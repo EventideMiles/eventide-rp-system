@@ -1,15 +1,11 @@
 {
   "id": "eventide-rp-system",
   "title": "Eventide Roleplaying System",
-  "description": "The Eventide Roleplaying System system for FoundryVTT!",
+  "description": "The Eventide Roleplaying System system for FoundryVTT",
   "authors": [
     {
-      "name": "Asacolips",
-      "discord": "asacolips"
-    },
-    {
-      "name": "Lee Talman",
-      "discord": ".pizzaWizard"
+      "name": "Miles Eventide",
+      "discord": "@lunarrush"
     }
   ],
   "url": "Replace this with a link to your public repository",
@@ -17,19 +13,12 @@
   "readme": "README.md",
   "bugs": "Replace this with a link to file issues or tickets",
   "changelog": "CHANGELOG.md",
-  "media": [
-    {
-      "type": "setup",
-      "url": "systems/eventide-rp-system/assets/anvil-impact.png",
-      "thumbnail": "systems/eventide-rp-system/assets/anvil-impact.png"
-    }
-  ],
-  "version": "2.0.0",
+  "version": "0.0.1",
   "compatibility": {
-    "minimum": 11,
-    "verified": "11.315"
+    "minimum": 12,
+    "verified": 12
   },
-  "esmodules": ["module/eventide-rp-system.mjs"],
+  "esmodules": ["eventide-rp-system.mjs"],
   "styles": ["css/eventide-rp-system.css"],
   "languages": [
     {
@@ -38,14 +27,52 @@
       "path": "lang/en.json"
     }
   ],
-  "packs": [],
+  "documentTypes": {
+    "Actor": {
+      "hero": { "htmlFields": ["background.biography"] },
+      "villain": { "htmlFields": ["background.biography"] },
+      "pawn": {}
+    },
+    "Item": {
+      "weapon": {},
+      "spell": {}
+    },
+    "Condition": {
+      "boon": {},
+      "bane": {},
+      "dc": {},
+      "dice": {},
+      "critLower": {},
+      "critUpper": {}
+    }
+  },
+  "packs": [
+    {
+      "name": "npcCompendium",
+      "label": "NPC Compendium",
+      "type": "Actor"
+    },
+    {
+      "name": "items",
+      "label": "Items",
+      "type": "Item"
+    },
+    {
+      "name": "spells",
+      "label": "Spells",
+      "type": "Item"
+    },
+    {
+      "name": "conditions",
+      "label": "Conditions",
+      "type": "Item"
+    }
+  ],
   "packFolders": [],
   "socket": false,
-  "manifest": "Replace this with a link to the /latest release system.json so people can receive updates after they've installed the system",
-  "download": "This must link to a .zip file of the current version",
-  "background": "systems/eventide-rp-system/assets/anvil-impact.png",
+  "initiative": "1d20",
   "gridDistance": 5,
   "gridUnits": "ft",
-  "primaryTokenAttribute": "health",
-  "secondaryTokenAttribute": "power"
+  "primaryTokenAttribute": "resources.resolve",
+  "secondaryTokenAttribute": "resources.power"
 }

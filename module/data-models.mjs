@@ -89,7 +89,19 @@ class ActorDataModel extends foundry.abstract.TypeDataModel {
           min: 0,
           initial: 0,
         }),
-        critical: new NumberField({
+        dice: new NumberField({
+          required: true,
+          integer: true,
+          min: 1,
+          initial: 20,
+        }),
+        critLower: new NumberField({
+          required: true,
+          integer: true,
+          min: 1,
+          initial: 20,
+        }),
+        critUpper: new NumberField({
           required: true,
           integer: true,
           min: 1,
@@ -159,7 +171,7 @@ class ConditionDataModel extends foundry.abstract.TypeDataModel {
 
 // Stat Conditions will be based on this class: they always have to do
 // with stats
-class StatConditionDataModel extends ConditionDataModel {
+class StatDataModel extends ConditionDataModel {
   static defineSchema() {
     return {
       ...super.defineSchema(),
@@ -199,29 +211,11 @@ class StatConditionDataModel extends ConditionDataModel {
   }
 }
 
-export class BoonDataModel extends StatConditionDataModel {
-  static defineSchema() {
-    return {
-      ...super.defineSchema(),
-    };
-  }
-}
+export class BoonDataModel extends StatDataModel {}
 
-export class BaneDataModel extends StatConditionDataModel {
-  static defineSchema() {
-    return {
-      ...super.defineSchema(),
-    };
-  }
-}
+export class BaneDataModel extends StatDataModel {}
 
-export class DCDataModel extends StatConditionDataModel {
-  static defineSchema() {
-    return {
-      ...super.defineSchema(),
-    };
-  }
-}
+export class DCDataModel extends StatDataModel {}
 
 // This is what dice conditions will be based on
 class DiceConditionDataModel extends ConditionDataModel {
@@ -231,29 +225,17 @@ class DiceConditionDataModel extends ConditionDataModel {
       change: new NumberField({
         required: true,
         integer: true,
-        min: 0,
-        max: 20,
         initial: 0,
       }),
     };
   }
 }
 
-export class BoonDiceConditionDataModel extends DiceConditionDataModel {
-  static defineSchema() {
-    return {
-      ...super.defineSchema,
-    };
-  }
-}
+export class ChangeDiceDataModel extends DiceConditionDataModel {}
 
-export class BaneDiceConditionDataModel extends DiceConditionDataModel {
-  static defineSchema() {
-    return {
-      ...super.defineSchema,
-    };
-  }
-}
+export class CriticalMinimumDataModel extends DiceConditionDataModel {}
+
+export class CriticalMaximumDataModel extends DiceConditionDataModel {}
 
 /* -------------------------------------------- */
 /*  Item Models                                 */
@@ -313,7 +295,7 @@ export class SpellDataModel extends ItemDataModel {
         required: true,
         integer: true,
         positive: true,
-        initial: 2,
+        initial: 1,
       }),
     };
   }

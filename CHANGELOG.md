@@ -1,5 +1,4 @@
 # CHANGELOG
 
-## 1.2.0
-
-- Add support for Foundry v10
+## 0.0.1
+- Preparing initial release against foundry's "Introduction to System Development"
