@@ -38,7 +38,7 @@ export default class EventideRpSystemCharacter extends EventideRpSystemActorBase
     const data = {};
 
     // Copy the ability scores to the top level, so that rolls can use
-    // formulas like `@str.mod + 4`.
+    // formulas like `@acro.mod + 4`.
     if (this.abilities) {
       for (let [k,v] of Object.entries(this.abilities)) {
         data[k] = foundry.utils.deepClone(v);

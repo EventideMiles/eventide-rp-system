@@ -1,12 +1,11 @@
 {
   "EVENTIDE_RP_SYSTEM": {
     "Ability": {
-      "Str": { "long": "Strength", "abbr": "str" },
-      "Con": { "long": "Constitution", "abbr": "con" },
-      "Dex": { "long": "Dexterity", "abbr": "dex" },
-      "Int": { "long": "Intelligence", "abbr": "int" },
-      "Wis": { "long": "Wisdom", "abbr": "wis" },
-      "Cha": { "long": "Charisma", "abbr": "cha" }
+      "Acro": { "long": "Acrobatics", "abbr": "acro" },
+      "Phys": { "long": "Physical", "abbr": "phys" },
+      "Fort": { "long": "Fortitude", "abbr": "fort" },
+      "Will": { "long": "Will", "abbr": "will" },
+      "Wits": { "long": "Wits", "abbr": "wits" }
     },
     "SheetLabels": {
       "Actor": "EventideRpSystem Actor Sheet",
