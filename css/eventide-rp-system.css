@@ -205,66 +205,103 @@
 
 .eventide-critical-hit {
   color: white;
-  background-color: #512DA8;
+  background-color: #261282;
   text-align: center;
-  padding: 1rem;
-  font-size: 1rem;
+  padding: 0.875rem;
+  font-size: 1.125rem;
+  margin-bottom: 0px;
+  margin-top: 0px;
 }
 
 .eventide-critical-miss {
   color: white;
-  background-color: #8B0000;
+  background-color: #4e0101;
   text-align: center;
-  padding: 1rem;
-  font-size: 1rem;
+  padding: 0.875rem;
+  font-size: 1.125rem;
+  margin-bottom: 0px;
+  margin-top: 0px;
 }
 
 .eventide-acro-card {
   color: white;
-  background-color: #ff960c;
+  background-color: #a63b01;
   text-align: center;
-  padding: 1rem;
-  font-size: 1rem;
+  padding: 0.875rem;
+  font-size: 1.125rem;
+  margin-bottom: 0px;
 }
 
 .eventide-phys-card {
   color: white;
   background-color: #910303;
   text-align: center;
-  padding: 1rem;
-  font-size: 1rem;
+  padding: 0.875rem;
+  font-size: 1.125rem;
+  margin-bottom: 0px;
 }
 
 .eventide-fort-card {
   color: white;
-  background-color: #4CAF50;
+  background-color: #285828;
   text-align: center;
-  padding: 1rem;
-  font-size: 1rem;
+  padding: 0.875rem;
+  font-size: 1.125rem;
+  margin-bottom: 0px;
 }
 
 .eventide-will-card {
   color: white;
-  background-color: #52055f;
+  background-color: #79088d;
   text-align: center;
-  padding: 1rem;
-  font-size: 1rem;
+  padding: 0.875rem;
+  font-size: 1.125rem;
+  margin-bottom: 0px;
 }
 
 .eventide-wits-card {
   color: white;
-  background-color: #4E79A7;
+  background-color: #0e4380;
   text-align: center;
-  padding: 1rem;
-  font-size: 1rem;
+  padding: 0.875rem;
+  font-size: 1.125rem;
+  margin-bottom: 0px;
+}
+
+.eventide-item-card {
+  color: white;
+  background-color: #8B4513;
+  text-align: center;
+  padding: 0.875rem;
+  font-size: 1.125rem;
+  margin-bottom: 0px;
+}
+
+.eventide-combat-power-card {
+  color: white;
+  background-color: #B8860B;
+  text-align: center;
+  padding: 0.875rem;
+  font-size: 1.125rem;
+  margin-bottom: 0px;
+}
+
+.eventide-dice-dc-card {
+  color: white;
+  background-color: #1C424D;
+  text-align: center;
+  padding: 0.875rem;
+  font-size: 1.125rem;
+  margin-bottom: 0px;
 }
 
 .eventide-unknown-card {
   color: white;
   background-color: #535353;
   text-align: center;
-  padding: 1rem;
-  font-size: 1rem;
+  padding: 0.875rem;
+  font-size: 1.125rem;
+  margin-bottom: 0px;
 }
 
 /* Styles limited to eventide-rp-system sheets */
