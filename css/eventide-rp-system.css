@@ -203,6 +203,70 @@
   text-align: center;
 }
 
+.eventide-critical-hit {
+  color: white;
+  background-color: #512DA8;
+  text-align: center;
+  padding: 1rem;
+  font-size: 1rem;
+}
+
+.eventide-critical-miss {
+  color: white;
+  background-color: #8B0000;
+  text-align: center;
+  padding: 1rem;
+  font-size: 1rem;
+}
+
+.eventide-acro-card {
+  color: white;
+  background-color: #ff960c;
+  text-align: center;
+  padding: 1rem;
+  font-size: 1rem;
+}
+
+.eventide-phys-card {
+  color: white;
+  background-color: #910303;
+  text-align: center;
+  padding: 1rem;
+  font-size: 1rem;
+}
+
+.eventide-fort-card {
+  color: white;
+  background-color: #4CAF50;
+  text-align: center;
+  padding: 1rem;
+  font-size: 1rem;
+}
+
+.eventide-will-card {
+  color: white;
+  background-color: #52055f;
+  text-align: center;
+  padding: 1rem;
+  font-size: 1rem;
+}
+
+.eventide-wits-card {
+  color: white;
+  background-color: #4E79A7;
+  text-align: center;
+  padding: 1rem;
+  font-size: 1rem;
+}
+
+.eventide-unknown-card {
+  color: white;
+  background-color: #535353;
+  text-align: center;
+  padding: 1rem;
+  font-size: 1rem;
+}
+
 /* Styles limited to eventide-rp-system sheets */
 .eventide-rp-system .item-form {
   font-family: "Roboto", sans-serif;

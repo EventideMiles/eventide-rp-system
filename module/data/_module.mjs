@@ -8,3 +8,4 @@ export {default as EventideRpSystemItemBase} from "./base-item.mjs";
 export {default as EventideRpSystemItem} from "./item-item.mjs";
 export {default as EventideRpSystemFeature} from "./item-feature.mjs";
 export {default as EventideRpSystemSpell} from "./item-spell.mjs";
+// export {default as EventideRpSystemCombatPower} from "./item-combat-power.mjs";
