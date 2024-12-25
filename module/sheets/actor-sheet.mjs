@@ -1,8 +1,8 @@
 import {
   onManageActiveEffect,
   prepareActiveEffectCategories,
-} from '../helpers/effects.mjs';
-import { rollHandler } from '../../lib/eventide-library/roll-dice.js';
+} from "../helpers/effects.mjs";
+import { rollHandler } from "../../lib/eventide-library/roll-dice.js";
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
@@ -12,14 +12,14 @@ export class EventideRpSystemActorSheet extends ActorSheet {
   /** @override */
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ['eventide-rp-system', 'sheet', 'actor'],
+      classes: ["eventide-rp-system", "sheet", "actor"],
       width: 600,
       height: 600,
       tabs: [
         {
-          navSelector: '.sheet-tabs',
-          contentSelector: '.sheet-body',
-          initial: 'features',
+          navSelector: ".sheet-tabs",
+          contentSelector: ".sheet-body",
+          initial: "features",
         },
       ],
     });
@@ -51,13 +51,13 @@ export class EventideRpSystemActorSheet extends ActorSheet {
     context.config = CONFIG.EVENTIDE_RP_SYSTEM;
 
     // Prepare character data and items.
-    if (actorData.type == 'character') {
+    if (actorData.type == "character") {
       this._prepareItems(context);
       this._prepareCharacterData(context);
     }
 
     // Prepare NPC data and items.
-    if (actorData.type == 'npc') {
+    if (actorData.type == "npc") {
       this._prepareItems(context);
     }
 
@@ -123,15 +123,15 @@ export class EventideRpSystemActorSheet extends ActorSheet {
     for (let i of context.items) {
       i.img = i.img || Item.DEFAULT_ICON;
       // Append to gear.
-      if (i.type === 'item') {
+      if (i.type === "item") {
         gear.push(i);
       }
       // Append to features.
-      else if (i.type === 'feature') {
+      else if (i.type === "feature") {
         features.push(i);
       }
       // Append to spells.
-      else if (i.type === 'spell') {
+      else if (i.type === "spell") {
         if (i.system.spellLevel != undefined) {
           spells[i.system.spellLevel].push(i);
         }
@@ -151,9 +151,9 @@ export class EventideRpSystemActorSheet extends ActorSheet {
     super.activateListeners(html);
 
     // Render the item sheet for viewing/editing prior to the editable check.
-    html.on('click', '.item-edit', (ev) => {
-      const li = $(ev.currentTarget).parents('.item');
-      const item = this.actor.items.get(li.data('itemId'));
+    html.on("click", ".item-edit", (ev) => {
+      const li = $(ev.currentTarget).parents(".item");
+      const item = this.actor.items.get(li.data("itemId"));
       item.sheet.render(true);
     });
 
@@ -162,19 +162,19 @@ export class EventideRpSystemActorSheet extends ActorSheet {
     if (!this.isEditable) return;
 
     // Add Inventory Item
-    html.on('click', '.item-create', this._onItemCreate.bind(this));
+    html.on("click", ".item-create", this._onItemCreate.bind(this));
 
     // Delete Inventory Item
-    html.on('click', '.item-delete', (ev) => {
-      const li = $(ev.currentTarget).parents('.item');
-      const item = this.actor.items.get(li.data('itemId'));
+    html.on("click", ".item-delete", (ev) => {
+      const li = $(ev.currentTarget).parents(".item");
+      const item = this.actor.items.get(li.data("itemId"));
       item.delete();
       li.slideUp(200, () => this.render(false));
     });
 
     // Active Effect management
-    html.on('click', '.effect-control', (ev) => {
-      const row = ev.currentTarget.closest('li');
+    html.on("click", ".effect-control", (ev) => {
+      const row = ev.currentTarget.closest("li");
       const document =
         row.dataset.parentId === this.actor.id
           ? this.actor
@@ -183,15 +183,15 @@ export class EventideRpSystemActorSheet extends ActorSheet {
     });
 
     // Rollable abilities.
-    html.on('click', '.rollable', this._onRoll.bind(this));
+    html.on("click", ".rollable", this._onRoll.bind(this));
 
     // Drag events for macros.
     if (this.actor.isOwner) {
       let handler = (ev) => this._onDragStart(ev);
-      html.find('li.item').each((i, li) => {
-        if (li.classList.contains('inventory-header')) return;
-        li.setAttribute('draggable', true);
-        li.addEventListener('dragstart', handler, false);
+      html.find("li.item").each((i, li) => {
+        if (li.classList.contains("inventory-header")) return;
+        li.setAttribute("draggable", true);
+        li.addEventListener("dragstart", handler, false);
       });
     }
   }
@@ -207,7 +207,7 @@ export class EventideRpSystemActorSheet extends ActorSheet {
     // Get the type of item to create.
     const type = header.dataset.type;
     // Grab any data associated with this control.
-    const data = duplicate(header.dataset);
+    const data = foundry.utils.duplicate(header.dataset);
     // Initialize a default name.
     const name = `New ${type.capitalize()}`;
     // Prepare the item object.
@@ -217,7 +217,7 @@ export class EventideRpSystemActorSheet extends ActorSheet {
       system: data,
     };
     // Remove the type from the dataset since it's in the itemData.type prop.
-    delete itemData.system['type'];
+    delete itemData.system["type"];
 
     // Finally, create the item!
     return await Item.create(itemData, { parent: this.actor });
@@ -231,12 +231,15 @@ export class EventideRpSystemActorSheet extends ActorSheet {
   async _onRoll(event) {
     event.preventDefault();
     const element = event.currentTarget;
-    const dataset = element.dataset;
+    const dataset = {
+      ...element.dataset,
+      formula: element.dataset.roll,
+    };
 
     // Handle item rolls.
     if (dataset.rollType) {
-      if (dataset.rollType == 'item') {
-        const itemId = element.closest('.item').dataset.itemId;
+      if (dataset.rollType == "item") {
+        const itemId = element.closest(".item").dataset.itemId;
         const item = this.actor.items.get(itemId);
         if (item) return item.roll();
       }
@@ -245,7 +248,7 @@ export class EventideRpSystemActorSheet extends ActorSheet {
     // Handle rolls that supply the formula directly.
     if (dataset.roll) {
       let roll = await rollHandler(dataset, this.actor);
-      
+
       return roll;
     }
   }
