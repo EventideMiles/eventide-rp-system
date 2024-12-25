@@ -9,7 +9,7 @@ export default class EventideRpSystemCombatPower extends EventideRpSystemItemBas
         schema.roll = new fields.SchemaField({
             diceNum: new fields.NumberField({ ...requiredInteger, initial: 1, min: 0 }),
             diceSize: new fields.StringField({ initial: "d20" }),
-            diceBonus: new fields.StringField({ initial: "+@will.mod" })
+            diceBonus: new fields.StringField({ initial: "+@will.value" })
         })
 
         schema.formula = new fields.StringField({ blank: true });
