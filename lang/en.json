@@ -7,6 +7,16 @@
       "Will": { "long": "Will", "abbr": "will" },
       "Wits": { "long": "Wits", "abbr": "wits" }
     },
+    "HiddenAbilities": {
+      "Roll": { "long": "Roll", "abbr": "roll" },
+      "Cmax": { "long": "Critical Max", "abbr": "cmax" },
+      "Cmin": { "long": "Critical Min", "abbr": "cmin" },
+      "WillDC": { "long": "Will DC", "abbr": "willDC" },
+      "FortDC": { "long": "Fortitude DC", "abbr": "fortDC" },
+      "PhysDC": { "long": "Physical DC", "abbr": "physDC" },
+      "AcroDC": { "long": "Acrobatics DC", "abbr": "acroDC" },
+      "WitsDC": { "long": "Wits DC", "abbr": "witsDC" }
+    },
     "SheetLabels": {
       "Actor": "EventideRpSystem Actor Sheet",
       "Item": "EventideRpSystem Item Sheet"
