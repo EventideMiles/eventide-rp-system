@@ -44,7 +44,8 @@
     "Item": {
       "item": "Item",
       "feature": "Feature",
-      "spell": "Spell"
+      "spell": "Spell",
+      "status": "Status"
     }
   }
 }

@@ -121,8 +121,6 @@ export class EventideRpSystemActorSheet extends ActorSheet {
       9: [],
     };
 
-    console.log(context);
-
     // Iterate through items, allocating to containers
     for (let i of context.items) {
       i.img = i.img || Item.DEFAULT_ICON;

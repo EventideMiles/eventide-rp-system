@@ -33,8 +33,6 @@ export class EventideRpSystemItemSheet extends ItemSheet {
     // Alternatively, you could use the following return statement to do a
     // unique item sheet by type, like `weapon-sheet.hbs`.
 
-    console.log(this.item.type);
-
     return `${path}/item-${this.item.type}-sheet.hbs`;
   }
 
@@ -44,8 +42,6 @@ export class EventideRpSystemItemSheet extends ItemSheet {
   async getData() {
     // Retrieve base data structure.
     const context = super.getData();
-
-    console.log(context);
 
     // Use a safe clone of the item data for further operations.
     const itemData = this.document.toPlainObject();

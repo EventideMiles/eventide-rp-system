@@ -62,7 +62,7 @@ export class EventideRpSystemItem extends Item {
 
     // Initialize chat data.
     const speaker = ChatMessage.getSpeaker({ actor: this.actor });
-    const rollMode = game.settings.get('core', 'rollMode');
+    const rollMode = game.settings.get("core", "rollMode");
     const label = `[${item.type}] ${item.name}`;
 
     // If there's no roll data, send a chat message.
@@ -71,16 +71,16 @@ export class EventideRpSystemItem extends Item {
         speaker: speaker,
         rollMode: rollMode,
         flavor: label,
-        content: item.system.description ?? '',
+        content: item.system.description ?? "",
       });
     }
     // Otherwise, create a roll and send a chat message from it.
     else {
       // Retrieve roll data.
-      const rollData = { 
+      const rollData = {
         ...this.getRollData(),
-        label: item.name ?? '',
-        type: item.type ?? '',
+        label: item.name ?? "",
+        type: item.type ?? "",
       };
 
       const roll = await rollHandler(rollData, this.actor);
