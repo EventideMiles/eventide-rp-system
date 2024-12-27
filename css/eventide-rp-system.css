@@ -304,6 +304,14 @@
   margin-bottom: 0px;
 }
 
+.eventide-card-description {
+  color: rgb(78, 77, 77);
+  text-align: justify;
+  border: #535353;
+  font-size: 0.9rem;
+  padding: 0.01rem;
+}
+
 /* Styles limited to eventide-rp-system sheets */
 .eventide-rp-system .item-form {
   font-family: "Roboto", sans-serif;

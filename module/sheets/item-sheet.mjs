@@ -1,7 +1,7 @@
 import {
   onManageActiveEffect,
   prepareActiveEffectCategories,
-} from '../helpers/effects.mjs';
+} from "../helpers/effects.mjs";
 
 /**
  * Extend the basic ItemSheet with some very simple modifications
@@ -11,14 +11,14 @@ export class EventideRpSystemItemSheet extends ItemSheet {
   /** @override */
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ['eventide-rp-system', 'sheet', 'item'],
+      classes: ["eventide-rp-system", "sheet", "item"],
       width: 520,
       height: 480,
       tabs: [
         {
-          navSelector: '.sheet-tabs',
-          contentSelector: '.sheet-body',
-          initial: 'description',
+          navSelector: ".sheet-tabs",
+          contentSelector: ".sheet-body",
+          initial: "description",
         },
       ],
     });
@@ -26,12 +26,15 @@ export class EventideRpSystemItemSheet extends ItemSheet {
 
   /** @override */
   get template() {
-    const path = 'systems/eventide-rp-system/templates/item';
+    const path = "systems/eventide-rp-system/templates/item";
     // Return a single sheet for all item types.
     // return `${path}/item-sheet.hbs`;
 
     // Alternatively, you could use the following return statement to do a
     // unique item sheet by type, like `weapon-sheet.hbs`.
+
+    console.log(this.item.type);
+
     return `${path}/item-${this.item.type}-sheet.hbs`;
   }
 
@@ -41,6 +44,8 @@ export class EventideRpSystemItemSheet extends ItemSheet {
   async getData() {
     // Retrieve base data structure.
     const context = super.getData();
+
+    console.log(context);
 
     // Use a safe clone of the item data for further operations.
     const itemData = this.document.toPlainObject();
@@ -86,7 +91,7 @@ export class EventideRpSystemItemSheet extends ItemSheet {
     // Roll handlers, click handlers, etc. would go here.
 
     // Active Effect management
-    html.on('click', '.effect-control', (ev) =>
+    html.on("click", ".effect-control", (ev) =>
       onManageActiveEffect(ev, this.item)
     );
   }

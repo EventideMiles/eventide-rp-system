@@ -107,6 +107,7 @@ export class EventideRpSystemActorSheet extends ActorSheet {
     // Initialize containers.
     const gear = [];
     const features = [];
+    const statuses = [];
     const spells = {
       0: [],
       1: [],
@@ -120,6 +121,8 @@ export class EventideRpSystemActorSheet extends ActorSheet {
       9: [],
     };
 
+    console.log(context);
+
     // Iterate through items, allocating to containers
     for (let i of context.items) {
       i.img = i.img || Item.DEFAULT_ICON;
@@ -130,6 +133,10 @@ export class EventideRpSystemActorSheet extends ActorSheet {
       // Append to features.
       else if (i.type === "feature") {
         features.push(i);
+      }
+      // Append to effects.
+      else if (i.type === "status") {
+        statuses.push(i);
       }
       // Append to spells.
       else if (i.type === "spell") {
@@ -142,6 +149,7 @@ export class EventideRpSystemActorSheet extends ActorSheet {
     // Assign and return
     context.gear = gear;
     context.features = features;
+    context.statuses = statuses;
     context.spells = spells;
   }
 

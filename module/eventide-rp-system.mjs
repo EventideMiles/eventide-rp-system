@@ -1,20 +1,20 @@
 // Import document classes.
-import { EventideRpSystemActor } from './documents/actor.mjs';
-import { EventideRpSystemItem } from './documents/item.mjs';
+import { EventideRpSystemActor } from "./documents/actor.mjs";
+import { EventideRpSystemItem } from "./documents/item.mjs";
 // Import sheet classes.
-import { EventideRpSystemActorSheet } from './sheets/actor-sheet.mjs';
-import { EventideRpSystemItemSheet } from './sheets/item-sheet.mjs';
+import { EventideRpSystemActorSheet } from "./sheets/actor-sheet.mjs";
+import { EventideRpSystemItemSheet } from "./sheets/item-sheet.mjs";
 // Import helper/utility classes and constants.
-import { preloadHandlebarsTemplates } from './helpers/templates.mjs';
-import { EVENTIDE_RP_SYSTEM } from './helpers/config.mjs';
+import { preloadHandlebarsTemplates } from "./helpers/templates.mjs";
+import { EVENTIDE_RP_SYSTEM } from "./helpers/config.mjs";
 // Import DataModel classes
-import * as models from './data/_module.mjs';
+import * as models from "./data/_module.mjs";
 
 /* -------------------------------------------- */
 /*  Init Hook                                   */
 /* -------------------------------------------- */
 
-Hooks.once('init', function () {
+Hooks.once("init", function () {
   // Add utility classes to the global game object so that they're more easily
   // accessible in global contexts.
   game.eventiderpsystem = {
@@ -31,7 +31,7 @@ Hooks.once('init', function () {
    * @type {String}
    */
   CONFIG.Combat.initiative = {
-    formula: '1d20 + (@abilities.acro.value + @abilities.wits.value)/2',
+    formula: "1d20 + (@abilities.acro.value + @abilities.wits.value)/2",
     decimals: 2,
   };
 
@@ -43,14 +43,15 @@ Hooks.once('init', function () {
   // with the Character/NPC as part of super.defineSchema()
   CONFIG.Actor.dataModels = {
     character: models.EventideRpSystemCharacter,
-    npc: models.EventideRpSystemNPC
-  }
+    npc: models.EventideRpSystemNPC,
+  };
   CONFIG.Item.documentClass = EventideRpSystemItem;
   CONFIG.Item.dataModels = {
     item: models.EventideRpSystemItem,
     feature: models.EventideRpSystemFeature,
-    spell: models.EventideRpSystemSpell
-  }
+    spell: models.EventideRpSystemSpell,
+    status: models.EventideRpSystemStatus,
+  };
 
   // Active Effects are never copied to the Actor,
   // but will still apply to the Actor from within the Item
@@ -58,15 +59,15 @@ Hooks.once('init', function () {
   CONFIG.ActiveEffect.legacyTransferral = false;
 
   // Register sheet application classes
-  Actors.unregisterSheet('core', ActorSheet);
-  Actors.registerSheet('eventide-rp-system', EventideRpSystemActorSheet, {
+  Actors.unregisterSheet("core", ActorSheet);
+  Actors.registerSheet("eventide-rp-system", EventideRpSystemActorSheet, {
     makeDefault: true,
-    label: 'EVENTIDE_RP_SYSTEM.SheetLabels.Actor',
+    label: "EVENTIDE_RP_SYSTEM.SheetLabels.Actor",
   });
-  Items.unregisterSheet('core', ItemSheet);
-  Items.registerSheet('eventide-rp-system', EventideRpSystemItemSheet, {
+  Items.unregisterSheet("core", ItemSheet);
+  Items.registerSheet("eventide-rp-system", EventideRpSystemItemSheet, {
     makeDefault: true,
-    label: 'EVENTIDE_RP_SYSTEM.SheetLabels.Item',
+    label: "EVENTIDE_RP_SYSTEM.SheetLabels.Item",
   });
 
   // Preload Handlebars templates.
@@ -78,7 +79,7 @@ Hooks.once('init', function () {
 /* -------------------------------------------- */
 
 // If you need to add Handlebars helpers, here is a useful example:
-Handlebars.registerHelper('toLowerCase', function (str) {
+Handlebars.registerHelper("toLowerCase", function (str) {
   return str.toLowerCase();
 });
 
@@ -86,9 +87,9 @@ Handlebars.registerHelper('toLowerCase', function (str) {
 /*  Ready Hook                                  */
 /* -------------------------------------------- */
 
-Hooks.once('ready', function () {
+Hooks.once("ready", function () {
   // Wait to register hotbar drop hook on ready so that modules could register earlier if they want to
-  Hooks.on('hotbarDrop', (bar, data, slot) => createItemMacro(data, slot));
+  Hooks.on("hotbarDrop", (bar, data, slot) => createItemMacro(data, slot));
 });
 
 /* -------------------------------------------- */
@@ -104,10 +105,10 @@ Hooks.once('ready', function () {
  */
 async function createItemMacro(data, slot) {
   // First, determine if this is a valid owned item.
-  if (data.type !== 'Item') return;
-  if (!data.uuid.includes('Actor.') && !data.uuid.includes('Token.')) {
+  if (data.type !== "Item") return;
+  if (!data.uuid.includes("Actor.") && !data.uuid.includes("Token.")) {
     return ui.notifications.warn(
-      'You can only create macro buttons for owned Items'
+      "You can only create macro buttons for owned Items"
     );
   }
   // If it is, retrieve it based on the uuid.
@@ -121,10 +122,10 @@ async function createItemMacro(data, slot) {
   if (!macro) {
     macro = await Macro.create({
       name: item.name,
-      type: 'script',
+      type: "script",
       img: item.img,
       command: command,
-      flags: { 'eventide-rp-system.itemMacro': true },
+      flags: { "eventide-rp-system.itemMacro": true },
     });
   }
   game.user.assignHotbarMacro(macro, slot);
@@ -139,7 +140,7 @@ async function createItemMacro(data, slot) {
 function rollItemMacro(itemUuid) {
   // Reconstruct the drop data so that we can load the item.
   const dropData = {
-    type: 'Item',
+    type: "Item",
     uuid: itemUuid,
   };
   // Load the item from the uuid.
