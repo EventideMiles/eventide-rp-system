@@ -22,8 +22,8 @@
   ],
   "version": "0.0.1",
   "compatibility": {
-    "minimum": 11,
-    "verified": "11.315"
+    "minimum": 12,
+    "verified": 12
   },
   "esmodules": ["module/eventide-rp-system.mjs"],
   "styles": ["css/eventide-rp-system.css"],
