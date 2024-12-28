@@ -8,10 +8,12 @@ export default class EventideRpSystemStatus extends EventideRpSystemItemBase {
     schema.bgColor = new fields.ColorField({
       initial: "#7A70B8",
       blank: false,
+      required: true,
     });
     schema.textColor = new fields.ColorField({
       initial: "#ffffff",
       blank: false,
+      required: true,
     });
 
     return schema;

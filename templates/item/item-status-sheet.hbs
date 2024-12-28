@@ -1,16 +1,16 @@
 <form class="{{cssClass}}" autocomplete="off">
   <header class="sheet-header grid grid-3col">
-    <img class="profile-img flex-group-center" src="{{item.img}}" data-edit="img" title="{{item.name}}"/>
+    <img class="profile-img flex-group-center" width="50px" height="50px" src="{{item.img}}" data-edit="img" title="{{item.name}}"/>
     <div class="header-fields">
       <h1 class="charname"><input name="name" type="text" value="{{item.name}}" placeholder="Name"/></h1>
     </div>
     <div class="flexcol flex-group-center">
-      <color-picker name="system.textColor" value="{{item.system.textColor}}" placeholder="#ffffff">
-        <input type="text" placeholder="#ffffff" name="system.textColor" data-edit="system.textColor"/>
+      <color-picker name="system.textColor" value="{{item.system.textColor}}" placeholder="Text Color">
+        <input type="text" placeholder="Text Color" name="system.textColor" data-edit="system.textColor"/>
         <input type="color">
       </color-picker>
-      <color-picker name="system.bgColor" value="{{item.system.bgColor}}" placeholder="#000000">
-        <input type="text" placeholder="#000000" name="system.textColor" data-edit="system.bgColor"/>
+      <color-picker name="system.bgColor" value="{{item.system.bgColor}}" placeholder="Background Color">
+        <input type="text" placeholder="Background Color" name="system.bgColor" data-edit="system.bgColor"/>
         <input type="color">
       </color-picker>
     </div>
