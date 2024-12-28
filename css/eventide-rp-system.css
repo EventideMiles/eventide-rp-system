@@ -332,6 +332,8 @@
   text-align: justify;
   font-size: 0.8rem;
   padding: 0.01rem;
+  padding-top: 0.2rem;
+  padding-bottom: 0.2rem;
   background-color: #7B4874;
   color: white;
 }
