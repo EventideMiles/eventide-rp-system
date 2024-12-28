@@ -47,9 +47,8 @@
     {{!-- Default tab is specified in actor-sheet.mjs --}}
     <a class="item" data-tab="features">Features</a>
     <a class="item" data-tab="description">Description</a>
+    <a class="item" data-tab="statuses">Statuses</a>
     <a class="item" data-tab="items">Items</a>
-    <a class="item" data-tab="spells">Spells</a>
-    <a class="item" data-tab="effects">Effects</a>
   </nav>
 
   {{!-- Sheet Body --}}
@@ -66,9 +65,9 @@
           <div class="abilities flexcol">
             {{#each system.abilities as |ability key|}}
             <div class="ability flexrow flex-group-center">
-              <label for="system.abilities.{{key}}.value" class="resource-label rollable flexlarge align-left" data-roll="d@hiddenAbilities.dice.value+@abilities.{{key}}.mod" data-label="{{localize (lookup @root.config.abilities key)}}">{{localize (lookup @root.config.abilities key)}}</label>
+              <label for="system.abilities.{{key}}.value" data-type="{{key}}" class="resource-label rollable flexlarge align-left" data-roll="d@hiddenAbilities.dice.value+@abilities.{{key}}.total" data-label="{{localize (lookup @root.config.abilities key)}}">{{localize (lookup @root.config.abilities key)}}</label>
               <input type="text" name="system.abilities.{{key}}.value" value="{{ability.value}}" data-dtype="Number"/>
-              <span class="ability-mod rollable" data-roll="d@hiddenAbilities.dice.value+@abilities.{{key}}.mod" data-label="{{localize (lookup @root.config.abilities key)}}">{{numberFormat ability.mod decimals=0 sign=true}}</span>
+              <span class="ability-total rollable" data-type="{{key}}" data-roll="d@hiddenAbilities.dice.value+@abilities.{{key}}.total" data-label="{{localize (lookup @root.config.abilities key)}}">{{numberFormat ability.total decimals=0 sign=true}}</span>
             </div>
             {{/each}}
           </div>
@@ -89,20 +88,25 @@
       {{editor enrichedBiography target="system.biography" engine="prosemirror" button=true editable=editable}}
     </div>
 
+    {{!-- Statuses Tab --}}
+    <div class="tab statuses" data-group="primary" data-tab="statuses">
+      {{> "systems/eventide-rp-system/templates/actor/parts/actor-statuses.hbs"}}
+    </div>
+
     {{!-- Owned Items Tab --}}
     <div class="tab items" data-group="primary" data-tab="items">
        {{> "systems/eventide-rp-system/templates/actor/parts/actor-items.hbs"}}
     </div>
 
     {{!-- Owned Spells Tab --}}
-    <div class="tab spells" data-group="primary" data-tab="spells">
+    {{!-- <div class="tab spells" data-group="primary" data-tab="spells">
       {{> "systems/eventide-rp-system/templates/actor/parts/actor-spells.hbs"}}
     </div>
 
     {{!-- Active Effects Tab --}}
     <div class="tab effects flexcol" data-group="primary" data-tab="effects">
       {{> "systems/eventide-rp-system/templates/actor/parts/actor-effects.hbs"}}
-    </div>
+    </div> --}}
 
   </section>
 </form>

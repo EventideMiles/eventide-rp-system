@@ -205,69 +205,147 @@
 
 .eventide-critical-hit {
   color: white;
-  background-color: #512DA8;
+  background-color: #261282;
   text-align: center;
-  padding: 1rem;
-  font-size: 1rem;
+  padding: 0.875rem;
+  font-size: 1.125rem;
+  margin-bottom: 0px;
+  margin-top: 0px;
 }
 
 .eventide-critical-miss {
   color: white;
-  background-color: #8B0000;
+  background-color: #4e0101;
   text-align: center;
-  padding: 1rem;
-  font-size: 1rem;
+  padding: 0.875rem;
+  font-size: 1.125rem;
+  margin-bottom: 0px;
+  margin-top: 0px;
 }
 
 .eventide-acro-card {
   color: white;
-  background-color: #ff960c;
+  background-color: #a63b01;
   text-align: center;
-  padding: 1rem;
-  font-size: 1rem;
+  padding: 0.875rem;
+  font-size: 1.125rem;
+  margin-bottom: 0px;
 }
 
 .eventide-phys-card {
   color: white;
   background-color: #910303;
   text-align: center;
-  padding: 1rem;
-  font-size: 1rem;
+  padding: 0.875rem;
+  font-size: 1.125rem;
+  margin-bottom: 0px;
 }
 
 .eventide-fort-card {
   color: white;
-  background-color: #4CAF50;
+  background-color: #285828;
   text-align: center;
-  padding: 1rem;
-  font-size: 1rem;
+  padding: 0.875rem;
+  font-size: 1.125rem;
+  margin-bottom: 0px;
 }
 
 .eventide-will-card {
   color: white;
-  background-color: #52055f;
+  background-color: #79088d;
   text-align: center;
-  padding: 1rem;
-  font-size: 1rem;
+  padding: 0.875rem;
+  font-size: 1.125rem;
+  margin-bottom: 0px;
 }
 
 .eventide-wits-card {
   color: white;
-  background-color: #4E79A7;
+  background-color: #0e4380;
   text-align: center;
-  padding: 1rem;
-  font-size: 1rem;
+  padding: 0.875rem;
+  font-size: 1.125rem;
+  margin-bottom: 0px;
+}
+
+.eventide-item-card {
+  color: white;
+  background-color: #8B4513;
+  text-align: center;
+  padding: 0.875rem;
+  font-size: 1.125rem;
+  margin-bottom: 0px;
+}
+
+.eventide-combat-power-card {
+  color: white;
+  background-color: #B8860B;
+  text-align: center;
+  padding: 0.875rem;
+  font-size: 1.125rem;
+  margin-bottom: 0px;
+}
+
+.eventide-dice-dc-card {
+  color: white;
+  background-color: #1C424D;
+  text-align: center;
+  padding: 0.875rem;
+  font-size: 1.125rem;
+  margin-bottom: 0px;
 }
 
 .eventide-unknown-card {
   color: white;
   background-color: #535353;
   text-align: center;
-  padding: 1rem;
-  font-size: 1rem;
+  padding: 0.875rem;
+  font-size: 1.125rem;
+  margin-bottom: 0px;
+}
+
+.eventide-status-card {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  padding: 0.875rem;
+  font-size: 1.125rem;
+  margin-bottom: 0px;
+}
+
+.eventide-card-description {
+  color: rgb(78, 77, 77);
+  text-align: justify;
+  border: #535353;
+  font-size: 0.9rem;
+  padding: 0.01rem;
+}
+
+.eventide-card-effects {
+  text-align: justify;
+  font-size: 0.7rem;
+  padding: 0rem;
+  color: rgb(143, 143, 143);
+}
+
+.eventide-card-effects-title {
+  text-align: justify;
+  font-size: 0.8rem;
+  padding: 0.01rem;
+  background-color: #7B4874;
+  color: white;
+}
+
+.eventide-card-name {
+  text-align: justify;
+  font-size: 1.2rem;
+  color: rgb(78, 77, 77);
 }
 
 /* Styles limited to eventide-rp-system sheets */
+.eventide-rp-system {
+  @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
+}
 .eventide-rp-system .item-form {
   font-family: "Roboto", sans-serif;
 }

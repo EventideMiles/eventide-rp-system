@@ -6,11 +6,12 @@
 export const preloadHandlebarsTemplates = async function () {
   return loadTemplates([
     // Actor partials.
-    'systems/eventide-rp-system/templates/actor/parts/actor-features.hbs',
-    'systems/eventide-rp-system/templates/actor/parts/actor-items.hbs',
-    'systems/eventide-rp-system/templates/actor/parts/actor-spells.hbs',
-    'systems/eventide-rp-system/templates/actor/parts/actor-effects.hbs',
+    "systems/eventide-rp-system/templates/actor/parts/actor-features.hbs",
+    "systems/eventide-rp-system/templates/actor/parts/actor-items.hbs",
+    "systems/eventide-rp-system/templates/actor/parts/actor-spells.hbs",
+    "systems/eventide-rp-system/templates/actor/parts/actor-effects.hbs",
+    "systems/eventide-rp-system/templates/actor/parts/actor-statuses.hbs",
     // Item partials
-    'systems/eventide-rp-system/templates/item/parts/item-effects.hbs',
+    "systems/eventide-rp-system/templates/item/parts/item-effects.hbs",
   ]);
 };
