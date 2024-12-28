@@ -304,6 +304,15 @@
   margin-bottom: 0px;
 }
 
+.eventide-status-card {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  padding: 0.875rem;
+  font-size: 1.125rem;
+  margin-bottom: 0px;
+}
+
 .eventide-card-description {
   color: rgb(78, 77, 77);
   text-align: justify;
@@ -312,7 +321,31 @@
   padding: 0.01rem;
 }
 
+.eventide-card-effects {
+  text-align: justify;
+  font-size: 0.7rem;
+  padding: 0rem;
+  color: rgb(143, 143, 143);
+}
+
+.eventide-card-effects-title {
+  text-align: justify;
+  font-size: 0.8rem;
+  padding: 0.01rem;
+  background-color: #7B4874;
+  color: white;
+}
+
+.eventide-card-name {
+  text-align: justify;
+  font-size: 1.2rem;
+  color: rgb(78, 77, 77);
+}
+
 /* Styles limited to eventide-rp-system sheets */
+.eventide-rp-system {
+  @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
+}
 .eventide-rp-system .item-form {
   font-family: "Roboto", sans-serif;
 }

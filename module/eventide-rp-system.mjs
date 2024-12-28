@@ -9,6 +9,8 @@ import { preloadHandlebarsTemplates } from "./helpers/templates.mjs";
 import { EVENTIDE_RP_SYSTEM } from "./helpers/config.mjs";
 // Import DataModel classes
 import * as models from "./data/_module.mjs";
+// Import system libraries
+import { statusMessage } from "../lib/eventide-library/system-messages.js";
 
 /* -------------------------------------------- */
 /*  Init Hook                                   */
@@ -161,12 +163,19 @@ function rollItemMacro(itemUuid) {
 /* -------------------------------------------- */
 /*  System Hooks                                */
 /* -------------------------------------------- */
-Hooks.on("createItem", (item) => {
-  // ToDo: determine if the item was a status item, and if it has a description:
-  // if so call the statusMessage function.
+Hooks.on("closeEventideRpSystemItemSheet", (app) => {
+  const item = app.object;
+
+  if (item.type === "status" && item.system.description && app.actor !== null) {
+    statusMessage(item);
+  }
 });
 
-Hooks.on("updateItem", (item) => {
-  // ToDo: determine if the item was a status item, and if it has a description:
-  // if so call the statusMessage function.
+Hooks.on("dropActorSheetData", (actor, sheet, data) => {
+  const statusArray = actor.itemTypes.status;
+  const item = statusArray[statusArray.length - 1];
+
+  if (item.type === "status" && item.system.description) {
+    statusMessage(item);
+  }
 });
