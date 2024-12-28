@@ -157,3 +157,16 @@ function rollItemMacro(itemUuid) {
     item.roll();
   });
 }
+
+/* -------------------------------------------- */
+/*  System Hooks                                */
+/* -------------------------------------------- */
+Hooks.on("createItem", (item) => {
+  // ToDo: determine if the item was a status item, and if it has a description:
+  // if so call the statusMessage function.
+});
+
+Hooks.on("updateItem", (item) => {
+  // ToDo: determine if the item was a status item, and if it has a description:
+  // if so call the statusMessage function.
+});
