@@ -171,11 +171,12 @@ Hooks.on("closeEventideRpSystemItemSheet", (app) => {
   }
 });
 
-Hooks.on("dropActorSheetData", (actor, sheet, data) => {
-  const statusArray = actor.itemTypes.status;
-  const item = statusArray[statusArray.length - 1];
-
-  if (item.type === "status" && item.system.description) {
+Hooks.on("createItem", (item) => {
+  if (
+    item.type === "status" &&
+    item.system.description &&
+    item.actor !== null
+  ) {
     statusMessage(item);
   }
 });
