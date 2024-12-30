@@ -10,7 +10,10 @@ import { EVENTIDE_RP_SYSTEM } from "./helpers/config.mjs";
 // Import DataModel classes
 import * as models from "./data/_module.mjs";
 // Import system libraries
-import { statusMessage } from "../lib/eventide-library/system-messages.js";
+import {
+  createStatusMessage,
+  deleteStatusMessage,
+} from "../lib/eventide-library/system-messages.js";
 
 /* -------------------------------------------- */
 /*  Init Hook                                   */
@@ -171,12 +174,25 @@ Hooks.on("closeEventideRpSystemItemSheet", (app) => {
   }
 });
 
-Hooks.on("createItem", (item) => {
+Hooks.on("createItem", (item, options, triggerPlayer) => {
+  // Status Message Handler
   if (
     item.type === "status" &&
     item.system.description &&
-    item.actor !== null
+    item.actor !== null &&
+    game.user.id === triggerPlayer
   ) {
-    statusMessage(item);
+    createStatusMessage(item);
+  }
+});
+
+Hooks.on("deleteItem", (item, options, triggerPlayer) => {
+  // Delete Status Message Handler
+  if (
+    item.type === "status" &&
+    item.parent !== null &&
+    game.user.id === triggerPlayer
+  ) {
+    deleteStatusMessage(item);
   }
 });

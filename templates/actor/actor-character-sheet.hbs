@@ -65,9 +65,9 @@
           <div class="abilities flexcol">
             {{#each system.abilities as |ability key|}}
             <div class="ability flexrow flex-group-center">
-              <label for="system.abilities.{{key}}.value" data-type="{{key}}" class="resource-label rollable flexlarge align-left" data-roll="d@hiddenAbilities.dice.value+@abilities.{{key}}.total" data-label="{{localize (lookup @root.config.abilities key)}}">{{localize (lookup @root.config.abilities key)}}</label>
+              <label for="system.abilities.{{key}}.value" data-type="{{key}}" class="resource-label rollable flexlarge align-left" data-roll="d@hiddenAbilities.dice.total+@abilities.{{key}}.total" data-label="{{localize (lookup @root.config.abilities key)}}">{{localize (lookup @root.config.abilities key)}}</label>
               <input type="text" name="system.abilities.{{key}}.value" value="{{ability.value}}" data-dtype="Number"/>
-              <span class="ability-total rollable" data-type="{{key}}" data-roll="d@hiddenAbilities.dice.value+@abilities.{{key}}.total" data-label="{{localize (lookup @root.config.abilities key)}}">{{numberFormat ability.total decimals=0 sign=true}}</span>
+              <span class="ability-total rollable" data-type="{{key}}" data-roll="d@hiddenAbilities.dice.total+@abilities.{{key}}.total" data-label="{{localize (lookup @root.config.abilities key)}}">{{numberFormat ability.total decimals=0 sign=true}}</span>
             </div>
             {{/each}}
           </div>

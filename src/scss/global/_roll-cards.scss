@@ -108,6 +108,15 @@
     margin-bottom: 0px;
 }
 
+.eventide-status-delete-card {
+    color: white;
+    background-color: #555555;
+    text-align: center;
+    padding: 0.875rem;
+    font-size: 1.125rem;
+    margin-bottom: 0px;
+}
+
 .eventide-card-description {
     color: rgb(78, 77, 77);
     text-align: justify;
@@ -137,4 +146,35 @@
     text-align: justify;
     font-size: 1.2rem;
     color: rgb(78, 77, 77);
+}
+
+.eventide-card-primary-image {
+    width: 20px;
+    height: 20px;
+    border: 0px solid black;
+}
+
+.eventide-card-hr {
+    border: none;
+    border-top: 2px solid #7B4874;
+}
+
+.eventide-card-hit-box {
+    background-color: #50C877;
+    color: white;
+    text-align: center;
+    padding: 0.0875rem;
+    font-size: 0.7rem;
+    margin-bottom: 0px;
+    border: 1px solid #FFFFFF;
+}
+
+.eventide-card-miss-box {
+    background-color: #C70039;
+    color: white;
+    text-align: center;
+    padding: 0.0875rem;
+    font-size: 0.7rem;
+    margin-bottom: 0px;
+    border: 1px solid #FFFFFF;
 }

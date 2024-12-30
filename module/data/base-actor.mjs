@@ -38,6 +38,7 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
             value: new fields.NumberField({ ...requiredInteger, initial: 1 }),
             change: new fields.NumberField({ ...requiredInteger, initial: 0 }),
             total: new fields.NumberField({ ...requiredInteger, initial: 1 }),
+            ac: new fields.NumberField({ ...requiredInteger, initial: 11 }),
           });
           return obj;
         },
@@ -59,13 +60,14 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
         total: new fields.NumberField({
           ...requiredInteger,
           initial: 20,
+          min: 0,
         }),
       }),
       cmax: new fields.SchemaField({
         value: new fields.NumberField({
           ...requiredInteger,
           initial: 20,
-          min: 0,
+          min: 1,
         }),
         change: new fields.NumberField({
           ...requiredInteger,
@@ -74,13 +76,14 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
         total: new fields.NumberField({
           ...requiredInteger,
           initial: 20,
+          min: 1,
         }),
       }),
       cmin: new fields.SchemaField({
         value: new fields.NumberField({
           ...requiredInteger,
           initial: 20,
-          min: 0,
+          min: 1,
         }),
         change: new fields.NumberField({
           ...requiredInteger,
@@ -89,13 +92,45 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
         total: new fields.NumberField({
           ...requiredInteger,
           initial: 20,
+          min: 1,
         }),
       }),
-      sensitivity: new fields.SchemaField({
+      fmin: new fields.SchemaField({
+        value: new fields.NumberField({
+          ...requiredInteger,
+          initial: 1,
+          min: 0,
+        }),
+        change: new fields.NumberField({
+          ...requiredInteger,
+          initial: 0,
+        }),
+        total: new fields.NumberField({
+          ...requiredInteger,
+          initial: 1,
+          min: 0,
+        }),
+      }),
+      fmax: new fields.SchemaField({
+        value: new fields.NumberField({
+          ...requiredInteger,
+          initial: 20,
+          min: 1,
+        }),
+        change: new fields.NumberField({
+          ...requiredInteger,
+          initial: 0,
+        }),
+        total: new fields.NumberField({
+          ...requiredInteger,
+          initial: 20,
+          min: 1,
+        }),
+      }),
+      sens: new fields.SchemaField({
         value: new fields.NumberField({
           ...requiredInteger,
           initial: 0,
-          min: 0,
         }),
         change: new fields.NumberField({
           ...requiredInteger,
@@ -106,41 +141,6 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
           initial: 0,
         }),
       }),
-      // acrodc: new fields.SchemaField({
-      //   value: new fields.NumberField({
-      //     ...requiredInteger,
-      //     initial: 0,
-      //     min: 0,
-      //   }),
-      // }),
-      // physdc: new fields.SchemaField({
-      //   value: new fields.NumberField({
-      //     ...requiredInteger,
-      //     initial: 0,
-      //     min: 0,
-      //   }),
-      // }),
-      // fortdc: new fields.SchemaField({
-      //   value: new fields.NumberField({
-      //     ...requiredInteger,
-      //     initial: 0,
-      //     min: 0,
-      //   }),
-      // }),
-      // willdc: new fields.SchemaField({
-      //   value: new fields.NumberField({
-      //     ...requiredInteger,
-      //     initial: 0,
-      //     min: 0,
-      //   }),
-      // }),
-      // witsdc: new fields.SchemaField({
-      //   value: new fields.NumberField({
-      //     ...requiredInteger,
-      //     initial: 0,
-      //     min: 0,
-      //   }),
-      // }),
     });
 
     return schema;
@@ -151,15 +151,22 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
       // Handle ability label localization.
       this.abilities[key].label =
         game.i18n.localize(CONFIG.EVENTIDE_RP_SYSTEM.abilities[key]) ?? key;
+      this.abilities[key].abbr =
+        game.i18n.localize(
+          CONFIG.EVENTIDE_RP_SYSTEM.abilityAbbreviations[key]
+        ) ?? key;
       this.abilities[key].total =
         this.abilities[key].value + this.abilities[key].change;
+      this.abilities[key].ac = this.abilities[key].total + 11;
     }
 
     for (const key in this.hiddenAbilities) {
-      // Handle ability label localization.
+      // Handle hidden ability label localization.
       this.hiddenAbilities[key].label =
         game.i18n.localize(CONFIG.EVENTIDE_RP_SYSTEM.hiddenAbilities[key]) ??
         key;
+      this.hiddenAbilities[key].total =
+        this.hiddenAbilities[key].value + this.hiddenAbilities[key].change;
     }
   }
 
