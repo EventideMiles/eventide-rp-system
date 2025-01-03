@@ -14,6 +14,12 @@ import {
   createStatusMessage,
   deleteStatusMessage,
 } from "../lib/eventide-library/system-messages.js";
+import {
+  getSelectedArray,
+  getTargetArray,
+  storeLocal,
+  retrieveLocal,
+} from "../lib/eventide-library/common-foundry-tasks.js";
 
 /* -------------------------------------------- */
 /*  Init Hook                                   */
@@ -26,6 +32,10 @@ Hooks.once("init", function () {
     EventideRpSystemActor,
     EventideRpSystemItem,
     rollItemMacro,
+    getTargetArray,
+    getSelectedArray,
+    storeLocal,
+    retrieveLocal,
   };
 
   // Add custom constants for configuration.
@@ -170,7 +180,7 @@ Hooks.on("closeEventideRpSystemItemSheet", (app) => {
   const item = app.object;
 
   if (item.type === "status" && item.system.description && app.actor !== null) {
-    statusMessage(item);
+    createStatusMessage(item);
   }
 });
 
