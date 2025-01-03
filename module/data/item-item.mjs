@@ -23,11 +23,13 @@ export default class EventideRpSystemItem extends EventideRpSystemItemBase {
       diceNum: new fields.NumberField({
         ...requiredInteger,
         initial: 1,
-        min: 1,
+        min: 0,
       }),
-      diceSize: new fields.StringField({ initial: "d@dice.value" }),
+      diceSize: new fields.StringField({
+        initial: "d@hiddenAbilities.dice.total",
+      }),
       diceBonus: new fields.StringField({
-        initial: "+@acro.value+ceil(@lvl / 2)",
+        initial: "+@abilities.acro.total+ceil(@attributes.level.value / 2)",
       }),
     });
 
@@ -40,6 +42,8 @@ export default class EventideRpSystemItem extends EventideRpSystemItemBase {
     // Build the formula dynamically using string interpolation
     const roll = this.roll;
 
-    this.formula = `${roll.diceNum}${roll.diceSize}${roll.diceBonus}`;
+    if (roll.diceNum > 0)
+      this.formula = `${roll.diceNum}${roll.diceSize}${roll.diceBonus}`;
+    else this.formula = `${roll.diceBonus}`;
   }
 }
