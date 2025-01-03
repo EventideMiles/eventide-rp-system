@@ -1,21 +1,14 @@
 /*
- * Custom Damage
- * This script is designed to take damage and pass it to
- * the _damage_handler script. Its a middle man for this
- * script.
+ * This macro is designed to damage all targeted tokens.
  *
  */
 const tokenArray = await game.eventiderpsystem.getTargetArray();
 
 if (!tokenArray) return ui.notifications.error(`Please target a token first`);
 
-const defaultOptions = {
-  // options
-  tokenArray: tokenArray,
-  storageKeys: ["damage_label", "damage_description", "damage_formula"],
-};
+const storageKeys = ["damage_label", "damage_description", "damage_formula"];
 
-const main = async (options) => {
+const main = async () => {
   let applyChanges = false;
   let storeData = false;
 
@@ -59,9 +52,7 @@ const main = async (options) => {
     },
     default: "yes",
     render: async (html) => {
-      const storedData = await game.eventiderpsystem.retrieveLocal(
-        options.storageKeys
-      );
+      const storedData = await game.eventiderpsystem.retrieveLocal(storageKeys);
 
       html
         .find(`[name="label"]`)[0]
@@ -79,7 +70,7 @@ const main = async (options) => {
       const formula = html.find(`[name="formula"]`)[0].value || "1";
 
       if (applyChanges) {
-        for (const token of options.tokenArray) {
+        for (const token of tokenArray) {
           const damageOptions = {
             label,
             formula,
@@ -105,4 +96,4 @@ const main = async (options) => {
   }).render(true);
 };
 
-return await main({ ...defaultOptions });
+return await main();
