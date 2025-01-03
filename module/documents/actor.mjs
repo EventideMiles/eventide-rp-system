@@ -1,3 +1,6 @@
+import { clamp } from "../../lib/eventide-library/common-foundry-tasks.js";
+import { rollHandler } from "../../lib/eventide-library/roll-dice.js";
+
 /**
  * Extend the base Actor document by defining a custom roll data structure which is ideal for the Simple system.
  * @extends {Actor}
@@ -64,5 +67,47 @@ export class EventideRpSystemActor extends Actor {
     result.effects = this.effects?.size > 0 ? this.effects.contents : [];
 
     return result;
+  }
+
+  addResolve(value) {
+    this.update({
+      "system.resolve.value": clamp(
+        this.system.resolve.value + value,
+        0,
+        this.system.resolve.max
+      ),
+    });
+  }
+
+  addPower(value) {
+    this.update({
+      "system.power.value": clamp(
+        this.system.power.value + value,
+        0,
+        this.system.power.max
+      ),
+    });
+  }
+
+  async damageResolve({
+    formula = "1",
+    label = "Damage",
+    description = "",
+    type = "damage",
+    critAllowed = false,
+    acCheck = false,
+  }) {
+    const rollData = {
+      formula,
+      label,
+      type,
+      critAllowed,
+      description,
+      acCheck,
+    };
+    const roll = await rollHandler(rollData, this);
+
+    // Apply damage to resolve.
+    this.addResolve(-roll.total);
   }
 }
