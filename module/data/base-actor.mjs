@@ -114,7 +114,7 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
       fmax: new fields.SchemaField({
         value: new fields.NumberField({
           ...requiredInteger,
-          initial: 20,
+          initial: 1,
           min: 1,
         }),
         change: new fields.NumberField({
@@ -123,7 +123,7 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
         }),
         total: new fields.NumberField({
           ...requiredInteger,
-          initial: 20,
+          initial: 1,
           min: 1,
         }),
       }),
@@ -190,13 +190,5 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
     data.lvl = this.attributes.level.value;
 
     return data;
-  }
-
-  addResolve(value) {
-    this.resolve.value = clamp(this.resolve.value + value, 0, this.resolve.max);
-  }
-
-  addPower(value) {
-    this.power.value = clamp(this.power.value + value, 0, this.power.max);
   }
 }
