@@ -2,9 +2,10 @@
  * This macro is designed to damage all targeted tokens.
  *
  */
-const tokenArray = await game.eventiderpsystem.getTargetArray();
+const tokenArray = await game.erps.getTargetArray();
 
-if (!tokenArray) return ui.notifications.error(`Please target a token first`);
+if (!tokenArray.length)
+  return ui.notifications.error(`Please target a token first`);
 
 const storageKeys = ["damage_label", "damage_description", "damage_formula"];
 
@@ -52,7 +53,7 @@ const main = async () => {
     },
     default: "yes",
     render: async (html) => {
-      const storedData = await game.eventiderpsystem.retrieveLocal(storageKeys);
+      const storedData = await game.erps.retrieveLocal(storageKeys);
 
       html
         .find(`[name="label"]`)[0]
@@ -90,7 +91,7 @@ const main = async () => {
           damage_formula: formula,
         };
 
-        game.eventiderpsystem.storeLocal(storageObject);
+        game.erps.storeLocal(storageObject);
       }
     },
   }).render(true);

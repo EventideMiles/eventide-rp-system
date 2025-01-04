@@ -109,5 +109,31 @@ export class EventideRpSystemActor extends Actor {
 
     // Apply damage to resolve.
     this.addResolve(-roll.total);
+
+    return roll;
+  }
+
+  async rollAbility({ ability, advantage = 0 }) {
+    const actorRollData = this.getRollData();
+    const isAdvantageRoll = advantage > 0;
+    const isDisadvantageRoll = advantage < 0;
+    const absAdvantage = Math.abs(advantage);
+    const formula = `${absAdvantage + 1}d${
+      actorRollData.hiddenAbilities.dice.total
+    }${
+      isAdvantageRoll
+        ? `kh${absAdvantage}`
+        : isDisadvantageRoll
+        ? `kl${absAdvantage}`
+        : ""
+    } + ${actorRollData.abilities[ability].total}`;
+
+    const rollData = {
+      formula,
+      label: `${actorRollData.abilities[ability].label}`,
+      type: ability,
+    };
+
+    return await rollHandler(rollData, this);
   }
 }
