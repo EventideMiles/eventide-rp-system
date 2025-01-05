@@ -331,6 +331,15 @@
   margin-bottom: 0px;
 }
 
+.eventide-restore-card {
+  color: white;
+  background-color: #cb8e00;
+  text-align: center;
+  padding: 0.875rem;
+  font-size: 1.125rem;
+  margin-bottom: 0px;
+}
+
 .eventide-card-description {
   color: rgb(78, 77, 77);
   text-align: justify;
@@ -365,6 +374,12 @@
 .eventide-card-primary-image {
   width: 20px;
   height: 20px;
+  border: 0px solid black;
+}
+
+.eventide-card-secondary-image {
+  width: 13px;
+  height: 13px;
   border: 0px solid black;
 }
 

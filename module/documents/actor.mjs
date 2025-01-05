@@ -1,9 +1,17 @@
 import { clamp } from "../../lib/eventide-library/common-foundry-tasks.js";
 import { rollHandler } from "../../lib/eventide-library/roll-dice.js";
+import { restoreMessage } from "../../lib/eventide-library/system-messages.js";
 
 /**
- * Extend the base Actor document by defining a custom roll data structure which is ideal for the Simple system.
+ * Actor class for the Eventide RP System
  * @extends {Actor}
+ * @class
+ * @classdesc Represents an actor in the Eventide RP System, extending the base Foundry VTT Actor class.
+ * This class handles character data preparation, roll handling, and resource management.
+ * @property {Object} system - The actor's system data
+ * @property {Object} flags - Actor-specific flags
+ * @property {Collection} items - The actor's items collection
+ * @property {Collection} effects - The actor's effects collection
  */
 export class EventideRpSystemActor extends Actor {
   /** @override */
@@ -135,5 +143,42 @@ export class EventideRpSystemActor extends Actor {
     };
 
     return await rollHandler(rollData, this);
+  }
+
+  /**
+   * Restores actor resources and/or removes status effects
+   * @param {Object} options - The restoration options
+   * @param {boolean} options.health - Whether to restore health/resolve to maximum
+   * @param {boolean} options.power - Whether to restore power to maximum
+   * @param {Array} options.statuses - Array of status effects to remove
+   * @param {boolean} options.all - Whether to restore all resources and remove all status effects: if passed no other options needed.
+   * @returns {Promise<void>}
+   */
+  async restore({ resolve, power, statuses, all }) {
+    const statusArray =
+      statuses && statuses.length
+        ? Array.from(statuses)
+            .filter((i) => i.type === "status")
+            .map((i) => i.id)
+        : Array.from(this.items)
+            .filter((i) => i.type === "status")
+            .map((i) => i.id);
+
+    if (resolve) this.addResolve(this.system.resolve.max);
+    if (power) this.addPower(this.system.power.max);
+    if (statuses && statuses.length > 0)
+      await this.deleteEmbeddedDocuments("Item", statusArray);
+
+    const returnMessage = await restoreMessage({
+      all,
+      resolve,
+      power,
+      statuses: statuses
+        ? Array.from(statuses).filter((i) => i.type === "status")
+        : [],
+      actor: this,
+    });
+
+    return returnMessage;
   }
 }
