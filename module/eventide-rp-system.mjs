@@ -20,6 +20,11 @@ import {
   storeLocal,
   retrieveLocal,
 } from "../lib/eventide-library/common-foundry-tasks.js";
+import {
+  damageTargets,
+  restoreTarget,
+  statusCreator,
+} from "../lib/eventide-library/macros.js";
 
 /* -------------------------------------------- */
 /*  Init Hook                                   */
@@ -36,6 +41,9 @@ Hooks.once("init", function () {
     getSelectedArray,
     storeLocal,
     retrieveLocal,
+    damageTargets,
+    restoreTarget,
+    statusCreator,
   };
 
   // Add custom constants for configuration.
