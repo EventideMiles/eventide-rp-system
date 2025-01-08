@@ -9,11 +9,12 @@
     },
     "HiddenAbilities": {
       "Roll": { "long": "Roll", "abbr": "roll" },
-      "Cmax": { "long": "Critical Max", "abbr": "cmax" },
-      "Cmin": { "long": "Critical Min", "abbr": "cmin" },
-      "Fmin": { "long": "Failure Min", "abbr": "fmin" },
-      "Fmax": { "long": "Failure Max", "abbr": "fmax" },
-      "sens": { "long": "Sensitivity", "abbr": "sens" }
+      "Dice": { "long": "Dice", "abbr": "dice" },
+      "Cmax": { "long": "Crit^", "abbr": "cmax" },
+      "Cmin": { "long": "Critv", "abbr": "cmin" },
+      "Fmin": { "long": "Failv", "abbr": "fmin" },
+      "Fmax": { "long": "Fail^", "abbr": "fmax" },
+      "Sens": { "long": "Sens", "abbr": "sens" }
     },
     "SheetLabels": {
       "Actor": "EventideRpSystem Actor Sheet",

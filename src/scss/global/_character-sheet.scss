@@ -1,0 +1,38 @@
+@use "../utils/colors"as *;
+
+.eventide-ability-row {
+  border: 1px solid $c-black;
+  border-radius: 5px;
+  padding: 5px;
+  color: $c-white;
+}
+
+.eventide-ability-row input {
+  background-color: $c-white;
+  color: $c-black;
+  border-radius: 1px;
+}
+
+.eventide-ability-row :hover {
+  color: $hr-color;
+}
+
+.eventide-ability-acro-box {
+  background-color: $acro-color;
+}
+
+.eventide-ability-phys-box {
+  background-color: $phys-color;
+}
+
+.eventide-ability-fort-box {
+  background-color: $fort-color;
+}
+
+.eventide-ability-will-box {
+  background-color: $will-color;
+}
+
+.eventide-ability-wits-box {
+  background-color: $wits-color;
+}

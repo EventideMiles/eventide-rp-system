@@ -203,156 +203,83 @@
   text-align: center;
 }
 
-.eventide-critical-hit {
-  color: white;
-  background-color: #261282;
+.eventide-roll-card {
+  color: #fff;
   text-align: center;
   padding: 0.875rem;
   font-size: 1.125rem;
   margin-bottom: 0px;
   margin-top: 0px;
+}
+
+.eventide-critical-hit {
+  background-color: #261282;
 }
 
 .eventide-critical-miss {
-  color: white;
   background-color: #4e0101;
-  text-align: center;
-  padding: 0.875rem;
-  font-size: 1.125rem;
-  margin-bottom: 0px;
-  margin-top: 0px;
 }
 
 .eventide-acro-card {
-  color: white;
   background-color: #a63b01;
-  text-align: center;
-  padding: 0.875rem;
-  font-size: 1.125rem;
-  margin-bottom: 0px;
 }
 
 .eventide-phys-card {
-  color: white;
   background-color: #910303;
-  text-align: center;
-  padding: 0.875rem;
-  font-size: 1.125rem;
-  margin-bottom: 0px;
 }
 
 .eventide-fort-card {
-  color: white;
   background-color: #285828;
-  text-align: center;
-  padding: 0.875rem;
-  font-size: 1.125rem;
-  margin-bottom: 0px;
 }
 
 .eventide-will-card {
-  color: white;
   background-color: #79088d;
-  text-align: center;
-  padding: 0.875rem;
-  font-size: 1.125rem;
-  margin-bottom: 0px;
 }
 
 .eventide-wits-card {
-  color: white;
   background-color: #0e4380;
-  text-align: center;
-  padding: 0.875rem;
-  font-size: 1.125rem;
-  margin-bottom: 0px;
 }
 
 .eventide-item-card {
-  color: white;
   background-color: #8B4513;
-  text-align: center;
-  padding: 0.875rem;
-  font-size: 1.125rem;
-  margin-bottom: 0px;
 }
 
 .eventide-combat-power-card {
-  color: white;
   background-color: #B8860B;
-  text-align: center;
-  padding: 0.875rem;
-  font-size: 1.125rem;
-  margin-bottom: 0px;
 }
 
 .eventide-dice-dc-card {
-  color: white;
   background-color: #1C424D;
-  text-align: center;
-  padding: 0.875rem;
-  font-size: 1.125rem;
-  margin-bottom: 0px;
 }
 
 .eventide-unknown-card {
-  color: white;
   background-color: #535353;
-  text-align: center;
-  padding: 0.875rem;
-  font-size: 1.125rem;
-  margin-bottom: 0px;
 }
 
 .eventide-status-card {
   display: flex;
   justify-content: center;
-  text-align: center;
-  padding: 0.875rem;
-  font-size: 1.125rem;
-  margin-bottom: 0px;
 }
 
 .eventide-damage-card {
-  color: white;
   background-color: #580303;
-  text-align: center;
-  padding: 0.875rem;
-  font-size: 1.125rem;
-  margin-bottom: 0px;
 }
 
 .eventide-heal-card {
-  color: white;
   background-color: #cb8e00;
-  text-align: center;
-  padding: 0.875rem;
-  font-size: 1.125rem;
-  margin-bottom: 0px;
 }
 
 .eventide-status-delete-card {
-  color: white;
   background-color: #555555;
-  text-align: center;
-  padding: 0.875rem;
-  font-size: 1.125rem;
-  margin-bottom: 0px;
 }
 
 .eventide-restore-card {
-  color: white;
   background-color: #cb8e00;
-  text-align: center;
-  padding: 0.875rem;
-  font-size: 1.125rem;
-  margin-bottom: 0px;
 }
 
 .eventide-card-description {
-  color: rgb(78, 77, 77);
+  color: #444;
   text-align: justify;
-  border: #535353;
   font-size: 0.9rem;
   padding: 0.01rem;
 }
@@ -361,7 +288,7 @@
   text-align: justify;
   font-size: 0.7rem;
   padding: 0rem;
-  color: rgb(143, 143, 143);
+  color: #444;
 }
 
 .eventide-card-effects-title {
@@ -370,14 +297,14 @@
   padding: 0.01rem;
   padding-top: 0.2rem;
   padding-bottom: 0.2rem;
-  background-color: #7B4874;
+  background-color: #a63b01;
   color: white;
 }
 
 .eventide-card-name {
   text-align: justify;
   font-size: 1.2rem;
-  color: rgb(78, 77, 77);
+  color: #444;
 }
 
 .eventide-card-primary-image {
@@ -394,7 +321,7 @@
 
 .eventide-card-hr {
   border: none;
-  border-top: 2px solid #7B4874;
+  border-top: 2px solid #c9c7b8;
 }
 
 .eventide-card-hit-box {
@@ -404,7 +331,7 @@
   padding: 0.0875rem;
   font-size: 0.7rem;
   margin-bottom: 0px;
-  border: 1px solid #FFFFFF;
+  border: 1px solid #fff;
 }
 
 .eventide-card-miss-box {
@@ -414,7 +341,44 @@
   padding: 0.0875rem;
   font-size: 0.7rem;
   margin-bottom: 0px;
-  border: 1px solid #FFFFFF;
+  border: 1px solid #fff;
+}
+
+.eventide-ability-row {
+  border: 1px solid #000;
+  border-radius: 5px;
+  padding: 5px;
+  color: #fff;
+}
+
+.eventide-ability-row input {
+  background-color: #fff;
+  color: #000;
+  border-radius: 1px;
+}
+
+.eventide-ability-row :hover {
+  color: #c9c7b8;
+}
+
+.eventide-ability-acro-box {
+  background-color: #a63b01;
+}
+
+.eventide-ability-phys-box {
+  background-color: #910303;
+}
+
+.eventide-ability-fort-box {
+  background-color: #285828;
+}
+
+.eventide-ability-will-box {
+  background-color: #79088d;
+}
+
+.eventide-ability-wits-box {
+  background-color: #0e4380;
 }
 
 /* Styles limited to eventide-rp-system sheets */

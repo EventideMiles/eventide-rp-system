@@ -58,17 +58,33 @@
     <div class="tab features" data-group="primary" data-tab="features">
       <section class="grid grid-3col">
         <aside class="sidebar">
+          <div class="abilities grid-2col">
 
-          {{!-- The grid classes are defined in scss/global/_grid.scss. To use,
-          use both the "grid" and "grid-Ncol" class where "N" can be any number
-          from 1 to 12 and will create that number of columns.  --}}
-          <div class="abilities flexcol">
             {{#each system.abilities as |ability key|}}
-            <div class="ability flexrow flex-group-center">
-              <label for="system.abilities.{{key}}.value" data-type="{{key}}" class="resource-label rollable flexlarge align-left" data-roll="d@hiddenAbilities.dice.total+@abilities.{{key}}.total" data-label="{{localize (lookup @root.config.abilities key)}}">{{localize (lookup @root.config.abilities key)}}</label>
-              <input type="text" name="system.abilities.{{key}}.value" value="{{ability.value}}" data-dtype="Number"/>
-              <span class="ability-total rollable" data-type="{{key}}" data-roll="d@hiddenAbilities.dice.total+@abilities.{{key}}.total" data-label="{{localize (lookup @root.config.abilities key)}}">{{numberFormat ability.total decimals=0 sign=true}}</span>
+            <section class="eventide-ability-{{key}}-box eventide-ability-row">
+            <div class="ability gridrow">
+              <div class="ability-info flex-group-center">
+                <label for="system.abilities.{{key}}.value" class="resource-label rollable flexlarge align-left" data-type="{{key}}" data-roll="d@hiddenAbilities.dice.total+@abilities.{{key}}.total" data-label="{{localize (lookup @root.config.abilities key)}}">
+                  {{localize (lookup @root.config.abilities key)}}
+                </label>
+                <input type="text" name="system.abilities.{{key}}.value" value="{{ability.value}}" data-dtype="Number"/>
+              </div>
             </div>
+            <div class="ability gridrow">
+              <div class="ability-stats flex-group-center">
+                <div class="ability-total rollable" data-type="{{key}}" data-roll="d@hiddenAbilities.dice.total+@abilities.{{key}}.total" data-label="{{localize (lookup @root.config.abilities key)}}">
+                  {{numberFormat ability.total decimals=0 sign=true}}
+                </div>
+                {{#if ability.override}}
+                <div class="ability-override flex-group-center">
+                  <i class="fa-solid fa-road-barrier" style="color: red"></i>
+                </div>
+                {{else}}
+                <div class="ability-override flex-group-center"><i class="fa-solid fa-road" style="color: green"></i></div>
+                {{/if}}
+              </div>
+            </div>
+            </section>
             {{/each}}
           </div>
         </aside>
@@ -98,15 +114,7 @@
        {{> "systems/eventide-rp-system/templates/actor/parts/actor-items.hbs"}}
     </div>
 
-    {{!-- Owned Spells Tab --}}
-    {{!-- <div class="tab spells" data-group="primary" data-tab="spells">
-      {{> "systems/eventide-rp-system/templates/actor/parts/actor-spells.hbs"}}
-    </div>
-
-    {{!-- Active Effects Tab --}}
-    <div class="tab effects flexcol" data-group="primary" data-tab="effects">
-      {{> "systems/eventide-rp-system/templates/actor/parts/actor-effects.hbs"}}
-    </div> --}}
-
   </section>
 </form>
+
+
