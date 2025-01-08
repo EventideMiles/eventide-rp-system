@@ -146,30 +146,42 @@ export class EventideRpSystemActor extends Actor {
   }
 
   /**
-   * Restores actor resources and/or removes status effects
+   * Restores the actor's resources and removes status effects.
+   *
+   * This function can restore the actor's resolve and power to their maximum values.
+   * It can also remove specific status effects or all status effects from the actor.
+   *
    * @param {Object} options - The restoration options
-   * @param {boolean} options.health - Whether to restore health/resolve to maximum
+   * @param {boolean} options.resolve - Whether to restore resolve to maximum
    * @param {boolean} options.power - Whether to restore power to maximum
-   * @param {Array} options.statuses - Array of status effects to remove
-   * @param {boolean} options.all - Whether to restore all resources and remove all status effects: if passed no other options needed.
-   * @returns {Promise<void>}
+   * @param {Array} options.statuses - Array of status effects to be removed
+   * @param {boolean} options.all - Whether to remove all status effects
+   * @returns {Promise<ChatMessage>} The message detailing the restoration process
    */
   async restore({ resolve, power, statuses, all }) {
     const statusArray =
-      statuses && statuses.length
+      statuses?.length && !all
         ? Array.from(statuses)
             .filter((i) => i.type === "status")
             .map((i) => i.id)
-        : Array.from(this.items)
+        : all
+        ? Array.from(this.items)
             .filter((i) => i.type === "status")
-            .map((i) => i.id);
+            .map((i) => i.id)
+        : [];
 
-    if (resolve) this.addResolve(this.system.resolve.max);
-    if (power) this.addPower(this.system.power.max);
-    if (statuses && statuses.length > 0)
-      await this.deleteEmbeddedDocuments("Item", statusArray);
+    if (resolve) this.addResolve(this.system.resolve.max || 0);
+    if (power) this.addPower(this.system.power.max || 0);
 
-    const returnMessage = await restoreMessage({
+    if (statuses && statuses.length > 0) {
+      const statusIds = Array.from(this.items)
+        .filter((i) => i.type === "status" && statusArray.includes(i.id))
+        .map((i) => i.id);
+
+      await this.deleteEmbeddedDocuments("Item", statusIds);
+    }
+
+    return await restoreMessage({
       all,
       resolve,
       power,
@@ -178,7 +190,5 @@ export class EventideRpSystemActor extends Actor {
         : [],
       actor: this,
     });
-
-    return returnMessage;
   }
 }

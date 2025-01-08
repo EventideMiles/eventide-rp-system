@@ -21,19 +21,19 @@ EVENTIDE_RP_SYSTEM.abilityAbbreviations = {
 };
 
 EVENTIDE_RP_SYSTEM.hiddenAbilities = {
-  dice: `EVENTIDE_RP_SYSTEM.Ability.Dice.long`,
-  cmax: `EVENTIDE_RP_SYSTEM.Ability.Cmax.long`,
-  cmin: `EVENTIDE_RP_SYSTEM.Ability.Cmin.long`,
-  fmax: `EVENTIDE_RP_SYSTEM.Ability.Fmax.long`,
-  fmin: `EVENTIDE_RP_SYSTEM.Ability.Fmin.long`,
-  sens: `EVENTIDE_RP_SYSTEM.Ability.Sens.long`,
+  dice: `EVENTIDE_RP_SYSTEM.HiddenAbilities.Dice.long`,
+  cmax: `EVENTIDE_RP_SYSTEM.HiddenAbilities.Cmax.long`,
+  cmin: `EVENTIDE_RP_SYSTEM.HiddenAbilities.Cmin.long`,
+  fmax: `EVENTIDE_RP_SYSTEM.HiddenAbilities.Fmax.long`,
+  fmin: `EVENTIDE_RP_SYSTEM.HiddenAbilities.Fmin.long`,
+  sens: `EVENTIDE_RP_SYSTEM.HiddenAbilities.Sens.long`,
 };
 
 EVENTIDE_RP_SYSTEM.hiddenAbilityAbbreviations = {
-  dice: `EVENTIDE_RP_SYSTEM.Ability.Dice.abbr`,
-  cmax: `EVENTIDE_RP_SYSTEM.Ability.Cmax.abbr`,
-  cmin: `EVENTIDE_RP_SYSTEM.Ability.Cmin.abbr`,
-  fmax: `EVENTIDE_RP_SYSTEM.Ability.Fmax.abbr`,
-  fmin: `EVENTIDE_RP_SYSTEM.Ability.Fmin.abbr`,
-  sens: `EVENTIDE_RP_SYSTEM.Ability.Sens.abbr`,
+  dice: `EVENTIDE_RP_SYSTEM.HiddenAbilities.Dice.abbr`,
+  cmax: `EVENTIDE_RP_SYSTEM.HiddenAbilities.Cmax.abbr`,
+  cmin: `EVENTIDE_RP_SYSTEM.HiddenAbilities.Cmin.abbr`,
+  fmax: `EVENTIDE_RP_SYSTEM.HiddenAbilities.Fmax.abbr`,
+  fmin: `EVENTIDE_RP_SYSTEM.HiddenAbilities.Fmin.abbr`,
+  sens: `EVENTIDE_RP_SYSTEM.HiddenAbilities.Sens.abbr`,
 };
