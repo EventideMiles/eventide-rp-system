@@ -36,6 +36,12 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
         (obj, ability) => {
           obj[ability] = new fields.SchemaField({
             value: new fields.NumberField({ ...requiredInteger, initial: 1 }),
+            override: new fields.NumberField({
+              nullable: true,
+              integer: true,
+              required: false,
+              initial: null,
+            }),
             change: new fields.NumberField({ ...requiredInteger, initial: 0 }),
             total: new fields.NumberField({ ...requiredInteger, initial: 1 }),
             ac: new fields.NumberField({ ...requiredInteger, initial: 11 }),
@@ -53,6 +59,12 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
           initial: 20,
           min: 0,
         }),
+        override: new fields.NumberField({
+          nullable: true,
+          integer: true,
+          required: false,
+          initial: null,
+        }),
         change: new fields.NumberField({
           ...requiredInteger,
           initial: 0,
@@ -68,6 +80,12 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
           ...requiredInteger,
           initial: 20,
           min: 1,
+        }),
+        override: new fields.NumberField({
+          nullable: true,
+          integer: true,
+          required: false,
+          initial: null,
         }),
         change: new fields.NumberField({
           ...requiredInteger,
@@ -85,6 +103,12 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
           initial: 20,
           min: 1,
         }),
+        override: new fields.NumberField({
+          nullable: true,
+          integer: true,
+          required: false,
+          initial: null,
+        }),
         change: new fields.NumberField({
           ...requiredInteger,
           initial: 0,
@@ -100,6 +124,12 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
           ...requiredInteger,
           initial: 1,
           min: 0,
+        }),
+        override: new fields.NumberField({
+          nullable: true,
+          integer: true,
+          required: false,
+          initial: null,
         }),
         change: new fields.NumberField({
           ...requiredInteger,
@@ -117,6 +147,12 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
           initial: 1,
           min: 1,
         }),
+        override: new fields.NumberField({
+          nullable: true,
+          integer: true,
+          required: false,
+          initial: null,
+        }),
         change: new fields.NumberField({
           ...requiredInteger,
           initial: 0,
@@ -131,6 +167,12 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
         value: new fields.NumberField({
           ...requiredInteger,
           initial: 0,
+        }),
+        override: new fields.NumberField({
+          nullable: true,
+          integer: true,
+          required: false,
+          initial: null,
         }),
         change: new fields.NumberField({
           ...requiredInteger,
@@ -156,6 +198,7 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
           CONFIG.EVENTIDE_RP_SYSTEM.abilityAbbreviations[key]
         ) ?? key;
       this.abilities[key].total =
+        this.abilities[key].override ??
         this.abilities[key].value + this.abilities[key].change;
       this.abilities[key].ac = this.abilities[key].total + 11;
     }
@@ -166,6 +209,7 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
         game.i18n.localize(CONFIG.EVENTIDE_RP_SYSTEM.hiddenAbilities[key]) ??
         key;
       this.hiddenAbilities[key].total =
+        this.hiddenAbilities[key].override ??
         this.hiddenAbilities[key].value + this.hiddenAbilities[key].change;
     }
   }
