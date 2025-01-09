@@ -214,3 +214,9 @@ Hooks.on("deleteItem", (item, options, triggerPlayer) => {
     deleteStatusMessage(item);
   }
 });
+
+Hooks.on("renderChatMessage", (message, [html]) => {
+  if (game.user.isGM) return;
+
+  html.querySelector(".ac-check-container")?.remove();
+});
