@@ -14,7 +14,7 @@ export class EventideRpSystemActorSheet extends ActorSheet {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["eventide-rp-system", "sheet", "actor"],
       width: 600,
-      height: 600,
+      height: 675,
       tabs: [
         {
           navSelector: ".sheet-tabs",

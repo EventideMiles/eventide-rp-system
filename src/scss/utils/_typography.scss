@@ -1,6 +1,41 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Combo&family=Merienda:wght@300..900&family=Protest+Revolution&family=Underdog&display=swap');
 
 $font-primary: 'Roboto',
 sans-serif;
 $font-secondary: 'Roboto',
 sans-serif;
+$font-decorative: 'Protest Revolution',
+sans-serif;
+
+.protest-revolution-regular {
+  font-family: "Protest Revolution", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.combo-regular {
+  font-family: "Combo", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.underdog-regular {
+  font-family: "Underdog", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.merienda-regular {
+  font-family: "Merienda", serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+// .merienda-<uniquifier> {
+//   font-family: "Merienda", serif;
+//   font-optical-sizing: auto;
+//   font-weight: <weight>;
+//   font-style: normal;
+// }

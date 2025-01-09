@@ -1,7 +1,43 @@
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Combo&family=Merienda:wght@300..900&family=Protest+Revolution&family=Underdog&display=swap");
+.protest-revolution-regular, .eventide-character-sheet, .eventide-roll-card {
+  font-family: "Protest Revolution", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.combo-regular {
+  font-family: "Combo", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.underdog-regular {
+  font-family: "Underdog", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.merienda-regular {
+  font-family: "Merienda", serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
 /* Global styles */
 .window-app {
   font-family: "Roboto", sans-serif;
+  background: linear-gradient(to bottom, rgba(68, 98, 131, 0.537254902), rgba(51, 72, 104, 0.462745098));
+}
+
+.app {
+  background-image: linear-gradient(to bottom, rgba(0, 77, 159, 0.5411764706), rgba(0, 41, 112, 0.5411764706));
+}
+
+.window-content {
+  background: linear-gradient(to bottom, rgba(68, 98, 131, 0.537254902), rgba(51, 72, 104, 0.462745098));
+  padding: 0px;
 }
 
 .rollable:hover, .rollable:focus {
@@ -212,48 +248,56 @@
   margin-top: 0px;
 }
 
+.ac-check-container {
+  border: 3px dashed #ff9194;
+  border-radius: 5px;
+  background-color: #efdadf;
+  padding: 0.0875rem;
+  margin: 0.0875rem;
+}
+
 .eventide-critical-hit {
-  background-color: #261282;
+  background-color: rgba(38, 18, 130, 0.7019607843);
 }
 
 .eventide-critical-miss {
-  background-color: #4e0101;
+  background-color: rgba(78, 1, 1, 0.7019607843);
 }
 
 .eventide-acro-card {
-  background-color: #a63b01;
+  background-color: rgba(166, 59, 1, 0.7019607843);
 }
 
 .eventide-phys-card {
-  background-color: #910303;
+  background-color: rgba(145, 3, 3, 0.7019607843);
 }
 
 .eventide-fort-card {
-  background-color: #285828;
+  background-color: rgba(40, 88, 40, 0.7019607843);
 }
 
 .eventide-will-card {
-  background-color: #79088d;
+  background-color: rgba(121, 8, 141, 0.7019607843);
 }
 
 .eventide-wits-card {
-  background-color: #0e4380;
+  background-color: rgba(14, 67, 128, 0.7019607843);
 }
 
 .eventide-item-card {
-  background-color: #8B4513;
+  background-color: rgba(139, 69, 19, 0.7019607843);
 }
 
 .eventide-combat-power-card {
-  background-color: #B8860B;
+  background-color: rgba(184, 134, 11, 0.7019607843);
 }
 
 .eventide-dice-dc-card {
-  background-color: #1C424D;
+  background-color: rgba(28, 66, 77, 0.7019607843);
 }
 
 .eventide-unknown-card {
-  background-color: #535353;
+  background-color: rgba(83, 83, 83, 0.7019607843);
 }
 
 .eventide-status-card {
@@ -262,19 +306,19 @@
 }
 
 .eventide-damage-card {
-  background-color: #580303;
+  background-color: rgba(88, 3, 3, 0.7019607843);
 }
 
 .eventide-heal-card {
-  background-color: #cb8e00;
+  background-color: rgba(203, 142, 0, 0.7019607843);
 }
 
 .eventide-status-delete-card {
-  background-color: #555555;
+  background-color: rgba(85, 85, 85, 0.7019607843);
 }
 
 .eventide-restore-card {
-  background-color: #cb8e00;
+  background-color: rgba(203, 142, 0, 0.7019607843);
 }
 
 .eventide-card-description {
@@ -297,7 +341,7 @@
   padding: 0.01rem;
   padding-top: 0.2rem;
   padding-bottom: 0.2rem;
-  background-color: #a63b01;
+  background-color: rgba(139, 69, 19, 0.7019607843);
   color: white;
 }
 
@@ -310,13 +354,13 @@
 .eventide-card-primary-image {
   width: 20px;
   height: 20px;
-  border: 0px solid black;
+  border: 0px solid #000;
 }
 
 .eventide-card-secondary-image {
   width: 13px;
   height: 13px;
-  border: 0px solid black;
+  border: 0px solid #000;
 }
 
 .eventide-card-hr {
@@ -325,7 +369,7 @@
 }
 
 .eventide-card-hit-box {
-  background-color: #50C877;
+  background-color: rgba(80, 200, 119, 0.7019607843);
   color: white;
   text-align: center;
   padding: 0.0875rem;
@@ -335,7 +379,7 @@
 }
 
 .eventide-card-miss-box {
-  background-color: #C70039;
+  background-color: rgba(199, 0, 57, 0.7019607843);
   color: white;
   text-align: center;
   padding: 0.0875rem;
@@ -351,39 +395,74 @@
   color: #fff;
 }
 
-.eventide-ability-row input {
-  background-color: #fff;
-  color: #000;
-  border-radius: 1px;
+.eventide-character-sheet {
+  background-image: linear-gradient(to bottom, rgba(68, 98, 131, 0.537254902), rgba(51, 72, 104, 0.462745098));
+  padding: 5px;
+  margin: -8px;
 }
 
-.eventide-ability-row :hover {
-  color: #c9c7b8;
+.eventide-character-sheet input {
+  background-color: rgba(0, 0, 0, 0.45);
+  color: #fff;
+  border-radius: 5px;
+  border: 1px solid rgba(0, 0, 0, 0.5);
+}
+
+.eventide-character-sheet input::selection {
+  background: rgba(139, 69, 19, 0.7019607843);
+  color: #fff;
+}
+
+.eventide-ability-row :hover:not(input) {
+  text-shadow: 1px 1px 1px 1px #fff, 5px 5px 5px 5px rgba(0, 123, 255, 0.7019607843), 10px 10px 10px 10px rgba(0, 123, 255, 0.7019607843);
+  color: #fff;
 }
 
 .eventide-ability-acro-box {
-  background-color: #a63b01;
+  background-color: rgba(166, 59, 1, 0.7019607843);
 }
 
 .eventide-ability-phys-box {
-  background-color: #910303;
+  background-color: rgba(145, 3, 3, 0.7019607843);
 }
 
 .eventide-ability-fort-box {
-  background-color: #285828;
+  background-color: rgba(40, 88, 40, 0.7019607843);
 }
 
 .eventide-ability-will-box {
-  background-color: #79088d;
+  background-color: rgba(121, 8, 141, 0.7019607843);
 }
 
 .eventide-ability-wits-box {
-  background-color: #0e4380;
+  background-color: rgba(14, 67, 128, 0.7019607843);
 }
 
 /* Styles limited to eventide-rp-system sheets */
 .eventide-rp-system {
   @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
+  @import url("https://fonts.googleapis.com/css2?family=Combo&family=Merienda:wght@300..900&family=Protest+Revolution&family=Underdog&display=swap");
+}
+.eventide-rp-system .protest-revolution-regular {
+  font-family: "Protest Revolution", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+.eventide-rp-system .combo-regular {
+  font-family: "Combo", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+.eventide-rp-system .underdog-regular {
+  font-family: "Underdog", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+.eventide-rp-system .merienda-regular {
+  font-family: "Merienda", serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
 }
 .eventide-rp-system .item-form {
   font-family: "Roboto", sans-serif;

@@ -1,10 +1,22 @@
 @use "../utils/typography";
+@use "../utils/colors"as colors;
 
 .window-app {
   font-family: typography.$font-primary;
+  background: colors.$character-background-color;
+}
+
+.app {
+  background-image: colors.$app-bg;
+}
+
+.window-content {
+  background: colors.$character-background-color;
+  padding: 0px;
 }
 
 .rollable {
+
   &:hover,
   &:focus {
     color: #000;

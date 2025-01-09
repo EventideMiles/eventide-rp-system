@@ -1,38 +1,53 @@
-@use "../utils/colors"as *;
+@use "../utils/colors"as colors;
+@use "../utils/typography"as typography;
 
 .eventide-ability-row {
-  border: 1px solid $c-black;
+  border: 1px solid colors.$c-black;
   border-radius: 5px;
   padding: 5px;
-  color: $c-white;
+  color: colors.$c-white;
 }
 
-.eventide-ability-row input {
-  background-color: $c-white;
-  color: $c-black;
-  border-radius: 1px;
+.eventide-character-sheet {
+  @extend .protest-revolution-regular;
+  background-image: colors.$character-background-color;
+  padding: 5px;
+  margin: -8px;
 }
 
-.eventide-ability-row :hover {
-  color: $hr-color;
+.eventide-character-sheet input {
+  background-color: colors.$character-input;
+  color: colors.$c-white;
+  border-radius: 5px;
+  border: 1px solid colors.$character-input-border;
+}
+
+.eventide-character-sheet input::selection {
+  background: colors.$item;
+  color: colors.$c-white;
+}
+
+.eventide-ability-row :hover:not(input) {
+  text-shadow: 1px 1px 1px 1px colors.$c-white, 5px 5px 5px 5px colors.$character-glow, 10px 10px 10px 10px colors.$character-glow;
+  color: colors.$c-white;
 }
 
 .eventide-ability-acro-box {
-  background-color: $acro-color;
+  background-color: colors.$acro;
 }
 
 .eventide-ability-phys-box {
-  background-color: $phys-color;
+  background-color: colors.$phys;
 }
 
 .eventide-ability-fort-box {
-  background-color: $fort-color;
+  background-color: colors.$fort;
 }
 
 .eventide-ability-will-box {
-  background-color: $will-color;
+  background-color: colors.$will;
 }
 
 .eventide-ability-wits-box {
-  background-color: $wits-color;
+  background-color: colors.$wits;
 }

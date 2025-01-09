@@ -1,7 +1,9 @@
-@use "../utils/colors"as *;
+@use "../utils/colors"as colors;
+@use "../utils/typography"as typography;
 
 .eventide-roll-card {
-    color: $c-white;
+    @extend .protest-revolution-regular;
+    color: colors.$c-white;
     text-align: center;
     padding: 0.875rem;
     font-size: 1.125rem;
@@ -9,48 +11,56 @@
     margin-top: 0px;
 }
 
+.ac-check-container {
+    border: 3px dashed colors.$hidden-border;
+    border-radius: 5px;
+    background-color: colors.$hidden-bg;
+    padding: 0.0875rem;
+    margin: 0.0875rem;
+}
+
 .eventide-critical-hit {
-    background-color: $critical-hit;
+    background-color: colors.$critical-hit;
 }
 
 .eventide-critical-miss {
-    background-color: $critical-miss;
+    background-color: colors.$critical-miss;
 }
 
 .eventide-acro-card {
-    background-color: $acro-color;
+    background-color: colors.$acro;
 }
 
 .eventide-phys-card {
-    background-color: $phys-color;
+    background-color: colors.$phys;
 }
 
 .eventide-fort-card {
-    background-color: $fort-color;
+    background-color: colors.$fort;
 }
 
 .eventide-will-card {
-    background-color: $will-color;
+    background-color: colors.$will;
 }
 
 .eventide-wits-card {
-    background-color: $wits-color;
+    background-color: colors.$wits;
 }
 
 .eventide-item-card {
-    background-color: $item-color;
+    background-color: colors.$item;
 }
 
 .eventide-combat-power-card {
-    background-color: $combat-power-color;
+    background-color: colors.$combat-power;
 }
 
 .eventide-dice-dc-card {
-    background-color: $dc-color;
+    background-color: colors.$dc;
 }
 
 .eventide-unknown-card {
-    background-color: $unknown-color;
+    background-color: colors.$unknown;
 }
 
 .eventide-status-card {
@@ -59,23 +69,23 @@
 }
 
 .eventide-damage-card {
-    background-color: $damage-color;
+    background-color: colors.$damage;
 }
 
 .eventide-heal-card {
-    background-color: $heal-color;
+    background-color: colors.$heal;
 }
 
 .eventide-status-delete-card {
-    background-color: $delete-color;
+    background-color: colors.$delete;
 }
 
 .eventide-restore-card {
-    background-color: $heal-color;
+    background-color: colors.$heal;
 }
 
 .eventide-card-description {
-    color: $c-tan;
+    color: colors.$c-tan;
     text-align: justify;
     font-size: 0.9rem;
     padding: 0.01rem;
@@ -85,7 +95,7 @@
     text-align: justify;
     font-size: 0.7rem;
     padding: 0rem;
-    color: $c-tan;
+    color: colors.$c-tan;
 }
 
 .eventide-card-effects-title {
@@ -94,49 +104,49 @@
     padding: 0.01rem;
     padding-top: 0.2rem;
     padding-bottom: 0.2rem;
-    background-color: $acro-color;
+    background-color: colors.$effect;
     color: white;
 }
 
 .eventide-card-name {
     text-align: justify;
     font-size: 1.2rem;
-    color: $c-tan;
+    color: colors.$c-tan;
 }
 
 .eventide-card-primary-image {
     width: 20px;
     height: 20px;
-    border: 0px solid black;
+    border: 0px solid colors.$c-black;
 }
 
 .eventide-card-secondary-image {
     width: 13px;
     height: 13px;
-    border: 0px solid black;
+    border: 0px solid colors.$c-black;
 }
 
 .eventide-card-hr {
     border: none;
-    border-top: 2px solid $hr-color;
+    border-top: 2px solid colors.$hr;
 }
 
 .eventide-card-hit-box {
-    background-color: $hit-color;
+    background-color: colors.$hit;
     color: white;
     text-align: center;
     padding: 0.0875rem;
     font-size: 0.7rem;
     margin-bottom: 0px;
-    border: 1px solid $c-white;
+    border: 1px solid colors.$c-white;
 }
 
 .eventide-card-miss-box {
-    background-color: $miss-color;
+    background-color: colors.$miss;
     color: white;
     text-align: center;
     padding: 0.0875rem;
     font-size: 0.7rem;
     margin-bottom: 0px;
-    border: 1px solid $c-white;
+    border: 1px solid colors.$c-white;
 }

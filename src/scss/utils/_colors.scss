@@ -6,25 +6,35 @@ $c-faint: #c9c7b8;
 $c-beige: #b5b3a4;
 $c-tan: #444;
 
-$acro-color: #a63b01;
-$phys-color: #910303;
-$fort-color: #285828;
-$will-color: #79088d;
-$wits-color: #0e4380;
+$app-bg: linear-gradient(to bottom, #004d9f8a, #0029708a);
 
-$critical-hit: #261282;
-$critical-miss: #4e0101;
+$character-glow: #007bffb3;
+$character-input: rgba($c-black, 0.45);
+$character-input-border: rgba($c-black, 0.5);
+$character-background-color: linear-gradient(to bottom, #44628389, #33486876);
 
-$item-color: #8B4513;
-$combat-power-color: #B8860B;
-$dc-color: #1C424D;
-$unknown-color: #535353;
-$damage-color: #580303;
-$heal-color: #cb8e00;
-$effect-color: #8B4513;
-$delete-color: #555555;
+$hidden-bg: #efdadf;
+$hidden-border: #ff9194;
 
-$hit-color: #50C877;
-$miss-color: #C70039;
+$acro: #a63b01b3;
+$phys: #910303b3;
+$fort: #285828b3;
+$will: #79088db3;
+$wits: #0e4380b3;
 
-$hr-color: #c9c7b8;
+$critical-hit: #261282b3;
+$critical-miss: #4e0101b3;
+
+$item: #8B4513b3;
+$combat-power: #B8860Bb3;
+$dc: #1C424Db3;
+$unknown: #535353b3;
+$damage: #580303b3;
+$heal: #cb8e00b3;
+$effect: #8B4513b3;
+$delete: #555555b3;
+
+$hit: #50C877b3;
+$miss: #C70039b3;
+
+$hr: #c9c7b8;
