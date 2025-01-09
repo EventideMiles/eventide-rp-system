@@ -121,6 +121,14 @@ export class EventideRpSystemActor extends Actor {
     return roll;
   }
 
+  /**
+   * Rolls an ability check for the actor with optional advantage or disadvantage.
+   *
+   * @param {Object} params - Parameters for the ability roll.
+   * @param {string} params.ability - The ability to roll.
+   * @param {number} [params.advantage=0] - The advantage level for the roll. Positive for advantage, negative for disadvantage.
+   * @returns {Promise<Roll>} - The result of the ability roll.
+   */
   async rollAbility({ ability, advantage = 0 }) {
     const actorRollData = this.getRollData();
     const isAdvantageRoll = advantage > 0;
@@ -190,5 +198,19 @@ export class EventideRpSystemActor extends Actor {
         : [],
       actor: this,
     });
+  }
+
+  async incrementStatuses({
+    statuses = [],
+    addAmount = 0,
+    overrideAmount = 0,
+  }) {
+    if (statuses.length === 0 || (addAmount === 0 && overrideAmount === 0))
+      return;
+
+    const filteredStatuses = statuses.filter((i) => i.type === "status");
+
+    for (const status of filteredStatuses) {
+    }
   }
 }
