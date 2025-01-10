@@ -33,7 +33,6 @@ export class statusCreatorApplication extends HandlebarsApplicationMixin(
   static hiddenAbilities = ["Roll", "Cmin", "Cmax", "Fmin", "Fmax"];
 
   async _prepareContext(options) {
-    console.log(options);
     const context = {};
 
     context.abilities = statusCreatorApplication.abilities;
@@ -160,8 +159,6 @@ export class statusCreatorApplication extends HandlebarsApplicationMixin(
     } else {
       createdItem = await game.items.createDocument(statusItem);
     }
-
-    console.log(createdItem);
 
     // Store the status item in the compendium, create pack if it doesn't exist
     let pack = game.packs.get("world.customstatuses");
