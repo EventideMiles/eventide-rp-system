@@ -1,6 +1,6 @@
 {
   "name": "eventide-rp-system",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "CSS compiler for the EventideRpSystem system",
   "scripts": {
     "build": "sass src/scss/eventide-rp-system.scss css/eventide-rp-system.css --style=expanded --no-source-map",
