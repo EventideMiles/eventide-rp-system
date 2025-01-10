@@ -4,6 +4,7 @@ import { EventideRpSystemItem } from "./documents/item.mjs";
 // Import sheet classes.
 import { EventideRpSystemActorSheet } from "./sheets/actor-sheet.mjs";
 import { EventideRpSystemItemSheet } from "./sheets/item-sheet.mjs";
+import { statusCreatorApplication } from "./sheets/status-creator.mjs";
 // Import helper/utility classes and constants.
 import { preloadHandlebarsTemplates } from "./helpers/templates.mjs";
 import { EVENTIDE_RP_SYSTEM } from "./helpers/config.mjs";
@@ -36,6 +37,7 @@ Hooks.once("init", function () {
   game.erps = {
     EventideRpSystemActor,
     EventideRpSystemItem,
+    statusCreatorApplication,
     rollItemMacro,
     getTargetArray,
     getSelectedArray,
