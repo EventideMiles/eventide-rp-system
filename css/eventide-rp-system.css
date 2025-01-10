@@ -1,6 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Combo&family=Merienda:wght@300..900&family=Protest+Revolution&family=Underdog&display=swap");
-.protest-revolution-regular, .eventide-character-sheet, .eventide-roll-card {
+.protest-revolution-regular, .eventide-roll-card, .eventide-character-sheet, .window-content form,
+.window-content .dialog-buttons {
   font-family: "Protest Revolution", serif;
   font-weight: 400;
   font-style: normal;
@@ -26,6 +27,62 @@
 }
 
 /* Global styles */
+.eventide-ability-row {
+  border: 1px solid #000;
+  border-radius: 5px;
+  padding: 5px;
+  color: #fff;
+}
+
+.eventide-character-sheet, .window-content form,
+.window-content .dialog-buttons {
+  background-image: linear-gradient(to bottom, rgba(68, 98, 131, 0.537254902), rgba(51, 72, 104, 0.462745098));
+  padding: 5px;
+  margin: -8px;
+  background-attachment: local;
+  height: 100%;
+  overflow: auto;
+}
+
+.eventide-character-sheet input, .window-content form input,
+.window-content .dialog-buttons input {
+  background-color: rgba(0, 0, 0, 0.45);
+  color: #fff;
+  border-radius: 5px;
+  border: 1px solid rgba(0, 0, 0, 0.5);
+}
+
+.eventide-character-sheet input::selection, .window-content form input::selection,
+.window-content .dialog-buttons input::selection {
+  background: rgba(139, 69, 19, 0.7019607843);
+  color: #fff;
+}
+
+.eventide-ability-row :hover:not(input) {
+  text-shadow: 1px 1px 1px 1px #fff, 5px 5px 5px 5px rgba(0, 123, 255, 0.7019607843), 10px 10px 10px 10px rgba(0, 123, 255, 0.7019607843);
+  color: #fff;
+}
+
+.eventide-ability-acro-box {
+  background-color: rgba(166, 59, 1, 0.7019607843);
+}
+
+.eventide-ability-phys-box {
+  background-color: rgba(145, 3, 3, 0.7019607843);
+}
+
+.eventide-ability-fort-box {
+  background-color: rgba(40, 88, 40, 0.7019607843);
+}
+
+.eventide-ability-will-box {
+  background-color: rgba(121, 8, 141, 0.7019607843);
+}
+
+.eventide-ability-wits-box {
+  background-color: rgba(14, 67, 128, 0.7019607843);
+}
+
 .window-app {
   font-family: "Roboto", sans-serif;
   background: linear-gradient(to bottom, rgba(68, 98, 131, 0.537254902), rgba(51, 72, 104, 0.462745098));
@@ -388,56 +445,6 @@
   border: 1px solid #fff;
 }
 
-.eventide-ability-row {
-  border: 1px solid #000;
-  border-radius: 5px;
-  padding: 5px;
-  color: #fff;
-}
-
-.eventide-character-sheet {
-  background-image: linear-gradient(to bottom, rgba(68, 98, 131, 0.537254902), rgba(51, 72, 104, 0.462745098));
-  padding: 5px;
-  margin: -8px;
-}
-
-.eventide-character-sheet input {
-  background-color: rgba(0, 0, 0, 0.45);
-  color: #fff;
-  border-radius: 5px;
-  border: 1px solid rgba(0, 0, 0, 0.5);
-}
-
-.eventide-character-sheet input::selection {
-  background: rgba(139, 69, 19, 0.7019607843);
-  color: #fff;
-}
-
-.eventide-ability-row :hover:not(input) {
-  text-shadow: 1px 1px 1px 1px #fff, 5px 5px 5px 5px rgba(0, 123, 255, 0.7019607843), 10px 10px 10px 10px rgba(0, 123, 255, 0.7019607843);
-  color: #fff;
-}
-
-.eventide-ability-acro-box {
-  background-color: rgba(166, 59, 1, 0.7019607843);
-}
-
-.eventide-ability-phys-box {
-  background-color: rgba(145, 3, 3, 0.7019607843);
-}
-
-.eventide-ability-fort-box {
-  background-color: rgba(40, 88, 40, 0.7019607843);
-}
-
-.eventide-ability-will-box {
-  background-color: rgba(121, 8, 141, 0.7019607843);
-}
-
-.eventide-ability-wits-box {
-  background-color: rgba(14, 67, 128, 0.7019607843);
-}
-
 /* Styles limited to eventide-rp-system sheets */
 .eventide-rp-system {
   @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
@@ -624,3 +631,5 @@
 .eventide-rp-system .effects .item .effect-controls {
   border: none;
 }
+
+/*# sourceMappingURL=eventide-rp-system.css.map */
