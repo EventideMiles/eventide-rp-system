@@ -1,0 +1,13 @@
+<div class="chat-card">
+  <div class="chat-card__header chat-card__header--delete">
+    <img src="{{item.img}}" class="chat-card__image--primary" /> {{item.name}} : Removed
+  </div>
+  <div class="chat-card__description">
+    <div class="chat-card__description--header">{{item.actor.name}}. . . </div> 
+    {{#if options.description}}
+      {{options.description}}
+    {{else}}
+      had a status effect removed
+    {{/if}}
+  </div>
+</div>

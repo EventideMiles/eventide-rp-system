@@ -1,0 +1,26 @@
+<div class="chat-card">
+  <div class="chat-card chat-card__header chat-card__header--restore">
+    <i class="fa-solid fa-notes-medical"></i> Restoration
+  </div>
+  <div class="chat-card__description">
+    <div class="chat-card__description--header">{{actor.name}}. . . </div> 
+    is getting their status restored!
+  </div>
+  <hr class="chat-card__hr" />
+  <h3>Restored:</h3>
+  <div class="chat-card__effects">
+    {{#if resolve}}
+      <div><i class="fa-regular fa-heart-pulse"></i> Resolve</div>
+    {{/if}}
+    {{#if power}}
+      <div><i class="fa-duotone fa-solid fa-bolt-lightning"></i> Power</div>
+    {{/if}}
+    {{#if all}}
+      <div><i class="fa-solid fa-globe"></i> All</div>
+    {{else}}
+      {{#each statuses}}
+        <div><img src="{{this.img}}" class="chat-card__image--secondary" /> {{this.name}}</div>
+      {{/each}}
+    {{/if}}
+  </div>
+</div>

@@ -139,6 +139,10 @@ Handlebars.registerHelper("keySplit", function (key, choice) {
   return key.split(".")[choice];
 });
 
+Handlebars.registerHelper("console", function (str) {
+  console.log(str);
+});
+
 /* -------------------------------------------- */
 /*  Ready Hook                                  */
 /* -------------------------------------------- */
