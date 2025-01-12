@@ -1,0 +1,22 @@
+<div class="chat-card chat-card__header chat-card__header--status" style="{{style}}">
+  <img src="{{item.img}}" class="chat-card__image--primary" /> {{item.name}}
+</div>
+{{# if item.system.description }}
+  <div class="chat-card__description">
+    <div class="chat-card__description--header">{{item.actor.name}}. . . </div> 
+    {{item.system.description}}
+  </div>
+{{/if}}
+<hr class="chat-card__hr" />
+{{#ifCond effects.length ">"0}}
+  <div class="chat-card__effects"><div class='chat-card__effects--title'>Effects</div>
+  {{#each effects}}
+    <div class="chat-card__effects--name"><img src="{{this.img}}" class="chat-card__image--secondary" /> {{this.name}}</div>
+    {{#ifCond this.changes.length ">" 0 }}
+      {{#each this.changes}}
+        <div class="chat-card__effects--row"># {{#keySplit this.key 2}}{{/keySplit}} {{#ifCond this.mode "===" 5}}set to{{/ifCond}}: {{this.value}}</div>
+      {{/each}}
+    {{/ifCond}}
+  {{/each}}
+  </div>
+{{/ifCond}}
