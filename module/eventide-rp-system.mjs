@@ -220,5 +220,5 @@ Hooks.on("deleteItem", (item, options, triggerPlayer) => {
 Hooks.on("renderChatMessage", (message, [html]) => {
   if (game.user.isGM) return;
 
-  html.querySelector(".ac-check-container")?.remove();
+  html.querySelector(".chat-card__effects--ac-check")?.remove();
 });

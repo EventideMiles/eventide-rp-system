@@ -1,7 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Combo&family=Merienda:wght@300..900&family=Protest+Revolution&family=Underdog&display=swap");
-.protest-revolution-regular, .eventide-roll-card, .eventide-character-sheet, .window-content form,
-.window-content .dialog-buttons {
+.protest-revolution-regular, .chat-card__header, .chat-card__effects--title {
   font-family: "Protest Revolution", serif;
   font-weight: 400;
   font-style: normal;
@@ -13,7 +12,7 @@
   font-style: normal;
 }
 
-.underdog-regular {
+.underdog-regular, .chat-card__description, .chat-card__effects {
   font-family: "Underdog", serif;
   font-weight: 400;
   font-style: normal;
@@ -296,7 +295,8 @@
   text-align: center;
 }
 
-.eventide-roll-card {
+/* Styles limited to eventide-rp-system sheets */
+.chat-card__header {
   color: #fff;
   text-align: center;
   padding: 0.875rem;
@@ -304,128 +304,95 @@
   margin-bottom: 0px;
   margin-top: 0px;
 }
-
-.ac-check-container {
+.chat-card__header--acrobatics {
+  background-color: rgba(166, 59, 1, 0.7019607843);
+}
+.chat-card__header--physical {
+  background-color: rgba(145, 3, 3, 0.7019607843);
+}
+.chat-card__header--fortitude {
+  background-color: rgba(40, 88, 40, 0.7019607843);
+}
+.chat-card__header--willpower {
+  background-color: rgba(121, 8, 141, 0.7019607843);
+}
+.chat-card__header--wits {
+  background-color: rgba(14, 67, 128, 0.7019607843);
+}
+.chat-card__header--item {
+  background-color: rgba(139, 69, 19, 0.7019607843);
+}
+.chat-card__header--combat-power {
+  background-color: rgba(184, 134, 11, 0.7019607843);
+}
+.chat-card__header--dice-dc {
+  background-color: rgba(28, 66, 77, 0.7019607843);
+}
+.chat-card__header--critical-hit {
+  background-color: rgba(38, 18, 130, 0.7019607843);
+}
+.chat-card__header--critical-miss {
+  background-color: rgba(78, 1, 1, 0.7019607843);
+}
+.chat-card__header--unknown {
+  background-color: rgba(83, 83, 83, 0.7019607843);
+}
+.chat-card__header--status {
+  display: flex;
+  justify-content: center;
+}
+.chat-card__header--damage {
+  background-color: rgba(88, 3, 3, 0.7019607843);
+}
+.chat-card__header--heal {
+  background-color: rgba(203, 142, 0, 0.7019607843);
+}
+.chat-card__header--delete {
+  background-color: rgba(85, 85, 85, 0.7019607843);
+}
+.chat-card__header--restore {
+  background-color: rgba(203, 142, 0, 0.7019607843);
+}
+.chat-card__description {
+  color: #444;
+  text-align: justify;
+  font-size: 0.9rem;
+  padding: 0.01rem;
+}
+.chat-card__description--header {
+  text-align: justify;
+  font-size: 1.2rem;
+  color: #444;
+}
+.chat-card__description--header-center-underline {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #444;
+  border-bottom: 1px solid rgba(139, 69, 19, 0.7019607843);
+}
+.chat-card__effects {
+  text-align: justify;
+  font-size: 0.7rem;
+  padding: 0rem;
+  color: #444;
+}
+.chat-card__effects--ac-check {
   border: 3px dashed #ff9194;
   border-radius: 5px;
   background-color: #efdadf;
   padding: 0.0875rem;
   margin: 0.0875rem;
 }
-
-.eventide-critical-hit {
-  background-color: rgba(38, 18, 130, 0.7019607843);
-}
-
-.eventide-critical-miss {
-  background-color: rgba(78, 1, 1, 0.7019607843);
-}
-
-.eventide-acro-card {
-  background-color: rgba(166, 59, 1, 0.7019607843);
-}
-
-.eventide-phys-card {
-  background-color: rgba(145, 3, 3, 0.7019607843);
-}
-
-.eventide-fort-card {
-  background-color: rgba(40, 88, 40, 0.7019607843);
-}
-
-.eventide-will-card {
-  background-color: rgba(121, 8, 141, 0.7019607843);
-}
-
-.eventide-wits-card {
-  background-color: rgba(14, 67, 128, 0.7019607843);
-}
-
-.eventide-item-card {
-  background-color: rgba(139, 69, 19, 0.7019607843);
-}
-
-.eventide-combat-power-card {
-  background-color: rgba(184, 134, 11, 0.7019607843);
-}
-
-.eventide-dice-dc-card {
-  background-color: rgba(28, 66, 77, 0.7019607843);
-}
-
-.eventide-unknown-card {
-  background-color: rgba(83, 83, 83, 0.7019607843);
-}
-
-.eventide-status-card {
-  display: flex;
-  justify-content: center;
-}
-
-.eventide-damage-card {
-  background-color: rgba(88, 3, 3, 0.7019607843);
-}
-
-.eventide-heal-card {
-  background-color: rgba(203, 142, 0, 0.7019607843);
-}
-
-.eventide-status-delete-card {
-  background-color: rgba(85, 85, 85, 0.7019607843);
-}
-
-.eventide-restore-card {
-  background-color: rgba(203, 142, 0, 0.7019607843);
-}
-
-.eventide-card-description {
-  color: #444;
-  text-align: justify;
-  font-size: 0.9rem;
-  padding: 0.01rem;
-}
-
-.eventide-card-effects {
-  text-align: justify;
-  font-size: 0.7rem;
-  padding: 0rem;
-  color: #444;
-}
-
-.eventide-card-effects-title {
+.chat-card__effects--title {
   text-align: justify;
   font-size: 0.8rem;
   padding: 0.01rem;
   padding-top: 0.2rem;
   padding-bottom: 0.2rem;
   background-color: rgba(139, 69, 19, 0.7019607843);
-  color: white;
+  color: #fff;
 }
-
-.eventide-card-name {
-  text-align: justify;
-  font-size: 1.2rem;
-  color: #444;
-}
-
-.eventide-card-primary-image {
-  width: 20px;
-  height: 20px;
-  border: 0px solid #000;
-}
-
-.eventide-card-secondary-image {
-  width: 13px;
-  height: 13px;
-  border: 0px solid #000;
-}
-
-.eventide-card-hr {
-  border: none;
-  border-top: 2px solid #c9c7b8;
-}
-
-.eventide-card-hit-box {
+.chat-card__effects--hit {
   background-color: rgba(80, 200, 119, 0.7019607843);
   color: white;
   text-align: center;
@@ -434,8 +401,7 @@
   margin-bottom: 0px;
   border: 1px solid #fff;
 }
-
-.eventide-card-miss-box {
+.chat-card__effects--miss {
   background-color: rgba(199, 0, 57, 0.7019607843);
   color: white;
   text-align: center;
@@ -444,8 +410,30 @@
   margin-bottom: 0px;
   border: 1px solid #fff;
 }
+.chat-card__effects--name {
+  font-weight: bolder;
+  color: #000;
+  font-size: 0.75rem;
+}
+.chat-card__effects--row {
+  padding-left: 20px;
+}
+.chat-card__image--primary {
+  width: 20px;
+  height: 20px;
+  border: 0px;
+}
+.chat-card__image--secondary {
+  width: 13px;
+  height: 13px;
+  border: 0px;
+  background-color: rgba(0, 0, 0, 0.8);
+}
+.chat-card__hr {
+  border: none;
+  border-top: 1px solid #c9c7b8;
+}
 
-/* Styles limited to eventide-rp-system sheets */
 .eventide-rp-system {
   @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
   @import url("https://fonts.googleapis.com/css2?family=Combo&family=Merienda:wght@300..900&family=Protest+Revolution&family=Underdog&display=swap");

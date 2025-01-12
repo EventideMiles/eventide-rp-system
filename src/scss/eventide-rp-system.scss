@@ -10,10 +10,11 @@
 @use 'global/window';
 @use 'global/grid';
 @use 'global/flex';
-@use 'global/roll-cards';
 @use 'global/character-sheet';
 
 /* Styles limited to eventide-rp-system sheets */
+@use 'components/chat-cards';
+
 .eventide-rp-system {
   @include meta.load-css('components/forms');
   @include meta.load-css('components/resource');

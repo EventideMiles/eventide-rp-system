@@ -29,8 +29,10 @@ export class statusCreatorApplication extends HandlebarsApplicationMixin(
     },
   };
 
+  // todo: implement local storage for img value on context.
+
   static abilities = ["Acro", "Phys", "Fort", "Will", "Wits"];
-  static hiddenAbilities = ["Roll", "Cmin", "Cmax", "Fmin", "Fmax"];
+  static hiddenAbilities = ["Dice", "Cmin", "Cmax", "Fmin", "Fmax"];
 
   async _prepareContext(options) {
     const context = {};
