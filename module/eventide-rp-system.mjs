@@ -4,6 +4,9 @@ import { EventideRpSystemItem } from "./documents/item.mjs";
 // Import sheet classes.
 import { EventideRpSystemActorSheet } from "./sheets/actor-sheet.mjs";
 import { EventideRpSystemItemSheet } from "./sheets/item-sheet.mjs";
+import { statusCreator } from "./sheets/status-creator.mjs";
+import { damageTargets } from "./sheets/damage-targets.mjs";
+import { restoreTarget } from "./sheets/restore-target.mjs";
 // Import helper/utility classes and constants.
 import { preloadHandlebarsTemplates } from "./helpers/templates.mjs";
 import { EVENTIDE_RP_SYSTEM } from "./helpers/config.mjs";
@@ -20,12 +23,6 @@ import {
   storeLocal,
   retrieveLocal,
 } from "../lib/eventide-library/common-foundry-tasks.js";
-import {
-  damageTargets,
-  restoreTarget,
-  statusCreator,
-} from "../lib/eventide-library/macros.js";
-
 /* -------------------------------------------- */
 /*  Init Hook                                   */
 /* -------------------------------------------- */
@@ -36,14 +33,14 @@ Hooks.once("init", function () {
   game.erps = {
     EventideRpSystemActor,
     EventideRpSystemItem,
+    statusCreator,
+    damageTargets,
     rollItemMacro,
     getTargetArray,
     getSelectedArray,
     storeLocal,
     retrieveLocal,
-    damageTargets,
     restoreTarget,
-    statusCreator,
   };
 
   // Add custom constants for configuration.
@@ -104,6 +101,52 @@ Hooks.once("init", function () {
 // If you need to add Handlebars helpers, here is a useful example:
 Handlebars.registerHelper("toLowerCase", function (str) {
   return str.toLowerCase();
+});
+
+Handlebars.registerHelper("ifCond", function (v1, operator, v2, options) {
+  switch (operator) {
+    case "==":
+      return v1 == v2 ? options.fn(this) : options.inverse(this);
+    case "===":
+      return v1 === v2 ? options.fn(this) : options.inverse(this);
+    case "!=":
+      return v1 != v2 ? options.fn(this) : options.inverse(this);
+    case "!==":
+      return v1 !== v2 ? options.fn(this) : options.inverse(this);
+    case "<":
+      return v1 < v2 ? options.fn(this) : options.inverse(this);
+    case "<=":
+      return v1 <= v2 ? options.fn(this) : options.inverse(this);
+    case ">":
+      return v1 > v2 ? options.fn(this) : options.inverse(this);
+    case ">=":
+      return v1 >= v2 ? options.fn(this) : options.inverse(this);
+    case "&&":
+      return v1 && v2 ? options.fn(this) : options.inverse(this);
+    case "||":
+      return v1 || v2 ? options.fn(this) : options.inverse(this);
+    default:
+      return options.inverse(this);
+  }
+});
+
+Handlebars.registerHelper("keySplit", function (key, choice) {
+  return key.split(".")[choice];
+});
+
+Handlebars.registerHelper("console", function (str) {
+  console.log(str);
+});
+
+Handlebars.registerHelper("debug", function (optionalValue) {
+  console.log("Current Context");
+  console.log("====================");
+  console.log(this);
+  if (optionalValue) {
+    console.log("Value");
+    console.log("====================");
+    console.log(optionalValue);
+  }
 });
 
 /* -------------------------------------------- */
@@ -218,5 +261,5 @@ Hooks.on("deleteItem", (item, options, triggerPlayer) => {
 Hooks.on("renderChatMessage", (message, [html]) => {
   if (game.user.isGM) return;
 
-  html.querySelector(".ac-check-container")?.remove();
+  html.querySelector(".chat-card__effects--ac-check")?.remove();
 });

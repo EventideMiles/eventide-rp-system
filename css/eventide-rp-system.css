@@ -1,6 +1,7 @@
+@charset "UTF-8";
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Combo&family=Merienda:wght@300..900&family=Protest+Revolution&family=Underdog&display=swap");
-.protest-revolution-regular, .eventide-character-sheet, .eventide-roll-card {
+.protest-revolution-regular, .chat-card__header, .chat-card__effects--title {
   font-family: "Protest Revolution", serif;
   font-weight: 400;
   font-style: normal;
@@ -12,7 +13,7 @@
   font-style: normal;
 }
 
-.underdog-regular {
+.underdog-regular, .chat-card__description, .chat-card__effects, .base-form__header, .base-form .form-group, .restore-target .form-group, .damage-targets .form-group, .status-creator .form-group, .status-creator__header {
   font-family: "Underdog", serif;
   font-weight: 400;
   font-style: normal;
@@ -26,6 +27,59 @@
 }
 
 /* Global styles */
+.eventide-ability-row {
+  border: 1px solid #000;
+  border-radius: 5px;
+  padding: 5px;
+  color: #fff;
+}
+
+.eventide-character-sheet {
+  background-image: linear-gradient(to bottom, rgba(68, 98, 131, 0.537254902), rgba(51, 72, 104, 0.462745098));
+  padding: 5px;
+  margin: -8px;
+  background-attachment: local;
+  height: 100%;
+  overflow: auto;
+}
+
+.eventide-character-sheet input {
+  background-color: rgba(0, 0, 0, 0.45);
+  color: #fff;
+  border-radius: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.eventide-character-sheet input::selection {
+  background: rgba(139, 69, 19, 0.7019607843);
+  color: #fff;
+}
+
+.eventide-ability-row :hover:not(input) {
+  text-shadow: 1px 1px 1px 1px #fff, 5px 5px 5px 5px rgba(0, 123, 255, 0.7019607843), 10px 10px 10px 10px rgba(0, 123, 255, 0.7019607843);
+  color: #fff;
+}
+
+.eventide-ability-acro-box {
+  background-color: rgba(166, 59, 1, 0.7019607843);
+}
+
+.eventide-ability-phys-box {
+  background-color: rgba(145, 3, 3, 0.7019607843);
+}
+
+.eventide-ability-fort-box {
+  background-color: rgba(40, 88, 40, 0.7019607843);
+}
+
+.eventide-ability-will-box {
+  background-color: rgba(121, 8, 141, 0.7019607843);
+}
+
+.eventide-ability-wits-box {
+  background-color: rgba(14, 67, 128, 0.7019607843);
+}
+
 .window-app {
   font-family: "Roboto", sans-serif;
   background: linear-gradient(to bottom, rgba(68, 98, 131, 0.537254902), rgba(51, 72, 104, 0.462745098));
@@ -239,7 +293,83 @@
   text-align: center;
 }
 
-.eventide-roll-card {
+.base-form, .restore-target, .damage-targets, .status-creator {
+  overflow-y: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.base-form::-webkit-scrollbar, .restore-target::-webkit-scrollbar, .damage-targets::-webkit-scrollbar, .status-creator::-webkit-scrollbar {
+  display: none;
+}
+.base-form__header, .status-creator__header {
+  color: #fff;
+  text-align: center;
+  text-decoration: underline;
+  padding: 0.875rem;
+  font-size: 1.125rem;
+  margin-bottom: 0px;
+  margin-top: 0px;
+}
+.base-form .form-group, .restore-target .form-group, .damage-targets .form-group, .status-creator .form-group {
+  margin-bottom: 0px;
+  padding-bottom: 0px;
+}
+.base-form .form-group label, .restore-target .form-group label, .damage-targets .form-group label, .status-creator .form-group label {
+  color: #fff;
+  font-size: 1rem;
+  font-weight: bolder;
+}
+.base-form .form-group input, .restore-target .form-group input, .damage-targets .form-group input, .status-creator .form-group input,
+.base-form .form-group select,
+.restore-target .form-group select,
+.damage-targets .form-group select,
+.status-creator .form-group select,
+.base-form .form-group textarea,
+.restore-target .form-group textarea,
+.damage-targets .form-group textarea,
+.status-creator .form-group textarea {
+  background-color: rgba(0, 0, 0, 0.45);
+  color: #fff;
+  border-radius: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+.base-form .form-group input:not([type=checkbox]), .restore-target .form-group input:not([type=checkbox]), .damage-targets .form-group input:not([type=checkbox]), .status-creator .form-group input:not([type=checkbox]),
+.base-form .form-group select,
+.restore-target .form-group select,
+.damage-targets .form-group select,
+.status-creator .form-group select {
+  height: 1.75rem;
+}
+.base-form .form-group input[type=checkbox]:checked, .restore-target .form-group input[type=checkbox]:checked, .damage-targets .form-group input[type=checkbox]:checked, .status-creator .form-group input[type=checkbox]:checked {
+  background-color: rgba(0, 0, 0, 0.45);
+}
+.base-form .form-group input[type=checkbox]:checked:after, .restore-target .form-group input[type=checkbox]:checked:after, .damage-targets .form-group input[type=checkbox]:checked:after, .status-creator .form-group input[type=checkbox]:checked:after {
+  content: "✓";
+  color: white;
+}
+.base-form .form-group input[type=checkbox], .restore-target .form-group input[type=checkbox], .damage-targets .form-group input[type=checkbox], .status-creator .form-group input[type=checkbox] {
+  text-align: center;
+  display: table-cell;
+  vertical-align: middle;
+  width: 20px !important;
+  height: 20px !important;
+  appearance: none;
+  border-radius: 10%;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: none;
+  font-size: 1em;
+}
+.base-form .form-group input::selection, .restore-target .form-group input::selection, .damage-targets .form-group input::selection, .status-creator .form-group input::selection,
+.base-form .form-group textarea::selection,
+.restore-target .form-group textarea::selection,
+.damage-targets .form-group textarea::selection,
+.status-creator .form-group textarea::selection {
+  background: #fff;
+  color: #000;
+}
+
+/* Styles limited to eventide-rp-system sheets */
+.chat-card__header {
   color: #fff;
   text-align: center;
   padding: 0.875rem;
@@ -247,128 +377,96 @@
   margin-bottom: 0px;
   margin-top: 0px;
 }
-
-.ac-check-container {
+.chat-card__header--acrobatics {
+  background-color: rgba(166, 59, 1, 0.7019607843);
+}
+.chat-card__header--physical {
+  background-color: rgba(145, 3, 3, 0.7019607843);
+}
+.chat-card__header--fortitude {
+  background-color: rgba(40, 88, 40, 0.7019607843);
+}
+.chat-card__header--willpower {
+  background-color: rgba(121, 8, 141, 0.7019607843);
+}
+.chat-card__header--wits {
+  background-color: rgba(14, 67, 128, 0.7019607843);
+}
+.chat-card__header--item {
+  background-color: rgba(139, 69, 19, 0.7019607843);
+}
+.chat-card__header--combat-power {
+  background-color: rgba(184, 134, 11, 0.7019607843);
+}
+.chat-card__header--dice-dc {
+  background-color: rgba(28, 66, 77, 0.7019607843);
+}
+.chat-card__header--critical-hit {
+  background-color: rgba(38, 18, 130, 0.7019607843);
+}
+.chat-card__header--critical-miss {
+  background-color: rgba(78, 1, 1, 0.7019607843);
+}
+.chat-card__header--unknown {
+  background-color: rgba(83, 83, 83, 0.7019607843);
+}
+.chat-card__header--status {
+  display: flex;
+  justify-content: center;
+}
+.chat-card__header--damage {
+  background-color: rgba(88, 3, 3, 0.7019607843);
+}
+.chat-card__header--heal {
+  background-color: rgba(203, 142, 0, 0.7019607843);
+}
+.chat-card__header--delete {
+  background-color: rgba(85, 85, 85, 0.7019607843);
+}
+.chat-card__header--restore {
+  background-color: rgba(203, 142, 0, 0.7019607843);
+}
+.chat-card__description {
+  color: #444;
+  text-align: justify;
+  font-size: 0.9rem;
+  padding: 0.01rem;
+}
+.chat-card__description--header {
+  text-align: justify;
+  font-size: 1.2rem;
+  color: #444;
+}
+.chat-card__description--header-center-underline {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #444;
+  border-bottom: 1px solid rgba(139, 69, 19, 0.7019607843);
+}
+.chat-card__effects {
+  text-align: justify;
+  font-size: 0.7rem;
+  padding: 0rem;
+  color: #444;
+}
+.chat-card__effects--ac-check {
   border: 3px dashed #ff9194;
   border-radius: 5px;
   background-color: #efdadf;
   padding: 0.0875rem;
   margin: 0.0875rem;
 }
-
-.eventide-critical-hit {
-  background-color: rgba(38, 18, 130, 0.7019607843);
-}
-
-.eventide-critical-miss {
-  background-color: rgba(78, 1, 1, 0.7019607843);
-}
-
-.eventide-acro-card {
-  background-color: rgba(166, 59, 1, 0.7019607843);
-}
-
-.eventide-phys-card {
-  background-color: rgba(145, 3, 3, 0.7019607843);
-}
-
-.eventide-fort-card {
-  background-color: rgba(40, 88, 40, 0.7019607843);
-}
-
-.eventide-will-card {
-  background-color: rgba(121, 8, 141, 0.7019607843);
-}
-
-.eventide-wits-card {
-  background-color: rgba(14, 67, 128, 0.7019607843);
-}
-
-.eventide-item-card {
-  background-color: rgba(139, 69, 19, 0.7019607843);
-}
-
-.eventide-combat-power-card {
-  background-color: rgba(184, 134, 11, 0.7019607843);
-}
-
-.eventide-dice-dc-card {
-  background-color: rgba(28, 66, 77, 0.7019607843);
-}
-
-.eventide-unknown-card {
-  background-color: rgba(83, 83, 83, 0.7019607843);
-}
-
-.eventide-status-card {
-  display: flex;
-  justify-content: center;
-}
-
-.eventide-damage-card {
-  background-color: rgba(88, 3, 3, 0.7019607843);
-}
-
-.eventide-heal-card {
-  background-color: rgba(203, 142, 0, 0.7019607843);
-}
-
-.eventide-status-delete-card {
-  background-color: rgba(85, 85, 85, 0.7019607843);
-}
-
-.eventide-restore-card {
-  background-color: rgba(203, 142, 0, 0.7019607843);
-}
-
-.eventide-card-description {
-  color: #444;
-  text-align: justify;
-  font-size: 0.9rem;
-  padding: 0.01rem;
-}
-
-.eventide-card-effects {
-  text-align: justify;
-  font-size: 0.7rem;
-  padding: 0rem;
-  color: #444;
-}
-
-.eventide-card-effects-title {
+.chat-card__effects--title {
   text-align: justify;
   font-size: 0.8rem;
   padding: 0.01rem;
   padding-top: 0.2rem;
   padding-bottom: 0.2rem;
+  margin-bottom: 3px;
   background-color: rgba(139, 69, 19, 0.7019607843);
-  color: white;
+  color: #fff;
 }
-
-.eventide-card-name {
-  text-align: justify;
-  font-size: 1.2rem;
-  color: #444;
-}
-
-.eventide-card-primary-image {
-  width: 20px;
-  height: 20px;
-  border: 0px solid #000;
-}
-
-.eventide-card-secondary-image {
-  width: 13px;
-  height: 13px;
-  border: 0px solid #000;
-}
-
-.eventide-card-hr {
-  border: none;
-  border-top: 2px solid #c9c7b8;
-}
-
-.eventide-card-hit-box {
+.chat-card__effects--hit {
   background-color: rgba(80, 200, 119, 0.7019607843);
   color: white;
   text-align: center;
@@ -377,8 +475,7 @@
   margin-bottom: 0px;
   border: 1px solid #fff;
 }
-
-.eventide-card-miss-box {
+.chat-card__effects--miss {
   background-color: rgba(199, 0, 57, 0.7019607843);
   color: white;
   text-align: center;
@@ -387,58 +484,61 @@
   margin-bottom: 0px;
   border: 1px solid #fff;
 }
-
-.eventide-ability-row {
-  border: 1px solid #000;
-  border-radius: 5px;
-  padding: 5px;
-  color: #fff;
+.chat-card__effects--name {
+  font-weight: bolder;
+  color: #000;
+  font-size: 0.75rem;
+}
+.chat-card__effects--row {
+  padding-left: 20px;
+  display: grid;
+  grid-column: span 3/span 3;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  width: 50%;
+}
+.chat-card__effects--row div {
+  padding-left: 3px;
+  padding-right: 3px;
+  border-bottom: 1px dashed #444;
+}
+.chat-card__effects--row div:first-child,
+.chat-card__effects--row div:last-child {
+  font-weight: bold;
+}
+.chat-card__effects--row div:last-child {
+  border-left: 1px dashed #444;
+}
+.chat-card__effects--row div:not(:first-child):not(:last-child) {
+  font-style: italic;
+}
+.chat-card__image--primary {
+  width: 20px;
+  height: 20px;
+  border: 0px;
+}
+.chat-card__image--secondary {
+  width: 13px;
+  height: 13px;
+  border: 0px;
+  background-color: rgba(0, 0, 0, 0.8);
+}
+.chat-card__hr {
+  border: none;
+  border-top: 1px solid #c9c7b8;
 }
 
-.eventide-character-sheet {
-  background-image: linear-gradient(to bottom, rgba(68, 98, 131, 0.537254902), rgba(51, 72, 104, 0.462745098));
-  padding: 5px;
-  margin: -8px;
+.restore-target {
+  max-height: 600px;
+  color: black;
+}
+.restore-target .form-group {
+  margin: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  padding: 0;
 }
 
-.eventide-character-sheet input {
-  background-color: rgba(0, 0, 0, 0.45);
-  color: #fff;
-  border-radius: 5px;
-  border: 1px solid rgba(0, 0, 0, 0.5);
-}
-
-.eventide-character-sheet input::selection {
-  background: rgba(139, 69, 19, 0.7019607843);
-  color: #fff;
-}
-
-.eventide-ability-row :hover:not(input) {
-  text-shadow: 1px 1px 1px 1px #fff, 5px 5px 5px 5px rgba(0, 123, 255, 0.7019607843), 10px 10px 10px 10px rgba(0, 123, 255, 0.7019607843);
-  color: #fff;
-}
-
-.eventide-ability-acro-box {
-  background-color: rgba(166, 59, 1, 0.7019607843);
-}
-
-.eventide-ability-phys-box {
-  background-color: rgba(145, 3, 3, 0.7019607843);
-}
-
-.eventide-ability-fort-box {
-  background-color: rgba(40, 88, 40, 0.7019607843);
-}
-
-.eventide-ability-will-box {
-  background-color: rgba(121, 8, 141, 0.7019607843);
-}
-
-.eventide-ability-wits-box {
-  background-color: rgba(14, 67, 128, 0.7019607843);
-}
-
-/* Styles limited to eventide-rp-system sheets */
 .eventide-rp-system {
   @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
   @import url("https://fonts.googleapis.com/css2?family=Combo&family=Merienda:wght@300..900&family=Protest+Revolution&family=Underdog&display=swap");
@@ -624,3 +724,5 @@
 .eventide-rp-system .effects .item .effect-controls {
   border: none;
 }
+
+/*# sourceMappingURL=eventide-rp-system.css.map */

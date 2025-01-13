@@ -181,7 +181,7 @@ export class EventideRpSystemActor extends Actor {
     if (resolve) this.addResolve(this.system.resolve.max || 0);
     if (power) this.addPower(this.system.power.max || 0);
 
-    if (statuses && statuses.length > 0) {
+    if (statusArray && statusArray.length > 0) {
       const statusIds = Array.from(this.items)
         .filter((i) => i.type === "status" && statusArray.includes(i.id))
         .map((i) => i.id);

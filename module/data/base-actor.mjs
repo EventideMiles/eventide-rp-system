@@ -197,9 +197,9 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
         game.i18n.localize(
           CONFIG.EVENTIDE_RP_SYSTEM.abilityAbbreviations[key]
         ) ?? key;
-      this.abilities[key].total =
-        this.abilities[key].override ??
-        this.abilities[key].value + this.abilities[key].change;
+      this.abilities[key].total = this.abilities[key].override
+        ? this.abilities[key].override + this.abilities[key].change
+        : this.abilities[key].value + this.abilities[key].change;
       this.abilities[key].ac = this.abilities[key].total + 11;
     }
 
@@ -208,9 +208,9 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
       this.hiddenAbilities[key].label =
         game.i18n.localize(CONFIG.EVENTIDE_RP_SYSTEM.hiddenAbilities[key]) ??
         key;
-      this.hiddenAbilities[key].total =
-        this.hiddenAbilities[key].override ??
-        this.hiddenAbilities[key].value + this.hiddenAbilities[key].change;
+      this.hiddenAbilities[key].total = this.hiddenAbilities[key].override
+        ? this.hiddenAbilities[key].override + this.hiddenAbilities[key].change
+        : this.hiddenAbilities[key].value + this.hiddenAbilities[key].change;
     }
   }
 

@@ -10,11 +10,14 @@ $app-bg: linear-gradient(to bottom, #004d9f8a, #0029708a);
 
 $character-glow: #007bffb3;
 $character-input: rgba($c-black, 0.45);
-$character-input-border: rgba($c-black, 0.5);
+$character-input-border: rgba($c-white, 0.5);
 $character-background-color: linear-gradient(to bottom, #44628389, #33486876);
+$secondary-image-background: rgba($c-black, 0.8);
 
 $hidden-bg: #efdadf;
 $hidden-border: #ff9194;
+
+$effect-bg: #885735b3;
 
 $acro: #a63b01b3;
 $phys: #910303b3;
@@ -33,6 +36,7 @@ $damage: #580303b3;
 $heal: #cb8e00b3;
 $effect: #8B4513b3;
 $delete: #555555b3;
+$description-hr: #8B4513b3;
 
 $hit: #50C877b3;
 $miss: #C70039b3;

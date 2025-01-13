@@ -1,5 +1,6 @@
 @use "../utils/typography";
 @use "../utils/colors"as colors;
+@use "../global/character-sheet";
 
 .window-app {
   font-family: typography.$font-primary;
@@ -14,6 +15,11 @@
   background: colors.$character-background-color;
   padding: 0px;
 }
+
+// .window-content form,
+// .window-content .dialog-buttons {
+//   @extend .eventide-character-sheet;
+// }
 
 .rollable {
 

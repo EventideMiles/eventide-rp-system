@@ -1,0 +1,36 @@
+<div class="chat-card">
+  <div class="chat-card__header {{pickedCardClass}}">
+    <i class="{{pickedIcon}}"></i> {{label}}
+  </div>
+  {{#if critHit}}
+    <div class="chat-card__header chat-card__header--critical-hit">Critical Hit!</div>
+  {{/if}}
+  {{#if critMiss}}
+    <div class="chat-card__header chat-card__header--critical-miss">Critical Miss!</div>
+  {{/if}}
+  {{#if acCheck}}
+    <div class="chat-card__effects chat-card__effects--ac-check">
+      <div class="chat-card__effects--title">AC Check</div>
+      {{#each targetRollData as |target|}}
+          <div class="chat-card__effects--name flexrow"> {{this.name}}:
+            {{#each this.abilities as |ability key|}}
+              {{#ifCond target.compare ">=" ability.ac}}
+                <div class="chat-card__effects--hit flex-group-center">
+              {{/ifCond}}
+              {{#ifCond target.compare "<" ability.ac}}
+                <div class="chat-card__effects--miss flex-group-center">
+              {{/ifCond}}
+              {{ability.abbr}}
+               </div>
+            {{/each}}
+          </div>
+      {{/each}}
+    </div>
+  {{/if}}
+  {{#if description}}
+    <div class="chat-card__description">
+      <div class="chat-card__description--header">{{item.actor.name}}. . . </div>
+      {{description}} 
+    </div>
+  {{/if}}
+</div>

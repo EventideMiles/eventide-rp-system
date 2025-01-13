@@ -1,0 +1,9 @@
+@use "../global/form-elements";
+
+.status-creator {
+  @extend .base-form;
+
+  &__header {
+    @extend .base-form__header;
+  }
+}

@@ -1,0 +1,206 @@
+@use "../utils/colors"as colors;
+@use "../utils/typography"as typography;
+
+.chat-card {
+    &__header {
+        @extend .protest-revolution-regular;
+        color: colors.$c-white;
+        text-align: center;
+        padding: 0.875rem;
+        font-size: 1.125rem;
+        margin-bottom: 0px;
+        margin-top: 0px;
+
+        &--acrobatics {
+            background-color: colors.$acro;
+        }
+
+        &--physical {
+            background-color: colors.$phys;
+        }
+
+        &--fortitude {
+            background-color: colors.$fort;
+        }
+
+        &--willpower {
+            background-color: colors.$will;
+        }
+
+        &--wits {
+            background-color: colors.$wits;
+        }
+
+        &--item {
+            background-color: colors.$item;
+        }
+
+        &--combat-power {
+            background-color: colors.$combat-power;
+        }
+
+        &--dice-dc {
+            background-color: colors.$dc;
+        }
+
+        &--critical-hit {
+            background-color: colors.$critical-hit;
+        }
+
+        &--critical-miss {
+            background-color: colors.$critical-miss;
+        }
+
+        &--unknown {
+            background-color: colors.$unknown;
+        }
+
+        &--status {
+            display: flex;
+            justify-content: center;
+        }
+
+        &--damage {
+            background-color: colors.$damage;
+        }
+
+        &--heal {
+            background-color: colors.$heal;
+        }
+
+        &--delete {
+            background-color: colors.$delete;
+        }
+
+        &--restore {
+            background-color: colors.$heal;
+        }
+    }
+
+    &__description {
+        @extend .underdog-regular;
+        color: colors.$c-tan;
+        text-align: justify;
+        font-size: 0.9rem;
+        padding: 0.01rem;
+
+        &--header {
+            text-align: justify;
+            font-size: 1.2rem;
+            color: colors.$c-tan;
+        }
+
+        &--header-center-underline {
+            text-align: center;
+            font-size: 1.2rem;
+            color: colors.$c-tan;
+            border-bottom: 1px solid colors.$description-hr;
+        }
+    }
+
+    &__effects {
+        @extend .underdog-regular;
+        text-align: justify;
+        font-size: 0.7rem;
+        padding: 0rem;
+        color: colors.$c-tan;
+
+
+        &--ac-check {
+            border: 3px dashed colors.$hidden-border;
+            border-radius: 5px;
+            background-color: colors.$hidden-bg;
+            padding: 0.0875rem;
+            margin: 0.0875rem;
+        }
+
+        &--title {
+            @extend .protest-revolution-regular;
+            text-align: justify;
+            font-size: 0.8rem;
+            padding: 0.01rem;
+            padding-top: 0.2rem;
+            padding-bottom: 0.2rem;
+            margin-bottom: 3px;
+            background-color: colors.$effect;
+            color: colors.$c-white;
+        }
+
+        &--hit {
+            background-color: colors.$hit;
+            color: white;
+            text-align: center;
+            padding: 0.0875rem;
+            font-size: 0.7rem;
+            margin-bottom: 0px;
+            border: 1px solid colors.$c-white;
+        }
+
+        &--miss {
+            background-color: colors.$miss;
+            color: white;
+            text-align: center;
+            padding: 0.0875rem;
+            font-size: 0.7rem;
+            margin-bottom: 0px;
+            border: 1px solid colors.$c-white;
+        }
+
+        &--name {
+            font-weight: bolder;
+            color: colors.$c-black;
+            font-size: 0.75rem;
+        }
+
+        &--row {
+            padding-left: 20px;
+            display: grid;
+            grid-column: span 3 / span 3;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            width: 50%;
+
+            div {
+                padding-left: 3px;
+                padding-right: 3px;
+                border-bottom: 1px dashed colors.$c-tan;
+            }
+
+            div:first-child,
+            div:last-child {
+                font-weight: bold;
+            }
+
+            div:last-child {
+                border-left: 1px dashed colors.$c-tan;
+            }
+
+            div:not(:first-child):not(:last-child) {
+                font-style: italic;
+
+            }
+        }
+    }
+
+
+
+    &__image {
+        &--primary {
+            width: 20px;
+            height: 20px;
+            border: 0px;
+        }
+
+        &--secondary {
+            width: 13px;
+            height: 13px;
+            border: 0px;
+            background-color: colors.$secondary-image-background;
+        }
+    }
+
+    &__hr {
+        border: none;
+        border-top: 1px solid colors.$hr;
+    }
+
+}
