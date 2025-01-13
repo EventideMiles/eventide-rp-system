@@ -1,8 +1,6 @@
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
-export class statusCreatorApplication extends HandlebarsApplicationMixin(
-  ApplicationV2
-) {
+export class statusCreator extends HandlebarsApplicationMixin(ApplicationV2) {
   static PARTS = {
     statusCreator: {
       template:
@@ -20,7 +18,7 @@ export class statusCreatorApplication extends HandlebarsApplicationMixin(
     tag: "form",
     window: {
       title: "Status Creator",
-      icon: "fas fa-gear",
+      icon: "fa-solid fa-message-plus",
     },
     form: {
       handler: this.#onSubmit,
@@ -38,25 +36,27 @@ export class statusCreatorApplication extends HandlebarsApplicationMixin(
   async _prepareContext(options) {
     const context = {};
 
-    context.cssClass =
-      statusCreatorApplication.DEFAULT_OPTIONS.classes.join(" ");
-    context.abilities = statusCreatorApplication.abilities;
-    context.hiddenAbilities = statusCreatorApplication.hiddenAbilities;
+    context.cssClass = statusCreator.DEFAULT_OPTIONS.classes.join(" ");
+    context.abilities = statusCreator.abilities;
+    context.hiddenAbilities = statusCreator.hiddenAbilities;
     context.targetArray = await game.erps.getTargetArray();
 
-    context.storedData = await game.erps.retrieveLocal(
-      statusCreatorApplication.storageKeys
-    );
+    if (context.targetArray.length === 0)
+      ui.notifications.warn(
+        `If you proceed status will only be created in compendium: not applied.`
+      );
 
-    console.log(context.storedData);
+    context.storedData = await game.erps.retrieveLocal(
+      statusCreator.storageKeys
+    );
 
     context.returnedData = context.storedData.img;
     return context;
   }
 
   static async #onSubmit(event, form, formData) {
-    const abilities = statusCreatorApplication.abilities;
-    const hiddenAbilities = statusCreatorApplication.hiddenAbilities;
+    const abilities = statusCreator.abilities;
+    const hiddenAbilities = statusCreator.hiddenAbilities;
 
     const targetArray = await game.erps.getTargetArray();
 
@@ -188,9 +188,9 @@ export class statusCreatorApplication extends HandlebarsApplicationMixin(
 
     // store the data in localStorage
     const storageObject = {
-      [statusCreatorApplication.storageKeys[0]]: img,
-      [statusCreatorApplication.storageKeys[1]]: bgColor,
-      [statusCreatorApplication.storageKeys[2]]: textColor,
+      [statusCreator.storageKeys[0]]: img,
+      [statusCreator.storageKeys[1]]: bgColor,
+      [statusCreator.storageKeys[2]]: textColor,
     };
 
     game.erps.storeLocal(storageObject);

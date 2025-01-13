@@ -4,7 +4,8 @@ import { EventideRpSystemItem } from "./documents/item.mjs";
 // Import sheet classes.
 import { EventideRpSystemActorSheet } from "./sheets/actor-sheet.mjs";
 import { EventideRpSystemItemSheet } from "./sheets/item-sheet.mjs";
-import { statusCreatorApplication } from "./sheets/status-creator.mjs";
+import { statusCreator } from "./sheets/status-creator.mjs";
+import { damageTargets } from "./sheets/damage-targets.mjs";
 // Import helper/utility classes and constants.
 import { preloadHandlebarsTemplates } from "./helpers/templates.mjs";
 import { EVENTIDE_RP_SYSTEM } from "./helpers/config.mjs";
@@ -21,11 +22,7 @@ import {
   storeLocal,
   retrieveLocal,
 } from "../lib/eventide-library/common-foundry-tasks.js";
-import {
-  damageTargets,
-  restoreTarget,
-  statusCreator,
-} from "../lib/eventide-library/macros.js";
+import { restoreTarget } from "../lib/eventide-library/macros.js";
 
 /* -------------------------------------------- */
 /*  Init Hook                                   */
@@ -37,15 +34,14 @@ Hooks.once("init", function () {
   game.erps = {
     EventideRpSystemActor,
     EventideRpSystemItem,
-    statusCreatorApplication,
+    statusCreator,
+    damageTargets,
     rollItemMacro,
     getTargetArray,
     getSelectedArray,
     storeLocal,
     retrieveLocal,
-    damageTargets,
     restoreTarget,
-    statusCreator,
   };
 
   // Add custom constants for configuration.

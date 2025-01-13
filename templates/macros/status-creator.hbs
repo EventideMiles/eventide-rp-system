@@ -19,7 +19,7 @@
     <label for="textColor">Text Color:</label>
     <input type="color" id="textColor" name="textColor" value="{{ifThen storedData.status_textColor storedData.status_textColor "#ffffff"}}">
   </div>
-  <p>Effects:</p>
+  <div class=".status-creator status-creator__header">Effects</div>
   {{#each abilities}}
     <div class="form-group">
       <label for="{{this.toLowerCase}}"> {{this}}:</label>

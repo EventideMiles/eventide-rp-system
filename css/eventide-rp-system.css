@@ -12,7 +12,7 @@
   font-style: normal;
 }
 
-.underdog-regular, .chat-card__description, .chat-card__effects {
+.underdog-regular, .chat-card__description, .chat-card__effects, .base-form__header, .base-form .form-group, .damage-targets .form-group, .status-creator .form-group, .status-creator__header {
   font-family: "Underdog", serif;
   font-weight: 400;
   font-style: normal;
@@ -292,6 +292,58 @@
   text-align: center;
 }
 
+.base-form, .damage-targets, .status-creator {
+  overflow-y: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.base-form::-webkit-scrollbar, .damage-targets::-webkit-scrollbar, .status-creator::-webkit-scrollbar {
+  display: none;
+}
+.base-form__header, .status-creator__header {
+  color: #fff;
+  text-align: center;
+  text-decoration: underline;
+  padding: 0.875rem;
+  font-size: 1.125rem;
+  margin-bottom: 0px;
+  margin-top: 0px;
+}
+.base-form .form-group, .damage-targets .form-group, .status-creator .form-group {
+  margin-bottom: 0px;
+  padding-bottom: 0px;
+}
+.base-form .form-group label, .damage-targets .form-group label, .status-creator .form-group label {
+  color: #fff;
+  font-size: 1rem;
+  font-weight: bolder;
+}
+.base-form .form-group input, .damage-targets .form-group input, .status-creator .form-group input,
+.base-form .form-group select,
+.damage-targets .form-group select,
+.status-creator .form-group select,
+.base-form .form-group textarea,
+.damage-targets .form-group textarea,
+.status-creator .form-group textarea {
+  background-color: rgba(0, 0, 0, 0.45);
+  color: #fff;
+  border-radius: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+.base-form .form-group input:not([type=checkbox]), .damage-targets .form-group input:not([type=checkbox]), .status-creator .form-group input:not([type=checkbox]),
+.base-form .form-group select,
+.damage-targets .form-group select,
+.status-creator .form-group select {
+  height: 1.75rem;
+}
+.base-form .form-group input::selection, .damage-targets .form-group input::selection, .status-creator .form-group input::selection,
+.base-form .form-group textarea::selection,
+.damage-targets .form-group textarea::selection,
+.status-creator .form-group textarea::selection {
+  background: #fff;
+  color: #000;
+}
+
 /* Styles limited to eventide-rp-system sheets */
 .chat-card__header {
   color: #fff;
@@ -449,32 +501,6 @@
 .chat-card__hr {
   border: none;
   border-top: 1px solid #c9c7b8;
-}
-
-.status-creator {
-  overflow-y: auto;
-  max-height: 500px;
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-.status-creator::-webkit-scrollbar {
-  display: none;
-}
-.status-creator input {
-  background-color: rgba(0, 0, 0, 0.45);
-  color: #fff;
-  border-radius: 5px;
-  border: 1px solid rgba(255, 255, 255, 0.5);
-}
-.status-creator input::selection {
-  background: rgba(0, 0, 0, 0.45);
-  color: #fff;
-}
-.status-creator textarea {
-  background-color: rgba(0, 0, 0, 0.45);
-  border-radius: 5px;
-  padding: 5px;
-  margin: 5px;
 }
 
 .eventide-rp-system {

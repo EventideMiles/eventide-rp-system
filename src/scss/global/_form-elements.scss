@@ -1,0 +1,55 @@
+@use "../utils/typography";
+@use "../utils/colors";
+
+.base-form {
+  overflow-y: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  &__header {
+    @extend .underdog-regular;
+    color: colors.$c-white;
+    text-align: center;
+    text-decoration: underline;
+    padding: 0.875rem;
+    font-size: 1.125rem;
+    margin-bottom: 0px;
+    margin-top: 0px;
+  }
+
+  .form-group {
+    @extend .underdog-regular;
+    margin-bottom: 0px;
+    padding-bottom: 0px;
+
+    label {
+      color: colors.$c-white;
+      font-size: 1rem;
+      font-weight: bolder;
+    }
+
+    input,
+    select,
+    textarea {
+      background-color: colors.$character-input;
+      color: colors.$c-white;
+      border-radius: 5px;
+      border: 1px solid colors.$character-input-border;
+    }
+
+    input:not([type="checkbox"]),
+    select {
+      height: 1.75rem;
+    }
+
+    input::selection,
+    textarea::selection {
+      background: colors.$c-white;
+      color: colors.$c-black;
+    }
+  }
+}
