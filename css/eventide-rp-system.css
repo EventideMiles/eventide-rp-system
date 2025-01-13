@@ -1,3 +1,4 @@
+@charset "UTF-8";
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Combo&family=Merienda:wght@300..900&family=Protest+Revolution&family=Underdog&display=swap");
 .protest-revolution-regular, .chat-card__header, .chat-card__effects--title {
@@ -12,7 +13,7 @@
   font-style: normal;
 }
 
-.underdog-regular, .chat-card__description, .chat-card__effects, .base-form__header, .base-form .form-group, .damage-targets .form-group, .status-creator .form-group, .status-creator__header {
+.underdog-regular, .chat-card__description, .chat-card__effects, .base-form__header, .base-form .form-group, .restore-target .form-group, .damage-targets .form-group, .status-creator .form-group, .status-creator__header {
   font-family: "Underdog", serif;
   font-weight: 400;
   font-style: normal;
@@ -292,12 +293,12 @@
   text-align: center;
 }
 
-.base-form, .damage-targets, .status-creator {
+.base-form, .restore-target, .damage-targets, .status-creator {
   overflow-y: auto;
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
-.base-form::-webkit-scrollbar, .damage-targets::-webkit-scrollbar, .status-creator::-webkit-scrollbar {
+.base-form::-webkit-scrollbar, .restore-target::-webkit-scrollbar, .damage-targets::-webkit-scrollbar, .status-creator::-webkit-scrollbar {
   display: none;
 }
 .base-form__header, .status-creator__header {
@@ -309,20 +310,22 @@
   margin-bottom: 0px;
   margin-top: 0px;
 }
-.base-form .form-group, .damage-targets .form-group, .status-creator .form-group {
+.base-form .form-group, .restore-target .form-group, .damage-targets .form-group, .status-creator .form-group {
   margin-bottom: 0px;
   padding-bottom: 0px;
 }
-.base-form .form-group label, .damage-targets .form-group label, .status-creator .form-group label {
+.base-form .form-group label, .restore-target .form-group label, .damage-targets .form-group label, .status-creator .form-group label {
   color: #fff;
   font-size: 1rem;
   font-weight: bolder;
 }
-.base-form .form-group input, .damage-targets .form-group input, .status-creator .form-group input,
+.base-form .form-group input, .restore-target .form-group input, .damage-targets .form-group input, .status-creator .form-group input,
 .base-form .form-group select,
+.restore-target .form-group select,
 .damage-targets .form-group select,
 .status-creator .form-group select,
 .base-form .form-group textarea,
+.restore-target .form-group textarea,
 .damage-targets .form-group textarea,
 .status-creator .form-group textarea {
   background-color: rgba(0, 0, 0, 0.45);
@@ -330,14 +333,35 @@
   border-radius: 5px;
   border: 1px solid rgba(255, 255, 255, 0.5);
 }
-.base-form .form-group input:not([type=checkbox]), .damage-targets .form-group input:not([type=checkbox]), .status-creator .form-group input:not([type=checkbox]),
+.base-form .form-group input:not([type=checkbox]), .restore-target .form-group input:not([type=checkbox]), .damage-targets .form-group input:not([type=checkbox]), .status-creator .form-group input:not([type=checkbox]),
 .base-form .form-group select,
+.restore-target .form-group select,
 .damage-targets .form-group select,
 .status-creator .form-group select {
   height: 1.75rem;
 }
-.base-form .form-group input::selection, .damage-targets .form-group input::selection, .status-creator .form-group input::selection,
+.base-form .form-group input[type=checkbox]:checked, .restore-target .form-group input[type=checkbox]:checked, .damage-targets .form-group input[type=checkbox]:checked, .status-creator .form-group input[type=checkbox]:checked {
+  background-color: rgba(0, 0, 0, 0.45);
+}
+.base-form .form-group input[type=checkbox]:checked:after, .restore-target .form-group input[type=checkbox]:checked:after, .damage-targets .form-group input[type=checkbox]:checked:after, .status-creator .form-group input[type=checkbox]:checked:after {
+  content: "✓";
+  color: white;
+}
+.base-form .form-group input[type=checkbox], .restore-target .form-group input[type=checkbox], .damage-targets .form-group input[type=checkbox], .status-creator .form-group input[type=checkbox] {
+  text-align: center;
+  display: table-cell;
+  vertical-align: middle;
+  width: 20px !important;
+  height: 20px !important;
+  appearance: none;
+  border-radius: 10%;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: none;
+  font-size: 1em;
+}
+.base-form .form-group input::selection, .restore-target .form-group input::selection, .damage-targets .form-group input::selection, .status-creator .form-group input::selection,
 .base-form .form-group textarea::selection,
+.restore-target .form-group textarea::selection,
 .damage-targets .form-group textarea::selection,
 .status-creator .form-group textarea::selection {
   background: #fff;
@@ -501,6 +525,18 @@
 .chat-card__hr {
   border: none;
   border-top: 1px solid #c9c7b8;
+}
+
+.restore-target {
+  max-height: 600px;
+  color: black;
+}
+.restore-target .form-group {
+  margin: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  padding: 0;
 }
 
 .eventide-rp-system {

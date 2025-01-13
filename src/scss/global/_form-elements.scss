@@ -46,6 +46,28 @@
       height: 1.75rem;
     }
 
+    input[type='checkbox']:checked {
+      background-color: colors.$character-input;
+    }
+
+    input[type='checkbox']:checked:after {
+      content: '\2713';
+      color: white;
+    }
+
+    input[type='checkbox'] {
+      text-align: center;
+      display: table-cell;
+      vertical-align: middle;
+      width: 20px !important;
+      height: 20px !important;
+      appearance: none;
+      border-radius: 10%;
+      border: 1px solid colors.$character-input-border;
+      box-shadow: none;
+      font-size: 1em;
+    }
+
     input::selection,
     textarea::selection {
       background: colors.$c-white;

@@ -6,6 +6,7 @@ import { EventideRpSystemActorSheet } from "./sheets/actor-sheet.mjs";
 import { EventideRpSystemItemSheet } from "./sheets/item-sheet.mjs";
 import { statusCreator } from "./sheets/status-creator.mjs";
 import { damageTargets } from "./sheets/damage-targets.mjs";
+import { restoreTarget } from "./sheets/restore-target.mjs";
 // Import helper/utility classes and constants.
 import { preloadHandlebarsTemplates } from "./helpers/templates.mjs";
 import { EVENTIDE_RP_SYSTEM } from "./helpers/config.mjs";
@@ -22,8 +23,6 @@ import {
   storeLocal,
   retrieveLocal,
 } from "../lib/eventide-library/common-foundry-tasks.js";
-import { restoreTarget } from "../lib/eventide-library/macros.js";
-
 /* -------------------------------------------- */
 /*  Init Hook                                   */
 /* -------------------------------------------- */

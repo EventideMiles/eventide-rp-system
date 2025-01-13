@@ -17,6 +17,7 @@
 @use 'components/chat-cards';
 @use 'components/status-creator';
 @use 'components/damage-targets';
+@use 'components/restore-target';
 
 .eventide-rp-system {
   @include meta.load-css('components/forms');

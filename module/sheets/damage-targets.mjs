@@ -33,6 +33,14 @@ export class damageTargets extends HandlebarsApplicationMixin(ApplicationV2) {
   constructor(number = 0) {
     super(damageTargets.DEFAULT_OPTIONS, damageTargets.PARTS);
     this.number = Math.floor(number);
+  }
+
+  static targetArray = [];
+
+  static storageKeys = [];
+
+  async _prepareContext(options) {
+    const context = {};
 
     this.storageKeys = [
       `damage_${this.number}_label`,
@@ -40,15 +48,13 @@ export class damageTargets extends HandlebarsApplicationMixin(ApplicationV2) {
       `damage_${this.number}_formula`,
       `damage_${this.number}_isHeal`,
     ];
-  }
-
-  async _prepareContext(options) {
-    const context = {};
 
     context.cssClass = damageTargets.DEFAULT_OPTIONS.classes.join(" ");
     context.storageKeys = this.storageKeys;
     context.storedData = await game.erps.retrieveLocal(context.storageKeys);
     context.targetArray = await game.erps.getTargetArray();
+
+    this.targetArray = context.targetArray;
 
     if (
       context.storedData[this.storageKeys[3]] === null ||
@@ -68,24 +74,23 @@ export class damageTargets extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 
   static async store(event, target) {
-    const storageObject = {
-      [this.storageKeys[0]]: target.form.label.value,
-      [this.storageKeys[1]]: target.form.description.value,
-      [this.storageKeys[2]]: target.form.formula.value,
-      [this.storageKeys[3]]: target.form.isHeal.checked,
-    };
-
-    damageTargets.#storeData(storageObject);
+    damageTargets.#storeData(this, target.form);
 
     this.close();
   }
 
-  static async #storeData(storageObject) {
+  static async #storeData(instance, form) {
+    const storageObject = {
+      [instance.storageKeys[0]]: form.label.value,
+      [instance.storageKeys[1]]: form.description.value,
+      [instance.storageKeys[2]]: form.formula.value,
+      [instance.storageKeys[3]]: form.isHeal.checked,
+    };
     await game.erps.storeLocal(storageObject);
   }
 
   static async #onSubmit(event, form, formData) {
-    const targetArray = await game.erps.getTargetArray();
+    console.log(this.storageKeys);
 
     const damageOptions = {
       label: form.label.value || "Damage",
@@ -94,16 +99,9 @@ export class damageTargets extends HandlebarsApplicationMixin(ApplicationV2) {
       type: form.isHeal.checked ? "heal" : "damage",
     };
     await Promise.all(
-      targetArray.map((token) => token.actor.damageResolve(damageOptions))
+      this.targetArray.map((token) => token.actor.damageResolve(damageOptions))
     );
 
-    const storageObject = {
-      [this.storageKeys[0]]: form.label.value,
-      [this.storageKeys[1]]: form.description.value,
-      [this.storageKeys[2]]: form.formula.value,
-      [this.storageKeys[3]]: form.isHeal.checked,
-    };
-
-    damageTargets.#storeData(storageObject);
+    damageTargets.#storeData(this, form);
   }
 }
