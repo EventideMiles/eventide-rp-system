@@ -12,10 +12,10 @@ export class statusCreatorApplication extends HandlebarsApplicationMixin(
 
   static DEFAULT_OPTIONS = {
     id: "status-creator",
-    classes: ["eventide-rp-system", "sheet", "status-creator"],
+    classes: ["eventide-rp-system", "standard-form", "status-creator"],
     position: {
       width: 640,
-      height: "auto",
+      height: 600,
     },
     tag: "form",
     window: {
@@ -33,14 +33,24 @@ export class statusCreatorApplication extends HandlebarsApplicationMixin(
 
   static abilities = ["Acro", "Phys", "Fort", "Will", "Wits"];
   static hiddenAbilities = ["Dice", "Cmin", "Cmax", "Fmin", "Fmax"];
+  static storageKeys = ["status_img", "status_bgColor", "status_textColor"];
 
   async _prepareContext(options) {
     const context = {};
 
+    context.cssClass =
+      statusCreatorApplication.DEFAULT_OPTIONS.classes.join(" ");
     context.abilities = statusCreatorApplication.abilities;
     context.hiddenAbilities = statusCreatorApplication.hiddenAbilities;
     context.targetArray = await game.erps.getTargetArray();
 
+    context.storedData = await game.erps.retrieveLocal(
+      statusCreatorApplication.storageKeys
+    );
+
+    console.log(context.storedData);
+
+    context.returnedData = context.storedData.img;
     return context;
   }
 
@@ -175,5 +185,14 @@ export class statusCreatorApplication extends HandlebarsApplicationMixin(
     if (createdItem) {
       await pack.importDocument(createdItem[0] ? createdItem[0] : createdItem);
     }
+
+    // store the data in localStorage
+    const storageObject = {
+      [statusCreatorApplication.storageKeys[0]]: img,
+      [statusCreatorApplication.storageKeys[1]]: bgColor,
+      [statusCreatorApplication.storageKeys[2]]: textColor,
+    };
+
+    game.erps.storeLocal(storageObject);
   }
 }

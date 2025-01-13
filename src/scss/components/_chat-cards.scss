@@ -121,6 +121,7 @@
             padding: 0.01rem;
             padding-top: 0.2rem;
             padding-bottom: 0.2rem;
+            margin-bottom: 3px;
             background-color: colors.$effect;
             color: colors.$c-white;
         }
@@ -153,6 +154,30 @@
 
         &--row {
             padding-left: 20px;
+            display: grid;
+            grid-column: span 3 / span 3;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            width: 50%;
+
+            div {
+                padding-left: 3px;
+                padding-right: 3px;
+                border-bottom: 1px dashed colors.$c-tan;
+            }
+
+            div:first-child,
+            div:last-child {
+                font-weight: bold;
+            }
+
+            div:last-child {
+                border-left: 1px dashed colors.$c-tan;
+            }
+
+            div:not(:first-child):not(:last-child) {
+                font-style: italic;
+
+            }
         }
     }
 

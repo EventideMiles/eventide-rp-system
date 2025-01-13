@@ -1,0 +1,31 @@
+@use "../utils/colors";
+
+.status-creator {
+  overflow-y: auto;
+  max-height: 500px;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  input {
+    background-color: colors.$character-input;
+    color: colors.$c-white;
+    border-radius: 5px;
+    border: 1px solid colors.$character-input-border;
+  }
+
+  input::selection {
+    background: colors.$character-input;
+    color: colors.$c-white;
+  }
+
+  textarea {
+    background-color: colors.$character-input;
+    border-radius: 5px;
+    padding: 5px;
+    margin: 5px;
+  }
+}

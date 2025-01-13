@@ -14,7 +14,14 @@
     <div class="chat-card__effects--name"><img src="{{this.img}}" class="chat-card__image--secondary" /> {{this.name}}</div>
     {{#ifCond this.changes.length ">" 0 }}
       {{#each this.changes}}
-        <div class="chat-card__effects--row"># {{#keySplit this.key 2}}{{/keySplit}} {{#ifCond this.mode "===" 5}}set to{{/ifCond}}: {{this.value}}</div>
+        <div class="chat-card__effects--row">
+          <div class="align-left">{{keySplit this.key 2}}</div> 
+          <div class="align-center">
+            {{#ifCond this.mode "===" 5}}set to{{/ifCond}}
+            {{#ifCond this.mode "!==" 5}}add{{/ifCond}}
+          </div>
+          <div class="align-center">{{this.value}}</div>
+        </div>
       {{/each}}
     {{/ifCond}}
   {{/each}}

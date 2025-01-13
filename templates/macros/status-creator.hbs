@@ -1,4 +1,4 @@
-<div class="{{cssClass}} standard-form" autocomplete="off">
+<div class="{{cssClass}}" autocomplete="off">
   <div class="form-group">
     <label for="name">Name:</label>
     <input type="text" id="name" name="name" placeholder="Name">
@@ -9,16 +9,15 @@
   </div>
   <div class="form-group">
     <label for="img">Image:</label>
-    {{!-- <button type="button" id="file-picker" data-type="image" data-target="img" class="file-picker">Browse</button> --}}
-    <file-picker data-action="imagePick" id="img" name="img" type="image" value="icons/svg/stoned.svg" create="{displayMode: "tiles"}"></file-picker>
+    <file-picker data-action="imagePick" id="img" name="img" type="image" value="{{ifThen storedData.status_img storedData.status_img "icons/svg/stoned.svg"}}" create="{displayMode: "tiles"}"></file-picker>
   </div>
   <div class="form-group">
     <label for="bgColor">Background Color:</label>
-    <input type="color" id="bgColor" name="bgColor" value="#7B4874">
+    <input type="color" id="bgColor" name="bgColor" value="{{ifThen storedData.status_bgColor storedData.status_bgColor "#7B4874"}}">
   </div>
   <div class="form-group">
     <label for="textColor">Text Color:</label>
-    <input type="color" id="textColor" name="textColor" value="#ffffff">
+    <input type="color" id="textColor" name="textColor" value="{{ifThen storedData.status_textColor storedData.status_textColor "#ffffff"}}">
   </div>
   <p>Effects:</p>
   {{#each abilities}}
@@ -41,6 +40,6 @@
       </select>
     </div>
   {{/each}}
-  <button type="submit">{{#if targetArray.length}}Create and Apply{{else}}Create{{/if}}</button>
-  {{!-- <input type="text" id="img" name="img" placeholder="Image URL" value="icons/svg/item-bag.svg" style="display: none;" disabled> --}}
+  <button type="submit">{{ifThen targetArray.length "Create and Apply" "Create"}}</button>
 </div>
+
