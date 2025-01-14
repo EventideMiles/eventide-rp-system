@@ -1,4 +1,4 @@
-const tokenArray = await game.erps.getTargetArray();
+const tokenArray = await erps.utils.getTargetArray();
 
 if (!tokenArray.length)
   return ui.notifications.error(`Please target a token first`);
@@ -97,7 +97,7 @@ const main = async () => {
     },
     default: "yes",
     render: async (html) => {
-      const storedData = await game.erps.retrieveLocal(storageKeys);
+      const storedData = await erps.utils.retrieveLocal(storageKeys);
 
       html
         .find(`[name="label"]`)[0]
@@ -213,7 +213,7 @@ const main = async () => {
           failMinImpact,
         };
 
-        game.erps.storeLocal(storageObject);
+        erps.utils.storeLocal(storageObject);
       }
     },
   }).render(true);

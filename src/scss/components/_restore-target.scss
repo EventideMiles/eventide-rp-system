@@ -1,9 +1,10 @@
 @use "../global/form-elements";
+@use "../utils/colors";
 
 .restore-target {
   @extend .base-form;
   max-height: 600px;
-  color: black;
+  color: colors.$c-white;
 
   .form-group {
     margin: 0;

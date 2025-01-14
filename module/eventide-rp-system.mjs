@@ -8,41 +8,57 @@ import { StatusCreator } from "./sheets/status-creator.mjs";
 import { DamageTargets } from "./sheets/damage-targets.mjs";
 import { RestoreTarget } from "./sheets/restore-target.mjs";
 // Import helper/utility classes and constants.
-import { preloadHandlebarsTemplates } from "./helpers/templates.mjs";
 import { EVENTIDE_RP_SYSTEM } from "./helpers/config.mjs";
 // Import DataModel classes
 import * as models from "./data/_module.mjs";
-// Import system libraries
-import {
-  createStatusMessage,
-  deleteStatusMessage,
-} from "./helpers/system-messages.mjs";
 import {
   getSelectedArray,
   getTargetArray,
-  storeLocal,
   retrieveLocal,
+  storeLocal,
 } from "./helpers/common-foundry-tasks.mjs";
+import {
+  createStatusMessage,
+  deleteStatusMessage,
+  restoreMessage,
+} from "./helpers/system-messages.mjs";
+
 /* -------------------------------------------- */
 /*  Init Hook                                   */
 /* -------------------------------------------- */
 
-Hooks.once("init", function () {
-  // Add utility classes to the global game object so that they're more easily
-  // accessible in global contexts.
-  game.erps = {
+// Add key classes to the global scope so they can be more easily used
+// by downstream developers
+globalThis.erps = {
+  documents: {
     EventideRpSystemActor,
     EventideRpSystemItem,
-    StatusCreator,
-    DamageTargets,
-    RestoreTarget,
+  },
+  applications: {
+    EventideRpSystemActorSheet,
+    EventideRpSystemItemSheet,
+  },
+  utils: {
     rollItemMacro,
     getTargetArray,
     getSelectedArray,
     storeLocal,
     retrieveLocal,
-  };
+  },
+  macros: {
+    StatusCreator,
+    DamageTargets,
+    RestoreTarget,
+  },
+  messages: {
+    createStatusMessage,
+    deleteStatusMessage,
+    restoreMessage,
+  },
+  models,
+};
 
+Hooks.once("init", function () {
   // Add custom constants for configuration.
   CONFIG.EVENTIDE_RP_SYSTEM = EVENTIDE_RP_SYSTEM;
 
@@ -67,7 +83,7 @@ Hooks.once("init", function () {
   };
   CONFIG.Item.documentClass = EventideRpSystemItem;
   CONFIG.Item.dataModels = {
-    item: models.EventideRpSystemItem,
+    gear: models.EventideRpSystemGear,
     feature: models.EventideRpSystemFeature,
     spell: models.EventideRpSystemSpell,
     status: models.EventideRpSystemStatus,
@@ -89,9 +105,6 @@ Hooks.once("init", function () {
     makeDefault: true,
     label: "EVENTIDE_RP_SYSTEM.SheetLabels.Item",
   });
-
-  // Preload Handlebars templates.
-  return preloadHandlebarsTemplates();
 });
 
 /* -------------------------------------------- */
@@ -155,7 +168,7 @@ Handlebars.registerHelper("debug", function (optionalValue) {
 
 Hooks.once("ready", function () {
   // Wait to register hotbar drop hook on ready so that modules could register earlier if they want to
-  Hooks.on("hotbarDrop", (bar, data, slot) => createItemMacro(data, slot));
+  Hooks.on("hotbarDrop", (bar, data, slot) => createDocMacro(data, slot));
 });
 
 /* -------------------------------------------- */
@@ -169,7 +182,7 @@ Hooks.once("ready", function () {
  * @param {number} slot     The hotbar slot to use
  * @returns {Promise}
  */
-async function createItemMacro(data, slot) {
+async function createDocMacro(data, slot) {
   // First, determine if this is a valid owned item.
   if (data.type !== "Item") return;
   if (!data.uuid.includes("Actor.") && !data.uuid.includes("Token.")) {
@@ -181,7 +194,7 @@ async function createItemMacro(data, slot) {
   const item = await Item.fromDropData(data);
 
   // Create the macro command using the uuid.
-  const command = `game.erps.rollItemMacro("${data.uuid}");`;
+  const command = `erps.utils.rollItemMacro("${data.uuid}");`;
   let macro = game.macros.find(
     (m) => m.name === item.name && m.command === command
   );
@@ -228,7 +241,9 @@ function rollItemMacro(itemUuid) {
 /*  System Hooks                                */
 /* -------------------------------------------- */
 Hooks.on("closeEventideRpSystemItemSheet", (app) => {
-  const item = app.object;
+  const item = app.document;
+
+  console.log(item);
 
   if (item.type === "status" && item.system.description && app.actor !== null) {
     createStatusMessage(item);

@@ -8,7 +8,7 @@
   </div>
 {{/if}}
 <hr class="chat-card__hr" />
-{{#ifCond effects.length ">"0}}
+{{#ifCond effects.length ">" 0}}
   <div class="chat-card__effects"><div class='chat-card__effects--title'>Effects</div>
   {{#each effects}}
     <div class="chat-card__effects--name"><img src="{{this.img}}" class="chat-card__image--secondary" /> {{this.name}}</div>

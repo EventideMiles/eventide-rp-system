@@ -33,20 +33,25 @@ export class StatusCreator extends HandlebarsApplicationMixin(ApplicationV2) {
   static hiddenAbilities = ["Dice", "Cmin", "Cmax", "Fmin", "Fmax"];
   static storageKeys = ["status_img", "status_bgColor", "status_textColor"];
 
+  async _preparePartContext(partId, context, options) {
+    context.partId = `${this.id}-${partId}`;
+    return context;
+  }
+
   async _prepareContext(options) {
     const context = {};
 
     context.cssClass = StatusCreator.DEFAULT_OPTIONS.classes.join(" ");
     context.abilities = StatusCreator.abilities;
     context.hiddenAbilities = StatusCreator.hiddenAbilities;
-    context.targetArray = await game.erps.getTargetArray();
+    context.targetArray = await erps.utils.getTargetArray();
 
     if (context.targetArray.length === 0)
       ui.notifications.warn(
         `If you proceed status will only be created in compendium: not applied.`
       );
 
-    context.storedData = await game.erps.retrieveLocal(
+    context.storedData = await erps.utils.retrieveLocal(
       StatusCreator.storageKeys
     );
 
@@ -58,7 +63,7 @@ export class StatusCreator extends HandlebarsApplicationMixin(ApplicationV2) {
     const abilities = StatusCreator.abilities;
     const hiddenAbilities = StatusCreator.hiddenAbilities;
 
-    const targetArray = await game.erps.getTargetArray();
+    const targetArray = await erps.utils.getTargetArray();
 
     let createdItem;
 
@@ -80,20 +85,12 @@ export class StatusCreator extends HandlebarsApplicationMixin(ApplicationV2) {
 
         return {
           key: `system.abilities.${ability.toLowerCase()}.${
-            ["downgrade", "upgrade"].includes(mode)
-              ? "total"
-              : mode === "add"
-              ? "change"
-              : "override"
+            mode === "add" ? "change" : "override"
           }`,
           mode:
             mode === "add"
               ? CONST.ACTIVE_EFFECT_MODES.ADD
-              : mode === "override"
-              ? CONST.ACTIVE_EFFECT_MODES.OVERRIDE
-              : mode === "downgrade"
-              ? CONST.ACTIVE_EFFECT_MODES.DOWNGRADE
-              : CONST.ACTIVE_EFFECT_MODES.UPGRADE,
+              : CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
           value: value,
           priority: 0,
         };
@@ -108,20 +105,12 @@ export class StatusCreator extends HandlebarsApplicationMixin(ApplicationV2) {
 
         return {
           key: `system.hiddenAbilities.${ability.toLowerCase()}.${
-            ["downgrade", "upgrade"].includes(mode)
-              ? "total"
-              : mode === "add"
-              ? "change"
-              : "override"
+            mode === "add" ? "change" : "override"
           }`,
           mode:
             mode === "add"
               ? CONST.ACTIVE_EFFECT_MODES.ADD
-              : mode === "override"
-              ? CONST.ACTIVE_EFFECT_MODES.OVERRIDE
-              : mode === "downgrade"
-              ? CONST.ACTIVE_EFFECT_MODES.DOWNGRADE
-              : CONST.ACTIVE_EFFECT_MODES.UPGRADE,
+              : CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
           value: value,
           priority: 0,
         };
@@ -193,6 +182,6 @@ export class StatusCreator extends HandlebarsApplicationMixin(ApplicationV2) {
       [StatusCreator.storageKeys[2]]: textColor,
     };
 
-    game.erps.storeLocal(storageObject);
+    erps.utils.storeLocal(storageObject);
   }
 }

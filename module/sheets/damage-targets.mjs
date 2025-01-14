@@ -39,6 +39,11 @@ export class DamageTargets extends HandlebarsApplicationMixin(ApplicationV2) {
 
   static storageKeys = [];
 
+  async _preparePartContext(partId, context, options) {
+    context.partId = `${this.id}-${partId}`;
+    return context;
+  }
+
   async _prepareContext(options) {
     const context = {};
 
@@ -51,8 +56,8 @@ export class DamageTargets extends HandlebarsApplicationMixin(ApplicationV2) {
 
     context.cssClass = DamageTargets.DEFAULT_OPTIONS.classes.join(" ");
     context.storageKeys = this.storageKeys;
-    context.storedData = await game.erps.retrieveLocal(context.storageKeys);
-    context.targetArray = await game.erps.getTargetArray();
+    context.storedData = await erps.utils.retrieveLocal(context.storageKeys);
+    context.targetArray = await erps.utils.getTargetArray();
 
     this.targetArray = context.targetArray;
 
@@ -86,7 +91,7 @@ export class DamageTargets extends HandlebarsApplicationMixin(ApplicationV2) {
       [instance.storageKeys[2]]: form.formula.value,
       [instance.storageKeys[3]]: form.isHeal.checked,
     };
-    await game.erps.storeLocal(storageObject);
+    await erps.utils.storeLocal(storageObject);
   }
 
   static async #onSubmit(event, form, formData) {

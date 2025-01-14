@@ -28,10 +28,15 @@ export class RestoreTarget extends HandlebarsApplicationMixin(ApplicationV2) {
 
   static statusEffects = [];
 
+  async _preparePartContext(partId, context, options) {
+    context.partId = `${this.id}-${partId}`;
+    return context;
+  }
+
   async _prepareContext(options) {
     const context = {};
 
-    const targetTokens = await game.erps.getTargetArray();
+    const targetTokens = await erps.utils.getTargetArray();
     context.cssClass = RestoreTarget.DEFAULT_OPTIONS.classes.join(" ");
 
     if (targetTokens.length === 0) {
@@ -59,7 +64,7 @@ export class RestoreTarget extends HandlebarsApplicationMixin(ApplicationV2) {
 
   static async #onSubmit(event, form, formData) {
     console.log(this.statusEffects);
-    const targetArray = await game.erps.getTargetArray();
+    const targetArray = await erps.utils.getTargetArray();
     const actor = targetArray[0].actor;
 
     const selectedStatuses = this.statusEffects?.filter(
