@@ -7,6 +7,7 @@ import { EventideRpSystemItemSheet } from "./sheets/item-sheet.mjs";
 import { StatusCreator } from "./sheets/status-creator.mjs";
 import { DamageTargets } from "./sheets/damage-targets.mjs";
 import { RestoreTarget } from "./sheets/restore-target.mjs";
+import { IncrementTargetStatus } from "./sheets/increment-target-status.mjs";
 // Import helper/utility classes and constants.
 import { EVENTIDE_RP_SYSTEM } from "./helpers/config.mjs";
 // Import DataModel classes
@@ -49,6 +50,7 @@ globalThis.erps = {
     StatusCreator,
     DamageTargets,
     RestoreTarget,
+    IncrementTargetStatus,
   },
   messages: {
     createStatusMessage,
