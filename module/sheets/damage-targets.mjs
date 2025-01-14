@@ -95,8 +95,6 @@ export class DamageTargets extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 
   static async #onSubmit(event, form, formData) {
-    console.log(this.storageKeys);
-
     const damageOptions = {
       label: form.label.value || "Damage",
       formula: form.formula.value || "1",

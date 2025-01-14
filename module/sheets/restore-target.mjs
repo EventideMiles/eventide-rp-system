@@ -63,7 +63,6 @@ export class RestoreTarget extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 
   static async #onSubmit(event, form, formData) {
-    console.log(this.statusEffects);
     const targetArray = await erps.utils.getTargetArray();
     const actor = targetArray[0].actor;
 
