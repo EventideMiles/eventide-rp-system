@@ -1,6 +1,6 @@
-import { clamp } from "../../lib/eventide-library/common-foundry-tasks.js";
-import { rollHandler } from "../../lib/eventide-library/roll-dice.js";
-import { restoreMessage } from "../../lib/eventide-library/system-messages.js";
+import { clamp } from "../helpers/common-foundry-tasks.mjs";
+import { rollHandler } from "../helpers/roll-dice.mjs";
+import { restoreMessage } from "../helpers/system-messages.mjs";
 
 /**
  * Actor class for the Eventide RP System

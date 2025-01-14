@@ -1,6 +1,6 @@
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
-export class restoreTarget extends HandlebarsApplicationMixin(ApplicationV2) {
+export class RestoreTarget extends HandlebarsApplicationMixin(ApplicationV2) {
   static PARTS = {
     restoreTarget: {
       template: `systems/eventide-rp-system/templates/macros/restore-target.hbs`,
@@ -32,7 +32,7 @@ export class restoreTarget extends HandlebarsApplicationMixin(ApplicationV2) {
     const context = {};
 
     const targetTokens = await game.erps.getTargetArray();
-    context.cssClass = restoreTarget.DEFAULT_OPTIONS.classes.join(" ");
+    context.cssClass = RestoreTarget.DEFAULT_OPTIONS.classes.join(" ");
 
     if (targetTokens.length === 0) {
       ui.notifications.error(`Please target a token first!`);

@@ -1,6 +1,6 @@
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
-export class damageTargets extends HandlebarsApplicationMixin(ApplicationV2) {
+export class DamageTargets extends HandlebarsApplicationMixin(ApplicationV2) {
   static PARTS = {
     damageTargets: {
       template:
@@ -26,12 +26,12 @@ export class damageTargets extends HandlebarsApplicationMixin(ApplicationV2) {
       closeOnSubmit: true,
     },
     actions: {
-      store: damageTargets.store,
+      store: DamageTargets.store,
     },
   };
 
   constructor(number = 0) {
-    super(damageTargets.DEFAULT_OPTIONS, damageTargets.PARTS);
+    super(DamageTargets.DEFAULT_OPTIONS, DamageTargets.PARTS);
     this.number = Math.floor(number);
   }
 
@@ -49,7 +49,7 @@ export class damageTargets extends HandlebarsApplicationMixin(ApplicationV2) {
       `damage_${this.number}_isHeal`,
     ];
 
-    context.cssClass = damageTargets.DEFAULT_OPTIONS.classes.join(" ");
+    context.cssClass = DamageTargets.DEFAULT_OPTIONS.classes.join(" ");
     context.storageKeys = this.storageKeys;
     context.storedData = await game.erps.retrieveLocal(context.storageKeys);
     context.targetArray = await game.erps.getTargetArray();
@@ -74,7 +74,7 @@ export class damageTargets extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 
   static async store(event, target) {
-    damageTargets.#storeData(this, target.form);
+    DamageTargets.#storeData(this, target.form);
 
     this.close();
   }
@@ -102,6 +102,6 @@ export class damageTargets extends HandlebarsApplicationMixin(ApplicationV2) {
       this.targetArray.map((token) => token.actor.damageResolve(damageOptions))
     );
 
-    damageTargets.#storeData(this, form);
+    DamageTargets.#storeData(this, form);
   }
 }

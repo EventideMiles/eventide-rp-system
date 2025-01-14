@@ -1,6 +1,6 @@
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
-export class statusCreator extends HandlebarsApplicationMixin(ApplicationV2) {
+export class StatusCreator extends HandlebarsApplicationMixin(ApplicationV2) {
   static PARTS = {
     statusCreator: {
       template:
@@ -36,9 +36,9 @@ export class statusCreator extends HandlebarsApplicationMixin(ApplicationV2) {
   async _prepareContext(options) {
     const context = {};
 
-    context.cssClass = statusCreator.DEFAULT_OPTIONS.classes.join(" ");
-    context.abilities = statusCreator.abilities;
-    context.hiddenAbilities = statusCreator.hiddenAbilities;
+    context.cssClass = StatusCreator.DEFAULT_OPTIONS.classes.join(" ");
+    context.abilities = StatusCreator.abilities;
+    context.hiddenAbilities = StatusCreator.hiddenAbilities;
     context.targetArray = await game.erps.getTargetArray();
 
     if (context.targetArray.length === 0)
@@ -47,7 +47,7 @@ export class statusCreator extends HandlebarsApplicationMixin(ApplicationV2) {
       );
 
     context.storedData = await game.erps.retrieveLocal(
-      statusCreator.storageKeys
+      StatusCreator.storageKeys
     );
 
     context.returnedData = context.storedData.img;
@@ -55,8 +55,8 @@ export class statusCreator extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 
   static async #onSubmit(event, form, formData) {
-    const abilities = statusCreator.abilities;
-    const hiddenAbilities = statusCreator.hiddenAbilities;
+    const abilities = StatusCreator.abilities;
+    const hiddenAbilities = StatusCreator.hiddenAbilities;
 
     const targetArray = await game.erps.getTargetArray();
 
@@ -188,9 +188,9 @@ export class statusCreator extends HandlebarsApplicationMixin(ApplicationV2) {
 
     // store the data in localStorage
     const storageObject = {
-      [statusCreator.storageKeys[0]]: img,
-      [statusCreator.storageKeys[1]]: bgColor,
-      [statusCreator.storageKeys[2]]: textColor,
+      [StatusCreator.storageKeys[0]]: img,
+      [StatusCreator.storageKeys[1]]: bgColor,
+      [StatusCreator.storageKeys[2]]: textColor,
     };
 
     game.erps.storeLocal(storageObject);

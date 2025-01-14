@@ -1,4 +1,4 @@
-import { getTargetArray } from "./common-foundry-tasks.js";
+import { getTargetArray } from "./common-foundry-tasks.mjs";
 
 /**
  * Roll handler for the Eventide RP System

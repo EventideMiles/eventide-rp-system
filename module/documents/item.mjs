@@ -1,4 +1,4 @@
-import { rollHandler } from "../../lib/eventide-library/roll-dice.js";
+import { rollHandler } from "../helpers/roll-dice.mjs";
 
 /**
  * Extend the basic Item with some very simple modifications.

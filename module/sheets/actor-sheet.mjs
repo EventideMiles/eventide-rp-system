@@ -2,7 +2,7 @@ import {
   onManageActiveEffect,
   prepareActiveEffectCategories,
 } from "../helpers/effects.mjs";
-import { rollHandler } from "../../lib/eventide-library/roll-dice.js";
+import { rollHandler } from "../helpers/roll-dice.mjs";
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
