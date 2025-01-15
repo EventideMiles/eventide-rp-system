@@ -82,6 +82,12 @@ export class RestoreTarget extends HandlebarsApplicationMixin(ApplicationV2) {
     return context;
   }
 
+  async _renderFrame(options) {
+    const frame = await super._renderFrame(options);
+    frame.autocomplete = "off";
+    return frame;
+  }
+
   /**
    * Handle form submission to restore resources and remove status effects.
    * @param {Event} event - The form submission event

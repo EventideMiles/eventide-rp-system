@@ -31,31 +31,26 @@ export class StatusCreator extends HandlebarsApplicationMixin(ApplicationV2) {
     },
   };
 
-  /**
-   * List of standard abilities that can be modified by status effects
-   * @type {string[]}
-   */
   static abilities = ["Acro", "Phys", "Fort", "Will", "Wits"];
-
-  /**
-   * List of hidden abilities that can be modified by status effects
-   * @type {string[]}
-   */
   static hiddenAbilities = ["Dice", "Cmin", "Cmax", "Fmin", "Fmax"];
 
-  /**
-   * Keys used for storing status effect preferences in local storage
-   * @type {string[]}
-   */
-  static storageKeys = ["status_img", "status_bgColor", "status_textColor"];
+  constructor({ advanced = false, number = 0 } = {}) {
+    super();
+    this.number = Math.floor(number);
+    this.storageKeys = [
+      `status_${this.number}_img`,
+      `status_${this.number}_bgColor`,
+      `status_${this.number}_textColor`,
+    ];
+    if (advanced) {
+      this.hiddenAbilities = [...StatusCreator.hiddenAbilities];
+    } else {
+      this.hiddenAbilities = StatusCreator.hiddenAbilities.filter(
+        (ability) => ability !== "Cmax" && ability !== "Fmin"
+      );
+    }
+  }
 
-  /**
-   * Prepares the context data for a specific part of the form.
-   * @param {string} partId - The ID of the form part
-   * @param {Object} context - The context object to prepare
-   * @param {Object} options - Additional options
-   * @returns {Promise<Object>} The prepared context
-   */
   async _preparePartContext(partId, context, options) {
     context.partId = `${this.id}-${partId}`;
     return context;
@@ -71,7 +66,7 @@ export class StatusCreator extends HandlebarsApplicationMixin(ApplicationV2) {
 
     context.cssClass = StatusCreator.DEFAULT_OPTIONS.classes.join(" ");
     context.abilities = StatusCreator.abilities;
-    context.hiddenAbilities = StatusCreator.hiddenAbilities;
+    context.hiddenAbilities = this.hiddenAbilities;
     context.targetArray = await erps.utils.getTargetArray();
 
     if (context.targetArray.length === 0)
@@ -79,12 +74,22 @@ export class StatusCreator extends HandlebarsApplicationMixin(ApplicationV2) {
         `If you proceed status will only be created in compendium: not applied.`
       );
 
-    context.storedData = await erps.utils.retrieveLocal(
-      StatusCreator.storageKeys
-    );
+    const storedData = await erps.utils.retrieveLocal(this.storageKeys);
+
+    context.storedData = {
+      status_img: storedData[this.storageKeys[0]],
+      status_bgColor: storedData[this.storageKeys[1]],
+      status_textColor: storedData[this.storageKeys[2]],
+    };
 
     context.returnedData = context.storedData.img;
     return context;
+  }
+
+  async _renderFrame(options) {
+    const frame = await super._renderFrame(options);
+    frame.autocomplete = "off";
+    return frame;
   }
 
   /**
@@ -97,8 +102,9 @@ export class StatusCreator extends HandlebarsApplicationMixin(ApplicationV2) {
    * @private
    */
   static async #onSubmit(event, form, formData) {
+    console.log(form);
     const abilities = StatusCreator.abilities;
-    const hiddenAbilities = StatusCreator.hiddenAbilities;
+    const hiddenAbilities = this.hiddenAbilities;
 
     const targetArray = await erps.utils.getTargetArray();
 
@@ -116,6 +122,7 @@ export class StatusCreator extends HandlebarsApplicationMixin(ApplicationV2) {
 
     const effects = abilities
       .map((ability) => {
+        console.log(ability.toLowerCase());
         const value = parseInt(html[ability.toLowerCase()].value);
         if (value === 0) return null;
         const mode = html[`${ability.toLowerCase()}-mode`].value;
@@ -220,11 +227,11 @@ export class StatusCreator extends HandlebarsApplicationMixin(ApplicationV2) {
 
     // store the data in localStorage
     const storageObject = {
-      [StatusCreator.storageKeys[0]]: img,
-      [StatusCreator.storageKeys[1]]: bgColor,
-      [StatusCreator.storageKeys[2]]: textColor,
+      [this.storageKeys[0]]: img,
+      [this.storageKeys[1]]: bgColor,
+      [this.storageKeys[2]]: textColor,
     };
 
-    erps.utils.storeLocal(storageObject);
+    await erps.utils.storeLocal(storageObject);
   }
 }

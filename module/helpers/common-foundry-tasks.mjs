@@ -34,7 +34,7 @@ const clamp = (num, min, max) => {
  * @returns {boolean} Returns true if storage was successful, otherwise false if an error occurred.
  */
 
-const storeLocal = (storageObject) => {
+const storeLocal = async (storageObject) => {
   try {
     for (const item in storageObject) {
       localStorage.setItem(item, storageObject[item]);

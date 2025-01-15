@@ -75,6 +75,12 @@ export class IncrementTargetStatus extends HandlebarsApplicationMixin(
     return context;
   }
 
+  async _renderFrame(options) {
+    const frame = await super._renderFrame(options);
+    frame.autocomplete = "off";
+    return frame;
+  }
+
   /**
    * Handles form submission to update status effect values.
    * @param {Event} event - The form submission event

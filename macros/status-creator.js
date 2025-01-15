@@ -213,7 +213,7 @@ const main = async () => {
           failMinImpact,
         };
 
-        erps.utils.storeLocal(storageObject);
+        await erps.utils.storeLocal(storageObject);
       }
     },
   }).render(true);
