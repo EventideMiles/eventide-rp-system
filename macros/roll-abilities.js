@@ -1,5 +1,5 @@
 const Acrobatics = async () => {
-  const tokenArray = await game.erps.getSelectedArray();
+  const tokenArray = await erps.utils.getSelectedArray();
 
   if (!tokenArray.length)
     return ui.notifications.error("Please select a token.");
@@ -10,7 +10,7 @@ const Acrobatics = async () => {
 };
 
 const Physical = async () => {
-  const tokenArray = await game.erps.getSelectedArray();
+  const tokenArray = await erps.utils.getSelectedArray();
 
   if (!tokenArray.length)
     return ui.notifications.error("Please select a token.");
@@ -20,7 +20,7 @@ const Physical = async () => {
   }
 };
 const Fortitude = async () => {
-  const tokenArray = await game.erps.getSelectedArray();
+  const tokenArray = await erps.utils.getSelectedArray();
 
   if (!tokenArray.length)
     return ui.notifications.error("Please select a token.");
@@ -30,7 +30,7 @@ const Fortitude = async () => {
   }
 };
 const Will = async () => {
-  const tokenArray = await game.erps.getSelectedArray();
+  const tokenArray = await erps.utils.getSelectedArray();
 
   if (!tokenArray.length)
     return ui.notifications.error("Please select a token.");
@@ -40,7 +40,7 @@ const Will = async () => {
   }
 };
 const Wits = async () => {
-  const tokenArray = await game.erps.getSelectedArray();
+  const tokenArray = await erps.utils.getSelectedArray();
 
   if (!tokenArray.length)
     return ui.notifications.error("Please select a token.");

@@ -4,7 +4,14 @@ Copyright (c) 2024 Dalton Sterritt
 
 All rights reserved
 
-BOILERPLATE LICENSES
+BOILERPLATE LICENSES AND ACKNOWLEDGEMENTS
+
+This system was started on the back of the Boilerplate system and though it 
+has grown a lot since then I could not have gotten as far as I have without 
+their code. Their code: https://github.com/asacolips-projects/boilerplate
+
+Their code is licensed MIT but mine is currently All Rights Reserved
+for the time being.
 
 MIT License
 

@@ -1,0 +1,25 @@
+<div class="{{cssClass}}" autocomplete="off">
+  <div>This script is to allow you to change the values
+    on an existing status condition easily.
+  </div>
+  <div class="form-group">
+    <label for="statusSelector">Status:</label>
+    <select id="statusSelector" name="statusSelector">
+      {{#each statuses as |status|}}
+        <option value="{{status.id}}">{{status.name}}</option>
+      {{/each}}
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="addChange">Add Change:</label>
+    <input type="number" id="addChange" name="addChange" value="0">
+  </div>
+  <div class="form-group">
+    <label for="overrideChange">Override Change:</label>
+    <input type="number" id="overrideChange" name="overrideChange" value="0">
+  </div>
+  <div class="form-group">
+    <button type="submit">Increment</button>
+    <button type="button" data-action="close">Close</button>
+  </div>
+</div>

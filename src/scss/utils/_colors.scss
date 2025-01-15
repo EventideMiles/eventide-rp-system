@@ -1,16 +1,53 @@
-$c-white: #fff;
-$c-black: #000;
+:root {
+  --eventide-rp-system-c-dark: #191813;
+  --eventide-rp-system-c-faint: #c9c7b8;
+  --eventide-rp-system-c-beige: #b5b3a4;
+  --eventide-rp-system-c-tan: #444444;
+  --eventide-rp-system-c-white: #ffffff;
+  --eventide-rp-system-c-black: #000000;
+  --eventide-rp-system-c-groove: #eeede0;
+  --eventide-rp-system-character-input: rgba(white, 0.45);
+  --eventide-rp-system-character-input-border: rgba(black, 0.5);
+}
 
-$c-dark: #191813;
-$c-faint: #c9c7b8;
-$c-beige: #b5b3a4;
-$c-tan: #444;
+.theme-dark {
+  --eventide-rp-system-c-dark: #c9c7b8;
+  --eventide-rp-system-c-faint: #191813;
+  --eventide-rp-system-c-beige: #444444;
+  --eventide-rp-system-c-tan: #b5b3a4;
+  --eventide-rp-system-c-white: #000000;
+  --eventide-rp-system-c-black: #ffffff;
+  --eventide-rp-system-c-groove: #11121f;
+  --eventide-rp-system-character-input: rgba(black, 0.45);
+  --eventide-rp-system-character-input-border: rgba(white, 0.5);
+}
+
+$c-white: var(--eventide-rp-system-c-white);
+$c-black: var(--eventide-rp-system-c-black);
+
+$c-dark: var(--eventide-rp-system-c-dark);
+$c-faint: var(--eventide-rp-system-c-faint);
+$c-beige: var(--eventide-rp-system-c-beige);
+$c-tan: var(--eventide-rp-system-c-tan);
+
+$c-groove: var(--eventide-rp-system-c-groove);
+
+// Chat card colors: here because chat doesn't support 
+// dark backgrounds because its overridden by an image.
+$card-white: #ffffff;
+$card-black: #000000;
+$card-tan: #444444;
+
+// Character sheet colors
+$character-black: #000000;
+$character-white: #ffffff;
+
 
 $app-bg: linear-gradient(to bottom, #004d9f8a, #0029708a);
 
 $character-glow: #007bffb3;
-$character-input: rgba($c-black, 0.45);
-$character-input-border: rgba($c-white, 0.5);
+$character-input: var(--eventide-rp-system-character-input);
+$character-input-border: var(--eventide-rp-system-character-input-border);
 $character-background-color: linear-gradient(to bottom, #44628389, #33486876);
 $secondary-image-background: rgba($c-black, 0.8);
 

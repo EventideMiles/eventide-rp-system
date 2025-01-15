@@ -4,45 +4,63 @@ import { EventideRpSystemItem } from "./documents/item.mjs";
 // Import sheet classes.
 import { EventideRpSystemActorSheet } from "./sheets/actor-sheet.mjs";
 import { EventideRpSystemItemSheet } from "./sheets/item-sheet.mjs";
-import { statusCreator } from "./sheets/status-creator.mjs";
-import { damageTargets } from "./sheets/damage-targets.mjs";
-import { restoreTarget } from "./sheets/restore-target.mjs";
+import { StatusCreator } from "./sheets/status-creator.mjs";
+import { DamageTargets } from "./sheets/damage-targets.mjs";
+import { RestoreTarget } from "./sheets/restore-target.mjs";
+import { IncrementTargetStatus } from "./sheets/increment-target-status.mjs";
 // Import helper/utility classes and constants.
-import { preloadHandlebarsTemplates } from "./helpers/templates.mjs";
 import { EVENTIDE_RP_SYSTEM } from "./helpers/config.mjs";
 // Import DataModel classes
 import * as models from "./data/_module.mjs";
-// Import system libraries
-import {
-  createStatusMessage,
-  deleteStatusMessage,
-} from "../lib/eventide-library/system-messages.js";
 import {
   getSelectedArray,
   getTargetArray,
-  storeLocal,
   retrieveLocal,
-} from "../lib/eventide-library/common-foundry-tasks.js";
+  storeLocal,
+} from "./helpers/common-foundry-tasks.mjs";
+import {
+  createStatusMessage,
+  deleteStatusMessage,
+  restoreMessage,
+} from "./helpers/system-messages.mjs";
+
 /* -------------------------------------------- */
 /*  Init Hook                                   */
 /* -------------------------------------------- */
 
-Hooks.once("init", function () {
-  // Add utility classes to the global game object so that they're more easily
-  // accessible in global contexts.
-  game.erps = {
+// Add key classes to the global scope so they can be more easily used
+// by downstream developers
+globalThis.erps = {
+  documents: {
     EventideRpSystemActor,
     EventideRpSystemItem,
-    statusCreator,
-    damageTargets,
+  },
+  applications: {
+    EventideRpSystemActorSheet,
+    EventideRpSystemItemSheet,
+  },
+  utils: {
     rollItemMacro,
     getTargetArray,
     getSelectedArray,
     storeLocal,
     retrieveLocal,
-    restoreTarget,
-  };
+  },
+  macros: {
+    StatusCreator,
+    DamageTargets,
+    RestoreTarget,
+    IncrementTargetStatus,
+  },
+  messages: {
+    createStatusMessage,
+    deleteStatusMessage,
+    restoreMessage,
+  },
+  models,
+};
 
+Hooks.once("init", function () {
   // Add custom constants for configuration.
   CONFIG.EVENTIDE_RP_SYSTEM = EVENTIDE_RP_SYSTEM;
 
@@ -67,7 +85,7 @@ Hooks.once("init", function () {
   };
   CONFIG.Item.documentClass = EventideRpSystemItem;
   CONFIG.Item.dataModels = {
-    item: models.EventideRpSystemItem,
+    gear: models.EventideRpSystemGear,
     feature: models.EventideRpSystemFeature,
     spell: models.EventideRpSystemSpell,
     status: models.EventideRpSystemStatus,
@@ -89,9 +107,6 @@ Hooks.once("init", function () {
     makeDefault: true,
     label: "EVENTIDE_RP_SYSTEM.SheetLabels.Item",
   });
-
-  // Preload Handlebars templates.
-  return preloadHandlebarsTemplates();
 });
 
 /* -------------------------------------------- */
@@ -155,7 +170,7 @@ Handlebars.registerHelper("debug", function (optionalValue) {
 
 Hooks.once("ready", function () {
   // Wait to register hotbar drop hook on ready so that modules could register earlier if they want to
-  Hooks.on("hotbarDrop", (bar, data, slot) => createItemMacro(data, slot));
+  Hooks.on("hotbarDrop", (bar, data, slot) => createDocMacro(data, slot));
 });
 
 /* -------------------------------------------- */
@@ -165,11 +180,11 @@ Hooks.once("ready", function () {
 /**
  * Create a Macro from an Item drop.
  * Get an existing item macro if one exists, otherwise create a new one.
- * @param {Object} data     The dropped data
- * @param {number} slot     The hotbar slot to use
- * @returns {Promise}
+ * @param {Object} data - The dropped data containing item information
+ * @param {number} slot - The hotbar slot to use for the macro
+ * @returns {Promise<Macro|null>} The created or existing macro, or null if creation fails
  */
-async function createItemMacro(data, slot) {
+async function createDocMacro(data, slot) {
   // First, determine if this is a valid owned item.
   if (data.type !== "Item") return;
   if (!data.uuid.includes("Actor.") && !data.uuid.includes("Token.")) {
@@ -181,7 +196,7 @@ async function createItemMacro(data, slot) {
   const item = await Item.fromDropData(data);
 
   // Create the macro command using the uuid.
-  const command = `game.erps.rollItemMacro("${data.uuid}");`;
+  const command = `erps.utils.rollItemMacro("${data.uuid}");`;
   let macro = game.macros.find(
     (m) => m.name === item.name && m.command === command
   );
@@ -199,11 +214,11 @@ async function createItemMacro(data, slot) {
 }
 
 /**
- * Create a Macro from an Item drop.
- * Get an existing item macro if one exists, otherwise create a new one.
- * @param {string} itemUuid
+ * Execute a macro created from an Item drop.
+ * @param {string} itemUuid - The UUID of the item to roll
+ * @returns {Promise<void>}
  */
-function rollItemMacro(itemUuid) {
+async function rollItemMacro(itemUuid) {
   // Reconstruct the drop data so that we can load the item.
   const dropData = {
     type: "Item",
@@ -227,8 +242,21 @@ function rollItemMacro(itemUuid) {
 /* -------------------------------------------- */
 /*  System Hooks                                */
 /* -------------------------------------------- */
+Hooks.on("updateItem", (item, changed, options, triggerPlayer) => {
+  if (
+    item.type === "status" &&
+    item.system.description &&
+    item.actor !== null &&
+    game.user.id === triggerPlayer
+  ) {
+    createStatusMessage(item);
+  }
+});
+
 Hooks.on("closeEventideRpSystemItemSheet", (app) => {
-  const item = app.object;
+  const item = app.document;
+
+  console.log(item);
 
   if (item.type === "status" && item.system.description && app.actor !== null) {
     createStatusMessage(item);

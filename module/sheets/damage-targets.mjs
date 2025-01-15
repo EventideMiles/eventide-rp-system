@@ -1,6 +1,11 @@
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
-export class damageTargets extends HandlebarsApplicationMixin(ApplicationV2) {
+/**
+ * Application for managing damage to targeted tokens.
+ * @extends {HandlebarsApplicationMixin(ApplicationV2)}
+ */
+export class DamageTargets extends HandlebarsApplicationMixin(ApplicationV2) {
+  /** @override */
   static PARTS = {
     damageTargets: {
       template:
@@ -8,6 +13,7 @@ export class damageTargets extends HandlebarsApplicationMixin(ApplicationV2) {
     },
   };
 
+  /** @override */
   static DEFAULT_OPTIONS = {
     id: "damage-targets",
     classes: ["eventide-rp-system", "standard-form", "damage-targets"],
@@ -26,19 +32,42 @@ export class damageTargets extends HandlebarsApplicationMixin(ApplicationV2) {
       closeOnSubmit: true,
     },
     actions: {
-      store: damageTargets.store,
+      store: DamageTargets.store,
     },
   };
 
+  /**
+   * @constructor
+   * @param {number} [number=0] - Damage instance number for multiple damage applications
+   */
   constructor(number = 0) {
-    super(damageTargets.DEFAULT_OPTIONS, damageTargets.PARTS);
+    super(DamageTargets.DEFAULT_OPTIONS, DamageTargets.PARTS);
     this.number = Math.floor(number);
   }
 
+  /** @type {Token[]} Array of targeted tokens */
   static targetArray = [];
 
+  /** @type {string[]} Keys for storing damage preferences */
   static storageKeys = [];
 
+  /**
+   * Prepare context data for a specific part of the form.
+   * @param {string} partId - The ID of the form part
+   * @param {Object} context - The context object to prepare
+   * @param {Object} options - Additional options
+   * @returns {Promise<Object>} The prepared context
+   */
+  async _preparePartContext(partId, context, options) {
+    context.partId = `${this.id}-${partId}`;
+    return context;
+  }
+
+  /**
+   * Prepare the main context data for the form.
+   * @param {Object} options - Form options
+   * @returns {Promise<Object>} The prepared context
+   */
   async _prepareContext(options) {
     const context = {};
 
@@ -49,10 +78,10 @@ export class damageTargets extends HandlebarsApplicationMixin(ApplicationV2) {
       `damage_${this.number}_isHeal`,
     ];
 
-    context.cssClass = damageTargets.DEFAULT_OPTIONS.classes.join(" ");
+    context.cssClass = DamageTargets.DEFAULT_OPTIONS.classes.join(" ");
     context.storageKeys = this.storageKeys;
-    context.storedData = await game.erps.retrieveLocal(context.storageKeys);
-    context.targetArray = await game.erps.getTargetArray();
+    context.storedData = await erps.utils.retrieveLocal(context.storageKeys);
+    context.targetArray = await erps.utils.getTargetArray();
 
     this.targetArray = context.targetArray;
 
@@ -73,25 +102,14 @@ export class damageTargets extends HandlebarsApplicationMixin(ApplicationV2) {
     return context;
   }
 
-  static async store(event, target) {
-    damageTargets.#storeData(this, target.form);
-
-    this.close();
-  }
-
-  static async #storeData(instance, form) {
-    const storageObject = {
-      [instance.storageKeys[0]]: form.label.value,
-      [instance.storageKeys[1]]: form.description.value,
-      [instance.storageKeys[2]]: form.formula.value,
-      [instance.storageKeys[3]]: form.isHeal.checked,
-    };
-    await game.erps.storeLocal(storageObject);
-  }
-
+  /**
+   * Handle form submission to apply damage to targets.
+   * @param {Event} event - The form submission event
+   * @param {HTMLFormElement} form - The form element
+   * @param {FormData} formData - The form data
+   * @private
+   */
   static async #onSubmit(event, form, formData) {
-    console.log(this.storageKeys);
-
     const damageOptions = {
       label: form.label.value || "Damage",
       formula: form.formula.value || "1",
@@ -102,6 +120,34 @@ export class damageTargets extends HandlebarsApplicationMixin(ApplicationV2) {
       this.targetArray.map((token) => token.actor.damageResolve(damageOptions))
     );
 
-    damageTargets.#storeData(this, form);
+    DamageTargets.#storeData(this, form);
+  }
+
+  /**
+   * Store damage preferences in local storage.
+   * @param {Event} event - The triggering event
+   * @param {HTMLElement} target - The target element
+   * @static
+   */
+  static async store(event, target) {
+    DamageTargets.#storeData(this, target.form);
+
+    this.close();
+  }
+
+  /**
+   * Store damage preferences in local storage.
+   * @param {DamageTargets} instance - The DamageTargets instance
+   * @param {HTMLFormElement} form - The form element
+   * @private
+   */
+  static async #storeData(instance, form) {
+    const storageObject = {
+      [instance.storageKeys[0]]: form.label.value,
+      [instance.storageKeys[1]]: form.description.value,
+      [instance.storageKeys[2]]: form.formula.value,
+      [instance.storageKeys[3]]: form.isHeal.checked,
+    };
+    await erps.utils.storeLocal(storageObject);
   }
 }

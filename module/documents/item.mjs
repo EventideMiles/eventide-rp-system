@@ -1,13 +1,12 @@
-import { rollHandler } from "../../lib/eventide-library/roll-dice.js";
+import { rollHandler } from "../helpers/roll-dice.mjs";
 
 /**
- * Extend the basic Item with some very simple modifications.
+ * Extended Item class for the Eventide RP System.
+ * Provides additional functionality for items including roll data preparation and chat message creation.
  * @extends {Item}
  */
 export class EventideRpSystemItem extends Item {
-  /**
-   * Augment the basic Item data model with additional dynamic data.
-   */
+  /** @override */
   prepareData() {
     // As with the actor class, items are documents that can have their data
     // preparation methods overridden (such as prepareBaseData()).
@@ -15,8 +14,9 @@ export class EventideRpSystemItem extends Item {
   }
 
   /**
-   * Prepare a data object which defines the data schema used by dice roll commands against this Item
+   * Prepare roll data for the item.
    * @override
+   * @returns {Object} The prepared roll data
    */
   getRollData() {
     // Starts off by populating the roll data with a shallow copy of `this.system`
@@ -32,13 +32,8 @@ export class EventideRpSystemItem extends Item {
   }
 
   /**
-   * Convert the actor document to a plain object.
-   *
-   * The built in `toObject()` method will ignore derived data when using Data Models.
-   * This additional method will instead use the spread operator to return a simplified
-   * version of the data.
-   *
-   * @returns {object} Plain object either via deepClone or the spread operator.
+   * Convert the item document to a plain object.
+   * @returns {Object} Plain object representation of the item
    */
   toPlainObject() {
     const result = { ...this };
@@ -53,11 +48,11 @@ export class EventideRpSystemItem extends Item {
   }
 
   /**
-   * Handle clickable rolls.
-   * @param {Event} event   The originating click event
-   * @private
+   * Handle a click event on the item.
+   * @param {Event} event - The triggering click event
+   * @returns {Promise<void>}
    */
-  async roll() {
+  async roll(event) {
     const item = this;
 
     // Initialize chat data.

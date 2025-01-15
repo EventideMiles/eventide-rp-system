@@ -4,7 +4,7 @@
 .chat-card {
     &__header {
         @extend .protest-revolution-regular;
-        color: colors.$c-white;
+        color: colors.$card-white;
         text-align: center;
         padding: 0.875rem;
         font-size: 1.125rem;
@@ -79,7 +79,7 @@
 
     &__description {
         @extend .underdog-regular;
-        color: colors.$c-tan;
+        color: colors.$card-tan;
         text-align: justify;
         font-size: 0.9rem;
         padding: 0.01rem;
@@ -87,13 +87,13 @@
         &--header {
             text-align: justify;
             font-size: 1.2rem;
-            color: colors.$c-tan;
+            color: colors.$card-tan;
         }
 
         &--header-center-underline {
             text-align: center;
             font-size: 1.2rem;
-            color: colors.$c-tan;
+            color: colors.$card-tan;
             border-bottom: 1px solid colors.$description-hr;
         }
     }
@@ -103,7 +103,7 @@
         text-align: justify;
         font-size: 0.7rem;
         padding: 0rem;
-        color: colors.$c-tan;
+        color: colors.$card-tan;
 
 
         &--ac-check {
@@ -123,7 +123,7 @@
             padding-bottom: 0.2rem;
             margin-bottom: 3px;
             background-color: colors.$effect;
-            color: colors.$c-white;
+            color: colors.$card-white;
         }
 
         &--hit {
@@ -133,7 +133,7 @@
             padding: 0.0875rem;
             font-size: 0.7rem;
             margin-bottom: 0px;
-            border: 1px solid colors.$c-white;
+            border: 1px solid colors.$card-white;
         }
 
         &--miss {
@@ -143,12 +143,12 @@
             padding: 0.0875rem;
             font-size: 0.7rem;
             margin-bottom: 0px;
-            border: 1px solid colors.$c-white;
+            border: 1px solid colors.$card-white;
         }
 
         &--name {
             font-weight: bolder;
-            color: colors.$c-black;
+            color: colors.$card-black;
             font-size: 0.75rem;
         }
 
@@ -162,7 +162,7 @@
             div {
                 padding-left: 3px;
                 padding-right: 3px;
-                border-bottom: 1px dashed colors.$c-tan;
+                border-bottom: 1px dashed colors.$card-tan;
             }
 
             div:first-child,
@@ -171,7 +171,7 @@
             }
 
             div:last-child {
-                border-left: 1px dashed colors.$c-tan;
+                border-left: 1px dashed colors.$card-tan;
             }
 
             div:not(:first-child):not(:last-child) {

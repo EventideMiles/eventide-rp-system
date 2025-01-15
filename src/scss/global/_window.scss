@@ -1,31 +1,15 @@
 @use "../utils/typography";
-@use "../utils/colors"as colors;
-@use "../global/character-sheet";
+@use "../utils/colors";
 
 .window-app {
   font-family: typography.$font-primary;
-  background: colors.$character-background-color;
 }
-
-.app {
-  background-image: colors.$app-bg;
-}
-
-.window-content {
-  background: colors.$character-background-color;
-  padding: 0px;
-}
-
-// .window-content form,
-// .window-content .dialog-buttons {
-//   @extend .eventide-character-sheet;
-// }
 
 .rollable {
 
   &:hover,
   &:focus {
-    color: #000;
+    color: colors.$c-black;
     text-shadow: 0 0 10px red;
     cursor: pointer;
   }

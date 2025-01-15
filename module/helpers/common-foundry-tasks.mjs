@@ -16,6 +16,13 @@ const getSelectedArray = async () => {
   return canvas.tokens.controlled;
 };
 
+/**
+ * Clamps a number between a minimum and maximum value.
+ * @param {number} num - The number to clamp
+ * @param {number} min - The minimum value
+ * @param {number} max - The maximum value
+ * @returns {number} The clamped value
+ */
 const clamp = (num, min, max) => {
   return Math.min(Math.max(num, min), max);
 };

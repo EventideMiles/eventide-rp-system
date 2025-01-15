@@ -8,6 +8,39 @@
       "discord": "@lunarrush"
     }
   ],
+  "documentTypes": {
+    "Actor": {
+      "character": {
+        "htmlFields": ["biography"]
+      },
+      "npc": {
+        "htmlFields": ["biography"]
+      }
+    },
+    "Item": {
+      "feature": {
+        "htmlFields": ["description"]
+      },
+      "gear": {
+        "htmlFields": ["description"]
+      },
+      "spell": {
+        "htmlFields": ["description"]
+      },
+      "status": {
+        "htmlFields": ["description"]
+      },
+      "item": {
+        "htmlFields": ["description"]
+      }
+    }
+  },
+  "flags": {
+    "hotReload": {
+      "extensions": ["css", "html", "hbs", "json"],
+      "paths": ["css", "lang", "templates"]
+    }
+  },
   "url": "Replace this with a link to your public repository",
   "license": "LICENSE.txt",
   "readme": "README.md",
@@ -20,10 +53,10 @@
       "thumbnail": "systems/eventide-rp-system/assets/anvil-impact.png"
     }
   ],
-  "version": "0.5.4",
+  "version": "0.6.3",
   "compatibility": {
-    "minimum": 12,
-    "verified": 12
+    "minimum": "12.328",
+    "verified": "12.328"
   },
   "esmodules": ["module/eventide-rp-system.mjs"],
   "styles": ["css/eventide-rp-system.css"],
@@ -34,15 +67,23 @@
       "path": "lang/en.json"
     }
   ],
-  "packs": [],
+  "packs": [
+    {
+      "name": "erps-macros",
+      "label": "ERPS Macros",
+      "type": "Macro"
+    }
+  ],
   "packFolders": [],
   "socket": false,
   "manifest": "Replace this with a link to the /latest release system.json so people can receive updates after they've installed the system",
   "download": "This must link to a .zip file of the current version",
   "background": "systems/eventide-rp-system/assets/anvil-impact.png",
   "grid": {
+    "type": 1,
     "distance": 5,
-    "units": "ft"
+    "units": "ft",
+    "diagonals": 0
   },
   "primaryTokenAttribute": "resolve",
   "secondaryTokenAttribute": "power"

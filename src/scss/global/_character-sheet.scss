@@ -2,10 +2,20 @@
 @use "../utils/typography"as typography;
 
 .eventide-ability-row {
-  border: 1px solid colors.$c-black;
+  border: 1px solid colors.$character-white;
   border-radius: 5px;
   padding: 5px;
-  color: colors.$c-white;
+  color: colors.$character-white;
+}
+
+.features {
+  overflow-y: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 .eventide-character-sheet {
@@ -25,13 +35,13 @@
 }
 
 .eventide-character-sheet input::selection {
-  background: colors.$item;
-  color: colors.$c-white;
+  background: colors.$character-black;
+  color: colors.$character-white;
 }
 
 .eventide-ability-row :hover:not(input) {
-  text-shadow: 1px 1px 1px 1px colors.$c-white, 5px 5px 5px 5px colors.$character-glow, 10px 10px 10px 10px colors.$character-glow;
-  color: colors.$c-white;
+  text-shadow: 1px 1px 1px 1px colors.$character-black, 5px 5px 5px 5px colors.$character-glow, 10px 10px 10px 10px colors.$character-glow;
+  color: colors.$character-white;
 }
 
 .eventide-ability-acro-box {
