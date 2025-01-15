@@ -80,8 +80,8 @@ export class DamageTargets extends HandlebarsApplicationMixin(ApplicationV2) {
 
     context.cssClass = DamageTargets.DEFAULT_OPTIONS.classes.join(" ");
     context.storageKeys = this.storageKeys;
-    context.storedData = await erps.utils.retrieveLocal(context.storageKeys);
-    context.targetArray = await erps.utils.getTargetArray();
+    context.storedData = erps.utils.retrieveLocal(context.storageKeys);
+    context.targetArray = erps.utils.getTargetArray();
 
     this.targetArray = context.targetArray;
 
@@ -100,6 +100,12 @@ export class DamageTargets extends HandlebarsApplicationMixin(ApplicationV2) {
     }
 
     return context;
+  }
+
+  async _renderFrame(options) {
+    const frame = await super._renderFrame(options);
+    frame.autocomplete = "off";
+    return frame;
   }
 
   /**
@@ -148,6 +154,6 @@ export class DamageTargets extends HandlebarsApplicationMixin(ApplicationV2) {
       [instance.storageKeys[2]]: form.formula.value,
       [instance.storageKeys[3]]: form.isHeal.checked,
     };
-    await erps.utils.storeLocal(storageObject);
+    erps.utils.storeLocal(storageObject);
   }
 }

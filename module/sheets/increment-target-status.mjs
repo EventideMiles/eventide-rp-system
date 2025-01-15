@@ -53,7 +53,7 @@ export class IncrementTargetStatus extends HandlebarsApplicationMixin(
   async _prepareContext(options) {
     const context = {};
 
-    const targetArray = await erps.utils.getTargetArray();
+    const targetArray = erps.utils.getTargetArray();
 
     if (targetArray.length === 0) {
       ui.notifications.error(`Please target a token first!`);
@@ -73,6 +73,12 @@ export class IncrementTargetStatus extends HandlebarsApplicationMixin(
     );
 
     return context;
+  }
+
+  async _renderFrame(options) {
+    const frame = await super._renderFrame(options);
+    frame.autocomplete = "off";
+    return frame;
   }
 
   /**
