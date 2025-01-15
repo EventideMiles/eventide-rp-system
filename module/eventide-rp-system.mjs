@@ -247,6 +247,7 @@ Hooks.on("updateItem", (item, changed, options, triggerPlayer) => {
     item.type === "status" &&
     item.system.description &&
     item.actor !== null &&
+    item.actor !== undefined &&
     game.user.id === triggerPlayer
   ) {
     createStatusMessage(item);
