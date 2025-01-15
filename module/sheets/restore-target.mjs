@@ -56,7 +56,7 @@ export class RestoreTarget extends HandlebarsApplicationMixin(ApplicationV2) {
   async _prepareContext(options) {
     const context = {};
 
-    const targetTokens = await erps.utils.getTargetArray();
+    const targetTokens = erps.utils.getTargetArray();
     context.cssClass = RestoreTarget.DEFAULT_OPTIONS.classes.join(" ");
 
     if (targetTokens.length === 0) {
@@ -82,6 +82,12 @@ export class RestoreTarget extends HandlebarsApplicationMixin(ApplicationV2) {
     return context;
   }
 
+  async _renderFrame(options) {
+    const frame = await super._renderFrame(options);
+    frame.autocomplete = "off";
+    return frame;
+  }
+
   /**
    * Handle form submission to restore resources and remove status effects.
    * @param {Event} event - The form submission event
@@ -90,7 +96,7 @@ export class RestoreTarget extends HandlebarsApplicationMixin(ApplicationV2) {
    * @private
    */
   static async #onSubmit(event, form, formData) {
-    const targetArray = await erps.utils.getTargetArray();
+    const targetArray = erps.utils.getTargetArray();
     const actor = targetArray[0].actor;
 
     const selectedStatuses = this.statusEffects?.filter(
