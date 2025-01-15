@@ -4,7 +4,7 @@ export class IncrementTargetStatus extends HandlebarsApplicationMixin(
   ApplicationV2
 ) {
   static PARTS = {
-    icrementTargetStatus: {
+    incrementTargetStatus: {
       template: `systems/eventide-rp-system/templates/macros/increment-target-status.hbs`,
     },
   };
@@ -13,7 +13,7 @@ export class IncrementTargetStatus extends HandlebarsApplicationMixin(
     id: "increment-target-status",
     classes: ["eventide-rp-system", "standard-form", "increment-target-status"],
     position: {
-      width: 320,
+      width: 500,
       height: "auto",
     },
     tag: "form",
@@ -59,6 +59,50 @@ export class IncrementTargetStatus extends HandlebarsApplicationMixin(
   }
 
   static async #onSubmit(event, form, formData) {
-    console.log(form.statusSelector.value);
+    const statusId = form.statusSelector.value;
+    const target = this.target;
+
+    if (!target || !statusId) {
+      ui.notifications.error("Missing target or status selection!");
+      return;
+    }
+
+    const status = target.actor.items.get(statusId);
+    if (!status) {
+      ui.notifications.error("Selected status not found!");
+      return;
+    }
+
+    // Get the current values from the status effects
+    const effects = status.effects.contents[0];
+    if (!effects) {
+      ui.notifications.error("No effects found on status!");
+      return;
+    }
+
+    // Get the increment values from the form
+    const addChange = parseInt(form.addChange.value) || 0;
+    const overrideChange = parseInt(form.overrideChange.value) || 0;
+
+    // Update each change value in the effects based on its mode
+    const updatedChanges = effects.changes.map((change) => {
+      const newChange = foundry.utils.deepClone(change);
+      if (change.mode === CONST.ACTIVE_EFFECT_MODES.ADD) {
+        newChange.value = parseInt(change.value) + addChange;
+      } else if (change.mode === CONST.ACTIVE_EFFECT_MODES.OVERRIDE) {
+        newChange.value = parseInt(change.value) + overrideChange;
+      }
+      return newChange;
+    });
+
+    // Update the item with the modified effects
+    await status.update({
+      effects: [
+        {
+          ...effects.toObject(),
+          changes: updatedChanges,
+        },
+      ],
+    });
   }
 }

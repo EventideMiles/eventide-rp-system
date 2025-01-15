@@ -242,6 +242,23 @@ function rollItemMacro(itemUuid) {
 /* -------------------------------------------- */
 /*  System Hooks                                */
 /* -------------------------------------------- */
+Hooks.on("updateItem", (item, changed, options, triggerPlayer) => {
+  console.log("Called");
+  console.log(item);
+  console.log(changed);
+  console.log(options);
+  console.log(triggerPlayer);
+
+  if (
+    item.type === "status" &&
+    item.system.description &&
+    item.actor !== null &&
+    game.user.id === triggerPlayer
+  ) {
+    createStatusMessage(item);
+  }
+});
+
 Hooks.on("closeEventideRpSystemItemSheet", (app) => {
   const item = app.document;
 
