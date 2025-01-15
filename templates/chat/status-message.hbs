@@ -25,7 +25,9 @@
               {{#ifCond (keySplit this.key 4) "===" "disadvantage"}}
                 dis
               {{/ifCond}}
+              {{#ifCond (keySplit this.key 3) "===" "change"}}
                 add
+              {{/ifCond}}
             {{/ifCond}}
           </div>
           <div class="align-center">{{this.value}}</div>
