@@ -53,7 +53,7 @@ export class IncrementTargetStatus extends HandlebarsApplicationMixin(
   async _prepareContext(options) {
     const context = {};
 
-    const targetArray = erps.utils.getTargetArray();
+    const targetArray = await erps.utils.getTargetArray();
 
     if (targetArray.length === 0) {
       ui.notifications.error(`Please target a token first!`);

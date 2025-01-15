@@ -80,8 +80,8 @@ export class DamageTargets extends HandlebarsApplicationMixin(ApplicationV2) {
 
     context.cssClass = DamageTargets.DEFAULT_OPTIONS.classes.join(" ");
     context.storageKeys = this.storageKeys;
-    context.storedData = erps.utils.retrieveLocal(context.storageKeys);
-    context.targetArray = erps.utils.getTargetArray();
+    context.storedData = await erps.utils.retrieveLocal(context.storageKeys);
+    context.targetArray = await erps.utils.getTargetArray();
 
     this.targetArray = context.targetArray;
 
@@ -154,6 +154,6 @@ export class DamageTargets extends HandlebarsApplicationMixin(ApplicationV2) {
       [instance.storageKeys[2]]: form.formula.value,
       [instance.storageKeys[3]]: form.isHeal.checked,
     };
-    erps.utils.storeLocal(storageObject);
+    await erps.utils.storeLocal(storageObject);
   }
 }

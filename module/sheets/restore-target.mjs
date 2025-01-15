@@ -56,7 +56,7 @@ export class RestoreTarget extends HandlebarsApplicationMixin(ApplicationV2) {
   async _prepareContext(options) {
     const context = {};
 
-    const targetTokens = erps.utils.getTargetArray();
+    const targetTokens = await erps.utils.getTargetArray();
     context.cssClass = RestoreTarget.DEFAULT_OPTIONS.classes.join(" ");
 
     if (targetTokens.length === 0) {
@@ -96,7 +96,7 @@ export class RestoreTarget extends HandlebarsApplicationMixin(ApplicationV2) {
    * @private
    */
   static async #onSubmit(event, form, formData) {
-    const targetArray = erps.utils.getTargetArray();
+    const targetArray = await erps.utils.getTargetArray();
     const actor = targetArray[0].actor;
 
     const selectedStatuses = this.statusEffects?.filter(

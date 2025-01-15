@@ -67,14 +67,14 @@ export class StatusCreator extends HandlebarsApplicationMixin(ApplicationV2) {
     context.cssClass = StatusCreator.DEFAULT_OPTIONS.classes.join(" ");
     context.abilities = StatusCreator.abilities;
     context.hiddenAbilities = this.hiddenAbilities;
-    context.targetArray = erps.utils.getTargetArray();
+    context.targetArray = await erps.utils.getTargetArray();
 
     if (context.targetArray.length === 0)
       ui.notifications.warn(
         `If you proceed status will only be created in compendium: not applied.`
       );
 
-    const storedData = erps.utils.retrieveLocal(this.storageKeys);
+    const storedData = await erps.utils.retrieveLocal(this.storageKeys);
 
     context.storedData = {
       status_img: storedData[this.storageKeys[0]],
@@ -106,7 +106,7 @@ export class StatusCreator extends HandlebarsApplicationMixin(ApplicationV2) {
     const abilities = StatusCreator.abilities;
     const hiddenAbilities = this.hiddenAbilities;
 
-    const targetArray = erps.utils.getTargetArray();
+    const targetArray = await erps.utils.getTargetArray();
 
     let createdItem;
 
@@ -232,6 +232,6 @@ export class StatusCreator extends HandlebarsApplicationMixin(ApplicationV2) {
       [this.storageKeys[2]]: textColor,
     };
 
-    erps.utils.storeLocal(storageObject);
+    await erps.utils.storeLocal(storageObject);
   }
 }

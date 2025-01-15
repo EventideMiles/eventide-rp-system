@@ -3,7 +3,7 @@
  *
  * @returns {Array<Token>} Returns an array of tokens which are currently targeted.
  */
-const getTargetArray = () => {
+const getTargetArray = async () => {
   return game.user.targets.size ? Array.from(game.user.targets) : []; //Array.from(game.user.character.getActiveTokens());
 };
 
@@ -12,7 +12,7 @@ const getTargetArray = () => {
  *
  * @returns {Array<Token>} Returns an array of tokens which are currently selected.
  */
-const getSelectedArray = () => {
+const getSelectedArray = async () => {
   return canvas.tokens.controlled;
 };
 
@@ -34,7 +34,7 @@ const clamp = (num, min, max) => {
  * @returns {boolean} Returns true if storage was successful, otherwise false if an error occurred.
  */
 
-const storeLocal = (storageObject) => {
+const storeLocal = async (storageObject) => {
   try {
     for (const item in storageObject) {
       localStorage.setItem(item, storageObject[item]);
@@ -55,7 +55,7 @@ const storeLocal = (storageObject) => {
  * @returns {Object} An object containing key-value pairs retrieved from local storage.
  */
 
-const retrieveLocal = (keys) => {
+const retrieveLocal = async (keys) => {
   const returnObject = {};
 
   for (const key of keys) {
