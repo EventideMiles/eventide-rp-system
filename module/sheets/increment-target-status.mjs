@@ -32,6 +32,14 @@ export class IncrementTargetStatus extends HandlebarsApplicationMixin(
     },
   };
 
+  static storageKeys = [
+    "incrementTargetStatus_statusSelector",
+    "incrementTargetStatus_addChange",
+    "incrementTargetStatus_overrideChange",
+    "incrementTargetStatus_advantageChange",
+    "incrementTargetStatus_disadvantageChange",
+  ];
+
   /**
    * Prepares the context data for a specific part of the form.
    * @param {string} partId - The ID of the form part
@@ -71,6 +79,10 @@ export class IncrementTargetStatus extends HandlebarsApplicationMixin(
     context.statuses = this.target.actor.items.filter(
       (item) => item.type === "status"
     );
+
+    context.storageKeys = IncrementTargetStatus.storageKeys;
+
+    context.storedData = await erps.utils.retrieveLocal(context.storageKeys);
 
     return context;
   }
@@ -134,5 +146,16 @@ export class IncrementTargetStatus extends HandlebarsApplicationMixin(
         },
       ],
     });
+
+    // store data in local storage
+    const storageObject = {
+      incrementTargetStatus_statusSelector: form.statusSelector.value,
+      incrementTargetStatus_addChange: form.addChange.value,
+      incrementTargetStatus_overrideChange: form.overrideChange.value,
+      incrementTargetStatus_advantageChange: form.advantageChange.value,
+      incrementTargetStatus_disadvantageChange: form.disadvantageChange.value,
+    };
+
+    await erps.utils.storeLocal(storageObject);
   }
 }
