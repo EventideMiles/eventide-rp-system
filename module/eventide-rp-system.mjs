@@ -69,7 +69,7 @@ Hooks.once("init", function () {
    * @type {String}
    */
   CONFIG.Combat.initiative = {
-    formula: "1d20 + (@abilities.acro.value + @abilities.wits.value)/2",
+    formula: "1d@hiddenAbilities.roll.total + (@abilities.acro.total + @abilities.wits.total)/2",
     decimals: 2,
   };
 
