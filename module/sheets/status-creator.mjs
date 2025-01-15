@@ -102,7 +102,6 @@ export class StatusCreator extends HandlebarsApplicationMixin(ApplicationV2) {
    * @private
    */
   static async #onSubmit(event, form, formData) {
-    console.log(form);
     const abilities = StatusCreator.abilities;
     const hiddenAbilities = this.hiddenAbilities;
 
@@ -122,7 +121,6 @@ export class StatusCreator extends HandlebarsApplicationMixin(ApplicationV2) {
 
     const effects = abilities
       .map((ability) => {
-        console.log(ability.toLowerCase());
         const value = parseInt(html[ability.toLowerCase()].value);
         if (value === 0) return null;
         const mode = html[`${ability.toLowerCase()}-mode`].value;
