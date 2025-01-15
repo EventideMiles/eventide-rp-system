@@ -74,7 +74,13 @@ export class StatusCreator extends HandlebarsApplicationMixin(ApplicationV2) {
         `If you proceed status will only be created in compendium: not applied.`
       );
 
-    context.storedData = erps.utils.retrieveLocal(this.storageKeys);
+    const storedData = erps.utils.retrieveLocal(this.storageKeys);
+
+    context.storedData = {
+      status_img: storedData[this.storageKeys[0]],
+      status_bgColor: storedData[this.storageKeys[1]],
+      status_textColor: storedData[this.storageKeys[2]],
+    };
 
     context.returnedData = context.storedData.img;
     return context;
