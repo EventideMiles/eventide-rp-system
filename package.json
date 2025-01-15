@@ -4,7 +4,10 @@
   "description": "CSS compiler for the EventideRpSystem system",
   "scripts": {
     "build": "sass src/scss/eventide-rp-system.scss css/eventide-rp-system.css --style=expanded --no-source-map",
-    "watch": "sass src/scss/eventide-rp-system.scss css/eventide-rp-system.css --style=expanded --source-map --watch"
+    "watch": "sass src/scss/eventide-rp-system.scss css/eventide-rp-system.css --style=expanded --source-map --watch",
+    "release": "npm run release:linux || npm run release:win",
+    "release:linux": "bash release_script.sh",
+    "release:win": "release_script.bat"
   },
   "browserslist": [
     "last 3 versions"

@@ -1,0 +1,13 @@
+src\
+node_modules\
+package.json
+package-lock.json
+.gitignore
+.prettierignore
+.vscode\
+exclude.txt
+css\eventide-rp-system.css.map
+release_script.sh
+release_script.bat
+minify.js
+
