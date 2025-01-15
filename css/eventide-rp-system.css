@@ -392,7 +392,7 @@
 .chat-card__header--fortitude {
   background-color: rgba(40, 88, 40, 0.7019607843);
 }
-.chat-card__header--willpower {
+.chat-card__header--will {
   background-color: rgba(121, 8, 141, 0.7019607843);
 }
 .chat-card__header--wits {
@@ -924,5 +924,3 @@
 .eventide-rp-system .effects .item .effect-controls {
   border: none;
 }
-
-/*# sourceMappingURL=eventide-rp-system.css.map */
