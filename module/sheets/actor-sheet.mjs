@@ -131,13 +131,15 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
         );
         break;
     }
+
+    context.formulas = await this.actor.getRollFormulas();
     return context;
   }
 
   /**
    * Generates the data for the generic tab navigation template
    * @param {string[]} parts An array of named template parts to render
-   * @returns {Record<string, Partial<ApplicationTab>>}
+   * @returns {Record<string, Partial<ApplicationTab>>>}
    * @protected
    */
   _getTabs(parts) {

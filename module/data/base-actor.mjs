@@ -55,6 +55,24 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
             change: new fields.NumberField({ ...requiredInteger, initial: 0 }),
             total: new fields.NumberField({ ...requiredInteger, initial: 1 }),
             ac: new fields.NumberField({ ...requiredInteger, initial: 11 }),
+            diceAdjustments: new fields.SchemaField({
+              advantage: new fields.NumberField({
+                ...requiredInteger,
+                initial: 0,
+              }),
+              disadvantage: new fields.NumberField({
+                ...requiredInteger,
+                initial: 0,
+              }),
+              total: new fields.NumberField({
+                ...requiredInteger,
+                initial: 0,
+              }),
+              mode: new fields.StringField({
+                required: false,
+                initial: '',
+              }),
+            }),
           });
           return obj;
         },
@@ -203,6 +221,8 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
    * @param {Object} actorData - The actor's data object.
    */
   prepareDerivedData() {
+    super.prepareDerivedData();
+
     for (const key in this.abilities) {
       // Handle ability label localization.
       this.abilities[key].label =
@@ -215,6 +235,18 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
         ? this.abilities[key].override + this.abilities[key].change
         : this.abilities[key].value + this.abilities[key].change;
       this.abilities[key].ac = this.abilities[key].total + 11;
+
+      // Calculate total for diceAdjustments
+      this.abilities[key].diceAdjustments.total =
+        this.abilities[key].diceAdjustments.advantage -
+        this.abilities[key].diceAdjustments.disadvantage;
+      if (this.abilities[key].diceAdjustments.total < 0) {
+        this.abilities[key].diceAdjustments.mode = 'kl';
+      } else if (this.abilities[key].diceAdjustments.total > 0) {
+        this.abilities[key].diceAdjustments.mode = 'k';
+      } else {
+        this.abilities[key].diceAdjustments.mode = '';
+      }
     }
 
     for (const key in this.hiddenAbilities) {

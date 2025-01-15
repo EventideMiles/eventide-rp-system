@@ -122,27 +122,54 @@ export class EventideRpSystemActor extends Actor {
   }
 
   /**
+   * Generate a roll formula string for an ability roll.
+   *
+   * @param {Object} params - Parameters for the ability roll.
+   * @param {string} params.ability - The ability to roll.
+   * @returns {string} The roll formula string.
+   */
+  async getRollFormula({ability}) {
+    const actorRollData = this.getRollData();
+    const diceAdjustments = actorRollData.abilities[ability].diceAdjustments;
+
+    const total = diceAdjustments.total;
+    const absTotal = Math.abs(total);
+    const rolltype = diceAdjustments.mode;
+
+    return `${absTotal + 1}d${
+      actorRollData.hiddenAbilities.dice.total
+    }${rolltype} + ${actorRollData.abilities[ability].total}`;
+  }
+
+  /**
+   * Get the roll formulas for the actor's abilities.
+   *
+   * @returns {Object} An object with the roll formulas for the actor's abilities.
+   * @property {string} acro - The roll formula for the Acrobatics ability.
+   * @property {string} phys - The roll formula for the Physical ability.
+   * @property {string} fort - The roll formula for the Fortitude ability.
+   * @property {string} will - The roll formula for the Will ability.
+   * @property {string} wits - The roll formula for the Wits ability.
+   */
+  async getRollFormulas() {
+    return {
+      acro: await this.getRollFormula({ ability: "acro" }),
+      phys: await this.getRollFormula({ ability: "phys" }),
+      fort: await this.getRollFormula({ ability: "fort" }),
+      will: await this.getRollFormula({ ability: "will" }),
+      wits: await this.getRollFormula({ ability: "wits" }),
+    };
+  }
+
+  /**
    * Rolls an ability check for the actor with optional advantage or disadvantage.
    *
    * @param {Object} params - Parameters for the ability roll.
    * @param {string} params.ability - The ability to roll.
-   * @param {number} [params.advantage=0] - The advantage level for the roll. Positive for advantage, negative for disadvantage.
-   * @returns {Promise<Roll>} - The result of the ability roll.
    */
-  async rollAbility({ ability, advantage = 0 }) {
+  async rollAbility({ ability }) {
     const actorRollData = this.getRollData();
-    const isAdvantageRoll = advantage > 0;
-    const isDisadvantageRoll = advantage < 0;
-    const absAdvantage = Math.abs(advantage);
-    const formula = `${absAdvantage + 1}d${
-      actorRollData.hiddenAbilities.dice.total
-    }${
-      isAdvantageRoll
-        ? `kh${absAdvantage}`
-        : isDisadvantageRoll
-        ? `kl${absAdvantage}`
-        : ""
-    } + ${actorRollData.abilities[ability].total}`;
+    const formula = await this.getRollFormula({ ability });
 
     const rollData = {
       formula,

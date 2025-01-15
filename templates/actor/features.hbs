@@ -18,7 +18,7 @@
                   class='resource-label rollable flexlarge align-center'
                   data-action='roll'
                   data-type="{{key}}"
-                  data-roll='d@hiddenAbilities.dice.total+@abilities.{{key}}.total'
+                  data-roll='{{lookup ../formulas key}}'
                   data-label='{{localize (lookup @root.config.abilities key)}}'
                 >{{localize (lookup @root.config.abilities key)}}</label>
               </div>
@@ -36,7 +36,7 @@
                   class='ability-total rollable align-center'
                   data-action='roll'
                   data-type="{{key}}"
-                  data-roll='d@hiddenAbilities.dice.total+@abilities.{{key}}.total'
+                  data-roll='{{lookup ../formulas key}}'
                   data-label='{{localize (lookup @root.config.abilities key)}}'
                 >Total: {{numberFormat ability.total decimals=0 sign=true}}</div>
                 {{#if ability.override}}
