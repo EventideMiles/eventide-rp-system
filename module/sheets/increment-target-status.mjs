@@ -125,15 +125,26 @@ export class IncrementTargetStatus extends HandlebarsApplicationMixin(
     // Get the increment values from the form
     const addChange = parseInt(form.addChange.value) || 0;
     const overrideChange = parseInt(form.overrideChange.value) || 0;
+    const advantageChange = parseInt(form.advantageChange.value) || 0;
+    const disadvantageChange = parseInt(form.disadvantageChange.value) || 0;
 
-    // Update each change value in the effects based on its mode
+    console.log(effects.changes);
+
+    // update the change value based on splitting the key and checking for
+    // "change" in slot 3, "override" in slot 3, "advantage" in slot 4, "disadvantage" in slot 4
     const updatedChanges = effects.changes.map((change) => {
       const newChange = foundry.utils.deepClone(change);
-      if (change.mode === CONST.ACTIVE_EFFECT_MODES.ADD) {
-        newChange.value = parseInt(change.value) + addChange;
-      } else if (change.mode === CONST.ACTIVE_EFFECT_MODES.OVERRIDE) {
+      if (change.key.includes("disadvantage")) {
+        newChange.value = parseInt(change.value) + disadvantageChange;
+      } else if (change.key.includes("advantage")) {
+        newChange.value = parseInt(change.value) + advantageChange;
+      } else if (change.key.includes("override")) {
         newChange.value = parseInt(change.value) + overrideChange;
+      } else {
+        newChange.value = parseInt(change.value) + addChange;
       }
+
+      console.log(newChange);
       return newChange;
     });
 
