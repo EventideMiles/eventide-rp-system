@@ -22,7 +22,7 @@ const rollHandler = async (dataSet, actor) => {
   const rollData = actor.getRollData();
   const roll = new Roll(dataSet.formula, rollData);
   const result = await roll.evaluate();
-  const targetArray = await getTargetArray();
+  const targetArray = getTargetArray();
   const critAllowed = dataSet?.critAllowed ?? true;
   const acCheck =
     (dataSet?.acCheck ?? true) && targetArray.length ? true : false;

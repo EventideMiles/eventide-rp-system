@@ -3,7 +3,7 @@
  *
  * @returns {Array<Token>} Returns an array of tokens which are currently targeted.
  */
-const getTargetArray = async () => {
+const getTargetArray = () => {
   return game.user.targets.size ? Array.from(game.user.targets) : []; //Array.from(game.user.character.getActiveTokens());
 };
 
@@ -12,7 +12,7 @@ const getTargetArray = async () => {
  *
  * @returns {Array<Token>} Returns an array of tokens which are currently selected.
  */
-const getSelectedArray = async () => {
+const getSelectedArray = () => {
   return canvas.tokens.controlled;
 };
 
@@ -55,7 +55,7 @@ const storeLocal = (storageObject) => {
  * @returns {Object} An object containing key-value pairs retrieved from local storage.
  */
 
-const retrieveLocal = async (keys) => {
+const retrieveLocal = (keys) => {
   const returnObject = {};
 
   for (const key of keys) {
