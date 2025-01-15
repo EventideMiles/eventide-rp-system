@@ -1,12 +1,18 @@
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
+/**
+ * Application for managing resource restoration of targeted tokens.
+ * @extends {HandlebarsApplicationMixin(ApplicationV2)}
+ */
 export class RestoreTarget extends HandlebarsApplicationMixin(ApplicationV2) {
+  /** @override */
   static PARTS = {
     restoreTarget: {
       template: `systems/eventide-rp-system/templates/macros/restore-target.hbs`,
     },
   };
 
+  /** @override */
   static DEFAULT_OPTIONS = {
     id: "restore-target",
     classes: ["eventide-rp-system", "standard-form", "restore-target"],
@@ -26,13 +32,27 @@ export class RestoreTarget extends HandlebarsApplicationMixin(ApplicationV2) {
     },
   };
 
+  /** @type {ActiveEffect[]} Array of status effects */
   static statusEffects = [];
 
+  /**
+   * Prepare context data for a specific part of the form.
+   * @param {string} partId - The ID of the form part
+   * @param {Object} context - The context object to prepare
+   * @param {Object} options - Additional options
+   * @returns {Promise<Object>} The prepared context
+   */
   async _preparePartContext(partId, context, options) {
     context.partId = `${this.id}-${partId}`;
     return context;
   }
 
+  /**
+   * Prepare the main context data for the form.
+   * @param {Object} options - Form options
+   * @returns {Promise<Object>} The prepared context containing target and status information
+   * @throws {Error} If no target is selected or multiple targets are selected
+   */
   async _prepareContext(options) {
     const context = {};
 
@@ -62,6 +82,13 @@ export class RestoreTarget extends HandlebarsApplicationMixin(ApplicationV2) {
     return context;
   }
 
+  /**
+   * Handle form submission to restore resources and remove status effects.
+   * @param {Event} event - The form submission event
+   * @param {HTMLFormElement} form - The form element
+   * @param {FormData} formData - The form data
+   * @private
+   */
   static async #onSubmit(event, form, formData) {
     const targetArray = await erps.utils.getTargetArray();
     const actor = targetArray[0].actor;

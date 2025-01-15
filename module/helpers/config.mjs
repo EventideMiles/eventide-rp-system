@@ -1,8 +1,12 @@
+/**
+ * System-specific configuration constants.
+ * @const {Object}
+ */
 export const EVENTIDE_RP_SYSTEM = {};
 
 /**
  * The set of Ability Scores used within the system.
- * @type {Object}
+ * @type {Object<string, string>}
  */
 EVENTIDE_RP_SYSTEM.abilities = {
   acro: "EVENTIDE_RP_SYSTEM.Ability.Acro.long",
@@ -12,6 +16,10 @@ EVENTIDE_RP_SYSTEM.abilities = {
   wits: "EVENTIDE_RP_SYSTEM.Ability.Wits.long",
 };
 
+/**
+ * Abbreviated names for ability scores.
+ * @type {Object<string, string>}
+ */
 EVENTIDE_RP_SYSTEM.abilityAbbreviations = {
   acro: "EVENTIDE_RP_SYSTEM.Ability.Acro.abbr",
   phys: "EVENTIDE_RP_SYSTEM.Ability.Phys.abbr",
@@ -20,6 +28,10 @@ EVENTIDE_RP_SYSTEM.abilityAbbreviations = {
   wits: "EVENTIDE_RP_SYSTEM.Ability.Wits.abbr",
 };
 
+/**
+ * Hidden abilities used for system mechanics.
+ * @type {Object<string, string>}
+ */
 EVENTIDE_RP_SYSTEM.hiddenAbilities = {
   dice: `EVENTIDE_RP_SYSTEM.HiddenAbilities.Dice.long`,
   cmax: `EVENTIDE_RP_SYSTEM.HiddenAbilities.Cmax.long`,
@@ -29,6 +41,10 @@ EVENTIDE_RP_SYSTEM.hiddenAbilities = {
   sens: `EVENTIDE_RP_SYSTEM.HiddenAbilities.Sens.long`,
 };
 
+/**
+ * Abbreviated names for hidden abilities.
+ * @type {Object<string, string>}
+ */
 EVENTIDE_RP_SYSTEM.hiddenAbilityAbbreviations = {
   dice: `EVENTIDE_RP_SYSTEM.HiddenAbilities.Dice.abbr`,
   cmax: `EVENTIDE_RP_SYSTEM.HiddenAbilities.Cmax.abbr`,

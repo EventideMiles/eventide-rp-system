@@ -180,9 +180,9 @@ Hooks.once("ready", function () {
 /**
  * Create a Macro from an Item drop.
  * Get an existing item macro if one exists, otherwise create a new one.
- * @param {Object} data     The dropped data
- * @param {number} slot     The hotbar slot to use
- * @returns {Promise}
+ * @param {Object} data - The dropped data containing item information
+ * @param {number} slot - The hotbar slot to use for the macro
+ * @returns {Promise<Macro|null>} The created or existing macro, or null if creation fails
  */
 async function createDocMacro(data, slot) {
   // First, determine if this is a valid owned item.
@@ -214,11 +214,11 @@ async function createDocMacro(data, slot) {
 }
 
 /**
- * Create a Macro from an Item drop.
- * Get an existing item macro if one exists, otherwise create a new one.
- * @param {string} itemUuid
+ * Execute a macro created from an Item drop.
+ * @param {string} itemUuid - The UUID of the item to roll
+ * @returns {Promise<void>}
  */
-function rollItemMacro(itemUuid) {
+async function rollItemMacro(itemUuid) {
   // Reconstruct the drop data so that we can load the item.
   const dropData = {
     type: "Item",
@@ -243,12 +243,6 @@ function rollItemMacro(itemUuid) {
 /*  System Hooks                                */
 /* -------------------------------------------- */
 Hooks.on("updateItem", (item, changed, options, triggerPlayer) => {
-  console.log("Called");
-  console.log(item);
-  console.log(changed);
-  console.log(options);
-  console.log(triggerPlayer);
-
   if (
     item.type === "status" &&
     item.system.description &&

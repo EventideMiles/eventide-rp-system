@@ -50,17 +50,15 @@ const deleteStatusMessage = async (item, options) => {
 };
 
 /**
- * Creates a chat message for the restoration of an actor's status, including resolve, power,
- * and status effects restored.
- * @param {Object} options - The restoration options
- * @param {boolean} options.all - Whether all resources and status effects are restored
- * @param {boolean} options.resolve - Whether resolve is restored
- * @param {boolean} options.power - Whether power is restored
- * @param {Array} options.statuses - Array of status effects that are restored
- * @param {Actor} options.actor - The actor whose status is being restored
+ * Creates a chat message detailing resource restoration and status effect removal.
+ * @param {Object} options - Options for the restoration message
+ * @param {boolean} options.all - Whether all status effects were removed
+ * @param {boolean} options.resolve - Whether resolve was restored
+ * @param {boolean} options.power - Whether power was restored
+ * @param {Item[]} options.statuses - Array of status effects that were removed
+ * @param {Actor} options.actor - The actor being restored
  * @returns {Promise<ChatMessage>} The created chat message
  */
-
 const restoreMessage = async ({ all, resolve, power, statuses, actor }) => {
   const data = { all, resolve, power, statuses, actor };
 

@@ -1,3 +1,8 @@
+/**
+ * Base data model for the Eventide RP System.
+ * Provides common functionality for all system data models.
+ * @extends {foundry.abstract.TypeDataModel}
+ */
 export default class EventideRpSystemDataModel extends foundry.abstract
   .TypeDataModel {
   /**

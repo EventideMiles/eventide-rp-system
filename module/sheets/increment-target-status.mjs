@@ -1,5 +1,9 @@
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
+/**
+ * A form application for incrementing status effects on a target token.
+ * @extends {HandlebarsApplicationMixin(ApplicationV2)}
+ */
 export class IncrementTargetStatus extends HandlebarsApplicationMixin(
   ApplicationV2
 ) {
@@ -28,11 +32,24 @@ export class IncrementTargetStatus extends HandlebarsApplicationMixin(
     },
   };
 
+  /**
+   * Prepares the context data for a specific part of the form.
+   * @param {string} partId - The ID of the form part
+   * @param {Object} context - The context object to prepare
+   * @param {Object} options - Additional options
+   * @returns {Promise<Object>} The prepared context
+   */
   async _preparePartContext(partId, context, options) {
     context.partId = `${this.id}-${partId}`;
     return context;
   }
 
+  /**
+   * Prepares the main context data for the form.
+   * @param {Object} options - Form options
+   * @returns {Promise<Object>} The prepared context containing target and status information
+   * @throws {Error} If no target is selected or multiple targets are selected
+   */
   async _prepareContext(options) {
     const context = {};
 
@@ -58,6 +75,13 @@ export class IncrementTargetStatus extends HandlebarsApplicationMixin(
     return context;
   }
 
+  /**
+   * Handles form submission to update status effect values.
+   * @param {Event} event - The form submission event
+   * @param {HTMLFormElement} form - The form element
+   * @param {FormData} formData - The form data
+   * @private
+   */
   static async #onSubmit(event, form, formData) {
     const statusId = form.statusSelector.value;
     const target = this.target;

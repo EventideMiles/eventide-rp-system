@@ -1,5 +1,9 @@
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
+/**
+ * A form application for creating and managing status effects.
+ * @extends {HandlebarsApplicationMixin(ApplicationV2)}
+ */
 export class StatusCreator extends HandlebarsApplicationMixin(ApplicationV2) {
   static PARTS = {
     statusCreator: {
@@ -27,17 +31,41 @@ export class StatusCreator extends HandlebarsApplicationMixin(ApplicationV2) {
     },
   };
 
-  // todo: implement local storage for img value on context.
-
+  /**
+   * List of standard abilities that can be modified by status effects
+   * @type {string[]}
+   */
   static abilities = ["Acro", "Phys", "Fort", "Will", "Wits"];
+
+  /**
+   * List of hidden abilities that can be modified by status effects
+   * @type {string[]}
+   */
   static hiddenAbilities = ["Dice", "Cmin", "Cmax", "Fmin", "Fmax"];
+
+  /**
+   * Keys used for storing status effect preferences in local storage
+   * @type {string[]}
+   */
   static storageKeys = ["status_img", "status_bgColor", "status_textColor"];
 
+  /**
+   * Prepares the context data for a specific part of the form.
+   * @param {string} partId - The ID of the form part
+   * @param {Object} context - The context object to prepare
+   * @param {Object} options - Additional options
+   * @returns {Promise<Object>} The prepared context
+   */
   async _preparePartContext(partId, context, options) {
     context.partId = `${this.id}-${partId}`;
     return context;
   }
 
+  /**
+   * Prepares the main context data for the form.
+   * @param {Object} options - Form options
+   * @returns {Promise<Object>} The prepared context containing abilities, stored preferences, and target information
+   */
   async _prepareContext(options) {
     const context = {};
 
@@ -59,6 +87,15 @@ export class StatusCreator extends HandlebarsApplicationMixin(ApplicationV2) {
     return context;
   }
 
+  /**
+   * Handles form submission to create a new status effect.
+   * Creates the status effect on targeted tokens and stores it in a compendium.
+   * Also saves form preferences to local storage.
+   * @param {Event} event - The form submission event
+   * @param {HTMLFormElement} form - The form element
+   * @param {FormData} formData - The form data
+   * @private
+   */
   static async #onSubmit(event, form, formData) {
     const abilities = StatusCreator.abilities;
     const hiddenAbilities = StatusCreator.hiddenAbilities;

@@ -3,12 +3,17 @@ import { prepareActiveEffectCategories } from "../helpers/effects.mjs";
 const { api, sheets } = foundry.applications;
 
 /**
- * Extend the basic ItemSheet with some very simple modifications
- * @extends {ItemSheetV2}
+ * Item sheet implementation for the Eventide RP System.
+ * Extends the base ItemSheetV2 with system-specific functionality.
+ * @extends {HandlebarsApplicationMixin(ItemSheetV2)}
  */
 export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
   sheets.ItemSheetV2
 ) {
+  /**
+   * @constructor
+   * @param {Object} [options={}] - Application configuration options
+   */
   constructor(options = {}) {
     super(options);
     this.#dragDrop = this.#createDragDropHandlers();
@@ -30,8 +35,6 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
     // Custom property that's merged into `this.options`
     dragDrop: [{ dragSelector: "[data-drag]", dropSelector: null }],
   };
-
-  /* -------------------------------------------- */
 
   /** @override */
   static PARTS = {
@@ -112,7 +115,13 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
     return context;
   }
 
-  /** @override */
+  /**
+   * Prepare data for rendering a specific part of the Item sheet.
+   * @param {string} partId - The ID of the part to prepare
+   * @param {Object} context - The data object to prepare
+   * @returns {Promise<Object>} The prepared context
+   * @override
+   */
   async _preparePartContext(partId, context) {
     switch (partId) {
       case "attributesFeature":

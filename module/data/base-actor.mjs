@@ -1,6 +1,16 @@
 import EventideRpSystemDataModel from "./base-model.mjs";
 
+/**
+ * Base actor data model for the Eventide RP System.
+ * Defines the common data schema shared by all actor types.
+ * @extends {EventideRpSystemDataModel}
+ */
 export default class EventideRpSystemActorBase extends EventideRpSystemDataModel {
+  /**
+   * Define the data schema for actor documents.
+   * @returns {Object} The actor data schema.
+   * @static
+   */
   static defineSchema() {
     const fields = foundry.data.fields;
     const requiredInteger = { required: true, nullable: false, integer: true };
@@ -188,6 +198,10 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
     return schema;
   }
 
+  /**
+   * Prepare base actor data, calculating derived values.
+   * @param {Object} actorData - The actor's data object.
+   */
   prepareDerivedData() {
     for (const key in this.abilities) {
       // Handle ability label localization.
@@ -214,6 +228,10 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
     }
   }
 
+  /**
+   * Get the roll data for the actor.
+   * @returns {Object} The roll data.
+   */
   getRollData() {
     const data = {};
 
