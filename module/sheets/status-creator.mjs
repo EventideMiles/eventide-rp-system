@@ -122,10 +122,16 @@ export class StatusCreator extends HandlebarsApplicationMixin(ApplicationV2) {
 
         return {
           key: `system.abilities.${ability.toLowerCase()}.${
-            mode === "add" ? "change" : "override"
+            mode === "add"
+              ? "change"
+              : mode === "advantage"
+              ? "diceAdjustments.advantage"
+              : mode === "disadvantage"
+              ? "diceAdjustments.disadvantage"
+              : "override"
           }`,
           mode:
-            mode === "add"
+            mode === "add" || mode === "advantage" || mode === "disadvantage"
               ? CONST.ACTIVE_EFFECT_MODES.ADD
               : CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
           value: value,
