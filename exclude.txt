@@ -10,4 +10,5 @@ css\eventide-rp-system.css.map
 release_script.sh
 release_script.bat
 minify.js
+.git
 

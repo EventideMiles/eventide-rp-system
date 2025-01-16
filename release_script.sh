@@ -18,13 +18,13 @@ WORKING_DIR=$(pwd)
 mkdir -p "$TEMP_DIR/eventide-rp-system"
 
 # Copy all files into the new directory
-rsync -av --exclude='src/' --exclude='node_modules/' --exclude='package.json' --exclude='package-lock.json' --exclude='.gitignore' --exclude='.prettierignore' --exclude='.vscode/' --exclude='exclude.txt' --exclude='css/eventide-rp-system.css.map' --exclude='release_script.sh' --exclude='release_script.bat' --exclude='minify.js' . "$TEMP_DIR/eventide-rp-system/"
+rsync -av --exclude='src/' --exclude='node_modules/' --exclude=".git/" --exclude='package.json' --exclude='package-lock.json' --exclude='.gitignore' --exclude='.prettierignore' --exclude='.vscode/' --exclude='exclude.txt' --exclude='css/eventide-rp-system.css.map' --exclude='release_script.sh' --exclude='release_script.bat' --exclude='minify.js' . "$TEMP_DIR/eventide-rp-system/"
 
 # Create the zip file in the temp directory
-cd "$TEMP_DIR/eventide-rp-system" && zip -r eventide-rp-system.zip *
+cd "$TEMP_DIR" && zip -r eventide-rp-system.zip *
 
 # Move the zip file to the releases directory
-mv "$TEMP_DIR/eventide-rp-system/eventide-rp-system.zip" "$WORKING_DIR/releases/eventide-rp-system.zip"
+mv "$TEMP_DIR/eventide-rp-system.zip" "$WORKING_DIR/releases/eventide-rp-system.zip"
 
 # Clean up the temporary directory
 rm -rf "$TEMP_DIR"
