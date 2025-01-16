@@ -1,10 +1,10 @@
 <div class="chat-card chat-card__header chat-card__header--status" style="{{style}}">
   <img src="{{item.img}}" class="chat-card__image--primary" /> {{item.name}}
 </div>
-{{# if item.system.description }}
+{{#if item.system.description}}
   <div class="chat-card__description">
     <div class="chat-card__description--header">{{item.actor.name}}. . . </div> 
-    {{item.system.description}}
+    {{{item.system.description}}}
   </div>
 {{/if}}
 <hr class="chat-card__hr" />
