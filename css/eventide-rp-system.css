@@ -413,6 +413,12 @@
 .chat-card__header--critical-miss {
   background-color: rgba(78, 1, 1, 0.7019607843);
 }
+.chat-card__header--stolen-crit {
+  background-color: rgba(86, 60, 92, 0.7019607843);
+}
+.chat-card__header--saved-miss {
+  background-color: rgba(74, 119, 122, 0.7019607843);
+}
 .chat-card__header--unknown {
   background-color: rgba(83, 83, 83, 0.7019607843);
 }
@@ -924,3 +930,5 @@
 .eventide-rp-system .effects .item .effect-controls {
   border: none;
 }
+
+/*# sourceMappingURL=eventide-rp-system.css.map */
