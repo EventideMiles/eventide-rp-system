@@ -29,21 +29,60 @@ const rollHandler = async (dataSet, actor) => {
   const description = dataSet?.description ?? "";
 
   const pickedType = await dataSet?.type?.toLowerCase();
+
   let critHit = false;
   let critMiss = false;
+  let stolenCrit = false;
+  let savedMiss = false;
 
   if (critAllowed && dataSet.formula.includes("d")) {
-    const dieRoll = result.terms[0].results[0].result;
-    critHit =
-      dieRoll <= rollData.hiddenAbilities.cmax.total &&
-      dieRoll >= rollData.hiddenAbilities.cmin.total
-        ? true
-        : false;
-    critMiss =
-      dieRoll >= rollData.hiddenAbilities.fmin.total &&
-      dieRoll <= rollData.hiddenAbilities.fmax.total
-        ? true
-        : false;
+    const dieArray = result.terms[0].results;
+
+    critHit = dieArray.some(
+      (die) =>
+        die.result <= rollData.hiddenAbilities.cmax.total &&
+        die.result >= rollData.hiddenAbilities.cmin.total
+    );
+    critMiss = dieArray.some(
+      (die) =>
+        die.result <= rollData.hiddenAbilities.fmax.total &&
+        die.result >= rollData.hiddenAbilities.fmin.total
+    );
+
+    stolenCrit =
+      dieArray.some(
+        (die) =>
+          die.result <= rollData.hiddenAbilities.cmax.total &&
+          die.result >= rollData.hiddenAbilities.cmin.total &&
+          dataSet.formula.toLowerCase().includes("kl")
+      ) &&
+      !dieArray.every(
+        (die) =>
+          die.result <= rollData.hiddenAbilities.cmax.total &&
+          die.result >= rollData.hiddenAbilities.cmin.total
+      );
+
+    savedMiss =
+      dieArray.some(
+        (die) =>
+          die.result >= rollData.hiddenAbilities.fmin.total &&
+          die.result <= rollData.hiddenAbilities.fmax.total &&
+          dataSet.formula.toLowerCase().includes("k") &&
+          !dataSet.formula.toLowerCase().includes("kl")
+      ) &&
+      !dieArray.every(
+        (die) =>
+          die.result >= rollData.hiddenAbilities.fmin.total &&
+          die.result <= rollData.hiddenAbilities.fmax.total
+      );
+
+    if (stolenCrit && critHit) {
+      critHit = false;
+    }
+
+    if (savedMiss && critMiss) {
+      critMiss = false;
+    }
   }
 
   let targetRollData = [];
@@ -109,8 +148,10 @@ const rollHandler = async (dataSet, actor) => {
     targetRollData,
     actor,
     dataSet,
-    critHit,
-    critMiss,
+    critHit: critHit ?? false,
+    critMiss: critMiss ?? false,
+    savedMiss: savedMiss ?? false,
+    stolenCrit: stolenCrit ?? false,
     description,
   };
 

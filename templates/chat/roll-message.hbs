@@ -8,6 +8,12 @@
   {{#if critMiss}}
     <div class="chat-card__header chat-card__header--critical-miss">Critical Miss!</div>
   {{/if}}
+  {{#if stolenCrit}}
+    <div class="chat-card__header chat-card__header--stolen-crit">Stolen Critical!</div>
+  {{/if}}
+  {{#if savedMiss}}
+    <div class="chat-card__header chat-card__header--saved-miss">Saved Miss!</div>
+  {{/if}}
   {{#if acCheck}}
     <div class="chat-card__effects chat-card__effects--ac-check">
       <div class="chat-card__effects--title">AC Check</div>

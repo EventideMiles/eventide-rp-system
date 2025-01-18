@@ -51,6 +51,14 @@
             background-color: colors.$critical-miss;
         }
 
+        &--stolen-crit {
+            background-color: colors.$stolen-crit;
+        }
+
+        &--saved-miss {
+            background-color: colors.$saved-miss;
+        }
+
         &--unknown {
             background-color: colors.$unknown;
         }
