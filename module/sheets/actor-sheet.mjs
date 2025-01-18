@@ -20,7 +20,7 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
     classes: ["eventide-rp-system", "actor"],
     position: {
       width: 600,
-      height: 675,
+      height: 700,
     },
     actions: {
       onEditImage: this._onEditImage,
