@@ -25,7 +25,8 @@
         "Biography": "Biography",
         "Features": "Features",
         "Gear": "Gear",
-        "Statuses": "Statuses"
+        "Statuses": "Statuses",
+        "CombatPowers": "Combat Powers"
       },
       "base": {
         "FIELDS": {
@@ -93,7 +94,8 @@
       "gear": "Gear",
       "feature": "Feature",
       "spell": "Spell",
-      "status": "Status"
+      "status": "Status",
+      "combatPower": "Combat Power"
     }
   }
 }

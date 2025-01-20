@@ -69,7 +69,8 @@ Hooks.once("init", function () {
    * @type {String}
    */
   CONFIG.Combat.initiative = {
-    formula: "1d@hiddenAbilities.dice.total + (@abilities.acro.total + @abilities.wits.total)/2",
+    formula:
+      "1d@hiddenAbilities.dice.total + (@abilities.acro.total + @abilities.wits.total)/2",
     decimals: 2,
   };
 
@@ -89,6 +90,7 @@ Hooks.once("init", function () {
     feature: models.EventideRpSystemFeature,
     spell: models.EventideRpSystemSpell,
     status: models.EventideRpSystemStatus,
+    combatPower: models.EventideRpSystemCombatPower,
   };
 
   // Active Effects are never copied to the Actor,

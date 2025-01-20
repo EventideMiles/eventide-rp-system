@@ -1,4 +1,11 @@
+import EventideRpSystemItemBase from "./base-item.mjs";
+
 export default class EventideRpSystemCombatPower extends EventideRpSystemItemBase {
+  static LOCALIZATION_PREFIXES = [
+    "EVENTIDE_RP_SYSTEM.Item.base",
+    "EVENTIDE_RP_SYSTEM.Item.CombatPower",
+  ];
+
   static defineSchema() {
     const fields = foundry.data.fields;
     const requiredInteger = { required: true, nullable: false, integer: true };
@@ -11,13 +18,28 @@ export default class EventideRpSystemCombatPower extends EventideRpSystemItemBas
     });
 
     schema.roll = new fields.SchemaField({
-      diceNum: new fields.NumberField({
-        ...requiredInteger,
-        initial: 1,
-        min: 0,
+      type: new fields.StringField({
+        initial: "roll",
+        required: true,
+        nullable: false,
+        choices: ["roll", "flat"],
       }),
-      diceSize: new fields.StringField({ initial: "d20" }),
-      diceBonus: new fields.StringField({ initial: "+@will.value" }),
+      ability: new fields.StringField({
+        required: true,
+        nullable: false,
+        choices: ["acro", "phys", "fort", "will", "wits", "unaugmented"],
+        initial: "unaugmented",
+      }),
+      bonus: new fields.NumberField({ initial: 0 }),
+      diceAdjustments: new fields.SchemaField({
+        advantage: new fields.NumberField({ initial: 0, ...requiredInteger }),
+        disadvantage: new fields.NumberField({
+          initial: 0,
+          ...requiredInteger,
+        }),
+        total: new fields.NumberField({ initial: 0, ...requiredInteger }),
+        mode: new fields.StringField({ initial: "" }),
+      }),
     });
 
     schema.formula = new fields.StringField({ blank: true });
@@ -29,9 +51,15 @@ export default class EventideRpSystemCombatPower extends EventideRpSystemItemBas
     // Build the formula dynamically using string interpolation
     const roll = this.roll;
 
-    if (roll.diceNum === 0)
-      // If diceNum is 0 it means it's a flat bonus
-      this.formula = `${roll.diceSize}${roll.diceBonus}`;
-    else this.formula = `${roll.diceNum}${roll.diceSize}${roll.diceBonus}`;
+    this.formula = "";
+
+    if (!this.actor) return;
+
+    const rollData = this.actor.getRollData();
+
+    //   if (roll.diceNum === 0)
+    //     // If diceNum is 0 it means it's a flat bonus
+    //     this.formula = `${roll.diceSize}${roll.diceBonus}`;
+    //   else this.formula = `${roll.diceNum}${roll.diceSize}${roll.diceBonus}`;
   }
 }

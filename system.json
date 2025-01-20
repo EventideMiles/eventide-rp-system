@@ -32,6 +32,9 @@
       },
       "item": {
         "htmlFields": ["description"]
+      },
+      "combatPower": {
+        "htmlFields": ["description"]
       }
     }
   },

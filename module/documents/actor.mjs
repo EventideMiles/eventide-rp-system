@@ -128,13 +128,15 @@ export class EventideRpSystemActor extends Actor {
    * @param {string} params.ability - The ability to roll.
    * @returns {string} The roll formula string.
    */
-  async getRollFormula({ability}) {
+  async getRollFormula({ ability }) {
     const actorRollData = this.getRollData();
     const diceAdjustments = actorRollData.abilities[ability].diceAdjustments;
-
     const total = diceAdjustments.total;
     const absTotal = Math.abs(total);
     const rolltype = diceAdjustments.mode;
+
+    if (ability === "unaugmented")
+      return `1d${actorRollData.hiddenAbilities.dice.total}`;
 
     return `${absTotal + 1}d${
       actorRollData.hiddenAbilities.dice.total
@@ -152,13 +154,14 @@ export class EventideRpSystemActor extends Actor {
    * @property {string} wits - The roll formula for the Wits ability.
    */
   async getRollFormulas() {
-    return {
-      acro: await this.getRollFormula({ ability: "acro" }),
-      phys: await this.getRollFormula({ ability: "phys" }),
-      fort: await this.getRollFormula({ ability: "fort" }),
-      will: await this.getRollFormula({ ability: "will" }),
-      wits: await this.getRollFormula({ ability: "wits" }),
-    };
+    const abilities = ["acro", "phys", "fort", "will", "wits"];
+    const formulas = await Promise.all(
+      abilities.map((ability) => this.getRollFormula({ ability }))
+    );
+
+    return Object.fromEntries(
+      abilities.map((ability, index) => [ability, formulas[index]])
+    );
   }
 
   /**
