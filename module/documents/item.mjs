@@ -114,10 +114,12 @@ export class EventideRpSystemItem extends Item {
     if (item.type === "combatPower") {
       const targetArray = await erps.utils.getTargetArray();
 
-      if (targetArray.length === 0)
+      // Only check for targets if this is a targeted power
+      if (item.system.targeted && targetArray.length === 0) {
         return ui.notifications.error(
           `Please target at least one token first!`
         );
+      }
 
       const rollData = {
         ...this.getRollData(),

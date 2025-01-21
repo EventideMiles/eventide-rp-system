@@ -17,6 +17,11 @@ export default class EventideRpSystemCombatPower extends EventideRpSystemItemBas
       min: 0,
     });
 
+    schema.targeted = new fields.BooleanField({
+      required: true,
+      initial: true
+    });
+
     schema.roll = new fields.SchemaField({
       type: new fields.StringField({
         initial: "roll",
