@@ -38,26 +38,15 @@ export default class EventideRpSystemCombatPower extends EventideRpSystemItemBas
           ...requiredInteger,
         }),
         total: new fields.NumberField({ initial: 0, ...requiredInteger }),
-        mode: new fields.StringField({ initial: "" }),
       }),
     });
 
     return schema;
   }
 
-  async prepareDerivedData() {
-    if (!this.actor) return;
-
-    this.rollAdjustments.total =
+  prepareDerivedData() {
+    this.roll.diceAdjustments.total =
       this.roll.diceAdjustments.advantage -
       this.roll.diceAdjustments.disadvantage;
-
-    if (this.rollAdjustments.total < 0) {
-      this.rollAdjustments.mode = "kl";
-    } else if (this.rollAdjustments.total > 0) {
-      this.rollAdjustments.mode = "k";
-    } else {
-      this.rollAdjustments.mode = "";
-    }
   }
 }
