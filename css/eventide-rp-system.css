@@ -539,6 +539,15 @@
   border-top: 1px solid #c9c7b8;
 }
 
+.status-creator .profile-img {
+  flex: 0 0 100px;
+  height: 100px;
+  margin-right: 10px;
+  object-fit: contain;
+  border: none;
+  cursor: pointer;
+}
+
 .restore-target {
   max-height: 600px;
   color: var(--eventide-rp-system-c-white);
