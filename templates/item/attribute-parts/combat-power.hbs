@@ -23,6 +23,7 @@
       </div>
     </div>
 
+    {{#if (not (eq system.roll.type "flat"))}}
     <div class='dice-adjustments'>
       <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.CombatPower.FIELDS.roll.diceAdjustments.label'}}</label>
       <div class='grid grid-3col'>
@@ -58,5 +59,6 @@
         </div>
       </div>
     </div>
+    {{/if}}
   </div>
 </section>
