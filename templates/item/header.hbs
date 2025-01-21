@@ -45,5 +45,11 @@
         </color-picker>
       </div>
     {{/if}}
+    {{#if (eq item.type 'combatPower')}}
+      <div class="resource">
+        <label class="resource-label">{{localize 'EVENTIDE_RP_SYSTEM.Item.CombatPower.FIELDS.cost.label'}}</label>
+        <input type="text" name="system.cost" value="{{system.cost}}" data-dtype="Number" />
+      </div>
+    {{/if}}
   </div>
 </header>
