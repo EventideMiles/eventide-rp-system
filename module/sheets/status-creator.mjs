@@ -111,6 +111,7 @@ export class StatusCreator extends HandlebarsApplicationMixin(ApplicationV2) {
     currentPath = currentPath.replace(/^\/+/, "");
 
     const fp = new FilePicker({
+      displayMode: "tiles",
       type: "image",
       current: currentPath,
       callback: (path) => {
@@ -158,12 +159,9 @@ export class StatusCreator extends HandlebarsApplicationMixin(ApplicationV2) {
     const html = form;
     const name = html.name.value;
     const description = html.description.value;
-    const img = html.img.src;
+    const img = html.img.value;
     const bgColor = html.bgColor.value;
     const textColor = html.textColor.value;
-
-    if (!name || !description || !img || !bgColor || !textColor)
-      return ui.notifications.error("Missing data!");
 
     const effects = abilities
       .map((ability) => {

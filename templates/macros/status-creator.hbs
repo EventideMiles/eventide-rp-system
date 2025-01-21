@@ -11,12 +11,12 @@
     <label for="img">Image:</label>
     <img
       class="profile-img"
-      id="img"
       src="{{ifThen storedData.status_img storedData.status_img "icons/svg/stoned.svg"}}"
       data-edit="img"
       data-action='onEditImage'
       title="Status Image"
     />
+    <input type="hidden" name="img" value="{{ifThen storedData.status_img storedData.status_img "icons/svg/stoned.svg"}}">
   </div>
   <div class="form-group">
     <label for="bgColor">Background Color/Tint:</label>
