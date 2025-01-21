@@ -124,7 +124,7 @@ export class EventideRpSystemItem extends Item {
       const rollData = {
         ...this.getRollData(),
         formula: this.getCombatRollFormula(),
-        label: item.name ?? "",
+        label: item.name ? `${item.name} (Cost: ${item.system.cost})` : "",
         type: item.type ?? "",
       };
 
