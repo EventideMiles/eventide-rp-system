@@ -42,24 +42,22 @@ export default class EventideRpSystemCombatPower extends EventideRpSystemItemBas
       }),
     });
 
-    schema.formula = new fields.StringField({ blank: true });
-
     return schema;
   }
 
-  prepareDerivedData() {
-    // Build the formula dynamically using string interpolation
-    const roll = this.roll;
-
-    this.formula = "";
-
+  async prepareDerivedData() {
     if (!this.actor) return;
 
-    const rollData = this.actor.getRollData();
+    this.rollAdjustments.total =
+      this.roll.diceAdjustments.advantage -
+      this.roll.diceAdjustments.disadvantage;
 
-    //   if (roll.diceNum === 0)
-    //     // If diceNum is 0 it means it's a flat bonus
-    //     this.formula = `${roll.diceSize}${roll.diceBonus}`;
-    //   else this.formula = `${roll.diceNum}${roll.diceSize}${roll.diceBonus}`;
+    if (this.rollAdjustments.total < 0) {
+      this.rollAdjustments.mode = "kl";
+    } else if (this.rollAdjustments.total > 0) {
+      this.rollAdjustments.mode = "k";
+    } else {
+      this.rollAdjustments.mode = "";
+    }
   }
 }
