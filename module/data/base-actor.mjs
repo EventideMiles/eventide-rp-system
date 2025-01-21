@@ -70,7 +70,7 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
               }),
               mode: new fields.StringField({
                 required: false,
-                initial: '',
+                initial: "",
               }),
             }),
           });
@@ -225,38 +225,40 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
 
     for (const key in this.abilities) {
       // Handle ability label localization.
-      this.abilities[key].label =
+      const current = this.abilities[key];
+      current.label =
         game.i18n.localize(CONFIG.EVENTIDE_RP_SYSTEM.abilities[key]) ?? key;
-      this.abilities[key].abbr =
+      current.abbr =
         game.i18n.localize(
           CONFIG.EVENTIDE_RP_SYSTEM.abilityAbbreviations[key]
         ) ?? key;
-      this.abilities[key].total = this.abilities[key].override
-        ? this.abilities[key].override + this.abilities[key].change
-        : this.abilities[key].value + this.abilities[key].change;
-      this.abilities[key].ac = this.abilities[key].total + 11;
+      current.total = current.override
+        ? current.override + current.change
+        : current.value + current.change;
+      current.ac = current.total + 11;
 
       // Calculate total for diceAdjustments
-      this.abilities[key].diceAdjustments.total =
-        this.abilities[key].diceAdjustments.advantage -
-        this.abilities[key].diceAdjustments.disadvantage;
-      if (this.abilities[key].diceAdjustments.total < 0) {
-        this.abilities[key].diceAdjustments.mode = 'kl';
-      } else if (this.abilities[key].diceAdjustments.total > 0) {
-        this.abilities[key].diceAdjustments.mode = 'k';
+      current.diceAdjustments.total =
+        current.diceAdjustments.advantage -
+        current.diceAdjustments.disadvantage;
+      if (current.diceAdjustments.total < 0) {
+        current.diceAdjustments.mode = "kl";
+      } else if (current.diceAdjustments.total > 0) {
+        current.diceAdjustments.mode = "k";
       } else {
-        this.abilities[key].diceAdjustments.mode = '';
+        current.diceAdjustments.mode = "";
       }
     }
 
     for (const key in this.hiddenAbilities) {
       // Handle hidden ability label localization.
-      this.hiddenAbilities[key].label =
+      const current = this.hiddenAbilities[key];
+      current.label =
         game.i18n.localize(CONFIG.EVENTIDE_RP_SYSTEM.hiddenAbilities[key]) ??
         key;
-      this.hiddenAbilities[key].total = this.hiddenAbilities[key].override
-        ? this.hiddenAbilities[key].override + this.hiddenAbilities[key].change
-        : this.hiddenAbilities[key].value + this.hiddenAbilities[key].change;
+      current.total = current.override
+        ? current.override + current.change
+        : current.value + current.change;
     }
   }
 
