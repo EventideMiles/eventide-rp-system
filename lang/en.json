@@ -72,6 +72,7 @@
       "CombatPower": {
         "FIELDS": {
           "cost": { "label": "Cost" },
+          "targeted": { "label": "Requires Target?" },
           "roll": {
             "type": { "label": "Roll Type" },
             "ability": { "label": "Ability" },

@@ -3,6 +3,7 @@
   <ol class='items-list'>
     <li class='item flexrow items-header'>
       <div class='item-name'>{{localize 'Name'}}</div>
+      <div class='item-cost'>{{localize 'EVENTIDE_RP_SYSTEM.Item.CombatPower.FIELDS.cost.label'}}</div>
       <div class='item-controls'>
         {{#if @root.editable }}
           <a
@@ -38,6 +39,7 @@
           </div>
           <div>{{item.name}}</div>
         </div>
+        <div class='item-cost item-prop'>{{item.system.cost}}</div>
         <div class='item-controls'>
           <a
             class='item-control item-edit'
@@ -59,5 +61,4 @@
       </li>
     {{/each}}
   </ol>
-
 </section>

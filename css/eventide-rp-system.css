@@ -366,8 +366,9 @@
   text-align: center;
   display: table-cell;
   vertical-align: middle;
-  width: 20px !important;
-  height: 20px !important;
+  width: 20px;
+  height: 20px;
+  cursor: pointer !important;
   appearance: none;
   border-radius: 10%;
   box-shadow: none;
@@ -628,6 +629,52 @@
 }
 .eventide-rp-system .sheet-header .header-fields {
   flex: 1;
+}
+.eventide-rp-system .sheet-header .header-fields .checkbox-resource {
+  display: flex;
+  flex-direction: column;
+}
+.eventide-rp-system .sheet-header .header-fields .checkbox-resource .resource-label {
+  margin-bottom: 4px;
+  width: 100%;
+}
+.eventide-rp-system .sheet-header .header-fields .checkbox-wrapper {
+  height: 28px;
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+.eventide-rp-system .sheet-header .header-fields .checkbox-wrapper .large-checkbox {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 28px !important;
+  height: 28px !important;
+  min-width: 28px !important;
+  min-height: 28px !important;
+  max-width: 28px !important;
+  max-height: 28px !important;
+  margin: 0;
+  cursor: pointer;
+  background-color: rgba(0, 0, 0, 0.6) !important;
+  border: none;
+  border-radius: 4px;
+  position: relative;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.8), inset 0 1px 3px rgba(0, 0, 0, 0.6);
+}
+.eventide-rp-system .sheet-header .header-fields .checkbox-wrapper .large-checkbox:checked:after {
+  content: "✓";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+.eventide-rp-system .sheet-header .header-fields .checkbox-wrapper .large-checkbox:hover {
+  background-color: rgba(0, 0, 0, 0.7) !important;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1), inset 0 1px 3px rgba(0, 0, 0, 0.7);
 }
 .eventide-rp-system .sheet-tabs {
   flex: 0;

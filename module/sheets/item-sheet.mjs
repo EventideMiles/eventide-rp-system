@@ -27,7 +27,7 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
       viewDoc: this._viewEffect,
       createDoc: this._createEffect,
       deleteDoc: this._deleteEffect,
-      toggleEffect: this._toggleEffect
+      toggleEffect: this._toggleEffect,
     },
     form: {
       submitOnChange: true,
@@ -79,7 +79,7 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
     // Control which parts show based on document subtype
     switch (this.document.type) {
       case "feature":
-        options.parts.push("attributesFeature", "effects");
+        options.parts.push("effects"); // previously also included "attributesFeature" but since that's currently empty we're excluding it until / unless it starts to have something.
         break;
       case "status":
         options.parts.push("effects");
@@ -141,7 +141,7 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
           // Add roll type options
           context.rollTypes = {
             roll: "Roll",
-            flat: "Flat"
+            flat: "Flat",
           };
           // Add ability options
           context.abilities = {
@@ -150,7 +150,7 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
             fort: "Fortitude",
             will: "Will",
             wits: "Wits",
-            unaugmented: "Unaugmented"
+            unaugmented: "Unaugmented",
           };
         }
         break;
