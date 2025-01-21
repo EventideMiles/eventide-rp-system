@@ -30,9 +30,8 @@ export class StatusCreator extends HandlebarsApplicationMixin(ApplicationV2) {
       closeOnSubmit: true,
     },
     actions: {
-      onEditImage: this._onEditImage
+      onEditImage: this._onEditImage,
     },
-    activateListeners: true
   };
 
   static abilities = ["Acro", "Phys", "Fort", "Will", "Wits"];
@@ -97,35 +96,41 @@ export class StatusCreator extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 
   /**
-   * Activates event listeners for the application
-   * @param {JQuery} html - The rendered HTML of the application
-   */
-  activateListeners(html) {
-    super.activateListeners?.(html);
-
-    html.find('[data-action="onEditImage"]').click(this._onEditImage.bind(this));
-  }
-
-  /**
    * Handle changing the status image.
-   *
-   * @this StatusCreator
    * @param {PointerEvent} event   The originating click event
    * @param {HTMLElement} target   The capturing HTML element which defined a [data-edit]
    * @returns {Promise}
    * @protected
    */
   static async _onEditImage(event, target) {
+    // Clean the current path
+    let currentPath = target.src;
+    // Remove origin if present
+    currentPath = currentPath.replace(window.location.origin, "");
+    // Remove leading slash if present
+    currentPath = currentPath.replace(/^\/+/, "");
+
     const fp = new FilePicker({
       type: "image",
-      current: target.src,
+      current: currentPath,
       callback: (path) => {
-        target.src = path;
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = 'img';
-        input.value = path;
-        target.parentNode.appendChild(input);
+        // Clean the selected path
+        let cleanPath = path;
+        // Remove any leading slashes
+        cleanPath = cleanPath.replace(/^\/+/, "");
+
+        // Update the image source and hidden input with clean path
+        target.src = cleanPath;
+
+        // Find or create the hidden input
+        let input = target.parentNode.querySelector('input[name="img"]');
+        if (!input) {
+          input = document.createElement("input");
+          input.type = "hidden";
+          input.name = "img";
+          target.parentNode.appendChild(input);
+        }
+        input.value = cleanPath;
       },
       top: this.position.top + 40,
       left: this.position.left + 10,
@@ -153,11 +158,11 @@ export class StatusCreator extends HandlebarsApplicationMixin(ApplicationV2) {
     const html = form;
     const name = html.name.value;
     const description = html.description.value;
-    const img = html.img.value;
+    const img = html.img.src;
     const bgColor = html.bgColor.value;
     const textColor = html.textColor.value;
 
-    if ((!name, !description, !img, !bgColor, !textColor))
+    if (!name || !description || !img || !bgColor || !textColor)
       return ui.notifications.error("Missing data!");
 
     const effects = abilities
