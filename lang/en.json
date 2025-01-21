@@ -69,6 +69,22 @@
           "weight": { "label": "Weight" }
         }
       },
+      "CombatPower": {
+        "FIELDS": {
+          "cost": { "label": "Cost" },
+          "roll": {
+            "type": { "label": "Roll Type" },
+            "ability": { "label": "Ability" },
+            "bonus": { "label": "Bonus" },
+            "diceAdjustments": {
+              "label": "Dice Adjustments",
+              "advantage": { "label": "Advantage" },
+              "disadvantage": { "label": "Disadvantage" },
+              "total": { "label": "Total Adjustment" }
+            }
+          }
+        }
+      },
       "Spell": {
         "FIELDS": {
           "level": { "label": "Spell Level" }
