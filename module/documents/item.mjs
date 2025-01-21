@@ -74,7 +74,11 @@ export class EventideRpSystemItem extends Item {
 
     return `${diceAdjustments.total + 1}d${
       rollData.actor.hiddenAbilities.dice.total
-    }${diceAdjustments.mode}`;
+    }${diceAdjustments.mode}${
+      rollData.roll.ability !== "unaugmented"
+        ? ` + ${rollData.actor.abilities[rollData.roll.ability].total}`
+        : ""
+    } + ${rollData.roll.bonus}`;
   }
 
   /**
@@ -108,6 +112,13 @@ export class EventideRpSystemItem extends Item {
 
     // if its a combat power we need special handling
     if (item.type === "combatPower") {
+      const targetArray = await erps.utils.getTargetArray();
+
+      if (targetArray.length === 0)
+        return ui.notifications.error(
+          `Please target at least one token first!`
+        );
+
       const rollData = {
         ...this.getRollData(),
         formula: this.getCombatRollFormula(),
