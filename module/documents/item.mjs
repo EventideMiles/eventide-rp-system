@@ -39,6 +39,11 @@ export class EventideRpSystemItem extends Item {
 
     console.log(rollData);
 
+    if (rollData.actor.power.value < rollData.cost) {
+      ui.notifications.warn("You don't have enough power to use this ability!");
+      return "";
+    }
+
     if (rollData.roll.ability !== "unaugmented") {
       const thisDiceAdjustments = rollData.roll.diceAdjustments;
       const actorDiceAdjustments =
@@ -66,8 +71,6 @@ export class EventideRpSystemItem extends Item {
           ? ` + ${rollData.actor.abilities[rollData.roll.ability].total}`
           : ""
       }`;
-
-    console.log(diceAdjustments);
 
     return `${diceAdjustments.total + 1}d${
       rollData.actor.hiddenAbilities.dice.total
@@ -112,7 +115,9 @@ export class EventideRpSystemItem extends Item {
         type: item.type ?? "",
       };
 
-      console.log(rollData);
+      if (rollData.formula === "") return;
+
+      this.actor.addPower(-item.system.cost);
 
       const roll = await rollHandler(rollData, this.actor);
       return roll;
