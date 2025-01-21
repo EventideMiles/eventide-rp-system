@@ -27,7 +27,7 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
       viewDoc: this._viewEffect,
       createDoc: this._createEffect,
       deleteDoc: this._deleteEffect,
-      toggleEffect: this._toggleEffect,
+      toggleEffect: this._toggleEffect
     },
     form: {
       submitOnChange: true,
@@ -60,6 +60,10 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
       template:
         "systems/eventide-rp-system/templates/item/attribute-parts/spell.hbs",
     },
+    attributesCombatPower: {
+      template:
+        "systems/eventide-rp-system/templates/item/attribute-parts/combat-power.hbs",
+    },
     effects: {
       template: "systems/eventide-rp-system/templates/item/effects.hbs",
     },
@@ -85,6 +89,9 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
         break;
       case "spell":
         options.parts.push("attributesSpell");
+        break;
+      case "combatPower":
+        options.parts.push("attributesCombatPower");
         break;
     }
   }
@@ -127,8 +134,25 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
       case "attributesFeature":
       case "attributesGear":
       case "attributesSpell":
+      case "attributesCombatPower":
         // Necessary for preserving active tab on re-render
         context.tab = context.tabs[partId];
+        if (partId === "attributesCombatPower") {
+          // Add roll type options
+          context.rollTypes = {
+            roll: "Roll",
+            flat: "Flat"
+          };
+          // Add ability options
+          context.abilities = {
+            acro: "Acrobatics",
+            phys: "Physical",
+            fort: "Fortitude",
+            will: "Will",
+            wits: "Wits",
+            unaugmented: "Unaugmented"
+          };
+        }
         break;
       case "description":
         context.tab = context.tabs[partId];
@@ -188,6 +212,7 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
         case "attributesFeature":
         case "attributesGear":
         case "attributesSpell":
+        case "attributesCombatPower":
           tab.id = "attributes";
           tab.label += "Attributes";
           break;
