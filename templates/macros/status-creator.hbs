@@ -9,10 +9,16 @@
   </div>
   <div class="form-group">
     <label for="img">Image:</label>
-    <file-picker data-action="imagePick" id="img" name="img" type="image" value="{{ifThen storedData.status_img storedData.status_img "icons/svg/stoned.svg"}}" create="{displayMode: "tiles"}"></file-picker>
+    <img
+      class="profile-img"
+      src="{{ifThen storedData.status_img storedData.status_img "icons/svg/stoned.svg"}}"
+      data-edit="img"
+      data-action='onEditImage'
+      title="Status Image"
+    />
   </div>
   <div class="form-group">
-    <label for="bgColor">Background Color:</label>
+    <label for="bgColor">Background Color/Tint:</label>
     <input type="color" id="bgColor" name="bgColor" value="{{ifThen storedData.status_bgColor storedData.status_bgColor "#7B4874"}}">
   </div>
   <div class="form-group">
@@ -44,4 +50,3 @@
   {{/each}}
   <button type="submit">{{ifThen targetArray.length "Create and Apply" "Create"}}</button>
 </div>
-

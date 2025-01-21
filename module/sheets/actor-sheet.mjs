@@ -58,6 +58,9 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
     gear: {
       template: "systems/eventide-rp-system/templates/actor/gear.hbs",
     },
+    combatPowers: {
+      template: "systems/eventide-rp-system/templates/actor/combat-powers.hbs",
+    },
   };
 
   /** @override */
@@ -68,6 +71,7 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
       "header",
       "tabs",
       "features",
+      "combatPowers",
       "biography",
       "statuses",
       "gear",
@@ -112,6 +116,7 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
       case "features":
       case "gear":
       case "statuses":
+      case "combatPowers":
         context.tab = context.tabs[partId];
         break;
       case "biography":
@@ -162,6 +167,10 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
         case "header":
         case "tabs":
           return tabs;
+        case "combatPowers":
+          tab.id = "combatPowers";
+          tab.label += "CombatPowers";
+          break;
         case "biography":
           tab.id = "biography";
           tab.label += "Biography";
@@ -198,6 +207,7 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
     const gear = [];
     const features = [];
     const statuses = [];
+    const combatPowers = [];
 
     // Iterate through items, allocating to containers
     for (let i of this.document.items) {
@@ -213,12 +223,19 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
       else if (i.type === "status") {
         statuses.push(i);
       }
+      // Append to combat powers
+      else if (i.type === "combatPower") {
+        combatPowers.push(i);
+      }
     }
 
     // Sort then assign
     context.gear = gear.sort((a, b) => (a.sort || 0) - (b.sort || 0));
     context.features = features.sort((a, b) => (a.sort || 0) - (b.sort || 0));
     context.statuses = statuses.sort((a, b) => (a.sort || 0) - (b.sort || 0));
+    context.combatPowers = combatPowers.sort(
+      (a, b) => (a.sort || 0) - (b.sort || 0)
+    );
   }
 
   /**

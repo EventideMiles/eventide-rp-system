@@ -29,6 +29,10 @@ export class StatusCreator extends HandlebarsApplicationMixin(ApplicationV2) {
       submitOnChange: false,
       closeOnSubmit: true,
     },
+    actions: {
+      onEditImage: this._onEditImage
+    },
+    activateListeners: true
   };
 
   static abilities = ["Acro", "Phys", "Fort", "Will", "Wits"];
@@ -90,6 +94,43 @@ export class StatusCreator extends HandlebarsApplicationMixin(ApplicationV2) {
     const frame = await super._renderFrame(options);
     frame.autocomplete = "off";
     return frame;
+  }
+
+  /**
+   * Activates event listeners for the application
+   * @param {JQuery} html - The rendered HTML of the application
+   */
+  activateListeners(html) {
+    super.activateListeners?.(html);
+
+    html.find('[data-action="onEditImage"]').click(this._onEditImage.bind(this));
+  }
+
+  /**
+   * Handle changing the status image.
+   *
+   * @this StatusCreator
+   * @param {PointerEvent} event   The originating click event
+   * @param {HTMLElement} target   The capturing HTML element which defined a [data-edit]
+   * @returns {Promise}
+   * @protected
+   */
+  static async _onEditImage(event, target) {
+    const fp = new FilePicker({
+      type: "image",
+      current: target.src,
+      callback: (path) => {
+        target.src = path;
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'img';
+        input.value = path;
+        target.parentNode.appendChild(input);
+      },
+      top: this.position.top + 40,
+      left: this.position.left + 10,
+    });
+    return fp.browse();
   }
 
   /**

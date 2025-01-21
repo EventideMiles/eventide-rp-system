@@ -9,4 +9,4 @@ export { default as EventideRpSystemGear } from "./item-gear.mjs";
 export { default as EventideRpSystemFeature } from "./item-feature.mjs";
 export { default as EventideRpSystemSpell } from "./item-spell.mjs";
 export { default as EventideRpSystemStatus } from "./item-status.mjs";
-// export {default as EventideRpSystemCombatPower} from "./item-combat-power.mjs";
+export { default as EventideRpSystemCombatPower } from "./item-combat-power.mjs";

@@ -401,7 +401,7 @@
 .chat-card__header--item {
   background-color: rgba(139, 69, 19, 0.7019607843);
 }
-.chat-card__header--combat-power {
+.chat-card__header--combat-powers {
   background-color: rgba(184, 134, 11, 0.7019607843);
 }
 .chat-card__header--dice-dc {
@@ -537,6 +537,15 @@
 .chat-card__hr {
   border: none;
   border-top: 1px solid #c9c7b8;
+}
+
+.status-creator .profile-img {
+  flex: 0 0 100px;
+  height: 100px;
+  margin-right: 10px;
+  object-fit: contain;
+  border: none;
+  cursor: pointer;
 }
 
 .restore-target {

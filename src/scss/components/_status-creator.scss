@@ -6,4 +6,13 @@
   &__header {
     @extend .base-form__header;
   }
+
+  .profile-img {
+    flex: 0 0 100px;
+    height: 100px;
+    margin-right: 10px;
+    object-fit: contain;
+    border: none;
+    cursor: pointer;
+  }
 }

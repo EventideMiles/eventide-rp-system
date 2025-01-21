@@ -105,7 +105,7 @@ const rollHandler = async (dataSet, actor) => {
     : pickedType.includes("wits")
     ? "chat-card__header--wits"
     : pickedType.includes("combat")
-    ? "chat-card__header--combat-power"
+    ? "chat-card__header--combat-powers"
     : pickedType.includes("item")
     ? "chat-card__header--item"
     : pickedType.includes("damage")
