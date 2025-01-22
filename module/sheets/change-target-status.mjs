@@ -1,29 +1,29 @@
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
 /**
- * A form application for incrementing status effects on a target token.
+ * A form application for changing status effects on a target token.
  * @extends {HandlebarsApplicationMixin(ApplicationV2)}
  */
-export class IncrementTargetStatus extends HandlebarsApplicationMixin(
+export class ChangeTargetStatus extends HandlebarsApplicationMixin(
   ApplicationV2
 ) {
   static PARTS = {
-    incrementTargetStatus: {
-      template: `systems/eventide-rp-system/templates/macros/increment-target-status.hbs`,
+    changeTargetStatus: {
+      template: `systems/eventide-rp-system/templates/macros/change-target-status.hbs`,
     },
   };
 
   static DEFAULT_OPTIONS = {
-    id: "increment-target-status",
-    classes: ["eventide-rp-system", "standard-form", "increment-target-status"],
+    id: "change-target-status",
+    classes: ["eventide-rp-system", "standard-form", "change-target-status"],
     position: {
-      width: 500,
+      width: 600,
       height: "auto",
     },
     tag: "form",
     window: {
-      title: "Increment Target Status",
-      icon: "fa-solid fa-plus",
+      title: "Change Target Status",
+      icon: "fa-regular fa-atom-simple",
     },
     form: {
       handler: this.#onSubmit,
@@ -33,12 +33,18 @@ export class IncrementTargetStatus extends HandlebarsApplicationMixin(
   };
 
   static storageKeys = [
-    "incrementTargetStatus_statusSelector",
-    "incrementTargetStatus_addChange",
-    "incrementTargetStatus_overrideChange",
-    "incrementTargetStatus_advantageChange",
-    "incrementTargetStatus_disadvantageChange",
+    "changeTargetStatus_statusSelector",
+    "changeTargetStatus_adjustmentChange",
+    "changeTargetStatus_overrideChange",
+    "changeTargetStatus_advantageChange",
+    "changeTargetStatus_disadvantageChange",
   ];
+
+  constructor({ subtractMode = false } = {}) {
+    super();
+
+    this.subtractMode = subtractMode;
+  }
 
   /**
    * Prepares the context data for a specific part of the form.
@@ -74,13 +80,15 @@ export class IncrementTargetStatus extends HandlebarsApplicationMixin(
     this.target = targetArray[0];
     context.target = this.target;
 
-    context.cssClass = IncrementTargetStatus.DEFAULT_OPTIONS.classes.join(" ");
+    context.subtractMode = this.subtractMode;
+
+    context.cssClass = ChangeTargetStatus.DEFAULT_OPTIONS.classes.join(" ");
 
     context.statuses = this.target.actor.items.filter(
       (item) => item.type === "status"
     );
 
-    context.storageKeys = IncrementTargetStatus.storageKeys;
+    context.storageKeys = ChangeTargetStatus.storageKeys;
 
     context.storedData = await erps.utils.retrieveLocal(context.storageKeys);
 
@@ -101,6 +109,10 @@ export class IncrementTargetStatus extends HandlebarsApplicationMixin(
    * @private
    */
   static async #onSubmit(event, form, formData) {
+    console.log(event);
+    console.log(form);
+    console.log(formData);
+    console.log(this);
     const statusId = form.statusSelector.value;
     const target = this.target;
 
@@ -122,8 +134,13 @@ export class IncrementTargetStatus extends HandlebarsApplicationMixin(
       return;
     }
 
-    // Get the increment values from the form
-    const addChange = parseInt(form.addChange.value) || 0;
+    // Get the change values from the form
+    const adjustmentChange =
+      parseInt(
+        this.subtractMode
+          ? -form.adjustmentChange.value
+          : form.adjustmentChange.value
+      ) || 0;
     const overrideChange = parseInt(form.overrideChange.value) || 0;
     const advantageChange = parseInt(form.advantageChange.value) || 0;
     const disadvantageChange = parseInt(form.disadvantageChange.value) || 0;
@@ -141,7 +158,7 @@ export class IncrementTargetStatus extends HandlebarsApplicationMixin(
       } else if (change.key.includes("override")) {
         newChange.value = parseInt(change.value) + overrideChange;
       } else {
-        newChange.value = parseInt(change.value) + addChange;
+        newChange.value = parseInt(change.value) + adjustmentChange;
       }
 
       console.log(newChange);
@@ -160,11 +177,11 @@ export class IncrementTargetStatus extends HandlebarsApplicationMixin(
 
     // store data in local storage
     const storageObject = {
-      incrementTargetStatus_statusSelector: form.statusSelector.value,
-      incrementTargetStatus_addChange: form.addChange.value,
-      incrementTargetStatus_overrideChange: form.overrideChange.value,
-      incrementTargetStatus_advantageChange: form.advantageChange.value,
-      incrementTargetStatus_disadvantageChange: form.disadvantageChange.value,
+      changeTargetStatus_statusSelector: form.statusSelector.value,
+      changeTargetStatus_adjustmentChange: form.adjustmentChange.value,
+      changeTargetStatus_overrideChange: form.overrideChange.value,
+      changeTargetStatus_advantageChange: form.advantageChange.value,
+      changeTargetStatus_disadvantageChange: form.disadvantageChange.value,
     };
 
     await erps.utils.storeLocal(storageObject);

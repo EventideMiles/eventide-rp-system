@@ -142,6 +142,7 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
           context.rollTypes = {
             roll: "Roll",
             flat: "Flat",
+            none: "None",
           };
           // Add ability options
           context.abilities = {
