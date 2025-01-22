@@ -11,15 +11,25 @@ export default class EventideRpSystemCombatPower extends EventideRpSystemItemBas
     const requiredInteger = { required: true, nullable: false, integer: true };
     const schema = super.defineSchema();
 
+    schema.bgColor = new fields.ColorField({
+      initial: "#B8860B",
+      blank: false,
+      required: true,
+    });
+    schema.textColor = new fields.ColorField({
+      initial: "#ffffff",
+      blank: false,
+      required: true,
+    });
+
     schema.cost = new fields.NumberField({
       ...requiredInteger,
       initial: 1,
-      min: 0,
     });
 
     schema.targeted = new fields.BooleanField({
       required: true,
-      initial: true
+      initial: true,
     });
 
     schema.roll = new fields.SchemaField({
@@ -27,7 +37,7 @@ export default class EventideRpSystemCombatPower extends EventideRpSystemItemBas
         initial: "roll",
         required: true,
         nullable: false,
-        choices: ["roll", "flat"],
+        choices: ["roll", "flat", "none"],
       }),
       ability: new fields.StringField({
         required: true,
