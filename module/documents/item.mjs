@@ -37,12 +37,12 @@ export class EventideRpSystemItem extends Item {
 
     const rollData = this.getRollData();
 
-    console.log(rollData);
-
     if (rollData.actor.power.value < rollData.cost) {
       ui.notifications.warn("You don't have enough power to use this ability!");
       return "";
     }
+
+    if (rollData.roll.type === "none") return "0";
 
     if (rollData.roll.ability !== "unaugmented") {
       const thisDiceAdjustments = rollData.roll.diceAdjustments;
@@ -115,25 +115,23 @@ export class EventideRpSystemItem extends Item {
       const targetArray = await erps.utils.getTargetArray();
 
       // Only check for targets if this is a targeted power
-      if (item.system.targeted && targetArray.length === 0) {
+      if (
+        item.system.targeted &&
+        targetArray.length === 0 &&
+        item.system.roll.type !== "none"
+      ) {
         return ui.notifications.error(
           `Please target at least one token first!`
         );
       }
 
-      const rollData = {
-        ...this.getRollData(),
-        formula: this.getCombatRollFormula(),
-        label: item.name ? `${item.name} (Cost: ${item.system.cost})` : "",
-        type: item.type ?? "",
-      };
+      item.formula = item.getCombatRollFormula();
 
-      if (rollData.formula === "") return;
+      if (item.formula === "") return;
 
       this.actor.addPower(-item.system.cost);
 
-      const roll = await rollHandler(rollData, this.actor);
-      return roll;
+      const message = await erps.messages.combatPowerMessage(item, this.actor);
     }
     // If there's no roll data, send a chat message.
     else if (!this.system.formula) {
