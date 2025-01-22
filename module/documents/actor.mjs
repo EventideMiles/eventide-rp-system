@@ -229,18 +229,4 @@ export class EventideRpSystemActor extends Actor {
       actor: this,
     });
   }
-
-  async incrementStatuses({
-    statuses = [],
-    addAmount = 0,
-    overrideAmount = 0,
-  }) {
-    if (statuses.length === 0 || (addAmount === 0 && overrideAmount === 0))
-      return;
-
-    const filteredStatuses = statuses.filter((i) => i.type === "status");
-
-    for (const status of filteredStatuses) {
-    }
-  }
 }
