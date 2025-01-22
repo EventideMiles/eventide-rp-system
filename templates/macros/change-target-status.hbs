@@ -1,0 +1,33 @@
+<div class="{{cssClass}}" autocomplete="off">
+  <div>This script is to allow you to change the values
+    on an existing status condition easily.
+  </div>
+  <div class="form-group">
+    <label for="statusSelector">Status:</label>
+    <select id="statusSelector" name="statusSelector">
+      {{#each statuses as |status|}}
+        <option value="{{status.id}}" {{#ifCond status.id "===" ../storedData.changeTargetStatus_statusSelector}}selected{{/ifCond}}>{{status.name}}</option>
+      {{/each}}
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="adjustmentChange">Stat Adjustment {{#ifCond subtractMode "===" false}}Addition{{else}}Reduction{{/ifCond}}:</label>
+    <input autofocus type="number" id="adjustmentChange" name="adjustmentChange" value="{{ifThen storedData.changeTargetStatus_adjustmentChange storedData.changeTargetStatus_adjustmentChange "0"}}">
+  </div>
+  <div class="form-group">
+    <label for="overrideChange">Stat Override Change:</label>
+    <input type="number" id="overrideChange" name="overrideChange" value="{{ifThen storedData.changeTargetStatus_overrideChange storedData.changeTargetStatus_overrideChange "0"}}">
+  </div>
+  <div class="form-group">
+    <label for="advantageChange">Advantage Change:</label>
+    <input type="number" id="advantageChange" name="advantageChange" value="{{ifThen storedData.changeTargetStatus_advantageChange storedData.changeTargetStatus_advantageChange "0"}}">
+  </div>
+  <div class="form-group">
+    <label for="disadvantageChange">Disadvantage Change:</label>
+    <input type="number" id="disadvantageChange" name="disadvantageChange" value="{{ifThen storedData.changeTargetStatus_disadvantageChange storedData.changeTargetStatus_disadvantageChange "0"}}">
+  </div>
+  <div class="form-group">
+    <button type="submit">{{ifThen subtractMode "Decrement" "Increment"}}</button>
+    <button type="button" data-action="close">Close</button>
+  </div>
+</div>
