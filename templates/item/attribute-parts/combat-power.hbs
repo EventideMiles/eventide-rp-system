@@ -8,57 +8,65 @@
           {{selectOptions rollTypes selected=system.roll.type}}
         </select>
       </div>
-      <div class='grid-span-1'>
-        <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.CombatPower.FIELDS.roll.ability.label'}}</label>
-        <select name='system.roll.ability'>
-          {{selectOptions abilities selected=system.roll.ability}}
-        </select>
+      <div class="resource checkbox-resource">
+        <label class="resource-label">{{localize 'EVENTIDE_RP_SYSTEM.Item.CombatPower.FIELDS.targeted.label'}}</label>
+        <div class="checkbox-wrapper">
+          <input type="checkbox" class="large-checkbox" name="system.targeted" {{checked system.targeted}} />
+        </div>
       </div>
     </div>
 
-    <div class='grid grid-1col'>
-      <div class='grid-span-1'>
-        <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.CombatPower.FIELDS.roll.bonus.label'}}</label>
-        <input type='text' name='system.roll.bonus' value='{{system.roll.bonus}}' data-dtype='Number' />
+    {{#ifCond system.roll.type "!==" "none"}}
+      <div class='grid grid-2col'>
+        <div class='grid-span-1'>
+          <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.CombatPower.FIELDS.roll.ability.label'}}</label>
+          <select name='system.roll.ability'>
+            {{selectOptions abilities selected=system.roll.ability}}
+          </select>
+        </div>
+        <div class='grid-span-1'>
+          <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.CombatPower.FIELDS.roll.bonus.label'}}</label>
+          <input type='text' name='system.roll.bonus' value='{{system.roll.bonus}}' data-dtype='Number' />
+        </div>
       </div>
-    </div>
+    {{/ifCond}}
 
-    {{#if (not (eq system.roll.type "flat"))}}
-    <div class='dice-adjustments'>
-      <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.CombatPower.FIELDS.roll.diceAdjustments.label'}}</label>
-      <div class='grid grid-3col'>
-        <div class='grid-span-1'>
-          <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.CombatPower.FIELDS.roll.diceAdjustments.advantage.label'}}</label>
-          <input 
-            type='text' 
-            name='system.roll.diceAdjustments.advantage' 
-            value='{{system.roll.diceAdjustments.advantage}}' 
-            data-dtype='Number'
-            {{#if editable}}data-action='onDiceAdjustmentChange'{{/if}}
-          />
-        </div>
-        <div class='grid-span-1'>
-          <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.CombatPower.FIELDS.roll.diceAdjustments.disadvantage.label'}}</label>
-          <input 
-            type='text' 
-            name='system.roll.diceAdjustments.disadvantage' 
-            value='{{system.roll.diceAdjustments.disadvantage}}' 
-            data-dtype='Number'
-            {{#if editable}}data-action='onDiceAdjustmentChange'{{/if}}
-          />
-        </div>
-        <div class='grid-span-1'>
-          <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.CombatPower.FIELDS.roll.diceAdjustments.total.label'}}</label>
-          <input 
-            type='text' 
-            name='system.roll.diceAdjustments.total' 
-            value='{{system.roll.diceAdjustments.total}}' 
-            data-dtype='Number' 
-            disabled
-          />
+    {{#if (eq system.roll.type "roll")}}
+      <div class='dice-adjustments'>
+        <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.CombatPower.FIELDS.roll.diceAdjustments.label'}}</label>
+        <div class='grid grid-3col'>
+          <div class='grid-span-1'>
+            <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.CombatPower.FIELDS.roll.diceAdjustments.advantage.label'}}</label>
+            <input 
+              type='text' 
+              name='system.roll.diceAdjustments.advantage' 
+              value='{{system.roll.diceAdjustments.advantage}}' 
+              data-dtype='Number'
+              {{#if editable}}data-action='onDiceAdjustmentChange'{{/if}}
+            />
+          </div>
+          <div class='grid-span-1'>
+            <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.CombatPower.FIELDS.roll.diceAdjustments.disadvantage.label'}}</label>
+            <input 
+              type='text' 
+              name='system.roll.diceAdjustments.disadvantage' 
+              value='{{system.roll.diceAdjustments.disadvantage}}' 
+              data-dtype='Number'
+              {{#if editable}}data-action='onDiceAdjustmentChange'{{/if}}
+            />
+          </div>
+          <div class='grid-span-1'>
+            <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.CombatPower.FIELDS.roll.diceAdjustments.total.label'}}</label>
+            <input 
+              type='text' 
+              name='system.roll.diceAdjustments.total' 
+              value='{{system.roll.diceAdjustments.total}}' 
+              data-dtype='Number' 
+              disabled
+            />
+          </div>
         </div>
       </div>
-    </div>
     {{/if}}
   </div>
 </section>

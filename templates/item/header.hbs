@@ -35,27 +35,35 @@
     {{/if}}
     {{#if (eq item.type 'status')}}
       <div class="grid grid-2col">
-        <color-picker name="system.textColor" value="{{item.system.textColor}}" placeholder="Text Color">
-          <input type="text" placeholder="Text Color" name="system.textColor" data-edit="system.textColor"/>
+        <color-picker name="system.textColor" value="{{item.system.textColor}}" placeholder="{{localize 'EVENTIDE_RP_SYSTEM.Item.Status.FIELDS.textColor.placeholder'}}">
+          <input type="text" placeholder="{{localize 'EVENTIDE_RP_SYSTEM.Item.Status.FIELDS.textColor.placeholder'}}" name="system.textColor" data-edit="system.textColor"/>
           <input type="color">
         </color-picker>
-        <color-picker name="system.bgColor" value="{{item.system.bgColor}}" placeholder="Background Color">
-          <input type="text" placeholder="Background Color" name="system.bgColor" data-edit="system.bgColor"/>
+        <color-picker name="system.bgColor" value="{{item.system.bgColor}}" placeholder="{{localize 'EVENTIDE_RP_SYSTEM.Item.Status.FIELDS.bgColor.placeholder'}}">
+          <input type="text" placeholder="{{localize 'EVENTIDE_RP_SYSTEM.Item.Status.FIELDS.bgColor.placeholder'}}" name="system.bgColor" data-edit="system.bgColor"/>
           <input type="color">
         </color-picker>
       </div>
     {{/if}}
     {{#if (eq item.type 'combatPower')}}
       <div class="grid grid-2col">
-        <div class="resource">
-          <label class="resource-label">{{localize 'EVENTIDE_RP_SYSTEM.Item.CombatPower.FIELDS.cost.label'}}</label>
+        <div class='resource grid-span-2'>
+          <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.CombatPower.FIELDS.cost.label'}}</label>
           <input type="text" name="system.cost" value="{{system.cost}}" data-dtype="Number" />
         </div>
-        <div class="resource checkbox-resource">
-          <label class="resource-label align-right">{{localize 'EVENTIDE_RP_SYSTEM.Item.CombatPower.FIELDS.targeted.label'}}</label>
-          <div class="checkbox-wrapper align-right">
-            <input type="checkbox" class="large-checkbox" name="system.targeted" {{checked system.targeted}} />
-          </div>
+        <div class='resource'>
+          <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.CombatPower.FIELDS.textColor.label'}}</label>
+          <color-picker name="system.textColor" value="{{system.textColor}}" placeholder="{{localize 'EVENTIDE_RP_SYSTEM.Item.CombatPower.FIELDS.textColor.placeholder'}}">
+            <input type="text" placeholder="{{localize 'EVENTIDE_RP_SYSTEM.Item.CombatPower.FIELDS.textColor.placeholder'}}" name="system.textColor" data-edit="system.textColor"/>
+            <input type="color">
+          </color-picker>
+        </div>
+        <div class='resource'>
+          <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.CombatPower.FIELDS.bgColor.label'}}</label>
+          <color-picker name="system.bgColor" value="{{system.bgColor}}" placeholder="{{localize 'EVENTIDE_RP_SYSTEM.Item.CombatPower.FIELDS.bgColor.placeholder'}}">
+            <input type="text" placeholder="{{localize 'EVENTIDE_RP_SYSTEM.Item.CombatPower.FIELDS.bgColor.placeholder'}}" name="system.bgColor" data-edit="system.bgColor"/>
+            <input type="color">
+          </color-picker>
         </div>
       </div>
     {{/if}}
