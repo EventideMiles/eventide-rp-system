@@ -22,6 +22,7 @@ import {
   createStatusMessage,
   deleteStatusMessage,
   restoreMessage,
+  combatPowerMessage,
 } from "./helpers/system-messages.mjs";
 
 /* -------------------------------------------- */
@@ -56,6 +57,7 @@ globalThis.erps = {
     createStatusMessage,
     deleteStatusMessage,
     restoreMessage,
+    combatPowerMessage,
   },
   models,
 };
