@@ -73,6 +73,14 @@
         "FIELDS": {
           "cost": { "label": "Cost" },
           "targeted": { "label": "Requires Target?" },
+          "textColor": { 
+            "label": "Text Color",
+            "placeholder": "Enter text color" 
+          },
+          "bgColor": { 
+            "label": "Background Color",
+            "placeholder": "Enter background color" 
+          },
           "roll": {
             "type": { "label": "Roll Type" },
             "ability": { "label": "Ability" },
