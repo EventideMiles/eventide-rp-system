@@ -24,6 +24,7 @@ const rollHandler = async (dataSet, actor) => {
   const result = await roll.evaluate();
   const targetArray = await getTargetArray();
   const critAllowed = dataSet?.critAllowed ?? true;
+  const toMessage = dataSet?.toMessage ?? true;
   const acCheck =
     (dataSet?.acCheck ?? true) && targetArray.length ? true : false;
   const description = dataSet?.description ?? "";
@@ -104,8 +105,6 @@ const rollHandler = async (dataSet, actor) => {
     ? "chat-card__header--will"
     : pickedType.includes("wits")
     ? "chat-card__header--wits"
-    : pickedType.includes("combat")
-    ? "chat-card__header--combat-powers"
     : pickedType.includes("item")
     ? "chat-card__header--item"
     : pickedType.includes("damage")
@@ -124,8 +123,6 @@ const rollHandler = async (dataSet, actor) => {
     ? "fa-solid fa-fire-flame-curved"
     : pickedType.includes("wits")
     ? "fa-solid fa-chess"
-    : pickedType.includes("combat")
-    ? "fa-solid fa-sword"
     : pickedType.includes("item")
     ? "fa-solid fa-toolbox"
     : pickedType.includes("damage")
@@ -160,11 +157,13 @@ const rollHandler = async (dataSet, actor) => {
     data
   );
 
-  roll.toMessage({
-    speaker: ChatMessage.getSpeaker({ actor }),
-    flavor: content,
-    rollMode: game.settings.get("core", "rollMode"),
-  });
+  if (toMessage) {
+    roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor }),
+      flavor: content,
+      rollMode: game.settings.get("core", "rollMode"),
+    });
+  }
 
   return roll;
 };
