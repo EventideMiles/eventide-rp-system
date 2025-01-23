@@ -430,21 +430,21 @@
   background-color: var(--eventide-rp-system-abilities-wits);
 }
 
-.base-form, .restore-target, .damage-targets, .status-creator {
+.base-form {
   overflow-y: auto;
   -ms-overflow-style: none;
   scrollbar-width: none;
   font-family: "Underdog", serif;
   margin: 0.5rem;
 }
-.base-form::-webkit-scrollbar, .restore-target::-webkit-scrollbar, .damage-targets::-webkit-scrollbar, .status-creator::-webkit-scrollbar {
+.base-form::-webkit-scrollbar {
   display: none;
 }
 .base-form--disabled {
   pointer-events: none;
   opacity: 0.7;
 }
-.base-form__header, .status-creator__header {
+.base-form__header {
   font-family: "Underdog", serif;
   text-align: center;
   text-decoration: underline;
@@ -973,33 +973,6 @@ input[type=checkbox].base-form__checkbox:checked::after {
 .chat-card__hr {
   border: none;
   border-top: 1px solid var(--eventide-rp-system-chat-hr);
-}
-
-.status-creator__header {
-  padding: 0.5rem;
-  margin: 0;
-  height: auto;
-  overflow: visible;
-}
-.status-creator .profile-img {
-  flex: 0 0 100px;
-  height: 100px;
-  margin-right: 10px;
-  object-fit: contain;
-  border: none;
-  cursor: pointer;
-}
-
-.restore-target {
-  max-height: 600px;
-  color: var(--eventide-rp-system-c-white);
-}
-.restore-target .form-group {
-  margin: 0;
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  padding: 0;
 }
 
 .eventide-rp-system {
