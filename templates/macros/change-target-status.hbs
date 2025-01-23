@@ -1,33 +1,32 @@
-<div class="{{cssClass}}" autocomplete="off">
-  <div>This script is to allow you to change the values
-    on an existing status condition easily.
-  </div>
-  <div class="form-group">
-    <label for="statusSelector">Status:</label>
-    <select id="statusSelector" name="statusSelector">
+<div class="{{cssClass}} base-form" autocomplete="off">
+  <p>This script is to allow you to change the values on an existing status condition easily.</p>
+  <div class="base-form__group">
+    <label class="base-form__label" for="statusSelector">Status:</label>
+    <select class="base-form__select" id="statusSelector" name="statusSelector">
       {{#each statuses as |status|}}
-        <option value="{{status.id}}" {{#ifCond status.id "===" ../storedData.changeTargetStatus_statusSelector}}selected{{/ifCond}}>{{status.name}}</option>
+        <option class="base-form__select-option" value="{{status.id}}" {{#ifCond status.id "===" ../storedData.changeTargetStatus_statusSelector}}selected{{/ifCond}}>{{status.name}}</option>
       {{/each}}
     </select>
   </div>
-  <div class="form-group">
-    <label for="adjustmentChange">Stat Adjustment {{#ifCond subtractMode "===" false}}Addition{{else}}Reduction{{/ifCond}}:</label>
-    <input autofocus type="number" id="adjustmentChange" name="adjustmentChange" value="{{ifThen storedData.changeTargetStatus_adjustmentChange storedData.changeTargetStatus_adjustmentChange "0"}}">
+  <div class="base-form__group">
+    <label class="base-form__label" for="adjustmentChange">Stat Adjustment:</label>
+    <input class="base-form__number-input" autofocus type="number" id="adjustmentChange" name="adjustmentChange" value="{{ifThen storedData.changeTargetStatus_adjustmentChange storedData.changeTargetStatus_adjustmentChange "0"}}" placeholder="{{#ifCond subtractMode "===" false}}Addition{{else}}Reduction{{/ifCond}}">
   </div>
-  <div class="form-group">
-    <label for="overrideChange">Stat Override Change:</label>
-    <input type="number" id="overrideChange" name="overrideChange" value="{{ifThen storedData.changeTargetStatus_overrideChange storedData.changeTargetStatus_overrideChange "0"}}">
+  <div class="base-form__group">
+    <label class="base-form__label" for="overrideChange">Override Value:</label>
+    <input class="base-form__number-input" type="number" id="overrideChange" name="overrideChange" value="{{ifThen storedData.changeTargetStatus_overrideChange storedData.changeTargetStatus_overrideChange "0"}}" placeholder="New Value">
   </div>
-  <div class="form-group">
-    <label for="advantageChange">Advantage Change:</label>
-    <input type="number" id="advantageChange" name="advantageChange" value="{{ifThen storedData.changeTargetStatus_advantageChange storedData.changeTargetStatus_advantageChange "0"}}">
+  <div class="base-form__group">
+    <label class="base-form__label" for="advantageChange">Advantage:</label>
+    <input class="base-form__number-input" type="number" id="advantageChange" name="advantageChange" value="{{ifThen storedData.changeTargetStatus_advantageChange storedData.changeTargetStatus_advantageChange "0"}}" placeholder="Change Value">
   </div>
-  <div class="form-group">
-    <label for="disadvantageChange">Disadvantage Change:</label>
-    <input type="number" id="disadvantageChange" name="disadvantageChange" value="{{ifThen storedData.changeTargetStatus_disadvantageChange storedData.changeTargetStatus_disadvantageChange "0"}}">
+  <div class="base-form__group">
+    <label class="base-form__label" for="disadvantageChange">Disadvantage:</label>
+    <input class="base-form__number-input" type="number" id="disadvantageChange" name="disadvantageChange" value="{{ifThen storedData.changeTargetStatus_disadvantageChange storedData.changeTargetStatus_disadvantageChange "0"}}" placeholder="Change Value">
   </div>
-  <div class="form-group">
-    <button type="submit">{{ifThen subtractMode "Decrement" "Increment"}}</button>
-    <button type="button" data-action="close">Close</button>
+  <div class="base-form__group base-form__group--right">
+    <button type="submit" class="base-form__button base-form__button--primary">{{ifThen subtractMode "Decrement" "Increment"}}</button>
+    <button type="button" class="base-form__button" data-action="store">Store</button>
+    <button type="button" class="base-form__button" data-action="close">Close</button>
   </div>
 </div>

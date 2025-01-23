@@ -1,38 +1,38 @@
-<div class="{{cssClass}}" autocomplete="off">
-  <div class="form-group">
-    <label for="name">Name:</label>
-    <input autofocus type="text" id="name" name="name" placeholder="Name">
+<div class="{{cssClass}} base-form" autocomplete="off">
+  <div class="base-form__group">
+    <label class="base-form__label" for="name">Name:</label>
+    <input class="base-form__text-input" autofocus type="text" id="name" name="name" placeholder="Name">
   </div>
-  <div class="form-group">
-    <label for="description">Description:</label>
-    <textarea id="description" name="description" placeholder="Description"></textarea>
+  <div class="base-form__group">
+    <label class="base-form__label" for="description">Description:</label>
+    <textarea class="base-form__textarea" id="description" name="description" placeholder="Description"></textarea>
   </div>
-  <div class="form-group">
-    <label for="img">Image:</label>
+  <div class="base-form__group">
+    <label class="base-form__label" for="img">Image:</label>
     <img
-      class="profile-img"
+      class="base-form__image"
       src="{{ifThen storedData.status_img storedData.status_img "icons/svg/stoned.svg"}}"
       data-edit="img"
       data-action='onEditImage'
       title="Status Image"
     />
-    <input type="hidden" name="img" value="{{ifThen storedData.status_img storedData.status_img "icons/svg/stoned.svg"}}">
+    <input class="base-form__hidden-input" type="hidden" name="img" value="{{ifThen storedData.status_img storedData.status_img "icons/svg/stoned.svg"}}">
   </div>
-  <div class="form-group">
-    <label for="bgColor">Background Color/Tint:</label>
-    <input type="color" id="bgColor" name="bgColor" value="{{ifThen storedData.status_bgColor storedData.status_bgColor "#7B4874"}}">
+  <div class="base-form__group">
+    <label class="base-form__label" for="bgColor">Background Color/Tint:</label>
+    <input class="base-form__color-input" type="color" id="bgColor" name="bgColor" value="{{ifThen storedData.status_bgColor storedData.status_bgColor "#7B4874"}}">
   </div>
-  <div class="form-group">
-    <label for="textColor">Text Color:</label>
-    <input type="color" id="textColor" name="textColor" value="{{ifThen storedData.status_textColor storedData.status_textColor "#ffffff"}}">
+  <div class="base-form__group">
+    <label class="base-form__label" for="textColor">Text Color:</label>
+    <input class="base-form__color-input" type="color" id="textColor" name="textColor" value="{{ifThen storedData.status_textColor storedData.status_textColor "#ffffff"}}">
   </div>
-  <div class=".status-creator status-creator__header">Effects</div>
+  <div class="base-form__header">Effects</div>
   {{#each abilities}}
-    <div class="form-group">
-      <label for="{{this.toLowerCase}}"> {{this}}:</label>
-      <input type="number" id="{{this.toLowerCase}}" name="{{this.toLowerCase}}" value="0">
-      <select id="{{this.toLowerCase}}-mode" name="{{this.toLowerCase}}-mode">
-        <option value="add">Add</option>
+    <div class="base-form__group">
+      <label class="base-form__label" for="{{this.toLowerCase}}"> {{this}}:</label>
+      <input class="base-form__number-input" type="number" id="{{this.toLowerCase}}" name="{{this.toLowerCase}}" value="0">
+      <select class="base-form__select" id="{{this.toLowerCase}}-mode" name="{{this.toLowerCase}}-mode">
+        <option value="add">Change</option>
         <option value="override">Override</option>
         <option value="advantage">Advantage</option>
         <option value="disadvantage">Disadvantage</option>
@@ -40,14 +40,18 @@
     </div>
   {{/each}}
   {{#each hiddenAbilities}}
-    <div class="form-group">
-      <label for="{{this.toLowerCase}}"> {{this}}:</label>
-      <input type="number" id="{{this.toLowerCase}}" name="{{this.toLowerCase}}" value="0">
-      <select id="{{this.toLowerCase}}-mode" name="{{this.toLowerCase}}-mode">
-        <option value="add">Add</option>
+    <div class="base-form__group">
+      <label class="base-form__label" for="{{this.toLowerCase}}"> {{this}}:</label>
+      <input class="base-form__number-input" type="number" id="{{this.toLowerCase}}" name="{{this.toLowerCase}}" value="0">
+      <select class="base-form__select" id="{{this.toLowerCase}}-mode" name="{{this.toLowerCase}}-mode">
+        <option value="add">Change</option>
         <option value="override">Override</option>
+        <option value="advantage">Advantage</option>
+        <option value="disadvantage">Disadvantage</option>
       </select>
     </div>
   {{/each}}
-  <button type="submit">{{ifThen targetArray.length "Create and Apply" "Create"}}</button>
+  <div class="base-form__group base-form__group--right">
+    <button type="submit" class="base-form__button base-form__button--primary">{{ifThen targetArray.length "Create and Apply" "Create"}}</button>
+  </div>
 </div>

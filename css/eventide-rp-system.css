@@ -13,7 +13,7 @@
   font-style: normal;
 }
 
-.underdog-regular, .chat-card__description, .chat-card__effects, .base-form__header, .base-form .form-group, .restore-target .form-group, .damage-targets .form-group, .status-creator .form-group, .status-creator__header {
+.underdog-regular, .chat-card__description, .chat-card__effects {
   font-family: "Underdog", serif;
   font-weight: 400;
   font-style: normal;
@@ -27,27 +27,157 @@
 }
 
 :root {
-  --eventide-rp-system-c-dark: #191813;
-  --eventide-rp-system-c-faint: #c9c7b8;
+  --eventide-rp-system-c-dark: #1a1814;
+  --eventide-rp-system-c-faint: #a8a69b;
   --eventide-rp-system-c-beige: #b5b3a4;
-  --eventide-rp-system-c-tan: #444444;
+  --eventide-rp-system-c-tan: #4d4d4d;
   --eventide-rp-system-c-white: #ffffff;
   --eventide-rp-system-c-black: #000000;
-  --eventide-rp-system-c-groove: #eeede0;
-  --eventide-rp-system-character-input: rgba(white, 0.45);
-  --eventide-rp-system-character-input-border: rgba(black, 0.5);
+  --eventide-rp-system-c-groove: #f0efe6;
+  --eventide-rp-system-character-input: rgba(255, 255, 255, 0.85);
+  --eventide-rp-system-character-input-border: rgba(0, 0, 0, 0.65);
+  --eventide-rp-system-character-black: #000000;
+  --eventide-rp-system-character-white: #ffffff;
+  --eventide-rp-system-character-tan: #4d4d4d;
+  --eventide-rp-system-character-glow: rgba(0, 123, 255, 0.75);
+  --eventide-rp-system-character-background-color: linear-gradient(to bottom, rgba(68, 98, 131, 0.6), rgba(51, 72, 104, 0.5));
+  --eventide-rp-system-secondary-image-background: rgba(0, 0, 0, 0.85);
+  --eventide-rp-system-hidden-bg: #f7e8ea;
+  --eventide-rp-system-hidden-border: #e66a6e;
+  --eventide-rp-system-effect-bg: rgba(136, 87, 53, 0.75);
+  --eventide-rp-system-chat-card-white: #ffffff;
+  --eventide-rp-system-chat-card-black: #000000;
+  --eventide-rp-system-chat-card-tan: #4d4d4d;
+  --eventide-rp-system-abilities-acro: rgba(191, 68, 0, 0.75);
+  --eventide-rp-system-abilities-phys: rgba(168, 3, 3, 0.75);
+  --eventide-rp-system-abilities-fort: rgba(45, 104, 45, 0.75);
+  --eventide-rp-system-abilities-will: rgba(106, 27, 154, 0.75);
+  --eventide-rp-system-abilities-wits: rgba(14, 67, 128, 0.75);
+  --eventide-rp-system-card-header-item: #8B4513b3;
+  --eventide-rp-system-card-header-dc: #234B57b3;
+  --eventide-rp-system-card-header-unknown: #535353b3;
+  --eventide-rp-system-card-header-damage: #6A0404b3;
+  --eventide-rp-system-card-header-heal: #cb8e00b3;
+  --eventide-rp-system-card-header-effect: #9A5D2Db3;
+  --eventide-rp-system-card-header-delete: #555555b3;
+  --eventide-rp-system-card-header-description-hr: #8B4513b3;
+  --eventide-rp-system-chat-details-hit: #50C877b3;
+  --eventide-rp-system-chat-details-miss: #C70039b3;
+  --eventide-rp-system-chat-hr: #c9c7b8;
+  --eventide-rp-system-critical-hit: #2D1499b3;
+  --eventide-rp-system-critical-miss: #4e0101b3;
+  --eventide-rp-system-saved-miss: #4A777Ab3;
+  --eventide-rp-system-stolen-crit: #563C5Cb3;
+  --eventide-rp-system-input-bg: #ffffff;
+  --eventide-rp-system-input-hover: #f0f0f0;
+  --eventide-rp-system-input-border: #d0d0d0;
+  --eventide-rp-system-input-text: #191813;
+  --eventide-rp-system-input-placeholder: #666666;
+  --eventide-rp-system-input-focus: #4d94ff;
+  --eventide-rp-system-input-checked: #4d94ff;
+  --eventide-rp-system-input-check: #ffffff;
+  --eventide-rp-system-checkbox-bg: #ffffff;
+  --eventide-rp-system-checkbox-hover: #f0f0f0;
+  --eventide-rp-system-label-text: #191813;
+  --eventide-rp-system-required: #cc0000;
+  --eventide-rp-system-select-arrow-url: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath fill='%23191813' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  --eventide-rp-system-select-option-bg: #ffffff;
+  --eventide-rp-system-select-option-text: #191813;
+  --eventide-rp-system-select-option-hover: #f0f0f0;
+  --eventide-rp-system-button-bg: #ffffff;
+  --eventide-rp-system-button-text: #191813;
+  --eventide-rp-system-button-border: #d0d0d0;
+  --eventide-rp-system-button-hover: #e8f0ff;
+  --eventide-rp-system-button-active: #d6e4ff;
+  --eventide-rp-system-button-glow: rgba(255, 255, 255, 0.75);
+  --eventide-rp-system-primary-button-bg: #ffffff;
+  --eventide-rp-system-primary-button-text: #191813;
+  --eventide-rp-system-primary-button-border: #d0d0d0;
+  --eventide-rp-system-primary-button-hover: #4d94ff;
+  --eventide-rp-system-primary-button-hover-text: #ffffff;
+  --eventide-rp-system-primary-button-active: #2979ff;
+  --eventide-rp-system-primary-button-glow: rgba(77, 148, 255, 0.75);
+  --eventide-rp-system-danger-button-bg: #cc0000;
+  --eventide-rp-system-danger-button-text: #ffffff;
+  --eventide-rp-system-danger-button-border: #990000;
+  --eventide-rp-system-danger-button-hover: #ff0000;
 }
 
 .theme-dark {
-  --eventide-rp-system-c-dark: #c9c7b8;
-  --eventide-rp-system-c-faint: #191813;
-  --eventide-rp-system-c-beige: #444444;
-  --eventide-rp-system-c-tan: #b5b3a4;
+  --eventide-rp-system-c-dark: #e5e3d8;
+  --eventide-rp-system-c-faint: #2a2925;
+  --eventide-rp-system-c-beige: #4d4d4d;
+  --eventide-rp-system-c-tan: #c9c7b8;
   --eventide-rp-system-c-white: #000000;
   --eventide-rp-system-c-black: #ffffff;
-  --eventide-rp-system-c-groove: #11121f;
-  --eventide-rp-system-character-input: rgba(black, 0.45);
-  --eventide-rp-system-character-input-border: rgba(white, 0.5);
+  --eventide-rp-system-c-groove: #1a1922;
+  --eventide-rp-system-character-input: rgba(0, 0, 0, 0.85);
+  --eventide-rp-system-character-input-border: rgba(255, 255, 255, 0.65);
+  --eventide-rp-system-character-black: #000000;
+  --eventide-rp-system-character-white: #ffffff;
+  --eventide-rp-system-character-tan: #c9c7b8;
+  --eventide-rp-system-character-glow: rgba(0, 149, 255, 0.75);
+  --eventide-rp-system-character-background-color: linear-gradient(to bottom, rgba(44, 63, 84, 0.6), rgba(33, 46, 66, 0.5));
+  --eventide-rp-system-secondary-image-background: rgba(0, 0, 0, 0.85);
+  --eventide-rp-system-hidden-bg: #f7e8ea;
+  --eventide-rp-system-hidden-border: #e66a6e;
+  --eventide-rp-system-effect-bg: rgba(156, 107, 73, 0.75);
+  --eventide-rp-system-chat-card-white: #ffffff;
+  --eventide-rp-system-chat-card-black: #000000;
+  --eventide-rp-system-chat-card-tan: #444444;
+  --eventide-rp-system-abilities-acro: #a63b01b3;
+  --eventide-rp-system-abilities-phys: #910303b3;
+  --eventide-rp-system-abilities-fort: #2D682Db3;
+  --eventide-rp-system-abilities-will: #6A1B9Ab3;
+  --eventide-rp-system-abilities-wits: #0e4380b3;
+  --eventide-rp-system-card-header-item: #8B4513b3;
+  --eventide-rp-system-card-header-dc: #234B57b3;
+  --eventide-rp-system-card-header-unknown: #535353b3;
+  --eventide-rp-system-card-header-damage: #6A0404b3;
+  --eventide-rp-system-card-header-heal: #cb8e00b3;
+  --eventide-rp-system-card-header-effect: #9A5D2Db3;
+  --eventide-rp-system-card-header-delete: #555555b3;
+  --eventide-rp-system-card-header-description-hr: #8B4513b3;
+  --eventide-rp-system-chat-details-hit: #50C877b3;
+  --eventide-rp-system-chat-details-miss: #C70039b3;
+  --eventide-rp-system-chat-hr: #c9c7b8;
+  --eventide-rp-system-critical-hit: #2D1499b3;
+  --eventide-rp-system-critical-miss: #4e0101b3;
+  --eventide-rp-system-saved-miss: #4A777Ab3;
+  --eventide-rp-system-stolen-crit: #563C5Cb3;
+  --eventide-rp-system-input-bg: #1e2430;
+  --eventide-rp-system-input-hover: #2a3441;
+  --eventide-rp-system-input-border: #3d4655;
+  --eventide-rp-system-input-text: #ffffff;
+  --eventide-rp-system-input-placeholder: #999999;
+  --eventide-rp-system-input-focus: #4d94ff;
+  --eventide-rp-system-input-checked: #4d94ff;
+  --eventide-rp-system-input-check: #ffffff;
+  --eventide-rp-system-checkbox-bg: #1e2430;
+  --eventide-rp-system-checkbox-hover: #2a3441;
+  --eventide-rp-system-label-text: #ffffff;
+  --eventide-rp-system-required: #ff0000;
+  --eventide-rp-system-select-arrow-url: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath fill='%23ffffff' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  --eventide-rp-system-select-option-bg: #1e2430;
+  --eventide-rp-system-select-option-text: #ffffff;
+  --eventide-rp-system-select-option-hover: #2a3441;
+  --eventide-rp-system-button-bg: #000000;
+  --eventide-rp-system-button-text: #ffffff;
+  --eventide-rp-system-button-border: #333333;
+  --eventide-rp-system-button-hover: #1a365d;
+  --eventide-rp-system-button-active: #0d1b2e;
+  --eventide-rp-system-button-glow: rgba(255, 255, 255, 0.75);
+  --eventide-rp-system-primary-button-bg: #000000;
+  --eventide-rp-system-primary-button-text: #ffffff;
+  --eventide-rp-system-primary-button-border: #333333;
+  --eventide-rp-system-primary-button-hover: #1a365d;
+  --eventide-rp-system-primary-button-hover-text: #ffffff;
+  --eventide-rp-system-primary-button-active: #0d1b2e;
+  --eventide-rp-system-primary-button-glow: rgba(77, 148, 255, 0.75);
+  --eventide-rp-system-danger-button-bg: #cc0000;
+  --eventide-rp-system-danger-button-text: #ffffff;
+  --eventide-rp-system-danger-button-border: #990000;
+  --eventide-rp-system-danger-button-hover: #ff0000;
 }
 
 /* Global styles */
@@ -255,10 +385,10 @@
 }
 
 .eventide-ability-row {
-  border: 1px solid #ffffff;
+  border: 1px solid var(--eventide-rp-system-character-white);
   border-radius: 5px;
   padding: 5px;
-  color: #ffffff;
+  color: var(--eventide-rp-system-character-white);
 }
 
 .features {
@@ -271,7 +401,7 @@
 }
 
 .eventide-character-sheet {
-  background-image: linear-gradient(to bottom, rgba(68, 98, 131, 0.537254902), rgba(51, 72, 104, 0.462745098));
+  background-image: var(--eventide-rp-system-character-background-color);
   padding: 5px;
   margin: -8px;
   background-attachment: local;
@@ -287,97 +417,442 @@
 }
 
 .eventide-character-sheet input::selection {
-  background: #000000;
-  color: #ffffff;
+  background: var(--eventide-rp-system-character-black);
+  color: var(--eventide-rp-system-character-white);
 }
 
 .eventide-ability-row :hover:not(input) {
-  text-shadow: 1px 1px 1px 1px #000000, 5px 5px 5px 5px rgba(0, 123, 255, 0.7019607843), 10px 10px 10px 10px rgba(0, 123, 255, 0.7019607843);
-  color: #ffffff;
+  text-shadow: 1px 1px 1px 1px var(--eventide-rp-system-character-black), 5px 5px 5px 5px var(--eventide-rp-system-character-glow), 10px 10px 10px 10px var(--eventide-rp-system-character-glow);
+  color: var(--eventide-rp-system-character-white);
 }
 
 .eventide-ability-acro-box {
-  background-color: rgba(166, 59, 1, 0.7019607843);
+  background-color: var(--eventide-rp-system-abilities-acro);
 }
 
 .eventide-ability-phys-box {
-  background-color: rgba(145, 3, 3, 0.7019607843);
+  background-color: var(--eventide-rp-system-abilities-phys);
 }
 
 .eventide-ability-fort-box {
-  background-color: rgba(45, 104, 45, 0.7019607843);
+  background-color: var(--eventide-rp-system-abilities-fort);
 }
 
 .eventide-ability-will-box {
-  background-color: rgba(106, 27, 154, 0.7019607843);
+  background-color: var(--eventide-rp-system-abilities-will);
 }
 
 .eventide-ability-wits-box {
-  background-color: rgba(14, 67, 128, 0.7019607843);
+  background-color: var(--eventide-rp-system-abilities-wits);
 }
 
-.base-form, .restore-target, .damage-targets, .status-creator {
+.base-form {
   overflow-y: auto;
   -ms-overflow-style: none;
   scrollbar-width: none;
+  font-family: "Underdog", serif;
+  margin: 0.5rem;
 }
-.base-form::-webkit-scrollbar, .restore-target::-webkit-scrollbar, .damage-targets::-webkit-scrollbar, .status-creator::-webkit-scrollbar {
+.base-form::-webkit-scrollbar {
   display: none;
 }
-.base-form__header, .status-creator__header {
+.base-form--disabled {
+  pointer-events: none;
+  opacity: 0.7;
+}
+.base-form__header {
+  font-family: "Underdog", serif;
   text-align: center;
   text-decoration: underline;
   padding: 0.875rem;
   font-size: 1.125rem;
-  margin-bottom: 0px;
-  margin-top: 0px;
+  margin: 0;
 }
-.base-form .form-group, .restore-target .form-group, .damage-targets .form-group, .status-creator .form-group {
-  margin-bottom: 0px;
-  padding-bottom: 0px;
+.base-form__group {
+  margin: 0;
+  padding: 0.25rem 0.5rem 0.75rem 0.5rem;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  gap: 0.5rem;
+  flex: 1;
 }
-.base-form .form-group label, .restore-target .form-group label, .damage-targets .form-group label, .status-creator .form-group label {
+.base-form__group:first-child {
+  padding-top: 0.5rem;
+}
+.base-form__group--stacked {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.25rem;
+}
+.base-form__group--stacked .base-form__label {
+  margin-bottom: 0.25rem;
+}
+.base-form__group--checkbox {
+  height: 28px;
+  justify-content: space-between;
+  align-items: center;
+}
+.base-form__group--checkbox .base-form__label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
+  line-height: 28px;
+  min-width: auto;
+  flex: 1;
+}
+.base-form__group--checkbox .base-form__checkbox {
+  margin-left: 0.5rem;
+  flex: 0 0 auto;
+}
+.base-form__group--header .base-form__label {
+  font-weight: bold;
+}
+.base-form__group--right {
+  justify-content: flex-end;
+  padding: 0.5rem 1.25rem 0.75rem 0.5rem;
+  gap: 0.75rem;
+}
+.base-form__label {
+  display: block;
   font-size: 1rem;
-  font-weight: bolder;
+  font-weight: normal;
+  color: var(--eventide-rp-system-label-text);
+  margin: 0;
+  flex: 0 0 120px;
+  min-width: 120px;
 }
-.base-form .form-group input, .restore-target .form-group input, .damage-targets .form-group input, .status-creator .form-group input,
-.base-form .form-group select,
-.restore-target .form-group select,
-.damage-targets .form-group select,
-.status-creator .form-group select,
-.base-form .form-group textarea,
-.restore-target .form-group textarea,
-.damage-targets .form-group textarea,
-.status-creator .form-group textarea {
+.base-form__label--inline {
+  display: inline-block;
+  margin-right: 0.5rem;
+  min-width: auto;
+}
+.base-form__label--required::after {
+  content: "*";
+  color: var(--eventide-rp-system-required);
+  margin-left: 0.25rem;
+}
+.base-form__text-input {
+  display: block;
+  width: 100%;
+  height: 2rem;
+  padding: 0.5rem;
+  color: var(--eventide-rp-system-input-text);
+  background-color: var(--eventide-rp-system-input-bg) !important;
+  border: none;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.8), inset 0 1px 3px rgba(0, 0, 0, 0.6);
   border-radius: 5px;
-}
-.base-form .form-group input:not([type=checkbox]), .restore-target .form-group input:not([type=checkbox]), .damage-targets .form-group input:not([type=checkbox]), .status-creator .form-group input:not([type=checkbox]),
-.base-form .form-group select,
-.restore-target .form-group select,
-.damage-targets .form-group select,
-.status-creator .form-group select {
-  height: 1.75rem;
-}
-.base-form .form-group input[type=checkbox]:checked:after, .restore-target .form-group input[type=checkbox]:checked:after, .damage-targets .form-group input[type=checkbox]:checked:after, .status-creator .form-group input[type=checkbox]:checked:after {
-  content: "✓";
-  color: white;
-}
-.base-form .form-group input[type=checkbox], .restore-target .form-group input[type=checkbox], .damage-targets .form-group input[type=checkbox], .status-creator .form-group input[type=checkbox] {
-  text-align: center;
-  display: table-cell;
-  vertical-align: middle;
-  width: 20px;
-  height: 20px;
-  cursor: pointer !important;
   appearance: none;
-  border-radius: 10%;
-  box-shadow: none;
-  font-size: 1em;
+  -webkit-appearance: none;
+}
+.base-form__text-input:focus {
+  outline: none;
+  border-color: var(--eventide-rp-system-input-focus);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1), inset 0 1px 3px rgba(0, 0, 0, 0.7);
+}
+.base-form__text-input:hover {
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1), inset 0 1px 3px rgba(0, 0, 0, 0.7);
+}
+.base-form__number-input {
+  display: block;
+  width: 100%;
+  height: 2rem;
+  padding: 0.5rem;
+  color: var(--eventide-rp-system-input-text);
+  background-color: var(--eventide-rp-system-input-bg) !important;
+  border: none;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.8), inset 0 1px 3px rgba(0, 0, 0, 0.6);
+  border-radius: 5px;
+  appearance: none;
+  -webkit-appearance: none;
+  text-align: center;
+}
+.base-form__number-input:focus {
+  outline: none;
+  border-color: var(--eventide-rp-system-input-focus);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1), inset 0 1px 3px rgba(0, 0, 0, 0.7);
+}
+.base-form__number-input:hover {
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1), inset 0 1px 3px rgba(0, 0, 0, 0.7);
+}
+.base-form__number-input::-webkit-inner-spin-button, .base-form__number-input::-webkit-outer-spin-button {
+  display: none;
+}
+.base-form__select {
+  display: block;
+  width: 100%;
+  height: 2rem;
+  padding: 0.5rem;
+  color: var(--eventide-rp-system-input-text);
+  background-color: var(--eventide-rp-system-input-bg) !important;
+  border: none;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.8), inset 0 1px 3px rgba(0, 0, 0, 0.6);
+  border-radius: 5px;
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 2.5rem;
+  cursor: pointer;
+  background-image: var(--eventide-rp-system-select-arrow-url) !important;
+  background-repeat: no-repeat !important;
+  background-position: calc(100% - 8px) center !important;
+  background-size: 24px !important;
+}
+.base-form__select:focus {
+  outline: none;
+  border-color: var(--eventide-rp-system-input-focus);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1), inset 0 1px 3px rgba(0, 0, 0, 0.7);
+}
+.base-form__select:hover {
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1), inset 0 1px 3px rgba(0, 0, 0, 0.7);
+}
+.base-form__select option {
+  background-color: var(--eventide-rp-system-select-option-bg) !important;
+  color: var(--eventide-rp-system-select-option-text) !important;
+  padding: 0.5rem !important;
+}
+.base-form__select option:hover {
+  background-color: var(--eventide-rp-system-select-option-hover) !important;
+}
+.base-form__select-option {
+  background-color: rgba(30, 30, 30, 0.95);
+  color: white;
+  padding: 0.5rem;
+}
+.base-form__textarea {
+  display: block;
+  width: 100%;
+  height: 2rem;
+  padding: 0.5rem;
+  color: var(--eventide-rp-system-input-text);
+  background-color: var(--eventide-rp-system-input-bg) !important;
+  border: none;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.8), inset 0 1px 3px rgba(0, 0, 0, 0.6);
+  border-radius: 5px;
+  appearance: none;
+  -webkit-appearance: none;
+  height: auto;
+  min-height: 4rem;
+  resize: vertical;
+}
+.base-form__textarea:focus {
+  outline: none;
+  border-color: var(--eventide-rp-system-input-focus);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1), inset 0 1px 3px rgba(0, 0, 0, 0.7);
+}
+.base-form__textarea:hover {
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1), inset 0 1px 3px rgba(0, 0, 0, 0.7);
+}
+.base-form__color-input {
+  display: block;
+  width: 100%;
+  height: 2rem;
+  padding: 0.5rem;
+  color: var(--eventide-rp-system-input-text);
+  background-color: var(--eventide-rp-system-input-bg) !important;
+  border: none;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.8), inset 0 1px 3px rgba(0, 0, 0, 0.6);
+  border-radius: 5px;
+  appearance: none;
+  -webkit-appearance: none;
+  padding: 2px;
+  width: 50px;
+  height: 30px;
+  flex: 1;
+  max-width: 250px;
+  margin-left: auto;
+}
+.base-form__color-input:focus {
+  outline: none;
+  border-color: var(--eventide-rp-system-input-focus);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1), inset 0 1px 3px rgba(0, 0, 0, 0.7);
+}
+.base-form__color-input:hover {
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1), inset 0 1px 3px rgba(0, 0, 0, 0.7);
+}
+.base-form__checkbox {
+  display: flex;
+  align-items: center;
+  width: 28px;
+  height: 28px;
+  background-color: var(--eventide-rp-system-checkbox-bg) !important;
+  border: none;
+  margin: 0 10px;
+  cursor: pointer;
+  vertical-align: middle;
+  position: relative;
+  z-index: 100;
+  border-radius: 4px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.8), inset 0 1px 3px rgba(0, 0, 0, 0.6);
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+.base-form__checkbox:hover {
+  background-color: var(--eventide-rp-system-checkbox-hover) !important;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1), inset 0 1px 3px rgba(0, 0, 0, 0.7);
+}
+.base-form__checkbox:checked {
+  background-color: var(--eventide-rp-system-input-checked) !important;
+}
+.base-form__checkbox:checked::after {
+  content: "✓";
+  display: block;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--eventide-rp-system-input-check);
+  font-size: 18px;
+  font-weight: bold;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  z-index: 101;
+}
+.base-form__button {
+  background-color: var(--eventide-rp-system-button-bg) !important;
+  color: var(--eventide-rp-system-button-text) !important;
+  border: 1px solid var(--eventide-rp-system-button-border) !important;
+  border-radius: 5px !important;
+  padding: 0.5rem 1rem !important;
+  cursor: pointer !important;
+  font-family: "Underdog", serif !important;
+  transition: all 0.2s ease-in-out !important;
+  box-shadow: 0 0 0 0 transparent !important;
+  min-width: 80px !important;
+}
+.base-form__button:hover {
+  background-color: var(--eventide-rp-system-button-hover) !important;
+  box-shadow: 0 0 15px 5px var(--eventide-rp-system-button-glow) !important;
+}
+.base-form__button:active {
+  background-color: var(--eventide-rp-system-button-active) !important;
+  box-shadow: 0 0 8px 2px var(--eventide-rp-system-button-glow) !important;
+}
+.base-form__button--primary {
+  background-color: var(--eventide-rp-system-primary-button-bg) !important;
+  color: var(--eventide-rp-system-primary-button-text) !important;
+  border-color: var(--eventide-rp-system-primary-button-border) !important;
+}
+.base-form__button--primary:hover {
+  background-color: var(--eventide-rp-system-primary-button-hover) !important;
+  color: var(--eventide-rp-system-primary-button-hover-text) !important;
+  box-shadow: 0 0 15px 5px var(--eventide-rp-system-primary-button-glow) !important;
+}
+.base-form__button--primary:active {
+  background-color: var(--eventide-rp-system-primary-button-active) !important;
+  box-shadow: 0 0 8px 2px var(--eventide-rp-system-primary-button-glow) !important;
+}
+.base-form__button--danger {
+  background-color: var(--eventide-rp-system-danger-button-bg) !important;
+  color: var(--eventide-rp-system-danger-button-text) !important;
+  border-color: var(--eventide-rp-system-danger-button-border) !important;
+}
+.base-form__button--danger:hover {
+  background-color: var(--eventide-rp-system-danger-button-hover) !important;
+  box-shadow: 0 0 15px 5px rgba(255, 0, 0, 0.4) !important;
+}
+.base-form__button + .base-form__button {
+  margin-left: 0.5rem !important;
+}
+.base-form__image {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  border: none;
+  margin-left: auto;
+  align-self: flex-end;
+  flex: 0 0 100px;
+}
+.base-form__hidden-input {
+  display: none;
+}
+.base-form__sheet-header {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  flex: 0 auto;
+  overflow: hidden;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  margin-bottom: 10px;
+}
+.base-form__sheet-profile-img {
+  flex: 0 0 100px;
+  height: 100px;
+  margin-right: 10px;
+}
+.base-form__sheet-header-fields {
+  flex: 1;
+}
+.base-form__sheet-tabs {
+  flex: 0;
+}
+.base-form__sheet-body {
+  height: 100%;
+}
+.base-form__sheet-tab {
+  height: 100%;
+}
+.base-form__sheet-tab--biography {
+  flex: 1;
+}
+.base-form__sheet-tab-editor {
+  height: 100%;
+}
+
+input[type=checkbox] {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  background: none !important;
+  border: none !important;
+}
+input[type=checkbox]::before {
+  display: none !important;
+}
+
+input[type=checkbox].base-form__checkbox {
+  all: initial !important;
+  display: inline-block !important;
+  width: 28px !important;
+  height: 28px !important;
+  background-color: var(--eventide-rp-system-checkbox-bg) !important;
+  border: none !important;
+  margin: 0 10px !important;
+  cursor: pointer !important;
+  vertical-align: middle !important;
+  position: relative !important;
+  z-index: 100 !important;
+  border-radius: 4px !important;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.8), inset 0 1px 3px rgba(0, 0, 0, 0.6) !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+}
+input[type=checkbox].base-form__checkbox:hover {
+  background-color: var(--eventide-rp-system-checkbox-hover) !important;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1), inset 0 1px 3px rgba(0, 0, 0, 0.7) !important;
+}
+input[type=checkbox].base-form__checkbox:checked {
+  background-color: var(--eventide-rp-system-input-checked) !important;
+}
+input[type=checkbox].base-form__checkbox:checked::after {
+  content: "✓" !important;
+  display: block !important;
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  color: var(--eventide-rp-system-input-check) !important;
+  font-size: 18px !important;
+  font-weight: bold !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
+  z-index: 101 !important;
 }
 
 /* Styles limited to eventide-rp-system sheets */
 .chat-card__header {
-  color: #ffffff;
+  color: var(--eventide-rp-system-chat-card-white);
   text-align: center;
   padding: 0.875rem;
   font-size: 1.125rem;
@@ -385,62 +860,59 @@
   margin-top: 0px;
 }
 .chat-card__header--acrobatics {
-  background-color: rgba(166, 59, 1, 0.7019607843);
+  background-color: var(--eventide-rp-system-abilities-acro);
 }
 .chat-card__header--physical {
-  background-color: rgba(145, 3, 3, 0.7019607843);
+  background-color: var(--eventide-rp-system-abilities-phys);
 }
 .chat-card__header--fortitude {
-  background-color: rgba(45, 104, 45, 0.7019607843);
+  background-color: var(--eventide-rp-system-abilities-fort);
 }
 .chat-card__header--will {
-  background-color: rgba(106, 27, 154, 0.7019607843);
+  background-color: var(--eventide-rp-system-abilities-will);
 }
 .chat-card__header--wits {
-  background-color: rgba(14, 67, 128, 0.7019607843);
+  background-color: var(--eventide-rp-system-abilities-wits);
 }
 .chat-card__header--item {
-  background-color: rgba(139, 69, 19, 0.7019607843);
-}
-.chat-card__header--combat-powers {
-  background-color: rgba(184, 134, 11, 0.7019607843);
+  background-color: var(--eventide-rp-system-card-header-item);
 }
 .chat-card__header--dice-dc {
-  background-color: rgba(35, 75, 87, 0.7019607843);
+  background-color: var(--eventide-rp-system-card-header-dc);
 }
 .chat-card__header--critical-hit {
-  background-color: rgba(45, 20, 153, 0.7019607843);
+  background-color: var(--eventide-rp-system-critical-hit);
 }
 .chat-card__header--critical-miss {
-  background-color: rgba(78, 1, 1, 0.7019607843);
+  background-color: var(--eventide-rp-system-critical-miss);
 }
 .chat-card__header--stolen-crit {
-  background-color: rgba(86, 60, 92, 0.7019607843);
+  background-color: var(--eventide-rp-system-stolen-crit);
 }
 .chat-card__header--saved-miss {
-  background-color: rgba(74, 119, 122, 0.7019607843);
+  background-color: var(--eventide-rp-system-saved-miss);
 }
 .chat-card__header--unknown {
-  background-color: rgba(83, 83, 83, 0.7019607843);
+  background-color: var(--eventide-rp-system-card-header-unknown);
 }
 .chat-card__header--status {
   display: flex;
   justify-content: center;
 }
 .chat-card__header--damage {
-  background-color: rgba(106, 4, 4, 0.7019607843);
+  background-color: var(--eventide-rp-system-card-header-damage);
 }
 .chat-card__header--heal {
-  background-color: rgba(203, 142, 0, 0.7019607843);
+  background-color: var(--eventide-rp-system-card-header-heal);
 }
 .chat-card__header--delete {
-  background-color: rgba(85, 85, 85, 0.7019607843);
+  background-color: var(--eventide-rp-system-card-header-delete);
 }
 .chat-card__header--restore {
-  background-color: rgba(203, 142, 0, 0.7019607843);
+  background-color: var(--eventide-rp-system-card-header-heal);
 }
 .chat-card__description {
-  color: #444444;
+  color: var(--eventide-rp-system-chat-card-tan);
   text-align: justify;
   font-size: 0.9rem;
   padding: 0.01rem;
@@ -448,24 +920,24 @@
 .chat-card__description--header {
   text-align: justify;
   font-size: 1.2rem;
-  color: #444444;
+  color: var(--eventide-rp-system-chat-card-tan);
 }
 .chat-card__description--header-center-underline {
   text-align: center;
   font-size: 1.2rem;
-  color: #444444;
-  border-bottom: 1px solid rgba(139, 69, 19, 0.7019607843);
+  color: var(--eventide-rp-system-chat-card-tan);
+  border-bottom: 1px solid var(--eventide-rp-system-card-header-description-hr);
 }
 .chat-card__effects {
   text-align: justify;
   font-size: 0.7rem;
   padding: 0rem;
-  color: #444444;
+  color: var(--eventide-rp-system-chat-card-tan);
 }
 .chat-card__effects--ac-check {
-  border: 3px dashed #ff9194;
+  border: 3px dashed var(--eventide-rp-system-hidden-border);
   border-radius: 5px;
-  background-color: #efdadf;
+  background-color: var(--eventide-rp-system-hidden-bg);
   padding: 0.0875rem;
   margin: 0.0875rem;
 }
@@ -476,30 +948,30 @@
   padding-top: 0.2rem;
   padding-bottom: 0.2rem;
   margin-bottom: 3px;
-  background-color: rgba(154, 93, 45, 0.7019607843);
-  color: #ffffff;
+  background-color: var(--eventide-rp-system-card-header-effect);
+  color: var(--eventide-rp-system-chat-card-white);
 }
 .chat-card__effects--hit {
-  background-color: rgba(80, 200, 119, 0.7019607843);
+  background-color: var(--eventide-rp-system-chat-details-hit);
   color: white;
   text-align: center;
   padding: 0.0875rem;
   font-size: 0.7rem;
   margin-bottom: 0px;
-  border: 1px solid #ffffff;
+  border: 1px solid var(--eventide-rp-system-chat-card-white);
 }
 .chat-card__effects--miss {
-  background-color: rgba(199, 0, 57, 0.7019607843);
+  background-color: var(--eventide-rp-system-chat-details-miss);
   color: white;
   text-align: center;
   padding: 0.0875rem;
   font-size: 0.7rem;
   margin-bottom: 0px;
-  border: 1px solid #ffffff;
+  border: 1px solid var(--eventide-rp-system-chat-card-white);
 }
 .chat-card__effects--name {
   font-weight: bolder;
-  color: #000000;
+  color: var(--eventide-rp-system-chat-card-black);
   font-size: 0.75rem;
 }
 .chat-card__effects--row {
@@ -509,19 +981,19 @@
   grid-template-columns: repeat(3, minmax(0, 1fr));
   width: 50%;
 }
-.chat-card__effects--row div {
+.chat-card__effects--row-cell {
   padding-left: 3px;
   padding-right: 3px;
-  border-bottom: 1px dashed #444444;
+  border-bottom: 1px dashed var(--eventide-rp-system-chat-card-tan);
 }
-.chat-card__effects--row div:first-child,
-.chat-card__effects--row div:last-child {
+.chat-card__effects--row-cell--first, .chat-card__effects--row-cell--last {
   font-weight: bold;
 }
-.chat-card__effects--row div:last-child {
-  border-left: 1px dashed #444444;
+.chat-card__effects--row-cell--last {
+  border-left: 1px dashed var(--eventide-rp-system-chat-card-tan);
+  padding-left: 30px;
 }
-.chat-card__effects--row div:not(:first-child):not(:last-child) {
+.chat-card__effects--row-cell--middle {
   font-style: italic;
 }
 .chat-card__image--primary {
@@ -533,32 +1005,11 @@
   width: 13px;
   height: 13px;
   border: 0px;
-  background-color: rgba(var(--eventide-rp-system-c-black), 0.8);
+  background-color: var(--eventide-rp-system-secondary-image-background);
 }
 .chat-card__hr {
   border: none;
-  border-top: 1px solid #c9c7b8;
-}
-
-.status-creator .profile-img {
-  flex: 0 0 100px;
-  height: 100px;
-  margin-right: 10px;
-  object-fit: contain;
-  border: none;
-  cursor: pointer;
-}
-
-.restore-target {
-  max-height: 600px;
-  color: var(--eventide-rp-system-c-white);
-}
-.restore-target .form-group {
-  margin: 0;
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  padding: 0;
+  border-top: 1px solid var(--eventide-rp-system-chat-hr);
 }
 
 .eventide-rp-system {
@@ -589,26 +1040,156 @@
   font-style: normal;
 }
 .eventide-rp-system :root {
-  --eventide-rp-system-c-dark: #191813;
-  --eventide-rp-system-c-faint: #c9c7b8;
+  --eventide-rp-system-c-dark: #1a1814;
+  --eventide-rp-system-c-faint: #a8a69b;
   --eventide-rp-system-c-beige: #b5b3a4;
-  --eventide-rp-system-c-tan: #444444;
+  --eventide-rp-system-c-tan: #4d4d4d;
   --eventide-rp-system-c-white: #ffffff;
   --eventide-rp-system-c-black: #000000;
-  --eventide-rp-system-c-groove: #eeede0;
-  --eventide-rp-system-character-input: rgba(white, 0.45);
-  --eventide-rp-system-character-input-border: rgba(black, 0.5);
+  --eventide-rp-system-c-groove: #f0efe6;
+  --eventide-rp-system-character-input: rgba(255, 255, 255, 0.85);
+  --eventide-rp-system-character-input-border: rgba(0, 0, 0, 0.65);
+  --eventide-rp-system-character-black: #000000;
+  --eventide-rp-system-character-white: #ffffff;
+  --eventide-rp-system-character-tan: #4d4d4d;
+  --eventide-rp-system-character-glow: rgba(0, 123, 255, 0.75);
+  --eventide-rp-system-character-background-color: linear-gradient(to bottom, rgba(68, 98, 131, 0.6), rgba(51, 72, 104, 0.5));
+  --eventide-rp-system-secondary-image-background: rgba(0, 0, 0, 0.85);
+  --eventide-rp-system-hidden-bg: #f7e8ea;
+  --eventide-rp-system-hidden-border: #e66a6e;
+  --eventide-rp-system-effect-bg: rgba(136, 87, 53, 0.75);
+  --eventide-rp-system-chat-card-white: #ffffff;
+  --eventide-rp-system-chat-card-black: #000000;
+  --eventide-rp-system-chat-card-tan: #4d4d4d;
+  --eventide-rp-system-abilities-acro: rgba(191, 68, 0, 0.75);
+  --eventide-rp-system-abilities-phys: rgba(168, 3, 3, 0.75);
+  --eventide-rp-system-abilities-fort: rgba(45, 104, 45, 0.75);
+  --eventide-rp-system-abilities-will: rgba(106, 27, 154, 0.75);
+  --eventide-rp-system-abilities-wits: rgba(14, 67, 128, 0.75);
+  --eventide-rp-system-card-header-item: #8B4513b3;
+  --eventide-rp-system-card-header-dc: #234B57b3;
+  --eventide-rp-system-card-header-unknown: #535353b3;
+  --eventide-rp-system-card-header-damage: #6A0404b3;
+  --eventide-rp-system-card-header-heal: #cb8e00b3;
+  --eventide-rp-system-card-header-effect: #9A5D2Db3;
+  --eventide-rp-system-card-header-delete: #555555b3;
+  --eventide-rp-system-card-header-description-hr: #8B4513b3;
+  --eventide-rp-system-chat-details-hit: #50C877b3;
+  --eventide-rp-system-chat-details-miss: #C70039b3;
+  --eventide-rp-system-chat-hr: #c9c7b8;
+  --eventide-rp-system-critical-hit: #2D1499b3;
+  --eventide-rp-system-critical-miss: #4e0101b3;
+  --eventide-rp-system-saved-miss: #4A777Ab3;
+  --eventide-rp-system-stolen-crit: #563C5Cb3;
+  --eventide-rp-system-input-bg: #ffffff;
+  --eventide-rp-system-input-hover: #f0f0f0;
+  --eventide-rp-system-input-border: #d0d0d0;
+  --eventide-rp-system-input-text: #191813;
+  --eventide-rp-system-input-placeholder: #666666;
+  --eventide-rp-system-input-focus: #4d94ff;
+  --eventide-rp-system-input-checked: #4d94ff;
+  --eventide-rp-system-input-check: #ffffff;
+  --eventide-rp-system-checkbox-bg: #ffffff;
+  --eventide-rp-system-checkbox-hover: #f0f0f0;
+  --eventide-rp-system-label-text: #191813;
+  --eventide-rp-system-required: #cc0000;
+  --eventide-rp-system-select-arrow-url: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath fill='%23191813' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  --eventide-rp-system-select-option-bg: #ffffff;
+  --eventide-rp-system-select-option-text: #191813;
+  --eventide-rp-system-select-option-hover: #f0f0f0;
+  --eventide-rp-system-button-bg: #ffffff;
+  --eventide-rp-system-button-text: #191813;
+  --eventide-rp-system-button-border: #d0d0d0;
+  --eventide-rp-system-button-hover: #e8f0ff;
+  --eventide-rp-system-button-active: #d6e4ff;
+  --eventide-rp-system-button-glow: rgba(255, 255, 255, 0.75);
+  --eventide-rp-system-primary-button-bg: #ffffff;
+  --eventide-rp-system-primary-button-text: #191813;
+  --eventide-rp-system-primary-button-border: #d0d0d0;
+  --eventide-rp-system-primary-button-hover: #4d94ff;
+  --eventide-rp-system-primary-button-hover-text: #ffffff;
+  --eventide-rp-system-primary-button-active: #2979ff;
+  --eventide-rp-system-primary-button-glow: rgba(77, 148, 255, 0.75);
+  --eventide-rp-system-danger-button-bg: #cc0000;
+  --eventide-rp-system-danger-button-text: #ffffff;
+  --eventide-rp-system-danger-button-border: #990000;
+  --eventide-rp-system-danger-button-hover: #ff0000;
 }
 .eventide-rp-system .theme-dark {
-  --eventide-rp-system-c-dark: #c9c7b8;
-  --eventide-rp-system-c-faint: #191813;
-  --eventide-rp-system-c-beige: #444444;
-  --eventide-rp-system-c-tan: #b5b3a4;
+  --eventide-rp-system-c-dark: #e5e3d8;
+  --eventide-rp-system-c-faint: #2a2925;
+  --eventide-rp-system-c-beige: #4d4d4d;
+  --eventide-rp-system-c-tan: #c9c7b8;
   --eventide-rp-system-c-white: #000000;
   --eventide-rp-system-c-black: #ffffff;
-  --eventide-rp-system-c-groove: #11121f;
-  --eventide-rp-system-character-input: rgba(black, 0.45);
-  --eventide-rp-system-character-input-border: rgba(white, 0.5);
+  --eventide-rp-system-c-groove: #1a1922;
+  --eventide-rp-system-character-input: rgba(0, 0, 0, 0.85);
+  --eventide-rp-system-character-input-border: rgba(255, 255, 255, 0.65);
+  --eventide-rp-system-character-black: #000000;
+  --eventide-rp-system-character-white: #ffffff;
+  --eventide-rp-system-character-tan: #c9c7b8;
+  --eventide-rp-system-character-glow: rgba(0, 149, 255, 0.75);
+  --eventide-rp-system-character-background-color: linear-gradient(to bottom, rgba(44, 63, 84, 0.6), rgba(33, 46, 66, 0.5));
+  --eventide-rp-system-secondary-image-background: rgba(0, 0, 0, 0.85);
+  --eventide-rp-system-hidden-bg: #f7e8ea;
+  --eventide-rp-system-hidden-border: #e66a6e;
+  --eventide-rp-system-effect-bg: rgba(156, 107, 73, 0.75);
+  --eventide-rp-system-chat-card-white: #ffffff;
+  --eventide-rp-system-chat-card-black: #000000;
+  --eventide-rp-system-chat-card-tan: #444444;
+  --eventide-rp-system-abilities-acro: #a63b01b3;
+  --eventide-rp-system-abilities-phys: #910303b3;
+  --eventide-rp-system-abilities-fort: #2D682Db3;
+  --eventide-rp-system-abilities-will: #6A1B9Ab3;
+  --eventide-rp-system-abilities-wits: #0e4380b3;
+  --eventide-rp-system-card-header-item: #8B4513b3;
+  --eventide-rp-system-card-header-dc: #234B57b3;
+  --eventide-rp-system-card-header-unknown: #535353b3;
+  --eventide-rp-system-card-header-damage: #6A0404b3;
+  --eventide-rp-system-card-header-heal: #cb8e00b3;
+  --eventide-rp-system-card-header-effect: #9A5D2Db3;
+  --eventide-rp-system-card-header-delete: #555555b3;
+  --eventide-rp-system-card-header-description-hr: #8B4513b3;
+  --eventide-rp-system-chat-details-hit: #50C877b3;
+  --eventide-rp-system-chat-details-miss: #C70039b3;
+  --eventide-rp-system-chat-hr: #c9c7b8;
+  --eventide-rp-system-critical-hit: #2D1499b3;
+  --eventide-rp-system-critical-miss: #4e0101b3;
+  --eventide-rp-system-saved-miss: #4A777Ab3;
+  --eventide-rp-system-stolen-crit: #563C5Cb3;
+  --eventide-rp-system-input-bg: #1e2430;
+  --eventide-rp-system-input-hover: #2a3441;
+  --eventide-rp-system-input-border: #3d4655;
+  --eventide-rp-system-input-text: #ffffff;
+  --eventide-rp-system-input-placeholder: #999999;
+  --eventide-rp-system-input-focus: #4d94ff;
+  --eventide-rp-system-input-checked: #4d94ff;
+  --eventide-rp-system-input-check: #ffffff;
+  --eventide-rp-system-checkbox-bg: #1e2430;
+  --eventide-rp-system-checkbox-hover: #2a3441;
+  --eventide-rp-system-label-text: #ffffff;
+  --eventide-rp-system-required: #ff0000;
+  --eventide-rp-system-select-arrow-url: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath fill='%23ffffff' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  --eventide-rp-system-select-option-bg: #1e2430;
+  --eventide-rp-system-select-option-text: #ffffff;
+  --eventide-rp-system-select-option-hover: #2a3441;
+  --eventide-rp-system-button-bg: #000000;
+  --eventide-rp-system-button-text: #ffffff;
+  --eventide-rp-system-button-border: #333333;
+  --eventide-rp-system-button-hover: #1a365d;
+  --eventide-rp-system-button-active: #0d1b2e;
+  --eventide-rp-system-button-glow: rgba(255, 255, 255, 0.75);
+  --eventide-rp-system-primary-button-bg: #000000;
+  --eventide-rp-system-primary-button-text: #ffffff;
+  --eventide-rp-system-primary-button-border: #333333;
+  --eventide-rp-system-primary-button-hover: #1a365d;
+  --eventide-rp-system-primary-button-hover-text: #ffffff;
+  --eventide-rp-system-primary-button-active: #0d1b2e;
+  --eventide-rp-system-primary-button-glow: rgba(77, 148, 255, 0.75);
+  --eventide-rp-system-danger-button-bg: #cc0000;
+  --eventide-rp-system-danger-button-text: #ffffff;
+  --eventide-rp-system-danger-button-border: #990000;
+  --eventide-rp-system-danger-button-hover: #ff0000;
 }
 .eventide-rp-system .item-form {
   font-family: "Roboto", sans-serif;
@@ -709,26 +1290,156 @@
   flex: 0 0 44px;
 }
 .eventide-rp-system :root {
-  --eventide-rp-system-c-dark: #191813;
-  --eventide-rp-system-c-faint: #c9c7b8;
+  --eventide-rp-system-c-dark: #1a1814;
+  --eventide-rp-system-c-faint: #a8a69b;
   --eventide-rp-system-c-beige: #b5b3a4;
-  --eventide-rp-system-c-tan: #444444;
+  --eventide-rp-system-c-tan: #4d4d4d;
   --eventide-rp-system-c-white: #ffffff;
   --eventide-rp-system-c-black: #000000;
-  --eventide-rp-system-c-groove: #eeede0;
-  --eventide-rp-system-character-input: rgba(white, 0.45);
-  --eventide-rp-system-character-input-border: rgba(black, 0.5);
+  --eventide-rp-system-c-groove: #f0efe6;
+  --eventide-rp-system-character-input: rgba(255, 255, 255, 0.85);
+  --eventide-rp-system-character-input-border: rgba(0, 0, 0, 0.65);
+  --eventide-rp-system-character-black: #000000;
+  --eventide-rp-system-character-white: #ffffff;
+  --eventide-rp-system-character-tan: #4d4d4d;
+  --eventide-rp-system-character-glow: rgba(0, 123, 255, 0.75);
+  --eventide-rp-system-character-background-color: linear-gradient(to bottom, rgba(68, 98, 131, 0.6), rgba(51, 72, 104, 0.5));
+  --eventide-rp-system-secondary-image-background: rgba(0, 0, 0, 0.85);
+  --eventide-rp-system-hidden-bg: #f7e8ea;
+  --eventide-rp-system-hidden-border: #e66a6e;
+  --eventide-rp-system-effect-bg: rgba(136, 87, 53, 0.75);
+  --eventide-rp-system-chat-card-white: #ffffff;
+  --eventide-rp-system-chat-card-black: #000000;
+  --eventide-rp-system-chat-card-tan: #4d4d4d;
+  --eventide-rp-system-abilities-acro: rgba(191, 68, 0, 0.75);
+  --eventide-rp-system-abilities-phys: rgba(168, 3, 3, 0.75);
+  --eventide-rp-system-abilities-fort: rgba(45, 104, 45, 0.75);
+  --eventide-rp-system-abilities-will: rgba(106, 27, 154, 0.75);
+  --eventide-rp-system-abilities-wits: rgba(14, 67, 128, 0.75);
+  --eventide-rp-system-card-header-item: #8B4513b3;
+  --eventide-rp-system-card-header-dc: #234B57b3;
+  --eventide-rp-system-card-header-unknown: #535353b3;
+  --eventide-rp-system-card-header-damage: #6A0404b3;
+  --eventide-rp-system-card-header-heal: #cb8e00b3;
+  --eventide-rp-system-card-header-effect: #9A5D2Db3;
+  --eventide-rp-system-card-header-delete: #555555b3;
+  --eventide-rp-system-card-header-description-hr: #8B4513b3;
+  --eventide-rp-system-chat-details-hit: #50C877b3;
+  --eventide-rp-system-chat-details-miss: #C70039b3;
+  --eventide-rp-system-chat-hr: #c9c7b8;
+  --eventide-rp-system-critical-hit: #2D1499b3;
+  --eventide-rp-system-critical-miss: #4e0101b3;
+  --eventide-rp-system-saved-miss: #4A777Ab3;
+  --eventide-rp-system-stolen-crit: #563C5Cb3;
+  --eventide-rp-system-input-bg: #ffffff;
+  --eventide-rp-system-input-hover: #f0f0f0;
+  --eventide-rp-system-input-border: #d0d0d0;
+  --eventide-rp-system-input-text: #191813;
+  --eventide-rp-system-input-placeholder: #666666;
+  --eventide-rp-system-input-focus: #4d94ff;
+  --eventide-rp-system-input-checked: #4d94ff;
+  --eventide-rp-system-input-check: #ffffff;
+  --eventide-rp-system-checkbox-bg: #ffffff;
+  --eventide-rp-system-checkbox-hover: #f0f0f0;
+  --eventide-rp-system-label-text: #191813;
+  --eventide-rp-system-required: #cc0000;
+  --eventide-rp-system-select-arrow-url: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath fill='%23191813' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  --eventide-rp-system-select-option-bg: #ffffff;
+  --eventide-rp-system-select-option-text: #191813;
+  --eventide-rp-system-select-option-hover: #f0f0f0;
+  --eventide-rp-system-button-bg: #ffffff;
+  --eventide-rp-system-button-text: #191813;
+  --eventide-rp-system-button-border: #d0d0d0;
+  --eventide-rp-system-button-hover: #e8f0ff;
+  --eventide-rp-system-button-active: #d6e4ff;
+  --eventide-rp-system-button-glow: rgba(255, 255, 255, 0.75);
+  --eventide-rp-system-primary-button-bg: #ffffff;
+  --eventide-rp-system-primary-button-text: #191813;
+  --eventide-rp-system-primary-button-border: #d0d0d0;
+  --eventide-rp-system-primary-button-hover: #4d94ff;
+  --eventide-rp-system-primary-button-hover-text: #ffffff;
+  --eventide-rp-system-primary-button-active: #2979ff;
+  --eventide-rp-system-primary-button-glow: rgba(77, 148, 255, 0.75);
+  --eventide-rp-system-danger-button-bg: #cc0000;
+  --eventide-rp-system-danger-button-text: #ffffff;
+  --eventide-rp-system-danger-button-border: #990000;
+  --eventide-rp-system-danger-button-hover: #ff0000;
 }
 .eventide-rp-system .theme-dark {
-  --eventide-rp-system-c-dark: #c9c7b8;
-  --eventide-rp-system-c-faint: #191813;
-  --eventide-rp-system-c-beige: #444444;
-  --eventide-rp-system-c-tan: #b5b3a4;
+  --eventide-rp-system-c-dark: #e5e3d8;
+  --eventide-rp-system-c-faint: #2a2925;
+  --eventide-rp-system-c-beige: #4d4d4d;
+  --eventide-rp-system-c-tan: #c9c7b8;
   --eventide-rp-system-c-white: #000000;
   --eventide-rp-system-c-black: #ffffff;
-  --eventide-rp-system-c-groove: #11121f;
-  --eventide-rp-system-character-input: rgba(black, 0.45);
-  --eventide-rp-system-character-input-border: rgba(white, 0.5);
+  --eventide-rp-system-c-groove: #1a1922;
+  --eventide-rp-system-character-input: rgba(0, 0, 0, 0.85);
+  --eventide-rp-system-character-input-border: rgba(255, 255, 255, 0.65);
+  --eventide-rp-system-character-black: #000000;
+  --eventide-rp-system-character-white: #ffffff;
+  --eventide-rp-system-character-tan: #c9c7b8;
+  --eventide-rp-system-character-glow: rgba(0, 149, 255, 0.75);
+  --eventide-rp-system-character-background-color: linear-gradient(to bottom, rgba(44, 63, 84, 0.6), rgba(33, 46, 66, 0.5));
+  --eventide-rp-system-secondary-image-background: rgba(0, 0, 0, 0.85);
+  --eventide-rp-system-hidden-bg: #f7e8ea;
+  --eventide-rp-system-hidden-border: #e66a6e;
+  --eventide-rp-system-effect-bg: rgba(156, 107, 73, 0.75);
+  --eventide-rp-system-chat-card-white: #ffffff;
+  --eventide-rp-system-chat-card-black: #000000;
+  --eventide-rp-system-chat-card-tan: #444444;
+  --eventide-rp-system-abilities-acro: #a63b01b3;
+  --eventide-rp-system-abilities-phys: #910303b3;
+  --eventide-rp-system-abilities-fort: #2D682Db3;
+  --eventide-rp-system-abilities-will: #6A1B9Ab3;
+  --eventide-rp-system-abilities-wits: #0e4380b3;
+  --eventide-rp-system-card-header-item: #8B4513b3;
+  --eventide-rp-system-card-header-dc: #234B57b3;
+  --eventide-rp-system-card-header-unknown: #535353b3;
+  --eventide-rp-system-card-header-damage: #6A0404b3;
+  --eventide-rp-system-card-header-heal: #cb8e00b3;
+  --eventide-rp-system-card-header-effect: #9A5D2Db3;
+  --eventide-rp-system-card-header-delete: #555555b3;
+  --eventide-rp-system-card-header-description-hr: #8B4513b3;
+  --eventide-rp-system-chat-details-hit: #50C877b3;
+  --eventide-rp-system-chat-details-miss: #C70039b3;
+  --eventide-rp-system-chat-hr: #c9c7b8;
+  --eventide-rp-system-critical-hit: #2D1499b3;
+  --eventide-rp-system-critical-miss: #4e0101b3;
+  --eventide-rp-system-saved-miss: #4A777Ab3;
+  --eventide-rp-system-stolen-crit: #563C5Cb3;
+  --eventide-rp-system-input-bg: #1e2430;
+  --eventide-rp-system-input-hover: #2a3441;
+  --eventide-rp-system-input-border: #3d4655;
+  --eventide-rp-system-input-text: #ffffff;
+  --eventide-rp-system-input-placeholder: #999999;
+  --eventide-rp-system-input-focus: #4d94ff;
+  --eventide-rp-system-input-checked: #4d94ff;
+  --eventide-rp-system-input-check: #ffffff;
+  --eventide-rp-system-checkbox-bg: #1e2430;
+  --eventide-rp-system-checkbox-hover: #2a3441;
+  --eventide-rp-system-label-text: #ffffff;
+  --eventide-rp-system-required: #ff0000;
+  --eventide-rp-system-select-arrow-url: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath fill='%23ffffff' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  --eventide-rp-system-select-option-bg: #1e2430;
+  --eventide-rp-system-select-option-text: #ffffff;
+  --eventide-rp-system-select-option-hover: #2a3441;
+  --eventide-rp-system-button-bg: #000000;
+  --eventide-rp-system-button-text: #ffffff;
+  --eventide-rp-system-button-border: #333333;
+  --eventide-rp-system-button-hover: #1a365d;
+  --eventide-rp-system-button-active: #0d1b2e;
+  --eventide-rp-system-button-glow: rgba(255, 255, 255, 0.75);
+  --eventide-rp-system-primary-button-bg: #000000;
+  --eventide-rp-system-primary-button-text: #ffffff;
+  --eventide-rp-system-primary-button-border: #333333;
+  --eventide-rp-system-primary-button-hover: #1a365d;
+  --eventide-rp-system-primary-button-hover-text: #ffffff;
+  --eventide-rp-system-primary-button-active: #0d1b2e;
+  --eventide-rp-system-primary-button-glow: rgba(77, 148, 255, 0.75);
+  --eventide-rp-system-danger-button-bg: #cc0000;
+  --eventide-rp-system-danger-button-text: #ffffff;
+  --eventide-rp-system-danger-button-border: #990000;
+  --eventide-rp-system-danger-button-hover: #ff0000;
 }
 .eventide-rp-system .items-header {
   height: 28px;
@@ -854,26 +1565,156 @@
   font-style: normal;
 }
 .eventide-rp-system :root {
-  --eventide-rp-system-c-dark: #191813;
-  --eventide-rp-system-c-faint: #c9c7b8;
+  --eventide-rp-system-c-dark: #1a1814;
+  --eventide-rp-system-c-faint: #a8a69b;
   --eventide-rp-system-c-beige: #b5b3a4;
-  --eventide-rp-system-c-tan: #444444;
+  --eventide-rp-system-c-tan: #4d4d4d;
   --eventide-rp-system-c-white: #ffffff;
   --eventide-rp-system-c-black: #000000;
-  --eventide-rp-system-c-groove: #eeede0;
-  --eventide-rp-system-character-input: rgba(white, 0.45);
-  --eventide-rp-system-character-input-border: rgba(black, 0.5);
+  --eventide-rp-system-c-groove: #f0efe6;
+  --eventide-rp-system-character-input: rgba(255, 255, 255, 0.85);
+  --eventide-rp-system-character-input-border: rgba(0, 0, 0, 0.65);
+  --eventide-rp-system-character-black: #000000;
+  --eventide-rp-system-character-white: #ffffff;
+  --eventide-rp-system-character-tan: #4d4d4d;
+  --eventide-rp-system-character-glow: rgba(0, 123, 255, 0.75);
+  --eventide-rp-system-character-background-color: linear-gradient(to bottom, rgba(68, 98, 131, 0.6), rgba(51, 72, 104, 0.5));
+  --eventide-rp-system-secondary-image-background: rgba(0, 0, 0, 0.85);
+  --eventide-rp-system-hidden-bg: #f7e8ea;
+  --eventide-rp-system-hidden-border: #e66a6e;
+  --eventide-rp-system-effect-bg: rgba(136, 87, 53, 0.75);
+  --eventide-rp-system-chat-card-white: #ffffff;
+  --eventide-rp-system-chat-card-black: #000000;
+  --eventide-rp-system-chat-card-tan: #4d4d4d;
+  --eventide-rp-system-abilities-acro: rgba(191, 68, 0, 0.75);
+  --eventide-rp-system-abilities-phys: rgba(168, 3, 3, 0.75);
+  --eventide-rp-system-abilities-fort: rgba(45, 104, 45, 0.75);
+  --eventide-rp-system-abilities-will: rgba(106, 27, 154, 0.75);
+  --eventide-rp-system-abilities-wits: rgba(14, 67, 128, 0.75);
+  --eventide-rp-system-card-header-item: #8B4513b3;
+  --eventide-rp-system-card-header-dc: #234B57b3;
+  --eventide-rp-system-card-header-unknown: #535353b3;
+  --eventide-rp-system-card-header-damage: #6A0404b3;
+  --eventide-rp-system-card-header-heal: #cb8e00b3;
+  --eventide-rp-system-card-header-effect: #9A5D2Db3;
+  --eventide-rp-system-card-header-delete: #555555b3;
+  --eventide-rp-system-card-header-description-hr: #8B4513b3;
+  --eventide-rp-system-chat-details-hit: #50C877b3;
+  --eventide-rp-system-chat-details-miss: #C70039b3;
+  --eventide-rp-system-chat-hr: #c9c7b8;
+  --eventide-rp-system-critical-hit: #2D1499b3;
+  --eventide-rp-system-critical-miss: #4e0101b3;
+  --eventide-rp-system-saved-miss: #4A777Ab3;
+  --eventide-rp-system-stolen-crit: #563C5Cb3;
+  --eventide-rp-system-input-bg: #ffffff;
+  --eventide-rp-system-input-hover: #f0f0f0;
+  --eventide-rp-system-input-border: #d0d0d0;
+  --eventide-rp-system-input-text: #191813;
+  --eventide-rp-system-input-placeholder: #666666;
+  --eventide-rp-system-input-focus: #4d94ff;
+  --eventide-rp-system-input-checked: #4d94ff;
+  --eventide-rp-system-input-check: #ffffff;
+  --eventide-rp-system-checkbox-bg: #ffffff;
+  --eventide-rp-system-checkbox-hover: #f0f0f0;
+  --eventide-rp-system-label-text: #191813;
+  --eventide-rp-system-required: #cc0000;
+  --eventide-rp-system-select-arrow-url: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath fill='%23191813' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  --eventide-rp-system-select-option-bg: #ffffff;
+  --eventide-rp-system-select-option-text: #191813;
+  --eventide-rp-system-select-option-hover: #f0f0f0;
+  --eventide-rp-system-button-bg: #ffffff;
+  --eventide-rp-system-button-text: #191813;
+  --eventide-rp-system-button-border: #d0d0d0;
+  --eventide-rp-system-button-hover: #e8f0ff;
+  --eventide-rp-system-button-active: #d6e4ff;
+  --eventide-rp-system-button-glow: rgba(255, 255, 255, 0.75);
+  --eventide-rp-system-primary-button-bg: #ffffff;
+  --eventide-rp-system-primary-button-text: #191813;
+  --eventide-rp-system-primary-button-border: #d0d0d0;
+  --eventide-rp-system-primary-button-hover: #4d94ff;
+  --eventide-rp-system-primary-button-hover-text: #ffffff;
+  --eventide-rp-system-primary-button-active: #2979ff;
+  --eventide-rp-system-primary-button-glow: rgba(77, 148, 255, 0.75);
+  --eventide-rp-system-danger-button-bg: #cc0000;
+  --eventide-rp-system-danger-button-text: #ffffff;
+  --eventide-rp-system-danger-button-border: #990000;
+  --eventide-rp-system-danger-button-hover: #ff0000;
 }
 .eventide-rp-system .theme-dark {
-  --eventide-rp-system-c-dark: #c9c7b8;
-  --eventide-rp-system-c-faint: #191813;
-  --eventide-rp-system-c-beige: #444444;
-  --eventide-rp-system-c-tan: #b5b3a4;
+  --eventide-rp-system-c-dark: #e5e3d8;
+  --eventide-rp-system-c-faint: #2a2925;
+  --eventide-rp-system-c-beige: #4d4d4d;
+  --eventide-rp-system-c-tan: #c9c7b8;
   --eventide-rp-system-c-white: #000000;
   --eventide-rp-system-c-black: #ffffff;
-  --eventide-rp-system-c-groove: #11121f;
-  --eventide-rp-system-character-input: rgba(black, 0.45);
-  --eventide-rp-system-character-input-border: rgba(white, 0.5);
+  --eventide-rp-system-c-groove: #1a1922;
+  --eventide-rp-system-character-input: rgba(0, 0, 0, 0.85);
+  --eventide-rp-system-character-input-border: rgba(255, 255, 255, 0.65);
+  --eventide-rp-system-character-black: #000000;
+  --eventide-rp-system-character-white: #ffffff;
+  --eventide-rp-system-character-tan: #c9c7b8;
+  --eventide-rp-system-character-glow: rgba(0, 149, 255, 0.75);
+  --eventide-rp-system-character-background-color: linear-gradient(to bottom, rgba(44, 63, 84, 0.6), rgba(33, 46, 66, 0.5));
+  --eventide-rp-system-secondary-image-background: rgba(0, 0, 0, 0.85);
+  --eventide-rp-system-hidden-bg: #f7e8ea;
+  --eventide-rp-system-hidden-border: #e66a6e;
+  --eventide-rp-system-effect-bg: rgba(156, 107, 73, 0.75);
+  --eventide-rp-system-chat-card-white: #ffffff;
+  --eventide-rp-system-chat-card-black: #000000;
+  --eventide-rp-system-chat-card-tan: #444444;
+  --eventide-rp-system-abilities-acro: #a63b01b3;
+  --eventide-rp-system-abilities-phys: #910303b3;
+  --eventide-rp-system-abilities-fort: #2D682Db3;
+  --eventide-rp-system-abilities-will: #6A1B9Ab3;
+  --eventide-rp-system-abilities-wits: #0e4380b3;
+  --eventide-rp-system-card-header-item: #8B4513b3;
+  --eventide-rp-system-card-header-dc: #234B57b3;
+  --eventide-rp-system-card-header-unknown: #535353b3;
+  --eventide-rp-system-card-header-damage: #6A0404b3;
+  --eventide-rp-system-card-header-heal: #cb8e00b3;
+  --eventide-rp-system-card-header-effect: #9A5D2Db3;
+  --eventide-rp-system-card-header-delete: #555555b3;
+  --eventide-rp-system-card-header-description-hr: #8B4513b3;
+  --eventide-rp-system-chat-details-hit: #50C877b3;
+  --eventide-rp-system-chat-details-miss: #C70039b3;
+  --eventide-rp-system-chat-hr: #c9c7b8;
+  --eventide-rp-system-critical-hit: #2D1499b3;
+  --eventide-rp-system-critical-miss: #4e0101b3;
+  --eventide-rp-system-saved-miss: #4A777Ab3;
+  --eventide-rp-system-stolen-crit: #563C5Cb3;
+  --eventide-rp-system-input-bg: #1e2430;
+  --eventide-rp-system-input-hover: #2a3441;
+  --eventide-rp-system-input-border: #3d4655;
+  --eventide-rp-system-input-text: #ffffff;
+  --eventide-rp-system-input-placeholder: #999999;
+  --eventide-rp-system-input-focus: #4d94ff;
+  --eventide-rp-system-input-checked: #4d94ff;
+  --eventide-rp-system-input-check: #ffffff;
+  --eventide-rp-system-checkbox-bg: #1e2430;
+  --eventide-rp-system-checkbox-hover: #2a3441;
+  --eventide-rp-system-label-text: #ffffff;
+  --eventide-rp-system-required: #ff0000;
+  --eventide-rp-system-select-arrow-url: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath fill='%23ffffff' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  --eventide-rp-system-select-option-bg: #1e2430;
+  --eventide-rp-system-select-option-text: #ffffff;
+  --eventide-rp-system-select-option-hover: #2a3441;
+  --eventide-rp-system-button-bg: #000000;
+  --eventide-rp-system-button-text: #ffffff;
+  --eventide-rp-system-button-border: #333333;
+  --eventide-rp-system-button-hover: #1a365d;
+  --eventide-rp-system-button-active: #0d1b2e;
+  --eventide-rp-system-button-glow: rgba(255, 255, 255, 0.75);
+  --eventide-rp-system-primary-button-bg: #000000;
+  --eventide-rp-system-primary-button-text: #ffffff;
+  --eventide-rp-system-primary-button-border: #333333;
+  --eventide-rp-system-primary-button-hover: #1a365d;
+  --eventide-rp-system-primary-button-hover-text: #ffffff;
+  --eventide-rp-system-primary-button-active: #0d1b2e;
+  --eventide-rp-system-primary-button-glow: rgba(77, 148, 255, 0.75);
+  --eventide-rp-system-danger-button-bg: #cc0000;
+  --eventide-rp-system-danger-button-text: #ffffff;
+  --eventide-rp-system-danger-button-border: #990000;
+  --eventide-rp-system-danger-button-hover: #ff0000;
 }
 .eventide-rp-system .effects-header {
   height: 28px;
