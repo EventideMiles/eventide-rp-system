@@ -35,10 +35,6 @@
             background-color: colors.$item;
         }
 
-        &--combat-powers {
-            background-color: colors.$combat-powers;
-        }
-
         &--dice-dc {
             background-color: colors.$dc;
         }
@@ -167,24 +163,24 @@
             grid-template-columns: repeat(3, minmax(0, 1fr));
             width: 50%;
 
-            div {
+            &-cell {
                 padding-left: 3px;
                 padding-right: 3px;
                 border-bottom: 1px dashed colors.$card-tan;
-            }
 
-            div:first-child,
-            div:last-child {
-                font-weight: bold;
-            }
+                &--first,
+                &--last {
+                    font-weight: bold;
+                }
 
-            div:last-child {
-                border-left: 1px dashed colors.$card-tan;
-            }
+                &--last {
+                    border-left: 1px dashed colors.$card-tan;
+                    padding-left: 30px;
+                }
 
-            div:not(:first-child):not(:last-child) {
-                font-style: italic;
-
+                &--middle {
+                    font-style: italic;
+                }
             }
         }
     }

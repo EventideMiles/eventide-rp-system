@@ -15,8 +15,8 @@
     {{#ifCond this.changes.length ">" 0 }}
       {{#each this.changes}}
         <div class="chat-card__effects--row">
-          <div class="align-left">{{keySplit this.key 2}}</div> 
-          <div class="align-center">
+          <div class="chat-card__effects--row-cell chat-card__effects--row-cell--first">{{keySplit this.key 2}}</div> 
+          <div class="chat-card__effects--row-cell chat-card__effects--row-cell--middle">
             {{#ifCond this.mode "===" 5}}set to{{/ifCond}}
             {{#ifCond this.mode "!==" 5}}
               {{#ifCond (keySplit this.key 4) "===" "advantage"}}
@@ -30,7 +30,7 @@
               {{/ifCond}}
             {{/ifCond}}
           </div>
-          <div class="align-center">{{this.value}}</div>
+          <div class="chat-card__effects--row-cell chat-card__effects--row-cell--last">{{this.value}}</div>
         </div>
       {{/each}}
     {{/ifCond}}
