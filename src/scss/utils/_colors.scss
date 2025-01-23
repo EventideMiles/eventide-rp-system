@@ -1,4 +1,6 @@
+// light theme colors
 :root {
+    // universal
   --eventide-rp-system-c-dark: #191813;
   --eventide-rp-system-c-faint: #c9c7b8;
   --eventide-rp-system-c-beige: #b5b3a4;
@@ -6,11 +8,58 @@
   --eventide-rp-system-c-white: #ffffff;
   --eventide-rp-system-c-black: #000000;
   --eventide-rp-system-c-groove: #eeede0;
+
+  // character sheet
   --eventide-rp-system-character-input: rgba(white, 0.45);
   --eventide-rp-system-character-input-border: rgba(black, 0.5);
+  --eventide-rp-system-character-black: #000000;
+  --eventide-rp-system-character-white: #ffffff;
+  --eventide-rp-system-character-tan: #444444;
+  --eventide-rp-system-character-glow: #007bffb3;
+  --eventide-rp-system-character-background-color: linear-gradient(to bottom, #44628389, #33486876);
+  --eventide-rp-system-secondary-image-background: rgba($c-black, 0.8);
+  --eventide-rp-system-hidden-bg: #efdadf;
+  --eventide-rp-system-hidden-border: #ff9194;
+  --eventide-rp-system-effect-bg: #885735b3;
+
+  // chat cards
+  --eventide-rp-system-chat-card-white: #ffffff;
+  --eventide-rp-system-chat-card-black: #000000;
+  --eventide-rp-system-chat-card-tan: #444444;
+
+  // abilities
+  --eventide-rp-system-abilities-acro: #a63b01b3;
+  --eventide-rp-system-abilities-phys: #910303b3;
+  --eventide-rp-system-abilities-fort: #2D682Db3;
+  --eventide-rp-system-abilities-will: #6A1B9Ab3;
+  --eventide-rp-system-abilities-wits: #0e4380b3;
+
+  // additional card headers
+  --eventide-rp-system-card-header-item: #8B4513b3;
+  --eventide-rp-system-card-header-dc: #234B57b3;
+  --eventide-rp-system-card-header-unknown: #535353b3;
+  --eventide-rp-system-card-header-damage: #6A0404b3;
+  --eventide-rp-system-card-header-heal: #cb8e00b3;
+  --eventide-rp-system-card-header-effect: #9A5D2Db3;
+  --eventide-rp-system-card-header-delete: #555555b3;
+  --eventide-rp-system-card-header-description-hr: #8B4513b3;
+
+  // additional chat details
+  --eventide-rp-system-chat-details-hit: #50C877b3;
+  --eventide-rp-system-chat-details-miss: #C70039b3;
+  --eventide-rp-system-chat-hr: #c9c7b8;
+
+  // critical
+  --eventide-rp-system-critical-hit: #2D1499b3;
+  --eventide-rp-system-critical-miss: #4e0101b3;
+  --eventide-rp-system-saved-miss: #4A777Ab3;
+  --eventide-rp-system-stolen-crit: #563C5Cb3;
 }
 
+
+// Dark theme colors
 .theme-dark {
+  // universal
   --eventide-rp-system-c-dark: #c9c7b8;
   --eventide-rp-system-c-faint: #191813;
   --eventide-rp-system-c-beige: #444444;
@@ -18,8 +67,52 @@
   --eventide-rp-system-c-white: #000000;
   --eventide-rp-system-c-black: #ffffff;
   --eventide-rp-system-c-groove: #11121f;
+
+// character sheet
   --eventide-rp-system-character-input: rgba(black, 0.45);
   --eventide-rp-system-character-input-border: rgba(white, 0.5);
+  --eventide-rp-system-character-black: #000000;
+  --eventide-rp-system-character-white: #ffffff;
+  --eventide-rp-system-character-tan: #b5b3a4;
+  --eventide-rp-system-character-glow: #007bffb3;
+  --eventide-rp-system-character-background-color: linear-gradient(to bottom, #44628389, #33486876);
+  --eventide-rp-system-secondary-image-background: rgba($c-black, 0.8);
+  --eventide-rp-system-hidden-bg: #efdadf;
+  --eventide-rp-system-hidden-border: #ff9194;
+  --eventide-rp-system-effect-bg: #885735b3;
+
+  // chat cards
+  --eventide-rp-system-chat-card-white: #ffffff;
+  --eventide-rp-system-chat-card-black: #000000;
+  --eventide-rp-system-chat-card-tan: #444444;
+
+  // abilities
+  --eventide-rp-system-abilities-acro: #a63b01b3;
+  --eventide-rp-system-abilities-phys: #910303b3;
+  --eventide-rp-system-abilities-fort: #2D682Db3;
+  --eventide-rp-system-abilities-will: #6A1B9Ab3;
+  --eventide-rp-system-abilities-wits: #0e4380b3;
+
+  // additional card headers
+  --eventide-rp-system-card-header-item: #8B4513b3;
+  --eventide-rp-system-card-header-dc: #234B57b3;
+  --eventide-rp-system-card-header-unknown: #535353b3;
+  --eventide-rp-system-card-header-damage: #6A0404b3;
+  --eventide-rp-system-card-header-heal: #cb8e00b3;
+  --eventide-rp-system-card-header-effect: #9A5D2Db3;
+  --eventide-rp-system-card-header-delete: #555555b3;
+  --eventide-rp-system-card-header-description-hr: #8B4513b3;
+
+  // chat details
+  --eventide-rp-system-chat-details-hit: #50C877b3;
+  --eventide-rp-system-chat-details-miss: #C70039b3;
+  --eventide-rp-system-chat-hr: #c9c7b8;
+
+  // critical
+  --eventide-rp-system-critical-hit: #2D1499b3;
+  --eventide-rp-system-critical-miss: #4e0101b3;
+  --eventide-rp-system-saved-miss: #4A777Ab3;
+  --eventide-rp-system-stolen-crit: #563C5Cb3;
 }
 
 $c-white: var(--eventide-rp-system-c-white);
@@ -34,50 +127,51 @@ $c-groove: var(--eventide-rp-system-c-groove);
 
 // Chat card colors: here because chat doesn't support 
 // dark backgrounds because its overridden by an image.
-$card-white: #ffffff;
-$card-black: #000000;
-$card-tan: #444444;
+$card-white: var(--eventide-rp-system-chat-card-white);
+$card-black: var(--eventide-rp-system-chat-card-black);
+$card-tan: var(--eventide-rp-system-chat-card-tan);
 
 // Character sheet colors
-$character-black: #000000;
-$character-white: #ffffff;
+$character-black: var(--eventide-rp-system-character-black);
+$character-white: var(--eventide-rp-system-character-white);
+$character-tan: var(--eventide-rp-system-character-tan);
 
 
-$app-bg: linear-gradient(to bottom, #004d9f8a, #0029708a);
-
-$character-glow: #007bffb3;
+$character-glow: var(--eventide-rp-system-character-glow);
 $character-input: var(--eventide-rp-system-character-input);
 $character-input-border: var(--eventide-rp-system-character-input-border);
-$character-background-color: linear-gradient(to bottom, #44628389, #33486876);
-$secondary-image-background: rgba($c-black, 0.8);
+$character-background-color: var(--eventide-rp-system-character-background-color);
+$secondary-image-background: var(--eventide-rp-system-secondary-image-background);
 
-$hidden-bg: #efdadf;
-$hidden-border: #ff9194;
+$hidden-bg: var(--eventide-rp-system-hidden-bg);
+$hidden-border: var(--eventide-rp-system-hidden-border);
 
-$effect-bg: #885735b3;
+$effect-bg: var(--eventide-rp-system-effect-bg);
 
-$acro: #a63b01b3;
-$phys: #910303b3;
-$fort: #2D682Db3;
-$will: #6A1B9Ab3;
-$wits: #0e4380b3;
+$acro: var(--eventide-rp-system-abilities-acro);
+$phys: var(--eventide-rp-system-abilities-phys);
+$fort: var(--eventide-rp-system-abilities-fort);
+$will: var(--eventide-rp-system-abilities-will);
+$wits: var(--eventide-rp-system-abilities-wits);
 
-$critical-hit: #2D1499b3;
-$critical-miss: #4e0101b3;
-$saved-miss: #4A777Ab3;
-$stolen-crit: #563C5Cb3;
+$critical-hit: var(--eventide-rp-system-critical-hit);
+$critical-miss: var(--eventide-rp-system-critical-miss);
+$saved-miss: var(--eventide-rp-system-saved-miss);
+$stolen-crit: var(--eventide-rp-system-stolen-crit);
 
-$item: #8B4513b3;
-$combat-powers: #B8860Bb3;
-$dc: #234B57b3;
-$unknown: #535353b3;
-$damage: #6A0404b3;
-$heal: #cb8e00b3;
-$effect: #9A5D2Db3;
-$delete: #555555b3;
-$description-hr: #8B4513b3;
+$item: var(--eventide-rp-system-card-header-item);  
+$unknown: var(--eventide-rp-system-card-header-unknown);
+$damage: var(--eventide-rp-system-card-header-damage);
+$heal: var(--eventide-rp-system-card-header-heal);
+$effect: var(--eventide-rp-system-card-header-effect);
+$delete: var(--eventide-rp-system-card-header-delete);
+$description-hr: var(--eventide-rp-system-card-header-description-hr);
 
-$hit: #50C877b3;
-$miss: #C70039b3;
+$hit: var(--eventide-rp-system-chat-details-hit);
+$miss: var(--eventide-rp-system-chat-details-miss);
 
-$hr: #c9c7b8;
+$hr: var(--eventide-rp-system-chat-hr);
+
+// currently unused
+$app-bg: linear-gradient(to bottom, #004d9f8a, #0029708a);
+$dc: var(--eventide-rp-system-card-header-dc);
