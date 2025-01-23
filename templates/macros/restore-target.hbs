@@ -1,28 +1,28 @@
-<div class="{{cssClass}}" autocomplete="off">
-  <div class="form-group">
-    <label for="restoreResolve"><strong>Restore Resolve:</strong></label>
-    <input autofocus type="checkbox" id="restoreResolve" name="restoreResolve" {{checked defaultOptions.restoreResolve}}>
+<div class="{{cssClass}} base-form" autocomplete="off">
+  <div class="base-form__group base-form__group--checkbox">
+    <label class="base-form__label" for="restoreResolve">Restore Resolve:</label>
+    <input class="base-form__checkbox" autofocus type="checkbox" id="restoreResolve" name="restoreResolve" {{checked defaultOptions.restoreResolve}}>
   </div>
-  <div class="form-group">
-    <label for="restorePower"><strong>Restore Power:</strong></label>
-    <input type="checkbox" id="restorePower" name="restorePower" {{checked defaultOptions.restorePower}}>
+  <div class="base-form__group base-form__group--checkbox">
+    <label class="base-form__label" for="restorePower">Restore Power:</label>
+    <input class="base-form__checkbox" type="checkbox" id="restorePower" name="restorePower" {{checked defaultOptions.restorePower}}>
   </div>
   <hr />
-  <div class="form-group">
-    <label><strong>Remove Statuses:</strong></label>
+  <div class="base-form__group base-form__group--checkbox base-form__group--header">
+    <label class="base-form__label">Remove Statuses:</label>
   </div>
-  <div class="form-group">
-    <label for ="all"><u><strong>All</strong></u></label>
-    <input type="checkbox" id="all" name="all">
+  <div class="base-form__group base-form__group--checkbox">
+    <label class="base-form__label" for="all">All</label>
+    <input class="base-form__checkbox" type="checkbox" id="all" name="all">
   </div>
   {{#each statusEffects as |status|}}
-    <div class="form-group">
-      <label for="{{status.id}}">{{status.name}}</label>
-      <input type="checkbox" name="{{status.id}}" id="{{status.id}}">
+    <div class="base-form__group base-form__group--checkbox">
+      <label class="base-form__label" for="{{status.id}}">{{status.name}}</label>
+      <input class="base-form__checkbox" type="checkbox" name="{{status.id}}" id="{{status.id}}">
     </div>
   {{/each}}
-  <div class="form-group">
-    <button type="submit">Restore</button>
-    <button type="button" data-action="close">Close</button>
+  <div class="base-form__group base-form__group--right">
+    <button type="submit" class="base-form__button base-form__button--primary">Restore</button>
+    <button type="button" class="base-form__button" data-action="close">Close</button>
   </div>
 </div>

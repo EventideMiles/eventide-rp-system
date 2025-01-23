@@ -18,8 +18,8 @@ export class DamageTargets extends HandlebarsApplicationMixin(ApplicationV2) {
     id: "damage-targets",
     classes: ["eventide-rp-system", "standard-form", "damage-targets"],
     position: {
-      width: 640,
-      height: 375,
+      width: 400,
+      height: "auto",
     },
     tag: "form",
     window: {
