@@ -1,38 +1,38 @@
 // light theme colors
 :root {
     // universal
-  --eventide-rp-system-c-dark: #191813;
-  --eventide-rp-system-c-faint: #c9c7b8;
+  --eventide-rp-system-c-dark: #1a1814;
+  --eventide-rp-system-c-faint: #a8a69b;
   --eventide-rp-system-c-beige: #b5b3a4;
-  --eventide-rp-system-c-tan: #444444;
+  --eventide-rp-system-c-tan: #4d4d4d;
   --eventide-rp-system-c-white: #ffffff;
   --eventide-rp-system-c-black: #000000;
-  --eventide-rp-system-c-groove: #eeede0;
+  --eventide-rp-system-c-groove: #f0efe6;
 
   // character sheet
-  --eventide-rp-system-character-input: rgba(white, 0.45);
-  --eventide-rp-system-character-input-border: rgba(black, 0.5);
+  --eventide-rp-system-character-input: rgba(255, 255, 255, 0.85);
+  --eventide-rp-system-character-input-border: rgba(0, 0, 0, 0.65);
   --eventide-rp-system-character-black: #000000;
   --eventide-rp-system-character-white: #ffffff;
-  --eventide-rp-system-character-tan: #444444;
-  --eventide-rp-system-character-glow: #007bffb3;
-  --eventide-rp-system-character-background-color: linear-gradient(to bottom, #44628389, #33486876);
-  --eventide-rp-system-secondary-image-background: rgba($c-black, 0.8);
-  --eventide-rp-system-hidden-bg: #efdadf;
-  --eventide-rp-system-hidden-border: #ff9194;
-  --eventide-rp-system-effect-bg: #885735b3;
+  --eventide-rp-system-character-tan: #4d4d4d;
+  --eventide-rp-system-character-glow: rgba(0, 123, 255, 0.75);
+  --eventide-rp-system-character-background-color: linear-gradient(to bottom, rgba(68, 98, 131, 0.6), rgba(51, 72, 104, 0.5));
+  --eventide-rp-system-secondary-image-background: rgba(0, 0, 0, 0.85);
+  --eventide-rp-system-hidden-bg: #f7e8ea;
+  --eventide-rp-system-hidden-border: #e66a6e;
+  --eventide-rp-system-effect-bg: rgba(136, 87, 53, 0.75);
 
   // chat cards
   --eventide-rp-system-chat-card-white: #ffffff;
   --eventide-rp-system-chat-card-black: #000000;
-  --eventide-rp-system-chat-card-tan: #444444;
+  --eventide-rp-system-chat-card-tan: #4d4d4d;
 
   // abilities
-  --eventide-rp-system-abilities-acro: #a63b01b3;
-  --eventide-rp-system-abilities-phys: #910303b3;
-  --eventide-rp-system-abilities-fort: #2D682Db3;
-  --eventide-rp-system-abilities-will: #6A1B9Ab3;
-  --eventide-rp-system-abilities-wits: #0e4380b3;
+  --eventide-rp-system-abilities-acro: rgba(191, 68, 0, 0.75);
+  --eventide-rp-system-abilities-phys: rgba(168, 3, 3, 0.75);
+  --eventide-rp-system-abilities-fort: rgba(45, 104, 45, 0.75);
+  --eventide-rp-system-abilities-will: rgba(106, 27, 154, 0.75);
+  --eventide-rp-system-abilities-wits: rgba(14, 67, 128, 0.75);
 
   // additional card headers
   --eventide-rp-system-card-header-item: #8B4513b3;
@@ -56,60 +56,69 @@
   --eventide-rp-system-stolen-crit: #563C5Cb3;
 
   // form elements
-  --eventide-rp-system-input-bg: rgba(255, 255, 255, 0.8);
-  --eventide-rp-system-input-hover: rgba(255, 255, 255, 0.15);
-  --eventide-rp-system-input-border: #7a7971;
+  --eventide-rp-system-input-bg: #ffffff;
+  --eventide-rp-system-input-hover: #f0f0f0;
+  --eventide-rp-system-input-border: #d0d0d0;
   --eventide-rp-system-input-text: #191813;
-  --eventide-rp-system-input-placeholder: rgba(255, 255, 255, 0.5);
-  --eventide-rp-system-input-focus: #007bff;
-  --eventide-rp-system-input-checked: #2d682d00;
-  --eventide-rp-system-input-check: #000000;
-  --eventide-rp-system-checkbox-bg: rgba(255, 255, 255, 0.3);
-  --eventide-rp-system-checkbox-hover: rgba(255, 255, 255, 0.4);
+  --eventide-rp-system-input-placeholder: #666666;
+  --eventide-rp-system-input-focus: #4d94ff;
+  --eventide-rp-system-input-checked: #4d94ff;
+  --eventide-rp-system-input-check: #ffffff;
+  --eventide-rp-system-checkbox-bg: #ffffff;
+  --eventide-rp-system-checkbox-hover: #f0f0f0;
   --eventide-rp-system-label-text: #191813;
-  --eventide-rp-system-required: #910303;
+  --eventide-rp-system-required: #cc0000;
+  --eventide-rp-system-select-arrow-url: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath fill='%23191813' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  --eventide-rp-system-select-option-bg: #ffffff;
+  --eventide-rp-system-select-option-text: #191813;
+  --eventide-rp-system-select-option-hover: #f0f0f0;
   
-  --eventide-rp-system-button-bg: #4b4a44;
-  --eventide-rp-system-button-text: #ffffff;
-  --eventide-rp-system-button-border: #2b2b2b;
-  --eventide-rp-system-button-hover: #5a5a5a;
-  --eventide-rp-system-button-active: #3d3d3d;
+  // buttons - light theme
+  --eventide-rp-system-button-bg: #ffffff;
+  --eventide-rp-system-button-text: #191813;
+  --eventide-rp-system-button-border: #d0d0d0;
+  --eventide-rp-system-button-hover: #e8f0ff;
+  --eventide-rp-system-button-active: #d6e4ff;
+  --eventide-rp-system-button-glow: rgba(255, 255, 255, 0.75);
   
-  --eventide-rp-system-primary-button-bg: #2D682D;
-  --eventide-rp-system-primary-button-text: #ffffff;
-  --eventide-rp-system-primary-button-border: #1d4b1d;
-  --eventide-rp-system-primary-button-hover: #367c36;
+  --eventide-rp-system-primary-button-bg: #ffffff;
+  --eventide-rp-system-primary-button-text: #191813;
+  --eventide-rp-system-primary-button-border: #d0d0d0;
+  --eventide-rp-system-primary-button-hover: #4d94ff;
+  --eventide-rp-system-primary-button-hover-text: #ffffff;
+  --eventide-rp-system-primary-button-active: #2979ff;
+  --eventide-rp-system-primary-button-glow: rgba(77, 148, 255, 0.75);
   
-  --eventide-rp-system-danger-button-bg: #910303;
+  --eventide-rp-system-danger-button-bg: #cc0000;
   --eventide-rp-system-danger-button-text: #ffffff;
-  --eventide-rp-system-danger-button-border: #6a0202;
-  --eventide-rp-system-danger-button-hover: #b50404;
+  --eventide-rp-system-danger-button-border: #990000;
+  --eventide-rp-system-danger-button-hover: #ff0000;
 }
 
 
 // Dark theme colors
 .theme-dark {
   // universal
-  --eventide-rp-system-c-dark: #c9c7b8;
-  --eventide-rp-system-c-faint: #191813;
-  --eventide-rp-system-c-beige: #444444;
-  --eventide-rp-system-c-tan: #b5b3a4;
+  --eventide-rp-system-c-dark: #e5e3d8;
+  --eventide-rp-system-c-faint: #2a2925;
+  --eventide-rp-system-c-beige: #4d4d4d;
+  --eventide-rp-system-c-tan: #c9c7b8;
   --eventide-rp-system-c-white: #000000;
   --eventide-rp-system-c-black: #ffffff;
-  --eventide-rp-system-c-groove: #11121f;
+  --eventide-rp-system-c-groove: #1a1922;
 
-// character sheet
-  --eventide-rp-system-character-input: rgba(black, 0.45);
-  --eventide-rp-system-character-input-border: rgba(white, 0.5);
+  // character sheet
+  --eventide-rp-system-character-input: rgba(0, 0, 0, 0.85);
+  --eventide-rp-system-character-input-border: rgba(255, 255, 255, 0.65);
   --eventide-rp-system-character-black: #000000;
   --eventide-rp-system-character-white: #ffffff;
-  --eventide-rp-system-character-tan: #b5b3a4;
-  --eventide-rp-system-character-glow: #007bffb3;
-  --eventide-rp-system-character-background-color: linear-gradient(to bottom, #44628389, #33486876);
-  --eventide-rp-system-secondary-image-background: rgba($c-black, 0.8);
-  --eventide-rp-system-hidden-bg: #efdadf;
-  --eventide-rp-system-hidden-border: #ff9194;
-  --eventide-rp-system-effect-bg: #885735b3;
+  --eventide-rp-system-character-tan: #c9c7b8;
+  --eventide-rp-system-character-glow: rgba(0, 149, 255, 0.75);
+  --eventide-rp-system-character-background-color: linear-gradient(to bottom, rgba(44, 63, 84, 0.6), rgba(33, 46, 66, 0.5));
+  --eventide-rp-system-secondary-image-background: rgba(0, 0, 0, 0.85);
+  --eventide-rp-system-hidden-bg: #f7e8ea;
+  --eventide-rp-system-hidden-border: #e66a6e;
+  --eventide-rp-system-effect-bg: rgba(156, 107, 73, 0.75);
 
   // chat cards
   --eventide-rp-system-chat-card-white: #ffffff;
@@ -145,34 +154,43 @@
   --eventide-rp-system-stolen-crit: #563C5Cb3;
 
   // form elements
-  --eventide-rp-system-input-bg: rgba(137, 137, 137, 0.688);
-  --eventide-rp-system-input-hover: rgba(137, 137, 137, 0.688);
-  --eventide-rp-system-input-border: #7a7971;
-  --eventide-rp-system-input-text: #c9c7b8;
-  --eventide-rp-system-input-placeholder: rgba(0, 0, 0, 0.5);
-  --eventide-rp-system-input-focus: #007bff;
-  --eventide-rp-system-input-checked: #2d682d00;
+  --eventide-rp-system-input-bg: #1e2430;
+  --eventide-rp-system-input-hover: #2a3441;
+  --eventide-rp-system-input-border: #3d4655;
+  --eventide-rp-system-input-text: #ffffff;
+  --eventide-rp-system-input-placeholder: #999999;
+  --eventide-rp-system-input-focus: #4d94ff;
+  --eventide-rp-system-input-checked: #4d94ff;
   --eventide-rp-system-input-check: #ffffff;
-  --eventide-rp-system-checkbox-bg: rgba(137, 137, 137, 0.688);
-  --eventide-rp-system-checkbox-hover: rgba(137, 137, 137, 0.73);
-  --eventide-rp-system-label-text: #c9c7b8;
-  --eventide-rp-system-required: #ff4444;
+  --eventide-rp-system-checkbox-bg: #1e2430;
+  --eventide-rp-system-checkbox-hover: #2a3441;
+  --eventide-rp-system-label-text: #ffffff;
+  --eventide-rp-system-required: #ff0000;
+  --eventide-rp-system-select-arrow-url: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath fill='%23ffffff' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  --eventide-rp-system-select-option-bg: #1e2430;
+  --eventide-rp-system-select-option-text: #ffffff;
+  --eventide-rp-system-select-option-hover: #2a3441;
   
-  --eventide-rp-system-button-bg: #2b2b2b;
-  --eventide-rp-system-button-text: #c9c7b8;
-  --eventide-rp-system-button-border: #1a1a1a;
-  --eventide-rp-system-button-hover: #3d3d3d;
-  --eventide-rp-system-button-active: #1f1f1f;
+  // buttons - dark theme
+  --eventide-rp-system-button-bg: #000000;
+  --eventide-rp-system-button-text: #ffffff;
+  --eventide-rp-system-button-border: #333333;
+  --eventide-rp-system-button-hover: #1a365d;
+  --eventide-rp-system-button-active: #0d1b2e;
+  --eventide-rp-system-button-glow: rgba(255, 255, 255, 0.75);
   
-  --eventide-rp-system-primary-button-bg: #2D682D;
+  --eventide-rp-system-primary-button-bg: #000000;
   --eventide-rp-system-primary-button-text: #ffffff;
-  --eventide-rp-system-primary-button-border: #1d4b1d;
-  --eventide-rp-system-primary-button-hover: #367c36;
+  --eventide-rp-system-primary-button-border: #333333;
+  --eventide-rp-system-primary-button-hover: #1a365d;
+  --eventide-rp-system-primary-button-hover-text: #ffffff;
+  --eventide-rp-system-primary-button-active: #0d1b2e;
+  --eventide-rp-system-primary-button-glow: rgba(77, 148, 255, 0.75);
   
-  --eventide-rp-system-danger-button-bg: #910303;
+  --eventide-rp-system-danger-button-bg: #cc0000;
   --eventide-rp-system-danger-button-text: #ffffff;
-  --eventide-rp-system-danger-button-border: #6a0202;
-  --eventide-rp-system-danger-button-hover: #b50404;
+  --eventide-rp-system-danger-button-border: #990000;
+  --eventide-rp-system-danger-button-hover: #ff0000;
 }
 
 $c-white: var(--eventide-rp-system-c-white);
@@ -245,6 +263,10 @@ $checkbox-bg: var(--eventide-rp-system-checkbox-bg);
 $checkbox-hover: var(--eventide-rp-system-checkbox-hover);
 $label-text: var(--eventide-rp-system-label-text);
 $required: var(--eventide-rp-system-required);
+$select-arrow-url: var(--eventide-rp-system-select-arrow-url);
+$select-option-bg: var(--eventide-rp-system-select-option-bg);
+$select-option-text: var(--eventide-rp-system-select-option-text);
+$select-option-hover: var(--eventide-rp-system-select-option-hover);
 
 // Button Colors
 $button-bg: var(--eventide-rp-system-button-bg);
@@ -252,11 +274,15 @@ $button-text: var(--eventide-rp-system-button-text);
 $button-border: var(--eventide-rp-system-button-border);
 $button-hover: var(--eventide-rp-system-button-hover);
 $button-active: var(--eventide-rp-system-button-active);
+$button-glow: var(--eventide-rp-system-button-glow);
 
 $primary-button-bg: var(--eventide-rp-system-primary-button-bg);
 $primary-button-text: var(--eventide-rp-system-primary-button-text);
 $primary-button-border: var(--eventide-rp-system-primary-button-border);
 $primary-button-hover: var(--eventide-rp-system-primary-button-hover);
+$primary-button-hover-text: var(--eventide-rp-system-primary-button-hover-text);
+$primary-button-active: var(--eventide-rp-system-primary-button-active);
+$primary-button-glow: var(--eventide-rp-system-primary-button-glow);
 
 $danger-button-bg: var(--eventide-rp-system-danger-button-bg);
 $danger-button-text: var(--eventide-rp-system-danger-button-text);

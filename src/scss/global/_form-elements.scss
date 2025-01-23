@@ -49,16 +49,24 @@
 }
 
 @mixin button-base {
-  background-color: colors.$button-bg;
-  color: colors.$button-text;
-  border: 1px solid colors.$button-border;
-  border-radius: 5px;
-  padding: 0.5rem 1rem;
-  cursor: pointer;
-  font-family: typography.$underdog;
+  background-color: colors.$button-bg !important;
+  color: colors.$button-text !important;
+  border: 1px solid colors.$button-border !important;
+  border-radius: 5px !important;
+  padding: 0.5rem 1rem !important;
+  cursor: pointer !important;
+  font-family: typography.$underdog !important;
+  transition: all 0.2s ease-in-out !important;
+  box-shadow: 0 0 0 0 transparent !important;
 
   &:hover {
-    background-color: colors.$button-hover;
+    background-color: colors.$button-hover !important;
+    box-shadow: 0 0 15px 5px colors.$button-glow !important;
+  }
+
+  &:active {
+    background-color: colors.$button-active !important;
+    box-shadow: 0 0 8px 2px colors.$button-glow !important;
   }
 }
 
@@ -186,10 +194,20 @@
     @include input-base;
     padding-right: 2.5rem;
     cursor: pointer;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath fill='white' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E") !important;
+    background-image: colors.$select-arrow-url !important;
     background-repeat: no-repeat !important;
     background-position: calc(100% - 8px) center !important;
     background-size: 24px !important;
+
+    option {
+      background-color: colors.$select-option-bg !important;
+      color: colors.$select-option-text !important;
+      padding: 0.5rem !important;
+
+      &:hover {
+        background-color: colors.$select-option-hover !important;
+      }
+    }
   }
 
   &__select-option {
@@ -258,31 +276,38 @@
 
   &__button {
     @include button-base;
+    min-width: 80px !important;
 
     &--primary {
-      background-color: colors.$primary-button-bg;
-      color: colors.$primary-button-text;
-      border-color: colors.$primary-button-border;
+      background-color: colors.$primary-button-bg !important;
+      color: colors.$primary-button-text !important;
+      border-color: colors.$primary-button-border !important;
 
       &:hover {
-        background-color: colors.$primary-button-hover;
-        border-color: colors.$primary-button-hover;
+        background-color: colors.$primary-button-hover !important;
+        color: colors.$primary-button-hover-text !important;
+        box-shadow: 0 0 15px 5px colors.$primary-button-glow !important;
+      }
+
+      &:active {
+        background-color: colors.$primary-button-active !important;
+        box-shadow: 0 0 8px 2px colors.$primary-button-glow !important;
       }
     }
 
     &--danger {
-      background-color: colors.$danger-button-bg;
-      color: colors.$danger-button-text;
-      border-color: colors.$danger-button-border;
+      background-color: colors.$danger-button-bg !important;
+      color: colors.$danger-button-text !important;
+      border-color: colors.$danger-button-border !important;
 
       &:hover {
-        background-color: colors.$danger-button-hover;
-        border-color: colors.$danger-button-hover;
+        background-color: colors.$danger-button-hover !important;
+        box-shadow: 0 0 15px 5px rgba(255, 0, 0, 0.4) !important;
       }
     }
 
     & + & {
-      margin-left: 0.5rem;
+      margin-left: 0.5rem !important;
     }
   }
 
