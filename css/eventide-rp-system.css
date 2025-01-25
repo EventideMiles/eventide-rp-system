@@ -858,6 +858,7 @@ input[type=checkbox].base-form__checkbox:checked::after {
   font-size: 1.125rem;
   margin-bottom: 0px;
   margin-top: 0px;
+  position: relative;
 }
 .chat-card__header--acrobatics {
   background-color: var(--eventide-rp-system-abilities-acro);
@@ -897,7 +898,9 @@ input[type=checkbox].base-form__checkbox:checked::after {
 }
 .chat-card__header--status {
   display: flex;
-  justify-content: center;
+  justify-content: left;
+  align-items: left;
+  padding-left: 48px;
 }
 .chat-card__header--damage {
   background-color: var(--eventide-rp-system-card-header-damage);
@@ -997,9 +1000,14 @@ input[type=checkbox].base-form__checkbox:checked::after {
   font-style: italic;
 }
 .chat-card__image--primary {
-  width: 20px;
-  height: 20px;
+  width: 40px;
+  height: 40px;
   border: 0px;
+  object-fit: contain;
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
 }
 .chat-card__image--secondary {
   width: 13px;

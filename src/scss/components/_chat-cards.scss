@@ -10,6 +10,7 @@
         font-size: 1.125rem;
         margin-bottom: 0px;
         margin-top: 0px;
+        position: relative;
 
         &--acrobatics {
             background-color: colors.$acro;
@@ -61,7 +62,9 @@
 
         &--status {
             display: flex;
-            justify-content: center;
+            justify-content: left;
+            align-items: left;
+            padding-left: 48px;
         }
 
         &--damage {
@@ -189,9 +192,14 @@
 
     &__image {
         &--primary {
-            width: 20px;
-            height: 20px;
+            width: 40px;
+            height: 40px;
             border: 0px;
+            object-fit: contain;
+            position: absolute;
+            left: 8px;
+            top: 50%;
+            transform: translateY(-50%);
         }
 
         &--secondary {
