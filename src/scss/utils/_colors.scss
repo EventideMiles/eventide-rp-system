@@ -259,8 +259,13 @@ $input-placeholder: var(--eventide-rp-system-input-placeholder);
 $input-focus: var(--eventide-rp-system-input-focus);
 $input-checked: var(--eventide-rp-system-input-checked);
 $input-check: var(--eventide-rp-system-input-check);
+
+// Checkbox colors
 $checkbox-bg: var(--eventide-rp-system-checkbox-bg);
 $checkbox-hover: var(--eventide-rp-system-checkbox-hover);
+$checkbox-bg-checked: var(--eventide-rp-system-input-checked);
+$checkbox-check: var(--eventide-rp-system-input-check);
+
 $label-text: var(--eventide-rp-system-label-text);
 $required: var(--eventide-rp-system-required);
 $select-arrow-url: var(--eventide-rp-system-select-arrow-url);

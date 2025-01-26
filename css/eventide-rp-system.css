@@ -800,54 +800,52 @@
   height: 100%;
 }
 
-input[type=checkbox] {
-  appearance: none !important;
+/* Target only checkboxes within our base-form */
+.eventide-rp-system .base-form input[type=checkbox].base-form__checkbox {
   -webkit-appearance: none !important;
   -moz-appearance: none !important;
-  background: none !important;
-  border: none !important;
-}
-input[type=checkbox]::before {
-  display: none !important;
-}
-
-input[type=checkbox].base-form__checkbox {
-  all: initial !important;
+  appearance: none !important;
   display: inline-block !important;
   width: 28px !important;
   height: 28px !important;
-  background-color: var(--eventide-rp-system-checkbox-bg) !important;
-  border: none !important;
   margin: 0 10px !important;
+  padding: 0 !important;
+  border: none !important;
+  outline: none !important;
   cursor: pointer !important;
   vertical-align: middle !important;
-  position: relative !important;
-  z-index: 100 !important;
+  background-color: var(--eventide-rp-system-input-bg) !important;
   border-radius: 4px !important;
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.8), inset 0 1px 3px rgba(0, 0, 0, 0.6) !important;
-  -webkit-appearance: none !important;
-  -moz-appearance: none !important;
-  appearance: none !important;
+  position: relative !important;
+  /* Remove Foundry's pseudo-elements */
+  /* Hover state */
+  /* Checked state */
 }
-input[type=checkbox].base-form__checkbox:hover {
-  background-color: var(--eventide-rp-system-checkbox-hover) !important;
+.eventide-rp-system .base-form input[type=checkbox].base-form__checkbox::before, .eventide-rp-system .base-form input[type=checkbox].base-form__checkbox::after {
+  display: none !important;
+  content: none !important;
+  visibility: hidden !important;
+}
+.eventide-rp-system .base-form input[type=checkbox].base-form__checkbox:hover {
+  background-color: var(--eventide-rp-system-input-hover) !important;
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1), inset 0 1px 3px rgba(0, 0, 0, 0.7) !important;
 }
-input[type=checkbox].base-form__checkbox:checked {
-  background-color: var(--eventide-rp-system-input-checked) !important;
+.eventide-rp-system .base-form input[type=checkbox].base-form__checkbox:checked {
+  background-color: #191813 !important;
 }
-input[type=checkbox].base-form__checkbox:checked::after {
-  content: "✓" !important;
+.eventide-rp-system .base-form input[type=checkbox].base-form__checkbox:checked::before {
   display: block !important;
+  content: "✓" !important;
+  visibility: visible !important;
   position: absolute !important;
-  top: 50% !important;
-  left: 50% !important;
-  transform: translate(-50%, -50%) !important;
-  color: var(--eventide-rp-system-input-check) !important;
-  font-size: 18px !important;
-  font-weight: bold !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
-  z-index: 101 !important;
+  color: white !important;
+  font-size: 20px !important;
+  line-height: 28px !important;
+  width: 100% !important;
+  text-align: center !important;
+  top: 0 !important;
+  left: 0 !important;
 }
 
 /* Styles limited to eventide-rp-system sheets */
