@@ -42,6 +42,7 @@
   --eventide-rp-system-character-glow: rgba(0, 123, 255, 0.75);
   --eventide-rp-system-character-background-color: linear-gradient(to bottom, rgba(68, 98, 131, 0.6), rgba(51, 72, 104, 0.5));
   --eventide-rp-system-secondary-image-background: rgba(0, 0, 0, 0.85);
+  --eventide-rp-system-image-edit-border: rgba(24, 24, 24, 0.65);
   --eventide-rp-system-hidden-bg: #f7e8ea;
   --eventide-rp-system-hidden-border: #e66a6e;
   --eventide-rp-system-effect-bg: rgba(136, 87, 53, 0.75);
@@ -119,6 +120,7 @@
   --eventide-rp-system-character-glow: rgba(0, 149, 255, 0.75);
   --eventide-rp-system-character-background-color: linear-gradient(to bottom, rgba(44, 63, 84, 0.6), rgba(33, 46, 66, 0.5));
   --eventide-rp-system-secondary-image-background: rgba(0, 0, 0, 0.85);
+  --eventide-rp-system-image-edit-border: rgba(153, 153, 153, 0.65);
   --eventide-rp-system-hidden-bg: #f7e8ea;
   --eventide-rp-system-hidden-border: #e66a6e;
   --eventide-rp-system-effect-bg: rgba(156, 107, 73, 0.75);
@@ -763,6 +765,10 @@
   align-self: flex-end;
   flex: 0 0 100px;
 }
+.base-form__image--edit {
+  border: 1px solid var(--eventide-rp-system-image-edit-border);
+  border-radius: 10px;
+}
 .base-form__hidden-input {
   display: none;
 }
@@ -1062,6 +1068,7 @@
   --eventide-rp-system-character-glow: rgba(0, 123, 255, 0.75);
   --eventide-rp-system-character-background-color: linear-gradient(to bottom, rgba(68, 98, 131, 0.6), rgba(51, 72, 104, 0.5));
   --eventide-rp-system-secondary-image-background: rgba(0, 0, 0, 0.85);
+  --eventide-rp-system-image-edit-border: rgba(24, 24, 24, 0.65);
   --eventide-rp-system-hidden-bg: #f7e8ea;
   --eventide-rp-system-hidden-border: #e66a6e;
   --eventide-rp-system-effect-bg: rgba(136, 87, 53, 0.75);
@@ -1138,6 +1145,7 @@
   --eventide-rp-system-character-glow: rgba(0, 149, 255, 0.75);
   --eventide-rp-system-character-background-color: linear-gradient(to bottom, rgba(44, 63, 84, 0.6), rgba(33, 46, 66, 0.5));
   --eventide-rp-system-secondary-image-background: rgba(0, 0, 0, 0.85);
+  --eventide-rp-system-image-edit-border: rgba(153, 153, 153, 0.65);
   --eventide-rp-system-hidden-bg: #f7e8ea;
   --eventide-rp-system-hidden-border: #e66a6e;
   --eventide-rp-system-effect-bg: rgba(156, 107, 73, 0.75);
@@ -1312,6 +1320,7 @@
   --eventide-rp-system-character-glow: rgba(0, 123, 255, 0.75);
   --eventide-rp-system-character-background-color: linear-gradient(to bottom, rgba(68, 98, 131, 0.6), rgba(51, 72, 104, 0.5));
   --eventide-rp-system-secondary-image-background: rgba(0, 0, 0, 0.85);
+  --eventide-rp-system-image-edit-border: rgba(24, 24, 24, 0.65);
   --eventide-rp-system-hidden-bg: #f7e8ea;
   --eventide-rp-system-hidden-border: #e66a6e;
   --eventide-rp-system-effect-bg: rgba(136, 87, 53, 0.75);
@@ -1388,6 +1397,7 @@
   --eventide-rp-system-character-glow: rgba(0, 149, 255, 0.75);
   --eventide-rp-system-character-background-color: linear-gradient(to bottom, rgba(44, 63, 84, 0.6), rgba(33, 46, 66, 0.5));
   --eventide-rp-system-secondary-image-background: rgba(0, 0, 0, 0.85);
+  --eventide-rp-system-image-edit-border: rgba(153, 153, 153, 0.65);
   --eventide-rp-system-hidden-bg: #f7e8ea;
   --eventide-rp-system-hidden-border: #e66a6e;
   --eventide-rp-system-effect-bg: rgba(156, 107, 73, 0.75);
@@ -1587,6 +1597,7 @@
   --eventide-rp-system-character-glow: rgba(0, 123, 255, 0.75);
   --eventide-rp-system-character-background-color: linear-gradient(to bottom, rgba(68, 98, 131, 0.6), rgba(51, 72, 104, 0.5));
   --eventide-rp-system-secondary-image-background: rgba(0, 0, 0, 0.85);
+  --eventide-rp-system-image-edit-border: rgba(24, 24, 24, 0.65);
   --eventide-rp-system-hidden-bg: #f7e8ea;
   --eventide-rp-system-hidden-border: #e66a6e;
   --eventide-rp-system-effect-bg: rgba(136, 87, 53, 0.75);
@@ -1663,6 +1674,7 @@
   --eventide-rp-system-character-glow: rgba(0, 149, 255, 0.75);
   --eventide-rp-system-character-background-color: linear-gradient(to bottom, rgba(44, 63, 84, 0.6), rgba(33, 46, 66, 0.5));
   --eventide-rp-system-secondary-image-background: rgba(0, 0, 0, 0.85);
+  --eventide-rp-system-image-edit-border: rgba(153, 153, 153, 0.65);
   --eventide-rp-system-hidden-bg: #f7e8ea;
   --eventide-rp-system-hidden-border: #e66a6e;
   --eventide-rp-system-effect-bg: rgba(156, 107, 73, 0.75);

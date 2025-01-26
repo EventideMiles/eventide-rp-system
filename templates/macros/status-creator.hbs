@@ -10,8 +10,8 @@
   <div class="base-form__group">
     <label class="base-form__label" for="img">Image:</label>
     <img
-      class="base-form__image"
-      src="{{ifThen storedData.status_img storedData.status_img "icons/svg/stoned.svg"}}"
+      class="base-form__image base-form__image--edit"
+      src="{{storedData.status_img storedData.status_img}}"
       data-edit="img"
       data-action='onEditImage'
       title="Status Image"

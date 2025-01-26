@@ -319,6 +319,11 @@
     margin-left: auto;
     align-self: flex-end;
     flex: 0 0 100px;
+
+    &--edit {
+      border: 1px solid colors.$input-image-edit-border;
+      border-radius: 10px;
+    }
   }
 
   &__hidden-input {

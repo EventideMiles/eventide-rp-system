@@ -80,7 +80,7 @@ export class StatusCreator extends HandlebarsApplicationMixin(ApplicationV2) {
     const storedData = await erps.utils.retrieveLocal(this.storageKeys);
 
     context.storedData = {
-      status_img: storedData[this.storageKeys[0]],
+      status_img: storedData[this.storageKeys[0]] || "icons/svg/stoned.svg",
       status_bgColor: storedData[this.storageKeys[1]],
       status_textColor: storedData[this.storageKeys[2]],
     };
