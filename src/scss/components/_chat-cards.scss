@@ -12,6 +12,16 @@
         margin-top: 0px;
         position: relative;
 
+        &--subheader {
+            color: colors.$card-white;
+            text-align: left;
+            display: flex;
+            align-items: left;
+            justify-content: left;
+            padding-left: 48px;
+            font-size: 0.7rem;
+        }
+
         &--acrobatics {
             background-color: colors.$acro;
         }

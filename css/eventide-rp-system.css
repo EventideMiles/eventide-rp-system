@@ -864,6 +864,15 @@
   margin-top: 0px;
   position: relative;
 }
+.chat-card__header--subheader {
+  color: var(--eventide-rp-system-chat-card-white);
+  text-align: left;
+  display: flex;
+  align-items: left;
+  justify-content: left;
+  padding-left: 48px;
+  font-size: 0.7rem;
+}
 .chat-card__header--acrobatics {
   background-color: var(--eventide-rp-system-abilities-acro);
 }
