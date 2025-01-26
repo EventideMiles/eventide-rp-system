@@ -992,7 +992,8 @@
 }
 .chat-card__effects--row-cell--last {
   border-left: 1px dashed var(--eventide-rp-system-chat-card-tan);
-  padding-left: 30px;
+  padding-left: 15px;
+  white-space: nowrap;
 }
 .chat-card__effects--row-cell--middle {
   font-style: italic;

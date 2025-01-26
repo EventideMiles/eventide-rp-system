@@ -178,7 +178,8 @@
 
                 &--last {
                     border-left: 1px dashed colors.$card-tan;
-                    padding-left: 30px;
+                    padding-left: 15px;
+                    white-space: nowrap;
                 }
 
                 &--middle {
