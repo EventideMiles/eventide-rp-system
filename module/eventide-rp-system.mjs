@@ -295,4 +295,5 @@ Hooks.on("renderChatMessage", (message, [html]) => {
   if (game.user.isGM) return;
 
   html.querySelector(".chat-card__effects--ac-check")?.remove();
+  html.querySelector(".secret")?.remove();
 });
