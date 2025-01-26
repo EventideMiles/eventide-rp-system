@@ -261,8 +261,6 @@ Hooks.on("updateItem", (item, changed, options, triggerPlayer) => {
 Hooks.on("closeEventideRpSystemItemSheet", (app) => {
   const item = app.document;
 
-  console.log(item);
-
   if (item.type === "status" && item.system.description && app.actor !== null) {
     createStatusMessage(item);
   }

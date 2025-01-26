@@ -48,6 +48,9 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
     description: {
       template: "systems/eventide-rp-system/templates/item/description.hbs",
     },
+    prerequisites: {
+      template: "systems/eventide-rp-system/templates/item/prerequisites.hbs",
+    },
     attributesFeature: {
       template:
         "systems/eventide-rp-system/templates/item/attribute-parts/feature.hbs",
@@ -91,7 +94,7 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
         options.parts.push("attributesSpell");
         break;
       case "combatPower":
-        options.parts.push("attributesCombatPower");
+        options.parts.push("attributesCombatPower", "prerequisites");
         break;
     }
   }
@@ -171,6 +174,10 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
           }
         );
         break;
+      case "prerequisites":
+        context.prerequisites = this.item.system.prerequisites;
+        context.tab = context.tabs[partId];
+        break;
       case "effects":
         context.tab = context.tabs[partId];
         // Prepare active effects for easier access
@@ -210,6 +217,11 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
           tab.id = "description";
           tab.label += "Description";
           break;
+        case "prerequisites":
+          tab.id = "prerequisites";
+          tab.label += "Prerequisites";
+          break;
+        case "effects":
         case "attributesFeature":
         case "attributesGear":
         case "attributesSpell":

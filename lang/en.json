@@ -57,7 +57,8 @@
       "Tabs": {
         "Attributes": "Attributes",
         "Description": "Description",
-        "Effects": "Effects"
+        "Effects": "Effects",
+        "Prerequisites": "Prerequisites"
       },
       "Gear": {
         "FIELDS": {
