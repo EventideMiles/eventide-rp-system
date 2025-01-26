@@ -129,8 +129,6 @@ export class EventideRpSystemItem extends Item {
       item.formula = item.getCombatRollFormula();
 
       if (item.formula === "") return;
-
-      console.log(item);
       new PrerequisitePopup({ item }).render(
         this.system.prerequisites === "" || !this.system.prerequisites
           ? false

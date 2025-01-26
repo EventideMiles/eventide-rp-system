@@ -69,7 +69,6 @@ export class PrerequisitePopup extends HandlebarsApplicationMixin(
   }
 
   earlySubmit() {
-    console.log(this);
     this.item.actor.addPower(-this.item.system.cost);
 
     erps.messages.combatPowerMessage(this.item);
@@ -90,7 +89,6 @@ export class PrerequisitePopup extends HandlebarsApplicationMixin(
    * @private
    */
   static async #onSubmit() {
-    console.log(this);
     this.item.actor.addPower(-this.item.system.cost);
 
     erps.messages.combatPowerMessage(this.item);
