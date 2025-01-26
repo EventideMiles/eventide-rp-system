@@ -73,6 +73,7 @@
   --eventide-rp-system-select-option-bg: #ffffff;
   --eventide-rp-system-select-option-text: #191813;
   --eventide-rp-system-select-option-hover: #f0f0f0;
+  --eventide-rp-system-form-content-bg: #7c7777;
   
   // buttons - light theme
   --eventide-rp-system-button-bg: #ffffff;
@@ -172,6 +173,7 @@
   --eventide-rp-system-select-option-bg: #1e2430;
   --eventide-rp-system-select-option-text: #ffffff;
   --eventide-rp-system-select-option-hover: #2a3441;
+  --eventide-rp-system-form-content-bg: #1e2430;
   
   // buttons - dark theme
   --eventide-rp-system-button-bg: #000000;
@@ -215,7 +217,6 @@ $card-tan: var(--eventide-rp-system-chat-card-tan);
 $character-black: var(--eventide-rp-system-character-black);
 $character-white: var(--eventide-rp-system-character-white);
 $character-tan: var(--eventide-rp-system-character-tan);
-
 
 $character-glow: var(--eventide-rp-system-character-glow);
 $character-input: var(--eventide-rp-system-character-input);
@@ -262,6 +263,7 @@ $input-focus: var(--eventide-rp-system-input-focus);
 $input-checked: var(--eventide-rp-system-input-checked);
 $input-check: var(--eventide-rp-system-input-check);
 $input-image-edit-border: var(--eventide-rp-system-image-edit-border);
+$form-content-bg: var(--eventide-rp-system-form-content-bg);
 
 // Checkbox colors
 $checkbox-bg: var(--eventide-rp-system-checkbox-bg);
