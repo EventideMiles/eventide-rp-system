@@ -98,6 +98,14 @@
     margin: 0;
   }
 
+  &__content {
+    text-align: justify;
+    font-style: italic;
+    background-color: colors.$form-content-bg;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+  }
+
   &__group {
     margin: 0;
     padding: 0.25rem 0.5rem 0.75rem 0.5rem;
@@ -319,6 +327,11 @@
     margin-left: auto;
     align-self: flex-end;
     flex: 0 0 100px;
+
+    &--edit {
+      border: 1px solid colors.$input-image-edit-border;
+      border-radius: 10px;
+    }
   }
 
   &__hidden-input {
@@ -363,17 +376,5 @@
 
   &__sheet-tab-editor {
     height: 100%;
-  }
-}
-
-input[type="checkbox"] {
-  appearance: none !important;
-  -webkit-appearance: none !important;
-  -moz-appearance: none !important;
-  background: none !important;
-  border: none !important;
-  
-  &::before {
-    display: none !important;
   }
 }

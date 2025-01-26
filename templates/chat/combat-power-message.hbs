@@ -1,6 +1,9 @@
 {{!-- Header always shows with item styling --}}
-<div class="chat-card chat-card__header chat-card__header--status" style="{{style}}">
-  <img src="{{img}}" class="chat-card__image--primary" /> {{name}} (Cost: {{system.cost}})
+<div class="chat-card chat-card__header"style="{{style}}">
+  <div class="chat-card__header--status">
+  <img src="{{img}}" class="chat-card__image--primary" /> {{name}} </div>
+  <div class="chat-card__header--subheader">(Cost: {{system.cost}})</div>
+</div>
 </div>
 
 {{#if hasRoll}}

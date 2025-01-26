@@ -32,6 +32,11 @@ export default class EventideRpSystemCombatPower extends EventideRpSystemItemBas
       initial: true,
     });
 
+    schema.prerequisites = new fields.StringField({
+      required: true,
+      blank: true,
+    });
+
     schema.roll = new fields.SchemaField({
       type: new fields.StringField({
         initial: "roll",

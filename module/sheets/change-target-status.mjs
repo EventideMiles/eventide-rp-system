@@ -109,10 +109,6 @@ export class ChangeTargetStatus extends HandlebarsApplicationMixin(
    * @private
    */
   static async #onSubmit(event, form, formData) {
-    console.log(event);
-    console.log(form);
-    console.log(formData);
-    console.log(this);
     const statusId = form.statusSelector.value;
     const target = this.target;
 
@@ -145,8 +141,6 @@ export class ChangeTargetStatus extends HandlebarsApplicationMixin(
     const advantageChange = parseInt(form.advantageChange.value) || 0;
     const disadvantageChange = parseInt(form.disadvantageChange.value) || 0;
 
-    console.log(effects.changes);
-
     // update the change value based on splitting the key and checking for
     // "change" in slot 3, "override" in slot 3, "advantage" in slot 4, "disadvantage" in slot 4
     const updatedChanges = effects.changes.map((change) => {
@@ -161,7 +155,6 @@ export class ChangeTargetStatus extends HandlebarsApplicationMixin(
         newChange.value = parseInt(change.value) + adjustmentChange;
       }
 
-      console.log(newChange);
       return newChange;
     });
 

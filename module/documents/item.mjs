@@ -1,4 +1,5 @@
 import { rollHandler } from "../helpers/roll-dice.mjs";
+import { PrerequisitePopup } from "../sheets/prerequisite-popup.mjs";
 
 /**
  * Extended Item class for the Eventide RP System.
@@ -128,10 +129,11 @@ export class EventideRpSystemItem extends Item {
       item.formula = item.getCombatRollFormula();
 
       if (item.formula === "") return;
-
-      this.actor.addPower(-item.system.cost);
-
-      const message = await erps.messages.combatPowerMessage(item, this.actor);
+      new PrerequisitePopup({ item }).render(
+        this.system.prerequisites === "" || !this.system.prerequisites
+          ? false
+          : true
+      );
     }
     // If there's no roll data, send a chat message.
     else if (!this.system.formula) {
