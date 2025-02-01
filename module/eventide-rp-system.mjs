@@ -92,7 +92,6 @@ Hooks.once("init", function () {
   CONFIG.Item.dataModels = {
     gear: models.EventideRpSystemGear,
     feature: models.EventideRpSystemFeature,
-    spell: models.EventideRpSystemSpell,
     status: models.EventideRpSystemStatus,
     combatPower: models.EventideRpSystemCombatPower,
   };

@@ -8,7 +8,6 @@ export const preloadHandlebarsTemplates = async function () {
     // Actor partials.
     "systems/eventide-rp-system/templates/actor/parts/actor-features.hbs",
     "systems/eventide-rp-system/templates/actor/parts/actor-items.hbs",
-    "systems/eventide-rp-system/templates/actor/parts/actor-spells.hbs",
     "systems/eventide-rp-system/templates/actor/parts/actor-effects.hbs",
     "systems/eventide-rp-system/templates/actor/parts/actor-statuses.hbs",
     // Item partials

@@ -59,10 +59,6 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
       template:
         "systems/eventide-rp-system/templates/item/attribute-parts/gear.hbs",
     },
-    attributesSpell: {
-      template:
-        "systems/eventide-rp-system/templates/item/attribute-parts/spell.hbs",
-    },
     attributesCombatPower: {
       template:
         "systems/eventide-rp-system/templates/item/attribute-parts/combat-power.hbs",
@@ -89,9 +85,6 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
         break;
       case "gear":
         options.parts.push("attributesGear");
-        break;
-      case "spell":
-        options.parts.push("attributesSpell");
         break;
       case "combatPower":
         options.parts.push("attributesCombatPower", "prerequisites");
@@ -136,7 +129,6 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
     switch (partId) {
       case "attributesFeature":
       case "attributesGear":
-      case "attributesSpell":
       case "attributesCombatPower":
         // Necessary for preserving active tab on re-render
         context.tab = context.tabs[partId];
@@ -229,7 +221,6 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
           break;
         case "attributesFeature":
         case "attributesGear":
-        case "attributesSpell":
         case "attributesCombatPower":
           tab.id = "attributes";
           tab.label += "Attributes";
@@ -340,8 +331,6 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
       // These data attributes are reserved for the action handling
       if (["action", "documentClass"].includes(dataKey)) continue;
       // Nested properties require dot notation in the HTML, e.g. anything with `system`
-      // An example exists in spells.hbs, with `data-system.spell-level`
-      // which turns into the dataKey 'system.spellLevel'
       foundry.utils.setProperty(effectData, dataKey, value);
     }
 

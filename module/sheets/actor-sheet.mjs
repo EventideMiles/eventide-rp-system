@@ -338,8 +338,6 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
       // These data attributes are reserved for the action handling
       if (["action", "documentClass"].includes(dataKey)) continue;
       // Nested properties require dot notation in the HTML, e.g. anything with `system`
-      // An example exists in spells.hbs, with `data-system.spell-level`
-      // which turns into the dataKey 'system.spellLevel'
       foundry.utils.setProperty(docData, dataKey, value);
     }
 

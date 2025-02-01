@@ -24,13 +24,7 @@
       "gear": {
         "htmlFields": ["description"]
       },
-      "spell": {
-        "htmlFields": ["description"]
-      },
       "status": {
-        "htmlFields": ["description"]
-      },
-      "item": {
         "htmlFields": ["description"]
       },
       "combatPower": {
