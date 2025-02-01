@@ -1,0 +1,14 @@
+<div class="{{cssClass}} base-form" autocomplete="off">
+    <div class="base-form__header">Select an Ability Roll</div>
+    <div class="base-form__group">
+        <select class="base-form__select" name="attribute-choice">
+            {{#each abilities}}
+            <option value="{{this}}">{{this}}</option>
+            {{/each}}
+        </select>
+    </div>
+    <div class="base-form__group base-form__group--right">
+      <button type="submit" class="base-form__button base-form__button--primary">Roll</button>
+      <button type="button" class="base-form__button" data-action="close">Cancel</button>
+    </div>
+</div>
