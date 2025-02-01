@@ -1,7 +1,7 @@
 @charset "UTF-8";
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Combo&family=Merienda:wght@300..900&family=Protest+Revolution&family=Underdog&display=swap");
-.protest-revolution-regular, .chat-card__header, .chat-card__effects--title {
+.protest-revolution-regular, .chat-card__header, .chat-card__effects--title, .base-form__effects--title {
   font-family: "Protest Revolution", serif;
   font-weight: 400;
   font-style: normal;
@@ -13,7 +13,7 @@
   font-style: normal;
 }
 
-.underdog-regular, .chat-card__description, .chat-card__effects {
+.underdog-regular, .chat-card__description, .chat-card__effects, .base-form__effects {
   font-family: "Underdog", serif;
   font-weight: 400;
   font-style: normal;
@@ -478,6 +478,51 @@
   background-color: var(--eventide-rp-system-form-content-bg);
   padding: 0.5rem 1rem;
   border-radius: 5px;
+}
+.base-form__effects {
+  text-align: justify;
+  font-size: 0.7rem;
+  padding: 0rem;
+  color: var(--eventide-rp-system-chat-card-white);
+  background-color: var(--eventide-rp-system-form-content-bg);
+}
+.base-form__effects--title {
+  text-align: justify;
+  font-size: 0.8rem;
+  padding: 0.01rem;
+  padding-top: 0.2rem;
+  padding-bottom: 0.2rem;
+  margin-bottom: 3px;
+  background-color: var(--eventide-rp-system-card-header-effect);
+  color: var(--eventide-rp-system-chat-card-white);
+}
+.base-form__effects--name {
+  font-weight: bolder;
+  color: var(--eventide-rp-system-chat-card-white);
+  font-size: 0.75rem;
+}
+.base-form__effects--row {
+  padding-left: 20px;
+  display: grid;
+  grid-column: span 3/span 3;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  width: 50%;
+}
+.base-form__effects--row-cell {
+  padding-left: 3px;
+  padding-right: 3px;
+  border-bottom: 1px dashed var(--eventide-rp-system-chat-card-tan);
+}
+.base-form__effects--row-cell--first, .base-form__effects--row-cell--last {
+  font-weight: bold;
+}
+.base-form__effects--row-cell--last {
+  border-left: 1px dashed var(--eventide-rp-system-chat-card-tan);
+  padding-left: 15px;
+  white-space: nowrap;
+}
+.base-form__effects--row-cell--middle {
+  font-style: italic;
 }
 .base-form__group {
   margin: 0;
@@ -1861,3 +1906,5 @@
 .eventide-rp-system .effects .item .effect-controls {
   border: none;
 }
+
+/*# sourceMappingURL=eventide-rp-system.css.map */
