@@ -2,7 +2,9 @@
     <div class="base-form__header">Select an Ability Roll</div>
     <div class="base-form__group">
         <select class="base-form__select" name="attribute-choice">
-            {{selectOptions abilities selected=selectedAbility}}
+            {{#each abilities}}
+            <option value="{{this}}">{{this}}</option>
+            {{/each}}
         </select>
     </div>
     <div class="base-form__group base-form__group--right">
