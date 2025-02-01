@@ -24,13 +24,7 @@
       "gear": {
         "htmlFields": ["description"]
       },
-      "spell": {
-        "htmlFields": ["description"]
-      },
       "status": {
-        "htmlFields": ["description"]
-      },
-      "item": {
         "htmlFields": ["description"]
       },
       "combatPower": {
@@ -56,7 +50,7 @@
       "thumbnail": "systems/eventide-rp-system/assets/anvil-impact.png"
     }
   ],
-  "version": "0.8.6",
+  "version": "0.9.0",
   "compatibility": {
     "minimum": "12.328",
     "verified": "12.328"

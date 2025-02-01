@@ -94,13 +94,6 @@
             }
           }
         }
-      },
-      "Spell": {
-        "FIELDS": {
-          "level": { "label": "Spell Level" }
-        },
-        "SpellLVL": "Level {level} Spells",
-        "AddLVL": "Add LVL {level}"
       }
     },
     "Effect": {
@@ -119,7 +112,6 @@
     "Item": {
       "gear": "Gear",
       "feature": "Feature",
-      "spell": "Spell",
       "status": "Status",
       "combatPower": "Combat Power"
     }
