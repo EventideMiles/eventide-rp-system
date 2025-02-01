@@ -19,12 +19,16 @@
     <input class="base-form__hidden-input" type="hidden" name="img" value="{{ifThen storedData.status_img storedData.status_img "icons/svg/stoned.svg"}}">
   </div>
   <div class="base-form__group">
-    <label class="base-form__label" for="bgColor">Background Color/Tint:</label>
+    <label class="base-form__label" for="bgColor">Background Color:</label>
     <input class="base-form__color-input" type="color" id="bgColor" name="bgColor" value="{{ifThen storedData.status_bgColor storedData.status_bgColor "#7B4874"}}">
   </div>
   <div class="base-form__group">
     <label class="base-form__label" for="textColor">Text Color:</label>
     <input class="base-form__color-input" type="color" id="textColor" name="textColor" value="{{ifThen storedData.status_textColor storedData.status_textColor "#ffffff"}}">
+  </div>
+  <div class="base-form__group">
+    <label class=""base-form__label for="iconTint">Icon Tint:</label>
+    <input class="base-form__color-input" type="color" id="iconTint" name="iconTint" value="{{ifThen storedData.status_iconTint storedData.status_iconTint "#ffffff"}}">
   </div>
   <div class="base-form__header">Effects</div>
   {{#each abilities}}

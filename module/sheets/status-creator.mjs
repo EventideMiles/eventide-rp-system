@@ -44,6 +44,7 @@ export class StatusCreator extends HandlebarsApplicationMixin(ApplicationV2) {
       `status_${this.number}_img`,
       `status_${this.number}_bgColor`,
       `status_${this.number}_textColor`,
+      `status_${this.number}_iconTint`,
     ];
     if (advanced) {
       this.hiddenAbilities = [...StatusCreator.hiddenAbilities];
@@ -83,6 +84,7 @@ export class StatusCreator extends HandlebarsApplicationMixin(ApplicationV2) {
       status_img: storedData[this.storageKeys[0]] || "icons/svg/stoned.svg",
       status_bgColor: storedData[this.storageKeys[1]],
       status_textColor: storedData[this.storageKeys[2]],
+      status_iconTint: storedData[this.storageKeys[3]],
     };
 
     context.returnedData = context.storedData.img;
@@ -162,6 +164,7 @@ export class StatusCreator extends HandlebarsApplicationMixin(ApplicationV2) {
     const img = html.img.value;
     const bgColor = html.bgColor.value;
     const textColor = html.textColor.value;
+    const iconTint = html.iconTint.value;
 
     const effects = abilities
       .map((ability) => {
@@ -236,7 +239,7 @@ export class StatusCreator extends HandlebarsApplicationMixin(ApplicationV2) {
           },
           description: description || "",
           origin: "",
-          tint: bgColor,
+          tint: iconTint,
           transfer: true,
           statuses: new Set(),
           flags: {},
@@ -272,6 +275,7 @@ export class StatusCreator extends HandlebarsApplicationMixin(ApplicationV2) {
       [this.storageKeys[0]]: img,
       [this.storageKeys[1]]: bgColor,
       [this.storageKeys[2]]: textColor,
+      [this.storageKeys[3]]: iconTint,
     };
 
     await erps.utils.storeLocal(storageObject);
