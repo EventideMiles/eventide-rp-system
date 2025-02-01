@@ -17,7 +17,7 @@ export class ChangeTargetStatus extends HandlebarsApplicationMixin(
     id: "change-target-status",
     classes: ["eventide-rp-system", "standard-form", "change-target-status"],
     position: {
-      width: 400,
+      width: 500,
       height: "auto",
     },
     tag: "form",

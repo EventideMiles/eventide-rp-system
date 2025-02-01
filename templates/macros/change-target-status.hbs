@@ -10,7 +10,7 @@
     </select>
   </div>
   <div class="base-form__group">
-    <label class="base-form__label" for="adjustmentChange">Stat Adjustment:</label>
+    <label class="base-form__label" for="adjustmentChange">Change Values:</label>
     <select class="base-form__select" id="adjustmentMode" name="adjustmentMode">
       <option value="add" {{#ifCond storedData.changeTargetStatus_adjustmentMode "===" "add"}}selected{{/ifCond}}>Add</option>
       <option value="subtract" {{#ifCond storedData.changeTargetStatus_adjustmentMode "===" "subtract"}}selected{{/ifCond}}>Subtract</option>
@@ -18,7 +18,7 @@
     <input class="base-form__number-input" autofocus type="number" id="adjustmentChange" name="adjustmentChange" value="{{ifThen storedData.changeTargetStatus_adjustmentChange storedData.changeTargetStatus_adjustmentChange "0"}}" placeholder="Change Value">
   </div>
   <div class="base-form__group">
-    <label class="base-form__label" for="overrideChange">Override Value:</label>
+    <label class="base-form__label" for="overrideChange">Override Values:</label>
     <select class="base-form__select" id="overrideMode" name="overrideMode">
       <option value="add" {{#ifCond storedData.changeTargetStatus_overrideMode "===" "add"}}selected{{/ifCond}}>Add</option>
       <option value="subtract" {{#ifCond storedData.changeTargetStatus_overrideMode "===" "subtract"}}selected{{/ifCond}}>Subtract</option>
