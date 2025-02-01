@@ -50,6 +50,7 @@ export class EventideRpSystemItem extends Item {
       const actorDiceAdjustments =
         rollData.actor.abilities[rollData.roll.ability].diceAdjustments;
       const total = thisDiceAdjustments.total + actorDiceAdjustments.total;
+      const absTotal = Math.abs(total);
 
       diceAdjustments = {
         total,
@@ -58,6 +59,7 @@ export class EventideRpSystemItem extends Item {
         disadvantage:
           thisDiceAdjustments.disadvantage + actorDiceAdjustments.disadvantage,
         mode: total >= 0 ? "k" : "kl",
+        absTotal,
       };
     } else {
       diceAdjustments = {
@@ -73,7 +75,7 @@ export class EventideRpSystemItem extends Item {
           : ""
       }`;
 
-    return `${diceAdjustments.total + 1}d${
+    return `${diceAdjustments.absTotal + 1}d${
       rollData.actor.hiddenAbilities.dice.total
     }${diceAdjustments.mode}${
       rollData.roll.ability !== "unaugmented"
