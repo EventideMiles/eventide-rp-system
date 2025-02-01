@@ -35,16 +35,14 @@ export class ChangeTargetStatus extends HandlebarsApplicationMixin(
   static storageKeys = [
     "changeTargetStatus_statusSelector",
     "changeTargetStatus_adjustmentChange",
+    "changeTargetStatus_adjustmentMode",
     "changeTargetStatus_overrideChange",
+    "changeTargetStatus_overrideMode",
     "changeTargetStatus_advantageChange",
+    "changeTargetStatus_advantageMode",
     "changeTargetStatus_disadvantageChange",
+    "changeTargetStatus_disadvantageMode",
   ];
-
-  constructor({ subtractMode = false } = {}) {
-    super();
-
-    this.subtractMode = subtractMode;
-  }
 
   /**
    * Prepares the context data for a specific part of the form.
@@ -79,8 +77,6 @@ export class ChangeTargetStatus extends HandlebarsApplicationMixin(
 
     this.target = targetArray[0];
     context.target = this.target;
-
-    context.subtractMode = this.subtractMode;
 
     context.cssClass = ChangeTargetStatus.DEFAULT_OPTIONS.classes.join(" ");
 
@@ -175,6 +171,10 @@ export class ChangeTargetStatus extends HandlebarsApplicationMixin(
       changeTargetStatus_overrideChange: form.overrideChange.value,
       changeTargetStatus_advantageChange: form.advantageChange.value,
       changeTargetStatus_disadvantageChange: form.disadvantageChange.value,
+      changeTargetStatus_adjustmentMode: form.adjustmentMode.value,
+      changeTargetStatus_overrideMode: form.overrideMode.value,
+      changeTargetStatus_advantageMode: form.advantageMode.value,
+      changeTargetStatus_disadvantageMode: form.disadvantageMode.value,
     };
 
     await erps.utils.storeLocal(storageObject);
