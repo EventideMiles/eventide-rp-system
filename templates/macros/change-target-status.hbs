@@ -1,3 +1,4 @@
+{{debug storedData}}
 <div class="{{cssClass}} base-form" autocomplete="off">
   <p>This script is to allow you to change the values on an existing status condition easily.</p>
   <div class="base-form__group">
@@ -9,23 +10,39 @@
     </select>
   </div>
   <div class="base-form__group">
-    <label class="base-form__label" for="adjustmentChange">Stat Adjustment:</label>
-    <input class="base-form__number-input" autofocus type="number" id="adjustmentChange" name="adjustmentChange" value="{{ifThen storedData.changeTargetStatus_adjustmentChange storedData.changeTargetStatus_adjustmentChange "0"}}" placeholder="{{#ifCond subtractMode "===" false}}Addition{{else}}Reduction{{/ifCond}}">
+    <label class="base-form__label" for="adjustmentChange">Change Values:</label>
+    <select class="base-form__select" id="adjustmentMode" name="adjustmentMode">
+      <option value="add" {{#ifCond storedData.changeTargetStatus_adjustmentMode "===" "add"}}selected{{/ifCond}}>Add</option>
+      <option value="subtract" {{#ifCond storedData.changeTargetStatus_adjustmentMode "===" "subtract"}}selected{{/ifCond}}>Subtract</option>
+    </select>
+    <input class="base-form__number-input" autofocus type="number" id="adjustmentChange" name="adjustmentChange" value="{{ifThen storedData.changeTargetStatus_adjustmentChange storedData.changeTargetStatus_adjustmentChange "0"}}" placeholder="Change Value">
   </div>
   <div class="base-form__group">
-    <label class="base-form__label" for="overrideChange">Override Value:</label>
+    <label class="base-form__label" for="overrideChange">Override Values:</label>
+    <select class="base-form__select" id="overrideMode" name="overrideMode">
+      <option value="add" {{#ifCond storedData.changeTargetStatus_overrideMode "===" "add"}}selected{{/ifCond}}>Add</option>
+      <option value="subtract" {{#ifCond storedData.changeTargetStatus_overrideMode "===" "subtract"}}selected{{/ifCond}}>Subtract</option>
+    </select>
     <input class="base-form__number-input" type="number" id="overrideChange" name="overrideChange" value="{{ifThen storedData.changeTargetStatus_overrideChange storedData.changeTargetStatus_overrideChange "0"}}" placeholder="New Value">
   </div>
   <div class="base-form__group">
     <label class="base-form__label" for="advantageChange">Advantage:</label>
+    <select class="base-form__select" id="advantageMode" name="advantageMode">
+      <option value="add" {{#ifCond storedData.changeTargetStatus_advantageMode "===" "add"}}selected{{/ifCond}}>Add</option>
+      <option value="subtract" {{#ifCond storedData.changeTargetStatus_advantageMode "===" "subtract"}}selected{{/ifCond}}>Subtract</option>
+    </select>
     <input class="base-form__number-input" type="number" id="advantageChange" name="advantageChange" value="{{ifThen storedData.changeTargetStatus_advantageChange storedData.changeTargetStatus_advantageChange "0"}}" placeholder="Change Value">
   </div>
   <div class="base-form__group">
     <label class="base-form__label" for="disadvantageChange">Disadvantage:</label>
+    <select class="base-form__select" id="disadvantageMode" name="disadvantageMode">
+      <option value="add" {{#ifCond storedData.changeTargetStatus_disadvantageMode "===" "add"}}selected{{/ifCond}}>Add</option>  
+      <option value="subtract" {{#ifCond storedData.changeTargetStatus_disadvantageMode "===" "subtract"}}selected{{/ifCond}}>Subtract</option>
+    </select>
     <input class="base-form__number-input" type="number" id="disadvantageChange" name="disadvantageChange" value="{{ifThen storedData.changeTargetStatus_disadvantageChange storedData.changeTargetStatus_disadvantageChange "0"}}" placeholder="Change Value">
   </div>
   <div class="base-form__group base-form__group--right">
-    <button type="submit" class="base-form__button base-form__button--primary">{{ifThen subtractMode "Decrement" "Increment"}}</button>
+    <button type="submit" class="base-form__button base-form__button--primary">Change</button>
     <button type="button" class="base-form__button" data-action="store">Store</button>
     <button type="button" class="base-form__button" data-action="close">Close</button>
   </div>

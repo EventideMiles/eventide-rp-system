@@ -17,7 +17,7 @@ export class ChangeTargetStatus extends HandlebarsApplicationMixin(
     id: "change-target-status",
     classes: ["eventide-rp-system", "standard-form", "change-target-status"],
     position: {
-      width: 400,
+      width: 500,
       height: "auto",
     },
     tag: "form",
@@ -35,16 +35,14 @@ export class ChangeTargetStatus extends HandlebarsApplicationMixin(
   static storageKeys = [
     "changeTargetStatus_statusSelector",
     "changeTargetStatus_adjustmentChange",
+    "changeTargetStatus_adjustmentMode",
     "changeTargetStatus_overrideChange",
+    "changeTargetStatus_overrideMode",
     "changeTargetStatus_advantageChange",
+    "changeTargetStatus_advantageMode",
     "changeTargetStatus_disadvantageChange",
+    "changeTargetStatus_disadvantageMode",
   ];
-
-  constructor({ subtractMode = false } = {}) {
-    super();
-
-    this.subtractMode = subtractMode;
-  }
 
   /**
    * Prepares the context data for a specific part of the form.
@@ -79,8 +77,6 @@ export class ChangeTargetStatus extends HandlebarsApplicationMixin(
 
     this.target = targetArray[0];
     context.target = this.target;
-
-    context.subtractMode = this.subtractMode;
 
     context.cssClass = ChangeTargetStatus.DEFAULT_OPTIONS.classes.join(" ");
 
@@ -133,13 +129,28 @@ export class ChangeTargetStatus extends HandlebarsApplicationMixin(
     // Get the change values from the form
     const adjustmentChange =
       parseInt(
-        this.subtractMode
-          ? -form.adjustmentChange.value
-          : form.adjustmentChange.value
+        form.adjustmentMode.value === "subtract"
+          ? -Math.abs(form.adjustmentChange.value)
+          : Math.abs(form.adjustmentChange.value)
       ) || 0;
-    const overrideChange = parseInt(form.overrideChange.value) || 0;
-    const advantageChange = parseInt(form.advantageChange.value) || 0;
-    const disadvantageChange = parseInt(form.disadvantageChange.value) || 0;
+    const overrideChange =
+      parseInt(
+        form.overrideMode.value === "subtract"
+          ? -Math.abs(form.overrideChange.value)
+          : Math.abs(form.overrideChange.value)
+      ) || 0;
+    const advantageChange =
+      parseInt(
+        form.advantageMode.value === "subtract"
+          ? -Math.abs(form.advantageChange.value)
+          : Math.abs(form.advantageChange.value)
+      ) || 0;
+    const disadvantageChange =
+      parseInt(
+        form.disadvantageMode.value === "subtract"
+          ? -Math.abs(form.disadvantageChange.value)
+          : Math.abs(form.disadvantageChange.value)
+      ) || 0;
 
     // update the change value based on splitting the key and checking for
     // "change" in slot 3, "override" in slot 3, "advantage" in slot 4, "disadvantage" in slot 4
@@ -175,6 +186,10 @@ export class ChangeTargetStatus extends HandlebarsApplicationMixin(
       changeTargetStatus_overrideChange: form.overrideChange.value,
       changeTargetStatus_advantageChange: form.advantageChange.value,
       changeTargetStatus_disadvantageChange: form.disadvantageChange.value,
+      changeTargetStatus_adjustmentMode: form.adjustmentMode.value,
+      changeTargetStatus_overrideMode: form.overrideMode.value,
+      changeTargetStatus_advantageMode: form.advantageMode.value,
+      changeTargetStatus_disadvantageMode: form.disadvantageMode.value,
     };
 
     await erps.utils.storeLocal(storageObject);
