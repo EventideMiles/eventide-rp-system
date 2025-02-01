@@ -1,0 +1,46 @@
+<div class="{{cssClass}} base-form">
+    <div class="chat-card chat-card__header chat-card__header--status" style="{{style}}">
+    <img src="{{item.img}}" class="chat-card__image--primary" /> 
+    <div>{{item.name}}</div>
+    </div>
+    {{#if item.system.description}}
+    <div class="base-form__content">
+        <div class="base-form__header">{{item.actor.name}}. . . </div> 
+        {{{item.system.description}}}
+    </div>
+    {{/if}}
+    <hr class="chat-card__hr" />
+    {{#ifCond effects.length ">" 0}}
+    <div class="base-form__effects"><div class='base-form__effects--title'>Effects</div>
+    {{#each effects}}
+        <div class="base-form__effects--name"><img src="{{this.img}}" class="chat-card__image--secondary" /> {{this.name}}</div>
+        {{#ifCond this.changes.length ">" 0 }}
+        {{#each this.changes}}
+            <div class="base-form__effects--row">
+            <div class="base-form__effects--row-cell base-form__effects--row-cell--first">{{keySplit this.key 2}}</div> 
+            <div class="base-form__effects--row-cell base-form__effects--row-cell--middle">
+                {{#ifCond this.mode "===" 5}}set to{{/ifCond}}
+                {{#ifCond this.mode "!==" 5}}
+                {{#ifCond (keySplit this.key 4) "===" "advantage"}}
+                    adv
+                {{/ifCond}}
+                {{#ifCond (keySplit this.key 4) "===" "disadvantage"}}
+                    dis
+                {{/ifCond}}
+                {{#ifCond (keySplit this.key 3) "===" "change"}}
+                    add
+                {{/ifCond}}
+                {{/ifCond}}
+            </div>
+            <div class="base-form__effects--row-cell base-form__effects--row-cell--last">{{this.value}}</div>
+            </div>
+        {{/each}}
+        {{/ifCond}}
+    {{/each}}
+    </div>
+    {{/ifCond}}
+
+    <div class="base-form__group base-form__group--right">
+        <button type="submit" class="base-form__button base-form__button--primary">Close</button>
+    </div>
+</div>
