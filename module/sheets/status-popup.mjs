@@ -58,6 +58,8 @@ export class StatusPopup extends HandlebarsApplicationMixin(ApplicationV2) {
     const context = {};
 
     context.item = this.item;
+    context.cssClass = StatusPopup.DEFAULT_OPTIONS.classes.join(" ");
+    context.effects = Array.from(this.item.effects);
     return context;
   }
 
