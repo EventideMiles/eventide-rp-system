@@ -181,7 +181,9 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
       case "effects":
         context.tab = context.tabs[partId];
         // Prepare active effects for easier access
-        context.effects = prepareActiveEffectCategories(this.item.effects);
+        context.effects = await prepareActiveEffectCategories(
+          this.item.effects
+        );
         break;
     }
     return context;
@@ -222,16 +224,15 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
           tab.label += "Prerequisites";
           break;
         case "effects":
+          tab.id = "effects";
+          tab.label += "Effects";
+          break;
         case "attributesFeature":
         case "attributesGear":
         case "attributesSpell":
         case "attributesCombatPower":
           tab.id = "attributes";
           tab.label += "Attributes";
-          break;
-        case "effects":
-          tab.id = "effects";
-          tab.label += "Effects";
           break;
       }
       if (this.tabGroups[tabGroup] === tab.id) tab.cssClass = "active";

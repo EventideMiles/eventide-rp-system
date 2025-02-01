@@ -919,10 +919,7 @@
   background-color: var(--eventide-rp-system-card-header-unknown);
 }
 .chat-card__header--status {
-  display: flex;
-  justify-content: left;
-  align-items: left;
-  padding-left: 48px;
+  font-size: 1.125rem;
 }
 .chat-card__header--damage {
   background-color: var(--eventide-rp-system-card-header-damage);
@@ -1023,14 +1020,9 @@
   font-style: italic;
 }
 .chat-card__image--primary {
-  width: 40px;
-  height: 40px;
+  width: 150px;
+  height: 150px;
   border: 0px;
-  object-fit: contain;
-  position: absolute;
-  left: 8px;
-  top: 50%;
-  transform: translateY(-50%);
 }
 .chat-card__image--secondary {
   width: 13px;
