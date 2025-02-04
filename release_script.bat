@@ -14,6 +14,9 @@ mkdir "%TEMP_DIR%\eventide-rp-system"
 REM Copy all files into the new directory
 xcopy * "%TEMP_DIR%\eventide-rp-system\" /E /I /EXCLUDE:exclude.txt
 
+REM Minify JavaScript files
+node minify.js "%TEMP_DIR%\eventide-rp-system"
+
 REM Remove existing zip file if it exists
 if exist releases\eventide-rp-system.zip (
     del releases\eventide-rp-system.zip
