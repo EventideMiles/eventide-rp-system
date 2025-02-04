@@ -96,8 +96,11 @@ export class DamageTargets extends HandlebarsApplicationMixin(ApplicationV2) {
       context.heal = true;
     }
 
-    if (context.targetArray.length === 0) {
-      ui.notifications.error(`Please target a token first!`);
+    if (
+      context.targetArray.length === 0 &&
+      context.selectedArray.length === 0
+    ) {
+      ui.notifications.error(`Please target or select a token first!`);
       return this.close();
     }
 
@@ -118,6 +121,12 @@ export class DamageTargets extends HandlebarsApplicationMixin(ApplicationV2) {
    * @private
    */
   static async #onSubmit(event, form, formData) {
+    if (this.targetArray.length === 0 && this.selectedArray.length === 0) {
+      ui.notifications.error(`Please target or select a token first!`);
+      this.close();
+      return;
+    }
+
     const damageOptions = {
       label: form.label.value || "Damage",
       formula: form.formula.value || "1",
