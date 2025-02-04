@@ -82,8 +82,10 @@ export class DamageTargets extends HandlebarsApplicationMixin(ApplicationV2) {
     context.storageKeys = this.storageKeys;
     context.storedData = await erps.utils.retrieveLocal(context.storageKeys);
     context.targetArray = await erps.utils.getTargetArray();
+    context.selectedArray = await erps.utils.getSelectedArray();
 
     this.targetArray = context.targetArray;
+    this.selectedArray = context.selectedArray;
 
     if (
       context.storedData[this.storageKeys[3]] === null ||
@@ -122,9 +124,19 @@ export class DamageTargets extends HandlebarsApplicationMixin(ApplicationV2) {
       description: form.description.value || "",
       type: form.isHeal.checked ? "heal" : "damage",
     };
-    await Promise.all(
-      this.targetArray.map((token) => token.actor.damageResolve(damageOptions))
-    );
+    if (damageOptions.type === "heal") {
+      await Promise.all(
+        this.selectedArray.map((token) =>
+          token.actor.damageResolve(damageOptions)
+        )
+      );
+    } else {
+      await Promise.all(
+        this.targetArray.map((token) =>
+          token.actor.damageResolve(damageOptions)
+        )
+      );
+    }
 
     DamageTargets.#storeData(this, form);
   }
