@@ -82,8 +82,10 @@ export class DamageTargets extends HandlebarsApplicationMixin(ApplicationV2) {
     context.storageKeys = this.storageKeys;
     context.storedData = await erps.utils.retrieveLocal(context.storageKeys);
     context.targetArray = await erps.utils.getTargetArray();
+    context.selectedArray = await erps.utils.getSelectedArray();
 
     this.targetArray = context.targetArray;
+    this.selectedArray = context.selectedArray;
 
     if (
       context.storedData[this.storageKeys[3]] === null ||
@@ -94,8 +96,11 @@ export class DamageTargets extends HandlebarsApplicationMixin(ApplicationV2) {
       context.heal = true;
     }
 
-    if (context.targetArray.length === 0) {
-      ui.notifications.error(`Please target a token first!`);
+    if (
+      context.targetArray.length === 0 &&
+      context.selectedArray.length === 0
+    ) {
+      ui.notifications.error(`Please target or select a token first!`);
       return this.close();
     }
 
@@ -116,15 +121,31 @@ export class DamageTargets extends HandlebarsApplicationMixin(ApplicationV2) {
    * @private
    */
   static async #onSubmit(event, form, formData) {
+    if (this.targetArray.length === 0 && this.selectedArray.length === 0) {
+      ui.notifications.error(`Please target or select a token first!`);
+      this.close();
+      return;
+    }
+
     const damageOptions = {
       label: form.label.value || "Damage",
       formula: form.formula.value || "1",
       description: form.description.value || "",
       type: form.isHeal.checked ? "heal" : "damage",
     };
-    await Promise.all(
-      this.targetArray.map((token) => token.actor.damageResolve(damageOptions))
-    );
+    if (damageOptions.type === "heal" && selectedArray.length > 0) {
+      await Promise.all(
+        this.selectedArray.map((token) =>
+          token.actor.damageResolve(damageOptions)
+        )
+      );
+    } else {
+      await Promise.all(
+        this.targetArray.map((token) =>
+          token.actor.damageResolve(damageOptions)
+        )
+      );
+    }
 
     DamageTargets.#storeData(this, form);
   }

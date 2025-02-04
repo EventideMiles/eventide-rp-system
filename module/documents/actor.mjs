@@ -116,7 +116,11 @@ export class EventideRpSystemActor extends Actor {
     const roll = await rollHandler(rollData, this);
 
     // Apply damage to resolve.
-    this.addResolve(-roll.total);
+    if (type === "heal") {
+      this.addResolve(Math.abs(roll.total));
+    } else {
+      this.addResolve(-Math.abs(roll.total));
+    }
 
     return roll;
   }
