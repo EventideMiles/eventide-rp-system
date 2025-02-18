@@ -1,9 +1,9 @@
-import EventideRpSystemItemBase from './base-item.mjs';
+import EventideRpSystemItemBase from "./base-item.mjs";
 
 export default class EventideRpSystemGear extends EventideRpSystemItemBase {
   static LOCALIZATION_PREFIXES = [
-    'EVENTIDE_RP_SYSTEM.Item.base',
-    'EVENTIDE_RP_SYSTEM.Item.Gear',
+    "EVENTIDE_RP_SYSTEM.Item.base",
+    "EVENTIDE_RP_SYSTEM.Item.Gear",
   ];
 
   static defineSchema() {
@@ -30,9 +30,9 @@ export default class EventideRpSystemGear extends EventideRpSystemItemBase {
         initial: 1,
         min: 1,
       }),
-      diceSize: new fields.StringField({ initial: 'd20' }),
+      diceSize: new fields.StringField({ initial: "d20" }),
       diceBonus: new fields.StringField({
-        initial: '+@str.mod+ceil(@lvl / 2)',
+        initial: "+@abilities.acro.total+ceil(@attributes.level.value / 2)",
       }),
     });
 
