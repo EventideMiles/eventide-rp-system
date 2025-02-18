@@ -136,7 +136,7 @@ export class DamageTargets extends HandlebarsApplicationMixin(ApplicationV2) {
       description: form.description.value || "",
       type: form.isHeal.checked ? "heal" : "damage",
     };
-    if (damageOptions.type === "heal" && selectedArray.length > 0) {
+    if (damageOptions.type === "heal" && this.selectedArray.length > 0) {
       await Promise.all(
         selectedArray.map((token) => token.actor.damageResolve(damageOptions))
       );

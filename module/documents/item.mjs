@@ -66,6 +66,7 @@ export class EventideRpSystemItem extends Item {
       diceAdjustments = {
         ...rollData.roll.diceAdjustments,
         mode: rollData.roll.diceAdjustments.total >= 0 ? "k" : "kl",
+        absTotal: Math.abs(rollData.roll.diceAdjustments.total),
       };
     }
 
@@ -76,13 +77,15 @@ export class EventideRpSystemItem extends Item {
           : ""
       }`;
 
-    return `${diceAdjustments.absTotal + 1}d${
+    const returnFormula = `${diceAdjustments.absTotal + 1}d${
       rollData.actor.hiddenAbilities.dice.total
     }${diceAdjustments.mode}${
       rollData.roll.ability !== "unaugmented"
         ? ` + ${rollData.actor.abilities[rollData.roll.ability].total}`
         : ""
     } + ${rollData.roll.bonus}`;
+
+    return returnFormula;
   }
 
   /**
