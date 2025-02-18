@@ -36,7 +36,7 @@
   --eventide-rp-system-abilities-wits: rgba(14, 67, 128, 0.75);
 
   // additional card headers
-  --eventide-rp-system-card-header-item: #8B4513b3;
+  --eventide-rp-system-card-header-gear: #8B4513b3;
   --eventide-rp-system-card-header-dc: #234B57b3;
   --eventide-rp-system-card-header-unknown: #535353b3;
   --eventide-rp-system-card-header-damage: #6A0404b3;
@@ -136,7 +136,7 @@
   --eventide-rp-system-abilities-wits: #0e4380b3;
 
   // additional card headers
-  --eventide-rp-system-card-header-item: #8B4513b3;
+  --eventide-rp-system-card-header-gear: #8B4513b3;
   --eventide-rp-system-card-header-dc: #234B57b3;
   --eventide-rp-system-card-header-unknown: #535353b3;
   --eventide-rp-system-card-header-damage: #6A0404b3;
@@ -240,7 +240,7 @@ $critical-miss: var(--eventide-rp-system-critical-miss);
 $saved-miss: var(--eventide-rp-system-saved-miss);
 $stolen-crit: var(--eventide-rp-system-stolen-crit);
 
-$item: var(--eventide-rp-system-card-header-item);  
+$gear: var(--eventide-rp-system-card-header-gear);  
 $unknown: var(--eventide-rp-system-card-header-unknown);
 $damage: var(--eventide-rp-system-card-header-damage);
 $heal: var(--eventide-rp-system-card-header-heal);
