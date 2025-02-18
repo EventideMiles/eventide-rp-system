@@ -54,7 +54,7 @@
   --eventide-rp-system-abilities-fort: rgba(45, 104, 45, 0.75);
   --eventide-rp-system-abilities-will: rgba(106, 27, 154, 0.75);
   --eventide-rp-system-abilities-wits: rgba(14, 67, 128, 0.75);
-  --eventide-rp-system-card-header-item: #8B4513b3;
+  --eventide-rp-system-card-header-gear: #8B4513b3;
   --eventide-rp-system-card-header-dc: #234B57b3;
   --eventide-rp-system-card-header-unknown: #535353b3;
   --eventide-rp-system-card-header-damage: #6A0404b3;
@@ -133,7 +133,7 @@
   --eventide-rp-system-abilities-fort: #2D682Db3;
   --eventide-rp-system-abilities-will: #6A1B9Ab3;
   --eventide-rp-system-abilities-wits: #0e4380b3;
-  --eventide-rp-system-card-header-item: #8B4513b3;
+  --eventide-rp-system-card-header-gear: #8B4513b3;
   --eventide-rp-system-card-header-dc: #234B57b3;
   --eventide-rp-system-card-header-unknown: #535353b3;
   --eventide-rp-system-card-header-damage: #6A0404b3;
@@ -939,8 +939,8 @@
 .chat-card__header--wits {
   background-color: var(--eventide-rp-system-abilities-wits);
 }
-.chat-card__header--item {
-  background-color: var(--eventide-rp-system-card-header-item);
+.chat-card__header--gear {
+  background-color: var(--eventide-rp-system-card-header-gear);
 }
 .chat-card__header--dice-dc {
   background-color: var(--eventide-rp-system-card-header-dc);
@@ -1132,7 +1132,7 @@
   --eventide-rp-system-abilities-fort: rgba(45, 104, 45, 0.75);
   --eventide-rp-system-abilities-will: rgba(106, 27, 154, 0.75);
   --eventide-rp-system-abilities-wits: rgba(14, 67, 128, 0.75);
-  --eventide-rp-system-card-header-item: #8B4513b3;
+  --eventide-rp-system-card-header-gear: #8B4513b3;
   --eventide-rp-system-card-header-dc: #234B57b3;
   --eventide-rp-system-card-header-unknown: #535353b3;
   --eventide-rp-system-card-header-damage: #6A0404b3;
@@ -1210,7 +1210,7 @@
   --eventide-rp-system-abilities-fort: #2D682Db3;
   --eventide-rp-system-abilities-will: #6A1B9Ab3;
   --eventide-rp-system-abilities-wits: #0e4380b3;
-  --eventide-rp-system-card-header-item: #8B4513b3;
+  --eventide-rp-system-card-header-gear: #8B4513b3;
   --eventide-rp-system-card-header-dc: #234B57b3;
   --eventide-rp-system-card-header-unknown: #535353b3;
   --eventide-rp-system-card-header-damage: #6A0404b3;
@@ -1386,7 +1386,7 @@
   --eventide-rp-system-abilities-fort: rgba(45, 104, 45, 0.75);
   --eventide-rp-system-abilities-will: rgba(106, 27, 154, 0.75);
   --eventide-rp-system-abilities-wits: rgba(14, 67, 128, 0.75);
-  --eventide-rp-system-card-header-item: #8B4513b3;
+  --eventide-rp-system-card-header-gear: #8B4513b3;
   --eventide-rp-system-card-header-dc: #234B57b3;
   --eventide-rp-system-card-header-unknown: #535353b3;
   --eventide-rp-system-card-header-damage: #6A0404b3;
@@ -1464,7 +1464,7 @@
   --eventide-rp-system-abilities-fort: #2D682Db3;
   --eventide-rp-system-abilities-will: #6A1B9Ab3;
   --eventide-rp-system-abilities-wits: #0e4380b3;
-  --eventide-rp-system-card-header-item: #8B4513b3;
+  --eventide-rp-system-card-header-gear: #8B4513b3;
   --eventide-rp-system-card-header-dc: #234B57b3;
   --eventide-rp-system-card-header-unknown: #535353b3;
   --eventide-rp-system-card-header-damage: #6A0404b3;
@@ -1665,7 +1665,7 @@
   --eventide-rp-system-abilities-fort: rgba(45, 104, 45, 0.75);
   --eventide-rp-system-abilities-will: rgba(106, 27, 154, 0.75);
   --eventide-rp-system-abilities-wits: rgba(14, 67, 128, 0.75);
-  --eventide-rp-system-card-header-item: #8B4513b3;
+  --eventide-rp-system-card-header-gear: #8B4513b3;
   --eventide-rp-system-card-header-dc: #234B57b3;
   --eventide-rp-system-card-header-unknown: #535353b3;
   --eventide-rp-system-card-header-damage: #6A0404b3;
@@ -1743,7 +1743,7 @@
   --eventide-rp-system-abilities-fort: #2D682Db3;
   --eventide-rp-system-abilities-will: #6A1B9Ab3;
   --eventide-rp-system-abilities-wits: #0e4380b3;
-  --eventide-rp-system-card-header-item: #8B4513b3;
+  --eventide-rp-system-card-header-gear: #8B4513b3;
   --eventide-rp-system-card-header-dc: #234B57b3;
   --eventide-rp-system-card-header-unknown: #535353b3;
   --eventide-rp-system-card-header-damage: #6A0404b3;

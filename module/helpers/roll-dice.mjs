@@ -105,8 +105,8 @@ const rollHandler = async (dataSet, actor) => {
     ? "chat-card__header--will"
     : pickedType.includes("wits")
     ? "chat-card__header--wits"
-    : pickedType.includes("item")
-    ? "chat-card__header--item"
+    : pickedType.includes("gear")
+    ? "chat-card__header--gear"
     : pickedType.includes("damage")
     ? "chat-card__header--damage"
     : pickedType.includes("heal")
@@ -123,7 +123,7 @@ const rollHandler = async (dataSet, actor) => {
     ? "fa-solid fa-fire-flame-curved"
     : pickedType.includes("wits")
     ? "fa-solid fa-chess"
-    : pickedType.includes("item")
+    : pickedType.includes("gear")
     ? "fa-solid fa-toolbox"
     : pickedType.includes("damage")
     ? "fa-sharp-duotone fa-light fa-claw-marks"

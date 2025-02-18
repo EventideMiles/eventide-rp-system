@@ -1,6 +1,7 @@
 import { rollHandler } from "../helpers/roll-dice.mjs";
 import { PrerequisitePopup } from "../sheets/prerequisite-popup.mjs";
 import { StatusPopup } from "../sheets/status-popup.mjs";
+import { FeaturePopup } from "../sheets/feature-popup.mjs";
 
 /**
  * Extended Item class for the Eventide RP System.
@@ -144,6 +145,10 @@ export class EventideRpSystemItem extends Item {
     // status roll handling
     else if (item.type === "status") {
       new StatusPopup({ item }).render(true);
+    }
+    // feature roll handling
+    else if (item.type === "feature") {
+      new FeaturePopup({ item }).render(true);
     }
     // If there's no roll data, send a chat message.
     else if (!this.system.formula) {
