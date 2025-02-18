@@ -115,11 +115,14 @@ export class EventideRpSystemActor extends Actor {
     };
     const roll = await rollHandler(rollData, this);
 
-    // Apply damage to resolve.
-    if (type === "heal") {
-      this.addResolve(Math.abs(roll.total));
-    } else {
-      this.addResolve(-Math.abs(roll.total));
+    // Only apply damage if user has permission
+    if (this.isOwner) {
+      // Apply damage to resolve.
+      if (type === "heal") {
+        this.addResolve(Math.abs(roll.total));
+      } else {
+        this.addResolve(-Math.abs(roll.total));
+      }
     }
 
     return roll;
@@ -192,15 +195,21 @@ export class EventideRpSystemActor extends Actor {
    *
    * This function can restore the actor's resolve and power to their maximum values.
    * It can also remove specific status effects or all status effects from the actor.
+   * Only Game Masters can use this function.
    *
    * @param {Object} options - The restoration options
    * @param {boolean} options.resolve - Whether to restore resolve to maximum
    * @param {boolean} options.power - Whether to restore power to maximum
    * @param {Array} options.statuses - Array of status effects to be removed
    * @param {boolean} options.all - Whether to remove all status effects
-   * @returns {Promise<ChatMessage>} The message detailing the restoration process
+   * @returns {Promise<ChatMessage|null>} The message detailing the restoration process, or null if not GM
    */
   async restore({ resolve, power, statuses, all }) {
+    if (!game.user.isGM) {
+      ui.notifications.warn("Only GMs can restore actor resources and remove status effects.");
+      return null;
+    }
+
     const statusArray =
       statuses?.length && !all
         ? Array.from(statuses)

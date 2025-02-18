@@ -54,6 +54,12 @@ export class RestoreTarget extends HandlebarsApplicationMixin(ApplicationV2) {
    * @throws {Error} If no target is selected or multiple targets are selected
    */
   async _prepareContext(options) {
+    if (!game.user?.isGM) {
+      ui.notifications.error(
+        "Only GMs can restore actor resources and remove status effects."
+      );
+      this.close();
+    }
     const context = {};
 
     const targetTokens = await erps.utils.getTargetArray();
