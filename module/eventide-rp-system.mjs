@@ -21,6 +21,7 @@ import {
 } from "./helpers/common-foundry-tasks.mjs";
 import {
   createStatusMessage,
+  featureMessage,
   deleteStatusMessage,
   restoreMessage,
   combatPowerMessage,
@@ -57,6 +58,7 @@ globalThis.erps = {
   },
   messages: {
     createStatusMessage,
+    featureMessage,
     deleteStatusMessage,
     restoreMessage,
     combatPowerMessage,

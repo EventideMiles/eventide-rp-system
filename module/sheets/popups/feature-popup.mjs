@@ -1,3 +1,5 @@
+import { featureMessage } from "../../helpers/system-messages.mjs";
+
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
 /**
@@ -8,7 +10,8 @@ export class FeaturePopup extends HandlebarsApplicationMixin(ApplicationV2) {
   /** @override */
   static PARTS = {
     featurePopup: {
-      template: "systems/eventide-rp-system/templates/macros/feature-popup.hbs",
+      template:
+        "systems/eventide-rp-system/templates/macros/popups/feature-popup.hbs",
     },
   };
 
@@ -29,6 +32,9 @@ export class FeaturePopup extends HandlebarsApplicationMixin(ApplicationV2) {
       handler: this.#onSubmit,
       submitOnChange: false,
       closeOnSubmit: true,
+    },
+    actions: {
+      toChat: FeaturePopup.toChat,
     },
   };
 
@@ -60,7 +66,7 @@ export class FeaturePopup extends HandlebarsApplicationMixin(ApplicationV2) {
     context.item = this.item;
     context.cssClass = FeaturePopup.DEFAULT_OPTIONS.classes.join(" ");
     context.effects = Array.from(this.item.effects);
-    
+
     return context;
   }
 
@@ -68,6 +74,12 @@ export class FeaturePopup extends HandlebarsApplicationMixin(ApplicationV2) {
     const frame = await super._renderFrame(options);
     frame.autocomplete = "off";
     return frame;
+  }
+
+  static async toChat() {
+    console.log(this.item);
+    featureMessage(this.item);
+    this.close();
   }
 
   /**
