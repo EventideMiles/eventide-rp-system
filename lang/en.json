@@ -57,7 +57,7 @@
       "Base": {
         "FIELDS": {
           "rollActorName": {
-            "label": "Add Actor Name?"
+            "label": "Add Actor Name To Chat Messages:"
           }
         }
       },

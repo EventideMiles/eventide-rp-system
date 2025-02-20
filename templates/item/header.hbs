@@ -11,11 +11,15 @@
       <input name='name' type='text' value='{{item.name}}' placeholder='Name' />
     </div>
     {{! You may prefer to have a separate header file instead of this if statement}}
-    <div class="form-group">
-      <label class="checkbox">
-        <input type="checkbox" name="system.rollActorName" {{checked system.rollActorName}}/>
-        {{localize "EVENTIDE_RP_SYSTEM.Item.Base.FIELDS.rollActorName.label"}}
-      </label>
+    <div class="grid grid-2col">
+      <div class="resource checkbox-resource">
+        <div class="checkbox-container">
+          <label class="resource-label">{{localize "EVENTIDE_RP_SYSTEM.Item.Base.FIELDS.rollActorName.label"}}</label>
+          <div class="checkbox-wrapper">
+            <input type="checkbox" class="large-checkbox" name="system.rollActorName" {{checked system.rollActorName}}/>
+          </div>
+        </div>
+      </div>
     </div>
     {{#if (eq item.type 'gear')}}
       <div class='grid grid-2col'>

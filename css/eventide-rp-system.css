@@ -1351,6 +1351,15 @@
 .eventide-rp-system .resource-label {
   font-weight: bold;
 }
+.eventide-rp-system .checkbox-resource {
+  min-width: 200px;
+}
+.eventide-rp-system .checkbox-resource .checkbox-container {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  white-space: nowrap;
+}
 .eventide-rp-system .ability {
   margin-bottom: 2px;
 }
