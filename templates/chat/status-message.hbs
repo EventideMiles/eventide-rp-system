@@ -4,7 +4,9 @@
 </div>
 {{#if item.system.description}}
   <div class="chat-card__description">
-    <div class="chat-card__description--header">{{item.actor.name}}. . . </div> 
+    {{#if item.system.rollActorName}}
+      <div class="chat-card__description--header">{{item.actor.name}}. . . </div> 
+    {{/if}}
     {{{item.system.description}}}
   </div>
 {{/if}}

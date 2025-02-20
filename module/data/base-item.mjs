@@ -10,6 +10,11 @@ export default class EventideRpSystemItemBase extends EventideRpSystemDataModel 
       blank: true,
     });
 
+    schema.rollActorName = new fields.BooleanField({
+      required: true,
+      initial: true,
+    });
+
     return schema;
   }
 }
