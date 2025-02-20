@@ -156,6 +156,10 @@ Handlebars.registerHelper("keySplit", function (key, choice) {
   return key.split(".")[choice];
 });
 
+Handlebars.registerHelper("abs", function (value) {
+  return Math.abs(value);
+});
+
 Handlebars.registerHelper("console", function (str) {
   console.log(str);
 });
