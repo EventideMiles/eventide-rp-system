@@ -1,4 +1,3 @@
-import { rollHandler } from "../helpers/roll-dice.mjs";
 import { CombatPowerPopup } from "../sheets/popups/combat-power-popup.mjs";
 import { GearPopup } from "../sheets/popups/gear-popup.mjs";
 import { StatusPopup } from "../sheets/popups/status-popup.mjs";
