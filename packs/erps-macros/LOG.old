@@ -1,3 +1,7 @@
-2025/02/18-03:23:34.179 5cbc Recovering log #98
-2025/02/18-03:23:34.191 5cbc Delete type=0 #98
-2025/02/18-03:23:34.191 5cbc Delete type=3 #97
+2025/02/20-01:51:58.845 4290 Recovering log #100
+2025/02/20-01:51:58.854 4290 Delete type=0 #100
+2025/02/20-01:51:58.854 4290 Delete type=3 #99
+2025/02/20-04:16:54.106 2b5c Level-0 table #104: started
+2025/02/20-04:16:54.106 2b5c Level-0 table #104: 0 bytes OK
+2025/02/20-04:16:54.109 2b5c Delete type=0 #102
+2025/02/20-04:16:54.116 2b5c Manual compaction at level-0 from '!macros!8ij27KrDDKjtaemK' @ 72057594037927935 : 1 .. '!macros!mLQbYn08lLhlDJlG' @ 0 : 0; will stop at (end)
