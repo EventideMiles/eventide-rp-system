@@ -33,13 +33,12 @@
       </div>
     {{/if}}
     <div class="grid grid-2col">
-    {{#if (eq item.type 'combatPower')}}
+    {{#if (or (eq item.type 'combatPower') (eq item.type 'gear'))}}
         <div class='resource grid-span-2'>
           <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.CombatPower.FIELDS.cost.label'}}</label>
           <input type="text" name="system.cost" value="{{system.cost}}" data-dtype="Number" />
         </div>
       {{/if}}
-      {{#if (or (eq item.type 'status') (eq item.type 'feature') (eq item.type 'combatPower'))}}
         <div class='resource'>
           <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.CombatPower.FIELDS.textColor.label'}}</label>
           <color-picker name="system.textColor" value="{{system.textColor}}" placeholder="{{localize 'EVENTIDE_RP_SYSTEM.Item.CombatPower.FIELDS.textColor.placeholder'}}">
@@ -54,7 +53,6 @@
             <input type="color">
           </color-picker>
         </div>
-    {{/if}}
     </div>
     <div class="grid grid-2col">
       <div class="resource checkbox-resource">
