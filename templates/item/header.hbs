@@ -10,17 +10,6 @@
     <div class='document-name'>
       <input name='name' type='text' value='{{item.name}}' placeholder='Name' />
     </div>
-    {{! You may prefer to have a separate header file instead of this if statement}}
-    <div class="grid grid-2col">
-      <div class="resource checkbox-resource">
-        <div class="checkbox-container">
-          <label class="resource-label">{{localize "EVENTIDE_RP_SYSTEM.Item.Base.FIELDS.rollActorName.label"}}</label>
-          <div class="checkbox-wrapper">
-            <input type="checkbox" class="large-checkbox" name="system.rollActorName" {{checked system.rollActorName}}/>
-          </div>
-        </div>
-      </div>
-    </div>
     {{#if (eq item.type 'gear')}}
       <div class='grid grid-2col'>
         <div class='resource'>
@@ -43,24 +32,14 @@
         </div>
       </div>
     {{/if}}
-    {{#if (or (eq item.type 'status') (eq item.type 'feature'))}}
-      <div class="grid grid-2col">
-        <color-picker name="system.textColor" value="{{item.system.textColor}}" placeholder="{{localize 'EVENTIDE_RP_SYSTEM.Item.Status.FIELDS.textColor.placeholder'}}">
-          <input type="text" placeholder="{{localize 'EVENTIDE_RP_SYSTEM.Item.Status.FIELDS.textColor.placeholder'}}" name="system.textColor" data-edit="system.textColor"/>
-          <input type="color">
-        </color-picker>
-        <color-picker name="system.bgColor" value="{{item.system.bgColor}}" placeholder="{{localize 'EVENTIDE_RP_SYSTEM.Item.Status.FIELDS.bgColor.placeholder'}}">
-          <input type="text" placeholder="{{localize 'EVENTIDE_RP_SYSTEM.Item.Status.FIELDS.bgColor.placeholder'}}" name="system.bgColor" data-edit="system.bgColor"/>
-          <input type="color">
-        </color-picker>
-      </div>
-    {{/if}}
+    <div class="grid grid-2col">
     {{#if (eq item.type 'combatPower')}}
-      <div class="grid grid-2col">
         <div class='resource grid-span-2'>
           <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.CombatPower.FIELDS.cost.label'}}</label>
           <input type="text" name="system.cost" value="{{system.cost}}" data-dtype="Number" />
         </div>
+      {{/if}}
+      {{#if (or (eq item.type 'status') (eq item.type 'feature') (eq item.type 'combatPower'))}}
         <div class='resource'>
           <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.CombatPower.FIELDS.textColor.label'}}</label>
           <color-picker name="system.textColor" value="{{system.textColor}}" placeholder="{{localize 'EVENTIDE_RP_SYSTEM.Item.CombatPower.FIELDS.textColor.placeholder'}}">
@@ -75,7 +54,17 @@
             <input type="color">
           </color-picker>
         </div>
-      </div>
     {{/if}}
+    </div>
+    <div class="grid grid-2col">
+      <div class="resource checkbox-resource">
+        <div class="checkbox-container">
+          <label class="resource-label">{{localize "EVENTIDE_RP_SYSTEM.Item.Base.FIELDS.rollActorName.label"}}</label>
+          <div class="checkbox-wrapper">
+            <input type="checkbox" class="large-checkbox" name="system.rollActorName" {{checked system.rollActorName}}/>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </header>
