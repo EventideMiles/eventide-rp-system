@@ -11,7 +11,7 @@ export class PrerequisitePopup extends HandlebarsApplicationMixin(
   static PARTS = {
     prerequisitePopup: {
       template:
-        "systems/eventide-rp-system/templates/macros/prerequisite-popup.hbs",
+        "systems/eventide-rp-system/templates/macros/popups/prerequisite-popup.hbs",
     },
   };
 

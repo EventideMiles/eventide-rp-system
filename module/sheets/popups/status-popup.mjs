@@ -1,3 +1,5 @@
+import { createStatusMessage } from "../../helpers/system-messages.mjs";
+
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
 /**
@@ -8,7 +10,8 @@ export class StatusPopup extends HandlebarsApplicationMixin(ApplicationV2) {
   /** @override */
   static PARTS = {
     statusPopup: {
-      template: "systems/eventide-rp-system/templates/macros/status-popup.hbs",
+      template:
+        "systems/eventide-rp-system/templates/macros/popups/status-popup.hbs",
     },
   };
 
@@ -29,6 +32,9 @@ export class StatusPopup extends HandlebarsApplicationMixin(ApplicationV2) {
       handler: this.#onSubmit,
       submitOnChange: false,
       closeOnSubmit: true,
+    },
+    actions: {
+      toChat: StatusPopup.toChat,
     },
   };
 
@@ -67,6 +73,11 @@ export class StatusPopup extends HandlebarsApplicationMixin(ApplicationV2) {
     const frame = await super._renderFrame(options);
     frame.autocomplete = "off";
     return frame;
+  }
+
+  static async toChat() {
+    createStatusMessage(this.item);
+    this.close();
   }
 
   /**

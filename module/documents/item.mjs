@@ -1,7 +1,7 @@
 import { rollHandler } from "../helpers/roll-dice.mjs";
-import { PrerequisitePopup } from "../sheets/prerequisite-popup.mjs";
-import { StatusPopup } from "../sheets/status-popup.mjs";
-import { FeaturePopup } from "../sheets/feature-popup.mjs";
+import { PrerequisitePopup } from "../sheets/popups/prerequisite-popup.mjs";
+import { StatusPopup } from "../sheets/popups/status-popup.mjs";
+import { FeaturePopup } from "../sheets/popups/feature-popup.mjs";
 
 /**
  * Extended Item class for the Eventide RP System.
