@@ -1,5 +1,5 @@
 import { rollHandler } from "../helpers/roll-dice.mjs";
-import { PrerequisitePopup } from "../sheets/popups/prerequisite-popup.mjs";
+import { CombatPowerPopup } from "../sheets/popups/combat-power-popup.mjs";
 import { StatusPopup } from "../sheets/popups/status-popup.mjs";
 import { FeaturePopup } from "../sheets/popups/feature-popup.mjs";
 
@@ -35,15 +35,10 @@ export class EventideRpSystemItem extends Item {
   }
 
   getCombatRollFormula() {
-    if (!this.actor || this.type !== "combatPower") return;
+    if (!this.actor) return;
     let diceAdjustments;
 
     const rollData = this.getRollData();
-
-    if (rollData.actor.power.value < rollData.cost) {
-      ui.notifications.warn("You don't have enough power to use this ability!");
-      return "";
-    }
 
     if (rollData.roll.type === "none") return "0";
 
@@ -118,29 +113,13 @@ export class EventideRpSystemItem extends Item {
     const rollMode = game.settings.get("core", "rollMode");
     const label = `[${item.type}] ${item.name}`;
 
-    // if its a combat power we need special handling
-    if (item.type === "combatPower") {
+    // if its a combat power or gear we need special handling
+    if (item.type === "combatPower" || item.type === "gear") {
       const targetArray = await erps.utils.getTargetArray();
-
-      // Only check for targets if this is a targeted power
-      if (
-        item.system.targeted &&
-        targetArray.length === 0 &&
-        item.system.roll.type !== "none"
-      ) {
-        return ui.notifications.error(
-          `Please target at least one token first!`
-        );
-      }
 
       item.formula = item.getCombatRollFormula();
 
-      if (item.formula === "") return;
-      new PrerequisitePopup({ item }).render(
-        this.system.prerequisites === "" || !this.system.prerequisites
-          ? false
-          : true
-      );
+      new CombatPowerPopup({ item }).render(true);
     }
     // status roll handling
     else if (item.type === "status") {
