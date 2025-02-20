@@ -20,7 +20,7 @@ export class GearPopup extends HandlebarsApplicationMixin(
     id: "gear-popup",
     classes: ["eventide-rp-system", "standard-form", "gear-popup"],
     position: {
-      width: 500,
+      width: 600,
       height: "auto",
     },
     tag: "form",

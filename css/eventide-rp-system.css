@@ -473,6 +473,35 @@
   margin: 10px 0;
   font-weight: bold;
 }
+.base-form__section {
+  margin: 0.5rem 0;
+  padding: 0.5rem;
+  border-radius: 8px;
+  background-color: rgba(0, 0, 0, 0.05);
+}
+.base-form__row {
+  display: grid;
+  grid-template-columns: minmax(80px, auto) 1fr minmax(80px, auto) 1fr;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  width: 100%;
+}
+.base-form__row:last-child {
+  margin-bottom: 0;
+}
+.base-form__column {
+  flex: 1;
+  min-width: 0;
+}
+.base-form__text--advantage {
+  color: #2ecc71;
+  font-weight: bold;
+}
+.base-form__text--disadvantage {
+  color: #e74c3c;
+  font-weight: bold;
+}
 .base-form__header {
   font-family: "Underdog", serif;
   text-align: center;
@@ -482,11 +511,27 @@
   margin: 0;
 }
 .base-form__content {
-  text-align: justify;
-  font-style: italic;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 0.25rem 0.5rem;
   background-color: var(--eventide-rp-system-form-content-bg);
-  padding: 0.5rem 1rem;
-  border-radius: 5px;
+  border-radius: 4px;
+  text-align: center;
+}
+.base-form__content--description {
+  white-space: normal;
+  text-align: left;
+  padding: 0.5rem;
+}
+.base-form__content .base-form__text--advantage {
+  color: #2ecc71;
+  font-weight: bold;
+}
+.base-form__content .base-form__text--disadvantage {
+  color: #e74c3c;
+  font-weight: bold;
 }
 .base-form__effects {
   text-align: justify;
@@ -534,7 +579,7 @@
   font-style: italic;
 }
 .base-form__group {
-  margin: 0;
+  margin: 0.5rem 0;
   padding: 0.25rem 0.5rem 0.75rem 0.5rem;
   display: flex;
   align-items: center;
@@ -582,11 +627,12 @@
 .base-form__label {
   display: block;
   font-size: 1rem;
-  font-weight: normal;
+  font-weight: bold;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   color: var(--eventide-rp-system-label-text);
   margin: 0;
-  flex: 0 0 120px;
-  min-width: 120px;
 }
 .base-form__label--inline {
   display: inline-block;

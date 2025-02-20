@@ -9,38 +9,50 @@
     <div class="base-form__header">Gear Details</div>
     
     {{#if item.system.description}}
-    <div class="base-form__content">
+    <div class="base-form__content base-form__content--description">
         <div class="base-form__header">{{item.actor.name}}</div> 
         {{{item.system.description}}}
     </div>
     {{/if}}
 
     {{#if item.system.roll}}
-    <div class="base-form__group">
-        <div class="base-form__label">Type</div>
-        <div class="base-form__content">{{item.system.roll.type}}</div>
-        <div class="base-form__label">Ability</div>
-        <div class="base-form__content">{{item.system.roll.ability}}</div>
-    </div>
-    <div class="base-form__group">
-        <div class="base-form__label">Bonus</div>
-        <div class="base-form__content">{{numberFormat item.system.roll.bonus decimals=0 sign=true}}</div>
-        <div class="base-form__label">Dice Adjustments</div>
-        <div class="base-form__content">
-            {{#if (lte item.system.roll.diceAdjustments.total 0)}}
-                Disadv {{numberFormat (abs item.system.roll.diceAdjustments.total) decimals=0}}
-            {{else}}
-                Adv {{numberFormat item.system.roll.diceAdjustments.total decimals=0}}
-            {{/if}}
+    <div class="base-form__section">
+        <div class="base-form__header">Roll Information</div>
+        <div class="base-form__group">
+            <div class="base-form__row">
+                <div class="base-form__label">Type</div>
+                <div class="base-form__content">{{item.system.roll.type}}</div>
+                <div class="base-form__label">Ability</div>
+                <div class="base-form__content">{{item.system.roll.ability}}</div>
+            </div>
+        </div>
+        <div class="base-form__group">
+            <div class="base-form__row">
+                <div class="base-form__label">Bonus</div>
+                <div class="base-form__content">{{numberFormat item.system.roll.bonus decimals=0 sign=true}}</div>
+                <div class="base-form__label">Adjustments</div>
+                <div class="base-form__content">
+                    {{#if (lte item.system.roll.diceAdjustments.total 0)}}
+                        <span class="base-form__text--disadvantage">Disadv {{numberFormat (abs item.system.roll.diceAdjustments.total) decimals=0}}</span>
+                    {{else}}
+                        <span class="base-form__text--advantage">Adv {{numberFormat item.system.roll.diceAdjustments.total decimals=0}}</span>
+                    {{/if}}
+                </div>
+            </div>
         </div>
     </div>
     {{/if}}
 
-    <div class="base-form__group">
-        <div class="base-form__label">Quantity</div>
-        <div class="base-form__content">{{item.system.quantity}}</div>
-        <div class="base-form__label">Cost per Use</div>
-        <div class="base-form__content">{{item.system.cost}}</div>
+    <div class="base-form__section">
+        <div class="base-form__header">Item Details</div>
+        <div class="base-form__group">
+            <div class="base-form__row">
+                <div class="base-form__label">Quantity</div>
+                <div class="base-form__content">{{item.system.quantity}}</div>
+                <div class="base-form__label">Cost/Use</div>
+                <div class="base-form__content">{{item.system.cost}}</div>
+            </div>
+        </div>
     </div>
 
     <div class="base-form__group base-form__group--right">

@@ -69,14 +69,14 @@ export class CombatPowerPopup extends HandlebarsApplicationMixin(
   static async #checkEligibility(item) {
     const problems = {
       targeting: false,
-      cost: false,
+      power: false,
     };
     if (item.system.targeted) {
       const targetArray = await erps.utils.getTargetArray();
       if (targetArray.length === 0) problems.targeting = true;
     }
 
-    if (item.system.cost > item.actor.system.power.value) problems.cost = true;
+    if (item.system.cost > item.actor.system.power.value) problems.power = true;
 
     return problems;
   }
@@ -91,7 +91,7 @@ export class CombatPowerPopup extends HandlebarsApplicationMixin(
   static async #onSubmit(event, formData, form) {
     // check for problems
     const problems = await CombatPowerPopup.#checkEligibility(this.item);
-    if (problems.targeting || problems.cost)
+    if (problems.targeting || problems.power)
       return ui.notifications.error("Cannot use Combat Power right now!");
 
     this.item.actor.addPower(-this.item.system.cost);
