@@ -162,16 +162,26 @@
       white-space: normal;
       text-align: left;
       padding: 0.5rem;
+      overflow-y: auto;
+      max-height: 200px;
+      word-wrap: break-word;
     }
 
-    .base-form__text--advantage {
-      color: #2ecc71;
-      font-weight: bold;
-    }
+    .base-form__text {
+      &--advantage {
+        color: #2ecc71;
+        font-weight: bold;
+      }
 
-    .base-form__text--disadvantage {
-      color: #e74c3c;
-      font-weight: bold;
+      &--disadvantage {
+        color: #e74c3c;
+        font-weight: bold;
+      }
+
+      &--neutral {
+        color: #95a5a6;
+        font-weight: bold;
+      }
     }
   }
 

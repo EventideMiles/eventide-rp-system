@@ -1,11 +1,11 @@
-<div class="{{cssClass}} base-form">
+<div class="{{cssClass}} base-form" autocomplete="off">
     <div class="chat-card chat-card__header chat-card__header--feature">
         <img src="{{item.img}}" class="chat-card__image--primary" /> 
         <div>{{item.name}}</div>
     </div>
 
     {{#if item.system.description}}
-    <div class="base-form__content">
+    <div class="base-form__content base-form__content--description">
         <div class="base-form__header">{{item.actor.name}}</div> 
         {{{item.system.description}}}
     </div>
