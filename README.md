@@ -8,33 +8,38 @@ A custom roleplaying system for Foundry VTT that emphasizes dynamic character ab
 ## Core Features
 
 ### Character Management
+
 - Five core abilities: Acrobatics, Physical, Fortitude, Will, and Wits
 - Rich HTML-supported biography fields for both characters and NPCs
 - Streamlined character creation and management
 
 ### Dynamic Ability System
+
 - Status effects that modify character abilities dynamically - allowing for prep work before session and improvization during session to react to unexpected player choices
 - Feature-based ability modifications for lasting character changes
 - Hidden abilities support for GM-controlled special effects - such as changing rolled dice, adding advantage / disadvantage, or modifying critical ranges
 - Intuitive dialogs for formatted system control
 
 ### Equipment and Powers
-- Basic gear management system
+
+- Combat gear management system - Quick and easy to manage combat gear and use it
 - Combat powers with detailed descriptions and reminders to ensure you fulfill their requirements / have enough
-power to use them
+  power to use them
 - Status effect tracking and management - formatted chat messages for when they apply and expire
 
 ## Usage
 
 ### For Game Masters
+
 - Modify character abilities through status effects and features
 - Create and manage hidden abilities using the status system
 - Design NPCs with custom combat powers, inflictable status effects, and features
 - Track combat powers and their effects - the requirements pop up before each roll of a combat power so for NPCs
-if there's anything you want to remember to do before using a combat power, you can put it there
+  if there's anything you want to remember to do before using a combat power, you can put it there
 - Apply damage and healing to characters - with chat messages to keep tabs on what's happening
 
 ### For Players
+
 - Create and customize characters with unique combinations of features
 - Manage equipment and combat powers - your creativity and the gm's guidance are the limits of what you can do
 - Track active status effects - clicking to roll them shows you the status but doesn't reroll it to the chat
@@ -50,6 +55,7 @@ This project is licensed under the Mozilla Public License 2.0 (MPL-2.0). When co
 4. Submit a pull request
 
 Important licensing notes:
+
 - All modifications to existing files must be shared under MPL-2.0
 - New files you create can be licensed differently if desired
 - Asacolips Projects / Foundry Mods may use contributions under the MIT license
@@ -58,15 +64,18 @@ Important licensing notes:
 ## Development
 
 ### Prerequisites
+
 - Foundry VTT (v12 or higher)
 - Basic knowledge of JavaScript and Foundry VTT systems
 
 ### Setup for Development
+
 1. Clone the repository
 2. Link or copy to your Foundry systems directory
 3. Run npm install to install dependencies for sass and terser
 4. Restart Foundry VTT
 5. Make any changes in your favorite development tools and test them against a running foundry world
+
 - **Optional**: if you want to build your modifications for distribution you can run npm run release:win or npm run release:linux to build a minified .zip file.
 
 ## Acknowledgements
@@ -75,9 +84,10 @@ This system evolved from the excellent [Boilerplate System](https://github.com/a
 
 ## License
 
-This project is licensed under the Mozilla Public License 2.0 - see the [LICENSE.txt](LICENSE.txt) file for details. 
+This project is licensed under the Mozilla Public License 2.0 - see the [LICENSE.txt](LICENSE.txt) file for details.
 
 Key points:
+
 - Source code must remain open source
 - Modifications must be shared under MPL-2.0
 - Commercial use is permitted
@@ -87,4 +97,5 @@ Key points:
 ## Support
 
 For bug reports and feature requests, please use the GitHub issues system. For general support:
+
 - Review existing issues before reporting bugs and feature requests
