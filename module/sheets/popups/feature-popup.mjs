@@ -77,7 +77,6 @@ export class FeaturePopup extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 
   static async toChat() {
-    console.log(this.item);
     featureMessage(this.item);
     this.close();
   }
