@@ -464,6 +464,15 @@
   pointer-events: none;
   opacity: 0.7;
 }
+.base-form__warning {
+  background-color: #e6b800;
+  border: 2px dashed #ff8c00;
+  border-radius: 8px;
+  color: #ffffff;
+  padding: 10px;
+  margin: 10px 0;
+  font-weight: bold;
+}
 .base-form__header {
   font-family: "Underdog", serif;
   text-align: center;

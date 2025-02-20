@@ -88,6 +88,16 @@
     opacity: 0.7;
   }
 
+  &__warning {
+    background-color: #e6b800;
+    border: 2px dashed #ff8c00;
+    border-radius: 8px;
+    color: #ffffff;
+    padding: 10px;
+    margin: 10px 0;
+    font-weight: bold;
+  }
+
   // Elements
   &__header {
     font-family: typography.$underdog;
