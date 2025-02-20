@@ -32,7 +32,9 @@
                 <div class="base-form__content">{{numberFormat item.system.roll.bonus decimals=0 sign=true}}</div>
                 <div class="base-form__label">Adjustments</div>
                 <div class="base-form__content">
-                    {{#if (lte item.system.roll.diceAdjustments.total 0)}}
+                    {{#if (eq item.system.roll.diceAdjustments.total 0)}}
+                        <span class="base-form__text--neutral">Neutral</span>
+                    {{else if (lt item.system.roll.diceAdjustments.total 0)}}
                         <span class="base-form__text--disadvantage">Disadv {{numberFormat (abs item.system.roll.diceAdjustments.total) decimals=0}}</span>
                     {{else}}
                         <span class="base-form__text--advantage">Adv {{numberFormat item.system.roll.diceAdjustments.total decimals=0}}</span>
