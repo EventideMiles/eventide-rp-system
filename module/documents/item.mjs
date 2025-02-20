@@ -1,5 +1,6 @@
 import { rollHandler } from "../helpers/roll-dice.mjs";
 import { CombatPowerPopup } from "../sheets/popups/combat-power-popup.mjs";
+import { GearPopup } from "../sheets/popups/gear-popup.mjs";
 import { StatusPopup } from "../sheets/popups/status-popup.mjs";
 import { FeaturePopup } from "../sheets/popups/feature-popup.mjs";
 
@@ -100,6 +101,12 @@ export class EventideRpSystemItem extends Item {
     return result;
   }
 
+  addQuantity(value) {
+    this.update({
+      "system.quantity": this.system.quantity + value,
+    });
+  }
+
   /**
    * Handle a click event on the item.
    * @param {Event} event - The triggering click event
@@ -114,12 +121,12 @@ export class EventideRpSystemItem extends Item {
     const label = `[${item.type}] ${item.name}`;
 
     // if its a combat power or gear we need special handling
-    if (item.type === "combatPower" || item.type === "gear") {
-      const targetArray = await erps.utils.getTargetArray();
-
+    if (item.type === "combatPower") {
       item.formula = item.getCombatRollFormula();
-
       new CombatPowerPopup({ item }).render(true);
+    } else if (item.type === "gear") {
+      item.formula = item.getCombatRollFormula();
+      new GearPopup({ item }).render(true);
     }
     // status roll handling
     else if (item.type === "status") {
