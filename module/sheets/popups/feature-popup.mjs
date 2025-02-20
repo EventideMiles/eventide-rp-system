@@ -1,5 +1,3 @@
-import { featureMessage } from "../../helpers/system-messages.mjs";
-
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
 /**
@@ -77,7 +75,7 @@ export class FeaturePopup extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 
   static async toChat() {
-    featureMessage(this.item);
+    erps.messages.featureMessage(this.item);
     this.close();
   }
 

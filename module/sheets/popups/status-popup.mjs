@@ -1,5 +1,3 @@
-import { createStatusMessage } from "../../helpers/system-messages.mjs";
-
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
 /**
@@ -76,7 +74,7 @@ export class StatusPopup extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 
   static async toChat() {
-    createStatusMessage(this.item);
+    erps.messages.createStatusMessage(this.item);
     this.close();
   }
 
