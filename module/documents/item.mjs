@@ -115,16 +115,13 @@ export class EventideRpSystemItem extends Item {
   async roll(event) {
     const item = this;
 
-    // Initialize chat data.
-    const speaker = ChatMessage.getSpeaker({ actor: this.actor });
-    const rollMode = game.settings.get("core", "rollMode");
-    const label = `[${item.type}] ${item.name}`;
-
-    // if its a combat power or gear we need special handling
+    // combat power handling
     if (item.type === "combatPower") {
       item.formula = item.getCombatRollFormula();
       new CombatPowerPopup({ item }).render(true);
-    } else if (item.type === "gear") {
+    }
+    // gear handling
+    else if (item.type === "gear") {
       item.formula = item.getCombatRollFormula();
       new GearPopup({ item }).render(true);
     }
@@ -135,26 +132,6 @@ export class EventideRpSystemItem extends Item {
     // feature roll handling
     else if (item.type === "feature") {
       new FeaturePopup({ item }).render(true);
-    }
-    // If there's no roll data, send a chat message.
-    else if (!this.system.formula) {
-      new ChatMessage({
-        speaker,
-        content: `${label}`,
-        rollMode,
-      });
-    }
-    // Otherwise, create a roll and send a chat message from it.
-    else {
-      // Retrieve roll data.
-      const rollData = {
-        ...this.getRollData(),
-        label: item.name ?? "",
-        type: item.type ?? "",
-      };
-
-      const roll = await rollHandler(rollData, this.actor);
-      return roll;
     }
   }
 }
