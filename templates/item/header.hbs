@@ -11,6 +11,12 @@
       <input name='name' type='text' value='{{item.name}}' placeholder='Name' />
     </div>
     {{! You may prefer to have a separate header file instead of this if statement}}
+    <div class="form-group">
+      <label class="checkbox">
+        <input type="checkbox" name="system.rollActorName" {{checked system.rollActorName}}/>
+        {{localize "EVENTIDE_RP_SYSTEM.Item.Base.FIELDS.rollActorName.label"}}
+      </label>
+    </div>
     {{#if (eq item.type 'gear')}}
       <div class='grid grid-2col'>
         <div class='resource'>
@@ -33,7 +39,7 @@
         </div>
       </div>
     {{/if}}
-    {{#if (eq item.type 'status')}}
+    {{#if (or (eq item.type 'status') (eq item.type 'feature'))}}
       <div class="grid grid-2col">
         <color-picker name="system.textColor" value="{{item.system.textColor}}" placeholder="{{localize 'EVENTIDE_RP_SYSTEM.Item.Status.FIELDS.textColor.placeholder'}}">
           <input type="text" placeholder="{{localize 'EVENTIDE_RP_SYSTEM.Item.Status.FIELDS.textColor.placeholder'}}" name="system.textColor" data-edit="system.textColor"/>

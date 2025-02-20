@@ -54,6 +54,13 @@
       }
     },
     "Item": {
+      "Base": {
+        "FIELDS": {
+          "rollActorName": {
+            "label": "Add Actor Name?"
+          }
+        }
+      },
       "Tabs": {
         "Attributes": "Attributes",
         "Description": "Description",
