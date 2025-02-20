@@ -11,6 +11,17 @@ export default class EventideRpSystemGear extends EventideRpSystemItemBase {
     const requiredInteger = { required: true, nullable: false, integer: true };
     const schema = super.defineSchema();
 
+    schema.bgColor = new fields.ColorField({
+      initial: "#8B4513",
+      blank: false,
+      required: true,
+    });
+    schema.textColor = new fields.ColorField({
+      initial: "#ffffff",
+      blank: false,
+      required: true,
+    });
+
     schema.quantity = new fields.NumberField({
       ...requiredInteger,
       initial: 1,
@@ -22,21 +33,39 @@ export default class EventideRpSystemGear extends EventideRpSystemItemBase {
       initial: 0,
       min: 0,
     });
-
-    // Break down roll formula into three independent fields
-    schema.roll = new fields.SchemaField({
-      diceNum: new fields.NumberField({
-        ...requiredInteger,
-        initial: 1,
-        min: 1,
-      }),
-      diceSize: new fields.StringField({ initial: "d20" }),
-      diceBonus: new fields.StringField({
-        initial: "+@abilities.acro.total+ceil(@attributes.level.value / 2)",
-      }),
+    schema.cost = new fields.NumberField({
+      ...requiredInteger,
+      initial: 0,
     });
 
-    schema.formula = new fields.StringField({ blank: true });
+    schema.targeted = new fields.BooleanField({
+      required: true,
+      initial: true,
+    });
+
+    schema.roll = new fields.SchemaField({
+      type: new fields.StringField({
+        initial: "roll",
+        required: true,
+        nullable: false,
+        choices: ["roll", "flat", "none"],
+      }),
+      ability: new fields.StringField({
+        required: true,
+        nullable: false,
+        choices: ["acro", "phys", "fort", "will", "wits", "unaugmented"],
+        initial: "unaugmented",
+      }),
+      bonus: new fields.NumberField({ initial: 0 }),
+      diceAdjustments: new fields.SchemaField({
+        advantage: new fields.NumberField({ initial: 0, ...requiredInteger }),
+        disadvantage: new fields.NumberField({
+          initial: 0,
+          ...requiredInteger,
+        }),
+        total: new fields.NumberField({ initial: 0, ...requiredInteger }),
+      }),
+    });
 
     return schema;
   }
