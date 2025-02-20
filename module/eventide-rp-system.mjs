@@ -21,6 +21,7 @@ import {
 } from "./helpers/common-foundry-tasks.mjs";
 import {
   createStatusMessage,
+  featureMessage,
   deleteStatusMessage,
   restoreMessage,
   combatPowerMessage,
@@ -57,6 +58,7 @@ globalThis.erps = {
   },
   messages: {
     createStatusMessage,
+    featureMessage,
     deleteStatusMessage,
     restoreMessage,
     combatPowerMessage,
@@ -152,6 +154,10 @@ Handlebars.registerHelper("ifCond", function (v1, operator, v2, options) {
 
 Handlebars.registerHelper("keySplit", function (key, choice) {
   return key.split(".")[choice];
+});
+
+Handlebars.registerHelper("abs", function (value) {
+  return Math.abs(value);
 });
 
 Handlebars.registerHelper("console", function (str) {

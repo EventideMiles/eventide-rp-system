@@ -88,6 +88,56 @@
     opacity: 0.7;
   }
 
+  &__warning {
+    background-color: #e6b800;
+    border: 2px dashed #ff8c00;
+    border-radius: 8px;
+    color: #ffffff;
+    padding: 10px;
+    margin: 10px 0;
+    font-weight: bold;
+  }
+
+  // Section styling
+  &__section {
+    margin: 0.5rem 0;
+    padding: 0.5rem;
+    border-radius: 8px;
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+
+  // Row and column layout
+  &__row {
+    display: grid;
+    grid-template-columns: minmax(80px, auto) 1fr minmax(80px, auto) 1fr;
+    gap: 0.5rem;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    width: 100%;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &__column {
+    flex: 1;
+    min-width: 0;
+  }
+
+  // Text styling
+  &__text {
+    &--advantage {
+      color: #2ecc71;
+      font-weight: bold;
+    }
+
+    &--disadvantage {
+      color: #e74c3c;
+      font-weight: bold;
+    }
+  }
+
   // Elements
   &__header {
     font-family: typography.$underdog;
@@ -99,11 +149,40 @@
   }
 
   &__content {
-    text-align: justify;
-    font-style: italic;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 0.25rem 0.5rem;
     background-color: colors.$form-content-bg;
-    padding: 0.5rem 1rem;
-    border-radius: 5px;
+    border-radius: 4px;
+    text-align: center;
+
+    &--description {
+      white-space: normal;
+      text-align: left;
+      padding: 0.5rem;
+      overflow-y: auto;
+      max-height: 200px;
+      word-wrap: break-word;
+    }
+
+    .base-form__text {
+      &--advantage {
+        color: #2ecc71;
+        font-weight: bold;
+      }
+
+      &--disadvantage {
+        color: #e74c3c;
+        font-weight: bold;
+      }
+
+      &--neutral {
+        color: #95a5a6;
+        font-weight: bold;
+      }
+    }
   }
 
   &__effects {
@@ -164,7 +243,7 @@
 }
 
   &__group {
-    margin: 0;
+    margin: 0.5rem 0;
     padding: 0.25rem 0.5rem 0.75rem 0.5rem;
     @include flex-row;
     gap: 0.5rem;
@@ -222,11 +301,12 @@
   &__label {
     display: block;
     font-size: 1rem;
-    font-weight: normal;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     color: colors.$label-text;
     margin: 0;
-    flex: 0 0 120px;
-    min-width: 120px;
   }
 
   &__label--inline {

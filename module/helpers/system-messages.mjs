@@ -27,6 +27,33 @@ const createStatusMessage = async (item) => {
 };
 
 /**
+ * Creates a chat message for the given feature item, including its name, description, and active effects.
+ * @param {Item} item - The feature item to generate the message for.
+ * @returns {Promise<ChatMessage>} The created chat message.
+ */
+
+const featureMessage = async (item) => {
+  const effects = item.effects.toObject();
+  const style = `background-color: ${item.system.bgColor.css}; color: ${item.system.textColor.css};`;
+
+  const data = {
+    item,
+    effects,
+    style,
+  };
+
+  const content = await renderTemplate(
+    `systems/eventide-rp-system/templates/chat/feature-message.hbs`,
+    data
+  );
+
+  return ChatMessage.create({
+    speaker: ChatMessage.getSpeaker({ actor: item.parent }),
+    content: content,
+  });
+};
+
+/**
  * Creates a chat message indicating the deletion of a status effect.
  * @param {Item} item - The status effect item to be removed.
  * @param {Object} options - Additional options to customize the message.
@@ -212,6 +239,7 @@ const combatPowerMessage = async (item) => {
 
 export {
   createStatusMessage,
+  featureMessage,
   deleteStatusMessage,
   restoreMessage,
   combatPowerMessage,

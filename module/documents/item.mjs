@@ -1,7 +1,7 @@
-import { rollHandler } from "../helpers/roll-dice.mjs";
-import { PrerequisitePopup } from "../sheets/prerequisite-popup.mjs";
-import { StatusPopup } from "../sheets/status-popup.mjs";
-import { FeaturePopup } from "../sheets/feature-popup.mjs";
+import { CombatPowerPopup } from "../sheets/popups/combat-power-popup.mjs";
+import { GearPopup } from "../sheets/popups/gear-popup.mjs";
+import { StatusPopup } from "../sheets/popups/status-popup.mjs";
+import { FeaturePopup } from "../sheets/popups/feature-popup.mjs";
 
 /**
  * Extended Item class for the Eventide RP System.
@@ -35,15 +35,10 @@ export class EventideRpSystemItem extends Item {
   }
 
   getCombatRollFormula() {
-    if (!this.actor || this.type !== "combatPower") return;
+    if (!this.actor) return;
     let diceAdjustments;
 
     const rollData = this.getRollData();
-
-    if (rollData.actor.power.value < rollData.cost) {
-      ui.notifications.warn("You don't have enough power to use this ability!");
-      return "";
-    }
 
     if (rollData.roll.type === "none") return "0";
 
@@ -105,6 +100,12 @@ export class EventideRpSystemItem extends Item {
     return result;
   }
 
+  addQuantity(value) {
+    this.update({
+      "system.quantity": this.system.quantity + value,
+    });
+  }
+
   /**
    * Handle a click event on the item.
    * @param {Event} event - The triggering click event
@@ -113,34 +114,15 @@ export class EventideRpSystemItem extends Item {
   async roll(event) {
     const item = this;
 
-    // Initialize chat data.
-    const speaker = ChatMessage.getSpeaker({ actor: this.actor });
-    const rollMode = game.settings.get("core", "rollMode");
-    const label = `[${item.type}] ${item.name}`;
-
-    // if its a combat power we need special handling
+    // combat power handling
     if (item.type === "combatPower") {
-      const targetArray = await erps.utils.getTargetArray();
-
-      // Only check for targets if this is a targeted power
-      if (
-        item.system.targeted &&
-        targetArray.length === 0 &&
-        item.system.roll.type !== "none"
-      ) {
-        return ui.notifications.error(
-          `Please target at least one token first!`
-        );
-      }
-
       item.formula = item.getCombatRollFormula();
-
-      if (item.formula === "") return;
-      new PrerequisitePopup({ item }).render(
-        this.system.prerequisites === "" || !this.system.prerequisites
-          ? false
-          : true
-      );
+      new CombatPowerPopup({ item }).render(true);
+    }
+    // gear handling
+    else if (item.type === "gear") {
+      item.formula = item.getCombatRollFormula();
+      new GearPopup({ item }).render(true);
     }
     // status roll handling
     else if (item.type === "status") {
@@ -149,26 +131,6 @@ export class EventideRpSystemItem extends Item {
     // feature roll handling
     else if (item.type === "feature") {
       new FeaturePopup({ item }).render(true);
-    }
-    // If there's no roll data, send a chat message.
-    else if (!this.system.formula) {
-      new ChatMessage({
-        speaker,
-        content: `${label}`,
-        rollMode,
-      });
-    }
-    // Otherwise, create a roll and send a chat message from it.
-    else {
-      // Retrieve roll data.
-      const rollData = {
-        ...this.getRollData(),
-        label: item.name ?? "",
-        type: item.type ?? "",
-      };
-
-      const roll = await rollHandler(rollData, this.actor);
-      return roll;
     }
   }
 }

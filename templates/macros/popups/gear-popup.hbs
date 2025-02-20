@@ -1,0 +1,66 @@
+<div class="{{cssClass}} base-form" autocomplete="off">
+    <!-- Warnings -->
+    {{#if problems.targeting}}
+        <div class="base-form__warning">You need to target someone to use this gear!</div>
+    {{/if}}
+    {{#if problems.quantity}}
+        <div class="base-form__warning">You don't have enough of this item to use it! (Need {{item.system.cost}}, have {{item.system.quantity}})</div>
+    {{/if}}
+    <div class="base-form__header">Gear Details</div>
+    
+    {{#if item.system.description}}
+    <div class="base-form__content base-form__content--description">
+        <div class="base-form__header">{{item.actor.name}}</div> 
+        {{{item.system.description}}}
+    </div>
+    {{/if}}
+
+    {{#if item.system.roll}}
+    <div class="base-form__section">
+        <div class="base-form__header">Roll Information</div>
+        <div class="base-form__group">
+            <div class="base-form__row">
+                <div class="base-form__label">Type</div>
+                <div class="base-form__content">{{item.system.roll.type}}</div>
+                <div class="base-form__label">Ability</div>
+                <div class="base-form__content">{{item.system.roll.ability}}</div>
+            </div>
+        </div>
+        <div class="base-form__group">
+            <div class="base-form__row">
+                <div class="base-form__label">Bonus</div>
+                <div class="base-form__content">{{numberFormat item.system.roll.bonus decimals=0 sign=true}}</div>
+                <div class="base-form__label">Adjustments</div>
+                <div class="base-form__content">
+                    {{#if (eq item.system.roll.diceAdjustments.total 0)}}
+                        <span class="base-form__text--neutral">Neutral</span>
+                    {{else if (lt item.system.roll.diceAdjustments.total 0)}}
+                        <span class="base-form__text--disadvantage">Disadv {{numberFormat (abs item.system.roll.diceAdjustments.total) decimals=0}}</span>
+                    {{else}}
+                        <span class="base-form__text--advantage">Adv {{numberFormat item.system.roll.diceAdjustments.total decimals=0}}</span>
+                    {{/if}}
+                </div>
+            </div>
+        </div>
+    </div>
+    {{/if}}
+
+    <div class="base-form__section">
+        <div class="base-form__header">Item Details</div>
+        <div class="base-form__group">
+            <div class="base-form__row">
+                <div class="base-form__label">Quantity</div>
+                <div class="base-form__content">{{item.system.quantity}}</div>
+                <div class="base-form__label">Cost/Use</div>
+                <div class="base-form__content">{{item.system.cost}}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="base-form__group base-form__group--right">
+        {{#unless (or problems.targeting problems.quantity)}}
+            <button type="submit" class="base-form__button base-form__button--primary">Use Item</button>
+        {{/unless}}
+        <button type="button" class="base-form__button" data-action="close">Close</button>
+    </div>
+</div>

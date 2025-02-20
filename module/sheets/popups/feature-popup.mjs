@@ -1,37 +1,38 @@
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
 /**
- * Application for managing damage to targeted tokens.
+ * Application for displaying feature information in a popup.
  * @extends {HandlebarsApplicationMixin(ApplicationV2)}
  */
-export class PrerequisitePopup extends HandlebarsApplicationMixin(
-  ApplicationV2
-) {
+export class FeaturePopup extends HandlebarsApplicationMixin(ApplicationV2) {
   /** @override */
   static PARTS = {
-    prerequisitePopup: {
+    featurePopup: {
       template:
-        "systems/eventide-rp-system/templates/macros/prerequisite-popup.hbs",
+        "systems/eventide-rp-system/templates/macros/popups/feature-popup.hbs",
     },
   };
 
   /** @override */
   static DEFAULT_OPTIONS = {
-    id: "prerequisite-popup",
-    classes: ["eventide-rp-system", "standard-form", "prerequisite-popup"],
+    id: "feature-popup",
+    classes: ["eventide-rp-system", "standard-form", "feature-popup"],
     position: {
       width: 400,
       height: "auto",
     },
     tag: "form",
     window: {
-      title: "Prerequisites Met?",
-      icon: "fa-solid fa-square-question",
+      title: "Feature Information",
+      icon: "fa-solid fa-star",
     },
     form: {
       handler: this.#onSubmit,
       submitOnChange: false,
       closeOnSubmit: true,
+    },
+    actions: {
+      toChat: FeaturePopup.toChat,
     },
   };
 
@@ -60,19 +61,11 @@ export class PrerequisitePopup extends HandlebarsApplicationMixin(
   async _prepareContext(options) {
     const context = {};
 
-    context.prerequisites = this.item.system.prerequisites;
+    context.item = this.item;
+    context.cssClass = FeaturePopup.DEFAULT_OPTIONS.classes.join(" ");
+    context.effects = Array.from(this.item.effects);
 
-    if (!context.prerequisites || context.prerequisites === "") {
-      this.earlySubmit();
-    }
     return context;
-  }
-
-  earlySubmit() {
-    this.item.actor.addPower(-this.item.system.cost);
-
-    erps.messages.combatPowerMessage(this.item);
-    this.close();
   }
 
   async _renderFrame(options) {
@@ -81,17 +74,19 @@ export class PrerequisitePopup extends HandlebarsApplicationMixin(
     return frame;
   }
 
+  static async toChat() {
+    erps.messages.featureMessage(this.item);
+    this.close();
+  }
+
   /**
-   * Handle form submission to apply damage to targets.
+   * Handle form submission to close the popup.
    * @param {Event} event - The form submission event
    * @param {HTMLFormElement} form - The form element
    * @param {FormData} formData - The form data
    * @private
    */
   static async #onSubmit() {
-    this.item.actor.addPower(-this.item.system.cost);
-
-    erps.messages.combatPowerMessage(this.item);
     this.close();
   }
 }

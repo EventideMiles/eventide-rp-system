@@ -2,6 +2,17 @@
   font-weight: bold;
 }
 
+.checkbox-resource {
+  min-width: 200px;
+  
+  .checkbox-container {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    white-space: nowrap;
+  }
+}
+
 .ability {
   margin-bottom: 2px;
 }

@@ -43,8 +43,10 @@
 {{/if}}
 {{#if system.description}}
 <div class="chat-card__description">
+  {{#if system.rollActorName}}
     <div class="chat-card__description--header">{{actor.name}}. . . </div> 
-    {{{system.description}}}
+  {{/if}}
+  {{{system.description}}}
 </div>
 {{/if}}
 

@@ -54,6 +54,13 @@
       }
     },
     "Item": {
+      "Base": {
+        "FIELDS": {
+          "rollActorName": {
+            "label": "Add Actor Name To Chat Messages:"
+          }
+        }
+      },
       "Tabs": {
         "Attributes": "Attributes",
         "Description": "Description",

@@ -132,7 +132,7 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
       case "attributesCombatPower":
         // Necessary for preserving active tab on re-render
         context.tab = context.tabs[partId];
-        if (partId === "attributesCombatPower") {
+        if (partId === "attributesCombatPower" || partId === "attributesGear") {
           // Add roll type options
           context.rollTypes = {
             roll: "Roll",
