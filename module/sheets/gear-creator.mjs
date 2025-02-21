@@ -15,7 +15,7 @@ export class GearCreator extends HandlebarsApplicationMixin(ApplicationV2) {
     id: "gear-creator",
     classes: ["eventide-rp-system", "standard-form", "gear-creator"],
     position: {
-      width: 640,
+      width: 800,
       height: 800,
     },
     tag: "form",
