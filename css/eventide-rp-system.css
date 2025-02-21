@@ -61,6 +61,7 @@
   --eventide-rp-system-card-header-heal: #cb8e00b3;
   --eventide-rp-system-card-header-effect: #9A5D2Db3;
   --eventide-rp-system-card-header-delete: #555555b3;
+  --eventide-rp-system-card-header-transfer: #9B4B7D;
   --eventide-rp-system-card-header-description-hr: #8B4513b3;
   --eventide-rp-system-chat-details-hit: #50C877b3;
   --eventide-rp-system-chat-details-miss: #C70039b3;
@@ -140,6 +141,7 @@
   --eventide-rp-system-card-header-heal: #cb8e00b3;
   --eventide-rp-system-card-header-effect: #9A5D2Db3;
   --eventide-rp-system-card-header-delete: #555555b3;
+  --eventide-rp-system-card-header-transfer: #9B4B7D;
   --eventide-rp-system-card-header-description-hr: #8B4513b3;
   --eventide-rp-system-chat-details-hit: #50C877b3;
   --eventide-rp-system-chat-details-miss: #C70039b3;
@@ -975,6 +977,9 @@
 .chat-card__header--restore {
   background-color: var(--eventide-rp-system-card-header-heal);
 }
+.chat-card__header--transfer {
+  background-color: var(--eventide-rp-system-card-header-transfer);
+}
 .chat-card__description {
   color: var(--eventide-rp-system-chat-card-tan);
   text-align: justify;
@@ -1770,6 +1775,7 @@
   --eventide-rp-system-card-header-heal: #cb8e00b3;
   --eventide-rp-system-card-header-effect: #9A5D2Db3;
   --eventide-rp-system-card-header-delete: #555555b3;
+  --eventide-rp-system-card-header-transfer: #9B4B7D;
   --eventide-rp-system-card-header-description-hr: #8B4513b3;
   --eventide-rp-system-chat-details-hit: #50C877b3;
   --eventide-rp-system-chat-details-miss: #C70039b3;
@@ -1848,6 +1854,7 @@
   --eventide-rp-system-card-header-heal: #cb8e00b3;
   --eventide-rp-system-card-header-effect: #9A5D2Db3;
   --eventide-rp-system-card-header-delete: #555555b3;
+  --eventide-rp-system-card-header-transfer: #9B4B7D;
   --eventide-rp-system-card-header-description-hr: #8B4513b3;
   --eventide-rp-system-chat-details-hit: #50C877b3;
   --eventide-rp-system-chat-details-miss: #C70039b3;
@@ -2071,6 +2078,7 @@
   --eventide-rp-system-card-header-heal: #cb8e00b3;
   --eventide-rp-system-card-header-effect: #9A5D2Db3;
   --eventide-rp-system-card-header-delete: #555555b3;
+  --eventide-rp-system-card-header-transfer: #9B4B7D;
   --eventide-rp-system-card-header-description-hr: #8B4513b3;
   --eventide-rp-system-chat-details-hit: #50C877b3;
   --eventide-rp-system-chat-details-miss: #C70039b3;
@@ -2149,6 +2157,7 @@
   --eventide-rp-system-card-header-heal: #cb8e00b3;
   --eventide-rp-system-card-header-effect: #9A5D2Db3;
   --eventide-rp-system-card-header-delete: #555555b3;
+  --eventide-rp-system-card-header-transfer: #9B4B7D;
   --eventide-rp-system-card-header-description-hr: #8B4513b3;
   --eventide-rp-system-chat-details-hit: #50C877b3;
   --eventide-rp-system-chat-details-miss: #C70039b3;
@@ -2350,6 +2359,7 @@
   --eventide-rp-system-card-header-heal: #cb8e00b3;
   --eventide-rp-system-card-header-effect: #9A5D2Db3;
   --eventide-rp-system-card-header-delete: #555555b3;
+  --eventide-rp-system-card-header-transfer: #9B4B7D;
   --eventide-rp-system-card-header-description-hr: #8B4513b3;
   --eventide-rp-system-chat-details-hit: #50C877b3;
   --eventide-rp-system-chat-details-miss: #C70039b3;
@@ -2428,6 +2438,7 @@
   --eventide-rp-system-card-header-heal: #cb8e00b3;
   --eventide-rp-system-card-header-effect: #9A5D2Db3;
   --eventide-rp-system-card-header-delete: #555555b3;
+  --eventide-rp-system-card-header-transfer: #9B4B7D;
   --eventide-rp-system-card-header-description-hr: #8B4513b3;
   --eventide-rp-system-chat-details-hit: #50C877b3;
   --eventide-rp-system-chat-details-miss: #C70039b3;

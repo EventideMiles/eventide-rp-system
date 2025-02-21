@@ -4,7 +4,7 @@
     <select class="base-form__select" id="gearId" name="gearId">
       {{#each targetGear as |item|}}
         <option value="{{item.id}}">
-          {{item.name}} ({{item.system.quantity}})
+          {{item.name}} ({{item.system.quantity}} available)
         </option>
       {{/each}}
     </select>
@@ -13,6 +13,11 @@
   <div class="base-form__group">
     <label class="base-form__label" for="quantity">Quantity:</label>
     <input class="base-form__number-input" type="number" id="quantity" name="quantity" value="1" min="1">
+  </div>
+
+  <div class="base-form__group">
+    <label class="base-form__label" for="description">Description (Optional):</label>
+    <textarea class="base-form__textarea" id="description" name="description" placeholder="Add a note about this transfer"></textarea>
   </div>
 
   <div class="base-form__group base-form__group--right">

@@ -1,0 +1,14 @@
+<div class="chat-card">
+  <div class="chat-card__header chat-card__header--transfer">
+    <img src="{{item.img}}" class="chat-card__image--primary" /> 
+    <div>{{item.name}} : Transferred</div>
+  </div>
+  <div class="chat-card__description">
+    <div class="chat-card__description--header">{{sourceActor.name}} → {{destActor.name}}</div> 
+    Transferred {{quantity}} {{item.name}}{{#ifCond quantity ">" 1}}s{{/ifCond}}
+    {{#if description}}
+    <hr class="chat-card__hr">
+    <div class="chat-card__description--text">{{description}}</div>
+    {{/if}}
+  </div>
+</div>

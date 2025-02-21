@@ -27,6 +27,7 @@ import {
   deleteStatusMessage,
   restoreMessage,
   combatPowerMessage,
+  gearTransferMessage,
 } from "./helpers/system-messages.mjs";
 
 /* -------------------------------------------- */
@@ -50,6 +51,12 @@ globalThis.erps = {
     getSelectedArray,
     storeLocal,
     retrieveLocal,
+    createStatusMessage,
+    featureMessage,
+    deleteStatusMessage,
+    restoreMessage,
+    combatPowerMessage,
+    gearTransferMessage,
   },
   macros: {
     StatusCreator,
@@ -66,6 +73,7 @@ globalThis.erps = {
     deleteStatusMessage,
     restoreMessage,
     combatPowerMessage,
+    gearTransferMessage,
   },
   models,
 };
