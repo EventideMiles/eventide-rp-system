@@ -5,6 +5,7 @@ import { EventideRpSystemItem } from "./documents/item.mjs";
 import { EventideRpSystemActorSheet } from "./sheets/actor-sheet.mjs";
 import { EventideRpSystemItemSheet } from "./sheets/item-sheet.mjs";
 import { StatusCreator } from "./sheets/status-creator.mjs";
+import { GearCreator } from "./sheets/gear-creator.mjs";
 import { DamageTargets } from "./sheets/damage-targets.mjs";
 import { RestoreTarget } from "./sheets/restore-target.mjs";
 import { ChangeTargetStatus } from "./sheets/change-target-status.mjs";
@@ -51,6 +52,7 @@ globalThis.erps = {
   },
   macros: {
     StatusCreator,
+    GearCreator,
     DamageTargets,
     RestoreTarget,
     ChangeTargetStatus,
@@ -173,6 +175,10 @@ Handlebars.registerHelper("debug", function (optionalValue) {
     console.log("====================");
     console.log(optionalValue);
   }
+});
+
+Handlebars.registerHelper("lowercase", function (str) {
+  return (str || "").toLowerCase();
 });
 
 /* -------------------------------------------- */

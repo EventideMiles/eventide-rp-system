@@ -1,0 +1,119 @@
+<div class="{{cssClass}} base-form" autocomplete="off">
+  <div class="base-form__group">
+    <label class="base-form__label" for="name">Name:</label>
+    <input class="base-form__text-input" autofocus type="text" id="name" name="name" placeholder="Name">
+  </div>
+
+  <div class="base-form__group">
+    <label class="base-form__label" for="description">Description:</label>
+    <textarea class="base-form__textarea" id="description" name="description" placeholder="Description"></textarea>
+  </div>
+
+  <div class="base-form__group">
+    <label class="base-form__label" for="img">Image:</label>
+    <img
+      class="base-form__image base-form__image--edit"
+      src="{{storedData.gear_img}}"
+      data-edit="img"
+      data-action='onEditImage'
+      title="Gear Image"
+    />
+    <input class="base-form__hidden-input" type="hidden" name="img" value="{{ifThen storedData.gear_img storedData.gear_img "icons/svg/item-bag.svg"}}">
+  </div>
+
+  <div class="base-form__group">
+    <label class="base-form__label" for="bgColor">Background Color:</label>
+    <input class="base-form__color-input" type="color" id="bgColor" name="bgColor" value="{{ifThen storedData.gear_bgColor storedData.gear_bgColor "#7B4874"}}">
+  </div>
+
+  <div class="base-form__group">
+    <label class="base-form__label" for="textColor">Text Color:</label>
+    <input class="base-form__color-input" type="color" id="textColor" name="textColor" value="{{ifThen storedData.gear_textColor storedData.gear_textColor "#ffffff"}}">
+  </div>
+
+  <div class="base-form__header">Attributes</div>
+  
+  <div class="base-form__group">
+    <label class="base-form__label" for="quantity">Quantity:</label>
+    <input class="base-form__number-input" type="number" id="quantity" name="quantity" value="1">
+  </div>
+
+  <div class="base-form__group">
+    <label class="base-form__label" for="weight">Weight:</label>
+    <input class="base-form__number-input" type="number" id="weight" name="weight" value="0">
+  </div>
+
+  <div class="base-form__group">
+    <label class="base-form__label" for="cost">Cost:</label>
+    <input class="base-form__number-input" type="number" id="cost" name="cost" value="0">
+  </div>
+
+  <div class="base-form__group">
+    <label class="base-form__label" for="targeted">Targeted:</label>
+    <input class="base-form__checkbox" type="checkbox" id="targeted" name="targeted" checked>
+  </div>
+
+  <div class="base-form__header">Roll Settings</div>
+
+  <div class="base-form__group">
+    <label class="base-form__label" for="roll.type">Roll Type:</label>
+    <select class="base-form__select" id="roll.type" name="roll.type">
+      {{#each rollTypes}}
+        <option value="{{@key}}">{{this}}</option>
+      {{/each}}
+    </select>
+  </div>
+
+  <div class="base-form__group">
+    <label class="base-form__label" for="roll.ability">Roll Ability:</label>
+    <select class="base-form__select" id="roll.ability" name="roll.ability">
+      {{#each abilities}}
+        <option value="{{lowercase this}}">{{this}}</option>
+      {{/each}}
+      <option value="unaugmented">Unaugmented</option>
+    </select>
+  </div>
+
+  <div class="base-form__group">
+    <label class="base-form__label" for="roll.bonus">Roll Bonus:</label>
+    <input class="base-form__number-input" type="number" id="roll.bonus" name="roll.bonus" value="0">
+  </div>
+
+  <div class="base-form__group">
+    <label class="base-form__label" for="roll.diceAdjustments.advantage">Advantage:</label>
+    <input class="base-form__number-input" type="number" id="roll.diceAdjustments.advantage" name="roll.diceAdjustments.advantage" value="0">
+  </div>
+
+  <div class="base-form__group">
+    <label class="base-form__label" for="roll.diceAdjustments.disadvantage">Disadvantage:</label>
+    <input class="base-form__number-input" type="number" id="roll.diceAdjustments.disadvantage" name="roll.diceAdjustments.disadvantage" value="0">
+  </div>
+
+  <div class="base-form__header">Effects</div>
+  {{#each abilities}}
+    <div class="base-form__group">
+      <label class="base-form__label" for="{{lowercase this}}">{{this}}:</label>
+      <input class="base-form__number-input" type="number" id="{{lowercase this}}" name="{{lowercase this}}" value="0">
+      <select class="base-form__select" id="{{lowercase this}}-mode" name="{{lowercase this}}-mode">
+        <option value="add">Change</option>
+        <option value="override">Override</option>
+        <option value="advantage">Advantage</option>
+        <option value="disadvantage">Disadvantage</option>
+      </select>
+    </div>
+  {{/each}}
+  {{#each hiddenAbilities}}
+    <div class="base-form__group">
+      <label class="base-form__label" for="{{lowercase this}}">{{this}}:</label>
+      <input class="base-form__number-input" type="number" id="{{lowercase this}}" name="{{lowercase this}}" value="0">
+      <select class="base-form__select" id="{{lowercase this}}-mode" name="{{lowercase this}}-mode">
+        <option value="add">Change</option>
+        <option value="override">Override</option>
+      </select>
+    </div>
+  {{/each}}
+
+  <div class="base-form__group base-form__group--right">
+    <button type="submit" class="base-form__button base-form__button--primary">{{ifThen targetArray.length "Create and Apply" "Create"}}</button>
+  </div>
+</div>

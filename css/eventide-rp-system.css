@@ -1549,6 +1549,72 @@
   height: 100%;
 }
 
+.gear-creator {
+  padding: 8px;
+}
+.gear-creator__header {
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--color-border-light-primary);
+}
+.gear-creator__columns {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.gear-creator__column {
+  flex: 1;
+  min-width: 0;
+}
+.gear-creator .base-form__group {
+  margin-bottom: 8px;
+}
+.gear-creator .base-form__group--right {
+  text-align: right;
+  margin-top: 16px;
+}
+.gear-creator .base-form__header {
+  font-size: 1.2em;
+  font-weight: bold;
+  margin-bottom: 12px;
+  padding-bottom: 4px;
+  border-bottom: 2px solid var(--color-border-light-tertiary);
+}
+.gear-creator .base-form__image {
+  max-width: 100px;
+  height: auto;
+  cursor: pointer;
+}
+.gear-creator .base-form__checkbox {
+  width: auto;
+  margin-left: 8px;
+}
+.gear-creator .base-form__textarea {
+  min-height: 60px;
+}
+.gear-creator .roll-options,
+.gear-creator .dice-adjustments {
+  margin-top: 8px;
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+}
+.gear-creator .roll-options[style*="display: none"],
+.gear-creator .dice-adjustments[style*="display: none"] {
+  display: none;
+}
+.gear-creator .roll-options .base-form__group,
+.gear-creator .dice-adjustments .base-form__group {
+  margin-bottom: 8px;
+}
+.gear-creator .roll-options .base-form__group:last-child,
+.gear-creator .dice-adjustments .base-form__group:last-child {
+  margin-bottom: 0;
+}
+.gear-creator .dice-adjustments {
+  margin-top: 12px;
+}
+
 .eventide-rp-system {
   @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
   @import url("https://fonts.googleapis.com/css2?family=Combo&family=Merienda:wght@300..900&family=Protest+Revolution&family=Underdog&display=swap");

@@ -1,0 +1,78 @@
+.gear-creator {
+  padding: 8px;
+
+  &__header {
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid var(--color-border-light-primary);
+  }
+
+  &__columns {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  &__column {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .base-form {
+    &__group {
+      margin-bottom: 8px;
+
+      &--right {
+        text-align: right;
+        margin-top: 16px;
+      }
+    }
+
+    &__header {
+      font-size: 1.2em;
+      font-weight: bold;
+      margin-bottom: 12px;
+      padding-bottom: 4px;
+      border-bottom: 2px solid var(--color-border-light-tertiary);
+    }
+
+    &__image {
+      max-width: 100px;
+      height: auto;
+      cursor: pointer;
+    }
+
+    &__checkbox {
+      width: auto;
+      margin-left: 8px;
+    }
+
+    &__textarea {
+      min-height: 60px;
+    }
+  }
+
+  .roll-options,
+  .dice-adjustments {
+    margin-top: 8px;
+    padding: 8px;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 4px;
+
+    &[style*="display: none"] {
+      display: none;
+    }
+
+    .base-form__group {
+      margin-bottom: 8px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  .dice-adjustments {
+    margin-top: 12px;
+  }
+}
