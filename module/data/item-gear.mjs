@@ -71,9 +71,8 @@ export default class EventideRpSystemGear extends EventideRpSystemItemBase {
   }
 
   prepareDerivedData() {
-    // Build the formula dynamically using string interpolation
-    const roll = this.roll;
-
-    this.formula = `${roll.diceNum}${roll.diceSize}${roll.diceBonus}`;
+    this.roll.diceAdjustments.total =
+      this.roll.diceAdjustments.advantage -
+      this.roll.diceAdjustments.disadvantage;
   }
 }
