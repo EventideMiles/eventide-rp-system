@@ -262,6 +262,13 @@ Hooks.on("updateItem", (item, changed, options, triggerPlayer) => {
     game.user.id === triggerPlayer
   ) {
     createStatusMessage(item);
+  } else if (item.type === "gear" && item.actor !== null) {
+    console.log(item);
+    if (item.system.quantity >= 1) {
+      item.effects.forEach((effect) => effect.update({ disabled: false }));
+    } else {
+      item.effects.forEach((effect) => effect.update({ disabled: true }));
+    }
   }
 });
 
