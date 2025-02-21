@@ -78,13 +78,13 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
     // Control which parts show based on document subtype
     switch (this.document.type) {
       case "feature":
-        options.parts.push("effects"); // previously also included "attributesFeature" but since that's currently empty we're excluding it until / unless it starts to have something.
+        options.parts.push("effects");
         break;
       case "status":
         options.parts.push("effects");
         break;
       case "gear":
-        options.parts.push("attributesGear");
+        options.parts.push("attributesGear", "effects");
         break;
       case "combatPower":
         options.parts.push("attributesCombatPower", "prerequisites");
