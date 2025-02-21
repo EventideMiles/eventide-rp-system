@@ -5,10 +5,12 @@ import { EventideRpSystemItem } from "./documents/item.mjs";
 import { EventideRpSystemActorSheet } from "./sheets/actor-sheet.mjs";
 import { EventideRpSystemItemSheet } from "./sheets/item-sheet.mjs";
 import { StatusCreator } from "./sheets/status-creator.mjs";
+import { GearCreator } from "./sheets/gear-creator.mjs";
 import { DamageTargets } from "./sheets/damage-targets.mjs";
 import { RestoreTarget } from "./sheets/restore-target.mjs";
 import { ChangeTargetStatus } from "./sheets/change-target-status.mjs";
 import { SelectAbilityRoll } from "./sheets/select-ability-roll.mjs";
+import { GearTransfer } from "./sheets/gear-transfer.mjs";
 // Import helper/utility classes and constants.
 import { EVENTIDE_RP_SYSTEM } from "./helpers/config.mjs";
 // Import DataModel classes
@@ -25,6 +27,7 @@ import {
   deleteStatusMessage,
   restoreMessage,
   combatPowerMessage,
+  gearTransferMessage,
 } from "./helpers/system-messages.mjs";
 
 /* -------------------------------------------- */
@@ -48,9 +51,17 @@ globalThis.erps = {
     getSelectedArray,
     storeLocal,
     retrieveLocal,
+    createStatusMessage,
+    featureMessage,
+    deleteStatusMessage,
+    restoreMessage,
+    combatPowerMessage,
+    gearTransferMessage,
   },
   macros: {
     StatusCreator,
+    GearTransfer,
+    GearCreator,
     DamageTargets,
     RestoreTarget,
     ChangeTargetStatus,
@@ -62,6 +73,7 @@ globalThis.erps = {
     deleteStatusMessage,
     restoreMessage,
     combatPowerMessage,
+    gearTransferMessage,
   },
   models,
 };
@@ -175,6 +187,10 @@ Handlebars.registerHelper("debug", function (optionalValue) {
   }
 });
 
+Handlebars.registerHelper("lowercase", function (str) {
+  return (str || "").toLowerCase();
+});
+
 /* -------------------------------------------- */
 /*  Ready Hook                                  */
 /* -------------------------------------------- */
@@ -262,16 +278,23 @@ Hooks.on("updateItem", (item, changed, options, triggerPlayer) => {
     game.user.id === triggerPlayer
   ) {
     createStatusMessage(item);
+  } else if (item.type === "gear" && item.actor !== null) {
+    console.log(item);
+    if (item.system.quantity >= 1) {
+      item.effects.forEach((effect) => effect.update({ disabled: false }));
+    } else {
+      item.effects.forEach((effect) => effect.update({ disabled: true }));
+    }
   }
 });
 
-Hooks.on("closeEventideRpSystemItemSheet", (app) => {
-  const item = app.document;
+// Hooks.on("closeEventideRpSystemItemSheet", (app) => {
+//   const item = app.document;
 
-  if (item.type === "status" && item.system.description && app.actor !== null) {
-    createStatusMessage(item);
-  }
-});
+//   if (item.type === "status" && item.system.description && app.actor !== null) {
+//     createStatusMessage(item);
+//   }
+// });
 
 Hooks.on("createItem", (item, options, triggerPlayer) => {
   // Status Message Handler

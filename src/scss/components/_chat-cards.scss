@@ -90,6 +90,10 @@
         &--restore {
             background-color: colors.$heal;
         }
+
+        &--transfer {
+            background-color: colors.$transfer;
+        }
     }
 
     &__description {

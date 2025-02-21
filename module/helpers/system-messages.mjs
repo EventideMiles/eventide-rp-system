@@ -237,10 +237,40 @@ const combatPowerMessage = async (item) => {
   });
 };
 
+/**
+ * Creates a chat message for gear transfer between actors
+ * @param {Item} item - The gear item being transferred
+ * @param {Actor} sourceActor - The actor transferring the gear
+ * @param {Actor} destActor - The actor receiving the gear
+ * @param {number} quantity - The quantity being transferred
+ * @param {string} [description] - Optional description of the transfer
+ * @returns {Promise<ChatMessage>} The created chat message
+ */
+const gearTransferMessage = async (item, sourceActor, destActor, quantity, description = "") => {
+  const data = {
+    item,
+    sourceActor,
+    destActor,
+    quantity,
+    description
+  };
+
+  const content = await renderTemplate(
+    `systems/eventide-rp-system/templates/chat/gear-transfer-message.hbs`,
+    data
+  );
+
+  return ChatMessage.create({
+    speaker: ChatMessage.getSpeaker({ actor: sourceActor }),
+    content: content,
+  });
+};
+
 export {
   createStatusMessage,
   featureMessage,
   deleteStatusMessage,
   restoreMessage,
   combatPowerMessage,
+  gearTransferMessage
 };
