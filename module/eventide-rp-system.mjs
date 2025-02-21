@@ -272,13 +272,13 @@ Hooks.on("updateItem", (item, changed, options, triggerPlayer) => {
   }
 });
 
-Hooks.on("closeEventideRpSystemItemSheet", (app) => {
-  const item = app.document;
+// Hooks.on("closeEventideRpSystemItemSheet", (app) => {
+//   const item = app.document;
 
-  if (item.type === "status" && item.system.description && app.actor !== null) {
-    createStatusMessage(item);
-  }
-});
+//   if (item.type === "status" && item.system.description && app.actor !== null) {
+//     createStatusMessage(item);
+//   }
+// });
 
 Hooks.on("createItem", (item, options, triggerPlayer) => {
   // Status Message Handler
