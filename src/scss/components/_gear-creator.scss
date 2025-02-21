@@ -2,19 +2,19 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  padding: 8px 8px 8px 8px;
+  padding: 6px 8px 6px 8px;
 
   &__header {
-    margin-bottom: 24px;
-    padding-bottom: 16px;
+    margin-bottom: 8px;
+    padding-bottom: 4px;
     border-bottom: 2px solid var(--color-border-light-primary);
   }
 
   &__header-section {
     display: grid;
     grid-template-columns: 2fr 1fr;
-    gap: 16px;
-    margin-bottom: 24px;
+    gap: 12px;
+    margin-bottom: 8px;
   }
 
   &__main-info {
@@ -30,12 +30,12 @@
   &__visual-info {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 4px;
   }
 
   &__image-group {
     text-align: center;
-    margin-bottom: 8px;
+    margin-bottom: 4px;
 
     .base-form__label {
       text-align: left;
@@ -89,8 +89,8 @@
   &__columns {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
-    margin-bottom: 24px;
+    gap: 20px;
+    margin-bottom: 4px;
   }
 
   &__column {
@@ -98,10 +98,11 @@
 
     .base-form__header {
       margin-top: 0;
+      margin-bottom: 4px;
     }
 
     .base-form__group {
-      margin-bottom: 12px;
+      margin-bottom: 4px;
     }
   }
 
@@ -130,19 +131,19 @@
 
   .base-form {
     &__group {
-      margin-bottom: 8px;
+      margin-bottom: 4px;
 
       &--right {
         text-align: right;
-        margin-top: 16px;
+        margin-top: 6px;
       }
     }
 
     &__header {
       font-size: 1.2em;
       font-weight: bold;
-      margin-bottom: 12px;
-      padding-bottom: 4px;
+      margin-bottom: 6px;
+      padding-bottom: 2px;
       border-bottom: 2px solid var(--color-border-light-tertiary);
     }
 
@@ -174,7 +175,7 @@
     }
 
     .base-form__group {
-      margin-bottom: 8px;
+      margin-bottom: 4px;
 
       &:last-child {
         margin-bottom: 0;
