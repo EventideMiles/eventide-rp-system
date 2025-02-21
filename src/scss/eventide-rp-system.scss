@@ -16,6 +16,7 @@
 
 /* Styles limited to eventide-rp-system sheets */
 @use 'components/chat-cards';
+@use 'components/popup-forms';
 
 .eventide-rp-system {
   @include meta.load-css('components/forms');

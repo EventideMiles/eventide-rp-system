@@ -1,43 +1,43 @@
 <div class="{{cssClass}} base-form" autocomplete="off">
     <!-- Warnings -->
     {{#if problems.targeting}}
-        <div class="base-form__warning">You need to target someone to use this power!</div>
+        <div class="popup-form__warning">You need to target someone to use this power!</div>
     {{/if}}
     {{#if problems.power}}
-        <div class="base-form__warning">You don't have enough power to use this! (Need {{item.system.cost}}, have {{item.actor.system.power.value}})</div>
+        <div class="popup-form__warning">You don't have enough power to use this! (Need {{item.system.cost}}, have {{item.actor.system.power.value}})</div>
     {{/if}}
-    <div class="base-form__header">Combat Power Details</div>
+    <div class="popup-form__header">Combat Power Details</div>
     
     {{#if item.system.description}}
-    <div class="base-form__content base-form__content--description">
-        <div class="base-form__header">{{item.actor.name}}</div> 
+    <div class="popup-form__content popup-form__content--description">
+        <div class="popup-form__header">{{item.actor.name}}</div> 
         {{{item.system.description}}}
     </div>
     {{/if}}
 
     {{#if item.system.roll}}
-    <div class="base-form__section">
-        <div class="base-form__header">Roll Information</div>
-        <div class="base-form__group">
-            <div class="base-form__row">
-                <div class="base-form__label">Type</div>
-                <div class="base-form__content">{{item.system.roll.type}}</div>
-                <div class="base-form__label">Ability</div>
-                <div class="base-form__content">{{item.system.roll.ability}}</div>
+    <div class="popup-form__section">
+        <div class="popup-form__header">Roll Information</div>
+        <div class="popup-form__group">
+            <div class="popup-form__row">
+                <div class="popup-form__label">Type</div>
+                <div class="popup-form__content">{{item.system.roll.type}}</div>
+                <div class="popup-form__label">Ability</div>
+                <div class="popup-form__content">{{item.system.roll.ability}}</div>
             </div>
         </div>
-        <div class="base-form__group">
-            <div class="base-form__row">
-                <div class="base-form__label">Bonus</div>
-                <div class="base-form__content">{{numberFormat item.system.roll.bonus decimals=0 sign=true}}</div>
-                <div class="base-form__label">Adjustments</div>
-                <div class="base-form__content">
+        <div class="popup-form__group">
+            <div class="popup-form__row">
+                <div class="popup-form__label">Bonus</div>
+                <div class="popup-form__content">{{numberFormat item.system.roll.bonus decimals=0 sign=true}}</div>
+                <div class="popup-form__label">Adjustments</div>
+                <div class="popup-form__content">
                     {{#if (eq item.system.roll.diceAdjustments.total 0)}}
-                        <span class="base-form__text--neutral">Neutral</span>
+                        <span class="popup-form__text--neutral">Neutral</span>
                     {{else if (lt item.system.roll.diceAdjustments.total 0)}}
-                        <span class="base-form__text--disadvantage">Disadv {{numberFormat (abs item.system.roll.diceAdjustments.total) decimals=0}}</span>
+                        <span class="popup-form__text--disadvantage">Disadv {{numberFormat (abs item.system.roll.diceAdjustments.total) decimals=0}}</span>
                     {{else}}
-                        <span class="base-form__text--advantage">Adv {{numberFormat item.system.roll.diceAdjustments.total decimals=0}}</span>
+                        <span class="popup-form__text--advantage">Adv {{numberFormat item.system.roll.diceAdjustments.total decimals=0}}</span>
                     {{/if}}
                 </div>
             </div>
@@ -46,18 +46,18 @@
     {{/if}}
 
     {{#if item.system.prerequisites}}
-    <div class="base-form__section">
-        <div class="base-form__header">Prerequisites</div>
-        <div class="base-form__content base-form__content--description">
+    <div class="popup-form__section">
+        <div class="popup-form__header">Prerequisites</div>
+        <div class="popup-form__content popup-form__content--description">
             {{{item.system.prerequisites}}}
         </div>
     </div>
     {{/if}}
 
-    <div class="base-form__group base-form__group--right">
+    <div class="popup-form__group popup-form__group--right">
         {{#unless (or problems.targeting problems.power)}}
-            <button type="submit" class="base-form__button base-form__button--primary">Use Power</button>
+            <button type="submit" class="popup-form__button popup-form__button--primary">Use Power</button>
         {{/unless}}
-        <button type="button" class="base-form__button" data-action="close">Close</button>
+        <button type="button" class="popup-form__button" data-action="close">Close</button>
     </div>
 </div>
