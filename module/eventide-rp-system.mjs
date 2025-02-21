@@ -10,6 +10,7 @@ import { DamageTargets } from "./sheets/damage-targets.mjs";
 import { RestoreTarget } from "./sheets/restore-target.mjs";
 import { ChangeTargetStatus } from "./sheets/change-target-status.mjs";
 import { SelectAbilityRoll } from "./sheets/select-ability-roll.mjs";
+import { GearTransfer } from "./sheets/gear-transfer.mjs";
 // Import helper/utility classes and constants.
 import { EVENTIDE_RP_SYSTEM } from "./helpers/config.mjs";
 // Import DataModel classes
@@ -52,6 +53,7 @@ globalThis.erps = {
   },
   macros: {
     StatusCreator,
+    GearTransfer,
     GearCreator,
     DamageTargets,
     RestoreTarget,
