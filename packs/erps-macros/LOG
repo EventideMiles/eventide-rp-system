@@ -1,5 +1,3 @@
-2025/02/21-09:11:15.956 3a3c Recovering log #114
-2025/02/21-09:11:15.956 3a3c Level-0 table #116: started
-2025/02/21-09:11:15.972 3a3c Level-0 table #116: 917 bytes OK
-2025/02/21-09:11:15.982 3a3c Delete type=0 #114
-2025/02/21-09:11:15.982 3a3c Delete type=3 #113
+2025/02/22-09:40:40.502 2f9c Recovering log #117
+2025/02/22-09:40:40.511 2f9c Delete type=0 #117
+2025/02/22-09:40:40.511 2f9c Delete type=3 #115

@@ -1,5 +1,12 @@
 <div class="{{cssClass}} base-form" autocomplete="off">
-    <div class="">This script is designed to damage targets and heal selected tokens. If its in heal mode it will always heal selected over damaging targets.</div>
+    <div>This script is designed to damage targets and heal selected tokens. If its in heal mode it will always heal selected over damaging targets.</div>
+    <div class="base-form__callout base-form__callout--information">
+      {{#if (gt targetArray.length 0)}}
+        There are {{targetArray.length}} target(s) selected.
+      {{else}}
+        There are {{selectedArray.length}} selected token(s).
+      {{/if}}
+    </div>
     <div class="base-form__group">
       <label class="base-form__label" for="label">Label:</label>
       <input class="base-form__text-input" autofocus placeholder="Label" name="label" value="{{lookup storedData (lookup storageKeys 0)}}">

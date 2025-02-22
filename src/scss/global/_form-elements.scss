@@ -88,6 +88,25 @@
     opacity: 0.7;
   }
 
+  &__callout {
+    border-radius: 8px;
+    padding: 10px;
+    margin: 10px 0;
+    font-weight: bold;
+    color: #ffffff;
+  
+
+  &--warning {
+    background-color: #e6b800;
+    border: 2px dashed #ff8c00;
+  }
+
+  &--information {
+    background-color: #0050b3;
+    border: 2px solid #91d5ff;
+  }
+}
+
   // Elements
   &__header {
     font-family: typography.$underdog;
