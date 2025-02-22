@@ -158,19 +158,18 @@ export class StatusCreator extends HandlebarsApplicationMixin(ApplicationV2) {
 
     let createdItem;
 
-    const html = form;
-    const name = html.name.value;
-    const description = html.description.value;
-    const img = html.img.value;
-    const bgColor = html.bgColor.value;
-    const textColor = html.textColor.value;
-    const iconTint = html.iconTint.value;
+    const name = form.name.value;
+    const description = form.description.value;
+    const img = form.img.value;
+    const bgColor = form.bgColor.value;
+    const textColor = form.textColor.value;
+    const iconTint = form.iconTint.value;
 
     const effects = abilities
       .map((ability) => {
-        const value = parseInt(html[ability.toLowerCase()].value);
+        const value = parseInt(form[ability.toLowerCase()].value);
         if (value === 0) return null;
-        const mode = html[`${ability.toLowerCase()}-mode`].value;
+        const mode = form[`${ability.toLowerCase()}-mode`].value;
 
         return {
           key: `system.abilities.${ability.toLowerCase()}.${
@@ -194,9 +193,9 @@ export class StatusCreator extends HandlebarsApplicationMixin(ApplicationV2) {
 
     const hiddenEffects = hiddenAbilities
       .map((ability) => {
-        const value = parseInt(html[ability.toLowerCase()].value);
+        const value = parseInt(form[ability.toLowerCase()].value);
         if (value === 0) return null;
-        const mode = html[`${ability.toLowerCase()}-mode`].value;
+        const mode = form[`${ability.toLowerCase()}-mode`].value;
 
         return {
           key: `system.hiddenAbilities.${ability.toLowerCase()}.${

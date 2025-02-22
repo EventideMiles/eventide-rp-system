@@ -163,38 +163,37 @@ export class GearCreator extends HandlebarsApplicationMixin(ApplicationV2) {
     try {
       event.preventDefault();
 
-      const html = form;
-      const name = html.name.value;
+      const name = form.name.value;
       if (!name) {
         ui.notifications.error("Name is required");
         return;
       }
 
-      const description = html.description.value;
-      const img = html.img.value;
-      const bgColor = html.bgColor.value;
-      const textColor = html.textColor.value;
-      const quantity = parseInt(html.quantity.value) || 1;
-      const weight = parseFloat(html.weight.value) || 0;
-      const cost = parseInt(html.cost.value) || 0;
-      const targeted = html.targeted.checked;
+      const description = form.description.value;
+      const img = form.img.value;
+      const bgColor = form.bgColor.value;
+      const textColor = form.textColor.value;
+      const quantity = parseInt(form.quantity.value) || 1;
+      const weight = parseFloat(form.weight.value) || 0;
+      const cost = parseInt(form.cost.value) || 0;
+      const targeted = form.targeted.checked;
 
       // Roll data
-      const rollType = html["roll.type"].value;
+      const rollType = form["roll.type"].value;
       const rollData = {
         type: rollType,
         ability:
-          rollType !== "none" ? html["roll.ability"].value : "unaugmented",
+          rollType !== "none" ? form["roll.ability"].value : "unaugmented",
         bonus:
-          rollType !== "none" ? parseInt(html["roll.bonus"].value) || 0 : 0,
+          rollType !== "none" ? parseInt(form["roll.bonus"].value) || 0 : 0,
         diceAdjustments: {
           advantage:
             rollType === "roll"
-              ? parseInt(html["roll.diceAdjustments.advantage"].value) || 0
+              ? parseInt(form["roll.diceAdjustments.advantage"].value) || 0
               : 0,
           disadvantage:
             rollType === "roll"
-              ? parseInt(html["roll.diceAdjustments.disadvantage"].value) || 0
+              ? parseInt(form["roll.diceAdjustments.disadvantage"].value) || 0
               : 0,
           total: 0, // This will be calculated by the system
         },
@@ -202,9 +201,9 @@ export class GearCreator extends HandlebarsApplicationMixin(ApplicationV2) {
 
       const effects = GearCreator.abilities
         .map((ability) => {
-          const value = parseInt(html[ability.toLowerCase()].value);
+          const value = parseInt(form[ability.toLowerCase()].value);
           if (value === 0) return null;
-          const mode = html[`${ability.toLowerCase()}-mode`].value;
+          const mode = form[`${ability.toLowerCase()}-mode`].value;
 
           return {
             key: `system.abilities.${ability.toLowerCase()}.${
@@ -228,9 +227,9 @@ export class GearCreator extends HandlebarsApplicationMixin(ApplicationV2) {
 
       const hiddenEffects = this.hiddenAbilities
         .map((ability) => {
-          const value = parseInt(html[ability.toLowerCase()].value);
+          const value = parseInt(form[ability.toLowerCase()].value);
           if (value === 0) return null;
-          const mode = html[`${ability.toLowerCase()}-mode`].value;
+          const mode = form[`${ability.toLowerCase()}-mode`].value;
 
           return {
             key: `system.abilities.${ability.toLowerCase()}.${
