@@ -59,12 +59,12 @@ export class RestoreTarget extends HandlebarsApplicationMixin(ApplicationV2) {
         "Only GMs can restore actor resources and remove status effects."
       );
       this.close();
+      return;
     }
     const context = {};
 
     const targetTokens = await erps.utils.getTargetArray();
     context.cssClass = RestoreTarget.DEFAULT_OPTIONS.classes.join(" ");
-
     if (targetTokens.length === 0) {
       ui.notifications.error(`Please target a token first!`);
       this.close();
@@ -73,8 +73,8 @@ export class RestoreTarget extends HandlebarsApplicationMixin(ApplicationV2) {
       this.close();
     }
 
-    const actor = targetTokens[0].actor;
-    context.statusEffects = actor?.items?.filter(
+    context.actor = targetTokens[0].actor;
+    context.statusEffects = context.actor?.items?.filter(
       (item) => item?.type === "status"
     );
 
