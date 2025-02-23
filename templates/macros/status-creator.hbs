@@ -1,4 +1,14 @@
 <div class="{{cssClass}} base-form" autocomplete="off">
+  <div class="base-form__callout base-form__callout--information">
+    <i class="fas fa-info-circle"></i>
+    {{#if (eq targetArray.length 0)}}
+      There are no targets selected. This will create a status condition 
+      for the compendium only.
+    {{else}}
+      There are <strong>{{targetArray.length}} target(s)</strong> selected. This will create a status condition 
+      for each target and your compendium.
+    {{/if}}
+  </div>
   <div class="base-form__group">
     <label class="base-form__label" for="name">Name:</label>
     <input class="base-form__text-input" autofocus type="text" id="name" name="name" placeholder="Name">
@@ -27,15 +37,15 @@
     <input class="base-form__color-input" type="color" id="textColor" name="textColor" value="{{ifThen storedData.status_textColor storedData.status_textColor "#ffffff"}}">
   </div>
   <div class="base-form__group">
-    <label class=""base-form__label for="iconTint">Icon Tint:</label>
+    <label class="base-form__label" for="iconTint">Icon Tint:</label>
     <input class="base-form__color-input" type="color" id="iconTint" name="iconTint" value="{{ifThen storedData.status_iconTint storedData.status_iconTint "#ffffff"}}">
   </div>
   <div class="base-form__header">Effects</div>
   {{#each abilities}}
     <div class="base-form__group">
-      <label class="base-form__label" for="{{this.toLowerCase}}"> {{this}}:</label>
-      <input class="base-form__number-input" type="number" id="{{this.toLowerCase}}" name="{{this.toLowerCase}}" value="0">
-      <select class="base-form__select" id="{{this.toLowerCase}}-mode" name="{{this.toLowerCase}}-mode">
+      <label class="base-form__label" for="{{lowercase this}}">{{this}}:</label>
+      <input class="base-form__number-input" type="number" id="{{lowercase this}}" name="{{lowercase this}}" value="0">
+      <select class="base-form__select" id="{{lowercase this}}-mode" name="{{lowercase this}}-mode">
         <option value="add">Change</option>
         <option value="override">Override</option>
         <option value="advantage">Advantage</option>
@@ -45,9 +55,9 @@
   {{/each}}
   {{#each hiddenAbilities}}
     <div class="base-form__group">
-      <label class="base-form__label" for="{{this.toLowerCase}}"> {{this}}:</label>
-      <input class="base-form__number-input" type="number" id="{{this.toLowerCase}}" name="{{this.toLowerCase}}" value="0">
-      <select class="base-form__select" id="{{this.toLowerCase}}-mode" name="{{this.toLowerCase}}-mode">
+      <label class="base-form__label" for="{{lowercase this}}">{{this}}:</label>
+      <input class="base-form__number-input" type="number" id="{{lowercase this}}" name="{{lowercase this}}" value="0">
+      <select class="base-form__select" id="{{lowercase this}}-mode" name="{{lowercase this}}-mode">
         <option value="add">Change</option>
         <option value="override">Override</option>
       </select>

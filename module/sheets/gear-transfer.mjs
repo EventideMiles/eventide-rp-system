@@ -74,28 +74,26 @@ export class GearTransfer extends HandlebarsApplicationMixin(ApplicationV2) {
     }
 
     // Get actors
-    const targetActor = context.targetToken.actor;
-    const selectedActor = context.selectedToken.actor;
+    context.targetActor = context.targetToken.actor;
+    context.selectedActor = context.selectedToken.actor;
 
-    if (!targetActor || !selectedActor) {
+    if (!context.targetActor || !context.selectedActor) {
       ui.notifications.warn("Selected tokens must have associated actors");
       this.close();
       return context;
     }
 
     // Get gear items from target actor with quantity > 0
-    const targetItems = targetActor.items?.contents || [];
-    context.targetGear = targetItems.filter((i) => i.type === "gear" && i.system.quantity > 0);
+    const targetItems = context.targetActor.items?.contents || [];
+    context.targetGear = targetItems.filter(
+      (i) => i.type === "gear" && i.system.quantity > 0
+    );
 
     if (context.targetGear.length === 0) {
       ui.notifications.warn("Target has no gear items available to transfer");
       this.close();
       return context;
     }
-
-    // Set names for display
-    context.targetName = targetActor.name;
-    context.selectedName = selectedActor.name;
 
     return context;
   }
@@ -165,7 +163,10 @@ export class GearTransfer extends HandlebarsApplicationMixin(ApplicationV2) {
     }
 
     // Reduce source item quantity (never below 0)
-    const newQuantity = Math.max(0, sourceItem.system.quantity - transferQuantity);
+    const newQuantity = Math.max(
+      0,
+      sourceItem.system.quantity - transferQuantity
+    );
     await sourceItem.update({
       "system.quantity": newQuantity,
     });
@@ -178,6 +179,12 @@ export class GearTransfer extends HandlebarsApplicationMixin(ApplicationV2) {
     }
 
     // Create chat message about the transfer
-    await erps.utils.gearTransferMessage(sourceItem, sourceActor, destActor, transferQuantity, finalDescription);
+    await erps.messages.gearTransferMessage(
+      sourceItem,
+      sourceActor,
+      destActor,
+      transferQuantity,
+      finalDescription
+    );
   }
 }

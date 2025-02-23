@@ -29,6 +29,7 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
       deleteDoc: this._deleteDoc,
       toggleEffect: this._toggleEffect,
       roll: this._onRoll,
+      toggleGear: this._toggleGear,
     },
     // Custom property that's merged into `this.options`
     dragDrop: [{ dragSelector: "[data-drag]", dropSelector: null }],
@@ -113,8 +114,11 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
   /** @override */
   async _preparePartContext(partId, context) {
     switch (partId) {
-      case "features":
       case "gear":
+        context.tab = context.tabs[partId];
+
+        break;
+      case "features":
       case "statuses":
       case "combatPowers":
         context.tab = context.tabs[partId];
@@ -231,6 +235,8 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
 
     // Sort then assign
     context.gear = gear.sort((a, b) => (a.sort || 0) - (b.sort || 0));
+    context.unequippedGear = gear.filter((i) => !i.system.equipped);
+    context.equippedGear = gear.filter((i) => i.system.equipped);
     context.features = features.sort((a, b) => (a.sort || 0) - (b.sort || 0));
     context.statuses = statuses.sort((a, b) => (a.sort || 0) - (b.sort || 0));
     context.combatPowers = combatPowers.sort(
@@ -356,6 +362,12 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
   static async _toggleEffect(event, target) {
     const effect = this._getEmbeddedDocument(target);
     await effect.update({ disabled: !effect.disabled });
+  }
+
+  static async _toggleGear(event, target) {
+    const gear = this._getEmbeddedDocument(target);
+    await gear.update({ "system.equipped": !gear.system.equipped });
+    erps.messages.gearEquipMessage(gear);
   }
 
   /**

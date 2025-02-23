@@ -94,6 +94,10 @@
         &--transfer {
             background-color: colors.$transfer;
         }
+
+        &--equip {
+            background-color: colors.$gear;
+        }
     }
 
     &__description {
@@ -123,7 +127,6 @@
         font-size: 0.7rem;
         padding: 0rem;
         color: colors.$card-tan;
-
 
         &--ac-check {
             border: 3px dashed colors.$hidden-border;
@@ -201,8 +204,6 @@
         }
     }
 
-
-
     &__image {
         &--primary {
             width: 150px;
@@ -222,5 +223,4 @@
         border: none;
         border-top: 1px solid colors.$hr;
     }
-
 }

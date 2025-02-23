@@ -1,5 +1,18 @@
 @use "../utils/colors";
 @use "../utils/variables";
+@use "../utils/typography";
+
+.items-section-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: typography.$underdog;
+  font-size: 1.5em;
+  font-weight: bold;
+  text-decoration: underline;
+  padding: 10px 0;
+  
+}
 
 // Section Header
 .items-header {
@@ -72,6 +85,10 @@
       font-size: 12px;
       text-align: center;
       margin: 0 6px;
+    }
+
+    .item-unequip {
+      color: #e74c3c;
     }
   }
 

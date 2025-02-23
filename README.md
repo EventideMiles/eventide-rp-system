@@ -22,7 +22,8 @@ A custom roleplaying system for Foundry VTT that emphasizes dynamic character ab
 
 ### Equipment and Powers
 
-- Combat gear management system - Quick and easy to manage combat gear and use it
+- Extensive Combat Gear Management system - Quick and easy to manage combat gear and use it:
+  - As extensive as you want it to be: items can have effects on stats, roll data like a combat power, they can track uses, and can be equipped and unequipped
 - Combat powers with detailed descriptions and reminders to ensure you fulfill their requirements / have enough
   power to use them
 - Status effect tracking and management - formatted chat messages for when they apply and expire

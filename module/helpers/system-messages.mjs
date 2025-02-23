@@ -246,13 +246,19 @@ const combatPowerMessage = async (item) => {
  * @param {string} [description] - Optional description of the transfer
  * @returns {Promise<ChatMessage>} The created chat message
  */
-const gearTransferMessage = async (item, sourceActor, destActor, quantity, description = "") => {
+const gearTransferMessage = async (
+  item,
+  sourceActor,
+  destActor,
+  quantity,
+  description = ""
+) => {
   const data = {
     item,
     sourceActor,
     destActor,
     quantity,
-    description
+    description,
   };
 
   const content = await renderTemplate(
@@ -266,11 +272,35 @@ const gearTransferMessage = async (item, sourceActor, destActor, quantity, descr
   });
 };
 
+/**
+ * Creates a chat message for gear equip/unequip events
+ * @param {Item} item - The gear item being equipped/unequipped
+ * @returns {Promise<ChatMessage>} The created chat message
+ */
+const gearEquipMessage = async (item) => {
+  const data = {
+    item,
+    actor: item.actor,
+    equipped: item.system.equipped,
+  };
+
+  const content = await renderTemplate(
+    `systems/eventide-rp-system/templates/chat/gear-equip-message.hbs`,
+    data
+  );
+
+  return ChatMessage.create({
+    speaker: ChatMessage.getSpeaker({ actor: item.actor }),
+    content: content,
+  });
+};
+
 export {
   createStatusMessage,
   featureMessage,
   deleteStatusMessage,
   restoreMessage,
   combatPowerMessage,
-  gearTransferMessage
+  gearTransferMessage,
+  gearEquipMessage,
 };

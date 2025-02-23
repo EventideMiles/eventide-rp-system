@@ -124,7 +124,7 @@ export class DamageTargets extends HandlebarsApplicationMixin(ApplicationV2) {
     const selectedArray = this.selectedArray;
     const targetArray = this.targetArray;
 
-    if (targetArray.length === 0 && selectedArray.length === 0) {
+    if (this.targetArray.length === 0 && this.selectedArray.length === 0) {
       ui.notifications.error(`Please target or select a token first!`);
       this.close();
       return;
@@ -136,7 +136,10 @@ export class DamageTargets extends HandlebarsApplicationMixin(ApplicationV2) {
       description: form.description.value || "",
       type: form.isHeal.checked ? "heal" : "damage",
     };
-    if (damageOptions.type === "heal" && this.selectedArray.length > 0) {
+    if (
+      (damageOptions.type === "heal" && this.selectedArray.length > 0) ||
+      (this.selectedArray.length > 0 && this.targetArray.length === 0)
+    ) {
       await Promise.all(
         selectedArray.map((token) => token.actor.damageResolve(damageOptions))
       );

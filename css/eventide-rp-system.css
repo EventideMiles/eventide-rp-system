@@ -466,6 +466,21 @@
   pointer-events: none;
   opacity: 0.7;
 }
+.base-form__callout {
+  border-radius: 8px;
+  padding: 10px;
+  margin: 10px 0;
+  font-weight: bold;
+  color: #ffffff;
+}
+.base-form__callout--warning {
+  background-color: #e6b800;
+  border: 2px dashed #ff8c00;
+}
+.base-form__callout--information {
+  background-color: #0050b3;
+  border: 2px solid #91d5ff;
+}
 .base-form__header {
   font-family: "Underdog", serif;
   text-align: center;
@@ -979,6 +994,9 @@
 }
 .chat-card__header--transfer {
   background-color: var(--eventide-rp-system-card-header-transfer);
+}
+.chat-card__header--equip {
+  background-color: var(--eventide-rp-system-card-header-gear);
 }
 .chat-card__description {
   color: var(--eventide-rp-system-chat-card-tan);
@@ -1718,6 +1736,8 @@
   /* Update base form styling to ensure scrollbars work properly */
   @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
   @import url("https://fonts.googleapis.com/css2?family=Combo&family=Merienda:wght@300..900&family=Protest+Revolution&family=Underdog&display=swap");
+  @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
+  @import url("https://fonts.googleapis.com/css2?family=Combo&family=Merienda:wght@300..900&family=Protest+Revolution&family=Underdog&display=swap");
 }
 .eventide-rp-system .protest-revolution-regular {
   font-family: "Protest Revolution", serif;
@@ -2201,6 +2221,37 @@
   --eventide-rp-system-danger-button-border: #990000;
   --eventide-rp-system-danger-button-hover: #ff0000;
 }
+.eventide-rp-system .protest-revolution-regular {
+  font-family: "Protest Revolution", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+.eventide-rp-system .combo-regular {
+  font-family: "Combo", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+.eventide-rp-system .underdog-regular {
+  font-family: "Underdog", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+.eventide-rp-system .merienda-regular {
+  font-family: "Merienda", serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+.eventide-rp-system .items-section-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: "Underdog", serif;
+  font-size: 1.5em;
+  font-weight: bold;
+  text-decoration: underline;
+  padding: 10px 0;
+}
 .eventide-rp-system .items-header {
   height: 28px;
   margin: 2px 0;
@@ -2257,6 +2308,9 @@
   font-size: 12px;
   text-align: center;
   margin: 0 6px;
+}
+.eventide-rp-system .items-list .item-controls .item-unequip {
+  color: #e74c3c;
 }
 .eventide-rp-system .items-list .item {
   align-items: center;
