@@ -28,6 +28,7 @@ import {
   restoreMessage,
   combatPowerMessage,
   gearTransferMessage,
+  gearEquipMessage,
 } from "./helpers/system-messages.mjs";
 
 /* -------------------------------------------- */
@@ -51,12 +52,6 @@ globalThis.erps = {
     getSelectedArray,
     storeLocal,
     retrieveLocal,
-    createStatusMessage,
-    featureMessage,
-    deleteStatusMessage,
-    restoreMessage,
-    combatPowerMessage,
-    gearTransferMessage,
   },
   macros: {
     StatusCreator,
@@ -74,6 +69,7 @@ globalThis.erps = {
     restoreMessage,
     combatPowerMessage,
     gearTransferMessage,
+    gearEquipMessage,
   },
   models,
 };
@@ -87,8 +83,9 @@ Hooks.once("init", function () {
    * @type {String}
    */
   CONFIG.Combat.initiative = {
-    formula:
-      "1d@hiddenAbilities.dice.total + (@abilities.acro.total + @abilities.wits.total)/2",
+    formula: `1d@hiddenAbilities.dice.total + 
+    ((@abilities.acro.total + @abilities.wits.total)/2) + 
+    ((@abilities.acro.total + @abilities.phys.total + @abilities.fort.total + @abilities.will.total + @abilities.wits.total)/100)`,
     decimals: 2,
   };
 
@@ -246,6 +243,7 @@ async function createDocMacro(data, slot) {
  * @returns {Promise<void>}
  */
 async function rollItemMacro(itemUuid) {
+  console.log("Rolling item macro for " + itemUuid);
   // Reconstruct the drop data so that we can load the item.
   const dropData = {
     type: "Item",
@@ -280,7 +278,7 @@ Hooks.on("updateItem", (item, changed, options, triggerPlayer) => {
     createStatusMessage(item);
   } else if (item.type === "gear" && item.actor !== null) {
     console.log(item);
-    if (item.system.quantity >= 1) {
+    if (item.system.quantity >= 1 && item.system.equipped) {
       item.effects.forEach((effect) => effect.update({ disabled: false }));
     } else {
       item.effects.forEach((effect) => effect.update({ disabled: true }));

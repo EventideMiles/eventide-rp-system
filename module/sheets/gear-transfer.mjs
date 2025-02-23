@@ -179,7 +179,7 @@ export class GearTransfer extends HandlebarsApplicationMixin(ApplicationV2) {
     }
 
     // Create chat message about the transfer
-    await erps.utils.gearTransferMessage(
+    await erps.messages.gearTransferMessage(
       sourceItem,
       sourceActor,
       destActor,

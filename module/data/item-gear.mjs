@@ -11,6 +11,11 @@ export default class EventideRpSystemGear extends EventideRpSystemItemBase {
     const requiredInteger = { required: true, nullable: false, integer: true };
     const schema = super.defineSchema();
 
+    schema.equipped = new fields.BooleanField({
+      required: true,
+      initial: true,
+    });
+
     schema.bgColor = new fields.ColorField({
       initial: "#8B4513",
       blank: false,
