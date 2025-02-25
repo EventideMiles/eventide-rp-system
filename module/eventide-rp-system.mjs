@@ -302,6 +302,13 @@ Hooks.on("createItem", (item, options, triggerPlayer) => {
   ) {
     createStatusMessage(item);
   }
+  if (
+    item.type === "feature" &&
+    item.actor !== null &&
+    game.user.id === triggerPlayer
+  ) {
+    featureMessage(item);
+  }
 });
 
 Hooks.on("deleteItem", (item, options, triggerPlayer) => {

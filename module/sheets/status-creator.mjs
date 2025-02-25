@@ -1,7 +1,7 @@
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
 /**
- * A form application for creating and managing status effects.
+ * A form application for creating and managing status effects and features.
  * @extends {HandlebarsApplicationMixin(ApplicationV2)}
  */
 export class StatusCreator extends HandlebarsApplicationMixin(ApplicationV2) {
@@ -45,6 +45,7 @@ export class StatusCreator extends HandlebarsApplicationMixin(ApplicationV2) {
       `status_${this.number}_bgColor`,
       `status_${this.number}_textColor`,
       `status_${this.number}_iconTint`,
+      `status_${this.number}_type`,
     ];
     if (advanced) {
       this.hiddenAbilities = [...StatusCreator.hiddenAbilities];
@@ -85,6 +86,7 @@ export class StatusCreator extends HandlebarsApplicationMixin(ApplicationV2) {
       status_bgColor: storedData[this.storageKeys[1]],
       status_textColor: storedData[this.storageKeys[2]],
       status_iconTint: storedData[this.storageKeys[3]],
+      status_type: storedData[this.storageKeys[4]] || "status",
     };
 
     context.returnedData = context.storedData.img;
@@ -142,8 +144,8 @@ export class StatusCreator extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 
   /**
-   * Handles form submission to create a new status effect.
-   * Creates the status effect on targeted tokens and stores it in a compendium.
+   * Handles form submission to create a new status effect or feature.
+   * Creates the status effect or feature on targeted tokens and stores it in a compendium.
    * Also saves form preferences to local storage.
    * @param {Event} event - The form submission event
    * @param {HTMLFormElement} form - The form element
@@ -164,6 +166,7 @@ export class StatusCreator extends HandlebarsApplicationMixin(ApplicationV2) {
     const bgColor = form.bgColor.value;
     const textColor = form.textColor.value;
     const iconTint = form.iconTint.value;
+    const type = form.type.value;
 
     const effects = abilities
       .map((ability) => {
@@ -211,9 +214,9 @@ export class StatusCreator extends HandlebarsApplicationMixin(ApplicationV2) {
       })
       .filter((e) => e !== null);
 
-    const statusItem = {
+    const item = {
       name,
-      type: "status",
+      type,
       system: {
         description,
         bgColor,
@@ -229,7 +232,7 @@ export class StatusCreator extends HandlebarsApplicationMixin(ApplicationV2) {
           disabled: false,
           duration: {
             startTime: null,
-            seconds: 18000,
+            seconds: type === "status" ? 18000 : 0,
             combat: "",
             rounds: 0,
             turns: 0,
@@ -249,18 +252,21 @@ export class StatusCreator extends HandlebarsApplicationMixin(ApplicationV2) {
     if (targetArray.length > 0) {
       for (const token of targetArray) {
         const actor = token.actor;
-        createdItem = await actor.createEmbeddedDocuments("Item", [statusItem]);
+        createdItem = await actor.createEmbeddedDocuments("Item", [item]);
       }
     } else {
-      createdItem = await game.items.createDocument(statusItem);
+      createdItem = await game.items.createDocument(item);
     }
 
-    // Store the status item in the compendium, create pack if it doesn't exist
-    let pack = game.packs.get("world.customstatuses");
+    // Store the item in the appropriate compendium, create pack if it doesn't exist
+    const packId = type === "status" ? "customstatuses" : "customfeatures";
+    const packLabel = type === "status" ? "Custom Statuses" : "Custom Features";
+
+    let pack = game.packs.get(`world.${packId}`);
     if (!pack) {
       pack = await CompendiumCollection.createCompendium({
-        name: "customstatuses",
-        label: "Custom Statuses",
+        name: packId,
+        label: packLabel,
         type: "Item",
       });
     }
@@ -275,6 +281,7 @@ export class StatusCreator extends HandlebarsApplicationMixin(ApplicationV2) {
       [this.storageKeys[1]]: bgColor,
       [this.storageKeys[2]]: textColor,
       [this.storageKeys[3]]: iconTint,
+      [this.storageKeys[4]]: type,
     };
 
     await erps.utils.storeLocal(storageObject);

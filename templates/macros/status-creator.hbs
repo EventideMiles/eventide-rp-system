@@ -2,12 +2,17 @@
   <div class="base-form__callout base-form__callout--information">
     <i class="fas fa-info-circle"></i>
     {{#if (eq targetArray.length 0)}}
-      There are no targets selected. This will create a status condition 
-      for the compendium only.
+      There are no targets selected. This will create either a status condition or feature (as selected) for the compendium only.
     {{else}}
-      There are <strong>{{targetArray.length}} target(s)</strong> selected. This will create a status condition 
-      for each target and your compendium.
+      There are <strong>{{targetArray.length}} target(s)</strong> selected. This will create a status condition or feature (as selected) for each target and your compendium.
     {{/if}}
+  </div>
+  <div class="base-form__group">
+    <label class="base-form__label" for="type">Type:</label>
+    <select class="base-form__select" id="type" name="type">
+      <option value="status" {{#if (eq storedData.status_type "status")}}selected{{/if}}>Status</option>
+      <option value="feature" {{#if (eq storedData.status_type "feature")}}selected{{/if}}>Feature</option>
+    </select>
   </div>
   <div class="base-form__group">
     <label class="base-form__label" for="name">Name:</label>
