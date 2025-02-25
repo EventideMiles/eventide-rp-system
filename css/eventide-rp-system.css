@@ -1101,6 +1101,7 @@
 }
 
 .popup-form {
+  max-height: 90vh;
   overflow-y: auto;
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -1171,11 +1172,9 @@
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 .popup-form__content {
-  min-width: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  padding: 0.25rem 0.5rem;
+  flex: 1;
+  margin: 0.25rem;
+  padding: 0.25rem;
   background-color: var(--eventide-rp-system-form-content-bg);
   border-radius: 4px;
   text-align: center;
@@ -1191,11 +1190,11 @@
   line-height: 1.4;
 }
 .popup-form__content--description {
+  overflow-y: visible;
+  height: auto;
   white-space: normal;
   text-align: left;
   padding: 0.5rem;
-  overflow-y: auto;
-  max-height: 200px;
   word-wrap: break-word;
 }
 .popup-form__content .popup-form__text--advantage {
