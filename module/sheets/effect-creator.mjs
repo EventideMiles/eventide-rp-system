@@ -4,24 +4,24 @@ const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
  * A form application for creating and managing status effects and features.
  * @extends {HandlebarsApplicationMixin(ApplicationV2)}
  */
-export class StatusCreator extends HandlebarsApplicationMixin(ApplicationV2) {
+export class EffectCreator extends HandlebarsApplicationMixin(ApplicationV2) {
   static PARTS = {
-    statusCreator: {
+    effectCreator: {
       template:
-        "/systems/eventide-rp-system/templates/macros/status-creator.hbs",
+        "/systems/eventide-rp-system/templates/macros/effect-creator.hbs",
     },
   };
 
   static DEFAULT_OPTIONS = {
-    id: "status-creator",
-    classes: ["eventide-rp-system", "standard-form", "status-creator"],
+    id: "effect-creator",
+    classes: ["eventide-rp-system", "standard-form", "effect-creator"],
     position: {
       width: 640,
       height: 600,
     },
     tag: "form",
     window: {
-      title: "Status Creator",
+      title: "Effect Creator",
       icon: "fa-solid fa-message-plus",
     },
     form: {
@@ -41,16 +41,16 @@ export class StatusCreator extends HandlebarsApplicationMixin(ApplicationV2) {
     super();
     this.number = Math.floor(number);
     this.storageKeys = [
-      `status_${this.number}_img`,
-      `status_${this.number}_bgColor`,
-      `status_${this.number}_textColor`,
-      `status_${this.number}_iconTint`,
-      `status_${this.number}_type`,
+      `effect_${this.number}_img`,
+      `effect_${this.number}_bgColor`,
+      `effect_${this.number}_textColor`,
+      `effect_${this.number}_iconTint`,
+      `effect_${this.number}_type`,
     ];
     if (advanced) {
-      this.hiddenAbilities = [...StatusCreator.hiddenAbilities];
+      this.hiddenAbilities = [...EffectCreator.hiddenAbilities];
     } else {
-      this.hiddenAbilities = StatusCreator.hiddenAbilities.filter(
+      this.hiddenAbilities = EffectCreator.hiddenAbilities.filter(
         (ability) => ability !== "Cmax" && ability !== "Fmin"
       );
     }
@@ -69,8 +69,8 @@ export class StatusCreator extends HandlebarsApplicationMixin(ApplicationV2) {
   async _prepareContext(options) {
     const context = {};
 
-    context.cssClass = StatusCreator.DEFAULT_OPTIONS.classes.join(" ");
-    context.abilities = StatusCreator.abilities;
+    context.cssClass = EffectCreator.DEFAULT_OPTIONS.classes.join(" ");
+    context.abilities = EffectCreator.abilities;
     context.hiddenAbilities = this.hiddenAbilities;
     context.targetArray = await erps.utils.getTargetArray();
 
@@ -82,11 +82,11 @@ export class StatusCreator extends HandlebarsApplicationMixin(ApplicationV2) {
     const storedData = await erps.utils.retrieveLocal(this.storageKeys);
 
     context.storedData = {
-      status_img: storedData[this.storageKeys[0]] || "icons/svg/stoned.svg",
-      status_bgColor: storedData[this.storageKeys[1]],
-      status_textColor: storedData[this.storageKeys[2]],
-      status_iconTint: storedData[this.storageKeys[3]],
-      status_type: storedData[this.storageKeys[4]] || "status",
+      effect_img: storedData[this.storageKeys[0]] || "icons/svg/stoned.svg",
+      effect_bgColor: storedData[this.storageKeys[1]],
+      effect_textColor: storedData[this.storageKeys[2]],
+      effect_iconTint: storedData[this.storageKeys[3]],
+      effect_type: storedData[this.storageKeys[4]] || "status",
     };
 
     context.returnedData = context.storedData.img;
@@ -153,7 +153,7 @@ export class StatusCreator extends HandlebarsApplicationMixin(ApplicationV2) {
    * @private
    */
   static async #onSubmit(event, form, formData) {
-    const abilities = StatusCreator.abilities;
+    const abilities = EffectCreator.abilities;
     const hiddenAbilities = this.hiddenAbilities;
 
     const targetArray = await erps.utils.getTargetArray();

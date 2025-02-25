@@ -4,13 +4,13 @@ import { EventideRpSystemItem } from "./documents/item.mjs";
 // Import sheet classes.
 import { EventideRpSystemActorSheet } from "./sheets/actor-sheet.mjs";
 import { EventideRpSystemItemSheet } from "./sheets/item-sheet.mjs";
-import { StatusCreator } from "./sheets/status-creator.mjs";
 import { GearCreator } from "./sheets/gear-creator.mjs";
 import { DamageTargets } from "./sheets/damage-targets.mjs";
 import { RestoreTarget } from "./sheets/restore-target.mjs";
 import { ChangeTargetStatus } from "./sheets/change-target-status.mjs";
 import { SelectAbilityRoll } from "./sheets/select-ability-roll.mjs";
 import { GearTransfer } from "./sheets/gear-transfer.mjs";
+import { EffectCreator } from "./sheets/effect-creator.mjs";
 // Import helper/utility classes and constants.
 import { EVENTIDE_RP_SYSTEM } from "./helpers/config.mjs";
 // Import DataModel classes
@@ -54,13 +54,13 @@ globalThis.erps = {
     retrieveLocal,
   },
   macros: {
-    StatusCreator,
     GearTransfer,
     GearCreator,
     DamageTargets,
     RestoreTarget,
     ChangeTargetStatus,
     SelectAbilityRoll,
+    EffectCreator,
   },
   messages: {
     createStatusMessage,

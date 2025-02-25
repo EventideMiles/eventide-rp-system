@@ -10,8 +10,8 @@
   <div class="base-form__group">
     <label class="base-form__label" for="type">Type:</label>
     <select class="base-form__select" id="type" name="type">
-      <option value="status" {{#if (eq storedData.status_type "status")}}selected{{/if}}>Status</option>
-      <option value="feature" {{#if (eq storedData.status_type "feature")}}selected{{/if}}>Feature</option>
+      <option value="status" {{#if (eq storedData.effect_type "status")}}selected{{/if}}>Status</option>
+      <option value="feature" {{#if (eq storedData.effect_type "feature")}}selected{{/if}}>Feature</option>
     </select>
   </div>
   <div class="base-form__group">
@@ -26,24 +26,24 @@
     <label class="base-form__label" for="img">Image:</label>
     <img
       class="base-form__image base-form__image--edit"
-      src="{{storedData.status_img}}"
+      src="{{storedData.effect_img}}"
       data-edit="img"
       data-action='onEditImage'
-      title="Status Image"
+      title="Effect Image"
     />
-    <input class="base-form__hidden-input" type="hidden" name="img" value="{{ifThen storedData.status_img storedData.status_img "icons/svg/stoned.svg"}}">
+    <input class="base-form__hidden-input" type="hidden" name="img" value="{{ifThen storedData.effect_img storedData.effect_img "icons/svg/stoned.svg"}}">
   </div>
   <div class="base-form__group">
     <label class="base-form__label" for="bgColor">Background Color:</label>
-    <input class="base-form__color-input" type="color" id="bgColor" name="bgColor" value="{{ifThen storedData.status_bgColor storedData.status_bgColor "#7B4874"}}">
+    <input class="base-form__color-input" type="color" id="bgColor" name="bgColor" value="{{ifThen storedData.effect_bgColor storedData.effect_bgColor "#7B4874"}}">
   </div>
   <div class="base-form__group">
     <label class="base-form__label" for="textColor">Text Color:</label>
-    <input class="base-form__color-input" type="color" id="textColor" name="textColor" value="{{ifThen storedData.status_textColor storedData.status_textColor "#ffffff"}}">
+    <input class="base-form__color-input" type="color" id="textColor" name="textColor" value="{{ifThen storedData.effect_textColor storedData.effect_textColor "#ffffff"}}">
   </div>
   <div class="base-form__group">
     <label class="base-form__label" for="iconTint">Icon Tint:</label>
-    <input class="base-form__color-input" type="color" id="iconTint" name="iconTint" value="{{ifThen storedData.status_iconTint storedData.status_iconTint "#ffffff"}}">
+    <input class="base-form__color-input" type="color" id="iconTint" name="iconTint" value="{{ifThen storedData.effect_iconTint storedData.effect_iconTint "#ffffff"}}">
   </div>
   <div class="base-form__header">Effects</div>
   {{#each abilities}}
