@@ -113,6 +113,20 @@
         margin-right: 5px;
       }
     }
+
+    .item-prop {
+      text-align: center;
+      border-left: 1px solid colors.$c-faint;
+      border-right: 1px solid colors.$c-faint;
+      font-size: 12px;
+    }
+
+    .item-usage {
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
   }
 
   .item-prop {

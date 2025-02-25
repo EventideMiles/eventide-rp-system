@@ -72,6 +72,7 @@
 
 // Block
 .popup-form {
+  max-height: 90vh; 
   overflow-y: auto;
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -161,11 +162,9 @@
   }
 
   &__content {
-    min-width: 0;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    padding: 0.25rem 0.5rem;
+    flex: 1;
+    margin: 0.25rem;
+    padding: 0.25rem;
     background-color: colors.$form-content-bg;
     border-radius: 4px;
     text-align: center;
@@ -182,11 +181,11 @@
     }
 
     &--description {
+      overflow-y: visible; 
+      height: auto; 
       white-space: normal;
       text-align: left;
       padding: 0.5rem;
-      overflow-y: auto;
-      max-height: 200px;
       word-wrap: break-word;
     }
 
