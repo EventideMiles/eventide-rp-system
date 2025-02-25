@@ -2349,6 +2349,18 @@
   border: none;
   margin-right: 5px;
 }
+.eventide-rp-system .items-list .item .item-prop {
+  text-align: center;
+  border-left: 1px solid var(--eventide-rp-system-c-faint);
+  border-right: 1px solid var(--eventide-rp-system-c-faint);
+  font-size: 12px;
+}
+.eventide-rp-system .items-list .item .item-usage {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .eventide-rp-system .items-list .item-prop {
   text-align: center;
   border-left: 1px solid #c9c7b8;
