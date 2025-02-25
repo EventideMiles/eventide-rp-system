@@ -1,7 +1,7 @@
 {{! Attributes Tab }}
 <section class='tab attributes {{tab.cssClass}}' data-group='primary' data-tab='attributes'>
   <div class='resource'>
-    <div class='grid grid-2col'>
+    <div class='grid grid-3col'>
       <div class='grid-span-1'>
         <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.CombatPower.FIELDS.roll.type.label'}}</label>
         <select name='system.roll.type'>
@@ -13,6 +13,10 @@
         <div class="checkbox-wrapper">
           <input type="checkbox" class="large-checkbox" name="system.targeted" {{checked system.targeted}} />
         </div>
+      </div>
+       <div class='grid-span-1'>
+        <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.CombatPower.FIELDS.usageInfo.label'}}</label>
+        <input type='text' name='system.usageInfo' value='{{system.usageInfo}}' placeholder='e.g., 1/day' />
       </div>
     </div>
 
