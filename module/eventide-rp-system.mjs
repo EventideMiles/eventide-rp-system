@@ -296,7 +296,6 @@ Hooks.on("createItem", (item, options, triggerPlayer) => {
   // Status Message Handler
   if (
     item.type === "status" &&
-    item.system.description &&
     item.actor !== null &&
     game.user.id === triggerPlayer
   ) {
