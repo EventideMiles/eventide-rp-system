@@ -80,7 +80,8 @@
       "CombatPower": {
         "FIELDS": {
           "cost": { "label": "Cost" },
-          "usageInfo": { "label": "Usage Info" },
+          "usageInfo": { "label": "Usage Info",
+            "placeholder": "e.g., 1/day"},
           "targeted": { "label": "Requires Target?" },
           "textColor": { 
             "label": "Text Color",

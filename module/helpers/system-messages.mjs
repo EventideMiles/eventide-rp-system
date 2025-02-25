@@ -21,7 +21,10 @@ const createStatusMessage = async (item) => {
   );
 
   return ChatMessage.create({
-    speaker: ChatMessage.getSpeaker({ actor: item.parent }),
+    speaker: ChatMessage.getSpeaker({
+      actor: item.parent,
+      alias: `Status: ${item.parent.name}`,
+    }),
     content: content,
   });
 };
@@ -48,7 +51,10 @@ const featureMessage = async (item) => {
   );
 
   return ChatMessage.create({
-    speaker: ChatMessage.getSpeaker({ actor: item.parent }),
+    speaker: ChatMessage.getSpeaker({
+      actor: item.parent,
+      alias: `Feature: ${item.parent.name}`,
+    }),
     content: content,
   });
 };
