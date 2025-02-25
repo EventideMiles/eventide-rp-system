@@ -48,9 +48,14 @@
     {{#if item.system.prerequisites}}
     <div class="popup-form__section">
         <div class="popup-form__header">Prerequisites</div>
-        <div class="popup-form__content popup-form__content--description">
-            {{{item.system.prerequisites}}}
-        </div>
+        <div class="popup-form__content">{{item.system.prerequisites}}</div>
+    </div>
+    {{/if}}
+
+    {{#if item.system.usageInfo}}
+    <div class="popup-form__section popup-form__section--usage">
+        <div class="popup-form__header popup-form__header--usage">Usage Information</div>
+        <div class="popup-form__content popup-form__content--usage">{{item.system.usageInfo}}</div>
     </div>
     {{/if}}
 
