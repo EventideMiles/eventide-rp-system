@@ -73,9 +73,9 @@
   ],
   "packFolders": [],
   "socket": false,
-  "manifest": "Replace this with a link to the /latest release system.json so people can receive updates after they've installed the system",
-  "download": "This must link to a .zip file of the current version",
-  "background": "systems/eventide-rp-system/assets/anvil-impact.png",
+  "manifest": "https://github.com/EventideMiles/eventide-rp-system/releases/latest/download/system.json",
+  "download": "https://github.com/EventideMiles/eventide-rp-system/releases/latest/download/eventide-rp-system.zip",
+  "background": "systems/eventide-rp-system/assets/wolf-sunset.jpg",
   "grid": {
     "type": 1,
     "distance": 5,

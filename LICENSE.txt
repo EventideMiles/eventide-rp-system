@@ -25,3 +25,4 @@ https://mozilla.org/MPL/2.0/
 IMAGE LICENSES
 
 anvil-impact.png by Lorc under CC BY 3.0 from game-icons.net
+wolf-sunset.jpg by Marek Szturc under Unsplash license from unsplash.com
