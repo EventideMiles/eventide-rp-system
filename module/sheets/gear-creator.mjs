@@ -308,12 +308,12 @@ export class GearCreator extends HandlebarsApplicationMixin(ApplicationV2) {
       const selectedArray = await erps.utils.getSelectedArray();
 
       // Create item in compendium
-      const packId = this.playerMode ? "world.playergear" : "world.customgear";
-      let pack = game.packs.get(packId);
+      const packId = this.playerMode ? "playergear" : "customgear";
+      let pack = game.packs.get(`world.${packId}`);
       if (!pack) {
         pack = await CompendiumCollection.createCompendium({
           name: packId,
-          label: packId === "world.playergear" ? "Player Gear" : "Custom Gear",
+          label: packId === "playergear" ? "Player Gear" : "Custom Gear",
           type: "Item",
         });
       }
