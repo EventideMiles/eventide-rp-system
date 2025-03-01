@@ -41,7 +41,7 @@ export class GearCreator extends HandlebarsApplicationMixin(ApplicationV2) {
     flat: "Flat",
   };
 
-  constructor({ advanced = false, number = 0 } = {}) {
+  constructor({ advanced = false, number = 0, playerMode = false } = {}) {
     super();
     this.number = Math.floor(number);
     this.storageKeys = [
@@ -56,6 +56,7 @@ export class GearCreator extends HandlebarsApplicationMixin(ApplicationV2) {
         (ability) => ability !== "Cmax" && ability !== "Fmin"
       );
     }
+    this.playerMode = playerMode;
   }
 
   async _preparePartContext(partId, context, options) {
@@ -76,11 +77,17 @@ export class GearCreator extends HandlebarsApplicationMixin(ApplicationV2) {
     context.hiddenAbilities = this.hiddenAbilities;
     context.rollTypes = GearCreator.rollTypes;
     context.targetArray = await erps.utils.getTargetArray();
+    context.selectedArray = await erps.utils.getSelectedArray();
+    context.playerMode = this.playerMode;
 
-    if (context.targetArray.length === 0) {
+    if (context.targetArray.length === 0 && !context.playerMode) {
       ui.notifications.warn(
         `If you proceed gear will only be created in compendium: not applied.`
       );
+    } else if (context.selectedArray.length === 0 && context.playerMode) {
+      ui.notifications.error(`You must select a token you own to create gear.`);
+      this.close();
+      return;
     }
 
     const storedData = await erps.utils.retrieveLocal(this.storageKeys);
@@ -161,7 +168,7 @@ export class GearCreator extends HandlebarsApplicationMixin(ApplicationV2) {
    */
   static async #onSubmit(event, form, formData) {
     try {
-      event.preventDefault();
+      // event.preventDefault();
 
       const name = form.name.value;
       if (!name) {
@@ -225,25 +232,29 @@ export class GearCreator extends HandlebarsApplicationMixin(ApplicationV2) {
         })
         .filter((e) => e !== null);
 
-      const hiddenEffects = this.hiddenAbilities
-        .map((ability) => {
-          const value = parseInt(form[ability.toLowerCase()].value);
-          if (value === 0) return null;
-          const mode = form[`${ability.toLowerCase()}-mode`].value;
+      let hiddenEffects = [{}];
 
-          return {
-            key: `system.abilities.${ability.toLowerCase()}.${
-              mode === "add" ? "change" : "override"
-            }`,
-            mode:
-              mode === "add"
-                ? CONST.ACTIVE_EFFECT_MODES.ADD
-                : CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
-            value: value,
-            priority: 0,
-          };
-        })
-        .filter((e) => e !== null);
+      if (!this.playerMode) {
+        hiddenEffects = this.hiddenAbilities
+          .map((ability) => {
+            const value = parseInt(form[ability.toLowerCase()].value);
+            if (value === 0) return null;
+            const mode = form[`${ability.toLowerCase()}-mode`].value;
+
+            return {
+              key: `system.abilities.${ability.toLowerCase()}.${
+                mode === "add" ? "change" : "override"
+              }`,
+              mode:
+                mode === "add"
+                  ? CONST.ACTIVE_EFFECT_MODES.ADD
+                  : CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
+              value: value,
+              priority: 0,
+            };
+          })
+          .filter((e) => e !== null);
+      }
 
       // Save preferences to local storage
       await erps.utils.storeLocal({
@@ -293,32 +304,41 @@ export class GearCreator extends HandlebarsApplicationMixin(ApplicationV2) {
         ],
       };
 
-      // Get target array
       const targetArray = await erps.utils.getTargetArray();
+      const selectedArray = await erps.utils.getSelectedArray();
 
       // Create item in compendium
-      let pack = game.packs.get("world.customgear");
+      const packId = this.playerMode ? "world.playergear" : "world.customgear";
+      let pack = game.packs.get(packId);
       if (!pack) {
         pack = await CompendiumCollection.createCompendium({
-          name: "customgear",
-          label: "Custom Gear",
+          name: packId,
+          label: packId === "world.playergear" ? "Player Gear" : "Custom Gear",
           type: "Item",
         });
       }
 
       // Create the item
-      const createdItem = await Item.create(itemData, {
+      await Item.create(itemData, {
         pack: pack.collection,
       });
 
       // If we have targets, create the item on them
-      if (targetArray.length > 0) {
+      if (targetArray.length > 0 && !this.playerMode) {
         for (const token of targetArray) {
           const actor = token.actor;
           await actor.createEmbeddedDocuments("Item", [itemData]);
         }
         ui.notifications.info(
           `Created gear item "${name}" on ${targetArray.length} target(s) and in Custom Gear compendium`
+        );
+      } else if (selectedArray.length > 0 && this.playerMode) {
+        for (const token of selectedArray) {
+          const actor = token.actor;
+          await actor.createEmbeddedDocuments("Item", [itemData]);
+        }
+        ui.notifications.info(
+          `Created gear item "${name}" on ${selectedArray.length} selected token(s) and in Player Gear compendium`
         );
       } else {
         ui.notifications.info(

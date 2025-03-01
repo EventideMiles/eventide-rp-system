@@ -1,12 +1,16 @@
 <div class="{{cssClass}} base-form" autocomplete="off">
   <div class="base-form__callout base-form__callout--information">
     <i class="fas fa-info-circle"></i>
-    {{#if (eq targetArray.length 0)}}
-      There are no targets selected. This will create a gear item
-      for the compendium only.
+    {{#if (eq playerMode true)}}
+      You are using the gear creator in player mode. This can only be used to create gear for tokens you control. You currently have <strong>{{selectedArray.length}} tokens(s)</strong> selected.
     {{else}}
-      There are <strong>{{targetArray.length}} target(s)</strong> selected. This will create a gear item 
-      for each target and your compendium.
+      {{#if (eq targetArray.length 0)}}
+        There are no targets selected. This will create a gear item
+        for the compendium only.
+      {{else}}
+        There are <strong>{{targetArray.length}} target(s)</strong> selected. This will create a gear item 
+        for each target and your compendium.
+      {{/if}}
     {{/if}}
   </div>
   <div class="gear-creator__header-section">
@@ -123,16 +127,18 @@
           </select>
         </div>
       {{/each}}
-      {{#each hiddenAbilities}}
-        <div class="base-form__group gear-creator__effect-group">
-          <label class="base-form__label gear-creator__effect-label" for="{{lowercase this}}">{{this}}:</label>
-          <input class="base-form__number-input gear-creator__effect-input" type="number" id="{{lowercase this}}" name="{{lowercase this}}" value="0">
-          <select class="base-form__select gear-creator__effect-select" id="{{lowercase this}}-mode" name="{{lowercase this}}-mode">
-            <option value="add">Change</option>
-            <option value="override">Override</option>
-          </select>
-        </div>
-      {{/each}}
+      {{#if (eq playerMode false)}}
+        {{#each hiddenAbilities}}
+          <div class="base-form__group gear-creator__effect-group">
+            <label class="base-form__label gear-creator__effect-label" for="{{lowercase this}}">{{this}}:</label>
+            <input class="base-form__number-input gear-creator__effect-input" type="number" id="{{lowercase this}}" name="{{lowercase this}}" value="0">
+            <select class="base-form__select gear-creator__effect-select" id="{{lowercase this}}-mode" name="{{lowercase this}}-mode">
+              <option value="add">Change</option>
+              <option value="override">Override</option>
+            </select>
+          </div>
+        {{/each}}
+      {{/if}}
     </div>
   </div>
 
