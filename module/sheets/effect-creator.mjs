@@ -37,7 +37,7 @@ export class EffectCreator extends HandlebarsApplicationMixin(ApplicationV2) {
   static abilities = ["Acro", "Phys", "Fort", "Will", "Wits"];
   static hiddenAbilities = ["Dice", "Cmin", "Cmax", "Fmin", "Fmax"];
 
-  constructor({ advanced = false, number = 0 } = {}) {
+  constructor({ advanced = false, number = 0, playerMode = false } = {}) {
     super();
     this.number = Math.floor(number);
     this.storageKeys = [
@@ -54,6 +54,8 @@ export class EffectCreator extends HandlebarsApplicationMixin(ApplicationV2) {
         (ability) => ability !== "Cmax" && ability !== "Fmin"
       );
     }
+
+    this.playerMode = playerMode;
   }
 
   async _preparePartContext(partId, context, options) {
@@ -73,11 +75,21 @@ export class EffectCreator extends HandlebarsApplicationMixin(ApplicationV2) {
     context.abilities = EffectCreator.abilities;
     context.hiddenAbilities = this.hiddenAbilities;
     context.targetArray = await erps.utils.getTargetArray();
+    context.selectedArray = await erps.utils.getSelectedArray();
+    context.playerMode = this.playerMode;
 
-    if (context.targetArray.length === 0)
+    if (context.targetArray.length === 0 && !context.playerMode)
       ui.notifications.warn(
-        `If you proceed status will only be created in compendium: not applied.`
+        `If you proceed effect will only be created in compendium: not applied.`
       );
+
+    if (context.selectedArray.length === 0 && context.playerMode) {
+      ui.notifications.error(
+        `You must select a token you own to create a feature.`
+      );
+      this.close();
+      return;
+    }
 
     const storedData = await erps.utils.retrieveLocal(this.storageKeys);
 
@@ -86,7 +98,10 @@ export class EffectCreator extends HandlebarsApplicationMixin(ApplicationV2) {
       effect_bgColor: storedData[this.storageKeys[1]],
       effect_textColor: storedData[this.storageKeys[2]],
       effect_iconTint: storedData[this.storageKeys[3]],
-      effect_type: storedData[this.storageKeys[4]] || "status",
+      effect_type:
+        storedData[this.storageKeys[4]] || context.playerMode
+          ? "feature"
+          : "status",
     };
 
     context.returnedData = context.storedData.img;
@@ -157,6 +172,7 @@ export class EffectCreator extends HandlebarsApplicationMixin(ApplicationV2) {
     const hiddenAbilities = this.hiddenAbilities;
 
     const targetArray = await erps.utils.getTargetArray();
+    const selectedArray = await erps.utils.getSelectedArray();
 
     let createdItem;
 
@@ -166,7 +182,7 @@ export class EffectCreator extends HandlebarsApplicationMixin(ApplicationV2) {
     const bgColor = form.bgColor.value;
     const textColor = form.textColor.value;
     const iconTint = form.iconTint.value;
-    const type = form.type.value;
+    const type = this.playerMode ? "feature" : form.type.value;
 
     const effects = abilities
       .map((ability) => {
@@ -194,25 +210,29 @@ export class EffectCreator extends HandlebarsApplicationMixin(ApplicationV2) {
       })
       .filter((e) => e !== null);
 
-    const hiddenEffects = hiddenAbilities
-      .map((ability) => {
-        const value = parseInt(form[ability.toLowerCase()].value);
-        if (value === 0) return null;
-        const mode = form[`${ability.toLowerCase()}-mode`].value;
+    let hiddenEffects = [{}];
 
-        return {
-          key: `system.hiddenAbilities.${ability.toLowerCase()}.${
-            mode === "add" ? "change" : "override"
-          }`,
-          mode:
-            mode === "add"
-              ? CONST.ACTIVE_EFFECT_MODES.ADD
-              : CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
-          value: value,
-          priority: 0,
-        };
-      })
-      .filter((e) => e !== null);
+    if (!this.playerMode) {
+      hiddenEffects = hiddenAbilities
+        .map((ability) => {
+          const value = parseInt(form[ability.toLowerCase()].value);
+          if (value === 0) return null;
+          const mode = form[`${ability.toLowerCase()}-mode`].value;
+
+          return {
+            key: `system.hiddenAbilities.${ability.toLowerCase()}.${
+              mode === "add" ? "change" : "override"
+            }`,
+            mode:
+              mode === "add"
+                ? CONST.ACTIVE_EFFECT_MODES.ADD
+                : CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
+            value: value,
+            priority: 0,
+          };
+        })
+        .filter((e) => e !== null);
+    }
 
     const item = {
       name,
@@ -254,21 +274,43 @@ export class EffectCreator extends HandlebarsApplicationMixin(ApplicationV2) {
         const actor = token.actor;
         createdItem = await actor.createEmbeddedDocuments("Item", [item]);
       }
+    } else if (this.playerMode) {
+      for (const token of selectedArray) {
+        const actor = token.actor;
+        createdItem = await actor.createEmbeddedDocuments("Item", [item]);
+      }
     } else {
       createdItem = await game.items.createDocument(item);
     }
 
     // Store the item in the appropriate compendium, create pack if it doesn't exist
-    const packId = type === "status" ? "customstatuses" : "customfeatures";
-    const packLabel = type === "status" ? "Custom Statuses" : "Custom Features";
+    const packId =
+      type === "status"
+        ? "customstatuses"
+        : this.playerMode
+        ? "playerFeatures"
+        : "customfeatures";
+    const packLabel =
+      type === "status"
+        ? "Custom Statuses"
+        : this.playerMode
+        ? "Player Created Features"
+        : "Custom Features";
 
     let pack = game.packs.get(`world.${packId}`);
+    const packData = {
+      name: packId,
+      label: packLabel,
+      type: "Item",
+    };
+    if (this.playerMode) {
+      packData.ownership = {
+        PLAYER: "OWNER",
+        ASSISTANT: "OWNER",
+      };
+    }
     if (!pack) {
-      pack = await CompendiumCollection.createCompendium({
-        name: packId,
-        label: packLabel,
-        type: "Item",
-      });
+      pack = await CompendiumCollection.createCompendium(packData);
     }
 
     if (createdItem) {
