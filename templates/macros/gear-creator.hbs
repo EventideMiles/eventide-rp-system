@@ -81,8 +81,8 @@
       <div class="base-form__group">
         <label class="base-form__label" for="roll.type">Roll Type:</label>
         <select class="base-form__select" id="roll.type" name="roll.type">
-          {{#each rollTypes}}
-            <option value="{{@key}}">{{this}}</option>
+          {{#each rollTypes as |rollType rollTypeKey|}}
+            <option value="{{lowercase rollType}}">{{rollType}}</option>
           {{/each}}
         </select>
       </div>
