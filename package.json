@@ -1,6 +1,6 @@
 {
   "name": "eventide-rp-system",
-  "version": "0.12.2",
+  "version": "0.13.1",
   "description": "Build tools and development scripts for the Eventide Roleplaying System",
   "scripts": {
     "build": "sass src/scss/eventide-rp-system.scss css/eventide-rp-system.css --style=expanded --no-source-map",
@@ -13,7 +13,7 @@
     "last 3 versions"
   ],
   "author": "Miles Eventide",
-  "license": "All rights reserved",
+  "license": "Apache-2.0",
   "private": true,
   "devDependencies": {
     "sass": "^1.53.0",

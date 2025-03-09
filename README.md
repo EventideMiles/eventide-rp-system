@@ -3,7 +3,7 @@
 ![Foundry v12](https://img.shields.io/badge/foundry-v12-green)
 [![License: MPL 2.0](https://img.shields.io/badge/License-MPL_2.0-brightgreen.svg)](https://opensource.org/licenses/MPL-2.0)
 
-A custom roleplaying system for Foundry VTT that emphasizes dynamic character abilities through status effects and features, providing an intuitive and flexible gaming experience.
+A custom roleplaying system for Foundry VTT that emphasizes dynamic character abilities through status effects features, and gear. The system is focused on providing an intuitive and flexible gaming experience.
 
 ## Core Features
 
@@ -12,6 +12,7 @@ A custom roleplaying system for Foundry VTT that emphasizes dynamic character ab
 - Five core abilities: Acrobatics, Physical, Fortitude, Will, and Wits
 - Rich HTML-supported biography fields for both characters and NPCs
 - Streamlined character creation and management
+- Gear, Status, Feature, and Combat Power management easy via the item system and system provided macros.
 
 ### Dynamic Ability System
 
@@ -24,8 +25,7 @@ A custom roleplaying system for Foundry VTT that emphasizes dynamic character ab
 
 - Extensive Combat Gear Management system - Quick and easy to manage combat gear and use it:
   - As extensive as you want it to be: items can have effects on stats, roll data like a combat power, they can track uses, and can be equipped and unequipped
-- Combat powers with detailed descriptions and reminders to ensure you fulfill their requirements / have enough
-  power to use them
+- Combat powers with detailed descriptions and reminders to ensure you fulfill their requirements / have enough power to use them
 - Status effect tracking and management - formatted chat messages for when they apply and expire
 
 ## Usage
@@ -33,10 +33,10 @@ A custom roleplaying system for Foundry VTT that emphasizes dynamic character ab
 ### For Game Masters
 
 - Modify character abilities through status effects and features
-- Create and manage hidden abilities using the status system
+- Manage abilties and hidden abilities using the status system and feature system via the effect creator
 - Design NPCs with custom combat powers, inflictable status effects, and features
-- Track combat powers and their effects - the requirements pop up before each roll of a combat power so for NPCs
-  if there's anything you want to remember to do before using a combat power, you can put it there
+- Track combat powers and their effects
+- Popup system provides details on anything on any player - simply click the item and get information about it
 - Apply damage and healing to characters - with chat messages to keep tabs on what's happening
 
 ### For Players
@@ -85,7 +85,7 @@ This system evolved from the excellent [Boilerplate System](https://github.com/a
 
 ## License
 
-This project is licensed under the Mozilla Public License 2.0 - see the [LICENSE.txt](LICENSE.txt) file for details.
+This project is licensed under the Mozilla Public License 2.0 - see the [LICENSE.md](LICENSE.md) file for details.
 
 Key points:
 

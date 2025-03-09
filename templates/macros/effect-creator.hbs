@@ -1,16 +1,23 @@
 <div class="{{cssClass}} base-form" autocomplete="off">
   <div class="base-form__callout base-form__callout--information">
     <i class="fas fa-info-circle"></i>
-    {{#if (eq targetArray.length 0)}}
-      There are no targets selected. This will create either a status condition or feature (as selected) for the compendium only.
-    {{else}}
-      There are <strong>{{targetArray.length}} target(s)</strong> selected. This will create a status condition or feature (as selected) for each target and your compendium.
+    {{#if (eq playerMode true)}}
+      You are using the effect creator in player mode. This can only be used to create features for tokens you control. You currently have <strong>{{selectedArray.length}} tokens(s)</strong> selected.
+    {{/if}}
+    {{#if (eq playerMode false)}}
+      {{#if (eq targetArray.length 0)}}
+        There are no targets selected. This will create either a status condition or feature (as selected) for the compendium only.
+      {{else}}
+        There are <strong>{{targetArray.length}} target(s)</strong> selected. This will create a status condition or feature (as selected) for each target and your compendium.
+      {{/if}}
     {{/if}}
   </div>
   <div class="base-form__group">
     <label class="base-form__label" for="type">Type:</label>
     <select class="base-form__select" id="type" name="type">
-      <option value="status" {{#if (eq storedData.effect_type "status")}}selected{{/if}}>Status</option>
+      {{#if (eq playerMode false)}}
+        <option value="status" {{#if (eq storedData.effect_type "status")}}selected{{/if}}>Status</option>
+      {{/if}}
       <option value="feature" {{#if (eq storedData.effect_type "feature")}}selected{{/if}}>Feature</option>
     </select>
   </div>
@@ -58,16 +65,18 @@
       </select>
     </div>
   {{/each}}
-  {{#each hiddenAbilities}}
-    <div class="base-form__group">
-      <label class="base-form__label" for="{{lowercase this}}">{{this}}:</label>
-      <input class="base-form__number-input" type="number" id="{{lowercase this}}" name="{{lowercase this}}" value="0">
-      <select class="base-form__select" id="{{lowercase this}}-mode" name="{{lowercase this}}-mode">
-        <option value="add">Change</option>
-        <option value="override">Override</option>
-      </select>
-    </div>
-  {{/each}}
+  {{#if (eq playerMode false)}}
+    {{#each hiddenAbilities}}
+      <div class="base-form__group">
+        <label class="base-form__label" for="{{lowercase this}}">{{this}}:</label>
+        <input class="base-form__number-input" type="number" id="{{lowercase this}}" name="{{lowercase this}}" value="0">
+        <select class="base-form__select" id="{{lowercase this}}-mode" name="{{lowercase this}}-mode">
+          <option value="add">Change</option>
+          <option value="override">Override</option>
+        </select>
+      </div>
+    {{/each}}
+  {{/if}}
   <div class="base-form__group base-form__group--right">
     <button type="submit" class="base-form__button base-form__button--primary">{{ifThen targetArray.length "Create and Apply" "Create"}}</button>
   </div>
