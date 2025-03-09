@@ -8,20 +8,28 @@ This system was started on the back of the Boilerplate system and though it
 has grown a lot since then I could not have gotten as far as I have without
 their code. Their code: https://github.com/asacolips-projects/boilerplate
 
-## MOZILLA PUBLIC LICENSE VERSION 2.0
+## APACHE LICENSE VERSION 2.0
 
-This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
-If a copy of the MPL was not distributed with this file, You can obtain one at
-https://mozilla.org/MPL/2.0/.
+This project is licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 
 ## Additional Grant of License:
 
 The original Boilerplate code by Asacolips Projects / Foundry Mods is licensed under MIT License.
 Any contributions made to this project may also be used by Asacolips Projects / Foundry Mods
-under the terms of the MIT License, while remaining MPL-2.0 for all other users.
+under the terms of the MIT License, while remaining Apache-2.0 for all other users.
 
-The full text of the MPL-2.0 license can be found at:
-https://mozilla.org/MPL/2.0/
+The full text of the Apache-2.0 license can be found at:
+http://www.apache.org/licenses/LICENSE-2.0
 
 ## IMAGE LICENSES
 
