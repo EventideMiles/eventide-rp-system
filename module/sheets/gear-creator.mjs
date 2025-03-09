@@ -31,15 +31,6 @@ export class GearCreator extends CreatorApplication {
     super({ advanced, number, playerMode, keyType: "gear" });
   }
 
-  async _preparePartContext(partId, context, options) {
-    return await super._preparePartContext(partId, context, options);
-  }
-
-  async _renderFrame(options) {
-    return await super._renderFrame(options);
-  }
-
-
   /**
    * Prepares the main context data for the form.
    * @param {Object} options - Form options
