@@ -1,10 +1,10 @@
-const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
+import { EventideSheetHelpers } from "./base/eventide-sheet-helpers.mjs";
 
 /**
  * Application for managing damage to targeted tokens.
- * @extends {HandlebarsApplicationMixin(ApplicationV2)}
+ * @extends {EventideSheetHelpers}
  */
-export class DamageTargets extends HandlebarsApplicationMixin(ApplicationV2) {
+export class DamageTargets extends EventideSheetHelpers {
   /** @override */
   static PARTS = {
     damageTargets: {
@@ -41,26 +41,8 @@ export class DamageTargets extends HandlebarsApplicationMixin(ApplicationV2) {
    * @param {number} [number=0] - Damage instance number for multiple damage applications
    */
   constructor(number = 0) {
-    super(DamageTargets.DEFAULT_OPTIONS, DamageTargets.PARTS);
+    super();
     this.number = Math.floor(number);
-  }
-
-  /** @type {Token[]} Array of targeted tokens */
-  static targetArray = [];
-
-  /** @type {string[]} Keys for storing damage preferences */
-  static storageKeys = [];
-
-  /**
-   * Prepare context data for a specific part of the form.
-   * @param {string} partId - The ID of the form part
-   * @param {Object} context - The context object to prepare
-   * @param {Object} options - Additional options
-   * @returns {Promise<Object>} The prepared context
-   */
-  async _preparePartContext(partId, context, options) {
-    context.partId = `${this.id}-${partId}`;
-    return context;
   }
 
   /**
@@ -105,12 +87,6 @@ export class DamageTargets extends HandlebarsApplicationMixin(ApplicationV2) {
     }
 
     return context;
-  }
-
-  async _renderFrame(options) {
-    const frame = await super._renderFrame(options);
-    frame.autocomplete = "off";
-    return frame;
   }
 
   /**

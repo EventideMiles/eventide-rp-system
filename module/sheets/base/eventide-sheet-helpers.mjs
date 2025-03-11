@@ -7,8 +7,36 @@ const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 export class EventideSheetHelpers extends HandlebarsApplicationMixin(
   ApplicationV2
 ) {
+  static abilities = ["acro", "phys", "fort", "will", "wits"];
+  static hiddenAbilities = ["Dice", "Cmin", "Fmax"];
+  static advancedHiddenAbilities = ["Cmax", "Fmin"];
+  static rollTypes = ["None", "Roll", "Flat"];
+
   constructor() {
     super();
+  }
+
+  /**
+   * Prepare context data for a specific part of the form
+   * @param {string} partId - The ID of the form part
+   * @param {Object} context - The context object to prepare
+   * @param {Object} options - Additional options
+   * @returns {Promise<Object>} The prepared context
+   */
+  async _preparePartContext(partId, context, options) {
+    context.partId = `${this.id}-${partId}`;
+    return context;
+  }
+
+  /**
+   * Render the application frame
+   * @param {Object} options - Rendering options
+   * @returns {Promise<HTMLElement>} The rendered frame
+   */
+  async _renderFrame(options) {
+    const frame = await super._renderFrame(options);
+    frame.autocomplete = "off";
+    return frame;
   }
 
   /**

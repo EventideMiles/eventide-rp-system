@@ -1,12 +1,10 @@
-const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
+import { EventideSheetHelpers } from "./eventide-sheet-helpers.mjs";
 
 /**
  * A form application for changing status effects on a target token.
- * @extends {HandlebarsApplicationMixin(ApplicationV2)}
+ * @extends {EventideSheetHelpers}
  */
-export class ChangeTargetStatus extends HandlebarsApplicationMixin(
-  ApplicationV2
-) {
+export class ChangeTargetStatus extends EventideSheetHelpers {
   static PARTS = {
     changeTargetStatus: {
       template: `systems/eventide-rp-system/templates/macros/change-target-status.hbs`,
@@ -45,18 +43,6 @@ export class ChangeTargetStatus extends HandlebarsApplicationMixin(
   ];
 
   /**
-   * Prepares the context data for a specific part of the form.
-   * @param {string} partId - The ID of the form part
-   * @param {Object} context - The context object to prepare
-   * @param {Object} options - Additional options
-   * @returns {Promise<Object>} The prepared context
-   */
-  async _preparePartContext(partId, context, options) {
-    context.partId = `${this.id}-${partId}`;
-    return context;
-  }
-
-  /**
    * Prepares the main context data for the form.
    * @param {Object} options - Form options
    * @returns {Promise<Object>} The prepared context containing target and status information
@@ -65,17 +51,17 @@ export class ChangeTargetStatus extends HandlebarsApplicationMixin(
   async _prepareContext(options) {
     const context = {};
 
-    const targetArray = await erps.utils.getTargetArray();
+    this.targetArray = await erps.utils.getTargetArray();
 
-    if (targetArray.length === 0) {
+    if (this.targetArray.length === 0) {
       ui.notifications.error(`Please target a token first!`);
       this.close();
-    } else if (targetArray.length > 1) {
+    } else if (this.targetArray.length > 1) {
       ui.notifications.error(`You can only target one token at a time!`);
       this.close();
     }
 
-    this.target = targetArray[0];
+    this.target = this.targetArray[0];
     context.target = this.target;
 
     context.cssClass = ChangeTargetStatus.DEFAULT_OPTIONS.classes.join(" ");
@@ -91,12 +77,6 @@ export class ChangeTargetStatus extends HandlebarsApplicationMixin(
     return context;
   }
 
-  async _renderFrame(options) {
-    const frame = await super._renderFrame(options);
-    frame.autocomplete = "off";
-    return frame;
-  }
-
   /**
    * Handles form submission to update status effect values.
    * @param {Event} event - The form submission event
@@ -106,14 +86,13 @@ export class ChangeTargetStatus extends HandlebarsApplicationMixin(
    */
   static async #onSubmit(event, form, formData) {
     const statusId = form.statusSelector.value;
-    const target = this.target;
 
-    if (!target || !statusId) {
+    if (!this.target || !statusId) {
       ui.notifications.error("Missing target or status selection!");
       return;
     }
 
-    const status = target.actor.items.get(statusId);
+    const status = this.target.actor.items.get(statusId);
     if (!status) {
       ui.notifications.error("Selected status not found!");
       return;

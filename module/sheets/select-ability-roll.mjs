@@ -1,12 +1,10 @@
-const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
+import { EventideSheetHelpers } from "./base/eventide-sheet-helpers.mjs";
 
 /**
  * A form application for selecting and rolling ability checks.
- * @extends {HandlebarsApplicationMixin(ApplicationV2)}
+ * @extends {EventideSheetHelpers}
  */
-export class SelectAbilityRoll extends HandlebarsApplicationMixin(
-  ApplicationV2
-) {
+export class SelectAbilityRoll extends EventideSheetHelpers {
   static PARTS = {
     selectAbilityRoll: {
       template:
@@ -35,11 +33,6 @@ export class SelectAbilityRoll extends HandlebarsApplicationMixin(
 
   static abilities = ["Acrobatics", "Physical", "Fortitude", "Will", "Wits"];
 
-  async _preparePartContext(partId, context, options) {
-    context.partId = `${this.id}-${partId}`;
-    return context;
-  }
-
   /**
    * Prepares the main context data for the form.
    * @param {Object} options - Form options
@@ -50,12 +43,6 @@ export class SelectAbilityRoll extends HandlebarsApplicationMixin(
     context.cssClass = SelectAbilityRoll.DEFAULT_OPTIONS.classes.join(" ");
     context.abilities = SelectAbilityRoll.abilities;
     return context;
-  }
-
-  async _renderFrame(options) {
-    const frame = await super._renderFrame(options);
-    frame.autocomplete = "off";
-    return frame;
   }
 
   /**

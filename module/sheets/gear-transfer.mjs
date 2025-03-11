@@ -1,10 +1,10 @@
-const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
+import { EventideSheetHelpers } from "./base/eventide-sheet-helpers.mjs";
 
 /**
  * A form application for transferring gear from target to selected token.
- * @extends {HandlebarsApplicationMixin(ApplicationV2)}
+ * @extends {EventideSheetHelpers}
  */
-export class GearTransfer extends HandlebarsApplicationMixin(ApplicationV2) {
+export class GearTransfer extends EventideSheetHelpers {
   static PARTS = {
     gearTransfer: {
       template: "systems/eventide-rp-system/templates/macros/gear-transfer.hbs",
@@ -41,41 +41,40 @@ export class GearTransfer extends HandlebarsApplicationMixin(ApplicationV2) {
   async _prepareContext(options) {
     const context = {};
 
-    const targetArray = await erps.utils.getTargetArray();
-    const selectedArray = await erps.utils.getSelectedArray();
+    this.targetTokens = await erps.utils.getTargetArray();
+    this.selectedTokens = await erps.utils.getSelectedArray();
+    this.targetToken = this.targetTokens[0];
+    this.selectedToken = this.selectedTokens[0];
 
     // Check for multiple tokens
-    if (targetArray.length > 1) {
+    if (this.targetTokens.length > 1) {
       ui.notifications.warn("Please target only one token to transfer from");
       this.close();
       return context;
     }
 
-    if (selectedArray.length > 1) {
+    if (this.selectedTokens.length > 1) {
       ui.notifications.warn("Please select only one token to transfer to");
       this.close();
       return context;
     }
 
-    context.targetToken = targetArray[0];
-    context.selectedToken = selectedArray[0];
-
-    if (!context.targetToken || !context.selectedToken) {
+    if (!this.targetToken || !this.selectedToken) {
       ui.notifications.warn("Please select a token and target another token");
       this.close();
       return context;
     }
 
     // Check for self-transfer
-    if (context.targetToken.id === context.selectedToken.id) {
+    if (this.targetToken.id === this.selectedToken.id) {
       ui.notifications.warn("Cannot transfer items to the same token");
       this.close();
       return context;
     }
 
     // Get actors
-    context.targetActor = context.targetToken.actor;
-    context.selectedActor = context.selectedToken.actor;
+    context.targetActor = this.targetToken.actor;
+    context.selectedActor = this.selectedToken.actor;
 
     if (!context.targetActor || !context.selectedActor) {
       ui.notifications.warn("Selected tokens must have associated actors");
@@ -104,37 +103,18 @@ export class GearTransfer extends HandlebarsApplicationMixin(ApplicationV2) {
    * @param {Object} form - The form data
    */
   static async #onSubmit(event, form) {
-    const targetArray = await erps.utils.getTargetArray();
-    const selectedArray = await erps.utils.getSelectedArray();
-
-    // Double-check validations in case tokens changed during form open
-    if (targetArray.length !== 1 || selectedArray.length !== 1) {
-      ui.notifications.warn("Invalid token selection. Please try again.");
-      return;
-    }
-
-    const sourceToken = targetArray[0];
-    const destToken = selectedArray[0];
-
-    if (sourceToken.id === destToken.id) {
-      ui.notifications.warn("Cannot transfer items to the same token");
-      return;
-    }
-
     const itemId = form.gearId.value;
     const requestedQuantity = Number(form.quantity.value) || 1;
     const description = form.description.value.trim();
 
-    const sourceActor = sourceToken.actor;
-    const destActor = destToken.actor;
-
-    if (!sourceActor || !destActor) {
-      ui.notifications.warn("Selected tokens must have associated actors");
-      return;
-    }
+    const sourceActor = this.targetToken.actor;
+    const destActor = this.selectedToken.actor;
 
     const sourceItem = sourceActor.items.get(itemId);
-    if (!sourceItem) return;
+    if (!sourceItem) {
+      ui.notifications.warn("Item not found");
+      return;
+    }
 
     // Calculate the actual quantity to transfer (never more than available)
     const availableQuantity = sourceItem.system.quantity;

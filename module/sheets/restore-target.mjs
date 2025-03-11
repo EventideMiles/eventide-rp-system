@@ -1,10 +1,10 @@
-const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
+import { EventideSheetHelpers } from "./base/eventide-sheet-helpers.mjs";
 
 /**
  * Application for managing resource restoration of targeted tokens.
- * @extends {HandlebarsApplicationMixin(ApplicationV2)}
+ * @extends {EventideSheetHelpers}
  */
-export class RestoreTarget extends HandlebarsApplicationMixin(ApplicationV2) {
+export class RestoreTarget extends EventideSheetHelpers {
   /** @override */
   static PARTS = {
     restoreTarget: {
@@ -32,21 +32,6 @@ export class RestoreTarget extends HandlebarsApplicationMixin(ApplicationV2) {
     },
   };
 
-  /** @type {ActiveEffect[]} Array of status effects */
-  static statusEffects = [];
-
-  /**
-   * Prepare context data for a specific part of the form.
-   * @param {string} partId - The ID of the form part
-   * @param {Object} context - The context object to prepare
-   * @param {Object} options - Additional options
-   * @returns {Promise<Object>} The prepared context
-   */
-  async _preparePartContext(partId, context, options) {
-    context.partId = `${this.id}-${partId}`;
-    return context;
-  }
-
   /**
    * Prepare the main context data for the form.
    * @param {Object} options - Form options
@@ -63,17 +48,17 @@ export class RestoreTarget extends HandlebarsApplicationMixin(ApplicationV2) {
     }
     const context = {};
 
-    const targetTokens = await erps.utils.getTargetArray();
+    this.targetTokens = await erps.utils.getTargetArray();
     context.cssClass = RestoreTarget.DEFAULT_OPTIONS.classes.join(" ");
-    if (targetTokens.length === 0) {
+    if (this.targetTokens.length === 0) {
       ui.notifications.error(`Please target a token first!`);
       this.close();
-    } else if (targetTokens.length > 1) {
+    } else if (this.targetTokens.length > 1) {
       ui.notifications.error(`You can only target one token at a time!`);
       this.close();
     }
 
-    context.actor = targetTokens[0].actor;
+    context.actor = this.targetTokens[0].actor;
     context.statusEffects = context.actor?.items?.filter(
       (item) => item?.type === "status"
     );
@@ -88,12 +73,6 @@ export class RestoreTarget extends HandlebarsApplicationMixin(ApplicationV2) {
     return context;
   }
 
-  async _renderFrame(options) {
-    const frame = await super._renderFrame(options);
-    frame.autocomplete = "off";
-    return frame;
-  }
-
   /**
    * Handle form submission to restore resources and remove status effects.
    * @param {Event} event - The form submission event
@@ -102,8 +81,7 @@ export class RestoreTarget extends HandlebarsApplicationMixin(ApplicationV2) {
    * @private
    */
   static async #onSubmit(event, form, formData) {
-    const targetArray = await erps.utils.getTargetArray();
-    const actor = targetArray[0].actor;
+    const actor = this.targetTokens[0].actor;
 
     const selectedStatuses = this.statusEffects?.filter(
       (status) => form[status?.id]?.checked
