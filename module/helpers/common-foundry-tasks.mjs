@@ -4,7 +4,7 @@
  * @returns {Array<Token>} Returns an array of tokens which are currently targeted.
  */
 const getTargetArray = async () => {
-  return game.user.targets.size ? Array.from(game.user.targets) : []; //Array.from(game.user.character.getActiveTokens());
+  return game.user.targets.size ? Array.from(game.user.targets) : [];
 };
 
 /**
