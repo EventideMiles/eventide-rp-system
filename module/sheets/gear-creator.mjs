@@ -41,12 +41,12 @@ export class GearCreator extends CreatorApplication {
     const context = await super._prepareContext(options);
 
     context.storedData = {
-      gear_img: this.storedData[this.storageKeys[0]] || "icons/svg/item-bag.svg",
+      gear_img:
+        this.storedData[this.storageKeys[0]] || "icons/svg/item-bag.svg",
       gear_bgColor: this.storedData[this.storageKeys[1]],
       gear_textColor: this.storedData[this.storageKeys[2]],
     };
 
     return context;
   }
-
 }
