@@ -64,7 +64,7 @@ export class CreatorApplication extends EventideSheetHelpers {
    * @returns {Promise<Object>} The prepared context data
    */
   async _prepareContext(options) {
-    const gmCheck = await EventideSheetHelpers._gmCheck({
+    this.gmCheck = await EventideSheetHelpers._gmCheck({
       playerMode: this.playerMode,
     });
     this.targetArray = await erps.utils.getTargetArray();
@@ -80,13 +80,13 @@ export class CreatorApplication extends EventideSheetHelpers {
       selectedArray: this.selectedArray,
     };
 
-    if (context.targetArray.length === 0 && gmCheck === "gm") {
+    if (context.targetArray.length === 0 && this.gmCheck === "gm") {
       ui.notifications.warn(
         `If you proceed ${this.keyType} will only be created in compendium: not applied.`
       );
     }
 
-    if (context.selectedArray.length === 0 && gmCheck === "player") {
+    if (context.selectedArray.length === 0 && this.gmCheck === "player") {
       ui.notifications.error(
         `You must select a token you own to create a ${this.keyType}.`
       );
@@ -191,7 +191,7 @@ export class CreatorApplication extends EventideSheetHelpers {
       })
       .filter((e) => e !== null);
 
-    if (!this.playerMode) {
+    if (this.gmCheck === "gm") {
       hiddenEffects = this.hiddenAbilities
         .map((ability) => {
           const value = parseInt(form[ability.toLowerCase()].value);
@@ -275,22 +275,24 @@ export class CreatorApplication extends EventideSheetHelpers {
       itemData.system.roll = rollData;
     }
 
-    if (this.targetArray.length > 0) {
-      for (const token of this.targetArray) {
-        const actor = token.actor;
-        await actor.createEmbeddedDocuments("Item", [itemData]);
-      }
-    } else if (this.playerMode) {
-      for (const token of this.selectedArray) {
-        const actor = token.actor;
-        await actor.createEmbeddedDocuments("Item", [itemData]);
-      }
+    if (this.targetArray.length > 0 && this.gmCheck === "gm") {
+      await Promise.all(
+        this.targetArray.map(async (token) => {
+          await token.actor.createEmbeddedDocuments("Item", [itemData]);
+        })
+      );
+    } else if (this.gmCheck === "player") {
+      await Promise.all(
+        this.selectedArray.map(async (token) => {
+          await token.actor.createEmbeddedDocuments("Item", [itemData]);
+        })
+      );
     } else {
       await game.items.createDocument(itemData);
     }
 
-    let packId = this.playerMode ? "player" : "custom";
-    let packLabel = this.playerMode ? "Player " : "Custom";
+    let packId = this.gmCheck === "gm" ? "custom" : "player";
+    let packLabel = this.gmCheck === "gm" ? "Custom" : "Player";
     if (type === "gear") {
       packId += "gear";
       packLabel += "Gear";
@@ -315,11 +317,11 @@ export class CreatorApplication extends EventideSheetHelpers {
       pack: pack.collection,
     });
 
-    if (this.targetArray.length > 0 && !this.playerMode) {
+    if (this.targetArray.length > 0 && this.gmCheck === "gm") {
       ui.notifications.info(
         `Created ${type} item "${name}" on ${this.targetArray.length} target(s) and in the ${packLabel} compendium`
       );
-    } else if (this.selectedArray.length > 0 && this.playerMode) {
+    } else if (this.selectedArray.length > 0 && this.gmCheck === "player") {
       ui.notifications.info(
         `Created ${type} item "${name}" on ${this.selectedArray.length} selected token(s) and in the ${packLabel} compendium`
       );
