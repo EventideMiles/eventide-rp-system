@@ -1,4 +1,4 @@
-import { EventideSheetHelpers } from "./eventide-sheet-helpers.mjs";
+import { EventideSheetHelpers } from "./base/eventide-sheet-helpers.mjs";
 
 /**
  * A form application for changing status effects on a target token.
