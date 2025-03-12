@@ -40,7 +40,7 @@ export class EventideSheetHelpers extends HandlebarsApplicationMixin(
   }
 
   /**
-   * Handle changing the gear image.
+   * Handle changing the image.
    * @param {PointerEvent} event - The originating click event
    * @param {HTMLElement} target - The capturing HTML element which defined a [data-edit]
    * @returns {Promise} The file picker browse operation
@@ -86,5 +86,22 @@ export class EventideSheetHelpers extends HandlebarsApplicationMixin(
       console.error("Error in _onEditImage:", error);
       ui.notifications.error("Failed to open file picker");
     }
+  }
+
+  /**
+   * Checks if the current user is a GM and handles permissions accordingly.
+   * @param {Object} options - Configuration options
+   * @param {boolean} [options.playerMode=false] - Whether to allow player access to the script
+   * @returns {string} - "forbidden" if access denied, "player" if player with access, "gm" if GM
+   */
+  static async _gmCheck({ playerMode = false } = {}) {
+    if (!game.user?.isGM && !playerMode) {
+      ui.notifications.error("Only GMs can use this script in this mode.");
+      this.close();
+      return "forbidden";
+    } else if (!game.user?.isGM && playerMode) {
+      return "player";
+    }
+    return "gm";
   }
 }
