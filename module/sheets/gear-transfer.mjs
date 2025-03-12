@@ -39,6 +39,7 @@ export class GearTransfer extends EventideSheetHelpers {
    * @returns {Object} Template data
    */
   async _prepareContext(options) {
+    await EventideSheetHelpers._gmCheck();
     const context = {};
 
     this.targetTokens = await erps.utils.getTargetArray();

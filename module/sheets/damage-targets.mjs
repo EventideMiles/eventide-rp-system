@@ -32,7 +32,7 @@ export class DamageTargets extends EventideSheetHelpers {
       closeOnSubmit: true,
     },
     actions: {
-      store: DamageTargets.store,
+      store: this.#store,
     },
   };
 
@@ -51,7 +51,9 @@ export class DamageTargets extends EventideSheetHelpers {
    * @returns {Promise<Object>} The prepared context
    */
   async _prepareContext(options) {
-    const context = {};
+    this.gmCheck = await EventideSheetHelpers._gmCheck({
+      playerMode: true,
+    });
 
     this.storageKeys = [
       `damage_${this.number}_label`,
@@ -60,8 +62,12 @@ export class DamageTargets extends EventideSheetHelpers {
       `damage_${this.number}_isHeal`,
     ];
 
-    context.cssClass = DamageTargets.DEFAULT_OPTIONS.classes.join(" ");
-    context.storageKeys = this.storageKeys;
+    const context = {
+      gmCheck: this.gmCheck,
+      cssClass: DamageTargets.DEFAULT_OPTIONS.classes.join(" "),
+      storageKeys: this.storageKeys,
+    };
+
     context.storedData = await erps.utils.retrieveLocal(context.storageKeys);
     context.targetArray = await erps.utils.getTargetArray();
     context.selectedArray = await erps.utils.getSelectedArray();
@@ -86,6 +92,11 @@ export class DamageTargets extends EventideSheetHelpers {
       return this.close();
     }
 
+    if (context.selectedArray.length === 0 && this.gmCheck === "player") {
+      ui.notifications.error(`Only GMs can apply damage to targets.`);
+      return this.close();
+    }
+
     return context;
   }
 
@@ -97,15 +108,6 @@ export class DamageTargets extends EventideSheetHelpers {
    * @private
    */
   static async #onSubmit(event, form, formData) {
-    const selectedArray = this.selectedArray;
-    const targetArray = this.targetArray;
-
-    if (this.targetArray.length === 0 && this.selectedArray.length === 0) {
-      ui.notifications.error(`Please target or select a token first!`);
-      this.close();
-      return;
-    }
-
     const damageOptions = {
       label: form.label.value || "Damage",
       formula: form.formula.value || "1",
@@ -114,14 +116,19 @@ export class DamageTargets extends EventideSheetHelpers {
     };
     if (
       (damageOptions.type === "heal" && this.selectedArray.length > 0) ||
-      (this.selectedArray.length > 0 && this.targetArray.length === 0)
+      (this.selectedArray.length > 0 && this.targetArray.length === 0) ||
+      (this.selectedArray.length > 0 && this.gmCheck === "player")
     ) {
       await Promise.all(
-        selectedArray.map((token) => token.actor.damageResolve(damageOptions))
+        this.selectedArray.map((token) =>
+          token.actor.damageResolve(damageOptions)
+        )
       );
     } else {
       await Promise.all(
-        targetArray.map((token) => token.actor.damageResolve(damageOptions))
+        this.targetArray.map((token) =>
+          token.actor.damageResolve(damageOptions)
+        )
       );
     }
 
@@ -134,7 +141,7 @@ export class DamageTargets extends EventideSheetHelpers {
    * @param {HTMLElement} target - The target element
    * @static
    */
-  static async store(event, target) {
+  static async #store(event, target) {
     DamageTargets.#storeData(this, target.form);
 
     this.close();

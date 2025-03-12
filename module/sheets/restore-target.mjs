@@ -39,13 +39,7 @@ export class RestoreTarget extends EventideSheetHelpers {
    * @throws {Error} If no target is selected or multiple targets are selected
    */
   async _prepareContext(options) {
-    if (!game.user?.isGM) {
-      ui.notifications.error(
-        "Only GMs can restore actor resources and remove status effects."
-      );
-      this.close();
-      return;
-    }
+    await EventideSheetHelpers._gmCheck();
     const context = {};
 
     this.targetTokens = await erps.utils.getTargetArray();
