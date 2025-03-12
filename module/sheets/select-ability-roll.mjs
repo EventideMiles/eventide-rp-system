@@ -53,7 +53,6 @@ export class SelectAbilityRoll extends EventideSheetHelpers {
    * @private
    */
   static async #onSubmit(event, form, formData) {
-    event.preventDefault();
     const attributeChoice = form["attribute-choice"].value;
     const macro = game.macros.getName(attributeChoice);
     if (macro) {
