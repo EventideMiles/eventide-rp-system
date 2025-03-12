@@ -64,6 +64,9 @@ export class CreatorApplication extends EventideSheetHelpers {
    * @returns {Promise<Object>} The prepared context data
    */
   async _prepareContext(options) {
+    const gmCheck = await EventideSheetHelpers._gmCheck({
+      playerMode: this.playerMode,
+    });
     this.targetArray = await erps.utils.getTargetArray();
     this.selectedArray = await erps.utils.getSelectedArray();
     this.storedData = await erps.utils.retrieveLocal(this.storageKeys);
@@ -77,13 +80,13 @@ export class CreatorApplication extends EventideSheetHelpers {
       selectedArray: this.selectedArray,
     };
 
-    if (context.targetArray.length === 0 && !context.playerMode) {
+    if (context.targetArray.length === 0 && gmCheck === "gm") {
       ui.notifications.warn(
         `If you proceed ${this.keyType} will only be created in compendium: not applied.`
       );
     }
 
-    if (context.selectedArray.length === 0 && context.playerMode) {
+    if (context.selectedArray.length === 0 && gmCheck === "player") {
       ui.notifications.error(
         `You must select a token you own to create a ${this.keyType}.`
       );
