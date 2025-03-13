@@ -21,6 +21,9 @@
       "Roll": "Roll",
       "Flat": "Flat"
     },
+    "CombatOptions": {
+      "Unaugmented": "Unaugmented"
+    },
     "SheetLabels": {
       "Actor": "EventideRpSystem Actor Sheet",
       "Item": "EventideRpSystem Item Sheet"

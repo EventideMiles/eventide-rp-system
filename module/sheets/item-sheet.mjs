@@ -138,7 +138,7 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
           context.rollTypes = EventideSheetHelpers.rollTypeObject;
           context.abilities = {
             ...EventideSheetHelpers.abilityObject,
-            unaugmented: "nnaugmented",
+            unaugmented: "unaugmented",
           };
         }
         break;
