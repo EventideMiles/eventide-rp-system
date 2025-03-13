@@ -46,15 +46,15 @@ export class CreatorApplication extends EventideSheetHelpers {
         `${keyType}_${this.number}_type`,
       ];
     }
-    this.abilities = [...CreatorApplication.abilities];
-    this.hiddenAbilities = [...CreatorApplication.hiddenAbilities];
+    this.abilities = [...EventideSheetHelpers.abilities];
+    this.hiddenAbilities = [...EventideSheetHelpers.hiddenAbilities];
     if (advanced) {
       this.hiddenAbilities = [
         ...this.hiddenAbilities,
-        ...CreatorApplication.advancedHiddenAbilities,
+        ...EventideSheetHelpers.advancedHiddenAbilities,
       ];
     }
-    this.rollTypes = CreatorApplication.rollTypes;
+    this.rollTypes = EventideSheetHelpers.rollTypes;
     this.playerMode = playerMode;
   }
 
@@ -64,6 +64,7 @@ export class CreatorApplication extends EventideSheetHelpers {
    * @returns {Promise<Object>} The prepared context data
    */
   async _prepareContext(options) {
+    const context = await super._prepareContext(options);
     this.gmCheck = await EventideSheetHelpers._gmCheck({
       playerMode: this.playerMode,
     });
@@ -71,14 +72,12 @@ export class CreatorApplication extends EventideSheetHelpers {
     this.selectedArray = await erps.utils.getSelectedArray();
     this.storedData = await erps.utils.retrieveLocal(this.storageKeys);
 
-    const context = {
-      abilities: this.abilities,
-      hiddenAbilities: this.hiddenAbilities,
-      rollTypes: this.rollTypes,
-      playerMode: this.playerMode,
-      targetArray: this.targetArray,
-      selectedArray: this.selectedArray,
-    };
+    context.abilities = this.abilities;
+    context.hiddenAbilities = this.hiddenAbilities;
+    context.rollTypes = this.rollTypes;
+    context.playerMode = this.playerMode;
+    context.targetArray = this.targetArray;
+    context.selectedArray = this.selectedArray;
 
     if (context.targetArray.length === 0 && this.gmCheck === "gm") {
       ui.notifications.warn(
