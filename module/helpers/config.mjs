@@ -53,3 +53,13 @@ EVENTIDE_RP_SYSTEM.hiddenAbilityAbbreviations = {
   fmin: `EVENTIDE_RP_SYSTEM.HiddenAbilities.Fmin.abbr`,
   sens: `EVENTIDE_RP_SYSTEM.HiddenAbilities.Sens.abbr`,
 };
+
+/**
+ * Roll types used for system mechanics.
+ * @type {Object<string, string>}
+ */
+EVENTIDE_RP_SYSTEM.rollTypes = {
+  none: "EVENTIDE_RP_SYSTEM.RollTypes.None",
+  roll: "EVENTIDE_RP_SYSTEM.RollTypes.Roll",
+  flat: "EVENTIDE_RP_SYSTEM.RollTypes.Flat",
+};

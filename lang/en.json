@@ -16,6 +16,11 @@
       "Fmax": { "long": "Fail^", "abbr": "fmax" },
       "Sens": { "long": "Sens", "abbr": "sens" }
     },
+    "RollTypes": {
+      "None": "None",
+      "Roll": "Roll",
+      "Flat": "Flat"
+    },
     "SheetLabels": {
       "Actor": "EventideRpSystem Actor Sheet",
       "Item": "EventideRpSystem Item Sheet"
