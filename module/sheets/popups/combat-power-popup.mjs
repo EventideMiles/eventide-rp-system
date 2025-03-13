@@ -36,41 +36,26 @@ export class CombatPowerPopup extends EventidePopupHelpers {
   async _prepareContext(options) {
     const context = await super._prepareContext(options);
     context.cssClass = CombatPowerPopup.DEFAULT_OPTIONS.classes.join(" ");
-    context.problems = await CombatPowerPopup.#checkEligibility(this.item);
+    context.problems = await this.checkEligibility();
 
     return context;
-  }
-
-  static async #checkEligibility(item) {
-    const problems = {
-      targeting: false,
-      power: false,
-    };
-    if (item.system.targeted) {
-      const targetArray = await erps.utils.getTargetArray();
-      if (targetArray.length === 0) problems.targeting = true;
-    }
-
-    if (item.system.cost > item.actor.system.power.value) problems.power = true;
-
-    return problems;
   }
 
   /**
    * Handle form submission.
    * @param {Event} event - The form submission event
-   * @param {FormData} formData - The form data
    * @param {HTMLElement} form - The form element
    * @private
    */
   static async #onSubmit(event, form, formData) {
-    // check for problems
-    const problems = await CombatPowerPopup.#checkEligibility(this.item);
+    const problems = await this.checkEligibility();
+
     if (problems.targeting || problems.power)
       return ui.notifications.error("Cannot use Combat Power right now!");
 
     this.item.actor.addPower(-this.item.system.cost);
 
+    // Send to chat
     erps.messages.combatPowerMessage(this.item);
     this.close();
   }

@@ -36,4 +36,26 @@ export class EventidePopupHelpers extends HandlebarsApplicationMixin(
     frame.autocomplete = "off";
     return frame;
   }
+
+  async checkEligibility() {
+    const problems = {
+      targeting: false,
+      power: false,
+      quantity: false,
+    };
+
+    if (this.item.system.targeted) {
+      const targetArray = await erps.utils.getTargetArray();
+      if (targetArray.length === 0) problems.targeting = true;
+    }
+
+    if (this.item.system.cost > (this.item.system.quantity || 0)) {
+      problems.quantity = true;
+    }
+    if (this.item.system.cost > this.item.actor?.system?.power?.value) {
+      problems.power = true;
+    }
+
+    return problems;
+  }
 }

@@ -37,25 +37,9 @@ export class GearPopup extends EventidePopupHelpers {
   async _prepareContext(options) {
     const context = await super._prepareContext(options);
     context.cssClass = GearPopup.DEFAULT_OPTIONS.classes.join(" ");
-    context.problems = await GearPopup.#checkEligibility(this.item);
+    context.problems = await this.checkEligibility();
 
     return context;
-  }
-
-  static async #checkEligibility(item) {
-    const problems = {
-      targeting: false,
-      quantity: false,
-    };
-
-    if (item.system.targeted) {
-      const targetArray = await erps.utils.getTargetArray();
-      if (targetArray.length === 0) problems.targeting = true;
-    }
-
-    if (item.system.cost > item.system.quantity) problems.quantity = true;
-
-    return problems;
   }
 
   /**
@@ -66,12 +50,11 @@ export class GearPopup extends EventidePopupHelpers {
    * @private
    */
   static async #onSubmit(event, formData, form) {
-    // check for problems
-    const problems = await GearPopup.#checkEligibility(this.item);
+    const problems = await this.checkEligibility(this.item);
+
     if (problems.targeting || problems.quantity)
       return ui.notifications.error("Cannot use Gear right now!");
 
-    // Reduce quantity by cost
     this.item.addQuantity(-this.item.system.cost);
 
     erps.messages.combatPowerMessage(this.item);
