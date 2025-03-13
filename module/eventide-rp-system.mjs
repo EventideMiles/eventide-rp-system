@@ -83,7 +83,7 @@ Hooks.once("init", function () {
    * @type {String}
    */
   CONFIG.Combat.initiative = {
-    formula: `1d@hiddenAbilities.dice.total + (@abilities.acro.total + @abilities.wits.total)/2 + (@abilities.acro.total + @abilities.phys.total + @abilities.fort.total + @abilities.will.total + @abilities.wits.total)/100`,
+    formula: `1d@hiddenAbilities.dice.total + @statTotal.mainInit + @statTotal.subInit`,
     decimals: 2,
   };
 

@@ -213,6 +213,21 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
       }),
     });
 
+    schema.statTotal = new fields.SchemaField({
+      value: new fields.NumberField({
+        ...requiredInteger,
+        initial: 0,
+      }),
+      mainInit: new fields.NumberField({
+        ...requiredInteger,
+        initial: 0,
+      }),
+      subInit: new fields.NumberField({
+        ...requiredInteger,
+        initial: 0,
+      }),
+    });
+
     return schema;
   }
 
@@ -260,6 +275,18 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
         ? current.override + current.change
         : current.value + current.change;
     }
+
+    this.statTotal.value = Object.values(this.abilities).reduce(
+      (total, ability) => {
+        return total + ability.total;
+      },
+      0
+    );
+
+    this.statTotal.mainInit =
+      (this.abilities.acro.total + this.abilities.wits.total) / 2;
+
+    this.statTotal.subInit = this.statTotal.value / 100;
   }
 
   /**
@@ -284,6 +311,7 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
     }
 
     data.lvl = this.attributes.level.value;
+    data.statTotal = this.statTotal.value;
 
     return data;
   }
