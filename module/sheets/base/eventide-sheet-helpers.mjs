@@ -7,13 +7,39 @@ const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 export class EventideSheetHelpers extends HandlebarsApplicationMixin(
   ApplicationV2
 ) {
-  static abilities = ["acro", "phys", "fort", "will", "wits"];
-  static hiddenAbilities = ["Dice", "Cmin", "Fmax"];
-  static advancedHiddenAbilities = ["Cmax", "Fmin"];
-  static rollTypes = ["None", "Roll", "Flat"];
-
   constructor() {
     super();
+  }
+
+  async _prepareContext(context, options) {
+    context.config = CONFIG.EVENTIDE_RP_SYSTEM;
+    return context;
+  }
+
+  static get abilities() {
+    return Object.values(CONFIG.EVENTIDE_RP_SYSTEM.abilities).map((v) =>
+      game.i18n.localize(v)
+    );
+  }
+  // static get abilities() {
+  //   // Return an array of keys for compatibility with spread operator
+  //   return Object.entries(CONFIG.EVENTIDE_RP_SYSTEM.abilities);
+  // }
+  static get hiddenAbilities() {
+    return ["Dice", "Cmin", "Fmax"];
+  }
+  static get advancedHiddenAbilities() {
+    return ["Cmax", "Fmin"];
+  }
+  static get rollTypes() {
+    // Return an object with keys mapped to translated values
+    return Object.entries(CONFIG.EVENTIDE_RP_SYSTEM.rollTypes).reduce(
+      (acc, [key, value]) => {
+        acc[key] = game.i18n.localize(value);
+        return acc;
+      },
+      {}
+    );
   }
 
   /**

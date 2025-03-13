@@ -31,7 +31,11 @@ export class SelectAbilityRoll extends EventideSheetHelpers {
     },
   };
 
-  static abilities = ["Acrobatics", "Physical", "Fortitude", "Will", "Wits"];
+  static get abilities() {
+    return Object.values(CONFIG.EVENTIDE_RP_SYSTEM.abilities).map((v) =>
+      game.i18n.localize(v)
+    );
+  }
 
   /**
    * Prepares the main context data for the form.

@@ -133,21 +133,24 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
         // Necessary for preserving active tab on re-render
         context.tab = context.tabs[partId];
         if (partId === "attributesCombatPower" || partId === "attributesGear") {
-          // Add roll type options
-          context.rollTypes = {
-            roll: "Roll",
-            flat: "Flat",
-            none: "None",
-          };
-          // Add ability options
-          context.abilities = {
-            acro: "Acrobatics",
-            phys: "Physical",
-            fort: "Fortitude",
-            will: "Will",
-            wits: "Wits",
-            unaugmented: "Unaugmented",
-          };
+          // Add roll type options - create an object with keys and translated values
+          context.rollTypes = Object.entries(
+            CONFIG.EVENTIDE_RP_SYSTEM.rollTypes
+          ).reduce((acc, [key, value]) => {
+            acc[key] = game.i18n.localize(value);
+            return acc;
+          }, {});
+          // Get localized ability names from config
+          context.abilities = Object.keys(
+            CONFIG.EVENTIDE_RP_SYSTEM.abilities
+          ).reduce((acc, key) => {
+            acc[key] = game.i18n.localize(
+              CONFIG.EVENTIDE_RP_SYSTEM.abilities[key]
+            );
+            return acc;
+          }, {});
+          // Add unaugmented option at the end
+          context.abilities.unaugmented = "Unaugmented";
         }
         break;
       case "description":
