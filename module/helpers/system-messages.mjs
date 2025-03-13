@@ -159,43 +159,36 @@ const combatPowerMessage = async (item) => {
 
   if (item.formula.includes("d")) {
     const dieArray = result.terms[0].results;
+    const [cmin, cmax, fmin, fmax] = Object.values(rollData.hiddenAbilities);
 
     critHit = dieArray.some(
-      (die) =>
-        die.result <= rollData.hiddenAbilities.cmax.total &&
-        die.result >= rollData.hiddenAbilities.cmin.total
+      (die) => die.result <= cmax.total && die.result >= cmin.total
     );
     critMiss = dieArray.some(
-      (die) =>
-        die.result <= rollData.hiddenAbilities.fmax.total &&
-        die.result >= rollData.hiddenAbilities.fmin.total
+      (die) => die.result <= fmax.total && die.result >= fmin.total
     );
 
     stolenCrit =
       dieArray.some(
         (die) =>
-          die.result <= rollData.hiddenAbilities.cmax.total &&
-          die.result >= rollData.hiddenAbilities.cmin.total &&
+          die.result <= cmax.total &&
+          die.result >= cmin.total &&
           item.formula.toLowerCase().includes("kl")
       ) &&
       !dieArray.every(
-        (die) =>
-          die.result <= rollData.hiddenAbilities.cmax.total &&
-          die.result >= rollData.hiddenAbilities.cmin.total
+        (die) => die.result <= cmax.total && die.result >= cmin.total
       );
 
     savedMiss =
       dieArray.some(
         (die) =>
-          die.result >= rollData.hiddenAbilities.fmin.total &&
-          die.result <= rollData.hiddenAbilities.fmax.total &&
+          die.result >= fmin.total &&
+          die.result <= fmax.total &&
           item.formula.toLowerCase().includes("k") &&
           !item.formula.toLowerCase().includes("kl")
       ) &&
       !dieArray.every(
-        (die) =>
-          die.result >= rollData.hiddenAbilities.fmin.total &&
-          die.result <= rollData.hiddenAbilities.fmax.total
+        (die) => die.result >= fmin.total && die.result <= fmax.total
       );
 
     if (stolenCrit && critHit) {
@@ -207,17 +200,14 @@ const combatPowerMessage = async (item) => {
     }
   }
 
-  // Handle AC check data if targeted
-  let targetRollData = [];
-  if (item.system.targeted && targetArray.length > 0) {
-    for (const target of targetArray) {
-      targetRollData.push({
-        name: target.actor.name,
-        compare: result.total,
-        ...target.actor.getRollData(),
-      });
-    }
-  }
+  const targetRollData =
+    item.system.targeted && targetArray.length > 0
+      ? targetArray.map((target) => ({
+          name: target.actor.name,
+          compare: result.total,
+          ...target.actor.getRollData(),
+        }))
+      : [];
 
   const templateData = {
     ...itemData,
