@@ -8,8 +8,6 @@ import EventideRpSystemActorBase from "./base-actor.mjs";
 
 export default class EventideRpSystemNPC extends EventideRpSystemActorBase {
   static defineSchema() {
-    // const fields = foundry.data.fields;
-    // const requiredInteger = { required: true, nullable: false, integer: true };
     const schema = super.defineSchema();
 
     return schema;
