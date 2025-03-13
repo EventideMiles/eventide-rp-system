@@ -17,14 +17,8 @@ export class EventideSheetHelpers extends HandlebarsApplicationMixin(
   }
 
   static get abilities() {
-    return Object.values(CONFIG.EVENTIDE_RP_SYSTEM.abilities).map((v) =>
-      game.i18n.localize(v)
-    );
+    return Object.keys(CONFIG.EVENTIDE_RP_SYSTEM.abilities);
   }
-  // static get abilities() {
-  //   // Return an array of keys for compatibility with spread operator
-  //   return Object.entries(CONFIG.EVENTIDE_RP_SYSTEM.abilities);
-  // }
   static get hiddenAbilities() {
     return ["Dice", "Cmin", "Fmax"];
   }
