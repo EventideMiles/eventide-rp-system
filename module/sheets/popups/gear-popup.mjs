@@ -1,12 +1,10 @@
-const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
+import { EventidePopupHelpers } from "../base/eventide-popup-helpers.mjs";
 
 /**
  * Application for displaying gear information including roll formulas and quantity checks.
- * @extends {HandlebarsApplicationMixin(ApplicationV2)}
+ * @extends {EventidePopupHelpers}
  */
-export class GearPopup extends HandlebarsApplicationMixin(
-  ApplicationV2
-) {
+export class GearPopup extends EventidePopupHelpers {
   /** @override */
   static PARTS = {
     gearPopup: {
@@ -17,50 +15,28 @@ export class GearPopup extends HandlebarsApplicationMixin(
 
   /** @override */
   static DEFAULT_OPTIONS = {
-    id: "gear-popup",
+    ...super.DEFAULT_OPTIONS,
     classes: ["eventide-rp-system", "standard-form", "gear-popup"],
     position: {
       width: 600,
       height: "auto",
     },
-    tag: "form",
     window: {
       title: "Use Gear",
       icon: "fa-solid fa-sack",
     },
     form: {
       handler: this.#onSubmit,
-      submitOnChange: false,
-      closeOnSubmit: true,
-    },
-    actions: {
-      close: GearPopup.close,
     },
   };
 
   constructor({ item }) {
-    super();
-    this.item = item;
+    super({ item });
   }
 
-  async _renderFrame(options) {
-    const frame = await super._renderFrame(options);
-    frame.autocomplete = "off";
-    return frame;
-  }
-
-  /**
-   * Prepare context data for a specific part of the form.
-   * @param {string} partId - The ID of the form part
-   * @param {Object} context - The context object to prepare
-   * @param {Object} options - Additional options
-   * @returns {Promise<Object>} The prepared context
-   */
-  async _preparePartContext(partId, context, options) {
-    context.partId = `${this.id}-${partId}`;
-    context = await super._preparePartContext(partId, context, options);
-
-    context.item = this.item;
+  async _prepareContext(options) {
+    const context = await super._prepareContext(options);
+    context.cssClass = GearPopup.DEFAULT_OPTIONS.classes.join(" ");
     context.problems = await GearPopup.#checkEligibility(this.item);
 
     return context;
@@ -99,10 +75,6 @@ export class GearPopup extends HandlebarsApplicationMixin(
     this.item.addQuantity(-this.item.system.cost);
 
     erps.messages.combatPowerMessage(this.item);
-    this.close();
-  }
-
-  static close() {
     this.close();
   }
 }

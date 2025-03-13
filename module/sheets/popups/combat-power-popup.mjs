@@ -1,12 +1,10 @@
-const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
+import { EventidePopupHelpers } from "../base/eventide-popup-helpers.mjs";
 
 /**
  * Application for displaying combat power information including roll formulas and prerequisites.
- * @extends {HandlebarsApplicationMixin(ApplicationV2)}
+ * @extends {EventidePopupHelpers}
  */
-export class CombatPowerPopup extends HandlebarsApplicationMixin(
-  ApplicationV2
-) {
+export class CombatPowerPopup extends EventidePopupHelpers {
   /** @override */
   static PARTS = {
     combatPowerPopup: {
@@ -17,53 +15,30 @@ export class CombatPowerPopup extends HandlebarsApplicationMixin(
 
   /** @override */
   static DEFAULT_OPTIONS = {
-    id: "combat-power-popup",
     classes: ["eventide-rp-system", "standard-form", "combat-power-popup"],
     position: {
       width: 500, // Slightly wider to accommodate roll formulas
       height: "auto",
     },
-    tag: "form",
     window: {
       title: "Combat Power Details",
       icon: "fa-solid fa-dice-d20",
     },
     form: {
       handler: this.#onSubmit,
-      submitOnChange: false,
-      closeOnSubmit: true,
-    },
-    actions: {
-      close: CombatPowerPopup.close,
     },
   };
 
   constructor({ item }) {
-    super();
-    this.item = item;
+    super({ item });
   }
 
-  /**
-   * Prepare context data for a specific part of the form.
-   * @param {string} partId - The ID of the form part
-   * @param {Object} context - The context object to prepare
-   * @param {Object} options - Additional options
-   * @returns {Promise<Object>} The prepared context
-   */
-  async _preparePartContext(partId, context, options) {
-    context.partId = `${this.id}-${partId}`;
-    context = await super._preparePartContext(partId, context, options);
-
-    context.item = this.item;
+  async _prepareContext(options) {
+    const context = await super._prepareContext(options);
+    context.cssClass = CombatPowerPopup.DEFAULT_OPTIONS.classes.join(" ");
     context.problems = await CombatPowerPopup.#checkEligibility(this.item);
 
     return context;
-  }
-
-  async _renderFrame(options) {
-    const frame = await super._renderFrame(options);
-    frame.autocomplete = "off";
-    return frame;
   }
 
   static async #checkEligibility(item) {
@@ -88,7 +63,7 @@ export class CombatPowerPopup extends HandlebarsApplicationMixin(
    * @param {HTMLElement} form - The form element
    * @private
    */
-  static async #onSubmit(event, formData, form) {
+  static async #onSubmit(event, form, formData) {
     // check for problems
     const problems = await CombatPowerPopup.#checkEligibility(this.item);
     if (problems.targeting || problems.power)
@@ -97,10 +72,6 @@ export class CombatPowerPopup extends HandlebarsApplicationMixin(
     this.item.actor.addPower(-this.item.system.cost);
 
     erps.messages.combatPowerMessage(this.item);
-    this.close();
-  }
-
-  static close() {
     this.close();
   }
 }
