@@ -19,6 +19,11 @@ export class EventideSheetHelpers extends HandlebarsApplicationMixin(
   static get abilities() {
     return Object.keys(CONFIG.EVENTIDE_RP_SYSTEM.abilities);
   }
+  static get abilityObject() {
+    return Object.fromEntries(
+      Object.keys(CONFIG.EVENTIDE_RP_SYSTEM.abilities).map((key) => [key, key])
+    );
+  }
   static get hiddenAbilities() {
     return ["Dice", "Cmin", "Fmax"];
   }
@@ -26,13 +31,11 @@ export class EventideSheetHelpers extends HandlebarsApplicationMixin(
     return ["Cmax", "Fmin"];
   }
   static get rollTypes() {
-    // Return an object with keys mapped to translated values
-    return Object.entries(CONFIG.EVENTIDE_RP_SYSTEM.rollTypes).reduce(
-      (acc, [key, value]) => {
-        acc[key] = game.i18n.localize(value);
-        return acc;
-      },
-      {}
+    return Object.keys(CONFIG.EVENTIDE_RP_SYSTEM.rollTypes);
+  }
+  static get rollTypeObject() {
+    return Object.fromEntries(
+      Object.keys(CONFIG.EVENTIDE_RP_SYSTEM.rollTypes).map((key) => [key, key])
     );
   }
 
