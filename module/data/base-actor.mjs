@@ -14,6 +14,7 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
   static defineSchema() {
     const fields = foundry.data.fields;
     const requiredInteger = { required: true, nullable: false, integer: true };
+    const overrideInteger = { integer: true, required: false, nullable: true };
     const schema = {};
 
     schema.resolve = new fields.SchemaField({
@@ -47,9 +48,7 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
           obj[ability] = new fields.SchemaField({
             value: new fields.NumberField({ ...requiredInteger, initial: 1 }),
             override: new fields.NumberField({
-              nullable: true,
-              integer: true,
-              required: false,
+              ...overrideInteger,
               initial: null,
             }),
             change: new fields.NumberField({ ...requiredInteger, initial: 0 }),
@@ -87,21 +86,13 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
           initial: 20,
           min: 0,
         }),
-        override: new fields.NumberField({
-          nullable: true,
-          integer: true,
-          required: false,
-          initial: null,
-        }),
-        change: new fields.NumberField({
-          ...requiredInteger,
-          initial: 0,
-        }),
         total: new fields.NumberField({
           ...requiredInteger,
           initial: 20,
           min: 0,
         }),
+        override: new fields.NumberField({ ...overrideInteger, initial: null }),
+        change: new fields.NumberField({ ...requiredInteger, initial: 0 }),
       }),
       cmax: new fields.SchemaField({
         value: new fields.NumberField({
@@ -109,21 +100,13 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
           initial: 20,
           min: 1,
         }),
-        override: new fields.NumberField({
-          nullable: true,
-          integer: true,
-          required: false,
-          initial: null,
-        }),
-        change: new fields.NumberField({
-          ...requiredInteger,
-          initial: 0,
-        }),
         total: new fields.NumberField({
           ...requiredInteger,
           initial: 20,
           min: 1,
         }),
+        override: new fields.NumberField({ ...overrideInteger, initial: null }),
+        change: new fields.NumberField({ ...requiredInteger, initial: 0 }),
       }),
       cmin: new fields.SchemaField({
         value: new fields.NumberField({
@@ -131,21 +114,13 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
           initial: 20,
           min: 1,
         }),
-        override: new fields.NumberField({
-          nullable: true,
-          integer: true,
-          required: false,
-          initial: null,
-        }),
-        change: new fields.NumberField({
-          ...requiredInteger,
-          initial: 0,
-        }),
         total: new fields.NumberField({
           ...requiredInteger,
           initial: 20,
           min: 1,
         }),
+        override: new fields.NumberField({ ...overrideInteger, initial: null }),
+        change: new fields.NumberField({ ...requiredInteger, initial: 0 }),
       }),
       fmin: new fields.SchemaField({
         value: new fields.NumberField({
@@ -153,21 +128,13 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
           initial: 1,
           min: 0,
         }),
-        override: new fields.NumberField({
-          nullable: true,
-          integer: true,
-          required: false,
-          initial: null,
-        }),
-        change: new fields.NumberField({
-          ...requiredInteger,
-          initial: 0,
-        }),
         total: new fields.NumberField({
           ...requiredInteger,
           initial: 1,
           min: 0,
         }),
+        override: new fields.NumberField({ ...overrideInteger, initial: null }),
+        change: new fields.NumberField({ ...requiredInteger, initial: 0 }),
       }),
       fmax: new fields.SchemaField({
         value: new fields.NumberField({
@@ -175,57 +142,32 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
           initial: 1,
           min: 1,
         }),
-        override: new fields.NumberField({
-          nullable: true,
-          integer: true,
-          required: false,
-          initial: null,
-        }),
-        change: new fields.NumberField({
-          ...requiredInteger,
-          initial: 0,
-        }),
         total: new fields.NumberField({
           ...requiredInteger,
           initial: 1,
           min: 1,
         }),
+        override: new fields.NumberField({ ...overrideInteger, initial: null }),
+        change: new fields.NumberField({ ...requiredInteger, initial: 0 }),
       }),
       sens: new fields.SchemaField({
         value: new fields.NumberField({
           ...requiredInteger,
           initial: 0,
         }),
-        override: new fields.NumberField({
-          nullable: true,
-          integer: true,
-          required: false,
-          initial: null,
-        }),
-        change: new fields.NumberField({
-          ...requiredInteger,
-          initial: 0,
-        }),
         total: new fields.NumberField({
           ...requiredInteger,
           initial: 0,
         }),
+        override: new fields.NumberField({ ...overrideInteger, initial: null }),
+        change: new fields.NumberField({ ...requiredInteger, initial: 0 }),
       }),
     });
 
     schema.statTotal = new fields.SchemaField({
-      value: new fields.NumberField({
-        ...requiredInteger,
-        initial: 0,
-      }),
-      mainInit: new fields.NumberField({
-        ...requiredInteger,
-        initial: 0,
-      }),
-      subInit: new fields.NumberField({
-        ...requiredInteger,
-        initial: 0,
-      }),
+      value: new fields.NumberField({ ...requiredInteger, initial: 0 }),
+      mainInit: new fields.NumberField({ ...requiredInteger, initial: 0 }),
+      subInit: new fields.NumberField({ ...requiredInteger, initial: 0 }),
     });
 
     return schema;
