@@ -25,10 +25,10 @@ export class EventideSheetHelpers extends HandlebarsApplicationMixin(
     );
   }
   static get hiddenAbilities() {
-    return ["Dice", "Cmin", "Fmax"];
+    return ["dice", "cmin", "fmax"];
   }
   static get advancedHiddenAbilities() {
-    return ["Cmax", "Fmin"];
+    return ["cmax", "fmin"];
   }
   static get rollTypes() {
     return Object.keys(CONFIG.EVENTIDE_RP_SYSTEM.rollTypes);
