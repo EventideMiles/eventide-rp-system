@@ -22,11 +22,15 @@
     },
     "Forms" : {
       "Sections": {
+        "Type": "Type",
+        "Status": "Status",
+        "Feature": "Feature",
         "Name": "Name",
         "Description": "Description",
         "Image": "Image",
         "Background": "Background",
         "Text": "Text",
+        "IconTint": "Icon Tint",
         "Attributes": "Attributes",
         "Quantity": "Quantity",
         "Weight": "Weight",
@@ -46,7 +50,7 @@
         "CreateAndApply": "Create and Apply"
       },
       "Modifications": {
-        "Add": "Add",
+        "Add": "Change",
         "Override": "Override",
         "Advantage": "Advantage",
         "Disadvantage": "Disadvantage"
@@ -56,14 +60,12 @@
           "PlayerMode": "You are using the gear creator in player mode. This can only be used to create gear for tokens you control. You currently have <strong>{count} tokens(s)</strong> selected.",
           "NoTargets": "There are no targets selected. This will create a gear item for the compendium only.",
           "WithTargets": "There are <strong>{count} target(s)</strong> selected. This will create a gear item for each target and your compendium."
+        },
+        "Effect": {
+          "PlayerMode": "You are using the effect creator in player mode. This can only be used to create features for tokens you control. You currently have <strong>{count} tokens(s)</strong> selected.",
+          "NoTargets": "There are no targets selected. This will create either a status condition or feature (as selected) for the compendium only.",
+          "WithTargets": "There are <strong>{count} target(s)</strong> selected. This will create a status condition or feature (as selected) for each target and your compendium."
         }
-      },
-      "Labels": {
-        "Name": "Name:",
-        "Description": "Description:",
-        "Image": "Image:",
-        "Background": "Background:",
-        "Text": "Text:"
       },
       "Placeholders": {
         "Name": "Name",
