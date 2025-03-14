@@ -186,6 +186,12 @@ Handlebars.registerHelper("lowercase", function (str) {
   return (str || "").toLowerCase();
 });
 
+Handlebars.registerHelper("capitalize", function (str) {
+  if (!str) return "";
+  str = String(str);
+  return str.charAt(0).toUpperCase() + str.slice(1);
+});
+
 /* -------------------------------------------- */
 /*  Ready Hook                                  */
 /* -------------------------------------------- */
