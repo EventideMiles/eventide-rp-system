@@ -8,7 +8,6 @@
       "Wits": { "long": "Wits", "abbr": "wits" }
     },
     "HiddenAbilities": {
-      "Roll": { "long": "Roll", "abbr": "roll" },
       "Dice": { "long": "Dice", "abbr": "dice" },
       "Cmax": { "long": "Crit^", "abbr": "cmax" },
       "Cmin": { "long": "Critv", "abbr": "cmin" },
@@ -20,6 +19,56 @@
       "None": "None",
       "Roll": "Roll",
       "Flat": "Flat"
+    },
+    "Forms" : {
+      "Sections": {
+        "Name": "Name",
+        "Description": "Description",
+        "Image": "Image",
+        "Background": "Background",
+        "Text": "Text",
+        "Attributes": "Attributes",
+        "Quantity": "Quantity",
+        "Weight": "Weight",
+        "Cost": "Cost",
+        "Targeted": "Targeted",
+        "RollSettings": "Roll Settings",
+        "RollType": "Roll Type",
+        "RollAbility": "Roll Ability",
+        "RollBonus": "Roll Bonus",
+        "RollAdvantage": "Advantage",
+        "RollDisadvantage": "Disadvantage",
+        "Effects": "Effects",
+        "Prerequisites": "Prerequisites"
+      },
+      "Buttons": {
+        "Create": "Create",
+        "CreateAndApply": "Create and Apply"
+      },
+      "Modifications": {
+        "Add": "Add",
+        "Override": "Override",
+        "Advantage": "Advantage",
+        "Disadvantage": "Disadvantage"
+      },
+      "Callouts": {
+        "Gear": {
+          "PlayerMode": "You are using the gear creator in player mode. This can only be used to create gear for tokens you control. You currently have <strong>{count} tokens(s)</strong> selected.",
+          "NoTargets": "There are no targets selected. This will create a gear item for the compendium only.",
+          "WithTargets": "There are <strong>{count} target(s)</strong> selected. This will create a gear item for each target and your compendium."
+        }
+      },
+      "Labels": {
+        "Name": "Name:",
+        "Description": "Description:",
+        "Image": "Image:",
+        "Background": "Background:",
+        "Text": "Text:"
+      },
+      "Placeholders": {
+        "Name": "Name",
+        "Description": "Description"
+      }
     },
     "CombatOptions": {
       "Unaugmented": "Unaugmented"

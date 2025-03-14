@@ -2,84 +2,81 @@
   <div class="base-form__callout base-form__callout--information">
     <i class="fas fa-info-circle"></i>
     {{#if (eq playerMode true)}}
-      You are using the gear creator in player mode. This can only be used to create gear for tokens you control. You currently have <strong>{{selectedArray.length}} tokens(s)</strong> selected.
+      {{{localize "EVENTIDE_RP_SYSTEM.Forms.Callouts.Gear.PlayerMode" count=selectedArray.length}}}
     {{else}}
       {{#if (eq targetArray.length 0)}}
-        There are no targets selected. This will create a gear item
-        for the compendium only.
+        {{localize "EVENTIDE_RP_SYSTEM.Forms.Callouts.Gear.NoTargets"}}
       {{else}}
-        There are <strong>{{targetArray.length}} target(s)</strong> selected. This will create a gear item 
-        for each target and your compendium.
+        {{{localize "EVENTIDE_RP_SYSTEM.Forms.Callouts.Gear.WithTargets" count=targetArray.length}}}
       {{/if}}
     {{/if}}
   </div>
   <div class="gear-creator__header-section">
     <div class="gear-creator__main-info">
       <div class="base-form__group">
-        <label class="base-form__label" for="name">Name:</label>
-        <input class="base-form__text-input" autofocus type="text" id="name" name="name" placeholder="Name">
+        <label class="base-form__label" for="name">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Name"}}</label>
+        <input class="base-form__text-input" autofocus type="text" id="name" name="name" placeholder="{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.Name"}}">
       </div>
 
       <div class="base-form__group">
-        <label class="base-form__label" for="description">Description:</label>
-        <textarea class="base-form__textarea" id="description" name="description" placeholder="Description"></textarea>
+        <label class="base-form__label" for="description">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Description"}}</label>
+        <textarea class="base-form__textarea" id="description" name="description" placeholder="{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.Description"}}"></textarea>
       </div>
     </div>
 
     <div class="gear-creator__visual-info">
       <div class="base-form__group gear-creator__image-group">
-        <label class="base-form__label" for="img">Image:</label>
+        <label class="base-form__label" for="img">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Image"}}</label>
         <img
           class="base-form__image base-form__image--edit"
           src="{{storedData.gear_img}}"
           data-edit="img"
           data-action='onEditImage'
-          title="Gear Image"
+          title="{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Image"}}"
         />
         <input class="base-form__hidden-input" type="hidden" name="img" value="{{ifThen storedData.gear_img storedData.gear_img "icons/svg/item-bag.svg"}}">
       </div>
 
         <div class="base-form__group">
-          <label class="base-form__label" for="bgColor">Background:</label>
+          <label class="base-form__label" for="bgColor">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Background"}}</label>
           <input class="base-form__color-input" type="color" id="bgColor" name="bgColor" value="{{ifThen storedData.gear_bgColor storedData.gear_bgColor "#7B4874"}}">
         </div>
 
         <div class="base-form__group">
-          <label class="base-form__label" for="textColor">Text:</label>
+          <label class="base-form__label" for="textColor">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Text"}}</label>
           <input class="base-form__color-input" type="color" id="textColor" name="textColor" value="{{ifThen storedData.gear_textColor storedData.gear_textColor "#ffffff"}}">
         </div>
-
     </div>
   </div>
 
   <div class="gear-creator__columns">
     <div class="gear-creator__column">
-      <div class="base-form__header">Attributes</div>
+      <div class="base-form__header">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Attributes"}}</div>
       <div class="base-form__group">
-        <label class="base-form__label" for="quantity">Quantity:</label>
+        <label class="base-form__label" for="quantity">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Quantity"}}</label>
         <input class="base-form__number-input" type="number" id="quantity" name="quantity" value="1">
       </div>
 
       <div class="base-form__group">
-        <label class="base-form__label" for="weight">Weight:</label>
+        <label class="base-form__label" for="weight">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Weight"}}</label>
         <input class="base-form__number-input" type="number" id="weight" name="weight" value="0">
       </div>
 
       <div class="base-form__group">
-        <label class="base-form__label" for="cost">Cost:</label>
+        <label class="base-form__label" for="cost">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Cost"}}</label>
         <input class="base-form__number-input" type="number" id="cost" name="cost" value="0">
       </div>
 
       <div class="base-form__group">
-        <label class="base-form__label" for="targeted">Targeted:</label>
+        <label class="base-form__label" for="targeted">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Targeted"}}</label>
         <input class="base-form__checkbox" type="checkbox" id="targeted" name="targeted" checked>
       </div>
     </div>
 
     <div class="gear-creator__column">
-      <div class="base-form__header">Roll Settings</div>
+      <div class="base-form__header">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RollSettings"}}</div>
       <div class="base-form__group">
-        <label class="base-form__label" for="roll.type">Roll Type:</label>
+        <label class="base-form__label" for="roll.type">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RollType"}}</label>
         <select class="base-form__select" id="roll.type" name="roll.type">
           {{#each rollTypes as |rollType rollTypeKey|}}
             <option value="{{lowercase rollType}}">{{rollType}}</option>
@@ -88,53 +85,53 @@
       </div>
 
       <div class="base-form__group">
-        <label class="base-form__label" for="roll.ability">Roll Ability:</label>
+        <label class="base-form__label" for="roll.ability">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RollAbility"}}</label>
         <select class="base-form__select" id="roll.ability" name="roll.ability">
           {{#each abilities}}
-            <option value="{{lowercase this}}">{{this}}</option>
+            <option value="{{lowercase this}}">{{localize (lookup @root.config.abilityAbbreviations this)}}</option>
           {{/each}}
-          <option value="unaugmented">Unaugmented</option>
+          <option value="unaugmented">{{localize "EVENTIDE_RP_SYSTEM.CombatOptions.Unaugmented"}}</option>
         </select>
       </div>
 
       <div class="base-form__group">
-        <label class="base-form__label" for="roll.bonus">Roll Bonus:</label>
+        <label class="base-form__label" for="roll.bonus">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RollBonus"}}</label>
         <input class="base-form__number-input" type="number" id="roll.bonus" name="roll.bonus" value="0">
       </div>
 
       <div class="base-form__group">
-        <label class="base-form__label" for="roll.diceAdjustments.advantage">Advantage:</label>
+        <label class="base-form__label" for="roll.diceAdjustments.advantage">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RollAdvantage"}}</label>
         <input class="base-form__number-input" type="number" id="roll.diceAdjustments.advantage" name="roll.diceAdjustments.advantage" value="0">
       </div>
 
       <div class="base-form__group">
-        <label class="base-form__label" for="roll.diceAdjustments.disadvantage">Disadvantage:</label>
+        <label class="base-form__label" for="roll.diceAdjustments.disadvantage">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RollDisadvantage"}}</label>
         <input class="base-form__number-input" type="number" id="roll.diceAdjustments.disadvantage" name="roll.diceAdjustments.disadvantage" value="0">
       </div>
     </div>
 
     <div class="gear-creator__column">
-      <div class="base-form__header">Effects</div>
+      <div class="base-form__header">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Effects"}}</div>
       {{#each abilities}}
         <div class="base-form__group gear-creator__effect-group">
-          <label class="base-form__label gear-creator__effect-label" for="{{lowercase this}}">{{this}}:</label>
+          <label class="base-form__label gear-creator__effect-label" for="{{lowercase this}}">{{capitalize (localize (lookup @root.config.abilityAbbreviations this))}}</label>
           <input class="base-form__number-input gear-creator__effect-input" type="number" id="{{lowercase this}}" name="{{lowercase this}}" value="0">
           <select class="base-form__select gear-creator__effect-select" id="{{lowercase this}}-mode" name="{{lowercase this}}-mode">
-            <option value="add">Change</option>
-            <option value="override">Override</option>
-            <option value="advantage">Advantage</option>
-            <option value="disadvantage">Disadvantage</option>
+            <option value="add">{{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.Add"}}</option>
+            <option value="override">{{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.Override"}}</option>
+            <option value="advantage">{{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.Advantage"}}</option>
+            <option value="disadvantage">{{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.Disadvantage"}}</option>
           </select>
         </div>
       {{/each}}
       {{#if (eq playerMode false)}}
         {{#each hiddenAbilities}}
           <div class="base-form__group gear-creator__effect-group">
-            <label class="base-form__label gear-creator__effect-label" for="{{lowercase this}}">{{this}}:</label>
+            <label class="base-form__label gear-creator__effect-label" for="{{lowercase this}}">{{capitalize (localize (lookup @root.config.hiddenAbilityAbbreviations this))}}</label>
             <input class="base-form__number-input gear-creator__effect-input" type="number" id="{{lowercase this}}" name="{{lowercase this}}" value="0">
             <select class="base-form__select gear-creator__effect-select" id="{{lowercase this}}-mode" name="{{lowercase this}}-mode">
-              <option value="add">Change</option>
-              <option value="override">Override</option>
+              <option value="add">{{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.Add"}}</option>
+              <option value="override">{{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.Override"}}</option>
             </select>
           </div>
         {{/each}}
@@ -143,6 +140,6 @@
   </div>
 
   <div class="base-form__group base-form__group--right">
-    <button type="submit" class="base-form__button base-form__button--primary">{{ifThen targetArray.length "Create and Apply" "Create"}}</button>
+    <button type="submit" class="base-form__button base-form__button--primary">{{ifThen targetArray.length (localize "EVENTIDE_RP_SYSTEM.Forms.Buttons.CreateAndApply") (localize "EVENTIDE_RP_SYSTEM.Forms.Buttons.Create")}}</button>
   </div>
 </div>
