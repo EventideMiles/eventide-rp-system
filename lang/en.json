@@ -20,6 +20,16 @@
       "Roll": "Roll",
       "Flat": "Flat"
     },
+    "Errors": {
+      "EditImage": "Failed to open file picker",
+      "GMOnly": "Only GMs can use this script in this mode.",
+      "CompendiumOnly": "If you proceed {keyType} will only be created in compendium: not applied.",
+      "PlayerSelection": "You must select a token you own to create a {keyType}."
+    },
+    "Info": {
+      "TokenItemCreated": "Created {keyType} item {name} on {count} {targetType} token(s) and in the {packLabel} compendium",
+      "CompendiumItemCreated": "Created {keyType} item {name} in the {packLabel} compendium"
+    },
     "Forms" : {
       "Sections": {
         "Type": "Type",

@@ -79,15 +79,23 @@ export class CreatorApplication extends EventideSheetHelpers {
     context.targetArray = this.targetArray;
     context.selectedArray = this.selectedArray;
 
-    if (context.targetArray.length === 0 && this.gmCheck === "gm") {
+    if (
+      context.targetArray.length === 0 &&
+      this.gmCheck === "gm" &&
+      !this.playerMode
+    ) {
       ui.notifications.warn(
-        `If you proceed ${this.keyType} will only be created in compendium: not applied.`
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.CompendiumOnly", {
+          keyType: this.keyType,
+        })
       );
     }
 
     if (context.selectedArray.length === 0 && this.gmCheck === "player") {
       ui.notifications.error(
-        `You must select a token you own to create a ${this.keyType}.`
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.PlayerSelection", {
+          keyType: this.keyType,
+        })
       );
       this.close();
       return;
@@ -190,7 +198,7 @@ export class CreatorApplication extends EventideSheetHelpers {
       })
       .filter((e) => e !== null);
 
-    if (this.gmCheck === "gm") {
+    if (this.gmCheck === "gm" && !this.playerMode) {
       hiddenEffects = this.hiddenAbilities
         .map((ability) => {
           const value = parseInt(form[ability.toLowerCase()].value);
@@ -318,15 +326,31 @@ export class CreatorApplication extends EventideSheetHelpers {
 
     if (this.targetArray.length > 0 && this.gmCheck === "gm") {
       ui.notifications.info(
-        `Created ${type} item "${name}" on ${this.targetArray.length} target(s) and in the ${packLabel} compendium`
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Info.TokenItemCreated", {
+          keyType: type,
+          name: name,
+          count: this.targetArray.length,
+          targetType: "targeted",
+          packLabel: packLabel,
+        })
       );
     } else if (this.selectedArray.length > 0 && this.gmCheck === "player") {
       ui.notifications.info(
-        `Created ${type} item "${name}" on ${this.selectedArray.length} selected token(s) and in the ${packLabel} compendium`
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Info.TokenItemCreated", {
+          keyType: type,
+          name: name,
+          count: this.selectedArray.length,
+          targetType: "selected",
+          packLabel: packLabel,
+        })
       );
     } else {
       ui.notifications.info(
-        `Created ${type} item "${name}" in the ${packLabel} compendium`
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Info.CompendiumItemCreated", {
+          keyType: type,
+          name: name,
+          packLabel: packLabel,
+        })
       );
     }
   }

@@ -107,7 +107,9 @@ export class EventideSheetHelpers extends HandlebarsApplicationMixin(
       return fp.browse();
     } catch (error) {
       console.error("Error in _onEditImage:", error);
-      ui.notifications.error("Failed to open file picker");
+      ui.notifications.error(
+        game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.EditImage")
+      );
     }
   }
 
@@ -119,7 +121,9 @@ export class EventideSheetHelpers extends HandlebarsApplicationMixin(
    */
   static async _gmCheck({ playerMode = false } = {}) {
     if (!game.user?.isGM && !playerMode) {
-      ui.notifications.error("Only GMs can use this script in this mode.");
+      ui.notifications.error(
+        game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.GMOnly")
+      );
       this.close();
       return "forbidden";
     } else if (!game.user?.isGM && playerMode) {
