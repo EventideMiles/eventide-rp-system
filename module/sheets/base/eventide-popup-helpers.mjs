@@ -37,6 +37,10 @@ export class EventidePopupHelpers extends HandlebarsApplicationMixin(
     return frame;
   }
 
+  /**
+   * Checks if the item is eligible for use based on targeting, power, and quantity.
+   * @returns {Object} An object containing the eligibility status for each check.
+   */
   async checkEligibility() {
     const problems = {
       targeting: false,
