@@ -16,23 +16,47 @@ export class EventideSheetHelpers extends HandlebarsApplicationMixin(
     return context;
   }
 
+  /**
+   * Returns an array of ability keys defined in the system configuration.
+   * @returns {string[]} Array of ability keys (acro, phys, fort, will, wits)
+   */
   static get abilities() {
     return Object.keys(CONFIG.EVENTIDE_RP_SYSTEM.abilities);
   }
+  /**
+   * Returns an object mapping ability keys to their values.
+   * @returns {Object} Object with ability keys as keys and their values
+   */
   static get abilityObject() {
     return Object.fromEntries(
       Object.keys(CONFIG.EVENTIDE_RP_SYSTEM.abilities).map((key) => [key, key])
     );
   }
+  /**
+   * Returns an array of hidden ability keys defined in the system configuration.
+   * @returns {string[]} Array of hidden ability keys (dice, cmin, fmax)
+   */
   static get hiddenAbilities() {
     return ["dice", "cmin", "fmax"];
   }
+  /**
+   * Returns an array of advanced hidden ability keys defined in the system configuration.
+   * @returns {string[]} Array of advanced hidden ability keys (cmax, fmin)
+   */
   static get advancedHiddenAbilities() {
     return ["cmax", "fmin"];
   }
+  /**
+   * Returns an array of roll types defined in the system configuration.
+   * @returns {string[]} Array of roll types (none, roll, flat)
+   */
   static get rollTypes() {
     return Object.keys(CONFIG.EVENTIDE_RP_SYSTEM.rollTypes);
   }
+  /**
+   * Returns an object mapping roll types to their values.
+   * @returns {Object} Object with roll types as keys and their values
+   */
   static get rollTypeObject() {
     return Object.fromEntries(
       Object.keys(CONFIG.EVENTIDE_RP_SYSTEM.rollTypes).map((key) => [key, key])
