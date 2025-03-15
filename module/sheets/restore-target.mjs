@@ -22,7 +22,6 @@ export class RestoreTarget extends EventideSheetHelpers {
     },
     tag: "form",
     window: {
-      title: "Restore Target",
       icon: "fa-solid fa-notes-medical",
     },
     form: {
@@ -31,6 +30,14 @@ export class RestoreTarget extends EventideSheetHelpers {
       closeOnSubmit: true,
     },
   };
+
+  /**
+   * Get the localized window title
+   * @returns {string} The localized window title
+   */
+  get title() {
+    return game.i18n.format("EVENTIDE_RP_SYSTEM.WindowTitles.RestoreTarget");
+  }
 
   /**
    * Prepare the main context data for the form.

@@ -20,11 +20,26 @@
       "Roll": "Roll",
       "Flat": "Flat"
     },
+    "WindowTitles": {
+      "StatusPopup": "Status Information",
+      "CombatPowerPopup": "Combat Power Details",
+      "GearPopup": "Use Gear",
+      "FeaturePopup": "Feature Information",
+      "SelectAbilityRoll": "Select Ability Roll",
+      "RestoreTarget": "Restore Target",
+      "GearTransfer": "Transfer Gear",
+      "GearCreator": "Gear Creator",
+      "ChangeTargetStatus": "Change Target Status",
+      "DamageTargets": "Damage Targets",
+      "EffectCreator": "Effect Creator"
+    },
     "Errors": {
       "EditImage": "Failed to open file picker",
       "GMOnly": "Only GMs can use this script in this mode.",
       "CompendiumOnly": "If you proceed {keyType} will only be created in compendium: not applied.",
-      "PlayerSelection": "You must select a token you own to create a {keyType}."
+      "PlayerSelection": "You must select a token you own to create a {keyType}.",
+      "CombatPowerError": "Cannot use Combat Power right now!",
+      "GearError": "Cannot use Gear right now!"
     },
     "Info": {
       "TokenItemCreated": "Created {keyType} item {name} on {count} {targetType} token(s) and in the {packLabel} compendium",

@@ -22,13 +22,20 @@ export class FeaturePopup extends EventidePopupHelpers {
       height: "auto",
     },
     window: {
-      title: "Feature Information",
       icon: "fa-solid fa-star",
     },
     actions: {
       toChat: this.#toChat,
     },
   };
+
+  /**
+   * Get the localized window title
+   * @returns {string} The localized window title
+   */
+  get title() {
+    return game.i18n.format("EVENTIDE_RP_SYSTEM.WindowTitles.FeaturePopup");
+  }
 
   constructor({ item }) {
     super({ item });

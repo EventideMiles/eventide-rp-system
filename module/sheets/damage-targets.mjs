@@ -23,7 +23,6 @@ export class DamageTargets extends EventideSheetHelpers {
     },
     tag: "form",
     window: {
-      title: "Damage Targets",
       icon: "fa-solid fa-claw-marks",
     },
     form: {
@@ -35,6 +34,14 @@ export class DamageTargets extends EventideSheetHelpers {
       store: this.#store,
     },
   };
+
+  /**
+   * Get the localized window title
+   * @returns {string} The localized window title
+   */
+  get title() {
+    return game.i18n.format("EVENTIDE_RP_SYSTEM.WindowTitles.DamageTargets");
+  }
 
   /**
    * @constructor

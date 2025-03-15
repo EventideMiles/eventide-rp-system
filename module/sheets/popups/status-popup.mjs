@@ -22,7 +22,6 @@ export class StatusPopup extends EventidePopupHelpers {
       height: "auto",
     },
     window: {
-      title: "Status Information",
       icon: "fa-solid fa-info-circle",
     },
     form: {
@@ -32,6 +31,14 @@ export class StatusPopup extends EventidePopupHelpers {
       toChat: this.#toChat,
     },
   };
+
+  /**
+   * Get the localized window title
+   * @returns {string} The localized window title
+   */
+  get title() {
+    return game.i18n.format("EVENTIDE_RP_SYSTEM.WindowTitles.StatusPopup");
+  }
 
   constructor({ item }) {
     super({ item });
@@ -45,7 +52,8 @@ export class StatusPopup extends EventidePopupHelpers {
   async _prepareContext(options) {
     const context = await super._prepareContext(options);
     context.cssClass = StatusPopup.DEFAULT_OPTIONS.classes.join(" ");
-
+    context.problems = await this.checkEligibility();
+    
     return context;
   }
 

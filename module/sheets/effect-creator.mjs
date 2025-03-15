@@ -15,7 +15,6 @@ export class EffectCreator extends CreatorApplication {
     ...super.DEFAULT_OPTIONS,
     classes: ["eventide-rp-system", "standard-form", "effect-creator"],
     window: {
-      title: "Effect Creator",
       icon: "fa-solid fa-message-plus",
     },
     form: {
@@ -27,6 +26,14 @@ export class EffectCreator extends CreatorApplication {
       onEditImage: super._onEditImage,
     },
   };
+
+  /**
+   * Get the localized window title
+   * @returns {string} The localized window title
+   */
+  get title() {
+    return game.i18n.format("EVENTIDE_RP_SYSTEM.WindowTitles.EffectCreator");
+  }
 
   constructor({ advanced = false, number = 0, playerMode = false } = {}) {
     super({ advanced, number, playerMode, keyType: "effect" });

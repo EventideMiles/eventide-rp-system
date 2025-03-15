@@ -21,7 +21,6 @@ export class SelectAbilityRoll extends EventideSheetHelpers {
     },
     tag: "form",
     window: {
-      title: "Select Ability Roll",
       icon: "fa-solid fa-dice-d20",
     },
     form: {
@@ -47,6 +46,18 @@ export class SelectAbilityRoll extends EventideSheetHelpers {
     context.cssClass = SelectAbilityRoll.DEFAULT_OPTIONS.classes.join(" ");
     context.abilities = SelectAbilityRoll.abilities;
     return context;
+  }
+
+  /**
+   * Get the localized window title
+   * @returns {string} The localized window title
+   */
+  get title() {
+    return game.i18n.format("EVENTIDE_RP_SYSTEM.WindowTitles.SelectAbilityRoll");
+  }
+
+  constructor(options = {}) {
+    super(options);
   }
 
   /**

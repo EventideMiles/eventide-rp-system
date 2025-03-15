@@ -20,7 +20,6 @@ export class ChangeTargetStatus extends EventideSheetHelpers {
     },
     tag: "form",
     window: {
-      title: "Change Target Status",
       icon: "fa-regular fa-atom-simple",
     },
     form: {
@@ -41,6 +40,18 @@ export class ChangeTargetStatus extends EventideSheetHelpers {
     "changeTargetStatus_disadvantageChange",
     "changeTargetStatus_disadvantageMode",
   ];
+
+  /**
+   * Get the localized window title
+   * @returns {string} The localized window title
+   */
+  get title() {
+    return game.i18n.format("EVENTIDE_RP_SYSTEM.WindowTitles.ChangeTargetStatus");
+  }
+
+  constructor(options = {}) {
+    super(options);
+  }
 
   /**
    * Prepares the main context data for the form.

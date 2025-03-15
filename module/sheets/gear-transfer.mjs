@@ -20,7 +20,6 @@ export class GearTransfer extends EventideSheetHelpers {
     },
     tag: "form",
     window: {
-      title: "Transfer Gear",
       icon: "fa-solid fa-exchange",
     },
     form: {
@@ -30,7 +29,15 @@ export class GearTransfer extends EventideSheetHelpers {
     },
   };
 
-  constructor() {
+  /**
+   * Get the localized window title
+   * @returns {string} The localized window title
+   */
+  get title() {
+    return game.i18n.format("EVENTIDE_RP_SYSTEM.WindowTitles.GearTransfer");
+  }
+
+  constructor(options = {}) {
     super();
   }
 

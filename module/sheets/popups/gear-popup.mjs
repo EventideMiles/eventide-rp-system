@@ -22,13 +22,20 @@ export class GearPopup extends EventidePopupHelpers {
       height: "auto",
     },
     window: {
-      title: "Use Gear",
       icon: "fa-solid fa-sack",
     },
     form: {
       handler: this.#onSubmit,
     },
   };
+
+  /**
+   * Get the localized window title
+   * @returns {string} The localized window title
+   */
+  get title() {
+    return game.i18n.format("EVENTIDE_RP_SYSTEM.WindowTitles.GearPopup");
+  }
 
   constructor({ item }) {
     super({ item });
@@ -53,7 +60,9 @@ export class GearPopup extends EventidePopupHelpers {
     const problems = await this.checkEligibility(this.item);
 
     if (problems.targeting || problems.quantity)
-      return ui.notifications.error("Cannot use Gear right now!");
+      return ui.notifications.error(
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.GearError")
+      );
 
     this.item.addQuantity(-this.item.system.cost);
 

@@ -21,13 +21,20 @@ export class CombatPowerPopup extends EventidePopupHelpers {
       height: "auto",
     },
     window: {
-      title: "Combat Power Details",
       icon: "fa-solid fa-dice-d20",
     },
     form: {
       handler: this.#onSubmit,
     },
   };
+
+  /**
+   * Get the localized window title
+   * @returns {string} The localized window title
+   */
+  get title() {
+    return game.i18n.format("EVENTIDE_RP_SYSTEM.WindowTitles.CombatPowerPopup");
+  }
 
   constructor({ item }) {
     super({ item });
@@ -51,7 +58,9 @@ export class CombatPowerPopup extends EventidePopupHelpers {
     const problems = await this.checkEligibility();
 
     if (problems.targeting || problems.power)
-      return ui.notifications.error("Cannot use Combat Power right now!");
+      return ui.notifications.error(
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.CombatPowerError")
+      );
 
     this.item.actor.addPower(-this.item.system.cost);
 
