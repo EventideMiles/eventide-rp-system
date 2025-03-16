@@ -6,6 +6,9 @@
     {{#if problems.quantity}}
         <div class="popup-form__warning">{{localize "EVENTIDE_RP_SYSTEM.Forms.Callouts.Gear.InsufficientQuantity" cost=item.system.cost quantity=item.system.quantity}}</div>
     {{/if}}
+    {{#if problems.equipped}}
+        <div class="popup-form__warning">{{localize "EVENTIDE_RP_SYSTEM.Forms.Callouts.Gear.NotEquipped"}}</div>
+    {{/if}}
     <div class="popup-form__header">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Details"}}</div>
     
     {{#if item.system.description}}
@@ -58,7 +61,7 @@
     </div>
 
     <div class="popup-form__group popup-form__group--right">
-        {{#unless (or problems.targeting problems.quantity)}}
+        {{#unless (or problems.targeting problems.quantity problems.equipped)}}
             <button type="submit" class="popup-form__button popup-form__button--primary">{{localize "EVENTIDE_RP_SYSTEM.Forms.Buttons.UseItem"}}</button>
         {{/unless}}
         <button type="button" class="popup-form__button" data-action="close">{{localize "EVENTIDE_RP_SYSTEM.Forms.Buttons.Close"}}</button>

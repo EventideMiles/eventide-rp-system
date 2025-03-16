@@ -46,6 +46,7 @@ export class EventidePopupHelpers extends HandlebarsApplicationMixin(
       targeting: false,
       power: false,
       quantity: false,
+      equipped: false,
     };
 
     if (this.item.system.targeted) {
@@ -58,6 +59,9 @@ export class EventidePopupHelpers extends HandlebarsApplicationMixin(
     }
     if (this.item.system.cost > this.item.actor?.system?.power?.value) {
       problems.power = true;
+    }
+    if (!this.item?.system?.equipped) {
+      problems.equipped = true;
     }
 
     return problems;

@@ -59,7 +59,7 @@ export class GearPopup extends EventidePopupHelpers {
   static async #onSubmit(event, formData, form) {
     const problems = await this.checkEligibility(this.item);
 
-    if (problems.targeting || problems.quantity)
+    if (problems.targeting || problems.quantity || problems.equipped)
       return ui.notifications.error(
         game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.GearError")
       );
