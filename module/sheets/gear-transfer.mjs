@@ -56,26 +56,34 @@ export class GearTransfer extends EventideSheetHelpers {
 
     // Check for multiple tokens
     if (this.targetTokens.length > 1) {
-      ui.notifications.warn("Please target only one token to transfer from");
+      ui.notifications.warn(
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.SingleTargetOnly")
+      );
       this.close();
       return context;
     }
 
     if (this.selectedTokens.length > 1) {
-      ui.notifications.warn("Please select only one token to transfer to");
+      ui.notifications.warn(
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.SingleSelectOnly")
+      );
       this.close();
       return context;
     }
 
     if (!this.targetToken || !this.selectedToken) {
-      ui.notifications.warn("Please select a token and target another token");
+      ui.notifications.warn(
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.BothFirst")
+      );
       this.close();
       return context;
     }
 
     // Check for self-transfer
     if (this.targetToken.id === this.selectedToken.id) {
-      ui.notifications.warn("Cannot transfer items to the same token");
+      ui.notifications.warn(
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.SameTransferPrevention")
+      );
       this.close();
       return context;
     }
@@ -85,7 +93,9 @@ export class GearTransfer extends EventideSheetHelpers {
     context.selectedActor = this.selectedToken.actor;
 
     if (!context.targetActor || !context.selectedActor) {
-      ui.notifications.warn("Selected tokens must have associated actors");
+      ui.notifications.warn(
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.NoActor")
+      );
       this.close();
       return context;
     }
@@ -97,7 +107,9 @@ export class GearTransfer extends EventideSheetHelpers {
     );
 
     if (context.targetGear.length === 0) {
-      ui.notifications.warn("Target has no gear items available to transfer");
+      ui.notifications.warn(
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.NoGear")
+      );
       this.close();
       return context;
     }
@@ -120,7 +132,9 @@ export class GearTransfer extends EventideSheetHelpers {
 
     const sourceItem = sourceActor.items.get(itemId);
     if (!sourceItem) {
-      ui.notifications.warn("Item not found");
+      ui.notifications.warn(
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.ItemNotFound")
+      );
       return;
     }
 
@@ -129,7 +143,9 @@ export class GearTransfer extends EventideSheetHelpers {
     const transferQuantity = Math.min(requestedQuantity, availableQuantity);
 
     if (transferQuantity <= 0) {
-      ui.notifications.warn("No items available to transfer");
+      ui.notifications.warn(
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.NoItemsAvailable")
+      );
       return;
     }
 

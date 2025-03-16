@@ -1,10 +1,10 @@
 <div class="chat-card">
   <div class="chat-card__header chat-card__header--equip">
     <img src="{{item.img}}" class="chat-card__image--primary" /> 
-    <div>{{item.name}} : {{#if equipped}}Equipped{{else}}Unequipped{{/if}}</div>
+    <div>{{item.name}} : {{#if equipped}}{{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.Equipped"}}{{else}}{{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.Unequipped"}}{{/if}}</div>
   </div>
   <div class="chat-card__description">
     <div class="chat-card__description--header">{{actor.name}}</div> 
-    {{#if equipped}}equipped{{else}}unequipped{{/if}} {{item.name}}
+    {{#if equipped}}{{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.Equipped"}}{{else}}{{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.Unequipped"}}{{/if}} {{item.name}}
   </div>
 </div>

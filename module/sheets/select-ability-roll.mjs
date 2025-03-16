@@ -53,7 +53,9 @@ export class SelectAbilityRoll extends EventideSheetHelpers {
    * @returns {string} The localized window title
    */
   get title() {
-    return game.i18n.format("EVENTIDE_RP_SYSTEM.WindowTitles.SelectAbilityRoll");
+    return game.i18n.format(
+      "EVENTIDE_RP_SYSTEM.WindowTitles.SelectAbilityRoll"
+    );
   }
 
   constructor(options = {}) {
@@ -73,7 +75,11 @@ export class SelectAbilityRoll extends EventideSheetHelpers {
     if (macro) {
       await macro.execute({ args: [] });
     } else {
-      ui.notifications.error(`No macro found for ability: ${attributeChoice}`);
+      ui.notifications.error(
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.NoMacroFound", {
+          macroName: attributeChoice,
+        })
+      );
     }
   }
 }

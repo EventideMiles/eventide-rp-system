@@ -41,7 +41,7 @@ const storeLocal = async (storageObject) => {
     }
   } catch (error) {
     ui.notifications.error(
-      `There was some sort of error storing values locally.`
+      game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.LocalStorage")
     );
     return false;
   }

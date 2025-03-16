@@ -217,7 +217,7 @@ async function createDocMacro(data, slot) {
   if (data.type !== "Item") return;
   if (!data.uuid.includes("Actor.") && !data.uuid.includes("Token.")) {
     return ui.notifications.warn(
-      "You can only create macro buttons for owned Items"
+      game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.OwnedMacrosOnly")
     );
   }
   // If it is, retrieve it based on the uuid.
@@ -259,7 +259,9 @@ async function rollItemMacro(itemUuid) {
     if (!item || !item.parent) {
       const itemName = item?.name ?? itemUuid;
       return ui.notifications.warn(
-        `Could not find item ${itemName}. You may need to delete and recreate this macro.`
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.UnknownItemMacro", {
+          item: itemName,
+        })
       );
     }
 

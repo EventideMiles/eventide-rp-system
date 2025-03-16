@@ -1,22 +1,22 @@
 <div class="chat-card">
   <div class="chat-card chat-card__header chat-card__header--restore">
-    <i class="fa-solid fa-notes-medical"></i> Restoration
+    <i class="fa-solid fa-notes-medical"></i> {{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.Restoration"}}
   </div>
   <div class="chat-card__description">
     <div class="chat-card__description--header">{{actor.name}}. . . </div> 
-    is getting their status restored!
+    {{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.Restored"}}
   </div>
   <hr class="chat-card__hr" />
-  <h3>Restored:</h3>
+  <h3>{{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.Restored"}}</h3>
   <div class="chat-card__effects">
     {{#if resolve}}
-      <div><i class="fa-regular fa-heart-pulse"></i> Resolve</div>
+      <div><i class="fa-regular fa-heart-pulse"></i> {{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.Resolve"}}</div>
     {{/if}}
     {{#if power}}
-      <div><i class="fa-duotone fa-solid fa-bolt-lightning"></i> Power</div>
+      <div><i class="fa-duotone fa-solid fa-bolt-lightning"></i> {{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.Power"}}</div>
     {{/if}}
     {{#if all}}
-      <div><i class="fa-solid fa-globe"></i> All</div>
+      <div><i class="fa-solid fa-globe"></i> {{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.All"}}</div>
     {{else}}
       {{#each statuses}}
         <div><img src="{{this.img}}" class="chat-card__image--secondary" /> {{this.name}}</div>

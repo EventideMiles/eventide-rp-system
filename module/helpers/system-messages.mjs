@@ -23,7 +23,9 @@ const createStatusMessage = async (item) => {
   return ChatMessage.create({
     speaker: ChatMessage.getSpeaker({
       actor: item.parent,
-      alias: `Status: ${item.parent.name}`,
+      alias: game.i18n.format("EVENTIDE_RP_SYSTEM.MessageHeaders.Status", {
+        name: item.parent.name,
+      }),
     }),
     content: content,
   });
@@ -53,7 +55,9 @@ const featureMessage = async (item) => {
   return ChatMessage.create({
     speaker: ChatMessage.getSpeaker({
       actor: item.parent,
-      alias: `Feature: ${item.parent.name}`,
+      alias: game.i18n.format("EVENTIDE_RP_SYSTEM.MessageHeaders.Feature", {
+        name: item.parent.name,
+      }),
     }),
     content: content,
   });

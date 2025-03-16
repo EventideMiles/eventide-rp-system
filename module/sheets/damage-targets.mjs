@@ -95,12 +95,16 @@ export class DamageTargets extends EventideSheetHelpers {
       context.targetArray.length === 0 &&
       context.selectedArray.length === 0
     ) {
-      ui.notifications.error(`Please target or select a token first!`);
+      ui.notifications.error(
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.TargetOrSelectFirst")
+      );
       return this.close();
     }
 
     if (context.selectedArray.length === 0 && this.gmCheck === "player") {
-      ui.notifications.error(`Only GMs can apply damage to targets.`);
+      ui.notifications.error(
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.OnlyGmDamageTarget")
+      );
       return this.close();
     }
 

@@ -209,7 +209,7 @@ export class EventideRpSystemActor extends Actor {
   async restore({ resolve, power, statuses, all }) {
     if (!game.user.isGM) {
       ui.notifications.warn(
-        "Only GMs can restore actor resources and remove status effects."
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.GMOnly")
       );
       return null;
     }

@@ -46,7 +46,9 @@ export class ChangeTargetStatus extends EventideSheetHelpers {
    * @returns {string} The localized window title
    */
   get title() {
-    return game.i18n.format("EVENTIDE_RP_SYSTEM.WindowTitles.ChangeTargetStatus");
+    return game.i18n.format(
+      "EVENTIDE_RP_SYSTEM.WindowTitles.ChangeTargetStatus"
+    );
   }
 
   constructor(options = {}) {
@@ -65,10 +67,14 @@ export class ChangeTargetStatus extends EventideSheetHelpers {
     this.targetArray = await erps.utils.getTargetArray();
 
     if (this.targetArray.length === 0) {
-      ui.notifications.error(`Please target a token first!`);
+      ui.notifications.error(
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.TargetFirst")
+      );
       this.close();
     } else if (this.targetArray.length > 1) {
-      ui.notifications.error(`You can only target one token at a time!`);
+      ui.notifications.error(
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.SingleTargetOnly")
+      );
       this.close();
     }
 
@@ -98,21 +104,27 @@ export class ChangeTargetStatus extends EventideSheetHelpers {
   static async #onSubmit(event, form, formData) {
     const statusId = form.statusSelector.value;
 
-    if (!this.target || !statusId) {
-      ui.notifications.error("Missing target or status selection!");
+    if (!statusId) {
+      ui.notifications.error(
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.MissingStatus")
+      );
       return;
     }
 
     const status = this.target.actor.items.get(statusId);
     if (!status) {
-      ui.notifications.error("Selected status not found!");
+      ui.notifications.error(
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.MissingStatus")
+      );
       return;
     }
 
     // Get the current values from the status effects
     const effects = status.effects.contents[0];
     if (!effects) {
-      ui.notifications.error("No effects found on status!");
+      ui.notifications.error(
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.NoStatusEffects")
+      );
       return;
     }
 

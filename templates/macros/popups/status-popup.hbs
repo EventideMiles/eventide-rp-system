@@ -15,7 +15,7 @@
 
     {{#ifCond effects.length ">" 0}}
     <div class="popup-form__effects">
-        <div class='popup-form__effects--title'>Effects</div>
+        <div class='popup-form__effects--title'>{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Effects"}}</div>
         {{#each effects}}
             <div class="popup-form__effects--name">
                 <img src="{{this.img}}" class="chat-card__image--secondary" /> {{this.name}}
@@ -25,16 +25,16 @@
                 <div class="popup-form__effects--row">
                     <div class="popup-form__effects--row-cell popup-form__effects--row-cell--first">{{keySplit this.key 2}}</div> 
                     <div class="popup-form__effects--row-cell popup-form__effects--row-cell--middle">
-                        {{#ifCond this.mode "===" 5}}set to{{/ifCond}}
+                        {{#ifCond this.mode "===" 5}}{{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.SetTo"}}{{/ifCond}}
                         {{#ifCond this.mode "!==" 5}}
                         {{#ifCond (keySplit this.key 4) "===" "advantage"}}
-                            adv
+                            {{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.Adv"}}
                         {{/ifCond}}
                         {{#ifCond (keySplit this.key 4) "===" "disadvantage"}}
-                            dis
+                            {{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.Dis"}}
                         {{/ifCond}}
                         {{#ifCond (keySplit this.key 3) "===" "change"}}
-                            add
+                            {{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.Add"}}
                         {{/ifCond}}
                         {{/ifCond}}
                     </div>
@@ -47,7 +47,7 @@
     {{/ifCond}}
 
     <div class="popup-form__group popup-form__group--right">
-        <button type="submit" class="popup-form__button popup-form__button--primary">Close</button>
-        <button type="button" class="popup-form__button" data-action="toChat">Send To Chat</button>
+        <button type="submit" class="popup-form__button popup-form__button--primary">{{localize "EVENTIDE_RP_SYSTEM.Forms.Buttons.Close"}}</button>
+        <button type="button" class="popup-form__button" data-action="toChat">{{localize "EVENTIDE_RP_SYSTEM.Forms.Buttons.SendToChat"}}</button>
     </div>
 </div>

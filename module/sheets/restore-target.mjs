@@ -52,10 +52,14 @@ export class RestoreTarget extends EventideSheetHelpers {
     this.targetTokens = await erps.utils.getTargetArray();
     context.cssClass = RestoreTarget.DEFAULT_OPTIONS.classes.join(" ");
     if (this.targetTokens.length === 0) {
-      ui.notifications.error(`Please target a token first!`);
+      ui.notifications.error(
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.TargetFirst")
+      );
       this.close();
     } else if (this.targetTokens.length > 1) {
-      ui.notifications.error(`You can only target one token at a time!`);
+      ui.notifications.error(
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.SingleTargetOnly")
+      );
       this.close();
     }
 
