@@ -1,54 +1,39 @@
 {
   "EVENTIDE_RP_SYSTEM": {
     "Actor": {
+      "Attributes": {
+        "CR": {
+          "label": "CR"
+        },
+        "Level": {
+          "label": "Level"
+        },
+        "Power": {
+          "Max": {
+            "label": "Maximum Power"
+          },
+          "Value": {
+            "label": "Power"
+          }
+        },
+        "Resolve": {
+          "Max": {
+            "label": "Maximum Resolve"
+          },
+          "Value": {
+            "label": "Resolve"
+          }
+        },
+        "XP": {
+          "label": "XP"
+        }
+      },
       "Tabs": {
         "Biography": "Biography",
         "CombatPowers": "Combat Powers",
         "Features": "Features",
         "Gear": "Gear",
         "Statuses": "Statuses"
-      },
-      "base": {
-        "FIELDS": {
-          "biography": {
-            "label": "Biography"
-          },
-          "power": {
-            "max": {
-              "label": "Maximum Power"
-            },
-            "value": {
-              "label": "Power"
-            }
-          },
-          "resolve": {
-            "max": {
-              "label": "Maximum Resolve"
-            },
-            "value": {
-              "label": "Resolve"
-            }
-          }
-        }
-      },
-      "Character": {
-        "attributes": {
-          "level": {
-            "value": {
-              "label": "Level"
-            }
-          }
-        }
-      },
-      "NPC": {
-        "FIELDS": {
-          "cr": {
-            "label": "CR"
-          }
-        },
-        "xp": {
-          "label": "XP"
-        }
       }
     }
   }
