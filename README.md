@@ -1,7 +1,7 @@
 # Eventide Roleplaying System for Foundry VTT
 
 ![Foundry v12](https://img.shields.io/badge/foundry-v12-green)
-[![License: MPL 2.0](https://img.shields.io/badge/License-MPL_2.0-brightgreen.svg)](https://opensource.org/licenses/MPL-2.0)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 A custom roleplaying system for Foundry VTT that emphasizes dynamic character abilities through status effects features, and gear. The system is focused on providing an intuitive and flexible gaming experience.
 
@@ -48,7 +48,7 @@ A custom roleplaying system for Foundry VTT that emphasizes dynamic character ab
 
 ## Contributing
 
-This project is licensed under the Mozilla Public License 2.0 (MPL-2.0). When contributing:
+This project is licensed under the Apache License 2.0. When contributing:
 
 1. Fork the repository
 2. Create a feature branch
@@ -57,7 +57,7 @@ This project is licensed under the Mozilla Public License 2.0 (MPL-2.0). When co
 
 Important licensing notes:
 
-- All modifications to existing files must be shared under MPL-2.0
+- All modifications to existing files must be shared under Apache License 2.0
 - New files you create can be licensed differently if desired
 - Asacolips Projects / Foundry Mods may use contributions under the MIT license
 - Include appropriate copyright notices in new files
@@ -85,12 +85,12 @@ This system evolved from the excellent [Boilerplate System](https://github.com/a
 
 ## License
 
-This project is licensed under the Mozilla Public License 2.0 - see the [LICENSE.md](LICENSE.md) file for details.
+This project is licensed under the Apache License 2.0 - see the [LICENSE.md](LICENSE.md) file for details.
 
 Key points:
 
 - Source code must remain open source
-- Modifications must be shared under MPL-2.0
+- Modifications must be shared under Apache License 2.0
 - Commercial use is permitted
 - Original Boilerplate code remains under MIT license
 - Out of gratitude for our starting point: contributions to this project may be used by Asacolips Projects under MIT license
