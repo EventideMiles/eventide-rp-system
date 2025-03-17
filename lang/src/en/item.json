@@ -1,0 +1,67 @@
+{
+  "EVENTIDE_RP_SYSTEM": {
+    "Item": {
+      "Tabs": {
+        "Description": "Description",
+        "Details": "Details",
+        "Effects": "Effects",
+        "Prerequisites": "Prerequisites",
+        "Attributes": "Attributes"
+      },
+      "Roll": {
+        "Ability": {
+          "label": "Ability"
+        },
+        "Bonus": {
+          "label": "Bonus"
+        },
+        "Type": {
+          "label": "Roll Type"
+        },
+        "DiceAdjustments": {
+          "Advantage": {
+            "label": "Advantage"
+          },
+          "Disadvantage": {
+            "label": "Disadvantage"
+          },
+          "Total": {
+            "label": "Total Adjustment"
+          },
+          "label": "Dice Adjustments"
+        },
+        "Targeted": {
+          "label": "Requires Target?"
+        }
+      },
+      "Inventory": {
+        "Quantity": {
+          "label": "Quantity"
+        },
+        "Weight": {
+          "label": "Weight"
+        },
+        "Cost": {
+          "label": "Cost"
+        }
+      },
+      "Colors": {
+        "TextColor": {
+          "label": "Text Color",
+          "placeholder": "Enter text color"
+        },
+        "BgColor": {
+          "label": "Background Color",
+          "placeholder": "Enter background color"
+        }
+      },
+      "Descriptors": {
+        "UsageInfo": {
+          "label": "Usage Info",
+          "placeholder": "e.g., 1/day"
+        },
+        "RollActorName": { "label": "Roll Actor Name" }
+      }
+    }
+  }
+}

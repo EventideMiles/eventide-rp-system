@@ -68,6 +68,7 @@ Important licensing notes:
 
 - Foundry VTT (v12 or higher)
 - Basic knowledge of JavaScript and Foundry VTT systems
+- Node.js (for building language files / scss / terser)
 
 ### Setup for Development
 
@@ -78,6 +79,41 @@ Important licensing notes:
 5. Make any changes in your favorite development tools and test them against a running foundry world
 
 - **Optional**: if you want to build your modifications for distribution you can run npm run release:win or npm run release:linux to build a minified .zip file.
+
+### Language File Organization
+
+The system uses a modular approach to manage language files:
+
+1. Source files are organized in the `lang/src/<language-code>` directory (e.g., `lang/src/en` for English)
+2. Each language directory contains multiple JSON files, each focused on a specific section of the UI:
+   - `abilities.json`: Character abilities and hidden abilities
+   - `actor.json`: Actor-related translations
+   - `errors.json`: Error messages and notifications
+   - `forms.json`: Form labels, buttons, and UI elements
+   - `item.json`: Item-related translations
+   - `messages.json`: Chat and notification messages
+   - `misc.json`: Miscellaneous translations
+   - `ui.json`: UI elements and window titles
+
+3. These source files are combined into a single language file (e.g., `lang/en.json`) using the build script
+
+### Building Language Files
+
+To build the language files:
+
+1. Make changes to the source files in the `lang/src/<language-code>` directory
+2. Run the build script:
+   ```
+   npm run build:lang
+   ```
+3. The script will process all language directories in `lang/src` and generate corresponding language files in the `lang` directory
+
+To add a new language:
+
+1. Create a new directory in `lang/src` with the language code (e.g., `lang/src/fr` for French)
+2. Copy the JSON files from an existing language directory and translate the values
+3. Run the build script to generate the language file
+4. Update the `system.json` file to include the new language
 
 ## Acknowledgements
 

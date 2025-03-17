@@ -1,0 +1,31 @@
+{
+  "EVENTIDE_RP_SYSTEM": {
+    "Effect": {
+      "Inactive": "Inactive Effects",
+      "Passive": "Passive Effects",
+      "Source": "Source",
+      "Temporary": "Temporary Effects",
+      "Toggle": "Toggle Effect"
+    },
+    "CombatOptions": {
+      "Unaugmented": "Unaugmented"
+    },
+    "SheetLabels": {
+      "Actor": "EventideRpSystem Actor Sheet",
+      "Item": "EventideRpSystem Item Sheet"
+    }
+  },
+  "TYPES": {
+    "Actor": {
+      "character": "Character",
+      "npc": "NPC"
+    },
+    "Item": {
+      "combatPower": "Combat Power",
+      "effect": "Effect",
+      "feature": "Feature",
+      "gear": "Gear",
+      "status": "Status"
+    }
+  }
+}

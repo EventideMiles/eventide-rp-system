@@ -1,0 +1,34 @@
+{
+  "EVENTIDE_RP_SYSTEM": {
+    "Errors": {
+      "BothFirst": "Please select a token and target another token",
+      "CompendiumOnly": "If you proceed {keyType} will only be created in compendium: not applied.",
+      "CombatPowerError": "Cannot use Combat Power right now!",
+      "EditImage": "Failed to open file picker",
+      "GearError": "Cannot use Gear right now!",
+      "GMOnly": "Only GMs can use this script in this mode.",
+      "ItemNotFound": "Item not found",
+      "LocalStorage": "There was some sort of error storing values locally.",
+      "MissingStatus": "Selected status not found!",
+      "NoActor": "Selected tokens must have associated actors",
+      "NoGear": "Target has no gear items available to transfer",
+      "NoItemsAvailable": "No items available to transfer",
+      "NoMacroFound": "No macro found for {macroName}.",
+      "NoStatusEffects": "No effects found on status!",
+      "OnlyGmDamageTarget": "Only GMs can apply damage to targets.",
+      "OwnedMacrosOnly": "You can only create macro buttons for owned items.",
+      "PlayerSelection": "You must select a token you own to create a {keyType}.",
+      "SameTransferPrevention": "Cannot transfer items to the same token",
+      "SelectFirst": "Please select a token first!",
+      "SingleSelectOnly": "You can only select one token at a time!",
+      "SingleTargetOnly": "You can only target one token at a time!",
+      "TargetFirst": "Please target a token first!",
+      "TargetOrSelectFirst": "Please target or select a token first!",
+      "UnknownItemMacro": "Could not find item {item}. You may need to delete and recreate this macro."
+    },
+    "Info": {
+      "CompendiumItemCreated": "Created {keyType} item {name} in the {packLabel} compendium",
+      "TokenItemCreated": "Created {keyType} item {name} on {count} {targetType} token(s) and in the {packLabel} compendium"
+    }
+  }
+}

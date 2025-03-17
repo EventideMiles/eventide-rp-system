@@ -1,0 +1,24 @@
+{
+  "EVENTIDE_RP_SYSTEM": {
+    "Ability": {
+      "Acro": { "long": "Acrobatics", "abbr": "acro" },
+      "Fort": { "long": "Fortitude", "abbr": "fort" },
+      "Phys": { "long": "Physical", "abbr": "phys" },
+      "Will": { "long": "Will", "abbr": "will" },
+      "Wits": { "long": "Wits", "abbr": "wits" }
+    },
+    "HiddenAbilities": {
+      "Cmax": { "long": "Crit^", "abbr": "cmax" },
+      "Cmin": { "long": "Critv", "abbr": "cmin" },
+      "Dice": { "long": "Dice", "abbr": "dice" },
+      "Fmax": { "long": "Fail^", "abbr": "fmax" },
+      "Fmin": { "long": "Failv", "abbr": "fmin" },
+      "Sens": { "long": "Sens", "abbr": "sens" }
+    },
+    "RollTypes": {
+      "Flat": "Flat",
+      "None": "None",
+      "Roll": "Roll"
+    }
+  }
+}

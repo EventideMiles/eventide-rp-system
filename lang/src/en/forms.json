@@ -1,0 +1,110 @@
+{
+  "EVENTIDE_RP_SYSTEM": {
+    "Forms": {
+      "ScriptExplanations": {
+        "ChangeTargetStatus": "This script is to allow you to change the values on an existing status condition easily. Keep in mind that signed numbers will be overridden by the mode selected in the dropdown.",
+        "DamageTargets": "This script is designed to damage targets and heal selected tokens. If its in heal mode it will always heal selected over damaging targets."
+      },
+      "Sections": {
+        "Adjustments": "Adjustments",
+        "Adv": "Adv",
+        "All": "All",
+        "Attributes": "Attributes",
+        "Available": "{number} Available",
+        "Background": "Background",
+        "Bonus": "Bonus",
+        "Cost": "Cost",
+        "Description": "Description",
+        "Details": "Details",
+        "Disadv": "Disadv",
+        "Effects": "Effects",
+        "Feature": "Feature",
+        "Formula": "Formula",
+        "IconTint": "Icon Tint",
+        "Image": "Image",
+        "IsHeal": "Is Heal",
+        "ItemDetails": "Item Details",
+        "Label": "Label",
+        "Name": "Name",
+        "Neutral": "Neutral",
+        "Optional": "(Optional)",
+        "OverrideValues": "Override Values",
+        "Prerequisites": "Prerequisites",
+        "Quantity": "Quantity",
+        "RemoveStatuses": "Remove Statuses",
+        "RestorePower": "Restore Power",
+        "RestoreResolve": "Restore Resolve",
+        "RollAbility": "Roll Ability",
+        "RollAdvantage": "Advantage",
+        "RollBonus": "Roll Bonus",
+        "RollDisadvantage": "Disadvantage",
+        "RollInfo": "Roll Information",
+        "RollSettings": "Roll Settings",
+        "RollType": "Roll Type",
+        "SelectAbilityRoll": "Select An Ability Roll",
+        "SelectGear": "Select Gear",
+        "Status": "Status",
+        "Targeted": "Targeted",
+        "Text": "Text",
+        "Type": "Type",
+        "UsageInfo": "Usage Information",
+        "Weight": "Weight"
+      },
+      "Buttons": {
+        "Change": "Change",
+        "Close": "Close",
+        "Create": "Create",
+        "CreateAndApply": "Create and Apply",
+        "Damage": "Damage",
+        "Restore": "Restore",
+        "Roll": "Roll",
+        "SendToChat": "Send To Chat",
+        "Store": "Store",
+        "Transfer": "Transfer",
+        "UseItem": "Use Item",
+        "UsePower": "Use Power"
+      },
+      "Modifications": {
+        "Add": "Change",
+        "AddMode": "Add",
+        "Advantage": "Advantage",
+        "Disadvantage": "Disadvantage",
+        "Override": "Override",
+        "SubtractMode": "Subtract"
+      },
+      "Callouts": {
+        "Damage": {
+          "SelectMode": "There are <strong>{count} token(s)</strong> selected.",
+          "TargetMode": "There are <strong>{count} target(s)</strong> selected."
+        },
+        "Effect": {
+          "NoTargets": "There are no targets selected. This will create either a status condition or feature (as selected) for the compendium only.",
+          "PlayerMode": "You are using the effect creator in player mode. This can only be used to create features for tokens you control. You currently have <strong>{count} tokens(s)</strong> selected.",
+          "WithTargets": "There are <strong>{count} target(s)</strong> selected. This will create a status condition or feature (as selected) for each target and your compendium."
+        },
+        "Gear": {
+          "InsufficientQuantity": "You don't have enough of this item to use it! (Need {cost}, have {quantity})",
+          "NoTargets": "There are no targets selected. This will create a gear item for the compendium only.",
+          "NotEquipped": "This item is not equipped!",
+          "PlayerMode": "You are using the gear creator in player mode. This can only be used to create gear for tokens you control. You currently have <strong>{count} tokens(s)</strong> selected.",
+          "RestoreTarget": "Restore {target}(s) Resolve, power, and selected statuses.",
+          "TargetGear": "You need to target someone to use this gear!",
+          "TransferGear": "Transfer gear from {target} to {selected}.",
+          "WithTargets": "There are <strong>{count} target(s)</strong> selected. This will create a gear item for each target and your compendium."
+        },
+        "Power": {
+          "InsufficientPower": "You don't have enough power to use this! (Need {cost}, have {actorPower})",
+          "TargetPower": "You need to target someone to use this power!"
+        }
+      },
+      "Placeholders": {
+        "ChangeValue": "Change Value",
+        "Description": "Description",
+        "Formula": "xdy + z",
+        "Label": "Label",
+        "Name": "Name",
+        "TransferNote": "Add a note about this transfer"
+      }
+    }
+  }
+}

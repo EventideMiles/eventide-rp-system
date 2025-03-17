@@ -1,0 +1,21 @@
+{
+  "EVENTIDE_RP_SYSTEM": {
+    "WindowTitles": {
+      "ChangeTargetStatus": "Change Target Status",
+      "CombatPowerPopup": "Combat Power Details",
+      "DamageTargets": "Damage Targets",
+      "EffectCreator": "Effect Creator",
+      "FeaturePopup": "Feature Information",
+      "GearCreator": "Gear Creator",
+      "GearPopup": "Use Gear",
+      "GearTransfer": "Transfer Gear",
+      "RestoreTarget": "Restore Target",
+      "SelectAbilityRoll": "Select Ability Roll",
+      "StatusPopup": "Status Information"
+    },
+    "MessageHeaders": {
+      "Feature": "Feature: {name}",
+      "Status": "Status: {name}"
+    }
+  }
+}

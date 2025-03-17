@@ -1,0 +1,30 @@
+{
+  "EVENTIDE_RP_SYSTEM": {
+    "Messages": {
+      "Sections": {
+        "ACCheck": "AC Check",
+        "Add": "add",
+        "Adv": "adv",
+        "All": "All",
+        "Cost": "Cost",
+        "CriticaMiss": "Critical Miss!",
+        "CriticalHit": "Critical Hit!",
+        "Dis": "dis",
+        "Effects": "Effects",
+        "Equipped": "Equipped",
+        "Power": "Power",
+        "Removed": "Removed",
+        "RemovedMessage": "had a status effect removed",
+        "Resolve": "Resolve",
+        "Restoration": "Restoration",
+        "RestoreActor": "is getting their status restored!",
+        "Restored": "Restored",
+        "SavedMiss": "Saved Miss!",
+        "SetTo": "set to",
+        "StolenCrit": "Stolen Critical!",
+        "Transferred": "Transferred",
+        "Unequipped": "Unequipped"
+      }
+    }
+  }
+}
