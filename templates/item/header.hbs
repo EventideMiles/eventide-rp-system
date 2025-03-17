@@ -8,12 +8,12 @@
   />
   <div class='header-fields'>
     <div class='document-name'>
-      <input name='name' type='text' value='{{item.name}}' placeholder='Name' />
+      <input name='name' type='text' value='{{item.name}}' placeholder='{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.Name"}}' />
     </div>
     {{#if (eq item.type 'gear')}}
       <div class='grid grid-3col'>
         <div class='resource'>
-          <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.Gear.FIELDS.quantity.label'}}</label>
+          <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.Inventory.Quantity.label'}}</label>
           <input
             type='text'
             name='system.quantity'
@@ -22,7 +22,7 @@
           />
         </div>
         <div class='resource'>
-          <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.Gear.FIELDS.weight.label'}}</label>
+          <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.Inventory.Weight.label'}}</label>
           <input
             type='text'
             name='system.weight'
@@ -31,7 +31,7 @@
           />
         </div>
         <div class='resource'>
-          <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.CombatPower.FIELDS.cost.label'}}</label>
+          <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.Inventory.Cost.label'}}</label>
           <input type="text" name="system.cost" value="{{system.cost}}" data-dtype="Number" />
         </div>
       </div>
@@ -39,21 +39,21 @@
     <div class="grid grid-2col">
     {{#if (eq item.type 'combatPower')}}
         <div class='resource grid-span-2'>
-          <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.CombatPower.FIELDS.cost.label'}}</label>
+          <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.Inventory.Cost.label'}}</label>
           <input type="text" name="system.cost" value="{{system.cost}}" data-dtype="Number" />
         </div>
       {{/if}}
         <div class='resource'>
-          <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.CombatPower.FIELDS.textColor.label'}}</label>
-          <color-picker name="system.textColor" value="{{system.textColor}}" placeholder="{{localize 'EVENTIDE_RP_SYSTEM.Item.CombatPower.FIELDS.textColor.placeholder'}}">
-            <input type="text" placeholder="{{localize 'EVENTIDE_RP_SYSTEM.Item.CombatPower.FIELDS.textColor.placeholder'}}" name="system.textColor" data-edit="system.textColor"/>
+          <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.Colors.TextColor.label'}}</label>
+          <color-picker name="system.textColor" value="{{system.textColor}}" placeholder="{{localize 'EVENTIDE_RP_SYSTEM.Item.Colors.TextColor.placeholder'}}">
+            <input type="text" placeholder="{{localize 'EVENTIDE_RP_SYSTEM.Item.Colors.TextColor.placeholder'}}" name="system.textColor" data-edit="system.textColor"/>
             <input type="color">
           </color-picker>
         </div>
         <div class='resource'>
-          <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.CombatPower.FIELDS.bgColor.label'}}</label>
-          <color-picker name="system.bgColor" value="{{system.bgColor}}" placeholder="{{localize 'EVENTIDE_RP_SYSTEM.Item.CombatPower.FIELDS.bgColor.placeholder'}}">
-            <input type="text" placeholder="{{localize 'EVENTIDE_RP_SYSTEM.Item.CombatPower.FIELDS.bgColor.placeholder'}}" name="system.bgColor" data-edit="system.bgColor"/>
+          <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.Colors.BgColor.label'}}</label>
+          <color-picker name="system.bgColor" value="{{system.bgColor}}" placeholder="{{localize 'EVENTIDE_RP_SYSTEM.Item.Colors.BgColor.placeholder'}}">
+            <input type="text" placeholder="{{localize 'EVENTIDE_RP_SYSTEM.Item.Colors.BgColor.placeholder'}}" name="system.bgColor" data-edit="system.bgColor"/>
             <input type="color">
           </color-picker>
         </div>
@@ -61,7 +61,7 @@
     <div class="grid grid-2col">
       <div class="resource checkbox-resource">
         <div class="checkbox-container">
-          <label class="resource-label">{{localize "EVENTIDE_RP_SYSTEM.Item.Base.FIELDS.rollActorName.label"}}</label>
+          <label class="resource-label">{{localize "EVENTIDE_RP_SYSTEM.Item.Descriptors.RollActorName.label"}}</label>
           <div class="checkbox-wrapper">
             <input type="checkbox" class="large-checkbox" name="system.rollActorName" {{checked system.rollActorName}}/>
           </div>

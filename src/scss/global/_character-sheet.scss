@@ -19,12 +19,55 @@
 }
 
 .eventide-character-sheet {
-  background-image: colors.$character-background-color;
-  padding: 5px;
-  margin: -8px;
-  background-attachment: local;
-  height: 100%;
-  overflow: auto;
+  // background-image: colors.$character-background-color;
+  // padding: 5px;
+  // margin: -8px;
+  // background-attachment: local;
+  
+  &--scrollbars {
+    // Apply scrollbars to the entire tab content
+    .tab {
+      height: 450px; // Fixed height to ensure scrolling happens
+      overflow-y: auto !important;
+      -ms-overflow-style: initial !important;
+      scrollbar-width: thin !important;
+      scrollbar-color: var(--eventide-rp-system-input-focus) transparent !important;
+      
+      &::-webkit-scrollbar {
+        width: 6px !important;
+        background-color: transparent !important;
+        display: block !important;
+      }
+      
+      &::-webkit-scrollbar-thumb {
+        background-color: var(--eventide-rp-system-input-focus) !important;
+        border-radius: 10px !important;
+        border: 1px solid var(--eventide-rp-system-input-bg) !important;
+        
+        &:hover {
+          background-color: var(--eventide-rp-system-primary-button-hover) !important;
+        }
+      }
+      
+      &::-webkit-scrollbar-track {
+        background-color: transparent !important;
+        margin: 0 !important;
+      }
+      
+      // Ensure all sections don't scroll individually
+      section.main, aside.sidebar, .items-list {
+        overflow: visible !important;
+        max-height: none !important; // Remove height constraints
+      }
+    }
+    
+    // Override features class to show scrollbars when needed
+    .tab.features {
+      &::-webkit-scrollbar {
+        display: block !important;
+      }
+    }
+  }
 }
 
 .eventide-character-sheet input {
