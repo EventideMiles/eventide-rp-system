@@ -1,12 +1,12 @@
 {{! Gear Tab }}
 <section class='tab gear {{tab.cssClass}}' data-group='primary' data-tab='gear'>
   <div class="items-section-header">
-    Active Gear
+    {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.ActiveGear"}}
   </div>
   <ol class='items-list'>
     <li class='item flexrow items-header'>
       <div class='item-name'>{{localize 'Name'}}</div>
-      <div class='item-quantity'>{{localize 'EVENTIDE_RP_SYSTEM.Item.Gear.FIELDS.quantity.label'}}</div>
+      <div class='item-quantity'>{{localize 'EVENTIDE_RP_SYSTEM.Item.Inventory.Quantity.label'}}</div>
       <div class='item-controls'>
         {{#if @root.editable}}
           <a
@@ -46,7 +46,7 @@
         <div class='item-controls'>
           <a
             class="item-control item-equip"
-            title='{{localize "EVENTIDE_RP_SYSTEM.Item.Gear.FIELDS.unequip.label"}}'
+            title='{{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Unequip.label"}}'
             data-action='toggleGear'
           >
             <i class='fa-solid fa-helmet-battle'></i>
@@ -73,12 +73,12 @@
     
   </ol>
   <div class="items-section-header">
-    Unequipped Gear
+    {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.UnequippedGear"}}
   </div>
   <ol class='items-list'>
     <li class='item flexrow items-header'>
       <div class='item-name'>{{localize 'Name'}}</div>
-      <div class='item-quantity'>{{localize 'EVENTIDE_RP_SYSTEM.Item.Gear.FIELDS.quantity.label'}}</div>
+      <div class='item-quantity'>{{localize 'EVENTIDE_RP_SYSTEM.Item.Inventory.Quantity.label'}}</div>
       <div class='item-controls'>
       </div>
     </li>
@@ -106,7 +106,7 @@
         <div class='item-controls'>
           <a
             class="item-control item-unequip"
-            title='{{localize "EVENTIDE_RP_SYSTEM.Item.Gear.FIELDS.unequip.label"}}'
+            title='{{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Equip.label"}}'
             data-action='toggleGear'
           >
             <i class='fa-solid fa-helmet-battle'></i>

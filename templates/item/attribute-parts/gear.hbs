@@ -3,7 +3,7 @@
   <div class='resource'>
     <div class='grid grid-2col'>
       <div class='grid-span-1'>
-        <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.CombatPower.FIELDS.roll.type.label'}}</label>
+        <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.Roll.Type.label'}}</label>
         <select name='system.roll.type'>
           {{#each rollTypes as |name key|}}
             <option value="{{key}}" {{#if (eq ../system.roll.type key)}}selected{{/if}}>{{localize (lookup @root.config.rollTypes key)}}</option>
@@ -11,7 +11,7 @@
         </select>
       </div>
       <div class="resource checkbox-resource">
-        <label class="resource-label">{{localize 'EVENTIDE_RP_SYSTEM.Item.CombatPower.FIELDS.targeted.label'}}</label>
+        <label class="resource-label">{{localize 'EVENTIDE_RP_SYSTEM.Item.Roll.Targeted.label'}}</label>
         <div class="checkbox-wrapper">
           <input type="checkbox" class="large-checkbox" name="system.targeted" {{checked system.targeted}} />
         </div>
@@ -21,7 +21,7 @@
     {{#ifCond system.roll.type "!==" "none"}}
       <div class='grid grid-2col'>
         <div class='grid-span-1'>
-          <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.CombatPower.FIELDS.roll.ability.label'}}</label>
+          <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.Roll.Ability.label'}}</label>
           <select name='system.roll.ability'>
             {{#each abilities as |name key|}}
               <option value="{{key}}" {{#if (eq ../system.roll.ability key)}}selected{{/if}}>
@@ -35,7 +35,7 @@
           </select>
         </div>
         <div class='grid-span-1'>
-          <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.CombatPower.FIELDS.roll.bonus.label'}}</label>
+          <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.Roll.Bonus.label'}}</label>
           <input type='text' name='system.roll.bonus' value='{{system.roll.bonus}}' data-dtype='Number' />
         </div>
       </div>
@@ -43,10 +43,10 @@
 
     {{#if (eq system.roll.type "roll")}}
       <div class='dice-adjustments'>
-        <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.CombatPower.FIELDS.roll.diceAdjustments.label'}}</label>
+        <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.Roll.DiceAdjustments.label'}}</label>
         <div class='grid grid-3col'>
           <div class='grid-span-1'>
-            <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.CombatPower.FIELDS.roll.diceAdjustments.advantage.label'}}</label>
+            <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.Roll.DiceAdjustments.Advantage.label'}}</label>
             <input 
               type='text' 
               name='system.roll.diceAdjustments.advantage' 
@@ -56,7 +56,7 @@
             />
           </div>
           <div class='grid-span-1'>
-            <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.CombatPower.FIELDS.roll.diceAdjustments.disadvantage.label'}}</label>
+            <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.Roll.DiceAdjustments.Disadvantage.label'}}</label>
             <input 
               type='text' 
               name='system.roll.diceAdjustments.disadvantage' 
@@ -66,7 +66,7 @@
             />
           </div>
           <div class='grid-span-1'>
-            <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.CombatPower.FIELDS.roll.diceAdjustments.total.label'}}</label>
+            <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.Roll.DiceAdjustments.Total.label'}}</label>
             <input 
               type='text' 
               name='system.roll.diceAdjustments.total' 
