@@ -8,7 +8,6 @@
       "Wits": { "long": "Wits", "abbr": "wits" }
     },
     "HiddenAbilities": {
-      "Roll": { "long": "Roll", "abbr": "roll" },
       "Dice": { "long": "Dice", "abbr": "dice" },
       "Cmax": { "long": "Crit^", "abbr": "cmax" },
       "Cmin": { "long": "Critv", "abbr": "cmin" },
@@ -16,11 +15,198 @@
       "Fmax": { "long": "Fail^", "abbr": "fmax" },
       "Sens": { "long": "Sens", "abbr": "sens" }
     },
+    "RollTypes": {
+      "None": "None",
+      "Roll": "Roll",
+      "Flat": "Flat"
+    },
+    "MessageHeaders": {
+      "Status": "Status: {name}",
+      "Feature": "Feature: {name}"
+    },
+    "WindowTitles": {
+      "StatusPopup": "Status Information",
+      "CombatPowerPopup": "Combat Power Details",
+      "GearPopup": "Use Gear",
+      "FeaturePopup": "Feature Information",
+      "SelectAbilityRoll": "Select Ability Roll",
+      "RestoreTarget": "Restore Target",
+      "GearTransfer": "Transfer Gear",
+      "GearCreator": "Gear Creator",
+      "ChangeTargetStatus": "Change Target Status",
+      "DamageTargets": "Damage Targets",
+      "EffectCreator": "Effect Creator"
+    },
+    "Errors": {
+      "EditImage": "Failed to open file picker",
+      "GMOnly": "Only GMs can use this script in this mode.",
+      "OnlyGmDamageTarget": "Only GMs can apply damage to targets.",
+      "CompendiumOnly": "If you proceed {keyType} will only be created in compendium: not applied.",
+      "PlayerSelection": "You must select a token you own to create a {keyType}.",
+      "CombatPowerError": "Cannot use Combat Power right now!",
+      "GearError": "Cannot use Gear right now!",
+      "NoMacroFound": "No macro found for {macroName}.",
+      "SingleTargetOnly": "You can only target one token at a time!",
+      "TargetFirst": "Please target a token first!",
+      "SingleSelectOnly": "You can only select one token at a time!",
+      "BothFirst": "Please select a token and target another token",
+      "SelectFirst": "Please select a token first!",
+      "TargetOrSelectFirst": "Please target or select a token first!",
+      "SameTransferPrevention": "Cannot transfer items to the same token",
+      "NoActor": "Selected tokens must have associated actors",
+      "NoGear": "Target has no gear items available to transfer",
+      "ItemNotFound": "Item not found",
+      "NoItemsAvailable": "No items available to transfer",
+      "MissingStatus": "Selected status not found!",
+      "NoStatusEffects": "No effects found on status!",
+      "OwnedMacrosOnly": "You can only create macro buttons for owned items.",
+      "UnknownItemMacro": "Could not find item {item}. You may need to delete and recreate this macro.",
+      "LocalStorage": "There was some sort of error storing values locally."
+    },
+    "Info": {
+      "TokenItemCreated": "Created {keyType} item {name} on {count} {targetType} token(s) and in the {packLabel} compendium",
+      "CompendiumItemCreated": "Created {keyType} item {name} in the {packLabel} compendium"
+    },
+    "Messages": {
+      "Sections": {
+        "Effects": "Effects",
+        "Adv": "adv",
+        "Dis": "dis",
+        "Add": "add",
+        "SetTo": "set to",
+        "Cost": "Cost",
+        "CriticalHit": "Critical Hit!",
+        "CriticaMiss": "Critical Miss!",
+        "StolenCrit": "Stolen Critical!",
+        "SavedMiss": "Saved Miss!",
+        "ACCheck": "AC Check",
+        "Restoration": "Restoration",
+        "RestoreActor": "is getting their status restored!",
+        "Restored": "Restored",
+        "Resolve": "Resolve",
+        "Power": "Power",
+        "All": "All",
+        "Transferred": "Transferred",
+        "Equipped": "Equipped",
+        "Unequipped": "Unequipped",
+        "Removed": "Removed",
+        "RemovedMessage": "had a status effect removed"
+      }
+    },
+    "Forms" : {
+      "ScriptExplanations": {
+        "ChangeTargetStatus": "This script is to allow you to change the values on an existing status condition easily. Keep in mind that signed numbers will be overridden by the mode selected in the dropdown.",
+        "DamageTargets": "This script is designed to damage targets and heal selected tokens. If its in heal mode it will always heal selected over damaging targets."
+      },
+      "Sections": {
+        "Type": "Type",
+        "UsageInfo": "Usage Information",
+        "Status": "Status",
+        "Feature": "Feature",
+        "Name": "Name",
+        "Label": "Label",
+        "Bonus": "Bonus",
+        "Adjustments": "Adjustments",
+        "Description": "Description",
+        "Neutral": "Neutral",
+        "Adv": "Adv",
+        "Disadv": "Disadv",
+        "Image": "Image",
+        "Background": "Background",
+        "Text": "Text",
+        "IconTint": "Icon Tint",
+        "Attributes": "Attributes",
+        "Quantity": "Quantity",
+        "Weight": "Weight",
+        "Cost": "Cost",
+        "Targeted": "Targeted",
+        "RollSettings": "Roll Settings",
+        "RollType": "Roll Type",
+        "RollAbility": "Roll Ability",
+        "RollBonus": "Roll Bonus",
+        "RollInfo": "Roll Information",
+        "ItemDetails": "Item Details",
+        "RollAdvantage": "Advantage",
+        "RollDisadvantage": "Disadvantage",
+        "Effects": "Effects",
+        "Prerequisites": "Prerequisites",
+        "OverrideValues": "Override Values",
+        "Formula": "Formula",
+        "IsHeal": "Is Heal",
+        "SelectGear": "Select Gear",
+        "Available": "{number} Available",
+        "Optional": "(Optional)",
+        "SelectAbilityRoll": "Select An Ability Roll",
+        "RestoreResolve": "Restore Resolve",
+        "RestorePower": "Restore Power",
+        "RemoveStatuses": "Remove Statuses",
+        "All": "All",
+        "Details": "Details"
+      },
+      "Buttons": {
+        "Create": "Create",
+        "CreateAndApply": "Create and Apply",
+        "Change": "Change",
+        "Store": "Store",
+        "Close": "Close",
+        "Damage": "Damage",
+        "Transfer": "Transfer",
+        "Roll": "Roll",
+        "Restore": "Restore",
+        "UsePower": "Use Power",
+        "UseItem": "Use Item",
+        "SendToChat": "Send To Chat"
+      },
+      "Modifications": {
+        "Add": "Change",
+        "AddMode": "Add",
+        "SubtractMode": "Subtract",
+        "Override": "Override",
+        "Advantage": "Advantage",
+        "Disadvantage": "Disadvantage"
+      },
+      "Callouts": {
+        "Gear": {
+          "PlayerMode": "You are using the gear creator in player mode. This can only be used to create gear for tokens you control. You currently have <strong>{count} tokens(s)</strong> selected.",
+          "NoTargets": "There are no targets selected. This will create a gear item for the compendium only.",
+          "WithTargets": "There are <strong>{count} target(s)</strong> selected. This will create a gear item for each target and your compendium.",
+          "TransferGear": "Transfer gear from {target} to {selected}.",
+          "RestoreTarget": "Restore {target}(s) Resolve, power, and selected statuses.",
+          "TargetGear": "You need to target someone to use this gear!",
+          "InsufficientQuantity": "You don't have enough of this item to use it! (Need {cost}, have {quantity})",
+          "NotEquipped": "This item is not equipped!"
+        },
+        "Effect": {
+          "PlayerMode": "You are using the effect creator in player mode. This can only be used to create features for tokens you control. You currently have <strong>{count} tokens(s)</strong> selected.",
+          "NoTargets": "There are no targets selected. This will create either a status condition or feature (as selected) for the compendium only.",
+          "WithTargets": "There are <strong>{count} target(s)</strong> selected. This will create a status condition or feature (as selected) for each target and your compendium."
+        },
+        "Damage": {
+          "TargetMode": "There are <strong>{count} target(s)</strong> selected.",
+          "SelectMode": "There are <strong>{count} token(s)</strong> selected."
+        },
+        "Power": {
+          "TargetPower": "You need to target someone to use this power!",
+          "InsufficientPower": "You don't have enough power to use this! (Need {cost}, have {actorPower})"
+        }
+      },
+      "Placeholders": {
+        "Name": "Name",
+        "Description": "Description",
+        "ChangeValue": "Change Value",
+        "Label": "Label",
+        "Formula": "xdy + z",
+        "TransferNote": "Add a note about this transfer"
+      }
+    },
+    "CombatOptions": {
+      "Unaugmented": "Unaugmented"
+    },
     "SheetLabels": {
       "Actor": "EventideRpSystem Actor Sheet",
       "Item": "EventideRpSystem Item Sheet"
     },
-    "Actor": {
+    "Actor": {  
       "Tabs": {
         "Biography": "Biography",
         "Features": "Features",

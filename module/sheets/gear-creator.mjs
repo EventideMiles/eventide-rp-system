@@ -14,7 +14,6 @@ export class GearCreator extends CreatorApplication {
     ...super.DEFAULT_OPTIONS,
     classes: ["eventide-rp-system", "standard-form", "gear-creator"],
     window: {
-      title: "Gear Creator",
       icon: "fa-solid fa-sack",
     },
     form: {
@@ -26,6 +25,14 @@ export class GearCreator extends CreatorApplication {
       onEditImage: super._onEditImage,
     },
   };
+
+  /**
+   * Get the localized window title
+   * @returns {string} The localized window title
+   */
+  get title() {
+    return game.i18n.format("EVENTIDE_RP_SYSTEM.WindowTitles.GearCreator");
+  }
 
   constructor({ advanced = false, number = 0, playerMode = false } = {}) {
     super({ advanced, number, playerMode, keyType: "gear" });
@@ -41,12 +48,12 @@ export class GearCreator extends CreatorApplication {
     const context = await super._prepareContext(options);
 
     context.storedData = {
-      gear_img: this.storedData[this.storageKeys[0]] || "icons/svg/item-bag.svg",
+      gear_img:
+        this.storedData[this.storageKeys[0]] || "icons/svg/item-bag.svg",
       gear_bgColor: this.storedData[this.storageKeys[1]],
       gear_textColor: this.storedData[this.storageKeys[2]],
     };
 
     return context;
   }
-
 }

@@ -1,12 +1,10 @@
-const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
+import { EventideSheetHelpers } from "./base/eventide-sheet-helpers.mjs";
 
 /**
  * A form application for changing status effects on a target token.
- * @extends {HandlebarsApplicationMixin(ApplicationV2)}
+ * @extends {EventideSheetHelpers}
  */
-export class ChangeTargetStatus extends HandlebarsApplicationMixin(
-  ApplicationV2
-) {
+export class ChangeTargetStatus extends EventideSheetHelpers {
   static PARTS = {
     changeTargetStatus: {
       template: `systems/eventide-rp-system/templates/macros/change-target-status.hbs`,
@@ -22,7 +20,6 @@ export class ChangeTargetStatus extends HandlebarsApplicationMixin(
     },
     tag: "form",
     window: {
-      title: "Change Target Status",
       icon: "fa-regular fa-atom-simple",
     },
     form: {
@@ -45,15 +42,17 @@ export class ChangeTargetStatus extends HandlebarsApplicationMixin(
   ];
 
   /**
-   * Prepares the context data for a specific part of the form.
-   * @param {string} partId - The ID of the form part
-   * @param {Object} context - The context object to prepare
-   * @param {Object} options - Additional options
-   * @returns {Promise<Object>} The prepared context
+   * Get the localized window title
+   * @returns {string} The localized window title
    */
-  async _preparePartContext(partId, context, options) {
-    context.partId = `${this.id}-${partId}`;
-    return context;
+  get title() {
+    return game.i18n.format(
+      "EVENTIDE_RP_SYSTEM.WindowTitles.ChangeTargetStatus"
+    );
+  }
+
+  constructor(options = {}) {
+    super(options);
   }
 
   /**
@@ -65,17 +64,21 @@ export class ChangeTargetStatus extends HandlebarsApplicationMixin(
   async _prepareContext(options) {
     const context = {};
 
-    const targetArray = await erps.utils.getTargetArray();
+    this.targetArray = await erps.utils.getTargetArray();
 
-    if (targetArray.length === 0) {
-      ui.notifications.error(`Please target a token first!`);
+    if (this.targetArray.length === 0) {
+      ui.notifications.error(
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.TargetFirst")
+      );
       this.close();
-    } else if (targetArray.length > 1) {
-      ui.notifications.error(`You can only target one token at a time!`);
+    } else if (this.targetArray.length > 1) {
+      ui.notifications.error(
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.SingleTargetOnly")
+      );
       this.close();
     }
 
-    this.target = targetArray[0];
+    this.target = this.targetArray[0];
     context.target = this.target;
 
     context.cssClass = ChangeTargetStatus.DEFAULT_OPTIONS.classes.join(" ");
@@ -91,12 +94,6 @@ export class ChangeTargetStatus extends HandlebarsApplicationMixin(
     return context;
   }
 
-  async _renderFrame(options) {
-    const frame = await super._renderFrame(options);
-    frame.autocomplete = "off";
-    return frame;
-  }
-
   /**
    * Handles form submission to update status effect values.
    * @param {Event} event - The form submission event
@@ -106,23 +103,28 @@ export class ChangeTargetStatus extends HandlebarsApplicationMixin(
    */
   static async #onSubmit(event, form, formData) {
     const statusId = form.statusSelector.value;
-    const target = this.target;
 
-    if (!target || !statusId) {
-      ui.notifications.error("Missing target or status selection!");
+    if (!statusId) {
+      ui.notifications.error(
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.MissingStatus")
+      );
       return;
     }
 
-    const status = target.actor.items.get(statusId);
+    const status = this.target.actor.items.get(statusId);
     if (!status) {
-      ui.notifications.error("Selected status not found!");
+      ui.notifications.error(
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.MissingStatus")
+      );
       return;
     }
 
     // Get the current values from the status effects
     const effects = status.effects.contents[0];
     if (!effects) {
-      ui.notifications.error("No effects found on status!");
+      ui.notifications.error(
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.NoStatusEffects")
+      );
       return;
     }
 

@@ -12,7 +12,7 @@
 {{/if}}
 <hr class="chat-card__hr" />
 {{#ifCond effects.length ">" 0}}
-  <div class="chat-card__effects"><div class='chat-card__effects--title'>Effects</div>
+  <div class="chat-card__effects"><div class='chat-card__effects--title'>{{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.Effects"}}</div>
   {{#each effects}}
     <div class="chat-card__effects--name"><img src="{{this.img}}" class="chat-card__image--secondary" /> {{this.name}}</div>
     {{#ifCond this.changes.length ">" 0 }}
@@ -20,16 +20,18 @@
         <div class="chat-card__effects--row">
           <div class="chat-card__effects--row-cell chat-card__effects--row-cell--first">{{keySplit this.key 2}}</div> 
           <div class="chat-card__effects--row-cell chat-card__effects--row-cell--middle">
-            {{#ifCond this.mode "===" 5}}set to{{/ifCond}}
+            {{#ifCond this.mode "===" 5}}
+              {{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.SetTo"}}
+            {{/ifCond}}
             {{#ifCond this.mode "!==" 5}}
               {{#ifCond (keySplit this.key 4) "===" "advantage"}}
-                adv
+                {{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.Adv"}}
               {{/ifCond}}
               {{#ifCond (keySplit this.key 4) "===" "disadvantage"}}
-                dis
+                {{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.Dis"}}
               {{/ifCond}}
               {{#ifCond (keySplit this.key 3) "===" "change"}}
-                add
+                {{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.Add"}}
               {{/ifCond}}
             {{/ifCond}}
           </div>

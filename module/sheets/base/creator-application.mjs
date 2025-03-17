@@ -1,12 +1,10 @@
-const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
+import { EventideSheetHelpers } from "./eventide-sheet-helpers.mjs";
 
 /**
  * Base class for creator applications that handle item creation
  * @extends {HandlebarsApplicationMixin(ApplicationV2)}
  */
-export class CreatorApplication extends HandlebarsApplicationMixin(
-  ApplicationV2
-) {
+export class CreatorApplication extends EventideSheetHelpers {
   static DEFAULT_OPTIONS = {
     id: "creator-application",
     position: {
@@ -16,10 +14,6 @@ export class CreatorApplication extends HandlebarsApplicationMixin(
     tag: "form",
   };
 
-  static abilities = ["acro", "phys", "fort", "will", "wits"];
-  static hiddenAbilities = ["Dice", "Cmin", "Fmax"];
-  static advancedHiddenAbilities = ["Cmax", "Fmin"];
-  static rollTypes = ["None", "Roll", "Flat"];
   static storageKeys = ["img", "bgColor", "textColor"];
   static effectStorageKeys = ["iconTint", "type"];
 
@@ -31,7 +25,12 @@ export class CreatorApplication extends HandlebarsApplicationMixin(
    * @param {boolean} [options.playerMode=false] - Whether this is being used by a player
    * @param {string} [options.keyType="effect"] - Type of item being created
    */
-  constructor({ number = 0, advanced = false, playerMode = false, keyType = "effect" } = {}) {
+  constructor({
+    number = 0,
+    advanced = false,
+    playerMode = false,
+    keyType = "effect",
+  } = {}) {
     super();
     this.number = Math.floor(number);
     this.keyType = keyType;
@@ -47,39 +46,16 @@ export class CreatorApplication extends HandlebarsApplicationMixin(
         `${keyType}_${this.number}_type`,
       ];
     }
-    this.abilities = [...CreatorApplication.abilities];
-    this.hiddenAbilities = [...CreatorApplication.hiddenAbilities];
+    this.abilities = [...EventideSheetHelpers.abilities];
+    this.hiddenAbilities = [...EventideSheetHelpers.hiddenAbilities];
     if (advanced) {
       this.hiddenAbilities = [
         ...this.hiddenAbilities,
-        ...CreatorApplication.advancedHiddenAbilities,
+        ...EventideSheetHelpers.advancedHiddenAbilities,
       ];
     }
-    this.rollTypes = CreatorApplication.rollTypes;
+    this.rollTypes = EventideSheetHelpers.rollTypes;
     this.playerMode = playerMode;
-  }
-
-  /**
-   * Prepare context data for a specific part of the form
-   * @param {string} partId - The ID of the form part
-   * @param {Object} context - The context object to prepare
-   * @param {Object} options - Additional options
-   * @returns {Promise<Object>} The prepared context
-   */
-  async _preparePartContext(partId, context, options) {
-    context.partId = `${this.id}-${partId}`;
-    return context;
-  }
-
-  /**
-   * Render the application frame
-   * @param {Object} options - Rendering options
-   * @returns {Promise<HTMLElement>} The rendered frame
-   */
-  async _renderFrame(options) {
-    const frame = await super._renderFrame(options);
-    frame.autocomplete = "off";
-    return frame;
   }
 
   /**
@@ -88,27 +64,39 @@ export class CreatorApplication extends HandlebarsApplicationMixin(
    * @returns {Promise<Object>} The prepared context data
    */
   async _prepareContext(options) {
+    const context = await super._prepareContext(options);
+    this.gmCheck = await EventideSheetHelpers._gmCheck({
+      playerMode: this.playerMode,
+    });
     this.targetArray = await erps.utils.getTargetArray();
     this.selectedArray = await erps.utils.getSelectedArray();
     this.storedData = await erps.utils.retrieveLocal(this.storageKeys);
 
-    const context = {
-      abilities: this.abilities,
-      hiddenAbilities: this.hiddenAbilities,
-      rollTypes: this.rollTypes,
-      playerMode: this.playerMode,
-      targetArray: this.targetArray,
-      selectedArray: this.selectedArray,
-      };
+    context.abilities = this.abilities;
+    context.hiddenAbilities = this.hiddenAbilities;
+    context.rollTypes = this.rollTypes;
+    context.playerMode = this.playerMode;
+    context.targetArray = this.targetArray;
+    context.selectedArray = this.selectedArray;
 
-    if (context.targetArray.length === 0 && !context.playerMode) {
+    if (
+      context.targetArray.length === 0 &&
+      this.gmCheck === "gm" &&
+      !this.playerMode
+    ) {
       ui.notifications.warn(
-        `If you proceed ${this.keyType} will only be created in compendium: not applied.`
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.CompendiumOnly", {
+          keyType: this.keyType,
+        })
       );
     }
 
-    if (context.selectedArray.length === 0 && context.playerMode) {
-      ui.notifications.error(`You must select a token you own to create a ${this.keyType}.`);
+    if (context.selectedArray.length === 0 && this.gmCheck === "player") {
+      ui.notifications.error(
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.PlayerSelection", {
+          keyType: this.keyType,
+        })
+      );
       this.close();
       return;
     }
@@ -124,45 +112,7 @@ export class CreatorApplication extends HandlebarsApplicationMixin(
    * @protected
    */
   static async _onEditImage(event, target) {
-    try {
-      // Clean the current path
-      let currentPath = target.src;
-      // Remove origin if present
-      currentPath = currentPath.replace(window.location.origin, "");
-      // Remove leading slash if present
-      currentPath = currentPath.replace(/^\/+/, "");
-
-      const fp = new FilePicker({
-        displayMode: "tiles",
-        type: "image",
-        current: currentPath,
-        callback: (path) => {
-          // Clean the selected path
-          let cleanPath = path;
-          // Remove any leading slashes
-          cleanPath = cleanPath.replace(/^\/+/, "");
-
-          // Update the image source and hidden input with clean path
-          target.src = cleanPath;
-
-          // Find or create the hidden input
-          let input = target.parentNode.querySelector('input[name="img"]');
-          if (!input) {
-            input = document.createElement("input");
-            input.type = "hidden";
-            input.name = "img";
-            target.parentNode.appendChild(input);
-          }
-          input.value = cleanPath;
-        },
-        top: this.position?.top + 40 || 40,
-        left: this.position?.left + 10 || 10,
-      });
-      return fp.browse();
-    } catch (error) {
-      console.error("Error in _onEditImage:", error);
-      ui.notifications.error("Failed to open file picker");
-    }
+    return await super._onEditImage(event, target);
   }
 
   /**
@@ -187,7 +137,12 @@ export class CreatorApplication extends HandlebarsApplicationMixin(
     const img = form.img.value;
     const bgColor = form.bgColor.value;
     const textColor = form.textColor.value;
-    const type = this.keyType === "gear" ? "gear" : this.playerMode ? "feature" : form.type.value;
+    const type =
+      this.keyType === "gear"
+        ? "gear"
+        : this.playerMode
+        ? "feature"
+        : form.type.value;
     const iconTint = form?.iconTint?.value || "#ffffff";
 
     if (this.keyType === "gear") {
@@ -199,45 +154,32 @@ export class CreatorApplication extends HandlebarsApplicationMixin(
       console.log(rollType);
       rollData = {
         type: rollType,
-        ability: rollType !== "none" ? form["roll.ability"].value : "unaugmented",
-        bonus: rollType !== "none" ? parseInt(form["roll.bonus"].value) || 0 : 0,
+        ability:
+          rollType !== "none" ? form["roll.ability"].value : "unaugmented",
+        bonus:
+          rollType !== "none" ? parseInt(form["roll.bonus"].value) || 0 : 0,
         diceAdjustments: {
-          advantage: rollType === "roll" ? parseInt(form["roll.diceAdjustments.advantage"].value) || 0 : 0,
-          disadvantage: rollType === "roll" ? parseInt(form["roll.diceAdjustments.disadvantage"].value) || 0 : 0,
+          advantage:
+            rollType === "roll"
+              ? parseInt(form["roll.diceAdjustments.advantage"].value) || 0
+              : 0,
+          disadvantage:
+            rollType === "roll"
+              ? parseInt(form["roll.diceAdjustments.disadvantage"].value) || 0
+              : 0,
           total: 0,
         },
       };
     }
 
-    const effects = this.abilities.map((ability) => {
-      const value = parseInt(form[ability.toLowerCase()].value);
-      if (value === 0) return null;
-      const mode = form[`${ability.toLowerCase()}-mode`].value;
-
-      return {
-        key: `system.abilities.${ability.toLowerCase()}.${
-          mode === "add"
-            ? "change"
-            : mode === "advantage"
-            ? "diceAdjustments.advantage"
-            : mode === "disadvantage"
-            ? "diceAdjustments.disadvantage"
-            : "override"
-        }`,
-        mode: mode === "add" ? CONST.ACTIVE_EFFECT_MODES.ADD : CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
-        value: value,
-        priority: 0,
-      };
-    }).filter((e) => e !== null);
-
-    if (!this.playerMode) {
-      hiddenEffects = this.hiddenAbilities.map((ability) => {
+    const effects = this.abilities
+      .map((ability) => {
         const value = parseInt(form[ability.toLowerCase()].value);
         if (value === 0) return null;
         const mode = form[`${ability.toLowerCase()}-mode`].value;
 
         return {
-          key: `system.hiddenAbilities.${ability.toLowerCase()}.${
+          key: `system.abilities.${ability.toLowerCase()}.${
             mode === "add"
               ? "change"
               : mode === "advantage"
@@ -246,11 +188,42 @@ export class CreatorApplication extends HandlebarsApplicationMixin(
               ? "diceAdjustments.disadvantage"
               : "override"
           }`,
-          mode: mode === "add" ? CONST.ACTIVE_EFFECT_MODES.ADD : CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
+          mode:
+            mode === "add"
+              ? CONST.ACTIVE_EFFECT_MODES.ADD
+              : CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
           value: value,
           priority: 0,
         };
-      }).filter((e) => e !== null);
+      })
+      .filter((e) => e !== null);
+
+    if (this.gmCheck === "gm" && !this.playerMode) {
+      hiddenEffects = this.hiddenAbilities
+        .map((ability) => {
+          const value = parseInt(form[ability.toLowerCase()].value);
+          if (value === 0) return null;
+          const mode = form[`${ability.toLowerCase()}-mode`].value;
+
+          return {
+            key: `system.hiddenAbilities.${ability.toLowerCase()}.${
+              mode === "add"
+                ? "change"
+                : mode === "advantage"
+                ? "diceAdjustments.advantage"
+                : mode === "disadvantage"
+                ? "diceAdjustments.disadvantage"
+                : "override"
+            }`,
+            mode:
+              mode === "add"
+                ? CONST.ACTIVE_EFFECT_MODES.ADD
+                : CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
+            value: value,
+            priority: 0,
+          };
+        })
+        .filter((e) => e !== null);
     }
     // Save preferences to local storage
     let storageData = {
@@ -300,7 +273,7 @@ export class CreatorApplication extends HandlebarsApplicationMixin(
         },
       ],
     };
-    
+
     if (this.keyType === "gear") {
       itemData.system.quantity = quantity;
       itemData.system.weight = weight;
@@ -309,22 +282,24 @@ export class CreatorApplication extends HandlebarsApplicationMixin(
       itemData.system.roll = rollData;
     }
 
-    if (this.targetArray.length > 0) {
-      for (const token of this.targetArray) {
-        const actor = token.actor;
-        await actor.createEmbeddedDocuments("Item", [itemData]);
-      }
-    } else if (this.playerMode) {
-      for (const token of this.selectedArray) {
-        const actor = token.actor;
-        await actor.createEmbeddedDocuments("Item", [itemData]);
-      }
+    if (this.targetArray.length > 0 && this.gmCheck === "gm") {
+      await Promise.all(
+        this.targetArray.map(async (token) => {
+          await token.actor.createEmbeddedDocuments("Item", [itemData]);
+        })
+      );
+    } else if (this.gmCheck === "player") {
+      await Promise.all(
+        this.selectedArray.map(async (token) => {
+          await token.actor.createEmbeddedDocuments("Item", [itemData]);
+        })
+      );
     } else {
       await game.items.createDocument(itemData);
     }
 
-    let packId = this.playerMode ? "player" : "custom";
-    let packLabel = this.playerMode ? "Player " : "Custom";
+    let packId = this.gmCheck === "gm" ? "custom" : "player";
+    let packLabel = this.gmCheck === "gm" ? "Custom" : "Player";
     if (type === "gear") {
       packId += "gear";
       packLabel += "Gear";
@@ -349,17 +324,33 @@ export class CreatorApplication extends HandlebarsApplicationMixin(
       pack: pack.collection,
     });
 
-    if (this.targetArray.length > 0 && !this.playerMode) {
+    if (this.targetArray.length > 0 && this.gmCheck === "gm") {
       ui.notifications.info(
-        `Created ${type} item "${name}" on ${this.targetArray.length} target(s) and in the ${packLabel} compendium`
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Info.TokenItemCreated", {
+          keyType: type,
+          name: name,
+          count: this.targetArray.length,
+          targetType: "targeted",
+          packLabel: packLabel,
+        })
       );
-    } else if (this.selectedArray.length > 0 && this.playerMode) {
+    } else if (this.selectedArray.length > 0 && this.gmCheck === "player") {
       ui.notifications.info(
-        `Created ${type} item "${name}" on ${this.selectedArray.length} selected token(s) and in the ${packLabel} compendium`
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Info.TokenItemCreated", {
+          keyType: type,
+          name: name,
+          count: this.selectedArray.length,
+          targetType: "selected",
+          packLabel: packLabel,
+        })
       );
     } else {
       ui.notifications.info(
-        `Created ${type} item "${name}" in the ${packLabel} compendium`
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Info.CompendiumItemCreated", {
+          keyType: type,
+          name: name,
+          packLabel: packLabel,
+        })
       );
     }
   }

@@ -83,7 +83,7 @@ Hooks.once("init", function () {
    * @type {String}
    */
   CONFIG.Combat.initiative = {
-    formula: `1d@hiddenAbilities.dice.total + (@abilities.acro.total + @abilities.wits.total)/2 + (@abilities.acro.total + @abilities.phys.total + @abilities.fort.total + @abilities.will.total + @abilities.wits.total)/100`,
+    formula: `1d@hiddenAbilities.dice.total + @statTotal.mainInit + @statTotal.subInit`,
     decimals: 2,
   };
 
@@ -186,6 +186,12 @@ Handlebars.registerHelper("lowercase", function (str) {
   return (str || "").toLowerCase();
 });
 
+Handlebars.registerHelper("capitalize", function (str) {
+  if (!str) return "";
+  str = String(str);
+  return str.charAt(0).toUpperCase() + str.slice(1);
+});
+
 /* -------------------------------------------- */
 /*  Ready Hook                                  */
 /* -------------------------------------------- */
@@ -211,7 +217,7 @@ async function createDocMacro(data, slot) {
   if (data.type !== "Item") return;
   if (!data.uuid.includes("Actor.") && !data.uuid.includes("Token.")) {
     return ui.notifications.warn(
-      "You can only create macro buttons for owned Items"
+      game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.OwnedMacrosOnly")
     );
   }
   // If it is, retrieve it based on the uuid.
@@ -253,7 +259,9 @@ async function rollItemMacro(itemUuid) {
     if (!item || !item.parent) {
       const itemName = item?.name ?? itemUuid;
       return ui.notifications.warn(
-        `Could not find item ${itemName}. You may need to delete and recreate this macro.`
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.UnknownItemMacro", {
+          item: itemName,
+        })
       );
     }
 
@@ -283,14 +291,6 @@ Hooks.on("updateItem", (item, changed, options, triggerPlayer) => {
     }
   }
 });
-
-// Hooks.on("closeEventideRpSystemItemSheet", (app) => {
-//   const item = app.document;
-
-//   if (item.type === "status" && item.system.description && app.actor !== null) {
-//     createStatusMessage(item);
-//   }
-// });
 
 Hooks.on("createItem", (item, options, triggerPlayer) => {
   // Status Message Handler

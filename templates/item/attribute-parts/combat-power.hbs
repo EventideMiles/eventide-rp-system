@@ -5,7 +5,9 @@
       <div class='grid-span-1'>
         <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.CombatPower.FIELDS.roll.type.label'}}</label>
         <select name='system.roll.type'>
-          {{selectOptions rollTypes selected=system.roll.type}}
+          {{#each rollTypes as |name key|}}
+            <option value="{{key}}" {{#if (eq ../system.roll.type key)}}selected{{/if}}>{{localize (lookup @root.config.rollTypes key)}}</option>
+          {{/each}}
         </select>
       </div>
       <div class="resource checkbox-resource">
@@ -25,7 +27,15 @@
         <div class='grid-span-1'>
           <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.CombatPower.FIELDS.roll.ability.label'}}</label>
           <select name='system.roll.ability'>
-            {{selectOptions abilities selected=system.roll.ability}}
+            {{#each abilities as |name key|}}
+              <option value="{{key}}" {{#if (eq ../system.roll.ability key)}}selected{{/if}}>
+                {{#if (eq key "unaugmented")}}
+                  {{localize "EVENTIDE_RP_SYSTEM.CombatOptions.Unaugmented"}}
+                {{else}}
+                  {{localize (lookup @root.config.abilities key)}}
+                {{/if}}
+              </option>
+            {{/each}}
           </select>
         </div>
         <div class='grid-span-1'>

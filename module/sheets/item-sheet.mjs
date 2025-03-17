@@ -1,4 +1,5 @@
 import { prepareActiveEffectCategories } from "../helpers/effects.mjs";
+import { EventideSheetHelpers } from "./base/eventide-sheet-helpers.mjs";
 
 const { api, sheets } = foundry.applications;
 
@@ -134,19 +135,10 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
         context.tab = context.tabs[partId];
         if (partId === "attributesCombatPower" || partId === "attributesGear") {
           // Add roll type options
-          context.rollTypes = {
-            roll: "Roll",
-            flat: "Flat",
-            none: "None",
-          };
-          // Add ability options
+          context.rollTypes = EventideSheetHelpers.rollTypeObject;
           context.abilities = {
-            acro: "Acrobatics",
-            phys: "Physical",
-            fort: "Fortitude",
-            will: "Will",
-            wits: "Wits",
-            unaugmented: "Unaugmented",
+            ...EventideSheetHelpers.abilityObject,
+            unaugmented: "unaugmented",
           };
         }
         break;

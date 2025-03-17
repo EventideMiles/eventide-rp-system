@@ -153,21 +153,23 @@ export class EventideRpSystemActor extends Actor {
   /**
    * Get the roll formulas for the actor's abilities.
    *
-   * @returns {Object} An object with the roll formulas for the actor's abilities.
-   * @property {string} acro - The roll formula for the Acrobatics ability.
-   * @property {string} phys - The roll formula for the Physical ability.
-   * @property {string} fort - The roll formula for the Fortitude ability.
-   * @property {string} will - The roll formula for the Will ability.
-   * @property {string} wits - The roll formula for the Wits ability.
+   * @returns {Object} An object with ability keys mapped to their roll formulas
+   * @example
+   * // Returns something like: { acro: "2d20k + 5", phys: "1d20 + 3", ... }
+   * const formulas = await actor.getRollFormulas();
    */
   async getRollFormulas() {
-    const abilities = ["acro", "phys", "fort", "will", "wits"];
     const formulas = await Promise.all(
-      abilities.map((ability) => this.getRollFormula({ ability }))
+      Object.keys(CONFIG.EVENTIDE_RP_SYSTEM.abilities).map((ability) =>
+        this.getRollFormula({ ability })
+      )
     );
 
     return Object.fromEntries(
-      abilities.map((ability, index) => [ability, formulas[index]])
+      Object.keys(CONFIG.EVENTIDE_RP_SYSTEM.abilities).map((ability, index) => [
+        ability,
+        formulas[index],
+      ])
     );
   }
 
@@ -206,7 +208,9 @@ export class EventideRpSystemActor extends Actor {
    */
   async restore({ resolve, power, statuses, all }) {
     if (!game.user.isGM) {
-      ui.notifications.warn("Only GMs can restore actor resources and remove status effects.");
+      ui.notifications.warn(
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.GMOnly")
+      );
       return null;
     }
 

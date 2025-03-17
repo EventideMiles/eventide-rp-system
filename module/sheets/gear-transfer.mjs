@@ -1,10 +1,10 @@
-const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
+import { EventideSheetHelpers } from "./base/eventide-sheet-helpers.mjs";
 
 /**
  * A form application for transferring gear from target to selected token.
- * @extends {HandlebarsApplicationMixin(ApplicationV2)}
+ * @extends {EventideSheetHelpers}
  */
-export class GearTransfer extends HandlebarsApplicationMixin(ApplicationV2) {
+export class GearTransfer extends EventideSheetHelpers {
   static PARTS = {
     gearTransfer: {
       template: "systems/eventide-rp-system/templates/macros/gear-transfer.hbs",
@@ -20,7 +20,6 @@ export class GearTransfer extends HandlebarsApplicationMixin(ApplicationV2) {
     },
     tag: "form",
     window: {
-      title: "Transfer Gear",
       icon: "fa-solid fa-exchange",
     },
     form: {
@@ -30,7 +29,15 @@ export class GearTransfer extends HandlebarsApplicationMixin(ApplicationV2) {
     },
   };
 
-  constructor() {
+  /**
+   * Get the localized window title
+   * @returns {string} The localized window title
+   */
+  get title() {
+    return game.i18n.format("EVENTIDE_RP_SYSTEM.WindowTitles.GearTransfer");
+  }
+
+  constructor(options = {}) {
     super();
   }
 
@@ -39,46 +46,56 @@ export class GearTransfer extends HandlebarsApplicationMixin(ApplicationV2) {
    * @returns {Object} Template data
    */
   async _prepareContext(options) {
+    await EventideSheetHelpers._gmCheck();
     const context = {};
 
-    const targetArray = await erps.utils.getTargetArray();
-    const selectedArray = await erps.utils.getSelectedArray();
+    this.targetTokens = await erps.utils.getTargetArray();
+    this.selectedTokens = await erps.utils.getSelectedArray();
+    this.targetToken = this.targetTokens[0];
+    this.selectedToken = this.selectedTokens[0];
 
     // Check for multiple tokens
-    if (targetArray.length > 1) {
-      ui.notifications.warn("Please target only one token to transfer from");
+    if (this.targetTokens.length > 1) {
+      ui.notifications.warn(
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.SingleTargetOnly")
+      );
       this.close();
       return context;
     }
 
-    if (selectedArray.length > 1) {
-      ui.notifications.warn("Please select only one token to transfer to");
+    if (this.selectedTokens.length > 1) {
+      ui.notifications.warn(
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.SingleSelectOnly")
+      );
       this.close();
       return context;
     }
 
-    context.targetToken = targetArray[0];
-    context.selectedToken = selectedArray[0];
-
-    if (!context.targetToken || !context.selectedToken) {
-      ui.notifications.warn("Please select a token and target another token");
+    if (!this.targetToken || !this.selectedToken) {
+      ui.notifications.warn(
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.BothFirst")
+      );
       this.close();
       return context;
     }
 
     // Check for self-transfer
-    if (context.targetToken.id === context.selectedToken.id) {
-      ui.notifications.warn("Cannot transfer items to the same token");
+    if (this.targetToken.id === this.selectedToken.id) {
+      ui.notifications.warn(
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.SameTransferPrevention")
+      );
       this.close();
       return context;
     }
 
     // Get actors
-    context.targetActor = context.targetToken.actor;
-    context.selectedActor = context.selectedToken.actor;
+    context.targetActor = this.targetToken.actor;
+    context.selectedActor = this.selectedToken.actor;
 
     if (!context.targetActor || !context.selectedActor) {
-      ui.notifications.warn("Selected tokens must have associated actors");
+      ui.notifications.warn(
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.NoActor")
+      );
       this.close();
       return context;
     }
@@ -90,7 +107,9 @@ export class GearTransfer extends HandlebarsApplicationMixin(ApplicationV2) {
     );
 
     if (context.targetGear.length === 0) {
-      ui.notifications.warn("Target has no gear items available to transfer");
+      ui.notifications.warn(
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.NoGear")
+      );
       this.close();
       return context;
     }
@@ -104,44 +123,29 @@ export class GearTransfer extends HandlebarsApplicationMixin(ApplicationV2) {
    * @param {Object} form - The form data
    */
   static async #onSubmit(event, form) {
-    const targetArray = await erps.utils.getTargetArray();
-    const selectedArray = await erps.utils.getSelectedArray();
-
-    // Double-check validations in case tokens changed during form open
-    if (targetArray.length !== 1 || selectedArray.length !== 1) {
-      ui.notifications.warn("Invalid token selection. Please try again.");
-      return;
-    }
-
-    const sourceToken = targetArray[0];
-    const destToken = selectedArray[0];
-
-    if (sourceToken.id === destToken.id) {
-      ui.notifications.warn("Cannot transfer items to the same token");
-      return;
-    }
-
     const itemId = form.gearId.value;
     const requestedQuantity = Number(form.quantity.value) || 1;
     const description = form.description.value.trim();
 
-    const sourceActor = sourceToken.actor;
-    const destActor = destToken.actor;
-
-    if (!sourceActor || !destActor) {
-      ui.notifications.warn("Selected tokens must have associated actors");
-      return;
-    }
+    const sourceActor = this.targetToken.actor;
+    const destActor = this.selectedToken.actor;
 
     const sourceItem = sourceActor.items.get(itemId);
-    if (!sourceItem) return;
+    if (!sourceItem) {
+      ui.notifications.warn(
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.ItemNotFound")
+      );
+      return;
+    }
 
     // Calculate the actual quantity to transfer (never more than available)
     const availableQuantity = sourceItem.system.quantity;
     const transferQuantity = Math.min(requestedQuantity, availableQuantity);
 
     if (transferQuantity <= 0) {
-      ui.notifications.warn("No items available to transfer");
+      ui.notifications.warn(
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.NoItemsAvailable")
+      );
       return;
     }
 

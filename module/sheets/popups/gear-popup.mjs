@@ -1,12 +1,10 @@
-const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
+import { EventidePopupHelpers } from "../base/eventide-popup-helpers.mjs";
 
 /**
  * Application for displaying gear information including roll formulas and quantity checks.
- * @extends {HandlebarsApplicationMixin(ApplicationV2)}
+ * @extends {EventidePopupHelpers}
  */
-export class GearPopup extends HandlebarsApplicationMixin(
-  ApplicationV2
-) {
+export class GearPopup extends EventidePopupHelpers {
   /** @override */
   static PARTS = {
     gearPopup: {
@@ -17,69 +15,38 @@ export class GearPopup extends HandlebarsApplicationMixin(
 
   /** @override */
   static DEFAULT_OPTIONS = {
-    id: "gear-popup",
+    ...super.DEFAULT_OPTIONS,
     classes: ["eventide-rp-system", "standard-form", "gear-popup"],
     position: {
       width: 600,
       height: "auto",
     },
-    tag: "form",
     window: {
-      title: "Use Gear",
       icon: "fa-solid fa-sack",
     },
     form: {
       handler: this.#onSubmit,
-      submitOnChange: false,
-      closeOnSubmit: true,
-    },
-    actions: {
-      close: GearPopup.close,
     },
   };
 
-  constructor({ item }) {
-    super();
-    this.item = item;
-  }
-
-  async _renderFrame(options) {
-    const frame = await super._renderFrame(options);
-    frame.autocomplete = "off";
-    return frame;
-  }
-
   /**
-   * Prepare context data for a specific part of the form.
-   * @param {string} partId - The ID of the form part
-   * @param {Object} context - The context object to prepare
-   * @param {Object} options - Additional options
-   * @returns {Promise<Object>} The prepared context
+   * Get the localized window title
+   * @returns {string} The localized window title
    */
-  async _preparePartContext(partId, context, options) {
-    context.partId = `${this.id}-${partId}`;
-    context = await super._preparePartContext(partId, context, options);
+  get title() {
+    return game.i18n.format("EVENTIDE_RP_SYSTEM.WindowTitles.GearPopup");
+  }
 
-    context.item = this.item;
-    context.problems = await GearPopup.#checkEligibility(this.item);
+  constructor({ item }) {
+    super({ item });
+  }
+
+  async _prepareContext(options) {
+    const context = await super._prepareContext(options);
+    context.cssClass = GearPopup.DEFAULT_OPTIONS.classes.join(" ");
+    context.problems = await this.checkEligibility();
 
     return context;
-  }
-
-  static async #checkEligibility(item) {
-    const problems = {
-      targeting: false,
-      quantity: false,
-    };
-
-    if (item.system.targeted) {
-      const targetArray = await erps.utils.getTargetArray();
-      if (targetArray.length === 0) problems.targeting = true;
-    }
-
-    if (item.system.cost > item.system.quantity) problems.quantity = true;
-
-    return problems;
   }
 
   /**
@@ -90,19 +57,16 @@ export class GearPopup extends HandlebarsApplicationMixin(
    * @private
    */
   static async #onSubmit(event, formData, form) {
-    // check for problems
-    const problems = await GearPopup.#checkEligibility(this.item);
-    if (problems.targeting || problems.quantity)
-      return ui.notifications.error("Cannot use Gear right now!");
+    const problems = await this.checkEligibility(this.item);
 
-    // Reduce quantity by cost
+    if (problems.targeting || problems.quantity || problems.equipped)
+      return ui.notifications.error(
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.GearError")
+      );
+
     this.item.addQuantity(-this.item.system.cost);
 
     erps.messages.combatPowerMessage(this.item);
-    this.close();
-  }
-
-  static close() {
     this.close();
   }
 }

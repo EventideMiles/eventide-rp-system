@@ -1,10 +1,10 @@
-const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
+import { EventideSheetHelpers } from "./base/eventide-sheet-helpers.mjs";
 
 /**
  * Application for managing resource restoration of targeted tokens.
- * @extends {HandlebarsApplicationMixin(ApplicationV2)}
+ * @extends {EventideSheetHelpers}
  */
-export class RestoreTarget extends HandlebarsApplicationMixin(ApplicationV2) {
+export class RestoreTarget extends EventideSheetHelpers {
   /** @override */
   static PARTS = {
     restoreTarget: {
@@ -22,7 +22,6 @@ export class RestoreTarget extends HandlebarsApplicationMixin(ApplicationV2) {
     },
     tag: "form",
     window: {
-      title: "Restore Target",
       icon: "fa-solid fa-notes-medical",
     },
     form: {
@@ -32,19 +31,12 @@ export class RestoreTarget extends HandlebarsApplicationMixin(ApplicationV2) {
     },
   };
 
-  /** @type {ActiveEffect[]} Array of status effects */
-  static statusEffects = [];
-
   /**
-   * Prepare context data for a specific part of the form.
-   * @param {string} partId - The ID of the form part
-   * @param {Object} context - The context object to prepare
-   * @param {Object} options - Additional options
-   * @returns {Promise<Object>} The prepared context
+   * Get the localized window title
+   * @returns {string} The localized window title
    */
-  async _preparePartContext(partId, context, options) {
-    context.partId = `${this.id}-${partId}`;
-    return context;
+  get title() {
+    return game.i18n.format("EVENTIDE_RP_SYSTEM.WindowTitles.RestoreTarget");
   }
 
   /**
@@ -54,26 +46,24 @@ export class RestoreTarget extends HandlebarsApplicationMixin(ApplicationV2) {
    * @throws {Error} If no target is selected or multiple targets are selected
    */
   async _prepareContext(options) {
-    if (!game.user?.isGM) {
-      ui.notifications.error(
-        "Only GMs can restore actor resources and remove status effects."
-      );
-      this.close();
-      return;
-    }
+    await EventideSheetHelpers._gmCheck();
     const context = {};
 
-    const targetTokens = await erps.utils.getTargetArray();
+    this.targetTokens = await erps.utils.getTargetArray();
     context.cssClass = RestoreTarget.DEFAULT_OPTIONS.classes.join(" ");
-    if (targetTokens.length === 0) {
-      ui.notifications.error(`Please target a token first!`);
+    if (this.targetTokens.length === 0) {
+      ui.notifications.error(
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.TargetFirst")
+      );
       this.close();
-    } else if (targetTokens.length > 1) {
-      ui.notifications.error(`You can only target one token at a time!`);
+    } else if (this.targetTokens.length > 1) {
+      ui.notifications.error(
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.SingleTargetOnly")
+      );
       this.close();
     }
 
-    context.actor = targetTokens[0].actor;
+    context.actor = this.targetTokens[0].actor;
     context.statusEffects = context.actor?.items?.filter(
       (item) => item?.type === "status"
     );
@@ -88,12 +78,6 @@ export class RestoreTarget extends HandlebarsApplicationMixin(ApplicationV2) {
     return context;
   }
 
-  async _renderFrame(options) {
-    const frame = await super._renderFrame(options);
-    frame.autocomplete = "off";
-    return frame;
-  }
-
   /**
    * Handle form submission to restore resources and remove status effects.
    * @param {Event} event - The form submission event
@@ -102,8 +86,7 @@ export class RestoreTarget extends HandlebarsApplicationMixin(ApplicationV2) {
    * @private
    */
   static async #onSubmit(event, form, formData) {
-    const targetArray = await erps.utils.getTargetArray();
-    const actor = targetArray[0].actor;
+    const actor = this.targetTokens[0].actor;
 
     const selectedStatuses = this.statusEffects?.filter(
       (status) => form[status?.id]?.checked

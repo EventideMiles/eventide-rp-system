@@ -1,10 +1,10 @@
-const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
+import { EventideSheetHelpers } from "./base/eventide-sheet-helpers.mjs";
 
 /**
  * Application for managing damage to targeted tokens.
- * @extends {HandlebarsApplicationMixin(ApplicationV2)}
+ * @extends {EventideSheetHelpers}
  */
-export class DamageTargets extends HandlebarsApplicationMixin(ApplicationV2) {
+export class DamageTargets extends EventideSheetHelpers {
   /** @override */
   static PARTS = {
     damageTargets: {
@@ -23,7 +23,6 @@ export class DamageTargets extends HandlebarsApplicationMixin(ApplicationV2) {
     },
     tag: "form",
     window: {
-      title: "Damage Targets",
       icon: "fa-solid fa-claw-marks",
     },
     form: {
@@ -32,35 +31,25 @@ export class DamageTargets extends HandlebarsApplicationMixin(ApplicationV2) {
       closeOnSubmit: true,
     },
     actions: {
-      store: DamageTargets.store,
+      store: this.#store,
     },
   };
+
+  /**
+   * Get the localized window title
+   * @returns {string} The localized window title
+   */
+  get title() {
+    return game.i18n.format("EVENTIDE_RP_SYSTEM.WindowTitles.DamageTargets");
+  }
 
   /**
    * @constructor
    * @param {number} [number=0] - Damage instance number for multiple damage applications
    */
   constructor(number = 0) {
-    super(DamageTargets.DEFAULT_OPTIONS, DamageTargets.PARTS);
+    super();
     this.number = Math.floor(number);
-  }
-
-  /** @type {Token[]} Array of targeted tokens */
-  static targetArray = [];
-
-  /** @type {string[]} Keys for storing damage preferences */
-  static storageKeys = [];
-
-  /**
-   * Prepare context data for a specific part of the form.
-   * @param {string} partId - The ID of the form part
-   * @param {Object} context - The context object to prepare
-   * @param {Object} options - Additional options
-   * @returns {Promise<Object>} The prepared context
-   */
-  async _preparePartContext(partId, context, options) {
-    context.partId = `${this.id}-${partId}`;
-    return context;
   }
 
   /**
@@ -69,7 +58,9 @@ export class DamageTargets extends HandlebarsApplicationMixin(ApplicationV2) {
    * @returns {Promise<Object>} The prepared context
    */
   async _prepareContext(options) {
-    const context = {};
+    this.gmCheck = await EventideSheetHelpers._gmCheck({
+      playerMode: true,
+    });
 
     this.storageKeys = [
       `damage_${this.number}_label`,
@@ -78,8 +69,12 @@ export class DamageTargets extends HandlebarsApplicationMixin(ApplicationV2) {
       `damage_${this.number}_isHeal`,
     ];
 
-    context.cssClass = DamageTargets.DEFAULT_OPTIONS.classes.join(" ");
-    context.storageKeys = this.storageKeys;
+    const context = {
+      gmCheck: this.gmCheck,
+      cssClass: DamageTargets.DEFAULT_OPTIONS.classes.join(" "),
+      storageKeys: this.storageKeys,
+    };
+
     context.storedData = await erps.utils.retrieveLocal(context.storageKeys);
     context.targetArray = await erps.utils.getTargetArray();
     context.selectedArray = await erps.utils.getSelectedArray();
@@ -100,17 +95,20 @@ export class DamageTargets extends HandlebarsApplicationMixin(ApplicationV2) {
       context.targetArray.length === 0 &&
       context.selectedArray.length === 0
     ) {
-      ui.notifications.error(`Please target or select a token first!`);
+      ui.notifications.error(
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.TargetOrSelectFirst")
+      );
+      return this.close();
+    }
+
+    if (context.selectedArray.length === 0 && this.gmCheck === "player") {
+      ui.notifications.error(
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.OnlyGmDamageTarget")
+      );
       return this.close();
     }
 
     return context;
-  }
-
-  async _renderFrame(options) {
-    const frame = await super._renderFrame(options);
-    frame.autocomplete = "off";
-    return frame;
   }
 
   /**
@@ -121,15 +119,6 @@ export class DamageTargets extends HandlebarsApplicationMixin(ApplicationV2) {
    * @private
    */
   static async #onSubmit(event, form, formData) {
-    const selectedArray = this.selectedArray;
-    const targetArray = this.targetArray;
-
-    if (this.targetArray.length === 0 && this.selectedArray.length === 0) {
-      ui.notifications.error(`Please target or select a token first!`);
-      this.close();
-      return;
-    }
-
     const damageOptions = {
       label: form.label.value || "Damage",
       formula: form.formula.value || "1",
@@ -138,14 +127,19 @@ export class DamageTargets extends HandlebarsApplicationMixin(ApplicationV2) {
     };
     if (
       (damageOptions.type === "heal" && this.selectedArray.length > 0) ||
-      (this.selectedArray.length > 0 && this.targetArray.length === 0)
+      (this.selectedArray.length > 0 && this.targetArray.length === 0) ||
+      (this.selectedArray.length > 0 && this.gmCheck === "player")
     ) {
       await Promise.all(
-        selectedArray.map((token) => token.actor.damageResolve(damageOptions))
+        this.selectedArray.map((token) =>
+          token.actor.damageResolve(damageOptions)
+        )
       );
     } else {
       await Promise.all(
-        targetArray.map((token) => token.actor.damageResolve(damageOptions))
+        this.targetArray.map((token) =>
+          token.actor.damageResolve(damageOptions)
+        )
       );
     }
 
@@ -158,7 +152,7 @@ export class DamageTargets extends HandlebarsApplicationMixin(ApplicationV2) {
    * @param {HTMLElement} target - The target element
    * @static
    */
-  static async store(event, target) {
+  static async #store(event, target) {
     DamageTargets.#storeData(this, target.form);
 
     this.close();

@@ -4,7 +4,7 @@
  * @returns {Array<Token>} Returns an array of tokens which are currently targeted.
  */
 const getTargetArray = async () => {
-  return game.user.targets.size ? Array.from(game.user.targets) : []; //Array.from(game.user.character.getActiveTokens());
+  return game.user.targets.size ? Array.from(game.user.targets) : [];
 };
 
 /**
@@ -41,7 +41,7 @@ const storeLocal = async (storageObject) => {
     }
   } catch (error) {
     ui.notifications.error(
-      `There was some sort of error storing values locally.`
+      game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.LocalStorage")
     );
     return false;
   }

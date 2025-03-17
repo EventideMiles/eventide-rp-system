@@ -1,12 +1,10 @@
-const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
+import { EventideSheetHelpers } from "./base/eventide-sheet-helpers.mjs";
 
 /**
  * A form application for selecting and rolling ability checks.
- * @extends {HandlebarsApplicationMixin(ApplicationV2)}
+ * @extends {EventideSheetHelpers}
  */
-export class SelectAbilityRoll extends HandlebarsApplicationMixin(
-  ApplicationV2
-) {
+export class SelectAbilityRoll extends EventideSheetHelpers {
   static PARTS = {
     selectAbilityRoll: {
       template:
@@ -23,7 +21,6 @@ export class SelectAbilityRoll extends HandlebarsApplicationMixin(
     },
     tag: "form",
     window: {
-      title: "Select Ability Roll",
       icon: "fa-solid fa-dice-d20",
     },
     form: {
@@ -33,11 +30,10 @@ export class SelectAbilityRoll extends HandlebarsApplicationMixin(
     },
   };
 
-  static abilities = ["Acrobatics", "Physical", "Fortitude", "Will", "Wits"];
-
-  async _preparePartContext(partId, context, options) {
-    context.partId = `${this.id}-${partId}`;
-    return context;
+  static get abilities() {
+    return Object.values(CONFIG.EVENTIDE_RP_SYSTEM.abilities).map((v) =>
+      game.i18n.localize(v)
+    );
   }
 
   /**
@@ -52,10 +48,18 @@ export class SelectAbilityRoll extends HandlebarsApplicationMixin(
     return context;
   }
 
-  async _renderFrame(options) {
-    const frame = await super._renderFrame(options);
-    frame.autocomplete = "off";
-    return frame;
+  /**
+   * Get the localized window title
+   * @returns {string} The localized window title
+   */
+  get title() {
+    return game.i18n.format(
+      "EVENTIDE_RP_SYSTEM.WindowTitles.SelectAbilityRoll"
+    );
+  }
+
+  constructor(options = {}) {
+    super(options);
   }
 
   /**
@@ -66,13 +70,16 @@ export class SelectAbilityRoll extends HandlebarsApplicationMixin(
    * @private
    */
   static async #onSubmit(event, form, formData) {
-    event.preventDefault();
     const attributeChoice = form["attribute-choice"].value;
     const macro = game.macros.getName(attributeChoice);
     if (macro) {
       await macro.execute({ args: [] });
     } else {
-      ui.notifications.error(`No macro found for ability: ${attributeChoice}`);
+      ui.notifications.error(
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.NoMacroFound", {
+          macroName: attributeChoice,
+        })
+      );
     }
   }
 }

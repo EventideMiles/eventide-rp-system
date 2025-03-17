@@ -1,10 +1,10 @@
-const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
+import { EventidePopupHelpers } from "../base/eventide-popup-helpers.mjs";
 
 /**
  * Application for displaying feature information in a popup.
- * @extends {HandlebarsApplicationMixin(ApplicationV2)}
+ * @extends {EventidePopupHelpers}
  */
-export class FeaturePopup extends HandlebarsApplicationMixin(ApplicationV2) {
+export class FeaturePopup extends EventidePopupHelpers {
   /** @override */
   static PARTS = {
     featurePopup: {
@@ -15,42 +15,30 @@ export class FeaturePopup extends HandlebarsApplicationMixin(ApplicationV2) {
 
   /** @override */
   static DEFAULT_OPTIONS = {
-    id: "feature-popup",
+    ...super.DEFAULT_OPTIONS,
     classes: ["eventide-rp-system", "standard-form", "feature-popup"],
     position: {
       width: 400,
       height: "auto",
     },
-    tag: "form",
     window: {
-      title: "Feature Information",
       icon: "fa-solid fa-star",
     },
-    form: {
-      handler: this.#onSubmit,
-      submitOnChange: false,
-      closeOnSubmit: true,
-    },
     actions: {
-      toChat: FeaturePopup.toChat,
+      toChat: this.#toChat,
     },
   };
 
-  constructor({ item }) {
-    super();
-    this.item = item;
+  /**
+   * Get the localized window title
+   * @returns {string} The localized window title
+   */
+  get title() {
+    return game.i18n.format("EVENTIDE_RP_SYSTEM.WindowTitles.FeaturePopup");
   }
 
-  /**
-   * Prepare context data for a specific part of the form.
-   * @param {string} partId - The ID of the form part
-   * @param {Object} context - The context object to prepare
-   * @param {Object} options - Additional options
-   * @returns {Promise<Object>} The prepared context
-   */
-  async _preparePartContext(partId, context, options) {
-    context.partId = `${this.id}-${partId}`;
-    return context;
+  constructor({ item }) {
+    super({ item });
   }
 
   /**
@@ -59,34 +47,14 @@ export class FeaturePopup extends HandlebarsApplicationMixin(ApplicationV2) {
    * @returns {Promise<Object>} The prepared context
    */
   async _prepareContext(options) {
-    const context = {};
+    const context = await super._prepareContext(options);
 
-    context.item = this.item;
     context.cssClass = FeaturePopup.DEFAULT_OPTIONS.classes.join(" ");
-    context.effects = Array.from(this.item.effects);
-
     return context;
   }
 
-  async _renderFrame(options) {
-    const frame = await super._renderFrame(options);
-    frame.autocomplete = "off";
-    return frame;
-  }
-
-  static async toChat() {
+  static async #toChat() {
     erps.messages.featureMessage(this.item);
-    this.close();
-  }
-
-  /**
-   * Handle form submission to close the popup.
-   * @param {Event} event - The form submission event
-   * @param {HTMLFormElement} form - The form element
-   * @param {FormData} formData - The form data
-   * @private
-   */
-  static async #onSubmit() {
     this.close();
   }
 }

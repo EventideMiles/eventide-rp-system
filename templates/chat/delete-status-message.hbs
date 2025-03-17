@@ -1,14 +1,14 @@
 <div class="chat-card">
   <div class="chat-card__header chat-card__header--delete">
     <img src="{{item.img}}" class="chat-card__image--primary" /> 
-    <div>{{item.name}} : Removed</div>
+    <div>{{item.name}} : {{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.Removed"}}</div>
   </div>
   <div class="chat-card__description">
     <div class="chat-card__description--header">{{item.actor.name}}. . . </div> 
     {{#if options.description}}
       {{{options.description}}}
     {{else}}
-      had a status effect removed
+      {{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.RemovedMessage"}}
     {{/if}}
   </div>
 </div>
