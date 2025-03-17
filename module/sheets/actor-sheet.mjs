@@ -17,7 +17,7 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
 
   /** @override */
   static DEFAULT_OPTIONS = {
-    classes: ["eventide-rp-system", "actor"],
+    classes: ["eventide-rp-system", "actor", "eventide-character-sheet", "eventide-character-sheet--scrollbars"],
     position: {
       width: 600,
       height: 700,
