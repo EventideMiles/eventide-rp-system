@@ -1093,7 +1093,7 @@
 .chat-card__initiative-result .power-value, .chat-card__combat-roll-result .power-value {
   font-size: 2rem;
   font-weight: bold;
-  color: #000000;
+  color: #666666;
   font-family: "Protest Revolution", sans-serif;
 }
 .chat-card__initiative-result .roll-value-acro, .chat-card__combat-roll-result .roll-value-acro {
@@ -1134,6 +1134,9 @@
   border-radius: 3px;
   margin: 0 3px 2px 3px;
   width: 100%;
+}
+.chat-card__initiative-formula .roll-formula, .chat-card__combat-roll-formula .roll-formula {
+  font-style: italic;
 }
 .chat-card__roll-details {
   width: calc(100% - 6px);

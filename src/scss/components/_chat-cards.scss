@@ -154,7 +154,7 @@
             .power-value {
                 font-size: 2rem;
                 font-weight: bold;
-                color: #000000;
+                color: #666666;
                 font-family: typography.$font-decorative;
             }
             
@@ -207,6 +207,10 @@
             border-radius: 3px;
             margin: 0 3px 2px 3px;
             width: calc(100%);
+            
+            .roll-formula {
+                font-style: italic;
+            }
         }
     }
 
