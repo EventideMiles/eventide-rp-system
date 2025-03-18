@@ -13,6 +13,9 @@ import { GearTransfer } from "./sheets/gear-transfer.mjs";
 import { EffectCreator } from "./sheets/effect-creator.mjs";
 // Import helper/utility classes and constants.
 import { EVENTIDE_RP_SYSTEM } from "./helpers/config.mjs";
+import { preloadHandlebarsTemplates } from "./helpers/templates.mjs";
+import { registerSettings, getSetting } from "./helpers/settings.mjs";
+import { initializeCombatHooks } from "./helpers/combat.mjs";
 // Import DataModel classes
 import * as models from "./data/_module.mjs";
 import {
@@ -78,14 +81,32 @@ Hooks.once("init", function () {
   // Add custom constants for configuration.
   CONFIG.EVENTIDE_RP_SYSTEM = EVENTIDE_RP_SYSTEM;
 
+  // Register system settings
+  registerSettings();
+
+  // Initialize combat hooks
+  initializeCombatHooks();
+
   /**
    * Set an initiative formula for the system
    * @type {String}
    */
   CONFIG.Combat.initiative = {
-    formula: `1d@hiddenAbilities.dice.total + @statTotal.mainInit + @statTotal.subInit`,
-    decimals: 2,
+    formula: "1d20", // Default fallback
+    decimals: 2, // Default fallback
   };
+
+  // Update with settings if available
+  if (game.settings && game.settings.get) {
+    try {
+      CONFIG.Combat.initiative = {
+        formula: game.settings.get("eventide-rp-system", "initativeFormula"),
+        decimals: game.settings.get("eventide-rp-system", "initiativeDecimals"),
+      };
+    } catch (error) {
+      console.warn("Could not get initiative settings, using defaults");
+    }
+  }
 
   // Define custom Document and DataModel classes
   CONFIG.Actor.documentClass = EventideRpSystemActor;
