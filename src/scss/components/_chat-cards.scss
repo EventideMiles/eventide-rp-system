@@ -47,6 +47,10 @@
             background-color: colors.$dc;
         }
 
+        &--initiative {
+            background-color: colors.$initiative;
+        }
+
         &--critical-hit {
             background-color: colors.$critical-hit;
         }
@@ -105,7 +109,10 @@
         color: colors.$card-tan;
         text-align: justify;
         font-size: 0.9rem;
-        padding: 0.01rem;
+        padding: 0.5rem;
+        margin-bottom: 0.5rem;
+        background-color: colors.$card-white;
+        border-radius: 0px 0px 5px 5px;
 
         &--header {
             text-align: justify;
@@ -118,6 +125,38 @@
             font-size: 1.2rem;
             color: colors.$card-tan;
             border-bottom: 1px solid colors.$description-hr;
+        }
+    }
+
+    &__initiative {
+        display: flex;
+        flex-direction: column;
+        padding: 0.75rem;
+        background-color: colors.$card-white;
+        
+        &-result {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            
+            .initiative-value {
+                font-size: 2rem;
+                font-weight: bold;
+                color: colors.$initiative;
+            }
+        }
+        
+        &-formula {
+            display: flex;
+            justify-content: center;
+            font-family: var(--font-monospace);
+            font-size: 0.9rem;
+            color: colors.$card-white;
+            background: colors.$initiative-formula-bg;
+            padding: 0.25rem 0.5rem;
+            border-radius: 3px;
+            margin-bottom: 0.5rem;
         }
     }
 

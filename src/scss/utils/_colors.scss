@@ -51,6 +51,12 @@
   --eventide-rp-system-chat-details-miss: #C70039b3;
   --eventide-rp-system-chat-hr: #c9c7b8;
 
+  // initiative
+  --eventide-rp-system-initiative: #3498db;
+  --eventide-rp-system-initiative-npc: #e67e22;
+  --eventide-rp-system-initiative-pc: #2ecc71;
+  --eventide-rp-system-initiative-formula-bg: rgba(52, 152, 219, 0.7);
+
   // critical
   --eventide-rp-system-critical-hit: #2D1499b3;
   --eventide-rp-system-critical-miss: #4e0101b3;
@@ -151,6 +157,12 @@
   --eventide-rp-system-chat-details-hit: #50C877b3;
   --eventide-rp-system-chat-details-miss: #C70039b3;
   --eventide-rp-system-chat-hr: #c9c7b8;
+
+  // initiative
+  --eventide-rp-system-initiative: #3498db;
+  --eventide-rp-system-initiative-npc: #e67e22;
+  --eventide-rp-system-initiative-pc: #2ecc71;
+  --eventide-rp-system-initiative-formula-bg: rgba(52, 152, 219, 0.7);
 
   // critical
   --eventide-rp-system-critical-hit: #2D1499b3;
@@ -255,6 +267,11 @@ $hit: var(--eventide-rp-system-chat-details-hit);
 $miss: var(--eventide-rp-system-chat-details-miss);
 
 $hr: var(--eventide-rp-system-chat-hr);
+
+$initiative: var(--eventide-rp-system-initiative);
+$initiative-npc: var(--eventide-rp-system-initiative-npc);
+$initiative-pc: var(--eventide-rp-system-initiative-pc);
+$initiative-formula-bg: var(--eventide-rp-system-initiative-formula-bg);
 
 // Form element colors
 $input-bg: var(--eventide-rp-system-input-bg);

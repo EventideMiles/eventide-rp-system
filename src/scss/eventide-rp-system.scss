@@ -18,6 +18,7 @@
 @use 'components/chat-cards';
 @use 'components/popup-forms';
 @use 'components/gear-creator';
+@use 'components/initiative-roll';
 
 .eventide-rp-system {
   @include meta.load-css('components/forms');
