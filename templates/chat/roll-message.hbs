@@ -18,21 +18,44 @@
     <div class="chat-card__effects chat-card__effects--ac-check">
       <div class="chat-card__effects--title">AC Check</div>
       {{#each targetRollData as |target|}}
-          <div class="chat-card__effects--name flexrow"> {{this.name}}:
-            {{#each this.abilities as |ability key|}}
-              {{#ifCond target.compare ">=" ability.ac}}
-                <div class="chat-card__effects--hit flex-group-center">
-              {{/ifCond}}
-              {{#ifCond target.compare "<" ability.ac}}
-                <div class="chat-card__effects--miss flex-group-center">
-              {{/ifCond}}
-              {{ability.abbr}}
-               </div>
-            {{/each}}
-          </div>
+        <div class="chat-card__effects--name flexrow"> {{this.name}}:
+          {{#each this.abilities as |ability key|}}
+            {{#ifCond target.compare ">=" ability.ac}}
+              <div class="chat-card__effects--hit flex-group-center">
+            {{/ifCond}}
+            {{#ifCond target.compare "<" ability.ac}}
+              <div class="chat-card__effects--miss flex-group-center">
+            {{/ifCond}}
+            {{ability.abbr}}
+             </div>
+          {{/each}}
+        </div>
       {{/each}}
     </div>
   {{/if}}
+  <div class="chat-card__initiative">
+    <div class="chat-card__initiative-formula formula-bg-{{pickedType}} formula-toggle">
+      <span class="roll-formula">{{roll.formula}}</span>
+      <i class="fas fa-chevron-down formula-toggle-icon"></i>
+    </div>
+    <div class="chat-card__roll-details" style="display: none;">
+      {{#each roll.terms as |term|}}
+        {{#if term.results}}
+          <div class="roll-term">
+            <span class="roll-term-formula">{{term.formula}}</span>
+            <div class="roll-term-results">
+              {{#each term.results as |result|}}
+                <span class="die-result {{#if result.discarded}}discarded{{/if}}">{{result.result}}</span>
+              {{/each}}
+            </div>
+          </div>
+        {{/if}}
+      {{/each}}
+    </div>
+    <div class="chat-card__initiative-result">
+      <span class="initiative-value roll-value-{{pickedType}}">{{roll.total}}</span>
+    </div>
+  </div>
   {{#if description}}
     <div class="chat-card__description">
       <div class="chat-card__description--header">{{actor.name}}. . . </div>

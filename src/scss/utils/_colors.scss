@@ -55,13 +55,24 @@
   --eventide-rp-system-initiative: #3498db;
   --eventide-rp-system-initiative-npc: #e67e22;
   --eventide-rp-system-initiative-pc: #2ecc71;
-  --eventide-rp-system-initiative-formula-bg: rgba(52, 152, 219, 0.7);
+  --eventide-rp-system-initiative-formula-bg: rgba(52, 152, 219, 0.85);
 
   // critical
   --eventide-rp-system-critical-hit: #2D1499b3;
   --eventide-rp-system-critical-miss: #4e0101b3;
   --eventide-rp-system-saved-miss: #4A777Ab3;
   --eventide-rp-system-stolen-crit: #563C5Cb3;
+
+  // formula backgrounds
+  --eventide-rp-system-acro-formula-bg: rgba(191, 68, 0, 0.85);
+  --eventide-rp-system-phys-formula-bg: rgba(168, 3, 3, 0.85);
+  --eventide-rp-system-fort-formula-bg: rgba(45, 104, 45, 0.85);
+  --eventide-rp-system-will-formula-bg: rgba(106, 27, 154, 0.85);
+  --eventide-rp-system-wits-formula-bg: rgba(14, 67, 128, 0.85);
+  --eventide-rp-system-gear-formula-bg: rgba(139, 69, 19, 0.85);
+  --eventide-rp-system-damage-formula-bg: rgba(106, 4, 4, 0.85);
+  --eventide-rp-system-heal-formula-bg: rgba(203, 142, 0, 0.85);
+  --eventide-rp-system-unknown-formula-bg: rgba(83, 83, 83, 0.85);
 
   // form elements
   --eventide-rp-system-input-bg: #ffffff;
@@ -162,13 +173,24 @@
   --eventide-rp-system-initiative: #3498db;
   --eventide-rp-system-initiative-npc: #e67e22;
   --eventide-rp-system-initiative-pc: #2ecc71;
-  --eventide-rp-system-initiative-formula-bg: rgba(52, 152, 219, 0.7);
+  --eventide-rp-system-initiative-formula-bg: rgba(52, 152, 219, 0.85);
 
   // critical
   --eventide-rp-system-critical-hit: #2D1499b3;
   --eventide-rp-system-critical-miss: #4e0101b3;
   --eventide-rp-system-saved-miss: #4A777Ab3;
   --eventide-rp-system-stolen-crit: #563C5Cb3;
+
+  // formula backgrounds
+  --eventide-rp-system-acro-formula-bg: rgba(191, 68, 0, 0.85);
+  --eventide-rp-system-phys-formula-bg: rgba(168, 3, 3, 0.85);
+  --eventide-rp-system-fort-formula-bg: rgba(45, 104, 45, 0.85);
+  --eventide-rp-system-will-formula-bg: rgba(106, 27, 154, 0.85);
+  --eventide-rp-system-wits-formula-bg: rgba(14, 67, 128, 0.85);
+  --eventide-rp-system-gear-formula-bg: rgba(139, 69, 19, 0.85);
+  --eventide-rp-system-damage-formula-bg: rgba(106, 4, 4, 0.85);
+  --eventide-rp-system-heal-formula-bg: rgba(203, 142, 0, 0.85);
+  --eventide-rp-system-unknown-formula-bg: rgba(83, 83, 83, 0.85);
 
   // form elements
   --eventide-rp-system-input-bg: #1e2430;
@@ -272,6 +294,16 @@ $initiative: var(--eventide-rp-system-initiative);
 $initiative-npc: var(--eventide-rp-system-initiative-npc);
 $initiative-pc: var(--eventide-rp-system-initiative-pc);
 $initiative-formula-bg: var(--eventide-rp-system-initiative-formula-bg);
+
+$acro-formula-bg: var(--eventide-rp-system-acro-formula-bg);
+$phys-formula-bg: var(--eventide-rp-system-phys-formula-bg);
+$fort-formula-bg: var(--eventide-rp-system-fort-formula-bg);
+$will-formula-bg: var(--eventide-rp-system-will-formula-bg);
+$wits-formula-bg: var(--eventide-rp-system-wits-formula-bg);
+$gear-formula-bg: var(--eventide-rp-system-gear-formula-bg);
+$damage-formula-bg: var(--eventide-rp-system-damage-formula-bg);
+$heal-formula-bg: var(--eventide-rp-system-heal-formula-bg);
+$unknown-formula-bg: var(--eventide-rp-system-unknown-formula-bg);
 
 // Form element colors
 $input-bg: var(--eventide-rp-system-input-bg);

@@ -119,6 +119,7 @@ const rollHandler = async (
     description,
     pickedCardClass,
     pickedIcon,
+    pickedType, // Add the picked type to the data
     critAllowed,
     acCheck: addCheck,
     targetArray,
@@ -128,6 +129,10 @@ const rollHandler = async (
     critMiss: critMiss ?? false,
     savedMiss: savedMiss ?? false,
     stolenCrit: stolenCrit ?? false,
+    // Add these properties to match initiative roll template
+    name: actor.name,
+    total: result.total,
+    formula: formula,
   };
 
   const content = await renderTemplate(
@@ -139,11 +144,34 @@ const rollHandler = async (
     // Use the system setting for default dice roll mode if available
     let rollMode = game.settings.get("core", "rollMode");
 
-    roll.toMessage({
+    // Create the chat message directly, similar to rollInitiative
+    const messageData = {
       speaker: ChatMessage.getSpeaker({ actor }),
-      flavor: content,
-      rollMode: rollMode,
-    });
+      content: content,
+      sound: CONFIG.sounds.dice,
+      rolls: [roll],
+      flags: {
+        "eventide-rp-system": {
+          roll: {
+            type: pickedType,
+            formula: formula,
+            total: result.total,
+          },
+        },
+      },
+    };
+
+    // Apply roll mode if specified
+    if (rollMode !== "roll") {
+      messageData.rollMode = rollMode;
+      if (rollMode === "gmroll" || rollMode === "blindroll") {
+        messageData.whisper = game.users
+          .filter((user) => user.isGM)
+          .map((user) => user.id);
+      }
+    }
+
+    ChatMessage.create(messageData);
   }
 
   return roll;
@@ -187,6 +215,7 @@ const rollInitiative = async ({
     formula: roll.formula,
     total: roll.total.toFixed(2),
     description: description,
+    roll: roll, // Pass the roll object to the template
   };
 
   // Render the template

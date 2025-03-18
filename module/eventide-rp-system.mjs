@@ -16,6 +16,7 @@ import { EVENTIDE_RP_SYSTEM } from "./helpers/config.mjs";
 import { preloadHandlebarsTemplates } from "./helpers/templates.mjs";
 import { registerSettings, getSetting } from "./helpers/settings.mjs";
 import { initializeCombatHooks } from "./helpers/combat.mjs";
+import { initChatListeners } from "./chat/chat-listeners.mjs";
 // Import DataModel classes
 import * as models from "./data/_module.mjs";
 import {
@@ -86,6 +87,9 @@ Hooks.once("init", function () {
 
   // Initialize combat hooks
   initializeCombatHooks();
+
+  // Initialize chat message listeners
+  initChatListeners();
 
   /**
    * Set an initiative formula for the system

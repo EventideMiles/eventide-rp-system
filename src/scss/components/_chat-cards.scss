@@ -111,7 +111,7 @@
         font-size: 0.9rem;
         padding: 0.5rem;
         margin-bottom: 0.5rem;
-        background-color: colors.$card-white;
+        // background-color: colors.$card-white;
         border-radius: 0px 0px 5px 5px;
 
         &--header {
@@ -131,32 +131,148 @@
     &__initiative {
         display: flex;
         flex-direction: column;
-        padding: 0.75rem;
-        background-color: colors.$card-white;
-        
+        align-items: center;
+        justify-content: center;
+        margin: 0.5rem 0 0 0;
+        padding: 0.5rem 0.5rem 0 0.5rem;
+        background-color: rgba(255, 255, 255, 0.05);
+        border-radius: 3px;
+
         &-result {
             display: flex;
             justify-content: center;
             align-items: center;
             margin-bottom: 0.5rem;
-            
+
             .initiative-value {
                 font-size: 2rem;
                 font-weight: bold;
                 color: colors.$initiative;
             }
+            
+            // Roll value colors based on roll type
+            .roll-value-acro {
+                color: colors.$acro;
+            }
+            
+            .roll-value-phys {
+                color: colors.$phys;
+            }
+            
+            .roll-value-fort {
+                color: colors.$fort;
+            }
+            
+            .roll-value-will {
+                color: colors.$will;
+            }
+            
+            .roll-value-wits {
+                color: colors.$wits;
+            }
+            
+            .roll-value-gear {
+                color: colors.$gear;
+            }
+            
+            .roll-value-damage {
+                color: colors.$damage;
+            }
+            
+            .roll-value-heal {
+                color: colors.$heal;
+            }
+            
+            .roll-value-unknown {
+                color: colors.$unknown;
+            }
         }
-        
+
         &-formula {
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             font-family: var(--font-monospace);
             font-size: 0.9rem;
             color: colors.$card-white;
             background: colors.$initiative-formula-bg;
             padding: 0.25rem 0.5rem;
             border-radius: 3px;
-            margin-bottom: 0.5rem;
+            margin: 0 3px 2px 3px;
+            width: calc(100%);
+            
+            // Formula background colors based on roll type
+            &.formula-bg-acro {
+                background: colors.$acro-formula-bg;
+            }
+            
+            &.formula-bg-phys {
+                background: colors.$phys-formula-bg;
+            }
+            
+            &.formula-bg-fort {
+                background: colors.$fort-formula-bg;
+            }
+            
+            &.formula-bg-will {
+                background: colors.$will-formula-bg;
+            }
+            
+            &.formula-bg-wits {
+                background: colors.$wits-formula-bg;
+            }
+            
+            &.formula-bg-gear {
+                background: colors.$gear-formula-bg;
+            }
+            
+            &.formula-bg-damage {
+                background: colors.$damage-formula-bg;
+            }
+            
+            &.formula-bg-heal {
+                background: colors.$heal-formula-bg;
+            }
+            
+            &.formula-bg-unknown {
+                background: colors.$unknown-formula-bg;
+            }
+        }
+    }
+
+    &__roll-details {
+        width: calc(100% - 6px);
+        margin: 0 3px;
+        padding: 0.5rem;
+        background-color: rgba(0, 0, 0, 0.05);
+        border-radius: 3px;
+        font-family: var(--font-monospace);
+        font-size: 0.8rem;
+        
+        .roll-term {
+            margin-bottom: 0.25rem;
+            
+            &-formula {
+                font-weight: bold;
+                margin-right: 0.5rem;
+            }
+            
+            &-results {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.25rem;
+            }
+        }
+        
+        .die-result {
+            display: inline-block;
+            padding: 0.125rem 0.25rem;
+            border-radius: 3px;
+            background-color: rgba(255, 255, 255, 0.2);
+            
+            &.discarded {
+                text-decoration: line-through;
+                opacity: 0.6;
+            }
         }
     }
 
@@ -164,7 +280,8 @@
         @extend .underdog-regular;
         text-align: justify;
         font-size: 0.7rem;
-        padding: 0rem;
+        padding: 0;
+        margin: 0;
         color: colors.$card-tan;
 
         &--ac-check {
@@ -172,7 +289,8 @@
             border-radius: 5px;
             background-color: colors.$hidden-bg;
             padding: 0.0875rem;
-            margin: 0.0875rem;
+            margin: 0 3px;
+            margin-top: 5px;
         }
 
         &--title {
@@ -261,5 +379,21 @@
     &__hr {
         border: none;
         border-top: 1px solid colors.$hr;
+    }
+}
+
+.formula-toggle {
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+    .formula-toggle-icon {
+        margin-left: 0.5rem;
+        transition: transform 0.2s ease;
+    }
+    
+    &.active .formula-toggle-icon {
+        transform: rotate(180deg);
     }
 }

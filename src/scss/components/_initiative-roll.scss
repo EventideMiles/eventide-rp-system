@@ -55,6 +55,8 @@
   background: colors.$initiative-formula-bg;
   padding: 3px 8px;
   border-radius: 3px;
+  margin: 0 3px;
+  width: calc(100% - 6px);
 }
 
 /* Different styling for NPCs vs PCs */
