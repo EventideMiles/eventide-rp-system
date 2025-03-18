@@ -5,7 +5,7 @@ export const initChatListeners = () => {
   // Add a hook for when chat messages are rendered
   Hooks.on("renderChatMessage", (message, html, data) => {
     // Find formula toggle elements
-    const formulaToggle = html.find(".formula-toggle");
+    const formulaToggle = html.find(".chat-card__formula-toggle");
     
     // Add click event listener
     formulaToggle.on("click", (event) => {

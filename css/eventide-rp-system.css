@@ -1085,45 +1085,45 @@
   margin: 0.25rem 0;
   width: 100%;
 }
-.chat-card__initiative-result .initiative-value, .chat-card__combat-roll-result .initiative-value {
+.chat-card__value {
   font-size: 2rem;
   font-weight: bold;
-  color: var(--eventide-rp-system-initiative);
-}
-.chat-card__initiative-result .power-value, .chat-card__combat-roll-result .power-value {
-  font-size: 2rem;
-  font-weight: bold;
-  color: #666666;
   font-family: "Protest Revolution", sans-serif;
 }
-.chat-card__initiative-result .roll-value-acro, .chat-card__combat-roll-result .roll-value-acro {
+.chat-card__value--initiative {
+  color: var(--eventide-rp-system-initiative);
+}
+.chat-card__value--power {
+  color: #666666;
+}
+.chat-card__value--acro {
   color: var(--eventide-rp-system-abilities-acro);
 }
-.chat-card__initiative-result .roll-value-phys, .chat-card__combat-roll-result .roll-value-phys {
+.chat-card__value--phys {
   color: var(--eventide-rp-system-abilities-phys);
 }
-.chat-card__initiative-result .roll-value-fort, .chat-card__combat-roll-result .roll-value-fort {
+.chat-card__value--fort {
   color: var(--eventide-rp-system-abilities-fort);
 }
-.chat-card__initiative-result .roll-value-will, .chat-card__combat-roll-result .roll-value-will {
+.chat-card__value--will {
   color: var(--eventide-rp-system-abilities-will);
 }
-.chat-card__initiative-result .roll-value-wits, .chat-card__combat-roll-result .roll-value-wits {
+.chat-card__value--wits {
   color: var(--eventide-rp-system-abilities-wits);
 }
-.chat-card__initiative-result .roll-value-gear, .chat-card__combat-roll-result .roll-value-gear {
+.chat-card__value--gear {
   color: var(--eventide-rp-system-card-header-gear);
 }
-.chat-card__initiative-result .roll-value-damage, .chat-card__combat-roll-result .roll-value-damage {
+.chat-card__value--damage {
   color: var(--eventide-rp-system-card-header-damage);
 }
-.chat-card__initiative-result .roll-value-heal, .chat-card__combat-roll-result .roll-value-heal {
+.chat-card__value--heal {
   color: var(--eventide-rp-system-card-header-heal);
 }
-.chat-card__initiative-result .roll-value-unknown, .chat-card__combat-roll-result .roll-value-unknown {
+.chat-card__value--unknown {
   color: var(--eventide-rp-system-card-header-unknown);
 }
-.chat-card__initiative-formula, .chat-card__combat-roll-formula {
+.chat-card__formula-toggle {
   display: flex;
   justify-content: space-between;
   font-family: var(--font-monospace);
@@ -1134,8 +1134,9 @@
   border-radius: 3px;
   margin: 0 3px 2px 3px;
   width: 100%;
+  cursor: pointer;
 }
-.chat-card__initiative-formula .roll-formula, .chat-card__combat-roll-formula .roll-formula {
+.chat-card__formula {
   font-style: italic;
 }
 .chat-card__roll-details {
@@ -1147,25 +1148,25 @@
   font-family: var(--font-monospace);
   font-size: 0.8rem;
 }
-.chat-card__roll-details .roll-term {
+.chat-card__roll-term {
   margin-bottom: 0.25rem;
 }
-.chat-card__roll-details .roll-term-formula {
+.chat-card__roll-term-formula {
   font-weight: bold;
   margin-right: 0.5rem;
 }
-.chat-card__roll-details .roll-term-results {
+.chat-card__roll-term-results {
   display: flex;
   flex-wrap: wrap;
   gap: 0.25rem;
 }
-.chat-card__roll-details .die-result {
+.chat-card__die-result {
   display: inline-block;
   padding: 0.125rem 0.25rem;
   border-radius: 3px;
   background-color: rgba(255, 255, 255, 0.2);
 }
-.chat-card__roll-details .die-result.discarded {
+.chat-card__die-result--discarded {
   text-decoration: line-through;
   opacity: 0.6;
 }
@@ -1256,22 +1257,12 @@
   border-top: 1px solid var(--eventide-rp-system-chat-hr);
 }
 
-.formula-toggle {
-  cursor: pointer;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.formula-toggle .formula-toggle-icon {
-  margin-left: 0.5rem;
+.formula-toggle-icon {
   transition: transform 0.2s ease;
 }
+
 .formula-toggle.active .formula-toggle-icon {
   transform: rotate(180deg);
-}
-.formula-toggle .fa-chevron-down {
-  color: inherit;
-  opacity: 0.8;
 }
 
 .popup-form {

@@ -72,10 +72,6 @@
         }
 
         &--status {
-            // display: flex;
-            // justify-content: left;
-            // align-items: left;
-            // padding-left: 48px;
             font-size: 1.125rem;
         }
 
@@ -111,7 +107,6 @@
         font-size: 0.9rem;
         padding: 0.5rem;
         margin-bottom: 0.5rem;
-        // background-color: colors.$card-white;
         border-radius: 0px 0px 5px 5px;
 
         &--header {
@@ -144,74 +139,75 @@
             font-weight: bold;
             margin: 0.25rem 0;
             width: 100%;
-            
-            .initiative-value {
-                font-size: 2rem;
-                font-weight: bold;
-                color: colors.$initiative;
-            }
-
-            .power-value {
-                font-size: 2rem;
-                font-weight: bold;
-                color: #666666;
-                font-family: typography.$font-decorative;
-            }
-            
-            // Roll value colors based on roll type
-            .roll-value-acro {
-                color: colors.$acro;
-            }
-            
-            .roll-value-phys {
-                color: colors.$phys;
-            }
-            
-            .roll-value-fort {
-                color: colors.$fort;
-            }
-            
-            .roll-value-will {
-                color: colors.$will;
-            }
-            
-            .roll-value-wits {
-                color: colors.$wits;
-            }
-            
-            .roll-value-gear {
-                color: colors.$gear;
-            }
-            
-            .roll-value-damage {
-                color: colors.$damage;
-            }
-            
-            .roll-value-heal {
-                color: colors.$heal;
-            }
-            
-            .roll-value-unknown {
-                color: colors.$unknown;
-            }
         }
-
-        &-formula {
-            display: flex;
-            justify-content: space-between;
-            font-family: var(--font-monospace);
-            font-size: 0.9rem;
-            color: colors.$card-white;
-            background: rgba(50, 50, 50, 0.9);
-            padding: 0.25rem 0.5rem;
-            border-radius: 3px;
-            margin: 0 3px 2px 3px;
-            width: calc(100%);
-            
-            .roll-formula {
-                font-style: italic;
-            }
+    }
+    
+    &__value {
+        font-size: 2rem;
+        font-weight: bold;
+        font-family: typography.$font-decorative;
+        
+        &--initiative {
+            color: colors.$initiative;
         }
+        
+        &--power {
+            color: #666666;
+        }
+        
+        &--acro {
+            color: colors.$acro;
+        }
+        
+        &--phys {
+            color: colors.$phys;
+        }
+        
+        &--fort {
+            color: colors.$fort;
+        }
+        
+        &--will {
+            color: colors.$will;
+        }
+        
+        &--wits {
+            color: colors.$wits;
+        }
+        
+        &--gear {
+            color: colors.$gear;
+        }
+        
+        &--damage {
+            color: colors.$damage;
+        }
+        
+        &--heal {
+            color: colors.$heal;
+        }
+        
+        &--unknown {
+            color: colors.$unknown;
+        }
+    }
+
+    &__formula-toggle {
+        display: flex;
+        justify-content: space-between;
+        font-family: var(--font-monospace);
+        font-size: 0.9rem;
+        color: colors.$card-white;
+        background: rgba(50, 50, 50, 0.9);
+        padding: 0.25rem 0.5rem;
+        border-radius: 3px;
+        margin: 0 3px 2px 3px;
+        width: calc(100%);
+        cursor: pointer;
+    }
+    
+    &__formula {
+        font-style: italic;
     }
 
     &__roll-details {
@@ -222,32 +218,32 @@
         border-radius: 3px;
         font-family: var(--font-monospace);
         font-size: 0.8rem;
+    }
+    
+    &__roll-term {
+        margin-bottom: 0.25rem;
         
-        .roll-term {
-            margin-bottom: 0.25rem;
-            
-            &-formula {
-                font-weight: bold;
-                margin-right: 0.5rem;
-            }
-            
-            &-results {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 0.25rem;
-            }
+        &-formula {
+            font-weight: bold;
+            margin-right: 0.5rem;
         }
         
-        .die-result {
-            display: inline-block;
-            padding: 0.125rem 0.25rem;
-            border-radius: 3px;
-            background-color: rgba(255, 255, 255, 0.2);
-            
-            &.discarded {
-                text-decoration: line-through;
-                opacity: 0.6;
-            }
+        &-results {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.25rem;
+        }
+    }
+    
+    &__die-result {
+        display: inline-block;
+        padding: 0.125rem 0.25rem;
+        border-radius: 3px;
+        background-color: rgba(255, 255, 255, 0.2);
+        
+        &--discarded {
+            text-decoration: line-through;
+            opacity: 0.6;
         }
     }
 
@@ -258,7 +254,7 @@
         padding: 0;
         margin: 0;
         color: colors.$card-tan;
-
+        
         &--ac-check {
             border: 3px dashed colors.$hidden-border;
             border-radius: 5px;
@@ -267,7 +263,7 @@
             margin: 0 3px;
             margin-top: 5px;
         }
-
+        
         &--title {
             @extend .protest-revolution-regular;
             text-align: justify;
@@ -299,7 +295,7 @@
             margin-bottom: 0px;
             border: 1px solid colors.$card-white;
         }
-
+        
         &--name {
             font-weight: bolder;
             color: colors.$card-black;
@@ -320,9 +316,9 @@
 
                 &--first,
                 &--last {
-                    font-weight: bold;
-                }
-
+            font-weight: bold;
+        }
+        
                 &--last {
                     border-left: 1px dashed colors.$card-tan;
                     padding-left: 15px;
@@ -357,24 +353,11 @@
     }
 }
 
-.formula-toggle {
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    
-    .formula-toggle-icon {
-        margin-left: 0.5rem;
-        transition: transform 0.2s ease;
-    }
-    
-    &.active .formula-toggle-icon {
-        transform: rotate(180deg);
-    }
-    
-    // Ensure icon is visible regardless of background color
-    .fa-chevron-down {
-        color: inherit;
-        opacity: 0.8;
-    }
+// For toggle icon
+.formula-toggle-icon {
+    transition: transform 0.2s ease;
+}
+
+.formula-toggle.active .formula-toggle-icon {
+    transform: rotate(180deg);
 }
