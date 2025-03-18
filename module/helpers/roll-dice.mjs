@@ -1,4 +1,5 @@
-import { getTargetArray } from "./common-foundry-tasks.mjs";
+import { getSetting } from "./settings.mjs";
+
 /**
  * Roll handler for the Eventide RP System
  * This function processes dice rolls for various actions in the game system.
@@ -135,14 +136,87 @@ const rollHandler = async (
   );
 
   if (toMessage) {
+    // Use the system setting for default dice roll mode if available
+    let rollMode = game.settings.get("core", "rollMode");
+
     roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor }),
       flavor: content,
-      rollMode: game.settings.get("core", "rollMode"),
+      rollMode: rollMode,
     });
   }
 
   return roll;
 };
 
-export { rollHandler };
+/**
+ * Custom initiative roll handler for the Eventide RP System
+ * This function handles initiative rolls with custom messaging and visibility options
+ *
+ * @param {Object} options - Options for the initiative roll
+ * @param {Combatant} options.combatant - The combatant rolling initiative
+ * @param {boolean} options.whisperMode - Whether to whisper the roll to GMs only
+ * @param {string} options.customFlavor - Optional custom flavor text for the roll
+ * @param {string} options.description - Optional description to include in the message
+ * @returns {Promise<Roll>} The evaluated roll
+ */
+const rollInitiative = async ({
+  combatant,
+  whisperMode = false,
+  description = "",
+}) => {
+  // Get initiative formula from settings or combatant
+  let formula = CONFIG.Combat.initiative.formula;
+
+  // Create and evaluate the roll
+  const roll = new Roll(formula, combatant.actor?.getRollData() || {});
+  await roll.evaluate();
+
+  // Set combatant initiative
+  const combat = combatant.parent;
+  await combat.updateEmbeddedDocuments("Combatant", [
+    {
+      _id: combatant.id,
+      initiative: roll.total,
+    },
+  ]);
+
+  // Prepare template data
+  const data = {
+    name: combatant.name,
+    formula: roll.formula,
+    total: roll.total.toFixed(2),
+    description: description,
+  };
+
+  // Render the template
+  const content = await renderTemplate(
+    "systems/eventide-rp-system/templates/chat/initiative-roll.hbs",
+    data
+  );
+
+  // Prepare the message data
+  const messageData = {
+    speaker: ChatMessage.getSpeaker({ actor: combatant.actor }),
+    content: content,
+    sound: CONFIG.sounds.dice,
+    // Pass the roll data directly
+    rolls: [roll],
+  };
+
+  // If whisper mode is enabled, only show to GMs
+  if (whisperMode) {
+    messageData.whisper = game.users
+      .filter((user) => user.isGM)
+      .map((user) => user.id);
+
+    console.log("Whispering initiative roll to GMs only");
+  }
+
+  // Send the message
+  await ChatMessage.create(messageData);
+
+  return roll;
+};
+
+export { rollHandler, rollInitiative };

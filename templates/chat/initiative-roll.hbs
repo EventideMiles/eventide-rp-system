@@ -1,0 +1,19 @@
+<div class="chat-card">
+  <div class="chat-card__header chat-card__header--initiative">
+    <i class="fa-solid fa-bolt"></i> {{name}} rolls for Initiative
+  </div>
+  <div class="chat-card__initiative">
+    <div class="chat-card__initiative-result">
+      <span class="initiative-value">{{total}}</span>
+    </div>
+    <div class="chat-card__initiative-formula">
+      <span class="roll-formula">{{formula}}</span>
+    </div>
+  </div>
+  {{#if description}}
+    <div class="chat-card__description">
+      <div class="chat-card__description--header">{{name}}. . . </div>
+      {{{description}}} 
+    </div>
+  {{/if}}
+</div>
