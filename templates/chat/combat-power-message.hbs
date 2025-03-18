@@ -21,6 +21,29 @@
   {{#if savedMiss}}
     <div class="chat-card__header chat-card__header--saved-miss">{{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.SavedMiss"}}</div>
   {{/if}}
+  <div class="chat-card__combat-roll">
+    <div class="chat-card__combat-roll-formula formula-toggle">
+      <span class="roll-formula">{{roll.formula}}</span>
+      <i class="fas fa-chevron-down formula-toggle-icon"></i>
+    </div>
+    <div class="chat-card__roll-details" style="display: none;">
+      {{#each roll.terms as |term|}}
+        {{#if term.results}}
+          <div class="roll-term">
+            <span class="roll-term-formula">{{term.formula}}</span>
+            <div class="roll-term-results">
+              {{#each term.results as |result|}}
+                <span class="die-result {{#if result.discarded}}discarded{{/if}}">{{result.result}}</span>
+              {{/each}}
+            </div>
+          </div>
+        {{/if}}
+      {{/each}}
+    </div>
+    <div class="chat-card__combat-roll-result">
+      <span class="power-value">{{roll.total}}</span>
+    </div>
+  </div>
   {{#if acCheck}}
     <div class="chat-card__effects chat-card__effects--ac-check">
       <div class="chat-card__effects--title">{{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.ACCheck"}}</div>
@@ -41,6 +64,7 @@
     </div>
   {{/if}}
 {{/if}}
+
 {{#if system.description}}
 <div class="chat-card__description">
   {{#if system.rollActorName}}

@@ -10,7 +10,8 @@ export const initChatListeners = () => {
     // Add click event listener
     formulaToggle.on("click", (event) => {
       const toggleElement = $(event.currentTarget);
-      const rollDetails = toggleElement.closest(".chat-card__initiative").find(".chat-card__roll-details");
+      const rollContainer = toggleElement.closest(".chat-card__initiative, .chat-card__combat-roll");
+      const rollDetails = rollContainer.find(".chat-card__roll-details");
       
       // Toggle the active class for the formula toggle
       toggleElement.toggleClass("active");

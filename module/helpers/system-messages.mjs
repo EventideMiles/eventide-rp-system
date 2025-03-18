@@ -1,5 +1,3 @@
-import { rollHandler } from "./roll-dice.mjs";
-
 /**
  * Creates a chat message for the given status effect item, including its name, description, and active effects.
  * @param {Item} item - The status effect item to generate the message for.
@@ -230,10 +228,10 @@ const combatPowerMessage = async (item) => {
     templateData
   );
 
-  return await roll.toMessage({
+  return await ChatMessage.create({
     speaker: ChatMessage.getSpeaker({ actor: item.actor }),
-    flavor: content,
-    rollMode: game.settings.get("core", "rollMode"),
+    content: content,
+    rolls: [roll],
   });
 };
 

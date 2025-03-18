@@ -128,26 +128,34 @@
         }
     }
 
-    &__initiative {
+    &__initiative,
+    &__combat-roll {
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: center;
-        margin: 0.5rem 0 0 0;
-        padding: 0.5rem 0.5rem 0 0.5rem;
-        background-color: rgba(255, 255, 255, 0.05);
-        border-radius: 3px;
+        margin-bottom: 0.5rem;
+        width: 100%;
 
         &-result {
             display: flex;
             justify-content: center;
-            align-items: center;
-            margin-bottom: 0.5rem;
-
+            font-family: typography.$font-decorative;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 0.25rem 0;
+            width: 100%;
+            
             .initiative-value {
                 font-size: 2rem;
                 font-weight: bold;
                 color: colors.$initiative;
+            }
+
+            .power-value {
+                font-size: 2rem;
+                font-weight: bold;
+                color: #000000;
+                font-family: typography.$font-decorative;
             }
             
             // Roll value colors based on roll type
@@ -194,48 +202,11 @@
             font-family: var(--font-monospace);
             font-size: 0.9rem;
             color: colors.$card-white;
-            background: colors.$initiative-formula-bg;
+            background: rgba(50, 50, 50, 0.9);
             padding: 0.25rem 0.5rem;
             border-radius: 3px;
             margin: 0 3px 2px 3px;
             width: calc(100%);
-            
-            // Formula background colors based on roll type
-            &.formula-bg-acro {
-                background: colors.$acro-formula-bg;
-            }
-            
-            &.formula-bg-phys {
-                background: colors.$phys-formula-bg;
-            }
-            
-            &.formula-bg-fort {
-                background: colors.$fort-formula-bg;
-            }
-            
-            &.formula-bg-will {
-                background: colors.$will-formula-bg;
-            }
-            
-            &.formula-bg-wits {
-                background: colors.$wits-formula-bg;
-            }
-            
-            &.formula-bg-gear {
-                background: colors.$gear-formula-bg;
-            }
-            
-            &.formula-bg-damage {
-                background: colors.$damage-formula-bg;
-            }
-            
-            &.formula-bg-heal {
-                background: colors.$heal-formula-bg;
-            }
-            
-            &.formula-bg-unknown {
-                background: colors.$unknown-formula-bg;
-            }
         }
     }
 
@@ -395,5 +366,11 @@
     
     &.active .formula-toggle-icon {
         transform: rotate(180deg);
+    }
+    
+    // Ensure icon is visible regardless of background color
+    .fa-chevron-down {
+        color: inherit;
+        opacity: 0.8;
     }
 }
