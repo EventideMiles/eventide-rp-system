@@ -131,15 +131,29 @@ export class DamageTargets extends EventideSheetHelpers {
       (this.selectedArray.length > 0 && this.gmCheck === "player")
     ) {
       await Promise.all(
-        this.selectedArray.map((token) =>
-          token.actor.damageResolve(damageOptions)
-        )
+        this.selectedArray.map((token) => {
+          damageOptions.formula =
+            damageOptions.type !== "heal" &&
+            token.actor.system.hiddenAbilities.vuln.total !== 0
+              ? `${damageOptions.formula} + ${Math.abs(
+                  token.actor.system.hiddenAbilities.vuln.total
+                )}`
+              : damageOptions.formula;
+          token.actor.damageResolve(damageOptions);
+        })
       );
     } else {
       await Promise.all(
-        this.targetArray.map((token) =>
-          token.actor.damageResolve(damageOptions)
-        )
+        this.targetArray.map((token) => {
+          damageOptions.formula =
+            damageOptions.type !== "heal" &&
+            token.actor.system.hiddenAbilities.vuln.total !== 0
+              ? `${damageOptions.formula} + ${Math.abs(
+                  token.actor.system.hiddenAbilities.vuln.total
+                )}`
+              : damageOptions.formula;
+          token.actor.damageResolve(damageOptions);
+        })
       );
     }
 

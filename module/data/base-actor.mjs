@@ -150,7 +150,7 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
         override: new fields.NumberField({ ...overrideInteger, initial: null }),
         change: new fields.NumberField({ ...requiredInteger, initial: 0 }),
       }),
-      sens: new fields.SchemaField({
+      vuln: new fields.SchemaField({
         value: new fields.NumberField({
           ...requiredInteger,
           initial: 0,

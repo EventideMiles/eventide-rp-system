@@ -24,11 +24,11 @@
     },
     "HiddenAbilities": {
       "Cmax": {
-        "long": "Crit^",
+        "long": "Critical Upper Limit",
         "abbr": "cmax"
       },
       "Cmin": {
-        "long": "Critv",
+        "long": "Critical Lower Limit",
         "abbr": "cmin"
       },
       "Dice": {
@@ -36,16 +36,16 @@
         "abbr": "dice"
       },
       "Fmax": {
-        "long": "Fail^",
+        "long": "Fail Upper Limit",
         "abbr": "fmax"
       },
       "Fmin": {
-        "long": "Failv",
+        "long": "Fail Lower Limit",
         "abbr": "fmin"
       },
-      "Sens": {
-        "long": "Sens",
-        "abbr": "sens"
+      "Vuln": {
+        "long": "Vulnerability",
+        "abbr": "vuln"
       }
     },
     "RollTypes": {

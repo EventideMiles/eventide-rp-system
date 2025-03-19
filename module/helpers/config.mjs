@@ -38,7 +38,7 @@ EVENTIDE_RP_SYSTEM.hiddenAbilities = {
   cmin: `EVENTIDE_RP_SYSTEM.HiddenAbilities.Cmin.long`,
   fmax: `EVENTIDE_RP_SYSTEM.HiddenAbilities.Fmax.long`,
   fmin: `EVENTIDE_RP_SYSTEM.HiddenAbilities.Fmin.long`,
-  sens: `EVENTIDE_RP_SYSTEM.HiddenAbilities.Sens.long`,
+  vuln: `EVENTIDE_RP_SYSTEM.HiddenAbilities.Vuln.long`,
 };
 
 /**
@@ -51,7 +51,7 @@ EVENTIDE_RP_SYSTEM.hiddenAbilityAbbreviations = {
   cmin: `EVENTIDE_RP_SYSTEM.HiddenAbilities.Cmin.abbr`,
   fmax: `EVENTIDE_RP_SYSTEM.HiddenAbilities.Fmax.abbr`,
   fmin: `EVENTIDE_RP_SYSTEM.HiddenAbilities.Fmin.abbr`,
-  sens: `EVENTIDE_RP_SYSTEM.HiddenAbilities.Sens.abbr`,
+  vuln: `EVENTIDE_RP_SYSTEM.HiddenAbilities.Vuln.abbr`,
 };
 
 /**

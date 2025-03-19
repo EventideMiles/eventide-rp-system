@@ -37,7 +37,7 @@ export class EventideSheetHelpers extends HandlebarsApplicationMixin(
    * @returns {string[]} Array of hidden ability keys (dice, cmin, fmax)
    */
   static get hiddenAbilities() {
-    return ["dice", "cmin", "fmax"];
+    return ["dice", "cmin", "fmax", "vuln"];
   }
   /**
    * Returns an array of advanced hidden ability keys defined in the system configuration.
