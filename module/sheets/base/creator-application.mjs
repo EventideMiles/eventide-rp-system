@@ -189,7 +189,7 @@ export class CreatorApplication extends EventideSheetHelpers {
               : "override"
           }`,
           mode:
-            mode === "add"
+            mode === "add" || mode === "advantage" || mode === "disadvantage"
               ? CONST.ACTIVE_EFFECT_MODES.ADD
               : CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
           value: value,
