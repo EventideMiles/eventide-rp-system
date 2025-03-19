@@ -135,7 +135,7 @@ export class DamageTargets extends EventideSheetHelpers {
         this.selectedArray.map((token) => {
           damageOptions.formula =
             damageOptions.type !== "heal" &&
-            token.actor.system.hiddenAbilities.vuln.total >= 0
+            token.actor.system.hiddenAbilities.vuln.total > 0
               ? `${originalFormula} + ${Math.abs(
                   token.actor.system.hiddenAbilities.vuln.total
                 )}`
@@ -148,7 +148,7 @@ export class DamageTargets extends EventideSheetHelpers {
         this.targetArray.map((token) => {
           damageOptions.formula =
             damageOptions.type !== "heal" &&
-            token.actor.system.hiddenAbilities.vuln.total >= 0
+            token.actor.system.hiddenAbilities.vuln.total > 0
               ? `${originalFormula} + ${Math.abs(
                   token.actor.system.hiddenAbilities.vuln.total
                 )}`
