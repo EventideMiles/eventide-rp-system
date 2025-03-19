@@ -44,7 +44,7 @@ const rollHandler = async (
 
   if (critAllowed && formula.includes("d")) {
     const dieArray = result.terms[0].results;
-    const [cmin, cmax, fmin, fmax] = Object.values(rollData.hiddenAbilities);
+    const { cmin, cmax, fmin, fmax } = rollData.hiddenAbilities;
 
     critHit = dieArray.some(
       (die) => die.result <= cmax.total && die.result >= cmin.total
