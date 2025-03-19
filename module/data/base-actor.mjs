@@ -1,5 +1,4 @@
 import EventideRpSystemDataModel from "./base-model.mjs";
-
 /**
  * Base actor data model for the Eventide RP System.
  * Defines the common data schema shared by all actor types.
@@ -158,6 +157,7 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
         total: new fields.NumberField({
           ...requiredInteger,
           initial: 0,
+          min: 0,
         }),
         override: new fields.NumberField({ ...overrideInteger, initial: null }),
         change: new fields.NumberField({ ...requiredInteger, initial: 0 }),
@@ -221,6 +221,7 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
       current.label =
         game.i18n.localize(CONFIG.EVENTIDE_RP_SYSTEM.hiddenAbilities[key]) ??
         key;
+      console.log(current);
       current.total = current.override
         ? current.override + current.change
         : current.value + current.change;
