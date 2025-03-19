@@ -125,6 +125,7 @@ export class DamageTargets extends EventideSheetHelpers {
       description: form.description.value || "",
       type: form.isHeal.checked ? "heal" : "damage",
     };
+    const originalFormula = damageOptions.formula;
     if (
       (damageOptions.type === "heal" && this.selectedArray.length > 0) ||
       (this.selectedArray.length > 0 && this.targetArray.length === 0) ||
@@ -135,10 +136,10 @@ export class DamageTargets extends EventideSheetHelpers {
           damageOptions.formula =
             damageOptions.type !== "heal" &&
             token.actor.system.hiddenAbilities.vuln.total >= 0
-              ? `${damageOptions.formula} + ${Math.abs(
+              ? `${originalFormula} + ${Math.abs(
                   token.actor.system.hiddenAbilities.vuln.total
                 )}`
-              : damageOptions.formula;
+              : originalFormula;
           token.actor.damageResolve(damageOptions);
         })
       );
@@ -148,10 +149,10 @@ export class DamageTargets extends EventideSheetHelpers {
           damageOptions.formula =
             damageOptions.type !== "heal" &&
             token.actor.system.hiddenAbilities.vuln.total >= 0
-              ? `${damageOptions.formula} + ${Math.abs(
+              ? `${originalFormula} + ${Math.abs(
                   token.actor.system.hiddenAbilities.vuln.total
                 )}`
-              : damageOptions.formula;
+              : originalFormula;
           token.actor.damageResolve(damageOptions);
         })
       );
