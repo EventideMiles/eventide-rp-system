@@ -1,4 +1,5 @@
 import { getTargetArray } from "./common-foundry-tasks.mjs";
+import { erpsRollUtilities } from "./roll-utilities.mjs";
 
 /**
  * ERPSMessageHandler - Handles all chat message creation for the Eventide RP System
@@ -10,12 +11,32 @@ class ERPSMessageHandler {
     this.templates = {
       status: "systems/eventide-rp-system/templates/chat/status-message.hbs",
       feature: "systems/eventide-rp-system/templates/chat/feature-message.hbs",
-      deleteStatus: "systems/eventide-rp-system/templates/chat/delete-status-message.hbs",
+      deleteStatus:
+        "systems/eventide-rp-system/templates/chat/delete-status-message.hbs",
       restore: "systems/eventide-rp-system/templates/chat/restore-message.hbs",
-      combatPower: "systems/eventide-rp-system/templates/chat/combat-power-message.hbs",
-      gearTransfer: "systems/eventide-rp-system/templates/chat/gear-transfer-message.hbs",
-      gearEquip: "systems/eventide-rp-system/templates/chat/gear-equip-message.hbs",
+      combatPower:
+        "systems/eventide-rp-system/templates/chat/combat-power-message.hbs",
+      gearTransfer:
+        "systems/eventide-rp-system/templates/chat/gear-transfer-message.hbs",
+      gearEquip:
+        "systems/eventide-rp-system/templates/chat/gear-equip-message.hbs",
     };
+  }
+
+  /**
+   * Helper method to render a template with data and create a chat message
+   * @private
+   * @param {string} templateKey - Key for the template in this.templates
+   * @param {Object} data - Data to pass to the template
+   * @param {Object} messageOptions - Options for ChatMessage.create
+   * @returns {Promise<ChatMessage>} The created chat message
+   */
+  async _createChatMessage(templateKey, data, messageOptions) {
+    const content = await renderTemplate(this.templates[templateKey], data);
+    return ChatMessage.create({
+      ...messageOptions,
+      content,
+    });
   }
 
   /**
@@ -25,7 +46,7 @@ class ERPSMessageHandler {
    */
   async createStatusMessage(item) {
     const effects = item.effects.toObject();
-    const style = `background-color: ${item.system.bgColor.css}; color: ${item.system.textColor.css};`;
+    const style = erpsRollUtilities.getItemStyle(item);
 
     const data = {
       item,
@@ -33,19 +54,11 @@ class ERPSMessageHandler {
       style,
     };
 
-    const content = await renderTemplate(
-      this.templates.status,
-      data
-    );
-
-    return ChatMessage.create({
-      speaker: ChatMessage.getSpeaker({
-        actor: item.parent,
-        alias: game.i18n.format("EVENTIDE_RP_SYSTEM.MessageHeaders.Status", {
-          name: item.parent.name,
-        }),
-      }),
-      content: content,
+    return this._createChatMessage("status", data, {
+      speaker: erpsRollUtilities.getSpeaker(
+        item.parent,
+        "EVENTIDE_RP_SYSTEM.MessageHeaders.Status"
+      ),
     });
   }
 
@@ -56,7 +69,7 @@ class ERPSMessageHandler {
    */
   async createFeatureMessage(item) {
     const effects = item.effects.toObject();
-    const style = `background-color: ${item.system.bgColor.css}; color: ${item.system.textColor.css};`;
+    const style = erpsRollUtilities.getItemStyle(item);
 
     const data = {
       item,
@@ -64,19 +77,11 @@ class ERPSMessageHandler {
       style,
     };
 
-    const content = await renderTemplate(
-      this.templates.feature,
-      data
-    );
-
-    return ChatMessage.create({
-      speaker: ChatMessage.getSpeaker({
-        actor: item.parent,
-        alias: game.i18n.format("EVENTIDE_RP_SYSTEM.MessageHeaders.Feature", {
-          name: item.parent.name,
-        }),
-      }),
-      content: content,
+    return this._createChatMessage("feature", data, {
+      speaker: erpsRollUtilities.getSpeaker(
+        item.parent,
+        "EVENTIDE_RP_SYSTEM.MessageHeaders.Feature"
+      ),
     });
   }
 
@@ -93,14 +98,8 @@ class ERPSMessageHandler {
       options,
     };
 
-    const content = await renderTemplate(
-      this.templates.deleteStatus,
-      data
-    );
-
-    return ChatMessage.create({
-      speaker: ChatMessage.getSpeaker({ actor: item.parent }),
-      content: content,
+    return this._createChatMessage("deleteStatus", data, {
+      speaker: erpsRollUtilities.getSpeaker(item.parent),
     });
   }
 
@@ -117,14 +116,11 @@ class ERPSMessageHandler {
   async createRestoreMessage({ all, resolve, power, statuses, actor }) {
     const data = { all, resolve, power, statuses, actor };
 
-    const content = await renderTemplate(
-      this.templates.restore,
-      data
-    );
-
-    return await ChatMessage.create({
-      speaker: ChatMessage.getSpeaker({ actor }),
-      content: content,
+    return this._createChatMessage("restore", data, {
+      speaker: erpsRollUtilities.getSpeaker(
+        actor,
+        "EVENTIDE_RP_SYSTEM.MessageHeaders.Restore"
+      ),
     });
   }
 
@@ -140,10 +136,10 @@ class ERPSMessageHandler {
     if (!item || !item.system) return null;
 
     // Get the roll type from the item
-    const rollType = (item.system.roll?.type || "none");
-    const style = `background-color: ${item.system.bgColor?.css || "#444"}; color: ${item.system.textColor?.css || "#fff"};`;
+    const rollType = item.system.roll?.type || "none";
+    const style = erpsRollUtilities.getItemStyle(item);
     const isRoll = rollType !== "none";
-    
+
     // Get the roll mode from options or use the default game setting
     const rollMode = options.rollMode || game.settings.get("core", "rollMode");
 
@@ -160,23 +156,15 @@ class ERPSMessageHandler {
         isGear: item.type === "gear",
         description: item.system.description,
         hasRoll: false,
-        actor: actor
+        actor: actor,
       };
 
-      const content = await renderTemplate(
-        this.templates.combatPower,
-        data
-      );
-
-      return ChatMessage.create({
-        speaker: ChatMessage.getSpeaker({
-          actor: actor,
-          alias: game.i18n.format("EVENTIDE_RP_SYSTEM.MessageHeaders.CombatPower", {
-            name: actor.name,
-          }),
-        }),
-        content: content,
-        rollMode: rollMode
+      return this._createChatMessage("combatPower", data, {
+        speaker: erpsRollUtilities.getSpeaker(
+          actor,
+          "EVENTIDE_RP_SYSTEM.MessageHeaders.CombatPower"
+        ),
+        rollMode,
       });
     }
 
@@ -184,30 +172,32 @@ class ERPSMessageHandler {
     try {
       // Get the formula using the item's getCombatRollFormula method
       const formula = item.getCombatRollFormula();
-      
+
       // Check if formula exists and is valid
-      if (!formula || typeof formula !== 'string' || formula.trim() === '') {
+      if (!formula || typeof formula !== "string" || formula.trim() === "") {
         throw new Error("Invalid roll formula");
       }
-      
+
       // Get the actor's roll data
       const rollData = actor.getRollData();
-      
+
       // Create the roll
       const roll = new Roll(formula, rollData);
       const result = await roll.evaluate();
 
       // Check if we need to do AC checks
       const targetArray = await getTargetArray();
-      const addCheck = item.system.targeted && targetArray.length ? true : false;
+      const addCheck =
+        item.system.targeted && targetArray.length ? true : false;
 
       // Determine critical states
-      const { critHit, critMiss, stolenCrit, savedMiss } = this._determineCriticalStates({
-        roll: result,
-        thresholds: rollData.hiddenAbilities,
-        formula: formula,
-        critAllowed: true,
-      });
+      const { critHit, critMiss, stolenCrit, savedMiss } =
+        erpsRollUtilities.determineCriticalStates({
+          roll: result,
+          thresholds: rollData.hiddenAbilities,
+          formula: formula,
+          critAllowed: true,
+        });
 
       // Prepare target data if needed
       const targetRollData = addCheck
@@ -238,31 +228,21 @@ class ERPSMessageHandler {
         targetArray,
         targetRollData,
         critAllowed: true,
-        actor: actor
+        actor: actor,
       };
 
-      // Render the template
-      const content = await renderTemplate(
-        this.templates.combatPower,
-        data
-      );
-
-      // Create the chat message
-      return ChatMessage.create({
-        speaker: ChatMessage.getSpeaker({
-          actor: actor,
-          alias: game.i18n.format("EVENTIDE_RP_SYSTEM.MessageHeaders.CombatPower", {
-            name: actor.name,
-          }),
-        }),
-        content: content,
+      return this._createChatMessage("combatPower", data, {
+        speaker: erpsRollUtilities.getSpeaker(
+          actor,
+          "EVENTIDE_RP_SYSTEM.MessageHeaders.CombatPower"
+        ),
         sound: CONFIG.sounds.dice,
         rolls: [roll],
-        rollMode: rollMode
+        rollMode,
       });
     } catch (error) {
       console.error("Error creating combat power roll:", error);
-      
+
       // Create a non-roll message as fallback
       const data = {
         img: item.img,
@@ -274,23 +254,15 @@ class ERPSMessageHandler {
         description: item.system.description,
         hasRoll: false,
         isGear: item.type === "gear",
-        actor: actor
+        actor: actor,
       };
 
-      const content = await renderTemplate(
-        this.templates.combatPower,
-        data
-      );
-
-      return ChatMessage.create({
-        speaker: ChatMessage.getSpeaker({
-          actor: actor,
-          alias: game.i18n.format("EVENTIDE_RP_SYSTEM.MessageHeaders.CombatPower", {
-            name: actor.name,
-          }),
-        }),
-        content: content,
-        rollMode: rollMode
+      return this._createChatMessage("combatPower", data, {
+        speaker: erpsRollUtilities.getSpeaker(
+          actor,
+          "EVENTIDE_RP_SYSTEM.MessageHeaders.CombatPower"
+        ),
+        rollMode,
       });
     }
   }
@@ -319,19 +291,11 @@ class ERPSMessageHandler {
       description,
     };
 
-    const content = await renderTemplate(
-      this.templates.gearTransfer,
-      data
-    );
-
-    return ChatMessage.create({
-      speaker: ChatMessage.getSpeaker({
-        actor: sourceActor,
-        alias: game.i18n.format("EVENTIDE_RP_SYSTEM.MessageHeaders.GearTransfer", {
-          name: sourceActor.name,
-        }),
-      }),
-      content: content,
+    return this._createChatMessage("gearTransfer", data, {
+      speaker: erpsRollUtilities.getSpeaker(
+        sourceActor,
+        "EVENTIDE_RP_SYSTEM.MessageHeaders.GearTransfer"
+      ),
     });
   }
 
@@ -347,89 +311,45 @@ class ERPSMessageHandler {
       equipped: item.system.equipped,
     };
 
-    const content = await renderTemplate(
-      this.templates.gearEquip,
-      data
-    );
-
-    return ChatMessage.create({
-      speaker: ChatMessage.getSpeaker({ actor: item.parent }),
-      content: content,
+    return this._createChatMessage("gearEquip", data, {
+      speaker: erpsRollUtilities.getSpeaker(
+        item.parent,
+        "EVENTIDE_RP_SYSTEM.MessageHeaders.GearEquip"
+      ),
     });
-  }
-
-  /**
-   * Determines critical success/failure states for a roll
-   * @private
-   * @param {Object} options - Options for critical state determination
-   * @param {Roll} options.roll - The roll to check
-   * @param {Object} options.thresholds - Object containing critical thresholds
-   * @param {string} options.formula - The roll formula
-   * @param {boolean} [options.critAllowed=true] - Whether critical hits/misses are allowed
-   * @returns {Object} Object containing critical states
-   */
-  _determineCriticalStates({
-    roll,
-    thresholds,
-    formula,
-    critAllowed = true,
-  }) {
-    // Early return if crits aren't allowed or there are no dice in the formula
-    if (!critAllowed || !formula.includes("d") || !roll.terms[0]?.results) {
-      return {
-        critHit: false,
-        critMiss: false,
-        stolenCrit: false,
-        savedMiss: false,
-      };
-    }
-
-    const dieArray = roll.terms[0].results;
-    const { cmin, cmax, fmin, fmax } = thresholds;
-    const formulaLower = formula.toLowerCase();
-    const isKeepLowest = formulaLower.includes("kl");
-    const isKeepHighest = formulaLower.includes("k") && !isKeepLowest;
-
-    // Check for basic crit hit/miss conditions
-    const hasCritValue = (die) =>
-      die.result <= cmax.total && die.result >= cmin.total;
-    const hasMissValue = (die) =>
-      die.result <= fmax.total && die.result >= fmin.total;
-
-    // Determine base critical states
-    let critHit = dieArray.some(hasCritValue);
-    let critMiss = dieArray.some(hasMissValue);
-
-    // Check for special conditions with advantage/disadvantage
-    const allDiceCrit = dieArray.every(hasCritValue);
-    const allDiceMiss = dieArray.every(hasMissValue);
-
-    // Determine special cases
-    const stolenCrit = critHit && isKeepLowest && !allDiceCrit;
-    const savedMiss = critMiss && isKeepHighest && !allDiceMiss;
-
-    // Adjust final states
-    if (stolenCrit) critHit = false;
-    if (savedMiss) critMiss = false;
-
-    return { critHit, critMiss, stolenCrit, savedMiss };
   }
 }
 
 // Create a singleton instance
-const messageHandler = new ERPSMessageHandler();
+export const erpsMessageHandler = new ERPSMessageHandler();
 
 // Export individual functions for backward compatibility
-export const createStatusMessage = (item) => messageHandler.createStatusMessage(item);
-export const featureMessage = (item) => messageHandler.createFeatureMessage(item);
-export const deleteStatusMessage = (item, options) => messageHandler.createDeleteStatusMessage(item, options);
-export const createRestoreMessage = (options) => messageHandler.createRestoreMessage(options);
+export const createStatusMessage = (item) =>
+  messageHandler.createStatusMessage(item);
+export const featureMessage = (item) =>
+  messageHandler.createFeatureMessage(item);
+export const deleteStatusMessage = (item, options) =>
+  messageHandler.createDeleteStatusMessage(item, options);
+export const createRestoreMessage = (options) =>
+  messageHandler.createRestoreMessage(options);
 // Keep the old name for backward compatibility with macros
-export const restoreMessage = (options) => messageHandler.createRestoreMessage(options);
-export const combatPowerMessage = (item, options) => messageHandler.createCombatPowerMessage(item, options);
-export const gearTransferMessage = (item, sourceActor, destActor, quantity, description) => 
-  messageHandler.createGearTransferMessage(item, sourceActor, destActor, quantity, description);
-export const gearEquipMessage = (item) => messageHandler.createGearEquipMessage(item);
-
-// Export the class instance for direct use
-export const erpsMessageHandler = messageHandler;
+export const restoreMessage = (options) =>
+  messageHandler.createRestoreMessage(options);
+export const combatPowerMessage = (item, options) =>
+  messageHandler.createCombatPowerMessage(item, options);
+export const gearTransferMessage = (
+  item,
+  sourceActor,
+  destActor,
+  quantity,
+  description
+) =>
+  messageHandler.createGearTransferMessage(
+    item,
+    sourceActor,
+    destActor,
+    quantity,
+    description
+  );
+export const gearEquipMessage = (item) =>
+  messageHandler.createGearEquipMessage(item);

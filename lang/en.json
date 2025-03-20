@@ -321,6 +321,14 @@
         "Unequipped": "Unequipped"
       }
     },
+    "MessageHeaders": {
+      "Status": "Status: {name}",
+      "Feature": "Feature: {name}",
+      "CombatPower": "Combat Power: {name}",
+      "GearTransfer": "Gear Transfer: {name}",
+      "Restore": "Restoration: {name}",
+      "GearEquip": "Equipment Change: {name}"
+    },
     "Effect": {
       "Inactive": "Inactive Effects",
       "Passive": "Passive Effects",
@@ -347,10 +355,6 @@
       "RestoreTarget": "Restore Target",
       "SelectAbilityRoll": "Select Ability Roll",
       "StatusPopup": "Status Information"
-    },
-    "MessageHeaders": {
-      "Feature": "Feature: {name}",
-      "Status": "Status: {name}"
     }
   },
   "TYPES": {
@@ -389,9 +393,9 @@
     "DiceRollModeBlind": "Blind Roll",
     "DiceRollModeSelf": "Self Roll",
     "AutoRollNpcInitiativeName": "Auto-Roll NPC Initiative",
-    "AutoRollNpcInitiativeHint": "Automatically roll initiative for NPCs when combat starts.",
+    "AutoRollNpcInitiativeHint": "Automatically roll initiative for NPCs when added to initiative.",
     "AutoRollPlayerInitiativeName": "Auto-Roll Player Initiative",
-    "AutoRollPlayerInitiativeHint": "Automatically roll initiative for players when combat starts.",
+    "AutoRollPlayerInitiativeHint": "Automatically roll initiative for players when added to initiative.",
     "HideNpcInitiativeRollsName": "Hide NPC Initiative Rolls",
     "HideNpcInitiativeRollsHint": "Hide the initiative roll results for NPCs from players.",
     "DefaultCombatRoundDurationName": "Default Combat Round Duration",

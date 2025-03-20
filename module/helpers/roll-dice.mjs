@@ -1,4 +1,5 @@
 import { getSetting } from "./settings.mjs";
+import { erpsRollUtilities } from "./roll-utilities.mjs";
 
 /**
  * ERPSRollHandler - Handles all dice rolling operations for the Eventide RP System
@@ -47,82 +48,14 @@ class ERPSRollHandler {
   }
 
   /**
-   * Determines critical success/failure states for a roll
-   * @private
-   * @param {Object} options - Options for critical state determination
-   * @param {Roll} options.roll - The roll to check
-   * @param {Object} options.thresholds - Object containing critical thresholds: gotten from hiddenAbilities
-   * @param {Object} options.thresholds.cmin - Minimum value for critical hit
-   * @param {Object} options.thresholds.cmax - Maximum value for critical hit
-   * @param {Object} options.thresholds.fmin - Minimum value for critical miss
-   * @param {Object} options.thresholds.fmax - Maximum value for critical miss
-   * @param {string} options.formula - The roll formula
-   * @param {boolean} [options.critAllowed=true] - Whether critical hits/misses are allowed
-   * @returns {Object} Object containing critical states
-   */
-  _determineCriticalStates({ roll, thresholds, formula, critAllowed = true }) {
-    // Early return if crits aren't allowed or there are no dice in the formula
-    if (!critAllowed || !formula.includes("d") || !roll.terms[0]?.results) {
-      return {
-        critHit: false,
-        critMiss: false,
-        stolenCrit: false,
-        savedMiss: false,
-      };
-    }
-
-    const dieArray = roll.terms[0].results;
-    const { cmin, cmax, fmin, fmax } = thresholds;
-    const formulaLower = formula.toLowerCase();
-    const isKeepLowest = formulaLower.includes("kl");
-    const isKeepHighest = formulaLower.includes("k") && !isKeepLowest;
-
-    // Check for basic crit hit/miss conditions
-    const hasCritValue = (die) =>
-      die.result <= cmax.total && die.result >= cmin.total;
-    const hasMissValue = (die) =>
-      die.result <= fmax.total && die.result >= fmin.total;
-
-    // Determine base critical states
-    let critHit = dieArray.some(hasCritValue);
-    let critMiss = dieArray.some(hasMissValue);
-
-    // Check for special conditions with advantage/disadvantage
-    const allDiceCrit = dieArray.every(hasCritValue);
-    const allDiceMiss = dieArray.every(hasMissValue);
-
-    // Determine special cases
-    let stolenCrit = critHit && isKeepLowest && !allDiceCrit;
-    let savedMiss = critMiss && isKeepHighest && !allDiceMiss;
-
-    // Adjust final states
-    if (stolenCrit) critHit = false;
-    if (savedMiss) critMiss = false;
-
-    if (critHit) savedMiss = false;
-    if (critMiss) stolenCrit = false;
-
-    return { critHit, critMiss, stolenCrit, savedMiss };
-  }
-
-  /**
    * Determine the appropriate card styling based on roll type
    * @private
    * @param {string} type - The roll type
    * @returns {Array} An array containing [cardClass, icon]
    */
   _getCardStyling(type) {
-    const pickedType = type.toLowerCase();
-
-    // Check for partial matches in roll type
-    for (const [key, style] of Object.entries(this.rollTypeStyles)) {
-      if (pickedType.includes(key)) {
-        return style;
-      }
-    }
-
-    // Return default styling if no match found
-    return this.rollTypeStyles.default;
+    const lowerType = type.toLowerCase();
+    return this.rollTypeStyles[lowerType] || this.rollTypeStyles.default;
   }
 
   /**
@@ -141,6 +74,7 @@ class ERPSRollHandler {
   _createMessageData({
     speaker,
     content,
+    sound = CONFIG.sounds.dice,
     rolls,
     type = "unknown",
     formula = "",
@@ -150,7 +84,7 @@ class ERPSRollHandler {
     const messageData = {
       speaker,
       content,
-      sound: CONFIG.sounds.dice,
+      sound,
       rolls,
       flags: {
         "eventide-rp-system": {
@@ -199,6 +133,7 @@ class ERPSRollHandler {
       acCheck = this.defaults.acCheck,
       description = this.defaults.description,
       toMessage = this.defaults.toMessage,
+      rollMode = this.defaults.rollMode,
     } = {},
     actor
   ) {
@@ -212,7 +147,7 @@ class ERPSRollHandler {
 
     // Determine critical states using the helper method
     const { critHit, critMiss, stolenCrit, savedMiss } =
-      this._determineCriticalStates({
+      erpsRollUtilities.determineCriticalStates({
         roll: result,
         thresholds: rollData.hiddenAbilities,
         formula,
@@ -256,10 +191,6 @@ class ERPSRollHandler {
     const content = await renderTemplate(this.templates.standard, data);
 
     if (toMessage) {
-      // Use the system setting for default dice roll mode if available
-      let rollMode =
-        this.defaults.rollMode || game.settings.get("core", "rollMode");
-
       // Create the chat message
       const messageData = this._createMessageData({
         speaker: ChatMessage.getSpeaker({ actor }),
@@ -296,14 +227,10 @@ class ERPSRollHandler {
     // Get initiative settings
     let hideNpcInitiativeRolls = false;
     try {
-      hideNpcInitiativeRolls = game.settings.get(
-        "eventide-rp-system",
-        "hideNpcInitiativeRolls"
-      );
+      hideNpcInitiativeRolls = getSetting("hideNpcInitiativeRolls");
     } catch (error) {
-      console.warn(
-        "Could not get hideNpcInitiativeRolls setting, using default"
-      );
+      console.warn("Error getting hideNpcInitiativeRolls setting:", error);
+      hideNpcInitiativeRolls = false;
     }
 
     // Determine if this is an NPC and should be whispered
@@ -349,9 +276,7 @@ class ERPSRollHandler {
       rollMode: shouldWhisper ? "gmroll" : "roll",
     });
 
-    // Send the message
-    await ChatMessage.create(messageData);
-
+    ChatMessage.create(messageData);
     return roll;
   }
 }
@@ -360,6 +285,7 @@ class ERPSRollHandler {
 export const erpsRollHandler = new ERPSRollHandler();
 
 // For backward compatibility
-export const rollHandler = erpsRollHandler.handleRoll.bind(erpsRollHandler);
-export const rollInitiative =
-  erpsRollHandler.rollInitiative.bind(erpsRollHandler);
+export const handleRoll = (options, actor) =>
+  erpsRollHandler.handleRoll(options, actor);
+export const rollInitiative = (options) =>
+  erpsRollHandler.rollInitiative(options);
