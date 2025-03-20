@@ -66,7 +66,7 @@ export class GearPopup extends EventidePopupHelpers {
 
     this.item.addQuantity(-this.item.system.cost);
 
-    erps.messages.combatPowerMessage(this.item);
+    erps.messages.createCombatPowerMessage(this.item);
     this.close();
   }
 }

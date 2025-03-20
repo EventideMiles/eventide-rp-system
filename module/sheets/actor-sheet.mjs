@@ -399,7 +399,7 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
   static async _toggleGear(event, target) {
     const gear = this._getEmbeddedDocument(target);
     await gear.update({ "system.equipped": !gear.system.equipped });
-    erps.messages.gearEquipMessage(gear);
+    erps.messages.createGearEquipMessage(gear);
   }
 
   /**

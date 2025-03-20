@@ -324,13 +324,13 @@ class ERPSMessageHandler {
 export const erpsMessageHandler = new ERPSMessageHandler();
 
 // Add proxy methods to match the names of the individual functions
-erpsMessageHandler.deleteStatusMessage = erpsMessageHandler.createDeleteStatusMessage;
-erpsMessageHandler.restoreMessage = erpsMessageHandler.createRestoreMessage;
-erpsMessageHandler.featureMessage = erpsMessageHandler.createFeatureMessage;
-erpsMessageHandler.combatPowerMessage = erpsMessageHandler.createCombatPowerMessage;
-erpsMessageHandler.gearTransferMessage = erpsMessageHandler.createGearTransferMessage;
-erpsMessageHandler.gearEquipMessage = erpsMessageHandler.createGearEquipMessage;
-erpsMessageHandler.statusMessage = erpsMessageHandler.createStatusMessage;
+// erpsMessageHandler.deleteStatusMessage = erpsMessageHandler.createDeleteStatusMessage;
+// erpsMessageHandler.restoreMessage = erpsMessageHandler.createRestoreMessage;
+// erpsMessageHandler.featureMessage = erpsMessageHandler.createFeatureMessage;
+// erpsMessageHandler.combatPowerMessage = erpsMessageHandler.createCombatPowerMessage;
+// erpsMessageHandler.gearTransferMessage = erpsMessageHandler.createGearTransferMessage;
+// erpsMessageHandler.gearEquipMessage = erpsMessageHandler.createGearEquipMessage;
+// erpsMessageHandler.statusMessage = erpsMessageHandler.createStatusMessage;
 
 // Export individual functions for backward compatibility
 export const createStatusMessage = (item) =>

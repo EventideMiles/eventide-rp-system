@@ -65,7 +65,7 @@ export class CombatPowerPopup extends EventidePopupHelpers {
     this.item.actor.addPower(-this.item.system.cost);
 
     // Send to chat
-    erps.messages.combatPowerMessage(this.item);
+    erps.messages.createCombatPowerMessage(this.item);
     this.close();
   }
 }

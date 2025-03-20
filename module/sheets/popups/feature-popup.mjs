@@ -54,7 +54,7 @@ export class FeaturePopup extends EventidePopupHelpers {
   }
 
   static async #toChat() {
-    erps.messages.featureMessage(this.item);
+    erps.messages.createFeatureMessage(this.item);
     this.close();
   }
 }
