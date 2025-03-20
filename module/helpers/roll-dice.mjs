@@ -9,9 +9,10 @@ class ERPSRollHandler {
     // Default roll templates
     this.templates = {
       standard: "systems/eventide-rp-system/templates/chat/roll-message.hbs",
-      initiative: "systems/eventide-rp-system/templates/chat/initiative-roll.hbs"
+      initiative:
+        "systems/eventide-rp-system/templates/chat/initiative-roll.hbs",
     };
-    
+
     // Default roll options
     this.defaults = {
       formula: "1",
@@ -21,9 +22,9 @@ class ERPSRollHandler {
       acCheck: true,
       description: "",
       toMessage: true,
-      rollMode: null // Will use game setting if null
+      rollMode: null, // Will use game setting if null
     };
-    
+
     // Roll type styling map - maps roll types to their styling classes and icons
     this.rollTypeStyles = {
       acro: ["chat-card__header--acrobatics", "fa-solid fa-feather-pointed"],
@@ -32,10 +33,16 @@ class ERPSRollHandler {
       will: ["chat-card__header--will", "fa-solid fa-fire-flame-curved"],
       wits: ["chat-card__header--wits", "fa-solid fa-chess"],
       gear: ["chat-card__header--gear", "fa-solid fa-toolbox"],
-      damage: ["chat-card__header--damage", "fa-sharp-duotone fa-light fa-claw-marks"],
+      damage: [
+        "chat-card__header--damage",
+        "fa-sharp-duotone fa-light fa-claw-marks",
+      ],
       heal: ["chat-card__header--heal", "fa-regular fa-wave-pulse"],
-      initiative: ["chat-card__header--initiative", "fa-solid fa-hourglass-start"],
-      default: ["chat-card__header--unknown", "fa-solid fa-question"]
+      initiative: [
+        "chat-card__header--initiative",
+        "fa-solid fa-hourglass-start",
+      ],
+      default: ["chat-card__header--unknown", "fa-solid fa-question"],
     };
   }
 
@@ -53,12 +60,7 @@ class ERPSRollHandler {
    * @param {boolean} [options.critAllowed=true] - Whether critical hits/misses are allowed
    * @returns {Object} Object containing critical states
    */
-  _determineCriticalStates({
-    roll,
-    thresholds,
-    formula,
-    critAllowed = true,
-  }) {
+  _determineCriticalStates({ roll, thresholds, formula, critAllowed = true }) {
     // Early return if crits aren't allowed or there are no dice in the formula
     if (!critAllowed || !formula.includes("d") || !roll.terms[0]?.results) {
       return {
@@ -90,12 +92,15 @@ class ERPSRollHandler {
     const allDiceMiss = dieArray.every(hasMissValue);
 
     // Determine special cases
-    const stolenCrit = critHit && isKeepLowest && !allDiceCrit;
-    const savedMiss = critMiss && isKeepHighest && !allDiceMiss;
+    let stolenCrit = critHit && isKeepLowest && !allDiceCrit;
+    let savedMiss = critMiss && isKeepHighest && !allDiceMiss;
 
     // Adjust final states
     if (stolenCrit) critHit = false;
     if (savedMiss) critMiss = false;
+
+    if (critHit) savedMiss = false;
+    if (critMiss) stolenCrit = false;
 
     return { critHit, critMiss, stolenCrit, savedMiss };
   }
@@ -108,14 +113,14 @@ class ERPSRollHandler {
    */
   _getCardStyling(type) {
     const pickedType = type.toLowerCase();
-    
+
     // Check for partial matches in roll type
     for (const [key, style] of Object.entries(this.rollTypeStyles)) {
       if (pickedType.includes(key)) {
         return style;
       }
     }
-    
+
     // Return default styling if no match found
     return this.rollTypeStyles.default;
   }
@@ -206,12 +211,13 @@ class ERPSRollHandler {
     const pickedType = type.toLowerCase();
 
     // Determine critical states using the helper method
-    const { critHit, critMiss, stolenCrit, savedMiss } = this._determineCriticalStates({
-      roll: result,
-      thresholds: rollData.hiddenAbilities,
-      formula,
-      critAllowed,
-    });
+    const { critHit, critMiss, stolenCrit, savedMiss } =
+      this._determineCriticalStates({
+        roll: result,
+        thresholds: rollData.hiddenAbilities,
+        formula,
+        critAllowed,
+      });
 
     const targetRollData = addCheck
       ? targetArray.map((target) => ({
@@ -247,14 +253,12 @@ class ERPSRollHandler {
       formula: formula,
     };
 
-    const content = await renderTemplate(
-      this.templates.standard,
-      data
-    );
+    const content = await renderTemplate(this.templates.standard, data);
 
     if (toMessage) {
       // Use the system setting for default dice roll mode if available
-      let rollMode = this.defaults.rollMode || game.settings.get("core", "rollMode");
+      let rollMode =
+        this.defaults.rollMode || game.settings.get("core", "rollMode");
 
       // Create the chat message
       const messageData = this._createMessageData({
@@ -297,13 +301,15 @@ class ERPSRollHandler {
         "hideNpcInitiativeRolls"
       );
     } catch (error) {
-      console.warn("Could not get hideNpcInitiativeRolls setting, using default");
+      console.warn(
+        "Could not get hideNpcInitiativeRolls setting, using default"
+      );
     }
 
     // Determine if this is an NPC and should be whispered
     const isNpc = combatant.actor && !combatant.actor.hasPlayerOwner;
     const shouldWhisper = (hideNpcInitiativeRolls && isNpc) || whisperMode;
-    
+
     // Get initiative formula from settings or combatant
     let formula = CONFIG.Combat.initiative.formula;
 
@@ -330,10 +336,7 @@ class ERPSRollHandler {
     };
 
     // Render the template
-    const content = await renderTemplate(
-      this.templates.initiative,
-      data
-    );
+    const content = await renderTemplate(this.templates.initiative, data);
 
     // Prepare the message data
     const messageData = this._createMessageData({
@@ -358,4 +361,5 @@ export const erpsRollHandler = new ERPSRollHandler();
 
 // For backward compatibility
 export const rollHandler = erpsRollHandler.handleRoll.bind(erpsRollHandler);
-export const rollInitiative = erpsRollHandler.rollInitiative.bind(erpsRollHandler);
+export const rollInitiative =
+  erpsRollHandler.rollInitiative.bind(erpsRollHandler);
