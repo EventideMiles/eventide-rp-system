@@ -390,6 +390,8 @@
     "DiceRollModeSelf": "Self Roll",
     "AutoRollNpcInitiativeName": "Auto-Roll NPC Initiative",
     "AutoRollNpcInitiativeHint": "Automatically roll initiative for NPCs when combat starts.",
+    "AutoRollPlayerInitiativeName": "Auto-Roll Player Initiative",
+    "AutoRollPlayerInitiativeHint": "Automatically roll initiative for players when combat starts.",
     "HideNpcInitiativeRollsName": "Hide NPC Initiative Rolls",
     "HideNpcInitiativeRollsHint": "Hide the initiative roll results for NPCs from players.",
     "DefaultCombatRoundDurationName": "Default Combat Round Duration",

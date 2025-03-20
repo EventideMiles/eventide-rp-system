@@ -29,7 +29,7 @@ export const registerSettings = function () {
         CONFIG.Combat.initiative.formula = value;
 
         // Prompt for reload to ensure all initiative calculations use the new formula
-        SettingsConfig.reloadConfirm();
+        SettingsConfig.reloadConfirm({ world: true });
       }
     },
   });
@@ -48,7 +48,7 @@ export const registerSettings = function () {
       step: 1,
     },
     onChange: () => {
-      SettingsConfig.reloadConfirm();
+      SettingsConfig.reloadConfirm({ world: true });
     },
   });
 
@@ -90,7 +90,19 @@ export const registerSettings = function () {
     type: Boolean,
     default: false,
     onChange: () => {
-      SettingsConfig.reloadConfirm();
+      SettingsConfig.reloadConfirm({ world: true });
+    },
+  });
+
+  game.settings.register("eventide-rp-system", "autoRollPlayerInitiative", {
+    name: "SETTINGS.AutoRollPlayerInitiativeName",
+    hint: "SETTINGS.AutoRollPlayerInitiativeHint",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false,
+    onChange: () => {
+      SettingsConfig.reloadConfirm({ world: true });
     },
   });
 
@@ -107,7 +119,7 @@ export const registerSettings = function () {
       step: 1,
     },
     onChange: () => {
-      SettingsConfig.reloadConfirm();
+      SettingsConfig.reloadConfirm({ world: true });
     },
   });
 
