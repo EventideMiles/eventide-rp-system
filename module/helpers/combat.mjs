@@ -1,19 +1,12 @@
-import { getSetting } from "./settings.mjs";
 import { rollInitiative } from "./roll-dice.mjs";
-
-/**
- * Handles combat-related functionality for the Eventide RP System
- */
 
 /**
  * Initialize combat-related hooks
  */
 export async function initializeCombatHooks() {
-  // Auto-roll NPC initiative when combat starts
   Hooks.on("createCombatant", async (combatant, options, userId) => {
     if (game.user.id !== userId) return;
 
-    // Only process NPCs if the setting is enabled
     let autoRollNpcInitiative = false;
     let hideNpcInitiativeRolls = false;
     let autoRollPlayerInitiative = false;
@@ -32,26 +25,12 @@ export async function initializeCombatHooks() {
           "eventide-rp-system",
           "autoRollPlayerInitiative"
         );
-
-        // Debug log
-        console.log("NPC Initiative Settings:", {
-          autoRollNpcInitiative,
-          hideNpcInitiativeRolls,
-          combatantId: combatant.id,
-          isNPC: !combatant.actor.hasPlayerOwner,
-        });
-        console.log("Player Initiative Settings:", {
-          autoRollPlayerInitiative,
-          combatantId: combatant.id,
-          isPlayer: combatant.actor.hasPlayerOwner,
-        });
       } catch (error) {
         console.warn("Could not get NPC initiative settings, using defaults");
       }
     }
 
     if (autoRollNpcInitiative && !combatant.actor.hasPlayerOwner) {
-      // Roll initiative for this NPC using our custom handler
       try {
         await rollInitiative({
           combatant: combatant,
@@ -68,7 +47,6 @@ export async function initializeCombatHooks() {
     }
 
     if (autoRollPlayerInitiative && combatant.actor.hasPlayerOwner) {
-      // Roll initiative for this player using our custom handler
       try {
         await rollInitiative({
           combatant: combatant,
@@ -85,7 +63,7 @@ export async function initializeCombatHooks() {
     }
   });
 
-  // Completely override the Combat.rollInitiative method to use our custom initiative roller
+  // Override the Combat.rollInitiative method to use our custom initiative roller
   Combat.prototype.rollInitiative = async function (ids, options = {}) {
     // Get the hideNpcInitiativeRolls setting
     let hideNpcInitiativeRolls = false;
@@ -112,11 +90,9 @@ export async function initializeCombatHooks() {
       const combatant = this.combatants.get(id);
       if (!combatant?.isOwner) continue;
 
-      // Determine if this is an NPC roll that should be hidden
       const isNpc = !combatant.actor.hasPlayerOwner;
       const shouldWhisper = hideNpcInitiativeRolls && isNpc;
 
-      // Use our custom initiative roller
       await rollInitiative({
         combatant: combatant,
         whisperMode:
@@ -145,12 +121,9 @@ export async function initializeCombatHooks() {
       );
     }
 
-    // Determine if this is an NPC roll that should be hidden
     const isNpc = !this.actor.hasPlayerOwner;
     const shouldWhisper = hideNpcInitiativeRolls && isNpc;
     const rollMode = options.messageOptions?.rollMode;
-
-    // Use our custom initiative roller
     return await rollInitiative({
       combatant: this,
       whisperMode:
