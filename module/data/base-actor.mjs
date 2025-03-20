@@ -221,7 +221,6 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
       current.label =
         game.i18n.localize(CONFIG.EVENTIDE_RP_SYSTEM.hiddenAbilities[key]) ??
         key;
-      console.log(current);
       current.total = current.override
         ? current.override + current.change
         : current.value + current.change;
