@@ -108,8 +108,15 @@
             class="item-control item-unequip"
             title='{{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Equip.label"}}'
             data-action='toggleGear'
+            {{#ifCond item.system.quantity "<=" 0}}
+            disabled
+            {{/ifCond}}
           >
+            {{#ifCond item.system.quantity "<=" 0}}
+              <i class="fa-solid fa-triangle-exclamation"></i>
+            {{else}}
             <i class='fa-solid fa-helmet-battle'></i>
+            {{/ifCond}}
           </a>
           <a
             class='item-control item-edit'

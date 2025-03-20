@@ -42,6 +42,9 @@
     "UiThemeDefault": "Default",
     "UiThemeDark": "Dark",
     "UiThemeLight": "Light",
-    "UiThemeContrast": "High Contrast"
+    "UiThemeContrast": "High Contrast",
+    
+    "ShowGearEquipMessagesName": "Show Gear Equip Messages",
+    "ShowGearEquipMessagesHint": "Display chat messages when gear items are equipped or unequipped."
   }
 }

@@ -61,6 +61,8 @@ export const initChatListeners = () => {
         item.effects.forEach((effect) => effect.update({ disabled: false }));
       } else {
         item.effects.forEach((effect) => effect.update({ disabled: true }));
+        item.update({ "system.equipped": false });
+        erps.messages.createGearEquipMessage(item);
       }
     }
   });
@@ -85,7 +87,7 @@ export const initChatListeners = () => {
       item.actor !== null &&
       game.user.id === triggerPlayer
     ) {
-      erps.messages.featureMessage(item);
+      erps.messages.createFeatureMessage(item);
     }
   });
 
@@ -102,7 +104,7 @@ export const initChatListeners = () => {
       item.parent !== null &&
       game.user.id === triggerPlayer
     ) {
-      erps.messages.deleteStatusMessage(item);
+      erps.messages.createDeleteStatusMessage(item);
     }
   });
 };

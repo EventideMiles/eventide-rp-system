@@ -150,6 +150,19 @@ export const registerSettings = function () {
       SettingsConfig.reloadConfirm();
     },
   });
+
+  // Gear Equipment Messages
+  game.settings.register("eventide-rp-system", "showGearEquipMessages", {
+    name: "SETTINGS.ShowGearEquipMessagesName",
+    hint: "SETTINGS.ShowGearEquipMessagesHint",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: true,
+    onChange: () => {
+      SettingsConfig.reloadConfirm({ world: true });
+    },
+  });
 };
 
 /**

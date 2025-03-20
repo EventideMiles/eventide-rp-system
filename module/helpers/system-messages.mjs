@@ -305,6 +305,9 @@ class ERPSMessageHandler {
    * @returns {Promise<ChatMessage>} The created chat message
    */
   async createGearEquipMessage(item) {
+    // Check if gear equip messages are enabled in settings
+    if (!game.settings.get("eventide-rp-system", "showGearEquipMessages")) return;
+
     const data = {
       item,
       actor: item.parent,

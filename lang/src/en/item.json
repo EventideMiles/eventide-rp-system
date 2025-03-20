@@ -22,6 +22,9 @@
         "Cost": {
           "label": "Cost"
         },
+        "Equipped": {
+          "label": "Equipped"
+        },
         "Quantity": {
           "label": "Quantity"
         },
