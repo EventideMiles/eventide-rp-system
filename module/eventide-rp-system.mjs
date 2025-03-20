@@ -14,9 +14,9 @@ import { EffectCreator } from "./sheets/effect-creator.mjs";
 // Import helper/utility classes and constants.
 import { EVENTIDE_RP_SYSTEM } from "./helpers/config.mjs";
 import { preloadHandlebarsTemplates } from "./helpers/templates.mjs";
-import { registerSettings, getSetting } from "./helpers/settings.mjs";
+import { registerSettings } from "./helpers/settings.mjs";
 import { initializeCombatHooks } from "./helpers/combat.mjs";
-import { initChatListeners } from "./chat/chat-listeners.mjs";
+import { initChatListeners } from "./helpers/chat-listeners.mjs";
 // Import DataModel classes
 import * as models from "./data/_module.mjs";
 import {
@@ -84,6 +84,9 @@ Hooks.once("init", function () {
 
   // Register system settings
   registerSettings();
+
+  // Preload Handlebars templates
+  preloadHandlebarsTemplates();
 
   // Initialize combat hooks
   initializeCombatHooks();
@@ -294,60 +297,3 @@ async function rollItemMacro(itemUuid) {
     item.roll();
   });
 }
-
-/* -------------------------------------------- */
-/*  System Hooks                                */
-/* -------------------------------------------- */
-Hooks.on("updateItem", (item, changed, options, triggerPlayer) => {
-  if (
-    item.type === "status" &&
-    item.system.description &&
-    item.actor !== null &&
-    item.actor !== undefined &&
-    game.user.id === triggerPlayer
-  ) {
-    createStatusMessage(item);
-  } else if (item.type === "gear" && item.actor !== null) {
-    if (item.system.quantity >= 1 && item.system.equipped) {
-      item.effects.forEach((effect) => effect.update({ disabled: false }));
-    } else {
-      item.effects.forEach((effect) => effect.update({ disabled: true }));
-    }
-  }
-});
-
-Hooks.on("createItem", (item, options, triggerPlayer) => {
-  // Status Message Handler
-  if (
-    item.type === "status" &&
-    item.actor !== null &&
-    game.user.id === triggerPlayer
-  ) {
-    createStatusMessage(item);
-  }
-  if (
-    item.type === "feature" &&
-    item.actor !== null &&
-    game.user.id === triggerPlayer
-  ) {
-    featureMessage(item);
-  }
-});
-
-Hooks.on("deleteItem", (item, options, triggerPlayer) => {
-  // Delete Status Message Handler
-  if (
-    item.type === "status" &&
-    item.parent !== null &&
-    game.user.id === triggerPlayer
-  ) {
-    deleteStatusMessage(item);
-  }
-});
-
-Hooks.on("renderChatMessage", (message, [html]) => {
-  if (game.user.isGM) return;
-
-  html.querySelector(".chat-card__effects--ac-check")?.remove();
-  html.querySelector(".secret")?.remove();
-});
