@@ -1,6 +1,66 @@
 import { getSetting } from "./settings.mjs";
 
 /**
+ * Determines critical success/failure states for a roll
+ * @param {Object} options - Options for critical state determination
+ * @param {Roll} options.roll - The roll to check
+ * @param {Object} options.thresholds - Object containing critical thresholds: gotten from hiddenAbilities
+ * @param {Object} options.thresholds.cmin - Minimum value for critical hit
+ * @param {Object} options.thresholds.cmax - Maximum value for critical hit
+ * @param {Object} options.thresholds.fmin - Minimum value for critical miss
+ * @param {Object} options.thresholds.fmax - Maximum value for critical miss
+ * @param {string} options.formula - The roll formula
+ * @param {boolean} [options.critAllowed=true] - Whether critical hits/misses are allowed
+ * @returns {Object} Object containing critical states
+ */
+function determineCriticalStates({
+  roll,
+  thresholds,
+  formula,
+  critAllowed = true,
+}) {
+  // Early return if crits aren't allowed or there are no dice in the formula
+  if (!critAllowed || !formula.includes("d") || !roll.terms[0]?.results) {
+    return {
+      critHit: false,
+      critMiss: false,
+      stolenCrit: false,
+      savedMiss: false,
+    };
+  }
+
+  const dieArray = roll.terms[0].results;
+  const { cmin, cmax, fmin, fmax } = thresholds;
+  const formulaLower = formula.toLowerCase();
+  const isKeepLowest = formulaLower.includes("kl");
+  const isKeepHighest = formulaLower.includes("k") && !isKeepLowest;
+
+  // Check for basic crit hit/miss conditions
+  const hasCritValue = (die) =>
+    die.result <= cmax.total && die.result >= cmin.total;
+  const hasMissValue = (die) =>
+    die.result <= fmax.total && die.result >= fmin.total;
+
+  // Determine base critical states
+  let critHit = dieArray.some(hasCritValue);
+  let critMiss = dieArray.some(hasMissValue);
+
+  // Check for special conditions with advantage/disadvantage
+  const allDiceCrit = dieArray.every(hasCritValue);
+  const allDiceMiss = dieArray.every(hasMissValue);
+
+  // Determine special cases
+  const stolenCrit = critHit && isKeepLowest && !allDiceCrit;
+  const savedMiss = critMiss && isKeepHighest && !allDiceMiss;
+
+  // Adjust final states
+  if (stolenCrit) critHit = false;
+  if (savedMiss) critMiss = false;
+
+  return { critHit, critMiss, stolenCrit, savedMiss };
+}
+
+/**
  * Roll handler for the Eventide RP System
  * This function processes dice rolls for various actions in the game system.
  * It handles critical hits/misses, AC checks against targets, and formats
@@ -37,53 +97,13 @@ const rollHandler = async (
 
   const pickedType = type.toLowerCase();
 
-  let critHit = false;
-  let critMiss = false;
-  let stolenCrit = false;
-  let savedMiss = false;
-
-  if (critAllowed && formula.includes("d")) {
-    const dieArray = result.terms[0].results;
-    const { cmin, cmax, fmin, fmax } = rollData.hiddenAbilities;
-
-    critHit = dieArray.some(
-      (die) => die.result <= cmax.total && die.result >= cmin.total
-    );
-    critMiss = dieArray.some(
-      (die) => die.result <= fmax.total && die.result >= fmin.total
-    );
-
-    stolenCrit =
-      dieArray.some(
-        (die) =>
-          die.result <= cmax.total &&
-          die.result >= cmin.total &&
-          formula.toLowerCase().includes("kl")
-      ) &&
-      !dieArray.every(
-        (die) => die.result <= cmax.total && die.result >= cmin.total
-      );
-
-    savedMiss =
-      dieArray.some(
-        (die) =>
-          die.result >= fmin.total &&
-          die.result <= fmax.total &&
-          formula.toLowerCase().includes("k") &&
-          !formula.toLowerCase().includes("kl")
-      ) &&
-      !dieArray.every(
-        (die) => die.result >= fmin.total && die.result <= fmax.total
-      );
-
-    if (stolenCrit && critHit) {
-      critHit = false;
-    }
-
-    if (savedMiss && critMiss) {
-      critMiss = false;
-    }
-  }
+  // Determine critical states using the helper function
+  const { critHit, critMiss, stolenCrit, savedMiss } = determineCriticalStates({
+    roll: result,
+    thresholds: rollData.hiddenAbilities,
+    formula,
+    critAllowed,
+  });
 
   const targetRollData = addCheck
     ? targetArray.map((target) => ({
