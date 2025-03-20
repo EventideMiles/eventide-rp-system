@@ -1,6 +1,6 @@
 import { clamp } from "../helpers/common-foundry-tasks.mjs";
 import { erpsRollHandler } from "../helpers/roll-dice.mjs";
-import { restoreMessage } from "../helpers/system-messages.mjs";
+import { erpsMessageHandler } from "../helpers/system-messages.mjs";
 
 /**
  * Actor class for the Eventide RP System
@@ -236,7 +236,7 @@ export class EventideRpSystemActor extends Actor {
       await this.deleteEmbeddedDocuments("Item", statusIds);
     }
 
-    return await restoreMessage({
+    return await erpsMessageHandler.createRestoreMessage({
       all,
       resolve,
       power,
