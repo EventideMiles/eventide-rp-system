@@ -25,15 +25,7 @@ import {
   retrieveLocal,
   storeLocal,
 } from "./helpers/common-foundry-tasks.mjs";
-import {
-  createStatusMessage,
-  featureMessage,
-  deleteStatusMessage,
-  restoreMessage,
-  combatPowerMessage,
-  gearTransferMessage,
-  gearEquipMessage,
-} from "./helpers/system-messages.mjs";
+import { erpsMessageHandler } from "./helpers/system-messages.mjs";
 
 /* -------------------------------------------- */
 /*  Init Hook                                   */
@@ -66,15 +58,7 @@ globalThis.erps = {
     SelectAbilityRoll,
     EffectCreator,
   },
-  messages: {
-    createStatusMessage,
-    featureMessage,
-    deleteStatusMessage,
-    restoreMessage,
-    combatPowerMessage,
-    gearTransferMessage,
-    gearEquipMessage,
-  },
+  messages: erpsMessageHandler,
   models,
 };
 

@@ -323,20 +323,29 @@ class ERPSMessageHandler {
 // Create a singleton instance
 export const erpsMessageHandler = new ERPSMessageHandler();
 
+// Add proxy methods to match the names of the individual functions
+erpsMessageHandler.deleteStatusMessage = erpsMessageHandler.createDeleteStatusMessage;
+erpsMessageHandler.restoreMessage = erpsMessageHandler.createRestoreMessage;
+erpsMessageHandler.featureMessage = erpsMessageHandler.createFeatureMessage;
+erpsMessageHandler.combatPowerMessage = erpsMessageHandler.createCombatPowerMessage;
+erpsMessageHandler.gearTransferMessage = erpsMessageHandler.createGearTransferMessage;
+erpsMessageHandler.gearEquipMessage = erpsMessageHandler.createGearEquipMessage;
+erpsMessageHandler.statusMessage = erpsMessageHandler.createStatusMessage;
+
 // Export individual functions for backward compatibility
 export const createStatusMessage = (item) =>
-  messageHandler.createStatusMessage(item);
+  erpsMessageHandler.createStatusMessage(item);
 export const featureMessage = (item) =>
-  messageHandler.createFeatureMessage(item);
+  erpsMessageHandler.createFeatureMessage(item);
 export const deleteStatusMessage = (item, options) =>
-  messageHandler.createDeleteStatusMessage(item, options);
+  erpsMessageHandler.createDeleteStatusMessage(item, options);
 export const createRestoreMessage = (options) =>
-  messageHandler.createRestoreMessage(options);
+  erpsMessageHandler.createRestoreMessage(options);
 // Keep the old name for backward compatibility with macros
 export const restoreMessage = (options) =>
-  messageHandler.createRestoreMessage(options);
+  erpsMessageHandler.createRestoreMessage(options);
 export const combatPowerMessage = (item, options) =>
-  messageHandler.createCombatPowerMessage(item, options);
+  erpsMessageHandler.createCombatPowerMessage(item, options);
 export const gearTransferMessage = (
   item,
   sourceActor,
@@ -344,7 +353,7 @@ export const gearTransferMessage = (
   quantity,
   description
 ) =>
-  messageHandler.createGearTransferMessage(
+  erpsMessageHandler.createGearTransferMessage(
     item,
     sourceActor,
     destActor,
@@ -352,4 +361,4 @@ export const gearTransferMessage = (
     description
   );
 export const gearEquipMessage = (item) =>
-  messageHandler.createGearEquipMessage(item);
+  erpsMessageHandler.createGearEquipMessage(item);
