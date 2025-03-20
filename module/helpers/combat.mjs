@@ -1,4 +1,4 @@
-import { rollInitiative } from "./roll-dice.mjs";
+import { erpsRollHandler } from "./roll-dice.mjs";
 
 /**
  * Initialize combat-related hooks
@@ -32,7 +32,7 @@ export async function initializeCombatHooks() {
 
     if (autoRollNpcInitiative && !combatant.actor.hasPlayerOwner) {
       try {
-        await rollInitiative({
+        await erpsRollHandler.rollInitiative({
           combatant: combatant,
           whisperMode: hideNpcInitiativeRolls,
           customFlavor: `${
@@ -48,7 +48,7 @@ export async function initializeCombatHooks() {
 
     if (autoRollPlayerInitiative && combatant.actor.hasPlayerOwner) {
       try {
-        await rollInitiative({
+        await erpsRollHandler.rollInitiative({
           combatant: combatant,
           whisperMode: false,
           customFlavor: `${
@@ -93,7 +93,7 @@ export async function initializeCombatHooks() {
       const isNpc = !combatant.actor.hasPlayerOwner;
       const shouldWhisper = hideNpcInitiativeRolls && isNpc;
 
-      await rollInitiative({
+      await erpsRollHandler.rollInitiative({
         combatant: combatant,
         whisperMode:
           shouldWhisper || rollMode === "gmroll" || rollMode === "blindroll",
@@ -124,7 +124,7 @@ export async function initializeCombatHooks() {
     const isNpc = !this.actor.hasPlayerOwner;
     const shouldWhisper = hideNpcInitiativeRolls && isNpc;
     const rollMode = options.messageOptions?.rollMode;
-    return await rollInitiative({
+    return await erpsRollHandler.rollInitiative({
       combatant: this,
       whisperMode:
         shouldWhisper || rollMode === "gmroll" || rollMode === "blindroll",

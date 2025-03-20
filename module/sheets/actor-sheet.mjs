@@ -1,5 +1,5 @@
 import { prepareActiveEffectCategories } from "../helpers/effects.mjs";
-import { rollHandler } from "../helpers/roll-dice.mjs";
+import { erpsRollHandler } from "../helpers/roll-dice.mjs";
 
 const { api, sheets } = foundry.applications;
 
@@ -425,7 +425,7 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
 
     // Handle rolls that supply the formula directly.
     if (dataset.roll) {
-      let roll = await rollHandler(dataset, this.actor);
+      let roll = await erpsRollHandler.handleRoll(dataset, this.actor);
     }
   }
 

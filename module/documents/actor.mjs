@@ -1,5 +1,5 @@
 import { clamp } from "../helpers/common-foundry-tasks.mjs";
-import { rollHandler } from "../helpers/roll-dice.mjs";
+import { erpsRollHandler } from "../helpers/roll-dice.mjs";
 import { restoreMessage } from "../helpers/system-messages.mjs";
 
 /**
@@ -113,7 +113,7 @@ export class EventideRpSystemActor extends Actor {
       description,
       acCheck,
     };
-    const roll = await rollHandler(rollData, this);
+    const roll = await erpsRollHandler.handleRoll(rollData, this);
 
     // Only apply damage if user has permission
     if (this.isOwner) {
@@ -189,7 +189,7 @@ export class EventideRpSystemActor extends Actor {
       type: ability,
     };
 
-    return await rollHandler(rollData, this);
+    return await erpsRollHandler.handleRoll(rollData, this);
   }
 
   /**
