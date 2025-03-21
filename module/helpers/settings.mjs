@@ -492,7 +492,8 @@ export const registerSettings = function () {
       hint: "SETTINGS.SoundSettingsHint",
       icon: "fas fa-volume-up",
       type: SoundSettingsApplication,
-      restricted: false,
+      restricted: true,
+      scope: "world",
     });
   });
 };
