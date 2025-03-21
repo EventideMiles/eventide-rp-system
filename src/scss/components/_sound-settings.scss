@@ -1,103 +1,170 @@
 .sound-settings {
   /* Application container styling */
   height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 6px 8px 6px 8px;
   
-  /* Form styling */
-  .sound-settings-form {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    padding: 6px 8px 6px 8px;
+  /* Content area with scrollbar */
+  &__content {
+    flex: 1;
+    overflow-y: auto;
+    margin-right: -8px; /* Offset the container padding */
+    padding-right: 8px; /* Add padding back to the content */
     
-    /* Content area with scrollbar */
-    .sound-settings-content {
-      flex: 1;
-      overflow-y: auto;
-      margin-right: -8px; /* Offset the container padding */
-      padding-right: 8px; /* Add padding back to the content */
-      
-      /* Remove any overflow style overrides */
-      -ms-overflow-style: initial;
-      scrollbar-width: thin;
-      scrollbar-color: var(--eventide-rp-system-input-focus) transparent;
-    
-      /* Styling for the scrollbar */
-      &::-webkit-scrollbar {
-        width: 6px;
-        background-color: transparent;
-        display: block;
+    /* Remove any overflow style overrides */
+    -ms-overflow-style: initial;
+    scrollbar-width: thin;
+    scrollbar-color: var(--eventide-rp-system-input-focus) transparent;
+  
+    /* Styling for the scrollbar */
+    &::-webkit-scrollbar {
+      width: 6px;
+      background-color: transparent;
+      display: block;
+    }
+  
+    &::-webkit-scrollbar-thumb {
+      background-color: var(--eventide-rp-system-input-focus);
+      border-radius: 10px;
+      border: 1px solid var(--eventide-rp-system-input-bg);
+  
+      &:hover {
+        background-color: var(--eventide-rp-system-primary-button-hover);
       }
-    
-      &::-webkit-scrollbar-thumb {
-        background-color: var(--eventide-rp-system-input-focus);
-        border-radius: 10px;
-        border: 1px solid var(--eventide-rp-system-input-bg);
-    
-        &:hover {
-          background-color: var(--eventide-rp-system-primary-button-hover);
-        }
-      }
-    
-      &::-webkit-scrollbar-track {
-        background-color: transparent;
-        margin: 0; /* Remove track margin */
-      }
+    }
+  
+    &::-webkit-scrollbar-track {
+      background-color: transparent;
+      margin: 0; /* Remove track margin */
     }
   }
   
-  .form-group {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    margin-bottom: 10px;
-    padding-bottom: 10px;
+  /* Description text */
+  &__description {
+    color: #c8c8c8; /* Brighter text color for better readability */
+    font-size: 0.9em;
+    margin-top: 4px;
+    margin-bottom: 12px;
+    line-height: 1.4;
   }
   
-  .form-fields {
+  /* Action buttons container */
+  &__actions {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Sound group */
+  &__group {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+  }
+  
+  /* Label for sound inputs */
+  &__label {
+    display: block;
+    margin-bottom: 4px;
+    font-weight: bold;
+  }
+  
+  /* Fields container */
+  &__fields {
     display: flex;
     align-items: center;
+    gap: 5px;
   }
   
-  input[type="text"] {
+  /* Text input */
+  &__input {
     flex: 1;
   }
   
-  button {
-    margin-left: 5px;
-    width: auto;
-    flex: 0 0 auto;
-  }
-  
-  /* Improve readability of hint text */
-  .notes {
+  /* Hint text */
+  &__hint {
     color: #c8c8c8; /* Brighter text color for better readability */
     font-size: 0.9em;
     margin-top: 4px;
     line-height: 1.4;
   }
   
-  /* Style buttons based on data-action attributes */
-  button[data-action="playSound"] {
+  /* Footer area */
+  &__footer {
+    margin-top: 10px;
+    display: flex;
+    width: 100%;
+    flex: 0 0 auto; /* Prevent footer from scrolling */
+    
+    /* Make the save button take full width */
+    .sound-settings__button--save {
+      width: 100%;
+      justify-content: center;
+      padding: 8px;
+      font-weight: bold;
+      text-align: center;
+    }
+  }
+  
+  /* Button styling */
+  &__button {
+    width: auto;
+    flex: 0 0 auto;
+    margin: 0 2px;
+    
+    /* Button variants */
+    &--play {
+      background-color: #4CAF50;
+      color: white;
+    }
+    
+    &--reset {
+      background-color: #f44336;
+      color: white;
+    }
+    
+    &--play-all {
+      background-color: #2196F3;
+      color: white;
+    }
+    
+    &--reset-all {
+      background-color: #f44336;
+      color: white;
+    }
+    
+    &--save {
+      background-color: #4CAF50;
+      color: white;
+    }
+    
+    &--browse {
+      background-color: #607D8B;
+      color: white;
+    }
+  }
+  
+  /* Backward compatibility for data-action selectors */
+  [data-action="playSound"] {
     background-color: #4CAF50;
     color: white;
   }
   
-  button[data-action="resetSound"] {
+  [data-action="resetSound"] {
     background-color: #f44336;
     color: white;
   }
   
-  button[data-action="testAllSounds"] {
+  [data-action="testAllSounds"] {
     background-color: #2196F3;
     color: white;
   }
   
-  button[data-action="resetAllSounds"] {
+  [data-action="resetAllSounds"] {
     background-color: #f44336;
     color: white;
-  }
-  
-  .sheet-footer {
-    margin-top: 10px;
-    justify-content: flex-end;
-    flex: 0 0 auto; /* Prevent footer from scrolling */
   }
 }

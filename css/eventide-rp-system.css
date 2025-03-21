@@ -1997,18 +1997,22 @@
 .sound-settings {
   /* Application container styling */
   height: 100%;
-  /* Form styling */
-  /* Improve readability of hint text */
-  /* Style buttons based on data-action attributes */
-}
-.sound-settings .sound-settings-form {
-  height: 100%;
   display: flex;
   flex-direction: column;
   padding: 6px 8px 6px 8px;
   /* Content area with scrollbar */
+  /* Description text */
+  /* Action buttons container */
+  /* Sound group */
+  /* Label for sound inputs */
+  /* Fields container */
+  /* Text input */
+  /* Hint text */
+  /* Footer area */
+  /* Button styling */
+  /* Backward compatibility for data-action selectors */
 }
-.sound-settings .sound-settings-form .sound-settings-content {
+.sound-settings__content {
   flex: 1;
   overflow-y: auto;
   margin-right: -8px; /* Offset the container padding */
@@ -2019,66 +2023,120 @@
   scrollbar-color: var(--eventide-rp-system-input-focus) transparent;
   /* Styling for the scrollbar */
 }
-.sound-settings .sound-settings-form .sound-settings-content::-webkit-scrollbar {
+.sound-settings__content::-webkit-scrollbar {
   width: 6px;
   background-color: transparent;
   display: block;
 }
-.sound-settings .sound-settings-form .sound-settings-content::-webkit-scrollbar-thumb {
+.sound-settings__content::-webkit-scrollbar-thumb {
   background-color: var(--eventide-rp-system-input-focus);
   border-radius: 10px;
   border: 1px solid var(--eventide-rp-system-input-bg);
 }
-.sound-settings .sound-settings-form .sound-settings-content::-webkit-scrollbar-thumb:hover {
+.sound-settings__content::-webkit-scrollbar-thumb:hover {
   background-color: var(--eventide-rp-system-primary-button-hover);
 }
-.sound-settings .sound-settings-form .sound-settings-content::-webkit-scrollbar-track {
+.sound-settings__content::-webkit-scrollbar-track {
   background-color: transparent;
   margin: 0; /* Remove track margin */
 }
-.sound-settings .form-group {
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  margin-bottom: 10px;
-  padding-bottom: 10px;
+.sound-settings__description {
+  color: #c8c8c8; /* Brighter text color for better readability */
+  font-size: 0.9em;
+  margin-top: 4px;
+  margin-bottom: 12px;
+  line-height: 1.4;
 }
-.sound-settings .form-fields {
+.sound-settings__actions {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+.sound-settings__group {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+}
+.sound-settings__label {
+  display: block;
+  margin-bottom: 4px;
+  font-weight: bold;
+}
+.sound-settings__fields {
   display: flex;
   align-items: center;
+  gap: 5px;
 }
-.sound-settings input[type=text] {
+.sound-settings__input {
   flex: 1;
 }
-.sound-settings button {
-  margin-left: 5px;
-  width: auto;
-  flex: 0 0 auto;
-}
-.sound-settings .notes {
+.sound-settings__hint {
   color: #c8c8c8; /* Brighter text color for better readability */
   font-size: 0.9em;
   margin-top: 4px;
   line-height: 1.4;
 }
-.sound-settings button[data-action=playSound] {
+.sound-settings__footer {
+  margin-top: 10px;
+  display: flex;
+  width: 100%;
+  flex: 0 0 auto; /* Prevent footer from scrolling */
+  /* Make the save button take full width */
+}
+.sound-settings__footer .sound-settings__button--save {
+  width: 100%;
+  justify-content: center;
+  padding: 8px;
+  font-weight: bold;
+  text-align: center;
+}
+.sound-settings__button {
+  width: auto;
+  flex: 0 0 auto;
+  margin: 0 2px;
+  /* Button variants */
+}
+.sound-settings__button--play {
   background-color: #4CAF50;
   color: white;
 }
-.sound-settings button[data-action=resetSound] {
+.sound-settings__button--reset {
   background-color: #f44336;
   color: white;
 }
-.sound-settings button[data-action=testAllSounds] {
+.sound-settings__button--play-all {
   background-color: #2196F3;
   color: white;
 }
-.sound-settings button[data-action=resetAllSounds] {
+.sound-settings__button--reset-all {
   background-color: #f44336;
   color: white;
 }
-.sound-settings .sheet-footer {
-  margin-top: 10px;
-  justify-content: flex-end;
-  flex: 0 0 auto; /* Prevent footer from scrolling */
+.sound-settings__button--save {
+  background-color: #4CAF50;
+  color: white;
+}
+.sound-settings__button--browse {
+  background-color: #607D8B;
+  color: white;
+}
+.sound-settings [data-action=playSound] {
+  background-color: #4CAF50;
+  color: white;
+}
+.sound-settings [data-action=resetSound] {
+  background-color: #f44336;
+  color: white;
+}
+.sound-settings [data-action=testAllSounds] {
+  background-color: #2196F3;
+  color: white;
+}
+.sound-settings [data-action=resetAllSounds] {
+  background-color: #f44336;
+  color: white;
 }
 
 .eventide-rp-system {
@@ -3090,3 +3148,5 @@
 .eventide-rp-system .effects .item .effect-controls {
   border: none;
 }
+
+/*# sourceMappingURL=eventide-rp-system.css.map */

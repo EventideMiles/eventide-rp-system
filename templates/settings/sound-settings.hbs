@@ -1,38 +1,38 @@
-<div class="sound-settings-form">
-  <div class="sound-settings-content">
-    <p class="notes">{{localize "SETTINGS.SoundSettingsDescription"}}</p>
+<div class="sound-settings">
+  <div class="sound-settings__content">
+    <p class="sound-settings__description">{{localize "SETTINGS.SoundSettingsDescription"}}</p>
     
-    <div class="form-group">
-      <button type="button" data-action="testAllSounds">
+    <div class="sound-settings__actions">
+      <button type="button" data-action="testAllSounds" class="sound-settings__button sound-settings__button--play-all">
         <i class="fas fa-play"></i> {{localize "SETTINGS.TestAllSounds"}}
       </button>
-      <button type="button" data-action="resetAllSounds">
+      <button type="button" data-action="resetAllSounds" class="sound-settings__button sound-settings__button--reset-all">
         <i class="fas fa-undo"></i> {{localize "SETTINGS.ResetAllSounds"}}
       </button>
     </div>
     
     {{#each sounds as |sound|}}
-    <div class="form-group">
-      <label for="sound_{{sound.key}}">{{sound.name}}</label>
-      <div class="form-fields">
-        <input type="text" name="sound_{{sound.key}}" value="{{sound.path}}" data-dtype="String">
-        <button type="button" data-action="browseFiles" data-target="sound_{{sound.key}}" data-type="audio">
+    <div class="sound-settings__group">
+      <label for="sound_{{sound.key}}" class="sound-settings__label">{{sound.name}}</label>
+      <div class="sound-settings__fields">
+        <input type="text" name="sound_{{sound.key}}" value="{{sound.path}}" data-dtype="String" class="sound-settings__input">
+        <button type="button" data-action="browseFiles" data-target="sound_{{sound.key}}" data-type="audio" class="sound-settings__button sound-settings__button--browse">
           <i class="fas fa-file-import"></i>
         </button>
-        <button type="button" data-action="playSound" data-key="{{sound.key}}">
+        <button type="button" data-action="playSound" data-key="{{sound.key}}" class="sound-settings__button sound-settings__button--play">
           <i class="fas fa-play"></i>
         </button>
-        <button type="button" data-action="resetSound" data-key="{{sound.key}}" data-default="{{sound.default}}">
+        <button type="button" data-action="resetSound" data-key="{{sound.key}}" data-default="{{sound.default}}" class="sound-settings__button sound-settings__button--reset">
           <i class="fas fa-undo"></i>
         </button>
       </div>
-      <p class="notes">{{sound.hint}}</p>
+      <p class="sound-settings__hint">{{sound.hint}}</p>
     </div>
     {{/each}}
   </div>
   
-  <footer class="sheet-footer flexrow">
-    <button type="submit" name="submit">
+  <footer class="sound-settings__footer">
+    <button type="submit" name="submit" class="sound-settings__button sound-settings__button--save">
       <i class="far fa-save"></i> {{localize "SETTINGS.SaveSoundSettings"}}
     </button>
   </footer>
