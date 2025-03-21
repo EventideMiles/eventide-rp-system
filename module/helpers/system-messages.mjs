@@ -123,10 +123,7 @@ class ERPSMessageHandler {
   async createRestoreMessage({ all, resolve, power, statuses, actor }) {
     const data = { all, resolve, power, statuses, actor };
 
-    // Play status remove sound once, regardless of how many statuses were removed
-    if (statuses?.length > 0 || all) {
-      await erpsSoundManager.playSound("statusRemove");
-    }
+    await erpsSoundManager.playSound("statusRemove");
 
     return this._createChatMessage("restore", data, {
       speaker: erpsRollUtilities.getSpeaker(

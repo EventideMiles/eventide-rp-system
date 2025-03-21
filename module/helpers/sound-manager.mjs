@@ -4,7 +4,7 @@
  */
 export class ERPSSoundManager {
   constructor() {
-    this.sounds = {
+    this._defaultSounds = {
       healing: "systems/eventide-rp-system/assets/sounds/Cure2.wav",
       statusApply: "systems/eventide-rp-system/assets/sounds/jingles_SAX04.ogg",
       statusRemove: "systems/eventide-rp-system/assets/sounds/Cure5.wav",
@@ -14,7 +14,51 @@ export class ERPSSoundManager {
       damage: "systems/eventide-rp-system/assets/sounds/swish_4.wav",
       initiative: "systems/eventide-rp-system/assets/sounds/levelup.wav",
     };
+    
+    // Initialize with default sounds
+    this.sounds = { ...this._defaultSounds };
     this._recentlyPlayedSounds = new Set();
+    
+    // Wait for game to be ready before loading from settings
+    Hooks.once('ready', () => {
+      this.refreshSounds();
+    });
+  }
+
+  /**
+   * Get the default sounds object
+   * @returns {Object} Default sounds mapping
+   */
+  getDefaultSounds() {
+    return this._defaultSounds;
+  }
+
+  /**
+   * Refresh sounds from settings
+   */
+  refreshSounds() {
+    // Only proceed if game settings are available
+    if (!game.settings) return;
+    
+    // Load each sound from settings or use default
+    for (const [key, defaultPath] of Object.entries(this._defaultSounds)) {
+      const settingKey = `sound_${key}`;
+      
+      try {
+        let soundPath = game.settings.get("eventide-rp-system", settingKey);
+        
+        // If empty, use default
+        if (!soundPath || soundPath.trim() === "") {
+          soundPath = defaultPath;
+        }
+        
+        this.sounds[key] = soundPath;
+      } catch (error) {
+        // If setting doesn't exist yet, use default
+        console.log(`Sound setting ${settingKey} not found, using default`);
+        this.sounds[key] = defaultPath;
+      }
+    }
   }
 
   /**
@@ -64,21 +108,12 @@ export class ERPSSoundManager {
   }
 
   /**
-   * Check if a sound file exists
-   * @param {string} soundKey - Key of the sound in this.sounds
-   * @returns {Promise<boolean>} - Whether the sound file exists
+   * Check if a sound exists
+   * @param {string} soundKey - Key of the sound to check
+   * @returns {boolean} Whether the sound exists
    */
-  async soundExists(soundKey) {
-    const soundPath = this.sounds[soundKey];
-    if (!soundPath) return false;
-
-    try {
-      const response = await fetch(soundPath);
-      return response.ok;
-    } catch (error) {
-      console.warn(`Eventide RP System | Error checking sound file: ${error}`);
-      return false;
-    }
+  soundExists(soundKey) {
+    return !!this.sounds[soundKey];
   }
 }
 

@@ -1994,6 +1994,93 @@
   background: var(--eventide-rp-system-initiative-pc);
 }
 
+.sound-settings {
+  /* Application container styling */
+  height: 100%;
+  /* Form styling */
+  /* Improve readability of hint text */
+  /* Style buttons based on data-action attributes */
+}
+.sound-settings .sound-settings-form {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 6px 8px 6px 8px;
+  /* Content area with scrollbar */
+}
+.sound-settings .sound-settings-form .sound-settings-content {
+  flex: 1;
+  overflow-y: auto;
+  margin-right: -8px; /* Offset the container padding */
+  padding-right: 8px; /* Add padding back to the content */
+  /* Remove any overflow style overrides */
+  -ms-overflow-style: initial;
+  scrollbar-width: thin;
+  scrollbar-color: var(--eventide-rp-system-input-focus) transparent;
+  /* Styling for the scrollbar */
+}
+.sound-settings .sound-settings-form .sound-settings-content::-webkit-scrollbar {
+  width: 6px;
+  background-color: transparent;
+  display: block;
+}
+.sound-settings .sound-settings-form .sound-settings-content::-webkit-scrollbar-thumb {
+  background-color: var(--eventide-rp-system-input-focus);
+  border-radius: 10px;
+  border: 1px solid var(--eventide-rp-system-input-bg);
+}
+.sound-settings .sound-settings-form .sound-settings-content::-webkit-scrollbar-thumb:hover {
+  background-color: var(--eventide-rp-system-primary-button-hover);
+}
+.sound-settings .sound-settings-form .sound-settings-content::-webkit-scrollbar-track {
+  background-color: transparent;
+  margin: 0; /* Remove track margin */
+}
+.sound-settings .form-group {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+}
+.sound-settings .form-fields {
+  display: flex;
+  align-items: center;
+}
+.sound-settings input[type=text] {
+  flex: 1;
+}
+.sound-settings button {
+  margin-left: 5px;
+  width: auto;
+  flex: 0 0 auto;
+}
+.sound-settings .notes {
+  color: #c8c8c8; /* Brighter text color for better readability */
+  font-size: 0.9em;
+  margin-top: 4px;
+  line-height: 1.4;
+}
+.sound-settings button[data-action=playSound] {
+  background-color: #4CAF50;
+  color: white;
+}
+.sound-settings button[data-action=resetSound] {
+  background-color: #f44336;
+  color: white;
+}
+.sound-settings button[data-action=testAllSounds] {
+  background-color: #2196F3;
+  color: white;
+}
+.sound-settings button[data-action=resetAllSounds] {
+  background-color: #f44336;
+  color: white;
+}
+.sound-settings .sheet-footer {
+  margin-top: 10px;
+  justify-content: flex-end;
+  flex: 0 0 auto; /* Prevent footer from scrolling */
+}
+
 .eventide-rp-system {
   @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
   @import url("https://fonts.googleapis.com/css2?family=Combo&family=Merienda:wght@300..900&family=Protest+Revolution&family=Underdog&display=swap");
@@ -3003,5 +3090,3 @@
 .eventide-rp-system .effects .item .effect-controls {
   border: none;
 }
-
-/*# sourceMappingURL=eventide-rp-system.css.map */
