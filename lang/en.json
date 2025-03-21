@@ -448,6 +448,7 @@
     "ErrorResettingAllSounds": "Error resetting all sounds",
     "ErrorOpeningFilePicker": "Error opening file picker",
     "ErrorSavingSoundSettings": "Error saving sound settings",
-    "SoundResetToDefault": "Sound for {0} reset to default."
+    "SoundResetToDefault": "Sound for {0} reset to default.",
+    "NoPlayerPermission": "Players do not have permission to change sound settings."
   }
 }
