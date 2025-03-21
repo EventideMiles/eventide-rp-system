@@ -27,7 +27,7 @@
   &--scrollbars {
     // Apply scrollbars to the entire tab content
     .tab {
-      height: 450px; // Fixed height to ensure scrolling happens
+      height: 600px; // Fixed height to ensure scrolling happens
       overflow-y: auto !important;
       -ms-overflow-style: initial !important;
       scrollbar-width: thin !important;

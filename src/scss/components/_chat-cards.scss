@@ -47,6 +47,10 @@
             background-color: colors.$dc;
         }
 
+        &--initiative {
+            background-color: colors.$initiative;
+        }
+
         &--critical-hit {
             background-color: colors.$critical-hit;
         }
@@ -68,10 +72,6 @@
         }
 
         &--status {
-            // display: flex;
-            // justify-content: left;
-            // align-items: left;
-            // padding-left: 48px;
             font-size: 1.125rem;
         }
 
@@ -105,7 +105,9 @@
         color: colors.$card-tan;
         text-align: justify;
         font-size: 0.9rem;
-        padding: 0.01rem;
+        padding: 0.5rem;
+        margin-bottom: 0.5rem;
+        border-radius: 0px 0px 5px 5px;
 
         &--header {
             text-align: justify;
@@ -121,21 +123,147 @@
         }
     }
 
+    &__initiative,
+    &__combat-roll {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 0.5rem;
+        width: 100%;
+
+        &-result {
+            display: flex;
+            justify-content: center;
+            font-family: typography.$font-decorative;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 0.25rem 0;
+            width: 100%;
+        }
+    }
+    
+    &__value {
+        font-size: 2rem;
+        font-weight: bold;
+        font-family: typography.$font-decorative;
+        
+        &--initiative {
+            color: colors.$initiative;
+        }
+        
+        &--power {
+            color: #666666;
+        }
+        
+        &--acro {
+            color: colors.$acro;
+        }
+        
+        &--phys {
+            color: colors.$phys;
+        }
+        
+        &--fort {
+            color: colors.$fort;
+        }
+        
+        &--will {
+            color: colors.$will;
+        }
+        
+        &--wits {
+            color: colors.$wits;
+        }
+        
+        &--gear {
+            color: colors.$gear;
+        }
+        
+        &--damage {
+            color: colors.$damage;
+        }
+        
+        &--heal {
+            color: colors.$heal;
+        }
+        
+        &--unknown {
+            color: colors.$unknown;
+        }
+    }
+
+    &__formula-toggle {
+        display: flex;
+        justify-content: space-between;
+        font-family: var(--font-monospace);
+        font-size: 0.9rem;
+        color: colors.$card-white;
+        background: rgba(50, 50, 50, 0.9);
+        padding: 0.25rem 0.5rem;
+        border-radius: 3px;
+        margin: 0 3px 2px 3px;
+        width: calc(100%);
+        cursor: pointer;
+    }
+    
+    &__formula {
+        font-style: italic;
+    }
+
+    &__roll-details {
+        width: calc(100% - 6px);
+        margin: 0 3px;
+        padding: 0.5rem;
+        background-color: rgba(0, 0, 0, 0.05);
+        border-radius: 3px;
+        font-family: var(--font-monospace);
+        font-size: 0.8rem;
+    }
+    
+    &__roll-term {
+        margin-bottom: 0.25rem;
+        
+        &-formula {
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+        
+        &-results {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.25rem;
+        }
+    }
+    
+    &__die-result {
+        display: inline-block;
+        padding: 0.125rem 0.25rem;
+        border-radius: 3px;
+        background-color: rgba(255, 255, 255, 0.2);
+        
+        &--discarded {
+            text-decoration: line-through;
+            opacity: 0.6;
+        }
+    }
+
     &__effects {
         @extend .underdog-regular;
         text-align: justify;
         font-size: 0.7rem;
-        padding: 0rem;
+        padding: 0;
+        margin: 0;
         color: colors.$card-tan;
-
+        
         &--ac-check {
             border: 3px dashed colors.$hidden-border;
             border-radius: 5px;
             background-color: colors.$hidden-bg;
             padding: 0.0875rem;
-            margin: 0.0875rem;
+            margin: 0 3px;
+            margin-top: 5px;
         }
-
+        
         &--title {
             @extend .protest-revolution-regular;
             text-align: justify;
@@ -167,7 +295,7 @@
             margin-bottom: 0px;
             border: 1px solid colors.$card-white;
         }
-
+        
         &--name {
             font-weight: bolder;
             color: colors.$card-black;
@@ -188,9 +316,9 @@
 
                 &--first,
                 &--last {
-                    font-weight: bold;
-                }
-
+            font-weight: bold;
+        }
+        
                 &--last {
                     border-left: 1px dashed colors.$card-tan;
                     padding-left: 15px;
@@ -223,4 +351,13 @@
         border: none;
         border-top: 1px solid colors.$hr;
     }
+}
+
+// For toggle icon
+.formula-toggle-icon {
+    transition: transform 0.2s ease;
+}
+
+.formula-toggle.active .formula-toggle-icon {
+    transform: rotate(180deg);
 }

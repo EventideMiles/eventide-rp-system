@@ -67,6 +67,17 @@
           </div>
         </div>
       </div>
+      {{#if (eq item.type 'gear')}}
+      <div class="resource checkbox-resource">
+        <div class="checkbox-container">
+          <label class="resource-label">{{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Equipped.label"}}</label>
+          <div class="checkbox-wrapper">
+            <input type="checkbox" class="large-checkbox" name="system.equipped" {{checked system.equipped}}
+              {{#ifCond system.quantity "<=" 0}}disabled{{/ifCond}}/>
+          </div>
+        </div>
+      </div>
+      {{/if}}
     </div>
   </div>
 </header>

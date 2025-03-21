@@ -1,6 +1,6 @@
 import { clamp } from "../helpers/common-foundry-tasks.mjs";
-import { rollHandler } from "../helpers/roll-dice.mjs";
-import { restoreMessage } from "../helpers/system-messages.mjs";
+import { erpsRollHandler } from "../helpers/roll-dice.mjs";
+import { erpsMessageHandler } from "../helpers/system-messages.mjs";
 
 /**
  * Actor class for the Eventide RP System
@@ -104,6 +104,7 @@ export class EventideRpSystemActor extends Actor {
     type = "damage",
     critAllowed = false,
     acCheck = false,
+    soundKey = null,
   }) {
     const rollData = {
       formula,
@@ -112,8 +113,9 @@ export class EventideRpSystemActor extends Actor {
       critAllowed,
       description,
       acCheck,
+      soundKey,
     };
-    const roll = await rollHandler(rollData, this);
+    const roll = await erpsRollHandler.handleRoll(rollData, this);
 
     // Only apply damage if user has permission
     if (this.isOwner) {
@@ -189,7 +191,7 @@ export class EventideRpSystemActor extends Actor {
       type: ability,
     };
 
-    return await rollHandler(rollData, this);
+    return await erpsRollHandler.handleRoll(rollData, this);
   }
 
   /**
@@ -236,7 +238,7 @@ export class EventideRpSystemActor extends Actor {
       await this.deleteEmbeddedDocuments("Item", statusIds);
     }
 
-    return await restoreMessage({
+    return await erpsMessageHandler.createRestoreMessage({
       all,
       resolve,
       power,

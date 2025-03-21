@@ -1,0 +1,69 @@
+@use "../utils/colors" as colors;
+@use "../utils/typography" as typography;
+
+/* Initiative Roll Styling */
+.eventide-initiative-roll {
+  background: rgba(0, 0, 0, 0.05);
+  border: 1px solid colors.$input-border;
+  border-radius: 5px;
+  padding: 8px;
+  margin: 5px 0;
+  font-family: typography.$font-primary;
+}
+
+.initiative-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+  border-bottom: 1px solid colors.$hr;
+  padding-bottom: 5px;
+}
+
+.initiative-actor-name {
+  @extend .protest-revolution-regular;
+  font-size: 1.1em;
+  color: colors.$card-black;
+}
+
+.initiative-actor-type {
+  font-size: 0.9em;
+  padding: 2px 6px;
+  border-radius: 3px;
+  background: colors.$initiative;
+  color: colors.$card-white;
+}
+
+.initiative-result {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 10px 0;
+  font-size: 1.2em;
+}
+
+.initiative-value {
+  @extend .protest-revolution-regular;
+  font-size: 1.4em;
+  color: colors.$initiative;
+}
+
+.initiative-formula {
+  font-family: var(--font-monospace);
+  font-size: 0.9em;
+  color: colors.$card-white;
+  background: colors.$initiative-formula-bg;
+  padding: 3px 8px;
+  border-radius: 3px;
+  margin: 0 3px;
+  width: calc(100% - 6px);
+}
+
+/* Different styling for NPCs vs PCs */
+.initiative-actor-type:contains("NPC") {
+  background: colors.$initiative-npc;
+}
+
+.initiative-actor-type:contains("Character") {
+  background: colors.$initiative-pc;
+}

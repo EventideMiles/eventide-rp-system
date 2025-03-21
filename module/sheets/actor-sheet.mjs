@@ -1,5 +1,5 @@
 import { prepareActiveEffectCategories } from "../helpers/effects.mjs";
-import { rollHandler } from "../helpers/roll-dice.mjs";
+import { erpsRollHandler } from "../helpers/roll-dice.mjs";
 
 const { api, sheets } = foundry.applications;
 
@@ -17,10 +17,15 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
 
   /** @override */
   static DEFAULT_OPTIONS = {
-    classes: ["eventide-rp-system", "actor", "eventide-character-sheet", "eventide-character-sheet--scrollbars"],
+    classes: [
+      "eventide-rp-system",
+      "actor",
+      "eventide-character-sheet",
+      "eventide-character-sheet--scrollbars",
+    ],
     position: {
       width: 600,
-      height: 700,
+      height: 750,
     },
     actions: {
       onEditImage: this._onEditImage,
@@ -154,8 +159,12 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
   _getTabs(parts) {
     // If you have sub-tabs this is necessary to change
     const tabGroup = "primary";
-    // Default tab for first time it's rendered this session
-    if (!this.tabGroups[tabGroup]) this.tabGroups[tabGroup] = "features";
+
+    // If no tab is selected yet, use the default from settings
+    if (!this.tabGroups[tabGroup]) {
+      this.tabGroups[tabGroup] = this.defaultTab;
+    }
+
     return parts.reduce((tabs, partId) => {
       const tab = {
         cssClass: "",
@@ -196,6 +205,29 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
       tabs[partId] = tab;
       return tabs;
     }, {});
+  }
+
+  /**
+   * Get the default tab for this sheet from settings
+   * @returns {string} The default tab ID
+   */
+  get defaultTab() {
+    // Default to "features" if settings aren't available
+    let defaultTab = "features";
+
+    // Try to get the setting if available
+    if (game.settings && game.settings.get) {
+      try {
+        defaultTab = game.settings.get(
+          "eventide-rp-system",
+          "defaultCharacterTab"
+        );
+      } catch (error) {
+        console.warn("Could not get default tab setting, using 'features'");
+      }
+    }
+
+    return defaultTab;
   }
 
   /**
@@ -367,7 +399,7 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
   static async _toggleGear(event, target) {
     const gear = this._getEmbeddedDocument(target);
     await gear.update({ "system.equipped": !gear.system.equipped });
-    erps.messages.gearEquipMessage(gear);
+    erps.messages.createGearEquipMessage(gear);
   }
 
   /**
@@ -393,7 +425,7 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
 
     // Handle rolls that supply the formula directly.
     if (dataset.roll) {
-      let roll = await rollHandler(dataset, this.actor);
+      let roll = await erpsRollHandler.handleRoll(dataset, this.actor);
     }
   }
 

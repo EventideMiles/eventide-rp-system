@@ -1,4 +1,5 @@
 import { EventideSheetHelpers } from "./base/eventide-sheet-helpers.mjs";
+import { erpsSoundManager } from "../helpers/sound-manager.mjs";
 
 /**
  * Application for managing damage to targeted tokens.
@@ -124,22 +125,38 @@ export class DamageTargets extends EventideSheetHelpers {
       formula: form.formula.value || "1",
       description: form.description.value || "",
       type: form.isHeal.checked ? "heal" : "damage",
+      soundKey: form.isHeal.checked ? "healing" : "damage",
     };
+    const originalFormula = damageOptions.formula;
     if (
       (damageOptions.type === "heal" && this.selectedArray.length > 0) ||
       (this.selectedArray.length > 0 && this.targetArray.length === 0) ||
       (this.selectedArray.length > 0 && this.gmCheck === "player")
     ) {
       await Promise.all(
-        this.selectedArray.map((token) =>
-          token.actor.damageResolve(damageOptions)
-        )
+        this.selectedArray.map((token) => {
+          damageOptions.formula =
+            damageOptions.type !== "heal" &&
+            token.actor.system.hiddenAbilities.vuln.total > 0
+              ? `${originalFormula} + ${Math.abs(
+                  token.actor.system.hiddenAbilities.vuln.total
+                )}`
+              : originalFormula;
+          token.actor.damageResolve(damageOptions);
+        })
       );
     } else {
       await Promise.all(
-        this.targetArray.map((token) =>
-          token.actor.damageResolve(damageOptions)
-        )
+        this.targetArray.map((token) => {
+          damageOptions.formula =
+            damageOptions.type !== "heal" &&
+            token.actor.system.hiddenAbilities.vuln.total > 0
+              ? `${originalFormula} + ${Math.abs(
+                  token.actor.system.hiddenAbilities.vuln.total
+                )}`
+              : originalFormula;
+          token.actor.damageResolve(damageOptions);
+        })
       );
     }
 

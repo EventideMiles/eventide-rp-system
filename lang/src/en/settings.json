@@ -1,0 +1,99 @@
+{
+  "SETTINGS": {
+    "MenuName": "Eventide RP System Settings",
+    "MenuHint": "Configure settings for the Eventide RP System.",
+    "InitativeFormulaName": "Initiative Formula",
+    "InitativeFormulaHint": "Formula used to calculate initiative in combat. Cannot be empty. Leave empty and save to reset to default.",
+    "InitiativeFormulaReloadTitle": "Reload Recommended",
+    "InitiativeFormulaReloadPrompt": "The initiative formula has been updated. It's recommended to reload the game for this change to fully take effect. Reload now?",
+    
+    "InitiativeDecimalsName": "Initiative Decimal Places",
+    "InitiativeDecimalsHint": "Number of decimal places to display for initiative values.",
+    
+    "DefaultCharacterTabName": "Default Character Sheet Tab",
+    "DefaultCharacterTabHint": "The tab that will be active by default when opening a character sheet.",
+    "TabFeatures": "Features",
+    "TabBiography": "Biography",
+    "TabStatuses": "Statuses",
+    "TabGear": "Gear",
+    "TabCombatPowers": "Combat Powers",
+    
+    "DefaultDiceRollModeName": "Default Dice Roll Mode",
+    "DefaultDiceRollModeHint": "The default visibility mode for dice rolls.",
+    "DiceRollModePublic": "Public Roll",
+    "DiceRollModeGM": "GM Roll",
+    "DiceRollModeBlind": "Blind Roll",
+    "DiceRollModeSelf": "Self Roll",
+    
+    "AutoRollNpcInitiativeName": "Auto-Roll NPC Initiative",
+    "AutoRollNpcInitiativeHint": "Automatically roll initiative for NPCs when added to initiative.",
+    "AutoRollPlayerInitiativeName": "Auto-Roll Player Initiative",
+    "AutoRollPlayerInitiativeHint": "Automatically roll initiative for players when added to initiative.",
+    
+    "HideNpcInitiativeRollsName": "Hide NPC Initiative Rolls",
+    "HideNpcInitiativeRollsHint": "Hide the initiative roll results for NPCs from players.",
+    
+    "DefaultCombatRoundDurationName": "Default Combat Round Duration",
+    "DefaultCombatRoundDurationHint": "Default duration of a combat round in seconds.",
+    
+    "UiThemeName": "UI Theme",
+    "UiThemeHint": "Choose a visual theme for the user interface.",
+    "UiThemeDefault": "Default",
+    "UiThemeDark": "Dark",
+    "UiThemeLight": "Light",
+    "UiThemeContrast": "High Contrast",
+    
+    "ShowGearEquipMessagesName": "Show Gear Equip Messages",
+    "ShowGearEquipMessagesHint": "If enabled, chat messages will be created when gear items are equipped or unequipped.",
+    
+    "EnableSystemSoundsName": "Enable System Sounds",
+    "EnableSystemSoundsHint": "Enable or disable custom sound effects for the system.",
+    
+    "SystemSoundVolumeName": "System Sound Volume",
+    "SystemSoundVolumeHint": "Adjust the volume of system sound effects.",
+    
+    "SoundSettingsName": "Sound Effects",
+    "SoundSettingsLabel": "Configure Sound Effects",
+    "SoundSettingsHint": "Configure custom sound effects for various game events.",
+    "SoundSettingsTitle": "Eventide RP System Sound Settings",
+    "SoundSettingsDescription": "Customize the sound effects used by the Eventide RP System. Leave a field blank to reset to default.",
+    "TestAllSounds": "Test All Sounds",
+    "ResetAllSounds": "Reset All Sounds",
+    "SaveSoundSettings": "Save Sound Settings",
+    "SoundSettingsSaved": "Sound settings saved successfully.",
+    
+    "SoundHealingName": "Healing Sound",
+    "SoundHealingHint": "Sound played when healing is applied.",
+    
+    "SoundDamageName": "Damage Sound",
+    "SoundDamageHint": "Sound played when damage is applied.",
+    
+    "SoundStatusApplyName": "Status Apply Sound",
+    "SoundStatusApplyHint": "Sound played when a status effect is applied.",
+    
+    "SoundStatusRemoveName": "Status Remove Sound",
+    "SoundStatusRemoveHint": "Sound played when a status effect is removed.",
+    
+    "SoundGearEquipName": "Gear Equip Sound",
+    "SoundGearEquipHint": "Sound played when gear is equipped.",
+    
+    "SoundGearUnequipName": "Gear Unequip Sound",
+    "SoundGearUnequipHint": "Sound played when gear is unequipped.",
+    
+    "SoundCombatPowerName": "Combat Power Sound",
+    "SoundCombatPowerHint": "Sound played when a combat power is used.",
+    
+    "SoundInitiativeName": "Initiative Sound",
+    "SoundInitiativeHint": "Sound played when initiative is rolled.",
+    
+    "NoSoundSelected": "No sound file selected.",
+    "ErrorPlayingSound": "Error playing sound",
+    "ErrorResettingSound": "Error resetting sound",
+    "ErrorTestingSounds": "Error testing sounds",
+    "AllSoundsReset": "All sounds reset to defaults. Click Save to apply changes.",
+    "ErrorResettingAllSounds": "Error resetting all sounds",
+    "ErrorOpeningFilePicker": "Error opening file picker",
+    "ErrorSavingSoundSettings": "Error saving sound settings",
+    "SoundResetToDefault": "Sound for {0} reset to default."
+  }
+}

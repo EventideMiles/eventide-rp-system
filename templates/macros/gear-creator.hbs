@@ -124,18 +124,16 @@
           </select>
         </div>
       {{/each}}
-      {{#if (eq playerMode false)}}
-        {{#each hiddenAbilities}}
-          <div class="base-form__group gear-creator__effect-group">
-            <label class="base-form__label gear-creator__effect-label" for="{{lowercase this}}">{{capitalize (localize (lookup @root.config.hiddenAbilityAbbreviations this))}}</label>
-            <input class="base-form__number-input gear-creator__effect-input" type="number" id="{{lowercase this}}" name="{{lowercase this}}" value="0">
-            <select class="base-form__select gear-creator__effect-select" id="{{lowercase this}}-mode" name="{{lowercase this}}-mode">
-              <option value="add">{{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.Add"}}</option>
-              <option value="override">{{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.Override"}}</option>
-            </select>
-          </div>
-        {{/each}}
-      {{/if}}
+      {{#each hiddenAbilities}}
+        <div class="base-form__group gear-creator__effect-group">
+          <label class="base-form__label gear-creator__effect-label" for="{{lowercase this}}">{{capitalize (localize (lookup @root.config.hiddenAbilityAbbreviations this))}}</label>
+          <input class="base-form__number-input gear-creator__effect-input" type="number" id="{{lowercase this}}" name="{{lowercase this}}" value="0">
+          <select class="base-form__select gear-creator__effect-select" id="{{lowercase this}}-mode" name="{{lowercase this}}-mode">
+            <option value="add">{{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.Add"}}</option>
+            <option value="override">{{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.Override"}}</option>
+          </select>
+        </div>
+      {{/each}}
     </div>
   </div>
 

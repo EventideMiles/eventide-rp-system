@@ -33,6 +33,13 @@ export class EventideSheetHelpers extends HandlebarsApplicationMixin(
     );
   }
   /**
+   * Returns an array of hidden ability keys that are accessible to players.
+   * @returns {string[]} Array of player-accessible hidden ability keys (vuln)
+   */
+  static get playerAccessableHiddenAbilities() {
+    return ["vuln"];
+  }
+  /**
    * Returns an array of hidden ability keys defined in the system configuration.
    * @returns {string[]} Array of hidden ability keys (dice, cmin, fmax)
    */

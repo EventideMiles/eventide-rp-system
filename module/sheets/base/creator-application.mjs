@@ -47,7 +47,15 @@ export class CreatorApplication extends EventideSheetHelpers {
       ];
     }
     this.abilities = [...EventideSheetHelpers.abilities];
-    this.hiddenAbilities = [...EventideSheetHelpers.hiddenAbilities];
+    this.hiddenAbilities = [
+      ...EventideSheetHelpers.playerAccessableHiddenAbilities,
+    ];
+    if (!playerMode) {
+      this.hiddenAbilities = [
+        ...this.hiddenAbilities,
+        ...EventideSheetHelpers.hiddenAbilities,
+      ];
+    }
     if (advanced) {
       this.hiddenAbilities = [
         ...this.hiddenAbilities,
@@ -189,7 +197,7 @@ export class CreatorApplication extends EventideSheetHelpers {
               : "override"
           }`,
           mode:
-            mode === "add"
+            mode === "add" || mode === "advantage" || mode === "disadvantage"
               ? CONST.ACTIVE_EFFECT_MODES.ADD
               : CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
           value: value,
@@ -198,33 +206,31 @@ export class CreatorApplication extends EventideSheetHelpers {
       })
       .filter((e) => e !== null);
 
-    if (this.gmCheck === "gm" && !this.playerMode) {
-      hiddenEffects = this.hiddenAbilities
-        .map((ability) => {
-          const value = parseInt(form[ability.toLowerCase()].value);
-          if (value === 0) return null;
-          const mode = form[`${ability.toLowerCase()}-mode`].value;
+    hiddenEffects = this.hiddenAbilities
+      .map((ability) => {
+        const value = parseInt(form[ability.toLowerCase()].value);
+        if (value === 0) return null;
+        const mode = form[`${ability.toLowerCase()}-mode`].value;
 
-          return {
-            key: `system.hiddenAbilities.${ability.toLowerCase()}.${
-              mode === "add"
-                ? "change"
-                : mode === "advantage"
-                ? "diceAdjustments.advantage"
-                : mode === "disadvantage"
-                ? "diceAdjustments.disadvantage"
-                : "override"
-            }`,
-            mode:
-              mode === "add"
-                ? CONST.ACTIVE_EFFECT_MODES.ADD
-                : CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
-            value: value,
-            priority: 0,
-          };
-        })
-        .filter((e) => e !== null);
-    }
+        return {
+          key: `system.hiddenAbilities.${ability.toLowerCase()}.${
+            mode === "add"
+              ? "change"
+              : mode === "advantage"
+              ? "diceAdjustments.advantage"
+              : mode === "disadvantage"
+              ? "diceAdjustments.disadvantage"
+              : "override"
+          }`,
+          mode:
+            mode === "add"
+              ? CONST.ACTIVE_EFFECT_MODES.ADD
+              : CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
+          value: value,
+          priority: 0,
+        };
+      })
+      .filter((e) => e !== null);
     // Save preferences to local storage
     let storageData = {
       [`${this.keyType}_${this.number}_img`]: img,
@@ -298,8 +304,8 @@ export class CreatorApplication extends EventideSheetHelpers {
       await game.items.createDocument(itemData);
     }
 
-    let packId = this.gmCheck === "gm" ? "custom" : "player";
-    let packLabel = this.gmCheck === "gm" ? "Custom" : "Player";
+    let packId = !this.playerMode ? "custom" : "player";
+    let packLabel = !this.playerMode ? "Custom " : "Player ";
     if (type === "gear") {
       packId += "gear";
       packLabel += "Gear";
@@ -313,11 +319,18 @@ export class CreatorApplication extends EventideSheetHelpers {
 
     let pack = game.packs.get(`world.${packId}`);
     if (!pack) {
-      pack = await CompendiumCollection.createCompendium({
+      const packData = {
         name: packId,
         label: packLabel,
         type: "Item",
-      });
+      };
+
+      if (packId.includes("player")) {
+        packData.ownership = {
+          PLAYER: "OWNER",
+        };
+      }
+      pack = await CompendiumCollection.createCompendium(packData);
     }
 
     await Item.create(itemData, {

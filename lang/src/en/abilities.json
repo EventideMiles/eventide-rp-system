@@ -8,12 +8,12 @@
       "Wits": { "long": "Wits", "abbr": "wits" }
     },
     "HiddenAbilities": {
-      "Cmax": { "long": "Crit^", "abbr": "cmax" },
-      "Cmin": { "long": "Critv", "abbr": "cmin" },
+      "Cmax": { "long": "Critical Upper Limit", "abbr": "cmax" },
+      "Cmin": { "long": "Critical Lower Limit", "abbr": "cmin" },
       "Dice": { "long": "Dice", "abbr": "dice" },
-      "Fmax": { "long": "Fail^", "abbr": "fmax" },
-      "Fmin": { "long": "Failv", "abbr": "fmin" },
-      "Sens": { "long": "Sens", "abbr": "sens" }
+      "Fmax": { "long": "Fail Upper Limit", "abbr": "fmax" },
+      "Fmin": { "long": "Fail Lower Limit", "abbr": "fmin" },
+      "Vuln": { "long": "Vulnerability", "abbr": "vuln" }
     },
     "RollTypes": {
       "Flat": "Flat",

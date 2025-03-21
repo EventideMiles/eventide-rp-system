@@ -183,7 +183,7 @@ export class GearTransfer extends EventideSheetHelpers {
     }
 
     // Create chat message about the transfer
-    await erps.messages.gearTransferMessage(
+    await erps.messages.createGearTransferMessage(
       sourceItem,
       sourceActor,
       destActor,

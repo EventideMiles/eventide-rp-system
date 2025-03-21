@@ -60,3 +60,36 @@ http://www.apache.org/licenses/LICENSE-2.0
 ### By Marek Szturc under Unsplash license from unsplash.com
 
 - wolf-sunset.jpg
+
+## SOUND LICENSES
+
+### By Someoneman under CC0 from opengameart.org
+
+- Cure2.wav
+- Cure5.wav
+
+### By Otto Halmén under CC-BY from opengameart.org
+
+- Death-Is-Just-Another-Path.ogg
+
+### By artisticdude under CC-BY from opengameart.org
+
+- swish_4.wav
+
+### By Kenney.nl under CC-BY from opengameart.org
+
+- cloth3.ogg
+- clothBelt2.ogg
+- jingles_SAX04.ogg
+
+### By Snabisch under CC-BY from opengameart.org
+
+- Bad-SpeechPSG3.mp3
+
+### Sound package from Heroes of Hawks Haven By Tuomo Untinen under CC-BY from opengameart.org
+
+- levelup.wav
+
+### By Little Robot Sound Factory under CC-BY from opengameart.org : www.littlerobotsoundfactory.com
+
+- trap_00.wav

@@ -51,11 +51,28 @@
   --eventide-rp-system-chat-details-miss: #C70039b3;
   --eventide-rp-system-chat-hr: #c9c7b8;
 
+  // initiative
+  --eventide-rp-system-initiative: #3498db;
+  --eventide-rp-system-initiative-npc: #e67e22;
+  --eventide-rp-system-initiative-pc: #2ecc71;
+  --eventide-rp-system-initiative-formula-bg: rgba(52, 152, 219, 0.85);
+
   // critical
   --eventide-rp-system-critical-hit: #2D1499b3;
   --eventide-rp-system-critical-miss: #4e0101b3;
   --eventide-rp-system-saved-miss: #4A777Ab3;
   --eventide-rp-system-stolen-crit: #563C5Cb3;
+
+  // formula backgrounds
+  --eventide-rp-system-acro-formula-bg: rgba(191, 68, 0, 0.85);
+  --eventide-rp-system-phys-formula-bg: rgba(168, 3, 3, 0.85);
+  --eventide-rp-system-fort-formula-bg: rgba(45, 104, 45, 0.85);
+  --eventide-rp-system-will-formula-bg: rgba(106, 27, 154, 0.85);
+  --eventide-rp-system-wits-formula-bg: rgba(14, 67, 128, 0.85);
+  --eventide-rp-system-gear-formula-bg: rgba(139, 69, 19, 0.85);
+  --eventide-rp-system-damage-formula-bg: rgba(106, 4, 4, 0.85);
+  --eventide-rp-system-heal-formula-bg: rgba(203, 142, 0, 0.85);
+  --eventide-rp-system-unknown-formula-bg: rgba(83, 83, 83, 0.85);
 
   // form elements
   --eventide-rp-system-input-bg: #ffffff;
@@ -96,8 +113,20 @@
   --eventide-rp-system-danger-button-text: #ffffff;
   --eventide-rp-system-danger-button-border: #990000;
   --eventide-rp-system-danger-button-hover: #ff0000;
+  
+  // Sound settings button colors
+  --eventide-rp-system-play-button-bg: #4CAF50;
+  --eventide-rp-system-play-button-text: #ffffff;
+  
+  --eventide-rp-system-reset-button-bg: #f44336;
+  --eventide-rp-system-reset-button-text: #ffffff;
+  
+  --eventide-rp-system-play-all-button-bg: #2196F3;
+  --eventide-rp-system-play-all-button-text: #ffffff;
+  
+  --eventide-rp-system-browse-button-bg: #607D8B;
+  --eventide-rp-system-browse-button-text: #ffffff;
 }
-
 
 // Dark theme colors
 .theme-dark {
@@ -152,11 +181,28 @@
   --eventide-rp-system-chat-details-miss: #C70039b3;
   --eventide-rp-system-chat-hr: #c9c7b8;
 
+  // initiative
+  --eventide-rp-system-initiative: #3498db;
+  --eventide-rp-system-initiative-npc: #e67e22;
+  --eventide-rp-system-initiative-pc: #2ecc71;
+  --eventide-rp-system-initiative-formula-bg: rgba(52, 152, 219, 0.85);
+
   // critical
   --eventide-rp-system-critical-hit: #2D1499b3;
   --eventide-rp-system-critical-miss: #4e0101b3;
   --eventide-rp-system-saved-miss: #4A777Ab3;
   --eventide-rp-system-stolen-crit: #563C5Cb3;
+
+  // formula backgrounds
+  --eventide-rp-system-acro-formula-bg: rgba(191, 68, 0, 0.85);
+  --eventide-rp-system-phys-formula-bg: rgba(168, 3, 3, 0.85);
+  --eventide-rp-system-fort-formula-bg: rgba(45, 104, 45, 0.85);
+  --eventide-rp-system-will-formula-bg: rgba(106, 27, 154, 0.85);
+  --eventide-rp-system-wits-formula-bg: rgba(14, 67, 128, 0.85);
+  --eventide-rp-system-gear-formula-bg: rgba(139, 69, 19, 0.85);
+  --eventide-rp-system-damage-formula-bg: rgba(106, 4, 4, 0.85);
+  --eventide-rp-system-heal-formula-bg: rgba(203, 142, 0, 0.85);
+  --eventide-rp-system-unknown-formula-bg: rgba(83, 83, 83, 0.85);
 
   // form elements
   --eventide-rp-system-input-bg: #1e2430;
@@ -197,6 +243,19 @@
   --eventide-rp-system-danger-button-text: #ffffff;
   --eventide-rp-system-danger-button-border: #990000;
   --eventide-rp-system-danger-button-hover: #ff0000;
+  
+  // Sound settings button colors
+  --eventide-rp-system-play-button-bg: #4CAF50;
+  --eventide-rp-system-play-button-text: #ffffff;
+  
+  --eventide-rp-system-reset-button-bg: #f44336;
+  --eventide-rp-system-reset-button-text: #ffffff;
+  
+  --eventide-rp-system-play-all-button-bg: #2196F3;
+  --eventide-rp-system-play-all-button-text: #ffffff;
+  
+  --eventide-rp-system-browse-button-bg: #607D8B;
+  --eventide-rp-system-browse-button-text: #ffffff;
 }
 
 $c-white: var(--eventide-rp-system-c-white);
@@ -256,6 +315,21 @@ $miss: var(--eventide-rp-system-chat-details-miss);
 
 $hr: var(--eventide-rp-system-chat-hr);
 
+$initiative: var(--eventide-rp-system-initiative);
+$initiative-npc: var(--eventide-rp-system-initiative-npc);
+$initiative-pc: var(--eventide-rp-system-initiative-pc);
+$initiative-formula-bg: var(--eventide-rp-system-initiative-formula-bg);
+
+$acro-formula-bg: var(--eventide-rp-system-acro-formula-bg);
+$phys-formula-bg: var(--eventide-rp-system-phys-formula-bg);
+$fort-formula-bg: var(--eventide-rp-system-fort-formula-bg);
+$will-formula-bg: var(--eventide-rp-system-will-formula-bg);
+$wits-formula-bg: var(--eventide-rp-system-wits-formula-bg);
+$gear-formula-bg: var(--eventide-rp-system-gear-formula-bg);
+$damage-formula-bg: var(--eventide-rp-system-damage-formula-bg);
+$heal-formula-bg: var(--eventide-rp-system-heal-formula-bg);
+$unknown-formula-bg: var(--eventide-rp-system-unknown-formula-bg);
+
 // Form element colors
 $input-bg: var(--eventide-rp-system-input-bg);
 $input-hover: var(--eventide-rp-system-input-hover);
@@ -301,6 +375,19 @@ $danger-button-bg: var(--eventide-rp-system-danger-button-bg);
 $danger-button-text: var(--eventide-rp-system-danger-button-text);
 $danger-button-border: var(--eventide-rp-system-danger-button-border);
 $danger-button-hover: var(--eventide-rp-system-danger-button-hover);
+
+// Sound settings button colors
+$play-button-bg: var(--eventide-rp-system-play-button-bg);
+$play-button-text: var(--eventide-rp-system-play-button-text);
+
+$reset-button-bg: var(--eventide-rp-system-reset-button-bg);
+$reset-button-text: var(--eventide-rp-system-reset-button-text);
+
+$play-all-button-bg: var(--eventide-rp-system-play-all-button-bg);
+$play-all-button-text: var(--eventide-rp-system-play-all-button-text);
+
+$browse-button-bg: var(--eventide-rp-system-browse-button-bg);
+$browse-button-text: var(--eventide-rp-system-browse-button-text);
 
 // currently unused
 $app-bg: linear-gradient(to bottom, #004d9f8a, #0029708a);
