@@ -88,11 +88,11 @@ class SoundSettingsApplication extends HandlebarsApplicationMixin(
           false
         );
       } else {
-        ui.notifications.warn("No sound file selected.");
+        ui.notifications.warn(game.i18n.localize("SETTINGS.NoSoundSelected"));
       }
     } catch (error) {
       console.error("Error in _onPlaySound:", error);
-      ui.notifications.error("Error playing sound");
+      ui.notifications.error(game.i18n.localize("SETTINGS.ErrorPlayingSound"));
     }
   }
 
@@ -115,7 +115,7 @@ class SoundSettingsApplication extends HandlebarsApplicationMixin(
       input.dispatchEvent(new Event("change"));
     } catch (error) {
       console.error("Error in _onResetSound:", error);
-      ui.notifications.error("Error resetting sound");
+      ui.notifications.error(game.i18n.localize("SETTINGS.ErrorResettingSound"));
     }
   }
 
@@ -145,7 +145,7 @@ class SoundSettingsApplication extends HandlebarsApplicationMixin(
       }
     } catch (error) {
       console.error("Error in _onTestAllSounds:", error);
-      ui.notifications.error("Error testing sounds");
+      ui.notifications.error(game.i18n.localize("SETTINGS.ErrorTestingSounds"));
     }
   }
 
@@ -167,11 +167,11 @@ class SoundSettingsApplication extends HandlebarsApplicationMixin(
         // as we'll notify the user to save changes
       }
       ui.notifications.info(
-        "All sounds reset to defaults. Click Save to apply changes."
+        game.i18n.localize("SETTINGS.AllSoundsReset")
       );
     } catch (error) {
       console.error("Error in _onResetAllSounds:", error);
-      ui.notifications.error("Error resetting all sounds");
+      ui.notifications.error(game.i18n.localize("SETTINGS.ErrorResettingAllSounds"));
     }
   }
 
@@ -204,7 +204,7 @@ class SoundSettingsApplication extends HandlebarsApplicationMixin(
       return fp.browse();
     } catch (error) {
       console.error("Error in _onBrowseFiles:", error);
-      ui.notifications.error("Error opening file picker");
+      ui.notifications.error(game.i18n.localize("SETTINGS.ErrorOpeningFilePicker"));
     }
   }
 
@@ -245,7 +245,7 @@ class SoundSettingsApplication extends HandlebarsApplicationMixin(
       return true;
     } catch (error) {
       console.error("Error in _onSubmit:", error);
-      ui.notifications.error("Error saving sound settings");
+      ui.notifications.error(game.i18n.localize("SETTINGS.ErrorSavingSoundSettings"));
       return false;
     }
   }
@@ -255,6 +255,30 @@ class SoundSettingsApplication extends HandlebarsApplicationMixin(
  * Register system settings for the Eventide RP System
  */
 export const registerSettings = function () {
+  // System Sound Settings
+  game.settings.register("eventide-rp-system", "enableSystemSounds", {
+    name: "SETTINGS.EnableSystemSoundsName",
+    hint: "SETTINGS.EnableSystemSoundsHint",
+    scope: "client",
+    config: true,
+    type: Boolean,
+    default: true,
+  });
+
+  game.settings.register("eventide-rp-system", "systemSoundVolume", {
+    name: "SETTINGS.SystemSoundVolumeName",
+    hint: "SETTINGS.SystemSoundVolumeHint",
+    scope: "client",
+    config: true,
+    type: Number,
+    default: 0.5,
+    range: {
+      min: 0,
+      max: 1,
+      step: 0.1,
+    },
+  });
+
   // Initative String
   game.settings.register("eventide-rp-system", "initativeFormula", {
     name: "SETTINGS.InitativeFormulaName",
@@ -305,23 +329,6 @@ export const registerSettings = function () {
     },
   });
 
-  // Default Tab
-  game.settings.register("eventide-rp-system", "defaultCharacterTab", {
-    name: "SETTINGS.DefaultCharacterTabName",
-    hint: "SETTINGS.DefaultCharacterTabHint",
-    scope: "client",
-    config: true,
-    type: String,
-    default: "features",
-    choices: {
-      features: "SETTINGS.TabFeatures",
-      biography: "SETTINGS.TabBiography",
-      statuses: "SETTINGS.TabStatuses",
-      gear: "SETTINGS.TabGear",
-      combatPowers: "SETTINGS.TabCombatPowers",
-    },
-  });
-
   // Combat-Related Settings
   game.settings.register("eventide-rp-system", "autoRollNpcInitiative", {
     name: "SETTINGS.AutoRollNpcInitiativeName",
@@ -331,7 +338,7 @@ export const registerSettings = function () {
     type: Boolean,
     default: true,
     onChange: () => {
-      SettingsConfig.reloadConfirm();
+      SettingsConfig.reloadConfirm({ world: true });
     },
   });
 
@@ -404,6 +411,23 @@ export const registerSettings = function () {
     },
   });
 
+  // Default Tab
+  game.settings.register("eventide-rp-system", "defaultCharacterTab", {
+    name: "SETTINGS.DefaultCharacterTabName",
+    hint: "SETTINGS.DefaultCharacterTabHint",
+    scope: "client",
+    config: true,
+    type: String,
+    default: "features",
+    choices: {
+      features: "SETTINGS.TabFeatures",
+      biography: "SETTINGS.TabBiography",
+      statuses: "SETTINGS.TabStatuses",
+      gear: "SETTINGS.TabGear",
+      combatPowers: "SETTINGS.TabCombatPowers",
+    },
+  });
+
   // Gear Equipment Messages
   game.settings.register("eventide-rp-system", "showGearEquipMessages", {
     name: "SETTINGS.ShowGearEquipMessagesName",
@@ -414,30 +438,6 @@ export const registerSettings = function () {
     default: true,
     onChange: () => {
       SettingsConfig.reloadConfirm({ world: true });
-    },
-  });
-
-  // System Sound Settings
-  game.settings.register("eventide-rp-system", "enableSystemSounds", {
-    name: "SETTINGS.EnableSystemSoundsName",
-    hint: "SETTINGS.EnableSystemSoundsHint",
-    scope: "client",
-    config: true,
-    type: Boolean,
-    default: true,
-  });
-
-  game.settings.register("eventide-rp-system", "systemSoundVolume", {
-    name: "SETTINGS.SystemSoundVolumeName",
-    hint: "SETTINGS.SystemSoundVolumeHint",
-    scope: "client",
-    config: true,
-    type: Number,
-    default: 0.5,
-    range: {
-      min: 0,
-      max: 1,
-      step: 0.1,
     },
   });
 
@@ -466,7 +466,7 @@ export const registerSettings = function () {
         // If the value is empty, reset to default
         if (!value || value.trim() === "") {
           game.settings.set("eventide-rp-system", `sound_${key}`, defaultPath);
-          ui.notifications.info(`Sound for ${key} reset to default.`);
+          ui.notifications.info(game.i18n.format("SETTINGS.SoundResetToDefault", [key]));
         }
       },
     });

@@ -27,7 +27,6 @@
     
     "AutoRollNpcInitiativeName": "Auto-Roll NPC Initiative",
     "AutoRollNpcInitiativeHint": "Automatically roll initiative for NPCs when added to initiative.",
-
     "AutoRollPlayerInitiativeName": "Auto-Roll Player Initiative",
     "AutoRollPlayerInitiativeHint": "Automatically roll initiative for players when added to initiative.",
     
@@ -85,6 +84,16 @@
     "SoundCombatPowerHint": "Sound played when a combat power is used.",
     
     "SoundInitiativeName": "Initiative Sound",
-    "SoundInitiativeHint": "Sound played when initiative is rolled."
+    "SoundInitiativeHint": "Sound played when initiative is rolled.",
+    
+    "NoSoundSelected": "No sound file selected.",
+    "ErrorPlayingSound": "Error playing sound",
+    "ErrorResettingSound": "Error resetting sound",
+    "ErrorTestingSounds": "Error testing sounds",
+    "AllSoundsReset": "All sounds reset to defaults. Click Save to apply changes.",
+    "ErrorResettingAllSounds": "Error resetting all sounds",
+    "ErrorOpeningFilePicker": "Error opening file picker",
+    "ErrorSavingSoundSettings": "Error saving sound settings",
+    "SoundResetToDefault": "Sound for {0} reset to default."
   }
 }
