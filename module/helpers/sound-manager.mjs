@@ -1,3 +1,5 @@
+import { getSetting } from "./settings.mjs";
+
 /**
  * Sound Manager for Eventide RP System
  * Handles playing custom sounds for various system events
@@ -14,13 +16,13 @@ export class ERPSSoundManager {
       damage: "systems/eventide-rp-system/assets/sounds/swish_4.wav",
       initiative: "systems/eventide-rp-system/assets/sounds/levelup.wav",
     };
-    
+
     // Initialize with default sounds
     this.sounds = { ...this._defaultSounds };
     this._recentlyPlayedSounds = new Set();
-    
+
     // Wait for game to be ready before loading from settings
-    Hooks.once('ready', () => {
+    Hooks.once("ready", () => {
       this.refreshSounds();
     });
   }
@@ -39,19 +41,19 @@ export class ERPSSoundManager {
   refreshSounds() {
     // Only proceed if game settings are available
     if (!game.settings) return;
-    
+
     // Load each sound from settings or use default
     for (const [key, defaultPath] of Object.entries(this._defaultSounds)) {
       const settingKey = `sound_${key}`;
-      
+
       try {
-        let soundPath = game.settings.get("eventide-rp-system", settingKey);
-        
+        let soundPath = getSetting(settingKey);
+
         // If empty, use default
         if (!soundPath || soundPath.trim() === "") {
           soundPath = defaultPath;
         }
-        
+
         this.sounds[key] = soundPath;
       } catch (error) {
         // If setting doesn't exist yet, use default
@@ -70,7 +72,7 @@ export class ERPSSoundManager {
    */
   async playSound(soundKey, options = {}) {
     // Check if sounds are enabled in settings
-    if (!game.settings.get("eventide-rp-system", "enableSystemSounds")) return;
+    if (!getSetting("enableSystemSounds")) return;
 
     // Get the sound path
     const soundPath = this.sounds[soundKey];
@@ -87,7 +89,7 @@ export class ERPSSoundManager {
     }
 
     // Get the volume from settings
-    const volume = game.settings.get("eventide-rp-system", "systemSoundVolume");
+    const volume = getSetting("systemSoundVolume");
 
     // Play the sound using the namespaced AudioHelper
     foundry.audio.AudioHelper.play(

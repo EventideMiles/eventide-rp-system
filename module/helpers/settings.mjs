@@ -60,7 +60,7 @@ class SoundSettingsApplication extends HandlebarsApplicationMixin(
         hint: game.i18n.localize(
           `SETTINGS.Sound${key.charAt(0).toUpperCase() + key.slice(1)}Hint`
         ),
-        path: game.settings.get("eventide-rp-system", `sound_${key}`),
+        path: getSetting(`sound_${key}`),
         default: defaultPath,
       };
     });
@@ -229,7 +229,7 @@ class SoundSettingsApplication extends HandlebarsApplicationMixin(
         if (inputElement) {
           const value = inputElement.value;
           console.log(`Saving ${settingKey} with value ${value}`);
-          await game.settings.set("eventide-rp-system", settingKey, value);
+          await setSetting(settingKey, value);
         } else {
           console.warn(
             `Sound setting ${settingKey} not found in form elements`
