@@ -85,14 +85,9 @@ class ERPSRollHandler {
     rollMode = "roll",
     soundKey = null,
   }) {
-    // If a soundKey is provided, play it through the sound manager and set message sound to null
+    // If a soundKey is provided, play it locally and add to message flags
     let useSound = sound;
-
-    if (soundKey) {
-      erpsSoundManager.playSound(soundKey);
-      useSound = null;
-    }
-
+    
     const messageData = {
       speaker,
       content,
@@ -108,6 +103,21 @@ class ERPSRollHandler {
         },
       },
     };
+
+    // Add sound flags if a sound key is provided
+    if (soundKey) {
+      // Play sound locally for immediate feedback
+      erpsSoundManager._playLocalSound(soundKey);
+      
+      // Set built-in sound to null since we're using our own system
+      messageData.sound = null;
+      
+      // Add sound data to flags
+      messageData.flags["eventide-rp-system"].sound = {
+        key: soundKey,
+        force: false
+      };
+    }
 
     // Apply roll mode if specified
     if (rollMode !== "roll") {

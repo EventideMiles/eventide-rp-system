@@ -24,6 +24,26 @@ export class ERPSSoundManager {
     // Wait for game to be ready before loading from settings
     Hooks.once("ready", () => {
       this.refreshSounds();
+      this._registerHooks();
+    });
+  }
+
+  /**
+   * Register hooks for chat messages to play sounds
+   * @private
+   */
+  _registerHooks() {
+    // Listen for chat messages to play sounds
+    Hooks.on("createChatMessage", (message) => {
+      // Check if the message has sound data
+      const flags = message.flags || {};
+      const soundData = flags["eventide-rp-system"]?.sound;
+      
+      if (soundData && soundData.key) {
+        console.log(`Eventide RP System | Playing sound from chat message: ${soundData.key}`);
+        // Play the sound locally without broadcasting to avoid loops
+        this._playLocalSound(soundData.key, { force: soundData.force || false });
+      }
     });
   }
 
@@ -64,13 +84,42 @@ export class ERPSSoundManager {
   }
 
   /**
-   * Play a sound if system sounds are enabled
+   * Play a sound locally and prepare flags for a chat message
+   * @param {string} soundKey - Key of the sound in this.sounds
+   * @param {Object} [options={}] - Additional options
+   * @param {boolean} [options.force=false] - Whether to force play the sound even if recently played
+   * @returns {Object} Sound flags to add to a chat message
+   */
+  async playSound(soundKey, options = {}) {
+    // Default options
+    const opts = {
+      force: false,
+      ...options
+    };
+    
+    // Play locally first for immediate feedback
+    await this._playLocalSound(soundKey, { force: opts.force });
+    
+    // Return flags to add to a chat message
+    return {
+      "eventide-rp-system": {
+        sound: {
+          key: soundKey,
+          force: opts.force
+        }
+      }
+    };
+  }
+
+  /**
+   * Play a sound locally if system sounds are enabled
+   * @private
    * @param {string} soundKey - Key of the sound in this.sounds
    * @param {Object} [options={}] - Additional options
    * @param {boolean} [options.force=false] - Whether to force play the sound even if recently played
    * @returns {Promise<void>}
    */
-  async playSound(soundKey, options = {}) {
+  async _playLocalSound(soundKey, options = {}) {
     // Check if sounds are enabled in settings
     if (!getSetting("enableSystemSounds")) return;
 

@@ -30,14 +30,29 @@ class ERPSMessageHandler {
    * @param {string} templateKey - Key for the template in this.templates
    * @param {Object} data - Data to pass to the template
    * @param {Object} messageOptions - Options for ChatMessage.create
+   * @param {Object} [soundOptions=null] - Sound options to include in the message
    * @returns {Promise<ChatMessage>} The created chat message
    */
-  async _createChatMessage(templateKey, data, messageOptions) {
+  async _createChatMessage(templateKey, data, messageOptions, soundOptions = null) {
     const content = await renderTemplate(this.templates[templateKey], data);
-    return ChatMessage.create({
+    
+    // Prepare message data
+    const messageData = {
       ...messageOptions,
-      content,
-    });
+      content
+    };
+    
+    // Add sound flags if provided
+    if (soundOptions && soundOptions.soundKey) {
+      messageData.flags = messageData.flags || {};
+      messageData.flags["eventide-rp-system"] = messageData.flags["eventide-rp-system"] || {};
+      messageData.flags["eventide-rp-system"].sound = {
+        key: soundOptions.soundKey,
+        force: soundOptions.force || false
+      };
+    }
+    
+    return ChatMessage.create(messageData);
   }
 
   /**
@@ -55,15 +70,15 @@ class ERPSMessageHandler {
       style,
     };
 
-    // Play status apply sound
-    await erpsSoundManager.playSound("statusApply");
+    // Play status apply sound locally
+    await erpsSoundManager._playLocalSound("statusApply");
 
     return this._createChatMessage("status", data, {
       speaker: erpsRollUtilities.getSpeaker(
         item.parent,
         "EVENTIDE_RP_SYSTEM.MessageHeaders.Status"
       ),
-    });
+    }, { soundKey: "statusApply" });
   }
 
   /**
@@ -102,12 +117,12 @@ class ERPSMessageHandler {
       options,
     };
 
-    // Play status remove sound
-    await erpsSoundManager.playSound("statusRemove");
+    // Play status remove sound locally
+    await erpsSoundManager._playLocalSound("statusRemove");
 
     return this._createChatMessage("deleteStatus", data, {
       speaker: erpsRollUtilities.getSpeaker(item.parent),
-    });
+    }, { soundKey: "statusRemove" });
   }
 
   /**
@@ -123,14 +138,15 @@ class ERPSMessageHandler {
   async createRestoreMessage({ all, resolve, power, statuses, actor }) {
     const data = { all, resolve, power, statuses, actor };
 
-    await erpsSoundManager.playSound("statusRemove");
+    // Play status remove sound locally
+    await erpsSoundManager._playLocalSound("statusRemove");
 
     return this._createChatMessage("restore", data, {
       speaker: erpsRollUtilities.getSpeaker(
         actor,
         "EVENTIDE_RP_SYSTEM.MessageHeaders.Restore"
       ),
-    });
+    }, { soundKey: "statusRemove" });
   }
 
   /**
@@ -168,15 +184,15 @@ class ERPSMessageHandler {
         actor: actor,
       };
 
-      await erpsSoundManager.playSound("combatPower");
-
+      // Play combat power sound locally and add to message
+      await erpsSoundManager._playLocalSound("combatPower");
       return this._createChatMessage("combatPower", data, {
         speaker: erpsRollUtilities.getSpeaker(
           actor,
           "EVENTIDE_RP_SYSTEM.MessageHeaders.CombatPower"
         ),
         rollMode,
-      });
+      }, { soundKey: "combatPower" });
     }
 
     // For roll-type items
@@ -242,8 +258,8 @@ class ERPSMessageHandler {
         actor: actor,
       };
 
-      await erpsSoundManager.playSound("combatPower");
-
+      // Play combat power sound locally and add to message
+      await erpsSoundManager._playLocalSound("combatPower");
       return this._createChatMessage("combatPower", data, {
         speaker: erpsRollUtilities.getSpeaker(
           actor,
@@ -251,7 +267,7 @@ class ERPSMessageHandler {
         ),
         rolls: [roll],
         rollMode,
-      });
+      }, { soundKey: "combatPower" });
     } catch (error) {
       console.error("Error creating combat power roll:", error);
 
@@ -269,15 +285,15 @@ class ERPSMessageHandler {
         actor: actor,
       };
 
-      await erpsSoundManager.playSound("combatPower");
-
+      // Play combat power sound locally and add to message
+      await erpsSoundManager._playLocalSound("combatPower");
       return this._createChatMessage("combatPower", data, {
         speaker: erpsRollUtilities.getSpeaker(
           actor,
           "EVENTIDE_RP_SYSTEM.MessageHeaders.CombatPower"
         ),
         rollMode,
-      });
+      }, { soundKey: "combatPower" });
     }
   }
 
@@ -305,12 +321,14 @@ class ERPSMessageHandler {
       description,
     };
 
+    // Play gear transfer sound locally and add to message
+    await erpsSoundManager._playLocalSound("gearTransfer");
     return this._createChatMessage("gearTransfer", data, {
       speaker: erpsRollUtilities.getSpeaker(
         sourceActor,
         "EVENTIDE_RP_SYSTEM.MessageHeaders.GearTransfer"
       ),
-    });
+    }, { soundKey: "gearTransfer" });
   }
 
   /**
@@ -329,19 +347,24 @@ class ERPSMessageHandler {
       equipped: item.system.equipped,
     };
 
-    // Play appropriate sound based on equipped state
+    // Play appropriate sound locally and add to message
     if (item.system.equipped) {
-      await erpsSoundManager.playSound("gearEquip");
+      await erpsSoundManager._playLocalSound("gearEquip");
+      return this._createChatMessage("gearEquip", data, {
+        speaker: erpsRollUtilities.getSpeaker(
+          item.parent,
+          "EVENTIDE_RP_SYSTEM.MessageHeaders.GearEquip"
+        ),
+      }, { soundKey: "gearEquip" });
     } else {
-      await erpsSoundManager.playSound("gearUnequip");
+      await erpsSoundManager._playLocalSound("gearUnequip");
+      return this._createChatMessage("gearEquip", data, {
+        speaker: erpsRollUtilities.getSpeaker(
+          item.parent,
+          "EVENTIDE_RP_SYSTEM.MessageHeaders.GearEquip"
+        ),
+      }, { soundKey: "gearUnequip" });
     }
-
-    return this._createChatMessage("gearEquip", data, {
-      speaker: erpsRollUtilities.getSpeaker(
-        item.parent,
-        "EVENTIDE_RP_SYSTEM.MessageHeaders.GearEquip"
-      ),
-    });
   }
 }
 

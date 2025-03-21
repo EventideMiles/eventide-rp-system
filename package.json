@@ -1,6 +1,6 @@
 {
   "name": "eventide-rp-system",
-  "version": "0.20.2",
+  "version": "0.21.0",
   "description": "Build tools and development scripts for the Eventide Roleplaying System",
   "scripts": {
     "build": "npm run build:css && npm run build:lang",
