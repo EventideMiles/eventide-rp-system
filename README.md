@@ -57,6 +57,7 @@ A custom roleplaying system for Foundry VTT that emphasizes dynamic character ab
 
 - Multiple theme options: Default, Dark, Light, and High Contrast
 - Customizable default character sheet tab
+- System sounds for key actions like healing, damage, status effects, and more
 
 ## Usage
 
@@ -68,6 +69,10 @@ A custom roleplaying system for Foundry VTT that emphasizes dynamic character ab
 - Track combat powers and their effects
 - Popup system provides details on anything on any player - simply click the item and get information about it
 - Apply damage and healing to characters - with chat messages to keep tabs on what's happening
+- Customize system sounds for various actions:
+  - Enable/disable system sounds
+  - Adjust system sound volume
+  - Configure custom sounds for healing, damage, status effects, gear equipping/unequipping, combat powers, and initiative rolls
 - Configure system settings to customize your game experience:
   - Adjust initiative formula and display precision
   - Control visibility of NPC initiative rolls
