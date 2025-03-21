@@ -163,6 +163,30 @@ export const registerSettings = function () {
       SettingsConfig.reloadConfirm({ world: true });
     },
   });
+
+  // System Sound Settings
+  game.settings.register("eventide-rp-system", "enableSystemSounds", {
+    name: "SETTINGS.EnableSystemSoundsName",
+    hint: "SETTINGS.EnableSystemSoundsHint",
+    scope: "client",
+    config: true,
+    type: Boolean,
+    default: true,
+  });
+
+  game.settings.register("eventide-rp-system", "systemSoundVolume", {
+    name: "SETTINGS.SystemSoundVolumeName",
+    hint: "SETTINGS.SystemSoundVolumeHint",
+    scope: "client",
+    config: true,
+    type: Number,
+    default: 0.5,
+    range: {
+      min: 0,
+      max: 1,
+      step: 0.1,
+    },
+  });
 };
 
 /**

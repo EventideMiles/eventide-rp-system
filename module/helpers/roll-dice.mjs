@@ -1,5 +1,6 @@
 import { getSetting } from "./settings.mjs";
 import { erpsRollUtilities } from "./roll-utilities.mjs";
+import { erpsSoundManager } from "./sound-manager.mjs";
 
 /**
  * ERPSRollHandler - Handles all dice rolling operations for the Eventide RP System
@@ -24,6 +25,7 @@ class ERPSRollHandler {
       description: "",
       toMessage: true,
       rollMode: null, // Will use game setting if null
+      soundKey: null, // Optional sound key for the sound manager
     };
 
     // Roll type styling map - maps roll types to their styling classes and icons
@@ -69,6 +71,7 @@ class ERPSRollHandler {
    * @param {string} [options.formula=""] - Roll formula
    * @param {number} [options.total=0] - Roll total
    * @param {string} [options.rollMode="roll"] - Roll mode for visibility
+   * @param {string} [options.soundKey=null] - Optional sound key for the sound manager
    * @returns {Object} Chat message data object
    */
   _createMessageData({
@@ -80,11 +83,20 @@ class ERPSRollHandler {
     formula = "",
     total = 0,
     rollMode = "roll",
+    soundKey = null,
   }) {
+    // If a soundKey is provided, play it through the sound manager and set message sound to null
+    let useSound = sound;
+
+    if (soundKey) {
+      erpsSoundManager.playSound(soundKey);
+      useSound = null;
+    }
+
     const messageData = {
       speaker,
       content,
-      sound,
+      sound: useSound,
       rolls,
       flags: {
         "eventide-rp-system": {
@@ -121,6 +133,8 @@ class ERPSRollHandler {
    * @param {boolean} [options.acCheck=true] - Whether to check against target AC values
    * @param {string} [options.description=""] - Optional description of the roll
    * @param {boolean} [options.toMessage=true] - Whether to create a chat message
+   * @param {string} [options.rollMode=null] - Roll mode for visibility
+   * @param {string} [options.soundKey=null] - Optional sound key for the sound manager
    * @param {Actor} actor - Actor performing the roll
    * @returns {Promise<Roll>} - Resolved promise containing the evaluated roll
    */
@@ -134,6 +148,7 @@ class ERPSRollHandler {
       description = this.defaults.description,
       toMessage = this.defaults.toMessage,
       rollMode = this.defaults.rollMode,
+      soundKey = this.defaults.soundKey,
     } = {},
     actor
   ) {
@@ -200,6 +215,7 @@ class ERPSRollHandler {
         formula,
         total: result.total,
         rollMode,
+        soundKey,
       });
 
       ChatMessage.create(messageData);
@@ -216,6 +232,7 @@ class ERPSRollHandler {
    * @param {boolean} [options.whisperMode=false] - Whether to whisper the roll to GMs only
    * @param {string} [options.description=""] - Optional description to include in the message
    * @param {string} [options.customFlavor=""] - Optional custom flavor text for the roll
+   * @param {string} [options.soundKey=null] - Optional sound key for the sound manager
    * @returns {Promise<Roll>} The evaluated roll
    */
   async rollInitiative({
@@ -223,6 +240,7 @@ class ERPSRollHandler {
     whisperMode = false,
     description = "",
     customFlavor = "",
+    soundKey = null,
   }) {
     // Get initiative settings
     let hideNpcInitiativeRolls = false;
@@ -274,6 +292,7 @@ class ERPSRollHandler {
       formula: roll.formula,
       total: roll.total,
       rollMode: shouldWhisper ? "gmroll" : "roll",
+      soundKey: "initiative",
     });
 
     ChatMessage.create(messageData);

@@ -1,5 +1,6 @@
 import { getTargetArray } from "./common-foundry-tasks.mjs";
 import { erpsRollUtilities } from "./roll-utilities.mjs";
+import { erpsSoundManager } from "./sound-manager.mjs";
 
 /**
  * ERPSMessageHandler - Handles all chat message creation for the Eventide RP System
@@ -54,6 +55,9 @@ class ERPSMessageHandler {
       style,
     };
 
+    // Play status apply sound
+    await erpsSoundManager.playSound("statusApply");
+
     return this._createChatMessage("status", data, {
       speaker: erpsRollUtilities.getSpeaker(
         item.parent,
@@ -98,6 +102,9 @@ class ERPSMessageHandler {
       options,
     };
 
+    // Play status remove sound
+    await erpsSoundManager.playSound("statusRemove");
+
     return this._createChatMessage("deleteStatus", data, {
       speaker: erpsRollUtilities.getSpeaker(item.parent),
     });
@@ -115,6 +122,11 @@ class ERPSMessageHandler {
    */
   async createRestoreMessage({ all, resolve, power, statuses, actor }) {
     const data = { all, resolve, power, statuses, actor };
+
+    // Play status remove sound once, regardless of how many statuses were removed
+    if (statuses?.length > 0 || all) {
+      await erpsSoundManager.playSound("statusRemove");
+    }
 
     return this._createChatMessage("restore", data, {
       speaker: erpsRollUtilities.getSpeaker(
@@ -158,6 +170,8 @@ class ERPSMessageHandler {
         hasRoll: false,
         actor: actor,
       };
+
+      await erpsSoundManager.playSound("combatPower");
 
       return this._createChatMessage("combatPower", data, {
         speaker: erpsRollUtilities.getSpeaker(
@@ -231,12 +245,13 @@ class ERPSMessageHandler {
         actor: actor,
       };
 
+      await erpsSoundManager.playSound("combatPower");
+
       return this._createChatMessage("combatPower", data, {
         speaker: erpsRollUtilities.getSpeaker(
           actor,
           "EVENTIDE_RP_SYSTEM.MessageHeaders.CombatPower"
         ),
-        sound: CONFIG.sounds.dice,
         rolls: [roll],
         rollMode,
       });
@@ -256,6 +271,8 @@ class ERPSMessageHandler {
         isGear: item.type === "gear",
         actor: actor,
       };
+
+      await erpsSoundManager.playSound("combatPower");
 
       return this._createChatMessage("combatPower", data, {
         speaker: erpsRollUtilities.getSpeaker(
@@ -306,13 +323,21 @@ class ERPSMessageHandler {
    */
   async createGearEquipMessage(item) {
     // Check if gear equip messages are enabled in settings
-    if (!game.settings.get("eventide-rp-system", "showGearEquipMessages")) return;
+    if (!game.settings.get("eventide-rp-system", "showGearEquipMessages"))
+      return;
 
     const data = {
       item,
       actor: item.parent,
       equipped: item.system.equipped,
     };
+
+    // Play appropriate sound based on equipped state
+    if (item.system.equipped) {
+      await erpsSoundManager.playSound("gearEquip");
+    } else {
+      await erpsSoundManager.playSound("gearUnequip");
+    }
 
     return this._createChatMessage("gearEquip", data, {
       speaker: erpsRollUtilities.getSpeaker(

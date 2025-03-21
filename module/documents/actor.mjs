@@ -104,6 +104,7 @@ export class EventideRpSystemActor extends Actor {
     type = "damage",
     critAllowed = false,
     acCheck = false,
+    soundKey = null,
   }) {
     const rollData = {
       formula,
@@ -112,6 +113,7 @@ export class EventideRpSystemActor extends Actor {
       critAllowed,
       description,
       acCheck,
+      soundKey,
     };
     const roll = await erpsRollHandler.handleRoll(rollData, this);
 

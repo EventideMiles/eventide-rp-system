@@ -410,6 +410,10 @@
     "UiThemeLight": "Light",
     "UiThemeContrast": "High Contrast",
     "ShowGearEquipMessagesName": "Show Gear Equip Messages",
-    "ShowGearEquipMessagesHint": "Display chat messages when gear items are equipped or unequipped."
+    "ShowGearEquipMessagesHint": "If enabled, chat messages will be created when gear items are equipped or unequipped.",
+    "EnableSystemSoundsName": "Enable System Sounds",
+    "EnableSystemSoundsHint": "Enable or disable custom sounds for system events like equipping gear, applying status effects, etc.",
+    "SystemSoundVolumeName": "System Sound Volume",
+    "SystemSoundVolumeHint": "Adjust the volume of system sounds (0 = silent, 1 = maximum volume)."
   }
 }

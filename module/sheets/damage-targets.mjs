@@ -1,4 +1,5 @@
 import { EventideSheetHelpers } from "./base/eventide-sheet-helpers.mjs";
+import { erpsSoundManager } from "../helpers/sound-manager.mjs";
 
 /**
  * Application for managing damage to targeted tokens.
@@ -124,6 +125,7 @@ export class DamageTargets extends EventideSheetHelpers {
       formula: form.formula.value || "1",
       description: form.description.value || "",
       type: form.isHeal.checked ? "heal" : "damage",
+      soundKey: form.isHeal.checked ? "healing" : "damage",
     };
     const originalFormula = damageOptions.formula;
     if (
