@@ -117,6 +117,14 @@
   --eventide-rp-system-danger-button-text: #ffffff;
   --eventide-rp-system-danger-button-border: #990000;
   --eventide-rp-system-danger-button-hover: #ff0000;
+  --eventide-rp-system-play-button-bg: #4CAF50;
+  --eventide-rp-system-play-button-text: #ffffff;
+  --eventide-rp-system-reset-button-bg: #f44336;
+  --eventide-rp-system-reset-button-text: #ffffff;
+  --eventide-rp-system-play-all-button-bg: #2196F3;
+  --eventide-rp-system-play-all-button-text: #ffffff;
+  --eventide-rp-system-browse-button-bg: #607D8B;
+  --eventide-rp-system-browse-button-text: #ffffff;
 }
 
 .theme-dark {
@@ -210,6 +218,14 @@
   --eventide-rp-system-danger-button-text: #ffffff;
   --eventide-rp-system-danger-button-border: #990000;
   --eventide-rp-system-danger-button-hover: #ff0000;
+  --eventide-rp-system-play-button-bg: #4CAF50;
+  --eventide-rp-system-play-button-text: #ffffff;
+  --eventide-rp-system-reset-button-bg: #f44336;
+  --eventide-rp-system-reset-button-text: #ffffff;
+  --eventide-rp-system-play-all-button-bg: #2196F3;
+  --eventide-rp-system-play-all-button-text: #ffffff;
+  --eventide-rp-system-browse-button-bg: #607D8B;
+  --eventide-rp-system-browse-button-text: #ffffff;
 }
 
 /* Global styles */
@@ -2041,7 +2057,7 @@
   margin: 0; /* Remove track margin */
 }
 .sound-settings__description {
-  color: #c8c8c8; /* Brighter text color for better readability */
+  color: var(--eventide-rp-system-label-text);
   font-size: 0.9em;
   margin-top: 4px;
   margin-bottom: 12px;
@@ -2063,6 +2079,7 @@
   display: block;
   margin-bottom: 4px;
   font-weight: bold;
+  color: var(--eventide-rp-system-label-text);
 }
 .sound-settings__fields {
   display: flex;
@@ -2071,9 +2088,15 @@
 }
 .sound-settings__input {
   flex: 1;
+  background-color: var(--eventide-rp-system-input-bg);
+  color: var(--eventide-rp-system-input-text);
+  border: 1px solid var(--eventide-rp-system-input-border);
+}
+.sound-settings__input:focus {
+  border-color: var(--eventide-rp-system-input-focus);
 }
 .sound-settings__hint {
-  color: #c8c8c8; /* Brighter text color for better readability */
+  color: var(--eventide-rp-system-input-placeholder);
   font-size: 0.9em;
   margin-top: 4px;
   line-height: 1.4;
@@ -2099,44 +2122,44 @@
   /* Button variants */
 }
 .sound-settings__button--play {
-  background-color: #4CAF50;
-  color: white;
+  background-color: var(--eventide-rp-system-play-button-bg);
+  color: var(--eventide-rp-system-play-button-text);
 }
 .sound-settings__button--reset {
-  background-color: #f44336;
-  color: white;
+  background-color: var(--eventide-rp-system-reset-button-bg);
+  color: var(--eventide-rp-system-reset-button-text);
 }
 .sound-settings__button--play-all {
-  background-color: #2196F3;
-  color: white;
+  background-color: var(--eventide-rp-system-play-all-button-bg);
+  color: var(--eventide-rp-system-play-all-button-text);
 }
 .sound-settings__button--reset-all {
-  background-color: #f44336;
-  color: white;
+  background-color: var(--eventide-rp-system-reset-button-bg);
+  color: var(--eventide-rp-system-reset-button-text);
 }
 .sound-settings__button--save {
-  background-color: #4CAF50;
-  color: white;
+  background-color: var(--eventide-rp-system-play-button-bg);
+  color: var(--eventide-rp-system-play-button-text);
 }
 .sound-settings__button--browse {
-  background-color: #607D8B;
-  color: white;
+  background-color: var(--eventide-rp-system-browse-button-bg);
+  color: var(--eventide-rp-system-browse-button-text);
 }
 .sound-settings [data-action=playSound] {
-  background-color: #4CAF50;
-  color: white;
+  background-color: var(--eventide-rp-system-play-button-bg);
+  color: var(--eventide-rp-system-play-button-text);
 }
 .sound-settings [data-action=resetSound] {
-  background-color: #f44336;
-  color: white;
+  background-color: var(--eventide-rp-system-reset-button-bg);
+  color: var(--eventide-rp-system-reset-button-text);
 }
 .sound-settings [data-action=testAllSounds] {
-  background-color: #2196F3;
-  color: white;
+  background-color: var(--eventide-rp-system-play-all-button-bg);
+  color: var(--eventide-rp-system-play-all-button-text);
 }
 .sound-settings [data-action=resetAllSounds] {
-  background-color: #f44336;
-  color: white;
+  background-color: var(--eventide-rp-system-reset-button-bg);
+  color: var(--eventide-rp-system-reset-button-text);
 }
 
 .eventide-rp-system {
@@ -2260,6 +2283,14 @@
   --eventide-rp-system-danger-button-text: #ffffff;
   --eventide-rp-system-danger-button-border: #990000;
   --eventide-rp-system-danger-button-hover: #ff0000;
+  --eventide-rp-system-play-button-bg: #4CAF50;
+  --eventide-rp-system-play-button-text: #ffffff;
+  --eventide-rp-system-reset-button-bg: #f44336;
+  --eventide-rp-system-reset-button-text: #ffffff;
+  --eventide-rp-system-play-all-button-bg: #2196F3;
+  --eventide-rp-system-play-all-button-text: #ffffff;
+  --eventide-rp-system-browse-button-bg: #607D8B;
+  --eventide-rp-system-browse-button-text: #ffffff;
 }
 .eventide-rp-system .theme-dark {
   --eventide-rp-system-c-dark: #e5e3d8;
@@ -2352,6 +2383,14 @@
   --eventide-rp-system-danger-button-text: #ffffff;
   --eventide-rp-system-danger-button-border: #990000;
   --eventide-rp-system-danger-button-hover: #ff0000;
+  --eventide-rp-system-play-button-bg: #4CAF50;
+  --eventide-rp-system-play-button-text: #ffffff;
+  --eventide-rp-system-reset-button-bg: #f44336;
+  --eventide-rp-system-reset-button-text: #ffffff;
+  --eventide-rp-system-play-all-button-bg: #2196F3;
+  --eventide-rp-system-play-all-button-text: #ffffff;
+  --eventide-rp-system-browse-button-bg: #607D8B;
+  --eventide-rp-system-browse-button-text: #ffffff;
 }
 .eventide-rp-system .item-form {
   font-family: "Roboto", sans-serif;
@@ -2589,6 +2628,14 @@
   --eventide-rp-system-danger-button-text: #ffffff;
   --eventide-rp-system-danger-button-border: #990000;
   --eventide-rp-system-danger-button-hover: #ff0000;
+  --eventide-rp-system-play-button-bg: #4CAF50;
+  --eventide-rp-system-play-button-text: #ffffff;
+  --eventide-rp-system-reset-button-bg: #f44336;
+  --eventide-rp-system-reset-button-text: #ffffff;
+  --eventide-rp-system-play-all-button-bg: #2196F3;
+  --eventide-rp-system-play-all-button-text: #ffffff;
+  --eventide-rp-system-browse-button-bg: #607D8B;
+  --eventide-rp-system-browse-button-text: #ffffff;
 }
 .eventide-rp-system .theme-dark {
   --eventide-rp-system-c-dark: #e5e3d8;
@@ -2681,6 +2728,14 @@
   --eventide-rp-system-danger-button-text: #ffffff;
   --eventide-rp-system-danger-button-border: #990000;
   --eventide-rp-system-danger-button-hover: #ff0000;
+  --eventide-rp-system-play-button-bg: #4CAF50;
+  --eventide-rp-system-play-button-text: #ffffff;
+  --eventide-rp-system-reset-button-bg: #f44336;
+  --eventide-rp-system-reset-button-text: #ffffff;
+  --eventide-rp-system-play-all-button-bg: #2196F3;
+  --eventide-rp-system-play-all-button-text: #ffffff;
+  --eventide-rp-system-browse-button-bg: #607D8B;
+  --eventide-rp-system-browse-button-text: #ffffff;
 }
 .eventide-rp-system .protest-revolution-regular {
   font-family: "Protest Revolution", serif;
@@ -2942,6 +2997,14 @@
   --eventide-rp-system-danger-button-text: #ffffff;
   --eventide-rp-system-danger-button-border: #990000;
   --eventide-rp-system-danger-button-hover: #ff0000;
+  --eventide-rp-system-play-button-bg: #4CAF50;
+  --eventide-rp-system-play-button-text: #ffffff;
+  --eventide-rp-system-reset-button-bg: #f44336;
+  --eventide-rp-system-reset-button-text: #ffffff;
+  --eventide-rp-system-play-all-button-bg: #2196F3;
+  --eventide-rp-system-play-all-button-text: #ffffff;
+  --eventide-rp-system-browse-button-bg: #607D8B;
+  --eventide-rp-system-browse-button-text: #ffffff;
 }
 .eventide-rp-system .theme-dark {
   --eventide-rp-system-c-dark: #e5e3d8;
@@ -3034,6 +3097,14 @@
   --eventide-rp-system-danger-button-text: #ffffff;
   --eventide-rp-system-danger-button-border: #990000;
   --eventide-rp-system-danger-button-hover: #ff0000;
+  --eventide-rp-system-play-button-bg: #4CAF50;
+  --eventide-rp-system-play-button-text: #ffffff;
+  --eventide-rp-system-reset-button-bg: #f44336;
+  --eventide-rp-system-reset-button-text: #ffffff;
+  --eventide-rp-system-play-all-button-bg: #2196F3;
+  --eventide-rp-system-play-all-button-text: #ffffff;
+  --eventide-rp-system-browse-button-bg: #607D8B;
+  --eventide-rp-system-browse-button-text: #ffffff;
 }
 .eventide-rp-system .effects-header {
   height: 28px;

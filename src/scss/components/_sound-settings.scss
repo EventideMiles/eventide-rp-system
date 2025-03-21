@@ -1,3 +1,5 @@
+@use "../utils/colors";
+
 .sound-settings {
   /* Application container styling */
   height: 100%;
@@ -15,7 +17,7 @@
     /* Remove any overflow style overrides */
     -ms-overflow-style: initial;
     scrollbar-width: thin;
-    scrollbar-color: var(--eventide-rp-system-input-focus) transparent;
+    scrollbar-color: colors.$input-focus transparent;
   
     /* Styling for the scrollbar */
     &::-webkit-scrollbar {
@@ -25,12 +27,12 @@
     }
   
     &::-webkit-scrollbar-thumb {
-      background-color: var(--eventide-rp-system-input-focus);
+      background-color: colors.$input-focus;
       border-radius: 10px;
-      border: 1px solid var(--eventide-rp-system-input-bg);
+      border: 1px solid colors.$input-bg;
   
       &:hover {
-        background-color: var(--eventide-rp-system-primary-button-hover);
+        background-color: colors.$primary-button-hover;
       }
     }
   
@@ -42,7 +44,7 @@
   
   /* Description text */
   &__description {
-    color: #c8c8c8; /* Brighter text color for better readability */
+    color: colors.$label-text;
     font-size: 0.9em;
     margin-top: 4px;
     margin-bottom: 12px;
@@ -70,6 +72,7 @@
     display: block;
     margin-bottom: 4px;
     font-weight: bold;
+    color: colors.$label-text;
   }
   
   /* Fields container */
@@ -82,11 +85,18 @@
   /* Text input */
   &__input {
     flex: 1;
+    background-color: colors.$input-bg;
+    color: colors.$input-text;
+    border: 1px solid colors.$input-border;
+    
+    &:focus {
+      border-color: colors.$input-focus;
+    }
   }
   
   /* Hint text */
   &__hint {
-    color: #c8c8c8; /* Brighter text color for better readability */
+    color: colors.$input-placeholder;
     font-size: 0.9em;
     margin-top: 4px;
     line-height: 1.4;
@@ -117,54 +127,54 @@
     
     /* Button variants */
     &--play {
-      background-color: #4CAF50;
-      color: white;
+      background-color: colors.$play-button-bg;
+      color: colors.$play-button-text;
     }
     
     &--reset {
-      background-color: #f44336;
-      color: white;
+      background-color: colors.$reset-button-bg;
+      color: colors.$reset-button-text;
     }
     
     &--play-all {
-      background-color: #2196F3;
-      color: white;
+      background-color: colors.$play-all-button-bg;
+      color: colors.$play-all-button-text;
     }
     
     &--reset-all {
-      background-color: #f44336;
-      color: white;
+      background-color: colors.$reset-button-bg;
+      color: colors.$reset-button-text;
     }
     
     &--save {
-      background-color: #4CAF50;
-      color: white;
+      background-color: colors.$play-button-bg;
+      color: colors.$play-button-text;
     }
     
     &--browse {
-      background-color: #607D8B;
-      color: white;
+      background-color: colors.$browse-button-bg;
+      color: colors.$browse-button-text;
     }
   }
   
   /* Backward compatibility for data-action selectors */
   [data-action="playSound"] {
-    background-color: #4CAF50;
-    color: white;
+    background-color: colors.$play-button-bg;
+    color: colors.$play-button-text;
   }
   
   [data-action="resetSound"] {
-    background-color: #f44336;
-    color: white;
+    background-color: colors.$reset-button-bg;
+    color: colors.$reset-button-text;
   }
   
   [data-action="testAllSounds"] {
-    background-color: #2196F3;
-    color: white;
+    background-color: colors.$play-all-button-bg;
+    color: colors.$play-all-button-text;
   }
   
   [data-action="resetAllSounds"] {
-    background-color: #f44336;
-    color: white;
+    background-color: colors.$reset-button-bg;
+    color: colors.$reset-button-text;
   }
 }
