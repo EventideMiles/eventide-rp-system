@@ -49,9 +49,6 @@
     "EnableSystemSoundsName": "Enable System Sounds",
     "EnableSystemSoundsHint": "Enable or disable custom sound effects for the system.",
     
-    "SystemSoundVolumeName": "System Sound Volume",
-    "SystemSoundVolumeHint": "Adjust the volume of system sound effects.",
-    
     "SoundSettingsName": "Sound Effects",
     "SoundSettingsLabel": "Configure Sound Effects",
     "SoundSettingsHint": "Configure custom sound effects for various game events.",

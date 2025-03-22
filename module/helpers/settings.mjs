@@ -275,20 +275,6 @@ export const registerSettings = function () {
     default: true,
   });
 
-  game.settings.register("eventide-rp-system", "systemSoundVolume", {
-    name: "SETTINGS.SystemSoundVolumeName",
-    hint: "SETTINGS.SystemSoundVolumeHint",
-    scope: "client",
-    config: true,
-    type: Number,
-    default: 0.5,
-    range: {
-      min: 0,
-      max: 1,
-      step: 0.1,
-    },
-  });
-
   // Initative String
   game.settings.register("eventide-rp-system", "initativeFormula", {
     name: "SETTINGS.InitativeFormulaName",
