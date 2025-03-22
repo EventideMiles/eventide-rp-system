@@ -38,11 +38,15 @@ export class ERPSSoundManager {
       // Check if the message has sound data
       const flags = message.flags || {};
       const soundData = flags["eventide-rp-system"]?.sound;
-      
+
       if (soundData && soundData.key) {
-        console.log(`Eventide RP System | Playing sound from chat message: ${soundData.key}`);
+        console.log(
+          `Eventide RP System | Playing sound from chat message: ${soundData.key}`
+        );
         // Play the sound locally without broadcasting to avoid loops
-        this._playLocalSound(soundData.key, { force: soundData.force || false });
+        this._playLocalSound(soundData.key, {
+          force: soundData.force || false,
+        });
       }
     });
   }
@@ -94,20 +98,20 @@ export class ERPSSoundManager {
     // Default options
     const opts = {
       force: false,
-      ...options
+      ...options,
     };
-    
+
     // Play locally first for immediate feedback
     await this._playLocalSound(soundKey, { force: opts.force });
-    
+
     // Return flags to add to a chat message
     return {
       "eventide-rp-system": {
         sound: {
           key: soundKey,
-          force: opts.force
-        }
-      }
+          force: opts.force,
+        },
+      },
     };
   }
 
@@ -138,7 +142,7 @@ export class ERPSSoundManager {
     }
 
     // Get the volume from settings
-    const volume = getSetting("systemSoundVolume");
+    const volume = game.settings.get("core", "globalInterfaceVolume");
 
     // Play the sound using the namespaced AudioHelper
     foundry.audio.AudioHelper.play(
