@@ -47,6 +47,10 @@ class SoundSettingsApplication extends HandlebarsApplicationMixin(
    * @returns {Object} The prepared context data
    */
   async _prepareContext() {
+    if (!game.user.isGM) {
+      ui.notifications.error(game.i18n.localize("SETTINGS.NoPlayerPermission"));
+      return this.close();
+    }
     const context = await super._prepareContext();
 
     // Get all sound settings
@@ -115,7 +119,9 @@ class SoundSettingsApplication extends HandlebarsApplicationMixin(
       input.dispatchEvent(new Event("change"));
     } catch (error) {
       console.error("Error in _onResetSound:", error);
-      ui.notifications.error(game.i18n.localize("SETTINGS.ErrorResettingSound"));
+      ui.notifications.error(
+        game.i18n.localize("SETTINGS.ErrorResettingSound")
+      );
     }
   }
 
@@ -166,12 +172,12 @@ class SoundSettingsApplication extends HandlebarsApplicationMixin(
         // We don't need to dispatch change events for each input
         // as we'll notify the user to save changes
       }
-      ui.notifications.info(
-        game.i18n.localize("SETTINGS.AllSoundsReset")
-      );
+      ui.notifications.info(game.i18n.localize("SETTINGS.AllSoundsReset"));
     } catch (error) {
       console.error("Error in _onResetAllSounds:", error);
-      ui.notifications.error(game.i18n.localize("SETTINGS.ErrorResettingAllSounds"));
+      ui.notifications.error(
+        game.i18n.localize("SETTINGS.ErrorResettingAllSounds")
+      );
     }
   }
 
@@ -204,7 +210,9 @@ class SoundSettingsApplication extends HandlebarsApplicationMixin(
       return fp.browse();
     } catch (error) {
       console.error("Error in _onBrowseFiles:", error);
-      ui.notifications.error(game.i18n.localize("SETTINGS.ErrorOpeningFilePicker"));
+      ui.notifications.error(
+        game.i18n.localize("SETTINGS.ErrorOpeningFilePicker")
+      );
     }
   }
 
@@ -245,7 +253,9 @@ class SoundSettingsApplication extends HandlebarsApplicationMixin(
       return true;
     } catch (error) {
       console.error("Error in _onSubmit:", error);
-      ui.notifications.error(game.i18n.localize("SETTINGS.ErrorSavingSoundSettings"));
+      ui.notifications.error(
+        game.i18n.localize("SETTINGS.ErrorSavingSoundSettings")
+      );
       return false;
     }
   }
@@ -263,20 +273,6 @@ export const registerSettings = function () {
     config: true,
     type: Boolean,
     default: true,
-  });
-
-  game.settings.register("eventide-rp-system", "systemSoundVolume", {
-    name: "SETTINGS.SystemSoundVolumeName",
-    hint: "SETTINGS.SystemSoundVolumeHint",
-    scope: "client",
-    config: true,
-    type: Number,
-    default: 0.5,
-    range: {
-      min: 0,
-      max: 1,
-      step: 0.1,
-    },
   });
 
   // Initative String
@@ -466,7 +462,9 @@ export const registerSettings = function () {
         // If the value is empty, reset to default
         if (!value || value.trim() === "") {
           game.settings.set("eventide-rp-system", `sound_${key}`, defaultPath);
-          ui.notifications.info(game.i18n.format("SETTINGS.SoundResetToDefault", [key]));
+          ui.notifications.info(
+            game.i18n.format("SETTINGS.SoundResetToDefault", [key])
+          );
         }
       },
     });
@@ -480,7 +478,8 @@ export const registerSettings = function () {
       hint: "SETTINGS.SoundSettingsHint",
       icon: "fas fa-volume-up",
       type: SoundSettingsApplication,
-      restricted: false,
+      restricted: true,
+      scope: "world",
     });
   });
 };

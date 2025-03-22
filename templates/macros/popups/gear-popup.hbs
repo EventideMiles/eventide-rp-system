@@ -1,69 +1,74 @@
 <div class="{{cssClass}} popup-form" autocomplete="off">
-    <!-- Warnings -->
-    {{#if problems.targeting}}
-        <div class="popup-form__warning">{{localize "EVENTIDE_RP_SYSTEM.Forms.Callouts.Gear.TargetGear"}}</div>
-    {{/if}}
-    {{#if problems.quantity}}
-        <div class="popup-form__warning">{{localize "EVENTIDE_RP_SYSTEM.Forms.Callouts.Gear.InsufficientQuantity" cost=item.system.cost quantity=item.system.quantity}}</div>
-    {{/if}}
-    {{#if problems.equipped}}
-        <div class="popup-form__warning">{{localize "EVENTIDE_RP_SYSTEM.Forms.Callouts.Gear.NotEquipped"}}</div>
-    {{/if}}
-    <div class="popup-form__header">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Details"}}</div>
-    
-    {{#if item.system.description}}
-    <div class="popup-form__content popup-form__content--description">
-        <div class="popup-form__header">{{item.actor.name}}</div> 
-        {{{item.system.description}}}
-    </div>
-    {{/if}}
+    <header class="popup-form__callout-box">
+        <!-- Warnings -->
+        {{#if problems.targeting}}
+            <div class="popup-form__callout popup-form__callout--warning"><i class="fas fa-exclamation-triangle"></i> {{localize "EVENTIDE_RP_SYSTEM.Forms.Callouts.Gear.TargetGear"}}</div>
+        {{/if}}
+        {{#if problems.quantity}}
+            <div class="popup-form__callout popup-form__callout--warning"><i class="fas fa-exclamation-triangle"></i> {{localize "EVENTIDE_RP_SYSTEM.Forms.Callouts.Gear.InsufficientQuantity" cost=item.system.cost quantity=item.system.quantity}}</div>
+        {{/if}}
+        {{#if problems.equipped}}
+            <div class="popup-form__callout popup-form__callout--warning"><i class="fas fa-exclamation-triangle"></i> {{localize "EVENTIDE_RP_SYSTEM.Forms.Callouts.Gear.NotEquipped"}}</div>
+        {{/if}}
+    </header>
+    <div class="base-form__main">
+        
+        <div class="popup-form__header">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Details"}}</div>
+        
+        {{#if item.system.description}}
+        <div class="popup-form__content popup-form__content--description">
+            <div class="popup-form__header">{{item.actor.name}}</div> 
+            {{{item.system.description}}}
+        </div>
+        {{/if}}
 
-    {{#if item.system.roll}}
-    <div class="popup-form__section">
-        <div class="popup-form__header">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RollInfo"}}</div>
-        <div class="popup-form__group">
-            <div class="popup-form__row">
-                <div class="popup-form__label">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RollType"}}</div>
-                <div class="popup-form__content">{{item.system.roll.type}}</div>
-                <div class="popup-form__label">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RollAbility"}}</div>
-                <div class="popup-form__content">{{item.system.roll.ability}}</div>
+        {{#if item.system.roll}}
+        <div class="popup-form__section">
+            <div class="popup-form__header">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RollInfo"}}</div>
+            <div class="popup-form__group">
+                <div class="popup-form__row">
+                    <div class="popup-form__label">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RollType"}}</div>
+                    <div class="popup-form__content popup-form__content--data">{{item.system.roll.type}}</div>
+                    <div class="popup-form__label">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RollAbility"}}</div>
+                    <div class="popup-form__content popup-form__content--data">{{item.system.roll.ability}}</div>
+                </div>
+            </div>
+            <div class="popup-form__group">
+                <div class="popup-form__row">
+                    <div class="popup-form__label">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Bonus"}}</div>
+                    <div class="popup-form__content popup-form__content--data">{{numberFormat item.system.roll.bonus decimals=0 sign=true}}</div>
+                    <div class="popup-form__label">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Adjustments"}}</div>
+                    <div class="popup-form__content popup-form__content--data">
+                        {{#if (eq item.system.roll.diceAdjustments.total 0)}}
+                            <span class="popup-form__text--neutral">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Neutral"}}</span>
+                        {{else if (lt item.system.roll.diceAdjustments.total 0)}}
+                            <span class="popup-form__text--disadvantage">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Disadv"}} {{numberFormat (abs item.system.roll.diceAdjustments.total) decimals=0}}</span>
+                        {{else}}
+                            <span class="popup-form__text--advantage">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Adv"}} {{numberFormat item.system.roll.diceAdjustments.total decimals=0}}</span>
+                        {{/if}}
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="popup-form__group">
-            <div class="popup-form__row">
-                <div class="popup-form__label">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Bonus"}}</div>
-                <div class="popup-form__content">{{numberFormat item.system.roll.bonus decimals=0 sign=true}}</div>
-                <div class="popup-form__label">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Adjustments"}}</div>
-                <div class="popup-form__content">
-                    {{#if (eq item.system.roll.diceAdjustments.total 0)}}
-                        <span class="popup-form__text--neutral">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Neutral"}}</span>
-                    {{else if (lt item.system.roll.diceAdjustments.total 0)}}
-                        <span class="popup-form__text--disadvantage">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Disadv"}} {{numberFormat (abs item.system.roll.diceAdjustments.total) decimals=0}}</span>
-                    {{else}}
-                        <span class="popup-form__text--advantage">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Adv"}} {{numberFormat item.system.roll.diceAdjustments.total decimals=0}}</span>
-                    {{/if}}
+        {{/if}}
+
+        <div class="popup-form__section">
+            <div class="popup-form__header">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.ItemDetails"}}</div>
+            <div class="popup-form__group">
+                <div class="popup-form__row">
+                    <div class="popup-form__label">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Quantity"}}</div>
+                    <div class="popup-form__content popup-form__content--data">{{item.system.quantity}}</div>
+                    <div class="popup-form__label">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Cost"}}</div>
+                    <div class="popup-form__content popup-form__content--data">{{item.system.cost}}</div>
                 </div>
             </div>
         </div>
     </div>
-    {{/if}}
 
-    <div class="popup-form__section">
-        <div class="popup-form__header">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.ItemDetails"}}</div>
-        <div class="popup-form__group">
-            <div class="popup-form__row">
-                <div class="popup-form__label">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Quantity"}}</div>
-                <div class="popup-form__content">{{item.system.quantity}}</div>
-                <div class="popup-form__label">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Cost"}}</div>
-                <div class="popup-form__content">{{item.system.cost}}</div>
-            </div>
-        </div>
-    </div>
-
-    <div class="popup-form__group popup-form__group--right">
+    <footer class="base-form__footer">
         {{#unless (or problems.targeting problems.quantity problems.equipped)}}
             <button type="submit" class="popup-form__button popup-form__button--primary">{{localize "EVENTIDE_RP_SYSTEM.Forms.Buttons.UseItem"}}</button>
         {{/unless}}
         <button type="button" class="popup-form__button" data-action="close">{{localize "EVENTIDE_RP_SYSTEM.Forms.Buttons.Close"}}</button>
-    </div>
+    </footer>
 </div>

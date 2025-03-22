@@ -1,32 +1,37 @@
 <div class="{{cssClass}} base-form" autocomplete="off">
-  <div class="base-form__callout base-form__callout--information">
-    <i class="fas fa-info-circle"></i>
-    {{localize "EVENTIDE_RP_SYSTEM.Forms.Callouts.Gear.RestoreTarget" target=actor.name}}
-  </div>
-  <div class="base-form__group base-form__group--checkbox">
-    <label class="base-form__label" for="restoreResolve">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RestoreResolve"}}</label>
-    <input class="base-form__checkbox" autofocus type="checkbox" id="restoreResolve" name="restoreResolve" {{checked defaultOptions.restoreResolve}}>
-  </div>
-  <div class="base-form__group base-form__group--checkbox">
-    <label class="base-form__label" for="restorePower">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RestorePower"}}</label>
-    <input class="base-form__checkbox" type="checkbox" id="restorePower" name="restorePower" {{checked defaultOptions.restorePower}}>
-  </div>
-  <hr />
-  <div class="base-form__group base-form__group--checkbox base-form__group--header">
-    <label class="base-form__label">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RemoveStatuses"}}</label>
-  </div>
-  <div class="base-form__group base-form__group--checkbox">
-    <label class="base-form__label" for="all">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.All"}}</label>
-    <input class="base-form__checkbox" type="checkbox" id="all" name="all">
-  </div>
-  {{#each statusEffects as |status|}}
-    <div class="base-form__group base-form__group--checkbox">
-      <label class="base-form__label" for="{{status.id}}">{{status.name}}</label>
-      <input class="base-form__checkbox" type="checkbox" name="{{status.id}}" id="{{status.id}}">
+  <header class="base-form__callout-box">
+    <div class="base-form__callout base-form__callout--information">
+      <i class="fas fa-info-circle"></i>
+      {{localize "EVENTIDE_RP_SYSTEM.Forms.Callouts.Gear.RestoreTarget" target=actor.name}}
     </div>
-  {{/each}}
-  <div class="base-form__group base-form__group--right">
+  </header>
+  <div class="base-form__content">
+    <div class="base-form__group base-form__group--checkbox">
+      <label class="base-form__label" for="restoreResolve">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RestoreResolve"}}</label>
+      <input class="base-form__checkbox" autofocus type="checkbox" id="restoreResolve" name="restoreResolve" {{checked defaultOptions.restoreResolve}}>
+    </div>
+    <div class="base-form__group base-form__group--checkbox">
+      <label class="base-form__label" for="restorePower">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RestorePower"}}</label>
+      <input class="base-form__checkbox" type="checkbox" id="restorePower" name="restorePower" {{checked defaultOptions.restorePower}}>
+    </div>
+    <hr />
+    <div class="base-form__group base-form__group--checkbox base-form__group--header">
+      <label class="base-form__label">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RemoveStatuses"}}</label>
+    </div>
+    <div class="base-form__group base-form__group--checkbox">
+      <label class="base-form__label" for="all">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.All"}}</label>
+      <input class="base-form__checkbox" type="checkbox" id="all" name="all">
+    </div>
+    {{#each statusEffects as |status|}}
+      <div class="base-form__group base-form__group--checkbox">
+        <label class="base-form__label" for="{{status.id}}">{{status.name}}</label>
+        <input class="base-form__checkbox" type="checkbox" name="{{status.id}}" id="{{status.id}}">
+      </div>
+    {{/each}}
+  </div>
+  
+  <footer class="base-form__footer">
     <button type="submit" class="base-form__button base-form__button--primary">{{localize "EVENTIDE_RP_SYSTEM.Forms.Buttons.Restore"}}</button>
     <button type="button" class="base-form__button" data-action="close">{{localize "EVENTIDE_RP_SYSTEM.Forms.Buttons.Close"}}</button>
-  </div>
+  </footer>
 </div>

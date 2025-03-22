@@ -88,11 +88,20 @@
     opacity: 0.7;
   }
 
+  &__callout-box {
+    font-family: typography.$underdog;
+    margin-bottom: 3px;
+    display: flex;
+    flex: 0 0 auto;
+  }
+
   &__callout {
     border-radius: 8px;
-    padding: 10px;
-    margin: 10px 0;
+    padding: 0.5rem;
     font-weight: bold;
+    width: 100%;
+    align-content: flex-start;
+    font-size: 0.9rem;
     color: #ffffff;
   
 
@@ -112,17 +121,20 @@
     font-family: typography.$underdog;
     text-align: center;
     text-decoration: underline;
-    padding: 0.875rem;
+    // padding: 0.875rem;
     font-size: 1.125rem;
-    margin: 0;
+    // margin-top: -3rem;
   }
 
   &__content {
     text-align: justify;
-    font-style: italic;
-    background-color: colors.$form-content-bg;
-    padding: 0.5rem 1rem;
     border-radius: 5px;
+  }
+
+  &__description {
+    @extend .underdog-regular;
+    text-align: justify;
+    font-style: italic;
   }
 
   &__effects {
@@ -141,7 +153,7 @@
         padding: 0.01rem;
         padding-top: 0.2rem;
         padding-bottom: 0.2rem;
-        margin-bottom: 3px;
+        margin-bottom: 0.1875rem;
         background-color: colors.$effect;
         color: colors.$card-white;
     }
@@ -183,10 +195,10 @@
 }
 
   &__group {
-    margin: 0;
+    margin: 1rem 0;
     padding: 0.25rem 0.5rem 0.75rem 0.5rem;
     @include flex-row;
-    gap: 0.5rem;
+    gap: 1rem;
     flex: 1;
 
     &:first-child {
