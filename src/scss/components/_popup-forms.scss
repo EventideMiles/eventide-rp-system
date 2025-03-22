@@ -73,12 +73,15 @@
 // Block
 .popup-form {
   max-height: 90vh; 
-  overflow-y: auto;
+  overflow-y: hidden; 
   -ms-overflow-style: initial;
   scrollbar-width: thin;
-  scrollbar-color: var(--eventide-rp-system-input-focus) transparent;
+  scrollbar-color: colors.$input-focus transparent;
   font-family: typography.$underdog;
   margin: 0.5rem;
+  display: flex; 
+  flex-direction: column; 
+  height: 100%; 
 
   &::-webkit-scrollbar {
     width: 6px;
@@ -87,12 +90,12 @@
   }
   
   &::-webkit-scrollbar-thumb {
-    background-color: var(--eventide-rp-system-input-focus);
+    background-color: colors.$input-focus;
     border-radius: 10px;
-    border: 1px solid var(--eventide-rp-system-input-bg);
+    border: 1px solid colors.$input-bg;
     
     &:hover {
-      background-color: var(--eventide-rp-system-primary-button-hover);
+      background-color: colors.$primary-button-hover;
     }
   }
   
@@ -169,6 +172,44 @@
     }
   }
 
+  &__main {
+    flex: 1;
+    margin: 0.25rem;
+    padding: 0.25rem;
+    // background-color: colors.$form-content-bg;
+    border-radius: 4px;
+    text-align: center;
+    overflow-y: auto; 
+    max-height: calc(90vh - 100px); 
+    
+    /* Add blue scrollbar styling */
+    -ms-overflow-style: initial;
+    scrollbar-width: thin;
+    scrollbar-color: colors.$input-focus transparent;
+    
+    &::-webkit-scrollbar {
+      width: 6px;
+      background-color: transparent;
+      display: block;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background-color: colors.$input-focus;
+      border-radius: 10px;
+      border: 1px solid colors.$input-bg;
+      
+      &:hover {
+        background-color: colors.$primary-button-hover;
+      }
+    }
+    
+    &::-webkit-scrollbar-track {
+      background-color: transparent;
+      margin: 0;
+    }
+  }
+  
+
   &__content {
     flex: 1;
     margin: 0.25rem;
@@ -177,18 +218,23 @@
     border-radius: 4px;
     text-align: center;
 
+    &--data {
+      background-color: colors.$form-content-bg;
+    }
+
     &--usage {
       font-size: 1.1rem;
       padding: 0.5rem;
       white-space: normal;
       text-align: justify;
-      background-color: rgba(0, 0, 0, 0.1);
+      background-color: rgba(16, 26, 41, 0.5);
       border-radius: 4px;
       border-left: 3px solid #cb8e00;
       line-height: 1.4;
     }
 
     &--description {
+      background-color: colors.$form-content-bg;
       overflow-y: visible; 
       height: auto; 
       white-space: normal;
@@ -549,8 +595,12 @@
     margin-top: 10px;
     display: flex;
     width: 100%;
-    flex: 0 0 auto; /* Prevent footer from scrolling */
+    flex: 0 0 auto; 
     justify-content: flex-end;
+    position: sticky; 
+    bottom: 0; 
+    background-color: inherit; 
+    z-index: 10; 
     
     /* Make the submit button take appropriate width */
     .popup-form__button--primary {
@@ -567,6 +617,10 @@
     margin-bottom: 3px;
     display: flex;
     flex: 0 0 auto;
+    position: sticky; 
+    top: 0; 
+    z-index: 10; 
+    background-color: inherit; 
   }
 
   &__callout {

@@ -11,7 +11,7 @@
             <div class="popup-form__callout popup-form__callout--warning"><i class="fas fa-exclamation-triangle"></i> {{localize "EVENTIDE_RP_SYSTEM.Forms.Callouts.Gear.NotEquipped"}}</div>
         {{/if}}
     </header>
-    <div class="base-form__content">
+    <div class="base-form__main">
         
         <div class="popup-form__header">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Details"}}</div>
         
@@ -28,17 +28,17 @@
             <div class="popup-form__group">
                 <div class="popup-form__row">
                     <div class="popup-form__label">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RollType"}}</div>
-                    <div class="popup-form__content">{{item.system.roll.type}}</div>
+                    <div class="popup-form__content popup-form__content--data">{{item.system.roll.type}}</div>
                     <div class="popup-form__label">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RollAbility"}}</div>
-                    <div class="popup-form__content">{{item.system.roll.ability}}</div>
+                    <div class="popup-form__content popup-form__content--data">{{item.system.roll.ability}}</div>
                 </div>
             </div>
             <div class="popup-form__group">
                 <div class="popup-form__row">
                     <div class="popup-form__label">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Bonus"}}</div>
-                    <div class="popup-form__content">{{numberFormat item.system.roll.bonus decimals=0 sign=true}}</div>
+                    <div class="popup-form__content popup-form__content--data">{{numberFormat item.system.roll.bonus decimals=0 sign=true}}</div>
                     <div class="popup-form__label">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Adjustments"}}</div>
-                    <div class="popup-form__content">
+                    <div class="popup-form__content popup-form__content--data">
                         {{#if (eq item.system.roll.diceAdjustments.total 0)}}
                             <span class="popup-form__text--neutral">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Neutral"}}</span>
                         {{else if (lt item.system.roll.diceAdjustments.total 0)}}
@@ -57,9 +57,9 @@
             <div class="popup-form__group">
                 <div class="popup-form__row">
                     <div class="popup-form__label">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Quantity"}}</div>
-                    <div class="popup-form__content">{{item.system.quantity}}</div>
+                    <div class="popup-form__content popup-form__content--data">{{item.system.quantity}}</div>
                     <div class="popup-form__label">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Cost"}}</div>
-                    <div class="popup-form__content">{{item.system.cost}}</div>
+                    <div class="popup-form__content popup-form__content--data">{{item.system.cost}}</div>
                 </div>
             </div>
         </div>
