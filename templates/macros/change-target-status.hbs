@@ -1,51 +1,54 @@
 <div class="{{cssClass}} base-form" autocomplete="off">
-  <div class="base-form__callout base-form__callout--information">
-    <i class="fas fa-info-circle"></i>
-    {{localize "EVENTIDE_RP_SYSTEM.Forms.ScriptExplanations.ChangeTargetStatus"}}
+  <div class="base-form__content">
+    <div class="base-form__callout base-form__callout--information">
+      <i class="fas fa-info-circle"></i>
+      {{localize "EVENTIDE_RP_SYSTEM.Forms.ScriptExplanations.ChangeTargetStatus"}}
+    </div>
+    <div class="base-form__group">
+      <label class="base-form__label" for="statusSelector">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Status"}}:</label>
+      <select class="base-form__select" id="statusSelector" name="statusSelector">
+        {{#each statuses as |status|}}
+          <option class="base-form__select-option" value="{{status.id}}" {{#ifCond status.id "===" ../storedData.changeTargetStatus_statusSelector}}selected{{/ifCond}}>{{status.name}}</option>
+        {{/each}}
+      </select>
+    </div>
+    <div class="base-form__group">
+      <label class="base-form__label" for="adjustmentChange">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Effects"}}:</label>
+      <select class="base-form__select" id="adjustmentMode" name="adjustmentMode">
+        <option value="add" {{#ifCond storedData.changeTargetStatus_adjustmentMode "===" "add"}}selected{{/ifCond}}>{{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.AddMode"}}</option>
+        <option value="subtract" {{#ifCond storedData.changeTargetStatus_adjustmentMode "===" "subtract"}}selected{{/ifCond}}>{{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.SubtractMode"}}</option>
+      </select>
+      <input class="base-form__number-input" autofocus type="number" id="adjustmentChange" name="adjustmentChange" value="{{ifThen storedData.changeTargetStatus_adjustmentChange storedData.changeTargetStatus_adjustmentChange "0"}}" placeholder="{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.ChangeValue"}}">
+    </div>
+    <div class="base-form__group">
+      <label class="base-form__label" for="overrideChange">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.OverrideValues"}}:</label>
+      <select class="base-form__select" id="overrideMode" name="overrideMode">
+        <option value="add" {{#ifCond storedData.changeTargetStatus_overrideMode "===" "add"}}selected{{/ifCond}}>{{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.AddMode"}}</option>
+        <option value="subtract" {{#ifCond storedData.changeTargetStatus_overrideMode "===" "subtract"}}selected{{/ifCond}}>{{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.SubtractMode"}}</option>
+      </select>
+      <input class="base-form__number-input" type="number" id="overrideChange" name="overrideChange" value="{{ifThen storedData.changeTargetStatus_overrideChange storedData.changeTargetStatus_overrideChange "0"}}" placeholder="{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.ChangeValue"}}">
+    </div>
+    <div class="base-form__group">
+      <label class="base-form__label" for="advantageChange">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RollAdvantage"}}:</label>
+      <select class="base-form__select" id="advantageMode" name="advantageMode">
+        <option value="add" {{#ifCond storedData.changeTargetStatus_advantageMode "===" "add"}}selected{{/ifCond}}>{{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.AddMode"}}</option>
+        <option value="subtract" {{#ifCond storedData.changeTargetStatus_advantageMode "===" "subtract"}}selected{{/ifCond}}>{{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.SubtractMode"}}</option>
+      </select>
+      <input class="base-form__number-input" type="number" id="advantageChange" name="advantageChange" value="{{ifThen storedData.changeTargetStatus_advantageChange storedData.changeTargetStatus_advantageChange "0"}}" placeholder="{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.ChangeValue"}}">
+    </div>
+    <div class="base-form__group">
+      <label class="base-form__label" for="disadvantageChange">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RollDisadvantage"}}:</label>
+      <select class="base-form__select" id="disadvantageMode" name="disadvantageMode">
+        <option value="add" {{#ifCond storedData.changeTargetStatus_disadvantageMode "===" "add"}}selected{{/ifCond}}>{{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.AddMode"}}</option>  
+        <option value="subtract" {{#ifCond storedData.changeTargetStatus_disadvantageMode "===" "subtract"}}selected{{/ifCond}}>{{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.SubtractMode"}}</option>
+      </select>
+      <input class="base-form__number-input" type="number" id="disadvantageChange" name="disadvantageChange" value="{{ifThen storedData.changeTargetStatus_disadvantageChange storedData.changeTargetStatus_disadvantageChange "0"}}" placeholder="{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.ChangeValue"}}">
+    </div>
   </div>
-  <div class="base-form__group">
-    <label class="base-form__label" for="statusSelector">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Status"}}:</label>
-    <select class="base-form__select" id="statusSelector" name="statusSelector">
-      {{#each statuses as |status|}}
-        <option class="base-form__select-option" value="{{status.id}}" {{#ifCond status.id "===" ../storedData.changeTargetStatus_statusSelector}}selected{{/ifCond}}>{{status.name}}</option>
-      {{/each}}
-    </select>
-  </div>
-  <div class="base-form__group">
-    <label class="base-form__label" for="adjustmentChange">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Effects"}}:</label>
-    <select class="base-form__select" id="adjustmentMode" name="adjustmentMode">
-      <option value="add" {{#ifCond storedData.changeTargetStatus_adjustmentMode "===" "add"}}selected{{/ifCond}}>{{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.AddMode"}}</option>
-      <option value="subtract" {{#ifCond storedData.changeTargetStatus_adjustmentMode "===" "subtract"}}selected{{/ifCond}}>{{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.SubtractMode"}}</option>
-    </select>
-    <input class="base-form__number-input" autofocus type="number" id="adjustmentChange" name="adjustmentChange" value="{{ifThen storedData.changeTargetStatus_adjustmentChange storedData.changeTargetStatus_adjustmentChange "0"}}" placeholder="{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.ChangeValue"}}">
-  </div>
-  <div class="base-form__group">
-    <label class="base-form__label" for="overrideChange">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.OverrideValues"}}:</label>
-    <select class="base-form__select" id="overrideMode" name="overrideMode">
-      <option value="add" {{#ifCond storedData.changeTargetStatus_overrideMode "===" "add"}}selected{{/ifCond}}>{{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.AddMode"}}</option>
-      <option value="subtract" {{#ifCond storedData.changeTargetStatus_overrideMode "===" "subtract"}}selected{{/ifCond}}>{{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.SubtractMode"}}</option>
-    </select>
-    <input class="base-form__number-input" type="number" id="overrideChange" name="overrideChange" value="{{ifThen storedData.changeTargetStatus_overrideChange storedData.changeTargetStatus_overrideChange "0"}}" placeholder="{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.ChangeValue"}}">
-  </div>
-  <div class="base-form__group">
-    <label class="base-form__label" for="advantageChange">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RollAdvantage"}}:</label>
-    <select class="base-form__select" id="advantageMode" name="advantageMode">
-      <option value="add" {{#ifCond storedData.changeTargetStatus_advantageMode "===" "add"}}selected{{/ifCond}}>{{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.AddMode"}}</option>
-      <option value="subtract" {{#ifCond storedData.changeTargetStatus_advantageMode "===" "subtract"}}selected{{/ifCond}}>{{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.SubtractMode"}}</option>
-    </select>
-    <input class="base-form__number-input" type="number" id="advantageChange" name="advantageChange" value="{{ifThen storedData.changeTargetStatus_advantageChange storedData.changeTargetStatus_advantageChange "0"}}" placeholder="{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.ChangeValue"}}">
-  </div>
-  <div class="base-form__group">
-    <label class="base-form__label" for="disadvantageChange">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RollDisadvantage"}}:</label>
-    <select class="base-form__select" id="disadvantageMode" name="disadvantageMode">
-      <option value="add" {{#ifCond storedData.changeTargetStatus_disadvantageMode "===" "add"}}selected{{/ifCond}}>{{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.AddMode"}}</option>  
-      <option value="subtract" {{#ifCond storedData.changeTargetStatus_disadvantageMode "===" "subtract"}}selected{{/ifCond}}>{{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.SubtractMode"}}</option>
-    </select>
-    <input class="base-form__number-input" type="number" id="disadvantageChange" name="disadvantageChange" value="{{ifThen storedData.changeTargetStatus_disadvantageChange storedData.changeTargetStatus_disadvantageChange "0"}}" placeholder="{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.ChangeValue"}}">
-  </div>
-  <div class="base-form__group base-form__group--right">
+  
+  <footer class="base-form__footer">
     <button type="submit" class="base-form__button base-form__button--primary">{{localize "EVENTIDE_RP_SYSTEM.Forms.Buttons.Change"}}</button>
-    <button type="button" class="base-form__button" data-action="store">{{localize "EVENTIDE_RP_SYSTEM.Forms.Buttons.Store"}}</button>
     <button type="button" class="base-form__button" data-action="close">{{localize "EVENTIDE_RP_SYSTEM.Forms.Buttons.Close"}}</button>
-  </div>
+    <button type="button" class="base-form__button" data-action="store">{{localize "EVENTIDE_RP_SYSTEM.Forms.Buttons.Store"}}</button>
+  </footer>
 </div>

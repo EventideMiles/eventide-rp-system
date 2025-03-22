@@ -69,46 +69,62 @@
 /* Update base form styling to ensure scrollbars work properly */
 .base-form {
   height: 100%;
-  max-height: calc(100vh - 120px);
-  overflow-y: auto;
   display: flex;
   flex-direction: column;
-  margin-right: -8px; /* Offset the container padding */
-  padding-right: 8px; /* Add padding back to the content */
+  padding: 6px 8px 6px 8px;
   
-  /* Remove any overflow style overrides */
-  -ms-overflow-style: initial;
-  scrollbar-width: thin;
-  scrollbar-color: var(--eventide-rp-system-input-focus) transparent;
-
-  /* Styling for the scrollbar */
-  &::-webkit-scrollbar {
-    width: 6px;
-    background-color: transparent;
-    display: block;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background-color: var(--eventide-rp-system-input-focus);
-    border-radius: 10px;
-    border: 1px solid var(--eventide-rp-system-input-bg);
-
-    &:hover {
-      background-color: var(--eventide-rp-system-primary-button-hover);
+  /* Content area with scrollbar */
+  &__content {
+    flex: 1;
+    overflow-y: auto;
+    margin-right: -8px; /* Offset the container padding */
+    padding-right: 8px; /* Add padding back to the content */
+    
+    /* Remove any overflow style overrides */
+    -ms-overflow-style: initial;
+    scrollbar-width: thin;
+    scrollbar-color: colors.$input-focus transparent;
+  
+    /* Styling for the scrollbar */
+    &::-webkit-scrollbar {
+      width: 6px;
+      background-color: transparent;
+      display: block;
+    }
+  
+    &::-webkit-scrollbar-thumb {
+      background-color: colors.$input-focus;
+      border-radius: 10px;
+      border: 1px solid colors.$input-bg;
+  
+      &:hover {
+        background-color: colors.$primary-button-hover;
+      }
+    }
+  
+    &::-webkit-scrollbar-track {
+      background-color: transparent;
+      margin: 0; /* Remove track margin */
     }
   }
-
-  &::-webkit-scrollbar-track {
-    background-color: transparent;
-    margin: 0; /* Remove track margin */
-  }
-
-  /* Ensure content can scroll */
-  > .form-content {
-    flex: 1 1 auto;
-    overflow-y: auto;
-    min-height: 0;
-    padding-right: 2px; /* Minimal padding between content and scrollbar */
+  
+  /* Footer area */
+  &__footer {
+    margin-top: 10px;
+    display: flex;
+    width: 100%;
+    flex: 0 0 auto; /* Prevent footer from scrolling */
+    justify-content: flex-end;
+    gap: 8px;
+    
+    /* Make the submit button take appropriate width */
+    .base-form__button--primary {
+      min-width: 120px;
+      justify-content: center;
+      padding: 8px;
+      font-weight: bold;
+      text-align: center;
+    }
   }
 }
 

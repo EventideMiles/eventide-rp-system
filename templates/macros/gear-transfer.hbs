@@ -1,32 +1,34 @@
 <div class="{{cssClass}} base-form" autocomplete="off">
-  <div class="base-form__callout base-form__callout--information">
-    <i class="fas fa-info-circle"></i>
-    {{{localize "EVENTIDE_RP_SYSTEM.Forms.Callouts.Gear.TransferGear" target=targetActor.name selected=selectedActor.name}}}
-  </div>
-  <div class="base-form__group">
-    <label class="base-form__label" for="gearId">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.SelectGear"}}:</label>
-    <select class="base-form__select" id="gearId" name="gearId">
-      {{#each targetGear as |item|}}
-        <option value="{{item.id}}">
-          {{item.name}} ({{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Available" number=item.system.quantity}})
-        </option>
-      {{/each}}
-    </select>
+  <div class="base-form__content">
+    <div class="base-form__callout base-form__callout--information">
+      <i class="fas fa-info-circle"></i>
+      {{{localize "EVENTIDE_RP_SYSTEM.Forms.Callouts.Gear.TransferGear" target=targetActor.name selected=selectedActor.name}}}
+    </div>
+    <div class="base-form__group">
+      <label class="base-form__label" for="gearId">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.SelectGear"}}:</label>
+      <select class="base-form__select" id="gearId" name="gearId">
+        {{#each targetGear as |item|}}
+          <option value="{{item.id}}">
+            {{item.name}} ({{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Available" number=item.system.quantity}})
+          </option>
+        {{/each}}
+      </select>
+    </div>
+
+    <div class="base-form__group">
+      <label class="base-form__label" for="quantity">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Quantity"}}:</label>
+      <input class="base-form__number-input" type="number" id="quantity" name="quantity" value="1" min="1">
+    </div>
+
+    <div class="base-form__group">
+      <label class="base-form__label" for="description">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Description"}} {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Optional"}}:</label>
+      <textarea class="base-form__textarea" id="description" name="description" placeholder="{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.TransferNote"}}"></textarea>
+    </div>
   </div>
 
-  <div class="base-form__group">
-    <label class="base-form__label" for="quantity">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Quantity"}}:</label>
-    <input class="base-form__number-input" type="number" id="quantity" name="quantity" value="1" min="1">
-  </div>
-
-  <div class="base-form__group">
-    <label class="base-form__label" for="description">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Description"}} {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Optional"}}:</label>
-    <textarea class="base-form__textarea" id="description" name="description" placeholder="{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.TransferNote"}}"></textarea>
-  </div>
-
-  <div class="base-form__group base-form__group--right">
+  <footer class="base-form__footer">
     <button type="submit" class="base-form__button base-form__button--primary">
       <i class="fa fa-check"></i> {{localize "EVENTIDE_RP_SYSTEM.Forms.Buttons.Transfer"}}
     </button>
-  </div>
+  </footer>
 </div>

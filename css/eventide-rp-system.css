@@ -1786,6 +1786,21 @@
 .popup-form__sheet-tab-editor {
   height: 100%;
 }
+.popup-form__footer {
+  margin-top: 10px;
+  display: flex;
+  width: 100%;
+  flex: 0 0 auto; /* Prevent footer from scrolling */
+  justify-content: flex-end;
+  /* Make the submit button take appropriate width */
+}
+.popup-form__footer .popup-form__button--primary {
+  min-width: 120px;
+  justify-content: center;
+  padding: 8px;
+  font-weight: bold;
+  text-align: center;
+}
 
 .gear-creator {
   height: 100%;
@@ -2445,10 +2460,15 @@
 }
 .eventide-rp-system .base-form {
   height: 100%;
-  max-height: calc(100vh - 120px);
-  overflow-y: auto;
   display: flex;
   flex-direction: column;
+  padding: 6px 8px 6px 8px;
+  /* Content area with scrollbar */
+  /* Footer area */
+}
+.eventide-rp-system .base-form__content {
+  flex: 1;
+  overflow-y: auto;
   margin-right: -8px; /* Offset the container padding */
   padding-right: 8px; /* Add padding back to the content */
   /* Remove any overflow style overrides */
@@ -2456,30 +2476,39 @@
   scrollbar-width: thin;
   scrollbar-color: var(--eventide-rp-system-input-focus) transparent;
   /* Styling for the scrollbar */
-  /* Ensure content can scroll */
 }
-.eventide-rp-system .base-form::-webkit-scrollbar {
+.eventide-rp-system .base-form__content::-webkit-scrollbar {
   width: 6px;
   background-color: transparent;
   display: block;
 }
-.eventide-rp-system .base-form::-webkit-scrollbar-thumb {
+.eventide-rp-system .base-form__content::-webkit-scrollbar-thumb {
   background-color: var(--eventide-rp-system-input-focus);
   border-radius: 10px;
   border: 1px solid var(--eventide-rp-system-input-bg);
 }
-.eventide-rp-system .base-form::-webkit-scrollbar-thumb:hover {
+.eventide-rp-system .base-form__content::-webkit-scrollbar-thumb:hover {
   background-color: var(--eventide-rp-system-primary-button-hover);
 }
-.eventide-rp-system .base-form::-webkit-scrollbar-track {
+.eventide-rp-system .base-form__content::-webkit-scrollbar-track {
   background-color: transparent;
   margin: 0; /* Remove track margin */
 }
-.eventide-rp-system .base-form > .form-content {
-  flex: 1 1 auto;
-  overflow-y: auto;
-  min-height: 0;
-  padding-right: 2px; /* Minimal padding between content and scrollbar */
+.eventide-rp-system .base-form__footer {
+  margin-top: 10px;
+  display: flex;
+  width: 100%;
+  flex: 0 0 auto; /* Prevent footer from scrolling */
+  justify-content: flex-end;
+  gap: 8px;
+  /* Make the submit button take appropriate width */
+}
+.eventide-rp-system .base-form__footer .base-form__button--primary {
+  min-width: 120px;
+  justify-content: center;
+  padding: 8px;
+  font-weight: bold;
+  text-align: center;
 }
 .eventide-rp-system .sheet-header {
   flex: 0 auto;

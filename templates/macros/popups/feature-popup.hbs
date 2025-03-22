@@ -1,53 +1,55 @@
 <div class="{{cssClass}} popup-form" autocomplete="off">
-    <div class="chat-card chat-card__header chat-card__header--feature">
-        <img src="{{item.img}}" class="chat-card__image--primary" /> 
-        <div>{{item.name}}</div>
-    </div>
+    <div class="base-form__content">
+        <div class="chat-card chat-card__header chat-card__header--feature">
+            <img src="{{item.img}}" class="chat-card__image--primary" /> 
+            <div>{{item.name}}</div>
+        </div>
 
-    {{#if item.system.description}}
-    <div class="popup-form__content popup-form__content--description">
-        <div class="popup-form__header">{{item.actor.name}}</div> 
-        {{{item.system.description}}}
-    </div>
-    {{/if}}
+        {{#if item.system.description}}
+        <div class="popup-form__content popup-form__content--description">
+            <div class="popup-form__header">{{item.actor.name}}</div> 
+            {{{item.system.description}}}
+        </div>
+        {{/if}}
 
-    <hr class="chat-card__hr" />
+        <hr class="chat-card__hr" />
 
-    {{#ifCond effects.length ">" 0}}
-    <div class="popup-form__effects">
-        <div class='popup-form__effects--title'>{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Effects"}}</div>
-        {{#each effects}}
-            <div class="popup-form__effects--name">
-                <img src="{{this.img}}" class="chat-card__image--secondary" /> {{this.name}}
-            </div>
-            {{#ifCond this.changes.length ">" 0 }}
-            {{#each this.changes}}
-                <div class="popup-form__effects--row">
-                    <div class="popup-form__effects--row-cell popup-form__effects--row-cell--first">{{keySplit this.key 2}}</div> 
-                    <div class="popup-form__effects--row-cell popup-form__effects--row-cell--middle">
-                        {{#ifCond this.mode "===" 5}}{{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.SetTo"}}{{/ifCond}}
-                        {{#ifCond this.mode "!==" 5}}
-                        {{#ifCond (keySplit this.key 4) "===" "advantage"}}
-                            {{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.Adv"}}
-                        {{/ifCond}}
-                        {{#ifCond (keySplit this.key 4) "===" "disadvantage"}}
-                            {{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.Dis"}}
-                        {{/ifCond}}
-                        {{#ifCond (keySplit this.key 3) "===" "change"}}
-                            {{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.Add"}}
-                        {{/ifCond}}
-                        {{/ifCond}}
-                    </div>
-                    <div class="popup-form__effects--row-cell popup-form__effects--row-cell--last">{{this.value}}</div>
+        {{#ifCond effects.length ">" 0}}
+        <div class="popup-form__effects">
+            <div class='popup-form__effects--title'>{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Effects"}}</div>
+            {{#each effects}}
+                <div class="popup-form__effects--name">
+                    <img src="{{this.img}}" class="chat-card__image--secondary" /> {{this.name}}
                 </div>
+                {{#ifCond this.changes.length ">" 0 }}
+                {{#each this.changes}}
+                    <div class="popup-form__effects--row">
+                        <div class="popup-form__effects--row-cell popup-form__effects--row-cell--first">{{keySplit this.key 2}}</div> 
+                        <div class="popup-form__effects--row-cell popup-form__effects--row-cell--middle">
+                            {{#ifCond this.mode "===" 5}}{{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.SetTo"}}{{/ifCond}}
+                            {{#ifCond this.mode "!==" 5}}
+                            {{#ifCond (keySplit this.key 4) "===" "advantage"}}
+                                {{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.Adv"}}
+                            {{/ifCond}}
+                            {{#ifCond (keySplit this.key 4) "===" "disadvantage"}}
+                                {{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.Dis"}}
+                            {{/ifCond}}
+                            {{#ifCond (keySplit this.key 3) "===" "change"}}
+                                {{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.Add"}}
+                            {{/ifCond}}
+                            {{/ifCond}}
+                        </div>
+                        <div class="popup-form__effects--row-cell popup-form__effects--row-cell--last">{{this.value}}</div>
+                    </div>
+                {{/each}}
+                {{/ifCond}}
             {{/each}}
-            {{/ifCond}}
-        {{/each}}
+        </div>
+        {{/ifCond}}
     </div>
-    {{/ifCond}}
 
-    <div class="popup-form__group popup-form__group--right">
-        <button type="submit" class="popup-form__button popup-form__button--primary">{{localize "EVENTIDE_RP_SYSTEM.Forms.Buttons.Close"}}</button>
+    <footer class="base-form__footer">
         <button type="button" class="popup-form__button" data-action="toChat">{{localize "EVENTIDE_RP_SYSTEM.Forms.Buttons.SendToChat"}}</button>
-    </div>
+        <button type="submit" class="popup-form__button popup-form__button--primary">{{localize "EVENTIDE_RP_SYSTEM.Forms.Buttons.Close"}}</button>
+    </footer>
 </div>

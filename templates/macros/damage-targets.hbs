@@ -1,4 +1,5 @@
 <div class="{{cssClass}} base-form" autocomplete="off">
+  <div class="base-form__content">
     <div>{{{localize "EVENTIDE_RP_SYSTEM.Forms.ScriptExplanations.DamageTargets"}}}</div>
     <div class="base-form__callout base-form__callout--information">
       <i class="fas fa-info-circle"></i>
@@ -24,9 +25,11 @@
       <label class="base-form__label" for="isHeal">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.IsHeal"}}:</label>
       <input class="base-form__checkbox" type="checkbox" name="isHeal" {{checked heal}}>
     </div>
-    <div class="base-form__group base-form__group--right">
-      <button type="submit" class="base-form__button base-form__button--primary">{{localize "EVENTIDE_RP_SYSTEM.Forms.Buttons.Damage"}}</button>
-      <button type="button" class="base-form__button" data-action="store">{{localize "EVENTIDE_RP_SYSTEM.Forms.Buttons.Store"}}</button>
-      <button type="button" class="base-form__button" data-action="close">{{localize "EVENTIDE_RP_SYSTEM.Forms.Buttons.Close"}}</button>
-    </div>
+  </div>
+  
+  <footer class="base-form__footer">
+    <button type="submit" class="base-form__button base-form__button--primary">{{localize "EVENTIDE_RP_SYSTEM.Forms.Buttons.Damage"}}</button>
+    <button type="button" class="base-form__button" data-action="close">{{localize "EVENTIDE_RP_SYSTEM.Forms.Buttons.Close"}}</button>
+    <button type="button" class="base-form__button" data-action="store">{{localize "EVENTIDE_RP_SYSTEM.Forms.Buttons.Store"}}</button>
+  </footer>
 </div>
