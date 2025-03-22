@@ -1,9 +1,11 @@
 <div class="{{cssClass}} base-form" autocomplete="off">
-  <div class="base-form__content">
+  <header class="base-form__callout-box">
     <div class="base-form__callout base-form__callout--information">
       <i class="fas fa-info-circle"></i>
       {{{localize "EVENTIDE_RP_SYSTEM.Forms.Callouts.Gear.TransferGear" target=targetActor.name selected=selectedActor.name}}}
     </div>
+  </header>
+  <div class="base-form__content">
     <div class="base-form__group">
       <label class="base-form__label" for="gearId">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.SelectGear"}}:</label>
       <select class="base-form__select" id="gearId" name="gearId">

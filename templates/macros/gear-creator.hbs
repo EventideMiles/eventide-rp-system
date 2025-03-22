@@ -1,17 +1,25 @@
 <div class="{{cssClass}} base-form" autocomplete="off">
-  <div class="base-form__content">
-    <div class="base-form__callout base-form__callout--information">
-      <i class="fas fa-info-circle"></i>
-      {{#if (eq playerMode true)}}
+  <header class="base-form__callout-box">
+    {{#if (eq playerMode true)}}
+      <div class="base-form__callout base-form__callout--information">
+        <i class="fas fa-info-circle"></i>
         {{{localize "EVENTIDE_RP_SYSTEM.Forms.Callouts.Gear.PlayerMode" count=selectedArray.length}}}
-      {{else}}
-        {{#if (eq targetArray.length 0)}}
+      </div>
+    {{else}}
+      {{#if (eq targetArray.length 0)}}
+        <div class="base-form__callout base-form__callout--information">
+          <i class="fas fa-info-circle"></i>
           {{{localize "EVENTIDE_RP_SYSTEM.Forms.Callouts.Gear.NoTargets"}}}
-        {{else}}
+        </div>
+      {{else}}
+        <div class="base-form__callout base-form__callout--information">
+          <i class="fas fa-info-circle"></i>
           {{{localize "EVENTIDE_RP_SYSTEM.Forms.Callouts.Gear.WithTargets" count=targetArray.length}}}
-        {{/if}}
+        </div>
       {{/if}}
-    </div>
+    {{/if}}
+  </header>
+  <div class="base-form__content">
     <div class="gear-creator__header-section">
       <div class="gear-creator__main-info">
         <div class="base-form__group">

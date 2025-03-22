@@ -77,8 +77,8 @@
   &__content {
     flex: 1;
     overflow-y: auto;
-    margin-right: -8px; /* Offset the container padding */
-    padding-right: 8px; /* Add padding back to the content */
+    // margin-right: -8px; /* Offset the container padding */
+    // padding-right: 8px; /* Add padding back to the content */
     
     /* Remove any overflow style overrides */
     -ms-overflow-style: initial;

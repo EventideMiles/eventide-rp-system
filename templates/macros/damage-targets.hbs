@@ -1,14 +1,20 @@
 <div class="{{cssClass}} base-form" autocomplete="off">
-  <div class="base-form__content">
-    <div>{{{localize "EVENTIDE_RP_SYSTEM.Forms.ScriptExplanations.DamageTargets"}}}</div>
-    <div class="base-form__callout base-form__callout--information">
-      <i class="fas fa-info-circle"></i>
+   <header class="base-form__callout-box">
       {{#if (and (gt targetArray.length 0) (eq gmCheck "gm"))}}
-        {{{localize "EVENTIDE_RP_SYSTEM.Forms.Callouts.Damage.TargetMode" count=targetArray.length}}}
+        <div class="base-form__callout base-form__callout--information">
+          <i class="fas fa-info-circle"></i>
+          {{{localize "EVENTIDE_RP_SYSTEM.Forms.Callouts.Damage.TargetMode" count=targetArray.length}}}
+        </div>
       {{else}}
-        {{{localize "EVENTIDE_RP_SYSTEM.Forms.Callouts.Damage.SelectMode" count=selectedArray.length}}}
+        <div class="base-form__callout base-form__callout--information">
+          <i class="fas fa-info-circle"></i>
+          {{{localize "EVENTIDE_RP_SYSTEM.Forms.Callouts.Damage.SelectMode" count=selectedArray.length}}}
+        </div>
       {{/if}}
-    </div>
+    </header>
+  <div class="base-form__content">
+    <div class="base-form__description">{{{localize "EVENTIDE_RP_SYSTEM.Forms.ScriptExplanations.DamageTargets"}}}</div>
+   
     <div class="base-form__group">
       <label class="base-form__label" for="label">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Label"}}:</label>
       <input class="base-form__text-input" autofocus placeholder="{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.Label"}}" name="label" value="{{lookup storedData (lookup storageKeys 0)}}">

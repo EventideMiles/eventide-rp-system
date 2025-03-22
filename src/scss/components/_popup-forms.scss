@@ -107,16 +107,6 @@
     opacity: 0.7;
   }
 
-  &__warning {
-    background-color: #e6b800;
-    border: 2px dashed #ff8c00;
-    border-radius: 8px;
-    color: #ffffff;
-    padding: 10px;
-    margin: 10px 0;
-    font-weight: bold;
-  }
-
   // Section styling
   &__section {
     margin: 0.5rem 0;
@@ -183,7 +173,7 @@
     flex: 1;
     margin: 0.25rem;
     padding: 0.25rem;
-    background-color: colors.$form-content-bg;
+    // background-color: colors.$form-content-bg;
     border-radius: 4px;
     text-align: center;
 
@@ -569,6 +559,28 @@
       padding: 8px;
       font-weight: bold;
       text-align: center;
+    }
+  }
+
+  &__callout-box {
+    font-family: typography.$underdog;
+    margin-bottom: 3px;
+    display: flex;
+    flex: 0 0 auto;
+  }
+
+  &__callout {
+    border-radius: 8px;
+    padding: 0.5rem;
+    font-weight: bold;
+    width: 100%;
+    align-content: flex-start;
+    font-size: 0.9rem;
+    color: #ffffff;
+
+    &--warning {
+      background-color: #e6b800;
+      border: 2px dashed #ff8c00;
     }
   }
 }

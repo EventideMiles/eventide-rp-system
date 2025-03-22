@@ -13,7 +13,7 @@
   font-style: normal;
 }
 
-.underdog-regular, .popup-form__effects, .chat-card__description, .chat-card__effects, .base-form__effects {
+.underdog-regular, .popup-form__effects, .chat-card__description, .chat-card__effects, .base-form__description, .base-form__effects {
   font-family: "Underdog", serif;
   font-weight: 400;
   font-style: normal;
@@ -531,11 +531,19 @@
   pointer-events: none;
   opacity: 0.7;
 }
+.base-form__callout-box {
+  font-family: "Underdog", serif;
+  margin-bottom: 3px;
+  display: flex;
+  flex: 0 0 auto;
+}
 .base-form__callout {
   border-radius: 8px;
-  padding: 10px;
-  margin: 10px 0;
+  padding: 0.5rem;
   font-weight: bold;
+  width: 100%;
+  align-content: flex-start;
+  font-size: 0.9rem;
   color: #ffffff;
 }
 .base-form__callout--warning {
@@ -550,16 +558,15 @@
   font-family: "Underdog", serif;
   text-align: center;
   text-decoration: underline;
-  padding: 0.875rem;
   font-size: 1.125rem;
-  margin: 0;
 }
 .base-form__content {
   text-align: justify;
-  font-style: italic;
-  background-color: var(--eventide-rp-system-form-content-bg);
-  padding: 0.5rem 1rem;
   border-radius: 5px;
+}
+.base-form__description {
+  text-align: justify;
+  font-style: italic;
 }
 .base-form__effects {
   text-align: justify;
@@ -574,7 +581,7 @@
   padding: 0.01rem;
   padding-top: 0.2rem;
   padding-bottom: 0.2rem;
-  margin-bottom: 3px;
+  margin-bottom: 0.1875rem;
   background-color: var(--eventide-rp-system-card-header-effect);
   color: var(--eventide-rp-system-chat-card-white);
 }
@@ -607,12 +614,12 @@
   font-style: italic;
 }
 .base-form__group {
-  margin: 0;
+  margin: 1rem 0;
   padding: 0.25rem 0.5rem 0.75rem 0.5rem;
   display: flex;
   align-items: center;
   flex-direction: row;
-  gap: 0.5rem;
+  gap: 1rem;
   flex: 1;
 }
 .base-form__group:first-child {
@@ -1311,15 +1318,6 @@
   pointer-events: none;
   opacity: 0.7;
 }
-.popup-form__warning {
-  background-color: #e6b800;
-  border: 2px dashed #ff8c00;
-  border-radius: 8px;
-  color: #ffffff;
-  padding: 10px;
-  margin: 10px 0;
-  font-weight: bold;
-}
 .popup-form__section {
   margin: 0.5rem 0;
   padding: 0.5rem;
@@ -1371,7 +1369,6 @@
   flex: 1;
   margin: 0.25rem;
   padding: 0.25rem;
-  background-color: var(--eventide-rp-system-form-content-bg);
   border-radius: 4px;
   text-align: center;
 }
@@ -1800,6 +1797,25 @@
   padding: 8px;
   font-weight: bold;
   text-align: center;
+}
+.popup-form__callout-box {
+  font-family: "Underdog", serif;
+  margin-bottom: 3px;
+  display: flex;
+  flex: 0 0 auto;
+}
+.popup-form__callout {
+  border-radius: 8px;
+  padding: 0.5rem;
+  font-weight: bold;
+  width: 100%;
+  align-content: flex-start;
+  font-size: 0.9rem;
+  color: #ffffff;
+}
+.popup-form__callout--warning {
+  background-color: #e6b800;
+  border: 2px dashed #ff8c00;
 }
 
 .gear-creator {
@@ -2469,8 +2485,6 @@
 .eventide-rp-system .base-form__content {
   flex: 1;
   overflow-y: auto;
-  margin-right: -8px; /* Offset the container padding */
-  padding-right: 8px; /* Add padding back to the content */
   /* Remove any overflow style overrides */
   -ms-overflow-style: initial;
   scrollbar-width: thin;

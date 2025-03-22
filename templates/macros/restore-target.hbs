@@ -1,9 +1,11 @@
 <div class="{{cssClass}} base-form" autocomplete="off">
-  <div class="base-form__content">
+  <header class="base-form__callout-box">
     <div class="base-form__callout base-form__callout--information">
       <i class="fas fa-info-circle"></i>
       {{localize "EVENTIDE_RP_SYSTEM.Forms.Callouts.Gear.RestoreTarget" target=actor.name}}
     </div>
+  </header>
+  <div class="base-form__content">
     <div class="base-form__group base-form__group--checkbox">
       <label class="base-form__label" for="restoreResolve">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RestoreResolve"}}</label>
       <input class="base-form__checkbox" autofocus type="checkbox" id="restoreResolve" name="restoreResolve" {{checked defaultOptions.restoreResolve}}>
