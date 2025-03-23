@@ -52,6 +52,8 @@ http://www.apache.org/licenses/LICENSE-2.0
 - liberty-wing.svg
 - chest.svg
 - van-damme-split.svg
+- power-up.svg (originally called upgrade)
+- power-down.svg (originally called upgrade)
 
 ### By Skoll under CC BY 3.0 from game-icons.net
 
