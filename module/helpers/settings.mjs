@@ -46,6 +46,20 @@ export class MessageSettingsApplication extends HandlebarsApplicationMixin(Appli
     ],
   };
 
+  
+  static defaultMessageSettings = {
+    colors: {
+      incrementText: "#ffffff",
+      decrementText: "#ffffff",
+      incrementBg: "#4b0082",
+      decrementBg: "#4b0082",
+    },
+    images: {
+      increment: "systems/eventide-rp-system/assets/icons/power-up.svg",
+      decrement: "systems/eventide-rp-system/assets/icons/power-down.svg"
+    }
+  }
+
   /**
    * Prepares the context data for the message settings form
    * @returns {Object} The prepared context data
@@ -56,6 +70,8 @@ export class MessageSettingsApplication extends HandlebarsApplicationMixin(Appli
       return this.close();
     }
     const context = await super._prepareContext();
+
+    const { colors, images } = MessageSettingsApplication.defaultMessageSettings;
 
     // General message settings
     context.generalSettings = {
@@ -70,29 +86,29 @@ export class MessageSettingsApplication extends HandlebarsApplicationMixin(Appli
           key: "incrementTextColor",
           name: game.i18n.localize("SETTINGS.PowerIncrementTextColorName"),
           hint: game.i18n.localize("SETTINGS.PowerIncrementTextColorHint"),
-          value: getSetting("powerMessage_incrementTextColor") || "#ffffff",
-          default: "#ffffff",
+          value: getSetting("powerMessage_incrementTextColor") || colors.incrementText,
+          default: colors.incrementText,
         },
         {
           key: "incrementBgColor",
           name: game.i18n.localize("SETTINGS.PowerIncrementBgColorName"),
           hint: game.i18n.localize("SETTINGS.PowerIncrementBgColorHint"),
-          value: getSetting("powerMessage_incrementBgColor") || "#4b0082",
-          default: "#4b0082",
+          value: getSetting("powerMessage_incrementBgColor") || colors.incrementBg,
+          default: colors.incrementBg,
         },
         {
           key: "decrementTextColor",
           name: game.i18n.localize("SETTINGS.PowerDecrementTextColorName"),
           hint: game.i18n.localize("SETTINGS.PowerDecrementTextColorHint"),
-          value: getSetting("powerMessage_decrementTextColor") || "#ffffff",
-          default: "#ffffff",
+          value: getSetting("powerMessage_decrementTextColor") || colors.decrementText,
+          default: colors.decrementText,
         },
         {
           key: "decrementBgColor",
           name: game.i18n.localize("SETTINGS.PowerDecrementBgColorName"),
           hint: game.i18n.localize("SETTINGS.PowerDecrementBgColorHint"),
-          value: getSetting("powerMessage_decrementBgColor") || "#4b0082",
-          default: "#4b0082",
+          value: getSetting("powerMessage_decrementBgColor") || colors.decrementBg,
+          default: colors.decrementBg,
         }
       ],
       images: [
@@ -100,15 +116,15 @@ export class MessageSettingsApplication extends HandlebarsApplicationMixin(Appli
           key: "incrementImage",
           name: game.i18n.localize("SETTINGS.PowerIncrementImageName"),
           hint: game.i18n.localize("SETTINGS.PowerIncrementImageHint"),
-          value: getSetting("powerMessage_incrementImage") || "systems/eventide-rp-system/assets/icons/power-up.svg",
-          default: "systems/eventide-rp-system/assets/icons/power-up.svg",
+          value: getSetting("powerMessage_incrementImage") || images.increment,
+          default: images.increment,
         },
         {
           key: "decrementImage",
           name: game.i18n.localize("SETTINGS.PowerDecrementImageName"),
           hint: game.i18n.localize("SETTINGS.PowerDecrementImageHint"),
-          value: getSetting("powerMessage_decrementImage") || "systems/eventide-rp-system/assets/icons/power-down.svg",
-          default: "systems/eventide-rp-system/assets/icons/power-down.svg",
+          value: getSetting("powerMessage_decrementImage") || images.decrement,
+          default: images.decrement,
         }
       ]
     };
@@ -227,13 +243,15 @@ export class MessageSettingsApplication extends HandlebarsApplicationMixin(Appli
       };
 
       // Default power settings
+      const { colors, images } = MessageSettingsApplication.defaultMessageSettings;
+
       const defaultPowerSettings = {
-        incrementTextColor: "#ffffff",
-        incrementBgColor: "#4b0082",
-        decrementTextColor: "#ffffff",
-        decrementBgColor: "#4b0082",
-        incrementImage: "systems/eventide-rp-system/assets/icons/power-up.svg",
-        decrementImage: "systems/eventide-rp-system/assets/icons/power-down.svg",
+        incrementTextColor: colors.incrementText,
+        incrementBgColor: colors.incrementBg,
+        decrementTextColor: colors.decrementText,
+        decrementBgColor: colors.decrementBg,
+        incrementImage: images.increment,
+        decrementImage: images.decrement,
         enableMessages: true
       };
 
@@ -345,13 +363,15 @@ export class MessageSettingsApplication extends HandlebarsApplicationMixin(Appli
       }
 
       // Get default power message settings to ensure we save all settings
+      const { colors, images } = MessageSettingsApplication.defaultMessageSettings;
+
       const defaultMessageSettings = {
-        incrementTextColor: "#ffffff",
-        incrementBgColor: "#4b0082",
-        decrementTextColor: "#ffffff",
-        decrementBgColor: "#4b0082",
-        incrementImage: "systems/eventide-rp-system/assets/icons/power-up.svg",
-        decrementImage: "systems/eventide-rp-system/assets/icons/power-down.svg",
+        incrementTextColor: colors.incrementText,
+        incrementBgColor: colors.incrementBg,
+        decrementTextColor: colors.decrementText,
+        decrementBgColor: colors.decrementBg,
+        incrementImage: images.increment,
+        decrementImage: images.decrement,
         enableMessages: true
       };
 
