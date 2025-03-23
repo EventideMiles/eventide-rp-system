@@ -34,7 +34,7 @@
       <label for="powerMessage_{{setting.key}}" class="message-settings__label">{{setting.name}}</label>
       <div class="message-settings__fields">
         <input type="color" name="powerMessage_{{setting.key}}" value="{{setting.value}}" data-dtype="String" class="message-settings__input message-settings__input--color">
-        <input type="text" name="powerMessage_{{setting.key}}_text" value="{{setting.value}}" data-dtype="String" class="message-settings__input message-settings__input--color-text" readonly>
+        <input type="text" name="powerMessage_{{setting.key}}_text" value="{{setting.value}}" data-dtype="String" class="message-settings__input message-settings__input--color-text">
         <button type="button" data-action="resetSetting" data-key="{{setting.key}}" data-default="{{setting.default}}" class="message-settings__button message-settings__button--reset">
           <i class="fas fa-undo"></i>
         </button>

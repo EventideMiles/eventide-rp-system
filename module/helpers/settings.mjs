@@ -7,10 +7,13 @@ const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
  * This application allows users to configure message settings
  * @extends {HandlebarsApplicationMixin(ApplicationV2)}
  */
-export class MessageSettingsApplication extends HandlebarsApplicationMixin(ApplicationV2) {
+export class MessageSettingsApplication extends HandlebarsApplicationMixin(
+  ApplicationV2
+) {
   static PARTS = {
     messageSettings: {
-      template: "systems/eventide-rp-system/templates/settings/message-settings.hbs",
+      template:
+        "systems/eventide-rp-system/templates/settings/message-settings.hbs",
     },
   };
 
@@ -37,16 +40,35 @@ export class MessageSettingsApplication extends HandlebarsApplicationMixin(Appli
       resetAllSettings: this._onResetAllSettings,
       browseFiles: this._onBrowseFiles,
     },
-    listeners: [
-      {
-        selector: 'input[type="color"]',
-        event: "input",
-        callback: this._onColorChange,
-      },
-    ],
   };
 
-  
+  _onChangeForm(formConfig, event) {
+    super._onChangeForm(formConfig, event);
+
+    // Check if the target element is a color input
+    if (
+      event.target.name &&
+      event.target.name.includes("Color") &&
+      !event.target.name.includes("_text")
+    ) {
+      // Update the text field when the color input changes
+      const textInput = document.querySelector(
+        `input[name="${event.target.name}_text"]`
+      );
+      if (textInput) {
+        textInput.value = event.target.value;
+      }
+    } else if (event.target.name && event.target.name.includes("_text")) {
+      // Update the color input when the text field changes
+      const colorInput = document.querySelector(
+        `input[name="${event.target.name.replace("_text", "")}"]`
+      );
+      if (colorInput) {
+        colorInput.value = event.target.value;
+      }
+    }
+  }
+
   static defaultMessageSettings = {
     colors: {
       incrementText: "#ffffff",
@@ -56,9 +78,9 @@ export class MessageSettingsApplication extends HandlebarsApplicationMixin(Appli
     },
     images: {
       increment: "systems/eventide-rp-system/assets/icons/power-up.svg",
-      decrement: "systems/eventide-rp-system/assets/icons/power-down.svg"
-    }
-  }
+      decrement: "systems/eventide-rp-system/assets/icons/power-down.svg",
+    },
+  };
 
   /**
    * Prepares the context data for the message settings form
@@ -71,11 +93,12 @@ export class MessageSettingsApplication extends HandlebarsApplicationMixin(Appli
     }
     const context = await super._prepareContext();
 
-    const { colors, images } = MessageSettingsApplication.defaultMessageSettings;
+    const { colors, images } =
+      MessageSettingsApplication.defaultMessageSettings;
 
     // General message settings
     context.generalSettings = {
-      showGearEquipMessages: getSetting("showGearEquipMessages")
+      showGearEquipMessages: getSetting("showGearEquipMessages"),
     };
 
     // Power message settings
@@ -86,30 +109,36 @@ export class MessageSettingsApplication extends HandlebarsApplicationMixin(Appli
           key: "incrementTextColor",
           name: game.i18n.localize("SETTINGS.PowerIncrementTextColorName"),
           hint: game.i18n.localize("SETTINGS.PowerIncrementTextColorHint"),
-          value: getSetting("powerMessage_incrementTextColor") || colors.incrementText,
+          value:
+            getSetting("powerMessage_incrementTextColor") ||
+            colors.incrementText,
           default: colors.incrementText,
         },
         {
           key: "incrementBgColor",
           name: game.i18n.localize("SETTINGS.PowerIncrementBgColorName"),
           hint: game.i18n.localize("SETTINGS.PowerIncrementBgColorHint"),
-          value: getSetting("powerMessage_incrementBgColor") || colors.incrementBg,
+          value:
+            getSetting("powerMessage_incrementBgColor") || colors.incrementBg,
           default: colors.incrementBg,
         },
         {
           key: "decrementTextColor",
           name: game.i18n.localize("SETTINGS.PowerDecrementTextColorName"),
           hint: game.i18n.localize("SETTINGS.PowerDecrementTextColorHint"),
-          value: getSetting("powerMessage_decrementTextColor") || colors.decrementText,
+          value:
+            getSetting("powerMessage_decrementTextColor") ||
+            colors.decrementText,
           default: colors.decrementText,
         },
         {
           key: "decrementBgColor",
           name: game.i18n.localize("SETTINGS.PowerDecrementBgColorName"),
           hint: game.i18n.localize("SETTINGS.PowerDecrementBgColorHint"),
-          value: getSetting("powerMessage_decrementBgColor") || colors.decrementBg,
+          value:
+            getSetting("powerMessage_decrementBgColor") || colors.decrementBg,
           default: colors.decrementBg,
-        }
+        },
       ],
       images: [
         {
@@ -125,29 +154,11 @@ export class MessageSettingsApplication extends HandlebarsApplicationMixin(Appli
           hint: game.i18n.localize("SETTINGS.PowerDecrementImageHint"),
           value: getSetting("powerMessage_decrementImage") || images.decrement,
           default: images.decrement,
-        }
-      ]
+        },
+      ],
     };
 
     return context;
-  }
-
-  /**
-   * Handle color input changes
-   * @param {Event} event - The input event
-   * @param {HTMLElement} target - The target element
-   */
-  static _onColorChange(event, target) {
-    try {
-      // Get the text input associated with this color input
-      const colorKey = target.name;
-      const textInput = document.querySelector(`input[name="${colorKey}_text"]`);
-      if (textInput) {
-        textInput.value = target.value;
-      }
-    } catch (error) {
-      console.error("Error in _onColorChange:", error);
-    }
   }
 
   /**
@@ -161,10 +172,16 @@ export class MessageSettingsApplication extends HandlebarsApplicationMixin(Appli
       if (!form) return;
 
       // Get values from the form
-      const textColor = form.querySelector('input[name="powerMessage_incrementTextColor"]').value;
-      const bgColor = form.querySelector('input[name="powerMessage_incrementBgColor"]').value;
-      const incrementImage = form.querySelector('input[name="powerMessage_incrementImage"]').value;
-      
+      const textColor = form.querySelector(
+        'input[name="powerMessage_incrementTextColor"]'
+      ).value;
+      const bgColor = form.querySelector(
+        'input[name="powerMessage_incrementBgColor"]'
+      ).value;
+      const incrementImage = form.querySelector(
+        'input[name="powerMessage_incrementImage"]'
+      ).value;
+
       // Create a preview message
       const content = `
         <div class="power-message" style="background-color: ${bgColor}; color: ${textColor}; padding: 10px; border-radius: 5px;">
@@ -186,7 +203,9 @@ export class MessageSettingsApplication extends HandlebarsApplicationMixin(Appli
       });
     } catch (error) {
       console.error("Error in _onPreviewMessage:", error);
-      ui.notifications.error(game.i18n.localize("SETTINGS.ErrorPreviewingMessage"));
+      ui.notifications.error(
+        game.i18n.localize("SETTINGS.ErrorPreviewingMessage")
+      );
     }
   }
 
@@ -199,34 +218,45 @@ export class MessageSettingsApplication extends HandlebarsApplicationMixin(Appli
     try {
       const key = target.dataset.key;
       const defaultValue = target.dataset.default;
-      
+
       // Get the input field and update its value
       const input = document.querySelector(`input[name="powerMessage_${key}"]`);
       if (!input) return;
 
       input.value = defaultValue;
-      
+
       // Dispatch a change event to ensure the form knows the value changed
       input.dispatchEvent(new Event("change"));
-      
+
       // Update color text input if present (for color inputs)
-      if (key === "incrementTextColor" || key === "incrementBgColor" || key === "decrementTextColor" || key === "decrementBgColor") {
-        const textInput = document.querySelector(`input[name="powerMessage_${key}_text"]`);
+      if (
+        key === "incrementTextColor" ||
+        key === "incrementBgColor" ||
+        key === "decrementTextColor" ||
+        key === "decrementBgColor"
+      ) {
+        const textInput = document.querySelector(
+          `input[name="powerMessage_${key}_text"]`
+        );
         if (textInput) {
           textInput.value = defaultValue;
         }
       }
-      
+
       // Update image preview if present
       if (key === "incrementImage" || key === "decrementImage") {
-        const preview = input.closest(".message-settings__fields").querySelector(".message-settings__preview-img");
+        const preview = input
+          .closest(".message-settings__fields")
+          .querySelector(".message-settings__preview-img");
         if (preview) {
           preview.src = defaultValue;
         }
       }
     } catch (error) {
       console.error("Error in _onResetSetting:", error);
-      ui.notifications.error(game.i18n.localize("SETTINGS.ErrorResettingColor"));
+      ui.notifications.error(
+        game.i18n.localize("SETTINGS.ErrorResettingColor")
+      );
     }
   }
 
@@ -239,11 +269,12 @@ export class MessageSettingsApplication extends HandlebarsApplicationMixin(Appli
     try {
       // Default general settings
       const defaultGeneralSettings = {
-        showGearEquipMessages: true
+        showGearEquipMessages: true,
       };
 
       // Default power settings
-      const { colors, images } = MessageSettingsApplication.defaultMessageSettings;
+      const { colors, images } =
+        MessageSettingsApplication.defaultMessageSettings;
 
       const defaultPowerSettings = {
         incrementTextColor: colors.incrementText,
@@ -252,59 +283,74 @@ export class MessageSettingsApplication extends HandlebarsApplicationMixin(Appli
         decrementBgColor: colors.decrementBg,
         incrementImage: images.increment,
         decrementImage: images.decrement,
-        enableMessages: true
+        enableMessages: true,
       };
 
       // Update general settings
       for (const [key, value] of Object.entries(defaultGeneralSettings)) {
         const input = document.querySelector(`input[name="${key}"]`);
         if (!input) continue;
-        
+
         if (input.type === "checkbox") {
           input.checked = value;
         } else {
           input.value = value;
         }
-        
+
         // Dispatch a change event to ensure the form knows the value changed
         input.dispatchEvent(new Event("change"));
       }
 
       // Update power settings
       for (const [key, value] of Object.entries(defaultPowerSettings)) {
-        const input = document.querySelector(`input[name="powerMessage_${key}"]`);
+        const input = document.querySelector(
+          `input[name="powerMessage_${key}"]`
+        );
         if (!input) continue;
-        
+
         if (input.type === "checkbox") {
           input.checked = value;
         } else {
           input.value = value;
         }
-        
+
         // Dispatch a change event to ensure the form knows the value changed
         input.dispatchEvent(new Event("change"));
-        
+
         // Update color text inputs if present
-        if (key === "incrementTextColor" || key === "incrementBgColor" || key === "decrementTextColor" || key === "decrementBgColor") {
-          const textInput = document.querySelector(`input[name="powerMessage_${key}_text"]`);
+        if (
+          key === "incrementTextColor" ||
+          key === "incrementBgColor" ||
+          key === "decrementTextColor" ||
+          key === "decrementBgColor"
+        ) {
+          const textInput = document.querySelector(
+            `input[name="powerMessage_${key}_text"]`
+          );
           if (textInput) {
             textInput.value = value;
           }
         }
-        
+
         // Update image previews if present
         if (key === "incrementImage" || key === "decrementImage") {
-          const preview = input.closest(".message-settings__fields").querySelector(".message-settings__preview-img");
+          const preview = input
+            .closest(".message-settings__fields")
+            .querySelector(".message-settings__preview-img");
           if (preview) {
             preview.src = value;
           }
         }
       }
 
-      ui.notifications.info(game.i18n.localize("SETTINGS.AllMessageSettingsReset"));
+      ui.notifications.info(
+        game.i18n.localize("SETTINGS.AllMessageSettingsReset")
+      );
     } catch (error) {
       console.error("Error in _onResetAllSettings:", error);
-      ui.notifications.error(game.i18n.localize("SETTINGS.ErrorResettingAllMessageSettings"));
+      ui.notifications.error(
+        game.i18n.localize("SETTINGS.ErrorResettingAllMessageSettings")
+      );
     }
   }
 
@@ -328,12 +374,14 @@ export class MessageSettingsApplication extends HandlebarsApplicationMixin(Appli
         callback: (path) => {
           // Update the input value
           input.value = path;
-          
+
           // Dispatch a change event to ensure the form knows the value changed
           input.dispatchEvent(new Event("change"));
-          
+
           // Update image preview if present
-          const preview = input.closest(".message-settings__fields").querySelector(".message-settings__preview-img");
+          const preview = input
+            .closest(".message-settings__fields")
+            .querySelector(".message-settings__preview-img");
           if (preview) {
             preview.src = path;
           }
@@ -343,7 +391,9 @@ export class MessageSettingsApplication extends HandlebarsApplicationMixin(Appli
       return fp.browse();
     } catch (error) {
       console.error("Error in _onBrowseFiles:", error);
-      ui.notifications.error(game.i18n.localize("SETTINGS.ErrorOpeningFilePicker"));
+      ui.notifications.error(
+        game.i18n.localize("SETTINGS.ErrorOpeningFilePicker")
+      );
     }
   }
 
@@ -359,11 +409,15 @@ export class MessageSettingsApplication extends HandlebarsApplicationMixin(Appli
 
       // Save general settings
       if (formData.hasOwnProperty("showGearEquipMessages")) {
-        await setSetting("showGearEquipMessages", formData.showGearEquipMessages);
+        await setSetting(
+          "showGearEquipMessages",
+          formData.showGearEquipMessages
+        );
       }
 
       // Get default power message settings to ensure we save all settings
-      const { colors, images } = MessageSettingsApplication.defaultMessageSettings;
+      const { colors, images } =
+        MessageSettingsApplication.defaultMessageSettings;
 
       const defaultMessageSettings = {
         incrementTextColor: colors.incrementText,
@@ -372,14 +426,14 @@ export class MessageSettingsApplication extends HandlebarsApplicationMixin(Appli
         decrementBgColor: colors.decrementBg,
         incrementImage: images.increment,
         decrementImage: images.decrement,
-        enableMessages: true
+        enableMessages: true,
       };
 
       // Save power message settings
       for (const key of Object.keys(defaultMessageSettings)) {
         const settingKey = `powerMessage_${key}`;
         const inputElement = form.elements[settingKey];
-        
+
         if (inputElement) {
           let value;
           if (inputElement.type === "checkbox") {
@@ -387,20 +441,26 @@ export class MessageSettingsApplication extends HandlebarsApplicationMixin(Appli
           } else {
             value = inputElement.value;
           }
-          
+
           console.log(`Saving ${settingKey} with value ${value}`);
           await setSetting(settingKey, value);
         } else {
-          console.warn(`Message setting ${settingKey} not found in form elements`);
+          console.warn(
+            `Message setting ${settingKey} not found in form elements`
+          );
         }
       }
-      
-      ui.notifications.info(game.i18n.localize("SETTINGS.MessageSettingsSaved"));
+
+      ui.notifications.info(
+        game.i18n.localize("SETTINGS.MessageSettingsSaved")
+      );
       SettingsConfig.reloadConfirm({ world: true });
       return true;
     } catch (error) {
       console.error("Error in _onSubmit:", error);
-      ui.notifications.error(game.i18n.localize("SETTINGS.ErrorSavingMessageSettings"));
+      ui.notifications.error(
+        game.i18n.localize("SETTINGS.ErrorSavingMessageSettings")
+      );
       return false;
     }
   }
@@ -822,8 +882,14 @@ export const registerSettings = function () {
       // If the value is empty, reset it to the default
       if (!value || value.trim() === "") {
         const defaultFormula = "@lvl + @wits.total";
-        game.settings.set("eventide-rp-system", "defaultPowerMax", defaultFormula);
-        ui.notifications.warn("Power maximum formula cannot be empty. Resetting to default.");
+        game.settings.set(
+          "eventide-rp-system",
+          "defaultPowerMax",
+          defaultFormula
+        );
+        ui.notifications.warn(
+          "Power maximum formula cannot be empty. Resetting to default."
+        );
       }
       SettingsConfig.reloadConfirm({ world: true });
     },
@@ -837,18 +903,20 @@ export const registerSettings = function () {
     decrementBgColor: "#4b0082",
     incrementImage: "systems/eventide-rp-system/assets/icons/power-up.svg",
     decrementImage: "systems/eventide-rp-system/assets/icons/power-down.svg",
-    enableMessages: true
+    enableMessages: true,
   };
 
   // Register each message setting
   for (const [key, defaultValue] of Object.entries(defaultMessageSettings)) {
     game.settings.register("eventide-rp-system", `powerMessage_${key}`, {
-      name: key === "enableMessages" 
-        ? "SETTINGS.EnablePowerMessagesName"
-        : `SETTINGS.Power${key.charAt(0).toUpperCase() + key.slice(1)}Name`,
-      hint: key === "enableMessages"
-        ? "SETTINGS.EnablePowerMessagesHint"
-        : `SETTINGS.Power${key.charAt(0).toUpperCase() + key.slice(1)}Hint`,
+      name:
+        key === "enableMessages"
+          ? "SETTINGS.EnablePowerMessagesName"
+          : `SETTINGS.Power${key.charAt(0).toUpperCase() + key.slice(1)}Name`,
+      hint:
+        key === "enableMessages"
+          ? "SETTINGS.EnablePowerMessagesHint"
+          : `SETTINGS.Power${key.charAt(0).toUpperCase() + key.slice(1)}Hint`,
       scope: "world",
       config: false, // Hide from main settings menu
       type: key === "enableMessages" ? Boolean : String,
@@ -856,7 +924,11 @@ export const registerSettings = function () {
       onChange: (value) => {
         // If the value is empty and it's not a boolean, reset to default
         if (key !== "enableMessages" && (!value || value.trim() === "")) {
-          game.settings.set("eventide-rp-system", `powerMessage_${key}`, defaultValue);
+          game.settings.set(
+            "eventide-rp-system",
+            `powerMessage_${key}`,
+            defaultValue
+          );
           ui.notifications.info(
             game.i18n.localize("SETTINGS.SettingResetToDefault")
           );
