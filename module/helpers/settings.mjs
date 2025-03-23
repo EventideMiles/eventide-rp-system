@@ -67,17 +67,31 @@ export class MessageSettingsApplication extends HandlebarsApplicationMixin(Appli
       enableMessages: getSetting("powerMessage_enableMessages"),
       colors: [
         {
-          key: "textColor",
-          name: game.i18n.localize("SETTINGS.PowerMessageTextColorName"),
-          hint: game.i18n.localize("SETTINGS.PowerMessageTextColorHint"),
-          value: getSetting("powerMessage_textColor") || "#ffffff",
+          key: "incrementTextColor",
+          name: game.i18n.localize("SETTINGS.PowerIncrementTextColorName"),
+          hint: game.i18n.localize("SETTINGS.PowerIncrementTextColorHint"),
+          value: getSetting("powerMessage_incrementTextColor") || "#ffffff",
           default: "#ffffff",
         },
         {
-          key: "bgColor",
-          name: game.i18n.localize("SETTINGS.PowerMessageBgColorName"),
-          hint: game.i18n.localize("SETTINGS.PowerMessageBgColorHint"),
-          value: getSetting("powerMessage_bgColor") || "#4b0082",
+          key: "incrementBgColor",
+          name: game.i18n.localize("SETTINGS.PowerIncrementBgColorName"),
+          hint: game.i18n.localize("SETTINGS.PowerIncrementBgColorHint"),
+          value: getSetting("powerMessage_incrementBgColor") || "#4b0082",
+          default: "#4b0082",
+        },
+        {
+          key: "decrementTextColor",
+          name: game.i18n.localize("SETTINGS.PowerDecrementTextColorName"),
+          hint: game.i18n.localize("SETTINGS.PowerDecrementTextColorHint"),
+          value: getSetting("powerMessage_decrementTextColor") || "#ffffff",
+          default: "#ffffff",
+        },
+        {
+          key: "decrementBgColor",
+          name: game.i18n.localize("SETTINGS.PowerDecrementBgColorName"),
+          hint: game.i18n.localize("SETTINGS.PowerDecrementBgColorHint"),
+          value: getSetting("powerMessage_decrementBgColor") || "#4b0082",
           default: "#4b0082",
         }
       ],
@@ -131,8 +145,8 @@ export class MessageSettingsApplication extends HandlebarsApplicationMixin(Appli
       if (!form) return;
 
       // Get values from the form
-      const textColor = form.querySelector('input[name="powerMessage_textColor"]').value;
-      const bgColor = form.querySelector('input[name="powerMessage_bgColor"]').value;
+      const textColor = form.querySelector('input[name="powerMessage_incrementTextColor"]').value;
+      const bgColor = form.querySelector('input[name="powerMessage_incrementBgColor"]').value;
       const incrementImage = form.querySelector('input[name="powerMessage_incrementImage"]').value;
       
       // Create a preview message
@@ -180,7 +194,7 @@ export class MessageSettingsApplication extends HandlebarsApplicationMixin(Appli
       input.dispatchEvent(new Event("change"));
       
       // Update color text input if present (for color inputs)
-      if (key === "textColor" || key === "bgColor") {
+      if (key === "incrementTextColor" || key === "incrementBgColor" || key === "decrementTextColor" || key === "decrementBgColor") {
         const textInput = document.querySelector(`input[name="powerMessage_${key}_text"]`);
         if (textInput) {
           textInput.value = defaultValue;
@@ -214,8 +228,10 @@ export class MessageSettingsApplication extends HandlebarsApplicationMixin(Appli
 
       // Default power settings
       const defaultPowerSettings = {
-        textColor: "#ffffff",
-        bgColor: "#4b0082",
+        incrementTextColor: "#ffffff",
+        incrementBgColor: "#4b0082",
+        decrementTextColor: "#ffffff",
+        decrementBgColor: "#4b0082",
         incrementImage: "systems/eventide-rp-system/assets/icons/power-up.svg",
         decrementImage: "systems/eventide-rp-system/assets/icons/power-down.svg",
         enableMessages: true
@@ -251,7 +267,7 @@ export class MessageSettingsApplication extends HandlebarsApplicationMixin(Appli
         input.dispatchEvent(new Event("change"));
         
         // Update color text inputs if present
-        if (key === "textColor" || key === "bgColor") {
+        if (key === "incrementTextColor" || key === "incrementBgColor" || key === "decrementTextColor" || key === "decrementBgColor") {
           const textInput = document.querySelector(`input[name="powerMessage_${key}_text"]`);
           if (textInput) {
             textInput.value = value;
@@ -330,8 +346,10 @@ export class MessageSettingsApplication extends HandlebarsApplicationMixin(Appli
 
       // Get default power message settings to ensure we save all settings
       const defaultMessageSettings = {
-        textColor: "#ffffff",
-        bgColor: "#4b0082",
+        incrementTextColor: "#ffffff",
+        incrementBgColor: "#4b0082",
+        decrementTextColor: "#ffffff",
+        decrementBgColor: "#4b0082",
         incrementImage: "systems/eventide-rp-system/assets/icons/power-up.svg",
         decrementImage: "systems/eventide-rp-system/assets/icons/power-down.svg",
         enableMessages: true
@@ -793,8 +811,10 @@ export const registerSettings = function () {
 
   // Power message settings (hidden from main menu)
   const defaultMessageSettings = {
-    textColor: "#ffffff",
-    bgColor: "#4b0082",
+    incrementTextColor: "#ffffff",
+    incrementBgColor: "#4b0082",
+    decrementTextColor: "#ffffff",
+    decrementBgColor: "#4b0082",
     incrementImage: "systems/eventide-rp-system/assets/icons/power-up.svg",
     decrementImage: "systems/eventide-rp-system/assets/icons/power-down.svg",
     enableMessages: true
@@ -803,8 +823,12 @@ export const registerSettings = function () {
   // Register each message setting
   for (const [key, defaultValue] of Object.entries(defaultMessageSettings)) {
     game.settings.register("eventide-rp-system", `powerMessage_${key}`, {
-      name: `SETTINGS.PowerMessage${key.charAt(0).toUpperCase() + key.slice(1)}Name`,
-      hint: `SETTINGS.PowerMessage${key.charAt(0).toUpperCase() + key.slice(1)}Hint`,
+      name: key === "enableMessages" 
+        ? "SETTINGS.EnablePowerMessagesName"
+        : `SETTINGS.Power${key.charAt(0).toUpperCase() + key.slice(1)}Name`,
+      hint: key === "enableMessages"
+        ? "SETTINGS.EnablePowerMessagesHint"
+        : `SETTINGS.Power${key.charAt(0).toUpperCase() + key.slice(1)}Hint`,
       scope: "world",
       config: false, // Hide from main settings menu
       type: key === "enableMessages" ? Boolean : String,
@@ -814,7 +838,7 @@ export const registerSettings = function () {
         if (key !== "enableMessages" && (!value || value.trim() === "")) {
           game.settings.set("eventide-rp-system", `powerMessage_${key}`, defaultValue);
           ui.notifications.info(
-            game.i18n.format("SETTINGS.MessageSettingResetToDefault", [key])
+            game.i18n.localize("SETTINGS.SettingResetToDefault")
           );
         }
       },
