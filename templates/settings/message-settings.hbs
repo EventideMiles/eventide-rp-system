@@ -1,0 +1,69 @@
+<div class="message-settings">
+  <div class="message-settings__content">
+    <p class="message-settings__description">{{localize "SETTINGS.MessageSettingsDescription"}}</p>
+    
+    <div class="message-settings__actions">
+      <button type="button" data-action="previewMessage" class="message-settings__button message-settings__button--preview">
+        <i class="fas fa-eye"></i> {{localize "SETTINGS.PreviewMessage"}}
+      </button>
+      <button type="button" data-action="resetAllSettings" class="message-settings__button message-settings__button--reset-all">
+        <i class="fas fa-undo"></i> {{localize "SETTINGS.ResetAllMessageSettings"}}
+      </button>
+    </div>
+    
+    <h2 class="message-settings__section-title">{{localize "SETTINGS.GeneralMessageSettingsTitle"}}</h2>
+    <div class="message-settings__group">
+      <label for="showGearEquipMessages" class="message-settings__label">{{localize "SETTINGS.ShowGearEquipMessagesName"}}</label>
+      <div class="message-settings__fields">
+        <input type="checkbox" name="showGearEquipMessages" {{#if generalSettings.showGearEquipMessages}}checked{{/if}} data-dtype="Boolean" class="message-settings__input message-settings__input--checkbox">
+      </div>
+      <p class="message-settings__hint">{{localize "SETTINGS.ShowGearEquipMessagesHint"}}</p>
+    </div>
+    
+    <h2 class="message-settings__section-title">{{localize "SETTINGS.PowerMessageSettingsTitle"}}</h2>
+    <div class="message-settings__group">
+      <label for="powerMessage_enableMessages" class="message-settings__label">{{localize "SETTINGS.EnablePowerMessagesName"}}</label>
+      <div class="message-settings__fields">
+        <input type="checkbox" name="powerMessage_enableMessages" {{#if powerSettings.enableMessages}}checked{{/if}} data-dtype="Boolean" class="message-settings__input message-settings__input--checkbox">
+      </div>
+      <p class="message-settings__hint">{{localize "SETTINGS.EnablePowerMessagesHint"}}</p>
+    </div>
+    
+    {{#each powerSettings.colors as |setting|}}
+    <div class="message-settings__group">
+      <label for="powerMessage_{{setting.key}}" class="message-settings__label">{{setting.name}}</label>
+      <div class="message-settings__fields">
+        <input type="color" name="powerMessage_{{setting.key}}" value="{{setting.value}}" data-dtype="String" class="message-settings__input message-settings__input--color">
+        <input type="text" name="powerMessage_{{setting.key}}_text" value="{{setting.value}}" data-dtype="String" class="message-settings__input message-settings__input--color-text" readonly>
+        <button type="button" data-action="resetSetting" data-key="{{setting.key}}" data-default="{{setting.default}}" class="message-settings__button message-settings__button--reset">
+          <i class="fas fa-undo"></i>
+        </button>
+      </div>
+      <p class="message-settings__hint">{{setting.hint}}</p>
+    </div>
+    {{/each}}
+    
+    {{#each powerSettings.images as |setting|}}
+    <div class="message-settings__group">
+      <label for="powerMessage_{{setting.key}}" class="message-settings__label">{{setting.name}}</label>
+      <div class="message-settings__fields">
+        <input type="text" name="powerMessage_{{setting.key}}" value="{{setting.value}}" data-dtype="String" class="message-settings__input">
+        <button type="button" data-action="browseFiles" data-target="powerMessage_{{setting.key}}" class="message-settings__button message-settings__button--browse">
+          <i class="fas fa-file-import"></i>
+        </button>
+        <button type="button" data-action="resetSetting" data-key="{{setting.key}}" data-default="{{setting.default}}" class="message-settings__button message-settings__button--reset">
+          <i class="fas fa-undo"></i>
+        </button>
+        <img src="{{setting.value}}" class="message-settings__preview-img" alt="{{setting.name}}" style="max-width: 24px; max-height: 24px; margin-left: 5px;">
+      </div>
+      <p class="message-settings__hint">{{setting.hint}}</p>
+    </div>
+    {{/each}}
+  </div>
+  
+  <footer class="message-settings__footer">
+    <button type="submit" name="submit" class="message-settings__button message-settings__button--save">
+      <i class="far fa-save"></i> {{localize "SETTINGS.SaveMessageSettings"}}
+    </button>
+  </footer>
+</div>

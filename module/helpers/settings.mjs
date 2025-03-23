@@ -3,6 +3,372 @@ import { erpsSoundManager } from "./sound-manager.mjs";
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
 /**
+ * Message Settings Application
+ * This application allows users to configure message settings
+ * @extends {HandlebarsApplicationMixin(ApplicationV2)}
+ */
+export class MessageSettingsApplication extends HandlebarsApplicationMixin(ApplicationV2) {
+  static PARTS = {
+    messageSettings: {
+      template: "systems/eventide-rp-system/templates/settings/message-settings.hbs",
+    },
+  };
+
+  static DEFAULT_OPTIONS = {
+    id: "eventide-message-settings",
+    classes: ["eventide-rp-system", "message-settings"],
+    position: {
+      width: 600,
+      height: "auto",
+    },
+    window: {
+      title: "SETTINGS.MessageSettingsTitle",
+      icon: "fas fa-comment-alt",
+    },
+    tag: "form",
+    form: {
+      handler: this._onSubmit,
+      submitOnChange: false,
+      closeOnSubmit: true,
+    },
+    actions: {
+      previewMessage: this._onPreviewMessage,
+      resetSetting: this._onResetSetting,
+      resetAllSettings: this._onResetAllSettings,
+      browseFiles: this._onBrowseFiles,
+    },
+    listeners: [
+      {
+        selector: 'input[type="color"]',
+        event: "input",
+        callback: this._onColorChange,
+      },
+    ],
+  };
+
+  /**
+   * Prepares the context data for the message settings form
+   * @returns {Object} The prepared context data
+   */
+  async _prepareContext() {
+    if (!game.user.isGM) {
+      ui.notifications.error(game.i18n.localize("SETTINGS.NoPlayerPermission"));
+      return this.close();
+    }
+    const context = await super._prepareContext();
+
+    // General message settings
+    context.generalSettings = {
+      showGearEquipMessages: getSetting("showGearEquipMessages")
+    };
+
+    // Power message settings
+    context.powerSettings = {
+      enableMessages: getSetting("powerMessage_enableMessages"),
+      colors: [
+        {
+          key: "textColor",
+          name: game.i18n.localize("SETTINGS.PowerMessageTextColorName"),
+          hint: game.i18n.localize("SETTINGS.PowerMessageTextColorHint"),
+          value: getSetting("powerMessage_textColor") || "#ffffff",
+          default: "#ffffff",
+        },
+        {
+          key: "bgColor",
+          name: game.i18n.localize("SETTINGS.PowerMessageBgColorName"),
+          hint: game.i18n.localize("SETTINGS.PowerMessageBgColorHint"),
+          value: getSetting("powerMessage_bgColor") || "#4b0082",
+          default: "#4b0082",
+        }
+      ],
+      images: [
+        {
+          key: "incrementImage",
+          name: game.i18n.localize("SETTINGS.PowerIncrementImageName"),
+          hint: game.i18n.localize("SETTINGS.PowerIncrementImageHint"),
+          value: getSetting("powerMessage_incrementImage") || "systems/eventide-rp-system/assets/icons/power-up.svg",
+          default: "systems/eventide-rp-system/assets/icons/power-up.svg",
+        },
+        {
+          key: "decrementImage",
+          name: game.i18n.localize("SETTINGS.PowerDecrementImageName"),
+          hint: game.i18n.localize("SETTINGS.PowerDecrementImageHint"),
+          value: getSetting("powerMessage_decrementImage") || "systems/eventide-rp-system/assets/icons/power-down.svg",
+          default: "systems/eventide-rp-system/assets/icons/power-down.svg",
+        }
+      ]
+    };
+
+    return context;
+  }
+
+  /**
+   * Handle color input changes
+   * @param {Event} event - The input event
+   * @param {HTMLElement} target - The target element
+   */
+  static _onColorChange(event, target) {
+    try {
+      // Get the text input associated with this color input
+      const colorKey = target.name;
+      const textInput = document.querySelector(`input[name="${colorKey}_text"]`);
+      if (textInput) {
+        textInput.value = target.value;
+      }
+    } catch (error) {
+      console.error("Error in _onColorChange:", error);
+    }
+  }
+
+  /**
+   * Handle preview message button click
+   * @param {Event} event - The click event
+   * @param {HTMLElement} target - The target element
+   */
+  static async _onPreviewMessage(event, target) {
+    try {
+      const form = target.closest("form");
+      if (!form) return;
+
+      // Get values from the form
+      const textColor = form.querySelector('input[name="powerMessage_textColor"]').value;
+      const bgColor = form.querySelector('input[name="powerMessage_bgColor"]').value;
+      const incrementImage = form.querySelector('input[name="powerMessage_incrementImage"]').value;
+      
+      // Create a preview message
+      const content = `
+        <div class="power-message" style="background-color: ${bgColor}; color: ${textColor}; padding: 10px; border-radius: 5px;">
+          <div class="power-message__header" style="display: flex; align-items: center; margin-bottom: 5px;">
+            <img src="${incrementImage}" style="width: 24px; height: 24px; margin-right: 10px;" />
+            <h3 style="margin: 0;">Power Change</h3>
+          </div>
+          <div class="power-message__content">
+            <p style="margin: 0;">Character's power increased by 1.</p>
+            <p style="margin: 0;">Current Power: 3/5</p>
+          </div>
+        </div>
+      `;
+
+      ChatMessage.create({
+        content,
+        speaker: { alias: game.i18n.localize("SETTINGS.MessageSettingsTitle") },
+        whisper: [game.user.id],
+      });
+    } catch (error) {
+      console.error("Error in _onPreviewMessage:", error);
+      ui.notifications.error(game.i18n.localize("SETTINGS.ErrorPreviewingMessage"));
+    }
+  }
+
+  /**
+   * Handle reset setting button click
+   * @param {Event} event - The click event
+   * @param {HTMLElement} target - The target element
+   */
+  static _onResetSetting(event, target) {
+    try {
+      const key = target.dataset.key;
+      const defaultValue = target.dataset.default;
+      
+      // Get the input field and update its value
+      const input = document.querySelector(`input[name="powerMessage_${key}"]`);
+      if (!input) return;
+
+      input.value = defaultValue;
+      
+      // Dispatch a change event to ensure the form knows the value changed
+      input.dispatchEvent(new Event("change"));
+      
+      // Update color text input if present (for color inputs)
+      if (key === "textColor" || key === "bgColor") {
+        const textInput = document.querySelector(`input[name="powerMessage_${key}_text"]`);
+        if (textInput) {
+          textInput.value = defaultValue;
+        }
+      }
+      
+      // Update image preview if present
+      if (key === "incrementImage" || key === "decrementImage") {
+        const preview = input.closest(".message-settings__fields").querySelector(".message-settings__preview-img");
+        if (preview) {
+          preview.src = defaultValue;
+        }
+      }
+    } catch (error) {
+      console.error("Error in _onResetSetting:", error);
+      ui.notifications.error(game.i18n.localize("SETTINGS.ErrorResettingColor"));
+    }
+  }
+
+  /**
+   * Handle reset all settings button click
+   * @param {Event} event - The click event
+   * @param {HTMLElement} target - The target element
+   */
+  static _onResetAllSettings(event, target) {
+    try {
+      // Default general settings
+      const defaultGeneralSettings = {
+        showGearEquipMessages: true
+      };
+
+      // Default power settings
+      const defaultPowerSettings = {
+        textColor: "#ffffff",
+        bgColor: "#4b0082",
+        incrementImage: "systems/eventide-rp-system/assets/icons/power-up.svg",
+        decrementImage: "systems/eventide-rp-system/assets/icons/power-down.svg",
+        enableMessages: true
+      };
+
+      // Update general settings
+      for (const [key, value] of Object.entries(defaultGeneralSettings)) {
+        const input = document.querySelector(`input[name="${key}"]`);
+        if (!input) continue;
+        
+        if (input.type === "checkbox") {
+          input.checked = value;
+        } else {
+          input.value = value;
+        }
+        
+        // Dispatch a change event to ensure the form knows the value changed
+        input.dispatchEvent(new Event("change"));
+      }
+
+      // Update power settings
+      for (const [key, value] of Object.entries(defaultPowerSettings)) {
+        const input = document.querySelector(`input[name="powerMessage_${key}"]`);
+        if (!input) continue;
+        
+        if (input.type === "checkbox") {
+          input.checked = value;
+        } else {
+          input.value = value;
+        }
+        
+        // Dispatch a change event to ensure the form knows the value changed
+        input.dispatchEvent(new Event("change"));
+        
+        // Update color text inputs if present
+        if (key === "textColor" || key === "bgColor") {
+          const textInput = document.querySelector(`input[name="powerMessage_${key}_text"]`);
+          if (textInput) {
+            textInput.value = value;
+          }
+        }
+        
+        // Update image previews if present
+        if (key === "incrementImage" || key === "decrementImage") {
+          const preview = input.closest(".message-settings__fields").querySelector(".message-settings__preview-img");
+          if (preview) {
+            preview.src = value;
+          }
+        }
+      }
+
+      ui.notifications.info(game.i18n.localize("SETTINGS.AllMessageSettingsReset"));
+    } catch (error) {
+      console.error("Error in _onResetAllSettings:", error);
+      ui.notifications.error(game.i18n.localize("SETTINGS.ErrorResettingAllMessageSettings"));
+    }
+  }
+
+  /**
+   * Handle browse files button click
+   * @param {Event} event - The click event
+   * @param {HTMLElement} target - The target element
+   */
+  static async _onBrowseFiles(event, target) {
+    try {
+      const inputName = target.dataset.target;
+      const input = document.querySelector(`input[name="${inputName}"]`);
+      if (!input) return;
+
+      // Get the current path from the input
+      let currentPath = input.value || "";
+
+      const fp = new FilePicker({
+        type: "image",
+        current: currentPath,
+        callback: (path) => {
+          // Update the input value
+          input.value = path;
+          
+          // Dispatch a change event to ensure the form knows the value changed
+          input.dispatchEvent(new Event("change"));
+          
+          // Update image preview if present
+          const preview = input.closest(".message-settings__fields").querySelector(".message-settings__preview-img");
+          if (preview) {
+            preview.src = path;
+          }
+        },
+        displayMode: "tiles",
+      });
+      return fp.browse();
+    } catch (error) {
+      console.error("Error in _onBrowseFiles:", error);
+      ui.notifications.error(game.i18n.localize("SETTINGS.ErrorOpeningFilePicker"));
+    }
+  }
+
+  /**
+   * Handles form submission
+   * @param {Event} event - The form submission event
+   * @param {HTMLFormElement} form - The form element
+   * @param {Object} formData - The form data
+   */
+  static async _onSubmit(event, form, formData) {
+    try {
+      event.preventDefault();
+
+      // Save general settings
+      if (formData.hasOwnProperty("showGearEquipMessages")) {
+        await setSetting("showGearEquipMessages", formData.showGearEquipMessages);
+      }
+
+      // Get default power message settings to ensure we save all settings
+      const defaultMessageSettings = {
+        textColor: "#ffffff",
+        bgColor: "#4b0082",
+        incrementImage: "systems/eventide-rp-system/assets/icons/power-up.svg",
+        decrementImage: "systems/eventide-rp-system/assets/icons/power-down.svg",
+        enableMessages: true
+      };
+
+      // Save power message settings
+      for (const key of Object.keys(defaultMessageSettings)) {
+        const settingKey = `powerMessage_${key}`;
+        const inputElement = form.elements[settingKey];
+        
+        if (inputElement) {
+          let value;
+          if (inputElement.type === "checkbox") {
+            value = inputElement.checked;
+          } else {
+            value = inputElement.value;
+          }
+          
+          console.log(`Saving ${settingKey} with value ${value}`);
+          await setSetting(settingKey, value);
+        } else {
+          console.warn(`Message setting ${settingKey} not found in form elements`);
+        }
+      }
+      
+      ui.notifications.info(game.i18n.localize("SETTINGS.MessageSettingsSaved"));
+      SettingsConfig.reloadConfirm({ world: true });
+      return true;
+    } catch (error) {
+      console.error("Error in _onSubmit:", error);
+      ui.notifications.error(game.i18n.localize("SETTINGS.ErrorSavingMessageSettings"));
+      return false;
+    }
+  }
+}
+
+/**
  * Sound Settings Application
  * @extends {HandlebarsApplicationMixin(ApplicationV2)}
  */
@@ -185,7 +551,6 @@ class SoundSettingsApplication extends HandlebarsApplicationMixin(
    * Handles the file picker button click
    * @param {Event} event - The click event
    * @param {HTMLElement} target - The target element
-   * @returns {Promise} The file picker browse operation
    */
   static async _onBrowseFiles(event, target) {
     try {
@@ -407,6 +772,55 @@ export const registerSettings = function () {
     },
   });
 
+  // Power System Settings
+  game.settings.register("eventide-rp-system", "defaultPowerMax", {
+    name: "SETTINGS.DefaultPowerMaxName",
+    hint: "SETTINGS.DefaultPowerMaxHint",
+    scope: "world",
+    config: true,
+    type: String,
+    default: "@lvl + @wits.total",
+    onChange: (value) => {
+      // If the value is empty, reset it to the default
+      if (!value || value.trim() === "") {
+        const defaultFormula = "@lvl + @wits.total";
+        game.settings.set("eventide-rp-system", "defaultPowerMax", defaultFormula);
+        ui.notifications.warn("Power maximum formula cannot be empty. Resetting to default.");
+      }
+      SettingsConfig.reloadConfirm({ world: true });
+    },
+  });
+
+  // Power message settings (hidden from main menu)
+  const defaultMessageSettings = {
+    textColor: "#ffffff",
+    bgColor: "#4b0082",
+    incrementImage: "systems/eventide-rp-system/assets/icons/power-up.svg",
+    decrementImage: "systems/eventide-rp-system/assets/icons/power-down.svg",
+    enableMessages: true
+  };
+
+  // Register each message setting
+  for (const [key, defaultValue] of Object.entries(defaultMessageSettings)) {
+    game.settings.register("eventide-rp-system", `powerMessage_${key}`, {
+      name: `SETTINGS.PowerMessage${key.charAt(0).toUpperCase() + key.slice(1)}Name`,
+      hint: `SETTINGS.PowerMessage${key.charAt(0).toUpperCase() + key.slice(1)}Hint`,
+      scope: "world",
+      config: false, // Hide from main settings menu
+      type: key === "enableMessages" ? Boolean : String,
+      default: defaultValue,
+      onChange: (value) => {
+        // If the value is empty and it's not a boolean, reset to default
+        if (key !== "enableMessages" && (!value || value.trim() === "")) {
+          game.settings.set("eventide-rp-system", `powerMessage_${key}`, defaultValue);
+          ui.notifications.info(
+            game.i18n.format("SETTINGS.MessageSettingResetToDefault", [key])
+          );
+        }
+      },
+    });
+  }
+
   // Default Tab
   game.settings.register("eventide-rp-system", "defaultCharacterTab", {
     name: "SETTINGS.DefaultCharacterTabName",
@@ -478,6 +892,16 @@ export const registerSettings = function () {
       hint: "SETTINGS.SoundSettingsHint",
       icon: "fas fa-volume-up",
       type: SoundSettingsApplication,
+      restricted: true,
+      scope: "world",
+    });
+
+    game.settings.registerMenu("eventide-rp-system", "messageSettings", {
+      name: "SETTINGS.MessageSettingsName",
+      label: "SETTINGS.MessageSettingsLabel",
+      hint: "SETTINGS.MessageSettingsHint",
+      icon: "fas fa-comment-alt",
+      type: MessageSettingsApplication,
       restricted: true,
       scope: "world",
     });

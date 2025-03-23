@@ -26,7 +26,10 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
     });
     schema.power = new fields.SchemaField({
       value: new fields.NumberField({ ...requiredInteger, initial: 5, min: 0 }),
-      max: new fields.NumberField({ ...requiredInteger, initial: 5 }),
+      max: new fields.NumberField({ ...requiredInteger, initial: 5, min: 0 }),
+      maxChange: new fields.NumberField({ ...requiredInteger, initial: 0 }),
+      maxOverride: new fields.NumberField({ ...overrideInteger, initial: null }),
+      total: new fields.NumberField({ ...requiredInteger, initial: 5, min: 0 }),
     });
     schema.biography = new fields.StringField({ required: true, blank: true }); // equivalent to passing ({initial: ""}) for StringFields
 
@@ -187,6 +190,13 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
    */
   prepareDerivedData() {
     super.prepareDerivedData();
+
+    // Calculate power total based on maxOverride and maxChange
+    if (this.power) {
+      this.power.total = this.power.maxOverride !== null
+        ? this.power.maxOverride + this.power.maxChange
+        : this.power.max + this.power.maxChange;
+    }
 
     for (const key in this.abilities) {
       // Handle ability label localization.

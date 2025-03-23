@@ -47,7 +47,44 @@
     "ShowGearEquipMessagesHint": "If enabled, chat messages will be created when gear items are equipped or unequipped.",
     
     "EnableSystemSoundsName": "Enable System Sounds",
-    "EnableSystemSoundsHint": "Enable or disable custom sound effects for the system.",
+    "EnableSystemSoundsHint": "Enable or disable system sound effects.",
+    
+    "DefaultPowerMaxName": "Default Power Maximum",
+    "DefaultPowerMaxHint": "Formula used to calculate the default maximum power for characters. Uses actor roll data (e.g. @lvl + @wits.total).",
+    
+    "MessageSettingsName": "Message Settings",
+    "MessageSettingsLabel": "Configure Message Settings",
+    "MessageSettingsHint": "Configure appearance and behavior of system messages.",
+    "MessageSettingsTitle": "Eventide RP System Message Settings",
+    "MessageSettingsDescription": "Customize the appearance and behavior of messages in the Eventide RP System.",
+    "PreviewMessage": "Preview Message",
+    "ResetAllMessageSettings": "Reset All Settings",
+    "SaveMessageSettings": "Save Message Settings",
+    "MessageSettingsSaved": "Message settings saved successfully.",
+    
+    "GeneralMessageSettingsTitle": "General Message Settings",
+    "PowerMessageSettingsTitle": "Power Message Settings",
+    
+    "PowerMessageTextColorName": "Message Text Color",
+    "PowerMessageTextColorHint": "The color of text in power change messages.",
+    
+    "PowerMessageBgColorName": "Message Background Color",
+    "PowerMessageBgColorHint": "The background color of power change messages.",
+    
+    "PowerIncrementImageName": "Power Increase Image",
+    "PowerIncrementImageHint": "Image displayed when power increases.",
+    
+    "PowerDecrementImageName": "Power Decrease Image",
+    "PowerDecrementImageHint": "Image displayed when power decreases.",
+    
+    "EnablePowerMessagesName": "Enable Power Messages",
+    "EnablePowerMessagesHint": "If enabled, chat messages will be created when power values change.",
+    
+    "ErrorResettingColor": "Error resetting color",
+    "AllMessageSettingsReset": "All message settings reset to defaults. Click Save to apply changes.",
+    "ErrorResettingAllMessageSettings": "Error resetting all message settings",
+    "ErrorSavingMessageSettings": "Error saving message settings",
+    "ErrorPreviewingMessage": "Error previewing message",
     
     "SoundSettingsName": "Sound Effects",
     "SoundSettingsLabel": "Configure Sound Effects",

@@ -20,6 +20,7 @@
 @use 'components/gear-creator';
 @use 'components/initiative-roll';
 @use 'components/sound-settings';
+@use 'components/message-settings';
 
 .eventide-rp-system {
   @include meta.load-css('components/forms');
