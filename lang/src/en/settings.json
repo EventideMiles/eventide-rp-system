@@ -65,11 +65,17 @@
     "GeneralMessageSettingsTitle": "General Message Settings",
     "PowerMessageSettingsTitle": "Power Message Settings",
     
-    "PowerMessageTextColorName": "Message Text Color",
-    "PowerMessageTextColorHint": "The color of text in power change messages.",
+    "PowerIncrementTextColorName": "Power Increase Text Color",
+    "PowerIncrementTextColorHint": "The color of text in power increase messages.",
     
-    "PowerMessageBgColorName": "Message Background Color",
-    "PowerMessageBgColorHint": "The background color of power change messages.",
+    "PowerIncrementBgColorName": "Power Increase Background Color",
+    "PowerIncrementBgColorHint": "The background color of power increase messages.",
+    
+    "PowerDecrementTextColorName": "Power Decrease Text Color",
+    "PowerDecrementTextColorHint": "The color of text in power decrease messages.",
+    
+    "PowerDecrementBgColorName": "Power Decrease Background Color",
+    "PowerDecrementBgColorHint": "The background color of power decrease messages.",
     
     "PowerIncrementImageName": "Power Increase Image",
     "PowerIncrementImageHint": "Image displayed when power increases.",
