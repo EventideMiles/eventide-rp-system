@@ -94,6 +94,8 @@
       "CompendiumOnly": "If you proceed {keyType} will only be created in compendium: not applied.",
       "CombatPowerError": "Cannot use Combat Power right now!",
       "EditImage": "Failed to open file picker",
+      "EditAudio": "Failed to open file picker",
+      "EditFile": "Failed to open file picker",
       "GearError": "Cannot use Gear right now!",
       "GMOnly": "Only GMs can use this script in this mode.",
       "ItemNotFound": "Item not found",
@@ -359,6 +361,19 @@
       "SelectAbilityRoll": "Select Ability Roll",
       "StatusPopup": "Status Information"
     }
+  },
+  "ACTOR": {
+    "MessageConfigDescription": "Customize the appearance of power messages for this actor.",
+    "PreviewMessage": "Preview Message",
+    "ResetAllMessageSettings": "Reset All Settings",
+    "PowerMessageSettingsTitle": "Power Message Settings",
+    "SaveSettings": "Save Settings",
+    "ImagePathHint": "Enter the path to an image file or URL.",
+    "ColorHint": "Enter a valid CSS color (e.g., #ff0000 or rgb(255,0,0)).",
+    "DescriptionHint": "Enter a description that will appear in the chat message.",
+    "PowerIncrementPreview": "Power Increased",
+    "DefaultIncrementDescription": "The character's power has increased.",
+    "MessagePreview": "Message Preview"
   },
   "TYPES": {
     "Actor": {

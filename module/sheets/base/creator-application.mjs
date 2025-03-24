@@ -120,7 +120,7 @@ export class CreatorApplication extends EventideSheetHelpers {
    * @protected
    */
   static async _onEditImage(event, target) {
-    return await super._onEditImage(event, target);
+    return await super._fileHandler(event, target, "image");
   }
 
   /**

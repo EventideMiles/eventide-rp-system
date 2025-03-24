@@ -12,6 +12,7 @@ export class EventideSheetHelpers extends HandlebarsApplicationMixin(
   }
 
   async _prepareContext(context, options) {
+    context = (await super._prepareContext(context, options)) || {};
     context.config = CONFIG.EVENTIDE_RP_SYSTEM;
     return context;
   }
@@ -91,6 +92,68 @@ export class EventideSheetHelpers extends HandlebarsApplicationMixin(
     const frame = await super._renderFrame(options);
     frame.autocomplete = "off";
     return frame;
+  }
+
+  /**
+   * Handle file selection for image, audio, or generic file inputs.
+   * @param {PointerEvent} event - The originating click event
+   * @param {HTMLElement} target - The capturing HTML element which defined a [data-edit]
+   * @param {string} type - The type of file to select (image, audio, file)
+   * @returns {Promise} The file picker browse operation
+   * @protected
+   */
+  static async _fileHandler(event, target, type) {
+    try {
+      let currentPath = target.src;
+      currentPath = currentPath.replace(window.location.origin, "");
+      currentPath = currentPath.replace(/^\/+/, "");
+
+      const fp = new FilePicker({
+        displayMode: "tiles",
+        type: type,
+        current: currentPath,
+        callback: (path) => {
+          // Clean the selected path
+          let cleanPath = path;
+          // Remove any leading slashes
+          cleanPath = cleanPath.replace(/^\/+/, "");
+
+          // Update the image source and hidden input with clean path
+          target.src = cleanPath;
+
+          // Find or create the hidden input
+          let input;
+          if (type === "image") {
+            input = target.parentNode.querySelector('input[name="img"]');
+            if (!input) {
+              input = document.createElement("input");
+              input.type = "hidden";
+              input.name = "img";
+              target.parentNode.appendChild(input);
+            }
+            input.value = cleanPath;
+          }
+        },
+        top: this.position?.top + 40 || 40,
+        left: this.position?.left + 10 || 10,
+      });
+      return fp.browse();
+    } catch (error) {
+      console.error("Error in fileHandler:", error);
+      if (type === "image") {
+        ui.notifications.error(
+          game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.EditImage")
+        );
+      } else if (type === "audio") {
+        ui.notifications.error(
+          game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.EditAudio")
+        );
+      } else {
+        ui.notifications.error(
+          game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.EditFile")
+        );
+      }
+    }
   }
 
   /**

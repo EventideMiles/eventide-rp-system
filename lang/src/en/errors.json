@@ -5,6 +5,8 @@
       "CompendiumOnly": "If you proceed {keyType} will only be created in compendium: not applied.",
       "CombatPowerError": "Cannot use Combat Power right now!",
       "EditImage": "Failed to open file picker",
+      "EditAudio": "Failed to open file picker",
+      "EditFile": "Failed to open file picker",
       "GearError": "Cannot use Gear right now!",
       "GMOnly": "Only GMs can use this script in this mode.",
       "ItemNotFound": "Item not found",
