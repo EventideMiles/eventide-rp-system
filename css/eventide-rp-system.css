@@ -1,7 +1,7 @@
 @charset "UTF-8";
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Combo&family=Merienda:wght@300..900&family=Protest+Revolution&family=Underdog&display=swap");
-.protest-revolution-regular, .initiative-actor-name, .initiative-value, .chat-card__header, .base-form__effects--title, .popup-form__effects--title, .chat-card__effects--title {
+.protest-revolution-regular, .chat-card__header, .base-form__effects--title, .popup-form__effects--title, .chat-card__effects--title {
   font-family: "Protest Revolution", serif;
   font-weight: 400;
   font-style: normal;
@@ -1461,71 +1461,6 @@
 }
 .gear-creator__effect-select {
   width: 100%;
-}
-
-/* Initiative Roll Styling */
-.eventide-initiative-roll {
-  background: rgba(0, 0, 0, 0.05);
-  border: 1px solid var(--eventide-rp-system-input-border);
-  border-radius: 5px;
-  padding: 8px;
-  margin: 5px 0;
-  font-family: "Roboto", sans-serif;
-}
-
-.initiative-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 5px;
-  border-bottom: 1px solid var(--eventide-rp-system-chat-hr);
-  padding-bottom: 5px;
-}
-
-.initiative-actor-name {
-  font-size: 1.1em;
-  color: var(--eventide-rp-system-chat-card-black);
-}
-
-.initiative-actor-type {
-  font-size: 0.9em;
-  padding: 2px 6px;
-  border-radius: 3px;
-  background: var(--eventide-rp-system-initiative);
-  color: var(--eventide-rp-system-chat-card-white);
-}
-
-.initiative-result {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin: 10px 0;
-  font-size: 1.2em;
-}
-
-.initiative-value {
-  font-size: 1.4em;
-  color: var(--eventide-rp-system-initiative);
-}
-
-.initiative-formula {
-  font-family: var(--font-monospace);
-  font-size: 0.9em;
-  color: var(--eventide-rp-system-chat-card-white);
-  background: var(--eventide-rp-system-initiative-formula-bg);
-  padding: 3px 8px;
-  border-radius: 3px;
-  margin: 0 3px;
-  width: calc(100% - 6px);
-}
-
-/* Different styling for NPCs vs PCs */
-.initiative-actor-type:contains("NPC") {
-  background: var(--eventide-rp-system-initiative-npc);
-}
-
-.initiative-actor-type:contains("Character") {
-  background: var(--eventide-rp-system-initiative-pc);
 }
 
 .sound-settings {
