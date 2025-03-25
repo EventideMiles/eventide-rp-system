@@ -42,6 +42,8 @@
             data-edit="img"
             data-action='onEditImage'
             title="{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Image"}}"
+            name="displayImage"
+            id="displayImage"
           />
           <input class="base-form__hidden-input" type="hidden" name="img" value="{{ifThen storedData.gear_img storedData.gear_img "icons/svg/item-bag.svg"}}">
         </div>
