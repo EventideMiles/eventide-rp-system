@@ -45,7 +45,10 @@
         src="{{storedData.effect_img}}"
         data-edit="img"
         data-action='onEditImage'
+        data-target="img"
         title="Effect Image"
+        name="displayImage"
+        id="displayImage"
       />
       <input class="base-form__hidden-input" type="hidden" name="img" value="{{ifThen storedData.effect_img storedData.effect_img "icons/svg/stoned.svg"}}">
     </div>

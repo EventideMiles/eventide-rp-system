@@ -185,7 +185,6 @@ class SoundSettingsApplication extends HandlebarsApplicationMixin(
    * Handles the file picker button click
    * @param {Event} event - The click event
    * @param {HTMLElement} target - The target element
-   * @returns {Promise} The file picker browse operation
    */
   static async _onBrowseFiles(event, target) {
     try {

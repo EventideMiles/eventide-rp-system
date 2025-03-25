@@ -12,6 +12,7 @@ export class EventideSheetHelpers extends HandlebarsApplicationMixin(
   }
 
   async _prepareContext(context, options) {
+    context = (await super._prepareContext(context, options)) || {};
     context.config = CONFIG.EVENTIDE_RP_SYSTEM;
     return context;
   }
@@ -94,24 +95,32 @@ export class EventideSheetHelpers extends HandlebarsApplicationMixin(
   }
 
   /**
-   * Handle changing the image.
+   * Handle file selection for image, audio, or generic file inputs.
    * @param {PointerEvent} event - The originating click event
    * @param {HTMLElement} target - The capturing HTML element which defined a [data-edit]
+   * @param {string} type - The type of file to select (image, audio, file)
+   * @param {Function} callback - The callback function to handle the selected file
    * @returns {Promise} The file picker browse operation
    * @protected
    */
-  static async _onEditImage(event, target) {
+  static async _fileHandler(event, target, { type = "image" }) {
+    console.log("Target:", target.dataset);
     try {
-      // Clean the current path
-      let currentPath = target.src;
-      // Remove origin if present
+      let currentPath; //= target.src;
+      const inputName = target.dataset.target;
+      console.log(inputName);
+      const input = target.parentNode.querySelector(
+        `input[name="${inputName}"]`
+      );
+      currentPath = input.value || "";
+
+      console.log("Current path:", currentPath);
       currentPath = currentPath.replace(window.location.origin, "");
-      // Remove leading slash if present
       currentPath = currentPath.replace(/^\/+/, "");
 
       const fp = new FilePicker({
         displayMode: "tiles",
-        type: "image",
+        type: type,
         current: currentPath,
         callback: (path) => {
           // Clean the selected path
@@ -123,25 +132,48 @@ export class EventideSheetHelpers extends HandlebarsApplicationMixin(
           target.src = cleanPath;
 
           // Find or create the hidden input
-          let input = target.parentNode.querySelector('input[name="img"]');
-          if (!input) {
-            input = document.createElement("input");
-            input.type = "hidden";
-            input.name = "img";
-            target.parentNode.appendChild(input);
-          }
+          let input;
+          input = target.parentNode.querySelector(`input[name="${inputName}"]`);
           input.value = cleanPath;
+
+          input.dispatchEvent(new Event("change"));
         },
         top: this.position?.top + 40 || 40,
         left: this.position?.left + 10 || 10,
       });
       return fp.browse();
     } catch (error) {
-      console.error("Error in _onEditImage:", error);
-      ui.notifications.error(
-        game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.EditImage")
-      );
+      console.error("Error in fileHandler:", error);
+      if (type === "image") {
+        ui.notifications.error(
+          game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.EditImage")
+        );
+      } else if (type === "audio") {
+        ui.notifications.error(
+          game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.EditAudio")
+        );
+      } else {
+        ui.notifications.error(
+          game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.EditFile")
+        );
+      }
     }
+  }
+
+  /**
+   *
+   * Wrappers for fileHandler
+   */
+  static async _onEditImage(event, target) {
+    return await super._fileHandler(event, target, { type: "image" });
+  }
+
+  static async _onEditAudio(event, target) {
+    return await super._fileHandler(event, target, { type: "audio" });
+  }
+
+  static async _onEditFile(event, target) {
+    return await super._fileHandler(event, target, { type: "file" });
   }
 
   /**

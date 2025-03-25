@@ -47,7 +47,8 @@
     "ShowGearEquipMessagesHint": "If enabled, chat messages will be created when gear items are equipped or unequipped.",
     
     "EnableSystemSoundsName": "Enable System Sounds",
-    "EnableSystemSoundsHint": "Enable or disable custom sound effects for the system.",
+    "EnableSystemSoundsHint": "Enable or disable system sound effects.",
+    
     
     "SoundSettingsName": "Sound Effects",
     "SoundSettingsLabel": "Configure Sound Effects",

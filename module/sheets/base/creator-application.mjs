@@ -112,6 +112,15 @@ export class CreatorApplication extends EventideSheetHelpers {
     return context;
   }
 
+  _onChangeForm(formConfig, event) {
+    super._onChangeForm(formConfig, event);
+
+    if (event.target.name === "img") {
+      document.querySelector(`img[name="displayImage"]`).src =
+        event.target.value;
+    }
+  }
+
   /**
    * Handle changing the gear image.
    * @param {PointerEvent} event - The originating click event
@@ -120,7 +129,7 @@ export class CreatorApplication extends EventideSheetHelpers {
    * @protected
    */
   static async _onEditImage(event, target) {
-    return await super._onEditImage(event, target);
+    return await super._fileHandler(event, target, "image");
   }
 
   /**
