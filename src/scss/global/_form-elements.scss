@@ -120,10 +120,8 @@
   &__header {
     font-family: typography.$underdog;
     text-align: center;
-    text-decoration: underline;
-    // padding: 0.875rem;
     font-size: 1.125rem;
-    // margin-top: -3rem;
+    border-bottom: 2px solid colors.$form-header-underline;
   }
 
   &__content {
@@ -464,5 +462,9 @@
 
   &__sheet-tab-editor {
     height: 100%;
+  }
+
+  &[style*="display: none"] {
+    display: none;
   }
 }

@@ -100,6 +100,7 @@
   --eventide-rp-system-select-option-text: #191813;
   --eventide-rp-system-select-option-hover: #f0f0f0;
   --eventide-rp-system-form-content-bg: #7c7777;
+  --eventide-rp-system-form-header-underline: #424242;
   --eventide-rp-system-button-bg: #ffffff;
   --eventide-rp-system-button-text: #191813;
   --eventide-rp-system-button-border: #d0d0d0;
@@ -201,6 +202,7 @@
   --eventide-rp-system-select-option-text: #ffffff;
   --eventide-rp-system-select-option-hover: #2a3441;
   --eventide-rp-system-form-content-bg: #1e2430;
+  --eventide-rp-system-form-header-underline: #858585;
   --eventide-rp-system-button-bg: #000000;
   --eventide-rp-system-button-text: #ffffff;
   --eventide-rp-system-button-border: #333333;
@@ -517,14 +519,14 @@
   background-color: var(--eventide-rp-system-abilities-wits);
 }
 
-.base-form {
+.base-form, .gear-creator {
   overflow-y: auto;
   -ms-overflow-style: none;
   scrollbar-width: none;
   font-family: "Underdog", serif;
   margin: 0.5rem;
 }
-.base-form::-webkit-scrollbar {
+.base-form::-webkit-scrollbar, .gear-creator::-webkit-scrollbar {
   display: none;
 }
 .base-form--disabled {
@@ -557,8 +559,8 @@
 .base-form__header {
   font-family: "Underdog", serif;
   text-align: center;
-  text-decoration: underline;
   font-size: 1.125rem;
+  border-bottom: 2px solid var(--eventide-rp-system-form-header-underline);
 }
 .base-form__content {
   text-align: justify;
@@ -899,7 +901,7 @@
 .base-form__button + .base-form__button {
   margin-left: 0.5rem !important;
 }
-.base-form__image {
+.base-form__image, .gear-creator__image {
   width: 100px;
   height: 100px;
   object-fit: contain;
@@ -947,6 +949,9 @@
 }
 .base-form__sheet-tab-editor {
   height: 100%;
+}
+.base-form[style*="display: none"], [style*="display: none"].gear-creator {
+  display: none;
 }
 
 /* Target only checkboxes within our base-form */
@@ -1869,12 +1874,7 @@
   flex-direction: column;
   padding: 6px 8px 6px 8px;
 }
-.gear-creator__header {
-  margin-bottom: 8px;
-  padding-bottom: 4px;
-  border-bottom: 2px solid var(--color-border-light-primary);
-}
-.gear-creator__header-section {
+.gear-creator__upper-section {
   display: grid;
   grid-template-columns: 2fr 1fr;
   gap: 12px;
@@ -1893,64 +1893,15 @@
   flex-direction: column;
   gap: 4px;
 }
-.gear-creator__image-group {
-  text-align: center;
-  margin-bottom: 4px;
-}
-.gear-creator__image-group .base-form__label {
-  text-align: left;
-}
-.gear-creator__image-group .base-form__image {
+.gear-creator__image {
   max-width: 64px;
   height: auto;
-  margin: 0 auto;
-}
-.gear-creator__colors {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  padding: 8px;
-  border-radius: 4px;
-}
-.gear-creator__colors .base-form__group {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-.gear-creator__colors .base-form__label {
-  font-size: 0.9em;
-  margin-bottom: 4px;
-}
-.gear-creator__colors .base-form__color-input {
-  width: 100%;
-  height: 24px;
-  padding: 2px;
-  background: white;
-  border: 1px solid var(--color-border-light-primary);
-  border-radius: 3px;
-  cursor: pointer;
-}
-.gear-creator__colors .base-form__color-input:hover {
-  border-color: var(--color-border-highlight);
-}
-.gear-creator__colors .base-form__color-input:focus {
-  border-color: var(--color-border-highlight);
-  box-shadow: 0 0 3px var(--color-shadow-highlight);
+  margin: 0 0.5rem 0 auto;
 }
 .gear-creator__columns {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
-  margin-bottom: 4px;
-}
-.gear-creator__column {
-  min-width: 0;
-}
-.gear-creator__column .base-form__header {
-  margin-top: 0;
-  margin-bottom: 4px;
-}
-.gear-creator__column .base-form__group {
   margin-bottom: 4px;
 }
 .gear-creator__effect-group {
@@ -1959,66 +1910,11 @@
   gap: 8px;
   align-items: center;
 }
-.gear-creator__effect-label {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-size: 0.9em;
-  padding-right: 2px;
-}
 .gear-creator__effect-input {
   width: 100% !important;
 }
 .gear-creator__effect-select {
   width: 100%;
-}
-.gear-creator .base-form__group {
-  margin-bottom: 4px;
-}
-.gear-creator .base-form__group--right {
-  text-align: right;
-  margin-top: 6px;
-}
-.gear-creator .base-form__header {
-  font-size: 1.2em;
-  font-weight: bold;
-  margin-bottom: 6px;
-  padding-bottom: 2px;
-  border-bottom: 2px solid var(--color-border-light-tertiary);
-}
-.gear-creator .base-form__image {
-  max-width: 100px;
-  height: auto;
-  cursor: pointer;
-}
-.gear-creator .base-form__checkbox {
-  width: auto;
-  margin-left: 8px;
-}
-.gear-creator .base-form__textarea {
-  min-height: 60px;
-}
-.gear-creator .roll-options,
-.gear-creator .dice-adjustments {
-  margin-top: 8px;
-  padding: 8px;
-  background: rgba(0, 0, 0, 0.05);
-  border-radius: 4px;
-}
-.gear-creator .roll-options[style*="display: none"],
-.gear-creator .dice-adjustments[style*="display: none"] {
-  display: none;
-}
-.gear-creator .roll-options .base-form__group,
-.gear-creator .dice-adjustments .base-form__group {
-  margin-bottom: 4px;
-}
-.gear-creator .roll-options .base-form__group:last-child,
-.gear-creator .dice-adjustments .base-form__group:last-child {
-  margin-bottom: 0;
-}
-.gear-creator .dice-adjustments {
-  margin-top: 12px;
 }
 
 /* Initiative Roll Styling */
@@ -2342,6 +2238,7 @@
   --eventide-rp-system-select-option-text: #191813;
   --eventide-rp-system-select-option-hover: #f0f0f0;
   --eventide-rp-system-form-content-bg: #7c7777;
+  --eventide-rp-system-form-header-underline: #424242;
   --eventide-rp-system-button-bg: #ffffff;
   --eventide-rp-system-button-text: #191813;
   --eventide-rp-system-button-border: #d0d0d0;
@@ -2442,6 +2339,7 @@
   --eventide-rp-system-select-option-text: #ffffff;
   --eventide-rp-system-select-option-hover: #2a3441;
   --eventide-rp-system-form-content-bg: #1e2430;
+  --eventide-rp-system-form-header-underline: #858585;
   --eventide-rp-system-button-bg: #000000;
   --eventide-rp-system-button-text: #ffffff;
   --eventide-rp-system-button-border: #333333;
@@ -2699,6 +2597,7 @@
   --eventide-rp-system-select-option-text: #191813;
   --eventide-rp-system-select-option-hover: #f0f0f0;
   --eventide-rp-system-form-content-bg: #7c7777;
+  --eventide-rp-system-form-header-underline: #424242;
   --eventide-rp-system-button-bg: #ffffff;
   --eventide-rp-system-button-text: #191813;
   --eventide-rp-system-button-border: #d0d0d0;
@@ -2799,6 +2698,7 @@
   --eventide-rp-system-select-option-text: #ffffff;
   --eventide-rp-system-select-option-hover: #2a3441;
   --eventide-rp-system-form-content-bg: #1e2430;
+  --eventide-rp-system-form-header-underline: #858585;
   --eventide-rp-system-button-bg: #000000;
   --eventide-rp-system-button-text: #ffffff;
   --eventide-rp-system-button-border: #333333;
@@ -3068,6 +2968,7 @@
   --eventide-rp-system-select-option-text: #191813;
   --eventide-rp-system-select-option-hover: #f0f0f0;
   --eventide-rp-system-form-content-bg: #7c7777;
+  --eventide-rp-system-form-header-underline: #424242;
   --eventide-rp-system-button-bg: #ffffff;
   --eventide-rp-system-button-text: #191813;
   --eventide-rp-system-button-border: #d0d0d0;
@@ -3168,6 +3069,7 @@
   --eventide-rp-system-select-option-text: #ffffff;
   --eventide-rp-system-select-option-hover: #2a3441;
   --eventide-rp-system-form-content-bg: #1e2430;
+  --eventide-rp-system-form-header-underline: #858585;
   --eventide-rp-system-button-bg: #000000;
   --eventide-rp-system-button-text: #ffffff;
   --eventide-rp-system-button-border: #333333;
@@ -3307,3 +3209,5 @@
 .eventide-rp-system .effects .item .effect-controls {
   border: none;
 }
+
+/*# sourceMappingURL=eventide-rp-system.css.map */
