@@ -1,114 +1,10 @@
 @use "../utils/typography";
 @use "../utils/colors";
-
-// Mixins for shared styles
-@mixin box-shadow-base {
-  box-shadow: 
-    0 0 0 1px rgba(0, 0, 0, 0.8),
-    inset 0 1px 3px rgba(0, 0, 0, 0.6);
-}
-
-@mixin box-shadow-hover {
-  box-shadow: 
-    0 0 0 1px rgba(255, 255, 255, 0.1),
-    inset 0 1px 3px rgba(0, 0, 0, 0.7);
-}
-
-@mixin flex-center {
-  display: flex;
-  align-items: center;
-}
-
-@mixin flex-row {
-  @include flex-center;
-  flex-direction: row;
-}
-
-@mixin input-base {
-  display: block;
-  width: 100%;
-  height: 2rem;
-  padding: 0.5rem;
-  color: colors.$input-text;
-  background-color: colors.$input-bg !important;
-  border: none;
-  @include box-shadow-base;
-  border-radius: 5px;
-  appearance: none;
-  -webkit-appearance: none;
-  
-  &:focus {
-    outline: none;
-    border-color: colors.$input-focus;
-    @include box-shadow-hover;
-  }
-
-  &:hover {
-    @include box-shadow-hover;
-  }
-}
-
-@mixin button-base {
-  background-color: colors.$button-bg !important;
-  color: colors.$button-text !important;
-  border: 1px solid colors.$button-border !important;
-  border-radius: 5px !important;
-  padding: 0.5rem 1rem !important;
-  cursor: pointer !important;
-  font-family: typography.$underdog !important;
-  transition: all 0.2s ease-in-out !important;
-  box-shadow: 0 0 0 0 transparent !important;
-
-  &:hover {
-    background-color: colors.$button-hover !important;
-    box-shadow: 0 0 15px 5px colors.$button-glow !important;
-  }
-
-  &:active {
-    background-color: colors.$button-active !important;
-    box-shadow: 0 0 8px 2px colors.$button-glow !important;
-  }
-}
+@use "../global/form-elements";
 
 // Block
 .popup-form {
-  max-height: 90vh; 
-  overflow-y: hidden; 
-  -ms-overflow-style: initial;
-  scrollbar-width: thin;
-  scrollbar-color: colors.$input-focus transparent;
-  font-family: typography.$underdog;
-  margin: 0.5rem;
-  display: flex; 
-  flex-direction: column; 
-  height: 100%; 
-
-  &::-webkit-scrollbar {
-    width: 6px;
-    background-color: transparent;
-    display: block;
-  }
-  
-  &::-webkit-scrollbar-thumb {
-    background-color: colors.$input-focus;
-    border-radius: 10px;
-    border: 1px solid colors.$input-bg;
-    
-    &:hover {
-      background-color: colors.$primary-button-hover;
-    }
-  }
-  
-  &::-webkit-scrollbar-track {
-    background-color: transparent;
-    margin: 0;
-  }
-
-  // Block modifiers
-  &--disabled {
-    pointer-events: none;
-    opacity: 0.7;
-  }
+  @extend .base-form;
 
   // Section styling
   &__section {
@@ -154,16 +50,16 @@
       color: #e74c3c;
       font-weight: bold;
     }
+
+    &--neutral {
+      color: #95a5a6;
+      font-weight: bold;
+    }
   }
 
   // Elements
   &__header {
-    font-family: typography.$underdog;
-    text-align: center;
-    text-decoration: underline;
-    padding: 0.875rem;
-    font-size: 1.125rem;
-    margin: 0;
+    @extend .base-form__header;
 
     &--usage {
       color: #cb8e00;
@@ -176,37 +72,12 @@
     flex: 1;
     margin: 0.25rem;
     padding: 0.25rem;
-    // background-color: colors.$form-content-bg;
     border-radius: 4px;
     text-align: center;
     overflow-y: auto; 
-    max-height: calc(90vh - 100px); 
-    
-    /* Add blue scrollbar styling */
-    -ms-overflow-style: initial;
-    scrollbar-width: thin;
-    scrollbar-color: colors.$input-focus transparent;
-    
-    &::-webkit-scrollbar {
-      width: 6px;
-      background-color: transparent;
-      display: block;
-    }
-    
-    &::-webkit-scrollbar-thumb {
-      background-color: colors.$input-focus;
-      border-radius: 10px;
-      border: 1px solid colors.$input-bg;
-      
-      &:hover {
-        background-color: colors.$primary-button-hover;
-      }
-    }
-    
-    &::-webkit-scrollbar-track {
-      background-color: transparent;
-      margin: 0;
-    }
+    max-height: calc(90rem - 100px); 
+
+    @include form-elements.scrollbar-base;
   }
   
 
@@ -214,7 +85,6 @@
     flex: 1;
     margin: 0.25rem;
     padding: 0.25rem;
-    // background-color: colors.$form-content-bg;
     border-radius: 4px;
     text-align: center;
 
@@ -242,399 +112,36 @@
       padding: 0.5rem;
       word-wrap: break-word;
     }
-
-    .popup-form__text {
-      &--advantage {
-        color: #2ecc71;
-        font-weight: bold;
-      }
-
-      &--disadvantage {
-        color: #e74c3c;
-        font-weight: bold;
-      }
-
-      &--neutral {
-        color: #95a5a6;
-        font-weight: bold;
-      }
-    }
   }
 
   &__effects {
-    @extend .underdog-regular;
-    text-align: justify;
-    font-size: 0.7rem;
-    padding: 0rem;
-    color: colors.$card-white;
-    background-color: colors.$form-content-bg;
+    @extend .base-form__effects;
 
 
     &--title {
-        @extend .protest-revolution-regular;
-        text-align: justify;
-        font-size: 0.8rem;
-        padding: 0.01rem;
-        padding-top: 0.2rem;
-        padding-bottom: 0.2rem;
+        @extend .base-form__effects--title;
         margin-bottom: 3px;
-        background-color: colors.$effect;
-        color: colors.$card-white;
-    }
-
-    &--name {
-        font-weight: bolder;
-        color: colors.$card-white;
-        font-size: 0.75rem;
-    }
-
-    &--row {
-        padding-left: 20px;
-        display: grid;
-        grid-column: span 3 / span 3;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        width: 50%;
-
-        &-cell {
-            padding-left: 3px;
-            padding-right: 3px;
-            border-bottom: 1px dashed colors.$card-tan;
-
-            &--first,
-            &--last {
-                font-weight: bold;
-            }
-
-            &--last {
-                border-left: 1px dashed colors.$card-tan;
-                padding-left: 15px;
-                white-space: nowrap;
-            }
-
-            &--middle {
-                font-style: italic;
-            }
-        }
     }
 }
 
   &__group {
+    @extend .base-form__group;
     margin: 0.5rem 0;
-    padding: 0.25rem 0.5rem 0.75rem 0.5rem;
-    @include flex-row;
     gap: 0.5rem;
     flex: 1;
-
-    &:first-child {
-      padding-top: 0.5rem;
-    }
-  }
-
-  // Group modifiers
-  &__group--stacked {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.25rem;
-
-    .popup-form__label {
-      margin-bottom: 0.25rem;
-    }
-  }
-
-  &__group--checkbox {
-    height: 28px;
-    justify-content: space-between;
-    align-items: center;
-
-    .popup-form__label {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      margin: 0;
-      line-height: 28px;
-      min-width: auto;
-      flex: 1;
-    }
-
-    .popup-form__checkbox {
-      margin-left: 0.5rem;
-      flex: 0 0 auto;
-    }
-  }
-
-  &__group--header {
-    .popup-form__label {
-      font-weight: bold;
-    }
-  }
-
-  &__group--right {
-    justify-content: flex-end;
-    padding: 0.5rem 1.25rem 0.75rem 0.5rem;
-    gap: 0.75rem;
   }
 
   &__label {
-    display: block;
-    font-size: 1rem;
-    font-weight: bold;
+    @extend .base-form__label;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    color: colors.$label-text;
-    margin: 0;
-  }
-
-  &__label--inline {
-    display: inline-block;
-    margin-right: 0.5rem;
-    min-width: auto;
-  }
-
-  &__label--required::after {
-    content: '*';
-    color: colors.$required;
-    margin-left: 0.25rem;
-  }
-
-  &__text-input {
-    @include input-base;
-  }
-
-  &__number-input {
-    @include input-base;
-    text-align: center;
-    
-    &::-webkit-inner-spin-button,
-    &::-webkit-outer-spin-button {
-      display: none;
-    }
-  }
-
-  &__select {
-    @include input-base;
-    padding-right: 2.5rem;
-    cursor: pointer;
-    background-image: colors.$select-arrow-url !important;
-    background-repeat: no-repeat !important;
-    background-position: calc(100% - 8px) center !important;
-    background-size: 24px !important;
-
-    option {
-      background-color: colors.$select-option-bg !important;
-      color: colors.$select-option-text !important;
-      padding: 0.5rem !important;
-
-      &:hover {
-        background-color: colors.$select-option-hover !important;
-      }
-    }
-  }
-
-  &__select-option {
-    background-color: rgba(30, 30, 30, 0.95);
-    color: white;
-    padding: 0.5rem;
-  }
-
-  &__textarea {
-    @include input-base;
-    height: auto;
-    min-height: 4rem;
-    resize: vertical;
-  }
-
-  &__color-input {
-    @include input-base;
-    padding: 2px;
-    width: 50px;
-    height: 30px;
-    flex: 1;
-    max-width: 250px;
-    margin-left: auto;
-  }
-
-  &__checkbox {
-    @include flex-center;
-    width: 28px;
-    height: 28px;
-    background-color: colors.$checkbox-bg !important;
-    border: none;
-    margin: 0 10px;
-    cursor: pointer;
-    vertical-align: middle;
-    position: relative;
-    z-index: 100;
-    border-radius: 4px;
-    @include box-shadow-base;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-
-    &:hover {
-      background-color: colors.$checkbox-hover !important;
-      @include box-shadow-hover;
-    }
-
-    &:checked {
-      background-color: colors.$input-checked !important;
-
-      &::after {
-        content: '✓';
-        display: block;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        color: colors.$input-check;
-        font-size: 18px;
-        font-weight: bold;
-        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-        z-index: 101;
-      }
-    }
   }
 
   &__button {
-    @include button-base;
-    min-width: 80px !important;
-
-    &--primary {
-      background-color: colors.$primary-button-bg !important;
-      color: colors.$primary-button-text !important;
-      border-color: colors.$primary-button-border !important;
-
-      &:hover {
-        background-color: colors.$primary-button-hover !important;
-        color: colors.$primary-button-hover-text !important;
-        box-shadow: 0 0 15px 5px colors.$primary-button-glow !important;
-      }
-
-      &:active {
-        background-color: colors.$primary-button-active !important;
-        box-shadow: 0 0 8px 2px colors.$primary-button-glow !important;
-      }
-    }
-
-    &--danger {
-      background-color: colors.$danger-button-bg !important;
-      color: colors.$danger-button-text !important;
-      border-color: colors.$danger-button-border !important;
-
-      &:hover {
-        background-color: colors.$danger-button-hover !important;
-        box-shadow: 0 0 15px 5px rgba(255, 0, 0, 0.4) !important;
-      }
-    }
-
-    & + & {
-      margin-left: 0.5rem !important;
-    }
-  }
-
-  &__image {
-    width: 100px;
-    height: 100px;
-    object-fit: contain;
-    border: none;
-    margin-left: auto;
-    align-self: flex-end;
-    flex: 0 0 100px;
-
-    &--edit {
-      border: 1px solid colors.$input-image-edit-border;
-      border-radius: 10px;
-    }
-  }
-
-  &__hidden-input {
-    display: none;
-  }
-
-  // Sheet-related elements
-  &__sheet-header {
-    @include flex-row;
-    flex: 0 auto;
-    overflow: hidden;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    margin-bottom: 10px;
-  }
-
-  &__sheet-profile-img {
-    flex: 0 0 100px;
-    height: 100px;
-    margin-right: 10px;
-  }
-
-  &__sheet-header-fields {
-    flex: 1;
-  }
-
-  &__sheet-tabs {
-    flex: 0;
-  }
-
-  &__sheet-body {
-    height: 100%;
-  }
-
-  &__sheet-tab {
-    height: 100%;
-  }
-
-  &__sheet-tab--biography {
-    flex: 1;
-  }
-
-  &__sheet-tab-editor {
-    height: 100%;
-  }
-
-  &__footer {
-    margin-top: 10px;
-    display: flex;
-    width: 100%;
-    flex: 0 0 auto; 
-    justify-content: flex-end;
-    position: sticky; 
-    bottom: 0; 
-    background-color: inherit; 
-    z-index: 10; 
-    
-    /* Make the submit button take appropriate width */
-    .popup-form__button--primary {
-      min-width: 120px;
-      justify-content: center;
-      padding: 8px;
-      font-weight: bold;
-      text-align: center;
-    }
-  }
-
-  &__callout-box {
-    font-family: typography.$underdog;
-    margin-bottom: 3px;
-    display: flex;
-    flex: 0 0 auto;
-    position: sticky; 
-    top: 0; 
-    z-index: 10; 
-    background-color: inherit; 
-  }
-
-  &__callout {
-    border-radius: 8px;
-    padding: 0.5rem;
-    font-weight: bold;
-    width: 100%;
-    align-content: flex-start;
-    font-size: 0.9rem;
-    color: #ffffff;
-
-    &--warning {
-      background-color: #e6b800;
-      border: 2px dashed #ff8c00;
-    }
+    @include form-elements.button-base;
+    margin-right: 0.5rem;
+    margin-left: 0.5rem;
+    margin-bottom: 0.5rem;
   }
 }

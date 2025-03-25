@@ -1,17 +1,16 @@
 <div class="{{cssClass}} popup-form" autocomplete="off">
-    <header class="popup-form__callout-box">
-        <!-- Warnings -->
+    <header class="base-form__callout-box">
         {{#if problems.targeting}}
-            <div class="popup-form__callout popup-form__callout--warning"><i class="fas fa-exclamation-triangle"></i> {{localize "EVENTIDE_RP_SYSTEM.Forms.Callouts.Gear.TargetGear"}}</div>
+            <div class="base-form__callout base-form__callout--warning"><i class="fas fa-exclamation-triangle"></i> {{localize "EVENTIDE_RP_SYSTEM.Forms.Callouts.Gear.TargetGear"}}</div>
         {{/if}}
         {{#if problems.quantity}}
-            <div class="popup-form__callout popup-form__callout--warning"><i class="fas fa-exclamation-triangle"></i> {{localize "EVENTIDE_RP_SYSTEM.Forms.Callouts.Gear.InsufficientQuantity" cost=item.system.cost quantity=item.system.quantity}}</div>
+            <div class="base-form__callout base-form__callout--warning"><i class="fas fa-exclamation-triangle"></i> {{localize "EVENTIDE_RP_SYSTEM.Forms.Callouts.Gear.InsufficientQuantity" cost=item.system.cost quantity=item.system.quantity}}</div>
         {{/if}}
         {{#if problems.equipped}}
-            <div class="popup-form__callout popup-form__callout--warning"><i class="fas fa-exclamation-triangle"></i> {{localize "EVENTIDE_RP_SYSTEM.Forms.Callouts.Gear.NotEquipped"}}</div>
+            <div class="base-form__callout base-form__callout--warning"><i class="fas fa-exclamation-triangle"></i> {{localize "EVENTIDE_RP_SYSTEM.Forms.Callouts.Gear.NotEquipped"}}</div>
         {{/if}}
     </header>
-    <div class="base-form__main">
+    <div class="popup-form__main">
         
         <div class="popup-form__header">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Details"}}</div>
         
