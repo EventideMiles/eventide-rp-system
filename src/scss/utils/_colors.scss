@@ -92,6 +92,7 @@
   --eventide-rp-system-select-option-text: #191813;
   --eventide-rp-system-select-option-hover: #f0f0f0;
   --eventide-rp-system-form-content-bg: #7c7777;
+  --eventide-rp-system-form-header-underline: #424242;
   
   // buttons - light theme
   --eventide-rp-system-button-bg: #ffffff;
@@ -222,6 +223,7 @@
   --eventide-rp-system-select-option-text: #ffffff;
   --eventide-rp-system-select-option-hover: #2a3441;
   --eventide-rp-system-form-content-bg: #1e2430;
+  --eventide-rp-system-form-header-underline: #858585;
   
   // buttons - dark theme
   --eventide-rp-system-button-bg: #000000;
@@ -341,6 +343,7 @@ $input-checked: var(--eventide-rp-system-input-checked);
 $input-check: var(--eventide-rp-system-input-check);
 $input-image-edit-border: var(--eventide-rp-system-image-edit-border);
 $form-content-bg: var(--eventide-rp-system-form-content-bg);
+$form-header-underline: var(--eventide-rp-system-form-header-underline);
 
 // Checkbox colors
 $checkbox-bg: var(--eventide-rp-system-checkbox-bg);

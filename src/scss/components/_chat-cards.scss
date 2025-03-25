@@ -1,7 +1,9 @@
 @use "../utils/colors"as colors;
 @use "../utils/typography"as typography;
+@use "../global/form-elements";
 
 .chat-card {
+    @extend .base-form;
     &__header {
         @extend .protest-revolution-regular;
         color: colors.$card-white;
@@ -248,12 +250,9 @@
     }
 
     &__effects {
-        @extend .underdog-regular;
-        text-align: justify;
-        font-size: 0.7rem;
-        padding: 0;
-        margin: 0;
+        @extend .base-form__effects;
         color: colors.$card-tan;
+        background-color: colors.$card-white;
         
         &--ac-check {
             border: 3px dashed colors.$hidden-border;
@@ -265,15 +264,7 @@
         }
         
         &--title {
-            @extend .protest-revolution-regular;
-            text-align: justify;
-            font-size: 0.8rem;
-            padding: 0.01rem;
-            padding-top: 0.2rem;
-            padding-bottom: 0.2rem;
-            margin-bottom: 3px;
-            background-color: colors.$effect;
-            color: colors.$card-white;
+           @extend .base-form__effects--title;
         }
 
         &--hit {
@@ -283,6 +274,7 @@
             padding: 0.0875rem;
             font-size: 0.7rem;
             margin-bottom: 0px;
+            border-radius: 5px;
             border: 1px solid colors.$card-white;
         }
 
@@ -293,40 +285,32 @@
             padding: 0.0875rem;
             font-size: 0.7rem;
             margin-bottom: 0px;
+            border-radius: 5px;
             border: 1px solid colors.$card-white;
         }
         
         &--name {
-            font-weight: bolder;
+            @extend .base-form__effects--name;
             color: colors.$card-black;
-            font-size: 0.75rem;
         }
 
         &--row {
-            padding-left: 20px;
-            display: grid;
-            grid-column: span 3 / span 3;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            width: 50%;
+            @extend .base-form__effects--row;
 
-            &-cell {
-                padding-left: 3px;
-                padding-right: 3px;
-                border-bottom: 1px dashed colors.$card-tan;
+            &--cell {
+                @extend .base-form__effects--row--cell;
 
                 &--first,
                 &--last {
-            font-weight: bold;
-        }
+                    @extend .base-form__effects--row--cell--first;
+                }
         
                 &--last {
-                    border-left: 1px dashed colors.$card-tan;
-                    padding-left: 15px;
-                    white-space: nowrap;
+                    @extend .base-form__effects--row--cell--last;
                 }
 
                 &--middle {
-                    font-style: italic;
+                    @extend .base-form__effects--row--cell--middle;
                 }
             }
         }

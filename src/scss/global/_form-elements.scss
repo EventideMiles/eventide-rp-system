@@ -48,6 +48,47 @@
   }
 }
 
+@mixin checkbox-base {
+  @include flex-center;
+  width: 28px;
+  height: 28px;
+  background-color: colors.$checkbox-bg !important;
+  border: none;
+  margin: 0 10px;
+  cursor: pointer;
+  vertical-align: middle;
+  position: relative;
+  z-index: 100;
+  border-radius: 4px;
+  @include box-shadow-base;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+
+  &:hover {
+    background-color: colors.$checkbox-hover !important;
+    @include box-shadow-hover;
+  }
+
+  &:checked {
+    background-color: colors.$input-checked !important;
+
+    &::after {
+      content: '✓';
+      display: block;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: colors.$input-check;
+      font-size: 18px;
+      font-weight: bold;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+      z-index: 101;
+    }
+  }
+}
+
 @mixin button-base {
   background-color: colors.$button-bg !important;
   color: colors.$button-text !important;
@@ -70,17 +111,40 @@
   }
 }
 
+@mixin scrollbar-base {
+  -ms-overflow-style: initial;
+    scrollbar-width: thin;
+    scrollbar-color: colors.$input-focus transparent;
+    
+    &::-webkit-scrollbar {
+      width: 6px;
+      background-color: transparent;
+      display: block;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background-color: colors.$input-focus;
+      border-radius: 10px;
+      border: 1px solid colors.$input-bg;
+      
+      &:hover {
+        background-color: colors.$primary-button-hover;
+      }
+    }
+    
+    &::-webkit-scrollbar-track {
+      background-color: transparent;
+      margin: 0;
+    }
+}
+
+
 // Block
 .base-form {
   overflow-y: auto;
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-  font-family: typography.$underdog;
-  margin: 0.5rem;
 
-  &::-webkit-scrollbar {
-    display: none;
-  }
+  @include scrollbar-base;
+  margin: 0.5rem;
 
   // Block modifiers
   &--disabled {
@@ -114,16 +178,21 @@
     background-color: #0050b3;
     border: 2px solid #91d5ff;
   }
+
+  &--error {
+    background-color: #e60000;
+    border: 2px dashed #ff8c00;
+  }
 }
 
   // Elements
   &__header {
     font-family: typography.$underdog;
     text-align: center;
-    text-decoration: underline;
-    // padding: 0.875rem;
     font-size: 1.125rem;
-    // margin-top: -3rem;
+    padding: 0.875rem;
+    border-bottom: 2px solid colors.$form-header-underline;
+    margin: 0;
   }
 
   &__content {
@@ -171,7 +240,7 @@
         grid-template-columns: repeat(3, minmax(0, 1fr));
         width: 50%;
 
-        &-cell {
+        &--cell {
             padding-left: 3px;
             padding-right: 3px;
             border-bottom: 1px dashed colors.$card-tan;
@@ -253,7 +322,7 @@
   &__label {
     display: block;
     font-size: 1rem;
-    font-weight: normal;
+    font-weight: bold;
     color: colors.$label-text;
     margin: 0;
     flex: 0 0 120px;
@@ -330,44 +399,7 @@
   }
 
   &__checkbox {
-    @include flex-center;
-    width: 28px;
-    height: 28px;
-    background-color: colors.$checkbox-bg !important;
-    border: none;
-    margin: 0 10px;
-    cursor: pointer;
-    vertical-align: middle;
-    position: relative;
-    z-index: 100;
-    border-radius: 4px;
-    @include box-shadow-base;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-
-    &:hover {
-      background-color: colors.$checkbox-hover !important;
-      @include box-shadow-hover;
-    }
-
-    &:checked {
-      background-color: colors.$input-checked !important;
-
-      &::after {
-        content: '✓';
-        display: block;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        color: colors.$input-check;
-        font-size: 18px;
-        font-weight: bold;
-        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-        z-index: 101;
-      }
-    }
+    @include checkbox-base;
   }
 
   &__button {
@@ -465,4 +497,8 @@
   &__sheet-tab-editor {
     height: 100%;
   }
+
+  &[style*="display: none"] {
+      display: none;
+    }
 }

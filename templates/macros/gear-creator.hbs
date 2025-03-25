@@ -20,7 +20,7 @@
     {{/if}}
   </header>
   <div class="base-form__content">
-    <div class="gear-creator__header-section">
+    <div class="gear-creator__upper-section">
       <div class="gear-creator__main-info">
         <div class="base-form__group">
           <label class="base-form__label" for="name">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Name"}}</label>
@@ -37,10 +37,11 @@
         <div class="base-form__group gear-creator__image-group">
           <label class="base-form__label" for="img">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Image"}}</label>
           <img
-            class="base-form__image base-form__image--edit"
+            class="gear-creator__image base-form__image--edit"
             src="{{storedData.gear_img}}"
             data-edit="img"
             data-action='onEditImage'
+            data-target="img"
             title="{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Image"}}"
             name="displayImage"
             id="displayImage"
@@ -125,7 +126,7 @@
         <div class="base-form__header">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Effects"}}</div>
         {{#each abilities}}
           <div class="base-form__group gear-creator__effect-group">
-            <label class="base-form__label gear-creator__effect-label" for="{{lowercase this}}">{{capitalize (localize (lookup @root.config.abilityAbbreviations this))}}</label>
+            <label class="base-form__label" for="{{lowercase this}}">{{capitalize (localize (lookup @root.config.abilityAbbreviations this))}}</label>
             <input class="base-form__number-input gear-creator__effect-input" type="number" id="{{lowercase this}}" name="{{lowercase this}}" value="0">
             <select class="base-form__select gear-creator__effect-select" id="{{lowercase this}}-mode" name="{{lowercase this}}-mode">
               <option value="add">{{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.Add"}}</option>
@@ -137,7 +138,7 @@
         {{/each}}
         {{#each hiddenAbilities}}
           <div class="base-form__group gear-creator__effect-group">
-            <label class="base-form__label gear-creator__effect-label" for="{{lowercase this}}">{{capitalize (localize (lookup @root.config.hiddenAbilityAbbreviations this))}}</label>
+            <label class="base-form__label" for="{{lowercase this}}">{{capitalize (localize (lookup @root.config.hiddenAbilityAbbreviations this))}}</label>
             <input class="base-form__number-input gear-creator__effect-input" type="number" id="{{lowercase this}}" name="{{lowercase this}}" value="0">
             <select class="base-form__select gear-creator__effect-select" id="{{lowercase this}}-mode" name="{{lowercase this}}-mode">
               <option value="add">{{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.Add"}}</option>
