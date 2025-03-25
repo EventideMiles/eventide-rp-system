@@ -240,7 +240,7 @@
         grid-template-columns: repeat(3, minmax(0, 1fr));
         width: 50%;
 
-        &-cell {
+        &--cell {
             padding-left: 3px;
             padding-right: 3px;
             border-bottom: 1px dashed colors.$card-tan;
