@@ -27,6 +27,9 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
       width: 600,
       height: 750,
     },
+    window: {
+      controls: [...super.DEFAULT_OPTIONS.window.controls],
+    },
     actions: {
       onEditImage: this._onEditImage,
       viewDoc: this._viewDoc,
