@@ -104,17 +104,13 @@ export class EventideSheetHelpers extends HandlebarsApplicationMixin(
    * @protected
    */
   static async _fileHandler(event, target, { type = "image" }) {
-    console.log("Target:", target.dataset);
     try {
       let currentPath; //= target.src;
       const inputName = target.dataset.target;
-      console.log(inputName);
       const input = target.parentNode.querySelector(
         `input[name="${inputName}"]`
       );
       currentPath = input.value || "";
-
-      console.log("Current path:", currentPath);
       currentPath = currentPath.replace(window.location.origin, "");
       currentPath = currentPath.replace(/^\/+/, "");
 
@@ -129,9 +125,11 @@ export class EventideSheetHelpers extends HandlebarsApplicationMixin(
           cleanPath = cleanPath.replace(/^\/+/, "");
 
           // Update the image source and hidden input with clean path
-          target.src = cleanPath;
+          if (target.src && type === "image") {
+            target.src = cleanPath;
+          }
 
-          // Find or create the hidden input
+          // Find the input
           let input;
           input = target.parentNode.querySelector(`input[name="${inputName}"]`);
           input.value = cleanPath;

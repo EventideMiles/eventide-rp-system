@@ -1,14 +1,11 @@
+import { EventideSheetHelpers } from "../sheets/base/eventide-sheet-helpers.mjs";
 import { erpsSoundManager } from "./sound-manager.mjs";
-
-const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
 /**
  * Sound Settings Application
- * @extends {HandlebarsApplicationMixin(ApplicationV2)}
+ * @extends {EventideSheetHelpers}
  */
-class SoundSettingsApplication extends HandlebarsApplicationMixin(
-  ApplicationV2
-) {
+class SoundSettingsApplication extends EventideSheetHelpers {
   static PARTS = {
     soundSettings: {
       template:
@@ -187,32 +184,7 @@ class SoundSettingsApplication extends HandlebarsApplicationMixin(
    * @param {HTMLElement} target - The target element
    */
   static async _onBrowseFiles(event, target) {
-    try {
-      const inputName = target.dataset.target;
-      const input = document.querySelector(`input[name="${inputName}"]`);
-      if (!input) return;
-
-      // Get the current path from the input
-      let currentPath = input.value || "";
-
-      const fp = new FilePicker({
-        type: "audio",
-        current: currentPath,
-        callback: (path) => {
-          // Update the input value
-          input.value = path;
-          // Dispatch a change event to ensure the form knows the value changed
-          input.dispatchEvent(new Event("change"));
-        },
-        displayMode: "tiles",
-      });
-      return fp.browse();
-    } catch (error) {
-      console.error("Error in _onBrowseFiles:", error);
-      ui.notifications.error(
-        game.i18n.localize("SETTINGS.ErrorOpeningFilePicker")
-      );
-    }
+    await super._fileHandler(event, target, { type: "audio" });
   }
 
   /**
