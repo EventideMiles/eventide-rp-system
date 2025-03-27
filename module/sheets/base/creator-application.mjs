@@ -114,9 +114,8 @@ export class CreatorApplication extends EventideSheetHelpers {
 
   _onChangeForm(formConfig, event) {
     super._onChangeForm(formConfig, event);
-
     if (event.target.name === "img") {
-      document.querySelector(`img[name="displayImage"]`).src =
+      event.target.parentNode.querySelector(`img[name="displayImage"]`).src =
         event.target.value;
     }
   }
