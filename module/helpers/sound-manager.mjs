@@ -5,6 +5,10 @@ import { getSetting } from "./settings.mjs";
  * Handles playing custom sounds for various system events
  */
 export class ERPSSoundManager {
+  /**
+   * Initializes the sound manager
+   * @constructor
+   */
   constructor() {
     this._defaultSounds = {
       healing: "systems/eventide-rp-system/assets/sounds/Cure2.wav",
