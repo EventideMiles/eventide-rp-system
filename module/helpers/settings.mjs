@@ -415,7 +415,7 @@ export const registerSettings = function () {
     statusRemove: "systems/eventide-rp-system/assets/sounds/Cure5.wav",
     gearEquip: "systems/eventide-rp-system/assets/sounds/cloth3.ogg",
     gearUnequip: "systems/eventide-rp-system/assets/sounds/clothBelt2.ogg",
-    combatPower: "systems/eventide-rp-system/assets/sounds/trap_00.wav",
+    combatPower: "systems/eventide-rp-system/assets/sounds/Trap_00.wav",
     damage: "systems/eventide-rp-system/assets/sounds/swish_4.wav",
     initiative: "systems/eventide-rp-system/assets/sounds/levelup.wav",
   };
