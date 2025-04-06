@@ -1,13 +1,13 @@
 <div class="{{cssClass}} popup-form" autocomplete="off">
     <div class="base-form__main chat-card">
-        <div class="chat-card__header chat-card__header--feature">
-            <img src="{{item.img}}" class="chat-card__image--primary" /> 
+        <div class="popup-form__header" style="{{style}}">
             <div>{{item.name}}</div>
+            <img src="{{item.img}}" class="popup-form__image" alt="{{item.name}}" /> 
         </div>
 
         {{#if item.system.description}}
         <div class="popup-form__content popup-form__content--description">
-            <div class="popup-form__header">{{item.actor.name}}</div> 
+            <div class="popup-form__subheader">{{item.actor.name}}</div> 
             {{{item.system.description}}}
         </div>
         {{/if}}

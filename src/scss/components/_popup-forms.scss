@@ -59,7 +59,14 @@
 
   // Elements
   &__header {
-    @extend .base-form__header;
+    @extend .protest-revolution-regular;
+    color: colors.$card-white;
+    text-align: center;
+    padding: 0.875rem;
+    font-size: 1.125rem;
+    margin-bottom: 0px;
+    margin-top: 0px;
+    position: relative;
 
     &--usage {
       color: #0069cb;
@@ -78,6 +85,10 @@
     max-height: calc(90rem - 100px); 
 
     @include form-elements.scrollbar-base;
+  }
+
+  &__subheader {
+    @extend .base-form__header;
   }
   
 

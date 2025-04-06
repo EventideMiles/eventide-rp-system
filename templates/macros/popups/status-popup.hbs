@@ -1,8 +1,8 @@
 <div class="{{cssClass}} popup-form" autocomplete="off">
     <div class="base-form__main chat-card">
-        <div class="chat-card__header chat-card__header--status" style="{{style}}">
-            <img src="{{item.img}}" class="chat-card__image--primary" /> 
+        <div class="popup-form__header" style="{{style}}">
             <div>{{item.name}}</div>
+            <img src="{{item.img}}" class="popup-form__image" alt="{{item.name}}" /> 
         </div>
 
         {{#if item.system.description}}

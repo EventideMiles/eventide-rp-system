@@ -11,19 +11,23 @@
         {{/if}}
     </header>
     <div class="popup-form__main">
+        <div class="popup-form__header">{{item.name}}</div>
+        <div class="popup-form__content popup-form__content--image">
+            <img src="{{item.img}}" class="popup-form__image" alt="{{item.name}}" />
+        </div>
         
-        <div class="popup-form__header">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Details"}}</div>
+        <div class="popup-form__subheader">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Details"}}</div>
         
         {{#if item.system.description}}
         <div class="popup-form__content popup-form__content--description">
-            <div class="popup-form__header">{{item.actor.name}}</div> 
+            <div class="popup-form__subheader">{{item.actor.name}}</div> 
             {{{item.system.description}}}
         </div>
         {{/if}}
 
         {{#if item.system.roll}}
         <div class="popup-form__section">
-            <div class="popup-form__header">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RollInfo"}}</div>
+            <div class="popup-form__subheader">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RollInfo"}}</div>
             <div class="popup-form__group">
                 <div class="popup-form__row">
                     <div class="popup-form__label">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RollType"}}</div>
@@ -52,7 +56,7 @@
         {{/if}}
 
         <div class="popup-form__section">
-            <div class="popup-form__header">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.ItemDetails"}}</div>
+            <div class="popup-form__subheader">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.ItemDetails"}}</div>
             <div class="popup-form__group">
                 <div class="popup-form__row">
                     <div class="popup-form__label">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Quantity"}}</div>
