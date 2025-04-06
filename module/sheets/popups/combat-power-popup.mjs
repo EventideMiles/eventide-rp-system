@@ -17,7 +17,7 @@ export class CombatPowerPopup extends EventidePopupHelpers {
   static DEFAULT_OPTIONS = {
     classes: ["eventide-rp-system", "standard-form", "combat-power-popup"],
     position: {
-      width: 500, // Slightly wider to accommodate roll formulas
+      width: 600, // Slightly wider to accommodate roll formulas
       height: "auto",
     },
     window: {

@@ -1,7 +1,7 @@
 @charset "UTF-8";
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Combo&family=Merienda:wght@300..900&family=Protest+Revolution&family=Underdog&display=swap");
-.protest-revolution-regular, .chat-card__header, .base-form__effects--title, .popup-form__effects--title, .chat-card__effects--title {
+.protest-revolution-regular, .popup-form__header, .chat-card__header, .base-form__effects--title, .popup-form__effects--title, .chat-card__effects--title {
   font-family: "Protest Revolution", serif;
   font-weight: 400;
   font-style: normal;
@@ -574,7 +574,7 @@
   background-color: #e60000;
   border: 2px dashed #ff8c00;
 }
-.base-form__header, .popup-form__header {
+.base-form__header, .popup-form__subheader {
   font-family: "Underdog", serif;
   text-align: center;
   font-size: 1.125rem;
@@ -1314,6 +1314,15 @@
 .popup-form__text--neutral {
   color: #95a5a6;
   font-weight: bold;
+}
+.popup-form__header {
+  color: var(--eventide-rp-system-chat-card-white);
+  text-align: center;
+  padding: 0.875rem;
+  font-size: 1.125rem;
+  margin-bottom: 0px;
+  margin-top: 0px;
+  position: relative;
 }
 .popup-form__header--usage {
   color: #0069cb;
