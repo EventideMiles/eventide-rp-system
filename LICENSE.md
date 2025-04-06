@@ -94,4 +94,4 @@ http://www.apache.org/licenses/LICENSE-2.0
 
 ### By Little Robot Sound Factory under CC-BY from opengameart.org : www.littlerobotsoundfactory.com
 
-- trap_00.wav
+- Trap_00.wav

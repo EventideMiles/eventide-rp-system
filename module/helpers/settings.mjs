@@ -5,7 +5,7 @@ import { erpsSoundManager } from "./sound-manager.mjs";
  * Sound Settings Application
  * @extends {EventideSheetHelpers}
  */
-class SoundSettingsApplication extends EventideSheetHelpers {
+export class SoundSettingsApplication extends EventideSheetHelpers {
   static PARTS = {
     soundSettings: {
       template:
@@ -409,16 +409,7 @@ export const registerSettings = function () {
   });
 
   // Individual sound settings (hidden from main menu)
-  const defaultSounds = {
-    healing: "systems/eventide-rp-system/assets/sounds/Cure2.wav",
-    statusApply: "systems/eventide-rp-system/assets/sounds/jingles_SAX04.ogg",
-    statusRemove: "systems/eventide-rp-system/assets/sounds/Cure5.wav",
-    gearEquip: "systems/eventide-rp-system/assets/sounds/cloth3.ogg",
-    gearUnequip: "systems/eventide-rp-system/assets/sounds/clothBelt2.ogg",
-    combatPower: "systems/eventide-rp-system/assets/sounds/trap_00.wav",
-    damage: "systems/eventide-rp-system/assets/sounds/swish_4.wav",
-    initiative: "systems/eventide-rp-system/assets/sounds/levelup.wav",
-  };
+  const defaultSounds = erpsSoundManager.getDefaultSounds();
 
   // Register each sound setting
   for (const [key, defaultPath] of Object.entries(defaultSounds)) {

@@ -1124,7 +1124,7 @@
   margin-bottom: 0.5rem;
   width: 100%;
 }
-.chat-card__initiative-result, .chat-card__combat-roll-result {
+.chat-card__initiative--result, .chat-card__combat-roll--result {
   display: flex;
   justify-content: center;
   font-family: "Protest Revolution", sans-serif;
