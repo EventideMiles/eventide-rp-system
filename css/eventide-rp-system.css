@@ -1977,6 +1977,7 @@
 .eventide-rp-system .sheet-header {
   flex: 0 auto;
   overflow: hidden;
+  height: 8rem;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
@@ -1998,9 +1999,6 @@
 .eventide-rp-system .sheet-body .tab,
 .eventide-rp-system .sheet-body .tab .editor {
   height: 100%;
-}
-.eventide-rp-system .tab.biography {
-  flex: 1;
 }
 .eventide-rp-system .tab.biography .editor {
   height: 100%;

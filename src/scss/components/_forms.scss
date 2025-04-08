@@ -131,6 +131,7 @@
 .sheet-header {
   flex: 0 auto;
   overflow: hidden;
+  height: 8rem;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
@@ -159,7 +160,6 @@
 }
 
 .tab.biography {
-  flex: 1;
 
   .editor {
     height: 100%;
