@@ -1977,6 +1977,7 @@
 .eventide-rp-system .sheet-header {
   flex: 0 auto;
   overflow: hidden;
+  height: 8rem;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
