@@ -11,7 +11,7 @@
       <input name='name' type='text' value='{{item.name}}' placeholder='{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.Name"}}' />
     </div>
     {{#if (eq item.type 'gear')}}
-      <div class='grid grid-3col'>
+      <div class='grid grid-4col'>
         <div class='resource'>
           <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.Inventory.Quantity.label'}}</label>
           <input
@@ -33,6 +33,14 @@
         <div class='resource'>
           <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.Inventory.Cost.label'}}</label>
           <input type="text" name="system.cost" value="{{system.cost}}" data-dtype="Number" />
+        </div>
+        <div class='resource'>
+          <label class="resource-label">{{localize 'EVENTIDE_RP_SYSTEM.Forms.Sections.ClassName'}}</label>
+          <select name="system.className">
+            {{#each @root.config.classNames as |name key|}}
+              <option value="{{key}}" {{#if (eq ../system.className key)}}selected{{/if}}>{{localize (lookup @root.config.classNames key)}}</option>
+            {{/each}}
+          </select>
         </div>
       </div>
     {{/if}}
