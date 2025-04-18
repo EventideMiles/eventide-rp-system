@@ -20,6 +20,7 @@ class ERPSRollHandler {
       formula: "1",
       label: "unknown roll",
       type: "unknown",
+      className: "",
       critAllowed: true,
       acCheck: true,
       description: "",
@@ -87,7 +88,7 @@ class ERPSRollHandler {
   }) {
     // If a soundKey is provided, play it locally and add to message flags
     let useSound = sound;
-    
+
     const messageData = {
       speaker,
       content,
@@ -108,14 +109,14 @@ class ERPSRollHandler {
     if (soundKey) {
       // Play sound locally for immediate feedback
       erpsSoundManager._playLocalSound(soundKey);
-      
+
       // Set built-in sound to null since we're using our own system
       messageData.sound = null;
-      
+
       // Add sound data to flags
       messageData.flags["eventide-rp-system"].sound = {
         key: soundKey,
-        force: false
+        force: false,
       };
     }
 
@@ -153,6 +154,7 @@ class ERPSRollHandler {
       formula = this.defaults.formula,
       label = this.defaults.label,
       type = this.defaults.type,
+      className = this.defaults.className,
       critAllowed = this.defaults.critAllowed,
       acCheck = this.defaults.acCheck,
       description = this.defaults.description,
@@ -198,6 +200,7 @@ class ERPSRollHandler {
       pickedCardClass,
       pickedIcon,
       pickedType,
+      className,
       critAllowed,
       acCheck: addCheck,
       targetArray,
