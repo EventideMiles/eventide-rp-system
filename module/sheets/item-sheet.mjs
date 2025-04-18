@@ -30,6 +30,10 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
       deleteDoc: this._deleteEffect,
       toggleEffect: this._toggleEffect,
     },
+    position: {
+      width: 600,
+      height: "auto",
+    },
     form: {
       submitOnChange: true,
     },
