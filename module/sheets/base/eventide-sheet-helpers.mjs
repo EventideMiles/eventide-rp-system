@@ -61,6 +61,15 @@ export class EventideSheetHelpers extends HandlebarsApplicationMixin(
   static get rollTypes() {
     return Object.keys(CONFIG.EVENTIDE_RP_SYSTEM.rollTypes);
   }
+
+  /**
+   * Returns an array of class names defined in the system configuration.
+   * @returns {string[]} Array of class names (weapon, armor, tool, spell, other)
+   */
+  static get classNames() {
+    return Object.keys(CONFIG.EVENTIDE_RP_SYSTEM.classNames);
+  }
+
   /**
    * Returns an object mapping roll types to their values.
    * @returns {Object} Object with roll types as keys and their values
@@ -68,6 +77,16 @@ export class EventideSheetHelpers extends HandlebarsApplicationMixin(
   static get rollTypeObject() {
     return Object.fromEntries(
       Object.keys(CONFIG.EVENTIDE_RP_SYSTEM.rollTypes).map((key) => [key, key])
+    );
+  }
+
+  /**
+   * Returns an object mapping class names to their values.
+   * @returns {Object} Object with class names as keys and their values
+   */
+  static get classNameObject() {
+    return Object.fromEntries(
+      Object.keys(CONFIG.EVENTIDE_RP_SYSTEM.classNames).map((key) => [key, key])
     );
   }
 

@@ -48,6 +48,13 @@ export default class EventideRpSystemGear extends EventideRpSystemItemBase {
       initial: true,
     });
 
+    schema.className = new fields.StringField({
+      required: true,
+      nullable: false,
+      choices: ["weapon", "armor", "tool", "spell", "other"],
+      initial: "other",
+    });
+
     schema.roll = new fields.SchemaField({
       type: new fields.StringField({
         initial: "roll",

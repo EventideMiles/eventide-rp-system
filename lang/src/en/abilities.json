@@ -19,6 +19,13 @@
       "Flat": "Flat",
       "None": "None",
       "Roll": "Roll"
+    },
+    "ClassNames": {
+      "Weapon": "Weapon",
+      "Armor": "Armor",
+      "Tool": "Tool",
+      "Spell": "Spell",
+      "Other": "Other"
     }
   }
 }

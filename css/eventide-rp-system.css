@@ -1977,12 +1977,17 @@
 .eventide-rp-system .sheet-header {
   flex: 0 auto;
   overflow: hidden;
-  height: 8rem;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: flex-start;
   margin-bottom: 10px;
+  width: 100%;
+  padding-top: 8px;
+  padding-right: 8px;
+}
+.eventide-rp-system .sheet-header--actor {
+  height: 8rem;
 }
 .eventide-rp-system .sheet-header .profile-img {
   flex: 0 0 100px;

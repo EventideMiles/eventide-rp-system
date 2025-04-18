@@ -8,7 +8,7 @@ export class CreatorApplication extends EventideSheetHelpers {
   static DEFAULT_OPTIONS = {
     id: "creator-application",
     position: {
-      width: 800,
+      width: 850,
       height: 800,
     },
     tag: "form",
@@ -63,6 +63,7 @@ export class CreatorApplication extends EventideSheetHelpers {
       ];
     }
     this.rollTypes = EventideSheetHelpers.rollTypes;
+    this.classNames = EventideSheetHelpers.classNames;
     this.playerMode = playerMode;
   }
 
@@ -83,6 +84,7 @@ export class CreatorApplication extends EventideSheetHelpers {
     context.abilities = this.abilities;
     context.hiddenAbilities = this.hiddenAbilities;
     context.rollTypes = this.rollTypes;
+    context.classNames = this.classNames;
     context.playerMode = this.playerMode;
     context.targetArray = this.targetArray;
     context.selectedArray = this.selectedArray;
@@ -146,6 +148,7 @@ export class CreatorApplication extends EventideSheetHelpers {
     let cost;
     let targeted;
     let rollData;
+    let className;
     let hiddenEffects = [{}];
 
     const name = form.name.value;
@@ -166,10 +169,11 @@ export class CreatorApplication extends EventideSheetHelpers {
       weight = parseFloat(form.weight.value) || 0;
       cost = parseInt(form.cost.value) || 0;
       targeted = form.targeted.checked;
+      className = form.className.value;
       const rollType = form["roll.type"].value;
-      console.log(rollType);
       rollData = {
         type: rollType,
+        className: className,
         ability:
           rollType !== "none" ? form["roll.ability"].value : "unaugmented",
         bonus:
@@ -294,6 +298,7 @@ export class CreatorApplication extends EventideSheetHelpers {
       itemData.system.cost = cost;
       itemData.system.targeted = targeted;
       itemData.system.roll = rollData;
+      itemData.system.className = className;
     }
 
     if (this.targetArray.length > 0 && this.gmCheck === "gm") {

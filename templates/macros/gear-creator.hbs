@@ -83,6 +83,15 @@
           <label class="base-form__label" for="targeted">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Targeted"}}</label>
           <input class="base-form__checkbox" type="checkbox" id="targeted" name="targeted" checked>
         </div>
+
+        <div class="base-form__group">
+            <label class="base-form__label" for="className">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.ClassName"}}</label>
+            <select class="base-form__select" id="className" name="className">
+              {{#each classNames as |className|}}
+                <option value="{{lowercase className}}" {{#if (eq (lowercase className) "other")}}selected{{/if}}>{{localize (lookup @root.config.classNames className)}}</option>
+              {{/each}}
+            </select>
+          </div>
       </div>
 
       <div class="gear-creator__column">

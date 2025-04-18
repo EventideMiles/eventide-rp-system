@@ -63,3 +63,11 @@ EVENTIDE_RP_SYSTEM.rollTypes = {
   roll: "EVENTIDE_RP_SYSTEM.RollTypes.Roll",
   flat: "EVENTIDE_RP_SYSTEM.RollTypes.Flat",
 };
+
+EVENTIDE_RP_SYSTEM.classNames = {
+  weapon: "EVENTIDE_RP_SYSTEM.ClassNames.Weapon",
+  armor: "EVENTIDE_RP_SYSTEM.ClassNames.Armor",
+  tool: "EVENTIDE_RP_SYSTEM.ClassNames.Tool",
+  spell: "EVENTIDE_RP_SYSTEM.ClassNames.Spell",
+  other: "EVENTIDE_RP_SYSTEM.ClassNames.Other",
+};

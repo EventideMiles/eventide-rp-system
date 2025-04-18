@@ -50,7 +50,8 @@
         "Type": "Type",
         "UnequippedGear": "Unequipped Gear",
         "UsageInfo": "Usage Information",
-        "Weight": "Weight"
+        "Weight": "Weight",
+        "ClassName": "Class"
       },
       "Buttons": {
         "Change": "Change",

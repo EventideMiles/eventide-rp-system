@@ -53,6 +53,13 @@
       "None": "None",
       "Roll": "Roll"
     },
+    "ClassNames": {
+      "Weapon": "Weapon",
+      "Armor": "Armor",
+      "Tool": "Tool",
+      "Spell": "Spell",
+      "Other": "Other"
+    },
     "Actor": {
       "Attributes": {
         "CR": {
@@ -171,7 +178,8 @@
         "Type": "Type",
         "UnequippedGear": "Unequipped Gear",
         "UsageInfo": "Usage Information",
-        "Weight": "Weight"
+        "Weight": "Weight",
+        "ClassName": "Class"
       },
       "Buttons": {
         "Change": "Change",
@@ -415,7 +423,6 @@
     "ShowGearEquipMessagesHint": "If enabled, chat messages will be created when gear items are equipped or unequipped.",
     "EnableSystemSoundsName": "Enable System Sounds",
     "EnableSystemSoundsHint": "Enable or disable system sound effects.",
-    "ErrorResettingColor": "Error resetting color",
     "SoundSettingsName": "Sound Effects",
     "SoundSettingsLabel": "Configure Sound Effects",
     "SoundSettingsHint": "Configure custom sound effects for various game events.",

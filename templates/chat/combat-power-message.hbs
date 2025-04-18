@@ -5,7 +5,11 @@
       <img src="{{img}}" class="chat-card__image--primary" /> 
       <div>{{name}}</div>
     </div>
-    <div class="chat-card__header--subheader">({{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.Cost"}}: {{system.cost}})</div>
+    <div class="chat-card__header--subheader">({{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.Cost"}}: {{system.cost}})
+    {{#if className}}
+      Type: {{className}}
+    {{/if}}
+    </div>
   </div>
 
   {{#if hasRoll}}
