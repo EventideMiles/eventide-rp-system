@@ -24,6 +24,7 @@ import {
   getTargetArray,
   retrieveLocal,
   storeLocal,
+  permissionCheck,
 } from "./helpers/common-foundry-tasks.mjs";
 import { erpsMessageHandler } from "./helpers/system-messages.mjs";
 
@@ -48,6 +49,7 @@ globalThis.erps = {
     getSelectedArray,
     storeLocal,
     retrieveLocal,
+    permissionCheck,
   },
   macros: {
     GearTransfer,

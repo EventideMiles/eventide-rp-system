@@ -65,4 +65,18 @@ const retrieveLocal = async (keys) => {
   return returnObject;
 };
 
-export { getTargetArray, getSelectedArray, clamp, storeLocal, retrieveLocal };
+const permissionCheck = async ({ playerMode = false } = {}) => {
+  if (game.user.isGM) return "gm";
+  if (playerMode) return "player";
+  ui.notification.error(game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.GMOnly"));
+  return "forbidden";
+};
+
+export {
+  getTargetArray,
+  getSelectedArray,
+  clamp,
+  storeLocal,
+  retrieveLocal,
+  permissionCheck,
+};
