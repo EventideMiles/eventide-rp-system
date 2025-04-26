@@ -16,6 +16,11 @@ export default class EventideRpSystemGear extends EventideRpSystemItemBase {
       initial: true,
     });
 
+    schema.cursed = new fields.BooleanField({
+      required: true,
+      initial: false,
+    });
+
     schema.bgColor = new fields.ColorField({
       initial: "#8B4513",
       blank: false,
