@@ -54,6 +54,11 @@ export class GearCreator extends CreatorApplication {
       gear_textColor: this.storedData[this.storageKeys[2]],
     };
 
+    context.gearEquippedDefault = game.settings.get(
+      "eventide-rp-system",
+      "gearEquippedDefault"
+    );
+
     return context;
   }
 }

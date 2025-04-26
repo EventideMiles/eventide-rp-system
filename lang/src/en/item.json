@@ -25,6 +25,9 @@
         "Equipped": {
           "label": "Equipped"
         },
+        "Cursed": {
+          "label": "Cursed"
+        },
         "Quantity": {
           "label": "Quantity"
         },
@@ -33,6 +36,12 @@
         },
         "Weight": {
           "label": "Weight"
+        },
+        "Increment": {
+          "label": "Increment"
+        },
+        "Decrement": {
+          "label": "Decrement"
         }
       },
       "Roll": {

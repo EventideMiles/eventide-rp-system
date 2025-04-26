@@ -34,7 +34,6 @@
     padding-left: 5px;
     text-align: left;
     display: flex;
-    // font-size: 16px;
   }
 }
 
@@ -88,6 +87,14 @@
     }
 
     .item-unequip {
+      color: #e7bc3c;
+    }
+
+    .item-unequip-disabled {
+      color: #e74c3c;
+    }
+
+    .item-decrement-disabled {
       color: #e74c3c;
     }
   }
@@ -154,7 +161,6 @@
     .item-name {
       padding-left: 5px;
       text-align: left;
-      // font-size: 16px;
     }
   }
 }

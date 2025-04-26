@@ -92,6 +92,18 @@
               {{/each}}
             </select>
           </div>
+
+        <div class="base-form__group">
+          <label class="base-form__label" for="equipped">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Equipped"}}</label>
+          <input class="base-form__checkbox" type="checkbox" id="equipped" name="equipped" {{#if gearEquippedDefault}}checked{{/if}}>
+        </div>
+
+        {{#if isGM}}
+          <div class="base-form__group">
+            <label class="base-form__label" for="cursed">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Cursed"}}</label>
+            <input class="base-form__checkbox" type="checkbox" id="cursed" name="cursed">
+          </div>
+        {{/if}}
       </div>
 
       <div class="gear-creator__column">

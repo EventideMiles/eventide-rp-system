@@ -51,7 +51,10 @@
         "UnequippedGear": "Unequipped Gear",
         "UsageInfo": "Usage Information",
         "Weight": "Weight",
-        "ClassName": "Class"
+        "ClassName": "Class",
+        "Cursed": "Cursed",
+        "Equipped": "Equipped",
+        "EquipFirst": "You need to equip this item to see details. If you want to investigate it first ask your GM."
       },
       "Buttons": {
         "Change": "Change",

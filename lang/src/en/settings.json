@@ -45,6 +45,9 @@
     
     "ShowGearEquipMessagesName": "Show Gear Equip Messages",
     "ShowGearEquipMessagesHint": "If enabled, chat messages will be created when gear items are equipped or unequipped.",
+
+    "GearEquippedDefaultName": "Gear Creator: Default Equipped",
+    "GearEquippedDefaultHint": "If enabled, gear creator will mark new gear as equipped by default.",
     
     "EnableSystemSoundsName": "Enable System Sounds",
     "EnableSystemSoundsHint": "Enable or disable system sound effects.",

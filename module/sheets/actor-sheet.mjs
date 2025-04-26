@@ -38,6 +38,8 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
       toggleEffect: this._toggleEffect,
       roll: this._onRoll,
       toggleGear: this._toggleGear,
+      incrementGear: this._incrementGear,
+      decrementGear: this._decrementGear,
     },
     // Custom property that's merged into `this.options`
     dragDrop: [{ dragSelector: "[data-drag]", dropSelector: null }],
@@ -111,6 +113,7 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
       // Necessary for formInput and formFields helpers
       fields: this.document.schema.fields,
       systemFields: this.document.system.schema.fields,
+      isGM: game.user.isGM,
     };
 
     // Offloading context prep to a helper function
@@ -405,9 +408,20 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
     erps.messages.createGearEquipMessage(gear);
   }
 
+  static async _incrementGear(event, target) {
+    const gear = this._getEmbeddedDocument(target);
+    await gear.update({ "system.quantity": gear.system.quantity + 1 });
+  }
+
+  static async _decrementGear(event, target) {
+    const gear = this._getEmbeddedDocument(target);
+    await gear.update({
+      "system.quantity": Math.max(gear.system.quantity - 1, 0),
+    });
+  }
+
   /**
    * Handle clickable rolls.
-   *
    * @this EventideRpSystemActorSheet
    * @param {PointerEvent} event   The originating click event
    * @param {HTMLElement} target   The capturing HTML element which defined a [data-action]

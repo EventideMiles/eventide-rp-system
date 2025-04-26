@@ -408,6 +408,18 @@ export const registerSettings = function () {
     },
   });
 
+  game.settings.register("eventide-rp-system", "gearEquippedDefault", {
+    name: "SETTINGS.GearEquippedDefaultName",
+    hint: "SETTINGS.GearEquippedDefaultHint",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: true,
+    onChange: () => {
+      SettingsConfig.reloadConfirm({ world: true });
+    },
+  });
+
   // Individual sound settings (hidden from main menu)
   const defaultSounds = erpsSoundManager.getDefaultSounds();
 

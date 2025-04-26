@@ -150,6 +150,8 @@ export class CreatorApplication extends EventideSheetHelpers {
     let rollData;
     let className;
     let hiddenEffects = [{}];
+    let cursed;
+    let equipped;
 
     const name = form.name.value;
     const description = form.description.value;
@@ -170,6 +172,8 @@ export class CreatorApplication extends EventideSheetHelpers {
       cost = parseInt(form.cost.value) || 0;
       targeted = form.targeted.checked;
       className = form.className.value;
+      cursed = form?.cursed?.checked || false; // Only allowed for GM
+      equipped = form.equipped.checked;
       const rollType = form["roll.type"].value;
       rollData = {
         type: rollType,
@@ -299,6 +303,8 @@ export class CreatorApplication extends EventideSheetHelpers {
       itemData.system.targeted = targeted;
       itemData.system.roll = rollData;
       itemData.system.className = className;
+      itemData.system.cursed = cursed;
+      itemData.system.equipped = equipped;
     }
 
     if (this.targetArray.length > 0 && this.gmCheck === "gm") {

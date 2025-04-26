@@ -14,6 +14,7 @@ export class EventideSheetHelpers extends HandlebarsApplicationMixin(
   async _prepareContext(context, options) {
     context = (await super._prepareContext(context, options)) || {};
     context.config = CONFIG.EVENTIDE_RP_SYSTEM;
+    context.isGM = game.user.isGM;
     return context;
   }
 
@@ -195,20 +196,15 @@ export class EventideSheetHelpers extends HandlebarsApplicationMixin(
 
   /**
    * Checks if the current user is a GM and handles permissions accordingly.
-   * @param {Object} options - Configuration options
    * @param {boolean} [options.playerMode=false] - Whether to allow player access to the script
    * @returns {string} - "forbidden" if access denied, "player" if player with access, "gm" if GM
    */
   static async _gmCheck({ playerMode = false } = {}) {
-    if (!game.user?.isGM && !playerMode) {
-      ui.notifications.error(
-        game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.GMOnly")
-      );
-      this.close();
-      return "forbidden";
-    } else if (!game.user?.isGM && playerMode) {
-      return "player";
-    }
-    return "gm";
+    if (game.user.isGM) return "gm";
+    if (playerMode) return "player";
+    ui.notification.error(
+      game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.GMOnly")
+    );
+    return "forbidden";
   }
 }

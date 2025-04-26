@@ -21,6 +21,7 @@ export class EventidePopupHelpers extends HandlebarsApplicationMixin(
     const context = {
       item: this.item,
       effects: Array.from(this.item.effects),
+      isGM: game.user.isGM,
     };
 
     return context;

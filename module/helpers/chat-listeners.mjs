@@ -48,21 +48,16 @@ export const initChatListeners = () => {
    * @param {string} triggerPlayer - ID of the player who triggered the update
    */
   Hooks.on("updateItem", (item, changed, options, triggerPlayer) => {
-    if (
-      item.type === "status" &&
-      item.system.description &&
-      item.actor !== null &&
-      item.actor !== undefined &&
-      game.user.id === triggerPlayer
-    ) {
+    if (game.user.id !== triggerPlayer) return;
+    if (item.actor === null || item.actor === undefined) return;
+    if (item.type === "status" && item.system.description)
       erps.messages.createStatusMessage(item);
-    } else if (item.type === "gear" && item.actor !== null) {
+    else if (item.type === "gear") {
       if (item.system.quantity >= 1 && item.system.equipped) {
         item.effects.forEach((effect) => effect.update({ disabled: false }));
       } else {
         item.effects.forEach((effect) => effect.update({ disabled: true }));
         item.update({ "system.equipped": false });
-        erps.messages.createGearEquipMessage(item);
       }
     }
   });
@@ -75,19 +70,22 @@ export const initChatListeners = () => {
    * @param {string} triggerPlayer - ID of the player who triggered the creation
    */
   Hooks.on("createItem", (item, options, triggerPlayer) => {
-    if (
-      item.type === "status" &&
-      item.actor !== null &&
-      game.user.id === triggerPlayer
-    ) {
+    if (item.actor === null || item.actor === undefined) return;
+    if (game.user.id !== triggerPlayer) return;
+    if (item.type === "status" && item.system.description) {
       erps.messages.createStatusMessage(item);
     }
-    if (
-      item.type === "feature" &&
-      item.actor !== null &&
-      game.user.id === triggerPlayer
-    ) {
+    if (item.type === "feature" && item.system.description) {
       erps.messages.createFeatureMessage(item);
+    }
+
+    if (item.type === "gear") {
+      if (item.system.quantity >= 1 && item.system.equipped) {
+        item.effects.forEach((effect) => effect.update({ disabled: false }));
+      } else {
+        item.effects.forEach((effect) => effect.update({ disabled: true }));
+        item.update({ "system.equipped": false });
+      }
     }
   });
 
@@ -99,11 +97,9 @@ export const initChatListeners = () => {
    * @param {string} triggerPlayer - ID of the player who triggered the deletion
    */
   Hooks.on("deleteItem", (item, options, triggerPlayer) => {
-    if (
-      item.type === "status" &&
-      item.parent !== null &&
-      game.user.id === triggerPlayer
-    ) {
+    if (item.actor === null || item.actor === undefined) return;
+    if (game.user.id !== triggerPlayer) return;
+    if (item.type === "status" && item.system.description) {
       erps.messages.createDeleteStatusMessage(item);
     }
   });

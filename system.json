@@ -50,7 +50,7 @@
       "thumbnail": "systems/eventide-rp-system/assets/anvil-impact.png"
     }
   ],
-  "version": "0.23.0",
+  "version": "0.25.3",
   "compatibility": {
     "minimum": "12.328",
     "verified": "12.328"

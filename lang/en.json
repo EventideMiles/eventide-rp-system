@@ -179,7 +179,10 @@
         "UnequippedGear": "Unequipped Gear",
         "UsageInfo": "Usage Information",
         "Weight": "Weight",
-        "ClassName": "Class"
+        "ClassName": "Class",
+        "Cursed": "Cursed",
+        "Equipped": "Equipped",
+        "EquipFirst": "You need to equip this item to see details. If you want to investigate it first ask your GM."
       },
       "Buttons": {
         "Change": "Change",
@@ -264,6 +267,9 @@
         "Equipped": {
           "label": "Equipped"
         },
+        "Cursed": {
+          "label": "Cursed"
+        },
         "Quantity": {
           "label": "Quantity"
         },
@@ -272,6 +278,12 @@
         },
         "Weight": {
           "label": "Weight"
+        },
+        "Increment": {
+          "label": "Increment"
+        },
+        "Decrement": {
+          "label": "Decrement"
         }
       },
       "Roll": {
@@ -421,6 +433,8 @@
     "UiThemeContrast": "High Contrast",
     "ShowGearEquipMessagesName": "Show Gear Equip Messages",
     "ShowGearEquipMessagesHint": "If enabled, chat messages will be created when gear items are equipped or unequipped.",
+    "GearEquippedDefaultName": "Gear Creator: Default Equipped",
+    "GearEquippedDefaultHint": "If enabled, gear creator will mark new gear as equipped by default.",
     "EnableSystemSoundsName": "Enable System Sounds",
     "EnableSystemSoundsHint": "Enable or disable system sound effects.",
     "SoundSettingsName": "Sound Effects",

@@ -46,27 +46,74 @@
         <div class="item-cost item-prop">{{item.system.cost}}</div>
         <div class='item-quantity item-prop'>{{item.system.quantity}}</div>
         <div class='item-controls'>
-          <a
-            class="item-control item-equip"
-            title='{{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Unequip.label"}}'
-            data-action='toggleGear'
-          >
-            <i class='fa-solid fa-helmet-battle'></i>
-          </a>
-          <a
-            class='item-control item-edit'
-            title='{{localize "DOCUMENT.Update" type='Gear'}}'
-            data-action='viewDoc'
-          >
-            <i class='fas fa-edit'></i>
-          </a>
-          {{#if @root.editable}}
+        {{#if (or @root.isGM (not item.system.cursed))}}
             <a
-              class='item-control item-delete'
-              title='{{localize "DOCUMENT.Delete" type='Gear'}}'
-              data-action='deleteDoc'
+              class="item-control item-equip"
+              title='{{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Unequip.label"}}'
+              data-action='toggleGear'
             >
-              <i class='fas fa-trash'></i>
+              <i class='fa-solid fa-helmet-battle'></i>
+            </a>
+            <a
+              class='item-control item-edit'
+              title='{{localize "DOCUMENT.Update" type='Gear'}}'
+              data-action='viewDoc'
+            >
+              <i class='fas fa-edit'></i>
+            </a>
+            {{#if @root.editable}}
+              <a
+                class='item-control item-delete'
+                title='{{localize "DOCUMENT.Delete" type='Gear'}}'
+                data-action='deleteDoc'
+              >
+                <i class='fas fa-trash'></i>
+              </a>
+            {{/if}}
+            <a
+              class="item-control item-increment"
+              title='{{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Increment.label"}}'
+              data-action='incrementGear'
+            >
+              <i class='fa-solid fa-plus'></i>
+            </a>
+            <a
+              class="item-control item-decrement"
+              title='{{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Decrement.label"}}'
+              data-action='decrementGear'
+            >
+              <i class='fa-solid fa-minus'></i>
+            </a>
+          {{else}}
+            <a 
+              class="item-control item-decrement-disabled" 
+              title='{{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Unequip.label"}}' 
+              disabled>
+                <i class="fa-solid fa-lock-keyhole"></i>
+            </a>
+            <a
+              class="item-control item-decrement-disabled" 
+              title='{{localize "DOCUMENT.Update" type='Gear'}}' 
+              disabled>
+                <i class="fa-solid fa-lock-keyhole"></i>
+            </a>
+            <a
+              class="item-control item-decrement-disabled" 
+              title='{{localize "DOCUMENT.Delete" type='Gear'}}' 
+              disabled>
+                <i class="fa-solid fa-lock-keyhole"></i>
+            </a>
+            <a
+              class="item-control item-decrement-disabled"
+              title='{{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Increment.label"}}' 
+              disabled>
+                <i class="fa-solid fa-lock-keyhole"></i>
+            </a>
+            <a
+              class="item-control item-decrement-disabled"
+              title='{{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Decrement.label"}}' 
+              disabled>
+                <i class="fa-solid fa-lock-keyhole"></i>
             </a>
           {{/if}}
         </div>
@@ -109,12 +156,10 @@
         <div class='item-quantity item-prop'>{{item.system.quantity}}</div>
         <div class='item-controls'>
           <a
-            class="item-control item-unequip"
+            class="item-control item-unequip {{#if (not item.system.quantity)}}item-unequip-disabled{{/if}}"
+            {{#if (not item.system.quantity)}}disabled{{/if}}
             title='{{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Equip.label"}}'
             data-action='toggleGear'
-            {{#ifCond item.system.quantity "<=" 0}}
-            disabled
-            {{/ifCond}}
           >
             {{#ifCond item.system.quantity "<=" 0}}
               <i class="fa-solid fa-triangle-exclamation"></i>
@@ -122,13 +167,15 @@
             <i class='fa-solid fa-helmet-battle'></i>
             {{/ifCond}}
           </a>
-          <a
-            class='item-control item-edit'
-            title='{{localize "DOCUMENT.Update" type='Gear'}}'
-            data-action='viewDoc'
-          >
-            <i class='fas fa-edit'></i>
-          </a>
+          {{#if @root.isGM}}
+            <a
+              class='item-control item-edit'
+              title='{{localize "DOCUMENT.Update" type='Gear'}}'
+              data-action='viewDoc'
+            >
+              <i class='fas fa-edit'></i>
+            </a>
+          {{/if}}
           {{#if @root.editable}}
             <a
               class='item-control item-delete'
@@ -138,6 +185,30 @@
               <i class='fas fa-trash'></i>
             </a>
           {{/if}}
+          
+          <a
+            class="item-control item-increment"
+            title='{{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Increment.label"}}'
+            data-action='incrementGear'
+          >
+            <i class='fa-solid fa-plus'></i>
+          </a>
+            {{#if item.system.quantity}}
+            <a
+              class="item-control item-decrement"
+              title='{{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Decrement.label"}}'
+              data-action='decrementGear'
+            >
+              <i class='fa-solid fa-minus'></i>
+            </a>
+            {{else}}
+              <a 
+                class="item-control item-decrement-disabled" 
+                title='{{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Decrement.label"}}' 
+                disabled>
+                  <i class="fa-solid fa-ban"></i>
+              </a>
+            {{/if}}
         </div>
       </li>
     {{/each}}
