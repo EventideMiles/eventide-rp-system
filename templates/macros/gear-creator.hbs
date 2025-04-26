@@ -95,7 +95,7 @@
 
         <div class="base-form__group">
           <label class="base-form__label" for="equipped">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Equipped"}}</label>
-          <input class="base-form__checkbox" type="checkbox" id="equipped" name="equipped" checked>
+          <input class="base-form__checkbox" type="checkbox" id="equipped" name="equipped" {{#if gearEquippedDefault}}checked{{/if}}>
         </div>
 
         {{#if isGM}}
