@@ -58,7 +58,6 @@ export const initChatListeners = () => {
       } else {
         item.effects.forEach((effect) => effect.update({ disabled: true }));
         item.update({ "system.equipped": false });
-        erps.messages.createGearEquipMessage(item);
       }
     }
   });
@@ -86,7 +85,6 @@ export const initChatListeners = () => {
       } else {
         item.effects.forEach((effect) => effect.update({ disabled: true }));
         item.update({ "system.equipped": false });
-        erps.messages.createGearEquipMessage(item);
       }
     }
   });
