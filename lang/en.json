@@ -278,6 +278,12 @@
         },
         "Weight": {
           "label": "Weight"
+        },
+        "Increment": {
+          "label": "Increment"
+        },
+        "Decrement": {
+          "label": "Decrement"
         }
       },
       "Roll": {
