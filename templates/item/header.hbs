@@ -66,7 +66,7 @@
           </color-picker>
         </div>
     </div>
-    <div class="grid grid-2col">
+    <div class="grid grid-3col">
       <div class="resource checkbox-resource">
         <div class="checkbox-container">
           <label class="resource-label">{{localize "EVENTIDE_RP_SYSTEM.Item.Descriptors.RollActorName.label"}}</label>
@@ -85,6 +85,16 @@
           </div>
         </div>
       </div>
+        {{#if isGM}}
+        <div class="resource checkbox-resource">
+          <div class="checkbox-container">
+            <label class="resource-label">{{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Cursed.label"}}</label>
+            <div class="checkbox-wrapper">
+              <input type="checkbox" class="large-checkbox" name="system.cursed" {{checked system.cursed}}/>
+            </div>
+          </div>
+        </div>
+        {{/if}}
       {{/if}}
     </div>
   </div>

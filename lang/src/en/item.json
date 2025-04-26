@@ -25,6 +25,9 @@
         "Equipped": {
           "label": "Equipped"
         },
+        "Cursed": {
+          "label": "Cursed"
+        },
         "Quantity": {
           "label": "Quantity"
         },
