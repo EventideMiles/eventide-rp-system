@@ -111,6 +111,7 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
       // Necessary for formInput and formFields helpers
       fields: this.document.schema.fields,
       systemFields: this.document.system.schema.fields,
+      isGM: game.user.isGM,
     };
 
     // Offloading context prep to a helper function
