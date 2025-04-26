@@ -179,7 +179,9 @@
         "UnequippedGear": "Unequipped Gear",
         "UsageInfo": "Usage Information",
         "Weight": "Weight",
-        "ClassName": "Class"
+        "ClassName": "Class",
+        "Cursed": "Cursed",
+        "Equipped": "Equipped"
       },
       "Buttons": {
         "Change": "Change",
@@ -263,6 +265,9 @@
         },
         "Equipped": {
           "label": "Equipped"
+        },
+        "Cursed": {
+          "label": "Cursed"
         },
         "Quantity": {
           "label": "Quantity"
