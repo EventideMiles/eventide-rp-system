@@ -8,12 +8,19 @@
   />
   <div class='header-fields'>
     <div class='document-name'>
-      <input name='name' type='text' value='{{item.name}}' placeholder='{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.Name"}}' />
+      <input 
+        name='name' 
+        type='text' 
+        value='{{item.name}}' 
+        placeholder='{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.Name"}}' 
+      />
     </div>
     {{#if (eq item.type 'gear')}}
       <div class='grid grid-4col'>
         <div class='resource'>
-          <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.Inventory.Quantity.label'}}</label>
+          <label class='resource-label'>
+            {{localize 'EVENTIDE_RP_SYSTEM.Item.Inventory.Quantity.label'}}
+          </label>
           <input
             type='text'
             name='system.quantity'
@@ -22,7 +29,9 @@
           />
         </div>
         <div class='resource'>
-          <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.Inventory.Weight.label'}}</label>
+          <label class='resource-label'>
+            {{localize 'EVENTIDE_RP_SYSTEM.Item.Inventory.Weight.label'}}
+          </label>
           <input
             type='text'
             name='system.weight'
@@ -31,14 +40,28 @@
           />
         </div>
         <div class='resource'>
-          <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.Inventory.Cost.label'}}</label>
-          <input type="text" name="system.cost" value="{{system.cost}}" data-dtype="Number" />
+          <label class='resource-label'>
+            {{localize 'EVENTIDE_RP_SYSTEM.Item.Inventory.Cost.label'}}
+          </label>
+          <input 
+            type="text" 
+            name="system.cost" 
+            value="{{system.cost}}" 
+            data-dtype="Number" 
+          />
         </div>
         <div class='resource'>
-          <label class="resource-label">{{localize 'EVENTIDE_RP_SYSTEM.Forms.Sections.ClassName'}}</label>
+          <label class="resource-label">
+            {{localize 'EVENTIDE_RP_SYSTEM.Forms.Sections.ClassName'}}
+          </label>
           <select name="system.className">
             {{#each @root.config.classNames as |name key|}}
-              <option value="{{key}}" {{#if (eq ../system.className key)}}selected{{/if}}>{{localize (lookup @root.config.classNames key)}}</option>
+              <option 
+                value="{{key}}" 
+                {{#if (eq ../system.className key)}}selected{{/if}}
+              >
+                {{localize (lookup @root.config.classNames key)}}
+              </option>
             {{/each}}
           </select>
         </div>
@@ -47,21 +70,46 @@
     <div class="grid grid-2col">
     {{#if (eq item.type 'combatPower')}}
         <div class='resource grid-span-2'>
-          <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.Inventory.Cost.label'}}</label>
-          <input type="text" name="system.cost" value="{{system.cost}}" data-dtype="Number" />
+          <label class='resource-label'>
+            {{localize 'EVENTIDE_RP_SYSTEM.Item.Inventory.Cost.label'}}
+          </label>
+          <input 
+            type="text" 
+            name="system.cost" 
+            value="{{system.cost}}" 
+            data-dtype="Number" 
+          />
         </div>
       {{/if}}
         <div class='resource'>
-          <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.Colors.TextColor.label'}}</label>
-          <color-picker name="system.textColor" value="{{system.textColor}}" placeholder="{{localize 'EVENTIDE_RP_SYSTEM.Item.Colors.TextColor.placeholder'}}">
-            <input type="text" placeholder="{{localize 'EVENTIDE_RP_SYSTEM.Item.Colors.TextColor.placeholder'}}" name="system.textColor" data-edit="system.textColor"/>
+          <label class='resource-label'>
+            {{localize 'EVENTIDE_RP_SYSTEM.Item.Colors.TextColor.label'}}
+          </label>
+          <color-picker 
+            name="system.textColor" 
+            value="{{system.textColor}}" 
+            placeholder="{{localize 'EVENTIDE_RP_SYSTEM.Item.Colors.TextColor.placeholder'}}">
+            <input 
+              type="text" 
+              placeholder="{{localize 'EVENTIDE_RP_SYSTEM.Item.Colors.TextColor.placeholder'}}" 
+              name="system.textColor" 
+              data-edit="system.textColor"/>
             <input type="color">
           </color-picker>
         </div>
         <div class='resource'>
-          <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.Colors.BgColor.label'}}</label>
-          <color-picker name="system.bgColor" value="{{system.bgColor}}" placeholder="{{localize 'EVENTIDE_RP_SYSTEM.Item.Colors.BgColor.placeholder'}}">
-            <input type="text" placeholder="{{localize 'EVENTIDE_RP_SYSTEM.Item.Colors.BgColor.placeholder'}}" name="system.bgColor" data-edit="system.bgColor"/>
+          <label class='resource-label'>
+            {{localize 'EVENTIDE_RP_SYSTEM.Item.Colors.BgColor.label'}}
+          </label>
+          <color-picker 
+            name="system.bgColor" 
+            value="{{system.bgColor}}" 
+            placeholder="{{localize 'EVENTIDE_RP_SYSTEM.Item.Colors.BgColor.placeholder'}}">
+            <input 
+              type="text" 
+              placeholder="{{localize 'EVENTIDE_RP_SYSTEM.Item.Colors.BgColor.placeholder'}}" 
+              name="system.bgColor" 
+              data-edit="system.bgColor"/>
             <input type="color">
           </color-picker>
         </div>
@@ -69,28 +117,56 @@
     <div class="grid grid-3col">
       <div class="resource checkbox-resource">
         <div class="checkbox-container">
-          <label class="resource-label">{{localize "EVENTIDE_RP_SYSTEM.Item.Descriptors.RollActorName.label"}}</label>
-          <div class="checkbox-wrapper">
-            <input type="checkbox" class="large-checkbox" name="system.rollActorName" {{checked system.rollActorName}}/>
+          <label 
+            class="resource-label checkbox-label"
+            title='{{localize "EVENTIDE_RP_SYSTEM.Item.Descriptors.RollActorName.label"}}'
+          >
+            {{localize "EVENTIDE_RP_SYSTEM.Item.Descriptors.RollActorName.label"}}
+          </label>
+          <div class="checkbox-wrapper checkbox-content">
+            <input 
+              type="checkbox" 
+              class="large-checkbox" 
+              name="system.rollActorName" 
+              {{checked system.rollActorName}}
+            />
           </div>
         </div>
       </div>
       {{#if (eq item.type 'gear')}}
       <div class="resource checkbox-resource">
         <div class="checkbox-container">
-          <label class="resource-label">{{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Equipped.label"}}</label>
-          <div class="checkbox-wrapper">
-            <input type="checkbox" class="large-checkbox" name="system.equipped" {{checked system.equipped}}
-              {{#ifCond system.quantity "<=" 0}}disabled{{/ifCond}}/>
+          <label 
+            class="resource-label checkbox-label">
+            {{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Equipped.label"}}
+          </label>
+          <div class="checkbox-wrapper checkbox-content">
+            <input 
+              type="checkbox" 
+              class="large-checkbox" 
+              name="system.equipped" 
+              {{checked system.equipped}}
+              {{#ifCond system.quantity "<=" 0}}disabled{{/ifCond}}
+            />
           </div>
         </div>
       </div>
         {{#if isGM}}
         <div class="resource checkbox-resource">
           <div class="checkbox-container">
-            <label class="resource-label">{{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Cursed.label"}}</label>
-            <div class="checkbox-wrapper">
-              <input type="checkbox" class="large-checkbox" name="system.cursed" {{checked system.cursed}}/>
+            <label 
+              class="resource-label checkbox-label"
+              title='{{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Cursed.label"}}'
+            >
+              {{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Cursed.label"}}
+            </label>
+            <div class="checkbox-wrapper checkbox-content">
+              <input 
+                type="checkbox" 
+                class="large-checkbox" 
+                name="system.cursed" 
+                {{checked system.cursed}}
+              />
             </div>
           </div>
         </div>
