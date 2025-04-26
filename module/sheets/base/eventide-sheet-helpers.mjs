@@ -14,6 +14,7 @@ export class EventideSheetHelpers extends HandlebarsApplicationMixin(
   async _prepareContext(context, options) {
     context = (await super._prepareContext(context, options)) || {};
     context.config = CONFIG.EVENTIDE_RP_SYSTEM;
+    context.isGM = game.user.isGM;
     return context;
   }
 
