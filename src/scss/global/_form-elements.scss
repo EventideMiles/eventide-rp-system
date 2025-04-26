@@ -155,8 +155,9 @@
   &__callout-box {
     font-family: typography.$underdog;
     margin-bottom: 3px;
-    display: flex;
-    flex: 0 0 auto;
+    display: grid;
+    grid-auto-columns: auto;
+    grid-row-gap: 0.2rem;
   }
 
   &__callout {

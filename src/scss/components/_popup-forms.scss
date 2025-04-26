@@ -57,6 +57,15 @@
     }
   }
 
+  &__callout {
+    @extend .base-form__callout;
+    margin-top: 0.5rem;
+  }
+
+  &__callout--warning {
+    @extend .base-form__callout--warning;
+  }
+
   // Elements
   &__header {
     @extend .protest-revolution-regular;

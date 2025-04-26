@@ -124,13 +124,15 @@
             <i class='fa-solid fa-helmet-battle'></i>
             {{/ifCond}}
           </a>
-          <a
-            class='item-control item-edit'
-            title='{{localize "DOCUMENT.Update" type='Gear'}}'
-            data-action='viewDoc'
-          >
-            <i class='fas fa-edit'></i>
-          </a>
+          {{#if @root.isGM}}
+            <a
+              class='item-control item-edit'
+              title='{{localize "DOCUMENT.Update" type='Gear'}}'
+              data-action='viewDoc'
+            >
+              <i class='fas fa-edit'></i>
+            </a>
+          {{/if}}
           {{#if @root.editable}}
             <a
               class='item-control item-delete'
