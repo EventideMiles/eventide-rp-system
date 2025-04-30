@@ -484,7 +484,7 @@
 
 .eventide-character-sheet input {
   background-color: var(--eventide-rp-system-character-input);
-  color: var(--eventide-rp-system-c-white);
+  color: var(--eventide-rp-system-c-black);
   border-radius: 5px;
   border: 1px solid var(--eventide-rp-system-character-input-border);
 }
