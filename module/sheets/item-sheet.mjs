@@ -101,25 +101,77 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
 
   /** @override */
   async _prepareContext(options) {
-    const context = {
-      // Validates both permissions and compendium status
-      editable: this.isEditable,
-      owner: this.document.isOwner,
-      limited: this.document.limited,
-      // Add the item document.
-      item: this.item,
-      // Adding system and flags for easier access
-      system: this.item.system,
-      flags: this.item.flags,
-      // Adding a pointer to CONFIG.EVENTIDE_RP_SYSTEM
-      config: CONFIG.EVENTIDE_RP_SYSTEM,
-      // You can factor out context construction to helper functions
-      tabs: this._getTabs(options.parts),
-      // Necessary for formInput and formFields helpers
-      fields: this.document.schema.fields,
-      systemFields: this.document.system.schema.fields,
-      isGM: game.user.isGM,
-    };
+    const context = {};
+
+    const effects = Array.from(this.item.effects);
+
+    if (effects.length > 1) {
+      let keepEffect = this.item.effects.find(
+        (effect) => effect.name === this.item.name
+      );
+
+      if (!keepEffect) {
+        keepEffect = effects[0];
+        keepEffect.name = this.item.name;
+        keepEffect.img = this.item.img;
+      }
+
+      const effectIds = effects.map((effect) => effect._id);
+
+      await this.item.deleteEmbeddedDocuments("ActiveEffect", effectIds);
+      await this.item.createEmbeddedDocuments("ActiveEffect", [keepEffect]);
+    }
+
+    if (effects.length === 0) {
+      const newEffect = new ActiveEffect({
+        _id: foundry.utils.randomID(),
+        name: this.item.name,
+        img: this.item.img,
+        changes: [],
+        disabled: false,
+        duration: {
+          startTime: null,
+          seconds:
+            this.item.type === "status" || this.item.type === "feature"
+              ? 18000
+              : 0,
+          combat: "",
+          rounds: 0,
+          turns: 0,
+          startRound: 0,
+          startTurn: 0,
+        },
+        description: "",
+        origin: "",
+        tint: "#ffffff",
+        transfer: true,
+        statuses: new Set(),
+        flags: {},
+      });
+      await this.item.createEmbeddedDocuments("ActiveEffect", [newEffect]);
+    }
+
+    context.activeEffect = this.item.effects.contents[0];
+
+    // Validates both permissions and compendium status
+    context.editable = this.isEditable;
+    context.owner = this.document.isOwner;
+    context.limited = this.document.limited;
+    // Add the item document.
+    context.item = this.item;
+    // Adding system and flags for easier access
+    context.system = this.item.system;
+    context.flags = this.item.flags;
+    // Adding a pointer to CONFIG.EVENTIDE_RP_SYSTEM
+    context.config = CONFIG.EVENTIDE_RP_SYSTEM;
+    // You can factor out context construction to helper functions
+    context.tabs = this._getTabs(options.parts);
+    // Necessary for formInput and formFields helpers
+    context.fields = this.document.schema.fields;
+    context.systemFields = this.document.system.schema.fields;
+    context.isGM = game.user.isGM;
+
+    console.log(context);
 
     return context;
   }
