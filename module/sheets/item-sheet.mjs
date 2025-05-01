@@ -32,6 +32,8 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
       createDoc: this._createEffect,
       deleteDoc: this._deleteEffect,
       toggleEffect: this._toggleEffect,
+      newCharacterEffect: this._newCharacterEffect,
+      deleteCharacterEffect: this._deleteCharacterEffect,
     },
     position: {
       width: 600,
@@ -112,18 +114,8 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
 
     const effects = Array.from(this.item.effects);
 
-    let keepEffect;
-
     if (effects.length > 1) {
-      keepEffect = this.item.effects.find(
-        (effect) => effect.name === this.item.name
-      );
-
-      if (!keepEffect) {
-        keepEffect = effects[0];
-        keepEffect.name = this.item.name;
-        keepEffect.img = this.item.img;
-      }
+      let keepEffect = this.item.effects.contents[0];
 
       const effectIds = effects.map((effect) => effect._id);
 
@@ -158,6 +150,22 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
         flags: {},
       });
       await this.item.createEmbeddedDocuments("ActiveEffect", [newEffect]);
+    }
+
+    if (
+      !this.item.effects.contents.find(
+        (effect) =>
+          effect.name === this.item.name && effect.img === this.item.img
+      )
+    ) {
+      const keepEffectId = this.item.effects.contents[0]._id;
+
+      const updateData = {
+        _id: keepEffectId,
+        name: this.item.name,
+        img: this.item.img,
+      };
+      await this.item.updateEmbeddedDocuments("ActiveEffect", [updateData]);
     }
 
     context.activeEffect = this.item.effects.contents[0];
@@ -314,6 +322,119 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
     // That you may want to implement yourself.
   }
 
+  async _updateCharacterEffects({
+    newEffect = { type: null, ability: null },
+    remove = { index: null, type: null },
+  } = {}) {
+    // Get all form elements that include "characterEffects" in their name
+    // Filter out elements that match the remove value if one is provided
+    let formElements = this.form.querySelectorAll('[name*="characterEffects"]');
+
+    if (remove.type && remove.index) {
+      formElements = Array.from(formElements).filter(
+        (el) => !el.name.includes(`${remove.type}.${remove.index}`)
+      );
+    }
+
+    // Create an object to store the values
+    const characterEffects = {
+      regularEffects: [],
+      hiddenEffects: [],
+    };
+
+    // Process each form element using for...of instead of forEach for async safety
+    for (const element of formElements) {
+      const name = element.name;
+      const value = element.value;
+
+      // Parse the name to extract the type (regularEffects or hiddenEffects) and index
+      if (name.includes("regularEffects") || name.includes("hiddenEffects")) {
+        const parts = name.split(".");
+        if (parts.length >= 3) {
+          const type = parts[1]; // regularEffects or hiddenEffects
+          const index = parseInt(parts[2]);
+          const property = parts[3]; // ability, mode, value, etc.
+
+          // Ensure the array has an object at this index
+          if (!characterEffects[type][index]) {
+            characterEffects[type][index] = {};
+          }
+
+          // Set the property value
+          characterEffects[type][index][property] = value;
+        }
+      }
+    }
+
+    // Clean up the arrays (remove any undefined entries)
+    characterEffects.regularEffects = characterEffects.regularEffects.filter(
+      (e) => e
+    );
+    characterEffects.hiddenEffects = characterEffects.hiddenEffects.filter(
+      (e) => e
+    );
+
+    // console.log("Collected character effects:", characterEffects);
+
+    const newEffects = [];
+
+    for (const effect of characterEffects.regularEffects) {
+      const key = `system.abilities.${effect.ability}.${
+        effect.mode === "add"
+          ? "change"
+          : effect.mode === "override"
+          ? "override"
+          : effect.mode === "advantage"
+          ? "diceAdjustments.advantage"
+          : "diceAdjustments.disadvantage"
+      }`;
+      const mode = effect.mode !== "override" ? 2 : 5;
+
+      newEffects.push({
+        key,
+        mode,
+        value: effect.value,
+      });
+    }
+
+    for (const effect of characterEffects.hiddenEffects) {
+      const key = `system.hiddenAbilities.${effect.ability}.${
+        effect.mode === "add" ? "change" : "override"
+      }`;
+      const mode = effect.mode === "add" ? 2 : 5;
+
+      newEffects.push({
+        key,
+        mode,
+        value: effect.value,
+      });
+    }
+
+    if (newEffect.type && newEffect.ability) {
+      newEffects.push({
+        key: `system.${newEffect.type}.${newEffect.ability}.change`,
+        mode: 2,
+        value: 0,
+      });
+    }
+
+    const updateData = {
+      _id: this.item.effects.contents[0]._id,
+      changes: newEffects,
+    };
+
+    await this.item.updateEmbeddedDocuments("ActiveEffect", [updateData]);
+  }
+
+  async _onChangeForm(formConfig, event) {
+    if (event.target.name.includes("characterEffects")) {
+      this._updateCharacterEffects();
+      Hooks.call("updateItem", this.item, this.item, {}, game.user.id);
+      return;
+    }
+    await super._onChangeForm(formConfig, event);
+  }
+
   /**************
    *
    *   ACTIONS
@@ -346,6 +467,21 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
       left: this.position.left + 10,
     });
     return fp.browse();
+  }
+
+  static async _newCharacterEffect(event, target) {
+    const { type, ability } = target.dataset;
+    const newEffect = {
+      type,
+      ability,
+    };
+    this._updateCharacterEffects({ newEffect });
+  }
+
+  static async _deleteCharacterEffect(event, target) {
+    const index = target.dataset.index;
+    const type = target.dataset.type;
+    this._updateCharacterEffects({ remove: { index, type } });
   }
 
   /**
