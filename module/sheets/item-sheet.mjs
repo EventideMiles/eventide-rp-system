@@ -34,6 +34,7 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
       toggleEffect: this._toggleEffect,
       newCharacterEffect: this._newCharacterEffect,
       deleteCharacterEffect: this._deleteCharacterEffect,
+      toggleEffectDisplay: this._toggleEffectDisplay,
     },
     position: {
       width: 600,
@@ -482,6 +483,16 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
     const index = target.dataset.index;
     const type = target.dataset.type;
     this._updateCharacterEffects({ remove: { index, type } });
+  }
+
+  static async _toggleEffectDisplay(event, target) {
+    const duration = target.checked ? { seconds: 604800 } : { seconds: 0 };
+    const updateData = {
+      _id: this.item.effects.contents[0]._id,
+      duration,
+    };
+    await this.item.updateEmbeddedDocuments("ActiveEffect", [updateData]);
+    //Hooks.call("updateItem", this.item, this.item, {}, game.user.id);
   }
 
   /**

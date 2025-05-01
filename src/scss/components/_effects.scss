@@ -150,3 +150,250 @@
     border: none;
   }
 }
+
+// Character Effects Styling for Item Sheet
+.eventide-item-sheet {
+  // Effects container
+  &__effects-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+  
+  // Effects header
+  &__effects-header {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 0.5rem;
+    padding: 0.5rem;
+    background-color: rgba(0, 0, 0, 0.05);
+    border: 1px solid #dbd9c9;
+    border-radius: 3px;
+  }
+  
+  // Effects grid
+  &__effects-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    
+    &-header {
+      display: grid;
+      grid-template-columns: 1.5fr 1.5fr 1fr 0.5fr;
+      gap: 0.5rem;
+      padding: 0.5rem 0;
+      font-weight: bold;
+      border-bottom: 1px solid #dbd9c9;
+    }
+    
+    &-row {
+      display: grid;
+      grid-template-columns: 1.5fr 1.5fr 1fr 0.5fr;
+      gap: 0.5rem;
+      padding: 0.25rem 0;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      
+      &--hidden {
+        background-color: rgba(0, 0, 0, 0.03);
+      }
+      
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+    
+    &-cell {
+      display: flex;
+      align-items: center;
+      
+      select, input {
+        width: 100%;
+        height: 28px;
+        padding: 0 0.25rem;
+        font-size: 0.9rem;
+      }
+    }
+  }
+  
+  // Effect toggle
+  &__effect-toggle {
+    display: flex;
+    width: fit-content;
+    // width: max-content;
+    margin: 0 auto;
+    display: inline-block;
+    padding: 0.75rem;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    cursor: pointer;
+    white-space: nowrap;
+    background-color: #373737;
+    color: #ffffff;
+    border-radius: 10px;
+    border: 1px inset colors.$c-dark;
+    
+    &--global {
+      font-weight: bold;
+      font-size: 0.9rem;
+      background-color: colors.$c-faint;
+      border-color: colors.$c-dark;
+      
+      &:hover {
+        background-color: colors.$c-faint;
+      }
+    }
+
+    &--active {
+      background-color: #007bff;
+      border-color: #0056b3;
+      color: #ffffff;
+      border: 1px outset colors.$c-dark;
+    }
+    
+    // &:hover {
+    //   background-color: colors.$c-faint;
+    // }
+    
+    input[type="checkbox"] {
+      margin: 0;
+      width: 16px;
+      height: 16px;
+      display: none;
+      
+      &:checked + .eventide-item-sheet__effect-toggle-label {
+        font-weight: bold;
+        // color: #ffffff;
+        // background-color: #007bff;
+      }
+    }
+    
+    &-label {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+  
+  // Effect controls
+  &__effect-controls {
+    display: flex;
+    justify-content: flex-start;
+    margin-top: 0.5rem;
+    gap: 0.5rem;
+  }
+  
+  // Effect buttons
+  &__effect-remove {
+    background: none;
+    border: none;
+    color: #dc3545;
+    cursor: pointer;
+    padding: 0.25rem;
+    transition: transform 0.2s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    &:hover {
+      transform: scale(1.1);
+    }
+  }
+  
+  &__add-effect {
+    background: #007bff;
+    color: #ffffff;
+    border: none;
+    border-radius: 3px;
+    padding: 0.25rem 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+    font-size: 0.9rem;
+    
+    &:hover {
+      background: #0056b3;
+    }
+  }
+  
+  // Hidden effects
+  &__hidden-effects {
+    margin-top: 1rem;
+    border: 1px solid #dbd9c9;
+    border-radius: 3px;
+    padding: 0.5rem;
+    background-color: rgba(0, 0, 0, 0.02);
+    
+    &-header {
+      font-weight: bold;
+      color: colors.$c-dark;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      
+      &:hover {
+        color: colors.$c-tan;
+      }
+      
+      &::before {
+        content: '▼';
+        margin-right: 0.5rem;
+        font-size: 0.8rem;
+      }
+    }
+  }
+  
+  // No effects message
+  &__no-effects {
+    font-style: italic;
+    color: colors.$c-tan;
+    text-align: center;
+    padding: 1rem;
+  }
+  
+  // Effect inputs
+  &__effect-attribute,
+  &__effect-mode,
+  &__effect-value {
+    padding: 0.25rem;
+    border: 1px solid #dbd9c9;
+    border-radius: 3px;
+    background: #ffffff;
+    
+    &:focus {
+      outline: none;
+      border-color: #007bff;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    }
+  }
+  
+  // Foundry V12 compatibility adjustments
+  .tab.effects {
+    padding: 0.5rem;
+    
+    h3 {
+      border-bottom: 1px solid #dbd9c9;
+      padding-bottom: 0.5rem;
+      margin-bottom: 1rem;
+    }
+  }
+}
+
+// Responsive adjustments for smaller screens
+@media (max-width: 768px) {
+  .eventide-item-sheet {
+    &__effects-grid {
+      &-header, &-row {
+        grid-template-columns: 1fr 1fr 0.8fr 0.4fr;
+      }
+    }
+    
+    &__effect-toggle {
+      font-size: 0.8rem;
+      
+      &--global {
+        font-size: 0.85rem;
+      }
+    }
+  }
+}
