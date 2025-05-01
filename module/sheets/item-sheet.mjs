@@ -1,7 +1,10 @@
 import { prepareActiveEffectCategories } from "../helpers/effects.mjs";
+import { prepareCharacterEffects } from "../helpers/character-effects.mjs";
 import { EventideSheetHelpers } from "./base/eventide-sheet-helpers.mjs";
 
 const { api, sheets } = foundry.applications;
+
+const { DragDrop, TextEditor } = foundry.applications.ux;
 
 /**
  * Item sheet implementation for the Eventide RP System.
@@ -71,6 +74,10 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
     effects: {
       template: "systems/eventide-rp-system/templates/item/effects.hbs",
     },
+    characterEffects: {
+      template:
+        "systems/eventide-rp-system/templates/item/character-effects.hbs",
+    },
   };
 
   /** @override */
@@ -83,13 +90,13 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
     // Control which parts show based on document subtype
     switch (this.document.type) {
       case "feature":
-        options.parts.push("effects");
+        options.parts.push("effects", "characterEffects");
         break;
       case "status":
-        options.parts.push("effects");
+        options.parts.push("effects", "characterEffects");
         break;
       case "gear":
-        options.parts.push("attributesGear", "effects");
+        options.parts.push("attributesGear", "effects", "characterEffects");
         break;
       case "combatPower":
         options.parts.push("attributesCombatPower", "prerequisites");
@@ -105,8 +112,10 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
 
     const effects = Array.from(this.item.effects);
 
+    let keepEffect;
+
     if (effects.length > 1) {
-      let keepEffect = this.item.effects.find(
+      keepEffect = this.item.effects.find(
         (effect) => effect.name === this.item.name
       );
 
@@ -171,8 +180,6 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
     context.systemFields = this.document.system.schema.fields;
     context.isGM = game.user.isGM;
 
-    console.log(context);
-
     return context;
   }
 
@@ -203,17 +210,18 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
         context.tab = context.tabs[partId];
         // Enrich description info for display
         // Enrichment turns text like `[[/r 1d20]]` into buttons
-        context.enrichedDescription = await TextEditor.enrichHTML(
-          this.item.system.description,
-          {
-            // Whether to show secret blocks in the finished html
-            secrets: this.document.isOwner,
-            // Data to fill in for inline rolls
-            rollData: this.item.getRollData(),
-            // Relative UUID resolution
-            relativeTo: this.item,
-          }
-        );
+        context.enrichedDescription =
+          await TextEditor.implementation.enrichHTML(
+            this.item.system.description,
+            {
+              // Whether to show secret blocks in the finished html
+              secrets: this.document.isOwner,
+              // Data to fill in for inline rolls
+              rollData: this.item.getRollData(),
+              // Relative UUID resolution
+              relativeTo: this.item,
+            }
+          );
         break;
       case "prerequisites":
         context.prerequisites = this.item.system.prerequisites;
@@ -224,6 +232,13 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
         // Prepare active effects for easier access
         context.effects = await prepareActiveEffectCategories(
           this.item.effects
+        );
+        break;
+      case "characterEffects":
+        context.tab = context.tabs[partId];
+        // Prepare active effects for easier access
+        context.characterEffects = await prepareCharacterEffects(
+          this.item.effects.contents[0]
         );
         break;
     }
@@ -267,6 +282,10 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
         case "effects":
           tab.id = "effects";
           tab.label += "Effects";
+          break;
+        case "characterEffects":
+          tab.id = "characterEffects";
+          tab.label += "CharacterEffects";
           break;
         case "attributesFeature":
         case "attributesGear":
@@ -477,7 +496,7 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
    * @protected
    */
   async _onDrop(event) {
-    const data = TextEditor.getDragEventData(event);
+    const data = TextEditor.implementation.getDragEventData(event);
     const item = this.item;
     const allowed = Hooks.call("dropItemSheetData", item, this, data);
     if (allowed === false) return;
@@ -597,7 +616,7 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
 
   /**
    * Returns an array of DragDrop instances
-   * @type {DragDrop[]}
+   * @type {DragDrop.implementation[]}
    */
   get dragDrop() {
     return this.#dragDrop;
@@ -609,7 +628,7 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
 
   /**
    * Create drag-and-drop workflow handlers for this Application
-   * @returns {DragDrop[]}     An array of DragDrop handlers
+   * @returns {DragDrop.implementation[]}     An array of DragDrop handlers
    * @private
    */
   #createDragDropHandlers() {
@@ -623,7 +642,7 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
         dragover: this._onDragOver.bind(this),
         drop: this._onDrop.bind(this),
       };
-      return new DragDrop(d);
+      return new DragDrop.implementation(d);
     });
   }
 }

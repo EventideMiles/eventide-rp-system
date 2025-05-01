@@ -3,6 +3,8 @@ import { erpsRollHandler } from "../helpers/roll-dice.mjs";
 
 const { api, sheets } = foundry.applications;
 
+const { DragDrop, TextEditor } = foundry.applications.ux;
+
 /**
  * Extend the basic ActorSheet with some very simple modifications
  * @extends {ActorSheetV2}
@@ -138,7 +140,7 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
         context.tab = context.tabs[partId];
         // Enrich biography info for display
         // Enrichment turns text like `[[/r 1d20]]` into buttons
-        context.enrichedBiography = await TextEditor.enrichHTML(
+        context.enrichedBiography = await TextEditor.implementation.enrichHTML(
           this.actor.system.biography,
           {
             // Whether to show secret blocks in the finished html
@@ -526,7 +528,7 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
    * @protected
    */
   async _onDrop(event) {
-    const data = TextEditor.getDragEventData(event);
+    const data = TextEditor.implementation.getDragEventData(event);
     const actor = this.actor;
     const allowed = Hooks.call("dropActorSheetData", actor, this, data);
     if (allowed === false) return;
@@ -730,7 +732,7 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
 
   /**
    * Returns an array of DragDrop instances
-   * @type {DragDrop[]}
+   * @type {DragDrop.implementation[]}
    */
   get dragDrop() {
     return this.#dragDrop;
@@ -742,7 +744,7 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
 
   /**
    * Create drag-and-drop workflow handlers for this Application
-   * @returns {DragDrop[]}     An array of DragDrop handlers
+   * @returns {DragDrop.implementation[]}     An array of DragDrop handlers
    * @private
    */
   #createDragDropHandlers() {
@@ -756,7 +758,7 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
         dragover: this._onDragOver.bind(this),
         drop: this._onDrop.bind(this),
       };
-      return new DragDrop(d);
+      return new DragDrop.implementation(d);
     });
   }
 

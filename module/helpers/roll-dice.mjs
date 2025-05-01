@@ -2,6 +2,8 @@ import { getSetting } from "./settings.mjs";
 import { erpsRollUtilities } from "./roll-utilities.mjs";
 import { erpsSoundManager } from "./sound-manager.mjs";
 
+const { renderTemplate } = foundry.applications.handlebars;
+
 /**
  * ERPSRollHandler - Handles all dice rolling operations for the Eventide RP System
  * @class

@@ -9,34 +9,46 @@
  * @function
  */
 export const initChatListeners = () => {
-  Hooks.on("renderChatMessage", (message, html, data) => {
+  Hooks.on("renderChatMessageHTML", (message, html, data) => {
+    // html is now an HTMLElement instead of a jQuery object
     // Find formula toggle elements
-    const formulaToggle = html.find(".chat-card__formula-toggle");
+    const formulaToggle = html.querySelectorAll(".chat-card__formula-toggle");
 
     // Add click event listener for formula toggle
-    formulaToggle.on("click", (event) => {
-      const toggleElement = $(event.currentTarget);
-      const rollContainer = toggleElement.closest(
-        ".chat-card__initiative, .chat-card__combat-roll"
-      );
-      const rollDetails = rollContainer.find(".chat-card__roll-details");
+    formulaToggle.forEach((toggle) => {
+      toggle.addEventListener("click", (event) => {
+        const toggleElement = event.currentTarget;
+        const rollContainer = toggleElement.closest(
+          ".chat-card__initiative, .chat-card__combat-roll"
+        );
+        const rollDetails = rollContainer.querySelector(
+          ".chat-card__roll-details"
+        );
 
-      // Toggle the active class for the formula toggle
-      toggleElement.toggleClass("active");
+        // Toggle the active class for the formula toggle
+        toggleElement.classList.toggle("active");
 
-      // Toggle the visibility of the roll details
-      if (rollDetails.is(":visible")) {
-        rollDetails.slideUp(200);
-      } else {
-        rollDetails.slideDown(200);
-      }
+        // Toggle the visibility of the roll details
+        if (
+          rollDetails.style.display !== "none" &&
+          rollDetails.style.display !== ""
+        ) {
+          rollDetails.style.display = "none";
+          // For animation, you could use a transition in CSS instead of jQuery's slideUp/Down
+        } else {
+          rollDetails.style.display = "block";
+        }
+      });
     });
 
     // Remove ac check and secret elements for non-GMs
     if (game.user.isGM) return;
 
-    html.find(".chat-card__effects--ac-check").remove();
-    html.find(".secret").remove();
+    html
+      .querySelectorAll(".chat-card__effects--ac-check, .secret")
+      .forEach((el) => {
+        el.remove();
+      });
   });
 
   /**

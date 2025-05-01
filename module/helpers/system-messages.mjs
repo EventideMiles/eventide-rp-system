@@ -1,6 +1,8 @@
 import { erpsRollUtilities } from "./roll-utilities.mjs";
 import { erpsSoundManager } from "./sound-manager.mjs";
 
+const { renderTemplate } = foundry.applications.handlebars;
+
 /**
  * ERPSMessageHandler - Handles all chat message creation for the Eventide RP System
  * @class
