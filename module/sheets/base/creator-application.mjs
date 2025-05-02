@@ -14,8 +14,14 @@ export class CreatorApplication extends EventideSheetHelpers {
     tag: "form",
   };
 
-  static storageKeys = ["img", "bgColor", "textColor"];
-  static effectStorageKeys = ["iconTint", "type"];
+  static storageKeys = [
+    "img",
+    "bgColor",
+    "textColor",
+    "displayOnToken",
+    "iconTint",
+  ];
+  static effectStorageKeys = ["type"];
 
   /**
    * Initialize a new CreatorApplication
@@ -38,11 +44,12 @@ export class CreatorApplication extends EventideSheetHelpers {
       `${keyType}_${this.number}_img`,
       `${keyType}_${this.number}_bgColor`,
       `${keyType}_${this.number}_textColor`,
+      `${keyType}_${this.number}_iconTint`,
+      `${keyType}_${this.number}_displayOnToken`,
     ];
     if (keyType === "effect") {
       this.storageKeys = [
         ...this.storageKeys,
-        `${keyType}_${this.number}_iconTint`,
         `${keyType}_${this.number}_type`,
       ];
     }
@@ -165,6 +172,7 @@ export class CreatorApplication extends EventideSheetHelpers {
         ? "feature"
         : form.type.value;
     const iconTint = form?.iconTint?.value || "#ffffff";
+    const displayOnToken = form?.displayOnToken?.checked || false;
 
     if (this.keyType === "gear") {
       quantity = parseInt(form.quantity.value) || 1;
@@ -252,11 +260,12 @@ export class CreatorApplication extends EventideSheetHelpers {
       [`${this.keyType}_${this.number}_img`]: img,
       [`${this.keyType}_${this.number}_bgColor`]: bgColor,
       [`${this.keyType}_${this.number}_textColor`]: textColor,
+      [`${this.keyType}_${this.number}_iconTint`]: iconTint,
+      [`${this.keyType}_${this.number}_displayOnToken`]: displayOnToken,
     };
 
     if (this.keyType === "effect") {
       storageData[`${this.keyType}_${this.number}_type`] = type;
-      storageData[`${this.keyType}_${this.number}_iconTint`] = iconTint;
     }
 
     await erps.utils.storeLocal(storageData);
@@ -279,7 +288,7 @@ export class CreatorApplication extends EventideSheetHelpers {
           disabled: false,
           duration: {
             startTime: null,
-            seconds: type === "status" ? 18000 : 0,
+            seconds: displayOnToken ? 18000 : 0,
             combat: "",
             rounds: 0,
             turns: 0,

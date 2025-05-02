@@ -52,6 +52,8 @@ export class GearCreator extends CreatorApplication {
         this.storedData[this.storageKeys[0]] || "icons/svg/item-bag.svg",
       gear_bgColor: this.storedData[this.storageKeys[1]],
       gear_textColor: this.storedData[this.storageKeys[2]],
+      gear_iconTint: this.storedData[this.storageKeys[3]],
+      gear_displayOnToken: this.storedData[this.storageKeys[4]],
     };
 
     context.gearEquippedDefault = game.settings.get(

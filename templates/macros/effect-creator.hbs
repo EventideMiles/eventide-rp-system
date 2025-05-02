@@ -22,24 +22,46 @@
   </header>
   <div class="base-form__content">
     <div class="base-form__group">
-      <label class="base-form__label" for="type">{{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Type"}}}:</label>
+      <label class="base-form__label" for="type">
+        {{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Type"}}}:
+      </label>
       <select class="base-form__select" id="type" name="type">
         {{#if (eq playerMode false)}}
-          <option value="status" {{#if (eq storedData.effect_type "status")}}selected{{/if}}>{{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Status"}}}</option>
+          <option value="status" 
+            {{#if (eq storedData.effect_type "status")}}selected{{/if}}>
+            {{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Status"}}}
+          </option>
         {{/if}}
-        <option value="feature" {{#if (eq storedData.effect_type "feature")}}selected{{/if}}>{{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Feature"}}}</option>
+        <option value="feature" 
+          {{#if (eq storedData.effect_type "feature")}}selected{{/if}}>
+          {{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Feature"}}}
+        </option>
       </select>
     </div>
     <div class="base-form__group">
-      <label class="base-form__label" for="name">{{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Name"}}}:</label>
-      <input class="base-form__text-input" autofocus type="text" id="name" name="name" placeholder="{{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.Name"}}}">
+      <label class="base-form__label" for="name">
+        {{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Name"}}}:
+      </label>
+      <input class="base-form__text-input" 
+        autofocus 
+        type="text" 
+        id="name" 
+        name="name" 
+        placeholder="{{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.Name"}}}">
     </div>
     <div class="base-form__group">
-      <label class="base-form__label" for="description">{{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Description"}}}:</label>
-      <textarea class="base-form__textarea" id="description" name="description" placeholder="{{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.Description"}}}"></textarea>
+      <label class="base-form__label" for="description">
+        {{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Description"}}}:
+      </label>
+      <textarea class="base-form__textarea" 
+        id="description" 
+        name="description" 
+        placeholder="{{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.Description"}}}"></textarea>
     </div>
     <div class="base-form__group">
-      <label class="base-form__label" for="img">{{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Image"}}}:</label>
+      <label class="base-form__label" for="img">
+        {{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Image"}}}:
+      </label>
       <img
         class="base-form__image base-form__image--edit"
         src="{{storedData.effect_img}}"
@@ -50,26 +72,72 @@
         name="displayImage"
         id="displayImage"
       />
-      <input class="base-form__hidden-input" type="hidden" name="img" value="{{ifThen storedData.effect_img storedData.effect_img "icons/svg/stoned.svg"}}">
+      <input 
+        class="base-form__hidden-input" 
+        type="hidden" 
+        name="img" 
+        value="{{ifThen storedData.effect_img storedData.effect_img "icons/svg/stoned.svg"}}">
     </div>
     <div class="base-form__group">
-      <label class="base-form__label" for="bgColor">{{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Background"}}}:</label>
-      <input class="base-form__color-input" type="color" id="bgColor" name="bgColor" value="{{ifThen storedData.effect_bgColor storedData.effect_bgColor "#7B4874"}}">
+      <label class="base-form__label" for="bgColor">
+        {{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Background"}}}:
+      </label>
+      <input 
+        class="base-form__color-input" 
+        type="color" 
+        id="bgColor" 
+        name="bgColor" 
+        value="{{ifThen storedData.effect_bgColor storedData.effect_bgColor "#7B4874"}}">
     </div>
     <div class="base-form__group">
-      <label class="base-form__label" for="textColor">{{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Text"}}}:</label>
-      <input class="base-form__color-input" type="color" id="textColor" name="textColor" value="{{ifThen storedData.effect_textColor storedData.effect_textColor "#ffffff"}}">
+      <label class="base-form__label" for="textColor">
+        {{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Text"}}}:
+      </label>
+      <input 
+        class="base-form__color-input" 
+        type="color" 
+        id="textColor" 
+        name="textColor" 
+        value="{{ifThen storedData.effect_textColor storedData.effect_textColor "#ffffff"}}">
     </div>
     <div class="base-form__group">
-      <label class="base-form__label" for="iconTint">{{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.IconTint"}}}:</label>
-      <input class="base-form__color-input" type="color" id="iconTint" name="iconTint" value="{{ifThen storedData.effect_iconTint storedData.effect_iconTint "#ffffff"}}">
+      <label class="base-form__label" for="iconTint">
+        {{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.IconTint"}}}:
+      </label>
+      <input 
+        class="base-form__color-input" 
+        type="color" 
+        id="iconTint" 
+        name="iconTint" 
+        value="{{ifThen storedData.effect_iconTint storedData.effect_iconTint "#ffffff"}}">
     </div>
     <div class="base-form__header">{{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Effects"}}}</div>
+    <div class="base-form__group">
+      <label class="base-form__label" for="displayOnToken">
+        {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.DisplayOnToken"}}
+      </label>
+      <input 
+        class="base-form__checkbox" 
+        type="checkbox" 
+        id="displayOnToken" 
+        name="displayOnToken" 
+        {{#if (eq storedData.effect_displayOnToken "true")}}checked{{/if}}>
+    </div>
     {{#each abilities}}
       <div class="base-form__group">
-        <label class="base-form__label" for="{{lowercase this}}">{{{capitalize (localize (lookup @root.config.abilityAbbreviations this))}}}:</label>
-        <input class="base-form__number-input" type="number" id="{{lowercase this}}" name="{{lowercase this}}" value="0">
-        <select class="base-form__select" id="{{lowercase this}}-mode" name="{{lowercase this}}-mode">
+        <label class="base-form__label" for="{{lowercase this}}">
+          {{{capitalize (localize (lookup @root.config.abilityAbbreviations this))}}}:
+        </label>
+        <input 
+          class="base-form__number-input" 
+          type="number" 
+          id="{{lowercase this}}" 
+          name="{{lowercase this}}" 
+          value="0">
+        <select 
+          class="base-form__select" 
+          id="{{lowercase this}}-mode" 
+          name="{{lowercase this}}-mode">
           <option value="add">{{{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.Add"}}}</option>
           <option value="override">{{{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.Override"}}}</option>
           <option value="advantage">{{{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.Advantage"}}}</option>
@@ -79,9 +147,21 @@
     {{/each}}
     {{#each hiddenAbilities}}
       <div class="base-form__group">
-        <label class="base-form__label" for="{{lowercase this}}">{{{capitalize (localize (lookup @root.config.hiddenAbilityAbbreviations this))}}}:</label>
-        <input class="base-form__number-input" type="number" id="{{lowercase this}}" name="{{lowercase this}}" value="0">
-        <select class="base-form__select" id="{{lowercase this}}-mode" name="{{lowercase this}}-mode">
+        <label 
+          class="base-form__label" 
+          for="{{lowercase this}}">
+          {{capitalize (localize (lookup @root.config.hiddenAbilityAbbreviations this))}}:
+        </label>
+        <input 
+          class="base-form__number-input" 
+          type="number" 
+          id="{{lowercase this}}" 
+          name="{{lowercase this}}" 
+          value="0">
+        <select 
+          class="base-form__select" 
+          id="{{lowercase this}}-mode" 
+          name="{{lowercase this}}-mode">
           <option value="add">{{{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.Add"}}}</option>
           <option value="override">{{{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.Override"}}}</option>
         </select>

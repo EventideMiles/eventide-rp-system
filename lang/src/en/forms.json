@@ -54,7 +54,8 @@
         "ClassName": "Class",
         "Cursed": "Cursed",
         "Equipped": "Equipped",
-        "EquipFirst": "You need to equip this item to see details. If you want to investigate it first ask your GM."
+        "EquipFirst": "You need to equip this item to see details. If you want to investigate it first ask your GM.",
+        "DisplayOnToken": "Display Effect On Token"
       },
       "Buttons": {
         "Change": "Change",
