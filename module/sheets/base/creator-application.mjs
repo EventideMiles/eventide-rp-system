@@ -352,9 +352,11 @@ export class CreatorApplication extends EventideSheetHelpers {
       pack = await CompendiumCollection.createCompendium(packData);
     }
 
-    await Item.create(itemData, {
+    const item = await Item.create(itemData, {
       pack: pack.collection,
     });
+
+    Hooks.call("erpsUpdateItem", item, {}, {}, game.user.id);
 
     if (this.targetArray.length > 0 && this.gmCheck === "gm") {
       ui.notifications.info(

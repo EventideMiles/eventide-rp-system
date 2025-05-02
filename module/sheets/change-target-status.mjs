@@ -181,6 +181,8 @@ export class ChangeTargetStatus extends EventideSheetHelpers {
       ],
     });
 
+    Hooks.call("erpsUpdateItem", status, {}, {}, game.user.id);
+
     // store data in local storage
     const storageObject = {
       changeTargetStatus_statusSelector: form.statusSelector.value,
