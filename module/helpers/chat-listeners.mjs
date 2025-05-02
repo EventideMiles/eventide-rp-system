@@ -59,12 +59,16 @@ export const initChatListeners = () => {
    * @param {Object} options - Additional options for the update operation
    * @param {string} triggerPlayer - ID of the player who triggered the update
    */
+  Hooks.on("erpsUpdateItem", (item, changed, options, triggerPlayer) => {
+    if (game.user.id !== triggerPlayer) return;
+    if (item.actor === null || item.actor === undefined) return;
+    if (item.type === "status") erps.messages.createStatusMessage(item);
+  });
+
   Hooks.on("updateItem", (item, changed, options, triggerPlayer) => {
     if (game.user.id !== triggerPlayer) return;
     if (item.actor === null || item.actor === undefined) return;
-    if (item.type === "status" && item.system.description)
-      erps.messages.createStatusMessage(item);
-    else if (item.type === "gear") {
+    if (item.type === "gear") {
       if (item.system.quantity >= 1 && item.system.equipped) {
         item.effects.forEach((effect) => effect.update({ disabled: false }));
       } else {
