@@ -57,7 +57,7 @@
       // Ensure all sections don't scroll individually
       section.main, aside.sidebar, .items-list {
         overflow: visible !important;
-        max-height: none !important; // Remove height constraints
+        // max-height: none !important; // Remove height constraints
       }
     }
     

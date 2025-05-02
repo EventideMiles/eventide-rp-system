@@ -1,105 +1,112 @@
 <section class="tab effects {{tab.cssClass}}" data-group="primary" data-tab="characterEffects">
-          <label 
-            class="eventide-item-sheet__effect-toggle {{#if activeEffect.duration.seconds}}eventide-item-sheet__effect-toggle--active{{/if}}" 
-            title="When enabled, this effect will be displayed on tokens">
-            <input 
-            type="checkbox" 
-            class="eventide-item-sheet__effect-display-token" 
-            name="effect.displayOnToken" 
-            {{#if activeEffect.duration.seconds}}checked{{/if}}
-            data-action="toggleEffectDisplay"
-            >
-            <span 
-                class="eventide-item-sheet__effect-toggle-label"
-            >
-                {{#if activeEffect.duration.seconds}}<i class="fa-solid fa-square-check"></i> Icon Displayed On Token{{else}}<i class="fa-solid fa-square"></i> Icon Displayed On Token{{/if}}
-            </span>
-        </label>
+  <label 
+    class="eventide-item-sheet__effect-toggle {{#if activeEffect.duration.seconds}}eventide-item-sheet__effect-toggle--active{{/if}}" 
+    title="When enabled, this effect will be displayed on tokens">
+    <input 
+      type="checkbox" 
+      class="eventide-item-sheet__effect-display-token" 
+      name="effect.displayOnToken" 
+      {{#if activeEffect.duration.seconds}}checked{{/if}}
+      data-action="toggleEffectDisplay"
+    >
+    <span 
+      class="eventide-item-sheet__effect-toggle-label"
+    >
+      {{#if activeEffect.duration.seconds}}Icon Displayed On Token <i class="fa-solid fa-square-check"></i>{{else}}Icon Displayed On Token <i class="fa-solid fa-square"></i>{{/if}}
+    </span>
+  </label>
 
-        {{! Effects section partial for Eventide Item Sheet }}
-    <div class="eventide-item-sheet__effects-grid">
-      <div class="eventide-item-sheet__effects-grid-header">
-        <div class="eventide-item-sheet__effects-grid-cell">Attribute</div>
-        <div class="eventide-item-sheet__effects-grid-cell">Mode</div>
-        <div class="eventide-item-sheet__effects-grid-cell">Value</div>
-        <div class="eventide-item-sheet__effects-grid-cell">Actions</div>
+  <div class="eventide-item-sheet__scrollable-container">
+    {{! Regular Effects Section }}
+    <div class="eventide-item-sheet__effects-section">
+      <h3 class="eventide-item-sheet__effects-section-header">
+        Regular Effects ({{characterEffects.regularEffects.length}})
+      </h3>
+      
+      <div class="eventide-item-sheet__effects-grid">
+        <div class="eventide-item-sheet__effects-grid-header">
+          <div class="eventide-item-sheet__effects-grid-cell">Attribute</div>
+          <div class="eventide-item-sheet__effects-grid-cell">Mode</div>
+          <div class="eventide-item-sheet__effects-grid-cell">Value</div>
+          <div class="eventide-item-sheet__effects-grid-cell">Actions</div>
+        </div>
+        
+        {{#each characterEffects.regularEffects}}
+          <div class="eventide-item-sheet__effects-grid-row">
+            <div class="eventide-item-sheet__effects-grid-cell">
+              <select 
+                name="characterEffects.regularEffects.{{@index}}.ability"
+                data-index="{{@index}}"
+                data-type="visible"
+              >
+                {{#each ../config.abilities as |label key|}}
+                  <option value="{{key}}" {{#if (eq ../ability key)}}selected{{/if}}>
+                    {{localize label}}
+                  </option>
+                {{/each}}
+              </select>
+            </div>
+            
+            <div class="eventide-item-sheet__effects-grid-cell">
+              <select 
+                name="characterEffects.regularEffects.{{@index}}.mode"
+                data-index="{{@index}}"
+                data-type="visible"
+              >
+                <option value="add" {{#if (eq mode "change")}}selected{{/if}}>Add</option>
+                <option value="override" {{#if (eq mode "override")}}selected{{/if}}>Override</option>
+                <option value="advantage" {{#if (eq mode "advantage")}}selected{{/if}}>Advantage</option>
+                <option value="disadvantage" {{#if (eq mode "disadvantage")}}selected{{/if}}>Disadvantage</option>
+              </select>
+            </div>
+            
+            <div class="eventide-item-sheet__effects-grid-cell">
+              <input 
+                type="number" 
+                name="characterEffects.regularEffects.{{@index}}.value" 
+                value="{{value}}" 
+                step="1"
+                data-index="{{@index}}"
+                data-type="visible"
+              >
+            </div>
+            
+            <div class="eventide-item-sheet__effects-grid-cell">
+              <button 
+                type="button" 
+                class="eventide-item-sheet__effect-remove"
+                data-action="deleteCharacterEffect" 
+                data-index="{{@index}}"
+                data-type="regularEffects"
+                title="Remove effect"
+              >
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </div>
+        {{/each}}
       </div>
       
-      {{#each characterEffects.regularEffects}}
-        <div class="eventide-item-sheet__effects-grid-row">
-          <div class="eventide-item-sheet__effects-grid-cell">
-            <select 
-              class="eventide-item-sheet__effect-attribute" 
-              name="characterEffects.regularEffects.{{@index}}.ability"
-              data-index="{{@index}}"
-              data-type="visible"
-            >
-              {{#each ../config.abilities as |label key|}}
-                <option value="{{key}}" {{#if (eq ../ability key)}}selected{{/if}}>
-                  {{localize label}}
-                </option>
-              {{/each}}
-            </select>
-          </div>
-          
-          <div class="eventide-item-sheet__effects-grid-cell">
-            <select 
-              class="eventide-item-sheet__effect-mode" 
-              name="characterEffects.regularEffects.{{@index}}.mode"
-              data-index="{{@index}}"
-              data-type="visible"
-            >
-              <option value="add" {{#if (eq mode "change")}}selected{{/if}}>Add</option>
-              <option value="override" {{#if (eq mode "override")}}selected{{/if}}>Override</option>
-              <option value="advantage" {{#if (eq mode "advantage")}}selected{{/if}}>Advantage</option>
-              <option value="disadvantage" {{#if (eq mode "disadvantage")}}selected{{/if}}>Disadvantage</option>
-            </select>
-          </div>
-          
-          <div class="eventide-item-sheet__effects-grid-cell">
-            <input 
-              type="number" 
-              class="eventide-item-sheet__effect-value" 
-              name="characterEffects.regularEffects.{{@index}}.value" 
-              value="{{value}}" 
-              step="1"
-              data-index="{{@index}}"
-              data-type="visible"
-            >
-          </div>
-          
-          <div class="eventide-item-sheet__effects-grid-cell">
-            <button 
-              type="button" 
-              class="eventide-item-sheet__effect-remove"
-              data-action="deleteCharacterEffect" 
-              data-index="{{@index}}"
-              data-type="regularEffects"
-              title="Remove effect"
-            >
-              <i class="fas fa-trash"></i>
-            </button>
-          </div>
-        </div>
-      {{/each}}
+      <div class="eventide-item-sheet__effect-controls">
+        <button 
+          type="button" 
+          class="eventide-item-sheet__add-effect"
+          data-action="newCharacterEffect" 
+          data-type="abilities"
+          data-ability="acro"
+          title="Add new effect"
+        >
+          <i class="fas fa-plus"></i> Add Effect
+        </button>
+      </div>
     </div>
     
-    <div class="eventide-item-sheet__effect-controls">
-      <button 
-        type="button" 
-        class="eventide-item-sheet__add-effect"
-        data-action="newCharacterEffect" 
-        data-type="abilities"
-        data-ability="acro"
-        title="Add new effect"
-      >
-        <i class="fas fa-plus"></i> Add Effect
-      </button>
-    </div>
-    
+    {{! Hidden Effects Section }}
     {{#if isGM}}
-      <details class="eventide-item-sheet__hidden-effects" open>
-        <summary class="eventide-item-sheet__hidden-effects-header">Hidden Effects ({{characterEffects.hiddenEffects.length}})</summary>
+      <div class="eventide-item-sheet__effects-section eventide-item-sheet__effects-section--hidden">
+        <h3 class="eventide-item-sheet__effects-section-header">
+          Hidden Effects ({{characterEffects.hiddenEffects.length}})
+        </h3>
         
         <div class="eventide-item-sheet__effects-grid">
           <div class="eventide-item-sheet__effects-grid-header">
@@ -113,7 +120,6 @@
             <div class="eventide-item-sheet__effects-grid-row eventide-item-sheet__effects-grid-row--hidden">
               <div class="eventide-item-sheet__effects-grid-cell">
                 <select 
-                  class="eventide-item-sheet__effect-attribute" 
                   name="characterEffects.hiddenEffects.{{@index}}.ability"
                   data-index="{{@index}}"
                   data-type="hiddenEffects"
@@ -128,7 +134,6 @@
               
               <div class="eventide-item-sheet__effects-grid-cell">
                 <select 
-                  class="eventide-item-sheet__effect-mode" 
                   name="characterEffects.hiddenEffects.{{@index}}.mode"
                   data-index="{{@index}}"
                   data-type="hiddenEffects"
@@ -141,7 +146,6 @@
               <div class="eventide-item-sheet__effects-grid-cell">
                 <input 
                   type="number" 
-                  class="eventide-item-sheet__effect-value" 
                   name="characterEffects.hiddenEffects.{{@index}}.value" 
                   value="{{value}}" 
                   step="1"
@@ -178,10 +182,12 @@
             <i class="fas fa-plus"></i> Add Hidden Effect
           </button>
         </div>
-      </details>
+      </div>
     {{else if hiddenEffects.length}}
-      <details class="eventide-item-sheet__hidden-effects" open>
-        <summary class="eventide-item-sheet__hidden-effects-header">Hidden Effects ({{characterEffects.hiddenEffects.length}})</summary>
+      <div class="eventide-item-sheet__effects-section eventide-item-sheet__effects-section--hidden">
+        <h3 class="eventide-item-sheet__effects-section-header">
+          Hidden Effects ({{characterEffects.hiddenEffects.length}})
+        </h3>
         
         <div class="eventide-item-sheet__effects-grid">
           <div class="eventide-item-sheet__effects-grid-header">
@@ -195,7 +201,6 @@
             <div class="eventide-item-sheet__effects-grid-row eventide-item-sheet__effects-grid-row--hidden">
               <div class="eventide-item-sheet__effects-grid-cell">
                 <select 
-                  class="eventide-item-sheet__effect-attribute" 
                   name="characterEffects.hiddenEffects.{{@index}}.ability"
                   data-index="{{@index}}"
                   data-type="hidden"
@@ -211,21 +216,19 @@
               
               <div class="eventide-item-sheet__effects-grid-cell">
                 <select 
-                  class="eventide-item-sheet__effect-mode" 
                   name="characterEffects.hiddenEffects.{{@index}}.mode"
                   data-index="{{@index}}"
                   data-type="hidden"
                   disabled
                 >
-                  <option value="add" {{#if (eq mode "change")}}selected{{/if}}>Add</option>
-                  <option value="override" {{#if (eq mode "override")}}selected{{/if}}>Override</option>
+                  <option value="add" {{#if (eq ../mode "change")}}selected{{/if}}>Add</option>
+                  <option value="override" {{#if (eq ../mode "override")}}selected{{/if}}>Override</option>
                 </select>
               </div>
               
               <div class="eventide-item-sheet__effects-grid-cell">
                 <input 
                   type="number" 
-                  class="eventide-item-sheet__effect-value" 
                   name="characterEffects.hiddenEffects.{{@index}}.value" 
                   value="{{value}}" 
                   step="1"
@@ -236,12 +239,12 @@
               </div>
               
               <div class="eventide-item-sheet__effects-grid-cell">
-                <!-- No remove button for non-GM users -->
+                <i class="fas fa-eye-slash" title="Hidden effect (only visible to GM)"></i>
               </div>
             </div>
           {{/each}}
         </div>
-      </details>
+      </div>
     {{/if}}
   </div>
 </section>

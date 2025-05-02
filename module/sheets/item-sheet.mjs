@@ -25,7 +25,13 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
 
   /** @override */
   static DEFAULT_OPTIONS = {
-    classes: ["eventide-rp-system", "item"],
+    classes: [
+      "eventide-rp-system",
+      "sheet",
+      "item",
+      "eventide-item-sheet",
+      "eventide-item-sheet--scrollbars"
+    ],
     actions: {
       onEditImage: this._onEditImage,
       viewDoc: this._viewEffect,
@@ -93,13 +99,13 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
     // Control which parts show based on document subtype
     switch (this.document.type) {
       case "feature":
-        options.parts.push("effects", "characterEffects");
+        options.parts.push("characterEffects");
         break;
       case "status":
-        options.parts.push("effects", "characterEffects");
+        options.parts.push("characterEffects");
         break;
       case "gear":
-        options.parts.push("attributesGear", "effects", "characterEffects");
+        options.parts.push("attributesGear", "characterEffects");
         break;
       case "combatPower":
         options.parts.push("attributesCombatPower", "prerequisites");
