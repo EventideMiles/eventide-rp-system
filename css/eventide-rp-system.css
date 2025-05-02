@@ -1031,16 +1031,18 @@
   margin-bottom: 0px;
   margin-top: 0px;
   position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
 }
 .chat-card__header--subheader {
   color: var(--eventide-rp-system-chat-card-white);
   align-items: center;
   justify-content: center;
   font-size: 0.7rem;
+}
+.chat-card__header--image {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 .chat-card__header--acrobatics {
   background-color: var(--eventide-rp-system-abilities-acro);
