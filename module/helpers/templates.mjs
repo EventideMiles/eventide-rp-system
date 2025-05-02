@@ -1,3 +1,5 @@
+const { loadTemplates } = foundry.applications.handlebars;
+
 /**
  * Define a set of template paths to pre-load
  * Pre-loaded templates are compiled and cached for fast access when rendering
@@ -13,7 +15,7 @@ export const preloadHandlebarsTemplates = async function () {
     "systems/eventide-rp-system/templates/actor/gear.hbs",
     "systems/eventide-rp-system/templates/actor/header.hbs",
     "systems/eventide-rp-system/templates/actor/statuses.hbs",
-    
+
     // Chat message templates
     "systems/eventide-rp-system/templates/chat/combat-power-message.hbs",
     "systems/eventide-rp-system/templates/chat/delete-status-message.hbs",
@@ -24,7 +26,7 @@ export const preloadHandlebarsTemplates = async function () {
     "systems/eventide-rp-system/templates/chat/restore-message.hbs",
     "systems/eventide-rp-system/templates/chat/roll-message.hbs",
     "systems/eventide-rp-system/templates/chat/status-message.hbs",
-    
+
     // Item partials
     "systems/eventide-rp-system/templates/item/attribute-parts/combat-power.hbs",
     "systems/eventide-rp-system/templates/item/attribute-parts/feature.hbs",
@@ -33,7 +35,7 @@ export const preloadHandlebarsTemplates = async function () {
     "systems/eventide-rp-system/templates/item/effects.hbs",
     "systems/eventide-rp-system/templates/item/header.hbs",
     "systems/eventide-rp-system/templates/item/prerequisites.hbs",
-    
+
     // Macro templates
     "systems/eventide-rp-system/templates/macros/change-target-status.hbs",
     "systems/eventide-rp-system/templates/macros/damage-targets.hbs",
@@ -42,11 +44,11 @@ export const preloadHandlebarsTemplates = async function () {
     "systems/eventide-rp-system/templates/macros/gear-transfer.hbs",
     "systems/eventide-rp-system/templates/macros/restore-target.hbs",
     "systems/eventide-rp-system/templates/macros/select-ability-roll.hbs",
-    
+
     // Popup templates
     "systems/eventide-rp-system/templates/macros/popups/combat-power-popup.hbs",
     "systems/eventide-rp-system/templates/macros/popups/feature-popup.hbs",
     "systems/eventide-rp-system/templates/macros/popups/gear-popup.hbs",
-    "systems/eventide-rp-system/templates/macros/popups/status-popup.hbs"
+    "systems/eventide-rp-system/templates/macros/popups/status-popup.hbs",
   ]);
 };

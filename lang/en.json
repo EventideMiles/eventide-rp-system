@@ -126,7 +126,8 @@
     },
     "Info": {
       "CompendiumItemCreated": "Created {keyType} item {name} in the {packLabel} compendium",
-      "TokenItemCreated": "Created {keyType} item {name} on {count} {targetType} token(s) and in the {packLabel} compendium"
+      "TokenItemCreated": "Created {keyType} item {name} on {count} {targetType} token(s) and in the {packLabel} compendium",
+      "Stored": "Stored {keyType} information in localStorage"
     },
     "Forms": {
       "ScriptExplanations": {
@@ -182,7 +183,8 @@
         "ClassName": "Class",
         "Cursed": "Cursed",
         "Equipped": "Equipped",
-        "EquipFirst": "You need to equip this item to see details. If you want to investigate it first ask your GM."
+        "EquipFirst": "You need to equip this item to see details. If you want to investigate it first ask your GM.",
+        "DisplayOnToken": "Display On Token"
       },
       "Buttons": {
         "Change": "Change",
@@ -317,7 +319,8 @@
         "Details": "Details",
         "Effects": "Effects",
         "Prerequisites": "Prerequisites",
-        "Attributes": "Attributes"
+        "Attributes": "Attributes",
+        "CharacterEffects": "Character Effects"
       }
     },
     "Messages": {

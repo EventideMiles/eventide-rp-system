@@ -57,7 +57,7 @@
       // Ensure all sections don't scroll individually
       section.main, aside.sidebar, .items-list {
         overflow: visible !important;
-        max-height: none !important; // Remove height constraints
+        // max-height: none !important; // Remove height constraints
       }
     }
     
@@ -72,7 +72,7 @@
 
 .eventide-character-sheet input {
   background-color: colors.$character-input;
-  color: colors.$c-white;
+  color: colors.$c-black;
   border-radius: 5px;
   border: 1px solid colors.$character-input-border;
 }

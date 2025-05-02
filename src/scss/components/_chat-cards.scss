@@ -13,12 +13,19 @@
         margin-bottom: 0px;
         margin-top: 0px;
         position: relative;
-
+        
         &--subheader {
             color: colors.$card-white;
             align-items: center;
             justify-content: center;
             font-size: 0.7rem;
+        }
+
+        &--image {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
 
         &--acrobatics {

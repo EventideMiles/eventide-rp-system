@@ -23,9 +23,12 @@ export class ChangeTargetStatus extends EventideSheetHelpers {
       icon: "fa-regular fa-atom-simple",
     },
     form: {
-      handler: this.#onSubmit,
+      handler: this._onSubmit,
       submitOnChange: false,
       closeOnSubmit: true,
+    },
+    actions: {
+      onStore: this._onStore,
     },
   };
 
@@ -94,6 +97,50 @@ export class ChangeTargetStatus extends EventideSheetHelpers {
     return context;
   }
 
+  async _store() {
+    const statusId = this.form.statusSelector.value;
+
+    if (!statusId) {
+      ui.notifications.error(
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.MissingStatus")
+      );
+      return;
+    }
+    const adjustmentChange = this.form.adjustmentChange.value;
+    const overrideChange = this.form.overrideChange.value;
+    const advantageChange = this.form.advantageChange.value;
+    const disadvantageChange = this.form.disadvantageChange.value;
+    const adjustmentMode = this.form.adjustmentMode.value;
+    const overrideMode = this.form.overrideMode.value;
+    const advantageMode = this.form.advantageMode.value;
+    const disadvantageMode = this.form.disadvantageMode.value;
+
+    const storageObject = {
+      changeTargetStatus_statusSelector: statusId,
+      changeTargetStatus_adjustmentChange: adjustmentChange,
+      changeTargetStatus_overrideChange: overrideChange,
+      changeTargetStatus_advantageChange: advantageChange,
+      changeTargetStatus_disadvantageChange: disadvantageChange,
+      changeTargetStatus_adjustmentMode: adjustmentMode,
+      changeTargetStatus_overrideMode: overrideMode,
+      changeTargetStatus_advantageMode: advantageMode,
+      changeTargetStatus_disadvantageMode: disadvantageMode,
+    };
+
+    await erps.utils.storeLocal(storageObject);
+
+    ui.notifications.info(
+      game.i18n.format("EVENTIDE_RP_SYSTEM.Info.Stored", {
+        keyType: "status update",
+      })
+    );
+    this.close();
+  }
+
+  static async _onStore() {
+    this._store();
+  }
+
   /**
    * Handles form submission to update status effect values.
    * @param {Event} event - The form submission event
@@ -101,7 +148,7 @@ export class ChangeTargetStatus extends EventideSheetHelpers {
    * @param {FormData} formData - The form data
    * @private
    */
-  static async #onSubmit(event, form, formData) {
+  static async _onSubmit(event, form, formData) {
     const statusId = form.statusSelector.value;
 
     if (!statusId) {
@@ -181,19 +228,8 @@ export class ChangeTargetStatus extends EventideSheetHelpers {
       ],
     });
 
-    // store data in local storage
-    const storageObject = {
-      changeTargetStatus_statusSelector: form.statusSelector.value,
-      changeTargetStatus_adjustmentChange: form.adjustmentChange.value,
-      changeTargetStatus_overrideChange: form.overrideChange.value,
-      changeTargetStatus_advantageChange: form.advantageChange.value,
-      changeTargetStatus_disadvantageChange: form.disadvantageChange.value,
-      changeTargetStatus_adjustmentMode: form.adjustmentMode.value,
-      changeTargetStatus_overrideMode: form.overrideMode.value,
-      changeTargetStatus_advantageMode: form.advantageMode.value,
-      changeTargetStatus_disadvantageMode: form.disadvantageMode.value,
-    };
+    Hooks.call("erpsUpdateItem", status, {}, {}, game.user.id);
 
-    await erps.utils.storeLocal(storageObject);
+    this._store();
   }
 }

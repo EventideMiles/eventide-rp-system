@@ -1,7 +1,10 @@
 import { prepareActiveEffectCategories } from "../helpers/effects.mjs";
+import { prepareCharacterEffects } from "../helpers/character-effects.mjs";
 import { EventideSheetHelpers } from "./base/eventide-sheet-helpers.mjs";
 
 const { api, sheets } = foundry.applications;
+
+const { DragDrop, TextEditor } = foundry.applications.ux;
 
 /**
  * Item sheet implementation for the Eventide RP System.
@@ -18,17 +21,33 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
   constructor(options = {}) {
     super(options);
     this.#dragDrop = this.#createDragDropHandlers();
+    this.#formChanged = false; // Track if the form has been changed
   }
+
+  /*********************
+   *
+   *   CONFIG / CONTEXT
+   *
+   *********************/
 
   /** @override */
   static DEFAULT_OPTIONS = {
-    classes: ["eventide-rp-system", "item"],
+    classes: [
+      "eventide-rp-system",
+      "sheet",
+      "item",
+      "eventide-item-sheet",
+      "eventide-item-sheet--scrollbars",
+    ],
     actions: {
       onEditImage: this._onEditImage,
       viewDoc: this._viewEffect,
       createDoc: this._createEffect,
       deleteDoc: this._deleteEffect,
       toggleEffect: this._toggleEffect,
+      newCharacterEffect: this._newCharacterEffect,
+      deleteCharacterEffect: this._deleteCharacterEffect,
+      toggleEffectDisplay: this._toggleEffectDisplay,
     },
     position: {
       width: 600,
@@ -71,6 +90,10 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
     effects: {
       template: "systems/eventide-rp-system/templates/item/effects.hbs",
     },
+    characterEffects: {
+      template:
+        "systems/eventide-rp-system/templates/item/character-effects.hbs",
+    },
   };
 
   /** @override */
@@ -83,13 +106,13 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
     // Control which parts show based on document subtype
     switch (this.document.type) {
       case "feature":
-        options.parts.push("effects");
+        options.parts.push("characterEffects");
         break;
       case "status":
-        options.parts.push("effects");
+        options.parts.push("characterEffects");
         break;
       case "gear":
-        options.parts.push("attributesGear", "effects");
+        options.parts.push("attributesGear", "characterEffects");
         break;
       case "combatPower":
         options.parts.push("attributesCombatPower", "prerequisites");
@@ -97,29 +120,32 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
     }
   }
 
-  /* -------------------------------------------- */
-
   /** @override */
   async _prepareContext(options) {
-    const context = {
-      // Validates both permissions and compendium status
-      editable: this.isEditable,
-      owner: this.document.isOwner,
-      limited: this.document.limited,
-      // Add the item document.
-      item: this.item,
-      // Adding system and flags for easier access
-      system: this.item.system,
-      flags: this.item.flags,
-      // Adding a pointer to CONFIG.EVENTIDE_RP_SYSTEM
-      config: CONFIG.EVENTIDE_RP_SYSTEM,
-      // You can factor out context construction to helper functions
-      tabs: this._getTabs(options.parts),
-      // Necessary for formInput and formFields helpers
-      fields: this.document.schema.fields,
-      systemFields: this.document.system.schema.fields,
-      isGM: game.user.isGM,
-    };
+    const context = {};
+
+    await this._eventideItemEffectGuards();
+
+    context.activeEffect = this.item.effects.contents[0];
+    context.iconTint = context.activeEffect.tint;
+
+    // Validates both permissions and compendium status
+    context.editable = this.isEditable;
+    context.owner = this.document.isOwner;
+    context.limited = this.document.limited;
+    // Add the item document.
+    context.item = this.item;
+    // Adding system and flags for easier access
+    context.system = this.item.system;
+    context.flags = this.item.flags;
+    // Adding a pointer to CONFIG.EVENTIDE_RP_SYSTEM
+    context.config = CONFIG.EVENTIDE_RP_SYSTEM;
+    // You can factor out context construction to helper functions
+    context.tabs = this._getTabs(options.parts);
+    // Necessary for formInput and formFields helpers
+    context.fields = this.document.schema.fields;
+    context.systemFields = this.document.system.schema.fields;
+    context.isGM = game.user.isGM;
 
     return context;
   }
@@ -151,17 +177,18 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
         context.tab = context.tabs[partId];
         // Enrich description info for display
         // Enrichment turns text like `[[/r 1d20]]` into buttons
-        context.enrichedDescription = await TextEditor.enrichHTML(
-          this.item.system.description,
-          {
-            // Whether to show secret blocks in the finished html
-            secrets: this.document.isOwner,
-            // Data to fill in for inline rolls
-            rollData: this.item.getRollData(),
-            // Relative UUID resolution
-            relativeTo: this.item,
-          }
-        );
+        context.enrichedDescription =
+          await TextEditor.implementation.enrichHTML(
+            this.item.system.description,
+            {
+              // Whether to show secret blocks in the finished html
+              secrets: this.document.isOwner,
+              // Data to fill in for inline rolls
+              rollData: this.item.getRollData(),
+              // Relative UUID resolution
+              relativeTo: this.item,
+            }
+          );
         break;
       case "prerequisites":
         context.prerequisites = this.item.system.prerequisites;
@@ -172,6 +199,13 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
         // Prepare active effects for easier access
         context.effects = await prepareActiveEffectCategories(
           this.item.effects
+        );
+        break;
+      case "characterEffects":
+        context.tab = context.tabs[partId];
+        // Prepare active effects for easier access
+        context.characterEffects = await prepareCharacterEffects(
+          this.item.effects.contents[0]
         );
         break;
     }
@@ -216,6 +250,10 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
           tab.id = "effects";
           tab.label += "Effects";
           break;
+        case "characterEffects":
+          tab.id = "characterEffects";
+          tab.label += "CharacterEffects";
+          break;
         case "attributesFeature":
         case "attributesGear":
         case "attributesCombatPower":
@@ -229,6 +267,12 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
     }, {});
   }
 
+  /*********************
+   *
+   *   EVENT HANDLERS
+   *
+   *********************/
+
   /**
    * Actions performed after any render of the Application.
    * Post-render steps are not awaited by the render process.
@@ -238,9 +282,32 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
    */
   _onRender(context, options) {
     this.#dragDrop.forEach((d) => d.bind(this.element));
-    // You may want to add other special handling here
-    // Foundry comes with a large number of utility classes, e.g. SearchFilter
-    // That you may want to implement yourself.
+  }
+
+  async _onChangeForm(formConfig, event) {
+    this.#formChanged = true; // Set flag when form changes
+
+    if (event.target.name.includes("characterEffects")) {
+      await this._updateCharacterEffects();
+      return;
+    }
+    if (event.target.name.includes("iconTint")) {
+      const updateData = {
+        _id: this.item.effects.contents[0]._id,
+        tint: event.target.value,
+      };
+      await this.item.updateEmbeddedDocuments("ActiveEffect", [updateData]);
+      return;
+    }
+    await super._onChangeForm(formConfig, event);
+  }
+
+  async _onClose() {
+    // Only call the hook if the form was changed
+    if (this.#formChanged) {
+      Hooks.call("erpsUpdateItem", this.item, this.item, {}, game.user.id);
+    }
+    this.#formChanged = false;
   }
 
   /**************
@@ -277,95 +344,35 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
     return fp.browse();
   }
 
-  /**
-   * Renders an embedded document's sheet
-   *
-   * @this EventideRpSystemItemSheet
-   * @param {PointerEvent} event   The originating click event
-   * @param {HTMLElement} target   The capturing HTML element which defined a [data-action]
-   * @protected
-   */
-  static async _viewEffect(event, target) {
-    const effect = this._getEffect(target);
-    effect.sheet.render(true);
-  }
-
-  /**
-   * Handles item deletion
-   *
-   * @this EventideRpSystemItemSheet
-   * @param {PointerEvent} event   The originating click event
-   * @param {HTMLElement} target   The capturing HTML element which defined a [data-action]
-   * @protected
-   */
-  static async _deleteEffect(event, target) {
-    const effect = this._getEffect(target);
-    await effect.delete();
-  }
-
-  /**
-   * Handle creating a new Owned Item or ActiveEffect for the actor using initial data defined in the HTML dataset
-   *
-   * @this EventideRpSystemItemSheet
-   * @param {PointerEvent} event   The originating click event
-   * @param {HTMLElement} target   The capturing HTML element which defined a [data-action]
-   * @private
-   */
-  static async _createEffect(event, target) {
-    // Retrieve the configured document class for ActiveEffect
-    const aeCls = getDocumentClass("ActiveEffect");
-    // Prepare the document creation data by initializing it a default name.
-    // As of v12, you can define custom Active Effect subtypes just like Item subtypes if you want
-    const effectData = {
-      name: aeCls.defaultName({
-        // defaultName handles an undefined type gracefully
-        type: target.dataset.type,
-        parent: this.item,
-      }),
+  static async _newCharacterEffect(event, target) {
+    const { type, ability } = target.dataset;
+    const newEffect = {
+      type,
+      ability,
     };
-    // Loop through the dataset and add it to our effectData
-    for (const [dataKey, value] of Object.entries(target.dataset)) {
-      // These data attributes are reserved for the action handling
-      if (["action", "documentClass"].includes(dataKey)) continue;
-      // Nested properties require dot notation in the HTML, e.g. anything with `system`
-      foundry.utils.setProperty(effectData, dataKey, value);
-    }
-
-    // Finally, create the embedded document!
-    await aeCls.create(effectData, { parent: this.item });
+    this._updateCharacterEffects({ newEffect });
   }
 
-  /**
-   * Determines effect parent to pass to helper
-   *
-   * @this EventideRpSystemItemSheet
-   * @param {PointerEvent} event   The originating click event
-   * @param {HTMLElement} target   The capturing HTML element which defined a [data-action]
-   * @private
-   */
-  static async _toggleEffect(event, target) {
-    const effect = this._getEffect(target);
-    await effect.update({ disabled: !effect.disabled });
+  static async _deleteCharacterEffect(event, target) {
+    const index = target.dataset.index;
+    const type = target.dataset.type;
+    this._updateCharacterEffects({ remove: { index, type } });
   }
 
-  /** Helper Functions */
-
-  /**
-   * Fetches the row with the data for the rendered embedded document
-   *
-   * @param {HTMLElement} target  The element with the action
-   * @returns {HTMLLIElement} The document's row
-   */
-  _getEffect(target) {
-    const li = target.closest(".effect");
-    return this.item.effects.get(li?.dataset?.effectId);
+  static async _toggleEffectDisplay(event, target) {
+    const duration = target.checked ? { seconds: 604800 } : { seconds: 0 };
+    const updateData = {
+      _id: this.item.effects.contents[0]._id,
+      duration,
+    };
+    await this.item.updateEmbeddedDocuments("ActiveEffect", [updateData]);
   }
 
-  /**
+  /*****************
    *
-   * DragDrop
+   *   DragDrop
    *
-   */
+   *****************/
 
   /**
    * Define whether a user is able to begin a dragstart workflow for a given drag selector
@@ -425,7 +432,7 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
    * @protected
    */
   async _onDrop(event) {
-    const data = TextEditor.getDragEventData(event);
+    const data = TextEditor.implementation.getDragEventData(event);
     const item = this.item;
     const allowed = Hooks.call("dropItemSheetData", item, this, data);
     if (allowed === false) return;
@@ -545,7 +552,7 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
 
   /**
    * Returns an array of DragDrop instances
-   * @type {DragDrop[]}
+   * @type {DragDrop.implementation[]}
    */
   get dragDrop() {
     return this.#dragDrop;
@@ -554,10 +561,11 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
   // This is marked as private because there's no real need
   // for subclasses or external hooks to mess with it directly
   #dragDrop;
+  #formChanged; // Flag to track if form has been changed
 
   /**
    * Create drag-and-drop workflow handlers for this Application
-   * @returns {DragDrop[]}     An array of DragDrop handlers
+   * @returns {DragDrop.implementation[]}     An array of DragDrop handlers
    * @private
    */
   #createDragDropHandlers() {
@@ -571,7 +579,280 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
         dragover: this._onDragOver.bind(this),
         drop: this._onDrop.bind(this),
       };
-      return new DragDrop(d);
+      return new DragDrop.implementation(d);
     });
+  }
+
+  /**************************
+   *
+   *   SANITIZATION / GUARDS
+   *
+   **************************/
+
+  /**
+   * Ensures that each item has exactly one active effect
+   * @private
+   */
+  async _eventideItemEffectGuards() {
+    const effects = Array.from(this.item.effects);
+
+    if (effects.length > 1) {
+      let keepEffect = this.item.effects.contents[0];
+
+      const effectIds = effects.map((effect) => effect._id);
+
+      await this.item.deleteEmbeddedDocuments("ActiveEffect", effectIds);
+      await this.item.createEmbeddedDocuments("ActiveEffect", [keepEffect]);
+    }
+
+    if (effects.length === 0) {
+      const newEffect = new ActiveEffect({
+        _id: foundry.utils.randomID(),
+        name: this.item.name,
+        img: this.item.img,
+        changes: [],
+        disabled: false,
+        duration: {
+          startTime: null,
+          seconds:
+            this.item.type === "status" || this.item.type === "feature"
+              ? 18000
+              : 0,
+          combat: "",
+          rounds: 0,
+          turns: 0,
+          startRound: 0,
+          startTurn: 0,
+        },
+        description: "",
+        origin: "",
+        tint: "#ffffff",
+        transfer: true,
+        statuses: new Set(),
+        flags: {},
+      });
+      await this.item.createEmbeddedDocuments("ActiveEffect", [newEffect]);
+    }
+
+    if (
+      !this.item.effects.contents.find(
+        (effect) =>
+          effect.name === this.item.name && effect.img === this.item.img
+      )
+    ) {
+      const keepEffectId = this.item.effects.contents[0]._id;
+
+      const updateData = {
+        _id: keepEffectId,
+        name: this.item.name,
+        img: this.item.img,
+      };
+      await this.item.updateEmbeddedDocuments("ActiveEffect", [updateData]);
+    }
+  }
+
+  /**
+   * Updates the character effects for the item
+   * @param {Object} [options={}] - Options for updating character effects
+   * @param {Object} [options.newEffect] - Configuration for a new effect to add
+   * @param {(null|"abilities"|"hiddenAbilities")} [options.newEffect.type] - Type of effect, must be either null, 'abilities' or 'hiddenAbilities'
+   * @param {string} [options.newEffect.ability] - Ability identifier for the new effect
+   * @param {Object} [options.remove] - Configuration for removing an existing effect
+   * @param {number} [options.remove.index] - Index of the effect to remove
+   * @param {(null|"regularEffects"|"hiddenEffects")} [options.remove.type] - Type of effect to remove, must be either null,'regularEffects' or 'hiddenEffects'
+   * @returns {Promise<void>}
+   */
+  async _updateCharacterEffects({
+    newEffect = { type: null, ability: null },
+    remove = { index: null, type: null },
+  } = {}) {
+    // Get all form elements that include "characterEffects" in their name
+    // Filter out elements that match the remove value if one is provided
+    let formElements = this.form.querySelectorAll('[name*="characterEffects"]');
+
+    if (remove.type && remove.index) {
+      formElements = Array.from(formElements).filter(
+        (el) => !el.name.includes(`${remove.type}.${remove.index}`)
+      );
+    }
+
+    // Create an object to store the values
+    const characterEffects = {
+      regularEffects: [],
+      hiddenEffects: [],
+    };
+
+    // Process each form element using for...of instead of forEach for async safety
+    for (const element of formElements) {
+      const name = element.name;
+      const value = element.value;
+
+      if (!name.includes("regularEffects") && !name.includes("hiddenEffects"))
+        continue;
+
+      const parts = name.split(".");
+      if (parts.length < 3) continue;
+
+      // Parse the name to extract the type (regularEffects or hiddenEffects) and index
+      const type = parts[1]; // regularEffects or hiddenEffects
+      const index = parseInt(parts[2]);
+      const property = parts[3]; // ability, mode, value, etc.
+
+      // Ensure the array has an object at this index
+      if (!characterEffects[type][index]) {
+        characterEffects[type][index] = {};
+      }
+
+      // Set the property value
+      characterEffects[type][index][property] = value;
+    }
+
+    // Clean up the arrays (remove any undefined entries)
+    characterEffects.regularEffects = characterEffects.regularEffects.filter(
+      (e) => e
+    );
+    characterEffects.hiddenEffects = characterEffects.hiddenEffects.filter(
+      (e) => e
+    );
+
+    const processEffects = async (effects, isRegular) => {
+      return effects.map((effect) => {
+        let key, mode;
+
+        if (isRegular) {
+          key = `system.abilities.${effect.ability}.${
+            effect.mode === "add"
+              ? "change"
+              : effect.mode === "override"
+              ? "override"
+              : effect.mode === "advantage"
+              ? "diceAdjustments.advantage"
+              : "diceAdjustments.disadvantage"
+          }`;
+        } else {
+          key = `system.hiddenAbilities.${effect.ability}.${
+            effect.mode === "add" ? "change" : "override"
+          }`;
+        }
+
+        mode =
+          (isRegular && effect.mode !== "override") ||
+          (!isRegular && effect.mode === "add")
+            ? 2
+            : 5;
+
+        return { key, mode, value: effect.value };
+      });
+    };
+
+    const newEffects = [
+      ...(await processEffects(characterEffects.regularEffects, true)),
+      ...(await processEffects(characterEffects.hiddenEffects, false)),
+    ];
+
+    if (newEffect.type && newEffect.ability) {
+      newEffects.push({
+        key: `system.${newEffect.type}.${newEffect.ability}.change`,
+        mode: 2,
+        value: 0,
+      });
+    }
+
+    const updateData = {
+      _id: this.item.effects.contents[0]._id,
+      changes: newEffects,
+    };
+
+    await this.item.updateEmbeddedDocuments("ActiveEffect", [updateData]);
+  }
+
+  /*************************************************
+   *
+   *   ORIGINAL EFFECT FUNCTIONS (Legacy / Unused)
+   *
+   *************************************************/
+
+  /**
+   * Renders an embedded document's sheet
+   *
+   * @this EventideRpSystemItemSheet
+   * @param {PointerEvent} event   The originating click event
+   * @param {HTMLElement} target   The capturing HTML element which defined a [data-action]
+   * @protected
+   */
+  static async _viewEffect(event, target) {
+    const effect = this._getEffect(target);
+    effect.sheet.render(true);
+  }
+
+  /**
+   * Handles item deletion
+   *
+   * @this EventideRpSystemItemSheet
+   * @param {PointerEvent} event   The originating click event
+   * @param {HTMLElement} target   The capturing HTML element which defined a [data-action]
+   * @protected
+   */
+  static async _deleteEffect(event, target) {
+    const effect = this._getEffect(target);
+    await effect.delete();
+  }
+
+  /**
+   * Handle creating a new Owned Item or ActiveEffect for the actor using initial data defined in the HTML dataset
+   *
+   * @this EventideRpSystemItemSheet
+   * @param {PointerEvent} event   The originating click event
+   * @param {HTMLElement} target   The capturing HTML element which defined a [data-action]
+   * @private
+   */
+  static async _createEffect(event, target) {
+    // Retrieve the configured document class for ActiveEffect
+    const aeCls = getDocumentClass("ActiveEffect");
+    // Prepare the document creation data by initializing it a default name.
+    // As of v12, you can define custom Active Effect subtypes just like Item subtypes if you want
+    const effectData = {
+      name: aeCls.defaultName({
+        // defaultName handles an undefined type gracefully
+        type: target.dataset.type,
+        parent: this.item,
+      }),
+    };
+    // Loop through the dataset and add it to our effectData
+    for (const [dataKey, value] of Object.entries(target.dataset)) {
+      // These data attributes are reserved for the action handling
+      if (["action", "documentClass"].includes(dataKey)) continue;
+      // Nested properties require dot notation in the HTML, e.g. anything with `system`
+      foundry.utils.setProperty(effectData, dataKey, value);
+    }
+
+    // Finally, create the embedded document!
+    await aeCls.create(effectData, { parent: this.item });
+  }
+
+  /**
+   * Determines effect parent to pass to helper
+   *
+   * @this EventideRpSystemItemSheet
+   * @param {PointerEvent} event   The originating click event
+   * @param {HTMLElement} target   The capturing HTML element which defined a [data-action]
+   * @private
+   */
+  static async _toggleEffect(event, target) {
+    const effect = this._getEffect(target);
+    await effect.update({ disabled: !effect.disabled });
+  }
+
+  /** Helper Functions */
+
+  /**
+   * Fetches the row with the data for the rendered embedded document
+   *
+   * @param {HTMLElement} target  The element with the action
+   * @returns {HTMLLIElement} The document's row
+   */
+  _getEffect(target) {
+    const li = target.closest(".effect");
+    return this.item.effects.get(li?.dataset?.effectId);
   }
 }

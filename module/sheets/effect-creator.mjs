@@ -49,15 +49,26 @@ export class EffectCreator extends CreatorApplication {
     const context = await super._prepareContext(options);
 
     context.storedData = {
-      effect_img: this.storedData[this.storageKeys[0]] || "icons/svg/stoned.svg",
+      effect_img:
+        this.storedData[this.storageKeys[0]] || "icons/svg/stoned.svg",
       effect_bgColor: this.storedData[this.storageKeys[1]],
       effect_textColor: this.storedData[this.storageKeys[2]],
       effect_iconTint: this.storedData[this.storageKeys[3]],
+      effect_displayOnToken: this.storedData[this.storageKeys[4]],
       effect_type:
-        this.storedData[this.storageKeys[4]] === "feature" || context.playerMode
+        this.storedData[this.storageKeys[5]] === "feature" || context.playerMode
           ? "feature"
           : "status",
     };
+
+    console.log(context.storedData);
+
+    if (context.storedData.effect_displayOnToken === null) {
+      console.log("Setting default displayOnToken to true");
+      context.storedData.effect_displayOnToken = "true";
+    }
+
+    console.log(context.storedData);
 
     return context;
   }

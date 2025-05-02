@@ -1,0 +1,95 @@
+{{!-- Item Sheet Template for Eventide RP System (2x2 Grid Layout) --}}
+<form class="eventide-item-sheet" autocomplete="off">
+  <div class="eventide-item-sheet__grid">
+    {{!-- Top Left: Item Configuration --}}
+    <div class="eventide-item-sheet__cell eventide-item-sheet__cell--top-left">
+      <section class="eventide-item-sheet__section eventide-item-sheet__section--config">
+        <div class="eventide-item-sheet__section-header">
+          <h3>Item Configuration</h3>
+          <a class="eventide-item-sheet__section-header-toggle" data-action="toggleSection" data-section="config">
+            <i class="fas fa-chevron-up"></i>
+          </a>
+        </div>
+        <div class="eventide-item-sheet__section-content" data-section="config">
+          {{!-- Item Header --}}
+          <div class="eventide-item-sheet__header">
+            <div class="eventide-item-sheet__header-image">
+              <img src="{{item.img}}" data-edit="img" title="{{item.name}}" data-action="onEditImage" />
+            </div>
+            <div class="eventide-item-sheet__header-details">
+              <div class="eventide-item-sheet__name-row">
+                <input name="name" type="text" value="{{item.name}}" placeholder="Name" />
+              </div>
+              <div class="eventide-item-sheet__type-row">
+                <span class="eventide-item-sheet__type-label">{{localize "EVENTIDE_RP_SYSTEM.ItemSheet.Type"}}</span>
+                <span class="eventide-item-sheet__type-value">{{item.type}}</span>
+              </div>
+              {{#if activeEffect}}
+              <div class="eventide-item-sheet__icon-tint">
+                <label>{{localize "EVENTIDE_RP_SYSTEM.ItemSheet.IconTint"}}</label>
+                <input type="color" name="effects[0].tint" value="{{activeEffect.tint}}" data-action="updateEffectTint" />
+              </div>
+              {{/if}}
+            </div>
+          </div>
+          
+          {{!-- Item Attributes --}}
+          <div class="eventide-item-sheet__attributes">
+            {{> "systems/eventide-rp-system/templates/item/parts/attributes.hbs"}}
+          </div>
+        </div>
+      </section>
+    </div>
+    
+    {{!-- Top Right: Description --}}
+    <div class="eventide-item-sheet__cell eventide-item-sheet__cell--top-right">
+      <section class="eventide-item-sheet__section eventide-item-sheet__section--description">
+        <div class="eventide-item-sheet__section-header">
+          <h3>Description</h3>
+          <a class="eventide-item-sheet__section-header-toggle" data-action="toggleSection" data-section="description">
+            <i class="fas fa-chevron-up"></i>
+          </a>
+        </div>
+        <div class="eventide-item-sheet__section-content" data-section="description">
+          {{editor 
+            content=system.description 
+            target="system.description" 
+            button=true 
+            owner=owner 
+            editable=editable
+          }}
+        </div>
+      </section>
+    </div>
+    
+    {{!-- Bottom Left: Prerequisites --}}
+    <div class="eventide-item-sheet__cell eventide-item-sheet__cell--bottom-left">
+      <section class="eventide-item-sheet__section eventide-item-sheet__section--prerequisites">
+        <div class="eventide-item-sheet__section-header">
+          <h3>Prerequisites</h3>
+          <a class="eventide-item-sheet__section-header-toggle" data-action="toggleSection" data-section="prerequisites">
+            <i class="fas fa-chevron-up"></i>
+          </a>
+        </div>
+        <div class="eventide-item-sheet__section-content" data-section="prerequisites">
+          {{> "systems/eventide-rp-system/templates/item/parts/prerequisites.hbs"}}
+        </div>
+      </section>
+    </div>
+    
+    {{!-- Bottom Right: Effects --}}
+    <div class="eventide-item-sheet__cell eventide-item-sheet__cell--bottom-right">
+      <section class="eventide-item-sheet__section eventide-item-sheet__section--effects">
+        <div class="eventide-item-sheet__section-header">
+          <h3>Effects</h3>
+          <a class="eventide-item-sheet__section-header-toggle" data-action="toggleSection" data-section="effects">
+            <i class="fas fa-chevron-up"></i>
+          </a>
+        </div>
+        <div class="eventide-item-sheet__section-content" data-section="effects">
+          {{> "systems/eventide-rp-system/templates/item/parts/effects.hbs"}}
+        </div>
+      </section>
+    </div>
+  </div>
+</form>
