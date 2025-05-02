@@ -127,6 +127,7 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
     await this._eventideItemEffectGuards();
 
     context.activeEffect = this.item.effects.contents[0];
+    context.iconTint = context.activeEffect.tint;
 
     // Validates both permissions and compendium status
     context.editable = this.isEditable;
@@ -290,6 +291,14 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
       await this._updateCharacterEffects();
       return;
     }
+    if (event.target.name.includes("iconTint")) {
+      const updateData = {
+        _id: this.item.effects.contents[0]._id,
+        tint: event.target.value,
+      };
+      await this.item.updateEmbeddedDocuments("ActiveEffect", [updateData]);
+      return;
+    }
     await super._onChangeForm(formConfig, event);
   }
 
@@ -298,6 +307,7 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
     if (this.#formChanged) {
       Hooks.call("erpsUpdateItem", this.item, this.item, {}, game.user.id);
     }
+    this.#formChanged = false;
   }
 
   /**************

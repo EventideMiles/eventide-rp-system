@@ -101,6 +101,17 @@
               name="iconTint" 
               value="{{ifThen storedData.gear_iconTint storedData.gear_iconTint "#ffffff"}}">
           </div>
+          <div class="base-form__group">
+            <label class="base-form__label" for="displayOnToken">
+              {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.DisplayOnToken"}}
+            </label>
+            <input 
+              class="base-form__checkbox" 
+              type="checkbox" 
+              id="displayOnToken" 
+              name="displayOnToken" 
+              {{#if storedData.gear_displayOnToken}}checked{{/if}}>
+          </div>
       </div>
     </div>
 
@@ -244,17 +255,6 @@
       </div>
 
       <div class="gear-creator__column">
-        <div class="base-form__group">
-          <label class="base-form__label" for="displayOnToken">
-            {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.DisplayOnToken"}}
-          </label>
-          <input 
-            class="base-form__checkbox" 
-            type="checkbox" 
-            id="displayOnToken" 
-            name="displayOnToken" 
-            {{#if storedData.gear_displayOnToken}}checked{{/if}}>
-        </div>
         <div class="base-form__header">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Effects"}}</div>
         {{#each abilities}}
           <div class="base-form__group gear-creator__effect-group">
