@@ -1,5 +1,4 @@
 const prepareCharacterEffects = async (effect) => {
-  console.log(effect);
   let fullEffects = [];
   let regularEffects = [];
   let hiddenEffects = [];
@@ -44,9 +43,6 @@ const prepareCharacterEffects = async (effect) => {
       regularEffects.push(e);
     }
   }
-
-  console.log("Regular effects:", regularEffects);
-  console.log("Hidden effects:", hiddenEffects);
 
   return {
     fullEffects: fullEffects,
