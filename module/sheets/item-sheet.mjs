@@ -285,7 +285,7 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
 
   async _onChangeForm(formConfig, event) {
     this.#formChanged = true; // Set flag when form changes
-    
+
     if (event.target.name.includes("characterEffects")) {
       await this._updateCharacterEffects();
       return;
@@ -677,23 +677,24 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
       const name = element.name;
       const value = element.value;
 
+      if (!name.includes("regularEffects") && !name.includes("hiddenEffects"))
+        continue;
+
+      const parts = name.split(".");
+      if (parts.length < 3) continue;
+
       // Parse the name to extract the type (regularEffects or hiddenEffects) and index
-      if (name.includes("regularEffects") || name.includes("hiddenEffects")) {
-        const parts = name.split(".");
-        if (parts.length >= 3) {
-          const type = parts[1]; // regularEffects or hiddenEffects
-          const index = parseInt(parts[2]);
-          const property = parts[3]; // ability, mode, value, etc.
+      const type = parts[1]; // regularEffects or hiddenEffects
+      const index = parseInt(parts[2]);
+      const property = parts[3]; // ability, mode, value, etc.
 
-          // Ensure the array has an object at this index
-          if (!characterEffects[type][index]) {
-            characterEffects[type][index] = {};
-          }
-
-          // Set the property value
-          characterEffects[type][index][property] = value;
-        }
+      // Ensure the array has an object at this index
+      if (!characterEffects[type][index]) {
+        characterEffects[type][index] = {};
       }
+
+      // Set the property value
+      characterEffects[type][index][property] = value;
     }
 
     // Clean up the arrays (remove any undefined entries)
