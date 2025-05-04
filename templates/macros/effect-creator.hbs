@@ -1,4 +1,4 @@
-<div class="{{cssClass}} base-form" autocomplete="off">
+<div class="{{cssClass}} base-form effect-creator" autocomplete="off">
   <header class="base-form__callout-box">
     {{#if (eq playerMode true)}}
       <div class="base-form__callout base-form__callout--information">
@@ -112,16 +112,21 @@
         value="{{ifThen storedData.effect_iconTint storedData.effect_iconTint "#ffffff"}}">
     </div>
     <div class="base-form__header">{{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Effects"}}}</div>
-    <div class="base-form__group">
-      <label class="base-form__label" for="displayOnToken">
-        {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.DisplayOnToken"}}
-      </label>
-      <input 
-        class="base-form__checkbox" 
-        type="checkbox" 
-        id="displayOnToken" 
-        name="displayOnToken" 
-        {{#if (eq storedData.effect_displayOnToken "true")}}checked{{/if}}>
+    <div class="toggle-container">
+      <div class="base-form__toggle-group">
+        <label for="displayOnToken">
+          {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.DisplayOnToken"}}
+        </label>
+        <div class="toggle-switch-wrapper">
+          <input 
+            class="base-form__toggle-switch" 
+            type="checkbox" 
+            id="displayOnToken" 
+            name="displayOnToken" 
+            {{#if (eq storedData.effect_displayOnToken "true")}}checked{{/if}}>
+          <label class="toggle-switch-display" for="displayOnToken"></label>
+        </div>
+      </div>
     </div>
     {{#each abilities}}
       <div class="base-form__group">

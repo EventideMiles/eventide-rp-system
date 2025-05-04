@@ -518,27 +518,27 @@
   background-color: var(--eventide-rp-system-abilities-wits);
 }
 
-.base-form, .gear-creator, .popup-form, .chat-card {
+.base-form, .effect-creator, .gear-creator, .popup-form, .chat-card {
   overflow-y: auto;
   -ms-overflow-style: initial;
   scrollbar-width: thin;
   scrollbar-color: var(--eventide-rp-system-input-focus) transparent;
   margin: 0.5rem;
 }
-.base-form::-webkit-scrollbar, .gear-creator::-webkit-scrollbar, .popup-form::-webkit-scrollbar, .chat-card::-webkit-scrollbar {
+.base-form::-webkit-scrollbar, .effect-creator::-webkit-scrollbar, .gear-creator::-webkit-scrollbar, .popup-form::-webkit-scrollbar, .chat-card::-webkit-scrollbar {
   width: 6px;
   background-color: transparent;
   display: block;
 }
-.base-form::-webkit-scrollbar-thumb, .gear-creator::-webkit-scrollbar-thumb, .popup-form::-webkit-scrollbar-thumb, .chat-card::-webkit-scrollbar-thumb {
+.base-form::-webkit-scrollbar-thumb, .effect-creator::-webkit-scrollbar-thumb, .gear-creator::-webkit-scrollbar-thumb, .popup-form::-webkit-scrollbar-thumb, .chat-card::-webkit-scrollbar-thumb {
   background-color: var(--eventide-rp-system-input-focus);
   border-radius: 10px;
   border: 1px solid var(--eventide-rp-system-input-bg);
 }
-.base-form::-webkit-scrollbar-thumb:hover, .gear-creator::-webkit-scrollbar-thumb:hover, .popup-form::-webkit-scrollbar-thumb:hover, .chat-card::-webkit-scrollbar-thumb:hover {
+.base-form::-webkit-scrollbar-thumb:hover, .effect-creator::-webkit-scrollbar-thumb:hover, .gear-creator::-webkit-scrollbar-thumb:hover, .popup-form::-webkit-scrollbar-thumb:hover, .chat-card::-webkit-scrollbar-thumb:hover {
   background-color: var(--eventide-rp-system-primary-button-hover);
 }
-.base-form::-webkit-scrollbar-track, .gear-creator::-webkit-scrollbar-track, .popup-form::-webkit-scrollbar-track, .chat-card::-webkit-scrollbar-track {
+.base-form::-webkit-scrollbar-track, .effect-creator::-webkit-scrollbar-track, .gear-creator::-webkit-scrollbar-track, .popup-form::-webkit-scrollbar-track, .chat-card::-webkit-scrollbar-track {
   background-color: transparent;
   margin: 0;
 }
@@ -714,14 +714,14 @@
   box-sizing: border-box;
   padding: 0.5rem;
   margin: 0;
-  border-radius: 4px;
+  border-radius: 0.25rem;
   font-family: inherit;
   font-size: 1rem;
   line-height: 1.5;
   color: var(--eventide-rp-system-input-text);
   background-color: var(--eventide-rp-system-input-bg) !important;
-  border: 1px solid var(--eventide-rp-system-input-border);
-  border-radius: 4px;
+  border: 0.0625rem solid var(--eventide-rp-system-input-border);
+  border-radius: 0.25rem;
   transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, background-color 0.2s ease-in-out;
   appearance: none;
   -webkit-appearance: none;
@@ -732,7 +732,7 @@
 .base-form__text-input:focus {
   outline: none;
   border-color: #1a365d;
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--eventide-rp-system-input-focus) 25%, transparent);
+  box-shadow: 0 0 0 0.125rem color-mix(in srgb, var(--eventide-rp-system-input-focus) 25%, transparent);
 }
 .base-form__text-input::placeholder {
   color: var(--eventide-rp-system-input-placeholder);
@@ -744,14 +744,14 @@
   box-sizing: border-box;
   padding: 0.5rem;
   margin: 0;
-  border-radius: 4px;
+  border-radius: 0.25rem;
   font-family: inherit;
   font-size: 1rem;
   line-height: 1.5;
   color: var(--eventide-rp-system-input-text);
   background-color: var(--eventide-rp-system-input-bg) !important;
-  border: 1px solid var(--eventide-rp-system-input-border);
-  border-radius: 4px;
+  border: 0.0625rem solid var(--eventide-rp-system-input-border);
+  border-radius: 0.25rem;
   transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, background-color 0.2s ease-in-out;
   appearance: none;
   -webkit-appearance: none;
@@ -763,7 +763,7 @@
 .base-form__number-input:focus {
   outline: none;
   border-color: #1a365d;
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--eventide-rp-system-input-focus) 25%, transparent);
+  box-shadow: 0 0 0 0.125rem color-mix(in srgb, var(--eventide-rp-system-input-focus) 25%, transparent);
 }
 .base-form__number-input::placeholder {
   color: var(--eventide-rp-system-input-placeholder);
@@ -778,7 +778,7 @@
   box-sizing: border-box;
   padding: 0.5rem;
   margin: 0;
-  border-radius: 4px;
+  border-radius: 0.25rem;
   font-family: inherit;
   font-size: 1rem;
   line-height: 1.5;
@@ -852,14 +852,14 @@
   box-sizing: border-box;
   padding: 0.5rem;
   margin: 0;
-  border-radius: 4px;
+  border-radius: 0.25rem;
   font-family: inherit;
   font-size: 1rem;
   line-height: 1.5;
   color: var(--eventide-rp-system-input-text);
   background-color: var(--eventide-rp-system-input-bg) !important;
-  border: 1px solid var(--eventide-rp-system-input-border);
-  border-radius: 4px;
+  border: 0.0625rem solid var(--eventide-rp-system-input-border);
+  border-radius: 0.25rem;
   transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, background-color 0.2s ease-in-out;
   min-height: 4rem;
   resize: vertical;
@@ -870,7 +870,7 @@
 .base-form__textarea:focus {
   outline: none;
   border-color: #1a365d;
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--eventide-rp-system-input-focus) 25%, transparent);
+  box-shadow: 0 0 0 0.125rem color-mix(in srgb, var(--eventide-rp-system-input-focus) 25%, transparent);
 }
 .base-form__textarea::placeholder {
   color: var(--eventide-rp-system-input-placeholder);
@@ -954,30 +954,30 @@
 .base-form__toggle-switch ~ .toggle-switch-display {
   position: relative;
   display: block;
-  width: 40px;
-  height: 20px;
-  flex: 0 0 40px;
-  min-width: 40px;
-  max-width: 40px;
+  width: 2.5rem;
+  height: 1.25rem;
+  flex: 0 0 2.5rem;
+  min-width: 2.5rem;
+  max-width: 2.5rem;
 }
 .base-form__toggle-switch ~ .toggle-switch-display::before {
   content: "";
   position: absolute;
   top: 0;
   left: 0;
-  width: 40px;
-  height: 20px;
+  width: 2.5rem;
+  height: 1.25rem;
   background-color: var(--eventide-rp-system-input-border);
-  border-radius: 20px;
+  border-radius: 1.25rem;
   transition: background-color 0.2s ease-in-out;
 }
 .base-form__toggle-switch ~ .toggle-switch-display::after {
   content: "";
   position: absolute;
-  left: 2px;
-  top: 2px;
-  width: 16px;
-  height: 16px;
+  left: 0.125rem;
+  top: 0.125rem;
+  width: 1rem;
+  height: 1rem;
   background-color: #ffffff;
   border-radius: 50%;
   transition: transform 0.2s ease-in-out;
@@ -986,10 +986,10 @@
   background-color: #1a365d;
 }
 .base-form__toggle-switch:checked ~ .toggle-switch-display::after {
-  transform: translateX(20px);
+  transform: translateX(1.25rem);
 }
 .base-form__toggle-switch:focus ~ .toggle-switch-display::before {
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--eventide-rp-system-input-focus) 25%, transparent);
+  box-shadow: 0 0 0 0.125rem color-mix(in srgb, var(--eventide-rp-system-input-focus) 25%, transparent);
 }
 .base-form__toggle-switch:disabled ~ .toggle-switch-display {
   opacity: 0.5;
@@ -1016,16 +1016,16 @@
   color: var(--eventide-rp-system-label-text);
   margin-bottom: 0.375rem;
   display: block;
-  min-width: 120px;
+  min-width: 7.5rem;
   flex: 0 0 auto;
   flex-grow: 1;
-  margin-right: 10px;
+  margin-right: 0.625rem;
   cursor: pointer;
   margin-bottom: 0;
 }
 .base-form__toggle-group .toggle-switch-wrapper {
-  width: 40px;
-  flex: 0 0 40px;
+  width: 2.5rem;
+  flex: 0 0 2.5rem;
   position: relative;
   margin-left: auto;
   overflow: visible;
@@ -1040,7 +1040,7 @@
   font-family: "Underdog", serif !important;
   transition: all 0.2s ease-in-out !important;
   box-shadow: 0 0 0 0 transparent !important;
-  min-width: 80px !important;
+  min-width: 5rem !important;
 }
 .base-form__button:hover {
   background-color: var(--eventide-rp-system-button-hover) !important;
@@ -1058,11 +1058,11 @@
 .base-form__button--primary:hover {
   background-color: var(--eventide-rp-system-primary-button-hover) !important;
   color: var(--eventide-rp-system-primary-button-hover-text) !important;
-  box-shadow: 0 0 15px 5px var(--eventide-rp-system-primary-button-glow) !important;
+  box-shadow: 0 0 0.9375rem 0.3125rem var(--eventide-rp-system-primary-button-glow) !important;
 }
 .base-form__button--primary:active {
   background-color: var(--eventide-rp-system-primary-button-active) !important;
-  box-shadow: 0 0 8px 2px var(--eventide-rp-system-primary-button-glow) !important;
+  box-shadow: 0 0 0.5rem 0.125rem var(--eventide-rp-system-primary-button-glow) !important;
 }
 .base-form__button--danger {
   background-color: var(--eventide-rp-system-danger-button-bg) !important;
@@ -1071,7 +1071,7 @@
 }
 .base-form__button--danger:hover {
   background-color: var(--eventide-rp-system-danger-button-hover) !important;
-  box-shadow: 0 0 15px 5px rgba(255, 0, 0, 0.4) !important;
+  box-shadow: 0 0 0.9375rem 0.3125rem rgba(255, 0, 0, 0.4) !important;
 }
 .base-form__button + .base-form__button {
   margin-left: 0.5rem !important;
@@ -1125,7 +1125,7 @@
 .base-form__sheet-tab-editor {
   height: 100%;
 }
-.base-form[style*="display: none"], [style*="display: none"].gear-creator, [style*="display: none"].popup-form, [style*="display: none"].chat-card {
+.base-form[style*="display: none"], [style*="display: none"].effect-creator, [style*="display: none"].gear-creator, [style*="display: none"].popup-form, [style*="display: none"].chat-card {
   display: none;
 }
 
@@ -1652,14 +1652,14 @@
   box-sizing: border-box;
   padding: 0.5rem;
   margin: 0;
-  border-radius: 4px;
+  border-radius: 0.25rem;
   font-family: inherit;
   font-size: 1rem;
   line-height: 1.5;
   color: var(--eventide-rp-system-input-text);
   background-color: var(--eventide-rp-system-input-bg) !important;
-  border: 1px solid var(--eventide-rp-system-input-border);
-  border-radius: 4px;
+  border: 0.0625rem solid var(--eventide-rp-system-input-border);
+  border-radius: 0.25rem;
   transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, background-color 0.2s ease-in-out;
 }
 .gear-creator__effect-input:hover {
@@ -1668,7 +1668,7 @@
 .gear-creator__effect-input:focus {
   outline: none;
   border-color: #1a365d;
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--eventide-rp-system-input-focus) 25%, transparent);
+  box-shadow: 0 0 0 0.125rem color-mix(in srgb, var(--eventide-rp-system-input-focus) 25%, transparent);
 }
 .gear-creator__effect-input::placeholder {
   color: var(--eventide-rp-system-input-placeholder);
@@ -1687,6 +1687,42 @@
   background-size: 40px 20px !important;
   background-position: left center !important;
   background-repeat: no-repeat !important;
+}
+
+.effect-creator {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 0.375rem 0.5rem;
+}
+.effect-creator .toggle-container {
+  border: 0.0625rem solid var(--eventide-rp-system-input-border);
+  border-radius: 0.25rem;
+  padding: 0.75rem;
+  background-color: rgba(0, 0, 0, 0.1);
+  margin-bottom: 1rem;
+  overflow: hidden;
+}
+.effect-creator .base-form__toggle-group {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+}
+.effect-creator .base-form__toggle-group label:first-child {
+  font-family: inherit;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--eventide-rp-system-label-text);
+  margin-bottom: 0.375rem;
+  display: block;
+  margin-bottom: 0;
+  grid-column: 1/2;
+}
+.effect-creator .base-form__toggle-group .toggle-switch-wrapper {
+  grid-column: 2/3;
+  justify-self: end;
 }
 
 .sound-settings {
