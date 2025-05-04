@@ -1031,50 +1031,70 @@
   overflow: visible;
 }
 .base-form__button {
-  background-color: var(--eventide-rp-system-button-bg) !important;
-  color: var(--eventide-rp-system-button-text) !important;
-  border: 1px solid var(--eventide-rp-system-button-border) !important;
-  border-radius: 5px !important;
-  padding: 0.5rem 1rem !important;
-  cursor: pointer !important;
-  font-family: "Underdog", serif !important;
-  transition: all 0.2s ease-in-out !important;
-  box-shadow: 0 0 0 0 transparent !important;
-  min-width: 5rem !important;
+  background-color: var(--eventide-rp-system-button-bg);
+  color: var(--eventide-rp-system-button-text);
+  border: 0.0625rem solid var(--eventide-rp-system-button-border);
+  border-radius: 0.25rem;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-family: "Underdog", serif;
+  font-size: 1rem;
+  line-height: 1.5;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 2.25rem;
+  transition: all 0.2s ease-in-out;
+  display: flex;
+  width: 100%;
+  box-sizing: border-box;
+  font-weight: 500;
+  margin: 0;
+  min-height: 2.5rem;
 }
 .base-form__button:hover {
-  background-color: var(--eventide-rp-system-button-hover) !important;
-  box-shadow: 0 0 15px 5px var(--eventide-rp-system-button-glow) !important;
+  background-color: var(--eventide-rp-system-button-hover);
+  box-shadow: 0 0 0.9375rem 0.3125rem var(--eventide-rp-system-button-glow);
 }
 .base-form__button:active {
-  background-color: var(--eventide-rp-system-button-active) !important;
-  box-shadow: 0 0 8px 2px var(--eventide-rp-system-button-glow) !important;
+  background-color: var(--eventide-rp-system-button-active);
+  box-shadow: 0 0 0.5rem 0.125rem var(--eventide-rp-system-button-glow);
+}
+.base-form__button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 .base-form__button--primary {
-  background-color: var(--eventide-rp-system-primary-button-bg) !important;
-  color: var(--eventide-rp-system-primary-button-text) !important;
-  border-color: var(--eventide-rp-system-primary-button-border) !important;
+  background-color: var(--eventide-rp-system-primary-button-bg);
+  color: var(--eventide-rp-system-primary-button-text);
+  border-color: var(--eventide-rp-system-primary-button-border);
 }
 .base-form__button--primary:hover {
-  background-color: var(--eventide-rp-system-primary-button-hover) !important;
-  color: var(--eventide-rp-system-primary-button-hover-text) !important;
-  box-shadow: 0 0 0.9375rem 0.3125rem var(--eventide-rp-system-primary-button-glow) !important;
+  background-color: var(--eventide-rp-system-primary-button-hover);
+  color: var(--eventide-rp-system-primary-button-hover-text);
+  box-shadow: 0 0 0.9375rem 0.3125rem var(--eventide-rp-system-primary-button-glow);
 }
 .base-form__button--primary:active {
-  background-color: var(--eventide-rp-system-primary-button-active) !important;
-  box-shadow: 0 0 0.5rem 0.125rem var(--eventide-rp-system-primary-button-glow) !important;
+  background-color: var(--eventide-rp-system-primary-button-active);
+  box-shadow: 0 0 0.5rem 0.125rem var(--eventide-rp-system-primary-button-glow);
 }
 .base-form__button--danger {
-  background-color: var(--eventide-rp-system-danger-button-bg) !important;
-  color: var(--eventide-rp-system-danger-button-text) !important;
-  border-color: var(--eventide-rp-system-danger-button-border) !important;
+  background-color: var(--eventide-rp-system-danger-button-bg);
+  color: var(--eventide-rp-system-danger-button-text);
+  border-color: var(--eventide-rp-system-danger-button-border);
 }
 .base-form__button--danger:hover {
-  background-color: var(--eventide-rp-system-danger-button-hover) !important;
-  box-shadow: 0 0 0.9375rem 0.3125rem rgba(255, 0, 0, 0.4) !important;
+  background-color: var(--eventide-rp-system-danger-button-hover);
+  box-shadow: 0 0 0.9375rem 0.3125rem rgba(255, 0, 0, 0.4);
 }
 .base-form__button + .base-form__button {
-  margin-left: 0.5rem !important;
+  margin-left: 0.5rem;
+}
+.base-form__button--fixed {
+  width: auto;
+  min-width: 5rem;
+  display: inline-block;
 }
 .base-form__image, .gear-creator__image {
   width: 100px;
@@ -1582,26 +1602,36 @@
   text-overflow: ellipsis;
 }
 .popup-form__button {
-  background-color: var(--eventide-rp-system-button-bg) !important;
-  color: var(--eventide-rp-system-button-text) !important;
-  border: 1px solid var(--eventide-rp-system-button-border) !important;
-  border-radius: 5px !important;
-  padding: 0.5rem 1rem !important;
-  cursor: pointer !important;
-  font-family: "Underdog", serif !important;
-  transition: all 0.2s ease-in-out !important;
-  box-shadow: 0 0 0 0 transparent !important;
+  background-color: var(--eventide-rp-system-button-bg);
+  color: var(--eventide-rp-system-button-text);
+  border: 0.0625rem solid var(--eventide-rp-system-button-border);
+  border-radius: 0.25rem;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-family: "Underdog", serif;
+  font-size: 1rem;
+  line-height: 1.5;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 2.25rem;
+  transition: all 0.2s ease-in-out;
   margin-right: 0.5rem;
   margin-left: 0.5rem;
   margin-bottom: 0.5rem;
 }
 .popup-form__button:hover {
-  background-color: var(--eventide-rp-system-button-hover) !important;
-  box-shadow: 0 0 15px 5px var(--eventide-rp-system-button-glow) !important;
+  background-color: var(--eventide-rp-system-button-hover);
+  box-shadow: 0 0 0.9375rem 0.3125rem var(--eventide-rp-system-button-glow);
 }
 .popup-form__button:active {
-  background-color: var(--eventide-rp-system-button-active) !important;
-  box-shadow: 0 0 8px 2px var(--eventide-rp-system-button-glow) !important;
+  background-color: var(--eventide-rp-system-button-active);
+  box-shadow: 0 0 0.5rem 0.125rem var(--eventide-rp-system-button-glow);
+}
+.popup-form__button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .gear-creator {
@@ -3340,5 +3370,3 @@
   background-color: transparent !important;
   margin: 0 !important;
 }
-
-/*# sourceMappingURL=eventide-rp-system.css.map */

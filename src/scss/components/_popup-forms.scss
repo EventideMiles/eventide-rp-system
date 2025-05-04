@@ -1,5 +1,6 @@
 @use "../utils/typography";
 @use "../utils/colors";
+@use "../utils/mixins";
 @use "../global/form-elements";
 
 // Block
@@ -177,7 +178,7 @@
   }
 
   &__button {
-    @include form-elements.button-base;
+    @include mixins.button-base;
     margin-right: 0.5rem;
     margin-left: 0.5rem;
     margin-bottom: 0.5rem;

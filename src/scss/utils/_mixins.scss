@@ -224,3 +224,54 @@
   margin-bottom: 0.375rem;
   display: block;
 }
+
+@mixin button-base {
+  // Core button styling that all buttons share
+  background-color: colors.$button-bg;
+  color: colors.$button-text;
+  border: 0.0625rem solid colors.$button-border;
+  border-radius: 0.25rem;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-family: 'Underdog', serif;
+  font-size: 1rem;
+  line-height: 1.5;
+  
+  // Flex centering for all buttons
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 2.25rem;
+  
+  transition: all 0.2s ease-in-out;
+  
+  // Interactive states
+  &:hover {
+    background-color: colors.$button-hover;
+    box-shadow: 0 0 0.9375rem 0.3125rem colors.$button-glow;
+  }
+  
+  &:active {
+    background-color: colors.$button-active;
+    box-shadow: 0 0 0.5rem 0.125rem colors.$button-glow;
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+@mixin grid-compliant-button {
+  // Start with the base button styling
+  @include button-base;
+  
+  // Grid-specific properties (only changing display and width)
+  display: flex;
+  width: 100%;
+  box-sizing: border-box;
+  font-weight: 500;
+  margin: 0;
+  min-height: 2.5rem; // Slightly taller than base buttons
+}
