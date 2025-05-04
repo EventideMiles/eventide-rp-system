@@ -434,17 +434,17 @@
     
     label:first-child {
       @include mixins.form-label-base;
-      min-width: 120px;
+      min-width: 7.5rem; 
       flex: 0 0 auto;
       flex-grow: 1; 
-      margin-right: 10px;
+      margin-right: 0.625rem; 
       cursor: pointer; 
       margin-bottom: 0; 
     }
     
     .toggle-switch-wrapper {
-      width: 40px;
-      flex: 0 0 40px; 
+      width: 2.5rem; 
+      flex: 0 0 2.5rem; 
       position: relative;
       margin-left: auto; 
       overflow: visible; 
@@ -453,7 +453,7 @@
 
   &__button {
     @include button-base;
-    min-width: 80px !important;
+    min-width: 5rem !important;
 
     &--primary {
       background-color: colors.$primary-button-bg !important;
@@ -463,12 +463,12 @@
       &:hover {
         background-color: colors.$primary-button-hover !important;
         color: colors.$primary-button-hover-text !important;
-        box-shadow: 0 0 15px 5px colors.$primary-button-glow !important;
+        box-shadow: 0 0 0.9375rem 0.3125rem colors.$primary-button-glow !important;
       }
 
       &:active {
         background-color: colors.$primary-button-active !important;
-        box-shadow: 0 0 8px 2px colors.$primary-button-glow !important;
+        box-shadow: 0 0 0.5rem 0.125rem colors.$primary-button-glow !important;
       }
     }
 
@@ -479,7 +479,7 @@
 
       &:hover {
         background-color: colors.$danger-button-hover !important;
-        box-shadow: 0 0 15px 5px rgba(255, 0, 0, 0.4) !important;
+        box-shadow: 0 0 0.9375rem 0.3125rem rgba(255, 0, 0, 0.4) !important;
       }
     }
 
