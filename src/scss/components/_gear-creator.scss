@@ -61,4 +61,20 @@
   &__effect-select {
     width: 100%;
   }
+
+  // Specific override for toggle switches in the gear creator
+  .base-form__toggle-group {
+    .toggle-switch-wrapper {
+      width: 40px !important;
+      flex: 0 0 40px !important;
+    }
+    
+    .toggle-switch-display {
+      width: 40px !important;
+      max-width: 40px !important;
+      background-size: 40px 20px !important;
+      background-position: left center !important;
+      background-repeat: no-repeat !important;
+    }
+  }
 }

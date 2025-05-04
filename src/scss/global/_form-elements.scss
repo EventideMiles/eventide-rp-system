@@ -267,6 +267,10 @@
     &:first-child {
       padding-top: 0.5rem;
     }
+    
+    label {
+      @include mixins.form-label-base;
+    }
   }
 
   // Group modifiers
@@ -410,6 +414,41 @@
 
   &__checkbox {
     @include checkbox-base;
+  }
+  
+  &__toggle-switch {
+    @include mixins.grid-compliant-toggle-switch;
+    & ~ .toggle-switch-display {
+      margin-left: auto; // Push to the right side of the container
+      cursor: pointer; // Make it clear this is clickable
+    }
+  }
+  
+  // Style for groups containing toggle switches
+  &__toggle-group {
+    display: flex;
+    align-items: center;
+    position: relative;
+    margin: 1rem 0; 
+    padding: 0.25rem 0.5rem 0.75rem 0.5rem; 
+    
+    label:first-child {
+      @include mixins.form-label-base;
+      min-width: 120px;
+      flex: 0 0 auto;
+      flex-grow: 1; 
+      margin-right: 10px;
+      cursor: pointer; 
+      margin-bottom: 0; 
+    }
+    
+    .toggle-switch-wrapper {
+      width: 40px;
+      flex: 0 0 40px; 
+      position: relative;
+      margin-left: auto; 
+      overflow: visible; 
+    }
   }
 
   &__button {
