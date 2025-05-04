@@ -1,5 +1,6 @@
 @use "../utils/typography";
 @use "../utils/colors";
+@use "../utils/mixins";
 @use "../global/form-elements";
 
 .gear-creator {
@@ -54,7 +55,7 @@
   }
 
   &__effect-input {
-    width: 100% !important;
+    @include mixins.grid-compliant-text-input;
   }
 
   &__effect-select {

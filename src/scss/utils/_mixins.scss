@@ -1,3 +1,5 @@
+@use "colors";
+
 @mixin element-invisible {
   position: absolute;
 
@@ -13,4 +15,126 @@
 
 @mixin hide {
   display: none;
+}
+
+@mixin input-base {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.5rem;
+  margin: 0;
+  font-family: inherit;
+  font-size: 1rem;
+  line-height: 1.5;
+  border-radius: 4px;
+}
+
+@mixin grid-compliant-text-input {
+  @include input-base;
+  
+  // Theme-aware styling
+  color: colors.$input-text;
+  background-color: colors.$input-bg !important;//colors.$input-bg;
+  border: 1px solid colors.$input-border;
+  border-radius: 4px;
+  transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, background-color 0.2s ease-in-out;
+  
+  &:hover {
+    background-color: colors.$input-hover;
+  }
+  
+  &:focus {
+    outline: none;
+    border-color: #1a365d;
+    box-shadow: 0 0 0 2px color-mix(in srgb, colors.$input-focus 25%, transparent);
+  }
+  
+  &::placeholder {
+    color: colors.$input-placeholder;
+    opacity: 1;
+  }
+}
+
+@mixin grid-compliant-select {
+  // Base styling from text input
+  @include input-base;
+  
+  // Theme-aware styling
+  color: colors.$input-text;
+  background-color: colors.$input-bg !important; // Same as text input for consistency
+  border: 1px solid colors.$input-border;
+  transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, background-color 0.2s ease-in-out;
+  
+  // Select-specific styling - fixing vertical alignment issues
+  // height: 2rem; // Explicit height
+  line-height: 1; // Tighter line height for better vertical centering
+  padding: 0 2.5rem 0 0.5rem; // Adjust padding (top, right, bottom, left)
+  display: flex; // Using flex for better alignment
+  align-items: center; // Center content vertically
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: colors.$select-arrow-url !important;
+  background-repeat: no-repeat !important;
+  background-position: calc(100% - 8px) center !important;
+  background-size: 24px !important;
+  
+  // Text overflow handling
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  
+  &:hover {
+    background-color: #1a365d;
+  }
+  
+  &:focus {
+    outline: none;
+    border-color: colors.$input-focus;
+    box-shadow: 0 0 0 2px color-mix(in srgb, colors.$input-focus 25%, transparent);
+  }
+  
+  &:hover, &:focus {
+    background-color: #1a365d !important; // Dark blue for hover state
+  }
+}
+
+// This mixin should be used separately on select elements
+// Browser dropdown styling is handled differently and can't be fully controlled via the select element
+@mixin select-dropdown-styles {
+  // This addresses styling for the dropdown items
+  option {
+    background-color: #2a3441 !important; // Darker background for better contrast
+    color: #ffffff !important; // White text for maximum visibility
+    padding: 0.5rem 0.75rem !important; // More horizontal padding
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5) !important; // Add text shadow for better visibility
+    font-weight: normal !important; // Normal weight for better legibility
+    
+    &:hover, &:focus, &:active, &:checked {
+      background-color: #1a365d !important; // Dark blue for selection
+      color: #ffffff !important;
+    }
+  }
+  
+  // For Firefox
+  &::-moz-focus-inner {
+    border: 0;
+  }
+  
+  // For IE/Edge
+  &::-ms-expand {
+    display: none;
+  }
+  
+  // For Chrome/Safari
+  &::-webkit-scrollbar {
+    width: 8px;
+    background-color: #2a3441;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background-color: #4d94ff;
+    border-radius: 4px;
+  }
 }

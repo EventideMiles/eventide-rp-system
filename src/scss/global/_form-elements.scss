@@ -1,5 +1,6 @@
 @use "../utils/typography";
 @use "../utils/colors";
+@use "../utils/mixins";
 
 // Mixins for shared styles
 @mixin box-shadow-base {
@@ -25,27 +26,19 @@
 }
 
 @mixin input-base {
-  display: block;
-  width: 100%;
-  height: 2rem;
-  padding: 0.5rem;
-  color: colors.$input-text;
-  background-color: colors.$input-bg !important;
-  border: none;
-  @include box-shadow-base;
-  border-radius: 5px;
+  @include mixins.grid-compliant-text-input;
+  // @include box-shadow-base;
   appearance: none;
   -webkit-appearance: none;
   
-  &:focus {
-    outline: none;
-    border-color: colors.$input-focus;
-    @include box-shadow-hover;
-  }
+  // &:focus {
+  //   // outline: none;
+  //   // @include box-shadow-hover;
+  // }
 
-  &:hover {
-    @include box-shadow-hover;
-  }
+  // &:hover {
+  //   // @include box-shadow-hover;
+  // }
 }
 
 @mixin checkbox-base {
@@ -357,46 +350,62 @@
   }
 
   &__select {
-    @include input-base;
-    padding-right: 2.5rem;
-    cursor: pointer;
-    background-image: colors.$select-arrow-url !important;
-    background-repeat: no-repeat !important;
-    background-position: calc(100% - 8px) center !important;
-    background-size: 24px !important;
-
-    option {
-      background-color: colors.$select-option-bg !important;
-      color: colors.$select-option-text !important;
-      padding: 0.5rem !important;
-
-      &:hover {
-        background-color: colors.$select-option-hover !important;
-      }
-    }
+    @include mixins.grid-compliant-select;
+    @include mixins.select-dropdown-styles;
   }
 
   &__select-option {
-    background-color: rgba(30, 30, 30, 0.95);
-    color: white;
+    background-color: colors.$select-option-bg;
+    color: colors.$select-option-text;
     padding: 0.5rem;
+    
+    &:hover {
+      background-color: #1a365d; // Dark blue for hover state
+    }
   }
 
   &__textarea {
-    @include input-base;
-    height: auto;
+    @include mixins.grid-compliant-text-input;
     min-height: 4rem;
     resize: vertical;
   }
 
   &__color-input {
-    @include input-base;
-    padding: 2px;
+    // Don't use input-base here since color inputs need specific styling
+    display: block;
     width: 50px;
     height: 30px;
+    padding: 2px;
+    border-radius: 4px;
+    cursor: pointer;
+    @include box-shadow-base;
+    border: none;
     flex: 1;
     max-width: 250px;
     margin-left: auto;
+    
+    &:hover {
+      @include box-shadow-hover;
+    }
+    
+    &:focus {
+      outline: none;
+      @include box-shadow-hover;
+    }
+    
+    &::-webkit-color-swatch-wrapper {
+      padding: 0;
+    }
+    
+    &::-webkit-color-swatch {
+      border: none;
+      border-radius: 2px;
+    }
+    
+    &::-moz-color-swatch {
+      border: none;
+      border-radius: 2px;
+    }
   }
 
   &__checkbox {
