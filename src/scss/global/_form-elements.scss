@@ -158,12 +158,21 @@
 
   // Elements
   &__header {
-    font-family: typography.$underdog;
+    @include mixins.grid-compliant-section-header;
+    // Override the mixin for any existing specific styles we want to keep
     text-align: center;
-    font-size: 1.125rem;
-    padding: 0.875rem;
-    border-bottom: 2px solid colors.$form-header-underline;
-    margin: 0;
+  }
+
+  &__fieldset {
+    @include mixins.grid-compliant-fieldset;
+  }
+  
+  &__collapsible-section {
+    @include mixins.grid-compliant-collapsible-section;
+  }
+  
+  &__divider {
+    @include mixins.grid-compliant-form-divider;
   }
 
   &__content {

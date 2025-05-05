@@ -1,4 +1,5 @@
 @use "colors";
+@use "typography";
 
 @mixin element-invisible {
   position: absolute;
@@ -491,4 +492,138 @@
     border-color: colors.$input-focus;
     box-shadow: 0 0 0 0.125rem color-mix(in srgb, colors.$input-focus 25%, transparent);
   }
+}
+
+// Form Section Dividers and Fieldsets
+// ----------------------------------
+
+@mixin grid-compliant-section-header {
+  font-family: typography.$underdog;
+  font-size: 1.25rem;
+  color: #ffffff; // White text for dark backgrounds
+  padding: 0.75rem 1rem;
+  margin: 1.5rem 0 1rem 0;
+  border-bottom: 2px solid #4d94ff; // Dark blue border
+  position: relative;
+  width: 100%;
+  text-align: left;
+  
+  // Add subtle gradient background
+  background: linear-gradient(
+    to right,
+    rgba(30, 40, 60, 0.8), // Dark blue-gray with some transparency
+    rgba(20, 30, 45, 0.7)  // Slightly darker and more transparent
+  );
+  
+  // First header in a form should have no top margin
+  &:first-of-type {
+    margin-top: 0;
+  }
+  
+  // Optional icon support
+  &.with-icon {
+    padding-left: 2.5rem;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 1.25rem;
+      height: 1.25rem;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      opacity: 0.8;
+    }
+  }
+}
+
+@mixin grid-compliant-fieldset {
+  border: 1px solid #4d94ff; // Dark blue border
+  border-radius: 0.25rem;
+  padding: 1rem;
+  margin: 1rem 0;
+  width: 100%;
+  position: relative;
+  background-color: rgba(25, 35, 50, 0.6); // Dark blue-gray with transparency
+  
+  // Remove default fieldset styles
+  min-inline-size: auto;
+  
+  // Legend styling
+  legend {
+    font-family: typography.$underdog;
+    font-size: 1rem;
+    color: #ffffff;
+    padding: 0 0.5rem;
+    background-color: rgba(35, 45, 65, 0.9); // Slightly lighter than fieldset
+    border: 1px solid #4d94ff; // Dark blue border
+    border-radius: 0.25rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  }
+  
+  // Nested fieldsets
+  fieldset {
+    margin: 0.75rem 0;
+    
+    legend {
+      font-size: 0.9rem;
+    }
+  }
+}
+
+@mixin grid-compliant-collapsible-section {
+  // Base fieldset styling
+  @include grid-compliant-fieldset;
+  
+  // Additional styles for collapsible behavior
+  padding-top: 2rem;
+  
+  // Legend styling for collapsible sections
+  legend {
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    
+    &::after {
+      content: '▾';
+      margin-left: 0.5rem;
+      transition: transform 0.2s ease;
+    }
+  }
+  
+  // Collapsed state
+  &.collapsed {
+    padding: 0;
+    border-color: #4d94ff; // Dark blue border
+    
+    legend {
+      margin-bottom: 0;
+      
+      &::after {
+        content: '▸';
+      }
+    }
+    
+    // Hide content when collapsed
+    > *:not(legend) {
+      display: none;
+    }
+  }
+}
+
+@mixin grid-compliant-form-divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    #4d94ff, // Dark blue for divider
+    transparent
+  );
+  margin: 1.5rem 0;
+  border: none;
 }
