@@ -462,3 +462,33 @@
     }
   }
 }
+
+@mixin grid-compliant-textarea {
+  // Start with the base text input styling
+  @include grid-compliant-text-input;
+  
+  // Textarea-specific properties
+  min-height: 5rem;
+  resize: vertical;
+  line-height: 1.4;
+  padding: 0.75rem;
+  
+  // Preserve whitespace formatting but wrap text
+  white-space: pre-wrap;
+  
+  // Optimize scrolling behavior
+  overflow-y: auto;
+  
+  // Placeholder text styling
+  &::placeholder {
+    color: colors.$input-placeholder;
+    opacity: 0.7;
+  }
+  
+  // Focus styling that allows for resizing
+  &:focus {
+    outline: none;
+    border-color: colors.$input-focus;
+    box-shadow: 0 0 0 0.125rem color-mix(in srgb, colors.$input-focus 25%, transparent);
+  }
+}

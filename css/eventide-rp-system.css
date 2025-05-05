@@ -902,8 +902,12 @@
   border: 0.0625rem solid var(--eventide-rp-system-input-border);
   border-radius: 0.25rem;
   transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, background-color 0.2s ease-in-out;
-  min-height: 4rem;
+  min-height: 5rem;
   resize: vertical;
+  line-height: 1.4;
+  padding: 0.75rem;
+  white-space: pre-wrap;
+  overflow-y: auto;
 }
 .base-form__textarea:hover {
   background-color: var(--eventide-rp-system-input-hover);
@@ -916,6 +920,15 @@
 .base-form__textarea::placeholder {
   color: var(--eventide-rp-system-input-placeholder);
   opacity: 1;
+}
+.base-form__textarea::placeholder {
+  color: var(--eventide-rp-system-input-placeholder);
+  opacity: 0.7;
+}
+.base-form__textarea:focus {
+  outline: none;
+  border-color: var(--eventide-rp-system-input-focus);
+  box-shadow: 0 0 0 0.125rem color-mix(in srgb, var(--eventide-rp-system-input-focus) 25%, transparent);
 }
 .base-form__color-input {
   display: block;

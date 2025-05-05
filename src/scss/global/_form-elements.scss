@@ -345,9 +345,7 @@
   }
 
   &__textarea {
-    @include mixins.grid-compliant-text-input;
-    min-height: 4rem;
-    resize: vertical;
+    @include mixins.grid-compliant-textarea;
   }
 
   &__color-input {
