@@ -321,13 +321,12 @@
   }
 
   &__number-input {
-    @include input-base;
-    text-align: center;
-    
-    &::-webkit-inner-spin-button,
-    &::-webkit-outer-spin-button {
-      display: none;
-    }
+    @include mixins.grid-compliant-number-input;
+  }
+
+  &__number-input-wrapper {
+    @include mixins.grid-compliant-number-input-wrapper;
+    width: 100%;
   }
 
   &__select {

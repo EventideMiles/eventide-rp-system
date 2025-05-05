@@ -757,9 +757,11 @@
   border: 0.0625rem solid var(--eventide-rp-system-input-border);
   border-radius: 0.25rem;
   transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, background-color 0.2s ease-in-out;
-  appearance: none;
-  -webkit-appearance: none;
+  width: calc(100% - 4rem);
   text-align: center;
+  margin: 0;
+  appearance: textfield;
+  -moz-appearance: textfield;
 }
 .base-form__number-input:hover {
   background-color: var(--eventide-rp-system-input-hover);
@@ -773,8 +775,43 @@
   color: var(--eventide-rp-system-input-placeholder);
   opacity: 1;
 }
-.base-form__number-input::-webkit-inner-spin-button, .base-form__number-input::-webkit-outer-spin-button {
-  display: none;
+.base-form__number-input::-webkit-outer-spin-button, .base-form__number-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.base-form__number-input-wrapper {
+  position: relative;
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+.base-form__number-input-wrapper .decrement, .base-form__number-input-wrapper .increment {
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 0.25rem;
+  border: 0.0625rem solid var(--eventide-rp-system-input-border);
+  background-color: var(--eventide-rp-system-input-bg);
+  color: var(--eventide-rp-system-input-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+.base-form__number-input-wrapper .decrement:hover, .base-form__number-input-wrapper .decrement:focus, .base-form__number-input-wrapper .increment:hover, .base-form__number-input-wrapper .increment:focus {
+  border-color: var(--eventide-rp-system-input-focus);
+  background-color: var(--eventide-rp-system-input-focus);
+  color: #ffffff;
+  outline: none;
+  box-shadow: 0 0 0 0.125rem color-mix(in srgb, var(--eventide-rp-system-input-focus) 25%, transparent);
+}
+.base-form__number-input-wrapper .decrement:active, .base-form__number-input-wrapper .increment:active {
+  transform: scale(0.95);
 }
 .base-form__select {
   display: block;
@@ -3508,5 +3545,3 @@
   background-color: transparent !important;
   margin: 0 !important;
 }
-
-/*# sourceMappingURL=eventide-rp-system.css.map */

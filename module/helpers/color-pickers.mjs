@@ -110,9 +110,12 @@ Hooks.on('ready', () => {
 });
 
 // Initialize when relevant sheets render
-Hooks.on('renderApplication', (app, html, data) => {
+// element = HTMLElement
+// context = ApplicationRenderContext
+// options = RenderOptions
+Hooks.on('renderApplicationV2', (context, element, options) => {
   // console.log("Application rendered:", app.constructor.name);
-  if (html.find('.color-picker-with-hex').length > 0) {
+  if (element.querySelector('.color-picker-with-hex')) {
     // console.log("Found color pickers in", app.constructor.name);
     initColorPickersWithHex();
   }

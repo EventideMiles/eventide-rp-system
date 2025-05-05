@@ -19,7 +19,11 @@
 
     <div class="base-form__group">
       <label class="base-form__label" for="quantity">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Quantity"}}:</label>
-      <input class="base-form__number-input" type="number" id="quantity" name="quantity" value="1" min="1">
+      <div class="base-form__number-input-wrapper">
+        <button type="button" class="decrement" data-action="decrement">−</button>
+        <input class="base-form__number-input" type="number" id="quantity" name="quantity" value="1" min="1">
+        <button type="button" class="increment" data-action="increment">+</button>
+      </div>
     </div>
 
     <div class="base-form__group">

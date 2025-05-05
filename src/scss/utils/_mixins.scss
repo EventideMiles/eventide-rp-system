@@ -404,3 +404,61 @@
     box-shadow: 0 0 0.25rem 0.0625rem color-mix(in srgb, colors.$form-incorrect 30%, transparent);
   }
 }
+
+@mixin grid-compliant-number-input {
+  // Use the same text input mixin as other inputs for consistency
+  @include grid-compliant-text-input;
+  
+  // Override width to leave space for the buttons
+  width: calc(100% - 4rem);
+  text-align: center;
+  margin: 0;
+  
+  // Ensure consistent appearance across browsers
+  appearance: textfield;
+  -moz-appearance: textfield;
+  
+  // Remove default browser spinners
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
+
+@mixin grid-compliant-number-input-wrapper {
+  position: relative;
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  
+  .decrement, .increment {
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 0.25rem;
+    border: 0.0625rem solid colors.$input-border;
+    background-color: colors.$input-bg;
+    color: colors.$input-text;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    
+    &:hover, &:focus {
+      border-color: colors.$input-focus;
+      background-color: colors.$input-focus;
+      color: #ffffff;
+      outline: none;
+      box-shadow: 0 0 0 0.125rem color-mix(in srgb, colors.$input-focus 25%, transparent);
+    }
+    
+    &:active {
+      transform: scale(0.95);
+    }
+  }
+}
