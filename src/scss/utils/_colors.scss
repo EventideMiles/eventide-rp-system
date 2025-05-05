@@ -127,6 +127,10 @@
   
   --eventide-rp-system-browse-button-bg: #607D8B;
   --eventide-rp-system-browse-button-text: #ffffff;
+
+
+  --erps-selected: #1a365d;
+  --erps-incorrect: #570000;
 }
 
 // Dark theme colors
@@ -258,6 +262,9 @@
   
   --eventide-rp-system-browse-button-bg: #607D8B;
   --eventide-rp-system-browse-button-text: #ffffff;
+
+  --erps-selected: #1a365d;
+  --erps-incorrect: #570000;
 }
 
 $c-white: var(--eventide-rp-system-c-white);
@@ -395,3 +402,6 @@ $browse-button-text: var(--eventide-rp-system-browse-button-text);
 // currently unused
 $app-bg: linear-gradient(to bottom, #004d9f8a, #0029708a);
 $dc: var(--eventide-rp-system-card-header-dc);
+
+$form-selected: var(--erps-selected);
+$form-incorrect: var(--erps-incorrect);

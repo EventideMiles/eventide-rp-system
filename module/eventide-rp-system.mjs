@@ -27,6 +27,7 @@ import {
   permissionCheck,
 } from "./helpers/common-foundry-tasks.mjs";
 import { erpsMessageHandler } from "./helpers/system-messages.mjs";
+import { initColorPickersWithHex } from "./helpers/color-pickers.mjs";
 
 const { Actors, Items } = foundry.documents.collections;
 const { ActorSheet, ItemSheet } = foundry.appv1.sheets;
@@ -53,6 +54,7 @@ globalThis.erps = {
     storeLocal,
     retrieveLocal,
     permissionCheck,
+    initColorPickersWithHex,
   },
   macros: {
     GearTransfer,

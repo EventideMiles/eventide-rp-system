@@ -45,7 +45,7 @@
   
   &:focus {
     outline: none;
-    border-color: #1a365d;
+    border-color: colors.$input-focus;
     box-shadow: 0 0 0 0.125rem color-mix(in srgb, colors.$input-focus 25%, transparent);
   }
   
@@ -86,7 +86,7 @@
   overflow: hidden;
   
   &:hover {
-    background-color: #1a365d;
+    background-color: colors.$form-selected;
   }
   
   &:focus {
@@ -96,7 +96,7 @@
   }
   
   &:hover, &:focus {
-    background-color: #1a365d !important; // Dark blue for hover state
+    background-color: colors.$form-selected !important; // Dark blue for hover state
   }
 }
 
@@ -112,7 +112,7 @@
     font-weight: normal !important; // Normal weight for better legibility
     
     &:hover, &:focus, &:active, &:checked {
-      background-color: #1a365d !important; // Dark blue for selection
+      background-color: colors.$form-selected !important; // Dark blue for selection
       color: #ffffff !important;
     }
   }
@@ -190,7 +190,7 @@
   // Checked state
   &:checked ~ .toggle-switch-display {
     &::before {
-      background-color: #1a365d; 
+      background-color: colors.$input-focus; 
     }
     
     &::after {
@@ -214,6 +214,13 @@
       cursor: not-allowed;
     }
   }
+}
+
+@mixin form-group-base {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-bottom: 1rem;
 }
 
 @mixin form-label-base {
@@ -274,4 +281,126 @@
   font-weight: 500;
   margin: 0;
   min-height: 2.5rem; // Slightly taller than base buttons
+}
+
+@mixin grid-compliant-color-picker {
+  // Base styling - grouped all base properties together
+  display: block;
+  width: 100%;
+  height: 2.5rem;
+  padding: 0.125rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  box-sizing: border-box;
+  background-color: colors.$input-bg;
+  border: 0.0625rem solid colors.$input-border;
+  
+  // States
+  &:hover {
+    border-color: colors.$input-hover;
+    box-shadow: 0 0 0.5rem 0 rgba(0, 0, 0, 0.15);
+  }
+  
+  &:focus {
+    outline: none;
+    border-color: colors.$input-focus;
+    box-shadow: 0 0 0 0.125rem color-mix(in srgb, colors.$input-focus 25%, transparent);
+  }
+  
+  // Browser-specific overrides
+  &::-webkit-color-swatch-wrapper {
+    padding: 0;
+    border: none;
+  }
+  
+  &::-webkit-color-swatch {
+    border: none;
+    border-radius: 0.125rem;
+  }
+  
+  &::-moz-color-swatch {
+    border: none;
+    border-radius: 0.125rem;
+  }
+}
+
+@mixin grid-compliant-color-picker-compact {
+  @include grid-compliant-color-picker;
+  width: 3.125rem;
+  height: 1.875rem;
+  margin-left: auto;
+  flex: 0 0 auto;
+}
+
+@mixin grid-compliant-color-picker-with-preview {
+  @include grid-compliant-color-picker;
+  display: flex;
+  align-items: center;
+  
+  &::before {
+    content: "";
+    display: block;
+    width: 2rem;
+    height: 1.25rem;
+    border-radius: 0.125rem;
+    margin-right: 0.5rem;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.2);
+    background-color: currentColor;
+  }
+}
+
+@mixin grid-compliant-color-picker-with-hex {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 1rem;
+}
+
+@mixin color-picker-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.125rem 0.25rem; 
+  overflow: visible; 
+}
+
+@mixin color-picker-preview {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 0.1875rem;
+  border: 0.0625rem solid colors.$input-border;
+  margin-right: 0.3125rem;
+  flex: 0 0 auto;
+  overflow: hidden;
+}
+
+@mixin color-picker-hex-input {
+  @include grid-compliant-text-input;
+  flex: 1 1 auto;
+  min-width: 5rem;
+  font-family: monospace;
+  text-transform: uppercase;
+  box-sizing: border-box;
+  margin-right: 0.25rem; // Extra margin on the right to prevent glow clipping
+  
+  &::placeholder {
+    text-transform: none;
+  }
+  
+  // Adjust focus styles to make them more contained
+  &:focus {
+    outline: none;
+    border-color: colors.$input-focus;
+    box-shadow: 0 0 0.375rem 0.0625rem color-mix(in srgb, colors.$input-focus 50%, transparent);
+  }
+  
+  // Style for invalid hex values
+  &.invalid {
+    border-color: colors.$form-incorrect;
+    box-shadow: 0 0 0.25rem 0.0625rem color-mix(in srgb, colors.$form-incorrect 30%, transparent);
+  }
 }

@@ -118,6 +118,8 @@ export class CreatorApplication extends EventideSheetHelpers {
       return;
     }
 
+    erps.utils.initColorPickersWithHex();
+
     return context;
   }
 
