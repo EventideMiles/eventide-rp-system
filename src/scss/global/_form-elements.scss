@@ -402,6 +402,14 @@
     }
   }
   
+  &__toggle-switch-left {
+    @include mixins.grid-compliant-toggle-switch-left;
+    & ~ .toggle-switch-display {
+      margin-right: auto; // Push to the left side of the container
+      cursor: pointer; // Make it clear this is clickable
+    }
+  }
+  
   // Style for groups containing toggle switches
   &__toggle-group {
     display: flex;

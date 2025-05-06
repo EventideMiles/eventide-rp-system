@@ -208,11 +208,91 @@
   
   // Disabled state
   &:disabled ~ .toggle-switch-display {
-    opacity: 0.5;
+    opacity: 0.6;
     pointer-events: none;
+    cursor: not-allowed;
     
     &::before, &::after {
-      cursor: not-allowed;
+      background-color: colors.$form-input-disabled;
+    }
+  }
+}
+
+@mixin grid-compliant-toggle-switch-left {
+  // Hide the actual checkbox
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  
+  // Toggle display is a fixed-size element
+  & ~ .toggle-switch-display {
+    // Basic positioning and dimensions
+    position: relative;
+    display: block;
+    width: 2.5rem;  
+    height: 1.25rem; 
+    
+    // Prevent flexbox stretching
+    flex: 0 0 2.5rem; 
+    min-width: 2.5rem; 
+    max-width: 2.5rem; 
+    
+    // For left alignment, we don't need special positioning
+    // as it will naturally align left in its container
+    
+    // Create the background track
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 2.5rem; 
+      height: 1.25rem; 
+      background-color: colors.$input-border;
+      border-radius: 1.25rem; 
+      transition: background-color 0.2s ease-in-out;
+    }
+    
+    // Create the toggle knob
+    &::after {
+      content: '';
+      position: absolute;
+      left: 0.125rem; 
+      top: 0.125rem; 
+      width: 1rem; 
+      height: 1rem; 
+      background-color: #ffffff;
+      border-radius: 50%;
+      transition: transform 0.2s ease-in-out;
+    }
+  }
+  
+  // Checked state
+  &:checked ~ .toggle-switch-display {
+    &::before {
+      background-color: colors.$input-focus; 
+    }
+    
+    &::after {
+      transform: translateX(1.25rem); 
+    }
+  }
+  
+  // Focus state for accessibility
+  &:focus ~ .toggle-switch-display {
+    &::before {
+      box-shadow: 0 0 0 0.125rem color-mix(in srgb, colors.$input-focus 25%, transparent);
+    }
+  }
+  
+  // Disabled state
+  &:disabled ~ .toggle-switch-display {
+    opacity: 0.6;
+    cursor: not-allowed;
+    
+    &::before {
+      background-color: colors.$form-input-disabled;
     }
   }
 }

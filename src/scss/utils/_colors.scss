@@ -265,6 +265,7 @@
 
   --erps-selected: #1a365d;
   --erps-incorrect: #570000;
+  --erps-disabled: #333333;
 }
 
 $c-white: var(--eventide-rp-system-c-white);
@@ -405,3 +406,4 @@ $dc: var(--eventide-rp-system-card-header-dc);
 
 $form-selected: var(--erps-selected);
 $form-incorrect: var(--erps-incorrect);
+$form-input-disabled: var(--erps-disabled);

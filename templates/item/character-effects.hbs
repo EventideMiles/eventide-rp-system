@@ -1,11 +1,12 @@
 <section class="tab effects {{tab.cssClass}}" data-group="primary" data-tab="characterEffects">
+  <label class="eventide-item-sheet__effect-toggle-label" for="effect.displayOnToken">Icon Displayed On Token</label>
   <label 
-    class="eventide-item-sheet__effect-toggle {{#if activeEffect.duration.seconds}}eventide-item-sheet__effect-toggle--active{{/if}}" 
+    class="" 
     title="When enabled, this effect will be displayed on tokens">
     <div class="toggle-switch-wrapper">
       <input 
         type="checkbox" 
-        class="base-form__toggle-switch" 
+        class="base-form__toggle-switch-left" 
         name="effect.displayOnToken" 
         id="effect.displayOnToken"
         {{#if activeEffect.duration.seconds}}checked{{/if}}
@@ -16,7 +17,7 @@
     <span 
       class="eventide-item-sheet__effect-toggle-label"
     >
-      {{#if activeEffect.duration.seconds}}Icon Displayed On Token <i class="fa-solid fa-square-check"></i>{{else}}Icon Displayed On Token <i class="fa-solid fa-square"></i>{{/if}}
+      
     </span>
   </label>
 
