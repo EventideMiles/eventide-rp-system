@@ -304,13 +304,11 @@
   }
 
   &__label {
-    display: block;
-    font-size: 1rem;
-    font-weight: bold;
-    color: colors.$label-text;
-    margin: 0;
-    flex: 0 0 120px;
-    min-width: 120px;
+    @include mixins.form-label-medium;
+    
+    &--checkbox {
+      @include mixins.checkbox-label;
+    }
   }
 
   &__label--inline {

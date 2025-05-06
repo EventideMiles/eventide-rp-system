@@ -313,6 +313,33 @@
   display: block;
 }
 
+@mixin form-label-small {
+  @include form-label-base;
+  font-size: 0.75rem;
+}
+
+@mixin form-label-medium {
+  @include form-label-base;
+  font-size: 1.125rem;
+}
+
+@mixin form-label-large {
+  @include form-label-base;
+  font-size: 1.5rem;
+}
+
+@mixin form-label-with-icon {
+  @include form-label-base;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+}
+
+@mixin checkbox-label {
+  @include form-label-base;
+  cursor: pointer;
+}
+
 @mixin button-base {
   // Core button styling that all buttons share
   background-color: colors.$button-bg;
