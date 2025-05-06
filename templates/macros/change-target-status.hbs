@@ -38,14 +38,18 @@
           {{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.SubtractMode"}}
         </option>
       </select>
-      <input 
-        class="base-form__number-input" 
-        autofocus 
-        type="number" 
-        id="adjustmentChange" 
-        name="adjustmentChange" 
-        value="{{ifThen storedData.changeTargetStatus_adjustmentChange storedData.changeTargetStatus_adjustmentChange "0"}}" 
-        placeholder="{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.ChangeValue"}}">
+      <div class="base-form__number-input-wrapper">
+        <button type="button" class="decrement" data-action="decrement">−</button>
+        <input 
+          class="base-form__number-input" 
+          autofocus 
+          type="number" 
+          id="adjustmentChange" 
+          name="adjustmentChange" 
+          value="{{ifThen storedData.changeTargetStatus_adjustmentChange storedData.changeTargetStatus_adjustmentChange "0"}}" 
+          placeholder="{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.ChangeValue"}}">
+        <button type="button" class="increment" data-action="increment">+</button>
+      </div>
     </div>
     <div class="base-form__group">
       <label class="base-form__label" 
@@ -64,13 +68,17 @@
           {{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.SubtractMode"}}
         </option>
       </select>
-      <input 
-        class="base-form__number-input" 
-        type="number" 
-        id="overrideChange" 
-        name="overrideChange" 
-        value="{{ifThen storedData.changeTargetStatus_overrideChange storedData.changeTargetStatus_overrideChange "0"}}" 
-        placeholder="{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.ChangeValue"}}">
+      <div class="base-form__number-input-wrapper">
+        <button type="button" class="decrement" data-action="decrement">−</button>
+        <input 
+          class="base-form__number-input" 
+          type="number" 
+          id="overrideChange" 
+          name="overrideChange" 
+          value="{{ifThen storedData.changeTargetStatus_overrideChange storedData.changeTargetStatus_overrideChange "0"}}" 
+          placeholder="{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.ChangeValue"}}">
+        <button type="button" class="increment" data-action="increment">+</button>
+      </div>
     </div>
     <div class="base-form__group">
       <label class="base-form__label" 
@@ -89,13 +97,17 @@
           {{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.SubtractMode"}}
         </option>
       </select>
-      <input 
-        class="base-form__number-input" 
-        type="number" 
-        id="advantageChange" 
-        name="advantageChange" 
-        value="{{ifThen storedData.changeTargetStatus_advantageChange storedData.changeTargetStatus_advantageChange "0"}}" 
-        placeholder="{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.ChangeValue"}}">
+      <div class="base-form__number-input-wrapper">
+        <button type="button" class="decrement" data-action="decrement">−</button>
+        <input 
+          class="base-form__number-input" 
+          type="number" 
+          id="advantageChange" 
+          name="advantageChange" 
+          value="{{ifThen storedData.changeTargetStatus_advantageChange storedData.changeTargetStatus_advantageChange "0"}}" 
+          placeholder="{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.ChangeValue"}}">
+        <button type="button" class="increment" data-action="increment">+</button>
+      </div>
     </div>
     <div class="base-form__group">
       <label class="base-form__label" 
@@ -114,13 +126,17 @@
           {{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.SubtractMode"}}
         </option>
       </select>
-      <input 
-        class="base-form__number-input" 
-        type="number" 
-        id="disadvantageChange" 
-        name="disadvantageChange" 
-        value="{{ifThen storedData.changeTargetStatus_disadvantageChange storedData.changeTargetStatus_disadvantageChange "0"}}" 
-        placeholder="{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.ChangeValue"}}">
+      <div class="base-form__number-input-wrapper">
+        <button type="button" class="decrement" data-action="decrement">−</button>
+        <input 
+          class="base-form__number-input" 
+          type="number" 
+          id="disadvantageChange" 
+          name="disadvantageChange" 
+          value="{{ifThen storedData.changeTargetStatus_disadvantageChange storedData.changeTargetStatus_disadvantageChange "0"}}" 
+          placeholder="{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.ChangeValue"}}">
+        <button type="button" class="increment" data-action="increment">+</button>
+      </div>
     </div>
   </div>
   

@@ -123,13 +123,15 @@
           >
             {{localize "EVENTIDE_RP_SYSTEM.Item.Descriptors.RollActorName.label"}}
           </label>
-          <div class="checkbox-wrapper checkbox-content">
+          <div class="toggle-switch-wrapper">
             <input 
               type="checkbox" 
-              class="large-checkbox" 
+              class="base-form__toggle-switch" 
               name="system.rollActorName" 
+              id="system.rollActorName"
               {{checked system.rollActorName}}
             />
+            <label class="toggle-switch-display" for="system.rollActorName"></label>
           </div>
         </div>
       </div>
@@ -140,14 +142,16 @@
             class="resource-label checkbox-label">
             {{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Equipped.label"}}
           </label>
-          <div class="checkbox-wrapper checkbox-content">
+          <div class="toggle-switch-wrapper">
             <input 
               type="checkbox" 
-              class="large-checkbox" 
+              class="base-form__toggle-switch" 
               name="system.equipped" 
+              id="system.equipped"
               {{checked system.equipped}}
               {{#ifCond system.quantity "<=" 0}}disabled{{/ifCond}}
             />
+            <label class="toggle-switch-display" for="system.equipped"></label>
           </div>
         </div>
       </div>
@@ -160,13 +164,15 @@
             >
               {{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Cursed.label"}}
             </label>
-            <div class="checkbox-wrapper checkbox-content">
+            <div class="toggle-switch-wrapper">
               <input 
                 type="checkbox" 
-                class="large-checkbox" 
+                class="base-form__toggle-switch" 
                 name="system.cursed" 
+                id="system.cursed"
                 {{checked system.cursed}}
               />
+              <label class="toggle-switch-display" for="system.cursed"></label>
             </div>
           </div>
         </div>

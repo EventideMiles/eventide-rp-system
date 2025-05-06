@@ -121,21 +121,33 @@
           <label class="base-form__label" for="quantity">
             {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Quantity"}}
           </label>
-          <input class="base-form__number-input" type="number" id="quantity" name="quantity" value="1">
+          <div class="base-form__number-input-wrapper">
+            <button type="button" class="decrement" data-action="decrement">−</button>
+            <input class="base-form__number-input" type="number" id="quantity" name="quantity" value="1">
+            <button type="button" class="increment" data-action="increment">+</button>
+          </div>
         </div>
 
         <div class="base-form__group">
           <label class="base-form__label" for="weight">
             {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Weight"}}
           </label>
-          <input class="base-form__number-input" type="number" id="weight" name="weight" value="0">
+          <div class="base-form__number-input-wrapper">
+            <button type="button" class="decrement" data-action="decrement">−</button>
+            <input class="base-form__number-input" type="number" id="weight" name="weight" value="0">
+            <button type="button" class="increment" data-action="increment">+</button>
+          </div>
         </div>
 
         <div class="base-form__group">
           <label class="base-form__label" for="cost">
             {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Cost"}}
           </label>
-          <input class="base-form__number-input" type="number" id="cost" name="cost" value="0">
+          <div class="base-form__number-input-wrapper">
+            <button type="button" class="decrement" data-action="decrement">−</button>
+            <input class="base-form__number-input" type="number" id="cost" name="cost" value="0">
+            <button type="button" class="increment" data-action="increment">+</button>
+          </div>
         </div>
 
         <div class="base-form__toggle-group">
@@ -234,36 +246,48 @@
           <label class="base-form__label" for="roll.bonus">
             {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RollBonus"}}
           </label>
-          <input 
-            class="base-form__number-input" 
-            type="number" 
-            id="roll.bonus" 
-            name="roll.bonus" 
-            value="0">
+          <div class="base-form__number-input-wrapper">
+            <button type="button" class="decrement" data-action="decrement">−</button>
+            <input 
+              class="base-form__number-input" 
+              type="number" 
+              id="roll.bonus" 
+              name="roll.bonus" 
+              value="0">
+            <button type="button" class="increment" data-action="increment">+</button>
+          </div>
         </div>
 
         <div class="base-form__group">
           <label class="base-form__label" for="roll.diceAdjustments.advantage">
             {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RollAdvantage"}}
           </label>
-          <input 
-            class="base-form__number-input" 
-            type="number" 
-            id="roll.diceAdjustments.advantage" 
-            name="roll.diceAdjustments.advantage" 
-            value="0">
+          <div class="base-form__number-input-wrapper">
+            <button type="button" class="decrement" data-action="decrement">−</button>
+            <input 
+              class="base-form__number-input" 
+              type="number" 
+              id="roll.diceAdjustments.advantage" 
+              name="roll.diceAdjustments.advantage" 
+              value="0">
+            <button type="button" class="increment" data-action="increment">+</button>
+          </div>
         </div>
 
         <div class="base-form__group">
           <label class="base-form__label" for="roll.diceAdjustments.disadvantage">
             {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RollDisadvantage"}}
           </label>
-          <input 
-            class="base-form__number-input" 
-            type="number" 
-            id="roll.diceAdjustments.disadvantage" 
-            name="roll.diceAdjustments.disadvantage" 
-            value="0">
+          <div class="base-form__number-input-wrapper">
+            <button type="button" class="decrement" data-action="decrement">−</button>
+            <input 
+              class="base-form__number-input" 
+              type="number" 
+              id="roll.diceAdjustments.disadvantage" 
+              name="roll.diceAdjustments.disadvantage" 
+              value="0">
+            <button type="button" class="increment" data-action="increment">+</button>
+          </div>
         </div>
       </div>
 
@@ -272,7 +296,11 @@
         {{#each abilities}}
           <div class="base-form__group gear-creator__effect-group">
             <label class="base-form__label" for="{{lowercase this}}">{{capitalize (localize (lookup @root.config.abilityAbbreviations this))}}</label>
-            <input class="base-form__number-input gear-creator__effect-input" type="number" id="{{lowercase this}}" name="{{lowercase this}}" value="0">
+            <div class="base-form__number-input-wrapper">
+              <button type="button" class="decrement" data-action="decrement">−</button>
+              <input class="base-form__number-input gear-creator__effect-input" type="number" id="{{lowercase this}}" name="{{lowercase this}}" value="0">
+              <button type="button" class="increment" data-action="increment">+</button>
+            </div>
             <select class="base-form__select gear-creator__effect-select" id="{{lowercase this}}-mode" name="{{lowercase this}}-mode">
               <option value="add">{{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.Add"}}</option>
               <option value="override">{{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.Override"}}</option>
@@ -284,7 +312,11 @@
         {{#each hiddenAbilities}}
           <div class="base-form__group gear-creator__effect-group">
             <label class="base-form__label" for="{{lowercase this}}">{{capitalize (localize (lookup @root.config.hiddenAbilityAbbreviations this))}}</label>
-            <input class="base-form__number-input gear-creator__effect-input" type="number" id="{{lowercase this}}" name="{{lowercase this}}" value="0">
+            <div class="base-form__number-input-wrapper">
+              <button type="button" class="decrement" data-action="decrement">−</button>
+              <input class="base-form__number-input gear-creator__effect-input" type="number" id="{{lowercase this}}" name="{{lowercase this}}" value="0">
+              <button type="button" class="increment" data-action="increment">+</button>
+            </div>
             <select class="base-form__select gear-creator__effect-select" id="{{lowercase this}}-mode" name="{{lowercase this}}-mode">
               <option value="add">{{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.Add"}}</option>
               <option value="override">{{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.Override"}}</option>

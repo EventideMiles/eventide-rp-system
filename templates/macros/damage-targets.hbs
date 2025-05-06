@@ -29,7 +29,10 @@
     </div>
     <div class="base-form__group base-form__group--checkbox">
       <label class="base-form__label" for="isHeal">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.IsHeal"}}:</label>
-      <input class="base-form__checkbox" type="checkbox" name="isHeal" {{checked heal}}>
+      <div class="toggle-switch-wrapper">
+        <input class="base-form__toggle-switch" type="checkbox" name="isHeal" id="isHeal" {{checked heal}}>
+        <label class="toggle-switch-display" for="isHeal"></label>
+      </div>
     </div>
   </div>
   

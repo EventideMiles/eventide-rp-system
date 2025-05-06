@@ -124,12 +124,16 @@
         <label class="base-form__label" for="{{lowercase this}}">
           {{{capitalize (localize (lookup @root.config.abilityAbbreviations this))}}}:
         </label>
-        <input 
-          class="base-form__number-input" 
-          type="number" 
-          id="{{lowercase this}}" 
-          name="{{lowercase this}}" 
-          value="0">
+        <div class="base-form__number-input-wrapper">
+          <button type="button" class="decrement" data-action="decrement">−</button>
+          <input 
+            class="base-form__number-input" 
+            type="number" 
+            id="{{lowercase this}}" 
+            name="{{lowercase this}}" 
+            value="0">
+          <button type="button" class="increment" data-action="increment">+</button>
+        </div>
         <select 
           class="base-form__select" 
           id="{{lowercase this}}-mode" 
@@ -148,12 +152,16 @@
           for="{{lowercase this}}">
           {{capitalize (localize (lookup @root.config.hiddenAbilityAbbreviations this))}}:
         </label>
-        <input 
-          class="base-form__number-input" 
-          type="number" 
-          id="{{lowercase this}}" 
-          name="{{lowercase this}}" 
-          value="0">
+        <div class="base-form__number-input-wrapper">
+          <button type="button" class="decrement" data-action="decrement">−</button>
+          <input 
+            class="base-form__number-input" 
+            type="number" 
+            id="{{lowercase this}}" 
+            name="{{lowercase this}}" 
+            value="0">
+          <button type="button" class="increment" data-action="increment">+</button>
+        </div>
         <select 
           class="base-form__select" 
           id="{{lowercase this}}-mode" 

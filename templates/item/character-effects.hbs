@@ -2,13 +2,17 @@
   <label 
     class="eventide-item-sheet__effect-toggle {{#if activeEffect.duration.seconds}}eventide-item-sheet__effect-toggle--active{{/if}}" 
     title="When enabled, this effect will be displayed on tokens">
-    <input 
-      type="checkbox" 
-      class="eventide-item-sheet__effect-display-token" 
-      name="effect.displayOnToken" 
-      {{#if activeEffect.duration.seconds}}checked{{/if}}
-      data-action="toggleEffectDisplay"
-    >
+    <div class="toggle-switch-wrapper">
+      <input 
+        type="checkbox" 
+        class="base-form__toggle-switch" 
+        name="effect.displayOnToken" 
+        id="effect.displayOnToken"
+        {{#if activeEffect.duration.seconds}}checked{{/if}}
+        data-action="toggleEffectDisplay"
+      >
+      <label class="toggle-switch-display" for="effect.displayOnToken"></label>
+    </div>
     <span 
       class="eventide-item-sheet__effect-toggle-label"
     >
@@ -72,14 +76,19 @@
             </div>
             
             <div class="eventide-item-sheet__effects-grid-cell">
-              <input 
-                type="number" 
-                name="characterEffects.regularEffects.{{@index}}.value" 
-                value="{{value}}" 
-                step="1"
-                data-index="{{@index}}"
-                data-type="visible"
-              >
+              <div class="base-form__number-input-wrapper">
+                <button type="button" class="decrement" data-action="decrementEffect" data-index="{{@index}}" data-type="visible">−</button>
+                <input 
+                  type="number" 
+                  class="base-form__number-input"
+                  name="characterEffects.regularEffects.{{@index}}.value" 
+                  value="{{value}}" 
+                  step="1"
+                  data-index="{{@index}}"
+                  data-type="visible"
+                >
+                <button type="button" class="increment" data-action="incrementEffect" data-index="{{@index}}" data-type="visible">+</button>
+              </div>
             </div>
             
             <div class="eventide-item-sheet__effects-grid-cell">
@@ -155,14 +164,19 @@
               </div>
               
               <div class="eventide-item-sheet__effects-grid-cell">
-                <input 
-                  type="number" 
-                  name="characterEffects.hiddenEffects.{{@index}}.value" 
-                  value="{{value}}" 
-                  step="1"
-                  data-index="{{@index}}"
-                  data-type="hiddenEffects"
-                >
+                <div class="base-form__number-input-wrapper">
+                  <button type="button" class="decrement" data-action="decrementEffect" data-index="{{@index}}" data-type="hiddenEffects">−</button>
+                  <input 
+                    type="number" 
+                    class="base-form__number-input"
+                    name="characterEffects.hiddenEffects.{{@index}}.value" 
+                    value="{{value}}" 
+                    step="1"
+                    data-index="{{@index}}"
+                    data-type="hiddenEffects"
+                  >
+                  <button type="button" class="increment" data-action="incrementEffect" data-index="{{@index}}" data-type="hiddenEffects">+</button>
+                </div>
               </div>
               
               <div class="eventide-item-sheet__effects-grid-cell">
@@ -238,15 +252,20 @@
               </div>
               
               <div class="eventide-item-sheet__effects-grid-cell">
-                <input 
-                  type="number" 
-                  name="characterEffects.hiddenEffects.{{@index}}.value" 
-                  value="{{value}}" 
-                  step="1"
-                  data-index="{{@index}}"
-                  data-type="hidden"
-                  disabled
-                >
+                <div class="base-form__number-input-wrapper">
+                  <button type="button" class="decrement" data-action="decrementEffect" data-index="{{@index}}" data-type="hidden">−</button>
+                  <input 
+                    type="number" 
+                    class="base-form__number-input"
+                    name="characterEffects.hiddenEffects.{{@index}}.value" 
+                    value="{{value}}" 
+                    step="1"
+                    data-index="{{@index}}"
+                    data-type="hidden"
+                    disabled
+                  >
+                  <button type="button" class="increment" data-action="incrementEffect" data-index="{{@index}}" data-type="hidden">+</button>
+                </div>
               </div>
               
               <div class="eventide-item-sheet__effects-grid-cell">

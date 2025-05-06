@@ -11,9 +11,10 @@
         </select>
       </div>
       <div class="resource checkbox-resource">
-        <label class="resource-label">{{localize 'EVENTIDE_RP_SYSTEM.Item.Roll.Targeted.label'}}</label>
-        <div class="checkbox-wrapper">
-          <input type="checkbox" class="large-checkbox" name="system.targeted" {{checked system.targeted}} />
+        <label class="resource-label" for="system.targeted">{{localize 'EVENTIDE_RP_SYSTEM.Item.Roll.Targeted.label'}}</label>
+        <div class="toggle-switch-wrapper">
+          <input type="checkbox" class="base-form__toggle-switch" name="system.targeted" id="system.targeted" {{checked system.targeted}} />
+          <label class="toggle-switch-display" for="system.targeted"></label>
         </div>
       </div>
     </div>
