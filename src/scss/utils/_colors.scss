@@ -1,78 +1,87 @@
+// cross-theme colors
+* {
+  // universal
+  --erps-universal-white: #ffffff;
+  --erps-universal-black: #000000;
+  --erps-universal-tan: #4d4d4d;
+
+  --erps-white-text-glow: rgba(162, 162, 162, 0.75);
+
+  // scrollbars
+  --erps-scrollbar-color: #0044aa;
+  --erps-scrollbar-bg: #45454530;
+
+  // abilities
+  --erps-abilities-acro: rgb(191, 68, 0);
+  --erps-abilities-phys: rgb(168, 3, 3);
+  --erps-abilities-fort: rgb(45, 104, 45);
+  --erps-abilities-will: rgb(106, 27, 154);
+  --erps-abilities-wits: rgb(14, 67, 128);
+
+  --erps-abilities-acro-transparent: rgba(191, 68, 0, 0.5);
+  --erps-abilities-phys-transparent: rgba(168, 3, 3, 0.5);
+  --erps-abilities-fort-transparent: rgba(45, 104, 45, 0.5);
+  --erps-abilities-will-transparent: rgba(106, 27, 154, 0.5);
+  --erps-abilities-wits-transparent: rgba(14, 67, 128, 0.5);
+
+  --erps-acro-formula-bg: rgba(191, 68, 0, 0.85);
+  --erps-phys-formula-bg: rgba(168, 3, 3, 0.85);
+  --erps-fort-formula-bg: rgba(45, 104, 45, 0.85);
+  --erps-will-formula-bg: rgba(106, 27, 154, 0.85);
+  --erps-wits-formula-bg: rgba(14, 67, 128, 0.85);
+  --erps-gear-formula-bg: rgba(139, 69, 19, 0.85);
+  --erps-damage-formula-bg: rgba(106, 4, 4, 0.85);
+  --erps-heal-formula-bg: rgba(203, 142, 0, 0.85);
+  --erps-unknown-formula-bg: rgba(83, 83, 83, 0.85);
+  --erps-initiative-formula-bg: rgba(52, 152, 219, 0.85);
+
+  // additional card headers
+  --erps-card-header-gear: #8B4513;
+  --erps-card-header-unknown: #535353;
+  --erps-card-header-damage: #6A0404;
+  --erps-card-header-heal: #cb8e00;
+  --erps-card-header-effect: #9A5D2D;
+  --erps-card-header-delete: #555555;
+  --erps-card-header-transfer: #9B4B7D;
+
+  --erps-card-header-initiative: #3498db;
+  --erps-card-header-initiative-npc: #e67e22;
+  --erps-card-header-initiative-pc: #2ecc71;
+
+  --erps-critical-hit: #2D1499b3;
+  --erps-critical-miss: #4e0101b3;
+  --erps-saved-miss: #4A777Ab3;
+  --erps-stolen-crit: #563C5Cb3;
+
+  --erps-chat-details-hit: #50C877;
+  --erps-chat-details-miss: #C70039;
+
+  // hidden section colors
+  --erps-hidden-bg: #f7e8ea;
+  --erps-hidden-border: #e66a6e;
+
+  // input validation colors
+  --erps-selected: #1a365d;
+  --erps-incorrect: #570000;
+  --erps-required: #cc0000;
+}
+
 // light theme colors
 :root {
     // universal
-  --eventide-rp-system-c-dark: #1a1814;
-  --eventide-rp-system-c-faint: #a8a69b;
-  --eventide-rp-system-c-beige: #b5b3a4;
-  --eventide-rp-system-c-tan: #4d4d4d;
-  --eventide-rp-system-c-white: #ffffff;
-  --eventide-rp-system-c-black: #000000;
-  --eventide-rp-system-c-groove: #f0efe6;
+  --erps-c-dark: #1a1814;
+  --erps-c-faint: #a8a69b;
+  --erps-c-beige: #b5b3a4;
+  --erps-c-tan: #4d4d4d;
+  --erps-c-white: #ffffff;
+  --erps-c-black: #000000;
+  --erps-c-groove: #f0efe6;
 
   // character sheet
-  --eventide-rp-system-character-input: rgba(255, 255, 255, 0.85);
-  --eventide-rp-system-character-input-border: rgba(0, 0, 0, 0.65);
-  --eventide-rp-system-character-black: #000000;
-  --eventide-rp-system-character-white: #ffffff;
-  --eventide-rp-system-character-tan: #4d4d4d;
-  --eventide-rp-system-character-glow: rgba(0, 123, 255, 0.75);
-  --eventide-rp-system-character-background-color: linear-gradient(to bottom, rgba(68, 98, 131, 0.6), rgba(51, 72, 104, 0.5));
   --eventide-rp-system-secondary-image-background: rgba(0, 0, 0, 0.85);
-  --eventide-rp-system-image-edit-border: rgba(24, 24, 24, 0.65);
-  --eventide-rp-system-hidden-bg: #f7e8ea;
-  --eventide-rp-system-hidden-border: #e66a6e;
+  --erps-image-edit-border: rgba(24, 24, 24, 0.65);
   --eventide-rp-system-effect-bg: rgba(136, 87, 53, 0.75);
 
-  // chat cards
-  --eventide-rp-system-chat-card-white: #ffffff;
-  --eventide-rp-system-chat-card-black: #000000;
-  --eventide-rp-system-chat-card-tan: #4d4d4d;
-
-  // abilities
-  --eventide-rp-system-abilities-acro: rgba(191, 68, 0, 0.75);
-  --eventide-rp-system-abilities-phys: rgba(168, 3, 3, 0.75);
-  --eventide-rp-system-abilities-fort: rgba(45, 104, 45, 0.75);
-  --eventide-rp-system-abilities-will: rgba(106, 27, 154, 0.75);
-  --eventide-rp-system-abilities-wits: rgba(14, 67, 128, 0.75);
-
-  // additional card headers
-  --eventide-rp-system-card-header-gear: #8B4513b3;
-  --eventide-rp-system-card-header-dc: #234B57b3;
-  --eventide-rp-system-card-header-unknown: #535353b3;
-  --eventide-rp-system-card-header-damage: #6A0404b3;
-  --eventide-rp-system-card-header-heal: #cb8e00b3;
-  --eventide-rp-system-card-header-effect: #9A5D2Db3;
-  --eventide-rp-system-card-header-delete: #555555b3;
-  --eventide-rp-system-card-header-transfer: #9B4B7D; // Muted purple/magenta for embarrassing transfers
-  --eventide-rp-system-card-header-description-hr: #8B4513b3;
-
-  // additional chat details
-  --eventide-rp-system-chat-details-hit: #50C877b3;
-  --eventide-rp-system-chat-details-miss: #C70039b3;
-  --eventide-rp-system-chat-hr: #c9c7b8;
-
-  // initiative
-  --eventide-rp-system-initiative: #3498db;
-  --eventide-rp-system-initiative-npc: #e67e22;
-  --eventide-rp-system-initiative-pc: #2ecc71;
-  --eventide-rp-system-initiative-formula-bg: rgba(52, 152, 219, 0.85);
-
-  // critical
-  --eventide-rp-system-critical-hit: #2D1499b3;
-  --eventide-rp-system-critical-miss: #4e0101b3;
-  --eventide-rp-system-saved-miss: #4A777Ab3;
-  --eventide-rp-system-stolen-crit: #563C5Cb3;
-
-  // formula backgrounds
-  --eventide-rp-system-acro-formula-bg: rgba(191, 68, 0, 0.85);
-  --eventide-rp-system-phys-formula-bg: rgba(168, 3, 3, 0.85);
-  --eventide-rp-system-fort-formula-bg: rgba(45, 104, 45, 0.85);
-  --eventide-rp-system-will-formula-bg: rgba(106, 27, 154, 0.85);
-  --eventide-rp-system-wits-formula-bg: rgba(14, 67, 128, 0.85);
-  --eventide-rp-system-gear-formula-bg: rgba(139, 69, 19, 0.85);
-  --eventide-rp-system-damage-formula-bg: rgba(106, 4, 4, 0.85);
-  --eventide-rp-system-heal-formula-bg: rgba(203, 142, 0, 0.85);
-  --eventide-rp-system-unknown-formula-bg: rgba(83, 83, 83, 0.85);
 
   // form elements
   --eventide-rp-system-input-bg: #ffffff;
@@ -86,7 +95,7 @@
   --eventide-rp-system-checkbox-bg: #ffffff;
   --eventide-rp-system-checkbox-hover: #f0f0f0;
   --eventide-rp-system-label-text: #191813;
-  --eventide-rp-system-required: #cc0000;
+  
   --eventide-rp-system-select-arrow-url: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath fill='%23191813' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
   --eventide-rp-system-select-option-bg: #ffffff;
   --eventide-rp-system-select-option-text: #191813;
@@ -129,86 +138,27 @@
   --eventide-rp-system-browse-button-text: #ffffff;
 
 
-  --erps-selected: #1a365d;
-  --erps-incorrect: #570000;
+  
 }
 
 // Dark theme colors
 .theme-dark {
   // universal
-  --eventide-rp-system-c-dark: #e5e3d8;
-  --eventide-rp-system-c-faint: #2a2925;
-  --eventide-rp-system-c-beige: #4d4d4d;
-  --eventide-rp-system-c-tan: #c9c7b8;
-  --eventide-rp-system-c-white: #000000;
-  --eventide-rp-system-c-black: #ffffff;
-  --eventide-rp-system-c-groove: #1a1922;
+  --erps-c-dark: #e5e3d8;
+  --erps-c-faint: #2a2925;
+  --erps-c-beige: #4d4d4d;
+  --erps-c-tan: #c9c7b8;
+  --erps-c-white: #000000;
+  --erps-c-black: #ffffff;
+  --erps-c-groove: #1a1922;
 
   // character sheet
-  --eventide-rp-system-character-input: rgba(0, 0, 0, 0.85);
-  --eventide-rp-system-character-input-border: rgba(255, 255, 255, 0.65);
-  --eventide-rp-system-character-black: #000000;
-  --eventide-rp-system-character-white: #ffffff;
-  --eventide-rp-system-character-tan: #c9c7b8;
-  --eventide-rp-system-character-glow: rgba(0, 149, 255, 0.75);
-  --eventide-rp-system-character-background-color: linear-gradient(to bottom, rgba(44, 63, 84, 0.6), rgba(33, 46, 66, 0.5));
   --eventide-rp-system-secondary-image-background: rgba(0, 0, 0, 0.85);
-  --eventide-rp-system-image-edit-border: rgba(153, 153, 153, 0.65);
-  --eventide-rp-system-hidden-bg: #f7e8ea;
-  --eventide-rp-system-hidden-border: #e66a6e;
+
+  --erps-image-edit-border: rgba(153, 153, 153, 0.65);
+
   --eventide-rp-system-effect-bg: rgba(156, 107, 73, 0.75);
-
-  // chat cards
-  --eventide-rp-system-chat-card-white: #ffffff;
-  --eventide-rp-system-chat-card-black: #000000;
-  --eventide-rp-system-chat-card-tan: #444444;
-
-  // abilities
-  --eventide-rp-system-abilities-acro: #a63b01b3;
-  --eventide-rp-system-abilities-phys: #910303b3;
-  --eventide-rp-system-abilities-fort: #2D682Db3;
-  --eventide-rp-system-abilities-will: #6A1B9Ab3;
-  --eventide-rp-system-abilities-wits: #0e4380b3;
-
-  // additional card headers
-  --eventide-rp-system-card-header-gear: #8B4513b3;
-  --eventide-rp-system-card-header-dc: #234B57b3;
-  --eventide-rp-system-card-header-unknown: #535353b3;
-  --eventide-rp-system-card-header-damage: #6A0404b3;
-  --eventide-rp-system-card-header-heal: #cb8e00b3;
-  --eventide-rp-system-card-header-effect: #9A5D2Db3;
-  --eventide-rp-system-card-header-delete: #555555b3;
-  --eventide-rp-system-card-header-transfer: #9B4B7D; // Muted purple/magenta for embarrassing transfers
-  --eventide-rp-system-card-header-description-hr: #8B4513b3;
-
-  // chat details
-  --eventide-rp-system-chat-details-hit: #50C877b3;
-  --eventide-rp-system-chat-details-miss: #C70039b3;
-  --eventide-rp-system-chat-hr: #c9c7b8;
-
-  // initiative
-  --eventide-rp-system-initiative: #3498db;
-  --eventide-rp-system-initiative-npc: #e67e22;
-  --eventide-rp-system-initiative-pc: #2ecc71;
-  --eventide-rp-system-initiative-formula-bg: rgba(52, 152, 219, 0.85);
-
-  // critical
-  --eventide-rp-system-critical-hit: #2D1499b3;
-  --eventide-rp-system-critical-miss: #4e0101b3;
-  --eventide-rp-system-saved-miss: #4A777Ab3;
-  --eventide-rp-system-stolen-crit: #563C5Cb3;
-
-  // formula backgrounds
-  --eventide-rp-system-acro-formula-bg: rgba(191, 68, 0, 0.85);
-  --eventide-rp-system-phys-formula-bg: rgba(168, 3, 3, 0.85);
-  --eventide-rp-system-fort-formula-bg: rgba(45, 104, 45, 0.85);
-  --eventide-rp-system-will-formula-bg: rgba(106, 27, 154, 0.85);
-  --eventide-rp-system-wits-formula-bg: rgba(14, 67, 128, 0.85);
-  --eventide-rp-system-gear-formula-bg: rgba(139, 69, 19, 0.85);
-  --eventide-rp-system-damage-formula-bg: rgba(106, 4, 4, 0.85);
-  --eventide-rp-system-heal-formula-bg: rgba(203, 142, 0, 0.85);
-  --eventide-rp-system-unknown-formula-bg: rgba(83, 83, 83, 0.85);
-
+  
   // form elements
   --eventide-rp-system-input-bg: #1e2430;
   --eventide-rp-system-input-hover: #2a3441;
@@ -221,7 +171,6 @@
   --eventide-rp-system-checkbox-bg: #1e2430;
   --eventide-rp-system-checkbox-hover: #2a3441;
   --eventide-rp-system-label-text: #ffffff;
-  --eventide-rp-system-required: #ff0000;
   --eventide-rp-system-select-arrow-url: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath fill='%23ffffff' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
   --eventide-rp-system-select-option-bg: #1e2430;
   --eventide-rp-system-select-option-text: #ffffff;
@@ -263,82 +212,80 @@
   --eventide-rp-system-browse-button-bg: #607D8B;
   --eventide-rp-system-browse-button-text: #ffffff;
 
-  --erps-selected: #1a365d;
-  --erps-incorrect: #570000;
   --erps-disabled: #333333;
 }
 
-$c-white: var(--eventide-rp-system-c-white);
-$c-black: var(--eventide-rp-system-c-black);
+// colors that won't change with the theme.
+$universal-white: var(--erps-universal-white);
+$universal-black: var(--erps-universal-black);
+$universal-tan: var(--erps-universal-tan);
 
-$c-dark: var(--eventide-rp-system-c-dark);
-$c-faint: var(--eventide-rp-system-c-faint);
-$c-beige: var(--eventide-rp-system-c-beige);
-$c-tan: var(--eventide-rp-system-c-tan);
+$white-text-glow: var(--erps-white-text-glow);
 
-$c-groove: var(--eventide-rp-system-c-groove);
+$scrollbar-color: var(--erps-scrollbar-color);
+$scrollbar-bg: var(--erps-scrollbar-bg);
 
-// Chat card colors: here because chat doesn't support 
-// dark backgrounds because its overridden by an image.
-$card-white: var(--eventide-rp-system-chat-card-white);
-$card-black: var(--eventide-rp-system-chat-card-black);
-$card-tan: var(--eventide-rp-system-chat-card-tan);
+$c-white: var(--erps-c-white);
+$c-black: var(--erps-c-black);
+$c-dark: var(--erps-c-dark);
+$c-faint: var(--erps-c-faint);
+$c-beige: var(--erps-c-beige);
+$c-tan: var(--erps-c-tan);
+$c-groove: var(--erps-c-groove);
 
-// Character sheet colors
-$character-black: var(--eventide-rp-system-character-black);
-$character-white: var(--eventide-rp-system-character-white);
-$character-tan: var(--eventide-rp-system-character-tan);
 
-$character-glow: var(--eventide-rp-system-character-glow);
-$character-input: var(--eventide-rp-system-character-input);
-$character-input-border: var(--eventide-rp-system-character-input-border);
-$character-background-color: var(--eventide-rp-system-character-background-color);
 $secondary-image-background: var(--eventide-rp-system-secondary-image-background);
 
-$hidden-bg: var(--eventide-rp-system-hidden-bg);
-$hidden-border: var(--eventide-rp-system-hidden-border);
+$hidden-bg: var(--erps-hidden-bg);
+$hidden-border: var(--erps-hidden-border);
 
-$effect-bg: var(--eventide-rp-system-effect-bg);
+// Ability colors
+$acro: var(--erps-abilities-acro);
+$phys: var(--erps-abilities-phys);
+$fort: var(--erps-abilities-fort);
+$will: var(--erps-abilities-will);
+$wits: var(--erps-abilities-wits);
 
-$acro: var(--eventide-rp-system-abilities-acro);
-$phys: var(--eventide-rp-system-abilities-phys);
-$fort: var(--eventide-rp-system-abilities-fort);
-$will: var(--eventide-rp-system-abilities-will);
-$wits: var(--eventide-rp-system-abilities-wits);
+$acro-transparent: var(--erps-abilities-acro-transparent);
+$phys-transparent: var(--erps-abilities-phys-transparent);
+$fort-transparent: var(--erps-abilities-fort-transparent);
+$will-transparent: var(--erps-abilities-will-transparent);
+$wits-transparent: var(--erps-abilities-wits-transparent);
 
-$critical-hit: var(--eventide-rp-system-critical-hit);
-$critical-miss: var(--eventide-rp-system-critical-miss);
-$saved-miss: var(--eventide-rp-system-saved-miss);
-$stolen-crit: var(--eventide-rp-system-stolen-crit);
+// Chat and Combat Colors
+$critical-hit: var(--erps-critical-hit);
+$critical-miss: var(--erps-critical-miss);
+$saved-miss: var(--erps-saved-miss);
+$stolen-crit: var(--erps-stolen-crit);
 
-$gear: var(--eventide-rp-system-card-header-gear);  
-$unknown: var(--eventide-rp-system-card-header-unknown);
-$damage: var(--eventide-rp-system-card-header-damage);
-$heal: var(--eventide-rp-system-card-header-heal);
-$effect: var(--eventide-rp-system-card-header-effect);
-$delete: var(--eventide-rp-system-card-header-delete);
-$description-hr: var(--eventide-rp-system-card-header-description-hr);
-$transfer: var(--eventide-rp-system-card-header-transfer);
+$gear: var(--erps-card-header-gear);  
+$unknown: var(--erps-card-header-unknown);
+$damage: var(--erps-card-header-damage);
+$heal: var(--erps-card-header-heal);
+$effect: var(--erps-card-header-effect);
+$delete: var(--erps-card-header-delete);
+$description-hr: var(--erps-card-header-description-hr);
+$transfer: var(--erps-card-header-transfer);
 
-$hit: var(--eventide-rp-system-chat-details-hit);
-$miss: var(--eventide-rp-system-chat-details-miss);
+$hit: var(--erps-chat-details-hit);
+$miss: var(--erps-chat-details-miss);
 
-$hr: var(--eventide-rp-system-chat-hr);
+$hr: var(--erps-chat-hr);
 
-$initiative: var(--eventide-rp-system-initiative);
-$initiative-npc: var(--eventide-rp-system-initiative-npc);
-$initiative-pc: var(--eventide-rp-system-initiative-pc);
-$initiative-formula-bg: var(--eventide-rp-system-initiative-formula-bg);
+$initiative: var(--erps-card-header-initiative);
+$initiative-npc: var(--erps-card-header-initiative-npc);
+$initiative-pc: var(--erps-card-header-initiative-pc);
 
-$acro-formula-bg: var(--eventide-rp-system-acro-formula-bg);
-$phys-formula-bg: var(--eventide-rp-system-phys-formula-bg);
-$fort-formula-bg: var(--eventide-rp-system-fort-formula-bg);
-$will-formula-bg: var(--eventide-rp-system-will-formula-bg);
-$wits-formula-bg: var(--eventide-rp-system-wits-formula-bg);
-$gear-formula-bg: var(--eventide-rp-system-gear-formula-bg);
-$damage-formula-bg: var(--eventide-rp-system-damage-formula-bg);
-$heal-formula-bg: var(--eventide-rp-system-heal-formula-bg);
-$unknown-formula-bg: var(--eventide-rp-system-unknown-formula-bg);
+$acro-formula-bg: var(--erps-acro-formula-bg);
+$phys-formula-bg: var(--erps-phys-formula-bg);
+$fort-formula-bg: var(--erps-fort-formula-bg);
+$will-formula-bg: var(--erps-will-formula-bg);
+$wits-formula-bg: var(--erps-wits-formula-bg);
+$gear-formula-bg: var(--erps-gear-formula-bg);
+$damage-formula-bg: var(--erps-damage-formula-bg);
+$heal-formula-bg: var(--erps-heal-formula-bg);
+$unknown-formula-bg: var(--erps-unknown-formula-bg);
+$initiative-formula-bg: var(--erps-initiative-formula-bg);
 
 // Form element colors
 $input-bg: var(--eventide-rp-system-input-bg);
@@ -349,18 +296,10 @@ $input-placeholder: var(--eventide-rp-system-input-placeholder);
 $input-focus: var(--eventide-rp-system-input-focus);
 $input-checked: var(--eventide-rp-system-input-checked);
 $input-check: var(--eventide-rp-system-input-check);
-$input-image-edit-border: var(--eventide-rp-system-image-edit-border);
+$input-image-edit-border: var(--erps-image-edit-border);
 $form-content-bg: var(--eventide-rp-system-form-content-bg);
-$form-header-underline: var(--eventide-rp-system-form-header-underline);
-
-// Checkbox colors
-$checkbox-bg: var(--eventide-rp-system-checkbox-bg);
-$checkbox-hover: var(--eventide-rp-system-checkbox-hover);
-$checkbox-bg-checked: var(--eventide-rp-system-input-checked);
-$checkbox-check: var(--eventide-rp-system-input-check);
 
 $label-text: var(--eventide-rp-system-label-text);
-$required: var(--eventide-rp-system-required);
 $select-arrow-url: var(--eventide-rp-system-select-arrow-url);
 $select-option-bg: var(--eventide-rp-system-select-option-bg);
 $select-option-text: var(--eventide-rp-system-select-option-text);
@@ -374,18 +313,9 @@ $button-hover: var(--eventide-rp-system-button-hover);
 $button-active: var(--eventide-rp-system-button-active);
 $button-glow: var(--eventide-rp-system-button-glow);
 
-$primary-button-bg: var(--eventide-rp-system-primary-button-bg);
-$primary-button-text: var(--eventide-rp-system-primary-button-text);
-$primary-button-border: var(--eventide-rp-system-primary-button-border);
 $primary-button-hover: var(--eventide-rp-system-primary-button-hover);
-$primary-button-hover-text: var(--eventide-rp-system-primary-button-hover-text);
 $primary-button-active: var(--eventide-rp-system-primary-button-active);
 $primary-button-glow: var(--eventide-rp-system-primary-button-glow);
-
-$danger-button-bg: var(--eventide-rp-system-danger-button-bg);
-$danger-button-text: var(--eventide-rp-system-danger-button-text);
-$danger-button-border: var(--eventide-rp-system-danger-button-border);
-$danger-button-hover: var(--eventide-rp-system-danger-button-hover);
 
 // Sound settings button colors
 $play-button-bg: var(--eventide-rp-system-play-button-bg);
@@ -400,10 +330,7 @@ $play-all-button-text: var(--eventide-rp-system-play-all-button-text);
 $browse-button-bg: var(--eventide-rp-system-browse-button-bg);
 $browse-button-text: var(--eventide-rp-system-browse-button-text);
 
-// currently unused
-$app-bg: linear-gradient(to bottom, #004d9f8a, #0029708a);
-$dc: var(--eventide-rp-system-card-header-dc);
-
 $form-selected: var(--erps-selected);
 $form-incorrect: var(--erps-incorrect);
 $form-input-disabled: var(--erps-disabled);
+$form-required: var(--erps-required);

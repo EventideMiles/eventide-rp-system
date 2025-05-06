@@ -2,6 +2,9 @@
 @use "../utils/colors";
 @use "../utils/variables";
 
+// This is depreciated and kept around for the time being until I've ensured that the new system
+// suits my user base.
+
 // Section Header
 .effects-header {
   height: 28px;
@@ -35,7 +38,6 @@
   margin: 0;
   padding: 0;
   overflow-y: auto;
-  scrollbar-width: thin;
   color: colors.$c-tan;
 
   // Child lists
@@ -160,7 +162,6 @@
     gap: 0.5rem;
     margin-top: 0.5rem;
     overflow-y: auto;
-    scrollbar-width: thin;
   }
   
   // Effects header
@@ -307,30 +308,6 @@
     max-height: 14rem; // 200px converted to rem
     margin-top: 0.5rem;
     padding-right: 0.5rem; // Add some padding for the scrollbar
-    
-    // Scrollbar styling
-    scrollbar-width: thin;
-    scrollbar-color: colors.$input-focus transparent;
-    
-    &::-webkit-scrollbar {
-      width: 6px;
-      background-color: transparent;
-    }
-    
-    &::-webkit-scrollbar-thumb {
-      background-color: colors.$input-focus;
-      border-radius: 10px;
-      border: 1px solid colors.$input-bg;
-      
-      &:hover {
-        background-color: colors.$primary-button-hover;
-      }
-    }
-    
-    &::-webkit-scrollbar-track {
-      background-color: transparent;
-      margin: 0;
-    }
   }
   
   // Effect toggle
@@ -548,29 +525,5 @@
     height: auto;
     max-height: 600px; // Fixed height to ensure scrolling happens
     overflow-y: auto !important;
-    -ms-overflow-style: initial !important;
-    scrollbar-width: thin !important;
-    scrollbar-color: colors.$input-focus transparent !important;
-    
-    &::-webkit-scrollbar {
-      width: 6px !important;
-      background-color: transparent !important;
-      display: block !important;
-    }
-    
-    &::-webkit-scrollbar-thumb {
-      background-color: colors.$input-focus !important;
-      border-radius: 10px !important;
-      border: 1px solid colors.$input-bg !important;
-      
-      &:hover {
-        background-color: colors.$primary-button-hover !important;
-      }
-    }
-    
-    &::-webkit-scrollbar-track {
-      background-color: transparent !important;
-      margin: 0 !important;
-    }
   }
 }

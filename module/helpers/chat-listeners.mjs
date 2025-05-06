@@ -10,7 +10,6 @@
  */
 export const initChatListeners = () => {
   Hooks.on("renderChatMessageHTML", (message, html, data) => {
-    // html is now an HTMLElement instead of a jQuery object
     // Find formula toggle elements
     const formulaToggle = html.querySelectorAll(".chat-card__formula-toggle");
 

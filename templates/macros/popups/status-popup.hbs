@@ -1,8 +1,10 @@
 <div class="{{cssClass}} popup-form" autocomplete="off">
-    <div class="base-form__main chat-card">
+    <div class="popup-form__main chat-card">
         <div class="popup-form__header" style="{{style}}">
             <div>{{item.name}}</div>
-            <img src="{{item.img}}" class="popup-form__image" alt="{{item.name}}" /> 
+            <div class="popup-form__content popup-form__content--image">
+                <img src="{{item.img}}" class="popup-form__image" alt="{{item.name}}" /> 
+            </div>
         </div>
 
         {{#if item.system.description}}
@@ -12,7 +14,7 @@
         </div>
         {{/if}}
 
-        <hr class="chat-card__hr" />
+        <hr />
 
         {{#ifCond effects.length ">" 0}}
         <div class="popup-form__effects">

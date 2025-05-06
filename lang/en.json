@@ -158,7 +158,7 @@
         "Name": "Name",
         "Neutral": "Neutral",
         "Optional": "(Optional)",
-        "OverrideValues": "Override Values",
+        "OverrideValues": "Override",
         "Prerequisites": "Prerequisites",
         "Quantity": "Quantity",
         "RemoveStatuses": "Remove Statuses",
@@ -255,7 +255,7 @@
       },
       "Descriptors": {
         "RollActorName": {
-          "label": "Roll Actor Name"
+          "label": "Roll Name"
         },
         "UsageInfo": {
           "label": "Usage Info",

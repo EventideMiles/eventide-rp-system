@@ -6,7 +6,7 @@
     @extend .base-form;
     &__header {
         @extend .protest-revolution-regular;
-        color: colors.$card-white;
+        color: colors.$universal-white;
         text-align: center;
         padding: 0.875rem;
         font-size: 1.125rem;
@@ -15,7 +15,7 @@
         position: relative;
         
         &--subheader {
-            color: colors.$card-white;
+            color: colors.$universal-white;
             align-items: center;
             justify-content: center;
             font-size: 0.7rem;
@@ -52,12 +52,16 @@
             background-color: colors.$gear;
         }
 
-        &--dice-dc {
-            background-color: colors.$dc;
-        }
-
         &--initiative {
             background-color: colors.$initiative;
+        }
+
+        &--initiative-npc {
+            background-color: colors.$initiative-npc;
+        }
+
+        &--initiative-pc {
+            background-color: colors.$initiative-pc;
         }
 
         &--critical-hit {
@@ -111,7 +115,7 @@
 
     &__description {
         @extend .underdog-regular;
-        color: colors.$card-tan;
+        color: colors.$universal-tan;
         text-align: justify;
         font-size: 0.9rem;
         padding: 0.5rem;
@@ -121,13 +125,13 @@
         &--header {
             text-align: justify;
             font-size: 1.2rem;
-            color: colors.$card-tan;
+            color: colors.$universal-tan;
         }
 
         &--header-center-underline {
             text-align: center;
             font-size: 1.2rem;
-            color: colors.$card-tan;
+            color: colors.$universal-tan;
             border-bottom: 1px solid colors.$description-hr;
         }
     }
@@ -206,7 +210,7 @@
         justify-content: space-between;
         font-family: var(--font-monospace);
         font-size: 0.9rem;
-        color: colors.$card-white;
+        color: colors.$universal-white;
         background: rgba(50, 50, 50, 0.9);
         padding: 0.25rem 0.5rem;
         border-radius: 3px;
@@ -258,8 +262,8 @@
 
     &__effects {
         @extend .base-form__effects;
-        color: colors.$card-tan;
-        background-color: colors.$card-white;
+        color: colors.$universal-tan;
+        background-color: colors.$universal-white;
         
         &--ac-check {
             border: 3px dashed colors.$hidden-border;
@@ -282,7 +286,7 @@
             font-size: 0.7rem;
             margin-bottom: 0px;
             border-radius: 5px;
-            border: 1px solid colors.$card-white;
+            border: 1px solid colors.$universal-white;
         }
 
         &--miss {
@@ -293,12 +297,12 @@
             font-size: 0.7rem;
             margin-bottom: 0px;
             border-radius: 5px;
-            border: 1px solid colors.$card-white;
+            border: 1px solid colors.$universal-white;
         }
         
         &--name {
             @extend .base-form__effects--name;
-            color: colors.$card-black;
+            color: colors.$universal-black;
         }
 
         &--row {
@@ -335,12 +339,13 @@
             height: 13px;
             border: 0px;
             background-color: colors.$secondary-image-background;
+            display: inline;
         }
     }
 
     &__hr {
         border: none;
-        border-top: 1px solid colors.$hr;
+        border-top: 1px solid colors.$universal-white;
     }
 }
 

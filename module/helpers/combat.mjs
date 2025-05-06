@@ -34,6 +34,7 @@ export async function initializeCombatHooks() {
       try {
         await erpsRollHandler.rollInitiative({
           combatant: combatant,
+          npc: true,
           whisperMode: hideNpcInitiativeRolls,
           customFlavor: `${
             combatant.name || combatant.actor.name
@@ -50,6 +51,7 @@ export async function initializeCombatHooks() {
       try {
         await erpsRollHandler.rollInitiative({
           combatant: combatant,
+          npc: false,
           whisperMode: false,
           customFlavor: `${
             combatant.name || combatant.actor.name
@@ -95,6 +97,7 @@ export async function initializeCombatHooks() {
 
       await erpsRollHandler.rollInitiative({
         combatant: combatant,
+        npc: isNpc,
         whisperMode:
           shouldWhisper || rollMode === "gmroll" || rollMode === "blindroll",
         customFlavor:
@@ -126,6 +129,7 @@ export async function initializeCombatHooks() {
     const rollMode = options.messageOptions?.rollMode;
     return await erpsRollHandler.rollInitiative({
       combatant: this,
+      npc: isNpc,
       whisperMode:
         shouldWhisper || rollMode === "gmroll" || rollMode === "blindroll",
       customFlavor:

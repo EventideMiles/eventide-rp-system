@@ -39,13 +39,15 @@
                   data-roll='{{lookup ../formulas key}}'
                   data-label='{{localize (lookup @root.config.abilities key)}}'
                 >Total: {{numberFormat ability.total decimals=0 sign=true}}</div>
+                <div class="ability-override">
                 {{#if ability.override}}
                   <i class="fas fa-lock" style="color: red"></i>
                   <span style="color: white"> Capped</span>
                 {{else}}
-                <i class="fas fa-unlock-alt" style="color: #4CAF50"></i>
-                <span style="color: white"> Uncapped</span>
+                  <i class="fas fa-unlock-alt" style="color: #4CAF50"></i>
+                  <span style="color: white"> Uncapped</span>
                 {{/if}}
+                </div>
               </div>
             </div>
           </section>

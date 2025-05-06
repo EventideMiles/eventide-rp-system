@@ -2,13 +2,6 @@
 @use "../utils/colors";
 @use "../utils/mixins";
 
-// Mixins for shared styles
-@mixin box-shadow-base {
-  box-shadow: 
-    0 0 0 1px rgba(0, 0, 0, 0.8),
-    inset 0 1px 3px rgba(0, 0, 0, 0.6);
-}
-
 @mixin box-shadow-hover {
   box-shadow: 
     0 0 0 1px rgba(255, 255, 255, 0.1),
@@ -41,80 +34,10 @@
   // }
 }
 
-@mixin checkbox-base {
-  @include flex-center;
-  width: 28px;
-  height: 28px;
-  background-color: colors.$checkbox-bg !important;
-  border: none;
-  margin: 0 10px;
-  cursor: pointer;
-  vertical-align: middle;
-  position: relative;
-  z-index: 100;
-  border-radius: 4px;
-  @include box-shadow-base;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-
-  &:hover {
-    background-color: colors.$checkbox-hover !important;
-    @include box-shadow-hover;
-  }
-
-  &:checked {
-    background-color: colors.$input-checked !important;
-
-    &::after {
-      content: '✓';
-      display: block;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      color: colors.$input-check;
-      font-size: 18px;
-      font-weight: bold;
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-      z-index: 101;
-    }
-  }
-}
-
-@mixin scrollbar-base {
-  -ms-overflow-style: initial;
-    scrollbar-width: thin;
-    scrollbar-color: colors.$input-focus transparent;
-    
-    &::-webkit-scrollbar {
-      width: 6px;
-      background-color: transparent;
-      display: block;
-    }
-    
-    &::-webkit-scrollbar-thumb {
-      background-color: colors.$input-focus;
-      border-radius: 10px;
-      border: 1px solid colors.$input-bg;
-      
-      &:hover {
-        background-color: colors.$primary-button-hover;
-      }
-    }
-    
-    &::-webkit-scrollbar-track {
-      background-color: transparent;
-      margin: 0;
-    }
-}
-
 // Block
 .base-form {
   overflow-y: auto;
-
-  @include scrollbar-base;
-  margin: 0.5rem;
+  // margin: 0.5rem;
 
   // Block modifiers
   &--disabled {
@@ -191,7 +114,7 @@
     text-align: justify;
     font-size: 0.7rem;
     padding: 0rem;
-    color: colors.$card-white;
+    color: colors.$c-black;
     background-color: colors.$form-content-bg;
 
 
@@ -204,12 +127,12 @@
         padding-bottom: 0.2rem;
         margin-bottom: 0.1875rem;
         background-color: colors.$effect;
-        color: colors.$card-white;
+        color: colors.$universal-white;
     }
 
     &--name {
         font-weight: bolder;
-        color: colors.$card-white;
+        color: colors.$c-black;
         font-size: 0.75rem;
     }
 
@@ -223,7 +146,7 @@
         &--cell {
             padding-left: 3px;
             padding-right: 3px;
-            border-bottom: 1px dashed colors.$card-tan;
+            border-bottom: 1px dashed colors.$c-tan;
 
             &--first,
             &--last {
@@ -231,7 +154,7 @@
             }
 
             &--last {
-                border-left: 1px dashed colors.$card-tan;
+                border-left: 1px dashed colors.$c-tan;
                 padding-left: 15px;
                 white-space: nowrap;
             }
@@ -319,7 +242,7 @@
 
   &__label--required::after {
     content: '*';
-    color: colors.$required;
+    color: colors.$form-required;
     margin-left: 0.25rem;
   }
 
@@ -387,10 +310,6 @@
       @include mixins.color-picker-hex-input;
     }
   }
-
-  &__checkbox {
-    @include checkbox-base;
-  }
   
   &__toggle-switch {
     @include mixins.grid-compliant-toggle-switch;
@@ -410,59 +329,22 @@
   
   // Style for groups containing toggle switches
   &__toggle-group {
-    display: flex;
-    align-items: center;
-    position: relative;
-    margin: 1rem 0; 
-    padding: 0.25rem 0.5rem 0.75rem 0.5rem; 
-    
-    label:first-child {
-      @include mixins.form-label-base;
-      min-width: 7.5rem; 
-      flex: 0 0 auto;
-      flex-grow: 1; 
-      margin-right: 0.625rem; 
-      cursor: pointer; 
-      margin-bottom: 0; 
-    }
-    
-    .toggle-switch-wrapper {
-      width: 2.5rem; 
-      flex: 0 0 2.5rem; 
-      position: relative;
-      margin-left: auto; 
-      overflow: visible; 
-    }
+    @include mixins.grid-compliant-toggle-group;
   }
 
   &__button {
     @include mixins.grid-compliant-button;
     
     &--primary {
-      background-color: colors.$primary-button-bg;
-      color: colors.$primary-button-text;
-      border-color: colors.$primary-button-border;
 
       &:hover {
         background-color: colors.$primary-button-hover;
-        color: colors.$primary-button-hover-text;
         box-shadow: 0 0 0.9375rem 0.3125rem colors.$primary-button-glow;
       }
 
       &:active {
         background-color: colors.$primary-button-active;
         box-shadow: 0 0 0.5rem 0.125rem colors.$primary-button-glow;
-      }
-    }
-
-    &--danger {
-      background-color: colors.$danger-button-bg;
-      color: colors.$danger-button-text;
-      border-color: colors.$danger-button-border;
-
-      &:hover {
-        background-color: colors.$danger-button-hover;
-        box-shadow: 0 0 0.9375rem 0.3125rem rgba(255, 0, 0, 0.4);
       }
     }
 

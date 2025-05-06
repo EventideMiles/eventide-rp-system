@@ -5,128 +5,14 @@
   font-family: typography.$font-primary;
 }
 
-.checkbox-resource {
+.checkbox-attribute {
   display: flex;
   flex-direction: column;
+  width: 100%;
 
   .resource-label {
     margin-bottom: 4px;
     width: 100%;
-  }
-}
-
-.form-checkbox-wrapper {
-  display: inline-flex;
-  align-items: center;
-  margin-bottom: 0.5rem;
-
-  &.align-right {
-    justify-content: flex-end;
-  }
-
-  input[type="checkbox"]::before {
-    background-color: transparent !important;
-    color: transparent !important;
-    appearance: none !important;
-    -webkit-appearance: none !important;
-    -moz-appearance: none !important;
-  }
-
-  .large-checkbox {
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    width: 1.7rem !important;
-    height: 1.7rem !important;
-    min-width: 1.7rem !important;
-    min-height: 1.7rem !important;
-    max-width: 1.7rem !important;
-    max-height: 1.7rem !important;
-    cursor: pointer;
-    border: none;
-    border-radius: 4px;
-    position: relative;
-    display: block;
-    background-color: colors.$input-bg;
-    box-shadow: 
-      0 0 0 1px rgba(0, 0, 0, 0.8),
-      inset 0 1px 3px rgba(0, 0, 0, 0.6);
-
-    &:checked {
-      &:before {
-        background-color: #ffffff;
-      }
-      &:after {
-        content: '✓';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        color: white;
-        font-size: 20px;
-        font-weight: bold;
-        line-height: 1;
-      }
-    }
-
-    &:hover {
-      background-image: linear-gradient(to bottom, #000000, #000000) !important;
-      box-shadow: 
-        0 0 0 1px rgba(255, 255, 255, 0.1),
-        inset 0 1px 3px rgba(0, 0, 0, 0.7);
-    }
-  }
-}
-
-.checkbox-wrapper {
-  &.align-right {
-    justify-content: flex-end;
-  }
-
-  input[type="checkbox"]::before {
-    background-color: transparent !important;
-    color: transparent !important;
-    appearance: none !important;
-    -webkit-appearance: none !important;
-    -moz-appearance: none !important;
-  }
-
-  .large-checkbox {
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    width: 1.7rem !important;
-    height: 1.7rem !important;
-    min-width: 1.7rem !important;
-    min-height: 1.7rem !important;
-    max-width: 1.7rem !important;
-    max-height: 1.7rem !important;
-    cursor: pointer;
-    border: none;
-    border-radius: 4px;
-    position: relative;
-    display: block;
-    background-color: colors.$input-bg;
-    box-shadow: 
-      0 0 0 1px rgba(0, 0, 0, 0.8),
-      inset 0 1px 3px rgba(0, 0, 0, 0.6);
-
-    &:checked {
-      &:before {
-        background-color: #ffffff;
-      }
-      &:after {
-        content: '✓';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        color: white;
-        font-size: 20px;
-        font-weight: bold;
-        line-height: 1;
-      }
-    }
   }
 }
 
@@ -136,56 +22,27 @@
   display: flex;
   flex-direction: column;
   padding: 6px 8px 6px 8px;
+  box-sizing: border-box;
   
-  /* Content area with scrollbar */
   &__content {
     flex: 1;
     overflow-y: auto;
-    // margin-right: -8px; /* Offset the container padding */
-    // padding-right: 8px; /* Add padding back to the content */
-    
-    /* Remove any overflow style overrides */
-    -ms-overflow-style: initial;
-    scrollbar-width: thin;
-    scrollbar-color: colors.$input-focus transparent;
-  
-    /* Styling for the scrollbar */
-    &::-webkit-scrollbar {
-      width: 6px;
-      background-color: transparent;
-      display: block;
-    }
-  
-    &::-webkit-scrollbar-thumb {
-      background-color: colors.$input-focus;
-      border-radius: 10px;
-      border: 1px solid colors.$input-bg;
-  
-      &:hover {
-        background-color: colors.$primary-button-hover;
-      }
-    }
-  
-    &::-webkit-scrollbar-track {
-      background-color: transparent;
-      margin: 0; /* Remove track margin */
-    }
   }
   
   /* Footer area */
   &__footer {
-    margin-top: 10px;
+    margin-top: 0.5rem;
     display: flex;
     width: 100%;
     flex: 0 0 auto; /* Prevent footer from scrolling */
     justify-content: flex-end;
-    gap: 8px;
+    gap: 0.5rem;
     
     /* Make the submit button take appropriate width */
     .base-form__button--primary {
-      min-width: 120px;
+      min-width: 7.5em;
       justify-content: center;
-      padding: 8px;
+      padding: 0.5rem;
       font-weight: bold;
       text-align: center;
     }
