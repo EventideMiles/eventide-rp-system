@@ -410,8 +410,8 @@
   // Use the same text input mixin as other inputs for consistency
   @include grid-compliant-text-input;
   
-  // Override width to leave space for the buttons
-  width: calc(100% - 4rem);
+  // Allow the input to fill the available space
+  width: 100%;
   text-align: center;
   margin: 0;
   
@@ -425,6 +425,11 @@
     -webkit-appearance: none;
     margin: 0;
   }
+  
+  // Adjust width based on container context
+  .base-form__number-input-wrapper:not(.compact) & {
+    width: calc(100% - 4rem);
+  }
 }
 
 @mixin grid-compliant-number-input-wrapper {
@@ -433,6 +438,32 @@
   width: 100%;
   align-items: center;
   justify-content: space-between;
+  
+  // Responsive behavior
+  &.compact {
+    .decrement, .increment {
+      display: none;
+    }
+    
+    .base-form__number-input {
+      width: 100%;
+    }
+  }
+  
+  // Container query for automatic adaptation (for browsers that support it)
+  @supports (container-type: inline-size) {
+    container-type: inline-size;
+    
+    @container (max-width: 9rem) {
+      .decrement, .increment {
+        display: none;
+      }
+      
+      .base-form__number-input {
+        width: 100%;
+      }
+    }
+  }
   
   .decrement, .increment {
     width: 1.75rem;
