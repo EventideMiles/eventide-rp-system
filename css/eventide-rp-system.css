@@ -804,11 +804,11 @@
   border: 0.0625rem solid var(--erps-input-border);
   border-radius: 0.25rem;
   transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, background-color 0.2s ease-in-out;
-  width: 100%;
-  text-align: center;
-  margin: 0;
   appearance: textfield;
   -moz-appearance: textfield;
+  text-align: center;
+  width: 100%;
+  margin: 0;
 }
 .base-form__number-input:hover {
   background-color: var(--erps-input-hover);
@@ -836,29 +836,9 @@
 .base-form__number-input-wrapper {
   position: relative;
   display: flex;
-  width: 100%;
   align-items: center;
   justify-content: space-between;
   width: 100%;
-}
-.base-form__number-input-wrapper.compact .decrement, .base-form__number-input-wrapper.compact .increment {
-  display: none;
-}
-.base-form__number-input-wrapper.compact .base-form__number-input {
-  width: 100%;
-}
-@supports (container-type: inline-size) {
-  .base-form__number-input-wrapper {
-    container-type: inline-size;
-  }
-  @container (max-width: 9rem) {
-    .base-form__number-input-wrapper .decrement, .base-form__number-input-wrapper .increment {
-      display: none;
-    }
-    .base-form__number-input-wrapper .base-form__number-input {
-      width: 100%;
-    }
-  }
 }
 .base-form__number-input-wrapper .decrement, .base-form__number-input-wrapper .increment {
   width: 1.75rem;
@@ -885,6 +865,27 @@
 }
 .base-form__number-input-wrapper .decrement:active, .base-form__number-input-wrapper .increment:active {
   transform: scale(0.95);
+}
+.base-form__number-input-wrapper.compact .decrement, .base-form__number-input-wrapper.compact .increment {
+  display: none;
+}
+.base-form__number-input-wrapper.compact .base-form__number-input {
+  width: 100%;
+}
+@supports (container-type: inline-size) {
+  .base-form__number-input-wrapper {
+    container-type: inline-size;
+  }
+}
+@supports (container-type: inline-size) {
+  @container (max-width: 9rem) {
+    .base-form__number-input-wrapper .decrement, .base-form__number-input-wrapper .increment {
+      display: none !important;
+    }
+    .base-form__number-input-wrapper .base-form__number-input {
+      width: 100% !important;
+    }
+  }
 }
 .base-form__select {
   display: block;
@@ -4066,5 +4067,3 @@
   max-height: 600px;
   overflow-y: auto !important;
 }
-
-/*# sourceMappingURL=eventide-rp-system.css.map */

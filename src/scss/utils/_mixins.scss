@@ -1,6 +1,19 @@
 @use "colors";
 @use "typography";
 
+// Private mixins for standardized input states
+@mixin _input-focus-state {
+  outline: none;
+  border-color: colors.$input-focus;
+  box-shadow: 0 0 0 0.125rem color-mix(in srgb, colors.$input-focus 25%, transparent);
+  @content; // Allow for customization
+}
+
+@mixin _input-hover-state {
+  background-color: colors.$input-hover;
+  @content; // Allow for customization
+}
+
 @mixin element-invisible {
   position: absolute;
 
@@ -12,10 +25,14 @@
 
   clip: rect(0 0 0 0);
   overflow: hidden;
+  
+  @content; // Allow for customization
 }
 
 @mixin hide {
   display: none;
+  
+  @content; // Allow for customization
 }
 
 @mixin input-base {
@@ -28,6 +45,9 @@
   font-family: inherit;
   font-size: 1rem;
   line-height: 1.5;
+  
+  // Allow for customization
+  @content;
 }
 
 @mixin grid-compliant-text-input {
@@ -41,7 +61,9 @@
   transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, background-color 0.2s ease-in-out;
   
   &:hover {
-    background-color: colors.$input-hover;
+    @include _input-hover-state {
+      // Pass through nested content
+    }
   }
 
   &::selection {
@@ -50,20 +72,25 @@
   }
   
   &:focus {
-    outline: none;
-    border-color: colors.$input-focus;
-    box-shadow: 0 0 0 0.125rem color-mix(in srgb, colors.$input-focus 25%, transparent);
+    @include _input-focus-state {
+      // Pass through nested content
+    }
   }
   
   &::placeholder {
     color: colors.$input-placeholder;
     opacity: 1;
   }
+  
+  // Allow for customization
+  @content;
 }
 
 @mixin grid-compliant-select {
   // Base styling from text input
-  @include input-base;
+  @include input-base {
+    // Pass through nested content
+  }
   
   // Theme-aware styling
   color: colors.$input-text;
@@ -104,6 +131,9 @@
   &:hover, &:focus {
     background-color: colors.$form-selected !important; // Dark blue for hover state
   }
+  
+  // Allow for customization
+  @content;
 }
 
 // This mixin should be used separately on select elements
@@ -132,6 +162,9 @@
   &::-ms-expand {
     display: none;
   }
+  
+  // Allow for customization
+  @content;
 }
 
 @mixin grid-compliant-toggle-group {
@@ -142,7 +175,9 @@
   padding: 0.25rem 0.5rem 0.75rem 0.5rem; 
   
   label:first-child {
-    @include form-label-base;
+    @include form-label-base {
+      // Pass through nested content
+    }
     min-width: 7.5rem; 
     flex: 0 0 auto;
     flex-grow: 1; 
@@ -158,10 +193,13 @@
     margin-left: auto; 
     overflow: visible; 
   }
+  
+  // Allow for customization
+  @content;
 }
 
-@mixin grid-compliant-toggle-switch {
-
+// Private mixin for toggle switch base styles
+@mixin _toggle-switch-base {
   // Hide the actual checkbox
   position: absolute;
   opacity: 0;
@@ -226,6 +264,15 @@
     }
   }
   
+  // Allow for customization
+  @content;
+}
+
+@mixin grid-compliant-toggle-switch {
+  @include _toggle-switch-base {
+    // Pass through nested content
+  }
+  
   // Disabled state
   &:disabled ~ .toggle-switch-display {
     opacity: 0.6;
@@ -236,77 +283,17 @@
       background-color: colors.$form-input-disabled;
     }
   }
+  
+  // Allow for customization
+  @content;
 }
 
 @mixin grid-compliant-toggle-switch-left {
-  // Hide the actual checkbox
-  position: absolute;
-  opacity: 0;
-  width: 0;
-  height: 0;
-  
-  // Toggle display is a fixed-size element
-  & ~ .toggle-switch-display {
-    // Basic positioning and dimensions
-    position: relative;
-    display: block;
-    width: 2.5rem;  
-    height: 1.25rem; 
-    
-    // Prevent flexbox stretching
-    flex: 0 0 2.5rem; 
-    min-width: 2.5rem; 
-    max-width: 2.5rem; 
-    
-    // For left alignment, we don't need special positioning
-    // as it will naturally align left in its container
-    
-    // Create the background track
-    &::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 2.5rem; 
-      height: 1.25rem; 
-      background-color: colors.$input-border;
-      border-radius: 1.25rem; 
-      transition: background-color 0.2s ease-in-out;
-    }
-    
-    // Create the toggle knob
-    &::after {
-      content: '';
-      position: absolute;
-      left: 0.125rem; 
-      top: 0.125rem; 
-      width: 1rem; 
-      height: 1rem; 
-      background-color: #ffffff;
-      border-radius: 50%;
-      transition: transform 0.2s ease-in-out;
-    }
+  @include _toggle-switch-base {
+    // Pass through nested content
   }
   
-  // Checked state
-  &:checked ~ .toggle-switch-display {
-    &::before {
-      background-color: colors.$input-focus; 
-    }
-    
-    &::after {
-      transform: translateX(1.25rem); 
-    }
-  }
-  
-  // Focus state for accessibility
-  &:focus ~ .toggle-switch-display {
-    &::before {
-      box-shadow: 0 0 0 0.125rem color-mix(in srgb, colors.$input-focus 25%, transparent);
-    }
-  }
-  
-  // Disabled state
+  // Disabled state (slightly different from the regular toggle switch)
   &:disabled ~ .toggle-switch-display {
     opacity: 0.6;
     cursor: not-allowed;
@@ -315,6 +302,9 @@
       background-color: colors.$form-input-disabled;
     }
   }
+  
+  // Allow for customization
+  @content;
 }
 
 @mixin form-group-base {
@@ -322,6 +312,8 @@
   flex-direction: column;
   width: 100%;
   margin-bottom: 1rem;
+  
+  @content; // Allow for customization
 }
 
 @mixin form-label-base {
@@ -333,36 +325,62 @@
   display: block;
   flex: 0, 0, 120px;
   min-width: 120px;
+  
+  // Allow for customization
+  @content;
 }
 
 @mixin form-label-small {
-  @include form-label-base;
+  @include form-label-base {
+    // Pass through nested content
+  };
   font-size: 0.75rem;
+  
+  @content; // Allow for customization
 }
 
 @mixin form-label-medium {
-  @include form-label-base;
+  @include form-label-base {
+    // Pass through nested content
+  }
   font-size: 1.125rem;
+  
+  // Allow for customization
+  @content;
 }
 
 @mixin form-label-large {
-  @include form-label-base;
+  @include form-label-base {
+    // Pass through nested content
+  };
   font-size: 1.5rem;
+  
+  @content; // Allow for customization
 }
 
 @mixin form-label-with-icon {
-  @include form-label-base;
+  @include form-label-base {
+    // Pass through nested content
+  };
   display: flex;
   align-items: center;
   flex-direction: row;
+  
+  @content; // Allow for customization
 }
 
 @mixin checkbox-label {
-  @include form-label-base;
+  @include form-label-base {
+    // Pass through nested content
+  }
   cursor: pointer;
+  
+  // Allow for customization
+  @content;
 }
 
-@mixin button-base {
+// Private mixin for button base styles
+@mixin _button-base-styles {
   // Core button styling that all buttons share
   background-color: colors.$button-bg;
   color: colors.$button-text;
@@ -398,10 +416,20 @@
     opacity: 0.6;
     cursor: not-allowed;
   }
+  
+  // Allow for customization
+  @content;
+}
+
+// Public mixin for backward compatibility
+@mixin button-base {
+  @include _button-base-styles;
 }
 
 @mixin grid-compliant-button {
-  @include button-base;
+  @include _button-base-styles {
+    // Pass through nested content
+  }
   
   // Grid-specific properties (only changing display and width)
   display: flex;
@@ -410,9 +438,13 @@
   font-weight: 500;
   margin: 0;
   min-height: 2.5rem;
+  
+  // Allow for customization
+  @content;
 }
 
-@mixin grid-compliant-color-picker {
+// Private mixin for color picker base styles
+@mixin _color-picker-base {
   // Base styling - grouped all base properties together
   display: block;
   width: 100%;
@@ -431,9 +463,7 @@
   }
   
   &:focus {
-    outline: none;
-    border-color: colors.$input-focus;
-    box-shadow: 0 0 0 0.125rem color-mix(in srgb, colors.$input-focus 25%, transparent);
+    @include _input-focus-state;
   }
   
   // Browser-specific overrides
@@ -451,14 +481,32 @@
     border: none;
     border-radius: 0.125rem;
   }
+  
+  // Allow for customization
+  @content;
+}
+
+@mixin grid-compliant-color-picker {
+  @include _color-picker-base {
+    // Pass through nested content
+  }
+  
+  // Allow for customization
+  @content;
 }
 
 @mixin grid-compliant-color-picker-compact {
-  @include grid-compliant-color-picker;
+  // Use the base mixin directly to avoid circular references
+  @include _color-picker-base {
+    // Pass through nested content
+  }
   width: 3.125rem;
   height: 1.875rem;
   margin-left: auto;
   flex: 0 0 auto;
+  
+  // Allow for customization
+  @content;
 }
 
 @mixin grid-compliant-color-picker-with-preview {
@@ -484,6 +532,9 @@
   width: 100%;
   box-sizing: border-box;
   margin-bottom: 1rem;
+  
+  // Allow for customization
+  @content;
 }
 
 @mixin color-picker-container {
@@ -495,6 +546,9 @@
   box-sizing: border-box;
   padding: 0.125rem 0.25rem; 
   overflow: visible; 
+  
+  // Allow for customization
+  @content;
 }
 
 @mixin color-picker-preview {
@@ -505,10 +559,15 @@
   margin-right: 0.3125rem;
   flex: 0 0 auto;
   overflow: hidden;
+  
+  // Allow for customization
+  @content;
 }
 
 @mixin color-picker-hex-input {
-  @include grid-compliant-text-input;
+  @include grid-compliant-text-input {
+    // Pass through nested content
+  }
   flex: 1 1 auto;
   min-width: 5rem;
   font-family: monospace;
@@ -532,17 +591,13 @@
     border-color: colors.$form-incorrect;
     box-shadow: 0 0 0.25rem 0.0625rem color-mix(in srgb, colors.$form-incorrect 30%, transparent);
   }
+  
+  // Allow for customization
+  @content;
 }
 
-@mixin grid-compliant-number-input {
-  // Use the same text input mixin as other inputs for consistency
-  @include grid-compliant-text-input;
-  
-  // Allow the input to fill the available space
-  width: 100%;
-  text-align: center;
-  margin: 0;
-  
+// Private mixin for number input base styles
+@mixin _number-input-base {
   // Ensure consistent appearance across browsers
   appearance: textfield;
   -moz-appearance: textfield;
@@ -554,6 +609,22 @@
     margin: 0;
   }
   
+  // Text alignment for better readability
+  text-align: center;
+  
+  // Allow for customization
+  @content;
+}
+
+@mixin grid-compliant-number-input {
+  // Use the same text input mixin as other inputs for consistency
+  @include grid-compliant-text-input;
+  @include _number-input-base;
+  
+  // Allow the input to fill the available space
+  width: 100%;
+  margin: 0;
+  
   // Adjust width based on container context
   .base-form__number-input-wrapper:not(.compact) & {
     width: calc(100% - 4rem);
@@ -561,38 +632,14 @@
 }
 
 @mixin grid-compliant-number-input-wrapper {
+  // Base properties
   position: relative;
   display: flex;
-  width: 100%;
   align-items: center;
   justify-content: space-between;
+  width: 100%;
   
-  // Responsive behavior
-  &.compact {
-    .decrement, .increment {
-      display: none;
-    }
-    
-    .base-form__number-input {
-      width: 100%;
-    }
-  }
-  
-  // Container query for automatic adaptation (for browsers that support it)
-  @supports (container-type: inline-size) {
-    container-type: inline-size;
-    
-    @container (max-width: 9rem) {
-      .decrement, .increment {
-        display: none;
-      }
-      
-      .base-form__number-input {
-        width: 100%;
-      }
-    }
-  }
-  
+  // Button styles
   .decrement, .increment {
     width: 1.75rem;
     height: 1.75rem;
@@ -621,11 +668,46 @@
       transform: scale(0.95);
     }
   }
+  
+  // Explicit compact class for browsers without container query support
+  &.compact {
+    .decrement, .increment {
+      display: none;
+    }
+    
+    .base-form__number-input {
+      width: 100%;
+    }
+  }
+  
+  // Container query for automatic adaptation
+  // First, set the container type
+  @supports (container-type: inline-size) {
+    container-type: inline-size;
+  }
+  
+  // Then define the container query
+  @supports (container-type: inline-size) {
+    @container (max-width: 9rem) {
+      .decrement, .increment {
+        display: none !important; // Use !important to ensure this overrides any other styles
+      }
+      
+      .base-form__number-input {
+        width: 100% !important; // Use !important to ensure this overrides any other styles
+      }
+    }
+  }
+  
+  // Allow for customization
+  @content;
 }
 
 @mixin grid-compliant-textarea {
   // Start with the base text input styling
-  @include grid-compliant-text-input;
+  @include grid-compliant-text-input {
+    // Pass through nested content
+  }
   
   // Textarea-specific properties
   min-height: 5rem;
@@ -647,10 +729,13 @@
   
   // Focus styling that allows for resizing
   &:focus {
-    outline: none;
-    border-color: colors.$input-focus;
-    box-shadow: 0 0 0 0.125rem color-mix(in srgb, colors.$input-focus 25%, transparent);
+    @include _input-focus-state {
+      // Pass through nested content
+    }
   }
+  
+  // Allow for customization
+  @content;
 }
 
 // Form Section Dividers and Fieldsets
@@ -697,6 +782,9 @@
       opacity: 0.8;
     }
   }
+  
+  // Allow for customization
+  @content;
 }
 
 @mixin grid-compliant-fieldset {
@@ -731,11 +819,16 @@
       font-size: 0.9rem;
     }
   }
+  
+  // Allow for customization
+  @content;
 }
 
 @mixin grid-compliant-collapsible-section {
   // Base fieldset styling
-  @include grid-compliant-fieldset;
+  @include grid-compliant-fieldset {
+    // Pass through nested content
+  }
   
   // Additional styles for collapsible behavior
   padding-top: 2rem;
@@ -772,6 +865,9 @@
       display: none;
     }
   }
+  
+  // Allow for customization
+  @content;
 }
 
 @mixin grid-compliant-form-divider {
@@ -785,4 +881,7 @@
   );
   margin: 1.5rem 0;
   border: none;
+  
+  // Allow for customization
+  @content;
 }
