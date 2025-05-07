@@ -6,6 +6,7 @@
   --erps-universal-tan: #4d4d4d;
 
   --erps-white-text-glow: rgba(162, 162, 162, 0.75);
+  --erps-secondary-image-background: rgba(0, 0, 0, 0.85);
 
   // scrollbars
   --erps-scrollbar-color: #0044aa;
@@ -68,7 +69,7 @@
 
 // light theme colors
 :root {
-    // universal
+    // themed universal
   --erps-c-dark: #1a1814;
   --erps-c-faint: #a8a69b;
   --erps-c-beige: #b5b3a4;
@@ -77,65 +78,48 @@
   --erps-c-black: #000000;
   --erps-c-groove: #f0efe6;
 
-  // character sheet
-  --eventide-rp-system-secondary-image-background: rgba(0, 0, 0, 0.85);
-  --erps-image-edit-border: rgba(24, 24, 24, 0.65);
-  --eventide-rp-system-effect-bg: rgba(136, 87, 53, 0.75);
-
-
   // form elements
-  --eventide-rp-system-input-bg: #ffffff;
-  --eventide-rp-system-input-hover: #f0f0f0;
-  --eventide-rp-system-input-border: #d0d0d0;
-  --eventide-rp-system-input-text: #191813;
-  --eventide-rp-system-input-placeholder: #666666;
-  --eventide-rp-system-input-focus: #4d94ff;
-  --eventide-rp-system-input-checked: #4d94ff;
-  --eventide-rp-system-input-check: #ffffff;
-  --eventide-rp-system-checkbox-bg: #ffffff;
-  --eventide-rp-system-checkbox-hover: #f0f0f0;
-  --eventide-rp-system-label-text: #191813;
+  --erps-input-bg: #ffffff;
+  --erps-input-hover: #f0f0f0;
+  --erps-input-border: #d0d0d0;
+  --erps-input-text: #191813;
+  --erps-input-placeholder: #666666;
+  --erps-input-focus: #4d94ff;
+  --erps-image-edit-border: rgba(24, 24, 24, 0.65);
+
+  --erps-label-text: #191813;
   
-  --eventide-rp-system-select-arrow-url: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath fill='%23191813' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
-  --eventide-rp-system-select-option-bg: #ffffff;
-  --eventide-rp-system-select-option-text: #191813;
-  --eventide-rp-system-select-option-hover: #f0f0f0;
-  --eventide-rp-system-form-content-bg: #7c7777;
-  --eventide-rp-system-form-header-underline: #424242;
+  --erps-select-arrow-url: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath fill='%23191813' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  --erps-select-option-bg: #ffffff;
+  --erps-select-option-text: #191813;
+  --erps-select-option-hover: #f0f0f0;
+
+  --erps-form-content-bg: #7c7777;
   
   // buttons - light theme
-  --eventide-rp-system-button-bg: #ffffff;
-  --eventide-rp-system-button-text: #191813;
-  --eventide-rp-system-button-border: #d0d0d0;
-  --eventide-rp-system-button-hover: #e8f0ff;
-  --eventide-rp-system-button-active: #d6e4ff;
-  --eventide-rp-system-button-glow: rgba(255, 255, 255, 0.75);
+  --erps-button-bg: #ffffff;
+  --erps-button-text: #191813;
+  --erps-button-border: #d0d0d0;
+  --erps-button-hover: #e8f0ff;
+  --erps-button-active: #d6e4ff;
+  --erps-button-glow: rgba(255, 255, 255, 0.75);
   
-  --eventide-rp-system-primary-button-bg: #ffffff;
-  --eventide-rp-system-primary-button-text: #191813;
-  --eventide-rp-system-primary-button-border: #d0d0d0;
-  --eventide-rp-system-primary-button-hover: #4d94ff;
-  --eventide-rp-system-primary-button-hover-text: #ffffff;
-  --eventide-rp-system-primary-button-active: #2979ff;
-  --eventide-rp-system-primary-button-glow: rgba(77, 148, 255, 0.75);
-  
-  --eventide-rp-system-danger-button-bg: #cc0000;
-  --eventide-rp-system-danger-button-text: #ffffff;
-  --eventide-rp-system-danger-button-border: #990000;
-  --eventide-rp-system-danger-button-hover: #ff0000;
+  --erps-primary-button-hover: #4d94ff;
+  --erps-primary-button-active: #2979ff;
+  --erps-primary-button-glow: rgba(77, 148, 255, 0.75);
   
   // Sound settings button colors
-  --eventide-rp-system-play-button-bg: #4CAF50;
-  --eventide-rp-system-play-button-text: #ffffff;
+  --erps-play-button-bg: #4CAF50;
+  --erps-play-button-text: #ffffff;
   
-  --eventide-rp-system-reset-button-bg: #f44336;
-  --eventide-rp-system-reset-button-text: #ffffff;
+  --erps-reset-button-bg: #f44336;
+  --erps-reset-button-text: #ffffff;
   
-  --eventide-rp-system-play-all-button-bg: #2196F3;
-  --eventide-rp-system-play-all-button-text: #ffffff;
+  --erps-play-all-button-bg: #2196F3;
+  --erps-play-all-button-text: #ffffff;
   
-  --eventide-rp-system-browse-button-bg: #607D8B;
-  --eventide-rp-system-browse-button-text: #ffffff;
+  --erps-browse-button-bg: #607D8B;
+  --erps-browse-button-text: #ffffff;
 
 
   
@@ -143,7 +127,7 @@
 
 // Dark theme colors
 .theme-dark {
-  // universal
+  // themed universal
   --erps-c-dark: #e5e3d8;
   --erps-c-faint: #2a2925;
   --erps-c-beige: #4d4d4d;
@@ -152,65 +136,49 @@
   --erps-c-black: #ffffff;
   --erps-c-groove: #1a1922;
 
-  // character sheet
-  --eventide-rp-system-secondary-image-background: rgba(0, 0, 0, 0.85);
-
+  // form elements
+  --erps-input-bg: #1e2430;
+  --erps-input-hover: #2a3441;
+  --erps-input-border: #3d4655;
+  --erps-input-text: #ffffff;
+  --erps-input-placeholder: #999999;
+  --erps-input-focus: #4d94ff;
   --erps-image-edit-border: rgba(153, 153, 153, 0.65);
 
-  --eventide-rp-system-effect-bg: rgba(156, 107, 73, 0.75);
-  
-  // form elements
-  --eventide-rp-system-input-bg: #1e2430;
-  --eventide-rp-system-input-hover: #2a3441;
-  --eventide-rp-system-input-border: #3d4655;
-  --eventide-rp-system-input-text: #ffffff;
-  --eventide-rp-system-input-placeholder: #999999;
-  --eventide-rp-system-input-focus: #4d94ff;
-  --eventide-rp-system-input-checked: #4d94ff;
-  --eventide-rp-system-input-check: #ffffff;
-  --eventide-rp-system-checkbox-bg: #1e2430;
-  --eventide-rp-system-checkbox-hover: #2a3441;
-  --eventide-rp-system-label-text: #ffffff;
-  --eventide-rp-system-select-arrow-url: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath fill='%23ffffff' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
-  --eventide-rp-system-select-option-bg: #1e2430;
-  --eventide-rp-system-select-option-text: #ffffff;
-  --eventide-rp-system-select-option-hover: #2a3441;
-  --eventide-rp-system-form-content-bg: #1e2430;
-  --eventide-rp-system-form-header-underline: #858585;
+  --erps-label-text: #ffffff;
+
+  --erps-select-arrow-url: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath fill='%23ffffff' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  --erps-select-option-bg: #1e2430;
+  --erps-select-option-text: #ffffff;
+  --erps-select-option-hover: #2a3441;
+
+  --erps-form-content-bg: #1e2430;
   
   // buttons - dark theme
-  --eventide-rp-system-button-bg: #000000;
-  --eventide-rp-system-button-text: #ffffff;
-  --eventide-rp-system-button-border: #333333;
-  --eventide-rp-system-button-hover: #1a365d;
-  --eventide-rp-system-button-active: #0d1b2e;
-  --eventide-rp-system-button-glow: rgba(255, 255, 255, 0.75);
+  --erps-button-bg: #000000;
+  --erps-button-text: #ffffff;
+  --erps-button-border: #333333;
+  --erps-button-hover: #1a365d;
+  --erps-button-active: #0d1b2e;
+  --erps-button-glow: rgba(255, 255, 255, 0.75);
   
-  --eventide-rp-system-primary-button-bg: #000000;
-  --eventide-rp-system-primary-button-text: #ffffff;
-  --eventide-rp-system-primary-button-border: #333333;
-  --eventide-rp-system-primary-button-hover: #1a365d;
-  --eventide-rp-system-primary-button-hover-text: #ffffff;
-  --eventide-rp-system-primary-button-active: #0d1b2e;
-  --eventide-rp-system-primary-button-glow: rgba(77, 148, 255, 0.75);
-  
-  --eventide-rp-system-danger-button-bg: #cc0000;
-  --eventide-rp-system-danger-button-text: #ffffff;
-  --eventide-rp-system-danger-button-border: #990000;
-  --eventide-rp-system-danger-button-hover: #ff0000;
+
+  --erps-primary-button-hover: #1a365d;
+  --erps-primary-button-active: #0d1b2e;
+  --erps-primary-button-glow: rgba(77, 148, 255, 0.75);
   
   // Sound settings button colors
-  --eventide-rp-system-play-button-bg: #4CAF50;
-  --eventide-rp-system-play-button-text: #ffffff;
+  --erps-play-button-bg: #4CAF50;
+  --erps-play-button-text: #ffffff;
   
-  --eventide-rp-system-reset-button-bg: #f44336;
-  --eventide-rp-system-reset-button-text: #ffffff;
+  --erps-reset-button-bg: #f44336;
+  --erps-reset-button-text: #ffffff;
   
-  --eventide-rp-system-play-all-button-bg: #2196F3;
-  --eventide-rp-system-play-all-button-text: #ffffff;
+  --erps-play-all-button-bg: #2196F3;
+  --erps-play-all-button-text: #ffffff;
   
-  --eventide-rp-system-browse-button-bg: #607D8B;
-  --eventide-rp-system-browse-button-text: #ffffff;
+  --erps-browse-button-bg: #607D8B;
+  --erps-browse-button-text: #ffffff;
 
   --erps-disabled: #333333;
 }
@@ -234,7 +202,7 @@ $c-tan: var(--erps-c-tan);
 $c-groove: var(--erps-c-groove);
 
 
-$secondary-image-background: var(--eventide-rp-system-secondary-image-background);
+$secondary-image-background: var(--erps-secondary-image-background);
 
 $hidden-bg: var(--erps-hidden-bg);
 $hidden-border: var(--erps-hidden-border);
@@ -288,47 +256,47 @@ $unknown-formula-bg: var(--erps-unknown-formula-bg);
 $initiative-formula-bg: var(--erps-initiative-formula-bg);
 
 // Form element colors
-$input-bg: var(--eventide-rp-system-input-bg);
-$input-hover: var(--eventide-rp-system-input-hover);
-$input-border: var(--eventide-rp-system-input-border);
-$input-text: var(--eventide-rp-system-input-text);
-$input-placeholder: var(--eventide-rp-system-input-placeholder);
-$input-focus: var(--eventide-rp-system-input-focus);
-$input-checked: var(--eventide-rp-system-input-checked);
-$input-check: var(--eventide-rp-system-input-check);
+$input-bg: var(--erps-input-bg);
+$input-hover: var(--erps-input-hover);
+$input-border: var(--erps-input-border);
+$input-text: var(--erps-input-text);
+$input-placeholder: var(--erps-input-placeholder);
+$input-focus: var(--erps-input-focus);
 $input-image-edit-border: var(--erps-image-edit-border);
-$form-content-bg: var(--eventide-rp-system-form-content-bg);
 
-$label-text: var(--eventide-rp-system-label-text);
-$select-arrow-url: var(--eventide-rp-system-select-arrow-url);
-$select-option-bg: var(--eventide-rp-system-select-option-bg);
-$select-option-text: var(--eventide-rp-system-select-option-text);
-$select-option-hover: var(--eventide-rp-system-select-option-hover);
+$label-text: var(--erps-label-text);
+
+$select-arrow-url: var(--erps-select-arrow-url);
+$select-option-bg: var(--erps-select-option-bg);
+$select-option-text: var(--erps-select-option-text);
+$select-option-hover: var(--erps-select-option-hover);
+
+$form-content-bg: var(--erps-form-content-bg);
 
 // Button Colors
-$button-bg: var(--eventide-rp-system-button-bg);
-$button-text: var(--eventide-rp-system-button-text);
-$button-border: var(--eventide-rp-system-button-border);
-$button-hover: var(--eventide-rp-system-button-hover);
-$button-active: var(--eventide-rp-system-button-active);
-$button-glow: var(--eventide-rp-system-button-glow);
+$button-bg: var(--erps-button-bg);
+$button-text: var(--erps-button-text);
+$button-border: var(--erps-button-border);
+$button-hover: var(--erps-button-hover);
+$button-active: var(--erps-button-active);
+$button-glow: var(--erps-button-glow);
 
-$primary-button-hover: var(--eventide-rp-system-primary-button-hover);
-$primary-button-active: var(--eventide-rp-system-primary-button-active);
-$primary-button-glow: var(--eventide-rp-system-primary-button-glow);
+$primary-button-hover: var(--erps-primary-button-hover);
+$primary-button-active: var(--erps-primary-button-active);
+$primary-button-glow: var(--erps-primary-button-glow);
 
 // Sound settings button colors
-$play-button-bg: var(--eventide-rp-system-play-button-bg);
-$play-button-text: var(--eventide-rp-system-play-button-text);
+$play-button-bg: var(--erps-play-button-bg);
+$play-button-text: var(--erps-play-button-text);
 
-$reset-button-bg: var(--eventide-rp-system-reset-button-bg);
-$reset-button-text: var(--eventide-rp-system-reset-button-text);
+$reset-button-bg: var(--erps-reset-button-bg);
+$reset-button-text: var(--erps-reset-button-text);
 
-$play-all-button-bg: var(--eventide-rp-system-play-all-button-bg);
-$play-all-button-text: var(--eventide-rp-system-play-all-button-text);
+$play-all-button-bg: var(--erps-play-all-button-bg);
+$play-all-button-text: var(--erps-play-all-button-text);
 
-$browse-button-bg: var(--eventide-rp-system-browse-button-bg);
-$browse-button-text: var(--eventide-rp-system-browse-button-text);
+$browse-button-bg: var(--erps-browse-button-bg);
+$browse-button-text: var(--erps-browse-button-text);
 
 $form-selected: var(--erps-selected);
 $form-incorrect: var(--erps-incorrect);
