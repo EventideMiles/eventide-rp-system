@@ -8,7 +8,7 @@ export class CreatorApplication extends EventideSheetHelpers {
   static DEFAULT_OPTIONS = {
     id: "creator-application",
     position: {
-      width: 900,
+      width: "auto",
       height: 800,
     },
     tag: "form",

@@ -18,9 +18,9 @@
     <div class="chat-card__effects--name"><img src="{{this.img}}" class="chat-card__image--secondary" /> {{this.name}}</div>
     {{#ifCond this.changes.length ">" 0 }}
       {{#each this.changes}}
-        <div class="chat-card__effects--row">
-          <div class="chat-card__effects--row--cell chat-card__effects--row--cell--first">{{keySplit this.key 2}}</div> 
-          <div class="chat-card__effects--row--cell chat-card__effects--row--cell--middle">
+        <div class="chat-card__effects-row">
+          <div class="chat-card__effects-row-cell chat-card__effects-row-cell--first">{{keySplit this.key 2}}</div> 
+          <div class="chat-card__effects-row-cell chat-card__effects-row-cell--middle">
             {{#ifCond this.mode "===" 5}}
               {{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.SetTo"}}
             {{/ifCond}}
@@ -36,7 +36,7 @@
               {{/ifCond}}
             {{/ifCond}}
           </div>
-          <div class="chat-card__effects--row--cell chat-card__effects--row--cell--last">{{this.value}}</div>
+          <div class="chat-card__effects-row-cell chat-card__effects-row-cell--last">{{this.value}}</div>
         </div>
       {{/each}}
     {{/ifCond}}

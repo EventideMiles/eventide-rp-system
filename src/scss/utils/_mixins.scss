@@ -95,7 +95,6 @@
   // Theme-aware styling
   color: colors.$input-text;
   background-color: colors.$input-bg !important; // Same as text input for consistency
-  border: 1px solid colors.$input-border;
   transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, background-color 0.2s ease-in-out;
   
   // Select-specific styling - fixing vertical alignment issues
