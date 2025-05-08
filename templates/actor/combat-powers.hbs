@@ -22,7 +22,7 @@
     </li>
     {{#each combatPowers as |item id|}}
   <li
-    class='items-panel__list-item item'
+    class='items-panel__list-item'
     data-item-id='{{item._id}}'
     data-drag='true'
     data-document-class='Item'
@@ -41,7 +41,7 @@
       <div>{{item.name}}</div>
     </div>
     <div class='item-cost items-panel__prop items-panel__list-cell'>{{item.system.cost}}</div>
-    <div class='items-panel__usage items-panel__list-cell'>{{item.system.usageInfo}}</div>
+    <div class='items-panel__usage items-panel__list-cell'><div>{{item.system.usageInfo}}</div></div>
     <div class='items-panel__controls items-panel__list-cell'>
       <a
         class='items-panel__control item-edit'
