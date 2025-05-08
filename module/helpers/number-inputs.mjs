@@ -16,18 +16,21 @@ export function initNumberInputs() {
     updateNumberInputResponsiveness();
     return;
   }
-  
+
   isInitialized = true;
-  
+
   // Add the global click handler for all number input buttons
-  document.addEventListener('click', handleNumberInputClick);
-  
+  document.addEventListener("click", handleNumberInputClick);
+
   // Initial check of number input sizes
   updateNumberInputResponsiveness();
-  
+
   // Listen for window resize events to update compact state
-  window.addEventListener('resize', debounce(updateNumberInputResponsiveness, 250));
-  
+  window.addEventListener(
+    "resize",
+    debounce(updateNumberInputResponsiveness, 250)
+  );
+
   console.log("Number inputs initialized with responsive behavior");
 }
 
@@ -37,17 +40,17 @@ export function initNumberInputs() {
  */
 export function enhanceExistingNumberInputs() {
   // Find all number inputs not properly wrapped
-  document.querySelectorAll('input[type="number"]').forEach(input => {
-    const wrapper = input.closest('.base-form__number-input-wrapper');
-    
+  document.querySelectorAll('input[type="number"]').forEach((input) => {
+    const wrapper = input.closest(".base-form__number-input-wrapper");
+
     // If this input isn't in a wrapper but has the base-form__number-input class,
     // we need to wrap it with increment/decrement buttons
-    if (!wrapper && input.classList.contains('base-form__number-input')) {
-      console.log('Found unwrapped number input, wrapping it');
+    if (!wrapper && input.classList.contains("base-form__number-input")) {
+      console.log("Found unwrapped number input, wrapping it");
       wrapNumberInput(input);
     }
   });
-  
+
   // Update responsive behavior for all wrappers
   updateNumberInputResponsiveness();
 }
@@ -58,35 +61,35 @@ export function enhanceExistingNumberInputs() {
  */
 function wrapNumberInput(input) {
   // Create wrapper
-  const wrapper = document.createElement('div');
-  wrapper.className = 'base-form__number-input-wrapper';
-  
+  const wrapper = document.createElement("div");
+  wrapper.className = "base-form__number-input-wrapper";
+
   // Create decrement button
-  const decrementBtn = document.createElement('button');
-  decrementBtn.type = 'button';
-  decrementBtn.className = 'decrement';
-  decrementBtn.dataset.action = 'decrement';
-  decrementBtn.textContent = '−';
-  
-  // Create increment button  
-  const incrementBtn = document.createElement('button');
-  incrementBtn.type = 'button';
-  incrementBtn.className = 'increment';
-  incrementBtn.dataset.action = 'increment';
-  incrementBtn.textContent = '+';
-  
+  const decrementBtn = document.createElement("button");
+  decrementBtn.type = "button";
+  decrementBtn.className = "decrement";
+  decrementBtn.dataset.action = "decrement";
+  decrementBtn.textContent = "−";
+
+  // Create increment button
+  const incrementBtn = document.createElement("button");
+  incrementBtn.type = "button";
+  incrementBtn.className = "increment";
+  incrementBtn.dataset.action = "increment";
+  incrementBtn.textContent = "+";
+
   // Save existing attributes
   const attributes = {};
   for (const attr of input.attributes) {
-    if (attr.name !== 'class') {
+    if (attr.name !== "class") {
       attributes[attr.name] = attr.value;
     }
   }
-  
+
   // Replace input with our wrapped version
   const parent = input.parentElement;
   parent.replaceChild(wrapper, input);
-  
+
   // Add elements to wrapper
   wrapper.appendChild(decrementBtn);
   wrapper.appendChild(input);
@@ -99,30 +102,30 @@ function wrapNumberInput(input) {
  */
 function handleNumberInputClick(event) {
   const target = event.target;
-  
+
   // Check if the clicked element is an increment or decrement button
-  if (target.matches('.increment, .decrement')) {
-    const wrapper = target.closest('.base-form__number-input-wrapper');
+  if (target.matches(".increment, .decrement")) {
+    const wrapper = target.closest(".base-form__number-input-wrapper");
     if (!wrapper) return;
-    
+
     const input = wrapper.querySelector('input[type="number"]');
     if (!input) return;
-    
+
     const value = parseFloat(input.value) || 0;
     const step = parseFloat(input.step) || 1;
-    const min = input.hasAttribute('min') ? parseFloat(input.min) : -Infinity;
-    const max = input.hasAttribute('max') ? parseFloat(input.max) : Infinity;
-    
+    const min = input.hasAttribute("min") ? parseFloat(input.min) : -Infinity;
+    const max = input.hasAttribute("max") ? parseFloat(input.max) : Infinity;
+
     // Increment or decrement the value
-    if (target.classList.contains('increment')) {
+    if (target.classList.contains("increment")) {
       input.value = Math.min(value + step, max);
     } else {
       input.value = Math.max(value - step, min);
     }
-    
+
     // Trigger change event
-    input.dispatchEvent(new Event('change', { bubbles: true }));
-    input.dispatchEvent(new Event('input', { bubbles: true }));
+    input.dispatchEvent(new Event("change", { bubbles: true }));
+    input.dispatchEvent(new Event("input", { bubbles: true }));
   }
 }
 
@@ -131,17 +134,19 @@ function handleNumberInputClick(event) {
  */
 function updateNumberInputResponsiveness() {
   const MIN_WIDTH_FOR_BUTTONS = 110; // Width in pixels needed for comfortable display of buttons
-  
-  document.querySelectorAll('.base-form__number-input-wrapper').forEach(wrapper => {
-    const wrapperWidth = wrapper.offsetWidth;
-    
-    // If the wrapper is too narrow, make it compact
-    if (wrapperWidth < MIN_WIDTH_FOR_BUTTONS) {
-      wrapper.classList.add('compact');
-    } else {
-      wrapper.classList.remove('compact');
-    }
-  });
+
+  document
+    .querySelectorAll(".base-form__number-input-wrapper")
+    .forEach((wrapper) => {
+      const wrapperWidth = wrapper.offsetWidth;
+
+      // If the wrapper is too narrow, make it compact
+      if (wrapperWidth < MIN_WIDTH_FOR_BUTTONS) {
+        wrapper.classList.add("compact");
+      } else {
+        wrapper.classList.remove("compact");
+      }
+    });
 }
 
 /**
@@ -152,7 +157,7 @@ function updateNumberInputResponsiveness() {
  */
 function debounce(func, wait) {
   let timeout;
-  return function(...args) {
+  return function (...args) {
     const context = this;
     clearTimeout(timeout);
     timeout = setTimeout(() => func.apply(context, args), wait);
@@ -160,20 +165,30 @@ function debounce(func, wait) {
 }
 
 // Initialize number inputs when relevant hooks fire
-Hooks.on('ready', () => {
+Hooks.on("ready", () => {
   initNumberInputs();
 });
 
 // Hook into all relevant render events to ensure number inputs are enhanced
-Hooks.on('renderItemV2', (app, html) => {
+Hooks.on("renderItemV2", (app, html) => {
   enhanceExistingNumberInputs();
 });
 
-Hooks.on('renderEventideRpSystemItemSheet', (app, html) => {
+Hooks.on("renderEventideRpSystemItemSheet", (app, html) => {
   enhanceExistingNumberInputs();
+
+  const tabsContainer = html.querySelector(".tabs");
+  if (tabsContainer) {
+    tabsContainer.addEventListener("click", (event) => {
+      setTimeout(() => {
+        updateNumberInputResponsiveness();
+      }, 50);
+    });
+  }
 });
 
 // Catch any other application renders
-Hooks.on('renderApplicationV2', () => {
+Hooks.on("renderApplicationV2", () => {
   updateNumberInputResponsiveness();
+  console.log("Number inputs updated");
 });
