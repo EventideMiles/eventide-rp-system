@@ -4207,7 +4207,6 @@
 }
 .eventide-rp-system .eventide-item-sheet--scrollbars .tab.effects, .eventide-rp-system .eventide-item-sheet--scrollbars .tab.characterEffects {
   height: auto;
-  max-height: 75%;
   overflow-y: auto !important;
 }
 
