@@ -305,7 +305,7 @@
   &__scrollable-container {
     flex: 1;
     overflow-y: auto;
-    max-height: 14rem; // 200px converted to rem
+    max-height: 20rem;
     margin-top: 0.5rem;
     padding-right: 0.5rem; // Add some padding for the scrollbar
   }
@@ -523,7 +523,6 @@
   // Apply scrollbars to the tab content
   .tab.effects, .tab.characterEffects {
     height: auto;
-    max-height: 600px; // Fixed height to ensure scrolling happens
     overflow-y: auto !important;
   }
 }

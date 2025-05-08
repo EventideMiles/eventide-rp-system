@@ -687,7 +687,7 @@
   
   // Then define the container query
   @supports (container-type: inline-size) {
-    @container (max-width: 9rem) {
+    @container (max-width: 7rem) {
       .decrement, .increment {
         display: none !important; // Use !important to ensure this overrides any other styles
       }
