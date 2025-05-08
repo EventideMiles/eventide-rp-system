@@ -251,21 +251,13 @@
         .increment, .decrement {
           display: flex;
         }
-        
-        // Override grid cell styling for number inputs
-        .base-form__number-input {
-          background-color: colors.$input-bg !important;
-          color: colors.$input-text;
-        }
       }
       
       button {
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 2.5rem;
-        height: 2.5rem;
-        background-color: colors.$button-bg !important;
+        background-color: colors.$input-bg !important;
         color: colors.$button-text !important;
         border: 1px solid colors.$button-border !important;
         border-radius: 5px !important;

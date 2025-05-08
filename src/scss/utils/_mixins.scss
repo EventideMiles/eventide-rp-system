@@ -558,6 +558,7 @@
   margin-right: 0.3125rem;
   flex: 0 0 auto;
   overflow: hidden;
+  display: none;
   
   // Allow for customization
   @content;

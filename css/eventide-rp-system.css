@@ -1103,6 +1103,7 @@
   margin-right: 0.3125rem;
   flex: 0 0 auto;
   overflow: hidden;
+  display: none;
 }
 .base-form__color-picker-with-hex .color-picker {
   display: block;
@@ -4007,17 +4008,11 @@
 .eventide-rp-system .eventide-item-sheet__effects-grid-cell .base-form__number-input-wrapper .increment, .eventide-rp-system .eventide-item-sheet__effects-grid-cell .base-form__number-input-wrapper .decrement {
   display: flex;
 }
-.eventide-rp-system .eventide-item-sheet__effects-grid-cell .base-form__number-input-wrapper .base-form__number-input {
-  background-color: var(--erps-input-bg) !important;
-  color: var(--erps-input-text);
-}
 .eventide-rp-system .eventide-item-sheet__effects-grid-cell button {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 2.5rem;
-  height: 2.5rem;
-  background-color: var(--erps-button-bg) !important;
+  background-color: var(--erps-input-bg) !important;
   color: var(--erps-button-text) !important;
   border: 1px solid var(--erps-button-border) !important;
   border-radius: 5px !important;

@@ -1,5 +1,7 @@
 <section class="tab effects {{tab.cssClass}}" data-group="primary" data-tab="characterEffects">
-  <div class="eventide-item-sheet__scrollable-container">
+  <div class="eventide-item-sheet__scrollable-container base-form">
+    <div class="grid grid-cols-2">
+    <div>
     <label class="eventide-item-sheet__effect-toggle-label" for="effect.displayOnToken">Icon Displayed On Token</label>
     <label 
       class="" 
@@ -22,15 +24,18 @@
     </span>
   </label>
 
+  </div>
   <div>
     <div class="base-form__color-picker-with-hex color-picker-with-hex">
-      <label class="color-picker-label" for="color-iconTint">{{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.IconTint"}}}:</label>
+      <label class="base-form__label--small" for="color-iconTint">{{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.IconTint"}}}:</label>
       <div class="color-picker-container">
         <div class="color-preview" id="preview-iconTint" style="background-color: {{iconTint}}"></div>
         <input type="color" class="color-picker" id="color-iconTint" name="iconTint" value="{{iconTint}}">
         <input type="text" class="hex-input" id="hex-iconTint" placeholder="Hex color" value="{{iconTint}}">
       </div>
     </div>
+  </div>
+
   </div>
 
   
