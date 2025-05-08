@@ -52,14 +52,14 @@
               title='{{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Unequip.label"}}'
               data-action='toggleGear'
             >
-              <i class='fa-solid fa-helmet-battle'></i>
+              <i class='fa-solid fa-helmet-battle{{#if item.system.cursed}} items-panel__controls--cursed{{/if}}'></i>
             </a>
             <a
               class='item-control item-edit'
               title='{{localize "DOCUMENT.Update" type='Gear'}}'
               data-action='viewDoc'
             >
-              <i class='fas fa-edit'></i>
+              <i class='fas fa-edit{{#if item.system.cursed}} items-panel__controls--cursed{{/if}}'></i>
             </a>
             {{#if @root.editable}}
               <a
@@ -67,7 +67,7 @@
                 title='{{localize "DOCUMENT.Delete" type='Gear'}}'
                 data-action='deleteDoc'
               >
-                <i class='fas fa-trash'></i>
+                <i class='fas fa-trash{{#if item.system.cursed}} items-panel__controls--cursed{{/if}}'></i>
               </a>
             {{/if}}
             <a
@@ -75,14 +75,14 @@
               title='{{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Increment.label"}}'
               data-action='incrementGear'
             >
-              <i class='fa-solid fa-plus'></i>
+              <i class='fa-solid fa-plus{{#if item.system.cursed}} items-panel__controls--cursed{{/if}}'></i>
             </a>
             <a
               class="item-control item-decrement"
               title='{{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Decrement.label"}}'
               data-action='decrementGear'
             >
-              <i class='fa-solid fa-minus'></i>
+              <i class='fa-solid fa-minus{{#if item.system.cursed}} items-panel__controls--cursed{{/if}}'></i>
             </a>
           {{else}}
             <a 
@@ -164,7 +164,7 @@
             {{#if (not item.system.quantity)}}
               <i class="fa-solid fa-triangle-exclamation"></i>
             {{else}}
-            <i class='fa-solid fa-helmet-battle'></i>
+            <i class='fa-solid fa-helmet-battle{{#if (and item.system.cursed @root.isGM)}} items-panel__controls--cursed{{/if}}'></i>
             {{/if}}
           </a>
           {{#if @root.isGM}}
