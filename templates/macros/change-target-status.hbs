@@ -29,14 +29,12 @@
       <select class="base-form__select" 
       id="adjustmentMode" 
       name="adjustmentMode">
-        <option value="add" 
-        {{#if (eq storedData.changeTargetStatus_adjustmentMode "add")}}selected{{/if}}>
-          {{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.AddMode"}}
-        </option>
-        <option value="subtract" 
-        {{#if (eq storedData.changeTargetStatus_adjustmentMode "subtract")}}selected{{/if}}>
-          {{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.SubtractMode"}}
-        </option>
+        {{#each modes as |mode|}}
+          <option value="{{toLowerCase mode}}" 
+          {{#if (eq ../storedData.changeTargetStatus_adjustmentMode (toLowerCase mode))}}selected{{/if}}>
+            {{mode}}
+          </option>
+        {{/each}}
       </select>
       <div class="base-form__number-input-wrapper">
         <button type="button" class="decrement" data-action="decrement">−</button>
@@ -59,14 +57,12 @@
       <select class="base-form__select" 
       id="overrideMode" 
       name="overrideMode">
-        <option value="add" 
-        {{#if (eq storedData.changeTargetStatus_overrideMode "add")}}selected{{/if}}>
-          {{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.AddMode"}}
-        </option>
-        <option value="subtract" 
-        {{#if (eq storedData.changeTargetStatus_overrideMode "subtract")}}selected{{/if}}>
-          {{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.SubtractMode"}}
-        </option>
+        {{#each modes as |mode|}}
+          <option value="{{toLowerCase mode}}" 
+          {{#if (eq ../storedData.changeTargetStatus_overrideMode (toLowerCase mode))}}selected{{/if}}>
+            {{mode}}
+          </option>
+        {{/each}}
       </select>
       <div class="base-form__number-input-wrapper">
         <button type="button" class="decrement" data-action="decrement">−</button>
@@ -88,14 +84,12 @@
       <select class="base-form__select" 
       id="advantageMode" 
       name="advantageMode">
-        <option value="add" 
-        {{#if (eq storedData.changeTargetStatus_advantageMode "add")}}selected{{/if}}>
-          {{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.AddMode"}}
-        </option>
-        <option value="subtract" 
-        {{#if (eq storedData.changeTargetStatus_advantageMode "subtract")}}selected{{/if}}>
-          {{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.SubtractMode"}}
-        </option>
+        {{#each modes as |mode|}}
+          <option value="{{toLowerCase mode}}" 
+          {{#if (eq ../storedData.changeTargetStatus_advantageMode (toLowerCase mode))}}selected{{/if}}>
+            {{mode}}
+          </option>
+        {{/each}}
       </select>
       <div class="base-form__number-input-wrapper">
         <button type="button" class="decrement" data-action="decrement">−</button>
@@ -117,14 +111,12 @@
       <select class="base-form__select" 
       id="disadvantageMode" 
       name="disadvantageMode">
-        <option value="add" 
-        {{#if (eq storedData.changeTargetStatus_disadvantageMode "add")}}selected{{/if}}>
-          {{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.AddMode"}}
-        </option>  
-        <option value="subtract" 
-        {{#if (eq storedData.changeTargetStatus_disadvantageMode "subtract")}}selected{{/if}}>
-          {{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.SubtractMode"}}
-        </option>
+        {{#each modes as |mode|}}
+          <option value="{{toLowerCase mode}}" 
+          {{#if (eq ../storedData.changeTargetStatus_disadvantageMode (toLowerCase mode))}}selected{{/if}}>
+            {{mode}}
+          </option>
+        {{/each}}
       </select>
       <div class="base-form__number-input-wrapper">
         <button type="button" class="decrement" data-action="decrement">−</button>

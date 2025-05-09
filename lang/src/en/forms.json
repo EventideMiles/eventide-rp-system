@@ -77,7 +77,9 @@
         "Advantage": "Advantage",
         "Disadvantage": "Disadvantage",
         "Override": "Override",
-        "SubtractMode": "Subtract"
+        "SubtractMode": "Subtract",
+        "IntensifyMode": "Intensify",
+        "WeakenMode": "Weaken"
       },
       "Callouts": {
         "Damage": {
