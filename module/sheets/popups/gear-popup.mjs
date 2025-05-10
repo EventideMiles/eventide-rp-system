@@ -46,6 +46,27 @@ export class GearPopup extends EventidePopupHelpers {
     context.cssClass = GearPopup.DEFAULT_OPTIONS.classes.join(" ");
     context.problems = await this.checkEligibility();
 
+    context.footerButtons = [
+      context.problems.targeting ||
+      context.problems.quantity ||
+      context.problems.equipped
+        ? null
+        : {
+            label: game.i18n.localize(
+              "EVENTIDE_RP_SYSTEM.Forms.Buttons.UseItem"
+            ),
+            type: "submit",
+            cssClass: "popup-form__button popup-form__button--primary",
+            action: "useItem",
+          },
+      {
+        label: game.i18n.localize("EVENTIDE_RP_SYSTEM.Forms.Buttons.Close"),
+        type: "button",
+        cssClass: "popup-form__button",
+        action: "close",
+      },
+    ];
+
     return context;
   }
 

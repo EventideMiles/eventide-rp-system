@@ -65,10 +65,5 @@
         {{/if}}
     </div>
 
-    <footer class="base-form__footer">
-        {{#unless (or problems.targeting problems.power)}}
-            <button type="submit" class="popup-form__button popup-form__button--primary">{{localize "EVENTIDE_RP_SYSTEM.Forms.Buttons.UsePower"}}</button>
-        {{/unless}}
-        <button type="button" class="popup-form__button" data-action="close">{{localize "EVENTIDE_RP_SYSTEM.Forms.Buttons.Close"}}</button>
-    </footer>
+    {{> macro-footer}}
 </div>

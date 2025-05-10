@@ -45,6 +45,24 @@ export class CombatPowerPopup extends EventidePopupHelpers {
     context.cssClass = CombatPowerPopup.DEFAULT_OPTIONS.classes.join(" ");
     context.problems = await this.checkEligibility();
 
+    context.footerButtons = [
+      context.problems.targeting || context.problems.power
+        ? null
+        : {
+            label: game.i18n.localize(
+              "EVENTIDE_RP_SYSTEM.Forms.Buttons.UsePower"
+            ),
+            type: "submit",
+            cssClass: "popup-form__button popup-form__button--primary",
+          },
+      {
+        label: game.i18n.localize("EVENTIDE_RP_SYSTEM.Forms.Buttons.Close"),
+        type: "button",
+        cssClass: "popup-form__button",
+        action: "close",
+      },
+    ];
+
     return context;
   }
 

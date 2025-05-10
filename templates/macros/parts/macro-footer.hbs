@@ -1,10 +1,13 @@
 <footer class="base-form__footer">
   {{#each footerButtons as |current|}}
+    {{#if current}}
     <button
       type="{{current.type}}"
       class="{{current.cssClass}}"
+      {{#if current.action}}data-action="{{current.action}}"{{/if}}
     >
       {{current.label}}
     </button>
+    {{/if}}
   {{/each}}
 </footer>

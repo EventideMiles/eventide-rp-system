@@ -58,6 +58,19 @@ export class GearCreator extends CreatorApplication {
       "gearEquippedDefault"
     );
 
+    context.footerButtons = [
+      {
+        label:
+          context.playerMode || context.targetArray.length > 0
+            ? game.i18n.localize(
+                "EVENTIDE_RP_SYSTEM.Forms.Buttons.CreateAndApply"
+              )
+            : game.i18n.localize("EVENTIDE_RP_SYSTEM.Forms.Buttons.Create"),
+        type: "submit",
+        cssClass: "base-form__button base-form__button--primary",
+      },
+    ];
+
     return context;
   }
 }

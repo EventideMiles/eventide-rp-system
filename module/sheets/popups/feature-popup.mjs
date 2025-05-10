@@ -50,6 +50,23 @@ export class FeaturePopup extends EventidePopupHelpers {
     const context = await super._prepareContext(options);
 
     context.cssClass = FeaturePopup.DEFAULT_OPTIONS.classes.join(" ");
+
+    context.footerButtons = [
+      {
+        label: game.i18n.localize(
+          "EVENTIDE_RP_SYSTEM.Forms.Buttons.SendToChat"
+        ),
+        type: "button",
+        cssClass: "popup-form__button",
+        action: "toChat",
+      },
+      {
+        label: game.i18n.localize("EVENTIDE_RP_SYSTEM.Forms.Buttons.Close"),
+        type: "submit",
+        cssClass: "popup-form__button popup-form__button--primary",
+      },
+    ];
+
     return context;
   }
 

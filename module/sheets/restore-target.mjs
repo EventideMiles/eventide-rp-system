@@ -75,6 +75,20 @@ export class RestoreTarget extends EventideSheetHelpers {
       restorePower: true,
     };
 
+    context.footerButtons = [
+      {
+        label: game.i18n.localize("EVENTIDE_RP_SYSTEM.Forms.Buttons.Restore"),
+        type: "submit",
+        cssClass: "base-form__button base-form__button--primary",
+      },
+      {
+        label: game.i18n.localize("EVENTIDE_RP_SYSTEM.Forms.Buttons.Close"),
+        type: "button",
+        cssClass: "base-form__button",
+        action: "close",
+      },
+    ];
+
     return context;
   }
 

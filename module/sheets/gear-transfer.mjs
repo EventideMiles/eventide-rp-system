@@ -114,6 +114,14 @@ export class GearTransfer extends EventideSheetHelpers {
       return context;
     }
 
+    context.footerButtons = [
+      {
+        label: game.i18n.localize("EVENTIDE_RP_SYSTEM.Forms.Buttons.Transfer"),
+        type: "submit",
+        cssClass: "base-form__button base-form__button--primary",
+      },
+    ];
+
     return context;
   }
 
