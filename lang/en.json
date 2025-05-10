@@ -122,7 +122,12 @@
       "SingleTargetOnly": "You can only target one token at a time!",
       "TargetFirst": "Please target a token first!",
       "TargetOrSelectFirst": "Please target or select a token first!",
-      "UnknownItemMacro": "Could not find item {item}. You may need to delete and recreate this macro."
+      "UnknownItemMacro": "Could not find item {item}. You may need to delete and recreate this macro.",
+      "NameRequired": "Item name is required",
+      "ImageRequired": "Item image is required",
+      "InvalidQuantity": "Quantity must be a positive number",
+      "InvalidWeight": "Weight must be a valid number",
+      "InvalidCost": "Cost must be a valid number"
     },
     "Info": {
       "CompendiumItemCreated": "Created {keyType} item {name} in the {packLabel} compendium",

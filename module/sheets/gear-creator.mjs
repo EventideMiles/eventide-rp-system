@@ -21,9 +21,6 @@ export class GearCreator extends CreatorApplication {
       submitOnChange: false,
       closeOnSubmit: true,
     },
-    actions: {
-      onEditImage: super._onEditImage,
-    },
   };
 
   /**

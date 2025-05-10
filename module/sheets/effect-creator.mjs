@@ -22,9 +22,6 @@ export class EffectCreator extends CreatorApplication {
       submitOnChange: false,
       closeOnSubmit: true,
     },
-    actions: {
-      onEditImage: super._onEditImage,
-    },
   };
 
   /**

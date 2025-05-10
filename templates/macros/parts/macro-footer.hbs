@@ -1,0 +1,10 @@
+<footer class="base-form__footer">
+  {{#each buttons as |current|}}
+    <button
+      type="{{current.type}}"
+      class="{{current.cssClass}}"
+    >
+      {{current.label}}
+    </button>
+  {{/each}}
+</footer>

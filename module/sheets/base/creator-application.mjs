@@ -5,6 +5,14 @@ import { EventideSheetHelpers } from "./eventide-sheet-helpers.mjs";
  * @extends {HandlebarsApplicationMixin(ApplicationV2)}
  */
 export class CreatorApplication extends EventideSheetHelpers {
+  // Set to true to enable debug logging, false for production
+  static TESTING_MODE = false;
+  /**
+   * Default options for the application
+   * Note: The actions object maps action names to static methods, but Foundry will call them
+   * with the instance as 'this' context
+   * @type {Object}
+   */
   static DEFAULT_OPTIONS = {
     id: "creator-application",
     position: {
@@ -12,8 +20,17 @@ export class CreatorApplication extends EventideSheetHelpers {
       height: 800,
     },
     tag: "form",
+    actions: {
+      onAddAbility: this._onAddAbility,
+      onRemoveAbility: this._onRemoveAbility,
+      onEditImage: this._onEditImage,
+    },
   };
 
+  /**
+   * Default storage keys for preferences
+   * @type {string[]}
+   */
   static storageKeys = [
     "img",
     "bgColor",
@@ -21,6 +38,10 @@ export class CreatorApplication extends EventideSheetHelpers {
     "displayOnToken",
     "iconTint",
   ];
+  /**
+   * Additional storage keys specific to effects
+   * @type {string[]}
+   */
   static effectStorageKeys = ["type"];
 
   /**
@@ -69,6 +90,14 @@ export class CreatorApplication extends EventideSheetHelpers {
         ...EventideSheetHelpers.advancedHiddenAbilities,
       ];
     }
+    this.allAbilities = [...this.abilities, ...this.hiddenAbilities];
+    this.addedAbilities = [
+      {
+        attribute: "acro",
+        mode: "add",
+        value: 0,
+      },
+    ];
     this.rollTypes = EventideSheetHelpers.rollTypes;
     this.classNames = EventideSheetHelpers.classNames;
     this.playerMode = playerMode;
@@ -90,14 +119,20 @@ export class CreatorApplication extends EventideSheetHelpers {
 
     context.abilities = this.abilities;
     context.hiddenAbilities = this.hiddenAbilities;
+    context.allAbilities = this.allAbilities;
+    context.addedAbilities = this.addedAbilities;
     context.rollTypes = this.rollTypes;
     context.classNames = this.classNames;
     context.playerMode = this.playerMode;
     context.targetArray = this.targetArray;
     context.selectedArray = this.selectedArray;
 
+    return context;
+  }
+
+  _onFirstRender() {
     if (
-      context.targetArray.length === 0 &&
+      this.targetArray.length === 0 &&
       this.gmCheck === "gm" &&
       !this.playerMode
     ) {
@@ -108,7 +143,7 @@ export class CreatorApplication extends EventideSheetHelpers {
       );
     }
 
-    if (context.selectedArray.length === 0 && this.gmCheck === "player") {
+    if (this.selectedArray.length === 0 && this.gmCheck === "player") {
       ui.notifications.error(
         game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.PlayerSelection", {
           keyType: this.keyType,
@@ -117,20 +152,99 @@ export class CreatorApplication extends EventideSheetHelpers {
       this.close();
       return;
     }
-
-    return context;
   }
 
   _onChangeForm(formConfig, event) {
-    super._onChangeForm(formConfig, event);
     if (event.target.name === "img") {
       event.target.parentNode.querySelector(`img[name="displayImage"]`).src =
         event.target.value;
     }
+    super._onChangeForm(formConfig, event);
+  }
+
+  /**
+   * Handle adding a new ability to the form
+   * Note: Although this is a static method, Foundry calls it with the application instance as 'this'
+   * @returns {Promise<void>}
+   */
+  static async _onAddAbility() {
+    const app = this;
+
+    const formData = CreatorApplication._saveFormData(app);
+
+    const ability = {
+      attribute: "acro",
+      mode: "add",
+      value: 0,
+    };
+    app.addedAbilities.push(ability);
+    if (CreatorApplication.TESTING_MODE)
+      console.log("Added ability:", app.addedAbilities);
+
+    const oldPosition = app.position.height;
+
+    // Render the form and scroll to the previous position
+    await app.render();
+    CreatorApplication._restoreFormData(app, formData);
+    const contentElement = app.element.querySelector(".base-form__content");
+    if (contentElement) {
+      contentElement.scrollTop = oldPosition;
+    }
+  }
+
+  /**
+   * Handle removing an ability from the form
+   * Note: Although this is a static method, Foundry calls it with the application instance as 'this'
+   * @param {Event} event - The triggering event
+   * @returns {Promise<void>}
+   */
+  static async _onRemoveAbility(event) {
+    const app = this;
+
+    const formData = CreatorApplication._saveFormData(app);
+
+    const oldPosition = app.position.height;
+    const index = event.target.dataset.index;
+    app.addedAbilities.splice(index, 1);
+    if (CreatorApplication.TESTING_MODE) {
+      console.log(
+        "Removed ability at index",
+        index,
+        "remaining:",
+        app.addedAbilities
+      );
+    }
+
+    // Render the form and restore previous scroll position
+    await app.render();
+    CreatorApplication._restoreFormData(app, formData);
+    const contentElement = app.element.querySelector(".base-form__content");
+    if (contentElement) {
+      contentElement.scrollTop = oldPosition;
+    }
+  }
+
+  async _onChangeForm(formConfig, event) {
+    const form = event.target.form;
+
+    if (event.target.name.includes("addedAbilities")) {
+      const index = event.target.dataset.index;
+
+      // Get form elements for this ability
+      const updateData = form.querySelectorAll(
+        `[name*="addedAbilities.${index}"]`
+      );
+
+      this.addedAbilities[index].attribute = updateData[0].value;
+      this.addedAbilities[index].mode = updateData[1].value;
+      this.addedAbilities[index].value = updateData[2].value;
+    }
+    await super._onChangeForm(formConfig, event);
   }
 
   /**
    * Handle changing the gear image.
+   * Note: Although this is a static method, Foundry calls it with the application instance as 'this'
    * @param {PointerEvent} event - The originating click event
    * @param {HTMLElement} target - The capturing HTML element which defined a [data-edit]
    * @returns {Promise} The file picker browse operation
@@ -149,155 +263,151 @@ export class CreatorApplication extends EventideSheetHelpers {
    * @protected
    */
   static async _onSubmit(event, form, formData) {
-    // declared variables
-    let quantity;
-    let weight;
-    let cost;
-    let targeted;
-    let rollData;
-    let className;
-    let hiddenEffects = [{}];
-    let cursed;
-    let equipped;
+    if (CreatorApplication.TESTING_MODE) {
+      console.log("FormData entries:");
+      for (const [key, value] of formData.entries()) {
+        console.log(`${key}: ${value}`);
+      }
+    }
 
-    const name = form.name.value;
-    const description = form.description.value;
-    const img = form.img.value;
-    const bgColor = form.bgColor.value;
-    const textColor = form.textColor.value;
+    // Validate required fields
+    if (!CreatorApplication._validateFormData(formData, this)) {
+      return false;
+    }
+
+    // Extract basic data common to all item types
+    const basicData = {
+      name: formData.get("name"),
+      description: formData.get("description"),
+      img: formData.get("img"),
+      bgColor: formData.get("bgColor"),
+      textColor: formData.get("textColor"),
+      iconTint: formData.get("iconTint"),
+      displayOnToken: formData.get("displayOnToken"),
+    };
+
+    // Determine item type based on context
     const type =
       this.keyType === "gear"
         ? "gear"
         : this.playerMode
         ? "feature"
-        : form.type.value;
-    const iconTint = form?.iconTint?.value || "#ffffff";
-    const displayOnToken = form?.displayOnToken?.checked || false;
+        : formData.get("type");
 
-    if (this.keyType === "gear") {
-      quantity = parseInt(form.quantity.value) || 1;
-      weight = parseFloat(form.weight.value) || 0;
-      cost = parseInt(form.cost.value) || 0;
-      targeted = form.targeted.checked;
-      className = form.className.value;
-      cursed = form?.cursed?.checked || false; // Only allowed for GM
-      equipped = form.equipped.checked;
-      const rollType = form["roll.type"].value;
-      rollData = {
-        type: rollType,
-        className: className,
-        ability:
-          rollType !== "none" ? form["roll.ability"].value : "unaugmented",
-        bonus:
-          rollType !== "none" ? parseInt(form["roll.bonus"].value) || 0 : 0,
-        diceAdjustments: {
-          advantage:
-            rollType === "roll"
-              ? parseInt(form["roll.diceAdjustments.advantage"].value) || 0
-              : 0,
-          disadvantage:
-            rollType === "roll"
-              ? parseInt(form["roll.diceAdjustments.disadvantage"].value) || 0
-              : 0,
-          total: 0,
-        },
-      };
+    // Extract gear-specific data if applicable
+    const gearData =
+      type === "gear"
+        ? {
+            quantity: formData.get("quantity"),
+            weight: formData.get("weight"),
+            cost: formData.get("cost"),
+            targeted: formData.get("targeted"),
+            className: formData.get("className"),
+            cursed: this.playerMode ? false : formData.get("cursed"),
+            equipped: formData.get("equipped"),
+          }
+        : {};
+
+    // Extract roll data for gear items
+    const rollType = formData.get("roll.type");
+    const rollData =
+      type === "gear"
+        ? {
+            type: rollType,
+            className: gearData.className,
+            ability:
+              rollType !== "none"
+                ? formData.get("roll.ability")
+                : "unaugmented",
+            bonus:
+              rollType !== "none"
+                ? parseInt(formData.get("roll.bonus")) || 0
+                : 0,
+            diceAdjustments: {
+              advantage:
+                rollType === "roll"
+                  ? parseInt(formData.get("roll.diceAdjustments.advantage")) ||
+                    0
+                  : 0,
+              disadvantage:
+                rollType === "roll"
+                  ? parseInt(
+                      formData.get("roll.diceAdjustments.disadvantage")
+                    ) || 0
+                  : 0,
+              total: 0,
+            },
+          }
+        : {};
+
+    // Process abilities from the instance's addedAbilities array
+    // Note: It's valid to have an item with no changes
+    const changes = [];
+
+    for (const ability of this.addedAbilities) {
+      const isHidden = this.hiddenAbilities.includes(ability.attribute);
+      const key = `system.${isHidden ? "hiddenAbilities" : "abilities"}.${
+        ability.attribute
+      }.${
+        ability.mode === "add"
+          ? "change"
+          : ability.mode === "override"
+          ? "override"
+          : "diceAdjustments." + ability.mode
+      }`;
+      const mode =
+        ability.mode !== "override"
+          ? CONST.ACTIVE_EFFECT_MODES.ADD
+          : CONST.ACTIVE_EFFECT_MODES.OVERRIDE;
+
+      changes.push({
+        key,
+        mode,
+        value: ability.value,
+      });
     }
 
-    const effects = this.abilities
-      .map((ability) => {
-        const value = parseInt(form[ability.toLowerCase()].value);
-        if (value === 0) return null;
-        const mode = form[`${ability.toLowerCase()}-mode`].value;
-
-        return {
-          key: `system.abilities.${ability.toLowerCase()}.${
-            mode === "add"
-              ? "change"
-              : mode === "advantage"
-              ? "diceAdjustments.advantage"
-              : mode === "disadvantage"
-              ? "diceAdjustments.disadvantage"
-              : "override"
-          }`,
-          mode:
-            mode === "add" || mode === "advantage" || mode === "disadvantage"
-              ? CONST.ACTIVE_EFFECT_MODES.ADD
-              : CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
-          value: value,
-          priority: 0,
-        };
-      })
-      .filter((e) => e !== null);
-
-    hiddenEffects = this.hiddenAbilities
-      .map((ability) => {
-        const value = parseInt(form[ability.toLowerCase()].value);
-        if (value === 0) return null;
-        const mode = form[`${ability.toLowerCase()}-mode`].value;
-
-        return {
-          key: `system.hiddenAbilities.${ability.toLowerCase()}.${
-            mode === "add"
-              ? "change"
-              : mode === "advantage"
-              ? "diceAdjustments.advantage"
-              : mode === "disadvantage"
-              ? "diceAdjustments.disadvantage"
-              : "override"
-          }`,
-          mode:
-            mode === "add"
-              ? CONST.ACTIVE_EFFECT_MODES.ADD
-              : CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
-          value: value,
-          priority: 0,
-        };
-      })
-      .filter((e) => e !== null);
-    // Save preferences to local storage
-    let storageData = {
-      [`${this.keyType}_${this.number}_img`]: img,
-      [`${this.keyType}_${this.number}_bgColor`]: bgColor,
-      [`${this.keyType}_${this.number}_textColor`]: textColor,
-      [`${this.keyType}_${this.number}_iconTint`]: iconTint,
-      [`${this.keyType}_${this.number}_displayOnToken`]: displayOnToken,
-    };
-
-    if (this.keyType === "effect") {
-      storageData[`${this.keyType}_${this.number}_type`] = type;
-    }
-
-    await erps.utils.storeLocal(storageData);
-
+    // Construct the item data object
     const itemData = {
-      name,
+      name: basicData.name,
       type,
-      img,
+      img: basicData.img,
       system: {
-        description,
-        bgColor,
-        textColor,
+        description: basicData.description,
+        bgColor: basicData.bgColor,
+        textColor: basicData.textColor,
+        ...(type === "gear"
+          ? {
+              quantity: gearData.quantity,
+              weight: gearData.weight,
+              cost: gearData.cost,
+              targeted: gearData.targeted,
+              rollData: rollData,
+              className: gearData.className,
+              cursed: gearData.cursed,
+              equipped: gearData.equipped,
+            }
+          : {}),
       },
       effects: [
         {
           _id: foundry.utils.randomID(),
-          name,
-          img,
-          changes: [...effects, ...hiddenEffects],
+          name: basicData.name,
+          img: basicData.img,
+          changes,
           disabled: false,
           duration: {
             startTime: null,
-            seconds: displayOnToken ? 18000 : 0,
+            seconds: basicData.displayOnToken ? 18000 : 0,
             combat: "",
             rounds: 0,
             turns: 0,
             startRound: 0,
             startTurn: 0,
           },
-          description: description || "",
+          description: basicData.description || "",
           origin: "",
-          tint: iconTint,
+          tint: basicData.iconTint,
           transfer: true,
           statuses: new Set(),
           flags: {},
@@ -305,16 +415,17 @@ export class CreatorApplication extends EventideSheetHelpers {
       ],
     };
 
-    if (this.keyType === "gear") {
-      itemData.system.quantity = quantity;
-      itemData.system.weight = weight;
-      itemData.system.cost = cost;
-      itemData.system.targeted = targeted;
-      itemData.system.roll = rollData;
-      itemData.system.className = className;
-      itemData.system.cursed = cursed;
-      itemData.system.equipped = equipped;
-    }
+    if (CreatorApplication.TESTING_MODE) console.log(itemData);
+
+    // Store form values in local storage
+    CreatorApplication._store(this, {
+      img: basicData.img,
+      bgColor: basicData.bgColor,
+      textColor: basicData.textColor,
+      iconTint: basicData.iconTint,
+      displayOnToken: basicData.displayOnToken,
+      type,
+    });
 
     if (this.targetArray.length > 0 && this.gmCheck === "gm") {
       await Promise.all(
@@ -334,6 +445,7 @@ export class CreatorApplication extends EventideSheetHelpers {
 
     let packId = !this.playerMode ? "custom" : "player";
     let packLabel = !this.playerMode ? "Custom " : "Player ";
+
     if (type === "gear") {
       packId += "gear";
       packLabel += "Gear";
@@ -396,5 +508,195 @@ export class CreatorApplication extends EventideSheetHelpers {
         })
       );
     }
+
+    return;
+  }
+
+  /**
+   * Store form values in local storage
+   * @param {CreatorApplication} instance - The application instance
+   * @param {Object} formValues - The form values to store
+   * @param {string} formValues.img - The image path
+   * @param {string} formValues.bgColor - The background color
+   * @param {string} formValues.textColor - The text color
+   * @param {string} formValues.iconTint - The icon tint color
+   * @param {boolean} formValues.displayOnToken - Whether to display on token
+   * @param {string} [formValues.type] - The effect type (only for effects)
+   * @private
+   */
+  /**
+   * Validate form data before submission
+   * @param {FormData} formData - The form data to validate
+   * @param {CreatorApplication} instance - The application instance
+   * @returns {boolean} Whether the form data is valid
+   * @private
+   */
+  static _validateFormData(formData, instance) {
+    // Validate name (required)
+    const name = formData.get("name");
+    if (!name || name.trim() === "") {
+      ui.notifications.error(
+        game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.NameRequired")
+      );
+      return false;
+    }
+
+    // Validate image (required)
+    const img = formData.get("img");
+    if (!img || img.trim() === "") {
+      ui.notifications.error(
+        game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.ImageRequired")
+      );
+      return false;
+    }
+
+    // For gear items, validate numeric fields
+    if (instance.keyType === "gear") {
+      // Quantity must be a positive number
+      const quantity = formData.get("quantity");
+      if (quantity && (isNaN(parseInt(quantity)) || parseInt(quantity) < 0)) {
+        ui.notifications.error(
+          game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.InvalidQuantity")
+        );
+        return false;
+      }
+
+      // Weight must be a number
+      const weight = formData.get("weight");
+      if (weight && isNaN(parseFloat(weight))) {
+        ui.notifications.error(
+          game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.InvalidWeight")
+        );
+        return false;
+      }
+
+      // Cost must be a number
+      const cost = formData.get("cost");
+      if (cost && isNaN(parseInt(cost))) {
+        ui.notifications.error(
+          game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.InvalidCost")
+        );
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  static _store(instance, formValues) {
+    if (CreatorApplication.TESTING_MODE)
+      console.log("Storing values:", formValues);
+
+    let storageData = {
+      [`${instance.keyType}_${instance.number}_img`]: formValues.img,
+      [`${instance.keyType}_${instance.number}_bgColor`]: formValues.bgColor,
+      [`${instance.keyType}_${instance.number}_textColor`]:
+        formValues.textColor,
+      [`${instance.keyType}_${instance.number}_iconTint`]: formValues.iconTint,
+      [`${instance.keyType}_${instance.number}_displayOnToken`]:
+        formValues.displayOnToken,
+    };
+
+    if (instance.keyType === "effect") {
+      storageData[`${instance.keyType}_${instance.number}_type`] =
+        formValues.type;
+    }
+
+    erps.utils.storeLocal(storageData);
+  }
+
+  /**
+   * Save the current form data to a temporary object
+   * Note: This excludes addedAbilities fields which are handled separately
+   * @param {CreatorApplication} app - The application instance
+   * @returns {Object} The saved form data
+   * @private
+   */
+  static _saveFormData(app) {
+    if (!app || !app.element) return {};
+
+    // Get the form element
+    const form =
+      app.element.tagName === "FORM"
+        ? app.element
+        : app.element.querySelector("form");
+    if (!form) return {};
+
+    const savedData = {};
+
+    const inputs = form.querySelectorAll("input, select, textarea");
+
+    if (CreatorApplication.TESTING_MODE)
+      console.log("Saving form data from", inputs.length, "inputs");
+
+    inputs.forEach((input) => {
+      if (input.name && !input.name.includes("addedAbilities")) {
+        if (input.type === "checkbox") {
+          savedData[input.name] = input.checked;
+        } else {
+          savedData[input.name] = input.value;
+        }
+        if (CreatorApplication.TESTING_MODE)
+          console.log(`Saved ${input.name}: ${savedData[input.name]}`);
+      }
+    });
+
+    return savedData;
+  }
+
+  /**
+   * Restore saved form data after re-rendering
+   * Handles special cases like checkboxes and color inputs
+   * @param {CreatorApplication} app - The application instance
+   * @param {Object} savedData - The saved form data
+   * @private
+   */
+  static _restoreFormData(app, savedData) {
+    if (!app || !app.element || !savedData) return;
+
+    // Get the form element
+    const form =
+      app.element.tagName === "FORM"
+        ? app.element
+        : app.element.querySelector("form");
+    if (!form) return;
+
+    if (CreatorApplication.TESTING_MODE) {
+      console.log(
+        "Restoring form data with",
+        Object.keys(savedData).length,
+        "fields"
+      );
+    }
+
+    Object.entries(savedData).forEach(([name, value]) => {
+      const input = form.querySelector(`[name="${name}"]`);
+      if (input) {
+        if (input.type === "checkbox") {
+          input.checked = value;
+        } else if (input.type === "color") {
+          input.value = value;
+
+          // Update associated hex input if it exists
+          const hexInput = form.querySelector(`#hex-${name}`);
+          if (hexInput) {
+            hexInput.value = value;
+          }
+
+          // Update color preview element if it exists
+          const preview = form.querySelector(`#preview-${name}`);
+          if (preview) {
+            preview.style.backgroundColor = value;
+          }
+        } else {
+          input.value = value;
+        }
+        if (CreatorApplication.TESTING_MODE)
+          console.log(`Restored ${name}: ${value}`);
+      } else {
+        if (CreatorApplication.TESTING_MODE)
+          console.log(`Could not find input with name: ${name}`);
+      }
+    });
   }
 }

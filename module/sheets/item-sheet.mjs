@@ -289,6 +289,7 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
 
     if (event.target.name.includes("characterEffects")) {
       await this._updateCharacterEffects();
+      event.target.focus();
       return;
     }
     if (event.target.name.includes("iconTint")) {
@@ -351,6 +352,7 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
       ability,
     };
     this._updateCharacterEffects({ newEffect });
+    event.target.focus();
   }
 
   static async _deleteCharacterEffect(event, target) {
@@ -366,6 +368,7 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
       duration,
     };
     await this.item.updateEmbeddedDocuments("ActiveEffect", [updateData]);
+    event.target.focus();
   }
 
   /*****************
