@@ -117,8 +117,6 @@ export class CreatorApplication extends EventideSheetHelpers {
     this.selectedArray = await erps.utils.getSelectedArray();
     this.storedData = await erps.utils.retrieveLocal(this.storageKeys);
 
-    context.abilities = this.abilities;
-    context.hiddenAbilities = this.hiddenAbilities;
     context.allAbilities = this.allAbilities;
     context.addedAbilities = this.addedAbilities;
     context.rollTypes = this.rollTypes;

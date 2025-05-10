@@ -58,14 +58,18 @@ export class EffectCreator extends CreatorApplication {
           : "status",
     };
 
-    console.log(context.storedData);
-
-    if (context.storedData.effect_displayOnToken === null) {
-      console.log("Setting default displayOnToken to true");
-      context.storedData.effect_displayOnToken = "true";
-    }
-
-    console.log(context.storedData);
+    context.footerButtons = [
+      {
+        label:
+          context.playerMode || context.targetArray.length > 0
+            ? game.i18n.localize(
+                "EVENTIDE_RP_SYSTEM.Forms.Buttons.CreateAndApply"
+              )
+            : game.i18n.localize("EVENTIDE_RP_SYSTEM.Forms.Buttons.Create"),
+        type: "submit",
+        cssClass: "base-form__button base-form__button--primary",
+      },
+    ];
 
     return context;
   }

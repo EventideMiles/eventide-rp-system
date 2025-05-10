@@ -57,6 +57,7 @@
           <div class="eventide-item-sheet__effects-grid-row">
             <div class="eventide-item-sheet__effects-grid-cell">
               <select 
+                class="base-form__select"
                 name="characterEffects.regularEffects.{{@index}}.ability"
                 data-index="{{@index}}"
                 data-type="visible"
@@ -71,6 +72,7 @@
             
             <div class="eventide-item-sheet__effects-grid-cell">
               <select 
+                class="base-form__select"
                 name="characterEffects.regularEffects.{{@index}}.mode"
                 data-index="{{@index}}"
                 data-type="visible"
@@ -101,7 +103,7 @@
             <div class="eventide-item-sheet__effects-grid-cell">
               <button 
                 type="button" 
-                class="eventide-item-sheet__effect-remove"
+                class="base-form__button"
                 data-action="deleteCharacterEffect" 
                 data-index="{{@index}}"
                 data-type="regularEffects"
@@ -117,7 +119,7 @@
       <div class="eventide-item-sheet__effect-controls">
         <button 
           type="button" 
-          class="eventide-item-sheet__add-effect"
+          class="eventide-item-sheet__add-effect base-form__button"
           data-action="newCharacterEffect" 
           data-type="abilities"
           data-ability="acro"
@@ -189,7 +191,7 @@
               <div class="eventide-item-sheet__effects-grid-cell">
                 <button 
                   type="button" 
-                  class="eventide-item-sheet__effect-remove"
+                  class="base-form__button"
                   data-action="deleteCharacterEffect" 
                   data-index="{{@index}}" 
                   data-type="hiddenEffects"
@@ -205,7 +207,7 @@
         <div class="eventide-item-sheet__effect-controls">
           <button 
             type="button" 
-            class="eventide-item-sheet__add-effect"
+            class="eventide-item-sheet__add-effect base-form__button"
             data-action="newCharacterEffect" 
             data-type="hiddenAbilities"
             data-ability="dice"
@@ -233,6 +235,7 @@
             <div class="eventide-item-sheet__effects-grid-row eventide-item-sheet__effects-grid-row--hidden">
               <div class="eventide-item-sheet__effects-grid-cell">
                 <select 
+                  class="base-form__select"
                   name="characterEffects.hiddenEffects.{{@index}}.ability"
                   data-index="{{@index}}"
                   data-type="hidden"
@@ -248,6 +251,7 @@
               
               <div class="eventide-item-sheet__effects-grid-cell">
                 <select 
+                  class="base-form__select"
                   name="characterEffects.hiddenEffects.{{@index}}.mode"
                   data-index="{{@index}}"
                   data-type="hidden"

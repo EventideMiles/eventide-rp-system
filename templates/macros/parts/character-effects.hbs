@@ -9,7 +9,7 @@
         </div>
         
         {{#each addedAbilities as |ability index|}}
-          <div class="eventide-item-sheet__effects-grid-row">
+          <div class="eventide-item-sheet__effects-grid-row base-form">
             <div class="eventide-item-sheet__effects-grid-cell">
               <select 
                 class="base-form__select"
@@ -40,8 +40,7 @@
             <div class="eventide-item-sheet__effects-grid-cell">
               <div class="base-form__number-input-wrapper">
                 <button type="button" 
-                  class="decrement base-form__button base-form__button--fixed" 
-                  style="min-width: 1.25rem; padding: 0; height: 1.75rem; min-height: 0; line-height: 1;"
+                  class="decrement" 
                   data-action="decrementEffect" 
                   data-index="{{@index}}"
                 >
@@ -50,14 +49,13 @@
                 <input 
                   type="number" 
                   class="base-form__number-input"
-                  name="addedAbilities.{{@index}}.value" 
+                  name="addedAbilities.{{@index}}.value"
                   value="{{value}}" 
                   step="1"
                   data-index="{{@index}}"
                 >
                 <button type="button" 
-                  class="increment base-form__button base-form__button--fixed" 
-                  style="min-width: 1.25rem; padding: 0; height: 1.75rem; min-height: 0; line-height: 1;"
+                  class="increment" 
                   data-action="incrementEffect" 
                   data-index="{{@index}}"
                 >
@@ -70,7 +68,6 @@
               <button 
                 type="button" 
                 class="base-form__button"
-                style="width: 100%; height: 1.75rem; min-height: 0; display: flex; justify-content: center; align-items: center; padding: 0;"
                 data-action="onRemoveAbility" 
                 data-index="{{@index}}"
                 title="Remove effect"

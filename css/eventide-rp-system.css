@@ -837,6 +837,7 @@
   transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, background-color 0.2s ease-in-out;
   appearance: textfield;
   -moz-appearance: textfield;
+  height: 2.5rem;
   text-align: center;
   width: 100%;
   margin: 0;
@@ -873,7 +874,7 @@
 }
 .base-form__number-input-wrapper .decrement, .base-form__number-input-wrapper .increment {
   width: 1.75rem;
-  height: 1.75rem;
+  height: 2.5rem;
   border-radius: 0.25rem;
   border: 0.0625rem solid var(--erps-input-border);
   background-color: var(--erps-input-bg);
@@ -4204,3 +4205,5 @@
   height: auto;
   overflow-y: auto !important;
 }
+
+/*# sourceMappingURL=eventide-rp-system.css.map */

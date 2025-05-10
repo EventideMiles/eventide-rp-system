@@ -601,6 +601,7 @@
   // Ensure consistent appearance across browsers
   appearance: textfield;
   -moz-appearance: textfield;
+  height: 2.5rem;
   
   // Remove default browser spinners
   &::-webkit-outer-spin-button,
@@ -642,7 +643,7 @@
   // Button styles
   .decrement, .increment {
     width: 1.75rem;
-    height: 1.75rem;
+    height: 2.5rem;
     border-radius: 0.25rem;
     border: 0.0625rem solid colors.$input-border;
     background-color: colors.$input-bg;

@@ -741,8 +741,8 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
         mode =
           (isRegular && effect.mode !== "override") ||
           (!isRegular && effect.mode === "add")
-            ? 2
-            : 5;
+            ? CONST.ACTIVE_EFFECT_MODES.ADD
+            : CONST.ACTIVE_EFFECT_MODES.OVERRIDE;
 
         return { key, mode, value: effect.value };
       });
@@ -756,7 +756,7 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
     if (newEffect.type && newEffect.ability) {
       newEffects.push({
         key: `system.${newEffect.type}.${newEffect.ability}.change`,
-        mode: 2,
+        mode: CONST.ACTIVE_EFFECT_MODES.ADD,
         value: 0,
       });
     }
