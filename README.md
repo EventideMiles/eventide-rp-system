@@ -16,7 +16,7 @@
 
 Alternatively, you can download the latest release from the [Releases](https://github.com/EventideMiles/eventide-rp-system/releases) page and install it manually.
 
-![Foundry v13](https://img.shields.io/badge/foundry-v13-green)
+![Foundry v13.341+](https://img.shields.io/badge/foundry-v13.341+-green)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 A custom roleplaying system for Foundry VTT that emphasizes dynamic character abilities through status effects features, and gear. The system is focused on providing an intuitive and flexible gaming experience.
@@ -59,6 +59,22 @@ A custom roleplaying system for Foundry VTT that emphasizes dynamic character ab
 
 - Multiple theme options: Dark is the default, but Light is also available
 - System sounds for key actions like healing, damage, status effects, and more: all configurable in the system settings
+
+### Powerful System Macros
+
+- Makes creating and managing gear, statuses, and features easy and quick
+- Available in a system compendium: import to your world and drag to the hotbar
+- Provide players with the tools they need to manage their own gear and statuses: player versions of the effect and gear creator are available
+- Need to make a status effect slightly worse or better? Intensify and Weaken are available for statuses and features. Intensify makes every positive number bigger and every negative number smaller. Weaken does the opposite till the limit of 1 on either side
+- Damage scripts handle formatting and describing what is happening to the target
+- Most macros save your settings: so if you need to have a specific status modified over many turns, you can use the same macro and it will remember your settings
+- Fully extensible: see a macro with a number argument? You can use it as a template to create one with a new number than can remember new settings
+
+
+### Coming Soon
+
+- An RPG system that uses this system as a base - feel free to use it however you wish but I will be providing documentation and support for the official use and development of this system
+- See a feature you want that we don't have? Open an issue and as long as its not antithetical to my vision for the system and isn't far too complex, I will be happy to add it
 
 ## Usage
 
@@ -105,7 +121,7 @@ This project is licensed under the Apache License 2.0. When contributing:
 Important licensing notes:
 
 - All modifications to existing files must be shared under Apache License 2.0
-- New files you create can be licensed differently if desired
+- New files you create can be licensed differently if desired: do not submit pull requests to the main repository with files that are not under Apache License 2.0
 - Asacolips Projects / Foundry Mods may use contributions under the MIT license
 - Include appropriate copyright notices in new files
 
