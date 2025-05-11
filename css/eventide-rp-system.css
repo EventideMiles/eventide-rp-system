@@ -3334,7 +3334,7 @@
   display: grid;
   grid-template-columns: minmax(min-content, max-content) 1fr;
   align-items: center;
-  border: 0.125rem outset #c9c7b8;
+  border: 0.125rem outset var(--erps-c-dark);
   border-radius: 0.5rem;
   background-color: var(--erps-form-content-bg);
   padding: 0.2rem;
@@ -3529,14 +3529,37 @@
   font-style: normal;
 }
 .eventide-rp-system .items-panel__section-header {
-  display: flex;
-  justify-content: center;
-  align-items: center;
   font-family: "Underdog", serif;
-  font-size: 1rem;
-  font-weight: bold;
-  text-decoration: underline;
-  padding: 10px 0;
+  font-size: 1.25rem;
+  color: #ffffff;
+  padding: 0.75rem 1rem;
+  margin: 1.5rem 0 1rem 0;
+  border-bottom: 2px solid #4d94ff;
+  position: relative;
+  width: 100%;
+  text-align: left;
+  background: linear-gradient(to right, rgba(30, 40, 60, 0.8), rgba(20, 30, 45, 0.7));
+  text-align: center;
+  margin-bottom: 0;
+}
+.eventide-rp-system .items-panel__section-header:first-of-type {
+  margin-top: 0;
+}
+.eventide-rp-system .items-panel__section-header.with-icon {
+  padding-left: 2.5rem;
+}
+.eventide-rp-system .items-panel__section-header.with-icon::before {
+  content: "";
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1.25rem;
+  height: 1.25rem;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: 0.8;
 }
 .eventide-rp-system .items-header {
   height: 28px;

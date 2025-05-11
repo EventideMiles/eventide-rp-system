@@ -1,17 +1,12 @@
 @use "../utils/colors";
 @use "../utils/variables";
 @use "../utils/typography";
+@use "../utils/mixins";
 
 .items-panel__section-header {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-family: typography.$underdog;
-  font-size: 1rem;
-  font-weight: bold;
-  text-decoration: underline;
-  padding: 10px 0;
-  
+  @include mixins.grid-compliant-section-header;
+  text-align: center;
+  margin-bottom: 0;
 }
 
 // Section Header
