@@ -12,6 +12,9 @@
   --erps-scrollbar-color: #0044aa;
   --erps-scrollbar-bg: #45454530;
 
+  // tab styling
+  --erps-tab-active-bg: rgba(0, 68, 170, 0.8);
+
   // abilities
   --erps-abilities-acro: rgb(191, 68, 0);
   --erps-abilities-phys: rgb(168, 3, 3);
@@ -192,6 +195,9 @@ $white-text-glow: var(--erps-white-text-glow);
 
 $scrollbar-color: var(--erps-scrollbar-color);
 $scrollbar-bg: var(--erps-scrollbar-bg);
+
+// Tab styling colors
+$tab-active-bg: var(--erps-tab-active-bg);
 
 $c-white: var(--erps-c-white);
 $c-black: var(--erps-c-black);

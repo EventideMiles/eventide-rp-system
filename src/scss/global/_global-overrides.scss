@@ -29,5 +29,68 @@
     border-radius: 10rem;
     margin: 0;
   }
+  
+  // Global Tab Styling
+  &.sheet-tabs, .tabs {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 5px;
+    border-bottom: 1px solid colors.$c-faint;
+  }
+  
+  .sheet-tabs.tabs a[data-action="tab"] {
+    position: relative;
+    margin: 0 5px;
+    padding: 5px 10px;
+    border: 1px solid transparent;
+    border-bottom: none;
+    border-radius: 5px 5px 0 0;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+  
+  .sheet-tabs.tabs a[data-action="tab"].active {
+    position: relative;
+    background-color: transparent;
+    color: #ffffff;
+    border: none;
+    z-index: 1;
+    padding: 5px 15px;
+    
+    // Create parallelogram background
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: colors.$tab-active-bg;
+      transform: skewX(-15deg);
+      transform-origin: bottom;
+      z-index: -1;
+    }
+  }
+  
+  .sheet-tabs.tabs a[data-action="tab"]:hover:not(.active) {
+    position: relative;
+    color: colors.$scrollbar-color;
+    border: none;
+    background-color: transparent;
+    
+    // Create parallelogram background for hover state
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(colors.$scrollbar-color, 0.1);
+      transform: skewX(-15deg);
+      transform-origin: bottom;
+      z-index: -1;
+    }
+  }
 }
 
