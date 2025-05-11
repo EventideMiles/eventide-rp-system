@@ -14,6 +14,7 @@
 
   // tab styling
   --erps-tab-active-bg: rgba(0, 68, 170, 0.8);
+  --erps-label-light-required: #ffffff;
 
   // abilities
   --erps-abilities-acro: rgb(191, 68, 0);
@@ -73,7 +74,7 @@
 // light theme colors
 :root {
     // themed universal
-  --erps-c-dark: #1a1814;
+  --erps-c-dark: #3d3d3d;
   --erps-c-faint: #a8a69b;
   --erps-c-beige: #b5b3a4;
   --erps-c-tan: #4d4d4d;
@@ -271,6 +272,7 @@ $input-focus: var(--erps-input-focus);
 $input-image-edit-border: var(--erps-image-edit-border);
 
 $label-text: var(--erps-label-text);
+$label-light-required: var(--erps-label-light-required);
 
 $select-arrow-url: var(--erps-select-arrow-url);
 $select-option-bg: var(--erps-select-option-bg);

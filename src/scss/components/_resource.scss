@@ -13,13 +13,14 @@
     align-items: center;
     border: 0.125rem outset #c9c7b8;
     border-radius: 0.5rem;
-    background-color: #151515;
+    background-color: colors.$form-content-bg;
     padding: 0.2rem;
   }
 
   .checkbox-label {
     min-width: min-content;
     hyphens: manual;
+    color: colors.$label-light-required;
   }
 }
 

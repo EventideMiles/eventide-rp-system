@@ -65,6 +65,7 @@
   --erps-scrollbar-color: #0044aa;
   --erps-scrollbar-bg: #45454530;
   --erps-tab-active-bg: rgba(0, 68, 170, 0.8);
+  --erps-label-light-required: #ffffff;
   --erps-abilities-acro: rgb(191, 68, 0);
   --erps-abilities-phys: rgb(168, 3, 3);
   --erps-abilities-fort: rgb(45, 104, 45);
@@ -109,7 +110,7 @@
 }
 
 :root {
-  --erps-c-dark: #1a1814;
+  --erps-c-dark: #3d3d3d;
   --erps-c-faint: #a8a69b;
   --erps-c-beige: #b5b3a4;
   --erps-c-tan: #4d4d4d;
@@ -1214,7 +1215,7 @@
   left: 0;
   width: 2.5rem;
   height: 1.25rem;
-  background-color: var(--erps-input-border);
+  background-color: var(--erps-input-bg);
   border-radius: 1.25rem;
   transition: background-color 0.2s ease-in-out;
 }
@@ -1225,7 +1226,7 @@
   top: 0.125rem;
   width: 1rem;
   height: 1rem;
-  background-color: #ffffff;
+  background-color: var(--erps-c-dark);
   border-radius: 50%;
   transition: transform 0.2s ease-in-out;
 }
@@ -1272,7 +1273,7 @@
   left: 0;
   width: 2.5rem;
   height: 1.25rem;
-  background-color: var(--erps-input-border);
+  background-color: var(--erps-input-bg);
   border-radius: 1.25rem;
   transition: background-color 0.2s ease-in-out;
 }
@@ -1283,7 +1284,7 @@
   top: 0.125rem;
   width: 1rem;
   height: 1rem;
-  background-color: #ffffff;
+  background-color: var(--erps-c-dark);
   border-radius: 50%;
   transition: transform 0.2s ease-in-out;
 }
@@ -1468,12 +1469,10 @@
 *.sheet-tabs, * .tabs {
   display: flex;
   flex-wrap: wrap;
-  margin-bottom: 5px;
   border-bottom: 1px solid var(--erps-c-faint);
 }
 * .sheet-tabs.tabs a[data-action=tab] {
   position: relative;
-  margin: 0 5px;
   padding: 5px 10px;
   border: 1px solid transparent;
   border-bottom: none;
@@ -2948,6 +2947,7 @@
   --erps-scrollbar-color: #0044aa;
   --erps-scrollbar-bg: #45454530;
   --erps-tab-active-bg: rgba(0, 68, 170, 0.8);
+  --erps-label-light-required: #ffffff;
   --erps-abilities-acro: rgb(191, 68, 0);
   --erps-abilities-phys: rgb(168, 3, 3);
   --erps-abilities-fort: rgb(45, 104, 45);
@@ -2991,7 +2991,7 @@
   --erps-required: #cc0000;
 }
 .eventide-rp-system :root {
-  --erps-c-dark: #1a1814;
+  --erps-c-dark: #3d3d3d;
   --erps-c-faint: #a8a69b;
   --erps-c-beige: #b5b3a4;
   --erps-c-tan: #4d4d4d;
@@ -3159,6 +3159,7 @@
   --erps-scrollbar-color: #0044aa;
   --erps-scrollbar-bg: #45454530;
   --erps-tab-active-bg: rgba(0, 68, 170, 0.8);
+  --erps-label-light-required: #ffffff;
   --erps-abilities-acro: rgb(191, 68, 0);
   --erps-abilities-phys: rgb(168, 3, 3);
   --erps-abilities-fort: rgb(45, 104, 45);
@@ -3202,7 +3203,7 @@
   --erps-required: #cc0000;
 }
 .eventide-rp-system :root {
-  --erps-c-dark: #1a1814;
+  --erps-c-dark: #3d3d3d;
   --erps-c-faint: #a8a69b;
   --erps-c-beige: #b5b3a4;
   --erps-c-tan: #4d4d4d;
@@ -3335,12 +3336,13 @@
   align-items: center;
   border: 0.125rem outset #c9c7b8;
   border-radius: 0.5rem;
-  background-color: #151515;
+  background-color: var(--erps-form-content-bg);
   padding: 0.2rem;
 }
 .eventide-rp-system .checkbox-resource .checkbox-label {
   min-width: min-content;
   hyphens: manual;
+  color: var(--erps-label-light-required);
 }
 .eventide-rp-system .ability {
   margin-bottom: 2px;
@@ -3358,6 +3360,7 @@
   --erps-scrollbar-color: #0044aa;
   --erps-scrollbar-bg: #45454530;
   --erps-tab-active-bg: rgba(0, 68, 170, 0.8);
+  --erps-label-light-required: #ffffff;
   --erps-abilities-acro: rgb(191, 68, 0);
   --erps-abilities-phys: rgb(168, 3, 3);
   --erps-abilities-fort: rgb(45, 104, 45);
@@ -3401,7 +3404,7 @@
   --erps-required: #cc0000;
 }
 .eventide-rp-system :root {
-  --erps-c-dark: #1a1814;
+  --erps-c-dark: #3d3d3d;
   --erps-c-faint: #a8a69b;
   --erps-c-beige: #b5b3a4;
   --erps-c-tan: #4d4d4d;
@@ -3580,7 +3583,7 @@
 .eventide-rp-system .items-panel__header-cell {
   background: var(--erps-form-content-bg);
   width: 100%;
-  color: var(--erps-label-text);
+  color: var(--erps-label-light-required);
   font-weight: bold;
   border-bottom: 2px solid #10458e;
   padding-bottom: 2px;
@@ -3757,6 +3760,7 @@
   --erps-scrollbar-color: #0044aa;
   --erps-scrollbar-bg: #45454530;
   --erps-tab-active-bg: rgba(0, 68, 170, 0.8);
+  --erps-label-light-required: #ffffff;
   --erps-abilities-acro: rgb(191, 68, 0);
   --erps-abilities-phys: rgb(168, 3, 3);
   --erps-abilities-fort: rgb(45, 104, 45);
@@ -3800,7 +3804,7 @@
   --erps-required: #cc0000;
 }
 .eventide-rp-system :root {
-  --erps-c-dark: #1a1814;
+  --erps-c-dark: #3d3d3d;
   --erps-c-faint: #a8a69b;
   --erps-c-beige: #b5b3a4;
   --erps-c-tan: #4d4d4d;

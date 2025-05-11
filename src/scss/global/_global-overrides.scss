@@ -34,13 +34,11 @@
   &.sheet-tabs, .tabs {
     display: flex;
     flex-wrap: wrap;
-    margin-bottom: 5px;
     border-bottom: 1px solid colors.$c-faint;
   }
   
   .sheet-tabs.tabs a[data-action="tab"] {
     position: relative;
-    margin: 0 5px;
     padding: 5px 10px;
     border: 1px solid transparent;
     border-bottom: none;

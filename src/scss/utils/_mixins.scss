@@ -226,7 +226,7 @@
       left: 0;
       width: 2.5rem; 
       height: 1.25rem; 
-      background-color: colors.$input-border;
+      background-color: colors.$input-bg;
       border-radius: 1.25rem; 
       transition: background-color 0.2s ease-in-out;
     }
@@ -239,7 +239,7 @@
       top: 0.125rem; 
       width: 1rem; 
       height: 1rem; 
-      background-color: #ffffff;
+      background-color: colors.$c-dark;
       border-radius: 50%;
       transition: transform 0.2s ease-in-out;
     }
