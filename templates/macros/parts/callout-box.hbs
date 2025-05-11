@@ -1,0 +1,10 @@
+<header class="base-form__callout-box">
+    {{#each callouts as |callout|}}
+        {{#if callout}}
+            <div class="base-form__callout base-form__callout--{{callout.type}}">
+                <i class="{{callout.faIcon}}"></i>
+                {{{callout.text}}}
+            </div>
+        {{/if}}
+    {{/each}}
+</header>

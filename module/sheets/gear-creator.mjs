@@ -58,6 +58,37 @@ export class GearCreator extends CreatorApplication {
       "gearEquippedDefault"
     );
 
+    context.callouts = [];
+    if (this.playerMode) {
+      context.callouts.push({
+        type: "information",
+        faIcon: "fas fa-info-circle",
+        text: game.i18n.format(
+          "EVENTIDE_RP_SYSTEM.Forms.Callouts.Gear.PlayerMode",
+          { count: this.selectedArray.length }
+        ),
+      });
+    } else {
+      if (this.targetArray.length === 0) {
+        context.callouts.push({
+          type: "information",
+          faIcon: "fas fa-info-circle",
+          text: game.i18n.format(
+            "EVENTIDE_RP_SYSTEM.Forms.Callouts.Gear.NoTargets"
+          ),
+        });
+      } else {
+        context.callouts.push({
+          type: "information",
+          faIcon: "fas fa-info-circle",
+          text: game.i18n.format(
+            "EVENTIDE_RP_SYSTEM.Forms.Callouts.Gear.WithTargets",
+            { count: this.targetArray.length }
+          ),
+        });
+      }
+    }
+
     context.footerButtons = [
       {
         label:

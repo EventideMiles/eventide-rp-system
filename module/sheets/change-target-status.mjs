@@ -123,6 +123,15 @@ export class ChangeTargetStatus extends EventideSheetHelpers {
     context.storageKeys = ChangeTargetStatus.storageKeys;
 
     context.storedData = await erps.utils.retrieveLocal(context.storageKeys);
+    context.callouts = [
+      {
+        type: "information",
+        faIcon: "fas fa-info-circle",
+        text: game.i18n.format(
+          "EVENTIDE_RP_SYSTEM.Forms.ScriptExplanations.ChangeTargetStatus"
+        ),
+      },
+    ];
 
     context.footerButtons = [
       {

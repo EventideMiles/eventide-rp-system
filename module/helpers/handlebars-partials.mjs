@@ -4,6 +4,8 @@ const initHandlebarsPartials = async () => {
       "systems/eventide-rp-system/templates/macros/parts/character-effects.hbs",
     "macro-footer":
       "systems/eventide-rp-system/templates/macros/parts/macro-footer.hbs",
+    "callout-box":
+      "systems/eventide-rp-system/templates/macros/parts/callout-box.hbs",
   };
 
   // Load and register each partial
