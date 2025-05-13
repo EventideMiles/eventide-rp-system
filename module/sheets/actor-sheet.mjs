@@ -21,7 +21,6 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
   static DEFAULT_OPTIONS = {
     classes: [
       "eventide-rp-system",
-      "actor",
       "eventide-character-sheet",
       "eventide-character-sheet--scrollbars",
     ],

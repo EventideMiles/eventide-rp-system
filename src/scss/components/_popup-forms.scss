@@ -1,26 +1,25 @@
 @use "../utils/typography";
 @use "../utils/colors";
+@use "../utils/mixins";
 @use "../global/form-elements";
 
 // Block
 .popup-form {
   @extend .base-form;
 
-  // Section styling
   &__section {
     margin: 0.5rem 0;
     padding: 0.5rem;
     border-radius: 8px;
     background-color: rgba(0, 0, 0, 0.05);
-
-    &--usage {
-      background-color: rgba(0, 105, 203, 0.2);
-      border: 1px solid rgba(0, 105, 203, 0.4);
-      box-shadow: 0 0 10px rgba(0, 105, 203, 0.2);
-    }
   }
 
-  // Row and column layout
+  &__section--usage {
+    background-color: rgba(0, 105, 203, 0.2);
+    border: 1px solid rgba(0, 105, 203, 0.4);
+    box-shadow: 0 0 10px rgba(0, 105, 203, 0.2);
+  }
+
   &__row {
     display: grid;
     grid-template-columns: minmax(80px, auto) 1fr minmax(80px, auto) 1fr;
@@ -28,10 +27,10 @@
     align-items: center;
     margin-bottom: 0.5rem;
     width: 100%;
+  }
 
-    &:last-child {
-      margin-bottom: 0;
-    }
+  &__row:last-child {
+    margin-bottom: 0;
   }
 
   &__column {
@@ -39,7 +38,6 @@
     min-width: 0;
   }
 
-  // Text styling
   &__text {
     &--advantage {
       color: #2ecc71;
@@ -66,22 +64,21 @@
     @extend .base-form__callout--warning;
   }
 
-  // Elements
   &__header {
     @extend .protest-revolution-regular;
-    color: colors.$card-white;
+    color: colors.$c-black;
     text-align: center;
     padding: 0.875rem;
     font-size: 1.125rem;
     margin-bottom: 0px;
     margin-top: 0px;
     position: relative;
+  }
 
-    &--usage {
-      color: #0069cb;
-      font-size: 1.3rem;
-      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-    }
+  &__header--usage {
+    color: #0069cb;
+    font-size: 1.3rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
   }
 
   &__main {
@@ -90,16 +87,13 @@
     padding: 0.25rem;
     border-radius: 4px;
     text-align: center;
-    overflow-y: auto; 
-    max-height: calc(90rem - 100px); 
-
-    @include form-elements.scrollbar-base;
+    overflow-y: auto;
+    max-height: calc(90rem - 100px);
   }
 
   &__subheader {
     @extend .base-form__header;
   }
-  
 
   &__content {
     flex: 1;
@@ -107,59 +101,58 @@
     padding: 0.25rem;
     border-radius: 4px;
     text-align: center;
+  }
 
-    &--data {
-      background-color: colors.$form-content-bg;
-      padding-left: 1rem;
-      padding-right: 1rem;
-    }
+  &__content--data {
+    background-color: colors.$form-content-bg;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
 
-    &--usage {
-      font-size: 1.1rem;
-      padding: 0.5rem;
-      white-space: normal;
-      text-align: justify;
-      background-color: rgba(16, 26, 41, 0.5);
-      border-radius: 4px;
-      border-left: 3px solid #0069cb;
-      line-height: 1.4;
-    }
+  &__content--usage {
+    font-size: 1.1rem;
+    padding: 0.5rem;
+    white-space: normal;
+    text-align: justify;
+    background-color: rgba(16, 26, 41, 0.5);
+    border-radius: 4px;
+    border-left: 3px solid #0069cb;
+    line-height: 1.4;
+  }
 
-    &--description {
-      background-color: colors.$form-content-bg;
-      overflow-y: visible; 
-      height: auto; 
-      white-space: normal;
-      text-align: left;
-      padding: 0.5rem;
-      word-wrap: break-word;
-    }
+  &__content--description {
+    background-color: colors.$form-content-bg;
+    overflow-y: visible;
+    height: auto;
+    white-space: normal;
+    text-align: left;
+    padding: 0.5rem;
+    word-wrap: break-word;
+  }
 
-    &--image {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 1rem;
-      background-color: rgba(0, 0, 0, 0.1);
-      border-radius: 8px;
-      padding: 0.5rem;
-    }
+  &__content--image {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1rem;
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 0.5rem;
   }
 
   &__image {
     max-width: 100%;
     max-height: 150px;
     object-fit: contain;
-    border-radius: 4px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    border: 0px;
   }
 
   &__effects {
     @extend .base-form__effects;
+  }
 
-    &--title {
-        @extend .base-form__effects--title;
-        margin-bottom: 3px;
-    }
+  &__effects--title {
+    @extend .base-form__effects-title;
+    margin-bottom: 3px;
   }
 
   &__group {
@@ -177,7 +170,7 @@
   }
 
   &__button {
-    @include form-elements.button-base;
+    @extend .base-form__button;
     margin-right: 0.5rem;
     margin-left: 0.5rem;
     margin-bottom: 0.5rem;

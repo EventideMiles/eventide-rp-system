@@ -1,354 +1,244 @@
-@use "../utils/colors"as colors;
-@use "../utils/typography"as typography;
+@use "../utils/colors" as colors;
+@use "../utils/typography" as typography;
 @use "../global/form-elements";
 
 .chat-card {
-    @extend .base-form;
-    &__header {
-        @extend .protest-revolution-regular;
-        color: colors.$card-white;
-        text-align: center;
-        padding: 0.875rem;
-        font-size: 1.125rem;
-        margin-bottom: 0px;
-        margin-top: 0px;
-        position: relative;
-        
-        &--subheader {
-            color: colors.$card-white;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.7rem;
-        }
+  @extend .base-form;
 
-        &--image {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
+  &__header {
+    @extend .protest-revolution-regular;
+    color: colors.$universal-white;
+    text-align: center;
+    padding: 0.875rem;
+    font-size: 1.125rem;
+    margin-bottom: 0px;
+    margin-top: 0px;
+    position: relative;
+  }
+  &__header--subheader {
+    color: colors.$universal-white;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+  }
+  &__header--image {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  &__header--acrobatics { background-color: colors.$acro; }
+  &__header--physical { background-color: colors.$phys; }
+  &__header--fortitude { background-color: colors.$fort; }
+  &__header--will { background-color: colors.$will; }
+  &__header--wits { background-color: colors.$wits; }
+  &__header--gear { background-color: colors.$gear; }
+  &__header--initiative { background-color: colors.$initiative; }
+  &__header--initiative-npc { background-color: colors.$initiative-npc; }
+  &__header--initiative-pc { background-color: colors.$initiative-pc; }
+  &__header--critical-hit { background-color: colors.$critical-hit; }
+  &__header--critical-miss { background-color: colors.$critical-miss; }
+  &__header--stolen-crit { background-color: colors.$stolen-crit; }
+  &__header--saved-miss { background-color: colors.$saved-miss; }
+  &__header--unknown { background-color: colors.$unknown; }
+  &__header--status { font-size: 1.125rem; }
+  &__header--damage { background-color: colors.$damage; }
+  &__header--heal { background-color: colors.$heal; }
+  &__header--delete { background-color: colors.$delete; }
+  &__header--restore { background-color: colors.$heal; }
+  &__header--transfer { background-color: colors.$transfer; }
+  &__header--equip { background-color: colors.$gear; }
 
-        &--acrobatics {
-            background-color: colors.$acro;
-        }
 
-        &--physical {
-            background-color: colors.$phys;
-        }
+  &__description {
+    @extend .underdog-regular;
+    color: colors.$universal-tan;
+    text-align: justify;
+    font-size: 0.9rem;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    border-radius: 0px 0px 5px 5px;
+  }
+  &__description--header {
+    text-align: justify;
+    font-size: 1.2rem;
+    color: colors.$universal-tan;
+  }
+  &__description--header-center-underline {
+    text-align: center;
+    font-size: 1.2rem;
+    color: colors.$universal-tan;
+    border-bottom: 1px solid colors.$description-hr;
+  }
 
-        &--fortitude {
-            background-color: colors.$fort;
-        }
+  &__initiative,
+  &__combat-roll {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    width: 100%;
+  }
+  &__initiative--result,
+  &__combat-roll--result {
+    display: flex;
+    justify-content: center;
+    font-family: typography.$font-decorative;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 0.25rem 0;
+    width: 100%;
+  }
 
-        &--will {
-            background-color: colors.$will;
-        }
+  &__value {
+    font-size: 2rem;
+    font-weight: bold;
+    font-family: typography.$font-decorative;
+  }
+  &__value--initiative { color: colors.$initiative; }
+  &__value--power { color: #666666; }
+  &__value--acro { color: colors.$acro; }
+  &__value--phys { color: colors.$phys; }
+  &__value--fort { color: colors.$fort; }
+  &__value--will { color: colors.$will; }
+  &__value--wits { color: colors.$wits; }
+  &__value--gear { color: colors.$gear; }
+  &__value--damage { color: colors.$damage; }
+  &__value--heal { color: colors.$heal; }
+  &__value--unknown { color: colors.$unknown; }
 
-        &--wits {
-            background-color: colors.$wits;
-        }
+  &__formula-toggle {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-monospace);
+    font-size: 0.9rem;
+    color: colors.$universal-white;
+    background: rgba(50, 50, 50, 0.9);
+    padding: 0.25rem 0.5rem;
+    border-radius: 3px;
+    margin: 0 3px 2px 3px;
+    width: calc(100%);
+    cursor: pointer;
+  }
 
-        &--gear {
-            background-color: colors.$gear;
-        }
+  &__formula {
+    font-style: italic;
+  }
 
-        &--dice-dc {
-            background-color: colors.$dc;
-        }
+  &__roll-details {
+    width: calc(100% - 6px);
+    margin: 0 3px;
+    padding: 0.5rem;
+    background-color: rgba(0, 0, 0, 0.05);
+    border-radius: 3px;
+    font-family: var(--font-monospace);
+    font-size: 0.8rem;
+  }
 
-        &--initiative {
-            background-color: colors.$initiative;
-        }
+  &__roll-term {
+    margin-bottom: 0.25rem;
+  }
+  &__roll-term-formula {
+    font-weight: bold;
+    margin-right: 0.5rem;
+  }
+  &__roll-term-results {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
 
-        &--critical-hit {
-            background-color: colors.$critical-hit;
-        }
+  &__die-result {
+    display: inline-block;
+    padding: 0.125rem 0.25rem;
+    border-radius: 3px;
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+  &__die-result--discarded {
+    text-decoration: line-through;
+    opacity: 0.6;
+  }
 
-        &--critical-miss {
-            background-color: colors.$critical-miss;
-        }
+  &__effects {
+    @extend .base-form__effects;
+    color: colors.$universal-tan;
+    background-color: colors.$universal-white;
+  }
+  &__effects--ac-check {
+    border: 3px dashed colors.$hidden-border;
+    border-radius: 5px;
+    background-color: colors.$hidden-bg;
+    padding: 0.0875rem;
+    margin: 0 3px;
+    margin-top: 5px;
+  }
+  &__effects--title {
+    @extend .base-form__effects-title;
+  }
+  &__effects--hit {
+    background-color: colors.$hit;
+    color: white;
+    text-align: center;
+    padding: 0.0875rem;
+    font-size: 0.7rem;
+    margin-bottom: 0px;
+    border-radius: 5px;
+    border: 1px solid colors.$universal-white;
+  }
+  &__effects--miss {
+    background-color: colors.$miss;
+    color: white;
+    text-align: center;
+    padding: 0.0875rem;
+    font-size: 0.7rem;
+    margin-bottom: 0px;
+    border-radius: 5px;
+    border: 1px solid colors.$universal-white;
+  }
+  &__effects--name {
+    @extend .base-form__effects-name;
+    color: colors.$universal-black;
+  }
+  &__effects-row {
+    @extend .base-form__effects-row;
+  }
+  &__effects-row-cell {
+    @extend .base-form__effects-row-cell;
+  }
+  &__effects-row-cell--first {
+    @extend .base-form__effects-row-cell--first;
+  }
+  &__effects-row-cell--last {
+    @extend .base-form__effects-row-cell--last;
+  }
+  &__effects-row-cell--middle {
+    @extend .base-form__effects-row-cell--middle;
+  }
 
-        &--stolen-crit {
-            background-color: colors.$stolen-crit;
-        }
+  &__image--primary {
+    width: 150px;
+    height: 150px;
+    border: 0px;
+  }
+  &__image--secondary {
+    width: 13px;
+    height: 13px;
+    border: 0px;
+    background-color: colors.$secondary-image-background;
+    display: inline;
+  }
 
-        &--saved-miss {
-            background-color: colors.$saved-miss;
-        }
+  &__hr {
+    border: none;
+    border-top: 1px solid colors.$universal-white;
+  }
 
-        &--unknown {
-            background-color: colors.$unknown;
-        }
 
-        &--status {
-            font-size: 1.125rem;
-        }
-
-        &--damage {
-            background-color: colors.$damage;
-        }
-
-        &--heal {
-            background-color: colors.$heal;
-        }
-
-        &--delete {
-            background-color: colors.$delete;
-        }
-
-        &--restore {
-            background-color: colors.$heal;
-        }
-
-        &--transfer {
-            background-color: colors.$transfer;
-        }
-
-        &--equip {
-            background-color: colors.$gear;
-        }
-    }
-
-    &__description {
-        @extend .underdog-regular;
-        color: colors.$card-tan;
-        text-align: justify;
-        font-size: 0.9rem;
-        padding: 0.5rem;
-        margin-bottom: 0.5rem;
-        border-radius: 0px 0px 5px 5px;
-
-        &--header {
-            text-align: justify;
-            font-size: 1.2rem;
-            color: colors.$card-tan;
-        }
-
-        &--header-center-underline {
-            text-align: center;
-            font-size: 1.2rem;
-            color: colors.$card-tan;
-            border-bottom: 1px solid colors.$description-hr;
-        }
-    }
-
-    &__initiative,
-    &__combat-roll {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        margin-bottom: 0.5rem;
-        width: 100%;
-
-        &--result {
-            display: flex;
-            justify-content: center;
-            font-family: typography.$font-decorative;
-            font-size: 1.5rem;
-            font-weight: bold;
-            margin: 0.25rem 0;
-            width: 100%;
-        }
-    }
-    
-    &__value {
-        font-size: 2rem;
-        font-weight: bold;
-        font-family: typography.$font-decorative;
-        
-        &--initiative {
-            color: colors.$initiative;
-        }
-        
-        &--power {
-            color: #666666;
-        }
-        
-        &--acro {
-            color: colors.$acro;
-        }
-        
-        &--phys {
-            color: colors.$phys;
-        }
-        
-        &--fort {
-            color: colors.$fort;
-        }
-        
-        &--will {
-            color: colors.$will;
-        }
-        
-        &--wits {
-            color: colors.$wits;
-        }
-        
-        &--gear {
-            color: colors.$gear;
-        }
-        
-        &--damage {
-            color: colors.$damage;
-        }
-        
-        &--heal {
-            color: colors.$heal;
-        }
-        
-        &--unknown {
-            color: colors.$unknown;
-        }
-    }
-
-    &__formula-toggle {
-        display: flex;
-        justify-content: space-between;
-        font-family: var(--font-monospace);
-        font-size: 0.9rem;
-        color: colors.$card-white;
-        background: rgba(50, 50, 50, 0.9);
-        padding: 0.25rem 0.5rem;
-        border-radius: 3px;
-        margin: 0 3px 2px 3px;
-        width: calc(100%);
-        cursor: pointer;
-    }
-    
-    &__formula {
-        font-style: italic;
-    }
-
-    &__roll-details {
-        width: calc(100% - 6px);
-        margin: 0 3px;
-        padding: 0.5rem;
-        background-color: rgba(0, 0, 0, 0.05);
-        border-radius: 3px;
-        font-family: var(--font-monospace);
-        font-size: 0.8rem;
-    }
-    
-    &__roll-term {
-        margin-bottom: 0.25rem;
-        
-        &-formula {
-            font-weight: bold;
-            margin-right: 0.5rem;
-        }
-        
-        &-results {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.25rem;
-        }
-    }
-    
-    &__die-result {
-        display: inline-block;
-        padding: 0.125rem 0.25rem;
-        border-radius: 3px;
-        background-color: rgba(255, 255, 255, 0.2);
-        
-        &--discarded {
-            text-decoration: line-through;
-            opacity: 0.6;
-        }
-    }
-
-    &__effects {
-        @extend .base-form__effects;
-        color: colors.$card-tan;
-        background-color: colors.$card-white;
-        
-        &--ac-check {
-            border: 3px dashed colors.$hidden-border;
-            border-radius: 5px;
-            background-color: colors.$hidden-bg;
-            padding: 0.0875rem;
-            margin: 0 3px;
-            margin-top: 5px;
-        }
-        
-        &--title {
-           @extend .base-form__effects--title;
-        }
-
-        &--hit {
-            background-color: colors.$hit;
-            color: white;
-            text-align: center;
-            padding: 0.0875rem;
-            font-size: 0.7rem;
-            margin-bottom: 0px;
-            border-radius: 5px;
-            border: 1px solid colors.$card-white;
-        }
-
-        &--miss {
-            background-color: colors.$miss;
-            color: white;
-            text-align: center;
-            padding: 0.0875rem;
-            font-size: 0.7rem;
-            margin-bottom: 0px;
-            border-radius: 5px;
-            border: 1px solid colors.$card-white;
-        }
-        
-        &--name {
-            @extend .base-form__effects--name;
-            color: colors.$card-black;
-        }
-
-        &--row {
-            @extend .base-form__effects--row;
-
-            &--cell {
-                @extend .base-form__effects--row--cell;
-
-                &--first,
-                &--last {
-                    @extend .base-form__effects--row--cell--first;
-                }
-        
-                &--last {
-                    @extend .base-form__effects--row--cell--last;
-                }
-
-                &--middle {
-                    @extend .base-form__effects--row--cell--middle;
-                }
-            }
-        }
-    }
-
-    &__image {
-        &--primary {
-            width: 150px;
-            height: 150px;
-            border: 0px;
-        }
-
-        &--secondary {
-            width: 13px;
-            height: 13px;
-            border: 0px;
-            background-color: colors.$secondary-image-background;
-        }
-    }
-
-    &__hr {
-        border: none;
-        border-top: 1px solid colors.$hr;
-    }
-}
-
-// For toggle icon
-.formula-toggle-icon {
+  // For toggle icon
+  &__formula-toggle-icon {
     transition: transform 0.2s ease;
-}
-
-.formula-toggle.active .formula-toggle-icon {
-    transform: rotate(180deg);
+    &.active {
+      transform: rotate(180deg);
+    }
+  }
 }

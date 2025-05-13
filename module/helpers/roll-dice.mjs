@@ -252,6 +252,7 @@ class ERPSRollHandler {
    */
   async rollInitiative({
     combatant,
+    npc = false,
     whisperMode = false,
     description = "",
     customFlavor = "",
@@ -290,6 +291,7 @@ class ERPSRollHandler {
     const data = {
       name: combatant.name,
       formula: roll.formula,
+      npc: isNpc,
       total: roll.total.toFixed(2),
       description: description,
       roll: roll, // Pass the roll object to the template

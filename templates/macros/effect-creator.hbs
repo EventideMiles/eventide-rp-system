@@ -1,25 +1,5 @@
-<div class="{{cssClass}} base-form" autocomplete="off">
-  <header class="base-form__callout-box">
-    {{#if (eq playerMode true)}}
-      <div class="base-form__callout base-form__callout--information">
-        <i class="fas fa-info-circle"></i>
-        {{{localize "EVENTIDE_RP_SYSTEM.Forms.Callouts.Effect.PlayerMode" count=selectedArray.length}}}
-      </div>
-    {{/if}}
-    {{#if (eq playerMode false)}}
-      {{#if (eq targetArray.length 0)}}
-        <div class="base-form__callout base-form__callout--information">
-          <i class="fas fa-info-circle"></i>
-          {{{localize "EVENTIDE_RP_SYSTEM.Forms.Callouts.Effect.NoTargets"}}}
-        </div>
-      {{else}}
-        <div class="base-form__callout base-form__callout--information">
-          <i class="fas fa-info-circle"></i>
-          {{{localize "EVENTIDE_RP_SYSTEM.Forms.Callouts.Effect.WithTargets" count=targetArray.length}}}
-        </div>
-      {{/if}}
-    {{/if}}
-  </header>
+<div class="{{cssClass}} base-form effect-creator" autocomplete="off">
+  {{> callout-box}}
   <div class="base-form__content">
     <div class="base-form__group">
       <label class="base-form__label" for="type">
@@ -78,98 +58,49 @@
         name="img" 
         value="{{ifThen storedData.effect_img storedData.effect_img "icons/svg/stoned.svg"}}">
     </div>
-    <div class="base-form__group">
-      <label class="base-form__label" for="bgColor">
-        {{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Background"}}}:
-      </label>
-      <input 
-        class="base-form__color-input" 
-        type="color" 
-        id="bgColor" 
-        name="bgColor" 
-        value="{{ifThen storedData.effect_bgColor storedData.effect_bgColor "#7B4874"}}">
+    <div class="base-form__color-picker-with-hex color-picker-with-hex">
+      <label class="color-picker-label" for="color-bgColor">{{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Background"}}}:</label>
+      <div class="color-picker-container">
+        <div class="color-preview" id="preview-bgColor" style="background-color: {{ifThen storedData.effect_bgColor storedData.effect_bgColor '#7B4874'}}"></div>
+        <input type="color" class="color-picker" id="color-bgColor" name="bgColor" value="{{ifThen storedData.effect_bgColor storedData.effect_bgColor '#7B4874'}}">
+        <input type="text" class="hex-input" id="hex-bgColor" placeholder="Hex color" value="{{ifThen storedData.effect_bgColor storedData.effect_bgColor '#7B4874'}}">
+      </div>
     </div>
-    <div class="base-form__group">
-      <label class="base-form__label" for="textColor">
-        {{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Text"}}}:
-      </label>
-      <input 
-        class="base-form__color-input" 
-        type="color" 
-        id="textColor" 
-        name="textColor" 
-        value="{{ifThen storedData.effect_textColor storedData.effect_textColor "#ffffff"}}">
+    <div class="base-form__color-picker-with-hex color-picker-with-hex">
+      <label class="color-picker-label" for="color-textColor">{{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Text"}}}:</label>
+      <div class="color-picker-container">
+        <div class="color-preview" id="preview-textColor" style="background-color: {{ifThen storedData.effect_textColor storedData.effect_textColor '#ffffff'}}"></div>
+        <input type="color" class="color-picker" id="color-textColor" name="textColor" value="{{ifThen storedData.effect_textColor storedData.effect_textColor '#ffffff'}}">
+        <input type="text" class="hex-input" id="hex-textColor" placeholder="Hex color" value="{{ifThen storedData.effect_textColor storedData.effect_textColor '#FFFFFF'}}">
+      </div>
     </div>
-    <div class="base-form__group">
-      <label class="base-form__label" for="iconTint">
-        {{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.IconTint"}}}:
-      </label>
-      <input 
-        class="base-form__color-input" 
-        type="color" 
-        id="iconTint" 
-        name="iconTint" 
-        value="{{ifThen storedData.effect_iconTint storedData.effect_iconTint "#ffffff"}}">
+    <div class="base-form__color-picker-with-hex color-picker-with-hex">
+      <label class="color-picker-label" for="color-iconTint">{{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.IconTint"}}}:</label>
+      <div class="color-picker-container">
+        <div class="color-preview" id="preview-iconTint" style="background-color: {{ifThen storedData.effect_iconTint storedData.effect_iconTint '#ffffff'}}"></div>
+        <input type="color" class="color-picker" id="color-iconTint" name="iconTint" value="{{ifThen storedData.effect_iconTint storedData.effect_iconTint '#ffffff'}}">
+        <input type="text" class="hex-input" id="hex-iconTint" placeholder="Hex color" value="{{ifThen storedData.effect_iconTint storedData.effect_iconTint '#FFFFFF'}}">
+      </div>
     </div>
     <div class="base-form__header">{{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Effects"}}}</div>
-    <div class="base-form__group">
-      <label class="base-form__label" for="displayOnToken">
-        {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.DisplayOnToken"}}
-      </label>
-      <input 
-        class="base-form__checkbox" 
-        type="checkbox" 
-        id="displayOnToken" 
-        name="displayOnToken" 
-        {{#if (eq storedData.effect_displayOnToken "true")}}checked{{/if}}>
+    <div class="toggle-container">
+      <div class="base-form__toggle-group">
+        <label for="displayOnToken">
+          {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.DisplayOnToken"}}
+        </label>
+        <div class="toggle-switch-wrapper">
+          <input 
+            class="base-form__toggle-switch" 
+            type="checkbox" 
+            id="displayOnToken" 
+            name="displayOnToken" 
+            {{#if (eq storedData.effect_displayOnToken "true")}}checked{{/if}}>
+          <label class="toggle-switch-display" for="displayOnToken"></label>
+        </div>
+      </div>
     </div>
-    {{#each abilities}}
-      <div class="base-form__group">
-        <label class="base-form__label" for="{{lowercase this}}">
-          {{{capitalize (localize (lookup @root.config.abilityAbbreviations this))}}}:
-        </label>
-        <input 
-          class="base-form__number-input" 
-          type="number" 
-          id="{{lowercase this}}" 
-          name="{{lowercase this}}" 
-          value="0">
-        <select 
-          class="base-form__select" 
-          id="{{lowercase this}}-mode" 
-          name="{{lowercase this}}-mode">
-          <option value="add">{{{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.Add"}}}</option>
-          <option value="override">{{{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.Override"}}}</option>
-          <option value="advantage">{{{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.Advantage"}}}</option>
-          <option value="disadvantage">{{{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.Disadvantage"}}}</option>
-        </select>
-      </div>
-    {{/each}}
-    {{#each hiddenAbilities}}
-      <div class="base-form__group">
-        <label 
-          class="base-form__label" 
-          for="{{lowercase this}}">
-          {{capitalize (localize (lookup @root.config.hiddenAbilityAbbreviations this))}}:
-        </label>
-        <input 
-          class="base-form__number-input" 
-          type="number" 
-          id="{{lowercase this}}" 
-          name="{{lowercase this}}" 
-          value="0">
-        <select 
-          class="base-form__select" 
-          id="{{lowercase this}}-mode" 
-          name="{{lowercase this}}-mode">
-          <option value="add">{{{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.Add"}}}</option>
-          <option value="override">{{{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.Override"}}}</option>
-        </select>
-      </div>
-    {{/each}}
+    {{> character-effects}}
   </div>
   
-  <footer class="base-form__footer">
-    <button type="submit" class="base-form__button base-form__button--primary">{{{ifThen targetArray.length (localize "EVENTIDE_RP_SYSTEM.Forms.Buttons.CreateAndApply") (localize "EVENTIDE_RP_SYSTEM.Forms.Buttons.Create")}}}</button>
-  </footer>
+  {{> macro-footer}}
 </div>

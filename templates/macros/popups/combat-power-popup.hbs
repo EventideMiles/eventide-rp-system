@@ -1,12 +1,5 @@
 <div class="{{cssClass}} base-form" autocomplete="off">
-    <header class="base-form__callout-box">
-        {{#if problems.targeting}}
-            <div class="base-form__callout base-form__callout--warning"><i class="fas fa-exclamation-triangle"></i> {{localize "EVENTIDE_RP_SYSTEM.Forms.Callouts.Power.TargetPower"}}</div>
-        {{/if}}
-        {{#if problems.power}}
-            <div class="base-form__callout base-form__callout--warning"><i class="fas fa-exclamation-triangle"></i> {{localize "EVENTIDE_RP_SYSTEM.Forms.Callouts.Power.InsufficientPower" cost=item.system.cost actorPower=item.actor.system.power.value}}</div>
-        {{/if}}
-    </header>
+    {{> callout-box}}
     <div class="popup-form__main">
         <div class="popup-form__header">{{item.name}}</div>
         <div class="popup-form__content popup-form__content--image">
@@ -65,10 +58,5 @@
         {{/if}}
     </div>
 
-    <footer class="base-form__footer">
-        {{#unless (or problems.targeting problems.power)}}
-            <button type="submit" class="popup-form__button popup-form__button--primary">{{localize "EVENTIDE_RP_SYSTEM.Forms.Buttons.UsePower"}}</button>
-        {{/unless}}
-        <button type="button" class="popup-form__button" data-action="close">{{localize "EVENTIDE_RP_SYSTEM.Forms.Buttons.Close"}}</button>
-    </footer>
+    {{> macro-footer}}
 </div>

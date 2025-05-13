@@ -21,9 +21,6 @@ export class GearCreator extends CreatorApplication {
       submitOnChange: false,
       closeOnSubmit: true,
     },
-    actions: {
-      onEditImage: super._onEditImage,
-    },
   };
 
   /**
@@ -60,6 +57,50 @@ export class GearCreator extends CreatorApplication {
       "eventide-rp-system",
       "gearEquippedDefault"
     );
+
+    context.callouts = [];
+    if (this.playerMode) {
+      context.callouts.push({
+        type: "information",
+        faIcon: "fas fa-info-circle",
+        text: game.i18n.format(
+          "EVENTIDE_RP_SYSTEM.Forms.Callouts.Gear.PlayerMode",
+          { count: this.selectedArray.length }
+        ),
+      });
+    } else {
+      if (this.targetArray.length === 0) {
+        context.callouts.push({
+          type: "information",
+          faIcon: "fas fa-info-circle",
+          text: game.i18n.format(
+            "EVENTIDE_RP_SYSTEM.Forms.Callouts.Gear.NoTargets"
+          ),
+        });
+      } else {
+        context.callouts.push({
+          type: "information",
+          faIcon: "fas fa-info-circle",
+          text: game.i18n.format(
+            "EVENTIDE_RP_SYSTEM.Forms.Callouts.Gear.WithTargets",
+            { count: this.targetArray.length }
+          ),
+        });
+      }
+    }
+
+    context.footerButtons = [
+      {
+        label:
+          context.playerMode || context.targetArray.length > 0
+            ? game.i18n.localize(
+                "EVENTIDE_RP_SYSTEM.Forms.Buttons.CreateAndApply"
+              )
+            : game.i18n.localize("EVENTIDE_RP_SYSTEM.Forms.Buttons.Create"),
+        type: "submit",
+        cssClass: "base-form__button base-form__button--primary",
+      },
+    ];
 
     return context;
   }

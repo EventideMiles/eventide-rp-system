@@ -12,13 +12,16 @@
 @use 'global/flex';
 @use 'global/character-sheet';
 @use 'global/form-elements';
-@use 'global/checkbox-overrides';
+@use 'global/global-overrides';
 
 /* Styles limited to eventide-rp-system sheets */
 @use 'components/chat-cards';
 @use 'components/popup-forms';
 @use 'components/gear-creator';
+@use 'components/effect-creator';
 @use 'components/sound-settings';
+@use 'components/data-table';
+@use 'components/enhanced-grid';
 
 .eventide-rp-system {
   @include meta.load-css('components/forms');

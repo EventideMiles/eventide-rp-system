@@ -1,3 +1,6 @@
+@use "../utils/colors";
+@use "../utils/mixins";
+
 .resource-label {
   font-weight: bold;
 }
@@ -8,25 +11,16 @@
     display: grid;
     grid-template-columns: minmax(min-content, max-content) 1fr;
     align-items: center;
-    gap: 0.25rem;
-    white-space: normal;
-    border: 2px outset #c9c7b8;
-    border-radius: 8px;
-    background-color: #151515;
-    font-size: 0.8rem;
+    border: 0.125rem outset colors.$c-dark;
+    border-radius: 0.5rem;
+    background-color: colors.$form-content-bg;
     padding: 0.2rem;
   }
 
   .checkbox-label {
-    justify-self: start;
     min-width: min-content;
     hyphens: manual;
-  }
-
-  .checkbox-content {
-    display: grid;
-    justify-self: end;
-    align-items: center;
+    color: colors.$label-light-required;
   }
 }
 

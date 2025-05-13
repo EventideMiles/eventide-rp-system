@@ -1,15 +1,5 @@
 <div class="{{cssClass}} popup-form" autocomplete="off">
-    <header class="base-form__callout-box">
-        {{#if problems.targeting}}
-            <div class="base-form__callout base-form__callout--warning"><i class="fas fa-exclamation-triangle"></i> {{localize "EVENTIDE_RP_SYSTEM.Forms.Callouts.Gear.TargetGear"}}</div>
-        {{/if}}
-        {{#if problems.quantity}}
-            <div class="base-form__callout base-form__callout--warning"><i class="fas fa-exclamation-triangle"></i> {{localize "EVENTIDE_RP_SYSTEM.Forms.Callouts.Gear.InsufficientQuantity" cost=item.system.cost quantity=item.system.quantity}}</div>
-        {{/if}}
-        {{#if problems.equipped}}
-            <div class="base-form__callout base-form__callout--warning"><i class="fas fa-exclamation-triangle"></i> {{localize "EVENTIDE_RP_SYSTEM.Forms.Callouts.Gear.NotEquipped"}}</div>
-        {{/if}}
-    </header>
+    {{> callout-box}}
     <div class="popup-form__main">
         <div class="popup-form__header">{{item.name}}</div>
         <div class="popup-form__content popup-form__content--image">
@@ -71,50 +61,40 @@
                 </div>
             </div>
 
-            {{#ifCond effects.length ">" 0}}
-            <div class="popup-form__effects">
-                <div class='popup-form__effects--title'>{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Effects"}}</div>
-                {{#each effects}}
-                    <div class="base-form__effects--name">
-                        <img src="{{this.img}}" class="chat-card__image--secondary" /> {{this.name}}
-                    </div>
-                    {{#ifCond this.changes.length ">" 0 }}
-                    {{#each this.changes}}
-                        <div class="base-form__effects--row">
-                            <div class="base-form__effects--row--cell base-form__effects--row--cell--first">{{keySplit this.key 2}}</div> 
-                            <div class="base-form__effects--row--cell base-form__effects--row--cell--middle">
-                                {{#ifCond this.mode "===" 5}}{{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.SetTo"}}{{/ifCond}}
-                                {{#ifCond this.mode "!==" 5}}
-                                {{#ifCond (keySplit this.key 4) "===" "advantage"}}
-                                    {{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.Adv"}}
-                                {{/ifCond}}
-                                {{#ifCond (keySplit this.key 4) "===" "disadvantage"}}
-                                    {{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.Dis"}}
-                                {{/ifCond}}
-                                {{#ifCond (keySplit this.key 3) "===" "change"}}
-                                    {{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.Add"}}
-                                {{/ifCond}}
-                                {{/ifCond}}
-                            </div>
-                            <div class="base-form__effects--row--cell base-form__effects--row--cell--last">{{this.value}}</div>
-                        </div>
-                    {{/each}}
-                    {{/ifCond}}
-                {{/each}}
+    {{#if mainEffect.changes.length}}
+    <div class="base-form__effects">
+    <div class="base-form__effects-title">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Effects"}}</div>
+        <div class="base-form__effects-name"><img src="{{mainEffect.img}}" class="chat-card__image--secondary" /> {{mainEffect.name}}</div>
+        {{#each mainEffect.changes}}
+            <div class="base-form__effects-row">
+            <div class="base-form__effects-row-cell base-form__effects-row-cell--first">{{keySplit this.key 2}}</div> 
+            <div class="base-form__effects-row-cell base-form__effects-row-cell--middle">
+                {{#if (eq this.mode 5)}}
+                {{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.SetTo"}}
+                {{else}}
+                {{#if (eq (keySplit this.key 4) "advantage")}}
+                    {{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.Adv"}}
+                {{/if}}
+                {{#if (eq (keySplit this.key 4) "disadvantage")}}
+                    {{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.Dis"}}
+                {{/if}}
+                {{#if (eq (keySplit this.key 3) "change")}}
+                    {{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.Add"}}
+                {{/if}}
+                {{/if}}
             </div>
-            {{/ifCond}}
-        {{else}}
-            <div class="popup-form__callout popup-form__callout--warning">
-                <div><i class="fas fa-exclamation-triangle"></i>{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.EquipFirst"}}</div>
+            <div class="base-form__effects-row-cell base-form__effects-row-cell--last">{{this.value}}</div>
             </div>
-        {{/if}}
+        {{/each}}
     </div>
-        
+    {{/if}}
 
-    <footer class="base-form__footer">
-        {{#unless (or problems.targeting problems.quantity problems.equipped)}}
-            <button type="submit" class="popup-form__button popup-form__button--primary">{{localize "EVENTIDE_RP_SYSTEM.Forms.Buttons.UseItem"}}</button>
-        {{/unless}}
-        <button type="button" class="popup-form__button" data-action="close">{{localize "EVENTIDE_RP_SYSTEM.Forms.Buttons.Close"}}</button>
-    </footer>
+{{else}}
+<div class="popup-form__callout popup-form__callout--warning">
+    <div><i class="fas fa-exclamation-triangle"></i>{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.EquipFirst"}}</div>
+</div>
+{{/if}}
+    </div>
+
+    {{> macro-footer}}
 </div>

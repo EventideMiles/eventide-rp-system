@@ -5,12 +5,20 @@ import { EventideSheetHelpers } from "./base/eventide-sheet-helpers.mjs";
  * @extends {EventideSheetHelpers}
  */
 export class ChangeTargetStatus extends EventideSheetHelpers {
+  /**
+   * Define the template parts used by this application
+   * @type {Object}
+   */
   static PARTS = {
     changeTargetStatus: {
       template: `systems/eventide-rp-system/templates/macros/change-target-status.hbs`,
     },
   };
 
+  /**
+   * Default options for this application
+   * @type {Object}
+   */
   static DEFAULT_OPTIONS = {
     id: "change-target-status",
     classes: ["eventide-rp-system", "standard-form", "change-target-status"],
@@ -32,6 +40,10 @@ export class ChangeTargetStatus extends EventideSheetHelpers {
     },
   };
 
+  /**
+   * Keys used for storing form values in browser local storage
+   * @type {string[]}
+   */
   static storageKeys = [
     "changeTargetStatus_statusSelector",
     "changeTargetStatus_adjustmentChange",
@@ -54,6 +66,10 @@ export class ChangeTargetStatus extends EventideSheetHelpers {
     );
   }
 
+  /**
+   * @constructor
+   * @param {Object} options - Application options
+   */
   constructor(options = {}) {
     super(options);
   }
@@ -69,6 +85,19 @@ export class ChangeTargetStatus extends EventideSheetHelpers {
 
     this.targetArray = await erps.utils.getTargetArray();
 
+    this.modes = {
+      add: game.i18n.localize("EVENTIDE_RP_SYSTEM.Forms.Modifications.AddMode"),
+      subtract: game.i18n.localize(
+        "EVENTIDE_RP_SYSTEM.Forms.Modifications.SubtractMode"
+      ),
+      intensify: game.i18n.localize(
+        "EVENTIDE_RP_SYSTEM.Forms.Modifications.IntensifyMode"
+      ),
+      weaken: game.i18n.localize(
+        "EVENTIDE_RP_SYSTEM.Forms.Modifications.WeakenMode"
+      ),
+    };
+
     if (this.targetArray.length === 0) {
       ui.notifications.error(
         game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.TargetFirst")
@@ -83,6 +112,7 @@ export class ChangeTargetStatus extends EventideSheetHelpers {
 
     this.target = this.targetArray[0];
     context.target = this.target;
+    context.modes = this.modes;
 
     context.cssClass = ChangeTargetStatus.DEFAULT_OPTIONS.classes.join(" ");
 
@@ -93,10 +123,45 @@ export class ChangeTargetStatus extends EventideSheetHelpers {
     context.storageKeys = ChangeTargetStatus.storageKeys;
 
     context.storedData = await erps.utils.retrieveLocal(context.storageKeys);
+    context.callouts = [
+      {
+        type: "information",
+        faIcon: "fas fa-info-circle",
+        text: game.i18n.format(
+          "EVENTIDE_RP_SYSTEM.Forms.ScriptExplanations.ChangeTargetStatus"
+        ),
+      },
+    ];
+
+    context.footerButtons = [
+      {
+        label: game.i18n.localize("EVENTIDE_RP_SYSTEM.Forms.Buttons.Change"),
+        type: "submit",
+        cssClass: "base-form__button base-form__button--primary",
+      },
+      {
+        label: game.i18n.localize("EVENTIDE_RP_SYSTEM.Forms.Buttons.Store"),
+        type: "button",
+        cssClass: "base-form__button",
+        action: "onStore",
+      },
+      {
+        label: game.i18n.localize("EVENTIDE_RP_SYSTEM.Forms.Buttons.Close"),
+        type: "button",
+        cssClass: "base-form__button",
+        action: "close",
+      },
+    ];
 
     return context;
   }
 
+  /**
+   * Store the current form values in browser local storage
+   * @async
+   * @returns {Promise<void>}
+   * @private
+   */
   async _store() {
     const statusId = this.form.statusSelector.value;
 
@@ -137,8 +202,158 @@ export class ChangeTargetStatus extends EventideSheetHelpers {
     this.close();
   }
 
+  /**
+   * Static handler for the store action
+   * @async
+   * @returns {Promise<void>}
+   * @private
+   */
   static async _onStore() {
     this._store();
+  }
+
+  /**
+   * Process the form inputs and update the status effect values
+   * @async
+   * @param {ChangeTargetStatus} instance - The instance of the application
+   * @param {Object} inputs - The processed form inputs
+   * @param {string} inputs.statusSelector - The ID of the selected status
+   * @param {Object} inputs.adjustment - Adjustment values for regular modifiers
+   * @param {string} inputs.adjustment.change - The amount to change
+   * @param {string} inputs.adjustment.mode - The mode of change (add, subtract, intensify, weaken)
+   * @param {Object} inputs.override - Adjustment values for override modifiers
+   * @param {Object} inputs.advantage - Adjustment values for advantage dice
+   * @param {Object} inputs.disadvantage - Adjustment values for disadvantage dice
+   * @returns {Promise<void>}
+   * @private
+   */
+  static async _process(instance, inputs) {
+    const status = instance.target.actor.items.get(inputs.statusSelector);
+    if (!status) {
+      ui.notifications.error(
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.MissingStatus")
+      );
+      return;
+    }
+    const effects = status.effects.contents[0].changes;
+    if (!effects) {
+      ui.notifications.error(
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.NoStatusEffects")
+      );
+      return;
+    }
+    const old = {
+      adjustments: [],
+      overrides: [],
+      advantages: [],
+      disadvantages: [],
+    };
+    const updateData = [];
+
+    const addMode = (current, change) => {
+      const newValue = Number(current.value) + Math.abs(change);
+      updateData.push({
+        ...current,
+        value: newValue,
+      });
+      return;
+    };
+
+    const subtractMode = (current, change) => {
+      const newValue = Number(current.value) - Math.abs(change);
+      updateData.push({
+        ...current,
+        value: newValue,
+      });
+      return;
+    };
+
+    const intensifyMode = (current, change) => {
+      let newValue = 0;
+      if (Number(current.value) > 0) {
+        newValue = Number(current.value) + Math.abs(change);
+      } else if (Number(current.value) < 0) {
+        newValue = Number(current.value) - Math.abs(change);
+      }
+      updateData.push({
+        ...current,
+        value: newValue,
+      });
+      return;
+    };
+
+    const weakenMode = (current, change) => {
+      let newValue = 0;
+      if (Number(current.value) > 0) {
+        newValue = Math.max(Number(current.value) - Math.abs(change), 1);
+      } else if (Number(current.value) < 0) {
+        newValue = Math.min(Number(current.value) + Math.abs(change), -1);
+      }
+      updateData.push({
+        ...current,
+        value: newValue,
+      });
+      return;
+    };
+
+    for (const effect of effects) {
+      switch (effect.key.split(".")[3]) {
+        case "change":
+          old.adjustments.push(effect);
+          break;
+        case "override":
+          old.overrides.push(effect);
+          break;
+        case "diceAdjustments":
+          if (effect.key.split(".")[4] === "advantage") {
+            old.advantages.push(effect);
+          } else {
+            old.disadvantages.push(effect);
+          }
+          break;
+      }
+    }
+
+    // Process each category in the old object
+    const categoryMap = {
+      adjustments: "adjustment",
+      overrides: "override",
+      advantages: "advantage",
+      disadvantages: "disadvantage",
+    };
+
+    // Process each category in the old object
+    for (const [category, items] of Object.entries(old)) {
+      const inputKey = categoryMap[category];
+      const categoryInput = inputs[inputKey];
+
+      if (Array.isArray(items) && items.length > 0 && categoryInput) {
+        for (const item of items) {
+          // Apply the appropriate mode function based on the input mode
+          switch (categoryInput.mode) {
+            case "add":
+              addMode(item, categoryInput.change);
+              break;
+            case "subtract":
+              subtractMode(item, categoryInput.change);
+              break;
+            case "intensify":
+              intensifyMode(item, categoryInput.change);
+              break;
+            case "weaken":
+              weakenMode(item, categoryInput.change);
+              break;
+          }
+        }
+      }
+    }
+
+    await status.updateEmbeddedDocuments("ActiveEffect", [
+      { _id: status.effects.contents[0]._id, changes: updateData },
+    ]);
+
+    Hooks.call("erpsUpdateItem", status, {}, {}, game.user.id);
+    instance._store();
   }
 
   /**
@@ -149,87 +364,27 @@ export class ChangeTargetStatus extends EventideSheetHelpers {
    * @private
    */
   static async _onSubmit(event, form, formData) {
-    const statusId = form.statusSelector.value;
+    const inputs = {
+      statusSelector: form.statusSelector.value,
+      adjustment: {
+        change: form.adjustmentChange.value,
+        mode: form.adjustmentMode.value,
+      },
+      override: {
+        change: form.overrideChange.value,
+        mode: form.overrideMode.value,
+      },
+      advantage: {
+        change: form.advantageChange.value,
+        mode: form.advantageMode.value,
+      },
+      disadvantage: {
+        change: form.disadvantageChange.value,
+        mode: form.disadvantageMode.value,
+      },
+    };
 
-    if (!statusId) {
-      ui.notifications.error(
-        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.MissingStatus")
-      );
-      return;
-    }
-
-    const status = this.target.actor.items.get(statusId);
-    if (!status) {
-      ui.notifications.error(
-        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.MissingStatus")
-      );
-      return;
-    }
-
-    // Get the current values from the status effects
-    const effects = status.effects.contents[0];
-    if (!effects) {
-      ui.notifications.error(
-        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.NoStatusEffects")
-      );
-      return;
-    }
-
-    // Get the change values from the form
-    const adjustmentChange =
-      parseInt(
-        form.adjustmentMode.value === "subtract"
-          ? -Math.abs(form.adjustmentChange.value)
-          : Math.abs(form.adjustmentChange.value)
-      ) || 0;
-    const overrideChange =
-      parseInt(
-        form.overrideMode.value === "subtract"
-          ? -Math.abs(form.overrideChange.value)
-          : Math.abs(form.overrideChange.value)
-      ) || 0;
-    const advantageChange =
-      parseInt(
-        form.advantageMode.value === "subtract"
-          ? -Math.abs(form.advantageChange.value)
-          : Math.abs(form.advantageChange.value)
-      ) || 0;
-    const disadvantageChange =
-      parseInt(
-        form.disadvantageMode.value === "subtract"
-          ? -Math.abs(form.disadvantageChange.value)
-          : Math.abs(form.disadvantageChange.value)
-      ) || 0;
-
-    // update the change value based on splitting the key and checking for
-    // "change" in slot 3, "override" in slot 3, "advantage" in slot 4, "disadvantage" in slot 4
-    const updatedChanges = effects.changes.map((change) => {
-      const newChange = foundry.utils.deepClone(change);
-      if (change.key.includes("disadvantage")) {
-        newChange.value = parseInt(change.value) + disadvantageChange;
-      } else if (change.key.includes("advantage")) {
-        newChange.value = parseInt(change.value) + advantageChange;
-      } else if (change.key.includes("override")) {
-        newChange.value = parseInt(change.value) + overrideChange;
-      } else {
-        newChange.value = parseInt(change.value) + adjustmentChange;
-      }
-
-      return newChange;
-    });
-
-    // Update the item with the modified effects
-    await status.update({
-      effects: [
-        {
-          ...effects.toObject(),
-          changes: updatedChanges,
-        },
-      ],
-    });
-
-    Hooks.call("erpsUpdateItem", status, {}, {}, game.user.id);
-
-    this._store();
+    await ChangeTargetStatus._process(this, inputs);
+    return;
   }
 }

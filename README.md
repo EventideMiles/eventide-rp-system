@@ -2,7 +2,7 @@
 
 ## System Requirements
 
-- Foundry VTT v12 or higher
+- Foundry VTT v13.341 or higher
 - A modern web browser (Chrome, Firefox, Edge, Safari)
 
 ## Installation
@@ -11,12 +11,12 @@
 
 1. In Foundry VTT, navigate to the "Game Systems" tab
 2. Click "Install System"
-3. In the "Manifest URL" field, paste: [Your manifest URL here]
+3. In the "Manifest URL" field, paste: https://github.com/EventideMiles/eventide-rp-system/releases/latest/download/system.json
 4. Click "Install"
 
-Alternatively, you can download the latest release from the [Releases](https://github.com/yourusername/eventide-rp-system/releases) page and install it manually.
+Alternatively, you can download the latest release from the [Releases](https://github.com/EventideMiles/eventide-rp-system/releases) page and install it manually.
 
-![Foundry v12](https://img.shields.io/badge/foundry-v12-green)
+![Foundry v13.341+](https://img.shields.io/badge/foundry-v13.341+-green)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 A custom roleplaying system for Foundry VTT that emphasizes dynamic character abilities through status effects features, and gear. The system is focused on providing an intuitive and flexible gaming experience.
@@ -28,12 +28,12 @@ A custom roleplaying system for Foundry VTT that emphasizes dynamic character ab
 - Five core abilities: Acrobatics, Physical, Fortitude, Will, and Wits
 - Rich HTML-supported biography fields for both characters and NPCs
 - Streamlined character creation and management
-- Gear, Status, Feature, and Combat Power management easy via the item system and system provided macros.
+- Gear, Status, Feature, and Combat Power management easy via the item system and system provided macros
 
 ### Dynamic Ability System
 
-- Status effects that modify character abilities dynamically - allowing for prep work before session and improvization during session to react to unexpected player choices
-- Feature-based ability modifications for lasting character changes
+- Status effects and gear that modify character abilities dynamically - allowing for prep work before session and improvization during session to react to unexpected player choices
+- Feature-based ability modifications for lasting character changes - reflect your character's background and development
 - Hidden abilities support for GM-controlled special effects - such as changing rolled dice, adding advantage / disadvantage, or modifying critical ranges
 - Intuitive dialogs for formatted system control
 
@@ -43,8 +43,10 @@ A custom roleplaying system for Foundry VTT that emphasizes dynamic character ab
   - As extensive as you want it to be: items can have effects on stats, roll data like a combat power, they can track uses, and can be equipped and unequipped
   - Equipped/unequipped status can be toggled directly from item sheets or character sheets
   - Optional chat messages for equipment changes (configurable in system settings)
+  - Cursed Items - items that a player cannot unequip at will, and which may come with powers and drawbacks different than their first appearance
 - Combat powers with detailed descriptions and reminders to ensure you fulfill their requirements / have enough power to use them
 - Status effect tracking and management - formatted chat messages for when they apply and expire
+- You can have features, statuses, and gear display their icon on the player's token: reminders of the most important changes to their stats
 
 ### Combat and Initiative
 
@@ -55,21 +57,37 @@ A custom roleplaying system for Foundry VTT that emphasizes dynamic character ab
 
 ### User Interface
 
-- Multiple theme options: Default, Dark, Light, and High Contrast
-- Customizable default character sheet tab
-- System sounds for key actions like healing, damage, status effects, and more
+- Multiple theme options: Dark is the default, but Light is also available
+- System sounds for key actions like healing, damage, status effects, and more: all configurable in the system settings
+
+### Powerful System Macros
+
+- Makes creating and managing gear, statuses, and features easy and quick
+- Available in a system compendium: import to your world and drag to the hotbar
+- Provide players with the tools they need to manage their own gear and statuses: player versions of the effect and gear creator are available
+- Need to make a status effect slightly worse or better? Intensify and Weaken are available for statuses and features. Intensify makes every positive number bigger and every negative number smaller. Weaken does the opposite till the limit of 1 on either side
+- Damage scripts handle formatting and describing what is happening to the target
+- Most macros save your settings: so if you need to have a specific status modified over many turns, you can use the same macro and it will remember your settings
+- Fully extensible: see a macro with a number argument? You can use it as a template to create one with a new number than can remember new settings
+
+
+### Coming Soon
+
+- An RPG system that uses this system as a base - feel free to use it however you wish but I will be providing documentation and support for the official use and development of this system
+- See a feature you want that we don't have? Open an issue and as long as its not antithetical to my vision for the system and isn't far too complex, I will be happy to add it
 
 ## Usage
 
 ### For Game Masters
 
 - Modify character abilities through status effects and features
-- Manage abilities and hidden abilities using the status system and feature system via the effect creator
+- Create gear, place it in the world, and let your players interact with whatever you can imagine
+- Manage abilities and hidden abilities using the status system, feature system, and gear via the effect and gear creator
 - Design NPCs with custom combat powers, inflictable status effects, and features
 - Track combat powers and their effects
 - Popup system provides details on anything on any player - simply click the item and get information about it
 - Apply damage and healing to characters - with chat messages to keep tabs on what's happening
-- Customize system sounds for various actions:
+- Configure system sounds for various actions:
   - Enable/disable system sounds
   - Adjust system sound volume
   - Configure custom sounds for healing, damage, status effects, gear equipping/unequipping, combat powers, and initiative rolls
@@ -89,7 +107,7 @@ A custom roleplaying system for Foundry VTT that emphasizes dynamic character ab
   - View equipped items separately from unequipped items for better inventory management
 - Track active status effects - clicking to roll them shows you the status but doesn't reroll it to the chat
 - Roll abilities directly from character sheets or using one of the macros included in the system
-- Customize your interface with different theme options
+- Configure your interface with different theme options
 
 ## Contributing
 
@@ -103,7 +121,7 @@ This project is licensed under the Apache License 2.0. When contributing:
 Important licensing notes:
 
 - All modifications to existing files must be shared under Apache License 2.0
-- New files you create can be licensed differently if desired
+- New files you create can be licensed differently if desired: do not submit pull requests to the main repository with files that are not under Apache License 2.0
 - Asacolips Projects / Foundry Mods may use contributions under the MIT license
 - Include appropriate copyright notices in new files
 

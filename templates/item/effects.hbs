@@ -1,16 +1,12 @@
-{{! Effects Tab }}
+{{! Effects Tab -- Depreciated! }}
 <section class='tab effects {{tab.cssClass}}' data-group='primary' data-tab='effects'>
-  <ol class='effects-list'>
-    {{#each effects as |section sid|}}
-      <li class='effects-header flexrow' data-effect-type='{{section.type}}'>
-        <div class='effect-name effect-name flexrow'>
-          {{localize section.label}}
-        </div>
-        <div class='effect-source'>
-          {{localize 'EVENTIDE_RP_SYSTEM.Effect.Source'}}
-        </div>
-        <div class='effect-source'>{{localize 'EFFECT.TabDuration'}}</div>
-        <div class='effect-controls effect-controls flexrow'>
+  <ol class='items-panel__list'>
+  {{#each effects as |section sid|}}
+    <li class='items-panel__list-item items-panel__header' data-effect-type='{{section.type}}'>
+      <div class='items-panel__name'>{{localize section.label}}</div>
+      <div class='effect-source'>{{localize 'EVENTIDE_RP_SYSTEM.Effect.Source'}}</div>
+      <div class='effect-source'>{{localize 'EFFECT.TabDuration'}}</div>
+      <div class='items-panel__controls'>
           <a
             class='effect-control'
             data-action='createDoc'
@@ -29,21 +25,21 @@
           </a>
         </div>
       </li>
-      <ol class='effect-list'>
+      <ol class='items-panel__list'>
         {{#each section.effects as |effect|}}
           <li
-            class='item effect flexrow'
+            class='items-panel__list-item effect flexrow'
             data-effect-id='{{effect.id}}'
             data-parent-id='{{effect.parent.id}}'
             data-drag="true"
           >
-            <div class='effect-name effect-name flexrow'>
-              <img class='effect-image' src='{{effect.img}}' height="24" width="24"/>
+            <div class='items-panel__name items-panel__name flexrow'>
+              <img class='items-panel__image' src='{{effect.img}}' height="24" width="24"/>
               <div>{{effect.name}}</div>
             </div>
             <div class='effect-source'>{{effect.sourceName}}</div>
             <div class='effect-duration'>{{effect.duration.label}}</div>
-            <div class='effect-controls effect-controls flexrow'>
+            <div class='items-panel__controls items-panel__controls flexrow'>
               {{#if @root.editable}}
               <a
                 class='effect-control'

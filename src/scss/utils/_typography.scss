@@ -1,5 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Combo&family=Merienda:wght@300..900&family=Protest+Revolution&family=Underdog&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Combo&family=Amatic+SC:wght@400;700&family=Merienda:wght@300..900&family=Protest+Revolution&family=Underdog&family=Carlito:ital,wght@0,400;0,700;1,400;1,700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Goblin+One&display=swap');
 
 $font-primary: 'Roboto',
 sans-serif;
@@ -22,6 +22,10 @@ sans-serif;
   font-style: normal;
 }
 
+@mixin combo-regular {
+  @extend .combo-regular;
+}
+
 .underdog-regular {
   font-family: "Underdog", serif;
   font-weight: 400;
@@ -33,6 +37,56 @@ sans-serif;
   font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;
+}
+
+.carlito-regular {
+  font-family: "Carlito", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+@mixin carlito-regular {
+  @extend .carlito-regular;
+}
+
+.space-mono-regular {
+  font-family: "Space Mono", monospace;
+  font-weight: 400;
+  font-style: normal;
+}
+
+@mixin space-mono-regular {
+  @extend .space-mono-regular;
+}
+
+.goblin-one-regular {
+  font-family: "Goblin One", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+@mixin goblin-one-regular {
+  @extend .goblin-one-regular;
+}
+
+.amatic-sc-regular {
+  font-family: "Amatic SC", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+@mixin amatic-sc-regular {
+  @extend .amatic-sc-regular;
+}
+
+.amatic-sc-bold {
+  font-family: "Amatic SC", serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
+@mixin amatic-sc-bold {
+  @extend .amatic-sc-bold;
 }
 
 // .merienda-<uniquifier> {

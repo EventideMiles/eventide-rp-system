@@ -109,6 +109,47 @@ export class DamageTargets extends EventideSheetHelpers {
       return this.close();
     }
 
+    context.callouts = [];
+    if (context.targetArray.length > 0 && this.gmCheck === "gm") {
+      context.callouts.push({
+        type: "information",
+        faIcon: "fas fa-info-circle",
+        text: game.i18n.format(
+          "EVENTIDE_RP_SYSTEM.Forms.Callouts.Damage.TargetMode",
+          { count: context.targetArray.length }
+        ),
+      });
+    } else {
+      context.callouts.push({
+        type: "information",
+        faIcon: "fas fa-info-circle",
+        text: game.i18n.format(
+          "EVENTIDE_RP_SYSTEM.Forms.Callouts.Damage.SelectMode",
+          { count: context.selectedArray.length }
+        ),
+      });
+    }
+
+    context.footerButtons = [
+      {
+        label: game.i18n.localize("EVENTIDE_RP_SYSTEM.Forms.Buttons.Damage"),
+        type: "submit",
+        cssClass: "base-form__button base-form__button--primary",
+      },
+      {
+        label: game.i18n.localize("EVENTIDE_RP_SYSTEM.Forms.Buttons.Store"),
+        type: "button",
+        cssClass: "base-form__button",
+        action: "store",
+      },
+      {
+        label: game.i18n.localize("EVENTIDE_RP_SYSTEM.Forms.Buttons.Close"),
+        type: "button",
+        cssClass: "base-form__button",
+        action: "close",
+      },
+    ];
+
     return context;
   }
 

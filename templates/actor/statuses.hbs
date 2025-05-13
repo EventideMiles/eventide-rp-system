@@ -1,32 +1,32 @@
 {{! Statuses Tab }}
 <section class='tab statuses {{tab.cssClass}}' data-group='primary' data-tab='statuses'>
-  <ol class='items-list'>
-    <li class='item flexrow items-header'>
-      <div class='item-name'>{{localize 'EVENTIDE_RP_SYSTEM.Forms.Sections.Name'}}</div>
-      <div class='item-controls'>
-        {{#if @root.editable }}
-          <a
-            class='item-control item-create'
-            title='{{localize "DOCUMENT.Create" type='Item'}}'
-            data-action='createDoc'
-            data-document-class='Item'
-            data-type='status'
-          >
-            <i class='fas fa-plus'></i>
-            {{localize 'DOCUMENT.New' type='Status'}}
-          </a>
-        {{/if}}
+  <ol class='items-panel__list items-panel__list--spanning'>
+  <li class='items-panel__list-item items-panel__header'>
+    <div class='items-panel__name items-panel__header-cell'>{{localize 'EVENTIDE_RP_SYSTEM.Forms.Sections.Name'}}</div>
+    <div class='items-panel__controls items-panel__header-cell'>
+      {{#if @root.editable }}
+        <a
+          class='items-panel__list-item item-create'
+          title='{{localize "DOCUMENT.Create" type='Item'}}'
+          data-action='createDoc'
+          data-document-class='Item'
+          data-type='status'
+        >
+          <i class='fas fa-plus'></i>
+          {{localize 'DOCUMENT.New' type='Status'}}
+        </a>
+      {{/if}}
       </div>
     </li>
     {{#each statuses as |item id|}}
       <li
-        class='item flexrow'
+        class='items-panel__list-item items-panel__list-cell'
         data-item-id='{{item._id}}'
         data-drag='true'
         data-document-class='Item'
       >
-        <div class='item-name'>
-          <div class='item-image'>
+        <div class='items-panel__name items-panel__list-cell'>
+          <div class='items-panel__image'>
             <a class='rollable' data-roll-type='item' data-action='roll'>
               <img
                 src='{{item.img}}'
@@ -38,9 +38,9 @@
           </div>
           <div>{{item.name}}</div>
         </div>
-        <div class='item-controls'>
+        <div class='items-panel__controls items-panel__list-cell'>
           <a
-            class='item-control item-edit'
+            class='items-panel__control item-edit'
             title='{{localize "DOCUMENT.Update" type='Status'}}'
             data-action='viewDoc'
           >
@@ -48,7 +48,7 @@
           </a>
           {{#if @root.editable}}
             <a
-              class='item-control item-delete'
+              class='item-panel__control item-delete'
               title='{{localize "DOCUMENT.Delete" type='Status'}}'
               data-action='deleteDoc'
             >

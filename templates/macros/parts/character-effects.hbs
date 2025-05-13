@@ -1,0 +1,95 @@
+<div class="eventide-item-sheet base-form__part">
+    <div class="eventide-item-sheet__effects-section">
+      <div class="eventide-item-sheet__effects-grid">
+        <div class="eventide-item-sheet__effects-grid-header">
+          <div class="eventide-item-sheet__effects-grid-cell">Attribute</div>
+          <div class="eventide-item-sheet__effects-grid-cell">Mode</div>
+          <div class="eventide-item-sheet__effects-grid-cell">Value</div>
+          <div class="eventide-item-sheet__effects-grid-cell">Actions</div>
+        </div>
+        
+        {{#each addedAbilities as |ability index|}}
+          <div class="eventide-item-sheet__effects-grid-row base-form">
+            <div class="eventide-item-sheet__effects-grid-cell">
+              <select 
+                class="base-form__select"
+                name="addedAbilities.{{index}}.attribute"
+                data-index="{{index}}"
+              >
+                {{#each ../allAbilities as |label key|}}
+                  <option value="{{toLowerCase label}}" {{#if (eq ability.attribute (toLowerCase label))}}selected{{/if}}>
+                    {{localize label}}
+                  </option>
+                {{/each}}
+              </select>
+            </div>
+            
+            <div class="eventide-item-sheet__effects-grid-cell">
+              <select 
+                class="base-form__select"
+                name="addedAbilities.{{@index}}.mode"
+                data-index="{{@index}}"
+              >
+                <option value="add" {{#if (eq mode "change")}}selected{{/if}}>Add</option>
+                <option value="override" {{#if (eq mode "override")}}selected{{/if}}>Override</option>
+                <option value="advantage" {{#if (eq mode "advantage")}}selected{{/if}}>Advantage</option>
+                <option value="disadvantage" {{#if (eq mode "disadvantage")}}selected{{/if}}>Disadvantage</option>
+              </select>
+            </div>
+            
+            <div class="eventide-item-sheet__effects-grid-cell">
+              <div class="base-form__number-input-wrapper">
+                <button type="button" 
+                  class="decrement" 
+                  data-action="decrementEffect" 
+                  data-index="{{@index}}"
+                >
+                  −
+                </button>
+                <input 
+                  type="number" 
+                  class="base-form__number-input"
+                  name="addedAbilities.{{@index}}.value"
+                  value="{{value}}" 
+                  step="1"
+                  data-index="{{@index}}"
+                >
+                <button type="button" 
+                  class="increment" 
+                  data-action="incrementEffect" 
+                  data-index="{{@index}}"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+            
+            <div class="eventide-item-sheet__effects-grid-cell">
+              <button 
+                type="button" 
+                class="base-form__button"
+                data-action="onRemoveAbility" 
+                data-index="{{@index}}"
+                title="Remove effect"
+              >
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </div>
+        {{/each}}
+      </div>
+      
+      <div class="eventide-item-sheet__effect-controls">
+        <button 
+          type="button" 
+          class="eventide-item-sheet__add-effect base-form__button"
+          data-action="onAddAbility" 
+          data-type="abilities"
+          data-ability="acro"
+          title="Add new effect"
+        >
+          <i class="fas fa-plus"></i> Add Effect
+        </button>
+      </div>
+    </div>
+</div>

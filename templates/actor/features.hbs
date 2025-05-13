@@ -39,13 +39,15 @@
                   data-roll='{{lookup ../formulas key}}'
                   data-label='{{localize (lookup @root.config.abilities key)}}'
                 >Total: {{numberFormat ability.total decimals=0 sign=true}}</div>
+                <div class="ability-override">
                 {{#if ability.override}}
                   <i class="fas fa-lock" style="color: red"></i>
                   <span style="color: white"> Capped</span>
                 {{else}}
-                <i class="fas fa-unlock-alt" style="color: #4CAF50"></i>
-                <span style="color: white"> Uncapped</span>
+                  <i class="fas fa-unlock-alt" style="color: #4CAF50"></i>
+                  <span style="color: white"> Uncapped</span>
                 {{/if}}
+                </div>
               </div>
             </div>
           </section>
@@ -55,33 +57,33 @@
 
     {{! For the main features list, span the right two columns }}
     <section class='main grid-span-4'>
-      <ol class='items-list'>
-        <li class='item flexrow items-header'>
-          <div class='item-name'>{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Name"}}</div>
-          <div class='item-controls'>
-            {{#if @root.editable}}
-              <a
-                class='item-control item-create'
-                title='Create item'
-                data-action='createDoc'
-                data-document-class='Item'
-                data-type='feature'
-              >
-                <i class='fas fa-plus'></i>
-                {{localize 'DOCUMENT.New' type='feature'}}
-              </a>
-            {{/if}}
-          </div>
-        </li>
+      <ol class='items-panel__list items-panel__list--spanning'>
+  <li class='items-panel__list-item items-panel__header'>
+    <div class='items-panel__name items-panel__header-cell'>{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Name"}}</div>
+    <div class='items-panel__controls items-panel__header-cell'>
+      {{#if @root.editable}}
+        <a
+          class='items-panel__control item-create'
+          title='Create item'
+          data-action='createDoc'
+          data-document-class='Item'
+          data-type='feature'
+        >
+          <i class='fas fa-plus'></i>
+          {{localize 'DOCUMENT.New' type='feature'}}
+        </a>
+      {{/if}}
+    </div>
+  </li>
         {{#each features as |item id|}}
           <li
-            class='item flexrow'
+            class='items-panel__list-item'
             data-item-id='{{item._id}}'
             data-drag='true'
             data-document-class='Item'
           >
-            <div class='item-name'>
-              <div class='item-image'>
+            <div class='items-panel__name items-panel__list-cell'>
+              <div class='items-panel__image'>
                 <a class='rollable' data-roll-type='item' data-action='roll'>
                   <img
                     src='{{item.img}}'
@@ -93,9 +95,9 @@
               </div>
               <div>{{item.name}}</div>
             </div>
-            <div class='item-controls'>
+            <div class='items-panel__controls items-panel__list-cell'>
               <a
-                class='item-control item-edit'
+                class='items-panel__control item-edit'
                 title='{{localize "DOCUMENT.Update" type='feature'}}'
                 data-action='viewDoc'
               >
@@ -103,7 +105,7 @@
               </a>
               {{#if @root.editable}}
                 <a
-                  class='item-control item-delete'
+                  class='items-panel__control item-delete'
                   title='{{localize "DOCUMENT.Delete" type='feature'}}'
                   data-action='deleteDoc'
                 >

@@ -22,9 +22,6 @@ export class EffectCreator extends CreatorApplication {
       submitOnChange: false,
       closeOnSubmit: true,
     },
-    actions: {
-      onEditImage: super._onEditImage,
-    },
   };
 
   /**
@@ -61,14 +58,72 @@ export class EffectCreator extends CreatorApplication {
           : "status",
     };
 
-    console.log(context.storedData);
+    context.callouts = [];
 
-    if (context.storedData.effect_displayOnToken === null) {
-      console.log("Setting default displayOnToken to true");
-      context.storedData.effect_displayOnToken = "true";
+    if (context.playerMode) {
+      context.callouts.push({
+        type: "information",
+        icon: "fas fa-info-circle",
+        text: game.i18n.format(
+          "EVENTIDE_RP_SYSTEM.Forms.Callouts.Effect.PlayerMode",
+          { count: context.selectedArray.length }
+        ),
+      });
+    } else {
+      if (context.targetArray.length === 0) {
+        context.callouts.push({
+          type: "information",
+          faIcon: "fas fa-info-circle",
+          text: game.i18n.localize(
+            "EVENTIDE_RP_SYSTEM.Forms.Callouts.Effect.NoTargets"
+          ),
+        });
+      } else {
+        context.callouts.push({
+          type: "information",
+          faIcon: "fas fa-info-circle",
+          text: game.i18n.format(
+            "EVENTIDE_RP_SYSTEM.Forms.Callouts.Effect.WithTargets",
+            { count: context.targetArray.length }
+          ),
+        });
+      }
     }
 
-    console.log(context.storedData);
+    //   <header class="base-form__callout-box">
+    //   {{#if (eq playerMode true)}}
+    //     <div`` class="base-form__callout base-form__callout--information">
+    //       <i class="fas fa-info-circle"></i>
+    //       {{{localize "EVENTIDE_RP_SYSTEM.Forms.Callouts.Effect.PlayerMode" count=selectedArray.length}}}
+    //     </div>
+    //   {{/if}}
+    //   {{#if (eq playerMode false)}}
+    //     {{#if (eq targetArray.length 0)}}
+    //       <div class="base-form__callout base-form__callout--information">
+    //         <i class="fas fa-info-circle"></i>
+    //         {{{localize "EVENTIDE_RP_SYSTEM.Forms.Callouts.Effect.NoTargets"}}}
+    //       </div>
+    //     {{else}}
+    //       <div class="base-form__callout base-form__callout--information">
+    //         <i class="fas fa-info-circle"></i>
+    //         {{{localize "EVENTIDE_RP_SYSTEM.Forms.Callouts.Effect.WithTargets" count=targetArray.length}}}
+    //       </div>
+    //     {{/if}}
+    //   {{/if}}
+    // </header>
+
+    context.footerButtons = [
+      {
+        label:
+          context.playerMode || context.targetArray.length > 0
+            ? game.i18n.localize(
+                "EVENTIDE_RP_SYSTEM.Forms.Buttons.CreateAndApply"
+              )
+            : game.i18n.localize("EVENTIDE_RP_SYSTEM.Forms.Buttons.Create"),
+        type: "submit",
+        cssClass: "base-form__button base-form__button--primary",
+      },
+    ];
 
     return context;
   }

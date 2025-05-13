@@ -29,7 +29,7 @@
         "Name": "Name",
         "Neutral": "Neutral",
         "Optional": "(Optional)",
-        "OverrideValues": "Override Values",
+        "OverrideValues": "Override",
         "Prerequisites": "Prerequisites",
         "Quantity": "Quantity",
         "RemoveStatuses": "Remove Statuses",
@@ -77,7 +77,9 @@
         "Advantage": "Advantage",
         "Disadvantage": "Disadvantage",
         "Override": "Override",
-        "SubtractMode": "Subtract"
+        "SubtractMode": "Subtract",
+        "IntensifyMode": "Intensify",
+        "WeakenMode": "Weaken"
       },
       "Callouts": {
         "Damage": {

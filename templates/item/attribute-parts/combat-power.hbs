@@ -1,32 +1,68 @@
 {{! Attributes Tab }}
-<section class='tab attributes {{tab.cssClass}}' data-group='primary' data-tab='attributes'>
-  <div class='resource'>
+<section 
+  class='tab attributes {{tab.cssClass}}' 
+  data-group='primary' 
+  data-tab='attributes'
+>
+  <div class='base-form__sheet-tabs'>
     <div class='grid grid-3col'>
-      <div class='grid-span-1'>
-        <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.Roll.Type.label'}}</label>
-        <select name='system.roll.type'>
+      <div>
+        <label class='base-form__label'>
+          {{localize 'EVENTIDE_RP_SYSTEM.Item.Roll.Type.label'}}
+        </label>
+        <select 
+          name='system.roll.type' 
+          class="base-form__select"
+        >
           {{#each rollTypes as |name key|}}
-            <option value="{{key}}" {{#if (eq ../system.roll.type key)}}selected{{/if}}>{{localize (lookup @root.config.rollTypes key)}}</option>
+            <option 
+              value="{{key}}" 
+              {{#if (eq ../system.roll.type key)}}selected{{/if}}
+            >
+              {{localize (lookup @root.config.rollTypes key)}}
+            </option>
           {{/each}}
         </select>
       </div>
-      <div class="resource checkbox-resource">
-        <label class="resource-label">{{localize 'EVENTIDE_RP_SYSTEM.Item.Roll.Targeted.label'}}</label>
-        <div class="checkbox-wrapper">
-          <input type="checkbox" class="large-checkbox" name="system.targeted" {{checked system.targeted}} />
+      <div class="checkbox-attribute">
+        <label class="base-form__label" for="system.targeted">
+          {{localize 'EVENTIDE_RP_SYSTEM.Item.Roll.Targeted.label'}}
+        </label>
+        <div class="toggle-switch-wrapper">
+          <input 
+            type="checkbox" 
+            class="base-form__toggle-switch-left" 
+            name="system.targeted" 
+            id="system.targeted" 
+            {{checked system.targeted}} 
+          />
+          <label class="toggle-switch-display" for="system.targeted"></label>
         </div>
       </div>
-       <div class='grid-span-1'>
-        <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.Descriptors.UsageInfo.label'}}</label>
-        <input type='text' name='system.usageInfo' value='{{system.usageInfo}}' placeholder='{{localize "EVENTIDE_RP_SYSTEM.Item.Descriptors.UsageInfo.placeholder"}}' />
+       <div>
+        <label class='base-form__label'>
+          {{localize 'EVENTIDE_RP_SYSTEM.Item.Descriptors.UsageInfo.label'}}
+        </label>
+        <input 
+          class="base-form__text-input" 
+          type='text' 
+          name='system.usageInfo' 
+          value='{{system.usageInfo}}' 
+          placeholder='{{localize "EVENTIDE_RP_SYSTEM.Item.Descriptors.UsageInfo.placeholder"}}' 
+        />
       </div>
     </div>
 
-    {{#ifCond system.roll.type "!==" "none"}}
+    {{#if (ne system.roll.type "none")}}
       <div class='grid grid-2col'>
-        <div class='grid-span-1'>
-          <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.Roll.Ability.label'}}</label>
-          <select name='system.roll.ability'>
+        <div>
+          <label class='base-form__label'>
+            {{localize 'EVENTIDE_RP_SYSTEM.Item.Roll.Ability.label'}}
+          </label>
+          <select 
+            class="base-form__select" 
+            name='system.roll.ability'
+          >
             {{#each abilities as |name key|}}
               <option value="{{key}}" {{#if (eq ../system.roll.ability key)}}selected{{/if}}>
                 {{#if (eq key "unaugmented")}}
@@ -38,40 +74,73 @@
             {{/each}}
           </select>
         </div>
-        <div class='grid-span-1'>
-          <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.Roll.Bonus.label'}}</label>
-          <input type='text' name='system.roll.bonus' value='{{system.roll.bonus}}' data-dtype='Number' />
+        <div>
+          <label class='base-form__label'>
+            {{localize 'EVENTIDE_RP_SYSTEM.Item.Roll.Bonus.label'}}
+          </label>
+          <input 
+            type="number" 
+            class="base-form__number-input"
+            name="system.roll.bonus" 
+            value="{{system.roll.bonus}}" 
+            data-dtype="Number" 
+          />
         </div>
       </div>
-    {{/ifCond}}
+    {{/if}}
 
     {{#if (eq system.roll.type "roll")}}
       <div class='dice-adjustments'>
-        <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.Roll.DiceAdjustments.label'}}</label>
+        <label class='base-form__label'>
+          {{localize 'EVENTIDE_RP_SYSTEM.Item.Roll.DiceAdjustments.label'}}
+        </label>
         <div class='grid grid-3col'>
-          <div class='grid-span-1'>
-            <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.Roll.DiceAdjustments.Advantage.label'}}</label>
+          <div>
+            <label class='base-form__label'>
+              {{localize 'EVENTIDE_RP_SYSTEM.Item.Roll.DiceAdjustments.Advantage.label'}}
+            </label>
             <input 
-              type='text' 
-              name='system.roll.diceAdjustments.advantage' 
-              value='{{system.roll.diceAdjustments.advantage}}' 
-              data-dtype='Number'
+              class="base-form__number-input"
+              type="number" 
+              name="system.roll.diceAdjustments.advantage" 
+              value="{{system.roll.diceAdjustments.advantage}}" 
+              data-dtype="Number"
               {{#if editable}}data-action='onDiceAdjustmentChange'{{/if}}
             />
           </div>
-          <div class='grid-span-1'>
-            <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.Roll.DiceAdjustments.Disadvantage.label'}}</label>
-            <input 
-              type='text' 
-              name='system.roll.diceAdjustments.disadvantage' 
-              value='{{system.roll.diceAdjustments.disadvantage}}' 
-              data-dtype='Number'
+          <div>
+            <label class='base-form__label'>
+              {{localize 'EVENTIDE_RP_SYSTEM.Item.Roll.DiceAdjustments.Disadvantage.label'}}
+            </label>
+            <div class="base-form__number-input-wrapper">
+              <button type="button" class="decrement" data-action="decrement">−</button>
+              <input 
+                class="base-form__number-input"
+                type="number"
+                id="system.roll.diceAdjustments.disadvantage" 
+                name="system.roll.diceAdjustments.disadvantage" 
+                value="{{system.roll.diceAdjustments.disadvantage}}"
+                data-dtype="Number"
+                {{#if editable}}data-action='onDiceAdjustmentChange'{{/if}}
+              >
+              <button type="button" class="increment" data-action="increment">+</button>
+            </div>
+            {{!-- <input 
+              class="base-form__number-input"
+              type="number" 
+              name="system.roll.diceAdjustments.disadvantage" 
+              value="{{system.roll.diceAdjustments.disadvantage}}" 
+              data-dtype="Number"
               {{#if editable}}data-action='onDiceAdjustmentChange'{{/if}}
-            />
+            /> --}}
           </div>
-          <div class='grid-span-1'>
-            <label class='resource-label'>{{localize 'EVENTIDE_RP_SYSTEM.Item.Roll.DiceAdjustments.Total.label'}}</label>
+          <div>
+            <label class='base-form__label'>
+              {{localize 'EVENTIDE_RP_SYSTEM.Item.Roll.DiceAdjustments.Total.label'}}
+            </label>
             <input 
+              class="base-form__text-input"
+              style="text-align: center;"
               type='text' 
               name='system.roll.diceAdjustments.total' 
               value='{{system.roll.diceAdjustments.total}}' 

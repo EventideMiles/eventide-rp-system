@@ -114,6 +114,28 @@ export class GearTransfer extends EventideSheetHelpers {
       return context;
     }
 
+    context.callouts = [
+      {
+        type: "information",
+        faIcon: "fas fa-info-circle",
+        text: game.i18n.format(
+          "EVENTIDE_RP_SYSTEM.Forms.Callouts.Gear.TransferGear",
+          {
+            target: context.targetActor.name,
+            selected: context.selectedActor.name,
+          }
+        ),
+      },
+    ];
+
+    context.footerButtons = [
+      {
+        label: game.i18n.localize("EVENTIDE_RP_SYSTEM.Forms.Buttons.Transfer"),
+        type: "submit",
+        cssClass: "base-form__button base-form__button--primary",
+      },
+    ];
+
     return context;
   }
 

@@ -27,6 +27,9 @@ import {
   permissionCheck,
 } from "./helpers/common-foundry-tasks.mjs";
 import { erpsMessageHandler } from "./helpers/system-messages.mjs";
+import { initColorPickersWithHex } from "./helpers/color-pickers.mjs";
+import { initNumberInputs } from "./helpers/number-inputs.mjs";
+import { initHandlebarsPartials } from "./helpers/handlebars-partials.mjs";
 
 const { Actors, Items } = foundry.documents.collections;
 const { ActorSheet, ItemSheet } = foundry.appv1.sheets;
@@ -53,6 +56,8 @@ globalThis.erps = {
     storeLocal,
     retrieveLocal,
     permissionCheck,
+    initColorPickersWithHex,
+    initNumberInputs,
   },
   macros: {
     GearTransfer,
@@ -67,7 +72,7 @@ globalThis.erps = {
   models,
 };
 
-Hooks.once("init", function () {
+Hooks.once("init", async function () {
   // Add custom constants for configuration.
   CONFIG.EVENTIDE_RP_SYSTEM = EVENTIDE_RP_SYSTEM;
 
@@ -82,6 +87,8 @@ Hooks.once("init", function () {
 
   // Initialize chat message listeners
   initChatListeners();
+
+  initHandlebarsPartials();
 
   /**
    * Set an initiative formula for the system

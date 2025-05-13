@@ -1,10 +1,5 @@
 <div class="{{cssClass}} base-form" autocomplete="off">
-  <header class="base-form__callout-box">
-    <div class="base-form__callout base-form__callout--information">
-      <i class="fas fa-info-circle"></i>
-      {{localize "EVENTIDE_RP_SYSTEM.Forms.ScriptExplanations.ChangeTargetStatus"}}
-    </div>
-  </header>
+  {{> callout-box}}
 
   <div class="base-form__content">
     <div class="base-form__group">
@@ -29,23 +24,25 @@
       <select class="base-form__select" 
       id="adjustmentMode" 
       name="adjustmentMode">
-        <option value="add" 
-        {{#if (eq storedData.changeTargetStatus_adjustmentMode "add")}}selected{{/if}}>
-          {{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.AddMode"}}
-        </option>
-        <option value="subtract" 
-        {{#if (eq storedData.changeTargetStatus_adjustmentMode "subtract")}}selected{{/if}}>
-          {{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.SubtractMode"}}
-        </option>
+        {{#each modes as |mode|}}
+          <option value="{{toLowerCase mode}}" 
+          {{#if (eq ../storedData.changeTargetStatus_adjustmentMode (toLowerCase mode))}}selected{{/if}}>
+            {{mode}}
+          </option>
+        {{/each}}
       </select>
-      <input 
-        class="base-form__number-input" 
-        autofocus 
-        type="number" 
-        id="adjustmentChange" 
-        name="adjustmentChange" 
-        value="{{ifThen storedData.changeTargetStatus_adjustmentChange storedData.changeTargetStatus_adjustmentChange "0"}}" 
-        placeholder="{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.ChangeValue"}}">
+      <div class="base-form__number-input-wrapper">
+        <button type="button" class="decrement" data-action="decrement">−</button>
+        <input 
+          class="base-form__number-input" 
+          autofocus 
+          type="number" 
+          id="adjustmentChange" 
+          name="adjustmentChange" 
+          value="{{ifThen storedData.changeTargetStatus_adjustmentChange storedData.changeTargetStatus_adjustmentChange "0"}}" 
+          placeholder="{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.ChangeValue"}}">
+        <button type="button" class="increment" data-action="increment">+</button>
+      </div>
     </div>
     <div class="base-form__group">
       <label class="base-form__label" 
@@ -55,22 +52,24 @@
       <select class="base-form__select" 
       id="overrideMode" 
       name="overrideMode">
-        <option value="add" 
-        {{#if (eq storedData.changeTargetStatus_overrideMode "add")}}selected{{/if}}>
-          {{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.AddMode"}}
-        </option>
-        <option value="subtract" 
-        {{#if (eq storedData.changeTargetStatus_overrideMode "subtract")}}selected{{/if}}>
-          {{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.SubtractMode"}}
-        </option>
+        {{#each modes as |mode|}}
+          <option value="{{toLowerCase mode}}" 
+          {{#if (eq ../storedData.changeTargetStatus_overrideMode (toLowerCase mode))}}selected{{/if}}>
+            {{mode}}
+          </option>
+        {{/each}}
       </select>
-      <input 
-        class="base-form__number-input" 
-        type="number" 
-        id="overrideChange" 
-        name="overrideChange" 
-        value="{{ifThen storedData.changeTargetStatus_overrideChange storedData.changeTargetStatus_overrideChange "0"}}" 
-        placeholder="{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.ChangeValue"}}">
+      <div class="base-form__number-input-wrapper">
+        <button type="button" class="decrement" data-action="decrement">−</button>
+        <input 
+          class="base-form__number-input" 
+          type="number" 
+          id="overrideChange" 
+          name="overrideChange" 
+          value="{{ifThen storedData.changeTargetStatus_overrideChange storedData.changeTargetStatus_overrideChange "0"}}" 
+          placeholder="{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.ChangeValue"}}">
+        <button type="button" class="increment" data-action="increment">+</button>
+      </div>
     </div>
     <div class="base-form__group">
       <label class="base-form__label" 
@@ -80,22 +79,24 @@
       <select class="base-form__select" 
       id="advantageMode" 
       name="advantageMode">
-        <option value="add" 
-        {{#if (eq storedData.changeTargetStatus_advantageMode "add")}}selected{{/if}}>
-          {{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.AddMode"}}
-        </option>
-        <option value="subtract" 
-        {{#if (eq storedData.changeTargetStatus_advantageMode "subtract")}}selected{{/if}}>
-          {{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.SubtractMode"}}
-        </option>
+        {{#each modes as |mode|}}
+          <option value="{{toLowerCase mode}}" 
+          {{#if (eq ../storedData.changeTargetStatus_advantageMode (toLowerCase mode))}}selected{{/if}}>
+            {{mode}}
+          </option>
+        {{/each}}
       </select>
-      <input 
-        class="base-form__number-input" 
-        type="number" 
-        id="advantageChange" 
-        name="advantageChange" 
-        value="{{ifThen storedData.changeTargetStatus_advantageChange storedData.changeTargetStatus_advantageChange "0"}}" 
-        placeholder="{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.ChangeValue"}}">
+      <div class="base-form__number-input-wrapper">
+        <button type="button" class="decrement" data-action="decrement">−</button>
+        <input 
+          class="base-form__number-input" 
+          type="number" 
+          id="advantageChange" 
+          name="advantageChange" 
+          value="{{ifThen storedData.changeTargetStatus_advantageChange storedData.changeTargetStatus_advantageChange "0"}}" 
+          placeholder="{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.ChangeValue"}}">
+        <button type="button" class="increment" data-action="increment">+</button>
+      </div>
     </div>
     <div class="base-form__group">
       <label class="base-form__label" 
@@ -105,39 +106,26 @@
       <select class="base-form__select" 
       id="disadvantageMode" 
       name="disadvantageMode">
-        <option value="add" 
-        {{#if (eq storedData.changeTargetStatus_disadvantageMode "add")}}selected{{/if}}>
-          {{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.AddMode"}}
-        </option>  
-        <option value="subtract" 
-        {{#if (eq storedData.changeTargetStatus_disadvantageMode "subtract")}}selected{{/if}}>
-          {{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.SubtractMode"}}
-        </option>
+        {{#each modes as |mode|}}
+          <option value="{{toLowerCase mode}}" 
+          {{#if (eq ../storedData.changeTargetStatus_disadvantageMode (toLowerCase mode))}}selected{{/if}}>
+            {{mode}}
+          </option>
+        {{/each}}
       </select>
-      <input 
-        class="base-form__number-input" 
-        type="number" 
-        id="disadvantageChange" 
-        name="disadvantageChange" 
-        value="{{ifThen storedData.changeTargetStatus_disadvantageChange storedData.changeTargetStatus_disadvantageChange "0"}}" 
-        placeholder="{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.ChangeValue"}}">
+      <div class="base-form__number-input-wrapper">
+        <button type="button" class="decrement" data-action="decrement">−</button>
+        <input 
+          class="base-form__number-input" 
+          type="number" 
+          id="disadvantageChange" 
+          name="disadvantageChange" 
+          value="{{ifThen storedData.changeTargetStatus_disadvantageChange storedData.changeTargetStatus_disadvantageChange "0"}}" 
+          placeholder="{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.ChangeValue"}}">
+        <button type="button" class="increment" data-action="increment">+</button>
+      </div>
     </div>
   </div>
   
-  <footer class="base-form__footer">
-    <button type="submit" 
-    class="base-form__button base-form__button--primary">
-      {{localize "EVENTIDE_RP_SYSTEM.Forms.Buttons.Change"}}
-    </button>
-    <button type="button" 
-    class="base-form__button" 
-    data-action="onStore">
-      {{localize "EVENTIDE_RP_SYSTEM.Forms.Buttons.Store"}}
-    </button>
-    <button type="button" 
-    class="base-form__button" 
-    data-action="close">
-      {{localize "EVENTIDE_RP_SYSTEM.Forms.Buttons.Close"}}
-    </button>
-  </footer>
+  {{> macro-footer}}
 </div>

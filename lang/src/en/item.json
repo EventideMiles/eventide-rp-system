@@ -12,7 +12,7 @@
         }
       },
       "Descriptors": {
-        "RollActorName": { "label": "Roll Actor Name" },
+        "RollActorName": { "label": "Roll Name" },
         "UsageInfo": {
           "label": "Usage Info",
           "placeholder": "e.g., 1/day"

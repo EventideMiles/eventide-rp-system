@@ -1,10 +1,5 @@
 <div class="{{cssClass}} base-form" autocomplete="off">
-  <header class="base-form__callout-box">
-    <div class="base-form__callout base-form__callout--information">
-      <i class="fas fa-info-circle"></i>
-      {{{localize "EVENTIDE_RP_SYSTEM.Forms.Callouts.Gear.TransferGear" target=targetActor.name selected=selectedActor.name}}}
-    </div>
-  </header>
+  {{> callout-box}}
   <div class="base-form__content">
     <div class="base-form__group">
       <label class="base-form__label" for="gearId">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.SelectGear"}}:</label>
@@ -19,7 +14,11 @@
 
     <div class="base-form__group">
       <label class="base-form__label" for="quantity">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Quantity"}}:</label>
-      <input class="base-form__number-input" type="number" id="quantity" name="quantity" value="1" min="1">
+      <div class="base-form__number-input-wrapper">
+        <button type="button" class="decrement" data-action="decrement">−</button>
+        <input class="base-form__number-input" type="number" id="quantity" name="quantity" value="1" min="1">
+        <button type="button" class="increment" data-action="increment">+</button>
+      </div>
     </div>
 
     <div class="base-form__group">
@@ -28,9 +27,5 @@
     </div>
   </div>
 
-  <footer class="base-form__footer">
-    <button type="submit" class="base-form__button base-form__button--primary">
-      <i class="fa fa-check"></i> {{localize "EVENTIDE_RP_SYSTEM.Forms.Buttons.Transfer"}}
-    </button>
-  </footer>
+  {{> macro-footer}}
 </div>

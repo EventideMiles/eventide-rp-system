@@ -1,14 +1,14 @@
 {{! Combat Powers Tab }}
 <section class='tab combat-powers {{tab.cssClass}}' data-group='primary' data-tab='combatPowers'>
-  <ol class='items-list'>
-    <li class='item flexrow items-header'>
-      <div class='item-name'>{{localize 'EVENTIDE_RP_SYSTEM.Forms.Sections.Name'}}</div>
-      <div class='item-cost'>{{localize 'EVENTIDE_RP_SYSTEM.Item.Inventory.Cost.label'}}</div>
-      <div class='item-usage'>{{localize 'EVENTIDE_RP_SYSTEM.Item.Descriptors.UsageInfo.label'}}</div>
-      <div class='item-controls'>
-        {{#if @root.editable }}
+  <ol class='items-panel__list'>
+  <li class='items-panel__list-item items-panel__header'>
+    <div class='items-panel__name items-panel__header-cell'>{{localize 'EVENTIDE_RP_SYSTEM.Forms.Sections.Name'}}</div>
+    <div class='items-panel__prop items-panel__header-cell'>{{localize 'EVENTIDE_RP_SYSTEM.Item.Inventory.Cost.label'}}</div>
+    <div class='items-panel__usage items-panel__header-cell'>{{localize 'EVENTIDE_RP_SYSTEM.Item.Descriptors.UsageInfo.label'}}</div>
+    <div class='items-panel__controls items-panel__header-cell'>
+      {{#if @root.editable }}
           <a
-            class='item-control item-create'
+            class='items-panel__control items-panel__create'
             title='{{localize "DOCUMENT.Create" type='Item'}}'
             data-action='createDoc'
             data-document-class='Item'
@@ -21,46 +21,46 @@
       </div>
     </li>
     {{#each combatPowers as |item id|}}
-      <li
-        class='item flexrow'
-        data-item-id='{{item._id}}'
-        data-drag='true'
-        data-document-class='Item'
+  <li
+    class='items-panel__list-item'
+    data-item-id='{{item._id}}'
+    data-drag='true'
+    data-document-class='Item'
+  >
+    <div class='items-panel__name items-panel__list-cell'>
+      <div class='items-panel__image'>
+        <a class='rollable' data-roll-type='item' data-action='roll'>
+          <img
+            src='{{item.img}}'
+            title='{{item.name}}'
+            width='24'
+            height='24'
+          />
+        </a>
+      </div>
+      <div>{{item.name}}</div>
+    </div>
+    <div class='item-cost items-panel__prop items-panel__list-cell'>{{item.system.cost}}</div>
+    <div class='items-panel__usage items-panel__list-cell'><div>{{item.system.usageInfo}}</div></div>
+    <div class='items-panel__controls items-panel__list-cell'>
+      <a
+        class='items-panel__control item-edit'
+        title='{{localize "DOCUMENT.Update" type='Combat Power'}}'
+        data-action='viewDoc'
       >
-        <div class='item-name'>
-          <div class='item-image'>
-            <a class='rollable' data-roll-type='item' data-action='roll'>
-              <img
-                src='{{item.img}}'
-                title='{{item.name}}'
-                width='24'
-                height='24'
-              />
-            </a>
-          </div>
-          <div>{{item.name}}</div>
-        </div>
-        <div class='item-cost item-prop'>{{item.system.cost}}</div>
-        <div class='item-usage item-prop'>{{item.system.usageInfo}}</div>
-        <div class='item-controls'>
-          <a
-            class='item-control item-edit'
-            title='{{localize "DOCUMENT.Update" type='Combat Power'}}'
-            data-action='viewDoc'
-          >
-            <i class='fas fa-edit'></i>
-          </a>
-          {{#if @root.editable}}
-            <a
-              class='item-control item-delete'
-              title='{{localize "DOCUMENT.Delete" type='Combat Power'}}'
-              data-action='deleteDoc'
-            >
-              <i class='fas fa-trash'></i>
-            </a>
-          {{/if}}
-        </div>
-      </li>
-    {{/each}}
+        <i class='fas fa-edit'></i>
+      </a>
+      {{#if @root.editable}}
+        <a
+          class='items-panel__control item-delete'
+          title='{{localize "DOCUMENT.Delete" type='Combat Power'}}'
+          data-action='deleteDoc'
+        >
+          <i class='fas fa-trash'></i>
+        </a>
+      {{/if}}
+    </div>
+  </li>
+{{/each}}
   </ol>
 </section>

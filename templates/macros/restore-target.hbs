@@ -8,30 +8,39 @@
   <div class="base-form__content">
     <div class="base-form__group base-form__group--checkbox">
       <label class="base-form__label" for="restoreResolve">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RestoreResolve"}}</label>
-      <input class="base-form__checkbox" autofocus type="checkbox" id="restoreResolve" name="restoreResolve" {{checked defaultOptions.restoreResolve}}>
+      <div class="toggle-switch-wrapper">
+        <input class="base-form__toggle-switch" autofocus type="checkbox" id="restoreResolve" name="restoreResolve" {{checked defaultOptions.restoreResolve}}>
+        <label class="toggle-switch-display" for="restoreResolve"></label>
+      </div>
     </div>
     <div class="base-form__group base-form__group--checkbox">
       <label class="base-form__label" for="restorePower">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RestorePower"}}</label>
-      <input class="base-form__checkbox" type="checkbox" id="restorePower" name="restorePower" {{checked defaultOptions.restorePower}}>
+      <div class="toggle-switch-wrapper">
+        <input class="base-form__toggle-switch" type="checkbox" id="restorePower" name="restorePower" {{checked defaultOptions.restorePower}}>
+        <label class="toggle-switch-display" for="restorePower"></label>
+      </div>
     </div>
     <hr />
     <div class="base-form__group base-form__group--checkbox base-form__group--header">
-      <label class="base-form__label">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RemoveStatuses"}}</label>
+      <label class="base-form__header">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RemoveStatuses"}}</label>
     </div>
     <div class="base-form__group base-form__group--checkbox">
       <label class="base-form__label" for="all">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.All"}}</label>
-      <input class="base-form__checkbox" type="checkbox" id="all" name="all">
+      <div class="toggle-switch-wrapper">
+        <input class="base-form__toggle-switch" type="checkbox" id="all" name="all">
+        <label class="toggle-switch-display" for="all"></label>
+      </div>
     </div>
     {{#each statusEffects as |status|}}
       <div class="base-form__group base-form__group--checkbox">
         <label class="base-form__label" for="{{status.id}}">{{status.name}}</label>
-        <input class="base-form__checkbox" type="checkbox" name="{{status.id}}" id="{{status.id}}">
+        <div class="toggle-switch-wrapper">
+          <input class="base-form__toggle-switch" type="checkbox" name="{{status.id}}" id="{{status.id}}">
+          <label class="toggle-switch-display" for="{{status.id}}"></label>
+        </div>
       </div>
     {{/each}}
   </div>
   
-  <footer class="base-form__footer">
-    <button type="submit" class="base-form__button base-form__button--primary">{{localize "EVENTIDE_RP_SYSTEM.Forms.Buttons.Restore"}}</button>
-    <button type="button" class="base-form__button" data-action="close">{{localize "EVENTIDE_RP_SYSTEM.Forms.Buttons.Close"}}</button>
-  </footer>
+  {{> macro-footer}}
 </div>

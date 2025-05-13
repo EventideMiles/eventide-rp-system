@@ -7,18 +7,18 @@
   <ol class='effects-list'>
     {{#each effects as |section sid|}}
       <li
-        class='effects-header flexrow'
+        class='effects-header'
         data-effect-type='{{section.type}}'
         data-drag="true"
       >
-        <div class='effect-name flexrow'>
+        <div class='effect-name'>
           {{localize section.label}}
         </div>
         <div class='effect-source'>
           {{localize 'EVENTIDE_RP_SYSTEM.Effect.Source'}}
         </div>
         <div class='effect-source'>{{localize 'EFFECT.TabDuration'}}</div>
-        <div class='effect-controls flexrow'>
+        <div class='effect-controls'>
           <a
             class='effect-control'
             data-action='createDoc'

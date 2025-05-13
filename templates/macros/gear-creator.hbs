@@ -1,24 +1,5 @@
 <div class="{{cssClass}} base-form" autocomplete="off">
-  <header class="base-form__callout-box">
-    {{#if (eq playerMode true)}}
-      <div class="base-form__callout base-form__callout--information">
-        <i class="fas fa-info-circle"></i>
-        {{{localize "EVENTIDE_RP_SYSTEM.Forms.Callouts.Gear.PlayerMode" count=selectedArray.length}}}
-      </div>
-    {{else}}
-      {{#if (eq targetArray.length 0)}}
-        <div class="base-form__callout base-form__callout--information">
-          <i class="fas fa-info-circle"></i>
-          {{{localize "EVENTIDE_RP_SYSTEM.Forms.Callouts.Gear.NoTargets"}}}
-        </div>
-      {{else}}
-        <div class="base-form__callout base-form__callout--information">
-          <i class="fas fa-info-circle"></i>
-          {{{localize "EVENTIDE_RP_SYSTEM.Forms.Callouts.Gear.WithTargets" count=targetArray.length}}}
-        </div>
-      {{/if}}
-    {{/if}}
-  </header>
+  {{> callout-box}}
   <div class="base-form__content">
     <div class="gear-creator__upper-section">
       <div class="gear-creator__main-info">
@@ -44,8 +25,7 @@
             class="base-form__textarea" 
             id="description" 
             name="description" 
-            placeholder="{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.Description"}}">
-          </textarea>
+            placeholder="{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.Description"}}"></textarea>
         </div>
       </div>
 
@@ -71,46 +51,46 @@
             value="{{ifThen storedData.gear_img storedData.gear_img "icons/svg/item-bag.svg"}}">
         </div>
 
-          <div class="base-form__group">
-            <label class="base-form__label" for="bgColor">
-              {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Background"}}
-            </label>
-            <input class="base-form__color-input" type="color" id="bgColor" name="bgColor" value="{{ifThen storedData.gear_bgColor storedData.gear_bgColor "#7B4874"}}">
+          <div class="base-form__color-picker-with-hex color-picker-with-hex">
+            <label class="color-picker-label" for="color-bgColor">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Background"}}</label>
+            <div class="color-picker-container">
+              <div class="color-preview" id="preview-bgColor" style="background-color: {{ifThen storedData.gear_bgColor storedData.gear_bgColor '#7B4874'}}"></div>
+              <input type="color" class="color-picker" id="color-bgColor" name="bgColor" value="{{ifThen storedData.gear_bgColor storedData.gear_bgColor '#7B4874'}}">
+              <input type="text" class="hex-input" id="hex-bgColor" placeholder="Hex color" value="{{ifThen storedData.gear_bgColor storedData.gear_bgColor '#7B4874'}}">
+            </div>
           </div>
 
-          <div class="base-form__group">
-            <label class="base-form__label" for="textColor">
-              {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Text"}}
-            </label>
-            <input 
-              class="base-form__color-input" 
-              type="color" 
-              id="textColor" 
-              name="textColor" 
-              value="{{ifThen storedData.gear_textColor storedData.gear_textColor "#ffffff"}}">
+          <div class="base-form__color-picker-with-hex color-picker-with-hex">
+            <label class="color-picker-label" for="color-textColor">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Text"}}</label>
+            <div class="color-picker-container">
+              <div class="color-preview" id="preview-textColor" style="background-color: {{ifThen storedData.gear_textColor storedData.gear_textColor '#ffffff'}}"></div>
+              <input type="color" class="color-picker" id="color-textColor" name="textColor" value="{{ifThen storedData.gear_textColor storedData.gear_textColor '#ffffff'}}">
+              <input type="text" class="hex-input" id="hex-textColor" placeholder="Hex color" value="{{ifThen storedData.gear_textColor storedData.gear_textColor '#FFFFFF'}}">
+            </div>
           </div>
 
-          <div class="base-form__group">
-            <label class="base-form__label" for="iconTint">
-              {{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.IconTint"}}}:
-            </label>
-            <input 
-              class="base-form__color-input" 
-              type="color" 
-              id="iconTint" 
-              name="iconTint" 
-              value="{{ifThen storedData.gear_iconTint storedData.gear_iconTint "#ffffff"}}">
+          <div class="base-form__color-picker-with-hex color-picker-with-hex">
+            <label class="color-picker-label" for="color-iconTint">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.IconTint"}}:</label>
+            <div class="color-picker-container">
+              <div class="color-preview" id="preview-iconTint" style="background-color: {{ifThen storedData.gear_iconTint storedData.gear_iconTint '#ffffff'}}"></div>
+              <input type="color" class="color-picker" id="color-iconTint" name="iconTint" value="{{ifThen storedData.gear_iconTint storedData.gear_iconTint '#ffffff'}}">
+              <input type="text" class="hex-input" id="hex-iconTint" placeholder="Hex color" value="{{ifThen storedData.gear_iconTint storedData.gear_iconTint '#FFFFFF'}}">
+            </div>
           </div>
-          <div class="base-form__group">
-            <label class="base-form__label" for="displayOnToken">
+
+          <div class="base-form__toggle-group">
+            <label for="displayOnToken">
               {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.DisplayOnToken"}}
             </label>
-            <input 
-              class="base-form__checkbox" 
-              type="checkbox" 
-              id="displayOnToken" 
-              name="displayOnToken" 
-              {{#if storedData.gear_displayOnToken}}checked{{/if}}>
+            <div class="toggle-switch-wrapper">
+              <input 
+                class="base-form__toggle-switch" 
+                type="checkbox" 
+                id="displayOnToken" 
+                name="displayOnToken" 
+                {{#if storedData.gear_displayOnToken}}checked{{/if}}>
+              <label class="toggle-switch-display" for="displayOnToken"></label>
+            </div>
           </div>
       </div>
     </div>
@@ -122,28 +102,48 @@
           <label class="base-form__label" for="quantity">
             {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Quantity"}}
           </label>
-          <input class="base-form__number-input" type="number" id="quantity" name="quantity" value="1">
+          <div class="base-form__number-input-wrapper">
+            <button type="button" class="decrement" data-action="decrement">−</button>
+            <input class="base-form__number-input" type="number" id="quantity" name="quantity" value="1">
+            <button type="button" class="increment" data-action="increment">+</button>
+          </div>
         </div>
 
         <div class="base-form__group">
           <label class="base-form__label" for="weight">
             {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Weight"}}
           </label>
-          <input class="base-form__number-input" type="number" id="weight" name="weight" value="0">
+          <div class="base-form__number-input-wrapper">
+            <button type="button" class="decrement" data-action="decrement">−</button>
+            <input class="base-form__number-input" type="number" id="weight" name="weight" value="0">
+            <button type="button" class="increment" data-action="increment">+</button>
+          </div>
         </div>
 
         <div class="base-form__group">
           <label class="base-form__label" for="cost">
             {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Cost"}}
           </label>
-          <input class="base-form__number-input" type="number" id="cost" name="cost" value="0">
+          <div class="base-form__number-input-wrapper">
+            <button type="button" class="decrement" data-action="decrement">−</button>
+            <input class="base-form__number-input" type="number" id="cost" name="cost" value="0">
+            <button type="button" class="increment" data-action="increment">+</button>
+          </div>
         </div>
 
-        <div class="base-form__group">
-          <label class="base-form__label" for="targeted">
+        <div class="base-form__toggle-group">
+          <label for="targeted">
             {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Targeted"}}
           </label>
-          <input class="base-form__checkbox" type="checkbox" id="targeted" name="targeted" checked>
+          <div class="toggle-switch-wrapper">
+            <input 
+              class="base-form__toggle-switch" 
+              type="checkbox" 
+              id="targeted" 
+              name="targeted" 
+              checked>
+            <label class="toggle-switch-display" for="targeted"></label>
+          </div>
         </div>
 
         <div class="base-form__group">
@@ -162,28 +162,34 @@
           </select>
           </div>
 
-        <div class="base-form__group">
-          <label class="base-form__label" for="equipped">
+        <div class="base-form__toggle-group">
+          <label for="equipped">
             {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Equipped"}}
           </label>
-          <input 
-            class="base-form__checkbox" 
-            type="checkbox" 
-            id="equipped" 
-            name="equipped" 
-            {{#if gearEquippedDefault}}checked{{/if}}>
+          <div class="toggle-switch-wrapper">
+            <input 
+              class="base-form__toggle-switch" 
+              type="checkbox" 
+              id="equipped" 
+              name="equipped" 
+              {{#if gearEquippedDefault}}checked{{/if}}>
+            <label class="toggle-switch-display" for="equipped"></label>
+          </div>
         </div>
 
         {{#if isGM}}
-          <div class="base-form__group">
-            <label class="base-form__label" for="cursed">
+          <div class="base-form__toggle-group">
+            <label for="cursed">
               {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Cursed"}}
             </label>
-            <input 
-              class="base-form__checkbox" 
-              type="checkbox" 
-              id="cursed" 
-              name="cursed">
+            <div class="toggle-switch-wrapper">
+              <input 
+                class="base-form__toggle-switch" 
+                type="checkbox" 
+                id="cursed" 
+                name="cursed">
+              <label class="toggle-switch-display" for="cursed"></label>
+            </div>
           </div>
         {{/if}}
       </div>
@@ -221,68 +227,58 @@
           <label class="base-form__label" for="roll.bonus">
             {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RollBonus"}}
           </label>
-          <input 
-            class="base-form__number-input" 
-            type="number" 
-            id="roll.bonus" 
-            name="roll.bonus" 
-            value="0">
+          <div class="base-form__number-input-wrapper">
+            <button type="button" class="decrement" data-action="decrement">−</button>
+            <input 
+              class="base-form__number-input" 
+              type="number" 
+              id="roll.bonus" 
+              name="roll.bonus" 
+              value="0">
+            <button type="button" class="increment" data-action="increment">+</button>
+          </div>
         </div>
 
         <div class="base-form__group">
           <label class="base-form__label" for="roll.diceAdjustments.advantage">
             {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RollAdvantage"}}
           </label>
-          <input 
-            class="base-form__number-input" 
-            type="number" 
-            id="roll.diceAdjustments.advantage" 
-            name="roll.diceAdjustments.advantage" 
-            value="0">
+          <div class="base-form__number-input-wrapper">
+            <button type="button" class="decrement" data-action="decrement">−</button>
+            <input 
+              class="base-form__number-input" 
+              type="number" 
+              id="roll.diceAdjustments.advantage" 
+              name="roll.diceAdjustments.advantage" 
+              value="0">
+            <button type="button" class="increment" data-action="increment">+</button>
+          </div>
         </div>
 
         <div class="base-form__group">
           <label class="base-form__label" for="roll.diceAdjustments.disadvantage">
             {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RollDisadvantage"}}
           </label>
-          <input 
-            class="base-form__number-input" 
-            type="number" 
-            id="roll.diceAdjustments.disadvantage" 
-            name="roll.diceAdjustments.disadvantage" 
-            value="0">
+          <div class="base-form__number-input-wrapper">
+            <button type="button" class="decrement" data-action="decrement">−</button>
+            <input 
+              class="base-form__number-input"
+              
+              type="number" 
+              id="roll.diceAdjustments.disadvantage" 
+              name="roll.diceAdjustments.disadvantage" 
+              value="0">
+            <button type="button" class="increment"  data-action="increment">+</button>
+          </div>
         </div>
       </div>
 
       <div class="gear-creator__column">
         <div class="base-form__header">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Effects"}}</div>
-        {{#each abilities}}
-          <div class="base-form__group gear-creator__effect-group">
-            <label class="base-form__label" for="{{lowercase this}}">{{capitalize (localize (lookup @root.config.abilityAbbreviations this))}}</label>
-            <input class="base-form__number-input gear-creator__effect-input" type="number" id="{{lowercase this}}" name="{{lowercase this}}" value="0">
-            <select class="base-form__select gear-creator__effect-select" id="{{lowercase this}}-mode" name="{{lowercase this}}-mode">
-              <option value="add">{{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.Add"}}</option>
-              <option value="override">{{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.Override"}}</option>
-              <option value="advantage">{{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.Advantage"}}</option>
-              <option value="disadvantage">{{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.Disadvantage"}}</option>
-            </select>
-          </div>
-        {{/each}}
-        {{#each hiddenAbilities}}
-          <div class="base-form__group gear-creator__effect-group">
-            <label class="base-form__label" for="{{lowercase this}}">{{capitalize (localize (lookup @root.config.hiddenAbilityAbbreviations this))}}</label>
-            <input class="base-form__number-input gear-creator__effect-input" type="number" id="{{lowercase this}}" name="{{lowercase this}}" value="0">
-            <select class="base-form__select gear-creator__effect-select" id="{{lowercase this}}-mode" name="{{lowercase this}}-mode">
-              <option value="add">{{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.Add"}}</option>
-              <option value="override">{{localize "EVENTIDE_RP_SYSTEM.Forms.Modifications.Override"}}</option>
-            </select>
-          </div>
-        {{/each}}
+        {{> character-effects}}
       </div>
     </div>
   </div>
 
-  <footer class="base-form__footer">
-    <button type="submit" class="base-form__button base-form__button--primary">{{ifThen targetArray.length (localize "EVENTIDE_RP_SYSTEM.Forms.Buttons.CreateAndApply") (localize "EVENTIDE_RP_SYSTEM.Forms.Buttons.Create")}}</button>
-  </footer>
+  {{> macro-footer}}
 </div>
