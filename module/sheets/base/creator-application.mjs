@@ -1,8 +1,10 @@
 import { EventideSheetHelpers } from "./eventide-sheet-helpers.mjs";
 
 /**
- * Base class for creator applications that handle item creation
- * @extends {HandlebarsApplicationMixin(ApplicationV2)}
+ * Base class for creator applications that handle item creation (effects, gear, etc.)
+ * This class provides common functionality for creating and managing items in the Eventide RP System.
+ * It handles ability modifications, character effects, and user preferences storage.
+ * @extends {EventideSheetHelpers}
  */
 export class CreatorApplication extends EventideSheetHelpers {
   /**
@@ -134,6 +136,12 @@ export class CreatorApplication extends EventideSheetHelpers {
     return context;
   }
 
+  /**
+   * Prepare callout messages for the application based on player mode and target selection
+   * These callouts provide contextual information to the user about the current state
+   * @returns {Promise<Array>} Array of callout objects with type, icon, and text properties
+   * @protected
+   */
   async _prepareCallouts() {
     const callouts = [];
 
@@ -176,6 +184,12 @@ export class CreatorApplication extends EventideSheetHelpers {
     return callouts;
   }
 
+  /**
+   * Prepare the footer buttons for the application form
+   * Dynamically changes the button label based on player mode and target selection
+   * @returns {Promise<Array>} Array of button configuration objects
+   * @protected
+   */
   async _prepareFooterButtons() {
     return [
       {
@@ -191,6 +205,12 @@ export class CreatorApplication extends EventideSheetHelpers {
     ];
   }
 
+  /**
+   * Handle the first render of the application
+   * Shows notifications based on target selection and user permissions
+   * @override
+   * @protected
+   */
   _onFirstRender() {
     if (
       this.targetArray.length === 0 &&
@@ -276,6 +296,15 @@ export class CreatorApplication extends EventideSheetHelpers {
     }
   }
 
+  /**
+   * Handle form field changes, updating the internal state and UI
+   * Handles special cases like image updates and ability modifications
+   * @param {Object} formConfig - The form configuration
+   * @param {Event} event - The change event
+   * @returns {Promise<void>}
+   * @override
+   * @protected
+   */
   async _onChangeForm(formConfig, event) {
     const form = event.target.form;
 
@@ -310,14 +339,14 @@ export class CreatorApplication extends EventideSheetHelpers {
     this.addedAbilities = null;
     this.targetArray = null;
     this.selectedArray = null;
-    
+
     // Additional arrays and objects that should be nulled
     this.abilities = null;
     this.hiddenAbilities = null;
     this.allAbilities = null;
     this.storedData = null;
     this.calloutGroup = null;
-    
+
     // Call the parent class's _preClose method which will handle number input cleanup
     await super._preClose(options);
   }
@@ -593,23 +622,13 @@ export class CreatorApplication extends EventideSheetHelpers {
   }
 
   /**
-   * Store form values in local storage
-   * @param {CreatorApplication} instance - The application instance
-   * @param {Object} formValues - The form values to store
-   * @param {string} formValues.img - The image path
-   * @param {string} formValues.bgColor - The background color
-   * @param {string} formValues.textColor - The text color
-   * @param {string} formValues.iconTint - The icon tint color
-   * @param {boolean} formValues.displayOnToken - Whether to display on token
-   * @param {string} [formValues.type] - The effect type (only for effects)
-   * @private
-   */
-  /**
    * Validate form data before submission
+   * Checks required fields and validates numeric inputs for gear items
+   * Shows appropriate error notifications to the user when validation fails
    * @param {FormData} formData - The form data to validate
    * @param {CreatorApplication} instance - The application instance
    * @returns {boolean} Whether the form data is valid
-   * @private
+   * @protected
    */
   static _validateFormData(formData, instance) {
     // Validate name (required)
@@ -663,6 +682,12 @@ export class CreatorApplication extends EventideSheetHelpers {
     return true;
   }
 
+  /**
+   * Store form values in user flags for persistence between sessions
+   * @param {CreatorApplication} instance - The application instance
+   * @param {Object} formValues - The form values to store
+   * @protected
+   */
   static _store(instance, formValues) {
     if (instance.testingMode) console.log("Storing values:", formValues);
 
@@ -689,7 +714,7 @@ export class CreatorApplication extends EventideSheetHelpers {
    * Note: This excludes addedAbilities fields which are handled separately
    * @param {CreatorApplication} app - The application instance
    * @returns {Object} The saved form data
-   * @private
+   * @protected
    */
   static _saveFormData(app) {
     if (!app || !app.element) return {};
@@ -728,7 +753,7 @@ export class CreatorApplication extends EventideSheetHelpers {
    * Handles special cases like checkboxes and color inputs
    * @param {CreatorApplication} app - The application instance
    * @param {Object} savedData - The saved form data
-   * @private
+   * @protected
    */
   static _restoreFormData(app, savedData) {
     if (!app || !app.element || !savedData) return;
