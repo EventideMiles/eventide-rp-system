@@ -144,10 +144,10 @@ export class GearTransfer extends EventideSheetHelpers {
    * @param {Event} event - The form submission event
    * @param {Object} form - The form data
    */
-  static async #onSubmit(event, form) {
-    const itemId = form.gearId.value;
-    const requestedQuantity = Number(form.quantity.value) || 1;
-    const description = form.description.value.trim();
+  static async #onSubmit(event, form, formData) {
+    const itemId = formData.get("gearId");
+    const requestedQuantity = Number(formData.get("quantity")) || 1;
+    const description = formData.get("description").trim();
 
     const sourceActor = this.targetToken.actor;
     const destActor = this.selectedToken.actor;

@@ -19,13 +19,7 @@ import { initializeCombatHooks } from "./helpers/combat.mjs";
 import { initChatListeners } from "./helpers/chat-listeners.mjs";
 // Import DataModel classes
 import * as models from "./data/_module.mjs";
-import {
-  getSelectedArray,
-  getTargetArray,
-  retrieveLocal,
-  storeLocal,
-  permissionCheck,
-} from "./helpers/common-foundry-tasks.mjs";
+import { commonTasks } from "./helpers/common-foundry-tasks.mjs";
 import { erpsMessageHandler } from "./helpers/system-messages.mjs";
 import { initColorPickersWithHex } from "./helpers/color-pickers.mjs";
 import { initNumberInputs } from "./helpers/number-inputs.mjs";
@@ -50,12 +44,8 @@ globalThis.erps = {
     EventideRpSystemItemSheet,
   },
   utils: {
+    ...commonTasks,
     rollItemMacro,
-    getTargetArray,
-    getSelectedArray,
-    storeLocal,
-    retrieveLocal,
-    permissionCheck,
     initColorPickersWithHex,
     initNumberInputs,
   },

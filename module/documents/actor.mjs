@@ -1,4 +1,3 @@
-import { clamp } from "../helpers/common-foundry-tasks.mjs";
 import { erpsRollHandler } from "../helpers/roll-dice.mjs";
 import { erpsMessageHandler } from "../helpers/system-messages.mjs";
 
@@ -79,7 +78,7 @@ export class EventideRpSystemActor extends Actor {
 
   addResolve(value) {
     this.update({
-      "system.resolve.value": clamp(
+      "system.resolve.value": erps.utils.clamp(
         this.system.resolve.value + value,
         0,
         this.system.resolve.max
@@ -89,7 +88,7 @@ export class EventideRpSystemActor extends Actor {
 
   addPower(value) {
     this.update({
-      "system.power.value": clamp(
+      "system.power.value": erps.utils.clamp(
         this.system.power.value + value,
         0,
         this.system.power.max

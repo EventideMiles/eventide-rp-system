@@ -115,7 +115,9 @@ export class CreatorApplication extends EventideSheetHelpers {
     });
     this.targetArray = await erps.utils.getTargetArray();
     this.selectedArray = await erps.utils.getSelectedArray();
-    this.storedData = await erps.utils.retrieveLocal(this.storageKeys);
+    this.storedData = await erps.utils.retrieveMultipleUserFlags(
+      this.storageKeys
+    );
 
     context.abilities = this.abilities;
     context.allAbilities = this.allAbilities;
@@ -601,7 +603,7 @@ export class CreatorApplication extends EventideSheetHelpers {
         formValues.type;
     }
 
-    erps.utils.storeLocal(storageData);
+    erps.utils.storeMultipleUserFlags(storageData);
   }
 
   /**

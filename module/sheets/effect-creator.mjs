@@ -37,7 +37,7 @@ export class EffectCreator extends CreatorApplication {
   }
 
   /**
-   * Prepares the main context data for the form.
+   * Prepares the main context data for the effect creator.
    * @param {Object} options - Form options
    * @returns {Promise<Object>} The prepared context containing abilities, stored preferences, and target information
    * @throws {Error} Implicitly closes the form if a player has no selected tokens

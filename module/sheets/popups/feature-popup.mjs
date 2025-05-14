@@ -42,7 +42,7 @@ export class FeaturePopup extends EventidePopupHelpers {
   }
 
   /**
-   * Prepare the main context data for the form.
+   * Prepare the main context data for the feature popup.
    * @param {Object} options - Form options
    * @returns {Promise<Object>} The prepared context
    */

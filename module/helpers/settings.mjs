@@ -203,10 +203,9 @@ export class SoundSettingsApplication extends EventideSheetHelpers {
       // Loop through all sound keys to ensure we're saving all settings
       for (const key of Object.keys(defaultSounds)) {
         const settingKey = `sound_${key}`;
-        const inputElement = form.elements[settingKey];
+        const value = formData.get(settingKey);
 
-        if (inputElement) {
-          const value = inputElement.value;
+        if (value) {
           console.log(`Saving ${settingKey} with value ${value}`);
           await setSetting(settingKey, value);
         } else {
@@ -220,7 +219,9 @@ export class SoundSettingsApplication extends EventideSheetHelpers {
       erpsSoundManager.refreshSounds();
 
       ui.notifications.info(game.i18n.localize("SETTINGS.SoundSettingsSaved"));
-      SettingsConfig.reloadConfirm({ world: true });
+      foundry.applications.settings.SettingsConfig.reloadConfirm({
+        world: true,
+      });
       return true;
     } catch (error) {
       console.error("Error in _onSubmit:", error);
@@ -273,7 +274,9 @@ export const registerSettings = function () {
         CONFIG.Combat.initiative.formula = value;
 
         // Prompt for reload to ensure all initiative calculations use the new formula
-        SettingsConfig.reloadConfirm({ world: true });
+        foundry.applications.settings.SettingsConfig.reloadConfirm({
+          world: true,
+        });
       }
     },
   });
@@ -292,7 +295,9 @@ export const registerSettings = function () {
       step: 1,
     },
     onChange: () => {
-      SettingsConfig.reloadConfirm({ world: true });
+      foundry.applications.settings.SettingsConfig.reloadConfirm({
+        world: true,
+      });
     },
   });
 
@@ -305,7 +310,9 @@ export const registerSettings = function () {
     type: Boolean,
     default: true,
     onChange: () => {
-      SettingsConfig.reloadConfirm({ world: true });
+      foundry.applications.settings.SettingsConfig.reloadConfirm({
+        world: true,
+      });
     },
   });
 
@@ -317,7 +324,9 @@ export const registerSettings = function () {
     type: Boolean,
     default: false,
     onChange: () => {
-      SettingsConfig.reloadConfirm({ world: true });
+      foundry.applications.settings.SettingsConfig.reloadConfirm({
+        world: true,
+      });
     },
   });
 
@@ -329,7 +338,9 @@ export const registerSettings = function () {
     type: Boolean,
     default: false,
     onChange: () => {
-      SettingsConfig.reloadConfirm({ world: true });
+      foundry.applications.settings.SettingsConfig.reloadConfirm({
+        world: true,
+      });
     },
   });
 
@@ -346,7 +357,9 @@ export const registerSettings = function () {
       step: 1,
     },
     onChange: () => {
-      SettingsConfig.reloadConfirm({ world: true });
+      foundry.applications.settings.SettingsConfig.reloadConfirm({
+        world: true,
+      });
     },
   });
 
@@ -374,7 +387,7 @@ export const registerSettings = function () {
       );
       // Add the new theme class
       document.body.classList.add(`theme-${value}`);
-      SettingsConfig.reloadConfirm();
+      foundry.applications.settings.SettingsConfig.reloadConfirm();
     },
   });
 
@@ -404,7 +417,9 @@ export const registerSettings = function () {
     type: Boolean,
     default: true,
     onChange: () => {
-      SettingsConfig.reloadConfirm({ world: true });
+      foundry.applications.settings.SettingsConfig.reloadConfirm({
+        world: true,
+      });
     },
   });
 
@@ -416,7 +431,9 @@ export const registerSettings = function () {
     type: Boolean,
     default: true,
     onChange: () => {
-      SettingsConfig.reloadConfirm({ world: true });
+      foundry.applications.settings.SettingsConfig.reloadConfirm({
+        world: true,
+      });
     },
   });
 

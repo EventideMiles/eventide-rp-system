@@ -45,7 +45,7 @@ export class StatusPopup extends EventidePopupHelpers {
   }
 
   /**
-   * Prepare the main context data for the form.
+   * Prepare the main context data for the status popup.
    * @param {Object} options - Form options
    * @returns {Promise<Object>} The prepared context
    */
