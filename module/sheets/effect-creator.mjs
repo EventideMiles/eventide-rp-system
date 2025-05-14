@@ -34,6 +34,7 @@ export class EffectCreator extends CreatorApplication {
 
   constructor({ advanced = false, number = 0, playerMode = false } = {}) {
     super({ advanced, number, playerMode, keyType: "effect" });
+    this.calloutGroup = "Effect";
   }
 
   /**
@@ -57,82 +58,6 @@ export class EffectCreator extends CreatorApplication {
           ? "feature"
           : "status",
     };
-
-    context.callouts = [];
-
-    if (context.playerMode) {
-      context.callouts.push({
-        type: "information",
-        icon: "fas fa-info-circle",
-        text: game.i18n.format(
-          "EVENTIDE_RP_SYSTEM.Forms.Callouts.Effect.PlayerMode",
-          { count: context.selectedArray.length }
-        ),
-      });
-    } else {
-      if (context.targetArray.length === 0) {
-        context.callouts.push({
-          type: "information",
-          faIcon: "fas fa-info-circle",
-          text: game.i18n.localize(
-            "EVENTIDE_RP_SYSTEM.Forms.Callouts.Effect.NoTargets"
-          ),
-        });
-      } else {
-        context.callouts.push({
-          type: "information",
-          faIcon: "fas fa-info-circle",
-          text: game.i18n.format(
-            "EVENTIDE_RP_SYSTEM.Forms.Callouts.Effect.WithTargets",
-            { count: context.targetArray.length }
-          ),
-        });
-      }
-    }
-
-    context.callouts = [];
-    if (context.playerMode) {
-      context.callouts.push({
-        type: "information",
-        faIcon: "fas fa-info-circle",
-        text: game.i18n.format(
-          "EVENTIDE_RP_SYSTEM.Forms.Callouts.Effect.PlayerMode",
-          { count: context.selectedArray.length }
-        ),
-      });
-    } else {
-      if (context.targetArray.length === 0) {
-        context.callouts.push({
-          type: "information",
-          faIcon: "fas fa-info-circle",
-          text: game.i18n.localize(
-            "EVENTIDE_RP_SYSTEM.Forms.Callouts.Effect.NoTargets"
-          ),
-        });
-      } else {
-        context.callouts.push({
-          type: "information",
-          faIcon: "fas fa-info-circle",
-          text: game.i18n.format(
-            "EVENTIDE_RP_SYSTEM.Forms.Callouts.Effect.WithTargets",
-            { count: context.targetArray.length }
-          ),
-        });
-      }
-    }
-
-    context.footerButtons = [
-      {
-        label:
-          context.playerMode || context.targetArray.length > 0
-            ? game.i18n.localize(
-                "EVENTIDE_RP_SYSTEM.Forms.Buttons.CreateAndApply"
-              )
-            : game.i18n.localize("EVENTIDE_RP_SYSTEM.Forms.Buttons.Create"),
-        type: "submit",
-        cssClass: "base-form__button base-form__button--primary",
-      },
-    ];
 
     return context;
   }

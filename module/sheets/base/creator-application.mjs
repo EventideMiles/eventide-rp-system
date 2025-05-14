@@ -128,7 +128,59 @@ export class CreatorApplication extends EventideSheetHelpers {
     context.targetArray = this.targetArray;
     context.selectedArray = this.selectedArray;
 
+    context.callouts = await this._prepareCallouts();
+
+    context.footerButtons = await this._prepareFooterButtons();
+
     return context;
+  }
+
+  async _prepareCallouts() {
+    context.callouts = [];
+    if (this.playerMode) {
+      context.callouts.push({
+        type: "information",
+        faIcon: "fas fa-info-circle",
+        text: game.i18n.format(
+          `EVENTIDE_RP_SYSTEM.Forms.Callouts.${this.calloutGroup}.PlayerMode`,
+          { count: this.selectedArray.length }
+        ),
+      });
+    } else {
+      if (this.targetArray.length === 0) {
+        context.callouts.push({
+          type: "information",
+          faIcon: "fas fa-info-circle",
+          text: game.i18n.format(
+            `EVENTIDE_RP_SYSTEM.Forms.Callouts.${this.calloutGroup}.NoTargets`
+          ),
+        });
+      } else {
+        context.callouts.push({
+          type: "information",
+          faIcon: "fas fa-info-circle",
+          text: game.i18n.format(
+            `EVENTIDE_RP_SYSTEM.Forms.Callouts.${this.calloutGroup}.WithTargets`,
+            { count: this.targetArray.length }
+          ),
+        });
+      }
+    }
+  }
+
+  async _prepareFooterButtons() {
+    return [
+      {
+        label:
+          this.playerMode || this.targetArray.length > 0
+            ? game.i18n.localize(
+                "EVENTIDE_RP_SYSTEM.Forms.Buttons.CreateAndApply"
+              )
+            : game.i18n.localize("EVENTIDE_RP_SYSTEM.Forms.Buttons.Create"),
+        type: "submit",
+        cssClass: "base-form__button base-form__button--primary",
+      },
+    ];
   }
 
   _onFirstRender() {
