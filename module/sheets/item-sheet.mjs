@@ -1,7 +1,6 @@
 import { prepareActiveEffectCategories } from "../helpers/effects.mjs";
 import { prepareCharacterEffects } from "../helpers/character-effects.mjs";
 import { EventideSheetHelpers } from "./base/eventide-sheet-helpers.mjs";
-import { cleanupColorPickers } from "../helpers/color-pickers.mjs";
 
 const { api, sheets } = foundry.applications;
 
@@ -109,7 +108,7 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
       erps.utils.cleanupNumberInputs(this.element);
 
       // Clean up color pickers
-      cleanupColorPickers(this.element);
+      erps.utils.cleanupColorPickers(this.element);
     }
 
     // Clean up private fields and references
