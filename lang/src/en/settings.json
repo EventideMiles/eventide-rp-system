@@ -96,6 +96,9 @@
     "ErrorOpeningFilePicker": "Error opening file picker",
     "ErrorSavingSoundSettings": "Error saving sound settings",
     "SoundResetToDefault": "Sound for {0} reset to default.",
-    "NoPlayerPermission": "Players do not have permission to change sound settings."
+    "NoPlayerPermission": "Players do not have permission to change sound settings.",
+
+    "TestingModeName": "Testing Mode",
+    "TestingModeHint": "Enable or disable testing mode console logging for debugging."
   }
 }

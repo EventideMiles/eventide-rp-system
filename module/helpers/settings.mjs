@@ -461,6 +461,18 @@ export const registerSettings = function () {
     });
   }
 
+  game.settings.register("eventide-rp-system", "testingMode", {
+    name: "SETTINGS.TestingModeName",
+    hint: "SETTINGS.TestingModeHint",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: false,
+    onChange: (value) => {
+      console.log(`Testing mode set to ${value}`);
+    },
+  });
+
   // Register the sound settings menu after all sound settings are registered
   Hooks.once("ready", () => {
     game.settings.registerMenu("eventide-rp-system", "soundSettings", {
