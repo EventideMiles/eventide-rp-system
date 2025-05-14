@@ -139,6 +139,7 @@ export class CommonFoundryTasks {
    * @param {boolean} [options.playerMode=false] - Whether to allow player access
    * @returns {string} Returns "gm" if the user is a GM, "player" if the user is a player and playerMode is true,
    *                   or "forbidden" if the user is a player and playerMode is false
+   * @note This function will throw an error if the user is a player and playerMode is false
    * @static
    */
   static permissionCheck({ playerMode = false } = {}) {
@@ -148,6 +149,19 @@ export class CommonFoundryTasks {
       game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.GMOnly")
     );
     return "forbidden";
+  }
+
+  /**
+   * Safely checks if testing mode is enabled in the system settings
+   * @returns {boolean} Whether testing mode is enabled
+   * @static
+   */
+  static isTestingMode() {
+    return typeof erps !== "undefined" &&
+      erps.settings &&
+      typeof erps.settings.getSetting === "function"
+      ? erps.settings.getSetting("testingMode")
+      : false;
   }
 }
 
@@ -169,4 +183,5 @@ export const commonTasks = {
   deleteMultipleUserFlags: CommonFoundryTasks.deleteMultipleUserFlags,
   permissionLevel: CommonFoundryTasks.permissionLevel,
   permissionCheck: CommonFoundryTasks.permissionCheck,
+  isTestingMode: CommonFoundryTasks.isTestingMode,
 };

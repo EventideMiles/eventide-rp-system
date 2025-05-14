@@ -42,6 +42,19 @@ export class GearTransfer extends EventideSheetHelpers {
   }
 
   /**
+   * Clean up number inputs before closing the application
+   * @param {Object} options - The options for closing
+   * @returns {Promise<void>}
+   * @override
+   */
+  async _preClose(options) {
+    if (this.element) {
+      erps.utils.cleanupNumberInputs(this.element);
+    }
+    await super._preClose(options);
+  }
+
+  /**
    * Get data for the template render
    * @returns {Object} Template data
    */

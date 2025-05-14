@@ -1,5 +1,4 @@
 import { EventideSheetHelpers } from "./base/eventide-sheet-helpers.mjs";
-import { erpsSoundManager } from "../helpers/sound-manager.mjs";
 
 /**
  * Application for managing damage to targeted tokens.
@@ -156,11 +155,27 @@ export class DamageTargets extends EventideSheetHelpers {
   }
 
   /**
+   * Clean up resources before closing the application
+   * @param {Object} options - The options for closing
+   * @returns {Promise<void>}
+   * @override
+   */
+  async _preClose(options) {
+    // Clear references to arrays and objects
+    this.targetArray = null;
+    this.selectedArray = null;
+    this.storageKeys = null;
+
+    await super._preClose(options);
+  }
+
+  /**
    * Handle form submission to apply damage to targets.
    * @param {Event} event - The form submission event
    * @param {HTMLFormElement} form - The form element
-   * @param {FormData} formData - The form data
-   * @private
+   * @param {FormData} formData - The processed form data
+   * @returns {Promise<void>}
+   * @protected
    */
   static async #onSubmit(event, form, formData) {
     const damageOptions = {

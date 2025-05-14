@@ -24,6 +24,9 @@ import { erpsMessageHandler } from "./helpers/system-messages.mjs";
 import { initColorPickersWithHex } from "./helpers/color-pickers.mjs";
 import { initNumberInputs } from "./helpers/number-inputs.mjs";
 import { initHandlebarsPartials } from "./helpers/handlebars-partials.mjs";
+import { cleanupNumberInputs } from "./helpers/number-inputs.mjs";
+import { cleanupColorPickers } from "./helpers/color-pickers.mjs";
+import { getSetting, setSetting } from "./helpers/settings.mjs";
 
 const { Actors, Items } = foundry.documents.collections;
 const { ActorSheet, ItemSheet } = foundry.appv1.sheets;
@@ -48,6 +51,8 @@ globalThis.erps = {
     rollItemMacro,
     initColorPickersWithHex,
     initNumberInputs,
+    cleanupNumberInputs,
+    cleanupColorPickers,
   },
   macros: {
     GearTransfer,
@@ -57,6 +62,10 @@ globalThis.erps = {
     ChangeTargetStatus,
     SelectAbilityRoll,
     EffectCreator,
+  },
+  settings: {
+    getSetting,
+    setSetting,
   },
   messages: erpsMessageHandler,
   models,

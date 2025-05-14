@@ -75,6 +75,19 @@ export class ChangeTargetStatus extends EventideSheetHelpers {
   }
 
   /**
+   * Clean up number inputs before closing the application
+   * @param {Object} options - The options for closing
+   * @returns {Promise<void>}
+   * @override
+   */
+  async _preClose(options) {
+    if (this.element) {
+      erps.utils.cleanupNumberInputs(this.element);
+    }
+    await super._preClose(options);
+  }
+
+  /**
    * Prepares the main context data for the changing status.
    * @param {Object} options - Form options
    * @returns {Promise<Object>} The prepared context containing target and status information

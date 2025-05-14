@@ -5,8 +5,6 @@ import { EventideSheetHelpers } from "./eventide-sheet-helpers.mjs";
  * @extends {HandlebarsApplicationMixin(ApplicationV2)}
  */
 export class CreatorApplication extends EventideSheetHelpers {
-  // Set to true to enable debug logging, false for production
-  static TESTING_MODE = false;
   /**
    * Default options for the application
    * Note: The actions object maps action names to static methods, but Foundry will call them
@@ -59,6 +57,7 @@ export class CreatorApplication extends EventideSheetHelpers {
     keyType = "effect",
   } = {}) {
     super();
+    this.testingMode = erps.settings.getSetting("testingMode");
     this.number = Math.floor(number);
     this.keyType = keyType;
     this.storageKeys = [
@@ -216,14 +215,6 @@ export class CreatorApplication extends EventideSheetHelpers {
     }
   }
 
-  _onChangeForm(formConfig, event) {
-    if (event.target.name === "img") {
-      event.target.parentNode.querySelector(`img[name="displayImage"]`).src =
-        event.target.value;
-    }
-    super._onChangeForm(formConfig, event);
-  }
-
   /**
    * Handle adding a new ability to the form
    * Note: Although this is a static method, Foundry calls it with the application instance as 'this'
@@ -240,8 +231,7 @@ export class CreatorApplication extends EventideSheetHelpers {
       value: 0,
     };
     app.addedAbilities.push(ability);
-    if (CreatorApplication.TESTING_MODE)
-      console.log("Added ability:", app.addedAbilities);
+    if (app.testingMode) console.log("Added ability:", app.addedAbilities);
 
     const oldPosition = app.position.height;
 
@@ -268,7 +258,7 @@ export class CreatorApplication extends EventideSheetHelpers {
     const oldPosition = app.position.height;
     const index = event.target.dataset.index;
     app.addedAbilities.splice(index, 1);
-    if (CreatorApplication.TESTING_MODE) {
+    if (app.testingMode) {
       console.log(
         "Removed ability at index",
         index,
@@ -289,6 +279,11 @@ export class CreatorApplication extends EventideSheetHelpers {
   async _onChangeForm(formConfig, event) {
     const form = event.target.form;
 
+    if (event.target.name === "img") {
+      event.target.parentNode.querySelector(`img[name="displayImage"]`).src =
+        event.target.value;
+    }
+
     if (event.target.name.includes("addedAbilities")) {
       const index = event.target.dataset.index;
 
@@ -302,6 +297,29 @@ export class CreatorApplication extends EventideSheetHelpers {
       this.addedAbilities[index].value = updateData[2].value;
     }
     await super._onChangeForm(formConfig, event);
+  }
+
+  /**
+   * Clean up resources before the application is closed
+   * @param {Object} options - The options for closing
+   * @returns {Promise<void>}
+   * @override
+   */
+  async _preClose(options) {
+    // Clear any stored data that's no longer needed
+    this.addedAbilities = null;
+    this.targetArray = null;
+    this.selectedArray = null;
+    
+    // Additional arrays and objects that should be nulled
+    this.abilities = null;
+    this.hiddenAbilities = null;
+    this.allAbilities = null;
+    this.storedData = null;
+    this.calloutGroup = null;
+    
+    // Call the parent class's _preClose method which will handle number input cleanup
+    await super._preClose(options);
   }
 
   /**
@@ -325,7 +343,7 @@ export class CreatorApplication extends EventideSheetHelpers {
    * @protected
    */
   static async _onSubmit(event, form, formData) {
-    if (CreatorApplication.TESTING_MODE) {
+    if (this.testingMode) {
       console.log("FormData entries:");
       for (const [key, value] of formData.entries()) {
         console.log(`${key}: ${value}`);
@@ -477,7 +495,7 @@ export class CreatorApplication extends EventideSheetHelpers {
       ],
     };
 
-    if (CreatorApplication.TESTING_MODE) console.log(itemData);
+    if (this.testingMode) console.log(itemData);
 
     // Store form values in local storage
     CreatorApplication._store(this, {
@@ -646,8 +664,7 @@ export class CreatorApplication extends EventideSheetHelpers {
   }
 
   static _store(instance, formValues) {
-    if (CreatorApplication.TESTING_MODE)
-      console.log("Storing values:", formValues);
+    if (instance.testingMode) console.log("Storing values:", formValues);
 
     let storageData = {
       [`${instance.keyType}_${instance.number}_img`]: formValues.img,
@@ -688,7 +705,7 @@ export class CreatorApplication extends EventideSheetHelpers {
 
     const inputs = form.querySelectorAll("input, select, textarea");
 
-    if (CreatorApplication.TESTING_MODE)
+    if (app.testingMode)
       console.log("Saving form data from", inputs.length, "inputs");
 
     inputs.forEach((input) => {
@@ -698,7 +715,7 @@ export class CreatorApplication extends EventideSheetHelpers {
         } else {
           savedData[input.name] = input.value;
         }
-        if (CreatorApplication.TESTING_MODE)
+        if (app.testingMode)
           console.log(`Saved ${input.name}: ${savedData[input.name]}`);
       }
     });
@@ -723,7 +740,7 @@ export class CreatorApplication extends EventideSheetHelpers {
         : app.element.querySelector("form");
     if (!form) return;
 
-    if (CreatorApplication.TESTING_MODE) {
+    if (app.testingMode) {
       console.log(
         "Restoring form data with",
         Object.keys(savedData).length,
@@ -753,10 +770,9 @@ export class CreatorApplication extends EventideSheetHelpers {
         } else {
           input.value = value;
         }
-        if (CreatorApplication.TESTING_MODE)
-          console.log(`Restored ${name}: ${value}`);
+        if (app.testingMode) console.log(`Restored ${name}: ${value}`);
       } else {
-        if (CreatorApplication.TESTING_MODE)
+        if (app.testingMode)
           console.log(`Could not find input with name: ${name}`);
       }
     });

@@ -11,6 +11,23 @@ export class EventideSheetHelpers extends HandlebarsApplicationMixin(
     super();
   }
 
+  /**
+   * Clean up resources before closing the application
+   * @param {Object} options - The options for closing
+   * @returns {Promise<void>}
+   * @override
+   */
+  async _preClose(options) {
+    if (this.element) {
+      // Clean up number inputs
+      erps.utils.cleanupNumberInputs(this.element);
+
+      // Clean up color pickers
+      erps.utils.cleanupColorPickers(this.element);
+    }
+    await super._preClose(options);
+  }
+
   async _prepareContext(context, options) {
     context = (await super._prepareContext(context, options)) || {};
     context.config = CONFIG.EVENTIDE_RP_SYSTEM;

@@ -1,6 +1,7 @@
 import { prepareActiveEffectCategories } from "../helpers/effects.mjs";
 import { prepareCharacterEffects } from "../helpers/character-effects.mjs";
 import { EventideSheetHelpers } from "./base/eventide-sheet-helpers.mjs";
+import { cleanupColorPickers } from "../helpers/color-pickers.mjs";
 
 const { api, sheets } = foundry.applications;
 
@@ -95,6 +96,27 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
         "systems/eventide-rp-system/templates/item/character-effects.hbs",
     },
   };
+
+  /**
+   * Clean up resources before closing the application
+   * @param {Object} options - The options for closing
+   * @returns {Promise<void>}
+   * @override
+   */
+  async _preClose(options) {
+    if (this.element) {
+      // Clean up number inputs
+      erps.utils.cleanupNumberInputs(this.element);
+
+      // Clean up color pickers
+      cleanupColorPickers(this.element);
+    }
+
+    // Clean up private fields and references
+    this.#dragDrop = null;
+
+    await super._preClose(options);
+  }
 
   /** @override */
   _configureRenderOptions(options) {

@@ -1,4 +1,5 @@
 import { CreatorApplication } from "./base/creator-application.mjs";
+
 /**
  * A form application for creating and managing status effects and features.
  * @extends {CreatorApplication}
