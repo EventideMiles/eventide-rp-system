@@ -136,36 +136,45 @@ export class CreatorApplication extends EventideSheetHelpers {
   }
 
   async _prepareCallouts() {
-    context.callouts = [];
+    const callouts = [];
+
     if (this.playerMode) {
-      context.callouts.push({
+      callouts.push({
         type: "information",
         faIcon: "fas fa-info-circle",
         text: game.i18n.format(
           `EVENTIDE_RP_SYSTEM.Forms.Callouts.${this.calloutGroup}.PlayerMode`,
-          { count: this.selectedArray.length }
+          {
+            count: this.selectedArray.length,
+          }
         ),
       });
     } else {
       if (this.targetArray.length === 0) {
-        context.callouts.push({
+        callouts.push({
           type: "information",
           faIcon: "fas fa-info-circle",
           text: game.i18n.format(
-            `EVENTIDE_RP_SYSTEM.Forms.Callouts.${this.calloutGroup}.NoTargets`
+            `EVENTIDE_RP_SYSTEM.Forms.Callouts.${this.calloutGroup}.NoTargets`,
+            {
+              count: this.selectedArray.length,
+            }
           ),
         });
       } else {
-        context.callouts.push({
+        callouts.push({
           type: "information",
           faIcon: "fas fa-info-circle",
           text: game.i18n.format(
             `EVENTIDE_RP_SYSTEM.Forms.Callouts.${this.calloutGroup}.WithTargets`,
-            { count: this.targetArray.length }
+            {
+              count: this.targetArray.length,
+            }
           ),
         });
       }
     }
+    return callouts;
   }
 
   async _prepareFooterButtons() {
