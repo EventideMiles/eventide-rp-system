@@ -40,7 +40,7 @@ export class RestoreTarget extends EventideSheetHelpers {
   }
 
   /**
-   * Prepare the main context data for the form.
+   * Prepare the main context data for restoring target.
    * @param {Object} options - Form options
    * @returns {Promise<Object>} The prepared context containing target and status information
    * @throws {Error} If no target is selected or multiple targets are selected
@@ -102,13 +102,15 @@ export class RestoreTarget extends EventideSheetHelpers {
   static async #onSubmit(event, form, formData) {
     const actor = this.targetTokens[0].actor;
 
-    const selectedStatuses = this.statusEffects?.filter(
-      (status) => form[status?.id]?.checked
-    );
+    const selectedStatuses = this.statusEffects?.filter((status) => {
+      const value = formData.get(status.id);
+      return value === "on" || value === "true" || value === true;
+    });
+
     const restoreOptions = {
-      resolve: form.restoreResolve?.checked,
-      power: form.restorePower?.checked,
-      all: form.all?.checked,
+      resolve: formData.get("restoreResolve"),
+      power: formData.get("restorePower"),
+      all: formData.get("all"),
       statuses: selectedStatuses,
     };
 

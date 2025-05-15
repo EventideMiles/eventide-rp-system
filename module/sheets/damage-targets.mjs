@@ -1,5 +1,4 @@
 import { EventideSheetHelpers } from "./base/eventide-sheet-helpers.mjs";
-import { erpsSoundManager } from "../helpers/sound-manager.mjs";
 
 /**
  * Application for managing damage to targeted tokens.
@@ -54,7 +53,7 @@ export class DamageTargets extends EventideSheetHelpers {
   }
 
   /**
-   * Prepare the main context data for the form.
+   * Prepare the main context data for damaging targets.
    * @param {Object} options - Form options
    * @returns {Promise<Object>} The prepared context
    */
@@ -76,7 +75,9 @@ export class DamageTargets extends EventideSheetHelpers {
       storageKeys: this.storageKeys,
     };
 
-    context.storedData = await erps.utils.retrieveLocal(context.storageKeys);
+    context.storedData = await erps.utils.retrieveMultipleUserFlags(
+      context.storageKeys
+    );
     context.targetArray = await erps.utils.getTargetArray();
     context.selectedArray = await erps.utils.getSelectedArray();
 
@@ -154,19 +155,35 @@ export class DamageTargets extends EventideSheetHelpers {
   }
 
   /**
+   * Clean up resources before closing the application
+   * @param {Object} options - The options for closing
+   * @returns {Promise<void>}
+   * @override
+   */
+  async _preClose(options) {
+    // Clear references to arrays and objects
+    this.targetArray = null;
+    this.selectedArray = null;
+    this.storageKeys = null;
+
+    await super._preClose(options);
+  }
+
+  /**
    * Handle form submission to apply damage to targets.
    * @param {Event} event - The form submission event
    * @param {HTMLFormElement} form - The form element
-   * @param {FormData} formData - The form data
-   * @private
+   * @param {FormData} formData - The processed form data
+   * @returns {Promise<void>}
+   * @protected
    */
   static async #onSubmit(event, form, formData) {
     const damageOptions = {
-      label: form.label.value || "Damage",
-      formula: form.formula.value || "1",
-      description: form.description.value || "",
-      type: form.isHeal.checked ? "heal" : "damage",
-      soundKey: form.isHeal.checked ? "healing" : "damage",
+      label: formData.get("label") || "Damage",
+      formula: formData.get("formula") || "1",
+      description: formData.get("description") || "",
+      type: formData.get("isHeal") ? "heal" : "damage",
+      soundKey: formData.get("isHeal") ? "healing" : "damage",
     };
     const originalFormula = damageOptions.formula;
     if (
@@ -223,12 +240,13 @@ export class DamageTargets extends EventideSheetHelpers {
    * @private
    */
   static async #storeData(instance, form) {
+    const formData = new FormDataExtended(form);
     const storageObject = {
-      [instance.storageKeys[0]]: form.label.value,
-      [instance.storageKeys[1]]: form.description.value,
-      [instance.storageKeys[2]]: form.formula.value,
-      [instance.storageKeys[3]]: form.isHeal.checked,
+      [instance.storageKeys[0]]: formData.get("label"),
+      [instance.storageKeys[1]]: formData.get("description"),
+      [instance.storageKeys[2]]: formData.get("formula"),
+      [instance.storageKeys[3]]: formData.get("isHeal"),
     };
-    await erps.utils.storeLocal(storageObject);
+    await erps.utils.storeMultipleUserFlags(storageObject);
   }
 }

@@ -2,6 +2,7 @@
  * Helper functions for enhanced number inputs
  * @module helpers/number-inputs
  */
+import { CommonFoundryTasks } from "./common-foundry-tasks.mjs";
 
 // Track initialization to prevent duplicate handlers
 let isInitialized = false;
@@ -31,7 +32,9 @@ export function initNumberInputs() {
     debounce(updateNumberInputResponsiveness, 250)
   );
 
-  console.log("Number inputs initialized with responsive behavior");
+  if (CommonFoundryTasks.isTestingMode()) {
+    console.log("Number inputs initialized with responsive behavior");
+  }
 }
 
 /**
@@ -46,7 +49,9 @@ export function enhanceExistingNumberInputs() {
     // If this input isn't in a wrapper but has the base-form__number-input class,
     // we need to wrap it with increment/decrement buttons
     if (!wrapper && input.classList.contains("base-form__number-input")) {
-      console.log("Found unwrapped number input, wrapping it");
+      if (CommonFoundryTasks.isTestingMode()) {
+        console.log("Found unwrapped number input, wrapping it");
+      }
       wrapNumberInput(input);
     }
   });
@@ -190,5 +195,52 @@ Hooks.on("renderEventideRpSystemItemSheet", (app, html) => {
 // Catch any other application renders
 Hooks.on("renderApplicationV2", () => {
   updateNumberInputResponsiveness();
-  console.log("Number inputs updated");
+  if (CommonFoundryTasks.isTestingMode()) {
+    console.log("Number inputs updated");
+  }
 });
+
+/**
+ * Clean up number input enhancements for a specific application element
+ * This should be called in the _preClose method of applications that use enhanced number inputs
+ * @param {HTMLElement} element - The application's element (typically this.element)
+ */
+export function cleanupNumberInputs(element) {
+  if (!element) {
+    if (CommonFoundryTasks.isTestingMode()) {
+      console.log("Number Inputs | No element provided for cleanup");
+    }
+    return;
+  }
+
+  if (CommonFoundryTasks.isTestingMode()) {
+    console.log("Number Inputs | Cleaning up number inputs", element);
+  }
+
+  // Remove any tab click listeners that might have been added for number inputs
+  const tabsContainer = element.querySelector(".tabs");
+  if (tabsContainer) {
+    const clone = tabsContainer.cloneNode(true);
+    tabsContainer.parentNode.replaceChild(clone, tabsContainer);
+  }
+
+  // Clean up any number input wrappers
+  const numberWrappers = element.querySelectorAll(
+    ".base-form__number-input-wrapper"
+  );
+  
+  if (CommonFoundryTasks.isTestingMode()) {
+    console.log(`Number Inputs | Found ${numberWrappers.length} number inputs to clean up`);
+  }
+  
+  numberWrappers.forEach((wrapper) => {
+    // Remove event listeners by cloning and replacing
+    const input = wrapper.querySelector('input[type="number"]');
+    if (input) {
+      const newInput = input.cloneNode(true);
+      // Preserve the current value
+      newInput.value = input.value;
+      input.parentNode.replaceChild(newInput, input);
+    }
+  });
+}

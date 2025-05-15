@@ -96,6 +96,27 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
     },
   };
 
+  /**
+   * Clean up resources before closing the application
+   * @param {Object} options - The options for closing
+   * @returns {Promise<void>}
+   * @override
+   */
+  async _preClose(options) {
+    if (this.element) {
+      // Clean up number inputs
+      erps.utils.cleanupNumberInputs(this.element);
+
+      // Clean up color pickers
+      erps.utils.cleanupColorPickers(this.element);
+    }
+
+    // Clean up private fields and references
+    this.#dragDrop = null;
+
+    await super._preClose(options);
+  }
+
   /** @override */
   _configureRenderOptions(options) {
     super._configureRenderOptions(options);

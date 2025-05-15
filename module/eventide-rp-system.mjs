@@ -19,17 +19,14 @@ import { initializeCombatHooks } from "./helpers/combat.mjs";
 import { initChatListeners } from "./helpers/chat-listeners.mjs";
 // Import DataModel classes
 import * as models from "./data/_module.mjs";
-import {
-  getSelectedArray,
-  getTargetArray,
-  retrieveLocal,
-  storeLocal,
-  permissionCheck,
-} from "./helpers/common-foundry-tasks.mjs";
+import { commonTasks } from "./helpers/common-foundry-tasks.mjs";
 import { erpsMessageHandler } from "./helpers/system-messages.mjs";
 import { initColorPickersWithHex } from "./helpers/color-pickers.mjs";
 import { initNumberInputs } from "./helpers/number-inputs.mjs";
 import { initHandlebarsPartials } from "./helpers/handlebars-partials.mjs";
+import { cleanupNumberInputs } from "./helpers/number-inputs.mjs";
+import { cleanupColorPickers } from "./helpers/color-pickers.mjs";
+import { getSetting, setSetting } from "./helpers/settings.mjs";
 
 const { Actors, Items } = foundry.documents.collections;
 const { ActorSheet, ItemSheet } = foundry.appv1.sheets;
@@ -50,14 +47,12 @@ globalThis.erps = {
     EventideRpSystemItemSheet,
   },
   utils: {
+    ...commonTasks,
     rollItemMacro,
-    getTargetArray,
-    getSelectedArray,
-    storeLocal,
-    retrieveLocal,
-    permissionCheck,
     initColorPickersWithHex,
     initNumberInputs,
+    cleanupNumberInputs,
+    cleanupColorPickers,
   },
   macros: {
     GearTransfer,
@@ -67,6 +62,10 @@ globalThis.erps = {
     ChangeTargetStatus,
     SelectAbilityRoll,
     EffectCreator,
+  },
+  settings: {
+    getSetting,
+    setSetting,
   },
   messages: erpsMessageHandler,
   models,

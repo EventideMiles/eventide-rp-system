@@ -38,56 +38,12 @@ export class CombatPowerPopup extends EventidePopupHelpers {
 
   constructor({ item }) {
     super({ item });
+    this.type = "power";
   }
 
   async _prepareContext(options) {
     const context = await super._prepareContext(options);
     context.cssClass = CombatPowerPopup.DEFAULT_OPTIONS.classes.join(" ");
-    context.problems = await this.checkEligibility();
-
-    context.callouts = [];
-
-    if (context.problems.targeting) {
-      context.callouts.push({
-        type: "warning",
-        faIcon: "fas fa-exclamation-triangle",
-        text: game.i18n.localize(
-          "EVENTIDE_RP_SYSTEM.Forms.Callouts.Power.TargetPower"
-        ),
-      });
-    }
-
-    if (context.problems.power) {
-      context.callouts.push({
-        type: "warning",
-        faIcon: "fas fa-exclamation-triangle",
-        text: game.i18n.format(
-          "EVENTIDE_RP_SYSTEM.Forms.Callouts.Power.InsufficientPower",
-          {
-            cost: context.item.system.cost,
-            actorPower: context.item.actor.system.power.value,
-          }
-        ),
-      });
-    }
-
-    context.footerButtons = [
-      context.problems.targeting || context.problems.power
-        ? null
-        : {
-            label: game.i18n.localize(
-              "EVENTIDE_RP_SYSTEM.Forms.Buttons.UsePower"
-            ),
-            type: "submit",
-            cssClass: "popup-form__button popup-form__button--primary",
-          },
-      {
-        label: game.i18n.localize("EVENTIDE_RP_SYSTEM.Forms.Buttons.Close"),
-        type: "button",
-        cssClass: "popup-form__button",
-        action: "close",
-      },
-    ];
 
     return context;
   }
@@ -101,7 +57,7 @@ export class CombatPowerPopup extends EventidePopupHelpers {
   static async #onSubmit(event, form, formData) {
     const problems = await this.checkEligibility();
 
-    if (problems.targeting || problems.power)
+    if (Object.values(problems).some((value) => value))
       return ui.notifications.error(
         game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.CombatPowerError")
       );

@@ -1,12 +1,12 @@
 import { EventideSheetHelpers } from "./eventide-sheet-helpers.mjs";
 
 /**
- * Base class for creator applications that handle item creation
- * @extends {HandlebarsApplicationMixin(ApplicationV2)}
+ * Base class for creator applications that handle item creation (effects, gear, etc.)
+ * This class provides common functionality for creating and managing items in the Eventide RP System.
+ * It handles ability modifications, character effects, and user preferences storage.
+ * @extends {EventideSheetHelpers}
  */
 export class CreatorApplication extends EventideSheetHelpers {
-  // Set to true to enable debug logging, false for production
-  static TESTING_MODE = false;
   /**
    * Default options for the application
    * Note: The actions object maps action names to static methods, but Foundry will call them
@@ -59,6 +59,7 @@ export class CreatorApplication extends EventideSheetHelpers {
     keyType = "effect",
   } = {}) {
     super();
+    this.testingMode = erps.settings.getSetting("testingMode");
     this.number = Math.floor(number);
     this.keyType = keyType;
     this.storageKeys = [
@@ -115,7 +116,9 @@ export class CreatorApplication extends EventideSheetHelpers {
     });
     this.targetArray = await erps.utils.getTargetArray();
     this.selectedArray = await erps.utils.getSelectedArray();
-    this.storedData = await erps.utils.retrieveLocal(this.storageKeys);
+    this.storedData = await erps.utils.retrieveMultipleUserFlags(
+      this.storageKeys
+    );
 
     context.abilities = this.abilities;
     context.allAbilities = this.allAbilities;
@@ -126,9 +129,88 @@ export class CreatorApplication extends EventideSheetHelpers {
     context.targetArray = this.targetArray;
     context.selectedArray = this.selectedArray;
 
+    context.callouts = await this._prepareCallouts();
+
+    context.footerButtons = await this._prepareFooterButtons();
+
     return context;
   }
 
+  /**
+   * Prepare callout messages for the application based on player mode and target selection
+   * These callouts provide contextual information to the user about the current state
+   * @returns {Promise<Array>} Array of callout objects with type, icon, and text properties
+   * @protected
+   */
+  async _prepareCallouts() {
+    const callouts = [];
+
+    if (this.playerMode) {
+      callouts.push({
+        type: "information",
+        faIcon: "fas fa-info-circle",
+        text: game.i18n.format(
+          `EVENTIDE_RP_SYSTEM.Forms.Callouts.${this.calloutGroup}.PlayerMode`,
+          {
+            count: this.selectedArray.length,
+          }
+        ),
+      });
+    } else {
+      if (this.targetArray.length === 0) {
+        callouts.push({
+          type: "information",
+          faIcon: "fas fa-info-circle",
+          text: game.i18n.format(
+            `EVENTIDE_RP_SYSTEM.Forms.Callouts.${this.calloutGroup}.NoTargets`,
+            {
+              count: this.selectedArray.length,
+            }
+          ),
+        });
+      } else {
+        callouts.push({
+          type: "information",
+          faIcon: "fas fa-info-circle",
+          text: game.i18n.format(
+            `EVENTIDE_RP_SYSTEM.Forms.Callouts.${this.calloutGroup}.WithTargets`,
+            {
+              count: this.targetArray.length,
+            }
+          ),
+        });
+      }
+    }
+    return callouts;
+  }
+
+  /**
+   * Prepare the footer buttons for the application form
+   * Dynamically changes the button label based on player mode and target selection
+   * @returns {Promise<Array>} Array of button configuration objects
+   * @protected
+   */
+  async _prepareFooterButtons() {
+    return [
+      {
+        label:
+          this.playerMode || this.targetArray.length > 0
+            ? game.i18n.localize(
+                "EVENTIDE_RP_SYSTEM.Forms.Buttons.CreateAndApply"
+              )
+            : game.i18n.localize("EVENTIDE_RP_SYSTEM.Forms.Buttons.Create"),
+        type: "submit",
+        cssClass: "base-form__button base-form__button--primary",
+      },
+    ];
+  }
+
+  /**
+   * Handle the first render of the application
+   * Shows notifications based on target selection and user permissions
+   * @override
+   * @protected
+   */
   _onFirstRender() {
     if (
       this.targetArray.length === 0 &&
@@ -153,14 +235,6 @@ export class CreatorApplication extends EventideSheetHelpers {
     }
   }
 
-  _onChangeForm(formConfig, event) {
-    if (event.target.name === "img") {
-      event.target.parentNode.querySelector(`img[name="displayImage"]`).src =
-        event.target.value;
-    }
-    super._onChangeForm(formConfig, event);
-  }
-
   /**
    * Handle adding a new ability to the form
    * Note: Although this is a static method, Foundry calls it with the application instance as 'this'
@@ -177,8 +251,7 @@ export class CreatorApplication extends EventideSheetHelpers {
       value: 0,
     };
     app.addedAbilities.push(ability);
-    if (CreatorApplication.TESTING_MODE)
-      console.log("Added ability:", app.addedAbilities);
+    if (app.testingMode) console.log("Added ability:", app.addedAbilities);
 
     const oldPosition = app.position.height;
 
@@ -205,7 +278,7 @@ export class CreatorApplication extends EventideSheetHelpers {
     const oldPosition = app.position.height;
     const index = event.target.dataset.index;
     app.addedAbilities.splice(index, 1);
-    if (CreatorApplication.TESTING_MODE) {
+    if (app.testingMode) {
       console.log(
         "Removed ability at index",
         index,
@@ -223,8 +296,22 @@ export class CreatorApplication extends EventideSheetHelpers {
     }
   }
 
+  /**
+   * Handle form field changes, updating the internal state and UI
+   * Handles special cases like image updates and ability modifications
+   * @param {Object} formConfig - The form configuration
+   * @param {Event} event - The change event
+   * @returns {Promise<void>}
+   * @override
+   * @protected
+   */
   async _onChangeForm(formConfig, event) {
     const form = event.target.form;
+
+    if (event.target.name === "img") {
+      event.target.parentNode.querySelector(`img[name="displayImage"]`).src =
+        event.target.value;
+    }
 
     if (event.target.name.includes("addedAbilities")) {
       const index = event.target.dataset.index;
@@ -239,6 +326,29 @@ export class CreatorApplication extends EventideSheetHelpers {
       this.addedAbilities[index].value = updateData[2].value;
     }
     await super._onChangeForm(formConfig, event);
+  }
+
+  /**
+   * Clean up resources before the application is closed
+   * @param {Object} options - The options for closing
+   * @returns {Promise<void>}
+   * @override
+   */
+  async _preClose(options) {
+    // Clear any stored data that's no longer needed
+    this.addedAbilities = null;
+    this.targetArray = null;
+    this.selectedArray = null;
+
+    // Additional arrays and objects that should be nulled
+    this.abilities = null;
+    this.hiddenAbilities = null;
+    this.allAbilities = null;
+    this.storedData = null;
+    this.calloutGroup = null;
+
+    // Call the parent class's _preClose method which will handle number input cleanup
+    await super._preClose(options);
   }
 
   /**
@@ -262,7 +372,7 @@ export class CreatorApplication extends EventideSheetHelpers {
    * @protected
    */
   static async _onSubmit(event, form, formData) {
-    if (CreatorApplication.TESTING_MODE) {
+    if (this.testingMode) {
       console.log("FormData entries:");
       for (const [key, value] of formData.entries()) {
         console.log(`${key}: ${value}`);
@@ -414,7 +524,7 @@ export class CreatorApplication extends EventideSheetHelpers {
       ],
     };
 
-    if (CreatorApplication.TESTING_MODE) console.log(itemData);
+    if (this.testingMode) console.log(itemData);
 
     // Store form values in local storage
     CreatorApplication._store(this, {
@@ -512,23 +622,13 @@ export class CreatorApplication extends EventideSheetHelpers {
   }
 
   /**
-   * Store form values in local storage
-   * @param {CreatorApplication} instance - The application instance
-   * @param {Object} formValues - The form values to store
-   * @param {string} formValues.img - The image path
-   * @param {string} formValues.bgColor - The background color
-   * @param {string} formValues.textColor - The text color
-   * @param {string} formValues.iconTint - The icon tint color
-   * @param {boolean} formValues.displayOnToken - Whether to display on token
-   * @param {string} [formValues.type] - The effect type (only for effects)
-   * @private
-   */
-  /**
    * Validate form data before submission
+   * Checks required fields and validates numeric inputs for gear items
+   * Shows appropriate error notifications to the user when validation fails
    * @param {FormData} formData - The form data to validate
    * @param {CreatorApplication} instance - The application instance
    * @returns {boolean} Whether the form data is valid
-   * @private
+   * @protected
    */
   static _validateFormData(formData, instance) {
     // Validate name (required)
@@ -582,9 +682,14 @@ export class CreatorApplication extends EventideSheetHelpers {
     return true;
   }
 
+  /**
+   * Store form values in user flags for persistence between sessions
+   * @param {CreatorApplication} instance - The application instance
+   * @param {Object} formValues - The form values to store
+   * @protected
+   */
   static _store(instance, formValues) {
-    if (CreatorApplication.TESTING_MODE)
-      console.log("Storing values:", formValues);
+    if (instance.testingMode) console.log("Storing values:", formValues);
 
     let storageData = {
       [`${instance.keyType}_${instance.number}_img`]: formValues.img,
@@ -601,7 +706,7 @@ export class CreatorApplication extends EventideSheetHelpers {
         formValues.type;
     }
 
-    erps.utils.storeLocal(storageData);
+    erps.utils.storeMultipleUserFlags(storageData);
   }
 
   /**
@@ -609,7 +714,7 @@ export class CreatorApplication extends EventideSheetHelpers {
    * Note: This excludes addedAbilities fields which are handled separately
    * @param {CreatorApplication} app - The application instance
    * @returns {Object} The saved form data
-   * @private
+   * @protected
    */
   static _saveFormData(app) {
     if (!app || !app.element) return {};
@@ -625,7 +730,7 @@ export class CreatorApplication extends EventideSheetHelpers {
 
     const inputs = form.querySelectorAll("input, select, textarea");
 
-    if (CreatorApplication.TESTING_MODE)
+    if (app.testingMode)
       console.log("Saving form data from", inputs.length, "inputs");
 
     inputs.forEach((input) => {
@@ -635,7 +740,7 @@ export class CreatorApplication extends EventideSheetHelpers {
         } else {
           savedData[input.name] = input.value;
         }
-        if (CreatorApplication.TESTING_MODE)
+        if (app.testingMode)
           console.log(`Saved ${input.name}: ${savedData[input.name]}`);
       }
     });
@@ -648,7 +753,7 @@ export class CreatorApplication extends EventideSheetHelpers {
    * Handles special cases like checkboxes and color inputs
    * @param {CreatorApplication} app - The application instance
    * @param {Object} savedData - The saved form data
-   * @private
+   * @protected
    */
   static _restoreFormData(app, savedData) {
     if (!app || !app.element || !savedData) return;
@@ -660,7 +765,7 @@ export class CreatorApplication extends EventideSheetHelpers {
         : app.element.querySelector("form");
     if (!form) return;
 
-    if (CreatorApplication.TESTING_MODE) {
+    if (app.testingMode) {
       console.log(
         "Restoring form data with",
         Object.keys(savedData).length,
@@ -690,10 +795,9 @@ export class CreatorApplication extends EventideSheetHelpers {
         } else {
           input.value = value;
         }
-        if (CreatorApplication.TESTING_MODE)
-          console.log(`Restored ${name}: ${value}`);
+        if (app.testingMode) console.log(`Restored ${name}: ${value}`);
       } else {
-        if (CreatorApplication.TESTING_MODE)
+        if (app.testingMode)
           console.log(`Could not find input with name: ${name}`);
       }
     });

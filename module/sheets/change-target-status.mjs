@@ -75,7 +75,20 @@ export class ChangeTargetStatus extends EventideSheetHelpers {
   }
 
   /**
-   * Prepares the main context data for the form.
+   * Clean up number inputs before closing the application
+   * @param {Object} options - The options for closing
+   * @returns {Promise<void>}
+   * @override
+   */
+  async _preClose(options) {
+    if (this.element) {
+      erps.utils.cleanupNumberInputs(this.element);
+    }
+    await super._preClose(options);
+  }
+
+  /**
+   * Prepares the main context data for the changing status.
    * @param {Object} options - Form options
    * @returns {Promise<Object>} The prepared context containing target and status information
    * @throws {Error} If no target is selected or multiple targets are selected
@@ -122,7 +135,9 @@ export class ChangeTargetStatus extends EventideSheetHelpers {
 
     context.storageKeys = ChangeTargetStatus.storageKeys;
 
-    context.storedData = await erps.utils.retrieveLocal(context.storageKeys);
+    context.storedData = await erps.utils.retrieveMultipleUserFlags(
+      context.storageKeys
+    );
     context.callouts = [
       {
         type: "information",
@@ -163,7 +178,8 @@ export class ChangeTargetStatus extends EventideSheetHelpers {
    * @private
    */
   async _store() {
-    const statusId = this.form.statusSelector.value;
+    const formData = new foundry.applications.ux.FormDataExtended(this.form);
+    const statusId = formData.get("statusSelector");
 
     if (!statusId) {
       ui.notifications.error(
@@ -171,14 +187,14 @@ export class ChangeTargetStatus extends EventideSheetHelpers {
       );
       return;
     }
-    const adjustmentChange = this.form.adjustmentChange.value;
-    const overrideChange = this.form.overrideChange.value;
-    const advantageChange = this.form.advantageChange.value;
-    const disadvantageChange = this.form.disadvantageChange.value;
-    const adjustmentMode = this.form.adjustmentMode.value;
-    const overrideMode = this.form.overrideMode.value;
-    const advantageMode = this.form.advantageMode.value;
-    const disadvantageMode = this.form.disadvantageMode.value;
+    const adjustmentChange = formData.get("adjustmentChange");
+    const overrideChange = formData.get("overrideChange");
+    const advantageChange = formData.get("advantageChange");
+    const disadvantageChange = formData.get("disadvantageChange");
+    const adjustmentMode = formData.get("adjustmentMode");
+    const overrideMode = formData.get("overrideMode");
+    const advantageMode = formData.get("advantageMode");
+    const disadvantageMode = formData.get("disadvantageMode");
 
     const storageObject = {
       changeTargetStatus_statusSelector: statusId,
@@ -192,7 +208,7 @@ export class ChangeTargetStatus extends EventideSheetHelpers {
       changeTargetStatus_disadvantageMode: disadvantageMode,
     };
 
-    await erps.utils.storeLocal(storageObject);
+    await erps.utils.storeMultipleUserFlags(storageObject);
 
     ui.notifications.info(
       game.i18n.format("EVENTIDE_RP_SYSTEM.Info.Stored", {
@@ -364,23 +380,24 @@ export class ChangeTargetStatus extends EventideSheetHelpers {
    * @private
    */
   static async _onSubmit(event, form, formData) {
+    console.log(formData);
     const inputs = {
-      statusSelector: form.statusSelector.value,
+      statusSelector: formData.get("statusSelector"),
       adjustment: {
-        change: form.adjustmentChange.value,
-        mode: form.adjustmentMode.value,
+        change: formData.get("adjustmentChange"),
+        mode: formData.get("adjustmentMode"),
       },
       override: {
-        change: form.overrideChange.value,
-        mode: form.overrideMode.value,
+        change: formData.get("overrideChange"),
+        mode: formData.get("overrideMode"),
       },
       advantage: {
-        change: form.advantageChange.value,
-        mode: form.advantageMode.value,
+        change: formData.get("advantageChange"),
+        mode: formData.get("advantageMode"),
       },
       disadvantage: {
-        change: form.disadvantageChange.value,
-        mode: form.disadvantageMode.value,
+        change: formData.get("disadvantageChange"),
+        mode: formData.get("disadvantageMode"),
       },
     };
 
