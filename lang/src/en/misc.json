@@ -25,7 +25,8 @@
       "effect": "Effect",
       "feature": "Feature",
       "gear": "Gear",
-      "status": "Status"
+      "status": "Status",
+      "transformation": "Transformation"
     }
   }
 }

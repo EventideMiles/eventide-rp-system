@@ -31,7 +31,8 @@
       "ImageRequired": "Item image is required",
       "InvalidQuantity": "Quantity must be a positive number",
       "InvalidWeight": "Weight must be a valid number",
-      "InvalidCost": "Cost must be a valid number"
+      "InvalidCost": "Cost must be a valid number",
+      "TransformationItemTypes": "Transformations can only have combat powers added as embedded items"
     },
     "Info": {
       "CompendiumItemCreated": "Created {keyType} item {name} in the {packLabel} compendium",

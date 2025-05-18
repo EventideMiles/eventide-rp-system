@@ -126,6 +126,7 @@ Hooks.once("init", async function () {
     feature: models.EventideRpSystemFeature,
     status: models.EventideRpSystemStatus,
     combatPower: models.EventideRpSystemCombatPower,
+    transformation: models.EventideRpSystemTransformation,
   };
 
   // Active Effects are never copied to the Actor,

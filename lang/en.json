@@ -127,7 +127,8 @@
       "ImageRequired": "Item image is required",
       "InvalidQuantity": "Quantity must be a positive number",
       "InvalidWeight": "Weight must be a valid number",
-      "InvalidCost": "Cost must be a valid number"
+      "InvalidCost": "Cost must be a valid number",
+      "TransformationItemTypes": "Transformations can only have combat powers added as embedded items"
     },
     "Info": {
       "CompendiumItemCreated": "Created {keyType} item {name} in the {packLabel} compendium",
@@ -402,7 +403,8 @@
       "effect": "Effect",
       "feature": "Feature",
       "gear": "Gear",
-      "status": "Status"
+      "status": "Status",
+      "transformation": "Transformation"
     }
   },
   "SETTINGS": {
@@ -483,6 +485,6 @@
     "SoundResetToDefault": "Sound for {0} reset to default.",
     "NoPlayerPermission": "Players do not have permission to change sound settings.",
     "TestingModeName": "Testing Mode",
-    "TestingModeHint": "Enable or disable testing mode."
+    "TestingModeHint": "Enable or disable testing mode console logging for debugging."
   }
 }

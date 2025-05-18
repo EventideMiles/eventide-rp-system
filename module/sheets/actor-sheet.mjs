@@ -270,6 +270,10 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
       else if (i.type === "combatPower") {
         combatPowers.push(i);
       }
+      // Append to transformations
+      else if (i.type === "transformation") {
+        transformations.push(i);
+      }
     }
 
     // Sort then assign
@@ -279,6 +283,9 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
     context.features = features.sort((a, b) => (a.sort || 0) - (b.sort || 0));
     context.statuses = statuses.sort((a, b) => (a.sort || 0) - (b.sort || 0));
     context.combatPowers = combatPowers.sort(
+      (a, b) => (a.sort || 0) - (b.sort || 0)
+    );
+    context.transformations = transformations.sort(
       (a, b) => (a.sort || 0) - (b.sort || 0)
     );
   }

@@ -29,6 +29,9 @@
       },
       "combatPower": {
         "htmlFields": ["description"]
+      },
+      "transformation": {
+        "htmlFields": ["description"]
       }
     }
   },
