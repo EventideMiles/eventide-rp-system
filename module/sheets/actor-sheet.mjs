@@ -283,10 +283,6 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
       }
     }
 
-    console.log(combatPowers);
-
-    console.log(transformationCombatPowers);
-
     // Sort then assign
     context.gear = gear.sort((a, b) => (a.sort || 0) - (b.sort || 0));
     context.unequippedGear = gear.filter((i) => !i.system.equipped);

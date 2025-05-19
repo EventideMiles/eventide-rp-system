@@ -16,7 +16,7 @@
                 name="addedAbilities.{{index}}.attribute"
                 data-index="{{index}}"
               >
-              {{#if (not ../calloutGroup "Transformation")}}
+              {{#if (not (eq ../calloutGroup "Transformation"))}}
                 {{#each ../allAbilities as |label key|}}
                   <option value="{{toLowerCase label}}" {{#if (eq ability.attribute (toLowerCase label))}}selected{{/if}}>
                     {{localize label}}
@@ -41,7 +41,7 @@
                   disabled
                 {{/if}}
               >
-                {{#if (not ../calloutGroup "Transformation")}}
+                {{#if (not (eq ../calloutGroup "Transformation"))}}
                   <option value="add" {{#if (eq mode "change")}}selected{{/if}}>Add</option>
                   <option value="override" {{#if (eq mode "override")}}selected{{/if}}>Override</option>
                   <option value="advantage" {{#if (eq mode "advantage")}}selected{{/if}}>Advantage</option>

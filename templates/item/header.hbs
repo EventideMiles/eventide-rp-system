@@ -86,7 +86,7 @@
           />
         </div>
       {{/if}}
-      {{#if (not item.type 'transformation')}}
+      {{#if (not (eq item.type 'transformation'))}}
         <div>
           <label class="base-form__label--small" for="color-textColor">
             {{localize 'EVENTIDE_RP_SYSTEM.Item.Colors.TextColor.label'}}
@@ -114,7 +114,7 @@
       {{/if}}
     </div>
     <div class="grid grid-3col">
-      {{#if (not item.type 'transformation')}}
+      {{#if (not (eq item.type 'transformation'))}}
       <div class="checkbox-resource">
         <div class="checkbox-container">
           <label 
