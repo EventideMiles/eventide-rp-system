@@ -108,9 +108,9 @@ export class RestoreTarget extends EventideSheetHelpers {
     });
 
     const restoreOptions = {
-      resolve: formData.get("restoreResolve"),
-      power: formData.get("restorePower"),
-      all: formData.get("all"),
+      resolve: formData.get("restoreResolve") === "true",
+      power: formData.get("restorePower") === "true",
+      all: formData.get("all") === "true",
       statuses: selectedStatuses,
     };
 

@@ -392,7 +392,7 @@ export class CreatorApplication extends EventideSheetHelpers {
       bgColor: formData.get("bgColor") || "#000000",
       textColor: formData.get("textColor") || "#ffffff",
       iconTint: formData.get("iconTint") || "#ffffff",
-      displayOnToken: formData.get("displayOnToken"),
+      displayOnToken: formData.get("displayOnToken") === "true",
     };
 
     // Determine item type based on context
@@ -412,10 +412,10 @@ export class CreatorApplication extends EventideSheetHelpers {
             quantity: formData.get("quantity"),
             weight: formData.get("weight"),
             cost: formData.get("cost"),
-            targeted: formData.get("targeted"),
+            targeted: formData.get("targeted") === "true",
             className: formData.get("className"),
-            cursed: this.playerMode ? false : formData.get("cursed"),
-            equipped: formData.get("equipped"),
+            cursed: this.playerMode ? false : formData.get("cursed") === "true",
+            equipped: formData.get("equipped") === "true",
           }
         : {};
 
