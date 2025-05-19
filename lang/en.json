@@ -84,6 +84,10 @@
             "label": "Resolve"
           }
         },
+        "Transformation": {
+          "label": "Transformation",
+          "Remove": "Remove Transformation"
+        },
         "XP": {
           "label": "XP"
         }
@@ -128,7 +132,8 @@
       "InvalidQuantity": "Quantity must be a positive number",
       "InvalidWeight": "Weight must be a valid number",
       "InvalidCost": "Cost must be a valid number",
-      "TransformationItemTypes": "Transformations can only have combat powers added as embedded items"
+      "TransformationItemTypes": "Only combat powers can be added to transformations.",
+      "MissingAbility": "Missing ability"
     },
     "Info": {
       "CompendiumItemCreated": "Created {keyType} item {name} in the {packLabel} compendium",
@@ -324,11 +329,18 @@
       },
       "Tabs": {
         "Description": "Description",
-        "Details": "Details",
-        "Effects": "Effects",
-        "Prerequisites": "Prerequisites",
         "Attributes": "Attributes",
-        "CharacterEffects": "Character Effects"
+        "Effects": "Effects",
+        "CharacterEffects": "Character Effects",
+        "Prerequisites": "Prerequisites",
+        "CombatPowers": "Combat Powers"
+      },
+      "Transformation": {
+        "Size": "Size",
+        "Notes": "Transformations can store combat powers that are available when the character transforms.",
+        "EmbeddedPowers": "Combat Powers",
+        "NoPowers": "No combat powers added yet.",
+        "DropPowerHere": "Drop a combat power here to add it to this transformation."
       }
     },
     "Messages": {
@@ -378,6 +390,10 @@
     "SheetLabels": {
       "Actor": "EventideRpSystem Actor Sheet",
       "Item": "EventideRpSystem Item Sheet"
+    },
+    "UI": {
+      "View": "View",
+      "Remove": "Remove"
     },
     "WindowTitles": {
       "ChangeTargetStatus": "Change Target Status",

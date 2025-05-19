@@ -45,6 +45,7 @@
   font-family: inherit;
   font-size: 1rem;
   line-height: 1.5;
+  height: 2.5rem;
   
   // Allow for customization
   @content;
@@ -882,6 +883,121 @@
   );
   margin: 1.5rem 0;
   border: none;
+  
+  // Allow for customization
+  @content;
+}
+
+// Range Slider Mixins
+// ----------------------------------
+
+@mixin _range-slider-base {
+  // Reset appearance
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 0.5rem;
+  background: colors.$input-bg;
+  border-radius: 0.25rem;
+  outline: none;
+  margin: 0.75rem 0;
+  cursor: pointer;
+  border: 0.0625rem solid colors.$input-border;
+  
+  // Focus state
+  &:focus {
+    @include _input-focus-state;
+  }
+  
+  // Thumb styling for WebKit/Blink
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: 50%;
+    background: colors.$input-focus;
+    cursor: pointer;
+    border: 0.0625rem solid colors.$input-border;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.2);
+    transition: all 0.2s ease;
+    
+    &:hover {
+      background: colors.$input-hover;
+      transform: scale(1.1);
+    }
+    
+    &:active {
+      background: colors.$input-focus;
+      transform: scale(0.95);
+    }
+  }
+  
+  // Thumb styling for Firefox
+  &::-moz-range-thumb {
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: 50%;
+    background: colors.$input-focus;
+    cursor: pointer;
+    border: 0.0625rem solid colors.$input-border;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.2);
+    transition: all 0.2s ease;
+    
+    &:hover {
+      background: colors.$input-hover;
+      transform: scale(1.1);
+    }
+    
+    &:active {
+      background: colors.$input-focus;
+      transform: scale(0.95);
+    }
+  }
+  
+  // Track styling for Firefox
+  &::-moz-range-track {
+    width: 100%;
+    height: 0.5rem;
+    background: colors.$input-bg;
+    border-radius: 0.25rem;
+    border: 0.0625rem solid colors.$input-border;
+  }
+  
+  // Allow for customization
+  @content;
+}
+
+@mixin grid-compliant-range-slider {
+  @include _range-slider-base {
+    // Pass through nested content
+  }
+  
+  // Allow for customization
+  @content;
+}
+
+@mixin grid-compliant-slider-wrapper {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 0.75rem;
+  
+  .base-form__range-slider {
+    flex: 1;
+  }
+  
+  .base-form__range-value {
+    font-family: monospace;
+    font-size: 1rem;
+    color: colors.$input-text;
+    min-width: 2.5rem;
+    text-align: center;
+    background-color: colors.$input-bg;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    border: 0.0625rem solid colors.$input-border;
+  }
   
   // Allow for customization
   @content;

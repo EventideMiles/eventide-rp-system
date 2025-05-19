@@ -1,0 +1,21 @@
+<div class="tab attributes {{tab.cssClass}}" data-group="primary" data-tab="attributes">
+  <div class="form-group">
+    <label>{{localize "EVENTIDE_RP_SYSTEM.Item.Transformation.Size"}}</label>
+    <div class="form-fields">
+      <div class="base-form__slider-wrapper">
+        <input 
+          type="range" 
+          class="base-form__range-slider" 
+          name="system.size" 
+          value="{{system.size}}" 
+          min="0.5" 
+          max="5" 
+          step="0.5"
+          data-dtype="Number"
+        >
+        <span class="base-form__range-value">{{system.size}}×</span>
+      </div>
+    </div>
+  </div>
+</div>
+

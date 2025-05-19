@@ -34,6 +34,55 @@
   }
 }
 
+// Transformation header styling
+.transformation-header {
+  display: flex;
+  align-items: center;
+  margin-left: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  background: rgba(115, 114, 114, 0.434);
+  border-radius: 0.25rem;
+  border: 0.125rem outset colors.$universal-white;
+  height: 2rem;
+  
+  &__label {
+    font-weight: bold;
+    margin-right: 0.5rem;
+    color: colors.$universal-white;
+  }
+  
+  &__details {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+  }
+  
+  &__name {
+    font-size: 1em;
+    margin-right: 0.5rem;
+    color: colors.$universal-white;
+  }
+  
+  &__dismiss {
+    color: colors.$universal-white;
+    margin-left: auto;
+    
+    &:hover {
+      color: colors.$white-text-glow;
+    }
+  }
+}
+
+// Make document name flex container
+.document-name {
+  display: flex;
+  align-items: center;
+  
+  input {
+    flex-grow: 1;
+  }
+}
+
 .features {
   overflow-y: auto;
 }
@@ -55,6 +104,7 @@
 
 .eventide-character-sheet input {
   @include mixins.grid-compliant-text-input;
+  height: 2rem;
   border: 0.125rem inset colors.$universal-white;
   text-align: center;
 }

@@ -24,6 +24,9 @@ export class EventideSheetHelpers extends HandlebarsApplicationMixin(
 
       // Clean up color pickers
       erps.utils.cleanupColorPickers(this.element);
+
+      // Clean up range sliders
+      erps.utils.cleanupRangeSliders(this.element);
     }
     await super._preClose(options);
   }

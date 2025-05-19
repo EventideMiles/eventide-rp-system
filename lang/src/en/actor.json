@@ -24,6 +24,10 @@
             "label": "Resolve"
           }
         },
+        "Transformation": {
+          "label": "Transformation",
+          "Remove": "Remove Transformation"
+        },
         "XP": {
           "label": "XP"
         }

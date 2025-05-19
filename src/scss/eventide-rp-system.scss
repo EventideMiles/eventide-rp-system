@@ -22,6 +22,7 @@
 @use 'components/sound-settings';
 @use 'components/data-table';
 @use 'components/enhanced-grid';
+@use 'components/range-slider';
 
 .eventide-rp-system {
   @include meta.load-css('components/forms');

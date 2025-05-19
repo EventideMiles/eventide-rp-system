@@ -114,6 +114,7 @@
       {{/if}}
     </div>
     <div class="grid grid-3col">
+      {{#if (not item.type 'transformation')}}
       <div class="checkbox-resource">
         <div class="checkbox-container">
           <label 
@@ -134,6 +135,30 @@
           </div>
         </div>
       </div>
+      {{else}}
+      {{#if isGM}}
+          <div class="resource checkbox-resource">
+            <div class="checkbox-container">
+              <label 
+                class="resource-label checkbox-label"
+                title='{{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Cursed.label"}}'
+              >
+                {{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Cursed.label"}}
+              </label>
+              <div class="toggle-switch-wrapper">
+                <input 
+                  type="checkbox" 
+                  class="base-form__toggle-switch" 
+                  name="system.cursed" 
+                  id="system.cursed"
+                  {{checked system.cursed}}
+                />
+                <label class="toggle-switch-display" for="system.cursed"></label>
+              </div>
+            </div>
+          </div>
+        {{/if}}
+      {{/if}}
       {{#if (eq item.type 'gear')}}
         <div class="resource checkbox-resource">
           <div class="checkbox-container">

@@ -10,6 +10,30 @@ export default class EventideRpSystemTransformation extends EventideRpSystemItem
       new fields.ObjectField()
     );
 
+    schema.size = new fields.NumberField({
+      required: true,
+      initial: 1,
+      min: 0.5,
+      max: 5,
+      choices: [0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5],
+    });
+    
+    // Add token image property with proper categories
+    schema.tokenImage = new fields.FilePathField({
+      required: false,
+      blank: true,
+      initial: "",
+      label: "EVENTIDE_RP_SYSTEM.Item.Transformation.TokenImage",
+      hint: "EVENTIDE_RP_SYSTEM.Item.Transformation.TokenImageHint",
+      button: true,
+      categories: ["IMAGE"]
+    });
+
+    schema.cursed = new fields.BooleanField({
+      required: true,
+      initial: false,
+    });
+
     return schema;
   }
 
@@ -68,5 +92,16 @@ export default class EventideRpSystemTransformation extends EventideRpSystemItem
       // Create a temporary Item instance from the data
       return new CONFIG.Item.documentClass(powerData, { parent: this.parent });
     });
+  }
+
+  prepareDerivedData() {
+    const DEFAULT_IMAGE = "icons/svg/item-bag.svg";
+    super.prepareDerivedData?.();
+
+    if (this.parent.img !== DEFAULT_IMAGE) {
+      this.tokenImage = this.parent.img;
+    } else {
+      this.tokenImage = "";
+    }
   }
 }

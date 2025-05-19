@@ -41,13 +41,14 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
     ],
     actions: {
       onEditImage: this._onEditImage,
-      viewDoc: this._viewEffect,
+      viewDoc: this._viewDoc,
       createDoc: this._createEffect,
       deleteDoc: this._deleteEffect,
       toggleEffect: this._toggleEffect,
       newCharacterEffect: this._newCharacterEffect,
       deleteCharacterEffect: this._deleteCharacterEffect,
       toggleEffectDisplay: this._toggleEffectDisplay,
+      removeCombatPower: this._removeCombatPower,
     },
     position: {
       width: 600,
@@ -87,12 +88,20 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
       template:
         "systems/eventide-rp-system/templates/item/attribute-parts/combat-power.hbs",
     },
+    attributesTransformation: {
+      template:
+        "systems/eventide-rp-system/templates/item/attribute-parts/transformation.hbs",
+    },
     effects: {
       template: "systems/eventide-rp-system/templates/item/effects.hbs",
     },
     characterEffects: {
       template:
         "systems/eventide-rp-system/templates/item/character-effects.hbs",
+    },
+    embeddedCombatPowers: {
+      template:
+        "systems/eventide-rp-system/templates/item/embedded-combat-powers.hbs",
     },
   };
 
@@ -109,10 +118,10 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
 
       // Clean up color pickers
       erps.utils.cleanupColorPickers(this.element);
-    }
 
-    // Clean up private fields and references
-    this.#dragDrop = null;
+      // Clean up range sliders
+      erps.utils.cleanupRangeSliders(this.element);
+    }
 
     await super._preClose(options);
   }
@@ -137,6 +146,9 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
         break;
       case "combatPower":
         options.parts.push("attributesCombatPower", "prerequisites");
+        break;
+      case "transformation":
+        options.parts.push("attributesTransformation", "embeddedCombatPowers");
         break;
     }
   }
@@ -183,6 +195,7 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
       case "attributesFeature":
       case "attributesGear":
       case "attributesCombatPower":
+      case "attributesTransformation":
         // Necessary for preserving active tab on re-render
         context.tab = context.tabs[partId];
         if (partId === "attributesCombatPower" || partId === "attributesGear") {
@@ -214,6 +227,11 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
       case "prerequisites":
         context.prerequisites = this.item.system.prerequisites;
         context.tab = context.tabs[partId];
+        break;
+      case "embeddedCombatPowers":
+        context.tab = context.tabs[partId];
+        // Get embedded combat powers as temporary items
+        context.embeddedCombatPowers = this.item.system.getEmbeddedCombatPowers();
         break;
       case "effects":
         context.tab = context.tabs[partId];
@@ -275,9 +293,14 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
           tab.id = "characterEffects";
           tab.label += "CharacterEffects";
           break;
+        case "embeddedCombatPowers":
+          tab.id = "embeddedCombatPowers";
+          tab.label += "CombatPowers";
+          break;
         case "attributesFeature":
         case "attributesGear":
         case "attributesCombatPower":
+        case "attributesTransformation":
           tab.id = "attributes";
           tab.label += "Attributes";
           break;
@@ -390,6 +413,21 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
     };
     await this.item.updateEmbeddedDocuments("ActiveEffect", [updateData]);
     event.target.focus();
+  }
+
+  /**
+   * Handle removing a combat power from a transformation
+   * 
+   * @this EventideRpSystemItemSheet
+   * @param {PointerEvent} event   The originating click event
+   * @param {HTMLElement} target   The capturing HTML element which defined a [data-action]
+   * @protected
+   */
+  static async _removeCombatPower(event, target) {
+    const powerId = target.dataset.powerId;
+    if (!powerId) return;
+    
+    await this.item.system.removeCombatPower(powerId);
   }
 
   /*****************
@@ -548,14 +586,33 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
   /* -------------------------------------------- */
 
   /**
-   * Handle dropping of an item reference or item data onto an Actor Sheet
+   * Handle dropping of an item reference or item data onto an Item Sheet
    * @param {DragEvent} event            The concluding DragEvent which contains drop data
    * @param {object} data                The data transfer extracted from the event
-   * @returns {Promise<Item[]|boolean>}  The created or updated Item instances, or false if the drop was not permitted.
+   * @returns {Promise<boolean>}         Whether the drop was successful
    * @protected
    */
   async _onDropItem(event, data) {
     if (!this.item.isOwner) return false;
+    
+    // Get the dropped item
+    const droppedItem = await Item.implementation.fromDropData(data);
+    if (!droppedItem) return false;
+
+    // Handle transformation items receiving combat powers
+    if (this.item.type === "transformation") {
+      // Only allow combat powers to be added to transformations
+      if (droppedItem.type !== "combatPower") {
+        ui.notifications.warn(game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.TransformationItemTypes"));
+        return false;
+      }
+
+      // Add the combat power to the transformation
+      await this.item.system.addCombatPower(droppedItem);
+      return true;
+    }
+
+    return false;
   }
 
   /* -------------------------------------------- */
@@ -804,9 +861,26 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
    * @param {HTMLElement} target   The capturing HTML element which defined a [data-action]
    * @protected
    */
-  static async _viewEffect(event, target) {
-    const effect = this._getEffect(target);
-    effect.sheet.render(true);
+  static async _viewDoc(event, target) {
+    const docRow = target.closest("li");
+    
+    // Handle viewing embedded combat powers
+    if (this.item.type === "transformation" && docRow.dataset.itemId) {
+      const powerId = docRow.dataset.itemId;
+      const embeddedPowers = this.item.system.getEmbeddedCombatPowers();
+      const power = embeddedPowers.find(p => p.id === powerId);
+      
+      if (power) {
+        power.sheet.render(true);
+        return;
+      }
+    }
+    
+    // Handle viewing effects
+    if (docRow.dataset.effectId) {
+      const effect = this.item.effects.get(docRow.dataset.effectId);
+      effect?.sheet.render(true);
+    }
   }
 
   /**

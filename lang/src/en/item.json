@@ -72,11 +72,18 @@
       },
       "Tabs": {
         "Description": "Description",
-        "Details": "Details",
-        "Effects": "Effects",
-        "Prerequisites": "Prerequisites",
         "Attributes": "Attributes",
-        "CharacterEffects": "Character Effects"
+        "Effects": "Effects",
+        "CharacterEffects": "Character Effects",
+        "Prerequisites": "Prerequisites",
+        "CombatPowers": "Combat Powers"
+      },
+      "Transformation": {
+        "Size": "Size",
+        "Notes": "Transformations can store combat powers that are available when the character transforms.",
+        "EmbeddedPowers": "Combat Powers",
+        "NoPowers": "No combat powers added yet.",
+        "DropPowerHere": "Drop a combat power here to add it to this transformation."
       }
     }
   }

@@ -1,0 +1,17 @@
+@use '../utils/mixins' as mix;
+@use '../utils/colors' as colors;
+
+.base-form {
+  &__slider-wrapper {
+    @include mix.grid-compliant-slider-wrapper;
+  }
+
+  &__range-slider {
+    @include mix.grid-compliant-range-slider;
+  }
+
+//   &__range-value {
+//     // Additional styling for the value display can be added here
+//     // Base styling is already in the mixin
+//   }
+} 
