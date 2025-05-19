@@ -69,6 +69,8 @@
                 {{/each}}
               </select>
             </div>
+
+            {{debug ../item}}
             
             <div class="eventide-item-sheet__effects-grid-cell">
               <select 
@@ -76,11 +78,18 @@
                 name="characterEffects.regularEffects.{{@index}}.mode"
                 data-index="{{@index}}"
                 data-type="visible"
+                {{#if (eq ../item.type "transformation")}}
+                  disabled
+                {{/if}}
               >
+                {{#if (not ../item.type "transformation")}}
                 <option value="add" {{#if (eq mode "change")}}selected{{/if}}>Add</option>
                 <option value="override" {{#if (eq mode "override")}}selected{{/if}}>Override</option>
                 <option value="advantage" {{#if (eq mode "advantage")}}selected{{/if}}>Advantage</option>
                 <option value="disadvantage" {{#if (eq mode "disadvantage")}}selected{{/if}}>Disadvantage</option>
+                {{else}}
+                  <option value="transform">Transform</option>
+                {{/if}}
               </select>
             </div>
             
@@ -131,6 +140,7 @@
     </div>
     
     {{! Hidden Effects Section }}
+    {{#if (not item.type "transformation")}}
     {{#if isGM}}
       <div class="eventide-item-sheet__effects-section eventide-item-sheet__effects-section--hidden">
         <h3 class="eventide-item-sheet__effects-section-header">
@@ -288,6 +298,7 @@
           {{/each}}
         </div>
       </div>
+    {{/if}}
     {{/if}}
   </div>
 </section>
