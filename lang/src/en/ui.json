@@ -11,7 +11,8 @@
       "GearTransfer": "Transfer Gear",
       "RestoreTarget": "Restore Target",
       "SelectAbilityRoll": "Select Ability Roll",
-      "StatusPopup": "Status Information"
+      "StatusPopup": "Status Information",
+      "TransformationCreator": "Transformation Creator"
     },
     "MessageHeaders": {
       "Feature": "Feature: {name}",

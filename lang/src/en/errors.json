@@ -33,7 +33,8 @@
       "InvalidWeight": "Weight must be a valid number",
       "InvalidCost": "Cost must be a valid number",
       "TransformationItemTypes": "Only combat powers can be added to transformations.",
-      "MissingAbility": "Missing ability"
+      "MissingAbility": "Missing ability",
+      "MissingTransformation": "Missing transformation"
     },
     "Info": {
       "CompendiumItemCreated": "Created {keyType} item {name} in the {packLabel} compendium",
