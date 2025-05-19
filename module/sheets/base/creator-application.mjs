@@ -389,9 +389,9 @@ export class CreatorApplication extends EventideSheetHelpers {
       name: formData.get("name"),
       description: formData.get("description"),
       img: formData.get("img"),
-      bgColor: formData.get("bgColor"),
-      textColor: formData.get("textColor"),
-      iconTint: formData.get("iconTint"),
+      bgColor: formData.get("bgColor") || "#000000",
+      textColor: formData.get("textColor") || "#ffffff",
+      iconTint: formData.get("iconTint") || "#ffffff",
       displayOnToken: formData.get("displayOnToken"),
     };
 
@@ -399,6 +399,8 @@ export class CreatorApplication extends EventideSheetHelpers {
     const type =
       this.keyType === "gear"
         ? "gear"
+        : this.keyType === "transformation"
+        ? "transformation"
         : this.playerMode
         ? "feature"
         : formData.get("type");
@@ -414,6 +416,17 @@ export class CreatorApplication extends EventideSheetHelpers {
             className: formData.get("className"),
             cursed: this.playerMode ? false : formData.get("cursed"),
             equipped: formData.get("equipped"),
+          }
+        : {};
+
+    // Extract transformation-specific data if applicable
+    const transformationData =
+      type === "transformation"
+        ? {
+            size: parseFloat(formData.get("size")) || 1,
+            cursed: this.playerMode ? false : formData.get("cursed"),
+            embeddedCombatPowers:
+              this.embeddedCombatPowers?.map((power) => power.toObject()) || [],
           }
         : {};
 
@@ -462,6 +475,8 @@ export class CreatorApplication extends EventideSheetHelpers {
           ? "change"
           : ability.mode === "override"
           ? "override"
+          : ability.mode === "transform"
+          ? "transform"
           : "diceAdjustments." + ability.mode
       }`;
       const mode =
@@ -483,8 +498,10 @@ export class CreatorApplication extends EventideSheetHelpers {
       img: basicData.img,
       system: {
         description: basicData.description,
-        bgColor: basicData.bgColor,
-        textColor: basicData.textColor,
+        ...(type !== "transformation" && {
+          bgColor: basicData.bgColor,
+          textColor: basicData.textColor,
+        }),
         ...(type === "gear"
           ? {
               quantity: gearData.quantity,
@@ -495,6 +512,12 @@ export class CreatorApplication extends EventideSheetHelpers {
               className: gearData.className,
               cursed: gearData.cursed,
               equipped: gearData.equipped,
+            }
+          : type === "transformation"
+          ? {
+              size: transformationData.size,
+              cursed: transformationData.cursed,
+              embeddedCombatPowers: transformationData.embeddedCombatPowers,
             }
           : {}),
       },
@@ -539,7 +562,13 @@ export class CreatorApplication extends EventideSheetHelpers {
     if (this.targetArray.length > 0 && this.gmCheck === "gm") {
       await Promise.all(
         this.targetArray.map(async (token) => {
-          await token.actor.createEmbeddedDocuments("Item", [itemData]);
+          const created = await token.actor.createEmbeddedDocuments("Item", [
+            itemData,
+          ]);
+
+          if (type === "transformation") {
+            token.actor.applyTransformation(created[0]);
+          }
         })
       );
     } else if (this.gmCheck === "player") {
@@ -564,6 +593,9 @@ export class CreatorApplication extends EventideSheetHelpers {
     } else if (type === "feature") {
       packId += "features";
       packLabel += "Features";
+    } else if (type === "transformation") {
+      packId += "transformations";
+      packLabel += "Transformations";
     }
 
     let pack = game.packs.get(`world.${packId}`);
@@ -579,7 +611,10 @@ export class CreatorApplication extends EventideSheetHelpers {
           PLAYER: "OWNER",
         };
       }
-      pack = await CompendiumCollection.createCompendium(packData);
+      pack =
+        await foundry.documents.collections.CompendiumCollection.createCompendium(
+          packData
+        );
     }
 
     const item = await Item.create(itemData, {

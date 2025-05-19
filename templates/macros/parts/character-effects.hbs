@@ -16,11 +16,19 @@
                 name="addedAbilities.{{index}}.attribute"
                 data-index="{{index}}"
               >
+              {{#if (not ../calloutGroup "Transformation")}}
                 {{#each ../allAbilities as |label key|}}
                   <option value="{{toLowerCase label}}" {{#if (eq ability.attribute (toLowerCase label))}}selected{{/if}}>
                     {{localize label}}
                   </option>
                 {{/each}}
+              {{else}}
+                {{#each ../abilities as |label key|}}
+                  <option value="{{toLowerCase label}}" {{#if (eq ability.attribute (toLowerCase label))}}selected{{/if}}>
+                    {{localize label}}
+                  </option>
+                {{/each}}
+              {{/if}}
               </select>
             </div>
             
@@ -29,11 +37,18 @@
                 class="base-form__select"
                 name="addedAbilities.{{@index}}.mode"
                 data-index="{{@index}}"
+                {{#if (eq ../calloutGroup "Transformation")}}
+                  disabled
+                {{/if}}
               >
-                <option value="add" {{#if (eq mode "change")}}selected{{/if}}>Add</option>
-                <option value="override" {{#if (eq mode "override")}}selected{{/if}}>Override</option>
-                <option value="advantage" {{#if (eq mode "advantage")}}selected{{/if}}>Advantage</option>
-                <option value="disadvantage" {{#if (eq mode "disadvantage")}}selected{{/if}}>Disadvantage</option>
+                {{#if (not ../calloutGroup "Transformation")}}
+                  <option value="add" {{#if (eq mode "change")}}selected{{/if}}>Add</option>
+                  <option value="override" {{#if (eq mode "override")}}selected{{/if}}>Override</option>
+                  <option value="advantage" {{#if (eq mode "advantage")}}selected{{/if}}>Advantage</option>
+                  <option value="disadvantage" {{#if (eq mode "disadvantage")}}selected{{/if}}>Disadvantage</option>
+                {{else}}
+                  <option value="transform">Transform</option>
+                {{/if}}
               </select>
             </div>
             

@@ -1,5 +1,6 @@
 <section class="tab effects {{tab.cssClass}}" data-group="primary" data-tab="characterEffects">
   <div class="eventide-item-sheet__scrollable-container base-form">
+    {{#if (not item.type "transformation")}}
     <div class="grid grid-cols-2">
     <div>
     <label class="eventide-item-sheet__effect-toggle-label" for="effect.displayOnToken">Icon Displayed On Token</label>
@@ -37,7 +38,7 @@
   </div>
 
   </div>
-
+  {{/if}}
   
     {{! Regular Effects Section }}
     <div class="eventide-item-sheet__effects-section">

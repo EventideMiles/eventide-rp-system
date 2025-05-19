@@ -254,6 +254,7 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
     const statuses = [];
     const combatPowers = [];
     const transformations = [];
+    const transformationCombatPowers = [];
 
     // Iterate through items, allocating to containers
     for (let i of this.document.items) {
@@ -276,8 +277,15 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
       // Append to transformations
       else if (i.type === "transformation") {
         transformations.push(i);
+        if (i.system.embeddedCombatPowers.length > 0) {
+          transformationCombatPowers.push(...i.system.embeddedCombatPowers);
+        }
       }
     }
+
+    console.log(combatPowers);
+
+    console.log(transformationCombatPowers);
 
     // Sort then assign
     context.gear = gear.sort((a, b) => (a.sort || 0) - (b.sort || 0));
@@ -286,6 +294,9 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
     context.features = features.sort((a, b) => (a.sort || 0) - (b.sort || 0));
     context.statuses = statuses.sort((a, b) => (a.sort || 0) - (b.sort || 0));
     context.combatPowers = combatPowers.sort(
+      (a, b) => (a.sort || 0) - (b.sort || 0)
+    );
+    context.transformationCombatPowers = transformationCombatPowers.sort(
       (a, b) => (a.sort || 0) - (b.sort || 0)
     );
     context.transformations = transformations.sort(
@@ -304,10 +315,10 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
   _onRender(context, options) {
     this.#dragDrop.forEach((d) => d.bind(this.element));
     this.#disableOverrides();
-    
+
     // Debug the transformation display
     if (CommonFoundryTasks.isTestingMode) this._debugTransformation();
-    
+
     // You may want to add other special handling here
     // Foundry comes with a large number of utility classes, e.g. SearchFilter
     // That you may want to implement yourself.
@@ -318,19 +329,27 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
    * @private
    */
   _debugTransformation() {
-    const activeTransformationId = this.actor.getFlag("eventide-rp-system", "activeTransformation");
+    const activeTransformationId = this.actor.getFlag(
+      "eventide-rp-system",
+      "activeTransformation"
+    );
     if (activeTransformationId) {
       console.log("Active transformation ID:", activeTransformationId);
-      
+
       // Find the transformation item
       const transformation = this.actor.items.get(activeTransformationId);
       console.log("Transformation item:", transformation);
-      
+
       // Check if the transformation element exists in the DOM
-      const transformationElement = this.element.querySelector(".transformation-header__name");
+      const transformationElement = this.element.querySelector(
+        ".transformation-header__name"
+      );
       console.log("Transformation element:", transformationElement);
       if (transformationElement) {
-        console.log("Transformation element text:", transformationElement.textContent.trim());
+        console.log(
+          "Transformation element text:",
+          transformationElement.textContent.trim()
+        );
       }
     }
   }
