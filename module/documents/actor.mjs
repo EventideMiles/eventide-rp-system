@@ -37,7 +37,8 @@ export class EventideRpSystemActor extends Actor {
    */
   prepareDerivedData() {
     const actorData = this;
-    const flags = foundry.utils.getProperty(actorData.flags, "eventide-rp-system") || {};
+    const flags =
+      foundry.utils.getProperty(actorData.flags, "eventide-rp-system") || {};
   }
 
   /**
@@ -82,12 +83,16 @@ export class EventideRpSystemActor extends Actor {
    */
   async applyTransformation(transformationItem) {
     if (!this.isOwner) {
-      ui.notifications.warn(game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.NoPermission"));
+      ui.notifications.warn(
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.NoPermission")
+      );
       return this;
     }
 
     if (transformationItem.type !== "transformation") {
-      ui.notifications.error(game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.NotTransformation"));
+      ui.notifications.error(
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.NotTransformation")
+      );
       return this;
     }
 
@@ -96,53 +101,79 @@ export class EventideRpSystemActor extends Actor {
     if (!tokens.length) return this;
 
     // Check if there's already an active transformation
-    const hasActiveTransformation = this.getFlag("eventide-rp-system", "activeTransformation");
-    
+    const hasActiveTransformation = this.getFlag(
+      "eventide-rp-system",
+      "activeTransformation"
+    );
+
     // Only store original token data if there isn't already a transformation active
     // This ensures we maintain the original appearance, not the appearance of a previous transformation
     if (!hasActiveTransformation) {
       // Store original token data in flags
-      const originalTokenData = tokens.map(token => {
+      const originalTokenData = tokens.map((token) => {
         return {
           tokenId: token.id,
           img: token.document.texture.src,
           scale: token.document.texture.scaleX,
           width: token.document.width,
-          height: token.document.height
+          height: token.document.height,
         };
       });
-      
+
       // Set flag with original token data
-      await this.setFlag("eventide-rp-system", "originalTokenData", originalTokenData);
+      await this.setFlag(
+        "eventide-rp-system",
+        "originalTokenData",
+        originalTokenData
+      );
     }
-    
+
     // Set flags with active transformation ID and name
-    await this.setFlag("eventide-rp-system", "activeTransformation", transformationItem.id);
-    await this.setFlag("eventide-rp-system", "activeTransformationName", transformationItem.name)
-    
+    await this.setFlag(
+      "eventide-rp-system",
+      "activeTransformation",
+      transformationItem.id
+    );
+    await this.setFlag(
+      "eventide-rp-system",
+      "activeTransformationName",
+      transformationItem.name
+    );
+
     // set flag for cursed
-    await this.setFlag("eventide-rp-system", "activeTransformationCursed", transformationItem.system.cursed);
+    await this.setFlag(
+      "eventide-rp-system",
+      "activeTransformationCursed",
+      transformationItem.system.cursed
+    );
 
     // Update tokens with the transformation appearance
     for (const token of tokens) {
       const updates = {};
-      
+
       // Update token image if provided
       if (transformationItem.system.tokenImage) {
         updates["texture.src"] = transformationItem.system.tokenImage;
       }
-      
+
       // Calculate size and scale based on the transformation size
       if (transformationItem.system.size !== 1) {
         const size = transformationItem.system.size;
         const isHalfIncrement = (size * 10) % 10 === 5; // Check if it's a .5 increment
         const baseSize = Math.floor(size);
-        
+
         if (size === 0.5) {
+          // a 'tiny' creature
           updates.width = 0.5;
           updates.height = 0.5;
           updates["texture.scaleX"] = 1;
           updates["texture.scaleY"] = 1;
+        } else if (size === 0.75) {
+          // a 'small' creature
+          updates.width = 1;
+          updates.height = 1;
+          updates["texture.scaleX"] = 0.75;
+          updates["texture.scaleY"] = 0.75;
         } else {
           updates.width = baseSize;
           updates.height = baseSize;
@@ -156,7 +187,7 @@ export class EventideRpSystemActor extends Actor {
           }
         }
       }
-      
+
       // Apply updates if we have any
       if (Object.keys(updates).length > 0) {
         await token.document.update(updates);
@@ -167,7 +198,7 @@ export class EventideRpSystemActor extends Actor {
     await erpsMessageHandler.createTransformationMessage({
       actor: this,
       transformation: transformationItem,
-      isApplying: true
+      isApplying: true,
     });
 
     return this;
@@ -179,21 +210,31 @@ export class EventideRpSystemActor extends Actor {
    */
   async removeTransformation() {
     if (!this.isOwner) {
-      ui.notifications.warn(game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.NoPermission"));
+      ui.notifications.warn(
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.NoPermission")
+      );
       return this;
     }
 
     // Get the active transformation ID
-    const transformationId = this.getFlag("eventide-rp-system", "activeTransformation");
+    const transformationId = this.getFlag(
+      "eventide-rp-system",
+      "activeTransformation"
+    );
     if (!transformationId) return this; // No active transformation
-    
+
     // Get the transformation item: we cannot get from id because it gets a new one when applied
-    let transformationItem = this.items.filter(item => item.type === "transformation")[0];
-    
+    let transformationItem = this.items.filter(
+      (item) => item.type === "transformation"
+    )[0];
+
     // Get the original token data
-    const originalTokenData = this.getFlag("eventide-rp-system", "originalTokenData");
+    const originalTokenData = this.getFlag(
+      "eventide-rp-system",
+      "originalTokenData"
+    );
     if (!originalTokenData) return this;
-    
+
     // Get all tokens linked to this actor
     const tokens = this.getActiveTokens();
     if (!tokens.length) return this;
@@ -203,36 +244,39 @@ export class EventideRpSystemActor extends Actor {
       await erpsMessageHandler.createTransformationMessage({
         actor: this,
         transformation: transformationItem,
-        isApplying: false
+        isApplying: false,
       });
     }
 
-    // remove all transformation items 
+    // remove all transformation items
     for (const item of this.items) {
       if (item.type === "transformation") {
         await this.deleteEmbeddedDocuments("Item", [item.id]);
       }
     }
-    
+
     // Restore original token data
     for (const token of tokens) {
-      const originalData = originalTokenData.find(d => d.tokenId === token.id);
+      const originalData = originalTokenData.find(
+        (d) => d.tokenId === token.id
+      );
       if (!originalData) continue;
-      
+
       await token.document.update({
         "texture.src": originalData.img,
         "texture.scaleX": originalData.scale,
         "texture.scaleY": originalData.scale,
         width: originalData.width,
-        height: originalData.height
+        height: originalData.height,
       });
     }
-    
+
     // Clear the flags
     await this.unsetFlag("eventide-rp-system", "originalTokenData");
     await this.unsetFlag("eventide-rp-system", "activeTransformation");
     await this.unsetFlag("eventide-rp-system", "activeTransformationName");
-    
+    await this.unsetFlag("eventide-rp-system", "activeTransformationCursed");
+
     return this;
   }
 

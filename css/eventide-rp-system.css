@@ -109,6 +109,7 @@
   --erps-selected: #1a365d;
   --erps-incorrect: #570000;
   --erps-required: #cc0000;
+  --erps-cursed: #781990;
 }
 
 :root {
@@ -451,6 +452,13 @@
 }
 .transformation-header__dismiss:hover {
   color: var(--erps-white-text-glow);
+}
+.transformation-header__dismiss--cursed {
+  color: var(--erps-cursed);
+  margin-left: auto;
+}
+.transformation-header__dismiss--cursed:hover {
+  color: var(--erps-cursed);
 }
 
 .document-name {
@@ -3131,6 +3139,7 @@
   --erps-selected: #1a365d;
   --erps-incorrect: #570000;
   --erps-required: #cc0000;
+  --erps-cursed: #781990;
 }
 .eventide-rp-system :root {
   --erps-c-dark: #3d3d3d;
@@ -3345,6 +3354,7 @@
   --erps-selected: #1a365d;
   --erps-incorrect: #570000;
   --erps-required: #cc0000;
+  --erps-cursed: #781990;
 }
 .eventide-rp-system :root {
   --erps-c-dark: #3d3d3d;
@@ -3548,6 +3558,7 @@
   --erps-selected: #1a365d;
   --erps-incorrect: #570000;
   --erps-required: #cc0000;
+  --erps-cursed: #781990;
 }
 .eventide-rp-system :root {
   --erps-c-dark: #3d3d3d;
@@ -3861,7 +3872,7 @@
   color: #e7bc3c;
 }
 .eventide-rp-system .items-panel__list .items-panel__controls .items-panel__controls--cursed {
-  color: #781990;
+  color: var(--erps-cursed);
 }
 .eventide-rp-system .items-panel__list .items-panel__controls .items-panel__controls--disabled {
   color: #e74c3c;
@@ -4094,6 +4105,7 @@
   --erps-selected: #1a365d;
   --erps-incorrect: #570000;
   --erps-required: #cc0000;
+  --erps-cursed: #781990;
 }
 .eventide-rp-system :root {
   --erps-c-dark: #3d3d3d;

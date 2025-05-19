@@ -71,6 +71,8 @@
   --erps-selected: #1a365d;
   --erps-incorrect: #570000;
   --erps-required: #cc0000;
+  
+  --erps-cursed: #781990;
 }
 
 // light theme colors
@@ -314,3 +316,5 @@ $form-selected: var(--erps-selected);
 $form-incorrect: var(--erps-incorrect);
 $form-input-disabled: var(--erps-disabled);
 $form-required: var(--erps-required);
+
+$cursed: var(--erps-cursed);

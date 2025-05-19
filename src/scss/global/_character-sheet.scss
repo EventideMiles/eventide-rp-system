@@ -71,6 +71,15 @@
       color: colors.$white-text-glow;
     }
   }
+
+  &__dismiss--cursed {
+    color: colors.$cursed;
+    margin-left: auto;
+    
+    &:hover {
+      color: colors.$cursed;
+    }
+  }
 }
 
 // Make document name flex container

@@ -15,9 +15,9 @@ export default class EventideRpSystemTransformation extends EventideRpSystemItem
       initial: 1,
       min: 0.5,
       max: 5,
-      choices: [0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5],
+      choices: [0.5, 0.75, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5],
     });
-    
+
     // Add token image property with proper categories
     schema.tokenImage = new fields.FilePathField({
       required: false,
@@ -26,7 +26,7 @@ export default class EventideRpSystemTransformation extends EventideRpSystemItem
       label: "EVENTIDE_RP_SYSTEM.Item.Transformation.TokenImage",
       hint: "EVENTIDE_RP_SYSTEM.Item.Transformation.TokenImageHint",
       button: true,
-      categories: ["IMAGE"]
+      categories: ["IMAGE"],
     });
 
     schema.cursed = new fields.BooleanField({
@@ -95,10 +95,10 @@ export default class EventideRpSystemTransformation extends EventideRpSystemItem
   }
 
   prepareDerivedData() {
-    const DEFAULT_IMAGE = "icons/svg/item-bag.svg";
+    const DEFAULT_IMAGES = ["icons/svg/item-bag.svg"];
     super.prepareDerivedData?.();
 
-    if (this.parent.img !== DEFAULT_IMAGE) {
+    if (!DEFAULT_IMAGES.includes(this.parent.img)) {
       this.tokenImage = this.parent.img;
     } else {
       this.tokenImage = "";
