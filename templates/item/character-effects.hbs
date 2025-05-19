@@ -1,6 +1,6 @@
 <section class="tab effects {{tab.cssClass}}" data-group="primary" data-tab="characterEffects">
   <div class="eventide-item-sheet__scrollable-container base-form">
-    {{#if (not item.type "transformation")}}
+    {{#if (not (eq item.type "transformation"))}}
     <div class="grid grid-cols-2">
     <div>
     <label class="eventide-item-sheet__effect-toggle-label" for="effect.displayOnToken">Icon Displayed On Token</label>
@@ -83,13 +83,13 @@
                   disabled
                 {{/if}}
               >
-                {{#if (not ../item.type "transformation")}}
+                {{#if (eq ../item.type "transformation")}}
+                  <option value="transform">Transform</option>
+                {{else}}
                 <option value="add" {{#if (eq mode "change")}}selected{{/if}}>Add</option>
                 <option value="override" {{#if (eq mode "override")}}selected{{/if}}>Override</option>
                 <option value="advantage" {{#if (eq mode "advantage")}}selected{{/if}}>Advantage</option>
                 <option value="disadvantage" {{#if (eq mode "disadvantage")}}selected{{/if}}>Disadvantage</option>
-                {{else}}
-                  <option value="transform">Transform</option>
                 {{/if}}
               </select>
             </div>
@@ -141,7 +141,7 @@
     </div>
     
     {{! Hidden Effects Section }}
-    {{#if (not item.type "transformation")}}
+    {{#if (not (eq item.type "transformation"))}}
     {{#if isGM}}
       <div class="eventide-item-sheet__effects-section eventide-item-sheet__effects-section--hidden">
         <h3 class="eventide-item-sheet__effects-section-header">
