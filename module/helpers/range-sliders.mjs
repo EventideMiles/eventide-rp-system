@@ -26,7 +26,7 @@ export function initRangeSliders() {
   // Initial update of all range slider displays
   updateRangeSliderDisplays();
 
-  if (CommonFoundryTasks.isTestingMode()) {
+  if (CommonFoundryTasks.isTestingMode) {
     console.log("Range sliders initialized");
   }
 }
@@ -75,20 +75,20 @@ function handleRangeSliderInput(event) {
  */
 export function cleanupRangeSliders(element) {
   if (!element) {
-    if (CommonFoundryTasks.isTestingMode()) {
+    if (CommonFoundryTasks.isTestingMode) {
       console.log("Range Sliders | No element provided for cleanup");
     }
     return;
   }
 
-  if (CommonFoundryTasks.isTestingMode()) {
+  if (CommonFoundryTasks.isTestingMode) {
     console.log("Range Sliders | Cleaning up range sliders", element);
   }
 
   // Find all range sliders
   const rangeSliders = element.querySelectorAll('.base-form__range-slider');
   
-  if (CommonFoundryTasks.isTestingMode()) {
+  if (CommonFoundryTasks.isTestingMode) {
     console.log(`Range Sliders | Found ${rangeSliders.length} range sliders to clean up`);
   }
   

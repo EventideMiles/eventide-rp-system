@@ -4,48 +4,62 @@ import { StatusPopup } from "../sheets/popups/status-popup.mjs";
 import { FeaturePopup } from "../sheets/popups/feature-popup.mjs";
 
 /**
- * Extended Item class for the Eventide RP System.
- * Provides additional functionality for items including roll data preparation and chat message creation.
- * @extends {Item}
+ * Extended Item document class for the Eventide RP System.
+ * 
+ * Provides additional functionality for items including roll data preparation,
+ * chat message creation, and item-specific actions.
+ * 
+ * @extends {foundry.documents.Item}
  */
 export class EventideRpSystemItem extends Item {
-  /** @override */
+  /**
+   * Prepare base item data
+   * @override
+   */
   prepareData() {
-    // As with the actor class, items are documents that can have their data
-    // preparation methods overridden (such as prepareBaseData()).
     super.prepareData();
   }
 
   /**
-   * Prepare roll data for the item.
+   * Prepare data to be used for roll calculations
    * @override
    * @returns {Object} The prepared roll data
    */
   getRollData() {
-    // Starts off by populating the roll data with a shallow copy of `this.system`
+    // Start with a shallow copy of the item's system data
     const rollData = { ...this.system };
 
-    // Quit early if there's no parent actor
+    // If there's no parent actor, return early
     if (!this.actor) return rollData;
 
-    // If present, add the actor's roll data
+    // Add the actor's roll data to provide context for the item
     rollData.actor = this.actor.getRollData();
 
     return rollData;
   }
 
+  /**
+   * Generate a roll formula for a combat-related roll
+   * Takes into account dice adjustments from both the item and actor
+   * 
+   * @returns {string|undefined} The complete roll formula or undefined if no actor
+   */
   getCombatRollFormula() {
     if (!this.actor) return;
     let diceAdjustments;
 
     const rollData = this.getRollData();
 
+    // If roll type is 'none', return "0" as the formula (no roll)
     if (rollData.roll.type === "none") return "0";
 
+    // Handle ability-based rolls
     if (rollData.roll.ability !== "unaugmented") {
       const thisDiceAdjustments = rollData.roll.diceAdjustments;
       const actorDiceAdjustments =
         rollData.actor.abilities[rollData.roll.ability].diceAdjustments;
+      
+      // Combine adjustments from item and actor
       const total = thisDiceAdjustments.total + actorDiceAdjustments.total;
       const absTotal = Math.abs(total);
 
@@ -55,10 +69,11 @@ export class EventideRpSystemItem extends Item {
           thisDiceAdjustments.advantage + actorDiceAdjustments.advantage,
         disadvantage:
           thisDiceAdjustments.disadvantage + actorDiceAdjustments.disadvantage,
-        mode: total >= 0 ? "k" : "kl",
+        mode: total >= 0 ? "k" : "kl", // k = keep highest, kl = keep lowest
         absTotal,
       };
     } else {
+      // Handle unaugmented rolls
       diceAdjustments = {
         ...rollData.roll.diceAdjustments,
         mode: rollData.roll.diceAdjustments.total >= 0 ? "k" : "kl",
@@ -66,6 +81,7 @@ export class EventideRpSystemItem extends Item {
       };
     }
 
+    // Handle flat bonuses (no dice)
     if (rollData.roll.type === "flat")
       return `${rollData.roll.bonus}${
         rollData.roll.ability !== "unaugmented"
@@ -73,6 +89,7 @@ export class EventideRpSystemItem extends Item {
           : ""
       }`;
 
+    // Build the complete dice formula
     const returnFormula = `${diceAdjustments.absTotal + 1}d${
       rollData.actor.hiddenAbilities.dice.total
     }${diceAdjustments.mode}${
@@ -85,52 +102,65 @@ export class EventideRpSystemItem extends Item {
   }
 
   /**
-   * Convert the item document to a plain object.
+   * Convert the item document to a plain object for export or serialization.
+   * 
    * @returns {Object} Plain object representation of the item
    */
   toPlainObject() {
     const result = { ...this };
 
-    // Simplify system data.
+    // Simplify system data
     result.system = this.system.toPlainObject();
 
-    // Add effects.
+    // Add effects if they exist
     result.effects = this.effects?.size > 0 ? this.effects.contents : [];
 
     return result;
   }
 
-  addQuantity(value) {
-    this.update({
+  /**
+   * Update the item's quantity
+   * 
+   * @param {number} value - The amount to add (positive) or subtract (negative)
+   * @returns {Promise<Item>} The updated item
+   */
+  async addQuantity(value) {
+    return this.update({
       "system.quantity": this.system.quantity + value,
     });
   }
 
   /**
-   * Handle a click event on the item.
-   * @param {Event} event - The triggering click event
-   * @returns {Promise<void>}
+   * Handle a click event on the item, displaying appropriate popup based on item type.
+   * 
+   * @param {Event} [event] - The triggering click event (optional)
+   * @returns {Promise<Application>} The opened application
    */
   async roll(event) {
     const item = this;
+    let application;
 
-    // combat power handling
-    if (item.type === "combatPower") {
-      item.formula = item.getCombatRollFormula();
-      new CombatPowerPopup({ item }).render(true);
+    // Open the appropriate popup based on item type
+    switch(item.type) {
+      case "combatPower":
+        item.formula = item.getCombatRollFormula();
+        application = new CombatPowerPopup({ item });
+        break;
+      case "gear":
+        item.formula = item.getCombatRollFormula();
+        application = new GearPopup({ item });
+        break;
+      case "status":
+        application = new StatusPopup({ item });
+        break;
+      case "feature":
+        application = new FeaturePopup({ item });
+        break;
+      default:
+        console.warn(`No handler for item type: ${item.type}`);
+        return null;
     }
-    // gear handling
-    else if (item.type === "gear") {
-      item.formula = item.getCombatRollFormula();
-      new GearPopup({ item }).render(true);
-    }
-    // status roll handling
-    else if (item.type === "status") {
-      new StatusPopup({ item }).render(true);
-    }
-    // feature roll handling
-    else if (item.type === "feature") {
-      new FeaturePopup({ item }).render(true);
-    }
+
+    return application.render(true);
   }
 }

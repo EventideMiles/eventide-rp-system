@@ -112,20 +112,20 @@ export function initColorPickersWithHex(selector = ".color-picker-with-hex") {
  */
 export function cleanupColorPickers(element) {
   if (!element) {
-    if (CommonFoundryTasks.isTestingMode()) {
+    if (CommonFoundryTasks.isTestingMode) {
       console.log("Color Pickers | No element provided for cleanup");
     }
     return;
   }
 
-  if (CommonFoundryTasks.isTestingMode()) {
+  if (CommonFoundryTasks.isTestingMode) {
     console.log("Color Pickers | Cleaning up color pickers", element);
   }
 
   // Find all color pickers within the element
   const colorPickers = element.querySelectorAll(".color-picker-with-hex");
 
-  if (CommonFoundryTasks.isTestingMode()) {
+  if (CommonFoundryTasks.isTestingMode) {
     console.log(
       `Color Pickers | Found ${colorPickers.length} color pickers to clean up`
     );

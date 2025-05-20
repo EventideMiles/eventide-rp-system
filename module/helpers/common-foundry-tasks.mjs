@@ -1,14 +1,24 @@
 /**
  * A utility class that provides common Foundry VTT operations related to tokens,
  * user flags, permissions, and more.
+ * 
+ * This class is designed to consolidate frequently used operations and abstractions
+ * to make development easier and more consistent throughout the system.
+ * 
  * @class
  */
 export class CommonFoundryTasks {
+  /** 
+   * System identifier for flags and settings
+   * @type {string}
+   * @static
+   */
   static SYSTEM_ID = "eventide-rp-system";
 
   /**
    * Retrieves an array of tokens which are currently targeted by the user.
-   * @returns {Array<Token>} Returns an array of tokens which are currently targeted.
+   * 
+   * @returns {Token[]} Array of targeted tokens
    * @static
    */
   static getTargetArray() {
@@ -17,7 +27,8 @@ export class CommonFoundryTasks {
 
   /**
    * Retrieves the first token which is currently targeted by the user.
-   * @returns {Token|null} Returns the first targeted token or null if no tokens are targeted.
+   * 
+   * @returns {Token|null} The first targeted token or null if none targeted
    * @static
    */
   static getFirstTarget() {
@@ -26,7 +37,8 @@ export class CommonFoundryTasks {
 
   /**
    * Retrieves an array of tokens which are currently selected by the user.
-   * @returns {Array<Token>} Returns an array of tokens which are currently selected.
+   * 
+   * @returns {Token[]} Array of selected tokens
    * @static
    */
   static getSelectedArray() {
@@ -35,7 +47,8 @@ export class CommonFoundryTasks {
 
   /**
    * Retrieves the first token which is currently selected by the user.
-   * @returns {Token|null} Returns the first selected token or null if no tokens are selected.
+   * 
+   * @returns {Token|null} The first selected token or null if none selected
    * @static
    */
   static getFirstSelected() {
@@ -44,6 +57,7 @@ export class CommonFoundryTasks {
 
   /**
    * Clamps a number between a minimum and maximum value.
+   * 
    * @param {number} num - The number to clamp
    * @param {number} min - The minimum value
    * @param {number} max - The maximum value
@@ -56,19 +70,21 @@ export class CommonFoundryTasks {
 
   /**
    * Stores a value in the user's flags for the Eventide system.
+   * 
    * @param {string} key - The key to store the value under
    * @param {*} value - The value to store
    * @returns {Promise<User>} A Promise which resolves to the updated User
    * @static
    */
-  static storeUserFlag(key, value) {
+  static async storeUserFlag(key, value) {
     return game.user.setFlag(CommonFoundryTasks.SYSTEM_ID, key, value);
   }
 
   /**
    * Retrieves a value from the user's flags for the Eventide system.
+   * 
    * @param {string} key - The key of the flag to retrieve
-   * @returns {*} The value stored under the given key
+   * @returns {*} The value stored under the given key, or undefined if not found
    * @static
    */
   static retrieveUserFlag(key) {
@@ -77,29 +93,35 @@ export class CommonFoundryTasks {
 
   /**
    * Deletes a flag from the user's flags for the Eventide system.
+   * 
    * @param {string} key - The key of the flag to delete
    * @returns {Promise<User>} A Promise which resolves to the updated User
    * @static
    */
-  static deleteUserFlag(key) {
+  static async deleteUserFlag(key) {
     return game.user.unsetFlag(CommonFoundryTasks.SYSTEM_ID, key);
   }
 
   /**
    * Stores multiple values in the user's flags for the Eventide system.
-   * @param {Object} flags - An object containing key-value pairs to be stored in user flags
+   * 
+   * @param {Object} flags - An object containing key-value pairs to store
+   * @returns {Promise<void>} A Promise which resolves when all flags are stored
    * @static
    */
-  static storeMultipleUserFlags(flags) {
+  static async storeMultipleUserFlags(flags) {
+    const promises = [];
     for (const flag in flags) {
-      CommonFoundryTasks.storeUserFlag(flag, flags[flag]);
+      promises.push(CommonFoundryTasks.storeUserFlag(flag, flags[flag]));
     }
+    await Promise.all(promises);
   }
 
   /**
    * Retrieves multiple values from the user's flags for the Eventide system.
-   * @param {Array<string>} keys - An array of keys whose values need to be retrieved from user flags
-   * @returns {Object} An object containing key-value pairs retrieved from user flags
+   * 
+   * @param {string[]} keys - An array of keys to retrieve
+   * @returns {Object} An object containing the key-value pairs
    * @static
    */
   static retrieveMultipleUserFlags(keys) {
@@ -114,38 +136,44 @@ export class CommonFoundryTasks {
 
   /**
    * Deletes multiple flags from the user's flags for the Eventide system.
-   * @param {Array<string>} keys - An array of keys of flags to delete
+   * 
+   * @param {string[]} keys - An array of keys to delete
+   * @returns {Promise<void>} A Promise which resolves when all flags are deleted
    * @static
    */
-  static deleteMultipleUserFlags(keys) {
+  static async deleteMultipleUserFlags(keys) {
+    const promises = [];
     for (const key of keys) {
-      CommonFoundryTasks.deleteUserFlag(key);
+      promises.push(CommonFoundryTasks.deleteUserFlag(key));
     }
+    await Promise.all(promises);
   }
 
   /**
    * Determines the permission level of the current user.
-   * @returns {string} Returns "gm" if the user is a GM, otherwise "player"
+   * 
+   * @returns {string} "gm" if the user is a GM, otherwise "player"
    * @static
    */
   static permissionLevel() {
-    if (game.user.isGM) return "gm";
-    return "player";
+    return game.user.isGM ? "gm" : "player";
   }
 
   /**
    * Checks if the current user has permission to perform an action.
-   * @param {Object} options - The options object
+   * If not permitted and the user is not a GM, displays an error notification.
+   * 
+   * @param {Object} [options={}] - Options object
    * @param {boolean} [options.playerMode=false] - Whether to allow player access
-   * @returns {string} Returns "gm" if the user is a GM, "player" if the user is a player and playerMode is true,
-   *                   or "forbidden" if the user is a player and playerMode is false
-   * @note This function will throw an error if the user is a player and playerMode is false
+   * @returns {string} "gm" if GM, "player" if player and playerMode is true, or "forbidden"
    * @static
    */
   static permissionCheck({ playerMode = false } = {}) {
     if (game.user.isGM) return "gm";
     if (playerMode) return "player";
-    ui.notification.error(
+    
+    // Show error notification if action is not permitted for players
+    ui.notifications.error(
       game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.GMOnly")
     );
     return "forbidden";
@@ -153,10 +181,11 @@ export class CommonFoundryTasks {
 
   /**
    * Safely checks if testing mode is enabled in the system settings
+   * 
    * @returns {boolean} Whether testing mode is enabled
    * @static
    */
-  static isTestingMode() {
+  static get isTestingMode() {
     return typeof erps !== "undefined" &&
       erps.settings &&
       typeof erps.settings.getSetting === "function"
@@ -166,7 +195,8 @@ export class CommonFoundryTasks {
 }
 
 /**
- * Utility object that contains all static methods from CommonFoundryTasks for easier spreading
+ * Utility object that contains all static methods from CommonFoundryTasks
+ * for easier spreading into other objects
  * @type {Object}
  */
 export const commonTasks = {
@@ -183,5 +213,5 @@ export const commonTasks = {
   deleteMultipleUserFlags: CommonFoundryTasks.deleteMultipleUserFlags,
   permissionLevel: CommonFoundryTasks.permissionLevel,
   permissionCheck: CommonFoundryTasks.permissionCheck,
-  isTestingMode: CommonFoundryTasks.isTestingMode,
+  isTestingMode: () => CommonFoundryTasks.isTestingMode,
 };

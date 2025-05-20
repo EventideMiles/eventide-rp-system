@@ -32,7 +32,7 @@ export function initNumberInputs() {
     debounce(updateNumberInputResponsiveness, 250)
   );
 
-  if (CommonFoundryTasks.isTestingMode()) {
+  if (CommonFoundryTasks.isTestingMode) {
     console.log("Number inputs initialized with responsive behavior");
   }
 }
@@ -49,7 +49,7 @@ export function enhanceExistingNumberInputs() {
     // If this input isn't in a wrapper but has the base-form__number-input class,
     // we need to wrap it with increment/decrement buttons
     if (!wrapper && input.classList.contains("base-form__number-input")) {
-      if (CommonFoundryTasks.isTestingMode()) {
+      if (CommonFoundryTasks.isTestingMode) {
         console.log("Found unwrapped number input, wrapping it");
       }
       wrapNumberInput(input);
@@ -195,7 +195,7 @@ Hooks.on("renderEventideRpSystemItemSheet", (app, html) => {
 // Catch any other application renders
 Hooks.on("renderApplicationV2", () => {
   updateNumberInputResponsiveness();
-  if (CommonFoundryTasks.isTestingMode()) {
+  if (CommonFoundryTasks.isTestingMode) {
     console.log("Number inputs updated");
   }
 });
@@ -207,13 +207,13 @@ Hooks.on("renderApplicationV2", () => {
  */
 export function cleanupNumberInputs(element) {
   if (!element) {
-    if (CommonFoundryTasks.isTestingMode()) {
+    if (CommonFoundryTasks.isTestingMode) {
       console.log("Number Inputs | No element provided for cleanup");
     }
     return;
   }
 
-  if (CommonFoundryTasks.isTestingMode()) {
+  if (CommonFoundryTasks.isTestingMode) {
     console.log("Number Inputs | Cleaning up number inputs", element);
   }
 
@@ -229,7 +229,7 @@ export function cleanupNumberInputs(element) {
     ".base-form__number-input-wrapper"
   );
   
-  if (CommonFoundryTasks.isTestingMode()) {
+  if (CommonFoundryTasks.isTestingMode) {
     console.log(`Number Inputs | Found ${numberWrappers.length} number inputs to clean up`);
   }
   

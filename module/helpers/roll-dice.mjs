@@ -5,19 +5,31 @@ import { erpsSoundManager } from "./sound-manager.mjs";
 const { renderTemplate } = foundry.applications.handlebars;
 
 /**
- * ERPSRollHandler - Handles all dice rolling operations for the Eventide RP System
- * @class
+ * Handles all dice rolling operations for the Eventide RP System
+ * 
+ * This class is responsible for creating, evaluating, and displaying roll results
+ * in chat messages, including handling critical hits/misses and custom styling.
+ * 
+ * @class ERPSRollHandler
  */
 class ERPSRollHandler {
+  /**
+   * Create a new ERPSRollHandler instance
+   */
   constructor() {
-    // Default roll templates
+    /**
+     * Default roll templates for different roll types
+     * @type {Object<string, string>}
+     */
     this.templates = {
       standard: "systems/eventide-rp-system/templates/chat/roll-message.hbs",
-      initiative:
-        "systems/eventide-rp-system/templates/chat/initiative-roll.hbs",
+      initiative: "systems/eventide-rp-system/templates/chat/initiative-roll.hbs",
     };
 
-    // Default roll options
+    /**
+     * Default options for all rolls
+     * @type {Object}
+     */
     this.defaults = {
       formula: "1",
       label: "unknown roll",
@@ -31,7 +43,11 @@ class ERPSRollHandler {
       soundKey: null, // Optional sound key for the sound manager
     };
 
-    // Roll type styling map - maps roll types to their styling classes and icons
+    /**
+     * Style definitions for roll types
+     * Maps roll types to their styling classes and icons
+     * @type {Object<string, string[]>}
+     */
     this.rollTypeStyles = {
       acro: ["chat-card__header--acrobatics", "fa-solid fa-feather-pointed"],
       phys: ["chat-card__header--physical", "fa-solid fa-dragon"],
@@ -55,8 +71,8 @@ class ERPSRollHandler {
   /**
    * Determine the appropriate card styling based on roll type
    * @private
-   * @param {string} type - The roll type
-   * @returns {Array} An array containing [cardClass, icon]
+   * @param {string} type - The roll type identifier
+   * @returns {string[]} An array containing [cardClass, icon]
    */
   _getCardStyling(type) {
     const lowerType = type.toLowerCase();
@@ -65,17 +81,19 @@ class ERPSRollHandler {
 
   /**
    * Create chat message data with proper visibility settings
+   * 
    * @private
-   * @param {Object} options - Message data options
+   * @param {Object} options - Message configuration options
    * @param {ChatSpeakerData} options.speaker - The message speaker
    * @param {string} options.content - The message content HTML
-   * @param {Array<Roll>} options.rolls - Array of Roll objects
-   * @param {string} [options.type="unknown"] - Roll type
+   * @param {string} [options.sound=CONFIG.sounds.dice] - Sound to play
+   * @param {Roll[]} options.rolls - Array of Roll objects
+   * @param {string} [options.type="unknown"] - Roll type identifier
    * @param {string} [options.formula=""] - Roll formula
    * @param {number} [options.total=0] - Roll total
-   * @param {string} [options.rollMode="roll"] - Roll mode for visibility
-   * @param {string} [options.soundKey=null] - Optional sound key for the sound manager
-   * @returns {Object} Chat message data object
+   * @param {string} [options.rollMode="roll"] - Roll visibility mode
+   * @param {string} [options.soundKey=null] - Optional custom sound key
+   * @returns {Object} ChatMessage creation data
    */
   _createMessageData({
     speaker,
@@ -88,13 +106,11 @@ class ERPSRollHandler {
     rollMode = "roll",
     soundKey = null,
   }) {
-    // If a soundKey is provided, play it locally and add to message flags
-    let useSound = sound;
-
+    // Create the message data structure
     const messageData = {
       speaker,
       content,
-      sound: useSound,
+      sound: sound,
       rolls,
       flags: {
         "eventide-rp-system": {
@@ -107,7 +123,7 @@ class ERPSRollHandler {
       },
     };
 
-    // Add sound flags if a sound key is provided
+    // Handle custom sounds if provided
     if (soundKey) {
       // Play sound locally for immediate feedback
       erpsSoundManager._playLocalSound(soundKey);
@@ -115,16 +131,18 @@ class ERPSRollHandler {
       // Set built-in sound to null since we're using our own system
       messageData.sound = null;
 
-      // Add sound data to flags
+      // Add sound data to flags for remote playback
       messageData.flags["eventide-rp-system"].sound = {
         key: soundKey,
         force: false,
       };
     }
 
-    // Apply roll mode if specified
+    // Apply roll mode visibility settings
     if (rollMode !== "roll") {
       messageData.rollMode = rollMode;
+      
+      // Handle GM-only rolls
       if (rollMode === "gmroll" || rollMode === "blindroll") {
         messageData.whisper = game.users
           .filter((user) => user.isGM)
@@ -137,19 +155,21 @@ class ERPSRollHandler {
 
   /**
    * Process a roll and generate appropriate chat messages
-   * @public
-   * @param {Object} options - Roll options
-   * @param {string} [options.formula="1"] - The dice formula to roll (e.g. "1d20+5")
+   * 
+   * @async
+   * @param {Object} options - Roll configuration options
+   * @param {string} [options.formula="1"] - The dice formula to roll
    * @param {string} [options.label="unknown roll"] - Display name for the roll
-   * @param {string} [options.type="unknown"] - Type of roll (e.g. "damage", "heal", ability code)
+   * @param {string} [options.type="unknown"] - Type of roll (ability code, "damage", etc.)
+   * @param {string} [options.className=""] - Additional CSS class for styling
    * @param {boolean} [options.critAllowed=true] - Whether critical hits/misses are possible
    * @param {boolean} [options.acCheck=true] - Whether to check against target AC values
-   * @param {string} [options.description=""] - Optional description of the roll
+   * @param {string} [options.description=""] - Optional description text
    * @param {boolean} [options.toMessage=true] - Whether to create a chat message
-   * @param {string} [options.rollMode=null] - Roll mode for visibility
-   * @param {string} [options.soundKey=null] - Optional sound key for the sound manager
+   * @param {string} [options.rollMode=null] - Roll visibility mode
+   * @param {string} [options.soundKey=null] - Optional sound key 
    * @param {Actor} actor - Actor performing the roll
-   * @returns {Promise<Roll>} - Resolved promise containing the evaluated roll
+   * @returns {Promise<Roll>} The evaluated roll
    */
   async handleRoll(
     {
@@ -166,15 +186,21 @@ class ERPSRollHandler {
     } = {},
     actor
   ) {
+    // Get actor data and create the roll
     const rollData = actor.getRollData();
     const roll = new Roll(formula, rollData);
+    
+    // Evaluate the roll
     const result = await roll.evaluate();
+    
+    // Get targets if needed for AC checks
     const targetArray = await erps.utils.getTargetArray();
     const addCheck = (acCheck ?? true) && targetArray.length ? true : false;
 
+    // Normalize roll type
     const pickedType = type.toLowerCase();
 
-    // Determine critical states using the helper method
+    // Determine critical hit/miss states
     const { critHit, critMiss, stolenCrit, savedMiss } =
       erpsRollUtilities.determineCriticalStates({
         roll: result,
@@ -183,6 +209,7 @@ class ERPSRollHandler {
         critAllowed,
       });
 
+    // Get target data for AC checks if applicable
     const targetRollData = addCheck
       ? targetArray.map((target) => ({
           name: target.actor.name,
@@ -191,9 +218,11 @@ class ERPSRollHandler {
         }))
       : [];
 
+    // Get styling for this roll type
     const [pickedCardClass, pickedIcon] = this._getCardStyling(pickedType);
 
-    const data = {
+    // Prepare template data
+    const templateData = {
       rollData,
       roll,
       result,
@@ -212,16 +241,17 @@ class ERPSRollHandler {
       critMiss: critMiss ?? false,
       savedMiss: savedMiss ?? false,
       stolenCrit: stolenCrit ?? false,
-      // Add these properties to match initiative roll template
+      // Add these properties for initiative template compatibility
       name: actor.name,
       total: result.total,
       formula: formula,
     };
 
-    const content = await renderTemplate(this.templates.standard, data);
+    // Render the appropriate template
+    const content = await renderTemplate(this.templates.standard, templateData);
 
+    // Create chat message if requested
     if (toMessage) {
-      // Create the chat message
       const messageData = this._createMessageData({
         speaker: ChatMessage.getSpeaker({ actor }),
         content,
@@ -233,7 +263,7 @@ class ERPSRollHandler {
         soundKey,
       });
 
-      ChatMessage.create(messageData);
+      await ChatMessage.create(messageData);
     }
 
     return roll;
