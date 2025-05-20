@@ -48,7 +48,8 @@
   &__header--restore { background-color: colors.$heal; }
   &__header--transfer { background-color: colors.$transfer; }
   &__header--equip { background-color: colors.$gear; }
-
+  &__header--transformation { background: colors.$transformation-gradient; }
+  &__header--transformation-remove { background: colors.$transformation-remove-gradient; }
 
   &__description {
     @extend .underdog-regular;

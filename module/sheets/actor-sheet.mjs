@@ -1,4 +1,4 @@
-import { prepareActiveEffectCategories } from "../helpers/effects.mjs";
+import { CommonFoundryTasks } from "../helpers/common-foundry-tasks.mjs";
 import { erpsRollHandler } from "../helpers/roll-dice.mjs";
 
 const { api, sheets } = foundry.applications;
@@ -41,6 +41,8 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
       toggleGear: this._toggleGear,
       incrementGear: this._incrementGear,
       decrementGear: this._decrementGear,
+      applyTransformation: this._applyTransformation,
+      removeTransformation: this._removeTransformation,
     },
     // Custom property that's merged into `this.options`
     dragDrop: [{ dragSelector: "[data-drag]", dropSelector: null }],
@@ -251,6 +253,8 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
     const features = [];
     const statuses = [];
     const combatPowers = [];
+    const transformations = [];
+    const transformationCombatPowers = [];
 
     // Iterate through items, allocating to containers
     for (let i of this.document.items) {
@@ -270,6 +274,13 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
       else if (i.type === "combatPower") {
         combatPowers.push(i);
       }
+      // Append to transformations
+      else if (i.type === "transformation") {
+        transformations.push(i);
+        if (i.system.embeddedCombatPowers.length > 0) {
+          transformationCombatPowers.push(...i.system.embeddedCombatPowers);
+        }
+      }
     }
 
     // Sort then assign
@@ -279,6 +290,12 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
     context.features = features.sort((a, b) => (a.sort || 0) - (b.sort || 0));
     context.statuses = statuses.sort((a, b) => (a.sort || 0) - (b.sort || 0));
     context.combatPowers = combatPowers.sort(
+      (a, b) => (a.sort || 0) - (b.sort || 0)
+    );
+    context.transformationCombatPowers = transformationCombatPowers.sort(
+      (a, b) => (a.sort || 0) - (b.sort || 0)
+    );
+    context.transformations = transformations.sort(
       (a, b) => (a.sort || 0) - (b.sort || 0)
     );
   }
@@ -294,9 +311,43 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
   _onRender(context, options) {
     this.#dragDrop.forEach((d) => d.bind(this.element));
     this.#disableOverrides();
+
+    // Debug the transformation display
+    if (CommonFoundryTasks.isTestingMode) this._debugTransformation();
+
     // You may want to add other special handling here
     // Foundry comes with a large number of utility classes, e.g. SearchFilter
     // That you may want to implement yourself.
+  }
+
+  /**
+   * Debug the transformation display
+   * @private
+   */
+  _debugTransformation() {
+    const activeTransformationId = this.actor.getFlag(
+      "eventide-rp-system",
+      "activeTransformation"
+    );
+    if (activeTransformationId) {
+      console.log("Active transformation ID:", activeTransformationId);
+
+      // Find the transformation item
+      const transformation = this.actor.items.get(activeTransformationId);
+      console.log("Transformation item:", transformation);
+
+      // Check if the transformation element exists in the DOM
+      const transformationElement = this.element.querySelector(
+        ".transformation-header__name"
+      );
+      console.log("Transformation element:", transformationElement);
+      if (transformationElement) {
+        console.log(
+          "Transformation element text:",
+          transformationElement.textContent.trim()
+        );
+      }
+    }
   }
 
   /**************
@@ -419,6 +470,29 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
     await gear.update({
       "system.quantity": Math.max(gear.system.quantity - 1, 0),
     });
+  }
+
+  /**
+   * Apply a transformation to the actor
+   * @this EventideRpSystemActorSheet
+   * @param {PointerEvent} event   The originating click event
+   * @param {HTMLElement} target   The capturing HTML element which defined a [data-action]
+   * @protected
+   */
+  static async _applyTransformation(event, target) {
+    const transformation = this._getEmbeddedDocument(target);
+    await this.actor.applyTransformation(transformation);
+  }
+
+  /**
+   * Remove the active transformation from the actor
+   * @this EventideRpSystemActorSheet
+   * @param {PointerEvent} event   The originating click event
+   * @param {HTMLElement} target   The capturing HTML element which defined a [data-action]
+   * @protected
+   */
+  static async _removeTransformation(event, target) {
+    await this.actor.removeTransformation();
   }
 
   /**
@@ -649,6 +723,14 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
     // Handle item sorting within the same Actor
     if (this.actor.uuid === item.parent?.uuid)
       return this._onSortItem(event, item);
+
+    // Handle dropping a transformation directly on the actor
+    if (item.type === "transformation") {
+      // Apply the transformation
+      await this.actor.applyTransformation(item);
+      // Create the owned item
+      return this._onDropItemCreate(item, event);
+    }
 
     // Create the owned item
     return this._onDropItemCreate(item, event);

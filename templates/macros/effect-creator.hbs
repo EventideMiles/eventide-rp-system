@@ -94,7 +94,7 @@
             type="checkbox" 
             id="displayOnToken" 
             name="displayOnToken" 
-            {{#if (eq storedData.effect_displayOnToken "true")}}checked{{/if}}>
+            {{#if storedData.effect_displayOnToken}}checked{{/if}}>
           <label class="toggle-switch-display" for="displayOnToken"></label>
         </div>
       </div>

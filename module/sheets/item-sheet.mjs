@@ -8,15 +8,24 @@ const { DragDrop, TextEditor } = foundry.applications.ux;
 
 /**
  * Item sheet implementation for the Eventide RP System.
- * Extends the base ItemSheetV2 with system-specific functionality.
+ * Extends the base ItemSheetV2 with system-specific functionality for managing items in the Eventide RP System.
+ * This class handles the rendering and interaction with item sheets, including features, gear, combat powers,
+ * transformations, and their associated effects.
+ *
  * @extends {HandlebarsApplicationMixin(ItemSheetV2)}
+ * @class
  */
 export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
   sheets.ItemSheetV2
 ) {
   /**
-   * @constructor
+   * Creates a new instance of the EventideRpSystemItemSheet.
+   * Initializes drag and drop functionality and form change tracking.
+   *
    * @param {Object} [options={}] - Application configuration options
+   * @param {boolean} [options.editable=true] - Whether the sheet is editable
+   * @param {boolean} [options.closeOnSubmit=true] - Whether to close the sheet on form submission
+   * @param {Object} [options.submitOnChange=false] - Whether to submit the form on change
    */
   constructor(options = {}) {
     super(options);
@@ -41,13 +50,14 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
     ],
     actions: {
       onEditImage: this._onEditImage,
-      viewDoc: this._viewEffect,
+      viewDoc: this._viewDoc,
       createDoc: this._createEffect,
       deleteDoc: this._deleteEffect,
       toggleEffect: this._toggleEffect,
       newCharacterEffect: this._newCharacterEffect,
       deleteCharacterEffect: this._deleteCharacterEffect,
       toggleEffectDisplay: this._toggleEffectDisplay,
+      removeCombatPower: this._removeCombatPower,
     },
     position: {
       width: 600,
@@ -87,12 +97,20 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
       template:
         "systems/eventide-rp-system/templates/item/attribute-parts/combat-power.hbs",
     },
+    attributesTransformation: {
+      template:
+        "systems/eventide-rp-system/templates/item/attribute-parts/transformation.hbs",
+    },
     effects: {
       template: "systems/eventide-rp-system/templates/item/effects.hbs",
     },
     characterEffects: {
       template:
         "systems/eventide-rp-system/templates/item/character-effects.hbs",
+    },
+    embeddedCombatPowers: {
+      template:
+        "systems/eventide-rp-system/templates/item/embedded-combat-powers.hbs",
     },
   };
 
@@ -109,10 +127,10 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
 
       // Clean up color pickers
       erps.utils.cleanupColorPickers(this.element);
-    }
 
-    // Clean up private fields and references
-    this.#dragDrop = null;
+      // Clean up range sliders
+      erps.utils.cleanupRangeSliders(this.element);
+    }
 
     await super._preClose(options);
   }
@@ -138,10 +156,24 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
       case "combatPower":
         options.parts.push("attributesCombatPower", "prerequisites");
         break;
+      case "transformation":
+        options.parts.push(
+          "attributesTransformation",
+          "embeddedCombatPowers",
+          "characterEffects"
+        );
+        break;
     }
   }
 
-  /** @override */
+  /**
+   * Prepares the context data for rendering the sheet.
+   * This includes setting up permissions, item data, system data, and configuration.
+   *
+   * @param {Object} options - The options for preparing the context
+   * @returns {Promise<Object>} The prepared context data
+   * @override
+   */
   async _prepareContext(options) {
     const context = {};
 
@@ -172,7 +204,9 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
   }
 
   /**
-   * Prepare data for rendering a specific part of the Item sheet.
+   * Prepares data for rendering a specific part of the Item sheet.
+   * Handles different parts like attributes, description, prerequisites, effects, etc.
+   *
    * @param {string} partId - The ID of the part to prepare
    * @param {Object} context - The data object to prepare
    * @returns {Promise<Object>} The prepared context
@@ -183,6 +217,7 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
       case "attributesFeature":
       case "attributesGear":
       case "attributesCombatPower":
+      case "attributesTransformation":
         // Necessary for preserving active tab on re-render
         context.tab = context.tabs[partId];
         if (partId === "attributesCombatPower" || partId === "attributesGear") {
@@ -193,6 +228,8 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
             unaugmented: "unaugmented",
           };
         }
+        // Add size options for the select
+        context.sizeOptions = [0.5, 0.75, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5];
         break;
       case "description":
         context.tab = context.tabs[partId];
@@ -215,6 +252,12 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
         context.prerequisites = this.item.system.prerequisites;
         context.tab = context.tabs[partId];
         break;
+      case "embeddedCombatPowers":
+        context.tab = context.tabs[partId];
+        // Get embedded combat powers as temporary items
+        context.embeddedCombatPowers =
+          this.item.system.getEmbeddedCombatPowers();
+        break;
       case "effects":
         context.tab = context.tabs[partId];
         // Prepare active effects for easier access
@@ -234,9 +277,11 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
   }
 
   /**
-   * Generates the data for the generic tab navigation template
-   * @param {string[]} parts An array of named template parts to render
-   * @returns {Record<string, Partial<ApplicationTab>>}
+   * Generates the data for the generic tab navigation template.
+   * Creates tab definitions for different parts of the sheet.
+   *
+   * @param {string[]} parts - An array of named template parts to render
+   * @returns {Record<string, Partial<ApplicationTab>>} The tab definitions
    * @protected
    */
   _getTabs(parts) {
@@ -275,9 +320,14 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
           tab.id = "characterEffects";
           tab.label += "CharacterEffects";
           break;
+        case "embeddedCombatPowers":
+          tab.id = "embeddedCombatPowers";
+          tab.label += "CombatPowers";
+          break;
         case "attributesFeature":
         case "attributesGear":
         case "attributesCombatPower":
+        case "attributesTransformation":
           tab.id = "attributes";
           tab.label += "Attributes";
           break;
@@ -305,6 +355,15 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
     this.#dragDrop.forEach((d) => d.bind(this.element));
   }
 
+  /**
+   * Handles form change events.
+   * Updates character effects and handles icon tint changes.
+   *
+   * @param {Object} formConfig - The form configuration
+   * @param {Event} event - The form change event
+   * @returns {Promise<void>}
+   * @protected
+   */
   async _onChangeForm(formConfig, event) {
     this.#formChanged = true; // Set flag when form changes
 
@@ -324,6 +383,13 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
     await super._onChangeForm(formConfig, event);
   }
 
+  /**
+   * Handles the closing of the sheet.
+   * Calls the erpsUpdateItem hook if the form was changed.
+   *
+   * @returns {Promise<void>}
+   * @protected
+   */
   async _onClose() {
     // Only call the hook if the form was changed
     if (this.#formChanged) {
@@ -390,6 +456,21 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
     };
     await this.item.updateEmbeddedDocuments("ActiveEffect", [updateData]);
     event.target.focus();
+  }
+
+  /**
+   * Handle removing a combat power from a transformation
+   *
+   * @this EventideRpSystemItemSheet
+   * @param {PointerEvent} event   The originating click event
+   * @param {HTMLElement} target   The capturing HTML element which defined a [data-action]
+   * @protected
+   */
+  static async _removeCombatPower(event, target) {
+    const powerId = target.dataset.powerId;
+    if (!powerId) return;
+
+    await this.item.system.removeCombatPower(powerId);
   }
 
   /*****************
@@ -477,10 +558,50 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
   /* -------------------------------------------- */
 
   /**
-   * Handle the dropping of ActiveEffect data onto an Actor Sheet
-   * @param {DragEvent} event                  The concluding DragEvent which contains drop data
-   * @param {object} data                      The data transfer extracted from the event
-   * @returns {Promise<ActiveEffect|boolean>}  The created ActiveEffect object or false if it couldn't be created.
+   * Handles dropping of an item reference or item data onto an Item Sheet.
+   * Specifically handles combat powers being added to transformations.
+   *
+   * @param {DragEvent} event - The concluding DragEvent which contains drop data
+   * @param {Object} data - The data transfer extracted from the event
+   * @returns {Promise<boolean>} Whether the drop was successful
+   * @protected
+   */
+  async _onDropItem(event, data) {
+    if (!this.item.isOwner) return false;
+
+    // Get the dropped item
+    const droppedItem = await Item.implementation.fromDropData(data);
+    if (!droppedItem) return false;
+
+    // Handle transformation items receiving combat powers
+    if (this.item.type === "transformation") {
+      // Only allow combat powers to be added to transformations
+      if (droppedItem.type !== "combatPower") {
+        ui.notifications.warn(
+          game.i18n.localize(
+            "EVENTIDE_RP_SYSTEM.Errors.TransformationItemTypes"
+          )
+        );
+        return false;
+      }
+
+      // Add the combat power to the transformation
+      await this.item.system.addCombatPower(droppedItem);
+      return true;
+    }
+
+    return false;
+  }
+
+  /* -------------------------------------------- */
+
+  /**
+   * Handles the dropping of ActiveEffect data onto an Actor Sheet.
+   * Creates new effects or sorts existing ones.
+   *
+   * @param {DragEvent} event - The concluding DragEvent which contains drop data
+   * @param {Object} data - The data transfer extracted from the event
+   * @returns {Promise<ActiveEffect|boolean>} The created ActiveEffect object or false if it couldn't be created
    * @protected
    */
   async _onDropActiveEffect(event, data) {
@@ -493,11 +614,15 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
     return aeCls.create(effect, { parent: this.item });
   }
 
+  /* -------------------------------------------- */
+
   /**
-   * Sorts an Active Effect based on its surrounding attributes
+   * Sorts an Active Effect based on its surrounding attributes.
    *
-   * @param {DragEvent} event
-   * @param {ActiveEffect} effect
+   * @param {DragEvent} event - The drag event
+   * @param {ActiveEffect} effect - The effect being sorted
+   * @returns {Promise<void>}
+   * @protected
    */
   _onEffectSort(event, effect) {
     const effects = this.item.effects;
@@ -548,19 +673,6 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
   /* -------------------------------------------- */
 
   /**
-   * Handle dropping of an item reference or item data onto an Actor Sheet
-   * @param {DragEvent} event            The concluding DragEvent which contains drop data
-   * @param {object} data                The data transfer extracted from the event
-   * @returns {Promise<Item[]|boolean>}  The created or updated Item instances, or false if the drop was not permitted.
-   * @protected
-   */
-  async _onDropItem(event, data) {
-    if (!this.item.isOwner) return false;
-  }
-
-  /* -------------------------------------------- */
-
-  /**
    * Handle dropping of a Folder on an Actor Sheet.
    * The core sheet currently supports dropping a Folder of Items to create all items as owned items.
    * @param {DragEvent} event     The concluding DragEvent which contains drop data
@@ -588,8 +700,9 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
   #formChanged; // Flag to track if form has been changed
 
   /**
-   * Create drag-and-drop workflow handlers for this Application
-   * @returns {DragDrop.implementation[]}     An array of DragDrop handlers
+   * Creates drag-and-drop workflow handlers for this Application.
+   *
+   * @returns {DragDrop.implementation[]} An array of DragDrop handlers
    * @private
    */
   #createDragDropHandlers() {
@@ -614,7 +727,10 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
    **************************/
 
   /**
-   * Ensures that each item has exactly one active effect
+   * Ensures that each item has exactly one active effect.
+   * Creates a default effect if none exists, or consolidates multiple effects into one.
+   *
+   * @returns {Promise<void>}
    * @private
    */
   async _eventideItemEffectGuards() {
@@ -676,15 +792,18 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
   }
 
   /**
-   * Updates the character effects for the item
+   * Updates the character effects for the item.
+   * Processes both regular and hidden effects, handling additions and removals.
+   *
    * @param {Object} [options={}] - Options for updating character effects
    * @param {Object} [options.newEffect] - Configuration for a new effect to add
-   * @param {(null|"abilities"|"hiddenAbilities")} [options.newEffect.type] - Type of effect, must be either null, 'abilities' or 'hiddenAbilities'
+   * @param {(null|"abilities"|"hiddenAbilities")} [options.newEffect.type] - Type of effect
    * @param {string} [options.newEffect.ability] - Ability identifier for the new effect
    * @param {Object} [options.remove] - Configuration for removing an existing effect
    * @param {number} [options.remove.index] - Index of the effect to remove
-   * @param {(null|"regularEffects"|"hiddenEffects")} [options.remove.type] - Type of effect to remove, must be either null,'regularEffects' or 'hiddenEffects'
+   * @param {(null|"regularEffects"|"hiddenEffects")} [options.remove.type] - Type of effect to remove
    * @returns {Promise<void>}
+   * @protected
    */
   async _updateCharacterEffects({
     newEffect = { type: null, ability: null },
@@ -751,7 +870,9 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
               ? "override"
               : effect.mode === "advantage"
               ? "diceAdjustments.advantage"
-              : "diceAdjustments.disadvantage"
+              : effect.mode === "disadvantage"
+              ? "diceAdjustments.disadvantage"
+              : "transform"
           }`;
         } else {
           key = `system.hiddenAbilities.${effect.ability}.${
@@ -797,24 +918,42 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
    *************************************************/
 
   /**
-   * Renders an embedded document's sheet
+   * Renders an embedded document's sheet.
+   * Handles both combat powers and effects.
    *
-   * @this EventideRpSystemItemSheet
-   * @param {PointerEvent} event   The originating click event
-   * @param {HTMLElement} target   The capturing HTML element which defined a [data-action]
+   * @param {PointerEvent} event - The originating click event
+   * @param {HTMLElement} target - The capturing HTML element which defined a [data-action]
+   * @returns {Promise<void>}
    * @protected
    */
-  static async _viewEffect(event, target) {
-    const effect = this._getEffect(target);
-    effect.sheet.render(true);
+  static async _viewDoc(event, target) {
+    const docRow = target.closest("li");
+
+    // Handle viewing embedded combat powers
+    if (this.item.type === "transformation" && docRow.dataset.itemId) {
+      const powerId = docRow.dataset.itemId;
+      const embeddedPowers = this.item.system.getEmbeddedCombatPowers();
+      const power = embeddedPowers.find((p) => p.id === powerId);
+
+      if (power) {
+        power.sheet.render(true);
+        return;
+      }
+    }
+
+    // Handle viewing effects
+    if (docRow.dataset.effectId) {
+      const effect = this.item.effects.get(docRow.dataset.effectId);
+      effect?.sheet.render(true);
+    }
   }
 
   /**
-   * Handles item deletion
+   * Handles item deletion.
    *
-   * @this EventideRpSystemItemSheet
-   * @param {PointerEvent} event   The originating click event
-   * @param {HTMLElement} target   The capturing HTML element which defined a [data-action]
+   * @param {PointerEvent} event - The originating click event
+   * @param {HTMLElement} target - The capturing HTML element which defined a [data-action]
+   * @returns {Promise<void>}
    * @protected
    */
   static async _deleteEffect(event, target) {
@@ -823,11 +962,11 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
   }
 
   /**
-   * Handle creating a new Owned Item or ActiveEffect for the actor using initial data defined in the HTML dataset
+   * Creates a new Owned Item or ActiveEffect for the actor using initial data defined in the HTML dataset.
    *
-   * @this EventideRpSystemItemSheet
-   * @param {PointerEvent} event   The originating click event
-   * @param {HTMLElement} target   The capturing HTML element which defined a [data-action]
+   * @param {PointerEvent} event - The originating click event
+   * @param {HTMLElement} target - The capturing HTML element which defined a [data-action]
+   * @returns {Promise<void>}
    * @private
    */
   static async _createEffect(event, target) {
@@ -855,11 +994,11 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
   }
 
   /**
-   * Determines effect parent to pass to helper
+   * Toggles the disabled state of an effect.
    *
-   * @this EventideRpSystemItemSheet
-   * @param {PointerEvent} event   The originating click event
-   * @param {HTMLElement} target   The capturing HTML element which defined a [data-action]
+   * @param {PointerEvent} event - The originating click event
+   * @param {HTMLElement} target - The capturing HTML element which defined a [data-action]
+   * @returns {Promise<void>}
    * @private
    */
   static async _toggleEffect(event, target) {
@@ -870,10 +1009,11 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
   /** Helper Functions */
 
   /**
-   * Fetches the row with the data for the rendered embedded document
+   * Fetches the row with the data for the rendered embedded document.
    *
-   * @param {HTMLElement} target  The element with the action
+   * @param {HTMLElement} target - The element with the action
    * @returns {HTMLLIElement} The document's row
+   * @private
    */
   _getEffect(target) {
     const li = target.closest(".effect");

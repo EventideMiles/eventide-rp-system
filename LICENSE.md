@@ -43,6 +43,7 @@ http://www.apache.org/licenses/LICENSE-2.0
 - fire-ray.svg
 - split-cross.svg
 - oppression.svg
+- werewolf.svg
 
 ### By Delapouite under CC BY 3.0 from game-icons.net
 

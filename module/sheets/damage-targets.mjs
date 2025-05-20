@@ -182,8 +182,8 @@ export class DamageTargets extends EventideSheetHelpers {
       label: formData.get("label") || "Damage",
       formula: formData.get("formula") || "1",
       description: formData.get("description") || "",
-      type: formData.get("isHeal") ? "heal" : "damage",
-      soundKey: formData.get("isHeal") ? "healing" : "damage",
+      type: formData.get("isHeal") === "true" ? "heal" : "damage",
+      soundKey: formData.get("isHeal") === "true" ? "healing" : "damage",
     };
     const originalFormula = damageOptions.formula;
     if (

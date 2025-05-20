@@ -48,6 +48,8 @@
   --erps-card-header-effect: #9A5D2D;
   --erps-card-header-delete: #555555;
   --erps-card-header-transfer: #9B4B7D;
+  --erps-card-header-transformation: linear-gradient(270deg, #005716, #0066cc);
+  --erps-card-header-transformation-remove: linear-gradient(270deg, #0066cc, #005716);
 
   --erps-card-header-initiative: #3498db;
   --erps-card-header-initiative-npc: #e67e22;
@@ -69,6 +71,8 @@
   --erps-selected: #1a365d;
   --erps-incorrect: #570000;
   --erps-required: #cc0000;
+  
+  --erps-cursed: #781990;
 }
 
 // light theme colors
@@ -240,6 +244,8 @@ $heal: var(--erps-card-header-heal);
 $effect: var(--erps-card-header-effect);
 $delete: var(--erps-card-header-delete);
 $description-hr: var(--erps-card-header-description-hr);
+$transformation-gradient: var(--erps-card-header-transformation);
+$transformation-remove-gradient: var(--erps-card-header-transformation-remove);
 $transfer: var(--erps-card-header-transfer);
 
 $hit: var(--erps-chat-details-hit);
@@ -310,3 +316,5 @@ $form-selected: var(--erps-selected);
 $form-incorrect: var(--erps-incorrect);
 $form-input-disabled: var(--erps-disabled);
 $form-required: var(--erps-required);
+
+$cursed: var(--erps-cursed);

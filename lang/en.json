@@ -84,6 +84,10 @@
             "label": "Resolve"
           }
         },
+        "Transformation": {
+          "label": "Transformation",
+          "Remove": "Remove Transformation"
+        },
         "XP": {
           "label": "XP"
         }
@@ -127,7 +131,10 @@
       "ImageRequired": "Item image is required",
       "InvalidQuantity": "Quantity must be a positive number",
       "InvalidWeight": "Weight must be a valid number",
-      "InvalidCost": "Cost must be a valid number"
+      "InvalidCost": "Cost must be a valid number",
+      "TransformationItemTypes": "Only combat powers can be added to transformations.",
+      "MissingAbility": "Missing ability",
+      "MissingTransformation": "Missing transformation"
     },
     "Info": {
       "CompendiumItemCreated": "Created {keyType} item {name} in the {packLabel} compendium",
@@ -189,7 +196,11 @@
         "Cursed": "Cursed",
         "Equipped": "Equipped",
         "EquipFirst": "You need to equip this item to see details. If you want to investigate it first ask your GM.",
-        "DisplayOnToken": "Display On Token"
+        "DisplayOnToken": "Display On Token",
+        "Size": "Size",
+        "TransformationAttributes": "Transformation Attributes",
+        "CombatPowers": "Combat Powers",
+        "DropCombatPowers": "Drop combat powers here"
       },
       "Buttons": {
         "Change": "Change",
@@ -238,6 +249,11 @@
         "Power": {
           "InsufficientPower": "You don't have enough power to use this! (Need {cost}, have {actorPower})",
           "TargetPower": "You need to target someone to use this power!"
+        },
+        "Transformation": {
+          "NoTargets": "There are no targets selected. This will create a transformation for the compendium only.",
+          "PlayerMode": "You are using the transformation creator in player mode. This can only be used to create transformations for tokens you control. You currently have <strong>{count} tokens(s)</strong> selected.",
+          "WithTargets": "There are <strong>{count} target(s)</strong> selected. This will create a transformation for each target and your compendium."
         }
       },
       "Placeholders": {
@@ -323,11 +339,18 @@
       },
       "Tabs": {
         "Description": "Description",
-        "Details": "Details",
-        "Effects": "Effects",
-        "Prerequisites": "Prerequisites",
         "Attributes": "Attributes",
-        "CharacterEffects": "Character Effects"
+        "Effects": "Effects",
+        "CharacterEffects": "Character Effects",
+        "Prerequisites": "Prerequisites",
+        "CombatPowers": "Combat Powers"
+      },
+      "Transformation": {
+        "Size": "Size",
+        "Notes": "Transformations can store combat powers that are available when the character transforms.",
+        "EmbeddedPowers": "Combat Powers",
+        "NoPowers": "No combat powers added yet.",
+        "DropPowerHere": "Drop a combat power here to add it to this transformation."
       }
     },
     "Messages": {
@@ -362,7 +385,8 @@
       "CombatPower": "Combat Power: {name}",
       "GearTransfer": "Gear Transfer: {name}",
       "Restore": "Restoration: {name}",
-      "GearEquip": "Equipment Change: {name}"
+      "GearEquip": "Equipment Change: {name}",
+      "Transformation": "Transformation: {name}"
     },
     "Effect": {
       "Inactive": "Inactive Effects",
@@ -378,6 +402,10 @@
       "Actor": "EventideRpSystem Actor Sheet",
       "Item": "EventideRpSystem Item Sheet"
     },
+    "UI": {
+      "View": "View",
+      "Remove": "Remove"
+    },
     "WindowTitles": {
       "ChangeTargetStatus": "Change Target Status",
       "CombatPowerPopup": "Combat Power Details",
@@ -389,7 +417,8 @@
       "GearTransfer": "Transfer Gear",
       "RestoreTarget": "Restore Target",
       "SelectAbilityRoll": "Select Ability Roll",
-      "StatusPopup": "Status Information"
+      "StatusPopup": "Status Information",
+      "TransformationCreator": "Transformation Creator"
     }
   },
   "TYPES": {
@@ -402,7 +431,8 @@
       "effect": "Effect",
       "feature": "Feature",
       "gear": "Gear",
-      "status": "Status"
+      "status": "Status",
+      "transformation": "Transformation"
     }
   },
   "SETTINGS": {
@@ -483,6 +513,6 @@
     "SoundResetToDefault": "Sound for {0} reset to default.",
     "NoPlayerPermission": "Players do not have permission to change sound settings.",
     "TestingModeName": "Testing Mode",
-    "TestingModeHint": "Enable or disable testing mode."
+    "TestingModeHint": "Enable or disable testing mode console logging for debugging."
   }
 }

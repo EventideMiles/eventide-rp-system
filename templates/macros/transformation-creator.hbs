@@ -1,0 +1,142 @@
+{{!-- Transformation Creator Form --}}
+<div class="{{cssClass}} base-form transformation-creator" autocomplete="off">
+  {{> callout-box}}
+  <div class="base-form__content">
+    <div class="base-form__group">
+      <label class="base-form__label" for="name">
+        {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Name"}}:
+      </label>
+      <input 
+        class="base-form__text-input" 
+        autofocus 
+        type="text" 
+        id="name" 
+        name="name" 
+        placeholder="{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.Name"}}">
+    </div>
+
+    <div class="base-form__group">
+      <label class="base-form__label" for="description">
+        {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Description"}}:
+      </label>
+      <textarea 
+        class="base-form__textarea" 
+        id="description" 
+        name="description" 
+        placeholder="{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.Description"}}"></textarea>
+    </div>
+
+    <div class="base-form__group">
+      <label class="base-form__label" for="img">
+        {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Image"}}:
+      </label>
+      <img
+        class="base-form__image base-form__image--edit"
+        src="{{storedData.transformation_img}}"
+        data-edit="img"
+        data-action='onEditImage'
+        data-target="img"
+        title="{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Image"}}"
+        name="displayImage"
+        id="displayImage"
+      />
+      <input 
+        class="base-form__hidden-input" 
+        type="hidden" 
+        name="img" 
+        value="{{ifThen storedData.transformation_img storedData.transformation_img "icons/svg/ice-aura.svg"}}">
+    </div>
+
+    <div class="base-form__header">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.TransformationAttributes"}}</div>
+    <div class="base-form__group">
+      <label class="base-form__label" for="size">
+        {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Size"}}:
+      </label>
+      <select class="base-form__select" id="size" name="size">
+        {{#each sizeOptions as |size|}}
+          <option value="{{size.value}}">{{size.label}}</option>
+        {{/each}}
+      </select>
+    </div>
+
+    {{#if isGM}}
+      <div class="base-form__toggle-group">
+        <label for="cursed">
+          {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Cursed"}}
+        </label>
+        <div class="toggle-switch-wrapper">
+          <input 
+            class="base-form__toggle-switch" 
+            type="checkbox" 
+            id="cursed" 
+            name="cursed" 
+            {{#if storedData.transformation_cursed}}checked{{/if}}>
+          <label class="toggle-switch-display" for="cursed"></label>
+        </div>
+      </div>
+    {{/if}}
+
+    <div class="base-form__group--stacked">
+      <h3 class="base-form__label">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.CombatPowers"}}</h3>
+      {{#if embeddedCombatPowers.length}}
+        <ol class="items-panel__list items-panel__list--three-column">
+          <li class="items-panel__list-item items-panel__header">
+            <div class="items-panel__prop items-panel__header-cell">{{localize 'Image'}}</div>
+            <div class='items-panel__name items-panel__header-cell'>{{localize 'Name'}}</div>
+            <div class='items-panel__controls items-panel__header-cell'>{{localize 'Controls'}}</div>
+          </li>
+          {{#each embeddedCombatPowers}}
+            <li
+              class="items-panel__list-item"
+              data-item-id="{{this.id}}"
+              data-drag="true"
+              data-document-class="Item"
+            >
+              <div class="items-panel__prop items-panel__list-cell">
+                <div class="items-panel__image">
+                  <img
+                    src="{{this.img}}"
+                    title="{{this.name}}"
+                    width="24"
+                    height="24"
+                  />
+                </div>
+              </div>
+              <div class="items-panel__name items-panel__list-cell">
+                {{this.name}}
+              </div>
+              <div class="items-panel__controls items-panel__list-cell">
+                <a 
+                  class="items-panel__control" 
+                  data-action="viewCombatPower" 
+                  data-power-id="{{this.id}}" 
+                  title="{{localize 'EVENTIDE_RP_SYSTEM.UI.View'}}"
+                >
+                  <i class="fas fa-eye"></i>
+                </a>
+                <a 
+                  class="items-panel__control" 
+                  data-action="removeCombatPower" 
+                  data-power-id="{{this.id}}" 
+                  title="{{localize 'EVENTIDE_RP_SYSTEM.UI.Remove'}}"
+                >
+                  <i class="fas fa-trash"></i>
+                </a>
+              </div>
+            </li>
+          {{/each}}
+        </ol>
+      {{else}}
+        <p class="embedded-combat-powers__empty-message">{{localize "EVENTIDE_RP_SYSTEM.Item.Transformation.NoPowers"}}</p>
+      {{/if}}
+      <div class="embedded-combat-powers__drop-zone" data-drop-zone="combatPower">
+        <p>{{localize "EVENTIDE_RP_SYSTEM.Item.Transformation.DropPowerHere"}}</p>
+      </div>
+      <p class="notes">{{localize "EVENTIDE_RP_SYSTEM.Item.Transformation.Notes"}}</p>
+    </div>
+     <div class="base-form__header">{{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Effects"}}}</div>
+    {{> character-effects}}
+  </div>
+
+  {{> macro-footer}}
+</div> 

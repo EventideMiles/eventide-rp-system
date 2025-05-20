@@ -32,7 +32,8 @@
       "CombatPower": "Combat Power: {name}",
       "GearTransfer": "Gear Transfer: {name}",
       "Restore": "Restoration: {name}",
-      "GearEquip": "Equipment Change: {name}"
+      "GearEquip": "Equipment Change: {name}",
+      "Transformation": "Transformation: {name}"
     }
   }
 }

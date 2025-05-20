@@ -47,6 +47,8 @@ export class EffectCreator extends CreatorApplication {
   async _prepareContext(options) {
     const context = await super._prepareContext(options);
 
+    context.calloutGroup = this.calloutGroup;
+
     context.storedData = {
       effect_img:
         this.storedData[this.storageKeys[0]] || "icons/svg/stoned.svg",

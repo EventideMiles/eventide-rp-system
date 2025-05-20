@@ -1,0 +1,13 @@
+<div class="tab attributes {{tab.cssClass}}" data-group="primary" data-tab="attributes">
+  <div class="form-group">
+    <label>{{localize "EVENTIDE_RP_SYSTEM.Item.Transformation.Size"}}</label>
+    <div class="form-fields">
+      <select class="base-form__select" name="system.size" data-dtype="Number">
+        {{#each sizeOptions as |size|}}
+          <option value="{{size}}" {{#if (eq ../system.size size)}}selected{{/if}}>{{size}}×</option>
+        {{/each}}
+      </select>
+    </div>
+  </div>
+</div>
+

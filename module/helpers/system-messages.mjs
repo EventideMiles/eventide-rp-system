@@ -22,6 +22,8 @@ class ERPSMessageHandler {
         "systems/eventide-rp-system/templates/chat/gear-transfer-message.hbs",
       gearEquip:
         "systems/eventide-rp-system/templates/chat/gear-equip-message.hbs",
+      transformation:
+        "systems/eventide-rp-system/templates/chat/transformation-message.hbs",
     };
   }
 
@@ -420,6 +422,40 @@ class ERPSMessageHandler {
       );
     }
   }
+
+  /**
+   * Creates a chat message for transformation application or removal
+   * @param {Object} options - Options for the transformation message
+   * @param {Actor} options.actor - The actor being transformed
+   * @param {Item} options.transformation - The transformation item
+   * @param {boolean} options.isApplying - Whether the transformation is being applied (true) or removed (false)
+   * @returns {Promise<ChatMessage>} The created chat message
+   */
+  async createTransformationMessage({ actor, transformation, isApplying }) {
+    // console.log("createTransformationMessage", { actor, transformation, isApplying });
+    const data = {
+      actor,
+      transformation,
+      isApplying,
+      embeddedPowers: transformation.system.getEmbeddedCombatPowers()
+    };
+    
+    // Play appropriate sound locally and add to message
+    const soundKey = isApplying ? "combatPower" : "statusRemove";
+    await erpsSoundManager._playLocalSound(soundKey);
+    
+    return this._createChatMessage(
+      "transformation",
+      data,
+      {
+        speaker: erpsRollUtilities.getSpeaker(
+          actor,
+          "EVENTIDE_RP_SYSTEM.MessageHeaders.Transformation"
+        )
+      },
+      { soundKey }
+    );
+  }
 }
 
 // Create a singleton instance
@@ -464,3 +500,5 @@ export const gearTransferMessage = (
   );
 export const gearEquipMessage = (item) =>
   erpsMessageHandler.createGearEquipMessage(item);
+export const transformationMessage = (options) =>
+  erpsMessageHandler.createTransformationMessage(options);

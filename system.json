@@ -29,6 +29,9 @@
       },
       "combatPower": {
         "htmlFields": ["description"]
+      },
+      "transformation": {
+        "htmlFields": ["description"]
       }
     }
   },
@@ -50,7 +53,7 @@
       "thumbnail": "systems/eventide-rp-system/assets/anvil-impact.png"
     }
   ],
-  "version": "13.0.0",
+  "version": "13.1.1",
   "compatibility": {
     "minimum": "13.341",
     "verified": "13.342"

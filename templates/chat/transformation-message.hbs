@@ -1,0 +1,18 @@
+<div class="chat-card">
+  <header class="chat-card__header chat-card__header--transformation chat-card__header--image {{#if isApplying}}chat-card__header--apply{{else}}chat-card__header--remove{{/if}}">
+    <img src="{{transformation.img}}" class="chat-card__image--primary" title="{{transformation.name}}" />
+    <div>{{transformation.name}}</div>
+  </header>
+
+  <div class="chat-card__description">
+    <div class="chat-card__description--header">{{actor.name}}. . . </div> 
+    {{#if isApplying}}
+      <p>transforms into {{transformation.name}}!</p>
+    {{else}}
+      <p>reverts from {{transformation.name}} back to normal form.</p>
+    {{/if}}
+    {{#if transformation.system.description}}
+      {{{transformation.system.description}}}
+    {{/if}}
+  </div>
+</div> 

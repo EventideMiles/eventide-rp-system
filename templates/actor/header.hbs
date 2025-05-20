@@ -10,14 +10,36 @@
     width='100'
   />
   <div class='header-fields'>
-    <div class='document-name'>
+    <div class='document-name flexrow'>
       <input
         name='name'
         type='text'
         value='{{actor.name}}'
         placeholder='{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.Name"}}'
       />
+      {{#if actor.flags.eventide-rp-system.activeTransformation}}
+        <div class="transformation-header">
+          <label class="transformation-header__label">{{localize 'EVENTIDE_RP_SYSTEM.Actor.Attributes.Transformation.label'}}:</label>
+          <div class="transformation-header__details">
+            <span class="transformation-header__name">{{actor.flags.eventide-rp-system.activeTransformationName}}</span>
+            {{#if (and editable (or (not actor.flags.eventide-rp-system.activeTransformationCursed) @root.isGM))}}
+              <a class="transformation-header__dismiss" data-action="removeTransformation" title="{{localize 'EVENTIDE_RP_SYSTEM.Actor.Attributes.Transformation.Remove'}}">
+                <i class="fas fa-undo {{#if actor.flags.eventide-rp-system.activeTransformationCursed}}transformation-header__dismiss--cursed{{/if}}"></i>
+              </a>
+            {{else}}
+              <a 
+                class="transformation-header__dismiss--cursed" 
+                title="{{localize 'EVENTIDE_RP_SYSTEM.Actor.Attributes.Transformation.Remove'}}" 
+                disabled>
+                <i class="fas fa-lock-keyhole"></i>
+              </a>
+            {{/if}}
+            
+          </div>
+        </div>
+      {{/if}}
     </div>
+    
     {{! The grid classes are defined in scss/global/_grid.scss. To use,
       use both the "grid" and "grid-Ncol" class where "N" can be any number
       from 1 to 12 and will create that number of columns.  }}

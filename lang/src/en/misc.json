@@ -13,6 +13,10 @@
     "SheetLabels": {
       "Actor": "EventideRpSystem Actor Sheet",
       "Item": "EventideRpSystem Item Sheet"
+    },
+    "UI": {
+      "View": "View",
+      "Remove": "Remove"
     }
   },
   "TYPES": {
@@ -25,7 +29,8 @@
       "effect": "Effect",
       "feature": "Feature",
       "gear": "Gear",
-      "status": "Status"
+      "status": "Status",
+      "transformation": "Transformation"
     }
   }
 }

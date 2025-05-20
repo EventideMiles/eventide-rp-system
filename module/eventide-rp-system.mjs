@@ -11,6 +11,7 @@ import { ChangeTargetStatus } from "./sheets/change-target-status.mjs";
 import { SelectAbilityRoll } from "./sheets/select-ability-roll.mjs";
 import { GearTransfer } from "./sheets/gear-transfer.mjs";
 import { EffectCreator } from "./sheets/effect-creator.mjs";
+import { TransformationCreator } from "./sheets/transformation-creator.mjs";
 // Import helper/utility classes and constants.
 import { EVENTIDE_RP_SYSTEM } from "./helpers/config.mjs";
 import { preloadHandlebarsTemplates } from "./helpers/templates.mjs";
@@ -21,12 +22,20 @@ import { initChatListeners } from "./helpers/chat-listeners.mjs";
 import * as models from "./data/_module.mjs";
 import { commonTasks } from "./helpers/common-foundry-tasks.mjs";
 import { erpsMessageHandler } from "./helpers/system-messages.mjs";
-import { initColorPickersWithHex } from "./helpers/color-pickers.mjs";
-import { initNumberInputs } from "./helpers/number-inputs.mjs";
+import {
+  initColorPickersWithHex,
+  cleanupColorPickers,
+} from "./helpers/color-pickers.mjs";
+import {
+  initNumberInputs,
+  cleanupNumberInputs,
+} from "./helpers/number-inputs.mjs";
 import { initHandlebarsPartials } from "./helpers/handlebars-partials.mjs";
-import { cleanupNumberInputs } from "./helpers/number-inputs.mjs";
-import { cleanupColorPickers } from "./helpers/color-pickers.mjs";
 import { getSetting, setSetting } from "./helpers/settings.mjs";
+import {
+  initRangeSliders,
+  cleanupRangeSliders,
+} from "./helpers/range-sliders.mjs";
 
 const { Actors, Items } = foundry.documents.collections;
 const { ActorSheet, ItemSheet } = foundry.appv1.sheets;
@@ -53,6 +62,8 @@ globalThis.erps = {
     initNumberInputs,
     cleanupNumberInputs,
     cleanupColorPickers,
+    initRangeSliders,
+    cleanupRangeSliders,
   },
   macros: {
     GearTransfer,
@@ -62,6 +73,7 @@ globalThis.erps = {
     ChangeTargetStatus,
     SelectAbilityRoll,
     EffectCreator,
+    TransformationCreator,
   },
   settings: {
     getSetting,
@@ -126,6 +138,7 @@ Hooks.once("init", async function () {
     feature: models.EventideRpSystemFeature,
     status: models.EventideRpSystemStatus,
     combatPower: models.EventideRpSystemCombatPower,
+    transformation: models.EventideRpSystemTransformation,
   };
 
   // Active Effects are never copied to the Actor,
