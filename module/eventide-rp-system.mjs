@@ -9,48 +9,53 @@
  */
 
 // Import document classes
-import { EventideRpSystemActor } from "./documents/actor.mjs";
-import { EventideRpSystemItem } from "./documents/item.mjs";
+import { 
+  EventideRpSystemActor, 
+  EventideRpSystemItem 
+} from "./documents/_module.mjs";
 
 // Import sheet classes
-import { EventideRpSystemActorSheet } from "./sheets/actor-sheet.mjs";
-import { EventideRpSystemItemSheet } from "./sheets/item-sheet.mjs";
-import { GearCreator } from "./sheets/gear-creator.mjs";
-import { DamageTargets } from "./sheets/damage-targets.mjs";
-import { RestoreTarget } from "./sheets/restore-target.mjs";
-import { ChangeTargetStatus } from "./sheets/change-target-status.mjs";
-import { SelectAbilityRoll } from "./sheets/select-ability-roll.mjs";
-import { GearTransfer } from "./sheets/gear-transfer.mjs";
-import { EffectCreator } from "./sheets/effect-creator.mjs";
-import { TransformationCreator } from "./sheets/transformation-creator.mjs";
+import { 
+  EventideRpSystemActorSheet, 
+  EventideRpSystemItemSheet,
+  GearCreator,
+  DamageTargets,
+  RestoreTarget,
+  ChangeTargetStatus,
+  SelectAbilityRoll,
+  GearTransfer,
+  EffectCreator,
+  TransformationCreator,
+} from "./ui/_module.mjs";
 
-// Import helper/utility classes and constants
-import { EVENTIDE_RP_SYSTEM } from "./helpers/config.mjs";
-import { preloadHandlebarsTemplates } from "./helpers/templates.mjs";
-import { registerSettings } from "./helpers/settings.mjs";
-import { initializeCombatHooks } from "./helpers/combat.mjs";
-import { initChatListeners } from "./helpers/chat-listeners.mjs";
+// import service classes and constants
+import { 
+  EVENTIDE_RP_SYSTEM,
+  preloadHandlebarsTemplates,
+  registerSettings,
+  initializeCombatHooks,
+  initChatListeners,
+  erpsMessageHandler,
+  initHandlebarsPartials,
+  getSetting,
+  setSetting
+} from "./services/_module.mjs";
 
 // Import DataModel classes
 import * as models from "./data/_module.mjs";
 
 // Import utility functions
-import { commonTasks } from "./helpers/common-foundry-tasks.mjs";
-import { erpsMessageHandler } from "./helpers/system-messages.mjs";
+import { commonTasks } from "./utils/_module.mjs";
+
+//import helper functions
 import {
   initColorPickersWithHex,
   cleanupColorPickers,
-} from "./helpers/color-pickers.mjs";
-import {
   initNumberInputs,
   cleanupNumberInputs,
-} from "./helpers/number-inputs.mjs";
-import { initHandlebarsPartials } from "./helpers/handlebars-partials.mjs";
-import { getSetting, setSetting } from "./helpers/settings.mjs";
-import {
   initRangeSliders,
   cleanupRangeSliders,
-} from "./helpers/range-sliders.mjs";
+} from "./helpers/_module.mjs";
 
 const { Actors, Items } = foundry.documents.collections;
 const { ActorSheet, ItemSheet } = foundry.appv1.sheets;

@@ -2,7 +2,7 @@
  * Helper functions for enhanced number inputs
  * @module helpers/number-inputs
  */
-import { CommonFoundryTasks } from "./common-foundry-tasks.mjs";
+import { CommonFoundryTasks } from "../utils/common-foundry-tasks.mjs";
 
 // Track initialization to prevent duplicate handlers
 let isInitialized = false;

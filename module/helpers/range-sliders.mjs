@@ -2,7 +2,7 @@
  * Helper functions for range slider inputs
  * @module helpers/range-sliders
  */
-import { CommonFoundryTasks } from "./common-foundry-tasks.mjs";
+import { CommonFoundryTasks } from "../utils/common-foundry-tasks.mjs";
 
 // Track initialization to prevent duplicate handlers
 let isInitialized = false;

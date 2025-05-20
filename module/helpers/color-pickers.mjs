@@ -2,7 +2,7 @@
  * Helper functions for enhanced color pickers with hex input
  * @module helpers/color-pickers
  */
-import { CommonFoundryTasks } from "./common-foundry-tasks.mjs";
+import { CommonFoundryTasks } from "../utils/common-foundry-tasks.mjs";
 
 /**
  * Initialize color pickers with hex input fields
