@@ -237,7 +237,7 @@ export class EventideRpSystemActor extends Actor {
     // Get the transformation item: we cannot get from id because it gets a new one when applied
     let transformationItem = this.items.find(
       (item) => item.type === "transformation"
-    )[0];
+    );
 
     // Get the original token data
     const originalTokenData = this.getFlag(
