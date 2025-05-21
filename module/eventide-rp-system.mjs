@@ -1,22 +1,22 @@
 /**
  * Eventide RP System - Main Module
- * 
- * This file serves as the entry point for the Eventide RP System, setting up the system 
- * and registering its components with Foundry VTT. It initializes document classes, sheets, 
+ *
+ * This file serves as the entry point for the Eventide RP System, setting up the system
+ * and registering its components with Foundry VTT. It initializes document classes, sheets,
  * configuration, and utility functions.
- * 
+ *
  * @module eventide-rp-system
  */
 
 // Import document classes
-import { 
-  EventideRpSystemActor, 
-  EventideRpSystemItem 
+import {
+  EventideRpSystemActor,
+  EventideRpSystemItem,
 } from "./documents/_module.mjs";
 
 // Import sheet classes
-import { 
-  EventideRpSystemActorSheet, 
+import {
+  EventideRpSystemActorSheet,
   EventideRpSystemItemSheet,
   GearCreator,
   DamageTargets,
@@ -29,7 +29,7 @@ import {
 } from "./ui/_module.mjs";
 
 // import service classes and constants
-import { 
+import {
   EVENTIDE_RP_SYSTEM,
   preloadHandlebarsTemplates,
   registerSettings,
@@ -38,7 +38,7 @@ import {
   erpsMessageHandler,
   initHandlebarsPartials,
   getSetting,
-  setSetting
+  setSetting,
 } from "./services/_module.mjs";
 
 // Import DataModel classes
@@ -51,6 +51,7 @@ import { commonTasks } from "./utils/_module.mjs";
 import {
   initColorPickersWithHex,
   cleanupColorPickers,
+  enhanceExistingColorPickers,
   initNumberInputs,
   cleanupNumberInputs,
   initRangeSliders,
@@ -79,6 +80,7 @@ globalThis.erps = {
     ...commonTasks,
     rollItemMacro,
     initColorPickersWithHex,
+    enhanceExistingColorPickers,
     initNumberInputs,
     cleanupNumberInputs,
     cleanupColorPickers,
@@ -103,13 +105,13 @@ globalThis.erps = {
   models,
 };
 
-/** 
- * Initialize the Eventide RP System 
- * Sets up system configuration, registers document classes, initializes hooks and listeners 
+/**
+ * Initialize the Eventide RP System
+ * Sets up system configuration, registers document classes, initializes hooks and listeners
  */
 Hooks.once("init", async function () {
   console.log("ERPS | Initializing Eventide RP System");
-  
+
   // Add custom constants for configuration
   CONFIG.EVENTIDE_RP_SYSTEM = EVENTIDE_RP_SYSTEM;
   // Register system settings
@@ -122,8 +124,8 @@ Hooks.once("init", async function () {
   initializeCombatHooks();
   // Initialize chat message listeners
   initChatListeners();
-  /**  
-   * Configure initiative settings  
+  /**
+   * Configure initiative settings
    */
   CONFIG.Combat.initiative = {
     formula: "1d20", // Default fallback
@@ -137,7 +139,10 @@ Hooks.once("init", async function () {
         decimals: game.settings.get("eventide-rp-system", "initiativeDecimals"),
       };
     } catch (error) {
-      console.warn("ERPS | Could not get initiative settings, using defaults", error);
+      console.warn(
+        "ERPS | Could not get initiative settings, using defaults",
+        error
+      );
     }
   }
   // Define custom Document classes
@@ -148,7 +153,7 @@ Hooks.once("init", async function () {
   CONFIG.Actor.dataModels = {
     character: models.EventideRpSystemCharacter,
     npc: models.EventideRpSystemNPC,
-  };   
+  };
   CONFIG.Item.dataModels = {
     gear: models.EventideRpSystemGear,
     feature: models.EventideRpSystemFeature,
@@ -165,12 +170,12 @@ Hooks.once("init", async function () {
   Actors.registerSheet("eventide-rp-system", EventideRpSystemActorSheet, {
     makeDefault: true,
     label: "EVENTIDE_RP_SYSTEM.SheetLabels.Actor",
-  });   
+  });
   Items.unregisterSheet("core", ItemSheet);
   Items.registerSheet("eventide-rp-system", EventideRpSystemItemSheet, {
     makeDefault: true,
     label: "EVENTIDE_RP_SYSTEM.SheetLabels.Item",
-  });   
+  });
   console.log("ERPS | Eventide RP System Initialization Complete");
 });
 

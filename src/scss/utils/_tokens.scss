@@ -115,4 +115,31 @@ $z-index-fixed: 1030;
 $z-index-modal-backdrop: 1040;
 $z-index-modal: 1050;
 $z-index-popover: 1060;
-$z-index-tooltip: 1070; 
+$z-index-tooltip: 1070;
+
+// COMPONENT-SPECIFIC SIZES
+// -----------------------------------------------------------------------------
+// Toggle switch
+$size-toggle-width: 2.5rem;      // Width of toggle switch
+$size-toggle-height: 1.25rem;    // Height of toggle switch
+$size-toggle-knob: 1rem;         // Size of toggle switch knob
+$size-toggle-translate: 1.25rem;  // Translation distance for toggle
+
+// Form elements
+$size-label-width: 7.5rem;       // Standard label width
+$size-color-preview: 2rem;       // Width of color preview box
+$size-color-compact: 3.125rem;   // Width of compact color picker
+$size-color-height-compact: 1.875rem;  // Height of compact color picker
+
+// Range slider
+$size-range-track-height: 0.5rem;        // Height of range slider track
+$size-range-track-height-compact: 0.375rem;  // Height of compact range track
+$size-range-thumb: 1.25rem;              // Size of range slider thumb
+$size-range-thumb-compact: 1rem;         // Size of compact range thumb
+$size-range-value-min-width: 2.5rem;     // Min width of range value display
+
+// Typography sizes for specific components
+$font-size-section-header: 1.25rem;
+$font-size-label-base: 1.125rem;
+$font-size-label-small: 0.75rem;
+$font-size-label-large: 1.5rem; 

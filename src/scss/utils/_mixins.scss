@@ -1,25 +1,39 @@
 @use "colors";
 @use "typography";
 @use "tokens";
+@use "sass:list";
 
 // =============================================================================
 // REUSABLE STATES & BASE BEHAVIORS
 // =============================================================================
 
-// Interactive states for inputs
-@mixin input-state($state: 'base') {
-  @if $state == 'focus' {
-    outline: none;
-    border-color: colors.$input-focus;
-    box-shadow: 0 0 0 tokens.$border-width-base rgba(tokens.$color-primary, 0.25);
-  } @else if $state == 'hover' {
-    background-color: colors.$input-hover;
+// Interactive states for inputs and buttons
+@mixin interactive-state($type: 'input', $state: 'base') {
+  @if $type == 'input' {
+    @if $state == 'focus' {
+      outline: none;
+      border-color: colors.$input-focus;
+      box-shadow: 0 0 0 tokens.$border-width-base rgba(tokens.$color-primary, 0.25);
+    } @else if $state == 'hover' {
+      background-color: colors.$input-hover;
+    }
+  } @else if $type == 'button' {
+    @if $state == 'hover' {
+      background-color: colors.$button-hover;
+      box-shadow: 0 0 0.9375rem 0.3125rem colors.$button-glow;
+    } @else if $state == 'active' {
+      background-color: colors.$button-active;
+      box-shadow: 0 0 0.5rem 0.125rem colors.$button-glow;
+    } @else if $state == 'disabled' {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
   }
-  @content; // Allow for customization
+  @content;
 }
 
 // Element visibility control
-@mixin element-invisible {
+@mixin visually-hidden {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -31,17 +45,40 @@
   @content;
 }
 
-@mixin hide {
+@mixin hidden {
   display: none;
   @content;
+}
+
+// Common flex alignment patterns
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+// Common transition pattern
+@mixin standard-transition($properties...) {
+  $transition-list: ();
+  @each $prop in $properties {
+    $transition-list: list.append($transition-list, $prop tokens.$transition-quick, comma);
+  }
+  transition: $transition-list;
 }
 
 // =============================================================================
 // FORM ELEMENTS - BASE STYLES
 // =============================================================================
 
-// Base input properties that all text-based form elements share
-@mixin input-base {
+// Consolidated form element mixin
+@mixin form-element($type: 'text', $variant: 'default') {
+  // Common base properties for all form elements
   display: block;
   width: 100%;
   box-sizing: border-box;
@@ -52,160 +89,114 @@
   font-size: 1rem;
   line-height: 1.5;
   height: tokens.$size-input-height;
-  @content;
-}
-
-// Text inputs (standard text fields, search, email, etc.)
-@mixin grid-compliant-text-input {
-  @include input-base;
   
   // Theme-aware styling
   color: colors.$input-text;
   background-color: colors.$input-bg !important;
   border: tokens.$border-width-thin solid colors.$input-border;
-  border-radius: tokens.$radius-sm;
-  transition: border-color tokens.$transition-quick, box-shadow tokens.$transition-quick, background-color tokens.$transition-quick;
+  @include standard-transition(border-color, box-shadow, background-color);
   
-  &:hover {
-    @include input-state('hover');
-  }
-
-  &::selection {
-    background-color: colors.$input-text;
-    color: colors.$input-bg;
-  }
-  
-  &:focus {
-    @include input-state('focus');
-  }
+  // Interactive states
+  &:hover { @include interactive-state('input', 'hover'); }
+  &:focus { @include interactive-state('input', 'focus'); }
   
   &::placeholder {
     color: colors.$input-placeholder;
-    opacity: 1;
+    opacity: if($type == 'textarea', 0.7, 1);
   }
   
-  @content;
-}
-
-// Select dropdowns
-@mixin grid-compliant-select {
-  @include input-base;
-  
-  // Theme-aware styling
-  color: colors.$input-text;
-  background-color: colors.$input-bg !important;
-  transition: border-color tokens.$transition-quick, box-shadow tokens.$transition-quick, background-color tokens.$transition-quick;
-  
-  // Select-specific styling
-  line-height: 1;
-  padding: 0 2.5rem 0 tokens.$spacing-sm;
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  background-image: colors.$select-arrow-url !important;
-  background-repeat: no-repeat !important;
-  background-position: calc(100% - 8px) center !important;
-  background-size: 24px !important;
-  
-  // Text overflow handling
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-  
-  &:hover {
-    background-color: colors.$form-selected;
-  }
-  
-  &:focus {
-    @include input-state('focus');
-  }
-  
-  &:hover, &:focus {
-    background-color: colors.$form-selected !important;
-  }
-  
-  @content;
-}
-
-// Dropdown styling for options
-@mixin select-dropdown-styles {
-  option {
-    background-color: #2a3441 !important;
-    color: #ffffff !important;
-    padding: tokens.$spacing-sm tokens.$spacing-md !important;
-    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5) !important;
-    font-weight: normal !important;
+  // Type-specific styles
+  @if $type == 'select' {
+    line-height: 1;
+    padding: 0 2.5rem 0 tokens.$spacing-sm;
+    @include flex-center;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: colors.$select-arrow-url !important;
+    background-repeat: no-repeat !important;
+    background-position: calc(100% - 8px) center !important;
+    background-size: 24px !important;
     
-    &:hover, &:focus, &:active, &:checked {
+    // Text overflow handling
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    
+    &:hover, &:focus {
       background-color: colors.$form-selected !important;
+    }
+    
+    // Dropdown styling
+    option {
+      background-color: #2a3441 !important;
       color: #ffffff !important;
+      padding: tokens.$spacing-sm tokens.$spacing-md !important;
+      text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5) !important;
+      font-weight: normal !important;
+      
+      &:hover, &:focus, &:active, &:checked {
+        background-color: colors.$form-selected !important;
+        color: #ffffff !important;
+      }
+    }
+    
+    // Browser compatibility
+    &::-moz-focus-inner { border: 0; }
+    &::-ms-expand { display: none; }
+    
+  } @else if $type == 'textarea' {
+    min-height: 5rem;
+    resize: vertical;
+    line-height: 1.4;
+    padding: tokens.$spacing-md;
+    white-space: pre-wrap;
+    overflow-y: auto;
+  } @else if $type == 'number' {
+    appearance: textfield;
+    -moz-appearance: textfield;
+    text-align: center;
+    
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
     }
   }
   
-  // Browser compatibility
-  &::-moz-focus-inner {
-    border: 0;
-  }
-  
-  &::-ms-expand {
-    display: none;
-  }
-  
   @content;
 }
 
-// Textareas
+// Maintain backward compatibility with existing mixins
+@mixin grid-compliant-text-input {
+  @include form-element('text');
+  @content;
+}
+
+@mixin grid-compliant-select {
+  @include form-element('select');
+  @content;
+}
+
 @mixin grid-compliant-textarea {
-  @include grid-compliant-text-input;
-  
-  min-height: 5rem;
-  resize: vertical;
-  line-height: 1.4;
-  padding: tokens.$spacing-md;
-  white-space: pre-wrap;
-  overflow-y: auto;
-  
-  &::placeholder {
-    color: colors.$input-placeholder;
-    opacity: 0.7;
-  }
-  
+  @include form-element('textarea');
   @content;
 }
 
-// Number inputs
 @mixin grid-compliant-number-input {
-  @include grid-compliant-text-input;
-  
-  // Number-specific properties
-  appearance: textfield;
-  -moz-appearance: textfield;
-  height: tokens.$size-input-height;
-  
-  &::-webkit-outer-spin-button,
-  &::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
-  
-  text-align: center;
-  width: 100%;
-  margin: 0;
+  @include form-element('number');
   
   .base-form__number-input-wrapper:not(.compact) & {
     width: calc(100% - 4rem);
   }
+  
+  @content;
 }
 
 // Number input wrapper with increment/decrement buttons
 @mixin grid-compliant-number-input-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  @include flex-between;
   width: 100%;
   
   .decrement, .increment {
@@ -215,13 +206,11 @@
     border: tokens.$border-width-thin solid colors.$input-border;
     background-color: colors.$input-bg;
     color: colors.$input-text;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    @include flex-center;
     font-size: 1rem;
     font-weight: bold;
     cursor: pointer;
-    transition: all tokens.$transition-quick;
+    @include standard-transition(all);
     flex-shrink: 0;
     
     &:hover, &:focus {
@@ -250,9 +239,7 @@
   // Container query for automatic adaptation
   @supports (container-type: inline-size) {
     container-type: inline-size;
-  }
-  
-  @supports (container-type: inline-size) {
+    
     @container (max-width: 7rem) {
       .decrement, .increment {
         display: none !important;
@@ -271,8 +258,8 @@
 // TOGGLE SWITCHES
 // =============================================================================
 
-// Base toggle switch behavior shared by all switch variants
-@mixin toggle-switch-base {
+// Consolidated toggle switch mixin
+@mixin toggle-switch($variant: 'default') {
   // Hide the actual checkbox
   position: absolute;
   opacity: 0;
@@ -283,13 +270,13 @@
   & ~ .toggle-switch-display {
     position: relative;
     display: block;
-    width: 2.5rem;  
-    height: 1.25rem; 
+    width: tokens.$size-toggle-width;
+    height: tokens.$size-toggle-height;
     
     // Prevent flexbox stretching
-    flex: 0 0 2.5rem; 
-    min-width: 2.5rem; 
-    max-width: 2.5rem; 
+    flex: 0 0 tokens.$size-toggle-width;
+    min-width: tokens.$size-toggle-width;
+    max-width: tokens.$size-toggle-width;
     
     // Create the background track
     &::before {
@@ -297,10 +284,10 @@
       position: absolute;
       top: 0;
       left: 0;
-      width: 2.5rem; 
-      height: 1.25rem; 
+      width: tokens.$size-toggle-width;
+      height: tokens.$size-toggle-height;
       background-color: colors.$input-bg;
-      border-radius: 1.25rem; 
+      border-radius: tokens.$size-toggle-height;
       transition: background-color tokens.$transition-quick;
     }
     
@@ -308,12 +295,12 @@
     &::after {
       content: '';
       position: absolute;
-      left: tokens.$spacing-xxs; 
-      top: tokens.$spacing-xxs; 
-      width: 1rem; 
-      height: 1rem; 
+      left: tokens.$spacing-xxs;
+      top: tokens.$spacing-xxs;
+      width: tokens.$size-toggle-knob;
+      height: tokens.$size-toggle-knob;
       background-color: colors.$c-dark;
-      border-radius: 50%;
+      border-radius: tokens.$radius-round;
       transition: transform tokens.$transition-quick;
     }
   }
@@ -321,21 +308,54 @@
   // Checked state
   &:checked ~ .toggle-switch-display {
     &::before {
-      background-color: colors.$input-focus; 
+      background-color: colors.$input-focus;
     }
     
     &::after {
-      transform: translateX(1.25rem); 
+      transform: translateX(tokens.$size-toggle-translate);
     }
   }
   
   // Focus state
   &:focus ~ .toggle-switch-display {
     &::before {
-      box-shadow: 0 0 0 tokens.$border-width-base rgba(tokens.$color-primary, 0.25); 
+      box-shadow: 0 0 0 tokens.$border-width-base rgba(tokens.$color-primary, 0.25);
     }
   }
   
+  // Variant-specific styles
+  @if $variant == 'left-aligned' {
+    &:disabled ~ .toggle-switch-display {
+      opacity: 0.6;
+      cursor: not-allowed;
+      
+      &::before {
+        background-color: colors.$form-input-disabled;
+      }
+    }
+  } @else {
+    &:disabled ~ .toggle-switch-display {
+      opacity: 0.6;
+      pointer-events: none;
+      cursor: not-allowed;
+      
+      &::before, &::after {
+        background-color: colors.$form-input-disabled;
+      }
+    }
+  }
+  
+  @content;
+}
+
+// Maintain backward compatibility
+@mixin grid-compliant-toggle-switch {
+  @include toggle-switch('default');
+  @content;
+}
+
+@mixin grid-compliant-toggle-switch-left {
+  @include toggle-switch('left-aligned');
   @content;
 }
 
@@ -343,106 +363,25 @@
   display: flex;
   align-items: center;
   position: relative;
-  margin: 1rem 0; 
-  padding: tokens.$spacing-xs tokens.$spacing-sm tokens.$spacing-md tokens.$spacing-sm; 
+  margin: 1rem 0;
+  padding: tokens.$spacing-xs tokens.$spacing-sm tokens.$spacing-md tokens.$spacing-sm;
   
   label:first-child {
     @include form-label-base;
-    min-width: 7.5rem; 
+    min-width: 7.5rem;
     flex: 0 0 auto;
-    flex-grow: 1; 
-    margin-right: tokens.$spacing-md; 
-    cursor: pointer; 
-    margin-bottom: 0; 
+    flex-grow: 1;
+    margin-right: tokens.$spacing-md;
+    cursor: pointer;
+    margin-bottom: 0;
   }
   
   .toggle-switch-wrapper {
-    width: 2.5rem; 
-    flex: 0 0 2.5rem; 
-    position: relative;
-    margin-left: auto; 
-    overflow: visible; 
-  }
-  
-  @content;
-}
-
-// Regular toggle switch
-@mixin grid-compliant-toggle-switch {
-  @include toggle-switch-base;
-  
-  // Disabled state
-  &:disabled ~ .toggle-switch-display {
-    opacity: 0.6;
-    pointer-events: none;
-    cursor: not-allowed;
-    
-    &::before, &::after {
-      background-color: colors.$form-input-disabled;
-    }
-  }
-  
-  @content;
-}
-
-// Left-aligned toggle switch
-@mixin grid-compliant-toggle-switch-left {
-  @include toggle-switch-base;
-  
-  // Disabled state (slightly different from the regular toggle switch)
-  &:disabled ~ .toggle-switch-display {
-    opacity: 0.6;
-    cursor: not-allowed;
-    
-    &::before {
-      background-color: colors.$form-input-disabled;
-    }
-  }
-  
-  @content;
-}
-
-// Grid-compliant toggle switch base (for backward compatibility)
-@mixin grid-compliant-toggle-switch-base {
-  position: absolute;
-  @include element-invisible;
-  
-  & ~ .toggle-switch-display {
-    display: block;
-    position: relative;
     width: 2.5rem;
-    height: 1.25rem;
-    background-color: #cccccc;
-    border-radius: 0.625rem;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    flex-shrink: 0;
-    
-    &::after {
-      content: "";
-      position: absolute;
-      left: tokens.$spacing-xxs;
-      top: tokens.$spacing-xxs;
-      width: 1rem;
-      height: 1rem;
-      background-color: #ffffff;
-      border-radius: 50%;
-      transition: transform 0.3s ease, background-color 0.3s ease;
-    }
-  }
-  
-  // Checked state
-  &:checked ~ .toggle-switch-display {
-    background-color: colors.$input-focus;
-    
-    &::after {
-      transform: translateX(1.25rem);
-    }
-  }
-  
-  // Focus state
-  &:focus ~ .toggle-switch-display {
-    box-shadow: 0 0 0 tokens.$border-width-base rgba(tokens.$color-primary, 0.25);
+    flex: 0 0 2.5rem;
+    position: relative;
+    margin-left: auto;
+    overflow: visible;
   }
   
   @content;
@@ -462,31 +401,31 @@
 
 @mixin form-label-base {
   font-family: inherit;
-  font-size: 1.125rem; 
-  font-weight: 700; 
+  font-size: tokens.$font-size-label-base;
+  font-weight: tokens.$font-weight-bold;
   color: colors.$label-text;
   margin-bottom: tokens.$spacing-xs;
   display: block;
-  flex: 0, 0, 120px;
-  min-width: 120px;
+  flex: 0, 0, tokens.$size-label-width;
+  min-width: tokens.$size-label-width;
   @content;
 }
 
 @mixin form-label-small {
   @include form-label-base;
-  font-size: 0.75rem;
+  font-size: tokens.$font-size-label-small;
   @content;
 }
 
 @mixin form-label-medium {
   @include form-label-base;
-  font-size: 1.125rem;
+  font-size: tokens.$font-size-label-base;
   @content;
 }
 
 @mixin form-label-large {
   @include form-label-base;
-  font-size: 1.5rem;
+  font-size: tokens.$font-size-label-large;
   @content;
 }
 
@@ -505,12 +444,143 @@
 }
 
 // =============================================================================
+// FORM SECTIONS & FIELDSETS
+// =============================================================================
+
+@mixin grid-compliant-section-header {
+  font-family: typography.$underdog;
+  font-size: tokens.$font-size-section-header;
+  color: #ffffff;
+  padding: tokens.$spacing-md tokens.$spacing-base;
+  margin: tokens.$spacing-lg 0 tokens.$spacing-base 0;
+  border-bottom: tokens.$border-width-base solid tokens.$color-primary;
+  position: relative;
+  width: 100%;
+  text-align: left;
+  
+  background: linear-gradient(
+    to right,
+    rgba(30, 40, 60, 0.8),
+    rgba(20, 30, 45, 0.7)
+  );
+  
+  &:first-of-type {
+    margin-top: 0;
+  }
+  
+  &.with-icon {
+    padding-left: tokens.$size-toggle-width;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      left: tokens.$spacing-md;
+      top: 50%;
+      transform: translateY(-50%);
+      width: tokens.$font-size-section-header;
+      height: tokens.$font-size-section-header;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      opacity: 0.8;
+    }
+  }
+  
+  @content;
+}
+
+@mixin grid-compliant-fieldset {
+  border: 1px solid #4d94ff;
+  border-radius: tokens.$radius-sm;
+  padding: 1rem;
+  margin: 1rem 0;
+  width: 100%;
+  position: relative;
+  background-color: rgba(25, 35, 50, 0.6);
+  
+  min-inline-size: auto;
+  
+  legend {
+    font-family: typography.$underdog;
+    font-size: 1rem;
+    color: #ffffff;
+    padding: 0 tokens.$spacing-sm;
+    background-color: rgba(35, 45, 65, 0.9);
+    border: 1px solid #4d94ff;
+    border-radius: tokens.$radius-sm;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  }
+  
+  fieldset {
+    margin: tokens.$spacing-md 0;
+    
+    legend {
+      font-size: 0.9rem;
+    }
+  }
+  
+  @content;
+}
+
+@mixin grid-compliant-collapsible-section {
+  @include grid-compliant-fieldset;
+  
+  padding-top: 2rem;
+  
+  legend {
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    
+    &::after {
+      content: '▾';
+      margin-left: tokens.$spacing-sm;
+      transition: transform tokens.$transition-quick;
+    }
+  }
+  
+  &.collapsed {
+    padding: 0;
+    border-color: #4d94ff;
+    
+    legend {
+      margin-bottom: 0;
+      
+      &::after {
+        content: '▸';
+      }
+    }
+    
+    > *:not(legend) {
+      display: none;
+    }
+  }
+  
+  @content;
+}
+
+@mixin grid-compliant-form-divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    #4d94ff,
+    transparent
+  );
+  margin: 1.5rem 0;
+  border: none;
+  
+  @content;
+}
+
+// =============================================================================
 // BUTTONS
 // =============================================================================
 
-// Base button styles that all buttons share
-@mixin button-base {
-  // Core button styling
+@mixin button($variant: 'default', $fullWidth: true) {
+  // Core button styling (from original button-base)
   background-color: colors.$button-bg;
   color: colors.$button-text;
   border: tokens.$border-width-thin solid colors.$button-border;
@@ -520,46 +590,44 @@
   font-size: 1rem;
   line-height: 1.5;
   
-  // Flex centering
+  // Flex centering (from original)
   display: inline-flex;
   align-items: center;
   justify-content: center;
   text-align: center;
   min-height: 2.25rem;
   
-  transition: all tokens.$transition-quick;
+  // Width handling (from grid-compliant-button)
+  @if $fullWidth {
+    width: 100%;
+  }
   
   // Interactive states
+  transition: all tokens.$transition-quick;
+  
   &:hover {
-    background-color: colors.$button-hover;
-    box-shadow: 0 0 0.9375rem 0.3125rem colors.$button-glow;
+    @include interactive-state('button', 'hover');
   }
   
   &:active {
-    background-color: colors.$button-active;
-    box-shadow: 0 0 0.5rem 0.125rem colors.$button-glow;
+    @include interactive-state('button', 'active');
   }
   
   &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
+    @include interactive-state('button', 'disabled');
   }
   
   @content;
 }
 
-// Grid-adapted button
-@mixin grid-compliant-button {
-  @include button-base;
-  
-  // Grid-specific properties
-  display: flex;
-  width: 100%;
-  box-sizing: border-box;
+// Maintain backward compatibility with grid-compliant-button
+@mixin grid-compliant-button($variant: 'default', $fullWidth: true) {
+  @include button($variant, $fullWidth);
+  min-height: tokens.$size-button-height;
   font-weight: 500;
   margin: 0;
-  min-height: tokens.$size-button-height;
-  
+  display: flex;
+  box-sizing: border-box;
   @content;
 }
 
@@ -567,11 +635,12 @@
 // COLOR PICKERS
 // =============================================================================
 
-// Base color picker styling shared by all color picker variants
-@mixin color-picker-base {
+// Consolidated color picker mixin
+@mixin color-picker($variant: 'default') {
+  // Base properties
   display: block;
-  width: 100%;
-  height: tokens.$size-input-height;
+  width: if($variant == 'compact', tokens.$size-color-compact, 100%);
+  height: if($variant == 'compact', tokens.$size-color-height-compact, tokens.$size-input-height);
   padding: tokens.$spacing-xxs;
   border-radius: tokens.$radius-sm;
   cursor: pointer;
@@ -579,14 +648,36 @@
   background-color: colors.$input-bg;
   border: tokens.$border-width-thin solid colors.$input-border;
   
-  // States
+  // Variant-specific styles
+  @if $variant == 'compact' {
+    margin-left: auto;
+    flex: 0 0 auto;
+  }
+  
+  @if $variant == 'with-preview' {
+    display: flex;
+    align-items: center;
+    
+    &::before {
+      content: "";
+      display: block;
+      width: tokens.$size-color-preview;
+      height: tokens.$size-toggle-height;
+      border-radius: tokens.$radius-xs;
+      margin-right: tokens.$spacing-sm;
+      box-shadow: inset 0 0 0 tokens.$border-width-thin rgba(0, 0, 0, 0.2);
+      background-color: currentColor;
+    }
+  }
+  
+  // Interactive states
   &:hover {
     border-color: colors.$input-hover;
-    box-shadow: 0 0 0.5rem 0 rgba(0, 0, 0, 0.15);
+    box-shadow: 0 0 tokens.$spacing-md 0 rgba(0, 0, 0, 0.15);
   }
   
   &:focus {
-    @include input-state('focus');
+    @include interactive-state('input', 'focus');
   }
   
   // Browser-specific overrides
@@ -608,41 +699,23 @@
   @content;
 }
 
-// Standard color picker
+// Maintain backward compatibility with existing mixins
 @mixin grid-compliant-color-picker {
-  @include color-picker-base;
+  @include color-picker('default');
   @content;
 }
 
-// Compact color picker
 @mixin grid-compliant-color-picker-compact {
-  @include color-picker-base;
-  width: 3.125rem;
-  height: 1.875rem;
-  margin-left: auto;
-  flex: 0 0 auto;
+  @include color-picker('compact');
   @content;
 }
 
-// Color picker with preview area
 @mixin grid-compliant-color-picker-with-preview {
-  @include grid-compliant-color-picker;
-  display: flex;
-  align-items: center;
-  
-  &::before {
-    content: "";
-    display: block;
-    width: 2rem;
-    height: 1.25rem;
-    border-radius: tokens.$radius-xs;
-    margin-right: tokens.$spacing-sm;
-    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.2);
-    background-color: currentColor;
-  }
+  @include color-picker('with-preview');
+  @content;
 }
 
-// Color picker with hex input
+// Color picker with hex input - keep as is since it's a composite component
 @mixin grid-compliant-color-picker-with-hex {
   display: flex;
   flex-direction: column;
@@ -710,30 +783,31 @@
 // RANGE SLIDERS
 // =============================================================================
 
-// Base range slider styling shared by all slider variants
-@mixin range-slider-base {
+// Consolidated range slider mixin
+@mixin range-slider($variant: 'default') {
+  // Base properties
   -webkit-appearance: none;
   appearance: none;
   width: 100%;
-  height: 0.5rem;
+  height: if($variant == 'compact', tokens.$size-range-track-height-compact, tokens.$size-range-track-height);
   background: colors.$input-bg;
   border-radius: tokens.$radius-sm;
   outline: none;
-  margin: tokens.$spacing-md 0;
+  margin: if($variant == 'compact', tokens.$spacing-sm, tokens.$spacing-md) 0;
   cursor: pointer;
   border: tokens.$border-width-thin solid colors.$input-border;
   
   &:focus {
-    @include input-state('focus');
+    @include interactive-state('input', 'focus');
   }
   
-  // Thumb styling for WebKit/Blink
+  // Thumb styling
   &::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    width: 1.25rem;
-    height: 1.25rem;
-    border-radius: 50%;
+    width: if($variant == 'compact', tokens.$size-range-thumb-compact, tokens.$size-range-thumb);
+    height: if($variant == 'compact', tokens.$size-range-thumb-compact, tokens.$size-range-thumb);
+    border-radius: tokens.$radius-round;
     background: tokens.$color-primary;
     cursor: pointer;
     border: tokens.$border-width-thin solid tokens.$color-primary-dark;
@@ -751,11 +825,10 @@
     }
   }
   
-  // Thumb styling for Firefox
   &::-moz-range-thumb {
-    width: 1.25rem;
-    height: 1.25rem;
-    border-radius: 50%;
+    width: if($variant == 'compact', tokens.$size-range-thumb-compact, tokens.$size-range-thumb);
+    height: if($variant == 'compact', tokens.$size-range-thumb-compact, tokens.$size-range-thumb);
+    border-radius: tokens.$radius-round;
     background: tokens.$color-primary;
     cursor: pointer;
     border: tokens.$border-width-thin solid tokens.$color-primary-dark;
@@ -773,10 +846,9 @@
     }
   }
   
-  // Track styling for Firefox
   &::-moz-range-track {
     width: 100%;
-    height: 0.5rem;
+    height: if($variant == 'compact', tokens.$size-range-track-height-compact, tokens.$size-range-track-height);
     background: colors.$input-bg;
     border-radius: tokens.$radius-sm;
     border: tokens.$border-width-thin solid colors.$input-border;
@@ -785,13 +857,18 @@
   @content;
 }
 
-// Grid-compliant range slider
+// Maintain backward compatibility with existing mixins
 @mixin grid-compliant-range-slider {
-  @include range-slider-base;
+  @include range-slider('default');
   @content;
 }
 
-// Range slider wrapper with value display
+@mixin grid-compliant-range-slider-compact {
+  @include range-slider('compact');
+  @content;
+}
+
+// Range slider wrapper - keep as is since it's a composite component
 @mixin grid-compliant-slider-wrapper {
   display: flex;
   align-items: center;
@@ -804,9 +881,9 @@
   
   .base-form__range-value {
     font-family: monospace;
-    font-size: 1rem;
+    font-size: tokens.$size-icon-sm;
     color: colors.$input-text;
-    min-width: 2.5rem;
+    min-width: tokens.$size-range-value-min-width;
     text-align: center;
     background-color: colors.$input-bg;
     padding: tokens.$spacing-xs tokens.$spacing-sm;
@@ -818,153 +895,17 @@
 }
 
 // =============================================================================
-// FORM SECTIONS & FIELDSETS
-// =============================================================================
-
-// Section headers
-@mixin grid-compliant-section-header {
-  font-family: typography.$underdog;
-  font-size: 1.25rem;
-  color: #ffffff;
-  padding: tokens.$spacing-md 1rem;
-  margin: 1.5rem 0 1rem 0;
-  border-bottom: 2px solid #4d94ff;
-  position: relative;
-  width: 100%;
-  text-align: left;
-  
-  background: linear-gradient(
-    to right,
-    rgba(30, 40, 60, 0.8),
-    rgba(20, 30, 45, 0.7)
-  );
-  
-  &:first-of-type {
-    margin-top: 0;
-  }
-  
-  &.with-icon {
-    padding-left: 2.5rem;
-    
-    &::before {
-      content: '';
-      position: absolute;
-      left: tokens.$spacing-md;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 1.25rem;
-      height: 1.25rem;
-      background-size: contain;
-      background-repeat: no-repeat;
-      background-position: center;
-      opacity: 0.8;
-    }
-  }
-  
-  @content;
-}
-
-// Fieldsets
-@mixin grid-compliant-fieldset {
-  border: 1px solid #4d94ff;
-  border-radius: tokens.$radius-sm;
-  padding: 1rem;
-  margin: 1rem 0;
-  width: 100%;
-  position: relative;
-  background-color: rgba(25, 35, 50, 0.6);
-  
-  min-inline-size: auto;
-  
-  legend {
-    font-family: typography.$underdog;
-    font-size: 1rem;
-    color: #ffffff;
-    padding: 0 tokens.$spacing-sm;
-    background-color: rgba(35, 45, 65, 0.9);
-    border: 1px solid #4d94ff;
-    border-radius: tokens.$radius-sm;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-  }
-  
-  fieldset {
-    margin: tokens.$spacing-md 0;
-    
-    legend {
-      font-size: 0.9rem;
-    }
-  }
-  
-  @content;
-}
-
-// Collapsible sections
-@mixin grid-compliant-collapsible-section {
-  @include grid-compliant-fieldset;
-  
-  padding-top: 2rem;
-  
-  legend {
-    cursor: pointer;
-    user-select: none;
-    display: flex;
-    align-items: center;
-    
-    &::after {
-      content: '▾';
-      margin-left: tokens.$spacing-sm;
-      transition: transform tokens.$transition-quick;
-    }
-  }
-  
-  &.collapsed {
-    padding: 0;
-    border-color: #4d94ff;
-    
-    legend {
-      margin-bottom: 0;
-      
-      &::after {
-        content: '▸';
-      }
-    }
-    
-    > *:not(legend) {
-      display: none;
-    }
-  }
-  
-  @content;
-}
-
-// Form dividers
-@mixin grid-compliant-form-divider {
-  width: 100%;
-  height: 1px;
-  background: linear-gradient(
-    to right,
-    transparent,
-    #4d94ff,
-    transparent
-  );
-  margin: 1.5rem 0;
-  border: none;
-  
-  @content;
-}
-
-// =============================================================================
 // LEGACY MIXINS FOR BACKWARD COMPATIBILITY
 // =============================================================================
 
 // These are kept for backward compatibility only
 @mixin _input-focus-state {
-  @include input-state('focus');
+  @include interactive-state('input', 'focus');
   @content;
 }
 
 @mixin _input-hover-state {
-  @include input-state('hover');
+  @include interactive-state('input', 'hover');
   @content;
 }
 

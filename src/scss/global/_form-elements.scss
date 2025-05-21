@@ -254,7 +254,6 @@
 
   &__select {
     @include mixins.grid-compliant-select;
-    @include mixins.select-dropdown-styles;
   }
 
   &__select-option {
