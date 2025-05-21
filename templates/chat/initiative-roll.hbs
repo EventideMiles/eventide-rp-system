@@ -3,24 +3,8 @@
     <i class="fa-solid fa-bolt"></i> {{name}} rolls for Initiative
   </div>
   <div class="chat-card__initiative">
-    <div class="chat-card__formula-toggle formula-toggle">
-      <span class="chat-card__formula">{{formula}}</span>
-      <i class="fas fa-chevron-down formula-toggle-icon"></i>
-    </div>
-    <div class="chat-card__roll-details" style="display: none;">
-      {{#each roll.terms as |term|}}
-        {{#if term.results}}
-          <div class="chat-card__roll-term">
-            <span class="chat-card__roll-term-formula">{{term.formula}}</span>
-            <div class="chat-card__roll-term-results">
-              {{#each term.results as |result|}}
-                <span class="chat-card__die-result {{#if result.discarded}}chat-card__die-result--discarded{{/if}}">{{result.result}}</span>
-              {{/each}}
-            </div>
-          </div>
-        {{/if}}
-      {{/each}}
-    </div>
+    
+    {{> roll-info}}
     <div class="chat-card__initiative--result">
       <span class="chat-card__value chat-card__value--initiative">{{total}}</span>
     </div>

@@ -40,6 +40,8 @@ const addFormulaToggleFunctionality = (html) => {
   // Find formula toggle elements
   const formulaToggle = html.querySelectorAll(".chat-card__formula-toggle");
 
+  console.log(formulaToggle);
+
   // Add click event listener for formula toggle
   formulaToggle.forEach((toggle) => {
     toggle.addEventListener("click", (event) => {

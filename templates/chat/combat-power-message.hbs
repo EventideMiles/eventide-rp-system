@@ -11,45 +11,14 @@
     {{/if}}
     </div>
   </div>
-
-  {{#if hasRoll}}
-    {{#if critHit}}
-      <div class="chat-card__header chat-card__header--critical-hit">{{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.CriticalHit"}}</div>
-    {{/if}}
-    {{#if critMiss}}
-      <div class="chat-card__header chat-card__header--critical-miss">{{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.CriticaMiss"}}</div>
-    {{/if}}
-    {{#if stolenCrit}}
-      <div class="chat-card__header chat-card__header--stolen-crit">{{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.StolenCrit"}}</div>
-    {{/if}}
-    {{#if savedMiss}}
-      <div class="chat-card__header chat-card__header--saved-miss">{{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.SavedMiss"}}</div>
-    {{/if}}
-    <div class="chat-card__combat-roll">
-      <div class="chat-card__formula-toggle formula-toggle">
-        <span class="chat-card__formula">{{roll.formula}}</span>
-        <i class="fas fa-chevron-down formula-toggle-icon"></i>
-      </div>
-      <div class="chat-card__roll-details" style="display: none;">
-        {{#each roll.terms as |term|}}
-          {{#if term.results}}
-            <div class="chat-card__roll-term">
-              <span class="chat-card__roll-term-formula">{{term.formula}}</span>
-              <div class="chat-card__roll-term-results">
-                {{#each term.results as |result|}}
-                  <span class="chat-card__die-result {{#if result.discarded}}chat-card__die-result--discarded{{/if}}">{{result.result}}</span>
-                {{/each}}
-              </div>
-            </div>
-          {{/if}}
-        {{/each}}
-      </div>
+  
+  <div class="chat-card__combat-roll">
+      {{> roll-info}}
       <div class="chat-card__combat-roll--result">
         <span class="chat-card__value chat-card__value--power">{{roll.total}}</span>
       </div>
     </div>
     {{> card-ac-check}}
-  {{/if}}
 
   {{#if system.description}}
     <div class="chat-card__description">
