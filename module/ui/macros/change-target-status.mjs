@@ -1,5 +1,7 @@
-import { EventideSheetHelpers } from "../components/eventide-sheet-helpers.mjs";
+import { EventideSheetHelpers } from "../components/_module.mjs";
+import { CommonFoundryTasks } from "../../utils/_module.mjs";
 
+const logIfTesting = CommonFoundryTasks.logIfTesting;
 /**
  * A form application for changing status effects on a target token.
  * @extends {EventideSheetHelpers}
@@ -380,7 +382,7 @@ export class ChangeTargetStatus extends EventideSheetHelpers {
    * @private
    */
   static async _onSubmit(event, form, formData) {
-    console.log(formData);
+    erps.utils.logIfTesting(formData);
     const inputs = {
       statusSelector: formData.get("statusSelector"),
       adjustment: {

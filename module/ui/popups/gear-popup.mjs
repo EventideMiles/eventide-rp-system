@@ -1,4 +1,4 @@
-import { EventidePopupHelpers } from "../components/eventide-popup-helpers.mjs";
+import { EventidePopupHelpers } from "../components/_module.mjs";
 
 /**
  * Application for displaying gear information including roll formulas and quantity checks.

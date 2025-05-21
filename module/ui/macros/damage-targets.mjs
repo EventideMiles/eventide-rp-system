@@ -1,4 +1,4 @@
-import { EventideSheetHelpers } from "../components/eventide-sheet-helpers.mjs";
+import { EventideSheetHelpers } from "../components/_module.mjs";
 
 /**
  * Application for managing damage to targeted tokens.

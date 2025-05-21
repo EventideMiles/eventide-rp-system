@@ -1,4 +1,4 @@
-import { EventideSheetHelpers } from "../components/eventide-sheet-helpers.mjs";
+import { EventideSheetHelpers } from "../components/_module.mjs";
 
 /**
  * A form application for transferring gear from target to selected token.

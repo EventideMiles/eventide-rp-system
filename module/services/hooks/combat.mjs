@@ -2,7 +2,7 @@
  * Combat-related hooks for the Eventide RP System
  * @module services/hooks/combat
  */
-import { erpsRollHandler } from "../managers/roll-dice.mjs";
+import { erpsRollHandler } from "../managers/_module.mjs";
 
 /**
  * Initialize combat-related hooks

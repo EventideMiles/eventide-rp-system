@@ -1,4 +1,4 @@
-import { ERPSRollUtilities } from "../../utils/roll-utilities.mjs";
+import { ERPSRollUtilities } from "../../utils/_module.mjs";
 import { erpsSoundManager } from "./sound-manager.mjs";
 
 const { renderTemplate } = foundry.applications.handlebars;
@@ -437,13 +437,13 @@ class ERPSMessageHandler {
       actor,
       transformation,
       isApplying,
-      embeddedPowers: transformation.system.getEmbeddedCombatPowers()
+      embeddedPowers: transformation.system.getEmbeddedCombatPowers(),
     };
-    
+
     // Play appropriate sound locally and add to message
     const soundKey = isApplying ? "combatPower" : "statusRemove";
     await erpsSoundManager._playLocalSound(soundKey);
-    
+
     return this._createChatMessage(
       "transformation",
       data,
@@ -451,7 +451,7 @@ class ERPSMessageHandler {
         speaker: ERPSRollUtilities.getSpeaker(
           actor,
           "EVENTIDE_RP_SYSTEM.MessageHeaders.Transformation"
-        )
+        ),
       },
       { soundKey }
     );

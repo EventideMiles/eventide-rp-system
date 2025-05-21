@@ -1,7 +1,7 @@
-import { CombatPowerPopup } from "../ui/popups/combat-power-popup.mjs";
-import { GearPopup } from "../ui/popups/gear-popup.mjs";
-import { StatusPopup } from "../ui/popups/status-popup.mjs";
-import { FeaturePopup } from "../ui/popups/feature-popup.mjs";
+import { CombatPowerPopup } from "../ui/_module.mjs";
+import { GearPopup } from "../ui/_module.mjs";
+import { StatusPopup } from "../ui/_module.mjs";
+import { FeaturePopup } from "../ui/_module.mjs";
 
 /**
  * Extended Item document class for the Eventide RP System.

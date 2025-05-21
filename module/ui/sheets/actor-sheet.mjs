@@ -1,5 +1,5 @@
-import { CommonFoundryTasks } from "../../utils/common-foundry-tasks.mjs";
-import { erpsRollHandler } from "../../services/managers/roll-dice.mjs";
+import { CommonFoundryTasks } from "../../utils/_module.mjs";
+import { erpsRollHandler } from "../../services/_module.mjs";
 
 const { api, sheets } = foundry.applications;
 

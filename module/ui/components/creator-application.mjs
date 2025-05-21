@@ -1,4 +1,4 @@
-import { CommonFoundryTasks } from "../../utils/common-foundry-tasks.mjs";
+import { CommonFoundryTasks } from "../../utils/_module.mjs";
 import { EventideSheetHelpers } from "./eventide-sheet-helpers.mjs";
 
 const logIfTesting = CommonFoundryTasks.logIfTesting;

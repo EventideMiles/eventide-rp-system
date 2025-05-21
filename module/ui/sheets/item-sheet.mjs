@@ -1,6 +1,6 @@
-import { prepareActiveEffectCategories } from "../../helpers/effects.mjs";
-import { prepareCharacterEffects } from "../../helpers/character-effects.mjs";
-import { EventideSheetHelpers } from "../components/eventide-sheet-helpers.mjs";
+import { prepareActiveEffectCategories } from "../../helpers/_module.mjs";
+import { prepareCharacterEffects } from "../../helpers/_module.mjs";
+import { EventideSheetHelpers } from "../components/_module.mjs";
 
 const { api, sheets } = foundry.applications;
 

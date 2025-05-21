@@ -1,5 +1,5 @@
-import { erpsRollHandler } from "../services/managers/roll-dice.mjs";
-import { erpsMessageHandler } from "../services/managers/system-messages.mjs";
+import { erpsRollHandler } from "../services/_module.mjs";
+import { erpsMessageHandler } from "../services/_module.mjs";
 
 /**
  * Actor document class for the Eventide RP System

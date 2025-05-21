@@ -224,4 +224,5 @@ export const commonTasks = {
   permissionLevel: CommonFoundryTasks.permissionLevel,
   permissionCheck: CommonFoundryTasks.permissionCheck,
   isTestingMode: () => CommonFoundryTasks.isTestingMode,
+  logIfTesting: CommonFoundryTasks.logIfTesting,
 };
