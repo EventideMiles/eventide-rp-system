@@ -1,4 +1,7 @@
+import { CommonFoundryTasks } from "../../utils/common-foundry-tasks.mjs";
 import { EventideSheetHelpers } from "./eventide-sheet-helpers.mjs";
+
+const logIfTesting = CommonFoundryTasks.logIfTesting;
 
 /**
  * Base class for creator applications that handle item creation (effects, gear, etc.)
@@ -59,7 +62,6 @@ export class CreatorApplication extends EventideSheetHelpers {
     keyType = "effect",
   } = {}) {
     super();
-    this.testingMode = erps.settings.getSetting("testingMode");
     this.number = Math.floor(number);
     this.keyType = keyType;
     this.storageKeys = [
@@ -251,7 +253,7 @@ export class CreatorApplication extends EventideSheetHelpers {
       value: 0,
     };
     app.addedAbilities.push(ability);
-    if (app.testingMode) console.log("Added ability:", app.addedAbilities);
+    logIfTesting("Added ability:", app.addedAbilities);
 
     const oldPosition = app.position.height;
 
@@ -278,14 +280,8 @@ export class CreatorApplication extends EventideSheetHelpers {
     const oldPosition = app.position.height;
     const index = event.target.dataset.index;
     app.addedAbilities.splice(index, 1);
-    if (app.testingMode) {
-      console.log(
-        "Removed ability at index",
-        index,
-        "remaining:",
-        app.addedAbilities
-      );
-    }
+    logIfTesting("Removed ability at index", index);
+    logIfTesting("remaining:", app.addedAbilities);
 
     // Render the form and restore previous scroll position
     await app.render();
@@ -372,11 +368,9 @@ export class CreatorApplication extends EventideSheetHelpers {
    * @protected
    */
   static async _onSubmit(event, form, formData) {
-    if (this.testingMode) {
-      console.log("FormData entries:");
-      for (const [key, value] of formData.entries()) {
-        console.log(`${key}: ${value}`);
-      }
+    logIfTesting("FormData entries:");
+    for (const [key, value] of formData.entries()) {
+      logIfTesting(`${key}: ${value}`);
     }
 
     // Validate required fields
@@ -547,7 +541,7 @@ export class CreatorApplication extends EventideSheetHelpers {
       ],
     };
 
-    if (this.testingMode) console.log(itemData);
+    logIfTesting(itemData);
 
     // Store form values in local storage
     CreatorApplication._store(this, {
@@ -724,7 +718,7 @@ export class CreatorApplication extends EventideSheetHelpers {
    * @protected
    */
   static _store(instance, formValues) {
-    if (instance.testingMode) console.log("Storing values:", formValues);
+    logIfTesting("Storing values:", formValues);
 
     let storageData = {
       [`${instance.keyType}_${instance.number}_img`]: formValues.img,
@@ -765,8 +759,7 @@ export class CreatorApplication extends EventideSheetHelpers {
 
     const inputs = form.querySelectorAll("input, select, textarea");
 
-    if (app.testingMode)
-      console.log("Saving form data from", inputs.length, "inputs");
+    logIfTesting("Saving form data from", inputs.length, "inputs");
 
     inputs.forEach((input) => {
       if (input.name && !input.name.includes("addedAbilities")) {
@@ -775,8 +768,7 @@ export class CreatorApplication extends EventideSheetHelpers {
         } else {
           savedData[input.name] = input.value;
         }
-        if (app.testingMode)
-          console.log(`Saved ${input.name}: ${savedData[input.name]}`);
+        logIfTesting(`Saved ${input.name}: ${savedData[input.name]}`);
       }
     });
 
@@ -800,13 +792,7 @@ export class CreatorApplication extends EventideSheetHelpers {
         : app.element.querySelector("form");
     if (!form) return;
 
-    if (app.testingMode) {
-      console.log(
-        "Restoring form data with",
-        Object.keys(savedData).length,
-        "fields"
-      );
-    }
+    logIfTesting("Restoring form data with", Object.keys(savedData).length);
 
     Object.entries(savedData).forEach(([name, value]) => {
       const input = form.querySelector(`[name="${name}"]`);
@@ -830,10 +816,9 @@ export class CreatorApplication extends EventideSheetHelpers {
         } else {
           input.value = value;
         }
-        if (app.testingMode) console.log(`Restored ${name}: ${value}`);
+        logIfTesting(`Restored ${name}: ${value}`);
       } else {
-        if (app.testingMode)
-          console.log(`Could not find input with name: ${name}`);
+        logIfTesting(`Could not find input with name: ${name}`);
       }
     });
   }
