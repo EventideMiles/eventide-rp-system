@@ -11,9 +11,15 @@ import { CommonFoundryTasks } from "../utils/common-foundry-tasks.mjs";
 export function initColorPickersWithHex(selector = ".color-picker-with-hex") {
   // Use a slight delay to ensure the DOM is fully rendered
   setTimeout(() => {
-    // console.log("Initializing color pickers with hex input...");
+    if (CommonFoundryTasks.isTestingMode) {
+      console.log("Color Pickers | Initializing color pickers with hex input");
+    }
+
     const colorPickers = document.querySelectorAll(selector);
-    // console.log(`Found ${colorPickers.length} color pickers`);
+
+    if (CommonFoundryTasks.isTestingMode) {
+      console.log(`Color Pickers | Found ${colorPickers.length} color pickers`);
+    }
 
     colorPickers.forEach((container, index) => {
       const colorInput = container.querySelector(".color-picker");
@@ -21,7 +27,13 @@ export function initColorPickersWithHex(selector = ".color-picker-with-hex") {
       const preview = container.querySelector(".color-preview");
 
       if (!colorInput || !hexInput || !preview) {
-        // console.warn("Missing required elements for color picker", { colorInput, hexInput, preview });
+        if (CommonFoundryTasks.isTestingMode) {
+          console.warn("Missing required elements for color picker", {
+            colorInput,
+            hexInput,
+            preview,
+          });
+        }
         return;
       }
 
@@ -60,7 +72,9 @@ export function initColorPickersWithHex(selector = ".color-picker-with-hex") {
 
       // Event handler for color picker changes
       function handleColorInput(event) {
-        // console.log("Color input changed:", event.target.value);
+        if (CommonFoundryTasks.isTestingMode) {
+          console.log("Color input changed:", event.target.value);
+        }
         hexInput.value = event.target.value.toUpperCase();
         updatePreview();
       }
@@ -68,7 +82,9 @@ export function initColorPickersWithHex(selector = ".color-picker-with-hex") {
       // Event handler for hex input changes
       function handleHexInput(event) {
         let value = event.target.value;
-        // console.log("Hex input changed:", value);
+        if (CommonFoundryTasks.isTestingMode) {
+          console.log("Hex input changed:", value);
+        }
 
         // Add # if it's missing
         if (value.charAt(0) !== "#") {
@@ -77,12 +93,16 @@ export function initColorPickersWithHex(selector = ".color-picker-with-hex") {
         }
 
         // Validate the hex color
-        const isValid = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(value);
+        const isValid = /^#([A-Fa-f0-9]{6})$/.test(value);
+        const isShort = /^#([A-Fa-f0-9]{3})$/.test(value);
 
         if (isValid) {
           colorInput.value = value;
           updatePreview();
           event.target.classList.remove("invalid");
+        } else if (isShort) {
+          colorInput.value = `${value}${value.slice(1)}`;
+          updatePreview();
         } else {
           event.target.classList.add("invalid");
         }
@@ -103,6 +123,20 @@ export function initColorPickersWithHex(selector = ".color-picker-with-hex") {
       }
     });
   }, 100); // Short delay to ensure DOM is fully rendered
+}
+
+/**
+ * Enhance color pickers that may have been added dynamically
+ * This ensures all color pickers are properly initialized even if they weren't
+ * present during the initial render
+ */
+export function enhanceExistingColorPickers() {
+  if (CommonFoundryTasks.isTestingMode) {
+    console.log("Color Pickers | Enhancing existing color pickers");
+  }
+
+  // Find all color pickers and initialize them
+  initColorPickersWithHex();
 }
 
 /**
@@ -160,11 +194,18 @@ Hooks.on("ready", () => {
 });
 
 // Initialize when relevant sheets render
-// element = HTMLElement
-// context = ApplicationRenderContext
-// options = RenderOptions
 Hooks.on("renderApplicationV2", (context, element, options) => {
   if (element.querySelector(".color-picker-with-hex")) {
     initColorPickersWithHex();
   }
+});
+
+// Hook into all relevant item and sheet renders to ensure color pickers are enhanced
+Hooks.on("renderItemV2", (app, html) => {
+  enhanceExistingColorPickers();
+});
+
+// Handle color pickers in creator applications
+Hooks.on("renderCreatorApplication", (app, html) => {
+  enhanceExistingColorPickers();
 });

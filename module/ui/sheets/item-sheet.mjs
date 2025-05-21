@@ -372,6 +372,26 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
       event.target.focus();
       return;
     }
+    if (
+      event.target.name.includes("textColor") ||
+      event.target.name.includes("bgColor") ||
+      event.target.name.includes("iconTint")
+    ) {
+      if (event.target.value.length === 4) {
+        event.target.value = `${event.target.value}${event.target.value.slice(
+          1
+        )}`;
+      }
+      // if the target is blank or invalid length, reset to default color
+      if (event.target.value.length !== 7) {
+        const defaultColor = event.target.name.includes("textColor")
+          ? "#ffffff"
+          : event.target.name.includes("bgColor")
+          ? "#000000"
+          : "#ffffff"; // Default for iconTint
+        event.target.value = defaultColor;
+      }
+    }
     if (event.target.name.includes("iconTint")) {
       const updateData = {
         _id: this.item.effects.contents[0]._id,
@@ -380,6 +400,7 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
       await this.item.updateEmbeddedDocuments("ActiveEffect", [updateData]);
       return;
     }
+
     await super._onChangeForm(formConfig, event);
   }
 
