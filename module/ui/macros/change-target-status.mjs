@@ -382,7 +382,7 @@ export class ChangeTargetStatus extends EventideSheetHelpers {
    * @private
    */
   static async _onSubmit(event, form, formData) {
-    erps.utils.logIfTesting(formData);
+    logIfTesting(formData);
     const inputs = {
       statusSelector: formData.get("statusSelector"),
       adjustment: {
