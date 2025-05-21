@@ -1,5 +1,6 @@
 @use '../utils/mixins' as mix;
 @use '../utils/colors' as colors;
+@use '../utils/tokens' as tokens;
 
 .base-form {
   &__slider-wrapper {

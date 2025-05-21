@@ -2,6 +2,7 @@
 @use "../utils/variables";
 @use "../utils/typography";
 @use "../utils/mixins";
+@use "../utils/tokens";
 
 .items-panel__section-header {
   @include mixins.grid-compliant-section-header;
@@ -67,7 +68,7 @@
 
 // Variant for 3-column grid (used by embedded-combat-powers)
 .items-panel__list--three-column {
-  grid-template-columns: 40px 1fr max-content;
+  grid-template-columns: tokens.$size-prop-cell 1fr max-content;
   
   .items-panel__header-cell {
     padding: 0 5px;
@@ -83,37 +84,13 @@
   }
   
   // Make the first column narrower for the icon
-  .items-panel__list-item:first-child .items-panel__header-cell:first-child {
-    width: 40px;
-    text-align: left;
-    justify-content: left;
-  }
-  
-  // Remove borders from the image cell
-  .items-panel__prop.items-panel__list-cell {
-    border-left: none;
-    border-right: none;
-    justify-content: left;
-  }
-  
-  // Fix for name cell borders
-  .items-panel__name.items-panel__list-cell {
-    border-left: none;
-    border-right: none;
-  }
-  
-  // Fix for controls cell borders
-  .items-panel__controls.items-panel__list-cell {
-    border-left: none;
-    border-right: none;
+  .items-panel__header-cell:first-child {
+    justify-content: center;
   }
   
   // Add clean row borders
-  .items-panel__list-item:not(.items-panel__header) {
-    
-    &:last-child {
-      border-bottom: none;
-    }
+  .items-panel__list-item:not(.items-panel__header):last-child {
+    border-bottom: none;
   }
 }
 
@@ -130,7 +107,7 @@
   @include typography.amatic-sc-bold;
 }
 
-
+// Shared properties for header and list items
 .items-panel__header,
 .items-panel__list-item {
   flex: 2 1 0%;
@@ -140,29 +117,27 @@
   align-items: center;
 }
 
-.items-panel__header .items-panel__prop,
-.items-panel__list-item .items-panel__prop {
-  flex: 0 1 72px;
-  min-width: 72px;   // "Quantity"/"Cost" label fits without overlap
-  max-width: 100px;
+// Shared properties for prop cells
+.items-panel__prop {
+  width: tokens.$size-prop-cell;
   text-align: center;
   justify-content: center;
   align-items: center;
   display: flex;
 }
 
-.items-panel__header .items-panel__usage,
-.items-panel__list-item .items-panel__usage {
+// Shared properties for usage cells
+.items-panel__usage {
   flex: 2 1 0%;
-  min-width: 120px;  // "Usage Info" label fits without wrapping
+  min-width: 120px;
   max-width: 200px;
   text-align: left;
   align-items: center;
   display: flex;
 }
 
-.items-panel__header .items-panel__controls,
-.items-panel__list-item .items-panel__controls {
+// Shared properties for controls
+.items-panel__controls {
   flex: 0 1 auto;
   min-width: max-content;
   width: auto;
@@ -171,104 +146,90 @@
   align-items: center;
 }
 
-.items-panel__list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  color: colors.$c-tan;
+// Item Name
+.items-panel__name {
+  flex: 2;
+  text-align: left;
+  align-items: center;
+  display: flex;
+}
 
-  // Child lists
-  .items-panel__list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
+// Control Buttons
+.items-panel__controls {
+  display: flex;
+  flex: 0 0 100px;
+  justify-content: flex-end;
+
+  a {
+    text-align: center;
+    margin: 0 6px;
   }
 
-  // Item Name
+  .items-panel__controls--unequipped {
+    color: #e7bc3c;
+  }
+
+  .items-panel__controls--cursed {
+    color: colors.$cursed;
+  }
+
+  .items-panel__controls--disabled {
+    color: #e74c3c;
+  }
+}
+
+// Individual Item
+.items-panel__list-item {
+  align-items: center;
+  &:last-child {
+    border-bottom: none;
+  }
+
   .items-panel__name {
-    flex: 2;
-    text-align: left;
-    align-items: center;
-    display: flex;
-  }
-
-  // Control Buttons
-  .items-panel__controls {
-    display: flex;
-    flex: 0 0 100px;
-    justify-content: flex-end;
-
-    a {
-      text-align: center;
-      margin: 0 6px;
-    }
-
-    .items-panel__controls--unequipped {
-      color: #e7bc3c;
-    }
-
-    .items-panel__controls--cursed {
-      color: colors.$cursed;
-    }
-
-    .items-panel__controls--disabled {
-      color: #e74c3c;
-    }
-  }
-
-  // Individual Item
-  .items-panel__list-item {
-    align-items: center;
-    &:last-child {
-      border-bottom: none;
-    }
-
-    .items-panel__name {
-      .items-panel__image {
-        flex: 0 0 30px;
-        height: 30px;
-        background-size: 30px;
-        border: none;
-        margin-right: 5px;
-      }
-    }
-
-    .items-panel__prop {
-      text-align: center;
-      border-left: 1px solid colors.$c-faint;
-      border-right: 1px solid colors.$c-faint;
-    }
-
-    .items-panel__list-cell {
-      font-size: 0.75rem;
-      border-bottom: 2px dotted colors.$c-faint;
+    .items-panel__image {
+      flex: 0 0 30px;
+      height: 30px;
+      background-size: 30px;
+      border: none;
+      margin-right: 5px;
     }
   }
 
   .items-panel__prop {
     text-align: center;
-    border-left: 1px solid #c9c7b8;
-    border-right: 1px solid #c9c7b8;
+    border-left: 1px solid colors.$c-faint;
+    border-right: 1px solid colors.$c-faint;
   }
 
-  // Section Header
-  .items-header {
-    height: 28px;
-    margin: 2px 0;
-    padding: 0;
-    align-items: center;
-    background: rgba(0, 0, 0, 0.05);
-    border: variables.$border-groove;
-    font-weight: bold;
+  .items-panel__list-cell {
+    font-size: 0.75rem;
+    border-bottom: 2px dotted colors.$c-faint;
+  }
+}
 
-    >* {
-      text-align: center;
-    }
+.items-panel__prop {
+  text-align: center;
+  border-left: 1px solid #c9c7b8;
+  border-right: 1px solid #c9c7b8;
+}
 
-    .items-panel__name {
-      padding-left: 5px;
-      text-align: left;
-    }
+// Section Header
+.items-header {
+  height: 28px;
+  margin: 2px 0;
+  padding: 0;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.05);
+  border: variables.$border-groove;
+  font-weight: bold;
+
+  >* {
+    text-align: center;
+  }
+
+  .items-panel__name {
+    padding-left: 5px;
+    text-align: left;
   }
 }
 
