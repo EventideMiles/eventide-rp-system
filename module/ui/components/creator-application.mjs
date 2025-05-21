@@ -768,6 +768,17 @@ export class CreatorApplication extends EventideSheetHelpers {
         } else {
           savedData[input.name] = input.value;
         }
+
+        // If this is an image input, also save the display image source
+        if (input.name === "img") {
+          const displayImage = input.parentNode.querySelector(
+            'img[name="displayImage"]'
+          );
+          if (displayImage) {
+            savedData["displayImage"] = displayImage.src;
+          }
+        }
+
         logIfTesting(`Saved ${input.name}: ${savedData[input.name]}`);
       }
     });
@@ -795,6 +806,21 @@ export class CreatorApplication extends EventideSheetHelpers {
     logIfTesting("Restoring form data with", Object.keys(savedData).length);
 
     Object.entries(savedData).forEach(([name, value]) => {
+      // Handle special case for display image
+      if (name === "displayImage") {
+        const imgInput = form.querySelector('input[name="img"]');
+        if (imgInput) {
+          const displayImage = imgInput.parentNode.querySelector(
+            'img[name="displayImage"]'
+          );
+          if (displayImage) {
+            displayImage.src = value;
+            logIfTesting(`Restored displayImage: ${value}`);
+          }
+        }
+        return;
+      }
+
       const input = form.querySelector(`[name="${name}"]`);
       if (input) {
         if (input.type === "checkbox") {
