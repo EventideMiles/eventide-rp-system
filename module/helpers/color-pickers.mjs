@@ -10,6 +10,9 @@ import { CommonFoundryTasks } from "../utils/_module.mjs";
 
 const logIfTesting = CommonFoundryTasks.logIfTesting;
 
+// Store event handlers with their elements
+const eventHandlers = new WeakMap();
+
 /**
  * Initialize color pickers with hex input fields
  *
@@ -110,11 +113,12 @@ function setupSingleColorPicker(container, index) {
   colorInput.dataset.initialized = "true";
   hexInput.dataset.initialized = "true";
 
-  // Add the event listeners
-  colorInput.addEventListener("input", handleColorInput);
-  colorInput.addEventListener("change", handleColorInput); // For better browser compatibility
-  hexInput.addEventListener("input", handleHexInput);
-  hexInput.addEventListener("blur", handleHexBlur);
+  /**
+   * Update the preview element
+   */
+  function updatePreview() {
+    preview.style.backgroundColor = colorInput.value;
+  }
 
   /**
    * Event handler for color picker changes
@@ -170,12 +174,18 @@ function setupSingleColorPicker(container, index) {
     }
   }
 
-  /**
-   * Update the preview element
-   */
-  function updatePreview() {
-    preview.style.backgroundColor = colorInput.value;
-  }
+  // Store the handler functions for this specific input
+  eventHandlers.set(colorInput, {
+    handleColorInput,
+    handleHexInput,
+    handleHexBlur,
+  });
+
+  // Add the event listeners
+  colorInput.addEventListener("input", handleColorInput);
+  colorInput.addEventListener("change", handleColorInput); // For better browser compatibility
+  hexInput.addEventListener("input", handleHexInput);
+  hexInput.addEventListener("blur", handleHexBlur);
 }
 
 /**
@@ -189,14 +199,18 @@ function cleanupColorPickerListeners(colorInput, hexInput) {
   colorInput.dataset.initialized = colorInput.dataset.initialized || "false";
   hexInput.dataset.initialized = hexInput.dataset.initialized || "false";
 
-  if (colorInput.dataset.initialized === "true") {
-    colorInput.removeEventListener("input", handleColorInput);
-    colorInput.removeEventListener("change", handleColorInput);
-  }
+  if (
+    colorInput.dataset.initialized === "true" &&
+    eventHandlers.has(colorInput)
+  ) {
+    const handlers = eventHandlers.get(colorInput);
+    colorInput.removeEventListener("input", handlers.handleColorInput);
+    colorInput.removeEventListener("change", handlers.handleColorInput);
+    hexInput.removeEventListener("input", handlers.handleHexInput);
+    hexInput.removeEventListener("blur", handlers.handleHexBlur);
 
-  if (hexInput.dataset.initialized === "true") {
-    hexInput.removeEventListener("input", handleHexInput);
-    hexInput.removeEventListener("blur", handleHexBlur);
+    // Clear the event handlers for this input
+    eventHandlers.delete(colorInput);
   }
 }
 
@@ -211,6 +225,9 @@ function cleanupSingleColorPicker(container) {
   const hexInput = container.querySelector(".hex-input");
 
   if (!colorInput || !hexInput) return;
+
+  // Clean up event listeners before replacing
+  cleanupColorPickerListeners(colorInput, hexInput);
 
   // Create a clone of each input to remove event listeners
   if (colorInput.parentNode) {
