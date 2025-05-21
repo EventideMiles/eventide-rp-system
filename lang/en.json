@@ -376,7 +376,8 @@
         "SetTo": "set to",
         "StolenCrit": "Stolen Critical!",
         "Transferred": "Transferred",
-        "Unequipped": "Unequipped"
+        "Unequipped": "Unequipped",
+        "Trns": "Trns"
       }
     },
     "MessageHeaders": {

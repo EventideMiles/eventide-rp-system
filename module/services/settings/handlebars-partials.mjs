@@ -21,6 +21,10 @@ export const initHandlebarsPartials = async () => {
       "systems/eventide-rp-system/templates/macros/parts/macro-footer.hbs",
     "callout-box":
       "systems/eventide-rp-system/templates/macros/parts/callout-box.hbs",
+    "card-effects":
+      "systems/eventide-rp-system/templates/chat/parts/card-effects.hbs",
+    "card-ac-check":
+      "systems/eventide-rp-system/templates/chat/parts/card-ac-check.hbs",
   };
 
   // Load and register each partial
