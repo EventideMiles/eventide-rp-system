@@ -2,70 +2,72 @@
 @use "typography";
 @use "tokens";
 
-// Private mixins for standardized input states
-@mixin _input-focus-state {
-  outline: none;
-  border-color: colors.$input-focus;
-  box-shadow: 0 0 0 0.125rem rgba(tokens.$color-primary, 0.25);
+// =============================================================================
+// REUSABLE STATES & BASE BEHAVIORS
+// =============================================================================
+
+// Interactive states for inputs
+@mixin input-state($state: 'base') {
+  @if $state == 'focus' {
+    outline: none;
+    border-color: colors.$input-focus;
+    box-shadow: 0 0 0 tokens.$border-width-base rgba(tokens.$color-primary, 0.25);
+  } @else if $state == 'hover' {
+    background-color: colors.$input-hover;
+  }
   @content; // Allow for customization
 }
 
-@mixin _input-hover-state {
-  background-color: colors.$input-hover;
-  @content; // Allow for customization
-}
-
+// Element visibility control
 @mixin element-invisible {
   position: absolute;
-
   width: 1px;
   height: 1px;
   margin: -1px;
   border: 0;
   padding: 0;
-
   clip: rect(0 0 0 0);
   overflow: hidden;
-  
-  @content; // Allow for customization
+  @content;
 }
 
 @mixin hide {
   display: none;
-  
-  @content; // Allow for customization
+  @content;
 }
 
+// =============================================================================
+// FORM ELEMENTS - BASE STYLES
+// =============================================================================
+
+// Base input properties that all text-based form elements share
 @mixin input-base {
   display: block;
   width: 100%;
   box-sizing: border-box;
-  padding: 0.5rem;
+  padding: tokens.$spacing-sm;
   margin: 0;
-  border-radius: 0.25rem;
+  border-radius: tokens.$radius-sm;
   font-family: inherit;
   font-size: 1rem;
   line-height: 1.5;
-  height: 2.5rem;
-  
-  // Allow for customization
+  height: tokens.$size-input-height;
   @content;
 }
 
+// Text inputs (standard text fields, search, email, etc.)
 @mixin grid-compliant-text-input {
   @include input-base;
   
   // Theme-aware styling
   color: colors.$input-text;
   background-color: colors.$input-bg !important;
-  border: 0.0625rem solid colors.$input-border;
-  border-radius: 0.25rem;
-  transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, background-color 0.2s ease-in-out;
+  border: tokens.$border-width-thin solid colors.$input-border;
+  border-radius: tokens.$radius-sm;
+  transition: border-color tokens.$transition-quick, box-shadow tokens.$transition-quick, background-color tokens.$transition-quick;
   
   &:hover {
-    @include _input-hover-state {
-      // Pass through nested content
-    }
+    @include input-state('hover');
   }
 
   &::selection {
@@ -74,9 +76,7 @@
   }
   
   &:focus {
-    @include _input-focus-state {
-      // Pass through nested content
-    }
+    @include input-state('focus');
   }
   
   &::placeholder {
@@ -84,27 +84,23 @@
     opacity: 1;
   }
   
-  // Allow for customization
   @content;
 }
 
+// Select dropdowns
 @mixin grid-compliant-select {
-  // Base styling from text input
-  @include input-base {
-    // Pass through nested content
-  }
+  @include input-base;
   
   // Theme-aware styling
   color: colors.$input-text;
-  background-color: colors.$input-bg !important; // Same as text input for consistency
-  transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, background-color 0.2s ease-in-out;
+  background-color: colors.$input-bg !important;
+  transition: border-color tokens.$transition-quick, box-shadow tokens.$transition-quick, background-color tokens.$transition-quick;
   
-  // Select-specific styling - fixing vertical alignment issues
-  // height: 2rem; // Explicit height
-  line-height: 1; // Tighter line height for better vertical centering
-  padding: 0 2.5rem 0 0.5rem; // Adjust padding (top, right, bottom, left)
-  display: flex; // Using flex for better alignment
-  align-items: center; // Center content vertically
+  // Select-specific styling
+  line-height: 1;
+  padding: 0 2.5rem 0 tokens.$spacing-sm;
+  display: flex;
+  align-items: center;
   cursor: pointer;
   appearance: none;
   -webkit-appearance: none;
@@ -124,83 +120,159 @@
   }
   
   &:focus {
-    outline: none;
-    border-color: colors.$input-focus;
-    box-shadow: 0 0 0 2px rgba(tokens.$color-primary, 0.25);
+    @include input-state('focus');
   }
   
   &:hover, &:focus {
-    background-color: colors.$form-selected !important; // Dark blue for hover state
+    background-color: colors.$form-selected !important;
   }
   
-  // Allow for customization
   @content;
 }
 
-// This mixin should be used separately on select elements
-// Browser dropdown styling is handled differently and can't be fully controlled via the select element
+// Dropdown styling for options
 @mixin select-dropdown-styles {
-  // This addresses styling for the dropdown items
   option {
-    background-color: #2a3441 !important; // Darker background for better contrast
-    color: #ffffff !important; // White text for maximum visibility
-    padding: 0.5rem 0.75rem !important; // More horizontal padding
-    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5) !important; // Add text shadow for better visibility
-    font-weight: normal !important; // Normal weight for better legibility
+    background-color: #2a3441 !important;
+    color: #ffffff !important;
+    padding: tokens.$spacing-sm tokens.$spacing-md !important;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5) !important;
+    font-weight: normal !important;
     
     &:hover, &:focus, &:active, &:checked {
-      background-color: colors.$form-selected !important; // Dark blue for selection
+      background-color: colors.$form-selected !important;
       color: #ffffff !important;
     }
   }
   
-  // For Firefox
+  // Browser compatibility
   &::-moz-focus-inner {
     border: 0;
   }
   
-  // For IE/Edge
   &::-ms-expand {
     display: none;
   }
   
-  // Allow for customization
   @content;
 }
 
-@mixin grid-compliant-toggle-group {
+// Textareas
+@mixin grid-compliant-textarea {
+  @include grid-compliant-text-input;
+  
+  min-height: 5rem;
+  resize: vertical;
+  line-height: 1.4;
+  padding: tokens.$spacing-md;
+  white-space: pre-wrap;
+  overflow-y: auto;
+  
+  &::placeholder {
+    color: colors.$input-placeholder;
+    opacity: 0.7;
+  }
+  
+  @content;
+}
+
+// Number inputs
+@mixin grid-compliant-number-input {
+  @include grid-compliant-text-input;
+  
+  // Number-specific properties
+  appearance: textfield;
+  -moz-appearance: textfield;
+  height: tokens.$size-input-height;
+  
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  
+  text-align: center;
+  width: 100%;
+  margin: 0;
+  
+  .base-form__number-input-wrapper:not(.compact) & {
+    width: calc(100% - 4rem);
+  }
+}
+
+// Number input wrapper with increment/decrement buttons
+@mixin grid-compliant-number-input-wrapper {
+  position: relative;
   display: flex;
   align-items: center;
-  position: relative;
-  margin: 1rem 0; 
-  padding: 0.25rem 0.5rem 0.75rem 0.5rem; 
+  justify-content: space-between;
+  width: 100%;
   
-  label:first-child {
-    @include form-label-base {
-      // Pass through nested content
+  .decrement, .increment {
+    width: 1.75rem;
+    height: tokens.$size-input-height;
+    border-radius: tokens.$radius-sm;
+    border: tokens.$border-width-thin solid colors.$input-border;
+    background-color: colors.$input-bg;
+    color: colors.$input-text;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all tokens.$transition-quick;
+    flex-shrink: 0;
+    
+    &:hover, &:focus {
+      border-color: colors.$input-focus;
+      background-color: colors.$input-focus;
+      color: #ffffff;
+      outline: none;
+      box-shadow: 0 0 0 tokens.$border-width-base color-mix(in srgb, colors.$input-focus 25%, transparent);
     }
-    min-width: 7.5rem; 
-    flex: 0 0 auto;
-    flex-grow: 1; 
-    margin-right: 0.625rem; 
-    cursor: pointer; 
-    margin-bottom: 0; 
+    
+    &:active {
+      transform: scale(0.95);
+    }
   }
   
-  .toggle-switch-wrapper {
-    width: 2.5rem; 
-    flex: 0 0 2.5rem; 
-    position: relative;
-    margin-left: auto; 
-    overflow: visible; 
+  &.compact {
+    .decrement, .increment {
+      display: none;
+    }
+    
+    .base-form__number-input {
+      width: 100%;
+    }
   }
   
-  // Allow for customization
+  // Container query for automatic adaptation
+  @supports (container-type: inline-size) {
+    container-type: inline-size;
+  }
+  
+  @supports (container-type: inline-size) {
+    @container (max-width: 7rem) {
+      .decrement, .increment {
+        display: none !important;
+      }
+      
+      .base-form__number-input {
+        width: 100% !important;
+      }
+    }
+  }
+  
   @content;
 }
 
-// Private mixin for toggle switch base styles
-@mixin _toggle-switch-base {
+// =============================================================================
+// TOGGLE SWITCHES
+// =============================================================================
+
+// Base toggle switch behavior shared by all switch variants
+@mixin toggle-switch-base {
   // Hide the actual checkbox
   position: absolute;
   opacity: 0;
@@ -209,7 +281,6 @@
   
   // Toggle display is a fixed-size element
   & ~ .toggle-switch-display {
-    // Basic positioning and dimensions
     position: relative;
     display: block;
     width: 2.5rem;  
@@ -230,20 +301,20 @@
       height: 1.25rem; 
       background-color: colors.$input-bg;
       border-radius: 1.25rem; 
-      transition: background-color 0.2s ease-in-out;
+      transition: background-color tokens.$transition-quick;
     }
     
     // Create the toggle knob
     &::after {
       content: '';
       position: absolute;
-      left: 0.125rem; 
-      top: 0.125rem; 
+      left: tokens.$spacing-xxs; 
+      top: tokens.$spacing-xxs; 
       width: 1rem; 
       height: 1rem; 
       background-color: colors.$c-dark;
       border-radius: 50%;
-      transition: transform 0.2s ease-in-out;
+      transition: transform tokens.$transition-quick;
     }
   }
   
@@ -261,18 +332,44 @@
   // Focus state
   &:focus ~ .toggle-switch-display {
     &::before {
-      box-shadow: 0 0 0 0.125rem rgba(tokens.$color-primary, 0.25); 
+      box-shadow: 0 0 0 tokens.$border-width-base rgba(tokens.$color-primary, 0.25); 
     }
   }
   
-  // Allow for customization
   @content;
 }
 
-@mixin grid-compliant-toggle-switch {
-  @include _toggle-switch-base {
-    // Pass through nested content
+@mixin grid-compliant-toggle-group {
+  display: flex;
+  align-items: center;
+  position: relative;
+  margin: 1rem 0; 
+  padding: tokens.$spacing-xs tokens.$spacing-sm tokens.$spacing-md tokens.$spacing-sm; 
+  
+  label:first-child {
+    @include form-label-base;
+    min-width: 7.5rem; 
+    flex: 0 0 auto;
+    flex-grow: 1; 
+    margin-right: tokens.$spacing-md; 
+    cursor: pointer; 
+    margin-bottom: 0; 
   }
+  
+  .toggle-switch-wrapper {
+    width: 2.5rem; 
+    flex: 0 0 2.5rem; 
+    position: relative;
+    margin-left: auto; 
+    overflow: visible; 
+  }
+  
+  @content;
+}
+
+// Regular toggle switch
+@mixin grid-compliant-toggle-switch {
+  @include toggle-switch-base;
   
   // Disabled state
   &:disabled ~ .toggle-switch-display {
@@ -285,14 +382,12 @@
     }
   }
   
-  // Allow for customization
   @content;
 }
 
+// Left-aligned toggle switch
 @mixin grid-compliant-toggle-switch-left {
-  @include _toggle-switch-base {
-    // Pass through nested content
-  }
+  @include toggle-switch-base;
   
   // Disabled state (slightly different from the regular toggle switch)
   &:disabled ~ .toggle-switch-display {
@@ -304,706 +399,10 @@
     }
   }
   
-  // Allow for customization
   @content;
 }
 
-@mixin form-group-base {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  margin-bottom: 1rem;
-  
-  @content; // Allow for customization
-}
-
-@mixin form-label-base {
-  font-family: inherit;
-  font-size: 1.125rem; 
-  font-weight: 700; 
-  color: colors.$label-text;
-  margin-bottom: 0.375rem;
-  display: block;
-  flex: 0, 0, 120px;
-  min-width: 120px;
-  
-  // Allow for customization
-  @content;
-}
-
-@mixin form-label-small {
-  @include form-label-base {
-    // Pass through nested content
-  };
-  font-size: 0.75rem;
-  
-  @content; // Allow for customization
-}
-
-@mixin form-label-medium {
-  @include form-label-base {
-    // Pass through nested content
-  }
-  font-size: 1.125rem;
-  
-  // Allow for customization
-  @content;
-}
-
-@mixin form-label-large {
-  @include form-label-base {
-    // Pass through nested content
-  };
-  font-size: 1.5rem;
-  
-  @content; // Allow for customization
-}
-
-@mixin form-label-with-icon {
-  @include form-label-base {
-    // Pass through nested content
-  };
-  display: flex;
-  align-items: center;
-  flex-direction: row;
-  
-  @content; // Allow for customization
-}
-
-@mixin checkbox-label {
-  @include form-label-base {
-    // Pass through nested content
-  }
-  cursor: pointer;
-  
-  // Allow for customization
-  @content;
-}
-
-// Private mixin for button base styles
-@mixin _button-base-styles {
-  // Core button styling that all buttons share
-  background-color: colors.$button-bg;
-  color: colors.$button-text;
-  border: 0.0625rem solid colors.$button-border;
-  border-radius: 0.25rem;
-  // padding: 0.5rem 1rem;
-  cursor: pointer;
-  font-family: 'Underdog', serif;
-  font-size: 1rem;
-  line-height: 1.5;
-  
-  // Flex centering for all buttons
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  min-height: 2.25rem;
-  
-  transition: all 0.2s ease-in-out;
-  
-  // Interactive states
-  &:hover {
-    background-color: colors.$button-hover;
-    box-shadow: 0 0 0.9375rem 0.3125rem colors.$button-glow;
-  }
-  
-  &:active {
-    background-color: colors.$button-active;
-    box-shadow: 0 0 0.5rem 0.125rem colors.$button-glow;
-  }
-  
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-  
-  // Allow for customization
-  @content;
-}
-
-// Public mixin for backward compatibility
-@mixin button-base {
-  @include _button-base-styles;
-}
-
-@mixin grid-compliant-button {
-  @include _button-base-styles {
-    // Pass through nested content
-  }
-  
-  // Grid-specific properties (only changing display and width)
-  display: flex;
-  width: 100%;
-  box-sizing: border-box;
-  font-weight: 500;
-  margin: 0;
-  min-height: 2.5rem;
-  
-  // Allow for customization
-  @content;
-}
-
-// Private mixin for color picker base styles
-@mixin _color-picker-base {
-  // Base styling - grouped all base properties together
-  display: block;
-  width: 100%;
-  height: 2.5rem;
-  padding: 0.125rem;
-  border-radius: 0.25rem;
-  cursor: pointer;
-  box-sizing: border-box;
-  background-color: colors.$input-bg;
-  border: 0.0625rem solid colors.$input-border;
-  
-  // States
-  &:hover {
-    border-color: colors.$input-hover;
-    box-shadow: 0 0 0.5rem 0 rgba(0, 0, 0, 0.15);
-  }
-  
-  &:focus {
-    @include _input-focus-state;
-  }
-  
-  // Browser-specific overrides
-  &::-webkit-color-swatch-wrapper {
-    padding: 0;
-    border: none;
-  }
-  
-  &::-webkit-color-swatch {
-    border: none;
-    border-radius: 0.125rem;
-  }
-  
-  &::-moz-color-swatch {
-    border: none;
-    border-radius: 0.125rem;
-  }
-  
-  // Allow for customization
-  @content;
-}
-
-@mixin grid-compliant-color-picker {
-  @include _color-picker-base {
-    // Pass through nested content
-  }
-  
-  // Allow for customization
-  @content;
-}
-
-@mixin grid-compliant-color-picker-compact {
-  // Use the base mixin directly to avoid circular references
-  @include _color-picker-base {
-    // Pass through nested content
-  }
-  width: 3.125rem;
-  height: 1.875rem;
-  margin-left: auto;
-  flex: 0 0 auto;
-  
-  // Allow for customization
-  @content;
-}
-
-@mixin grid-compliant-color-picker-with-preview {
-  @include grid-compliant-color-picker;
-  display: flex;
-  align-items: center;
-  
-  &::before {
-    content: "";
-    display: block;
-    width: 2rem;
-    height: 1.25rem;
-    border-radius: 0.125rem;
-    margin-right: 0.5rem;
-    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.2);
-    background-color: currentColor;
-  }
-}
-
-@mixin grid-compliant-color-picker-with-hex {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  box-sizing: border-box;
-  margin-bottom: 1rem;
-  
-  // Allow for customization
-  @content;
-}
-
-@mixin color-picker-container {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 0.625rem;
-  width: 100%;
-  box-sizing: border-box;
-  padding: 0.125rem 0.25rem; 
-  overflow: visible; 
-  
-  // Allow for customization
-  @content;
-}
-
-@mixin color-picker-preview {
-  width: 1.5rem;
-  height: 1.5rem;
-  border-radius: 0.1875rem;
-  border: 0.0625rem solid colors.$input-border;
-  margin-right: 0.3125rem;
-  flex: 0 0 auto;
-  overflow: hidden;
-  display: none;
-  
-  // Allow for customization
-  @content;
-}
-
-@mixin color-picker-hex-input {
-  @include grid-compliant-text-input {
-    // Pass through nested content
-  }
-  flex: 1 1 auto;
-  min-width: 5rem;
-  font-family: monospace;
-  text-transform: uppercase;
-  box-sizing: border-box;
-  margin-right: 0.25rem; // Extra margin on the right to prevent glow clipping
-  
-  &::placeholder {
-    text-transform: none;
-  }
-  
-  // Adjust focus styles to make them more contained
-  &:focus {
-    outline: none;
-    border-color: colors.$input-focus;
-    box-shadow: 0 0 0.375rem 0.0625rem rgba(tokens.$color-primary, 0.5);
-  }
-  
-  // Style for invalid hex values
-  &.invalid {
-    border-color: colors.$form-incorrect;
-    box-shadow: 0 0 0.25rem 0.0625rem rgba(tokens.$color-danger, 0.3);
-  }
-  
-  // Allow for customization
-  @content;
-}
-
-// Private mixin for number input base styles
-@mixin _number-input-base {
-  // Ensure consistent appearance across browsers
-  appearance: textfield;
-  -moz-appearance: textfield;
-  height: 2.5rem;
-  
-  // Remove default browser spinners
-  &::-webkit-outer-spin-button,
-  &::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
-  
-  // Text alignment for better readability
-  text-align: center;
-  
-  // Allow for customization
-  @content;
-}
-
-@mixin grid-compliant-number-input {
-  // Use the same text input mixin as other inputs for consistency
-  @include grid-compliant-text-input;
-  @include _number-input-base;
-  
-  // Allow the input to fill the available space
-  width: 100%;
-  margin: 0;
-  
-  // Adjust width based on container context
-  .base-form__number-input-wrapper:not(.compact) & {
-    width: calc(100% - 4rem);
-  }
-}
-
-@mixin grid-compliant-number-input-wrapper {
-  // Base properties
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  
-  // Button styles
-  .decrement, .increment {
-    width: 1.75rem;
-    height: 2.5rem;
-    border-radius: 0.25rem;
-    border: 0.0625rem solid colors.$input-border;
-    background-color: colors.$input-bg;
-    color: colors.$input-text;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    flex-shrink: 0;
-    
-    &:hover, &:focus {
-      border-color: colors.$input-focus;
-      background-color: colors.$input-focus;
-      color: #ffffff;
-      outline: none;
-      box-shadow: 0 0 0 0.125rem color-mix(in srgb, colors.$input-focus 25%, transparent);
-    }
-    
-    &:active {
-      transform: scale(0.95);
-    }
-  }
-  
-  // Explicit compact class for browsers without container query support
-  &.compact {
-    .decrement, .increment {
-      display: none;
-    }
-    
-    .base-form__number-input {
-      width: 100%;
-    }
-  }
-  
-  // Container query for automatic adaptation
-  // First, set the container type
-  @supports (container-type: inline-size) {
-    container-type: inline-size;
-  }
-  
-  // Then define the container query
-  @supports (container-type: inline-size) {
-    @container (max-width: 7rem) {
-      .decrement, .increment {
-        display: none !important; // Use !important to ensure this overrides any other styles
-      }
-      
-      .base-form__number-input {
-        width: 100% !important; // Use !important to ensure this overrides any other styles
-      }
-    }
-  }
-  
-  // Allow for customization
-  @content;
-}
-
-@mixin grid-compliant-textarea {
-  // Start with the base text input styling
-  @include grid-compliant-text-input {
-    // Pass through nested content
-  }
-  
-  // Textarea-specific properties
-  min-height: 5rem;
-  resize: vertical;
-  line-height: 1.4;
-  padding: 0.75rem;
-  
-  // Preserve whitespace formatting but wrap text
-  white-space: pre-wrap;
-  
-  // Optimize scrolling behavior
-  overflow-y: auto;
-  
-  // Placeholder text styling
-  &::placeholder {
-    color: colors.$input-placeholder;
-    opacity: 0.7;
-  }
-  
-  // Focus styling that allows for resizing
-  &:focus {
-    @include _input-focus-state {
-      // Pass through nested content
-    }
-  }
-  
-  // Allow for customization
-  @content;
-}
-
-// Form Section Dividers and Fieldsets
-// ----------------------------------
-
-@mixin grid-compliant-section-header {
-  font-family: typography.$underdog;
-  font-size: 1.25rem;
-  color: #ffffff; // White text for dark backgrounds
-  padding: 0.75rem 1rem;
-  margin: 1.5rem 0 1rem 0;
-  border-bottom: 2px solid #4d94ff; // Dark blue border
-  position: relative;
-  width: 100%;
-  text-align: left;
-  
-  // Add subtle gradient background
-  background: linear-gradient(
-    to right,
-    rgba(30, 40, 60, 0.8), // Dark blue-gray with some transparency
-    rgba(20, 30, 45, 0.7)  // Slightly darker and more transparent
-  );
-  
-  // First header in a form should have no top margin
-  &:first-of-type {
-    margin-top: 0;
-  }
-  
-  // Optional icon support
-  &.with-icon {
-    padding-left: 2.5rem;
-    
-    &::before {
-      content: '';
-      position: absolute;
-      left: 0.75rem;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 1.25rem;
-      height: 1.25rem;
-      background-size: contain;
-      background-repeat: no-repeat;
-      background-position: center;
-      opacity: 0.8;
-    }
-  }
-  
-  // Allow for customization
-  @content;
-}
-
-@mixin grid-compliant-fieldset {
-  border: 1px solid #4d94ff; // Dark blue border
-  border-radius: 0.25rem;
-  padding: 1rem;
-  margin: 1rem 0;
-  width: 100%;
-  position: relative;
-  background-color: rgba(25, 35, 50, 0.6); // Dark blue-gray with transparency
-  
-  // Remove default fieldset styles
-  min-inline-size: auto;
-  
-  // Legend styling
-  legend {
-    font-family: typography.$underdog;
-    font-size: 1rem;
-    color: #ffffff;
-    padding: 0 0.5rem;
-    background-color: rgba(35, 45, 65, 0.9); // Slightly lighter than fieldset
-    border: 1px solid #4d94ff; // Dark blue border
-    border-radius: 0.25rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-  }
-  
-  // Nested fieldsets
-  fieldset {
-    margin: 0.75rem 0;
-    
-    legend {
-      font-size: 0.9rem;
-    }
-  }
-  
-  // Allow for customization
-  @content;
-}
-
-@mixin grid-compliant-collapsible-section {
-  // Base fieldset styling
-  @include grid-compliant-fieldset {
-    // Pass through nested content
-  }
-  
-  // Additional styles for collapsible behavior
-  padding-top: 2rem;
-  
-  // Legend styling for collapsible sections
-  legend {
-    cursor: pointer;
-    user-select: none;
-    display: flex;
-    align-items: center;
-    
-    &::after {
-      content: '▾';
-      margin-left: 0.5rem;
-      transition: transform 0.2s ease;
-    }
-  }
-  
-  // Collapsed state
-  &.collapsed {
-    padding: 0;
-    border-color: #4d94ff; // Dark blue border
-    
-    legend {
-      margin-bottom: 0;
-      
-      &::after {
-        content: '▸';
-      }
-    }
-    
-    // Hide content when collapsed
-    > *:not(legend) {
-      display: none;
-    }
-  }
-  
-  // Allow for customization
-  @content;
-}
-
-@mixin grid-compliant-form-divider {
-  width: 100%;
-  height: 1px;
-  background: linear-gradient(
-    to right,
-    transparent,
-    #4d94ff, // Dark blue for divider
-    transparent
-  );
-  margin: 1.5rem 0;
-  border: none;
-  
-  // Allow for customization
-  @content;
-}
-
-// Range Slider Mixins
-// ----------------------------------
-
-@mixin _range-slider-base {
-  // Reset appearance
-  -webkit-appearance: none;
-  appearance: none;
-  width: 100%;
-  height: 0.5rem;
-  background: colors.$input-bg;
-  border-radius: 0.25rem;
-  outline: none;
-  margin: 0.75rem 0;
-  cursor: pointer;
-  border: 0.0625rem solid colors.$input-border;
-  
-  // Focus state
-  &:focus {
-    @include _input-focus-state;
-  }
-  
-  // Thumb styling for WebKit/Blink
-  &::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 1.25rem;
-    height: 1.25rem;
-    border-radius: 50%;
-    background: tokens.$color-primary;
-    cursor: pointer;
-    border: 0.0625rem solid tokens.$color-primary-dark;
-    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.2);
-    transition: all 0.2s ease;
-    
-    &:hover {
-      background: tokens.$color-primary-light;
-      transform: scale(1.1);
-    }
-    
-    &:active {
-      background: tokens.$color-primary;
-      transform: scale(0.95);
-    }
-  }
-  
-  // Thumb styling for Firefox
-  &::-moz-range-thumb {
-    width: 1.25rem;
-    height: 1.25rem;
-    border-radius: 50%;
-    background: tokens.$color-primary;
-    cursor: pointer;
-    border: 0.0625rem solid tokens.$color-primary-dark;
-    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.2);
-    transition: all 0.2s ease;
-    
-    &:hover {
-      background: tokens.$color-primary-light;
-      transform: scale(1.1);
-    }
-    
-    &:active {
-      background: tokens.$color-primary;
-      transform: scale(0.95);
-    }
-  }
-  
-  // Track styling for Firefox
-  &::-moz-range-track {
-    width: 100%;
-    height: 0.5rem;
-    background: colors.$input-bg;
-    border-radius: 0.25rem;
-    border: 0.0625rem solid colors.$input-border;
-  }
-  
-  // Allow for customization
-  @content;
-}
-
-@mixin grid-compliant-range-slider {
-  @include _range-slider-base {
-    // Pass through nested content
-  }
-  
-  // Allow for customization
-  @content;
-}
-
-@mixin grid-compliant-slider-wrapper {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  gap: 0.75rem;
-  
-  .base-form__range-slider {
-    flex: 1;
-  }
-  
-  .base-form__range-value {
-    font-family: monospace;
-    font-size: 1rem;
-    color: colors.$input-text;
-    min-width: 2.5rem;
-    text-align: center;
-    background-color: colors.$input-bg;
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.25rem;
-    border: 0.0625rem solid colors.$input-border;
-  }
-  
-  // Allow for customization
-  @content;
-}
-
+// Grid-compliant toggle switch base (for backward compatibility)
 @mixin grid-compliant-toggle-switch-base {
   position: absolute;
   @include element-invisible;
@@ -1022,8 +421,8 @@
     &::after {
       content: "";
       position: absolute;
-      left: 0.125rem;
-      top: 0.125rem;
+      left: tokens.$spacing-xxs;
+      top: tokens.$spacing-xxs;
       width: 1rem;
       height: 1rem;
       background-color: #ffffff;
@@ -1043,9 +442,563 @@
   
   // Focus state
   &:focus ~ .toggle-switch-display {
-    box-shadow: 0 0 0 0.125rem rgba(tokens.$color-primary, 0.25);
+    box-shadow: 0 0 0 tokens.$border-width-base rgba(tokens.$color-primary, 0.25);
   }
   
-  // Allow for customization
+  @content;
+}
+
+// =============================================================================
+// FORM LABELS & GROUPS
+// =============================================================================
+
+@mixin form-group-base {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-bottom: 1rem;
+  @content;
+}
+
+@mixin form-label-base {
+  font-family: inherit;
+  font-size: 1.125rem; 
+  font-weight: 700; 
+  color: colors.$label-text;
+  margin-bottom: tokens.$spacing-xs;
+  display: block;
+  flex: 0, 0, 120px;
+  min-width: 120px;
+  @content;
+}
+
+@mixin form-label-small {
+  @include form-label-base;
+  font-size: 0.75rem;
+  @content;
+}
+
+@mixin form-label-medium {
+  @include form-label-base;
+  font-size: 1.125rem;
+  @content;
+}
+
+@mixin form-label-large {
+  @include form-label-base;
+  font-size: 1.5rem;
+  @content;
+}
+
+@mixin form-label-with-icon {
+  @include form-label-base;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  @content;
+}
+
+@mixin checkbox-label {
+  @include form-label-base;
+  cursor: pointer;
+  @content;
+}
+
+// =============================================================================
+// BUTTONS
+// =============================================================================
+
+// Base button styles that all buttons share
+@mixin button-base {
+  // Core button styling
+  background-color: colors.$button-bg;
+  color: colors.$button-text;
+  border: tokens.$border-width-thin solid colors.$button-border;
+  border-radius: tokens.$radius-sm;
+  cursor: pointer;
+  font-family: 'Underdog', serif;
+  font-size: 1rem;
+  line-height: 1.5;
+  
+  // Flex centering
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 2.25rem;
+  
+  transition: all tokens.$transition-quick;
+  
+  // Interactive states
+  &:hover {
+    background-color: colors.$button-hover;
+    box-shadow: 0 0 0.9375rem 0.3125rem colors.$button-glow;
+  }
+  
+  &:active {
+    background-color: colors.$button-active;
+    box-shadow: 0 0 0.5rem 0.125rem colors.$button-glow;
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  
+  @content;
+}
+
+// Grid-adapted button
+@mixin grid-compliant-button {
+  @include button-base;
+  
+  // Grid-specific properties
+  display: flex;
+  width: 100%;
+  box-sizing: border-box;
+  font-weight: 500;
+  margin: 0;
+  min-height: tokens.$size-button-height;
+  
+  @content;
+}
+
+// =============================================================================
+// COLOR PICKERS
+// =============================================================================
+
+// Base color picker styling shared by all color picker variants
+@mixin color-picker-base {
+  display: block;
+  width: 100%;
+  height: tokens.$size-input-height;
+  padding: tokens.$spacing-xxs;
+  border-radius: tokens.$radius-sm;
+  cursor: pointer;
+  box-sizing: border-box;
+  background-color: colors.$input-bg;
+  border: tokens.$border-width-thin solid colors.$input-border;
+  
+  // States
+  &:hover {
+    border-color: colors.$input-hover;
+    box-shadow: 0 0 0.5rem 0 rgba(0, 0, 0, 0.15);
+  }
+  
+  &:focus {
+    @include input-state('focus');
+  }
+  
+  // Browser-specific overrides
+  &::-webkit-color-swatch-wrapper {
+    padding: 0;
+    border: none;
+  }
+  
+  &::-webkit-color-swatch {
+    border: none;
+    border-radius: tokens.$radius-xs;
+  }
+  
+  &::-moz-color-swatch {
+    border: none;
+    border-radius: tokens.$radius-xs;
+  }
+  
+  @content;
+}
+
+// Standard color picker
+@mixin grid-compliant-color-picker {
+  @include color-picker-base;
+  @content;
+}
+
+// Compact color picker
+@mixin grid-compliant-color-picker-compact {
+  @include color-picker-base;
+  width: 3.125rem;
+  height: 1.875rem;
+  margin-left: auto;
+  flex: 0 0 auto;
+  @content;
+}
+
+// Color picker with preview area
+@mixin grid-compliant-color-picker-with-preview {
+  @include grid-compliant-color-picker;
+  display: flex;
+  align-items: center;
+  
+  &::before {
+    content: "";
+    display: block;
+    width: 2rem;
+    height: 1.25rem;
+    border-radius: tokens.$radius-xs;
+    margin-right: tokens.$spacing-sm;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.2);
+    background-color: currentColor;
+  }
+}
+
+// Color picker with hex input
+@mixin grid-compliant-color-picker-with-hex {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 1rem;
+  @content;
+}
+
+// Container for color picker
+@mixin color-picker-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: tokens.$spacing-md;
+  width: 100%;
+  box-sizing: border-box;
+  padding: tokens.$spacing-xxs tokens.$spacing-xs; 
+  overflow: visible;
+  @content;
+}
+
+// Preview box for color picker
+@mixin color-picker-preview {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: tokens.$radius-xs;
+  border: tokens.$border-width-thin solid colors.$input-border;
+  margin-right: tokens.$spacing-xs;
+  flex: 0 0 auto;
+  overflow: hidden;
+  display: none;
+  @content;
+}
+
+// Hex input for color picker
+@mixin color-picker-hex-input {
+  @include grid-compliant-text-input;
+  flex: 1 1 auto;
+  min-width: 5rem;
+  font-family: monospace;
+  text-transform: uppercase;
+  box-sizing: border-box;
+  margin-right: tokens.$spacing-xs;
+  
+  &::placeholder {
+    text-transform: none;
+  }
+  
+  &:focus {
+    outline: none;
+    border-color: colors.$input-focus;
+    box-shadow: 0 0 0.375rem 0.0625rem rgba(tokens.$color-primary, 0.5);
+  }
+  
+  &.invalid {
+    border-color: colors.$form-incorrect;
+    box-shadow: 0 0 0.25rem 0.0625rem rgba(tokens.$color-danger, 0.3);
+  }
+  
+  @content;
+}
+
+// =============================================================================
+// RANGE SLIDERS
+// =============================================================================
+
+// Base range slider styling shared by all slider variants
+@mixin range-slider-base {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 0.5rem;
+  background: colors.$input-bg;
+  border-radius: tokens.$radius-sm;
+  outline: none;
+  margin: tokens.$spacing-md 0;
+  cursor: pointer;
+  border: tokens.$border-width-thin solid colors.$input-border;
+  
+  &:focus {
+    @include input-state('focus');
+  }
+  
+  // Thumb styling for WebKit/Blink
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: 50%;
+    background: tokens.$color-primary;
+    cursor: pointer;
+    border: tokens.$border-width-thin solid tokens.$color-primary-dark;
+    box-shadow: tokens.$shadow-sm;
+    transition: all tokens.$transition-quick;
+    
+    &:hover {
+      background: tokens.$color-primary-light;
+      transform: scale(1.1);
+    }
+    
+    &:active {
+      background: tokens.$color-primary;
+      transform: scale(0.95);
+    }
+  }
+  
+  // Thumb styling for Firefox
+  &::-moz-range-thumb {
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: 50%;
+    background: tokens.$color-primary;
+    cursor: pointer;
+    border: tokens.$border-width-thin solid tokens.$color-primary-dark;
+    box-shadow: tokens.$shadow-sm;
+    transition: all tokens.$transition-quick;
+    
+    &:hover {
+      background: tokens.$color-primary-light;
+      transform: scale(1.1);
+    }
+    
+    &:active {
+      background: tokens.$color-primary;
+      transform: scale(0.95);
+    }
+  }
+  
+  // Track styling for Firefox
+  &::-moz-range-track {
+    width: 100%;
+    height: 0.5rem;
+    background: colors.$input-bg;
+    border-radius: tokens.$radius-sm;
+    border: tokens.$border-width-thin solid colors.$input-border;
+  }
+  
+  @content;
+}
+
+// Grid-compliant range slider
+@mixin grid-compliant-range-slider {
+  @include range-slider-base;
+  @content;
+}
+
+// Range slider wrapper with value display
+@mixin grid-compliant-slider-wrapper {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: tokens.$spacing-md;
+  
+  .base-form__range-slider {
+    flex: 1;
+  }
+  
+  .base-form__range-value {
+    font-family: monospace;
+    font-size: 1rem;
+    color: colors.$input-text;
+    min-width: 2.5rem;
+    text-align: center;
+    background-color: colors.$input-bg;
+    padding: tokens.$spacing-xs tokens.$spacing-sm;
+    border-radius: tokens.$radius-sm;
+    border: tokens.$border-width-thin solid colors.$input-border;
+  }
+  
+  @content;
+}
+
+// =============================================================================
+// FORM SECTIONS & FIELDSETS
+// =============================================================================
+
+// Section headers
+@mixin grid-compliant-section-header {
+  font-family: typography.$underdog;
+  font-size: 1.25rem;
+  color: #ffffff;
+  padding: tokens.$spacing-md 1rem;
+  margin: 1.5rem 0 1rem 0;
+  border-bottom: 2px solid #4d94ff;
+  position: relative;
+  width: 100%;
+  text-align: left;
+  
+  background: linear-gradient(
+    to right,
+    rgba(30, 40, 60, 0.8),
+    rgba(20, 30, 45, 0.7)
+  );
+  
+  &:first-of-type {
+    margin-top: 0;
+  }
+  
+  &.with-icon {
+    padding-left: 2.5rem;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      left: tokens.$spacing-md;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 1.25rem;
+      height: 1.25rem;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      opacity: 0.8;
+    }
+  }
+  
+  @content;
+}
+
+// Fieldsets
+@mixin grid-compliant-fieldset {
+  border: 1px solid #4d94ff;
+  border-radius: tokens.$radius-sm;
+  padding: 1rem;
+  margin: 1rem 0;
+  width: 100%;
+  position: relative;
+  background-color: rgba(25, 35, 50, 0.6);
+  
+  min-inline-size: auto;
+  
+  legend {
+    font-family: typography.$underdog;
+    font-size: 1rem;
+    color: #ffffff;
+    padding: 0 tokens.$spacing-sm;
+    background-color: rgba(35, 45, 65, 0.9);
+    border: 1px solid #4d94ff;
+    border-radius: tokens.$radius-sm;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  }
+  
+  fieldset {
+    margin: tokens.$spacing-md 0;
+    
+    legend {
+      font-size: 0.9rem;
+    }
+  }
+  
+  @content;
+}
+
+// Collapsible sections
+@mixin grid-compliant-collapsible-section {
+  @include grid-compliant-fieldset;
+  
+  padding-top: 2rem;
+  
+  legend {
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    
+    &::after {
+      content: '▾';
+      margin-left: tokens.$spacing-sm;
+      transition: transform tokens.$transition-quick;
+    }
+  }
+  
+  &.collapsed {
+    padding: 0;
+    border-color: #4d94ff;
+    
+    legend {
+      margin-bottom: 0;
+      
+      &::after {
+        content: '▸';
+      }
+    }
+    
+    > *:not(legend) {
+      display: none;
+    }
+  }
+  
+  @content;
+}
+
+// Form dividers
+@mixin grid-compliant-form-divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    #4d94ff,
+    transparent
+  );
+  margin: 1.5rem 0;
+  border: none;
+  
+  @content;
+}
+
+// =============================================================================
+// LEGACY MIXINS FOR BACKWARD COMPATIBILITY
+// =============================================================================
+
+// These are kept for backward compatibility only
+@mixin _input-focus-state {
+  @include input-state('focus');
+  @content;
+}
+
+@mixin _input-hover-state {
+  @include input-state('hover');
+  @content;
+}
+
+@mixin _button-base-styles {
+  @include button-base;
+  @content;
+}
+
+@mixin _number-input-base {
+  appearance: textfield;
+  -moz-appearance: textfield;
+  height: tokens.$size-input-height;
+  
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  
+  text-align: center;
+  @content;
+}
+
+@mixin _color-picker-base {
+  @include color-picker-base;
+  @content;
+}
+
+@mixin _range-slider-base {
+  @include range-slider-base;
+  @content;
+}
+
+@mixin _toggle-switch-base {
+  @include toggle-switch-base;
   @content;
 }
