@@ -3,11 +3,11 @@ import { erpsMessageHandler } from "../services/managers/system-messages.mjs";
 
 /**
  * Actor document class for the Eventide RP System
- * 
+ *
  * Represents an actor in the Eventide RP System, extending the base Foundry VTT Actor class.
  * This class handles character data preparation, roll handling, resource management, and
  * character transformations.
- * 
+ *
  * @extends {foundry.documents.Actor}
  */
 export class EventideRpSystemActor extends Actor {
@@ -28,35 +28,45 @@ export class EventideRpSystemActor extends Actor {
    * @override
    */
   prepareBaseData() {
-    // Data modifications in this step occur before processing embedded
-    // documents or derived data.
+    // This method is intentionally left empty as all data preparation happens
+    // in prepareDerivedData() after active effects have been applied.
+    // In the future, any data that needs to be initialized before active effects
+    // should be set up here.
   }
 
   /**
    * Augment the actor source data with additional dynamic data
-   * 
-   * This method creates and calculates derived data that doesn't exist in the 
+   *
+   * This method creates and calculates derived data that doesn't exist in the
    * strict data model but is needed for character sheets and rolls.
-   * 
+   *
    * @override
    */
   prepareDerivedData() {
     const actorData = this;
-    const flags = foundry.utils.getProperty(actorData.flags, "eventide-rp-system") || {};
-    
-    // Additional derived data calculations would go here
+    const flags =
+      foundry.utils.getProperty(actorData.flags, "eventide-rp-system") || {};
+
+    // Make these variables available for future derived data calculations
+    const systemData = actorData.system;
+
+    // TODO: Add derived data calculations here, such as:
+    // - Calculating total abilities from base values and modifiers
+    // - Deriving secondary statistics from primary ones
+    // - Applying effects from items or status effects
+    // - Computing resource maximums
   }
 
   /**
    * Extend the standard getRollData() method to add additional fields
-   * 
+   *
    * @override
    * @returns {Object} The actor's roll data
    */
   getRollData() {
-    return { 
-      ...super.getRollData(), 
-      ...(this.system.getRollData?.() ?? null) 
+    return {
+      ...super.getRollData(),
+      ...(this.system.getRollData?.() ?? null),
     };
   }
 
@@ -86,24 +96,13 @@ export class EventideRpSystemActor extends Actor {
 
   /**
    * Apply a transformation to the actor, changing the token appearance and storing the original state
-   * 
+   *
    * @param {Item} transformationItem - The transformation item to apply
    * @returns {Promise<Actor>} This actor after the update
    */
   async applyTransformation(transformationItem) {
-    // Check permissions
-    if (!this.isOwner) {
-      ui.notifications.warn(
-        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.NoPermission")
-      );
-      return this;
-    }
-
-    // Validate item type
-    if (transformationItem.type !== "transformation") {
-      ui.notifications.error(
-        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.NotTransformation")
-      );
+    // Check if the operation can proceed
+    if (!this._validateTransformationOperation(transformationItem)) {
       return this;
     }
 
@@ -111,6 +110,60 @@ export class EventideRpSystemActor extends Actor {
     const tokens = this.getActiveTokens();
     if (!tokens.length) return this;
 
+    // Store original token data if needed
+    await this._storeOriginalTokenData(tokens);
+
+    // Set flags indicating active transformation
+    await this._setTransformationFlags(transformationItem);
+
+    // Update tokens with the transformation appearance
+    await this._updateTokensForTransformation(tokens, transformationItem);
+
+    // Create a chat message about the transformation
+    await erpsMessageHandler.createTransformationMessage({
+      actor: this,
+      transformation: transformationItem,
+      isApplying: true,
+    });
+
+    return this;
+  }
+
+  /**
+   * Validate that a transformation can be applied
+   *
+   * @private
+   * @param {Item} transformationItem - The transformation item to validate
+   * @returns {boolean} Whether the transformation can proceed
+   */
+  _validateTransformationOperation(transformationItem) {
+    // Check permissions
+    if (!this.isOwner) {
+      ui.notifications.warn(
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.NoPermission")
+      );
+      return false;
+    }
+
+    // Validate item type
+    if (transformationItem.type !== "transformation") {
+      ui.notifications.error(
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.NotTransformation")
+      );
+      return false;
+    }
+
+    return true;
+  }
+
+  /**
+   * Store the original token data before applying a transformation
+   *
+   * @private
+   * @param {Token[]} tokens - Array of tokens to store data for
+   * @returns {Promise<void>}
+   */
+  async _storeOriginalTokenData(tokens) {
     // Check if there's already an active transformation
     const hasActiveTransformation = this.getFlag(
       "eventide-rp-system",
@@ -119,27 +172,35 @@ export class EventideRpSystemActor extends Actor {
 
     // Only store original token data if there isn't already a transformation active
     // This ensures we maintain the original appearance, not the appearance of a previous transformation
-    if (!hasActiveTransformation) {
-      // Store original token data in flags
-      const originalTokenData = tokens.map((token) => {
-        return {
-          tokenId: token.id,
-          img: token.document.texture.src,
-          scale: token.document.texture.scaleX,
-          width: token.document.width,
-          height: token.document.height,
-        };
-      });
+    if (hasActiveTransformation) return;
 
-      // Set flag with original token data
-      await this.setFlag(
-        "eventide-rp-system",
-        "originalTokenData",
-        originalTokenData
-      );
-    }
+    // Store original token data in flags
+    const originalTokenData = tokens.map((token) => {
+      return {
+        tokenId: token.id,
+        img: token.document.texture.src,
+        scale: token.document.texture.scaleX,
+        width: token.document.width,
+        height: token.document.height,
+      };
+    });
 
-    // Set flags with active transformation information
+    // Set flag with original token data
+    await this.setFlag(
+      "eventide-rp-system",
+      "originalTokenData",
+      originalTokenData
+    );
+  }
+
+  /**
+   * Set flags with active transformation information
+   *
+   * @private
+   * @param {Item} transformationItem - The transformation item
+   * @returns {Promise<void>}
+   */
+  async _setTransformationFlags(transformationItem) {
     await this.setFlag(
       "eventide-rp-system",
       "activeTransformation",
@@ -155,67 +216,89 @@ export class EventideRpSystemActor extends Actor {
       "activeTransformationCursed",
       transformationItem.system.cursed
     );
+  }
 
-    // Update tokens with the transformation appearance
+  /**
+   * Update tokens with the transformation appearance
+   *
+   * @private
+   * @param {Token[]} tokens - Array of tokens to update
+   * @param {Item} transformationItem - The transformation item
+   * @returns {Promise<void>}
+   */
+  async _updateTokensForTransformation(tokens, transformationItem) {
     for (const token of tokens) {
-      const updates = {};
-
-      // Update token image if provided
-      if (transformationItem.system.tokenImage) {
-        updates["texture.src"] = transformationItem.system.tokenImage;
-      }
-
-      // Calculate size and scale based on the transformation size
-      if (transformationItem.system.size !== 1) {
-        const size = transformationItem.system.size;
-        const isHalfIncrement = (size * 10) % 10 === 5; // Check if it's a .5 increment
-        const baseSize = Math.floor(size);
-
-        if (size === 0.5) {
-          // a 'tiny' creature
-          updates.width = 0.5;
-          updates.height = 0.5;
-          updates["texture.scaleX"] = 1;
-          updates["texture.scaleY"] = 1;
-        } else if (size === 0.75) {
-          // a 'small' creature
-          updates.width = 1;
-          updates.height = 1;
-          updates["texture.scaleX"] = 0.75;
-          updates["texture.scaleY"] = 0.75;
-        } else {
-          updates.width = baseSize;
-          updates.height = baseSize;
-          if (isHalfIncrement) {
-            const scale = 1 + 0.5 / baseSize;
-            updates["texture.scaleX"] = scale;
-            updates["texture.scaleY"] = scale;
-          } else {
-            updates["texture.scaleX"] = 1;
-            updates["texture.scaleY"] = 1;
-          }
-        }
-      }
+      const updates = this._getTokenTransformationUpdates(transformationItem);
 
       // Apply updates if we have any
       if (Object.keys(updates).length > 0) {
         await token.document.update(updates);
       }
     }
+  }
 
-    // Create a chat message about the transformation
-    await erpsMessageHandler.createTransformationMessage({
-      actor: this,
-      transformation: transformationItem,
-      isApplying: true,
-    });
+  /**
+   * Calculate the token updates needed for a transformation
+   *
+   * @private
+   * @param {Item} transformationItem - The transformation item
+   * @returns {Object} The updates to apply to the token
+   */
+  _getTokenTransformationUpdates(transformationItem) {
+    const updates = {};
 
-    return this;
+    // Update token image if provided
+    if (transformationItem.system.tokenImage) {
+      updates["texture.src"] = transformationItem.system.tokenImage;
+    }
+
+    // Calculate size and scale based on the transformation size
+    this._calculateTransformationSize(updates, transformationItem.system.size);
+
+    return updates;
+  }
+
+  /**
+   * Calculate the size and scale for a transformation
+   *
+   * @private
+   * @param {Object} updates - The updates object to modify
+   * @param {number} size - The transformation size value
+   * @returns {void}
+   */
+  _calculateTransformationSize(updates, size) {
+    const isHalfIncrement = (size * 10) % 10 === 5; // Check if it's a .5 increment
+    const baseSize = Math.floor(size);
+
+    if (size === 0.5) {
+      // a 'tiny' creature
+      updates.width = 0.5;
+      updates.height = 0.5;
+      updates["texture.scaleX"] = 1;
+      updates["texture.scaleY"] = 1;
+    } else if (size === 0.75) {
+      // a 'small' creature
+      updates.width = 1;
+      updates.height = 1;
+      updates["texture.scaleX"] = 0.75;
+      updates["texture.scaleY"] = 0.75;
+    } else {
+      updates.width = baseSize;
+      updates.height = baseSize;
+      if (isHalfIncrement) {
+        const scale = 1 + 0.5 / baseSize;
+        updates["texture.scaleX"] = scale;
+        updates["texture.scaleY"] = scale;
+      } else {
+        updates["texture.scaleX"] = 1;
+        updates["texture.scaleY"] = 1;
+      }
+    }
   }
 
   /**
    * Remove the active transformation from the actor, restoring the original token appearance
-   * 
+   *
    * @returns {Promise<Actor>} This actor after the update
    */
   async removeTransformation() {
@@ -293,7 +376,7 @@ export class EventideRpSystemActor extends Actor {
 
   /**
    * Add resolve points to the actor
-   * 
+   *
    * @param {number} value - The amount of resolve to add
    * @returns {Promise<Actor>} The updated actor
    */
@@ -309,7 +392,7 @@ export class EventideRpSystemActor extends Actor {
 
   /**
    * Add power points to the actor
-   * 
+   *
    * @param {number} value - The amount of power to add
    * @returns {Promise<Actor>} The updated actor
    */
@@ -325,7 +408,7 @@ export class EventideRpSystemActor extends Actor {
 
   /**
    * Apply damage or healing to the actor's resolve
-   * 
+   *
    * @param {Object} options - The damage options
    * @param {string} [options.formula="1"] - The damage formula
    * @param {string} [options.label="Damage"] - Label for the damage roll
@@ -371,7 +454,7 @@ export class EventideRpSystemActor extends Actor {
 
   /**
    * Generate a roll formula string for an ability roll
-   * 
+   *
    * @param {Object} params - Parameters for the ability roll
    * @param {string} params.ability - The ability identifier
    * @returns {Promise<string>} The roll formula string
@@ -393,7 +476,7 @@ export class EventideRpSystemActor extends Actor {
 
   /**
    * Get the roll formulas for all of the actor's abilities
-   * 
+   *
    * @returns {Promise<Object>} Object with ability keys mapped to roll formulas
    * @example
    * // Returns: { acro: "2d20k + 5", phys: "1d20 + 3", ... }
@@ -416,7 +499,7 @@ export class EventideRpSystemActor extends Actor {
 
   /**
    * Roll an ability check for the actor
-   * 
+   *
    * @param {Object} params - Parameters for the ability roll
    * @param {string} params.ability - The ability identifier
    * @returns {Promise<Roll>} The evaluated roll
