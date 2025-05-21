@@ -3,12 +3,7 @@
     <i class="{{pickedIcon}}"></i> {{label}}
   </div>
   
-  <div class="chat-card__combat-roll">
-    {{> roll-info}}
-    <div class="chat-card__combat-roll--result">
-      <span class="chat-card__value chat-card__value--{{pickedType}}">{{roll.total}}</span>
-    </div>
-  </div>
+  {{> roll-info cardClass="combat-roll" cardType="combat-roll"}}
   {{> card-ac-check}}
   {{#if description}}
     <div class="chat-card__description">

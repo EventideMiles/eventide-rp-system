@@ -1,4 +1,4 @@
-<roll-info>
+<div class="chat-card__{{cardClass}}">
     {{#if hasRoll}}
         {{#if critHit}}
         <div class="chat-card__header chat-card__header--critical-hit">{{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.CriticalHit"}}</div>
@@ -17,7 +17,7 @@
       <span class="chat-card__formula">{{roll.formula}}</span>
       <i class="fas fa-chevron-down formula-toggle-icon"></i>
     </div>
-<div class="chat-card__roll-details" style="display: none;">
+    <div class="chat-card__roll-details" style="display: none;">
     {{#each roll.terms as |term|}}
         {{#if term.results}}
         <div class="chat-card__roll-term">
@@ -31,4 +31,7 @@
         {{/if}}
     {{/each}}
     </div>
-</roll-info>
+    <div class="chat-card__{{cardClass}}--result">
+      <span class="chat-card__value chat-card__value--{{#if pickedType}}{{pickedType}}{{else}}{{cardType}}{{/if}}">{{roll.total}}</span>
+    </div>
+</div>

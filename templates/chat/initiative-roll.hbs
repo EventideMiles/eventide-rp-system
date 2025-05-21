@@ -2,13 +2,7 @@
   <div class="chat-card__header chat-card__header--initiative {{#if npc}}chat-card__header--initiative-npc{{else}}chat-card__header--initiative-pc{{/if}}">
     <i class="fa-solid fa-bolt"></i> {{name}} rolls for Initiative
   </div>
-  <div class="chat-card__initiative">
-    
-    {{> roll-info}}
-    <div class="chat-card__initiative--result">
-      <span class="chat-card__value chat-card__value--initiative">{{total}}</span>
-    </div>
-  </div>
+    {{> roll-info cardClass="initiative" cardType="initiative"}}
   {{#if description}}
     <div class="chat-card__description">
       <div class="chat-card__description--header">{{name}}. . . </div>
