@@ -51,32 +51,7 @@
             value="{{ifThen storedData.gear_img storedData.gear_img "icons/svg/item-bag.svg"}}">
         </div>
 
-          <div class="base-form__color-picker-with-hex color-picker-with-hex">
-            <label class="color-picker-label" for="color-bgColor">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Background"}}</label>
-            <div class="color-picker-container">
-              <div class="color-preview" id="preview-bgColor" style="background-color: {{ifThen storedData.gear_bgColor storedData.gear_bgColor '#7B4874'}}"></div>
-              <input type="color" class="color-picker" id="color-bgColor" name="bgColor" value="{{ifThen storedData.gear_bgColor storedData.gear_bgColor '#7B4874'}}">
-              <input type="text" class="hex-input" id="hex-bgColor" placeholder="Hex color" value="{{ifThen storedData.gear_bgColor storedData.gear_bgColor '#7B4874'}}">
-            </div>
-          </div>
-
-          <div class="base-form__color-picker-with-hex color-picker-with-hex">
-            <label class="color-picker-label" for="color-textColor">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Text"}}</label>
-            <div class="color-picker-container">
-              <div class="color-preview" id="preview-textColor" style="background-color: {{ifThen storedData.gear_textColor storedData.gear_textColor '#ffffff'}}"></div>
-              <input type="color" class="color-picker" id="color-textColor" name="textColor" value="{{ifThen storedData.gear_textColor storedData.gear_textColor '#ffffff'}}">
-              <input type="text" class="hex-input" id="hex-textColor" placeholder="Hex color" value="{{ifThen storedData.gear_textColor storedData.gear_textColor '#FFFFFF'}}">
-            </div>
-          </div>
-
-          <div class="base-form__color-picker-with-hex color-picker-with-hex">
-            <label class="color-picker-label" for="color-iconTint">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.IconTint"}}:</label>
-            <div class="color-picker-container">
-              <div class="color-preview" id="preview-iconTint" style="background-color: {{ifThen storedData.gear_iconTint storedData.gear_iconTint '#ffffff'}}"></div>
-              <input type="color" class="color-picker" id="color-iconTint" name="iconTint" value="{{ifThen storedData.gear_iconTint storedData.gear_iconTint '#ffffff'}}">
-              <input type="text" class="hex-input" id="hex-iconTint" placeholder="Hex color" value="{{ifThen storedData.gear_iconTint storedData.gear_iconTint '#FFFFFF'}}">
-            </div>
-          </div>
+        {{> color-pickers type="gear"}}
 
           <div class="base-form__toggle-group">
             <label for="displayOnToken">

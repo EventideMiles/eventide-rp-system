@@ -27,6 +27,8 @@ export const initHandlebarsPartials = async () => {
       "systems/eventide-rp-system/templates/chat/parts/card-ac-check.hbs",
     "roll-info":
       "systems/eventide-rp-system/templates/chat/parts/roll-info.hbs",
+    "color-pickers":
+      "systems/eventide-rp-system/templates/macros/parts/color-pickers.hbs",
   };
 
   // Load and register each partial

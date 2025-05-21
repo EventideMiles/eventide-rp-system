@@ -58,30 +58,8 @@
         name="img" 
         value="{{ifThen storedData.effect_img storedData.effect_img "icons/svg/stoned.svg"}}">
     </div>
-    <div class="base-form__color-picker-with-hex color-picker-with-hex">
-      <label class="color-picker-label" for="color-bgColor">{{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Background"}}}:</label>
-      <div class="color-picker-container">
-        <div class="color-preview" id="preview-bgColor" style="background-color: {{ifThen storedData.effect_bgColor storedData.effect_bgColor '#7B4874'}}"></div>
-        <input type="color" class="color-picker" id="color-bgColor" name="bgColor" value="{{ifThen storedData.effect_bgColor storedData.effect_bgColor '#7B4874'}}">
-        <input type="text" class="hex-input" id="hex-bgColor" placeholder="Hex color" value="{{ifThen storedData.effect_bgColor storedData.effect_bgColor '#7B4874'}}">
-      </div>
-    </div>
-    <div class="base-form__color-picker-with-hex color-picker-with-hex">
-      <label class="color-picker-label" for="color-textColor">{{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Text"}}}:</label>
-      <div class="color-picker-container">
-        <div class="color-preview" id="preview-textColor" style="background-color: {{ifThen storedData.effect_textColor storedData.effect_textColor '#ffffff'}}"></div>
-        <input type="color" class="color-picker" id="color-textColor" name="textColor" value="{{ifThen storedData.effect_textColor storedData.effect_textColor '#ffffff'}}">
-        <input type="text" class="hex-input" id="hex-textColor" placeholder="Hex color" value="{{ifThen storedData.effect_textColor storedData.effect_textColor '#FFFFFF'}}">
-      </div>
-    </div>
-    <div class="base-form__color-picker-with-hex color-picker-with-hex">
-      <label class="color-picker-label" for="color-iconTint">{{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.IconTint"}}}:</label>
-      <div class="color-picker-container">
-        <div class="color-preview" id="preview-iconTint" style="background-color: {{ifThen storedData.effect_iconTint storedData.effect_iconTint '#ffffff'}}"></div>
-        <input type="color" class="color-picker" id="color-iconTint" name="iconTint" value="{{ifThen storedData.effect_iconTint storedData.effect_iconTint '#ffffff'}}">
-        <input type="text" class="hex-input" id="hex-iconTint" placeholder="Hex color" value="{{ifThen storedData.effect_iconTint storedData.effect_iconTint '#FFFFFF'}}">
-      </div>
-    </div>
+    {{> color-pickers type="effect"}}
+    
     <div class="base-form__header">{{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Effects"}}}</div>
     <div class="toggle-container">
       <div class="base-form__toggle-group">
