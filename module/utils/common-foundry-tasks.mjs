@@ -1,14 +1,14 @@
 /**
  * A utility class that provides common Foundry VTT operations related to tokens,
  * user flags, permissions, and more.
- * 
+ *
  * This class is designed to consolidate frequently used operations and abstractions
  * to make development easier and more consistent throughout the system.
- * 
+ *
  * @class
  */
 export class CommonFoundryTasks {
-  /** 
+  /**
    * System identifier for flags and settings
    * @type {string}
    * @static
@@ -17,7 +17,7 @@ export class CommonFoundryTasks {
 
   /**
    * Retrieves an array of tokens which are currently targeted by the user.
-   * 
+   *
    * @returns {Token[]} Array of targeted tokens
    * @static
    */
@@ -27,7 +27,7 @@ export class CommonFoundryTasks {
 
   /**
    * Retrieves the first token which is currently targeted by the user.
-   * 
+   *
    * @returns {Token|null} The first targeted token or null if none targeted
    * @static
    */
@@ -37,7 +37,7 @@ export class CommonFoundryTasks {
 
   /**
    * Retrieves an array of tokens which are currently selected by the user.
-   * 
+   *
    * @returns {Token[]} Array of selected tokens
    * @static
    */
@@ -47,7 +47,7 @@ export class CommonFoundryTasks {
 
   /**
    * Retrieves the first token which is currently selected by the user.
-   * 
+   *
    * @returns {Token|null} The first selected token or null if none selected
    * @static
    */
@@ -57,7 +57,7 @@ export class CommonFoundryTasks {
 
   /**
    * Clamps a number between a minimum and maximum value.
-   * 
+   *
    * @param {number} num - The number to clamp
    * @param {number} min - The minimum value
    * @param {number} max - The maximum value
@@ -70,7 +70,7 @@ export class CommonFoundryTasks {
 
   /**
    * Stores a value in the user's flags for the Eventide system.
-   * 
+   *
    * @param {string} key - The key to store the value under
    * @param {*} value - The value to store
    * @returns {Promise<User>} A Promise which resolves to the updated User
@@ -82,7 +82,7 @@ export class CommonFoundryTasks {
 
   /**
    * Retrieves a value from the user's flags for the Eventide system.
-   * 
+   *
    * @param {string} key - The key of the flag to retrieve
    * @returns {*} The value stored under the given key, or undefined if not found
    * @static
@@ -93,7 +93,7 @@ export class CommonFoundryTasks {
 
   /**
    * Deletes a flag from the user's flags for the Eventide system.
-   * 
+   *
    * @param {string} key - The key of the flag to delete
    * @returns {Promise<User>} A Promise which resolves to the updated User
    * @static
@@ -104,7 +104,7 @@ export class CommonFoundryTasks {
 
   /**
    * Stores multiple values in the user's flags for the Eventide system.
-   * 
+   *
    * @param {Object} flags - An object containing key-value pairs to store
    * @returns {Promise<void>} A Promise which resolves when all flags are stored
    * @static
@@ -119,7 +119,7 @@ export class CommonFoundryTasks {
 
   /**
    * Retrieves multiple values from the user's flags for the Eventide system.
-   * 
+   *
    * @param {string[]} keys - An array of keys to retrieve
    * @returns {Object} An object containing the key-value pairs
    * @static
@@ -136,7 +136,7 @@ export class CommonFoundryTasks {
 
   /**
    * Deletes multiple flags from the user's flags for the Eventide system.
-   * 
+   *
    * @param {string[]} keys - An array of keys to delete
    * @returns {Promise<void>} A Promise which resolves when all flags are deleted
    * @static
@@ -151,7 +151,7 @@ export class CommonFoundryTasks {
 
   /**
    * Determines the permission level of the current user.
-   * 
+   *
    * @returns {string} "gm" if the user is a GM, otherwise "player"
    * @static
    */
@@ -162,7 +162,7 @@ export class CommonFoundryTasks {
   /**
    * Checks if the current user has permission to perform an action.
    * If not permitted and the user is not a GM, displays an error notification.
-   * 
+   *
    * @param {Object} [options={}] - Options object
    * @param {boolean} [options.playerMode=false] - Whether to allow player access
    * @returns {string} "gm" if GM, "player" if player and playerMode is true, or "forbidden"
@@ -171,7 +171,7 @@ export class CommonFoundryTasks {
   static permissionCheck({ playerMode = false } = {}) {
     if (game.user.isGM) return "gm";
     if (playerMode) return "player";
-    
+
     // Show error notification if action is not permitted for players
     ui.notifications.error(
       game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.GMOnly")
@@ -181,7 +181,7 @@ export class CommonFoundryTasks {
 
   /**
    * Safely checks if testing mode is enabled in the system settings
-   * 
+   *
    * @returns {boolean} Whether testing mode is enabled
    * @static
    */
@@ -191,6 +191,16 @@ export class CommonFoundryTasks {
       typeof erps.settings.getSetting === "function"
       ? erps.settings.getSetting("testingMode")
       : false;
+  }
+
+  static logIfTesting(message, data) {
+    if (!CommonFoundryTasks.isTestingMode) return;
+
+    if (data !== undefined) {
+      console.log(message, data);
+    } else {
+      console.log(message);
+    }
   }
 }
 
