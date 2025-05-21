@@ -470,6 +470,11 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
     await gear.update({
       "system.quantity": Math.max(gear.system.quantity - 1, 0),
     });
+    if (gear.system.quantity === 0) {
+      setTimeout(() => {
+        erps.messages.createGearEquipMessage(gear);
+      }, 100);
+    }
   }
 
   /**

@@ -1,4 +1,19 @@
-const initHandlebarsPartials = async () => {
+/**
+ * Handlebars partials initialization for Eventide RP System
+ * @module services/settings/handlebars-partials
+ */
+
+/**
+ * Initialize and register Handlebars partials
+ *
+ * This function loads the template files for commonly used UI components and
+ * registers them as Handlebars partials so they can be included in other templates.
+ *
+ * @async
+ * @returns {Promise<void>}
+ */
+export const initHandlebarsPartials = async () => {
+  // Define the partial paths with their registration names
   const partialPaths = {
     "character-effects":
       "systems/eventide-rp-system/templates/macros/parts/character-effects.hbs",
@@ -9,10 +24,29 @@ const initHandlebarsPartials = async () => {
   };
 
   // Load and register each partial
-  for (const [name, path] of Object.entries(partialPaths)) {
-    const template = await fetch(path).then((r) => r.text());
-    Handlebars.registerPartial(name, template);
-  }
+  await Promise.all(
+    Object.entries(partialPaths).map(async ([name, path]) => {
+      try {
+        const template = await fetchPartialTemplate(path);
+        Handlebars.registerPartial(name, template);
+      } catch (error) {
+        console.error(`Failed to load Handlebars partial '${name}':`, error);
+      }
+    })
+  );
 };
 
-export { initHandlebarsPartials };
+/**
+ * Fetch a template from a path
+ *
+ * @private
+ * @param {string} path - Path to the template file
+ * @returns {Promise<string>} The template content
+ */
+const fetchPartialTemplate = async (path) => {
+  const response = await fetch(path);
+  if (!response.ok) {
+    throw new Error(`HTTP error ${response.status} when fetching ${path}`);
+  }
+  return await response.text();
+};

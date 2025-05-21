@@ -1,71 +1,141 @@
+/**
+ * Combat-related hooks for the Eventide RP System
+ * @module services/hooks/combat
+ */
 import { erpsRollHandler } from "../managers/roll-dice.mjs";
 
 /**
  * Initialize combat-related hooks
+ *
+ * Sets up hooks for combat initialization, initiative rolling, and handles
+ * both player and NPC initiative rolls based on system settings.
+ *
+ * @returns {Promise<void>}
  */
-export async function initializeCombatHooks() {
+export const initializeCombatHooks = async () => {
+  // Hook into combatant creation to handle automatic initiative rolling
   Hooks.on("createCombatant", async (combatant, options, userId) => {
+    // Only process if this is the user who created the combatant
     if (game.user.id !== userId) return;
 
-    let autoRollNpcInitiative = false;
-    let hideNpcInitiativeRolls = false;
-    let autoRollPlayerInitiative = false;
+    // Get initiative settings
+    const settings = getCombatSettings();
 
-    if (game.settings && game.settings.get) {
-      try {
-        autoRollNpcInitiative = game.settings.get(
-          "eventide-rp-system",
-          "autoRollNpcInitiative"
-        );
-        hideNpcInitiativeRolls = game.settings.get(
-          "eventide-rp-system",
-          "hideNpcInitiativeRolls"
-        );
-        autoRollPlayerInitiative = game.settings.get(
-          "eventide-rp-system",
-          "autoRollPlayerInitiative"
-        );
-      } catch (error) {
-        console.warn("Could not get NPC initiative settings, using defaults");
-      }
+    // Roll initiative for NPCs if automatic rolling is enabled
+    if (settings.autoRollNpcInitiative && !combatant.actor.hasPlayerOwner) {
+      await rollInitiativeForCombatant(
+        combatant,
+        true,
+        settings.hideNpcInitiativeRolls
+      );
     }
 
-    if (autoRollNpcInitiative && !combatant.actor.hasPlayerOwner) {
-      try {
-        await erpsRollHandler.rollInitiative({
-          combatant: combatant,
-          npc: true,
-          whisperMode: hideNpcInitiativeRolls,
-          customFlavor: `${
-            combatant.name || combatant.actor.name
-          } rolls for Initiative!`,
-        });
-      } catch (error) {
-        console.error("Error rolling NPC initiative:", error);
-        // Fall back to the default method if our custom approach fails
-        combatant.parent.rollInitiative(combatant.id);
-      }
-    }
-
-    if (autoRollPlayerInitiative && combatant.actor.hasPlayerOwner) {
-      try {
-        await erpsRollHandler.rollInitiative({
-          combatant: combatant,
-          npc: false,
-          whisperMode: false,
-          customFlavor: `${
-            combatant.name || combatant.actor.name
-          } rolls for Initiative!`,
-        });
-      } catch (error) {
-        console.error("Error rolling player initiative:", error);
-        // Fall back to the default method if our custom approach fails
-        combatant.parent.rollInitiative(combatant.id);
-      }
+    // Roll initiative for players if automatic rolling is enabled
+    if (settings.autoRollPlayerInitiative && combatant.actor.hasPlayerOwner) {
+      await rollInitiativeForCombatant(combatant, false, false);
     }
   });
 
   // Override the Combat.rollInitiative method to use our custom initiative roller
+  overrideCombatRollInitiative();
+
+  // Override the Combatant.rollInitiative method to ensure all initiative rolls use our system
+  overrideCombatantRollInitiative();
+
+  // Set combat round duration when a new combat is created
+  Hooks.on("createCombat", (combat) => {
+    if (!game.settings || !game.settings.get) return;
+
+    try {
+      const roundDuration = game.settings.get(
+        "eventide-rp-system",
+        "defaultCombatRoundDuration"
+      );
+
+      if (roundDuration) {
+        combat.update({ roundTime: roundDuration });
+      }
+    } catch (error) {
+      console.warn(
+        "Could not get combat round duration setting, using default",
+        error
+      );
+    }
+  });
+};
+
+/**
+ * Get combat-related settings
+ *
+ * @private
+ * @returns {Object} Object containing combat settings
+ */
+const getCombatSettings = () => {
+  let autoRollNpcInitiative = false;
+  let hideNpcInitiativeRolls = false;
+  let autoRollPlayerInitiative = false;
+
+  if (game.settings && game.settings.get) {
+    try {
+      autoRollNpcInitiative = game.settings.get(
+        "eventide-rp-system",
+        "autoRollNpcInitiative"
+      );
+      hideNpcInitiativeRolls = game.settings.get(
+        "eventide-rp-system",
+        "hideNpcInitiativeRolls"
+      );
+      autoRollPlayerInitiative = game.settings.get(
+        "eventide-rp-system",
+        "autoRollPlayerInitiative"
+      );
+    } catch (error) {
+      console.warn("Could not get initiative settings, using defaults", error);
+    }
+  }
+
+  return {
+    autoRollNpcInitiative,
+    hideNpcInitiativeRolls,
+    autoRollPlayerInitiative,
+  };
+};
+
+/**
+ * Roll initiative for a combatant
+ *
+ * @private
+ * @param {Combatant} combatant - The combatant to roll initiative for
+ * @param {boolean} isNpc - Whether the combatant is an NPC
+ * @param {boolean} whisperMode - Whether to whisper the roll
+ * @returns {Promise<void>}
+ */
+const rollInitiativeForCombatant = async (combatant, isNpc, whisperMode) => {
+  try {
+    await erpsRollHandler.rollInitiative({
+      combatant: combatant,
+      npc: isNpc,
+      whisperMode: whisperMode,
+      customFlavor: `${
+        combatant.name || combatant.actor.name
+      } rolls for Initiative!`,
+    });
+  } catch (error) {
+    console.error(
+      `Error rolling initiative for ${isNpc ? "NPC" : "player"}:`,
+      error
+    );
+    // Fall back to the default method if our custom approach fails
+    combatant.parent.rollInitiative(combatant.id);
+  }
+};
+
+/**
+ * Override the Combat.rollInitiative method
+ *
+ * @private
+ */
+const overrideCombatRollInitiative = () => {
   Combat.prototype.rollInitiative = async function (ids, options = {}) {
     // Get the hideNpcInitiativeRolls setting
     let hideNpcInitiativeRolls = false;
@@ -76,7 +146,8 @@ export async function initializeCombatHooks() {
       );
     } catch (error) {
       console.warn(
-        "Could not get hideNpcInitiativeRolls setting, using default"
+        "Could not get hideNpcInitiativeRolls setting, using default",
+        error
       );
     }
 
@@ -108,8 +179,14 @@ export async function initializeCombatHooks() {
 
     return this;
   };
+};
 
-  // Also override the Combatant.rollInitiative method to ensure all initiative rolls use our system
+/**
+ * Override the Combatant.rollInitiative method
+ *
+ * @private
+ */
+const overrideCombatantRollInitiative = () => {
   Combatant.prototype.rollInitiative = async function (options = {}) {
     // Get the hideNpcInitiativeRolls setting
     let hideNpcInitiativeRolls = false;
@@ -120,13 +197,15 @@ export async function initializeCombatHooks() {
       );
     } catch (error) {
       console.warn(
-        "Could not get hideNpcInitiativeRolls setting, using default"
+        "Could not get hideNpcInitiativeRolls setting, using default",
+        error
       );
     }
 
     const isNpc = !this.actor.hasPlayerOwner;
     const shouldWhisper = hideNpcInitiativeRolls && isNpc;
     const rollMode = options.messageOptions?.rollMode;
+
     return await erpsRollHandler.rollInitiative({
       combatant: this,
       npc: isNpc,
@@ -136,23 +215,4 @@ export async function initializeCombatHooks() {
         options.messageOptions?.flavor || `${this.name} rolls for Initiative!`,
     });
   };
-
-  // Set combat round duration
-  Hooks.on("createCombat", (combat) => {
-    if (game.settings && game.settings.get) {
-      try {
-        const roundDuration = game.settings.get(
-          "eventide-rp-system",
-          "defaultCombatRoundDuration"
-        );
-        if (roundDuration) {
-          combat.update({ roundTime: roundDuration });
-        }
-      } catch (error) {
-        console.warn(
-          "Could not get combat round duration setting, using default"
-        );
-      }
-    }
-  });
-}
+};

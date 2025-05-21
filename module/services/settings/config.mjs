@@ -1,11 +1,20 @@
 /**
+ * System configuration constants for the Eventide RP System
+ * @module services/settings/config
+ */
+
+/**
  * System-specific configuration constants.
+ * This object contains all the configuration constants used by the system.
+ *
  * @const {Object}
  */
 export const EVENTIDE_RP_SYSTEM = {};
 
 /**
  * The set of Ability Scores used within the system.
+ * These are used for character attributes and skill checks.
+ *
  * @type {Object<string, string>}
  */
 EVENTIDE_RP_SYSTEM.abilities = {
@@ -18,6 +27,8 @@ EVENTIDE_RP_SYSTEM.abilities = {
 
 /**
  * Abbreviated names for ability scores.
+ * Used in places where space is limited.
+ *
  * @type {Object<string, string>}
  */
 EVENTIDE_RP_SYSTEM.abilityAbbreviations = {
@@ -30,6 +41,8 @@ EVENTIDE_RP_SYSTEM.abilityAbbreviations = {
 
 /**
  * Hidden abilities used for system mechanics.
+ * These represent underlying game mechanics that aren't directly visible to players.
+ *
  * @type {Object<string, string>}
  */
 EVENTIDE_RP_SYSTEM.hiddenAbilities = {
@@ -43,6 +56,8 @@ EVENTIDE_RP_SYSTEM.hiddenAbilities = {
 
 /**
  * Abbreviated names for hidden abilities.
+ * Used in places where space is limited.
+ *
  * @type {Object<string, string>}
  */
 EVENTIDE_RP_SYSTEM.hiddenAbilityAbbreviations = {
@@ -56,6 +71,8 @@ EVENTIDE_RP_SYSTEM.hiddenAbilityAbbreviations = {
 
 /**
  * Roll types used for system mechanics.
+ * These define how rolls are handled by the system.
+ *
  * @type {Object<string, string>}
  */
 EVENTIDE_RP_SYSTEM.rollTypes = {
@@ -64,6 +81,12 @@ EVENTIDE_RP_SYSTEM.rollTypes = {
   flat: "EVENTIDE_RP_SYSTEM.RollTypes.Flat",
 };
 
+/**
+ * Class names for items in the system.
+ * These define the different categories of items that can be created.
+ *
+ * @type {Object<string, string>}
+ */
 EVENTIDE_RP_SYSTEM.classNames = {
   weapon: "EVENTIDE_RP_SYSTEM.ClassNames.Weapon",
   armor: "EVENTIDE_RP_SYSTEM.ClassNames.Armor",

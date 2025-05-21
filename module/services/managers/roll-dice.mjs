@@ -1,3 +1,8 @@
+/**
+ * Dice rolling service for the Eventide RP System
+ *
+ * @module services/managers/roll-dice
+ */
 import { getSetting } from "../_module.mjs";
 import { ERPSRollUtilities } from "../../utils/_module.mjs";
 import { erpsSoundManager } from "../_module.mjs";
@@ -6,15 +11,18 @@ const { renderTemplate } = foundry.applications.handlebars;
 
 /**
  * Handles all dice rolling operations for the Eventide RP System
- * 
+ *
  * This class is responsible for creating, evaluating, and displaying roll results
  * in chat messages, including handling critical hits/misses and custom styling.
- * 
+ * It provides methods for standard rolls, initiative rolls, and roll styling.
+ *
  * @class ERPSRollHandler
  */
 class ERPSRollHandler {
   /**
    * Create a new ERPSRollHandler instance
+   *
+   * Initializes template paths, default options, and styling definitions for rolls.
    */
   constructor() {
     /**
@@ -23,7 +31,8 @@ class ERPSRollHandler {
      */
     this.templates = {
       standard: "systems/eventide-rp-system/templates/chat/roll-message.hbs",
-      initiative: "systems/eventide-rp-system/templates/chat/initiative-roll.hbs",
+      initiative:
+        "systems/eventide-rp-system/templates/chat/initiative-roll.hbs",
     };
 
     /**
@@ -70,6 +79,7 @@ class ERPSRollHandler {
 
   /**
    * Determine the appropriate card styling based on roll type
+   *
    * @private
    * @param {string} type - The roll type identifier
    * @returns {string[]} An array containing [cardClass, icon]
@@ -81,7 +91,7 @@ class ERPSRollHandler {
 
   /**
    * Create chat message data with proper visibility settings
-   * 
+   *
    * @private
    * @param {Object} options - Message configuration options
    * @param {ChatSpeakerData} options.speaker - The message speaker
@@ -123,25 +133,49 @@ class ERPSRollHandler {
       },
     };
 
-    // Handle custom sounds if provided
-    if (soundKey) {
-      // Play sound locally for immediate feedback
-      erpsSoundManager._playLocalSound(soundKey);
-
-      // Set built-in sound to null since we're using our own system
-      messageData.sound = null;
-
-      // Add sound data to flags for remote playback
-      messageData.flags["eventide-rp-system"].sound = {
-        key: soundKey,
-        force: false,
-      };
-    }
+    // Handle custom sounds
+    this._addSoundToMessageData(messageData, soundKey);
 
     // Apply roll mode visibility settings
+    this._applyRollModeSettings(messageData, rollMode);
+
+    return messageData;
+  }
+
+  /**
+   * Add sound data to message data
+   *
+   * @private
+   * @param {Object} messageData - The message data object to modify
+   * @param {string|null} soundKey - The sound key to add
+   */
+  _addSoundToMessageData(messageData, soundKey) {
+    if (!soundKey) return;
+
+    // Play sound locally for immediate feedback
+    erpsSoundManager._playLocalSound(soundKey);
+
+    // Set built-in sound to null since we're using our own system
+    messageData.sound = null;
+
+    // Add sound data to flags for remote playback
+    messageData.flags["eventide-rp-system"].sound = {
+      key: soundKey,
+      force: false,
+    };
+  }
+
+  /**
+   * Apply roll mode visibility settings to message data
+   *
+   * @private
+   * @param {Object} messageData - The message data object to modify
+   * @param {string} rollMode - The roll mode to apply
+   */
+  _applyRollModeSettings(messageData, rollMode) {
     if (rollMode !== "roll") {
       messageData.rollMode = rollMode;
-      
+
       // Handle GM-only rolls
       if (rollMode === "gmroll" || rollMode === "blindroll") {
         messageData.whisper = game.users
@@ -149,13 +183,11 @@ class ERPSRollHandler {
           .map((user) => user.id);
       }
     }
-
-    return messageData;
   }
 
   /**
    * Process a roll and generate appropriate chat messages
-   * 
+   *
    * @async
    * @param {Object} options - Roll configuration options
    * @param {string} [options.formula="1"] - The dice formula to roll
@@ -167,7 +199,7 @@ class ERPSRollHandler {
    * @param {string} [options.description=""] - Optional description text
    * @param {boolean} [options.toMessage=true] - Whether to create a chat message
    * @param {string} [options.rollMode=null] - Roll visibility mode
-   * @param {string} [options.soundKey=null] - Optional sound key 
+   * @param {string} [options.soundKey=null] - Optional sound key
    * @param {Actor} actor - Actor performing the roll
    * @returns {Promise<Roll>} The evaluated roll
    */
@@ -186,28 +218,86 @@ class ERPSRollHandler {
     } = {},
     actor
   ) {
+    // Create and evaluate the roll
+    const { roll, result } = await this._createAndEvaluateRoll(formula, actor);
+
+    // Get targets and check data
+    const { addCheck, targetArray, targetRollData } = await this._getTargetData(
+      acCheck,
+      result
+    );
+
+    // Determine critical states
+    const criticalStates = this._determineCriticalStates(
+      result,
+      actor,
+      formula,
+      critAllowed
+    );
+
+    // Prepare template data
+    const templateData = this._prepareRollTemplateData({
+      actor,
+      roll: result,
+      formula,
+      label,
+      description,
+      type,
+      className,
+      critAllowed,
+      addCheck,
+      targetArray,
+      targetRollData,
+      criticalStates,
+    });
+
+    // Render the template and create chat message if requested
+    if (toMessage) {
+      await this._createRollChatMessage({
+        actor,
+        roll: result,
+        formula,
+        type,
+        templateData,
+        rollMode,
+        soundKey,
+      });
+    }
+
+    return roll;
+  }
+
+  /**
+   * Create and evaluate a roll
+   *
+   * @private
+   * @param {string} formula - The dice formula to roll
+   * @param {Actor} actor - The actor performing the roll
+   * @returns {Promise<Object>} Object containing the roll and result
+   */
+  async _createAndEvaluateRoll(formula, actor) {
     // Get actor data and create the roll
     const rollData = actor.getRollData();
     const roll = new Roll(formula, rollData);
-    
+
     // Evaluate the roll
     const result = await roll.evaluate();
-    
+
+    return { roll, result, rollData };
+  }
+
+  /**
+   * Get target data for AC checks
+   *
+   * @private
+   * @param {boolean} acCheck - Whether to check against AC
+   * @param {Object} result - The roll result
+   * @returns {Promise<Object>} Object containing target data
+   */
+  async _getTargetData(acCheck, result) {
     // Get targets if needed for AC checks
     const targetArray = await erps.utils.getTargetArray();
     const addCheck = (acCheck ?? true) && targetArray.length ? true : false;
-
-    // Normalize roll type
-    const pickedType = type.toLowerCase();
-
-    // Determine critical hit/miss states
-    const { critHit, critMiss, stolenCrit, savedMiss } =
-      ERPSRollUtilities.determineCriticalStates({
-        roll: result,
-        thresholds: rollData.hiddenAbilities,
-        formula,
-        critAllowed,
-      });
 
     // Get target data for AC checks if applicable
     const targetRollData = addCheck
@@ -218,14 +308,62 @@ class ERPSRollHandler {
         }))
       : [];
 
+    return { addCheck, targetArray, targetRollData };
+  }
+
+  /**
+   * Determine critical hit/miss states
+   *
+   * @private
+   * @param {Object} result - The roll result
+   * @param {Actor} actor - The actor performing the roll
+   * @param {string} formula - The dice formula
+   * @param {boolean} critAllowed - Whether critical hits/misses are allowed
+   * @returns {Object} Object containing critical state flags
+   */
+  _determineCriticalStates(result, actor, formula, critAllowed) {
+    // Normalize roll type
+    const rollData = actor.getRollData();
+
+    // Determine critical hit/miss states
+    return ERPSRollUtilities.determineCriticalStates({
+      roll: result,
+      thresholds: rollData.hiddenAbilities,
+      formula,
+      critAllowed,
+    });
+  }
+
+  /**
+   * Prepare data for roll template
+   *
+   * @private
+   * @param {Object} options - Template data options
+   * @returns {Object} Prepared template data
+   */
+  _prepareRollTemplateData({
+    actor,
+    roll,
+    formula,
+    label,
+    description,
+    type,
+    className,
+    critAllowed,
+    addCheck,
+    targetArray,
+    targetRollData,
+    criticalStates,
+  }) {
     // Get styling for this roll type
+    const pickedType = type.toLowerCase();
     const [pickedCardClass, pickedIcon] = this._getCardStyling(pickedType);
 
     // Prepare template data
-    const templateData = {
-      rollData,
+    return {
+      rollData: actor.getRollData(),
       roll,
-      result,
+      result: roll,
       label,
       description,
       pickedCardClass,
@@ -237,43 +375,61 @@ class ERPSRollHandler {
       targetArray,
       targetRollData,
       actor,
-      critHit: critHit ?? false,
-      critMiss: critMiss ?? false,
-      savedMiss: savedMiss ?? false,
-      stolenCrit: stolenCrit ?? false,
+      critHit: criticalStates.critHit ?? false,
+      critMiss: criticalStates.critMiss ?? false,
+      savedMiss: criticalStates.savedMiss ?? false,
+      stolenCrit: criticalStates.stolenCrit ?? false,
       // Add these properties for initiative template compatibility
       name: actor.name,
-      total: result.total,
+      total: roll.total,
       formula: formula,
     };
+  }
 
+  /**
+   * Create a chat message for the roll
+   *
+   * @private
+   * @param {Object} options - Options for creating the chat message
+   * @returns {Promise<ChatMessage>} The created chat message
+   */
+  async _createRollChatMessage({
+    actor,
+    roll,
+    formula,
+    type,
+    templateData,
+    rollMode,
+    soundKey,
+  }) {
     // Render the appropriate template
     const content = await renderTemplate(this.templates.standard, templateData);
 
-    // Create chat message if requested
-    if (toMessage) {
-      const messageData = this._createMessageData({
-        speaker: ChatMessage.getSpeaker({ actor }),
-        content,
-        rolls: [roll],
-        type: pickedType,
-        formula,
-        total: result.total,
-        rollMode,
-        soundKey,
-      });
+    // Create chat message
+    const messageData = this._createMessageData({
+      speaker: ChatMessage.getSpeaker({ actor }),
+      content,
+      rolls: [roll],
+      type: type.toLowerCase(),
+      formula,
+      total: roll.total,
+      rollMode,
+      soundKey,
+    });
 
-      await ChatMessage.create(messageData);
-    }
-
-    return roll;
+    return await ChatMessage.create(messageData);
   }
 
   /**
    * Handle initiative rolls with custom visibility
+   *
+   * Creates a special initiative-specific roll with additional styling
+   * and handles visibility based on settings and combatant type.
+   *
    * @public
    * @param {Object} options - Options for the initiative roll
    * @param {Combatant} options.combatant - The combatant rolling initiative
+   * @param {boolean} [options.npc=false] - Whether the combatant is an NPC
    * @param {boolean} [options.whisperMode=false] - Whether to whisper the roll to GMs only
    * @param {string} [options.description=""] - Optional description to include in the message
    * @param {string} [options.customFlavor=""] - Optional custom flavor text for the roll
@@ -289,18 +445,54 @@ class ERPSRollHandler {
     soundKey = null,
   }) {
     // Get initiative settings
-    let hideNpcInitiativeRolls = false;
-    try {
-      hideNpcInitiativeRolls = getSetting("hideNpcInitiativeRolls");
-    } catch (error) {
-      console.warn("Error getting hideNpcInitiativeRolls setting:", error);
-      hideNpcInitiativeRolls = false;
-    }
+    const hideNpcInitiativeRolls = this._getInitiativeSettings();
 
     // Determine if this is an NPC and should be whispered
     const isNpc = combatant.actor && !combatant.actor.hasPlayerOwner;
     const shouldWhisper = (hideNpcInitiativeRolls && isNpc) || whisperMode;
 
+    // Create and evaluate the initiative roll
+    const roll = await this._createInitiativeRoll(combatant);
+
+    // Update combatant initiative value
+    await this._updateCombatantInitiative(combatant, roll);
+
+    // Create initiative message
+    await this._createInitiativeMessage({
+      combatant,
+      roll,
+      isNpc,
+      shouldWhisper,
+      description,
+      customFlavor,
+    });
+
+    return roll;
+  }
+
+  /**
+   * Get initiative settings
+   *
+   * @private
+   * @returns {boolean} Whether to hide NPC initiative rolls
+   */
+  _getInitiativeSettings() {
+    try {
+      return getSetting("hideNpcInitiativeRolls");
+    } catch (error) {
+      console.warn("Error getting hideNpcInitiativeRolls setting:", error);
+      return false;
+    }
+  }
+
+  /**
+   * Create and evaluate an initiative roll
+   *
+   * @private
+   * @param {Combatant} combatant - The combatant rolling initiative
+   * @returns {Promise<Roll>} The evaluated roll
+   */
+  async _createInitiativeRoll(combatant) {
     // Get initiative formula from settings or combatant
     let formula = CONFIG.Combat.initiative.formula;
 
@@ -308,7 +500,18 @@ class ERPSRollHandler {
     const roll = new Roll(formula, combatant.actor?.getRollData() || {});
     await roll.evaluate();
 
-    // Set combatant initiative
+    return roll;
+  }
+
+  /**
+   * Update combatant initiative value
+   *
+   * @private
+   * @param {Combatant} combatant - The combatant to update
+   * @param {Roll} roll - The initiative roll result
+   * @returns {Promise<void>}
+   */
+  async _updateCombatantInitiative(combatant, roll) {
     const combat = combatant.parent;
     await combat.updateEmbeddedDocuments("Combatant", [
       {
@@ -316,7 +519,23 @@ class ERPSRollHandler {
         initiative: roll.total,
       },
     ]);
+  }
 
+  /**
+   * Create initiative chat message
+   *
+   * @private
+   * @param {Object} options - Options for creating the message
+   * @returns {Promise<ChatMessage>} The created chat message
+   */
+  async _createInitiativeMessage({
+    combatant,
+    roll,
+    isNpc,
+    shouldWhisper,
+    description,
+    customFlavor,
+  }) {
     // Prepare template data
     const data = {
       name: combatant.name,
@@ -342,8 +561,7 @@ class ERPSRollHandler {
       soundKey: "initiative",
     });
 
-    ChatMessage.create(messageData);
-    return roll;
+    return await ChatMessage.create(messageData);
   }
 }
 
