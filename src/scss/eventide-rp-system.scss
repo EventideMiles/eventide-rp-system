@@ -1,6 +1,7 @@
 // Add custom fonts by visiting and search https://fonts.google.com
 // Import utilities.
 @use "sass:meta";
+@use 'utils/tokens';
 @use 'utils/typography';
 @use 'utils/colors';
 @use 'utils/mixins';

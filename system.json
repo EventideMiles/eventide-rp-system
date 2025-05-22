@@ -53,10 +53,10 @@
       "thumbnail": "systems/eventide-rp-system/assets/anvil-impact.png"
     }
   ],
-  "version": "13.1.1",
+  "version": "13.1.2",
   "compatibility": {
     "minimum": "13.341",
-    "verified": "13.342"
+    "verified": "13.344"
   },
   "esmodules": ["module/eventide-rp-system.mjs"],
   "styles": ["css/eventide-rp-system.css"],

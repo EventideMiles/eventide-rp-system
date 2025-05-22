@@ -27,16 +27,6 @@
   @include mixins.grid-compliant-text-input;
   appearance: none;
   -webkit-appearance: none;
-  
-  // &:focus {
-  //   // outline: none;
-  //   // @include box-shadow-hover;
-  // }
-
-  // &:hover {
-  //   // @include box-shadow-hover;
-  // }
-  
   @content; // Allow for customization
 }
 
@@ -264,7 +254,6 @@
 
   &__select {
     @include mixins.grid-compliant-select;
-    @include mixins.select-dropdown-styles;
   }
 
   &__select-option {

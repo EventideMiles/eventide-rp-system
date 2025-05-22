@@ -1,41 +1,62 @@
-// Import document classes.
-import { EventideRpSystemActor } from "./documents/actor.mjs";
-import { EventideRpSystemItem } from "./documents/item.mjs";
-// Import sheet classes.
-import { EventideRpSystemActorSheet } from "./sheets/actor-sheet.mjs";
-import { EventideRpSystemItemSheet } from "./sheets/item-sheet.mjs";
-import { GearCreator } from "./sheets/gear-creator.mjs";
-import { DamageTargets } from "./sheets/damage-targets.mjs";
-import { RestoreTarget } from "./sheets/restore-target.mjs";
-import { ChangeTargetStatus } from "./sheets/change-target-status.mjs";
-import { SelectAbilityRoll } from "./sheets/select-ability-roll.mjs";
-import { GearTransfer } from "./sheets/gear-transfer.mjs";
-import { EffectCreator } from "./sheets/effect-creator.mjs";
-import { TransformationCreator } from "./sheets/transformation-creator.mjs";
-// Import helper/utility classes and constants.
-import { EVENTIDE_RP_SYSTEM } from "./helpers/config.mjs";
-import { preloadHandlebarsTemplates } from "./helpers/templates.mjs";
-import { registerSettings } from "./helpers/settings.mjs";
-import { initializeCombatHooks } from "./helpers/combat.mjs";
-import { initChatListeners } from "./helpers/chat-listeners.mjs";
+/**
+ * Eventide RP System - Main Module
+ *
+ * This file serves as the entry point for the Eventide RP System, setting up the system
+ * and registering its components with Foundry VTT. It initializes document classes, sheets,
+ * configuration, and utility functions.
+ *
+ * @module eventide-rp-system
+ */
+
+// Import document classes
+import {
+  EventideRpSystemActor,
+  EventideRpSystemItem,
+} from "./documents/_module.mjs";
+
+// Import sheet classes
+import {
+  EventideRpSystemActorSheet,
+  EventideRpSystemItemSheet,
+  GearCreator,
+  DamageTargets,
+  RestoreTarget,
+  ChangeTargetStatus,
+  SelectAbilityRoll,
+  GearTransfer,
+  EffectCreator,
+  TransformationCreator,
+} from "./ui/_module.mjs";
+
+// import service classes and constants
+import {
+  EVENTIDE_RP_SYSTEM,
+  preloadHandlebarsTemplates,
+  registerSettings,
+  initializeCombatHooks,
+  initChatListeners,
+  erpsMessageHandler,
+  initHandlebarsPartials,
+  getSetting,
+  setSetting,
+} from "./services/_module.mjs";
+
 // Import DataModel classes
 import * as models from "./data/_module.mjs";
-import { commonTasks } from "./helpers/common-foundry-tasks.mjs";
-import { erpsMessageHandler } from "./helpers/system-messages.mjs";
+
+// Import utility functions
+import { commonTasks } from "./utils/_module.mjs";
+
+//import helper functions
 import {
   initColorPickersWithHex,
   cleanupColorPickers,
-} from "./helpers/color-pickers.mjs";
-import {
+  enhanceExistingColorPickers,
   initNumberInputs,
   cleanupNumberInputs,
-} from "./helpers/number-inputs.mjs";
-import { initHandlebarsPartials } from "./helpers/handlebars-partials.mjs";
-import { getSetting, setSetting } from "./helpers/settings.mjs";
-import {
   initRangeSliders,
   cleanupRangeSliders,
-} from "./helpers/range-sliders.mjs";
+} from "./helpers/_module.mjs";
 
 const { Actors, Items } = foundry.documents.collections;
 const { ActorSheet, ItemSheet } = foundry.appv1.sheets;
@@ -59,6 +80,7 @@ globalThis.erps = {
     ...commonTasks,
     rollItemMacro,
     initColorPickersWithHex,
+    enhanceExistingColorPickers,
     initNumberInputs,
     cleanupNumberInputs,
     cleanupColorPickers,
@@ -83,33 +105,32 @@ globalThis.erps = {
   models,
 };
 
+/**
+ * Initialize the Eventide RP System
+ * Sets up system configuration, registers document classes, initializes hooks and listeners
+ */
 Hooks.once("init", async function () {
-  // Add custom constants for configuration.
-  CONFIG.EVENTIDE_RP_SYSTEM = EVENTIDE_RP_SYSTEM;
+  console.log("ERPS | Initializing Eventide RP System");
 
+  // Add custom constants for configuration
+  CONFIG.EVENTIDE_RP_SYSTEM = EVENTIDE_RP_SYSTEM;
   // Register system settings
   registerSettings();
-
   // Preload Handlebars templates
-  preloadHandlebarsTemplates();
-
+  await preloadHandlebarsTemplates();
+  // Initialize handlebars partials
+  initHandlebarsPartials();
   // Initialize combat hooks
   initializeCombatHooks();
-
   // Initialize chat message listeners
   initChatListeners();
-
-  initHandlebarsPartials();
-
   /**
-   * Set an initiative formula for the system
-   * @type {String}
+   * Configure initiative settings
    */
   CONFIG.Combat.initiative = {
     formula: "1d20", // Default fallback
     decimals: 2, // Default fallback
   };
-
   // Update with settings if available
   if (game.settings && game.settings.get) {
     try {
@@ -118,21 +139,21 @@ Hooks.once("init", async function () {
         decimals: game.settings.get("eventide-rp-system", "initiativeDecimals"),
       };
     } catch (error) {
-      console.warn("Could not get initiative settings, using defaults");
+      console.warn(
+        "ERPS | Could not get initiative settings, using defaults",
+        error
+      );
     }
   }
-
-  // Define custom Document and DataModel classes
+  // Define custom Document classes
   CONFIG.Actor.documentClass = EventideRpSystemActor;
-
-  // Note that you don't need to declare a DataModel
-  // for the base actor/item classes - they are included
-  // with the Character/NPC as part of super.defineSchema()
+  CONFIG.Item.documentClass = EventideRpSystemItem;
+  // Register DataModel classes
+  // These data models define the schema for system data
   CONFIG.Actor.dataModels = {
     character: models.EventideRpSystemCharacter,
     npc: models.EventideRpSystemNPC,
   };
-  CONFIG.Item.documentClass = EventideRpSystemItem;
   CONFIG.Item.dataModels = {
     gear: models.EventideRpSystemGear,
     feature: models.EventideRpSystemFeature,
@@ -140,12 +161,10 @@ Hooks.once("init", async function () {
     combatPower: models.EventideRpSystemCombatPower,
     transformation: models.EventideRpSystemTransformation,
   };
-
-  // Active Effects are never copied to the Actor,
-  // but will still apply to the Actor from within the Item
-  // if the transfer property on the Active Effect is true.
+  // Configure Active Effect behavior
+  // Setting to false means Active Effects are never copied to the Actor directly,
+  // but will still apply if the transfer property on the Active Effect is true
   CONFIG.ActiveEffect.legacyTransferral = false;
-
   // Register sheet application classes
   Actors.unregisterSheet("core", ActorSheet);
   Actors.registerSheet("eventide-rp-system", EventideRpSystemActorSheet, {
@@ -157,6 +176,7 @@ Hooks.once("init", async function () {
     makeDefault: true,
     label: "EVENTIDE_RP_SYSTEM.SheetLabels.Item",
   });
+  console.log("ERPS | Eventide RP System Initialization Complete");
 });
 
 /* -------------------------------------------- */

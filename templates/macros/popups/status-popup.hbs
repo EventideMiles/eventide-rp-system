@@ -1,11 +1,6 @@
 <div class="{{cssClass}} popup-form" autocomplete="off">
     <div class="popup-form__main chat-card">
-        <div class="popup-form__header" style="{{style}}">
-            <div>{{item.name}}</div>
-            <div class="popup-form__content popup-form__content--image">
-                <img src="{{item.img}}" class="popup-form__image" alt="{{item.name}}" /> 
-            </div>
-        </div>
+        {{> popup-header}}
 
         {{#if item.system.description}}
         <div class="popup-form__content popup-form__content--description">
@@ -16,33 +11,7 @@
 
         <hr />
 
-{{#if mainEffect.changes.length}}
-<div class="base-form__effects">
-  <div class="base-form__effects-title">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Effects"}}</div>
-    <div class="base-form__effects-name"><img src="{{mainEffect.img}}" class="chat-card__image--secondary" /> {{mainEffect.name}}</div>
-      {{#each mainEffect.changes}}
-        <div class="base-form__effects-row">
-          <div class="base-form__effects-row-cell base-form__effects-row-cell--first">{{keySplit this.key 2}}</div> 
-          <div class="base-form__effects-row-cell base-form__effects-row-cell--middle">
-            {{#if (eq this.mode 5)}}
-              {{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.SetTo"}}
-            {{else}}
-              {{#if (eq (keySplit this.key 4) "advantage")}}
-                {{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.Adv"}}
-              {{/if}}
-              {{#if (eq (keySplit this.key 4) "disadvantage")}}
-                {{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.Dis"}}
-              {{/if}}
-              {{#if (eq (keySplit this.key 3) "change")}}
-                {{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.Add"}}
-              {{/if}}
-            {{/if}}
-          </div>
-          <div class="base-form__effects-row-cell base-form__effects-row-cell--last">{{this.value}}</div>
-        </div>
-      {{/each}}
-</div>
-{{/if}}
+        {{> popup-effects}}
 
     {{> macro-footer}}
 </div>

@@ -1,0 +1,18 @@
+{{#if acCheck}}
+<div class="chat-card__effects chat-card__effects--ac-check">
+    <div class="chat-card__effects--title">{{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.ACCheck"}}</div>
+    {{#each targetRollData as |target|}}
+        <div class="chat-card__effects--name flexrow"> {{this.name}}:
+        {{#each this.abilities as |ability key|}}
+            {{#if (gte target.compare ability.ac)}}
+            <div class="chat-card__effects--hit flex-group-center">
+            {{else}}
+            <div class="chat-card__effects--miss flex-group-center">
+            {{/if}}
+            {{ability.abbr}}
+            </div>
+        {{/each}}
+        </div>
+    {{/each}}
+</div>
+{{/if}}

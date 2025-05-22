@@ -1,0 +1,100 @@
+// MIXINS CLEANUP NOTES
+// =============================================================================
+// Issues and optimization opportunities in _mixins.scss
+// =============================================================================
+
+// 1. REDUNDANT MIXINS
+// -------------------
+// - _button-base-styles and button-base serve the same purpose
+// - Many mixins include "_" private versions and public versions that do the same thing
+// - grid-compliant-color-picker and _color-picker-base could be consolidated
+
+// 2. EXCESSIVE CUSTOMIZATION
+// -------------------------
+// - Almost every mixin has @content which allows for customization
+// - This approach can lead to inconsistent styling and is not needed everywhere
+
+// 3. VERBOSE NAMING
+// ----------------
+// - 'grid-compliant-' prefix is used extensively making names very long
+// - Could use shorter names or a namespace approach
+
+// 4. REPETITIVE DECLARATIONS
+// -------------------------
+// - Common properties like border-radius, transitions, and hover states 
+//   are repeated in multiple mixins
+
+// 5. RECOMMENDATION: CREATE A DESIGN TOKEN SYSTEM
+// ---------------------------------------------
+// - Move common values to a _tokens.scss file:
+//   - Border radius sizes
+//   - Spacing units
+//   - Transition timings
+//   - Shadow definitions
+// - Create composable mixins that can be combined rather than many specific ones
+
+// 6. CONSOLIDATE SEMANTIC MIXINS
+// ----------------------------
+// Create base mixins for common UI patterns:
+// - form-element() for common form element properties
+// - interactive-state() for hover/focus/active states
+// - elevation() for shadow levels
+
+// EXAMPLE REFACTORING
+// =============================================================================
+
+/*
+// BEFORE:
+@mixin grid-compliant-button {
+  @include _button-base-styles {
+    // Pass through nested content
+  }
+  
+  // Grid-specific properties
+  display: flex;
+  width: 100%;
+  box-sizing: border-box;
+  font-weight: 500;
+  margin: 0;
+  min-height: 2.5rem;
+  
+  // Allow for customization
+  @content;
+}
+
+// AFTER:
+@mixin button($variant: 'default', $fullWidth: true) {
+  // Base properties
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-sm $spacing-md;
+  border-radius: $radius-sm;
+  font-weight: 500;
+  cursor: pointer;
+  transition: $transition-quick;
+  
+  // Width handling
+  @if $fullWidth {
+    width: 100%;
+  }
+  
+  // Variants
+  @if $variant == 'primary' {
+    background-color: $color-primary;
+    color: $color-white;
+    border: 1px solid $color-primary-dark;
+  } @else if $variant == 'secondary' {
+    background-color: $color-secondary;
+    color: $color-white;
+    border: 1px solid $color-secondary-dark;
+  } @else {
+    background-color: $color-white;
+    color: $color-text;
+    border: 1px solid $color-border;
+  }
+  
+  // Interactive states
+  @include interactive-state;
+}
+*/ 

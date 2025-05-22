@@ -1,7 +1,19 @@
 /**
+ * Helper functions for Active Effects
+ * @module helpers/effects
+ */
+
+/**
  * Prepare the data structure for Active Effects which are currently embedded in an Actor or Item.
- * @param {ActiveEffect[]} effects    A collection or generator of Active Effect documents to prepare sheet data for
- * @return {object}                   Data for rendering
+ *
+ * This function organizes active effects into categories (temporary, passive, inactive)
+ * for easier rendering and management in the UI.
+ *
+ * @param {ActiveEffect[]} effects - A collection or generator of Active Effect documents to prepare sheet data for
+ * @returns {Object} Categorized effects data for rendering
+ * @returns {Object} returns.temporary - Category for temporary effects
+ * @returns {Object} returns.passive - Category for passive effects
+ * @returns {Object} returns.inactive - Category for disabled effects
  */
 export function prepareActiveEffectCategories(effects) {
   // Define effect header categories
@@ -24,15 +36,20 @@ export function prepareActiveEffectCategories(effects) {
   };
 
   // Iterate over active effects, classifying them into categories
-  for (const e of effects) {
-    if (e.disabled) categories.inactive.effects.push(e);
-    else if (e.isTemporary) categories.temporary.effects.push(e);
-    else categories.passive.effects.push(e);
+  for (const effect of effects) {
+    if (effect.disabled) {
+      categories.inactive.effects.push(effect);
+    } else if (effect.isTemporary) {
+      categories.temporary.effects.push(effect);
+    } else {
+      categories.passive.effects.push(effect);
+    }
   }
 
-  // Sort each category
-  for (const c of Object.values(categories)) {
-    c.effects.sort((a, b) => (a.sort || 0) - (b.sort || 0));
+  // Sort each category by the sort property
+  for (const category of Object.values(categories)) {
+    category.effects.sort((a, b) => (a.sort || 0) - (b.sort || 0));
   }
+
   return categories;
 }

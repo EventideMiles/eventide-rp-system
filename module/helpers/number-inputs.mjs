@@ -1,16 +1,26 @@
 /**
  * Helper functions for enhanced number inputs
+ *
+ * This module provides functionality for creating and managing enhanced number inputs
+ * with increment/decrement buttons and responsive sizing.
+ *
  * @module helpers/number-inputs
  */
-import { CommonFoundryTasks } from "./common-foundry-tasks.mjs";
+import { CommonFoundryTasks } from "../utils/_module.mjs";
+
+const logIfTesting = CommonFoundryTasks.logIfTesting;
 
 // Track initialization to prevent duplicate handlers
 let isInitialized = false;
 
 /**
  * Initialize number input functionality
+ *
+ * Sets up event listeners for number input buttons and initializes responsive behavior.
+ * This function is designed to be called only once, with subsequent calls
+ * only updating the responsive behavior.
  */
-export function initNumberInputs() {
+export const initNumberInputs = () => {
   // Prevent multiple initializations of event handlers
   if (isInitialized) {
     // If already initialized, just update the responsive behavior
@@ -32,16 +42,17 @@ export function initNumberInputs() {
     debounce(updateNumberInputResponsiveness, 250)
   );
 
-  if (CommonFoundryTasks.isTestingMode()) {
-    console.log("Number inputs initialized with responsive behavior");
-  }
-}
+  logIfTesting("Number inputs initialized with responsive behavior");
+};
 
 /**
  * Enhance number inputs that may have been added dynamically
- * This doesn't add new event listeners, just ensures all wrappers are properly set up
+ *
+ * This function finds unwrapped number inputs with the appropriate class
+ * and wraps them with increment/decrement buttons. It also updates the
+ * responsive behavior for all number input wrappers.
  */
-export function enhanceExistingNumberInputs() {
+export const enhanceExistingNumberInputs = () => {
   // Find all number inputs not properly wrapped
   document.querySelectorAll('input[type="number"]').forEach((input) => {
     const wrapper = input.closest(".base-form__number-input-wrapper");
@@ -49,22 +60,46 @@ export function enhanceExistingNumberInputs() {
     // If this input isn't in a wrapper but has the base-form__number-input class,
     // we need to wrap it with increment/decrement buttons
     if (!wrapper && input.classList.contains("base-form__number-input")) {
-      if (CommonFoundryTasks.isTestingMode()) {
-        console.log("Found unwrapped number input, wrapping it");
-      }
+      logIfTesting("Found unwrapped number input, wrapping it");
       wrapNumberInput(input);
     }
   });
 
   // Update responsive behavior for all wrappers
   updateNumberInputResponsiveness();
-}
+};
+
+/**
+ * Clean up number input enhancements for a specific application element
+ *
+ * This function removes event listeners from number inputs and tab containers
+ * by replacing them with clones, preserving their current values. It should be
+ * called in the _preClose method of applications that use enhanced number inputs.
+ *
+ * @param {HTMLElement} element - The application's element (typically this.element)
+ */
+export const cleanupNumberInputs = (element) => {
+  if (!element) {
+    logIfTesting("Number Inputs | No element provided for cleanup");
+    return;
+  }
+
+  logIfTesting("Number Inputs | Cleaning up number inputs", element);
+
+  // Remove any tab click listeners that might have been added for number inputs
+  cleanupTabListeners(element);
+
+  // Clean up any number input wrappers
+  cleanupNumberInputWrappers(element);
+};
 
 /**
  * Wrap a number input with the proper wrapper and buttons
+ *
+ * @private
  * @param {HTMLInputElement} input - The number input to wrap
  */
-function wrapNumberInput(input) {
+const wrapNumberInput = (input) => {
   // Create wrapper
   const wrapper = document.createElement("div");
   wrapper.className = "base-form__number-input-wrapper";
@@ -99,13 +134,15 @@ function wrapNumberInput(input) {
   wrapper.appendChild(decrementBtn);
   wrapper.appendChild(input);
   wrapper.appendChild(incrementBtn);
-}
+};
 
 /**
  * Handle click events for number input buttons
+ *
+ * @private
  * @param {MouseEvent} event - The click event
  */
-function handleNumberInputClick(event) {
+const handleNumberInputClick = (event) => {
   const target = event.target;
 
   // Check if the clicked element is an increment or decrement button
@@ -116,28 +153,41 @@ function handleNumberInputClick(event) {
     const input = wrapper.querySelector('input[type="number"]');
     if (!input) return;
 
-    const value = parseFloat(input.value) || 0;
-    const step = parseFloat(input.step) || 1;
-    const min = input.hasAttribute("min") ? parseFloat(input.min) : -Infinity;
-    const max = input.hasAttribute("max") ? parseFloat(input.max) : Infinity;
-
-    // Increment or decrement the value
-    if (target.classList.contains("increment")) {
-      input.value = Math.min(value + step, max);
-    } else {
-      input.value = Math.max(value - step, min);
-    }
-
-    // Trigger change event
-    input.dispatchEvent(new Event("change", { bubbles: true }));
-    input.dispatchEvent(new Event("input", { bubbles: true }));
+    updateNumberInputValue(input, target.classList.contains("increment"));
   }
-}
+};
+
+/**
+ * Update a number input's value based on increment/decrement action
+ *
+ * @private
+ * @param {HTMLInputElement} input - The number input element
+ * @param {boolean} isIncrement - Whether to increment (true) or decrement (false)
+ */
+const updateNumberInputValue = (input, isIncrement) => {
+  const value = parseFloat(input.value) || 0;
+  const step = parseFloat(input.step) || 1;
+  const min = input.hasAttribute("min") ? parseFloat(input.min) : -Infinity;
+  const max = input.hasAttribute("max") ? parseFloat(input.max) : Infinity;
+
+  // Increment or decrement the value
+  if (isIncrement) {
+    input.value = Math.min(value + step, max);
+  } else {
+    input.value = Math.max(value - step, min);
+  }
+
+  // Trigger change event
+  input.dispatchEvent(new Event("change", { bubbles: true }));
+  input.dispatchEvent(new Event("input", { bubbles: true }));
+};
 
 /**
  * Check all number input wrappers and add compact class if needed
+ *
+ * @private
  */
-function updateNumberInputResponsiveness() {
+const updateNumberInputResponsiveness = () => {
   const MIN_WIDTH_FOR_BUTTONS = 110; // Width in pixels needed for comfortable display of buttons
 
   document
@@ -152,22 +202,65 @@ function updateNumberInputResponsiveness() {
         wrapper.classList.remove("compact");
       }
     });
-}
+};
+
+/**
+ * Clean up tab container event listeners
+ *
+ * @private
+ * @param {HTMLElement} element - The element containing tabs
+ */
+const cleanupTabListeners = (element) => {
+  const tabsContainer = element.querySelector(".tabs");
+  if (tabsContainer) {
+    const clone = tabsContainer.cloneNode(true);
+    tabsContainer.parentNode.replaceChild(clone, tabsContainer);
+  }
+};
+
+/**
+ * Clean up number input wrappers by replacing inputs with clones
+ *
+ * @private
+ * @param {HTMLElement} element - The element containing number inputs
+ */
+const cleanupNumberInputWrappers = (element) => {
+  const numberWrappers = element.querySelectorAll(
+    ".base-form__number-input-wrapper"
+  );
+
+  logIfTesting(
+    `Number Inputs | Found ${numberWrappers.length} number inputs to clean up`
+  );
+
+  numberWrappers.forEach((wrapper) => {
+    // Remove event listeners by cloning and replacing
+    const input = wrapper.querySelector('input[type="number"]');
+    if (input) {
+      const newInput = input.cloneNode(true);
+      // Preserve the current value
+      newInput.value = input.value;
+      input.parentNode.replaceChild(newInput, input);
+    }
+  });
+};
 
 /**
  * Debounce function to limit how often a function is called
+ *
+ * @private
  * @param {Function} func - The function to debounce
  * @param {number} wait - The debounce delay in milliseconds
  * @returns {Function} The debounced function
  */
-function debounce(func, wait) {
+const debounce = (func, wait) => {
   let timeout;
   return function (...args) {
     const context = this;
     clearTimeout(timeout);
     timeout = setTimeout(() => func.apply(context, args), wait);
   };
-}
+};
 
 // Initialize number inputs when relevant hooks fire
 Hooks.on("ready", () => {
@@ -195,52 +288,5 @@ Hooks.on("renderEventideRpSystemItemSheet", (app, html) => {
 // Catch any other application renders
 Hooks.on("renderApplicationV2", () => {
   updateNumberInputResponsiveness();
-  if (CommonFoundryTasks.isTestingMode()) {
-    console.log("Number inputs updated");
-  }
+  logIfTesting("Number inputs updated");
 });
-
-/**
- * Clean up number input enhancements for a specific application element
- * This should be called in the _preClose method of applications that use enhanced number inputs
- * @param {HTMLElement} element - The application's element (typically this.element)
- */
-export function cleanupNumberInputs(element) {
-  if (!element) {
-    if (CommonFoundryTasks.isTestingMode()) {
-      console.log("Number Inputs | No element provided for cleanup");
-    }
-    return;
-  }
-
-  if (CommonFoundryTasks.isTestingMode()) {
-    console.log("Number Inputs | Cleaning up number inputs", element);
-  }
-
-  // Remove any tab click listeners that might have been added for number inputs
-  const tabsContainer = element.querySelector(".tabs");
-  if (tabsContainer) {
-    const clone = tabsContainer.cloneNode(true);
-    tabsContainer.parentNode.replaceChild(clone, tabsContainer);
-  }
-
-  // Clean up any number input wrappers
-  const numberWrappers = element.querySelectorAll(
-    ".base-form__number-input-wrapper"
-  );
-  
-  if (CommonFoundryTasks.isTestingMode()) {
-    console.log(`Number Inputs | Found ${numberWrappers.length} number inputs to clean up`);
-  }
-  
-  numberWrappers.forEach((wrapper) => {
-    // Remove event listeners by cloning and replacing
-    const input = wrapper.querySelector('input[type="number"]');
-    if (input) {
-      const newInput = input.cloneNode(true);
-      // Preserve the current value
-      newInput.value = input.value;
-      input.parentNode.replaceChild(newInput, input);
-    }
-  });
-}
