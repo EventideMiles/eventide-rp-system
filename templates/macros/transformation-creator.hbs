@@ -59,6 +59,42 @@
       </select>
     </div>
 
+    
+
+    <div class="base-form__group">
+      <label class="base-form__label" for="resolveAdjustment">
+        {{localize "EVENTIDE_RP_SYSTEM.Item.Transformation.ResolveAdjustment"}}:
+      </label>
+      <div class="base-form__number-input-wrapper">
+        <button type="button" class="decrement" data-action="decrement">−</button>
+        <input 
+          class="base-form__number-input"
+          type="number" 
+          id="resolveAdjustment" 
+          name="resolveAdjustment" 
+          data-dtype="Number"
+          value="{{ifThen storedData.transformation_resolveAdjustment storedData.transformation_resolveAdjustment "0"}}">
+        <button type="button" class="increment" data-action="increment">+</button>
+      </div>
+    </div>
+
+    <div class="base-form__group">
+      <label class="base-form__label" for="powerAdjustment">
+        {{localize "EVENTIDE_RP_SYSTEM.Item.Transformation.PowerAdjustment"}}:
+      </label>
+      <div class="base-form__number-input-wrapper">
+        <button type="button" class="decrement" data-action="decrement">−</button>
+        <input 
+          class="base-form__number-input"
+          type="number" 
+          id="powerAdjustment" 
+          name="powerAdjustment" 
+          data-dtype="Number"
+          value="{{ifThen storedData.transformation_powerAdjustment storedData.transformation_powerAdjustment "0"}}">
+        <button type="button" class="increment" data-action="increment">+</button>
+      </div>
+    </div>
+
     {{#if isGM}}
       <div class="base-form__toggle-group">
         <label for="cursed">
@@ -139,4 +175,4 @@
   </div>
 
   {{> macro-footer}}
-</div> 
+</div>

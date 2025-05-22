@@ -13,6 +13,8 @@ This application follows the pattern of most of our creator applications in that
   1. Tiny will reduce their token size to 1/4 of the square.
   2. Small will reduce the size of the image but not reduce the token below a square in size.
   3. Every "half" step is a round up to the next one. So, 1.5 will make a bigger token image that still technically fits on 1 square, 2 will be the next bump up making it a 2x2 token, 2.5 will be halfway between a 2x2 and a 3x3 but will 'fit' on a 2x2 and so on.
+- **Resolve Adjustment:** How much the player's max and current resolve will go up (or down) when the transformation is applied.
+- **Power Adjustment:** How much the player's max and current power will go up (or down) when the transformation is applied.
 - **Cursed:** If you flip this toggle your player will be unable to release the transformation on their own. Best used for 'baleful' transformations or those that are strictly duration based.
 - **Combat Powers:** This is the part that really makes transformations unique. Unlike other item types, Transformations are able to "hold" combat power items that you've prepared before. Simply drag them to this sheet either from other character sheets, your items section, or a comendium and they'll be added to the sheet.
   - _Note - If you add powers in this section they will be the only powers available to the transformed actor: make sure to add whatever the transformed character will need._
@@ -35,3 +37,5 @@ When a character is transformed the transformation will appear near the top righ
 
 - If you want to disable a character's combat powers completely with a transformation you should create a power with that explicit purpose: something useless to apply in the effects section, as then their typical combat powers will be disabled while the transformation is applied. Especially good for baleful polymorphs which would remove typical character abilities without providing much of use in return.
 - Transformations are good for just about every 'use case' you can imagine: from barbarian raging to size changes to full on curses and even things like vampirism. The sky and your imagination are the limits, so feel free to indulge your creativity and your player's.
+- When a transformation is applied if it has a resolve and power change then it will apply right away. On removal, rather than reducing by the amount of the increase, it will simply cap off at the new cap.
+  - If a new transformation is applied then the 'difference' will be applied right away. That means that if it goes up? So does their health. if it goes down? So too does their health.

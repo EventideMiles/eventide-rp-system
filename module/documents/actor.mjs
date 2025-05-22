@@ -1,5 +1,7 @@
 import { erpsRollHandler } from "../services/_module.mjs";
 import { erpsMessageHandler } from "../services/_module.mjs";
+import { CommonFoundryTasks } from "../utils/common-foundry-tasks.mjs";
+const logIfTesting = CommonFoundryTasks.logIfTesting;
 
 /**
  * Actor document class for the Eventide RP System
@@ -113,6 +115,9 @@ export class EventideRpSystemActor extends Actor {
     // Store original token data if needed
     await this._storeOriginalTokenData(tokens);
 
+    // apply transformation resolve and power adjustments
+    await this._transformPowerAndResolveUpdate(transformationItem);
+
     // Set flags indicating active transformation
     await this._setTransformationFlags(transformationItem);
 
@@ -127,6 +132,82 @@ export class EventideRpSystemActor extends Actor {
     });
 
     return this;
+  }
+
+  /**
+   * Transforms power and resolve statistics based on a transformation item and updates the actor.
+   * If there's a current transformation, calculates the difference between the current and new adjustments.
+   * If there's no current transformation, applies the new adjustments directly.
+   *
+   * @param {Object} transformationItem - The transformation item being applied
+   * @param {number} transformationItem.system.powerAdjustment - The power adjustment value from the transformation
+   * @param {number} transformationItem.system.resolveAdjustment - The resolve adjustment value from the transformation
+   * @returns {Promise<Actor>} A promise that resolves to the updated actor
+   * @async
+   */
+  async _transformPowerAndResolveUpdate(transformationItem) {
+    // Get the current transformation item
+    const currentTransformationItem = this.items.find(
+      (item) => item.type === "transformation"
+    );
+
+    logIfTesting("Current transformation item:", currentTransformationItem);
+    logIfTesting("New transformation item:", transformationItem);
+
+    const newPowerAdjustment = Number(
+      transformationItem.system.powerAdjustment
+    );
+    const newResolveAdjustment = Number(
+      transformationItem.system.resolveAdjustment
+    );
+
+    let finalResolveAdjustment = 0;
+    let finalPowerAdjustment = 0;
+
+    if (this.getFlag("eventide-rp-system", "activeTransformation")) {
+      const currentPowerAdjustment = Number(
+        currentTransformationItem.system.powerAdjustment
+      );
+      const currentResolveAdjustment = Number(
+        currentTransformationItem.system.resolveAdjustment
+      );
+
+      // Calculate the final adjustments
+      finalResolveAdjustment =
+        currentResolveAdjustment > newResolveAdjustment
+          ? -(currentResolveAdjustment - newResolveAdjustment)
+          : newResolveAdjustment - currentResolveAdjustment;
+      finalPowerAdjustment =
+        currentPowerAdjustment > newPowerAdjustment
+          ? -(currentPowerAdjustment - newPowerAdjustment)
+          : newPowerAdjustment - currentPowerAdjustment;
+
+      // remove the current transformation item
+      await this.deleteEmbeddedDocuments("Item", [
+        currentTransformationItem.id,
+      ]);
+    }
+
+    return await this.update({
+      "system.resolve.max": Math.max(
+        this.system.resolve.max + newResolveAdjustment,
+        0
+      ),
+      "system.resolve.value": erps.utils.clamp(
+        this.system.resolve.value + newResolveAdjustment,
+        0,
+        this.system.resolve.max + newResolveAdjustment
+      ),
+      "system.power.max": Math.max(
+        this.system.power.max + newPowerAdjustment,
+        0
+      ),
+      "system.power.value": erps.utils.clamp(
+        this.system.power.value + newPowerAdjustment,
+        0,
+        this.system.power.max + newPowerAdjustment
+      ),
+    });
   }
 
   /**
@@ -182,6 +263,8 @@ export class EventideRpSystemActor extends Actor {
         scale: token.document.texture.scaleX,
         width: token.document.width,
         height: token.document.height,
+        maxResolve: token.actor.system.resolve.max,
+        maxPower: token.actor.system.power.max,
       };
     });
 
@@ -364,6 +447,22 @@ export class EventideRpSystemActor extends Actor {
         height: originalData.height,
       });
     }
+
+    // Restore original resolve and power values
+    await this.update({
+      "system.resolve.max": originalTokenData[0].maxResolve,
+      "system.resolve.value": erps.utils.clamp(
+        this.system.resolve.value,
+        0,
+        originalTokenData[0].maxResolve
+      ),
+      "system.power.max": originalTokenData[0].maxPower,
+      "system.power.value": erps.utils.clamp(
+        this.system.power.value,
+        0,
+        originalTokenData[0].maxPower
+      ),
+    });
 
     // Clear the flags
     await this.unsetFlag("eventide-rp-system", "originalTokenData");

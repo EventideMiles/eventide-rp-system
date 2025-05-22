@@ -421,6 +421,9 @@ export class CreatorApplication extends EventideSheetHelpers {
             cursed: this.playerMode ? false : formData.get("cursed"),
             embeddedCombatPowers:
               this.embeddedCombatPowers?.map((power) => power.toObject()) || [],
+            resolveAdjustment:
+              parseFloat(formData.get("resolveAdjustment")) || 0,
+            powerAdjustment: parseFloat(formData.get("powerAdjustment")) || 0,
           }
         : {};
 
@@ -512,6 +515,8 @@ export class CreatorApplication extends EventideSheetHelpers {
               size: transformationData.size,
               cursed: transformationData.cursed,
               embeddedCombatPowers: transformationData.embeddedCombatPowers,
+              resolveAdjustment: transformationData.resolveAdjustment,
+              powerAdjustment: transformationData.powerAdjustment,
             }
           : {}),
       },
