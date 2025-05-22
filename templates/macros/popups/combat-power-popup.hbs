@@ -1,10 +1,7 @@
 <div class="{{cssClass}} base-form" autocomplete="off">
     {{> callout-box}}
     <div class="popup-form__main">
-        <div class="popup-form__header">{{item.name}}</div>
-        <div class="popup-form__content popup-form__content--image">
-            <img src="{{item.img}}" class="popup-form__image" alt="{{item.name}}" />
-        </div>
+        {{> popup-header}}
         <div class="popup-form__subheader">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Details"}}</div>
         
         {{#if item.system.description}}

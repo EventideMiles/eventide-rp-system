@@ -1,11 +1,6 @@
 <div class="{{cssClass}} popup-form" autocomplete="off">
     <div class="popup-form__main chat-card">
-        <div class="popup-form__header" style="{{style}}">
-            <div>{{item.name}}</div>
-            <div class="popup-form__content popup-form__content--image">
-                <img src="{{item.img}}" class="popup-form__image" alt="{{item.name}}" /> 
-            </div>
-        </div>
+        {{> popup-header}}
 
         {{#if item.system.description}}
         <div class="popup-form__content popup-form__content--description">
