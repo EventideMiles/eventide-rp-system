@@ -213,7 +213,9 @@ export class GearTransfer extends EventideSheetHelpers {
     // If the requested quantity was different from what was actually transferred, add a note
     let finalDescription = description;
     if (requestedQuantity !== transferQuantity) {
-      const note = `Only ${transferQuantity} items were available to transfer.`;
+      const note = game.i18n.format("EVENTIDE_RP_SYSTEM.Messages.PartialTransfer", {
+        quantity: transferQuantity
+      });
       finalDescription = description ? `${note}\n${description}` : note;
     }
 
