@@ -1,4 +1,5 @@
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
+const FilePicker = foundry.applications.apps.FilePicker.implementation;
 
 /**
  * Base class for creator applications that handle item creation

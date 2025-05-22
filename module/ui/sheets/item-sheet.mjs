@@ -3,8 +3,8 @@ import { prepareCharacterEffects } from "../../helpers/_module.mjs";
 import { EventideSheetHelpers } from "../components/_module.mjs";
 
 const { api, sheets } = foundry.applications;
-
 const { DragDrop, TextEditor } = foundry.applications.ux;
+const FilePicker = foundry.applications.apps.FilePicker.implementation;
 
 /**
  * Item sheet implementation for the Eventide RP System.

@@ -2,8 +2,8 @@ import { CommonFoundryTasks } from "../../utils/_module.mjs";
 import { erpsRollHandler } from "../../services/_module.mjs";
 
 const { api, sheets } = foundry.applications;
-
 const { DragDrop, TextEditor } = foundry.applications.ux;
+const FilePicker = foundry.applications.apps.FilePicker.implementation;
 
 /**
  * Extend the basic ActorSheet with some very simple modifications
