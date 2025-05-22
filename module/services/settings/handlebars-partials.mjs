@@ -31,6 +31,8 @@ export const initHandlebarsPartials = async () => {
       "systems/eventide-rp-system/templates/macros/parts/color-pickers.hbs",
     "popup-effects":
       "systems/eventide-rp-system/templates/macros/parts/popup-effects.hbs",
+    "popup-roll":
+      "systems/eventide-rp-system/templates/macros/parts/popup-roll.hbs",
   };
 
   // Load and register each partial
