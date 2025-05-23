@@ -39,13 +39,14 @@ import {
   initHandlebarsPartials,
   getSetting,
   setSetting,
+  Logger,
 } from "./services/_module.mjs";
 
 // Import DataModel classes
 import * as models from "./data/_module.mjs";
 
 // Import utility functions
-import { commonTasks } from "./utils/_module.mjs";
+import { commonTasks, ErrorHandler } from "./utils/_module.mjs";
 
 //import helper functions
 import {
@@ -86,6 +87,7 @@ globalThis.erps = {
     cleanupColorPickers,
     initRangeSliders,
     cleanupRangeSliders,
+    ErrorHandler,
   },
   macros: {
     GearTransfer,
@@ -103,14 +105,15 @@ globalThis.erps = {
   },
   messages: erpsMessageHandler,
   models,
+  Logger,
 };
 
 /**
  * Initialize the Eventide RP System
  * Sets up system configuration, registers document classes, initializes hooks and listeners
  */
-Hooks.once("init", async function () {
-  console.log("ERPS | Initializing Eventide RP System");
+Hooks.once("init", async () => {
+  console.info("ERPS | Initializing Eventide RP System");
 
   // Add custom constants for configuration
   CONFIG.EVENTIDE_RP_SYSTEM = EVENTIDE_RP_SYSTEM;
@@ -141,7 +144,7 @@ Hooks.once("init", async function () {
     } catch (error) {
       console.warn(
         "ERPS | Could not get initiative settings, using defaults",
-        error
+        error,
       );
     }
   }
@@ -176,7 +179,7 @@ Hooks.once("init", async function () {
     makeDefault: true,
     label: "EVENTIDE_RP_SYSTEM.SheetLabels.Item",
   });
-  console.log("ERPS | Eventide RP System Initialization Complete");
+  console.info("ERPS | Eventide RP System Initialization Complete");
 });
 
 /* -------------------------------------------- */
@@ -184,7 +187,7 @@ Hooks.once("init", async function () {
 /* -------------------------------------------- */
 
 // If you need to add Handlebars helpers, here is a useful example:
-Handlebars.registerHelper("toLowerCase", function (str) {
+Handlebars.registerHelper("toLowerCase", (str) => {
   return str.toLowerCase();
 });
 
@@ -215,34 +218,34 @@ Handlebars.registerHelper("ifCond", function (v1, operator, v2, options) {
   }
 });
 
-Handlebars.registerHelper("keySplit", function (key, choice) {
+Handlebars.registerHelper("keySplit", (key, choice) => {
   return key.split(".")[choice];
 });
 
-Handlebars.registerHelper("abs", function (value) {
+Handlebars.registerHelper("abs", (value) => {
   return Math.abs(value);
 });
 
-Handlebars.registerHelper("console", function (str) {
-  console.log(str);
+Handlebars.registerHelper("console", (str) => {
+  console.info(str);
 });
 
 Handlebars.registerHelper("debug", function (optionalValue) {
-  console.log("Current Context");
-  console.log("====================");
-  console.log(this);
+  console.info("Current Context");
+  console.info("====================");
+  console.info(this);
   if (optionalValue) {
-    console.log("Value");
-    console.log("====================");
-    console.log(optionalValue);
+    console.info("Value");
+    console.info("====================");
+    console.info(optionalValue);
   }
 });
 
-Handlebars.registerHelper("lowercase", function (str) {
+Handlebars.registerHelper("lowercase", (str) => {
   return (str || "").toLowerCase();
 });
 
-Handlebars.registerHelper("capitalize", function (str) {
+Handlebars.registerHelper("capitalize", (str) => {
   if (!str) return "";
   str = String(str);
   return str.charAt(0).toUpperCase() + str.slice(1);
@@ -252,7 +255,7 @@ Handlebars.registerHelper("capitalize", function (str) {
 /*  Ready Hook                                  */
 /* -------------------------------------------- */
 
-Hooks.once("ready", function () {
+Hooks.once("ready", () => {
   // Wait to register hotbar drop hook on ready so that modules could register earlier if they want to
   Hooks.on("hotbarDrop", (bar, data, slot) => createDocMacro(data, slot));
 });
@@ -270,11 +273,12 @@ Hooks.once("ready", function () {
  */
 async function createDocMacro(data, slot) {
   // First, determine if this is a valid owned item.
-  if (data.type !== "Item") return;
-  if (!data.uuid.includes("Actor.") && !data.uuid.includes("Token.")) {
-    return ui.notifications.warn(
-      game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.OwnedMacrosOnly")
-    );
+  if (data.type !== "Item") {
+    if (!data.uuid.includes("Actor.") && !data.uuid.includes("Token.")) {
+      return ui.notifications.warn(
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.OwnedMacrosOnly"),
+      );
+    }
   }
   // If it is, retrieve it based on the uuid.
   const item = await Item.fromDropData(data);
@@ -282,14 +286,14 @@ async function createDocMacro(data, slot) {
   // Create the macro command using the uuid.
   const command = `erps.utils.rollItemMacro("${data.uuid}");`;
   let macro = game.macros.find(
-    (m) => m.name === item.name && m.command === command
+    (m) => m.name === item.name && m.command === command,
   );
   if (!macro) {
     macro = await Macro.create({
       name: item.name,
       type: "script",
       img: item.img,
-      command: command,
+      command,
       flags: { "eventide-rp-system.itemMacro": true },
     });
   }
@@ -303,7 +307,7 @@ async function createDocMacro(data, slot) {
  * @returns {Promise<void>}
  */
 async function rollItemMacro(itemUuid) {
-  console.log("Rolling item macro for " + itemUuid);
+  console.info(`Rolling item macro for ${itemUuid}`);
   // Reconstruct the drop data so that we can load the item.
   const dropData = {
     type: "Item",
@@ -317,7 +321,7 @@ async function rollItemMacro(itemUuid) {
       return ui.notifications.warn(
         game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.UnknownItemMacro", {
           item: itemName,
-        })
+        }),
       );
     }
 

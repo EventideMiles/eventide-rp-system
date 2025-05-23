@@ -32,7 +32,7 @@ export class SelectAbilityRoll extends EventideSheetHelpers {
 
   static get abilities() {
     return Object.values(CONFIG.EVENTIDE_RP_SYSTEM.abilities).map((v) =>
-      game.i18n.localize(v)
+      game.i18n.localize(v),
     );
   }
 
@@ -41,7 +41,7 @@ export class SelectAbilityRoll extends EventideSheetHelpers {
    * @param {Object} options - Form options
    * @returns {Promise<Object>} The prepared context containing abilities
    */
-  async _prepareContext(options) {
+  async _prepareContext(_options) {
     const context = {};
     context.cssClass = SelectAbilityRoll.DEFAULT_OPTIONS.classes.join(" ");
     context.abilities = SelectAbilityRoll.abilities;
@@ -68,7 +68,7 @@ export class SelectAbilityRoll extends EventideSheetHelpers {
    */
   get title() {
     return game.i18n.format(
-      "EVENTIDE_RP_SYSTEM.WindowTitles.SelectAbilityRoll"
+      "EVENTIDE_RP_SYSTEM.WindowTitles.SelectAbilityRoll",
     );
   }
 
@@ -83,8 +83,8 @@ export class SelectAbilityRoll extends EventideSheetHelpers {
    * @param {FormData} formData - The form data
    * @private
    */
-  static async #onSubmit(event, form, formData) {
-    const attributeChoice = form["attribute-choice"].value;
+  static async #onSubmit(_event, _form, formData) {
+    const attributeChoice = formData.get("attribute.choice");
     const macro = game.macros.getName(attributeChoice);
     if (macro) {
       await macro.execute({ args: [] });
@@ -92,7 +92,7 @@ export class SelectAbilityRoll extends EventideSheetHelpers {
       ui.notifications.error(
         game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.NoMacroFound", {
           macroName: attributeChoice,
-        })
+        }),
       );
     }
   }

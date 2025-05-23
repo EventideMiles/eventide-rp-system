@@ -1,7 +1,6 @@
 import { EventideSheetHelpers } from "../components/_module.mjs";
-import { CommonFoundryTasks } from "../../utils/_module.mjs";
+import { Logger } from "../../services/_module.mjs";
 
-const logIfTesting = CommonFoundryTasks.logIfTesting;
 /**
  * A form application for changing status effects on a target token.
  * @extends {EventideSheetHelpers}
@@ -64,7 +63,7 @@ export class ChangeTargetStatus extends EventideSheetHelpers {
    */
   get title() {
     return game.i18n.format(
-      "EVENTIDE_RP_SYSTEM.WindowTitles.ChangeTargetStatus"
+      "EVENTIDE_RP_SYSTEM.WindowTitles.ChangeTargetStatus",
     );
   }
 
@@ -95,7 +94,7 @@ export class ChangeTargetStatus extends EventideSheetHelpers {
    * @returns {Promise<Object>} The prepared context containing target and status information
    * @throws {Error} If no target is selected or multiple targets are selected
    */
-  async _prepareContext(options) {
+  async _prepareContext(_options) {
     const context = {};
 
     this.targetArray = await erps.utils.getTargetArray();
@@ -103,24 +102,24 @@ export class ChangeTargetStatus extends EventideSheetHelpers {
     this.modes = {
       add: game.i18n.localize("EVENTIDE_RP_SYSTEM.Forms.Modifications.AddMode"),
       subtract: game.i18n.localize(
-        "EVENTIDE_RP_SYSTEM.Forms.Modifications.SubtractMode"
+        "EVENTIDE_RP_SYSTEM.Forms.Modifications.SubtractMode",
       ),
       intensify: game.i18n.localize(
-        "EVENTIDE_RP_SYSTEM.Forms.Modifications.IntensifyMode"
+        "EVENTIDE_RP_SYSTEM.Forms.Modifications.IntensifyMode",
       ),
       weaken: game.i18n.localize(
-        "EVENTIDE_RP_SYSTEM.Forms.Modifications.WeakenMode"
+        "EVENTIDE_RP_SYSTEM.Forms.Modifications.WeakenMode",
       ),
     };
 
     if (this.targetArray.length === 0) {
       ui.notifications.error(
-        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.TargetFirst")
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.TargetFirst"),
       );
       this.close();
     } else if (this.targetArray.length > 1) {
       ui.notifications.error(
-        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.SingleTargetOnly")
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.SingleTargetOnly"),
       );
       this.close();
     }
@@ -132,20 +131,20 @@ export class ChangeTargetStatus extends EventideSheetHelpers {
     context.cssClass = ChangeTargetStatus.DEFAULT_OPTIONS.classes.join(" ");
 
     context.statuses = this.target.actor.items.filter(
-      (item) => item.type === "status"
+      (item) => item.type === "status",
     );
 
     context.storageKeys = ChangeTargetStatus.storageKeys;
 
     context.storedData = await erps.utils.retrieveMultipleUserFlags(
-      context.storageKeys
+      context.storageKeys,
     );
     context.callouts = [
       {
         type: "information",
         faIcon: "fas fa-info-circle",
         text: game.i18n.format(
-          "EVENTIDE_RP_SYSTEM.Forms.ScriptExplanations.ChangeTargetStatus"
+          "EVENTIDE_RP_SYSTEM.Forms.ScriptExplanations.ChangeTargetStatus",
         ),
       },
     ];
@@ -185,7 +184,7 @@ export class ChangeTargetStatus extends EventideSheetHelpers {
 
     if (!statusId) {
       ui.notifications.error(
-        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.MissingStatus")
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.MissingStatus"),
       );
       return;
     }
@@ -215,7 +214,7 @@ export class ChangeTargetStatus extends EventideSheetHelpers {
     ui.notifications.info(
       game.i18n.format("EVENTIDE_RP_SYSTEM.Info.Stored", {
         keyType: "status update",
-      })
+      }),
     );
     this.close();
   }
@@ -249,14 +248,14 @@ export class ChangeTargetStatus extends EventideSheetHelpers {
     const status = instance.target.actor.items.get(inputs.statusSelector);
     if (!status) {
       ui.notifications.error(
-        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.MissingStatus")
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.MissingStatus"),
       );
       return;
     }
     const effects = status.effects.contents[0].changes;
     if (!effects) {
       ui.notifications.error(
-        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.NoStatusEffects")
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.NoStatusEffects"),
       );
       return;
     }
@@ -274,7 +273,6 @@ export class ChangeTargetStatus extends EventideSheetHelpers {
         ...current,
         value: newValue,
       });
-      return;
     };
 
     const subtractMode = (current, change) => {
@@ -283,7 +281,6 @@ export class ChangeTargetStatus extends EventideSheetHelpers {
         ...current,
         value: newValue,
       });
-      return;
     };
 
     const intensifyMode = (current, change) => {
@@ -297,7 +294,6 @@ export class ChangeTargetStatus extends EventideSheetHelpers {
         ...current,
         value: newValue,
       });
-      return;
     };
 
     const weakenMode = (current, change) => {
@@ -311,7 +307,6 @@ export class ChangeTargetStatus extends EventideSheetHelpers {
         ...current,
         value: newValue,
       });
-      return;
     };
 
     for (const effect of effects) {
@@ -382,7 +377,16 @@ export class ChangeTargetStatus extends EventideSheetHelpers {
    * @private
    */
   static async _onSubmit(event, form, formData) {
-    logIfTesting(formData);
+    Logger.debug(
+      "Processing status change form submission",
+      {
+        statusSelector: formData.get("statusSelector"),
+        adjustmentChange: formData.get("adjustmentChange"),
+        adjustmentMode: formData.get("adjustmentMode"),
+      },
+      "CHANGE_TARGET_STATUS",
+    );
+
     const inputs = {
       statusSelector: formData.get("statusSelector"),
       adjustment: {
@@ -404,6 +408,5 @@ export class ChangeTargetStatus extends EventideSheetHelpers {
     };
 
     await ChangeTargetStatus._process(this, inputs);
-    return;
   }
 }

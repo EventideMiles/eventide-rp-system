@@ -1,7 +1,5 @@
-import { CommonFoundryTasks } from "../../utils/_module.mjs";
 import { EventideSheetHelpers } from "./eventide-sheet-helpers.mjs";
-
-const logIfTesting = CommonFoundryTasks.logIfTesting;
+import { Logger } from "../../services/_module.mjs";
 
 /**
  * Base class for creator applications that handle item creation (effects, gear, etc.)
@@ -119,7 +117,7 @@ export class CreatorApplication extends EventideSheetHelpers {
     this.targetArray = await erps.utils.getTargetArray();
     this.selectedArray = await erps.utils.getSelectedArray();
     this.storedData = await erps.utils.retrieveMultipleUserFlags(
-      this.storageKeys
+      this.storageKeys,
     );
 
     context.abilities = this.abilities;
@@ -147,7 +145,23 @@ export class CreatorApplication extends EventideSheetHelpers {
   async _prepareCallouts() {
     const callouts = [];
 
-    if (this.playerMode) {
+    // Special callout for GMs using player-mode creators
+    if (
+      this.playerMode &&
+      this.gmCheck === "gm" &&
+      this.targetArray.length > 0
+    ) {
+      callouts.push({
+        type: "warning",
+        faIcon: "fas fa-exclamation-triangle",
+        text: game.i18n.format(
+          `EVENTIDE_RP_SYSTEM.Forms.Callouts.${this.calloutGroup}.GMPlayerMode`,
+          {
+            targetCount: this.targetArray.length,
+          },
+        ),
+      });
+    } else if (this.playerMode) {
       callouts.push({
         type: "information",
         faIcon: "fas fa-info-circle",
@@ -155,7 +169,7 @@ export class CreatorApplication extends EventideSheetHelpers {
           `EVENTIDE_RP_SYSTEM.Forms.Callouts.${this.calloutGroup}.PlayerMode`,
           {
             count: this.selectedArray.length,
-          }
+          },
         ),
       });
     } else {
@@ -167,7 +181,7 @@ export class CreatorApplication extends EventideSheetHelpers {
             `EVENTIDE_RP_SYSTEM.Forms.Callouts.${this.calloutGroup}.NoTargets`,
             {
               count: this.selectedArray.length,
-            }
+            },
           ),
         });
       } else {
@@ -178,7 +192,7 @@ export class CreatorApplication extends EventideSheetHelpers {
             `EVENTIDE_RP_SYSTEM.Forms.Callouts.${this.calloutGroup}.WithTargets`,
             {
               count: this.targetArray.length,
-            }
+            },
           ),
         });
       }
@@ -198,7 +212,7 @@ export class CreatorApplication extends EventideSheetHelpers {
         label:
           this.playerMode || this.targetArray.length > 0
             ? game.i18n.localize(
-                "EVENTIDE_RP_SYSTEM.Forms.Buttons.CreateAndApply"
+                "EVENTIDE_RP_SYSTEM.Forms.Buttons.CreateAndApply",
               )
             : game.i18n.localize("EVENTIDE_RP_SYSTEM.Forms.Buttons.Create"),
         type: "submit",
@@ -222,7 +236,7 @@ export class CreatorApplication extends EventideSheetHelpers {
       ui.notifications.warn(
         game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.CompendiumOnly", {
           keyType: this.keyType,
-        })
+        }),
       );
     }
 
@@ -230,10 +244,9 @@ export class CreatorApplication extends EventideSheetHelpers {
       ui.notifications.error(
         game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.PlayerSelection", {
           keyType: this.keyType,
-        })
+        }),
       );
       this.close();
-      return;
     }
   }
 
@@ -253,7 +266,11 @@ export class CreatorApplication extends EventideSheetHelpers {
       value: 0,
     };
     app.addedAbilities.push(ability);
-    logIfTesting("Added ability:", app.addedAbilities);
+    Logger.debug(
+      "Added ability:",
+      { abilities: app.addedAbilities },
+      "CREATOR_APP",
+    );
 
     const oldPosition = app.position.height;
 
@@ -280,8 +297,12 @@ export class CreatorApplication extends EventideSheetHelpers {
     const oldPosition = app.position.height;
     const index = event.target.dataset.index;
     app.addedAbilities.splice(index, 1);
-    logIfTesting("Removed ability at index", index);
-    logIfTesting("remaining:", app.addedAbilities);
+    Logger.debug("Removed ability at index", { index }, "CREATOR_APP");
+    Logger.debug(
+      "Remaining abilities:",
+      { abilities: app.addedAbilities },
+      "CREATOR_APP",
+    );
 
     // Render the form and restore previous scroll position
     await app.render();
@@ -314,7 +335,7 @@ export class CreatorApplication extends EventideSheetHelpers {
 
       // Get form elements for this ability
       const updateData = form.querySelectorAll(
-        `[name*="addedAbilities.${index}"]`
+        `[name*="addedAbilities.${index}"]`,
       );
 
       this.addedAbilities[index].attribute = updateData[0].value;
@@ -331,17 +352,20 @@ export class CreatorApplication extends EventideSheetHelpers {
    * @override
    */
   async _preClose(options) {
-    // Clear any stored data that's no longer needed
-    this.addedAbilities = null;
-    this.targetArray = null;
-    this.selectedArray = null;
+    // Don't clear arrays if we're in the middle of submitting
+    if (!this._submitting) {
+      // Clear any stored data that's no longer needed
+      this.addedAbilities = null;
+      this.targetArray = null;
+      this.selectedArray = null;
 
-    // Additional arrays and objects that should be nulled
-    this.abilities = null;
-    this.hiddenAbilities = null;
-    this.allAbilities = null;
-    this.storedData = null;
-    this.calloutGroup = null;
+      // Additional arrays and objects that should be nulled
+      this.abilities = null;
+      this.hiddenAbilities = null;
+      this.allAbilities = null;
+      this.storedData = null;
+      this.calloutGroup = null;
+    }
 
     // Call the parent class's _preClose method which will handle number input cleanup
     await super._preClose(options);
@@ -368,13 +392,17 @@ export class CreatorApplication extends EventideSheetHelpers {
    * @protected
    */
   static async _onSubmit(event, form, formData) {
-    logIfTesting("FormData entries:");
+    // Set flag to prevent clearing arrays during submission
+    this._submitting = true;
+
+    Logger.debug("FormData entries:", {}, "CREATOR_APP");
     for (const [key, value] of formData.entries()) {
-      logIfTesting(`${key}: ${value}`);
+      Logger.debug(`${key}: ${value}`, {}, "CREATOR_APP");
     }
 
     // Validate required fields
     if (!CreatorApplication._validateFormData(formData, this)) {
+      this._submitting = false;
       return false;
     }
 
@@ -389,15 +417,18 @@ export class CreatorApplication extends EventideSheetHelpers {
       displayOnToken: formData.get("displayOnToken") === "true",
     };
 
+    // Store name for later use
+    const name = basicData.name;
+
     // Determine item type based on context
     const type =
       this.keyType === "gear"
         ? "gear"
         : this.keyType === "transformation"
-        ? "transformation"
-        : this.playerMode
-        ? "feature"
-        : formData.get("type");
+          ? "transformation"
+          : this.playerMode
+            ? "feature"
+            : formData.get("type");
 
     // Extract gear-specific data if applicable
     const gearData =
@@ -429,6 +460,15 @@ export class CreatorApplication extends EventideSheetHelpers {
 
     // Extract roll data for gear items
     const rollType = formData.get("roll.type");
+    const advantageValue =
+      rollType === "roll"
+        ? parseInt(formData.get("roll.diceAdjustments.advantage"), 10) || 0
+        : 0;
+    const disadvantageValue =
+      rollType === "roll"
+        ? parseInt(formData.get("roll.diceAdjustments.disadvantage"), 10) || 0
+        : 0;
+
     const rollData =
       type === "gear"
         ? {
@@ -440,21 +480,12 @@ export class CreatorApplication extends EventideSheetHelpers {
                 : "unaugmented",
             bonus:
               rollType !== "none"
-                ? parseInt(formData.get("roll.bonus")) || 0
+                ? parseInt(formData.get("roll.bonus"), 10) || 0
                 : 0,
             diceAdjustments: {
-              advantage:
-                rollType === "roll"
-                  ? parseInt(formData.get("roll.diceAdjustments.advantage")) ||
-                    0
-                  : 0,
-              disadvantage:
-                rollType === "roll"
-                  ? parseInt(
-                      formData.get("roll.diceAdjustments.disadvantage")
-                    ) || 0
-                  : 0,
-              total: 0,
+              advantage: advantageValue,
+              disadvantage: disadvantageValue,
+              total: advantageValue - disadvantageValue,
             },
           }
         : {};
@@ -471,15 +502,15 @@ export class CreatorApplication extends EventideSheetHelpers {
         ability.mode === "add"
           ? "change"
           : ability.mode === "override"
-          ? "override"
-          : ability.mode === "transform"
-          ? "transform"
-          : "diceAdjustments." + ability.mode
+            ? "override"
+            : ability.mode === "transform"
+              ? "transform"
+              : `diceAdjustments.${ability.mode}`
       }`;
       const mode =
         ability.mode !== "override"
-          ? CONST.ACTIVE_EFFECT_MODES.ADD
-          : CONST.ACTIVE_EFFECT_MODES.OVERRIDE;
+          ? foundry.CONST.ACTIVE_EFFECT_MODES.ADD
+          : foundry.CONST.ACTIVE_EFFECT_MODES.OVERRIDE;
 
       changes.push({
         key,
@@ -505,20 +536,20 @@ export class CreatorApplication extends EventideSheetHelpers {
               weight: gearData.weight,
               cost: gearData.cost,
               targeted: gearData.targeted,
-              rollData: rollData,
+              roll: rollData,
               className: gearData.className,
               cursed: gearData.cursed,
               equipped: gearData.equipped,
             }
           : type === "transformation"
-          ? {
-              size: transformationData.size,
-              cursed: transformationData.cursed,
-              embeddedCombatPowers: transformationData.embeddedCombatPowers,
-              resolveAdjustment: transformationData.resolveAdjustment,
-              powerAdjustment: transformationData.powerAdjustment,
-            }
-          : {}),
+            ? {
+                size: transformationData.size,
+                cursed: transformationData.cursed,
+                embeddedCombatPowers: transformationData.embeddedCombatPowers,
+                resolveAdjustment: transformationData.resolveAdjustment,
+                powerAdjustment: transformationData.powerAdjustment,
+              }
+            : {}),
       },
       effects: [
         {
@@ -546,7 +577,7 @@ export class CreatorApplication extends EventideSheetHelpers {
       ],
     };
 
-    logIfTesting(itemData);
+    Logger.debug("Created item data:", { itemData }, "CREATOR_APP");
 
     // Store form values in local storage
     CreatorApplication._store(this, {
@@ -568,13 +599,13 @@ export class CreatorApplication extends EventideSheetHelpers {
           if (type === "transformation") {
             token.actor.applyTransformation(created[0]);
           }
-        })
+        }),
       );
-    } else if (this.gmCheck === "player") {
+    } else if (this.selectedArray.length > 0 && this.gmCheck === "player") {
       await Promise.all(
         this.selectedArray.map(async (token) => {
           await token.actor.createEmbeddedDocuments("Item", [itemData]);
-        })
+        }),
       );
     } else {
       await game.items.createDocument(itemData);
@@ -612,7 +643,7 @@ export class CreatorApplication extends EventideSheetHelpers {
       }
       pack =
         await foundry.documents.collections.CompendiumCollection.createCompendium(
-          packData
+          packData,
         );
     }
 
@@ -626,33 +657,34 @@ export class CreatorApplication extends EventideSheetHelpers {
       ui.notifications.info(
         game.i18n.format("EVENTIDE_RP_SYSTEM.Info.TokenItemCreated", {
           keyType: type,
-          name: name,
+          name,
           count: this.targetArray.length,
           targetType: "targeted",
-          packLabel: packLabel,
-        })
+          packLabel,
+        }),
       );
     } else if (this.selectedArray.length > 0 && this.gmCheck === "player") {
       ui.notifications.info(
         game.i18n.format("EVENTIDE_RP_SYSTEM.Info.TokenItemCreated", {
           keyType: type,
-          name: name,
+          name,
           count: this.selectedArray.length,
           targetType: "selected",
-          packLabel: packLabel,
-        })
+          packLabel,
+        }),
       );
     } else {
       ui.notifications.info(
         game.i18n.format("EVENTIDE_RP_SYSTEM.Info.CompendiumItemCreated", {
           keyType: type,
-          name: name,
-          packLabel: packLabel,
-        })
+          name,
+          packLabel,
+        }),
       );
     }
 
-    return;
+    // Clear the submitting flag
+    this._submitting = false;
   }
 
   /**
@@ -669,7 +701,7 @@ export class CreatorApplication extends EventideSheetHelpers {
     const name = formData.get("name");
     if (!name || name.trim() === "") {
       ui.notifications.error(
-        game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.NameRequired")
+        game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.NameRequired"),
       );
       return false;
     }
@@ -678,7 +710,7 @@ export class CreatorApplication extends EventideSheetHelpers {
     const img = formData.get("img");
     if (!img || img.trim() === "") {
       ui.notifications.error(
-        game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.ImageRequired")
+        game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.ImageRequired"),
       );
       return false;
     }
@@ -687,9 +719,12 @@ export class CreatorApplication extends EventideSheetHelpers {
     if (instance.keyType === "gear") {
       // Quantity must be a positive number
       const quantity = formData.get("quantity");
-      if (quantity && (isNaN(parseInt(quantity)) || parseInt(quantity) < 0)) {
+      if (
+        quantity &&
+        (isNaN(parseInt(quantity, 10)) || parseInt(quantity, 10) < 0)
+      ) {
         ui.notifications.error(
-          game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.InvalidQuantity")
+          game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.InvalidQuantity"),
         );
         return false;
       }
@@ -698,16 +733,16 @@ export class CreatorApplication extends EventideSheetHelpers {
       const weight = formData.get("weight");
       if (weight && isNaN(parseFloat(weight))) {
         ui.notifications.error(
-          game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.InvalidWeight")
+          game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.InvalidWeight"),
         );
         return false;
       }
 
       // Cost must be a number
       const cost = formData.get("cost");
-      if (cost && isNaN(parseInt(cost))) {
+      if (cost && isNaN(parseInt(cost, 10))) {
         ui.notifications.error(
-          game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.InvalidCost")
+          game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.InvalidCost"),
         );
         return false;
       }
@@ -723,9 +758,9 @@ export class CreatorApplication extends EventideSheetHelpers {
    * @protected
    */
   static _store(instance, formValues) {
-    logIfTesting("Storing values:", formValues);
+    Logger.debug("Storing values:", formValues, "CREATOR_APP");
 
-    let storageData = {
+    const storageData = {
       [`${instance.keyType}_${instance.number}_img`]: formValues.img,
       [`${instance.keyType}_${instance.number}_bgColor`]: formValues.bgColor,
       [`${instance.keyType}_${instance.number}_textColor`]:
@@ -764,7 +799,11 @@ export class CreatorApplication extends EventideSheetHelpers {
 
     const inputs = form.querySelectorAll("input, select, textarea");
 
-    logIfTesting("Saving form data from", inputs.length, "inputs");
+    Logger.debug(
+      "Saving form data from",
+      { inputCount: inputs.length },
+      "CREATOR_APP",
+    );
 
     inputs.forEach((input) => {
       if (input.name && !input.name.includes("addedAbilities")) {
@@ -777,14 +816,18 @@ export class CreatorApplication extends EventideSheetHelpers {
         // If this is an image input, also save the display image source
         if (input.name === "img") {
           const displayImage = input.parentNode.querySelector(
-            'img[name="displayImage"]'
+            'img[name="displayImage"]',
           );
           if (displayImage) {
             savedData["displayImage"] = displayImage.src;
           }
         }
 
-        logIfTesting(`Saved ${input.name}: ${savedData[input.name]}`);
+        Logger.debug(
+          `Saved ${input.name}`,
+          { value: savedData[input.name] },
+          "CREATOR_APP",
+        );
       }
     });
 
@@ -808,7 +851,11 @@ export class CreatorApplication extends EventideSheetHelpers {
         : app.element.querySelector("form");
     if (!form) return;
 
-    logIfTesting("Restoring form data with", Object.keys(savedData).length);
+    Logger.debug(
+      "Restoring form data",
+      { dataKeys: Object.keys(savedData).length },
+      "CREATOR_APP",
+    );
 
     Object.entries(savedData).forEach(([name, value]) => {
       // Handle special case for display image
@@ -816,11 +863,11 @@ export class CreatorApplication extends EventideSheetHelpers {
         const imgInput = form.querySelector('input[name="img"]');
         if (imgInput) {
           const displayImage = imgInput.parentNode.querySelector(
-            'img[name="displayImage"]'
+            'img[name="displayImage"]',
           );
           if (displayImage) {
             displayImage.src = value;
-            logIfTesting(`Restored displayImage: ${value}`);
+            Logger.debug(`Restored displayImage`, { value }, "CREATOR_APP");
           }
         }
         return;
@@ -847,9 +894,13 @@ export class CreatorApplication extends EventideSheetHelpers {
         } else {
           input.value = value;
         }
-        logIfTesting(`Restored ${name}: ${value}`);
+        Logger.debug(`Restored ${name}`, { value }, "CREATOR_APP");
       } else {
-        logIfTesting(`Could not find input with name: ${name}`);
+        Logger.debug(
+          `Could not find input with name: ${name}`,
+          {},
+          "CREATOR_APP",
+        );
       }
     });
   }

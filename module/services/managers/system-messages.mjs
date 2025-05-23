@@ -40,7 +40,7 @@ class ERPSMessageHandler {
     templateKey,
     data,
     messageOptions,
-    soundOptions = null
+    soundOptions = null,
   ) {
     const content = await renderTemplate(this.templates[templateKey], data);
 
@@ -88,10 +88,10 @@ class ERPSMessageHandler {
       {
         speaker: ERPSRollUtilities.getSpeaker(
           item.parent,
-          "EVENTIDE_RP_SYSTEM.MessageHeaders.Status"
+          "EVENTIDE_RP_SYSTEM.MessageHeaders.Status",
         ),
       },
-      { soundKey: "statusApply" }
+      { soundKey: "statusApply" },
     );
   }
 
@@ -113,7 +113,7 @@ class ERPSMessageHandler {
     return this._createChatMessage("feature", data, {
       speaker: ERPSRollUtilities.getSpeaker(
         item.parent,
-        "EVENTIDE_RP_SYSTEM.MessageHeaders.Feature"
+        "EVENTIDE_RP_SYSTEM.MessageHeaders.Feature",
       ),
     });
   }
@@ -140,7 +140,7 @@ class ERPSMessageHandler {
       {
         speaker: ERPSRollUtilities.getSpeaker(item.parent),
       },
-      { soundKey: "statusRemove" }
+      { soundKey: "statusRemove" },
     );
   }
 
@@ -166,10 +166,10 @@ class ERPSMessageHandler {
       {
         speaker: ERPSRollUtilities.getSpeaker(
           actor,
-          "EVENTIDE_RP_SYSTEM.MessageHeaders.Restore"
+          "EVENTIDE_RP_SYSTEM.MessageHeaders.Restore",
         ),
       },
-      { soundKey: "statusRemove" }
+      { soundKey: "statusRemove" },
     );
   }
 
@@ -206,7 +206,7 @@ class ERPSMessageHandler {
         className: item.system.className || "",
         description: item.system.description,
         hasRoll: false,
-        actor: actor,
+        actor,
       };
 
       // Play combat power sound locally and add to message
@@ -217,11 +217,11 @@ class ERPSMessageHandler {
         {
           speaker: ERPSRollUtilities.getSpeaker(
             actor,
-            "EVENTIDE_RP_SYSTEM.MessageHeaders.CombatPower"
+            "EVENTIDE_RP_SYSTEM.MessageHeaders.CombatPower",
           ),
           rollMode,
         },
-        { soundKey: "combatPower" }
+        { soundKey: "combatPower" },
       );
     }
 
@@ -252,7 +252,7 @@ class ERPSMessageHandler {
         ERPSRollUtilities.determineCriticalStates({
           roll: result,
           thresholds: rollData.hiddenAbilities,
-          formula: formula,
+          formula,
           critAllowed: true,
         });
 
@@ -286,7 +286,7 @@ class ERPSMessageHandler {
         targetArray,
         targetRollData,
         critAllowed: true,
-        actor: actor,
+        actor,
       };
 
       // Play combat power sound locally and add to message
@@ -297,12 +297,12 @@ class ERPSMessageHandler {
         {
           speaker: ERPSRollUtilities.getSpeaker(
             actor,
-            "EVENTIDE_RP_SYSTEM.MessageHeaders.CombatPower"
+            "EVENTIDE_RP_SYSTEM.MessageHeaders.CombatPower",
           ),
           rolls: [roll],
           rollMode,
         },
-        { soundKey: "combatPower" }
+        { soundKey: "combatPower" },
       );
     } catch (error) {
       console.error("Error creating combat power roll:", error);
@@ -318,7 +318,7 @@ class ERPSMessageHandler {
         description: item.system.description,
         hasRoll: false,
         isGear: item.type === "gear",
-        actor: actor,
+        actor,
       };
 
       // Play combat power sound locally and add to message
@@ -329,11 +329,11 @@ class ERPSMessageHandler {
         {
           speaker: ERPSRollUtilities.getSpeaker(
             actor,
-            "EVENTIDE_RP_SYSTEM.MessageHeaders.CombatPower"
+            "EVENTIDE_RP_SYSTEM.MessageHeaders.CombatPower",
           ),
           rollMode,
         },
-        { soundKey: "combatPower" }
+        { soundKey: "combatPower" },
       );
     }
   }
@@ -352,7 +352,7 @@ class ERPSMessageHandler {
     sourceActor,
     destActor,
     quantity,
-    description = ""
+    description = "",
   ) {
     const data = {
       item,
@@ -370,10 +370,10 @@ class ERPSMessageHandler {
       {
         speaker: ERPSRollUtilities.getSpeaker(
           sourceActor,
-          "EVENTIDE_RP_SYSTEM.MessageHeaders.GearTransfer"
+          "EVENTIDE_RP_SYSTEM.MessageHeaders.GearTransfer",
         ),
       },
-      { soundKey: "gearTransfer" }
+      { soundKey: "gearTransfer" },
     );
   }
 
@@ -384,8 +384,9 @@ class ERPSMessageHandler {
    */
   async createGearEquipMessage(item) {
     // Check if gear equip messages are enabled in settings
-    if (!game.settings.get("eventide-rp-system", "showGearEquipMessages"))
+    if (!game.settings.get("eventide-rp-system", "showGearEquipMessages")) {
       return;
+    }
 
     const data = {
       item,
@@ -402,10 +403,10 @@ class ERPSMessageHandler {
         {
           speaker: ERPSRollUtilities.getSpeaker(
             item.parent,
-            "EVENTIDE_RP_SYSTEM.MessageHeaders.GearEquip"
+            "EVENTIDE_RP_SYSTEM.MessageHeaders.GearEquip",
           ),
         },
-        { soundKey: "gearEquip" }
+        { soundKey: "gearEquip" },
       );
     } else {
       await erpsSoundManager._playLocalSound("gearUnequip");
@@ -415,10 +416,10 @@ class ERPSMessageHandler {
         {
           speaker: ERPSRollUtilities.getSpeaker(
             item.parent,
-            "EVENTIDE_RP_SYSTEM.MessageHeaders.GearEquip"
+            "EVENTIDE_RP_SYSTEM.MessageHeaders.GearEquip",
           ),
         },
-        { soundKey: "gearUnequip" }
+        { soundKey: "gearUnequip" },
       );
     }
   }
@@ -432,7 +433,7 @@ class ERPSMessageHandler {
    * @returns {Promise<ChatMessage>} The created chat message
    */
   async createTransformationMessage({ actor, transformation, isApplying }) {
-    // console.log("createTransformationMessage", { actor, transformation, isApplying });
+    // console.info("createTransformationMessage", { actor, transformation, isApplying });
     const data = {
       actor,
       transformation,
@@ -450,10 +451,10 @@ class ERPSMessageHandler {
       {
         speaker: ERPSRollUtilities.getSpeaker(
           actor,
-          "EVENTIDE_RP_SYSTEM.MessageHeaders.Transformation"
+          "EVENTIDE_RP_SYSTEM.MessageHeaders.Transformation",
         ),
       },
-      { soundKey }
+      { soundKey },
     );
   }
 }
@@ -461,14 +462,23 @@ class ERPSMessageHandler {
 // Create a singleton instance
 export const erpsMessageHandler = new ERPSMessageHandler();
 
-// Add proxy methods to match the names of the individual functions
-// erpsMessageHandler.deleteStatusMessage = erpsMessageHandler.createDeleteStatusMessage;
-// erpsMessageHandler.restoreMessage = erpsMessageHandler.createRestoreMessage;
-// erpsMessageHandler.featureMessage = erpsMessageHandler.createFeatureMessage;
-// erpsMessageHandler.combatPowerMessage = erpsMessageHandler.createCombatPowerMessage;
-// erpsMessageHandler.gearTransferMessage = erpsMessageHandler.createGearTransferMessage;
-// erpsMessageHandler.gearEquipMessage = erpsMessageHandler.createGearEquipMessage;
-// erpsMessageHandler.statusMessage = erpsMessageHandler.createStatusMessage;
+// Add the methods to the handler instance for erps.messages access
+erpsMessageHandler.createStatusMessage =
+  erpsMessageHandler.createStatusMessage.bind(erpsMessageHandler);
+erpsMessageHandler.createFeatureMessage =
+  erpsMessageHandler.createFeatureMessage.bind(erpsMessageHandler);
+erpsMessageHandler.createDeleteStatusMessage =
+  erpsMessageHandler.createDeleteStatusMessage.bind(erpsMessageHandler);
+erpsMessageHandler.createRestoreMessage =
+  erpsMessageHandler.createRestoreMessage.bind(erpsMessageHandler);
+erpsMessageHandler.createCombatPowerMessage =
+  erpsMessageHandler.createCombatPowerMessage.bind(erpsMessageHandler);
+erpsMessageHandler.createGearTransferMessage =
+  erpsMessageHandler.createGearTransferMessage.bind(erpsMessageHandler);
+erpsMessageHandler.createGearEquipMessage =
+  erpsMessageHandler.createGearEquipMessage.bind(erpsMessageHandler);
+erpsMessageHandler.createTransformationMessage =
+  erpsMessageHandler.createTransformationMessage.bind(erpsMessageHandler);
 
 // Export individual functions for backward compatibility
 export const createStatusMessage = (item) =>
@@ -489,14 +499,14 @@ export const gearTransferMessage = (
   sourceActor,
   destActor,
   quantity,
-  description
+  description,
 ) =>
   erpsMessageHandler.createGearTransferMessage(
     item,
     sourceActor,
     destActor,
     quantity,
-    description
+    description,
   );
 export const gearEquipMessage = (item) =>
   erpsMessageHandler.createGearEquipMessage(item);

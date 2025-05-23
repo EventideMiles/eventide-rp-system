@@ -58,7 +58,7 @@ export class GearCreator extends CreatorApplication {
 
     context.gearEquippedDefault = game.settings.get(
       "eventide-rp-system",
-      "gearEquippedDefault"
+      "gearEquippedDefault",
     );
 
     return context;

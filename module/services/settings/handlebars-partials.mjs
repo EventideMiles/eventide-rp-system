@@ -46,7 +46,7 @@ export const initHandlebarsPartials = async () => {
       } catch (error) {
         console.error(`Failed to load Handlebars partial '${name}':`, error);
       }
-    })
+    }),
   );
 };
 

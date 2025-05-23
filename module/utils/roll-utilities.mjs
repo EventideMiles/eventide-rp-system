@@ -34,6 +34,22 @@ export class ERPSRollUtilities {
 
     const dieArray = roll.terms[0].results;
     const { cmin, cmax, fmin, fmax } = thresholds;
+
+    // Validate threshold structure - check for undefined, not falsy values
+    if (
+      cmin?.total === undefined ||
+      cmax?.total === undefined ||
+      fmin?.total === undefined ||
+      fmax?.total === undefined
+    ) {
+      return {
+        critHit: false,
+        critMiss: false,
+        stolenCrit: false,
+        savedMiss: false,
+      };
+    }
+
     const formulaLower = formula.toLowerCase();
     const isKeepLowest = formulaLower.includes("kl");
     const isKeepHighest = formulaLower.includes("k") && !isKeepLowest;
@@ -83,9 +99,14 @@ export class ERPSRollUtilities {
    * @returns {Object} Speaker object for ChatMessage.create
    */
   static getSpeaker(actor, headerKey = null) {
+    // Handle null/undefined actor
+    if (!actor) {
+      return ChatMessage.getSpeaker();
+    }
+
     const speakerData = { actor };
 
-    if (headerKey) {
+    if (headerKey && actor.name) {
       speakerData.alias = game.i18n.format(headerKey, {
         name: actor.name,
       });

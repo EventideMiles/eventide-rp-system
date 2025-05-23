@@ -38,7 +38,7 @@ export class TransformationCreator extends CreatorApplication {
    */
   get title() {
     return game.i18n.format(
-      "EVENTIDE_RP_SYSTEM.WindowTitles.TransformationCreator"
+      "EVENTIDE_RP_SYSTEM.WindowTitles.TransformationCreator",
     );
   }
 
@@ -115,7 +115,7 @@ export class TransformationCreator extends CreatorApplication {
    * @returns {boolean}             Can the current user drag this selector?
    * @protected
    */
-  _canDragStart(selector) {
+  _canDragStart(_selector) {
     return true;
   }
 
@@ -125,7 +125,7 @@ export class TransformationCreator extends CreatorApplication {
    * @returns {boolean}             Can the current user drop on this selector?
    * @protected
    */
-  _canDragDrop(selector) {
+  _canDragDrop(_selector) {
     return true;
   }
 
@@ -171,6 +171,7 @@ export class TransformationCreator extends CreatorApplication {
     const formData = CreatorApplication._saveFormData(this);
     const data = TextEditor.implementation.getDragEventData(event);
     event.preventDefault();
+
     if (!data || data.type !== "Item") return;
 
     const combatPower = await Item.implementation.fromDropData(data);
@@ -180,6 +181,7 @@ export class TransformationCreator extends CreatorApplication {
     this.embeddedCombatPowers.push(combatPower);
     await this.render();
     CreatorApplication._restoreFormData(this, formData);
+
     const contentElement = this.element.querySelector(".base-form__content");
     if (contentElement) {
       contentElement.scrollTop = oldPosition;
@@ -204,6 +206,7 @@ export class TransformationCreator extends CreatorApplication {
     const oldPosition = this.position.height;
     await this.render();
     CreatorApplication._restoreFormData(this, formData);
+
     const contentElement = this.element.querySelector(".base-form__content");
     if (contentElement) {
       contentElement.scrollTop = oldPosition;
@@ -216,7 +219,7 @@ export class TransformationCreator extends CreatorApplication {
    * @param {HTMLElement} target   The capturing HTML element which defined a [data-action]
    * @protected
    */
-  static async _viewCombatPower(event, target) {
+  static async _viewCombatPower(_event, target) {
     const powerId = target.dataset.powerId;
     if (!powerId) return;
 

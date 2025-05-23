@@ -24,7 +24,7 @@ export const initChatListeners = () => {
  * @private
  */
 const setupChatMessageRendering = () => {
-  Hooks.on("renderChatMessageHTML", (message, html, data) => {
+  Hooks.on("renderChatMessageHTML", (_message, html, _data) => {
     addFormulaToggleFunctionality(html);
     removeRestrictedElementsForNonGMs(html);
   });
@@ -45,10 +45,10 @@ const addFormulaToggleFunctionality = (html) => {
     toggle.addEventListener("click", (event) => {
       const toggleElement = event.currentTarget;
       const rollContainer = toggleElement.closest(
-        ".chat-card__initiative, .chat-card__combat-roll"
+        ".chat-card__initiative, .chat-card__combat-roll",
       );
       const rollDetails = rollContainer.querySelector(
-        ".chat-card__roll-details"
+        ".chat-card__roll-details",
       );
 
       // Toggle the active class for the formula toggle
@@ -90,7 +90,7 @@ function removeRestrictedElementsForNonGMs(html) {
  */
 function setupItemUpdateHooks() {
   // Handle custom erpsUpdateItem hook
-  Hooks.on("erpsUpdateItem", (item, changed, options, triggerPlayer) => {
+  Hooks.on("erpsUpdateItem", (item, _changed, _options, triggerPlayer) => {
     if (game.user.id !== triggerPlayer) return;
     if (!item.actor) return;
 
@@ -100,10 +100,9 @@ function setupItemUpdateHooks() {
   });
 
   // Handle core updateItem hook
-  Hooks.on("updateItem", (item, changed, options, triggerPlayer) => {
+  Hooks.on("updateItem", (item, _changed, _options, triggerPlayer) => {
     if (game.user.id !== triggerPlayer) return;
     if (!item.actor) return;
-
     if (item.type === "gear") {
       handleGearEquipState(item);
     }
@@ -133,7 +132,7 @@ const handleGearEquipState = (item) => {
  * @private
  */
 function setupItemCreationHooks() {
-  Hooks.on("createItem", (item, options, triggerPlayer) => {
+  Hooks.on("createItem", (item, _options, triggerPlayer) => {
     if (!item.actor) return;
     if (game.user.id !== triggerPlayer) return;
 
@@ -160,7 +159,7 @@ function setupItemCreationHooks() {
  * @private
  */
 function setupItemDeletionHooks() {
-  Hooks.on("deleteItem", (item, options, triggerPlayer) => {
+  Hooks.on("deleteItem", (item, _options, triggerPlayer) => {
     if (!item.actor) return;
     if (game.user.id !== triggerPlayer) return;
 

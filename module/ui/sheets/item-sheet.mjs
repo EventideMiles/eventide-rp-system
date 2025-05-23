@@ -1,6 +1,8 @@
 import { prepareActiveEffectCategories } from "../../helpers/_module.mjs";
 import { prepareCharacterEffects } from "../../helpers/_module.mjs";
 import { EventideSheetHelpers } from "../components/_module.mjs";
+import { Logger } from "../../services/_module.mjs";
+import { ErrorHandler } from "../../utils/error-handler.mjs";
 
 const { api, sheets } = foundry.applications;
 const { DragDrop, TextEditor } = foundry.applications.ux;
@@ -16,7 +18,7 @@ const FilePicker = foundry.applications.apps.FilePicker.implementation;
  * @class
  */
 export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
-  sheets.ItemSheetV2
+  sheets.ItemSheetV2,
 ) {
   /**
    * Creates a new instance of the EventideRpSystemItemSheet.
@@ -28,9 +30,34 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
    * @param {Object} [options.submitOnChange=false] - Whether to submit the form on change
    */
   constructor(options = {}) {
-    super(options);
-    this.#dragDrop = this.#createDragDropHandlers();
-    this.#formChanged = false; // Track if the form has been changed
+    Logger.methodEntry("EventideRpSystemItemSheet", "constructor", {
+      itemId: options?.document?.id,
+      itemName: options?.document?.name,
+      itemType: options?.document?.type,
+    });
+
+    try {
+      super(options);
+      this.#dragDrop = this.#createDragDropHandlers();
+      this.#formChanged = false; // Track if the form has been changed
+
+      Logger.debug(
+        "Item sheet initialized successfully",
+        {
+          sheetId: this.id,
+          itemName: this.item?.name,
+          itemType: this.item?.type,
+          dragDropHandlers: this.#dragDrop?.length,
+        },
+        "ITEM_SHEET",
+      );
+
+      Logger.methodExit("EventideRpSystemItemSheet", "constructor", this);
+    } catch (error) {
+      Logger.error("Failed to initialize item sheet", error, "ITEM_SHEET");
+      Logger.methodExit("EventideRpSystemItemSheet", "constructor", null);
+      throw error;
+    }
   }
 
   /*********************
@@ -160,7 +187,7 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
         options.parts.push(
           "attributesTransformation",
           "embeddedCombatPowers",
-          "characterEffects"
+          "characterEffects",
         );
         break;
     }
@@ -175,32 +202,97 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
    * @override
    */
   async _prepareContext(options) {
-    const context = {};
+    Logger.methodEntry("EventideRpSystemItemSheet", "_prepareContext", {
+      itemName: this.item?.name,
+      itemType: this.item?.type,
+      optionsParts: options?.parts,
+    });
 
-    await this._eventideItemEffectGuards();
+    try {
+      const context = {};
 
-    context.activeEffect = this.item.effects.contents[0];
-    context.iconTint = context.activeEffect.tint;
+      // Handle effect guards with error handling
+      try {
+        await this.eventideItemEffectGuards();
+      } catch (guardError) {
+        Logger.warn("Effect guards failed", guardError, "ITEM_SHEET");
+      }
 
-    // Validates both permissions and compendium status
-    context.editable = this.isEditable;
-    context.owner = this.document.isOwner;
-    context.limited = this.document.limited;
-    // Add the item document.
-    context.item = this.item;
-    // Adding system and flags for easier access
-    context.system = this.item.system;
-    context.flags = this.item.flags;
-    // Adding a pointer to CONFIG.EVENTIDE_RP_SYSTEM
-    context.config = CONFIG.EVENTIDE_RP_SYSTEM;
-    // You can factor out context construction to helper functions
-    context.tabs = this._getTabs(options.parts);
-    // Necessary for formInput and formFields helpers
-    context.fields = this.document.schema.fields;
-    context.systemFields = this.document.system.schema.fields;
-    context.isGM = game.user.isGM;
+      // Set up active effect data safely
+      const firstEffect = this.item.effects.contents[0];
+      context.activeEffect = firstEffect;
+      context.iconTint = firstEffect?.tint;
 
-    return context;
+      // Validates both permissions and compendium status
+      context.editable = this.isEditable;
+      context.owner = this.document.isOwner;
+      context.limited = this.document.limited;
+      // Add the item document.
+      context.item = this.item;
+      // Adding system and flags for easier access
+      context.system = this.item.system;
+      context.flags = this.item.flags;
+      // Adding a pointer to CONFIG.EVENTIDE_RP_SYSTEM
+      context.config = CONFIG.EVENTIDE_RP_SYSTEM;
+      // You can factor out context construction to helper functions
+      context.tabs = this._getTabs(options.parts);
+      // Necessary for formInput and formFields helpers
+      context.fields = this.document.schema.fields;
+      context.systemFields = this.document.system.schema.fields;
+      context.isGM = game.user.isGM;
+
+      Logger.debug(
+        "Item sheet context prepared",
+        {
+          itemName: this.item.name,
+          itemType: this.item.type,
+          contextKeys: Object.keys(context),
+          tabCount: Object.keys(context.tabs).length,
+          editable: context.editable,
+          limited: context.limited,
+          hasActiveEffect: !!context.activeEffect,
+        },
+        "ITEM_SHEET",
+      );
+
+      Logger.methodExit(
+        "EventideRpSystemItemSheet",
+        "_prepareContext",
+        context,
+      );
+      return context;
+    } catch (error) {
+      await ErrorHandler.handleAsync(Promise.reject(error), {
+        context: `Prepare Item Sheet Context: ${this.item?.name}`,
+        errorType: ErrorHandler.ERROR_TYPES.UI,
+        userMessage: game.i18n.format(
+          "EVENTIDE_RP_SYSTEM.Errors.SheetContextError",
+          {
+            itemName: this.item?.name || "Unknown",
+          },
+        ),
+      });
+
+      Logger.methodExit("EventideRpSystemItemSheet", "_prepareContext", null);
+
+      // Return minimal fallback context
+      return {
+        editable: false,
+        owner: false,
+        limited: true,
+        item: this.item,
+        system: this.item?.system || {},
+        flags: this.item?.flags || {},
+        config: CONFIG.EVENTIDE_RP_SYSTEM || {},
+        tabs: {},
+        fields: {},
+        systemFields: {},
+        isGM: false,
+        activeEffect: null,
+        iconTint: null,
+        hasError: true,
+      };
+    }
   }
 
   /**
@@ -245,7 +337,7 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
               rollData: this.item.getRollData(),
               // Relative UUID resolution
               relativeTo: this.item,
-            }
+            },
           );
         break;
       case "prerequisites":
@@ -262,14 +354,14 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
         context.tab = context.tabs[partId];
         // Prepare active effects for easier access
         context.effects = await prepareActiveEffectCategories(
-          this.item.effects
+          this.item.effects,
         );
         break;
       case "characterEffects":
         context.tab = context.tabs[partId];
         // Prepare active effects for easier access
         context.characterEffects = await prepareCharacterEffects(
-          this.item.effects.contents[0]
+          this.item.effects.contents[0],
         );
         break;
     }
@@ -351,7 +443,7 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
    * @param {RenderOptions} options                 Provided render options
    * @protected
    */
-  _onRender(context, options) {
+  _onRender(_context, _options) {
     this.#dragDrop.forEach((d) => d.bind(this.element));
   }
 
@@ -379,7 +471,7 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
     ) {
       if (event.target.value.length === 4) {
         event.target.value = `${event.target.value}${event.target.value.slice(
-          1
+          1,
         )}`;
       }
       // if the target is blank or invalid length, reset to default color
@@ -387,8 +479,8 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
         const defaultColor = event.target.name.includes("textColor")
           ? "#ffffff"
           : event.target.name.includes("bgColor")
-          ? "#000000"
-          : "#ffffff"; // Default for iconTint
+            ? "#000000"
+            : "#ffffff"; // Default for iconTint
         event.target.value = defaultColor;
       }
     }
@@ -434,7 +526,7 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
    * @returns {Promise}
    * @protected
    */
-  static async _onEditImage(event, target) {
+  static async _onEditImage(_event, target) {
     const attr = target.dataset.edit;
     const current = foundry.utils.getProperty(this.document, attr);
     const { img } =
@@ -463,7 +555,7 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
     event.target.focus();
   }
 
-  static async _deleteCharacterEffect(event, target) {
+  static async _deleteCharacterEffect(_event, target) {
     const index = target.dataset.index;
     const type = target.dataset.type;
     this._updateCharacterEffects({ remove: { index, type } });
@@ -487,10 +579,11 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
    * @param {HTMLElement} target   The capturing HTML element which defined a [data-action]
    * @protected
    */
-  static async _removeCombatPower(event, target) {
+  static async _removeCombatPower(_event, target) {
     const powerId = target.dataset.powerId;
-    if (!powerId) return;
-
+    if (!powerId) {
+      return;
+    }
     await this.item.system.removeCombatPower(powerId);
   }
 
@@ -506,7 +599,7 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
    * @returns {boolean}             Can the current user drag this selector?
    * @protected
    */
-  _canDragStart(selector) {
+  _canDragStart(_selector) {
     // game.user fetches the current user
     return this.isEditable;
   }
@@ -517,7 +610,7 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
    * @returns {boolean}             Can the current user drop on this selector?
    * @protected
    */
-  _canDragDrop(selector) {
+  _canDragDrop(_selector) {
     // game.user fetches the current user
     return this.isEditable;
   }
@@ -550,7 +643,7 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
    * @param {DragEvent} event       The originating DragEvent
    * @protected
    */
-  _onDragOver(event) {}
+  _onDragOver(_event) {}
 
   /**
    * Callback actions which occur when a dragged element is dropped on a target.
@@ -587,7 +680,7 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
    * @returns {Promise<boolean>} Whether the drop was successful
    * @protected
    */
-  async _onDropItem(event, data) {
+  async _onDropItem(_event, data) {
     if (!this.item.isOwner) return false;
 
     // Get the dropped item
@@ -600,8 +693,8 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
       if (droppedItem.type !== "combatPower") {
         ui.notifications.warn(
           game.i18n.localize(
-            "EVENTIDE_RP_SYSTEM.Errors.TransformationItemTypes"
-          )
+            "EVENTIDE_RP_SYSTEM.Errors.TransformationItemTypes",
+          ),
         );
         return false;
       }
@@ -626,12 +719,13 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
    * @protected
    */
   async _onDropActiveEffect(event, data) {
-    const aeCls = getDocumentClass("ActiveEffect");
+    const aeCls = foundry.utils.getDocumentClass("ActiveEffect");
     const effect = await aeCls.fromDropData(data);
     if (!this.item.isOwner || !effect) return false;
 
-    if (this.item.uuid === effect.parent?.uuid)
+    if (this.item.uuid === effect.parent?.uuid) {
       return this._onEffectSort(event, effect);
+    }
     return aeCls.create(effect, { parent: this.item });
   }
 
@@ -649,6 +743,7 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
     const effects = this.item.effects;
     const dropTarget = event.target.closest("[data-effect-id]");
     if (!dropTarget) return;
+
     const target = effects.get(dropTarget.dataset.effectId);
 
     // Don't sort on yourself
@@ -656,10 +751,11 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
 
     // Identify sibling items based on adjacent HTML elements
     const siblings = [];
-    for (let el of dropTarget.parentElement.children) {
+    for (const el of dropTarget.parentElement.children) {
       const siblingId = el.dataset.effectId;
-      if (siblingId && siblingId !== effect.id)
+      if (siblingId && siblingId !== effect.id) {
         siblings.push(effects.get(el.dataset.effectId));
+      }
     }
 
     // Perform the sort
@@ -687,7 +783,7 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
    *                                     not permitted.
    * @protected
    */
-  async _onDropActor(event, data) {
+  async _onDropActor(_event, _data) {
     if (!this.item.isOwner) return false;
   }
 
@@ -701,7 +797,7 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
    * @returns {Promise<Item[]>}
    * @protected
    */
-  async _onDropFolder(event, data) {
+  async _onDropFolder(_event, _data) {
     if (!this.item.isOwner) return [];
   }
 
@@ -754,11 +850,11 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
    * @returns {Promise<void>}
    * @private
    */
-  async _eventideItemEffectGuards() {
+  async eventideItemEffectGuards() {
     const effects = Array.from(this.item.effects);
 
     if (effects.length > 1) {
-      let keepEffect = this.item.effects.contents[0];
+      const keepEffect = this.item.effects.contents[0];
 
       const effectIds = effects.map((effect) => effect._id);
 
@@ -798,7 +894,7 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
     if (
       !this.item.effects.contents.find(
         (effect) =>
-          effect.name === this.item.name && effect.img === this.item.img
+          effect.name === this.item.name && effect.img === this.item.img,
       )
     ) {
       const keepEffectId = this.item.effects.contents[0]._id;
@@ -836,7 +932,7 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
 
     if (remove.type && remove.index) {
       formElements = Array.from(formElements).filter(
-        (el) => !el.name.includes(`${remove.type}.${remove.index}`)
+        (el) => !el.name.includes(`${remove.type}.${remove.index}`),
       );
     }
 
@@ -851,15 +947,16 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
       const name = element.name;
       const value = element.value;
 
-      if (!name.includes("regularEffects") && !name.includes("hiddenEffects"))
+      if (!name.includes("regularEffects") && !name.includes("hiddenEffects")) {
         continue;
+      }
 
       const parts = name.split(".");
       if (parts.length < 3) continue;
 
       // Parse the name to extract the type (regularEffects or hiddenEffects) and index
       const type = parts[1]; // regularEffects or hiddenEffects
-      const index = parseInt(parts[2]);
+      const index = parseInt(parts[2], 10);
       const property = parts[3]; // ability, mode, value, etc.
 
       // Ensure the array has an object at this index
@@ -873,27 +970,27 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
 
     // Clean up the arrays (remove any undefined entries)
     characterEffects.regularEffects = characterEffects.regularEffects.filter(
-      (e) => e
+      (e) => e,
     );
     characterEffects.hiddenEffects = characterEffects.hiddenEffects.filter(
-      (e) => e
+      (e) => e,
     );
 
     const processEffects = async (effects, isRegular) => {
       return effects.map((effect) => {
-        let key, mode;
+        let key;
 
         if (isRegular) {
           key = `system.abilities.${effect.ability}.${
             effect.mode === "add"
               ? "change"
               : effect.mode === "override"
-              ? "override"
-              : effect.mode === "advantage"
-              ? "diceAdjustments.advantage"
-              : effect.mode === "disadvantage"
-              ? "diceAdjustments.disadvantage"
-              : "transform"
+                ? "override"
+                : effect.mode === "advantage"
+                  ? "diceAdjustments.advantage"
+                  : effect.mode === "disadvantage"
+                    ? "diceAdjustments.disadvantage"
+                    : "transform"
           }`;
         } else {
           key = `system.hiddenAbilities.${effect.ability}.${
@@ -901,7 +998,7 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
           }`;
         }
 
-        mode =
+        const mode =
           (isRegular && effect.mode !== "override") ||
           (!isRegular && effect.mode === "add")
             ? CONST.ACTIVE_EFFECT_MODES.ADD
@@ -947,7 +1044,7 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
    * @returns {Promise<void>}
    * @protected
    */
-  static async _viewDoc(event, target) {
+  static async _viewDoc(_event, target) {
     const docRow = target.closest("li");
 
     // Handle viewing embedded combat powers
@@ -957,8 +1054,7 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
       const power = embeddedPowers.find((p) => p.id === powerId);
 
       if (power) {
-        power.sheet.render(true);
-        return;
+        return power.sheet.render(true);
       }
     }
 
@@ -977,7 +1073,7 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
    * @returns {Promise<void>}
    * @protected
    */
-  static async _deleteEffect(event, target) {
+  static async _deleteEffect(_event, target) {
     const effect = this._getEffect(target);
     await effect.delete();
   }
@@ -990,9 +1086,9 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
    * @returns {Promise<void>}
    * @private
    */
-  static async _createEffect(event, target) {
+  static async _createEffect(_event, target) {
     // Retrieve the configured document class for ActiveEffect
-    const aeCls = getDocumentClass("ActiveEffect");
+    const aeCls = foundry.utils.getDocumentClass("ActiveEffect");
     // Prepare the document creation data by initializing it a default name.
     // As of v12, you can define custom Active Effect subtypes just like Item subtypes if you want
     const effectData = {
@@ -1022,7 +1118,7 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
    * @returns {Promise<void>}
    * @private
    */
-  static async _toggleEffect(event, target) {
+  static async _toggleEffect(_event, target) {
     const effect = this._getEffect(target);
     await effect.update({ disabled: !effect.disabled });
   }

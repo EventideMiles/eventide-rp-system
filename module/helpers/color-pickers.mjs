@@ -6,9 +6,7 @@
  *
  * @module helpers/color-pickers
  */
-import { CommonFoundryTasks } from "../utils/_module.mjs";
-
-const logIfTesting = CommonFoundryTasks.logIfTesting;
+import { Logger } from "../services/_module.mjs";
 
 // Store event handlers with their elements
 const eventHandlers = new WeakMap();
@@ -25,14 +23,34 @@ const eventHandlers = new WeakMap();
 export function initColorPickersWithHex(selector = ".color-picker-with-hex") {
   // Use a slight delay to ensure the DOM is fully rendered
   setTimeout(() => {
-    logIfTesting("Color Pickers | Initializing color pickers with hex input");
+    Logger.debug(
+      "Initializing color pickers with hex input",
+      { selector },
+      "COLOR_PICKER",
+    );
 
-    const colorPickers = document.querySelectorAll(selector);
-    logIfTesting(`Color Pickers | Found ${colorPickers.length} color pickers`);
+    try {
+      const colorPickers = document.querySelectorAll(selector);
+      Logger.debug(
+        "Found color pickers",
+        { count: colorPickers.length },
+        "COLOR_PICKER",
+      );
 
-    colorPickers.forEach((container, index) => {
-      setupSingleColorPicker(container, index);
-    });
+      colorPickers.forEach((container, index) => {
+        try {
+          setupSingleColorPicker(container, index);
+        } catch (error) {
+          Logger.warn(
+            `Failed to setup color picker ${index}`,
+            error,
+            "COLOR_PICKER",
+          );
+        }
+      });
+    } catch (error) {
+      Logger.error("Failed to initialize color pickers", error, "COLOR_PICKER");
+    }
   }, 100); // Short delay to ensure DOM is fully rendered
 }
 
@@ -43,10 +61,18 @@ export function initColorPickersWithHex(selector = ".color-picker-with-hex") {
  * present during the initial render. It's useful to call this after dynamic content updates.
  */
 export function enhanceExistingColorPickers() {
-  logIfTesting("Color Pickers | Enhancing existing color pickers");
+  Logger.debug("Enhancing existing color pickers", {}, "COLOR_PICKER");
 
-  // Find all color pickers and initialize them
-  initColorPickersWithHex();
+  try {
+    // Find all color pickers and initialize them
+    initColorPickersWithHex();
+  } catch (error) {
+    Logger.error(
+      "Failed to enhance existing color pickers",
+      error,
+      "COLOR_PICKER",
+    );
+  }
 }
 
 /**
@@ -60,21 +86,38 @@ export function enhanceExistingColorPickers() {
  */
 export function cleanupColorPickers(element) {
   if (!element) {
-    logIfTesting("Color Pickers | No element provided for cleanup");
-    return;
+    Logger.debug("No element provided for cleanup", {}, "COLOR_PICKER");
   }
 
-  logIfTesting("Color Pickers | Cleaning up color pickers", element);
-
-  // Find all color pickers within the element
-  const colorPickers = element.querySelectorAll(".color-picker-with-hex");
-  logIfTesting(
-    `Color Pickers | Found ${colorPickers.length} color pickers to clean up`
+  Logger.debug(
+    "Cleaning up color pickers",
+    { elementTag: element.tagName },
+    "COLOR_PICKER",
   );
 
-  colorPickers.forEach((container) => {
-    cleanupSingleColorPicker(container);
-  });
+  try {
+    // Find all color pickers within the element
+    const colorPickers = element.querySelectorAll(".color-picker-with-hex");
+    Logger.debug(
+      "Found color pickers to clean up",
+      { count: colorPickers.length },
+      "COLOR_PICKER",
+    );
+
+    colorPickers.forEach((container, index) => {
+      try {
+        cleanupSingleColorPicker(container);
+      } catch (error) {
+        Logger.warn(
+          `Failed to cleanup color picker ${index}`,
+          error,
+          "COLOR_PICKER",
+        );
+      }
+    });
+  } catch (error) {
+    Logger.error("Failed to cleanup color pickers", error, "COLOR_PICKER");
+  }
 }
 
 /**
@@ -84,22 +127,22 @@ export function cleanupColorPickers(element) {
  * @param {HTMLElement} container - The color picker container
  * @param {number} index - Index for generating unique IDs
  */
-function setupSingleColorPicker(container, index) {
+function setupSingleColorPicker(container, _index) {
   const colorInput = container.querySelector(".color-picker");
   const hexInput = container.querySelector(".hex-input");
   const preview = container.querySelector(".color-preview");
 
   if (!colorInput || !hexInput || !preview) {
-    logIfTesting("Missing required elements for color picker", {
-      colorInput,
-      hexInput,
-      preview,
-    });
-    return;
+    Logger.debug(
+      "Missing required elements for color picker",
+      {
+        colorInput,
+        hexInput,
+        preview,
+      },
+      "COLOR_PICKER",
+    );
   }
-
-  // Generate unique IDs for these elements if they don't already have them
-  const uniqueId = colorInput.id || `color-picker-${Date.now()}-${index}`;
 
   // Store the initial values
   const initialColor = colorInput.value;
@@ -125,7 +168,7 @@ function setupSingleColorPicker(container, index) {
    * @param {Event} event - The input event
    */
   function handleColorInput(event) {
-    logIfTesting("Color input changed:", event.target.value);
+    Logger.debug("Color input changed:", event.target.value, "COLOR_PICKER");
     hexInput.value = event.target.value.toUpperCase();
     updatePreview();
   }
@@ -136,11 +179,11 @@ function setupSingleColorPicker(container, index) {
    */
   function handleHexInput(event) {
     let value = event.target.value;
-    logIfTesting("Hex input changed:", value);
+    Logger.debug("Hex input changed:", value, "COLOR_PICKER");
 
     // Add # if it's missing
     if (value.charAt(0) !== "#") {
-      value = "#" + value;
+      value = `#${value}`;
       event.target.value = value;
     }
 
@@ -224,10 +267,10 @@ function cleanupSingleColorPicker(container) {
   const colorInput = container.querySelector(".color-picker");
   const hexInput = container.querySelector(".hex-input");
 
-  if (!colorInput || !hexInput) return;
-
-  // Clean up event listeners before replacing
-  cleanupColorPickerListeners(colorInput, hexInput);
+  if (!colorInput || !hexInput) {
+    // Clean up event listeners before replacing
+    cleanupColorPickerListeners(colorInput, hexInput);
+  }
 
   // Create a clone of each input to remove event listeners
   if (colorInput.parentNode) {
@@ -263,18 +306,18 @@ Hooks.on("ready", () => {
 });
 
 // Initialize when relevant sheets render
-Hooks.on("renderApplicationV2", (context, element, options) => {
+Hooks.on("renderApplicationV2", (_context, element, _options) => {
   if (element.querySelector(".color-picker-with-hex")) {
     initColorPickersWithHex();
   }
 });
 
 // Hook into all relevant item and sheet renders to ensure color pickers are enhanced
-Hooks.on("renderItemV2", (app, html) => {
+Hooks.on("renderItemV2", (_app, _html) => {
   enhanceExistingColorPickers();
 });
 
 // Handle color pickers in creator applications
-Hooks.on("renderCreatorApplication", (app, html) => {
+Hooks.on("renderCreatorApplication", (_app, _html) => {
   enhanceExistingColorPickers();
 });

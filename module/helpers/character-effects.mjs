@@ -39,7 +39,7 @@ const prepareCharacterEffects = async (effect) => {
   for (const change of effect.changes) {
     // Determine which ability this change affects
     const ability = allAbilities.find((ability) =>
-      change.key.includes(ability)
+      change.key.includes(ability),
     );
 
     // Determine the mode of the effect
