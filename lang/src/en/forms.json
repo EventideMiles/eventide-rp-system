@@ -91,11 +91,13 @@
           "TargetMode": "There are <strong>{count} target(s)</strong> selected."
         },
         "Effect": {
+          "GMPlayerMode": "<strong>GM using Player Mode:</strong> As a GM, you must use <strong>targeting</strong> (right-click tokens) instead of selection. You currently have <strong>{targetCount} target(s)</strong>.",
           "NoTargets": "There are no targets selected. This will create either a status condition or feature (as selected) for the compendium only.",
           "PlayerMode": "You are using the effect creator in player mode. This can only be used to create features for tokens you control. You currently have <strong>{count} tokens(s)</strong> selected.",
           "WithTargets": "There are <strong>{count} target(s)</strong> selected. This will create a status condition or feature (as selected) for each target and your compendium."
         },
         "Gear": {
+          "GMPlayerMode": "<strong>GM using Player Mode:</strong> As a GM, you must use <strong>targeting</strong> (right-click tokens) instead of selection. You currently have <strong>{targetCount} target(s)</strong>.",
           "InsufficientQuantity": "You don't have enough of this item to use it! (Need {cost}, have {quantity})",
           "NoTargets": "There are no targets selected. This will create a gear item for the compendium only.",
           "NotEquipped": "This item is not equipped!",
@@ -110,6 +112,7 @@
           "TargetPower": "You need to target someone to use this power!"
         },
         "Transformation": {
+          "GMPlayerMode": "<strong>GM using Player Mode:</strong> As a GM, you must use <strong>targeting</strong> (right-click tokens) instead of selection. You currently have <strong>{targetCount} target(s)</strong>.",
           "NoTargets": "There are no targets selected. This will create a transformation for the compendium only.",
           "PlayerMode": "You are using the transformation creator in player mode. This can only be used to create transformations for tokens you control. You currently have <strong>{count} tokens(s)</strong> selected.",
           "WithTargets": "There are <strong>{count} target(s)</strong> selected. This will create a transformation for each target and your compendium."
