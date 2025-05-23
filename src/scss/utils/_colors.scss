@@ -66,6 +66,11 @@
   --erps-card-header-transformation: linear-gradient(270deg, #005716, #0066cc);
   --erps-card-header-transformation-remove: linear-gradient(270deg, #0066cc, #005716);
 
+  // Transformation states
+  --erps-transformation-locked: #8A4FFF;
+  --erps-transformation-locked-bg: rgba(138, 79, 255, 0.15);
+  --erps-transformation-locked-border: rgba(138, 79, 255, 0.4);
+
   // Initiative
   --erps-card-header-initiative: #3498db;
   --erps-card-header-initiative-npc: #e67e22;
@@ -87,7 +92,7 @@
   --erps-required: #cc0000;
   --erps-cursed: #781990;
   --erps-highlight: #4d94ff;
-  
+
   // Button states (consistently used in both themes)
   --erps-play-button-bg: #4CAF50;
   --erps-play-button-text: #ffffff;
@@ -123,13 +128,13 @@
   --erps-label-text: #191813;
   --erps-form-content-bg: #7c7777;
   --erps-disabled: #e6e6e6;
-  
+
   // Select elements
   --erps-select-arrow-url: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath fill='%23191813' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
   --erps-select-option-bg: #ffffff;
   --erps-select-option-text: #191813;
   --erps-select-option-hover: #f0f0f0;
-  
+
   // Standard buttons
   --erps-button-bg: #ffffff;
   --erps-button-text: #191813;
@@ -137,7 +142,7 @@
   --erps-button-hover: #e8f0ff;
   --erps-button-active: #d6e4ff;
   --erps-button-glow: rgba(255, 255, 255, 0.75);
-  
+
   // Primary buttons
   --erps-primary-button-hover: #4d94ff;
   --erps-primary-button-active: #2979ff;
@@ -167,13 +172,13 @@
   --erps-image-edit-border: rgba(153, 153, 153, 0.65);
   --erps-label-text: #ffffff;
   --erps-form-content-bg: #1e2430;
-  
+
   // Select elements
   --erps-select-arrow-url: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath fill='%23ffffff' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
   --erps-select-option-bg: #1e2430;
   --erps-select-option-text: #ffffff;
   --erps-select-option-hover: #2a3441;
-  
+
   // Standard buttons
   --erps-button-bg: #000000;
   --erps-button-text: #ffffff;
@@ -181,12 +186,12 @@
   --erps-button-hover: #1a365d;
   --erps-button-active: #0d1b2e;
   --erps-button-glow: rgba(255, 255, 255, 0.75);
-  
+
   // Primary buttons
   --erps-primary-button-hover: #1a365d;
   --erps-primary-button-active: #0d1b2e;
   --erps-primary-button-glow: rgba(77, 148, 255, 0.75);
-  
+
   // Additional dark theme specific colors
   --erps-disabled: #333333;
 }
@@ -288,7 +293,7 @@ $unknown-formula-bg: var(--erps-formula-bg-unknown);
 $initiative-formula-bg: var(--erps-formula-bg-initiative);
 
 // Card headers and status
-$gear: var(--erps-card-header-gear);  
+$gear: var(--erps-card-header-gear);
 $unknown: var(--erps-card-header-unknown);
 $damage: var(--erps-card-header-damage);
 $heal: var(--erps-card-header-heal);
@@ -296,6 +301,9 @@ $effect: var(--erps-card-header-effect);
 $delete: var(--erps-card-header-delete);
 $transformation-gradient: var(--erps-card-header-transformation);
 $transformation-remove-gradient: var(--erps-card-header-transformation-remove);
+$transformation-locked: var(--erps-transformation-locked);
+$transformation-locked-bg: var(--erps-transformation-locked-bg);
+$transformation-locked-border: var(--erps-transformation-locked-border);
 $transfer: var(--erps-card-header-transfer);
 $initiative: var(--erps-card-header-initiative);
 $initiative-npc: var(--erps-card-header-initiative-npc);

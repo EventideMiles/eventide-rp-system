@@ -4,10 +4,11 @@ export default class EventideRpSystemTransformation extends EventideRpSystemItem
   static defineSchema() {
     const fields = foundry.data.fields;
     const schema = super.defineSchema();
+    const requiredInteger = { required: true, nullable: false, integer: true };
 
     // Store complete combat power data
     schema.embeddedCombatPowers = new fields.ArrayField(
-      new fields.ObjectField()
+      new fields.ObjectField(),
     );
 
     schema.size = new fields.NumberField({
@@ -29,6 +30,16 @@ export default class EventideRpSystemTransformation extends EventideRpSystemItem
       categories: ["IMAGE"],
     });
 
+    schema.powerAdjustment = new fields.NumberField({
+      ...requiredInteger,
+      initial: 0,
+    });
+
+    schema.resolveAdjustment = new fields.NumberField({
+      ...requiredInteger,
+      initial: 0,
+    });
+
     schema.cursed = new fields.BooleanField({
       required: true,
       initial: false,
@@ -40,7 +51,7 @@ export default class EventideRpSystemTransformation extends EventideRpSystemItem
   async addCombatPower(combatPower) {
     if (combatPower.type !== "combatPower") {
       throw new Error(
-        game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.TransformationItemTypes")
+        game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.TransformationItemTypes"),
       );
     }
 

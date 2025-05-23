@@ -56,13 +56,14 @@ export class GearPopup extends EventidePopupHelpers {
    * @param {HTMLElement} form - The form element
    * @private
    */
-  static async #onSubmit(event, formData, form) {
+  static async #onSubmit(_event, _formData, _form) {
     const problems = await this.checkEligibility(this.item);
 
-    if (Object.values(problems).some((value) => value))
+    if (Object.values(problems).some((value) => value)) {
       return ui.notifications.error(
-        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.GearError")
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.GearError"),
       );
+    }
 
     this.item.addQuantity(-this.item.system.cost);
 

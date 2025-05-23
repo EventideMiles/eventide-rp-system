@@ -100,6 +100,9 @@
   --erps-card-header-transfer: #9B4B7D;
   --erps-card-header-transformation: linear-gradient(270deg, #005716, #0066cc);
   --erps-card-header-transformation-remove: linear-gradient(270deg, #0066cc, #005716);
+  --erps-transformation-locked: #8A4FFF;
+  --erps-transformation-locked-bg: rgba(138, 79, 255, 0.15);
+  --erps-transformation-locked-border: rgba(138, 79, 255, 0.4);
   --erps-card-header-initiative: #3498db;
   --erps-card-header-initiative-npc: #e67e22;
   --erps-card-header-initiative-pc: #2ecc71;
@@ -1589,15 +1592,19 @@
 }
 .chat-card__header--critical-hit {
   background-color: var(--erps-critical-hit);
+  width: 100%;
 }
 .chat-card__header--critical-miss {
   background-color: var(--erps-critical-miss);
+  width: 100%;
 }
 .chat-card__header--stolen-crit {
   background-color: var(--erps-stolen-crit);
+  width: 100%;
 }
 .chat-card__header--saved-miss {
   background-color: var(--erps-saved-miss);
+  width: 100%;
 }
 .chat-card__header--unknown {
   background-color: var(--erps-card-header-unknown);
@@ -3086,6 +3093,9 @@
   --erps-card-header-transfer: #9B4B7D;
   --erps-card-header-transformation: linear-gradient(270deg, #005716, #0066cc);
   --erps-card-header-transformation-remove: linear-gradient(270deg, #0066cc, #005716);
+  --erps-transformation-locked: #8A4FFF;
+  --erps-transformation-locked-bg: rgba(138, 79, 255, 0.15);
+  --erps-transformation-locked-border: rgba(138, 79, 255, 0.4);
   --erps-card-header-initiative: #3498db;
   --erps-card-header-initiative-npc: #e67e22;
   --erps-card-header-initiative-pc: #2ecc71;
@@ -3298,6 +3308,9 @@
   --erps-card-header-transfer: #9B4B7D;
   --erps-card-header-transformation: linear-gradient(270deg, #005716, #0066cc);
   --erps-card-header-transformation-remove: linear-gradient(270deg, #0066cc, #005716);
+  --erps-transformation-locked: #8A4FFF;
+  --erps-transformation-locked-bg: rgba(138, 79, 255, 0.15);
+  --erps-transformation-locked-border: rgba(138, 79, 255, 0.4);
   --erps-card-header-initiative: #3498db;
   --erps-card-header-initiative-npc: #e67e22;
   --erps-card-header-initiative-pc: #2ecc71;
@@ -3499,6 +3512,9 @@
   --erps-card-header-transfer: #9B4B7D;
   --erps-card-header-transformation: linear-gradient(270deg, #005716, #0066cc);
   --erps-card-header-transformation-remove: linear-gradient(270deg, #0066cc, #005716);
+  --erps-transformation-locked: #8A4FFF;
+  --erps-transformation-locked-bg: rgba(138, 79, 255, 0.15);
+  --erps-transformation-locked-border: rgba(138, 79, 255, 0.4);
   --erps-card-header-initiative: #3498db;
   --erps-card-header-initiative-npc: #e67e22;
   --erps-card-header-initiative-pc: #2ecc71;
@@ -3793,6 +3809,24 @@
 .eventide-rp-system .items-panel__controls .items-panel__controls--disabled {
   color: #e74c3c;
 }
+.eventide-rp-system .items-panel__controls .items-panel__transformed-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: var(--erps-transformation-locked);
+  font-size: 0.75rem;
+  font-style: italic;
+  padding: 0.25rem 0.5rem;
+  background: var(--erps-transformation-locked-bg);
+  border-radius: 3px;
+  border: 1px solid var(--erps-transformation-locked-border);
+}
+.eventide-rp-system .items-panel__controls .items-panel__transformed-indicator i {
+  font-size: 0.7rem;
+}
+.eventide-rp-system .items-panel__controls .items-panel__transformed-indicator span {
+  white-space: nowrap;
+}
 .eventide-rp-system .items-panel__list-item {
   align-items: center;
 }
@@ -4012,6 +4046,9 @@
   --erps-card-header-transfer: #9B4B7D;
   --erps-card-header-transformation: linear-gradient(270deg, #005716, #0066cc);
   --erps-card-header-transformation-remove: linear-gradient(270deg, #0066cc, #005716);
+  --erps-transformation-locked: #8A4FFF;
+  --erps-transformation-locked-bg: rgba(138, 79, 255, 0.15);
+  --erps-transformation-locked-border: rgba(138, 79, 255, 0.4);
   --erps-card-header-initiative: #3498db;
   --erps-card-header-initiative-npc: #e67e22;
   --erps-card-header-initiative-pc: #2ecc71;
@@ -4485,5 +4522,3 @@
   height: auto;
   overflow-y: auto !important;
 }
-
-/*# sourceMappingURL=eventide-rp-system.css.map */

@@ -6,7 +6,7 @@ const FilePicker = foundry.applications.apps.FilePicker.implementation;
  * @extends {HandlebarsApplicationMixin(ApplicationV2)}
  */
 export class EventideSheetHelpers extends HandlebarsApplicationMixin(
-  ApplicationV2
+  ApplicationV2,
 ) {
   constructor() {
     super();
@@ -52,7 +52,7 @@ export class EventideSheetHelpers extends HandlebarsApplicationMixin(
    */
   static get abilityObject() {
     return Object.fromEntries(
-      Object.keys(CONFIG.EVENTIDE_RP_SYSTEM.abilities).map((key) => [key, key])
+      Object.keys(CONFIG.EVENTIDE_RP_SYSTEM.abilities).map((key) => [key, key]),
     );
   }
   /**
@@ -98,7 +98,7 @@ export class EventideSheetHelpers extends HandlebarsApplicationMixin(
    */
   static get rollTypeObject() {
     return Object.fromEntries(
-      Object.keys(CONFIG.EVENTIDE_RP_SYSTEM.rollTypes).map((key) => [key, key])
+      Object.keys(CONFIG.EVENTIDE_RP_SYSTEM.rollTypes).map((key) => [key, key]),
     );
   }
 
@@ -108,7 +108,10 @@ export class EventideSheetHelpers extends HandlebarsApplicationMixin(
    */
   static get classNameObject() {
     return Object.fromEntries(
-      Object.keys(CONFIG.EVENTIDE_RP_SYSTEM.classNames).map((key) => [key, key])
+      Object.keys(CONFIG.EVENTIDE_RP_SYSTEM.classNames).map((key) => [
+        key,
+        key,
+      ]),
     );
   }
 
@@ -119,7 +122,7 @@ export class EventideSheetHelpers extends HandlebarsApplicationMixin(
    * @param {Object} options - Additional options
    * @returns {Promise<Object>} The prepared context
    */
-  async _preparePartContext(partId, context, options) {
+  async _preparePartContext(partId, context, _options) {
     context.partId = `${this.id}-${partId}`;
     return context;
   }
@@ -149,7 +152,7 @@ export class EventideSheetHelpers extends HandlebarsApplicationMixin(
       let currentPath; //= target.src;
       const inputName = target.dataset.target;
       const input = target.parentNode.querySelector(
-        `input[name="${inputName}"]`
+        `input[name="${inputName}"]`,
       );
       currentPath = input.value || "";
       currentPath = currentPath.replace(window.location.origin, "");
@@ -157,7 +160,7 @@ export class EventideSheetHelpers extends HandlebarsApplicationMixin(
 
       const fp = new FilePicker({
         displayMode: "tiles",
-        type: type,
+        type,
         current: currentPath,
         callback: (path) => {
           // Clean the selected path
@@ -171,8 +174,9 @@ export class EventideSheetHelpers extends HandlebarsApplicationMixin(
           }
 
           // Find the input
-          let input;
-          input = target.parentNode.querySelector(`input[name="${inputName}"]`);
+          const input = target.parentNode.querySelector(
+            `input[name="${inputName}"]`,
+          );
           input.value = cleanPath;
 
           input.dispatchEvent(new Event("change"));
@@ -185,15 +189,15 @@ export class EventideSheetHelpers extends HandlebarsApplicationMixin(
       console.error("Error in fileHandler:", error);
       if (type === "image") {
         ui.notifications.error(
-          game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.EditImage")
+          game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.EditImage"),
         );
       } else if (type === "audio") {
         ui.notifications.error(
-          game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.EditAudio")
+          game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.EditAudio"),
         );
       } else {
         ui.notifications.error(
-          game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.EditFile")
+          game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.EditFile"),
         );
       }
     }
@@ -224,7 +228,7 @@ export class EventideSheetHelpers extends HandlebarsApplicationMixin(
     if (game.user.isGM) return "gm";
     if (playerMode) return "player";
     ui.notification.error(
-      game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.GMOnly")
+      game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.GMOnly"),
     );
     return "forbidden";
   }

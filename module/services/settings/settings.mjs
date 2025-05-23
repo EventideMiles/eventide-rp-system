@@ -56,10 +56,10 @@ export class SoundSettingsApplication extends EventideSheetHelpers {
       return {
         key,
         name: game.i18n.localize(
-          `SETTINGS.Sound${key.charAt(0).toUpperCase() + key.slice(1)}Name`
+          `SETTINGS.Sound${key.charAt(0).toUpperCase() + key.slice(1)}Name`,
         ),
         hint: game.i18n.localize(
-          `SETTINGS.Sound${key.charAt(0).toUpperCase() + key.slice(1)}Hint`
+          `SETTINGS.Sound${key.charAt(0).toUpperCase() + key.slice(1)}Hint`,
         ),
         path: getSetting(`sound_${key}`),
         default: defaultPath,
@@ -74,9 +74,10 @@ export class SoundSettingsApplication extends EventideSheetHelpers {
    * @param {Event} event - The click event
    * @param {HTMLElement} target - The target element
    */
-  static async _onPlaySound(event, target) {
+  static async _onPlaySound(_event, target) {
     try {
       const key = target.dataset.key;
+
       // Get the current value from the input field
       const input = document.querySelector(`input[name="sound_${key}"]`);
       if (!input) return;
@@ -86,7 +87,7 @@ export class SoundSettingsApplication extends EventideSheetHelpers {
         // Play the sound directly using foundry.audio.AudioHelper (V12 namespace)
         await foundry.audio.AudioHelper.play(
           { src: path, volume: 0.8, autoplay: true, loop: false },
-          false
+          false,
         );
       } else {
         ui.notifications.warn(game.i18n.localize("SETTINGS.NoSoundSelected"));
@@ -102,7 +103,7 @@ export class SoundSettingsApplication extends EventideSheetHelpers {
    * @param {Event} event - The click event
    * @param {HTMLElement} target - The target element
    */
-  static _onResetSound(event, target) {
+  static _onResetSound(_event, target) {
     try {
       const key = target.dataset.key;
       const defaultPath = target.dataset.default;
@@ -117,7 +118,7 @@ export class SoundSettingsApplication extends EventideSheetHelpers {
     } catch (error) {
       console.error("Error in _onResetSound:", error);
       ui.notifications.error(
-        game.i18n.localize("SETTINGS.ErrorResettingSound")
+        game.i18n.localize("SETTINGS.ErrorResettingSound"),
       );
     }
   }
@@ -127,7 +128,7 @@ export class SoundSettingsApplication extends EventideSheetHelpers {
    * @param {Event} event - The click event
    * @param {HTMLElement} target - The target element
    */
-  static async _onTestAllSounds(event, target) {
+  static async _onTestAllSounds(_event, _target) {
     try {
       const soundKeys = Object.keys(erpsSoundManager.getDefaultSounds());
       for (const key of soundKeys) {
@@ -140,7 +141,7 @@ export class SoundSettingsApplication extends EventideSheetHelpers {
           // Play the sound directly using AudioHelper
           await foundry.audio.AudioHelper.play(
             { src: path, volume: 0.8, autoplay: true, loop: false },
-            false
+            false,
           );
           // Add a small delay between sounds
           await new Promise((resolve) => setTimeout(resolve, 800));
@@ -157,7 +158,7 @@ export class SoundSettingsApplication extends EventideSheetHelpers {
    * @param {Event} event - The click event
    * @param {HTMLElement} target - The target element
    */
-  static _onResetAllSounds(event, target) {
+  static _onResetAllSounds(_event, _target) {
     try {
       const defaultSounds = erpsSoundManager.getDefaultSounds();
       for (const [key, defaultPath] of Object.entries(defaultSounds)) {
@@ -173,7 +174,7 @@ export class SoundSettingsApplication extends EventideSheetHelpers {
     } catch (error) {
       console.error("Error in _onResetAllSounds:", error);
       ui.notifications.error(
-        game.i18n.localize("SETTINGS.ErrorResettingAllSounds")
+        game.i18n.localize("SETTINGS.ErrorResettingAllSounds"),
       );
     }
   }
@@ -193,7 +194,7 @@ export class SoundSettingsApplication extends EventideSheetHelpers {
    * @param {HTMLFormElement} form - The form element
    * @param {Object} formData - The form data
    */
-  static async _onSubmit(event, form, formData) {
+  static async _onSubmit(event, _form, formData) {
     try {
       event.preventDefault();
 
@@ -206,11 +207,11 @@ export class SoundSettingsApplication extends EventideSheetHelpers {
         const value = formData.get(settingKey);
 
         if (value) {
-          console.log(`Saving ${settingKey} with value ${value}`);
+          console.info(`Saving ${settingKey} with value ${value}`);
           await setSetting(settingKey, value);
         } else {
           console.warn(
-            `Sound setting ${settingKey} not found in form elements`
+            `Sound setting ${settingKey} not found in form elements`,
           );
         }
       }
@@ -226,7 +227,7 @@ export class SoundSettingsApplication extends EventideSheetHelpers {
     } catch (error) {
       console.error("Error in _onSubmit:", error);
       ui.notifications.error(
-        game.i18n.localize("SETTINGS.ErrorSavingSoundSettings")
+        game.i18n.localize("SETTINGS.ErrorSavingSoundSettings"),
       );
       return false;
     }
@@ -264,10 +265,10 @@ export const registerSettings = function () {
         game.settings.set(
           "eventide-rp-system",
           "initativeFormula",
-          defaultFormula
+          defaultFormula,
         );
         ui.notifications.warn(
-          "Initiative formula cannot be empty. Resetting to default."
+          "Initiative formula cannot be empty. Resetting to default.",
         );
       } else {
         // Update the initiative formula in the current session
@@ -383,7 +384,7 @@ export const registerSettings = function () {
         "theme-default",
         "theme-dark",
         "theme-light",
-        "theme-contrast"
+        "theme-contrast",
       );
       // Add the new theme class
       document.body.classList.add(`theme-${value}`);
@@ -454,7 +455,7 @@ export const registerSettings = function () {
         if (!value || value.trim() === "") {
           game.settings.set("eventide-rp-system", `sound_${key}`, defaultPath);
           ui.notifications.info(
-            game.i18n.format("SETTINGS.SoundResetToDefault", [key])
+            game.i18n.format("SETTINGS.SoundResetToDefault", [key]),
           );
         }
       },
@@ -469,7 +470,7 @@ export const registerSettings = function () {
     type: Boolean,
     default: false,
     onChange: (value) => {
-      console.log(`Testing mode set to ${value}`);
+      console.info(`Testing mode set to ${value}`);
     },
   });
 

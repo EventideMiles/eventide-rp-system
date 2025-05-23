@@ -32,6 +32,7 @@ export class ERPSSoundManager {
       combatPower: "systems/eventide-rp-system/assets/sounds/Trap_00.wav",
       damage: "systems/eventide-rp-system/assets/sounds/swish_4.wav",
       initiative: "systems/eventide-rp-system/assets/sounds/levelup.wav",
+      diceRoll: "sounds/dice.wav", // Standard Foundry dice sound for ability rolls
     };
 
     /**
@@ -78,8 +79,8 @@ export class ERPSSoundManager {
     const soundData = flags["eventide-rp-system"]?.sound;
 
     if (soundData && soundData.key) {
-      console.log(
-        `Eventide RP System | Playing sound from chat message: ${soundData.key}`
+      console.info(
+        `Eventide RP System | Playing sound from chat message: ${soundData.key}`,
       );
       // Play the sound locally without broadcasting to avoid loops
       this._playLocalSound(soundData.key, {
@@ -130,9 +131,9 @@ export class ERPSSoundManager {
       }
 
       this.sounds[key] = soundPath;
-    } catch (error) {
+    } catch {
       // If setting doesn't exist yet, use default
-      console.log(`Sound setting ${settingKey} not found, using default`);
+      console.info(`Sound setting ${settingKey} not found, using default`);
       this.sounds[key] = defaultPath;
     }
   }
@@ -182,8 +183,8 @@ export class ERPSSoundManager {
     // Get the sound path
     const soundPath = this.sounds[soundKey];
     if (!soundPath) {
-      console.log(
-        `Eventide RP System | Sound key "${soundKey}" not found or not yet implemented`
+      console.info(
+        `Eventide RP System | Sound key "${soundKey}" not found or not yet implemented`,
       );
       return;
     }
@@ -214,11 +215,11 @@ export class ERPSSoundManager {
     foundry.audio.AudioHelper.play(
       {
         src: soundPath,
-        volume: volume,
+        volume,
         autoplay: true,
         loop: false,
       },
-      false
+      false,
     );
   }
 

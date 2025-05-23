@@ -54,13 +54,14 @@ export class CombatPowerPopup extends EventidePopupHelpers {
    * @param {HTMLElement} form - The form element
    * @private
    */
-  static async #onSubmit(event, form, formData) {
+  static async #onSubmit(_event, _form, _formData) {
     const problems = await this.checkEligibility();
 
-    if (Object.values(problems).some((value) => value))
+    if (Object.values(problems).some((value) => value)) {
       return ui.notifications.error(
-        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.CombatPowerError")
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.CombatPowerError"),
       );
+    }
 
     this.item.actor.addPower(-this.item.system.cost);
 

@@ -1,133 +1,142 @@
 /**
- * Helper functions for range slider inputs
+ * Helper functions for enhanced range sliders
+ *
+ * This module provides functionality for creating and managing enhanced range sliders
+ * with styled thumbs and value displays.
+ *
  * @module helpers/range-sliders
  */
-import { CommonFoundryTasks } from "../utils/_module.mjs";
-
-const logIfTesting = CommonFoundryTasks.logIfTesting;
-
-// Track initialization to prevent duplicate handlers
-let isInitialized = false;
+import { Logger } from "../services/_module.mjs";
 
 /**
  * Initialize range slider functionality
  *
- * Sets up event listeners for range sliders and updates their displays.
- * This function is designed to be called only once, with subsequent calls
- * only updating the displays.
+ * Sets up responsive styling and value display for range input elements.
  */
 export const initRangeSliders = () => {
-  // Prevent multiple initializations of event handlers
-  if (isInitialized) {
-    // If already initialized, just update the displays
-    updateRangeSliderDisplays();
-    return;
+  try {
+    // Find all range input elements
+    const rangeInputs = document.querySelectorAll('input[type="range"]');
+
+    rangeInputs.forEach((input) => {
+      // Add event listeners for input changes
+      input.addEventListener("input", updateRangeValueDisplay);
+      input.addEventListener("change", updateRangeValueDisplay);
+
+      // Initialize the value display
+      updateRangeValueDisplay({ target: input });
+    });
+
+    Logger.debug(
+      "Range sliders initialized",
+      { count: rangeInputs.length },
+      "RANGE_SLIDER",
+    );
+  } catch (error) {
+    Logger.error("Failed to initialize range sliders", error, "RANGE_SLIDER");
   }
-
-  isInitialized = true;
-
-  // Add the global input handler for all range sliders
-  document.addEventListener("input", handleRangeSliderInput);
-
-  // Initial update of all range slider displays
-  updateRangeSliderDisplays();
-
-  logIfTesting("Range sliders initialized");
 };
 
 /**
- * Update range slider displays for any sliders that may have been added dynamically
+ * Enhance range sliders that may have been added dynamically
  *
- * This function finds all range sliders in the document and updates their
- * associated display values to match the current slider value.
+ * This function ensures all range sliders are properly initialized even if they weren't
+ * present during the initial render.
  */
-export const updateRangeSliderDisplays = () => {
-  // Find all range sliders
-  document.querySelectorAll(".base-form__range-slider").forEach((slider) => {
-    updateSingleSliderDisplay(slider);
-  });
+export const enhanceExistingRangeSliders = () => {
+  try {
+    initRangeSliders();
+  } catch (error) {
+    Logger.error(
+      "Failed to enhance existing range sliders",
+      error,
+      "RANGE_SLIDER",
+    );
+  }
 };
 
 /**
- * Updates the display for a single range slider
+ * Update the visual display of a range slider's value
  *
  * @private
- * @param {HTMLElement} slider - The range slider element
+ * @param {Event} event - The input/change event
  */
-const updateSingleSliderDisplay = (slider) => {
-  // Find the associated display value element
-  const wrapper = slider.closest(".base-form__slider-wrapper");
-  if (!wrapper) return;
+const updateRangeValueDisplay = (event) => {
+  const input = event.target;
+  if (!input || input.type !== "range") {
+    try {
+      const value = parseFloat(input.value);
+      const min = parseFloat(input.min) || 0;
+      const max = parseFloat(input.max) || 100;
 
-  const display = wrapper.querySelector(".base-form__range-value");
-  if (!display) return;
+      // Calculate percentage for styling
+      const percentage = ((value - min) / (max - min)) * 100;
 
-  // Update the display with the current value
-  display.textContent = `${slider.value}×`;
-};
+      // Update CSS custom property for gradient
+      input.style.setProperty("--range-progress", `${percentage}%`);
 
-/**
- * Handle input events for range sliders
- *
- * @private
- * @param {Event} event - The input event
- */
-const handleRangeSliderInput = (event) => {
-  const target = event.target;
-
-  // Check if the event target is a range slider
-  if (target.matches(".base-form__range-slider")) {
-    updateSingleSliderDisplay(target);
+      // Update associated value display if it exists
+      const valueDisplay = input.parentNode.querySelector(
+        ".range-value-display",
+      );
+      if (valueDisplay) {
+        valueDisplay.textContent = value;
+      }
+    } catch (error) {
+      Logger.warn(
+        "Failed to update range value display",
+        error,
+        "RANGE_SLIDER",
+      );
+    }
   }
 };
 
 /**
  * Clean up range slider enhancements for a specific application element
  *
- * This function removes event listeners from range sliders by replacing
- * them with clones, preserving their current values.
+ * This function removes event listeners from range sliders by replacing them
+ * with clones. It should be called in the _preClose method of applications
+ * that use enhanced range sliders to prevent memory leaks.
  *
- * @param {HTMLElement} element - The application's element
+ * @param {HTMLElement} element - The application's element (typically this.element)
  */
 export const cleanupRangeSliders = (element) => {
   if (!element) {
-    logIfTesting("Range Sliders | No element provided for cleanup");
-    return;
+    Logger.debug("No element provided for cleanup", {}, "RANGE_SLIDER");
   }
 
-  logIfTesting("Range Sliders | Cleaning up range sliders", element);
-
-  // Find all range sliders
-  const rangeSliders = element.querySelectorAll(".base-form__range-slider");
-
-  logIfTesting(
-    `Range Sliders | Found ${rangeSliders.length} range sliders to clean up`
+  Logger.debug(
+    "Cleaning up range sliders",
+    { elementTag: element.tagName },
+    "RANGE_SLIDER",
   );
 
-  rangeSliders.forEach((slider) => {
-    // Remove event listeners by cloning and replacing
-    const newSlider = slider.cloneNode(true);
-    // Preserve the current value
-    newSlider.value = slider.value;
-    slider.parentNode.replaceChild(newSlider, slider);
-  });
+  try {
+    // Find all range sliders within the element
+    const rangeSliders = element.querySelectorAll('input[type="range"]');
+    Logger.debug(
+      "Found range sliders to clean up",
+      { count: rangeSliders.length },
+      "RANGE_SLIDER",
+    );
+
+    rangeSliders.forEach((slider) => {
+      try {
+        // Remove event listeners by cloning and replacing
+        const newSlider = slider.cloneNode(true);
+        // Preserve the current value
+        newSlider.value = slider.value;
+        slider.parentNode.replaceChild(newSlider, slider);
+      } catch (sliderError) {
+        Logger.warn(
+          "Failed to cleanup individual range slider",
+          sliderError,
+          "RANGE_SLIDER",
+        );
+      }
+    });
+  } catch (error) {
+    Logger.error("Failed to cleanup range sliders", error, "RANGE_SLIDER");
+  }
 };
-
-// Initialize range sliders when relevant hooks fire
-Hooks.on("ready", () => {
-  initRangeSliders();
-});
-
-// Hook into all relevant render events to ensure range sliders are updated
-Hooks.on("renderItemV2", () => {
-  updateRangeSliderDisplays();
-});
-
-Hooks.on("renderEventideRpSystemItemSheet", () => {
-  updateRangeSliderDisplays();
-});
-
-// Catch any other application renders
-Hooks.on("renderApplicationV2", () => {
-  updateRangeSliderDisplays();
-});

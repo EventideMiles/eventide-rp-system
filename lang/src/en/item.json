@@ -79,6 +79,8 @@
         "CombatPowers": "Combat Powers"
       },
       "Transformation": {
+        "PowerAdjustment": "Power Adjustment",
+        "ResolveAdjustment": "Resolve Adjustment",
         "Size": "Size",
         "Notes": "Transformations can store combat powers that are available when the character transforms.",
         "EmbeddedPowers": "Combat Powers",

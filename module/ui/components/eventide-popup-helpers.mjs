@@ -1,7 +1,7 @@
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
 export class EventidePopupHelpers extends HandlebarsApplicationMixin(
-  ApplicationV2
+  ApplicationV2,
 ) {
   static DEFAULT_OPTIONS = {
     id: "popup",
@@ -17,7 +17,7 @@ export class EventidePopupHelpers extends HandlebarsApplicationMixin(
     this.item = item;
   }
 
-  async _prepareContext(options) {
+  async _prepareContext(_options) {
     const context = {
       item: this.item,
       effects: Array.from(this.item.effects),
@@ -32,7 +32,7 @@ export class EventidePopupHelpers extends HandlebarsApplicationMixin(
     return context;
   }
 
-  async _preparePartContext(partId, context, options) {
+  async _preparePartContext(partId, context, _options) {
     context.partId = `${this.id}-${partId}`;
     return context;
   }
@@ -45,7 +45,7 @@ export class EventidePopupHelpers extends HandlebarsApplicationMixin(
         type: "warning",
         faIcon: "fas fa-exclamation-triangle",
         text: game.i18n.localize(
-          "EVENTIDE_RP_SYSTEM.Forms.Callouts.Power.TargetPower"
+          "EVENTIDE_RP_SYSTEM.Forms.Callouts.Power.TargetPower",
         ),
       });
     }
@@ -55,7 +55,7 @@ export class EventidePopupHelpers extends HandlebarsApplicationMixin(
         type: "warning",
         faIcon: "fas fa-exclamation-triangle",
         text: game.i18n.localize(
-          "EVENTIDE_RP_SYSTEM.Forms.Callouts.Gear.TargetGear"
+          "EVENTIDE_RP_SYSTEM.Forms.Callouts.Gear.TargetGear",
         ),
       });
     }
@@ -69,7 +69,7 @@ export class EventidePopupHelpers extends HandlebarsApplicationMixin(
           {
             cost: this.item.system.cost,
             quantity: this.item.system.quantity,
-          }
+          },
         ),
       });
     }
@@ -79,7 +79,7 @@ export class EventidePopupHelpers extends HandlebarsApplicationMixin(
         type: "warning",
         faIcon: "fas fa-exclamation-triangle",
         text: game.i18n.localize(
-          "EVENTIDE_RP_SYSTEM.Forms.Callouts.Gear.NotEquipped"
+          "EVENTIDE_RP_SYSTEM.Forms.Callouts.Gear.NotEquipped",
         ),
       });
     }
@@ -93,7 +93,7 @@ export class EventidePopupHelpers extends HandlebarsApplicationMixin(
           {
             cost: this.item.system.cost,
             actorPower: this.item.actor.system.power.value,
-          }
+          },
         ),
       });
     }

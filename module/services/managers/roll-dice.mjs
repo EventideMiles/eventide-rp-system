@@ -120,7 +120,7 @@ class ERPSRollHandler {
     const messageData = {
       speaker,
       content,
-      sound: sound,
+      sound,
       rolls,
       flags: {
         "eventide-rp-system": {
@@ -216,7 +216,7 @@ class ERPSRollHandler {
       rollMode = this.defaults.rollMode,
       soundKey = this.defaults.soundKey,
     } = {},
-    actor
+    actor,
   ) {
     // Create and evaluate the roll
     const { roll, result } = await this._createAndEvaluateRoll(formula, actor);
@@ -224,7 +224,7 @@ class ERPSRollHandler {
     // Get targets and check data
     const { addCheck, targetArray, targetRollData } = await this._getTargetData(
       acCheck,
-      result
+      result,
     );
 
     // Determine critical states
@@ -232,7 +232,7 @@ class ERPSRollHandler {
       result,
       actor,
       formula,
-      critAllowed
+      critAllowed,
     );
 
     // Prepare template data
@@ -371,6 +371,7 @@ class ERPSRollHandler {
       pickedType,
       className,
       critAllowed,
+      hasRoll: true,
       acCheck: addCheck,
       targetArray,
       targetRollData,
@@ -382,7 +383,7 @@ class ERPSRollHandler {
       // Add these properties for initiative template compatibility
       name: actor.name,
       total: roll.total,
-      formula: formula,
+      formula,
     };
   }
 
@@ -438,11 +439,9 @@ class ERPSRollHandler {
    */
   async rollInitiative({
     combatant,
-    npc = false,
     whisperMode = false,
     description = "",
     customFlavor = "",
-    soundKey = null,
   }) {
     // Get initiative settings
     const hideNpcInitiativeRolls = this._getInitiativeSettings();
@@ -494,7 +493,7 @@ class ERPSRollHandler {
    */
   async _createInitiativeRoll(combatant) {
     // Get initiative formula from settings or combatant
-    let formula = CONFIG.Combat.initiative.formula;
+    const formula = CONFIG.Combat.initiative.formula;
 
     // Create and evaluate the roll
     const roll = new Roll(formula, combatant.actor?.getRollData() || {});
@@ -534,7 +533,6 @@ class ERPSRollHandler {
     isNpc,
     shouldWhisper,
     description,
-    customFlavor,
   }) {
     // Prepare template data
     const data = {
@@ -542,8 +540,8 @@ class ERPSRollHandler {
       formula: roll.formula,
       npc: isNpc,
       total: roll.total.toFixed(2),
-      description: description,
-      roll: roll, // Pass the roll object to the template
+      description,
+      roll, // Pass the roll object to the template
     };
 
     // Render the template

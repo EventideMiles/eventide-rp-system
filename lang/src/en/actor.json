@@ -38,6 +38,10 @@
         "Features": "Features",
         "Gear": "Gear",
         "Statuses": "Statuses"
+      },
+      "CombatPowers": {
+        "Transformed": "Transformed",
+        "TransformedLocked": "Combat powers are provided by active transformation - cannot create new powers while transformed"
       }
     }
   }

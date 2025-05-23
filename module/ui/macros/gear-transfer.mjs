@@ -37,7 +37,7 @@ export class GearTransfer extends EventideSheetHelpers {
     return game.i18n.format("EVENTIDE_RP_SYSTEM.WindowTitles.GearTransfer");
   }
 
-  constructor(options = {}) {
+  constructor(_options = {}) {
     super();
   }
 
@@ -58,7 +58,7 @@ export class GearTransfer extends EventideSheetHelpers {
    * Get data for the template render
    * @returns {Object} Template data
    */
-  async _prepareContext(options) {
+  async _prepareContext(_options) {
     await EventideSheetHelpers._gmCheck();
     const context = {};
 
@@ -70,7 +70,7 @@ export class GearTransfer extends EventideSheetHelpers {
     // Check for multiple tokens
     if (this.targetTokens.length > 1) {
       ui.notifications.warn(
-        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.SingleTargetOnly")
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.SingleTargetOnly"),
       );
       this.close();
       return context;
@@ -78,7 +78,7 @@ export class GearTransfer extends EventideSheetHelpers {
 
     if (this.selectedTokens.length > 1) {
       ui.notifications.warn(
-        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.SingleSelectOnly")
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.SingleSelectOnly"),
       );
       this.close();
       return context;
@@ -86,7 +86,7 @@ export class GearTransfer extends EventideSheetHelpers {
 
     if (!this.targetToken || !this.selectedToken) {
       ui.notifications.warn(
-        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.BothFirst")
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.BothFirst"),
       );
       this.close();
       return context;
@@ -95,7 +95,7 @@ export class GearTransfer extends EventideSheetHelpers {
     // Check for self-transfer
     if (this.targetToken.id === this.selectedToken.id) {
       ui.notifications.warn(
-        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.SameTransferPrevention")
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.SameTransferPrevention"),
       );
       this.close();
       return context;
@@ -107,7 +107,7 @@ export class GearTransfer extends EventideSheetHelpers {
 
     if (!context.targetActor || !context.selectedActor) {
       ui.notifications.warn(
-        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.NoActor")
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.NoActor"),
       );
       this.close();
       return context;
@@ -116,12 +116,12 @@ export class GearTransfer extends EventideSheetHelpers {
     // Get gear items from target actor with quantity > 0
     const targetItems = context.targetActor.items?.contents || [];
     context.targetGear = targetItems.filter(
-      (i) => i.type === "gear" && i.system.quantity > 0
+      (i) => i.type === "gear" && i.system.quantity > 0,
     );
 
     if (context.targetGear.length === 0) {
       ui.notifications.warn(
-        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.NoGear")
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.NoGear"),
       );
       this.close();
       return context;
@@ -136,7 +136,7 @@ export class GearTransfer extends EventideSheetHelpers {
           {
             target: context.targetActor.name,
             selected: context.selectedActor.name,
-          }
+          },
         ),
       },
     ];
@@ -168,9 +168,8 @@ export class GearTransfer extends EventideSheetHelpers {
     const sourceItem = sourceActor.items.get(itemId);
     if (!sourceItem) {
       ui.notifications.warn(
-        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.ItemNotFound")
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.ItemNotFound"),
       );
-      return;
     }
 
     // Calculate the actual quantity to transfer (never more than available)
@@ -179,14 +178,13 @@ export class GearTransfer extends EventideSheetHelpers {
 
     if (transferQuantity <= 0) {
       ui.notifications.warn(
-        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.NoItemsAvailable")
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.NoItemsAvailable"),
       );
-      return;
     }
 
     // Check if destination already has this gear
     const existingItem = destActor.items.find(
-      (i) => i.name === sourceItem.name && i.type === "gear"
+      (i) => i.name === sourceItem.name && i.type === "gear",
     );
 
     if (existingItem) {
@@ -204,7 +202,7 @@ export class GearTransfer extends EventideSheetHelpers {
     // Reduce source item quantity (never below 0)
     const newQuantity = Math.max(
       0,
-      sourceItem.system.quantity - transferQuantity
+      sourceItem.system.quantity - transferQuantity,
     );
     await sourceItem.update({
       "system.quantity": newQuantity,
@@ -213,7 +211,12 @@ export class GearTransfer extends EventideSheetHelpers {
     // If the requested quantity was different from what was actually transferred, add a note
     let finalDescription = description;
     if (requestedQuantity !== transferQuantity) {
-      const note = `Only ${transferQuantity} items were available to transfer.`;
+      const note = game.i18n.format(
+        "EVENTIDE_RP_SYSTEM.Messages.PartialTransfer",
+        {
+          quantity: transferQuantity,
+        },
+      );
       finalDescription = description ? `${note}\n${description}` : note;
     }
 
@@ -223,7 +226,7 @@ export class GearTransfer extends EventideSheetHelpers {
       sourceActor,
       destActor,
       transferQuantity,
-      finalDescription
+      finalDescription,
     );
   }
 }

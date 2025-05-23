@@ -26,7 +26,7 @@ export const initializeCombatHooks = async () => {
       await rollInitiativeForCombatant(
         combatant,
         true,
-        settings.hideNpcInitiativeRolls
+        settings.hideNpcInitiativeRolls,
       );
     }
 
@@ -49,7 +49,7 @@ export const initializeCombatHooks = async () => {
     try {
       const roundDuration = game.settings.get(
         "eventide-rp-system",
-        "defaultCombatRoundDuration"
+        "defaultCombatRoundDuration",
       );
 
       if (roundDuration) {
@@ -58,7 +58,7 @@ export const initializeCombatHooks = async () => {
     } catch (error) {
       console.warn(
         "Could not get combat round duration setting, using default",
-        error
+        error,
       );
     }
   });
@@ -79,15 +79,15 @@ const getCombatSettings = () => {
     try {
       autoRollNpcInitiative = game.settings.get(
         "eventide-rp-system",
-        "autoRollNpcInitiative"
+        "autoRollNpcInitiative",
       );
       hideNpcInitiativeRolls = game.settings.get(
         "eventide-rp-system",
-        "hideNpcInitiativeRolls"
+        "hideNpcInitiativeRolls",
       );
       autoRollPlayerInitiative = game.settings.get(
         "eventide-rp-system",
-        "autoRollPlayerInitiative"
+        "autoRollPlayerInitiative",
       );
     } catch (error) {
       console.warn("Could not get initiative settings, using defaults", error);
@@ -113,9 +113,9 @@ const getCombatSettings = () => {
 const rollInitiativeForCombatant = async (combatant, isNpc, whisperMode) => {
   try {
     await erpsRollHandler.rollInitiative({
-      combatant: combatant,
+      combatant,
       npc: isNpc,
-      whisperMode: whisperMode,
+      whisperMode,
       customFlavor: `${
         combatant.name || combatant.actor.name
       } rolls for Initiative!`,
@@ -123,7 +123,7 @@ const rollInitiativeForCombatant = async (combatant, isNpc, whisperMode) => {
   } catch (error) {
     console.error(
       `Error rolling initiative for ${isNpc ? "NPC" : "player"}:`,
-      error
+      error,
     );
     // Fall back to the default method if our custom approach fails
     combatant.parent.rollInitiative(combatant.id);
@@ -142,12 +142,12 @@ const overrideCombatRollInitiative = () => {
     try {
       hideNpcInitiativeRolls = game.settings.get(
         "eventide-rp-system",
-        "hideNpcInitiativeRolls"
+        "hideNpcInitiativeRolls",
       );
     } catch (error) {
       console.warn(
         "Could not get hideNpcInitiativeRolls setting, using default",
-        error
+        error,
       );
     }
 
@@ -167,7 +167,7 @@ const overrideCombatRollInitiative = () => {
       const shouldWhisper = hideNpcInitiativeRolls && isNpc;
 
       await erpsRollHandler.rollInitiative({
-        combatant: combatant,
+        combatant,
         npc: isNpc,
         whisperMode:
           shouldWhisper || rollMode === "gmroll" || rollMode === "blindroll",
@@ -193,12 +193,12 @@ const overrideCombatantRollInitiative = () => {
     try {
       hideNpcInitiativeRolls = game.settings.get(
         "eventide-rp-system",
-        "hideNpcInitiativeRolls"
+        "hideNpcInitiativeRolls",
       );
     } catch (error) {
       console.warn(
         "Could not get hideNpcInitiativeRolls setting, using default",
-        error
+        error,
       );
     }
 

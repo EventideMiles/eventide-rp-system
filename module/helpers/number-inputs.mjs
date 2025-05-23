@@ -6,9 +6,7 @@
  *
  * @module helpers/number-inputs
  */
-import { CommonFoundryTasks } from "../utils/_module.mjs";
-
-const logIfTesting = CommonFoundryTasks.logIfTesting;
+import { Logger } from "../services/_module.mjs";
 
 // Track initialization to prevent duplicate handlers
 let isInitialized = false;
@@ -25,24 +23,31 @@ export const initNumberInputs = () => {
   if (isInitialized) {
     // If already initialized, just update the responsive behavior
     updateNumberInputResponsiveness();
-    return;
   }
 
   isInitialized = true;
 
-  // Add the global click handler for all number input buttons
-  document.addEventListener("click", handleNumberInputClick);
+  try {
+    // Add the global click handler for all number input buttons
+    document.addEventListener("click", handleNumberInputClick);
 
-  // Initial check of number input sizes
-  updateNumberInputResponsiveness();
+    // Initial check of number input sizes
+    updateNumberInputResponsiveness();
 
-  // Listen for window resize events to update compact state
-  window.addEventListener(
-    "resize",
-    debounce(updateNumberInputResponsiveness, 250)
-  );
+    // Listen for window resize events to update compact state
+    window.addEventListener(
+      "resize",
+      debounce(updateNumberInputResponsiveness, 250),
+    );
 
-  logIfTesting("Number inputs initialized with responsive behavior");
+    Logger.debug(
+      "Number inputs initialized with responsive behavior",
+      {},
+      "NUMBER_INPUT",
+    );
+  } catch (error) {
+    Logger.error("Failed to initialize number inputs", error, "NUMBER_INPUT");
+  }
 };
 
 /**
@@ -53,20 +58,32 @@ export const initNumberInputs = () => {
  * responsive behavior for all number input wrappers.
  */
 export const enhanceExistingNumberInputs = () => {
-  // Find all number inputs not properly wrapped
-  document.querySelectorAll('input[type="number"]').forEach((input) => {
-    const wrapper = input.closest(".base-form__number-input-wrapper");
+  try {
+    // Find all number inputs not properly wrapped
+    document.querySelectorAll('input[type="number"]').forEach((input) => {
+      const wrapper = input.closest(".base-form__number-input-wrapper");
 
-    // If this input isn't in a wrapper but has the base-form__number-input class,
-    // we need to wrap it with increment/decrement buttons
-    if (!wrapper && input.classList.contains("base-form__number-input")) {
-      logIfTesting("Found unwrapped number input, wrapping it");
-      wrapNumberInput(input);
-    }
-  });
+      // If this input isn't in a wrapper but has the base-form__number-input class,
+      // we need to wrap it with increment/decrement buttons
+      if (!wrapper && input.classList.contains("base-form__number-input")) {
+        Logger.debug(
+          "Found unwrapped number input, wrapping it",
+          { inputName: input.name },
+          "NUMBER_INPUT",
+        );
+        wrapNumberInput(input);
+      }
+    });
 
-  // Update responsive behavior for all wrappers
-  updateNumberInputResponsiveness();
+    // Update responsive behavior for all wrappers
+    updateNumberInputResponsiveness();
+  } catch (error) {
+    Logger.error(
+      "Failed to enhance existing number inputs",
+      error,
+      "NUMBER_INPUT",
+    );
+  }
 };
 
 /**
@@ -80,17 +97,24 @@ export const enhanceExistingNumberInputs = () => {
  */
 export const cleanupNumberInputs = (element) => {
   if (!element) {
-    logIfTesting("Number Inputs | No element provided for cleanup");
-    return;
+    Logger.debug("No element provided for cleanup", {}, "NUMBER_INPUT");
   }
 
-  logIfTesting("Number Inputs | Cleaning up number inputs", element);
+  Logger.debug(
+    "Cleaning up number inputs",
+    { elementTag: element.tagName },
+    "NUMBER_INPUT",
+  );
 
-  // Remove any tab click listeners that might have been added for number inputs
-  cleanupTabListeners(element);
+  try {
+    // Remove any tab click listeners that might have been added for number inputs
+    cleanupTabListeners(element);
 
-  // Clean up any number input wrappers
-  cleanupNumberInputWrappers(element);
+    // Clean up any number input wrappers
+    cleanupNumberInputWrappers(element);
+  } catch (error) {
+    Logger.error("Failed to cleanup number inputs", error, "NUMBER_INPUT");
+  }
 };
 
 /**
@@ -178,8 +202,8 @@ const updateNumberInputValue = (input, isIncrement) => {
   }
 
   // Trigger change event
-  input.dispatchEvent(new Event("change", { bubbles: true }));
-  input.dispatchEvent(new Event("input", { bubbles: true }));
+  input.dispatchEvent(new window.Event("change", { bubbles: true }));
+  input.dispatchEvent(new window.Event("input", { bubbles: true }));
 };
 
 /**
@@ -226,11 +250,13 @@ const cleanupTabListeners = (element) => {
  */
 const cleanupNumberInputWrappers = (element) => {
   const numberWrappers = element.querySelectorAll(
-    ".base-form__number-input-wrapper"
+    ".base-form__number-input-wrapper",
   );
 
-  logIfTesting(
-    `Number Inputs | Found ${numberWrappers.length} number inputs to clean up`
+  Logger.debug(
+    "Found number inputs to clean up",
+    { count: numberWrappers.length },
+    "NUMBER_INPUT",
   );
 
   numberWrappers.forEach((wrapper) => {
@@ -268,16 +294,16 @@ Hooks.on("ready", () => {
 });
 
 // Hook into all relevant render events to ensure number inputs are enhanced
-Hooks.on("renderItemV2", (app, html) => {
+Hooks.on("renderItemV2", (_app, _html) => {
   enhanceExistingNumberInputs();
 });
 
-Hooks.on("renderEventideRpSystemItemSheet", (app, html) => {
+Hooks.on("renderEventideRpSystemItemSheet", (_app, html) => {
   enhanceExistingNumberInputs();
 
   const tabsContainer = html.querySelector(".tabs");
   if (tabsContainer) {
-    tabsContainer.addEventListener("click", (event) => {
+    tabsContainer.addEventListener("click", (_event) => {
       setTimeout(() => {
         updateNumberInputResponsiveness();
       }, 50);
@@ -288,5 +314,5 @@ Hooks.on("renderEventideRpSystemItemSheet", (app, html) => {
 // Catch any other application renders
 Hooks.on("renderApplicationV2", () => {
   updateNumberInputResponsiveness();
-  logIfTesting("Number inputs updated");
+  Logger.debug("Number inputs updated", {}, "NUMBER_INPUT");
 });

@@ -82,8 +82,8 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
           });
           return obj;
         },
-        {}
-      )
+        {},
+      ),
     );
 
     schema.hiddenAbilities = new fields.SchemaField({
@@ -203,7 +203,7 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
         game.i18n.localize(CONFIG.EVENTIDE_RP_SYSTEM.abilities[key]) ?? key;
       current.abbr =
         game.i18n.localize(
-          CONFIG.EVENTIDE_RP_SYSTEM.abilityAbbreviations[key]
+          CONFIG.EVENTIDE_RP_SYSTEM.abilityAbbreviations[key],
         ) ?? key;
       current.total = current.override
         ? current.override + current.change + current.transform
@@ -238,7 +238,7 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
       (total, ability) => {
         return total + ability.total;
       },
-      0
+      0,
     );
 
     this.statTotal.mainInit =
@@ -257,13 +257,18 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
     // Copy the ability scores to the top level, so that rolls can use
     // formulas like `@acro.total + 4`.
     if (this.abilities) {
-      for (let [k, v] of Object.entries(this.abilities)) {
+      for (const [k, v] of Object.entries(this.abilities)) {
         data[k] = foundry.utils.deepClone(v);
       }
     }
 
+    // Keep hiddenAbilities as a nested object for critical detection
+    // but also copy individual properties to top level for formula compatibility
     if (this.hiddenAbilities) {
-      for (let [k, v] of Object.entries(this.hiddenAbilities)) {
+      data.hiddenAbilities = foundry.utils.deepClone(this.hiddenAbilities);
+
+      // Also copy individual hidden abilities to top level for backward compatibility
+      for (const [k, v] of Object.entries(this.hiddenAbilities)) {
         data[k] = foundry.utils.deepClone(v);
       }
     }

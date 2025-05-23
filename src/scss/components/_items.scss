@@ -69,25 +69,25 @@
 // Variant for 3-column grid (used by embedded-combat-powers)
 .items-panel__list--three-column {
   grid-template-columns: tokens.$size-prop-cell 1fr max-content;
-  
+
   .items-panel__header-cell {
     padding: 0 5px;
     text-align: center;
     border-left: none;
     border-right: none;
   }
-  
+
   .items-panel__list-cell {
     padding: 3px 5px;
     border-left: none;
     border-right: none;
   }
-  
+
   // Make the first column narrower for the icon
   .items-panel__header-cell:first-child {
     justify-content: center;
   }
-  
+
   // Add clean row borders
   .items-panel__list-item:not(.items-panel__header):last-child {
     border-bottom: none;
@@ -111,7 +111,7 @@
 .items-panel__header,
 .items-panel__list-item {
   flex: 2 1 0%;
-  min-width: 90px;   
+  min-width: 90px;
   text-align: left;
   display: flex;
   align-items: center;
@@ -176,6 +176,28 @@
   .items-panel__controls--disabled {
     color: #e74c3c;
   }
+
+  // Transformation indicator styling
+  .items-panel__transformed-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    color: colors.$transformation-locked;
+    font-size: 0.75rem;
+    font-style: italic;
+    padding: 0.25rem 0.5rem;
+    background: colors.$transformation-locked-bg;
+    border-radius: 3px;
+    border: 1px solid colors.$transformation-locked-border;
+
+    i {
+      font-size: 0.7rem;
+    }
+
+    span {
+      white-space: nowrap;
+    }
+  }
 }
 
 // Individual Item
@@ -239,7 +261,7 @@
 
 .embedded-combat-powers {
   // Block element
-  
+
   &__header {
     @include mixins.grid-compliant-section-header;
     border-bottom: 1px solid colors.$c-faint;

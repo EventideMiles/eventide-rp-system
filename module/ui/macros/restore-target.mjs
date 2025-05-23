@@ -45,7 +45,7 @@ export class RestoreTarget extends EventideSheetHelpers {
    * @returns {Promise<Object>} The prepared context containing target and status information
    * @throws {Error} If no target is selected or multiple targets are selected
    */
-  async _prepareContext(options) {
+  async _prepareContext(_options) {
     await EventideSheetHelpers._gmCheck();
     const context = {};
 
@@ -53,19 +53,19 @@ export class RestoreTarget extends EventideSheetHelpers {
     context.cssClass = RestoreTarget.DEFAULT_OPTIONS.classes.join(" ");
     if (this.targetTokens.length === 0) {
       ui.notifications.error(
-        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.TargetFirst")
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.TargetFirst"),
       );
       this.close();
     } else if (this.targetTokens.length > 1) {
       ui.notifications.error(
-        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.SingleTargetOnly")
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.SingleTargetOnly"),
       );
       this.close();
     }
 
     context.actor = this.targetTokens[0].actor;
     context.statusEffects = context.actor?.items?.filter(
-      (item) => item?.type === "status"
+      (item) => item?.type === "status",
     );
 
     this.statusEffects = context.statusEffects;

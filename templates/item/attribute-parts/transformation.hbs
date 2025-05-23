@@ -9,5 +9,39 @@
       </select>
     </div>
   </div>
+
+  <div class="grid grid-2col">
+    <div class="form-group">
+      <label>{{localize "EVENTIDE_RP_SYSTEM.Item.Transformation.ResolveAdjustment"}}</label>
+      <div class="base-form__number-input-wrapper">
+        <button type="button" class="decrement" data-action="decrementEffect" data-index="{{@index}}" data-type="visible">−</button>
+        <input 
+          type="number" 
+          class="base-form__number-input"
+          name="system.resolveAdjustment" 
+          value="{{system.resolveAdjustment}}" 
+          step="1"
+          data-dtype="Number"
+        >
+        <button type="button" class="increment" data-action="incrementEffect" data-index="{{@index}}" data-type="visible">+</button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>{{localize "EVENTIDE_RP_SYSTEM.Item.Transformation.PowerAdjustment"}}</label>
+      <div class="base-form__number-input-wrapper">
+        <button type="button" class="decrement" data-action="decrementEffect" data-index="{{@index}}" data-type="visible">−</button>
+        <input 
+          type="number" 
+          class="base-form__number-input"
+          name="system.powerAdjustment" 
+          value="{{system.powerAdjustment}}" 
+          step="1"
+          data-dtype="Number"
+        >
+        <button type="button" class="increment" data-action="incrementEffect" data-index="{{@index}}" data-type="visible">+</button>
+      </div>
+    </div>
+  </div>
 </div>
 

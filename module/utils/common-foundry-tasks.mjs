@@ -174,7 +174,7 @@ export class CommonFoundryTasks {
 
     // Show error notification if action is not permitted for players
     ui.notifications.error(
-      game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.GMOnly")
+      game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.GMOnly"),
     );
     return "forbidden";
   }
@@ -194,12 +194,12 @@ export class CommonFoundryTasks {
   }
 
   static logIfTesting(message, data) {
-    if (!CommonFoundryTasks.isTestingMode) return;
-
-    if (data !== undefined) {
-      console.log(message, data);
-    } else {
-      console.log(message);
+    if (!CommonFoundryTasks.isTestingMode) {
+      if (data !== undefined) {
+        console.info(message, data);
+      } else {
+        console.info(message);
+      }
     }
   }
 }

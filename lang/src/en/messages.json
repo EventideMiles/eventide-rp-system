@@ -35,6 +35,7 @@
       "Restore": "Restoration: {name}",
       "GearEquip": "Equipment Change: {name}",
       "Transformation": "Transformation: {name}"
-    }
+    },
+    "PartialTransfer": "Only {quantity} items were available to transfer."
   }
 }

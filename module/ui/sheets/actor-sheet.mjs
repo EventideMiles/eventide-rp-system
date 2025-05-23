@@ -1,5 +1,6 @@
 import { CommonFoundryTasks } from "../../utils/_module.mjs";
-import { erpsRollHandler } from "../../services/_module.mjs";
+import { erpsRollHandler, Logger } from "../../services/_module.mjs";
+import { ErrorHandler } from "../../utils/error-handler.mjs";
 
 const { api, sheets } = foundry.applications;
 const { DragDrop, TextEditor } = foundry.applications.ux;
@@ -10,11 +11,35 @@ const FilePicker = foundry.applications.apps.FilePicker.implementation;
  * @extends {ActorSheetV2}
  */
 export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
-  sheets.ActorSheetV2
+  sheets.ActorSheetV2,
 ) {
   constructor(options = {}) {
-    super(options);
-    this.#dragDrop = this.#createDragDropHandlers();
+    Logger.methodEntry("EventideRpSystemActorSheet", "constructor", {
+      actorId: options?.document?.id,
+      actorName: options?.document?.name,
+      actorType: options?.document?.type,
+    });
+
+    try {
+      super(options);
+      this.#dragDrop = this.#createDragDropHandlers();
+
+      Logger.debug(
+        "Actor sheet initialized successfully",
+        {
+          sheetId: this.id,
+          actorName: this.actor?.name,
+          dragDropHandlers: this.#dragDrop?.length,
+        },
+        "ACTOR_SHEET",
+      );
+
+      Logger.methodExit("EventideRpSystemActorSheet", "constructor", this);
+    } catch (error) {
+      Logger.error("Failed to initialize actor sheet", error, "ACTOR_SHEET");
+      Logger.methodExit("EventideRpSystemActorSheet", "constructor", null);
+      throw error;
+    }
   }
 
   /** @override */
@@ -91,7 +116,9 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
       "gear",
     ];
     // Don't show the other tabs if only limited view
-    if (this.document.limited) return;
+    if (this.document.limited) {
+      options.parts = ["header", "tabs", "biography"];
+    }
     // Control which parts show based on document subtype
   }
 
@@ -99,64 +126,168 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
 
   /** @override */
   async _prepareContext(options) {
-    // Output initialization
-    const context = {
-      // Validates both permissions and compendium status
-      editable: this.isEditable,
-      owner: this.document.isOwner,
-      limited: this.document.limited,
-      // Add the actor document.
-      actor: this.actor,
-      // Add the actor's data to context.data for easier access, as well as flags.
-      system: this.actor.system,
-      flags: this.actor.flags,
-      // Adding a pointer to CONFIG.EVENTIDE_RP_SYSTEM
-      config: CONFIG.EVENTIDE_RP_SYSTEM,
-      tabs: this._getTabs(options.parts),
-      // Necessary for formInput and formFields helpers
-      fields: this.document.schema.fields,
-      systemFields: this.document.system.schema.fields,
-      isGM: game.user.isGM,
-    };
+    Logger.methodEntry("EventideRpSystemActorSheet", "_prepareContext", {
+      actorName: this.actor?.name,
+      optionsParts: options?.parts,
+    });
 
-    // Offloading context prep to a helper function
-    this._prepareItems(context);
+    try {
+      // Output initialization
+      const context = {
+        // Validates both permissions and compendium status
+        editable: this.isEditable,
+        owner: this.document.isOwner,
+        limited: this.document.limited,
+        // Add the actor document.
+        actor: this.actor,
+        // Add the actor's data to context.data for easier access, as well as flags.
+        system: this.actor.system,
+        flags: this.actor.flags,
+        // Adding a pointer to CONFIG.EVENTIDE_RP_SYSTEM
+        config: CONFIG.EVENTIDE_RP_SYSTEM,
+        tabs: this._getTabs(options.parts),
+        // Necessary for formInput and formFields helpers
+        fields: this.document.schema.fields,
+        systemFields: this.document.system.schema.fields,
+        isGM: game.user.isGM,
+      };
 
-    return context;
+      // Offloading context prep to a helper function
+      await this._prepareItems(context);
+
+      Logger.debug(
+        "Actor sheet context prepared",
+        {
+          actorName: this.actor.name,
+          contextKeys: Object.keys(context),
+          tabCount: Object.keys(context.tabs).length,
+          editable: context.editable,
+          limited: context.limited,
+        },
+        "ACTOR_SHEET",
+      );
+
+      Logger.methodExit(
+        "EventideRpSystemActorSheet",
+        "_prepareContext",
+        context,
+      );
+      return context;
+    } catch (error) {
+      await ErrorHandler.handleAsync(Promise.reject(error), {
+        context: "Actor sheet context preparation",
+        errorType: ErrorHandler.ERROR_TYPES.UI,
+        userMessage: game.i18n.localize(
+          "EVENTIDE_RP_SYSTEM.Errors.SheetContextFailed",
+        ),
+      });
+
+      // Return minimal fallback context
+      return {
+        editable: false,
+        owner: false,
+        limited: true,
+        actor: this.actor,
+        system: this.actor?.system || {},
+        flags: this.actor?.flags || {},
+        config: CONFIG.EVENTIDE_RP_SYSTEM,
+        tabs: this._getTabs(options.parts),
+      };
+    }
   }
 
   /** @override */
   async _preparePartContext(partId, context) {
-    switch (partId) {
-      case "gear":
-        context.tab = context.tabs[partId];
+    Logger.methodEntry("EventideRpSystemActorSheet", "_preparePartContext", {
+      partId,
+      actorName: this.actor?.name,
+    });
 
-        break;
-      case "features":
-      case "statuses":
-      case "combatPowers":
-        context.tab = context.tabs[partId];
-        break;
-      case "biography":
-        context.tab = context.tabs[partId];
-        // Enrich biography info for display
-        // Enrichment turns text like `[[/r 1d20]]` into buttons
-        context.enrichedBiography = await TextEditor.implementation.enrichHTML(
-          this.actor.system.biography,
-          {
-            // Whether to show secret blocks in the finished html
-            secrets: this.document.isOwner,
-            // Data to fill in for inline rolls
-            rollData: this.actor.getRollData(),
-            // Relative UUID resolution
-            relativeTo: this.actor,
+    try {
+      switch (partId) {
+        case "gear":
+          context.tab = context.tabs[partId];
+          break;
+        case "features":
+        case "statuses":
+        case "combatPowers":
+          context.tab = context.tabs[partId];
+          break;
+        case "biography":
+          context.tab = context.tabs[partId];
+          // Enrich biography info for display
+          // Enrichment turns text like `[[/r 1d20]]` into buttons
+          try {
+            context.enrichedBiography =
+              await TextEditor.implementation.enrichHTML(
+                this.actor.system.biography,
+                {
+                  // Whether to show secret blocks in the finished html
+                  secrets: this.document.isOwner,
+                  // Data to fill in for inline rolls
+                  rollData: this.actor.getRollData(),
+                  // Relative UUID resolution
+                  relativeTo: this.actor,
+                },
+              );
+          } catch (enrichError) {
+            Logger.warn(
+              "Failed to enrich biography HTML",
+              enrichError,
+              "ACTOR_SHEET",
+            );
+            // Fallback to plain text
+            context.enrichedBiography = this.actor.system.biography || "";
           }
-        );
-        break;
-    }
+          break;
+      }
 
-    context.formulas = await this.actor.getRollFormulas();
-    return context;
+      // Get roll formulas with error handling
+      try {
+        context.formulas = await this.actor.getRollFormulas();
+      } catch (formulaError) {
+        Logger.warn("Failed to get roll formulas", formulaError, "ACTOR_SHEET");
+        context.formulas = {};
+      }
+
+      Logger.debug(
+        `Part context prepared for ${partId}`,
+        {
+          partId,
+          hasTab: !!context.tab,
+          hasFormulas: !!context.formulas,
+          hasEnrichedBiography: !!context.enrichedBiography,
+        },
+        "ACTOR_SHEET",
+      );
+
+      Logger.methodExit(
+        "EventideRpSystemActorSheet",
+        "_preparePartContext",
+        context,
+      );
+      return context;
+    } catch (error) {
+      Logger.error(
+        `Failed to prepare part context for ${partId}`,
+        error,
+        "ACTOR_SHEET",
+      );
+
+      // Return context with minimal fallback
+      context.tab = context.tabs?.[partId] || {};
+      context.formulas = {};
+      if (partId === "biography") {
+        context.enrichedBiography = this.actor?.system?.biography || "";
+      }
+
+      Logger.methodExit(
+        "EventideRpSystemActorSheet",
+        "_preparePartContext",
+        context,
+      );
+      return context;
+    }
   }
 
   /**
@@ -229,9 +360,9 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
       try {
         defaultTab = game.settings.get(
           "eventide-rp-system",
-          "defaultCharacterTab"
+          "defaultCharacterTab",
         );
-      } catch (error) {
+      } catch {
         console.warn("Could not get default tab setting, using 'features'");
       }
     }
@@ -244,60 +375,128 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
    *
    * @param {object} context The context object to mutate
    */
-  _prepareItems(context) {
-    // Initialize containers.
-    // You can just use `this.document.itemTypes` instead
-    // if you don't need to subdivide a given type like
-    // this sheet does with statuses
-    const gear = [];
-    const features = [];
-    const statuses = [];
-    const combatPowers = [];
-    const transformations = [];
-    const transformationCombatPowers = [];
+  async _prepareItems(context) {
+    Logger.methodEntry("EventideRpSystemActorSheet", "_prepareItems", {
+      actorName: this.actor?.name,
+      itemCount: this.document.items.size,
+    });
 
-    // Iterate through items, allocating to containers
-    for (let i of this.document.items) {
-      // Append to gear.
-      if (i.type === "gear") {
-        gear.push(i);
-      }
-      // Append to features.
-      else if (i.type === "feature") {
-        features.push(i);
-      }
-      // Append to statuses
-      else if (i.type === "status") {
-        statuses.push(i);
-      }
-      // Append to combat powers
-      else if (i.type === "combatPower") {
-        combatPowers.push(i);
-      }
-      // Append to transformations
-      else if (i.type === "transformation") {
-        transformations.push(i);
-        if (i.system.embeddedCombatPowers.length > 0) {
-          transformationCombatPowers.push(...i.system.embeddedCombatPowers);
+    try {
+      // Initialize containers.
+      // You can just use `this.document.itemTypes` instead
+      // if you don't need to subdivide a given type like
+      // this sheet does with statuses
+      const gear = [];
+      const features = [];
+      const statuses = [];
+      const combatPowers = [];
+      const transformations = [];
+      const transformationCombatPowers = [];
+
+      // Iterate through items, allocating to containers
+      for (const i of this.document.items) {
+        try {
+          // Append to gear.
+          if (i.type === "gear") {
+            gear.push(i);
+          } else if (i.type === "feature") {
+            // Append to features.
+            features.push(i);
+          } else if (i.type === "status") {
+            // Append to statuses
+            statuses.push(i);
+          } else if (i.type === "combatPower") {
+            // Append to combat powers
+            combatPowers.push(i);
+          } else if (i.type === "transformation") {
+            // Append to transformations
+            transformations.push(i);
+            if (i.system?.embeddedCombatPowers?.length > 0) {
+              transformationCombatPowers.push(...i.system.embeddedCombatPowers);
+            }
+          } else {
+            Logger.warn(
+              `Unknown item type: ${i.type}`,
+              { itemId: i.id, itemName: i.name },
+              "ACTOR_SHEET",
+            );
+          }
+        } catch (itemError) {
+          Logger.warn(
+            `Error processing item: ${i.name}`,
+            itemError,
+            "ACTOR_SHEET",
+          );
         }
       }
-    }
 
-    // Sort then assign
-    context.gear = gear.sort((a, b) => (a.sort || 0) - (b.sort || 0));
-    context.unequippedGear = gear.filter((i) => !i.system.equipped);
-    context.equippedGear = gear.filter((i) => i.system.equipped);
-    context.features = features.sort((a, b) => (a.sort || 0) - (b.sort || 0));
-    context.statuses = statuses.sort((a, b) => (a.sort || 0) - (b.sort || 0));
-    context.combatPowers = combatPowers.sort(
-      (a, b) => (a.sort || 0) - (b.sort || 0)
-    );
-    context.transformationCombatPowers = transformationCombatPowers.sort(
-      (a, b) => (a.sort || 0) - (b.sort || 0)
-    );
-    context.transformations = transformations.sort(
-      (a, b) => (a.sort || 0) - (b.sort || 0)
-    );
+      // Sort then assign with error handling
+      try {
+        context.gear = gear.sort((a, b) => (a.sort || 0) - (b.sort || 0));
+        context.unequippedGear = gear.filter((i) => !i.system?.equipped);
+        context.equippedGear = gear.filter((i) => i.system?.equipped);
+        context.features = features.sort(
+          (a, b) => (a.sort || 0) - (b.sort || 0),
+        );
+        context.statuses = statuses.sort(
+          (a, b) => (a.sort || 0) - (b.sort || 0),
+        );
+        context.combatPowers = combatPowers.sort(
+          (a, b) => (a.sort || 0) - (b.sort || 0),
+        );
+        context.transformationCombatPowers = transformationCombatPowers.sort(
+          (a, b) => (a.sort || 0) - (b.sort || 0),
+        );
+        context.transformations = transformations.sort(
+          (a, b) => (a.sort || 0) - (b.sort || 0),
+        );
+      } catch (sortError) {
+        Logger.error("Error sorting items", sortError, "ACTOR_SHEET");
+
+        // Fallback to unsorted arrays
+        context.gear = gear;
+        context.unequippedGear = gear.filter((i) => !i.system?.equipped);
+        context.equippedGear = gear.filter((i) => i.system?.equipped);
+        context.features = features;
+        context.statuses = statuses;
+        context.combatPowers = combatPowers;
+        context.transformationCombatPowers = transformationCombatPowers;
+        context.transformations = transformations;
+      }
+
+      Logger.debug(
+        "Items prepared for actor sheet",
+        {
+          gearCount: gear.length,
+          featuresCount: features.length,
+          statusesCount: statuses.length,
+          combatPowersCount: combatPowers.length,
+          transformationsCount: transformations.length,
+          transformationCombatPowersCount: transformationCombatPowers.length,
+        },
+        "ACTOR_SHEET",
+      );
+
+      Logger.methodExit("EventideRpSystemActorSheet", "_prepareItems", context);
+    } catch (error) {
+      Logger.error(
+        "Failed to prepare items for actor sheet",
+        error,
+        "ACTOR_SHEET",
+      );
+
+      // Set empty fallbacks
+      context.gear = [];
+      context.unequippedGear = [];
+      context.equippedGear = [];
+      context.features = [];
+      context.statuses = [];
+      context.combatPowers = [];
+      context.transformationCombatPowers = [];
+      context.transformations = [];
+
+      Logger.methodExit("EventideRpSystemActorSheet", "_prepareItems", context);
+    }
   }
 
   /**
@@ -308,7 +507,7 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
    * @protected
    * @override
    */
-  _onRender(context, options) {
+  _onRender(_context, _options) {
     this.#dragDrop.forEach((d) => d.bind(this.element));
     this.#disableOverrides();
 
@@ -327,24 +526,24 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
   _debugTransformation() {
     const activeTransformationId = this.actor.getFlag(
       "eventide-rp-system",
-      "activeTransformation"
+      "activeTransformation",
     );
     if (activeTransformationId) {
-      console.log("Active transformation ID:", activeTransformationId);
+      console.info("Active transformation ID:", activeTransformationId);
 
       // Find the transformation item
       const transformation = this.actor.items.get(activeTransformationId);
-      console.log("Transformation item:", transformation);
+      console.info("Transformation item:", transformation);
 
       // Check if the transformation element exists in the DOM
       const transformationElement = this.element.querySelector(
-        ".transformation-header__name"
+        ".transformation-header__name",
       );
-      console.log("Transformation element:", transformationElement);
+      console.info("Transformation element:", transformationElement);
       if (transformationElement) {
-        console.log(
+        console.info(
           "Transformation element text:",
-          transformationElement.textContent.trim()
+          transformationElement.textContent.trim(),
         );
       }
     }
@@ -365,7 +564,7 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
    * @returns {Promise}
    * @protected
    */
-  static async _onEditImage(event, target) {
+  static async _onEditImage(_event, target) {
     const attr = target.dataset.edit;
     const current = foundry.utils.getProperty(this.document, attr);
     const { img } =
@@ -392,7 +591,7 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
    * @param {HTMLElement} target   The capturing HTML element which defined a [data-action]
    * @protected
    */
-  static async _viewDoc(event, target) {
+  static async _viewDoc(_event, target) {
     const doc = this._getEmbeddedDocument(target);
     doc.sheet.render(true);
   }
@@ -405,7 +604,7 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
    * @param {HTMLElement} target   The capturing HTML element which defined a [data-action]
    * @protected
    */
-  static async _deleteDoc(event, target) {
+  static async _deleteDoc(_event, target) {
     const doc = this._getEmbeddedDocument(target);
     await doc.delete();
   }
@@ -418,27 +617,90 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
    * @param {HTMLElement} target   The capturing HTML element which defined a [data-action]
    * @private
    */
-  static async _createDoc(event, target) {
-    // Retrieve the configured document class for Item or ActiveEffect
-    const docCls = getDocumentClass(target.dataset.documentClass);
-    // Prepare the document creation data by initializing it a default name.
-    const docData = {
-      name: docCls.defaultName({
-        // defaultName handles an undefined type gracefully
-        type: target.dataset.type,
-        parent: this.actor,
-      }),
-    };
-    // Loop through the dataset and add it to our docData
-    for (const [dataKey, value] of Object.entries(target.dataset)) {
-      // These data attributes are reserved for the action handling
-      if (["action", "documentClass"].includes(dataKey)) continue;
-      // Nested properties require dot notation in the HTML, e.g. anything with `system`
-      foundry.utils.setProperty(docData, dataKey, value);
-    }
+  static async _createDoc(_event, target) {
+    Logger.methodEntry("EventideRpSystemActorSheet", "_createDoc", {
+      actorName: this.actor?.name,
+      documentClass: target.dataset.documentClass,
+      type: target.dataset.type,
+    });
 
-    // Finally, create the embedded document!
-    await docCls.create(docData, { parent: this.actor });
+    try {
+      // Retrieve the configured document class for Item or ActiveEffect
+      const docCls = foundry.utils.getDocumentClass(
+        target.dataset.documentClass,
+      );
+
+      if (!docCls) {
+        throw new Error(
+          `Unknown document class: ${target.dataset.documentClass}`,
+        );
+      }
+
+      // Prepare the document creation data by initializing it a default name.
+      const docData = {
+        name: docCls.defaultName({
+          // defaultName handles an undefined type gracefully
+          type: target.dataset.type,
+          parent: this.actor,
+        }),
+      };
+
+      // Loop through the dataset and add it to our docData
+      for (const [dataKey, value] of Object.entries(target.dataset)) {
+        // These data attributes are reserved for the action handling
+        if (["action", "documentClass"].includes(dataKey)) continue;
+        // Nested properties require dot notation in the HTML, e.g. anything with `system`
+        foundry.utils.setProperty(docData, dataKey, value);
+      }
+
+      Logger.debug(
+        "Creating embedded document",
+        {
+          documentClass: target.dataset.documentClass,
+          type: target.dataset.type,
+          name: docData.name,
+          dataKeys: Object.keys(docData),
+        },
+        "ACTOR_SHEET",
+      );
+
+      // Finally, create the embedded document!
+      const [createdDoc, error] = await ErrorHandler.handleDocumentOperation(
+        docCls.create(docData, { parent: this.actor }),
+        "create embedded document",
+        target.dataset.documentClass.toLowerCase(),
+      );
+
+      if (error) {
+        Logger.methodExit("EventideRpSystemActorSheet", "_createDoc", null);
+      }
+
+      Logger.info(
+        `Created ${target.dataset.documentClass}: ${createdDoc.name}`,
+        {
+          documentId: createdDoc.id,
+          documentType: target.dataset.type,
+          actorName: this.actor.name,
+        },
+        "ACTOR_SHEET",
+      );
+
+      Logger.methodExit("EventideRpSystemActorSheet", "_createDoc", createdDoc);
+    } catch (error) {
+      await ErrorHandler.handleAsync(Promise.reject(error), {
+        context: `Create ${target.dataset.documentClass} for ${this.actor?.name}`,
+        errorType: ErrorHandler.ERROR_TYPES.FOUNDRY_API,
+        userMessage: game.i18n.format(
+          "EVENTIDE_RP_SYSTEM.Errors.CreateDocumentError",
+          {
+            documentType: target.dataset.documentClass,
+            actorName: this.actor?.name || "Unknown",
+          },
+        ),
+      });
+
+      Logger.methodExit("EventideRpSystemActorSheet", "_createDoc", null);
+    }
   }
 
   /**
@@ -449,23 +711,23 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
    * @param {HTMLElement} target   The capturing HTML element which defined a [data-action]
    * @private
    */
-  static async _toggleEffect(event, target) {
+  static async _toggleEffect(_event, target) {
     const effect = this._getEmbeddedDocument(target);
     await effect.update({ disabled: !effect.disabled });
   }
 
-  static async _toggleGear(event, target) {
+  static async _toggleGear(_event, target) {
     const gear = this._getEmbeddedDocument(target);
     await gear.update({ "system.equipped": !gear.system.equipped });
     erps.messages.createGearEquipMessage(gear);
   }
 
-  static async _incrementGear(event, target) {
+  static async _incrementGear(_event, target) {
     const gear = this._getEmbeddedDocument(target);
     await gear.update({ "system.quantity": gear.system.quantity + 1 });
   }
 
-  static async _decrementGear(event, target) {
+  static async _decrementGear(_event, target) {
     const gear = this._getEmbeddedDocument(target);
     await gear.update({
       "system.quantity": Math.max(gear.system.quantity - 1, 0),
@@ -484,7 +746,7 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
    * @param {HTMLElement} target   The capturing HTML element which defined a [data-action]
    * @protected
    */
-  static async _applyTransformation(event, target) {
+  static async _applyTransformation(_event, target) {
     const transformation = this._getEmbeddedDocument(target);
     await this.actor.applyTransformation(transformation);
   }
@@ -496,7 +758,7 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
    * @param {HTMLElement} target   The capturing HTML element which defined a [data-action]
    * @protected
    */
-  static async _removeTransformation(event, target) {
+  static async _removeTransformation(_event, _target) {
     await this.actor.removeTransformation();
   }
 
@@ -508,21 +770,99 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
    * @protected
    */
   static async _onRoll(event, target) {
-    event.preventDefault();
-    const dataset = {
-      ...target.dataset,
-      formula: target.dataset.roll,
-    };
-    // Handle item rolls.
-    switch (dataset.rollType) {
-      case "item":
-        const item = this._getEmbeddedDocument(target);
-        if (item) return item.roll();
-    }
+    Logger.methodEntry("EventideRpSystemActorSheet", "_onRoll", {
+      actorName: this.actor?.name,
+      rollType: target.dataset.rollType,
+      roll: target.dataset.roll,
+    });
 
-    // Handle rolls that supply the formula directly.
-    if (dataset.roll) {
-      let roll = await erpsRollHandler.handleRoll(dataset, this.actor);
+    try {
+      event.preventDefault();
+
+      const dataset = {
+        ...target.dataset,
+        formula: target.dataset.roll,
+      };
+
+      Logger.debug(
+        "Processing roll request",
+        {
+          rollType: dataset.rollType,
+          formula: dataset.formula,
+          datasetKeys: Object.keys(dataset),
+        },
+        "ACTOR_SHEET",
+      );
+
+      // Handle item rolls.
+      switch (dataset.rollType) {
+        case "item": {
+          const item = this._getEmbeddedDocument(target);
+          if (!item) {
+            Logger.warn(
+              "No item found for item roll",
+              { targetDataset: target.dataset },
+              "ACTOR_SHEET",
+            );
+            ui.notifications.warn(
+              game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.ItemNotFound"),
+            );
+            Logger.methodExit("EventideRpSystemActorSheet", "_onRoll", null);
+            return;
+          }
+
+          Logger.info(
+            `Rolling item: ${item.name}`,
+            { itemId: item.id, itemType: item.type },
+            "ACTOR_SHEET",
+          );
+
+          const rollResult = await item.roll();
+          Logger.methodExit(
+            "EventideRpSystemActorSheet",
+            "_onRoll",
+            rollResult,
+          );
+          return rollResult;
+        }
+      }
+
+      // Handle rolls that supply the formula directly.
+      if (dataset.roll) {
+        Logger.info(
+          `Rolling formula: ${dataset.roll}`,
+          { formula: dataset.roll, actorName: this.actor.name },
+          "ACTOR_SHEET",
+        );
+
+        // Add the current roll mode to the dataset
+        const rollData = {
+          ...dataset,
+          rollMode: game.settings.get("core", "rollMode"),
+        };
+
+        const roll = await erpsRollHandler.handleRoll(rollData, this.actor);
+        Logger.methodExit("EventideRpSystemActorSheet", "_onRoll", roll);
+        return roll;
+      }
+
+      Logger.warn(
+        "No valid roll configuration found",
+        { dataset },
+        "ACTOR_SHEET",
+      );
+
+      Logger.methodExit("EventideRpSystemActorSheet", "_onRoll", null);
+    } catch (error) {
+      await ErrorHandler.handleAsync(Promise.reject(error), {
+        context: `Roll Action for ${this.actor?.name}`,
+        errorType: ErrorHandler.ERROR_TYPES.FOUNDRY_API,
+        userMessage: game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.RollError", {
+          actorName: this.actor?.name || "Unknown",
+        }),
+      });
+
+      Logger.methodExit("EventideRpSystemActorSheet", "_onRoll", null);
     }
   }
 
@@ -559,7 +899,7 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
    * @returns {boolean}             Can the current user drag this selector?
    * @protected
    */
-  _canDragStart(selector) {
+  _canDragStart(_selector) {
     // game.user fetches the current user
     return this.isEditable;
   }
@@ -570,14 +910,14 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
    * @returns {boolean}             Can the current user drop on this selector?
    * @protected
    */
-  _canDragDrop(selector) {
+  _canDragDrop(_selector) {
     // game.user fetches the current user
     return this.isEditable;
   }
 
   /**
-   * Callback actions which occur at the beginning of a drag start workflow.
-   * @param {DragEvent} event       The originating DragEvent
+   * Begins a drag operation from a popped out sheet
+   * @param {DragEvent} event   The originating DragEvent
    * @protected
    */
   _onDragStart(event) {
@@ -585,7 +925,7 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
     if ("link" in event.target.dataset) return;
 
     // Chained operation
-    let dragData = this._getEmbeddedDocument(docRow)?.toDragData();
+    const dragData = this._getEmbeddedDocument(docRow)?.toDragData();
 
     if (!dragData) return;
 
@@ -598,7 +938,7 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
    * @param {DragEvent} event       The originating DragEvent
    * @protected
    */
-  _onDragOver(event) {}
+  _onDragOver(_event) {}
 
   /**
    * Callback actions which occur when a dragged element is dropped on a target.
@@ -635,8 +975,9 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
     const aeCls = getDocumentClass("ActiveEffect");
     const effect = await aeCls.fromDropData(data);
     if (!this.actor.isOwner || !effect) return false;
-    if (effect.target === this.actor)
+    if (effect.target === this.actor) {
       return this._onSortActiveEffect(event, effect);
+    }
     return aeCls.create(effect, { parent: this.actor });
   }
 
@@ -650,6 +991,7 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
     /** @type {HTMLElement} */
     const dropTarget = event.target.closest("[data-effect-id]");
     if (!dropTarget) return;
+
     const target = this._getEmbeddedDocument(dropTarget);
 
     // Don't sort on yourself
@@ -664,8 +1006,9 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
         siblingId &&
         parentId &&
         (siblingId !== effect.id || parentId !== effect.parent.id)
-      )
+      ) {
         siblings.push(this._getEmbeddedDocument(el));
+      }
     }
 
     // Perform the sort
@@ -708,7 +1051,7 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
    *                                     not permitted.
    * @protected
    */
-  async _onDropActor(event, data) {
+  async _onDropActor(_event, _data) {
     if (!this.actor.isOwner) return false;
   }
 
@@ -726,8 +1069,9 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
     const item = await Item.implementation.fromDropData(data);
 
     // Handle item sorting within the same Actor
-    if (this.actor.uuid === item.parent?.uuid)
+    if (this.actor.uuid === item.parent?.uuid) {
       return this._onSortItem(event, item);
+    }
 
     // Handle dropping a transformation directly on the actor
     if (item.type === "transformation") {
@@ -757,7 +1101,7 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
       folder.contents.map(async (item) => {
         if (!(document instanceof Item)) item = await fromUuid(item.uuid);
         return item;
-      })
+      }),
     );
     return this._onDropItemCreate(droppedItemData, event);
   }
@@ -770,7 +1114,7 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
    * @returns {Promise<Item[]>}
    * @private
    */
-  async _onDropItemCreate(itemData, event) {
+  async _onDropItemCreate(itemData, _event) {
     itemData = itemData instanceof Array ? itemData : [itemData];
     return this.actor.createEmbeddedDocuments("Item", itemData);
   }
@@ -786,6 +1130,7 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
     const items = this.actor.items;
     const dropTarget = event.target.closest("[data-item-id]");
     if (!dropTarget) return;
+
     const target = items.get(dropTarget.dataset.itemId);
 
     // Don't sort on yourself
@@ -793,10 +1138,11 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
 
     // Identify sibling items based on adjacent HTML elements
     const siblings = [];
-    for (let el of dropTarget.parentElement.children) {
+    for (const el of dropTarget.parentElement.children) {
       const siblingId = el.dataset.itemId;
-      if (siblingId && siblingId !== item.id)
+      if (siblingId && siblingId !== item.id) {
         siblings.push(items.get(el.dataset.itemId));
+      }
     }
 
     // Perform the sort
@@ -865,7 +1211,7 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
    */
   async _processSubmitData(event, form, submitData) {
     const overrides = foundry.utils.flattenObject(this.actor.overrides);
-    for (let k of Object.keys(overrides)) delete submitData[k];
+    for (const k of Object.keys(overrides)) delete submitData[k];
     await this.document.update(submitData);
   }
 

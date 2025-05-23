@@ -1,5 +1,8 @@
 import { EventideSheetHelpers } from "../components/_module.mjs";
 
+// new place for FormDataExtended
+const FormDataExtended = foundry.applications.ux.FormDataExtended;
+
 /**
  * Application for managing damage to targeted tokens.
  * @extends {EventideSheetHelpers}
@@ -57,7 +60,7 @@ export class DamageTargets extends EventideSheetHelpers {
    * @param {Object} options - Form options
    * @returns {Promise<Object>} The prepared context
    */
-  async _prepareContext(options) {
+  async _prepareContext(_options) {
     this.gmCheck = await EventideSheetHelpers._gmCheck({
       playerMode: true,
     });
@@ -76,7 +79,7 @@ export class DamageTargets extends EventideSheetHelpers {
     };
 
     context.storedData = await erps.utils.retrieveMultipleUserFlags(
-      context.storageKeys
+      context.storageKeys,
     );
     context.targetArray = await erps.utils.getTargetArray();
     context.selectedArray = await erps.utils.getSelectedArray();
@@ -98,14 +101,14 @@ export class DamageTargets extends EventideSheetHelpers {
       context.selectedArray.length === 0
     ) {
       ui.notifications.error(
-        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.TargetOrSelectFirst")
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.TargetOrSelectFirst"),
       );
       return this.close();
     }
 
     if (context.selectedArray.length === 0 && this.gmCheck === "player") {
       ui.notifications.error(
-        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.OnlyGmDamageTarget")
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.OnlyGmDamageTarget"),
       );
       return this.close();
     }
@@ -117,7 +120,7 @@ export class DamageTargets extends EventideSheetHelpers {
         faIcon: "fas fa-info-circle",
         text: game.i18n.format(
           "EVENTIDE_RP_SYSTEM.Forms.Callouts.Damage.TargetMode",
-          { count: context.targetArray.length }
+          { count: context.targetArray.length },
         ),
       });
     } else {
@@ -126,7 +129,7 @@ export class DamageTargets extends EventideSheetHelpers {
         faIcon: "fas fa-info-circle",
         text: game.i18n.format(
           "EVENTIDE_RP_SYSTEM.Forms.Callouts.Damage.SelectMode",
-          { count: context.selectedArray.length }
+          { count: context.selectedArray.length },
         ),
       });
     }
@@ -197,11 +200,11 @@ export class DamageTargets extends EventideSheetHelpers {
             damageOptions.type !== "heal" &&
             token.actor.system.hiddenAbilities.vuln.total > 0
               ? `${originalFormula} + ${Math.abs(
-                  token.actor.system.hiddenAbilities.vuln.total
+                  token.actor.system.hiddenAbilities.vuln.total,
                 )}`
               : originalFormula;
           token.actor.damageResolve(damageOptions);
-        })
+        }),
       );
     } else {
       await Promise.all(
@@ -210,11 +213,11 @@ export class DamageTargets extends EventideSheetHelpers {
             damageOptions.type !== "heal" &&
             token.actor.system.hiddenAbilities.vuln.total > 0
               ? `${originalFormula} + ${Math.abs(
-                  token.actor.system.hiddenAbilities.vuln.total
+                  token.actor.system.hiddenAbilities.vuln.total,
                 )}`
               : originalFormula;
           token.actor.damageResolve(damageOptions);
-        })
+        }),
       );
     }
 
@@ -227,8 +230,8 @@ export class DamageTargets extends EventideSheetHelpers {
    * @param {HTMLElement} target - The target element
    * @static
    */
-  static async #store(event, target) {
-    DamageTargets.#storeData(this, target.form);
+  static async #store(event, _target) {
+    DamageTargets.#storeData(this, _target.form);
 
     this.close();
   }
