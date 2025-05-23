@@ -1,27 +1,45 @@
-import { CombatPowerPopup } from "../ui/_module.mjs";
-import { GearPopup } from "../ui/_module.mjs";
-import { StatusPopup } from "../ui/_module.mjs";
-import { FeaturePopup } from "../ui/_module.mjs";
+import { Logger } from "../services/logger.mjs";
+import {
+  ItemRollsMixin,
+  ItemPopupsMixin,
+  ItemUtilitiesMixin,
+} from "./mixins/_module.mjs";
 
 /**
  * Extended Item document class for the Eventide RP System.
  *
- * Provides additional functionality for items including roll data preparation,
- * chat message creation, and item-specific actions.
+ * Represents an item in the Eventide RP System, extending the base Foundry VTT Item class.
+ * This class composes multiple mixins to provide comprehensive item functionality including
+ * roll calculations, popup handling, and utility operations.
  *
  * @extends {foundry.documents.Item}
  */
-export class EventideRpSystemItem extends Item {
+export class EventideRpSystemItem extends ItemRollsMixin(
+  ItemPopupsMixin(ItemUtilitiesMixin(Item)),
+) {
   /**
    * Prepare base item data
    * @override
    */
   prepareData() {
+    Logger.methodEntry("EventideRpSystemItem", "prepareData");
+
     // Call the parent class' prepareData method to handle the core
     // data preparation steps like applying active effects
     super.prepareData();
 
     // Any item-specific data preparation should be added here in the future
+    Logger.debug(
+      "Prepared data for item",
+      {
+        itemName: this.name,
+        itemType: this.type,
+        hasSystem: !!this.system,
+      },
+      "ITEM_DATA",
+    );
+
+    Logger.methodExit("EventideRpSystemItem", "prepareData");
   }
 
   /**
@@ -30,194 +48,110 @@ export class EventideRpSystemItem extends Item {
    * @returns {Object} The prepared roll data
    */
   getRollData() {
-    // Start with a shallow copy of the item's system data
-    const rollData = { ...this.system };
+    Logger.methodEntry("EventideRpSystemItem", "getRollData");
 
-    // If there's no parent actor, return early
-    if (!this.actor) return rollData;
+    try {
+      // Start with a shallow copy of the item's system data
+      const rollData = { ...this.system };
 
-    // Add the actor's roll data to provide context for the item
-    rollData.actor = this.actor.getRollData();
+      // If there's no parent actor, return early
+      if (!this.actor) {
+        Logger.debug(
+          "No parent actor found for item roll data",
+          { itemName: this.name },
+          "ITEM_DATA",
+        );
+        Logger.methodExit("EventideRpSystemItem", "getRollData", rollData);
+        return rollData;
+      }
 
-    return rollData;
-  }
+      // Add the actor's roll data to provide context for the item
+      rollData.actor = this.actor.getRollData();
 
-  /**
-   * Generate a roll formula for a combat-related roll
-   * Takes into account dice adjustments from both the item and actor
-   *
-   * @returns {string|undefined} The complete roll formula or undefined if no actor
-   */
-  getCombatRollFormula() {
-    if (!this.actor) return;
+      Logger.debug(
+        "Prepared roll data for item",
+        {
+          itemName: this.name,
+          hasActorData: !!rollData.actor,
+          rollDataKeys: Object.keys(rollData),
+        },
+        "ITEM_DATA",
+      );
 
-    const rollData = this.getRollData();
+      Logger.methodExit("EventideRpSystemItem", "getRollData", rollData);
+      return rollData;
+    } catch (error) {
+      Logger.error("Error preparing roll data for item", error, "ITEM_DATA");
 
-    // If roll type is 'none', return "0" as the formula (no roll)
-    if (rollData.roll.type === "none") return "0";
-
-    // Handle flat bonuses (no dice)
-    if (rollData.roll.type === "flat") {
-      return this._getFlatBonusFormula(rollData);
+      // Return minimal fallback
+      const fallback = { ...this.system };
+      Logger.methodExit("EventideRpSystemItem", "getRollData", fallback);
+      return fallback;
     }
-
-    // Get dice adjustments for the formula
-    const diceAdjustments = this._calculateDiceAdjustments(rollData);
-
-    // Build the complete dice formula
-    return this._buildDiceFormula(rollData, diceAdjustments);
   }
 
   /**
-   * Calculate formula for flat bonus (no dice) rolls
+   * Get a summary of the item's current state
    *
-   * @private
-   * @param {Object} rollData - The roll data
-   * @returns {string} The flat bonus formula
+   * @returns {Object} Summary object with key item information
    */
-  _getFlatBonusFormula(rollData) {
-    return `${rollData.roll.bonus}${
-      rollData.roll.ability !== "unaugmented"
-        ? ` + ${rollData.actor.abilities[rollData.roll.ability].total}`
-        : ""
-    }`;
+  getItemSummary() {
+    return this.getSummary();
   }
 
   /**
-   * Calculate dice adjustments for the formula
+   * Check if the item has a specific capability
    *
-   * @private
-   * @param {Object} rollData - The roll data
-   * @returns {Object} The dice adjustments
+   * @param {string} capability - The capability to check for
+   * @returns {boolean} Whether the item has the capability
    */
-  _calculateDiceAdjustments(rollData) {
-    // Handle ability-based rolls
-    if (rollData.roll.ability !== "unaugmented") {
-      return this._calculateAbilityBasedAdjustments(rollData);
-    }
-    // Handle unaugmented rolls
-    return this._calculateUnaugmentedAdjustments(rollData);
-  }
-
-  /**
-   * Calculate dice adjustments for ability-based rolls
-   *
-   * @private
-   * @param {Object} rollData - The roll data
-   * @returns {Object} The dice adjustments
-   */
-  _calculateAbilityBasedAdjustments(rollData) {
-    const thisDiceAdjustments = rollData.roll.diceAdjustments;
-    const actorDiceAdjustments =
-      rollData.actor.abilities[rollData.roll.ability].diceAdjustments;
-
-    // Combine adjustments from item and actor
-    const total = thisDiceAdjustments.total + actorDiceAdjustments.total;
-    const absTotal = Math.abs(total);
-
-    return {
-      total,
-      advantage: thisDiceAdjustments.advantage + actorDiceAdjustments.advantage,
-      disadvantage:
-        thisDiceAdjustments.disadvantage + actorDiceAdjustments.disadvantage,
-      mode: total >= 0 ? "k" : "kl", // k = keep highest, kl = keep lowest
-      absTotal,
-    };
-  }
-
-  /**
-   * Calculate dice adjustments for unaugmented rolls
-   *
-   * @private
-   * @param {Object} rollData - The roll data
-   * @returns {Object} The dice adjustments
-   */
-  _calculateUnaugmentedAdjustments(rollData) {
-    return {
-      ...rollData.roll.diceAdjustments,
-      mode: rollData.roll.diceAdjustments.total >= 0 ? "k" : "kl",
-      absTotal: Math.abs(rollData.roll.diceAdjustments.total),
-    };
-  }
-
-  /**
-   * Build the complete dice formula string
-   *
-   * @private
-   * @param {Object} rollData - The roll data
-   * @param {Object} diceAdjustments - The calculated dice adjustments
-   * @returns {string} The complete dice formula
-   */
-  _buildDiceFormula(rollData, diceAdjustments) {
-    return `${diceAdjustments.absTotal + 1}d${
-      rollData.actor.hiddenAbilities.dice.total
-    }${diceAdjustments.mode}${
-      rollData.roll.ability !== "unaugmented"
-        ? ` + ${rollData.actor.abilities[rollData.roll.ability].total}`
-        : ""
-    } + ${rollData.roll.bonus}`;
-  }
-
-  /**
-   * Convert the item document to a plain object for export or serialization.
-   *
-   * @returns {Object} Plain object representation of the item
-   */
-  toPlainObject() {
-    const result = { ...this };
-
-    // Simplify system data
-    result.system = this.system.toPlainObject();
-
-    // Add effects if they exist
-    result.effects = this.effects?.size > 0 ? this.effects.contents : [];
-
-    return result;
-  }
-
-  /**
-   * Update the item's quantity
-   *
-   * @param {number} value - The amount to add (positive) or subtract (negative)
-   * @returns {Promise<Item>} The updated item
-   */
-  async addQuantity(value) {
-    return this.update({
-      "system.quantity": this.system.quantity + value,
-    });
-  }
-
-  /**
-   * Handle a click event on the item, displaying appropriate popup based on item type.
-   *
-   * @param {Event} [event] - The triggering click event (optional)
-   * @returns {Promise<Application>} The opened application
-   */
-  async roll(event) {
-    const item = this;
-    let application;
-
-    // Open the appropriate popup based on item type
-    switch (item.type) {
-      case "combatPower":
-        item.formula = item.getCombatRollFormula();
-        application = new CombatPowerPopup({ item });
-        break;
-      case "gear":
-        item.formula = item.getCombatRollFormula();
-        application = new GearPopup({ item });
-        break;
-      case "status":
-        application = new StatusPopup({ item });
-        break;
-      case "feature":
-        application = new FeaturePopup({ item });
-        break;
+  hasCapability(capability) {
+    switch (capability) {
+      case "roll":
+        return this.canRoll();
+      case "popup":
+        return this.hasPopupSupport();
+      case "quantity":
+        return this.hasQuantity();
+      case "effects":
+        return this.effects?.size > 0;
       default:
-        console.warn(`No handler for item type: ${item.type}`);
-        return null;
+        Logger.warn(`Unknown capability check: ${capability}`, null, "ITEM");
+        return false;
     }
+  }
 
-    return application.render(true);
+  /**
+   * Get the item's display icon based on type and state
+   *
+   * @returns {string} CSS class for the item icon
+   */
+  getDisplayIcon() {
+    const iconMap = {
+      gear: "fa-solid fa-shield",
+      combatPower: "fa-solid fa-bolt",
+      feature: "fa-solid fa-star",
+      status: "fa-solid fa-circle-info",
+      transformation: "fa-solid fa-exchange-alt",
+    };
+
+    return iconMap[this.type] || "fa-solid fa-question";
+  }
+
+  /**
+   * Get the item's priority for sorting
+   *
+   * @returns {number} Priority value (lower = higher priority)
+   */
+  getSortPriority() {
+    const priorityMap = {
+      combatPower: 1,
+      gear: 2,
+      feature: 3,
+      transformation: 4,
+      status: 5,
+    };
+
+    return priorityMap[this.type] || 999;
   }
 }
