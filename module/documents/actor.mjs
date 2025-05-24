@@ -45,7 +45,7 @@ export class EventideRpSystemActor extends ActorTransformationMixin(
     Logger.methodEntry("EventideRpSystemActor", "_onCreate", {
       actorName: data.name,
       actorType: data.type,
-      userId: userId,
+      userId,
     });
 
     await super._onCreate(data, options, userId);
