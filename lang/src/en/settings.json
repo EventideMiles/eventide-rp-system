@@ -49,6 +49,9 @@
     "GearEquippedDefaultName": "Gear Creator: Default Equipped",
     "GearEquippedDefaultHint": "If enabled, gear creator will mark new gear as equipped by default.",
     
+    "AutoLinkCharacterTokensName": "Auto-Link Character Tokens",
+    "AutoLinkCharacterTokensHint": "When enabled, all newly created tokens of the 'character' type will automatically be linked to their actor.",
+    
     "EnableSystemSoundsName": "Enable System Sounds",
     "EnableSystemSoundsHint": "Enable or disable system sound effects.",
     

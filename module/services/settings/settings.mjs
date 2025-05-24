@@ -468,6 +468,17 @@ export const registerSettings = function () {
     default: true,
   });
 
+  // Auto-Link Character Tokens (can be changed immediately)
+  game.settings.register("eventide-rp-system", "autoLinkCharacterTokens", {
+    name: "SETTINGS.AutoLinkCharacterTokensName",
+    hint: "SETTINGS.AutoLinkCharacterTokensHint",
+    scope: "world",
+    config: true,
+    restricted: true,
+    type: Boolean,
+    default: true,
+  });
+
   // ===========================================
   // DEVELOPER/TESTING SETTINGS (GM Only)
   // ===========================================
