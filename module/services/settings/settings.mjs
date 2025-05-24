@@ -2,6 +2,41 @@ import { EventideSheetHelpers } from "../../ui/_module.mjs";
 import { erpsSoundManager } from "../_module.mjs";
 
 /**
+ * EVENTIDE RP SYSTEM - SETTINGS CONFIGURATION
+ * ============================================
+ *
+ * This file manages all system settings for the Eventide RP System.
+ * Settings are organized by scope and permission level:
+ *
+ * CLIENT SCOPE (Player Preferences):
+ *   - enableSystemSounds: System Sound Settings
+ *   - uiTheme: Personal UI theme choice
+ *   - defaultCharacterTab: Personal default tab preference
+ *
+ * WORLD SCOPE + RESTRICTED (GM Only):
+ *   - initativeFormula: Combat mechanics (REQUIRES RELOAD)
+ *   - initiativeDecimals: Combat display precision (REQUIRES RELOAD)
+ *   - autoRollNpcInitiative: Combat automation behavior
+ *   - hideNpcInitiativeRolls: Combat display behavior
+ *   - autoRollPlayerInitiative: Combat automation behavior
+ *   - defaultCombatRoundDuration: Combat timing default
+ *   - showGearEquipMessages: Equipment notification behavior
+ *   - gearEquippedDefault: Equipment default state
+ *   - testingMode: Developer debugging mode
+ *   - sound_* settings: Audio file paths (hidden from main menu)
+ *
+ * RELOAD REQUIREMENTS:
+ *   - Only initativeFormula and initiativeDecimals require reloads
+ *   - All other settings take effect immediately when checked at runtime
+ *   - Sound settings and UI themes have immediate effect without reload
+ *
+ * SECURITY:
+ *   - All world-scoped settings use restricted: true for GM-only access
+ *   - Sound settings menu is also restricted to GM access
+ *   - Client settings remain visible to all users as intended
+ */
+
+/**
  * Sound Settings Application
  * @extends {EventideSheetHelpers}
  */
@@ -248,12 +283,62 @@ export const registerSettings = function () {
     default: true,
   });
 
-  // Initative String
+  // UI Theme Options (Client preference)
+  game.settings.register("eventide-rp-system", "uiTheme", {
+    name: "SETTINGS.UiThemeName",
+    hint: "SETTINGS.UiThemeHint",
+    scope: "client",
+    config: true,
+    type: String,
+    default: "default",
+    choices: {
+      default: "SETTINGS.UiThemeDefault",
+      dark: "SETTINGS.UiThemeDark",
+      light: "SETTINGS.UiThemeLight",
+      contrast: "SETTINGS.UiThemeContrast",
+    },
+    onChange: (value) => {
+      // Remove any existing theme classes
+      document.body.classList.remove(
+        "theme-default",
+        "theme-dark",
+        "theme-light",
+        "theme-contrast",
+      );
+      // Add the new theme class
+      document.body.classList.add(`theme-${value}`);
+      // No reload needed - immediate DOM update is sufficient
+    },
+  });
+
+  // Default Tab (Client preference)
+  game.settings.register("eventide-rp-system", "defaultCharacterTab", {
+    name: "SETTINGS.DefaultCharacterTabName",
+    hint: "SETTINGS.DefaultCharacterTabHint",
+    scope: "client",
+    config: true,
+    type: String,
+    default: "features",
+    choices: {
+      features: "SETTINGS.TabFeatures",
+      biography: "SETTINGS.TabBiography",
+      statuses: "SETTINGS.TabStatuses",
+      gear: "SETTINGS.TabGear",
+      combatPowers: "SETTINGS.TabCombatPowers",
+    },
+  });
+
+  // ===========================================
+  // WORLD-SCOPED SETTINGS (GM Only - Game Rules)
+  // ===========================================
+
+  // Initiative Formula (affects combat mechanics - needs reload)
   game.settings.register("eventide-rp-system", "initativeFormula", {
     name: "SETTINGS.InitativeFormulaName",
     hint: "SETTINGS.InitativeFormulaHint",
     scope: "world",
     config: true,
+    restricted: true,
     type: String,
     default:
       "1d@hiddenAbilities.dice.total + @statTotal.mainInit + @statTotal.subInit",
@@ -282,12 +367,13 @@ export const registerSettings = function () {
     },
   });
 
-  // Initiative Decimals
+  // Initiative Decimals (affects combat mechanics - needs reload)
   game.settings.register("eventide-rp-system", "initiativeDecimals", {
     name: "SETTINGS.InitiativeDecimalsName",
     hint: "SETTINGS.InitiativeDecimalsHint",
     scope: "world",
     config: true,
+    restricted: true,
     type: Number,
     default: 2,
     range: {
@@ -296,60 +382,57 @@ export const registerSettings = function () {
       step: 1,
     },
     onChange: () => {
+      // Initiative decimals affects core combat display - reload needed
       foundry.applications.settings.SettingsConfig.reloadConfirm({
         world: true,
       });
     },
   });
 
-  // Combat-Related Settings
+  // ===========================================
+  // COMBAT SETTINGS (GM Only - No Reload Needed)
+  // ===========================================
+
+  // Auto Roll NPC Initiative (can be changed immediately)
   game.settings.register("eventide-rp-system", "autoRollNpcInitiative", {
     name: "SETTINGS.AutoRollNpcInitiativeName",
     hint: "SETTINGS.AutoRollNpcInitiativeHint",
     scope: "world",
     config: true,
+    restricted: true,
     type: Boolean,
     default: true,
-    onChange: () => {
-      foundry.applications.settings.SettingsConfig.reloadConfirm({
-        world: true,
-      });
-    },
   });
 
+  // Hide NPC Initiative Rolls (can be changed immediately)
   game.settings.register("eventide-rp-system", "hideNpcInitiativeRolls", {
     name: "SETTINGS.HideNpcInitiativeRollsName",
     hint: "SETTINGS.HideNpcInitiativeRollsHint",
     scope: "world",
     config: true,
+    restricted: true,
     type: Boolean,
     default: false,
-    onChange: () => {
-      foundry.applications.settings.SettingsConfig.reloadConfirm({
-        world: true,
-      });
-    },
   });
 
+  // Auto Roll Player Initiative (can be changed immediately)
   game.settings.register("eventide-rp-system", "autoRollPlayerInitiative", {
     name: "SETTINGS.AutoRollPlayerInitiativeName",
     hint: "SETTINGS.AutoRollPlayerInitiativeHint",
     scope: "world",
     config: true,
+    restricted: true,
     type: Boolean,
     default: false,
-    onChange: () => {
-      foundry.applications.settings.SettingsConfig.reloadConfirm({
-        world: true,
-      });
-    },
   });
 
+  // Default Combat Round Duration (can be changed immediately)
   game.settings.register("eventide-rp-system", "defaultCombatRoundDuration", {
     name: "SETTINGS.DefaultCombatRoundDurationName",
     hint: "SETTINGS.DefaultCombatRoundDurationHint",
     scope: "world",
     config: true,
+    restricted: true,
     type: Number,
     default: 6,
     range: {
@@ -357,86 +440,56 @@ export const registerSettings = function () {
       max: 60,
       step: 1,
     },
-    onChange: () => {
-      foundry.applications.settings.SettingsConfig.reloadConfirm({
-        world: true,
-      });
-    },
   });
 
-  // UI Theme Options
-  game.settings.register("eventide-rp-system", "uiTheme", {
-    name: "SETTINGS.UiThemeName",
-    hint: "SETTINGS.UiThemeHint",
-    scope: "client",
-    config: true,
-    type: String,
-    default: "default",
-    choices: {
-      default: "SETTINGS.UiThemeDefault",
-      dark: "SETTINGS.UiThemeDark",
-      light: "SETTINGS.UiThemeLight",
-      contrast: "SETTINGS.UiThemeContrast",
-    },
-    onChange: (value) => {
-      // Remove any existing theme classes
-      document.body.classList.remove(
-        "theme-default",
-        "theme-dark",
-        "theme-light",
-        "theme-contrast",
-      );
-      // Add the new theme class
-      document.body.classList.add(`theme-${value}`);
-      foundry.applications.settings.SettingsConfig.reloadConfirm();
-    },
-  });
+  // ===========================================
+  // GEAR SETTINGS (GM Only - No Reload Needed)
+  // ===========================================
 
-  // Default Tab
-  game.settings.register("eventide-rp-system", "defaultCharacterTab", {
-    name: "SETTINGS.DefaultCharacterTabName",
-    hint: "SETTINGS.DefaultCharacterTabHint",
-    scope: "client",
-    config: true,
-    type: String,
-    default: "features",
-    choices: {
-      features: "SETTINGS.TabFeatures",
-      biography: "SETTINGS.TabBiography",
-      statuses: "SETTINGS.TabStatuses",
-      gear: "SETTINGS.TabGear",
-      combatPowers: "SETTINGS.TabCombatPowers",
-    },
-  });
-
-  // Gear Equipment Messages
+  // Show Gear Equip Messages (can be changed immediately)
   game.settings.register("eventide-rp-system", "showGearEquipMessages", {
     name: "SETTINGS.ShowGearEquipMessagesName",
     hint: "SETTINGS.ShowGearEquipMessagesHint",
     scope: "world",
     config: true,
+    restricted: true,
     type: Boolean,
     default: true,
-    onChange: () => {
-      foundry.applications.settings.SettingsConfig.reloadConfirm({
-        world: true,
-      });
-    },
   });
 
+  // Gear Equipped by Default (can be changed immediately)
   game.settings.register("eventide-rp-system", "gearEquippedDefault", {
     name: "SETTINGS.GearEquippedDefaultName",
     hint: "SETTINGS.GearEquippedDefaultHint",
     scope: "world",
     config: true,
+    restricted: true,
     type: Boolean,
     default: true,
-    onChange: () => {
-      foundry.applications.settings.SettingsConfig.reloadConfirm({
-        world: true,
-      });
+  });
+
+  // ===========================================
+  // DEVELOPER/TESTING SETTINGS (GM Only)
+  // ===========================================
+
+  // Testing Mode (developer setting)
+  game.settings.register("eventide-rp-system", "testingMode", {
+    name: "SETTINGS.TestingModeName",
+    hint: "SETTINGS.TestingModeHint",
+    scope: "world",
+    config: true,
+    restricted: true,
+    type: Boolean,
+    default: false,
+    onChange: (value) => {
+      console.info(`Testing mode set to ${value}`);
+      // No reload needed - can be checked at runtime
     },
   });
+
+  // ===========================================
+  // SOUND SETTINGS (GM Only - Hidden from main menu)
+  // ===========================================
 
   // Individual sound settings (hidden from main menu)
   const defaultSounds = erpsSoundManager.getDefaultSounds();
@@ -448,6 +501,7 @@ export const registerSettings = function () {
       hint: `SETTINGS.Sound${key.charAt(0).toUpperCase() + key.slice(1)}Hint`,
       scope: "world",
       config: false, // Hide from main settings menu
+      restricted: true,
       type: String,
       default: defaultPath,
       onChange: (value) => {
@@ -458,21 +512,10 @@ export const registerSettings = function () {
             game.i18n.format("SETTINGS.SoundResetToDefault", [key]),
           );
         }
+        // No reload needed - sounds are loaded on demand
       },
     });
   }
-
-  game.settings.register("eventide-rp-system", "testingMode", {
-    name: "SETTINGS.TestingModeName",
-    hint: "SETTINGS.TestingModeHint",
-    scope: "world",
-    config: true,
-    type: Boolean,
-    default: false,
-    onChange: (value) => {
-      console.info(`Testing mode set to ${value}`);
-    },
-  });
 
   // Register the sound settings menu after all sound settings are registered
   Hooks.once("ready", () => {
