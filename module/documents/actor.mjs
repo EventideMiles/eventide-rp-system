@@ -4,6 +4,7 @@ import {
   ActorResourceMixin,
   ActorRollsMixin,
 } from "./mixins/_module.mjs";
+import { getSetting } from "../services/_module.mjs";
 
 /**
  * Actor document class for the Eventide RP System
@@ -31,6 +32,52 @@ export class EventideRpSystemActor extends ActorTransformationMixin(
     super.prepareData();
 
     Logger.methodExit("EventideRpSystemActor", "prepareData");
+  }
+
+  /**
+   * Handle actor creation to automatically link character tokens if the setting is enabled
+   * @param {object} data - The initial data object provided to the document creation request
+   * @param {object} options - Additional options which modify the creation request
+   * @param {string} userId - The ID of the requesting user
+   * @override
+   */
+  async _onCreate(data, options, userId) {
+    Logger.methodEntry("EventideRpSystemActor", "_onCreate", {
+      actorName: data.name,
+      actorType: data.type,
+      userId: userId,
+    });
+
+    await super._onCreate(data, options, userId);
+
+    // Only proceed if this is a character type and the setting is enabled
+    if (data.type === "character") {
+      try {
+        const autoLinkSetting = getSetting("autoLinkCharacterTokens");
+
+        if (autoLinkSetting) {
+          // Update the prototype token to be linked
+          await this.update({
+            "prototypeToken.actorLink": true,
+          });
+
+          Logger.debug(
+            `Auto-linked prototype token for character actor: ${this.name}`,
+            null,
+            "ACTOR_CREATION",
+          );
+        }
+      } catch (error) {
+        Logger.warn(
+          `Failed to auto-link prototype token for character actor: ${this.name}`,
+          error,
+          "ACTOR_CREATION",
+        );
+        // Don't throw the error - token linking failure shouldn't prevent actor creation
+      }
+    }
+
+    Logger.methodExit("EventideRpSystemActor", "_onCreate");
   }
 
   /**
