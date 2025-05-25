@@ -1,6 +1,7 @@
 @use "../utils/colors" as colors;
 @use "../utils/typography" as typography;
 @use "../utils/mixins" as mixins;
+@use "../utils/tokens" as tokens;
 
 .eventide-ability-row {
   border-radius: 0.5rem;
@@ -34,51 +35,216 @@
   }
 }
 
-// Transformation header styling
-.transformation-header {
+// Transformation Effect Card - now designed for status bar
+.eventide-transformation-card {
   display: flex;
   align-items: center;
-  margin-left: 0.5rem;
-  padding: 0.25rem 0.5rem;
-  background: rgba(115, 114, 114, 0.434);
-  border-radius: 0.25rem;
-  border: 0.125rem outset colors.$universal-white;
-  height: 2rem;
+  margin: 0; // Remove margin since it's in status bar
+  padding: 0.5rem 0.75rem; // More compact padding
+  border-radius: 6px; // Smaller radius to match status indicators
+  border: 2px solid rgba(77, 148, 255, 0.6);
+  background: linear-gradient(
+    135deg,
+    rgba(77, 148, 255, 0.15) 0%,
+    rgba(30, 40, 60, 0.8) 50%,
+    rgba(77, 148, 255, 0.1) 100%
+  );
+  box-shadow: 
+    0 0 10px rgba(77, 148, 255, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  flex: 0 0 auto; // Don't grow or shrink
+  max-width: 20rem; // Limit width in status bar
   
-  &__label {
-    font-weight: bold;
-    margin-right: 0.5rem;
-    color: colors.$universal-white;
+  // Animated glow effect - more subtle for status bar
+  &::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -50%;
+    width: 200%;
+    height: calc(100% + 4px);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(77, 148, 255, 0.3), // More subtle
+      transparent
+    );
+    animation: transformationGlow 4s ease-in-out infinite; // Slower animation
+    z-index: 0;
   }
   
-  &__details {
+  &__header {
     display: flex;
     align-items: center;
+    width: 100%;
+    position: relative;
+    z-index: 1;
+  }
+  
+  &__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem; // Smaller for status bar
+    height: 1.75rem;
+    border-radius: 50%;
+    background: rgba(77, 148, 255, 0.3);
+    border: 2px solid rgba(77, 148, 255, 0.6);
+    margin-right: 0.75rem; // Reduced margin
+    flex-shrink: 0;
+    
+    i {
+      font-size: 0.9rem; // Smaller icon
+      color: #ffffff;
+      text-shadow: 0 0 6px rgba(77, 148, 255, 0.8);
+    }
+  }
+  
+  &__info {
+    display: flex;
+    flex-direction: column;
     flex-grow: 1;
+    min-width: 0; // Allow text truncation
+  }
+  
+  &__label {
+    font-size: 0.7rem; // Smaller label
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.8);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.125rem; // Reduced margin
+    line-height: 1;
   }
   
   &__name {
-    font-size: 1em;
-    margin-right: 0.5rem;
-    color: colors.$universal-white;
+    font-size: 0.9rem; // Smaller name
+    font-weight: bold;
+    color: #ffffff;
+    text-shadow: 0 0 6px rgba(77, 148, 255, 0.6);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.2;
   }
   
-  &__dismiss {
-    color: colors.$universal-white;
-    margin-left: auto;
+  &__revert {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem; // Smaller button
+    height: 1.5rem;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #ffffff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-left: 0.75rem; // Reduced margin
+    flex-shrink: 0;
+    
+    i {
+      font-size: 0.75rem; // Smaller icon
+    }
     
     &:hover {
-      color: colors.$white-text-glow;
+      background: rgba(255, 255, 255, 0.2);
+      border-color: rgba(255, 255, 255, 0.5);
+      transform: scale(1.05);
+      box-shadow: 0 0 6px rgba(255, 255, 255, 0.3);
+    }
+    
+    &:active {
+      transform: scale(0.95);
     }
   }
-
-  &__dismiss--cursed {
-    color: colors.$cursed;
-    margin-left: auto;
+  
+  &__locked {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem; // Smaller locked indicator
+    height: 1.5rem;
+    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.6);
+    margin-left: 0.75rem; // Reduced margin
+    flex-shrink: 0;
+    cursor: not-allowed;
     
-    &:hover {
-      color: colors.$cursed;
+    i {
+      font-size: 0.7rem; // Smaller icon
     }
+  }
+  
+  // Cursed transformation variant
+  &--cursed {
+    border-color: rgba(138, 43, 226, 0.8);
+    background: linear-gradient(
+      135deg,
+      rgba(138, 43, 226, 0.2) 0%,
+      rgba(75, 0, 130, 0.8) 50%,
+      rgba(138, 43, 226, 0.15) 100%
+    );
+    box-shadow: 
+      0 0 15px rgba(138, 43, 226, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    
+    &::before {
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(138, 43, 226, 0.4), // More subtle
+        transparent
+      );
+      animation: cursedTransformationGlow 3s ease-in-out infinite; // Slower
+    }
+    
+    .eventide-transformation-card__icon {
+      background: rgba(138, 43, 226, 0.4);
+      border-color: rgba(138, 43, 226, 0.8);
+      
+      i {
+        color: #ffffff;
+        text-shadow: 0 0 6px rgba(138, 43, 226, 0.8);
+      }
+    }
+    
+    .eventide-transformation-card__name {
+      text-shadow: 0 0 6px rgba(138, 43, 226, 0.6);
+    }
+    
+    .eventide-transformation-card__locked {
+      background: rgba(138, 43, 226, 0.3);
+      border-color: rgba(138, 43, 226, 0.6);
+      color: rgba(255, 255, 255, 0.8);
+    }
+  }
+}
+
+@keyframes transformationGlow {
+  0%, 100% { 
+    left: -50%; 
+    opacity: 0;
+  }
+  50% { 
+    left: 50%; 
+    opacity: 0.8; // More subtle
+  }
+}
+
+@keyframes cursedTransformationGlow {
+  0%, 100% { 
+    left: -50%; 
+    opacity: 0;
+  }
+  50% { 
+    left: 50%; 
+    opacity: 0.8; // More subtle
   }
 }
 
@@ -97,6 +263,476 @@
 }
 
 .eventide-character-sheet {
+  // Import game-appropriate fonts
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Crimson+Text:wght@400;600&family=Libre+Baskerville:wght@400;700&family=Roboto+Condensed:wght@400;700&display=swap');
+
+  // Font variables for game aesthetic
+  --erps-display-font: 'Cinzel', 'Libre Baskerville', serif; // For character names and important displays
+  --erps-info-font: 'Crimson Text', 'Times New Roman', serif; // For character information
+  --erps-ui-font: 'Roboto Condensed', 'Arial Narrow', sans-serif; // For UI elements
+  --erps-mono-font: 'Consolas', 'Monaco', 'Courier New', monospace; // For numerical values
+
+  // Character header styling
+  .eventide-actor__header {
+    background: linear-gradient(
+      135deg,
+      rgba(15, 25, 40, 0.95) 0%,
+      rgba(25, 35, 55, 0.9) 50%,
+      rgba(35, 45, 65, 0.85) 100%
+    );
+    border: 2px solid rgba(77, 148, 255, 0.6);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    box-shadow: 
+      0 8px 32px rgba(0, 0, 0, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+
+    // Animated background effect
+    &::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(
+        circle,
+        rgba(77, 148, 255, 0.1) 0%,
+        transparent 70%
+      );
+      animation: headerGlow 4s ease-in-out infinite alternate;
+      pointer-events: none;
+    }
+  }
+
+  // Character name input theme system with multiple color schemes
+  .document-name {
+    position: relative !important;
+    margin-bottom: 1rem !important;
+    
+    // Theme color variables (default to blue)
+    --theme-primary: rgba(59, 130, 246, 0.8);
+    --theme-secondary: rgba(147, 197, 253, 0.7);
+    --theme-accent: rgba(30, 58, 138, 0.9);
+    --theme-light: rgba(147, 197, 253, 0.8);
+    --theme-glow: rgba(59, 130, 246, 0.6);
+    --theme-text: #e8f4fd;
+    --theme-pattern: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M10 2l3 3-3 3-3-3z'/%3E%3Cpath d='M10 12l3 3-3 3-3-3z'/%3E%3C/g%3E%3C/svg%3E");
+    
+    // Blue Theme (Default - Night)
+    &[data-name-theme="blue"], &:not([data-name-theme]) {
+      --theme-primary: rgba(59, 130, 246, 0.8);
+      --theme-secondary: rgba(147, 197, 253, 0.7);
+      --theme-accent: rgba(30, 58, 138, 0.9);
+      --theme-light: rgba(147, 197, 253, 0.8);
+      --theme-glow: rgba(59, 130, 246, 0.6);
+      --theme-text: #e8f4fd;
+      --theme-pattern: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M10 2l3 3-3 3-3-3z'/%3E%3Cpath d='M10 12l3 3-3 3-3-3z'/%3E%3C/g%3E%3C/svg%3E");
+    }
+    
+    // Gold Theme (Twilight)
+    &[data-name-theme="gold"] {
+      --theme-primary: rgba(255, 193, 7, 0.8);
+      --theme-secondary: rgba(255, 235, 59, 0.7);
+      --theme-accent: rgba(255, 152, 0, 0.9);
+      --theme-light: rgba(255, 235, 59, 0.8);
+      --theme-glow: rgba(255, 193, 7, 0.6);
+      --theme-text: #fff8e1;
+      --theme-pattern: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M12 2l2 6h6l-5 4 2 6-5-4-5 4 2-6-5-4h6z'/%3E%3C/g%3E%3C/svg%3E");
+    }
+    
+    // Green Theme (Dawn)
+    &[data-name-theme="green"] {
+      --theme-primary: rgba(34, 197, 94, 0.8);
+      --theme-secondary: rgba(134, 239, 172, 0.7);
+      --theme-accent: rgba(21, 128, 61, 0.9);
+      --theme-light: rgba(134, 239, 172, 0.8);
+      --theme-glow: rgba(34, 197, 94, 0.6);
+      --theme-text: #ecfdf5;
+      --theme-pattern: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Ccircle cx='10' cy='10' r='2'/%3E%3Ccircle cx='10' cy='4' r='1'/%3E%3Ccircle cx='10' cy='16' r='1'/%3E%3Ccircle cx='4' cy='10' r='1'/%3E%3Ccircle cx='16' cy='10' r='1'/%3E%3C/g%3E%3C/svg%3E");
+    }
+    
+    // Add subtle animated element to the left
+    &::before {
+      content: '' !important;
+      position: absolute !important;
+      top: 50% !important;
+      left: -25px !important;
+      width: 20px !important;
+      height: 3px !important;
+      background: linear-gradient(90deg, 
+        transparent 0%,
+        var(--theme-glow) 30%,
+        var(--theme-light) 70%,
+        transparent 100%) !important;
+      border-radius: 2px !important;
+      transform: translateY(-50%) !important;
+      animation: nameInputGlow 3s ease-in-out infinite !important;
+      z-index: 1 !important;
+    }
+    
+    // Add decorative elements on both sides
+    &::after {
+      content: '' !important;
+      position: absolute !important;
+      top: 50% !important;
+      right: -25px !important;
+      width: 20px !important;
+      height: 3px !important;
+      background: linear-gradient(90deg, 
+        transparent 0%,
+        var(--theme-light) 30%,
+        var(--theme-glow) 70%,
+        transparent 100%) !important;
+      border-radius: 2px !important;
+      transform: translateY(-50%) !important;
+      animation: nameInputGlow 3s ease-in-out infinite 1.5s !important;
+      z-index: 1 !important;
+    }
+  }
+
+  // Target the specific character name input class
+  .eventide-actor__character-name {
+    font-family: var(--erps-display-font) !important;
+    font-size: 1.8rem !important;
+    font-weight: 600 !important;
+    letter-spacing: 1px !important;
+    text-align: center !important;
+    color: var(--theme-text) !important;
+    background: linear-gradient(135deg, 
+      var(--theme-accent) 0%,
+      var(--theme-primary) 25%,
+      var(--theme-secondary) 50%,
+      var(--theme-primary) 75%,
+      var(--theme-accent) 100%) !important;
+    border: 2px solid transparent !important;
+    border-radius: 8px !important;
+    padding: 12px 20px !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 3rem !important;
+    box-shadow: 
+      0 0 20px var(--theme-glow),
+      inset 0 2px 4px rgba(0, 0, 0, 0.2),
+      inset 0 -2px 4px rgba(255, 255, 255, 0.1) !important;
+    text-shadow: 
+      0 1px 2px rgba(0, 0, 0, 0.8),
+      0 0 10px var(--theme-light) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    position: relative !important;
+    z-index: 2 !important;
+    
+    // Elegant border effect
+    &::before {
+      content: '' !important;
+      position: absolute !important;
+      top: -2px !important;
+      left: -2px !important;
+      right: -2px !important;
+      bottom: -2px !important;
+      background: linear-gradient(45deg, 
+        var(--theme-primary), var(--theme-light), var(--theme-secondary), var(--theme-light), var(--theme-primary)) !important;
+      border-radius: 10px !important;
+      z-index: -1 !important;
+      opacity: 0 !important;
+      transition: opacity 0.3s ease !important;
+    }
+    
+    &:hover {
+      color: #ffffff !important;
+      background: 
+        var(--theme-pattern),
+        linear-gradient(135deg, 
+          var(--theme-accent) 0%,
+          var(--theme-primary) 25%,
+          var(--theme-secondary) 50%,
+          var(--theme-primary) 75%,
+          var(--theme-accent) 100%) !important;
+      background-size: 20px 20px, 100% 100% !important;
+      background-position: 0 0, 0 0 !important;
+      animation: patternShift 8s linear infinite !important;
+      box-shadow: 
+        0 0 30px var(--theme-glow),
+        inset 0 2px 4px rgba(0, 0, 0, 0.3),
+        inset 0 -2px 4px rgba(255, 255, 255, 0.2) !important;
+      text-shadow: 
+        0 1px 3px rgba(0, 0, 0, 0.9),
+        0 0 15px var(--theme-light) !important;
+      transform: translateY(-1px) !important;
+      
+      &::before {
+        opacity: 1 !important;
+      }
+    }
+    
+    &:focus {
+      outline: none !important;
+      color: #ffffff !important;
+      background: 
+        var(--theme-pattern),
+        linear-gradient(135deg, 
+          var(--theme-accent) 0%,
+          var(--theme-primary) 25%,
+          var(--theme-secondary) 50%,
+          var(--theme-primary) 75%,
+          var(--theme-accent) 100%) !important;
+      background-size: 20px 20px, 100% 100% !important;
+      background-position: 0 0, 0 0 !important;
+      animation: patternShift 6s linear infinite !important;
+      box-shadow: 
+        0 0 40px var(--theme-glow),
+        0 0 20px var(--theme-light),
+        inset 0 2px 6px rgba(0, 0, 0, 0.4),
+        inset 0 -2px 6px rgba(255, 255, 255, 0.3) !important;
+      text-shadow: 
+        0 1px 4px rgba(0, 0, 0, 1),
+        0 0 20px var(--theme-light),
+        0 0 30px var(--theme-glow) !important;
+      transform: translateY(-2px) !important;
+      
+      &::before {
+        opacity: 1 !important;
+      }
+    }
+    
+    // Placeholder styling
+    &::placeholder {
+      color: var(--theme-light) !important;
+      opacity: 0.7 !important;
+      font-style: italic !important;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6) !important;
+    }
+  }
+
+  // Animation for the subtle side elements
+  @keyframes nameInputGlow {
+    0%, 100% {
+      opacity: 0.3 !important;
+      transform: translateY(-50%) scaleX(0.8) !important;
+    }
+    50% {
+      opacity: 0.8 !important;
+      transform: translateY(-50%) scaleX(1.2) !important;
+    }
+  }
+
+  // Animation for the pattern background
+  @keyframes patternShift {
+    0% {
+      background-position: 0 0, 0 0 !important;
+    }
+    100% {
+      background-position: 20px 20px, 0 0 !important;
+    }
+  }
+
+  // Blue pulse animation for decorative elements
+  @keyframes pulseBlue {
+    0%, 100% {
+      opacity: 0.6 !important;
+      transform: translateY(-50%) scale(1) !important;
+    }
+    50% {
+      opacity: 1 !important;
+      transform: translateY(-50%) scale(1.2) !important;
+    }
+  }
+
+  // Resource boxes with game styling
+  .eventide-actor__resource-box {
+    background: linear-gradient(
+      135deg,
+      rgba(25, 35, 55, 0.9) 0%,
+      rgba(35, 45, 65, 0.8) 100%
+    );
+    border: 2px solid rgba(77, 148, 255, 0.5);
+    border-radius: 10px;
+    padding: 1rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 
+      0 4px 16px rgba(0, 0, 0, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(77, 148, 255, 0.2),
+        transparent
+      );
+      transition: left 0.6s ease;
+    }
+
+    &:hover::before {
+      left: 100%;
+    }
+
+    .resource-label {
+      font-family: var(--erps-info-font) !important;
+      font-size: 0.9rem !important;
+      font-weight: 600 !important;
+      color: rgba(255, 255, 255, 0.9) !important;
+      text-transform: uppercase !important;
+      letter-spacing: 1px !important;
+      margin-bottom: 0.5rem !important;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8) !important;
+    }
+
+    .resource-value {
+      font-family: var(--erps-mono-font) !important;
+      font-size: 1.4rem !important;
+      font-weight: 700 !important;
+      color: #ffffff !important;
+      text-shadow: 
+        0 2px 4px rgba(0, 0, 0, 0.8),
+        0 0 15px rgba(77, 148, 255, 0.6) !important;
+      margin-bottom: 0.25rem !important;
+    }
+
+    input.resource-input {
+      font-family: var(--erps-mono-font) !important;
+      font-size: 1.2rem !important;
+      font-weight: 600 !important;
+      color: #ffffff !important;
+      background: rgba(15, 25, 40, 0.8) !important;
+      border: 1px solid rgba(77, 148, 255, 0.4) !important;
+      border-radius: 6px !important;
+      padding: 0.5rem !important;
+      text-align: center !important;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8) !important;
+
+      &:focus {
+        border-color: rgba(77, 148, 255, 0.8) !important;
+        box-shadow: 
+          0 0 0 2px rgba(77, 148, 255, 0.3),
+          0 0 15px rgba(77, 148, 255, 0.4) !important;
+      }
+    }
+
+    .resource-max {
+      font-family: var(--erps-mono-font) !important;
+      font-size: 1rem !important;
+      color: rgba(255, 255, 255, 0.8) !important;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8) !important;
+    }
+  }
+
+  // Secondary stats styling
+  .eventide-actor__secondary-stats {
+    .stat-box {
+      background: linear-gradient(
+        135deg,
+        rgba(20, 30, 45, 0.9) 0%,
+        rgba(30, 40, 55, 0.8) 100%
+      );
+      border: 1px solid rgba(77, 148, 255, 0.4);
+      border-radius: 8px;
+      padding: 0.75rem;
+      text-align: center;
+
+      .stat-label {
+        font-family: var(--erps-info-font) !important;
+        font-size: 0.8rem !important;
+        font-weight: 600 !important;
+        color: rgba(255, 255, 255, 0.8) !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.5px !important;
+        margin-bottom: 0.25rem !important;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8) !important;
+      }
+
+      .stat-value {
+        font-family: var(--erps-mono-font) !important;
+        font-size: 1.1rem !important;
+        font-weight: 700 !important;
+        color: #ffffff !important;
+        text-shadow: 
+          0 1px 3px rgba(0, 0, 0, 0.8),
+          0 0 10px rgba(77, 148, 255, 0.5) !important;
+      }
+    }
+  }
+
+  // Status bar cards with enhanced typography
+  .eventide-header__status-bar {
+    .status-card {
+      .status-card__title {
+        font-family: var(--erps-info-font) !important;
+        font-weight: 600 !important;
+        letter-spacing: 0.5px !important;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8) !important;
+      }
+
+      .status-card__content {
+        font-family: var(--erps-ui-font) !important;
+        font-weight: 500 !important;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6) !important;
+      }
+
+      .status-card__value {
+        font-family: var(--erps-mono-font) !important;
+        font-weight: 700 !important;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8) !important;
+      }
+    }
+  }
+
+  // Form inputs throughout the sheet
+  input[type="text"],
+  input[type="number"],
+  textarea,
+  select {
+    font-family: var(--erps-info-font) !important;
+    
+    &.monospace,
+    &[data-dtype="Number"] {
+      font-family: var(--erps-mono-font) !important;
+    }
+  }
+
+  // Labels and headings
+  label,
+  .form-group label,
+  .section-header {
+    font-family: var(--erps-info-font) !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.3px !important;
+  }
+
+  // Tab navigation
+  .tabs .item {
+    font-family: var(--erps-ui-font) !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.5px !important;
+  }
+
+  // Animation keyframes
+  @keyframes headerGlow {
+    0% {
+      opacity: 0.3;
+      transform: rotate(0deg) scale(1);
+    }
+    50% {
+      opacity: 0.6;
+      transform: rotate(180deg) scale(1.1);
+    }
+    100% {
+      opacity: 0.3;
+      transform: rotate(360deg) scale(1);
+    }
+  }
+
   &--scrollbars {
     // Apply scrollbars to the entire tab content
     .tab {
@@ -146,4 +782,1180 @@
 .eventide-ability-wits-box {
   background-color: colors.$wits-transparent;
   border-left: 0.3125rem solid colors.$wits;
+}
+
+.eventide-actor__profile-img {
+  border-radius: 40px;
+  border: 3px solid colors.$universal-white;
+  width: 180px;
+  height: 180px;
+  box-shadow: 
+    0 0 20px rgba(255, 255, 255, 0.3),
+    inset 0 0 20px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  position: relative;
+  flex-shrink: 0;
+  
+  // Add frame effect
+  &::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    left: -6px;
+    right: -6px;
+    bottom: -6px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 46px;
+    z-index: -1;
+  }
+  
+  &:hover {
+    border: 3px solid colors.$white-text-glow;
+    box-shadow: 
+      0 0 30px colors.$white-text-glow,
+      inset 0 0 20px rgba(0, 0, 0, 0.1);
+    transform: scale(1.02);
+  }
+  
+  // Disabled state when transformed
+  &--disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    filter: grayscale(0.3);
+    
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 40px;
+      pointer-events: none;
+    }
+    
+    &:hover {
+      border: 3px solid colors.$universal-white;
+      box-shadow: 
+        0 0 20px rgba(255, 255, 255, 0.3),
+        inset 0 0 20px rgba(0, 0, 0, 0.2);
+      transform: none;
+    }
+  }
+}
+
+.eventide-actor__character-name {
+  font-size: 2.5rem !important;
+  font-weight: bold;
+  color: colors.$universal-white;
+  height: 5rem !important;
+  min-height: 5rem;
+  padding: 0.5rem 1rem;
+  text-align: center !important;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 0, 0, 0.3) 0%,
+    rgba(20, 30, 45, 0.4) 50%,
+    rgba(0, 0, 0, 0.3) 100%
+  );
+  border: 2px inset colors.$universal-white !important;
+  border-radius: 8px;
+  text-shadow: 
+    0 0 10px rgba(255, 255, 255, 0.5),
+    2px 2px 4px rgba(0, 0, 0, 0.8);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+  margin-bottom: 0;
+  
+  &:focus {
+    box-shadow: 
+      inset 0 2px 4px rgba(0, 0, 0, 0.3),
+      0 0 15px colors.$white-text-glow;
+    text-shadow: 
+      0 0 15px colors.$white-text-glow,
+      2px 2px 4px rgba(0, 0, 0, 0.8);
+  }
+}
+
+// Complete toggle group implementation for actor header: can be used anywhere on the actor sheet
+.eventide-actor__toggle-group {
+  @include mixins.grid-compliant-toggle-group;
+  
+  // Override default margins for header usage
+  margin: 0.5rem 0; // MAGICNUMBER replace with token eventually
+  
+  // Ensure proper styling for the label
+  label {
+    color: colors.$universal-white;
+    font-weight: bold;
+    
+    &:hover {
+      color: colors.$white-text-glow;
+    }
+  }
+  
+  // Alternative: target any label with the class
+  label.eventide-actor__toggle-label {
+    font-size: 0.8rem !important;
+  }
+  
+  // Style the toggle switch wrapper
+  .toggle-switch-wrapper {
+    position: relative;
+    
+    // Style the actual toggle input
+    input[type="checkbox"] {
+      @include mixins.grid-compliant-toggle-switch;
+    }
+    
+    // Style the toggle display element
+    .toggle-switch-display {
+      cursor: pointer;
+      
+      &:hover {
+        opacity: 0.9;
+      }
+    }
+  }
+  
+  // Variant for compact header usage
+  &--compact {
+    margin: 0.25rem 0;
+    padding: 0.25rem 0.5rem;
+    
+    label {
+      font-size: 0.9rem;
+      min-width: 5rem;
+    }
+    
+    .toggle-switch-wrapper {
+      width: 2rem;
+      flex: 0 0 2rem;
+    }
+  }
+  
+  // Variant for inline usage in headers
+  &--inline {
+    margin: 0;
+    padding: 0;
+    
+    label {
+      margin-right: 0.5rem;
+      margin-bottom: 0;
+    }
+  }
+}
+
+// Enhanced header styling for game design feel
+.sheet-header--actor {
+  background: linear-gradient(
+    135deg,
+    rgba(20, 30, 45, 0.95) 0%,
+    rgba(30, 40, 60, 0.9) 50%,
+    rgba(25, 35, 50, 0.95) 100%
+  );
+  border: 2px solid colors.$universal-white;
+  border-radius: 12px;
+  box-shadow: 
+    0 4px 20px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  padding: 1rem;
+  margin-bottom: 0.5rem;
+  position: relative;
+  
+  // Add subtle animated glow
+  &::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, 
+      colors.$universal-white, 
+      colors.$white-text-glow, 
+      colors.$universal-white
+    );
+    border-radius: 14px;
+    z-index: -1;
+    opacity: 0.3;
+    animation: headerGlow 3s ease-in-out infinite alternate;
+  }
+  
+  // Tighten up the main grid
+  .grid {
+    gap: 0.75rem;
+    align-items: flex-start;
+    margin-bottom: 0;
+  }
+  
+  // Ensure header fields align properly
+  .header-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    height: 100%;
+    justify-content: space-between;
+  }
+  
+  // Align the left column content
+  .grid-span-2 {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    height: 100%;
+  }
+}
+
+@keyframes headerGlow {
+  0% { opacity: 0.2; }
+  100% { opacity: 0.4; }
+}
+
+// Enhanced resource boxes with game design
+.resource {
+  background: linear-gradient(
+    135deg,
+    rgba(30, 40, 60, 0.8) 0%,
+    rgba(20, 30, 45, 0.9) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transition: all 0.2s ease;
+  
+  &:hover {
+    border-color: colors.$white-text-glow;
+    box-shadow: 
+      0 4px 12px rgba(0, 0, 0, 0.5),
+      0 0 8px rgba(255, 255, 255, 0.2);
+  }
+  
+  .resource-label {
+    color: colors.$universal-white;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    font-weight: bold;
+    font-size: 0.9rem;
+  }
+  
+  input {
+    background: rgba(0, 0, 0, 0.3) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    color: colors.$universal-white !important;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    
+    &:focus {
+      border-color: colors.$white-text-glow !important;
+      box-shadow: 0 0 8px rgba(255, 255, 255, 0.3) !important;
+    }
+  }
+  
+  // Styling for derived/read-only values
+  .resource-value {
+    display: inline-block;
+    padding: tokens.$spacing-sm;
+    background: rgba(0, 0, 0, 0.4) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    border-radius: tokens.$radius-sm;
+    color: colors.$universal-white !important;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    font-weight: 500;
+    text-align: center;
+    min-width: 2rem;
+    font-family: monospace; // Use monospace for numbers
+    font-size: 1rem;
+    
+    // Subtle styling to indicate it's read-only
+    opacity: 0.9;
+    cursor: default;
+    user-select: none;
+    
+    // Slight visual difference from inputs
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
+    
+    // Hover effect for derived values
+    &:hover {
+      opacity: 1;
+      background: rgba(0, 0, 0, 0.5) !important;
+    }
+  }
+}
+
+// Tighten up resource grids
+.resources {
+  margin-bottom: 0;
+  
+  &.grid {
+    gap: 0.75rem;
+  }
+}
+
+// Add status indicators section
+.eventide-header__status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.75rem;
+  width: 100%;
+  margin-top: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+  position: relative; // For arrow positioning
+  
+  // Make it horizontally scrollable but hide scrollbar
+  overflow-x: auto;
+  overflow-y: hidden;
+  flex-wrap: nowrap; // Prevent wrapping
+  
+  // Smooth scrolling
+  scroll-behavior: smooth;
+  
+  // Hide scrollbars completely
+  scrollbar-width: none; // Firefox
+  -ms-overflow-style: none; // IE/Edge
+  
+  &::-webkit-scrollbar {
+    display: none; // Chrome/Safari/Opera
+  }
+  
+  // Grab cursor to indicate draggable
+  cursor: grab;
+  
+  &:active {
+    cursor: grabbing;
+  }
+  
+  // Directional arrow indicators - positioned relative to the status bar container
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-style: solid;
+    opacity: 0;
+    transition: opacity 0.3s ease, border-color 0.2s ease, transform 0.2s ease;
+    pointer-events: none;
+    z-index: 10; // Higher z-index to appear above content
+    cursor: pointer;
+  }
+  
+  // Left arrow (when can scroll left) - positioned dynamically based on scroll
+  &::before {
+    left: var(--arrow-left-position, 0.5rem);
+    border-width: 8px 12px 8px 0;
+    border-color: transparent rgba(255, 255, 255, 0.5) transparent transparent;
+  }
+  
+  // Right arrow (when can scroll right) - positioned dynamically based on scroll
+  &::after {
+    left: var(--arrow-right-position, calc(100% - 2rem));
+    border-width: 8px 0 8px 12px;
+    border-color: transparent transparent transparent rgba(255, 255, 255, 0.5);
+  }
+  
+  // Show arrows when scrollable (these classes will be added via JavaScript)
+  &.scrollable-left::before {
+    opacity: 1;
+    pointer-events: auto;
+    
+    &:hover {
+      border-color: transparent rgba(255, 255, 255, 1) transparent transparent;
+      transform: translateY(-50%) scale(1.2);
+    }
+  }
+  
+  &.scrollable-right::after {
+    opacity: 1;
+    pointer-events: auto;
+    
+    &:hover {
+      border-color: transparent transparent transparent rgba(255, 255, 255, 1);
+      transform: translateY(-50%) scale(1.2);
+    }
+  }
+  
+  // If no status indicators, hide the bar
+  &:empty {
+    display: none;
+  }
+  
+  // Ensure all child cards maintain their size
+  > * {
+    flex-shrink: 0; // Prevent cards from shrinking
+    min-width: fit-content; // Ensure minimum width
+  }
+}
+
+.eventide-header__status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  font-size: 0.8rem;
+  color: colors.$universal-white;
+  font-weight: 500;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.2s ease;
+  
+  // Flex properties to prevent shrinking
+  flex: 0 0 auto;
+  white-space: nowrap;
+  
+  i {
+    font-size: 0.85rem;
+    opacity: 0.9;
+  }
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+  
+  &--active {
+    background: rgba(77, 148, 255, 0.4);
+    border: 1px solid rgba(77, 148, 255, 0.6);
+    color: #ffffff;
+    
+    &:hover {
+      background: rgba(77, 148, 255, 0.5);
+    }
+  }
+  
+  &--warning {
+    background: rgba(255, 193, 7, 0.4);
+    border: 1px solid rgba(255, 193, 7, 0.6);
+    color: #ffffff;
+    
+    &:hover {
+      background: rgba(255, 193, 7, 0.5);
+    }
+  }
+  
+  &--danger {
+    background: rgba(220, 53, 69, 0.4);
+    border: 1px solid rgba(220, 53, 69, 0.6);
+    color: #ffffff;
+    
+    &:hover {
+      background: rgba(220, 53, 69, 0.5);
+    }
+  }
+}
+
+// Health Status Card - matches transformation card styling
+.eventide-health-card {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  border: 2px solid rgba(220, 53, 69, 0.6);
+  background: linear-gradient(
+    135deg,
+    rgba(220, 53, 69, 0.15) 0%,
+    rgba(139, 0, 0, 0.8) 50%,
+    rgba(220, 53, 69, 0.1) 100%
+  );
+  box-shadow: 
+    0 0 10px rgba(220, 53, 69, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  flex: 0 0 auto;
+  max-width: 20rem;
+  
+  // Animated danger glow effect
+  &::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -50%;
+    width: 200%;
+    height: calc(100% + 4px);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(220, 53, 69, 0.4),
+      transparent
+    );
+    animation: dangerGlow 3s ease-in-out infinite;
+    z-index: 0;
+  }
+  
+  &__header {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    position: relative;
+    z-index: 1;
+  }
+  
+  &__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 50%;
+    background: rgba(220, 53, 69, 0.4);
+    border: 2px solid rgba(220, 53, 69, 0.7);
+    margin-right: 0.75rem;
+    flex-shrink: 0;
+    
+    i {
+      font-size: 0.9rem;
+      color: #ffffff;
+      text-shadow: 0 0 6px rgba(220, 53, 69, 0.8);
+      animation: heartbeat 2s ease-in-out infinite;
+    }
+  }
+  
+  &__info {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    min-width: 0;
+  }
+  
+  &__label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.125rem;
+    line-height: 1;
+  }
+  
+  &__details {
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: #ffffff;
+    text-shadow: 0 0 6px rgba(220, 53, 69, 0.6);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.2;
+    font-family: monospace; // Use monospace for numbers
+  }
+  
+  &__warning {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 4px;
+    background: rgba(255, 193, 7, 0.3);
+    border: 1px solid rgba(255, 193, 7, 0.6);
+    color: #ffffff;
+    margin-left: 0.75rem;
+    flex-shrink: 0;
+    
+    i {
+      font-size: 0.75rem;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+  }
+  
+  // Critical health variant (default)
+  &--critical {
+    // Already styled above - this is the base critical state
+    
+    // Add pulsing border for extra urgency
+    animation: criticalBorder 2s ease-in-out infinite;
+  }
+  
+  // Potential future variants
+  &--wounded {
+    border-color: rgba(255, 193, 7, 0.6);
+    background: linear-gradient(
+      135deg,
+      rgba(255, 193, 7, 0.15) 0%,
+      rgba(184, 134, 11, 0.8) 50%,
+      rgba(255, 193, 7, 0.1) 100%
+    );
+    box-shadow: 
+      0 0 10px rgba(255, 193, 7, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    
+    &::before {
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 193, 7, 0.4),
+        transparent
+      );
+      animation: woundedGlow 4s ease-in-out infinite;
+    }
+    
+    .eventide-health-card__icon {
+      background: rgba(255, 193, 7, 0.4);
+      border-color: rgba(255, 193, 7, 0.7);
+      
+      i {
+        text-shadow: 0 0 6px rgba(255, 193, 7, 0.8);
+      }
+    }
+    
+    .eventide-health-card__details {
+      text-shadow: 0 0 6px rgba(255, 193, 7, 0.6);
+    }
+  }
+}
+
+// Animations for health card
+@keyframes dangerGlow {
+  0%, 100% { 
+    left: -50%; 
+    opacity: 0;
+  }
+  50% { 
+    left: 50%; 
+    opacity: 0.8;
+  }
+}
+
+@keyframes woundedGlow {
+  0%, 100% { 
+    left: -50%; 
+    opacity: 0;
+  }
+  50% { 
+    left: 50%; 
+    opacity: 0.6;
+  }
+}
+
+@keyframes heartbeat {
+  0%, 100% { 
+    transform: scale(1);
+  }
+  50% { 
+    transform: scale(1.1);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { 
+    opacity: 1;
+  }
+  50% { 
+    opacity: 0.5;
+  }
+}
+
+@keyframes criticalBorder {
+  0%, 100% { 
+    border-color: rgba(220, 53, 69, 0.6);
+  }
+  50% { 
+    border-color: rgba(220, 53, 69, 0.9);
+  }
+}
+
+// Effects Status Card - matches transformation and health card styling
+.eventide-effects-card {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  border: 2px solid rgba(255, 193, 7, 0.6);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 193, 7, 0.15) 0%,
+    rgba(184, 134, 11, 0.8) 50%,
+    rgba(255, 193, 7, 0.1) 100%
+  );
+  box-shadow: 
+    0 0 10px rgba(255, 193, 7, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  flex: 0 0 auto;
+  max-width: 20rem;
+  
+  // Animated golden glow effect
+  &::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -50%;
+    width: 200%;
+    height: calc(100% + 4px);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 215, 0, 0.4),
+      transparent
+    );
+    animation: goldenGlow 3.5s ease-in-out infinite;
+    z-index: 0;
+  }
+  
+  &__header {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    position: relative;
+    z-index: 1;
+  }
+  
+  &__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 50%;
+    background: rgba(255, 193, 7, 0.4);
+    border: 2px solid rgba(255, 193, 7, 0.7);
+    margin-right: 0.75rem;
+    flex-shrink: 0;
+    
+    i {
+      font-size: 0.9rem;
+      color: #ffffff;
+      text-shadow: 0 0 6px rgba(255, 193, 7, 0.8);
+      animation: goldenSparkle 2.5s ease-in-out infinite;
+    }
+  }
+  
+  &__info {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    min-width: 0;
+  }
+  
+  &__label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.125rem;
+    line-height: 1;
+  }
+  
+  &__details {
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: #ffffff;
+    text-shadow: 0 0 6px rgba(255, 193, 7, 0.6);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.2;
+  }
+  
+  &__indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 4px;
+    background: rgba(255, 215, 0, 0.4);
+    border: 1px solid rgba(255, 215, 0, 0.7);
+    color: #ffffff;
+    margin-left: 0.75rem;
+    flex-shrink: 0;
+    
+    i {
+      font-size: 0.75rem;
+      animation: goldenTwinkle 1.8s ease-in-out infinite;
+    }
+  }
+  
+  // Active effects variant (default)
+  &--active {
+    // Already styled above - this is the base active state
+    
+    // Add subtle golden shimmer
+    animation: goldenShimmer 4s ease-in-out infinite;
+  }
+  
+  // Potential future variants for different effect types
+  &--beneficial {
+    border-color: rgba(40, 167, 69, 0.6);
+    background: linear-gradient(
+      135deg,
+      rgba(40, 167, 69, 0.15) 0%,
+      rgba(25, 135, 84, 0.8) 50%,
+      rgba(40, 167, 69, 0.1) 100%
+    );
+    box-shadow: 
+      0 0 10px rgba(40, 167, 69, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    
+    &::before {
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(40, 167, 69, 0.4),
+        transparent
+      );
+      animation: beneficialGlow 4s ease-in-out infinite;
+    }
+    
+    .eventide-effects-card__icon {
+      background: rgba(40, 167, 69, 0.4);
+      border-color: rgba(40, 167, 69, 0.7);
+      
+      i {
+        text-shadow: 0 0 6px rgba(40, 167, 69, 0.8);
+      }
+    }
+    
+    .eventide-effects-card__details {
+      text-shadow: 0 0 6px rgba(40, 167, 69, 0.6);
+    }
+  }
+  
+  &--harmful {
+    border-color: rgba(220, 53, 69, 0.6);
+    background: linear-gradient(
+      135deg,
+      rgba(220, 53, 69, 0.15) 0%,
+      rgba(139, 0, 0, 0.8) 50%,
+      rgba(220, 53, 69, 0.1) 100%
+    );
+    box-shadow: 
+      0 0 10px rgba(220, 53, 69, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    
+    &::before {
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(220, 53, 69, 0.4),
+        transparent
+      );
+      animation: harmfulGlow 2.5s ease-in-out infinite;
+    }
+    
+    .eventide-effects-card__icon {
+      background: rgba(220, 53, 69, 0.4);
+      border-color: rgba(220, 53, 69, 0.7);
+      
+      i {
+        text-shadow: 0 0 6px rgba(220, 53, 69, 0.8);
+      }
+    }
+    
+    .eventide-effects-card__details {
+      text-shadow: 0 0 6px rgba(220, 53, 69, 0.6);
+    }
+  }
+}
+
+// Animations for effects card
+@keyframes goldenGlow {
+  0%, 100% { 
+    left: -50%; 
+    opacity: 0;
+  }
+  50% { 
+    left: 50%; 
+    opacity: 0.7;
+  }
+}
+
+@keyframes beneficialGlow {
+  0%, 100% { 
+    left: -50%; 
+    opacity: 0;
+  }
+  50% { 
+    left: 50%; 
+    opacity: 0.6;
+  }
+}
+
+@keyframes harmfulGlow {
+  0%, 100% { 
+    left: -50%; 
+    opacity: 0;
+  }
+  50% { 
+    left: 50%; 
+    opacity: 0.8;
+  }
+}
+
+@keyframes goldenSparkle {
+  0%, 100% { 
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+  25% { 
+    transform: scale(1.1) rotate(90deg);
+    opacity: 0.8;
+  }
+  50% { 
+    transform: scale(1) rotate(180deg);
+    opacity: 1;
+  }
+  75% { 
+    transform: scale(1.1) rotate(270deg);
+    opacity: 0.8;
+  }
+}
+
+@keyframes goldenTwinkle {
+  0%, 100% { 
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 0.3;
+    transform: scale(0.8);
+  }
+}
+
+@keyframes goldenShimmer {
+  0%, 100% { 
+    box-shadow: 
+      0 0 10px rgba(255, 193, 7, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+  50% { 
+    box-shadow: 
+      0 0 15px rgba(255, 193, 7, 0.5),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  }
+}
+
+// Cursed Items Card - matches other status card styling
+.eventide-cursed-card {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  border: 2px solid rgba(139, 0, 139, 0.6);
+  background: linear-gradient(
+    135deg,
+    rgba(139, 0, 139, 0.15) 0%,
+    rgba(75, 0, 75, 0.8) 50%,
+    rgba(139, 0, 139, 0.1) 100%
+  );
+  box-shadow: 
+    0 0 10px rgba(139, 0, 139, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  flex: 0 0 auto;
+  max-width: 20rem;
+  
+  // Animated ominous glow effect
+  &::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -50%;
+    width: 200%;
+    height: calc(100% + 4px);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(139, 0, 139, 0.4),
+      transparent
+    );
+    animation: ominousGlow 4s ease-in-out infinite;
+    z-index: 0;
+  }
+  
+  &__header {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    position: relative;
+    z-index: 1;
+  }
+  
+  &__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 50%;
+    background: rgba(139, 0, 139, 0.4);
+    border: 2px solid rgba(139, 0, 139, 0.7);
+    margin-right: 0.75rem;
+    flex-shrink: 0;
+    
+    i {
+      font-size: 0.9rem;
+      color: #ffffff;
+      text-shadow: 0 0 6px rgba(139, 0, 139, 0.8);
+      animation: ominousFloat 3s ease-in-out infinite;
+    }
+  }
+  
+  &__info {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    min-width: 0;
+  }
+  
+  &__label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.125rem;
+    line-height: 1;
+  }
+  
+  &__details {
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: #ffffff;
+    text-shadow: 0 0 6px rgba(139, 0, 139, 0.6);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.2;
+  }
+  
+  &__warning {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 4px;
+    background: rgba(220, 53, 69, 0.4);
+    border: 1px solid rgba(220, 53, 69, 0.7);
+    color: #ffffff;
+    margin-left: 0.75rem;
+    flex-shrink: 0;
+    
+    i {
+      font-size: 0.75rem;
+      animation: ominousPulse 2s ease-in-out infinite;
+    }
+  }
+  
+  // Warning variant (default)
+  &--warning {
+    // Already styled above - this is the base warning state
+    
+    // Add subtle cursed shimmer
+    animation: cursedShimmer 5s ease-in-out infinite;
+  }
+  
+  // Potential future variants for different curse types
+  &--deadly {
+    border-color: rgba(139, 0, 0, 0.8);
+    background: linear-gradient(
+      135deg,
+      rgba(139, 0, 0, 0.2) 0%,
+      rgba(75, 0, 0, 0.9) 50%,
+      rgba(139, 0, 0, 0.15) 100%
+    );
+    box-shadow: 
+      0 0 15px rgba(139, 0, 0, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    
+    &::before {
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(139, 0, 0, 0.5),
+        transparent
+      );
+      animation: deadlyGlow 3s ease-in-out infinite;
+    }
+    
+    .eventide-cursed-card__icon {
+      background: rgba(139, 0, 0, 0.5);
+      border-color: rgba(139, 0, 0, 0.8);
+      
+      i {
+        text-shadow: 0 0 8px rgba(139, 0, 0, 0.9);
+      }
+    }
+    
+    .eventide-cursed-card__details {
+      text-shadow: 0 0 6px rgba(139, 0, 0, 0.7);
+    }
+  }
+}
+
+// Animations for cursed card
+@keyframes ominousGlow {
+  0%, 100% { 
+    left: -50%; 
+    opacity: 0;
+  }
+  50% { 
+    left: 50%; 
+    opacity: 0.6;
+  }
+}
+
+@keyframes deadlyGlow {
+  0%, 100% { 
+    left: -50%; 
+    opacity: 0;
+  }
+  50% { 
+    left: 50%; 
+    opacity: 0.8;
+  }
+}
+
+@keyframes ominousFloat {
+  0%, 100% { 
+    transform: translateY(0) scale(1);
+  }
+  50% { 
+    transform: translateY(-2px) scale(1.05);
+  }
+}
+
+@keyframes ominousPulse {
+  0%, 100% { 
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 0.6;
+    transform: scale(0.9);
+  }
+}
+
+@keyframes cursedShimmer {
+  0%, 100% { 
+    box-shadow: 
+      0 0 10px rgba(139, 0, 139, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+  50% { 
+    box-shadow: 
+      0 0 20px rgba(139, 0, 139, 0.5),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  }
 }

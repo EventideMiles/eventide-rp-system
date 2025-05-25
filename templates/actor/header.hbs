@@ -1,131 +1,276 @@
 {{! Sheet Header }}
 <header class='sheet-header sheet-header--actor'>
-  <img
-    class='profile-img'
-    src='{{actor.img}}'
-    data-edit='img'
-    data-action='onEditImage'
-    title='{{actor.name}}'
-    height='100'
-    width='100'
-  />
-  <div class='header-fields'>
-    <div class='document-name flexrow'>
-      <input
-        name='name'
-        type='text'
-        value='{{actor.name}}'
-        placeholder='{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.Name"}}'
+  <div class="grid grid-6col">
+    <div class="flexcol grid-span-2">
+      <img
+        class='eventide-actor__profile-img {{#if actor.flags.eventide-rp-system.activeTransformation}}eventide-actor__profile-img--disabled{{/if}}'
+        src='{{actor.img}}'
+        {{#unless actor.flags.eventide-rp-system.activeTransformation}}
+        data-edit='img'
+        data-action='onEditImage'
+        {{/unless}}
+        title='{{#if actor.flags.eventide-rp-system.activeTransformation}}{{localize "EVENTIDE_RP_SYSTEM.Actor.Errors.ActiveTransformation"}}{{else}}{{actor.name}}{{/if}}'
       />
-      {{#if actor.flags.eventide-rp-system.activeTransformation}}
-        <div class="transformation-header">
-          <label class="transformation-header__label">{{localize 'EVENTIDE_RP_SYSTEM.Actor.Attributes.Transformation.label'}}:</label>
-          <div class="transformation-header__details">
-            <span class="transformation-header__name">{{actor.flags.eventide-rp-system.activeTransformationName}}</span>
-            {{#if (and editable (or (not actor.flags.eventide-rp-system.activeTransformationCursed) @root.isGM))}}
-              <a class="transformation-header__dismiss" data-action="removeTransformation" title="{{localize 'EVENTIDE_RP_SYSTEM.Actor.Attributes.Transformation.Remove'}}">
-                <i class="fas fa-undo {{#if actor.flags.eventide-rp-system.activeTransformationCursed}}transformation-header__dismiss--cursed{{/if}}"></i>
-              </a>
-            {{else}}
-              <a 
-                class="transformation-header__dismiss--cursed" 
-                title="{{localize 'EVENTIDE_RP_SYSTEM.Actor.Attributes.Transformation.Remove'}}" 
-                disabled>
-                <i class="fas fa-lock-keyhole"></i>
-              </a>
-            {{/if}}
-            
+      
+      <div class="eventide-actor__toggle-group">
+        <label class="eventide-actor__toggle-label" for="actor.flags.eventide-rp-system.autoTokenUpdate">{{localize "EVENTIDE_RP_SYSTEM.Actor.Controls.AutoTokenUpdate.label"}}</label>
+      <label 
+        title="{{localize "EVENTIDE_RP_SYSTEM.Actor.Controls.AutoTokenUpdate.hint"}}">
+        <div class="toggle-switch-wrapper">
+        <input 
+          type="checkbox" 
+          class="base-form__toggle-switch-left" 
+          name="actor.flags.eventide-rp-system.autoTokenUpdate" 
+          id="actor.flags.eventide-rp-system.autoTokenUpdate"
+          {{#if actor.flags.eventide-rp-system.autoTokenUpdate}}checked{{/if}}
+          data-action="toggleAutoTokenUpdate"
+        >
+        <label class="toggle-switch-display" for="actor.flags.eventide-rp-system.autoTokenUpdate"></label>
+      </div>
+    </div>
+    </div>
+    <div class='header-fields grid-span-4'>
+      <div class='document-name flexrow' data-name-theme="{{#if actor.flags.eventide-rp-system.sheetTheme}}{{actor.flags.eventide-rp-system.sheetTheme}}{{else}}blue{{/if}}">
+        <input
+          name='name'
+          type='text'
+          class='eventide-actor__character-name'
+          value='{{actor.name}}'
+          placeholder='{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.Name"}}'
+        />
+      </div>
+      
+      {{! Primary resources row }}
+      <div class='resources grid grid-3col'>
+        <div class='resource flex-group-center'>
+          <label for='system.resolve.value' class='resource-label'>
+            {{localize 'EVENTIDE_RP_SYSTEM.Actor.Attributes.Resolve.Value.label'}}
+          </label>
+          <div class='resource-content flexrow flex-center flex-between'>
+            <input
+              type='text'
+              name='system.resolve.value'
+              value='{{system.resolve.value}}'
+              data-dtype='Number'
+            />
+            <span> / </span>
+            <input
+              type='text'
+              name='system.resolve.max'
+              value='{{system.resolve.max}}'
+              data-dtype='Number'
+            />
           </div>
         </div>
-      {{/if}}
+
+        <div class='resource flex-group-center'>
+          <label for='system.power.value' class='resource-label'>
+            {{localize 'EVENTIDE_RP_SYSTEM.Actor.Attributes.Power.Value.label'}}
+          </label>
+          <div class='resource-content flexrow flex-center flex-between'>
+            <input
+              type='text'
+              name='system.power.value'
+              value='{{system.power.value}}'
+              data-dtype='Number'
+            />
+            <span> / </span>
+            <input
+              type='text'
+              name='system.power.max'
+              value='{{system.power.max}}'
+              data-dtype='Number'
+            />
+          </div>
+        </div>
+
+        <div class='resource flex-group-center'>
+          {{#if (eq actor.type 'character')}}
+            <label class='resource-label'>
+              {{localize 'EVENTIDE_RP_SYSTEM.Actor.Attributes.Level.label'}}
+            </label>
+            <div class='resource-content flexrow flex-center flex-between'>
+              <input
+                type='text'
+                name='system.attributes.level.value'
+                value='{{system.attributes.level.value}}'
+                data-dtype='Number'
+              />
+            </div>
+          {{/if}}
+          {{#if (eq actor.type 'npc')}}
+            <label class='resource-label'>
+              {{localize 'EVENTIDE_RP_SYSTEM.Actor.Attributes.CR.label'}} / {{localize 'EVENTIDE_RP_SYSTEM.Actor.Attributes.XP.label'}}
+            </label>
+            <div class='resource-content flexrow flex-center flex-between'>
+              <input
+                type='text'
+                name='system.cr'
+                value='{{system.cr}}'
+                data-dtype='Number'
+              />
+              <span></span>
+              <input
+                type='text'
+                disabled='true'
+                name='system.xp'
+                value='{{system.xp}}'
+                data-dtype='Number'
+              />
+            </div>
+          {{/if}}
+        </div>
+      </div>
+      
+      {{! Secondary stats row }}
+      <div class='resources grid grid-4col'>
+        {{!-- <div class='resource flex-group-center'>
+          <label class='resource-label'>Initiative</label>
+          <div class='resource-content flexrow flex-center flex-between'>
+            <input
+              type='text'
+              name='system.statTotal.mainInit'
+              value='{{system.statTotal.mainInit}}'
+              data-dtype='Number'
+              title="Main Initiative"
+            />
+            <span>/</span>
+            <input
+              type='text'
+              name='system.statTotal.subInit'
+              value='{{system.statTotal.subInit}}'
+              data-dtype='Number'
+              title="Sub Initiative"
+            />
+          </div>
+        </div> --}}
+        
+        <div class='resource flex-group-center'>
+          <label class='resource-label'>Dice Pool</label>
+          <div class='resource-content flexrow flex-center'>
+            <span class="resource-value" title="Available Dice (Derived)">
+              {{system.hiddenAbilities.dice.total}}
+            </span>
+          </div>
+        </div>
+
+        <div class='resource flex-group-center'>
+          <label class='resource-label'>Fail Range</label>
+          <div class='resource-content flexrow flex-center flex-between'>
+            <span class="resource-value" title="Fail Minimum (Derived)">
+              {{system.hiddenAbilities.fmin.total}}
+            </span>
+            <span>-</span>
+            <span class="resource-value" title="Fail Maximum (Derived)">
+              {{system.hiddenAbilities.fmax.total}}
+            </span>
+          </div>
+        </div>
+        
+        <div class='resource flex-group-center'>
+          <label class='resource-label'>Crit Range</label>
+          <div class='resource-content flexrow flex-center flex-between'>
+            <span class="resource-value" title="Critical Minimum (Derived)">
+              {{system.hiddenAbilities.cmin.total}}
+            </span>
+            <span>-</span>
+            <span class="resource-value" title="Critical Maximum (Derived)">
+              {{system.hiddenAbilities.cmax.total}}
+            </span>
+          </div>
+        </div>
+        
+        <div class='resource flex-group-center'>
+          <label class='resource-label'>Stat Total</label>
+          <div class='resource-content flexrow flex-center'>
+            <span class="resource-value" title="Total Stat Points (Derived)">
+              {{system.statTotal.value}}
+            </span>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
+  
+  {{! Status indicators bar - moved to bottom of entire header }}
+  <div class="eventide-header__status-bar">
+    {{! Transformation Effect Card - moved here as requested }}
+    {{#if actor.flags.eventide-rp-system.activeTransformation}}
+      <div class="eventide-transformation-card {{#if actor.flags.eventide-rp-system.activeTransformationCursed}}eventide-transformation-card--cursed{{/if}}">
+        <div class="eventide-transformation-card__header">
+          <div class="eventide-transformation-card__icon">
+            <i class="{{#if actor.flags.eventide-rp-system.activeTransformationCursed}}fas fa-skull{{else}}fas fa-magic{{/if}}"></i>
+          </div>
+          <div class="eventide-transformation-card__info">
+            <span class="eventide-transformation-card__label">
+              {{#if actor.flags.eventide-rp-system.activeTransformationCursed}}Cursed Transformation{{else}}Active Transformation{{/if}}
+            </span>
+            <span class="eventide-transformation-card__name">{{actor.flags.eventide-rp-system.activeTransformationName}}</span>
+          </div>
+          {{#if (and editable (or (not actor.flags.eventide-rp-system.activeTransformationCursed) @root.isGM))}}
+            <button class="eventide-transformation-card__revert" data-action="removeTransformation" title="{{localize 'EVENTIDE_RP_SYSTEM.Actor.Attributes.Transformation.Remove'}}">
+              <i class="fas fa-compress-alt"></i>
+            </button>
+          {{else}}
+            <div class="eventide-transformation-card__locked" title="{{localize 'EVENTIDE_RP_SYSTEM.Actor.Attributes.Transformation.Remove'}}">
+              <i class="fas fa-lock"></i>
+            </div>
+          {{/if}}
+        </div>
+      </div>
+    {{/if}}
+    {{! Show cursed items warning if any equipped cursed gear }}
+    {{#if (hasCursedItems equippedGear)}}
+      <div class="eventide-cursed-card eventide-cursed-card--warning">
+        <div class="eventide-cursed-card__header">
+          <div class="eventide-cursed-card__icon">
+            <i class="fas fa-skull-crossbones"></i>
+          </div>
+          <div class="eventide-cursed-card__info">
+            <span class="eventide-cursed-card__label">Cursed Items</span>
+            <span class="eventide-cursed-card__details">Equipped Cursed Gear</span>
+          </div>
+          <div class="eventide-cursed-card__warning">
+            <i class="fas fa-exclamation-triangle"></i>
+          </div>
+        </div>
+      </div>
+    {{/if}}
     
-    {{! The grid classes are defined in scss/global/_grid.scss. To use,
-      use both the "grid" and "grid-Ncol" class where "N" can be any number
-      from 1 to 12 and will create that number of columns.  }}
-    <div class='resources grid grid-3col'>
-
-      {{! "flex-group-center" is also defined in the _grid.scss file
-        and it will add a small amount of padding, a border, and will
-        center all of its child elements content and text. }}
-      <div class='resource flex-group-center'>
-        <label for='system.resolve.value' class='resource-label'>
-          {{localize 'EVENTIDE_RP_SYSTEM.Actor.Attributes.Resolve.Value.label'}}
-        </label>
-        <div class='resource-content flexrow flex-center flex-between'>
-          <input
-            type='text'
-            name='system.resolve.value'
-            value='{{system.resolve.value}}'
-            data-dtype='Number'
-          />
-          <span> / </span>
-          <input
-            type='text'
-            name='system.resolve.max'
-            value='{{system.resolve.max}}'
-            data-dtype='Number'
-          />
+    {{! Show active effects count if any }}
+    {{#if (gt statuses.length 0)}}
+      <div class="eventide-effects-card eventide-effects-card--active">
+        <div class="eventide-effects-card__header">
+          <div class="eventide-effects-card__icon">
+            <i class="fas fa-magic"></i>
+          </div>
+          <div class="eventide-effects-card__info">
+            <span class="eventide-effects-card__label">Status Effects</span>
+            <span class="eventide-effects-card__details">{{statuses.length}} {{#if (eq statuses.length 1)}}Effect{{else}}Effects{{/if}} Active</span>
+          </div>
+          <div class="eventide-effects-card__indicator">
+            <i class="fas fa-star"></i>
+          </div>
         </div>
       </div>
-
-      <div class='resource flex-group-center'>
-        <label for='system.power.value' class='resource-label'>
-          {{localize 'EVENTIDE_RP_SYSTEM.Actor.Attributes.Power.Value.label'}}
-        </label>
-        <div class='resource-content flexrow flex-center flex-between'>
-          <input
-            type='text'
-            name='system.power.value'
-            value='{{system.power.value}}'
-            data-dtype='Number'
-          />
-          <span> / </span>
-          <input
-            type='text'
-            name='system.power.max'
-            value='{{system.power.max}}'
-            data-dtype='Number'
-          />
+    {{/if}}
+    
+    {{! Low resolve warning - enhanced card style }}
+    {{#if lowHealth}}
+      <div class="eventide-health-card eventide-health-card--critical">
+        <div class="eventide-health-card__header">
+          <div class="eventide-health-card__icon">
+            <i class="fas fa-heart-broken"></i>
+          </div>
+          <div class="eventide-health-card__info">
+            <span class="eventide-health-card__label">Critical Health</span>
+            <span class="eventide-health-card__details">{{system.resolve.value}}/{{system.resolve.max}} Resolve</span>
+          </div>
+          <div class="eventide-health-card__warning">
+            <i class="fas fa-exclamation-triangle"></i>
+          </div>
         </div>
       </div>
-
-      <div class='resource flex-group-center'>
-        {{#if (eq actor.type 'character')}}
-          <label class='resource-label'>
-            {{localize 'EVENTIDE_RP_SYSTEM.Actor.Attributes.Level.label'}}
-          </label>
-          <div class='resource-content flexrow flex-center flex-between'>
-            <input
-              type='text'
-              name='system.attributes.level.value'
-              value='{{system.attributes.level.value}}'
-              data-dtype='Number'
-            />
-          </div>
-        {{/if}}
-        {{#if (eq actor.type 'npc')}}
-          <label class='resource-label'>
-            {{localize 'EVENTIDE_RP_SYSTEM.Actor.Attributes.CR.label'}} / {{localize 'EVENTIDE_RP_SYSTEM.Actor.Attributes.XP.label'}}
-          </label>
-          <div class='resource-content flexrow flex-center flex-between'>
-            <input
-              type='text'
-              name='system.cr'
-              value='{{system.cr}}'
-              data-dtype='Number'
-            />
-            <span></span>
-            <input
-              type='text'
-              disabled='true'
-              name='system.xp'
-              value='{{system.xp}}'
-              data-dtype='Number'
-            />
-          </div>
-        {{/if}}
-      </div>
-    </div>
+    {{/if}}
   </div>
 </header>
