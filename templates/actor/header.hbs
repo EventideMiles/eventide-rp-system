@@ -1,5 +1,5 @@
 {{! Sheet Header }}
-<header class='sheet-header sheet-header--actor'>
+<header class='sheet-header sheet-header--actor eventide-actor__header' data-header-theme="{{userSheetTheme}}">
   <div class="grid grid-6col">
     <div class="flexcol grid-span-2">
       <img
@@ -11,16 +11,16 @@
         {{/unless}}
         title='{{#if actor.flags.eventide-rp-system.activeTransformation}}{{localize "EVENTIDE_RP_SYSTEM.Actor.Errors.ActiveTransformation"}}{{else}}{{actor.name}}{{/if}}'
       />
-      
+
       <div class="eventide-actor__toggle-group">
         <label class="eventide-actor__toggle-label" for="actor.flags.eventide-rp-system.autoTokenUpdate">{{localize "EVENTIDE_RP_SYSTEM.Actor.Controls.AutoTokenUpdate.label"}}</label>
-      <label 
+      <label
         title="{{localize "EVENTIDE_RP_SYSTEM.Actor.Controls.AutoTokenUpdate.hint"}}">
         <div class="toggle-switch-wrapper">
-        <input 
-          type="checkbox" 
-          class="base-form__toggle-switch-left" 
-          name="actor.flags.eventide-rp-system.autoTokenUpdate" 
+        <input
+          type="checkbox"
+          class="base-form__toggle-switch-left"
+          name="actor.flags.eventide-rp-system.autoTokenUpdate"
           id="actor.flags.eventide-rp-system.autoTokenUpdate"
           {{#if actor.flags.eventide-rp-system.autoTokenUpdate}}checked{{/if}}
           data-action="toggleAutoTokenUpdate"
@@ -30,7 +30,7 @@
     </div>
     </div>
     <div class='header-fields grid-span-4'>
-      <div class='document-name flexrow' data-name-theme="{{#if actor.flags.eventide-rp-system.sheetTheme}}{{actor.flags.eventide-rp-system.sheetTheme}}{{else}}blue{{/if}}">
+      <div class='document-name flexrow' data-name-theme="{{userSheetTheme}}">
         <input
           name='name'
           type='text'
@@ -39,7 +39,7 @@
           placeholder='{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.Name"}}'
         />
       </div>
-      
+
       {{! Primary resources row }}
       <div class='resources grid grid-3col'>
         <div class='resource flex-group-center'>
@@ -121,7 +121,7 @@
           {{/if}}
         </div>
       </div>
-      
+
       {{! Secondary stats row }}
       <div class='resources grid grid-4col'>
         {{!-- <div class='resource flex-group-center'>
@@ -144,7 +144,7 @@
             />
           </div>
         </div> --}}
-        
+
         <div class='resource flex-group-center'>
           <label class='resource-label'>Dice Pool</label>
           <div class='resource-content flexrow flex-center'>
@@ -166,7 +166,7 @@
             </span>
           </div>
         </div>
-        
+
         <div class='resource flex-group-center'>
           <label class='resource-label'>Crit Range</label>
           <div class='resource-content flexrow flex-center flex-between'>
@@ -179,7 +179,7 @@
             </span>
           </div>
         </div>
-        
+
         <div class='resource flex-group-center'>
           <label class='resource-label'>Stat Total</label>
           <div class='resource-content flexrow flex-center'>
@@ -191,7 +191,7 @@
       </div>
     </div>
   </div>
-  
+
   {{! Status indicators bar - moved to bottom of entire header }}
   <div class="eventide-header__status-bar">
     {{! Transformation Effect Card - moved here as requested }}
@@ -236,7 +236,7 @@
         </div>
       </div>
     {{/if}}
-    
+
     {{! Show active effects count if any }}
     {{#if (gt statuses.length 0)}}
       <div class="eventide-effects-card eventide-effects-card--active">
@@ -254,7 +254,7 @@
         </div>
       </div>
     {{/if}}
-    
+
     {{! Low resolve warning - enhanced card style }}
     {{#if lowHealth}}
       <div class="eventide-health-card eventide-health-card--critical">

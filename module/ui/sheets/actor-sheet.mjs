@@ -55,7 +55,7 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
     ],
     position: {
       width: 675,
-      height: 750,
+      height: 950,
     },
     window: {
       controls: [
@@ -183,6 +183,18 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
         lowHealth:
           this.actor.system.resolve.value / this.actor.system.resolve.max <=
           0.3,
+        // Add user's theme preference with debugging
+        userSheetTheme: (() => {
+          const rawFlag = CommonFoundryTasks.retrieveUserFlag("sheetTheme");
+          const theme = rawFlag || "blue";
+          Logger.debug("User theme retrieved for context", {
+            rawFlag,
+            theme,
+            userFlags: game.user.flags,
+            systemFlags: game.user.flags?.["eventide-rp-system"],
+          });
+          return theme;
+        })(),
       };
 
       // Offloading context prep to a helper function
@@ -547,6 +559,9 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
     // Initialize drag-scrolling for status bar
     this.#initStatusBarScrolling();
 
+    // Ensure theme is properly applied
+    this.#ensureThemeApplied();
+
     // Debug the transformation display
     if (CommonFoundryTasks.isTestingMode) this._debugTransformation();
 
@@ -826,6 +841,50 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
 
     // Clear the reference
     this.#statusBarEventHandlers = null;
+  }
+
+  /**
+   * Ensure the theme is properly applied to the sheet
+   * @private
+   */
+  #ensureThemeApplied() {
+    const currentTheme =
+      CommonFoundryTasks.retrieveUserFlag("sheetTheme") || "blue";
+
+    // Apply theme to document name element
+    const documentNameElement = this.element.querySelector(".document-name");
+    if (documentNameElement) {
+      const appliedTheme = documentNameElement.getAttribute("data-name-theme");
+
+      // If the applied theme doesn't match the user's preference, update it
+      if (appliedTheme !== currentTheme) {
+        documentNameElement.setAttribute("data-name-theme", currentTheme);
+        Logger.debug("Name theme corrected on render", {
+          sheetId: this.id,
+          actorName: this.actor?.name,
+          expectedTheme: currentTheme,
+          appliedTheme,
+        });
+      }
+    }
+
+    // Apply theme to header element
+    const headerElement = this.element.querySelector(".eventide-actor__header");
+    if (headerElement) {
+      const appliedHeaderTheme =
+        headerElement.getAttribute("data-header-theme");
+
+      // If the applied theme doesn't match the user's preference, update it
+      if (appliedHeaderTheme !== currentTheme) {
+        headerElement.setAttribute("data-header-theme", currentTheme);
+        Logger.debug("Header theme corrected on render", {
+          sheetId: this.id,
+          actorName: this.actor?.name,
+          expectedTheme: currentTheme,
+          appliedTheme: appliedHeaderTheme,
+        });
+      }
+    }
   }
 
   /**************
@@ -1801,66 +1860,88 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
   }
 
   /**
-   * Handle setting the actor's sheet theme (cycles through available themes)
+   * Handle setting the user's sheet theme preference (cycles through available themes)
    * @param {PointerEvent} event   The originating click event
    * @param {HTMLElement} target   The capturing HTML element which defined a [data-action]
    * @protected
    */
   static async _setSheetTheme(_event, _target) {
+    const rawFlag = CommonFoundryTasks.retrieveUserFlag("sheetTheme");
     Logger.methodEntry("EventideRpSystemActorSheet", "_setSheetTheme", {
       actorName: this.actor?.name,
-      currentTheme: this.actor.getFlag("eventide-rp-system", "sheetTheme"),
+      rawFlag,
+      rawFlagType: typeof rawFlag,
+      userFlags: game.user.flags,
     });
 
     try {
       // Define the theme cycle order
-      const themes = ["blue", "gold", "green"];
+      const themes = ["blue", "black", "green", "light", "gold", "purple"];
       const currentTheme =
-        this.actor.getFlag("eventide-rp-system", "sheetTheme") || "blue";
+        CommonFoundryTasks.retrieveUserFlag("sheetTheme") || "blue";
 
       // Find current theme index and move to next
-      const currentIndex = themes.indexOf(currentTheme);
+      // Handle case where currentTheme might not be in the themes array
+      let currentIndex = themes.indexOf(currentTheme);
+      if (currentIndex === -1) {
+        // If current theme is not found (corrupted data), default to blue (index 0)
+        currentIndex = 0;
+      }
       const nextIndex = (currentIndex + 1) % themes.length;
       const nextTheme = themes[nextIndex];
 
-      // Update the actor flag
-      await this.actor.setFlag("eventide-rp-system", "sheetTheme", nextTheme);
+      Logger.debug("Theme cycling", {
+        currentTheme,
+        currentIndex,
+        nextIndex,
+        nextTheme,
+        availableThemes: themes,
+      });
 
-      // Update the document-name element's data attribute immediately for visual feedback
-      const documentNameElement = this.element.querySelector(".document-name");
-      if (documentNameElement) {
-        documentNameElement.setAttribute("data-name-theme", nextTheme);
-      }
+      // Update the user flag
+      await CommonFoundryTasks.storeUserFlag("sheetTheme", nextTheme);
+
+      Logger.info("User theme flag updated", {
+        userName: game.user.name,
+        newTheme: nextTheme,
+        flagPath: "eventide-rp-system.sheetTheme",
+      });
+
+      // Re-render this sheet: if they have more than one open they'll just have to deal with closing and reopening them.
+      this.render(false);
 
       // Show notification about the theme change
       const themeNames = {
         blue: "Night",
-        gold: "Twilight",
+        black: "Midnight",
         green: "Dawn",
+        light: "Noon",
+        gold: "Twilight",
+        purple: "Dusk",
       };
 
       ui.notifications.info(
         game.i18n.format("EVENTIDE_RP_SYSTEM.Info.SheetThemeChanged", {
-          actorName: this.actor.name,
+          userName: game.user.name,
           themeName: themeNames[nextTheme],
         }),
       );
 
       Logger.info("Sheet theme cycled successfully", {
-        actorName: this.actor.name,
+        userName: game.user.name,
         previousTheme: currentTheme,
         newTheme: nextTheme,
       });
     } catch (error) {
       Logger.error("Failed to cycle sheet theme", {
-        actorName: this.actor?.name,
+        userName: game.user?.name,
         error: error.message,
         stack: error.stack,
       });
 
       ui.notifications.error(
         game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.SetSheetThemeError", {
-          actorName: this.actor?.name || "Unknown",
+          userName: game.user?.name || "Unknown",
         }),
       );
     }
