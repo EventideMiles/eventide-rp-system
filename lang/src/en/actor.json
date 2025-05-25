@@ -32,6 +32,15 @@
           "label": "XP"
         }
       },
+      "Errors": {
+        "ActiveTransformation": "Image editing disabled while transformed"
+      },
+      "Controls": {
+        "AutoTokenUpdate": {
+          "label": "Auto Token Update",
+          "hint": "Automatically update the token's image when the actor's image is updated"
+        }
+      },
       "Tabs": {
         "Biography": "Biography",
         "CombatPowers": "Combat Powers",

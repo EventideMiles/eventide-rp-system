@@ -92,6 +92,15 @@
           "label": "XP"
         }
       },
+      "Errors": {
+        "ActiveTransformation": "Image editing disabled while transformed"
+      },
+      "Controls": {
+        "AutoTokenUpdate": {
+          "label": "Auto Token Update",
+          "hint": "Automatically update the token's image when the actor's image is updated"
+        }
+      },
       "Tabs": {
         "Biography": "Biography",
         "CombatPowers": "Combat Powers",
@@ -138,12 +147,15 @@
       "InvalidCost": "Cost must be a valid number",
       "TransformationItemTypes": "Only combat powers can be added to transformations.",
       "MissingAbility": "Missing ability",
-      "MissingTransformation": "Missing transformation"
+      "MissingTransformation": "Missing transformation",
+      "ConfigureTokenError": "Failed to configure token for {actorName}",
+      "SetSheetThemeError": "Failed to set sheet theme for {actorName}"
     },
     "Info": {
       "CompendiumItemCreated": "Created {keyType} item {name} in the {packLabel} compendium",
       "TokenItemCreated": "Created {keyType} item {name} on {count} {targetType} token(s) and in the {packLabel} compendium",
-      "Stored": "Stored {keyType} information in localStorage"
+      "Stored": "Stored {keyType} information in localStorage",
+      "SheetThemeChanged": "Sheet theme changed to {themeName} for {actorName}"
     },
     "Forms": {
       "ScriptExplanations": {
@@ -420,6 +432,7 @@
     "WindowTitles": {
       "ChangeTargetStatus": "Change Target Status",
       "CombatPowerPopup": "Combat Power Details",
+      "ConfigureToken": "Configure Token",
       "DamageTargets": "Damage Targets",
       "EffectCreator": "Effect Creator",
       "FeaturePopup": "Feature Information",
@@ -428,6 +441,7 @@
       "GearTransfer": "Transfer Gear",
       "RestoreTarget": "Restore Target",
       "SelectAbilityRoll": "Select Ability Roll",
+      "SheetTheme": "Cycle Sheet Theme",
       "StatusPopup": "Status Information",
       "TransformationCreator": "Transformation Creator"
     }
