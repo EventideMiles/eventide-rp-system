@@ -1,6 +1,6 @@
 {{! Sheet Header }}
 <header class='sheet-header sheet-header--actor eventide-actor__header' data-header-theme="{{userSheetTheme}}">
-  <div class="grid grid-6col">
+  <div class="grid grid-8col">
     <div class="flexcol grid-span-2">
       <img
         class='eventide-actor__profile-img {{#if actor.flags.eventide-rp-system.activeTransformation}}eventide-actor__profile-img--disabled{{/if}}'
@@ -189,6 +189,50 @@
           </div>
         </div>
       </div>
+    </div>
+
+    {{! Ability Cards Column - Given more space }}
+    <div class='header-abilities flexcol grid-span-2'>
+      {{#each system.abilities as |ability key|}}
+        <div class="eventide-ability-card eventide-ability-card--{{key}} rollable"
+             data-ability="{{key}}"
+             data-action='roll'
+             data-type="{{key}}"
+             data-roll='{{lookup ../formulas key}}'
+             data-label='{{localize (lookup @root.config.abilities key)}}'
+             title="Roll {{localize (lookup @root.config.abilities key)}} ({{numberFormat ability.total decimals=0 sign=true}})">
+          <div class="eventide-ability-card__content">
+            <div class="eventide-ability-card__header">
+              <span class="eventide-ability-card__label">{{localize (lookup @root.config.abilities key)}}</span>
+            </div>
+            <div class="eventide-ability-card__stats">
+              <input
+                type='text'
+                name='system.abilities.{{key}}.value'
+                value='{{ability.value}}'
+                class="eventide-ability-card__input"
+                data-dtype='Number'
+                onclick="event.stopPropagation();"
+              />
+              <button class="eventide-ability-card__total-button rollable"
+                      data-action='roll'
+                      data-type="{{key}}"
+                      data-roll='{{lookup ../formulas key}}'
+                      data-label='{{localize (lookup @root.config.abilities key)}}'
+                      title="Roll {{localize (lookup @root.config.abilities key)}} ({{numberFormat ability.total decimals=0 sign=true}})">
+                {{numberFormat ability.total decimals=0 sign=true}}
+              </button>
+            </div>
+            <div class="eventide-ability-card__status">
+              {{#if ability.override}}
+                <i class="fas fa-lock eventide-ability-card__lock"></i>
+              {{else}}
+                <i class="fas fa-unlock-alt eventide-ability-card__unlock"></i>
+              {{/if}}
+            </div>
+          </div>
+        </div>
+      {{/each}}
     </div>
   </div>
 

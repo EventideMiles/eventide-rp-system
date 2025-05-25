@@ -1055,6 +1055,382 @@
   color: var(--erps-black);
 }
 
+.header-abilities {
+  gap: 0.25rem;
+  padding: 0.25rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.eventide-ability-card {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  border-radius: 4px;
+  border: 2px solid transparent;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.3) 0%, rgba(20, 30, 45, 0.4) 50%, rgba(0, 0, 0, 0.3) 100%);
+  padding: 0.25rem 0.5rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  height: 2.5rem;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+.eventide-ability-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  z-index: 1;
+  transition: all 0.3s ease;
+}
+.eventide-ability-card__content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  gap: 0.375rem;
+  justify-content: space-between;
+}
+.eventide-ability-card__header {
+  flex-shrink: 0;
+  min-width: 3rem;
+  max-width: 3.5rem;
+  width: 3.5rem;
+}
+.eventide-ability-card__label {
+  font-size: 0.55rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.8);
+  text-transform: uppercase;
+  letter-spacing: 0.2px;
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.eventide-ability-card__stats {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  flex-grow: 1;
+}
+.eventide-ability-card__input {
+  width: 1.75rem !important;
+  height: 1.25rem !important;
+  padding: 0.125rem !important;
+  font-size: 0.65rem !important;
+  text-align: center !important;
+  background: rgba(0, 0, 0, 0.3) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 2px !important;
+  color: #ffffff !important;
+  flex-shrink: 0;
+}
+.eventide-ability-card__input:focus {
+  border-color: rgba(255, 255, 255, 0.5) !important;
+  box-shadow: 0 0 4px rgba(255, 255, 255, 0.3) !important;
+}
+.eventide-ability-card__total-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 1.5rem;
+  border-radius: 3px;
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  font-size: 0.7rem;
+  font-weight: bold;
+  position: relative;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  text-shadow: 0 0 4px rgba(255, 255, 255, 0.6);
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+.eventide-ability-card__total-button:active {
+  transform: scale(0.95);
+}
+.eventide-ability-card__total-button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  animation: buttonShimmer 3s ease-in-out infinite;
+}
+.eventide-ability-card__status {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.2s ease;
+}
+.eventide-ability-card__status:hover {
+  background: rgba(0, 0, 0, 0.4);
+  border-color: rgba(255, 255, 255, 0.35);
+}
+.eventide-ability-card__lock, .eventide-ability-card__unlock {
+  font-size: 0.75rem;
+  opacity: 0.9;
+  transition: all 0.2s ease;
+}
+.eventide-ability-card__lock:hover, .eventide-ability-card__unlock:hover {
+  opacity: 1;
+  transform: scale(1.15);
+}
+.eventide-ability-card__lock {
+  color: #ff6b6b;
+  text-shadow: 0 0 4px rgba(255, 107, 107, 0.6);
+}
+.eventide-ability-card__unlock {
+  color: #4CAF50;
+  text-shadow: 0 0 4px rgba(76, 175, 80, 0.6);
+}
+.eventide-ability-card--acro::before {
+  background: var(--erps-abilities-acro);
+}
+.eventide-ability-card--acro .eventide-ability-card__total-button {
+  background: rgba(191, 68, 0, 0.3);
+  border: 1px solid rgba(191, 68, 0, 0.5);
+  text-shadow: 0 0 4px rgba(191, 68, 0, 0.8);
+  box-shadow: 0 0 6px rgba(191, 68, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  animation: acroGlow 2s ease-in-out infinite alternate;
+}
+.eventide-ability-card--acro .eventide-ability-card__total-button:hover {
+  background: rgba(191, 68, 0, 0.5);
+  border-color: rgba(191, 68, 0, 0.7);
+  transform: scale(1.05);
+  box-shadow: 0 0 12px rgba(191, 68, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+.eventide-ability-card--acro .eventide-ability-card__total-button::before {
+  background: linear-gradient(90deg, transparent, rgba(191, 68, 0, 0.3), transparent);
+}
+.eventide-ability-card--phys::before {
+  background: var(--erps-abilities-phys);
+}
+.eventide-ability-card--phys .eventide-ability-card__total-button {
+  background: rgba(168, 3, 3, 0.3);
+  border: 1px solid rgba(168, 3, 3, 0.5);
+  text-shadow: 0 0 4px rgba(168, 3, 3, 0.8);
+  box-shadow: 0 0 6px rgba(168, 3, 3, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  animation: physGlow 2s ease-in-out infinite alternate;
+}
+.eventide-ability-card--phys .eventide-ability-card__total-button:hover {
+  background: rgba(168, 3, 3, 0.5);
+  border-color: rgba(168, 3, 3, 0.7);
+  transform: scale(1.05);
+  box-shadow: 0 0 12px rgba(168, 3, 3, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+.eventide-ability-card--phys .eventide-ability-card__total-button::before {
+  background: linear-gradient(90deg, transparent, rgba(168, 3, 3, 0.3), transparent);
+}
+.eventide-ability-card--fort::before {
+  background: var(--erps-abilities-fort);
+}
+.eventide-ability-card--fort .eventide-ability-card__total-button {
+  background: rgba(45, 104, 45, 0.3);
+  border: 1px solid rgba(45, 104, 45, 0.5);
+  text-shadow: 0 0 4px rgba(45, 104, 45, 0.8);
+  box-shadow: 0 0 6px rgba(45, 104, 45, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  animation: fortGlow 2s ease-in-out infinite alternate;
+}
+.eventide-ability-card--fort .eventide-ability-card__total-button:hover {
+  background: rgba(45, 104, 45, 0.5);
+  border-color: rgba(45, 104, 45, 0.7);
+  transform: scale(1.05);
+  box-shadow: 0 0 12px rgba(45, 104, 45, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+.eventide-ability-card--fort .eventide-ability-card__total-button::before {
+  background: linear-gradient(90deg, transparent, rgba(45, 104, 45, 0.3), transparent);
+}
+.eventide-ability-card--will::before {
+  background: var(--erps-abilities-will);
+}
+.eventide-ability-card--will .eventide-ability-card__total-button {
+  background: rgba(106, 27, 154, 0.3);
+  border: 1px solid rgba(106, 27, 154, 0.5);
+  text-shadow: 0 0 4px rgba(106, 27, 154, 0.8);
+  box-shadow: 0 0 6px rgba(106, 27, 154, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  animation: willGlow 2s ease-in-out infinite alternate;
+}
+.eventide-ability-card--will .eventide-ability-card__total-button:hover {
+  background: rgba(106, 27, 154, 0.5);
+  border-color: rgba(106, 27, 154, 0.7);
+  transform: scale(1.05);
+  box-shadow: 0 0 12px rgba(106, 27, 154, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+.eventide-ability-card--will .eventide-ability-card__total-button::before {
+  background: linear-gradient(90deg, transparent, rgba(106, 27, 154, 0.3), transparent);
+}
+.eventide-ability-card--wits::before {
+  background: var(--erps-abilities-wits);
+}
+.eventide-ability-card--wits .eventide-ability-card__total-button {
+  background: rgba(14, 67, 128, 0.3);
+  border: 1px solid rgba(14, 67, 128, 0.5);
+  text-shadow: 0 0 4px rgba(14, 67, 128, 0.8);
+  box-shadow: 0 0 6px rgba(14, 67, 128, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  animation: witsGlow 2s ease-in-out infinite alternate;
+}
+.eventide-ability-card--wits .eventide-ability-card__total-button:hover {
+  background: rgba(14, 67, 128, 0.5);
+  border-color: rgba(14, 67, 128, 0.7);
+  transform: scale(1.05);
+  box-shadow: 0 0 12px rgba(14, 67, 128, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+.eventide-ability-card--wits .eventide-ability-card__total-button::before {
+  background: linear-gradient(90deg, transparent, rgba(14, 67, 128, 0.3), transparent);
+}
+.eventide-ability-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+.eventide-ability-card:hover::before {
+  width: 100%;
+  opacity: 0.15;
+}
+.eventide-ability-card--acro:hover {
+  background: linear-gradient(135deg, rgba(191, 68, 0, 0.2) 0%, rgba(191, 68, 0, 0.1) 50%, rgba(191, 68, 0, 0.05) 100%);
+}
+.eventide-ability-card--acro:hover::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23bf4400' fill-opacity='0.1'%3E%3Cpath d='M10 2l2 6h6l-5 4 2 6-5-4-5 4 2-6-5-4h6z'/%3E%3C/g%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 1;
+}
+.eventide-ability-card--phys:hover {
+  background: linear-gradient(135deg, rgba(168, 3, 3, 0.2) 0%, rgba(168, 3, 3, 0.1) 50%, rgba(168, 3, 3, 0.05) 100%);
+}
+.eventide-ability-card--phys:hover::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23a80303' fill-opacity='0.1'%3E%3Crect x='8' y='2' width='4' height='16'/%3E%3Crect x='2' y='8' width='16' height='4'/%3E%3C/g%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 1;
+}
+.eventide-ability-card--fort:hover {
+  background: linear-gradient(135deg, rgba(45, 104, 45, 0.2) 0%, rgba(45, 104, 45, 0.1) 50%, rgba(45, 104, 45, 0.05) 100%);
+}
+.eventide-ability-card--fort:hover::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%232d682d' fill-opacity='0.1'%3E%3Cpath d='M10 2L4 6v8l6 4 6-4V6z'/%3E%3C/g%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 1;
+}
+.eventide-ability-card--will:hover {
+  background: linear-gradient(135deg, rgba(106, 27, 154, 0.2) 0%, rgba(106, 27, 154, 0.1) 50%, rgba(106, 27, 154, 0.05) 100%);
+}
+.eventide-ability-card--will:hover::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%236a1b9a' fill-opacity='0.1'%3E%3Ccircle cx='10' cy='10' r='8'/%3E%3Ccircle cx='10' cy='10' r='4'/%3E%3C/g%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 1;
+}
+.eventide-ability-card--wits:hover {
+  background: linear-gradient(135deg, rgba(14, 67, 128, 0.2) 0%, rgba(14, 67, 128, 0.1) 50%, rgba(14, 67, 128, 0.05) 100%);
+}
+.eventide-ability-card--wits:hover::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%230e4380' fill-opacity='0.1'%3E%3Cpath d='M10 2l8 6-8 2-8-2z'/%3E%3Cpath d='M10 12l8 6-8-2-8 2z'/%3E%3C/g%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes acroGlow {
+  0% {
+    box-shadow: 0 0 6px rgba(191, 68, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(191, 68, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  }
+}
+@keyframes physGlow {
+  0% {
+    box-shadow: 0 0 6px rgba(168, 3, 3, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(168, 3, 3, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  }
+}
+@keyframes fortGlow {
+  0% {
+    box-shadow: 0 0 6px rgba(45, 104, 45, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(45, 104, 45, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  }
+}
+@keyframes willGlow {
+  0% {
+    box-shadow: 0 0 6px rgba(106, 27, 154, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(106, 27, 154, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  }
+}
+@keyframes witsGlow {
+  0% {
+    box-shadow: 0 0 6px rgba(14, 67, 128, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(14, 67, 128, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  }
+}
+@keyframes buttonShimmer {
+  0% {
+    left: -100%;
+  }
+  50% {
+    left: 100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
 .eventide-ability-acro-box {
   background-color: var(--erps-abilities-acro-transparent);
   border-left: 0.3125rem solid var(--erps-abilities-acro);
@@ -6019,5 +6395,3 @@
   height: auto;
   overflow-y: auto !important;
 }
-
-/*# sourceMappingURL=eventide-rp-system.css.map */

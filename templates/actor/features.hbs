@@ -4,59 +4,8 @@
   data-group='primary'
   data-tab='features'
 >
-  <section class='grid grid-5col'>
-    <aside class='sidebar'>
-      {{! The grid classes are defined in scss/global/_grid.scss. To use,
-          use both the "grid" and "grid-Ncol" class where "N" can be any number
-          from 1 to 12 and will create that number of columns.  }}
-      <div class='abilities flexcol'>
-        {{#each system.abilities as |ability key|}}
-          <section class="eventide-ability-{{key}}-box eventide-ability-row">
-            <div class="ability gridrow">
-              <div class='ability flexrow flex-group-center'>
-                <label
-                  class='resource-label rollable flexlarge align-center'
-                  data-action='roll'
-                  data-type="{{key}}"
-                  data-roll='{{lookup ../formulas key}}'
-                  data-label='{{localize (lookup @root.config.abilities key)}}'
-                >{{localize (lookup @root.config.abilities key)}}</label>
-              </div>
-              <div class='ability flexrow flex-group-center'>
-                <input
-                  type='text'
-                  name='system.abilities.{{key}}.value'
-                  value='{{ability.value}}'
-                  class="ability-score align-center"
-                  data-dtype='Number'
-                />
-              </div>
-              <div class='ability gridrow'>
-                <div
-                  class='ability-total rollable align-center'
-                  data-action='roll'
-                  data-type="{{key}}"
-                  data-roll='{{lookup ../formulas key}}'
-                  data-label='{{localize (lookup @root.config.abilities key)}}'
-                >Total: {{numberFormat ability.total decimals=0 sign=true}}</div>
-                <div class="ability-override">
-                {{#if ability.override}}
-                  <i class="fas fa-lock" style="color: red"></i>
-                  <span style="color: white"> Capped</span>
-                {{else}}
-                  <i class="fas fa-unlock-alt" style="color: #4CAF50"></i>
-                  <span style="color: white"> Uncapped</span>
-                {{/if}}
-                </div>
-              </div>
-            </div>
-          </section>
-        {{/each}}
-      </div>
-    </aside>
-
-    {{! For the main features list, span the right two columns }}
-    <section class='main grid-span-4'>
+  {{! Features list now spans the full width since abilities moved to header }}
+  <section class='main'>
       <ol class='items-panel__list items-panel__list--spanning'>
   <li class='items-panel__list-item items-panel__header'>
     <div class='items-panel__name items-panel__header-cell'>{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Name"}}</div>
@@ -117,5 +66,4 @@
         {{/each}}
       </ol>
     </section>
-  </section>
 </section>

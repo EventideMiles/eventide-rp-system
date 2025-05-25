@@ -54,7 +54,7 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
       "eventide-character-sheet--scrollbars",
     ],
     position: {
-      width: 675,
+      width: 850,
       height: 950,
     },
     window: {

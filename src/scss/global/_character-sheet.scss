@@ -859,6 +859,558 @@
   color: colors.$universal-black;
 }
 
+// Header Ability Cards - Compact design inspired by status cards
+.header-abilities {
+  gap: 0.25rem;
+  padding: 0.25rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%; // Match the height of the header content
+}
+
+.eventide-ability-card {
+  display: flex;
+  flex-direction: row; // Change to horizontal layout
+  align-items: center;
+  border-radius: 4px;
+  border: 2px solid transparent;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 0, 0, 0.3) 0%,
+    rgba(20, 30, 45, 0.4) 50%,
+    rgba(0, 0, 0, 0.3) 100%
+  );
+  padding: 0.25rem 0.5rem; // Reduced vertical padding
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  height: 2.5rem; // Fixed compact height
+  width: 100%; // Use full column width
+  max-width: 100%; // Ensure it doesn't exceed column bounds
+  min-width: 0; // Allow shrinking if needed
+
+  // Base styling similar to input sections
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    z-index: 1;
+    transition: all 0.3s ease;
+  }
+
+  &__content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: row; // Horizontal layout
+    align-items: center;
+    width: 100%;
+    gap: 0.375rem;
+    justify-content: space-between;
+  }
+
+  &__header {
+    flex-shrink: 0;
+    min-width: 3rem;
+    max-width: 3.5rem;
+    width: 3.5rem;
+  }
+
+  &__label {
+    font-size: 0.55rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.8);
+    text-transform: uppercase;
+    letter-spacing: 0.2px;
+    line-height: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__stats {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    flex-grow: 1;
+  }
+
+  &__input {
+    width: 1.75rem !important;
+    height: 1.25rem !important;
+    padding: 0.125rem !important;
+    font-size: 0.65rem !important;
+    text-align: center !important;
+    background: rgba(0, 0, 0, 0.3) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    border-radius: 2px !important;
+    color: #ffffff !important;
+    flex-shrink: 0;
+
+    &:focus {
+      border-color: rgba(255, 255, 255, 0.5) !important;
+      box-shadow: 0 0 4px rgba(255, 255, 255, 0.3) !important;
+    }
+  }
+
+  &__total-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem; // Slightly smaller to fit better
+    height: 1.5rem;
+    border-radius: 3px;
+    color: #ffffff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    font-size: 0.7rem;
+    font-weight: bold;
+    position: relative;
+    overflow: hidden;
+
+    // Default styling - will be overridden by ability-specific styles
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    text-shadow: 0 0 4px rgba(255, 255, 255, 0.6);
+    box-shadow:
+      0 0 6px rgba(255, 255, 255, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+
+    &:active {
+      transform: scale(0.95);
+    }
+
+    // Subtle animated background shimmer
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        transparent
+      );
+      animation: buttonShimmer 3s ease-in-out infinite;
+    }
+  }
+
+  &__status {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    width: 1.5rem; // Slightly larger for better icon visibility
+    height: 1.5rem;
+    border-radius: 3px;
+    background: rgba(0, 0, 0, 0.3); // Slightly darker background
+    border: 1px solid rgba(255, 255, 255, 0.2); // More visible border
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.4);
+      border-color: rgba(255, 255, 255, 0.35);
+    }
+  }
+
+  &__lock,
+  &__unlock {
+    font-size: 0.75rem; // Increased size for better visibility
+    opacity: 0.9; // Increased opacity
+    transition: all 0.2s ease;
+
+    &:hover {
+      opacity: 1;
+      transform: scale(1.15);
+    }
+  }
+
+  &__lock {
+    color: #ff6b6b;
+    text-shadow: 0 0 4px rgba(255, 107, 107, 0.6);
+  }
+
+  &__unlock {
+    color: #4CAF50;
+    text-shadow: 0 0 4px rgba(76, 175, 80, 0.6);
+  }
+
+  // Ability-specific styling with left border colors and button theming
+  &--acro {
+    &::before {
+      background: colors.$acro;
+    }
+
+    .eventide-ability-card__total-button {
+      background: rgba(191, 68, 0, 0.3);
+      border: 1px solid rgba(191, 68, 0, 0.5);
+      text-shadow: 0 0 4px rgba(191, 68, 0, 0.8);
+      box-shadow:
+        0 0 6px rgba(191, 68, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      animation: acroGlow 2s ease-in-out infinite alternate;
+
+      &:hover {
+        background: rgba(191, 68, 0, 0.5);
+        border-color: rgba(191, 68, 0, 0.7);
+        transform: scale(1.05);
+        box-shadow:
+          0 0 12px rgba(191, 68, 0, 0.6),
+          inset 0 1px 0 rgba(255, 255, 255, 0.3);
+      }
+
+      &::before {
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(191, 68, 0, 0.3),
+          transparent
+        );
+      }
+    }
+  }
+
+  &--phys {
+    &::before {
+      background: colors.$phys;
+    }
+
+    .eventide-ability-card__total-button {
+      background: rgba(168, 3, 3, 0.3);
+      border: 1px solid rgba(168, 3, 3, 0.5);
+      text-shadow: 0 0 4px rgba(168, 3, 3, 0.8);
+      box-shadow:
+        0 0 6px rgba(168, 3, 3, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      animation: physGlow 2s ease-in-out infinite alternate;
+
+      &:hover {
+        background: rgba(168, 3, 3, 0.5);
+        border-color: rgba(168, 3, 3, 0.7);
+        transform: scale(1.05);
+        box-shadow:
+          0 0 12px rgba(168, 3, 3, 0.6),
+          inset 0 1px 0 rgba(255, 255, 255, 0.3);
+      }
+
+      &::before {
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(168, 3, 3, 0.3),
+          transparent
+        );
+      }
+    }
+  }
+
+  &--fort {
+    &::before {
+      background: colors.$fort;
+    }
+
+    .eventide-ability-card__total-button {
+      background: rgba(45, 104, 45, 0.3);
+      border: 1px solid rgba(45, 104, 45, 0.5);
+      text-shadow: 0 0 4px rgba(45, 104, 45, 0.8);
+      box-shadow:
+        0 0 6px rgba(45, 104, 45, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      animation: fortGlow 2s ease-in-out infinite alternate;
+
+      &:hover {
+        background: rgba(45, 104, 45, 0.5);
+        border-color: rgba(45, 104, 45, 0.7);
+        transform: scale(1.05);
+        box-shadow:
+          0 0 12px rgba(45, 104, 45, 0.6),
+          inset 0 1px 0 rgba(255, 255, 255, 0.3);
+      }
+
+      &::before {
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(45, 104, 45, 0.3),
+          transparent
+        );
+      }
+    }
+  }
+
+  &--will {
+    &::before {
+      background: colors.$will;
+    }
+
+    .eventide-ability-card__total-button {
+      background: rgba(106, 27, 154, 0.3);
+      border: 1px solid rgba(106, 27, 154, 0.5);
+      text-shadow: 0 0 4px rgba(106, 27, 154, 0.8);
+      box-shadow:
+        0 0 6px rgba(106, 27, 154, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      animation: willGlow 2s ease-in-out infinite alternate;
+
+      &:hover {
+        background: rgba(106, 27, 154, 0.5);
+        border-color: rgba(106, 27, 154, 0.7);
+        transform: scale(1.05);
+        box-shadow:
+          0 0 12px rgba(106, 27, 154, 0.6),
+          inset 0 1px 0 rgba(255, 255, 255, 0.3);
+      }
+
+      &::before {
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(106, 27, 154, 0.3),
+          transparent
+        );
+      }
+    }
+  }
+
+  &--wits {
+    &::before {
+      background: colors.$wits;
+    }
+
+    .eventide-ability-card__total-button {
+      background: rgba(14, 67, 128, 0.3);
+      border: 1px solid rgba(14, 67, 128, 0.5);
+      text-shadow: 0 0 4px rgba(14, 67, 128, 0.8);
+      box-shadow:
+        0 0 6px rgba(14, 67, 128, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      animation: witsGlow 2s ease-in-out infinite alternate;
+
+      &:hover {
+        background: rgba(14, 67, 128, 0.5);
+        border-color: rgba(14, 67, 128, 0.7);
+        transform: scale(1.05);
+        box-shadow:
+          0 0 12px rgba(14, 67, 128, 0.6),
+          inset 0 1px 0 rgba(255, 255, 255, 0.3);
+      }
+
+      &::before {
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(14, 67, 128, 0.3),
+          transparent
+        );
+      }
+    }
+  }
+
+  // Hover effects with themed backgrounds and patterns
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+
+    &::before {
+      width: 100%;
+      opacity: 0.15;
+    }
+  }
+
+  // Specific hover patterns for each ability
+  &--acro:hover {
+    background: linear-gradient(
+      135deg,
+      rgba(191, 68, 0, 0.2) 0%,
+      rgba(191, 68, 0, 0.1) 50%,
+      rgba(191, 68, 0, 0.05) 100%
+    );
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23bf4400' fill-opacity='0.1'%3E%3Cpath d='M10 2l2 6h6l-5 4 2 6-5-4-5 4 2-6-5-4h6z'/%3E%3C/g%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 1;
+    }
+  }
+
+  &--phys:hover {
+    background: linear-gradient(
+      135deg,
+      rgba(168, 3, 3, 0.2) 0%,
+      rgba(168, 3, 3, 0.1) 50%,
+      rgba(168, 3, 3, 0.05) 100%
+    );
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23a80303' fill-opacity='0.1'%3E%3Crect x='8' y='2' width='4' height='16'/%3E%3Crect x='2' y='8' width='16' height='4'/%3E%3C/g%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 1;
+    }
+  }
+
+  &--fort:hover {
+    background: linear-gradient(
+      135deg,
+      rgba(45, 104, 45, 0.2) 0%,
+      rgba(45, 104, 45, 0.1) 50%,
+      rgba(45, 104, 45, 0.05) 100%
+    );
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%232d682d' fill-opacity='0.1'%3E%3Cpath d='M10 2L4 6v8l6 4 6-4V6z'/%3E%3C/g%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 1;
+    }
+  }
+
+  &--will:hover {
+    background: linear-gradient(
+      135deg,
+      rgba(106, 27, 154, 0.2) 0%,
+      rgba(106, 27, 154, 0.1) 50%,
+      rgba(106, 27, 154, 0.05) 100%
+    );
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%236a1b9a' fill-opacity='0.1'%3E%3Ccircle cx='10' cy='10' r='8'/%3E%3Ccircle cx='10' cy='10' r='4'/%3E%3C/g%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 1;
+    }
+  }
+
+  &--wits:hover {
+    background: linear-gradient(
+      135deg,
+      rgba(14, 67, 128, 0.2) 0%,
+      rgba(14, 67, 128, 0.1) 50%,
+      rgba(14, 67, 128, 0.05) 100%
+    );
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%230e4380' fill-opacity='0.1'%3E%3Cpath d='M10 2l8 6-8 2-8-2z'/%3E%3Cpath d='M10 12l8 6-8-2-8 2z'/%3E%3C/g%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 1;
+    }
+  }
+}
+
+// Animations for ability card total buttons - each with their own color
+@keyframes acroGlow {
+  0% {
+    box-shadow:
+      0 0 6px rgba(191, 68, 0, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  }
+  100% {
+    box-shadow:
+      0 0 10px rgba(191, 68, 0, 0.6),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  }
+}
+
+@keyframes physGlow {
+  0% {
+    box-shadow:
+      0 0 6px rgba(168, 3, 3, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  }
+  100% {
+    box-shadow:
+      0 0 10px rgba(168, 3, 3, 0.6),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  }
+}
+
+@keyframes fortGlow {
+  0% {
+    box-shadow:
+      0 0 6px rgba(45, 104, 45, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  }
+  100% {
+    box-shadow:
+      0 0 10px rgba(45, 104, 45, 0.6),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  }
+}
+
+@keyframes willGlow {
+  0% {
+    box-shadow:
+      0 0 6px rgba(106, 27, 154, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  }
+  100% {
+    box-shadow:
+      0 0 10px rgba(106, 27, 154, 0.6),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  }
+}
+
+@keyframes witsGlow {
+  0% {
+    box-shadow:
+      0 0 6px rgba(14, 67, 128, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  }
+  100% {
+    box-shadow:
+      0 0 10px rgba(14, 67, 128, 0.6),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  }
+}
+
+@keyframes buttonShimmer {
+  0% {
+    left: -100%;
+  }
+  50% {
+    left: 100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
 .eventide-ability-acro-box {
   background-color: colors.$acro-transparent;
   border-left: 0.3125rem solid colors.$acro;
