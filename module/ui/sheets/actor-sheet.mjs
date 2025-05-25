@@ -917,11 +917,6 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
             // Also update any existing tokens on the scene
             const tokens = this.actor.getActiveTokens();
             if (tokens.length > 0) {
-              const tokenUpdates = tokens.map((token) => ({
-                _id: token.id,
-                "texture.src": path,
-              }));
-
               // Update tokens on their respective scenes
               const sceneUpdates = new Map();
               for (const token of tokens) {
@@ -944,7 +939,7 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
                     `Updated ${updates.length} token(s) on scene: ${scene.name}`,
                     {
                       actorName: this.actor.name,
-                      sceneId: sceneId,
+                      sceneId,
                       tokenCount: updates.length,
                     },
                     "ACTOR_SHEET",
@@ -961,7 +956,7 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
             {
               actorName: this.actor.name,
               attribute: attr,
-              path: path,
+              path,
               tokenUpdated: autoTokenUpdate && attr === "img",
             },
             "ACTOR_SHEET",
@@ -1198,7 +1193,7 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
         {
           actorName: this.actor.name,
           previousValue: currentValue,
-          newValue: newValue,
+          newValue,
         },
         "ACTOR_SHEET",
       );
