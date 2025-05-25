@@ -1171,7 +1171,7 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
    * @param {HTMLElement} target   The capturing HTML element which defined a [data-action]
    * @protected
    */
-  static async _toggleAutoTokenUpdate(_event, target) {
+  static async _toggleAutoTokenUpdate(_event, _target) {
     Logger.methodEntry("EventideRpSystemActorSheet", "_toggleAutoTokenUpdate", {
       actorName: this.actor?.name,
       currentValue: this.actor.getFlag("eventide-rp-system", "autoTokenUpdate"),
