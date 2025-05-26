@@ -22,7 +22,7 @@ function deepMerge(target, source) {
   const output = { ...target };
 
   for (const key in source) {
-    if (source.hasOwnProperty(key)) {
+    if (Object.prototype.hasOwnProperty.call(source, key)) {
       if (
         source[key] instanceof Object &&
         key in target &&
