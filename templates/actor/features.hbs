@@ -6,64 +6,68 @@
 >
   {{! Features list now spans the full width since abilities moved to header }}
   <section class='main'>
-      <ol class='items-panel__list items-panel__list--spanning'>
-  <li class='items-panel__list-item items-panel__header'>
-    <div class='items-panel__name items-panel__header-cell'>{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Name"}}</div>
-    <div class='items-panel__controls items-panel__header-cell'>
-      {{#if @root.editable}}
-        <a
-          class='items-panel__control item-create'
-          title='Create item'
-          data-action='createDoc'
-          data-document-class='Item'
-          data-type='feature'
-        >
-          <i class='fas fa-plus'></i>
-          {{localize 'DOCUMENT.New' type='feature'}}
-        </a>
-      {{/if}}
-    </div>
-  </li>
-        {{#each features as |item id|}}
-          <li
-            class='items-panel__list-item'
-            data-item-id='{{item._id}}'
-            data-drag='true'
-            data-document-class='Item'
-          >
-            <div class='items-panel__name items-panel__list-cell'>
-              <div class='items-panel__image'>
-                <a class='rollable' data-roll-type='item' data-action='roll'>
-                  <img
-                    src='{{item.img}}'
-                    title='{{item.name}}'
-                    width='24'
-                    height='24'
-                  />
-                </a>
-              </div>
-              <div>{{item.name}}</div>
-            </div>
-            <div class='items-panel__controls items-panel__list-cell'>
+    <table class='eventide-actor-data-table eventide-actor-data-table--features'>
+      <thead class='eventide-actor-data-table__header'>
+        <tr>
+          <th class='eventide-actor-data-table__header-cell'>{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Name"}}</th>
+          <th class='eventide-actor-data-table__header-cell'>
+            {{#if @root.editable}}
               <a
-                class='items-panel__control item-edit'
+                class='eventide-actor-data-create'
+                title='Create item'
+                data-action='createDoc'
+                data-document-class='Item'
+                data-type='feature'
+              >
+                <i class='fas fa-plus'></i>
+                {{localize 'DOCUMENT.New' type='feature'}}
+              </a>
+            {{/if}}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each features as |item id|}}
+                  <tr
+          class='eventide-actor-data-table__row'
+          data-item-id='{{item._id}}'
+          data-drag='true'
+          data-document-class='Item'
+        >
+          <td class='eventide-actor-data-table__cell eventide-actor-data-table__name-cell rollable' data-roll-type='item' data-action='roll' data-item-id='{{item._id}}'>
+            <div class='eventide-actor-data-table__name-content'>
+              <img
+                src='{{item.img}}'
+                title='{{item.name}}'
+                width='24'
+                height='24'
+              />
+              <span>{{item.name}}</span>
+            </div>
+          </td>
+            <td class='eventide-actor-data-table__cell eventide-actor-data-table__controls-cell'>
+              <a
+                class='eventide-actor-data-control eventide-actor-data-control--edit'
                 title='{{localize "DOCUMENT.Update" type='feature'}}'
                 data-action='viewDoc'
+                data-item-id='{{item._id}}'
               >
                 <i class='fas fa-edit'></i>
               </a>
               {{#if @root.editable}}
                 <a
-                  class='items-panel__control item-delete'
+                  class='eventide-actor-data-control eventide-actor-data-control--delete'
                   title='{{localize "DOCUMENT.Delete" type='feature'}}'
                   data-action='deleteDoc'
+                  data-item-id='{{item._id}}'
                 >
                   <i class='fas fa-trash'></i>
                 </a>
               {{/if}}
-            </div>
-          </li>
+            </td>
+          </tr>
         {{/each}}
-      </ol>
-    </section>
+      </tbody>
+    </table>
+  </section>
 </section>
