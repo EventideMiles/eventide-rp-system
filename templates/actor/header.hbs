@@ -203,7 +203,13 @@
              title="Roll {{localize (lookup @root.config.abilities key)}} ({{numberFormat ability.total decimals=0 sign=true}})">
           <div class="eventide-ability-card__content">
             <div class="eventide-ability-card__header">
-              <span class="eventide-ability-card__label">{{localize (lookup @root.config.abilities key)}}</span>
+              <span class="eventide-ability-card__label" title="{{localize (lookup @root.config.abilities key)}}">
+                {{#if (eq key "acro")}}{{localize (lookup @root.config.abilityAbbreviations key)}}{{/if}}
+                {{#if (eq key "phys")}}{{localize (lookup @root.config.abilityAbbreviations key)}}{{/if}}
+                {{#if (eq key "fort")}}{{localize (lookup @root.config.abilityAbbreviations key)}}{{/if}}
+                {{#if (eq key "will")}}{{localize (lookup @root.config.abilityAbbreviations key)}}{{/if}}
+                {{#if (eq key "wits")}}{{localize (lookup @root.config.abilityAbbreviations key)}}{{/if}}
+              </span>
             </div>
             <div class="eventide-ability-card__stats">
               <input
