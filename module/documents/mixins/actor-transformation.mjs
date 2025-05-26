@@ -117,8 +117,10 @@ export const ActorTransformationMixin = (BaseClass) =>
     async removeTransformation() {
       Logger.methodEntry("ActorTransformationMixin", "removeTransformation");
 
+      console.log('OWNER', this.isOwner)
+
       // Check permissions
-      if (!this.isOwner) {
+      if (!this.isOwner && !game.user.isGM) {
         ui.notifications.warn(
           game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.NoPermission"),
         );
@@ -144,11 +146,14 @@ export const ActorTransformationMixin = (BaseClass) =>
         return this;
       }
 
+
+
       try {
         // Get the transformation item
         const transformationItem = this.items.find(
           (item) => item.type === "transformation",
         );
+
 
         // Get the original token data
         const originalTokenData = this.getFlag(
@@ -187,14 +192,14 @@ export const ActorTransformationMixin = (BaseClass) =>
           });
         }
 
-        // Remove all transformation items
-        await this._removeTransformationItems();
-
         // Restore original token data
         await this._restoreOriginalTokenData(tokens, originalTokenData);
 
         // Restore original resolve and power values
         await this._restoreOriginalStats(originalTokenData);
+
+        // Remove all transformation items
+        await this._removeTransformationItems();
 
         // Clear the transformation flags
         await this._clearTransformationFlags();
@@ -378,11 +383,14 @@ export const ActorTransformationMixin = (BaseClass) =>
         },
       );
 
+      console.log("TRANSFORMATION", this.items);
+
       // Check if there's already an active transformation
-      const hasActiveTransformation = this.getFlag(
-        "eventide-rp-system",
-        "activeTransformation",
-      );
+      const hasActiveTransformation = this.items.filter(
+        (item) => item.type === "transformation",
+      ).length > 0;
+
+      console.log("HAS ACTIVE TRANSFORMATION", hasActiveTransformation);
 
       // Only store original token data if there isn't already a transformation active
       // This ensures we maintain the original appearance, not the appearance of a previous transformation
@@ -392,6 +400,8 @@ export const ActorTransformationMixin = (BaseClass) =>
           null,
           "TRANSFORMATION",
         );
+        Logger.methodExit("ActorTransformationMixin", "_storeOriginalTokenData");
+        return;
       }
 
       // Store original token data in flags
@@ -593,10 +603,13 @@ export const ActorTransformationMixin = (BaseClass) =>
         },
       );
 
+      console.log("RESTORING ORIGINAL TOKEN DATA", originalTokenData);
+
       for (const token of tokens) {
         const originalData = originalTokenData.find(
           (d) => d.tokenId === token.id,
         );
+        console.log("ORIGINAL DATA", originalData);
         if (!originalData) {
           Logger.warn(
             `No original data found for token ${token.id}`,
