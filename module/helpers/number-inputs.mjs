@@ -98,6 +98,7 @@ export const enhanceExistingNumberInputs = () => {
 export const cleanupNumberInputs = (element) => {
   if (!element) {
     Logger.debug("No element provided for cleanup", {}, "NUMBER_INPUT");
+    return;
   }
 
   Logger.debug(

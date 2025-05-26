@@ -117,10 +117,8 @@ export const ActorTransformationMixin = (BaseClass) =>
     async removeTransformation() {
       Logger.methodEntry("ActorTransformationMixin", "removeTransformation");
 
-      console.log('OWNER', this.isOwner)
-
       // Check permissions
-      if (!this.isOwner && !game.user.isGM) {
+      if (!this.isOwner) {
         ui.notifications.warn(
           game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.NoPermission"),
         );
@@ -146,14 +144,11 @@ export const ActorTransformationMixin = (BaseClass) =>
         return this;
       }
 
-
-
       try {
         // Get the transformation item
         const transformationItem = this.items.find(
           (item) => item.type === "transformation",
         );
-
 
         // Get the original token data
         const originalTokenData = this.getFlag(
@@ -383,14 +378,9 @@ export const ActorTransformationMixin = (BaseClass) =>
         },
       );
 
-      console.log("TRANSFORMATION", this.items);
-
       // Check if there's already an active transformation
-      const hasActiveTransformation = this.items.filter(
-        (item) => item.type === "transformation",
-      ).length > 0;
-
-      console.log("HAS ACTIVE TRANSFORMATION", hasActiveTransformation);
+      const hasActiveTransformation =
+        this.items.filter((item) => item.type === "transformation").length > 0;
 
       // Only store original token data if there isn't already a transformation active
       // This ensures we maintain the original appearance, not the appearance of a previous transformation
@@ -400,7 +390,10 @@ export const ActorTransformationMixin = (BaseClass) =>
           null,
           "TRANSFORMATION",
         );
-        Logger.methodExit("ActorTransformationMixin", "_storeOriginalTokenData");
+        Logger.methodExit(
+          "ActorTransformationMixin",
+          "_storeOriginalTokenData",
+        );
         return;
       }
 
@@ -603,13 +596,10 @@ export const ActorTransformationMixin = (BaseClass) =>
         },
       );
 
-      console.log("RESTORING ORIGINAL TOKEN DATA", originalTokenData);
-
       for (const token of tokens) {
         const originalData = originalTokenData.find(
           (d) => d.tokenId === token.id,
         );
-        console.log("ORIGINAL DATA", originalData);
         if (!originalData) {
           Logger.warn(
             `No original data found for token ${token.id}`,
@@ -658,6 +648,8 @@ export const ActorTransformationMixin = (BaseClass) =>
           null,
           "TRANSFORMATION",
         );
+        Logger.methodExit("ActorTransformationMixin", "_restoreOriginalStats");
+        return;
       }
 
       const restoreData = {

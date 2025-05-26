@@ -87,6 +87,7 @@ export function enhanceExistingColorPickers() {
 export function cleanupColorPickers(element) {
   if (!element) {
     Logger.debug("No element provided for cleanup", {}, "COLOR_PICKER");
+    return;
   }
 
   Logger.debug(
@@ -142,6 +143,7 @@ function setupSingleColorPicker(container, _index) {
       },
       "COLOR_PICKER",
     );
+    return;
   }
 
   // Store the initial values
@@ -270,6 +272,7 @@ function cleanupSingleColorPicker(container) {
   if (!colorInput || !hexInput) {
     // Clean up event listeners before replacing
     cleanupColorPickerListeners(colorInput, hexInput);
+    return;
   }
 
   // Create a clone of each input to remove event listeners
