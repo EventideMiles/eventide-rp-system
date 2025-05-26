@@ -407,8 +407,12 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
           "eventide-rp-system",
           "defaultCharacterTab",
         );
-      } catch {
-        console.warn("Could not get default tab setting, using 'features'");
+      } catch (error) {
+        Logger.warn(
+          "Could not get default tab setting, using 'features'",
+          error,
+          "ACTOR_SHEET",
+        );
       }
     }
 
@@ -885,6 +889,45 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
         });
       }
     }
+
+    // Apply theme to data tables
+    const dataTableElements = this.element.querySelectorAll(
+      ".eventide-actor-data-table",
+    );
+    dataTableElements.forEach((tableElement) => {
+      const appliedTableTheme = tableElement.getAttribute("data-table-theme");
+
+      // If the applied theme doesn't match the user's preference, update it
+      if (appliedTableTheme !== currentTheme) {
+        tableElement.setAttribute("data-table-theme", currentTheme);
+        Logger.debug("Data table theme corrected on render", {
+          sheetId: this.id,
+          actorName: this.actor?.name,
+          expectedTheme: currentTheme,
+          appliedTheme: appliedTableTheme,
+        });
+      }
+    });
+
+    // Apply theme to section headers
+    const sectionHeaderElements = this.element.querySelectorAll(
+      ".eventide-actor-data-section__header",
+    );
+    sectionHeaderElements.forEach((headerElement) => {
+      const appliedSectionTheme =
+        headerElement.getAttribute("data-section-theme");
+
+      // If the applied theme doesn't match the user's preference, update it
+      if (appliedSectionTheme !== currentTheme) {
+        headerElement.setAttribute("data-section-theme", currentTheme);
+        Logger.debug("Section header theme corrected on render", {
+          sheetId: this.id,
+          actorName: this.actor?.name,
+          expectedTheme: currentTheme,
+          appliedTheme: appliedSectionTheme,
+        });
+      }
+    });
   }
 
   /**************
@@ -1466,16 +1509,43 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
    * @returns {Item | ActiveEffect} The embedded Item or ActiveEffect
    */
   _getEmbeddedDocument(target) {
-    const docRow = target.closest("li[data-document-class]");
-    if (docRow.dataset.documentClass === "Item") {
-      return this.actor.items.get(docRow.dataset.itemId);
-    } else if (docRow.dataset.documentClass === "ActiveEffect") {
-      const parent =
-        docRow.dataset.parentId === this.actor.id
-          ? this.actor
-          : this.actor.items.get(docRow?.dataset.parentId);
-      return parent.effects.get(docRow?.dataset.effectId);
-    } else return console.warn("Could not find document class");
+    // Support both li and tr elements for different template structures
+    const docRow =
+      target.closest("li[data-document-class], tr[data-document-class]") ||
+      target.closest("[data-item-id]");
+
+    if (docRow) {
+      // Handle direct item ID reference
+      if (docRow.dataset.itemId && !docRow.dataset.documentClass) {
+        return this.actor.items.get(docRow.dataset.itemId);
+      }
+
+      // Handle document class structure
+      if (docRow.dataset.documentClass === "Item") {
+        return this.actor.items.get(docRow.dataset.itemId);
+      } else if (docRow.dataset.documentClass === "ActiveEffect") {
+        const parent =
+          docRow.dataset.parentId === this.actor.id
+            ? this.actor
+            : this.actor.items.get(docRow?.dataset.parentId);
+        return parent.effects.get(docRow?.dataset.effectId);
+      }
+    }
+
+    // Fallback: check if target itself has item-id
+    if (target.dataset.itemId) {
+      return this.actor.items.get(target.dataset.itemId);
+    }
+
+    Logger.warn(
+      "Could not find document class or item ID",
+      {
+        target,
+        docRow,
+      },
+      "ACTOR_SHEET",
+    );
+    return null;
   }
 
   /***************
