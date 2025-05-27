@@ -5,19 +5,19 @@
   data-tab='effects'
 >
   {{#each effects as |section sid|}}
-    <div class="eventide-actor-data-section__header">
+    <div class="eventide-actor-data-section__header" data-section-theme='{{@root.userSheetTheme}}'>
       {{localize section.label}}
     </div>
 
-    <table class='eventide-actor-data-table eventide-actor-data-table--effects'>
-      <thead class='eventide-actor-data-table__header'>
-        <tr>
-          <th class='eventide-actor-data-table__header-cell'>{{localize 'EVENTIDE_RP_SYSTEM.Forms.Sections.Name'}}</th>
-          <th class='eventide-actor-data-table__header-cell'>{{localize 'EVENTIDE_RP_SYSTEM.Effect.Source'}}</th>
-          <th class='eventide-actor-data-table__header-cell'>{{localize 'EFFECT.TabDuration'}}</th>
-          <th class='eventide-actor-data-table__header-cell'>
+    <table class='erps-data-table erps-data-table--effects' data-table-theme='{{@root.userSheetTheme}}'>
+      <thead class='erps-data-table__header'>
+        <tr class='erps-data-table__header-row'>
+          <th class='erps-data-table__header-cell erps-data-table__header-cell--name'>{{localize 'EVENTIDE_RP_SYSTEM.Forms.Sections.Name'}}</th>
+          <th class='erps-data-table__header-cell erps-data-table__header-cell--center'>{{localize 'EVENTIDE_RP_SYSTEM.Effect.Source'}}</th>
+          <th class='erps-data-table__header-cell erps-data-table__header-cell--center'>{{localize 'EFFECT.TabDuration'}}</th>
+          <th class='erps-data-table__header-cell erps-data-table__header-cell--controls'>
             <a
-              class='eventide-actor-data-create'
+              class='erps-data-table__create-button'
               data-action='createDoc'
               data-document-class='ActiveEffect'
               data-origin="{{@root.actor.uuid}}"
@@ -36,58 +36,60 @@
           </th>
         </tr>
       </thead>
-      <tbody>
+      <tbody class='erps-data-table__body'>
         {{#each section.effects as |effect|}}
           <tr
-            class='eventide-actor-data-table__row{{#if effect.disabled}} eventide-actor-data-table__row--disabled{{/if}}'
+            class='erps-data-table__row{{#if effect.disabled}} erps-data-table__row--disabled{{/if}}'
             data-effect-id='{{effect.id}}'
             data-parent-id='{{effect.parent.id}}'
             data-document-class='ActiveEffect'
             data-drag="true"
           >
-            <td class='eventide-actor-data-table__cell eventide-actor-data-table__name-cell'>
-              <div class='eventide-actor-data-table__name-content'>
+            <td class='erps-data-table__cell erps-data-table__cell--name'>
+              <div class='erps-data-table__name-content'>
                 <img src='{{effect.img}}' height="24" width="24"/>
                 <span>{{effect.name}}</span>
               </div>
             </td>
-            <td class='eventide-actor-data-table__cell eventide-actor-data-table__prop-cell'>{{effect.sourceName}}</td>
-            <td class='eventide-actor-data-table__cell eventide-actor-data-table__prop-cell'>{{effect.duration.label}}</td>
-            <td class='eventide-actor-data-table__cell eventide-actor-data-table__controls-cell'>
-              {{#if @root.editable}}
+            <td class='erps-data-table__cell erps-data-table__cell--center'>{{effect.sourceName}}</td>
+            <td class='erps-data-table__cell erps-data-table__cell--center'>{{effect.duration.label}}</td>
+            <td class='erps-data-table__cell erps-data-table__cell--controls'>
+              <div class='erps-data-table__controls'>
+                {{#if @root.editable}}
+                  <a
+                    class='erps-data-table__control-button erps-data-table__control-button--equip{{#if effect.disabled}} erps-data-table__control-button--disabled{{/if}}'
+                    data-action='toggleEffect'
+                    data-effect-id='{{effect.id}}'
+                    data-parent-id='{{effect.parent.id}}'
+                    title='{{localize "EVENTIDE_RP_SYSTEM.Effect.Toggle"}}'
+                    onclick='event.stopPropagation();'
+                  >
+                    <i class='fas {{#if effect.disabled}}fa-check{{else}}fa-times{{/if}}'></i>
+                  </a>
+                {{/if}}
                 <a
-                  class='eventide-actor-data-control eventide-actor-data-control--equip{{#if effect.disabled}} eventide-actor-data-control--disabled{{/if}}'
-                  data-action='toggleEffect'
+                  class='erps-data-table__control-button erps-data-table__control-button--edit'
+                  data-action='viewDoc'
                   data-effect-id='{{effect.id}}'
                   data-parent-id='{{effect.parent.id}}'
-                  title='{{localize "EVENTIDE_RP_SYSTEM.Effect.Toggle"}}'
+                  title='{{localize "DOCUMENT.Update" type='Effect'}}'
                   onclick='event.stopPropagation();'
                 >
-                  <i class='fas {{#if effect.disabled}}fa-check{{else}}fa-times{{/if}}'></i>
+                  <i class='fas fa-edit'></i>
                 </a>
-              {{/if}}
-              <a
-                class='eventide-actor-data-control eventide-actor-data-control--edit'
-                data-action='viewDoc'
-                data-effect-id='{{effect.id}}'
-                data-parent-id='{{effect.parent.id}}'
-                title='{{localize "DOCUMENT.Update" type='Effect'}}'
-                onclick='event.stopPropagation();'
-              >
-                <i class='fas fa-edit'></i>
-              </a>
-              {{#if @root.editable}}
-                <a
-                  class='eventide-actor-data-control eventide-actor-data-control--delete'
-                  data-action='deleteDoc'
-                  data-effect-id='{{effect.id}}'
-                  data-parent-id='{{effect.parent.id}}'
-                  title='{{localize "DOCUMENT.Delete" type='Effect'}}'
-                  onclick='event.stopPropagation();'
-                >
-                  <i class='fas fa-trash'></i>
-                </a>
-              {{/if}}
+                {{#if @root.editable}}
+                  <a
+                    class='erps-data-table__control-button erps-data-table__control-button--delete'
+                    data-action='deleteDoc'
+                    data-effect-id='{{effect.id}}'
+                    data-parent-id='{{effect.parent.id}}'
+                    title='{{localize "DOCUMENT.Delete" type='Effect'}}'
+                    onclick='event.stopPropagation();'
+                  >
+                    <i class='fas fa-trash'></i>
+                  </a>
+                {{/if}}
+              </div>
             </td>
           </tr>
         {{/each}}

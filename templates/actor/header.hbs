@@ -244,9 +244,14 @@
 
   {{! Status indicators bar - moved to bottom of entire header }}
   <div class="eventide-header__status-bar">
+    {{debug activeTransformation}}
     {{! Transformation Effect Card - moved here as requested }}
     {{#if actor.flags.eventide-rp-system.activeTransformation}}
-      <div class="eventide-transformation-card {{#if actor.flags.eventide-rp-system.activeTransformationCursed}}eventide-transformation-card--cursed{{/if}}">
+      <div class="eventide-transformation-card {{#if actor.flags.eventide-rp-system.activeTransformationCursed}}eventide-transformation-card--cursed{{/if}}"
+           data-drag="true"
+           data-item-id="{{activeTransformation._id}}"
+           data-document-class="Item"
+           title="{{localize 'EVENTIDE_RP_SYSTEM.Actor.Attributes.Transformation.DragHint'}}">
         <div class="eventide-transformation-card__header">
           <div class="eventide-transformation-card__icon">
             <i class="{{#if actor.flags.eventide-rp-system.activeTransformationCursed}}fas fa-skull{{else}}fas fa-magic{{/if}}"></i>

@@ -1,234 +1,248 @@
 {{! Gear Tab }}
 <section class='tab gear {{tab.cssClass}}' data-group='primary' data-tab='gear'>
 
-  {{! Active Gear Section }}
-  <div class="eventide-actor-data-section__header">
-    {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.ActiveGear"}}
+  {{! Gear Tab Navigation }}
+  <div class="gear-tab-nav">
+    <button class="gear-tab-button gear-tab-button--equipped active" data-gear-tab="equipped">
+      <i class='fa-solid fa-helmet-battle'></i>
+      {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.ActiveGear"}}
+      <span class="gear-count">{{equippedGear.length}}</span>
+    </button>
+    <button class="gear-tab-button gear-tab-button--unequipped" data-gear-tab="unequipped">
+      <i class='fa-solid fa-box'></i>
+      {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.UnequippedGear"}}
+      <span class="gear-count">{{unequippedGear.length}}</span>
+    </button>
   </div>
 
-  <table class='eventide-actor-data-table eventide-actor-data-table--gear'>
-    <thead class='eventide-actor-data-table__header'>
-      <tr>
-        <th class='eventide-actor-data-table__header-cell'>{{localize 'Name'}}</th>
-        <th class='eventide-actor-data-table__header-cell'>{{localize 'EVENTIDE_RP_SYSTEM.Item.Inventory.Cost.label'}}</th>
-        <th class='eventide-actor-data-table__header-cell'>{{localize 'EVENTIDE_RP_SYSTEM.Item.Inventory.Quantity.label'}}</th>
-        <th class='eventide-actor-data-table__header-cell'>
-          {{#if @root.editable}}
-            <a
-              class='eventide-actor-data-create'
-              title='{{localize "DOCUMENT.Create" type='Item'}}'
-              data-action='createDoc'
-              data-document-class='Item'
-              data-type='gear'
-            >
-              <i class='fas fa-plus'></i>
-              {{localize 'DOCUMENT.New' type='item'}}
-            </a>
-          {{/if}}
-        </th>
-      </tr>
-    </thead>
-    <tbody>
-      {{#each equippedGear as |item id|}}
-        <tr
-          class='eventide-actor-data-table__row{{#if item.system.cursed}} eventide-actor-data-table__row--cursed{{/if}}'
-          data-item-id='{{item._id}}'
-          data-drag='true'
-          data-document-class='Item'
-        >
-          <td class='eventide-actor-data-table__cell eventide-actor-data-table__name-cell rollable' data-roll-type='item' data-action='roll' data-item-id='{{item._id}}'>
-            <div class='eventide-actor-data-table__name-content'>
-              <img
-                src='{{item.img}}'
-                title='{{item.name}}'
-                width='24'
-                height='24'
-              />
-              <span>{{item.name}}</span>
-            </div>
-          </td>
-          <td class="eventide-actor-data-table__cell eventide-actor-data-table__prop-cell rollable" data-roll-type='item' data-action='roll' data-item-id='{{item._id}}'>{{item.system.cost}}</td>
-          <td class='eventide-actor-data-table__cell eventide-actor-data-table__prop-cell rollable' data-roll-type='item' data-action='roll' data-item-id='{{item._id}}'>{{item.system.quantity}}</td>
-          <td class='eventide-actor-data-table__cell eventide-actor-data-table__controls-cell'>
-            {{#if (or @root.isGM (not item.system.cursed))}}
-              <a
-                class="eventide-actor-data-control eventide-actor-data-control--equip{{#if item.system.cursed}} eventide-actor-data-control--cursed{{/if}}"
-                title='{{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Unequip.label"}}'
-                data-action='toggleGear'
-                data-item-id='{{item._id}}'
-              >
-                <i class='fa-solid fa-helmet-battle'></i>
-              </a>
-              <a
-                class='eventide-actor-data-control eventide-actor-data-control--edit{{#if item.system.cursed}} eventide-actor-data-control--cursed{{/if}}'
-                title='{{localize "DOCUMENT.Update" type='Gear'}}'
-                data-action='viewDoc'
-                data-item-id='{{item._id}}'
-              >
-                <i class='fas fa-edit'></i>
-              </a>
-              {{#if @root.editable}}
-                <a
-                  class='eventide-actor-data-control eventide-actor-data-control--delete{{#if item.system.cursed}} eventide-actor-data-control--cursed{{/if}}'
-                  title='{{localize "DOCUMENT.Delete" type='Gear'}}'
-                  data-action='deleteDoc'
-                  data-item-id='{{item._id}}'
-                >
-                  <i class='fas fa-trash'></i>
-                </a>
-              {{/if}}
-              <a
-                class="eventide-actor-data-control eventide-actor-data-control--increment{{#if item.system.cursed}} eventide-actor-data-control--cursed{{/if}}"
-                title='{{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Increment.label"}}'
-                data-action='incrementGear'
-                data-item-id='{{item._id}}'
-              >
-                <i class='fa-solid fa-plus'></i>
-              </a>
-              <a
-                class="eventide-actor-data-control eventide-actor-data-control--decrement{{#if item.system.cursed}} eventide-actor-data-control--cursed{{/if}}"
-                title='{{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Decrement.label"}}'
-                data-action='decrementGear'
-                data-item-id='{{item._id}}'
-              >
-                <i class='fa-solid fa-minus'></i>
-              </a>
-            {{else}}
-              <a
-                class="eventide-actor-data-control eventide-actor-data-control--disabled eventide-actor-data-control--cursed"
-                title='{{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Unequip.label"}}'
-                disabled>
-                  <i class="fa-solid fa-lock-keyhole"></i>
-              </a>
-              <a
-                class="eventide-actor-data-control eventide-actor-data-control--disabled eventide-actor-data-control--cursed"
-                title='{{localize "DOCUMENT.Update" type='Gear'}}'
-                disabled>
-                  <i class="fa-solid fa-lock-keyhole"></i>
-              </a>
-              <a
-                class="eventide-actor-data-control eventide-actor-data-control--disabled eventide-actor-data-control--cursed"
-                title='{{localize "DOCUMENT.Delete" type='Gear'}}'
-                disabled>
-                  <i class="fa-solid fa-lock-keyhole"></i>
-              </a>
-              <a
-                class="eventide-actor-data-control eventide-actor-data-control--disabled eventide-actor-data-control--cursed"
-                title='{{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Increment.label"}}'
-                disabled>
-                  <i class="fa-solid fa-lock-keyhole"></i>
-              </a>
-              <a
-                class="eventide-actor-data-control eventide-actor-data-control--disabled eventide-actor-data-control--cursed"
-                title='{{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Decrement.label"}}'
-                disabled>
-                  <i class="fa-solid fa-lock-keyhole"></i>
-              </a>
-            {{/if}}
-          </td>
-        </tr>
-      {{/each}}
-    </tbody>
-  </table>
-
-  {{! Unequipped Gear Section }}
-  <div class="eventide-actor-data-section__header">
-    {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.UnequippedGear"}}
-  </div>
-
-  <table class='eventide-actor-data-table eventide-actor-data-table--gear'>
-    <thead class='eventide-actor-data-table__header'>
-      <tr>
-        <th class='eventide-actor-data-table__header-cell'>{{localize 'Name'}}</th>
-        <th class='eventide-actor-data-table__header-cell'>{{localize 'EVENTIDE_RP_SYSTEM.Item.Inventory.Cost.label'}}</th>
-        <th class='eventide-actor-data-table__header-cell'>{{localize 'EVENTIDE_RP_SYSTEM.Item.Inventory.Quantity.label'}}</th>
-        <th class='eventide-actor-data-table__header-cell'>{{localize 'Controls'}}</th>
-      </tr>
-    </thead>
-    <tbody>
-      {{#each unequippedGear as |item id|}}
-        <tr
-          class='eventide-actor-data-table__row eventide-actor-data-table__row--unequipped{{#if (not item.system.quantity)}} eventide-actor-data-table__row--disabled{{/if}}'
-          data-item-id='{{item._id}}'
-          data-drag='true'
-          data-document-class='Item'
-        >
-          <td class='eventide-actor-data-table__cell eventide-actor-data-table__name-cell rollable' data-roll-type='item' data-action='roll' data-item-id='{{item._id}}'>
-            <div class='eventide-actor-data-table__name-content'>
-              <img
-                src='{{item.img}}'
-                title='{{item.name}}'
-                width='24'
-                height='24'
-              />
-              <span>{{item.name}}</span>
-            </div>
-          </td>
-          <td class="eventide-actor-data-table__cell eventide-actor-data-table__prop-cell rollable" data-roll-type='item' data-action='roll' data-item-id='{{item._id}}'>{{item.system.cost}}</td>
-          <td class='eventide-actor-data-table__cell eventide-actor-data-table__prop-cell rollable' data-roll-type='item' data-action='roll' data-item-id='{{item._id}}'>{{item.system.quantity}}</td>
-          <td class='eventide-actor-data-table__cell eventide-actor-data-table__controls-cell'>
-            <a
-              class="eventide-actor-data-control eventide-actor-data-control--equip eventide-actor-data-control--unequipped {{#if (not item.system.quantity)}}eventide-actor-data-control--disabled{{/if}}"
-              {{#if (not item.system.quantity)}}disabled{{/if}}
-              title='{{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Equip.label"}}'
-              data-action='toggleGear'
-              data-item-id='{{item._id}}'
-            >
-              {{#if (not item.system.quantity)}}
-                <i class="fa-solid fa-triangle-exclamation"></i>
-              {{else}}
-                <i class='fa-solid fa-helmet-battle{{#if (and item.system.cursed @root.isGM)}} eventide-actor-data-control--cursed{{/if}}'></i>
-              {{/if}}
-            </a>
-            {{#if @root.isGM}}
-              <a
-                class='eventide-actor-data-control eventide-actor-data-control--edit'
-                title='{{localize "DOCUMENT.Update" type='Gear'}}'
-                data-action='viewDoc'
-                data-item-id='{{item._id}}'
-              >
-                <i class='fas fa-edit'></i>
-              </a>
-            {{/if}}
+  {{! Equipped Gear Content }}
+  <div class="gear-tab-content gear-tab-content--equipped active" data-gear-content="equipped">
+    <table class='erps-data-table erps-data-table--gear erps-data-table--equipped erps-data-table--flush-top' data-table-theme='{{userSheetTheme}}'>
+      <thead class='erps-data-table__header'>
+        <tr class='erps-data-table__header-row'>
+          <th class='erps-data-table__header-cell erps-data-table__header-cell--name'>{{localize 'Name'}}</th>
+          <th class='erps-data-table__header-cell erps-data-table__header-cell--center'>{{localize 'EVENTIDE_RP_SYSTEM.Item.Inventory.Cost.label'}}</th>
+          <th class='erps-data-table__header-cell erps-data-table__header-cell--center'>{{localize 'EVENTIDE_RP_SYSTEM.Item.Inventory.Quantity.label'}}</th>
+          <th class='erps-data-table__header-cell erps-data-table__header-cell--controls'>
             {{#if @root.editable}}
               <a
-                class='eventide-actor-data-control eventide-actor-data-control--delete'
-                title='{{localize "DOCUMENT.Delete" type='Gear'}}'
-                data-action='deleteDoc'
-                data-item-id='{{item._id}}'
+                class='erps-data-table__create-button'
+                title='{{localize "DOCUMENT.Create" type='Item'}}'
+                data-action='createDoc'
+                data-document-class='Item'
+                data-type='gear'
               >
-                <i class='fas fa-trash'></i>
+                <i class='fas fa-plus'></i>
+                {{localize 'DOCUMENT.New' type='item'}}
               </a>
             {{/if}}
-            <a
-              class="eventide-actor-data-control eventide-actor-data-control--increment"
-              title='{{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Increment.label"}}'
-              data-action='incrementGear'
-              data-item-id='{{item._id}}'
-            >
-              <i class='fa-solid fa-plus'></i>
-            </a>
-            {{#if item.system.quantity}}
-              <a
-                class="eventide-actor-data-control eventide-actor-data-control--decrement"
-                title='{{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Decrement.label"}}'
-                data-action='decrementGear'
-                data-item-id='{{item._id}}'
-              >
-                <i class='fa-solid fa-minus'></i>
-              </a>
-            {{else}}
-              <a
-                class="eventide-actor-data-control eventide-actor-data-control--disabled"
-                title='{{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Decrement.label"}}'
-                disabled>
-                  <i class="fa-solid fa-ban"></i>
-              </a>
-            {{/if}}
-          </td>
+          </th>
         </tr>
-      {{/each}}
-    </tbody>
-  </table>
+      </thead>
+      <tbody class='erps-data-table__body'>
+        {{#each equippedGear as |item id|}}
+          <tr
+            class='erps-data-table__row erps-data-table__row--equipped{{#if item.system.cursed}} erps-data-table__row--cursed{{/if}}'
+            data-item-id='{{item._id}}'
+            data-drag='true'
+            data-document-class='Item'
+          >
+            <td class='erps-data-table__cell erps-data-table__cell--name rollable' data-roll-type='item' data-action='roll' data-item-id='{{item._id}}'>
+              <div class='erps-data-table__name-content'>
+                <img
+                  src='{{item.img}}'
+                  title='{{item.name}}'
+                  width='24'
+                  height='24'
+                />
+                <span>{{item.name}}</span>
+              </div>
+            </td>
+            <td class="erps-data-table__cell erps-data-table__cell--center rollable" data-roll-type='item' data-action='roll' data-item-id='{{item._id}}'>{{item.system.cost}}</td>
+            <td class='erps-data-table__cell erps-data-table__cell--center rollable' data-roll-type='item' data-action='roll' data-item-id='{{item._id}}'>{{item.system.quantity}}</td>
+            <td class='erps-data-table__cell erps-data-table__cell--controls'>
+              <div class='erps-data-table__controls'>
+                {{#if (or @root.isGM (not item.system.cursed))}}
+                  <a
+                    class="erps-data-table__control-button erps-data-table__control-button--equip{{#if item.system.cursed}} erps-data-table__control-button--cursed{{/if}}"
+                    title='{{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Unequip.label"}}'
+                    data-action='toggleGear'
+                    data-item-id='{{item._id}}'
+                  >
+                    <i class='fa-solid fa-helmet-battle'></i>
+                  </a>
+                  <a
+                    class='erps-data-table__control-button erps-data-table__control-button--edit{{#if item.system.cursed}} erps-data-table__control-button--cursed{{/if}}'
+                    title='{{localize "DOCUMENT.Update" type='Gear'}}'
+                    data-action='viewDoc'
+                    data-item-id='{{item._id}}'
+                  >
+                    <i class='fas fa-edit'></i>
+                  </a>
+                  {{#if @root.editable}}
+                    <a
+                      class='erps-data-table__control-button erps-data-table__control-button--delete{{#if item.system.cursed}} erps-data-table__control-button--cursed{{/if}}'
+                      title='{{localize "DOCUMENT.Delete" type='Gear'}}'
+                      data-action='deleteDoc'
+                      data-item-id='{{item._id}}'
+                    >
+                      <i class='fas fa-trash'></i>
+                    </a>
+                  {{/if}}
+                  <a
+                    class="erps-data-table__control-button erps-data-table__control-button--increment{{#if item.system.cursed}} erps-data-table__control-button--cursed{{/if}}"
+                    title='{{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Increment.label"}}'
+                    data-action='incrementGear'
+                    data-item-id='{{item._id}}'
+                  >
+                    <i class='fa-solid fa-plus'></i>
+                  </a>
+                  <a
+                    class="erps-data-table__control-button erps-data-table__control-button--decrement{{#if item.system.cursed}} erps-data-table__control-button--cursed{{/if}}"
+                    title='{{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Decrement.label"}}'
+                    data-action='decrementGear'
+                    data-item-id='{{item._id}}'
+                  >
+                    <i class='fa-solid fa-minus'></i>
+                  </a>
+                {{else}}
+                  <a
+                    class="erps-data-table__control-button erps-data-table__control-button--disabled erps-data-table__control-button--cursed"
+                    title='{{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Unequip.label"}}'
+                    disabled>
+                      <i class="fa-solid fa-lock-keyhole"></i>
+                  </a>
+                  <a
+                    class="erps-data-table__control-button erps-data-table__control-button--disabled erps-data-table__control-button--cursed"
+                    title='{{localize "DOCUMENT.Update" type='Gear'}}'
+                    disabled>
+                      <i class="fa-solid fa-lock-keyhole"></i>
+                  </a>
+                  <a
+                    class="erps-data-table__control-button erps-data-table__control-button--disabled erps-data-table__control-button--cursed"
+                    title='{{localize "DOCUMENT.Delete" type='Gear'}}'
+                    disabled>
+                      <i class="fa-solid fa-lock-keyhole"></i>
+                  </a>
+                  <a
+                    class="erps-data-table__control-button erps-data-table__control-button--disabled erps-data-table__control-button--cursed"
+                    title='{{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Increment.label"}}'
+                    disabled>
+                      <i class="fa-solid fa-lock-keyhole"></i>
+                  </a>
+                  <a
+                    class="erps-data-table__control-button erps-data-table__control-button--disabled erps-data-table__control-button--cursed"
+                    title='{{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Decrement.label"}}'
+                    disabled>
+                      <i class="fa-solid fa-lock-keyhole"></i>
+                  </a>
+                {{/if}}
+              </div>
+            </td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+
+  {{! Unequipped Gear Content }}
+  <div class="gear-tab-content gear-tab-content--unequipped" data-gear-content="unequipped">
+    <table class='erps-data-table erps-data-table--gear erps-data-table--unequipped erps-data-table--flush-top' data-table-theme='{{userSheetTheme}}'>
+      <thead class='erps-data-table__header'>
+        <tr class='erps-data-table__header-row'>
+          <th class='erps-data-table__header-cell erps-data-table__header-cell--name'>{{localize 'Name'}}</th>
+          <th class='erps-data-table__header-cell erps-data-table__header-cell--center'>{{localize 'EVENTIDE_RP_SYSTEM.Item.Inventory.Cost.label'}}</th>
+          <th class='erps-data-table__header-cell erps-data-table__header-cell--center'>{{localize 'EVENTIDE_RP_SYSTEM.Item.Inventory.Quantity.label'}}</th>
+          <th class='erps-data-table__header-cell erps-data-table__header-cell--controls'>{{localize 'Controls'}}</th>
+        </tr>
+      </thead>
+      <tbody class='erps-data-table__body'>
+        {{#each unequippedGear as |item id|}}
+          <tr
+            class='erps-data-table__row erps-data-table__row--unequipped{{#if (not item.system.quantity)}} erps-data-table__row--disabled{{/if}}'
+            data-item-id='{{item._id}}'
+            data-drag='true'
+            data-document-class='Item'
+          >
+            <td class='erps-data-table__cell erps-data-table__cell--name rollable' data-roll-type='item' data-action='roll' data-item-id='{{item._id}}'>
+              <div class='erps-data-table__name-content'>
+                <img
+                  src='{{item.img}}'
+                  title='{{item.name}}'
+                  width='24'
+                  height='24'
+                />
+                <span>{{item.name}}</span>
+              </div>
+            </td>
+            <td class="erps-data-table__cell erps-data-table__cell--center rollable" data-roll-type='item' data-action='roll' data-item-id='{{item._id}}'>{{item.system.cost}}</td>
+            <td class='erps-data-table__cell erps-data-table__cell--center rollable' data-roll-type='item' data-action='roll' data-item-id='{{item._id}}'>{{item.system.quantity}}</td>
+            <td class='erps-data-table__cell erps-data-table__cell--controls'>
+              <div class='erps-data-table__controls'>
+                <a
+                  class="erps-data-table__control-button erps-data-table__control-button--equip erps-data-table__control-button--unequipped {{#if (not item.system.quantity)}}erps-data-table__control-button--disabled{{/if}}"
+                  {{#if (not item.system.quantity)}}disabled{{/if}}
+                  title='{{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Equip.label"}}'
+                  data-action='toggleGear'
+                  data-item-id='{{item._id}}'
+                >
+                  {{#if (not item.system.quantity)}}
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                  {{else}}
+                    <i class='fa-solid fa-helmet-battle{{#if (and item.system.cursed @root.isGM)}} erps-data-table__control-button--cursed{{/if}}'></i>
+                  {{/if}}
+                </a>
+                {{#if @root.isGM}}
+                  <a
+                    class='erps-data-table__control-button erps-data-table__control-button--edit'
+                    title='{{localize "DOCUMENT.Update" type='Gear'}}'
+                    data-action='viewDoc'
+                    data-item-id='{{item._id}}'
+                  >
+                    <i class='fas fa-edit'></i>
+                  </a>
+                {{/if}}
+                {{#if @root.editable}}
+                  <a
+                    class='erps-data-table__control-button erps-data-table__control-button--delete'
+                    title='{{localize "DOCUMENT.Delete" type='Gear'}}'
+                    data-action='deleteDoc'
+                    data-item-id='{{item._id}}'
+                  >
+                    <i class='fas fa-trash'></i>
+                  </a>
+                {{/if}}
+                <a
+                  class="erps-data-table__control-button erps-data-table__control-button--increment"
+                  title='{{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Increment.label"}}'
+                  data-action='incrementGear'
+                  data-item-id='{{item._id}}'
+                >
+                  <i class='fa-solid fa-plus'></i>
+                </a>
+                {{#if item.system.quantity}}
+                  <a
+                    class="erps-data-table__control-button erps-data-table__control-button--decrement"
+                    title='{{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Decrement.label"}}'
+                    data-action='decrementGear'
+                    data-item-id='{{item._id}}'
+                  >
+                    <i class='fa-solid fa-minus'></i>
+                  </a>
+                {{else}}
+                  <a
+                    class="erps-data-table__control-button erps-data-table__control-button--disabled"
+                    title='{{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Decrement.label"}}'
+                    disabled>
+                      <i class="fa-solid fa-ban"></i>
+                  </a>
+                {{/if}}
+              </div>
+            </td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
 
 </section>
