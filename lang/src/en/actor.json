@@ -26,7 +26,8 @@
         },
         "Transformation": {
           "label": "Transformation",
-          "Remove": "Remove Transformation"
+          "Remove": "Remove Transformation",
+          "DragHint": "Drag to share this transformation with another character"
         },
         "XP": {
           "label": "XP"

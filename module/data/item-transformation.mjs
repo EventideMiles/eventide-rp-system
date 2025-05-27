@@ -101,7 +101,9 @@ export default class EventideRpSystemTransformation extends EventideRpSystemItem
 
     return this.embeddedCombatPowers.map((powerData) => {
       // Create a temporary Item instance from the data
-      return new CONFIG.Item.documentClass(powerData, { parent: this.parent });
+      // Use the transformation item's parent (the actor) as the parent for the combat power
+      const actor = this.parent?.parent || this.parent;
+      return new CONFIG.Item.documentClass(powerData, { parent: actor });
     });
   }
 

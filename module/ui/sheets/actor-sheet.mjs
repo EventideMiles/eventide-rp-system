@@ -100,7 +100,10 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
       setSheetTheme: this._setSheetTheme,
     },
     // Custom property that's merged into `this.options`
-    dragDrop: [{ dragSelector: "[data-drag]", dropSelector: null }],
+    dragDrop: [{
+      dragSelector: "[data-drag], .erps-data-table__row[data-item-id], .erps-data-table__row[data-document-class], .eventide-transformation-card[data-item-id]",
+      dropSelector: null
+    }],
     form: {
       submitOnChange: true,
     },
@@ -185,10 +188,8 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
           0.3,
         // Add user's theme preference with debugging
         userSheetTheme: (() => {
-          const rawFlag = CommonFoundryTasks.retrieveUserFlag("sheetTheme");
-          const theme = rawFlag || "blue";
+          const theme = CommonFoundryTasks.retrieveSheetTheme();
           Logger.debug("User theme retrieved for context", {
-            rawFlag,
             theme,
             userFlags: game.user.flags,
             systemFlags: game.user.flags?.["eventide-rp-system"],
@@ -461,7 +462,7 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
             // Append to transformations
             transformations.push(i);
             if (i.system?.embeddedCombatPowers?.length > 0) {
-              transformationCombatPowers.push(...i.system.embeddedCombatPowers);
+              transformationCombatPowers.push(...i.system.getEmbeddedCombatPowers());
             }
           } else {
             Logger.warn(
@@ -499,6 +500,7 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
         context.transformations = transformations.sort(
           (a, b) => (a.sort || 0) - (b.sort || 0),
         );
+        context.activeTransformation = transformations[0];
       } catch (sortError) {
         Logger.error("Error sorting items", sortError, "ACTOR_SHEET");
 
@@ -511,6 +513,7 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
         context.combatPowers = combatPowers;
         context.transformationCombatPowers = transformationCombatPowers;
         context.transformations = transformations;
+        context.activeTransformation = transformations[0];
       }
 
       Logger.debug(
@@ -557,14 +560,51 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
    * @override
    */
   _onRender(_context, _options) {
-    this.#dragDrop.forEach((d) => d.bind(this.element));
+    // Debug drag drop setup
+    const transformationCards = this.element.querySelectorAll(".eventide-transformation-card[data-item-id]");
+    const allDraggableElements = this.element.querySelectorAll("[data-drag], .erps-data-table__row[data-item-id], .erps-data-table__row[data-document-class], .eventide-transformation-card[data-item-id]");
+
+    Logger.debug("Setting up drag drop handlers", {
+      sheetId: this.id,
+      actorName: this.actor?.name,
+      dragDropHandlers: this.#dragDrop?.length,
+      dragSelectors: this.#dragDrop?.map(d => d.dragSelector),
+      element: this.element,
+      draggableElements: allDraggableElements.length,
+      transformationCards: transformationCards.length,
+      transformationCardDetails: Array.from(transformationCards).map(card => ({
+        id: card.dataset.itemId,
+        classes: card.className,
+        dataset: card.dataset
+      })),
+      activeTransformation: this.actor.getFlag("eventide-rp-system", "activeTransformation")
+    }, "ACTOR_SHEET");
+
+    // Bind drag drop handlers
+    this.#dragDrop.forEach((d, index) => {
+      Logger.debug(`Binding drag drop handler ${index}`, {
+        dragSelector: d.dragSelector,
+        dropSelector: d.dropSelector,
+        matchingElements: this.element.querySelectorAll(d.dragSelector).length
+      }, "ACTOR_SHEET");
+      d.bind(this.element);
+    });
     this.#disableOverrides();
+
+    // Apply themes immediately to prevent flashing
+    this.#applyThemesImmediately();
 
     // Initialize drag-scrolling for status bar
     this.#initStatusBarScrolling();
 
-    // Ensure theme is properly applied
-    this.#ensureThemeApplied();
+    // Initialize gear tab functionality (preserve state across renders)
+    this.#initGearTabs();
+
+    // Set up theme change listeners (only once per instance)
+    this.#setupThemeChangeListeners();
+
+    // Verify other themes are properly applied (should be set by templates)
+    this.#verifyThemeApplied();
 
     // Debug the transformation display
     if (CommonFoundryTasks.isTestingMode) this._debugTransformation();
@@ -572,6 +612,68 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
     // You may want to add other special handling here
     // Foundry comes with a large number of utility classes, e.g. SearchFilter
     // That you may want to implement yourself.
+  }
+
+  /**
+   * Set up theme change listeners for this application instance
+   * @private
+   */
+  #setupThemeChangeListeners() {
+    // Prevent duplicate listeners
+    if (this._themeListenersSetup) return;
+    this._themeListenersSetup = true;
+
+    // Hook listener for theme changes
+    const hookId = Hooks.on("eventide-rp-system.themeChanged", (data) => {
+      Logger.debug("Theme change hook received", {
+        appId: this.id,
+        appName: this.constructor.name,
+        newTheme: data.newTheme,
+        userId: data.userId,
+      });
+
+      // Re-apply themes immediately
+      this.#applyThemesImmediately();
+
+      // Force a re-render to pick up template changes
+      setTimeout(() => {
+        try {
+          this.render(false);
+          Logger.debug("Application re-rendered for theme change", {
+            appId: this.id,
+            appName: this.constructor.name,
+            newTheme: data.newTheme,
+          });
+        } catch (error) {
+          Logger.warn("Failed to re-render application for theme change", {
+            appId: this.id,
+            appName: this.constructor.name,
+            error: error.message,
+          });
+        }
+      }, 50);
+    });
+
+    // DOM event listener for theme changes
+    const domEventHandler = (event) => {
+      Logger.debug("Theme change DOM event received", {
+        appId: this.id,
+        appName: this.constructor.name,
+        newTheme: event.detail.newTheme,
+        userId: event.detail.userId,
+      });
+
+      // Re-apply themes immediately
+      this.#applyThemesImmediately();
+    };
+
+    document.addEventListener("eventide-theme-change", domEventHandler);
+
+    // Store references for cleanup
+    this._themeChangeCleanup = {
+      hookId,
+      domEventHandler,
+    };
   }
 
   /**
@@ -682,6 +784,15 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
           statusBar.classList.contains("scrollable-right"))
       ) {
         return; // Let arrow click handler deal with it
+      }
+
+      // Don't interfere with drag operations on transformation cards
+      if (e.target.closest('.eventide-transformation-card')) {
+        Logger.debug("Skipping status bar drag for transformation card", {
+          target: e.target,
+          closest: e.target.closest('.eventide-transformation-card')
+        }, "ACTOR_SHEET");
+        return; // Let the drag and drop system handle it
       }
 
       isDown = true;
@@ -797,6 +908,7 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
     }
   }
 
+
   /**
    * Actions performed before closing the application
    * @param {object} options - Close options
@@ -807,6 +919,12 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
   async _preClose(options) {
     // Clean up status bar event listeners
     this.#cleanupStatusBarScrolling();
+
+    // Clean up theme change listeners
+    this.#cleanupThemeChangeListeners();
+
+    // Clean up gear tab state
+    this.#cleanupGearTabState();
 
     // Call parent cleanup
     return super._preClose(options);
@@ -848,22 +966,103 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
   }
 
   /**
-   * Ensure the theme is properly applied to the sheet
+   * Clean up theme change event listeners
    * @private
    */
-  #ensureThemeApplied() {
-    const currentTheme =
-      CommonFoundryTasks.retrieveUserFlag("sheetTheme") || "blue";
+  #cleanupThemeChangeListeners() {
+    if (!this._themeChangeCleanup) return;
 
-    // Apply theme to document name element
+    const { hookId, domEventHandler } = this._themeChangeCleanup;
+
+    // Remove hook listener
+    if (hookId) {
+      Hooks.off("eventide-rp-system.themeChanged", hookId);
+    }
+
+    // Remove DOM event listener
+    if (domEventHandler) {
+      document.removeEventListener("eventide-theme-change", domEventHandler);
+    }
+
+    // Clear references
+    this._themeChangeCleanup = null;
+    this._themeListenersSetup = false;
+  }
+
+  /**
+   * Clean up gear tab state
+   * @private
+   */
+  #cleanupGearTabState() {
+    // Clear gear tab state
+    delete this._currentGearTab;
+
+    Logger.debug("Gear tab state cleaned up", {
+      appId: this.id,
+      appName: this.constructor.name,
+    });
+  }
+
+  /**
+   * Apply themes immediately to prevent flashing during re-renders
+   * @private
+   */
+  #applyThemesImmediately() {
+    const currentTheme = CommonFoundryTasks.retrieveSheetTheme();
+
+    // Apply theme to character sheet background
+    // this.element IS the .eventide-character-sheet element, not a child of it
+    const characterSheetElement = this.element;
+    if (
+      characterSheetElement &&
+      characterSheetElement.classList.contains("eventide-character-sheet")
+    ) {
+      const appliedBgTheme =
+        characterSheetElement.getAttribute("data-bg-theme");
+
+      // Only update the background theme if it's different to avoid unnecessary DOM manipulation
+      if (appliedBgTheme !== currentTheme) {
+        characterSheetElement.setAttribute("data-bg-theme", currentTheme);
+        Logger.debug("Background theme applied on render", {
+          sheetId: this.id,
+          actorName: this.actor?.name,
+          expectedTheme: currentTheme,
+          appliedTheme: appliedBgTheme,
+        });
+      }
+    }
+
+    // Apply theme to tab navigation immediately to prevent flashing
+    const tabsElement = this.element.querySelector(".tabs");
+    if (tabsElement) {
+      const appliedTabTheme = tabsElement.getAttribute("data-tab-theme");
+
+      // Only update if different to avoid unnecessary DOM manipulation
+      if (appliedTabTheme !== currentTheme) {
+        tabsElement.setAttribute("data-tab-theme", currentTheme);
+        Logger.debug("Tab theme applied immediately on render", {
+          sheetId: this.id,
+          actorName: this.actor?.name,
+          theme: currentTheme,
+          previousTheme: appliedTabTheme,
+        });
+      }
+    }
+  }
+
+  /**
+   * Verify the theme is properly applied to the sheet (logging only, no corrections)
+   * @private
+   */
+  #verifyThemeApplied() {
+    const currentTheme = CommonFoundryTasks.retrieveSheetTheme();
+
+    // Check theme on document name element
     const documentNameElement = this.element.querySelector(".document-name");
     if (documentNameElement) {
       const appliedTheme = documentNameElement.getAttribute("data-name-theme");
-
-      // If the applied theme doesn't match the user's preference, update it
       if (appliedTheme !== currentTheme) {
-        documentNameElement.setAttribute("data-name-theme", currentTheme);
-        Logger.debug("Name theme corrected on render", {
+        Logger.warn("Name theme mismatch detected", {
           sheetId: this.id,
           actorName: this.actor?.name,
           expectedTheme: currentTheme,
@@ -872,16 +1071,13 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
       }
     }
 
-    // Apply theme to header element
+    // Check theme on header element
     const headerElement = this.element.querySelector(".eventide-actor__header");
     if (headerElement) {
       const appliedHeaderTheme =
         headerElement.getAttribute("data-header-theme");
-
-      // If the applied theme doesn't match the user's preference, update it
       if (appliedHeaderTheme !== currentTheme) {
-        headerElement.setAttribute("data-header-theme", currentTheme);
-        Logger.debug("Header theme corrected on render", {
+        Logger.warn("Header theme mismatch detected", {
           sheetId: this.id,
           actorName: this.actor?.name,
           expectedTheme: currentTheme,
@@ -890,43 +1086,168 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
       }
     }
 
-    // Apply theme to data tables
-    const dataTableElements = this.element.querySelectorAll(
-      ".eventide-actor-data-table",
-    );
-    dataTableElements.forEach((tableElement) => {
+    // Check theme on data tables
+    const dataTableElements = this.element.querySelectorAll(".erps-data-table");
+    dataTableElements.forEach((tableElement, index) => {
       const appliedTableTheme = tableElement.getAttribute("data-table-theme");
-
-      // If the applied theme doesn't match the user's preference, update it
       if (appliedTableTheme !== currentTheme) {
-        tableElement.setAttribute("data-table-theme", currentTheme);
-        Logger.debug("Data table theme corrected on render", {
+        Logger.warn("Data table theme mismatch detected", {
           sheetId: this.id,
           actorName: this.actor?.name,
+          tableIndex: index,
           expectedTheme: currentTheme,
           appliedTheme: appliedTableTheme,
         });
       }
     });
 
-    // Apply theme to section headers
+    // Check theme on section headers
     const sectionHeaderElements = this.element.querySelectorAll(
       ".eventide-actor-data-section__header",
     );
-    sectionHeaderElements.forEach((headerElement) => {
+    sectionHeaderElements.forEach((headerElement, index) => {
       const appliedSectionTheme =
         headerElement.getAttribute("data-section-theme");
-
-      // If the applied theme doesn't match the user's preference, update it
       if (appliedSectionTheme !== currentTheme) {
-        headerElement.setAttribute("data-section-theme", currentTheme);
-        Logger.debug("Section header theme corrected on render", {
+        Logger.warn("Section header theme mismatch detected", {
           sheetId: this.id,
           actorName: this.actor?.name,
+          headerIndex: index,
           expectedTheme: currentTheme,
           appliedTheme: appliedSectionTheme,
         });
       }
+    });
+
+    // Background and tab themes are handled separately by #applyThemesImmediately
+  }
+
+  /**
+   * Initialize gear tab functionality with state preservation
+   * @private
+   */
+  #initGearTabs() {
+    const gearTabButtons = this.element.querySelectorAll(".gear-tab-button");
+    const gearTabContents = this.element.querySelectorAll(".gear-tab-content");
+
+    if (gearTabButtons.length === 0 || gearTabContents.length === 0) {
+      return; // No gear tabs found, probably not on gear tab
+    }
+
+    // Store current active tab before re-initialization (if any)
+    let currentActiveTab = this._currentGearTab;
+    if (!currentActiveTab) {
+      // Check if there's already an active tab in the DOM
+      const activeButton = this.element.querySelector(
+        ".gear-tab-button.active",
+      );
+      if (activeButton) {
+        currentActiveTab = activeButton.getAttribute("data-gear-tab");
+      } else {
+        // Default to 'equipped' if no active tab found
+        currentActiveTab = "equipped";
+      }
+    }
+
+    // Remove existing event listeners to prevent duplicates
+    gearTabButtons.forEach((button) => {
+      // Clone the button to remove all event listeners
+      const newButton = button.cloneNode(true);
+      button.parentNode.replaceChild(newButton, button);
+    });
+
+    // Re-query buttons after cloning
+    const newGearTabButtons = this.element.querySelectorAll(".gear-tab-button");
+
+    // Handle tab button clicks
+    newGearTabButtons.forEach((button) => {
+      button.addEventListener("click", (event) => {
+        event.preventDefault();
+
+        const targetTab = button.getAttribute("data-gear-tab");
+
+        // Store the selected tab
+        this._currentGearTab = targetTab;
+
+        // Remove active class from all buttons and contents
+        newGearTabButtons.forEach((btn) => btn.classList.remove("active"));
+        gearTabContents.forEach((content) =>
+          content.classList.remove("active"),
+        );
+
+        // Add active class to clicked button and corresponding content
+        button.classList.add("active");
+        const targetContent = this.element.querySelector(
+          `[data-gear-content="${targetTab}"]`,
+        );
+        if (targetContent) {
+          targetContent.classList.add("active");
+        }
+
+        Logger.debug("Gear tab switched", {
+          sheetId: this.id,
+          actorName: this.actor?.name,
+          targetTab,
+        });
+      });
+    });
+
+    // Restore the previously active tab
+    this.#restoreGearTabState(
+      currentActiveTab,
+      newGearTabButtons,
+      gearTabContents,
+    );
+
+    Logger.debug("Gear tabs initialized with state preservation", {
+      sheetId: this.id,
+      actorName: this.actor?.name,
+      buttonCount: newGearTabButtons.length,
+      contentCount: gearTabContents.length,
+      activeTab: currentActiveTab,
+    });
+  }
+
+  /**
+   * Restore the gear tab state to the specified tab
+   * @private
+   * @param {string} targetTab - The tab to activate
+   * @param {NodeList} buttons - The gear tab buttons
+   * @param {NodeList} contents - The gear tab contents
+   */
+  #restoreGearTabState(targetTab, buttons, contents) {
+    // Remove active class from all buttons and contents
+    buttons.forEach((btn) => btn.classList.remove("active"));
+    contents.forEach((content) => content.classList.remove("active"));
+
+    // Find and activate the target tab
+    const targetButton = this.element.querySelector(
+      `[data-gear-tab="${targetTab}"]`,
+    );
+    const targetContent = this.element.querySelector(
+      `[data-gear-content="${targetTab}"]`,
+    );
+
+    if (targetButton && targetContent) {
+      targetButton.classList.add("active");
+      targetContent.classList.add("active");
+      this._currentGearTab = targetTab;
+    } else {
+      // Fallback to first available tab if target not found
+      const firstButton = buttons[0];
+      const firstContent = contents[0];
+      if (firstButton && firstContent) {
+        firstButton.classList.add("active");
+        firstContent.classList.add("active");
+        this._currentGearTab = firstButton.getAttribute("data-gear-tab");
+      }
+    }
+
+    Logger.debug("Gear tab state restored", {
+      sheetId: this.id,
+      actorName: this.actor?.name,
+      targetTab,
+      actualTab: this._currentGearTab,
     });
   }
 
@@ -1459,6 +1780,8 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
           );
           return rollResult;
         }
+
+
       }
 
       // Handle rolls that supply the formula directly.
@@ -1509,20 +1832,47 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
    * @returns {Item | ActiveEffect} The embedded Item or ActiveEffect
    */
   _getEmbeddedDocument(target) {
-    // Support both li and tr elements for different template structures
+    // Support li, tr elements, and transformation cards for different template structures
     const docRow =
-      target.closest("li[data-document-class], tr[data-document-class]") ||
+      target.closest("li[data-document-class], tr[data-document-class], .eventide-transformation-card[data-item-id]") ||
       target.closest("[data-item-id]");
 
     if (docRow) {
+      const itemId = docRow.dataset.itemId;
+
+      // Handle transformation cards specifically
+      if (docRow.classList.contains('eventide-transformation-card')) {
+        const transformationItem = this.actor.items.get(itemId);
+        if (transformationItem && transformationItem.type === "transformation") {
+          Logger.debug("Found transformation item for drag", {
+            itemId,
+            itemName: transformationItem.name,
+            itemType: transformationItem.type
+          }, "ACTOR_SHEET");
+          return transformationItem;
+        }
+      }
+
       // Handle direct item ID reference
-      if (docRow.dataset.itemId && !docRow.dataset.documentClass) {
-        return this.actor.items.get(docRow.dataset.itemId);
+      if (itemId && !docRow.dataset.documentClass) {
+        // First try to find in actor's items
+        let item = this.actor.items.get(itemId);
+        if (item) return item;
+
+        // If not found, check transformation combat powers
+        item = this._findTransformationCombatPower(itemId);
+        if (item) return item;
       }
 
       // Handle document class structure
       if (docRow.dataset.documentClass === "Item") {
-        return this.actor.items.get(docRow.dataset.itemId);
+        // First try to find in actor's items
+        let item = this.actor.items.get(itemId);
+        if (item) return item;
+
+        // If not found, check transformation combat powers
+        item = this._findTransformationCombatPower(itemId);
+        if (item) return item;
       } else if (docRow.dataset.documentClass === "ActiveEffect") {
         const parent =
           docRow.dataset.parentId === this.actor.id
@@ -1534,7 +1884,13 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
 
     // Fallback: check if target itself has item-id
     if (target.dataset.itemId) {
-      return this.actor.items.get(target.dataset.itemId);
+      // First try to find in actor's items
+      let item = this.actor.items.get(target.dataset.itemId);
+      if (item) return item;
+
+      // If not found, check transformation combat powers
+      item = this._findTransformationCombatPower(target.dataset.itemId);
+      if (item) return item;
     }
 
     Logger.warn(
@@ -1542,9 +1898,34 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
       {
         target,
         docRow,
+        itemId: docRow?.dataset?.itemId,
+        documentClass: docRow?.dataset?.documentClass,
+        isTransformationCard: docRow?.classList?.contains('eventide-transformation-card')
       },
       "ACTOR_SHEET",
     );
+    return null;
+  }
+
+  /**
+   * Find a transformation combat power by ID
+   * @param {string} itemId - The item ID to search for
+   * @returns {Item|null} The transformation combat power item or null if not found
+   * @private
+   */
+  _findTransformationCombatPower(itemId) {
+    // Get all transformation items
+    const transformations = this.actor.items.filter(i => i.type === "transformation");
+
+    // Search through all embedded combat powers
+    for (const transformation of transformations) {
+      const embeddedPowers = transformation.system.getEmbeddedCombatPowers();
+      const power = embeddedPowers.find(p => p.id === itemId);
+      if (power) {
+        return power;
+      }
+    }
+
     return null;
   }
 
@@ -1560,9 +1941,15 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
    * @returns {boolean}             Can the current user drag this selector?
    * @protected
    */
-  _canDragStart(_selector) {
-    // game.user fetches the current user
-    return this.isEditable;
+  _canDragStart(selector) {
+    const canDrag = this.isEditable;
+    Logger.debug("Drag permission check", {
+      selector,
+      canDrag,
+      isEditable: this.isEditable,
+      actorName: this.actor?.name
+    }, "ACTOR_SHEET");
+    return canDrag;
   }
 
   /**
@@ -1570,41 +1957,142 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
    * @param {string} selector       The candidate HTML selector for the drop target
    * @returns {boolean}             Can the current user drop on this selector?
    * @protected
+   * @override
    */
-  _canDragDrop(_selector) {
-    // game.user fetches the current user
-    return this.isEditable;
+  _canDragDrop(selector) {
+    const canDrop = this.isEditable;
+    Logger.debug("Drop permission check", {
+      selector,
+      canDrop,
+      isEditable: this.isEditable,
+      actorName: this.actor?.name
+    }, "ACTOR_SHEET");
+    return canDrop;
   }
 
   /**
    * Begins a drag operation from a popped out sheet
    * @param {DragEvent} event   The originating DragEvent
    * @protected
+   * @override
    */
   _onDragStart(event) {
-    const docRow = event.currentTarget.closest("li");
-    if ("link" in event.target.dataset) return;
+    Logger.debug("Drag start event triggered", {
+      currentTarget: event.currentTarget,
+      target: event.target,
+      targetDataset: event.target.dataset,
+      currentTargetDataset: event.currentTarget.dataset,
+      currentTargetClasses: event.currentTarget.className
+    }, "ACTOR_SHEET");
 
-    // Chained operation
-    const dragData = this._getEmbeddedDocument(docRow)?.toDragData();
+    // Support li, tr elements, and transformation cards
+    const docRow = event.currentTarget.closest("li, tr, .eventide-transformation-card");
+    if (!docRow) {
+      Logger.warn("No draggable element found", {
+        target: event.currentTarget,
+        targetClasses: event.currentTarget.className,
+        targetDataset: event.currentTarget.dataset
+      }, "ACTOR_SHEET");
+      return;
+    }
 
-    if (!dragData) return;
+    Logger.debug("Found draggable element", {
+      docRow,
+      docRowClasses: docRow.className,
+      docRowDataset: docRow.dataset,
+      isTransformationCard: docRow.classList.contains('eventide-transformation-card')
+    }, "ACTOR_SHEET");
+
+    // Don't drag if clicking on a link or button (except the transformation card itself)
+    if ("link" in event.target.dataset) {
+      Logger.debug("Preventing drag on link element", { target: event.target }, "ACTOR_SHEET");
+      return;
+    }
+
+    // Allow dragging transformation cards even when clicking buttons, but prevent if clicking the revert button specifically
+    if (event.target.closest('.eventide-transformation-card__revert')) {
+      Logger.debug("Preventing drag on revert button", { target: event.target }, "ACTOR_SHEET");
+      return;
+    }
+
+    // Get the embedded document for this element
+    const document = this._getEmbeddedDocument(docRow);
+    if (!document) {
+      Logger.warn("No document found for drag operation", {
+        docRow,
+        itemId: docRow.dataset?.itemId,
+        documentClass: docRow.dataset?.documentClass,
+        elementClass: docRow.className,
+        actorItems: this.actor.items.size,
+        activeTransformation: this.actor.getFlag("eventide-rp-system", "activeTransformation")
+      }, "ACTOR_SHEET");
+      return;
+    }
+
+    Logger.debug("Found document for drag", {
+      documentId: document.id,
+      documentName: document.name,
+      documentType: document.type || document.documentName
+    }, "ACTOR_SHEET");
+
+    // Get drag data from the document
+    const dragData = document.toDragData();
+    if (!dragData) {
+      Logger.warn("No drag data available for document", {
+        documentId: document.id,
+        documentType: document.type || document.documentName
+      }, "ACTOR_SHEET");
+      return;
+    }
+
+    // Add visual feedback
+    if (docRow.classList.contains('eventide-transformation-card')) {
+      docRow.classList.add('dragging');
+    }
 
     // Set data transfer
     event.dataTransfer.setData("text/plain", JSON.stringify(dragData));
+
+    Logger.info("Drag operation started successfully", {
+      documentId: document.id,
+      documentName: document.name,
+      documentType: document.type || document.documentName,
+      dragDataType: dragData.type,
+      elementType: docRow.classList.contains('eventide-transformation-card') ? 'transformation-card' : 'table-row'
+    }, "ACTOR_SHEET");
   }
 
   /**
    * Callback actions which occur when a dragged element is over a drop target.
    * @param {DragEvent} event       The originating DragEvent
    * @protected
+   * @override
    */
   _onDragOver(_event) {}
+
+  /**
+   * Callback actions which occur when a drag operation ends.
+   * @param {DragEvent} event       The originating DragEvent
+   * @protected
+   */
+  _onDragEnd(event) {
+    // Remove visual feedback
+    const docRow = event.currentTarget.closest("li, tr, .eventide-transformation-card");
+    if (docRow && docRow.classList.contains('eventide-transformation-card')) {
+      docRow.classList.remove('dragging');
+    }
+
+    Logger.debug("Drag operation ended", {
+      currentTarget: event.currentTarget,
+      elementType: docRow?.classList.contains('eventide-transformation-card') ? 'transformation-card' : 'table-row'
+    }, "ACTOR_SHEET");
+  }
 
   /**
    * Callback actions which occur when a dragged element is dropped on a target.
    * @param {DragEvent} event       The originating DragEvent
    * @protected
+   * @override
    */
   async _onDrop(event) {
     const data = TextEditor.implementation.getDragEventData(event);
@@ -1845,6 +2333,7 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
       d.callbacks = {
         dragstart: this._onDragStart.bind(this),
         dragover: this._onDragOver.bind(this),
+        dragend: this._onDragEnd.bind(this),
         drop: this._onDrop.bind(this),
       };
       return new DragDrop.implementation(d);
@@ -1936,19 +2425,16 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
    * @protected
    */
   static async _setSheetTheme(_event, _target) {
-    const rawFlag = CommonFoundryTasks.retrieveUserFlag("sheetTheme");
+    const currentTheme = CommonFoundryTasks.retrieveSheetTheme();
     Logger.methodEntry("EventideRpSystemActorSheet", "_setSheetTheme", {
       actorName: this.actor?.name,
-      rawFlag,
-      rawFlagType: typeof rawFlag,
+      currentTheme,
       userFlags: game.user.flags,
     });
 
     try {
       // Define the theme cycle order
       const themes = ["blue", "black", "green", "light", "gold", "purple"];
-      const currentTheme =
-        CommonFoundryTasks.retrieveUserFlag("sheetTheme") || "blue";
 
       // Find current theme index and move to next
       // Handle case where currentTheme might not be in the themes array
@@ -1968,13 +2454,15 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
         availableThemes: themes,
       });
 
-      // Update the user flag
+      // Update both the user flag and the setting
       await CommonFoundryTasks.storeUserFlag("sheetTheme", nextTheme);
+      await game.settings.set("eventide-rp-system", "sheetTheme", nextTheme);
 
-      Logger.info("User theme flag updated", {
+      Logger.info("User theme flag and setting updated", {
         userName: game.user.name,
         newTheme: nextTheme,
         flagPath: "eventide-rp-system.sheetTheme",
+        settingPath: "eventide-rp-system.sheetTheme",
       });
 
       // Re-render this sheet: if they have more than one open they'll just have to deal with closing and reopening them.
