@@ -1,5 +1,5 @@
 import { EventideSheetHelpers } from "../../ui/_module.mjs";
-import { erpsSoundManager } from "../_module.mjs";
+import { erpsSoundManager, Logger } from "../_module.mjs";
 
 /**
  * EVENTIDE RP SYSTEM - SETTINGS CONFIGURATION
@@ -10,7 +10,7 @@ import { erpsSoundManager } from "../_module.mjs";
  *
  * CLIENT SCOPE (Player Preferences):
  *   - enableSystemSounds: System Sound Settings
- *   - uiTheme: Personal UI theme choice
+ *   - sheetTheme: Personal theme choice for all system applications
  *   - defaultCharacterTab: Personal default tab preference
  *
  * WORLD SCOPE + RESTRICTED (GM Only):
@@ -283,32 +283,65 @@ export const registerSettings = function () {
     default: true,
   });
 
-  // UI Theme Options (Client preference)
-  game.settings.register("eventide-rp-system", "uiTheme", {
-    name: "SETTINGS.UiThemeName",
-    hint: "SETTINGS.UiThemeHint",
+    // Character Sheet Theme Options (Client preference)
+  game.settings.register("eventide-rp-system", "sheetTheme", {
+    name: "SETTINGS.SheetThemeName",
+    hint: "SETTINGS.SheetThemeHint",
     scope: "client",
     config: true,
     type: String,
-    default: "default",
+    default: "blue",
     choices: {
-      default: "SETTINGS.UiThemeDefault",
-      dark: "SETTINGS.UiThemeDark",
-      light: "SETTINGS.UiThemeLight",
-      contrast: "SETTINGS.UiThemeContrast",
+      blue: "SETTINGS.SheetThemeBlue",
+      gold: "SETTINGS.SheetThemeGold",
+      green: "SETTINGS.SheetThemeGreen",
+      black: "SETTINGS.SheetThemeBlack",
+      purple: "SETTINGS.SheetThemePurple",
+      light: "SETTINGS.SheetThemeLight",
     },
-    onChange: (value) => {
-      // Remove any existing theme classes
-      document.body.classList.remove(
-        "theme-default",
-        "theme-dark",
-        "theme-light",
-        "theme-contrast",
-      );
-      // Add the new theme class
-      document.body.classList.add(`theme-${value}`);
-      // No reload needed - immediate DOM update is sufficient
+    onChange: async (value) => {
+      // Update user flag for immediate effect on all themed applications
+      await game.user.setFlag("eventide-rp-system", "sheetTheme", value);
+
+      // Use setTimeout to ensure the flag is set before triggering theme updates
+      setTimeout(() => {
+        Logger.info("Theme setting changed - broadcasting theme update", {
+          userName: game.user.name,
+          newTheme: value
+        });
+
+        // Broadcast a hook that our applications can listen to
+        Hooks.callAll("eventide-rp-system.themeChanged", {
+          newTheme: value,
+          userId: game.user.id
+        });
+
+        // Show user notification of theme change
+        ui.notifications.info(`Theme changed to ${value.charAt(0).toUpperCase() + value.slice(1)}`, {
+          permanent: false,
+          console: false
+        });
+
+        Logger.debug("Theme change hook broadcasted", {
+          hookCalled: true,
+          userNotified: true
+        });
+      }, 100); // Small delay to ensure flag is set
+
+      // No reload needed - immediate update via hook system
     },
+  });
+
+  // Migrate existing user flag to setting if needed
+  Hooks.once("ready", () => {
+    const existingFlag = game.user.getFlag("eventide-rp-system", "sheetTheme");
+    const currentSetting = game.settings.get("eventide-rp-system", "sheetTheme");
+
+    // If user has a flag but setting is default, migrate the flag to setting
+    if (existingFlag && currentSetting === "blue" && existingFlag !== "blue") {
+      game.settings.set("eventide-rp-system", "sheetTheme", existingFlag);
+      Logger.info(`Eventide RP System: Migrated theme preference from flag to setting: ${existingFlag}`);
+    }
   });
 
   // Default Tab (Client preference)
