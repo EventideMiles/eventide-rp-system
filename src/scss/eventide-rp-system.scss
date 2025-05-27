@@ -1,5 +1,5 @@
 // Add custom fonts by visiting and search https://fonts.google.com
-// Import utilities.
+// Import utilities - ALL @use statements must come first
 @use "sass:meta";
 @use 'utils/tokens';
 @use 'utils/typography';
@@ -21,9 +21,15 @@
 @use 'components/gear-creator';
 @use 'components/effect-creator';
 @use 'components/sound-settings';
-@use 'components/data-table';
+@use 'components/data-table'; // DEPRECATED - use erps-data-tables instead
+@use 'components/erps-data-tables';
 @use 'components/enhanced-grid';
 @use 'components/range-slider';
+
+// Import Google Fonts after ALL @use statements to avoid CSS parsing errors
+@import 'https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap';
+@import 'https://fonts.googleapis.com/css2?family=Combo&family=Amatic+SC:wght@400;700&family=Merienda:wght@300..900&family=Protest+Revolution&family=Underdog&family=Carlito:ital,wght@0,400;0,700;1,400;1,700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Goblin+One&display=swap';
+@import 'https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Crimson+Text:wght@400;600&family=Libre+Baskerville:wght@400;700&family=Roboto+Condensed:wght@400;700&display=swap';
 
 .eventide-rp-system {
   @include meta.load-css('components/forms');

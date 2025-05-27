@@ -2,7 +2,20 @@
 @use "../utils/mixins";
 @use "../utils/typography";
 
-// Data Table Component for Eventide RP System
+// ⚠️  DEPRECATED: This file is being phased out in favor of _erps-data-tables.scss
+// ===============================================================================
+// This data-table component is being replaced by the new erps-data-tables component
+// which provides better BEM methodology, theme integration, and reusability.
+// Migration Timeline:
+// - Phase 1: New erps-data-tables component created with modern architecture
+// - Phase 2: Character sheets migrated to use new component
+// - Phase 3: Item sheets and other components use new component
+// - Phase 4: This file will be removed
+// For new development, please use the erps-data-tables component instead.
+// See: src/scss/components/_erps-data-tables.scss
+// ===============================================================================
+
+// Data Table Component for Eventide RP System (DEPRECATED)
 // Provides styling for tabular data displays and grid layouts
 // --------------------------------------------------------------
 
@@ -12,28 +25,28 @@
   border-collapse: separate;
   border-spacing: 0;
   margin: 0.5rem 0 1.5rem;
-  
+
   // Table with borders
   &--bordered {
     border: 1px solid var(--color-border-dark);
     border-radius: 0.25rem;
     overflow: hidden;
   }
-  
+
   // Table with alternating row colors
   &--striped {
     .data-table__row:nth-child(even) {
       background-color: var(--eventide-rp-system-c-faint);
     }
   }
-  
+
   // Table with hover effects
   &--hoverable {
     .data-table__row:hover {
-      background-color: rgba(41, 121, 255, 0.15);
+      background-color: rgb(41 121 255 / 15%);
     }
   }
-  
+
   // Condensed table with less padding
   &--condensed {
     .data-table__cell,
@@ -41,7 +54,7 @@
       padding: 0.35rem 0.75rem;
     }
   }
-  
+
   // Expanded table with more padding
   &--expanded {
     .data-table__cell,
@@ -49,12 +62,12 @@
       padding: 0.75rem 1.25rem;
     }
   }
-  
+
   // Header row
   &__header-row {
     border-bottom: 2px solid var(--color-border-dark);
   }
-  
+
   // Header cell
   &__header {
     padding: 0.5rem 1rem;
@@ -63,96 +76,96 @@
     color: var(--color-text-light-highlight);
     background-color: var(--eventide-rp-system-c-dark);
     position: relative;
-    
+
     &--sortable {
       cursor: pointer;
       user-select: none;
-      
+
       &:hover {
         background-color: var(--eventide-rp-system-c-beige);
       }
-      
+
       &::after {
         content: "↕";
         margin-left: 0.5rem;
         opacity: 0.5;
       }
-      
+
       &.sort-asc::after {
         content: "↑";
         opacity: 1;
       }
-      
+
       &.sort-desc::after {
         content: "↓";
         opacity: 1;
       }
     }
-    
+
     // Alignment variants
     &--right {
       text-align: right;
     }
-    
+
     &--center {
       text-align: center;
     }
   }
-  
+
   // Table row
   &__row {
     border-bottom: 1px solid var(--color-border-dark);
     transition: background-color 0.15s ease;
-    
+
     &:last-child {
       border-bottom: none;
     }
-    
+
     // Interactive row styles
     &--clickable {
       cursor: pointer;
-      
+
       &:hover {
-        background-color: rgba(41, 121, 255, 0.15);
+        background-color: rgb(41 121 255 / 15%);
       }
-      
+
       &:active {
-        background-color: rgba(41, 121, 255, 0.25);
+        background-color: rgb(41 121 255 / 25%);
       }
     }
-    
+
     // Status variants
     &--active {
-      background-color: rgba(41, 121, 255, 0.15);
+      background-color: rgb(41 121 255 / 15%);
     }
-    
+
     &--success {
-      background-color: var(--eventide-rp-system-chat-details-hit, rgba(80, 200, 119, 0.15));
+      background-color: var(--eventide-rp-system-chat-details-hit, rgb(80 200 119 / 15%));
     }
-    
+
     &--warning {
-      background-color: var(--eventide-rp-system-chat-details-crit-fail, rgba(255, 193, 7, 0.15));
+      background-color: var(--eventide-rp-system-chat-details-crit-fail, rgb(255 193 7 / 15%));
     }
-    
+
     &--danger {
-      background-color: var(--eventide-rp-system-chat-details-miss, rgba(199, 0, 57, 0.15));
+      background-color: var(--eventide-rp-system-chat-details-miss, rgb(199 0 57 / 15%));
     }
   }
-  
+
   // Table cell
   &__cell {
     padding: 0.5rem 1rem;
     vertical-align: middle;
-    
+
     // Alignment variants
     &--right {
       text-align: right;
     }
-    
+
     &--center {
       text-align: center;
     }
-    
+
     // Cell with truncated text
     &--truncate {
       max-width: 20ch;
@@ -160,31 +173,31 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    
+
     // Cell that can expand
     &--expandable {
       cursor: pointer;
       position: relative;
-      
+
       &::after {
         content: "▼";
         font-size: 0.75em;
         margin-left: 0.5rem;
         opacity: 0.7;
       }
-      
+
       &.expanded::after {
         content: "▲";
       }
     }
   }
-  
+
   // Footer row
   &__footer-row {
     border-top: 2px solid var(--color-border-dark);
     background-color: var(--eventide-rp-system-c-faint);
   }
-  
+
   // Footer cell
   &__footer {
     padding: 0.5rem 1rem;
@@ -198,44 +211,44 @@
   display: grid;
   width: 100%;
   margin: 0.5rem 0 1.5rem;
-  
+
   // The columns will be defined inline using grid-template-columns
   // e.g. style="grid-template-columns: 2fr 1fr 1fr 100px"
-  
+
   // Grid with borders
   &--bordered {
     border: 1px solid var(--color-border-dark);
     border-radius: 0.25rem;
     overflow: hidden;
-    
+
     .data-grid__cell {
       border-right: 1px solid var(--color-border-dark);
       border-bottom: 1px solid var(--color-border-dark);
-      
+
       &:last-child {
         border-right: none;
       }
     }
-    
+
     .data-grid__row:last-child .data-grid__cell {
       border-bottom: none;
     }
   }
-  
+
   // Grid with alternating row colors
   &--striped {
     .data-grid__row:nth-child(even) {
       background-color: var(--eventide-rp-system-c-faint);
     }
   }
-  
+
   // Grid with hover effects
   &--hoverable {
     .data-grid__row:hover {
-      background-color: rgba(41, 121, 255, 0.15);
+      background-color: rgb(41 121 255 / 15%);
     }
   }
-  
+
   // Condensed grid with less padding
   &--condensed {
     .data-grid__cell,
@@ -243,7 +256,7 @@
       padding: 0.35rem 0.75rem;
     }
   }
-  
+
   // Expanded grid with more padding
   &--expanded {
     .data-grid__cell,
@@ -251,12 +264,12 @@
       padding: 0.75rem 1.25rem;
     }
   }
-  
+
   // Header row
   &__header-row {
     display: contents;
   }
-  
+
   // Header cell
   &__header {
     padding: 0.5rem 1rem;
@@ -267,76 +280,76 @@
     display: flex;
     align-items: center;
     border-bottom: 2px solid var(--color-border-dark);
-    
+
     &--sortable {
       cursor: pointer;
       user-select: none;
-      
+
       &:hover {
         background-color: var(--eventide-rp-system-c-beige);
       }
-      
+
       &::after {
         content: "↕";
         margin-left: 0.5rem;
         opacity: 0.5;
       }
-      
+
       &.sort-asc::after {
         content: "↑";
         opacity: 1;
       }
-      
+
       &.sort-desc::after {
         content: "↓";
         opacity: 1;
       }
     }
-    
+
     // Alignment variants
     &--right {
       justify-content: flex-end;
       text-align: right;
     }
-    
+
     &--center {
       justify-content: center;
       text-align: center;
     }
   }
-  
+
   // Grid row
   &__row {
     display: contents;
-    
+
     // Interactive row styles - applied via JavaScript
     // since grid-rows are display:contents
     &--clickable {
       cursor: pointer;
-      
+
       .data-grid__cell {
         cursor: pointer;
       }
     }
-    
+
     // Status variants
     &--active .data-grid__cell {
-      background-color: rgba(41, 121, 255, 0.15);
+      background-color: rgb(41 121 255 / 15%);
     }
-    
+
     &--success .data-grid__cell {
-      background-color: var(--eventide-rp-system-chat-details-hit, rgba(80, 200, 119, 0.15));
+      background-color: var(--eventide-rp-system-chat-details-hit, rgb(80 200 119 / 15%));
     }
-    
+
     &--warning .data-grid__cell {
-      background-color: var(--eventide-rp-system-chat-details-crit-fail, rgba(255, 193, 7, 0.15));
+      background-color: var(--eventide-rp-system-chat-details-crit-fail, rgb(255 193 7 / 15%));
     }
-    
+
     &--danger .data-grid__cell {
-      background-color: var(--eventide-rp-system-chat-details-miss, rgba(199, 0, 57, 0.15));
+      background-color: var(--eventide-rp-system-chat-details-miss, rgb(199 0 57 / 15%));
     }
   }
-  
+
   // Grid cell
   &__cell {
     padding: 0.5rem 1rem;
@@ -345,23 +358,23 @@
     min-height: 2.5rem;
     border-bottom: 1px solid var(--color-border-dark);
     transition: background-color 0.15s ease;
-    
+
     // Hover effect needs to be applied to cells when using display:contents for rows
     .data-grid--hoverable &:hover {
-      background-color: rgba(41, 121, 255, 0.15);
+      background-color: rgb(41 121 255 / 15%);
     }
-    
+
     // Alignment variants
     &--right {
       justify-content: flex-end;
       text-align: right;
     }
-    
+
     &--center {
       justify-content: center;
       text-align: center;
     }
-    
+
     // Cell with truncated text
     &--truncate {
       max-width: 100%;
@@ -369,30 +382,30 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    
+
     // Cell that can expand
     &--expandable {
       cursor: pointer;
       position: relative;
-      
+
       &::after {
         content: "▼";
         font-size: 0.75em;
         margin-left: 0.5rem;
         opacity: 0.7;
       }
-      
+
       &.expanded::after {
         content: "▲";
       }
     }
   }
-  
+
   // Footer row
   &__footer-row {
     display: contents;
   }
-  
+
   // Footer cell
   &__footer {
     padding: 0.5rem 1rem;
@@ -407,79 +420,79 @@
 .data-list {
   width: 100%;
   margin: 0.5rem 0 1.5rem;
-  
+
   &__item {
     padding: 0.75rem 1rem;
     border-bottom: 1px solid var(--color-border-dark);
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    
+
     &:last-child {
       border-bottom: none;
     }
-    
+
     // Item with hover effects
     .data-list--hoverable & {
       &:hover {
-        background-color: rgba(41, 121, 255, 0.15);
+        background-color: rgb(41 121 255 / 15%);
       }
     }
-    
+
     // Clickable item
     &--clickable {
       cursor: pointer;
-      
+
       &:hover {
-        background-color: rgba(41, 121, 255, 0.15);
+        background-color: rgb(41 121 255 / 15%);
       }
-      
+
       &:active {
-        background-color: rgba(41, 121, 255, 0.25);
+        background-color: rgb(41 121 255 / 25%);
       }
     }
-    
+
     // Status variants
     &--active {
-      background-color: rgba(41, 121, 255, 0.15);
+      background-color: rgb(41 121 255 / 15%);
     }
-    
+
     &--success {
-      background-color: var(--eventide-rp-system-chat-details-hit, rgba(80, 200, 119, 0.15));
+      background-color: var(--eventide-rp-system-chat-details-hit, rgb(80 200 119 / 15%));
     }
-    
+
     &--warning {
-      background-color: var(--eventide-rp-system-chat-details-crit-fail, rgba(255, 193, 7, 0.15));
+      background-color: var(--eventide-rp-system-chat-details-crit-fail, rgb(255 193 7 / 15%));
     }
-    
+
     &--danger {
-      background-color: var(--eventide-rp-system-chat-details-miss, rgba(199, 0, 57, 0.15));
+      background-color: var(--eventide-rp-system-chat-details-miss, rgb(199 0 57 / 15%));
     }
   }
-  
+
   &__field {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    
+
     &-label {
       font-weight: bold;
       color: var(--color-text-light-highlight);
       margin-right: 1rem;
     }
-    
+
     &-value {
       text-align: right;
       flex: 1;
     }
   }
-  
+
   &__title {
     font-weight: bold;
     font-size: 1.1em;
     margin-bottom: 0.25rem;
   }
-  
+
   &__subtitle {
     font-size: 0.9em;
     opacity: 0.8;
@@ -493,19 +506,19 @@
     color: var(--color-text-light-highlight);
     font-weight: bold;
   }
-  
+
   &--success {
     color: var(--eventide-rp-system-chat-details-hit, #50C877);
   }
-  
+
   &--warning {
     color: var(--eventide-rp-system-chat-details-crit-fail, #FFC107);
   }
-  
+
   &--danger {
     color: var(--eventide-rp-system-chat-details-miss, #C70039);
   }
-  
+
   &--muted {
     opacity: 0.7;
   }
@@ -517,7 +530,7 @@
   border-collapse: separate;
   border-spacing: 0;
   margin: 0.5rem 0 1.5rem;
-  
+
   th {
     padding: 0.5rem 1rem;
     text-align: left;
@@ -526,13 +539,13 @@
     background-color: var(--eventide-rp-system-c-dark);
     border-bottom: 2px solid var(--color-border-dark);
   }
-  
+
   td {
     padding: 0.5rem 1rem;
     vertical-align: middle;
     border-bottom: 1px solid var(--color-border-dark);
   }
-  
+
   tbody tr:last-child td {
     border-bottom: none;
   }
@@ -552,6 +565,6 @@
 
 @mixin data-table-hoverable {
   tbody tr:hover {
-    background-color: rgba(41, 121, 255, 0.15);
+    background-color: rgb(41 121 255 / 15%);
   }
 }

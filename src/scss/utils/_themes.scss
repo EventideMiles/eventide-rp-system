@@ -1,0 +1,908 @@
+// ===================================
+// EVENTIDE THEME SYSTEM
+// ===================================
+// This file contains all theme definitions for the Eventide RP System
+// Each theme includes both CSS variables (for runtime switching) and SCSS variables (for compile-time usage)
+
+@use "sass:map";
+
+// ===================================
+// THEME MIXIN SYSTEM
+// ===================================
+
+// Mixin to define CSS variables for a theme
+@mixin define-theme-css-vars($primary, $secondary, $accent, $light, $glow, $text, $pattern) {
+  --theme-primary: #{$primary};
+  --theme-secondary: #{$secondary};
+  --theme-accent: #{$accent};
+  --theme-light: #{$light};
+  --theme-glow: #{$glow};
+  --theme-text: #{$text};
+  --theme-pattern: #{$pattern};
+}
+
+// ===================================
+// BLUE THEME (NIGHT) - DEFAULT
+// ===================================
+$blue-theme: (
+  primary: rgb(30 58 138 / 90%),
+  secondary: rgb(59 130 246 / 80%),
+  accent: rgb(15 30 70 / 95%),
+  light: rgb(59 130 246 / 70%),
+  glow: rgb(59 130 246 / 60%),
+  text: #fff,
+  pattern: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.15'%3E%3Cpath d='M10 2l3 3-3 3-3-3z'/%3E%3Cpath d='M10 12l3 3-3 3-3-3z'/%3E%3C/g%3E%3C/svg%3E")
+);
+
+// Blue theme SCSS variables
+$blue-primary: map.get($blue-theme, primary);
+$blue-secondary: map.get($blue-theme, secondary);
+$blue-accent: map.get($blue-theme, accent);
+$blue-light: map.get($blue-theme, light);
+$blue-glow: map.get($blue-theme, glow);
+$blue-text: map.get($blue-theme, text);
+$blue-pattern: map.get($blue-theme, pattern);
+
+// ===================================
+// GOLD THEME (TWILIGHT)
+// ===================================
+$gold-theme: (
+  primary: rgb(180 83 9 / 90%),
+  secondary: rgb(217 119 6 / 80%),
+  accent: rgb(120 53 15 / 95%),
+  light: rgb(217 119 6 / 70%),
+  glow: rgb(217 119 6 / 60%),
+  text: #fff,
+  pattern: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.15'%3E%3Cpath d='M12 2l2 6h6l-5 4 2 6-5-4-5 4 2-6-5-4h6z'/%3E%3C/g%3E%3C/svg%3E")
+);
+
+// Gold theme SCSS variables
+$gold-primary: map.get($gold-theme, primary);
+$gold-secondary: map.get($gold-theme, secondary);
+$gold-accent: map.get($gold-theme, accent);
+$gold-light: map.get($gold-theme, light);
+$gold-glow: map.get($gold-theme, glow);
+$gold-text: map.get($gold-theme, text);
+$gold-pattern: map.get($gold-theme, pattern);
+
+// ===================================
+// GREEN THEME (DAWN)
+// ===================================
+$green-theme: (
+  primary: rgb(21 128 61 / 90%),
+  secondary: rgb(34 197 94 / 80%),
+  accent: rgb(14 70 35 / 95%),
+  light: rgb(34 197 94 / 70%),
+  glow: rgb(34 197 94 / 60%),
+  text: #fff,
+  pattern: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.15'%3E%3Ccircle cx='10' cy='10' r='2'/%3E%3Ccircle cx='10' cy='4' r='1'/%3E%3Ccircle cx='10' cy='16' r='1'/%3E%3Ccircle cx='4' cy='10' r='1'/%3E%3Ccircle cx='16' cy='10' r='1'/%3E%3C/g%3E%3C/svg%3E")
+);
+
+// Green theme SCSS variables
+$green-primary: map.get($green-theme, primary);
+$green-secondary: map.get($green-theme, secondary);
+$green-accent: map.get($green-theme, accent);
+$green-light: map.get($green-theme, light);
+$green-glow: map.get($green-theme, glow);
+$green-text: map.get($green-theme, text);
+$green-pattern: map.get($green-theme, pattern);
+
+// ===================================
+// BLACK THEME (MIDNIGHT)
+// ===================================
+$black-theme: (
+  primary: rgb(40 40 40 / 90%),
+  secondary: rgb(80 80 80 / 80%),
+  accent: rgb(20 20 20 / 95%),
+  light: rgb(160 160 160 / 70%),
+  glow: rgb(200 200 200 / 60%),
+  text: #fff,
+  pattern: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.15'%3E%3Cpath d='M10 0l2 8h8l-6 4 2 8-6-4-6 4 2-8-6-4h8z'/%3E%3C/g%3E%3C/svg%3E")
+);
+
+// Black theme SCSS variables
+$black-primary: map.get($black-theme, primary);
+$black-secondary: map.get($black-theme, secondary);
+$black-accent: map.get($black-theme, accent);
+$black-light: map.get($black-theme, light);
+$black-glow: map.get($black-theme, glow);
+$black-text: map.get($black-theme, text);
+$black-pattern: map.get($black-theme, pattern);
+
+// ===================================
+// PURPLE THEME (DUSK)
+// ===================================
+$purple-theme: (
+  primary: rgb(88 28 135 / 90%),
+  secondary: rgb(147 51 234 / 80%),
+  accent: rgb(59 7 100 / 95%),
+  light: rgb(147 51 234 / 70%),
+  glow: rgb(147 51 234 / 60%),
+  text: #fff,
+  pattern: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.15'%3E%3Cpath d='M10 1l1 3 3 1-3 1-1 3-1-3-3-1 3-1z'/%3E%3Cpath d='M5 5l1 2 2 1-2 1-1 2-1-2-2-1 2-1z'/%3E%3Cpath d='M15 15l1 2 2 1-2 1-1 2-1-2-2-1 2-1z'/%3E%3C/g%3E%3C/svg%3E")
+);
+
+// Purple theme SCSS variables
+$purple-primary: map.get($purple-theme, primary);
+$purple-secondary: map.get($purple-theme, secondary);
+$purple-accent: map.get($purple-theme, accent);
+$purple-light: map.get($purple-theme, light);
+$purple-glow: map.get($purple-theme, glow);
+$purple-text: map.get($purple-theme, text);
+$purple-pattern: map.get($purple-theme, pattern);
+
+// ===================================
+// LIGHT THEME (NOON)
+// ===================================
+$light-theme: (
+  primary: rgb(248 250 252 / 90%),
+  secondary: rgb(226 232 240 / 80%),
+  accent: rgb(241 245 249 / 95%),
+  light: rgb(203 213 225 / 70%),
+  glow: rgb(148 163 184 / 60%),
+  text: #1e293b,
+  pattern: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%231e293b' fill-opacity='0.15'%3E%3Ccircle cx='10' cy='10' r='3'/%3E%3Cpath d='M10 1v2M10 17v2M1 10h2M17 10h2M4.22 4.22l1.42 1.42M14.36 14.36l1.42 1.42M4.22 15.78l1.42-1.42M14.36 5.64l1.42-1.42'/%3E%3C/g%3E%3C/svg%3E")
+);
+
+// Light theme SCSS variables
+$light-primary: map.get($light-theme, primary);
+$light-secondary: map.get($light-theme, secondary);
+$light-accent: map.get($light-theme, accent);
+$light-light: map.get($light-theme, light);
+$light-glow: map.get($light-theme, glow);
+$light-text: map.get($light-theme, text);
+$light-pattern: map.get($light-theme, pattern);
+
+// ===================================
+// EXTENDED COLOR PALETTES
+// ===================================
+// Comprehensive color variations for each theme, including opacity variants
+// These extend the base theme colors with additional shades and opacities
+
+// ===================================
+// UNIVERSAL COLORS
+// ===================================
+// Base colors used across all themes
+$theme-white-5: rgb(255 255 255 / 5%);
+$theme-white-10: rgb(255 255 255 / 10%);
+$theme-white-20: rgb(255 255 255 / 20%);
+$theme-black-30: rgb(0 0 0 / 30%);
+$theme-black-80: rgb(0 0 0 / 80%);
+
+// ===================================
+// BLUE THEME EXTENDED PALETTE
+// ===================================
+$blue-color-light: rgb(59 130 246);
+$blue-color-dark: rgb(30 58 138);
+$blue-color-8: rgb(59 130 246 / 8%);
+$blue-color-15: rgb(59 130 246 / 15%);
+$blue-color-20: rgb(59 130 246 / 20%);
+$blue-color-25: rgb(59 130 246 / 25%);
+$blue-color-30: rgb(30 58 138 / 30%);
+$blue-color-40: rgb(59 130 246 / 40%);
+$blue-color-60: rgb(59 130 246 / 60%);
+$blue-color-70: rgb(59 130 246 / 70%);
+$blue-color-80: rgb(59 130 246 / 80%);
+$blue-color-90: rgb(59 130 246 / 90%);
+$blue-color-dark-80: rgb(30 58 138 / 80%);
+$blue-color-dark-90: rgb(30 58 138 / 90%);
+
+// ===================================
+// GREEN THEME EXTENDED PALETTE
+// ===================================
+$green-color-light: rgb(34 197 94);
+$green-color-dark: rgb(21 128 61);
+$green-color-8: rgb(34 197 94 / 8%);
+$green-color-15: rgb(34 197 94 / 15%);
+$green-color-20: rgb(34 197 94 / 20%);
+$green-color-25: rgb(34 197 94 / 25%);
+$green-color-30: rgb(21 128 61 / 30%);
+$green-color-40: rgb(34 197 94 / 40%);
+$green-color-60: rgb(34 197 94 / 60%);
+$green-color-70: rgb(34 197 94 / 70%);
+$green-color-80: rgb(34 197 94 / 80%);
+$green-color-90: rgb(34 197 94 / 90%);
+$green-color-dark-80: rgb(21 128 61 / 80%);
+$green-color-dark-90: rgb(21 128 61 / 90%);
+
+// ===================================
+// RED THEME EXTENDED PALETTE
+// ===================================
+$red-color-light: rgb(239 68 68);
+$red-color-dark: rgb(185 28 28);
+$red-color-danger: rgb(220 53 69);
+$red-color-8: rgb(239 68 68 / 8%);
+$red-color-15: rgb(239 68 68 / 15%);
+$red-color-20: rgb(239 68 68 / 20%);
+$red-color-25: rgb(239 68 68 / 25%);
+$red-color-30: rgb(185 28 28 / 30%);
+$red-color-40: rgb(239 68 68 / 40%);
+$red-color-60: rgb(239 68 68 / 60%);
+$red-color-70: rgb(239 68 68 / 70%);
+$red-color-80: rgb(239 68 68 / 80%);
+$red-color-90: rgb(239 68 68 / 90%);
+$red-color-dark-80: rgb(185 28 28 / 80%);
+$red-color-dark-90: rgb(185 28 28 / 90%);
+$red-color-danger-60: rgb(220 53 69 / 60%);
+$red-color-danger-90: rgb(220 53 69 / 90%);
+
+// ===================================
+// ORANGE/GOLD THEME EXTENDED PALETTE
+// ===================================
+$orange-color-light: rgb(217 119 6);
+$orange-color-dark: rgb(180 83 9);
+$orange-color-8: rgb(217 119 6 / 8%);
+$orange-color-15: rgb(217 119 6 / 15%);
+$orange-color-20: rgb(217 119 6 / 20%);
+$orange-color-25: rgb(217 119 6 / 25%);
+$orange-color-30: rgb(180 83 9 / 30%);
+$orange-color-40: rgb(217 119 6 / 40%);
+$orange-color-60: rgb(217 119 6 / 60%);
+$orange-color-70: rgb(217 119 6 / 70%);
+$orange-color-80: rgb(217 119 6 / 80%);
+$orange-color-90: rgb(217 119 6 / 90%);
+$orange-color-dark-80: rgb(180 83 9 / 80%);
+$orange-color-dark-90: rgb(180 83 9 / 90%);
+
+// ===================================
+// GRAY THEME EXTENDED PALETTE
+// ===================================
+$gray-color-neutral: rgb(100 100 100);
+$gray-color-light: rgb(160 160 160);
+$gray-color-dark: rgb(80 80 80);
+$gray-color-8: rgb(100 100 100 / 8%);
+$gray-color-10: rgb(100 100 100 / 10%);
+$gray-color-15: rgb(100 100 100 / 15%);
+$gray-color-20: rgb(100 100 100 / 20%);
+$gray-color-25: rgb(100 100 100 / 25%);
+$gray-color-30: rgb(100 100 100 / 30%);
+$gray-color-40: rgb(100 100 100 / 40%);
+$gray-color-60: rgb(100 100 100 / 60%);
+$gray-color-70: rgb(100 100 100 / 70%);
+$gray-color-80: rgb(100 100 100 / 80%);
+$gray-color-90: rgb(100 100 100 / 90%);
+
+// ===================================
+// PURPLE THEME EXTENDED PALETTE
+// ===================================
+$purple-color-light: rgb(138 43 226);
+$purple-color-dark: rgb(75 0 130);
+$purple-color-theme: rgb(147 51 234); // Matches existing theme purple
+$purple-color-8: rgb(138 43 226 / 8%);
+$purple-color-15: rgb(138 43 226 / 15%);
+$purple-color-20: rgb(138 43 226 / 20%);
+$purple-color-25: rgb(138 43 226 / 25%);
+$purple-color-30: rgb(138 43 226 / 30%);
+$purple-color-40: rgb(138 43 226 / 40%);
+$purple-color-60: rgb(138 43 226 / 60%);
+$purple-color-70: rgb(138 43 226 / 70%);
+$purple-color-80: rgb(138 43 226 / 80%);
+$purple-color-90: rgb(138 43 226 / 90%);
+$purple-color-dark-30: rgb(75 0 130 / 30%);
+$purple-color-dark-40: rgb(75 0 130 / 40%);
+$purple-color-dark-60: rgb(75 0 130 / 60%);
+$purple-color-dark-80: rgb(75 0 130 / 80%);
+$purple-color-dark-90: rgb(75 0 130 / 90%);
+
+// ===================================
+// COLOR UTILITY MAPS & FUNCTIONS
+// ===================================
+
+// Color palette maps for cleaner function implementation
+$color-palettes: (
+  blue: (
+    base: $blue-color-light,
+    8: $blue-color-8,
+    15: $blue-color-15,
+    20: $blue-color-20,
+    25: $blue-color-25,
+    30: $blue-color-30,
+    40: $blue-color-40,
+    60: $blue-color-60,
+    70: $blue-color-70,
+    80: $blue-color-80,
+    90: $blue-color-90,
+    dark-80: $blue-color-dark-80,
+    dark-90: $blue-color-dark-90
+  ),
+  green: (
+    base: $green-color-light,
+    8: $green-color-8,
+    15: $green-color-15,
+    20: $green-color-20,
+    25: $green-color-25,
+    30: $green-color-30,
+    40: $green-color-40,
+    60: $green-color-60,
+    70: $green-color-70,
+    80: $green-color-80,
+    90: $green-color-90,
+    dark-80: $green-color-dark-80,
+    dark-90: $green-color-dark-90
+  ),
+  red: (
+    base: $red-color-light,
+    8: $red-color-8,
+    15: $red-color-15,
+    20: $red-color-20,
+    25: $red-color-25,
+    30: $red-color-30,
+    40: $red-color-40,
+    60: $red-color-60,
+    70: $red-color-70,
+    80: $red-color-80,
+    90: $red-color-90,
+    dark-80: $red-color-dark-80,
+    dark-90: $red-color-dark-90,
+    danger-60: $red-color-danger-60,
+    danger-90: $red-color-danger-90
+  ),
+  orange: (
+    base: $orange-color-light,
+    8: $orange-color-8,
+    15: $orange-color-15,
+    20: $orange-color-20,
+    25: $orange-color-25,
+    30: $orange-color-30,
+    40: $orange-color-40,
+    60: $orange-color-60,
+    70: $orange-color-70,
+    80: $orange-color-80,
+    90: $orange-color-90,
+    dark-80: $orange-color-dark-80,
+    dark-90: $orange-color-dark-90
+  ),
+  gray: (
+    base: $gray-color-neutral,
+    8: $gray-color-8,
+    10: $gray-color-10,
+    15: $gray-color-15,
+    20: $gray-color-20,
+    25: $gray-color-25,
+    30: $gray-color-30,
+    40: $gray-color-40,
+    60: $gray-color-60,
+    70: $gray-color-70,
+    80: $gray-color-80,
+    90: $gray-color-90
+  ),
+  purple: (
+    base: $purple-color-light,
+    8: $purple-color-8,
+    15: $purple-color-15,
+    20: $purple-color-20,
+    25: $purple-color-25,
+    30: $purple-color-30,
+    40: $purple-color-40,
+    60: $purple-color-60,
+    70: $purple-color-70,
+    80: $purple-color-80,
+    90: $purple-color-90,
+    dark-30: $purple-color-dark-30,
+    dark-40: $purple-color-dark-40,
+    dark-60: $purple-color-dark-60,
+    dark-80: $purple-color-dark-80,
+    dark-90: $purple-color-dark-90
+  )
+);
+$universal-colors: (
+  white: (
+    5: $theme-white-5,
+    10: $theme-white-10,
+    20: $theme-white-20
+  ),
+  black: (
+    30: $theme-black-30,
+    80: $theme-black-80
+  )
+);
+
+// Modern map-based color functions
+@function get-semantic-color($color-name, $opacity: base) {
+  $palette: map.get($color-palettes, $color-name);
+
+  @if not $palette {
+    @warn "Unknown semantic color: #{$color-name}. Available colors: #{map.keys($color-palettes)}";
+    @return map.get(map.get($color-palettes, blue), base);
+  }
+
+  $color: map.get($palette, $opacity);
+
+  @if not $color {
+    @warn "Unknown opacity '#{$opacity}' for color '#{$color-name}'. Available opacities: #{map.keys($palette)}";
+    @return map.get($palette, base);
+  }
+
+  @return $color;
+}
+
+@function get-universal-color($color-name, $opacity) {
+  $palette: map.get($universal-colors, $color-name);
+
+  @if not $palette {
+    @warn "Unknown universal color: #{$color-name}. Available colors: #{map.keys($universal-colors)}";
+    @return $theme-white-10;
+  }
+
+  $color: map.get($palette, $opacity);
+
+  @if not $color {
+    @warn "Unknown opacity '#{$opacity}' for universal color '#{$color-name}'. Available opacities: #{map.keys($palette)}";
+    @return map.get($palette, 10) or $theme-white-10;
+  }
+
+  @return $color;
+}
+
+// Convenience function for getting colors with numeric opacity (legacy support)
+@function get-color($color-name, $opacity: null) {
+  @if $opacity {
+    @return get-semantic-color($color-name, $opacity);
+  } @else {
+    @return get-semantic-color($color-name, base);
+  }
+}
+
+// ===================================
+// COLOR UTILITY MAPS & FUNCTIONS
+// ===================================
+
+// Color palette maps for cleaner function implementation
+$color-palettes: (
+  blue: (
+    base: $blue-color-light,
+    8: $blue-color-8,
+    15: $blue-color-15,
+    20: $blue-color-20,
+    25: $blue-color-25,
+    30: $blue-color-30,
+    40: $blue-color-40,
+    60: $blue-color-60,
+    70: $blue-color-70,
+    80: $blue-color-80,
+    90: $blue-color-90,
+    dark-80: $blue-color-dark-80,
+    dark-90: $blue-color-dark-90
+  ),
+  green: (
+    base: $green-color-light,
+    8: $green-color-8,
+    15: $green-color-15,
+    20: $green-color-20,
+    25: $green-color-25,
+    30: $green-color-30,
+    40: $green-color-40,
+    60: $green-color-60,
+    70: $green-color-70,
+    80: $green-color-80,
+    90: $green-color-90,
+    dark-80: $green-color-dark-80,
+    dark-90: $green-color-dark-90
+  ),
+  red: (
+    base: $red-color-light,
+    8: $red-color-8,
+    15: $red-color-15,
+    20: $red-color-20,
+    25: $red-color-25,
+    30: $red-color-30,
+    40: $red-color-40,
+    60: $red-color-60,
+    70: $red-color-70,
+    80: $red-color-80,
+    90: $red-color-90,
+    dark-80: $red-color-dark-80,
+    dark-90: $red-color-dark-90,
+    danger-60: $red-color-danger-60,
+    danger-90: $red-color-danger-90
+  ),
+  orange: (
+    base: $orange-color-light,
+    8: $orange-color-8,
+    15: $orange-color-15,
+    20: $orange-color-20,
+    25: $orange-color-25,
+    30: $orange-color-30,
+    40: $orange-color-40,
+    60: $orange-color-60,
+    70: $orange-color-70,
+    80: $orange-color-80,
+    90: $orange-color-90,
+    dark-80: $orange-color-dark-80,
+    dark-90: $orange-color-dark-90
+  ),
+  gray: (
+    base: $gray-color-neutral,
+    8: $gray-color-8,
+    10: $gray-color-10,
+    15: $gray-color-15,
+    20: $gray-color-20,
+    25: $gray-color-25,
+    30: $gray-color-30,
+    40: $gray-color-40,
+    60: $gray-color-60,
+    70: $gray-color-70,
+    80: $gray-color-80,
+    90: $gray-color-90
+  ),
+  purple: (
+    base: $purple-color-light,
+    8: $purple-color-8,
+    15: $purple-color-15,
+    20: $purple-color-20,
+    25: $purple-color-25,
+    30: $purple-color-30,
+    40: $purple-color-40,
+    60: $purple-color-60,
+    70: $purple-color-70,
+    80: $purple-color-80,
+    90: $purple-color-90,
+    dark-30: $purple-color-dark-30,
+    dark-40: $purple-color-dark-40,
+    dark-60: $purple-color-dark-60,
+    dark-80: $purple-color-dark-80,
+    dark-90: $purple-color-dark-90
+  )
+);
+$universal-colors: (
+  white: (
+    5: $theme-white-5,
+    10: $theme-white-10,
+    20: $theme-white-20
+  ),
+  black: (
+    30: $theme-black-30,
+    80: $theme-black-80
+  )
+);
+
+// Modern map-based color functions
+@function get-semantic-color($color-name, $opacity: base) {
+  $palette: map.get($color-palettes, $color-name);
+
+  @if not $palette {
+    @warn "Unknown semantic color: #{$color-name}. Available colors: #{map.keys($color-palettes)}";
+    @return map.get(map.get($color-palettes, blue), base);
+  }
+
+  $color: map.get($palette, $opacity);
+
+  @if not $color {
+    @warn "Unknown opacity '#{$opacity}' for color '#{$color-name}'. Available opacities: #{map.keys($palette)}";
+    @return map.get($palette, base);
+  }
+
+  @return $color;
+}
+
+@function get-universal-color($color-name, $opacity) {
+  $palette: map.get($universal-colors, $color-name);
+
+  @if not $palette {
+    @warn "Unknown universal color: #{$color-name}. Available colors: #{map.keys($universal-colors)}";
+    @return $theme-white-10;
+  }
+
+  $color: map.get($palette, $opacity);
+
+  @if not $color {
+    @warn "Unknown opacity '#{$opacity}' for universal color '#{$color-name}'. Available opacities: #{map.keys($palette)}";
+    @return map.get($palette, 10) or $theme-white-10;
+  }
+
+  @return $color;
+}
+
+// Convenience function for getting colors with numeric opacity (legacy support)
+@function get-color($color-name, $opacity: null) {
+  @if $opacity {
+    @return get-semantic-color($color-name, $opacity);
+  } @else {
+    @return get-semantic-color($color-name, base);
+  }
+}
+
+// ===================================
+// THEME APPLICATION MIXINS
+// ===================================
+
+// Apply blue theme CSS variables
+@mixin apply-blue-theme {
+  @include define-theme-css-vars(
+    $blue-primary,
+    $blue-secondary,
+    $blue-accent,
+    $blue-light,
+    $blue-glow,
+    $blue-text,
+    $blue-pattern
+  );
+}
+
+// Apply gold theme CSS variables
+@mixin apply-gold-theme {
+  @include define-theme-css-vars(
+    $gold-primary,
+    $gold-secondary,
+    $gold-accent,
+    $gold-light,
+    $gold-glow,
+    $gold-text,
+    $gold-pattern
+  );
+}
+
+// Apply green theme CSS variables
+@mixin apply-green-theme {
+  @include define-theme-css-vars(
+    $green-primary,
+    $green-secondary,
+    $green-accent,
+    $green-light,
+    $green-glow,
+    $green-text,
+    $green-pattern
+  );
+}
+
+// Apply black theme CSS variables
+@mixin apply-black-theme {
+  @include define-theme-css-vars(
+    $black-primary,
+    $black-secondary,
+    $black-accent,
+    $black-light,
+    $black-glow,
+    $black-text,
+    $black-pattern
+  );
+}
+
+// Apply purple theme CSS variables
+@mixin apply-purple-theme {
+  @include define-theme-css-vars(
+    $purple-primary,
+    $purple-secondary,
+    $purple-accent,
+    $purple-light,
+    $purple-glow,
+    $purple-text,
+    $purple-pattern
+  );
+}
+
+// Apply light theme CSS variables
+@mixin apply-light-theme {
+  @include define-theme-css-vars(
+    $light-primary,
+    $light-secondary,
+    $light-accent,
+    $light-light,
+    $light-glow,
+    $light-text,
+    $light-pattern
+  );
+}
+
+// ===================================
+// DEFAULT THEME VARIABLES
+// ===================================
+// These are the default theme variables that can be used throughout the system
+// They default to the blue theme but can be overridden
+
+$default-theme-primary: $blue-primary !default;
+$default-theme-secondary: $blue-secondary !default;
+$default-theme-accent: $blue-accent !default;
+$default-theme-light: $blue-light !default;
+$default-theme-glow: $blue-glow !default;
+$default-theme-text: $blue-text !default;
+$default-theme-pattern: $blue-pattern !default;
+
+// ===================================
+// THEME UTILITY FUNCTIONS
+// ===================================
+
+// Get a theme property by theme name and property
+@function get-theme-property($theme-name, $property) {
+  @if $theme-name == 'blue' {
+    @return map.get($blue-theme, $property);
+  } @else if $theme-name == 'gold' {
+    @return map.get($gold-theme, $property);
+  } @else if $theme-name == 'green' {
+    @return map.get($green-theme, $property);
+  } @else if $theme-name == 'black' {
+    @return map.get($black-theme, $property);
+  } @else if $theme-name == 'purple' {
+    @return map.get($purple-theme, $property);
+  } @else if $theme-name == 'light' {
+    @return map.get($light-theme, $property);
+  } @else {
+    @warn "Unknown theme: #{$theme-name}. Falling back to blue theme.";
+    @return map.get($blue-theme, $property);
+  }
+}
+
+// ===================================
+// THEME UTILITY MIXINS
+// ===================================
+
+// Apply all themes to a component with a specific data attribute
+@mixin apply-all-themes($attribute-name: 'theme') {
+  // Default theme (blue) - applies when no theme attribute or blue theme
+  &:not([data-#{$attribute-name}]),
+  &[data-#{$attribute-name}="blue"] {
+    @include apply-blue-theme;
+  }
+
+  &[data-#{$attribute-name}="gold"] { @include apply-gold-theme; }
+  &[data-#{$attribute-name}="green"] { @include apply-green-theme; }
+  &[data-#{$attribute-name}="black"] { @include apply-black-theme; }
+  &[data-#{$attribute-name}="purple"] { @include apply-purple-theme; }
+  &[data-#{$attribute-name}="light"] { @include apply-light-theme; }
+}
+
+// Common themed background patterns
+@mixin themed-gradient-background {
+  background: linear-gradient(135deg,
+    var(--theme-primary) 0%,
+    var(--theme-secondary) 50%,
+    var(--theme-primary) 100%) !important;
+}
+
+@mixin themed-accent-background {
+  background: var(--theme-accent) !important;
+}
+
+@mixin themed-pattern-background {
+  background: var(--theme-pattern),
+    linear-gradient(135deg,
+      var(--theme-accent) 0%,
+      var(--theme-primary) 100%) !important;
+  background-size: 20px 20px, 100% 100% !important;
+}
+
+// Common themed borders and shadows
+@mixin themed-border($opacity: 0.1) {
+  border: 2px solid rgb(255 255 255 / #{$opacity}) !important;
+}
+
+@mixin themed-glow-shadow {
+  box-shadow:
+    0 4px 12px rgb(0 0 0 / 30%),
+    inset 0 1px 0 rgb(255 255 255 / 10%) !important;
+}
+
+@mixin themed-active-glow {
+  box-shadow:
+    0 4px 12px rgb(0 0 0 / 30%),
+    0 0 20px var(--theme-glow) !important;
+}
+
+// Apply any theme by name
+@mixin apply-theme($theme-name) {
+  @if $theme-name == 'blue' {
+    @include apply-blue-theme;
+  } @else if $theme-name == 'gold' {
+    @include apply-gold-theme;
+  } @else if $theme-name == 'green' {
+    @include apply-green-theme;
+  } @else if $theme-name == 'black' {
+    @include apply-black-theme;
+  } @else if $theme-name == 'purple' {
+    @include apply-purple-theme;
+  } @else if $theme-name == 'light' {
+    @include apply-light-theme;
+  } @else {
+    @warn "Unknown theme: #{$theme-name}. Applying blue theme as fallback.";
+    @include apply-blue-theme;
+  }
+}
+
+// ===================================
+// BACKGROUND THEME MIXINS
+// ===================================
+
+// Blue theme background (Night) - Starfield pattern
+@mixin blue-background-theme {
+  background:
+    url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%234d94ff' fill-opacity='0.04'%3E%3Ccircle cx='20' cy='20' r='1'/%3E%3Ccircle cx='80' cy='15' r='0.5'/%3E%3Ccircle cx='45' cy='35' r='1.5'/%3E%3Ccircle cx='15' cy='75' r='0.8'/%3E%3Ccircle cx='90' cy='85' r='1'/%3E%3Ccircle cx='65' cy='95' r='0.5'/%3E%3Ccircle cx='100' cy='40' r='0.8'/%3E%3Cpath d='M60 50l1 3 3 1-3 1-1 3-1-3-3-1 3-1z'/%3E%3C/g%3E%3C/svg%3E"),
+    radial-gradient(ellipse at 30% 20%, rgb(77 148 255 / 6%) 0%, transparent 70%),
+    linear-gradient(135deg,
+      rgb(8 15 25 / 95%) 0%,
+      rgb(15 25 40 / 90%) 50%,
+      rgb(25 35 55 / 85%) 100%);
+  background-size: 120px 120px, 800px 600px, 100% 100%;
+  background-position: 0 0, 0 0, 0 0;
+  border: 2px solid rgb(77 148 255 / 30%);
+  animation: gentle-float 15s ease-in-out infinite;
+}
+
+// Gold theme background (Twilight) - Ornate filigree pattern
+@mixin gold-background-theme {
+  background:
+    url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23d97706' fill-opacity='0.05'%3E%3Cpath d='M50 10c-5 0-10 5-10 10s5 10 10 10 10-5 10-10-5-10-10-10zm0 15c-2.5 0-5-2.5-5-5s2.5-5 5-5 5 2.5 5 5-2.5 5-5 5z'/%3E%3Cpath d='M20 50c0-5-5-10-10-10s-10 5-10 10 5 10 10 10 10-5 10-10zm-15 0c0-2.5 2.5-5 5-5s5 2.5 5 5-2.5 5-5 5-5-2.5-5-5z'/%3E%3Cpath d='M90 50c0-5 5-10 10-10s10 5 10 10-5 10-10 10-10-5-10-10zm15 0c0-2.5-2.5-5-5-5s-5 2.5-5 5 2.5 5 5 5 5-2.5 5-5z'/%3E%3Cpath d='M50 90c5 0 10-5 10-10s-5-10-10-10-10 5-10 10 5 10 10 10zm0-15c2.5 0 5 2.5 5 5s-2.5 5-5 5-5-2.5-5-5 2.5-5 5-5z'/%3E%3C/g%3E%3C/svg%3E"),
+    radial-gradient(ellipse at 70% 30%, rgb(217 119 6 / 8%) 0%, transparent 60%),
+    linear-gradient(45deg,
+      rgb(25 15 8 / 95%) 0%,
+      rgb(40 25 15 / 90%) 50%,
+      rgb(55 35 25 / 85%) 100%);
+  background-size: 100px 100px, 600px 400px, 100% 100%;
+  background-position: 0 0, 0 0, 0 0;
+  border: 2px solid rgb(217 119 6 / 30%);
+  animation: gentle-pulse 12s ease-in-out infinite;
+}
+
+// Green theme background (Dawn) - Organic leaf pattern
+@mixin green-background-theme {
+  background:
+    url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%2322c55e' fill-opacity='0.06'%3E%3Cpath d='M20 20c0-5 5-10 10-5 5 5 0 10-5 10s-5-5-5-5z'/%3E%3Cpath d='M60 20c0-5-5-10-10-5-5 5 0 10 5 10s5-5 5-5z'/%3E%3Cpath d='M20 60c0 5 5 10 10 5 5-5 0-10-5-10s-5 5-5 5z'/%3E%3Cpath d='M60 60c0 5-5 10-10 5-5-5 0-10 5-10s5 5 5 5z'/%3E%3Cpath d='M40 10c-3 0-5 2-5 5v10c0 3 2 5 5 5s5-2 5-5V15c0-3-2-5-5-5z'/%3E%3Cpath d='M40 50c-3 0-5 2-5 5v10c0 3 2 5 5 5s5-2 5-5V55c0-3-2-5-5-5z'/%3E%3C/g%3E%3C/svg%3E"),
+    radial-gradient(ellipse at 20% 80%, rgb(34 197 94 / 5%) 0%, transparent 80%),
+    linear-gradient(180deg,
+      rgb(8 25 15 / 95%) 0%,
+      rgb(15 40 25 / 90%) 50%,
+      rgb(25 55 35 / 85%) 100%);
+  background-size: 80px 80px, 500px 700px, 100% 100%;
+  background-position: 0 0, 0 0, 0 0;
+  border: 2px solid rgb(34 197 94 / 30%);
+  animation: gentle-grow 18s ease-in-out infinite;
+}
+
+// Black theme background (Midnight) - Minimalist geometric pattern
+@mixin black-background-theme {
+  background:
+    url("data:image/svg+xml,%3Csvg width='150' height='150' viewBox='0 0 150 150' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23a0a0a0' stroke-opacity='0.08' stroke-width='1'%3E%3Cpath d='M75 25L125 75L75 125L25 75Z'/%3E%3Cpath d='M75 50L100 75L75 100L50 75Z'/%3E%3Cline x1='75' y1='0' x2='75' y2='150'/%3E%3Cline x1='0' y1='75' x2='150' y2='75'/%3E%3C/g%3E%3C/svg%3E"),
+    radial-gradient(circle at 50% 50%, rgb(160 160 160 / 6%) 0%, transparent 70%),
+    linear-gradient(90deg,
+      rgb(5 5 5 / 95%) 0%,
+      rgb(10 10 10 / 90%) 50%,
+      rgb(20 20 20 / 85%) 100%);
+  background-size: 150px 150px, 400px 400px, 100% 100%;
+  background-position: 0 0, 0 0, 0 0;
+  border: 2px solid rgb(160 160 160 / 30%);
+  animation: subtle-shift 20s linear infinite;
+}
+
+// Purple theme background (Dusk) - Mystical crystal pattern
+@mixin purple-background-theme {
+  background:
+    url("data:image/svg+xml,%3Csvg width='90' height='90' viewBox='0 0 90 90' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%239333ea' fill-opacity='0.05'%3E%3Cpath d='M45 15l8 15h-16z'/%3E%3Cpath d='M45 75l8-15h-16z'/%3E%3Cpath d='M15 45l15-8v16z'/%3E%3Cpath d='M75 45l-15-8v16z'/%3E%3Cpath d='M30 30l6-6 6 6-6 6z'/%3E%3Cpath d='M60 60l6-6 6 6-6 6z'/%3E%3Cpath d='M30 60l6 6 6-6-6-6z'/%3E%3Cpath d='M60 30l6 6 6-6-6-6z'/%3E%3C/g%3E%3C/svg%3E"),
+    radial-gradient(ellipse at 80% 20%, rgb(147 51 234 / 7%) 0%, transparent 65%),
+    linear-gradient(225deg,
+      rgb(15 5 25 / 95%) 0%,
+      rgb(30 10 50 / 90%) 50%,
+      rgb(45 15 75 / 85%) 100%);
+  background-size: 90px 90px, 450px 350px, 100% 100%;
+  background-position: 0 0, 0 0, 0 0;
+  border: 2px solid rgb(147 51 234 / 30%);
+  animation: mystic-glow 16s ease-in-out infinite;
+}
+
+// Light theme background (Noon) - Clean radial pattern
+@mixin light-background-theme {
+  background:
+    url("data:image/svg+xml,%3Csvg width='110' height='110' viewBox='0 0 110 110' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%2394a3b8' stroke-opacity='0.08' stroke-width='1'%3E%3Ccircle cx='55' cy='55' r='20'/%3E%3Ccircle cx='55' cy='55' r='35'/%3E%3Cpath d='M55 15v10M55 85v10M15 55h10M85 55h10M25 25l7 7M78 78l7 7M25 85l7-7M78 32l7-7'/%3E%3C/g%3E%3C/svg%3E"),
+    radial-gradient(circle at 60% 40%, rgb(148 163 184 / 8%) 0%, transparent 75%),
+    linear-gradient(135deg,
+      rgb(248 250 252 / 95%) 0%,
+      rgb(241 245 249 / 90%) 50%,
+      rgb(226 232 240 / 85%) 100%);
+  background-size: 110px 110px, 600px 500px, 100% 100%;
+  background-position: 0 0, 0 0, 0 0;
+  border: 2px solid rgb(148 163 184 / 30%);
+  animation: gentle-breeze 24s ease-in-out infinite;
+}
+
+// Apply all background themes to a component
+@mixin apply-all-background-themes {
+  // Default theme (blue) - applies when no theme attribute or blue theme
+  &:not([data-bg-theme]),
+  &[data-bg-theme="blue"] {
+    @include blue-background-theme;
+  }
+
+  &[data-bg-theme="gold"] { @include gold-background-theme; }
+  &[data-bg-theme="green"] { @include green-background-theme; }
+  &[data-bg-theme="black"] { @include black-background-theme; }
+  &[data-bg-theme="purple"] { @include purple-background-theme; }
+  &[data-bg-theme="light"] { @include light-background-theme; }
+}

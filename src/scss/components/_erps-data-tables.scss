@@ -1,0 +1,992 @@
+@use "../utils/themes" as themes;
+@use "../utils/colors" as colors;
+@use "../utils/typography" as typography;
+@use "../utils/mixins" as mixins;
+@use "../utils/tokens" as tokens;
+@use "sass:math";
+@use "sass:list";
+
+// ===================================
+// ERPS DATA TABLES COMPONENT
+// ===================================
+// Modern, reusable data table component following BEM methodology
+// Integrates with the Eventide RP System theme system
+// Designed for use across character sheets, item sheets, and other components
+
+// ===================================
+// CONFIGURATION VARIABLES
+// ===================================
+
+// Spacing and sizing
+$erps-table-border-radius: 8px;
+$erps-table-header-height: 3rem;
+$erps-table-header-height-compact: 2.5rem;
+$erps-table-cell-padding: 0.75rem 1rem;
+$erps-table-cell-padding-compact: 0.5rem 0.75rem;
+$erps-table-cell-padding-name: 0.5rem 1rem;
+$erps-table-cell-padding-controls: 0.75rem 0.75rem;
+$erps-table-control-gap: 0.25rem;
+
+// Control buttons
+$erps-table-control-size: 2rem;
+$erps-table-control-border-radius: 6px;
+
+// Typography
+$erps-table-header-font-size: 14pt;
+$erps-table-cell-font-size: 14pt;
+$erps-table-cell-font-size-compact: 12pt;
+$erps-table-control-font-size: 12pt;
+$erps-table-header-font-weight: 600;
+$erps-table-header-letter-spacing: 0.5px;
+
+// Borders and effects
+$erps-table-border-width: 1px;
+$erps-table-border-width-thick: 2px;
+$erps-table-border-width-accent: 3px;
+$erps-table-border-width-highlight: 4px;
+$erps-table-shadow-blur: 12px;
+$erps-table-shadow-blur-large: 20px;
+
+// Transitions and animations
+$erps-table-transition-duration: 0.2s;
+$erps-table-transition-duration-long: 0.3s;
+$erps-table-animation-duration-glow: 4s;
+$erps-table-animation-duration-shift: 8s;
+$erps-table-animation-duration-pulse: 3s;
+$erps-table-animation-duration-transform: 2s;
+
+// Opacity values
+$erps-table-opacity-disabled: 0.5;
+$erps-table-opacity-unequipped: 0.85;
+$erps-table-opacity-unequipped-table: 0.9;
+
+// Z-index values
+$erps-table-z-index-base: 0;
+$erps-table-z-index-overlay: 1;
+$erps-table-z-index-header: 2;
+
+// Pattern and background sizes
+$erps-table-pattern-size: 20px;
+$erps-table-glow-width: 200%;
+
+// Transform values
+$erps-table-transform-hover-y: -1px;
+$erps-table-transform-hover-scale: 1.05;
+$erps-table-transform-active-scale: 0.95;
+$erps-table-transform-glow-scale: 1.1;
+
+// Image and icon sizes
+$erps-table-image-size: 24px;
+$erps-table-image-border-radius: 4px;
+$erps-table-icon-size: 15pt;
+$erps-table-icon-size-large: 14pt;
+
+// Line height and spacing
+$erps-table-line-height: 1.2;
+$erps-table-gap-small: 0.5rem;
+$erps-table-gap-medium: 0.25rem;
+
+// Disabled state opacity
+$erps-table-opacity-disabled-control: 0.4;
+$erps-table-opacity-icon: 0.9;
+
+// Create button specific
+$erps-table-create-button-padding: 0.5rem 1rem;
+$erps-table-create-button-font-size: 12pt;
+
+// Layout percentages
+$erps-table-width-half: 50%;
+$erps-table-width-quarter: 25%;
+$erps-table-width-third: 30%;
+$erps-table-width-fifth: 22%;
+$erps-table-width-two-fifths: 40%;
+$erps-table-width-one-fifth: 20%;
+$erps-table-width-quarter-plus: 26%;
+$erps-table-width-full: 100%;
+
+// Responsive breakpoint
+$erps-table-responsive-breakpoint: 768px;
+$erps-table-responsive-label-width: 30%;
+$erps-table-responsive-margin: 0.5rem;
+$erps-table-responsive-padding: 0.5rem;
+
+// Transformation specific
+$erps-table-transformation-min-width: 200px;
+$erps-table-transformation-border-width: 4px;
+
+// ===================================
+// MODERN COLOR FUNCTIONS & UTILITIES
+// ===================================
+// Using the new map-based color system for cleaner, more maintainable code
+
+// Utility mixins for common patterns
+@mixin button-glow($color, $opacity: 60) {
+  box-shadow: 0 0 12px themes.get-semantic-color($color, $opacity) !important;
+}
+
+@mixin element-glow($color, $opacity: 60, $size: 8px) {
+  box-shadow: 0 0 $size themes.get-semantic-color($color, $opacity) !important;
+}
+
+@mixin multi-shadow($shadows...) {
+  box-shadow: $shadows !important;
+}
+
+// Gradient mixins for common patterns
+@mixin button-gradient($color, $start-opacity: 20, $end-opacity: 30) {
+  background: linear-gradient(135deg, themes.get-semantic-color($color, $start-opacity), themes.get-semantic-color($color, $end-opacity)) !important;
+}
+
+@mixin state-gradient($color, $start-opacity: 15, $end-var: var(--theme-accent)) {
+  background: linear-gradient(135deg, themes.get-semantic-color($color, $start-opacity) 0%, $end-var 100%) !important;
+}
+
+// ===================================
+// GENERIC LAYOUT MIXINS
+// ===================================
+
+// Generic column distribution mixins for flexible layouts
+@mixin table-columns-equal($count) {
+  table-layout: fixed !important;
+
+  @for $i from 1 through $count {
+    .erps-data-table__header-cell:nth-child(#{$i}),
+    .erps-data-table__cell:nth-child(#{$i}) {
+      width: math.percentage(math.div(1, $count)) !important;
+    }
+  }
+}
+
+@mixin table-columns-custom($widths...) {
+  table-layout: fixed !important;
+
+  @for $i from 1 through list.length($widths) {
+    .erps-data-table__header-cell:nth-child(#{$i}),
+    .erps-data-table__cell:nth-child(#{$i}) {
+      width: list.nth($widths, $i) !important;
+    }
+  }
+}
+
+@mixin table-columns-auto-last($fixed-widths...) {
+  table-layout: auto !important;
+
+  @for $i from 1 through list.length($fixed-widths) {
+    .erps-data-table__header-cell:nth-child(#{$i}),
+    .erps-data-table__cell:nth-child(#{$i}) {
+      width: list.nth($fixed-widths, $i) !important;
+    }
+  }
+
+  .erps-data-table__header-cell:last-child,
+  .erps-data-table__cell:last-child {
+    width: auto !important;
+  }
+}
+
+@mixin table-columns-flex-last($fixed-widths...) {
+  table-layout: auto !important;
+
+  @for $i from 1 through list.length($fixed-widths) {
+    .erps-data-table__header-cell:nth-child(#{$i}),
+    .erps-data-table__cell:nth-child(#{$i}) {
+      width: list.nth($fixed-widths, $i) !important;
+    }
+  }
+
+  .erps-data-table__header-cell:last-child,
+  .erps-data-table__cell:last-child {
+    width: 100% !important;
+    justify-content: flex-end !important;
+  }
+}
+
+// Responsive table mixins
+@mixin table-responsive-stack {
+  @media (width <= $erps-table-responsive-breakpoint) {
+    .erps-data-table__header {
+      display: none !important;
+    }
+
+    .erps-data-table__row {
+      display: block !important;
+      border: $erps-table-border-width solid themes.get-universal-color(white, 10) !important;
+      border-radius: $erps-table-border-radius !important;
+      margin-bottom: $erps-table-responsive-margin !important;
+    }
+
+    .erps-data-table__cell {
+      display: block !important;
+      text-align: left !important;
+      padding: $erps-table-responsive-padding !important;
+      border-bottom: none !important;
+
+      &::before {
+        content: attr(data-label) ": " !important;
+        font-weight: bold !important;
+        display: inline-block !important;
+        width: $erps-table-responsive-label-width !important;
+      }
+
+      &--controls {
+        text-align: right !important;
+        justify-content: flex-end !important;
+      }
+    }
+  }
+}
+
+@mixin table-responsive-scroll {
+  .erps-data-table__container {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+}
+
+// ===================================
+// CORE MIXINS FOR DATA TABLES
+// ===================================
+
+// Header styling mixins
+@mixin table-header-gradient {
+  background: linear-gradient(135deg,
+    var(--theme-primary) 0%,
+    var(--theme-secondary) 50%,
+    var(--theme-primary) 100%) !important;
+}
+
+@mixin animated-header-glow {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: -100% !important;
+  width: $erps-table-glow-width !important;
+  height: 100% !important;
+  background: linear-gradient(90deg,
+    transparent,
+    themes.get-universal-color(white, 10),
+    transparent) !important;
+  animation: erps-table-header-glow $erps-table-animation-duration-glow ease-in-out infinite !important;
+  z-index: $erps-table-z-index-overlay !important;
+}
+
+@mixin header-cell-base {
+  padding: $erps-table-cell-padding !important;
+  font-family: var(--erps-ui-font) !important;
+  font-size: $erps-table-header-font-size !important;
+  font-weight: $erps-table-header-font-weight !important;
+  color: var(--theme-text) !important;
+  text-align: center !important;
+  text-transform: uppercase !important;
+  letter-spacing: $erps-table-header-letter-spacing !important;
+  border-bottom: $erps-table-border-width-thick solid themes.get-universal-color(white, 20) !important;
+  position: relative !important;
+  z-index: $erps-table-z-index-header !important;
+  text-shadow: 0 1px 2px themes.get-universal-color(black, 80) !important;
+  vertical-align: middle !important;
+  min-height: $erps-table-header-height !important;
+  height: $erps-table-header-height !important;
+}
+
+// Row styling mixins
+@mixin table-row-base {
+  background: var(--theme-accent) !important;
+  transition: all $erps-table-transition-duration ease !important;
+  border-bottom: $erps-table-border-width solid themes.get-universal-color(white, 5) !important;
+
+  &:hover {
+    background: var(--theme-pattern),
+      linear-gradient(135deg,
+        var(--theme-accent) 0%,
+        var(--theme-primary) 100%) !important;
+    background-size: $erps-table-pattern-size $erps-table-pattern-size, 100% 100% !important;
+    animation: erps-pattern-shift $erps-table-animation-duration-shift linear infinite !important;
+    box-shadow: inset 0 0 $erps-table-shadow-blur-large themes.get-universal-color(white, 10) !important;
+  }
+}
+
+@mixin selected-row {
+  background: linear-gradient(135deg,
+    themes.get-semantic-color(blue, 20) 0%,
+    var(--theme-accent) 100%) !important;
+  border-left: $erps-table-border-width-highlight solid themes.get-semantic-color(blue, 80) !important;
+}
+
+@mixin equipped-row {
+  border-left: $erps-table-border-width-accent solid themes.get-semantic-color(green, 60) !important;
+  background: linear-gradient(135deg,
+    themes.get-semantic-color(green, 8) 0%,
+    var(--theme-accent) 100%) !important;
+}
+
+@mixin unequipped-row {
+  opacity: $erps-table-opacity-unequipped !important;
+  border-left: $erps-table-border-width-accent solid themes.get-semantic-color(gray, 40) !important;
+  background: linear-gradient(135deg,
+    themes.get-semantic-color(gray, 10) 0%,
+    var(--theme-accent) 100%) !important;
+}
+
+@mixin cursed-row {
+  background: linear-gradient(135deg,
+    themes.get-semantic-color(purple, 30) 0%,
+    var(--theme-accent) 100%) !important;
+  border-left: $erps-table-border-width-highlight solid themes.get-semantic-color(purple, 80) !important;
+  animation: erps-cursed-pulse $erps-table-animation-duration-pulse ease-in-out infinite !important;
+}
+
+@mixin disabled-row {
+  opacity: $erps-table-opacity-disabled !important;
+  pointer-events: none !important;
+}
+
+// Cell styling mixins
+@mixin table-cell-base {
+  padding: $erps-table-cell-padding !important;
+  font-family: var(--erps-info-font) !important;
+  font-size: $erps-table-cell-font-size !important;
+  color: var(--theme-text) !important;
+  text-align: center !important;
+  vertical-align: middle !important;
+  border-bottom: $erps-table-border-width solid themes.get-universal-color(white, 5) !important;
+}
+
+@mixin name-cell {
+  text-align: left !important;
+  padding: $erps-table-cell-padding-name !important;
+  vertical-align: middle !important;
+}
+
+@mixin numeric-cell {
+  font-family: var(--erps-mono-font) !important;
+  font-weight: 500 !important;
+  text-align: right !important;
+  vertical-align: middle !important;
+}
+
+@mixin controls-cell {
+  text-align: right !important;
+  white-space: nowrap !important;
+  width: auto !important;
+  min-width: min-content !important;
+  padding: 0 !important;
+  vertical-align: middle !important;
+  position: relative !important;
+}
+
+// Control button mixins
+@mixin control-button-base {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: $erps-table-control-size !important;
+  height: $erps-table-control-size !important;
+  min-width: $erps-table-control-size !important;
+  min-height: $erps-table-control-size !important;
+  border-radius: $erps-table-control-border-radius !important;
+  background: themes.get-universal-color(white, 10) !important;
+  border: $erps-table-border-width solid themes.get-universal-color(white, 20) !important;
+  color: var(--theme-text, #fff) !important;
+  cursor: pointer !important;
+  transition: all $erps-table-transition-duration ease !important;
+  font-size: $erps-table-control-font-size !important;
+  text-decoration: none !important;
+  position: relative !important;
+  overflow: hidden !important;
+  flex-shrink: 0 !important;
+
+  &::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    width: 0 !important;
+    height: 0 !important;
+    background: radial-gradient(circle, var(--theme-light, #{themes.get-semantic-color(blue, 70)}) 0%, transparent 70%) !important;
+    border-radius: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    transition: all $erps-table-transition-duration-long ease !important;
+    z-index: $erps-table-z-index-base !important;
+  }
+
+  i {
+    position: relative !important;
+    z-index: $erps-table-z-index-overlay !important;
+  }
+
+  &:hover {
+    background: var(--theme-primary, #{themes.get-semantic-color(blue, dark-90)}) !important;
+    border-color: var(--theme-light, #{themes.get-semantic-color(blue, 70)}) !important;
+    box-shadow: 0 0 $erps-table-shadow-blur var(--theme-glow, #{themes.get-semantic-color(blue, 60)}) !important;
+    transform: translateY($erps-table-transform-hover-y) scale($erps-table-transform-hover-scale) !important;
+
+    &::before {
+      width: 100% !important;
+      height: 100% !important;
+    }
+  }
+
+  &:active {
+    transform: translateY(0) scale($erps-table-transform-active-scale) !important;
+  }
+}
+
+@mixin create-button {
+  @include button-gradient(green);
+
+  border-color: themes.get-semantic-color(green, 40) !important;
+
+  &:hover {
+    background: themes.get-semantic-color(green, dark-80) !important;
+    border-color: themes.get-semantic-color(green, 80) !important;
+
+    @include button-glow(green);
+  }
+}
+
+@mixin edit-button {
+  @include button-gradient(blue);
+
+  border-color: themes.get-semantic-color(blue, 40) !important;
+
+  &:hover {
+    background: themes.get-semantic-color(blue, dark-90) !important;
+    border-color: themes.get-semantic-color(blue, 80) !important;
+
+    @include button-glow(blue);
+  }
+}
+
+@mixin delete-button {
+  background: linear-gradient(135deg, themes.get-semantic-color(red, 20), themes.get-semantic-color(red, 30)) !important;
+  border-color: themes.get-semantic-color(red, 40) !important;
+
+  &:hover {
+    background: themes.get-semantic-color(red, dark-80) !important;
+    border-color: themes.get-semantic-color(red, 80) !important;
+
+    @include button-glow(red);
+  }
+}
+
+@mixin equip-button {
+  background: linear-gradient(135deg, themes.get-semantic-color(orange, 20), themes.get-semantic-color(orange, 30)) !important;
+  border-color: themes.get-semantic-color(orange, 40) !important;
+
+  &:hover {
+    background: themes.get-semantic-color(orange, dark-80) !important;
+    border-color: themes.get-semantic-color(orange, 80) !important;
+
+    @include button-glow(orange);
+  }
+}
+
+// Layout mixins
+@mixin compact-table {
+  .erps-data-table__header-cell,
+  .erps-data-table__cell {
+    padding: $erps-table-cell-padding-compact !important;
+    font-size: $erps-table-cell-font-size-compact !important;
+  }
+
+  .erps-data-table__header-cell {
+    height: $erps-table-header-height-compact !important;
+    min-height: $erps-table-header-height-compact !important;
+  }
+}
+
+@mixin bordered-table {
+  border: $erps-table-border-width-thick solid var(--theme-light, #{themes.get-semantic-color(blue, 70)}) !important;
+  box-shadow: 0 0 $erps-table-shadow-blur-large var(--theme-glow, #{themes.get-semantic-color(blue, 60)}) !important;
+}
+
+@mixin striped-table {
+  .erps-data-table__row:nth-child(even) {
+    background: linear-gradient(135deg,
+      themes.get-universal-color(white, 5) 0%,
+      var(--theme-accent) 100%) !important;
+  }
+}
+
+// ===================================
+// MAIN COMPONENT
+// ===================================
+
+.erps-data-table {
+  // Base table styling
+  width: 100% !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  border-radius: $erps-table-border-radius !important;
+  overflow: hidden !important;
+  position: relative !important;
+
+  // Theme integration
+  @include themes.apply-all-themes('table-theme');
+  @include themes.themed-accent-background;
+  @include themes.themed-border;
+  @include themes.themed-glow-shadow;
+
+  // Container for responsive behavior
+  &__container {
+    width: 100% !important;
+    overflow-x: auto !important;
+    position: relative !important;
+  }
+
+  // Header styling
+  &__header {
+    @include table-header-gradient;
+
+    position: relative !important;
+
+    &::before {
+      @include animated-header-glow;
+    }
+  }
+
+  &__header-row {
+    // Header row specific styling if needed
+    width: 100% !important;
+  }
+
+  &__header-cell {
+    @include header-cell-base;
+
+    // Right align controls column headers
+    &--controls {
+      text-align: right !important;
+      white-space: nowrap !important;
+      vertical-align: middle !important;
+      height: 100% !important;
+    }
+
+    // Left align name column headers
+    &--name {
+      text-align: left !important;
+      vertical-align: middle !important;
+    }
+
+    // Center align by default (already in base)
+    &--center {
+      text-align: center !important;
+      vertical-align: middle !important;
+    }
+
+    // Special styling for gear section titles
+    &--section-title {
+      text-align: left !important;
+      display: flex !important;
+      align-items: center !important;
+      gap: $erps-table-gap-small !important;
+      font-weight: 700 !important;
+
+      i {
+        font-size: $erps-table-icon-size !important;
+        opacity: $erps-table-opacity-icon !important;
+        flex-shrink: 0 !important;
+      }
+    }
+
+    // Special styling for transformation header cell
+    &--transformation {
+      text-align: center !important;
+      padding: $erps-table-cell-padding !important;
+      background: linear-gradient(135deg, themes.get-semantic-color(purple, 30), themes.get-semantic-color(purple, dark-40)) !important;
+      border-bottom: $erps-table-border-width-thick solid themes.get-semantic-color(purple, 60) !important;
+      vertical-align: middle !important;
+    }
+  }
+
+  &__row {
+    @include table-row-base;
+
+    // State modifiers
+    &--selected {
+      @include selected-row;
+    }
+
+    &--disabled {
+      @include disabled-row;
+    }
+
+    &--equipped {
+      @include equipped-row;
+    }
+
+    &--unequipped {
+      @include unequipped-row;
+    }
+
+    &--cursed {
+      @include cursed-row;
+    }
+  }
+
+  &__cell {
+    @include table-cell-base;
+
+    // Type modifiers
+    &--name {
+      @include name-cell;
+    }
+
+    &--numeric {
+      @include numeric-cell;
+    }
+
+    &--controls {
+      @include controls-cell;
+    }
+
+    &--center {
+      text-align: center !important;
+      vertical-align: middle !important;
+    }
+
+    &--left {
+      text-align: left !important;
+      vertical-align: middle !important;
+    }
+
+    &--right {
+      text-align: right !important;
+      vertical-align: middle !important;
+    }
+  }
+
+  // Name cell content styling
+  &__name-content {
+    display: flex !important;
+    align-items: center !important;
+    gap: $erps-table-gap-small !important;
+    width: $erps-table-width-full !important;
+    height: 100% !important;
+
+    img {
+      width: $erps-table-image-size !important;
+      height: $erps-table-image-size !important;
+      border-radius: $erps-table-image-border-radius !important;
+      border: $erps-table-border-width solid themes.get-universal-color(white, 20) !important;
+      transition: all $erps-table-transition-duration ease !important;
+      flex-shrink: 0 !important;
+
+      &:hover {
+        border-color: var(--theme-light) !important;
+        box-shadow: 0 0 8px var(--theme-glow) !important;
+      }
+    }
+
+    span {
+      line-height: $erps-table-line-height !important;
+      flex: 1 !important;
+      min-width: 0 !important;
+    }
+
+    a {
+      flex-shrink: 0 !important;
+    }
+  }
+
+  // Controls system
+  &__controls {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    gap: $erps-table-gap-medium !important;
+    flex-wrap: nowrap !important;
+    height: 100% !important;
+    min-height: 100% !important;
+    width: 100% !important;
+    position: absolute !important;
+    top: 0 !important;
+    right: 0 !important;
+    padding: $erps-table-cell-padding-controls !important;
+    box-sizing: border-box !important;
+  }
+
+  &__control-button {
+    @include control-button-base;
+
+    // Action modifiers
+    &--create {
+      @include create-button;
+    }
+
+    &--edit {
+      @include edit-button;
+    }
+
+    &--delete {
+      @include delete-button;
+    }
+
+    &--equip {
+      @include equip-button;
+    }
+
+    // Special states
+    &--disabled {
+      opacity: $erps-table-opacity-disabled-control !important;
+      cursor: not-allowed !important;
+      pointer-events: none !important;
+      background: themes.get-semantic-color(gray, 20) !important;
+      border-color: themes.get-semantic-color(gray, 30) !important;
+    }
+  }
+
+  // Create button with text (for headers)
+  &__create-button {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: $erps-table-gap-small !important;
+    padding: $erps-table-create-button-padding !important;
+    border-radius: $erps-table-control-border-radius !important;
+    background: linear-gradient(135deg, themes.get-semantic-color(green, 20), themes.get-semantic-color(green, 30)) !important;
+    border: $erps-table-border-width solid themes.get-semantic-color(green, 40) !important;
+    color: var(--theme-text, #fff) !important;
+    cursor: pointer !important;
+    transition: all $erps-table-transition-duration ease !important;
+    font-family: var(--erps-ui-font) !important;
+    font-size: $erps-table-create-button-font-size !important;
+    font-weight: $erps-table-header-font-weight !important;
+    text-decoration: none !important;
+    text-transform: uppercase !important;
+    letter-spacing: $erps-table-header-letter-spacing !important;
+
+    &:hover {
+      background: themes.get-semantic-color(green, dark-80) !important;
+      border-color: themes.get-semantic-color(green, 80) !important;
+      box-shadow: 0 0 $erps-table-shadow-blur themes.get-semantic-color(green, 60) !important;
+      transform: translateY($erps-table-transform-hover-y) !important;
+    }
+
+    &:active {
+      transform: translateY(0) !important;
+    }
+  }
+
+  // Table modifiers
+  &--compact {
+    @include compact-table;
+  }
+
+  &--bordered {
+    @include bordered-table;
+  }
+
+  &--striped {
+    @include striped-table;
+  }
+
+  // Tab-specific styling for data tables
+  &--flush-top {
+    margin-top: 0 !important;
+    border-radius: 0 0 $erps-table-border-radius $erps-table-border-radius !important;
+  }
+
+  // Features layout
+  &--features {
+    @include table-columns-flex-last($erps-table-width-full);
+  }
+
+  // Gear layout
+  &--gear {
+    @include table-columns-auto-last($erps-table-width-half, $erps-table-width-quarter, $erps-table-width-quarter);
+
+    // Special styling for equipped gear tables
+    &.erps-data-table--equipped {
+      border-left: $erps-table-transformation-border-width solid themes.get-semantic-color(green, 60) !important;
+      box-shadow:
+        0 4px $erps-table-shadow-blur themes.get-universal-color(black, 30),
+        inset 0 1px 0 themes.get-universal-color(white, 10),
+        inset $erps-table-transformation-border-width 0 0 themes.get-semantic-color(green, 20) !important;
+    }
+
+    // Special styling for unequipped gear tables
+    &.erps-data-table--unequipped {
+      border-left: $erps-table-transformation-border-width solid themes.get-semantic-color(gray, 40) !important;
+      opacity: $erps-table-opacity-unequipped-table !important;
+      box-shadow:
+        0 4px $erps-table-shadow-blur themes.get-universal-color(black, 30),
+        inset 0 1px 0 themes.get-universal-color(white, 10),
+        inset $erps-table-transformation-border-width 0 0 themes.get-semantic-color(gray, 15) !important;
+    }
+  }
+
+  // Combat powers layout
+  &--combat-powers {
+    @include table-columns-auto-last($erps-table-width-two-fifths, $erps-table-width-one-fifth, $erps-table-width-two-fifths);
+  }
+
+  // Effects layout
+  &--effects {
+    @include table-columns-custom($erps-table-width-third, $erps-table-width-fifth, $erps-table-width-fifth, $erps-table-width-quarter-plus);
+  }
+
+  // Statuses layout
+  &--statuses {
+    @include table-columns-auto-last($erps-table-width-full);
+  }
+}
+
+// ===================================
+// ANIMATIONS
+// ===================================
+
+@keyframes erps-table-header-glow {
+  0%, 100% {
+    left: -100%;
+  }
+
+  50% {
+    left: 100%;
+  }
+}
+
+@keyframes erps-pattern-shift {
+  0% {
+    background-position: 0 0, 0 0;
+  }
+
+  100% {
+    background-position: $erps-table-pattern-size $erps-table-pattern-size, 0 0;
+  }
+}
+
+  @keyframes erps-cursed-pulse {
+    0%, 100% {
+      box-shadow: 0 0 5px themes.get-semantic-color(purple, 40);
+    }
+
+    50% {
+      box-shadow: 0 0 20px themes.get-semantic-color(purple, 80),
+                  inset 0 0 10px themes.get-semantic-color(purple, 30);
+    }
+  }
+
+@keyframes erps-transformation-glow {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale($erps-table-transform-glow-scale);
+  }
+}
+
+// ===================================
+// TRANSFORMATION SPECIFIC STYLING
+// ===================================
+
+// Transformation notice in header (replaces disabled create button)
+.erps-data-table__transformation-notice {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: $erps-table-gap-small !important;
+  padding: $erps-table-create-button-padding !important;
+  border-radius: $erps-table-control-border-radius !important;
+  background: linear-gradient(135deg, themes.get-semantic-color(purple, 20), themes.get-semantic-color(purple, dark-30)) !important;
+  border: $erps-table-border-width solid themes.get-semantic-color(purple, 40) !important;
+  color: var(--theme-text, #fff) !important;
+  font-family: var(--erps-ui-font) !important;
+  font-size: $erps-table-create-button-font-size !important;
+  font-weight: $erps-table-header-font-weight !important;
+  text-transform: uppercase !important;
+  letter-spacing: $erps-table-header-letter-spacing !important;
+  animation: erps-transformation-glow $erps-table-animation-duration-pulse ease-in-out infinite !important;
+  white-space: nowrap !important;
+  width: $erps-table-width-full !important;
+  min-width: $erps-table-transformation-min-width !important;
+  box-sizing: border-box !important;
+
+  i {
+    font-size: $erps-table-icon-size-large !important;
+    opacity: $erps-table-opacity-icon !important;
+    flex-shrink: 0 !important;
+
+    &.fa-magic {
+      color: themes.get-semantic-color(purple, 90) !important;
+      text-shadow: 0 0 6px themes.get-semantic-color(purple, 60) !important;
+    }
+
+    &.fa-lock {
+      color: themes.get-semantic-color(red, danger-90) !important;
+      text-shadow: 0 0 6px themes.get-semantic-color(red, danger-60) !important;
+    }
+  }
+
+  span {
+    flex: 1 !important;
+    text-align: center !important;
+    text-shadow: 0 1px 2px themes.get-universal-color(black, 80) !important;
+    min-width: 0 !important;
+  }
+}
+
+// Transformation indicator in name cells
+.erps-data-table__transformation-indicator {
+  color: themes.get-semantic-color(purple, 90) !important;
+  text-shadow: 0 0 6px themes.get-semantic-color(purple, 60) !important;
+  font-size: $erps-table-icon-size-large !important;
+  margin-left: $erps-table-gap-small !important;
+  animation: erps-transformation-glow $erps-table-animation-duration-transform ease-in-out infinite !important;
+  flex-shrink: 0 !important;
+}
+
+// Transformed row state
+.erps-data-table__row--transformed {
+  background: linear-gradient(135deg,
+    themes.get-semantic-color(purple, 15) 0%,
+    var(--theme-accent) 100%) !important;
+  border-left: $erps-table-transformation-border-width solid themes.get-semantic-color(purple, 60) !important;
+  position: relative !important;
+
+  &::before {
+    content: '' !important;
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    width: $erps-table-transformation-border-width !important;
+    background: linear-gradient(180deg,
+      themes.get-semantic-color(purple, 80) 0%,
+      themes.get-semantic-color(purple, dark-60) 50%,
+      themes.get-semantic-color(purple, 80) 100%) !important;
+    animation: erps-transformation-glow $erps-table-animation-duration-pulse ease-in-out infinite !important;
+  }
+
+  &:hover {
+    background: linear-gradient(135deg,
+      themes.get-semantic-color(purple, 25) 0%,
+      var(--theme-primary) 100%) !important;
+    box-shadow: inset 0 0 $erps-table-shadow-blur-large themes.get-semantic-color(purple, 20) !important;
+  }
+
+  // Ensure name cells in transformed rows are left-aligned
+  .erps-data-table__cell--name {
+    text-align: left !important;
+  }
+}
+
+// Locked control buttons for transformation state
+.erps-data-table__control-button--locked {
+  background: linear-gradient(135deg, themes.get-semantic-color(purple, 30), themes.get-semantic-color(purple, dark-40)) !important;
+  border-color: themes.get-semantic-color(purple, 60) !important;
+  animation: erps-cursed-pulse $erps-table-animation-duration-pulse ease-in-out infinite !important;
+
+  i {
+    color: themes.get-semantic-color(red, danger-90) !important;
+    text-shadow: 0 0 6px themes.get-semantic-color(red, danger-60) !important;
+  }
+
+  &:hover {
+    background: themes.get-semantic-color(purple, dark-60) !important;
+    border-color: themes.get-semantic-color(purple, 80) !important;
+    box-shadow: 0 0 15px themes.get-semantic-color(purple, 80) !important;
+  }
+}
+
