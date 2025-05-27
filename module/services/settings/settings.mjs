@@ -283,7 +283,7 @@ export const registerSettings = function () {
     default: true,
   });
 
-    // Character Sheet Theme Options (Client preference)
+  // Character Sheet Theme Options (Client preference)
   game.settings.register("eventide-rp-system", "sheetTheme", {
     name: "SETTINGS.SheetThemeName",
     hint: "SETTINGS.SheetThemeHint",
@@ -307,24 +307,27 @@ export const registerSettings = function () {
       setTimeout(() => {
         Logger.info("Theme setting changed - broadcasting theme update", {
           userName: game.user.name,
-          newTheme: value
+          newTheme: value,
         });
 
         // Broadcast a hook that our applications can listen to
         Hooks.callAll("eventide-rp-system.themeChanged", {
           newTheme: value,
-          userId: game.user.id
+          userId: game.user.id,
         });
 
         // Show user notification of theme change
-        ui.notifications.info(`Theme changed to ${value.charAt(0).toUpperCase() + value.slice(1)}`, {
-          permanent: false,
-          console: false
-        });
+        ui.notifications.info(
+          `Theme changed to ${value.charAt(0).toUpperCase() + value.slice(1)}`,
+          {
+            permanent: false,
+            console: false,
+          },
+        );
 
         Logger.debug("Theme change hook broadcasted", {
           hookCalled: true,
-          userNotified: true
+          userNotified: true,
         });
       }, 100); // Small delay to ensure flag is set
 
@@ -335,12 +338,17 @@ export const registerSettings = function () {
   // Migrate existing user flag to setting if needed
   Hooks.once("ready", () => {
     const existingFlag = game.user.getFlag("eventide-rp-system", "sheetTheme");
-    const currentSetting = game.settings.get("eventide-rp-system", "sheetTheme");
+    const currentSetting = game.settings.get(
+      "eventide-rp-system",
+      "sheetTheme",
+    );
 
     // If user has a flag but setting is default, migrate the flag to setting
     if (existingFlag && currentSetting === "blue" && existingFlag !== "blue") {
       game.settings.set("eventide-rp-system", "sheetTheme", existingFlag);
-      Logger.info(`Eventide RP System: Migrated theme preference from flag to setting: ${existingFlag}`);
+      Logger.info(
+        `Eventide RP System: Migrated theme preference from flag to setting: ${existingFlag}`,
+      );
     }
   });
 

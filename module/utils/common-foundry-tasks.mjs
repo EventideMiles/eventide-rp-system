@@ -92,6 +92,33 @@ export class CommonFoundryTasks {
   }
 
   /**
+   * Retrieves the user's sheet theme preference, checking both user flag and setting.
+   * This method provides backward compatibility and ensures theme consistency.
+   *
+   * @returns {string} The user's preferred theme (defaults to "blue")
+   * @static
+   */
+  static retrieveSheetTheme() {
+    // First check user flag (for backward compatibility and immediate updates)
+    const flagTheme = game.user.getFlag(
+      CommonFoundryTasks.SYSTEM_ID,
+      "sheetTheme",
+    );
+    if (flagTheme) {
+      return flagTheme;
+    }
+
+    // Fallback to setting if flag doesn't exist
+    const settingTheme = game.settings.get("eventide-rp-system", "sheetTheme");
+    if (settingTheme) {
+      return settingTheme;
+    }
+
+    // Final fallback to default
+    return "blue";
+  }
+
+  /**
    * Deletes a flag from the user's flags for the Eventide system.
    *
    * @param {string} key - The key of the flag to delete
@@ -217,6 +244,7 @@ export const commonTasks = {
   clamp: CommonFoundryTasks.clamp,
   storeUserFlag: CommonFoundryTasks.storeUserFlag,
   retrieveUserFlag: CommonFoundryTasks.retrieveUserFlag,
+  retrieveSheetTheme: CommonFoundryTasks.retrieveSheetTheme,
   deleteUserFlag: CommonFoundryTasks.deleteUserFlag,
   storeMultipleUserFlags: CommonFoundryTasks.storeMultipleUserFlags,
   retrieveMultipleUserFlags: CommonFoundryTasks.retrieveMultipleUserFlags,
