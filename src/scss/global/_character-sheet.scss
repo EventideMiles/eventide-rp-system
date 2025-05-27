@@ -759,127 +759,7 @@ label,
     }
   }
 
-  // Tab navigation - themed overrides with high specificity
-  .tabs .item {
-    font-family: var(--erps-ui-font) !important;
-    font-weight: 600 !important;
-    letter-spacing: 0.5px !important;
-  }
-
-    // Themed tab system - override global tab styling with important declarations
-  &.sheet-tabs,
-  .tabs {
-    @include themes.apply-all-themes('tab-theme');
-
-    display: flex !important;
-    flex-wrap: wrap !important;
-    border-bottom: 2px solid rgb(255 255 255 / 10%) !important;
-
-    @include themes.themed-gradient-background;
-
-    border-radius: 6px 6px 0 0 !important;
-    padding: 0.25rem 0.25rem 0 !important;
-    margin: 0 !important;
-
-    @include themes.themed-glow-shadow;
-  }
-
-  // Themed tab items - base selector first, then more specific ones
-  .tabs a[data-action="tab"] {
-    position: relative !important;
-    padding: 0.5rem 1rem !important;
-    border: 1px solid rgb(255 255 255 / 20%) !important;
-    border-bottom: none !important;
-    border-radius: 6px 6px 0 0 !important;
-    font-family: var(--erps-ui-font) !important;
-    font-size: 12pt !important;
-    font-weight: 600 !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.5px !important;
-    color: var(--theme-text, #fff) !important;
-    background: rgb(255 255 255 / 10%) !important;
-    transition: all 0.3s ease !important;
-    text-decoration: none !important;
-    cursor: pointer !important;
-    margin-right: 0.25rem !important;
-    overflow: hidden !important;
-
-    // Subtle animated background effect
-    &::before {
-      content: '' !important;
-      position: absolute !important;
-      top: 0 !important;
-      left: -100% !important;
-      width: 200% !important;
-      height: 100% !important;
-      background: linear-gradient(90deg,
-        transparent,
-        rgb(255 255 255 / 15%),
-        transparent) !important;
-      transition: left 0.6s ease !important;
-      z-index: 0 !important;
-    }
-
-    // Text content above background effect
-    & > * {
-      position: relative !important;
-      z-index: 1 !important;
-    }
-
-    &:hover:not(.active) {
-      background: var(--theme-primary, #{themes.$blue-primary}) !important;
-      border-color: var(--theme-light, #{themes.$blue-light}) !important;
-      color: var(--theme-text, #fff) !important;
-      transform: translateY(-2px) !important;
-      box-shadow: 0 4px 12px rgb(0 0 0 / 30%) !important;
-
-      &::before {
-        left: 100% !important;
-      }
-    }
-
-    &.active {
-      background: var(--theme-secondary, #{themes.$blue-secondary}) !important;
-      border-color: var(--theme-glow, #{themes.$blue-glow}) !important;
-      color: var(--theme-text, #fff) !important;
-      box-shadow:
-        0 4px 12px rgb(0 0 0 / 30%),
-        0 0 20px var(--theme-glow, #{themes.$blue-glow}) !important;
-      transform: translateY(-1px) !important;
-      z-index: 10 !important;
-
-      &::before {
-        left: 0% !important;
-        background: linear-gradient(90deg,
-          var(--theme-light, #{themes.$blue-light}),
-          transparent,
-          var(--theme-light, #{themes.$blue-light})) !important;
-        opacity: 0.3 !important;
-        animation: tab-glow 3s ease-in-out infinite !important;
-      }
-
-      // Remove the skewed background from global override
-      &::after {
-        display: none !important;
-      }
-    }
-  }
-
-  // More specific selector for sheet tabs
-  .sheet-tabs.tabs a[data-action="tab"] {
-    // Inherits all styles from above, can add specific overrides here if needed
-  }
-
-    // Animation for active tab glow
-  @keyframes tab-glow {
-    0%, 100% {
-      opacity: 0.2;
-    }
-
-    50% {
-      opacity: 0.4;
-    }
-  }
+  // Tab navigation styling is now handled by the erps-tabs component
 
   // Animation keyframes
   @keyframes header-glow {
@@ -899,31 +779,10 @@ label,
     }
   }
 
-  &--scrollbars {
-    // Apply scrollbars to the entire tab content
-    .tab {
-      height: 39.06rem; // Fixed height to ensure scrolling happens
-      overflow-y: auto !important;
-
-      // Ensure all sections don't scroll individually
-      section.main, aside.sidebar, .items-list {
-        overflow: visible !important;
-      }
-    }
-  }
+  // Scrollbars styling is now handled by the erps-tabs component
 
   // Tab content styling - remove gaps between tabs and content
-  .tab {
-    margin-top: 0 !important;
-    padding-top: 0 !important;
-
-    // Remove top margin and border radius from first data table in each tab
-    .eventide-actor-data-section:first-child {
-      margin-top: 0 !important;
-    }
-
-    // Note: eventide-actor-data-table selectors moved to after base definition for proper specificity
-  }
+  // (Combined with earlier .tab selector to avoid duplication)
 
   // ===================================
   // EVENTIDE ACTOR DATA TABLE SYSTEM
@@ -1249,15 +1108,76 @@ label,
   }
 
   // Tab content styling for data tables - now after base definition
-  .tab {
-    // Remove top margin from first data table after section headers
-    .eventide-actor-data-section__header + .eventide-actor-data-table {
-      margin-top: 0 !important;
-    }
-  }
+  // (Content styling moved to standalone .tab selector below to avoid duplication)
 }
 
+// Tab content styling (standalone to avoid duplication)
+.tab {
+  // Remove top margin from first data table after section headers
+  .eventide-actor-data-section__header + .eventide-actor-data-table {
+    margin-top: 0 !important;
+  }
 
+  // Biography tab theme-aware styling
+  &.biography {
+    .editor {
+      height: 100%;
+    }
+
+     // Additional styling for the biography content wrapper
+     .biography-content {
+      width: 100% !important;
+      height: 100% !important;
+      padding: 0.5rem !important;
+      box-sizing: border-box !important;
+    }
+
+    // Theme-aware text color for biography content
+    &[data-biography-theme="light"] {
+      color: #1e293b !important;
+
+      .biography-content,
+      prose-mirror {
+        color: #1e293b !important;
+      }
+
+      // Ensure all text elements inherit the dark color
+      p, div, span, h1, h2, h3, h4, h5, h6,
+      ul, ol, li, blockquote, pre, code {
+        color: #1e293b !important;
+      }
+
+      // Style links appropriately for light theme
+      a {
+        color: #2563eb !important; // Blue color for links in light theme
+      }
+    }
+
+
+    // Default dark theme styling (for all other themes)
+    &:not([data-biography-theme="light"]) {
+      color: #fff !important;
+
+      .biography-content,
+      prose-mirror {
+        color: #fff !important;
+      }
+
+      // Ensure all text elements inherit the light color
+      p, div, span, h1, h2, h3, h4, h5, h6,
+      ul, ol, li, blockquote, pre, code {
+        color: #fff !important;
+      }
+
+      // Style links appropriately for dark themes
+      a {
+        color: #60a5fa !important; // Light blue color for links in dark themes
+      }
+    }
+
+
+  }
+}
 
 .eventide-character-sheet input {
   @include mixins.grid-compliant-text-input;
@@ -2929,198 +2849,7 @@ label,
 
 // Note: Data table system moved earlier for proper CSS specificity ordering
 
-// ===================================
-// GEAR TAB SYSTEM
-// ===================================
-
-// Gear tab navigation
-.gear-tab-nav {
-  display: flex !important;
-  gap: 0.5rem !important;
-  margin-bottom: 1rem !important;
-  border-bottom: 2px solid rgb(255 255 255 / 10%) !important;
-  padding-bottom: 0.5rem !important;
-}
-
-.gear-tab-button {
-  display: flex !important;
-  align-items: center !important;
-  gap: 0.5rem !important;
-  padding: 0.75rem 1.5rem !important;
-  border: none !important;
-  border-radius: 8px 8px 0 0 !important;
-  background: rgb(255 255 255 / 10%) !important;
-  color: var(--theme-text, #fff) !important;
-  cursor: pointer !important;
-  transition: all 0.3s ease !important;
-  font-family: var(--erps-ui-font) !important;
-  font-size: 14pt !important;
-  font-weight: 600 !important;
-  text-transform: uppercase !important;
-  letter-spacing: 0.5px !important;
-  position: relative !important;
-  overflow: hidden !important;
-  height: 3.5rem !important; // Fixed height for consistency
-  min-height: 3.5rem !important; // Ensure minimum height
-  box-sizing: border-box !important; // Include padding in height calculation
-
-  // Theme color variables (default to blue theme)
-  --theme-primary: rgb(30 58 138 / 90%);
-  --theme-secondary: rgb(59 130 246 / 80%);
-  --theme-accent: rgb(15 30 70 / 95%);
-  --theme-light: rgb(59 130 246 / 70%);
-  --theme-glow: rgb(59 130 246 / 60%);
-  --theme-text: #fff;
-
-  i {
-    font-size: 16pt !important;
-    opacity: 0.8 !important;
-    transition: all 0.2s ease !important;
-  }
-
-  // Equipped gear button i styling (must come before hover selectors)
-  &--equipped i {
-    color: rgb(34 197 94 / 90%) !important;
-  }
-
-  // Unequipped gear button i styling (must come before hover selectors)
-  &--unequipped i {
-    color: rgb(150 150 150 / 90%) !important;
-  }
-
-  &:hover i {
-    opacity: 1 !important;
-    transform: scale(1.1) !important;
-  }
-
-  .gear-count {
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    min-width: 1.5rem !important;
-    height: 1.5rem !important;
-    padding: 0 0.5rem !important;
-    border-radius: 12px !important;
-    background: rgb(255 255 255 / 20%) !important;
-    font-size: 12pt !important;
-    font-weight: 700 !important;
-    line-height: 1 !important;
-  }
-
-  &:hover {
-    background: var(--theme-primary) !important;
-    transform: translateY(-2px) !important;
-    box-shadow: 0 4px 12px rgb(0 0 0 / 30%) !important;
-
-    .gear-count {
-      background: rgb(255 255 255 / 30%) !important;
-    }
-  }
-
-  &.active {
-    background: var(--theme-secondary) !important;
-    box-shadow:
-      0 4px 12px rgb(0 0 0 / 30%),
-      0 0 20px var(--theme-glow) !important;
-    transform: translateY(-1px) !important;
-
-    i {
-      opacity: 1 !important;
-      text-shadow: 0 0 8px var(--theme-glow) !important;
-    }
-
-    .gear-count {
-      background: rgb(255 255 255 / 40%) !important;
-      box-shadow: 0 0 8px rgb(255 255 255 / 30%) !important;
-    }
-  }
-
-  // Equipped gear button styling
-  &--equipped {
-    &.active, &:hover {
-      --theme-primary: rgb(21 128 61 / 90%);
-      --theme-secondary: rgb(34 197 94 / 80%);
-      --theme-glow: rgb(34 197 94 / 60%);
-    }
-  }
-
-  // Unequipped gear button styling
-  &--unequipped {
-    &.active, &:hover {
-      --theme-primary: rgb(100 100 100 / 90%);
-      --theme-secondary: rgb(150 150 150 / 80%);
-      --theme-glow: rgb(150 150 150 / 60%);
-    }
-    }
-}
-
-
-
-// Theme-specific text color overrides for gear tab buttons
-.eventide-character-sheet[data-bg-theme="light"] .gear-tab-button {
-  color: #1e293b !important; // Dark text for light theme
-
-  .gear-count {
-    background: rgb(30 41 59 / 20%) !important;
-    color: #1e293b !important;
-  }
-
-  &:hover .gear-count {
-    background: rgb(30 41 59 / 30%) !important;
-  }
-
-  &.active .gear-count {
-    background: rgb(30 41 59 / 40%) !important;
-    color: #1e293b !important;
-  }
-}
-
-// Gear tab content
-.gear-tab-content {
-  display: none !important;
-  width: 100% !important;
-      animation: fade-in 0.3s ease-in-out !important;
-
-  &.active {
-    display: block !important;
-  }
-
-  // Equipped gear content styling
-  &--equipped {
-    .eventide-actor-data-table {
-      border-left: 4px solid rgb(34 197 94 / 60%) !important;
-      box-shadow:
-        0 4px 12px rgb(0 0 0 / 30%),
-        inset 0 1px 0 rgb(255 255 255 / 10%),
-        inset 4px 0 0 rgb(34 197 94 / 20%) !important;
-    }
-  }
-
-  // Unequipped gear content styling
-  &--unequipped {
-    .eventide-actor-data-table {
-      border-left: 4px solid rgb(100 100 100 / 40%) !important;
-      opacity: 0.95 !important;
-      box-shadow:
-        0 4px 12px rgb(0 0 0 / 30%),
-        inset 0 1px 0 rgb(255 255 255 / 10%),
-        inset 4px 0 0 rgb(100 100 100 / 15%) !important;
-    }
-  }
-}
-
-// Fade in animation for tab content
-@keyframes fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+// Gear tab system is now handled by the erps-tabs component
 
 // Merge with existing light theme styling above to avoid duplication
 

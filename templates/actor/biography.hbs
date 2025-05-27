@@ -3,12 +3,16 @@
   class='tab biography {{tab.cssClass}}'
   data-group='primary'
   data-tab='biography'
+  data-biography-theme='{{userSheetTheme}}'
 >
   {{! Editors must receive enriched text data from getData to properly handle rolls, UUID links, etc. }}
-  {{#if editable}} 
+  {{#if editable}}
     <prose-mirror name="system.biography" data-document-u-u-i-d="{{actor.uuid}}" value="{{system.biography}}" collaborate="true" toggled="true">
       {{{enrichedBiography}}}
     </prose-mirror>
-  {{else}} {{{enrichedBiography}}}
+  {{else}}
+    <div class="biography-content" data-biography-theme='{{userSheetTheme}}'>
+      {{{enrichedBiography}}}
+    </div>
   {{/if}}
 </section>

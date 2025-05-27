@@ -1,6 +1,7 @@
 import { CommonFoundryTasks } from "../../utils/_module.mjs";
 import { erpsRollHandler, Logger } from "../../services/_module.mjs";
 import { ErrorHandler } from "../../utils/error-handler.mjs";
+import { initTabContainerStyling, cleanupTabContainerStyling } from "../../helpers/tab-container-styling.mjs";
 
 const { api, sheets } = foundry.applications;
 const { DragDrop, TextEditor } = foundry.applications.ux;
@@ -600,6 +601,9 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
     // Initialize gear tab functionality (preserve state across renders)
     this.#initGearTabs();
 
+    // Initialize tab container styling (dynamic border radius based on active tab)
+    initTabContainerStyling(this.element);
+
     // Set up theme change listeners (only once per instance)
     this.#setupThemeChangeListeners();
 
@@ -925,6 +929,9 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
 
     // Clean up gear tab state
     this.#cleanupGearTabState();
+
+    // Clean up tab container styling
+    cleanupTabContainerStyling(this.element);
 
     // Call parent cleanup
     return super._preClose(options);

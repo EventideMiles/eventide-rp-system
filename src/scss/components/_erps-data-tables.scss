@@ -114,6 +114,43 @@ $erps-table-responsive-padding: 0.5rem;
 $erps-table-transformation-min-width: 200px;
 $erps-table-transformation-border-width: 4px;
 
+// Position and sizing values
+$erps-table-position-zero: 0;
+$erps-table-position-top: 0;
+$erps-table-position-bottom: 0;
+$erps-table-position-left: 0;
+$erps-table-position-right: 0;
+$erps-table-position-center: 50%;
+$erps-table-width-full: 100%;
+$erps-table-height-full: 100%;
+$erps-table-flex-full: 1;
+$erps-table-min-width-zero: 0;
+
+// Border radius values
+$erps-table-border-radius-circle: 50%;
+
+// Shadow and glow values
+$erps-table-shadow-blur-small: 8px;
+$erps-table-shadow-blur-tiny: 5px;
+$erps-table-shadow-blur-medium: 15px;
+$erps-table-shadow-blur-text: 6px;
+$erps-table-shadow-offset-y: 1px;
+$erps-table-shadow-offset-y-small: 2px;
+
+// Animation opacity values
+$erps-table-animation-opacity-start: 0.6;
+$erps-table-animation-opacity-end: 1;
+
+// Gradient positions
+$erps-table-gradient-start: 0%;
+$erps-table-gradient-end: 100%;
+$erps-table-gradient-transparent: 70%;
+
+// Border radius variants
+$erps-table-border-radius-none: 0;
+$erps-table-border-radius-top-only: $erps-table-border-radius $erps-table-border-radius 0 0;
+$erps-table-border-radius-bottom-only: 0 0 $erps-table-border-radius $erps-table-border-radius;
+
 // ===================================
 // MODERN COLOR FUNCTIONS & UTILITIES
 // ===================================
@@ -124,8 +161,8 @@ $erps-table-transformation-border-width: 4px;
   box-shadow: 0 0 12px themes.get-semantic-color($color, $opacity) !important;
 }
 
-@mixin element-glow($color, $opacity: 60, $size: 8px) {
-  box-shadow: 0 0 $size themes.get-semantic-color($color, $opacity) !important;
+@mixin element-glow($color, $opacity: 60, $size: $erps-table-shadow-blur-small) {
+  box-shadow: $erps-table-position-zero $erps-table-position-zero $size themes.get-semantic-color($color, $opacity) !important;
 }
 
 @mixin multi-shadow($shadows...) {
@@ -138,7 +175,26 @@ $erps-table-transformation-border-width: 4px;
 }
 
 @mixin state-gradient($color, $start-opacity: 15, $end-var: var(--theme-accent)) {
-  background: linear-gradient(135deg, themes.get-semantic-color($color, $start-opacity) 0%, $end-var 100%) !important;
+  background: linear-gradient(135deg, themes.get-semantic-color($color, $start-opacity) $erps-table-gradient-start, $end-var $erps-table-gradient-end) !important;
+}
+
+// Border radius utility mixins
+@mixin table-border-radius-none {
+  border-radius: $erps-table-border-radius-none !important;
+  overflow: visible !important;
+}
+
+@mixin table-border-radius-top-only {
+  border-radius: $erps-table-border-radius-top-only !important;
+}
+
+@mixin table-border-radius-bottom-only {
+  border-radius: $erps-table-border-radius-bottom-only !important;
+}
+
+@mixin table-border-radius-full {
+  border-radius: $erps-table-border-radius !important;
+  overflow: hidden !important;
 }
 
 // ===================================
@@ -250,18 +306,18 @@ $erps-table-transformation-border-width: 4px;
 // Header styling mixins
 @mixin table-header-gradient {
   background: linear-gradient(135deg,
-    var(--theme-primary) 0%,
-    var(--theme-secondary) 50%,
-    var(--theme-primary) 100%) !important;
+    var(--theme-primary) $erps-table-gradient-start,
+    var(--theme-secondary) $erps-table-position-center,
+    var(--theme-primary) $erps-table-gradient-end) !important;
 }
 
 @mixin animated-header-glow {
   content: '' !important;
   position: absolute !important;
-  top: 0 !important;
-  left: -100% !important;
+  top: $erps-table-position-top !important;
+  left: -$erps-table-gradient-end !important;
   width: $erps-table-glow-width !important;
-  height: 100% !important;
+  height: $erps-table-height-full !important;
   background: linear-gradient(90deg,
     transparent,
     themes.get-universal-color(white, 10),
@@ -282,7 +338,7 @@ $erps-table-transformation-border-width: 4px;
   border-bottom: $erps-table-border-width-thick solid themes.get-universal-color(white, 20) !important;
   position: relative !important;
   z-index: $erps-table-z-index-header !important;
-  text-shadow: 0 1px 2px themes.get-universal-color(black, 80) !important;
+  text-shadow: $erps-table-position-zero $erps-table-shadow-offset-y $erps-table-shadow-offset-y-small themes.get-universal-color(black, 80) !important;
   vertical-align: middle !important;
   min-height: $erps-table-header-height !important;
   height: $erps-table-header-height !important;
@@ -369,7 +425,7 @@ $erps-table-transformation-border-width: 4px;
   white-space: nowrap !important;
   width: auto !important;
   min-width: min-content !important;
-  padding: 0 !important;
+  padding: $erps-table-position-zero !important;
   vertical-align: middle !important;
   position: relative !important;
 }
@@ -398,12 +454,12 @@ $erps-table-transformation-border-width: 4px;
   &::before {
     content: '' !important;
     position: absolute !important;
-    top: 50% !important;
-    left: 50% !important;
-    width: 0 !important;
-    height: 0 !important;
-    background: radial-gradient(circle, var(--theme-light, #{themes.get-semantic-color(blue, 70)}) 0%, transparent 70%) !important;
-    border-radius: 50% !important;
+    top: $erps-table-position-center !important;
+    left: $erps-table-position-center !important;
+    width: $erps-table-position-zero !important;
+    height: $erps-table-position-zero !important;
+    background: radial-gradient(circle, var(--theme-light, #{themes.get-semantic-color(blue, 70)}) $erps-table-gradient-start, transparent $erps-table-gradient-transparent) !important;
+    border-radius: $erps-table-border-radius-circle !important;
     transform: translate(-50%, -50%) !important;
     transition: all $erps-table-transition-duration-long ease !important;
     z-index: $erps-table-z-index-base !important;
@@ -421,13 +477,13 @@ $erps-table-transformation-border-width: 4px;
     transform: translateY($erps-table-transform-hover-y) scale($erps-table-transform-hover-scale) !important;
 
     &::before {
-      width: 100% !important;
-      height: 100% !important;
+      width: $erps-table-width-full !important;
+      height: $erps-table-height-full !important;
     }
   }
 
   &:active {
-    transform: translateY(0) scale($erps-table-transform-active-scale) !important;
+    transform: translateY($erps-table-position-zero) scale($erps-table-transform-active-scale) !important;
   }
 }
 
@@ -514,9 +570,9 @@ $erps-table-transformation-border-width: 4px;
 
 .erps-data-table {
   // Base table styling
-  width: 100% !important;
+  width: $erps-table-width-full !important;
   border-collapse: separate !important;
-  border-spacing: 0 !important;
+  border-spacing: $erps-table-position-zero !important;
   border-radius: $erps-table-border-radius !important;
   overflow: hidden !important;
   position: relative !important;
@@ -529,7 +585,7 @@ $erps-table-transformation-border-width: 4px;
 
   // Container for responsive behavior
   &__container {
-    width: 100% !important;
+    width: $erps-table-width-full !important;
     overflow-x: auto !important;
     position: relative !important;
   }
@@ -547,7 +603,7 @@ $erps-table-transformation-border-width: 4px;
 
   &__header-row {
     // Header row specific styling if needed
-    width: 100% !important;
+    width: $erps-table-width-full !important;
   }
 
   &__header-cell {
@@ -661,7 +717,7 @@ $erps-table-transformation-border-width: 4px;
     align-items: center !important;
     gap: $erps-table-gap-small !important;
     width: $erps-table-width-full !important;
-    height: 100% !important;
+    height: $erps-table-height-full !important;
 
     img {
       width: $erps-table-image-size !important;
@@ -679,8 +735,8 @@ $erps-table-transformation-border-width: 4px;
 
     span {
       line-height: $erps-table-line-height !important;
-      flex: 1 !important;
-      min-width: 0 !important;
+      flex: $erps-table-flex-full !important;
+      min-width: $erps-table-min-width-zero !important;
     }
 
     a {
@@ -779,10 +835,42 @@ $erps-table-transformation-border-width: 4px;
     @include striped-table;
   }
 
-  // Tab-specific styling for data tables
+  // Border radius modifiers
+  &--no-radius {
+    @include table-border-radius-none;
+  }
+
+  &--radius-top-only {
+    @include table-border-radius-top-only;
+  }
+
+  &--radius-bottom-only {
+    @include table-border-radius-bottom-only;
+  }
+
+  &--radius-full {
+    @include table-border-radius-full;
+  }
+
+  // Tab-specific styling for data tables (legacy - use --radius-bottom-only instead)
   &--flush-top {
-    margin-top: 0 !important;
-    border-radius: 0 0 $erps-table-border-radius $erps-table-border-radius !important;
+    margin-top: $erps-table-position-zero !important;
+
+    @include table-border-radius-bottom-only;
+  }
+
+  // Combination modifiers for common use cases
+  &--flush-top-compact {
+    @include compact-table;
+    @include table-border-radius-bottom-only;
+
+    margin-top: $erps-table-position-zero !important;
+  }
+
+  &--seamless {
+    @include table-border-radius-none;
+
+    margin: $erps-table-position-zero !important;
   }
 
   // Features layout
