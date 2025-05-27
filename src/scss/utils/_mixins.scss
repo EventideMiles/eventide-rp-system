@@ -66,9 +66,11 @@
 // Common transition pattern
 @mixin standard-transition($properties...) {
   $transition-list: ();
+
   @each $prop in $properties {
     $transition-list: list.append($transition-list, $prop tokens.$transition-quick, comma);
   }
+
   transition: $transition-list;
 }
 
@@ -89,63 +91,64 @@
   font-size: 1rem;
   line-height: 1.5;
   height: tokens.$size-input-height;
-  
+
   // Theme-aware styling
   color: colors.$input-text;
   background-color: colors.$input-bg !important;
   border: tokens.$border-width-thin solid colors.$input-border;
+
   @include standard-transition(border-color, box-shadow, background-color);
-  
+
   // Interactive states
   &:hover { @include interactive-state('input', 'hover'); }
   &:focus { @include interactive-state('input', 'focus'); }
-  
+
   &::placeholder {
     color: colors.$input-placeholder;
     opacity: if($type == 'textarea', 0.7, 1);
   }
-  
+
   // Type-specific styles
   @if $type == 'select' {
     line-height: 1;
     padding: 0 2.5rem 0 tokens.$spacing-sm;
+
     @include flex-center;
+
     cursor: pointer;
     appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
     background-image: colors.$select-arrow-url !important;
     background-repeat: no-repeat !important;
     background-position: calc(100% - 8px) center !important;
     background-size: 24px !important;
-    
+
     // Text overflow handling
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
-    
+
     &:hover, &:focus {
       background-color: colors.$form-selected !important;
     }
-    
+
     // Dropdown styling
     option {
       background-color: #2a3441 !important;
-      color: #ffffff !important;
+      color: #fff !important;
       padding: tokens.$spacing-sm tokens.$spacing-md !important;
-      text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5) !important;
+      text-shadow: 0 1px 0 rgb(0 0 0 / 50%) !important;
       font-weight: normal !important;
-      
+
       &:hover, &:focus, &:active, &:checked {
         background-color: colors.$form-selected !important;
-        color: #ffffff !important;
+        color: #fff !important;
       }
     }
-    
+
     // Browser compatibility
     &::-moz-focus-inner { border: 0; }
     &::-ms-expand { display: none; }
-    
+
   } @else if $type == 'textarea' {
     min-height: 5rem;
     resize: vertical;
@@ -155,16 +158,15 @@
     overflow-y: auto;
   } @else if $type == 'number' {
     appearance: textfield;
-    -moz-appearance: textfield;
     text-align: center;
-    
+
     &::-webkit-outer-spin-button,
     &::-webkit-inner-spin-button {
-      -webkit-appearance: none;
+      appearance: none;
       margin: 0;
     }
   }
-  
+
   @content;
 }
 
@@ -186,19 +188,20 @@
 
 @mixin grid-compliant-number-input {
   @include form-element('number');
-  
+
   .base-form__number-input-wrapper:not(.compact) & {
     width: calc(100% - 4rem);
   }
-  
+
   @content;
 }
 
 // Number input wrapper with increment/decrement buttons
 @mixin grid-compliant-number-input-wrapper {
   @include flex-between;
+
   width: 100%;
-  
+
   .decrement, .increment {
     width: 1.75rem;
     height: tokens.$size-input-height;
@@ -206,51 +209,55 @@
     border: tokens.$border-width-thin solid colors.$input-border;
     background-color: colors.$input-bg;
     color: colors.$input-text;
+
     @include flex-center;
+
     font-size: 1rem;
     font-weight: bold;
     cursor: pointer;
+
     @include standard-transition(all);
+
     flex-shrink: 0;
-    
+
     &:hover, &:focus {
       border-color: colors.$input-focus;
       background-color: colors.$input-focus;
-      color: #ffffff;
+      color: #fff;
       outline: none;
       box-shadow: 0 0 0 tokens.$border-width-base color-mix(in srgb, colors.$input-focus 25%, transparent);
     }
-    
+
     &:active {
       transform: scale(0.95);
     }
   }
-  
+
   &.compact {
     .decrement, .increment {
       display: none;
     }
-    
+
     .base-form__number-input {
       width: 100%;
     }
   }
-  
+
   // Container query for automatic adaptation
   @supports (container-type: inline-size) {
     container-type: inline-size;
-    
+
     @container (max-width: 7rem) {
       .decrement, .increment {
         display: none !important;
       }
-      
+
       .base-form__number-input {
         width: 100% !important;
       }
     }
   }
-  
+
   @content;
 }
 
@@ -265,19 +272,19 @@
   opacity: 0;
   width: 0;
   height: 0;
-  
+
   // Toggle display is a fixed-size element
   & ~ .toggle-switch-display {
     position: relative;
     display: block;
     width: tokens.$size-toggle-width;
     height: tokens.$size-toggle-height;
-    
+
     // Prevent flexbox stretching
     flex: 0 0 tokens.$size-toggle-width;
     min-width: tokens.$size-toggle-width;
     max-width: tokens.$size-toggle-width;
-    
+
     // Create the background track
     &::before {
       content: "";
@@ -290,7 +297,7 @@
       border-radius: tokens.$size-toggle-height;
       transition: background-color tokens.$transition-quick;
     }
-    
+
     // Create the toggle knob
     &::after {
       content: '';
@@ -304,31 +311,31 @@
       transition: transform tokens.$transition-quick;
     }
   }
-  
+
   // Checked state
   &:checked ~ .toggle-switch-display {
     &::before {
       background-color: colors.$input-focus;
     }
-    
+
     &::after {
       transform: translateX(tokens.$size-toggle-translate);
     }
   }
-  
+
   // Focus state
   &:focus ~ .toggle-switch-display {
     &::before {
       box-shadow: 0 0 0 tokens.$border-width-base rgba(tokens.$color-primary, 0.25);
     }
   }
-  
+
   // Variant-specific styles
   @if $variant == 'left-aligned' {
     &:disabled ~ .toggle-switch-display {
       opacity: 0.6;
       cursor: not-allowed;
-      
+
       &::before {
         background-color: colors.$form-input-disabled;
       }
@@ -338,13 +345,13 @@
       opacity: 0.6;
       pointer-events: none;
       cursor: not-allowed;
-      
+
       &::before, &::after {
         background-color: colors.$form-input-disabled;
       }
     }
   }
-  
+
   @content;
 }
 
@@ -365,9 +372,10 @@
   position: relative;
   margin: 1rem 0;
   padding: tokens.$spacing-xs tokens.$spacing-sm tokens.$spacing-md tokens.$spacing-sm;
-  
+
   label:first-child {
     @include form-label-base;
+
     min-width: 7.5rem;
     flex: 0 0 auto;
     flex-grow: 1;
@@ -375,7 +383,7 @@
     cursor: pointer;
     margin-bottom: 0;
   }
-  
+
   .toggle-switch-wrapper {
     width: 2.5rem;
     flex: 0 0 2.5rem;
@@ -383,7 +391,7 @@
     margin-left: auto;
     overflow: visible;
   }
-  
+
   @content;
 }
 
@@ -413,24 +421,28 @@
 
 @mixin form-label-small {
   @include form-label-base;
+
   font-size: tokens.$font-size-label-small;
   @content;
 }
 
 @mixin form-label-medium {
   @include form-label-base;
+
   font-size: tokens.$font-size-label-base;
   @content;
 }
 
 @mixin form-label-large {
   @include form-label-base;
+
   font-size: tokens.$font-size-label-large;
   @content;
 }
 
 @mixin form-label-with-icon {
   @include form-label-base;
+
   display: flex;
   align-items: center;
   flex-direction: row;
@@ -439,6 +451,7 @@
 
 @mixin checkbox-label {
   @include form-label-base;
+
   cursor: pointer;
   @content;
 }
@@ -450,27 +463,26 @@
 @mixin grid-compliant-section-header {
   font-family: typography.$underdog;
   font-size: tokens.$font-size-section-header;
-  color: #ffffff;
+  color: #fff;
   padding: tokens.$spacing-md tokens.$spacing-base;
   margin: tokens.$spacing-lg 0 tokens.$spacing-base 0;
   border-bottom: tokens.$border-width-base solid tokens.$color-primary;
   position: relative;
   width: 100%;
   text-align: left;
-  
   background: linear-gradient(
     to right,
-    rgba(30, 40, 60, 0.8),
-    rgba(20, 30, 45, 0.7)
+    rgb(30 40 60 / 80%),
+    rgb(20 30 45 / 70%)
   );
-  
+
   &:first-of-type {
     margin-top: 0;
   }
-  
+
   &.with-icon {
     padding-left: tokens.$size-toggle-width;
-    
+
     &::before {
       content: '';
       position: absolute;
@@ -485,7 +497,7 @@
       opacity: 0.8;
     }
   }
-  
+
   @content;
 }
 
@@ -496,67 +508,66 @@
   margin: 1rem 0;
   width: 100%;
   position: relative;
-  background-color: rgba(25, 35, 50, 0.6);
-  
+  background-color: rgb(25 35 50 / 60%);
   min-inline-size: auto;
-  
+
   legend {
     font-family: typography.$underdog;
     font-size: 1rem;
-    color: #ffffff;
+    color: #fff;
     padding: 0 tokens.$spacing-sm;
-    background-color: rgba(35, 45, 65, 0.9);
+    background-color: rgb(35 45 65 / 90%);
     border: 1px solid #4d94ff;
     border-radius: tokens.$radius-sm;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 1px 3px rgb(0 0 0 / 30%);
   }
-  
+
   fieldset {
     margin: tokens.$spacing-md 0;
-    
+
     legend {
       font-size: 0.9rem;
     }
   }
-  
+
   @content;
 }
 
 @mixin grid-compliant-collapsible-section {
   @include grid-compliant-fieldset;
-  
+
   padding-top: 2rem;
-  
+
   legend {
     cursor: pointer;
     user-select: none;
     display: flex;
     align-items: center;
-    
+
     &::after {
       content: '▾';
       margin-left: tokens.$spacing-sm;
       transition: transform tokens.$transition-quick;
     }
   }
-  
+
   &.collapsed {
     padding: 0;
     border-color: #4d94ff;
-    
+
     legend {
       margin-bottom: 0;
-      
+
       &::after {
         content: '▸';
       }
     }
-    
+
     > *:not(legend) {
       display: none;
     }
   }
-  
+
   @content;
 }
 
@@ -571,7 +582,7 @@
   );
   margin: 1.5rem 0;
   border: none;
-  
+
   @content;
 }
 
@@ -586,43 +597,44 @@
   border: tokens.$border-width-thin solid colors.$button-border;
   border-radius: tokens.$radius-sm;
   cursor: pointer;
-  font-family: 'Underdog', serif;
+  font-family: Underdog, serif;
   font-size: 1rem;
   line-height: 1.5;
-  
+
   // Flex centering (from original)
   display: inline-flex;
   align-items: center;
   justify-content: center;
   text-align: center;
   min-height: 2.25rem;
-  
+
   // Width handling (from grid-compliant-button)
   @if $fullWidth {
     width: 100%;
   }
-  
+
   // Interactive states
   transition: all tokens.$transition-quick;
-  
+
   &:hover {
     @include interactive-state('button', 'hover');
   }
-  
+
   &:active {
     @include interactive-state('button', 'active');
   }
-  
+
   &:disabled {
     @include interactive-state('button', 'disabled');
   }
-  
+
   @content;
 }
 
 // Maintain backward compatibility with grid-compliant-button
 @mixin grid-compliant-button($variant: 'default', $fullWidth: true) {
   @include button($variant, $fullWidth);
+
   min-height: tokens.$size-button-height;
   font-weight: 500;
   margin: 0;
@@ -647,17 +659,17 @@
   box-sizing: border-box;
   background-color: colors.$input-bg;
   border: tokens.$border-width-thin solid colors.$input-border;
-  
+
   // Variant-specific styles
   @if $variant == 'compact' {
     margin-left: auto;
     flex: 0 0 auto;
   }
-  
+
   @if $variant == 'with-preview' {
     display: flex;
     align-items: center;
-    
+
     &::before {
       content: "";
       display: block;
@@ -665,37 +677,37 @@
       height: tokens.$size-toggle-height;
       border-radius: tokens.$radius-xs;
       margin-right: tokens.$spacing-sm;
-      box-shadow: inset 0 0 0 tokens.$border-width-thin rgba(0, 0, 0, 0.2);
-      background-color: currentColor;
+      box-shadow: inset 0 0 0 tokens.$border-width-thin rgb(0 0 0 / 20%);
+      background-color: currentcolor;
     }
   }
-  
+
   // Interactive states
   &:hover {
     border-color: colors.$input-hover;
-    box-shadow: 0 0 tokens.$spacing-md 0 rgba(0, 0, 0, 0.15);
+    box-shadow: 0 0 tokens.$spacing-md 0 rgb(0 0 0 / 15%);
   }
-  
+
   &:focus {
     @include interactive-state('input', 'focus');
   }
-  
+
   // Browser-specific overrides
   &::-webkit-color-swatch-wrapper {
     padding: 0;
     border: none;
   }
-  
+
   &::-webkit-color-swatch {
     border: none;
     border-radius: tokens.$radius-xs;
   }
-  
+
   &::-moz-color-swatch {
     border: none;
     border-radius: tokens.$radius-xs;
   }
-  
+
   @content;
 }
 
@@ -733,7 +745,7 @@
   gap: tokens.$spacing-md;
   width: 100%;
   box-sizing: border-box;
-  padding: tokens.$spacing-xxs tokens.$spacing-xs; 
+  padding: tokens.$spacing-xxs tokens.$spacing-xs;
   overflow: visible;
   @content;
 }
@@ -754,28 +766,29 @@
 // Hex input for color picker
 @mixin color-picker-hex-input {
   @include grid-compliant-text-input;
+
   flex: 1 1 auto;
   min-width: 5rem;
   font-family: monospace;
   text-transform: uppercase;
   box-sizing: border-box;
   margin-right: tokens.$spacing-xs;
-  
+
   &::placeholder {
     text-transform: none;
   }
-  
+
   &:focus {
     outline: none;
     border-color: colors.$input-focus;
     box-shadow: 0 0 0.375rem 0.0625rem rgba(tokens.$color-primary, 0.5);
   }
-  
+
   &.invalid {
     border-color: colors.$form-incorrect;
     box-shadow: 0 0 0.25rem 0.0625rem rgba(tokens.$color-danger, 0.3);
   }
-  
+
   @content;
 }
 
@@ -786,7 +799,6 @@
 // Consolidated range slider mixin
 @mixin range-slider($variant: 'default') {
   // Base properties
-  -webkit-appearance: none;
   appearance: none;
   width: 100%;
   height: if($variant == 'compact', tokens.$size-range-track-height-compact, tokens.$size-range-track-height);
@@ -796,14 +808,13 @@
   margin: if($variant == 'compact', tokens.$spacing-sm, tokens.$spacing-md) 0;
   cursor: pointer;
   border: tokens.$border-width-thin solid colors.$input-border;
-  
+
   &:focus {
     @include interactive-state('input', 'focus');
   }
-  
+
   // Thumb styling
   &::-webkit-slider-thumb {
-    -webkit-appearance: none;
     appearance: none;
     width: if($variant == 'compact', tokens.$size-range-thumb-compact, tokens.$size-range-thumb);
     height: if($variant == 'compact', tokens.$size-range-thumb-compact, tokens.$size-range-thumb);
@@ -813,18 +824,18 @@
     border: tokens.$border-width-thin solid tokens.$color-primary-dark;
     box-shadow: tokens.$shadow-sm;
     transition: all tokens.$transition-quick;
-    
+
     &:hover {
       background: tokens.$color-primary-light;
       transform: scale(1.1);
     }
-    
+
     &:active {
       background: tokens.$color-primary;
       transform: scale(0.95);
     }
   }
-  
+
   &::-moz-range-thumb {
     width: if($variant == 'compact', tokens.$size-range-thumb-compact, tokens.$size-range-thumb);
     height: if($variant == 'compact', tokens.$size-range-thumb-compact, tokens.$size-range-thumb);
@@ -834,18 +845,18 @@
     border: tokens.$border-width-thin solid tokens.$color-primary-dark;
     box-shadow: tokens.$shadow-sm;
     transition: all tokens.$transition-quick;
-    
+
     &:hover {
       background: tokens.$color-primary-light;
       transform: scale(1.1);
     }
-    
+
     &:active {
       background: tokens.$color-primary;
       transform: scale(0.95);
     }
   }
-  
+
   &::-moz-range-track {
     width: 100%;
     height: if($variant == 'compact', tokens.$size-range-track-height-compact, tokens.$size-range-track-height);
@@ -853,7 +864,7 @@
     border-radius: tokens.$radius-sm;
     border: tokens.$border-width-thin solid colors.$input-border;
   }
-  
+
   @content;
 }
 
@@ -874,11 +885,11 @@
   align-items: center;
   width: 100%;
   gap: tokens.$spacing-md;
-  
+
   .base-form__range-slider {
     flex: 1;
   }
-  
+
   .base-form__range-value {
     font-family: monospace;
     font-size: tokens.$size-icon-sm;
@@ -890,7 +901,7 @@
     border-radius: tokens.$radius-sm;
     border: tokens.$border-width-thin solid colors.$input-border;
   }
-  
+
   @content;
 }
 
@@ -916,15 +927,14 @@
 
 @mixin _number-input-base {
   appearance: textfield;
-  -moz-appearance: textfield;
   height: tokens.$size-input-height;
-  
+
   &::-webkit-outer-spin-button,
   &::-webkit-inner-spin-button {
-    -webkit-appearance: none;
+    appearance: none;
     margin: 0;
   }
-  
+
   text-align: center;
   @content;
 }

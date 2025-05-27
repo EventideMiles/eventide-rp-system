@@ -169,12 +169,8 @@
   
   // Common area layouts
   &--standard-layout {
-    grid-template-areas:
-      "header header header"
-      "sidebar main aside"
-      "footer footer footer";
-    grid-template-rows: auto 1fr auto;
-    grid-template-columns: 200px 1fr 200px;
+    grid-template:
+      "header header header" auto "sidebar main aside" 1fr "footer footer footer" auto / 200px 1fr 200px;
     
     .e-grid__header { grid-area: header; }
     .e-grid__sidebar { grid-area: sidebar; }
@@ -190,11 +186,11 @@
       border: 1px solid var(--color-border-dark);
       border-radius: 0.25rem;
       padding: 1rem;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
       transition: all 0.2s ease;
       
       &:hover {
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 4px 8px rgb(0 0 0 / 15%);
         transform: translateY(-2px);
         border-color: var(--color-border-highlight);
       }
@@ -226,30 +222,31 @@
 
 // Media Query Mixins for grid adjustments
 @mixin grid-lg {
-  @media (min-width: 1200px) {
+  @media (width >= 1200px) {
     @content;
   }
 }
 
 @mixin grid-md {
-  @media (min-width: 992px) and (max-width: 1199px) {
+  @media (width >= 992px) and (width <= 1199px) {
     @content;
   }
 }
 
 @mixin grid-sm {
-  @media (min-width: 768px) and (max-width: 991px) {
+  @media (width >= 768px) and (width <= 991px) {
     @content;
   }
 }
 
 @mixin grid-xs {
-  @media (max-width: 767px) {
+  @media (width <= 767px) {
     @content;
   }
 }
 
 // Example responsive adjustments using the mixins:
+
 /*
 .custom-grid {
   @include grid-lg {

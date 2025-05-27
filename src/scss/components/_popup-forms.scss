@@ -11,13 +11,13 @@
     margin: 0.5rem 0;
     padding: 0.5rem;
     border-radius: 8px;
-    background-color: rgba(0, 0, 0, 0.05);
+    background-color: rgb(0 0 0 / 5%);
   }
 
   &__section--usage {
-    background-color: rgba(0, 105, 203, 0.2);
-    border: 1px solid rgba(0, 105, 203, 0.4);
-    box-shadow: 0 0 10px rgba(0, 105, 203, 0.2);
+    background-color: rgb(0 105 203 / 20%);
+    border: 1px solid rgb(0 105 203 / 40%);
+    box-shadow: 0 0 10px rgb(0 105 203 / 20%);
   }
 
   &__row {
@@ -57,6 +57,7 @@
 
   &__callout {
     @extend .base-form__callout;
+
     margin-top: 0.5rem;
   }
 
@@ -66,19 +67,20 @@
 
   &__header {
     @extend .protest-revolution-regular;
+
     color: colors.$c-black;
     text-align: center;
     padding: 0.875rem;
     font-size: 1.125rem;
-    margin-bottom: 0px;
-    margin-top: 0px;
+    margin-bottom: 0;
+    margin-top: 0;
     position: relative;
   }
 
   &__header--usage {
     color: #0069cb;
     font-size: 1.3rem;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    text-shadow: 1px 1px 2px rgb(0 0 0 / 50%);
   }
 
   &__main {
@@ -114,7 +116,7 @@
     padding: 0.5rem;
     white-space: normal;
     text-align: justify;
-    background-color: rgba(16, 26, 41, 0.5);
+    background-color: rgb(16 26 41 / 50%);
     border-radius: 4px;
     border-left: 3px solid #0069cb;
     line-height: 1.4;
@@ -134,7 +136,7 @@
     display: flex;
     justify-content: center;
     margin-bottom: 1rem;
-    background-color: rgba(0, 0, 0, 0.1);
+    background-color: rgb(0 0 0 / 10%);
     border-radius: 8px;
     padding: 0.5rem;
   }
@@ -143,7 +145,7 @@
     max-width: 100%;
     max-height: 150px;
     object-fit: contain;
-    border: 0px;
+    border: 0;
   }
 
   &__effects {
@@ -152,11 +154,13 @@
 
   &__effects--title {
     @extend .base-form__effects-title;
+
     margin-bottom: 3px;
   }
 
   &__group {
     @extend .base-form__group;
+
     margin: 0.5rem 0;
     gap: 0.5rem;
     flex: 1;
@@ -164,6 +168,7 @@
 
   &__label {
     @extend .base-form__label;
+
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -171,6 +176,7 @@
 
   &__button {
     @extend .base-form__button;
+
     margin-right: 0.5rem;
     margin-left: 0.5rem;
     margin-bottom: 0.5rem;

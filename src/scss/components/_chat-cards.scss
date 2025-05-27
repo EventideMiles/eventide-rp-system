@@ -7,20 +7,23 @@
 
   &__header {
     @extend .protest-revolution-regular;
+
     color: colors.$universal-white;
     text-align: center;
     padding: 0.875rem;
     font-size: 1.125rem;
-    margin-bottom: 0px;
-    margin-top: 0px;
+    margin-bottom: 0;
+    margin-top: 0;
     position: relative;
   }
+
   &__header--subheader {
     color: colors.$universal-white;
     align-items: center;
     justify-content: center;
     font-size: 0.7rem;
   }
+
   &__header--image {
     display: flex;
     flex-direction: column;
@@ -36,23 +39,31 @@
   &__header--initiative { background-color: colors.$initiative; }
   &__header--initiative-npc { background-color: colors.$initiative-npc; }
   &__header--initiative-pc { background-color: colors.$initiative-pc; }
+
   &__header--critical-hit { 
     background-color: colors.$critical-hit;
+
     // font-size: 1.125rem;
     width: 100%;
   }
+
   &__header--critical-miss { 
     background-color: colors.$critical-miss;
+
     // font-size: 1.125rem;
     width: 100%;
   }
+
   &__header--stolen-crit { 
     background-color: colors.$stolen-crit;
+
     // font-size: 1.125rem;
     width: 100%;
   }
+
   &__header--saved-miss { 
     background-color: colors.$saved-miss;
+
     // font-size: 1.125rem;
     width: 100%;
   }
@@ -69,18 +80,21 @@
 
   &__description {
     @extend .underdog-regular;
+
     color: colors.$universal-tan;
     text-align: justify;
     font-size: 0.9rem;
     padding: 0.5rem;
     margin-bottom: 0.5rem;
-    border-radius: 0px 0px 5px 5px;
+    border-radius: 0 0 5px 5px;
   }
+
   &__description--header {
     text-align: justify;
     font-size: 1.2rem;
     color: colors.$universal-tan;
   }
+
   &__description--header-center-underline {
     text-align: center;
     font-size: 1.2rem;
@@ -96,6 +110,7 @@
     margin-bottom: 0.5rem;
     width: 100%;
   }
+
   &__initiative--result,
   &__combat-roll--result {
     display: flex;
@@ -113,7 +128,7 @@
     font-family: typography.$font-decorative;
   }
   &__value--initiative { color: colors.$initiative; }
-  &__value--power { color: #666666; }
+  &__value--power { color: #666; }
   &__value--acro { color: colors.$acro; }
   &__value--phys { color: colors.$phys; }
   &__value--fort { color: colors.$fort; }
@@ -130,10 +145,10 @@
     font-family: var(--font-monospace);
     font-size: 0.9rem;
     color: colors.$universal-white;
-    background: rgba(50, 50, 50, 0.9);
+    background: rgb(50 50 50 / 90%);
     padding: 0.25rem 0.5rem;
     border-radius: 3px;
-    margin: 0 3px 2px 3px;
+    margin: 0 3px 2px;
     width: calc(100%);
     cursor: pointer;
   }
@@ -146,7 +161,7 @@
     width: calc(100% - 6px);
     margin: 0 3px;
     padding: 0.5rem;
-    background-color: rgba(0, 0, 0, 0.05);
+    background-color: rgb(0 0 0 / 5%);
     border-radius: 3px;
     font-family: var(--font-monospace);
     font-size: 0.8rem;
@@ -155,10 +170,12 @@
   &__roll-term {
     margin-bottom: 0.25rem;
   }
+
   &__roll-term-formula {
     font-weight: bold;
     margin-right: 0.5rem;
   }
+
   &__roll-term-results {
     display: flex;
     flex-wrap: wrap;
@@ -169,8 +186,9 @@
     display: inline-block;
     padding: 0.125rem 0.25rem;
     border-radius: 3px;
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: rgb(255 255 255 / 20%);
   }
+
   &__die-result--discarded {
     text-decoration: line-through;
     opacity: 0.6;
@@ -178,9 +196,11 @@
 
   &__effects {
     @extend .base-form__effects;
+
     color: colors.$universal-tan;
     background-color: colors.$universal-white;
   }
+
   &__effects--ac-check {
     border: 3px dashed colors.$hidden-border;
     border-radius: 5px;
@@ -189,45 +209,55 @@
     margin: 0 3px;
     margin-top: 5px;
   }
+
   &__effects--title {
     @extend .base-form__effects-title;
   }
+
   &__effects--hit {
     background-color: colors.$hit;
     color: white;
     text-align: center;
     padding: 0.0875rem;
     font-size: 0.7rem;
-    margin-bottom: 0px;
+    margin-bottom: 0;
     border-radius: 5px;
     border: 1px solid colors.$universal-white;
   }
+
   &__effects--miss {
     background-color: colors.$miss;
     color: white;
     text-align: center;
     padding: 0.0875rem;
     font-size: 0.7rem;
-    margin-bottom: 0px;
+    margin-bottom: 0;
     border-radius: 5px;
     border: 1px solid colors.$universal-white;
   }
+
   &__effects--name {
     @extend .base-form__effects-name;
+
     color: colors.$universal-black;
   }
+
   &__effects-row {
     @extend .base-form__effects-row;
   }
+
   &__effects-row-cell {
     @extend .base-form__effects-row-cell;
   }
+
   &__effects-row-cell--first {
     @extend .base-form__effects-row-cell--first;
   }
+
   &__effects-row-cell--last {
     @extend .base-form__effects-row-cell--last;
   }
+
   &__effects-row-cell--middle {
     @extend .base-form__effects-row-cell--middle;
   }
@@ -235,12 +265,13 @@
   &__image--primary {
     width: 150px;
     height: 150px;
-    border: 0px;
+    border: 0;
   }
+
   &__image--secondary {
     width: 13px;
     height: 13px;
-    border: 0px;
+    border: 0;
     background-color: colors.$secondary-image-background;
     display: inline;
   }
@@ -254,6 +285,7 @@
   // For toggle icon
   &__formula-toggle-icon {
     transition: transform 0.2s ease;
+
     &.active {
       transform: rotate(180deg);
     }

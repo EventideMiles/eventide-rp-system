@@ -10,20 +10,20 @@
 // =============================================================================
 * {
   // Base colors (pure colors)
-  --erps-white: #ffffff;
-  --erps-black: #000000;
+  --erps-white: #fff;
+  --erps-black: #000;
   --erps-neutral-gray: #4d4d4d;
 
   // Effects
-  --erps-white-text-glow: rgba(162, 162, 162, 0.75);
-  --erps-secondary-image-bg: rgba(0, 0, 0, 0.85);
+  --erps-white-text-glow: rgb(162 162 162 / 75%);
+  --erps-secondary-image-bg: rgb(0 0 0 / 85%);
 
   // UI components
-  --erps-scrollbar-color: #0044aa;
+  --erps-scrollbar-color: #04a;
   --erps-scrollbar-bg: #45454530;
-  --erps-tab-active-bg: rgba(0, 68, 170, 0.8);
-  --erps-label-required: #ffffff;
-  --erps-description-hr: #777777;
+  --erps-tab-active-bg: rgb(0 68 170 / 80%);
+  --erps-label-required: #fff;
+  --erps-description-hr: #777;
 
   // Critical states
   --erps-critical-hit: #2D1499b3;
@@ -32,28 +32,28 @@
   --erps-stolen-crit: #563C5Cb3;
 
   // Ability colors
-  --erps-abilities-acro: rgb(191, 68, 0);
-  --erps-abilities-phys: rgb(168, 3, 3);
-  --erps-abilities-fort: rgb(45, 104, 45);
-  --erps-abilities-will: rgb(106, 27, 154);
-  --erps-abilities-wits: rgb(14, 67, 128);
-  --erps-abilities-acro-transparent: rgba(191, 68, 0, 0.5);
-  --erps-abilities-phys-transparent: rgba(168, 3, 3, 0.5);
-  --erps-abilities-fort-transparent: rgba(45, 104, 45, 0.5);
-  --erps-abilities-will-transparent: rgba(106, 27, 154, 0.5);
-  --erps-abilities-wits-transparent: rgba(14, 67, 128, 0.5);
+  --erps-abilities-acro: rgb(191 68 0);
+  --erps-abilities-phys: rgb(168 3 3);
+  --erps-abilities-fort: rgb(45 104 45);
+  --erps-abilities-will: rgb(106 27 154);
+  --erps-abilities-wits: rgb(14 67 128);
+  --erps-abilities-acro-transparent: rgb(191 68 0 / 50%);
+  --erps-abilities-phys-transparent: rgb(168 3 3 / 50%);
+  --erps-abilities-fort-transparent: rgb(45 104 45 / 50%);
+  --erps-abilities-will-transparent: rgb(106 27 154 / 50%);
+  --erps-abilities-wits-transparent: rgb(14 67 128 / 50%);
 
   // Formula backgrounds
-  --erps-formula-bg-acro: rgba(191, 68, 0, 0.85);
-  --erps-formula-bg-phys: rgba(168, 3, 3, 0.85);
-  --erps-formula-bg-fort: rgba(45, 104, 45, 0.85);
-  --erps-formula-bg-will: rgba(106, 27, 154, 0.85);
-  --erps-formula-bg-wits: rgba(14, 67, 128, 0.85);
-  --erps-formula-bg-gear: rgba(139, 69, 19, 0.85);
-  --erps-formula-bg-damage: rgba(106, 4, 4, 0.85);
-  --erps-formula-bg-heal: rgba(203, 142, 0, 0.85);
-  --erps-formula-bg-unknown: rgba(83, 83, 83, 0.85);
-  --erps-formula-bg-initiative: rgba(52, 152, 219, 0.85);
+  --erps-formula-bg-acro: rgb(191 68 0 / 85%);
+  --erps-formula-bg-phys: rgb(168 3 3 / 85%);
+  --erps-formula-bg-fort: rgb(45 104 45 / 85%);
+  --erps-formula-bg-will: rgb(106 27 154 / 85%);
+  --erps-formula-bg-wits: rgb(14 67 128 / 85%);
+  --erps-formula-bg-gear: rgb(139 69 19 / 85%);
+  --erps-formula-bg-damage: rgb(106 4 4 / 85%);
+  --erps-formula-bg-heal: rgb(203 142 0 / 85%);
+  --erps-formula-bg-unknown: rgb(83 83 83 / 85%);
+  --erps-formula-bg-initiative: rgb(52 152 219 / 85%);
 
   // Card headers
   --erps-card-header-gear: #8B4513;
@@ -61,15 +61,15 @@
   --erps-card-header-damage: #6A0404;
   --erps-card-header-heal: #cb8e00;
   --erps-card-header-effect: #9A5D2D;
-  --erps-card-header-delete: #555555;
+  --erps-card-header-delete: #555;
   --erps-card-header-transfer: #9B4B7D;
-  --erps-card-header-transformation: linear-gradient(270deg, #005716, #0066cc);
-  --erps-card-header-transformation-remove: linear-gradient(270deg, #0066cc, #005716);
+  --erps-card-header-transformation: linear-gradient(270deg, #005716, #06c);
+  --erps-card-header-transformation-remove: linear-gradient(270deg, #06c, #005716);
 
   // Transformation states
   --erps-transformation-locked: #8A4FFF;
-  --erps-transformation-locked-bg: rgba(138, 79, 255, 0.15);
-  --erps-transformation-locked-border: rgba(138, 79, 255, 0.4);
+  --erps-transformation-locked-bg: rgb(138 79 255 / 15%);
+  --erps-transformation-locked-border: rgb(138 79 255 / 40%);
 
   // Initiative
   --erps-card-header-initiative: #3498db;
@@ -80,7 +80,7 @@
   --erps-chat-details-hit: #50C877;
   --erps-chat-details-miss: #C70039;
   --erps-chat-details-crit-fail: #FFC107;
-  --erps-chat-hr: #444444;
+  --erps-chat-hr: #444;
 
   // Section states
   --erps-hidden-bg: #f7e8ea;
@@ -89,19 +89,19 @@
   // Validation & status
   --erps-selected: #1a365d;
   --erps-incorrect: #570000;
-  --erps-required: #cc0000;
+  --erps-required: #c00;
   --erps-cursed: #781990;
   --erps-highlight: #4d94ff;
 
   // Button states (consistently used in both themes)
   --erps-play-button-bg: #4CAF50;
-  --erps-play-button-text: #ffffff;
+  --erps-play-button-text: #fff;
   --erps-reset-button-bg: #f44336;
-  --erps-reset-button-text: #ffffff;
+  --erps-reset-button-text: #fff;
   --erps-play-all-button-bg: #2196F3;
-  --erps-play-all-button-text: #ffffff;
+  --erps-play-all-button-text: #fff;
   --erps-browse-button-bg: #607D8B;
-  --erps-browse-button-text: #ffffff;
+  --erps-browse-button-text: #fff;
 }
 
 // =============================================================================
@@ -113,40 +113,40 @@
   --erps-c-faint: #a8a69b;
   --erps-c-beige: #b5b3a4;
   --erps-c-tan: #4d4d4d;
-  --erps-c-white: #ffffff;
-  --erps-c-black: #000000;
+  --erps-c-white: #fff;
+  --erps-c-black: #000;
   --erps-c-groove: #f0efe6;
 
   // Form inputs
-  --erps-input-bg: #ffffff;
+  --erps-input-bg: #fff;
   --erps-input-hover: #f0f0f0;
   --erps-input-border: #d0d0d0;
   --erps-input-text: #191813;
-  --erps-input-placeholder: #666666;
+  --erps-input-placeholder: #666;
   --erps-input-focus: #4d94ff;
-  --erps-image-edit-border: rgba(24, 24, 24, 0.65);
+  --erps-image-edit-border: rgb(24 24 24 / 65%);
   --erps-label-text: #191813;
   --erps-form-content-bg: #7c7777;
   --erps-disabled: #e6e6e6;
 
   // Select elements
   --erps-select-arrow-url: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath fill='%23191813' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
-  --erps-select-option-bg: #ffffff;
+  --erps-select-option-bg: #fff;
   --erps-select-option-text: #191813;
   --erps-select-option-hover: #f0f0f0;
 
   // Standard buttons
-  --erps-button-bg: #ffffff;
+  --erps-button-bg: #fff;
   --erps-button-text: #191813;
   --erps-button-border: #d0d0d0;
   --erps-button-hover: #e8f0ff;
   --erps-button-active: #d6e4ff;
-  --erps-button-glow: rgba(255, 255, 255, 0.75);
+  --erps-button-glow: rgb(255 255 255 / 75%);
 
   // Primary buttons
   --erps-primary-button-hover: #4d94ff;
   --erps-primary-button-active: #2979ff;
-  --erps-primary-button-glow: rgba(77, 148, 255, 0.75);
+  --erps-primary-button-glow: rgb(77 148 255 / 75%);
 }
 
 // =============================================================================
@@ -158,42 +158,42 @@
   --erps-c-faint: #2a2925;
   --erps-c-beige: #4d4d4d;
   --erps-c-tan: #c9c7b8;
-  --erps-c-white: #000000;
-  --erps-c-black: #ffffff;
+  --erps-c-white: #000;
+  --erps-c-black: #fff;
   --erps-c-groove: #1a1922;
 
   // Form inputs
   --erps-input-bg: #1e2430;
   --erps-input-hover: #2a3441;
   --erps-input-border: #3d4655;
-  --erps-input-text: #ffffff;
-  --erps-input-placeholder: #999999;
+  --erps-input-text: #fff;
+  --erps-input-placeholder: #999;
   --erps-input-focus: #4d94ff;
-  --erps-image-edit-border: rgba(153, 153, 153, 0.65);
-  --erps-label-text: #ffffff;
+  --erps-image-edit-border: rgb(153 153 153 / 65%);
+  --erps-label-text: #fff;
   --erps-form-content-bg: #1e2430;
 
   // Select elements
   --erps-select-arrow-url: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24'%3E%3Cpath fill='%23ffffff' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
   --erps-select-option-bg: #1e2430;
-  --erps-select-option-text: #ffffff;
+  --erps-select-option-text: #fff;
   --erps-select-option-hover: #2a3441;
 
   // Standard buttons
-  --erps-button-bg: #000000;
-  --erps-button-text: #ffffff;
-  --erps-button-border: #333333;
+  --erps-button-bg: #000;
+  --erps-button-text: #fff;
+  --erps-button-border: #333;
   --erps-button-hover: #1a365d;
   --erps-button-active: #0d1b2e;
-  --erps-button-glow: rgba(255, 255, 255, 0.75);
+  --erps-button-glow: rgb(255 255 255 / 75%);
 
   // Primary buttons
   --erps-primary-button-hover: #1a365d;
   --erps-primary-button-active: #0d1b2e;
-  --erps-primary-button-glow: rgba(77, 148, 255, 0.75);
+  --erps-primary-button-glow: rgb(77 148 255 / 75%);
 
   // Additional dark theme specific colors
-  --erps-disabled: #333333;
+  --erps-disabled: #333;
 }
 
 // =============================================================================
@@ -238,7 +238,6 @@ $button-border: var(--erps-button-border);
 $button-hover: var(--erps-button-hover);
 $button-active: var(--erps-button-active);
 $button-glow: var(--erps-button-glow);
-
 $primary-button-hover: var(--erps-primary-button-hover);
 $primary-button-active: var(--erps-primary-button-active);
 $primary-button-glow: var(--erps-primary-button-glow);
@@ -273,7 +272,6 @@ $phys: var(--erps-abilities-phys);
 $fort: var(--erps-abilities-fort);
 $will: var(--erps-abilities-will);
 $wits: var(--erps-abilities-wits);
-
 $acro-transparent: var(--erps-abilities-acro-transparent);
 $phys-transparent: var(--erps-abilities-phys-transparent);
 $fort-transparent: var(--erps-abilities-fort-transparent);

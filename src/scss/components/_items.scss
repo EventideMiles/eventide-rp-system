@@ -6,6 +6,7 @@
 
 .items-panel__section-header {
   @include mixins.grid-compliant-section-header;
+
   text-align: center;
   margin-bottom: 0;
 }
@@ -16,7 +17,7 @@
   margin: 2px 0;
   padding: 0;
   align-items: center;
-  background: rgba(0, 0, 0, 0.05);
+  background: rgb(0 0 0 / 5%);
   border: variables.$border-groove;
   font-weight: bold;
 
@@ -104,6 +105,7 @@
   margin-bottom: 2px;
   text-shadow: 0 1px 3px colors.$white-text-glow;
   font-size: 1rem;
+
   @include typography.amatic-sc-bold;
 }
 
@@ -203,6 +205,7 @@
 // Individual Item
 .items-panel__list-item {
   align-items: center;
+
   &:last-child {
     border-bottom: none;
   }
@@ -241,7 +244,7 @@
   margin: 2px 0;
   padding: 0;
   align-items: center;
-  background: rgba(0, 0, 0, 0.05);
+  background: rgb(0 0 0 / 5%);
   border: variables.$border-groove;
   font-weight: bold;
 
@@ -264,6 +267,7 @@
 
   &__header {
     @include mixins.grid-compliant-section-header;
+
     border-bottom: 1px solid colors.$c-faint;
     margin-bottom: 0.5rem;
     padding-bottom: 0.25rem;
@@ -317,7 +321,7 @@
   }
 
   &__drop-zone {
-    background-color: rgba(0, 0, 0, 0.05);
+    background-color: rgb(0 0 0 / 5%);
     border: 2px dashed colors.$c-faint;
     border-radius: 5px;
     margin-top: 0.5rem;

@@ -10,19 +10,15 @@
 $color-primary: #4d94ff;
 $color-primary-dark: #3a84e8;
 $color-primary-light: #7fb1ff;
-
 $color-success: #50C877;
 $color-danger: #C70039;
 $color-warning: #FFC107;
 $color-info: #3498db;
-
 $color-text-dark: #191813;
-$color-text-light: #ffffff;
-
+$color-text-light: #fff;
 $color-border-light: #d0d0d0;
 $color-border-dark: #3d4655;
-
-$color-input-bg-light: #ffffff;
+$color-input-bg-light: #fff;
 $color-input-bg-dark: #1e2430;
 
 // SPACING
@@ -62,13 +58,12 @@ $radius-round: 10000px;       // Fully rounded (for pills, circles)
 
 // SHADOWS & ELEVATIONS
 // -----------------------------------------------------------------------------
-$shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-$shadow-md: 0 2px 4px rgba(0, 0, 0, 0.1);
-$shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.15);
-$shadow-xl: 0 8px 16px rgba(0, 0, 0, 0.2);
-
-$shadow-inner-sm: inset 0 1px 2px rgba(0, 0, 0, 0.05);
-$shadow-inner-md: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+$shadow-sm: 0 1px 2px rgb(0 0 0 / 5%);
+$shadow-md: 0 2px 4px rgb(0 0 0 / 10%);
+$shadow-lg: 0 4px 8px rgb(0 0 0 / 15%);
+$shadow-xl: 0 8px 16px rgb(0 0 0 / 20%);
+$shadow-inner-sm: inset 0 1px 2px rgb(0 0 0 / 5%);
+$shadow-inner-md: inset 0 2px 4px rgb(0 0 0 / 10%);
 
 // Input focus shadow (customizable per theme)
 @function focus-shadow($color) {
@@ -84,9 +79,11 @@ $transition-slow: 0.5s ease-in-out;
 // Function to generate transition for multiple properties
 @function create-transition($properties, $duration: $transition-base) {
   $result: ();
+
   @each $property in $properties {
     $result: append($result, $property $duration, comma);
   }
+
   @return $result;
 }
 
@@ -96,11 +93,9 @@ $transition-slow: 0.5s ease-in-out;
 $line-height-tight: 1.2;
 $line-height-base: 1.5;
 $line-height-loose: 1.8;
-
 $letter-spacing-tight: -0.01em;
 $letter-spacing-base: 0;
 $letter-spacing-loose: 0.01em;
-
 $font-weight-light: 300;
 $font-weight-regular: 400;
 $font-weight-medium: 500;

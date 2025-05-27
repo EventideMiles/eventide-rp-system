@@ -11,7 +11,7 @@
   margin: 2px 0;
   padding: 0;
   align-items: center;
-  background: rgba(0, 0, 0, 0.05);
+  background: rgb(0 0 0 / 5%);
   border: variables.$border-groove;
   font-weight: bold;
 
@@ -25,6 +25,7 @@
     padding-left: 5px;
     text-align: left;
     display: flex;
+
     // font-size: 16px;
   }
 }
@@ -114,7 +115,7 @@
     margin: 2px 0;
     padding: 0;
     align-items: center;
-    background: rgba(0, 0, 0, 0.05);
+    background: rgb(0 0 0 / 5%);
     border: variables.$border-groove;
     font-weight: bold;
 
@@ -126,6 +127,7 @@
     .effect-name {
       padding-left: 5px;
       text-align: left;
+
       // font-size: 16px;
     }
   }
@@ -138,7 +140,6 @@
 }
 
 .effects .item {
-
   .effect-source,
   .effect-duration,
   .effect-controls {
@@ -170,7 +171,7 @@
     justify-content: flex-end;
     margin-bottom: 0.5rem;
     padding: 0.5rem;
-    background-color: rgba(0, 0, 0, 0.05);
+    background-color: rgb(0 0 0 / 5%);
     border: 1px solid #dbd9c9;
     border-radius: 3px;
   }
@@ -195,10 +196,10 @@
       grid-template-columns: 1.5fr 1.5fr 1fr 0.5fr;
       gap: 0.5rem;
       padding: 0.25rem 0;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      border-bottom: 1px solid rgb(0 0 0 / 5%);
       
       &--hidden {
-        background-color: rgba(0, 0, 0, 0.03);
+        background-color: rgb(0 0 0 / 3%);
       }
       
       &:last-child {
@@ -219,11 +220,10 @@
         background-color: colors.$input-bg !important;
         border: none;
         box-shadow: 
-          0 0 0 1px rgba(0, 0, 0, 0.8),
-          inset 0 1px 3px rgba(0, 0, 0, 0.6);
+          0 0 0 1px rgb(0 0 0 / 80%),
+          inset 0 1px 3px rgb(0 0 0 / 60%);
         border-radius: 5px;
         appearance: none;
-        -webkit-appearance: none;
       }
       
       // Keep base styling for standard inputs
@@ -236,11 +236,10 @@
         background-color: colors.$input-bg !important;
         border: none;
         box-shadow: 
-          0 0 0 1px rgba(0, 0, 0, 0.8),
-          inset 0 1px 3px rgba(0, 0, 0, 0.6);
+          0 0 0 1px rgb(0 0 0 / 80%),
+          inset 0 1px 3px rgb(0 0 0 / 60%);
         border-radius: 5px;
         appearance: none;
-        -webkit-appearance: none;
       }
       
       // Style for number input wrapper
@@ -267,7 +266,7 @@
         
         &:hover {
           background-color: colors.$button-hover !important;
-          color: #ff4444 !important;
+          color: #f44 !important;
         }
       }
     }
@@ -304,8 +303,8 @@
   
   // Effect toggle
   &__effect-toggle {
-    display: flex;
     width: fit-content;
+
     // width: max-content;
     margin: 0 auto;
     margin-top: 0.5rem;
@@ -317,7 +316,7 @@
     cursor: pointer;
     white-space: nowrap;
     background-color: #373737;
-    color: #ffffff;
+    color: #fff;
     border-radius: 10px;
     border: 1px inset colors.$c-dark;
     
@@ -351,6 +350,7 @@
       
       &:checked + .eventide-item-sheet__effect-toggle-label {
         font-weight: bold;
+
         // color: #ffffff;
         // background-color: #007bff;
       }
@@ -390,7 +390,7 @@
   
   &__add-effect {
     background: #007bff;
-    color: #ffffff;
+    color: #fff;
     border: none;
     border-radius: 3px;
     padding: 0.25rem 0.5rem;
@@ -409,7 +409,7 @@
     border: 1px solid #dbd9c9;
     border-radius: 3px;
     padding: 0.5rem;
-    background-color: rgba(0, 0, 0, 0.02);
+    background-color: rgb(0 0 0 / 2%);
     
     &-header {
       font-weight: bold;
@@ -445,12 +445,12 @@
     padding: 0.25rem;
     border: 1px solid #dbd9c9;
     border-radius: 3px;
-    background: #ffffff;
+    background: #fff;
     
     &:focus {
       outline: none;
       border-color: #007bff;
-      box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 0 5px rgb(0 0 0 / 10%);
     }
   }
   
@@ -476,8 +476,8 @@
     background-color: colors.$input-bg !important;
     border: none;
     box-shadow: 
-      0 0 0 1px rgba(0, 0, 0, 0.8),
-      inset 0 1px 3px rgba(0, 0, 0, 0.6);
+      0 0 0 1px rgb(0 0 0 / 80%),
+      inset 0 1px 3px rgb(0 0 0 / 60%);
     border-radius: 5px;
     padding: 0.5rem;
     
@@ -485,14 +485,14 @@
       outline: none;
       border-color: colors.$input-focus;
       box-shadow: 
-        0 0 0 1px rgba(255, 255, 255, 0.1),
-        inset 0 1px 3px rgba(0, 0, 0, 0.7);
+        0 0 0 1px rgb(255 255 255 / 10%),
+        inset 0 1px 3px rgb(0 0 0 / 70%);
     }
   }
 }
 
 // Responsive adjustments for smaller screens
-@media (max-width: 768px) {
+@media (width <= 768px) {
   .eventide-item-sheet {
     &__effects-grid {
       &-header, &-row {
