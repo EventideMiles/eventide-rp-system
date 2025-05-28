@@ -1,6 +1,7 @@
 @use "../utils/colors";
 @use "../utils/mixins";
 @use "../utils/typography";
+@use "../utils/themes";
 
 // ⚠️  DEPRECATED: This file is being phased out in favor of _erps-data-tables.scss
 // ===============================================================================
@@ -156,6 +157,24 @@
   &__cell {
     padding: 0.5rem 1rem;
     vertical-align: middle;
+
+    // Image styling for consistency with ERPS data tables
+    img {
+      width: 24px;
+      height: 24px;
+      border-radius: 4px;
+      border: 1px solid rgb(255 255 255 / 20%);
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+
+      // Apply themed image backgrounds for all themes
+      @include themes.apply-all-data-table-image-backgrounds('theme');
+
+      &:hover {
+        border-color: rgb(255 255 255 / 40%);
+        box-shadow: 0 0 6px rgb(255 255 255 / 30%);
+      }
+    }
 
     // Alignment variants
     &--right {
@@ -362,6 +381,25 @@
     // Hover effect needs to be applied to cells when using display:contents for rows
     .data-grid--hoverable &:hover {
       background-color: rgb(41 121 255 / 15%);
+    }
+
+    // Image styling for consistency with ERPS data tables
+    img {
+      width: 24px;
+      height: 24px;
+      border-radius: 4px;
+      border: 1px solid rgb(255 255 255 / 20%);
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+      margin-right: 0.5rem;
+
+      // Apply themed image backgrounds for all themes
+      @include themes.apply-all-data-table-image-backgrounds('theme');
+
+      &:hover {
+        border-color: rgb(255 255 255 / 40%);
+        box-shadow: 0 0 6px rgb(255 255 255 / 30%);
+      }
     }
 
     // Alignment variants

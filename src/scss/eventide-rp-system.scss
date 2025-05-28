@@ -28,6 +28,7 @@
 // New components
 @use 'components/sheet/erps-data-tables';
 @use 'components/sheet/erps-tabs';
+@use 'components/sheet/erps-status-cards';
 
 // Import Google Fonts after ALL @use statements to avoid CSS parsing errors
 @import 'https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap';

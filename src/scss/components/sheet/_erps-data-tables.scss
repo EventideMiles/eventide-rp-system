@@ -727,6 +727,9 @@ $erps-table-border-radius-bottom-only: 0 0 $erps-table-border-radius $erps-table
       transition: all $erps-table-transition-duration ease !important;
       flex-shrink: 0 !important;
 
+      // Apply themed image backgrounds for all themes
+      @include themes.apply-all-data-table-image-backgrounds('table-theme');
+
       &:hover {
         border-color: var(--theme-light) !important;
         box-shadow: 0 0 8px var(--theme-glow) !important;

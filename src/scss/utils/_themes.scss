@@ -5,6 +5,125 @@
 // Each theme includes both CSS variables (for runtime switching) and SCSS variables (for compile-time usage)
 
 @use "sass:map";
+@use "sass:math";
+@use "sass:list";
+@use "sass:meta";
+
+// ===================================
+// MODERN FUNCTIONAL COLOR SYSTEM
+// ===================================
+// New system for dynamic color generation with any opacity value
+
+// Core color definitions - RGB values without opacity (source of truth)
+$color-definitions: (
+  // Primary theme colors
+  blue: (59, 130, 246),
+  blue-dark: (30, 58, 138),
+  green: (34, 197, 94),
+  green-dark: (21, 128, 61),
+  red: (239, 68, 68),
+  red-dark: (185, 28, 28),
+  red-danger: (220, 53, 69),
+  orange: (217, 119, 6),
+  orange-dark: (180, 83, 9),
+  purple: (138, 43, 226),
+  purple-dark: (75, 0, 130),
+  purple-theme: (147, 51, 234),
+  yellow: (255, 193, 7),
+  yellow-dark: (184, 134, 11),
+
+  // Status colors for status cards
+  success: (34, 197, 94),
+  warning: (255, 193, 7),
+  danger: (220, 53, 69),
+  info: (59, 130, 246),
+
+  // Neutral colors
+  gray: (100, 100, 100),
+  gray-light: (160, 160, 160),
+  gray-dark: (80, 80, 80),
+  white: (255, 255, 255),
+  black: (0, 0, 0),
+
+  // Special effect colors for status cards
+  cursed: (138, 43, 226),
+  cursed-dark: (75, 0, 130),
+  cursed-deadly: (139, 0, 0),
+  transformation: (77, 148, 255),
+  health-critical: (220, 53, 69),
+  health-wounded: (255, 193, 7),
+  effects-beneficial: (40, 167, 69),
+  effects-harmful: (220, 53, 69)
+);
+
+// Generate RGB color with any opacity (0-100 for numeric, or string keys for legacy)
+@function color($color-name, $opacity: 100) {
+  // If opacity is a string (like "dark-80"), use the legacy system
+  @if meta.type-of($opacity) == string {
+    @return get-semantic-color($color-name, $opacity);
+  }
+
+  // Otherwise, use the new numeric system
+  $rgb-values: map.get($color-definitions, $color-name);
+
+  @if not $rgb-values {
+    @warn "Unknown color: #{$color-name}. Available colors: #{map.keys($color-definitions)}";
+
+    $rgb-values: map.get($color-definitions, blue); // Fallback to blue
+  }
+
+  $r: list.nth($rgb-values, 1);
+  $g: list.nth($rgb-values, 2);
+  $b: list.nth($rgb-values, 3);
+  $alpha: $opacity * 0.01; // Convert percentage to decimal (0-1)
+
+  @return rgba($r, $g, $b, $alpha);
+}
+
+// Specialized function for status cards with semantic naming
+@function status-color($type, $variant: "base", $opacity: 100) {
+  $color-map: (
+    transformation: (
+      base: transformation,
+      cursed: cursed,
+      locked: gray
+    ),
+    health: (
+      base: health-critical,
+      critical: health-critical,
+      wounded: health-wounded,
+      healthy: success
+    ),
+    effects: (
+      base: warning,
+      beneficial: effects-beneficial,
+      harmful: effects-harmful,
+      neutral: info
+    ),
+    cursed: (
+      base: cursed,
+      warning: cursed,
+      deadly: cursed-deadly,
+      dangerous: purple-dark
+    )
+  );
+  $type-colors: map.get($color-map, $type);
+
+  @if not $type-colors {
+    @warn "Unknown status type: #{$type}. Available types: #{map.keys($color-map)}";
+    @return color(blue, $opacity);
+  }
+
+  $color-name: map.get($type-colors, $variant);
+
+  @if not $color-name {
+    @warn "Unknown variant '#{$variant}' for status type '#{$type}'. Available variants: #{map.keys($type-colors)}";
+
+    $color-name: map.get($type-colors, base);
+  }
+
+  @return color($color-name, $opacity);
+}
 
 // ===================================
 // THEME MIXIN SYSTEM
@@ -211,6 +330,11 @@ $green-color-dark-90: rgb(21 128 61 / 90%);
 $red-color-light: rgb(239 68 68);
 $red-color-dark: rgb(185 28 28);
 $red-color-danger: rgb(220 53 69);
+$red-color-dark-15: rgb(185 28 28 / 15%);
+$red-color-dark-20: rgb(185 28 28 / 20%);
+$red-color-dark-40: rgb(185 28 28 / 40%);
+$red-color-dark-50: rgb(185 28 28 / 50%);
+$red-color-dark-70: rgb(185 28 28 / 70%);
 $red-color-8: rgb(239 68 68 / 8%);
 $red-color-15: rgb(239 68 68 / 15%);
 $red-color-20: rgb(239 68 68 / 20%);
@@ -243,6 +367,26 @@ $orange-color-80: rgb(217 119 6 / 80%);
 $orange-color-90: rgb(217 119 6 / 90%);
 $orange-color-dark-80: rgb(180 83 9 / 80%);
 $orange-color-dark-90: rgb(180 83 9 / 90%);
+
+// ===================================
+// YELLOW THEME EXTENDED PALETTE
+// ===================================
+$yellow-color-light: rgb(255 193 7);
+$yellow-color-dark: rgb(184 134 11);
+$yellow-color-8: rgb(255 193 7 / 8%);
+$yellow-color-15: rgb(255 193 7 / 15%);
+$yellow-color-20: rgb(255 193 7 / 20%);
+$yellow-color-25: rgb(255 193 7 / 25%);
+$yellow-color-30: rgb(184 134 11 / 30%);
+$yellow-color-40: rgb(255 193 7 / 40%);
+$yellow-color-60: rgb(255 193 7 / 60%);
+$yellow-color-70: rgb(255 193 7 / 70%);
+$yellow-color-80: rgb(255 193 7 / 80%);
+$yellow-color-90: rgb(255 193 7 / 90%);
+$yellow-color-dark-80: rgb(184 134 11 / 80%);
+$yellow-color-dark-90: rgb(184 134 11 / 90%);
+$yellow-color-light-40: rgb(255 193 7 / 40%);
+$yellow-color-light-70: rgb(255 193 7 / 70%);
 
 // ===================================
 // GRAY THEME EXTENDED PALETTE
@@ -332,6 +476,11 @@ $color-palettes: (
     70: $red-color-70,
     80: $red-color-80,
     90: $red-color-90,
+    dark-15: $red-color-dark-15,
+    dark-20: $red-color-dark-20,
+    dark-40: $red-color-dark-40,
+    dark-50: $red-color-dark-50,
+    dark-70: $red-color-dark-70,
     dark-80: $red-color-dark-80,
     dark-90: $red-color-dark-90,
     danger-60: $red-color-danger-60,
@@ -352,164 +501,22 @@ $color-palettes: (
     dark-80: $orange-color-dark-80,
     dark-90: $orange-color-dark-90
   ),
-  gray: (
-    base: $gray-color-neutral,
-    8: $gray-color-8,
-    10: $gray-color-10,
-    15: $gray-color-15,
-    20: $gray-color-20,
-    25: $gray-color-25,
-    30: $gray-color-30,
-    40: $gray-color-40,
-    60: $gray-color-60,
-    70: $gray-color-70,
-    80: $gray-color-80,
-    90: $gray-color-90
-  ),
-  purple: (
-    base: $purple-color-light,
-    8: $purple-color-8,
-    15: $purple-color-15,
-    20: $purple-color-20,
-    25: $purple-color-25,
-    30: $purple-color-30,
-    40: $purple-color-40,
-    60: $purple-color-60,
-    70: $purple-color-70,
-    80: $purple-color-80,
-    90: $purple-color-90,
-    dark-30: $purple-color-dark-30,
-    dark-40: $purple-color-dark-40,
-    dark-60: $purple-color-dark-60,
-    dark-80: $purple-color-dark-80,
-    dark-90: $purple-color-dark-90
-  )
-);
-$universal-colors: (
-  white: (
-    5: $theme-white-5,
-    10: $theme-white-10,
-    20: $theme-white-20
-  ),
-  black: (
-    30: $theme-black-30,
-    80: $theme-black-80
-  )
-);
-
-// Modern map-based color functions
-@function get-semantic-color($color-name, $opacity: base) {
-  $palette: map.get($color-palettes, $color-name);
-
-  @if not $palette {
-    @warn "Unknown semantic color: #{$color-name}. Available colors: #{map.keys($color-palettes)}";
-    @return map.get(map.get($color-palettes, blue), base);
-  }
-
-  $color: map.get($palette, $opacity);
-
-  @if not $color {
-    @warn "Unknown opacity '#{$opacity}' for color '#{$color-name}'. Available opacities: #{map.keys($palette)}";
-    @return map.get($palette, base);
-  }
-
-  @return $color;
-}
-
-@function get-universal-color($color-name, $opacity) {
-  $palette: map.get($universal-colors, $color-name);
-
-  @if not $palette {
-    @warn "Unknown universal color: #{$color-name}. Available colors: #{map.keys($universal-colors)}";
-    @return $theme-white-10;
-  }
-
-  $color: map.get($palette, $opacity);
-
-  @if not $color {
-    @warn "Unknown opacity '#{$opacity}' for universal color '#{$color-name}'. Available opacities: #{map.keys($palette)}";
-    @return map.get($palette, 10) or $theme-white-10;
-  }
-
-  @return $color;
-}
-
-// Convenience function for getting colors with numeric opacity (legacy support)
-@function get-color($color-name, $opacity: null) {
-  @if $opacity {
-    @return get-semantic-color($color-name, $opacity);
-  } @else {
-    @return get-semantic-color($color-name, base);
-  }
-}
-
-// ===================================
-// COLOR UTILITY MAPS & FUNCTIONS
-// ===================================
-
-// Color palette maps for cleaner function implementation
-$color-palettes: (
-  blue: (
-    base: $blue-color-light,
-    8: $blue-color-8,
-    15: $blue-color-15,
-    20: $blue-color-20,
-    25: $blue-color-25,
-    30: $blue-color-30,
-    40: $blue-color-40,
-    60: $blue-color-60,
-    70: $blue-color-70,
-    80: $blue-color-80,
-    90: $blue-color-90,
-    dark-80: $blue-color-dark-80,
-    dark-90: $blue-color-dark-90
-  ),
-  green: (
-    base: $green-color-light,
-    8: $green-color-8,
-    15: $green-color-15,
-    20: $green-color-20,
-    25: $green-color-25,
-    30: $green-color-30,
-    40: $green-color-40,
-    60: $green-color-60,
-    70: $green-color-70,
-    80: $green-color-80,
-    90: $green-color-90,
-    dark-80: $green-color-dark-80,
-    dark-90: $green-color-dark-90
-  ),
-  red: (
-    base: $red-color-light,
-    8: $red-color-8,
-    15: $red-color-15,
-    20: $red-color-20,
-    25: $red-color-25,
-    30: $red-color-30,
-    40: $red-color-40,
-    60: $red-color-60,
-    70: $red-color-70,
-    80: $red-color-80,
-    90: $red-color-90,
-    dark-80: $red-color-dark-80,
-    dark-90: $red-color-dark-90,
-    danger-60: $red-color-danger-60,
-    danger-90: $red-color-danger-90
-  ),
-  orange: (
-    base: $orange-color-light,
-    8: $orange-color-8,
-    15: $orange-color-15,
-    20: $orange-color-20,
-    25: $orange-color-25,
-    30: $orange-color-30,
-    40: $orange-color-40,
-    60: $orange-color-60,
-    70: $orange-color-70,
-    80: $orange-color-80,
-    90: $orange-color-90,
-    dark-80: $orange-color-dark-80,
-    dark-90: $orange-color-dark-90
+  yellow: (
+    base: $yellow-color-light,
+    8: $yellow-color-8,
+    15: $yellow-color-15,
+    20: $yellow-color-20,
+    25: $yellow-color-25,
+    30: $yellow-color-30,
+    40: $yellow-color-40,
+    60: $yellow-color-60,
+    70: $yellow-color-70,
+    80: $yellow-color-80,
+    90: $yellow-color-90,
+    light-40: $yellow-color-light-40,
+    light-70: $yellow-color-light-70,
+    dark-80: $yellow-color-dark-80,
+    dark-90: $yellow-color-dark-90
   ),
   gray: (
     base: $gray-color-neutral,
@@ -778,6 +785,177 @@ $default-theme-pattern: $blue-pattern !default;
     0 0 20px var(--theme-glow) !important;
 }
 
+// ===================================
+// IMAGE BACKGROUND MIXINS
+// ===================================
+// Provides consistent dark backgrounds for images across all themes
+
+// Base image background mixin - provides a dark background for contrast
+@mixin themed-image-background($opacity: 80) {
+  background: rgba(0, 0, 0, math.div($opacity, 100)) !important;
+  border-radius: 4px !important;
+  padding: 2px !important;
+  box-shadow: inset 0 1px 3px rgb(0 0 0 / 30%) !important;
+}
+
+// Light theme specific image background - extra dark for maximum contrast
+@mixin light-theme-image-background {
+  background: rgb(0 0 0 / 85%) !important;
+  border: 1px solid rgb(0 0 0 / 20%) !important;
+  box-shadow:
+    inset 0 1px 3px rgb(0 0 0 / 40%),
+    0 1px 2px rgb(0 0 0 / 20%) !important;
+}
+
+// Profile image background mixins - theme-specific for character portraits
+@mixin blue-profile-image-background {
+  background: rgb(30 58 138 / 80%) !important; // Blue theme primary with transparency
+  background-clip: content-box !important;
+  padding: 3px !important;
+  box-sizing: border-box !important;
+}
+
+@mixin gold-profile-image-background {
+  background: rgb(180 83 9 / 80%) !important; // Gold theme primary with transparency
+  background-clip: content-box !important;
+  padding: 3px !important;
+  box-sizing: border-box !important;
+}
+
+@mixin green-profile-image-background {
+  background: rgb(21 128 61 / 80%) !important; // Green theme primary with transparency
+  background-clip: content-box !important;
+  padding: 3px !important;
+  box-sizing: border-box !important;
+}
+
+@mixin black-profile-image-background {
+  background: rgb(40 40 40 / 85%) !important; // Black theme primary with transparency
+  background-clip: content-box !important;
+  padding: 3px !important;
+  box-sizing: border-box !important;
+}
+
+@mixin purple-profile-image-background {
+  background: rgb(88 28 135 / 80%) !important; // Purple theme primary with transparency
+  background-clip: content-box !important;
+  padding: 3px !important;
+  box-sizing: border-box !important;
+}
+
+@mixin light-profile-image-background {
+  background: rgb(0 0 0 / 75%) !important; // Slightly less dark for light theme contrast
+  background-clip: content-box !important;
+  padding: 3px !important;
+  box-sizing: border-box !important;
+  box-shadow: inset 0 2px 4px rgb(0 0 0 / 35%) !important;
+}
+
+// Generic profile image background mixin (fallback)
+@mixin themed-profile-image-background {
+  // Apply background directly to the image to avoid pseudo-element conflicts
+  background: rgb(0 0 0 / 75%) !important;
+  background-clip: content-box !important;
+  padding: 3px !important;
+  box-sizing: border-box !important;
+}
+
+// Data table image background mixin - for small item images
+@mixin themed-data-table-image-background {
+  background: rgb(0 0 0 / 80%) !important;
+  border-radius: 4px !important;
+  padding: 1px !important;
+  box-shadow: inset 0 1px 2px rgb(0 0 0 / 30%) !important;
+}
+
+// Apply image backgrounds to all themes
+@mixin apply-all-image-backgrounds($attribute-name: 'theme') {
+  // Default themes (blue, gold, green, black, purple) - standard dark background
+  &:not([data-#{$attribute-name}]),
+  &[data-#{$attribute-name}="blue"],
+  &[data-#{$attribute-name}="gold"],
+  &[data-#{$attribute-name}="green"],
+  &[data-#{$attribute-name}="black"],
+  &[data-#{$attribute-name}="purple"] {
+    @include themed-image-background(75);
+  }
+
+  // Light theme - extra dark background for contrast
+  &[data-#{$attribute-name}="light"] {
+    @include light-theme-image-background;
+  }
+}
+
+// Apply profile image backgrounds to all themes
+@mixin apply-all-profile-image-backgrounds($attribute-name: 'theme') {
+  // Blue theme (default)
+  &:not([data-#{$attribute-name}]),
+  &[data-#{$attribute-name}="blue"] {
+    .eventide-actor__profile-img {
+      @include blue-profile-image-background;
+    }
+  }
+
+  // Gold theme
+  &[data-#{$attribute-name}="gold"] {
+    .eventide-actor__profile-img {
+      @include gold-profile-image-background;
+    }
+  }
+
+  // Green theme
+  &[data-#{$attribute-name}="green"] {
+    .eventide-actor__profile-img {
+      @include green-profile-image-background;
+    }
+  }
+
+  // Black theme
+  &[data-#{$attribute-name}="black"] {
+    .eventide-actor__profile-img {
+      @include black-profile-image-background;
+    }
+  }
+
+  // Purple theme
+  &[data-#{$attribute-name}="purple"] {
+    .eventide-actor__profile-img {
+      @include purple-profile-image-background;
+    }
+  }
+
+  // Light theme
+  &[data-#{$attribute-name}="light"] {
+    .eventide-actor__profile-img {
+      @include light-profile-image-background;
+    }
+  }
+}
+
+// Apply data table image backgrounds to all themes
+@mixin apply-all-data-table-image-backgrounds($attribute-name: 'theme') {
+  // Default themes - standard background
+  &:not([data-#{$attribute-name}]),
+  &[data-#{$attribute-name}="blue"],
+  &[data-#{$attribute-name}="gold"],
+  &[data-#{$attribute-name}="green"],
+  &[data-#{$attribute-name}="black"],
+  &[data-#{$attribute-name}="purple"] {
+    @include themed-data-table-image-background;
+  }
+
+  // Light theme - extra dark background
+  &[data-#{$attribute-name}="light"] {
+    background: rgb(0 0 0 / 85%) !important;
+    border: 1px solid rgb(0 0 0 / 15%) !important;
+    border-radius: 4px !important;
+    padding: 1px !important;
+    box-shadow:
+      inset 0 1px 2px rgb(0 0 0 / 40%),
+      0 1px 1px rgb(0 0 0 / 15%) !important;
+  }
+}
+
 // Apply any theme by name
 @mixin apply-theme($theme-name) {
   @if $theme-name == 'blue' {
@@ -905,4 +1083,69 @@ $default-theme-pattern: $blue-pattern !default;
   &[data-bg-theme="black"] { @include black-background-theme; }
   &[data-bg-theme="purple"] { @include purple-background-theme; }
   &[data-bg-theme="light"] { @include light-background-theme; }
+}
+
+// ===================================
+// BACKGROUND ANIMATION KEYFRAMES
+// ===================================
+// Animations used by the themed background mixins
+
+@keyframes gentle-float {
+  0%, 100% {
+    background-position: 0 0, 0 0, 0 0;
+  }
+
+  50% {
+    background-position: 25px 25px, 60px 40px, 0 0;
+  }
+}
+
+@keyframes gentle-pulse {
+  0%, 100% {
+    background-position: 0 0, 0 0, 0 0;
+  }
+
+  50% {
+    background-position: 20px 20px, 50px 50px, 0 0;
+  }
+}
+
+@keyframes gentle-grow {
+  0%, 100% {
+    background-position: 0 0, 0 0, 0 0;
+  }
+
+  50% {
+    background-position: 22px 22px, 45px 80px, 0 0;
+  }
+}
+
+@keyframes subtle-shift {
+  0% {
+    background-position: 0 0, 0 0, 0 0;
+  }
+
+  100% {
+    background-position: 200px 200px, 75px 75px, 0 0;
+  }
+}
+
+@keyframes mystic-glow {
+  0%, 100% {
+    background-position: 0 0, 0 0, 0 0;
+  }
+
+  50% {
+    background-position: 30px 30px, 80px 50px, 0 0;
+  }
+}
+
+@keyframes gentle-breeze {
+  0%, 100% {
+    background-position: 0 0, 0 0, 0 0;
+  }
+
+  50% {
+    background-position: 35px 35px, 70px 45px, 0 0;
+  }
 }
