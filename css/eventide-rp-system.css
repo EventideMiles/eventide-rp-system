@@ -5542,12 +5542,12 @@ label,
 }
 .eventide-header__status-bar::before {
   left: var(--arrow-left-position, 0.5rem);
-  border-width: 8px 12px 8px 0;
+  border-width: 8px 12px 0;
   border-color: transparent rgba(255, 255, 255, 0.5) transparent transparent;
 }
 .eventide-header__status-bar::after {
   left: var(--arrow-right-position, calc(100% - 2rem));
-  border-width: 8px 0 8px 12px;
+  border-width: 8px 12px;
   border-color: transparent transparent transparent rgba(255, 255, 255, 0.5);
 }
 .eventide-header__status-bar.scrollable-left::before {
