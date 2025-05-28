@@ -6,7 +6,7 @@
   },
   "overrides": [
     {
-      "files": ["src/scss/components/*.scss"],
+      "files": ["src/scss/components/*.scss", "src/scss/components/sheet/*.scss"],
       "rules": {
         "no-descending-specificity": null
       }
