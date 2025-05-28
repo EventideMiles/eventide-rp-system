@@ -2,6 +2,7 @@ import { CommonFoundryTasks } from "../../utils/_module.mjs";
 import { erpsRollHandler, Logger } from "../../services/_module.mjs";
 import { ErrorHandler } from "../../utils/error-handler.mjs";
 import { initTabContainerStyling, cleanupTabContainerStyling } from "../../helpers/tab-container-styling.mjs";
+import { initThemeManager, cleanupThemeManager, triggerGlobalThemeChange, THEME_PRESETS } from "../../helpers/theme-manager.mjs";
 
 const { api, sheets } = foundry.applications;
 const { DragDrop, TextEditor } = foundry.applications.ux;
@@ -28,6 +29,9 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
     try {
       super(options);
       this.#dragDrop = this.#createDragDropHandlers();
+
+      // Initialize theme manager (will be set up properly in _onRender)
+      this.themeManager = null;
 
       Logger.debug(
         "Actor sheet initialized successfully",
@@ -592,8 +596,13 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
     });
     this.#disableOverrides();
 
-    // Apply themes immediately to prevent flashing
-    this.#applyThemesImmediately();
+    // Initialize centralized theme management
+    if (!this.themeManager) {
+      this.themeManager = initThemeManager(this, THEME_PRESETS.CHARACTER_SHEET);
+    } else {
+      // Re-apply themes on re-render
+      this.themeManager.applyThemes();
+    }
 
     // Initialize drag-scrolling for status bar
     this.#initStatusBarScrolling();
@@ -604,80 +613,12 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
     // Initialize tab container styling (dynamic border radius based on active tab)
     initTabContainerStyling(this.element);
 
-    // Set up theme change listeners (only once per instance)
-    this.#setupThemeChangeListeners();
-
-    // Verify other themes are properly applied (should be set by templates)
-    this.#verifyThemeApplied();
-
     // Debug the transformation display
     if (CommonFoundryTasks.isTestingMode) this._debugTransformation();
 
     // You may want to add other special handling here
     // Foundry comes with a large number of utility classes, e.g. SearchFilter
     // That you may want to implement yourself.
-  }
-
-  /**
-   * Set up theme change listeners for this application instance
-   * @private
-   */
-  #setupThemeChangeListeners() {
-    // Prevent duplicate listeners
-    if (this._themeListenersSetup) return;
-    this._themeListenersSetup = true;
-
-    // Hook listener for theme changes
-    const hookId = Hooks.on("eventide-rp-system.themeChanged", (data) => {
-      Logger.debug("Theme change hook received", {
-        appId: this.id,
-        appName: this.constructor.name,
-        newTheme: data.newTheme,
-        userId: data.userId,
-      });
-
-      // Re-apply themes immediately
-      this.#applyThemesImmediately();
-
-      // Force a re-render to pick up template changes
-      setTimeout(() => {
-        try {
-          this.render(false);
-          Logger.debug("Application re-rendered for theme change", {
-            appId: this.id,
-            appName: this.constructor.name,
-            newTheme: data.newTheme,
-          });
-        } catch (error) {
-          Logger.warn("Failed to re-render application for theme change", {
-            appId: this.id,
-            appName: this.constructor.name,
-            error: error.message,
-          });
-        }
-      }, 50);
-    });
-
-    // DOM event listener for theme changes
-    const domEventHandler = (event) => {
-      Logger.debug("Theme change DOM event received", {
-        appId: this.id,
-        appName: this.constructor.name,
-        newTheme: event.detail.newTheme,
-        userId: event.detail.userId,
-      });
-
-      // Re-apply themes immediately
-      this.#applyThemesImmediately();
-    };
-
-    document.addEventListener("eventide-theme-change", domEventHandler);
-
-    // Store references for cleanup
-    this._themeChangeCleanup = {
-      hookId,
-      domEventHandler,
-    };
   }
 
   /**
@@ -924,8 +865,11 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
     // Clean up status bar event listeners
     this.#cleanupStatusBarScrolling();
 
-    // Clean up theme change listeners
-    this.#cleanupThemeChangeListeners();
+    // Clean up centralized theme management
+    if (this.themeManager) {
+      cleanupThemeManager(this);
+      this.themeManager = null;
+    }
 
     // Clean up gear tab state
     this.#cleanupGearTabState();
@@ -2472,25 +2416,8 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
         settingPath: "eventide-rp-system.sheetTheme",
       });
 
-      // Re-render this sheet: if they have more than one open they'll just have to deal with closing and reopening them.
-      this.render(false);
-
-      // Show notification about the theme change
-      const themeNames = {
-        blue: "Night",
-        black: "Midnight",
-        green: "Dawn",
-        light: "Noon",
-        gold: "Twilight",
-        purple: "Dusk",
-      };
-
-      ui.notifications.info(
-        game.i18n.format("EVENTIDE_RP_SYSTEM.Info.SheetThemeChanged", {
-          userName: game.user.name,
-          themeName: themeNames[nextTheme],
-        }),
-      );
+      // Trigger global theme change (this will handle re-rendering and notifications)
+      triggerGlobalThemeChange(nextTheme, game.user.id);
 
       Logger.info("Sheet theme cycled successfully", {
         userName: game.user.name,
