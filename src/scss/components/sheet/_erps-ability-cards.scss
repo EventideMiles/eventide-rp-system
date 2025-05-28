@@ -6,45 +6,7 @@
 
 @use "../../utils/colors" as colors;
 @use "../../utils/mixins" as mixins;
-
-// ===================================
-// CONFIGURATION VARIABLES
-// ===================================
-
-// Card sizing and spacing
-$ability-card-height: 3rem;
-$ability-card-padding: 0.25rem 0.5rem;
-$ability-card-border-radius: 4px;
-$ability-card-border-width: 2px;
-
-// Content spacing
-$ability-card-content-gap: 0.5rem;
-$ability-card-stats-gap: 0.5rem;
-
-// Label styling
-$ability-card-label-font-size: 14pt;
-$ability-card-label-font-weight: 600;
-
-// Input and button sizing
-$ability-input-width: 2.25rem;
-$ability-input-height: 1.75rem;
-$ability-button-width: 2.25rem;
-$ability-button-height: 1.75rem;
-$ability-status-size: 1.75rem;
-
-// Header sizing
-$ability-header-min-width: 2.5rem;
-$ability-header-max-width: 3rem;
-$ability-header-width: 3rem;
-
-// Font sizes
-$ability-input-font-size: 16pt;
-$ability-button-font-size: 16pt;
-$ability-lock-icon-font-size: 0.9rem;
-
-// Animation timing
-$ability-transition-duration: 0.3s;
-$ability-button-transition-duration: 0.2s;
+@use "../../utils/sheet-tokens" as sheet;
 
 // ===================================
 // UTILITY MIXINS
@@ -55,22 +17,22 @@ $ability-button-transition-duration: 0.2s;
   display: flex;
   flex-direction: row;
   align-items: center;
-  border-radius: $ability-card-border-radius;
-  border: $ability-card-border-width solid transparent;
+  border-radius: sheet.$sheet-radius-sm;
+  border: sheet.$sheet-border-base solid transparent;
   background: linear-gradient(
     135deg,
     rgb(0 0 0 / 30%) 0%,
     rgb(20 30 45 / 40%) 50%,
     rgb(0 0 0 / 30%) 100%
   );
-  padding: $ability-card-padding;
-  transition: all $ability-transition-duration ease;
+  padding: sheet.$sheet-padding-input;
+  transition: all sheet.$sheet-transition-medium ease;
   position: relative;
   overflow: hidden;
   cursor: pointer;
-  height: $ability-card-height;
-  width: 100%;
-  max-width: 100%;
+  height: sheet.$sheet-height-ability-card;
+  width: sheet.$sheet-percent-full;
+  max-width: sheet.$sheet-percent-full;
   min-width: 0;
 }
 
@@ -80,10 +42,10 @@ $ability-button-transition-duration: 0.2s;
   position: absolute;
   top: 0;
   left: 0;
-  width: 4px;
-  height: 100%;
+  width: sheet.$sheet-border-accent;
+  height: sheet.$sheet-percent-full;
   z-index: 1;
-  transition: all $ability-transition-duration ease;
+  transition: all sheet.$sheet-transition-medium ease;
 }
 
 // Input styling for ability cards
@@ -91,18 +53,18 @@ $ability-button-transition-duration: 0.2s;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  width: $ability-input-width !important;
-  height: $ability-input-height !important;
-  min-height: $ability-input-height !important;
-  max-height: $ability-input-height !important;
+  width: sheet.$sheet-width-input !important;
+  height: sheet.$sheet-height-input !important;
+  min-height: sheet.$sheet-height-input !important;
+  max-height: sheet.$sheet-height-input !important;
   padding: 0 !important;
   margin: 0 !important;
-  font-size: $ability-input-font-size !important;
-  line-height: 1 !important;
+  font-size: sheet.$sheet-font-size-md !important;
+  line-height: sheet.$sheet-line-height-tight !important;
   text-align: center !important;
   background: rgb(0 0 0 / 30%) !important;
-  border: 1px solid rgb(255 255 255 / 20%) !important;
-  border-radius: 3px !important;
+  border: sheet.$sheet-border-thin solid rgb(255 255 255 / 20%) !important;
+  border-radius: sheet.$sheet-radius-xs !important;
   color: #fff !important;
   flex-shrink: 0 !important;
   box-sizing: border-box !important;
@@ -114,7 +76,7 @@ $ability-button-transition-duration: 0.2s;
 
   &:focus {
     border-color: rgb(255 255 255 / 50%) !important;
-    box-shadow: 0 0 4px rgb(255 255 255 / 30%) !important;
+    box-shadow: 0 0 sheet.$sheet-shadow-blur-xs rgb(255 255 255 / 30%) !important;
     outline: none !important;
   }
 
@@ -128,22 +90,22 @@ $ability-button-transition-duration: 0.2s;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  width: $ability-button-width !important;
-  height: $ability-button-height !important;
-  min-height: $ability-button-height !important;
-  max-height: $ability-button-height !important;
-  min-width: $ability-button-width !important;
-  max-width: $ability-button-width !important;
+  width: sheet.$sheet-width-button !important;
+  height: sheet.$sheet-height-button !important;
+  min-height: sheet.$sheet-height-button !important;
+  max-height: sheet.$sheet-height-button !important;
+  min-width: sheet.$sheet-width-button !important;
+  max-width: sheet.$sheet-width-button !important;
   padding: 0 !important;
   margin: 0 !important;
-  border-radius: 3px !important;
+  border-radius: sheet.$sheet-radius-xs !important;
   color: #fff !important;
   cursor: pointer !important;
-  transition: all $ability-button-transition-duration ease !important;
+  transition: all sheet.$sheet-transition-base ease !important;
   flex-shrink: 0 !important;
-  font-size: $ability-button-font-size !important;
+  font-size: sheet.$sheet-font-size-md !important;
   font-weight: bold !important;
-  line-height: 1 !important;
+  line-height: sheet.$sheet-line-height-tight !important;
   position: relative !important;
   overflow: hidden !important;
   box-sizing: border-box !important;
@@ -154,14 +116,14 @@ $ability-button-transition-duration: 0.2s;
 
   // Default styling
   background: rgb(255 255 255 / 10%);
-  border: 1px solid rgb(255 255 255 / 30%);
-  text-shadow: 0 0 4px rgb(255 255 255 / 60%);
+  border: sheet.$sheet-border-thin solid rgb(255 255 255 / 30%);
+  text-shadow: 0 0 sheet.$sheet-shadow-blur-xs rgb(255 255 255 / 60%);
   box-shadow:
-    0 0 6px rgb(255 255 255 / 40%),
-    inset 0 1px 0 rgb(255 255 255 / 20%);
+    0 0 sheet.$sheet-shadow-blur-sm rgb(255 255 255 / 40%),
+    inset 0 sheet.$sheet-shadow-offset-xs 0 rgb(255 255 255 / 20%);
 
   &:active {
-    transform: scale(0.95);
+    transform: scale(sheet.$sheet-transform-scale-active);
   }
 
   // Subtle animated background shimmer
@@ -169,16 +131,16 @@ $ability-button-transition-duration: 0.2s;
     content: '';
     position: absolute;
     top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
+    left: (- sheet.$sheet-percent-full);
+    width: sheet.$sheet-percent-full;
+    height: sheet.$sheet-percent-full;
     background: linear-gradient(
       90deg,
       transparent,
       rgb(255 255 255 / 20%),
       transparent
     );
-    animation: button-shimmer 3s ease-in-out infinite;
+    animation: button-shimmer sheet.$sheet-animation-shimmer ease-in-out infinite;
   }
 }
 
@@ -188,18 +150,18 @@ $ability-button-transition-duration: 0.2s;
   justify-content: center !important;
   align-items: center !important;
   flex-shrink: 0 !important;
-  width: $ability-status-size !important;
-  height: $ability-status-size !important;
-  min-height: $ability-status-size !important;
-  max-height: $ability-status-size !important;
-  min-width: $ability-status-size !important;
-  max-width: $ability-status-size !important;
+  width: sheet.$sheet-size-status-element !important;
+  height: sheet.$sheet-size-status-element !important;
+  min-height: sheet.$sheet-size-status-element !important;
+  max-height: sheet.$sheet-size-status-element !important;
+  min-width: sheet.$sheet-size-status-element !important;
+  max-width: sheet.$sheet-size-status-element !important;
   padding: 0 !important;
   margin: 0 !important;
-  border-radius: 3px !important;
+  border-radius: sheet.$sheet-radius-xs !important;
   background: rgb(0 0 0 / 30%) !important;
-  border: 1px solid rgb(255 255 255 / 20%) !important;
-  transition: all $ability-button-transition-duration ease !important;
+  border: sheet.$sheet-border-thin solid rgb(255 255 255 / 20%) !important;
+  transition: all sheet.$sheet-transition-base ease !important;
   box-sizing: border-box !important;
   vertical-align: middle !important;
   position: relative !important;
@@ -213,11 +175,11 @@ $ability-button-transition-duration: 0.2s;
 
 // Lock/unlock icon styling
 @mixin ability-card-icon {
-  font-size: $ability-lock-icon-font-size !important;
-  opacity: 0.9 !important;
-  transition: all $ability-button-transition-duration ease !important;
+  font-size: sheet.$sheet-font-size-label-lg !important;
+  opacity: sheet.$sheet-opacity-default !important;
+  transition: all sheet.$sheet-transition-base ease !important;
   display: inline-block !important;
-  line-height: 1 !important;
+  line-height: sheet.$sheet-line-height-tight !important;
   vertical-align: middle !important;
   margin: 0 !important;
   padding: 0 !important;
@@ -225,8 +187,8 @@ $ability-button-transition-duration: 0.2s;
   text-transform: none !important;
 
   &:hover {
-    opacity: 1 !important;
-    transform: scale(1.15) !important;
+    opacity: sheet.$sheet-opacity-full !important;
+    transform: scale(sheet.$sheet-transform-scale-icon) !important;
   }
 }
 
@@ -235,12 +197,12 @@ $ability-button-transition-duration: 0.2s;
 // ===================================
 
 .header-abilities {
-  gap: 0.25rem;
-  padding: 0.25rem;
+  gap: sheet.$sheet-spacing-xs;
+  padding: sheet.$sheet-spacing-xs;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  height: 100%; // Match the height of the header content
+  height: sheet.$sheet-percent-full; // Match the height of the header content
 }
 
 // ===================================
@@ -261,30 +223,30 @@ $ability-button-transition-duration: 0.2s;
     display: flex;
     flex-direction: row;
     align-items: center;
-    width: 100%;
-    gap: $ability-card-content-gap;
+    width: sheet.$sheet-percent-full;
+    gap: sheet.$sheet-spacing-sm;
     justify-content: space-between;
   }
 
   &__header {
     flex-shrink: 0;
-    min-width: $ability-header-min-width;
-    max-width: $ability-header-max-width;
-    width: $ability-header-width;
+    min-width: sheet.$sheet-width-header-min;
+    max-width: sheet.$sheet-width-header-max;
+    width: sheet.$sheet-width-header;
   }
 
   &__label {
-    font-size: $ability-card-label-font-size;
-    font-weight: $ability-card-label-font-weight;
+    font-size: sheet.$sheet-font-size-sm;
+    font-weight: sheet.$sheet-font-weight-semibold;
     color: rgb(255 255 255 / 80%);
     text-transform: uppercase;
-    letter-spacing: 0.3px;
-    line-height: 1;
+    letter-spacing: sheet.$sheet-letter-spacing-tight;
+    line-height: sheet.$sheet-line-height-tight;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     cursor: help;
-    transition: color $ability-button-transition-duration ease;
+    transition: color sheet.$sheet-transition-base ease;
 
     &:hover {
       color: rgb(255 255 255 / 100%);
@@ -294,7 +256,7 @@ $ability-button-transition-duration: 0.2s;
   &__stats {
     display: flex;
     align-items: center;
-    gap: $ability-card-stats-gap;
+    gap: sheet.$sheet-spacing-sm;
     flex-grow: 1;
   }
 
@@ -314,23 +276,23 @@ $ability-button-transition-duration: 0.2s;
     @include ability-card-icon;
 
     color: #ff6b6b;
-    text-shadow: 0 0 4px rgb(255 107 107 / 60%);
+    text-shadow: 0 0 sheet.$sheet-shadow-blur-xs rgb(255 107 107 / 60%);
   }
 
   &__unlock {
     @include ability-card-icon;
 
     color: #4CAF50;
-    text-shadow: 0 0 4px rgb(76 175 80 / 60%);
+    text-shadow: 0 0 sheet.$sheet-shadow-blur-xs rgb(76 175 80 / 60%);
   }
 
   // Hover effects with themed backgrounds and patterns
   &:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgb(0 0 0 / 30%);
+    transform: translateY(sheet.$sheet-transform-hover-sm);
+    box-shadow: 0 sheet.$sheet-shadow-offset-sm sheet.$sheet-shadow-blur-md rgb(0 0 0 / 30%);
 
     &::before {
-      width: 100%;
+      width: sheet.$sheet-percent-full;
       opacity: 0.15;
     }
   }
@@ -347,12 +309,12 @@ $ability-button-transition-duration: 0.2s;
 
     .eventide-ability-card__total-button {
       background: rgb(191 68 0 / 30%);
-      border: 1px solid rgb(191 68 0 / 50%);
-      text-shadow: 0 0 4px rgb(191 68 0 / 80%);
+      border: sheet.$sheet-border-thin solid rgb(191 68 0 / 50%);
+      text-shadow: 0 0 sheet.$sheet-shadow-blur-xs rgb(191 68 0 / 80%);
       box-shadow:
-        0 0 6px rgb(191 68 0 / 40%),
-        inset 0 1px 0 rgb(255 255 255 / 20%);
-      animation: acro-glow 2s ease-in-out infinite alternate;
+        0 0 sheet.$sheet-shadow-blur-sm rgb(191 68 0 / 40%),
+        inset 0 sheet.$sheet-shadow-offset-xs 0 rgb(255 255 255 / 20%);
+      animation: acro-glow sheet.$sheet-animation-fast ease-in-out infinite alternate;
 
       &::before {
         background: linear-gradient(
@@ -366,10 +328,10 @@ $ability-button-transition-duration: 0.2s;
       &:hover {
         background: rgb(191 68 0 / 50%);
         border-color: rgb(191 68 0 / 70%);
-        transform: scale(1.05);
+        transform: scale(sheet.$sheet-transform-scale-hover);
         box-shadow:
-          0 0 12px rgb(191 68 0 / 60%),
-          inset 0 1px 0 rgb(255 255 255 / 30%);
+          0 0 sheet.$sheet-shadow-blur-lg rgb(191 68 0 / 60%),
+          inset 0 sheet.$sheet-shadow-offset-xs 0 rgb(255 255 255 / 30%);
       }
     }
 
@@ -400,12 +362,12 @@ $ability-button-transition-duration: 0.2s;
 
     .eventide-ability-card__total-button {
       background: rgb(168 3 3 / 30%);
-      border: 1px solid rgb(168 3 3 / 50%);
-      text-shadow: 0 0 4px rgb(168 3 3 / 80%);
+      border: sheet.$sheet-border-thin solid rgb(168 3 3 / 50%);
+      text-shadow: 0 0 sheet.$sheet-shadow-blur-xs rgb(168 3 3 / 80%);
       box-shadow:
-        0 0 6px rgb(168 3 3 / 40%),
-        inset 0 1px 0 rgb(255 255 255 / 20%);
-      animation: phys-glow 2s ease-in-out infinite alternate;
+        0 0 sheet.$sheet-shadow-blur-sm rgb(168 3 3 / 40%),
+        inset 0 sheet.$sheet-shadow-offset-xs 0 rgb(255 255 255 / 20%);
+      animation: phys-glow sheet.$sheet-animation-fast ease-in-out infinite alternate;
 
       &::before {
         background: linear-gradient(
@@ -419,10 +381,10 @@ $ability-button-transition-duration: 0.2s;
       &:hover {
         background: rgb(168 3 3 / 50%);
         border-color: rgb(168 3 3 / 70%);
-        transform: scale(1.05);
+        transform: scale(sheet.$sheet-transform-scale-hover);
         box-shadow:
-          0 0 12px rgb(168 3 3 / 60%),
-          inset 0 1px 0 rgb(255 255 255 / 30%);
+          0 0 sheet.$sheet-shadow-blur-lg rgb(168 3 3 / 60%),
+          inset 0 sheet.$sheet-shadow-offset-xs 0 rgb(255 255 255 / 30%);
       }
     }
 
@@ -453,12 +415,12 @@ $ability-button-transition-duration: 0.2s;
 
     .eventide-ability-card__total-button {
       background: rgb(45 104 45 / 30%);
-      border: 1px solid rgb(45 104 45 / 50%);
-      text-shadow: 0 0 4px rgb(45 104 45 / 80%);
+      border: sheet.$sheet-border-thin solid rgb(45 104 45 / 50%);
+      text-shadow: 0 0 sheet.$sheet-shadow-blur-xs rgb(45 104 45 / 80%);
       box-shadow:
-        0 0 6px rgb(45 104 45 / 40%),
-        inset 0 1px 0 rgb(255 255 255 / 20%);
-      animation: fort-glow 2s ease-in-out infinite alternate;
+        0 0 sheet.$sheet-shadow-blur-sm rgb(45 104 45 / 40%),
+        inset 0 sheet.$sheet-shadow-offset-xs 0 rgb(255 255 255 / 20%);
+      animation: fort-glow sheet.$sheet-animation-fast ease-in-out infinite alternate;
 
       &::before {
         background: linear-gradient(
@@ -472,10 +434,10 @@ $ability-button-transition-duration: 0.2s;
       &:hover {
         background: rgb(45 104 45 / 50%);
         border-color: rgb(45 104 45 / 70%);
-        transform: scale(1.05);
+        transform: scale(sheet.$sheet-transform-scale-hover);
         box-shadow:
-          0 0 12px rgb(45 104 45 / 60%),
-          inset 0 1px 0 rgb(255 255 255 / 30%);
+          0 0 sheet.$sheet-shadow-blur-lg rgb(45 104 45 / 60%),
+          inset 0 sheet.$sheet-shadow-offset-xs 0 rgb(255 255 255 / 30%);
       }
     }
 
@@ -506,12 +468,12 @@ $ability-button-transition-duration: 0.2s;
 
     .eventide-ability-card__total-button {
       background: rgb(106 27 154 / 30%);
-      border: 1px solid rgb(106 27 154 / 50%);
-      text-shadow: 0 0 4px rgb(106 27 154 / 80%);
+      border: sheet.$sheet-border-thin solid rgb(106 27 154 / 50%);
+      text-shadow: 0 0 sheet.$sheet-shadow-blur-xs rgb(106 27 154 / 80%);
       box-shadow:
-        0 0 6px rgb(106 27 154 / 40%),
-        inset 0 1px 0 rgb(255 255 255 / 20%);
-      animation: will-glow 2s ease-in-out infinite alternate;
+        0 0 sheet.$sheet-shadow-blur-sm rgb(106 27 154 / 40%),
+        inset 0 sheet.$sheet-shadow-offset-xs 0 rgb(255 255 255 / 20%);
+      animation: will-glow sheet.$sheet-animation-fast ease-in-out infinite alternate;
 
       &::before {
         background: linear-gradient(
@@ -525,10 +487,10 @@ $ability-button-transition-duration: 0.2s;
       &:hover {
         background: rgb(106 27 154 / 50%);
         border-color: rgb(106 27 154 / 70%);
-        transform: scale(1.05);
+        transform: scale(sheet.$sheet-transform-scale-hover);
         box-shadow:
-          0 0 12px rgb(106 27 154 / 60%),
-          inset 0 1px 0 rgb(255 255 255 / 30%);
+          0 0 sheet.$sheet-shadow-blur-lg rgb(106 27 154 / 60%),
+          inset 0 sheet.$sheet-shadow-offset-xs 0 rgb(255 255 255 / 30%);
       }
     }
 
@@ -559,12 +521,12 @@ $ability-button-transition-duration: 0.2s;
 
     .eventide-ability-card__total-button {
       background: rgb(14 67 128 / 30%);
-      border: 1px solid rgb(14 67 128 / 50%);
-      text-shadow: 0 0 4px rgb(14 67 128 / 80%);
+      border: sheet.$sheet-border-thin solid rgb(14 67 128 / 50%);
+      text-shadow: 0 0 sheet.$sheet-shadow-blur-xs rgb(14 67 128 / 80%);
       box-shadow:
-        0 0 6px rgb(14 67 128 / 40%),
-        inset 0 1px 0 rgb(255 255 255 / 20%);
-      animation: wits-glow 2s ease-in-out infinite alternate;
+        0 0 sheet.$sheet-shadow-blur-sm rgb(14 67 128 / 40%),
+        inset 0 sheet.$sheet-shadow-offset-xs 0 rgb(255 255 255 / 20%);
+      animation: wits-glow sheet.$sheet-animation-fast ease-in-out infinite alternate;
 
       &::before {
         background: linear-gradient(
@@ -578,10 +540,10 @@ $ability-button-transition-duration: 0.2s;
       &:hover {
         background: rgb(14 67 128 / 50%);
         border-color: rgb(14 67 128 / 70%);
-        transform: scale(1.05);
+        transform: scale(sheet.$sheet-transform-scale-hover);
         box-shadow:
-          0 0 12px rgb(14 67 128 / 60%),
-          inset 0 1px 0 rgb(255 255 255 / 30%);
+          0 0 sheet.$sheet-shadow-blur-lg rgb(14 67 128 / 60%),
+          inset 0 sheet.$sheet-shadow-offset-xs 0 rgb(255 255 255 / 30%);
       }
     }
 
@@ -612,27 +574,27 @@ $ability-button-transition-duration: 0.2s;
 
 .eventide-ability-acro-box {
   background-color: colors.$acro-transparent;
-  border-left: 0.3125rem solid colors.$acro;
+  border-left: sheet.$sheet-spacing-sm solid colors.$acro;
 }
 
 .eventide-ability-phys-box {
   background-color: colors.$phys-transparent;
-  border-left: 0.3125rem solid colors.$phys;
+  border-left: sheet.$sheet-spacing-sm solid colors.$phys;
 }
 
 .eventide-ability-fort-box {
   background-color: colors.$fort-transparent;
-  border-left: 0.3125rem solid colors.$fort;
+  border-left: sheet.$sheet-spacing-sm solid colors.$fort;
 }
 
 .eventide-ability-will-box {
   background-color: colors.$will-transparent;
-  border-left: 0.3125rem solid colors.$will;
+  border-left: sheet.$sheet-spacing-sm solid colors.$will;
 }
 
 .eventide-ability-wits-box {
   background-color: colors.$wits-transparent;
-  border-left: 0.3125rem solid colors.$wits;
+  border-left: sheet.$sheet-spacing-sm solid colors.$wits;
 }
 
 // ===================================
@@ -643,83 +605,83 @@ $ability-button-transition-duration: 0.2s;
 @keyframes acro-glow {
   0% {
     box-shadow:
-      0 0 6px rgb(191 68 0 / 40%),
-      inset 0 1px 0 rgb(255 255 255 / 20%);
+      0 0 sheet.$sheet-shadow-blur-sm rgb(191 68 0 / 40%),
+      inset 0 sheet.$sheet-shadow-offset-xs 0 rgb(255 255 255 / 20%);
   }
 
   100% {
     box-shadow:
-      0 0 10px rgb(191 68 0 / 60%),
-      inset 0 1px 0 rgb(255 255 255 / 30%);
+      0 0 sheet.$sheet-glow-blur-sm rgb(191 68 0 / 60%),
+      inset 0 sheet.$sheet-shadow-offset-xs 0 rgb(255 255 255 / 30%);
   }
 }
 
 @keyframes phys-glow {
   0% {
     box-shadow:
-      0 0 6px rgb(168 3 3 / 40%),
-      inset 0 1px 0 rgb(255 255 255 / 20%);
+      0 0 sheet.$sheet-shadow-blur-sm rgb(168 3 3 / 40%),
+      inset 0 sheet.$sheet-shadow-offset-xs 0 rgb(255 255 255 / 20%);
   }
 
   100% {
     box-shadow:
-      0 0 10px rgb(168 3 3 / 60%),
-      inset 0 1px 0 rgb(255 255 255 / 30%);
+      0 0 sheet.$sheet-glow-blur-sm rgb(168 3 3 / 60%),
+      inset 0 sheet.$sheet-shadow-offset-xs 0 rgb(255 255 255 / 30%);
   }
 }
 
 @keyframes fort-glow {
   0% {
     box-shadow:
-      0 0 6px rgb(45 104 45 / 40%),
-      inset 0 1px 0 rgb(255 255 255 / 20%);
+      0 0 sheet.$sheet-shadow-blur-sm rgb(45 104 45 / 40%),
+      inset 0 sheet.$sheet-shadow-offset-xs 0 rgb(255 255 255 / 20%);
   }
 
   100% {
     box-shadow:
-      0 0 10px rgb(45 104 45 / 60%),
-      inset 0 1px 0 rgb(255 255 255 / 30%);
+      0 0 sheet.$sheet-glow-blur-sm rgb(45 104 45 / 60%),
+      inset 0 sheet.$sheet-shadow-offset-xs 0 rgb(255 255 255 / 30%);
   }
 }
 
 @keyframes will-glow {
   0% {
     box-shadow:
-      0 0 6px rgb(106 27 154 / 40%),
-      inset 0 1px 0 rgb(255 255 255 / 20%);
+      0 0 sheet.$sheet-shadow-blur-sm rgb(106 27 154 / 40%),
+      inset 0 sheet.$sheet-shadow-offset-xs 0 rgb(255 255 255 / 20%);
   }
 
   100% {
     box-shadow:
-      0 0 10px rgb(106 27 154 / 60%),
-      inset 0 1px 0 rgb(255 255 255 / 30%);
+      0 0 sheet.$sheet-glow-blur-sm rgb(106 27 154 / 60%),
+      inset 0 sheet.$sheet-shadow-offset-xs 0 rgb(255 255 255 / 30%);
   }
 }
 
 @keyframes wits-glow {
   0% {
     box-shadow:
-      0 0 6px rgb(14 67 128 / 40%),
-      inset 0 1px 0 rgb(255 255 255 / 20%);
+      0 0 sheet.$sheet-shadow-blur-sm rgb(14 67 128 / 40%),
+      inset 0 sheet.$sheet-shadow-offset-xs 0 rgb(255 255 255 / 20%);
   }
 
   100% {
     box-shadow:
-      0 0 10px rgb(14 67 128 / 60%),
-      inset 0 1px 0 rgb(255 255 255 / 30%);
+      0 0 sheet.$sheet-glow-blur-sm rgb(14 67 128 / 60%),
+      inset 0 sheet.$sheet-shadow-offset-xs 0 rgb(255 255 255 / 30%);
   }
 }
 
 @keyframes button-shimmer {
   0% {
-    left: -100%;
+    left: (- sheet.$sheet-percent-full);
   }
 
   50% {
-    left: 100%;
+    left: sheet.$sheet-percent-full;
   }
 
   100% {
-    left: 100%;
+    left: sheet.$sheet-percent-full;
   }
 }

@@ -3,6 +3,7 @@
 @use "../../utils/typography" as typography;
 @use "../../utils/mixins" as mixins;
 @use "../../utils/tokens" as tokens;
+@use "../../utils/sheet-tokens" as sheet;
 @use "sass:math";
 @use "sass:list";
 
@@ -14,154 +15,44 @@
 // Supports both standard Foundry tabs and custom gear tabs
 
 // ===================================
-// CONFIGURATION VARIABLES
-// ===================================
-
-// Spacing and sizing
-$erps-tab-border-radius: 6px;
-$erps-tab-border-radius-large: 8px;
-$erps-tab-padding: 0.5rem 1rem;
-$erps-tab-padding-large: 0.75rem 1.5rem;
-$erps-tab-padding-container: 0.25rem 0.25rem 0;
-$erps-tab-margin-right: 0.25rem;
-$erps-tab-gap: 0.5rem;
-$erps-tab-nav-padding-bottom: 0.5rem;
-$erps-tab-nav-margin-bottom: 1rem;
-
-// Heights
-$erps-tab-height-standard: auto;
-$erps-tab-height-large: 3.5rem;
-$erps-tab-content-height-scrollable: 39.06rem;
-
-// Typography
-$erps-tab-font-size: 12pt;
-$erps-tab-font-size-large: 14pt;
-$erps-tab-font-weight: 600;
-$erps-tab-letter-spacing: 0.5px;
-
-// Borders and effects
-$erps-tab-border-width: 1px;
-$erps-tab-border-width-thick: 2px;
-$erps-tab-border-width-accent: 4px;
-$erps-tab-shadow-blur: 12px;
-$erps-tab-shadow-blur-large: 20px;
-$erps-tab-shadow-blur-small: 8px;
-
-// Transitions and animations
-$erps-tab-transition-duration: 0.3s;
-$erps-tab-transition-duration-fast: 0.2s;
-$erps-tab-transition-duration-glow: 0.6s;
-$erps-tab-animation-duration-glow: 3s;
-$erps-tab-animation-duration-fade: 0.3s;
-
-// Transform values
-$erps-tab-transform-hover-y: -2px;
-$erps-tab-transform-active-y: -1px;
-$erps-tab-transform-scale-hover: 1.1;
-$erps-tab-transform-fade-y: 10px;
-
-// Z-index values
-$erps-tab-z-index-base: 0;
-$erps-tab-z-index-content: 1;
-$erps-tab-z-index-active: 10;
-
-// Opacity values
-$erps-tab-opacity-icon: 0.8;
-$erps-tab-opacity-icon-active: 1;
-$erps-tab-opacity-glow-start: 0.2;
-$erps-tab-opacity-glow-mid: 0.4;
-$erps-tab-opacity-glow-before: 0.3;
-$erps-tab-opacity-unequipped: 0.95;
-
-// Background opacity values (using valid theme system values)
-$erps-tab-bg-opacity-base: 10;
-$erps-tab-bg-opacity-hover: 20;
-$erps-tab-bg-opacity-active: 20;
-$erps-tab-bg-opacity-count: 10;
-
-// Pattern and background sizes
-$erps-tab-glow-width: 200%;
-$erps-tab-glow-position-start: -100%;
-$erps-tab-glow-position-end: 100%;
-$erps-tab-glow-position-center: 0%;
-
-// Badge/count styling
-$erps-tab-count-min-width: 1.5rem;
-$erps-tab-count-height: 1.5rem;
-$erps-tab-count-padding: 0 0.5rem;
-$erps-tab-count-border-radius: 12px;
-$erps-tab-count-font-size: 12pt;
-$erps-tab-count-font-weight: 700;
-
-// Icon sizes
-$erps-tab-icon-size: 16pt;
-
-// Gradient stop positions
-$erps-tab-gradient-start: 0%;
-$erps-tab-gradient-mid: 50%;
-$erps-tab-gradient-end: 100%;
-
-// Inset values for box shadows
-$erps-tab-inset-border: 1px;
-$erps-tab-inset-accent: 4px;
-
-// Line height values
-$erps-tab-line-height-badge: 1;
-
-// Animation opacity values
-$erps-tab-animation-opacity-start: 0;
-$erps-tab-animation-opacity-end: 1;
-
-// Position values
-$erps-tab-position-top: 0;
-$erps-tab-position-zero: 0;
-$erps-tab-margin-zero: 0;
-$erps-tab-width-full: 100%;
-
-// Border radius variants for tab containers
-$erps-tab-border-radius-top-only: $erps-tab-border-radius $erps-tab-border-radius 0 0;
-$erps-tab-border-radius-full: $erps-tab-border-radius;
-$erps-tab-border-radius-none: 0;
-
-// ===================================
 // MODERN COLOR FUNCTIONS & UTILITIES
 // ===================================
 
 // Utility mixins for tab-specific patterns
 @mixin tab-glow($color, $opacity: 60) {
-  box-shadow: 0 0 $erps-tab-shadow-blur-large themes.get-semantic-color($color, $opacity) !important;
+  box-shadow: 0 0 sheet.$sheet-shadow-blur-xxl themes.get-semantic-color($color, $opacity) !important;
 }
 
 @mixin tab-shadow-base {
-  box-shadow: 0 4px $erps-tab-shadow-blur themes.get-universal-color(black, 30) !important;
+  box-shadow: 0 4px sheet.$sheet-shadow-blur-lg themes.get-universal-color(black, 30) !important;
 }
 
 @mixin tab-shadow-active($glow-color: var(--theme-glow)) {
   box-shadow:
-    0 4px $erps-tab-shadow-blur themes.get-universal-color(black, 30),
-    0 0 $erps-tab-shadow-blur-large $glow-color !important;
+    0 4px sheet.$sheet-shadow-blur-lg themes.get-universal-color(black, 30),
+    0 0 sheet.$sheet-shadow-blur-xxl $glow-color !important;
 }
 
 @mixin tab-gradient-background {
   background: linear-gradient(135deg,
-    var(--theme-primary) $erps-tab-gradient-start,
-    var(--theme-secondary) $erps-tab-gradient-mid,
-    var(--theme-primary) $erps-tab-gradient-end) !important;
+    var(--theme-primary) sheet.$sheet-position-zero,
+    var(--theme-secondary) sheet.$sheet-position-center,
+    var(--theme-primary) sheet.$sheet-percent-full) !important;
 }
 
 @mixin tab-animated-glow {
   content: '' !important;
   position: absolute !important;
-  top: $erps-tab-position-top !important;
-  left: $erps-tab-glow-position-start !important;
-  width: $erps-tab-glow-width !important;
-  height: $erps-tab-gradient-end !important;
+  top: sheet.$sheet-position-zero !important;
+  left: (- sheet.$sheet-percent-full) !important;
+  width: sheet.$sheet-glow-width !important;
+  height: sheet.$sheet-percent-full !important;
   background: linear-gradient(90deg,
     transparent,
     themes.get-universal-color(white, 10),
     transparent) !important;
-  transition: left $erps-tab-transition-duration-glow ease !important;
-  z-index: $erps-tab-z-index-base !important;
+  transition: left sheet.$sheet-transition-slow ease !important;
+  z-index: sheet.$sheet-z-index-base !important;
 }
 
 // ===================================
@@ -170,15 +61,15 @@ $erps-tab-border-radius-none: 0;
 
 // Tab container border radius variants
 @mixin tab-container-radius-top-only {
-  border-radius: $erps-tab-border-radius-top-only !important;
+  border-radius: sheet.$sheet-radius-md sheet.$sheet-radius-md 0 0 !important;
 }
 
 @mixin tab-container-radius-full {
-  border-radius: $erps-tab-border-radius-full !important;
+  border-radius: sheet.$sheet-radius-md !important;
 }
 
 @mixin tab-container-radius-none {
-  border-radius: $erps-tab-border-radius-none !important;
+  border-radius: 0 !important;
 }
 
 // ===================================
@@ -191,13 +82,13 @@ $erps-tab-border-radius-none: 0;
 
   display: flex !important;
   flex-wrap: wrap !important;
-  border-bottom: $erps-tab-border-width-thick solid themes.get-universal-color(white, 10) !important;
+  border-bottom: sheet.$sheet-border-base solid themes.get-universal-color(white, 10) !important;
 
   @include tab-gradient-background;
   @include tab-container-radius-top-only; // Default: rounded top, flat bottom
 
-  padding: $erps-tab-padding-container !important;
-  margin: $erps-tab-margin-zero !important;
+  padding: sheet.$sheet-padding-tab-container !important;
+  margin: sheet.$sheet-position-zero !important;
 
   @include themes.themed-glow-shadow;
 }
@@ -205,21 +96,21 @@ $erps-tab-border-radius-none: 0;
 // Base tab item styling
 @mixin tab-item-base {
   position: relative !important;
-  padding: $erps-tab-padding !important;
-  border: $erps-tab-border-width solid themes.get-universal-color(white, 20) !important;
+  padding: sheet.$sheet-padding-tab !important;
+  border: sheet.$sheet-border-thin solid themes.get-universal-color(white, 20) !important;
   border-bottom: none !important;
-  border-radius: $erps-tab-border-radius $erps-tab-border-radius 0 0 !important;
+  border-radius: sheet.$sheet-radius-md sheet.$sheet-radius-md 0 0 !important;
   font-family: var(--erps-ui-font) !important;
-  font-size: $erps-tab-font-size !important;
-  font-weight: $erps-tab-font-weight !important;
+  font-size: sheet.$sheet-font-size-xs !important;
+  font-weight: sheet.$sheet-font-weight-semibold !important;
   text-transform: uppercase !important;
-  letter-spacing: $erps-tab-letter-spacing !important;
+  letter-spacing: sheet.$sheet-letter-spacing-base !important;
   color: var(--theme-text, #fff) !important;
-  background: themes.get-universal-color(white, $erps-tab-bg-opacity-base) !important;
-  transition: all $erps-tab-transition-duration ease !important;
+  background: themes.get-universal-color(white, 10) !important;
+  transition: all sheet.$sheet-transition-medium ease !important;
   text-decoration: none !important;
   cursor: pointer !important;
-  margin-right: $erps-tab-margin-right !important;
+  margin-right: sheet.$sheet-margin-tab-right !important;
   overflow: hidden !important;
 
   // Animated background effect
@@ -230,7 +121,7 @@ $erps-tab-border-radius-none: 0;
   // Text content above background effect
   & > * {
     position: relative !important;
-    z-index: $erps-tab-z-index-content !important;
+    z-index: sheet.$sheet-z-index-overlay !important;
   }
 }
 
@@ -239,12 +130,12 @@ $erps-tab-border-radius-none: 0;
   background: var(--theme-primary, #{themes.get-semantic-color(blue, dark-90)}) !important;
   border-color: var(--theme-light, #{themes.get-semantic-color(blue, 70)}) !important;
   color: var(--theme-text, #fff) !important;
-  transform: translateY($erps-tab-transform-hover-y) !important;
+  transform: translateY(sheet.$sheet-transform-hover-md) !important;
 
   @include tab-shadow-base;
 
   &::before {
-    left: $erps-tab-glow-position-end !important;
+    left: sheet.$sheet-percent-full !important;
   }
 }
 
@@ -256,17 +147,17 @@ $erps-tab-border-radius-none: 0;
 
   @include tab-shadow-active(var(--theme-glow, #{themes.get-semantic-color(blue, 60)}));
 
-  transform: translateY($erps-tab-transform-active-y) !important;
-  z-index: $erps-tab-z-index-active !important;
+  transform: translateY(sheet.$sheet-transform-hover-sm) !important;
+  z-index: 10 !important;
 
   &::before {
-    left: $erps-tab-glow-position-center !important;
+    left: sheet.$sheet-position-zero !important;
     background: linear-gradient(90deg,
       var(--theme-light, #{themes.get-semantic-color(blue, 70)}),
       transparent,
       var(--theme-light, #{themes.get-semantic-color(blue, 70)})) !important;
-    opacity: $erps-tab-opacity-glow-before !important;
-    animation: erps-tab-glow $erps-tab-animation-duration-glow ease-in-out infinite !important;
+    opacity: 0.3 !important;
+    animation: erps-tab-glow sheet.$sheet-animation-glow ease-in-out infinite !important;
   }
 
   // Remove the skewed background from global override
@@ -279,23 +170,23 @@ $erps-tab-border-radius-none: 0;
 @mixin custom-tab-button-base {
   display: flex !important;
   align-items: center !important;
-  gap: $erps-tab-gap !important;
-  padding: $erps-tab-padding-large !important;
+  gap: sheet.$sheet-spacing-sm !important;
+  padding: sheet.$sheet-padding-tab-large !important;
   border: none !important;
-  border-radius: $erps-tab-border-radius-large $erps-tab-border-radius-large 0 0 !important;
-  background: themes.get-universal-color(white, $erps-tab-bg-opacity-base) !important;
+  border-radius: sheet.$sheet-radius-lg sheet.$sheet-radius-lg 0 0 !important;
+  background: themes.get-universal-color(white, 10) !important;
   color: var(--theme-text, #fff) !important;
   cursor: pointer !important;
-  transition: all $erps-tab-transition-duration ease !important;
+  transition: all sheet.$sheet-transition-medium ease !important;
   font-family: var(--erps-ui-font) !important;
-  font-size: $erps-tab-font-size-large !important;
-  font-weight: $erps-tab-font-weight !important;
+  font-size: sheet.$sheet-font-size-sm !important;
+  font-weight: sheet.$sheet-font-weight-semibold !important;
   text-transform: uppercase !important;
-  letter-spacing: $erps-tab-letter-spacing !important;
+  letter-spacing: sheet.$sheet-letter-spacing-base !important;
   position: relative !important;
   overflow: hidden !important;
-  height: $erps-tab-height-large !important;
-  min-height: $erps-tab-height-large !important;
+  height: sheet.$sheet-height-tab-large !important;
+  min-height: sheet.$sheet-height-tab-large !important;
   box-sizing: border-box !important;
 
   // Default theme variables
@@ -307,30 +198,30 @@ $erps-tab-border-radius-none: 0;
   --theme-text: #fff;
 
   i {
-    font-size: $erps-tab-icon-size !important;
-    opacity: $erps-tab-opacity-icon !important;
-    transition: all $erps-tab-transition-duration-fast ease !important;
+    font-size: sheet.$sheet-font-size-md !important;
+    opacity: 0.8 !important;
+    transition: all sheet.$sheet-transition-base ease !important;
   }
 
   &:hover i {
-    opacity: $erps-tab-opacity-icon-active !important;
-    transform: scale($erps-tab-transform-scale-hover) !important;
+    opacity: sheet.$sheet-opacity-full !important;
+    transform: scale(1.1) !important;
   }
 }
 
 // Tab content styling
 @mixin tab-content-base {
-  margin-top: $erps-tab-position-zero !important;
-  padding-top: $erps-tab-position-zero !important;
+  margin-top: sheet.$sheet-position-zero !important;
+  padding-top: sheet.$sheet-position-zero !important;
 
   // Remove top margin from first data section in each tab
   .eventide-actor-data-section:first-child {
-    margin-top: $erps-tab-position-zero !important;
+    margin-top: sheet.$sheet-position-zero !important;
   }
 }
 
 @mixin tab-content-scrollable {
-  height: $erps-tab-content-height-scrollable !important;
+  height: sheet.$sheet-tab-content-height-scrollable !important;
   overflow-y: auto !important;
 
   // Ensure all sections don't scroll individually
@@ -341,8 +232,8 @@ $erps-tab-border-radius-none: 0;
 
 @mixin tab-content-animated {
   display: none !important;
-  width: $erps-tab-width-full !important;
-  animation: erps-tab-fade-in $erps-tab-animation-duration-fade ease-in-out !important;
+  width: sheet.$sheet-percent-full !important;
+  animation: erps-tab-fade-in sheet.$sheet-transition-medium ease-in-out !important;
 
   &.active {
     display: block !important;
@@ -354,14 +245,14 @@ $erps-tab-border-radius-none: 0;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  min-width: $erps-tab-count-min-width !important;
-  height: $erps-tab-count-height !important;
-  padding: $erps-tab-count-padding !important;
-  border-radius: $erps-tab-count-border-radius !important;
-  background: themes.get-universal-color(white, $erps-tab-bg-opacity-count) !important;
-  font-size: $erps-tab-count-font-size !important;
-  font-weight: $erps-tab-count-font-weight !important;
-  line-height: $erps-tab-line-height-badge !important;
+  min-width: sheet.$sheet-size-tab-count !important;
+  height: sheet.$sheet-size-tab-count !important;
+  padding: 0 sheet.$sheet-spacing-sm !important;
+  border-radius: sheet.$sheet-radius-xxl !important;
+  background: themes.get-universal-color(white, 10) !important;
+  font-size: sheet.$sheet-font-size-xs !important;
+  font-weight: sheet.$sheet-font-weight-bold !important;
+  line-height: sheet.$sheet-line-height-tight !important;
 }
 
 // ===================================
@@ -400,8 +291,8 @@ $erps-tab-border-radius-none: 0;
     // Font styling for tab text
     .item {
       font-family: var(--erps-ui-font) !important;
-      font-weight: $erps-tab-font-weight !important;
-      letter-spacing: $erps-tab-letter-spacing !important;
+      font-weight: sheet.$sheet-font-weight-semibold !important;
+      letter-spacing: sheet.$sheet-letter-spacing-base !important;
     }
 
     // Hover state
@@ -428,10 +319,10 @@ $erps-tab-border-radius-none: 0;
   // Custom tab navigation (for gear tabs, etc.)
   &__nav {
     display: flex !important;
-    gap: $erps-tab-gap !important;
-    margin-bottom: $erps-tab-nav-margin-bottom !important;
-    border-bottom: $erps-tab-border-width-thick solid themes.get-universal-color(white, 10) !important;
-    padding-bottom: $erps-tab-nav-padding-bottom !important;
+    gap: sheet.$sheet-spacing-sm !important;
+    margin-bottom: sheet.$sheet-margin-tab-nav-bottom !important;
+    border-bottom: sheet.$sheet-border-base solid themes.get-universal-color(white, 10) !important;
+    padding-bottom: sheet.$sheet-spacing-sm !important;
   }
 
   // Custom tab buttons
@@ -451,12 +342,12 @@ $erps-tab-border-radius-none: 0;
     // Hover state
     &:hover {
       background: var(--theme-primary) !important;
-      transform: translateY($erps-tab-transform-hover-y) !important;
+      transform: translateY(sheet.$sheet-transform-hover-md) !important;
 
       @include tab-shadow-base;
 
       .erps-tabs__count {
-        background: themes.get-universal-color(white, $erps-tab-bg-opacity-hover) !important;
+        background: themes.get-universal-color(white, 20) !important;
       }
     }
 
@@ -466,18 +357,18 @@ $erps-tab-border-radius-none: 0;
 
       @include tab-shadow-active(var(--theme-glow));
 
-      transform: translateY($erps-tab-transform-active-y) !important;
+      transform: translateY(sheet.$sheet-transform-hover-sm) !important;
 
       .erps-tabs__count {
-        background: themes.get-universal-color(white, $erps-tab-bg-opacity-active) !important;
-        box-shadow: 0 0 $erps-tab-shadow-blur-small themes.get-universal-color(white, 20) !important;
+        background: themes.get-universal-color(white, 20) !important;
+        box-shadow: 0 0 sheet.$sheet-shadow-blur-md themes.get-universal-color(white, 20) !important;
       }
     }
 
     // Active state icon styling (must come after variant icon styling)
     &.active i {
-      opacity: $erps-tab-opacity-icon-active !important;
-      text-shadow: 0 0 $erps-tab-shadow-blur-small var(--theme-glow) !important;
+      opacity: sheet.$sheet-opacity-full !important;
+      text-shadow: 0 0 sheet.$sheet-shadow-blur-md var(--theme-glow) !important;
     }
 
     // Equipped variant theme overrides
@@ -511,23 +402,23 @@ $erps-tab-border-radius-none: 0;
     // Equipped content styling
     &--equipped {
       .eventide-actor-data-table, .erps-data-table {
-        border-left: $erps-tab-border-width-accent solid themes.get-semantic-color(green, 60) !important;
+        border-left: sheet.$sheet-border-accent solid themes.get-semantic-color(green, 60) !important;
         box-shadow:
-          0 $erps-tab-border-width-accent $erps-tab-shadow-blur themes.get-universal-color(black, 30),
-          inset 0 $erps-tab-inset-border 0 themes.get-universal-color(white, 10),
-          inset $erps-tab-inset-accent 0 0 themes.get-semantic-color(green, 20) !important;
+          0 sheet.$sheet-border-accent sheet.$sheet-shadow-blur-lg themes.get-universal-color(black, 30),
+          inset 0 sheet.$sheet-border-thin 0 themes.get-universal-color(white, 10),
+          inset sheet.$sheet-border-accent 0 0 themes.get-semantic-color(green, 20) !important;
       }
     }
 
     // Unequipped content styling
     &--unequipped {
       .eventide-actor-data-table, .erps-data-table {
-        border-left: $erps-tab-border-width-accent solid themes.get-semantic-color(gray, 40) !important;
-        opacity: $erps-tab-opacity-unequipped !important;
+        border-left: sheet.$sheet-border-accent solid themes.get-semantic-color(gray, 40) !important;
+        opacity: sheet.$sheet-opacity-unequipped !important;
         box-shadow:
-          0 $erps-tab-border-width-accent $erps-tab-shadow-blur themes.get-universal-color(black, 30),
-          inset 0 $erps-tab-inset-border 0 themes.get-universal-color(white, 10),
-          inset $erps-tab-inset-accent 0 0 themes.get-semantic-color(gray, 15) !important;
+          0 sheet.$sheet-border-accent sheet.$sheet-shadow-blur-lg themes.get-universal-color(black, 30),
+          inset 0 sheet.$sheet-border-thin 0 themes.get-universal-color(white, 10),
+          inset sheet.$sheet-border-accent 0 0 themes.get-semantic-color(gray, 15) !important;
       }
     }
   }
@@ -567,7 +458,7 @@ $erps-tab-border-radius-none: 0;
   .sheet-tabs.erps-tabs__container--rounded {
     @include tab-container-radius-full;
 
-    margin-bottom: $erps-tab-nav-margin-bottom !important;
+    margin-bottom: sheet.$sheet-margin-tab-nav-bottom !important;
   }
 
   // Flat container for tabs that connect directly to data tables
@@ -575,7 +466,7 @@ $erps-tab-border-radius-none: 0;
   .sheet-tabs.erps-tabs__container--flat {
     @include tab-container-radius-top-only;
 
-    margin-bottom: $erps-tab-position-zero !important;
+    margin-bottom: sheet.$sheet-position-zero !important;
   }
 
   // Legacy static selectors (kept for fallback compatibility)
@@ -586,8 +477,8 @@ $erps-tab-border-radius-none: 0;
     .tabs,
     .sheet-tabs,
     .erps-tabs__container {
-      border-radius: $erps-tab-border-radius-full !important;
-      margin-bottom: $erps-tab-nav-margin-bottom !important;
+      border-radius: sheet.$sheet-radius-md !important;
+      margin-bottom: sheet.$sheet-margin-tab-nav-bottom !important;
     }
   }
 
@@ -596,7 +487,7 @@ $erps-tab-border-radius-none: 0;
     .tabs,
     .sheet-tabs,
     .erps-tabs__container {
-      border-radius: $erps-tab-border-radius-full !important;
+      border-radius: sheet.$sheet-radius-md !important;
     }
   }
 
@@ -604,7 +495,7 @@ $erps-tab-border-radius-none: 0;
     .tabs,
     .sheet-tabs,
     .erps-tabs__container {
-      border-radius: $erps-tab-border-radius-top-only !important;
+      border-radius: sheet.$sheet-radius-md !important;
     }
   }
 }
@@ -618,8 +509,8 @@ $erps-tab-border-radius-none: 0;
   // Tab navigation - themed overrides with high specificity
   .tabs .item {
     font-family: var(--erps-ui-font) !important;
-    font-weight: $erps-tab-font-weight !important;
-    letter-spacing: $erps-tab-letter-spacing !important;
+    font-weight: sheet.$sheet-font-weight-semibold !important;
+    letter-spacing: sheet.$sheet-letter-spacing-base !important;
   }
 
   // Themed tab system - override global tab styling with important declarations
@@ -681,10 +572,10 @@ $erps-tab-border-radius-none: 0;
 // Gear tab system (legacy selectors)
 .gear-tab-nav {
   display: flex !important;
-  gap: $erps-tab-gap !important;
-  margin-bottom: $erps-tab-nav-margin-bottom !important;
-  border-bottom: $erps-tab-border-width-thick solid themes.get-universal-color(white, 10) !important;
-  padding-bottom: $erps-tab-nav-padding-bottom !important;
+  gap: sheet.$sheet-spacing-sm !important;
+  margin-bottom: sheet.$sheet-margin-tab-nav-bottom !important;
+  border-bottom: sheet.$sheet-border-base solid themes.get-universal-color(white, 10) !important;
+  padding-bottom: sheet.$sheet-spacing-sm !important;
 }
 
 .gear-tab-button {
@@ -702,12 +593,12 @@ $erps-tab-border-radius-none: 0;
 
   &:hover {
     background: var(--theme-primary) !important;
-    transform: translateY($erps-tab-transform-hover-y) !important;
+    transform: translateY(sheet.$sheet-transform-hover-md) !important;
 
     @include tab-shadow-base;
 
     .gear-count {
-      background: themes.get-universal-color(white, $erps-tab-bg-opacity-hover) !important;
+      background: themes.get-universal-color(white, 20) !important;
     }
   }
 
@@ -716,18 +607,18 @@ $erps-tab-border-radius-none: 0;
 
     @include tab-shadow-active(var(--theme-glow));
 
-    transform: translateY($erps-tab-transform-active-y) !important;
+    transform: translateY(sheet.$sheet-transform-hover-sm) !important;
 
     .gear-count {
-      background: themes.get-universal-color(white, $erps-tab-bg-opacity-active) !important;
-      box-shadow: 0 0 $erps-tab-shadow-blur-small themes.get-universal-color(white, 20) !important;
+      background: themes.get-universal-color(white, 20) !important;
+      box-shadow: 0 0 sheet.$sheet-shadow-blur-md themes.get-universal-color(white, 20) !important;
     }
   }
 
   // Active state icon styling (inherits from custom-tab-button-base mixin)
   &.active i {
-    opacity: $erps-tab-opacity-icon-active !important;
-    text-shadow: 0 0 $erps-tab-shadow-blur-small var(--theme-glow) !important;
+    opacity: sheet.$sheet-opacity-full !important;
+    text-shadow: 0 0 sheet.$sheet-shadow-blur-md var(--theme-glow) !important;
   }
 
   // Equipped gear button theme overrides
@@ -760,23 +651,23 @@ $erps-tab-border-radius-none: 0;
   // Equipped gear content styling
   &--equipped {
     .eventide-actor-data-table {
-      border-left: $erps-tab-border-width-accent solid themes.get-semantic-color(green, 60) !important;
+      border-left: sheet.$sheet-border-accent solid themes.get-semantic-color(green, 60) !important;
       box-shadow:
-        0 $erps-tab-border-width-accent $erps-tab-shadow-blur themes.get-universal-color(black, 30),
-        inset 0 $erps-tab-inset-border 0 themes.get-universal-color(white, 10),
-        inset $erps-tab-inset-accent 0 0 themes.get-semantic-color(green, 20) !important;
+        0 sheet.$sheet-border-accent sheet.$sheet-shadow-blur-lg themes.get-universal-color(black, 30),
+        inset 0 sheet.$sheet-border-thin 0 themes.get-universal-color(white, 10),
+        inset sheet.$sheet-border-accent 0 0 themes.get-semantic-color(green, 20) !important;
     }
   }
 
   // Unequipped gear content styling
   &--unequipped {
     .eventide-actor-data-table {
-      border-left: $erps-tab-border-width-accent solid themes.get-semantic-color(gray, 40) !important;
-      opacity: $erps-tab-opacity-unequipped !important;
+      border-left: sheet.$sheet-border-accent solid themes.get-semantic-color(gray, 40) !important;
+      opacity: sheet.$sheet-opacity-unequipped !important;
       box-shadow:
-        0 $erps-tab-border-width-accent $erps-tab-shadow-blur themes.get-universal-color(black, 30),
-        inset 0 $erps-tab-inset-border 0 themes.get-universal-color(white, 10),
-        inset $erps-tab-inset-accent 0 0 themes.get-semantic-color(gray, 15) !important;
+        0 sheet.$sheet-border-accent sheet.$sheet-shadow-blur-lg themes.get-universal-color(black, 30),
+        inset 0 sheet.$sheet-border-thin 0 themes.get-universal-color(white, 10),
+        inset sheet.$sheet-border-accent 0 0 themes.get-semantic-color(gray, 15) !important;
     }
   }
 }
@@ -787,22 +678,22 @@ $erps-tab-border-radius-none: 0;
 
 @keyframes erps-tab-glow {
   0%, 100% {
-    opacity: $erps-tab-opacity-glow-start;
+    opacity: 0.2;
   }
 
   50% {
-    opacity: $erps-tab-opacity-glow-mid;
+    opacity: 0.4;
   }
 }
 
 @keyframes erps-tab-fade-in {
   from {
-    opacity: $erps-tab-animation-opacity-start;
-    transform: translateY($erps-tab-transform-fade-y);
+    opacity: 0;
+    transform: translateY(sheet.$sheet-transform-fade);
   }
 
   to {
-    opacity: $erps-tab-animation-opacity-end;
-    transform: translateY($erps-tab-position-zero);
+    opacity: 1;
+    transform: translateY(sheet.$sheet-position-zero);
   }
 }

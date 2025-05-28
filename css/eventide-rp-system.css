@@ -491,7 +491,7 @@
   border: 2px solid;
   background: linear-gradient(135deg, rgba(30, 58, 138, 0.9) 0%, rgba(30, 58, 138, 0.8) 100%);
   border-color: rgba(59, 130, 246, 0.5);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 .erps-resource-box::before {
   content: "";
@@ -4504,7 +4504,7 @@ label,
   display: flex !important;
   flex-wrap: wrap !important;
   border-bottom: 2px solid rgba(255, 255, 255, 0.1) !important;
-  background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-secondary) 50%, var(--theme-primary) 100%) !important;
+  background: linear-gradient(135deg, var(--theme-primary) 0, var(--theme-secondary) 50%, var(--theme-primary) 100%) !important;
   border-radius: 6px 6px 0 0 !important;
   padding: 0.25rem 0.25rem 0 !important;
   margin: 0 !important;
@@ -4575,7 +4575,7 @@ label,
   display: flex !important;
   flex-wrap: wrap !important;
   border-bottom: 2px solid rgba(255, 255, 255, 0.1) !important;
-  background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-secondary) 50%, var(--theme-primary) 100%) !important;
+  background: linear-gradient(135deg, var(--theme-primary) 0, var(--theme-secondary) 50%, var(--theme-primary) 100%) !important;
   border-radius: 6px 6px 0 0 !important;
   padding: 0.25rem 0.25rem 0 !important;
   margin: 0 !important;
@@ -4715,7 +4715,7 @@ label,
   z-index: 10 !important;
 }
 .erps-tabs__item.active::before {
-  left: 0% !important;
+  left: 0 !important;
   background: linear-gradient(90deg, var(--theme-light, rgba(59, 130, 246, 0.7)), transparent, var(--theme-light, rgba(59, 130, 246, 0.7))) !important;
   opacity: 0.3 !important;
   animation: erps-tab-glow 3s ease-in-out infinite !important;
@@ -4845,7 +4845,7 @@ label,
 }
 .erps-tabs__panel--unequipped .eventide-actor-data-table, .erps-tabs__panel--unequipped .erps-data-table {
   border-left: 4px solid rgba(100, 100, 100, 0.4) !important;
-  opacity: 0.95 !important;
+  opacity: 0.85 !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1), inset 4px 0 0 rgba(100, 100, 100, 0.15) !important;
 }
 .erps-tabs--light .erps-tabs__button {
@@ -4887,7 +4887,7 @@ label,
 .eventide-character-sheet .tab--flat-container .tabs,
 .eventide-character-sheet .tab--flat-container .sheet-tabs,
 .eventide-character-sheet .tab--flat-container .erps-tabs__container {
-  border-radius: 6px 6px 0 0 !important;
+  border-radius: 6px !important;
 }
 
 .eventide-character-sheet .tabs .item {
@@ -4900,7 +4900,7 @@ label,
   display: flex !important;
   flex-wrap: wrap !important;
   border-bottom: 2px solid rgba(255, 255, 255, 0.1) !important;
-  background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-secondary) 50%, var(--theme-primary) 100%) !important;
+  background: linear-gradient(135deg, var(--theme-primary) 0, var(--theme-secondary) 50%, var(--theme-primary) 100%) !important;
   border-radius: 6px 6px 0 0 !important;
   padding: 0.25rem 0.25rem 0 !important;
   margin: 0 !important;
@@ -5026,7 +5026,7 @@ label,
   z-index: 10 !important;
 }
 .eventide-character-sheet .tabs a[data-action=tab].active::before {
-  left: 0% !important;
+  left: 0 !important;
   background: linear-gradient(90deg, var(--theme-light, rgba(59, 130, 246, 0.7)), transparent, var(--theme-light, rgba(59, 130, 246, 0.7))) !important;
   opacity: 0.3 !important;
   animation: erps-tab-glow 3s ease-in-out infinite !important;
@@ -5173,7 +5173,7 @@ label,
 }
 .gear-tab-content--unequipped .eventide-actor-data-table {
   border-left: 4px solid rgba(100, 100, 100, 0.4) !important;
-  opacity: 0.95 !important;
+  opacity: 0.85 !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1), inset 4px 0 0 rgba(100, 100, 100, 0.15) !important;
 }
 
@@ -6374,7 +6374,7 @@ label,
   border: 1px solid rgba(191, 68, 0, 0.5);
   text-shadow: 0 0 4px rgba(191, 68, 0, 0.8);
   box-shadow: 0 0 6px rgba(191, 68, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  animation: acro-glow 2s ease-in-out infinite alternate;
+  animation: acro-glow 1.5s ease-in-out infinite alternate;
 }
 .eventide-ability-card--acro .eventide-ability-card__total-button::before {
   background: linear-gradient(90deg, transparent, rgba(191, 68, 0, 0.3), transparent);
@@ -6404,7 +6404,7 @@ label,
   border: 1px solid rgba(168, 3, 3, 0.5);
   text-shadow: 0 0 4px rgba(168, 3, 3, 0.8);
   box-shadow: 0 0 6px rgba(168, 3, 3, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  animation: phys-glow 2s ease-in-out infinite alternate;
+  animation: phys-glow 1.5s ease-in-out infinite alternate;
 }
 .eventide-ability-card--phys .eventide-ability-card__total-button::before {
   background: linear-gradient(90deg, transparent, rgba(168, 3, 3, 0.3), transparent);
@@ -6434,7 +6434,7 @@ label,
   border: 1px solid rgba(45, 104, 45, 0.5);
   text-shadow: 0 0 4px rgba(45, 104, 45, 0.8);
   box-shadow: 0 0 6px rgba(45, 104, 45, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  animation: fort-glow 2s ease-in-out infinite alternate;
+  animation: fort-glow 1.5s ease-in-out infinite alternate;
 }
 .eventide-ability-card--fort .eventide-ability-card__total-button::before {
   background: linear-gradient(90deg, transparent, rgba(45, 104, 45, 0.3), transparent);
@@ -6464,7 +6464,7 @@ label,
   border: 1px solid rgba(106, 27, 154, 0.5);
   text-shadow: 0 0 4px rgba(106, 27, 154, 0.8);
   box-shadow: 0 0 6px rgba(106, 27, 154, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  animation: will-glow 2s ease-in-out infinite alternate;
+  animation: will-glow 1.5s ease-in-out infinite alternate;
 }
 .eventide-ability-card--will .eventide-ability-card__total-button::before {
   background: linear-gradient(90deg, transparent, rgba(106, 27, 154, 0.3), transparent);
@@ -6494,7 +6494,7 @@ label,
   border: 1px solid rgba(14, 67, 128, 0.5);
   text-shadow: 0 0 4px rgba(14, 67, 128, 0.8);
   box-shadow: 0 0 6px rgba(14, 67, 128, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  animation: wits-glow 2s ease-in-out infinite alternate;
+  animation: wits-glow 1.5s ease-in-out infinite alternate;
 }
 .eventide-ability-card--wits .eventide-ability-card__total-button::before {
   background: linear-gradient(90deg, transparent, rgba(14, 67, 128, 0.3), transparent);
@@ -6519,27 +6519,27 @@ label,
 
 .eventide-ability-acro-box {
   background-color: var(--erps-abilities-acro-transparent);
-  border-left: 0.3125rem solid var(--erps-abilities-acro);
+  border-left: 0.5rem solid var(--erps-abilities-acro);
 }
 
 .eventide-ability-phys-box {
   background-color: var(--erps-abilities-phys-transparent);
-  border-left: 0.3125rem solid var(--erps-abilities-phys);
+  border-left: 0.5rem solid var(--erps-abilities-phys);
 }
 
 .eventide-ability-fort-box {
   background-color: var(--erps-abilities-fort-transparent);
-  border-left: 0.3125rem solid var(--erps-abilities-fort);
+  border-left: 0.5rem solid var(--erps-abilities-fort);
 }
 
 .eventide-ability-will-box {
   background-color: var(--erps-abilities-will-transparent);
-  border-left: 0.3125rem solid var(--erps-abilities-will);
+  border-left: 0.5rem solid var(--erps-abilities-will);
 }
 
 .eventide-ability-wits-box {
   background-color: var(--erps-abilities-wits-transparent);
-  border-left: 0.3125rem solid var(--erps-abilities-wits);
+  border-left: 0.5rem solid var(--erps-abilities-wits);
 }
 
 @keyframes acro-glow {
@@ -8660,7 +8660,7 @@ label,
   border: 2px solid;
   background: linear-gradient(135deg, rgba(30, 58, 138, 0.9) 0%, rgba(30, 58, 138, 0.8) 100%);
   border-color: rgba(59, 130, 246, 0.5);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 .eventide-rp-system .erps-resource-box::before {
   content: "";
@@ -9445,7 +9445,7 @@ label,
   border: 1px solid rgba(191, 68, 0, 0.5);
   text-shadow: 0 0 4px rgba(191, 68, 0, 0.8);
   box-shadow: 0 0 6px rgba(191, 68, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  animation: acro-glow 2s ease-in-out infinite alternate;
+  animation: acro-glow 1.5s ease-in-out infinite alternate;
 }
 .eventide-rp-system .eventide-ability-card--acro .eventide-ability-card__total-button::before {
   background: linear-gradient(90deg, transparent, rgba(191, 68, 0, 0.3), transparent);
@@ -9475,7 +9475,7 @@ label,
   border: 1px solid rgba(168, 3, 3, 0.5);
   text-shadow: 0 0 4px rgba(168, 3, 3, 0.8);
   box-shadow: 0 0 6px rgba(168, 3, 3, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  animation: phys-glow 2s ease-in-out infinite alternate;
+  animation: phys-glow 1.5s ease-in-out infinite alternate;
 }
 .eventide-rp-system .eventide-ability-card--phys .eventide-ability-card__total-button::before {
   background: linear-gradient(90deg, transparent, rgba(168, 3, 3, 0.3), transparent);
@@ -9505,7 +9505,7 @@ label,
   border: 1px solid rgba(45, 104, 45, 0.5);
   text-shadow: 0 0 4px rgba(45, 104, 45, 0.8);
   box-shadow: 0 0 6px rgba(45, 104, 45, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  animation: fort-glow 2s ease-in-out infinite alternate;
+  animation: fort-glow 1.5s ease-in-out infinite alternate;
 }
 .eventide-rp-system .eventide-ability-card--fort .eventide-ability-card__total-button::before {
   background: linear-gradient(90deg, transparent, rgba(45, 104, 45, 0.3), transparent);
@@ -9535,7 +9535,7 @@ label,
   border: 1px solid rgba(106, 27, 154, 0.5);
   text-shadow: 0 0 4px rgba(106, 27, 154, 0.8);
   box-shadow: 0 0 6px rgba(106, 27, 154, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  animation: will-glow 2s ease-in-out infinite alternate;
+  animation: will-glow 1.5s ease-in-out infinite alternate;
 }
 .eventide-rp-system .eventide-ability-card--will .eventide-ability-card__total-button::before {
   background: linear-gradient(90deg, transparent, rgba(106, 27, 154, 0.3), transparent);
@@ -9565,7 +9565,7 @@ label,
   border: 1px solid rgba(14, 67, 128, 0.5);
   text-shadow: 0 0 4px rgba(14, 67, 128, 0.8);
   box-shadow: 0 0 6px rgba(14, 67, 128, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  animation: wits-glow 2s ease-in-out infinite alternate;
+  animation: wits-glow 1.5s ease-in-out infinite alternate;
 }
 .eventide-rp-system .eventide-ability-card--wits .eventide-ability-card__total-button::before {
   background: linear-gradient(90deg, transparent, rgba(14, 67, 128, 0.3), transparent);
@@ -9589,23 +9589,23 @@ label,
 }
 .eventide-rp-system .eventide-ability-acro-box {
   background-color: var(--erps-abilities-acro-transparent);
-  border-left: 0.3125rem solid var(--erps-abilities-acro);
+  border-left: 0.5rem solid var(--erps-abilities-acro);
 }
 .eventide-rp-system .eventide-ability-phys-box {
   background-color: var(--erps-abilities-phys-transparent);
-  border-left: 0.3125rem solid var(--erps-abilities-phys);
+  border-left: 0.5rem solid var(--erps-abilities-phys);
 }
 .eventide-rp-system .eventide-ability-fort-box {
   background-color: var(--erps-abilities-fort-transparent);
-  border-left: 0.3125rem solid var(--erps-abilities-fort);
+  border-left: 0.5rem solid var(--erps-abilities-fort);
 }
 .eventide-rp-system .eventide-ability-will-box {
   background-color: var(--erps-abilities-will-transparent);
-  border-left: 0.3125rem solid var(--erps-abilities-will);
+  border-left: 0.5rem solid var(--erps-abilities-will);
 }
 .eventide-rp-system .eventide-ability-wits-box {
   background-color: var(--erps-abilities-wits-transparent);
-  border-left: 0.3125rem solid var(--erps-abilities-wits);
+  border-left: 0.5rem solid var(--erps-abilities-wits);
 }
 @keyframes acro-glow {
   0% {
@@ -9658,3 +9658,5 @@ label,
     left: 100%;
   }
 }
+
+/*# sourceMappingURL=eventide-rp-system.css.map */

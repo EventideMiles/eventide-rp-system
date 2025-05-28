@@ -1,0 +1,278 @@
+@use "sass:map";
+
+// =============================================================================
+// EVENTIDE RP SYSTEM SHEET DESIGN TOKENS
+// =============================================================================
+// This file consolidates design tokens specifically for sheet components
+// These tokens help ensure consistency across all sheet-related components
+
+// =============================================================================
+// SPACING & SIZING TOKENS
+// =============================================================================
+
+// Base spacing values
+$sheet-spacing-xxs: 0.125rem;    // 2px
+$sheet-spacing-xs: 0.25rem;      // 4px
+$sheet-spacing-sm: 0.5rem;       // 8px
+$sheet-spacing-md: 0.75rem;      // 12px
+$sheet-spacing-base: 1rem;       // 16px
+$sheet-spacing-lg: 1.5rem;       // 24px
+$sheet-spacing-xl: 2rem;         // 32px
+$sheet-spacing-xxl: 3rem;        // 48px
+
+// Component heights
+$sheet-height-input: 1.75rem;
+$sheet-height-button: 1.75rem;
+$sheet-height-section-upper: 2rem;
+$sheet-height-section-lower: 2.5rem;
+$sheet-height-section-third: 1.5rem;
+$sheet-height-header: 3rem;
+$sheet-height-header-compact: 2.5rem;
+$sheet-height-tab-large: 3.5rem;
+$sheet-height-ability-card: 3rem;
+
+// Component widths
+$sheet-width-input: 2.25rem;
+$sheet-width-button: 2.25rem;
+$sheet-width-header: 3rem;
+$sheet-width-header-min: 2.5rem;
+$sheet-width-header-max: 3rem;
+$sheet-width-input-min: 2rem;
+$sheet-width-status-max: 20rem;
+
+// Icon and element sizes
+$sheet-size-icon-sm: 1rem;
+$sheet-size-icon-md: 1.25rem;
+$sheet-size-icon-lg: 1.75rem;
+$sheet-size-status-button: 1.5rem;
+$sheet-size-status-element: 1.75rem;
+$sheet-size-tab-count: 1.5rem;
+$sheet-size-image: 24px;
+
+// =============================================================================
+// BORDER & RADIUS TOKENS
+// =============================================================================
+
+// Border widths
+$sheet-border-thin: 1px;
+$sheet-border-base: 2px;
+$sheet-border-thick: 3px;
+$sheet-border-accent: 4px;
+
+// Border radius values
+$sheet-radius-xs: 3px;
+$sheet-radius-sm: 4px;
+$sheet-radius-md: 6px;
+$sheet-radius-lg: 8px;
+$sheet-radius-xl: 10px;
+$sheet-radius-xxl: 12px;
+$sheet-radius-circle: 50%;
+
+// =============================================================================
+// TYPOGRAPHY TOKENS
+// =============================================================================
+
+// Font sizes (using pt for consistency with existing code)
+$sheet-font-size-xs: 12pt;
+$sheet-font-size-sm: 14pt;
+$sheet-font-size-md: 16pt;
+$sheet-font-size-lg: 18pt;
+
+// Font sizes (using rem for specific elements)
+$sheet-font-size-label-xs: 0.7rem;
+$sheet-font-size-label-sm: 0.75rem;
+$sheet-font-size-label-md: 0.8rem;
+$sheet-font-size-label-lg: 0.9rem;
+$sheet-font-size-value-sm: 0.9rem;
+$sheet-font-size-value-md: 1rem;
+$sheet-font-size-value-lg: 1.1rem;
+$sheet-font-size-value-xl: 1.4rem;
+
+// Font weights
+$sheet-font-weight-normal: 400;
+$sheet-font-weight-medium: 500;
+$sheet-font-weight-semibold: 600;
+$sheet-font-weight-bold: 700;
+
+// Letter spacing
+$sheet-letter-spacing-tight: 0.3px;
+$sheet-letter-spacing-base: 0.5px;
+$sheet-letter-spacing-loose: 1px;
+
+// Line heights
+$sheet-line-height-tight: 1;
+$sheet-line-height-base: 1.2;
+$sheet-line-height-loose: 1.5;
+
+// =============================================================================
+// SHADOW & GLOW TOKENS
+// =============================================================================
+
+// Shadow blur values
+$sheet-shadow-blur-xs: 4px;
+$sheet-shadow-blur-sm: 6px;
+$sheet-shadow-blur-md: 8px;
+$sheet-shadow-blur-lg: 12px;
+$sheet-shadow-blur-xl: 15px;
+$sheet-shadow-blur-xxl: 20px;
+
+// Shadow offsets
+$sheet-shadow-offset-xs: 1px;
+$sheet-shadow-offset-sm: 2px;
+$sheet-shadow-offset-md: 4px;
+
+// Glow and effect values
+$sheet-glow-blur-sm: 10px;
+$sheet-glow-blur-md: 15px;
+$sheet-glow-blur-lg: 20px;
+$sheet-glow-width: 200%;
+
+// =============================================================================
+// ANIMATION & TRANSITION TOKENS
+// =============================================================================
+
+// Transition durations
+$sheet-transition-fast: 0.15s;
+$sheet-transition-base: 0.2s;
+$sheet-transition-medium: 0.3s;
+$sheet-transition-slow: 0.6s;
+
+// Animation durations
+$sheet-animation-fast: 1.5s;
+$sheet-animation-medium: 2.5s;
+$sheet-animation-slow: 3.5s;
+$sheet-animation-glow: 3s;
+$sheet-animation-shift: 8s;
+$sheet-animation-pulse: 3s;
+$sheet-animation-shimmer: 3s;
+
+// Transform values
+$sheet-transform-hover-sm: -1px;
+$sheet-transform-hover-md: -2px;
+$sheet-transform-fade: 10px;
+$sheet-transform-scale-active: 0.95;
+$sheet-transform-scale-hover: 1.05;
+$sheet-transform-scale-icon: 1.15;
+
+// =============================================================================
+// OPACITY TOKENS
+// =============================================================================
+
+$sheet-opacity-disabled: 0.5;
+$sheet-opacity-unequipped: 0.85;
+$sheet-opacity-default: 0.9;
+$sheet-opacity-full: 1;
+
+// =============================================================================
+// POSITION & LAYOUT TOKENS
+// =============================================================================
+
+// Position values
+$sheet-position-zero: 0;
+$sheet-position-center: 50%;
+$sheet-position-full: 100%;
+
+// Percentage values for gradients and layouts
+$sheet-percent-quarter: 25%;
+$sheet-percent-third: 30%;
+$sheet-percent-half: 50%;
+$sheet-percent-two-thirds: 70%;
+$sheet-percent-three-quarters: 75%;
+$sheet-percent-full: 100%;
+
+// Z-index values
+$sheet-z-index-base: 0;
+$sheet-z-index-overlay: 1;
+$sheet-z-index-header: 2;
+
+// =============================================================================
+// COMPONENT-SPECIFIC TOKENS
+// =============================================================================
+
+// Tab-specific values
+$sheet-tab-content-height-scrollable: 39.06rem; // Specific calculated value
+$sheet-tab-responsive-breakpoint: 768px;
+$sheet-tab-responsive-label-width: 30%;
+
+// Status card specific
+$sheet-status-arrow-size: 8px 12px;
+$sheet-status-arrow-offset: 0.5rem;
+$sheet-status-arrow-right-offset: 2rem;
+
+// Resource box specific
+$sheet-resource-box-min-height: 5.5rem;
+$sheet-resource-stat-box-min-height: 4rem;
+
+// Data table specific
+$sheet-table-pattern-size: 20px;
+$sheet-table-responsive-breakpoint: 768px;
+$sheet-table-responsive-label-width: 30%;
+
+// =============================================================================
+// PADDING & MARGIN COMBINATIONS
+// =============================================================================
+
+// Common padding combinations
+$sheet-padding-input: 0.25rem 0.5rem;
+$sheet-padding-button: 0.5rem 1rem;
+$sheet-padding-card: 0.5rem 0.75rem;
+$sheet-padding-cell: 0.75rem 1rem;
+$sheet-padding-cell-compact: 0.5rem 0.75rem;
+$sheet-padding-status-indicator: 0.25rem 0.5rem;
+$sheet-padding-tab: 0.5rem 1rem;
+$sheet-padding-tab-large: 0.75rem 1.5rem;
+$sheet-padding-tab-container: 0.25rem 0.25rem 0;
+
+// Common margin combinations
+$sheet-margin-section-bottom: 1rem;
+$sheet-margin-tab-right: 0.25rem;
+$sheet-margin-tab-nav-bottom: 1rem;
+$sheet-margin-status-top: 0.5rem;
+$sheet-margin-responsive: 0.5rem;
+
+// =============================================================================
+// UTILITY FUNCTIONS
+// =============================================================================
+
+// Function to get consistent spacing values
+@function sheet-spacing($size) {
+  $spacing-map: (
+    'xxs': $sheet-spacing-xxs,
+    'xs': $sheet-spacing-xs,
+    'sm': $sheet-spacing-sm,
+    'md': $sheet-spacing-md,
+    'base': $sheet-spacing-base,
+    'lg': $sheet-spacing-lg,
+    'xl': $sheet-spacing-xl,
+    'xxl': $sheet-spacing-xxl
+  );
+
+  @return map.get($spacing-map, $size);
+}
+
+// Function to get consistent border radius values
+@function sheet-radius($size) {
+  $radius-map: (
+    'xs': $sheet-radius-xs,
+    'sm': $sheet-radius-sm,
+    'md': $sheet-radius-md,
+    'lg': $sheet-radius-lg,
+    'xl': $sheet-radius-xl,
+    'xxl': $sheet-radius-xxl,
+    'circle': $sheet-radius-circle
+  );
+
+  @return map.get($radius-map, $size);
+}
+
+// Function to get consistent transition values
+@function sheet-transition($speed: 'base') {
+  $transition-map: (
+    'fast': $sheet-transition-fast,
+    'base': $sheet-transition-base,
+    'medium': $sheet-transition-medium,
+    'slow': $sheet-transition-slow
+  );
+
+  @return map.get($transition-map, $speed) ease;
+}
