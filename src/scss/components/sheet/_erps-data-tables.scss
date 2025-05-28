@@ -879,6 +879,18 @@ $erps-table-border-radius-bottom-only: 0 0 $erps-table-border-radius $erps-table
   // Features layout
   &--features {
     @include table-columns-flex-last($erps-table-width-full);
+
+    // Ensure consistent padding with other table types
+    .erps-data-table__header-cell,
+    .erps-data-table__cell {
+      padding: $erps-table-cell-padding !important;
+      font-size: $erps-table-cell-font-size !important;
+    }
+
+    .erps-data-table__header-cell {
+      height: $erps-table-header-height !important;
+      min-height: $erps-table-header-height !important;
+    }
   }
 
   // Gear layout
@@ -918,6 +930,18 @@ $erps-table-border-radius-bottom-only: 0 0 $erps-table-border-radius $erps-table
   // Statuses layout
   &--statuses {
     @include table-columns-auto-last($erps-table-width-full);
+
+    // Ensure consistent padding with other table types
+    .erps-data-table__header-cell,
+    .erps-data-table__cell {
+      padding: $erps-table-cell-padding !important;
+      font-size: $erps-table-cell-font-size !important;
+    }
+
+    .erps-data-table__header-cell {
+      height: $erps-table-header-height !important;
+      min-height: $erps-table-header-height !important;
+    }
   }
 }
 

@@ -4258,6 +4258,15 @@ label,
   width: 100% !important;
   justify-content: flex-end !important;
 }
+.erps-data-table--features .erps-data-table__header-cell,
+.erps-data-table--features .erps-data-table__cell {
+  padding: 0.75rem 1rem !important;
+  font-size: 14pt !important;
+}
+.erps-data-table--features .erps-data-table__header-cell {
+  height: 3rem !important;
+  min-height: 3rem !important;
+}
 .erps-data-table--gear {
   table-layout: auto !important;
 }
@@ -4334,6 +4343,15 @@ label,
 .erps-data-table--statuses .erps-data-table__header-cell:last-child,
 .erps-data-table--statuses .erps-data-table__cell:last-child {
   width: auto !important;
+}
+.erps-data-table--statuses .erps-data-table__header-cell,
+.erps-data-table--statuses .erps-data-table__cell {
+  padding: 0.75rem 1rem !important;
+  font-size: 14pt !important;
+}
+.erps-data-table--statuses .erps-data-table__header-cell {
+  height: 3rem !important;
+  min-height: 3rem !important;
 }
 
 @keyframes erps-table-header-glow {
@@ -9640,5 +9658,3 @@ label,
     left: 100%;
   }
 }
-
-/*# sourceMappingURL=eventide-rp-system.css.map */
