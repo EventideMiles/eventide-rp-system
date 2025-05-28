@@ -1,0 +1,725 @@
+// ===================================
+// ABILITY CARDS COMPONENT
+// ===================================
+// Reusable ability display system with interactive buttons and status indicators
+// Extracted from character sheet and modernized following refactoring guidelines
+
+@use "../../utils/colors" as colors;
+@use "../../utils/mixins" as mixins;
+
+// ===================================
+// CONFIGURATION VARIABLES
+// ===================================
+
+// Card sizing and spacing
+$ability-card-height: 3rem;
+$ability-card-padding: 0.25rem 0.5rem;
+$ability-card-border-radius: 4px;
+$ability-card-border-width: 2px;
+
+// Content spacing
+$ability-card-content-gap: 0.5rem;
+$ability-card-stats-gap: 0.5rem;
+
+// Label styling
+$ability-card-label-font-size: 14pt;
+$ability-card-label-font-weight: 600;
+
+// Input and button sizing
+$ability-input-width: 2.25rem;
+$ability-input-height: 1.75rem;
+$ability-button-width: 2.25rem;
+$ability-button-height: 1.75rem;
+$ability-status-size: 1.75rem;
+
+// Header sizing
+$ability-header-min-width: 2.5rem;
+$ability-header-max-width: 3rem;
+$ability-header-width: 3rem;
+
+// Font sizes
+$ability-input-font-size: 16pt;
+$ability-button-font-size: 16pt;
+$ability-lock-icon-font-size: 0.9rem;
+
+// Animation timing
+$ability-transition-duration: 0.3s;
+$ability-button-transition-duration: 0.2s;
+
+// ===================================
+// UTILITY MIXINS
+// ===================================
+
+// Base ability card styling
+@mixin ability-card-base {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  border-radius: $ability-card-border-radius;
+  border: $ability-card-border-width solid transparent;
+  background: linear-gradient(
+    135deg,
+    rgb(0 0 0 / 30%) 0%,
+    rgb(20 30 45 / 40%) 50%,
+    rgb(0 0 0 / 30%) 100%
+  );
+  padding: $ability-card-padding;
+  transition: all $ability-transition-duration ease;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  height: $ability-card-height;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+// Ability card left border indicator
+@mixin ability-card-border-indicator {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  z-index: 1;
+  transition: all $ability-transition-duration ease;
+}
+
+// Input styling for ability cards
+@mixin ability-card-input {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: $ability-input-width !important;
+  height: $ability-input-height !important;
+  min-height: $ability-input-height !important;
+  max-height: $ability-input-height !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  font-size: $ability-input-font-size !important;
+  line-height: 1 !important;
+  text-align: center !important;
+  background: rgb(0 0 0 / 30%) !important;
+  border: 1px solid rgb(255 255 255 / 20%) !important;
+  border-radius: 3px !important;
+  color: #fff !important;
+  flex-shrink: 0 !important;
+  box-sizing: border-box !important;
+  vertical-align: middle !important;
+  font-family: inherit !important;
+  font-weight: normal !important;
+  letter-spacing: normal !important;
+  text-transform: none !important;
+
+  &:focus {
+    border-color: rgb(255 255 255 / 50%) !important;
+    box-shadow: 0 0 4px rgb(255 255 255 / 30%) !important;
+    outline: none !important;
+  }
+
+  &:hover {
+    border-color: rgb(255 255 255 / 40%) !important;
+  }
+}
+
+// Button styling for ability cards
+@mixin ability-card-button {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: $ability-button-width !important;
+  height: $ability-button-height !important;
+  min-height: $ability-button-height !important;
+  max-height: $ability-button-height !important;
+  min-width: $ability-button-width !important;
+  max-width: $ability-button-width !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border-radius: 3px !important;
+  color: #fff !important;
+  cursor: pointer !important;
+  transition: all $ability-button-transition-duration ease !important;
+  flex-shrink: 0 !important;
+  font-size: $ability-button-font-size !important;
+  font-weight: bold !important;
+  line-height: 1 !important;
+  position: relative !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+  vertical-align: middle !important;
+  text-decoration: none !important;
+  text-transform: none !important;
+  letter-spacing: normal !important;
+
+  // Default styling
+  background: rgb(255 255 255 / 10%);
+  border: 1px solid rgb(255 255 255 / 30%);
+  text-shadow: 0 0 4px rgb(255 255 255 / 60%);
+  box-shadow:
+    0 0 6px rgb(255 255 255 / 40%),
+    inset 0 1px 0 rgb(255 255 255 / 20%);
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  // Subtle animated background shimmer
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgb(255 255 255 / 20%),
+      transparent
+    );
+    animation: button-shimmer 3s ease-in-out infinite;
+  }
+}
+
+// Status container styling
+@mixin ability-card-status {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  flex-shrink: 0 !important;
+  width: $ability-status-size !important;
+  height: $ability-status-size !important;
+  min-height: $ability-status-size !important;
+  max-height: $ability-status-size !important;
+  min-width: $ability-status-size !important;
+  max-width: $ability-status-size !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border-radius: 3px !important;
+  background: rgb(0 0 0 / 30%) !important;
+  border: 1px solid rgb(255 255 255 / 20%) !important;
+  transition: all $ability-button-transition-duration ease !important;
+  box-sizing: border-box !important;
+  vertical-align: middle !important;
+  position: relative !important;
+  overflow: visible !important;
+
+  &:hover {
+    background: rgb(0 0 0 / 40%) !important;
+    border-color: rgb(255 255 255 / 35%) !important;
+  }
+}
+
+// Lock/unlock icon styling
+@mixin ability-card-icon {
+  font-size: $ability-lock-icon-font-size !important;
+  opacity: 0.9 !important;
+  transition: all $ability-button-transition-duration ease !important;
+  display: inline-block !important;
+  line-height: 1 !important;
+  vertical-align: middle !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  text-decoration: none !important;
+  text-transform: none !important;
+
+  &:hover {
+    opacity: 1 !important;
+    transform: scale(1.15) !important;
+  }
+}
+
+// ===================================
+// ABILITY CARDS CONTAINER
+// ===================================
+
+.header-abilities {
+  gap: 0.25rem;
+  padding: 0.25rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%; // Match the height of the header content
+}
+
+// ===================================
+// MAIN ABILITY CARD COMPONENT
+// ===================================
+
+.eventide-ability-card {
+  @include ability-card-base;
+
+  // Base styling with left border indicator
+  &::before {
+    @include ability-card-border-indicator;
+  }
+
+  &__content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    gap: $ability-card-content-gap;
+    justify-content: space-between;
+  }
+
+  &__header {
+    flex-shrink: 0;
+    min-width: $ability-header-min-width;
+    max-width: $ability-header-max-width;
+    width: $ability-header-width;
+  }
+
+  &__label {
+    font-size: $ability-card-label-font-size;
+    font-weight: $ability-card-label-font-weight;
+    color: rgb(255 255 255 / 80%);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    line-height: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: help;
+    transition: color $ability-button-transition-duration ease;
+
+    &:hover {
+      color: rgb(255 255 255 / 100%);
+    }
+  }
+
+  &__stats {
+    display: flex;
+    align-items: center;
+    gap: $ability-card-stats-gap;
+    flex-grow: 1;
+  }
+
+  &__input {
+    @include ability-card-input;
+  }
+
+  &__total-button {
+    @include ability-card-button;
+  }
+
+  &__status {
+    @include ability-card-status;
+  }
+
+  &__lock {
+    @include ability-card-icon;
+
+    color: #ff6b6b;
+    text-shadow: 0 0 4px rgb(255 107 107 / 60%);
+  }
+
+  &__unlock {
+    @include ability-card-icon;
+
+    color: #4CAF50;
+    text-shadow: 0 0 4px rgb(76 175 80 / 60%);
+  }
+
+  // Hover effects with themed backgrounds and patterns
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgb(0 0 0 / 30%);
+
+    &::before {
+      width: 100%;
+      opacity: 0.15;
+    }
+  }
+
+  // ===================================
+  // ABILITY-SPECIFIC STYLING
+  // ===================================
+
+  // Acrobatics
+  &--acro {
+    &::before {
+      background: colors.$acro;
+    }
+
+    .eventide-ability-card__total-button {
+      background: rgb(191 68 0 / 30%);
+      border: 1px solid rgb(191 68 0 / 50%);
+      text-shadow: 0 0 4px rgb(191 68 0 / 80%);
+      box-shadow:
+        0 0 6px rgb(191 68 0 / 40%),
+        inset 0 1px 0 rgb(255 255 255 / 20%);
+      animation: acro-glow 2s ease-in-out infinite alternate;
+
+      &::before {
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgb(191 68 0 / 30%),
+          transparent
+        );
+      }
+
+      &:hover {
+        background: rgb(191 68 0 / 50%);
+        border-color: rgb(191 68 0 / 70%);
+        transform: scale(1.05);
+        box-shadow:
+          0 0 12px rgb(191 68 0 / 60%),
+          inset 0 1px 0 rgb(255 255 255 / 30%);
+      }
+    }
+
+    &:hover {
+      background: linear-gradient(
+        135deg,
+        rgb(191 68 0 / 20%) 0%,
+        rgb(191 68 0 / 10%) 50%,
+        rgb(191 68 0 / 5%) 100%
+      );
+
+      &::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23bf4400' fill-opacity='0.1'%3E%3Cpath d='M10 2l2 6h6l-5 4 2 6-5-4-5 4 2-6-5-4h6z'/%3E%3C/g%3E%3C/svg%3E");
+        pointer-events: none;
+        z-index: 1;
+      }
+    }
+  }
+
+  // Physical
+  &--phys {
+    &::before {
+      background: colors.$phys;
+    }
+
+    .eventide-ability-card__total-button {
+      background: rgb(168 3 3 / 30%);
+      border: 1px solid rgb(168 3 3 / 50%);
+      text-shadow: 0 0 4px rgb(168 3 3 / 80%);
+      box-shadow:
+        0 0 6px rgb(168 3 3 / 40%),
+        inset 0 1px 0 rgb(255 255 255 / 20%);
+      animation: phys-glow 2s ease-in-out infinite alternate;
+
+      &::before {
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgb(168 3 3 / 30%),
+          transparent
+        );
+      }
+
+      &:hover {
+        background: rgb(168 3 3 / 50%);
+        border-color: rgb(168 3 3 / 70%);
+        transform: scale(1.05);
+        box-shadow:
+          0 0 12px rgb(168 3 3 / 60%),
+          inset 0 1px 0 rgb(255 255 255 / 30%);
+      }
+    }
+
+    &:hover {
+      background: linear-gradient(
+        135deg,
+        rgb(168 3 3 / 20%) 0%,
+        rgb(168 3 3 / 10%) 50%,
+        rgb(168 3 3 / 5%) 100%
+      );
+
+      &::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23a80303' fill-opacity='0.1'%3E%3Crect x='8' y='2' width='4' height='16'/%3E%3Crect x='2' y='8' width='16' height='4'/%3E%3C/g%3E%3C/svg%3E");
+        pointer-events: none;
+        z-index: 1;
+      }
+    }
+  }
+
+  // Fortitude
+  &--fort {
+    &::before {
+      background: colors.$fort;
+    }
+
+    .eventide-ability-card__total-button {
+      background: rgb(45 104 45 / 30%);
+      border: 1px solid rgb(45 104 45 / 50%);
+      text-shadow: 0 0 4px rgb(45 104 45 / 80%);
+      box-shadow:
+        0 0 6px rgb(45 104 45 / 40%),
+        inset 0 1px 0 rgb(255 255 255 / 20%);
+      animation: fort-glow 2s ease-in-out infinite alternate;
+
+      &::before {
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgb(45 104 45 / 30%),
+          transparent
+        );
+      }
+
+      &:hover {
+        background: rgb(45 104 45 / 50%);
+        border-color: rgb(45 104 45 / 70%);
+        transform: scale(1.05);
+        box-shadow:
+          0 0 12px rgb(45 104 45 / 60%),
+          inset 0 1px 0 rgb(255 255 255 / 30%);
+      }
+    }
+
+    &:hover {
+      background: linear-gradient(
+        135deg,
+        rgb(45 104 45 / 20%) 0%,
+        rgb(45 104 45 / 10%) 50%,
+        rgb(45 104 45 / 5%) 100%
+      );
+
+      &::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%232d682d' fill-opacity='0.1'%3E%3Cpath d='M10 2L4 6v8l6 4 6-4V6z'/%3E%3C/g%3E%3C/svg%3E");
+        pointer-events: none;
+        z-index: 1;
+      }
+    }
+  }
+
+  // Willpower
+  &--will {
+    &::before {
+      background: colors.$will;
+    }
+
+    .eventide-ability-card__total-button {
+      background: rgb(106 27 154 / 30%);
+      border: 1px solid rgb(106 27 154 / 50%);
+      text-shadow: 0 0 4px rgb(106 27 154 / 80%);
+      box-shadow:
+        0 0 6px rgb(106 27 154 / 40%),
+        inset 0 1px 0 rgb(255 255 255 / 20%);
+      animation: will-glow 2s ease-in-out infinite alternate;
+
+      &::before {
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgb(106 27 154 / 30%),
+          transparent
+        );
+      }
+
+      &:hover {
+        background: rgb(106 27 154 / 50%);
+        border-color: rgb(106 27 154 / 70%);
+        transform: scale(1.05);
+        box-shadow:
+          0 0 12px rgb(106 27 154 / 60%),
+          inset 0 1px 0 rgb(255 255 255 / 30%);
+      }
+    }
+
+    &:hover {
+      background: linear-gradient(
+        135deg,
+        rgb(106 27 154 / 20%) 0%,
+        rgb(106 27 154 / 10%) 50%,
+        rgb(106 27 154 / 5%) 100%
+      );
+
+      &::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%236a1b9a' fill-opacity='0.1'%3E%3Ccircle cx='10' cy='10' r='8'/%3E%3Ccircle cx='10' cy='10' r='4'/%3E%3C/g%3E%3C/svg%3E");
+        pointer-events: none;
+        z-index: 1;
+      }
+    }
+  }
+
+  // Wits
+  &--wits {
+    &::before {
+      background: colors.$wits;
+    }
+
+    .eventide-ability-card__total-button {
+      background: rgb(14 67 128 / 30%);
+      border: 1px solid rgb(14 67 128 / 50%);
+      text-shadow: 0 0 4px rgb(14 67 128 / 80%);
+      box-shadow:
+        0 0 6px rgb(14 67 128 / 40%),
+        inset 0 1px 0 rgb(255 255 255 / 20%);
+      animation: wits-glow 2s ease-in-out infinite alternate;
+
+      &::before {
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgb(14 67 128 / 30%),
+          transparent
+        );
+      }
+
+      &:hover {
+        background: rgb(14 67 128 / 50%);
+        border-color: rgb(14 67 128 / 70%);
+        transform: scale(1.05);
+        box-shadow:
+          0 0 12px rgb(14 67 128 / 60%),
+          inset 0 1px 0 rgb(255 255 255 / 30%);
+      }
+    }
+
+    &:hover {
+      background: linear-gradient(
+        135deg,
+        rgb(14 67 128 / 20%) 0%,
+        rgb(14 67 128 / 10%) 50%,
+        rgb(14 67 128 / 5%) 100%
+      );
+
+      &::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%230e4380' fill-opacity='0.1'%3E%3Cpath d='M10 2l8 6-8 2-8-2z'/%3E%3Cpath d='M10 12l8 6-8-2-8 2z'/%3E%3C/g%3E%3C/svg%3E");
+        pointer-events: none;
+        z-index: 1;
+      }
+    }
+  }
+}
+
+// ===================================
+// LEGACY ABILITY BOX SELECTORS
+// ===================================
+// These provide backward compatibility for existing templates
+
+.eventide-ability-acro-box {
+  background-color: colors.$acro-transparent;
+  border-left: 0.3125rem solid colors.$acro;
+}
+
+.eventide-ability-phys-box {
+  background-color: colors.$phys-transparent;
+  border-left: 0.3125rem solid colors.$phys;
+}
+
+.eventide-ability-fort-box {
+  background-color: colors.$fort-transparent;
+  border-left: 0.3125rem solid colors.$fort;
+}
+
+.eventide-ability-will-box {
+  background-color: colors.$will-transparent;
+  border-left: 0.3125rem solid colors.$will;
+}
+
+.eventide-ability-wits-box {
+  background-color: colors.$wits-transparent;
+  border-left: 0.3125rem solid colors.$wits;
+}
+
+// ===================================
+// ANIMATIONS
+// ===================================
+
+// Ability-specific glow animations
+@keyframes acro-glow {
+  0% {
+    box-shadow:
+      0 0 6px rgb(191 68 0 / 40%),
+      inset 0 1px 0 rgb(255 255 255 / 20%);
+  }
+
+  100% {
+    box-shadow:
+      0 0 10px rgb(191 68 0 / 60%),
+      inset 0 1px 0 rgb(255 255 255 / 30%);
+  }
+}
+
+@keyframes phys-glow {
+  0% {
+    box-shadow:
+      0 0 6px rgb(168 3 3 / 40%),
+      inset 0 1px 0 rgb(255 255 255 / 20%);
+  }
+
+  100% {
+    box-shadow:
+      0 0 10px rgb(168 3 3 / 60%),
+      inset 0 1px 0 rgb(255 255 255 / 30%);
+  }
+}
+
+@keyframes fort-glow {
+  0% {
+    box-shadow:
+      0 0 6px rgb(45 104 45 / 40%),
+      inset 0 1px 0 rgb(255 255 255 / 20%);
+  }
+
+  100% {
+    box-shadow:
+      0 0 10px rgb(45 104 45 / 60%),
+      inset 0 1px 0 rgb(255 255 255 / 30%);
+  }
+}
+
+@keyframes will-glow {
+  0% {
+    box-shadow:
+      0 0 6px rgb(106 27 154 / 40%),
+      inset 0 1px 0 rgb(255 255 255 / 20%);
+  }
+
+  100% {
+    box-shadow:
+      0 0 10px rgb(106 27 154 / 60%),
+      inset 0 1px 0 rgb(255 255 255 / 30%);
+  }
+}
+
+@keyframes wits-glow {
+  0% {
+    box-shadow:
+      0 0 6px rgb(14 67 128 / 40%),
+      inset 0 1px 0 rgb(255 255 255 / 20%);
+  }
+
+  100% {
+    box-shadow:
+      0 0 10px rgb(14 67 128 / 60%),
+      inset 0 1px 0 rgb(255 255 255 / 30%);
+  }
+}
+
+@keyframes button-shimmer {
+  0% {
+    left: -100%;
+  }
+
+  50% {
+    left: 100%;
+  }
+
+  100% {
+    left: 100%;
+  }
+}

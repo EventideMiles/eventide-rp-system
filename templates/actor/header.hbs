@@ -42,79 +42,93 @@
 
       {{! Primary resources row }}
       <div class='resources grid grid-3col'>
-        <div class='resource flex-group-center'>
-          <label for='system.resolve.value' class='resource-label'>
-            {{localize 'EVENTIDE_RP_SYSTEM.Actor.Attributes.Resolve.Value.label'}}
-          </label>
-          <div class='resource-content flexrow flex-center flex-between'>
+        <div class='erps-resource-box erps-resource-box--health'>
+          <div class='erps-resource-box__upper'>
+            <div class='erps-resource-box__label'>
+              {{localize 'EVENTIDE_RP_SYSTEM.Actor.Attributes.Resolve.Value.label'}}
+            </div>
+          </div>
+          <div class='erps-resource-box__lower'>
             <input
               type='text'
               name='system.resolve.value'
               value='{{system.resolve.value}}'
+              class='erps-resource-box__input'
               data-dtype='Number'
             />
-            <span> / </span>
+            <span class='erps-resource-box__separator'> / </span>
             <input
               type='text'
               name='system.resolve.max'
               value='{{system.resolve.max}}'
+              class='erps-resource-box__input'
               data-dtype='Number'
             />
           </div>
         </div>
 
-        <div class='resource flex-group-center'>
-          <label for='system.power.value' class='resource-label'>
-            {{localize 'EVENTIDE_RP_SYSTEM.Actor.Attributes.Power.Value.label'}}
-          </label>
-          <div class='resource-content flexrow flex-center flex-between'>
+        <div class='erps-resource-box erps-resource-box--mana'>
+          <div class='erps-resource-box__upper'>
+            <div class='erps-resource-box__label'>
+              {{localize 'EVENTIDE_RP_SYSTEM.Actor.Attributes.Power.Value.label'}}
+            </div>
+          </div>
+          <div class='erps-resource-box__lower'>
             <input
               type='text'
               name='system.power.value'
               value='{{system.power.value}}'
+              class='erps-resource-box__input'
               data-dtype='Number'
             />
-            <span> / </span>
+            <span class='erps-resource-box__separator'> / </span>
             <input
               type='text'
               name='system.power.max'
               value='{{system.power.max}}'
+              class='erps-resource-box__input'
               data-dtype='Number'
             />
           </div>
         </div>
 
-        <div class='resource flex-group-center'>
+        <div class='erps-resource-box erps-resource-box--neutral'>
           {{#if (eq actor.type 'character')}}
-            <label class='resource-label'>
-              {{localize 'EVENTIDE_RP_SYSTEM.Actor.Attributes.Level.label'}}
-            </label>
-            <div class='resource-content flexrow flex-center flex-between'>
+            <div class='erps-resource-box__upper'>
+              <div class='erps-resource-box__label'>
+                {{localize 'EVENTIDE_RP_SYSTEM.Actor.Attributes.Level.label'}}
+              </div>
+            </div>
+            <div class='erps-resource-box__lower'>
               <input
                 type='text'
                 name='system.attributes.level.value'
                 value='{{system.attributes.level.value}}'
+                class='erps-resource-box__input'
                 data-dtype='Number'
               />
             </div>
           {{/if}}
           {{#if (eq actor.type 'npc')}}
-            <label class='resource-label'>
-              {{localize 'EVENTIDE_RP_SYSTEM.Actor.Attributes.CR.label'}} / {{localize 'EVENTIDE_RP_SYSTEM.Actor.Attributes.XP.label'}}
-            </label>
-            <div class='resource-content flexrow flex-center flex-between'>
+            <div class='erps-resource-box__upper'>
+              <div class='erps-resource-box__label'>
+                {{localize 'EVENTIDE_RP_SYSTEM.Actor.Attributes.CR.label'}} / {{localize 'EVENTIDE_RP_SYSTEM.Actor.Attributes.XP.label'}}
+              </div>
+            </div>
+            <div class='erps-resource-box__lower'>
               <input
                 type='text'
                 name='system.cr'
                 value='{{system.cr}}'
+                class='erps-resource-box__input'
                 data-dtype='Number'
               />
-              <span></span>
               <input
                 type='text'
                 disabled='true'
                 name='system.xp'
                 value='{{system.xp}}'
+                class='erps-resource-box__input'
                 data-dtype='Number'
               />
             </div>
@@ -124,8 +138,8 @@
 
       {{! Secondary stats row }}
       <div class='resources grid grid-4col'>
-        {{!-- <div class='resource flex-group-center'>
-          <label class='resource-label'>Initiative</label>
+        {{!-- <div class='erps-stat-box erps-stat-box--neutral'>
+          <div class='erps-stat-box__label'>Initiative</div>
           <div class='resource-content flexrow flex-center flex-between'>
             <input
               type='text'
@@ -145,45 +159,53 @@
           </div>
         </div> --}}
 
-        <div class='resource flex-group-center'>
-          <label class='resource-label'>Dice Pool</label>
-          <div class='resource-content flexrow flex-center'>
-            <span class="resource-value" title="Available Dice (Derived)">
+        <div class='erps-stat-box erps-stat-box--neutral'>
+          <div class='erps-stat-box__upper'>
+            <div class='erps-stat-box__label'>Dice Pool</div>
+          </div>
+          <div class='erps-stat-box__lower'>
+            <span class="erps-stat-box__value" title="Available Dice (Derived)">
               {{system.hiddenAbilities.dice.total}}
             </span>
           </div>
         </div>
 
-        <div class='resource flex-group-center'>
-          <label class='resource-label'>Fail Range</label>
-          <div class='resource-content flexrow flex-center flex-between'>
-            <span class="resource-value" title="Fail Minimum (Derived)">
+        <div class='erps-stat-box erps-stat-box--neutral'>
+          <div class='erps-stat-box__upper'>
+            <div class='erps-stat-box__label'>Fail Range</div>
+          </div>
+          <div class='erps-stat-box__lower'>
+            <span class="erps-stat-box__value" title="Fail Minimum (Derived)">
               {{system.hiddenAbilities.fmin.total}}
             </span>
-            <span>-</span>
-            <span class="resource-value" title="Fail Maximum (Derived)">
+            <span class="erps-stat-box__separator">-</span>
+            <span class="erps-stat-box__value" title="Fail Maximum (Derived)">
               {{system.hiddenAbilities.fmax.total}}
             </span>
           </div>
         </div>
 
-        <div class='resource flex-group-center'>
-          <label class='resource-label'>Crit Range</label>
-          <div class='resource-content flexrow flex-center flex-between'>
-            <span class="resource-value" title="Critical Minimum (Derived)">
+        <div class='erps-stat-box erps-stat-box--neutral'>
+          <div class='erps-stat-box__upper'>
+            <div class='erps-stat-box__label'>Crit Range</div>
+          </div>
+          <div class='erps-stat-box__lower'>
+            <span class="erps-stat-box__value" title="Critical Minimum (Derived)">
               {{system.hiddenAbilities.cmin.total}}
             </span>
-            <span>-</span>
-            <span class="resource-value" title="Critical Maximum (Derived)">
+            <span class="erps-stat-box__separator">-</span>
+            <span class="erps-stat-box__value" title="Critical Maximum (Derived)">
               {{system.hiddenAbilities.cmax.total}}
             </span>
           </div>
         </div>
 
-        <div class='resource flex-group-center'>
-          <label class='resource-label'>Stat Total</label>
-          <div class='resource-content flexrow flex-center'>
-            <span class="resource-value" title="Total Stat Points (Derived)">
+        <div class='erps-stat-box erps-stat-box--neutral'>
+          <div class='erps-stat-box__upper'>
+            <div class='erps-stat-box__label'>Stat Total</div>
+          </div>
+          <div class='erps-stat-box__lower'>
+            <span class="erps-stat-box__value" title="Total Stat Points (Derived)">
               {{system.statTotal.value}}
             </span>
           </div>

@@ -29,6 +29,8 @@
 @use 'components/sheet/erps-data-tables';
 @use 'components/sheet/erps-tabs';
 @use 'components/sheet/erps-status-cards';
+@use 'components/sheet/erps-resource-boxes';
+@use 'components/sheet/erps-ability-cards';
 
 // Import Google Fonts after ALL @use statements to avoid CSS parsing errors
 @import 'https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap';
@@ -40,4 +42,6 @@
   @include meta.load-css('components/resource');
   @include meta.load-css('components/items');
   @include meta.load-css('components/effects');
+  @include meta.load-css('components/sheet/erps-resource-boxes');
+  @include meta.load-css('components/sheet/erps-ability-cards');
 }

@@ -1,0 +1,585 @@
+@use "../../utils/themes" as themes;
+@use "../../utils/tokens" as tokens;
+@use "../../utils/colors" as colors;
+
+// ===================================
+// RESOURCE BOXES COMPONENT
+// ===================================
+// Reusable resource display system with structured upper/lower sections
+// Extracted from character sheet and modernized following refactoring guidelines
+
+// ===================================
+// CONFIGURATION VARIABLES
+// ===================================
+
+// Resource box sizing and spacing
+$resource-box-border-radius: 10px;
+$resource-box-border-width: 2px;
+$resource-box-margin-bottom: 1rem;
+
+// Section heights and spacing
+$resource-upper-section-height: 2rem; // Fixed height for label section
+$resource-lower-section-height: 2.5rem; // Fixed height for input/data section
+$resource-third-section-height: 1.5rem; // Fixed height for optional resource label section
+$resource-section-gap: 0.25rem; // Gap between sections
+
+// Resource box shadows and effects
+$resource-box-shadow-blur: 4px 16px;
+$resource-box-glow-transition: 0.6s;
+$resource-box-inset-shadow: inset 0 1px 0;
+
+// Typography sizing
+$resource-label-font-size: 0.8rem;
+$resource-value-font-size: 1.4rem;
+$resource-input-font-size: 1rem; // Reduced for better fit
+$resource-max-font-size: 0.9rem;
+$resource-third-label-font-size: 0.7rem; // For optional third section
+$resource-stat-label-font-size: 0.75rem;
+$resource-stat-value-font-size: 1.1rem;
+
+// Input sizing and spacing
+$resource-input-padding: 0.25rem 0.5rem; // Reduced padding
+$resource-input-border-radius: 4px;
+$resource-input-min-width: 2rem; // Minimum width for inputs
+$resource-input-gap: 0.25rem; // Gap between inputs
+
+// Simple resource value styling
+$simple-resource-padding: tokens.$spacing-sm;
+$simple-resource-min-width: 2rem;
+$simple-resource-border-radius: tokens.$radius-sm;
+$simple-resource-border-width: 1px;
+
+// Text styling
+$resource-letter-spacing: 1px;
+$resource-stat-letter-spacing: 0.5px;
+$resource-text-shadow-offset: 0 1px 2px;
+$resource-value-text-shadow-offset: 0 2px 4px;
+$resource-glow-text-shadow: 0 0 15px;
+$resource-stat-text-shadow: 0 1px 3px;
+
+// Opacity values
+$resource-opacity-default: 0.9;
+$resource-opacity-hover: 1;
+$resource-disabled-opacity: 0.6;
+
+// Animation and transition values
+$resource-transition-duration: 0.3s;
+$resource-focus-transition: 0.2s;
+
+// Resource box height consistency
+$resource-box-min-height: 5.5rem;
+$resource-stat-box-min-height: 4rem;
+
+// ===================================
+// UTILITY MIXINS
+// ===================================
+
+// Base resource container styling
+@mixin resource-container-base {
+  position: relative;
+  overflow: hidden;
+  transition: all $resource-transition-duration ease;
+  display: flex;
+  flex-direction: column;
+  border-radius: $resource-box-border-radius;
+  border: $resource-box-border-width solid;
+}
+
+// Resource section styling
+@mixin resource-section-base {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  position: relative;
+}
+
+// Upper section (label) styling
+@mixin resource-upper-section {
+  @include resource-section-base;
+
+  height: $resource-upper-section-height;
+  padding: 0; // No padding to allow full width labels
+
+  // Label styling within upper section
+  .erps-resource-box__label,
+  .erps-stat-box__label {
+    width: 100%;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 0 0.25rem; // Minimal padding only to prevent edge touching
+  }
+}
+
+// Lower section (inputs/data) styling
+@mixin resource-lower-section {
+  @include resource-section-base;
+
+  height: $resource-lower-section-height;
+  padding: 0 0.5rem; // Minimal side padding
+  gap: $resource-input-gap;
+
+  // Ensure inputs/content fit properly
+  .erps-resource-box__input,
+  .erps-stat-box__value,
+  .resource-content {
+    flex: 1;
+    min-width: $resource-input-min-width;
+  }
+
+  // Special handling for single input (fill space)
+  &:has(.erps-resource-box__input:only-child) .erps-resource-box__input,
+  &:has(.erps-stat-box__value:only-child) .erps-stat-box__value {
+    flex: 1;
+    max-width: 100%;
+  }
+}
+
+// Optional third section (resource labels)
+@mixin resource-third-section {
+  @include resource-section-base;
+
+  height: $resource-third-section-height;
+  padding: 0 0.25rem;
+  font-size: $resource-third-label-font-size;
+  color: themes.color(white, 70);
+
+  &:empty {
+    // Still take up space for alignment even when empty
+    visibility: hidden;
+  }
+}
+
+// Animated glow effect for resource boxes
+@mixin resource-glow-animation($color: themes.color(blue, 20)) {
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      $color,
+      transparent
+    );
+    transition: left $resource-box-glow-transition ease;
+    z-index: 1;
+  }
+
+  &:hover::before {
+    left: 100%;
+  }
+
+  // Ensure content is above the glow effect
+  > * {
+    position: relative;
+    z-index: 2;
+  }
+}
+
+// Resource text styling mixin
+@mixin resource-text-base($font-family: var(--erps-info-font)) {
+  font-family: $font-family !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  text-shadow: $resource-text-shadow-offset themes.color(black, 80) !important;
+}
+
+// Resource value styling mixin
+@mixin resource-value-base($font-family: var(--erps-mono-font)) {
+  font-family: $font-family !important;
+  font-weight: 700 !important;
+  color: #fff !important;
+  text-shadow:
+    $resource-value-text-shadow-offset themes.color(black, 80),
+    $resource-glow-text-shadow themes.color(blue, 60) !important;
+}
+
+// ===================================
+// GENERAL RESOURCE SELECTORS
+// ===================================
+// These are global selectors that can be used anywhere for basic resource styling
+
+.resource-label {
+  @include resource-text-base;
+
+  color: colors.$universal-white;
+  font-size: $resource-label-font-size;
+}
+
+.resource-value {
+  @include resource-value-base;
+
+  display: inline-block;
+  padding: $simple-resource-padding;
+  background: themes.color(black, 40) !important;
+  border: $simple-resource-border-width solid themes.color(white, 15) !important;
+  border-radius: $simple-resource-border-radius;
+  color: colors.$universal-white !important;
+  font-weight: 500;
+  text-align: center;
+  min-width: $simple-resource-min-width;
+  font-family: monospace;
+  font-size: 1rem;
+  opacity: $resource-opacity-default;
+  cursor: default;
+  user-select: none;
+  box-shadow: inset 0 1px 3px themes.color(black, 30);
+
+  &:hover {
+    opacity: $resource-opacity-hover;
+    background: themes.color(black, 50) !important;
+  }
+}
+
+// ===================================
+// ENHANCED RESOURCE BOX COMPONENT
+// ===================================
+
+.erps-resource-box {
+  @include resource-container-base;
+  @include resource-glow-animation(themes.color(blue, 20));
+
+  background: linear-gradient(
+    135deg,
+    themes.color(blue-dark, 90) 0%,
+    themes.color(blue-dark, 80) 100%
+  );
+  border-color: themes.color(blue, 50);
+  box-shadow:
+    0 $resource-box-shadow-blur themes.color(black, 30),
+    $resource-box-inset-shadow themes.color(white, 10);
+
+  // Upper section - always contains the main label
+  &__upper {
+    @include resource-upper-section;
+  }
+
+  // Lower section - contains inputs or data
+  &__lower {
+    @include resource-lower-section;
+  }
+
+  // Optional third section - for resource labels (can be above or below lower)
+  &__third {
+    @include resource-third-section;
+  }
+
+  // Label styling
+  &__label {
+    @include resource-text-base;
+
+    font-size: $resource-label-font-size !important;
+    color: themes.color(white, 90) !important;
+    letter-spacing: $resource-letter-spacing !important;
+    line-height: 1.2 !important;
+  }
+
+  // Input styling
+  &__input {
+    font-family: var(--erps-mono-font) !important;
+    font-size: $resource-input-font-size !important;
+    font-weight: 600 !important;
+    color: #fff !important;
+    background: themes.color(blue-dark, 80) !important;
+    border: 1px solid themes.color(blue, 40) !important;
+    border-radius: $resource-input-border-radius !important;
+    padding: $resource-input-padding !important;
+    text-align: center !important;
+    text-shadow: $resource-text-shadow-offset themes.color(black, 80) !important;
+    transition: all $resource-focus-transition ease !important;
+
+    &:focus {
+      border-color: themes.color(blue, 80) !important;
+      box-shadow:
+        0 0 0 2px themes.color(blue, 30),
+        $resource-glow-text-shadow themes.color(blue, 40) !important;
+      outline: none !important;
+    }
+  }
+
+  // Separator styling (like "/")
+  &__separator {
+    font-family: var(--erps-mono-font) !important;
+    font-size: $resource-max-font-size !important;
+    color: themes.color(white, 80) !important;
+    text-shadow: $resource-text-shadow-offset themes.color(black, 80) !important;
+    flex-shrink: 0;
+  }
+
+  // Value display styling
+  &__value {
+    @include resource-value-base;
+
+    font-size: $resource-value-font-size !important;
+    text-align: center;
+  }
+
+  // Color variants
+  &--health {
+    background: linear-gradient(
+      135deg,
+      themes.color(red-dark, 90) 0%,
+      themes.color(red-dark, 80) 100%
+    );
+    border-color: themes.color(red, 50);
+
+    @include resource-glow-animation(themes.color(red, 20));
+
+    .erps-resource-box__value {
+      text-shadow:
+        $resource-value-text-shadow-offset themes.color(black, 80),
+        $resource-glow-text-shadow themes.color(red, 60) !important;
+    }
+
+    .erps-resource-box__input {
+      background: themes.color(red-dark, 80) !important;
+      border-color: themes.color(red, 40) !important;
+
+      &:focus {
+        border-color: themes.color(red, 80) !important;
+        box-shadow:
+          0 0 0 2px themes.color(red, 30),
+          $resource-glow-text-shadow themes.color(red, 40) !important;
+      }
+    }
+  }
+
+  &--mana {
+    background: linear-gradient(
+      135deg,
+      themes.color(purple-dark, 90) 0%,
+      themes.color(purple-dark, 80) 100%
+    );
+    border-color: themes.color(purple, 50);
+
+    @include resource-glow-animation(themes.color(purple, 20));
+
+    .erps-resource-box__value {
+      text-shadow:
+        $resource-value-text-shadow-offset themes.color(black, 80),
+        $resource-glow-text-shadow themes.color(purple, 60) !important;
+    }
+
+    .erps-resource-box__input {
+      background: themes.color(purple-dark, 80) !important;
+      border-color: themes.color(purple, 40) !important;
+
+      &:focus {
+        border-color: themes.color(purple, 80) !important;
+        box-shadow:
+          0 0 0 2px themes.color(purple, 30),
+          $resource-glow-text-shadow themes.color(purple, 40) !important;
+      }
+    }
+  }
+
+  &--neutral {
+    background: linear-gradient(
+      135deg,
+      themes.color(gray-dark, 90) 0%,
+      themes.color(gray-dark, 80) 100%
+    );
+    border-color: themes.color(gray, 30);
+
+    @include resource-glow-animation(themes.color(gray, 10));
+
+    .erps-resource-box__value {
+      text-shadow:
+        $resource-value-text-shadow-offset themes.color(black, 80),
+        $resource-glow-text-shadow themes.color(gray, 50) !important;
+    }
+
+    .erps-resource-box__input {
+      background: themes.color(black, 40) !important;
+      border-color: themes.color(gray, 20) !important;
+
+      &:focus {
+        border-color: themes.color(gray, 50) !important;
+        box-shadow:
+          0 0 0 2px themes.color(gray, 20),
+          $resource-glow-text-shadow themes.color(gray, 30) !important;
+      }
+    }
+  }
+}
+
+// ===================================
+// SECONDARY STAT BOX COMPONENT
+// ===================================
+
+.erps-stat-box {
+  @include resource-container-base;
+
+  background: linear-gradient(
+    135deg,
+    themes.color(blue-dark, 70) 0%,
+    themes.color(blue-dark, 60) 100%
+  );
+  border-color: themes.color(blue, 40);
+  box-shadow:
+    0 2px 8px themes.color(black, 20),
+    $resource-box-inset-shadow themes.color(white, 5);
+
+  // Upper section - always contains the main label
+  &__upper {
+    @include resource-upper-section;
+  }
+
+  // Lower section - contains values or data
+  &__lower {
+    @include resource-lower-section;
+  }
+
+  // Optional third section - for resource labels
+  &__third {
+    @include resource-third-section;
+  }
+
+  // Label styling
+  &__label {
+    @include resource-text-base;
+
+    font-size: $resource-stat-label-font-size !important;
+    color: themes.color(white, 80) !important;
+    letter-spacing: $resource-stat-letter-spacing !important;
+    line-height: 1.2 !important;
+  }
+
+  // Value styling
+  &__value {
+    @include resource-value-base;
+
+    font-size: $resource-stat-value-font-size !important;
+    text-shadow: $resource-stat-text-shadow themes.color(black, 80),
+      0 0 10px themes.color(blue, 50) !important;
+    text-align: center;
+  }
+
+  // Separator styling (like "-")
+  &__separator {
+    font-family: var(--erps-mono-font) !important;
+    font-size: $resource-stat-value-font-size !important;
+    color: themes.color(white, 80) !important;
+    text-shadow: $resource-text-shadow-offset themes.color(black, 80) !important;
+    flex-shrink: 0;
+  }
+
+  // Color variants for stat boxes
+  &--health {
+    background: linear-gradient(
+      135deg,
+      themes.color(red-dark, 70) 0%,
+      themes.color(red-dark, 60) 100%
+    );
+    border-color: themes.color(red, 40);
+
+    .erps-stat-box__value {
+      text-shadow: $resource-stat-text-shadow themes.color(black, 80),
+        0 0 10px themes.color(red, 50) !important;
+    }
+  }
+
+  &--mana {
+    background: linear-gradient(
+      135deg,
+      themes.color(purple-dark, 70) 0%,
+      themes.color(purple-dark, 60) 100%
+    );
+    border-color: themes.color(purple, 40);
+
+    .erps-stat-box__value {
+      text-shadow: $resource-stat-text-shadow themes.color(black, 80),
+        0 0 10px themes.color(purple, 50) !important;
+    }
+  }
+
+  &--neutral {
+    background: linear-gradient(
+      135deg,
+      themes.color(gray-dark, 70) 0%,
+      themes.color(gray-dark, 60) 100%
+    );
+    border-color: themes.color(gray, 20);
+
+    .erps-stat-box__value {
+      text-shadow: $resource-stat-text-shadow themes.color(black, 80),
+        0 0 10px themes.color(gray, 30) !important;
+    }
+  }
+}
+
+// ===================================
+// GRID CONTAINER STYLING
+// ===================================
+// Ensure resource boxes in the same grid row have equal heights and section alignment
+
+.resources.grid {
+  display: grid;
+  gap: 1rem;
+  align-items: stretch; // Force all grid items to stretch to the same height
+
+  &.grid-3col {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  &.grid-4col {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  // Ensure all resource boxes stretch to fill their grid cell
+  .erps-resource-box,
+  .erps-stat-box {
+    height: 100%; // Fill the grid cell height
+
+    // Calculate section heights based on whether third section exists
+    &:not(:has(.erps-resource-box__third, .erps-stat-box__third)) {
+      // Two-section layout: upper + lower
+      .erps-resource-box__upper,
+      .erps-stat-box__upper {
+        flex: 0 0 $resource-upper-section-height;
+      }
+
+      .erps-resource-box__lower,
+      .erps-stat-box__lower {
+        flex: 1; // Take remaining space
+      }
+    }
+
+    &:has(.erps-resource-box__third, .erps-stat-box__third) {
+      // Three-section layout: distribute space
+      .erps-resource-box__upper,
+      .erps-stat-box__upper {
+        flex: 0 0 $resource-upper-section-height;
+      }
+
+      .erps-resource-box__third,
+      .erps-stat-box__third {
+        flex: 0 0 $resource-third-section-height;
+      }
+
+      .erps-resource-box__lower,
+      .erps-stat-box__lower {
+        flex: 1; // Take remaining space
+      }
+    }
+  }
+
+  // If any box in the row has a third section, all should reserve space for it
+  &:has(.erps-resource-box__third, .erps-stat-box__third) {
+    .erps-resource-box:not(:has(.erps-resource-box__third)),
+    .erps-stat-box:not(:has(.erps-stat-box__third)) {
+      // Add invisible third section for alignment
+      &::after {
+        content: '';
+        height: $resource-third-section-height;
+        flex: 0 0 $resource-third-section-height;
+      }
+    }
+  }
+}
