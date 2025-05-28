@@ -243,8 +243,8 @@ $resource-stat-box-min-height: 4rem;
 
 .erps-resource-box {
   @include resource-container-base;
-  @include resource-glow-animation(themes.color(blue, 20));
 
+  // Move all direct declarations before nested rules and includes with nested content
   background: linear-gradient(
     135deg,
     themes.color(blue-dark, 90) 0%,
@@ -254,6 +254,9 @@ $resource-stat-box-min-height: 4rem;
   box-shadow:
     0 $resource-box-shadow-blur themes.color(black, 30),
     $resource-box-inset-shadow themes.color(white, 10);
+
+  // Include glow animation last since it contains nested rules
+  @include resource-glow-animation(themes.color(blue, 20));
 
   // Upper section - always contains the main label
   &__upper {

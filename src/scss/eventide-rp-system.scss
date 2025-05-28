@@ -31,6 +31,7 @@
 @use 'components/sheet/erps-status-cards';
 @use 'components/sheet/erps-resource-boxes';
 @use 'components/sheet/erps-ability-cards';
+@use 'components/erps-toggles';
 
 // Import Google Fonts after ALL @use statements to avoid CSS parsing errors
 @import 'https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap';

@@ -327,61 +327,6 @@ label,
   z-index: 9999 !important;
 }
 
-// Complete toggle group implementation for actor header: can be used anywhere on the actor sheet
-.eventide-actor__toggle-group {
-  @include mixins.grid-compliant-toggle-group;
-
-  // Override default margins for header usage
-  margin: 0.5rem 0; // MAGICNUMBER replace with token eventually
-
-  // Label styling is now handled at the top of the file
-
-  // Alternative: target any label with the class
-  label.eventide-actor__toggle-label {
-    font-size: 0.8rem !important;
-  }
-
-  // Style the toggle switch wrapper
-  .toggle-switch-wrapper {
-    position: relative;
-
-    // Style the actual toggle input
-    input[type="checkbox"] {
-      @include mixins.grid-compliant-toggle-switch;
-    }
-
-    // Style the toggle display element
-    .toggle-switch-display {
-      cursor: pointer;
-
-      &:hover {
-        opacity: 0.9;
-      }
-    }
-  }
-
-  // Variant for compact header usage
-  &--compact {
-    margin: 0.25rem 0;
-    padding: 0.25rem 0.5rem;
-
-    // Label styling is now handled at the top of the file
-
-    .toggle-switch-wrapper {
-      width: 2rem;
-      flex: 0 0 2rem;
-    }
-  }
-
-  // Variant for inline usage in headers
-  &--inline {
-    margin: 0;
-    padding: 0;
-
-    // Label styling is now handled at the top of the file
-  }
-}
-
 // Enhanced header styling for game design feel
 .sheet-header--actor {
   background: linear-gradient(

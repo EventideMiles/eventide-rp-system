@@ -81,7 +81,7 @@ $transition-slow: 0.5s ease-in-out;
   $result: ();
 
   @each $property in $properties {
-    $result: append($result, $property $duration, comma);
+    $result: list.append($result, $property $duration, comma);
   }
 
   @return $result;
@@ -137,4 +137,4 @@ $size-range-value-min-width: 2.5rem;     // Min width of range value display
 $font-size-section-header: 1.25rem;
 $font-size-label-base: 1.125rem;
 $font-size-label-small: 0.75rem;
-$font-size-label-large: 1.5rem; 
+$font-size-label-large: 1.5rem;

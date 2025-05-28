@@ -613,7 +613,7 @@ $erps-tab-border-radius-none: 0;
 // LEGACY SELECTORS FOR COMPATIBILITY
 // ===================================
 // These maintain compatibility with existing character sheet markup
-
+// stylelint-disable-next-line
 .eventide-character-sheet {
   // Tab navigation - themed overrides with high specificity
   .tabs .item {

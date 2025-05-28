@@ -13,21 +13,23 @@
       />
 
       <div class="eventide-actor__toggle-group">
-        <label class="eventide-actor__toggle-label" for="actor.flags.eventide-rp-system.autoTokenUpdate">{{localize "EVENTIDE_RP_SYSTEM.Actor.Controls.AutoTokenUpdate.label"}}</label>
-      <label
-        title="{{localize "EVENTIDE_RP_SYSTEM.Actor.Controls.AutoTokenUpdate.hint"}}">
-        <div class="toggle-switch-wrapper">
-        <input
-          type="checkbox"
-          class="base-form__toggle-switch-left"
-          name="actor.flags.eventide-rp-system.autoTokenUpdate"
-          id="actor.flags.eventide-rp-system.autoTokenUpdate"
-          {{#if actor.flags.eventide-rp-system.autoTokenUpdate}}checked{{/if}}
-          data-action="toggleAutoTokenUpdate"
-        >
-        <label class="toggle-switch-display" for="actor.flags.eventide-rp-system.autoTokenUpdate"></label>
+        <label class="erps-toggles erps-toggles--small erps-toggles--label-left"
+               data-toggle-theme="{{userSheetTheme}}"
+               title="{{localize "EVENTIDE_RP_SYSTEM.Actor.Controls.AutoTokenUpdate.hint"}}">
+          <input type="checkbox"
+                 class="erps-toggles__input"
+                 name="actor.flags.eventide-rp-system.autoTokenUpdate"
+                 id="actor.flags.eventide-rp-system.autoTokenUpdate"
+                 {{#if actor.flags.eventide-rp-system.autoTokenUpdate}}checked{{/if}}
+                 data-action="toggleAutoTokenUpdate">
+          <div class="erps-toggles__container">
+            <span class="erps-toggles__label">{{localize "EVENTIDE_RP_SYSTEM.Actor.Controls.AutoTokenUpdate.label"}}</span>
+            <span class="erps-toggles__track">
+              <span class="erps-toggles__thumb"></span>
+            </span>
+          </div>
+        </label>
       </div>
-    </div>
     </div>
     <div class='header-fields grid-span-4'>
       <div class='document-name flexrow' data-name-theme="{{userSheetTheme}}">
@@ -266,7 +268,6 @@
 
   {{! Status indicators bar - moved to bottom of entire header }}
   <div class="eventide-header__status-bar">
-    {{debug activeTransformation}}
     {{! Transformation Effect Card - moved here as requested }}
     {{#if actor.flags.eventide-rp-system.activeTransformation}}
       <div class="eventide-transformation-card {{#if actor.flags.eventide-rp-system.activeTransformationCursed}}eventide-transformation-card--cursed{{/if}}"
