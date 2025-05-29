@@ -106,6 +106,8 @@
   // Size variants
   @each $name, $size in tokens.$sheet-profile-sizes {
     &--#{$name} {
+      @extend %profile-image-base;
+
       width: $size;
       height: $size;
 
@@ -120,6 +122,46 @@
       }
     }
   }
+}
+
+// ===================================
+// THEME INTEGRATION FOR GENERIC PROFILE IMAGES
+// ===================================
+// Apply themed profile image backgrounds based on header theme
+// This needs to be outside the main class to work with the theme system
+
+// Blue theme (default)
+:not([data-header-theme]) .eventide-profile-image,
+:not([data-header-theme]) [class*="eventide-profile-image--"],
+[data-header-theme="blue"] .eventide-profile-image,
+[data-header-theme="blue"] [class*="eventide-profile-image--"] {
+  @include themes.profile-image-background("blue");
+}
+
+// Other themes
+[data-header-theme="gold"] .eventide-profile-image,
+[data-header-theme="gold"] [class*="eventide-profile-image--"] {
+  @include themes.profile-image-background("gold");
+}
+
+[data-header-theme="green"] .eventide-profile-image,
+[data-header-theme="green"] [class*="eventide-profile-image--"] {
+  @include themes.profile-image-background("green");
+}
+
+[data-header-theme="black"] .eventide-profile-image,
+[data-header-theme="black"] [class*="eventide-profile-image--"] {
+  @include themes.profile-image-background("black");
+}
+
+[data-header-theme="purple"] .eventide-profile-image,
+[data-header-theme="purple"] [class*="eventide-profile-image--"] {
+  @include themes.profile-image-background("purple");
+}
+
+[data-header-theme="light"] .eventide-profile-image,
+[data-header-theme="light"] [class*="eventide-profile-image--"] {
+  @include themes.profile-image-background("light");
 }
 
 // ===================================
@@ -144,7 +186,7 @@
 }
 
 // ===================================
-// THEME INTEGRATION
+// LEGACY THEME INTEGRATION
 // ===================================
 // Apply themed profile image backgrounds based on header theme
 // This maintains the existing theme integration from the original file
