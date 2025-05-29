@@ -8,7 +8,8 @@
     {
       "files": ["src/scss/components/*.scss", "src/scss/components/sheet/*.scss"],
       "rules": {
-        "no-descending-specificity": null
+        "no-descending-specificity": null,
+        "scss/percent-placeholder-pattern": null
       }
     }
   ]
