@@ -191,7 +191,7 @@
 // Apply themed profile image backgrounds based on header theme
 // This maintains the existing theme integration from the original file
 
-.eventide-character-sheet {
+.eventide-sheet {
   .eventide-actor__header {
     @include themes.apply-all-profile-image-backgrounds('header-theme');
   }

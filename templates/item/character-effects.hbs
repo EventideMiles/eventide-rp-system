@@ -1,29 +1,26 @@
 <section class="tab effects {{tab.cssClass}}" data-group="primary" data-tab="characterEffects">
-  <div class="eventide-item-sheet__scrollable-container base-form">
+  <div class="eventide-sheet__scrollable-container base-form">
     {{#if (not (eq item.type "transformation"))}}
     <div class="grid grid-cols-2">
     <div>
-    <label class="eventide-item-sheet__effect-toggle-label" for="effect.displayOnToken">Icon Displayed On Token</label>
-    <label 
-      class="" 
-      title="When enabled, this effect will be displayed on tokens">
-      <div class="toggle-switch-wrapper">
-      <input 
-        type="checkbox" 
-        class="base-form__toggle-switch-left" 
-        name="effect.displayOnToken" 
+    <label class="erps-toggles erps-toggles--label-above">
+      <input
+        type="checkbox"
+        class="erps-toggles__input"
+        name="effect.displayOnToken"
         id="effect.displayOnToken"
         {{#if activeEffect.duration.seconds}}checked{{/if}}
         data-action="toggleEffectDisplay"
-      >
-      <label class="toggle-switch-display" for="effect.displayOnToken"></label>
-    </div>
-    <span 
-      class="eventide-item-sheet__effect-toggle-label"
-    >
-      
-    </span>
-  </label>
+      />
+      <div class="erps-toggles__container">
+        <span class="erps-toggles__label" title="When enabled, this effect will be displayed on tokens">
+          Icon Displayed On Token
+        </span>
+        <span class="erps-toggles__track">
+          <span class="erps-toggles__thumb"></span>
+        </span>
+      </div>
+    </label>
 
   </div>
   <div>
@@ -39,13 +36,13 @@
 
   </div>
   {{/if}}
-  
+
     {{! Regular Effects Section }}
     <div class="eventide-item-sheet__effects-section">
       <h3 class="eventide-item-sheet__effects-section-header">
         Regular Effects ({{characterEffects.regularEffects.length}})
       </h3>
-      
+
       <div class="eventide-item-sheet__effects-grid">
         <div class="eventide-item-sheet__effects-grid-header">
           <div class="eventide-item-sheet__effects-grid-cell">Attribute</div>
@@ -53,11 +50,11 @@
           <div class="eventide-item-sheet__effects-grid-cell">Value</div>
           <div class="eventide-item-sheet__effects-grid-cell">Actions</div>
         </div>
-        
+
         {{#each characterEffects.regularEffects}}
           <div class="eventide-item-sheet__effects-grid-row">
             <div class="eventide-item-sheet__effects-grid-cell">
-              <select 
+              <select
                 class="base-form__select"
                 name="characterEffects.regularEffects.{{@index}}.ability"
                 data-index="{{@index}}"
@@ -70,9 +67,9 @@
                 {{/each}}
               </select>
             </div>
-            
+
             <div class="eventide-item-sheet__effects-grid-cell">
-              <select 
+              <select
                 class="base-form__select"
                 name="characterEffects.regularEffects.{{@index}}.mode"
                 data-index="{{@index}}"
@@ -91,15 +88,15 @@
                 {{/if}}
               </select>
             </div>
-            
+
             <div class="eventide-item-sheet__effects-grid-cell">
               <div class="base-form__number-input-wrapper">
                 <button type="button" class="decrement" data-action="decrementEffect" data-index="{{@index}}" data-type="visible">−</button>
-                <input 
-                  type="number" 
+                <input
+                  type="number"
                   class="base-form__number-input"
-                  name="characterEffects.regularEffects.{{@index}}.value" 
-                  value="{{value}}" 
+                  name="characterEffects.regularEffects.{{@index}}.value"
+                  value="{{value}}"
                   step="1"
                   data-index="{{@index}}"
                   data-type="visible"
@@ -107,12 +104,12 @@
                 <button type="button" class="increment" data-action="incrementEffect" data-index="{{@index}}" data-type="visible">+</button>
               </div>
             </div>
-            
+
             <div class="eventide-item-sheet__effects-grid-cell">
-              <button 
-                type="button" 
+              <button
+                type="button"
                 class="base-form__button"
-                data-action="deleteCharacterEffect" 
+                data-action="deleteCharacterEffect"
                 data-index="{{@index}}"
                 data-type="regularEffects"
                 title="Remove effect"
@@ -123,12 +120,12 @@
           </div>
         {{/each}}
       </div>
-      
+
       <div class="eventide-item-sheet__effect-controls">
-        <button 
-          type="button" 
+        <button
+          type="button"
           class="eventide-item-sheet__add-effect base-form__button"
-          data-action="newCharacterEffect" 
+          data-action="newCharacterEffect"
           data-type="abilities"
           data-ability="acro"
           title="Add new effect"
@@ -137,7 +134,7 @@
         </button>
       </div>
     </div>
-    
+
     {{! Hidden Effects Section }}
     {{#if (not (eq item.type "transformation"))}}
     {{#if isGM}}
@@ -145,7 +142,7 @@
         <h3 class="eventide-item-sheet__effects-section-header">
           Hidden Effects ({{characterEffects.hiddenEffects.length}})
         </h3>
-        
+
         <div class="eventide-item-sheet__effects-grid">
           <div class="eventide-item-sheet__effects-grid-header">
             <div class="eventide-item-sheet__effects-grid-cell">Attribute</div>
@@ -153,11 +150,11 @@
             <div class="eventide-item-sheet__effects-grid-cell">Value</div>
             <div class="eventide-item-sheet__effects-grid-cell">Actions</div>
           </div>
-          
+
           {{#each characterEffects.hiddenEffects}}
             <div class="eventide-item-sheet__effects-grid-row eventide-item-sheet__effects-grid-row--hidden">
               <div class="eventide-item-sheet__effects-grid-cell">
-                <select 
+                <select
                   class="base-form__select"
                   name="characterEffects.hiddenEffects.{{@index}}.ability"
                   data-index="{{@index}}"
@@ -170,9 +167,9 @@
                   {{/each}}
                 </select>
               </div>
-              
+
               <div class="eventide-item-sheet__effects-grid-cell">
-                <select 
+                <select
                   class="base-form__select"
                   name="characterEffects.hiddenEffects.{{@index}}.mode"
                   data-index="{{@index}}"
@@ -182,15 +179,15 @@
                   <option value="override" {{#if (eq mode "override")}}selected{{/if}}>Override</option>
                 </select>
               </div>
-              
+
               <div class="eventide-item-sheet__effects-grid-cell">
                 <div class="base-form__number-input-wrapper">
                   <button type="button" class="decrement" data-action="decrementEffect" data-index="{{@index}}" data-type="hiddenEffects">−</button>
-                  <input 
-                    type="number" 
+                  <input
+                    type="number"
                     class="base-form__number-input"
-                    name="characterEffects.hiddenEffects.{{@index}}.value" 
-                    value="{{value}}" 
+                    name="characterEffects.hiddenEffects.{{@index}}.value"
+                    value="{{value}}"
                     step="1"
                     data-index="{{@index}}"
                     data-type="hiddenEffects"
@@ -198,13 +195,13 @@
                   <button type="button" class="increment" data-action="incrementEffect" data-index="{{@index}}" data-type="hiddenEffects">+</button>
                 </div>
               </div>
-              
+
               <div class="eventide-item-sheet__effects-grid-cell">
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   class="base-form__button"
-                  data-action="deleteCharacterEffect" 
-                  data-index="{{@index}}" 
+                  data-action="deleteCharacterEffect"
+                  data-index="{{@index}}"
                   data-type="hiddenEffects"
                   title="Remove hidden effect"
                 >
@@ -214,12 +211,12 @@
             </div>
           {{/each}}
         </div>
-        
+
         <div class="eventide-item-sheet__effect-controls">
-          <button 
-            type="button" 
+          <button
+            type="button"
             class="eventide-item-sheet__add-effect base-form__button"
-            data-action="newCharacterEffect" 
+            data-action="newCharacterEffect"
             data-type="hiddenAbilities"
             data-ability="dice"
             title="Add new hidden effect"
@@ -233,7 +230,7 @@
         <h3 class="eventide-item-sheet__effects-section-header">
           Hidden Effects ({{characterEffects.hiddenEffects.length}})
         </h3>
-        
+
         <div class="eventide-item-sheet__effects-grid">
           <div class="eventide-item-sheet__effects-grid-header">
             <div class="eventide-item-sheet__effects-grid-cell">Attribute</div>
@@ -241,11 +238,11 @@
             <div class="eventide-item-sheet__effects-grid-cell">Value</div>
             <div class="eventide-item-sheet__effects-grid-cell">Actions</div>
           </div>
-          
+
           {{#each characterEffects.hiddenEffects}}
             <div class="eventide-item-sheet__effects-grid-row eventide-item-sheet__effects-grid-row--hidden">
               <div class="eventide-item-sheet__effects-grid-cell">
-                <select 
+                <select
                   class="base-form__select"
                   name="characterEffects.hiddenEffects.{{@index}}.ability"
                   data-index="{{@index}}"
@@ -259,9 +256,9 @@
                   {{/each}}
                 </select>
               </div>
-              
+
               <div class="eventide-item-sheet__effects-grid-cell">
-                <select 
+                <select
                   class="base-form__select"
                   name="characterEffects.hiddenEffects.{{@index}}.mode"
                   data-index="{{@index}}"
@@ -272,15 +269,15 @@
                   <option value="override" {{#if (eq ../mode "override")}}selected{{/if}}>Override</option>
                 </select>
               </div>
-              
+
               <div class="eventide-item-sheet__effects-grid-cell">
                 <div class="base-form__number-input-wrapper">
                   <button type="button" class="decrement" data-action="decrementEffect" data-index="{{@index}}" data-type="hidden">−</button>
-                  <input 
-                    type="number" 
+                  <input
+                    type="number"
                     class="base-form__number-input"
-                    name="characterEffects.hiddenEffects.{{@index}}.value" 
-                    value="{{value}}" 
+                    name="characterEffects.hiddenEffects.{{@index}}.value"
+                    value="{{value}}"
                     step="1"
                     data-index="{{@index}}"
                     data-type="hidden"
@@ -289,7 +286,7 @@
                   <button type="button" class="increment" data-action="incrementEffect" data-index="{{@index}}" data-type="hidden">+</button>
                 </div>
               </div>
-              
+
               <div class="eventide-item-sheet__effects-grid-cell">
                 <i class="fas fa-eye-slash" title="Hidden effect (only visible to GM)"></i>
               </div>

@@ -215,7 +215,7 @@
   padding-top: sheet.$sheet-position-zero !important;
 
   // Remove top margin from first data section in each tab
-  .eventide-actor-data-section:first-child {
+  .eventide-sheet-data-section:first-child {
     margin-top: sheet.$sheet-position-zero !important;
   }
 }
@@ -452,7 +452,7 @@
 // JavaScript-driven tab container styling based on active tab
 // These classes are applied dynamically by the tab-container-styling.mjs module
 
-.eventide-character-sheet {
+.eventide-sheet {
   // Rounded container for tabs with custom navigation or standalone content
   .tabs.erps-tabs__container--rounded,
   .sheet-tabs.erps-tabs__container--rounded {
@@ -505,7 +505,7 @@
 // ===================================
 // These maintain compatibility with existing character sheet markup
 // stylelint-disable-next-line
-.eventide-character-sheet {
+.eventide-sheet {
   // Tab navigation - themed overrides with high specificity
   .tabs .item {
     font-family: var(--erps-ui-font) !important;

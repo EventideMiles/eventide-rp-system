@@ -2,7 +2,8 @@ import { prepareActiveEffectCategories } from "../../helpers/_module.mjs";
 import { prepareCharacterEffects } from "../../helpers/_module.mjs";
 import { EventideSheetHelpers } from "../components/_module.mjs";
 import { Logger } from "../../services/_module.mjs";
-import { ErrorHandler } from "../../utils/error-handler.mjs";
+import { ErrorHandler, CommonFoundryTasks } from "../../utils/_module.mjs";
+import { initThemeManager, THEME_PRESETS, cleanupThemeManager } from "../../helpers/_module.mjs";
 
 const { api, sheets } = foundry.applications;
 const { DragDrop, TextEditor } = foundry.applications.ux;
@@ -69,11 +70,11 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
   /** @override */
   static DEFAULT_OPTIONS = {
     classes: [
-      "eventide-rp-system",
-      "sheet",
-      "item",
-      "eventide-item-sheet",
-      "eventide-item-sheet--scrollbars",
+      // "eventide-rp-system",
+      // "sheet",
+      // "item",
+      "eventide-sheet",
+      // "eventide-sheet--scrollbars",
     ],
     actions: {
       onEditImage: this._onEditImage,
@@ -87,7 +88,7 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
       removeCombatPower: this._removeCombatPower,
     },
     position: {
-      width: 600,
+      width: 800,
       height: "auto",
     },
     form: {
@@ -157,6 +158,12 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
 
       // Clean up range sliders
       erps.utils.cleanupRangeSliders(this.element);
+
+      // Clean up centralized theme management
+      if (this.themeManager) {
+        cleanupThemeManager(this);
+        this.themeManager = null;
+      }
     }
 
     await super._preClose(options);
@@ -240,6 +247,8 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
       context.fields = this.document.schema.fields;
       context.systemFields = this.document.system.schema.fields;
       context.isGM = game.user.isGM;
+
+      context.userSheetTheme = CommonFoundryTasks.retrieveSheetTheme();
 
       Logger.debug(
         "Item sheet context prepared",
@@ -445,6 +454,14 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
    */
   _onRender(_context, _options) {
     this.#dragDrop.forEach((d) => d.bind(this.element));
+
+    // Initialize centralized theme management
+    if (!this.themeManager) {
+      this.themeManager = initThemeManager(this, THEME_PRESETS.ITEM_SHEET);
+    } else {
+      // Re-apply themes on re-render
+      this.themeManager.applyThemes();
+    }
   }
 
   /**

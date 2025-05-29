@@ -1,5 +1,5 @@
 {{! Sheet Header }}
-<header class='sheet-header sheet-header--actor eventide-actor__header' data-header-theme="{{userSheetTheme}}">
+<header class='sheet-header sheet-header--actor eventide-sheet__header'>
   <div class="grid grid-8col">
     <div class="flexcol grid-span-2">
       <img
@@ -12,15 +12,14 @@
         title='{{#if actor.flags.eventide-rp-system.activeTransformation}}{{localize "EVENTIDE_RP_SYSTEM.Actor.Errors.ActiveTransformation"}}{{else}}{{actor.name}}{{/if}}'
       />
 
-      <div class="eventide-actor__toggle-group">
+      <div class="eventide-sheet__toggle-group">
         <label class="erps-toggles erps-toggles--small erps-toggles--label-left"
-               data-toggle-theme="{{userSheetTheme}}"
                title="{{localize "EVENTIDE_RP_SYSTEM.Actor.Controls.AutoTokenUpdate.hint"}}">
           <input type="checkbox"
                  class="erps-toggles__input"
                  name="actor.flags.eventide-rp-system.autoTokenUpdate"
                  id="actor.flags.eventide-rp-system.autoTokenUpdate"
-                 {{#if actor.flags.eventide-rp-system.autoTokenUpdate}}checked{{/if}}
+                 {{checked actor.flags.eventide-rp-system.autoTokenUpdate}}
                  data-action="toggleAutoTokenUpdate">
           <div class="erps-toggles__container">
             <span class="erps-toggles__label">{{localize "EVENTIDE_RP_SYSTEM.Actor.Controls.AutoTokenUpdate.label"}}</span>
@@ -32,11 +31,11 @@
       </div>
     </div>
     <div class='header-fields grid-span-4'>
-      <div class='document-name flexrow' data-name-theme="{{userSheetTheme}}">
+      <div class='document-name flexrow'>
         <input
           name='name'
           type='text'
-          class='eventide-actor__character-name'
+          class='eventide-sheet__character-name'
           value='{{actor.name}}'
           placeholder='{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.Name"}}'
         />

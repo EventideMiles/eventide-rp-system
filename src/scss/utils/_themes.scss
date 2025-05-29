@@ -603,24 +603,24 @@ $default-theme-pattern: map.get($blue-theme, pattern) !default;
 @mixin apply-all-profile-image-backgrounds($attribute-name: 'theme') {
   // Blue theme (default)
   &:not([data-#{$attribute-name}]), &[data-#{$attribute-name}="blue"] {
-    .eventide-actor__profile-img { @include profile-image-background("blue"); }
+    .eventide-sheet__profile-img { @include profile-image-background("blue"); }
   }
 
   // Other themes
   &[data-#{$attribute-name}="gold"] {
-    .eventide-actor__profile-img { @include profile-image-background("gold"); }
+    .eventide-sheet__profile-img { @include profile-image-background("gold"); }
   }
   &[data-#{$attribute-name}="green"] {
-    .eventide-actor__profile-img { @include profile-image-background("green"); }
+    .eventide-sheet__profile-img { @include profile-image-background("green"); }
   }
   &[data-#{$attribute-name}="black"] {
-    .eventide-actor__profile-img { @include profile-image-background("black"); }
+    .eventide-sheet__profile-img { @include profile-image-background("black"); }
   }
   &[data-#{$attribute-name}="purple"] {
-    .eventide-actor__profile-img { @include profile-image-background("purple"); }
+    .eventide-sheet__profile-img { @include profile-image-background("purple"); }
   }
   &[data-#{$attribute-name}="light"] {
-    .eventide-actor__profile-img { @include profile-image-background("light"); }
+    .eventide-sheet__profile-img { @include profile-image-background("light"); }
   }
 }
 

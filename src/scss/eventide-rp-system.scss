@@ -12,7 +12,7 @@
 @use 'global/window';
 @use 'global/grid';
 @use 'global/flex';
-@use 'global/character-sheet';
+@use 'global/eventide-sheet';
 @use 'global/form-elements';
 @use 'global/global-overrides';
 
@@ -32,6 +32,7 @@
 @use 'components/sheet/erps-status-cards';
 @use 'components/sheet/erps-resource-boxes';
 @use 'components/sheet/erps-ability-cards';
+@use 'components/sheet/erps-profile-images';
 @use 'components/erps-toggles';
 
 // Import Google Fonts after ALL @use statements to avoid CSS parsing errors

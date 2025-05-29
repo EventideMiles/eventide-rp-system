@@ -5,11 +5,11 @@
   data-tab='effects'
 >
   {{#each effects as |section sid|}}
-    <div class="eventide-actor-data-section__header" data-section-theme='{{@root.userSheetTheme}}'>
-      {{localize section.label}}
+    <div class="eventide-sheet-data-section__header">
+      <h3 class="eventide-sheet-data-section__title">{{localize "EVENTIDE_RP_SYSTEM.Actor.Sections.Effects"}}</h3>
     </div>
 
-    <table class='erps-data-table erps-data-table--effects' data-table-theme='{{@root.userSheetTheme}}'>
+    <table class='erps-data-table erps-data-table--effects'>
       <thead class='erps-data-table__header'>
         <tr class='erps-data-table__header-row'>
           <th class='erps-data-table__header-cell erps-data-table__header-cell--name'>{{localize 'EVENTIDE_RP_SYSTEM.Forms.Sections.Name'}}</th>

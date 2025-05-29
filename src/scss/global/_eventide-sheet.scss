@@ -19,7 +19,7 @@ label,
   overflow-y: auto;
 }
 
-.eventide-character-sheet {
+.eventide-sheet {
   // Font variables for game aesthetic
   --erps-display-font: 'Cinzel', 'Libre Baskerville', serif; // For character names and important displays
   --erps-info-font: 'Crimson Text', 'Times New Roman', serif; // For character information
@@ -38,9 +38,10 @@ label,
   @include themes.apply-all-background-themes;
 
   // Character header styling - now theme-aware
-  .eventide-actor__header {
+  .eventide-sheet__header {
     @include themes.apply-all-themes('header-theme');
 
+    min-height: fit-content;
     background: linear-gradient(
       135deg,
       var(--theme-accent) 0%,
@@ -77,7 +78,7 @@ label,
     // Light theme specific overrides
     &[data-header-theme="light"] {
       // Toggle label text for light theme
-      .eventide-actor__toggle-group label {
+      .eventide-sheet__toggle-group label {
         color: var(--theme-text) !important;
 
         &:hover {
@@ -134,7 +135,7 @@ label,
   }
 
     // Target the specific character name input class
-  .eventide-actor__character-name {
+  .eventide-sheet__character-name {
     font-family: var(--erps-display-font) !important;
     font-size: 1.8rem !important;
     font-weight: 600 !important;

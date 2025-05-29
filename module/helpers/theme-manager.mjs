@@ -31,12 +31,14 @@ class ThemeManagerInstance {
     this.appType = application.constructor.name;
     this.options = {
       // Default selectors for different theme targets
-      backgroundSelector: '.eventide-character-sheet, .eventide-item-sheet',
+      backgroundSelector: '.eventide-sheet',
       tabsSelector: '.tabs',
       nameSelector: '.document-name',
-      headerSelector: '.eventide-actor__header, .erps-item-form__header',
+      headerSelector: '.eventide-sheet__header',
       dataTablesSelector: '.erps-data-table',
-      sectionHeadersSelector: '.eventide-actor-data-section__header',
+      sectionHeadersSelector: '.eventide-sheet-data-section__header',
+      togglesSelector: '.erps-toggles',
+      biographySelector: '.biography-content, [data-biography-theme]',
       // Custom theme attributes
       backgroundAttribute: 'data-bg-theme',
       tabAttribute: 'data-tab-theme',
@@ -44,6 +46,8 @@ class ThemeManagerInstance {
       headerAttribute: 'data-header-theme',
       tableAttribute: 'data-table-theme',
       sectionAttribute: 'data-section-theme',
+      toggleAttribute: 'data-toggle-theme',
+      biographyAttribute: 'data-biography-theme',
       // Whether to auto-apply themes on render
       autoApply: true,
       // Whether to verify theme application
@@ -158,6 +162,22 @@ class ThemeManagerInstance {
       'section'
     );
 
+    // Apply toggle themes
+    this.applyThemeToSelector(
+      this.options.togglesSelector,
+      this.options.toggleAttribute,
+      currentTheme,
+      'toggle'
+    );
+
+    // Apply biography themes
+    this.applyThemeToSelector(
+      this.options.biographySelector,
+      this.options.biographyAttribute,
+      currentTheme,
+      'biography'
+    );
+
     Logger.debug("Themes applied", {
       appId: this.appId,
       appType: this.appType,
@@ -229,7 +249,9 @@ class ThemeManagerInstance {
       name: this.verifyThemeOnSelector(this.options.nameSelector, this.options.nameAttribute, currentTheme),
       header: this.verifyThemeOnSelector(this.options.headerSelector, this.options.headerAttribute, currentTheme),
       dataTables: this.verifyThemeOnSelector(this.options.dataTablesSelector, this.options.tableAttribute, currentTheme),
-      sectionHeaders: this.verifyThemeOnSelector(this.options.sectionHeadersSelector, this.options.sectionAttribute, currentTheme)
+      sectionHeaders: this.verifyThemeOnSelector(this.options.sectionHeadersSelector, this.options.sectionAttribute, currentTheme),
+      toggles: this.verifyThemeOnSelector(this.options.togglesSelector, this.options.toggleAttribute, currentTheme),
+      biography: this.verifyThemeOnSelector(this.options.biographySelector, this.options.biographyAttribute, currentTheme)
     };
 
     const mismatches = Object.entries(verificationResults)
@@ -567,24 +589,28 @@ export const triggerGlobalThemeChange = (newTheme, userId = game.user.id) => {
  */
 export const THEME_PRESETS = {
   CHARACTER_SHEET: {
-    backgroundSelector: '.eventide-character-sheet',
+    backgroundSelector: '.eventide-sheet',
     tabsSelector: '.tabs',
     nameSelector: '.document-name',
-    headerSelector: '.eventide-actor__header',
+    headerSelector: '.eventide-sheet__header',
     dataTablesSelector: '.erps-data-table',
-    sectionHeadersSelector: '.eventide-actor-data-section__header',
+    sectionHeadersSelector: '.eventide-sheet-data-section__header',
+    togglesSelector: '.erps-toggles',
+    biographySelector: '.biography-content, [data-biography-theme]',
     autoApply: true,
     verify: true,
     showNotifications: false
   },
 
   ITEM_SHEET: {
-    backgroundSelector: '.eventide-item-sheet',
+    backgroundSelector: '.eventide-sheet',
     tabsSelector: '.tabs',
     nameSelector: '.document-name',
-    headerSelector: '.erps-item-form__header',
+    headerSelector: '.eventide-sheet__header',
     dataTablesSelector: '.erps-data-table, .erps-item-effects__grid',
     sectionHeadersSelector: '.erps-item-effects__section-header',
+    togglesSelector: '.erps-toggles',
+    biographySelector: '.biography-content, [data-biography-theme]',
     autoApply: true,
     verify: true,
     showNotifications: false
