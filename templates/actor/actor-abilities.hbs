@@ -1,0 +1,55 @@
+{{! Ability Cards Column - Given more space }}
+<section class='header-abilities flexcol grid-span-2'>
+  {{#each system.abilities as |ability key|}}
+    {{! Each ability is presented as a card, using <article> for semantic grouping }}
+    <article class="eventide-ability-card eventide-ability-card--{{key}} rollable"
+             data-ability="{{key}}"
+             data-action='roll'
+             data-type="{{key}}"
+             data-roll='{{lookup ../formulas key}}'
+             data-label='{{localize (lookup @root.config.abilities key)}}'
+             title="Roll {{localize (lookup @root.config.abilities key)}} ({{numberFormat ability.total decimals=0 sign=true}})">
+      <div class="eventide-ability-card__content">
+        {{! Ability label/abbreviation, using <header> for the card's header content }}
+        <header class="eventide-ability-card__header">
+          <span class="eventide-ability-card__label" title="{{localize (lookup @root.config.abilities key)}}">
+            {{! Display abbreviation based on key }}
+            {{#if (eq key "acro")}}{{localize (lookup @root.config.abilityAbbreviations key)}}{{/if}}
+            {{#if (eq key "phys")}}{{localize (lookup @root.config.abilityAbbreviations key)}}{{/if}}
+            {{#if (eq key "fort")}}{{localize (lookup @root.config.abilityAbbreviations key)}}{{/if}}
+            {{#if (eq key "will")}}{{localize (lookup @root.config.abilityAbbreviations key)}}{{/if}}
+            {{#if (eq key "wits")}}{{localize (lookup @root.config.abilityAbbreviations key)}}{{/if}}
+          </span>
+        </header>
+        {{! Ability value input and total button }}
+        <div class="eventide-ability-card__stats">
+          <input
+            type='text'
+            name='system.abilities.{{key}}.value'
+            value='{{ability.value}}'
+            class="eventide-ability-card__input"
+            data-dtype='Number'
+            onclick="event.stopPropagation();" {{! Prevent card roll when clicking input }}
+          />
+          {{! Button to roll the ability check }}
+          <button class="eventide-ability-card__total-button rollable"
+                  data-action='roll'
+                  data-type="{{key}}"
+                  data-roll='{{lookup ../formulas key}}'
+                  data-label='{{localize (lookup @root.config.abilities key)}}'
+                  title="Roll {{localize (lookup @root.config.abilities key)}} ({{numberFormat ability.total decimals=0 sign=true}})">
+            {{numberFormat ability.total decimals=0 sign=true}}
+          </button>
+        </div>
+        {{! Status indicator (locked/unlocked) }}
+        <div class="eventide-ability-card__status">
+          {{#if ability.override}}
+            <i class="fas fa-lock eventide-ability-card__lock" title="{{localize 'EVENTIDE_RP_SYSTEM.Actor.Attributes.Ability.Locked'}}"></i>
+          {{else}}
+            <i class="fas fa-unlock-alt eventide-ability-card__unlock" title="{{localize 'EVENTIDE_RP_SYSTEM.Actor.Attributes.Ability.Unlocked'}}"></i>
+          {{/if}}
+        </div>
+      </div>
+    </article>
+  {{/each}}
+</section>

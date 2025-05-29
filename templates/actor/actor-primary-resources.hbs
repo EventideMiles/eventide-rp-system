@@ -1,0 +1,105 @@
+{{! Primary resources row }}
+<section class='resources grid grid-3col'>
+  {{!-- Resolve Resource --}}
+  <article class='erps-resource-box erps-resource-box--health'>
+    <header class='erps-resource-box__upper'>
+      <h3 class='erps-resource-box__label'>
+        {{localize 'EVENTIDE_RP_SYSTEM.Actor.Attributes.Resolve.Value.label'}}
+      </h3>
+    </header>
+    <div class='erps-resource-box__lower'>
+      <input
+        type='text'
+        name='system.resolve.value'
+        value='{{system.resolve.value}}'
+        class='erps-resource-box__input'
+        data-dtype='Number'
+        aria-label="{{localize 'EVENTIDE_RP_SYSTEM.Actor.Attributes.Resolve.Value.label'}} Current"
+      />
+      <span class='erps-resource-box__separator'> / </span>
+      <input
+        type='text'
+        name='system.resolve.max'
+        value='{{system.resolve.max}}'
+        class='erps-resource-box__input'
+        data-dtype='Number'
+        aria-label="{{localize 'EVENTIDE_RP_SYSTEM.Actor.Attributes.Resolve.Value.label'}} Maximum"
+      />
+    </div>
+  </article>
+
+  {{!-- Power Resource --}}
+  <article class='erps-resource-box erps-resource-box--mana'>
+    <header class='erps-resource-box__upper'>
+      <h3 class='erps-resource-box__label'>
+        {{localize 'EVENTIDE_RP_SYSTEM.Actor.Attributes.Power.Value.label'}}
+      </h3>
+    </header>
+    <div class='erps-resource-box__lower'>
+      <input
+        type='text'
+        name='system.power.value'
+        value='{{system.power.value}}'
+        class='erps-resource-box__input'
+        data-dtype='Number'
+        aria-label="{{localize 'EVENTIDE_RP_SYSTEM.Actor.Attributes.Power.Value.label'}} Current"
+      />
+      <span class='erps-resource-box__separator'> / </span>
+      <input
+        type='text'
+        name='system.power.max'
+        value='{{system.power.max}}'
+        class='erps-resource-box__input'
+        data-dtype='Number'
+        aria-label="{{localize 'EVENTIDE_RP_SYSTEM.Actor.Attributes.Power.Value.label'}} Maximum"
+      />
+    </div>
+  </article>
+
+  {{!-- Level (Character) or CR/XP (NPC) --}}
+  <article class='erps-resource-box erps-resource-box--neutral'>
+    {{#if (eq actor.type 'character')}}
+      <header class='erps-resource-box__upper'>
+        <h3 class='erps-resource-box__label'>
+          {{localize 'EVENTIDE_RP_SYSTEM.Actor.Attributes.Level.label'}}
+        </h3>
+      </header>
+      <div class='erps-resource-box__lower'>
+        <input
+          type='text'
+          name='system.attributes.level.value'
+          value='{{system.attributes.level.value}}'
+          class='erps-resource-box__input'
+          data-dtype='Number'
+          aria-label="{{localize 'EVENTIDE_RP_SYSTEM.Actor.Attributes.Level.label'}}"
+        />
+      </div>
+    {{/if}}
+    {{#if (eq actor.type 'npc')}}
+      <header class='erps-resource-box__upper'>
+        <h3 class='erps-resource-box__label'>
+          {{localize 'EVENTIDE_RP_SYSTEM.Actor.Attributes.CR.label'}} / {{localize 'EVENTIDE_RP_SYSTEM.Actor.Attributes.XP.label'}}
+        </h3>
+      </header>
+      <div class='erps-resource-box__lower'>
+        <input
+          type='text'
+          name='system.cr'
+          value='{{system.cr}}'
+          class='erps-resource-box__input'
+          data-dtype='Number'
+          aria-label="{{localize 'EVENTIDE_RP_SYSTEM.Actor.Attributes.CR.label'}}"
+        />
+        <input
+          type='text'
+          disabled='true'
+          name='system.xp'
+          value='{{system.xp}}'
+          class='erps-resource-box__input'
+          data-dtype='Number'
+          aria-label="{{localize 'EVENTIDE_RP_SYSTEM.Actor.Attributes.XP.label'}}"
+        />
+      </div>
+    {{/if}}
+  </article>
+</section>

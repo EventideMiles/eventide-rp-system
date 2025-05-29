@@ -1,0 +1,54 @@
+{{! Secondary stats row }}
+  <div class='resources grid grid-4col'>
+    <div class='erps-stat-box erps-stat-box--neutral'>
+      <header class='erps-stat-box__upper'>
+        <h4 class='erps-stat-box__label'>Dice Pool</h4>
+      </header>
+      <div class='erps-stat-box__lower' aria-label="Dice Pool Value">
+        <span class="erps-stat-box__value" title="Available Dice (Derived)">
+          {{system.hiddenAbilities.dice.total}}
+        </span>
+      </div>
+    </div>
+
+    <div class='erps-stat-box erps-stat-box--neutral'>
+      <header class='erps-stat-box__upper'>
+        <h4 class='erps-stat-box__label'>Fail Range</h4>
+      </header>
+      <div class='erps-stat-box__lower' aria-label="Fail Range Value">
+        <span class="erps-stat-box__value" title="Fail Minimum (Derived)">
+          {{system.hiddenAbilities.fmin.total}}
+        </span>
+        <span class="erps-stat-box__separator">-</span>
+        <span class="erps-stat-box__value" title="Fail Maximum (Derived)">
+          {{system.hiddenAbilities.fmax.total}}
+        </span>
+      </div>
+    </div>
+
+    <div class='erps-stat-box erps-stat-box--neutral'>
+      <header class='erps-stat-box__upper'>
+        <h4 class='erps-stat-box__label'>Crit Range</h4>
+      </header>
+      <div class='erps-stat-box__lower' aria-label="Critical Range Value">
+        <span class="erps-stat-box__value" title="Critical Minimum (Derived)">
+          {{system.hiddenAbilities.cmin.total}}
+        </span>
+        <span class="erps-stat-box__separator">-</span>
+        <span class="erps-stat-box__value" title="Critical Maximum (Derived)">
+          {{system.hiddenAbilities.cmax.total}}
+        </span>
+      </div>
+    </div>
+
+    <div class='erps-stat-box erps-stat-box--neutral'>
+      <header class='erps-stat-box__upper'>
+        <h4 class='erps-stat-box__label'>Stat Total</h4>
+      </header>
+      <div class='erps-stat-box__lower' aria-label="Total Stat Points Value">
+        <span class="erps-stat-box__value" title="Total Stat Points (Derived)">
+          {{system.statTotal.value}}
+        </span>
+      </div>
+    </div>
+  </div>

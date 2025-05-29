@@ -35,6 +35,15 @@ export const initHandlebarsPartials = async () => {
       "systems/eventide-rp-system/templates/macros/parts/popup-roll.hbs",
     "popup-header":
       "systems/eventide-rp-system/templates/macros/parts/popup-header.hbs",
+    // Actor partials
+    "actor-abilities":
+      "systems/eventide-rp-system/templates/actor/actor-abilities.hbs",
+    "actor-status":
+      "systems/eventide-rp-system/templates/actor/actor-status.hbs",
+    "actor-primary-resources":
+      "systems/eventide-rp-system/templates/actor/actor-primary-resources.hbs",
+    "actor-secondary-resources":
+      "systems/eventide-rp-system/templates/actor/actor-secondary-resources.hbs",
   };
 
   // Load and register each partial

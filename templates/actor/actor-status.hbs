@@ -1,0 +1,85 @@
+{{! Status indicators bar - moved to bottom of entire header }}
+  <div class="eventide-header__status-bar">
+    {{! Transformation Effect Card - moved here as requested }}
+    {{#if actor.flags.eventide-rp-system.activeTransformation}}
+      <article class="eventide-transformation-card {{#if actor.flags.eventide-rp-system.activeTransformationCursed}}eventide-transformation-card--cursed{{/if}}"
+               data-drag="true"
+               data-item-id="{{activeTransformation._id}}"
+               data-document-class="Item"
+               title="{{localize 'EVENTIDE_RP_SYSTEM.Actor.Attributes.Transformation.DragHint'}}">
+        <header class="eventide-transformation-card__header">
+          <div class="eventide-transformation-card__icon">
+            <i class="{{#if actor.flags.eventide-rp-system.activeTransformationCursed}}fas fa-skull{{else}}fas fa-magic{{/if}}"></i>
+          </div>
+          <div class="eventide-transformation-card__info">
+            <span class="eventide-transformation-card__label">
+              {{#if actor.flags.eventide-rp-system.activeTransformationCursed}}Cursed Transformation{{else}}Active Transformation{{/if}}
+            </span>
+            <span class="eventide-transformation-card__name">{{actor.flags.eventide-rp-system.activeTransformationName}}</span>
+          </div>
+          {{#if (and editable (or (not actor.flags.eventide-rp-system.activeTransformationCursed) @root.isGM))}}
+            <button class="eventide-transformation-card__revert" data-action="removeTransformation" title="{{localize 'EVENTIDE_RP_SYSTEM.Actor.Attributes.Transformation.Remove'}}">
+              <i class="fas fa-compress-alt"></i>
+            </button>
+          {{else}}
+            <div class="eventide-transformation-card__locked" title="{{localize 'EVENTIDE_RP_SYSTEM.Actor.Attributes.Transformation.Remove'}}">
+              <i class="fas fa-lock"></i>
+            </div>
+          {{/if}}
+        </header>
+      </article>
+    {{/if}}
+    {{! Show cursed items warning if any equipped cursed gear }}
+    {{#if (hasCursedItems equippedGear)}}
+      <article class="eventide-cursed-card eventide-cursed-card--warning">
+        <header class="eventide-cursed-card__header">
+          <div class="eventide-cursed-card__icon">
+            <i class="fas fa-skull-crossbones"></i>
+          </div>
+          <div class="eventide-cursed-card__info">
+            <span class="eventide-cursed-card__label">Cursed Items</span>
+            <span class="eventide-cursed-card__details">Equipped Cursed Gear</span>
+          </div>
+          <div class="eventide-cursed-card__warning">
+            <i class="fas fa-exclamation-triangle"></i>
+          </div>
+        </header>
+      </article>
+    {{/if}}
+
+    {{! Show active status effects count if any }}
+    {{#if (gt statuses.length 0)}}
+      <article class="eventide-effects-card eventide-effects-card--active">
+        <header class="eventide-effects-card__header">
+          <div class="eventide-effects-card__icon">
+            <i class="fas fa-magic"></i>
+          </div>
+          <div class="eventide-effects-card__info">
+            <span class="eventide-effects-card__label">Status Effects</span>
+            <span class="eventide-effects-card__details">{{statuses.length}} {{#if (eq statuses.length 1)}}Effect{{else}}Effects{{/if}} Active</span>
+          </div>
+          <div class="eventide-effects-card__indicator">
+            <i class="fas fa-star"></i>
+          </div>
+        </header>
+      </article>
+    {{/if}}
+
+    {{! Low resolve warning - enhanced card style }}
+    {{#if lowHealth}}
+      <article class="eventide-health-card eventide-health-card--critical">
+        <header class="eventide-health-card__header">
+          <div class="eventide-health-card__icon">
+            <i class="fas fa-heart-broken"></i>
+          </div>
+          <div class="eventide-health-card__info">
+            <span class="eventide-health-card__label">Critical Health</span>
+            <span class="eventide-health-card__details">{{system.resolve.value}}/{{system.resolve.max}} Resolve</span>
+          </div>
+          <div class="eventide-health-card__warning">
+            <i class="fas fa-exclamation-triangle"></i>
+          </div>
+        </header>
+      </article>
+    {{/if}}
+  </div>
