@@ -208,6 +208,29 @@ $sheet-table-pattern-size: 20px;
 $sheet-table-responsive-breakpoint: 768px;
 $sheet-table-responsive-label-width: 30%;
 
+// Profile image specific
+$sheet-profile-border-radius: 30px;
+$sheet-profile-frame-offset: 6px;
+$sheet-profile-shadow-blur-hover: 30px;
+$sheet-profile-hover-scale: 1.02;
+$sheet-profile-disabled-opacity: 0.6;
+$sheet-profile-disabled-overlay-opacity: 30;
+$sheet-profile-disabled-grayscale: 0.3;
+$sheet-profile-frame-opacity: 20;
+$sheet-profile-shadow-opacity: 30;
+$sheet-profile-inner-shadow-opacity: 20;
+$sheet-profile-inner-shadow-opacity-hover: 10;
+
+// Profile image size variants
+$sheet-profile-sizes: (
+  "xs": 60px,
+  "sm": 90px,
+  "md": 120px,
+  "lg": 180px,  // Default size from original
+  "xl": 240px,
+  "xxl": 300px
+);
+
 // =============================================================================
 // PADDING & MARGIN COMBINATIONS
 // =============================================================================

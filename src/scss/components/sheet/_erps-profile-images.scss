@@ -1,0 +1,156 @@
+@use "../../utils/themes" as themes;
+@use "../../utils/colors" as colors;
+@use "../../utils/sheet-tokens" as tokens;
+@use "sass:map";
+
+// ===================================
+// UTILITY MIXINS
+// ===================================
+
+@mixin profile-shadow($blur: tokens.$sheet-shadow-blur-xxl, $opacity: tokens.$sheet-profile-shadow-opacity) {
+  box-shadow:
+    // Outer highlight for depth
+    0 0 $blur #{themes.universal-color(white, $opacity)},
+    // Enhanced inset shadow for sunken effect
+    inset 2px 2px ($blur * 0.6) #{themes.universal-color(black, tokens.$sheet-profile-inner-shadow-opacity * 1.5)},
+    inset -1px -1px ($blur * 0.4) #{themes.universal-color(white, tokens.$sheet-profile-inner-shadow-opacity * 0.5)};
+}
+
+@mixin profile-shadow-hover($blur: tokens.$sheet-profile-shadow-blur-hover) {
+  box-shadow:
+    // Enhanced outer glow on hover using white with higher opacity for glow effect
+    0 0 $blur #{themes.universal-color(white, 80)},
+    // Reduced inset shadow on hover for subtle lift effect
+    inset 1px 1px ($blur * 0.53) #{themes.universal-color(black, tokens.$sheet-profile-inner-shadow-opacity-hover * 1.2)},
+    inset -1px -1px ($blur * 0.27) #{themes.universal-color(white, tokens.$sheet-profile-inner-shadow-opacity-hover * 0.8)};
+}
+
+@mixin profile-disabled-overlay($size) {
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: #{themes.universal-color(black, tokens.$sheet-profile-disabled-overlay-opacity)};
+    border-radius: tokens.$sheet-profile-border-radius;
+    pointer-events: none;
+  }
+}
+
+@mixin profile-frame-effect($size) {
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -(tokens.$sheet-profile-frame-offset);
+    border: tokens.$sheet-border-thin solid #{themes.universal-color(white, tokens.$sheet-profile-frame-opacity)};
+    border-radius: tokens.$sheet-profile-border-radius;
+    z-index: -1;
+  }
+}
+
+// ===================================
+// BASE PROFILE IMAGE STYLING
+// ===================================
+
+%profile-image-base {
+  border: tokens.$sheet-border-thick inset #{themes.universal-color(white, 100)};
+  transition: all tokens.$sheet-transition-medium;
+  position: relative;
+  flex-shrink: 0;
+  object-fit: cover;
+  box-sizing: border-box;
+  border-radius: tokens.$sheet-profile-border-radius;
+
+  @include profile-shadow;
+
+  &:hover {
+    border: tokens.$sheet-border-thick inset #{themes.universal-color(white, 90)};
+    transform: scale(tokens.$sheet-profile-hover-scale);
+
+    @include profile-shadow-hover;
+  }
+
+  // Disabled state
+  &--disabled {
+    opacity: tokens.$sheet-profile-disabled-opacity;
+    cursor: not-allowed;
+    filter: grayscale(tokens.$sheet-profile-disabled-grayscale);
+
+    &:hover {
+      border: tokens.$sheet-border-thick inset #{themes.universal-color(white, 100)};
+      transform: none;
+
+      @include profile-shadow;
+    }
+  }
+}
+
+// ===================================
+// SIZE VARIANTS
+// ===================================
+
+.eventide-profile-image {
+  @extend %profile-image-base;
+
+  // Default size (lg)
+  $default-size: map.get(tokens.$sheet-profile-sizes, "lg");
+
+  width: $default-size;
+  height: $default-size;
+
+  @include profile-frame-effect($default-size);
+
+  &--disabled {
+    @include profile-disabled-overlay($default-size);
+  }
+
+  // Size variants
+  @each $name, $size in tokens.$sheet-profile-sizes {
+    &--#{$name} {
+      width: $size;
+      height: $size;
+
+      @include profile-frame-effect($size);
+
+      &::before {
+        border-radius: tokens.$sheet-profile-border-radius;
+      }
+
+      &.eventide-profile-image--disabled {
+        @include profile-disabled-overlay($size);
+      }
+    }
+  }
+}
+
+// ===================================
+// LEGACY COMPATIBILITY
+// ===================================
+// Maintain existing class for backward compatibility
+
+.eventide-actor__profile-img {
+  @extend %profile-image-base;
+
+  // Default size (180px to match original)
+  $default-size: map.get(tokens.$sheet-profile-sizes, "lg");
+
+  width: $default-size;
+  height: $default-size;
+
+  @include profile-frame-effect($default-size);
+
+  &--disabled {
+    @include profile-disabled-overlay($default-size);
+  }
+}
+
+// ===================================
+// THEME INTEGRATION
+// ===================================
+// Apply themed profile image backgrounds based on header theme
+// This maintains the existing theme integration from the original file
+
+.eventide-character-sheet {
+  .eventide-actor__header {
+    @include themes.apply-all-profile-image-backgrounds('header-theme');
+  }
+}

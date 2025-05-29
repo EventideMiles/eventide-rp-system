@@ -4,6 +4,7 @@
 @use "../utils/tokens" as tokens;
 @use "../utils/themes" as themes;
 @use "../components/sheet/erps-resource-boxes" as resource-boxes;
+@use "../components/sheet/erps-profile-images" as profile-images;
 
 // General selectors (must come before any specific theme selectors for proper specificity)
 label,
@@ -84,67 +85,6 @@ label,
         }
       }
     }
-
-    // Profile image theme backgrounds - applied based on header theme
-    .eventide-actor__profile-img {
-      border-radius: 40px;
-      border: 3px solid colors.$universal-white;
-      width: 180px;
-      height: 180px;
-      box-shadow:
-        0 0 20px rgb(255 255 255 / 30%),
-        inset 0 0 20px rgb(0 0 0 / 20%);
-      transition: all 0.3s ease;
-      position: relative;
-      flex-shrink: 0;
-      object-fit: cover;
-      box-sizing: border-box;
-
-      // Add frame effect
-      &::before {
-        content: '';
-        position: absolute;
-        inset: -6px;
-        border: 1px solid rgb(255 255 255 / 20%);
-        border-radius: 46px;
-        z-index: -1;
-      }
-
-      &:hover {
-        border: 3px solid colors.$white-text-glow;
-        box-shadow:
-          0 0 30px colors.$white-text-glow,
-          inset 0 0 20px rgb(0 0 0 / 10%);
-        transform: scale(1.02);
-      }
-
-      // Disabled state when transformed
-      &--disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-        filter: grayscale(0.3);
-
-        &::after {
-          content: '';
-          position: absolute;
-          inset: 0;
-          background: rgb(0 0 0 / 30%);
-          border-radius: 40px;
-          pointer-events: none;
-        }
-
-        &:hover {
-          border: 3px solid colors.$universal-white;
-          box-shadow:
-            0 0 20px rgb(255 255 255 / 30%),
-            inset 0 0 20px rgb(0 0 0 / 20%);
-          transform: none;
-        }
-      }
-    }
-
-    // Apply themed profile image backgrounds based on header theme
-    @include themes.apply-all-profile-image-backgrounds('header-theme');
   }
 
   // Character name input theme system with multiple color schemes
@@ -320,11 +260,6 @@ label,
       transform: translateY(-50%) scale(1.2);
     }
   }
-}
-
-// Fix for controls dropdown z-index issues
-.controls-dropdown {
-  z-index: 9999 !important;
 }
 
 // Enhanced header styling for game design feel
