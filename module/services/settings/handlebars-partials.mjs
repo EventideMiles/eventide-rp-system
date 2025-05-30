@@ -15,6 +15,10 @@
 export const initHandlebarsPartials = async () => {
   // Define the partial paths with their registration names
   const partialPaths = {
+    // universal partials
+    "erps-color-picker":
+      "systems/eventide-rp-system/templates/partials/erps-color-picker.hbs",
+    // macro partials
     "character-effects":
       "systems/eventide-rp-system/templates/macros/parts/character-effects.hbs",
     "macro-footer":
