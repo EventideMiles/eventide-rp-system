@@ -2371,7 +2371,7 @@ label,
   flex: 1;
 }
 .popup-form__character-preview-info h4 {
-  margin: 0 0 0.5rem 0;
+  margin: 0 0 0.5rem;
   color: var(--theme-text);
   font-size: 1.1rem;
 }
