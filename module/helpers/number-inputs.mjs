@@ -216,7 +216,7 @@ const handleNumberInputClick = (event) => {
 
     const isIncrement = button.classList.contains("erps-number-input__button--increment");
     updateNumberInputValue(input, isIncrement);
-    return;
+
   }
 };
 

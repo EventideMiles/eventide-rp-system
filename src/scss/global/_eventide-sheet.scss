@@ -160,6 +160,28 @@ label,
         }
       }
     }
+
+    &--item {
+      // Inherit all base header styles and add item-specific layout
+      display: flex;
+      align-items: flex-start;
+      gap: 1.5rem;
+
+      .eventide-profile-image {
+        flex-shrink: 0;
+        position: relative;
+        z-index: 2;
+      }
+
+      .eventide-sheet__header-fields {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        position: relative;
+        z-index: 2;
+      }
+    }
   }
 
   // Character name input theme system with multiple color schemes
@@ -399,11 +421,40 @@ label,
     justify-content: space-between;
   }
 
+  // ERPS header fields styling
+  &__header-fields {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    height: 100%;
+    justify-content: space-between;
+  }
+
   // Align the left column content
   .grid-span-2 {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
     height: 100%;
+  }
+}
+
+// Item header specific grid spacing adjustments
+.eventide-sheet__header--item .eventide-sheet__header-fields .grid {
+  gap: 0.5rem;
+  margin: 0.5rem 0;
+
+  &:first-child {
+    margin-top: 0;
+  }
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  // Reduce color picker label spacing in item headers
+  .erps-color-picker--label-above .erps-color-picker__container {
+    gap: 0.125rem; // Reduced from 0.25rem
   }
 }

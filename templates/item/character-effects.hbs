@@ -24,14 +24,7 @@
 
   </div>
   <div>
-    <div class="erps-input-group erps-input-group--stacked">
-      <label class="erps-input-label" for="color-iconTint">{{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.IconTint"}}}:</label>
-      <div class="color-picker-container">
-        <div class="color-preview" id="preview-iconTint" style="background-color: {{iconTint}}"></div>
-        <input type="color" class="color-picker" id="color-iconTint" name="iconTint" value="{{iconTint}}">
-        <input type="text" class="erps-input" id="hex-iconTint" name="hex-iconTint" placeholder="Hex color" value="{{iconTint}}">
-      </div>
-    </div>
+    {{> erps-color-picker name="iconTint" labelPosition="above" value=iconTint label=(localize "EVENTIDE_RP_SYSTEM.Forms.Sections.IconTint") placeholder="#000000"}}
   </div>
 
   </div>

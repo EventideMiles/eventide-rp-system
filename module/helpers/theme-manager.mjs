@@ -44,6 +44,9 @@ class ThemeManagerInstance {
       buttonsSelector: '.erps-button',
       numberInputsSelector: '.erps-number-input__input',
       numberButtonsSelector: '.erps-number-input__button',
+      colorPickersSelector: '.erps-color-picker, .color-picker-with-hex',
+      textareasSelector: '.erps-textarea',
+      itemsPanelsSelector: '.erps-items-panel',
       // Custom theme attributes
       backgroundAttribute: 'data-bg-theme',
       tabAttribute: 'data-tab-theme',
@@ -58,6 +61,9 @@ class ThemeManagerInstance {
       buttonAttribute: 'data-button-theme',
       numberInputAttribute: 'data-input-theme',
       numberButtonAttribute: 'data-button-theme',
+      colorPickerAttribute: 'data-color-theme',
+      textareaAttribute: 'data-textarea-theme',
+      itemsPanelAttribute: 'data-items-theme',
       // Whether to auto-apply themes on render
       autoApply: true,
       // Whether to verify theme application
@@ -234,6 +240,30 @@ class ThemeManagerInstance {
       this.options.numberButtonAttribute,
       currentTheme,
       'number-button'
+    );
+
+    // Apply color picker themes
+    this.applyThemeToSelector(
+      this.options.colorPickersSelector,
+      this.options.colorPickerAttribute,
+      currentTheme,
+      'color-picker'
+    );
+
+    // Apply textarea themes
+    this.applyThemeToSelector(
+      this.options.textareasSelector,
+      this.options.textareaAttribute,
+      currentTheme,
+      'textarea'
+    );
+
+    // Apply items panel themes
+    this.applyThemeToSelector(
+      this.options.itemsPanelsSelector,
+      this.options.itemsPanelAttribute,
+      currentTheme,
+      'items-panel'
     );
 
     Logger.debug("Themes applied", {
@@ -413,7 +443,10 @@ class ThemeManagerInstance {
       selects: this.verifyThemeOnSelector(this.options.selectsSelector, this.options.selectAttribute, currentTheme),
       buttons: this.verifyThemeOnSelector(this.options.buttonsSelector, this.options.buttonAttribute, currentTheme),
       numberInputs: this.verifyThemeOnSelector(this.options.numberInputsSelector, this.options.numberInputAttribute, currentTheme),
-      numberButtons: this.verifyThemeOnSelector(this.options.numberButtonsSelector, this.options.numberButtonAttribute, currentTheme)
+      numberButtons: this.verifyThemeOnSelector(this.options.numberButtonsSelector, this.options.numberButtonAttribute, currentTheme),
+      colorPickers: this.verifyThemeOnSelector(this.options.colorPickersSelector, this.options.colorPickerAttribute, currentTheme),
+      textareas: this.verifyThemeOnSelector(this.options.textareasSelector, this.options.textareaAttribute, currentTheme),
+      itemsPanels: this.verifyThemeOnSelector(this.options.itemsPanelsSelector, this.options.itemsPanelAttribute, currentTheme)
     };
 
     const mismatches = Object.entries(verificationResults)
@@ -764,6 +797,9 @@ export const THEME_PRESETS = {
     buttonsSelector: '.erps-button',
     numberInputsSelector: '.erps-number-input__input',
     numberButtonsSelector: '.erps-number-input__button',
+    colorPickersSelector: '.erps-color-picker, .color-picker-with-hex',
+    textareasSelector: '.erps-textarea',
+    itemsPanelsSelector: '.erps-items-panel',
     autoApply: true,
     verify: true,
     showNotifications: false
@@ -771,18 +807,21 @@ export const THEME_PRESETS = {
 
   ITEM_SHEET: {
     backgroundSelector: '.eventide-sheet',
-    tabsSelector: '.tabs',
-    nameSelector: '.document-name',
+    tabsSelector: '.tabs .item',
+    nameSelector: '.document-name input',
     headerSelector: '.eventide-sheet__header',
     dataTablesSelector: '.erps-data-table, .erps-item-effects__grid',
     sectionHeadersSelector: '.erps-item-effects__section-header',
     togglesSelector: '.erps-toggles',
-    biographySelector: '.biography-content, [data-biography-theme]',
+    biographySelector: '.biography-content',
     inputsSelector: '.erps-input',
     selectsSelector: '.erps-select',
     buttonsSelector: '.erps-button',
     numberInputsSelector: '.erps-number-input__input',
     numberButtonsSelector: '.erps-number-input__button',
+    colorPickersSelector: '.erps-color-picker, .color-picker-with-hex',
+    textareasSelector: '.erps-textarea',
+    itemsPanelsSelector: '.erps-items-panel',
     autoApply: true,
     verify: true,
     showNotifications: false
@@ -800,6 +839,9 @@ export const THEME_PRESETS = {
     buttonsSelector: '',
     numberInputsSelector: '',
     numberButtonsSelector: '',
+    colorPickersSelector: '',
+    textareasSelector: '',
+    itemsPanelsSelector: '',
     autoApply: false,
     verify: false,
     showNotifications: false

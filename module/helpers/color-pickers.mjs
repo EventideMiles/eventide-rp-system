@@ -17,10 +17,11 @@ const eventHandlers = new WeakMap();
  * This function finds all color picker containers matching the selector
  * and enhances them with synchronized hex input fields and color previews.
  * It sets up event listeners to keep the color picker, hex input, and preview in sync.
+ * Supports both legacy .color-picker-with-hex and new .erps-color-picker components.
  *
  * @param {string} selector - The selector for the color picker containers
  */
-export function initColorPickersWithHex(selector = ".color-picker-with-hex") {
+export function initColorPickersWithHex(selector = ".color-picker-with-hex, .erps-color-picker") {
   // Use a slight delay to ensure the DOM is fully rendered
   setTimeout(() => {
     Logger.debug(
@@ -97,8 +98,8 @@ export function cleanupColorPickers(element) {
   );
 
   try {
-    // Find all color pickers within the element
-    const colorPickers = element.querySelectorAll(".color-picker-with-hex");
+    // Find all color pickers within the element (both legacy and ERPS)
+    const colorPickers = element.querySelectorAll(".color-picker-with-hex, .erps-color-picker");
     Logger.debug(
       "Found color pickers to clean up",
       { count: colorPickers.length },
@@ -129,17 +130,32 @@ export function cleanupColorPickers(element) {
  * @param {number} index - Index for generating unique IDs
  */
 function setupSingleColorPicker(container, _index) {
-  const colorInput = container.querySelector(".color-picker");
-  const hexInput = container.querySelector(".hex-input");
-  const preview = container.querySelector(".color-preview");
+  // Support both legacy and ERPS color picker structures
+  const isERPSColorPicker = container.classList.contains('erps-color-picker');
+
+  let colorInput, hexInput, preview;
+
+  if (isERPSColorPicker) {
+    // ERPS color picker structure
+    colorInput = container.querySelector(".erps-color-picker__input") || container.querySelector(".color-picker");
+    hexInput = container.querySelector(".erps-color-picker__hex") || container.querySelector(".hex-input");
+    preview = container.querySelector(".erps-color-picker__preview") || container.querySelector(".color-preview");
+  } else {
+    // Legacy color picker structure
+    colorInput = container.querySelector(".color-picker");
+    hexInput = container.querySelector(".hex-input");
+    preview = container.querySelector(".color-preview");
+  }
 
   if (!colorInput || !hexInput || !preview) {
     Logger.debug(
       "Missing required elements for color picker",
       {
-        colorInput,
-        hexInput,
-        preview,
+        colorInput: !!colorInput,
+        hexInput: !!hexInput,
+        preview: !!preview,
+        isERPSColorPicker,
+        containerClasses: container.className
       },
       "COLOR_PICKER",
     );
@@ -147,7 +163,7 @@ function setupSingleColorPicker(container, _index) {
   }
 
   // Store the initial values
-  const initialColor = colorInput.value;
+  const initialColor = colorInput.value || "#000000";
   preview.style.backgroundColor = initialColor;
   hexInput.value = initialColor.toUpperCase();
 
@@ -157,6 +173,12 @@ function setupSingleColorPicker(container, _index) {
   // Mark as initialized
   colorInput.dataset.initialized = "true";
   hexInput.dataset.initialized = "true";
+
+  Logger.debug("Setting up color picker", {
+    isERPSColorPicker,
+    initialColor,
+    containerClasses: container.className
+  }, "COLOR_PICKER");
 
   /**
    * Update the preview element
@@ -266,12 +288,26 @@ function cleanupColorPickerListeners(colorInput, hexInput) {
  * @param {HTMLElement} container - The color picker container
  */
 function cleanupSingleColorPicker(container) {
-  const colorInput = container.querySelector(".color-picker");
-  const hexInput = container.querySelector(".hex-input");
+  // Support both legacy and ERPS color picker structures
+  const isERPSColorPicker = container.classList.contains('erps-color-picker');
+
+  let colorInput, hexInput;
+
+  if (isERPSColorPicker) {
+    // ERPS color picker structure
+    colorInput = container.querySelector(".erps-color-picker__input") || container.querySelector(".color-picker");
+    hexInput = container.querySelector(".erps-color-picker__hex") || container.querySelector(".hex-input");
+  } else {
+    // Legacy color picker structure
+    colorInput = container.querySelector(".color-picker");
+    hexInput = container.querySelector(".hex-input");
+  }
 
   if (!colorInput || !hexInput) {
     // Clean up event listeners before replacing
-    cleanupColorPickerListeners(colorInput, hexInput);
+    if (colorInput && hexInput) {
+      cleanupColorPickerListeners(colorInput, hexInput);
+    }
     return;
   }
 
@@ -310,7 +346,7 @@ Hooks.on("ready", () => {
 
 // Initialize when relevant sheets render
 Hooks.on("renderApplicationV2", (_context, element, _options) => {
-  if (element.querySelector(".color-picker-with-hex")) {
+  if (element.querySelector(".color-picker-with-hex, .erps-color-picker")) {
     initColorPickersWithHex();
   }
 });

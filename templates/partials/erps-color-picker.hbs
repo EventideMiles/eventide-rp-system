@@ -1,0 +1,49 @@
+{{!--
+  ERPS Color Picker Component
+
+  A theme-aware color picker with hex input that integrates with the color-pickers.mjs system.
+
+  Parameters:
+  - name: The input name attribute
+  - value: The current color value (hex format)
+  - label: Optional label text
+  - placeholder: Optional placeholder text for hex input
+  - compact: Boolean - use compact variant
+  - stacked: Boolean - use stacked variant
+  - labelPosition: String - "left" (default), "right", "above", "below", or "none"
+  - disabled: Boolean - disable the input
+  - classes: Additional CSS classes
+--}}
+
+<div class="erps-color-picker {{#if compact}}erps-color-picker--compact{{/if}} {{#if stacked}}erps-color-picker--stacked{{/if}} {{#if labelPosition}}erps-color-picker--label-{{labelPosition}}{{else}}erps-color-picker--label-left{{/if}} {{classes}}">
+  <div class="erps-color-picker__container">
+    {{#if label}}
+      <label class="erps-color-picker__label" for="{{name}}-color">{{label}}</label>
+    {{/if}}
+
+    <div class="erps-color-picker__content">
+      <div class="erps-color-picker__preview" style="background-color: {{value}};">
+        <input
+          type="color"
+          class="erps-color-picker__input color-picker"
+          id="{{name}}-color"
+          name="{{name}}"
+          value="{{value}}"
+          {{#if disabled}}disabled{{/if}}
+        />
+      </div>
+
+      <input
+        type="text"
+        class="erps-color-picker__hex hex-input"
+        id="{{name}}-hex"
+        name="{{name}}-hex"
+        value="{{value}}"
+        placeholder="{{#if placeholder}}{{placeholder}}{{else}}#000000{{/if}}"
+        maxlength="7"
+        pattern="^#[0-9A-Fa-f]{6}$"
+        {{#if disabled}}disabled{{/if}}
+      />
+    </div>
+  </div>
+</div>
