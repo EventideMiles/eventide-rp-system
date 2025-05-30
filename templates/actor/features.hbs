@@ -4,72 +4,69 @@
   data-group='primary'
   data-tab='features'
 >
-  {{! Features list now spans the full width since abilities moved to header }}
-  <section class='main'>
-    <table class='erps-data-table erps-data-table--features erps-data-table--flush-top'>
-      <thead class='erps-data-table__header'>
-        <tr class='erps-data-table__header-row'>
-          <th class='erps-data-table__header-cell erps-data-table__header-cell--name'>{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Name"}}</th>
-          <th class='erps-data-table__header-cell erps-data-table__header-cell--controls'>
-            {{#if @root.editable}}
+  <table class='erps-data-table erps-data-table--features erps-data-table--flush-top'>
+    <thead class='erps-data-table__header'>
+      <tr class='erps-data-table__header-row'>
+        <th class='erps-data-table__header-cell erps-data-table__header-cell--name'>{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Name"}}</th>
+        <th class='erps-data-table__header-cell erps-data-table__header-cell--controls'>
+          {{#if @root.editable}}
+            <a
+              class='erps-data-table__create-button'
+              title='Create item'
+              data-action='createDoc'
+              data-document-class='Item'
+              data-type='feature'
+            >
+              <i class='fas fa-plus'></i>
+              {{localize 'DOCUMENT.New' type='feature'}}
+            </a>
+          {{/if}}
+        </th>
+      </tr>
+    </thead>
+    <tbody class='erps-data-table__body'>
+      {{#each features as |item id|}}
+        <tr
+          class='erps-data-table__row'
+          data-item-id='{{item._id}}'
+          data-drag='true'
+          data-document-class='Item'
+        >
+          <td class='erps-data-table__cell erps-data-table__cell--name rollable' data-roll-type='item' data-action='roll' data-item-id='{{item._id}}'>
+            <div class='erps-data-table__name-content'>
+              <img
+                src='{{item.img}}'
+                title='{{item.name}}'
+                width='24'
+                height='24'
+              />
+              <span>{{item.name}}</span>
+            </div>
+          </td>
+          <td class='erps-data-table__cell erps-data-table__cell--controls'>
+            <div class='erps-data-table__controls'>
               <a
-                class='erps-data-table__create-button'
-                title='Create item'
-                data-action='createDoc'
-                data-document-class='Item'
-                data-type='feature'
+                class='erps-data-table__control-button erps-data-table__control-button--edit'
+                title='{{localize "DOCUMENT.Update" type='feature'}}'
+                data-action='viewDoc'
+                data-item-id='{{item._id}}'
               >
-                <i class='fas fa-plus'></i>
-                {{localize 'DOCUMENT.New' type='feature'}}
+                <i class='fas fa-edit'></i>
               </a>
-            {{/if}}
-          </th>
-        </tr>
-      </thead>
-      <tbody class='erps-data-table__body'>
-        {{#each features as |item id|}}
-          <tr
-            class='erps-data-table__row'
-            data-item-id='{{item._id}}'
-            data-drag='true'
-            data-document-class='Item'
-          >
-            <td class='erps-data-table__cell erps-data-table__cell--name rollable' data-roll-type='item' data-action='roll' data-item-id='{{item._id}}'>
-              <div class='erps-data-table__name-content'>
-                <img
-                  src='{{item.img}}'
-                  title='{{item.name}}'
-                  width='24'
-                  height='24'
-                />
-                <span>{{item.name}}</span>
-              </div>
-            </td>
-            <td class='erps-data-table__cell erps-data-table__cell--controls'>
-              <div class='erps-data-table__controls'>
+              {{#if @root.editable}}
                 <a
-                  class='erps-data-table__control-button erps-data-table__control-button--edit'
-                  title='{{localize "DOCUMENT.Update" type='feature'}}'
-                  data-action='viewDoc'
+                  class='erps-data-table__control-button erps-data-table__control-button--delete'
+                  title='{{localize "DOCUMENT.Delete" type='feature'}}'
+                  data-action='deleteDoc'
                   data-item-id='{{item._id}}'
                 >
-                  <i class='fas fa-edit'></i>
+                  <i class='fas fa-trash'></i>
                 </a>
-                {{#if @root.editable}}
-                  <a
-                    class='erps-data-table__control-button erps-data-table__control-button--delete'
-                    title='{{localize "DOCUMENT.Delete" type='feature'}}'
-                    data-action='deleteDoc'
-                    data-item-id='{{item._id}}'
-                  >
-                    <i class='fas fa-trash'></i>
-                  </a>
-                {{/if}}
-              </div>
-            </td>
-          </tr>
-        {{/each}}
-      </tbody>
-    </table>
-  </section>
+              {{/if}}
+            </div>
+          </td>
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
 </section>
