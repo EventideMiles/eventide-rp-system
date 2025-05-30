@@ -1,0 +1,776 @@
+@use "../../utils/themes" as themes;
+@use "../../utils/tokens" as tokens;
+@use "sass:map";
+
+// ===================================
+// ERPS INPUTS COMPONENT
+// ===================================
+// Themed form inputs for the Eventide RP System
+// Includes text inputs, select elements, and buttons with theme variants
+
+// ===================================
+// THEME-AWARE DEFAULTS
+// ===================================
+// Set default theme values based on common themes
+// These will be overridden by CSS custom properties when available
+
+:root {
+  // Default theme (blue) - using actual theme colors from themes.scss
+  --erps-default-primary: #{map.get(themes.$blue-theme, primary)};
+  --erps-default-secondary: #{map.get(themes.$blue-theme, secondary)};
+  --erps-default-bright: #{map.get(themes.$blue-theme, light)};
+  --erps-default-glow: #{map.get(themes.$blue-theme, glow)};
+  --erps-default-text: #{map.get(themes.$blue-theme, text)};
+}
+
+// Theme-specific defaults that activate based on sheet classes
+.eventide-sheet[data-bg-theme="blue"] {
+  --erps-current-primary: #{map.get(themes.$blue-theme, primary)};
+  --erps-current-secondary: #{map.get(themes.$blue-theme, secondary)};
+  --erps-current-bright: #{map.get(themes.$blue-theme, light)};
+  --erps-current-glow: #{map.get(themes.$blue-theme, glow)};
+  --erps-current-text: #{map.get(themes.$blue-theme, text)};
+}
+
+.eventide-sheet[data-bg-theme="black"] {
+  --erps-current-primary: #{map.get(themes.$black-theme, primary)};
+  --erps-current-secondary: #{map.get(themes.$black-theme, secondary)};
+  --erps-current-bright: #{map.get(themes.$black-theme, light)};
+  --erps-current-glow: #{map.get(themes.$black-theme, glow)};
+  --erps-current-text: #{map.get(themes.$black-theme, text)};
+}
+
+.eventide-sheet[data-bg-theme="green"] {
+  --erps-current-primary: #{map.get(themes.$green-theme, primary)};
+  --erps-current-secondary: #{map.get(themes.$green-theme, secondary)};
+  --erps-current-bright: #{map.get(themes.$green-theme, light)};
+  --erps-current-glow: #{map.get(themes.$green-theme, glow)};
+  --erps-current-text: #{map.get(themes.$green-theme, text)};
+}
+
+.eventide-sheet[data-bg-theme="light"] {
+  --erps-current-primary: #{map.get(themes.$light-theme, primary)};
+  --erps-current-secondary: #{map.get(themes.$light-theme, secondary)};
+  --erps-current-bright: #{map.get(themes.$light-theme, light)};
+  --erps-current-glow: #{map.get(themes.$light-theme, glow)};
+  --erps-current-text: #{map.get(themes.$light-theme, text)};
+}
+
+.eventide-sheet[data-bg-theme="gold"] {
+  --erps-current-primary: #{map.get(themes.$gold-theme, primary)};
+  --erps-current-secondary: #{map.get(themes.$gold-theme, secondary)};
+  --erps-current-bright: #{map.get(themes.$gold-theme, light)};
+  --erps-current-glow: #{map.get(themes.$gold-theme, glow)};
+  --erps-current-text: #{map.get(themes.$gold-theme, text)};
+}
+
+.eventide-sheet[data-bg-theme="purple"] {
+  --erps-current-primary: #{map.get(themes.$purple-theme, primary)};
+  --erps-current-secondary: #{map.get(themes.$purple-theme, secondary)};
+  --erps-current-bright: #{map.get(themes.$purple-theme, light)};
+  --erps-current-glow: #{map.get(themes.$purple-theme, glow)};
+  --erps-current-text: #{map.get(themes.$purple-theme, text)};
+}
+
+// ===================================
+// CONFIGURATION VARIABLES
+// ===================================
+
+// Input sizing - increased for better readability
+$input-height: 3rem;
+$input-padding: 0.875rem 1rem;
+$input-border-radius: 6px;
+$input-border-width: 2px;
+$input-font-size: 1rem;
+$input-line-height: 1.2;
+
+// Button sizing - matched to input height
+$button-height: 3rem;
+$button-padding: 0.875rem 1.5rem;
+$button-border-radius: 6px;
+$button-border-width: 2px;
+$button-font-size: 1rem;
+$button-font-weight: 600;
+$button-line-height: 1.2;
+
+// Select sizing - matched to input height
+$select-height: 3rem;
+$select-padding: 0.875rem 2.5rem 0.875rem 1rem;
+$select-border-radius: 6px;
+$select-border-width: 2px;
+$select-font-size: 1rem;
+$select-line-height: 1.2;
+
+// Transitions
+$input-transition: all 0.3s ease;
+$button-transition: all 0.2s ease;
+
+// Effects
+$input-shadow-blur: 8px;
+$button-shadow-blur: 12px;
+$glow-opacity: 0.6;
+
+// ===================================
+// UTILITY MIXINS
+// ===================================
+
+@mixin input-glow($color, $opacity: $glow-opacity) {
+  box-shadow: 0 0 $input-shadow-blur themes.get-semantic-color($color, $opacity * 100);
+}
+
+@mixin button-glow($color, $opacity: $glow-opacity) {
+  box-shadow: 0 0 $button-shadow-blur themes.get-semantic-color($color, $opacity * 100);
+}
+
+@mixin button-gradient($color, $start-opacity: 20, $end-opacity: 30) {
+  background: linear-gradient(135deg,
+    themes.get-semantic-color($color, $start-opacity),
+    themes.get-semantic-color($color, $end-opacity)
+  );
+}
+
+// ===================================
+// TEXT INPUTS
+// ===================================
+
+.erps-input {
+  display: block;
+  width: 100%;
+  height: $input-height;
+  padding: $input-padding;
+  font-family: var(--erps-ui-font, sans-serif);
+  font-size: $input-font-size;
+  line-height: $input-line-height;
+  font-weight: 500;
+  color: var(--erps-current-text, var(--theme-text, var(--erps-default-text)));
+  background: var(--erps-current-primary, var(--theme-primary, var(--erps-default-primary)));
+  border: $input-border-width solid var(--erps-current-secondary, var(--theme-secondary, var(--erps-default-secondary)));
+  border-radius: $input-border-radius;
+  transition: $input-transition;
+  outline: none;
+  box-sizing: border-box;
+
+  &::placeholder {
+    color: var(--erps-current-text, var(--theme-text, var(--erps-default-text)));
+    opacity: 0.7;
+    font-style: italic;
+  }
+
+  &:hover {
+    border-color: var(--erps-current-bright, var(--theme-bright, var(--erps-default-bright)));
+    background-color: rgb(255 255 255 / 5%);
+    box-shadow: 0 0 0 2px var(--erps-current-glow, var(--theme-glow, var(--erps-default-glow)));
+  }
+
+  &:focus {
+    border-color: var(--erps-current-bright, var(--theme-bright, var(--erps-default-bright)));
+    background-color: rgb(255 255 255 / 10%);
+    box-shadow: 0 0 0 2px var(--erps-current-glow, var(--theme-glow, var(--erps-default-glow)));
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background: rgb(100 100 100 / 30%);
+    border-color: rgb(100 100 100 / 40%);
+    color: var(--erps-current-text, var(--theme-text, var(--erps-default-text)));
+  }
+}
+
+// ===================================
+// SELECT ELEMENTS
+// ===================================
+
+.erps-select {
+  display: block;
+  width: 100%;
+  height: $select-height;
+  padding: $select-padding;
+  font-family: var(--erps-ui-font, sans-serif);
+  font-size: $select-font-size;
+  line-height: $select-line-height;
+  font-weight: 500;
+  color: var(--erps-current-text, var(--theme-text, var(--erps-default-text)));
+  background: var(--erps-current-primary, var(--theme-primary, var(--erps-default-primary)));
+  border: $select-border-width solid var(--erps-current-secondary, var(--theme-secondary, var(--erps-default-secondary)));
+  border-radius: $select-border-radius;
+  transition: $input-transition;
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  box-sizing: border-box;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 0.75rem center;
+  background-repeat: no-repeat;
+  background-size: 1rem;
+  padding-right: 2.5rem;
+
+  &:hover {
+    border-color: var(--erps-current-bright, var(--theme-bright, var(--erps-default-bright)));
+    background-color: rgb(255 255 255 / 5%);
+    box-shadow: 0 0 0 2px var(--erps-current-glow, var(--theme-glow, var(--erps-default-glow)));
+  }
+
+  &:focus {
+    border-color: var(--erps-current-bright, var(--theme-bright, var(--erps-default-bright)));
+    background-color: rgb(255 255 255 / 10%);
+    box-shadow: 0 0 0 2px var(--erps-current-glow, var(--theme-glow, var(--erps-default-glow)));
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background: rgb(100 100 100 / 30%);
+    border-color: rgb(100 100 100 / 40%);
+  }
+
+  option {
+    background: var(--erps-current-primary, var(--theme-primary, var(--erps-default-primary)));
+    color: var(--erps-current-text, var(--theme-text, var(--erps-default-text)));
+    padding: 0.5rem;
+  }
+}
+
+// ===================================
+// BUTTONS
+// ===================================
+
+.erps-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  height: $button-height;
+  padding: $button-padding;
+  font-family: var(--erps-ui-font, sans-serif);
+  font-size: $button-font-size;
+  line-height: $button-line-height;
+  font-weight: $button-font-weight;
+  color: var(--erps-current-text, var(--theme-text, var(--erps-default-text)));
+  background: var(--erps-current-primary, var(--theme-primary, var(--erps-default-primary)));
+  border: $button-border-width solid var(--erps-current-secondary, var(--theme-secondary, var(--erps-default-secondary)));
+  border-radius: $button-border-radius;
+  transition: $button-transition;
+  outline: none;
+  cursor: pointer;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+
+  // Animated background effect
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: radial-gradient(circle, var(--erps-current-bright, var(--theme-bright, var(--erps-default-bright))) 0%, transparent 70%);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: all 0.3s ease;
+    z-index: 1;
+  }
+
+  // Content above background effect
+  & > * {
+    position: relative;
+    z-index: 2;
+  }
+
+  &:hover {
+    background: var(--erps-current-secondary, var(--theme-secondary, var(--erps-default-secondary)));
+    border-color: var(--erps-current-bright, var(--theme-bright, var(--erps-default-bright)));
+    box-shadow: 0 0 0 2px var(--erps-current-glow, var(--theme-glow, var(--erps-default-glow)));
+    transform: translateY(-1px);
+
+    &::before {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  &:active {
+    transform: translateY(0) scale(0.98);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background: rgb(100 100 100 / 30%);
+    border-color: rgb(100 100 100 / 40%);
+    transform: none;
+
+    &:hover {
+      transform: none;
+      box-shadow: none;
+    }
+  }
+
+  // ===================================
+  // BUTTON VARIANTS
+  // ===================================
+
+  // Bright variant - high contrast, vibrant
+  &--bright {
+    @include button-gradient(blue, 40, 60);
+
+    border-color: var(--theme-glow, rgb(59 130 246 / 60%));
+    box-shadow: 0 2px 8px rgb(0 0 0 / 30%);
+
+    &:hover {
+      @include button-gradient(blue, 60, 80);
+      @include button-glow(blue, 0.8);
+
+      border-color: var(--theme-text, #fff);
+    }
+  }
+
+  // Dim variant - subtle, muted
+  &--dim {
+    @include button-gradient(gray, 20, 30);
+
+    border-color: rgb(100 100 100 / 40%);
+    color: rgb(255 255 255 / 80%);
+
+    &:hover {
+      @include button-gradient(gray, 30, 40);
+      @include button-glow(gray, 0.4);
+
+      border-color: rgb(100 100 100 / 60%);
+      color: #fff;
+    }
+  }
+
+  // On variant - active/selected state
+  &--on {
+    @include button-gradient(green, 40, 60);
+    @include button-glow(green, 0.6);
+
+    border-color: themes.get-semantic-color(green, 60);
+
+    &:hover {
+      @include button-gradient(green, 60, 80);
+      @include button-glow(green, 0.8);
+
+      border-color: themes.get-semantic-color(green, 80);
+    }
+  }
+
+  // Size variants
+  &--small {
+    height: 2.5rem;
+    padding: 0.625rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  &--large {
+    height: 3.5rem;
+    padding: 1.125rem 2rem;
+    font-size: 1.1rem;
+  }
+
+  // Icon-only variant
+  &--icon {
+    width: $button-height;
+    padding: 0;
+
+    &.erps-button--small {
+      width: 2.5rem;
+    }
+
+    &.erps-button--large {
+      width: 3.5rem;
+    }
+  }
+}
+
+// ===================================
+// SPECIALIZED BUTTON TYPES
+// ===================================
+
+.erps-button--create {
+  @include button-gradient(green, 30, 50);
+
+  border-color: themes.get-semantic-color(green, 40);
+
+  &:hover {
+    @include button-gradient(green, 50, 70);
+    @include button-glow(green, 0.6);
+
+    border-color: themes.get-semantic-color(green, 80);
+  }
+}
+
+.erps-button--edit {
+  @include button-gradient(blue, 30, 50);
+
+  border-color: themes.get-semantic-color(blue, 40);
+
+  &:hover {
+    @include button-gradient(blue, 50, 70);
+    @include button-glow(blue, 0.6);
+
+    border-color: themes.get-semantic-color(blue, 80);
+  }
+}
+
+.erps-button--delete {
+  @include button-gradient(red, 30, 50);
+
+  border-color: themes.get-semantic-color(red, 40);
+
+  &:hover {
+    @include button-gradient(red, 50, 70);
+    @include button-glow(red, 0.6);
+
+    border-color: themes.get-semantic-color(red, 80);
+  }
+}
+
+.erps-button--warning {
+  @include button-gradient(orange, 30, 50);
+
+  border-color: themes.get-semantic-color(orange, 40);
+
+  &:hover {
+    @include button-gradient(orange, 50, 70);
+    @include button-glow(orange, 0.6);
+
+    border-color: themes.get-semantic-color(orange, 80);
+  }
+}
+
+// ===================================
+// INPUT GROUPS
+// ===================================
+
+.erps-input-group {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+
+  &--stacked {
+    flex-direction: column;
+    align-items: stretch;
+
+    .erps-input,
+    .erps-select,
+    .erps-button {
+      width: 100%;
+    }
+  }
+
+  &--inline {
+    flex-flow: row wrap;
+  }
+}
+
+.erps-input-label {
+  font-family: var(--erps-ui-font, sans-serif);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--theme-text, #fff);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.25rem;
+  display: block;
+}
+
+// ===================================
+// NUMBER INPUT WITH CONTROLS
+// ===================================
+
+.erps-number-input {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+
+  &__input {
+    display: block;
+    width: 100%;
+    height: $input-height;
+    padding: $input-padding;
+    font-family: var(--erps-ui-font, sans-serif);
+    font-size: $input-font-size;
+    line-height: $input-line-height;
+    font-weight: 500;
+    color: var(--erps-current-text, var(--theme-text, var(--erps-default-text)));
+    background: var(--erps-current-primary, var(--theme-primary, var(--erps-default-primary)));
+    border: $input-border-width solid var(--erps-current-secondary, var(--theme-secondary, var(--erps-default-secondary)));
+    border-radius: $input-border-radius;
+    transition: $input-transition;
+    outline: none;
+    text-align: center;
+    min-width: 4rem;
+    flex: 1;
+    box-sizing: border-box;
+
+    &:hover {
+      border-color: var(--erps-current-bright, var(--theme-bright, var(--erps-default-bright)));
+      background-color: rgb(255 255 255 / 5%);
+      box-shadow: 0 0 0 2px var(--erps-current-glow, var(--theme-glow, var(--erps-default-glow)));
+    }
+
+    &:focus {
+      border-color: var(--erps-current-bright, var(--theme-bright, var(--erps-default-bright)));
+      background-color: rgb(255 255 255 / 10%);
+      box-shadow: 0 0 0 2px var(--erps-current-glow, var(--theme-glow, var(--erps-default-glow)));
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      background: rgb(100 100 100 / 30%);
+      border-color: rgb(100 100 100 / 40%);
+    }
+  }
+
+  &__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    height: 2.5rem;
+    padding: 0;
+    width: 2.5rem;
+    font-family: var(--erps-ui-font, sans-serif);
+    font-size: 0.9rem;
+    line-height: 1.2;
+    font-weight: $button-font-weight;
+    color: var(--erps-current-text, var(--theme-text, var(--erps-default-text)));
+    background: var(--erps-current-primary, var(--theme-primary, var(--erps-default-primary)));
+    border: $button-border-width solid var(--erps-current-secondary, var(--theme-secondary, var(--erps-default-secondary)));
+    border-radius: $button-border-radius;
+    transition: $button-transition;
+    outline: none;
+    cursor: pointer;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: radial-gradient(circle, var(--erps-current-bright, var(--theme-bright, var(--erps-default-bright))) 0%, transparent 70%);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: all 0.3s ease;
+      z-index: 1;
+    }
+
+    & > * {
+      position: relative;
+      z-index: 2;
+    }
+
+    &:hover {
+      background: var(--erps-current-secondary, var(--theme-secondary, var(--erps-default-secondary)));
+      border-color: var(--erps-current-bright, var(--theme-bright, var(--erps-default-bright)));
+      box-shadow: 0 0 0 2px var(--erps-current-glow, var(--theme-glow, var(--erps-default-glow)));
+      transform: translateY(-1px);
+
+      &::before {
+        width: 100%;
+        height: 100%;
+      }
+    }
+
+    &:active {
+      transform: translateY(0) scale(0.98);
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      background: rgb(100 100 100 / 30%);
+      border-color: rgb(100 100 100 / 40%);
+      transform: none;
+
+      &:hover {
+        transform: none;
+        box-shadow: none;
+      }
+    }
+
+    &--decrement {
+      background: linear-gradient(135deg, rgb(255 255 255 / 8%), rgb(255 255 255 / 12%)) !important;
+      border-color: rgb(255 255 255 / 20%) !important;
+      color: rgb(255 255 255 / 80%) !important;
+
+      &:hover {
+        background: linear-gradient(135deg, rgb(255 255 255 / 12%), rgb(255 255 255 / 18%)) !important;
+        border-color: rgb(255 255 255 / 30%) !important;
+        color: rgb(255 255 255 / 90%) !important;
+        box-shadow: 0 0 8px rgb(255 255 255 / 15%) !important;
+      }
+    }
+
+    &--increment {
+      background: linear-gradient(135deg, var(--erps-current-primary, var(--theme-primary, var(--erps-default-primary))), var(--erps-current-secondary, var(--theme-secondary, var(--erps-default-secondary)))) !important;
+      border-color: var(--erps-current-bright, var(--theme-bright, var(--erps-default-bright))) !important;
+      box-shadow: 0 2px 8px rgb(0 0 0 / 30%) !important;
+
+      &:hover {
+        background: linear-gradient(135deg, var(--erps-current-secondary, var(--theme-secondary, var(--erps-default-secondary))), var(--erps-current-bright, var(--theme-bright, var(--erps-default-bright)))) !important;
+        border-color: #fff !important;
+        box-shadow: 0 0 12px var(--erps-current-glow, var(--theme-glow, var(--erps-default-glow))) !important;
+      }
+    }
+  }
+}
+
+// ===================================
+// EFFECTS SECTION INTEGRATION
+// ===================================
+// Styling for effects sections that use ERPS data tables
+
+.eventide-item-sheet__effects-section {
+  margin-bottom: 1.5rem;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  // Section headers
+  &__effects-section-header {
+    font-family: var(--erps-ui-font);
+    font-size: 16pt;
+    font-weight: 600;
+    color: var(--theme-text);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.75rem;
+    padding: 0.5rem 1rem;
+    background: linear-gradient(135deg, var(--theme-primary), var(--theme-secondary));
+    border-radius: 6px 6px 0 0;
+    border-bottom: 2px solid themes.get-universal-color(white, 20);
+    text-shadow: 0 1px 2px themes.get-universal-color(black, 80);
+    position: relative;
+    overflow: hidden;
+
+    // Animated glow effect
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 200%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, themes.get-universal-color(white, 10), transparent);
+      animation: erps-header-glow 4s ease-in-out infinite;
+      z-index: 1;
+    }
+
+    // Ensure text is above the glow
+    & > * {
+      position: relative;
+      z-index: 2;
+    }
+  }
+
+  // Hidden effects section styling
+  &--hidden {
+    .eventide-item-sheet__effects-section-header {
+      background: linear-gradient(135deg, themes.get-semantic-color(purple, 30), themes.get-semantic-color(purple, dark-40));
+      border-bottom-color: themes.get-semantic-color(purple, 60);
+    }
+
+    .erps-data-table {
+      border-left: 3px solid themes.get-semantic-color(purple, 60);
+      box-shadow:
+        0 4px 12px themes.get-universal-color(black, 30),
+        inset 3px 0 0 themes.get-semantic-color(purple, 20);
+    }
+  }
+
+  // Ensure tables are flush with section headers
+  .erps-data-table--flush-top {
+    margin-top: 0;
+    border-radius: 0 0 8px 8px;
+  }
+}
+
+// Color picker integration
+.color-picker-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+
+  .color-preview {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 4px;
+    border: 1px solid themes.get-universal-color(white, 20);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+
+    &:hover {
+      border-color: var(--theme-light);
+      box-shadow: 0 0 8px var(--theme-glow);
+    }
+  }
+
+  .color-picker {
+    width: 2rem;
+    height: 2rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    background: transparent;
+    flex-shrink: 0;
+
+    &::-webkit-color-swatch-wrapper {
+      padding: 0;
+      border: 1px solid themes.get-universal-color(white, 20);
+      border-radius: 4px;
+    }
+
+    &::-webkit-color-swatch {
+      border: none;
+      border-radius: 3px;
+    }
+  }
+
+  .erps-input {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+// Animation for header glow
+@keyframes erps-header-glow {
+  0%, 100% {
+    left: -100%;
+  }
+
+  50% {
+    left: 100%;
+  }
+}
+
+// ERPS Inputs Component
+// Modern themed input system for the Eventide RP System
+// Provides consistent styling across all input types with theme awareness
+
+// Theme inheritance system - elements inherit theme from their sheet container
+.eventide-sheet {
+  // Theme variables that cascade to all child elements
+  --erps-current-primary: var(--theme-primary, var(--erps-default-primary));
+  --erps-current-secondary: var(--theme-secondary, var(--erps-default-secondary));
+  --erps-current-bright: var(--theme-bright, var(--erps-default-bright));
+  --erps-current-glow: var(--theme-glow, var(--erps-default-glow));
+  --erps-current-text: var(--theme-text, var(--erps-default-text));
+}

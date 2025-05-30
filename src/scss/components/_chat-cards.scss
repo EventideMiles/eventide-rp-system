@@ -3,18 +3,89 @@
 @use "../global/form-elements";
 
 .chat-card {
-  @extend .base-form;
+  // Chat card styles without deprecated base-form extends
 
   &__header {
-    @extend .protest-revolution-regular;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem;
+    background: var(--theme-accent);
+    border-bottom: 1px solid var(--theme-light);
+    border-radius: 8px 8px 0 0;
+  }
 
-    color: colors.$universal-white;
-    text-align: center;
-    padding: 0.875rem;
-    font-size: 1.125rem;
-    margin-bottom: 0;
-    margin-top: 0;
-    position: relative;
+  &__title {
+    font-weight: bold;
+    color: var(--theme-text);
+    font-size: 1.1rem;
+  }
+
+  &__content {
+    padding: 1rem;
+    background: var(--theme-primary);
+    border-radius: 0 0 8px 8px;
+  }
+
+  &__description {
+    text-align: justify;
+    font-style: italic;
+    color: var(--theme-text);
+    margin-bottom: 1rem;
+  }
+
+  &__effects {
+    text-align: justify;
+    font-size: 0.7rem;
+    padding: 0;
+    color: var(--theme-text);
+    background-color: var(--theme-primary);
+  }
+
+  &__effects-title {
+    text-align: justify;
+    font-size: 0.8rem;
+    padding: 0.01rem 0;
+    padding-top: 0.2rem;
+    padding-bottom: 0.2rem;
+    margin-bottom: 0.1875rem;
+    background-color: var(--theme-bright);
+    color: var(--theme-primary);
+  }
+
+  &__effects-name {
+    font-weight: bolder;
+    color: var(--theme-text);
+    font-size: 0.75rem;
+  }
+
+  &__effects-row {
+    padding-left: 20px;
+    display: grid;
+    grid-column: span 3 / span 3;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    width: 50%;
+  }
+
+  &__effects-row-cell {
+    padding-left: 3px;
+    padding-right: 3px;
+    border-bottom: 1px dashed var(--theme-light);
+  }
+
+  &__effects-row-cell--first,
+  &__effects-row-cell--last {
+    font-weight: bold;
+  }
+
+  &__effects-row-cell--last {
+    border-left: 1px dashed var(--theme-light);
+    padding-left: 15px;
+    white-space: nowrap;
+  }
+
+  &__effects-row-cell--middle {
+    font-style: italic;
   }
 
   &__header--subheader {
@@ -40,28 +111,28 @@
   &__header--initiative-npc { background-color: colors.$initiative-npc; }
   &__header--initiative-pc { background-color: colors.$initiative-pc; }
 
-  &__header--critical-hit { 
+  &__header--critical-hit {
     background-color: colors.$critical-hit;
 
     // font-size: 1.125rem;
     width: 100%;
   }
 
-  &__header--critical-miss { 
+  &__header--critical-miss {
     background-color: colors.$critical-miss;
 
     // font-size: 1.125rem;
     width: 100%;
   }
 
-  &__header--stolen-crit { 
+  &__header--stolen-crit {
     background-color: colors.$stolen-crit;
 
     // font-size: 1.125rem;
     width: 100%;
   }
 
-  &__header--saved-miss { 
+  &__header--saved-miss {
     background-color: colors.$saved-miss;
 
     // font-size: 1.125rem;
@@ -77,17 +148,6 @@
   &__header--equip { background-color: colors.$gear; }
   &__header--transformation { background: colors.$transformation-gradient; }
   &__header--transformation-remove { background: colors.$transformation-remove-gradient; }
-
-  &__description {
-    @extend .underdog-regular;
-
-    color: colors.$universal-tan;
-    text-align: justify;
-    font-size: 0.9rem;
-    padding: 0.5rem;
-    margin-bottom: 0.5rem;
-    border-radius: 0 0 5px 5px;
-  }
 
   &__description--header {
     text-align: justify;
@@ -194,74 +254,6 @@
     opacity: 0.6;
   }
 
-  &__effects {
-    @extend .base-form__effects;
-
-    color: colors.$universal-tan;
-    background-color: colors.$universal-white;
-  }
-
-  &__effects--ac-check {
-    border: 3px dashed colors.$hidden-border;
-    border-radius: 5px;
-    background-color: colors.$hidden-bg;
-    padding: 0.0875rem;
-    margin: 0 3px;
-    margin-top: 5px;
-  }
-
-  &__effects--title {
-    @extend .base-form__effects-title;
-  }
-
-  &__effects--hit {
-    background-color: colors.$hit;
-    color: white;
-    text-align: center;
-    padding: 0.0875rem;
-    font-size: 0.7rem;
-    margin-bottom: 0;
-    border-radius: 5px;
-    border: 1px solid colors.$universal-white;
-  }
-
-  &__effects--miss {
-    background-color: colors.$miss;
-    color: white;
-    text-align: center;
-    padding: 0.0875rem;
-    font-size: 0.7rem;
-    margin-bottom: 0;
-    border-radius: 5px;
-    border: 1px solid colors.$universal-white;
-  }
-
-  &__effects--name {
-    @extend .base-form__effects-name;
-
-    color: colors.$universal-black;
-  }
-
-  &__effects-row {
-    @extend .base-form__effects-row;
-  }
-
-  &__effects-row-cell {
-    @extend .base-form__effects-row-cell;
-  }
-
-  &__effects-row-cell--first {
-    @extend .base-form__effects-row-cell--first;
-  }
-
-  &__effects-row-cell--last {
-    @extend .base-form__effects-row-cell--last;
-  }
-
-  &__effects-row-cell--middle {
-    @extend .base-form__effects-row-cell--middle;
-  }
-
   &__image--primary {
     width: 150px;
     height: 150px;
@@ -280,7 +272,6 @@
     border: none;
     border-top: 1px solid colors.$universal-white;
   }
-
 
   // For toggle icon
   &__formula-toggle-icon {

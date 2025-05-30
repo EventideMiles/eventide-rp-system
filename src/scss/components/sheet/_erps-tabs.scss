@@ -73,13 +73,73 @@
 }
 
 // ===================================
+// THEME-AWARE DEFAULTS FOR TABS
+// ===================================
+
+:root {
+  // Default theme (blue)
+  --erps-tab-primary: #4a90e2;
+  --erps-tab-secondary: #357abd;
+  --erps-tab-bright: #6bb6ff;
+  --erps-tab-glow: rgb(74 144 226 / 30%);
+  --erps-tab-text: #fff;
+}
+
+// Theme-specific defaults that activate based on sheet classes
+.eventide-sheet[data-bg-theme="blue"] {
+  --erps-tab-primary: #4a90e2;
+  --erps-tab-secondary: #357abd;
+  --erps-tab-bright: #6bb6ff;
+  --erps-tab-glow: rgb(74 144 226 / 30%);
+  --erps-tab-text: #fff;
+}
+
+.eventide-sheet[data-bg-theme="black"] {
+  --erps-tab-primary: #2c2c2c;
+  --erps-tab-secondary: #1a1a1a;
+  --erps-tab-bright: #4a4a4a;
+  --erps-tab-glow: rgb(44 44 44 / 30%);
+  --erps-tab-text: #fff;
+}
+
+.eventide-sheet[data-bg-theme="green"] {
+  --erps-tab-primary: #4a9e4a;
+  --erps-tab-secondary: #357a35;
+  --erps-tab-bright: #6bb66b;
+  --erps-tab-glow: rgb(74 158 74 / 30%);
+  --erps-tab-text: #fff;
+}
+
+.eventide-sheet[data-bg-theme="light"] {
+  --erps-tab-primary: #e2e2e2;
+  --erps-tab-secondary: #c0c0c0;
+  --erps-tab-bright: #fff;
+  --erps-tab-glow: rgb(226 226 226 / 30%);
+  --erps-tab-text: #1a1a1a;
+}
+
+.eventide-sheet[data-bg-theme="gold"] {
+  --erps-tab-primary: #d4af37;
+  --erps-tab-secondary: #b8941f;
+  --erps-tab-bright: #f4d03f;
+  --erps-tab-glow: rgb(212 175 55 / 30%);
+  --erps-tab-text: #fff;
+}
+
+.eventide-sheet[data-bg-theme="purple"] {
+  --erps-tab-primary: #8e44ad;
+  --erps-tab-secondary: #7d3c98;
+  --erps-tab-bright: #a569bd;
+  --erps-tab-glow: rgb(142 68 173 / 30%);
+  --erps-tab-text: #fff;
+}
+
+// ===================================
 // CORE MIXINS FOR TABS
 // ===================================
 
 // Base tab container styling
 @mixin tab-container-base {
-  @include themes.apply-all-themes('tab-theme');
-
   display: flex !important;
   flex-wrap: wrap !important;
   border-bottom: sheet.$sheet-border-base solid themes.get-universal-color(white, 10) !important;
@@ -105,7 +165,7 @@
   font-weight: sheet.$sheet-font-weight-semibold !important;
   text-transform: uppercase !important;
   letter-spacing: sheet.$sheet-letter-spacing-base !important;
-  color: var(--theme-text, #fff) !important;
+  color: var(--erps-tab-text, var(--theme-text, var(--erps-tab-text))) !important;
   background: themes.get-universal-color(white, 10) !important;
   transition: all sheet.$sheet-transition-medium ease !important;
   text-decoration: none !important;
@@ -127,9 +187,9 @@
 
 // Tab hover state
 @mixin tab-hover-state {
-  background: var(--theme-primary, #{themes.get-semantic-color(blue, dark-90)}) !important;
-  border-color: var(--theme-light, #{themes.get-semantic-color(blue, 70)}) !important;
-  color: var(--theme-text, #fff) !important;
+  background: var(--erps-tab-primary, var(--theme-primary, var(--erps-tab-primary))) !important;
+  border-color: var(--erps-tab-bright, var(--theme-bright, var(--erps-tab-bright))) !important;
+  color: var(--erps-tab-text, var(--theme-text, var(--erps-tab-text))) !important;
   transform: translateY(sheet.$sheet-transform-hover-md) !important;
 
   @include tab-shadow-base;
@@ -141,11 +201,11 @@
 
 // Tab active state
 @mixin tab-active-state {
-  background: var(--theme-secondary, #{themes.get-semantic-color(blue, 80)}) !important;
-  border-color: var(--theme-glow, #{themes.get-semantic-color(blue, 60)}) !important;
-  color: var(--theme-text, #fff) !important;
+  background: var(--erps-tab-secondary, var(--theme-secondary, var(--erps-tab-secondary))) !important;
+  border-color: var(--erps-tab-glow, var(--theme-glow, var(--erps-tab-glow))) !important;
+  color: var(--erps-tab-text, var(--theme-text, var(--erps-tab-text))) !important;
 
-  @include tab-shadow-active(var(--theme-glow, #{themes.get-semantic-color(blue, 60)}));
+  @include tab-shadow-active(var(--erps-tab-glow, var(--theme-glow, var(--erps-tab-glow))));
 
   transform: translateY(sheet.$sheet-transform-hover-sm) !important;
   z-index: 10 !important;
@@ -153,9 +213,9 @@
   &::before {
     left: sheet.$sheet-position-zero !important;
     background: linear-gradient(90deg,
-      var(--theme-light, #{themes.get-semantic-color(blue, 70)}),
+      var(--erps-tab-bright, var(--theme-bright, var(--erps-tab-bright))),
       transparent,
-      var(--theme-light, #{themes.get-semantic-color(blue, 70)})) !important;
+      var(--erps-tab-bright, var(--theme-bright, var(--erps-tab-bright)))) !important;
     opacity: 0.3 !important;
     animation: erps-tab-glow sheet.$sheet-animation-glow ease-in-out infinite !important;
   }
@@ -175,7 +235,7 @@
   border: none !important;
   border-radius: sheet.$sheet-radius-lg sheet.$sheet-radius-lg 0 0 !important;
   background: themes.get-universal-color(white, 10) !important;
-  color: var(--theme-text, #fff) !important;
+  color: var(--erps-tab-text, var(--theme-text, var(--erps-tab-text))) !important;
   cursor: pointer !important;
   transition: all sheet.$sheet-transition-medium ease !important;
   font-family: var(--erps-ui-font) !important;
@@ -188,14 +248,6 @@
   height: sheet.$sheet-height-tab-large !important;
   min-height: sheet.$sheet-height-tab-large !important;
   box-sizing: border-box !important;
-
-  // Default theme variables
-  --theme-primary: #{themes.get-semantic-color(blue, dark-90)};
-  --theme-secondary: #{themes.get-semantic-color(blue, 80)};
-  --theme-accent: #{themes.get-semantic-color(blue, dark-80)};
-  --theme-light: #{themes.get-semantic-color(blue, 70)};
-  --theme-glow: #{themes.get-semantic-color(blue, 60)};
-  --theme-text: #fff;
 
   i {
     font-size: sheet.$sheet-font-size-md !important;

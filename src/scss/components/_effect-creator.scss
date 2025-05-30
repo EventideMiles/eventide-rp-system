@@ -4,11 +4,9 @@
 @use "../global/form-elements";
 
 .effect-creator {
-  @extend .base-form;
-
   display: flex;
   flex-direction: column;
-  
+
   // Override the toggle group styling for this specific component
   .base-form__toggle-group {
     @include mixins.grid-compliant-toggle-group;

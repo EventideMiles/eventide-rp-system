@@ -4,12 +4,50 @@
 @use "../global/form-elements";
 
 .gear-creator {
-  @extend .base-form;
-
-  height: 100%;
   display: flex;
   flex-direction: column;
-  padding: 6px 8px;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--theme-accent);
+  border: 2px solid var(--theme-light);
+  border-radius: 8px;
+  color: var(--theme-text);
+  font-family: var(--erps-ui-font);
+
+  &__header {
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--theme-text);
+    margin-bottom: 0.5rem;
+  }
+
+  &__form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  &__label {
+    font-weight: 600;
+    color: var(--theme-text);
+    font-size: 0.9rem;
+  }
+
+  &__input {
+    padding: 0.5rem;
+    border: 1px solid var(--theme-light);
+    border-radius: 4px;
+    background: var(--theme-primary);
+    color: var(--theme-text);
+    font-family: inherit;
+  }
+
+  &__image {
+    max-width: 64px;
+    height: auto;
+    margin: 0 0.5rem 0 auto;
+  }
 
   &__upper-section {
     display: grid;
@@ -20,7 +58,7 @@
 
   &__main-info {
     min-width: 0;
-    
+
     .base-form__textarea {
       min-height: 80px;
       height: 160px;
@@ -32,14 +70,6 @@
     display: flex;
     flex-direction: column;
     gap: 4px;
-  }
-
-  &__image {
-    @extend .base-form__image;
-
-    max-width: 64px;
-    height: auto;
-    margin: 0 0.5rem 0 auto;
   }
 
   &__columns {
@@ -70,7 +100,7 @@
       width: 40px !important;
       flex: 0 0 40px !important;
     }
-    
+
     .toggle-switch-display {
       width: 40px !important;
       max-width: 40px !important;

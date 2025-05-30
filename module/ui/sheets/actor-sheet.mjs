@@ -596,6 +596,10 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
     });
     this.#disableOverrides();
 
+    // Set theme properties immediately to prevent flashing
+    const currentTheme = CommonFoundryTasks.retrieveSheetTheme();
+    this._setImmediateThemeProperties(currentTheme);
+
     // Initialize centralized theme management
     if (!this.themeManager) {
       this.themeManager = initThemeManager(this, THEME_PRESETS.CHARACTER_SHEET);
@@ -619,6 +623,73 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
     // You may want to add other special handling here
     // Foundry comes with a large number of utility classes, e.g. SearchFilter
     // That you may want to implement yourself.
+  }
+
+  /**
+   * Set theme properties immediately on the sheet element to prevent flashing
+   * This is a synchronous operation that happens before theme manager initialization
+   * @param {string} theme - The current theme name
+   * @private
+   */
+  _setImmediateThemeProperties(theme) {
+    // Theme color mappings (same as in theme manager)
+    const themeColors = {
+      blue: {
+        primary: '#4a90e2',
+        secondary: '#357abd',
+        bright: '#6bb6ff',
+        glow: 'rgba(74, 144, 226, 0.3)'
+      },
+      black: {
+        primary: '#2c2c2c',
+        secondary: '#1a1a1a',
+        bright: '#4a4a4a',
+        glow: 'rgba(44, 44, 44, 0.3)'
+      },
+      green: {
+        primary: '#4a9e4a',
+        secondary: '#357a35',
+        bright: '#6bb66b',
+        glow: 'rgba(74, 158, 74, 0.3)'
+      },
+      light: {
+        primary: '#e2e2e2',
+        secondary: '#c0c0c0',
+        bright: '#ffffff',
+        glow: 'rgba(226, 226, 226, 0.3)'
+      },
+      gold: {
+        primary: '#d4af37',
+        secondary: '#b8941f',
+        bright: '#f4d03f',
+        glow: 'rgba(212, 175, 55, 0.3)'
+      },
+      purple: {
+        primary: '#8e44ad',
+        secondary: '#7d3c98',
+        bright: '#a569bd',
+        glow: 'rgba(142, 68, 173, 0.3)'
+      }
+    };
+
+    const colors = themeColors[theme] || themeColors.blue;
+
+    // Find the target element and set properties immediately
+    let targetElement = null;
+    if (this.element.querySelector('.eventide-sheet')) {
+      targetElement = this.element.querySelector('.eventide-sheet');
+    } else if (this.element.classList && this.element.classList.contains('eventide-sheet')) {
+      targetElement = this.element;
+    } else {
+      targetElement = this.element;
+    }
+
+    if (targetElement && targetElement.style) {
+      targetElement.style.setProperty('--theme-primary', colors.primary);
+      targetElement.style.setProperty('--theme-secondary', colors.secondary);
+      targetElement.style.setProperty('--theme-bright', colors.bright);
+      targetElement.style.setProperty('--theme-glow', colors.glow);
+    }
   }
 
   /**

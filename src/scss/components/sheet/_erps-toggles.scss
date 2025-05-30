@@ -1,5 +1,5 @@
-@use "../utils/themes" as themes;
-@use "../utils/tokens" as tokens;
+@use "../../utils/themes" as themes;
+@use "../../utils/tokens" as tokens;
 
 // ===================================
 // ERPS TOGGLES COMPONENT
@@ -41,13 +41,72 @@ $toggle-disabled-opacity: 0.6;
 $toggle-focus-opacity: 0.3;
 
 // ===================================
+// THEME-AWARE DEFAULTS FOR TOGGLES
+// ===================================
+
+:root {
+  // Default theme (blue)
+  --erps-toggle-primary: #4a90e2;
+  --erps-toggle-secondary: #357abd;
+  --erps-toggle-bright: #6bb6ff;
+  --erps-toggle-glow: rgb(74 144 226 / 30%);
+  --erps-toggle-text: #fff;
+}
+
+// Theme-specific defaults that activate based on sheet classes
+.eventide-sheet[data-bg-theme="blue"] {
+  --erps-toggle-primary: #4a90e2;
+  --erps-toggle-secondary: #357abd;
+  --erps-toggle-bright: #6bb6ff;
+  --erps-toggle-glow: rgb(74 144 226 / 30%);
+  --erps-toggle-text: #fff;
+}
+
+.eventide-sheet[data-bg-theme="black"] {
+  --erps-toggle-primary: #2c2c2c;
+  --erps-toggle-secondary: #1a1a1a;
+  --erps-toggle-bright: #4a4a4a;
+  --erps-toggle-glow: rgb(44 44 44 / 30%);
+  --erps-toggle-text: #fff;
+}
+
+.eventide-sheet[data-bg-theme="green"] {
+  --erps-toggle-primary: #4a9e4a;
+  --erps-toggle-secondary: #357a35;
+  --erps-toggle-bright: #6bb66b;
+  --erps-toggle-glow: rgb(74 158 74 / 30%);
+  --erps-toggle-text: #fff;
+}
+
+.eventide-sheet[data-bg-theme="light"] {
+  --erps-toggle-primary: #e2e2e2;
+  --erps-toggle-secondary: #c0c0c0;
+  --erps-toggle-bright: #fff;
+  --erps-toggle-glow: rgb(226 226 226 / 30%);
+  --erps-toggle-text: #1a1a1a;
+}
+
+.eventide-sheet[data-bg-theme="gold"] {
+  --erps-toggle-primary: #d4af37;
+  --erps-toggle-secondary: #b8941f;
+  --erps-toggle-bright: #f4d03f;
+  --erps-toggle-glow: rgb(212 175 55 / 30%);
+  --erps-toggle-text: #fff;
+}
+
+.eventide-sheet[data-bg-theme="purple"] {
+  --erps-toggle-primary: #8e44ad;
+  --erps-toggle-secondary: #7d3c98;
+  --erps-toggle-bright: #a569bd;
+  --erps-toggle-glow: rgb(142 68 173 / 30%);
+  --erps-toggle-text: #fff;
+}
+
+// ===================================
 // TOGGLE COMPONENT
 // ===================================
 
 .erps-toggles {
-  // Apply theme integration
-  @include themes.apply-all-themes('toggle-theme');
-
   // Container for toggle and label
   display: inline-flex;
   align-items: center;
@@ -67,23 +126,23 @@ $toggle-focus-opacity: 0.3;
     &:focus + .erps-toggles__container .erps-toggles__track {
       box-shadow:
         $toggle-thumb-shadow themes.color(black, 30),
-        0 0 $toggle-glow-blur var(--theme-tertiary, #{themes.color(blue, 60)});
+        0 0 $toggle-glow-blur var(--erps-toggle-bright, var(--theme-bright, var(--erps-toggle-bright)));
     }
 
     &:checked + .erps-toggles__container .erps-toggles__track {
-      background: var(--theme-tertiary, #{themes.color(blue, 80)});
-      border-color: var(--theme-tertiary, #{themes.color(blue, 90)});
+      background: var(--erps-toggle-primary, var(--theme-primary, var(--erps-toggle-primary)));
+      border-color: var(--erps-toggle-secondary, var(--theme-secondary, var(--erps-toggle-secondary)));
       box-shadow:
         inset 0 1px 3px themes.color(black, 20),
-        0 0 $toggle-shadow-blur var(--theme-tertiary, #{themes.color(blue, 40)});
+        0 0 $toggle-shadow-blur var(--erps-toggle-glow, var(--theme-glow, var(--erps-toggle-glow)));
 
       .erps-toggles__thumb {
         transform: translateY(-50%) translateX($toggle-thumb-travel);
         background: themes.color(white, 95);
-        border-color: var(--theme-tertiary, #{themes.color(blue, 90)});
+        border-color: var(--erps-toggle-secondary, var(--theme-secondary, var(--erps-toggle-secondary)));
         box-shadow:
           $toggle-thumb-shadow themes.color(black, 40),
-          0 0 $toggle-shadow-blur var(--theme-tertiary, #{themes.color(blue, 60)});
+          0 0 $toggle-shadow-blur var(--erps-toggle-glow, var(--theme-glow, var(--erps-toggle-glow)));
       }
     }
 
@@ -125,10 +184,10 @@ $toggle-focus-opacity: 0.3;
     flex-shrink: 0;
 
     &:hover {
-      border-color: var(--theme-light, #{themes.color(blue, 50)});
+      border-color: var(--erps-toggle-bright, var(--theme-bright, var(--erps-toggle-bright)));
       box-shadow:
         inset 0 1px 3px themes.color(black, 30),
-        0 0 $toggle-shadow-blur var(--theme-glow, #{themes.color(blue, 30)});
+        0 0 $toggle-shadow-blur var(--erps-toggle-glow, var(--theme-glow, var(--erps-toggle-glow)));
     }
   }
 
@@ -163,7 +222,7 @@ $toggle-focus-opacity: 0.3;
     font-family: var(--erps-ui-font, sans-serif);
     font-size: $toggle-label-font-size;
     font-weight: 500;
-    color: var(--theme-text, #{themes.color(white, 90)});
+    color: var(--erps-toggle-text, var(--theme-text, var(--erps-toggle-text)));
     cursor: pointer;
     transition: color $toggle-transition-duration $toggle-transition-easing;
     text-shadow: 0 1px 2px themes.color(black, 60);

@@ -1,3 +1,11 @@
+/*
+// =============================================================================
+// DEPRECATED GLOBAL FORM ELEMENTS
+// =============================================================================
+// This file contains deprecated form element styles that are being replaced
+// by the new ERPS input system. Commented out to prevent CSS conflicts.
+// TODO: Remove this file entirely once migration is complete.
+
 @use "../utils/typography";
 @use "../utils/colors";
 @use "../utils/mixins";
@@ -198,36 +206,31 @@
   }
 
   &__group--checkbox .base-form__label {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin: 0;
-    line-height: 28px;
-    min-width: auto;
-    flex: 1;
+    margin-bottom: 0;
   }
 
   &__group--checkbox .base-form__checkbox {
-    margin-left: 0.5rem;
-    flex: 0 0 auto;
+    margin-left: auto;
   }
 
-  &__group--header .base-form__label {
-    font-weight: bold;
+  &__group--inline {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
   }
 
-  &__group--right {
-    justify-content: flex-end;
-    padding: 0.5rem 1.25rem 0.75rem 0.5rem;
-    gap: 0.75rem;
+  &__group--inline .base-form__label {
+    margin-bottom: 0;
+    margin-right: 0.5rem;
+  }
+
+  &__group--inline .base-form__text-input,
+  &__group--inline .base-form__select {
+    flex: 1;
   }
 
   &__label {
-    @include mixins.form-label-medium;
-
-    &--checkbox {
-      @include mixins.checkbox-label;
-    }
+    @include mixins.form-label-base;
   }
 
   &__label--small {
@@ -429,3 +432,4 @@
       display: none;
     }
 }
+*/

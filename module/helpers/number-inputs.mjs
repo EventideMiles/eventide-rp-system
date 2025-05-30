@@ -59,7 +59,7 @@ export const initNumberInputs = () => {
  */
 export const enhanceExistingNumberInputs = () => {
   try {
-    // Find all number inputs not properly wrapped
+    // Find all legacy number inputs not properly wrapped
     document.querySelectorAll('input[type="number"]').forEach((input) => {
       const wrapper = input.closest(".base-form__number-input-wrapper");
 
@@ -67,13 +67,21 @@ export const enhanceExistingNumberInputs = () => {
       // we need to wrap it with increment/decrement buttons
       if (!wrapper && input.classList.contains("base-form__number-input")) {
         Logger.debug(
-          "Found unwrapped number input, wrapping it",
+          "Found unwrapped legacy number input, wrapping it",
           { inputName: input.name },
           "NUMBER_INPUT",
         );
         wrapNumberInput(input);
       }
     });
+
+    // Initialize ERPS number inputs (they come pre-structured, just need event handling)
+    const erpsNumberInputs = document.querySelectorAll(".erps-number-input");
+    Logger.debug(
+      "Found ERPS number inputs",
+      { count: erpsNumberInputs.length },
+      "NUMBER_INPUT",
+    );
 
     // Update responsive behavior for all wrappers
     updateNumberInputResponsiveness();
@@ -170,7 +178,7 @@ const wrapNumberInput = (input) => {
 const handleNumberInputClick = (event) => {
   const target = event.target;
 
-  // Check if the clicked element is an increment or decrement button
+  // Check for legacy number input buttons
   if (target.matches(".increment, .decrement")) {
     const wrapper = target.closest(".base-form__number-input-wrapper");
     if (!wrapper) return;
@@ -179,6 +187,36 @@ const handleNumberInputClick = (event) => {
     if (!input) return;
 
     updateNumberInputValue(input, target.classList.contains("increment"));
+    return;
+  }
+
+  // Check for new ERPS number input buttons
+  if (target.matches(".erps-number-input__button--increment, .erps-number-input__button--decrement")) {
+    const wrapper = target.closest(".erps-number-input");
+    if (!wrapper) return;
+
+    const input = wrapper.querySelector('.erps-number-input__input');
+    if (!input) return;
+
+    const isIncrement = target.classList.contains("erps-number-input__button--increment");
+    updateNumberInputValue(input, isIncrement);
+    return;
+  }
+
+  // Also handle clicks on icons within ERPS number input buttons
+  if (target.matches(".erps-number-input__button--increment i, .erps-number-input__button--decrement i")) {
+    const button = target.closest(".erps-number-input__button--increment, .erps-number-input__button--decrement");
+    if (!button) return;
+
+    const wrapper = button.closest(".erps-number-input");
+    if (!wrapper) return;
+
+    const input = wrapper.querySelector('.erps-number-input__input');
+    if (!input) return;
+
+    const isIncrement = button.classList.contains("erps-number-input__button--increment");
+    updateNumberInputValue(input, isIncrement);
+    return;
   }
 };
 
@@ -215,8 +253,23 @@ const updateNumberInputValue = (input, isIncrement) => {
 const updateNumberInputResponsiveness = () => {
   const MIN_WIDTH_FOR_BUTTONS = 110; // Width in pixels needed for comfortable display of buttons
 
+  // Handle legacy number inputs
   document
     .querySelectorAll(".base-form__number-input-wrapper")
+    .forEach((wrapper) => {
+      const wrapperWidth = wrapper.offsetWidth;
+
+      // If the wrapper is too narrow, make it compact
+      if (wrapperWidth < MIN_WIDTH_FOR_BUTTONS) {
+        wrapper.classList.add("compact");
+      } else {
+        wrapper.classList.remove("compact");
+      }
+    });
+
+  // Handle ERPS number inputs
+  document
+    .querySelectorAll(".erps-number-input")
     .forEach((wrapper) => {
       const wrapperWidth = wrapper.offsetWidth;
 
@@ -250,12 +303,13 @@ const cleanupTabListeners = (element) => {
  * @param {HTMLElement} element - The element containing number inputs
  */
 const cleanupNumberInputWrappers = (element) => {
+  // Clean up legacy number inputs
   const numberWrappers = element.querySelectorAll(
     ".base-form__number-input-wrapper",
   );
 
   Logger.debug(
-    "Found number inputs to clean up",
+    "Found legacy number inputs to clean up",
     { count: numberWrappers.length },
     "NUMBER_INPUT",
   );
@@ -269,6 +323,33 @@ const cleanupNumberInputWrappers = (element) => {
       newInput.value = input.value;
       input.parentNode.replaceChild(newInput, input);
     }
+  });
+
+  // Clean up ERPS number inputs
+  const erpsNumberInputs = element.querySelectorAll(".erps-number-input");
+
+  Logger.debug(
+    "Found ERPS number inputs to clean up",
+    { count: erpsNumberInputs.length },
+    "NUMBER_INPUT",
+  );
+
+  erpsNumberInputs.forEach((wrapper) => {
+    // Remove event listeners by cloning and replacing the input
+    const input = wrapper.querySelector('.erps-number-input__input');
+    if (input) {
+      const newInput = input.cloneNode(true);
+      // Preserve the current value
+      newInput.value = input.value;
+      input.parentNode.replaceChild(newInput, input);
+    }
+
+    // Also clone and replace the buttons to remove event listeners
+    const buttons = wrapper.querySelectorAll('.erps-number-input__button');
+    buttons.forEach((button) => {
+      const newButton = button.cloneNode(true);
+      button.parentNode.replaceChild(newButton, button);
+    });
   });
 };
 

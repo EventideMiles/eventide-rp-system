@@ -125,43 +125,94 @@
 }
 
 // ===================================
+// THEME-AWARE DEFAULTS FOR PROFILE IMAGES
+// ===================================
+
+:root {
+  // Default theme (blue) - using actual theme colors from themes.scss
+  --erps-profile-primary: #{map.get(themes.$blue-theme, primary)};
+  --erps-profile-secondary: #{map.get(themes.$blue-theme, secondary)};
+  --erps-profile-bright: #{map.get(themes.$blue-theme, light)};
+  --erps-profile-glow: #{map.get(themes.$blue-theme, glow)};
+  --erps-profile-text: #{map.get(themes.$blue-theme, text)};
+}
+
+// Theme-specific defaults that activate based on sheet classes
+.eventide-sheet[data-bg-theme="blue"] {
+  --erps-profile-primary: #{map.get(themes.$blue-theme, primary)};
+  --erps-profile-secondary: #{map.get(themes.$blue-theme, secondary)};
+  --erps-profile-bright: #{map.get(themes.$blue-theme, light)};
+  --erps-profile-glow: #{map.get(themes.$blue-theme, glow)};
+  --erps-profile-text: #{map.get(themes.$blue-theme, text)};
+}
+
+.eventide-sheet[data-bg-theme="black"] {
+  --erps-profile-primary: #{map.get(themes.$black-theme, primary)};
+  --erps-profile-secondary: #{map.get(themes.$black-theme, secondary)};
+  --erps-profile-bright: #{map.get(themes.$black-theme, light)};
+  --erps-profile-glow: #{map.get(themes.$black-theme, glow)};
+  --erps-profile-text: #{map.get(themes.$black-theme, text)};
+}
+
+.eventide-sheet[data-bg-theme="green"] {
+  --erps-profile-primary: #{map.get(themes.$green-theme, primary)};
+  --erps-profile-secondary: #{map.get(themes.$green-theme, secondary)};
+  --erps-profile-bright: #{map.get(themes.$green-theme, light)};
+  --erps-profile-glow: #{map.get(themes.$green-theme, glow)};
+  --erps-profile-text: #{map.get(themes.$green-theme, text)};
+}
+
+.eventide-sheet[data-bg-theme="light"] {
+  --erps-profile-primary: #{map.get(themes.$light-theme, primary)};
+  --erps-profile-secondary: #{map.get(themes.$light-theme, secondary)};
+  --erps-profile-bright: #{map.get(themes.$light-theme, light)};
+  --erps-profile-glow: #{map.get(themes.$light-theme, glow)};
+  --erps-profile-text: #{map.get(themes.$light-theme, text)};
+
+  // Light theme specific overrides for profile images
+  .eventide-profile-image,
+  [class*="eventide-profile-image--"] {
+    background: rgb(0 0 0 / 75%) !important;
+    box-shadow: inset 0 2px 4px rgb(0 0 0 / 35%) !important;
+  }
+
+  // Legacy profile images
+  .eventide-actor__header .eventide-sheet__profile-img {
+    background: rgb(0 0 0 / 75%) !important;
+    box-shadow: inset 0 2px 4px rgb(0 0 0 / 35%) !important;
+  }
+}
+
+.eventide-sheet[data-bg-theme="gold"] {
+  --erps-profile-primary: #{map.get(themes.$gold-theme, primary)};
+  --erps-profile-secondary: #{map.get(themes.$gold-theme, secondary)};
+  --erps-profile-bright: #{map.get(themes.$gold-theme, light)};
+  --erps-profile-glow: #{map.get(themes.$gold-theme, glow)};
+  --erps-profile-text: #{map.get(themes.$gold-theme, text)};
+}
+
+.eventide-sheet[data-bg-theme="purple"] {
+  --erps-profile-primary: #{map.get(themes.$purple-theme, primary)};
+  --erps-profile-secondary: #{map.get(themes.$purple-theme, secondary)};
+  --erps-profile-bright: #{map.get(themes.$purple-theme, light)};
+  --erps-profile-glow: #{map.get(themes.$purple-theme, glow)};
+  --erps-profile-text: #{map.get(themes.$purple-theme, text)};
+}
+
+// ===================================
 // THEME INTEGRATION FOR GENERIC PROFILE IMAGES
 // ===================================
 // Apply themed profile image backgrounds based on header theme
 // This needs to be outside the main class to work with the theme system
 
-// Blue theme (default)
-:not([data-header-theme]) .eventide-profile-image,
-:not([data-header-theme]) [class*="eventide-profile-image--"],
-[data-header-theme="blue"] .eventide-profile-image,
-[data-header-theme="blue"] [class*="eventide-profile-image--"] {
-  @include themes.profile-image-background("blue");
-}
-
-// Other themes
-[data-header-theme="gold"] .eventide-profile-image,
-[data-header-theme="gold"] [class*="eventide-profile-image--"] {
-  @include themes.profile-image-background("gold");
-}
-
-[data-header-theme="green"] .eventide-profile-image,
-[data-header-theme="green"] [class*="eventide-profile-image--"] {
-  @include themes.profile-image-background("green");
-}
-
-[data-header-theme="black"] .eventide-profile-image,
-[data-header-theme="black"] [class*="eventide-profile-image--"] {
-  @include themes.profile-image-background("black");
-}
-
-[data-header-theme="purple"] .eventide-profile-image,
-[data-header-theme="purple"] [class*="eventide-profile-image--"] {
-  @include themes.profile-image-background("purple");
-}
-
-[data-header-theme="light"] .eventide-profile-image,
-[data-header-theme="light"] [class*="eventide-profile-image--"] {
-  @include themes.profile-image-background("light");
+// Theme-aware profile image backgrounds using CSS custom properties
+.eventide-profile-image,
+[class*="eventide-profile-image--"] {
+  // Use theme-aware background that adapts automatically
+  background: var(--erps-profile-primary, var(--theme-primary, var(--erps-profile-primary))) !important;
+  background-clip: content-box !important;
+  padding: 3px !important;
+  box-sizing: border-box !important;
 }
 
 // ===================================
@@ -193,6 +244,12 @@
 
 .eventide-sheet {
   .eventide-actor__header {
-    @include themes.apply-all-profile-image-backgrounds('header-theme');
+    // Theme-aware profile image backgrounds using CSS custom properties
+    .eventide-sheet__profile-img {
+      background: var(--erps-profile-primary, var(--theme-primary, var(--erps-profile-primary))) !important;
+      background-clip: content-box !important;
+      padding: 3px !important;
+      box-sizing: border-box !important;
+    }
   }
 }

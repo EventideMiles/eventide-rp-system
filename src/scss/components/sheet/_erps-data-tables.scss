@@ -577,11 +577,10 @@ $erps-table-border-radius-bottom-only: 0 0 $erps-table-border-radius $erps-table
   overflow: hidden !important;
   position: relative !important;
 
-  // Theme integration
-  @include themes.apply-all-themes('table-theme');
-  @include themes.themed-accent-background;
-  @include themes.themed-border;
-  @include themes.themed-glow-shadow;
+  // Theme-aware styling using CSS custom properties
+  background: var(--erps-table-accent, var(--theme-accent, var(--erps-table-accent))) !important;
+  border: 2px solid var(--erps-table-primary, var(--theme-primary, var(--erps-table-primary))) !important;
+  box-shadow: 0 8px 32px rgb(0 0 0 / 40%), 0 0 20px var(--erps-table-glow, var(--theme-glow, var(--erps-table-glow))) !important;
 
   // Container for responsive behavior
   &__container {
@@ -731,8 +730,8 @@ $erps-table-border-radius-bottom-only: 0 0 $erps-table-border-radius $erps-table
       @include themes.apply-all-data-table-image-backgrounds('table-theme');
 
       &:hover {
-        border-color: var(--theme-light) !important;
-        box-shadow: 0 0 8px var(--theme-glow) !important;
+        border-color: var(--erps-table-bright, var(--theme-bright, var(--erps-table-bright))) !important;
+        box-shadow: 0 0 8px var(--erps-table-glow, var(--theme-glow, var(--erps-table-glow))) !important;
       }
     }
 
@@ -925,6 +924,68 @@ $erps-table-border-radius-bottom-only: 0 0 $erps-table-border-radius $erps-table
   // Effects layout
   &--effects {
     @include table-columns-custom($erps-table-width-third, $erps-table-width-fifth, $erps-table-width-fifth, $erps-table-width-quarter-plus);
+
+    // Ensure adequate space for 3rem ERPS inputs
+    .erps-data-table__header-cell,
+    .erps-data-table__cell {
+      padding: 1rem !important; // Increased from 0.75rem 1rem to accommodate 3rem inputs
+      vertical-align: middle !important;
+      box-sizing: border-box !important;
+    }
+
+    .erps-data-table__header-cell {
+      height: $erps-table-header-height !important;
+      min-height: $erps-table-header-height !important;
+    }
+
+    // Ensure cells have adequate height for inputs without breaking layout
+    .erps-data-table__cell {
+      height: auto !important;
+      min-height: 5rem !important; // Increased to 5rem for more breathing room
+      position: relative !important;
+
+      // Keep default table cell display, don't use flexbox
+    }
+
+    // Ensure ERPS inputs within effects table cells are properly sized
+    .erps-input,
+    .erps-select {
+      width: 100% !important;
+      max-width: 100% !important;
+      min-width: 0 !important;
+      box-sizing: border-box !important;
+    }
+
+    .erps-number-input {
+      width: 100% !important;
+      max-width: 100% !important;
+      display: flex !important;
+      align-items: center !important;
+      box-sizing: border-box !important;
+
+      &__input {
+        width: 100% !important;
+        flex: 1 !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+      }
+
+      &__button {
+        flex-shrink: 0 !important;
+        box-sizing: border-box !important;
+      }
+    }
+
+    // Ensure control buttons are properly positioned without breaking cell layout
+    .erps-data-table__cell--controls {
+      text-align: center !important;
+      vertical-align: middle !important;
+      padding: 0.5rem !important;
+
+      .erps-data-table__control-button {
+        display: inline-flex !important;
+      }
+    }
   }
 
   // Statuses layout
@@ -1143,4 +1204,71 @@ $erps-table-border-radius-bottom-only: 0 0 $erps-table-border-radius $erps-table
 }
 
 // ===================================
+// THEME-AWARE DEFAULTS FOR DATA TABLES
+// ===================================
+
+:root {
+  // Default theme (blue)
+  --erps-table-primary: #4a90e2;
+  --erps-table-secondary: #357abd;
+  --erps-table-bright: #6bb6ff;
+  --erps-table-glow: rgb(74 144 226 / 30%);
+  --erps-table-text: #fff;
+  --erps-table-accent: #2c3e50;
+}
+
+// Theme-specific defaults that activate based on sheet classes
+.eventide-sheet[data-bg-theme="blue"] {
+  --erps-table-primary: #4a90e2;
+  --erps-table-secondary: #357abd;
+  --erps-table-bright: #6bb6ff;
+  --erps-table-glow: rgb(74 144 226 / 30%);
+  --erps-table-text: #fff;
+  --erps-table-accent: #2c3e50;
+}
+
+.eventide-sheet[data-bg-theme="black"] {
+  --erps-table-primary: #2c2c2c;
+  --erps-table-secondary: #1a1a1a;
+  --erps-table-bright: #4a4a4a;
+  --erps-table-glow: rgb(44 44 44 / 30%);
+  --erps-table-text: #fff;
+  --erps-table-accent: #1a1a1a;
+}
+
+.eventide-sheet[data-bg-theme="green"] {
+  --erps-table-primary: #4a9e4a;
+  --erps-table-secondary: #357a35;
+  --erps-table-bright: #6bb66b;
+  --erps-table-glow: rgb(74 158 74 / 30%);
+  --erps-table-text: #fff;
+  --erps-table-accent: #2d4a2d;
+}
+
+.eventide-sheet[data-bg-theme="light"] {
+  --erps-table-primary: #e2e2e2;
+  --erps-table-secondary: #c0c0c0;
+  --erps-table-bright: #fff;
+  --erps-table-glow: rgb(226 226 226 / 30%);
+  --erps-table-text: #1a1a1a;
+  --erps-table-accent: #f8f9fa;
+}
+
+.eventide-sheet[data-bg-theme="gold"] {
+  --erps-table-primary: #d4af37;
+  --erps-table-secondary: #b8941f;
+  --erps-table-bright: #f4d03f;
+  --erps-table-glow: rgb(212 175 55 / 30%);
+  --erps-table-text: #fff;
+  --erps-table-accent: #4a3c1d;
+}
+
+.eventide-sheet[data-bg-theme="purple"] {
+  --erps-table-primary: #8e44ad;
+  --erps-table-secondary: #7d3c98;
+  --erps-table-bright: #a569bd;
+  --erps-table-glow: rgb(142 68 173 / 30%);
+  --erps-table-text: #fff;
+  --erps-table-accent: #3d2a4a;
+}
 

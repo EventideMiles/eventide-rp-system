@@ -33,7 +33,8 @@
 @use 'components/sheet/erps-resource-boxes';
 @use 'components/sheet/erps-ability-cards';
 @use 'components/sheet/erps-profile-images';
-@use 'components/erps-toggles';
+@use 'components/sheet/erps-toggles';
+@use 'components/sheet/erps-inputs';
 
 // Import Google Fonts after ALL @use statements to avoid CSS parsing errors
 @import 'https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap';
@@ -47,4 +48,10 @@
   @include meta.load-css('components/effects');
   @include meta.load-css('components/sheet/erps-resource-boxes');
   @include meta.load-css('components/sheet/erps-ability-cards');
+  @include meta.load-css('components/sheet/erps-data-tables');
+  @include meta.load-css('components/sheet/erps-tabs');
+  @include meta.load-css('components/sheet/erps-status-cards');
+  @include meta.load-css('components/sheet/erps-profile-images');
+  @include meta.load-css('components/sheet/erps-toggles');
+  @include meta.load-css('components/sheet/erps-inputs');
 }

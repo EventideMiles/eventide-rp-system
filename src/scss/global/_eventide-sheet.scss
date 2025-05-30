@@ -5,6 +5,83 @@
 @use "../utils/themes" as themes;
 @use "../components/sheet/erps-resource-boxes" as resource-boxes;
 @use "../components/sheet/erps-profile-images" as profile-images;
+@use "sass:map";
+
+// ===================================
+// THEME-AWARE DEFAULTS FOR EVENTIDE SHEET
+// ===================================
+
+:root {
+  // Default theme (blue) - using actual theme colors from themes.scss
+  --erps-sheet-primary: #{map.get(themes.$blue-theme, primary)};
+  --erps-sheet-secondary: #{map.get(themes.$blue-theme, secondary)};
+  --erps-sheet-bright: #{map.get(themes.$blue-theme, light)};
+  --erps-sheet-glow: #{map.get(themes.$blue-theme, glow)};
+  --erps-sheet-text: #{map.get(themes.$blue-theme, text)};
+  --erps-sheet-accent: #{map.get(themes.$blue-theme, accent)};
+  --erps-sheet-light: #{map.get(themes.$blue-theme, light)};
+}
+
+// Theme-specific defaults that activate based on sheet classes
+.eventide-sheet[data-bg-theme="blue"] {
+  --erps-sheet-primary: #{map.get(themes.$blue-theme, primary)};
+  --erps-sheet-secondary: #{map.get(themes.$blue-theme, secondary)};
+  --erps-sheet-bright: #{map.get(themes.$blue-theme, light)};
+  --erps-sheet-glow: #{map.get(themes.$blue-theme, glow)};
+  --erps-sheet-text: #{map.get(themes.$blue-theme, text)};
+  --erps-sheet-accent: #{map.get(themes.$blue-theme, accent)};
+  --erps-sheet-light: #{map.get(themes.$blue-theme, light)};
+}
+
+.eventide-sheet[data-bg-theme="black"] {
+  --erps-sheet-primary: #{map.get(themes.$black-theme, primary)};
+  --erps-sheet-secondary: #{map.get(themes.$black-theme, secondary)};
+  --erps-sheet-bright: #{map.get(themes.$black-theme, light)};
+  --erps-sheet-glow: #{map.get(themes.$black-theme, glow)};
+  --erps-sheet-text: #{map.get(themes.$black-theme, text)};
+  --erps-sheet-accent: #{map.get(themes.$black-theme, accent)};
+  --erps-sheet-light: #{map.get(themes.$black-theme, light)};
+}
+
+.eventide-sheet[data-bg-theme="green"] {
+  --erps-sheet-primary: #{map.get(themes.$green-theme, primary)};
+  --erps-sheet-secondary: #{map.get(themes.$green-theme, secondary)};
+  --erps-sheet-bright: #{map.get(themes.$green-theme, light)};
+  --erps-sheet-glow: #{map.get(themes.$green-theme, glow)};
+  --erps-sheet-text: #{map.get(themes.$green-theme, text)};
+  --erps-sheet-accent: #{map.get(themes.$green-theme, accent)};
+  --erps-sheet-light: #{map.get(themes.$green-theme, light)};
+}
+
+.eventide-sheet[data-bg-theme="light"] {
+  --erps-sheet-primary: #{map.get(themes.$light-theme, primary)};
+  --erps-sheet-secondary: #{map.get(themes.$light-theme, secondary)};
+  --erps-sheet-bright: #{map.get(themes.$light-theme, light)};
+  --erps-sheet-glow: #{map.get(themes.$light-theme, glow)};
+  --erps-sheet-text: #{map.get(themes.$light-theme, text)};
+  --erps-sheet-accent: #{map.get(themes.$light-theme, accent)};
+  --erps-sheet-light: #{map.get(themes.$light-theme, light)};
+}
+
+.eventide-sheet[data-bg-theme="gold"] {
+  --erps-sheet-primary: #{map.get(themes.$gold-theme, primary)};
+  --erps-sheet-secondary: #{map.get(themes.$gold-theme, secondary)};
+  --erps-sheet-bright: #{map.get(themes.$gold-theme, light)};
+  --erps-sheet-glow: #{map.get(themes.$gold-theme, glow)};
+  --erps-sheet-text: #{map.get(themes.$gold-theme, text)};
+  --erps-sheet-accent: #{map.get(themes.$gold-theme, accent)};
+  --erps-sheet-light: #{map.get(themes.$gold-theme, light)};
+}
+
+.eventide-sheet[data-bg-theme="purple"] {
+  --erps-sheet-primary: #{map.get(themes.$purple-theme, primary)};
+  --erps-sheet-secondary: #{map.get(themes.$purple-theme, secondary)};
+  --erps-sheet-bright: #{map.get(themes.$purple-theme, light)};
+  --erps-sheet-glow: #{map.get(themes.$purple-theme, glow)};
+  --erps-sheet-text: #{map.get(themes.$purple-theme, text)};
+  --erps-sheet-accent: #{map.get(themes.$purple-theme, accent)};
+  --erps-sheet-light: #{map.get(themes.$purple-theme, light)};
+}
 
 // General selectors (must come before any specific theme selectors for proper specificity)
 label,
@@ -33,22 +110,19 @@ label,
     inset 0 2px 4px rgb(255 255 255 / 5%),
     inset 0 -2px 4px rgb(0 0 0 / 20%);
 
-
-  // Apply all background themes using optimized mixins
+  // Apply theme-aware animated backgrounds
   @include themes.apply-all-background-themes;
 
   // Character header styling - now theme-aware
   .eventide-sheet__header {
-    @include themes.apply-all-themes('header-theme');
-
     min-height: fit-content;
     background: linear-gradient(
       135deg,
-      var(--theme-accent) 0%,
-      var(--theme-primary) 50%,
-      var(--theme-secondary) 100%
+      var(--erps-sheet-accent, var(--theme-accent, var(--erps-sheet-accent))) 0%,
+      var(--erps-sheet-primary, var(--theme-primary, var(--erps-sheet-primary))) 50%,
+      var(--erps-sheet-secondary, var(--theme-secondary, var(--erps-sheet-secondary))) 100%
     );
-    border: 2px solid var(--theme-glow);
+    border: 2px solid var(--erps-sheet-glow, var(--theme-glow, var(--erps-sheet-glow)));
     border-radius: 12px;
     padding: 1.5rem;
     margin-bottom: 1rem;
@@ -68,7 +142,7 @@ label,
       height: 200%;
       background: radial-gradient(
         circle,
-        var(--theme-glow) 0%,
+        var(--erps-sheet-glow, var(--theme-glow, var(--erps-sheet-glow))) 0%,
         transparent 70%
       );
       animation: header-glow 4s ease-in-out infinite alternate;
@@ -79,7 +153,7 @@ label,
     &[data-header-theme="light"] {
       // Toggle label text for light theme
       .eventide-sheet__toggle-group label {
-        color: var(--theme-text) !important;
+        color: var(--erps-sheet-text, var(--theme-text, var(--erps-sheet-text))) !important;
 
         &:hover {
           color: #0f172a !important; // Even darker on hover
@@ -93,8 +167,6 @@ label,
     position: relative !important;
     margin-bottom: 1rem !important;
 
-    @include themes.apply-all-themes('name-theme');
-
     // Add subtle animated element to the left
     &::before {
       content: '' !important;
@@ -105,8 +177,8 @@ label,
       height: 3px !important;
       background: linear-gradient(90deg,
         transparent 0%,
-        var(--theme-glow) 30%,
-        var(--theme-light) 70%,
+        var(--erps-sheet-glow, var(--theme-glow, var(--erps-sheet-glow))) 30%,
+        var(--erps-sheet-light, var(--theme-light, var(--erps-sheet-light))) 70%,
         transparent 100%) !important;
       border-radius: 2px !important;
       transform: translateY(-50%) !important;
@@ -124,8 +196,8 @@ label,
       height: 3px !important;
       background: linear-gradient(90deg,
         transparent 0%,
-        var(--theme-light) 30%,
-        var(--theme-glow) 70%,
+        var(--erps-sheet-light, var(--theme-light, var(--erps-sheet-light))) 30%,
+        var(--erps-sheet-glow, var(--theme-glow, var(--erps-sheet-glow))) 70%,
         transparent 100%) !important;
       border-radius: 2px !important;
       transform: translateY(-50%) !important;
@@ -141,8 +213,8 @@ label,
     font-weight: 600 !important;
     letter-spacing: 1px !important;
     text-align: center !important;
-    color: var(--theme-text) !important;
-    background: var(--theme-accent) !important; // Flat single color background
+    color: var(--erps-sheet-text, var(--theme-text, var(--erps-sheet-text))) !important;
+    background: var(--erps-sheet-accent, var(--theme-accent, var(--erps-sheet-accent))) !important; // Flat single color background
     border: 2px solid rgb(255 255 255 / 20%) !important; // Subtle border
     border-radius: 8px !important;
     padding: 12px 20px !important;
@@ -163,7 +235,11 @@ label,
       position: absolute !important;
       inset: -2px !important;
       background: linear-gradient(45deg,
-        var(--theme-primary), var(--theme-light), var(--theme-secondary), var(--theme-light), var(--theme-primary)) !important;
+        var(--erps-sheet-primary, var(--theme-primary, var(--erps-sheet-primary))),
+        var(--erps-sheet-light, var(--theme-light, var(--erps-sheet-light))),
+        var(--erps-sheet-secondary, var(--theme-secondary, var(--erps-sheet-secondary))),
+        var(--erps-sheet-light, var(--theme-light, var(--erps-sheet-light))),
+        var(--erps-sheet-primary, var(--theme-primary, var(--erps-sheet-primary)))) !important;
       border-radius: 10px !important;
       z-index: -1 !important;
       opacity: 0 !important;
@@ -171,25 +247,25 @@ label,
     }
 
     &:hover {
-      color: #fff !important;
+      color: var(--erps-sheet-text, var(--theme-text, var(--erps-sheet-text))) !important;
       background:
         var(--theme-pattern),
         linear-gradient(135deg,
-          var(--theme-accent) 0%,
-          var(--theme-primary) 25%,
-          var(--theme-secondary) 50%,
-          var(--theme-primary) 75%,
-          var(--theme-accent) 100%) !important;
+          var(--erps-sheet-accent, var(--theme-accent, var(--erps-sheet-accent))) 0%,
+          var(--erps-sheet-primary, var(--theme-primary, var(--erps-sheet-primary))) 25%,
+          var(--erps-sheet-secondary, var(--theme-secondary, var(--erps-sheet-secondary))) 50%,
+          var(--erps-sheet-primary, var(--theme-primary, var(--erps-sheet-primary))) 75%,
+          var(--erps-sheet-accent, var(--theme-accent, var(--erps-sheet-accent))) 100%) !important;
       background-size: 20px 20px, 100% 100% !important;
       background-position: 0 0, 0 0 !important;
       animation: pattern-shift 8s linear infinite !important;
       box-shadow:
-        0 0 30px var(--theme-glow),
+        0 0 30px var(--erps-sheet-glow, var(--theme-glow, var(--erps-sheet-glow))),
         inset 0 2px 4px rgb(0 0 0 / 30%),
         inset 0 -2px 4px rgb(255 255 255 / 20%) !important;
       text-shadow:
         0 1px 3px rgb(0 0 0 / 90%),
-        0 0 15px var(--theme-light) !important;
+        0 0 15px var(--erps-sheet-light, var(--theme-light, var(--erps-sheet-light))) !important;
       transform: translateY(-1px) !important;
 
       &::before {
@@ -199,27 +275,27 @@ label,
 
     &:focus {
       outline: none !important;
-      color: #fff !important;
+      color: var(--erps-sheet-text, var(--theme-text, var(--erps-sheet-text))) !important;
       background:
         var(--theme-pattern),
         linear-gradient(135deg,
-          var(--theme-accent) 0%,
-          var(--theme-primary) 25%,
-          var(--theme-secondary) 50%,
-          var(--theme-primary) 75%,
-          var(--theme-accent) 100%) !important;
+          var(--erps-sheet-accent, var(--theme-accent, var(--erps-sheet-accent))) 0%,
+          var(--erps-sheet-primary, var(--theme-primary, var(--erps-sheet-primary))) 25%,
+          var(--erps-sheet-secondary, var(--theme-secondary, var(--erps-sheet-secondary))) 50%,
+          var(--erps-sheet-primary, var(--theme-primary, var(--erps-sheet-primary))) 75%,
+          var(--erps-sheet-accent, var(--theme-accent, var(--erps-sheet-accent))) 100%) !important;
       background-size: 20px 20px, 100% 100% !important;
       background-position: 0 0, 0 0 !important;
       animation: pattern-shift 6s linear infinite !important;
       box-shadow:
-        0 0 40px var(--theme-glow),
-        0 0 20px var(--theme-light),
+        0 0 40px var(--erps-sheet-glow, var(--theme-glow, var(--erps-sheet-glow))),
+        0 0 20px var(--erps-sheet-light, var(--theme-light, var(--erps-sheet-light))),
         inset 0 2px 6px rgb(0 0 0 / 40%),
         inset 0 -2px 6px rgb(255 255 255 / 30%) !important;
       text-shadow:
         0 1px 4px rgb(0 0 0 / 100%),
-        0 0 20px var(--theme-light),
-        0 0 30px var(--theme-glow) !important;
+        0 0 20px var(--erps-sheet-light, var(--theme-light, var(--erps-sheet-light))),
+        0 0 30px var(--erps-sheet-glow, var(--theme-glow, var(--erps-sheet-glow))) !important;
       transform: translateY(-2px) !important;
 
       &::before {
@@ -229,7 +305,7 @@ label,
 
     // Placeholder styling
     &::placeholder {
-      color: var(--theme-light) !important;
+      color: var(--erps-sheet-light, var(--theme-light, var(--erps-sheet-light))) !important;
       opacity: 0.7 !important;
       font-style: italic !important;
       text-shadow: 0 1px 2px rgb(0 0 0 / 60%) !important;
@@ -246,6 +322,17 @@ label,
     50% {
       opacity: 0.8;
       transform: translateY(-50%) scaleX(1.2);
+    }
+  }
+
+  // Pattern shift animation for hover effects
+  @keyframes pattern-shift {
+    0% {
+      background-position: 0 0, 0 0;
+    }
+
+    100% {
+      background-position: 20px 20px, 0 0;
     }
   }
 
