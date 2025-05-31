@@ -1,10 +1,8 @@
 // Add custom fonts by visiting and search https://fonts.google.com
 // Import utilities - ALL @use statements must come first
 @use "sass:meta";
-@use 'utils/tokens';
 @use 'utils/typography';
 @use 'utils/colors';
-@use 'utils/mixins';
 @use 'utils/variables';
 @use 'utils/sheet-tokens';
 
@@ -13,18 +11,12 @@
 @use 'global/grid';
 @use 'global/flex';
 @use 'global/eventide-sheet';
-@use 'global/form-elements';
 @use 'global/global-overrides';
 
 /* Styles limited to eventide-rp-system sheets */
 @use 'components/chat-cards';
-@use 'components/popup-forms';
 @use 'components/gear-creator';
-@use 'components/effect-creator';
 @use 'components/sound-settings';
-@use 'components/data-table'; // DEPRECATED - use erps-data-tables instead
-@use 'components/enhanced-grid';
-@use 'components/range-slider';
 
 // New components
 @use 'components/sheet/erps-data-tables';
@@ -46,10 +38,6 @@
 @import 'https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Crimson+Text:wght@400;600&family=Libre+Baskerville:wght@400;700&family=Roboto+Condensed:wght@400;700&display=swap';
 
 .eventide-rp-system {
-  @include meta.load-css('components/forms');
-  @include meta.load-css('components/resource');
-  @include meta.load-css('components/items');
-  @include meta.load-css('components/effects');
   @include meta.load-css('components/sheet/erps-resource-boxes');
   @include meta.load-css('components/sheet/erps-ability-cards');
   @include meta.load-css('components/sheet/erps-data-tables');

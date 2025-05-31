@@ -1,7 +1,5 @@
-@use "../utils/typography";
-@use "../utils/colors";
-@use "../utils/mixins";
-@use "../global/form-elements";
+// Gear Creator Component - Layout Only
+// Only includes classes actually used in gear-creator.hbs template
 
 .gear-creator {
   display: flex;
@@ -14,41 +12,6 @@
   color: var(--theme-text);
   font-family: var(--erps-ui-font);
 
-  &__header {
-    text-align: center;
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: var(--theme-text);
-    margin-bottom: 0.5rem;
-  }
-
-  &__form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  &__label {
-    font-weight: 600;
-    color: var(--theme-text);
-    font-size: 0.9rem;
-  }
-
-  &__input {
-    padding: 0.5rem;
-    border: 1px solid var(--theme-light);
-    border-radius: 4px;
-    background: var(--theme-primary);
-    color: var(--theme-text);
-    font-family: inherit;
-  }
-
-  &__image {
-    max-width: 64px;
-    height: auto;
-    margin: 0 0.5rem 0 auto;
-  }
-
   &__upper-section {
     display: grid;
     grid-template-columns: 2fr 1fr;
@@ -58,12 +21,6 @@
 
   &__main-info {
     min-width: 0;
-
-    .base-form__textarea {
-      min-height: 80px;
-      height: 160px;
-      resize: vertical;
-    }
   }
 
   &__visual-info {
@@ -79,34 +36,5 @@
     margin-bottom: 4px;
   }
 
-  &__effect-group {
-    display: grid;
-    grid-template-columns: 45px 50px 1fr;
-    gap: 8px;
-    align-items: center;
-  }
-
-  &__effect-input {
-    @include mixins.grid-compliant-text-input;
-  }
-
-  &__effect-select {
-    width: 100%;
-  }
-
-  // Specific override for toggle switches in the gear creator
-  .base-form__toggle-group {
-    .toggle-switch-wrapper {
-      width: 40px !important;
-      flex: 0 0 40px !important;
-    }
-
-    .toggle-switch-display {
-      width: 40px !important;
-      max-width: 40px !important;
-      background-size: 40px 20px !important;
-      background-position: left center !important;
-      background-repeat: no-repeat !important;
-    }
-  }
+  // Note: &__column has no specific styles - uses default grid behavior
 }
