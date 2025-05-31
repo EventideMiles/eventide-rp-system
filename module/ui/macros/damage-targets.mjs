@@ -1,4 +1,9 @@
 import { EventideSheetHelpers } from "../components/_module.mjs";
+import {
+  initThemeManager,
+  THEME_PRESETS,
+  cleanupThemeManager,
+} from "../../helpers/_module.mjs";
 
 // new place for FormDataExtended
 const FormDataExtended = foundry.applications.ux.FormDataExtended;
@@ -19,9 +24,9 @@ export class DamageTargets extends EventideSheetHelpers {
   /** @override */
   static DEFAULT_OPTIONS = {
     id: "damage-targets",
-    classes: ["eventide-rp-system", "standard-form", "damage-targets"],
+    classes: ["eventide-sheet", "eventide-sheet--scrollbars", "damage-targets"],
     position: {
-      width: 400,
+      width: 500,
       height: "auto",
     },
     tag: "form",
@@ -138,23 +143,55 @@ export class DamageTargets extends EventideSheetHelpers {
       {
         label: game.i18n.localize("EVENTIDE_RP_SYSTEM.Forms.Buttons.Damage"),
         type: "submit",
-        cssClass: "base-form__button base-form__button--primary",
+        cssClass: "erps-button erps-button--primary",
       },
       {
         label: game.i18n.localize("EVENTIDE_RP_SYSTEM.Forms.Buttons.Store"),
         type: "button",
-        cssClass: "base-form__button",
+        cssClass: "erps-button erps-button--secondary",
         action: "store",
       },
       {
         label: game.i18n.localize("EVENTIDE_RP_SYSTEM.Forms.Buttons.Close"),
         type: "button",
-        cssClass: "base-form__button",
+        cssClass: "erps-button",
         action: "close",
       },
     ];
 
     return context;
+  }
+
+  /**
+   * Handle rendering of the damage targets application
+   * @param {ApplicationRenderContext} context      Prepared context data
+   * @param {RenderOptions} options                 Provided render options
+   * @protected
+   */
+  _onRender(_context, _options) {
+    super._onRender(_context, _options);
+
+    // Re-apply themes on re-render (but don't reinitialize)
+    if (this.themeManager) {
+      this.themeManager.applyThemes();
+    }
+  }
+
+  /**
+   * Handle the first render of the damage targets application
+   * @override
+   * @protected
+   */
+  _onFirstRender() {
+    super._onFirstRender();
+
+    // Initialize theme management only on first render
+    if (!this.themeManager) {
+      this.themeManager = initThemeManager(
+        this,
+        THEME_PRESETS.CREATOR_APPLICATION,
+      );
+    }
   }
 
   /**
@@ -164,6 +201,12 @@ export class DamageTargets extends EventideSheetHelpers {
    * @override
    */
   async _preClose(options) {
+    // Clean up theme management for this specific instance
+    if (this.themeManager) {
+      cleanupThemeManager(this);
+      this.themeManager = null;
+    }
+
     // Clear references to arrays and objects
     this.targetArray = null;
     this.selectedArray = null;

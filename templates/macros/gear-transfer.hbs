@@ -1,9 +1,10 @@
-<div class="{{cssClass}} base-form" autocomplete="off">
+{{!-- Gear Transfer Form --}}
+<div class="{{cssClass}} erps-form" autocomplete="off">
   {{> callout-box}}
-  <div class="base-form__content">
-    <div class="base-form__group">
-      <label class="base-form__label" for="gearId">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.SelectGear"}}:</label>
-      <select class="base-form__select" id="gearId" name="gearId">
+  <div class="erps-form__content">
+    <div class="erps-form__group">
+      <label class="erps-form__label" for="gearId">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.SelectGear"}}</label>
+      <select class="erps-select" id="gearId" name="gearId">
         {{#each targetGear as |item|}}
           <option value="{{item.id}}">
             {{item.name}} ({{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Available" number=item.system.quantity}})
@@ -12,18 +13,22 @@
       </select>
     </div>
 
-    <div class="base-form__group">
-      <label class="base-form__label" for="quantity">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Quantity"}}:</label>
-      <div class="base-form__number-input-wrapper">
-        <button type="button" class="decrement" data-action="decrement">−</button>
-        <input class="base-form__number-input" type="number" id="quantity" name="quantity" value="1" min="1">
-        <button type="button" class="increment" data-action="increment">+</button>
+    <div class="erps-form__group">
+      <label class="erps-form__label" for="quantity">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Quantity"}}</label>
+      <div class="erps-number-input">
+        <button type="button" class="erps-number-input__button erps-number-input__button--decrement" data-action="decrement">
+          <i class="fas fa-minus"></i>
+        </button>
+        <input class="erps-number-input__input" type="number" id="quantity" name="quantity" value="1" min="1">
+        <button type="button" class="erps-number-input__button erps-number-input__button--increment" data-action="increment">
+          <i class="fas fa-plus"></i>
+        </button>
       </div>
     </div>
 
-    <div class="base-form__group">
-      <label class="base-form__label" for="description">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Description"}} {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Optional"}}:</label>
-      <textarea class="base-form__textarea" id="description" name="description" placeholder="{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.TransferNote"}}"></textarea>
+    <div class="erps-form__group">
+      <label class="erps-form__label erps-form__label--optional" for="description">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Description"}}</label>
+      <textarea class="erps-textarea" id="description" name="description" placeholder="{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.TransferNote"}}"></textarea>
     </div>
   </div>
 

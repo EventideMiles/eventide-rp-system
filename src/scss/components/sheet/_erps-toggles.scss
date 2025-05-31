@@ -342,6 +342,41 @@ $toggle-focus-opacity: 0.3;
   &--warning {
     @include toggle-color-variant(orange);
   }
+
+  // Restore target variant - label left, toggle right, with background
+  &--restore-row {
+    display: block;
+    width: 100%;
+    padding: tokens.$sheet-spacing-sm tokens.$sheet-spacing-md;
+    margin-bottom: tokens.$sheet-spacing-xs;
+    background: rgb(0 0 0 / 8%);
+    border: 1px solid var(--theme-secondary, var(--erps-sheet-secondary));
+    border-radius: tokens.$sheet-radius-sm;
+    transition: all tokens.$sheet-transition-fast ease;
+
+    &:hover {
+      background: rgb(255 255 255 / 5%);
+      border-color: var(--theme-light, var(--erps-sheet-light));
+    }
+
+    .erps-toggles__container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+
+      .erps-toggles__label {
+        order: 1; // Label first (left)
+        flex: 1;
+        text-align: left;
+      }
+
+      .erps-toggles__track {
+        order: 2; // Track second (right)
+        flex-shrink: 0;
+      }
+    }
+  }
 }
 
 // ===================================

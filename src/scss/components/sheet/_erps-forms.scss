@@ -297,6 +297,95 @@ $form-transition: all tokens.$sheet-transition-medium ease;
 }
 
 // ===================================
+// FORM DESCRIPTIONS
+// ===================================
+
+.erps-form__description {
+  font-size: tokens.$sheet-font-size-value-md;
+  font-family: var(--erps-ui-font, sans-serif);
+  color: var(--theme-text, var(--erps-sheet-text));
+  line-height: tokens.$sheet-line-height-loose;
+  margin-bottom: tokens.$sheet-spacing-lg;
+  padding: tokens.$sheet-spacing-md;
+  background: rgb(0 0 0 / 10%);
+  border-left: 3px solid var(--theme-secondary, var(--erps-sheet-secondary));
+  border-radius: 0 tokens.$sheet-radius-sm tokens.$sheet-radius-sm 0;
+  opacity: 0.9;
+
+  // Description variants
+  &--highlighted {
+    background: var(--theme-primary, var(--erps-sheet-primary));
+    border-left-color: var(--theme-glow, var(--erps-sheet-glow));
+    box-shadow: 0 2px 8px rgb(0 0 0 / 20%);
+  }
+
+  &--compact {
+    padding: tokens.$sheet-spacing-sm;
+    margin-bottom: tokens.$sheet-spacing-md;
+    font-size: tokens.$sheet-font-size-value-sm;
+  }
+
+  &--centered {
+    text-align: center;
+    border-left: none;
+    border-top: 3px solid var(--theme-secondary, var(--erps-sheet-secondary));
+    border-radius: tokens.$sheet-radius-sm tokens.$sheet-radius-sm 0 0;
+  }
+
+  // First description shouldn't have top margin
+  &:first-child {
+    margin-top: 0;
+  }
+
+  // Last description should have reduced bottom margin
+  &:last-child {
+    margin-bottom: tokens.$sheet-spacing-md;
+  }
+}
+
+// ===================================
+// FORM DIVIDERS
+// ===================================
+
+.erps-form__divider {
+  border: none;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--theme-secondary, var(--erps-sheet-secondary)) 20%,
+    var(--theme-secondary, var(--erps-sheet-secondary)) 80%,
+    transparent
+  );
+  margin: tokens.$sheet-spacing-lg 0;
+  opacity: 0.6;
+
+  // Divider variants
+  &--thick {
+    height: 2px;
+    opacity: 0.8;
+  }
+
+  &--solid {
+    background: var(--theme-secondary, var(--erps-sheet-secondary));
+  }
+
+  &--glow {
+    background: var(--theme-glow, var(--erps-sheet-glow));
+    box-shadow: 0 0 4px var(--theme-glow, var(--erps-sheet-glow));
+    opacity: 0.8;
+  }
+
+  &--compact {
+    margin: tokens.$sheet-spacing-md 0;
+  }
+
+  &--spaced {
+    margin: tokens.$sheet-spacing-xl 0;
+  }
+}
+
+// ===================================
 // FORM SECTIONS
 // ===================================
 
@@ -529,5 +618,102 @@ $form-transition: all tokens.$sheet-transition-medium ease;
         }
       }
     }
+  }
+}
+
+// ===================================
+// FORM GRID SECTIONS
+// ===================================
+
+.erps-form__grid-section {
+  margin-bottom: tokens.$sheet-spacing-lg;
+  border: 1px solid var(--theme-secondary, var(--erps-sheet-secondary));
+  border-radius: tokens.$sheet-radius-md;
+  overflow: hidden;
+  background: rgb(0 0 0 / 5%);
+}
+
+.erps-form__grid-header {
+  display: grid;
+  grid-template-columns: 2fr 1.5fr 1.5fr;
+  gap: tokens.$sheet-spacing-sm;
+  padding: tokens.$sheet-spacing-sm tokens.$sheet-spacing-md;
+  background: var(--theme-primary, var(--erps-sheet-primary));
+  border-bottom: 1px solid var(--theme-secondary, var(--erps-sheet-secondary));
+  font-weight: tokens.$sheet-font-weight-semibold;
+  font-size: tokens.$sheet-font-size-value-sm;
+  text-transform: uppercase;
+  letter-spacing: tokens.$sheet-letter-spacing-loose;
+}
+
+.erps-form__grid-header-cell {
+  color: var(--theme-text, var(--erps-sheet-text));
+  text-align: center;
+
+  &:first-child {
+    text-align: left;
+  }
+}
+
+.erps-form__grid-row {
+  display: grid;
+  grid-template-columns: 2fr 1.5fr 1.5fr;
+  gap: tokens.$sheet-spacing-sm;
+  padding: tokens.$sheet-spacing-md;
+  border-bottom: 1px solid var(--theme-secondary, var(--erps-sheet-secondary));
+  align-items: center;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background: rgb(255 255 255 / 3%);
+  }
+}
+
+.erps-form__grid-cell {
+  display: flex;
+  align-items: center;
+  min-height: 32px;
+}
+
+.erps-form__grid-label {
+  font-size: tokens.$sheet-font-size-label-md;
+  font-weight: tokens.$sheet-font-weight-semibold;
+  font-family: var(--erps-info-font, serif);
+  color: var(--theme-text, var(--erps-sheet-text));
+  justify-content: flex-start;
+}
+
+// Responsive grid layout
+@media (width <= 768px) {
+  .erps-form__grid-header,
+  .erps-form__grid-row {
+    grid-template-columns: 1fr;
+    gap: tokens.$sheet-spacing-xs;
+  }
+
+  .erps-form__grid-header-cell {
+    text-align: left;
+    
+    &:not(:first-child) {
+      display: none;
+    }
+  }
+
+  .erps-form__grid-row {
+    padding: tokens.$sheet-spacing-sm;
+  }
+
+  .erps-form__grid-cell {
+    flex-direction: column;
+    align-items: stretch;
+    gap: tokens.$sheet-spacing-xs;
+  }
+
+  .erps-form__grid-label {
+    font-size: tokens.$sheet-font-size-value-sm;
+    margin-bottom: tokens.$sheet-spacing-xs;
   }
 } 

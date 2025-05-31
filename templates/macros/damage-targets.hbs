@@ -1,26 +1,58 @@
-<div class="{{cssClass}} base-form" autocomplete="off">
-   {{> callout-box}}
-  <div class="base-form__content">
-    <div class="base-form__description">{{{localize "EVENTIDE_RP_SYSTEM.Forms.ScriptExplanations.DamageTargets"}}}</div>
+{{!-- Damage Targets Form --}}
+<div class="{{cssClass}} erps-form" autocomplete="off">
+  {{> callout-box}}
+  <div class="erps-form__content">
+    <div class="erps-form__description">{{{localize "EVENTIDE_RP_SYSTEM.Forms.ScriptExplanations.DamageTargets"}}}</div>
    
-    <div class="base-form__group">
-      <label class="base-form__label" for="label">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Label"}}:</label>
-      <input class="base-form__text-input" autofocus placeholder="{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.Label"}}" name="label" value="{{lookup storedData (lookup storageKeys 0)}}">
+    <div class="erps-form__group">
+      <label class="erps-form__label" for="label">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Label"}}</label>
+      <input 
+        class="erps-input" 
+        autofocus 
+        type="text"
+        id="label"
+        name="label" 
+        placeholder="{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.Label"}}" 
+        value="{{lookup storedData (lookup storageKeys 0)}}">
     </div>
-    <div class="base-form__group">
-      <label class="base-form__label" for="description">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Description"}}:</label>
-      <input class="base-form__text-input" placeholder="{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.Description"}}" name="description" value="{{lookup storedData (lookup storageKeys 1)}}">
+    
+    <div class="erps-form__group">
+      <label class="erps-form__label" for="description">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Description"}}</label>
+      <input 
+        class="erps-input" 
+        type="text"
+        id="description"
+        name="description" 
+        placeholder="{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.Description"}}" 
+        value="{{lookup storedData (lookup storageKeys 1)}}">
     </div>
-    <div class="base-form__group">
-      <label class="base-form__label" for="formula">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Formula"}}:</label>
-      <input class="base-form__text-input" placeholder="{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.Formula"}}" name="formula" value="{{lookup storedData (lookup storageKeys 2)}}">
+    
+    <div class="erps-form__group">
+      <label class="erps-form__label" for="formula">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Formula"}}</label>
+      <input 
+        class="erps-input" 
+        type="text"
+        id="formula"
+        name="formula" 
+        placeholder="{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.Formula"}}" 
+        value="{{lookup storedData (lookup storageKeys 2)}}">
     </div>
-    <div class="base-form__group base-form__group--checkbox">
-      <label class="base-form__label--checkbox" for="isHeal">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.IsHeal"}}:</label>
-      <div class="toggle-switch-wrapper">
-        <input class="base-form__toggle-switch" type="checkbox" name="isHeal" id="isHeal" {{checked heal}}>
-        <label class="toggle-switch-display" for="isHeal"></label>
-      </div>
+    
+    <div class="erps-form__group">
+      <label class="erps-toggles erps-toggles--label-left" for="isHeal">
+        <input 
+          class="erps-toggles__input" 
+          type="checkbox" 
+          id="isHeal" 
+          name="isHeal" 
+          {{#if heal}}checked{{/if}}>
+        <div class="erps-toggles__container">
+          <span class="erps-toggles__label">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.IsHeal"}}</span>
+          <span class="erps-toggles__track">
+            <span class="erps-toggles__thumb"></span>
+          </span>
+        </div>
+      </label>
     </div>
   </div>
   

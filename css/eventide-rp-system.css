@@ -6325,6 +6325,35 @@ label,
   border-color: rgba(217, 119, 6, 0.8);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4), 0 0 4px rgba(217, 119, 6, 0.4);
 }
+.erps-toggles--restore-row {
+  display: block;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 0.25rem;
+  background: rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--theme-secondary, var(--erps-sheet-secondary));
+  border-radius: 4px;
+  transition: all 0.15s ease;
+}
+.erps-toggles--restore-row:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--theme-light, var(--erps-sheet-light));
+}
+.erps-toggles--restore-row .erps-toggles__container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+.erps-toggles--restore-row .erps-toggles__container .erps-toggles__label {
+  order: 1;
+  flex: 1;
+  text-align: left;
+}
+.erps-toggles--restore-row .erps-toggles__container .erps-toggles__track {
+  order: 2;
+  flex-shrink: 0;
+}
 
 /*
 <!-- Basic toggle with label on left (default) -->
@@ -7921,6 +7950,67 @@ label,
   margin-top: 0;
 }
 
+.erps-form__description {
+  font-size: 1rem;
+  font-family: var(--erps-ui-font, sans-serif);
+  color: var(--theme-text, var(--erps-sheet-text));
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
+  padding: 0.75rem;
+  background: rgba(0, 0, 0, 0.1);
+  border-left: 3px solid var(--theme-secondary, var(--erps-sheet-secondary));
+  border-radius: 0 4px 4px 0;
+  opacity: 0.9;
+}
+.erps-form__description--highlighted {
+  background: var(--theme-primary, var(--erps-sheet-primary));
+  border-left-color: var(--theme-glow, var(--erps-sheet-glow));
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+.erps-form__description--compact {
+  padding: 0.5rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.9rem;
+}
+.erps-form__description--centered {
+  text-align: center;
+  border-left: none;
+  border-top: 3px solid var(--theme-secondary, var(--erps-sheet-secondary));
+  border-radius: 4px 4px 0 0;
+}
+.erps-form__description:first-child {
+  margin-top: 0;
+}
+.erps-form__description:last-child {
+  margin-bottom: 0.75rem;
+}
+
+.erps-form__divider {
+  border: none;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--theme-secondary, var(--erps-sheet-secondary)) 20%, var(--theme-secondary, var(--erps-sheet-secondary)) 80%, transparent);
+  margin: 1.5rem 0;
+  opacity: 0.6;
+}
+.erps-form__divider--thick {
+  height: 2px;
+  opacity: 0.8;
+}
+.erps-form__divider--solid {
+  background: var(--theme-secondary, var(--erps-sheet-secondary));
+}
+.erps-form__divider--glow {
+  background: var(--theme-glow, var(--erps-sheet-glow));
+  box-shadow: 0 0 4px var(--theme-glow, var(--erps-sheet-glow));
+  opacity: 0.8;
+}
+.erps-form__divider--compact {
+  margin: 0.75rem 0;
+}
+.erps-form__divider--spaced {
+  margin: 2rem 0;
+}
+
 .erps-form__section {
   margin-bottom: 2rem;
   padding: 0.75rem;
@@ -8089,6 +8179,89 @@ label,
   display: none;
 }
 
+.erps-form__grid-section {
+  margin-bottom: 1.5rem;
+  border: 1px solid var(--theme-secondary, var(--erps-sheet-secondary));
+  border-radius: 6px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.erps-form__grid-header {
+  display: grid;
+  grid-template-columns: 2fr 1.5fr 1.5fr;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--theme-primary, var(--erps-sheet-primary));
+  border-bottom: 1px solid var(--theme-secondary, var(--erps-sheet-secondary));
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.erps-form__grid-header-cell {
+  color: var(--theme-text, var(--erps-sheet-text));
+  text-align: center;
+}
+.erps-form__grid-header-cell:first-child {
+  text-align: left;
+}
+
+.erps-form__grid-row {
+  display: grid;
+  grid-template-columns: 2fr 1.5fr 1.5fr;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--theme-secondary, var(--erps-sheet-secondary));
+  align-items: center;
+}
+.erps-form__grid-row:last-child {
+  border-bottom: none;
+}
+.erps-form__grid-row:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.erps-form__grid-cell {
+  display: flex;
+  align-items: center;
+  min-height: 32px;
+}
+
+.erps-form__grid-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  font-family: var(--erps-info-font, serif);
+  color: var(--theme-text, var(--erps-sheet-text));
+  justify-content: flex-start;
+}
+
+@media (width <= 768px) {
+  .erps-form__grid-header,
+  .erps-form__grid-row {
+    grid-template-columns: 1fr;
+    gap: 0.25rem;
+  }
+  .erps-form__grid-header-cell {
+    text-align: left;
+  }
+  .erps-form__grid-header-cell:not(:first-child) {
+    display: none;
+  }
+  .erps-form__grid-row {
+    padding: 0.5rem;
+  }
+  .erps-form__grid-cell {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.25rem;
+  }
+  .erps-form__grid-label {
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+  }
+}
 .erps-callouts {
   position: sticky;
   top: 0;
@@ -13346,6 +13519,35 @@ label,
   border-color: rgba(217, 119, 6, 0.8);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4), 0 0 4px rgba(217, 119, 6, 0.4);
 }
+.eventide-rp-system .erps-toggles--restore-row {
+  display: block;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 0.25rem;
+  background: rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--theme-secondary, var(--erps-sheet-secondary));
+  border-radius: 4px;
+  transition: all 0.15s ease;
+}
+.eventide-rp-system .erps-toggles--restore-row:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--theme-light, var(--erps-sheet-light));
+}
+.eventide-rp-system .erps-toggles--restore-row .erps-toggles__container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+.eventide-rp-system .erps-toggles--restore-row .erps-toggles__container .erps-toggles__label {
+  order: 1;
+  flex: 1;
+  text-align: left;
+}
+.eventide-rp-system .erps-toggles--restore-row .erps-toggles__container .erps-toggles__track {
+  order: 2;
+  flex-shrink: 0;
+}
 @keyframes gentle-float {
   0%, 100% {
     background-position: 0 0, 0 0, 0 0;
@@ -14987,6 +15189,65 @@ label,
 .eventide-rp-system .erps-form__header:first-child {
   margin-top: 0;
 }
+.eventide-rp-system .erps-form__description {
+  font-size: 1rem;
+  font-family: var(--erps-ui-font, sans-serif);
+  color: var(--theme-text, var(--erps-sheet-text));
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
+  padding: 0.75rem;
+  background: rgba(0, 0, 0, 0.1);
+  border-left: 3px solid var(--theme-secondary, var(--erps-sheet-secondary));
+  border-radius: 0 4px 4px 0;
+  opacity: 0.9;
+}
+.eventide-rp-system .erps-form__description--highlighted {
+  background: var(--theme-primary, var(--erps-sheet-primary));
+  border-left-color: var(--theme-glow, var(--erps-sheet-glow));
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+.eventide-rp-system .erps-form__description--compact {
+  padding: 0.5rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.9rem;
+}
+.eventide-rp-system .erps-form__description--centered {
+  text-align: center;
+  border-left: none;
+  border-top: 3px solid var(--theme-secondary, var(--erps-sheet-secondary));
+  border-radius: 4px 4px 0 0;
+}
+.eventide-rp-system .erps-form__description:first-child {
+  margin-top: 0;
+}
+.eventide-rp-system .erps-form__description:last-child {
+  margin-bottom: 0.75rem;
+}
+.eventide-rp-system .erps-form__divider {
+  border: none;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--theme-secondary, var(--erps-sheet-secondary)) 20%, var(--theme-secondary, var(--erps-sheet-secondary)) 80%, transparent);
+  margin: 1.5rem 0;
+  opacity: 0.6;
+}
+.eventide-rp-system .erps-form__divider--thick {
+  height: 2px;
+  opacity: 0.8;
+}
+.eventide-rp-system .erps-form__divider--solid {
+  background: var(--theme-secondary, var(--erps-sheet-secondary));
+}
+.eventide-rp-system .erps-form__divider--glow {
+  background: var(--theme-glow, var(--erps-sheet-glow));
+  box-shadow: 0 0 4px var(--theme-glow, var(--erps-sheet-glow));
+  opacity: 0.8;
+}
+.eventide-rp-system .erps-form__divider--compact {
+  margin: 0.75rem 0;
+}
+.eventide-rp-system .erps-form__divider--spaced {
+  margin: 2rem 0;
+}
 .eventide-rp-system .erps-form__section {
   margin-bottom: 2rem;
   padding: 0.75rem;
@@ -15152,6 +15413,83 @@ label,
 }
 .eventide-rp-system .gear-creator__column:nth-child(3) .erps-data-table .erps-number-input.erps-number-input--narrow .erps-number-input__button {
   display: none;
+}
+.eventide-rp-system .erps-form__grid-section {
+  margin-bottom: 1.5rem;
+  border: 1px solid var(--theme-secondary, var(--erps-sheet-secondary));
+  border-radius: 6px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.05);
+}
+.eventide-rp-system .erps-form__grid-header {
+  display: grid;
+  grid-template-columns: 2fr 1.5fr 1.5fr;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--theme-primary, var(--erps-sheet-primary));
+  border-bottom: 1px solid var(--theme-secondary, var(--erps-sheet-secondary));
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.eventide-rp-system .erps-form__grid-header-cell {
+  color: var(--theme-text, var(--erps-sheet-text));
+  text-align: center;
+}
+.eventide-rp-system .erps-form__grid-header-cell:first-child {
+  text-align: left;
+}
+.eventide-rp-system .erps-form__grid-row {
+  display: grid;
+  grid-template-columns: 2fr 1.5fr 1.5fr;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--theme-secondary, var(--erps-sheet-secondary));
+  align-items: center;
+}
+.eventide-rp-system .erps-form__grid-row:last-child {
+  border-bottom: none;
+}
+.eventide-rp-system .erps-form__grid-row:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+.eventide-rp-system .erps-form__grid-cell {
+  display: flex;
+  align-items: center;
+  min-height: 32px;
+}
+.eventide-rp-system .erps-form__grid-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  font-family: var(--erps-info-font, serif);
+  color: var(--theme-text, var(--erps-sheet-text));
+  justify-content: flex-start;
+}
+@media (width <= 768px) {
+  .eventide-rp-system .erps-form__grid-header,
+  .eventide-rp-system .erps-form__grid-row {
+    grid-template-columns: 1fr;
+    gap: 0.25rem;
+  }
+  .eventide-rp-system .erps-form__grid-header-cell {
+    text-align: left;
+  }
+  .eventide-rp-system .erps-form__grid-header-cell:not(:first-child) {
+    display: none;
+  }
+  .eventide-rp-system .erps-form__grid-row {
+    padding: 0.5rem;
+  }
+  .eventide-rp-system .erps-form__grid-cell {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.25rem;
+  }
+  .eventide-rp-system .erps-form__grid-label {
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+  }
 }
 @keyframes gentle-float {
   0%, 100% {
@@ -15607,3 +15945,5 @@ label,
     flex: 1;
   }
 }
+
+/*# sourceMappingURL=eventide-rp-system.css.map */
