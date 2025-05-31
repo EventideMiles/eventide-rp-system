@@ -420,4 +420,13 @@ label,
       gap: 0.125rem; // Reduced from 0.25rem
     }
   }
+
+  // ===================================
+  // BIOGRAPHY TAB HEIGHT FIX
+  // ===================================
+
+  // Targeted fix for biography tab when scrollbars are enabled
+  &.eventide-sheet--scrollbars .tab.biography .editor {
+    min-height: 35rem;
+  }
 }

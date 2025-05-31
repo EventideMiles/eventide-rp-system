@@ -1,8 +1,16 @@
 import { CommonFoundryTasks } from "../../utils/_module.mjs";
 import { erpsRollHandler, Logger } from "../../services/_module.mjs";
 import { ErrorHandler } from "../../utils/error-handler.mjs";
-import { initTabContainerStyling, cleanupTabContainerStyling } from "../../helpers/tab-container-styling.mjs";
-import { initThemeManager, cleanupThemeManager, triggerGlobalThemeChange, THEME_PRESETS } from "../../helpers/theme-manager.mjs";
+import {
+  initTabContainerStyling,
+  cleanupTabContainerStyling,
+} from "../../helpers/tab-container-styling.mjs";
+import {
+  initThemeManager,
+  cleanupThemeManager,
+  triggerGlobalThemeChange,
+  THEME_PRESETS,
+} from "../../helpers/theme-manager.mjs";
 
 const { api, sheets } = foundry.applications;
 const { DragDrop, TextEditor } = foundry.applications.ux;
@@ -56,7 +64,7 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
     classes: [
       // "eventide-rp-system",
       "eventide-sheet",
-      // "eventide-character-sheet--scrollbars",
+      "eventide-sheet--scrollbars",
     ],
     position: {
       width: 920,
@@ -105,10 +113,13 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
       setSheetTheme: this._setSheetTheme,
     },
     // Custom property that's merged into `this.options`
-    dragDrop: [{
-      dragSelector: "[data-drag], .erps-data-table__row[data-item-id], .erps-data-table__row[data-document-class], .eventide-transformation-card[data-item-id]",
-      dropSelector: null
-    }],
+    dragDrop: [
+      {
+        dragSelector:
+          "[data-drag], .erps-data-table__row[data-item-id], .erps-data-table__row[data-document-class], .eventide-transformation-card[data-item-id]",
+        dropSelector: null,
+      },
+    ],
     form: {
       submitOnChange: true,
     },
@@ -467,7 +478,9 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
             // Append to transformations
             transformations.push(i);
             if (i.system?.embeddedCombatPowers?.length > 0) {
-              transformationCombatPowers.push(...i.system.getEmbeddedCombatPowers());
+              transformationCombatPowers.push(
+                ...i.system.getEmbeddedCombatPowers(),
+              );
             }
           } else {
             Logger.warn(
@@ -566,32 +579,50 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
    */
   _onRender(_context, _options) {
     // Debug drag drop setup
-    const transformationCards = this.element.querySelectorAll(".eventide-transformation-card[data-item-id]");
-    const allDraggableElements = this.element.querySelectorAll("[data-drag], .erps-data-table__row[data-item-id], .erps-data-table__row[data-document-class], .eventide-transformation-card[data-item-id]");
+    const transformationCards = this.element.querySelectorAll(
+      ".eventide-transformation-card[data-item-id]",
+    );
+    const allDraggableElements = this.element.querySelectorAll(
+      "[data-drag], .erps-data-table__row[data-item-id], .erps-data-table__row[data-document-class], .eventide-transformation-card[data-item-id]",
+    );
 
-    Logger.debug("Setting up drag drop handlers", {
-      sheetId: this.id,
-      actorName: this.actor?.name,
-      dragDropHandlers: this.#dragDrop?.length,
-      dragSelectors: this.#dragDrop?.map(d => d.dragSelector),
-      element: this.element,
-      draggableElements: allDraggableElements.length,
-      transformationCards: transformationCards.length,
-      transformationCardDetails: Array.from(transformationCards).map(card => ({
-        id: card.dataset.itemId,
-        classes: card.className,
-        dataset: card.dataset
-      })),
-      activeTransformation: this.actor.getFlag("eventide-rp-system", "activeTransformation")
-    }, "ACTOR_SHEET");
+    Logger.debug(
+      "Setting up drag drop handlers",
+      {
+        sheetId: this.id,
+        actorName: this.actor?.name,
+        dragDropHandlers: this.#dragDrop?.length,
+        dragSelectors: this.#dragDrop?.map((d) => d.dragSelector),
+        element: this.element,
+        draggableElements: allDraggableElements.length,
+        transformationCards: transformationCards.length,
+        transformationCardDetails: Array.from(transformationCards).map(
+          (card) => ({
+            id: card.dataset.itemId,
+            classes: card.className,
+            dataset: card.dataset,
+          }),
+        ),
+        activeTransformation: this.actor.getFlag(
+          "eventide-rp-system",
+          "activeTransformation",
+        ),
+      },
+      "ACTOR_SHEET",
+    );
 
     // Bind drag drop handlers
     this.#dragDrop.forEach((d, index) => {
-      Logger.debug(`Binding drag drop handler ${index}`, {
-        dragSelector: d.dragSelector,
-        dropSelector: d.dropSelector,
-        matchingElements: this.element.querySelectorAll(d.dragSelector).length
-      }, "ACTOR_SHEET");
+      Logger.debug(
+        `Binding drag drop handler ${index}`,
+        {
+          dragSelector: d.dragSelector,
+          dropSelector: d.dropSelector,
+          matchingElements: this.element.querySelectorAll(d.dragSelector)
+            .length,
+        },
+        "ACTOR_SHEET",
+      );
       d.bind(this.element);
     });
     this.#disableOverrides();
@@ -636,60 +667,63 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
     // Theme color mappings (same as in theme manager)
     const themeColors = {
       blue: {
-        primary: '#4a90e2',
-        secondary: '#357abd',
-        bright: '#6bb6ff',
-        glow: 'rgba(74, 144, 226, 0.3)'
+        primary: "#4a90e2",
+        secondary: "#357abd",
+        bright: "#6bb6ff",
+        glow: "rgba(74, 144, 226, 0.3)",
       },
       black: {
-        primary: '#2c2c2c',
-        secondary: '#1a1a1a',
-        bright: '#4a4a4a',
-        glow: 'rgba(44, 44, 44, 0.3)'
+        primary: "#2c2c2c",
+        secondary: "#1a1a1a",
+        bright: "#4a4a4a",
+        glow: "rgba(44, 44, 44, 0.3)",
       },
       green: {
-        primary: '#4a9e4a',
-        secondary: '#357a35',
-        bright: '#6bb66b',
-        glow: 'rgba(74, 158, 74, 0.3)'
+        primary: "#4a9e4a",
+        secondary: "#357a35",
+        bright: "#6bb66b",
+        glow: "rgba(74, 158, 74, 0.3)",
       },
       light: {
-        primary: '#cbd5e1',      // Light silver-gray (matches rgba(203, 213, 225, 0.75) at full opacity)
-        secondary: '#e2e8f0',    // Very light silver (matches rgba(226, 232, 240, 0.8) at full opacity)
-        bright: '#ffffff',       // Pure white
-        glow: 'rgba(59, 130, 246, 0.25)'  // Subtle cool blue glow
+        primary: "#cbd5e1", // Light silver-gray (matches rgba(203, 213, 225, 0.75) at full opacity)
+        secondary: "#e2e8f0", // Very light silver (matches rgba(226, 232, 240, 0.8) at full opacity)
+        bright: "#ffffff", // Pure white
+        glow: "rgba(59, 130, 246, 0.25)", // Subtle cool blue glow
       },
       gold: {
-        primary: '#d4af37',
-        secondary: '#b8941f',
-        bright: '#f4d03f',
-        glow: 'rgba(212, 175, 55, 0.3)'
+        primary: "#d4af37",
+        secondary: "#b8941f",
+        bright: "#f4d03f",
+        glow: "rgba(212, 175, 55, 0.3)",
       },
       purple: {
-        primary: '#8e44ad',
-        secondary: '#7d3c98',
-        bright: '#a569bd',
-        glow: 'rgba(142, 68, 173, 0.3)'
-      }
+        primary: "#8e44ad",
+        secondary: "#7d3c98",
+        bright: "#a569bd",
+        glow: "rgba(142, 68, 173, 0.3)",
+      },
     };
 
     const colors = themeColors[theme] || themeColors.blue;
 
     // Find the target element and set properties immediately
     let targetElement = null;
-    if (this.element.querySelector('.eventide-sheet')) {
-      targetElement = this.element.querySelector('.eventide-sheet');
-    } else if (this.element.classList && this.element.classList.contains('eventide-sheet')) {
+    if (this.element.querySelector(".eventide-sheet")) {
+      targetElement = this.element.querySelector(".eventide-sheet");
+    } else if (
+      this.element.classList &&
+      this.element.classList.contains("eventide-sheet")
+    ) {
       targetElement = this.element;
     } else {
       targetElement = this.element;
     }
 
     if (targetElement && targetElement.style) {
-      targetElement.style.setProperty('--theme-primary', colors.primary);
-      targetElement.style.setProperty('--theme-secondary', colors.secondary);
-      targetElement.style.setProperty('--theme-bright', colors.bright);
-      targetElement.style.setProperty('--theme-glow', colors.glow);
+      targetElement.style.setProperty("--theme-primary", colors.primary);
+      targetElement.style.setProperty("--theme-secondary", colors.secondary);
+      targetElement.style.setProperty("--theme-bright", colors.bright);
+      targetElement.style.setProperty("--theme-glow", colors.glow);
     }
   }
 
@@ -804,11 +838,15 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
       }
 
       // Don't interfere with drag operations on transformation cards
-      if (e.target.closest('.eventide-transformation-card')) {
-        Logger.debug("Skipping status bar drag for transformation card", {
-          target: e.target,
-          closest: e.target.closest('.eventide-transformation-card')
-        }, "ACTOR_SHEET");
+      if (e.target.closest(".eventide-transformation-card")) {
+        Logger.debug(
+          "Skipping status bar drag for transformation card",
+          {
+            target: e.target,
+            closest: e.target.closest(".eventide-transformation-card"),
+          },
+          "ACTOR_SHEET",
+        );
         return; // Let the drag and drop system handle it
       }
 
@@ -924,7 +962,6 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
       }
     }
   }
-
 
   /**
    * Actions performed before closing the application
@@ -1660,8 +1697,6 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
           );
           return rollResult;
         }
-
-
       }
 
       // Handle rolls that supply the formula directly.
@@ -1714,21 +1749,29 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
   _getEmbeddedDocument(target) {
     // Support li, tr elements, and transformation cards for different template structures
     const docRow =
-      target.closest("li[data-document-class], tr[data-document-class], .eventide-transformation-card[data-item-id]") ||
-      target.closest("[data-item-id]");
+      target.closest(
+        "li[data-document-class], tr[data-document-class], .eventide-transformation-card[data-item-id]",
+      ) || target.closest("[data-item-id]");
 
     if (docRow) {
       const itemId = docRow.dataset.itemId;
 
       // Handle transformation cards specifically
-      if (docRow.classList.contains('eventide-transformation-card')) {
+      if (docRow.classList.contains("eventide-transformation-card")) {
         const transformationItem = this.actor.items.get(itemId);
-        if (transformationItem && transformationItem.type === "transformation") {
-          Logger.debug("Found transformation item for drag", {
-            itemId,
-            itemName: transformationItem.name,
-            itemType: transformationItem.type
-          }, "ACTOR_SHEET");
+        if (
+          transformationItem &&
+          transformationItem.type === "transformation"
+        ) {
+          Logger.debug(
+            "Found transformation item for drag",
+            {
+              itemId,
+              itemName: transformationItem.name,
+              itemType: transformationItem.type,
+            },
+            "ACTOR_SHEET",
+          );
           return transformationItem;
         }
       }
@@ -1780,7 +1823,9 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
         docRow,
         itemId: docRow?.dataset?.itemId,
         documentClass: docRow?.dataset?.documentClass,
-        isTransformationCard: docRow?.classList?.contains('eventide-transformation-card')
+        isTransformationCard: docRow?.classList?.contains(
+          "eventide-transformation-card",
+        ),
       },
       "ACTOR_SHEET",
     );
@@ -1795,12 +1840,14 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
    */
   _findTransformationCombatPower(itemId) {
     // Get all transformation items
-    const transformations = this.actor.items.filter(i => i.type === "transformation");
+    const transformations = this.actor.items.filter(
+      (i) => i.type === "transformation",
+    );
 
     // Search through all embedded combat powers
     for (const transformation of transformations) {
       const embeddedPowers = transformation.system.getEmbeddedCombatPowers();
-      const power = embeddedPowers.find(p => p.id === itemId);
+      const power = embeddedPowers.find((p) => p.id === itemId);
       if (power) {
         return power;
       }
@@ -1823,12 +1870,16 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
    */
   _canDragStart(selector) {
     const canDrag = this.isEditable;
-    Logger.debug("Drag permission check", {
-      selector,
-      canDrag,
-      isEditable: this.isEditable,
-      actorName: this.actor?.name
-    }, "ACTOR_SHEET");
+    Logger.debug(
+      "Drag permission check",
+      {
+        selector,
+        canDrag,
+        isEditable: this.isEditable,
+        actorName: this.actor?.name,
+      },
+      "ACTOR_SHEET",
+    );
     return canDrag;
   }
 
@@ -1841,12 +1892,16 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
    */
   _canDragDrop(selector) {
     const canDrop = this.isEditable;
-    Logger.debug("Drop permission check", {
-      selector,
-      canDrop,
-      isEditable: this.isEditable,
-      actorName: this.actor?.name
-    }, "ACTOR_SHEET");
+    Logger.debug(
+      "Drop permission check",
+      {
+        selector,
+        canDrop,
+        isEditable: this.isEditable,
+        actorName: this.actor?.name,
+      },
+      "ACTOR_SHEET",
+    );
     return canDrop;
   }
 
@@ -1857,89 +1912,134 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
    * @override
    */
   _onDragStart(event) {
-    Logger.debug("Drag start event triggered", {
-      currentTarget: event.currentTarget,
-      target: event.target,
-      targetDataset: event.target.dataset,
-      currentTargetDataset: event.currentTarget.dataset,
-      currentTargetClasses: event.currentTarget.className
-    }, "ACTOR_SHEET");
+    Logger.debug(
+      "Drag start event triggered",
+      {
+        currentTarget: event.currentTarget,
+        target: event.target,
+        targetDataset: event.target.dataset,
+        currentTargetDataset: event.currentTarget.dataset,
+        currentTargetClasses: event.currentTarget.className,
+      },
+      "ACTOR_SHEET",
+    );
 
     // Support li, tr elements, and transformation cards
-    const docRow = event.currentTarget.closest("li, tr, .eventide-transformation-card");
+    const docRow = event.currentTarget.closest(
+      "li, tr, .eventide-transformation-card",
+    );
     if (!docRow) {
-      Logger.warn("No draggable element found", {
-        target: event.currentTarget,
-        targetClasses: event.currentTarget.className,
-        targetDataset: event.currentTarget.dataset
-      }, "ACTOR_SHEET");
+      Logger.warn(
+        "No draggable element found",
+        {
+          target: event.currentTarget,
+          targetClasses: event.currentTarget.className,
+          targetDataset: event.currentTarget.dataset,
+        },
+        "ACTOR_SHEET",
+      );
       return;
     }
 
-    Logger.debug("Found draggable element", {
-      docRow,
-      docRowClasses: docRow.className,
-      docRowDataset: docRow.dataset,
-      isTransformationCard: docRow.classList.contains('eventide-transformation-card')
-    }, "ACTOR_SHEET");
+    Logger.debug(
+      "Found draggable element",
+      {
+        docRow,
+        docRowClasses: docRow.className,
+        docRowDataset: docRow.dataset,
+        isTransformationCard: docRow.classList.contains(
+          "eventide-transformation-card",
+        ),
+      },
+      "ACTOR_SHEET",
+    );
 
     // Don't drag if clicking on a link or button (except the transformation card itself)
     if ("link" in event.target.dataset) {
-      Logger.debug("Preventing drag on link element", { target: event.target }, "ACTOR_SHEET");
+      Logger.debug(
+        "Preventing drag on link element",
+        { target: event.target },
+        "ACTOR_SHEET",
+      );
       return;
     }
 
     // Allow dragging transformation cards even when clicking buttons, but prevent if clicking the revert button specifically
-    if (event.target.closest('.eventide-transformation-card__revert')) {
-      Logger.debug("Preventing drag on revert button", { target: event.target }, "ACTOR_SHEET");
+    if (event.target.closest(".eventide-transformation-card__revert")) {
+      Logger.debug(
+        "Preventing drag on revert button",
+        { target: event.target },
+        "ACTOR_SHEET",
+      );
       return;
     }
 
     // Get the embedded document for this element
     const document = this._getEmbeddedDocument(docRow);
     if (!document) {
-      Logger.warn("No document found for drag operation", {
-        docRow,
-        itemId: docRow.dataset?.itemId,
-        documentClass: docRow.dataset?.documentClass,
-        elementClass: docRow.className,
-        actorItems: this.actor.items.size,
-        activeTransformation: this.actor.getFlag("eventide-rp-system", "activeTransformation")
-      }, "ACTOR_SHEET");
+      Logger.warn(
+        "No document found for drag operation",
+        {
+          docRow,
+          itemId: docRow.dataset?.itemId,
+          documentClass: docRow.dataset?.documentClass,
+          elementClass: docRow.className,
+          actorItems: this.actor.items.size,
+          activeTransformation: this.actor.getFlag(
+            "eventide-rp-system",
+            "activeTransformation",
+          ),
+        },
+        "ACTOR_SHEET",
+      );
       return;
     }
 
-    Logger.debug("Found document for drag", {
-      documentId: document.id,
-      documentName: document.name,
-      documentType: document.type || document.documentName
-    }, "ACTOR_SHEET");
+    Logger.debug(
+      "Found document for drag",
+      {
+        documentId: document.id,
+        documentName: document.name,
+        documentType: document.type || document.documentName,
+      },
+      "ACTOR_SHEET",
+    );
 
     // Get drag data from the document
     const dragData = document.toDragData();
     if (!dragData) {
-      Logger.warn("No drag data available for document", {
-        documentId: document.id,
-        documentType: document.type || document.documentName
-      }, "ACTOR_SHEET");
+      Logger.warn(
+        "No drag data available for document",
+        {
+          documentId: document.id,
+          documentType: document.type || document.documentName,
+        },
+        "ACTOR_SHEET",
+      );
       return;
     }
 
     // Add visual feedback
-    if (docRow.classList.contains('eventide-transformation-card')) {
-      docRow.classList.add('dragging');
+    if (docRow.classList.contains("eventide-transformation-card")) {
+      docRow.classList.add("dragging");
     }
 
     // Set data transfer
     event.dataTransfer.setData("text/plain", JSON.stringify(dragData));
 
-    Logger.info("Drag operation started successfully", {
-      documentId: document.id,
-      documentName: document.name,
-      documentType: document.type || document.documentName,
-      dragDataType: dragData.type,
-      elementType: docRow.classList.contains('eventide-transformation-card') ? 'transformation-card' : 'table-row'
-    }, "ACTOR_SHEET");
+    Logger.info(
+      "Drag operation started successfully",
+      {
+        documentId: document.id,
+        documentName: document.name,
+        documentType: document.type || document.documentName,
+        dragDataType: dragData.type,
+        elementType: docRow.classList.contains("eventide-transformation-card")
+          ? "transformation-card"
+          : "table-row",
+      },
+      "ACTOR_SHEET",
+    );
   }
 
   /**
@@ -1957,15 +2057,23 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
    */
   _onDragEnd(event) {
     // Remove visual feedback
-    const docRow = event.currentTarget.closest("li, tr, .eventide-transformation-card");
-    if (docRow && docRow.classList.contains('eventide-transformation-card')) {
-      docRow.classList.remove('dragging');
+    const docRow = event.currentTarget.closest(
+      "li, tr, .eventide-transformation-card",
+    );
+    if (docRow && docRow.classList.contains("eventide-transformation-card")) {
+      docRow.classList.remove("dragging");
     }
 
-    Logger.debug("Drag operation ended", {
-      currentTarget: event.currentTarget,
-      elementType: docRow?.classList.contains('eventide-transformation-card') ? 'transformation-card' : 'table-row'
-    }, "ACTOR_SHEET");
+    Logger.debug(
+      "Drag operation ended",
+      {
+        currentTarget: event.currentTarget,
+        elementType: docRow?.classList.contains("eventide-transformation-card")
+          ? "transformation-card"
+          : "table-row",
+      },
+      "ACTOR_SHEET",
+    );
   }
 
   /**

@@ -1378,6 +1378,9 @@ label,
 .eventide-sheet .eventide-sheet__header--item .eventide-sheet__header-fields .grid .erps-color-picker--label-above .erps-color-picker__container {
   gap: 0.125rem;
 }
+.eventide-sheet.eventide-sheet--scrollbars .tab.biography .editor {
+  min-height: 35rem;
+}
 
 /*
 // =============================================================================
@@ -3487,7 +3490,7 @@ label,
   width: 200%;
   height: 100%;
   background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-  animation: erps-table-header-glow 3s ease-in-out infinite;
+  animation: erps-table-header-glow 15s ease-in-out infinite;
   z-index: 1;
 }
 .erps-data-table__header-row {
@@ -4265,7 +4268,7 @@ label,
   left: 0;
   background: linear-gradient(90deg, var(--erps-tab-bright), transparent, var(--erps-tab-bright));
   opacity: 0.3;
-  animation: erps-tab-glow 3s ease-in-out infinite;
+  animation: erps-tab-glow 15s ease-in-out infinite;
 }
 .erps-tabs__item.active::after {
   display: none;
@@ -4635,7 +4638,7 @@ label,
   left: 0;
   background: linear-gradient(90deg, var(--erps-tab-bright), transparent, var(--erps-tab-bright));
   opacity: 0.3;
-  animation: erps-tab-glow 3s ease-in-out infinite;
+  animation: erps-tab-glow 15s ease-in-out infinite;
 }
 .eventide-sheet .tabs a[data-action=tab].active::after {
   display: none;
@@ -9751,7 +9754,7 @@ label,
   width: 200%;
   height: 100%;
   background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-  animation: erps-table-header-glow 3s ease-in-out infinite;
+  animation: erps-table-header-glow 15s ease-in-out infinite;
   z-index: 1;
 }
 .eventide-rp-system .erps-data-table__header-row {
@@ -10568,7 +10571,7 @@ label,
   left: 0;
   background: linear-gradient(90deg, var(--erps-tab-bright), transparent, var(--erps-tab-bright));
   opacity: 0.3;
-  animation: erps-tab-glow 3s ease-in-out infinite;
+  animation: erps-tab-glow 15s ease-in-out infinite;
 }
 .eventide-rp-system .erps-tabs__item.active::after {
   display: none;
@@ -10934,7 +10937,7 @@ label,
   left: 0;
   background: linear-gradient(90deg, var(--erps-tab-bright), transparent, var(--erps-tab-bright));
   opacity: 0.3;
-  animation: erps-tab-glow 3s ease-in-out infinite;
+  animation: erps-tab-glow 15s ease-in-out infinite;
 }
 .eventide-rp-system .eventide-sheet .tabs a[data-action=tab].active::after {
   display: none;
