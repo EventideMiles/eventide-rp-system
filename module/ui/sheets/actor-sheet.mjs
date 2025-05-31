@@ -597,8 +597,9 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
     this.#disableOverrides();
 
     // Set theme properties immediately to prevent flashing
-    const currentTheme = CommonFoundryTasks.retrieveSheetTheme();
-    this._setImmediateThemeProperties(currentTheme);
+    // const currentTheme = CommonFoundryTasks.retrieveSheetTheme();
+    // TESTING: Comment out JavaScript theme property setting to test pure CSS
+    // this._setImmediateThemeProperties(currentTheme);
 
     // Initialize centralized theme management
     if (!this.themeManager) {
@@ -653,10 +654,10 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
         glow: 'rgba(74, 158, 74, 0.3)'
       },
       light: {
-        primary: '#e2e2e2',
-        secondary: '#c0c0c0',
-        bright: '#ffffff',
-        glow: 'rgba(226, 226, 226, 0.3)'
+        primary: '#cbd5e1',      // Light silver-gray (matches rgba(203, 213, 225, 0.75) at full opacity)
+        secondary: '#e2e8f0',    // Very light silver (matches rgba(226, 232, 240, 0.8) at full opacity)
+        bright: '#ffffff',       // Pure white
+        glow: 'rgba(59, 130, 246, 0.25)'  // Subtle cool blue glow
       },
       gold: {
         primary: '#d4af37',

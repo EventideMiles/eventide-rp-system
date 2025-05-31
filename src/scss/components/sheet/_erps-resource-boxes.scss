@@ -1,13 +1,68 @@
 @use "../../utils/themes" as themes;
-@use "../../utils/tokens" as tokens;
-@use "../../utils/colors" as colors;
-@use "../../utils/sheet-tokens" as sheet;
+@use "../../utils/sheet-tokens" as tokens;
 
 // ===================================
 // RESOURCE BOXES COMPONENT
 // ===================================
 // Reusable resource display system with structured upper/lower sections
 // Extracted from character sheet and modernized following refactoring guidelines
+
+// ===================================
+// CONFIGURATION VARIABLES
+// ===================================
+// Using sheet-tokens for consistent design system integration
+
+// Resource dimensions and spacing
+$resource-height-upper: tokens.$sheet-height-section-upper;
+$resource-height-lower: tokens.$sheet-height-section-lower;
+$resource-height-third: tokens.$sheet-height-section-third;
+$resource-padding-input: tokens.$sheet-padding-input-resource;
+$resource-spacing-xs: tokens.$sheet-spacing-xs;
+$resource-spacing-sm: tokens.$sheet-spacing-sm;
+$resource-spacing-base: tokens.$sheet-spacing-base;
+
+// Typography
+$resource-font-size-label-xs: tokens.$sheet-font-size-label-xs;
+$resource-font-size-label-sm: tokens.$sheet-font-size-label-sm;
+$resource-font-size-label-md: tokens.$sheet-font-size-label-md;
+$resource-font-size-label-lg: tokens.$sheet-font-size-label-lg;
+$resource-font-size-value-md: tokens.$sheet-font-size-value-md;
+$resource-font-size-value-lg: tokens.$sheet-font-size-value-lg;
+$resource-font-size-value-xl: tokens.$sheet-font-size-value-xl;
+$resource-font-weight-semibold: tokens.$sheet-font-weight-semibold;
+$resource-font-weight-bold: tokens.$sheet-font-weight-bold;
+$resource-letter-spacing-base: tokens.$sheet-letter-spacing-base;
+$resource-letter-spacing-loose: tokens.$sheet-letter-spacing-loose;
+$resource-line-height-base: tokens.$sheet-line-height-base;
+
+// Borders and radius
+$resource-border-base: tokens.$sheet-border-base;
+$resource-border-thin: tokens.$sheet-border-thin;
+$resource-radius-xs: tokens.$sheet-radius-xs;
+$resource-radius-sm: tokens.$sheet-radius-sm;
+$resource-radius-xl: tokens.$sheet-radius-xl;
+
+// Shadows and effects
+$resource-shadow-offset-xs: tokens.$sheet-shadow-offset-xs;
+$resource-shadow-offset-sm: tokens.$sheet-shadow-offset-sm;
+$resource-shadow-offset-md: tokens.$sheet-shadow-offset-md;
+$resource-shadow-blur-xs: tokens.$sheet-shadow-blur-xs;
+$resource-shadow-blur-sm: tokens.$sheet-shadow-blur-sm;
+$resource-shadow-blur-md: tokens.$sheet-shadow-blur-md;
+$resource-shadow-blur-xxl: tokens.$sheet-shadow-blur-xxl;
+$resource-glow-blur-sm: tokens.$sheet-glow-blur-sm;
+$resource-glow-blur-md: tokens.$sheet-glow-blur-md;
+
+// Transitions and animations
+$resource-transition-base: tokens.$sheet-transition-base;
+$resource-transition-medium: tokens.$sheet-transition-medium;
+$resource-transition-slow: tokens.$sheet-transition-slow;
+
+// Layout dimensions
+$resource-width-input-min: tokens.$sheet-width-input-min;
+$resource-percent-full: tokens.$sheet-percent-full;
+$resource-opacity-default: tokens.$sheet-opacity-default;
+$resource-opacity-full: tokens.$sheet-opacity-full;
 
 // ===================================
 // UTILITY MIXINS
@@ -17,11 +72,11 @@
 @mixin resource-container-base {
   position: relative;
   overflow: hidden;
-  transition: all sheet.$sheet-transition-medium ease;
+  transition: all $resource-transition-medium ease;
   display: flex;
   flex-direction: column;
-  border-radius: sheet.$sheet-radius-xl;
-  border: sheet.$sheet-border-base solid;
+  border-radius: $resource-radius-xl;
+  border: $resource-border-base solid;
 }
 
 // Resource section styling
@@ -29,7 +84,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: sheet.$sheet-percent-full;
+  width: $resource-percent-full;
   position: relative;
 }
 
@@ -37,18 +92,18 @@
 @mixin resource-upper-section {
   @include resource-section-base;
 
-  height: sheet.$sheet-height-section-upper;
+  height: $resource-height-upper;
   padding: 0; // No padding to allow full width labels
 
   // Label styling within upper section
   .erps-resource-box__label,
   .erps-stat-box__label {
-    width: sheet.$sheet-percent-full;
+    width: $resource-percent-full;
     text-align: center;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    padding: 0 sheet.$sheet-spacing-xs; // Minimal padding only to prevent edge touching
+    padding: 0 $resource-spacing-xs; // Minimal padding only to prevent edge touching
   }
 }
 
@@ -56,23 +111,23 @@
 @mixin resource-lower-section {
   @include resource-section-base;
 
-  height: sheet.$sheet-height-section-lower;
-  padding: 0 sheet.$sheet-spacing-sm; // Minimal side padding
-  gap: sheet.$sheet-spacing-xs;
+  height: $resource-height-lower;
+  padding: 0 $resource-spacing-sm; // Minimal side padding
+  gap: $resource-spacing-xs;
 
   // Ensure inputs/content fit properly
   .erps-resource-box__input,
   .erps-stat-box__value,
   .resource-content {
     flex: 1;
-    min-width: sheet.$sheet-width-input-min;
+    min-width: $resource-width-input-min;
   }
 
   // Special handling for single input (fill space)
   &:has(.erps-resource-box__input:only-child) .erps-resource-box__input,
   &:has(.erps-stat-box__value:only-child) .erps-stat-box__value {
     flex: 1;
-    max-width: sheet.$sheet-percent-full;
+    max-width: $resource-percent-full;
   }
 }
 
@@ -80,9 +135,9 @@
 @mixin resource-third-section {
   @include resource-section-base;
 
-  height: sheet.$sheet-height-section-third;
-  padding: 0 sheet.$sheet-spacing-xs;
-  font-size: sheet.$sheet-font-size-label-xs;
+  height: $resource-height-third;
+  padding: 0 $resource-spacing-xs;
+  font-size: $resource-font-size-label-xs;
   color: themes.color(white, 70);
 
   &:empty {
@@ -97,21 +152,21 @@
     content: '';
     position: absolute;
     top: 0;
-    left: (- sheet.$sheet-percent-full);
-    width: sheet.$sheet-percent-full;
-    height: sheet.$sheet-percent-full;
+    left: (- $resource-percent-full);
+    width: $resource-percent-full;
+    height: $resource-percent-full;
     background: linear-gradient(
       90deg,
       transparent,
       $color,
       transparent
     );
-    transition: left sheet.$sheet-transition-slow ease;
+    transition: left $resource-transition-slow ease;
     z-index: 1;
   }
 
   &:hover::before {
-    left: sheet.$sheet-percent-full;
+    left: $resource-percent-full;
   }
 
   // Ensure content is above the glow effect
@@ -124,19 +179,64 @@
 // Resource text styling mixin
 @mixin resource-text-base($font-family: var(--erps-info-font)) {
   font-family: $font-family !important;
-  font-weight: sheet.$sheet-font-weight-semibold !important;
+  font-weight: $resource-font-weight-semibold !important;
   text-transform: uppercase !important;
-  text-shadow: 0 sheet.$sheet-shadow-offset-xs sheet.$sheet-shadow-offset-sm themes.color(black, 80) !important;
+  text-shadow: 0 $resource-shadow-offset-xs $resource-shadow-offset-sm themes.color(black, 80) !important;
 }
 
 // Resource value styling mixin
 @mixin resource-value-base($font-family: var(--erps-mono-font)) {
   font-family: $font-family !important;
-  font-weight: sheet.$sheet-font-weight-bold !important;
+  font-weight: $resource-font-weight-bold !important;
   color: #fff !important;
   text-shadow:
-    0 sheet.$sheet-shadow-offset-sm sheet.$sheet-shadow-offset-md themes.color(black, 80),
-    0 0 sheet.$sheet-glow-blur-md themes.color(blue, 60) !important;
+    0 $resource-shadow-offset-sm $resource-shadow-offset-md themes.color(black, 80),
+    0 0 $resource-glow-blur-md themes.color(blue, 60) !important;
+}
+
+// Color variant mixin for resource boxes
+@mixin resource-box-variant($primary-color, $secondary-color) {
+  background: linear-gradient(
+    135deg,
+    themes.color($primary-color, 90) 0%,
+    themes.color($primary-color, 80) 100%
+  );
+  border-color: themes.color($secondary-color, 50);
+
+  @include resource-glow-animation(themes.color($secondary-color, 20));
+
+  .erps-resource-box__value {
+    text-shadow:
+      0 $resource-shadow-offset-sm $resource-shadow-offset-md themes.color(black, 80),
+      0 0 $resource-glow-blur-md themes.color($secondary-color, 60) !important;
+  }
+
+  .erps-resource-box__input {
+    background: themes.color($primary-color, 80) !important;
+    border-color: themes.color($secondary-color, 40) !important;
+
+    &:focus {
+      border-color: themes.color($secondary-color, 80) !important;
+      box-shadow:
+        0 0 0 2px themes.color($secondary-color, 30),
+        0 0 $resource-glow-blur-md themes.color($secondary-color, 40) !important;
+    }
+  }
+}
+
+// Color variant mixin for stat boxes
+@mixin stat-box-variant($primary-color, $secondary-color) {
+  background: linear-gradient(
+    135deg,
+    themes.color($primary-color, 70) 0%,
+    themes.color($primary-color, 60) 100%
+  );
+  border-color: themes.color($secondary-color, 40);
+
+  .erps-stat-box__value {
+    text-shadow: 0 $resource-shadow-offset-xs $resource-radius-xs themes.color(black, 80),
+      0 0 $resource-glow-blur-sm themes.color($secondary-color, 50) !important;
+  }
 }
 
 // ===================================
@@ -147,31 +247,31 @@
 .resource-label {
   @include resource-text-base;
 
-  color: colors.$universal-white;
-  font-size: sheet.$sheet-font-size-label-md;
+  color: themes.color(white, 90);
+  font-size: $resource-font-size-label-md;
 }
 
 .resource-value {
   @include resource-value-base;
 
   display: inline-block;
-  padding: tokens.$spacing-sm;
+  padding: $resource-padding-input;
   background: themes.color(black, 40) !important;
-  border: sheet.$sheet-border-thin solid themes.color(white, 15) !important;
-  border-radius: tokens.$radius-sm;
-  color: colors.$universal-white !important;
+  border: $resource-border-thin solid themes.color(white, 15) !important;
+  border-radius: $resource-radius-sm;
+  color: themes.color(white, 90) !important;
   font-weight: 500;
   text-align: center;
-  min-width: sheet.$sheet-width-input-min;
+  min-width: $resource-width-input-min;
   font-family: monospace;
-  font-size: sheet.$sheet-font-size-value-md;
-  opacity: sheet.$sheet-opacity-default;
+  font-size: $resource-font-size-value-md;
+  opacity: $resource-opacity-default;
   cursor: default;
   user-select: none;
-  box-shadow: inset 0 sheet.$sheet-shadow-offset-xs sheet.$sheet-radius-xs themes.color(black, 30);
+  box-shadow: inset 0 $resource-shadow-offset-xs $resource-radius-xs themes.color(black, 30);
 
   &:hover {
-    opacity: sheet.$sheet-opacity-full;
+    opacity: $resource-opacity-full;
     background: themes.color(black, 50) !important;
   }
 }
@@ -191,8 +291,8 @@
   );
   border-color: themes.color(blue, 50);
   box-shadow:
-    0 sheet.$sheet-shadow-blur-xs sheet.$sheet-shadow-blur-xxl themes.color(black, 30),
-    inset 0 sheet.$sheet-shadow-offset-xs 0 themes.color(white, 10);
+    0 $resource-shadow-blur-xs $resource-shadow-blur-xxl themes.color(black, 30),
+    inset 0 $resource-shadow-offset-xs 0 themes.color(white, 10);
 
   // Include glow animation last since it contains nested rules
   @include resource-glow-animation(themes.color(blue, 20));
@@ -216,31 +316,31 @@
   &__label {
     @include resource-text-base;
 
-    font-size: sheet.$sheet-font-size-label-md !important;
+    font-size: $resource-font-size-label-md !important;
     color: themes.color(white, 90) !important;
-    letter-spacing: sheet.$sheet-letter-spacing-loose !important;
+    letter-spacing: $resource-letter-spacing-loose !important;
     line-height: 1.2 !important;
   }
 
   // Input styling
   &__input {
     font-family: var(--erps-mono-font) !important;
-    font-size: sheet.$sheet-font-size-value-md !important;
+    font-size: $resource-font-size-value-md !important;
     font-weight: 600 !important;
     color: #fff !important;
     background: themes.color(blue-dark, 80) !important;
     border: 1px solid themes.color(blue, 40) !important;
-    border-radius: sheet.$sheet-radius-sm !important;
-    padding: sheet.$sheet-padding-input !important;
+    border-radius: $resource-radius-sm !important;
+    padding: $resource-padding-input !important;
     text-align: center !important;
-    text-shadow: 0 sheet.$sheet-shadow-offset-xs sheet.$sheet-shadow-offset-sm themes.color(black, 80) !important;
-    transition: all sheet.$sheet-transition-base ease !important;
+    text-shadow: 0 $resource-shadow-offset-xs $resource-shadow-offset-sm themes.color(black, 80) !important;
+    transition: all $resource-transition-base ease !important;
 
     &:focus {
       border-color: themes.color(blue, 80) !important;
       box-shadow:
         0 0 0 2px themes.color(blue, 30),
-        0 0 sheet.$sheet-glow-blur-md themes.color(blue, 40) !important;
+        0 0 $resource-glow-blur-md themes.color(blue, 40) !important;
       outline: none !important;
     }
   }
@@ -248,9 +348,9 @@
   // Separator styling (like "/")
   &__separator {
     font-family: var(--erps-mono-font) !important;
-    font-size: sheet.$sheet-font-size-label-lg !important;
+    font-size: $resource-font-size-label-lg !important;
     color: themes.color(white, 80) !important;
-    text-shadow: 0 sheet.$sheet-shadow-offset-xs sheet.$sheet-shadow-offset-sm themes.color(black, 80) !important;
+    text-shadow: 0 $resource-shadow-offset-xs $resource-shadow-offset-sm themes.color(black, 80) !important;
     flex-shrink: 0;
   }
 
@@ -258,96 +358,21 @@
   &__value {
     @include resource-value-base;
 
-    font-size: sheet.$sheet-font-size-value-xl !important;
+    font-size: $resource-font-size-value-xl !important;
     text-align: center;
   }
 
   // Color variants
   &--health {
-    background: linear-gradient(
-      135deg,
-      themes.color(red-dark, 90) 0%,
-      themes.color(red-dark, 80) 100%
-    );
-    border-color: themes.color(red, 50);
-
-    @include resource-glow-animation(themes.color(red, 20));
-
-    .erps-resource-box__value {
-      text-shadow:
-        0 sheet.$sheet-shadow-offset-sm sheet.$sheet-shadow-offset-md themes.color(black, 80),
-        0 0 sheet.$sheet-glow-blur-md themes.color(red, 60) !important;
-    }
-
-    .erps-resource-box__input {
-      background: themes.color(red-dark, 80) !important;
-      border-color: themes.color(red, 40) !important;
-
-      &:focus {
-        border-color: themes.color(red, 80) !important;
-        box-shadow:
-          0 0 0 2px themes.color(red, 30),
-          0 0 sheet.$sheet-glow-blur-md themes.color(red, 40) !important;
-      }
-    }
+    @include resource-box-variant(red-dark, red);
   }
 
   &--mana {
-    background: linear-gradient(
-      135deg,
-      themes.color(purple-dark, 90) 0%,
-      themes.color(purple-dark, 80) 100%
-    );
-    border-color: themes.color(purple, 50);
-
-    @include resource-glow-animation(themes.color(purple, 20));
-
-    .erps-resource-box__value {
-      text-shadow:
-        0 sheet.$sheet-shadow-offset-sm sheet.$sheet-shadow-offset-md themes.color(black, 80),
-        0 0 sheet.$sheet-glow-blur-md themes.color(purple, 60) !important;
-    }
-
-    .erps-resource-box__input {
-      background: themes.color(purple-dark, 80) !important;
-      border-color: themes.color(purple, 40) !important;
-
-      &:focus {
-        border-color: themes.color(purple, 80) !important;
-        box-shadow:
-          0 0 0 2px themes.color(purple, 30),
-          0 0 sheet.$sheet-glow-blur-md themes.color(purple, 40) !important;
-      }
-    }
+    @include resource-box-variant(purple-dark, purple);
   }
 
   &--neutral {
-    background: linear-gradient(
-      135deg,
-      themes.color(gray-dark, 90) 0%,
-      themes.color(gray-dark, 80) 100%
-    );
-    border-color: themes.color(gray, 30);
-
-    @include resource-glow-animation(themes.color(gray, 10));
-
-    .erps-resource-box__value {
-      text-shadow:
-        0 sheet.$sheet-shadow-offset-sm sheet.$sheet-shadow-offset-md themes.color(black, 80),
-        0 0 sheet.$sheet-glow-blur-md themes.color(gray, 50) !important;
-    }
-
-    .erps-resource-box__input {
-      background: themes.color(black, 40) !important;
-      border-color: themes.color(gray, 20) !important;
-
-      &:focus {
-        border-color: themes.color(gray, 50) !important;
-        box-shadow:
-          0 0 0 2px themes.color(gray, 20),
-          0 0 sheet.$sheet-glow-blur-md themes.color(gray, 30) !important;
-      }
-    }
+    @include resource-box-variant(gray-dark, gray);
   }
 }
 
@@ -365,8 +390,8 @@
   );
   border-color: themes.color(blue, 40);
   box-shadow:
-    0 sheet.$sheet-shadow-offset-sm sheet.$sheet-shadow-blur-md themes.color(black, 20),
-    inset 0 sheet.$sheet-shadow-offset-xs 0 themes.color(white, 5);
+    0 $resource-shadow-offset-sm $resource-shadow-blur-md themes.color(black, 20),
+    inset 0 $resource-shadow-offset-xs 0 themes.color(white, 5);
 
   // Upper section - always contains the main label
   &__upper {
@@ -387,72 +412,40 @@
   &__label {
     @include resource-text-base;
 
-    font-size: sheet.$sheet-font-size-label-sm !important;
+    font-size: $resource-font-size-label-sm !important;
     color: themes.color(white, 80) !important;
-    letter-spacing: sheet.$sheet-letter-spacing-base !important;
-    line-height: sheet.$sheet-line-height-base !important;
+    letter-spacing: $resource-letter-spacing-base !important;
+    line-height: $resource-line-height-base !important;
   }
 
   // Value styling
   &__value {
     @include resource-value-base;
 
-    font-size: sheet.$sheet-font-size-value-lg !important;
-    text-shadow: 0 sheet.$sheet-shadow-offset-xs sheet.$sheet-radius-xs themes.color(black, 80),
-      0 0 sheet.$sheet-glow-blur-sm themes.color(blue, 50) !important;
+    font-size: $resource-font-size-value-lg !important;
     text-align: center;
   }
 
   // Separator styling (like "-")
   &__separator {
     font-family: var(--erps-mono-font) !important;
-    font-size: sheet.$sheet-font-size-value-lg !important;
+    font-size: $resource-font-size-value-lg !important;
     color: themes.color(white, 80) !important;
-    text-shadow: 0 sheet.$sheet-shadow-offset-xs sheet.$sheet-shadow-offset-sm themes.color(black, 80) !important;
+    text-shadow: 0 $resource-shadow-offset-xs $resource-shadow-offset-sm themes.color(black, 80) !important;
     flex-shrink: 0;
   }
 
   // Color variants for stat boxes
   &--health {
-    background: linear-gradient(
-      135deg,
-      themes.color(red-dark, 70) 0%,
-      themes.color(red-dark, 60) 100%
-    );
-    border-color: themes.color(red, 40);
-
-    .erps-stat-box__value {
-      text-shadow: 0 sheet.$sheet-shadow-offset-xs sheet.$sheet-radius-xs themes.color(black, 80),
-        0 0 sheet.$sheet-glow-blur-sm themes.color(red, 50) !important;
-    }
+    @include stat-box-variant(red-dark, red);
   }
 
   &--mana {
-    background: linear-gradient(
-      135deg,
-      themes.color(purple-dark, 70) 0%,
-      themes.color(purple-dark, 60) 100%
-    );
-    border-color: themes.color(purple, 40);
-
-    .erps-stat-box__value {
-      text-shadow: 0 sheet.$sheet-shadow-offset-xs sheet.$sheet-radius-xs themes.color(black, 80),
-        0 0 sheet.$sheet-glow-blur-sm themes.color(purple, 50) !important;
-    }
+    @include stat-box-variant(purple-dark, purple);
   }
 
   &--neutral {
-    background: linear-gradient(
-      135deg,
-      themes.color(gray-dark, 70) 0%,
-      themes.color(gray-dark, 60) 100%
-    );
-    border-color: themes.color(gray, 20);
-
-    .erps-stat-box__value {
-      text-shadow: 0 sheet.$sheet-shadow-offset-xs sheet.$sheet-radius-xs themes.color(black, 80),
-        0 0 sheet.$sheet-glow-blur-sm themes.color(gray, 30) !important;
-    }
+    @include stat-box-variant(gray-dark, gray);
   }
 }
 
@@ -463,7 +456,7 @@
 
 .resources.grid {
   display: grid;
-  gap: sheet.$sheet-spacing-base;
+  gap: $resource-spacing-base;
   align-items: stretch; // Force all grid items to stretch to the same height
 
   &.grid-3col {
@@ -477,14 +470,14 @@
   // Ensure all resource boxes stretch to fill their grid cell
   .erps-resource-box,
   .erps-stat-box {
-    height: sheet.$sheet-percent-full; // Fill the grid cell height
+    height: $resource-percent-full; // Fill the grid cell height
 
     // Calculate section heights based on whether third section exists
     &:not(:has(.erps-resource-box__third, .erps-stat-box__third)) {
       // Two-section layout: upper + lower
       .erps-resource-box__upper,
       .erps-stat-box__upper {
-        flex: 0 0 sheet.$sheet-height-section-upper;
+        flex: 0 0 $resource-height-upper;
       }
 
       .erps-resource-box__lower,
@@ -497,12 +490,12 @@
       // Three-section layout: distribute space
       .erps-resource-box__upper,
       .erps-stat-box__upper {
-        flex: 0 0 sheet.$sheet-height-section-upper;
+        flex: 0 0 $resource-height-upper;
       }
 
       .erps-resource-box__third,
       .erps-stat-box__third {
-        flex: 0 0 sheet.$sheet-height-section-third;
+        flex: 0 0 $resource-height-third;
       }
 
       .erps-resource-box__lower,
@@ -519,8 +512,8 @@
       // Add invisible third section for alignment
       &::after {
         content: '';
-        height: sheet.$sheet-height-section-third;
-        flex: 0 0 sheet.$sheet-height-section-third;
+        height: $resource-height-third;
+        flex: 0 0 $resource-height-third;
       }
     }
   }

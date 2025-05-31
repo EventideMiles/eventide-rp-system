@@ -22,74 +22,45 @@
   --erps-sheet-light: #{map.get(themes.$blue-theme, light)};
 }
 
-// Theme-specific defaults that activate based on sheet classes
-.eventide-sheet[data-bg-theme="blue"] {
-  --erps-sheet-primary: #{map.get(themes.$blue-theme, primary)};
-  --erps-sheet-secondary: #{map.get(themes.$blue-theme, secondary)};
-  --erps-sheet-bright: #{map.get(themes.$blue-theme, light)};
-  --erps-sheet-glow: #{map.get(themes.$blue-theme, glow)};
-  --erps-sheet-text: #{map.get(themes.$blue-theme, text)};
-  --erps-sheet-accent: #{map.get(themes.$blue-theme, accent)};
-  --erps-sheet-light: #{map.get(themes.$blue-theme, light)};
-}
+// Generate theme-specific CSS custom properties efficiently
+$theme-map: (
+  "blue": themes.$blue-theme,
+  "black": themes.$black-theme,
+  "green": themes.$green-theme,
+  "light": themes.$light-theme,
+  "gold": themes.$gold-theme,
+  "purple": themes.$purple-theme
+);
 
-.eventide-sheet[data-bg-theme="black"] {
-  --erps-sheet-primary: #{map.get(themes.$black-theme, primary)};
-  --erps-sheet-secondary: #{map.get(themes.$black-theme, secondary)};
-  --erps-sheet-bright: #{map.get(themes.$black-theme, light)};
-  --erps-sheet-glow: #{map.get(themes.$black-theme, glow)};
-  --erps-sheet-text: #{map.get(themes.$black-theme, text)};
-  --erps-sheet-accent: #{map.get(themes.$black-theme, accent)};
-  --erps-sheet-light: #{map.get(themes.$black-theme, light)};
-}
+@each $theme-name, $theme-colors in $theme-map {
+  .eventide-sheet[data-bg-theme="#{$theme-name}"] {
+    --theme-primary: #{map.get($theme-colors, primary)};
+    --theme-secondary: #{map.get($theme-colors, secondary)};
+    --theme-tertiary: #{map.get($theme-colors, tertiary)};
+    --theme-accent: #{map.get($theme-colors, accent)};
+    --theme-light: #{map.get($theme-colors, light)};
+    --theme-glow: #{map.get($theme-colors, glow)};
+    --theme-text: #{map.get($theme-colors, text)};
+    --theme-bright: #{map.get($theme-colors, bright)};
 
-.eventide-sheet[data-bg-theme="green"] {
-  --erps-sheet-primary: #{map.get(themes.$green-theme, primary)};
-  --erps-sheet-secondary: #{map.get(themes.$green-theme, secondary)};
-  --erps-sheet-bright: #{map.get(themes.$green-theme, light)};
-  --erps-sheet-glow: #{map.get(themes.$green-theme, glow)};
-  --erps-sheet-text: #{map.get(themes.$green-theme, text)};
-  --erps-sheet-accent: #{map.get(themes.$green-theme, accent)};
-  --erps-sheet-light: #{map.get(themes.$green-theme, light)};
-}
-
-.eventide-sheet[data-bg-theme="light"] {
-  --erps-sheet-primary: #{map.get(themes.$light-theme, primary)};
-  --erps-sheet-secondary: #{map.get(themes.$light-theme, secondary)};
-  --erps-sheet-bright: #{map.get(themes.$light-theme, light)};
-  --erps-sheet-glow: #{map.get(themes.$light-theme, glow)};
-  --erps-sheet-text: #{map.get(themes.$light-theme, text)};
-  --erps-sheet-accent: #{map.get(themes.$light-theme, accent)};
-  --erps-sheet-light: #{map.get(themes.$light-theme, light)};
-}
-
-.eventide-sheet[data-bg-theme="gold"] {
-  --erps-sheet-primary: #{map.get(themes.$gold-theme, primary)};
-  --erps-sheet-secondary: #{map.get(themes.$gold-theme, secondary)};
-  --erps-sheet-bright: #{map.get(themes.$gold-theme, light)};
-  --erps-sheet-glow: #{map.get(themes.$gold-theme, glow)};
-  --erps-sheet-text: #{map.get(themes.$gold-theme, text)};
-  --erps-sheet-accent: #{map.get(themes.$gold-theme, accent)};
-  --erps-sheet-light: #{map.get(themes.$gold-theme, light)};
-}
-
-.eventide-sheet[data-bg-theme="purple"] {
-  --erps-sheet-primary: #{map.get(themes.$purple-theme, primary)};
-  --erps-sheet-secondary: #{map.get(themes.$purple-theme, secondary)};
-  --erps-sheet-bright: #{map.get(themes.$purple-theme, light)};
-  --erps-sheet-glow: #{map.get(themes.$purple-theme, glow)};
-  --erps-sheet-text: #{map.get(themes.$purple-theme, text)};
-  --erps-sheet-accent: #{map.get(themes.$purple-theme, accent)};
-  --erps-sheet-light: #{map.get(themes.$purple-theme, light)};
+    // Legacy sheet properties for backward compatibility
+    --erps-sheet-primary: #{map.get($theme-colors, primary)};
+    --erps-sheet-secondary: #{map.get($theme-colors, secondary)};
+    --erps-sheet-bright: #{map.get($theme-colors, light)};
+    --erps-sheet-glow: #{map.get($theme-colors, glow)};
+    --erps-sheet-text: #{map.get($theme-colors, text)};
+    --erps-sheet-accent: #{map.get($theme-colors, accent)};
+    --erps-sheet-light: #{map.get($theme-colors, light)};
+  }
 }
 
 // General selectors (must come before any specific theme selectors for proper specificity)
 label,
 .form-group label,
 .section-header {
-  font-family: var(--erps-info-font) !important;
-  font-weight: 600 !important;
-  letter-spacing: 0.3px !important;
+  font-family: var(--erps-info-font);
+  font-weight: 600;
+  letter-spacing: 0.3px;
 }
 
 .eventide-sheet {
@@ -149,10 +120,10 @@ label,
     &[data-header-theme="light"] {
       // Toggle label text for light theme
       .eventide-sheet__toggle-group label {
-        color: var(--erps-sheet-text, var(--theme-text, var(--erps-sheet-text))) !important;
+        color: var(--erps-sheet-text, var(--theme-text, var(--erps-sheet-text)));
 
         &:hover {
-          color: #0f172a !important; // Even darker on hover
+          color: #0f172a; // Even darker on hover
         }
       }
     }
@@ -178,94 +149,137 @@ label,
         z-index: 2;
       }
     }
+
+    &--actor {
+      // Actor-specific header styling with theme-aware colors
+      background: linear-gradient(
+        135deg,
+        var(--erps-sheet-accent, var(--theme-accent, var(--erps-sheet-accent))) 0%,
+        var(--erps-sheet-primary, var(--theme-primary, var(--erps-sheet-primary))) 50%,
+        var(--erps-sheet-secondary, var(--theme-secondary, var(--erps-sheet-secondary))) 100%
+      );
+      border: 2px solid var(--erps-sheet-glow, var(--theme-glow, var(--erps-sheet-glow)));
+      border-radius: 12px;
+      box-shadow:
+        0 4px 20px rgb(0 0 0 / 60%),
+        inset 0 1px 0 rgb(255 255 255 / 10%);
+      padding: 1rem;
+      margin-bottom: 0.5rem;
+      position: relative;
+
+      // Add subtle animated glow using theme colors
+      &::before {
+        content: '';
+        position: absolute;
+        inset: -2px;
+        background: linear-gradient(45deg,
+          var(--erps-sheet-glow, var(--theme-glow, var(--erps-sheet-glow))),
+          var(--erps-sheet-light, var(--theme-light, var(--erps-sheet-light))),
+          var(--erps-sheet-glow, var(--theme-glow, var(--erps-sheet-glow)))
+        );
+        border-radius: 14px;
+        z-index: -1;
+        opacity: 0.3;
+        animation: header-glow 3s ease-in-out infinite alternate;
+      }
+
+      // ERPS header fields styling
+      .eventide-sheet__header-fields {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        height: 100%;
+        justify-content: space-between;
+      }
+    }
   }
 
   // Character name input theme system with multiple color schemes
   .document-name {
-    position: relative !important;
-    margin-bottom: 1rem !important;
+    position: relative;
+    margin-bottom: 1rem;
 
     // Add subtle animated element to the left
     &::before {
-      content: '' !important;
-      position: absolute !important;
-      top: 50% !important;
-      left: -25px !important;
-      width: 20px !important;
-      height: 3px !important;
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: -25px;
+      width: 20px;
+      height: 3px;
       background: linear-gradient(90deg,
         transparent 0%,
         var(--erps-sheet-glow, var(--theme-glow, var(--erps-sheet-glow))) 30%,
         var(--erps-sheet-light, var(--theme-light, var(--erps-sheet-light))) 70%,
-        transparent 100%) !important;
-      border-radius: 2px !important;
-      transform: translateY(-50%) !important;
-      animation: name-input-glow 3s ease-in-out infinite !important;
-      z-index: 1 !important;
+        transparent 100%);
+      border-radius: 2px;
+      transform: translateY(-50%);
+      animation: name-input-glow 3s ease-in-out infinite;
+      z-index: 1;
     }
 
     // Add decorative elements on both sides
     &::after {
-      content: '' !important;
-      position: absolute !important;
-      top: 50% !important;
-      right: -25px !important;
-      width: 20px !important;
-      height: 3px !important;
+      content: '';
+      position: absolute;
+      top: 50%;
+      right: -25px;
+      width: 20px;
+      height: 3px;
       background: linear-gradient(90deg,
         transparent 0%,
         var(--erps-sheet-light, var(--theme-light, var(--erps-sheet-light))) 30%,
         var(--erps-sheet-glow, var(--theme-glow, var(--erps-sheet-glow))) 70%,
-        transparent 100%) !important;
-      border-radius: 2px !important;
-      transform: translateY(-50%) !important;
-      animation: name-input-glow 3s ease-in-out infinite 1.5s !important;
-      z-index: 1 !important;
+        transparent 100%);
+      border-radius: 2px;
+      transform: translateY(-50%);
+      animation: name-input-glow 3s ease-in-out infinite 1.5s;
+      z-index: 1;
     }
   }
 
-    // Target the specific character name input class
+  // Target the specific character name input class
   .eventide-sheet__character-name {
-    font-family: var(--erps-display-font) !important;
-    font-size: 1.8rem !important;
-    font-weight: 600 !important;
-    letter-spacing: 1px !important;
-    text-align: center !important;
-    color: var(--erps-sheet-text, var(--theme-text, var(--erps-sheet-text))) !important;
-    background: var(--erps-sheet-accent, var(--theme-accent, var(--erps-sheet-accent))) !important; // Flat single color background
-    border: 2px solid rgb(255 255 255 / 20%) !important; // Subtle border
-    border-radius: 8px !important;
-    padding: 12px 20px !important;
-    width: 100% !important;
-    height: auto !important;
-    min-height: 7rem !important;
+    font-family: var(--erps-display-font);
+    font-size: 1.8rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-align: center;
+    color: var(--erps-sheet-text, var(--theme-text, var(--erps-sheet-text)));
+    background: var(--erps-sheet-accent, var(--theme-accent, var(--erps-sheet-accent)));
+    border: 2px solid rgb(255 255 255 / 20%);
+    border-radius: 8px;
+    padding: 12px 20px;
+    width: 100%;
+    height: auto;
+    min-height: 7rem;
     box-shadow:
       0 2px 8px rgb(0 0 0 / 30%),
-      inset 0 1px 0 rgb(255 255 255 / 10%) !important; // Minimal shadow
-
-    text-shadow: 0 1px 2px rgb(0 0 0 / 80%) !important; // Simple text shadow
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-    position: relative !important;
+      inset 0 1px 0 rgb(255 255 255 / 10%);
+    text-shadow: 0 1px 2px rgb(0 0 0 / 80%);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
 
     // Elegant border effect
     &::before {
-      content: '' !important;
-      position: absolute !important;
-      inset: -2px !important;
+      content: '';
+      position: absolute;
+      inset: -2px;
       background: linear-gradient(45deg,
         var(--erps-sheet-primary, var(--theme-primary, var(--erps-sheet-primary))),
         var(--erps-sheet-light, var(--theme-light, var(--erps-sheet-light))),
         var(--erps-sheet-secondary, var(--theme-secondary, var(--erps-sheet-secondary))),
         var(--erps-sheet-light, var(--theme-light, var(--erps-sheet-light))),
-        var(--erps-sheet-primary, var(--theme-primary, var(--erps-sheet-primary)))) !important;
-      border-radius: 10px !important;
-      z-index: -1 !important;
-      opacity: 0 !important;
-      transition: opacity 0.3s ease !important;
+        var(--erps-sheet-primary, var(--theme-primary, var(--erps-sheet-primary))));
+      border-radius: 10px;
+      z-index: -1;
+      opacity: 0;
+      transition: opacity 0.3s ease;
     }
 
     &:hover {
-      color: var(--erps-sheet-text, var(--theme-text, var(--erps-sheet-text))) !important;
+      color: var(--erps-sheet-text, var(--theme-text, var(--erps-sheet-text)));
       background:
         var(--theme-pattern),
         linear-gradient(135deg,
@@ -273,27 +287,27 @@ label,
           var(--erps-sheet-primary, var(--theme-primary, var(--erps-sheet-primary))) 25%,
           var(--erps-sheet-secondary, var(--theme-secondary, var(--erps-sheet-secondary))) 50%,
           var(--erps-sheet-primary, var(--theme-primary, var(--erps-sheet-primary))) 75%,
-          var(--erps-sheet-accent, var(--theme-accent, var(--erps-sheet-accent))) 100%) !important;
-      background-size: 20px 20px, 100% 100% !important;
-      background-position: 0 0, 0 0 !important;
-      animation: pattern-shift 8s linear infinite !important;
+          var(--erps-sheet-accent, var(--theme-accent, var(--erps-sheet-accent))) 100%);
+      background-size: 20px 20px, 100% 100%;
+      background-position: 0 0, 0 0;
+      animation: pattern-shift 8s linear infinite;
       box-shadow:
         0 0 30px var(--erps-sheet-glow, var(--theme-glow, var(--erps-sheet-glow))),
         inset 0 2px 4px rgb(0 0 0 / 30%),
-        inset 0 -2px 4px rgb(255 255 255 / 20%) !important;
+        inset 0 -2px 4px rgb(255 255 255 / 20%);
       text-shadow:
         0 1px 3px rgb(0 0 0 / 90%),
-        0 0 15px var(--erps-sheet-light, var(--theme-light, var(--erps-sheet-light))) !important;
-      transform: translateY(-1px) !important;
+        0 0 15px var(--erps-sheet-light, var(--theme-light, var(--erps-sheet-light)));
+      transform: translateY(-1px);
 
       &::before {
-        opacity: 1 !important;
+        opacity: 1;
       }
     }
 
     &:focus {
-      outline: none !important;
-      color: var(--erps-sheet-text, var(--theme-text, var(--erps-sheet-text))) !important;
+      outline: none;
+      color: var(--erps-sheet-text, var(--theme-text, var(--erps-sheet-text)));
       background:
         var(--theme-pattern),
         linear-gradient(135deg,
@@ -301,32 +315,49 @@ label,
           var(--erps-sheet-primary, var(--theme-primary, var(--erps-sheet-primary))) 25%,
           var(--erps-sheet-secondary, var(--theme-secondary, var(--erps-sheet-secondary))) 50%,
           var(--erps-sheet-primary, var(--theme-primary, var(--erps-sheet-primary))) 75%,
-          var(--erps-sheet-accent, var(--theme-accent, var(--erps-sheet-accent))) 100%) !important;
-      background-size: 20px 20px, 100% 100% !important;
-      background-position: 0 0, 0 0 !important;
-      animation: pattern-shift 6s linear infinite !important;
+          var(--erps-sheet-accent, var(--theme-accent, var(--erps-sheet-accent))) 100%);
+      background-size: 20px 20px, 100% 100%;
+      background-position: 0 0, 0 0;
+      animation: pattern-shift 6s linear infinite;
       box-shadow:
         0 0 40px var(--erps-sheet-glow, var(--theme-glow, var(--erps-sheet-glow))),
         0 0 20px var(--erps-sheet-light, var(--theme-light, var(--erps-sheet-light))),
         inset 0 2px 6px rgb(0 0 0 / 40%),
-        inset 0 -2px 6px rgb(255 255 255 / 30%) !important;
+        inset 0 -2px 6px rgb(255 255 255 / 30%);
       text-shadow:
         0 1px 4px rgb(0 0 0 / 100%),
         0 0 20px var(--erps-sheet-light, var(--theme-light, var(--erps-sheet-light))),
-        0 0 30px var(--erps-sheet-glow, var(--theme-glow, var(--erps-sheet-glow))) !important;
-      transform: translateY(-2px) !important;
+        0 0 30px var(--erps-sheet-glow, var(--theme-glow, var(--erps-sheet-glow)));
+      transform: translateY(-2px);
 
       &::before {
-        opacity: 1 !important;
+        opacity: 1;
       }
     }
 
     // Placeholder styling
     &::placeholder {
-      color: var(--erps-sheet-light, var(--theme-light, var(--erps-sheet-light))) !important;
-      opacity: 0.7 !important;
-      font-style: italic !important;
-      text-shadow: 0 1px 2px rgb(0 0 0 / 60%) !important;
+      color: var(--erps-sheet-light, var(--theme-light, var(--erps-sheet-light)));
+      opacity: 0.7;
+      font-style: italic;
+      text-shadow: 0 1px 2px rgb(0 0 0 / 60%);
+    }
+  }
+
+  // ===================================
+  // ANIMATIONS
+  // ===================================
+
+  // Header glow animation for animated background effects
+  @keyframes header-glow {
+    0%, 100% {
+      opacity: 0.3;
+      transform: scale(1);
+    }
+
+    50% {
+      opacity: 0.8;
+      transform: scale(1.1);
     }
   }
 
@@ -366,91 +397,27 @@ label,
       transform: translateY(-50%) scale(1.2);
     }
   }
-}
 
-// Enhanced header styling for game design feel
-.sheet-header--actor {
-  background: linear-gradient(
-    135deg,
-    rgb(20 30 45 / 95%) 0%,
-    rgb(30 40 60 / 90%) 50%,
-    rgb(25 35 50 / 95%) 100%
-  );
-  border: 2px solid colors.$universal-white;
-  border-radius: 12px;
-  box-shadow:
-    0 4px 20px rgb(0 0 0 / 60%),
-    inset 0 1px 0 rgb(255 255 255 / 10%);
-  padding: 1rem;
-  margin-bottom: 0.5rem;
-  position: relative;
+  // ===================================
+  // ITEM HEADER SPECIFIC ADJUSTMENTS
+  // ===================================
 
-  // Add subtle animated glow
-  &::before {
-    content: '';
-    position: absolute;
-    inset: -2px;
-    background: linear-gradient(45deg,
-      colors.$universal-white,
-      colors.$white-text-glow,
-      colors.$universal-white
-    );
-    border-radius: 14px;
-    z-index: -1;
-    opacity: 0.3;
-    animation: header-glow 3s ease-in-out infinite alternate;
-  }
+  // Item header specific grid spacing adjustments
+  .eventide-sheet__header--item .eventide-sheet__header-fields .grid {
+    gap: 0.5rem;
+    margin: 0.5rem 0;
 
-  // Tighten up the main grid
-  .grid {
-    gap: 0.75rem;
-    align-items: flex-start;
-    margin-bottom: 0;
-  }
+    &:first-child {
+      margin-top: 0;
+    }
 
-  // Ensure header fields align properly
-  .header-fields {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    height: 100%;
-    justify-content: space-between;
-  }
+    &:last-child {
+      margin-bottom: 0;
+    }
 
-  // ERPS header fields styling
-  &__header-fields {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    height: 100%;
-    justify-content: space-between;
-  }
-
-  // Align the left column content
-  .grid-span-2 {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    height: 100%;
-  }
-}
-
-// Item header specific grid spacing adjustments
-.eventide-sheet__header--item .eventide-sheet__header-fields .grid {
-  gap: 0.5rem;
-  margin: 0.5rem 0;
-
-  &:first-child {
-    margin-top: 0;
-  }
-
-  &:last-child {
-    margin-bottom: 0;
-  }
-
-  // Reduce color picker label spacing in item headers
-  .erps-color-picker--label-above .erps-color-picker__container {
-    gap: 0.125rem; // Reduced from 0.25rem
+    // Reduce color picker label spacing in item headers
+    .erps-color-picker--label-above .erps-color-picker__container {
+      gap: 0.125rem; // Reduced from 0.25rem
+    }
   }
 }

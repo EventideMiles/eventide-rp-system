@@ -4,9 +4,80 @@
 // Reusable ability display system with interactive buttons and status indicators
 // Extracted from character sheet and modernized following refactoring guidelines
 
-@use "../../utils/colors" as colors;
-@use "../../utils/mixins" as mixins;
-@use "../../utils/sheet-tokens" as sheet;
+@use "../../utils/themes" as themes;
+@use "../../utils/sheet-tokens" as tokens;
+@use "sass:color";
+
+// ===================================
+// CONFIGURATION VARIABLES
+// ===================================
+// Using sheet-tokens for consistent design system integration
+
+// Ability colors mapping
+$ability-colors: (
+  "acro": #bf4400,
+  "phys": #a80303,
+  "fort": #2d682d,
+  "will": #6a1b9a,
+  "wits": #0e4380
+);
+
+// Card dimensions and spacing
+$card-height: tokens.$sheet-height-ability-card;
+$card-padding: tokens.$sheet-padding-input;
+$card-gap: tokens.$sheet-spacing-sm;
+$card-border-radius: tokens.$sheet-radius-sm;
+$card-border-width: tokens.$sheet-border-base;
+$card-border-accent: tokens.$sheet-border-accent;
+
+// Input and button dimensions
+$input-width: tokens.$sheet-width-input;
+$input-height: tokens.$sheet-height-input;
+$button-width: tokens.$sheet-width-button;
+$button-height: tokens.$sheet-height-button;
+$status-size: tokens.$sheet-size-status-element;
+
+// Typography
+$label-font-size: tokens.$sheet-font-size-sm;
+$input-font-size: tokens.$sheet-font-size-md;
+$icon-font-size: tokens.$sheet-font-size-label-lg;
+$font-weight-semibold: tokens.$sheet-font-weight-semibold;
+$letter-spacing: tokens.$sheet-letter-spacing-tight;
+$line-height: tokens.$sheet-line-height-tight;
+
+// Borders and radius
+$border-thin: tokens.$sheet-border-thin;
+$radius-xs: tokens.$sheet-radius-xs;
+
+// Shadows and effects
+$shadow-blur-xs: tokens.$sheet-shadow-blur-xs;
+$shadow-blur-sm: tokens.$sheet-shadow-blur-sm;
+$shadow-blur-md: tokens.$sheet-shadow-blur-md;
+$shadow-blur-lg: tokens.$sheet-shadow-blur-lg;
+$shadow-offset-xs: tokens.$sheet-shadow-offset-xs;
+$shadow-offset-sm: tokens.$sheet-shadow-offset-sm;
+$glow-blur-sm: tokens.$sheet-glow-blur-sm;
+
+// Transitions and animations
+$transition-base: tokens.$sheet-transition-base;
+$transition-medium: tokens.$sheet-transition-medium;
+$animation-fast: tokens.$sheet-animation-fast;
+$animation-shimmer: tokens.$sheet-animation-shimmer;
+
+// Transforms and opacity
+$transform-hover-sm: tokens.$sheet-transform-hover-sm;
+$transform-scale-active: tokens.$sheet-transform-scale-active;
+$transform-scale-hover: tokens.$sheet-transform-scale-hover;
+$transform-scale-icon: tokens.$sheet-transform-scale-icon;
+$opacity-default: tokens.$sheet-opacity-default;
+$opacity-full: tokens.$sheet-opacity-full;
+
+// Layout dimensions
+$header-min-width: tokens.$sheet-width-header-min;
+$header-max-width: tokens.$sheet-width-header-max;
+$header-width: tokens.$sheet-width-header;
+$spacing-xs: tokens.$sheet-spacing-xs;
+$spacing-sm: tokens.$sheet-spacing-sm;
 
 // ===================================
 // UTILITY MIXINS
@@ -17,22 +88,22 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  border-radius: sheet.$sheet-radius-sm;
-  border: sheet.$sheet-border-base solid transparent;
+  border-radius: $card-border-radius;
+  border: $card-border-width solid transparent;
   background: linear-gradient(
     135deg,
-    rgb(0 0 0 / 30%) 0%,
-    rgb(20 30 45 / 40%) 50%,
-    rgb(0 0 0 / 30%) 100%
+    themes.color(black, 30) 0%,
+    themes.color(gray-dark, 40) 50%,
+    themes.color(black, 30) 100%
   );
-  padding: sheet.$sheet-padding-input;
-  transition: all sheet.$sheet-transition-medium ease;
+  padding: $card-padding;
+  transition: all $transition-medium ease;
   position: relative;
   overflow: hidden;
   cursor: pointer;
-  height: sheet.$sheet-height-ability-card;
-  width: sheet.$sheet-percent-full;
-  max-width: sheet.$sheet-percent-full;
+  height: $card-height;
+  width: 100%;
+  max-width: 100%;
   min-width: 0;
 }
 
@@ -42,88 +113,88 @@
   position: absolute;
   top: 0;
   left: 0;
-  width: sheet.$sheet-border-accent;
-  height: sheet.$sheet-percent-full;
+  width: $card-border-accent;
+  height: 100%;
   z-index: 1;
-  transition: all sheet.$sheet-transition-medium ease;
+  transition: all $transition-medium ease;
 }
 
 // Input styling for ability cards
 @mixin ability-card-input {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  width: sheet.$sheet-width-input !important;
-  height: sheet.$sheet-height-input !important;
-  min-height: sheet.$sheet-height-input !important;
-  max-height: sheet.$sheet-height-input !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  font-size: sheet.$sheet-font-size-md !important;
-  line-height: sheet.$sheet-line-height-tight !important;
-  text-align: center !important;
-  background: rgb(0 0 0 / 30%) !important;
-  border: sheet.$sheet-border-thin solid rgb(255 255 255 / 20%) !important;
-  border-radius: sheet.$sheet-radius-xs !important;
-  color: #fff !important;
-  flex-shrink: 0 !important;
-  box-sizing: border-box !important;
-  vertical-align: middle !important;
-  font-family: inherit !important;
-  font-weight: normal !important;
-  letter-spacing: normal !important;
-  text-transform: none !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: $input-width;
+  height: $input-height;
+  min-height: $input-height;
+  max-height: $input-height;
+  padding: 0;
+  margin: 0;
+  font-size: $input-font-size;
+  line-height: $line-height;
+  text-align: center;
+  background: themes.color(black, 30);
+  border: $border-thin solid themes.color(white, 20);
+  border-radius: $radius-xs;
+  color: themes.color(white);
+  flex-shrink: 0;
+  box-sizing: border-box;
+  vertical-align: middle;
+  font-family: inherit;
+  font-weight: normal;
+  letter-spacing: normal;
+  text-transform: none;
 
   &:focus {
-    border-color: rgb(255 255 255 / 50%) !important;
-    box-shadow: 0 0 sheet.$sheet-shadow-blur-xs rgb(255 255 255 / 30%) !important;
-    outline: none !important;
+    border-color: themes.color(white, 50);
+    box-shadow: 0 0 $shadow-blur-xs themes.color(white, 30);
+    outline: none;
   }
 
   &:hover {
-    border-color: rgb(255 255 255 / 40%) !important;
+    border-color: themes.color(white, 40);
   }
 }
 
 // Button styling for ability cards
 @mixin ability-card-button {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  width: sheet.$sheet-width-button !important;
-  height: sheet.$sheet-height-button !important;
-  min-height: sheet.$sheet-height-button !important;
-  max-height: sheet.$sheet-height-button !important;
-  min-width: sheet.$sheet-width-button !important;
-  max-width: sheet.$sheet-width-button !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  border-radius: sheet.$sheet-radius-xs !important;
-  color: #fff !important;
-  cursor: pointer !important;
-  transition: all sheet.$sheet-transition-base ease !important;
-  flex-shrink: 0 !important;
-  font-size: sheet.$sheet-font-size-md !important;
-  font-weight: bold !important;
-  line-height: sheet.$sheet-line-height-tight !important;
-  position: relative !important;
-  overflow: hidden !important;
-  box-sizing: border-box !important;
-  vertical-align: middle !important;
-  text-decoration: none !important;
-  text-transform: none !important;
-  letter-spacing: normal !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: $button-width;
+  height: $button-height;
+  min-height: $button-height;
+  max-height: $button-height;
+  min-width: $button-width;
+  max-width: $button-width;
+  padding: 0;
+  margin: 0;
+  border-radius: $radius-xs;
+  color: themes.color(white);
+  cursor: pointer;
+  transition: all $transition-base ease;
+  flex-shrink: 0;
+  font-size: $input-font-size;
+  font-weight: bold;
+  line-height: $line-height;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+  vertical-align: middle;
+  text-decoration: none;
+  text-transform: none;
+  letter-spacing: normal;
 
   // Default styling
-  background: rgb(255 255 255 / 10%);
-  border: sheet.$sheet-border-thin solid rgb(255 255 255 / 30%);
-  text-shadow: 0 0 sheet.$sheet-shadow-blur-xs rgb(255 255 255 / 60%);
+  background: themes.color(white, 10);
+  border: $border-thin solid themes.color(white, 30);
+  text-shadow: 0 0 $shadow-blur-xs themes.color(white, 60);
   box-shadow:
-    0 0 sheet.$sheet-shadow-blur-sm rgb(255 255 255 / 40%),
-    inset 0 sheet.$sheet-shadow-offset-xs 0 rgb(255 255 255 / 20%);
+    0 0 $shadow-blur-sm themes.color(white, 40),
+    inset 0 $shadow-offset-xs 0 themes.color(white, 20);
 
   &:active {
-    transform: scale(sheet.$sheet-transform-scale-active);
+    transform: scale($transform-scale-active);
   }
 
   // Subtle animated background shimmer
@@ -131,64 +202,120 @@
     content: '';
     position: absolute;
     top: 0;
-    left: (- sheet.$sheet-percent-full);
-    width: sheet.$sheet-percent-full;
-    height: sheet.$sheet-percent-full;
+    left: -100%;
+    width: 100%;
+    height: 100%;
     background: linear-gradient(
       90deg,
       transparent,
-      rgb(255 255 255 / 20%),
+      themes.color(white, 20),
       transparent
     );
-    animation: button-shimmer sheet.$sheet-animation-shimmer ease-in-out infinite;
+    animation: button-shimmer $animation-shimmer ease-in-out infinite;
   }
 }
 
 // Status container styling
 @mixin ability-card-status {
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
-  flex-shrink: 0 !important;
-  width: sheet.$sheet-size-status-element !important;
-  height: sheet.$sheet-size-status-element !important;
-  min-height: sheet.$sheet-size-status-element !important;
-  max-height: sheet.$sheet-size-status-element !important;
-  min-width: sheet.$sheet-size-status-element !important;
-  max-width: sheet.$sheet-size-status-element !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  border-radius: sheet.$sheet-radius-xs !important;
-  background: rgb(0 0 0 / 30%) !important;
-  border: sheet.$sheet-border-thin solid rgb(255 255 255 / 20%) !important;
-  transition: all sheet.$sheet-transition-base ease !important;
-  box-sizing: border-box !important;
-  vertical-align: middle !important;
-  position: relative !important;
-  overflow: visible !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  width: $status-size;
+  height: $status-size;
+  min-height: $status-size;
+  max-height: $status-size;
+  min-width: $status-size;
+  max-width: $status-size;
+  padding: 0;
+  margin: 0;
+  border-radius: $radius-xs;
+  background: themes.color(black, 30);
+  border: $border-thin solid themes.color(white, 20);
+  transition: all $transition-base ease;
+  box-sizing: border-box;
+  vertical-align: middle;
+  position: relative;
+  overflow: visible;
 
   &:hover {
-    background: rgb(0 0 0 / 40%) !important;
-    border-color: rgb(255 255 255 / 35%) !important;
+    background: themes.color(black, 40);
+    border-color: themes.color(white, 35);
   }
 }
 
 // Lock/unlock icon styling
 @mixin ability-card-icon {
-  font-size: sheet.$sheet-font-size-label-lg !important;
-  opacity: sheet.$sheet-opacity-default !important;
-  transition: all sheet.$sheet-transition-base ease !important;
-  display: inline-block !important;
-  line-height: sheet.$sheet-line-height-tight !important;
-  vertical-align: middle !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  text-decoration: none !important;
-  text-transform: none !important;
+  font-size: $icon-font-size;
+  opacity: $opacity-default;
+  transition: all $transition-base ease;
+  display: inline-block;
+  line-height: $line-height;
+  vertical-align: middle;
+  margin: 0;
+  padding: 0;
+  text-decoration: none;
+  text-transform: none;
 
   &:hover {
-    opacity: sheet.$sheet-opacity-full !important;
-    transform: scale(sheet.$sheet-transform-scale-icon) !important;
+    opacity: $opacity-full;
+    transform: scale($transform-scale-icon);
+  }
+}
+
+// Ability variant mixin - consolidates repetitive patterns
+@mixin ability-variant($color) {
+  &::before {
+    background: $color;
+  }
+
+  .eventide-ability-card__total-button {
+    background: color.change($color, $alpha: 0.3);
+    border: $border-thin solid color.change($color, $alpha: 0.5);
+    text-shadow: 0 0 $shadow-blur-xs color.change($color, $alpha: 0.8);
+    box-shadow:
+      0 0 $shadow-blur-sm color.change($color, $alpha: 0.4),
+      inset 0 $shadow-offset-xs 0 themes.color(white, 20);
+    animation: ability-glow $animation-fast ease-in-out infinite alternate;
+
+    &::before {
+      background: linear-gradient(
+        90deg,
+        transparent,
+        color.change($color, $alpha: 0.3),
+        transparent
+      );
+    }
+
+    &:hover {
+      background: color.change($color, $alpha: 0.5);
+      border-color: color.change($color, $alpha: 0.7);
+      transform: scale($transform-scale-hover);
+      box-shadow:
+        0 0 $shadow-blur-lg color.change($color, $alpha: 0.6),
+        inset 0 $shadow-offset-xs 0 themes.color(white, 30);
+    }
+  }
+
+  &:hover {
+    background: linear-gradient(
+      135deg,
+      color.change($color, $alpha: 0.2) 0%,
+      color.change($color, $alpha: 0.1) 50%,
+      color.change($color, $alpha: 0.05) 100%
+    );
+  }
+}
+
+// Ability pattern overlay mixin
+@mixin ability-pattern($color, $pattern) {
+  &:hover::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,#{$pattern}");
+    pointer-events: none;
+    z-index: 1;
   }
 }
 
@@ -197,12 +324,12 @@
 // ===================================
 
 .header-abilities {
-  gap: sheet.$sheet-spacing-xs;
-  padding: sheet.$sheet-spacing-xs;
+  gap: $spacing-xs;
+  padding: $spacing-xs;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  height: sheet.$sheet-percent-full; // Match the height of the header content
+  height: 100%;
 }
 
 // ===================================
@@ -223,40 +350,40 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    width: sheet.$sheet-percent-full;
-    gap: sheet.$sheet-spacing-sm;
+    width: 100%;
+    gap: $card-gap;
     justify-content: space-between;
   }
 
   &__header {
     flex-shrink: 0;
-    min-width: sheet.$sheet-width-header-min;
-    max-width: sheet.$sheet-width-header-max;
-    width: sheet.$sheet-width-header;
+    min-width: $header-min-width;
+    max-width: $header-max-width;
+    width: $header-width;
   }
 
   &__label {
-    font-size: sheet.$sheet-font-size-sm;
-    font-weight: sheet.$sheet-font-weight-semibold;
-    color: rgb(255 255 255 / 80%);
+    font-size: $label-font-size;
+    font-weight: $font-weight-semibold;
+    color: themes.color(white, 80);
     text-transform: uppercase;
-    letter-spacing: sheet.$sheet-letter-spacing-tight;
-    line-height: sheet.$sheet-line-height-tight;
+    letter-spacing: $letter-spacing;
+    line-height: $line-height;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     cursor: help;
-    transition: color sheet.$sheet-transition-base ease;
+    transition: color $transition-base ease;
 
     &:hover {
-      color: rgb(255 255 255 / 100%);
+      color: themes.color(white);
     }
   }
 
   &__stats {
     display: flex;
     align-items: center;
-    gap: sheet.$sheet-spacing-sm;
+    gap: $card-gap;
     flex-grow: 1;
   }
 
@@ -276,23 +403,23 @@
     @include ability-card-icon;
 
     color: #ff6b6b;
-    text-shadow: 0 0 sheet.$sheet-shadow-blur-xs rgb(255 107 107 / 60%);
+    text-shadow: 0 0 $shadow-blur-xs rgb(255 107 107 / 60%);
   }
 
   &__unlock {
     @include ability-card-icon;
 
     color: #4CAF50;
-    text-shadow: 0 0 sheet.$sheet-shadow-blur-xs rgb(76 175 80 / 60%);
+    text-shadow: 0 0 $shadow-blur-xs rgb(76 175 80 / 60%);
   }
 
-  // Hover effects with themed backgrounds and patterns
+  // Hover effects
   &:hover {
-    transform: translateY(sheet.$sheet-transform-hover-sm);
-    box-shadow: 0 sheet.$sheet-shadow-offset-sm sheet.$sheet-shadow-blur-md rgb(0 0 0 / 30%);
+    transform: translateY($transform-hover-sm);
+    box-shadow: 0 $shadow-offset-sm $shadow-blur-md themes.color(black, 30);
 
     &::before {
-      width: sheet.$sheet-percent-full;
+      width: 100%;
       opacity: 0.15;
     }
   }
@@ -301,267 +428,22 @@
   // ABILITY-SPECIFIC STYLING
   // ===================================
 
-  // Acrobatics
-  &--acro {
-    &::before {
-      background: colors.$acro;
-    }
+  // Generate ability variants
+  @each $ability, $color in $ability-colors {
+    &--#{$ability} {
+      @include ability-variant($color);
 
-    .eventide-ability-card__total-button {
-      background: rgb(191 68 0 / 30%);
-      border: sheet.$sheet-border-thin solid rgb(191 68 0 / 50%);
-      text-shadow: 0 0 sheet.$sheet-shadow-blur-xs rgb(191 68 0 / 80%);
-      box-shadow:
-        0 0 sheet.$sheet-shadow-blur-sm rgb(191 68 0 / 40%),
-        inset 0 sheet.$sheet-shadow-offset-xs 0 rgb(255 255 255 / 20%);
-      animation: acro-glow sheet.$sheet-animation-fast ease-in-out infinite alternate;
-
-      &::before {
-        background: linear-gradient(
-          90deg,
-          transparent,
-          rgb(191 68 0 / 30%),
-          transparent
-        );
-      }
-
-      &:hover {
-        background: rgb(191 68 0 / 50%);
-        border-color: rgb(191 68 0 / 70%);
-        transform: scale(sheet.$sheet-transform-scale-hover);
-        box-shadow:
-          0 0 sheet.$sheet-shadow-blur-lg rgb(191 68 0 / 60%),
-          inset 0 sheet.$sheet-shadow-offset-xs 0 rgb(255 255 255 / 30%);
-      }
-    }
-
-    &:hover {
-      background: linear-gradient(
-        135deg,
-        rgb(191 68 0 / 20%) 0%,
-        rgb(191 68 0 / 10%) 50%,
-        rgb(191 68 0 / 5%) 100%
-      );
-
-      &::after {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23bf4400' fill-opacity='0.1'%3E%3Cpath d='M10 2l2 6h6l-5 4 2 6-5-4-5 4 2-6-5-4h6z'/%3E%3C/g%3E%3C/svg%3E");
-        pointer-events: none;
-        z-index: 1;
-      }
-    }
-  }
-
-  // Physical
-  &--phys {
-    &::before {
-      background: colors.$phys;
-    }
-
-    .eventide-ability-card__total-button {
-      background: rgb(168 3 3 / 30%);
-      border: sheet.$sheet-border-thin solid rgb(168 3 3 / 50%);
-      text-shadow: 0 0 sheet.$sheet-shadow-blur-xs rgb(168 3 3 / 80%);
-      box-shadow:
-        0 0 sheet.$sheet-shadow-blur-sm rgb(168 3 3 / 40%),
-        inset 0 sheet.$sheet-shadow-offset-xs 0 rgb(255 255 255 / 20%);
-      animation: phys-glow sheet.$sheet-animation-fast ease-in-out infinite alternate;
-
-      &::before {
-        background: linear-gradient(
-          90deg,
-          transparent,
-          rgb(168 3 3 / 30%),
-          transparent
-        );
-      }
-
-      &:hover {
-        background: rgb(168 3 3 / 50%);
-        border-color: rgb(168 3 3 / 70%);
-        transform: scale(sheet.$sheet-transform-scale-hover);
-        box-shadow:
-          0 0 sheet.$sheet-shadow-blur-lg rgb(168 3 3 / 60%),
-          inset 0 sheet.$sheet-shadow-offset-xs 0 rgb(255 255 255 / 30%);
-      }
-    }
-
-    &:hover {
-      background: linear-gradient(
-        135deg,
-        rgb(168 3 3 / 20%) 0%,
-        rgb(168 3 3 / 10%) 50%,
-        rgb(168 3 3 / 5%) 100%
-      );
-
-      &::after {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23a80303' fill-opacity='0.1'%3E%3Crect x='8' y='2' width='4' height='16'/%3E%3Crect x='2' y='8' width='16' height='4'/%3E%3C/g%3E%3C/svg%3E");
-        pointer-events: none;
-        z-index: 1;
-      }
-    }
-  }
-
-  // Fortitude
-  &--fort {
-    &::before {
-      background: colors.$fort;
-    }
-
-    .eventide-ability-card__total-button {
-      background: rgb(45 104 45 / 30%);
-      border: sheet.$sheet-border-thin solid rgb(45 104 45 / 50%);
-      text-shadow: 0 0 sheet.$sheet-shadow-blur-xs rgb(45 104 45 / 80%);
-      box-shadow:
-        0 0 sheet.$sheet-shadow-blur-sm rgb(45 104 45 / 40%),
-        inset 0 sheet.$sheet-shadow-offset-xs 0 rgb(255 255 255 / 20%);
-      animation: fort-glow sheet.$sheet-animation-fast ease-in-out infinite alternate;
-
-      &::before {
-        background: linear-gradient(
-          90deg,
-          transparent,
-          rgb(45 104 45 / 30%),
-          transparent
-        );
-      }
-
-      &:hover {
-        background: rgb(45 104 45 / 50%);
-        border-color: rgb(45 104 45 / 70%);
-        transform: scale(sheet.$sheet-transform-scale-hover);
-        box-shadow:
-          0 0 sheet.$sheet-shadow-blur-lg rgb(45 104 45 / 60%),
-          inset 0 sheet.$sheet-shadow-offset-xs 0 rgb(255 255 255 / 30%);
-      }
-    }
-
-    &:hover {
-      background: linear-gradient(
-        135deg,
-        rgb(45 104 45 / 20%) 0%,
-        rgb(45 104 45 / 10%) 50%,
-        rgb(45 104 45 / 5%) 100%
-      );
-
-      &::after {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%232d682d' fill-opacity='0.1'%3E%3Cpath d='M10 2L4 6v8l6 4 6-4V6z'/%3E%3C/g%3E%3C/svg%3E");
-        pointer-events: none;
-        z-index: 1;
-      }
-    }
-  }
-
-  // Willpower
-  &--will {
-    &::before {
-      background: colors.$will;
-    }
-
-    .eventide-ability-card__total-button {
-      background: rgb(106 27 154 / 30%);
-      border: sheet.$sheet-border-thin solid rgb(106 27 154 / 50%);
-      text-shadow: 0 0 sheet.$sheet-shadow-blur-xs rgb(106 27 154 / 80%);
-      box-shadow:
-        0 0 sheet.$sheet-shadow-blur-sm rgb(106 27 154 / 40%),
-        inset 0 sheet.$sheet-shadow-offset-xs 0 rgb(255 255 255 / 20%);
-      animation: will-glow sheet.$sheet-animation-fast ease-in-out infinite alternate;
-
-      &::before {
-        background: linear-gradient(
-          90deg,
-          transparent,
-          rgb(106 27 154 / 30%),
-          transparent
-        );
-      }
-
-      &:hover {
-        background: rgb(106 27 154 / 50%);
-        border-color: rgb(106 27 154 / 70%);
-        transform: scale(sheet.$sheet-transform-scale-hover);
-        box-shadow:
-          0 0 sheet.$sheet-shadow-blur-lg rgb(106 27 154 / 60%),
-          inset 0 sheet.$sheet-shadow-offset-xs 0 rgb(255 255 255 / 30%);
-      }
-    }
-
-    &:hover {
-      background: linear-gradient(
-        135deg,
-        rgb(106 27 154 / 20%) 0%,
-        rgb(106 27 154 / 10%) 50%,
-        rgb(106 27 154 / 5%) 100%
-      );
-
-      &::after {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%236a1b9a' fill-opacity='0.1'%3E%3Ccircle cx='10' cy='10' r='8'/%3E%3Ccircle cx='10' cy='10' r='4'/%3E%3C/g%3E%3C/svg%3E");
-        pointer-events: none;
-        z-index: 1;
-      }
-    }
-  }
-
-  // Wits
-  &--wits {
-    &::before {
-      background: colors.$wits;
-    }
-
-    .eventide-ability-card__total-button {
-      background: rgb(14 67 128 / 30%);
-      border: sheet.$sheet-border-thin solid rgb(14 67 128 / 50%);
-      text-shadow: 0 0 sheet.$sheet-shadow-blur-xs rgb(14 67 128 / 80%);
-      box-shadow:
-        0 0 sheet.$sheet-shadow-blur-sm rgb(14 67 128 / 40%),
-        inset 0 sheet.$sheet-shadow-offset-xs 0 rgb(255 255 255 / 20%);
-      animation: wits-glow sheet.$sheet-animation-fast ease-in-out infinite alternate;
-
-      &::before {
-        background: linear-gradient(
-          90deg,
-          transparent,
-          rgb(14 67 128 / 30%),
-          transparent
-        );
-      }
-
-      &:hover {
-        background: rgb(14 67 128 / 50%);
-        border-color: rgb(14 67 128 / 70%);
-        transform: scale(sheet.$sheet-transform-scale-hover);
-        box-shadow:
-          0 0 sheet.$sheet-shadow-blur-lg rgb(14 67 128 / 60%),
-          inset 0 sheet.$sheet-shadow-offset-xs 0 rgb(255 255 255 / 30%);
-      }
-    }
-
-    &:hover {
-      background: linear-gradient(
-        135deg,
-        rgb(14 67 128 / 20%) 0%,
-        rgb(14 67 128 / 10%) 50%,
-        rgb(14 67 128 / 5%) 100%
-      );
-
-      &::after {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%230e4380' fill-opacity='0.1'%3E%3Cpath d='M10 2l8 6-8 2-8-2z'/%3E%3Cpath d='M10 12l8 6-8-2-8 2z'/%3E%3C/g%3E%3C/svg%3E");
-        pointer-events: none;
-        z-index: 1;
+      // Ability-specific patterns
+      @if $ability == "acro" {
+        @include ability-pattern($color, "%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23bf4400' fill-opacity='0.1'%3E%3Cpath d='M10 2l2 6h6l-5 4 2 6-5-4-5 4 2-6-5-4h6z'/%3E%3C/g%3E%3C/svg%3E");
+      } @else if $ability == "phys" {
+        @include ability-pattern($color, "%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23a80303' fill-opacity='0.1'%3E%3Crect x='8' y='2' width='4' height='16'/%3E%3Crect x='2' y='8' width='16' height='4'/%3E%3C/g%3E%3C/svg%3E");
+      } @else if $ability == "fort" {
+        @include ability-pattern($color, "%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%232d682d' fill-opacity='0.1'%3E%3Cpath d='M10 2L4 6v8l6 4 6-4V6z'/%3E%3C/g%3E%3C/svg%3E");
+      } @else if $ability == "will" {
+        @include ability-pattern($color, "%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%236a1b9a' fill-opacity='0.1'%3E%3Ccircle cx='10' cy='10' r='8'/%3E%3Ccircle cx='10' cy='10' r='4'/%3E%3C/g%3E%3C/svg%3E");
+      } @else if $ability == "wits" {
+        @include ability-pattern($color, "%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%230e4380' fill-opacity='0.1'%3E%3Cpath d='M10 2l8 6-8 2-8-2z'/%3E%3Cpath d='M10 12l8 6-8-2-8 2z'/%3E%3C/g%3E%3C/svg%3E");
       }
     }
   }
@@ -572,116 +454,42 @@
 // ===================================
 // These provide backward compatibility for existing templates
 
-.eventide-ability-acro-box {
-  background-color: colors.$acro-transparent;
-  border-left: sheet.$sheet-spacing-sm solid colors.$acro;
-}
-
-.eventide-ability-phys-box {
-  background-color: colors.$phys-transparent;
-  border-left: sheet.$sheet-spacing-sm solid colors.$phys;
-}
-
-.eventide-ability-fort-box {
-  background-color: colors.$fort-transparent;
-  border-left: sheet.$sheet-spacing-sm solid colors.$fort;
-}
-
-.eventide-ability-will-box {
-  background-color: colors.$will-transparent;
-  border-left: sheet.$sheet-spacing-sm solid colors.$will;
-}
-
-.eventide-ability-wits-box {
-  background-color: colors.$wits-transparent;
-  border-left: sheet.$sheet-spacing-sm solid colors.$wits;
+@each $ability, $color in $ability-colors {
+  .eventide-ability-#{$ability}-box {
+    background-color: color.change($color, $alpha: 0.1);
+    border-left: $spacing-sm solid $color;
+  }
 }
 
 // ===================================
 // ANIMATIONS
 // ===================================
 
-// Ability-specific glow animations
-@keyframes acro-glow {
+// Unified glow animation for all abilities
+@keyframes ability-glow {
   0% {
     box-shadow:
-      0 0 sheet.$sheet-shadow-blur-sm rgb(191 68 0 / 40%),
-      inset 0 sheet.$sheet-shadow-offset-xs 0 rgb(255 255 255 / 20%);
+      0 0 $shadow-blur-sm rgb(var(--ability-color) / 40%),
+      inset 0 $shadow-offset-xs 0 themes.color(white, 20);
   }
 
   100% {
     box-shadow:
-      0 0 sheet.$sheet-glow-blur-sm rgb(191 68 0 / 60%),
-      inset 0 sheet.$sheet-shadow-offset-xs 0 rgb(255 255 255 / 30%);
-  }
-}
-
-@keyframes phys-glow {
-  0% {
-    box-shadow:
-      0 0 sheet.$sheet-shadow-blur-sm rgb(168 3 3 / 40%),
-      inset 0 sheet.$sheet-shadow-offset-xs 0 rgb(255 255 255 / 20%);
-  }
-
-  100% {
-    box-shadow:
-      0 0 sheet.$sheet-glow-blur-sm rgb(168 3 3 / 60%),
-      inset 0 sheet.$sheet-shadow-offset-xs 0 rgb(255 255 255 / 30%);
-  }
-}
-
-@keyframes fort-glow {
-  0% {
-    box-shadow:
-      0 0 sheet.$sheet-shadow-blur-sm rgb(45 104 45 / 40%),
-      inset 0 sheet.$sheet-shadow-offset-xs 0 rgb(255 255 255 / 20%);
-  }
-
-  100% {
-    box-shadow:
-      0 0 sheet.$sheet-glow-blur-sm rgb(45 104 45 / 60%),
-      inset 0 sheet.$sheet-shadow-offset-xs 0 rgb(255 255 255 / 30%);
-  }
-}
-
-@keyframes will-glow {
-  0% {
-    box-shadow:
-      0 0 sheet.$sheet-shadow-blur-sm rgb(106 27 154 / 40%),
-      inset 0 sheet.$sheet-shadow-offset-xs 0 rgb(255 255 255 / 20%);
-  }
-
-  100% {
-    box-shadow:
-      0 0 sheet.$sheet-glow-blur-sm rgb(106 27 154 / 60%),
-      inset 0 sheet.$sheet-shadow-offset-xs 0 rgb(255 255 255 / 30%);
-  }
-}
-
-@keyframes wits-glow {
-  0% {
-    box-shadow:
-      0 0 sheet.$sheet-shadow-blur-sm rgb(14 67 128 / 40%),
-      inset 0 sheet.$sheet-shadow-offset-xs 0 rgb(255 255 255 / 20%);
-  }
-
-  100% {
-    box-shadow:
-      0 0 sheet.$sheet-glow-blur-sm rgb(14 67 128 / 60%),
-      inset 0 sheet.$sheet-shadow-offset-xs 0 rgb(255 255 255 / 30%);
+      0 0 $glow-blur-sm rgb(var(--ability-color) / 60%),
+      inset 0 $shadow-offset-xs 0 themes.color(white, 30);
   }
 }
 
 @keyframes button-shimmer {
   0% {
-    left: (- sheet.$sheet-percent-full);
+    left: -100%;
   }
 
   50% {
-    left: sheet.$sheet-percent-full;
+    left: 100%;
   }
 
   100% {
-    left: sheet.$sheet-percent-full;
+    left: 100%;
   }
 }

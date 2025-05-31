@@ -96,10 +96,6 @@ class ThemeManagerInstance {
       return;
     }
 
-    // Set theme properties immediately to prevent flashing
-    const currentTheme = CommonFoundryTasks.retrieveSheetTheme();
-    this.setThemeProperties(currentTheme);
-
     this.setupChangeListeners();
 
     if (this.options.autoApply) {
@@ -116,8 +112,7 @@ class ThemeManagerInstance {
     Logger.debug("Theme manager initialized", {
       appId: this.appId,
       appType: this.appType,
-      activeInstancesCount: activeInstances.size,
-      themePropertiesSet: true
+      activeInstancesCount: activeInstances.size
     }, "THEME_MANAGER");
   }
 
@@ -134,9 +129,6 @@ class ThemeManagerInstance {
     }
 
     const currentTheme = CommonFoundryTasks.retrieveSheetTheme();
-
-    // Set CSS custom properties on the sheet container for theme inheritance
-    this.setThemeProperties(currentTheme);
 
     // Apply background theme
     this.applyThemeToSelector(
@@ -271,105 +263,6 @@ class ThemeManagerInstance {
       appType: this.appType,
       theme: currentTheme
     }, "THEME_MANAGER");
-  }
-
-  /**
-   * Set CSS custom properties on the sheet container for theme inheritance
-   * This allows ERPS elements to inherit the current theme and maintain it during re-renders
-   * @param {string} theme - The current theme name
-   */
-  setThemeProperties(theme) {
-    // Theme color mappings using the actual values from themes.scss
-    // These values match the theme maps generated in themes.scss
-    const themeColors = {
-      blue: {
-        primary: 'rgba(30, 58, 138, 0.9)',      // blue-dark with 90% opacity
-        secondary: 'rgba(59, 130, 246, 0.8)',   // blue with 80% opacity
-        tertiary: 'rgba(59, 130, 246, 0.8)',    // blue with 80% opacity
-        accent: 'rgba(30, 58, 138, 0.95)',      // blue-dark with 95% opacity
-        light: 'rgba(59, 130, 246, 0.7)',       // blue with 70% opacity
-        glow: 'rgba(59, 130, 246, 0.6)',        // blue with 60% opacity
-        text: '#fff',
-        bright: 'rgba(59, 130, 246, 1)'         // blue at full opacity
-      },
-      black: {
-        primary: 'rgba(80, 80, 80, 0.9)',       // gray-dark with 90% opacity
-        secondary: 'rgba(100, 100, 100, 0.8)',  // gray with 80% opacity
-        tertiary: 'rgba(227, 227, 227, 0.8)',   // tertiary color with 80% opacity
-        accent: 'rgba(80, 80, 80, 0.95)',       // gray-dark with 95% opacity
-        light: 'rgba(160, 160, 160, 0.7)',      // gray-light with 70% opacity
-        glow: 'rgba(160, 160, 160, 0.6)',       // gray-light with 60% opacity
-        text: '#fff',
-        bright: 'rgba(160, 160, 160, 1)'        // gray-light at full opacity
-      },
-      green: {
-        primary: 'rgba(21, 128, 61, 0.9)',      // green-dark with 90% opacity
-        secondary: 'rgba(34, 197, 94, 0.8)',    // green with 80% opacity
-        tertiary: 'rgba(0, 177, 0, 0.8)',       // tertiary green with 80% opacity
-        accent: 'rgba(21, 128, 61, 0.95)',      // green-dark with 95% opacity
-        light: 'rgba(34, 197, 94, 0.7)',        // green with 70% opacity
-        glow: 'rgba(34, 197, 94, 0.6)',         // green with 60% opacity
-        text: '#fff',
-        bright: 'rgba(34, 197, 94, 1)'          // green at full opacity
-      },
-      light: {
-        primary: 'rgba(160, 160, 160, 0.9)',    // gray-light with 90% opacity (modified for light theme)
-        secondary: 'rgba(160, 160, 160, 0.8)',  // gray-light with 80% opacity (modified for light theme)
-        tertiary: 'rgba(36, 35, 35, 0.8)',      // tertiary color with 80% opacity
-        accent: 'rgba(160, 160, 160, 0.95)',    // gray-light with 95% opacity (modified for light theme)
-        light: 'rgba(100, 100, 100, 0.7)',      // gray with 70% opacity (modified for light theme)
-        glow: 'rgba(100, 100, 100, 0.6)',       // gray with 60% opacity (modified for light theme)
-        text: '#1e293b',
-        bright: 'rgba(255, 255, 255, 1)'        // white at full opacity
-      },
-      gold: {
-        primary: 'rgba(180, 83, 9, 0.9)',       // orange-dark with 90% opacity
-        secondary: 'rgba(217, 119, 6, 0.8)',    // orange with 80% opacity
-        tertiary: 'rgba(255, 215, 0, 0.8)',     // gold tertiary with 80% opacity
-        accent: 'rgba(180, 83, 9, 0.95)',       // orange-dark with 95% opacity
-        light: 'rgba(217, 119, 6, 0.7)',        // orange with 70% opacity
-        glow: 'rgba(217, 119, 6, 0.6)',         // orange with 60% opacity
-        text: '#fff',
-        bright: 'rgba(255, 215, 0, 1)'          // gold at full opacity
-      },
-      purple: {
-        primary: 'rgba(147, 51, 234, 0.9)',     // purple-theme with 90% opacity
-        secondary: 'rgba(147, 51, 234, 0.8)',   // purple-theme with 80% opacity
-        tertiary: 'rgba(211, 4, 180, 0.8)',     // tertiary purple with 80% opacity
-        accent: 'rgba(75, 0, 130, 0.95)',       // purple-dark with 95% opacity
-        light: 'rgba(147, 51, 234, 0.7)',       // purple-theme with 70% opacity
-        glow: 'rgba(147, 51, 234, 0.6)',        // purple-theme with 60% opacity
-        text: '#fff',
-        bright: 'rgba(211, 4, 180, 1)'          // tertiary purple at full opacity
-      }
-    };
-
-    const colors = themeColors[theme] || themeColors.blue;
-    const container = this.element;
-
-    if (container) {
-      // Set CSS custom properties that cascade to all child elements
-      container.style.setProperty('--theme-primary', colors.primary);
-      container.style.setProperty('--theme-secondary', colors.secondary);
-      container.style.setProperty('--theme-tertiary', colors.tertiary);
-      container.style.setProperty('--theme-accent', colors.accent);
-      container.style.setProperty('--theme-light', colors.light);
-      container.style.setProperty('--theme-glow', colors.glow);
-      container.style.setProperty('--theme-text', colors.text);
-      container.style.setProperty('--theme-bright', colors.bright);
-
-      Logger.debug(`Set theme properties for ${theme}`, {
-        appId: this.appId,
-        theme,
-        colors,
-        container: container.className
-      }, "THEME_MANAGER");
-    } else {
-      Logger.warn("No container found for setting theme properties", {
-        appId: this.appId,
-        theme
-      }, "THEME_MANAGER");
-    }
   }
 
   /**

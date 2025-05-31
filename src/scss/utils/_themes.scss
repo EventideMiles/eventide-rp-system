@@ -276,158 +276,93 @@ $legacy-opacity-map: (
 // PROGRAMMATIC THEME SYSTEM
 // ===================================
 
-// Theme configuration map - defines base colors and patterns for each theme
-$theme-configs: (
-  blue: (
-    primary-color: blue-dark,
-    secondary-color: blue,
-    tertiary-color: #0476e0,
-    accent-modifier: color-dark,
-    pattern: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.15'%3E%3Cpath d='M10 2l3 3-3 3-3-3z'/%3E%3Cpath d='M10 12l3 3-3 3-3-3z'/%3E%3C/g%3E%3C/svg%3E")
-  ),
-  gold: (
-    primary-color: orange-dark,
-    secondary-color: orange,
-    tertiary-color: #ffd700,
-    accent-modifier: color-dark,
-    pattern: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.15'%3E%3Cpath d='M12 2l2 6h6l-5 4 2 6-5-4-5 4 2-6-5-4h6z'/%3E%3C/g%3E%3C/svg%3E")
-  ),
-  green: (
-    primary-color: green-dark,
-    secondary-color: green,
-    tertiary-color: #00b100,
-    accent-modifier: color-dark,
-    pattern: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.15'%3E%3Ccircle cx='10' cy='10' r='2'/%3E%3Ccircle cx='10' cy='4' r='1'/%3E%3Ccircle cx='10' cy='16' r='1'/%3E%3Ccircle cx='4' cy='10' r='1'/%3E%3Ccircle cx='16' cy='10' r='1'/%3E%3C/g%3E%3C/svg%3E")
-  ),
-  black: (
-    primary-color: gray-dark,
-    secondary-color: gray,
-    tertiary-color: #e3e3e3,
-    accent-modifier: color-dark,
-    light-color: gray-light,
-    glow-modifier: color-light,
-    pattern: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.15'%3E%3Cpath d='M10 0l2 8h8l-6 4 2 8-6-4-6 4 2-8-6-4h8z'/%3E%3C/g%3E%3C/svg%3E")
-  ),
-  purple: (
-    primary-color: purple-theme,
-    secondary-color: purple-theme,
-    tertiary-color: #d304b4,
-    accent-color: purple-dark,
-    accent-modifier: color-dark,
-    pattern: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.15'%3E%3Cpath d='M10 1l1 3 3 1-3 1-1 3-1-3-3-1 3-1z'/%3E%3Cpath d='M5 5l1 2 2 1-2 1-1 2-1-2-2-1 2-1z'/%3E%3Cpath d='M15 15l1 2 2 1-2 1-1 2-1-2-2-1 2-1z'/%3E%3C/g%3E%3C/svg%3E")
-  ),
-  light: (
-    primary-color: gray-light,
-    secondary-color: gray-light,
-    tertiary-color: #242323,
-    primary-modifier: color-light,
-    secondary-modifier: color-muted,
-    accent-modifier: color-light,
-    light-color: gray,
-    light-modifier: color-muted,
-    glow-modifier: color-muted,
-    text: #1e293b,
-    pattern: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%231e293b' fill-opacity='0.15'%3E%3Ccircle cx='10' cy='10' r='3'/%3E%3Cpath d='M10 1v2M10 17v2M1 10h2M17 10h2M4.22 4.22l1.42 1.42M14.36 14.36l1.42 1.42M4.22 15.78l1.42-1.42M14.36 5.64l1.42-1.42'/%3E%3C/g%3E%3C/svg%3E")
-  )
+// Direct theme definitions using exact JavaScript theme manager values
+// This ensures perfect consistency between CSS and JavaScript theming
+$blue-theme: (
+  primary: rgb(21 101 192 / 90%),          // Deep royal blue for headers
+  secondary: rgb(25 118 210 / 80%),        // Medium blue for secondary elements
+  tertiary: rgb(66 165 245 / 80%),         // Lighter blue accents
+  accent: rgb(13 71 161 / 95%),            // Dark navy blue for backgrounds
+  light: rgb(100 181 246 / 70%),           // Soft blue highlights
+  glow: rgb(25 118 210 / 50%),             // Subtle blue glow
+  text: #fff,
+  bright: rgb(144 202 249 / 100%),         // Bright blue for emphasis
+  pattern: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.15'%3E%3Cpath d='M10 2l3 3-3 3-3-3z'/%3E%3Cpath d='M10 12l3 3-3 3-3-3z'/%3E%3C/g%3E%3C/svg%3E"),
+  toggle-track: #1565c0,
+  image-bg: #0d47a1
 );
-
-// Generate theme map programmatically
-@function generate-theme($theme-name) {
-  $config: map.get($theme-configs, $theme-name);
-
-  // Get base colors
-  $primary-color: map.get($config, primary-color);
-  $secondary-color: map.get($config, secondary-color);
-  $tertiary-color: map.get($config, tertiary-color);
-  $accent-color: map.get($config, accent-color) or $primary-color;
-  $light-color: map.get($config, light-color) or $secondary-color;
-
-  // Get modifiers
-  $primary-modifier: map.get($config, primary-modifier) or color;
-  $secondary-modifier: map.get($config, secondary-modifier) or color;
-  $tertiary-modifier: map.get($config, tertiary-modifier) or color;
-  $accent-modifier: map.get($config, accent-modifier) or color-dark;
-  $light-modifier: map.get($config, light-modifier) or color;
-  $glow-modifier: map.get($config, glow-modifier) or color;
-
-  // Generate theme colors
-  $primary: null;
-  $secondary: null;
-  $tertiary: null;
-  $accent: null;
-  $light: null;
-  $glow: null;
-
-  @if $primary-modifier == color {
-    $primary: color($primary-color, 90);
-  } @else if $primary-modifier == color-light {
-    $primary: color-light($primary-color, 60, 90);
-  } @else if $primary-modifier == color-dark {
-    $primary: color-dark($primary-color, 20, 90);
-  }
-
-  @if $secondary-modifier == color {
-    $secondary: color($secondary-color, 80);
-  } @else if $secondary-modifier == color-muted {
-    $secondary: color-muted($secondary-color, 20, 80);
-  } @else if $secondary-modifier == color-dark {
-    $secondary: color-dark($secondary-color, 20, 80);
-  }
-
-  @if $tertiary-modifier == color {
-    $tertiary: color($tertiary-color, 80);
-  } @else if $tertiary-modifier == color-light {
-    $tertiary: color-light($tertiary-color, 80, 80);
-  } @else if $tertiary-modifier == color-dark {
-    $tertiary: color-dark($tertiary-color, 20, 80);
-  }
-
-  @if $accent-modifier == color-dark {
-    $accent: color-dark($accent-color, 30, 95);
-  } @else if $accent-modifier == color-light {
-    $accent: color-light($accent-color, 80, 95);
-  }
-
-  @if $light-modifier == color {
-    $light: color($light-color, 70);
-  } @else if $light-modifier == color-muted {
-    $light: color-muted($light-color, 30, 70);
-  }
-
-  @if $glow-modifier == color {
-    $glow: color($secondary-color, 60);
-  } @else if $glow-modifier == color-light {
-    $glow: color-light($light-color, 20, 60);
-  } @else if $glow-modifier == color-muted {
-    $glow: color-muted($light-color, 10, 60);
-  }
-
-  @return (
-    primary: $primary,
-    secondary: $secondary,
-    tertiary: $tertiary,
-    accent: $accent,
-    light: $light,
-    glow: $glow,
-    text: map.get($config, text) or #fff,
-    pattern: map.get($config, pattern)
-  );
-}
-
-// Generate all theme maps
-$blue-theme: generate-theme(blue);
-$gold-theme: generate-theme(gold);
-$green-theme: generate-theme(green);
-$black-theme: generate-theme(black);
-$purple-theme: generate-theme(purple);
-$light-theme: generate-theme(light);
+$black-theme: (
+  primary: rgb(45 45 45 / 90%),            // Dark charcoal for headers
+  secondary: rgb(66 66 66 / 80%),          // Medium gray for secondary elements
+  tertiary: rgb(97 97 97 / 80%),           // Lighter gray accents
+  accent: rgb(33 33 33 / 95%),             // Deep charcoal for backgrounds
+  light: rgb(117 117 117 / 70%),           // Muted gray highlights
+  glow: rgb(78 90 102 / 50%),              // Subtle blue-gray glow
+  text: #fff,
+  bright: rgb(189 189 189 / 100%),         // Light gray for emphasis
+  pattern: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.15'%3E%3Cpath d='M10 0l2 8h8l-6 4 2 8-6-4-6 4 2-8-6-4h8z'/%3E%3C/g%3E%3C/svg%3E"),
+  toggle-track: #424242,
+  image-bg: #1a1a1a
+);
+$green-theme: (
+  primary: rgb(27 94 32 / 90%),            // Deep forest green for headers
+  secondary: rgb(46 125 50 / 80%),         // Medium forest green for secondary elements
+  tertiary: rgb(76 175 80 / 80%),          // Lighter green accents
+  accent: rgb(21 76 25 / 95%),             // Dark forest green for backgrounds
+  light: rgb(129 199 132 / 70%),           // Muted green highlights
+  glow: rgb(102 187 106 / 45%),            // Subtle green glow
+  text: #fff,
+  bright: rgb(165 214 167 / 100%),         // Light green for emphasis
+  pattern: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.15'%3E%3Ccircle cx='10' cy='10' r='2'/%3E%3Ccircle cx='10' cy='4' r='1'/%3E%3Ccircle cx='10' cy='16' r='1'/%3E%3Ccircle cx='4' cy='10' r='1'/%3E%3Ccircle cx='16' cy='10' r='1'/%3E%3C/g%3E%3C/svg%3E"),
+  toggle-track: #388e3c,
+  image-bg: #1b5e20
+);
+$light-theme: (
+  primary: rgb(203 213 225 / 75%),         // Light silver-gray for headers (readable with dark text)
+  secondary: rgb(226 232 240 / 80%),       // Very light silver for secondary elements
+  tertiary: rgb(241 245 249 / 85%),        // Near-white silver for tertiary elements
+  accent: rgb(248 250 252 / 95%),          // Near-white for backgrounds (ethereal feel)
+  light: rgb(148 163 184 / 60%),           // Muted slate for highlights
+  glow: rgb(59 130 246 / 25%),             // Subtle cool blue glow (ethereal energy)
+  text: #1e293b,                           // Dark slate text for readability
+  bright: rgb(255 255 255 / 100%),         // Pure white for bright elements
+  pattern: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23475569' fill-opacity='0.08'%3E%3Cpath d='M10 2l3 3-3 3-3-3z'/%3E%3Cpath d='M10 12l3 3-3 3-3-3z'/%3E%3Cpath d='M2 10l3-3 3 3-3 3z'/%3E%3Cpath d='M12 10l3-3 3 3-3 3z'/%3E%3C/g%3E%3C/svg%3E"),
+  toggle-track: #94a3b8,                   // Light slate for toggles
+  image-bg: #374151                        // Dark gray for image backgrounds (unchanged)
+);
+$gold-theme: (
+  primary: rgb(191 54 12 / 90%),           // Deep burnt orange for headers
+  secondary: rgb(230 81 0 / 80%),          // Medium orange for secondary elements
+  tertiary: rgb(255 152 0 / 80%),          // Lighter orange accents
+  accent: rgb(162 39 5 / 95%),             // Dark burnt orange for backgrounds
+  light: rgb(255 183 77 / 70%),            // Muted orange highlights
+  glow: rgb(230 81 0 / 45%),               // Subtle orange glow
+  text: #fff,
+  bright: rgb(255 204 128 / 100%),         // Light orange for emphasis
+  pattern: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.15'%3E%3Cpath d='M12 2l2 6h6l-5 4 2 6-5-4-5 4 2-6-5-4h6z'/%3E%3C/g%3E%3C/svg%3E"),
+  toggle-track: #e65100,
+  image-bg: #bf360c
+);
+$purple-theme: (
+  primary: rgb(74 20 140 / 90%),           // Deep violet for headers
+  secondary: rgb(106 27 154 / 80%),        // Medium purple for secondary elements
+  tertiary: rgb(142 36 170 / 80%),         // Lighter purple accents
+  accent: rgb(49 12 96 / 95%),             // Dark violet for backgrounds
+  light: rgb(156 39 176 / 70%),            // Muted purple highlights
+  glow: rgb(106 27 154 / 45%),             // Subtle purple glow
+  text: #fff,
+  bright: rgb(186 85 211 / 100%),          // Light purple for emphasis
+  pattern: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.15'%3E%3Cpath d='M10 1l1 3 3 1-3 1-1 3-1-3-3-1 3-1z'/%3E%3Cpath d='M5 5l1 2 2 1-2 1-1 2-1-2-2-1 2-1z'/%3E%3Cpath d='M15 15l1 2 2 1-2 1-1 2-1-2-2-1 2-1z'/%3E%3C/g%3E%3C/svg%3E"),
+  toggle-track: #7b1fa2,
+  image-bg: #4a148c
+);
 
 // ===================================
 // THEME MIXIN SYSTEM
 // ===================================
 
 // Mixin to define CSS variables for a theme
-@mixin define-theme-css-vars($primary, $secondary, $tertiary, $accent, $light, $glow, $text, $pattern) {
+@mixin define-theme-css-vars($primary, $secondary, $tertiary, $accent, $light, $glow, $text, $pattern, $toggle-track, $image-bg) {
   --theme-primary: #{$primary};
   --theme-secondary: #{$secondary};
   --theme-tertiary: #{$tertiary};
@@ -436,48 +371,56 @@ $light-theme: generate-theme(light);
   --theme-glow: #{$glow};
   --theme-text: #{$text};
   --theme-pattern: #{$pattern};
+  --theme-toggle-track: #{$toggle-track};
+  --theme-image-bg: #{$image-bg};
 }
 
 // Generate theme application mixins programmatically
 @mixin apply-blue-theme {
   @include define-theme-css-vars(
     map.get($blue-theme, primary), map.get($blue-theme, secondary), map.get($blue-theme, tertiary), map.get($blue-theme, accent),
-    map.get($blue-theme, light), map.get($blue-theme, glow), map.get($blue-theme, text), map.get($blue-theme, pattern)
+    map.get($blue-theme, light), map.get($blue-theme, glow), map.get($blue-theme, text), map.get($blue-theme, pattern),
+    map.get($blue-theme, toggle-track), map.get($blue-theme, image-bg)
   );
 }
 
 @mixin apply-gold-theme {
   @include define-theme-css-vars(
     map.get($gold-theme, primary), map.get($gold-theme, secondary), map.get($gold-theme, tertiary), map.get($gold-theme, accent),
-    map.get($gold-theme, light), map.get($gold-theme, glow), map.get($gold-theme, text), map.get($gold-theme, pattern)
+    map.get($gold-theme, light), map.get($gold-theme, glow), map.get($gold-theme, text), map.get($gold-theme, pattern),
+    map.get($gold-theme, toggle-track), map.get($gold-theme, image-bg)
   );
 }
 
 @mixin apply-green-theme {
   @include define-theme-css-vars(
     map.get($green-theme, primary), map.get($green-theme, secondary), map.get($green-theme, tertiary), map.get($green-theme, accent),
-    map.get($green-theme, light), map.get($green-theme, glow), map.get($green-theme, text), map.get($green-theme, pattern)
+    map.get($green-theme, light), map.get($green-theme, glow), map.get($green-theme, text), map.get($green-theme, pattern),
+    map.get($green-theme, toggle-track), map.get($green-theme, image-bg)
   );
 }
 
 @mixin apply-black-theme {
   @include define-theme-css-vars(
     map.get($black-theme, primary), map.get($black-theme, secondary), map.get($black-theme, tertiary), map.get($black-theme, accent),
-    map.get($black-theme, light), map.get($black-theme, glow), map.get($black-theme, text), map.get($black-theme, pattern)
+    map.get($black-theme, light), map.get($black-theme, glow), map.get($black-theme, text), map.get($black-theme, pattern),
+    map.get($black-theme, toggle-track), map.get($black-theme, image-bg)
   );
 }
 
 @mixin apply-purple-theme {
   @include define-theme-css-vars(
     map.get($purple-theme, primary), map.get($purple-theme, secondary), map.get($purple-theme, tertiary), map.get($purple-theme, accent),
-    map.get($purple-theme, light), map.get($purple-theme, glow), map.get($purple-theme, text), map.get($purple-theme, pattern)
+    map.get($purple-theme, light), map.get($purple-theme, glow), map.get($purple-theme, text), map.get($purple-theme, pattern),
+    map.get($purple-theme, toggle-track), map.get($purple-theme, image-bg)
   );
 }
 
 @mixin apply-light-theme {
   @include define-theme-css-vars(
     map.get($light-theme, primary), map.get($light-theme, secondary), map.get($light-theme, tertiary), map.get($light-theme, accent),
-    map.get($light-theme, light), map.get($light-theme, glow), map.get($light-theme, text), map.get($light-theme, pattern)
+    map.get($light-theme, light), map.get($light-theme, glow), map.get($light-theme, text), map.get($light-theme, pattern),
+    map.get($light-theme, toggle-track), map.get($light-theme, image-bg)
   );
 }
 
@@ -553,7 +496,7 @@ $default-theme-pattern: map.get($blue-theme, pattern) !default;
 
 // Base image background mixin
 @mixin themed-image-background($opacity: 80) {
-  background: rgba(0, 0, 0, $opacity * 0.01) !important;
+  background: var(--theme-image-bg, rgba(0, 0, 0, $opacity * 0.01)) !important;
   border-radius: 4px !important;
   padding: 2px !important;
   box-shadow: inset 0 1px 3px rgb(0 0 0 / 30%) !important;
@@ -561,9 +504,11 @@ $default-theme-pattern: map.get($blue-theme, pattern) !default;
 
 // Light theme specific image background
 @mixin light-theme-image-background {
-  background: rgb(0 0 0 / 85%) !important;
-  border: 1px solid rgb(0 0 0 / 20%) !important;
-  box-shadow: inset 0 1px 3px rgb(0 0 0 / 40%), 0 1px 2px rgb(0 0 0 / 20%) !important;
+  background: var(--theme-image-bg, rgb(75 85 99 / 85%)) !important;
+  border: 1px solid rgb(0 0 0 / 15%) !important;
+  border-radius: 4px !important;
+  padding: 1px !important;
+  box-shadow: inset 0 1px 2px rgb(0 0 0 / 40%), 0 1px 1px rgb(0 0 0 / 15%) !important;
 }
 
 // Programmatic profile image background generator
@@ -583,7 +528,7 @@ $default-theme-pattern: map.get($blue-theme, pattern) !default;
 
 // Data table image background mixin
 @mixin themed-data-table-image-background {
-  background: rgb(0 0 0 / 80%) !important;
+  background: var(--theme-image-bg, rgb(0 0 0 / 80%)) !important;
   border-radius: 4px !important;
   padding: 1px !important;
   box-shadow: inset 0 1px 2px rgb(0 0 0 / 30%) !important;
@@ -632,7 +577,7 @@ $default-theme-pattern: map.get($blue-theme, pattern) !default;
     @include themed-data-table-image-background;
   }
   &[data-#{$attribute-name}="light"] {
-    background: rgb(0 0 0 / 85%) !important;
+    background: var(--theme-image-bg, rgb(75 85 99 / 85%)) !important;
     border: 1px solid rgb(0 0 0 / 15%) !important;
     border-radius: 4px !important;
     padding: 1px !important;

@@ -258,7 +258,7 @@ $universal-black: var(--erps-black);
 $universal-tan: var(--erps-neutral-gray);
 $white-text-glow: var(--erps-white-text-glow);
 $label-light-required: var(--erps-label-required);
-$secondary-image-background: var(--erps-secondary-image-bg);
+$secondary-image-background: var(--theme-image-bg, var(--erps-secondary-image-bg));
 $description-hr: var(--erps-description-hr);
 
 // UI components

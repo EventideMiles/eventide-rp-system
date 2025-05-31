@@ -1,49 +1,126 @@
 @use "../../utils/themes" as themes;
-@use "../../utils/colors" as colors;
 @use "../../utils/sheet-tokens" as tokens;
 @use "sass:map";
+
+// ===================================
+// ERPS PROFILE IMAGES COMPONENT
+// ===================================
+// Modern, theme-aware profile images for the Eventide RP System
+// Uses dedicated image background colors for better contrast
+
+// ===================================
+// CONFIGURATION VARIABLES
+// ===================================
+// Using sheet-tokens for consistent design system integration
+
+// Profile image sizing - using original token sizes
+// Note: These are the original sizes that were working before
+// xs: 60px, sm: 90px, md: 120px, lg: 180px (default), xl: 240px, xxl: 300px
+
+// Border and effects
+$profile-border-width: tokens.$sheet-border-thick;
+$profile-border-radius: tokens.$sheet-radius-xxl * 3;
+$profile-frame-offset: 2px;
+
+// Shadows and effects
+$profile-shadow-blur: tokens.$sheet-shadow-blur-lg;
+$profile-shadow-blur-hover: tokens.$sheet-shadow-blur-xl;
+$profile-inner-shadow-opacity: 0.3;
+$profile-inner-shadow-opacity-hover: 0.2;
+
+// Transitions
+$profile-transition: all tokens.$sheet-transition-medium;
+$profile-hover-scale: 1.05;
+
+// Opacity values
+$profile-disabled-opacity: tokens.$sheet-opacity-disabled;
+$profile-disabled-grayscale: 100%;
+$profile-frame-opacity: 0.3;
+$profile-disabled-overlay-opacity: 0.6;
 
 // ===================================
 // UTILITY MIXINS
 // ===================================
 
-@mixin profile-shadow($blur: tokens.$sheet-shadow-blur-xxl, $opacity: tokens.$sheet-profile-shadow-opacity) {
+// Base profile shadow styling
+@mixin profile-shadow($blur: $profile-shadow-blur, $opacity: 0.8) {
   box-shadow:
     // Outer highlight for depth
-    0 0 $blur #{themes.universal-color(white, $opacity)},
+    0 0 $blur themes.color(white, $opacity * 100),
     // Enhanced inset shadow for sunken effect
-    inset 2px 2px ($blur * 0.6) #{themes.universal-color(black, tokens.$sheet-profile-inner-shadow-opacity * 1.5)},
-    inset -1px -1px ($blur * 0.4) #{themes.universal-color(white, tokens.$sheet-profile-inner-shadow-opacity * 0.5)};
+    inset 2px 2px ($blur * 0.6) themes.color(black, $profile-inner-shadow-opacity * 150),
+    inset -1px -1px ($blur * 0.4) themes.color(white, $profile-inner-shadow-opacity * 50);
 }
 
-@mixin profile-shadow-hover($blur: tokens.$sheet-profile-shadow-blur-hover) {
+// Hover shadow styling
+@mixin profile-shadow-hover($blur: $profile-shadow-blur-hover) {
   box-shadow:
-    // Enhanced outer glow on hover using white with higher opacity for glow effect
-    0 0 $blur #{themes.universal-color(white, 80)},
+    // Enhanced outer glow on hover
+    0 0 $blur themes.color(white, 80),
     // Reduced inset shadow on hover for subtle lift effect
-    inset 1px 1px ($blur * 0.53) #{themes.universal-color(black, tokens.$sheet-profile-inner-shadow-opacity-hover * 1.2)},
-    inset -1px -1px ($blur * 0.27) #{themes.universal-color(white, tokens.$sheet-profile-inner-shadow-opacity-hover * 0.8)};
+    inset 1px 1px ($blur * 0.53) themes.color(black, $profile-inner-shadow-opacity-hover * 120),
+    inset -1px -1px ($blur * 0.27) themes.color(white, $profile-inner-shadow-opacity-hover * 80);
 }
 
-@mixin profile-disabled-overlay($size) {
+// Disabled overlay mixin
+@mixin profile-disabled-overlay {
   &::after {
     content: '';
     position: absolute;
     inset: 0;
-    background: #{themes.universal-color(black, tokens.$sheet-profile-disabled-overlay-opacity)};
-    border-radius: tokens.$sheet-profile-border-radius;
+    background: themes.color(black, $profile-disabled-overlay-opacity * 100);
+    border-radius: $profile-border-radius;
     pointer-events: none;
   }
 }
 
-@mixin profile-frame-effect($size) {
+// Frame effect mixin
+@mixin profile-frame-effect {
   &::before {
     content: '';
     position: absolute;
-    inset: -(tokens.$sheet-profile-frame-offset);
-    border: tokens.$sheet-border-thin solid #{themes.universal-color(white, tokens.$sheet-profile-frame-opacity)};
-    border-radius: tokens.$sheet-profile-border-radius;
+    inset: -$profile-frame-offset;
+    border: tokens.$sheet-border-thin solid themes.color(white, $profile-frame-opacity * 100);
+    border-radius: $profile-border-radius;
     z-index: -1;
+  }
+}
+
+// Size variant mixin
+@mixin profile-size-variant($size) {
+  width: $size;
+  height: $size;
+}
+
+// ===================================
+// THEME-AWARE SYSTEM
+// ===================================
+// Theme-aware system using CSS custom properties that inherit from the main theme
+
+// Default theme variables that inherit from the main theme system
+:root {
+  --erps-profile-primary: var(--theme-image-bg, rgb(30 58 138 / 90%)); // Use theme image background with blue fallback
+  --erps-profile-secondary: var(--theme-secondary, rgb(59 130 246 / 80%));
+  --erps-profile-bright: var(--theme-light, rgb(59 130 246 / 70%));
+  --erps-profile-glow: var(--theme-glow, rgb(59 130 246 / 60%));
+  --erps-profile-text: var(--theme-text, #fff);
+}
+
+// Theme-aware variants that inherit from the sheet's theme context
+.eventide-sheet {
+  // Inherit theme colors from the main theme system
+  --erps-profile-primary: var(--theme-image-bg); // Use dedicated image background color
+  --erps-profile-secondary: var(--theme-secondary);
+  --erps-profile-bright: var(--theme-light);
+  --erps-profile-glow: var(--theme-glow);
+  --erps-profile-text: var(--theme-text);
+
+  // Legacy profile images in actor headers
+  .eventide-actor__header {
+    .eventide-sheet__profile-img {
+      @extend %profile-image-base;
+      @include profile-size-variant(map.get(tokens.$sheet-profile-sizes, "lg"));
+    }
   }
 }
 
@@ -52,31 +129,38 @@
 // ===================================
 
 %profile-image-base {
-  border: tokens.$sheet-border-thick inset #{themes.universal-color(white, 100)};
-  transition: all tokens.$sheet-transition-medium;
+  // Theme-aware background using CSS custom properties
+  background: var(--erps-profile-primary) !important;
+  background-clip: content-box !important;
+  border: $profile-border-width inset themes.color(white, 100);
+  border-radius: $profile-border-radius;
+  transition: $profile-transition;
   position: relative;
   flex-shrink: 0;
   object-fit: cover;
   box-sizing: border-box;
-  border-radius: tokens.$sheet-profile-border-radius;
+  padding: 3px;
 
   @include profile-shadow;
+  @include profile-frame-effect;
 
   &:hover {
-    border: tokens.$sheet-border-thick inset #{themes.universal-color(white, 90)};
-    transform: scale(tokens.$sheet-profile-hover-scale);
+    border: $profile-border-width inset themes.color(white, 90);
+    transform: scale($profile-hover-scale);
 
     @include profile-shadow-hover;
   }
 
   // Disabled state
   &--disabled {
-    opacity: tokens.$sheet-profile-disabled-opacity;
+    opacity: $profile-disabled-opacity;
     cursor: not-allowed;
-    filter: grayscale(tokens.$sheet-profile-disabled-grayscale);
+    filter: grayscale($profile-disabled-grayscale);
+
+    @include profile-disabled-overlay;
 
     &:hover {
-      border: tokens.$sheet-border-thick inset #{themes.universal-color(white, 100)};
+      border: $profile-border-width inset themes.color(white, 100);
       transform: none;
 
       @include profile-shadow;
@@ -85,171 +169,68 @@
 }
 
 // ===================================
-// SIZE VARIANTS
+// PROFILE IMAGE COMPONENT
 // ===================================
 
 .eventide-profile-image {
   @extend %profile-image-base;
 
-  // Default size (lg)
-  $default-size: map.get(tokens.$sheet-profile-sizes, "lg");
-
-  width: $default-size;
-  height: $default-size;
-
-  @include profile-frame-effect($default-size);
-
-  &--disabled {
-    @include profile-disabled-overlay($default-size);
-  }
+  // Default size (lg) - using original token size (180px) - set directly
+  width: 180px;
+  height: 180px;
 
   // Size variants
   @each $name, $size in tokens.$sheet-profile-sizes {
     &--#{$name} {
-      @extend %profile-image-base;
-
-      width: $size;
-      height: $size;
-
-      @include profile-frame-effect($size);
-
-      &::before {
-        border-radius: tokens.$sheet-profile-border-radius;
-      }
-
-      &.eventide-profile-image--disabled {
-        @include profile-disabled-overlay($size);
-      }
+      @include profile-size-variant($size);
     }
   }
-}
 
-// ===================================
-// THEME-AWARE DEFAULTS FOR PROFILE IMAGES
-// ===================================
-
-:root {
-  // Default theme (blue) - using actual theme colors from themes.scss
-  --erps-profile-primary: #{map.get(themes.$blue-theme, primary)};
-  --erps-profile-secondary: #{map.get(themes.$blue-theme, secondary)};
-  --erps-profile-bright: #{map.get(themes.$blue-theme, light)};
-  --erps-profile-glow: #{map.get(themes.$blue-theme, glow)};
-  --erps-profile-text: #{map.get(themes.$blue-theme, text)};
-}
-
-// Theme-specific defaults that activate based on sheet classes
-.eventide-sheet[data-bg-theme="blue"] {
-  --erps-profile-primary: #{map.get(themes.$blue-theme, primary)};
-  --erps-profile-secondary: #{map.get(themes.$blue-theme, secondary)};
-  --erps-profile-bright: #{map.get(themes.$blue-theme, light)};
-  --erps-profile-glow: #{map.get(themes.$blue-theme, glow)};
-  --erps-profile-text: #{map.get(themes.$blue-theme, text)};
-}
-
-.eventide-sheet[data-bg-theme="black"] {
-  --erps-profile-primary: #{map.get(themes.$black-theme, primary)};
-  --erps-profile-secondary: #{map.get(themes.$black-theme, secondary)};
-  --erps-profile-bright: #{map.get(themes.$black-theme, light)};
-  --erps-profile-glow: #{map.get(themes.$black-theme, glow)};
-  --erps-profile-text: #{map.get(themes.$black-theme, text)};
-}
-
-.eventide-sheet[data-bg-theme="green"] {
-  --erps-profile-primary: #{map.get(themes.$green-theme, primary)};
-  --erps-profile-secondary: #{map.get(themes.$green-theme, secondary)};
-  --erps-profile-bright: #{map.get(themes.$green-theme, light)};
-  --erps-profile-glow: #{map.get(themes.$green-theme, glow)};
-  --erps-profile-text: #{map.get(themes.$green-theme, text)};
-}
-
-.eventide-sheet[data-bg-theme="light"] {
-  --erps-profile-primary: #{map.get(themes.$light-theme, primary)};
-  --erps-profile-secondary: #{map.get(themes.$light-theme, secondary)};
-  --erps-profile-bright: #{map.get(themes.$light-theme, light)};
-  --erps-profile-glow: #{map.get(themes.$light-theme, glow)};
-  --erps-profile-text: #{map.get(themes.$light-theme, text)};
-
-  // Light theme specific overrides for profile images
-  .eventide-profile-image,
-  [class*="eventide-profile-image--"] {
-    background: rgb(0 0 0 / 75%) !important;
-    box-shadow: inset 0 2px 4px rgb(0 0 0 / 35%) !important;
+  // State modifiers
+  &--disabled {
+    @extend %profile-image-base--disabled;
   }
 
-  // Legacy profile images
-  .eventide-actor__header .eventide-sheet__profile-img {
-    background: rgb(0 0 0 / 75%) !important;
-    box-shadow: inset 0 2px 4px rgb(0 0 0 / 35%) !important;
+  &--actor {
+    @extend %profile-image-base;
+
+    margin-bottom: 30px;
   }
-}
-
-.eventide-sheet[data-bg-theme="gold"] {
-  --erps-profile-primary: #{map.get(themes.$gold-theme, primary)};
-  --erps-profile-secondary: #{map.get(themes.$gold-theme, secondary)};
-  --erps-profile-bright: #{map.get(themes.$gold-theme, light)};
-  --erps-profile-glow: #{map.get(themes.$gold-theme, glow)};
-  --erps-profile-text: #{map.get(themes.$gold-theme, text)};
-}
-
-.eventide-sheet[data-bg-theme="purple"] {
-  --erps-profile-primary: #{map.get(themes.$purple-theme, primary)};
-  --erps-profile-secondary: #{map.get(themes.$purple-theme, secondary)};
-  --erps-profile-bright: #{map.get(themes.$purple-theme, light)};
-  --erps-profile-glow: #{map.get(themes.$purple-theme, glow)};
-  --erps-profile-text: #{map.get(themes.$purple-theme, text)};
-}
-
-// ===================================
-// THEME INTEGRATION FOR GENERIC PROFILE IMAGES
-// ===================================
-// Apply themed profile image backgrounds based on header theme
-// This needs to be outside the main class to work with the theme system
-
-// Theme-aware profile image backgrounds using CSS custom properties
-.eventide-profile-image,
-[class*="eventide-profile-image--"] {
-  // Use theme-aware background that adapts automatically
-  background: var(--erps-profile-primary, var(--theme-primary, var(--erps-profile-primary))) !important;
-  background-clip: content-box !important;
-  padding: 3px !important;
-  box-sizing: border-box !important;
 }
 
 // ===================================
 // LEGACY COMPATIBILITY
 // ===================================
-// Maintain existing class for backward compatibility
+// Maintain existing classes for backward compatibility
 
 .eventide-actor__profile-img {
   @extend %profile-image-base;
 
-  // Default size (180px to match original)
-  $default-size: map.get(tokens.$sheet-profile-sizes, "lg");
-
-  width: $default-size;
-  height: $default-size;
-
-  @include profile-frame-effect($default-size);
+  width: 180px; // Direct size setting
+  height: 180px;
 
   &--disabled {
-    @include profile-disabled-overlay($default-size);
+    @extend %profile-image-base--disabled;
   }
 }
 
 // ===================================
-// LEGACY THEME INTEGRATION
+// USAGE EXAMPLES (HTML)
 // ===================================
-// Apply themed profile image backgrounds based on header theme
-// This maintains the existing theme integration from the original file
 
-.eventide-sheet {
-  .eventide-actor__header {
-    // Theme-aware profile image backgrounds using CSS custom properties
-    .eventide-sheet__profile-img {
-      background: var(--erps-profile-primary, var(--theme-primary, var(--erps-profile-primary))) !important;
-      background-clip: content-box !important;
-      padding: 3px !important;
-      box-sizing: border-box !important;
-    }
-  }
-}
+/*
+<!-- Basic profile image (default lg size) -->
+<img src="path/to/image.jpg" class="eventide-profile-image" alt="Character Portrait">
+
+<!-- Small profile image -->
+<img src="path/to/image.jpg" class="eventide-profile-image eventide-profile-image--sm" alt="Character Portrait">
+
+<!-- Extra large profile image -->
+<img src="path/to/image.jpg" class="eventide-profile-image eventide-profile-image--xl" alt="Character Portrait">
+
+<!-- Disabled profile image -->
+<img src="path/to/image.jpg" class="eventide-profile-image eventide-profile-image--disabled" alt="Character Portrait">
+
+<!-- Legacy actor profile image -->
+<img src="path/to/image.jpg" class="eventide-actor__profile-img" alt="Character Portrait">
+*/

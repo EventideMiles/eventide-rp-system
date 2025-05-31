@@ -1,5 +1,5 @@
 @use "../../utils/themes" as themes;
-@use "../../utils/tokens" as tokens;
+@use "../../utils/sheet-tokens" as tokens;
 @use "sass:map";
 
 // ===================================
@@ -11,45 +11,93 @@
 // ===================================
 // CONFIGURATION VARIABLES
 // ===================================
+// Using sheet-tokens for consistent design system integration
 
-$panel-border-radius: 8px;
-$panel-border-width: 2px;
-$panel-padding: 1rem;
-$panel-gap: 0.5rem;
-$header-height: 3rem;
-$header-padding: 0.75rem 1rem;
-$header-font-size: 1rem;
-$header-font-weight: 600;
+$panel-border-radius: tokens.$sheet-radius-lg;
+$panel-border-width: tokens.$sheet-border-base;
+$panel-padding: tokens.$sheet-spacing-base;
+$panel-gap: tokens.$sheet-spacing-sm;
+$header-height: tokens.$sheet-height-header;
+$header-padding: tokens.$sheet-padding-cell;
+$header-font-size: tokens.$sheet-font-size-value-md;
+$header-font-weight: tokens.$sheet-font-weight-semibold;
 $item-height: 3.5rem;
-$item-padding: 0.75rem 1rem;
-$item-font-size: 0.95rem;
+$item-padding: tokens.$sheet-padding-cell;
+$item-font-size: tokens.$sheet-font-size-label-lg;
 $control-button-size: 2.5rem;
-$control-gap: 0.5rem;
+$control-gap: tokens.$sheet-spacing-sm;
+
+// ===================================
+// UTILITY MIXINS
+// ===================================
+
+// Control button base styling
+@mixin control-button-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: $control-button-size;
+  height: $control-button-size;
+  padding: 0;
+  font-size: $item-font-size;
+  color: var(--theme-text);
+  background: var(--theme-primary);
+  border: 1px solid var(--theme-secondary);
+  border-radius: tokens.$sheet-radius-sm;
+  transition: all tokens.$sheet-transition-base ease;
+  cursor: pointer;
+  text-decoration: none;
+
+  &:hover {
+    background: var(--theme-secondary);
+    border-color: var(--theme-light);
+    color: var(--theme-light);
+    box-shadow: 0 0 tokens.$sheet-glow-blur-sm var(--theme-glow);
+    transform: translateY(tokens.$sheet-transform-hover-sm);
+  }
+
+  &:active {
+    transform: translateY(0) scale(tokens.$sheet-transform-scale-active);
+  }
+}
+
+// Control button color variant mixin
+@mixin control-button-variant($color-name) {
+  color: themes.color($color-name, 70);
+  border-color: themes.color($color-name, 40);
+
+  &:hover {
+    background: themes.color($color-name, 20);
+    border-color: themes.color($color-name, 80);
+    color: themes.color($color-name, 90);
+    box-shadow: 0 0 tokens.$sheet-glow-blur-sm themes.color($color-name, 40);
+  }
+}
 
 // ===================================
 // MAIN PANEL CONTAINER
 // ===================================
 
 .erps-items-panel {
-  background: var(--erps-current-primary, var(--theme-primary, var(--erps-default-primary)));
-  border: $panel-border-width solid var(--erps-current-secondary, var(--theme-secondary, var(--erps-default-secondary)));
+  background: var(--theme-primary);
+  border: $panel-border-width solid var(--theme-secondary);
   border-radius: $panel-border-radius;
   overflow: hidden;
-  box-shadow: 0 4px 12px rgb(0 0 0 / 30%);
+  box-shadow: 0 tokens.$sheet-shadow-blur-xs tokens.$sheet-shadow-blur-md themes.color(black, 30);
 
   &__section-header {
     font-family: var(--erps-ui-font);
-    font-size: 16pt;
-    font-weight: 600;
-    color: var(--erps-current-text, var(--theme-text, var(--erps-default-text)));
+    font-size: $header-font-size;
+    font-weight: $header-font-weight;
+    color: var(--theme-text);
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 0.75rem;
-    padding: 0.5rem 1rem;
-    background: linear-gradient(135deg, var(--erps-current-primary, var(--theme-primary, var(--erps-default-primary))), var(--erps-current-secondary, var(--theme-secondary, var(--erps-default-secondary))));
-    border-radius: 6px 6px 0 0;
-    border-bottom: 2px solid themes.get-universal-color(white, 20);
-    text-shadow: 0 1px 2px themes.get-universal-color(black, 80);
+    letter-spacing: tokens.$sheet-letter-spacing-base;
+    margin-bottom: tokens.$sheet-spacing-md;
+    padding: tokens.$sheet-spacing-sm tokens.$sheet-spacing-base;
+    background: linear-gradient(135deg, var(--theme-primary), var(--theme-secondary));
+    border-radius: tokens.$sheet-radius-md tokens.$sheet-radius-md 0 0;
+    border-bottom: tokens.$sheet-border-base solid themes.color(white, 20);
+    text-shadow: 0 1px 2px themes.color(black, 80);
     text-align: center;
   }
 
@@ -60,7 +108,7 @@ $control-gap: 0.5rem;
     list-style: none;
     margin: 0;
     padding: 0;
-    color: var(--erps-current-text, var(--theme-text, var(--erps-default-text)));
+    color: var(--theme-text);
 
     // Default 4-column layout: Image | Name | Usage | Controls
     &--default {
@@ -88,16 +136,16 @@ $control-gap: 0.5rem;
 
     &--header {
       .erps-items-panel__cell {
-        background: var(--erps-current-secondary, var(--theme-secondary, var(--erps-default-secondary)));
-        color: var(--erps-current-text, var(--theme-text, var(--erps-default-text)));
+        background: var(--theme-secondary);
+        color: var(--theme-text);
         font-weight: $header-font-weight;
         font-size: $header-font-size;
         height: $header-height;
         padding: $header-padding;
-        border-bottom: 2px solid var(--erps-current-bright, var(--theme-bright, var(--erps-default-bright)));
-        text-shadow: 0 1px 2px themes.get-universal-color(black, 60);
+        border-bottom: tokens.$sheet-border-base solid var(--theme-light);
+        text-shadow: 0 1px 2px themes.color(black, 60);
         text-transform: uppercase;
-        letter-spacing: 0.5px;
+        letter-spacing: tokens.$sheet-letter-spacing-base;
       }
     }
 
@@ -105,11 +153,11 @@ $control-gap: 0.5rem;
       .erps-items-panel__cell {
         height: $item-height;
         padding: $item-padding;
-        border-bottom: 1px solid themes.get-universal-color(white, 10);
-        transition: all 0.2s ease;
+        border-bottom: 1px solid themes.color(white, 10);
+        transition: all tokens.$sheet-transition-base ease;
 
         &:hover {
-          background-color: rgb(255 255 255 / 5%);
+          background-color: themes.color(white, 5);
         }
       }
 
@@ -169,14 +217,14 @@ $control-gap: 0.5rem;
   &__image {
     width: 2.5rem;
     height: 2.5rem;
-    border-radius: 4px;
-    border: 1px solid var(--erps-current-secondary, var(--theme-secondary, var(--erps-default-secondary)));
+    border-radius: tokens.$sheet-radius-sm;
+    border: 1px solid var(--theme-secondary);
     object-fit: cover;
     flex-shrink: 0;
 
     &:hover {
-      border-color: var(--erps-current-bright, var(--theme-bright, var(--erps-default-bright)));
-      box-shadow: 0 0 8px var(--erps-current-glow, var(--theme-glow, var(--erps-default-glow)));
+      border-color: var(--theme-light);
+      box-shadow: 0 0 tokens.$sheet-glow-blur-sm var(--theme-glow);
     }
   }
 
@@ -185,8 +233,8 @@ $control-gap: 0.5rem;
   // ===================================
 
   &__name {
-    font-weight: 500;
-    color: var(--erps-current-text, var(--theme-text, var(--erps-default-text)));
+    font-weight: tokens.$sheet-font-weight-medium;
+    color: var(--theme-text);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -194,7 +242,7 @@ $control-gap: 0.5rem;
     min-width: 0;
 
     &:hover {
-      color: var(--erps-current-bright, var(--theme-bright, var(--erps-default-bright)));
+      color: var(--theme-light);
     }
   }
 
@@ -203,84 +251,27 @@ $control-gap: 0.5rem;
   // ===================================
 
   &__control {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: $control-button-size;
-    height: $control-button-size;
-    padding: 0;
-    font-size: 0.9rem;
-    color: var(--erps-current-text, var(--theme-text, var(--erps-default-text)));
-    background: var(--erps-current-primary, var(--theme-primary, var(--erps-default-primary)));
-    border: 1px solid var(--erps-current-secondary, var(--theme-secondary, var(--erps-default-secondary)));
-    border-radius: 4px;
-    transition: all 0.2s ease;
-    cursor: pointer;
-    text-decoration: none;
-
-    &:hover {
-      background: var(--erps-current-secondary, var(--theme-secondary, var(--erps-default-secondary)));
-      border-color: var(--erps-current-bright, var(--theme-bright, var(--erps-default-bright)));
-      color: var(--erps-current-bright, var(--theme-bright, var(--erps-default-bright)));
-      box-shadow: 0 0 8px var(--erps-current-glow, var(--theme-glow, var(--erps-default-glow)));
-      transform: translateY(-1px);
-    }
-
-    &:active {
-      transform: translateY(0) scale(0.95);
-    }
+    @include control-button-base;
 
     // Control button variants
     &--view {
-      color: themes.get-semantic-color(blue, 70);
-      border-color: themes.get-semantic-color(blue, 40);
-
-      &:hover {
-        background: themes.get-semantic-color(blue, 20);
-        border-color: themes.get-semantic-color(blue, 80);
-        color: themes.get-semantic-color(blue, 90);
-        box-shadow: 0 0 8px themes.get-semantic-color(blue, 40);
-      }
+      @include control-button-variant(blue);
     }
 
     &--edit {
-      color: themes.get-semantic-color(green, 70);
-      border-color: themes.get-semantic-color(green, 40);
-
-      &:hover {
-        background: themes.get-semantic-color(green, 20);
-        border-color: themes.get-semantic-color(green, 80);
-        color: themes.get-semantic-color(green, 90);
-        box-shadow: 0 0 8px themes.get-semantic-color(green, 40);
-      }
+      @include control-button-variant(green);
     }
 
     &--delete {
-      color: themes.get-semantic-color(red, 70);
-      border-color: themes.get-semantic-color(red, 40);
-
-      &:hover {
-        background: themes.get-semantic-color(red, 20);
-        border-color: themes.get-semantic-color(red, 80);
-        color: themes.get-semantic-color(red, 90);
-        box-shadow: 0 0 8px themes.get-semantic-color(red, 40);
-      }
+      @include control-button-variant(red);
     }
 
     &--warning {
-      color: themes.get-semantic-color(orange, 70);
-      border-color: themes.get-semantic-color(orange, 40);
-
-      &:hover {
-        background: themes.get-semantic-color(orange, 20);
-        border-color: themes.get-semantic-color(orange, 80);
-        color: themes.get-semantic-color(orange, 90);
-        box-shadow: 0 0 8px themes.get-semantic-color(orange, 40);
-      }
+      @include control-button-variant(orange);
     }
 
     &--disabled {
-      opacity: 0.5;
+      opacity: tokens.$sheet-opacity-disabled;
       cursor: not-allowed;
       pointer-events: none;
     }
@@ -294,31 +285,31 @@ $control-gap: 0.5rem;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
+    gap: tokens.$sheet-spacing-sm;
     height: 2.5rem;
-    padding: 0 1rem;
+    padding: 0 tokens.$sheet-spacing-base;
     font-family: var(--erps-ui-font, sans-serif);
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: var(--erps-current-text, var(--theme-text, var(--erps-default-text)));
-    background: linear-gradient(135deg, themes.get-semantic-color(green, 30), themes.get-semantic-color(green, 50));
-    border: 1px solid themes.get-semantic-color(green, 40);
-    border-radius: 4px;
-    transition: all 0.2s ease;
+    font-size: $item-font-size;
+    font-weight: tokens.$sheet-font-weight-semibold;
+    color: var(--theme-text);
+    background: linear-gradient(135deg, themes.color(green, 30), themes.color(green, 50));
+    border: 1px solid themes.color(green, 40);
+    border-radius: tokens.$sheet-radius-sm;
+    transition: all tokens.$sheet-transition-base ease;
     cursor: pointer;
     text-decoration: none;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: tokens.$sheet-letter-spacing-base;
 
     &:hover {
-      background: linear-gradient(135deg, themes.get-semantic-color(green, 50), themes.get-semantic-color(green, 70));
-      border-color: themes.get-semantic-color(green, 80);
-      box-shadow: 0 0 8px themes.get-semantic-color(green, 40);
-      transform: translateY(-1px);
+      background: linear-gradient(135deg, themes.color(green, 50), themes.color(green, 70));
+      border-color: themes.color(green, 80);
+      box-shadow: 0 0 tokens.$sheet-glow-blur-sm themes.color(green, 40);
+      transform: translateY(tokens.$sheet-transform-hover-sm);
     }
 
     &:active {
-      transform: translateY(0) scale(0.98);
+      transform: translateY(0) scale(tokens.$sheet-transform-scale-active);
     }
   }
 
@@ -328,12 +319,12 @@ $control-gap: 0.5rem;
 
   &__empty {
     grid-column: 1 / -1;
-    padding: 2rem;
+    padding: tokens.$sheet-spacing-xl;
     text-align: center;
-    color: var(--erps-current-text, var(--theme-text, var(--erps-default-text)));
+    color: var(--theme-text);
     opacity: 0.7;
     font-style: italic;
-    font-size: 0.95rem;
+    font-size: $item-font-size;
   }
 
   // ===================================
@@ -341,27 +332,27 @@ $control-gap: 0.5rem;
   // ===================================
 
   &__drop-zone {
-    margin-top: 1rem;
-    padding: 1.5rem;
-    border: 2px dashed var(--erps-current-secondary, var(--theme-secondary, var(--erps-default-secondary)));
-    border-radius: 6px;
+    margin-top: tokens.$sheet-spacing-base;
+    padding: tokens.$sheet-spacing-lg;
+    border: tokens.$sheet-border-base dashed var(--theme-secondary);
+    border-radius: tokens.$sheet-radius-md;
     text-align: center;
-    color: var(--erps-current-text, var(--theme-text, var(--erps-default-text)));
+    color: var(--theme-text);
     opacity: 0.7;
-    transition: all 0.3s ease;
+    transition: all tokens.$sheet-transition-medium ease;
 
     &:hover,
     &.drag-over {
-      border-color: var(--erps-current-bright, var(--theme-bright, var(--erps-default-bright)));
-      background-color: rgb(255 255 255 / 5%);
+      border-color: var(--theme-light);
+      background-color: themes.color(white, 5);
       opacity: 1;
-      box-shadow: 0 0 12px var(--erps-current-glow, var(--theme-glow, var(--erps-default-glow)));
+      box-shadow: 0 0 tokens.$sheet-shadow-blur-md var(--theme-glow);
     }
 
     p {
       margin: 0;
-      font-size: 0.95rem;
-      font-weight: 500;
+      font-size: $item-font-size;
+      font-weight: tokens.$sheet-font-weight-medium;
     }
   }
 
@@ -370,14 +361,14 @@ $control-gap: 0.5rem;
   // ===================================
 
   &__notes {
-    margin-top: 1rem;
-    padding: 0.75rem;
-    font-size: 0.85rem;
-    color: var(--erps-current-text, var(--theme-text, var(--erps-default-text)));
+    margin-top: tokens.$sheet-spacing-base;
+    padding: tokens.$sheet-spacing-md;
+    font-size: tokens.$sheet-font-size-label-md;
+    color: var(--theme-text);
     opacity: 0.8;
     font-style: italic;
-    background: rgb(255 255 255 / 3%);
-    border-radius: 4px;
-    border-left: 3px solid var(--erps-current-secondary, var(--theme-secondary, var(--erps-default-secondary)));
+    background: themes.color(white, 3);
+    border-radius: tokens.$sheet-radius-sm;
+    border-left: 3px solid var(--theme-secondary);
   }
 }

@@ -1,9 +1,9 @@
 {{! Sheet Header }}
-<header class='sheet-header sheet-header--actor eventide-sheet__header'>
+<header class='eventide-sheet__header eventide-sheet__header--actor'>
   <div class="grid grid-8col">
     <div class="flexcol grid-span-2">
       <img
-        class='eventide-profile-image {{#if actor.flags.eventide-rp-system.activeTransformation}}eventide-profile-image--disabled{{/if}}'
+        class='eventide-profile-image--actor {{#if actor.flags.eventide-rp-system.activeTransformation}}eventide-profile-image--disabled{{/if}}'
         src='{{actor.img}}'
         {{#unless actor.flags.eventide-rp-system.activeTransformation}}
         data-edit='img'

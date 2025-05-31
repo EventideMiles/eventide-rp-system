@@ -31,6 +31,14 @@ $sheet-height-header-compact: 2.5rem;
 $sheet-height-tab-large: 3.5rem;
 $sheet-height-ability-card: 3rem;
 
+// Input-specific sizing (proper usable sizes)
+$sheet-height-input-standard: 3rem;        // Standard input height for good usability
+$sheet-height-input-compact: 2.5rem;       // Compact variant
+$sheet-height-input-large: 3.5rem;         // Large variant
+$sheet-height-button-standard: 3rem;       // Standard button height to match inputs
+$sheet-height-button-compact: 2.5rem;      // Compact button variant
+$sheet-height-button-large: 3.5rem;        // Large button variant
+
 // Component widths
 $sheet-width-input: 2.25rem;
 $sheet-width-button: 2.25rem;
@@ -236,8 +244,13 @@ $sheet-profile-sizes: (
 // =============================================================================
 
 // Common padding combinations
-$sheet-padding-input: 0.25rem 0.5rem;
-$sheet-padding-button: 0.5rem 1rem;
+$sheet-padding-input: 0.875rem 1rem;       // Standard input padding
+$sheet-padding-input-compact: 0.625rem 0.75rem;  // Compact input padding
+$sheet-padding-input-large: 1.125rem 1.25rem;    // Large input padding
+$sheet-padding-input-resource: 0.875rem 0.5rem;  // Resource box input padding (reduced horizontal for 2-digit display)
+$sheet-padding-button: 0.875rem 1.5rem;    // Standard button padding
+$sheet-padding-button-compact: 0.625rem 1rem;    // Compact button padding
+$sheet-padding-button-large: 1.125rem 2rem;      // Large button padding
 $sheet-padding-card: 0.5rem 0.75rem;
 $sheet-padding-cell: 0.75rem 1rem;
 $sheet-padding-cell-compact: 0.5rem 0.75rem;

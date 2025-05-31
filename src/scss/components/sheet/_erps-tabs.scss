@@ -1,11 +1,6 @@
 @use "../../utils/themes" as themes;
-@use "../../utils/colors" as colors;
-@use "../../utils/typography" as typography;
-@use "../../utils/mixins" as mixins;
-@use "../../utils/tokens" as tokens;
-@use "../../utils/sheet-tokens" as sheet;
-@use "sass:math";
-@use "sass:list";
+@use "../../utils/sheet-tokens" as tokens;
+@use "sass:map";
 
 // ===================================
 // ERPS TABS COMPONENT
@@ -15,163 +10,173 @@
 // Supports both standard Foundry tabs and custom gear tabs
 
 // ===================================
-// MODERN COLOR FUNCTIONS & UTILITIES
+// CONFIGURATION VARIABLES
+// ===================================
+// Using sheet-tokens for consistent design system integration
+
+// Tab spacing and sizing
+$tab-padding: tokens.$sheet-padding-tab;
+$tab-padding-large: tokens.$sheet-padding-tab-large;
+$tab-container-padding: tokens.$sheet-padding-tab-container;
+$tab-gap: tokens.$sheet-spacing-sm;
+$tab-margin-right: tokens.$sheet-margin-tab-right;
+$tab-nav-margin-bottom: tokens.$sheet-margin-tab-nav-bottom;
+
+// Tab dimensions
+$tab-height-large: tokens.$sheet-height-tab-large;
+$tab-count-size: tokens.$sheet-size-tab-count;
+$tab-content-height-scrollable: tokens.$sheet-tab-content-height-scrollable;
+
+// Typography
+$tab-font-size: tokens.$sheet-font-size-xs;
+$tab-font-size-sm: tokens.$sheet-font-size-sm;
+$tab-font-size-md: tokens.$sheet-font-size-md;
+$tab-font-weight: tokens.$sheet-font-weight-semibold;
+$tab-font-weight-bold: tokens.$sheet-font-weight-bold;
+$tab-letter-spacing: tokens.$sheet-letter-spacing-base;
+$tab-line-height: tokens.$sheet-line-height-tight;
+
+// Borders and radius
+$tab-border-thin: tokens.$sheet-border-thin;
+$tab-border-base: tokens.$sheet-border-base;
+$tab-border-accent: tokens.$sheet-border-accent;
+$tab-radius-sm: tokens.$sheet-radius-sm;
+$tab-radius-md: tokens.$sheet-radius-md;
+$tab-radius-lg: tokens.$sheet-radius-lg;
+$tab-radius-xxl: tokens.$sheet-radius-xxl;
+
+// Shadows and effects
+$tab-shadow-blur-md: tokens.$sheet-shadow-blur-md;
+$tab-shadow-blur-lg: tokens.$sheet-shadow-blur-lg;
+$tab-shadow-blur-xxl: tokens.$sheet-shadow-blur-xxl;
+$tab-glow-blur-sm: tokens.$sheet-glow-blur-sm;
+$tab-glow-blur-md: tokens.$sheet-glow-blur-md;
+$tab-glow-width: tokens.$sheet-glow-width;
+
+// Transitions and animations
+$tab-transition-base: tokens.$sheet-transition-base;
+$tab-transition-medium: tokens.$sheet-transition-medium;
+$tab-transition-slow: tokens.$sheet-transition-slow;
+$tab-animation-glow: tokens.$sheet-animation-glow;
+
+// Transforms and positioning
+$tab-transform-hover-sm: tokens.$sheet-transform-hover-sm;
+$tab-transform-hover-md: tokens.$sheet-transform-hover-md;
+$tab-transform-fade: tokens.$sheet-transform-fade;
+$tab-opacity-full: tokens.$sheet-opacity-full;
+$tab-opacity-unequipped: tokens.$sheet-opacity-unequipped;
+
+// Z-index values
+$tab-z-index-base: tokens.$sheet-z-index-base;
+$tab-z-index-overlay: tokens.$sheet-z-index-overlay;
+
+// ===================================
+// THEME SYSTEM
+// ===================================
+// Theme-aware system using CSS custom properties that inherit from the main theme
+
+// Default theme variables that inherit from the main theme system
+:root {
+  --erps-tab-primary: var(--theme-primary, #4a90e2);
+  --erps-tab-secondary: var(--theme-secondary, #357abd);
+  --erps-tab-bright: var(--theme-light, #6bb6ff);
+  --erps-tab-glow: var(--theme-glow, rgb(74 144 226 / 30%));
+  --erps-tab-text: var(--theme-text, #fff);
+}
+
+// ===================================
+// UTILITY MIXINS
 // ===================================
 
-// Utility mixins for tab-specific patterns
+// Tab glow effect
 @mixin tab-glow($color, $opacity: 60) {
-  box-shadow: 0 0 sheet.$sheet-shadow-blur-xxl themes.get-semantic-color($color, $opacity) !important;
+  box-shadow: 0 0 $tab-shadow-blur-xxl var(--theme-glow);
 }
 
+// Base shadow for tabs
 @mixin tab-shadow-base {
-  box-shadow: 0 4px sheet.$sheet-shadow-blur-lg themes.get-universal-color(black, 30) !important;
+  box-shadow: 0 4px $tab-shadow-blur-lg themes.color(black, 30);
 }
 
-@mixin tab-shadow-active($glow-color: var(--theme-glow)) {
+// Active tab shadow with glow
+@mixin tab-shadow-active($glow-color: var(--erps-tab-glow)) {
   box-shadow:
-    0 4px sheet.$sheet-shadow-blur-lg themes.get-universal-color(black, 30),
-    0 0 sheet.$sheet-shadow-blur-xxl $glow-color !important;
+    0 4px $tab-shadow-blur-lg themes.color(black, 30),
+    0 0 $tab-shadow-blur-xxl $glow-color;
 }
 
+// Tab gradient background
 @mixin tab-gradient-background {
   background: linear-gradient(135deg,
-    var(--theme-primary) sheet.$sheet-position-zero,
-    var(--theme-secondary) sheet.$sheet-position-center,
-    var(--theme-primary) sheet.$sheet-percent-full) !important;
+    var(--erps-tab-primary) 0%,
+    var(--erps-tab-secondary) 50%,
+    var(--erps-tab-primary) 100%);
 }
 
+// Animated glow effect
 @mixin tab-animated-glow {
-  content: '' !important;
-  position: absolute !important;
-  top: sheet.$sheet-position-zero !important;
-  left: (- sheet.$sheet-percent-full) !important;
-  width: sheet.$sheet-glow-width !important;
-  height: sheet.$sheet-percent-full !important;
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: $tab-glow-width;
+  height: 100%;
   background: linear-gradient(90deg,
     transparent,
-    themes.get-universal-color(white, 10),
-    transparent) !important;
-  transition: left sheet.$sheet-transition-slow ease !important;
-  z-index: sheet.$sheet-z-index-base !important;
+    var(--erps-tab-bright),
+    transparent);
+  transition: left $tab-transition-slow ease;
+  z-index: $tab-z-index-base;
 }
 
-// ===================================
-// TAB CONTAINER BORDER RADIUS UTILITIES
-// ===================================
-
-// Tab container border radius variants
+// Border radius variants
 @mixin tab-container-radius-top-only {
-  border-radius: sheet.$sheet-radius-md sheet.$sheet-radius-md 0 0 !important;
+  border-radius: $tab-radius-md $tab-radius-md 0 0;
 }
 
 @mixin tab-container-radius-full {
-  border-radius: sheet.$sheet-radius-md !important;
+  border-radius: $tab-radius-md;
 }
 
 @mixin tab-container-radius-none {
-  border-radius: 0 !important;
+  border-radius: 0;
 }
-
-// ===================================
-// THEME-AWARE DEFAULTS FOR TABS
-// ===================================
-
-:root {
-  // Default theme (blue)
-  --erps-tab-primary: #4a90e2;
-  --erps-tab-secondary: #357abd;
-  --erps-tab-bright: #6bb6ff;
-  --erps-tab-glow: rgb(74 144 226 / 30%);
-  --erps-tab-text: #fff;
-}
-
-// Theme-specific defaults that activate based on sheet classes
-.eventide-sheet[data-bg-theme="blue"] {
-  --erps-tab-primary: #4a90e2;
-  --erps-tab-secondary: #357abd;
-  --erps-tab-bright: #6bb6ff;
-  --erps-tab-glow: rgb(74 144 226 / 30%);
-  --erps-tab-text: #fff;
-}
-
-.eventide-sheet[data-bg-theme="black"] {
-  --erps-tab-primary: #2c2c2c;
-  --erps-tab-secondary: #1a1a1a;
-  --erps-tab-bright: #4a4a4a;
-  --erps-tab-glow: rgb(44 44 44 / 30%);
-  --erps-tab-text: #fff;
-}
-
-.eventide-sheet[data-bg-theme="green"] {
-  --erps-tab-primary: #4a9e4a;
-  --erps-tab-secondary: #357a35;
-  --erps-tab-bright: #6bb66b;
-  --erps-tab-glow: rgb(74 158 74 / 30%);
-  --erps-tab-text: #fff;
-}
-
-.eventide-sheet[data-bg-theme="light"] {
-  --erps-tab-primary: #e2e2e2;
-  --erps-tab-secondary: #c0c0c0;
-  --erps-tab-bright: #fff;
-  --erps-tab-glow: rgb(226 226 226 / 30%);
-  --erps-tab-text: #1a1a1a;
-}
-
-.eventide-sheet[data-bg-theme="gold"] {
-  --erps-tab-primary: #d4af37;
-  --erps-tab-secondary: #b8941f;
-  --erps-tab-bright: #f4d03f;
-  --erps-tab-glow: rgb(212 175 55 / 30%);
-  --erps-tab-text: #fff;
-}
-
-.eventide-sheet[data-bg-theme="purple"] {
-  --erps-tab-primary: #8e44ad;
-  --erps-tab-secondary: #7d3c98;
-  --erps-tab-bright: #a569bd;
-  --erps-tab-glow: rgb(142 68 173 / 30%);
-  --erps-tab-text: #fff;
-}
-
-// ===================================
-// CORE MIXINS FOR TABS
-// ===================================
 
 // Base tab container styling
 @mixin tab-container-base {
-  display: flex !important;
-  flex-wrap: wrap !important;
-  border-bottom: sheet.$sheet-border-base solid themes.get-universal-color(white, 10) !important;
+  display: flex;
+  flex-wrap: wrap;
+  border-bottom: $tab-border-base solid var(--erps-tab-bright);
 
   @include tab-gradient-background;
-  @include tab-container-radius-top-only; // Default: rounded top, flat bottom
+  @include tab-container-radius-top-only;
 
-  padding: sheet.$sheet-padding-tab-container !important;
-  margin: sheet.$sheet-position-zero !important;
+  padding: $tab-container-padding;
+  margin: 0;
 
   @include themes.themed-glow-shadow;
 }
 
 // Base tab item styling
 @mixin tab-item-base {
-  position: relative !important;
-  padding: sheet.$sheet-padding-tab !important;
-  border: sheet.$sheet-border-thin solid themes.get-universal-color(white, 20) !important;
-  border-bottom: none !important;
-  border-radius: sheet.$sheet-radius-md sheet.$sheet-radius-md 0 0 !important;
+  position: relative;
+  padding: $tab-padding;
+  border: $tab-border-thin solid var(--erps-tab-bright);
+  border-bottom: none;
+  border-radius: $tab-radius-md $tab-radius-md 0 0;
   font-family: var(--erps-ui-font) !important;
-  font-size: sheet.$sheet-font-size-xs !important;
-  font-weight: sheet.$sheet-font-weight-semibold !important;
+  font-size: $tab-font-size !important;
+  font-weight: $tab-font-weight !important;
   text-transform: uppercase !important;
-  letter-spacing: sheet.$sheet-letter-spacing-base !important;
-  color: var(--erps-tab-text, var(--theme-text, var(--erps-tab-text))) !important;
-  background: themes.get-universal-color(white, 10) !important;
-  transition: all sheet.$sheet-transition-medium ease !important;
+  letter-spacing: $tab-letter-spacing !important;
+  color: var(--erps-tab-text) !important;
+  background: var(--erps-tab-primary) !important;
+  transition: all $tab-transition-medium ease;
   text-decoration: none !important;
-  cursor: pointer !important;
-  margin-right: sheet.$sheet-margin-tab-right !important;
-  overflow: hidden !important;
+  cursor: pointer;
+  margin-right: $tab-margin-right;
+  overflow: hidden;
+  text-shadow: none !important;
 
   // Animated background effect
   &::before {
@@ -180,131 +185,161 @@
 
   // Text content above background effect
   & > * {
-    position: relative !important;
-    z-index: sheet.$sheet-z-index-overlay !important;
+    position: relative;
+    z-index: $tab-z-index-overlay;
   }
 }
 
 // Tab hover state
 @mixin tab-hover-state {
-  background: var(--erps-tab-primary, var(--theme-primary, var(--erps-tab-primary))) !important;
-  border-color: var(--erps-tab-bright, var(--theme-bright, var(--erps-tab-bright))) !important;
-  color: var(--erps-tab-text, var(--theme-text, var(--erps-tab-text))) !important;
-  transform: translateY(sheet.$sheet-transform-hover-md) !important;
+  background: var(--erps-tab-primary) !important;
+  border-color: var(--erps-tab-bright) !important;
+  color: var(--erps-tab-text) !important;
+  transform: translateY($tab-transform-hover-md);
+  text-shadow: none !important;
 
   @include tab-shadow-base;
 
   &::before {
-    left: sheet.$sheet-percent-full !important;
+    left: 100%;
   }
 }
 
 // Tab active state
 @mixin tab-active-state {
-  background: var(--erps-tab-secondary, var(--theme-secondary, var(--erps-tab-secondary))) !important;
-  border-color: var(--erps-tab-glow, var(--theme-glow, var(--erps-tab-glow))) !important;
-  color: var(--erps-tab-text, var(--theme-text, var(--erps-tab-text))) !important;
+  background: var(--erps-tab-secondary) !important;
+  border-color: var(--erps-tab-glow) !important;
+  color: var(--erps-tab-text) !important;
+  text-shadow: none !important;
 
-  @include tab-shadow-active(var(--erps-tab-glow, var(--theme-glow, var(--erps-tab-glow))));
+  @include tab-shadow-active(var(--erps-tab-glow));
 
-  transform: translateY(sheet.$sheet-transform-hover-sm) !important;
-  z-index: 10 !important;
+  transform: translateY($tab-transform-hover-sm);
+  z-index: 10;
 
   &::before {
-    left: sheet.$sheet-position-zero !important;
+    left: 0;
     background: linear-gradient(90deg,
-      var(--erps-tab-bright, var(--theme-bright, var(--erps-tab-bright))),
+      var(--erps-tab-bright),
       transparent,
-      var(--erps-tab-bright, var(--theme-bright, var(--erps-tab-bright)))) !important;
-    opacity: 0.3 !important;
-    animation: erps-tab-glow sheet.$sheet-animation-glow ease-in-out infinite !important;
+      var(--erps-tab-bright));
+    opacity: 0.3;
+    animation: erps-tab-glow $tab-animation-glow ease-in-out infinite;
   }
 
-  // Remove the skewed background from global override
   &::after {
-    display: none !important;
+    display: none;
   }
 }
 
-// Custom tab button styling (for gear tabs)
+// Custom tab button styling
 @mixin custom-tab-button-base {
-  display: flex !important;
-  align-items: center !important;
-  gap: sheet.$sheet-spacing-sm !important;
-  padding: sheet.$sheet-padding-tab-large !important;
-  border: none !important;
-  border-radius: sheet.$sheet-radius-lg sheet.$sheet-radius-lg 0 0 !important;
-  background: themes.get-universal-color(white, 10) !important;
-  color: var(--erps-tab-text, var(--theme-text, var(--erps-tab-text))) !important;
-  cursor: pointer !important;
-  transition: all sheet.$sheet-transition-medium ease !important;
-  font-family: var(--erps-ui-font) !important;
-  font-size: sheet.$sheet-font-size-sm !important;
-  font-weight: sheet.$sheet-font-weight-semibold !important;
-  text-transform: uppercase !important;
-  letter-spacing: sheet.$sheet-letter-spacing-base !important;
-  position: relative !important;
-  overflow: hidden !important;
-  height: sheet.$sheet-height-tab-large !important;
-  min-height: sheet.$sheet-height-tab-large !important;
-  box-sizing: border-box !important;
+  display: flex;
+  align-items: center;
+  gap: $tab-gap;
+  padding: $tab-padding-large;
+  border: none;
+  border-radius: $tab-radius-lg $tab-radius-lg 0 0;
+  background: var(--erps-tab-primary);
+  color: var(--erps-tab-text);
+  cursor: pointer;
+  transition: all $tab-transition-medium ease;
+  font-family: var(--erps-ui-font);
+  font-size: $tab-font-size-sm;
+  font-weight: $tab-font-weight;
+  text-transform: uppercase;
+  letter-spacing: $tab-letter-spacing;
+  position: relative;
+  overflow: hidden;
+  height: $tab-height-large;
+  min-height: $tab-height-large;
+  box-sizing: border-box;
 
   i {
-    font-size: sheet.$sheet-font-size-md !important;
-    opacity: 0.8 !important;
-    transition: all sheet.$sheet-transition-base ease !important;
+    font-size: $tab-font-size-md;
+    opacity: 0.8;
+    transition: all $tab-transition-base ease;
   }
 
   &:hover i {
-    opacity: sheet.$sheet-opacity-full !important;
-    transform: scale(1.1) !important;
+    opacity: $tab-opacity-full;
+    transform: scale(1.1);
   }
 }
 
 // Tab content styling
 @mixin tab-content-base {
-  margin-top: sheet.$sheet-position-zero !important;
-  padding-top: sheet.$sheet-position-zero !important;
+  margin-top: 0;
+  padding-top: 0;
 
-  // Remove top margin from first data section in each tab
   .eventide-sheet-data-section:first-child {
-    margin-top: sheet.$sheet-position-zero !important;
+    margin-top: 0;
   }
 }
 
 @mixin tab-content-scrollable {
-  height: sheet.$sheet-tab-content-height-scrollable !important;
-  overflow-y: auto !important;
+  height: $tab-content-height-scrollable;
+  overflow-y: auto;
 
-  // Ensure all sections don't scroll individually
   section.main, aside.sidebar, .items-list {
-    overflow: visible !important;
+    overflow: visible;
   }
 }
 
 @mixin tab-content-animated {
-  display: none !important;
-  width: sheet.$sheet-percent-full !important;
-  animation: erps-tab-fade-in sheet.$sheet-transition-medium ease-in-out !important;
+  display: none;
+  width: 100%;
+  animation: erps-tab-fade-in $tab-transition-medium ease-in-out;
 
   &.active {
-    display: block !important;
+    display: block;
   }
 }
 
-// Count/badge styling for custom tabs
+// Count/badge styling
 @mixin tab-count-badge {
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  min-width: sheet.$sheet-size-tab-count !important;
-  height: sheet.$sheet-size-tab-count !important;
-  padding: 0 sheet.$sheet-spacing-sm !important;
-  border-radius: sheet.$sheet-radius-xxl !important;
-  background: themes.get-universal-color(white, 10) !important;
-  font-size: sheet.$sheet-font-size-xs !important;
-  font-weight: sheet.$sheet-font-weight-bold !important;
-  line-height: sheet.$sheet-line-height-tight !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: $tab-count-size;
+  height: $tab-count-size;
+  padding: 0 $tab-gap;
+  border-radius: $tab-radius-xxl;
+  background: var(--erps-tab-secondary);
+  font-size: $tab-font-size;
+  font-weight: $tab-font-weight-bold;
+  line-height: $tab-line-height;
+}
+
+// Tab variant styling
+@mixin tab-variant($color, $hover-theme: null) {
+  @if $hover-theme {
+    &.active, &:hover {
+      --erps-tab-primary: var(--theme-primary);
+      --erps-tab-secondary: var(--theme-secondary);
+      --erps-tab-glow: var(--theme-glow);
+    }
+  }
+
+  i {
+    color: var(--theme-text);
+  }
+}
+
+// Tab panel content styling
+@mixin tab-panel-content($color, $opacity: null) {
+  .eventide-actor-data-table, .erps-data-table {
+    border-left: $tab-border-accent solid var(--theme-glow);
+
+    @if $opacity {
+      opacity: $opacity;
+    }
+
+    box-shadow:
+      0 $tab-border-accent $tab-shadow-blur-lg themes.color(black, 30),
+      inset 0 $tab-border-thin 0 var(--erps-tab-bright),
+      inset $tab-border-accent 0 0 var(--theme-primary);
+  }
 }
 
 // ===================================
@@ -316,13 +351,12 @@
   &__container {
     @include tab-container-base;
 
-    // Override global tab styling with higher specificity
     &.sheet-tabs,
     .tabs {
       @include tab-container-base;
     }
 
-    // Manual border radius overrides
+    // Border radius variants
     &--radius-top-only {
       @include tab-container-radius-top-only;
     }
@@ -340,19 +374,16 @@
   &__item {
     @include tab-item-base;
 
-    // Font styling for tab text
     .item {
-      font-family: var(--erps-ui-font) !important;
-      font-weight: sheet.$sheet-font-weight-semibold !important;
-      letter-spacing: sheet.$sheet-letter-spacing-base !important;
+      font-family: var(--erps-ui-font);
+      font-weight: $tab-font-weight;
+      letter-spacing: $tab-letter-spacing;
     }
 
-    // Hover state
     &:hover:not(.active) {
       @include tab-hover-state;
     }
 
-    // Active state
     &.active {
       @include tab-active-state;
     }
@@ -362,82 +393,61 @@
   &__content {
     @include tab-content-base;
 
-    // Scrollable variant
     &--scrollable {
       @include tab-content-scrollable;
     }
   }
 
-  // Custom tab navigation (for gear tabs, etc.)
+  // Custom tab navigation
   &__nav {
-    display: flex !important;
-    gap: sheet.$sheet-spacing-sm !important;
-    margin-bottom: sheet.$sheet-margin-tab-nav-bottom !important;
-    border-bottom: sheet.$sheet-border-base solid themes.get-universal-color(white, 10) !important;
-    padding-bottom: sheet.$sheet-spacing-sm !important;
+    display: flex;
+    gap: $tab-gap;
+    margin-bottom: $tab-nav-margin-bottom;
+    border-bottom: $tab-border-base solid var(--erps-tab-bright);
+    padding-bottom: $tab-gap;
   }
 
   // Custom tab buttons
   &__button {
     @include custom-tab-button-base;
 
-    // Equipped variant icon styling (must come before active state)
-    &--equipped i {
-      color: themes.get-semantic-color(green, 90) !important;
+    // Variant styling
+    &--equipped {
+      @include tab-variant(green, true);
     }
 
-    // Unequipped variant icon styling (must come before active state)
-    &--unequipped i {
-      color: themes.get-semantic-color(gray, 90) !important;
+    &--unequipped {
+      @include tab-variant(gray, true);
     }
 
     // Hover state
     &:hover {
-      background: var(--theme-primary) !important;
-      transform: translateY(sheet.$sheet-transform-hover-md) !important;
+      background: var(--erps-tab-primary);
+      transform: translateY($tab-transform-hover-md);
 
       @include tab-shadow-base;
 
       .erps-tabs__count {
-        background: themes.get-universal-color(white, 20) !important;
+        background: var(--erps-tab-secondary);
       }
     }
 
     // Active state
     &.active {
-      background: var(--theme-secondary) !important;
+      background: var(--erps-tab-secondary);
 
-      @include tab-shadow-active(var(--theme-glow));
+      @include tab-shadow-active(var(--erps-tab-glow));
 
-      transform: translateY(sheet.$sheet-transform-hover-sm) !important;
+      transform: translateY($tab-transform-hover-sm);
+
+      i {
+        opacity: $tab-opacity-full;
+        text-shadow: 0 0 $tab-shadow-blur-md var(--erps-tab-glow);
+      }
 
       .erps-tabs__count {
-        background: themes.get-universal-color(white, 20) !important;
-        box-shadow: 0 0 sheet.$sheet-shadow-blur-md themes.get-universal-color(white, 20) !important;
-      }
-    }
-
-    // Active state icon styling (must come after variant icon styling)
-    &.active i {
-      opacity: sheet.$sheet-opacity-full !important;
-      text-shadow: 0 0 sheet.$sheet-shadow-blur-md var(--theme-glow) !important;
-    }
-
-    // Equipped variant theme overrides
-    &--equipped {
-      &.active, &:hover {
-        --theme-primary: #{themes.get-semantic-color(green, dark-90)};
-        --theme-secondary: #{themes.get-semantic-color(green, 80)};
-        --theme-glow: #{themes.get-semantic-color(green, 60)};
-      }
-    }
-
-    // Unequipped variant theme overrides
-    &--unequipped {
-      &.active, &:hover {
-        --theme-primary: #{themes.get-semantic-color(gray, 90)};
-        --theme-secondary: #{themes.get-semantic-color(gray, 80)};
-        --theme-glow: #{themes.get-semantic-color(gray, 60)};
+        background: var(--erps-tab-secondary);
+        box-shadow: 0 0 $tab-shadow-blur-md var(--erps-tab-glow);
       }
     }
   }
@@ -451,243 +461,83 @@
   &__panel {
     @include tab-content-animated;
 
-    // Equipped content styling
     &--equipped {
-      .eventide-actor-data-table, .erps-data-table {
-        border-left: sheet.$sheet-border-accent solid themes.get-semantic-color(green, 60) !important;
-        box-shadow:
-          0 sheet.$sheet-border-accent sheet.$sheet-shadow-blur-lg themes.get-universal-color(black, 30),
-          inset 0 sheet.$sheet-border-thin 0 themes.get-universal-color(white, 10),
-          inset sheet.$sheet-border-accent 0 0 themes.get-semantic-color(green, 20) !important;
-      }
+      @include tab-panel-content(green);
     }
 
-    // Unequipped content styling
     &--unequipped {
-      .eventide-actor-data-table, .erps-data-table {
-        border-left: sheet.$sheet-border-accent solid themes.get-semantic-color(gray, 40) !important;
-        opacity: sheet.$sheet-opacity-unequipped !important;
-        box-shadow:
-          0 sheet.$sheet-border-accent sheet.$sheet-shadow-blur-lg themes.get-universal-color(black, 30),
-          inset 0 sheet.$sheet-border-thin 0 themes.get-universal-color(white, 10),
-          inset sheet.$sheet-border-accent 0 0 themes.get-semantic-color(gray, 15) !important;
-      }
+      @include tab-panel-content(gray, $tab-opacity-unequipped);
     }
   }
 
   // Light theme overrides
   &--light {
     .erps-tabs__button {
-      color: themes.get-universal-color(black, 80) !important;
+      color: themes.color(black, 80);
 
       .erps-tabs__count {
-        background: themes.get-universal-color(black, 30) !important;
-        color: themes.get-universal-color(black, 80) !important;
+        background: themes.color(black, 30);
+        color: themes.color(black, 80);
       }
 
-      &:hover .erps-tabs__count {
-        background: themes.get-universal-color(black, 30) !important;
-      }
-
+      &:hover .erps-tabs__count,
       &.active .erps-tabs__count {
-        background: themes.get-universal-color(black, 30) !important;
-        color: themes.get-universal-color(black, 80) !important;
+        background: themes.color(black, 30);
+        color: themes.color(black, 80);
       }
     }
   }
 }
 
 // ===================================
-// DYNAMIC TAB CONTAINER STYLING
+// LEGACY GEAR TAB SYSTEM
 // ===================================
 
-// JavaScript-driven tab container styling based on active tab
-// These classes are applied dynamically by the tab-container-styling.mjs module
-
-.eventide-sheet {
-  // Rounded container for tabs with custom navigation or standalone content
-  .tabs.erps-tabs__container--rounded,
-  .sheet-tabs.erps-tabs__container--rounded {
-    @include tab-container-radius-full;
-
-    margin-bottom: sheet.$sheet-margin-tab-nav-bottom !important;
-  }
-
-  // Flat container for tabs that connect directly to data tables
-  .tabs.erps-tabs__container--flat,
-  .sheet-tabs.erps-tabs__container--flat {
-    @include tab-container-radius-top-only;
-
-    margin-bottom: sheet.$sheet-position-zero !important;
-  }
-
-  // Legacy static selectors (kept for fallback compatibility)
-  // These will be overridden by the JavaScript-driven classes above
-
-  // Gear tab gets full rounding since it has its own navigation
-  .tab[data-tab="gear"] {
-    .tabs,
-    .sheet-tabs,
-    .erps-tabs__container {
-      border-radius: sheet.$sheet-radius-md !important;
-      margin-bottom: sheet.$sheet-margin-tab-nav-bottom !important;
-    }
-  }
-
-  // Manual override classes for specific use cases
-  .tab--rounded-container {
-    .tabs,
-    .sheet-tabs,
-    .erps-tabs__container {
-      border-radius: sheet.$sheet-radius-md !important;
-    }
-  }
-
-  .tab--flat-container {
-    .tabs,
-    .sheet-tabs,
-    .erps-tabs__container {
-      border-radius: sheet.$sheet-radius-md !important;
-    }
-  }
-}
-
-// ===================================
-// LEGACY SELECTORS FOR COMPATIBILITY
-// ===================================
-// These maintain compatibility with existing character sheet markup
-// stylelint-disable-next-line
-.eventide-sheet {
-  // Tab navigation - themed overrides with high specificity
-  .tabs .item {
-    font-family: var(--erps-ui-font) !important;
-    font-weight: sheet.$sheet-font-weight-semibold !important;
-    letter-spacing: sheet.$sheet-letter-spacing-base !important;
-  }
-
-  // Themed tab system - override global tab styling with important declarations
-  &.sheet-tabs,
-  .tabs {
-    @include tab-container-base;
-  }
-
-  // Themed tab items - base selector first, then more specific ones
-  .tabs a[data-action="tab"] {
-    @include tab-item-base;
-
-    &:hover:not(.active) {
-      @include tab-hover-state;
-    }
-
-    &.active {
-      @include tab-active-state;
-    }
-  }
-
-  // More specific selector for sheet tabs: uncomment if required
-  // .sheet-tabs.tabs a[data-action="tab"] {
-  //   // Inherits all styles from above, can add specific overrides here if needed
-  // }
-
-  // Scrollable tabs modifier
-  &--scrollbars {
-    .tab {
-      @include tab-content-scrollable;
-    }
-  }
-
-  // Tab content styling
-  .tab {
-    @include tab-content-base;
-  }
-
-  // Theme-specific text color overrides for gear tab buttons
-  &[data-bg-theme="light"] .gear-tab-button {
-    color: themes.get-universal-color(black, 80) !important;
-
-    .gear-count {
-      background: themes.get-universal-color(black, 30) !important;
-      color: themes.get-universal-color(black, 80) !important;
-    }
-
-    &:hover .gear-count {
-      background: themes.get-universal-color(black, 30) !important;
-    }
-
-    &.active .gear-count {
-      background: themes.get-universal-color(black, 30) !important;
-      color: themes.get-universal-color(black, 80) !important;
-    }
-  }
-}
-
-// Gear tab system (legacy selectors)
 .gear-tab-nav {
-  display: flex !important;
-  gap: sheet.$sheet-spacing-sm !important;
-  margin-bottom: sheet.$sheet-margin-tab-nav-bottom !important;
-  border-bottom: sheet.$sheet-border-base solid themes.get-universal-color(white, 10) !important;
-  padding-bottom: sheet.$sheet-spacing-sm !important;
+  display: flex;
+  gap: $tab-gap;
+  margin-bottom: $tab-nav-margin-bottom;
+  border-bottom: $tab-border-base solid var(--erps-tab-bright);
+  padding-bottom: $tab-gap;
 }
 
 .gear-tab-button {
   @include custom-tab-button-base;
 
-  // Equipped gear button icon styling (must come before active state)
-  &--equipped i {
-    color: themes.get-semantic-color(green, 90) !important;
+  // Variant styling
+  &--equipped {
+    @include tab-variant(green, true);
   }
 
-  // Unequipped gear button icon styling (must come before active state)
-  &--unequipped i {
-    color: themes.get-semantic-color(gray, 90) !important;
+  &--unequipped {
+    @include tab-variant(gray, true);
   }
 
   &:hover {
-    background: var(--theme-primary) !important;
-    transform: translateY(sheet.$sheet-transform-hover-md) !important;
+    background: var(--erps-tab-primary);
+    transform: translateY($tab-transform-hover-md);
 
     @include tab-shadow-base;
 
     .gear-count {
-      background: themes.get-universal-color(white, 20) !important;
+      background: var(--erps-tab-secondary);
     }
   }
 
   &.active {
-    background: var(--theme-secondary) !important;
+    background: var(--erps-tab-secondary);
+    transform: translateY($tab-transform-hover-sm);
 
-    @include tab-shadow-active(var(--theme-glow));
+    @include tab-shadow-active(var(--erps-tab-glow));
 
-    transform: translateY(sheet.$sheet-transform-hover-sm) !important;
+    i {
+      opacity: $tab-opacity-full;
+      text-shadow: 0 0 $tab-shadow-blur-md var(--erps-tab-glow);
+    }
 
     .gear-count {
-      background: themes.get-universal-color(white, 20) !important;
-      box-shadow: 0 0 sheet.$sheet-shadow-blur-md themes.get-universal-color(white, 20) !important;
-    }
-  }
-
-  // Active state icon styling (inherits from custom-tab-button-base mixin)
-  &.active i {
-    opacity: sheet.$sheet-opacity-full !important;
-    text-shadow: 0 0 sheet.$sheet-shadow-blur-md var(--theme-glow) !important;
-  }
-
-  // Equipped gear button theme overrides
-  &--equipped {
-    &.active, &:hover {
-      --theme-primary: #{themes.get-semantic-color(green, dark-90)};
-      --theme-secondary: #{themes.get-semantic-color(green, 80)};
-      --theme-glow: #{themes.get-semantic-color(green, 60)};
-    }
-  }
-
-  // Unequipped gear button theme overrides
-  &--unequipped {
-    &.active, &:hover {
-      --theme-primary: #{themes.get-semantic-color(gray, 90)};
-      --theme-secondary: #{themes.get-semantic-color(gray, 80)};
-      --theme-glow: #{themes.get-semantic-color(gray, 60)};
+      background: var(--erps-tab-secondary);
+      box-shadow: 0 0 $tab-shadow-blur-md var(--erps-tab-glow);
     }
   }
 
@@ -696,31 +546,15 @@
   }
 }
 
-// Gear tab content
 .gear-tab-content {
   @include tab-content-animated;
 
-  // Equipped gear content styling
   &--equipped {
-    .eventide-actor-data-table {
-      border-left: sheet.$sheet-border-accent solid themes.get-semantic-color(green, 60) !important;
-      box-shadow:
-        0 sheet.$sheet-border-accent sheet.$sheet-shadow-blur-lg themes.get-universal-color(black, 30),
-        inset 0 sheet.$sheet-border-thin 0 themes.get-universal-color(white, 10),
-        inset sheet.$sheet-border-accent 0 0 themes.get-semantic-color(green, 20) !important;
-    }
+    @include tab-panel-content(green);
   }
 
-  // Unequipped gear content styling
   &--unequipped {
-    .eventide-actor-data-table {
-      border-left: sheet.$sheet-border-accent solid themes.get-semantic-color(gray, 40) !important;
-      opacity: sheet.$sheet-opacity-unequipped !important;
-      box-shadow:
-        0 sheet.$sheet-border-accent sheet.$sheet-shadow-blur-lg themes.get-universal-color(black, 30),
-        inset 0 sheet.$sheet-border-thin 0 themes.get-universal-color(white, 10),
-        inset sheet.$sheet-border-accent 0 0 themes.get-semantic-color(gray, 15) !important;
-    }
+    @include tab-panel-content(gray, $tab-opacity-unequipped);
   }
 }
 
@@ -741,11 +575,136 @@
 @keyframes erps-tab-fade-in {
   from {
     opacity: 0;
-    transform: translateY(sheet.$sheet-transform-fade);
+    transform: translateY($tab-transform-fade);
   }
 
   to {
     opacity: 1;
-    transform: translateY(sheet.$sheet-position-zero);
+    transform: translateY(0);
+  }
+}
+
+// Theme-aware variants that inherit from the sheet's theme context
+.eventide-sheet {
+  // Inherit theme colors from the main theme system
+  --erps-tab-primary: var(--theme-primary);
+  --erps-tab-secondary: var(--theme-secondary);
+  --erps-tab-bright: var(--theme-light);
+  --erps-tab-glow: var(--theme-glow);
+  --erps-tab-text: var(--theme-text);
+
+  // ===================================
+  // DYNAMIC TAB CONTAINER STYLING
+  // ===================================
+
+  // Rounded container for tabs with custom navigation
+  .tabs.erps-tabs__container--rounded,
+  .sheet-tabs.erps-tabs__container--rounded {
+    @include tab-container-radius-full;
+
+    margin-bottom: $tab-nav-margin-bottom;
+  }
+
+  // Flat container for tabs that connect to data tables
+  .tabs.erps-tabs__container--flat,
+  .sheet-tabs.erps-tabs__container--flat {
+    @include tab-container-radius-top-only;
+
+    margin-bottom: 0;
+  }
+
+  // Legacy static selectors for fallback compatibility
+  .tab[data-tab="gear"] {
+    .tabs,
+    .sheet-tabs,
+    .erps-tabs__container {
+      border-radius: $tab-radius-md;
+      margin-bottom: $tab-nav-margin-bottom;
+    }
+  }
+
+  .tab--rounded-container,
+  .tab--flat-container {
+    .tabs,
+    .sheet-tabs,
+    .erps-tabs__container {
+      border-radius: $tab-radius-md;
+    }
+  }
+
+  // ===================================
+  // LEGACY SELECTORS FOR COMPATIBILITY
+  // ===================================
+
+  // Tab navigation themed overrides
+  .tabs .item {
+    font-family: var(--erps-ui-font) !important;
+    font-weight: $tab-font-weight !important;
+    letter-spacing: $tab-letter-spacing !important;
+    color: var(--erps-tab-text) !important;
+    text-shadow: none !important;
+  }
+
+  // Themed tab system
+  &.sheet-tabs,
+  .tabs {
+    @include tab-container-base;
+  }
+
+  // Themed tab items - these need !important to override Foundry defaults
+  .tabs a[data-action="tab"] {
+    @include tab-item-base;
+
+    &:hover:not(.active) {
+      @include tab-hover-state;
+    }
+
+    &.active {
+      @include tab-active-state;
+    }
+  }
+
+  // More specific selector for sheet tabs to ensure override
+  .sheet-tabs.tabs a[data-action="tab"] {
+    color: var(--erps-tab-text) !important;
+    text-shadow: none !important;
+
+    &:hover:not(.active) {
+      color: var(--erps-tab-text) !important;
+      text-shadow: none !important;
+    }
+
+    &.active {
+      color: var(--erps-tab-text) !important;
+      text-shadow: none !important;
+    }
+  }
+
+  // Scrollable tabs modifier
+  &--scrollbars {
+    .tab {
+      @include tab-content-scrollable;
+    }
+  }
+
+  // Tab content styling
+  .tab {
+    @include tab-content-base;
+  }
+
+  // Light theme text color overrides
+  &[data-bg-theme="light"] .gear-tab-button {
+    color: themes.color(black, 80);
+
+    .gear-count {
+      background: themes.color(black, 30);
+      color: themes.color(black, 80);
+    }
+
+    &:hover .gear-count,
+    &.active .gear-count {
+      background: themes.color(black, 30);
+      color: themes.color(black, 80);
+    }
   }
 }

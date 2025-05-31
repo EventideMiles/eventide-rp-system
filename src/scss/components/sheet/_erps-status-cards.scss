@@ -1,4 +1,5 @@
 @use "../../utils/themes" as themes;
+@use "../../utils/sheet-tokens" as tokens;
 
 // ===================================
 // STATUS CARDS COMPONENT
@@ -9,103 +10,131 @@
 // ===================================
 // CONFIGURATION VARIABLES
 // ===================================
+// Using sheet-tokens where possible, only defining status-specific values
 
-// Spacing and sizing
-$status-card-padding: 0.5rem 0.75rem;
-$status-card-border-radius: 6px;
-$status-card-gap: 0.75rem;
-$status-card-max-width: 20rem;
-$status-card-icon-size: 1.75rem;
-$status-card-button-size: 1.5rem;
+// Spacing and sizing (using sheet-tokens)
+$status-card-padding: tokens.$sheet-padding-card;
+$status-card-border-radius: tokens.$sheet-radius-md;
+$status-card-gap: tokens.$sheet-spacing-md;
+$status-card-max-width: tokens.$sheet-width-status-max;
+$status-card-icon-size: tokens.$sheet-size-status-element;
+$status-card-button-size: tokens.$sheet-size-status-button;
 
-// Typography
-$status-card-label-font-size: 0.7rem;
-$status-card-details-font-size: 0.9rem;
-$status-card-icon-font-size: 0.9rem;
-$status-card-button-icon-size: 0.75rem;
+// Typography (using sheet-tokens)
+$status-card-label-font-size: tokens.$sheet-font-size-label-xs;
+$status-card-details-font-size: tokens.$sheet-font-size-value-sm;
+$status-card-icon-font-size: tokens.$sheet-font-size-value-sm;
+$status-card-button-icon-size: tokens.$sheet-font-size-label-sm;
 
-// Borders and effects
-$status-card-border-width: 2px;
-$status-card-glow-blur: 10px;
-$status-card-hover-glow-blur: 15px;
+// Borders and effects (using sheet-tokens)
+$status-card-border-width: tokens.$sheet-border-base;
+$status-card-glow-blur: tokens.$sheet-glow-blur-sm;
+$status-card-hover-glow-blur: tokens.$sheet-glow-blur-md;
 
-// Transitions and animations
-$status-card-transition-duration: 0.3s;
-$status-card-animation-duration-fast: 2s;
-$status-card-animation-duration-medium: 3s;
-$status-card-animation-duration-slow: 4s;
+// Transitions and animations (using sheet-tokens)
+$status-card-transition-duration: tokens.$sheet-transition-medium;
+$status-card-animation-duration-fast: tokens.$sheet-animation-fast;
+$status-card-animation-duration-medium: tokens.$sheet-animation-medium;
+$status-card-animation-duration-slow: tokens.$sheet-animation-slow;
 
-// Z-index values
-$status-card-z-index-base: 0;
-$status-card-z-index-content: 1;
-$status-card-z-index-dragging: 1000;
+// Z-index values (using sheet-tokens)
+$status-card-z-index-base: tokens.$sheet-z-index-base;
+$status-card-z-index-content: tokens.$sheet-z-index-overlay;
+$status-card-z-index-dragging: 1000; // Keep high value for dragging
 
 // ===================================
-// ADDITIONAL EXTRACTED MAGIC NUMBERS
+// THEME-AWARE SYSTEM
 // ===================================
+// Theme-aware system using CSS custom properties that inherit from the main theme
 
-// Status bar container
-$status-bar-margin-top: 0.5rem;
-$status-bar-padding: 0.5rem 1rem;
-$status-bar-border-radius: 8px;
-$status-bar-border-width: 1px;
-$status-bar-arrow-position-offset: 0.5rem;
-$status-bar-arrow-right-offset: 2rem;
-$status-bar-arrow-size: 8px 12px;
-$status-bar-arrow-hover-scale: 1.2;
+// Default theme variables that inherit from the main theme system
+:root {
+  --erps-status-primary: var(--theme-primary, rgb(30 58 138 / 90%));
+  --erps-status-secondary: var(--theme-secondary, rgb(59 130 246 / 80%));
+  --erps-status-bright: var(--theme-light, rgb(59 130 246 / 70%));
+  --erps-status-glow: var(--theme-glow, rgb(59 130 246 / 60%));
+  --erps-status-text: var(--theme-text, #fff);
+  --erps-status-accent: var(--theme-accent, rgb(30 58 138 / 95%));
+}
 
-// Generic status indicator
-$status-indicator-gap: 0.375rem;
-$status-indicator-padding: 0.25rem 0.5rem;
-$status-indicator-font-size: 0.8rem;
-$status-indicator-icon-font-size: 0.85rem;
-$status-indicator-border-width: 1px;
-$status-indicator-hover-translate: -1px;
+// Theme-aware variants that inherit from the sheet's theme context
+.eventide-sheet {
+  // Inherit theme colors from the main theme system
+  --erps-status-primary: var(--theme-primary);
+  --erps-status-secondary: var(--theme-secondary);
+  --erps-status-bright: var(--theme-light);
+  --erps-status-glow: var(--theme-glow);
+  --erps-status-text: var(--theme-text);
+  --erps-status-accent: var(--theme-accent);
+}
 
-// Card transforms and positioning
-$card-hover-translate-y: -2px;
-$card-dragging-rotation: 5deg;
-$card-dragging-opacity: 0.5;
-$card-glow-position-offset: -2px;
-$card-glow-height-offset: 4px;
-$card-glow-width-percentage: 200%;
-$card-glow-left-start: -50%;
+// ===================================
+// CONSOLIDATED VARIABLES
+// ===================================
+// Reduced redundant variables by using tokens and logical grouping
 
-// Button styling
-$button-border-radius: 4px;
-$button-border-width: 1px;
-$button-hover-scale: 1.05;
-$button-active-scale: 0.95;
-$button-transition-duration: 0.2s;
+// Status bar container (using sheet-tokens)
+$status-bar-margin-top: tokens.$sheet-margin-status-top;
+$status-bar-padding: tokens.$sheet-spacing-sm tokens.$sheet-spacing-base;
+$status-bar-border-radius: tokens.$sheet-radius-lg;
+$status-bar-border-width: tokens.$sheet-border-thin;
+$status-bar-arrow-position-offset: tokens.$sheet-status-arrow-offset;
+$status-bar-arrow-right-offset: tokens.$sheet-status-arrow-right-offset;
+$status-bar-arrow-size: tokens.$sheet-status-arrow-size;
+$status-bar-arrow-hover-scale: tokens.$sheet-transform-scale-icon;
 
-// Text styling
-$text-letter-spacing: 0.5px;
-$text-margin-bottom: 0.125rem;
-$text-line-height: 1.2;
-$text-shadow-blur: 6px;
+// Generic status indicator (using sheet-tokens)
+$status-indicator-gap: tokens.$sheet-spacing-xs;
+$status-indicator-padding: tokens.$sheet-padding-status-indicator;
+$status-indicator-font-size: tokens.$sheet-font-size-label-md;
+$status-indicator-icon-font-size: tokens.$sheet-font-size-label-lg;
+$status-indicator-border-width: tokens.$sheet-border-thin;
+$status-indicator-hover-translate: tokens.$sheet-transform-hover-sm;
 
-// Shadow and glow effects
-$shadow-inset-offset: 1px;
-$shadow-hover-blur: 4px 8px;
-$shadow-box-blur: 2px 4px;
-$shadow-text-offset: 1px 1px 2px;
-$glow-enhanced-blur: 20px;
+// Card transforms and positioning (using sheet-tokens)
+$card-hover-translate-y: tokens.$sheet-transform-hover-md;
+$card-dragging-rotation: 5deg; // Keep specific value
+$card-dragging-opacity: tokens.$sheet-opacity-disabled;
+$card-glow-position-offset: -2px; // Keep specific positioning
+$card-glow-height-offset: 4px; // Keep specific positioning
+$card-glow-width-percentage: tokens.$sheet-glow-width;
+$card-glow-left-start: -50%; // Keep specific positioning
 
-// Animation-specific durations
-$animation-pulse-duration: 1.5s;
-$animation-golden-sparkle-duration: 2.5s;
-$animation-golden-glow-duration: 3.5s;
-$animation-heartbeat-duration: 3s; // Uses medium duration
+// Button styling (using sheet-tokens)
+$button-border-radius: tokens.$sheet-radius-sm;
+$button-border-width: tokens.$sheet-border-thin;
+$button-hover-scale: tokens.$sheet-transform-scale-hover;
+$button-active-scale: tokens.$sheet-transform-scale-active;
+$button-transition-duration: tokens.$sheet-transition-base;
 
-// Gradient angles
+// Text styling (using sheet-tokens)
+$text-letter-spacing: tokens.$sheet-letter-spacing-base;
+$text-margin-bottom: tokens.$sheet-spacing-xxs;
+$text-line-height: tokens.$sheet-line-height-base;
+$text-shadow-blur: tokens.$sheet-shadow-blur-sm;
+
+// Shadow and glow effects (using sheet-tokens)
+$shadow-inset-offset: tokens.$sheet-shadow-offset-xs;
+$shadow-hover-blur: tokens.$sheet-shadow-blur-sm tokens.$sheet-shadow-blur-md;
+$shadow-box-blur: tokens.$sheet-shadow-offset-sm tokens.$sheet-shadow-blur-sm;
+$shadow-text-offset: tokens.$sheet-shadow-offset-xs tokens.$sheet-shadow-offset-xs tokens.$sheet-shadow-offset-sm;
+$glow-enhanced-blur: tokens.$sheet-glow-blur-lg;
+
+// Animation-specific durations (using sheet-tokens)
+$animation-pulse-duration: tokens.$sheet-animation-fast;
+$animation-golden-sparkle-duration: tokens.$sheet-animation-medium;
+$animation-golden-glow-duration: tokens.$sheet-animation-slow;
+$animation-heartbeat-duration: tokens.$sheet-animation-pulse;
+
+// Gradient angles (keep specific values)
 $gradient-angle-standard: 135deg;
 $gradient-angle-glow: 90deg;
 
-// Opacity values
-$opacity-icon: 0.9;
-$opacity-dragging: 0.5;
+// Opacity values (using sheet-tokens)
+$opacity-icon: tokens.$sheet-opacity-default;
+$opacity-dragging: tokens.$sheet-opacity-disabled;
 $opacity-arrow-hidden: 0;
-$opacity-arrow-visible: 1;
+$opacity-arrow-visible: tokens.$sheet-opacity-full;
 
 // ===================================
 // UTILITY MIXINS
@@ -201,6 +230,84 @@ $opacity-arrow-visible: 1;
   }
 }
 
+// Status indicator variant mixin
+@mixin status-indicator-variant($color) {
+  background: themes.color($color, 40);
+  border: $status-indicator-border-width solid themes.color($color, 60);
+  color: #fff;
+
+  &:hover {
+    background: themes.color($color, 50);
+  }
+}
+
+// Status card variant mixin (consolidates repetitive card patterns)
+@mixin status-card-variant($color, $animation-name: null, $animation-duration: $status-card-animation-duration-medium) {
+  border-color: themes.color($color, 60);
+  background: linear-gradient(
+    $gradient-angle-standard,
+    themes.color($color, 15) 0%,
+    themes.color($color, dark-80) 50%,
+    themes.color($color, 10) 100%
+  );
+  box-shadow:
+    0 0 $status-card-glow-blur themes.color($color, 30),
+    inset 0 $shadow-inset-offset 0 themes.color(white, 10);
+
+  @if $animation-name {
+    @include status-card-glow($color, $animation-name, $animation-duration);
+  }
+
+  &:hover {
+    transform: translateY($card-hover-translate-y);
+    box-shadow:
+      0 0 $status-card-hover-glow-blur themes.color($color, 50),
+      inset 0 $shadow-inset-offset 0 themes.color(white, 15),
+      0 $shadow-hover-blur themes.color(black, 20);
+    border-color: themes.color($color, 80);
+  }
+}
+
+// Common card header structure
+@mixin status-card-header {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  position: relative;
+  z-index: $status-card-z-index-content;
+}
+
+// Common card info structure
+@mixin status-card-info {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  min-width: 0;
+}
+
+// Common card label styling
+@mixin status-card-label {
+  font-size: $status-card-label-font-size;
+  font-weight: 600;
+  color: themes.color(white, 90);
+  text-transform: uppercase;
+  letter-spacing: $text-letter-spacing;
+  margin-bottom: $text-margin-bottom;
+  line-height: 1;
+}
+
+// Common card details styling
+@mixin status-card-details($color) {
+  font-size: $status-card-details-font-size;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 0 0 $text-shadow-blur themes.color($color, 60);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: $text-line-height;
+}
+
 // ===================================
 // STATUS BAR CONTAINER
 // ===================================
@@ -235,6 +342,13 @@ $opacity-arrow-visible: 1;
 
   &:active {
     cursor: grabbing;
+    transform: translateY(0);
+  }
+
+  &.dragging {
+    opacity: $card-dragging-opacity;
+    transform: rotate($card-dragging-rotation);
+    z-index: $status-card-z-index-dragging;
   }
 
   // Directional arrow indicators
@@ -328,33 +442,15 @@ $opacity-arrow-visible: 1;
 
   // Variant states
   &--active {
-    background: themes.color(blue, 40);
-    border: $status-indicator-border-width solid themes.color(blue, 60);
-    color: #fff;
-
-    &:hover {
-      background: themes.color(blue, 50);
-    }
+    @include status-indicator-variant(blue);
   }
 
   &--warning {
-    background: themes.color(yellow, 40);
-    border: $status-indicator-border-width solid themes.color(yellow, 60);
-    color: #fff;
-
-    &:hover {
-      background: themes.color(yellow, 50);
-    }
+    @include status-indicator-variant(yellow);
   }
 
   &--danger {
-    background: themes.color(red, 40);
-    border: $status-indicator-border-width solid themes.color(red, 60);
-    color: #fff;
-
-    &:hover {
-      background: themes.color(red, 50);
-    }
+    @include status-indicator-variant(red);
   }
 }
 
@@ -364,50 +460,14 @@ $opacity-arrow-visible: 1;
 
 .eventide-transformation-card {
   @include status-card-base;
-
-  border-color: themes.color(blue, 60);
-  background: linear-gradient(
-    $gradient-angle-standard,
-    themes.color(blue, 15) 0%,
-    themes.color(blue, dark-80) 50%,
-    themes.color(blue, 10) 100%
-  );
-  box-shadow:
-    0 0 $status-card-glow-blur themes.color(blue, 30),
-    inset 0 $shadow-inset-offset 0 themes.color(white, 10);
+  @include status-card-variant(blue);
 
   // Draggable states
   cursor: grab;
   user-select: none;
 
-  &:hover {
-    transform: translateY($card-hover-translate-y);
-    box-shadow:
-      0 0 $status-card-hover-glow-blur themes.color(blue, 50),
-      inset 0 $shadow-inset-offset 0 themes.color(white, 15),
-      0 $shadow-hover-blur themes.color(black, 20);
-    border-color: themes.color(blue, 80);
-  }
-
-  &:active {
-    cursor: grabbing;
-    transform: translateY(0);
-  }
-
-  &.dragging {
-    opacity: $card-dragging-opacity;
-    transform: rotate($card-dragging-rotation);
-    z-index: $status-card-z-index-dragging;
-  }
-
-  @include status-card-glow(blue, transformation-glow, $status-card-animation-duration-slow);
-
   &__header {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    position: relative;
-    z-index: $status-card-z-index-content;
+    @include status-card-header;
   }
 
   &__icon {
@@ -415,31 +475,15 @@ $opacity-arrow-visible: 1;
   }
 
   &__info {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-    min-width: 0;
+    @include status-card-info;
   }
 
   &__label {
-    font-size: $status-card-label-font-size;
-    font-weight: 600;
-    color: themes.color(white, 90);
-    text-transform: uppercase;
-    letter-spacing: $text-letter-spacing;
-    margin-bottom: $text-margin-bottom;
-    line-height: 1;
+    @include status-card-label;
   }
 
   &__name {
-    font-size: $status-card-details-font-size;
-    font-weight: bold;
-    color: #fff;
-    text-shadow: 0 0 $text-shadow-blur themes.color(blue, 60);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    line-height: $text-line-height;
+    @include status-card-details(blue);
   }
 
   &__revert {
@@ -473,34 +517,14 @@ $opacity-arrow-visible: 1;
 
   // Cursed variant
   &--cursed {
-    border-color: themes.color(purple, 80);
-    background: linear-gradient(
-      $gradient-angle-standard,
-      themes.color(purple, 20) 0%,
-      themes.color(purple, dark-80) 50%,
-      themes.color(purple, 15) 100%
-    );
-    box-shadow:
-      0 0 $status-card-hover-glow-blur themes.color(purple, 40),
-      inset 0 $shadow-inset-offset 0 themes.color(white, 10);
-
-    @include status-card-glow(purple, cursed-transformation-glow, $status-card-animation-duration-fast);
-
-    &:hover {
-      transform: translateY($card-hover-translate-y);
-      box-shadow:
-        0 0 $glow-enhanced-blur themes.color(purple, 60),
-        inset 0 $shadow-inset-offset 0 themes.color(white, 15),
-        0 $shadow-hover-blur themes.color(black, 20);
-      border-color: themes.color(purple, 100);
-    }
+    @include status-card-variant(purple, cursed-transformation-glow, $status-card-animation-duration-fast);
 
     .eventide-transformation-card__icon {
       @include status-card-icon(purple);
     }
 
     .eventide-transformation-card__name {
-      text-shadow: 0 0 $text-shadow-blur themes.color(purple, 60);
+      @include status-card-details(purple);
     }
 
     .eventide-transformation-card__locked {
@@ -517,26 +541,10 @@ $opacity-arrow-visible: 1;
 
 .eventide-health-card {
   @include status-card-base;
-
-  border-color: themes.color(red, 60);
-  background: linear-gradient(
-    $gradient-angle-standard,
-    themes.color(red, 15) 0%,
-    themes.color(red, dark-80) 50%,
-    themes.color(red, 10) 100%
-  );
-  box-shadow:
-    0 0 $status-card-glow-blur themes.color(red, 30),
-    inset 0 $shadow-inset-offset 0 themes.color(white, 10);
-
-  @include status-card-glow(red, danger-glow, $status-card-animation-duration-fast);
+  @include status-card-variant(red);
 
   &__header {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    position: relative;
-    z-index: $status-card-z-index-content;
+    @include status-card-header;
   }
 
   &__icon {
@@ -548,32 +556,15 @@ $opacity-arrow-visible: 1;
   }
 
   &__info {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-    min-width: 0;
+    @include status-card-info;
   }
 
   &__label {
-    font-size: $status-card-label-font-size;
-    font-weight: 600;
-    color: themes.color(white, 90);
-    text-transform: uppercase;
-    letter-spacing: $text-letter-spacing;
-    margin-bottom: $text-margin-bottom;
-    line-height: 1;
+    @include status-card-label;
   }
 
   &__details {
-    font-size: $status-card-details-font-size;
-    font-weight: bold;
-    color: #fff;
-    text-shadow: 0 0 $text-shadow-blur themes.color(red, 60);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    line-height: $text-line-height;
-    font-family: monospace;
+    @include status-card-details(red);
   }
 
   &__warning {
@@ -591,25 +582,14 @@ $opacity-arrow-visible: 1;
 
   // Wounded variant
   &--wounded {
-    border-color: themes.color(yellow, 60);
-    background: linear-gradient(
-      $gradient-angle-standard,
-      themes.color(yellow, 15) 0%,
-      themes.color(yellow, dark-80) 50%,
-      themes.color(yellow, 10) 100%
-    );
-    box-shadow:
-      0 0 $status-card-glow-blur themes.color(yellow, 30),
-      inset 0 $shadow-inset-offset 0 themes.color(white, 10);
-
-    @include status-card-glow(yellow, wounded-glow, $status-card-animation-duration-slow);
+    @include status-card-variant(yellow, wounded-glow, $status-card-animation-duration-slow);
 
     .eventide-health-card__icon {
       @include status-card-icon(yellow);
     }
 
     .eventide-health-card__details {
-      text-shadow: 0 0 $text-shadow-blur themes.color(yellow, 60);
+      @include status-card-details(yellow);
     }
   }
 }
@@ -620,26 +600,10 @@ $opacity-arrow-visible: 1;
 
 .eventide-effects-card {
   @include status-card-base;
-
-  border-color: themes.color(yellow, 60);
-  background: linear-gradient(
-    $gradient-angle-standard,
-    themes.color(yellow, 15) 0%,
-    themes.color(yellow, dark-80) 50%,
-    themes.color(yellow, 10) 100%
-  );
-  box-shadow:
-    0 0 $status-card-glow-blur themes.color(yellow, 30),
-    inset 0 $shadow-inset-offset 0 themes.color(white, 10);
-
-  @include status-card-glow(yellow, golden-glow, $animation-golden-glow-duration);
+  @include status-card-variant(yellow, golden-glow, $animation-golden-glow-duration);
 
   &__header {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    position: relative;
-    z-index: $status-card-z-index-content;
+    @include status-card-header;
   }
 
   &__icon {
@@ -651,31 +615,15 @@ $opacity-arrow-visible: 1;
   }
 
   &__info {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-    min-width: 0;
+    @include status-card-info;
   }
 
   &__label {
-    font-size: $status-card-label-font-size;
-    font-weight: 600;
-    color: themes.color(white, 90);
-    text-transform: uppercase;
-    letter-spacing: $text-letter-spacing;
-    margin-bottom: $text-margin-bottom;
-    line-height: 1;
+    @include status-card-label;
   }
 
   &__details {
-    font-size: $status-card-details-font-size;
-    font-weight: bold;
-    color: #fff;
-    text-shadow: 0 0 $text-shadow-blur themes.color(yellow, 60);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    line-height: $text-line-height;
+    @include status-card-details(yellow);
   }
 
   &__indicator {
@@ -704,49 +652,27 @@ $opacity-arrow-visible: 1;
 
   // Beneficial variant
   &--beneficial {
-    border-color: themes.color(green, 60);
-    background: linear-gradient(
-      $gradient-angle-standard,
-      themes.color(green, 15) 0%,
-      themes.color(green, dark-80) 50%,
-      themes.color(green, 10) 100%
-    );
-    box-shadow:
-      0 0 $status-card-glow-blur themes.color(green, 30),
-      inset 0 $shadow-inset-offset 0 themes.color(white, 10);
-
-    @include status-card-glow(green, beneficial-glow, $status-card-animation-duration-slow);
+    @include status-card-variant(green, beneficial-glow, $status-card-animation-duration-slow);
 
     .eventide-effects-card__icon {
       @include status-card-icon(green);
     }
 
     .eventide-effects-card__details {
-      text-shadow: 0 0 $text-shadow-blur themes.color(green, 60);
+      @include status-card-details(green);
     }
   }
 
   // Harmful variant
   &--harmful {
-    border-color: themes.color(red, 60);
-    background: linear-gradient(
-      $gradient-angle-standard,
-      themes.color(red, 15) 0%,
-      themes.color(red, dark-80) 50%,
-      themes.color(red, 10) 100%
-    );
-    box-shadow:
-      0 0 $status-card-glow-blur themes.color(red, 30),
-      inset 0 $shadow-inset-offset 0 themes.color(white, 10);
-
-    @include status-card-glow(red, harmful-glow, 2.5s);
+    @include status-card-variant(red, harmful-glow, 2.5s);
 
     .eventide-effects-card__icon {
       @include status-card-icon(red);
     }
 
     .eventide-effects-card__details {
-      text-shadow: 0 0 $text-shadow-blur themes.color(red, 60);
+      @include status-card-details(red);
     }
   }
 }
@@ -757,26 +683,10 @@ $opacity-arrow-visible: 1;
 
 .eventide-cursed-card {
   @include status-card-base;
-
-  border-color: themes.color(purple, 60);
-  background: linear-gradient(
-    $gradient-angle-standard,
-    themes.color(purple, 15) 0%,
-    themes.color(purple, dark-80) 50%,
-    themes.color(purple, 10) 100%
-  );
-  box-shadow:
-    0 0 $status-card-glow-blur themes.color(purple, 30),
-    inset 0 $shadow-inset-offset 0 themes.color(white, 10);
-
-  @include status-card-glow(purple, ominous-glow, $status-card-animation-duration-slow);
+  @include status-card-variant(purple, ominous-glow, $status-card-animation-duration-slow);
 
   &__header {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    position: relative;
-    z-index: $status-card-z-index-content;
+    @include status-card-header;
   }
 
   &__icon {
@@ -788,31 +698,15 @@ $opacity-arrow-visible: 1;
   }
 
   &__info {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-    min-width: 0;
+    @include status-card-info;
   }
 
   &__label {
-    font-size: $status-card-label-font-size;
-    font-weight: 600;
-    color: themes.color(white, 90);
-    text-transform: uppercase;
-    letter-spacing: $text-letter-spacing;
-    margin-bottom: $text-margin-bottom;
-    line-height: 1;
+    @include status-card-label;
   }
 
   &__details {
-    font-size: $status-card-details-font-size;
-    font-weight: bold;
-    color: #fff;
-    text-shadow: 0 0 $text-shadow-blur themes.color(purple, 60);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    line-height: $text-line-height;
+    @include status-card-details(purple);
   }
 
   &__warning {
@@ -830,18 +724,7 @@ $opacity-arrow-visible: 1;
 
   // Deadly variant
   &--deadly {
-    border-color: themes.color(red, dark-80);
-    background: linear-gradient(
-      $gradient-angle-standard,
-      themes.color(red, dark-20) 0%,
-      themes.color(red, dark-90) 50%,
-      themes.color(red, dark-15) 100%
-    );
-    box-shadow:
-      0 0 $status-card-hover-glow-blur themes.color(red, dark-40),
-      inset 0 $shadow-inset-offset 0 themes.color(white, 10);
-
-    @include status-card-glow(red, deadly-glow, $status-card-animation-duration-fast);
+    @include status-card-variant(red, deadly-glow, $status-card-animation-duration-fast);
 
     .eventide-cursed-card__icon {
       background: themes.color(red, dark-50);
@@ -853,7 +736,7 @@ $opacity-arrow-visible: 1;
     }
 
     .eventide-cursed-card__details {
-      text-shadow: 0 0 $text-shadow-blur themes.color(red, dark-70);
+      @include status-card-details(red);
     }
   }
 }

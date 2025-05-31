@@ -1,5 +1,5 @@
 @use "../../utils/themes" as themes;
-@use "../../utils/tokens" as tokens;
+@use "../../utils/sheet-tokens" as tokens;
 
 // ===================================
 // ERPS TOGGLES COMPONENT
@@ -10,96 +10,167 @@
 // ===================================
 // CONFIGURATION VARIABLES
 // ===================================
+// Using sheet-tokens for consistent design system integration
 
 // Toggle sizing
 $toggle-width: 3rem;
 $toggle-height: 1.5rem;
 $toggle-thumb-size: 1.2rem;
-$toggle-border-radius: 0.75rem;
-$toggle-thumb-border-radius: 50%;
+$toggle-border-radius: tokens.$sheet-radius-lg;
+$toggle-thumb-border-radius: tokens.$sheet-radius-circle;
 
 // Spacing and positioning
-$toggle-thumb-offset: 0.15rem;
+$toggle-thumb-offset: calc(tokens.$sheet-spacing-xs - 3px); // Adjusted 1px left for better visual alignment
 $toggle-thumb-travel: calc($toggle-width - $toggle-thumb-size - ($toggle-thumb-offset * 2));
-$toggle-border-width: 2px;
+$toggle-border-width: tokens.$sheet-border-base;
 
 // Typography
-$toggle-label-font-size: 0.9rem;
-$toggle-label-gap: 0.5rem;
+$toggle-label-font-size: tokens.$sheet-font-size-label-md;
+$toggle-label-gap: tokens.$sheet-spacing-sm;
+$toggle-font-weight: tokens.$sheet-font-weight-medium;
 
 // Transitions
-$toggle-transition-duration: 0.3s;
+$toggle-transition-duration: tokens.$sheet-transition-medium;
 $toggle-transition-easing: ease-in-out;
 
 // Shadows and effects
-$toggle-shadow-blur: 4px;
-$toggle-glow-blur: 8px;
-$toggle-thumb-shadow: 0 2px 4px;
+$toggle-shadow-blur: tokens.$sheet-shadow-blur-xs;
+$toggle-glow-blur: tokens.$sheet-glow-blur-sm;
+$toggle-thumb-shadow: 0 tokens.$sheet-shadow-offset-sm tokens.$sheet-shadow-blur-xs;
 
 // Opacity values
-$toggle-disabled-opacity: 0.6;
+$toggle-disabled-opacity: tokens.$sheet-opacity-disabled;
 $toggle-focus-opacity: 0.3;
 
 // ===================================
-// THEME-AWARE DEFAULTS FOR TOGGLES
+// THEME-AWARE SYSTEM
+// ===================================
+// Theme-aware system using CSS custom properties that inherit from the main theme
+
+// Default theme variables that inherit from the main theme system
+:root {
+  --erps-toggle-primary: var(--theme-toggle-track, #2563eb); // Use unique toggle track color with blue fallback
+  --erps-toggle-secondary: var(--theme-secondary, #357abd);
+  --erps-toggle-bright: var(--theme-light, #6bb6ff);
+  --erps-toggle-glow: var(--theme-glow, rgb(74 144 226 / 30%));
+  --erps-toggle-text: var(--theme-text, #fff);
+}
+
+// Theme-aware variants that inherit from the sheet's theme context
+.eventide-sheet {
+  // Inherit theme colors from the main theme system
+  --erps-toggle-primary: var(--theme-toggle-track); // Use unique toggle track color
+  --erps-toggle-secondary: var(--theme-secondary);
+  --erps-toggle-bright: var(--theme-light);
+  --erps-toggle-glow: var(--theme-glow);
+  --erps-toggle-text: var(--theme-text);
+}
+
+// ===================================
+// UTILITY MIXINS
 // ===================================
 
-:root {
-  // Default theme (blue)
-  --erps-toggle-primary: #4a90e2;
-  --erps-toggle-secondary: #357abd;
-  --erps-toggle-bright: #6bb6ff;
-  --erps-toggle-glow: rgb(74 144 226 / 30%);
-  --erps-toggle-text: #fff;
+// Base toggle track styling
+@mixin toggle-track-base {
+  position: relative;
+  display: inline-block;
+  width: $toggle-width;
+  height: $toggle-height;
+  background: themes.color(gray-dark, 60);
+  border: $toggle-border-width solid themes.color(gray, 40);
+  border-radius: $toggle-border-radius;
+  transition: all $toggle-transition-duration $toggle-transition-easing;
+  cursor: pointer;
+  box-shadow:
+    inset 0 1px 3px themes.color(black, 30),
+    0 1px 2px themes.color(black, 10);
+  flex-shrink: 0;
+
+  &:hover {
+    border-color: var(--erps-toggle-bright);
+    box-shadow:
+      inset 0 1px 3px themes.color(black, 30),
+      0 0 $toggle-shadow-blur var(--erps-toggle-glow);
+  }
 }
 
-// Theme-specific defaults that activate based on sheet classes
-.eventide-sheet[data-bg-theme="blue"] {
-  --erps-toggle-primary: #4a90e2;
-  --erps-toggle-secondary: #357abd;
-  --erps-toggle-bright: #6bb6ff;
-  --erps-toggle-glow: rgb(74 144 226 / 30%);
-  --erps-toggle-text: #fff;
+// Base toggle thumb styling
+@mixin toggle-thumb-base {
+  position: absolute;
+  top: 50%;
+  left: $toggle-thumb-offset;
+  width: $toggle-thumb-size;
+  height: $toggle-thumb-size;
+  background: themes.color(white, 90);
+  border: $toggle-border-width solid themes.color(gray, 50);
+  border-radius: $toggle-thumb-border-radius;
+  transition: all $toggle-transition-duration $toggle-transition-easing;
+  cursor: pointer;
+  box-shadow: $toggle-thumb-shadow themes.color(black, 30);
+  transform: translateY(-50%);
+
+  // Add a subtle inner glow
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 2px;
+    background: radial-gradient(circle, themes.color(white, 20) 0%, transparent 70%);
+    border-radius: $toggle-thumb-border-radius;
+    pointer-events: none;
+  }
 }
 
-.eventide-sheet[data-bg-theme="black"] {
-  --erps-toggle-primary: #2c2c2c;
-  --erps-toggle-secondary: #1a1a1a;
-  --erps-toggle-bright: #4a4a4a;
-  --erps-toggle-glow: rgb(44 44 44 / 30%);
-  --erps-toggle-text: #fff;
+// Checked state styling mixin
+@mixin toggle-checked-state($primary-color: var(--erps-toggle-primary), $secondary-color: var(--erps-toggle-secondary), $glow-color: var(--erps-toggle-glow)) {
+  background: $primary-color;
+  border-color: $secondary-color;
+  box-shadow:
+    inset 0 1px 3px themes.color(black, 20),
+    0 0 $toggle-shadow-blur $glow-color;
+
+  .erps-toggles__thumb {
+    transform: translateY(-50%) translateX($toggle-thumb-travel);
+    background: themes.color(white, 95);
+    border-color: $secondary-color;
+    box-shadow:
+      $toggle-thumb-shadow themes.color(black, 40),
+      0 0 $toggle-shadow-blur $glow-color;
+  }
 }
 
-.eventide-sheet[data-bg-theme="green"] {
-  --erps-toggle-primary: #4a9e4a;
-  --erps-toggle-secondary: #357a35;
-  --erps-toggle-bright: #6bb66b;
-  --erps-toggle-glow: rgb(74 158 74 / 30%);
-  --erps-toggle-text: #fff;
+// Color variant mixin for toggle themes
+@mixin toggle-color-variant($color-name) {
+  .erps-toggles__input:checked + .erps-toggles__container .erps-toggles__track {
+    @include toggle-checked-state(
+      themes.color($color-name, 70),
+      themes.color($color-name, 80),
+      themes.color($color-name, 40)
+    );
+  }
 }
 
-.eventide-sheet[data-bg-theme="light"] {
-  --erps-toggle-primary: #e2e2e2;
-  --erps-toggle-secondary: #c0c0c0;
-  --erps-toggle-bright: #fff;
-  --erps-toggle-glow: rgb(226 226 226 / 30%);
-  --erps-toggle-text: #1a1a1a;
-}
+// Size variant mixin
+@mixin toggle-size-variant($width, $height, $thumb-size, $label-size) {
+  .erps-toggles__track {
+    width: $width;
+    height: $height;
+    border-radius: calc($height / 2);
+  }
 
-.eventide-sheet[data-bg-theme="gold"] {
-  --erps-toggle-primary: #d4af37;
-  --erps-toggle-secondary: #b8941f;
-  --erps-toggle-bright: #f4d03f;
-  --erps-toggle-glow: rgb(212 175 55 / 30%);
-  --erps-toggle-text: #fff;
-}
+  .erps-toggles__thumb {
+    width: $thumb-size;
+    height: $thumb-size;
 
-.eventide-sheet[data-bg-theme="purple"] {
-  --erps-toggle-primary: #8e44ad;
-  --erps-toggle-secondary: #7d3c98;
-  --erps-toggle-bright: #a569bd;
-  --erps-toggle-glow: rgb(142 68 173 / 30%);
-  --erps-toggle-text: #fff;
+    --thumb-travel: calc(#{$width} - #{$thumb-size} - (#{$toggle-thumb-offset} * 2));
+  }
+
+  .erps-toggles__input:checked + .erps-toggles__container .erps-toggles__track .erps-toggles__thumb {
+    transform: translateY(-50%) translateX(var(--thumb-travel));
+  }
+
+  .erps-toggles__label {
+    font-size: $label-size;
+  }
 }
 
 // ===================================
@@ -126,24 +197,11 @@ $toggle-focus-opacity: 0.3;
     &:focus + .erps-toggles__container .erps-toggles__track {
       box-shadow:
         $toggle-thumb-shadow themes.color(black, 30),
-        0 0 $toggle-glow-blur var(--erps-toggle-bright, var(--theme-bright, var(--erps-toggle-bright)));
+        0 0 $toggle-glow-blur var(--erps-toggle-bright);
     }
 
     &:checked + .erps-toggles__container .erps-toggles__track {
-      background: var(--erps-toggle-primary, var(--theme-primary, var(--erps-toggle-primary)));
-      border-color: var(--erps-toggle-secondary, var(--theme-secondary, var(--erps-toggle-secondary)));
-      box-shadow:
-        inset 0 1px 3px themes.color(black, 20),
-        0 0 $toggle-shadow-blur var(--erps-toggle-glow, var(--theme-glow, var(--erps-toggle-glow)));
-
-      .erps-toggles__thumb {
-        transform: translateY(-50%) translateX($toggle-thumb-travel);
-        background: themes.color(white, 95);
-        border-color: var(--erps-toggle-secondary, var(--theme-secondary, var(--erps-toggle-secondary)));
-        box-shadow:
-          $toggle-thumb-shadow themes.color(black, 40),
-          0 0 $toggle-shadow-blur var(--erps-toggle-glow, var(--theme-glow, var(--erps-toggle-glow)));
-      }
+      @include toggle-checked-state;
     }
 
     &:disabled + .erps-toggles__container .erps-toggles__track {
@@ -169,60 +227,20 @@ $toggle-focus-opacity: 0.3;
 
   // Track (background of the toggle)
   &__track {
-    position: relative;
-    display: inline-block;
-    width: $toggle-width;
-    height: $toggle-height;
-    background: themes.color(gray-dark, 60);
-    border: $toggle-border-width solid themes.color(gray, 40);
-    border-radius: $toggle-border-radius;
-    transition: all $toggle-transition-duration $toggle-transition-easing;
-    cursor: pointer;
-    box-shadow:
-      inset 0 1px 3px themes.color(black, 30),
-      0 1px 2px themes.color(black, 10);
-    flex-shrink: 0;
-
-    &:hover {
-      border-color: var(--erps-toggle-bright, var(--theme-bright, var(--erps-toggle-bright)));
-      box-shadow:
-        inset 0 1px 3px themes.color(black, 30),
-        0 0 $toggle-shadow-blur var(--erps-toggle-glow, var(--theme-glow, var(--erps-toggle-glow)));
-    }
+    @include toggle-track-base;
   }
 
   // Thumb (the sliding button part)
   &__thumb {
-    position: absolute;
-    top: 50%;
-    left: $toggle-thumb-offset;
-    width: $toggle-thumb-size;
-    height: $toggle-thumb-size;
-    background: themes.color(white, 90);
-    border: $toggle-border-width solid themes.color(gray, 50);
-    border-radius: $toggle-thumb-border-radius;
-    transition: all $toggle-transition-duration $toggle-transition-easing;
-    cursor: pointer;
-    box-shadow: $toggle-thumb-shadow themes.color(black, 30);
-    transform: translateY(-50%);
-
-    // Add a subtle inner glow
-    &::before {
-      content: '';
-      position: absolute;
-      inset: 2px;
-      background: radial-gradient(circle, themes.color(white, 20) 0%, transparent 70%);
-      border-radius: $toggle-thumb-border-radius;
-      pointer-events: none;
-    }
+    @include toggle-thumb-base;
   }
 
   // Label text
   &__label {
     font-family: var(--erps-ui-font, sans-serif);
     font-size: $toggle-label-font-size;
-    font-weight: 500;
-    color: var(--erps-toggle-text, var(--theme-text, var(--erps-toggle-text)));
+    font-weight: $toggle-font-weight;
+    color: var(--erps-toggle-text);
     cursor: pointer;
     transition: color $toggle-transition-duration $toggle-transition-easing;
     text-shadow: 0 1px 2px themes.color(black, 60);
@@ -234,49 +252,11 @@ $toggle-focus-opacity: 0.3;
 
   // Size modifiers
   &--small {
-    .erps-toggles__track {
-      width: 2.5rem;
-      height: 1.25rem;
-      border-radius: 0.625rem;
-    }
-
-    .erps-toggles__thumb {
-      width: 1rem;
-      height: 1rem;
-
-      --thumb-travel: calc(2.5rem - 1rem - (#{$toggle-thumb-offset} * 2));
-    }
-
-    .erps-toggles__input:checked + .erps-toggles__container .erps-toggles__track .erps-toggles__thumb {
-      transform: translateY(-50%) translateX(var(--thumb-travel, calc(2.5rem - 1rem - #{$toggle-thumb-offset * 2})));
-    }
-
-    .erps-toggles__label {
-      font-size: 0.8rem;
-    }
+    @include toggle-size-variant(2.5rem, 1.25rem, 1rem, tokens.$sheet-font-size-label-sm);
   }
 
   &--large {
-    .erps-toggles__track {
-      width: 3.5rem;
-      height: 1.75rem;
-      border-radius: 0.875rem;
-    }
-
-    .erps-toggles__thumb {
-      width: 1.4rem;
-      height: 1.4rem;
-
-      --thumb-travel: calc(3.5rem - 1.4rem - (#{$toggle-thumb-offset} * 2));
-    }
-
-    .erps-toggles__input:checked + .erps-toggles__container .erps-toggles__track .erps-toggles__thumb {
-      transform: translateY(-50%) translateX(var(--thumb-travel, calc(3.5rem - 1.4rem - #{$toggle-thumb-offset * 2})));
-    }
-
-    .erps-toggles__label {
-      font-size: 1rem;
-    }
+    @include toggle-size-variant(3.5rem, 1.75rem, 1.4rem, tokens.$sheet-font-size-value-md);
   }
 
   // Label position modifiers - BEM styled
@@ -308,7 +288,7 @@ $toggle-focus-opacity: 0.3;
     .erps-toggles__container {
       flex-direction: column;
       align-items: flex-start;
-      gap: 0.25rem;
+      gap: tokens.$sheet-spacing-xs;
 
       .erps-toggles__label {
         order: 1; // Label first (above)
@@ -324,7 +304,7 @@ $toggle-focus-opacity: 0.3;
     .erps-toggles__container {
       flex-direction: column;
       align-items: flex-start;
-      gap: 0.25rem;
+      gap: tokens.$sheet-spacing-xs;
 
       .erps-toggles__track {
         order: 1; // Track first (above)
@@ -352,57 +332,15 @@ $toggle-focus-opacity: 0.3;
 
   // Color theme overrides (for specific use cases)
   &--success {
-    .erps-toggles__input:checked + .erps-toggles__container .erps-toggles__track {
-      background: themes.color(green, 70);
-      border-color: themes.color(green, 80);
-      box-shadow:
-        inset 0 1px 3px themes.color(black, 20),
-        0 0 $toggle-shadow-blur themes.color(green, 40);
-
-      .erps-toggles__thumb {
-        transform: translateY(-50%) translateX($toggle-thumb-travel);
-        border-color: themes.color(green, 80);
-        box-shadow:
-          $toggle-thumb-shadow themes.color(black, 40),
-          0 0 $toggle-shadow-blur themes.color(green, 50);
-      }
-    }
+    @include toggle-color-variant(green);
   }
 
   &--danger {
-    .erps-toggles__input:checked + .erps-toggles__container .erps-toggles__track {
-      background: themes.color(red, 70);
-      border-color: themes.color(red, 80);
-      box-shadow:
-        inset 0 1px 3px themes.color(black, 20),
-        0 0 $toggle-shadow-blur themes.color(red, 40);
-
-      .erps-toggles__thumb {
-        transform: translateY(-50%) translateX($toggle-thumb-travel);
-        border-color: themes.color(red, 80);
-        box-shadow:
-          $toggle-thumb-shadow themes.color(black, 40),
-          0 0 $toggle-shadow-blur themes.color(red, 50);
-      }
-    }
+    @include toggle-color-variant(red);
   }
 
   &--warning {
-    .erps-toggles__input:checked + .erps-toggles__container .erps-toggles__track {
-      background: themes.color(orange, 70);
-      border-color: themes.color(orange, 80);
-      box-shadow:
-        inset 0 1px 3px themes.color(black, 20),
-        0 0 $toggle-shadow-blur themes.color(orange, 40);
-
-      .erps-toggles__thumb {
-        transform: translateY(-50%) translateX($toggle-thumb-travel);
-        border-color: themes.color(orange, 80);
-        box-shadow:
-          $toggle-thumb-shadow themes.color(black, 40),
-          0 0 $toggle-shadow-blur themes.color(orange, 50);
-      }
-    }
+    @include toggle-color-variant(orange);
   }
 }
 

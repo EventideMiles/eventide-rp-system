@@ -18,7 +18,7 @@
   padding: 1.5rem;
   min-width: 400px;
   max-width: 600px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 50%);
+  box-shadow: 0 4px 20px rgb(0 0 0 / 50%);
 
   &__header {
     text-align: center;
@@ -142,7 +142,7 @@
       flex: 1;
 
       h4 {
-        margin: 0 0 0.5rem 0;
+        margin: 0 0 0.5rem;
         color: var(--theme-text);
         font-size: 1.1rem;
       }
