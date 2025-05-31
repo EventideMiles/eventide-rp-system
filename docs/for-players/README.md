@@ -1,125 +1,433 @@
 # Eventide RP System Guide for Players
 
-This guide will help players understand how to create and play characters in the Eventide Roleplaying System.
+This comprehensive guide will help players understand how to create, play, and develop characters in the Eventide Roleplaying System.
 
-## Creating Your Character
+## Understanding Your Character
 
-### Character Sheet Basics
+### Character Sheet Overview
 
 The Eventide character sheet is organized into several tabs that help you manage different aspects of your character:
 
-1. **Main Tab**: Core abilities and character features
-2. **Combat Powers**: Access and manage your character's special combat abilities
-3. **Description**: A place for your character's background and story
-4. **Status Effects**: Track temporary conditions affecting your character
-5. **Gear**: Manage your gear and equipment
+#### **Features Tab** (Default)
 
-### Core Abilities
+- **Core Abilities**: Your five fundamental capabilities
+- **Character Features**: Permanent traits and background abilities
+- **Resources**: Current and maximum Resolve (health) and Power (magical energy)
+- **Derived Statistics**: Initiative, Armor Class, and other calculated values
 
-Your character has five core abilities that define their capabilities:
+#### **Combat Powers Tab**
 
-- **Acrobatics**: Agility, reflexes, and movement skills
-- **Physical**: Raw strength, endurance, and physical prowess
-- **Fortitude**: Constitution, resilience, and ability to withstand hardship: resolve typically comes from high fort
-- **Will**: Mental strength, determination, and force of personality: spellcasting prowess
-- **Wits**: Intelligence, perception, and quick thinking
+- **Special Abilities**: Powers that cost Power resource to use
+- **Power Management**: Track available and spent Power points
+- **Ability Integration**: Powers typically use one of your five core abilities for rolls
+- **Rich Descriptions**: Detailed explanations of what each power does
 
-These abilities form the foundation of your character and are used for most checks and actions in the game.
+#### **Biography Tab**
 
-## Managing Your Equipment
+- **Character Background**: Your character's history, personality, and motivations
+- **Rich Text Support**: Format your background with bold, italic, and other styling
+- **Character Development**: Track how your character grows and changes
+- **Roleplay Notes**: Important details for consistent character portrayal
 
-### Gear System
+#### **Status Effects Tab**
 
-Eventide features a robust equipment system that allows for detailed management of your character's possessions:
+- **Active Conditions**: All current temporary and permanent effects
+- **Effect Details**: Click effects to see detailed descriptions without re-rolling
+- **Visual Indicators**: Icons that may appear on your token
+- **Duration Tracking**: GM-controlled effect management
 
-1. **Equipping Items**:
-   - Items can be equipped/unequipped directly from item sheets or character sheets
-   - Equipped status determines whether an item's bonuses are active
-   - Some gear may require specific conditions to equip/unequip:
-      - This can be used to create an item with a number of 'charges' every day. Once the charges are out it is not equipped and cannot be used until the next reset period
-      - Cursed items exist that cannot be unequipped without the GM's help
+#### **Gear Tab**
 
-2. **Inventory Management**:
-   - Equipped items are displayed separately from unequipped items
-   - Each item can have detailed descriptions and effects
-   - Some items may have limited uses or charges
+- **Equipment Management**: All your character's possessions
+- **Equipped vs Unequipped**: Toggle gear to activate/deactivate bonuses
+- **Item Details**: Descriptions, effects, and mechanical benefits
+- **Inventory Organization**: Categorized display of different item types
 
-3. **Item Effects**:
-   - Gear can modify your abilities while equipped
-   - Some items may provide access to special powers
-   - Cursed items exist that cannot be unequipped without special help
+### The Five Core Abilities
 
-### Using The Gear Creator
+Your character is defined by five fundamental abilities that determine what they can do:
 
-If your GM has provided access to the player version of the Gear Creator macro:
+#### **Acrobatics (Acro)**
 
-1. Use it to easily create new gear
-2. Follow your GM's guidelines for creating custom items - work together to create items that fit your character and their world
+- **Represents**: Agility, reflexes, dexterity, balance, coordination
+- **Combat Uses**: Finesse weapons, ranged attacks, dodging, mobility
+- **Non-Combat Uses**: Stealth, climbing, jumping, sleight of hand, graceful attacks
+- **Character Types**: Rogues, scouts, archers, dancers, nimble fighters
+- **Rolling**: Click the Acrobatics card on your character sheet
 
-## Status Effects
+#### **Physical (Phys)**
 
-Status effects represent temporary conditions affecting your character:
+- **Represents**: Raw strength, muscle power, athletic prowess, endurance
+- **Combat Uses**: Heavy weapons, grappling, intimidation through presence
+- **Non-Combat Uses**: Lifting, breaking things, athletic feats, manual labor
+- **Character Types**: Warriors, laborers, athletes, strongmen, brawlers
+- **Rolling**: Click the Physical card on your character sheet
 
-1. **Viewing Active Effects**:
-   - Active status effects appear in the Status Effects tab
-   - Clicking an effect displays its details without re-rolling it to chat
-   - Effects may show icons on your token as visual reminders
+#### **Fortitude (Fort)**
 
-2. **Effect Duration**:
-   - All effects last until your GM is ready to remove them: while you can remove them yourself you should consult your GM before doing so
+- **Represents**: Constitution, resilience, health, resistance to harm
+- **Combat Uses**: Resisting damage, maintaining performance under stress
+- **Non-Combat Uses**: Surviving harsh conditions, resisting disease/poison
+- **Character Types**: Survivors, guards, explorers, hardy folk
+- **Special**: Typically directly affects your **Resolve** (health/stamina)
+- **Rolling**: Click the Fortitude card on your character sheet
 
-3. **Effect Modifications**:
-   - Status effects can modify your abilities positively or negatively
-   - Some may provide access to increased power
-   - Others might restrict certain actions: hard to hit when you're rolling at disadvantage because you're under the effects of a status that makes you clumsy
+#### **Will**
 
-## Using Combat Powers
+- **Represents**: Mental strength, determination, force of personality, magical aptitude
+- **Combat Uses**: Spellcasting, resisting mental effects, leadership
+- **Non-Combat Uses**: Inspiring others, resisting fear, magical activities
+- **Character Types**: Mages, leaders, clerics, charismatic individuals
+- **Special**: Typically directly affects your **Power** (magical/special ability resource)
+- **Rolling**: Click the Will card on your character sheet
 
-Combat powers are special abilities your character can use during encounters:
+#### **Wits**
 
-1. **Activating Powers**:
-   - Powers can be activated from your character sheet
-   - Some powers have prerequisites or resource costs
-   - The system provides reminders about requirements
+- **Represents**: Intelligence, perception, quick thinking, knowledge, awareness
+- **Combat Uses**: Tactics, targeting weak points, battlefield awareness
+- **Non-Combat Uses**: Solving puzzles, noticing details, recalling information
+- **Character Types**: Scholars, detectives, tacticians, inventors, strategists
+- **Rolling**: Click the Wits card on your character sheet
 
-2. **Power Effects**:
-   - Powers may deal damage, apply status effects, or provide other benefits
-   - Effects are automatically formatted in chat for everyone to see
-   - Some powers may have limited uses between rests
-   - You can use the description's rich text field to link to things that happen when you use an ability or to otherwise denote rolls as with any other foundry rich text field
+### Resources
 
-## Rolling Abilities
+Your character has two primary resources that fuel different aspects of gameplay:
 
-There are multiple ways to make ability checks in Eventide:
+#### **Resolve (Health/Stamina)**
 
-1. **From Character Sheet**:
-   - Click directly on abilities in your character sheet
-   - Modifiers from equipment and status effects are automatically applied
-   - Results are formatted and posted to chat
+- **What it represents**: Your physical and mental well-being, stamina, life force
+- **Derived from**: Typically your Fortitude ability, plus bonuses from features/gear
+- **Used for**: Absorbing damage, maintaining performance during extended activities
+- **When it reaches 0**: Your character is incapacitated (GM determines exact consequences)
+- **Recovery**: Healing spells, rest, medical attention, or GM-provided restoration
+- **Display**: Shows current/maximum (e.g., "25/30")
 
-2. **Using Macros**:
-   - The system includes macros for common roll types
-   - Ask your GM about available macros for specific situations
+#### **Power (Magical/Special Energy)**
 
-## Customizing Your Experience
+- **What it represents**: Your capacity for extraordinary feats, magic, special abilities
+- **Derived from**: Typically your Will ability, plus bonuses from features/gear
+- **Used for**: Activating Combat Powers, special abilities, magical effects
+- **Management**: Strategic resource requiring careful planning and conservation
+- **Recovery**: Rest periods, spending actions to restore power points in combat, magical restoration
+- **Display**: Shows current/maximum (e.g., "15/20")
 
-### UI Theme Options
+## Playing Your Character
 
-The Eventide system offers theme customization to suit your preferences:
+### Making Ability Rolls
 
-- Choose between Dark (default) and Light themes
-- Configure your interface in the system settings
+#### **Basic Rolling**
 
-### Sound Settings
+1. **Click** the ability card on your character sheet
+2. **Automatic Calculation**: System adds your ability score plus any modifiers
+3. **Chat Results**: Roll appears in chat with formatted results
+4. **Success Indicators**: Only show when targeting someone or for critical results
+5. **Modifier Application**: Equipment and status effects automatically included
 
-You can personalize sound feedback for various actions:
+#### **Understanding Results**
 
-- Enable or disable system sounds
-- Adjust volume settings
-- Ask your GM about customizing specific sound effects
+- **Target Numbers**: Usually need to beat opponent's Armor Class (Ability + 11)
+- **Critical Success**: Natural 20 (or within your critical threshold) adds +10 to result
+- **Critical Failure**: Natural 1 (or within your fail threshold) subtracts 10 from result
+- **Modifiers**: All bonuses from gear, status effects, and features apply automatically
+
+#### **When to Roll**
+
+- **GM Requests**: When the GM asks for a specific ability check
+- **Combat Actions**: Attacking, defending, using special abilities
+- **Skill Challenges**: Overcoming obstacles or achieving goals
+- **Contested Actions**: When opposing another character's action
+
+### Equipment Management
+
+#### **Understanding Gear**
+
+Equipment in the Eventide RP System is dynamic and meaningful:
+
+- **Equipped Status**: Only equipped gear provides bonuses
+- **Toggle Functionality**: Click the equip/unequip button to change status
+- **Automatic Effects**: Bonuses apply immediately when equipped
+- **Visual Feedback**: Character sheet updates to show modified abilities
+
+#### **Types of Equipment**
+
+- **Weapons**: Provide combat bonuses and may have special properties
+- **Armor**: Offers protection and may enhance certain abilities
+- **Tools**: Grant bonuses to specific types of actions
+- **Magical Items**: Provide unique effects and supernatural capabilities
+- **Consumables**: Limited-use items with temporary effects
+
+#### **Equipment Restrictions**
+
+- **Cursed Items**: Some gear cannot be unequipped without GM help
+- **Limited Uses**: Certain items have charges or daily use limits
+- **Requirements**: Some equipment may require specific abilities or conditions
+- **Conflicts**: Certain items may not work together
+
+#### **Gear Creator Access**
+
+If your GM grants access to the player version of the Gear Creator:
+
+1. **Collaborate**: Work with your GM to create appropriate items
+2. **Follow Guidelines**: Respect campaign balance and setting restrictions
+3. **Creative Input**: Contribute ideas for character-appropriate equipment
+4. **Balance Awareness**: Understand that overpowered items disrupt gameplay
+
+### Status Effects Management
+
+#### **Understanding Effects**
+
+Status effects represent temporary or permanent conditions affecting your character:
+
+- **Temporary Effects**: Applied during gameplay, removed by GM
+- **Permanent Features**: Background traits, racial abilities, character development
+- **Visual Indicators**: May show icons on your token for easy reference
+- **Stacking**: Multiple effects can apply simultaneously
+
+#### **Types of Status Effects**
+
+##### **Beneficial Effects**
+
+- **Blessed**: Divine favor enhancing your capabilities
+- **Inspired**: Motivational bonuses from allies or circumstances
+- **Enhanced**: Magical or alchemical improvements
+- **Advantaged**: Situational bonuses for favorable conditions
+
+##### **Detrimental Effects**
+
+- **Poisoned**: Toxins reducing your effectiveness
+- **Cursed**: Supernatural afflictions with negative consequences
+- **Exhausted**: Fatigue from overexertion or harsh conditions
+- **Disadvantaged**: Situational penalties from unfavorable conditions
+
+##### **Environmental Effects**
+
+- **Wet**: Reduced agility, vulnerability to lightning
+- **High Ground**: Tactical advantages for ranged combat
+- **Webbed**: Movement restrictions and potential fear effects
+- **Illuminated**: Enhanced visibility affecting stealth and targeting
+
+#### **Managing Your Effects**
+
+- **Status Tab**: Review all active effects and their descriptions
+- **Effect Details**: Click effects to see full descriptions without re-rolling
+- **Duration**: All effects last until your GM removes them
+- **Removal Etiquette**: Consult your GM before removing effects yourself
+- **Chat Notifications**: Effect removal always notifies the GM via chat
+
+### Combat Powers
+
+#### **Understanding Combat Powers**
+
+Combat Powers are your character's special abilities that go beyond basic actions:
+
+- **Power Cost**: Each ability requires spending Power resource points
+- **Ability-Based**: Most powers use one of your five core abilities for rolls
+- **Targeting**: Powers may affect single targets, multiple targets, or areas
+- **Rich Descriptions**: Detailed explanations of effects and requirements
+
+#### **Using Combat Powers**
+
+1. **Check Requirements**: Ensure you have sufficient Power and meet prerequisites
+2. **Select Target**: Choose valid targets if the power requires them
+3. **Activate Power**: Click the power name in your Combat Powers tab
+4. **Make Rolls**: System handles any required dice rolls automatically
+5. **Apply Effects**: Results appear in chat for everyone to see
+
+#### **Power Management Strategy**
+
+- **Resource Conservation**: Plan Power usage for important moments
+- **Recovery Options**: Spend actions in combat to restore Power points
+- **Rest Recovery**: Power typically regenerates during rest periods
+- **Emergency Reserve**: Keep some Power for defensive or escape abilities
+
+#### **Power Descriptions**
+
+- **Rich Text Support**: Use formatting to enhance power descriptions
+- **Foundry Integration**: Link to other items, actors, or journal entries
+- **Mechanical Details**: Include roll formulas, damage, and effect descriptions
+- **Narrative Elements**: Describe how the power looks and feels when used
+
+## Character Development
+
+### Growing Your Character
+
+#### **Ability Improvement**
+
+- **GM Rewards**: Ability increases typically come from GM-granted features
+- **Training**: Represent learning and practice through new features
+- **Equipment**: Acquire better gear that enhances your capabilities
+- **Experience**: Character growth through overcoming challenges
+
+#### **New Features**
+
+- **Background Development**: Gain features representing new training or experiences
+- **Story Rewards**: Features that reflect significant character moments
+- **Relationship Features**: Abilities gained through connections with NPCs or locations
+- **Achievement Features**: Rewards for accomplishing major goals
+
+#### **Equipment Upgrades**
+
+- **Better Gear**: Replace basic equipment with superior versions
+- **Magical Items**: Acquire equipment with supernatural properties
+- **Custom Gear**: Work with your GM to create character-specific equipment
+- **Situational Gear**: Collect tools for specific challenges or environments
+
+### Roleplaying Considerations
+
+#### **Character Consistency**
+
+- **Personality Traits**: Maintain consistent behavior patterns
+- **Motivations**: Remember what drives your character
+- **Relationships**: Develop connections with other characters
+- **Growth**: Allow your character to change through experiences
+
+#### **Ability Integration**
+
+- **High Abilities**: Roleplay your character's strengths and expertise
+- **Low Abilities**: Embrace weaknesses as character development opportunities
+- **Balanced Characters**: Show versatility and adaptability
+- **Specialized Characters**: Demonstrate mastery in your areas of focus
+
+#### **Status Effect Roleplay**
+
+- **Beneficial Effects**: Describe how bonuses manifest in your character's actions
+- **Detrimental Effects**: Roleplay the challenges and limitations imposed
+- **Environmental Effects**: React appropriately to changing conditions
+- **Transformation Effects**: Embrace dramatic changes when transformed
+
+## Customization Options
+
+### Interface Preferences
+
+#### **Theme Selection**
+
+Choose from multiple visual themes to suit your preferences:
+
+- **Night (Blue)**: Dark blue theme with cool tones (default)
+- **Twilight (Gold)**: Warm golden theme with amber accents
+- **Dawn (Green)**: Natural green theme with earth tones
+- **Midnight (Black)**: Pure black theme for minimal distraction
+- **Dusk (Purple)**: Rich purple theme with mystical feel
+- **Noon (Light)**: Light theme for bright environments
+
+#### **Default Tab Setting**
+
+Configure which character sheet tab opens by default:
+
+- **Features**: Core abilities and character traits (recommended for new players)
+- **Combat Powers**: Special abilities and magical powers
+- **Biography**: Character background and description
+- **Status Effects**: Active conditions and temporary effects
+- **Gear**: Equipment and inventory management
+
+#### **Sound Settings**
+
+Personalize audio feedback for various actions:
+
+- **Enable/Disable**: Toggle system sounds on or off
+- **Volume Control**: Adjust sound levels to your preference
+- **Specific Sounds**: Different audio cues for damage, healing, status changes
+
+### Accessibility Features
+
+#### **Visual Accessibility**
+
+- **High Contrast Themes**: Choose themes that work well for your vision needs
+- **Clear Typography**: System uses readable fonts and appropriate sizing
+- **Color Coding**: Effects and items use distinct colors for easy identification
+- **Icon Support**: Visual indicators supplement text descriptions
+
+#### **Interface Efficiency**
+
+- **Keyboard Navigation**: Many functions accessible via keyboard shortcuts
+- **Click Targets**: Large, easy-to-click buttons and interactive elements
+- **Consistent Layout**: Predictable organization across all system interfaces
+- **Responsive Design**: Interface adapts to different screen sizes
+
+## Collaboration and Communication
+
+### Working with Your GM
+
+#### **Character Creation**
+
+- **Concept Discussion**: Share your character ideas and get feedback
+- **Setting Integration**: Ensure your character fits the campaign world
+- **Mechanical Balance**: Work together to create appropriately powered characters
+- **Background Coordination**: Develop character history that enhances the story
+
+#### **During Play**
+
+- **Effect Clarification**: Ask about status effects and their mechanical impact
+- **Rule Questions**: Seek clarification on system mechanics when needed
+- **Character Development**: Discuss advancement and growth opportunities
+- **Story Integration**: Collaborate on character arcs and narrative moments
+
+### Working with Other Players
+
+#### **Party Coordination**
+
+- **Role Distribution**: Ensure the group covers essential capabilities
+- **Tactical Cooperation**: Coordinate abilities and resources in combat
+- **Narrative Collaboration**: Support each other's character stories
+- **Resource Sharing**: Help manage group equipment and supplies
+
+#### **Character Relationships**
+
+- **Interpersonal Dynamics**: Develop relationships between characters
+- **Shared History**: Create connections that enhance the group's story
+- **Conflict Resolution**: Handle character disagreements constructively
+- **Growth Together**: Allow relationships to evolve through play
+
+## Troubleshooting and Tips
+
+### Common Issues
+
+#### **Character Sheet Problems**
+
+- **Missing Bonuses**: Verify gear is equipped and effects are active
+- **Incorrect Totals**: Check for conflicting effects or calculation errors
+- **Interface Issues**: Refresh browser if elements aren't responding
+- **Permission Problems**: Ensure you have appropriate access to your character
+
+#### **Rolling Problems**
+
+- **No Results**: Verify you have a target selected if the power requires one
+- **Wrong Modifiers**: Check that all equipment and effects are properly configured
+- **Missing Dice**: Ensure your character has appropriate dice pool settings
+- **Chat Issues**: Refresh if rolls aren't appearing in chat
+
+### Best Practices
+
+#### **Session Preparation**
+
+- **Review Character**: Check abilities, equipment, and active effects before play
+- **Plan Strategy**: Consider how to use your resources effectively
+- **Update Biography**: Keep character background current with recent events
+- **Coordinate with Group**: Discuss tactics and resource management
+
+#### **During Play**
+
+- **Stay Engaged**: Pay attention to other players' actions and the ongoing story
+- **Ask Questions**: Seek clarification when mechanics or story elements are unclear
+- **Take Notes**: Record important events, NPCs, and character development
+- **Communicate Clearly**: Describe your actions and intentions clearly
 
 ## Next Steps
 
-- Explore [System Features](../system-features/README.md) for detailed mechanics
-- Review [Getting Started](../getting-started/README.md) if you're new to Foundry VTT
-- Check with your GM about any house rules or custom settings for your game
+### Continued Learning
+
+- **Explore System Features**: Read [System Features](../system-features/README.md) for detailed mechanics
+- **Advanced Techniques**: Check [Advanced Usage](../advanced-usage/README.md) for expert tips
+- **GM Perspective**: Review [For Game Masters](../for-gms/README.md) to understand the other side
+- **Character Creation**: Study [Character Creation](character-creation.md) for detailed guidance
+
+### Community Engagement
+
+- **Share Experiences**: Contribute to community discussions about the system
+- **Provide Feedback**: Help improve the system by reporting issues or suggestions
+- **Learn from Others**: Engage with other players to learn new techniques
+- **Support Development**: Participate in testing and feedback for new features
+
+---
+
+**Remember**: Eventide RP System is designed to enhance your storytelling and character development. Focus on having fun, developing your character, and contributing to memorable shared stories with your group!
