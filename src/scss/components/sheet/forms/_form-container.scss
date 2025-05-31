@@ -1,0 +1,52 @@
+@use "config" as *;
+@use "../../../utils/sheet-tokens" as tokens;
+
+// ===================================
+// MAIN FORM CONTAINER
+// ===================================
+// Base form container styling with variants
+
+.erps-form {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  background: var(--theme-accent, var(--erps-sheet-accent));
+  border: $form-border-width solid var(--theme-secondary, var(--erps-sheet-secondary));
+  border-radius: $form-border-radius;
+  box-shadow:
+    0 8px 32px rgb(0 0 0 / 40%),
+    inset 0 1px 0 rgb(255 255 255 / 10%);
+  overflow: hidden;
+  font-family: var(--erps-ui-font, sans-serif);
+
+  // Theme-aware background with pattern
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--theme-pattern, none);
+    background-size: 20px 20px;
+    opacity: 0.1;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  // Ensure content is above pattern
+  & > * {
+    position: relative;
+    z-index: 2;
+  }
+
+  // Form variants
+  &--compact {
+    padding: tokens.$sheet-spacing-md;
+    border-radius: tokens.$sheet-radius-md;
+  }
+
+  &--large {
+    padding: tokens.$sheet-spacing-xl;
+    border-radius: tokens.$sheet-radius-xxl;
+  }
+} 

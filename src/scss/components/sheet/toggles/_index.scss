@@ -1,0 +1,22 @@
+// ===================================
+// TOGGLES INDEX
+// ===================================
+// Main entry point for all toggle components
+
+// Import shared configuration first
+@use "config";
+
+// Import theme system
+@use "theme-system";
+
+// Import utility mixins
+@use "mixins";
+
+// Import core components
+@use "main-component";
+
+// Import modifiers
+@use "modifiers";
+
+// Import usage examples (documentation)
+@use "usage-examples"; 

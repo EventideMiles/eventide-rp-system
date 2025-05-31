@@ -1,0 +1,106 @@
+@use "config" as *;
+@use "../../../utils/sheet-tokens" as tokens;
+
+// ===================================
+// ITEMS PANEL UTILITY MIXINS
+// ===================================
+// Reusable mixins for items panel styling and components
+
+// ===================================
+// CONTROL BUTTON MIXINS
+// ===================================
+
+// Control button base styling
+@mixin control-button-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: $control-button-size;
+  height: $control-button-size;
+  padding: 0;
+  font-size: $item-font-size;
+  color: var(--theme-text);
+  background: var(--theme-primary);
+  border: 1px solid var(--theme-secondary);
+  border-radius: tokens.$sheet-radius-sm;
+  transition: all tokens.$sheet-transition-base ease;
+  cursor: pointer;
+  text-decoration: none;
+
+  &:hover {
+    background: var(--theme-secondary);
+    border-color: var(--theme-light);
+    color: var(--theme-light);
+    box-shadow: 0 0 tokens.$sheet-glow-blur-sm var(--theme-glow);
+    transform: translateY(tokens.$sheet-transform-hover-sm);
+  }
+
+  &:active {
+    transform: translateY(0) scale(tokens.$sheet-transform-scale-active);
+  }
+}
+
+// Control button color variant mixin
+@mixin control-button-variant($color-name) {
+  @if $color-name == "blue" {
+    color: rgb(59 130 246 / 70%);
+    border-color: rgb(59 130 246 / 40%);
+
+    &:hover {
+      background: rgb(59 130 246 / 20%);
+      border-color: rgb(59 130 246 / 80%);
+      color: rgb(59 130 246 / 90%);
+      box-shadow: 0 0 tokens.$sheet-glow-blur-sm rgb(59 130 246 / 40%);
+    }
+  } @else if $color-name == "green" {
+    color: rgb(34 197 94 / 70%);
+    border-color: rgb(34 197 94 / 40%);
+
+    &:hover {
+      background: rgb(34 197 94 / 20%);
+      border-color: rgb(34 197 94 / 80%);
+      color: rgb(34 197 94 / 90%);
+      box-shadow: 0 0 tokens.$sheet-glow-blur-sm rgb(34 197 94 / 40%);
+    }
+  } @else if $color-name == "red" {
+    color: rgb(220 38 38 / 70%);
+    border-color: rgb(220 38 38 / 40%);
+
+    &:hover {
+      background: rgb(220 38 38 / 20%);
+      border-color: rgb(220 38 38 / 80%);
+      color: rgb(220 38 38 / 90%);
+      box-shadow: 0 0 tokens.$sheet-glow-blur-sm rgb(220 38 38 / 40%);
+    }
+  } @else if $color-name == "orange" {
+    color: rgb(249 115 22 / 70%);
+    border-color: rgb(249 115 22 / 40%);
+
+    &:hover {
+      background: rgb(249 115 22 / 20%);
+      border-color: rgb(249 115 22 / 80%);
+      color: rgb(249 115 22 / 90%);
+      box-shadow: 0 0 tokens.$sheet-glow-blur-sm rgb(249 115 22 / 40%);
+    }
+  } @else if $color-name == "purple" {
+    color: rgb(147 51 234 / 70%);
+    border-color: rgb(147 51 234 / 40%);
+
+    &:hover {
+      background: rgb(147 51 234 / 20%);
+      border-color: rgb(147 51 234 / 80%);
+      color: rgb(147 51 234 / 90%);
+      box-shadow: 0 0 tokens.$sheet-glow-blur-sm rgb(147 51 234 / 40%);
+    }
+  } @else {
+    color: rgb(100 100 100 / 70%);
+    border-color: rgb(100 100 100 / 40%);
+
+    &:hover {
+      background: rgb(100 100 100 / 20%);
+      border-color: rgb(100 100 100 / 80%);
+      color: rgb(100 100 100 / 90%);
+      box-shadow: 0 0 tokens.$sheet-glow-blur-sm rgb(100 100 100 / 40%);
+    }
+  }
+} 

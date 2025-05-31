@@ -1,0 +1,165 @@
+@use "../../../utils/themes" as themes;
+@use "../../../utils/sheet-tokens" as tokens;
+@use "sass:map";
+
+// ===================================
+// ERPS INPUTS SHARED CONFIGURATION
+// ===================================
+// Shared theme setup, variables, and mixins for all input components
+
+// ===================================
+// THEME-AWARE DEFAULTS
+// ===================================
+// Efficient theme system using programmatic generation
+
+:root {
+  // Default theme (blue) - using actual theme colors from themes.scss
+  --erps-default-primary: #{map.get(themes.$blue-theme, primary)};
+  --erps-default-secondary: #{map.get(themes.$blue-theme, secondary)};
+  --erps-default-bright: #{map.get(themes.$blue-theme, light)};
+  --erps-default-glow: #{map.get(themes.$blue-theme, glow)};
+  --erps-default-text: #{map.get(themes.$blue-theme, text)};
+}
+
+// Programmatic theme generation - replaces 84 lines of repetitive code
+$theme-list: ("blue", "black", "green", "light", "gold", "purple");
+
+@each $theme-name in $theme-list {
+  .eventide-sheet[data-bg-theme="#{$theme-name}"] {
+    $theme-map: null;
+
+    @if $theme-name == "blue" { $theme-map: themes.$blue-theme; } @else if $theme-name == "black" { $theme-map: themes.$black-theme; } @else if $theme-name == "green" { $theme-map: themes.$green-theme; } @else if $theme-name == "light" { $theme-map: themes.$light-theme; } @else if $theme-name == "gold" { $theme-map: themes.$gold-theme; } @else if $theme-name == "purple" { $theme-map: themes.$purple-theme; }
+
+    --erps-current-primary: #{map.get($theme-map, primary)};
+    --erps-current-secondary: #{map.get($theme-map, secondary)};
+    --erps-current-bright: #{map.get($theme-map, light)};
+    --erps-current-glow: #{map.get($theme-map, glow)};
+    --erps-current-text: #{map.get($theme-map, text)};
+  }
+}
+
+// ===================================
+// CONFIGURATION VARIABLES
+// ===================================
+// Using sheet-tokens for consistency
+
+// Input sizing (using sheet-tokens)
+$input-height: tokens.$sheet-height-input-standard !default;
+$input-padding: tokens.$sheet-padding-input !default;
+$input-border-radius: tokens.$sheet-radius-md !default;
+$input-border-width: tokens.$sheet-border-base !default;
+$input-font-size: tokens.$sheet-font-size-value-md !default;
+$input-line-height: tokens.$sheet-line-height-base !default;
+
+// Button sizing (using sheet-tokens)
+$button-height: tokens.$sheet-height-button-standard !default;
+$button-padding: tokens.$sheet-padding-button !default;
+$button-border-radius: tokens.$sheet-radius-md !default;
+$button-border-width: tokens.$sheet-border-base !default;
+$button-font-size: tokens.$sheet-font-size-value-md !default;
+$button-font-weight: tokens.$sheet-font-weight-semibold !default;
+$button-line-height: tokens.$sheet-line-height-base !default;
+
+// Select sizing (using sheet-tokens)
+$select-height: tokens.$sheet-height-input-standard !default;
+$select-padding: tokens.$sheet-spacing-md 2.5rem tokens.$sheet-spacing-md tokens.$sheet-spacing-base !default;
+$select-border-radius: tokens.$sheet-radius-md !default;
+$select-border-width: tokens.$sheet-border-base !default;
+$select-font-size: tokens.$sheet-font-size-value-md !default;
+$select-line-height: tokens.$sheet-line-height-base !default;
+
+// Transitions (using sheet-tokens)
+$input-transition: all tokens.$sheet-transition-medium ease !default;
+$button-transition: all tokens.$sheet-transition-base ease !default;
+
+// Effects (using sheet-tokens)
+$input-shadow-blur: tokens.$sheet-shadow-blur-md !default;
+$button-shadow-blur: tokens.$sheet-shadow-blur-lg !default;
+$glow-opacity: 0.6 !default;
+
+// ===================================
+// UTILITY MIXINS
+// ===================================
+
+@mixin input-glow($glow-type: "input") {
+  @if $glow-type == "input" {
+    box-shadow: 0 0 $input-shadow-blur var(--theme-input-glow);
+  } @else if $glow-type == "button" {
+    box-shadow: 0 0 $button-shadow-blur var(--theme-button-glow);
+  } @else if $glow-type == "success" {
+    box-shadow: 0 0 $input-shadow-blur var(--theme-success-glow);
+  } @else if $glow-type == "warning" {
+    box-shadow: 0 0 $input-shadow-blur var(--theme-warning-glow);
+  } @else if $glow-type == "danger" {
+    box-shadow: 0 0 $input-shadow-blur var(--theme-danger-glow);
+  } @else if $glow-type == "purple" {
+    box-shadow: 0 0 $input-shadow-blur var(--theme-purple-glow);
+  } @else {
+    box-shadow: 0 0 $input-shadow-blur var(--theme-input-glow);
+  }
+}
+
+@mixin button-glow($glow-type: "button") {
+  @if $glow-type == "button" {
+    box-shadow: 0 0 $button-shadow-blur var(--theme-button-glow);
+  } @else if $glow-type == "success" {
+    box-shadow: 0 0 $button-shadow-blur var(--theme-success-glow);
+  } @else if $glow-type == "warning" {
+    box-shadow: 0 0 $button-shadow-blur var(--theme-warning-glow);
+  } @else if $glow-type == "danger" {
+    box-shadow: 0 0 $button-shadow-blur var(--theme-danger-glow);
+  } @else if $glow-type == "purple" {
+    box-shadow: 0 0 $button-shadow-blur var(--theme-purple-glow);
+  } @else {
+    box-shadow: 0 0 $button-shadow-blur var(--theme-button-glow);
+  }
+}
+
+@mixin button-gradient($color, $start-opacity: 20, $end-opacity: 30) {
+  @if $color == "blue" {
+    background: linear-gradient(135deg,
+      rgb(59 130 246 / 20%),
+      rgb(59 130 246 / 30%)
+    );
+  } @else if $color == "green" {
+    background: linear-gradient(135deg,
+      rgb(34 197 94 / 20%),
+      rgb(34 197 94 / 30%)
+    );
+  } @else if $color == "red" {
+    background: linear-gradient(135deg,
+      rgb(220 38 38 / 20%),
+      rgb(220 38 38 / 30%)
+    );
+  } @else if $color == "orange" {
+    background: linear-gradient(135deg,
+      rgb(249 115 22 / 20%),
+      rgb(249 115 22 / 30%)
+    );
+  } @else if $color == "purple" {
+    background: linear-gradient(135deg,
+      rgb(147 51 234 / 20%),
+      rgb(147 51 234 / 30%)
+    );
+  } @else if $color == "gray" {
+    background: linear-gradient(135deg,
+      rgb(100 100 100 / 20%),
+      rgb(100 100 100 / 30%)
+    );
+  } @else if $color == "gray-dark" {
+    background: linear-gradient(135deg,
+      rgb(80 80 80 / 20%),
+      rgb(80 80 80 / 30%)
+    );
+  } @else if $color == "gray-light" {
+    background: linear-gradient(135deg,
+      rgb(120 120 120 / 20%),
+      rgb(120 120 120 / 30%)
+    );
+  } @else {
+    background: linear-gradient(135deg,
+      rgb(100 100 100 / 20%),
+      rgb(100 100 100 / 30%)
+    );
+  }
+} 

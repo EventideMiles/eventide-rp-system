@@ -1,0 +1,124 @@
+@use "config" as *;
+@use "../../../utils/sheet-tokens" as tokens;
+
+// ===================================
+// FORM UTILITIES
+// ===================================
+// Images, effects lists, and text styling utilities
+
+// ===================================
+// FORM IMAGES
+// ===================================
+
+.erps-form__image {
+  width: 180px;
+  height: 180px;
+  object-fit: cover;
+  border-radius: tokens.$sheet-radius-sm;
+  border: 1px solid var(--theme-secondary, var(--erps-sheet-secondary));
+  box-shadow: 0 2px 4px rgb(0 0 0 / 20%);
+
+  &--small {
+    width: 24px;
+    height: 24px;
+    object-fit: cover;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: tokens.$sheet-spacing-xs;
+  }
+
+  &--medium {
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+  }
+
+  &--large {
+    width: 240px;
+    height: 240px;
+    object-fit: cover;
+  }
+}
+
+// ===================================
+// FORM EFFECTS LIST
+// ===================================
+
+.erps-form__effects-list {
+  margin-top: tokens.$sheet-spacing-sm;
+  display: flex;
+  flex-direction: column;
+  gap: tokens.$sheet-spacing-xs;
+  width: 75%;
+}
+
+.erps-form__effects-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: tokens.$sheet-spacing-sm;
+  align-items: center;
+  padding: tokens.$sheet-spacing-xs tokens.$sheet-spacing-sm;
+  background: rgb(0 0 0 / 5%);
+  border: 1px solid var(--theme-secondary, var(--erps-sheet-secondary));
+  border-radius: tokens.$sheet-radius-xs;
+  font-size: tokens.$sheet-font-size-value-sm;
+
+  &:hover {
+    background: rgb(255 255 255 / 3%);
+  }
+}
+
+.erps-form__effects-ability {
+  font-weight: tokens.$sheet-font-weight-semibold;
+  color: var(--theme-text, var(--erps-sheet-text));
+}
+
+.erps-form__effects-mode {
+  font-style: italic;
+  font-weight: tokens.$sheet-font-weight-medium;
+  color: var(--theme-text, var(--erps-sheet-text));
+  text-align: center;
+  opacity: 0.9;
+}
+
+.erps-form__effects-value {
+  font-weight: tokens.$sheet-font-weight-bold;
+  color: var(--theme-text, var(--erps-sheet-text));
+  text-align: right;
+  background: var(--theme-primary, var(--erps-sheet-primary));
+  padding: tokens.$sheet-spacing-xs;
+  border-radius: tokens.$sheet-radius-xs;
+}
+
+// ===================================
+// TEXT STYLING UTILITIES
+// ===================================
+
+.erps-text {
+  &--neutral {
+    color: var(--theme-text, var(--erps-sheet-text));
+    opacity: 0.8;
+  }
+
+  &--advantage {
+    color: rgb(34 197 94 / 70%);
+    font-weight: tokens.$sheet-font-weight-semibold;
+  }
+
+  &--disadvantage {
+    color: rgb(220 38 38 / 70%);
+    font-weight: tokens.$sheet-font-weight-semibold;
+  }
+
+  &--success {
+    color: rgb(34 197 94 / 80%);
+  }
+
+  &--warning {
+    color: rgb(249 115 22 / 80%);
+  }
+
+  &--error {
+    color: rgb(220 38 38 / 80%);
+  }
+} 

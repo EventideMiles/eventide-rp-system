@@ -1,0 +1,59 @@
+@use "config" as *;
+@use "../../../utils/sheet-tokens" as tokens;
+
+// ===================================
+// FORM GROUPS
+// ===================================
+// Form group layouts including grid systems
+
+.erps-form__group {
+  display: flex;
+  flex-direction: column;
+  gap: tokens.$sheet-spacing-xs;
+  margin-bottom: $group-spacing;
+
+  // Group variants
+  &--horizontal {
+    flex-direction: row;
+    align-items: center;
+    gap: tokens.$sheet-spacing-md;
+
+    .erps-form__label {
+      margin-bottom: 0;
+      flex-shrink: 0;
+      min-width: fit-content;
+    }
+  }
+
+  &--compact {
+    margin-bottom: tokens.$sheet-spacing-md;
+    gap: tokens.$sheet-spacing-xxs;
+  }
+
+  &--spaced {
+    margin-bottom: tokens.$sheet-spacing-xl;
+  }
+
+  // Grid layouts for complex forms
+  &--grid {
+    display: grid;
+    gap: tokens.$sheet-spacing-md;
+
+    &.erps-form__group--grid-2 {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    &.erps-form__group--grid-3 {
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    &.erps-form__group--grid-auto {
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+  }
+
+  // Last group in content shouldn't have bottom margin
+  &:last-child {
+    margin-bottom: 0;
+  }
+} 

@@ -6,7 +6,7 @@
   },
   "overrides": [
     {
-      "files": ["src/scss/components/*.scss", "src/scss/components/sheet/*.scss"],
+      "files": ["src/scss/components/*.scss", "src/scss/components/sheet/*.scss", "src/scss/components/sheet/inputs/*.scss"],
       "rules": {
         "no-descending-specificity": null,
         "scss/percent-placeholder-pattern": null

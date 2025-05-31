@@ -1,0 +1,136 @@
+@use "config" as *;
+
+// ===================================
+// TOGGLE UTILITY MIXINS
+// ===================================
+// Reusable mixins for toggle styling and components
+
+// ===================================
+// BASE COMPONENT MIXINS
+// ===================================
+
+// Base toggle track styling
+@mixin toggle-track-base {
+  position: relative;
+  display: inline-block;
+  width: $toggle-width;
+  height: $toggle-height;
+  background: rgb(80 80 80 / 60%); // gray-dark 60%
+  border: $toggle-border-width solid rgb(100 100 100 / 40%); // gray 40%
+  border-radius: $toggle-border-radius;
+  transition: all $toggle-transition-duration $toggle-transition-easing;
+  cursor: pointer;
+  box-shadow:
+    inset 0 1px 3px rgb(0 0 0 / 30%), // black 30%
+    0 1px 2px rgb(0 0 0 / 10%); // black 10%
+
+  flex-shrink: 0;
+
+  &:hover {
+    border-color: var(--erps-toggle-bright);
+    box-shadow:
+      inset 0 1px 3px rgb(0 0 0 / 30%), // black 30%
+      0 0 $toggle-shadow-blur var(--erps-toggle-glow);
+  }
+}
+
+// Base toggle thumb styling
+@mixin toggle-thumb-base {
+  position: absolute;
+  top: 50%;
+  left: $toggle-thumb-offset;
+  width: $toggle-thumb-size;
+  height: $toggle-thumb-size;
+  background: rgb(255 255 255 / 90%); // white 90%
+  border: $toggle-border-width solid rgb(100 100 100 / 50%); // gray 50%
+  border-radius: $toggle-thumb-border-radius;
+  transition: all $toggle-transition-duration $toggle-transition-easing;
+  cursor: pointer;
+  box-shadow: $toggle-thumb-shadow rgb(0 0 0 / 30%); // black 30%
+  transform: translateY(-50%);
+
+  // Add a subtle inner glow
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 2px;
+    background: radial-gradient(circle, rgb(255 255 255 / 20%) 0%, transparent 70%); // white 20%
+    border-radius: $toggle-thumb-border-radius;
+    pointer-events: none;
+  }
+}
+
+// ===================================
+// STATE MIXINS
+// ===================================
+
+// Checked state styling mixin
+@mixin toggle-checked-state($primary-color: var(--erps-toggle-primary), $secondary-color: var(--erps-toggle-secondary), $glow-color: var(--erps-toggle-glow)) {
+  background: $primary-color;
+  border-color: $secondary-color;
+  box-shadow:
+    inset 0 1px 3px rgb(0 0 0 / 20%), // black 20%
+    0 0 $toggle-shadow-blur $glow-color;
+
+  .erps-toggles__thumb {
+    transform: translateY(-50%) translateX($toggle-thumb-travel);
+    background: rgb(255 255 255 / 95%); // white 95%
+    border-color: $secondary-color;
+    box-shadow:
+      $toggle-thumb-shadow rgb(0 0 0 / 40%), // black 40%
+      0 0 $toggle-shadow-blur $glow-color;
+  }
+}
+
+// ===================================
+// VARIANT MIXINS
+// ===================================
+
+// Color variant mixin for toggle themes
+@mixin toggle-color-variant($color-name) {
+  .erps-toggles__input:checked + .erps-toggles__container .erps-toggles__track {
+    @if $color-name == 'green' {
+      @include toggle-checked-state(
+        rgb(34 197 94 / 70%), // green 70%
+        rgb(34 197 94 / 80%), // green 80%
+        rgb(34 197 94 / 40%)  // green 40%
+      );
+    } @else if $color-name == 'red' {
+      @include toggle-checked-state(
+        rgb(239 68 68 / 70%), // red 70%
+        rgb(239 68 68 / 80%), // red 80%
+        rgb(239 68 68 / 40%)  // red 40%
+      );
+    } @else if $color-name == 'orange' {
+      @include toggle-checked-state(
+        rgb(217 119 6 / 70%), // orange 70%
+        rgb(217 119 6 / 80%), // orange 80%
+        rgb(217 119 6 / 40%)  // orange 40%
+      );
+    }
+  }
+}
+
+// Size variant mixin
+@mixin toggle-size-variant($width, $height, $thumb-size, $label-size) {
+  .erps-toggles__track {
+    width: $width;
+    height: $height;
+    border-radius: calc($height / 2);
+  }
+
+  .erps-toggles__thumb {
+    width: $thumb-size;
+    height: $thumb-size;
+
+    --thumb-travel: calc(#{$width} - #{$thumb-size} - (#{$toggle-thumb-offset} * 2));
+  }
+
+  .erps-toggles__input:checked + .erps-toggles__container .erps-toggles__track .erps-toggles__thumb {
+    transform: translateY(-50%) translateX(var(--thumb-travel));
+  }
+
+  .erps-toggles__label {
+    font-size: $label-size;
+  }
+} 

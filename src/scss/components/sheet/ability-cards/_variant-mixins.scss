@@ -1,0 +1,71 @@
+@use "config" as *;
+@use "sass:color";
+
+// ===================================
+// ABILITY VARIANT MIXINS
+// ===================================
+// Mixins for generating ability-specific styling and patterns
+
+// ===================================
+// ABILITY VARIANT MIXIN
+// ===================================
+
+// Ability variant mixin - consolidates repetitive patterns
+@mixin ability-variant($color) {
+  &::before {
+    background: $color;
+  }
+
+  .eventide-ability-card__total-button {
+    background: color.change($color, $alpha: 0.3);
+    border: $border-thin solid color.change($color, $alpha: 0.5);
+    text-shadow: 0 0 $shadow-blur-xs color.change($color, $alpha: 0.8);
+    box-shadow:
+      0 0 $shadow-blur-sm color.change($color, $alpha: 0.4),
+      inset 0 $shadow-offset-xs 0 rgb(255 255 255 / 20%);
+    animation: ability-glow $animation-fast ease-in-out infinite alternate;
+
+    &::before {
+      background: linear-gradient(
+        90deg,
+        transparent,
+        color.change($color, $alpha: 0.3),
+        transparent
+      );
+    }
+
+    &:hover {
+      background: color.change($color, $alpha: 0.5);
+      border-color: color.change($color, $alpha: 0.7);
+      transform: scale($transform-scale-hover);
+      box-shadow:
+        0 0 $shadow-blur-lg color.change($color, $alpha: 0.6),
+        inset 0 $shadow-offset-xs 0 rgb(255 255 255 / 30%);
+    }
+  }
+
+  &:hover {
+    background: linear-gradient(
+      135deg,
+      color.change($color, $alpha: 0.2) 0%,
+      color.change($color, $alpha: 0.1) 50%,
+      color.change($color, $alpha: 0.05) 100%
+    );
+  }
+}
+
+// ===================================
+// ABILITY PATTERN MIXIN
+// ===================================
+
+// Ability pattern overlay mixin
+@mixin ability-pattern($color, $pattern) {
+  &:hover::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,#{$pattern}");
+    pointer-events: none;
+    z-index: 1;
+  }
+} 

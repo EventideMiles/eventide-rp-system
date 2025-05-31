@@ -1,0 +1,70 @@
+// ===================================
+// USAGE EXAMPLES (HTML)
+// ===================================
+
+/*
+<!-- Basic toggle with label on left (default) -->
+<label class="erps-toggles">
+  <input type="checkbox" class="erps-toggles__input">
+  <div class="erps-toggles__container">
+    <span class="erps-toggles__label">Enable Feature</span>
+    <span class="erps-toggles__track">
+      <span class="erps-toggles__thumb"></span>
+    </span>
+  </div>
+</label>
+
+<!-- Small toggle without label -->
+<label class="erps-toggles erps-toggles--small erps-toggles--no-label">
+  <input type="checkbox" class="erps-toggles__input">
+  <div class="erps-toggles__container">
+    <span class="erps-toggles__track">
+      <span class="erps-toggles__thumb"></span>
+    </span>
+  </div>
+</label>
+
+<!-- Toggle with label on right -->
+<label class="erps-toggles erps-toggles--label-right">
+  <input type="checkbox" class="erps-toggles__input">
+  <div class="erps-toggles__container">
+    <span class="erps-toggles__label">Auto-save</span>
+    <span class="erps-toggles__track">
+      <span class="erps-toggles__thumb"></span>
+    </span>
+  </div>
+</label>
+
+<!-- Toggle with label above -->
+<label class="erps-toggles erps-toggles--label-above">
+  <input type="checkbox" class="erps-toggles__input">
+  <div class="erps-toggles__container">
+    <span class="erps-toggles__label">Setting Name</span>
+    <span class="erps-toggles__track">
+      <span class="erps-toggles__thumb"></span>
+    </span>
+  </div>
+</label>
+
+<!-- Toggle with label below -->
+<label class="erps-toggles erps-toggles--label-below">
+  <input type="checkbox" class="erps-toggles__input">
+  <div class="erps-toggles__container">
+    <span class="erps-toggles__label">Option</span>
+    <span class="erps-toggles__track">
+      <span class="erps-toggles__thumb"></span>
+    </span>
+  </div>
+</label>
+
+<!-- Success-themed toggle -->
+<label class="erps-toggles erps-toggles--success">
+  <input type="checkbox" class="erps-toggles__input" checked>
+  <div class="erps-toggles__container">
+    <span class="erps-toggles__label">Task Complete</span>
+    <span class="erps-toggles__track">
+      <span class="erps-toggles__thumb"></span>
+    </span>
+  </div>
+</label>
+*/ 

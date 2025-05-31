@@ -1,0 +1,72 @@
+@use "config" as *;
+@use "mixins" as *;
+
+// ===================================
+// MODERN SUBTAB SYSTEM
+// ===================================
+// Modern gear subtab components for dynamic content switching
+
+.gear-tab-nav {
+  display: flex;
+  gap: $tab-gap;
+  margin-bottom: $tab-nav-margin-bottom;
+  border-bottom: $tab-border-base solid var(--erps-tab-bright);
+  padding-bottom: $tab-gap;
+}
+
+.gear-tab-button {
+  @include custom-tab-button-base;
+
+  // Variant styling
+  &--equipped {
+    @include tab-variant(green, true);
+  }
+
+  &--unequipped {
+    @include tab-variant(gray, true);
+  }
+
+  &:hover {
+    background: var(--erps-tab-primary);
+    transform: translateY($tab-transform-hover-md);
+
+    @include tab-shadow-base;
+
+    .gear-count {
+      background: var(--erps-tab-secondary);
+    }
+  }
+
+  &.active {
+    background: var(--erps-tab-secondary);
+    transform: translateY($tab-transform-hover-sm);
+
+    @include tab-shadow-active(var(--erps-tab-glow));
+
+    i {
+      opacity: $tab-opacity-full;
+      text-shadow: 0 0 $tab-shadow-blur-md var(--erps-tab-glow);
+    }
+
+    .gear-count {
+      background: var(--erps-tab-secondary);
+      box-shadow: 0 0 $tab-shadow-blur-md var(--erps-tab-glow);
+    }
+  }
+
+  .gear-count {
+    @include tab-count-badge;
+  }
+}
+
+.gear-tab-content {
+  @include tab-content-animated;
+
+  &--equipped {
+    @include tab-panel-content(green);
+  }
+
+  &--unequipped {
+    @include tab-panel-content(gray, $tab-opacity-unequipped);
+  }
+} 

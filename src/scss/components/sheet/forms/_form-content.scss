@@ -1,0 +1,41 @@
+@use "config" as *;
+
+// ===================================
+// FORM CONTENT AREA
+// ===================================
+// Content area with custom scrollbar styling
+
+.erps-form__content {
+  flex: 1;
+  padding: $form-content-padding;
+  overflow: hidden auto;
+
+  // Custom scrollbar styling
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: var(--theme-accent, var(--erps-sheet-accent));
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--theme-secondary, var(--erps-sheet-secondary));
+    border-radius: 4px;
+    border: 1px solid var(--theme-primary, var(--erps-sheet-primary));
+
+    &:hover {
+      background: var(--theme-light, var(--erps-sheet-light));
+    }
+  }
+
+  // Ensure proper spacing for first and last elements
+  & > *:first-child {
+    margin-top: 0;
+  }
+
+  & > *:last-child {
+    margin-bottom: 0;
+  }
+} 

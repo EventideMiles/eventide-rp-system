@@ -1,7 +1,7 @@
 @use "../utils/colors" as colors;
 @use "../utils/typography" as typography;
 @use "../utils/themes" as themes;
-@use "../components/sheet/erps-resource-boxes" as resource-boxes;
+@use "../components/sheet/resource-boxes" as resource-boxes;
 @use "../components/sheet/erps-profile-images" as profile-images;
 @use "sass:map";
 

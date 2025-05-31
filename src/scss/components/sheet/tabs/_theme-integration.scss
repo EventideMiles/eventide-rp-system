@@ -1,0 +1,137 @@
+@use "config" as *;
+@use "mixins" as *;
+
+// ===================================
+// THEME INTEGRATION
+// ===================================
+// Theme-aware variants and legacy compatibility
+
+// Theme-aware variants that inherit from the sheet's theme context
+.eventide-sheet {
+  // Inherit theme colors from the main theme system
+  --erps-tab-primary: var(--theme-primary);
+  --erps-tab-secondary: var(--theme-secondary);
+  --erps-tab-bright: var(--theme-light);
+  --erps-tab-glow: var(--theme-glow);
+  --erps-tab-text: var(--theme-text);
+
+  // ===================================
+  // LEGACY SELECTORS FOR COMPATIBILITY
+  // ===================================
+
+  // Themed tab system (base selectors first)
+  &.sheet-tabs,
+  .tabs {
+    @include tab-container-base;
+  }
+
+  // Tab navigation themed overrides
+  .tabs .item {
+    font-family: var(--erps-ui-font) !important;
+    font-weight: $tab-font-weight !important;
+    letter-spacing: $tab-letter-spacing !important;
+    color: var(--erps-tab-text) !important;
+    text-shadow: none !important;
+  }
+
+  // Themed tab items - these need !important to override Foundry defaults
+  .tabs a[data-action="tab"] {
+    @include tab-item-base;
+
+    &:hover:not(.active) {
+      @include tab-hover-state;
+    }
+
+    &.active {
+      @include tab-active-state;
+    }
+  }
+
+  // Tab content styling
+  .tab {
+    @include tab-content-base;
+  }
+
+  // ===================================
+  // DYNAMIC TAB CONTAINER STYLING
+  // ===================================
+
+  // Rounded container for tabs with custom navigation
+  .tabs.erps-tabs__container--rounded,
+  .sheet-tabs.erps-tabs__container--rounded {
+    @include tab-container-radius-full;
+
+    margin-bottom: $tab-nav-margin-bottom;
+  }
+
+  // Flat container for tabs that connect to data tables
+  .tabs.erps-tabs__container--flat,
+  .sheet-tabs.erps-tabs__container--flat {
+    @include tab-container-radius-top-only;
+
+    margin-bottom: 0;
+  }
+
+  // More specific selector for sheet tabs to ensure override
+  .sheet-tabs.tabs a[data-action="tab"] {
+    color: var(--erps-tab-text) !important;
+    text-shadow: none !important;
+
+    &:hover:not(.active) {
+      color: var(--erps-tab-text) !important;
+      text-shadow: none !important;
+    }
+
+    &.active {
+      color: var(--erps-tab-text) !important;
+      text-shadow: none !important;
+    }
+  }
+
+  // Scrollable tabs modifier
+  &--scrollbars {
+    .tab {
+      @include tab-content-scrollable;
+    }
+  }
+
+  // Light theme text color overrides
+  &[data-bg-theme="light"] .gear-tab-button {
+    color: rgb(0 0 0 / 80%);
+
+    .gear-count {
+      background: rgb(0 0 0 / 30%);
+      color: rgb(0 0 0 / 80%);
+    }
+
+    &:hover .gear-count,
+    &.active .gear-count {
+      background: rgb(0 0 0 / 30%);
+      color: rgb(0 0 0 / 80%);
+    }
+  }
+
+  // ===================================
+  // LEGACY STATIC SELECTORS
+  // ===================================
+  // These use different class combinations to avoid specificity conflicts
+
+  // Legacy gear tab specific styling
+  .tab[data-tab="gear"] {
+    .tabs.gear-tabs,
+    .sheet-tabs.gear-tabs,
+    .erps-tabs__container.gear-tabs {
+      border-radius: $tab-radius-md;
+      margin-bottom: $tab-nav-margin-bottom;
+    }
+  }
+
+  .tab--rounded-container,
+  .tab--flat-container {
+    .tabs.rounded-tabs,
+    .sheet-tabs.rounded-tabs,
+    .erps-tabs__container.rounded-tabs {
+      border-radius: $tab-radius-md;
+    }
+  }
+} 

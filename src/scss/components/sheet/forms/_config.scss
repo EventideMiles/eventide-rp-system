@@ -1,0 +1,37 @@
+@use "../../../utils/themes" as themes;
+@use "../../../utils/sheet-tokens" as tokens;
+@use "sass:map";
+
+// ===================================
+// FORMS CONFIGURATION
+// ===================================
+// Configuration variables and base settings for form components
+
+// ===================================
+// CONFIGURATION VARIABLES
+// ===================================
+
+// Form sizing
+$form-border-radius: tokens.$sheet-radius-xl;
+$form-border-width: tokens.$sheet-border-base;
+$form-padding: tokens.$sheet-spacing-lg;
+$form-content-padding: tokens.$sheet-spacing-base;
+
+// Group spacing
+$group-spacing: tokens.$sheet-spacing-lg;
+$group-padding: tokens.$sheet-spacing-md;
+
+// Label styling
+$label-font-size: tokens.$sheet-font-size-label-md;
+$label-font-weight: tokens.$sheet-font-weight-semibold;
+$label-margin-bottom: tokens.$sheet-spacing-xs;
+
+// Header styling
+$header-font-size: tokens.$sheet-font-size-lg;
+$header-font-weight: tokens.$sheet-font-weight-bold;
+$header-margin: tokens.$sheet-spacing-lg 0 tokens.$sheet-spacing-md 0;
+$header-padding: tokens.$sheet-spacing-md 0;
+$header-border-width: tokens.$sheet-border-thin;
+
+// Transitions
+$form-transition: all tokens.$sheet-transition-medium ease; 

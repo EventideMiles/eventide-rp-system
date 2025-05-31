@@ -1,0 +1,118 @@
+@use "config" as *;
+@use "../../../utils/sheet-tokens" as tokens;
+
+// ===================================
+// GRID SYSTEM
+// ===================================
+// List layouts, items, and cell variants
+
+.erps-items-panel {
+  &__list {
+    display: grid;
+    width: 100%;
+    gap: 0;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    color: var(--theme-text);
+
+    // Default 4-column layout: Image | Name | Usage | Controls
+    &--default {
+      grid-template-columns: auto 1fr auto auto;
+    }
+
+    // 3-column layout: Image | Name | Controls
+    &--three-column {
+      grid-template-columns: auto 1fr auto;
+    }
+
+    // 2-column layout: Name | Controls
+    &--two-column {
+      grid-template-columns: 1fr auto;
+    }
+
+    // Spanning layout: Name | Controls (full width)
+    &--spanning {
+      grid-template-columns: 1fr auto;
+    }
+  }
+
+  &__cell {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    box-sizing: border-box;
+
+    // Cell type variants
+    &--image {
+      justify-content: center;
+      width: 4rem;
+      flex-shrink: 0;
+    }
+
+    &--name {
+      flex: 1;
+      min-width: 0;
+      text-align: left;
+    }
+
+    &--usage {
+      flex: 0 1 auto;
+      min-width: 120px;
+      max-width: 200px;
+      text-align: left;
+    }
+
+    &--controls {
+      flex: 0 0 auto;
+      justify-content: flex-end;
+      gap: $control-gap;
+    }
+
+    &--center {
+      justify-content: center;
+      text-align: center;
+    }
+
+    &--right {
+      justify-content: flex-end;
+      text-align: right;
+    }
+  }
+
+  &__item {
+    display: contents; // Children participate in the parent grid
+
+    &--header {
+      .erps-items-panel__cell {
+        background: var(--theme-secondary);
+        color: var(--theme-text);
+        font-weight: $header-font-weight;
+        font-size: $header-font-size;
+        height: $header-height;
+        padding: $header-padding;
+        border-bottom: tokens.$sheet-border-base solid var(--theme-light);
+        text-shadow: 0 1px 2px rgb(0 0 0 / 60%);
+        text-transform: uppercase;
+        letter-spacing: tokens.$sheet-letter-spacing-base;
+      }
+    }
+
+    &:not(.erps-items-panel__item--header) {
+      .erps-items-panel__cell {
+        height: $item-height;
+        padding: $item-padding;
+        border-bottom: 1px solid rgb(255 255 255 / 10%);
+        transition: all tokens.$sheet-transition-base ease;
+
+        &:hover {
+          background-color: rgb(255 255 255 / 5%);
+        }
+      }
+
+      &:last-child .erps-items-panel__cell {
+        border-bottom: none;
+      }
+    }
+  }
+} 

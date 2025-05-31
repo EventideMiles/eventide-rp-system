@@ -1,0 +1,35 @@
+@use "config" as *;
+
+// ===================================
+// ABILITY CARD ANIMATIONS
+// ===================================
+// Keyframe animations for ability card components
+
+// Unified glow animation for all abilities
+@keyframes ability-glow {
+  0% {
+    box-shadow:
+      0 0 $shadow-blur-sm rgb(var(--ability-color) / 40%),
+      inset 0 $shadow-offset-xs 0 rgb(255 255 255 / 20%);
+  }
+
+  100% {
+    box-shadow:
+      0 0 $glow-blur-sm rgb(var(--ability-color) / 60%),
+      inset 0 $shadow-offset-xs 0 rgb(255 255 255 / 30%);
+  }
+}
+
+@keyframes button-shimmer {
+  0% {
+    left: -100%;
+  }
+
+  50% {
+    left: 100%;
+  }
+
+  100% {
+    left: 100%;
+  }
+} 

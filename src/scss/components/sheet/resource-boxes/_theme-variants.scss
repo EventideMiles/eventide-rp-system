@@ -1,0 +1,115 @@
+@use "config" as *;
+@use "mixins" as *;
+
+// ===================================
+// RESOURCE BOX THEME VARIANTS
+// ===================================
+// Color-specific mixins for different resource types
+
+// ===================================
+// HEALTH VARIANT
+// ===================================
+
+@mixin resource-box-health {
+  background: linear-gradient(135deg, var(--erps-resource-health-primary) 0%, var(--erps-resource-health-primary) 100%);
+  border-color: var(--erps-resource-health-secondary);
+
+  @include resource-glow-animation(var(--erps-resource-health-glow));
+
+  .erps-resource-box__value {
+    text-shadow:
+      0 $resource-shadow-offset-sm $resource-shadow-offset-md rgb(0 0 0 / 80%),
+      0 0 $resource-glow-blur-md var(--erps-resource-health-glow) !important;
+  }
+
+  .erps-resource-box__input {
+    background: var(--erps-resource-health-primary) !important;
+    border-color: var(--erps-resource-health-secondary) !important;
+
+    &:focus {
+      border-color: var(--erps-resource-health-secondary) !important;
+      box-shadow: 0 0 $resource-glow-blur-md var(--erps-resource-health-glow) !important;
+    }
+  }
+}
+
+// ===================================
+// MANA VARIANT
+// ===================================
+
+@mixin resource-box-mana {
+  background: linear-gradient(135deg, var(--erps-resource-mana-primary) 0%, var(--erps-resource-mana-primary) 100%);
+  border-color: var(--erps-resource-mana-secondary);
+
+  @include resource-glow-animation(var(--erps-resource-mana-glow));
+
+  .erps-resource-box__value {
+    text-shadow:
+      0 $resource-shadow-offset-sm $resource-shadow-offset-md rgb(0 0 0 / 80%),
+      0 0 $resource-glow-blur-md var(--erps-resource-mana-glow) !important;
+  }
+
+  .erps-resource-box__input {
+    background: var(--erps-resource-mana-primary) !important;
+    border-color: var(--erps-resource-mana-secondary) !important;
+
+    &:focus {
+      border-color: var(--erps-resource-mana-secondary) !important;
+      box-shadow: 0 0 $resource-glow-blur-md var(--erps-resource-mana-glow) !important;
+    }
+  }
+}
+
+// ===================================
+// STAMINA VARIANT
+// ===================================
+
+@mixin resource-box-stamina {
+  background: linear-gradient(135deg, var(--erps-resource-stamina-primary) 0%, var(--erps-resource-stamina-primary) 100%);
+  border-color: var(--erps-resource-stamina-secondary);
+
+  @include resource-glow-animation(var(--erps-resource-stamina-glow));
+
+  .erps-resource-box__value {
+    text-shadow:
+      0 $resource-shadow-offset-sm $resource-shadow-offset-md rgb(0 0 0 / 80%),
+      0 0 $resource-glow-blur-md var(--erps-resource-stamina-glow) !important;
+  }
+
+  .erps-resource-box__input {
+    background: var(--erps-resource-stamina-primary) !important;
+    border-color: var(--erps-resource-stamina-secondary) !important;
+
+    &:focus {
+      border-color: var(--erps-resource-stamina-secondary) !important;
+      box-shadow: 0 0 $resource-glow-blur-md var(--erps-resource-stamina-glow) !important;
+    }
+  }
+}
+
+// ===================================
+// GENERIC/NEUTRAL VARIANT
+// ===================================
+
+@mixin resource-box-generic {
+  background: linear-gradient(135deg, rgb(100 100 100 / 90%) 0%, rgb(100 100 100 / 80%) 100%);
+  border-color: rgb(100 100 100 / 50%);
+
+  @include resource-glow-animation(rgb(100 100 100 / 20%));
+
+  .erps-resource-box__value {
+    text-shadow:
+      0 $resource-shadow-offset-sm $resource-shadow-offset-md rgb(0 0 0 / 80%),
+      0 0 $resource-glow-blur-md rgb(100 100 100 / 60%) !important;
+  }
+
+  .erps-resource-box__input {
+    background: rgb(100 100 100 / 80%) !important;
+    border-color: rgb(100 100 100 / 40%) !important;
+
+    &:focus {
+      border-color: rgb(100 100 100 / 60%) !important;
+      box-shadow: 0 0 $resource-glow-blur-md rgb(100 100 100 / 30%) !important;
+    }
+  }
+} 

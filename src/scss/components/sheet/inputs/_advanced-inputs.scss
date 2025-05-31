@@ -1,0 +1,511 @@
+@use "config" as *;
+@use "../../../utils/sheet-tokens" as tokens;
+
+// ===================================
+// ERPS ADVANCED INPUTS
+// ===================================
+// Advanced input components like color picker, textarea, and image picker
+
+// ===================================
+// COLOR PICKER
+// ===================================
+
+// Base label styles - must come first for specificity
+.erps-color-picker__label {
+  // Match ERPS input label styling for consistency
+  font-family: var(--erps-ui-font, sans-serif);
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--erps-current-text, var(--theme-text, var(--erps-default-text)));
+  cursor: pointer;
+  transition: color 0.3s ease;
+  text-shadow: 0 1px 2px rgb(0 0 0 / 60%);
+  white-space: nowrap;
+}
+
+.erps-color-picker {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+
+  // Container wrapper for color picker and label positioning
+  &__container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 1;
+  }
+
+  // Color picker content (preview + hex input)
+  &__content {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 1;
+  }
+
+  &__preview {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: $input-border-radius;
+    border: $input-border-width solid var(--erps-current-secondary, var(--theme-secondary, var(--erps-default-secondary)));
+    cursor: pointer;
+    transition: $input-transition;
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
+
+    // Add a subtle pattern overlay for better visibility
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(45deg, rgb(255 255 255 / 10%) 25%, transparent 25%),
+        linear-gradient(-45deg, rgb(255 255 255 / 10%) 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, rgb(255 255 255 / 10%) 75%),
+        linear-gradient(-45deg, transparent 75%, rgb(255 255 255 / 10%) 75%);
+      background-size: 8px 8px;
+      background-position: 0 0, 0 4px, 4px -4px, -4px 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    &:hover {
+      border-color: var(--erps-current-bright, var(--theme-bright, var(--erps-default-bright)));
+      box-shadow: 0 0 0 2px var(--erps-current-glow, var(--theme-glow, var(--erps-default-glow)));
+      transform: scale(1.05);
+    }
+  }
+
+  &__input {
+    position: absolute;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    z-index: 2;
+  }
+
+  &__hex {
+    // Inherit all erps-input styles
+    display: block;
+    width: 100%;
+    height: $input-height;
+    padding: $input-padding;
+    font-family: var(--erps-mono-font, monospace);
+    font-size: $input-font-size;
+    line-height: $input-line-height;
+    font-weight: 500;
+    color: var(--erps-current-text, var(--theme-text, var(--erps-default-text)));
+    background: var(--erps-current-primary, var(--theme-primary, var(--erps-default-primary)));
+    border: $input-border-width solid var(--erps-current-secondary, var(--theme-secondary, var(--erps-default-secondary)));
+    border-radius: $input-border-radius;
+    transition: $input-transition;
+    outline: none;
+    box-sizing: border-box;
+
+    // Color picker specific styles
+    flex: 1;
+    min-width: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+
+    &::placeholder {
+      color: var(--erps-current-text, var(--theme-text, var(--erps-default-text)));
+      opacity: 0.7;
+      font-style: italic;
+      text-transform: none;
+      letter-spacing: normal;
+    }
+
+    &:hover {
+      border-color: var(--erps-current-bright, var(--theme-bright, var(--erps-default-bright)));
+      background-color: rgb(255 255 255 / 5%);
+      box-shadow: 0 0 0 2px var(--erps-current-glow, var(--theme-glow, var(--erps-default-glow)));
+    }
+
+    &:focus {
+      border-color: var(--erps-current-bright, var(--theme-bright, var(--erps-default-bright)));
+      background-color: rgb(255 255 255 / 10%);
+      box-shadow: 0 0 0 2px var(--erps-current-glow, var(--theme-glow, var(--erps-default-glow)));
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      background: rgb(100 100 100 / 30%);
+      border-color: rgb(100 100 100 / 40%);
+      color: var(--erps-current-text, var(--theme-text, var(--erps-default-text)));
+    }
+
+    &.invalid {
+      border-color: rgb(220 38 38 / 60%);
+      background-color: rgb(220 38 38 / 10%);
+      box-shadow: 0 0 0 2px rgb(220 38 38 / 30%);
+    }
+  }
+
+  // ===================================
+  // SIZE VARIANTS
+  // ===================================
+
+  // Compact variant
+  &--compact {
+    .erps-color-picker__container {
+      gap: 0.375rem;
+    }
+
+    .erps-color-picker__content {
+      gap: 0.375rem;
+    }
+
+    .erps-color-picker__preview {
+      width: 2rem;
+      height: 2rem;
+    }
+
+    .erps-color-picker__hex {
+      font-size: 0.875rem;
+      height: tokens.$sheet-height-input-compact;
+      padding: tokens.$sheet-padding-input-compact;
+    }
+
+    .erps-color-picker__label {
+      font-size: 0.8rem;
+    }
+  }
+
+  // Stacked variant (label above, different paradigm)
+  &--stacked {
+    flex-direction: column;
+    align-items: stretch;
+
+    .erps-color-picker__container {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.5rem;
+    }
+
+    .erps-color-picker__content {
+      width: 100%;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .erps-color-picker__preview {
+      width: 100%;
+      height: 3rem;
+    }
+
+    .erps-color-picker__hex {
+      width: 100%;
+    }
+
+    .erps-color-picker__label {
+      text-align: left;
+      white-space: normal;
+    }
+  }
+
+  // ===================================
+  // LABEL POSITIONING VARIANTS
+  // ===================================
+  &--label-none {
+    .erps-color-picker__label {
+      display: none;
+    }
+  }
+
+  // Label on left (default behavior)
+  &--label-left {
+    .erps-color-picker__container {
+      .erps-color-picker__content {
+        order: 2; // Content second (right)
+      }
+
+      .erps-color-picker__label {
+        order: 1; // Label first (left)
+      }
+    }
+  }
+
+  // Label on right
+  &--label-right {
+    .erps-color-picker__container {
+      .erps-color-picker__content {
+        order: 1; // Content first (left)
+      }
+
+      .erps-color-picker__label {
+        order: 2; // Label second (right)
+      }
+    }
+  }
+
+  // Label above
+  &--label-above {
+    .erps-color-picker__container {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: tokens.$sheet-spacing-xs;
+
+      .erps-color-picker__content {
+        order: 2; // Content second (below)
+        width: 100%;
+      }
+
+      .erps-color-picker__label {
+        order: 1; // Label first (above)
+      }
+    }
+  }
+
+  // Label below
+  &--label-below {
+    .erps-color-picker__container {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: tokens.$sheet-spacing-xs;
+
+      .erps-color-picker__content {
+        order: 1; // Content first (above)
+        width: 100%;
+      }
+
+      .erps-color-picker__label {
+        order: 2; // Label second (below)
+      }
+    }
+  }
+}
+
+// ===================================
+// TEXTAREA
+// ===================================
+
+.erps-textarea {
+  display: block;
+  width: 100%;
+  min-height: 8rem;
+  padding: $input-padding;
+  font-family: var(--erps-ui-font, sans-serif);
+  font-size: $input-font-size;
+  line-height: 1.4;
+  font-weight: 400;
+  color: var(--erps-current-text, var(--theme-text, var(--erps-default-text)));
+  background: var(--erps-current-primary, var(--theme-primary, var(--erps-default-primary)));
+  border: $input-border-width solid var(--erps-current-secondary, var(--theme-secondary, var(--erps-default-secondary)));
+  border-radius: $input-border-radius;
+  transition: $input-transition;
+  outline: none;
+  resize: vertical;
+  box-sizing: border-box;
+
+  &::placeholder {
+    color: var(--erps-current-text, var(--theme-text, var(--erps-default-text)));
+    opacity: 0.7;
+    font-style: italic;
+  }
+
+  &:hover {
+    border-color: var(--erps-current-bright, var(--theme-bright, var(--erps-default-bright)));
+    background-color: rgb(255 255 255 / 5%);
+    box-shadow: 0 0 0 2px var(--erps-current-glow, var(--theme-glow, var(--erps-default-glow)));
+  }
+
+  &:focus {
+    border-color: var(--erps-current-bright, var(--theme-bright, var(--erps-default-bright)));
+    background-color: rgb(255 255 255 / 10%);
+    box-shadow: 0 0 0 2px var(--erps-current-glow, var(--theme-glow, var(--erps-default-glow)));
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background: rgb(100 100 100 / 30%);
+    border-color: rgb(100 100 100 / 40%);
+    color: var(--erps-current-text, var(--theme-text, var(--erps-default-text)));
+    resize: none;
+  }
+
+  // Size variants
+  &--small {
+    min-height: 5rem;
+    font-size: 0.9rem;
+    padding: tokens.$sheet-padding-input-compact;
+  }
+
+  &--large {
+    min-height: 12rem;
+    font-size: 1.1rem;
+    padding: tokens.$sheet-padding-input-large;
+  }
+
+  // Auto-resize variant
+  &--auto-resize {
+    resize: none;
+    overflow: hidden;
+  }
+}
+
+// ===================================
+// IMAGE PICKER
+// ===================================
+
+// Base img selector - must come first for specificity
+.erps-image-picker img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: $input-transition;
+}
+
+.erps-image-picker {
+  display: block;
+  position: relative;
+  width: 6rem;
+  height: 6rem;
+  border: $input-border-width solid var(--erps-current-secondary, var(--theme-secondary, var(--erps-default-secondary)));
+  border-radius: $input-border-radius;
+  overflow: hidden;
+  cursor: pointer;
+  transition: $input-transition;
+  background: var(--erps-current-primary, var(--theme-primary, var(--erps-default-primary)));
+
+  // Edit overlay
+  &::after {
+    content: '✏️';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.5rem;
+    background: rgb(0 0 0 / 70%);
+    color: white;
+    border-radius: 50%;
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity tokens.$sheet-transition-fast ease;
+    pointer-events: none;
+  }
+
+  // Hover effects
+  &:hover {
+    border-color: var(--erps-current-bright, var(--theme-bright, var(--erps-default-bright)));
+    box-shadow: 0 0 0 2px var(--erps-current-glow, var(--theme-glow, var(--erps-default-glow)));
+
+    img {
+      transform: scale(1.05);
+    }
+
+    &::after {
+      opacity: 1;
+    }
+  }
+
+  // Size variants
+  &--small {
+    width: 4rem;
+    height: 4rem;
+
+    &::after {
+      font-size: 1rem;
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+  }
+
+  &--large {
+    width: 8rem;
+    height: 8rem;
+
+    &::after {
+      font-size: 2rem;
+      width: 2.5rem;
+      height: 2.5rem;
+    }
+  }
+
+  &--square {
+    aspect-ratio: 1;
+  }
+
+  &--circle {
+    border-radius: 50%;
+  }
+
+  // Disabled state - moved to end for proper specificity
+  &:disabled,
+  &--disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+
+    &:hover {
+      transform: none;
+      box-shadow: none;
+
+      &::after {
+        opacity: 0;
+      }
+
+      img {
+        transform: none;
+      }
+    }
+  }
+}
+
+// ===================================
+// HIDDEN INPUTS
+// ===================================
+
+.erps-hidden-input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+// ===================================
+// RESPONSIVE DESIGN FOR ADVANCED COMPONENTS
+// ===================================
+
+@media (width <= 768px) {
+  .erps-textarea {
+    min-height: 6rem;
+    font-size: 0.9rem;
+
+    &--small {
+      min-height: 4rem;
+    }
+
+    &--large {
+      min-height: 8rem;
+    }
+  }
+
+  .erps-image-picker {
+    width: 5rem;
+    height: 5rem;
+
+    &--small {
+      width: 3.5rem;
+      height: 3.5rem;
+    }
+
+    &--large {
+      width: 6rem;
+      height: 6rem;
+    }
+  }
+} 

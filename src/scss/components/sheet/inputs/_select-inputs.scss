@@ -1,0 +1,56 @@
+@use "config" as *;
+
+// ===================================
+// ERPS SELECT INPUTS
+// ===================================
+// Select dropdown components for the Eventide RP System
+
+.erps-select {
+  display: block;
+  width: 100%;
+  height: $select-height;
+  padding: $select-padding;
+  font-family: var(--erps-ui-font, sans-serif);
+  font-size: $select-font-size;
+  line-height: $select-line-height;
+  font-weight: 500;
+  color: var(--erps-current-text, var(--theme-text, var(--erps-default-text)));
+  background: var(--erps-current-primary, var(--theme-primary, var(--erps-default-primary)));
+  border: $select-border-width solid var(--erps-current-secondary, var(--theme-secondary, var(--erps-default-secondary)));
+  border-radius: $select-border-radius;
+  transition: $input-transition;
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  box-sizing: border-box;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 0.75rem center;
+  background-repeat: no-repeat;
+  background-size: 1rem;
+  padding-right: 2.5rem;
+
+  &:hover {
+    border-color: var(--erps-current-bright, var(--theme-bright, var(--erps-default-bright)));
+    background-color: rgb(255 255 255 / 5%);
+    box-shadow: 0 0 0 2px var(--erps-current-glow, var(--theme-glow, var(--erps-default-glow)));
+  }
+
+  &:focus {
+    border-color: var(--erps-current-bright, var(--theme-bright, var(--erps-default-bright)));
+    background-color: rgb(255 255 255 / 10%);
+    box-shadow: 0 0 0 2px var(--erps-current-glow, var(--theme-glow, var(--erps-default-glow)));
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background: rgb(100 100 100 / 30%);
+    border-color: rgb(100 100 100 / 40%);
+  }
+
+  option {
+    background: var(--erps-current-primary, var(--theme-primary, var(--erps-default-primary)));
+    color: var(--erps-current-text, var(--theme-text, var(--erps-default-text)));
+    padding: 0.5rem;
+  }
+} 

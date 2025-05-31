@@ -1,0 +1,25 @@
+// ===================================
+// FORMS INDEX
+// ===================================
+// Main entry point for all form components
+
+// Import shared configuration first
+@use "config";
+
+// Import core form components
+@use "form-container";
+@use "form-content";
+@use "form-groups";
+@use "form-labels";
+@use "form-headers";
+@use "form-descriptions";
+@use "form-dividers";
+@use "form-sections";
+
+// Import layout components
+@use "gear-creator-layout";
+@use "form-grids";
+
+// Import utilities and responsive design
+@use "form-utilities";
+@use "responsive"; 

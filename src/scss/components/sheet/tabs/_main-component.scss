@@ -1,0 +1,150 @@
+@use "config" as *;
+@use "mixins" as *;
+
+// ===================================
+// MAIN ERPS-TABS COMPONENT
+// ===================================
+// Core erps-tabs component with variants
+
+.erps-tabs {
+  // Standard Foundry tab container
+  &__container {
+    @include tab-container-base;
+
+    &.sheet-tabs,
+    .tabs {
+      @include tab-container-base;
+    }
+
+    // Border radius variants
+    &--radius-top-only {
+      @include tab-container-radius-top-only;
+    }
+
+    &--radius-full {
+      @include tab-container-radius-full;
+    }
+
+    &--radius-none {
+      @include tab-container-radius-none;
+    }
+  }
+
+  // Standard tab items
+  &__item {
+    @include tab-item-base;
+
+    .item {
+      font-family: var(--erps-ui-font);
+      font-weight: $tab-font-weight;
+      letter-spacing: $tab-letter-spacing;
+    }
+
+    &:hover:not(.active) {
+      @include tab-hover-state;
+    }
+
+    &.active {
+      @include tab-active-state;
+    }
+  }
+
+  // Tab content areas
+  &__content {
+    @include tab-content-base;
+
+    &--scrollable {
+      @include tab-content-scrollable;
+    }
+  }
+
+  // Custom tab navigation
+  &__nav {
+    display: flex;
+    gap: $tab-gap;
+    margin-bottom: $tab-nav-margin-bottom;
+    border-bottom: $tab-border-base solid var(--erps-tab-bright);
+    padding-bottom: $tab-gap;
+  }
+
+  // Custom tab buttons
+  &__button {
+    @include custom-tab-button-base;
+
+    // Variant styling
+    &--equipped {
+      @include tab-variant(green, true);
+    }
+
+    &--unequipped {
+      @include tab-variant(gray, true);
+    }
+
+    // Hover state
+    &:hover {
+      background: var(--erps-tab-primary);
+      transform: translateY($tab-transform-hover-md);
+
+      @include tab-shadow-base;
+
+      .erps-tabs__count {
+        background: var(--erps-tab-secondary);
+      }
+    }
+
+    // Active state
+    &.active {
+      background: var(--erps-tab-secondary);
+
+      @include tab-shadow-active(var(--erps-tab-glow));
+
+      transform: translateY($tab-transform-hover-sm);
+
+      i {
+        opacity: $tab-opacity-full;
+        text-shadow: 0 0 $tab-shadow-blur-md var(--erps-tab-glow);
+      }
+
+      .erps-tabs__count {
+        background: var(--erps-tab-secondary);
+        box-shadow: 0 0 $tab-shadow-blur-md var(--erps-tab-glow);
+      }
+    }
+  }
+
+  // Count/badge for custom tabs
+  &__count {
+    @include tab-count-badge;
+  }
+
+  // Custom tab content with animation
+  &__panel {
+    @include tab-content-animated;
+
+    &--equipped {
+      @include tab-panel-content(green);
+    }
+
+    &--unequipped {
+      @include tab-panel-content(gray, $tab-opacity-unequipped);
+    }
+  }
+
+  // Light theme overrides
+  &--light {
+    .erps-tabs__button {
+      color: rgb(0 0 0 / 80%);
+
+      .erps-tabs__count {
+        background: rgb(0 0 0 / 30%);
+        color: rgb(0 0 0 / 80%);
+      }
+
+      &:hover .erps-tabs__count,
+      &.active .erps-tabs__count {
+        background: rgb(0 0 0 / 30%);
+        color: rgb(0 0 0 / 80%);
+      }
+    }
+  }
+} 

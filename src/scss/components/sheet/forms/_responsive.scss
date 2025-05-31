@@ -1,0 +1,40 @@
+@use "config" as *;
+@use "../../../utils/sheet-tokens" as tokens;
+
+// ===================================
+// RESPONSIVE DESIGN
+// ===================================
+// Mobile and responsive form styling
+
+@media (width <= 768px) {
+  .erps-form {
+    border-radius: tokens.$sheet-radius-md;
+  }
+
+  .erps-form__content {
+    padding: tokens.$sheet-spacing-sm;
+  }
+
+  .erps-form__group {
+    &--horizontal {
+      flex-direction: column;
+      align-items: stretch;
+
+      .erps-form__label {
+        margin-bottom: tokens.$sheet-spacing-xs;
+      }
+    }
+
+    &--grid {
+      &.erps-form__group--grid-2,
+      &.erps-form__group--grid-3 {
+        grid-template-columns: 1fr;
+      }
+    }
+  }
+
+  .erps-form__header {
+    font-size: tokens.$sheet-font-size-value-lg;
+    margin: tokens.$sheet-spacing-md 0 tokens.$sheet-spacing-sm 0;
+  }
+} 

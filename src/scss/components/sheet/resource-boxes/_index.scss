@@ -1,0 +1,20 @@
+// ===================================
+// RESOURCE BOXES INDEX
+// ===================================
+// Main entry point for all resource box components
+
+// Import shared configuration first
+@use "config";
+
+// Import utility mixins
+@use "mixins";
+
+// Import theme variants
+@use "theme-variants";
+
+// Import core components
+@use "resource-box";
+@use "stat-box";
+
+// Import layout system
+@use "grid-layout"; 

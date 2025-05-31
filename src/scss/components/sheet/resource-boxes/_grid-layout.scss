@@ -1,0 +1,71 @@
+@use "config" as *;
+
+// ===================================
+// GRID CONTAINER STYLING
+// ===================================
+// Ensure resource boxes in the same grid row have equal heights and section alignment
+
+.resources.grid {
+  display: grid;
+  gap: $resource-spacing-base;
+  align-items: stretch; // Force all grid items to stretch to the same height
+
+  &.grid-3col {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  &.grid-4col {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  // Ensure all resource boxes stretch to fill their grid cell
+  .erps-resource-box,
+  .erps-stat-box {
+    height: $resource-percent-full; // Fill the grid cell height
+
+    // Calculate section heights based on whether third section exists
+    &:not(:has(.erps-resource-box__third, .erps-stat-box__third)) {
+      // Two-section layout: upper + lower
+      .erps-resource-box__upper,
+      .erps-stat-box__upper {
+        flex: 0 0 $resource-height-upper;
+      }
+
+      .erps-resource-box__lower,
+      .erps-stat-box__lower {
+        flex: 1; // Take remaining space
+      }
+    }
+
+    &:has(.erps-resource-box__third, .erps-stat-box__third) {
+      // Three-section layout: distribute space
+      .erps-resource-box__upper,
+      .erps-stat-box__upper {
+        flex: 0 0 $resource-height-upper;
+      }
+
+      .erps-resource-box__third,
+      .erps-stat-box__third {
+        flex: 0 0 $resource-height-third;
+      }
+
+      .erps-resource-box__lower,
+      .erps-stat-box__lower {
+        flex: 1; // Take remaining space
+      }
+    }
+  }
+
+  // If any box in the row has a third section, all should reserve space for it
+  &:has(.erps-resource-box__third, .erps-stat-box__third) {
+    .erps-resource-box:not(:has(.erps-resource-box__third)),
+    .erps-stat-box:not(:has(.erps-stat-box__third)) {
+      // Add invisible third section for alignment
+      &::after {
+        content: '';
+        height: $resource-height-third;
+        flex: 0 0 $resource-height-third;
+      }
+    }
+  }
+} 

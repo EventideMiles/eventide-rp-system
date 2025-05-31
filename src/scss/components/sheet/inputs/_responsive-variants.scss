@@ -1,0 +1,99 @@
+@use "config" as *;
+@use "../../../utils/sheet-tokens" as tokens;
+
+// ===================================
+// ERPS RESPONSIVE INPUT VARIANTS
+// ===================================
+// Narrow and responsive variants for constrained layouts
+
+// ===================================
+// NARROW VARIANTS FOR CONSTRAINED LAYOUTS
+// ===================================
+
+// Narrow data table for tight spaces (like gear creator effects column)
+.erps-data-table--narrow {
+  font-size: tokens.$sheet-font-size-value-sm;
+
+  .erps-data-table__header-cell,
+  .erps-data-table__cell {
+    padding: tokens.$sheet-spacing-xs tokens.$sheet-spacing-sm;
+  }
+
+  .erps-data-table__header-cell {
+    font-size: tokens.$sheet-font-size-value-sm;
+    font-weight: tokens.$sheet-font-weight-semibold;
+  }
+
+  // Compact button styling
+  .erps-data-table__create-button {
+    padding: tokens.$sheet-spacing-xs;
+    font-size: tokens.$sheet-font-size-value-sm;
+
+    i {
+      margin-right: tokens.$sheet-spacing-xs;
+    }
+  }
+
+  .erps-data-table__control-button {
+    padding: tokens.$sheet-spacing-xs;
+    min-width: auto;
+    width: 24px;
+    height: 24px;
+
+    i {
+      font-size: tokens.$sheet-font-size-value-sm;
+    }
+  }
+
+  // Compact selects and inputs
+  .erps-select {
+    padding: tokens.$sheet-spacing-xs;
+    font-size: tokens.$sheet-font-size-value-sm;
+    min-height: 28px;
+  }
+
+  // Narrow number inputs - hide buttons and make input smaller
+  .erps-number-input {
+    &__input {
+      padding: tokens.$sheet-spacing-xs;
+      font-size: tokens.$sheet-font-size-value-sm;
+      min-height: 28px;
+      width: 50px; // Narrower input for tight spaces
+      text-align: center;
+    }
+
+    &__button {
+      display: none; // Hide buttons in narrow tables
+    }
+  }
+
+  // Also apply to explicit narrow variant
+  .erps-number-input--narrow {
+    .erps-number-input__input {
+      width: 50px;
+      text-align: center;
+    }
+
+    .erps-number-input__button {
+      display: none;
+    }
+  }
+}
+
+// Narrow form sections
+.erps-form__section--narrow {
+  .erps-form__header {
+    font-size: tokens.$sheet-font-size-value-sm;
+    padding: tokens.$sheet-spacing-sm 0;
+    margin-bottom: tokens.$sheet-spacing-sm;
+  }
+
+  .erps-form__group {
+    margin-bottom: tokens.$sheet-spacing-sm;
+  }
+
+  .erps-form__label {
+    font-size: tokens.$sheet-font-size-value-sm;
+    margin-bottom: tokens.$sheet-spacing-xs;
+  }
+} 

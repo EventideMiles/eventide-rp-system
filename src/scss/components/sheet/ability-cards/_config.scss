@@ -1,0 +1,82 @@
+@use "../../../utils/themes" as themes;
+@use "../../../utils/sheet-tokens" as tokens;
+@use "sass:color";
+
+// ===================================
+// ABILITY CARDS CONFIGURATION
+// ===================================
+// Configuration variables and ability colors mapping for ability card components
+
+// ===================================
+// ABILITY COLORS MAPPING
+// ===================================
+
+$ability-colors: (
+  "acro": #bf4400,
+  "phys": #a80303,
+  "fort": #2d682d,
+  "will": #6a1b9a,
+  "wits": #0e4380
+);
+
+// ===================================
+// CONFIGURATION VARIABLES
+// ===================================
+// Using sheet-tokens for consistent design system integration
+
+// Card dimensions and spacing
+$card-height: tokens.$sheet-height-ability-card;
+$card-padding: tokens.$sheet-padding-input;
+$card-gap: tokens.$sheet-spacing-sm;
+$card-border-radius: tokens.$sheet-radius-sm;
+$card-border-width: tokens.$sheet-border-base;
+$card-border-accent: tokens.$sheet-border-accent;
+
+// Input and button dimensions
+$input-width: tokens.$sheet-width-input;
+$input-height: tokens.$sheet-height-input;
+$button-width: tokens.$sheet-width-button;
+$button-height: tokens.$sheet-height-button;
+$status-size: tokens.$sheet-size-status-element;
+
+// Typography
+$label-font-size: tokens.$sheet-font-size-sm;
+$input-font-size: tokens.$sheet-font-size-md;
+$icon-font-size: tokens.$sheet-font-size-label-lg;
+$font-weight-semibold: tokens.$sheet-font-weight-semibold;
+$letter-spacing: tokens.$sheet-letter-spacing-tight;
+$line-height: tokens.$sheet-line-height-tight;
+
+// Borders and radius
+$border-thin: tokens.$sheet-border-thin;
+$radius-xs: tokens.$sheet-radius-xs;
+
+// Shadows and effects
+$shadow-blur-xs: tokens.$sheet-shadow-blur-xs;
+$shadow-blur-sm: tokens.$sheet-shadow-blur-sm;
+$shadow-blur-md: tokens.$sheet-shadow-blur-md;
+$shadow-blur-lg: tokens.$sheet-shadow-blur-lg;
+$shadow-offset-xs: tokens.$sheet-shadow-offset-xs;
+$shadow-offset-sm: tokens.$sheet-shadow-offset-sm;
+$glow-blur-sm: tokens.$sheet-glow-blur-sm;
+
+// Transitions and animations
+$transition-base: tokens.$sheet-transition-base;
+$transition-medium: tokens.$sheet-transition-medium;
+$animation-fast: tokens.$sheet-animation-fast;
+$animation-shimmer: tokens.$sheet-animation-shimmer;
+
+// Transforms and opacity
+$transform-hover-sm: tokens.$sheet-transform-hover-sm;
+$transform-scale-active: tokens.$sheet-transform-scale-active;
+$transform-scale-hover: tokens.$sheet-transform-scale-hover;
+$transform-scale-icon: tokens.$sheet-transform-scale-icon;
+$opacity-default: tokens.$sheet-opacity-default;
+$opacity-full: tokens.$sheet-opacity-full;
+
+// Layout dimensions
+$header-min-width: tokens.$sheet-width-header-min;
+$header-max-width: tokens.$sheet-width-header-max;
+$header-width: tokens.$sheet-width-header;
+$spacing-xs: tokens.$sheet-spacing-xs;
+$spacing-sm: tokens.$sheet-spacing-sm; 

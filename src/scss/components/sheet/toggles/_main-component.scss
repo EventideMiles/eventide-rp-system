@@ -1,0 +1,76 @@
+@use "config" as *;
+@use "mixins" as *;
+
+// ===================================
+// TOGGLE COMPONENT
+// ===================================
+
+.erps-toggles {
+  // Container for toggle and label
+  display: inline-flex;
+  align-items: center;
+  gap: $toggle-label-gap;
+  cursor: pointer;
+  user-select: none;
+  transition: all $toggle-transition-duration $toggle-transition-easing;
+
+  // Hidden checkbox input
+  &__input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+
+    &:focus + .erps-toggles__container .erps-toggles__track {
+      box-shadow:
+        $toggle-thumb-shadow rgb(0 0 0 / 30%),
+        0 0 $toggle-glow-blur var(--erps-toggle-bright);
+    }
+
+    &:checked + .erps-toggles__container .erps-toggles__track {
+      @include toggle-checked-state;
+    }
+
+    &:disabled + .erps-toggles__container .erps-toggles__track {
+      opacity: $toggle-disabled-opacity;
+      cursor: not-allowed;
+      background: rgb(100 100 100 / 30%);
+      border-color: rgb(100 100 100 / 40%);
+
+      .erps-toggles__thumb {
+        background: rgb(100 100 100 / 60%);
+        border-color: rgb(100 100 100 / 70%);
+        box-shadow: $toggle-thumb-shadow rgb(0 0 0 / 20%);
+      }
+    }
+  }
+
+  // Container wrapper for track and label positioning
+  &__container {
+    display: flex;
+    align-items: center;
+    gap: $toggle-label-gap;
+  }
+
+  // Track (background of the toggle)
+  &__track {
+    @include toggle-track-base;
+  }
+
+  // Thumb (the sliding button part)
+  &__thumb {
+    @include toggle-thumb-base;
+  }
+
+  // Label text
+  &__label {
+    font-family: var(--erps-ui-font, sans-serif);
+    font-size: $toggle-label-font-size;
+    font-weight: $toggle-font-weight;
+    color: var(--erps-toggle-text);
+    cursor: pointer;
+    transition: color $toggle-transition-duration $toggle-transition-easing;
+    text-shadow: 0 1px 2px rgb(0 0 0 / 60%);
+  }
+} 

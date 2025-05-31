@@ -1,0 +1,25 @@
+// ===================================
+// ABILITY CARDS INDEX
+// ===================================
+// Main entry point for all ability card components
+
+// Import shared configuration first
+@use "config";
+
+// Import utility mixins
+@use "mixins";
+
+// Import variant mixins
+@use "variant-mixins";
+
+// Import core components
+@use "main-component";
+
+// Import ability variants
+@use "ability-variants";
+
+// Import legacy compatibility
+@use "legacy-compatibility";
+
+// Import animations
+@use "animations"; 
