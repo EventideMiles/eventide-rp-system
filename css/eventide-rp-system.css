@@ -1842,19 +1842,30 @@ label,
 }
 
 /* Styles limited to eventide-rp-system sheets */
+.chat-card {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  margin-bottom: 0.5rem;
+}
 .chat-card__header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 0.5rem;
+  justify-content: center;
+  padding: 1rem 0.75rem;
   background: var(--theme-accent);
-  border-bottom: 1px solid var(--theme-light);
-  border-radius: 8px 8px 0 0;
+  border-bottom: none;
+  color: var(--erps-white);
+  font-weight: 400;
+  font-size: 1.25rem;
+  font-family: "Protest Revolution", serif;
+  font-style: normal;
+  text-align: center;
+  line-height: 22.5px;
 }
-.chat-card__title {
-  font-weight: bold;
-  color: var(--theme-text);
-  font-size: 1.1rem;
+.chat-card__header i {
+  margin-right: 0.5rem;
+  font-size: 1.2rem;
 }
 .chat-card__content {
   padding: 1rem;
@@ -1863,66 +1874,162 @@ label,
 }
 .chat-card__description {
   text-align: justify;
-  font-style: italic;
+  font-style: normal;
   color: var(--theme-text);
   margin-bottom: 1rem;
+  padding: 0.75rem;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+  border-left: 3px solid var(--theme-secondary);
 }
 .chat-card__effects {
   text-align: justify;
-  font-size: 0.7rem;
+  font-size: 0.85rem;
   padding: 0;
   color: var(--theme-text);
-  background-color: var(--theme-primary);
+  background-color: transparent;
+  border-radius: 4px;
+  margin-top: 0.75rem;
+  width: 100%;
 }
-.chat-card__effects-title {
-  text-align: justify;
-  font-size: 0.8rem;
-  padding: 0.01rem 0;
-  padding-top: 0.2rem;
-  padding-bottom: 0.2rem;
-  margin-bottom: 0.1875rem;
-  background-color: var(--theme-bright);
-  color: var(--theme-primary);
+.chat-card__effects--ac-check {
+  background-color: rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.5rem;
+  width: 100%;
 }
-.chat-card__effects-name {
-  font-weight: bolder;
+.chat-card__effects--title {
+  font-size: 0.75rem;
+  font-weight: bold;
+  padding: 0.5rem;
+  margin: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: var(--erps-white);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-radius: 4px 4px 0 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  width: 100%;
+}
+.chat-card__effects--name {
+  font-weight: bold;
   color: var(--theme-text);
   font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0.5rem;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 0;
+  margin-bottom: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  width: 100%;
+}
+.chat-card__effects--name .chat-card__image--secondary {
+  margin-right: 0.5rem;
+}
+.chat-card__effects--hit {
+  background-color: var(--erps-chat-details-hit);
+  color: var(--erps-white);
+  padding: 0.125rem 0.25rem;
+  border-radius: 2px;
+  font-weight: bold;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  margin-left: 0.125rem;
+  min-width: 28px;
+  text-align: center;
+  display: inline-block;
+}
+.chat-card__effects--miss {
+  background-color: var(--erps-chat-details-miss);
+  color: var(--erps-white);
+  padding: 0.125rem 0.25rem;
+  border-radius: 2px;
+  font-weight: bold;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  margin-left: 0.125rem;
+  min-width: 28px;
+  text-align: center;
+  display: inline-block;
 }
 .chat-card__effects-row {
-  padding-left: 20px;
+  width: 100%;
+  margin-bottom: 0;
+  border-radius: 0;
+  position: relative;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.08);
+}
+.chat-card__effects-row:nth-of-type(even) {
+  background: rgba(0, 0, 0, 0.08);
+}
+.chat-card__effects-row:last-child {
+  border-radius: 0 0 4px 4px;
+  border-bottom: none;
+}
+.chat-card__effects-row-content {
   display: grid;
-  grid-column: span 3/span 3;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  width: 50%;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.5rem 0.5rem 0.5rem 1.25rem;
+  position: relative;
+  width: 75%;
+  margin-left: 0;
+}
+.chat-card__effects-row-content::before {
+  content: "•";
+  position: absolute;
+  left: 0.25rem;
+  color: var(--theme-text);
+  font-weight: bold;
+  font-size: 1rem;
 }
 .chat-card__effects-row-cell {
-  padding-left: 3px;
-  padding-right: 3px;
-  border-bottom: 1px dashed var(--theme-light);
+  font-size: 0.75rem;
 }
-.chat-card__effects-row-cell--first, .chat-card__effects-row-cell--last {
+.chat-card__effects-row-cell--first {
   font-weight: bold;
-}
-.chat-card__effects-row-cell--last {
-  border-left: 1px dashed var(--theme-light);
-  padding-left: 15px;
-  white-space: nowrap;
+  color: var(--theme-text);
 }
 .chat-card__effects-row-cell--middle {
   font-style: italic;
+  text-align: center;
+  color: var(--theme-text);
+  opacity: 0.8;
+}
+.chat-card__effects-row-cell--last {
+  font-weight: bold;
+  text-align: right;
+  color: var(--theme-text);
 }
 .chat-card__header--subheader {
   color: var(--erps-white);
-  align-items: center;
-  justify-content: center;
-  font-size: 0.7rem;
+  font-size: 0.9rem;
+  font-family: "Protest Revolution", serif;
+  padding: 0.75rem;
+  background: rgba(0, 0, 0, 0.3);
+  margin: 0;
+  border-radius: 0;
+  text-transform: none;
+  letter-spacing: normal;
+  text-align: center;
+  width: 100%;
+  box-sizing: border-box;
 }
 .chat-card__header--image {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  font-size: 1.25rem;
+  font-family: "Protest Revolution", serif;
+  font-weight: 400;
+  font-style: normal;
+  padding: 1rem 0.75rem;
+  line-height: 22.5px;
 }
 .chat-card__header--acrobatics {
   background-color: var(--erps-abilities-acro);
@@ -1953,25 +2060,67 @@ label,
 }
 .chat-card__header--critical-hit {
   background-color: var(--erps-critical-hit);
+  font-size: 1.25rem;
+  font-weight: 400;
+  font-family: "Protest Revolution", serif;
+  font-style: normal;
   width: 100%;
+  padding: 1rem 0.75rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  animation: pulse-glow 2s ease-in-out infinite alternate;
+  border-bottom: none;
+  border-radius: 0;
+  line-height: 22.5px;
 }
 .chat-card__header--critical-miss {
   background-color: var(--erps-critical-miss);
+  font-size: 1.25rem;
+  font-weight: 400;
+  font-family: "Protest Revolution", serif;
+  font-style: normal;
   width: 100%;
+  padding: 1rem 0.75rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  border-bottom: none;
+  border-radius: 0;
+  line-height: 22.5px;
 }
 .chat-card__header--stolen-crit {
   background-color: var(--erps-stolen-crit);
+  font-size: 1.25rem;
+  font-weight: 400;
+  font-family: "Protest Revolution", serif;
+  font-style: normal;
   width: 100%;
+  padding: 1rem 0.75rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  border-bottom: none;
+  border-radius: 0;
+  line-height: 22.5px;
 }
 .chat-card__header--saved-miss {
   background-color: var(--erps-saved-miss);
+  font-size: 1.25rem;
+  font-weight: 400;
+  font-family: "Protest Revolution", serif;
+  font-style: normal;
   width: 100%;
+  padding: 1rem 0.75rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  border-bottom: none;
+  border-radius: 0;
+  line-height: 22.5px;
 }
 .chat-card__header--unknown {
   background-color: var(--erps-card-header-unknown);
 }
 .chat-card__header--status {
-  font-size: 1.125rem;
+  font-size: 1.25rem;
+  font-family: "Protest Revolution", serif;
+  font-weight: 400;
+  font-style: normal;
+  padding: 1rem 0.75rem;
+  line-height: 22.5px;
 }
 .chat-card__header--damage {
   background-color: var(--erps-card-header-damage);
@@ -2000,6 +2149,7 @@ label,
 .chat-card__description--header {
   text-align: justify;
   font-size: 1.2rem;
+  font-style: normal;
   color: var(--erps-neutral-gray);
 }
 .chat-card__description--header-center-underline {
@@ -2018,16 +2168,19 @@ label,
 .chat-card__initiative--result, .chat-card__combat-roll--result {
   display: flex;
   justify-content: center;
-  font-family: "Protest Revolution", sans-serif;
+  font-family: "Protest Revolution", serif;
   font-size: 1.5rem;
   font-weight: bold;
-  margin: 0.25rem 0;
+  margin: 0.5rem 0;
   width: 100%;
+  padding: 1rem;
 }
 .chat-card__value {
-  font-size: 2rem;
+  font-size: 3rem;
   font-weight: bold;
-  font-family: "Protest Revolution", sans-serif;
+  font-family: "Protest Revolution", serif;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  line-height: 1;
 }
 .chat-card__value--initiative {
   color: var(--erps-card-header-initiative);
@@ -2065,49 +2218,70 @@ label,
 .chat-card__formula-toggle {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   font-family: var(--font-monospace);
   font-size: 0.9rem;
   color: var(--erps-white);
   background: rgba(50, 50, 50, 0.9);
-  padding: 0.25rem 0.5rem;
-  border-radius: 3px;
-  margin: 0 3px 2px;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0 0 8px 8px;
+  margin: 0;
   width: 100%;
   cursor: pointer;
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.2s ease;
+}
+.chat-card__formula-toggle:hover {
+  background: rgba(60, 60, 60, 0.9);
+}
+.chat-card__formula-toggle.active {
+  border-radius: 0;
 }
 .chat-card__formula {
   font-style: italic;
+  font-weight: bold;
 }
 .chat-card__roll-details {
-  width: calc(100% - 6px);
-  margin: 0 3px;
-  padding: 0.5rem;
-  background-color: rgba(0, 0, 0, 0.05);
-  border-radius: 3px;
+  width: 100%;
+  margin: 0;
+  padding: 0.75rem;
+  background-color: rgba(0, 0, 0, 0.4);
+  border-radius: 0 0 8px 8px;
   font-family: var(--font-monospace);
   font-size: 0.8rem;
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 .chat-card__roll-term {
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+.chat-card__roll-term:last-child {
+  margin-bottom: 0;
 }
 .chat-card__roll-term-formula {
   font-weight: bold;
-  margin-right: 0.5rem;
+  margin-right: 0.75rem;
+  color: var(--erps-white);
 }
 .chat-card__roll-term-results {
   display: flex;
   flex-wrap: wrap;
   gap: 0.25rem;
+  margin-top: 0.25rem;
 }
 .chat-card__die-result {
   display: inline-block;
-  padding: 0.125rem 0.25rem;
+  padding: 0.25rem 0.5rem;
   border-radius: 3px;
   background-color: rgba(255, 255, 255, 0.2);
+  font-weight: bold;
+  font-size: 0.75rem;
 }
 .chat-card__die-result--discarded {
   text-decoration: line-through;
   opacity: 0.6;
+  background-color: rgba(255, 255, 255, 0.1);
 }
 .chat-card__image--primary {
   width: 150px;
@@ -2115,23 +2289,58 @@ label,
   border: 0;
 }
 .chat-card__image--secondary {
-  width: 13px;
-  height: 13px;
+  width: 16px;
+  height: 16px;
   border: 0;
   background-color: var(--theme-image-bg, var(--erps-secondary-image-bg));
   display: inline;
+  margin-right: 0.5rem;
+  border-radius: 2px;
 }
 .chat-card__hr {
   border: none;
   border-top: 1px solid var(--erps-white);
+  margin: 1rem 0;
 }
 .chat-card__formula-toggle-icon {
   transition: transform 0.2s ease;
+  font-size: 0.8rem;
 }
 .chat-card__formula-toggle-icon.active {
   transform: rotate(180deg);
 }
+.chat-card__cost-section {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 0.75rem;
+  text-align: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--erps-white);
+  font-family: "Protest Revolution", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+.chat-card__cost-info {
+  font-size: 0.9rem;
+  font-weight: 400;
+  margin-bottom: 0.25rem;
+}
+.chat-card__cost-info:last-child {
+  margin-bottom: 0;
+}
+.chat-card__type-info {
+  font-size: 0.8rem;
+  opacity: 0.8;
+  font-style: normal;
+}
 
+@keyframes pulse-glow {
+  0% {
+    box-shadow: 0 0 5px var(--erps-critical-hit);
+  }
+  100% {
+    box-shadow: 0 0 20px var(--erps-critical-hit), 0 0 30px var(--erps-critical-hit);
+  }
+}
 .popup-form {
   position: fixed;
   top: 50%;
@@ -16154,5 +16363,3 @@ label,
     flex: 1;
   }
 }
-
-/*# sourceMappingURL=eventide-rp-system.css.map */

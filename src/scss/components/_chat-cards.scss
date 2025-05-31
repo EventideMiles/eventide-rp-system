@@ -4,21 +4,30 @@
 
 .chat-card {
   // Chat card styles without deprecated base-form extends
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 20%);
+  margin-bottom: 0.5rem;
 
   &__header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 0.5rem;
+    justify-content: center;
+    padding: 1rem 0.75rem;
     background: var(--theme-accent);
-    border-bottom: 1px solid var(--theme-light);
-    border-radius: 8px 8px 0 0;
-  }
+    border-bottom: none;
+    color: colors.$universal-white;
+    font-weight: 400;
+    font-size: 1.25rem;
+    font-family: "Protest Revolution", serif;
+    font-style: normal;
+    text-align: center;
+    line-height: 22.5px;
 
-  &__title {
-    font-weight: bold;
-    color: var(--theme-text);
-    font-size: 1.1rem;
+    i {
+      margin-right: 0.5rem;
+      font-size: 1.2rem;
+    }
   }
 
   &__content {
@@ -29,70 +38,172 @@
 
   &__description {
     text-align: justify;
-    font-style: italic;
+    font-style: normal;
     color: var(--theme-text);
     margin-bottom: 1rem;
+    padding: 0.75rem;
+    background: rgb(0 0 0 / 5%);
+    border-radius: 4px;
+    border-left: 3px solid var(--theme-secondary);
   }
 
   &__effects {
     text-align: justify;
-    font-size: 0.7rem;
+    font-size: 0.85rem;
     padding: 0;
     color: var(--theme-text);
-    background-color: var(--theme-primary);
-  }
+    background-color: transparent;
+    border-radius: 4px;
+    margin-top: 0.75rem;
+    width: 100%;
 
-  &__effects-title {
-    text-align: justify;
-    font-size: 0.8rem;
-    padding: 0.01rem 0;
-    padding-top: 0.2rem;
-    padding-bottom: 0.2rem;
-    margin-bottom: 0.1875rem;
-    background-color: var(--theme-bright);
-    color: var(--theme-primary);
-  }
+    &--ac-check {
+      background-color: rgb(0 0 0 / 10%);
+      border: 1px solid rgb(255 255 255 / 10%);
+      padding: 0.5rem;
+      width: 100%;
+    }
 
-  &__effects-name {
-    font-weight: bolder;
-    color: var(--theme-text);
-    font-size: 0.75rem;
+    &--title {
+      font-size: 0.75rem;
+      font-weight: bold;
+      padding: 0.5rem;
+      margin: 0;
+      background-color: rgb(0 0 0 / 60%);
+      color: colors.$universal-white;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-radius: 4px 4px 0 0;
+      border-bottom: 1px solid rgb(255 255 255 / 20%);
+      width: 100%;
+    }
+
+    &--name {
+      font-weight: bold;
+      color: var(--theme-text);
+      font-size: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 0.5rem;
+      background: rgb(0 0 0 / 10%);
+      border-radius: 0;
+      margin-bottom: 0;
+      border-bottom: 1px solid rgb(255 255 255 / 10%);
+      width: 100%;
+
+      .chat-card__image--secondary {
+        margin-right: 0.5rem;
+      }
+    }
+
+    &--hit {
+      background-color: var(--erps-chat-details-hit);
+      color: colors.$universal-white;
+      padding: 0.125rem 0.25rem;
+      border-radius: 2px;
+      font-weight: bold;
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      margin-left: 0.125rem;
+      min-width: 28px;
+      text-align: center;
+      display: inline-block;
+    }
+
+    &--miss {
+      background-color: var(--erps-chat-details-miss);
+      color: colors.$universal-white;
+      padding: 0.125rem 0.25rem;
+      border-radius: 2px;
+      font-weight: bold;
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      margin-left: 0.125rem;
+      min-width: 28px;
+      text-align: center;
+      display: inline-block;
+    }
   }
 
   &__effects-row {
-    padding-left: 20px;
+    width: 100%;
+    margin-bottom: 0;
+    border-radius: 0;
+    position: relative;
+    border-bottom: 1px solid rgb(255 255 255 / 10%);
+    
+    // Start with light background for first row (to contrast with dark header)
+    background: rgb(255 255 255 / 8%);
+    
+    // Alternate colors - even rows (2nd, 4th, etc.) get darker background
+    &:nth-of-type(even) {
+      background: rgb(0 0 0 / 8%);
+    }
+
+    // Last row gets rounded bottom corners
+    &:last-child {
+      border-radius: 0 0 4px 4px;
+      border-bottom: none;
+    }
+  }
+
+  &__effects-row-content {
     display: grid;
-    grid-column: span 3 / span 3;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    width: 50%;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 0.5rem;
+    align-items: center;
+    padding: 0.5rem 0.5rem 0.5rem 1.25rem; // Account for bullet space
+    position: relative;
+    width: 75%;
+    margin-left: 0;
+
+    // Add bullet point marker
+    &::before {
+      content: "•";
+      position: absolute;
+      left: 0.25rem;
+      color: var(--theme-text);
+      font-weight: bold;
+      font-size: 1rem;
+    }
   }
 
   &__effects-row-cell {
-    padding-left: 3px;
-    padding-right: 3px;
-    border-bottom: 1px dashed var(--theme-light);
-  }
+    font-size: 0.75rem;
 
-  &__effects-row-cell--first,
-  &__effects-row-cell--last {
-    font-weight: bold;
-  }
+    &--first {
+      font-weight: bold;
+      color: var(--theme-text);
+    }
 
-  &__effects-row-cell--last {
-    border-left: 1px dashed var(--theme-light);
-    padding-left: 15px;
-    white-space: nowrap;
-  }
+    &--middle {
+      font-style: italic;
+      text-align: center;
+      color: var(--theme-text);
+      opacity: 0.8;
+    }
 
-  &__effects-row-cell--middle {
-    font-style: italic;
+    &--last {
+      font-weight: bold;
+      text-align: right;
+      color: var(--theme-text);
+    }
   }
 
   &__header--subheader {
     color: colors.$universal-white;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.7rem;
+    font-size: 0.9rem;
+    font-family: typography.$font-decorative;
+    padding: 0.75rem;
+    background: rgb(0 0 0 / 30%);
+    margin: 0;
+    border-radius: 0;
+    text-transform: none;
+    letter-spacing: normal;
+    text-align: center;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   &__header--image {
@@ -100,58 +211,103 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    font-size: 1.25rem;
+    font-family: "Protest Revolution", serif;
+    font-weight: 400;
+    font-style: normal;
+    padding: 1rem 0.75rem;
+    line-height: 22.5px;
   }
-  &__header--acrobatics { background-color: colors.$acro; }
-  &__header--physical { background-color: colors.$phys; }
-  &__header--fortitude { background-color: colors.$fort; }
-  &__header--will { background-color: colors.$will; }
-  &__header--wits { background-color: colors.$wits; }
-  &__header--gear { background-color: colors.$gear; }
-  &__header--initiative { background-color: colors.$initiative; }
-  &__header--initiative-npc { background-color: colors.$initiative-npc; }
-  &__header--initiative-pc { background-color: colors.$initiative-pc; }
+  &__header--acrobatics { background-color: var(--erps-abilities-acro); }
+  &__header--physical { background-color: var(--erps-abilities-phys); }
+  &__header--fortitude { background-color: var(--erps-abilities-fort); }
+  &__header--will { background-color: var(--erps-abilities-will); }
+  &__header--wits { background-color: var(--erps-abilities-wits); }
+  &__header--gear { background-color: var(--erps-card-header-gear); }
+  &__header--initiative { background-color: var(--erps-card-header-initiative); }
+  &__header--initiative-npc { background-color: var(--erps-card-header-initiative-npc); }
+  &__header--initiative-pc { background-color: var(--erps-card-header-initiative-pc); }
 
   &__header--critical-hit {
-    background-color: colors.$critical-hit;
-
-    // font-size: 1.125rem;
+    background-color: var(--erps-critical-hit);
+    font-size: 1.25rem;
+    font-weight: 400;
+    font-family: "Protest Revolution", serif;
+    font-style: normal;
     width: 100%;
+    padding: 1rem 0.75rem;
+    text-shadow: 0 2px 4px rgb(0 0 0 / 50%);
+    animation: pulse-glow 2s ease-in-out infinite alternate;
+    border-bottom: none;
+    border-radius: 0;
+    line-height: 22.5px;
   }
 
   &__header--critical-miss {
-    background-color: colors.$critical-miss;
-
-    // font-size: 1.125rem;
+    background-color: var(--erps-critical-miss);
+    font-size: 1.25rem;
+    font-weight: 400;
+    font-family: "Protest Revolution", serif;
+    font-style: normal;
     width: 100%;
+    padding: 1rem 0.75rem;
+    text-shadow: 0 2px 4px rgb(0 0 0 / 50%);
+    border-bottom: none;
+    border-radius: 0;
+    line-height: 22.5px;
   }
 
   &__header--stolen-crit {
-    background-color: colors.$stolen-crit;
-
-    // font-size: 1.125rem;
+    background-color: var(--erps-stolen-crit);
+    font-size: 1.25rem;
+    font-weight: 400;
+    font-family: "Protest Revolution", serif;
+    font-style: normal;
     width: 100%;
+    padding: 1rem 0.75rem;
+    text-shadow: 0 2px 4px rgb(0 0 0 / 50%);
+    border-bottom: none;
+    border-radius: 0;
+    line-height: 22.5px;
   }
 
   &__header--saved-miss {
-    background-color: colors.$saved-miss;
-
-    // font-size: 1.125rem;
+    background-color: var(--erps-saved-miss);
+    font-size: 1.25rem;
+    font-weight: 400;
+    font-family: "Protest Revolution", serif;
+    font-style: normal;
     width: 100%;
+    padding: 1rem 0.75rem;
+    text-shadow: 0 2px 4px rgb(0 0 0 / 50%);
+    border-bottom: none;
+    border-radius: 0;
+    line-height: 22.5px;
   }
-  &__header--unknown { background-color: colors.$unknown; }
-  &__header--status { font-size: 1.125rem; }
-  &__header--damage { background-color: colors.$damage; }
-  &__header--heal { background-color: colors.$heal; }
-  &__header--delete { background-color: colors.$delete; }
-  &__header--restore { background-color: colors.$heal; }
-  &__header--transfer { background-color: colors.$transfer; }
-  &__header--equip { background-color: colors.$gear; }
-  &__header--transformation { background: colors.$transformation-gradient; }
-  &__header--transformation-remove { background: colors.$transformation-remove-gradient; }
+
+  &__header--unknown { background-color: var(--erps-card-header-unknown); }
+
+  &__header--status { 
+    font-size: 1.25rem;
+    font-family: "Protest Revolution", serif;
+    font-weight: 400;
+    font-style: normal;
+    padding: 1rem 0.75rem;
+    line-height: 22.5px;
+  }
+  &__header--damage { background-color: var(--erps-card-header-damage); }
+  &__header--heal { background-color: var(--erps-card-header-heal); }
+  &__header--delete { background-color: var(--erps-card-header-delete); }
+  &__header--restore { background-color: var(--erps-card-header-heal); }
+  &__header--transfer { background-color: var(--erps-card-header-transfer); }
+  &__header--equip { background-color: var(--erps-card-header-gear); }
+  &__header--transformation { background: var(--erps-card-header-transformation); }
+  &__header--transformation-remove { background: var(--erps-card-header-transformation-remove); }
 
   &__description--header {
     text-align: justify;
     font-size: 1.2rem;
+    font-style: normal;
     color: colors.$universal-tan;
   }
 
@@ -178,80 +334,108 @@
     font-family: typography.$font-decorative;
     font-size: 1.5rem;
     font-weight: bold;
-    margin: 0.25rem 0;
+    margin: 0.5rem 0;
     width: 100%;
+    padding: 1rem;
   }
 
   &__value {
-    font-size: 2rem;
+    font-size: 3rem;
     font-weight: bold;
     font-family: typography.$font-decorative;
+    text-shadow: 2px 2px 4px rgb(0 0 0 / 50%);
+    line-height: 1;
   }
-  &__value--initiative { color: colors.$initiative; }
+  &__value--initiative { color: var(--erps-card-header-initiative); }
   &__value--power { color: #666; }
-  &__value--acro { color: colors.$acro; }
-  &__value--phys { color: colors.$phys; }
-  &__value--fort { color: colors.$fort; }
-  &__value--will { color: colors.$will; }
-  &__value--wits { color: colors.$wits; }
-  &__value--gear { color: colors.$gear; }
-  &__value--damage { color: colors.$damage; }
-  &__value--heal { color: colors.$heal; }
-  &__value--unknown { color: colors.$unknown; }
+  &__value--acro { color: var(--erps-abilities-acro); }
+  &__value--phys { color: var(--erps-abilities-phys); }
+  &__value--fort { color: var(--erps-abilities-fort); }
+  &__value--will { color: var(--erps-abilities-will); }
+  &__value--wits { color: var(--erps-abilities-wits); }
+  &__value--gear { color: var(--erps-card-header-gear); }
+  &__value--damage { color: var(--erps-card-header-damage); }
+  &__value--heal { color: var(--erps-card-header-heal); }
+  &__value--unknown { color: var(--erps-card-header-unknown); }
 
   &__formula-toggle {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     font-family: var(--font-monospace);
     font-size: 0.9rem;
     color: colors.$universal-white;
     background: rgb(50 50 50 / 90%);
-    padding: 0.25rem 0.5rem;
-    border-radius: 3px;
-    margin: 0 3px 2px;
-    width: calc(100%);
+    padding: 0.5rem 0.75rem;
+    border-radius: 0 0 8px 8px;
+    margin: 0;
+    width: 100%;
     cursor: pointer;
+    border: none;
+    border-bottom: 1px solid rgb(255 255 255 / 10%);
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: rgb(60 60 60 / 90%);
+    }
+
+    // Remove border radius when active (expanded)
+    &.active {
+      border-radius: 0;
+    }
   }
 
   &__formula {
     font-style: italic;
+    font-weight: bold;
   }
 
   &__roll-details {
-    width: calc(100% - 6px);
-    margin: 0 3px;
-    padding: 0.5rem;
-    background-color: rgb(0 0 0 / 5%);
-    border-radius: 3px;
+    width: 100%;
+    margin: 0;
+    padding: 0.75rem;
+    background-color: rgb(0 0 0 / 40%);
+    border-radius: 0 0 8px 8px;
     font-family: var(--font-monospace);
     font-size: 0.8rem;
+    border: none;
+    border-bottom: 1px solid rgb(255 255 255 / 10%);
   }
 
   &__roll-term {
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.5rem;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
   }
 
   &__roll-term-formula {
     font-weight: bold;
-    margin-right: 0.5rem;
+    margin-right: 0.75rem;
+    color: colors.$universal-white;
   }
 
   &__roll-term-results {
     display: flex;
     flex-wrap: wrap;
     gap: 0.25rem;
+    margin-top: 0.25rem;
   }
 
   &__die-result {
     display: inline-block;
-    padding: 0.125rem 0.25rem;
+    padding: 0.25rem 0.5rem;
     border-radius: 3px;
     background-color: rgb(255 255 255 / 20%);
+    font-weight: bold;
+    font-size: 0.75rem;
   }
 
   &__die-result--discarded {
     text-decoration: line-through;
     opacity: 0.6;
+    background-color: rgb(255 255 255 / 10%);
   }
 
   &__image--primary {
@@ -261,24 +445,67 @@
   }
 
   &__image--secondary {
-    width: 13px;
-    height: 13px;
+    width: 16px;
+    height: 16px;
     border: 0;
     background-color: colors.$secondary-image-background;
     display: inline;
+    margin-right: 0.5rem;
+    border-radius: 2px;
   }
 
   &__hr {
     border: none;
     border-top: 1px solid colors.$universal-white;
+    margin: 1rem 0;
   }
 
   // For toggle icon
   &__formula-toggle-icon {
     transition: transform 0.2s ease;
+    font-size: 0.8rem;
 
     &.active {
       transform: rotate(180deg);
     }
+  }
+
+  // Combat Power Cost Section
+  &__cost-section {
+    background: rgb(0 0 0 / 30%);
+    padding: 0.75rem;
+    text-align: center;
+    border-bottom: 1px solid rgb(255 255 255 / 10%);
+    color: colors.$universal-white;
+    font-family: "Protest Revolution", serif;
+    font-weight: 400;
+    font-style: normal;
+  }
+
+  &__cost-info {
+    font-size: 0.9rem;
+    font-weight: 400;
+    margin-bottom: 0.25rem;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &__type-info {
+    font-size: 0.8rem;
+    opacity: 0.8;
+    font-style: normal;
+  }
+}
+
+// Animation for critical hits
+@keyframes pulse-glow {
+  0% {
+    box-shadow: 0 0 5px var(--erps-critical-hit);
+  }
+
+  100% {
+    box-shadow: 0 0 20px var(--erps-critical-hit), 0 0 30px var(--erps-critical-hit);
   }
 }
