@@ -1,29 +1,32 @@
+{{!-- Popup Roll Information --}}
 {{#if item.system.roll}}
-<div class="popup-form__section">
-    <div class="popup-form__subheader">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RollInfo"}}</div>
-    <div class="popup-form__group">
-        <div class="popup-form__row">
-            <div class="popup-form__label">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RollType"}}</div>
-            <div class="popup-form__content popup-form__content--data">{{item.system.roll.type}}</div>
-            <div class="popup-form__label">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RollAbility"}}</div>
-            <div class="popup-form__content popup-form__content--data">{{item.system.roll.ability}}</div>
+  <div class="erps-form__section erps-form__section--compact">
+    <div class="erps-form__header erps-form__header--small erps-form__header--no-margin">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RollInfo"}}</div>
+    <div class="erps-form__group erps-form__group--grid erps-form__group--grid-2 erps-form__group--compact">
+      <div class="erps-form__group erps-form__group--compact">
+        <label class="erps-form__label">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RollType"}}</label>
+        <div class="erps-form__description erps-form__description--data">{{item.system.roll.type}}</div>
+      </div>
+      <div class="erps-form__group erps-form__group--compact">
+        <label class="erps-form__label">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RollAbility"}}</label>
+        <div class="erps-form__description erps-form__description--data">{{item.system.roll.ability}}</div>
+      </div>
+      <div class="erps-form__group erps-form__group--compact">
+        <label class="erps-form__label">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Bonus"}}</label>
+        <div class="erps-form__description erps-form__description--data">{{numberFormat item.system.roll.bonus decimals=0 sign=true}}</div>
+      </div>
+      <div class="erps-form__group erps-form__group--compact">
+        <label class="erps-form__label">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Adjustments"}}</label>
+        <div class="erps-form__description erps-form__description--data">
+          {{#if (eq item.system.roll.diceAdjustments.total 0)}}
+            <span class="erps-text--neutral">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Neutral"}}</span>
+          {{else if (lt item.system.roll.diceAdjustments.total 0)}}
+            <span class="erps-text--disadvantage">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Disadv"}} {{numberFormat (abs item.system.roll.diceAdjustments.total) decimals=0}}</span>
+          {{else}}
+            <span class="erps-text--advantage">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Adv"}} {{numberFormat item.system.roll.diceAdjustments.total decimals=0}}</span>
+          {{/if}}
         </div>
+      </div>
     </div>
-    <div class="popup-form__group">
-        <div class="popup-form__row">
-            <div class="popup-form__label">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Bonus"}}</div>
-            <div class="popup-form__content popup-form__content--data">{{numberFormat item.system.roll.bonus decimals=0 sign=true}}</div>
-            <div class="popup-form__label">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Adjustments"}}</div>
-            <div class="popup-form__content popup-form__content--data">
-                {{#if (eq item.system.roll.diceAdjustments.total 0)}}
-                    <span class="popup-form__text--neutral">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Neutral"}}</span>
-                {{else if (lt item.system.roll.diceAdjustments.total 0)}}
-                    <span class="popup-form__text--disadvantage">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Disadv"}} {{numberFormat (abs item.system.roll.diceAdjustments.total) decimals=0}}</span>
-                {{else}}
-                    <span class="popup-form__text--advantage">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Adv"}} {{numberFormat item.system.roll.diceAdjustments.total decimals=0}}</span>
-                {{/if}}
-            </div>
-        </div>
-    </div>
-</div>
+  </div>
 {{/if}}
