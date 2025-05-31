@@ -1,11 +1,11 @@
-<div class="{{cssClass}} base-form effect-creator" autocomplete="off">
+<div class="{{cssClass}} erps-form effect-creator" autocomplete="off">
   {{> callout-box}}
-  <div class="base-form__content">
-    <div class="base-form__group">
-      <label class="base-form__label" for="type">
+  <div class="erps-form__content">
+    <div class="erps-form__group">
+      <label class="erps-form__label" for="type">
         {{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Type"}}}:
       </label>
-      <select class="base-form__select" id="type" name="type">
+      <select class="erps-select" id="type" name="type">
         {{#if (eq playerMode false)}}
           <option value="status" 
             {{#if (eq storedData.effect_type "status")}}selected{{/if}}>
@@ -18,32 +18,32 @@
         </option>
       </select>
     </div>
-    <div class="base-form__group">
-      <label class="base-form__label" for="name">
+    <div class="erps-form__group">
+      <label class="erps-form__label" for="name">
         {{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Name"}}}:
       </label>
-      <input class="base-form__text-input" 
+      <input class="erps-input" 
         autofocus 
         type="text" 
         id="name" 
         name="name" 
         placeholder="{{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.Name"}}}">
     </div>
-    <div class="base-form__group">
-      <label class="base-form__label" for="description">
+    <div class="erps-form__group">
+      <label class="erps-form__label" for="description">
         {{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Description"}}}:
       </label>
-      <textarea class="base-form__textarea" 
+      <textarea class="erps-textarea" 
         id="description" 
         name="description" 
         placeholder="{{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.Description"}}}"></textarea>
     </div>
-    <div class="base-form__group">
-      <label class="base-form__label" for="img">
+    <div class="erps-form__group">
+      <label class="erps-form__label" for="img">
         {{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Image"}}}:
       </label>
       <img
-        class="base-form__image base-form__image--edit"
+        class="erps-image-picker"
         src="{{storedData.effect_img}}"
         data-edit="img"
         data-action='onEditImage'
@@ -53,29 +53,31 @@
         id="displayImage"
       />
       <input 
-        class="base-form__hidden-input" 
+        class="erps-hidden-input" 
         type="hidden" 
         name="img" 
         value="{{ifThen storedData.effect_img storedData.effect_img "icons/svg/stoned.svg"}}">
     </div>
     {{> color-pickers type="effect"}}
     
-    <div class="base-form__header">{{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Effects"}}}</div>
-    <div class="toggle-container">
-      <div class="base-form__toggle-group">
-        <label for="displayOnToken">
-          {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.DisplayOnToken"}}
-        </label>
-        <div class="toggle-switch-wrapper">
-          <input 
-            class="base-form__toggle-switch" 
-            type="checkbox" 
-            id="displayOnToken" 
-            name="displayOnToken" 
-            {{#if storedData.effect_displayOnToken}}checked{{/if}}>
-          <label class="toggle-switch-display" for="displayOnToken"></label>
+    <div class="erps-form__header">{{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Effects"}}}</div>
+    <div class="erps-form__group">
+      <label class="erps-toggles erps-toggles--label-left">
+        <input 
+          class="erps-toggles__input" 
+          type="checkbox" 
+          id="displayOnToken" 
+          name="displayOnToken" 
+          {{#if storedData.effect_displayOnToken}}checked{{/if}}>
+        <div class="erps-toggles__container">
+          <span class="erps-toggles__track">
+            <span class="erps-toggles__thumb"></span>
+          </span>
+          <span class="erps-toggles__label">
+            {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.DisplayOnToken"}}
+          </span>
         </div>
-      </div>
+      </label>
     </div>
     {{> character-effects}}
   </div>

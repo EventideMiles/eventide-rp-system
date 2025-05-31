@@ -622,6 +622,18 @@ $glow-opacity: 0.6;
         box-shadow: 0 0 12px var(--erps-current-glow, var(--theme-glow, var(--erps-default-glow)));
       }
     }
+
+    // Narrow variant without buttons for very constrained spaces
+    &--narrow {
+      .erps-number-input__input {
+        width: 50px;
+        text-align: center;
+      }
+
+      .erps-number-input__button {
+        display: none;
+      }
+    }
   }
 }
 
@@ -954,6 +966,8 @@ $glow-opacity: 0.6;
 
     .erps-color-picker__content {
       width: 100%;
+      flex-direction: column;
+      gap: 0.5rem;
     }
 
     .erps-color-picker__preview {
@@ -1160,5 +1174,256 @@ $glow-opacity: 0.6;
   &--auto-resize {
     resize: none;
     overflow: hidden;
+  }
+}
+
+// ===================================
+// IMAGE PICKER
+// ===================================
+
+.erps-image-picker {
+  display: block;
+  position: relative;
+  width: 6rem;
+  height: 6rem;
+  border: $input-border-width solid var(--erps-current-secondary, var(--theme-secondary, var(--erps-default-secondary)));
+  border-radius: $input-border-radius;
+  overflow: hidden;
+  cursor: pointer;
+  transition: $input-transition;
+  background: var(--erps-current-primary, var(--theme-primary, var(--erps-default-primary)));
+
+  // Image display
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: $input-transition;
+  }
+
+  // Hover effects
+  &:hover {
+    border-color: var(--erps-current-bright, var(--theme-bright, var(--erps-default-bright)));
+    box-shadow: 0 0 0 2px var(--erps-current-glow, var(--theme-glow, var(--erps-default-glow)));
+
+    img {
+      transform: scale(1.05);
+    }
+
+    &::after {
+      opacity: 1;
+    }
+  }
+
+  // Edit overlay
+  &::after {
+    content: '✏️';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.5rem;
+    background: rgb(0 0 0 / 70%);
+    color: white;
+    border-radius: 50%;
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity tokens.$sheet-transition-fast ease;
+    pointer-events: none;
+  }
+
+  // Size variants
+  &--small {
+    width: 4rem;
+    height: 4rem;
+
+    &::after {
+      font-size: 1rem;
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+  }
+
+  &--large {
+    width: 8rem;
+    height: 8rem;
+
+    &::after {
+      font-size: 2rem;
+      width: 2.5rem;
+      height: 2.5rem;
+    }
+  }
+
+  &--square {
+    aspect-ratio: 1;
+  }
+
+  &--circle {
+    border-radius: 50%;
+  }
+
+  // Disabled state
+  &:disabled,
+  &--disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    
+    &:hover {
+      transform: none;
+      box-shadow: none;
+      
+      img {
+        transform: none;
+      }
+      
+      &::after {
+        opacity: 0;
+      }
+    }
+  }
+}
+
+// ===================================
+// HIDDEN INPUTS
+// ===================================
+
+.erps-hidden-input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+// ===================================
+// RESPONSIVE DESIGN FOR NEW COMPONENTS
+// ===================================
+
+@media (width <= 768px) {
+  .erps-textarea {
+    min-height: 6rem;
+    font-size: 0.9rem;
+    
+    &--small {
+      min-height: 4rem;
+    }
+    
+    &--large {
+      min-height: 8rem;
+    }
+  }
+
+  .erps-image-picker {
+    width: 5rem;
+    height: 5rem;
+
+    &--small {
+      width: 3.5rem;
+      height: 3.5rem;
+    }
+
+    &--large {
+      width: 6rem;
+      height: 6rem;
+    }
+  }
+}
+
+// ===================================
+// NARROW VARIANTS FOR CONSTRAINED LAYOUTS
+// ===================================
+
+// Narrow data table for tight spaces (like gear creator effects column)
+.erps-data-table--narrow {
+  font-size: tokens.$sheet-font-size-value-sm;
+
+  .erps-data-table__header-cell,
+  .erps-data-table__cell {
+    padding: tokens.$sheet-spacing-xs tokens.$sheet-spacing-sm;
+  }
+
+  .erps-data-table__header-cell {
+    font-size: tokens.$sheet-font-size-value-sm;
+    font-weight: tokens.$sheet-font-weight-semibold;
+  }
+
+  // Compact button styling
+  .erps-data-table__create-button {
+    padding: tokens.$sheet-spacing-xs;
+    font-size: tokens.$sheet-font-size-value-sm;
+    
+    i {
+      margin-right: tokens.$sheet-spacing-xs;
+    }
+  }
+
+  .erps-data-table__control-button {
+    padding: tokens.$sheet-spacing-xs;
+    min-width: auto;
+    width: 24px;
+    height: 24px;
+    
+    i {
+      font-size: tokens.$sheet-font-size-value-sm;
+    }
+  }
+
+  // Compact selects and inputs
+  .erps-select {
+    padding: tokens.$sheet-spacing-xs;
+    font-size: tokens.$sheet-font-size-value-sm;
+    min-height: 28px;
+  }
+
+  // Narrow number inputs - hide buttons and make input smaller
+  .erps-number-input {
+    &__input {
+      padding: tokens.$sheet-spacing-xs;
+      font-size: tokens.$sheet-font-size-value-sm;
+      min-height: 28px;
+      width: 50px; // Narrower input for tight spaces
+      text-align: center;
+    }
+
+    &__button {
+      display: none; // Hide buttons in narrow tables
+    }
+  }
+
+  // Also apply to explicit narrow variant
+  .erps-number-input--narrow {
+    .erps-number-input__input {
+      width: 50px;
+      text-align: center;
+    }
+
+    .erps-number-input__button {
+      display: none;
+    }
+  }
+}
+
+// Narrow form sections
+.erps-form__section--narrow {
+  .erps-form__header {
+    font-size: tokens.$sheet-font-size-value-sm;
+    padding: tokens.$sheet-spacing-sm 0;
+    margin-bottom: tokens.$sheet-spacing-sm;
+  }
+
+  .erps-form__group {
+    margin-bottom: tokens.$sheet-spacing-sm;
+  }
+
+  .erps-form__label {
+    font-size: tokens.$sheet-font-size-value-sm;
+    margin-bottom: tokens.$sheet-spacing-xs;
   }
 }

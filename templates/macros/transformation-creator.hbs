@@ -1,13 +1,13 @@
 {{!-- Transformation Creator Form --}}
-<div class="{{cssClass}} base-form transformation-creator" autocomplete="off">
+<div class="{{cssClass}} erps-form transformation-creator" autocomplete="off">
   {{> callout-box}}
-  <div class="base-form__content">
-    <div class="base-form__group">
-      <label class="base-form__label" for="name">
+  <div class="erps-form__content">
+    <div class="erps-form__group">
+      <label class="erps-form__label" for="name">
         {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Name"}}:
       </label>
       <input 
-        class="base-form__text-input" 
+        class="erps-input" 
         autofocus 
         type="text" 
         id="name" 
@@ -15,23 +15,23 @@
         placeholder="{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.Name"}}">
     </div>
 
-    <div class="base-form__group">
-      <label class="base-form__label" for="description">
+    <div class="erps-form__group">
+      <label class="erps-form__label" for="description">
         {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Description"}}:
       </label>
       <textarea 
-        class="base-form__textarea" 
+        class="erps-textarea" 
         id="description" 
         name="description" 
         placeholder="{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.Description"}}"></textarea>
     </div>
 
-    <div class="base-form__group">
-      <label class="base-form__label" for="img">
+    <div class="erps-form__group">
+      <label class="erps-form__label" for="img">
         {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Image"}}:
       </label>
       <img
-        class="base-form__image base-form__image--edit"
+        class="erps-image-picker"
         src="{{storedData.transformation_img}}"
         data-edit="img"
         data-action='onEditImage'
@@ -41,136 +41,138 @@
         id="displayImage"
       />
       <input 
-        class="base-form__hidden-input" 
+        class="erps-hidden-input" 
         type="hidden" 
         name="img" 
         value="{{ifThen storedData.transformation_img storedData.transformation_img "icons/svg/ice-aura.svg"}}">
     </div>
 
-    <div class="base-form__header">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.TransformationAttributes"}}</div>
-    <div class="base-form__group">
-      <label class="base-form__label" for="size">
+    <div class="erps-form__header">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.TransformationAttributes"}}</div>
+    <div class="erps-form__group">
+      <label class="erps-form__label" for="size">
         {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Size"}}:
       </label>
-      <select class="base-form__select" id="size" name="size">
+      <select class="erps-select" id="size" name="size">
         {{#each sizeOptions as |size|}}
           <option value="{{size.value}}">{{size.label}}</option>
         {{/each}}
       </select>
     </div>
 
-    
-
-    <div class="base-form__group">
-      <label class="base-form__label" for="resolveAdjustment">
+    <div class="erps-form__group">
+      <label class="erps-form__label" for="resolveAdjustment">
         {{localize "EVENTIDE_RP_SYSTEM.Item.Transformation.ResolveAdjustment"}}:
       </label>
-      <div class="base-form__number-input-wrapper">
-        <button type="button" class="decrement" data-action="decrement">−</button>
+      <div class="erps-number-input">
+        <button type="button" class="erps-number-input__button erps-number-input__button--decrement" data-action="decrement">−</button>
         <input 
-          class="base-form__number-input"
+          class="erps-number-input__input"
           type="number" 
           id="resolveAdjustment" 
           name="resolveAdjustment" 
           data-dtype="Number"
           value="{{ifThen storedData.transformation_resolveAdjustment storedData.transformation_resolveAdjustment "0"}}">
-        <button type="button" class="increment" data-action="increment">+</button>
+        <button type="button" class="erps-number-input__button erps-number-input__button--increment" data-action="increment">+</button>
       </div>
     </div>
 
-    <div class="base-form__group">
-      <label class="base-form__label" for="powerAdjustment">
+    <div class="erps-form__group">
+      <label class="erps-form__label" for="powerAdjustment">
         {{localize "EVENTIDE_RP_SYSTEM.Item.Transformation.PowerAdjustment"}}:
       </label>
-      <div class="base-form__number-input-wrapper">
-        <button type="button" class="decrement" data-action="decrement">−</button>
+      <div class="erps-number-input">
+        <button type="button" class="erps-number-input__button erps-number-input__button--decrement" data-action="decrement">−</button>
         <input 
-          class="base-form__number-input"
+          class="erps-number-input__input"
           type="number" 
           id="powerAdjustment" 
           name="powerAdjustment" 
           data-dtype="Number"
           value="{{ifThen storedData.transformation_powerAdjustment storedData.transformation_powerAdjustment "0"}}">
-        <button type="button" class="increment" data-action="increment">+</button>
+        <button type="button" class="erps-number-input__button erps-number-input__button--increment" data-action="increment">+</button>
       </div>
     </div>
 
     {{#if isGM}}
-      <div class="base-form__toggle-group">
-        <label for="cursed">
+      <div class="erps-form__group erps-form__group--toggle">
+        <label class="erps-form__label" for="cursed">
           {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Cursed"}}
         </label>
-        <div class="toggle-switch-wrapper">
+        <div class="erps-toggles">
           <input 
-            class="base-form__toggle-switch" 
+            class="erps-toggles__input" 
             type="checkbox" 
             id="cursed" 
             name="cursed" 
             {{#if storedData.transformation_cursed}}checked{{/if}}>
-          <label class="toggle-switch-display" for="cursed"></label>
+          <label class="erps-toggles__label" for="cursed"></label>
         </div>
       </div>
     {{/if}}
 
-    <div class="base-form__group--stacked">
-      <h3 class="base-form__label">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.CombatPowers"}}</h3>
-      {{#if embeddedCombatPowers.length}}
-        <ol class="items-panel__list items-panel__list--three-column">
-          <li class="items-panel__list-item items-panel__header">
-            <div class="items-panel__prop items-panel__header-cell">{{localize 'Image'}}</div>
-            <div class='items-panel__name items-panel__header-cell'>{{localize 'Name'}}</div>
-            <div class='items-panel__controls items-panel__header-cell'>{{localize 'Controls'}}</div>
-          </li>
-          {{#each embeddedCombatPowers}}
-            <li
-              class="items-panel__list-item"
-              data-item-id="{{this.id}}"
-              data-drag="true"
-              data-document-class="Item"
-            >
-              <div class="items-panel__prop items-panel__list-cell">
-                <div class="items-panel__image">
+    <div class="erps-form__section">
+      <div class="erps-form__header">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.CombatPowers"}}</div>
+      <div class="erps-items-panel">
+        {{#if embeddedCombatPowers.length}}
+          <ol class="erps-items-panel__list erps-items-panel__list--three-column">
+            <li class="erps-items-panel__item erps-items-panel__item--header">
+              <div class="erps-items-panel__cell erps-items-panel__cell--image">{{localize 'Image'}}</div>
+              <div class='erps-items-panel__cell erps-items-panel__cell--name'>{{localize 'Name'}}</div>
+              <div class='erps-items-panel__cell erps-items-panel__cell--controls'>{{localize 'Controls'}}</div>
+            </li>
+            {{#each embeddedCombatPowers}}
+              <li
+                class="erps-items-panel__item"
+                data-item-id="{{this.id}}"
+                data-drag="true"
+                data-document-class="Item"
+              >
+                <div class="erps-items-panel__cell erps-items-panel__cell--image">
                   <img
+                    class="erps-items-panel__image"
                     src="{{this.img}}"
                     title="{{this.name}}"
                     width="24"
                     height="24"
                   />
                 </div>
-              </div>
-              <div class="items-panel__name items-panel__list-cell">
-                {{this.name}}
-              </div>
-              <div class="items-panel__controls items-panel__list-cell">
-                <a 
-                  class="items-panel__control" 
-                  data-action="viewCombatPower" 
-                  data-power-id="{{this.id}}" 
-                  title="{{localize 'EVENTIDE_RP_SYSTEM.UI.View'}}"
-                >
-                  <i class="fas fa-eye"></i>
-                </a>
-                <a 
-                  class="items-panel__control" 
-                  data-action="removeCombatPower" 
-                  data-power-id="{{this.id}}" 
-                  title="{{localize 'EVENTIDE_RP_SYSTEM.UI.Remove'}}"
-                >
-                  <i class="fas fa-trash"></i>
-                </a>
-              </div>
-            </li>
-          {{/each}}
-        </ol>
-      {{else}}
-        <p class="embedded-combat-powers__empty-message">{{localize "EVENTIDE_RP_SYSTEM.Item.Transformation.NoPowers"}}</p>
-      {{/if}}
-      <div class="embedded-combat-powers__drop-zone" data-drop-zone="combatPower">
-        <p>{{localize "EVENTIDE_RP_SYSTEM.Item.Transformation.DropPowerHere"}}</p>
+                <div class="erps-items-panel__cell erps-items-panel__cell--name">
+                  <span class="erps-items-panel__name">{{this.name}}</span>
+                </div>
+                <div class="erps-items-panel__cell erps-items-panel__cell--controls">
+                  <a 
+                    class="erps-items-panel__control erps-items-panel__control--view" 
+                    data-action="viewCombatPower" 
+                    data-power-id="{{this.id}}" 
+                    title="{{localize 'EVENTIDE_RP_SYSTEM.UI.View'}}"
+                  >
+                    <i class="fas fa-eye"></i>
+                  </a>
+                  <a 
+                    class="erps-items-panel__control erps-items-panel__control--delete" 
+                    data-action="removeCombatPower" 
+                    data-power-id="{{this.id}}" 
+                    title="{{localize 'EVENTIDE_RP_SYSTEM.UI.Remove'}}"
+                  >
+                    <i class="fas fa-trash"></i>
+                  </a>
+                </div>
+              </li>
+            {{/each}}
+          </ol>
+        {{else}}
+          <div class="erps-items-panel__empty">{{localize "EVENTIDE_RP_SYSTEM.Item.Transformation.NoPowers"}}</div>
+        {{/if}}
+
+        <div class="erps-items-panel__drop-zone" data-drop-zone="combatPower">
+          <p>{{localize "EVENTIDE_RP_SYSTEM.Item.Transformation.DropPowerHere"}}</p>
+        </div>
+
+        <div class="erps-items-panel__notes">{{localize "EVENTIDE_RP_SYSTEM.Item.Transformation.Notes"}}</div>
       </div>
-      <p class="notes">{{localize "EVENTIDE_RP_SYSTEM.Item.Transformation.Notes"}}</p>
     </div>
-     <div class="base-form__header">{{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Effects"}}}</div>
+
+    <div class="erps-form__header">{{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Effects"}}}</div>
     {{> character-effects}}
   </div>
 

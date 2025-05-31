@@ -31,57 +31,61 @@ class ThemeManagerInstance {
     this.appType = application.constructor.name;
     this.options = {
       // Default selectors for different theme targets
-      backgroundSelector: '.eventide-sheet',
-      tabsSelector: '.tabs',
-      nameSelector: '.document-name',
-      headerSelector: '.eventide-sheet__header',
-      dataTablesSelector: '.erps-data-table',
-      sectionHeadersSelector: '.eventide-sheet-data-section__header',
-      togglesSelector: '.erps-toggles',
-      biographySelector: '.biography-content, [data-biography-theme]',
-      inputsSelector: '.erps-input',
-      selectsSelector: '.erps-select',
-      buttonsSelector: '.erps-button',
-      numberInputsSelector: '.erps-number-input__input',
-      numberButtonsSelector: '.erps-number-input__button',
-      colorPickersSelector: '.erps-color-picker, .color-picker-with-hex',
-      textareasSelector: '.erps-textarea',
-      itemsPanelsSelector: '.erps-items-panel',
+      backgroundSelector: ".eventide-sheet",
+      tabsSelector: ".tabs",
+      nameSelector: ".document-name",
+      headerSelector: ".eventide-sheet__header",
+      dataTablesSelector: ".erps-data-table",
+      sectionHeadersSelector: ".eventide-sheet-data-section__header",
+      togglesSelector: ".erps-toggles",
+      biographySelector: ".biography-content, [data-biography-theme]",
+      inputsSelector: ".erps-input",
+      selectsSelector: ".erps-select",
+      buttonsSelector: ".erps-button",
+      numberInputsSelector: ".erps-number-input__input",
+      numberButtonsSelector: ".erps-number-input__button",
+      colorPickersSelector: ".erps-color-picker, .color-picker-with-hex",
+      textareasSelector: ".erps-textarea",
+      itemsPanelsSelector: ".erps-items-panel",
       // Custom theme attributes
-      backgroundAttribute: 'data-bg-theme',
-      tabAttribute: 'data-tab-theme',
-      nameAttribute: 'data-name-theme',
-      headerAttribute: 'data-header-theme',
-      tableAttribute: 'data-table-theme',
-      sectionAttribute: 'data-section-theme',
-      toggleAttribute: 'data-toggle-theme',
-      biographyAttribute: 'data-biography-theme',
-      inputAttribute: 'data-input-theme',
-      selectAttribute: 'data-select-theme',
-      buttonAttribute: 'data-button-theme',
-      numberInputAttribute: 'data-input-theme',
-      numberButtonAttribute: 'data-button-theme',
-      colorPickerAttribute: 'data-color-theme',
-      textareaAttribute: 'data-textarea-theme',
-      itemsPanelAttribute: 'data-items-theme',
+      backgroundAttribute: "data-bg-theme",
+      tabAttribute: "data-tab-theme",
+      nameAttribute: "data-name-theme",
+      headerAttribute: "data-header-theme",
+      tableAttribute: "data-table-theme",
+      sectionAttribute: "data-section-theme",
+      toggleAttribute: "data-toggle-theme",
+      biographyAttribute: "data-biography-theme",
+      inputAttribute: "data-input-theme",
+      selectAttribute: "data-select-theme",
+      buttonAttribute: "data-button-theme",
+      numberInputAttribute: "data-input-theme",
+      numberButtonAttribute: "data-button-theme",
+      colorPickerAttribute: "data-color-theme",
+      textareaAttribute: "data-textarea-theme",
+      itemsPanelAttribute: "data-items-theme",
       // Whether to auto-apply themes on render
       autoApply: true,
       // Whether to verify theme application
       verify: true,
       // Whether to show notifications for theme changes
       showNotifications: false,
-      ...options
+      ...options,
     };
 
     this.hookId = null;
     this.domEventHandler = null;
     this.isSetup = false;
 
-    Logger.debug("Theme manager instance created", {
-      appId: this.appId,
-      appType: this.appType,
-      options: this.options
-    }, "THEME_MANAGER");
+    Logger.debug(
+      "Theme manager instance created",
+      {
+        appId: this.appId,
+        appType: this.appType,
+        options: this.options,
+      },
+      "THEME_MANAGER",
+    );
   }
 
   /**
@@ -89,10 +93,14 @@ class ThemeManagerInstance {
    */
   initialize() {
     if (this.isSetup) {
-      Logger.debug("Theme manager already initialized", {
-        appId: this.appId,
-        appType: this.appType
-      }, "THEME_MANAGER");
+      Logger.debug(
+        "Theme manager already initialized",
+        {
+          appId: this.appId,
+          appType: this.appType,
+        },
+        "THEME_MANAGER",
+      );
       return;
     }
 
@@ -109,11 +117,15 @@ class ThemeManagerInstance {
     this.isSetup = true;
     activeInstances.set(this.appId, this);
 
-    Logger.debug("Theme manager initialized", {
-      appId: this.appId,
-      appType: this.appType,
-      activeInstancesCount: activeInstances.size
-    }, "THEME_MANAGER");
+    Logger.debug(
+      "Theme manager initialized",
+      {
+        appId: this.appId,
+        appType: this.appType,
+        activeInstancesCount: activeInstances.size,
+      },
+      "THEME_MANAGER",
+    );
   }
 
   /**
@@ -121,10 +133,14 @@ class ThemeManagerInstance {
    */
   applyThemes() {
     if (!this.element) {
-      Logger.warn("No element available for theme application", {
-        appId: this.appId,
-        appType: this.appType
-      }, "THEME_MANAGER");
+      Logger.warn(
+        "No element available for theme application",
+        {
+          appId: this.appId,
+          appType: this.appType,
+        },
+        "THEME_MANAGER",
+      );
       return;
     }
 
@@ -135,7 +151,7 @@ class ThemeManagerInstance {
       this.options.backgroundSelector,
       this.options.backgroundAttribute,
       currentTheme,
-      'background'
+      "background",
     );
 
     // Apply tab theme
@@ -143,7 +159,7 @@ class ThemeManagerInstance {
       this.options.tabsSelector,
       this.options.tabAttribute,
       currentTheme,
-      'tab'
+      "tab",
     );
 
     // Apply name theme
@@ -151,7 +167,7 @@ class ThemeManagerInstance {
       this.options.nameSelector,
       this.options.nameAttribute,
       currentTheme,
-      'name'
+      "name",
     );
 
     // Apply header theme
@@ -159,7 +175,7 @@ class ThemeManagerInstance {
       this.options.headerSelector,
       this.options.headerAttribute,
       currentTheme,
-      'header'
+      "header",
     );
 
     // Apply data table themes
@@ -167,7 +183,7 @@ class ThemeManagerInstance {
       this.options.dataTablesSelector,
       this.options.tableAttribute,
       currentTheme,
-      'table'
+      "table",
     );
 
     // Apply section header themes
@@ -175,7 +191,7 @@ class ThemeManagerInstance {
       this.options.sectionHeadersSelector,
       this.options.sectionAttribute,
       currentTheme,
-      'section'
+      "section",
     );
 
     // Apply toggle themes
@@ -183,7 +199,7 @@ class ThemeManagerInstance {
       this.options.togglesSelector,
       this.options.toggleAttribute,
       currentTheme,
-      'toggle'
+      "toggle",
     );
 
     // Apply biography themes
@@ -191,7 +207,7 @@ class ThemeManagerInstance {
       this.options.biographySelector,
       this.options.biographyAttribute,
       currentTheme,
-      'biography'
+      "biography",
     );
 
     // Apply input themes
@@ -199,7 +215,7 @@ class ThemeManagerInstance {
       this.options.inputsSelector,
       this.options.inputAttribute,
       currentTheme,
-      'input'
+      "input",
     );
 
     // Apply select themes
@@ -207,7 +223,7 @@ class ThemeManagerInstance {
       this.options.selectsSelector,
       this.options.selectAttribute,
       currentTheme,
-      'select'
+      "select",
     );
 
     // Apply button themes
@@ -215,7 +231,7 @@ class ThemeManagerInstance {
       this.options.buttonsSelector,
       this.options.buttonAttribute,
       currentTheme,
-      'button'
+      "button",
     );
 
     // Apply number input themes
@@ -223,7 +239,7 @@ class ThemeManagerInstance {
       this.options.numberInputsSelector,
       this.options.numberInputAttribute,
       currentTheme,
-      'number-input'
+      "number-input",
     );
 
     // Apply number button themes
@@ -231,7 +247,7 @@ class ThemeManagerInstance {
       this.options.numberButtonsSelector,
       this.options.numberButtonAttribute,
       currentTheme,
-      'number-button'
+      "number-button",
     );
 
     // Apply color picker themes
@@ -239,7 +255,7 @@ class ThemeManagerInstance {
       this.options.colorPickersSelector,
       this.options.colorPickerAttribute,
       currentTheme,
-      'color-picker'
+      "color-picker",
     );
 
     // Apply textarea themes
@@ -247,7 +263,7 @@ class ThemeManagerInstance {
       this.options.textareasSelector,
       this.options.textareaAttribute,
       currentTheme,
-      'textarea'
+      "textarea",
     );
 
     // Apply items panel themes
@@ -255,14 +271,18 @@ class ThemeManagerInstance {
       this.options.itemsPanelsSelector,
       this.options.itemsPanelAttribute,
       currentTheme,
-      'items-panel'
+      "items-panel",
     );
 
-    Logger.debug("Themes applied", {
-      appId: this.appId,
-      appType: this.appType,
-      theme: currentTheme
-    }, "THEME_MANAGER");
+    Logger.debug(
+      "Themes applied",
+      {
+        appId: this.appId,
+        appType: this.appType,
+        theme: currentTheme,
+      },
+      "THEME_MANAGER",
+    );
   }
 
   /**
@@ -273,18 +293,38 @@ class ThemeManagerInstance {
    * @param {string} type - Type of theme for logging
    */
   applyThemeToSelector(selector, attribute, theme, type) {
+    // Skip empty selectors
+    if (!selector || selector.trim() === "") {
+      Logger.debug(
+        `Skipping ${type} theme - empty selector`,
+        {
+          appId: this.appId,
+          selector,
+          attribute,
+        },
+        "THEME_MANAGER",
+      );
+      return;
+    }
+
     const elements = this.element.querySelectorAll(selector);
 
     // Also check if the root element matches the selector
     const rootMatches = this.element.matches && this.element.matches(selector);
-    const allElements = rootMatches ? [this.element, ...elements] : [...elements];
+    const allElements = rootMatches
+      ? [this.element, ...elements]
+      : [...elements];
 
     if (allElements.length === 0) {
-      Logger.debug(`No elements found for ${type} theme`, {
-        appId: this.appId,
-        selector,
-        attribute
-      }, "THEME_MANAGER");
+      Logger.debug(
+        `No elements found for ${type} theme`,
+        {
+          appId: this.appId,
+          selector,
+          attribute,
+        },
+        "THEME_MANAGER",
+      );
       return;
     }
 
@@ -297,22 +337,30 @@ class ThemeManagerInstance {
         element.setAttribute(attribute, theme);
         updatedCount++;
 
-        Logger.debug(`${type} theme applied`, {
-          appId: this.appId,
-          elementIndex: index,
-          previousTheme: currentValue,
-          newTheme: theme,
-          attribute
-        }, "THEME_MANAGER");
+        Logger.debug(
+          `${type} theme applied`,
+          {
+            appId: this.appId,
+            elementIndex: index,
+            previousTheme: currentValue,
+            newTheme: theme,
+            attribute,
+          },
+          "THEME_MANAGER",
+        );
       }
     });
 
     if (updatedCount > 0) {
-      Logger.debug(`Updated ${updatedCount} ${type} theme elements`, {
-        appId: this.appId,
-        totalElements: allElements.length,
-        theme
-      }, "THEME_MANAGER");
+      Logger.debug(
+        `Updated ${updatedCount} ${type} theme elements`,
+        {
+          appId: this.appId,
+          totalElements: allElements.length,
+          theme,
+        },
+        "THEME_MANAGER",
+      );
     }
   }
 
@@ -324,22 +372,86 @@ class ThemeManagerInstance {
 
     const currentTheme = CommonFoundryTasks.retrieveSheetTheme();
     const verificationResults = {
-      background: this.verifyThemeOnSelector(this.options.backgroundSelector, this.options.backgroundAttribute, currentTheme),
-      tabs: this.verifyThemeOnSelector(this.options.tabsSelector, this.options.tabAttribute, currentTheme),
-      name: this.verifyThemeOnSelector(this.options.nameSelector, this.options.nameAttribute, currentTheme),
-      header: this.verifyThemeOnSelector(this.options.headerSelector, this.options.headerAttribute, currentTheme),
-      dataTables: this.verifyThemeOnSelector(this.options.dataTablesSelector, this.options.tableAttribute, currentTheme),
-      sectionHeaders: this.verifyThemeOnSelector(this.options.sectionHeadersSelector, this.options.sectionAttribute, currentTheme),
-      toggles: this.verifyThemeOnSelector(this.options.togglesSelector, this.options.toggleAttribute, currentTheme),
-      biography: this.verifyThemeOnSelector(this.options.biographySelector, this.options.biographyAttribute, currentTheme),
-      inputs: this.verifyThemeOnSelector(this.options.inputsSelector, this.options.inputAttribute, currentTheme),
-      selects: this.verifyThemeOnSelector(this.options.selectsSelector, this.options.selectAttribute, currentTheme),
-      buttons: this.verifyThemeOnSelector(this.options.buttonsSelector, this.options.buttonAttribute, currentTheme),
-      numberInputs: this.verifyThemeOnSelector(this.options.numberInputsSelector, this.options.numberInputAttribute, currentTheme),
-      numberButtons: this.verifyThemeOnSelector(this.options.numberButtonsSelector, this.options.numberButtonAttribute, currentTheme),
-      colorPickers: this.verifyThemeOnSelector(this.options.colorPickersSelector, this.options.colorPickerAttribute, currentTheme),
-      textareas: this.verifyThemeOnSelector(this.options.textareasSelector, this.options.textareaAttribute, currentTheme),
-      itemsPanels: this.verifyThemeOnSelector(this.options.itemsPanelsSelector, this.options.itemsPanelAttribute, currentTheme)
+      background: this.verifyThemeOnSelector(
+        this.options.backgroundSelector,
+        this.options.backgroundAttribute,
+        currentTheme,
+      ),
+      tabs: this.verifyThemeOnSelector(
+        this.options.tabsSelector,
+        this.options.tabAttribute,
+        currentTheme,
+      ),
+      name: this.verifyThemeOnSelector(
+        this.options.nameSelector,
+        this.options.nameAttribute,
+        currentTheme,
+      ),
+      header: this.verifyThemeOnSelector(
+        this.options.headerSelector,
+        this.options.headerAttribute,
+        currentTheme,
+      ),
+      dataTables: this.verifyThemeOnSelector(
+        this.options.dataTablesSelector,
+        this.options.tableAttribute,
+        currentTheme,
+      ),
+      sectionHeaders: this.verifyThemeOnSelector(
+        this.options.sectionHeadersSelector,
+        this.options.sectionAttribute,
+        currentTheme,
+      ),
+      toggles: this.verifyThemeOnSelector(
+        this.options.togglesSelector,
+        this.options.toggleAttribute,
+        currentTheme,
+      ),
+      biography: this.verifyThemeOnSelector(
+        this.options.biographySelector,
+        this.options.biographyAttribute,
+        currentTheme,
+      ),
+      inputs: this.verifyThemeOnSelector(
+        this.options.inputsSelector,
+        this.options.inputAttribute,
+        currentTheme,
+      ),
+      selects: this.verifyThemeOnSelector(
+        this.options.selectsSelector,
+        this.options.selectAttribute,
+        currentTheme,
+      ),
+      buttons: this.verifyThemeOnSelector(
+        this.options.buttonsSelector,
+        this.options.buttonAttribute,
+        currentTheme,
+      ),
+      numberInputs: this.verifyThemeOnSelector(
+        this.options.numberInputsSelector,
+        this.options.numberInputAttribute,
+        currentTheme,
+      ),
+      numberButtons: this.verifyThemeOnSelector(
+        this.options.numberButtonsSelector,
+        this.options.numberButtonAttribute,
+        currentTheme,
+      ),
+      colorPickers: this.verifyThemeOnSelector(
+        this.options.colorPickersSelector,
+        this.options.colorPickerAttribute,
+        currentTheme,
+      ),
+      textareas: this.verifyThemeOnSelector(
+        this.options.textareasSelector,
+        this.options.textareaAttribute,
+        currentTheme,
+      ),
+      itemsPanels: this.verifyThemeOnSelector(
+        this.options.itemsPanelsSelector,
+        this.options.itemsPanelAttribute,
+        currentTheme,
+      ),
     };
 
     const mismatches = Object.entries(verificationResults)
@@ -347,19 +459,27 @@ class ThemeManagerInstance {
       .map(([type, result]) => ({ type, ...result }));
 
     if (mismatches.length > 0) {
-      Logger.warn("Theme verification found mismatches", {
-        appId: this.appId,
-        appType: this.appType,
-        expectedTheme: currentTheme,
-        mismatches
-      }, "THEME_MANAGER");
+      Logger.warn(
+        "Theme verification found mismatches",
+        {
+          appId: this.appId,
+          appType: this.appType,
+          expectedTheme: currentTheme,
+          mismatches,
+        },
+        "THEME_MANAGER",
+      );
     } else {
-      Logger.debug("Theme verification passed", {
-        appId: this.appId,
-        appType: this.appType,
-        theme: currentTheme,
-        verificationResults
-      }, "THEME_MANAGER");
+      Logger.debug(
+        "Theme verification passed",
+        {
+          appId: this.appId,
+          appType: this.appType,
+          theme: currentTheme,
+          verificationResults,
+        },
+        "THEME_MANAGER",
+      );
     }
   }
 
@@ -371,9 +491,20 @@ class ThemeManagerInstance {
    * @returns {Object} Verification results
    */
   verifyThemeOnSelector(selector, attribute, expectedTheme) {
+    // Skip empty selectors
+    if (!selector || selector.trim() === "") {
+      return {
+        totalElements: 0,
+        mismatches: 0,
+        details: [],
+      };
+    }
+
     const elements = this.element.querySelectorAll(selector);
     const rootMatches = this.element.matches && this.element.matches(selector);
-    const allElements = rootMatches ? [this.element, ...elements] : [...elements];
+    const allElements = rootMatches
+      ? [this.element, ...elements]
+      : [...elements];
 
     let mismatches = 0;
     const details = [];
@@ -387,7 +518,7 @@ class ThemeManagerInstance {
           expected: expectedTheme,
           actual: actualTheme,
           selector,
-          attribute
+          attribute,
         });
       }
     });
@@ -395,7 +526,7 @@ class ThemeManagerInstance {
     return {
       totalElements: allElements.length,
       mismatches,
-      details
+      details,
     };
   }
 
@@ -404,44 +535,60 @@ class ThemeManagerInstance {
    */
   setupChangeListeners() {
     if (this.hookId || this.domEventHandler) {
-      Logger.debug("Theme change listeners already set up", {
-        appId: this.appId,
-        appType: this.appType
-      }, "THEME_MANAGER");
+      Logger.debug(
+        "Theme change listeners already set up",
+        {
+          appId: this.appId,
+          appType: this.appType,
+        },
+        "THEME_MANAGER",
+      );
       return;
     }
 
     // Hook listener for theme changes
     this.hookId = Hooks.on("eventide-rp-system.themeChanged", (data) => {
-      Logger.debug("Theme change hook received", {
-        appId: this.appId,
-        appType: this.appType,
-        newTheme: data.newTheme,
-        userId: data.userId
-      }, "THEME_MANAGER");
+      Logger.debug(
+        "Theme change hook received",
+        {
+          appId: this.appId,
+          appType: this.appType,
+          newTheme: data.newTheme,
+          userId: data.userId,
+        },
+        "THEME_MANAGER",
+      );
 
       this.handleThemeChange(data.newTheme);
     });
 
     // DOM event listener for theme changes
     this.domEventHandler = (event) => {
-      Logger.debug("Theme change DOM event received", {
-        appId: this.appId,
-        appType: this.appType,
-        newTheme: event.detail.newTheme,
-        userId: event.detail.userId
-      }, "THEME_MANAGER");
+      Logger.debug(
+        "Theme change DOM event received",
+        {
+          appId: this.appId,
+          appType: this.appType,
+          newTheme: event.detail.newTheme,
+          userId: event.detail.userId,
+        },
+        "THEME_MANAGER",
+      );
 
       this.handleThemeChange(event.detail.newTheme);
     };
 
     document.addEventListener("eventide-theme-change", this.domEventHandler);
 
-    Logger.debug("Theme change listeners set up", {
-      appId: this.appId,
-      appType: this.appType,
-      hookId: this.hookId
-    }, "THEME_MANAGER");
+    Logger.debug(
+      "Theme change listeners set up",
+      {
+        appId: this.appId,
+        appType: this.appType,
+        hookId: this.hookId,
+      },
+      "THEME_MANAGER",
+    );
   }
 
   /**
@@ -453,21 +600,29 @@ class ThemeManagerInstance {
     this.applyThemes();
 
     // Trigger application re-render if available
-    if (this.application && typeof this.application.render === 'function') {
+    if (this.application && typeof this.application.render === "function") {
       setTimeout(() => {
         try {
           this.application.render(false);
-          Logger.debug("Application re-rendered for theme change", {
-            appId: this.appId,
-            appType: this.appType,
-            newTheme
-          }, "THEME_MANAGER");
+          Logger.debug(
+            "Application re-rendered for theme change",
+            {
+              appId: this.appId,
+              appType: this.appType,
+              newTheme,
+            },
+            "THEME_MANAGER",
+          );
         } catch (error) {
-          Logger.warn("Failed to re-render application for theme change", {
-            appId: this.appId,
-            appType: this.appType,
-            error: error.message
-          }, "THEME_MANAGER");
+          Logger.warn(
+            "Failed to re-render application for theme change",
+            {
+              appId: this.appId,
+              appType: this.appType,
+              error: error.message,
+            },
+            "THEME_MANAGER",
+          );
         }
       }, 50);
     }
@@ -480,14 +635,14 @@ class ThemeManagerInstance {
         green: "Dawn",
         light: "Noon",
         gold: "Twilight",
-        purple: "Dusk"
+        purple: "Dusk",
       };
 
       ui.notifications.info(
         game.i18n.format("EVENTIDE_RP_SYSTEM.Info.SheetThemeChanged", {
           userName: game.user.name,
-          themeName: themeNames[newTheme] || newTheme
-        })
+          themeName: themeNames[newTheme] || newTheme,
+        }),
       );
     }
   }
@@ -504,7 +659,10 @@ class ThemeManagerInstance {
 
     // Remove DOM event listener
     if (this.domEventHandler) {
-      document.removeEventListener("eventide-theme-change", this.domEventHandler);
+      document.removeEventListener(
+        "eventide-theme-change",
+        this.domEventHandler,
+      );
       this.domEventHandler = null;
     }
 
@@ -512,11 +670,15 @@ class ThemeManagerInstance {
     activeInstances.delete(this.appId);
     this.isSetup = false;
 
-    Logger.debug("Theme manager cleaned up", {
-      appId: this.appId,
-      appType: this.appType,
-      remainingInstances: activeInstances.size
-    }, "THEME_MANAGER");
+    Logger.debug(
+      "Theme manager cleaned up",
+      {
+        appId: this.appId,
+        appType: this.appType,
+        remainingInstances: activeInstances.size,
+      },
+      "THEME_MANAGER",
+    );
   }
 }
 
@@ -528,20 +690,28 @@ class ThemeManagerInstance {
  */
 export const initThemeManager = (application, options = {}) => {
   if (!application || !application.element) {
-    Logger.warn("Invalid application provided to theme manager", {
-      application: !!application,
-      element: !!application?.element
-    }, "THEME_MANAGER");
+    Logger.warn(
+      "Invalid application provided to theme manager",
+      {
+        application: !!application,
+        element: !!application?.element,
+      },
+      "THEME_MANAGER",
+    );
     return null;
   }
 
   // Check if already initialized
   const existingInstance = activeInstances.get(application.id);
   if (existingInstance) {
-    Logger.debug("Theme manager already exists for application", {
-      appId: application.id,
-      appType: application.constructor.name
-    }, "THEME_MANAGER");
+    Logger.debug(
+      "Theme manager already exists for application",
+      {
+        appId: application.id,
+        appType: application.constructor.name,
+      },
+      "THEME_MANAGER",
+    );
     return existingInstance;
   }
 
@@ -556,12 +726,17 @@ export const initThemeManager = (application, options = {}) => {
  * @param {Application|string} applicationOrId - The application instance or ID
  */
 export const cleanupThemeManager = (applicationOrId) => {
-  const appId = typeof applicationOrId === 'string' ? applicationOrId : applicationOrId?.id;
+  const appId =
+    typeof applicationOrId === "string" ? applicationOrId : applicationOrId?.id;
 
   if (!appId) {
-    Logger.warn("No application ID provided for theme manager cleanup", {
-      applicationOrId
-    }, "THEME_MANAGER");
+    Logger.warn(
+      "No application ID provided for theme manager cleanup",
+      {
+        applicationOrId,
+      },
+      "THEME_MANAGER",
+    );
     return;
   }
 
@@ -569,9 +744,13 @@ export const cleanupThemeManager = (applicationOrId) => {
   if (instance) {
     instance.cleanup();
   } else {
-    Logger.debug("No theme manager instance found for cleanup", {
-      appId
-    }, "THEME_MANAGER");
+    Logger.debug(
+      "No theme manager instance found for cleanup",
+      {
+        appId,
+      },
+      "THEME_MANAGER",
+    );
   }
 };
 
@@ -579,19 +758,27 @@ export const cleanupThemeManager = (applicationOrId) => {
  * Apply themes to all active instances
  */
 export const applyThemesToAll = () => {
-  Logger.debug("Applying themes to all active instances", {
-    instanceCount: activeInstances.size
-  }, "THEME_MANAGER");
+  Logger.debug(
+    "Applying themes to all active instances",
+    {
+      instanceCount: activeInstances.size,
+    },
+    "THEME_MANAGER",
+  );
 
   for (const instance of activeInstances.values()) {
     try {
       instance.applyThemes();
     } catch (error) {
-      Logger.warn("Failed to apply themes to instance", {
-        appId: instance.appId,
-        appType: instance.appType,
-        error: error.message
-      }, "THEME_MANAGER");
+      Logger.warn(
+        "Failed to apply themes to instance",
+        {
+          appId: instance.appId,
+          appType: instance.appType,
+          error: error.message,
+        },
+        "THEME_MANAGER",
+      );
     }
   }
 };
@@ -602,7 +789,8 @@ export const applyThemesToAll = () => {
  * @returns {ThemeManagerInstance|null} The theme manager instance or null if not found
  */
 export const getThemeManager = (applicationOrId) => {
-  const appId = typeof applicationOrId === 'string' ? applicationOrId : applicationOrId?.id;
+  const appId =
+    typeof applicationOrId === "string" ? applicationOrId : applicationOrId?.id;
   return activeInstances.get(appId) || null;
 };
 
@@ -621,9 +809,13 @@ export const getAllThemeManagers = () => {
 export const addGlobalThemeListener = (listener) => {
   globalListeners.add(listener);
 
-  Logger.debug("Global theme listener added", {
-    listenerCount: globalListeners.size
-  }, "THEME_MANAGER");
+  Logger.debug(
+    "Global theme listener added",
+    {
+      listenerCount: globalListeners.size,
+    },
+    "THEME_MANAGER",
+  );
 };
 
 /**
@@ -633,9 +825,13 @@ export const addGlobalThemeListener = (listener) => {
 export const removeGlobalThemeListener = (listener) => {
   globalListeners.delete(listener);
 
-  Logger.debug("Global theme listener removed", {
-    listenerCount: globalListeners.size
-  }, "THEME_MANAGER");
+  Logger.debug(
+    "Global theme listener removed",
+    {
+      listenerCount: globalListeners.size,
+    },
+    "THEME_MANAGER",
+  );
 };
 
 /**
@@ -658,18 +854,26 @@ export const triggerGlobalThemeChange = (newTheme, userId = game.user.id) => {
     try {
       listener(data);
     } catch (error) {
-      Logger.warn("Global theme listener error", {
-        error: error.message
-      }, "THEME_MANAGER");
+      Logger.warn(
+        "Global theme listener error",
+        {
+          error: error.message,
+        },
+        "THEME_MANAGER",
+      );
     }
   }
 
-  Logger.info("Global theme change triggered", {
-    newTheme,
-    userId,
-    activeInstances: activeInstances.size,
-    globalListeners: globalListeners.size
-  }, "THEME_MANAGER");
+  Logger.info(
+    "Global theme change triggered",
+    {
+      newTheme,
+      userId,
+      activeInstances: activeInstances.size,
+      globalListeners: globalListeners.size,
+    },
+    "THEME_MANAGER",
+  );
 };
 
 /**
@@ -677,66 +881,89 @@ export const triggerGlobalThemeChange = (newTheme, userId = game.user.id) => {
  */
 export const THEME_PRESETS = {
   CHARACTER_SHEET: {
-    backgroundSelector: '.eventide-sheet',
-    tabsSelector: '.tabs',
-    nameSelector: '.document-name',
-    headerSelector: '.eventide-sheet__header',
-    dataTablesSelector: '.erps-data-table',
-    sectionHeadersSelector: '.eventide-sheet-data-section__header',
-    togglesSelector: '.erps-toggles',
-    biographySelector: '.biography-content, [data-biography-theme]',
-    inputsSelector: '.erps-input',
-    selectsSelector: '.erps-select',
-    buttonsSelector: '.erps-button',
-    numberInputsSelector: '.erps-number-input__input',
-    numberButtonsSelector: '.erps-number-input__button',
-    colorPickersSelector: '.erps-color-picker, .color-picker-with-hex',
-    textareasSelector: '.erps-textarea',
-    itemsPanelsSelector: '.erps-items-panel',
+    backgroundSelector: ".eventide-sheet",
+    tabsSelector: ".tabs",
+    nameSelector: ".document-name",
+    headerSelector: ".eventide-sheet__header",
+    dataTablesSelector: ".erps-data-table",
+    sectionHeadersSelector: ".eventide-sheet-data-section__header",
+    togglesSelector: ".erps-toggles",
+    biographySelector: ".biography-content, [data-biography-theme]",
+    inputsSelector: ".erps-input",
+    selectsSelector: ".erps-select",
+    buttonsSelector: ".erps-button",
+    numberInputsSelector: ".erps-number-input__input",
+    numberButtonsSelector: ".erps-number-input__button",
+    colorPickersSelector: ".erps-color-picker, .color-picker-with-hex",
+    textareasSelector: ".erps-textarea",
+    itemsPanelsSelector: ".erps-items-panel",
     autoApply: true,
     verify: true,
-    showNotifications: false
+    showNotifications: false,
   },
 
   ITEM_SHEET: {
-    backgroundSelector: '.eventide-sheet',
-    tabsSelector: '.tabs .item',
-    nameSelector: '.document-name input',
-    headerSelector: '.eventide-sheet__header',
-    dataTablesSelector: '.erps-data-table, .erps-item-effects__grid',
-    sectionHeadersSelector: '.erps-item-effects__section-header',
-    togglesSelector: '.erps-toggles',
-    biographySelector: '.biography-content',
-    inputsSelector: '.erps-input',
-    selectsSelector: '.erps-select',
-    buttonsSelector: '.erps-button',
-    numberInputsSelector: '.erps-number-input__input',
-    numberButtonsSelector: '.erps-number-input__button',
-    colorPickersSelector: '.erps-color-picker, .color-picker-with-hex',
-    textareasSelector: '.erps-textarea',
-    itemsPanelsSelector: '.erps-items-panel',
+    backgroundSelector: ".eventide-sheet",
+    tabsSelector: ".tabs .item",
+    nameSelector: ".document-name input",
+    headerSelector: ".eventide-sheet__header",
+    dataTablesSelector: ".erps-data-table, .erps-item-effects__grid",
+    sectionHeadersSelector: ".erps-item-effects__section-header",
+    togglesSelector: ".erps-toggles",
+    biographySelector: ".biography-content",
+    inputsSelector: ".erps-input",
+    selectsSelector: ".erps-select",
+    buttonsSelector: ".erps-button",
+    numberInputsSelector: ".erps-number-input__input",
+    numberButtonsSelector: ".erps-number-input__button",
+    colorPickersSelector: ".erps-color-picker, .color-picker-with-hex",
+    textareasSelector: ".erps-textarea",
+    itemsPanelsSelector: ".erps-items-panel",
     autoApply: true,
     verify: true,
-    showNotifications: false
+    showNotifications: false,
+  },
+
+  CREATOR_APPLICATION: {
+    backgroundSelector: ".eventide-sheet",
+    tabsSelector: "",
+    nameSelector: '.erps-input[name="name"]',
+    headerSelector: ".erps-form__header",
+    dataTablesSelector: ".erps-data-table",
+    sectionHeadersSelector: ".erps-form__header",
+    togglesSelector: ".erps-toggles",
+    biographySelector: '.erps-textarea[name="description"]',
+    inputsSelector: ".erps-input",
+    selectsSelector: ".erps-select",
+    buttonsSelector: ".erps-button",
+    numberInputsSelector: ".erps-number-input__input",
+    numberButtonsSelector: ".erps-number-input__button",
+    colorPickersSelector: ".erps-color-picker, .color-picker-with-hex",
+    textareasSelector: ".erps-textarea",
+    itemsPanelsSelector: ".erps-items-panel",
+    footerSelector: ".erps-form__footer",
+    autoApply: true,
+    verify: true,
+    showNotifications: false,
   },
 
   MINIMAL: {
-    backgroundSelector: '',
-    tabsSelector: '',
-    nameSelector: '',
-    headerSelector: '',
-    dataTablesSelector: '',
-    sectionHeadersSelector: '',
-    inputsSelector: '',
-    selectsSelector: '',
-    buttonsSelector: '',
-    numberInputsSelector: '',
-    numberButtonsSelector: '',
-    colorPickersSelector: '',
-    textareasSelector: '',
-    itemsPanelsSelector: '',
+    backgroundSelector: "",
+    tabsSelector: "",
+    nameSelector: "",
+    headerSelector: "",
+    dataTablesSelector: "",
+    sectionHeadersSelector: "",
+    inputsSelector: "",
+    selectsSelector: "",
+    buttonsSelector: "",
+    numberInputsSelector: "",
+    numberButtonsSelector: "",
+    colorPickersSelector: "",
+    textareasSelector: "",
+    itemsPanelsSelector: "",
     autoApply: false,
     verify: false,
-    showNotifications: false
-  }
+    showNotifications: false,
+  },
 };

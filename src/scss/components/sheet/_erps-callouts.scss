@@ -1,0 +1,292 @@
+@use "../../utils/themes" as themes;
+@use "../../utils/sheet-tokens" as tokens;
+
+// ===================================
+// ERPS CALLOUTS COMPONENT
+// ===================================
+// Fixed-color callout/notification boxes for the Eventide RP System
+// Includes information and warning callouts with sticky positioning
+// Uses fixed colors (not theme-aware) for consistent visibility
+
+// ===================================
+// CONFIGURATION VARIABLES
+// ===================================
+
+// Callout sizing
+$callout-padding: tokens.$sheet-spacing-md tokens.$sheet-spacing-lg;
+$callout-border-radius: tokens.$sheet-radius-md;
+$callout-border-width: tokens.$sheet-border-base;
+$callout-margin-bottom: tokens.$sheet-spacing-md;
+
+// Typography
+$callout-font-size: tokens.$sheet-font-size-value-md;
+$callout-font-weight: tokens.$sheet-font-weight-medium;
+$callout-line-height: tokens.$sheet-line-height-base;
+
+// Icon sizing
+$callout-icon-size: 1.25rem;
+$callout-icon-margin: tokens.$sheet-spacing-sm;
+
+// Positioning
+$callout-z-index: 10;
+$callout-top-offset: 0;
+
+// Transitions
+$callout-transition: all tokens.$sheet-transition-medium ease;
+
+// ===================================
+// CALLOUTS CONTAINER
+// ===================================
+
+.erps-callouts {
+  position: sticky;
+  top: $callout-top-offset;
+  z-index: $callout-z-index;
+  margin-bottom: $callout-margin-bottom;
+  display: flex;
+  flex-direction: column;
+  gap: tokens.$sheet-spacing-sm;
+
+  // Empty state - hide container when no callouts
+  &:empty {
+    display: none;
+  }
+}
+
+// ===================================
+// INDIVIDUAL CALLOUT
+// ===================================
+
+.erps-callout {
+  display: flex;
+  align-items: flex-start;
+  gap: $callout-icon-margin;
+  padding: $callout-padding;
+  border: $callout-border-width dashed;
+  border-radius: $callout-border-radius;
+  font-family: var(--erps-ui-font, sans-serif);
+  font-size: $callout-font-size;
+  font-weight: $callout-font-weight;
+  line-height: $callout-line-height;
+  transition: $callout-transition;
+  position: relative;
+  overflow: hidden;
+
+  // Icon styling
+  .fas,
+  .far,
+  .fab {
+    font-size: $callout-icon-size;
+    flex-shrink: 0;
+    margin-top: 0.125rem; // Slight vertical alignment adjustment
+  }
+
+  // Text content
+  &__content {
+    flex: 1;
+    
+    // Handle multiple paragraphs
+    p {
+      margin: 0;
+      
+      &:not(:last-child) {
+        margin-bottom: tokens.$sheet-spacing-xs;
+      }
+    }
+  }
+
+  // Subtle background pattern
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0.1;
+    background-size: 12px 12px;
+    pointer-events: none;
+  }
+
+  // Ensure content is above pattern
+  & > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  // ===================================
+  // CALLOUT VARIANTS
+  // ===================================
+
+  // Information callout (always dark glowing blue with white text)
+  &--information {
+    background: #1e3a8a; // Dark blue background
+    border-color: #3b82f6; // Bright blue border
+    color: #fff; // White text
+    box-shadow: 0 0 15px rgb(59 130 246 / 40%); // Blue glow
+
+    .fas,
+    .far,
+    .fab {
+      color: #60a5fa; // Light blue icon
+    }
+
+    &::before {
+      background-image: url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 12 12' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%233b82f6' fill-opacity='0.3'%3E%3Ccircle cx='6' cy='6' r='1'/%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    &:hover {
+      background: #1e40af !important; // Slightly lighter blue on hover
+      border-color: #60a5fa;
+      box-shadow: 0 0 20px rgb(59 130 246 / 60%); // Stronger glow on hover
+    }
+  }
+
+  // Warning callout (always glowing warning yellow with white text)
+  &--warning {
+    background: #b45309; // Dark amber/orange background
+    border-color: #f59e0b; // Bright amber border
+    color: #fff; // White text
+    box-shadow: 0 0 15px rgb(245 158 11 / 40%); // Amber glow
+
+    .fas,
+    .far,
+    .fab {
+      color: #fbbf24; // Light amber icon
+    }
+
+    &::before {
+      background-image: url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 12 12' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23f59e0b' fill-opacity='0.3'%3E%3Cpath d='M6 2l1 1-1 1-1-1z'/%3E%3Cpath d='M6 10l1-1-1-1-1 1z'/%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    &:hover {
+      background: #d97706; // Slightly lighter amber on hover
+      border-color: #fbbf24;
+      box-shadow: 0 0 20px rgb(245 158 11 / 60%); // Stronger glow on hover
+    }
+  }
+
+  // Error callout (always red - for completeness)
+  &--error {
+    background: #991b1b; // Dark red background
+    border-color: #ef4444; // Bright red border
+    color: #fff; // White text
+    box-shadow: 0 0 15px rgb(239 68 68 / 40%); // Red glow
+
+    .fas,
+    .far,
+    .fab {
+      color: #f87171; // Light red icon
+    }
+
+    &::before {
+      background-image: url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 12 12' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ef4444' fill-opacity='0.3'%3E%3Cpath d='M3 3l6 6M9 3l-6 6' stroke='%23ef4444' stroke-width='1'/%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    &:hover {
+      background: #b91c1c; // Slightly lighter red on hover
+      border-color: #f87171;
+      box-shadow: 0 0 20px rgb(239 68 68 / 60%); // Stronger glow on hover
+    }
+  }
+
+  // Success callout (always green - for completeness)
+  &--success {
+    background: #166534; // Dark green background
+    border-color: #22c55e; // Bright green border
+    color: #fff; // White text
+    box-shadow: 0 0 15px rgb(34 197 94 / 40%); // Green glow
+
+    .fas,
+    .far,
+    .fab {
+      color: #4ade80; // Light green icon
+    }
+
+    &::before {
+      background-image: url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 12 12' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%2322c55e' fill-opacity='0.3'%3E%3Cpath d='M3 6l2 2 4-4' stroke='%2322c55e' stroke-width='1' fill='none'/%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    &:hover {
+      background: #15803d; // Slightly lighter green on hover
+      border-color: #4ade80;
+      box-shadow: 0 0 20px rgb(34 197 94 / 60%); // Stronger glow on hover
+    }
+  }
+
+  // ===================================
+  // SIZE VARIANTS
+  // ===================================
+
+  &--compact {
+    padding: tokens.$sheet-spacing-sm tokens.$sheet-spacing-md;
+    font-size: tokens.$sheet-font-size-value-sm;
+
+    .fas,
+    .far,
+    .fab {
+      font-size: 1rem;
+    }
+  }
+
+  &--large {
+    padding: tokens.$sheet-spacing-lg tokens.$sheet-spacing-xl;
+    font-size: tokens.$sheet-font-size-value-lg;
+
+    .fas,
+    .far,
+    .fab {
+      font-size: 1.5rem;
+    }
+  }
+}
+
+// ===================================
+// FORM INTEGRATION
+// ===================================
+
+// Ensure callouts work well within forms (positioning only, no color changes)
+.erps-form .erps-callouts {
+  // Adjust positioning within forms
+  margin: 0 0 $callout-margin-bottom;
+
+  // Add focus styles for keyboard navigation
+  .erps-callout:focus-within {
+    outline: 2px solid #3b82f6; // Fixed blue outline instead of theme-aware
+    outline-offset: 2px;
+  }
+}
+
+// ===================================
+// RESPONSIVE DESIGN
+// ===================================
+
+@media (width <= 768px) {
+  .erps-callouts {
+    margin-bottom: tokens.$sheet-spacing-sm;
+    gap: tokens.$sheet-spacing-xs;
+  }
+
+  .erps-callout {
+    padding: tokens.$sheet-spacing-sm;
+    font-size: tokens.$sheet-font-size-value-sm;
+
+    .fas,
+    .far,
+    .fab {
+      font-size: 1rem;
+    }
+
+    &--compact {
+      padding: tokens.$sheet-spacing-xs tokens.$sheet-spacing-sm;
+    }
+  }
+}
+
+// ===================================
+// ACCESSIBILITY
+// ===================================
+
+// Reduced motion support
+@media (prefers-reduced-motion: reduce) {
+  .erps-callout {
+    transition: none;
+  }
+} 

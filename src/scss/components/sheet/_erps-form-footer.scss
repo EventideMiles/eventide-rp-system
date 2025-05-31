@@ -1,0 +1,293 @@
+@use "../../utils/themes" as themes;
+@use "../../utils/sheet-tokens" as tokens;
+
+// ===================================
+// ERPS FORM FOOTER COMPONENT
+// ===================================
+// Theme-aware sticky footer for forms with action buttons
+
+// ===================================
+// CONFIGURATION VARIABLES
+// ===================================
+
+// Footer sizing
+$footer-padding: tokens.$sheet-spacing-md tokens.$sheet-spacing-lg;
+$footer-border-radius: 0 0 tokens.$sheet-radius-xl tokens.$sheet-radius-xl;
+$footer-border-width: tokens.$sheet-border-thin;
+$footer-min-height: 4rem;
+
+// Button spacing
+$footer-button-gap: tokens.$sheet-spacing-md;
+
+// Positioning
+$footer-z-index: 10;
+$footer-bottom-offset: 0;
+
+// Transitions
+$footer-transition: all tokens.$sheet-transition-medium ease;
+
+// ===================================
+// FORM FOOTER
+// ===================================
+
+.erps-form__footer {
+  position: sticky;
+  bottom: $footer-bottom-offset;
+  z-index: $footer-z-index;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: $footer-button-gap;
+  min-height: $footer-min-height;
+  padding: $footer-padding;
+  background: var(--theme-primary, var(--erps-sheet-primary));
+  border-top: $footer-border-width solid var(--theme-secondary, var(--erps-sheet-secondary));
+  border-radius: $footer-border-radius;
+  box-shadow:
+    0 -4px 20px rgb(0 0 0 / 30%),
+    inset 0 1px 0 rgb(255 255 255 / 10%);
+  backdrop-filter: blur(8px);
+
+  // Subtle background pattern
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--theme-pattern, none);
+    background-size: 16px 16px;
+    opacity: 0.05;
+    pointer-events: none;
+    border-radius: $footer-border-radius;
+  }
+
+  // Ensure content is above pattern
+  & > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  // ===================================
+  // FOOTER VARIANTS
+  // ===================================
+
+  &--left-aligned {
+    justify-content: flex-start;
+  }
+
+  &--centered {
+    justify-content: center;
+  }
+
+  &--space-between {
+    justify-content: space-between;
+  }
+
+  &--compact {
+    min-height: 3rem;
+    padding: tokens.$sheet-spacing-sm tokens.$sheet-spacing-md;
+  }
+
+  &--large {
+    min-height: 5rem;
+    padding: tokens.$sheet-spacing-lg tokens.$sheet-spacing-xl;
+  }
+
+  // ===================================
+  // BUTTON STYLING WITHIN FOOTER
+  // ===================================
+
+  .erps-button {
+    // Ensure buttons have consistent sizing in footer
+    min-width: 6rem;
+    flex-shrink: 0;
+
+    // Focus management for accessibility
+    &:focus {
+      outline: 2px solid var(--theme-glow, var(--erps-sheet-glow));
+      outline-offset: 2px;
+      z-index: 1; // Ensure focused button is above others
+    }
+
+    // Reduced motion support
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+      
+      &:hover {
+        transform: none;
+      }
+    }
+
+    // Primary action button (typically submit/save)
+    &[type="submit"],
+    &--primary {
+      background: var(--theme-light, var(--erps-sheet-light));
+      border-color: var(--theme-bright, var(--erps-sheet-bright));
+      box-shadow: 0 2px 8px rgb(0 0 0 / 30%);
+
+      &:hover {
+        background: var(--theme-bright, var(--erps-sheet-bright));
+        box-shadow: 
+          0 4px 12px rgb(0 0 0 / 40%),
+          0 0 20px var(--theme-glow, var(--erps-sheet-glow));
+        transform: translateY(-1px);
+      }
+
+      &:active {
+        transform: translateY(0) scale(0.98);
+      }
+    }
+
+    // Secondary action buttons
+    &[type="button"],
+    &--secondary {
+      background: var(--theme-secondary, var(--erps-sheet-secondary));
+      border-color: var(--theme-light, var(--erps-sheet-light));
+
+      &:hover {
+        background: var(--theme-light, var(--erps-sheet-light));
+        border-color: var(--theme-bright, var(--erps-sheet-bright));
+        box-shadow: 0 0 15px var(--theme-glow, var(--erps-sheet-glow));
+      }
+    }
+
+    // Cancel/close buttons
+    &--cancel,
+    &--close {
+      background: themes.color(gray, 40);
+      border-color: themes.color(gray, 60);
+      color: themes.color(white, 90);
+
+      &:hover {
+        background: themes.color(gray, 50);
+        border-color: themes.color(gray, 70);
+        box-shadow: 0 0 10px themes.color(gray, 30);
+      }
+    }
+
+    // Destructive actions (delete, remove)
+    &--delete,
+    &--destructive {
+      background: themes.color(red, 40);
+      border-color: themes.color(red, 60);
+
+      &:hover {
+        background: themes.color(red, 50);
+        border-color: themes.color(red, 70);
+        box-shadow: 0 0 15px themes.color(red, 30);
+      }
+    }
+
+    // High contrast support
+    @media (prefers-contrast: high) {
+      border-width: 2px;
+    }
+  }
+
+  // ===================================
+  // BUTTON GROUPS
+  // ===================================
+
+  &__button-group {
+    display: flex;
+    gap: tokens.$sheet-spacing-sm;
+    align-items: center;
+
+    // Grouped buttons with reduced spacing
+    .erps-button + .erps-button {
+      margin-left: 0;
+    }
+
+    &--primary {
+      // Primary group gets more prominent styling
+      .erps-button {
+        box-shadow: 0 2px 6px rgb(0 0 0 / 20%);
+      }
+    }
+
+    &--secondary {
+      // Secondary group with subtle styling
+      .erps-button {
+        opacity: 0.9;
+
+        &:hover {
+          opacity: 1;
+        }
+      }
+    }
+  }
+
+  // ===================================
+  // FOOTER TEXT/LABELS
+  // ===================================
+
+  &__text {
+    font-family: var(--erps-ui-font, sans-serif);
+    font-size: tokens.$sheet-font-size-value-sm;
+    color: var(--theme-text, var(--erps-sheet-text));
+    opacity: 0.8;
+    margin-right: auto; // Push buttons to the right when text is present
+
+    &--emphasized {
+      font-weight: tokens.$sheet-font-weight-semibold;
+      opacity: 1;
+    }
+  }
+
+  // ===================================
+  // ACCESSIBILITY
+  // ===================================
+
+  // High contrast support for footer
+  @media (prefers-contrast: high) {
+    border-top-color: var(--theme-text, var(--erps-sheet-text));
+  }
+}
+
+// ===================================
+// RESPONSIVE DESIGN
+// ===================================
+
+@media (width <= 768px) {
+  .erps-form__footer {
+    padding: tokens.$sheet-spacing-sm;
+    gap: tokens.$sheet-spacing-sm;
+    flex-wrap: wrap;
+
+    .erps-button {
+      min-width: 5rem;
+      font-size: tokens.$sheet-font-size-value-sm;
+    }
+
+    &__button-group {
+      gap: tokens.$sheet-spacing-xs;
+    }
+
+    &__text {
+      font-size: tokens.$sheet-font-size-value-sm;
+      margin-right: 0;
+      width: 100%;
+      text-align: center;
+      order: -1; // Move text above buttons on mobile
+    }
+
+    // Stack buttons vertically on very small screens
+    &--stack-mobile {
+      flex-direction: column;
+      align-items: stretch;
+
+      .erps-button {
+        width: 100%;
+        min-width: auto;
+      }
+
+      &__button-group {
+        width: 100%;
+        justify-content: stretch;
+
+        .erps-button {
+          flex: 1;
+        }
+      }
+    }
+  }
+} 

@@ -12,9 +12,13 @@ export class GearCreator extends CreatorApplication {
 
   static DEFAULT_OPTIONS = {
     ...super.DEFAULT_OPTIONS,
-    classes: ["eventide-rp-system", "standard-form", "gear-creator"],
+    classes: ["eventide-sheet", "eventide-sheet--scrollbars", "gear-creator"],
     window: {
       icon: "fa-solid fa-sack",
+    },
+    position: {
+      width: 1000,
+      height: 800,
     },
     form: {
       handler: this._onSubmit,

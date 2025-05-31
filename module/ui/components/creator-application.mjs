@@ -1,5 +1,11 @@
 import { EventideSheetHelpers } from "./eventide-sheet-helpers.mjs";
 import { Logger } from "../../services/_module.mjs";
+import {
+  initThemeManager,
+  THEME_PRESETS,
+  cleanupThemeManager,
+} from "../../helpers/_module.mjs";
+import { CommonFoundryTasks } from "../../utils/_module.mjs";
 
 /**
  * Base class for creator applications that handle item creation (effects, gear, etc.)
@@ -16,8 +22,9 @@ export class CreatorApplication extends EventideSheetHelpers {
    */
   static DEFAULT_OPTIONS = {
     id: "creator-application",
+    classes: ["eventide-sheet", "eventide-sheet--scrollbars"],
     position: {
-      width: "auto",
+      width: 850,
       height: 800,
     },
     tag: "form",
@@ -133,6 +140,12 @@ export class CreatorApplication extends EventideSheetHelpers {
 
     context.footerButtons = await this._prepareFooterButtons();
 
+    // Add theme context for proper theming
+    context.userSheetTheme = CommonFoundryTasks.retrieveSheetTheme();
+
+    // Add CSS class for template compatibility
+    context.cssClass = "eventide-sheet eventide-sheet--scrollbars";
+
     return context;
   }
 
@@ -216,9 +229,29 @@ export class CreatorApplication extends EventideSheetHelpers {
               )
             : game.i18n.localize("EVENTIDE_RP_SYSTEM.Forms.Buttons.Create"),
         type: "submit",
-        cssClass: "base-form__button base-form__button--primary",
+        cssClass: "erps-button erps-button--primary",
       },
     ];
+  }
+
+  /**
+   * Actions performed after any render of the Application.
+   * Post-render steps are not awaited by the render process.
+   * @param {ApplicationRenderContext} context      Prepared context data
+   * @param {RenderOptions} options                 Provided render options
+   * @protected
+   */
+  _onRender(_context, _options) {
+    // Initialize centralized theme management for creator applications
+    if (!this.themeManager) {
+      this.themeManager = initThemeManager(
+        this,
+        THEME_PRESETS.CREATOR_APPLICATION,
+      );
+    } else {
+      // Re-apply themes on re-render
+      this.themeManager.applyThemes();
+    }
   }
 
   /**
@@ -277,7 +310,7 @@ export class CreatorApplication extends EventideSheetHelpers {
     // Render the form and scroll to the previous position
     await app.render();
     CreatorApplication._restoreFormData(app, formData);
-    const contentElement = app.element.querySelector(".base-form__content");
+    const contentElement = app.element.querySelector(".erps-form__content");
     if (contentElement) {
       contentElement.scrollTop = oldPosition;
     }
@@ -307,7 +340,7 @@ export class CreatorApplication extends EventideSheetHelpers {
     // Render the form and restore previous scroll position
     await app.render();
     CreatorApplication._restoreFormData(app, formData);
-    const contentElement = app.element.querySelector(".base-form__content");
+    const contentElement = app.element.querySelector(".erps-form__content");
     if (contentElement) {
       contentElement.scrollTop = oldPosition;
     }
@@ -365,6 +398,12 @@ export class CreatorApplication extends EventideSheetHelpers {
       this.allAbilities = null;
       this.storedData = null;
       this.calloutGroup = null;
+    }
+
+    // Clean up theme management
+    if (this.themeManager) {
+      cleanupThemeManager(this);
+      this.themeManager = null;
     }
 
     // Call the parent class's _preClose method which will handle number input cleanup

@@ -14,7 +14,7 @@ export class EffectCreator extends CreatorApplication {
 
   static DEFAULT_OPTIONS = {
     ...super.DEFAULT_OPTIONS,
-    classes: ["eventide-rp-system", "standard-form", "effect-creator"],
+    classes: ["eventide-sheet"],
     window: {
       icon: "fa-solid fa-message-plus",
     },

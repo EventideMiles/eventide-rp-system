@@ -1,28 +1,28 @@
-<div class="{{cssClass}} base-form" autocomplete="off">
+{{!-- Gear Creator Form --}}
+<div class="{{cssClass}} erps-form gear-creator" autocomplete="off">
   {{> callout-box}}
-  <div class="base-form__content">
+  <div class="erps-form__content">
     <div class="gear-creator__upper-section">
       <div class="gear-creator__main-info">
-        <div class="base-form__group">
-          <label class="base-form__label" for="name">
+        <div class="erps-form__group">
+          <label class="erps-form__label" for="name">
             {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Name"}}
           </label>
           <input 
-            class="base-form__text-input" 
+            class="erps-input" 
             autofocus 
             type="text" 
             id="name" 
             name="name" 
             placeholder="{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.Name"}}">
-          </input>
         </div>
 
-        <div class="base-form__group">
-          <label class="base-form__label" for="description">
+        <div class="erps-form__group">
+          <label class="erps-form__label" for="description">
             {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Description"}}
           </label>
           <textarea 
-            class="base-form__textarea" 
+            class="erps-textarea" 
             id="description" 
             name="description" 
             placeholder="{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.Description"}}"></textarea>
@@ -30,12 +30,12 @@
       </div>
 
       <div class="gear-creator__visual-info">
-        <div class="base-form__group gear-creator__image-group">
-          <label class="base-form__label" for="img">
+        <div class="erps-form__group gear-creator__image-group">
+          <label class="erps-form__label" for="img">
             {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Image"}}
           </label>
           <img
-            class="gear-creator__image base-form__image--edit"
+            class="erps-image-picker"
             src="{{storedData.gear_img}}"
             data-edit="img"
             data-action='onEditImage'
@@ -45,87 +45,90 @@
             id="displayImage"
           />
           <input 
-            class="base-form__hidden-input" 
+            class="erps-hidden-input" 
             type="hidden" 
             name="img" 
             value="{{ifThen storedData.gear_img storedData.gear_img "icons/svg/item-bag.svg"}}">
         </div>
+        {{> color-pickers type="gear" stacked=true}}
 
-        {{> color-pickers type="gear"}}
-
-          <div class="base-form__toggle-group">
-            <label for="displayOnToken">
-              {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.DisplayOnToken"}}
-            </label>
-            <div class="toggle-switch-wrapper">
-              <input 
-                class="base-form__toggle-switch" 
-                type="checkbox" 
-                id="displayOnToken" 
-                name="displayOnToken" 
-                {{#if storedData.gear_displayOnToken}}checked{{/if}}>
-              <label class="toggle-switch-display" for="displayOnToken"></label>
+        <div class="erps-form__group">
+          <label class="erps-toggles erps-toggles--label-left" for="displayOnToken">
+            <input 
+              class="erps-toggles__input" 
+              type="checkbox" 
+              id="displayOnToken" 
+              name="displayOnToken" 
+              {{#if storedData.gear_displayOnToken}}checked{{/if}}>
+            <div class="erps-toggles__container">
+              <span class="erps-toggles__label">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.DisplayOnToken"}}</span>
+              <span class="erps-toggles__track">
+                <span class="erps-toggles__thumb"></span>
+              </span>
             </div>
-          </div>
+          </label>
+        </div>
       </div>
     </div>
 
     <div class="gear-creator__columns">
       <div class="gear-creator__column">
-        <div class="base-form__header">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Attributes"}}</div>
-        <div class="base-form__group">
-          <label class="base-form__label" for="quantity">
+        <div class="erps-form__header">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Attributes"}}</div>
+        <div class="erps-form__group">
+          <label class="erps-form__label" for="quantity">
             {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Quantity"}}
           </label>
-          <div class="base-form__number-input-wrapper">
-            <button type="button" class="decrement" data-action="decrement">−</button>
-            <input class="base-form__number-input" type="number" id="quantity" name="quantity" value="1">
-            <button type="button" class="increment" data-action="increment">+</button>
+          <div class="erps-number-input">
+            <button type="button" class="erps-number-input__button erps-number-input__button--decrement" data-action="decrement">−</button>
+            <input class="erps-number-input__input" type="number" id="quantity" name="quantity" value="1">
+            <button type="button" class="erps-number-input__button erps-number-input__button--increment" data-action="increment">+</button>
           </div>
         </div>
 
-        <div class="base-form__group">
-          <label class="base-form__label" for="weight">
+        <div class="erps-form__group">
+          <label class="erps-form__label" for="weight">
             {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Weight"}}
           </label>
-          <div class="base-form__number-input-wrapper">
-            <button type="button" class="decrement" data-action="decrement">−</button>
-            <input class="base-form__number-input" type="number" id="weight" name="weight" value="0">
-            <button type="button" class="increment" data-action="increment">+</button>
+          <div class="erps-number-input">
+            <button type="button" class="erps-number-input__button erps-number-input__button--decrement" data-action="decrement">−</button>
+            <input class="erps-number-input__input" type="number" id="weight" name="weight" value="0">
+            <button type="button" class="erps-number-input__button erps-number-input__button--increment" data-action="increment">+</button>
           </div>
         </div>
 
-        <div class="base-form__group">
-          <label class="base-form__label" for="cost">
+        <div class="erps-form__group">
+          <label class="erps-form__label" for="cost">
             {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Cost"}}
           </label>
-          <div class="base-form__number-input-wrapper">
-            <button type="button" class="decrement" data-action="decrement">−</button>
-            <input class="base-form__number-input" type="number" id="cost" name="cost" value="0">
-            <button type="button" class="increment" data-action="increment">+</button>
+          <div class="erps-number-input">
+            <button type="button" class="erps-number-input__button erps-number-input__button--decrement" data-action="decrement">−</button>
+            <input class="erps-number-input__input" type="number" id="cost" name="cost" value="0">
+            <button type="button" class="erps-number-input__button erps-number-input__button--increment" data-action="increment">+</button>
           </div>
         </div>
 
-        <div class="base-form__toggle-group">
-          <label for="targeted">
-            {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Targeted"}}
-          </label>
-          <div class="toggle-switch-wrapper">
+        <div class="erps-form__group">
+          <label class="erps-toggles erps-toggles--label-left" for="targeted">
             <input 
-              class="base-form__toggle-switch" 
+              class="erps-toggles__input" 
               type="checkbox" 
               id="targeted" 
               name="targeted" 
               checked>
-            <label class="toggle-switch-display" for="targeted"></label>
-          </div>
+            <div class="erps-toggles__container">
+              <span class="erps-toggles__label">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Targeted"}}</span>
+              <span class="erps-toggles__track">
+                <span class="erps-toggles__thumb"></span>
+              </span>
+            </div>
+          </label>
         </div>
 
-        <div class="base-form__group">
-          <label class="base-form__label" for="className">
+        <div class="erps-form__group">
+          <label class="erps-form__label" for="className">
             {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.ClassName"}}
           </label>
-          <select class="base-form__select" id="className" name="className">
+          <select class="erps-select" id="className" name="className">
             {{#each classNames as |className|}}
               <option 
                 value="{{lowercase className}}" 
@@ -135,58 +138,62 @@
               </option>
             {{/each}}
           </select>
-          </div>
+        </div>
 
-        <div class="base-form__toggle-group">
-          <label for="equipped">
-            {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Equipped"}}
-          </label>
-          <div class="toggle-switch-wrapper">
+        <div class="erps-form__group">
+          <label class="erps-toggles erps-toggles--label-left" for="equipped">
             <input 
-              class="base-form__toggle-switch" 
+              class="erps-toggles__input" 
               type="checkbox" 
               id="equipped" 
               name="equipped" 
               {{#if gearEquippedDefault}}checked{{/if}}>
-            <label class="toggle-switch-display" for="equipped"></label>
-          </div>
+            <div class="erps-toggles__container">
+              <span class="erps-toggles__label">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Equipped"}}</span>
+              <span class="erps-toggles__track">
+                <span class="erps-toggles__thumb"></span>
+              </span>
+            </div>
+          </label>
         </div>
 
         {{#if isGM}}
-          <div class="base-form__toggle-group">
-            <label for="cursed">
-              {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Cursed"}}
-            </label>
-            <div class="toggle-switch-wrapper">
+          <div class="erps-form__group">
+            <label class="erps-toggles erps-toggles--label-left" for="cursed">
               <input 
-                class="base-form__toggle-switch" 
+                class="erps-toggles__input" 
                 type="checkbox" 
                 id="cursed" 
                 name="cursed">
-              <label class="toggle-switch-display" for="cursed"></label>
-            </div>
+              <div class="erps-toggles__container">
+                <span class="erps-toggles__label">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Cursed"}}</span>
+                <span class="erps-toggles__track">
+                  <span class="erps-toggles__thumb"></span>
+                </span>
+              </div>
+            </label>
           </div>
         {{/if}}
       </div>
 
       <div class="gear-creator__column">
-        <div class="base-form__header">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RollSettings"}}</div>
-        <div class="base-form__group">
-          <label class="base-form__label" for="roll.type">
+        <div class="erps-form__header">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RollSettings"}}</div>
+        <div class="erps-form__group">
+          <label class="erps-form__label" for="roll.type">
             {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RollType"}}
           </label>
-          <select class="base-form__select" id="roll.type" name="roll.type">
+          <select class="erps-select" id="roll.type" name="roll.type">
             {{#each rollTypes as |rollType rollTypeKey|}}
               <option value="{{lowercase rollType}}">{{rollType}}</option>
             {{/each}}
           </select>
         </div>
 
-        <div class="base-form__group">
-          <label class="base-form__label" for="roll.ability">
+        <div class="erps-form__group">
+          <label class="erps-form__label" for="roll.ability">
             {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RollAbility"}}
           </label>
-          <select class="base-form__select" id="roll.ability" name="roll.ability">
+          <select class="erps-select" id="roll.ability" name="roll.ability">
             {{#each abilities}}
               <option value="{{lowercase this}}">
                 {{localize (lookup @root.config.abilityAbbreviations this)}}
@@ -198,59 +205,58 @@
           </select>
         </div>
 
-        <div class="base-form__group">
-          <label class="base-form__label" for="roll.bonus">
+        <div class="erps-form__group">
+          <label class="erps-form__label" for="roll.bonus">
             {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RollBonus"}}
           </label>
-          <div class="base-form__number-input-wrapper">
-            <button type="button" class="decrement" data-action="decrement">−</button>
+          <div class="erps-number-input">
+            <button type="button" class="erps-number-input__button erps-number-input__button--decrement" data-action="decrement">−</button>
             <input 
-              class="base-form__number-input" 
+              class="erps-number-input__input" 
               type="number" 
               id="roll.bonus" 
               name="roll.bonus" 
               value="0">
-            <button type="button" class="increment" data-action="increment">+</button>
+            <button type="button" class="erps-number-input__button erps-number-input__button--increment" data-action="increment">+</button>
           </div>
         </div>
 
-        <div class="base-form__group">
-          <label class="base-form__label" for="roll.diceAdjustments.advantage">
+        <div class="erps-form__group">
+          <label class="erps-form__label" for="roll.diceAdjustments.advantage">
             {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RollAdvantage"}}
           </label>
-          <div class="base-form__number-input-wrapper">
-            <button type="button" class="decrement" data-action="decrement">−</button>
+          <div class="erps-number-input">
+            <button type="button" class="erps-number-input__button erps-number-input__button--decrement" data-action="decrement">−</button>
             <input 
-              class="base-form__number-input" 
+              class="erps-number-input__input" 
               type="number" 
               id="roll.diceAdjustments.advantage" 
               name="roll.diceAdjustments.advantage" 
               value="0">
-            <button type="button" class="increment" data-action="increment">+</button>
+            <button type="button" class="erps-number-input__button erps-number-input__button--increment" data-action="increment">+</button>
           </div>
         </div>
 
-        <div class="base-form__group">
-          <label class="base-form__label" for="roll.diceAdjustments.disadvantage">
+        <div class="erps-form__group">
+          <label class="erps-form__label" for="roll.diceAdjustments.disadvantage">
             {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RollDisadvantage"}}
           </label>
-          <div class="base-form__number-input-wrapper">
-            <button type="button" class="decrement" data-action="decrement">−</button>
+          <div class="erps-number-input">
+            <button type="button" class="erps-number-input__button erps-number-input__button--decrement" data-action="decrement">−</button>
             <input 
-              class="base-form__number-input"
-              
+              class="erps-number-input__input"
               type="number" 
               id="roll.diceAdjustments.disadvantage" 
               name="roll.diceAdjustments.disadvantage" 
               value="0">
-            <button type="button" class="increment"  data-action="increment">+</button>
+            <button type="button" class="erps-number-input__button erps-number-input__button--increment" data-action="increment">+</button>
           </div>
         </div>
       </div>
 
       <div class="gear-creator__column">
-        <div class="base-form__header">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Effects"}}</div>
-        {{> character-effects}}
+        <div class="erps-form__header">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Effects"}}</div>
+        {{> character-effects narrow=true}}
       </div>
     </div>
   </div>

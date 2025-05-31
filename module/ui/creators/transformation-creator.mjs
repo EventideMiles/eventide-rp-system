@@ -16,7 +16,11 @@ export class TransformationCreator extends CreatorApplication {
 
   static DEFAULT_OPTIONS = {
     ...super.DEFAULT_OPTIONS,
-    classes: ["eventide-rp-system", "standard-form", "transformation-creator"],
+    classes: [
+      "eventide-sheet",
+      "eventide-sheet--scrollbars",
+      "transformation-creator",
+    ],
     window: {
       icon: "fa-solid fa-mask",
     },
@@ -104,8 +108,8 @@ export class TransformationCreator extends CreatorApplication {
    * @returns {Promise<void>}
    * @override
    */
-  _preClose() {
-    super._preClose();
+  async _preClose(options) {
+    await super._preClose(options);
     // this.#dragDrop.forEach((d) => d.unbind());
   }
 
@@ -182,7 +186,7 @@ export class TransformationCreator extends CreatorApplication {
     await this.render();
     CreatorApplication._restoreFormData(this, formData);
 
-    const contentElement = this.element.querySelector(".base-form__content");
+    const contentElement = this.element.querySelector(".erps-form__content");
     if (contentElement) {
       contentElement.scrollTop = oldPosition;
     }
@@ -207,7 +211,7 @@ export class TransformationCreator extends CreatorApplication {
     await this.render();
     CreatorApplication._restoreFormData(this, formData);
 
-    const contentElement = this.element.querySelector(".base-form__content");
+    const contentElement = this.element.querySelector(".erps-form__content");
     if (contentElement) {
       contentElement.scrollTop = oldPosition;
     }
