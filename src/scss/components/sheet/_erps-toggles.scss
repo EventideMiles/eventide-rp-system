@@ -76,20 +76,21 @@ $toggle-focus-opacity: 0.3;
   display: inline-block;
   width: $toggle-width;
   height: $toggle-height;
-  background: themes.color(gray-dark, 60);
-  border: $toggle-border-width solid themes.color(gray, 40);
+  background: rgb(80 80 80 / 60%); // gray-dark 60%
+  border: $toggle-border-width solid rgb(100 100 100 / 40%); // gray 40%
   border-radius: $toggle-border-radius;
   transition: all $toggle-transition-duration $toggle-transition-easing;
   cursor: pointer;
   box-shadow:
-    inset 0 1px 3px themes.color(black, 30),
-    0 1px 2px themes.color(black, 10);
+    inset 0 1px 3px rgb(0 0 0 / 30%), // black 30%
+    0 1px 2px rgb(0 0 0 / 10%); // black 10%
+
   flex-shrink: 0;
 
   &:hover {
     border-color: var(--erps-toggle-bright);
     box-shadow:
-      inset 0 1px 3px themes.color(black, 30),
+      inset 0 1px 3px rgb(0 0 0 / 30%), // black 30%
       0 0 $toggle-shadow-blur var(--erps-toggle-glow);
   }
 }
@@ -101,12 +102,12 @@ $toggle-focus-opacity: 0.3;
   left: $toggle-thumb-offset;
   width: $toggle-thumb-size;
   height: $toggle-thumb-size;
-  background: themes.color(white, 90);
-  border: $toggle-border-width solid themes.color(gray, 50);
+  background: rgb(255 255 255 / 90%); // white 90%
+  border: $toggle-border-width solid rgb(100 100 100 / 50%); // gray 50%
   border-radius: $toggle-thumb-border-radius;
   transition: all $toggle-transition-duration $toggle-transition-easing;
   cursor: pointer;
-  box-shadow: $toggle-thumb-shadow themes.color(black, 30);
+  box-shadow: $toggle-thumb-shadow rgb(0 0 0 / 30%); // black 30%
   transform: translateY(-50%);
 
   // Add a subtle inner glow
@@ -114,7 +115,7 @@ $toggle-focus-opacity: 0.3;
     content: '';
     position: absolute;
     inset: 2px;
-    background: radial-gradient(circle, themes.color(white, 20) 0%, transparent 70%);
+    background: radial-gradient(circle, rgb(255 255 255 / 20%) 0%, transparent 70%); // white 20%
     border-radius: $toggle-thumb-border-radius;
     pointer-events: none;
   }
@@ -125,15 +126,15 @@ $toggle-focus-opacity: 0.3;
   background: $primary-color;
   border-color: $secondary-color;
   box-shadow:
-    inset 0 1px 3px themes.color(black, 20),
+    inset 0 1px 3px rgb(0 0 0 / 20%), // black 20%
     0 0 $toggle-shadow-blur $glow-color;
 
   .erps-toggles__thumb {
     transform: translateY(-50%) translateX($toggle-thumb-travel);
-    background: themes.color(white, 95);
+    background: rgb(255 255 255 / 95%); // white 95%
     border-color: $secondary-color;
     box-shadow:
-      $toggle-thumb-shadow themes.color(black, 40),
+      $toggle-thumb-shadow rgb(0 0 0 / 40%), // black 40%
       0 0 $toggle-shadow-blur $glow-color;
   }
 }
@@ -141,11 +142,25 @@ $toggle-focus-opacity: 0.3;
 // Color variant mixin for toggle themes
 @mixin toggle-color-variant($color-name) {
   .erps-toggles__input:checked + .erps-toggles__container .erps-toggles__track {
-    @include toggle-checked-state(
-      themes.color($color-name, 70),
-      themes.color($color-name, 80),
-      themes.color($color-name, 40)
-    );
+    @if $color-name == 'green' {
+      @include toggle-checked-state(
+        rgb(34 197 94 / 70%), // green 70%
+        rgb(34 197 94 / 80%), // green 80%
+        rgb(34 197 94 / 40%)  // green 40%
+      );
+    } @else if $color-name == 'red' {
+      @include toggle-checked-state(
+        rgb(239 68 68 / 70%), // red 70%
+        rgb(239 68 68 / 80%), // red 80%
+        rgb(239 68 68 / 40%)  // red 40%
+      );
+    } @else if $color-name == 'orange' {
+      @include toggle-checked-state(
+        rgb(217 119 6 / 70%), // orange 70%
+        rgb(217 119 6 / 80%), // orange 80%
+        rgb(217 119 6 / 40%)  // orange 40%
+      );
+    }
   }
 }
 
@@ -196,7 +211,7 @@ $toggle-focus-opacity: 0.3;
 
     &:focus + .erps-toggles__container .erps-toggles__track {
       box-shadow:
-        $toggle-thumb-shadow themes.color(black, 30),
+        $toggle-thumb-shadow rgb(0 0 0 / 30%),
         0 0 $toggle-glow-blur var(--erps-toggle-bright);
     }
 
@@ -207,13 +222,13 @@ $toggle-focus-opacity: 0.3;
     &:disabled + .erps-toggles__container .erps-toggles__track {
       opacity: $toggle-disabled-opacity;
       cursor: not-allowed;
-      background: themes.color(gray, 30);
-      border-color: themes.color(gray, 40);
+      background: rgb(100 100 100 / 30%);
+      border-color: rgb(100 100 100 / 40%);
 
       .erps-toggles__thumb {
-        background: themes.color(gray, 60);
-        border-color: themes.color(gray, 70);
-        box-shadow: $toggle-thumb-shadow themes.color(black, 20);
+        background: rgb(100 100 100 / 60%);
+        border-color: rgb(100 100 100 / 70%);
+        box-shadow: $toggle-thumb-shadow rgb(0 0 0 / 20%);
       }
     }
   }
@@ -243,7 +258,7 @@ $toggle-focus-opacity: 0.3;
     color: var(--erps-toggle-text);
     cursor: pointer;
     transition: color $toggle-transition-duration $toggle-transition-easing;
-    text-shadow: 0 1px 2px themes.color(black, 60);
+    text-shadow: 0 1px 2px rgb(0 0 0 / 60%);
   }
 
   // ===================================

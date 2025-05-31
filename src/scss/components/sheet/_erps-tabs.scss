@@ -95,13 +95,13 @@ $tab-z-index-overlay: tokens.$sheet-z-index-overlay;
 
 // Base shadow for tabs
 @mixin tab-shadow-base {
-  box-shadow: 0 4px $tab-shadow-blur-lg themes.color(black, 30);
+  box-shadow: 0 4px $tab-shadow-blur-lg rgb(0 0 0 / 30%);
 }
 
 // Active tab shadow with glow
 @mixin tab-shadow-active($glow-color: var(--erps-tab-glow)) {
   box-shadow:
-    0 4px $tab-shadow-blur-lg themes.color(black, 30),
+    0 4px $tab-shadow-blur-lg rgb(0 0 0 / 30%),
     0 0 $tab-shadow-blur-xxl $glow-color;
 }
 
@@ -336,7 +336,7 @@ $tab-z-index-overlay: tokens.$sheet-z-index-overlay;
     }
 
     box-shadow:
-      0 $tab-border-accent $tab-shadow-blur-lg themes.color(black, 30),
+      0 $tab-border-accent $tab-shadow-blur-lg rgb(0 0 0 / 30%),
       inset 0 $tab-border-thin 0 var(--erps-tab-bright),
       inset $tab-border-accent 0 0 var(--theme-primary);
   }
@@ -473,17 +473,17 @@ $tab-z-index-overlay: tokens.$sheet-z-index-overlay;
   // Light theme overrides
   &--light {
     .erps-tabs__button {
-      color: themes.color(black, 80);
+      color: rgb(0 0 0 / 80%);
 
       .erps-tabs__count {
-        background: themes.color(black, 30);
-        color: themes.color(black, 80);
+        background: rgb(0 0 0 / 30%);
+        color: rgb(0 0 0 / 80%);
       }
 
       &:hover .erps-tabs__count,
       &.active .erps-tabs__count {
-        background: themes.color(black, 30);
-        color: themes.color(black, 80);
+        background: rgb(0 0 0 / 30%);
+        color: rgb(0 0 0 / 80%);
       }
     }
   }
@@ -694,17 +694,17 @@ $tab-z-index-overlay: tokens.$sheet-z-index-overlay;
 
   // Light theme text color overrides
   &[data-bg-theme="light"] .gear-tab-button {
-    color: themes.color(black, 80);
+    color: rgb(0 0 0 / 80%);
 
     .gear-count {
-      background: themes.color(black, 30);
-      color: themes.color(black, 80);
+      background: rgb(0 0 0 / 30%);
+      color: rgb(0 0 0 / 80%);
     }
 
     &:hover .gear-count,
     &.active .gear-count {
-      background: themes.color(black, 30);
-      color: themes.color(black, 80);
+      background: rgb(0 0 0 / 30%);
+      color: rgb(0 0 0 / 80%);
     }
   }
 }

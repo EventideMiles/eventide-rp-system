@@ -117,8 +117,7 @@ $resource-opacity-full: tokens.$sheet-opacity-full;
 
   // Ensure inputs/content fit properly
   .erps-resource-box__input,
-  .erps-stat-box__value,
-  .resource-content {
+  .erps-stat-box__value {
     flex: 1;
     min-width: $resource-width-input-min;
   }
@@ -138,7 +137,7 @@ $resource-opacity-full: tokens.$sheet-opacity-full;
   height: $resource-height-third;
   padding: 0 $resource-spacing-xs;
   font-size: $resource-font-size-label-xs;
-  color: themes.color(white, 70);
+  color: rgb(255 255 255 / 70%);
 
   &:empty {
     // Still take up space for alignment even when empty
@@ -147,7 +146,7 @@ $resource-opacity-full: tokens.$sheet-opacity-full;
 }
 
 // Animated glow effect for resource boxes
-@mixin resource-glow-animation($color: themes.color(blue, 20)) {
+@mixin resource-glow-animation($color: rgb(59 130 246 / 20%)) {
   &::before {
     content: '';
     position: absolute;
@@ -168,12 +167,6 @@ $resource-opacity-full: tokens.$sheet-opacity-full;
   &:hover::before {
     left: $resource-percent-full;
   }
-
-  // Ensure content is above the glow effect
-  > * {
-    position: relative;
-    z-index: 2;
-  }
 }
 
 // Resource text styling mixin
@@ -181,7 +174,7 @@ $resource-opacity-full: tokens.$sheet-opacity-full;
   font-family: $font-family !important;
   font-weight: $resource-font-weight-semibold !important;
   text-transform: uppercase !important;
-  text-shadow: 0 $resource-shadow-offset-xs $resource-shadow-offset-sm themes.color(black, 80) !important;
+  text-shadow: 0 $resource-shadow-offset-xs $resource-shadow-offset-sm rgb(0 0 0 / 80%) !important;
 }
 
 // Resource value styling mixin
@@ -190,52 +183,100 @@ $resource-opacity-full: tokens.$sheet-opacity-full;
   font-weight: $resource-font-weight-bold !important;
   color: #fff !important;
   text-shadow:
-    0 $resource-shadow-offset-sm $resource-shadow-offset-md themes.color(black, 80),
-    0 0 $resource-glow-blur-md themes.color(blue, 60) !important;
+    0 $resource-shadow-offset-sm $resource-shadow-offset-md rgb(0 0 0 / 80%),
+    0 0 $resource-glow-blur-md rgb(59 130 246 / 60%) !important;
 }
 
-// Color variant mixin for resource boxes
-@mixin resource-box-variant($primary-color, $secondary-color) {
-  background: linear-gradient(
-    135deg,
-    themes.color($primary-color, 90) 0%,
-    themes.color($primary-color, 80) 100%
-  );
-  border-color: themes.color($secondary-color, 50);
+// Simple theme-aware resource box variants
+@mixin resource-box-health {
+  background: linear-gradient(135deg, var(--erps-resource-health-primary) 0%, var(--erps-resource-health-primary) 100%);
+  border-color: var(--erps-resource-health-secondary);
 
-  @include resource-glow-animation(themes.color($secondary-color, 20));
+  @include resource-glow-animation(var(--erps-resource-health-glow));
 
   .erps-resource-box__value {
     text-shadow:
-      0 $resource-shadow-offset-sm $resource-shadow-offset-md themes.color(black, 80),
-      0 0 $resource-glow-blur-md themes.color($secondary-color, 60) !important;
+      0 $resource-shadow-offset-sm $resource-shadow-offset-md rgb(0 0 0 / 80%),
+      0 0 $resource-glow-blur-md var(--erps-resource-health-glow) !important;
   }
 
   .erps-resource-box__input {
-    background: themes.color($primary-color, 80) !important;
-    border-color: themes.color($secondary-color, 40) !important;
+    background: var(--erps-resource-health-primary) !important;
+    border-color: var(--erps-resource-health-secondary) !important;
 
     &:focus {
-      border-color: themes.color($secondary-color, 80) !important;
-      box-shadow:
-        0 0 0 2px themes.color($secondary-color, 30),
-        0 0 $resource-glow-blur-md themes.color($secondary-color, 40) !important;
+      border-color: var(--erps-resource-health-secondary) !important;
+      box-shadow: 0 0 $resource-glow-blur-md var(--erps-resource-health-glow) !important;
     }
   }
 }
 
-// Color variant mixin for stat boxes
-@mixin stat-box-variant($primary-color, $secondary-color) {
-  background: linear-gradient(
-    135deg,
-    themes.color($primary-color, 70) 0%,
-    themes.color($primary-color, 60) 100%
-  );
-  border-color: themes.color($secondary-color, 40);
+@mixin resource-box-mana {
+  background: linear-gradient(135deg, var(--erps-resource-mana-primary) 0%, var(--erps-resource-mana-primary) 100%);
+  border-color: var(--erps-resource-mana-secondary);
 
-  .erps-stat-box__value {
-    text-shadow: 0 $resource-shadow-offset-xs $resource-radius-xs themes.color(black, 80),
-      0 0 $resource-glow-blur-sm themes.color($secondary-color, 50) !important;
+  @include resource-glow-animation(var(--erps-resource-mana-glow));
+
+  .erps-resource-box__value {
+    text-shadow:
+      0 $resource-shadow-offset-sm $resource-shadow-offset-md rgb(0 0 0 / 80%),
+      0 0 $resource-glow-blur-md var(--erps-resource-mana-glow) !important;
+  }
+
+  .erps-resource-box__input {
+    background: var(--erps-resource-mana-primary) !important;
+    border-color: var(--erps-resource-mana-secondary) !important;
+
+    &:focus {
+      border-color: var(--erps-resource-mana-secondary) !important;
+      box-shadow: 0 0 $resource-glow-blur-md var(--erps-resource-mana-glow) !important;
+    }
+  }
+}
+
+@mixin resource-box-stamina {
+  background: linear-gradient(135deg, var(--erps-resource-stamina-primary) 0%, var(--erps-resource-stamina-primary) 100%);
+  border-color: var(--erps-resource-stamina-secondary);
+
+  @include resource-glow-animation(var(--erps-resource-stamina-glow));
+
+  .erps-resource-box__value {
+    text-shadow:
+      0 $resource-shadow-offset-sm $resource-shadow-offset-md rgb(0 0 0 / 80%),
+      0 0 $resource-glow-blur-md var(--erps-resource-stamina-glow) !important;
+  }
+
+  .erps-resource-box__input {
+    background: var(--erps-resource-stamina-primary) !important;
+    border-color: var(--erps-resource-stamina-secondary) !important;
+
+    &:focus {
+      border-color: var(--erps-resource-stamina-secondary) !important;
+      box-shadow: 0 0 $resource-glow-blur-md var(--erps-resource-stamina-glow) !important;
+    }
+  }
+}
+
+@mixin resource-box-generic {
+  background: linear-gradient(135deg, rgb(100 100 100 / 90%) 0%, rgb(100 100 100 / 80%) 100%);
+  border-color: rgb(100 100 100 / 50%);
+
+  @include resource-glow-animation(rgb(100 100 100 / 20%));
+
+  .erps-resource-box__value {
+    text-shadow:
+      0 $resource-shadow-offset-sm $resource-shadow-offset-md rgb(0 0 0 / 80%),
+      0 0 $resource-glow-blur-md rgb(100 100 100 / 60%) !important;
+  }
+
+  .erps-resource-box__input {
+    background: rgb(100 100 100 / 80%) !important;
+    border-color: rgb(100 100 100 / 40%) !important;
+
+    &:focus {
+      border-color: rgb(100 100 100 / 60%) !important;
+      box-shadow: 0 0 $resource-glow-blur-md rgb(100 100 100 / 30%) !important;
+    }
   }
 }
 
@@ -243,38 +284,6 @@ $resource-opacity-full: tokens.$sheet-opacity-full;
 // GENERAL RESOURCE SELECTORS
 // ===================================
 // These are global selectors that can be used anywhere for basic resource styling
-
-.resource-label {
-  @include resource-text-base;
-
-  color: themes.color(white, 90);
-  font-size: $resource-font-size-label-md;
-}
-
-.resource-value {
-  @include resource-value-base;
-
-  display: inline-block;
-  padding: $resource-padding-input;
-  background: themes.color(black, 40) !important;
-  border: $resource-border-thin solid themes.color(white, 15) !important;
-  border-radius: $resource-radius-sm;
-  color: themes.color(white, 90) !important;
-  font-weight: 500;
-  text-align: center;
-  min-width: $resource-width-input-min;
-  font-family: monospace;
-  font-size: $resource-font-size-value-md;
-  opacity: $resource-opacity-default;
-  cursor: default;
-  user-select: none;
-  box-shadow: inset 0 $resource-shadow-offset-xs $resource-radius-xs themes.color(black, 30);
-
-  &:hover {
-    opacity: $resource-opacity-full;
-    background: themes.color(black, 50) !important;
-  }
-}
 
 // ===================================
 // ENHANCED RESOURCE BOX COMPONENT
@@ -286,16 +295,16 @@ $resource-opacity-full: tokens.$sheet-opacity-full;
   // Move all direct declarations before nested rules and includes with nested content
   background: linear-gradient(
     135deg,
-    themes.color(blue-dark, 90) 0%,
-    themes.color(blue-dark, 80) 100%
+    rgb(30 58 138 / 90%) 0%,
+    rgb(30 58 138 / 80%) 100%
   );
-  border-color: themes.color(blue, 50);
+  border-color: rgb(59 130 246 / 50%);
   box-shadow:
-    0 $resource-shadow-blur-xs $resource-shadow-blur-xxl themes.color(black, 30),
-    inset 0 $resource-shadow-offset-xs 0 themes.color(white, 10);
+    0 $resource-shadow-blur-xs $resource-shadow-blur-xxl rgb(0 0 0 / 30%),
+    inset 0 $resource-shadow-offset-xs 0 rgb(255 255 255 / 10%);
 
   // Include glow animation last since it contains nested rules
-  @include resource-glow-animation(themes.color(blue, 20));
+  @include resource-glow-animation(rgb(59 130 246 / 20%));
 
   // Upper section - always contains the main label
   &__upper {
@@ -317,7 +326,7 @@ $resource-opacity-full: tokens.$sheet-opacity-full;
     @include resource-text-base;
 
     font-size: $resource-font-size-label-md !important;
-    color: themes.color(white, 90) !important;
+    color: rgb(255 255 255 / 90%) !important;
     letter-spacing: $resource-letter-spacing-loose !important;
     line-height: 1.2 !important;
   }
@@ -328,19 +337,19 @@ $resource-opacity-full: tokens.$sheet-opacity-full;
     font-size: $resource-font-size-value-md !important;
     font-weight: 600 !important;
     color: #fff !important;
-    background: themes.color(blue-dark, 80) !important;
-    border: 1px solid themes.color(blue, 40) !important;
+    background: rgb(30 58 138 / 80%) !important;
+    border: 1px solid rgb(59 130 246 / 40%) !important;
     border-radius: $resource-radius-sm !important;
     padding: $resource-padding-input !important;
     text-align: center !important;
-    text-shadow: 0 $resource-shadow-offset-xs $resource-shadow-offset-sm themes.color(black, 80) !important;
+    text-shadow: 0 $resource-shadow-offset-xs $resource-shadow-offset-sm rgb(0 0 0 / 80%) !important;
     transition: all $resource-transition-base ease !important;
 
     &:focus {
-      border-color: themes.color(blue, 80) !important;
+      border-color: rgb(59 130 246 / 80%) !important;
       box-shadow:
-        0 0 0 2px themes.color(blue, 30),
-        0 0 $resource-glow-blur-md themes.color(blue, 40) !important;
+        0 0 0 2px rgb(59 130 246 / 30%),
+        0 0 $resource-glow-blur-md rgb(59 130 246 / 40%) !important;
       outline: none !important;
     }
   }
@@ -349,8 +358,8 @@ $resource-opacity-full: tokens.$sheet-opacity-full;
   &__separator {
     font-family: var(--erps-mono-font) !important;
     font-size: $resource-font-size-label-lg !important;
-    color: themes.color(white, 80) !important;
-    text-shadow: 0 $resource-shadow-offset-xs $resource-shadow-offset-sm themes.color(black, 80) !important;
+    color: rgb(255 255 255 / 80%) !important;
+    text-shadow: 0 $resource-shadow-offset-xs $resource-shadow-offset-sm rgb(0 0 0 / 80%) !important;
     flex-shrink: 0;
   }
 
@@ -364,15 +373,15 @@ $resource-opacity-full: tokens.$sheet-opacity-full;
 
   // Color variants
   &--health {
-    @include resource-box-variant(red-dark, red);
+    @include resource-box-health;
   }
 
   &--mana {
-    @include resource-box-variant(purple-dark, purple);
+    @include resource-box-mana;
   }
 
   &--neutral {
-    @include resource-box-variant(gray-dark, gray);
+    @include resource-box-generic;
   }
 }
 
@@ -385,13 +394,13 @@ $resource-opacity-full: tokens.$sheet-opacity-full;
 
   background: linear-gradient(
     135deg,
-    themes.color(blue-dark, 70) 0%,
-    themes.color(blue-dark, 60) 100%
+    rgb(30 58 138 / 70%) 0%,
+    rgb(30 58 138 / 60%) 100%
   );
-  border-color: themes.color(blue, 40);
+  border-color: rgb(59 130 246 / 40%);
   box-shadow:
-    0 $resource-shadow-offset-sm $resource-shadow-blur-md themes.color(black, 20),
-    inset 0 $resource-shadow-offset-xs 0 themes.color(white, 5);
+    0 $resource-shadow-offset-sm $resource-shadow-blur-md rgb(0 0 0 / 20%),
+    inset 0 $resource-shadow-offset-xs 0 rgb(255 255 255 / 5%);
 
   // Upper section - always contains the main label
   &__upper {
@@ -413,7 +422,7 @@ $resource-opacity-full: tokens.$sheet-opacity-full;
     @include resource-text-base;
 
     font-size: $resource-font-size-label-sm !important;
-    color: themes.color(white, 80) !important;
+    color: rgb(255 255 255 / 80%) !important;
     letter-spacing: $resource-letter-spacing-base !important;
     line-height: $resource-line-height-base !important;
   }
@@ -430,22 +439,22 @@ $resource-opacity-full: tokens.$sheet-opacity-full;
   &__separator {
     font-family: var(--erps-mono-font) !important;
     font-size: $resource-font-size-value-lg !important;
-    color: themes.color(white, 80) !important;
-    text-shadow: 0 $resource-shadow-offset-xs $resource-shadow-offset-sm themes.color(black, 80) !important;
+    color: rgb(255 255 255 / 80%) !important;
+    text-shadow: 0 $resource-shadow-offset-xs $resource-shadow-offset-sm rgb(0 0 0 / 80%) !important;
     flex-shrink: 0;
   }
 
   // Color variants for stat boxes
   &--health {
-    @include stat-box-variant(red-dark, red);
+    @include resource-box-health;
   }
 
   &--mana {
-    @include stat-box-variant(purple-dark, purple);
+    @include resource-box-mana;
   }
 
   &--neutral {
-    @include stat-box-variant(gray-dark, gray);
+    @include resource-box-generic;
   }
 }
 
@@ -518,3 +527,4 @@ $resource-opacity-full: tokens.$sheet-opacity-full;
     }
   }
 }
+

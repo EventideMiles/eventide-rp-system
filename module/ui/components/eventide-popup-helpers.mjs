@@ -117,14 +117,14 @@ export class EventidePopupHelpers extends HandlebarsApplicationMixin(
       buttons.push({
         label: game.i18n.localize(actionLabel[this.type]),
         type: "submit",
-        cssClass: "popup-form__button popup-form__button--primary",
+        cssClass: "erps-button erps-button--primary",
       });
     }
 
     buttons.push({
       label: game.i18n.localize("EVENTIDE_RP_SYSTEM.Forms.Buttons.Close"),
       type: "button",
-      cssClass: "popup-form__button",
+      cssClass: "erps-button",
       action: "close",
     });
 

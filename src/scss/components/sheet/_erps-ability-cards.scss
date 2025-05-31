@@ -92,9 +92,9 @@ $spacing-sm: tokens.$sheet-spacing-sm;
   border: $card-border-width solid transparent;
   background: linear-gradient(
     135deg,
-    themes.color(black, 30) 0%,
-    themes.color(gray-dark, 40) 50%,
-    themes.color(black, 30) 100%
+    rgb(0 0 0 / 30%) 0%,
+    rgb(80 80 80 / 40%) 50%,
+    rgb(0 0 0 / 30%) 100%
   );
   padding: $card-padding;
   transition: all $transition-medium ease;
@@ -133,10 +133,10 @@ $spacing-sm: tokens.$sheet-spacing-sm;
   font-size: $input-font-size;
   line-height: $line-height;
   text-align: center;
-  background: themes.color(black, 30);
-  border: $border-thin solid themes.color(white, 20);
+  background: rgb(0 0 0 / 30%);
+  border: $border-thin solid rgb(255 255 255 / 20%);
   border-radius: $radius-xs;
-  color: themes.color(white);
+  color: rgb(255 255 255 / 100%);
   flex-shrink: 0;
   box-sizing: border-box;
   vertical-align: middle;
@@ -146,13 +146,13 @@ $spacing-sm: tokens.$sheet-spacing-sm;
   text-transform: none;
 
   &:focus {
-    border-color: themes.color(white, 50);
-    box-shadow: 0 0 $shadow-blur-xs themes.color(white, 30);
+    border-color: rgb(255 255 255 / 50%);
+    box-shadow: 0 0 $shadow-blur-xs rgb(255 255 255 / 30%);
     outline: none;
   }
 
   &:hover {
-    border-color: themes.color(white, 40);
+    border-color: rgb(255 255 255 / 40%);
   }
 }
 
@@ -170,7 +170,7 @@ $spacing-sm: tokens.$sheet-spacing-sm;
   padding: 0;
   margin: 0;
   border-radius: $radius-xs;
-  color: themes.color(white);
+  color: rgb(255 255 255 / 100%);
   cursor: pointer;
   transition: all $transition-base ease;
   flex-shrink: 0;
@@ -186,12 +186,12 @@ $spacing-sm: tokens.$sheet-spacing-sm;
   letter-spacing: normal;
 
   // Default styling
-  background: themes.color(white, 10);
-  border: $border-thin solid themes.color(white, 30);
-  text-shadow: 0 0 $shadow-blur-xs themes.color(white, 60);
+  background: rgb(255 255 255 / 10%);
+  border: $border-thin solid rgb(255 255 255 / 30%);
+  text-shadow: 0 0 $shadow-blur-xs rgb(255 255 255 / 60%);
   box-shadow:
-    0 0 $shadow-blur-sm themes.color(white, 40),
-    inset 0 $shadow-offset-xs 0 themes.color(white, 20);
+    0 0 $shadow-blur-sm rgb(255 255 255 / 40%),
+    inset 0 $shadow-offset-xs 0 rgb(255 255 255 / 20%);
 
   &:active {
     transform: scale($transform-scale-active);
@@ -208,7 +208,7 @@ $spacing-sm: tokens.$sheet-spacing-sm;
     background: linear-gradient(
       90deg,
       transparent,
-      themes.color(white, 20),
+      rgb(255 255 255 / 20%),
       transparent
     );
     animation: button-shimmer $animation-shimmer ease-in-out infinite;
@@ -230,8 +230,8 @@ $spacing-sm: tokens.$sheet-spacing-sm;
   padding: 0;
   margin: 0;
   border-radius: $radius-xs;
-  background: themes.color(black, 30);
-  border: $border-thin solid themes.color(white, 20);
+  background: rgb(0 0 0 / 30%);
+  border: $border-thin solid rgb(255 255 255 / 20%);
   transition: all $transition-base ease;
   box-sizing: border-box;
   vertical-align: middle;
@@ -239,8 +239,8 @@ $spacing-sm: tokens.$sheet-spacing-sm;
   overflow: visible;
 
   &:hover {
-    background: themes.color(black, 40);
-    border-color: themes.color(white, 35);
+    background: rgb(0 0 0 / 40%);
+    border-color: rgb(255 255 255 / 35%);
   }
 }
 
@@ -275,7 +275,7 @@ $spacing-sm: tokens.$sheet-spacing-sm;
     text-shadow: 0 0 $shadow-blur-xs color.change($color, $alpha: 0.8);
     box-shadow:
       0 0 $shadow-blur-sm color.change($color, $alpha: 0.4),
-      inset 0 $shadow-offset-xs 0 themes.color(white, 20);
+      inset 0 $shadow-offset-xs 0 rgb(255 255 255 / 20%);
     animation: ability-glow $animation-fast ease-in-out infinite alternate;
 
     &::before {
@@ -293,7 +293,7 @@ $spacing-sm: tokens.$sheet-spacing-sm;
       transform: scale($transform-scale-hover);
       box-shadow:
         0 0 $shadow-blur-lg color.change($color, $alpha: 0.6),
-        inset 0 $shadow-offset-xs 0 themes.color(white, 30);
+        inset 0 $shadow-offset-xs 0 rgb(255 255 255 / 30%);
     }
   }
 
@@ -365,7 +365,7 @@ $spacing-sm: tokens.$sheet-spacing-sm;
   &__label {
     font-size: $label-font-size;
     font-weight: $font-weight-semibold;
-    color: themes.color(white, 80);
+    color: rgb(255 255 255 / 80%);
     text-transform: uppercase;
     letter-spacing: $letter-spacing;
     line-height: $line-height;
@@ -376,7 +376,7 @@ $spacing-sm: tokens.$sheet-spacing-sm;
     transition: color $transition-base ease;
 
     &:hover {
-      color: themes.color(white);
+      color: rgb(255 255 255 / 100%);
     }
   }
 
@@ -416,7 +416,7 @@ $spacing-sm: tokens.$sheet-spacing-sm;
   // Hover effects
   &:hover {
     transform: translateY($transform-hover-sm);
-    box-shadow: 0 $shadow-offset-sm $shadow-blur-md themes.color(black, 30);
+    box-shadow: 0 $shadow-offset-sm $shadow-blur-md rgb(0 0 0 / 30%);
 
     &::before {
       width: 100%;
@@ -470,13 +470,13 @@ $spacing-sm: tokens.$sheet-spacing-sm;
   0% {
     box-shadow:
       0 0 $shadow-blur-sm rgb(var(--ability-color) / 40%),
-      inset 0 $shadow-offset-xs 0 themes.color(white, 20);
+      inset 0 $shadow-offset-xs 0 rgb(255 255 255 / 20%);
   }
 
   100% {
     box-shadow:
       0 0 $glow-blur-sm rgb(var(--ability-color) / 60%),
-      inset 0 $shadow-offset-xs 0 themes.color(white, 30);
+      inset 0 $shadow-offset-xs 0 rgb(255 255 255 / 30%);
   }
 }
 

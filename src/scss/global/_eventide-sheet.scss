@@ -1,7 +1,5 @@
 @use "../utils/colors" as colors;
 @use "../utils/typography" as typography;
-@use "../utils/mixins" as mixins;
-@use "../utils/tokens" as tokens;
 @use "../utils/themes" as themes;
 @use "../components/sheet/erps-resource-boxes" as resource-boxes;
 @use "../components/sheet/erps-profile-images" as profile-images;
@@ -20,6 +18,20 @@
   --erps-sheet-text: #{map.get(themes.$blue-theme, text)};
   --erps-sheet-accent: #{map.get(themes.$blue-theme, accent)};
   --erps-sheet-light: #{map.get(themes.$blue-theme, light)};
+
+  // Resource box fallback variables with theme references and fallbacks
+  --erps-resource-health-primary: var(--theme-resource-health-primary, rgb(153 27 27 / 90%));
+  --erps-resource-health-secondary: var(--theme-resource-health-secondary, rgb(220 38 38 / 50%));
+  --erps-resource-health-glow: var(--theme-resource-health-glow, rgb(220 38 38 / 20%));
+  --erps-resource-resolve-primary: var(--theme-resource-resolve-primary, rgb(147 51 234 / 90%));
+  --erps-resource-resolve-secondary: var(--theme-resource-resolve-secondary, rgb(147 51 234 / 50%));
+  --erps-resource-resolve-glow: var(--theme-resource-resolve-glow, rgb(147 51 234 / 20%));
+  --erps-resource-mana-primary: var(--theme-resource-mana-primary, rgb(30 58 138 / 90%));
+  --erps-resource-mana-secondary: var(--theme-resource-mana-secondary, rgb(59 130 246 / 50%));
+  --erps-resource-mana-glow: var(--theme-resource-mana-glow, rgb(59 130 246 / 20%));
+  --erps-resource-stamina-primary: var(--theme-resource-stamina-primary, rgb(20 83 45 / 90%));
+  --erps-resource-stamina-secondary: var(--theme-resource-stamina-secondary, rgb(34 197 94 / 50%));
+  --erps-resource-stamina-glow: var(--theme-resource-stamina-glow, rgb(34 197 94 / 20%));
 }
 
 // Generate theme-specific CSS custom properties efficiently
@@ -42,6 +54,20 @@ $theme-map: (
     --theme-glow: #{map.get($theme-colors, glow)};
     --theme-text: #{map.get($theme-colors, text)};
     --theme-bright: #{map.get($theme-colors, bright)};
+
+    // Resource box theme variables
+    --theme-resource-health-primary: #{map.get($theme-colors, resource-health-primary)};
+    --theme-resource-health-secondary: #{map.get($theme-colors, resource-health-secondary)};
+    --theme-resource-health-glow: #{map.get($theme-colors, resource-health-glow)};
+    --theme-resource-resolve-primary: #{map.get($theme-colors, resource-resolve-primary)};
+    --theme-resource-resolve-secondary: #{map.get($theme-colors, resource-resolve-secondary)};
+    --theme-resource-resolve-glow: #{map.get($theme-colors, resource-resolve-glow)};
+    --theme-resource-mana-primary: #{map.get($theme-colors, resource-mana-primary)};
+    --theme-resource-mana-secondary: #{map.get($theme-colors, resource-mana-secondary)};
+    --theme-resource-mana-glow: #{map.get($theme-colors, resource-mana-glow)};
+    --theme-resource-stamina-primary: #{map.get($theme-colors, resource-stamina-primary)};
+    --theme-resource-stamina-secondary: #{map.get($theme-colors, resource-stamina-secondary)};
+    --theme-resource-stamina-glow: #{map.get($theme-colors, resource-stamina-glow)};
 
     // Legacy sheet properties for backward compatibility
     --erps-sheet-primary: #{map.get($theme-colors, primary)};
@@ -79,6 +105,20 @@ label,
 
   // Apply theme-aware animated backgrounds
   @include themes.apply-all-background-themes;
+
+  // Resource box theme variables that inherit from the main theme system
+  --erps-resource-health-primary: var(--theme-resource-health-primary);
+  --erps-resource-health-secondary: var(--theme-resource-health-secondary);
+  --erps-resource-health-glow: var(--theme-resource-health-glow);
+  --erps-resource-resolve-primary: var(--theme-resource-resolve-primary);
+  --erps-resource-resolve-secondary: var(--theme-resource-resolve-secondary);
+  --erps-resource-resolve-glow: var(--theme-resource-resolve-glow);
+  --erps-resource-mana-primary: var(--theme-resource-mana-primary);
+  --erps-resource-mana-secondary: var(--theme-resource-mana-secondary);
+  --erps-resource-mana-glow: var(--theme-resource-mana-glow);
+  --erps-resource-stamina-primary: var(--theme-resource-stamina-primary);
+  --erps-resource-stamina-secondary: var(--theme-resource-stamina-secondary);
+  --erps-resource-stamina-glow: var(--theme-resource-stamina-glow);
 
   // Character header styling - now theme-aware
   .eventide-sheet__header {

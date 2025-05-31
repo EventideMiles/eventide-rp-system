@@ -199,7 +199,7 @@ $form-transition: all tokens.$sheet-transition-medium ease;
   &--required {
     &::after {
       content: ' *';
-      color: themes.color(red, 80);
+      color: rgb(220 38 38 / 80%);
       font-weight: bold;
     }
   }
@@ -525,7 +525,7 @@ $form-transition: all tokens.$sheet-transition-medium ease;
 
     @media (width <= 1024px) {
       grid-template-columns: 1fr 1fr;
-      
+
       // Effects column spans full width on medium screens
       .gear-creator__column:nth-child(3) {
         grid-column: 1 / -1;
@@ -580,7 +580,7 @@ $form-transition: all tokens.$sheet-transition-medium ease;
         .erps-data-table__create-button {
           padding: tokens.$sheet-spacing-xs;
           font-size: tokens.$sheet-font-size-value-sm;
-          
+
           i {
             margin-right: tokens.$sheet-spacing-xs;
           }
@@ -591,7 +591,7 @@ $form-transition: all tokens.$sheet-transition-medium ease;
           min-width: auto;
           width: 24px;
           height: 24px;
-          
+
           i {
             font-size: tokens.$sheet-font-size-value-sm;
           }
@@ -615,7 +615,7 @@ $form-transition: all tokens.$sheet-transition-medium ease;
             width: 24px;
             height: 28px;
             padding: 0;
-            
+
             i {
               font-size: tokens.$sheet-font-size-value-sm;
             }
@@ -713,7 +713,7 @@ $form-transition: all tokens.$sheet-transition-medium ease;
 
   .erps-form__grid-header-cell {
     text-align: left;
-    
+
     &:not(:first-child) {
       display: none;
     }
@@ -830,24 +830,24 @@ $form-transition: all tokens.$sheet-transition-medium ease;
   }
 
   &--advantage {
-    color: themes.color(green, 70);
+    color: rgb(34 197 94 / 70%);
     font-weight: tokens.$sheet-font-weight-semibold;
   }
 
   &--disadvantage {
-    color: themes.color(red, 70);
+    color: rgb(220 38 38 / 70%);
     font-weight: tokens.$sheet-font-weight-semibold;
   }
 
   &--success {
-    color: themes.color(green, 80);
+    color: rgb(34 197 94 / 80%);
   }
 
   &--warning {
-    color: themes.color(orange, 80);
+    color: rgb(249 115 22 / 80%);
   }
 
   &--error {
-    color: themes.color(red, 80);
+    color: rgb(220 38 38 / 80%);
   }
-} 
+}

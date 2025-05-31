@@ -3,7 +3,11 @@ import { prepareCharacterEffects } from "../../helpers/_module.mjs";
 import { EventideSheetHelpers } from "../components/_module.mjs";
 import { Logger } from "../../services/_module.mjs";
 import { ErrorHandler, CommonFoundryTasks } from "../../utils/_module.mjs";
-import { initThemeManager, THEME_PRESETS, cleanupThemeManager } from "../../helpers/_module.mjs";
+import {
+  initThemeManager,
+  THEME_PRESETS,
+  cleanupThemeManager,
+} from "../../helpers/_module.mjs";
 
 const { api, sheets } = foundry.applications;
 const { DragDrop, TextEditor } = foundry.applications.ux;

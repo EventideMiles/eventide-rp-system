@@ -82,19 +82,87 @@ $glow-opacity: 0.6;
 // UTILITY MIXINS
 // ===================================
 
-@mixin input-glow($color, $opacity: $glow-opacity) {
-  box-shadow: 0 0 $input-shadow-blur themes.color($color, $opacity * 100);
+@mixin input-glow($glow-type: "input") {
+  @if $glow-type == "input" {
+    box-shadow: 0 0 $input-shadow-blur var(--theme-input-glow);
+  } @else if $glow-type == "button" {
+    box-shadow: 0 0 $button-shadow-blur var(--theme-button-glow);
+  } @else if $glow-type == "success" {
+    box-shadow: 0 0 $input-shadow-blur var(--theme-success-glow);
+  } @else if $glow-type == "warning" {
+    box-shadow: 0 0 $input-shadow-blur var(--theme-warning-glow);
+  } @else if $glow-type == "danger" {
+    box-shadow: 0 0 $input-shadow-blur var(--theme-danger-glow);
+  } @else if $glow-type == "purple" {
+    box-shadow: 0 0 $input-shadow-blur var(--theme-purple-glow);
+  } @else {
+    box-shadow: 0 0 $input-shadow-blur var(--theme-input-glow);
+  }
 }
 
-@mixin button-glow($color, $opacity: $glow-opacity) {
-  box-shadow: 0 0 $button-shadow-blur themes.color($color, $opacity * 100);
+@mixin button-glow($glow-type: "button") {
+  @if $glow-type == "button" {
+    box-shadow: 0 0 $button-shadow-blur var(--theme-button-glow);
+  } @else if $glow-type == "success" {
+    box-shadow: 0 0 $button-shadow-blur var(--theme-success-glow);
+  } @else if $glow-type == "warning" {
+    box-shadow: 0 0 $button-shadow-blur var(--theme-warning-glow);
+  } @else if $glow-type == "danger" {
+    box-shadow: 0 0 $button-shadow-blur var(--theme-danger-glow);
+  } @else if $glow-type == "purple" {
+    box-shadow: 0 0 $button-shadow-blur var(--theme-purple-glow);
+  } @else {
+    box-shadow: 0 0 $button-shadow-blur var(--theme-button-glow);
+  }
 }
 
 @mixin button-gradient($color, $start-opacity: 20, $end-opacity: 30) {
-  background: linear-gradient(135deg,
-    themes.color($color, $start-opacity),
-    themes.color($color, $end-opacity)
-  );
+  @if $color == "blue" {
+    background: linear-gradient(135deg,
+      rgb(59 130 246 / 20%),
+      rgb(59 130 246 / 30%)
+    );
+  } @else if $color == "green" {
+    background: linear-gradient(135deg,
+      rgb(34 197 94 / 20%),
+      rgb(34 197 94 / 30%)
+    );
+  } @else if $color == "red" {
+    background: linear-gradient(135deg,
+      rgb(220 38 38 / 20%),
+      rgb(220 38 38 / 30%)
+    );
+  } @else if $color == "orange" {
+    background: linear-gradient(135deg,
+      rgb(249 115 22 / 20%),
+      rgb(249 115 22 / 30%)
+    );
+  } @else if $color == "purple" {
+    background: linear-gradient(135deg,
+      rgb(147 51 234 / 20%),
+      rgb(147 51 234 / 30%)
+    );
+  } @else if $color == "gray" {
+    background: linear-gradient(135deg,
+      rgb(100 100 100 / 20%),
+      rgb(100 100 100 / 30%)
+    );
+  } @else if $color == "gray-dark" {
+    background: linear-gradient(135deg,
+      rgb(80 80 80 / 20%),
+      rgb(80 80 80 / 30%)
+    );
+  } @else if $color == "gray-light" {
+    background: linear-gradient(135deg,
+      rgb(120 120 120 / 20%),
+      rgb(120 120 120 / 30%)
+    );
+  } @else {
+    background: linear-gradient(135deg,
+      rgb(100 100 100 / 20%),
+      rgb(100 100 100 / 30%)
+    );
+  }
 }
 
 // ===================================
@@ -291,7 +359,7 @@ $glow-opacity: 0.6;
 
     &:hover {
       @include button-gradient(blue, 60, 80);
-      @include button-glow(blue, 0.8);
+      @include button-glow("button");
 
       border-color: var(--theme-text, #fff);
     }
@@ -306,7 +374,7 @@ $glow-opacity: 0.6;
 
     &:hover {
       @include button-gradient(gray, 30, 40);
-      @include button-glow(gray, 0.4);
+      @include button-glow("button");
 
       border-color: rgb(100 100 100 / 60%);
       color: #fff;
@@ -316,15 +384,15 @@ $glow-opacity: 0.6;
   // On variant - active/selected state
   &--on {
     @include button-gradient(green, 40, 60);
-    @include button-glow(green, 0.6);
+    @include button-glow("success");
 
-    border-color: themes.color(green, 60);
+    border-color: rgb(34 197 94 / 60%);
 
     &:hover {
       @include button-gradient(green, 60, 80);
-      @include button-glow(green, 0.8);
+      @include button-glow("success");
 
-      border-color: themes.color(green, 80);
+      border-color: rgb(34 197 94 / 80%);
     }
   }
 
@@ -363,52 +431,52 @@ $glow-opacity: 0.6;
 .erps-button--create {
   @include button-gradient(green, 30, 50);
 
-  border-color: themes.color(green, 40);
+  border-color: rgb(34 197 94 / 40%);
 
   &:hover {
     @include button-gradient(green, 50, 70);
-    @include button-glow(green, 0.6);
+    @include button-glow("success");
 
-    border-color: themes.color(green, 80);
+    border-color: rgb(34 197 94 / 80%);
   }
 }
 
 .erps-button--edit {
   @include button-gradient(blue, 30, 50);
 
-  border-color: themes.color(blue, 40);
+  border-color: rgb(59 130 246 / 40%);
 
   &:hover {
     @include button-gradient(blue, 50, 70);
-    @include button-glow(blue, 0.6);
+    @include button-glow("button");
 
-    border-color: themes.color(blue, 80);
+    border-color: rgb(59 130 246 / 80%);
   }
 }
 
 .erps-button--delete {
   @include button-gradient(red, 30, 50);
 
-  border-color: themes.color(red, 40);
+  border-color: rgb(220 38 38 / 40%);
 
   &:hover {
     @include button-gradient(red, 50, 70);
-    @include button-glow(red, 0.6);
+    @include button-glow("danger");
 
-    border-color: themes.color(red, 80);
+    border-color: rgb(220 38 38 / 80%);
   }
 }
 
 .erps-button--warning {
   @include button-gradient(orange, 30, 50);
 
-  border-color: themes.color(orange, 40);
+  border-color: rgb(249 115 22 / 40%);
 
   &:hover {
     @include button-gradient(orange, 50, 70);
-    @include button-glow(orange, 0.6);
+    @include button-glow("warning");
 
-    border-color: themes.color(orange, 80);
+    border-color: rgb(249 115 22 / 80%);
   }
 }
 
@@ -442,7 +510,7 @@ $glow-opacity: 0.6;
   font-size: 0.9rem;
   font-weight: 500;
   color: var(--erps-current-text, var(--theme-text, var(--erps-default-text)));
-  text-shadow: 0 1px 2px themes.color(black, 60);
+  text-shadow: 0 1px 2px rgb(0 0 0 / 60%);
   margin-bottom: 0.25rem;
   display: block;
 }
@@ -571,42 +639,42 @@ $glow-opacity: 0.6;
     }
 
     &--decrement {
-      background: linear-gradient(135deg, themes.color(gray, 20), themes.color(gray, 30));
-      border-color: themes.color(gray, 40);
-      color: themes.color(gray-light, 90);
+      background: linear-gradient(135deg, rgb(100 100 100 / 20%), rgb(100 100 100 / 30%));
+      border-color: rgb(100 100 100 / 40%);
+      color: rgb(160 160 160 / 90%);
 
       &:hover {
-        background: linear-gradient(135deg, themes.color(gray, 30), themes.color(gray, 40));
-        border-color: themes.color(gray, 50);
-        color: themes.color(gray-light, 95);
-        box-shadow: 0 0 8px themes.color(gray, 30);
+        background: linear-gradient(135deg, rgb(100 100 100 / 30%), rgb(100 100 100 / 40%));
+        border-color: rgb(100 100 100 / 50%);
+        color: rgb(160 160 160 / 95%);
+        box-shadow: 0 0 8px rgb(100 100 100 / 30%);
       }
 
       // Special handling for light theme
       .eventide-sheet[data-bg-theme="light"] & {
-        background: linear-gradient(135deg, themes.color(gray-dark, 20), themes.color(gray-dark, 30));
-        border-color: themes.color(gray-dark, 40);
-        color: themes.color(gray-dark, 90);
+        background: linear-gradient(135deg, rgb(80 80 80 / 20%), rgb(80 80 80 / 30%));
+        border-color: rgb(80 80 80 / 40%);
+        color: rgb(80 80 80 / 90%);
 
         &:hover {
-          background: linear-gradient(135deg, themes.color(gray-dark, 30), themes.color(gray-dark, 40));
-          border-color: themes.color(gray-dark, 50);
-          color: themes.color(gray-dark, 95);
-          box-shadow: 0 0 8px themes.color(gray-dark, 30);
+          background: linear-gradient(135deg, rgb(80 80 80 / 30%), rgb(80 80 80 / 40%));
+          border-color: rgb(80 80 80 / 50%);
+          color: rgb(80 80 80 / 95%);
+          box-shadow: 0 0 8px rgb(80 80 80 / 30%);
         }
       }
 
       // Special handling for black theme (needs even more contrast)
       .eventide-sheet[data-bg-theme="black"] & {
-        background: linear-gradient(135deg, themes.color(gray-light, 25), themes.color(gray-light, 35));
-        border-color: themes.color(gray-light, 45);
-        color: themes.color(white, 90);
+        background: linear-gradient(135deg, rgb(120 120 120 / 25%), rgb(120 120 120 / 35%));
+        border-color: rgb(120 120 120 / 45%);
+        color: rgb(255 255 255 / 90%);
 
         &:hover {
-          background: linear-gradient(135deg, themes.color(gray-light, 35), themes.color(gray-light, 45));
-          border-color: themes.color(gray-light, 55);
-          color: themes.color(white, 95);
-          box-shadow: 0 0 8px themes.color(gray-light, 35);
+          background: linear-gradient(135deg, rgb(120 120 120 / 35%), rgb(120 120 120 / 45%));
+          border-color: rgb(120 120 120 / 55%);
+          color: rgb(255 255 255 / 95%);
+          box-shadow: 0 0 8px rgb(120 120 120 / 35%);
         }
       }
     }
@@ -661,8 +729,8 @@ $glow-opacity: 0.6;
     padding: 0.5rem 1rem;
     background: linear-gradient(135deg, var(--theme-primary), var(--theme-secondary));
     border-radius: 6px 6px 0 0;
-    border-bottom: 2px solid themes.color(white, 20);
-    text-shadow: 0 1px 2px themes.color(black, 80);
+    border-bottom: 2px solid rgb(255 255 255 / 20%);
+    text-shadow: 0 1px 2px rgb(0 0 0 / 80%);
     position: relative;
     overflow: hidden;
 
@@ -674,7 +742,7 @@ $glow-opacity: 0.6;
       left: -100%;
       width: 200%;
       height: 100%;
-      background: linear-gradient(90deg, transparent, themes.color(white, 10), transparent);
+      background: linear-gradient(90deg, transparent, rgb(255 255 255 / 10%), transparent);
       animation: erps-header-glow 4s ease-in-out infinite;
       z-index: 1;
     }
@@ -689,15 +757,15 @@ $glow-opacity: 0.6;
   // Hidden effects section styling
   &--hidden {
     .eventide-item-sheet__effects-section-header {
-      background: linear-gradient(135deg, themes.color(purple, 30), themes.color(purple, 40));
-      border-bottom-color: themes.color(purple, 60);
+      background: linear-gradient(135deg, rgb(147 51 234 / 30%), rgb(147 51 234 / 40%));
+      border-bottom-color: rgb(147 51 234 / 60%);
     }
 
     .erps-data-table {
-      border-left: 3px solid themes.color(purple, 60);
+      border-left: 3px solid rgb(147 51 234 / 60%);
       box-shadow:
-        0 4px 12px themes.color(black, 30),
-        inset 3px 0 0 themes.color(purple, 20);
+        0 4px 12px rgb(0 0 0 / 30%),
+        inset 3px 0 0 rgb(147 51 234 / 20%);
     }
   }
 
@@ -719,7 +787,7 @@ $glow-opacity: 0.6;
     width: 2rem;
     height: 2rem;
     border-radius: 4px;
-    border: 1px solid themes.color(white, 20);
+    border: 1px solid rgb(255 255 255 / 20%);
     cursor: pointer;
     transition: all 0.2s ease;
     flex-shrink: 0;
@@ -741,7 +809,7 @@ $glow-opacity: 0.6;
 
     &::-webkit-color-swatch-wrapper {
       padding: 0;
-      border: 1px solid themes.color(white, 20);
+      border: 1px solid rgb(255 255 255 / 20%);
       border-radius: 4px;
     }
 
@@ -905,9 +973,9 @@ $glow-opacity: 0.6;
     }
 
     &.invalid {
-      border-color: themes.color(red, 60);
-      background-color: themes.color(red, 10);
-      box-shadow: 0 0 0 2px themes.color(red, 30);
+      border-color: rgb(220 38 38 / 60%);
+      background-color: rgb(220 38 38 / 10%);
+      box-shadow: 0 0 0 2px rgb(220 38 38 / 30%);
     }
   }
 
@@ -919,7 +987,7 @@ $glow-opacity: 0.6;
     color: var(--erps-current-text, var(--theme-text, var(--erps-default-text)));
     cursor: pointer;
     transition: color 0.3s ease;
-    text-shadow: 0 1px 2px themes.color(black, 60);
+    text-shadow: 0 1px 2px rgb(0 0 0 / 60%);
     white-space: nowrap;
   }
 
@@ -1273,15 +1341,15 @@ $glow-opacity: 0.6;
   &--disabled {
     opacity: 0.6;
     cursor: not-allowed;
-    
+
     &:hover {
       transform: none;
       box-shadow: none;
-      
+
       img {
         transform: none;
       }
-      
+
       &::after {
         opacity: 0;
       }
@@ -1310,11 +1378,11 @@ $glow-opacity: 0.6;
   .erps-textarea {
     min-height: 6rem;
     font-size: 0.9rem;
-    
+
     &--small {
       min-height: 4rem;
     }
-    
+
     &--large {
       min-height: 8rem;
     }
@@ -1358,7 +1426,7 @@ $glow-opacity: 0.6;
   .erps-data-table__create-button {
     padding: tokens.$sheet-spacing-xs;
     font-size: tokens.$sheet-font-size-value-sm;
-    
+
     i {
       margin-right: tokens.$sheet-spacing-xs;
     }
@@ -1369,7 +1437,7 @@ $glow-opacity: 0.6;
     min-width: auto;
     width: 24px;
     height: 24px;
-    
+
     i {
       font-size: tokens.$sheet-font-size-value-sm;
     }

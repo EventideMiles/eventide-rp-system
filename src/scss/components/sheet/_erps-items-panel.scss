@@ -63,14 +63,66 @@ $control-gap: tokens.$sheet-spacing-sm;
 
 // Control button color variant mixin
 @mixin control-button-variant($color-name) {
-  color: themes.color($color-name, 70);
-  border-color: themes.color($color-name, 40);
+  @if $color-name == "blue" {
+    color: rgb(59 130 246 / 70%);
+    border-color: rgb(59 130 246 / 40%);
 
-  &:hover {
-    background: themes.color($color-name, 20);
-    border-color: themes.color($color-name, 80);
-    color: themes.color($color-name, 90);
-    box-shadow: 0 0 tokens.$sheet-glow-blur-sm themes.color($color-name, 40);
+    &:hover {
+      background: rgb(59 130 246 / 20%);
+      border-color: rgb(59 130 246 / 80%);
+      color: rgb(59 130 246 / 90%);
+      box-shadow: 0 0 tokens.$sheet-glow-blur-sm rgb(59 130 246 / 40%);
+    }
+  } @else if $color-name == "green" {
+    color: rgb(34 197 94 / 70%);
+    border-color: rgb(34 197 94 / 40%);
+
+    &:hover {
+      background: rgb(34 197 94 / 20%);
+      border-color: rgb(34 197 94 / 80%);
+      color: rgb(34 197 94 / 90%);
+      box-shadow: 0 0 tokens.$sheet-glow-blur-sm rgb(34 197 94 / 40%);
+    }
+  } @else if $color-name == "red" {
+    color: rgb(220 38 38 / 70%);
+    border-color: rgb(220 38 38 / 40%);
+
+    &:hover {
+      background: rgb(220 38 38 / 20%);
+      border-color: rgb(220 38 38 / 80%);
+      color: rgb(220 38 38 / 90%);
+      box-shadow: 0 0 tokens.$sheet-glow-blur-sm rgb(220 38 38 / 40%);
+    }
+  } @else if $color-name == "orange" {
+    color: rgb(249 115 22 / 70%);
+    border-color: rgb(249 115 22 / 40%);
+
+    &:hover {
+      background: rgb(249 115 22 / 20%);
+      border-color: rgb(249 115 22 / 80%);
+      color: rgb(249 115 22 / 90%);
+      box-shadow: 0 0 tokens.$sheet-glow-blur-sm rgb(249 115 22 / 40%);
+    }
+  } @else if $color-name == "purple" {
+    color: rgb(147 51 234 / 70%);
+    border-color: rgb(147 51 234 / 40%);
+
+    &:hover {
+      background: rgb(147 51 234 / 20%);
+      border-color: rgb(147 51 234 / 80%);
+      color: rgb(147 51 234 / 90%);
+      box-shadow: 0 0 tokens.$sheet-glow-blur-sm rgb(147 51 234 / 40%);
+    }
+  } @else {
+    color: rgb(100 100 100 / 70%);
+    border-color: rgb(100 100 100 / 40%);
+
+    &:hover {
+      background: rgb(100 100 100 / 20%);
+      border-color: rgb(100 100 100 / 80%);
+      color: rgb(100 100 100 / 90%);
+      box-shadow: 0 0 tokens.$sheet-glow-blur-sm rgb(100 100 100 / 40%);
+    }
   }
 }
 
@@ -83,7 +135,7 @@ $control-gap: tokens.$sheet-spacing-sm;
   border: $panel-border-width solid var(--theme-secondary);
   border-radius: $panel-border-radius;
   overflow: hidden;
-  box-shadow: 0 tokens.$sheet-shadow-blur-xs tokens.$sheet-shadow-blur-md themes.color(black, 30);
+  box-shadow: 0 tokens.$sheet-shadow-blur-xs tokens.$sheet-shadow-blur-md rgb(0 0 0 / 30%);
 
   &__section-header {
     font-family: var(--erps-ui-font);
@@ -96,8 +148,8 @@ $control-gap: tokens.$sheet-spacing-sm;
     padding: tokens.$sheet-spacing-sm tokens.$sheet-spacing-base;
     background: linear-gradient(135deg, var(--theme-primary), var(--theme-secondary));
     border-radius: tokens.$sheet-radius-md tokens.$sheet-radius-md 0 0;
-    border-bottom: tokens.$sheet-border-base solid themes.color(white, 20);
-    text-shadow: 0 1px 2px themes.color(black, 80);
+    border-bottom: tokens.$sheet-border-base solid rgb(255 255 255 / 20%);
+    text-shadow: 0 1px 2px rgb(0 0 0 / 80%);
     text-align: center;
   }
 
@@ -143,7 +195,7 @@ $control-gap: tokens.$sheet-spacing-sm;
         height: $header-height;
         padding: $header-padding;
         border-bottom: tokens.$sheet-border-base solid var(--theme-light);
-        text-shadow: 0 1px 2px themes.color(black, 60);
+        text-shadow: 0 1px 2px rgb(0 0 0 / 60%);
         text-transform: uppercase;
         letter-spacing: tokens.$sheet-letter-spacing-base;
       }
@@ -153,11 +205,11 @@ $control-gap: tokens.$sheet-spacing-sm;
       .erps-items-panel__cell {
         height: $item-height;
         padding: $item-padding;
-        border-bottom: 1px solid themes.color(white, 10);
+        border-bottom: 1px solid rgb(255 255 255 / 10%);
         transition: all tokens.$sheet-transition-base ease;
 
         &:hover {
-          background-color: themes.color(white, 5);
+          background-color: rgb(255 255 255 / 5%);
         }
       }
 
@@ -292,8 +344,8 @@ $control-gap: tokens.$sheet-spacing-sm;
     font-size: $item-font-size;
     font-weight: tokens.$sheet-font-weight-semibold;
     color: var(--theme-text);
-    background: linear-gradient(135deg, themes.color(green, 30), themes.color(green, 50));
-    border: 1px solid themes.color(green, 40);
+    background: linear-gradient(135deg, rgb(34 197 94 / 30%), rgb(34 197 94 / 50%));
+    border: 1px solid rgb(34 197 94 / 40%);
     border-radius: tokens.$sheet-radius-sm;
     transition: all tokens.$sheet-transition-base ease;
     cursor: pointer;
@@ -302,9 +354,9 @@ $control-gap: tokens.$sheet-spacing-sm;
     letter-spacing: tokens.$sheet-letter-spacing-base;
 
     &:hover {
-      background: linear-gradient(135deg, themes.color(green, 50), themes.color(green, 70));
-      border-color: themes.color(green, 80);
-      box-shadow: 0 0 tokens.$sheet-glow-blur-sm themes.color(green, 40);
+      background: linear-gradient(135deg, rgb(34 197 94 / 50%), rgb(34 197 94 / 70%));
+      border-color: rgb(34 197 94 / 80%);
+      box-shadow: 0 0 tokens.$sheet-glow-blur-sm rgb(34 197 94 / 40%);
       transform: translateY(tokens.$sheet-transform-hover-sm);
     }
 
@@ -344,7 +396,7 @@ $control-gap: tokens.$sheet-spacing-sm;
     &:hover,
     &.drag-over {
       border-color: var(--theme-light);
-      background-color: themes.color(white, 5);
+      background-color: rgb(255 255 255 / 5%);
       opacity: 1;
       box-shadow: 0 0 tokens.$sheet-shadow-blur-md var(--theme-glow);
     }
@@ -367,7 +419,7 @@ $control-gap: tokens.$sheet-spacing-sm;
     color: var(--theme-text);
     opacity: 0.8;
     font-style: italic;
-    background: themes.color(white, 3);
+    background: rgb(255 255 255 / 3%);
     border-radius: tokens.$sheet-radius-sm;
     border-left: 3px solid var(--theme-secondary);
   }

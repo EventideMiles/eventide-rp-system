@@ -13,7 +13,11 @@ import { Logger } from "../services/_module.mjs";
  */
 export const initTabContainerStyling = (element) => {
   if (!element) {
-    Logger.debug("No element provided for tab container styling", {}, "TAB_STYLING");
+    Logger.debug(
+      "No element provided for tab container styling",
+      {},
+      "TAB_STYLING",
+    );
     return;
   }
 
@@ -37,10 +41,14 @@ export const initTabContainerStyling = (element) => {
     }
   });
 
-  Logger.debug("Tab container styling initialized", {
-    elementTag: element.tagName,
-    hasTabsContainer: !!tabsContainer
-  }, "TAB_STYLING");
+  Logger.debug(
+    "Tab container styling initialized",
+    {
+      elementTag: element.tagName,
+      hasTabsContainer: !!tabsContainer,
+    },
+    "TAB_STYLING",
+  );
 };
 
 /**
@@ -54,38 +62,50 @@ export const updateTabContainerStyling = (element) => {
   if (!tabsContainer) return;
 
   // Find the currently active tab
-  const activeTab = element.querySelector('.tab.active');
+  const activeTab = element.querySelector(".tab.active");
   if (!activeTab) return;
 
-  const activeTabId = activeTab.getAttribute('data-tab');
+  const activeTabId = activeTab.getAttribute("data-tab");
 
   // Remove all existing tab-specific classes
   tabsContainer.classList.remove(
-    'erps-tabs__container--rounded',
-    'erps-tabs__container--flat'
+    "erps-tabs__container--rounded",
+    "erps-tabs__container--flat",
   );
 
   // Apply styling based on the active tab
   switch (activeTabId) {
-    case 'gear':
+    case "gear":
       // Gear tab has its own navigation, so round the container
-      tabsContainer.classList.add('erps-tabs__container--rounded');
-      Logger.debug("Applied rounded styling for gear tab", { activeTabId }, "TAB_STYLING");
+      tabsContainer.classList.add("erps-tabs__container--rounded");
+      Logger.debug(
+        "Applied rounded styling for gear tab",
+        { activeTabId },
+        "TAB_STYLING",
+      );
       break;
 
-    case 'features':
-    case 'statuses':
-    case 'combatPowers':
+    case "features":
+    case "statuses":
+    case "combatPowers":
       // These tabs connect directly to data tables, so keep flat bottom
-      tabsContainer.classList.add('erps-tabs__container--flat');
-      Logger.debug("Applied flat styling for connected tab", { activeTabId }, "TAB_STYLING");
+      tabsContainer.classList.add("erps-tabs__container--flat");
+      Logger.debug(
+        "Applied flat styling for connected tab",
+        { activeTabId },
+        "TAB_STYLING",
+      );
       break;
 
-    case 'biography':
+    case "biography":
     default:
       // Biography and other tabs don't connect to data tables, so round them
-      tabsContainer.classList.add('erps-tabs__container--rounded');
-      Logger.debug("Applied rounded styling for standalone tab", { activeTabId }, "TAB_STYLING");
+      tabsContainer.classList.add("erps-tabs__container--rounded");
+      Logger.debug(
+        "Applied rounded styling for standalone tab",
+        { activeTabId },
+        "TAB_STYLING",
+      );
       break;
   }
 };
@@ -106,8 +126,12 @@ export const cleanupTabContainerStyling = (element) => {
     const clone = tabsContainer.cloneNode(true);
     tabsContainer.parentNode.replaceChild(clone, tabsContainer);
 
-    Logger.debug("Tab container styling cleaned up", {
-      elementTag: element.tagName
-    }, "TAB_STYLING");
+    Logger.debug(
+      "Tab container styling cleaned up",
+      {
+        elementTag: element.tagName,
+      },
+      "TAB_STYLING",
+    );
   }
 };

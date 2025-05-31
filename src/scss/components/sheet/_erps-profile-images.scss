@@ -46,20 +46,20 @@ $profile-disabled-overlay-opacity: 0.6;
 @mixin profile-shadow($blur: $profile-shadow-blur, $opacity: 0.8) {
   box-shadow:
     // Outer highlight for depth
-    0 0 $blur themes.color(white, $opacity * 100),
+    0 0 $blur rgb(255 255 255 / #{$opacity}),
     // Enhanced inset shadow for sunken effect
-    inset 2px 2px ($blur * 0.6) themes.color(black, $profile-inner-shadow-opacity * 150),
-    inset -1px -1px ($blur * 0.4) themes.color(white, $profile-inner-shadow-opacity * 50);
+    inset 2px 2px ($blur * 0.6) rgb(0 0 0 / #{$profile-inner-shadow-opacity * 1.5}),
+    inset -1px -1px ($blur * 0.4) rgb(255 255 255 / #{$profile-inner-shadow-opacity * 0.5});
 }
 
 // Hover shadow styling
 @mixin profile-shadow-hover($blur: $profile-shadow-blur-hover) {
   box-shadow:
     // Enhanced outer glow on hover
-    0 0 $blur themes.color(white, 80),
+    0 0 $blur rgb(255 255 255 / 80%),
     // Reduced inset shadow on hover for subtle lift effect
-    inset 1px 1px ($blur * 0.53) themes.color(black, $profile-inner-shadow-opacity-hover * 120),
-    inset -1px -1px ($blur * 0.27) themes.color(white, $profile-inner-shadow-opacity-hover * 80);
+    inset 1px 1px ($blur * 0.53) rgb(0 0 0 / #{$profile-inner-shadow-opacity-hover * 1.2}),
+    inset -1px -1px ($blur * 0.27) rgb(255 255 255 / #{$profile-inner-shadow-opacity-hover * 0.8});
 }
 
 // Disabled overlay mixin
@@ -68,7 +68,7 @@ $profile-disabled-overlay-opacity: 0.6;
     content: '';
     position: absolute;
     inset: 0;
-    background: themes.color(black, $profile-disabled-overlay-opacity * 100);
+    background: rgb(0 0 0 / #{$profile-disabled-overlay-opacity});
     border-radius: $profile-border-radius;
     pointer-events: none;
   }
@@ -80,7 +80,7 @@ $profile-disabled-overlay-opacity: 0.6;
     content: '';
     position: absolute;
     inset: -$profile-frame-offset;
-    border: tokens.$sheet-border-thin solid themes.color(white, $profile-frame-opacity * 100);
+    border: tokens.$sheet-border-thin solid rgb(255 255 255 / #{$profile-frame-opacity});
     border-radius: $profile-border-radius;
     z-index: -1;
   }
@@ -132,7 +132,7 @@ $profile-disabled-overlay-opacity: 0.6;
   // Theme-aware background using CSS custom properties
   background: var(--erps-profile-primary) !important;
   background-clip: content-box !important;
-  border: $profile-border-width inset themes.color(white, 100);
+  border: $profile-border-width inset rgb(255 255 255 / 100%);
   border-radius: $profile-border-radius;
   transition: $profile-transition;
   position: relative;
@@ -145,7 +145,7 @@ $profile-disabled-overlay-opacity: 0.6;
   @include profile-frame-effect;
 
   &:hover {
-    border: $profile-border-width inset themes.color(white, 90);
+    border: $profile-border-width inset rgb(255 255 255 / 90%);
     transform: scale($profile-hover-scale);
 
     @include profile-shadow-hover;
@@ -160,7 +160,7 @@ $profile-disabled-overlay-opacity: 0.6;
     @include profile-disabled-overlay;
 
     &:hover {
-      border: $profile-border-width inset themes.color(white, 100);
+      border: $profile-border-width inset rgb(255 255 255 / 100%);
       transform: none;
 
       @include profile-shadow;

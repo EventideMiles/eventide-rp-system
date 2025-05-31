@@ -119,30 +119,44 @@ const handleNumberInputClick = (event) => {
   const target = event.target;
 
   // Check for ERPS number input buttons
-  if (target.matches(".erps-number-input__button--increment, .erps-number-input__button--decrement")) {
+  if (
+    target.matches(
+      ".erps-number-input__button--increment, .erps-number-input__button--decrement",
+    )
+  ) {
     const wrapper = target.closest(".erps-number-input");
     if (!wrapper) return;
 
-    const input = wrapper.querySelector('.erps-number-input__input');
+    const input = wrapper.querySelector(".erps-number-input__input");
     if (!input) return;
 
-    const isIncrement = target.classList.contains("erps-number-input__button--increment");
+    const isIncrement = target.classList.contains(
+      "erps-number-input__button--increment",
+    );
     updateNumberInputValue(input, isIncrement);
     return;
   }
 
   // Also handle clicks on icons within ERPS number input buttons
-  if (target.matches(".erps-number-input__button--increment i, .erps-number-input__button--decrement i")) {
-    const button = target.closest(".erps-number-input__button--increment, .erps-number-input__button--decrement");
+  if (
+    target.matches(
+      ".erps-number-input__button--increment i, .erps-number-input__button--decrement i",
+    )
+  ) {
+    const button = target.closest(
+      ".erps-number-input__button--increment, .erps-number-input__button--decrement",
+    );
     if (!button) return;
 
     const wrapper = button.closest(".erps-number-input");
     if (!wrapper) return;
 
-    const input = wrapper.querySelector('.erps-number-input__input');
+    const input = wrapper.querySelector(".erps-number-input__input");
     if (!input) return;
 
-    const isIncrement = button.classList.contains("erps-number-input__button--increment");
+    const isIncrement = button.classList.contains(
+      "erps-number-input__button--increment",
+    );
     updateNumberInputValue(input, isIncrement);
   }
 };
@@ -181,18 +195,16 @@ const updateNumberInputResponsiveness = () => {
   const MIN_WIDTH_FOR_BUTTONS = 110; // Width in pixels needed for comfortable display of buttons
 
   // Handle ERPS number inputs
-  document
-    .querySelectorAll(".erps-number-input")
-    .forEach((wrapper) => {
-      const wrapperWidth = wrapper.offsetWidth;
+  document.querySelectorAll(".erps-number-input").forEach((wrapper) => {
+    const wrapperWidth = wrapper.offsetWidth;
 
-      // If the wrapper is too narrow, make it compact
-      if (wrapperWidth < MIN_WIDTH_FOR_BUTTONS) {
-        wrapper.classList.add("compact");
-      } else {
-        wrapper.classList.remove("compact");
-      }
-    });
+    // If the wrapper is too narrow, make it compact
+    if (wrapperWidth < MIN_WIDTH_FOR_BUTTONS) {
+      wrapper.classList.add("compact");
+    } else {
+      wrapper.classList.remove("compact");
+    }
+  });
 };
 
 /**
@@ -227,7 +239,7 @@ const cleanupNumberInputWrappers = (element) => {
 
   erpsNumberInputs.forEach((wrapper) => {
     // Remove event listeners by cloning and replacing the input
-    const input = wrapper.querySelector('.erps-number-input__input');
+    const input = wrapper.querySelector(".erps-number-input__input");
     if (input) {
       const newInput = input.cloneNode(true);
       // Preserve the current value
@@ -236,7 +248,7 @@ const cleanupNumberInputWrappers = (element) => {
     }
 
     // Also clone and replace the buttons to remove event listeners
-    const buttons = wrapper.querySelectorAll('.erps-number-input__button');
+    const buttons = wrapper.querySelectorAll(".erps-number-input__button");
     buttons.forEach((button) => {
       const newButton = button.cloneNode(true);
       button.parentNode.replaceChild(newButton, button);
