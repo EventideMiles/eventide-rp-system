@@ -6,6 +6,7 @@
     <div class="chat-card__description--header">{{actor.name}}. . . </div> 
     {{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.Restored"}}
   </div>
+  {{#if (or resolve power all statuses)}}
   <hr class="chat-card__hr" />
   <div class="chat-card__effects">
     <div class="chat-card__effects--title">{{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.Restored"}}</div>
@@ -23,4 +24,5 @@
       {{/each}}
     {{/if}}
   </div>
+  {{/if}}
 </div>

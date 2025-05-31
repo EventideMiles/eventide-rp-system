@@ -44,6 +44,11 @@
     background: rgb(0 0 0 / 5%);
     border-radius: 4px;
     border-left: 3px solid var(--theme-secondary);
+
+    // Remove bottom margin when description is the last element
+    &:last-child {
+      margin-bottom: 0;
+    }
   }
 
   &__effects {
@@ -495,6 +500,81 @@
     font-size: 0.8rem;
     opacity: 0.8;
     font-style: normal;
+  }
+
+  // ===================================
+  // UTILITY CLASSES
+  // ===================================
+
+  // Hide empty sections to prevent awkward spacing
+  &__section--hidden {
+    display: none !important;
+  }
+
+  // Hide when content would be empty
+  &__section--empty {
+    display: none !important;
+  }
+
+  // Hide sections with only whitespace or empty content
+  &__description:empty,
+  &__effects:empty,
+  &__cost-section:empty {
+    display: none;
+  }
+
+  // Hide sections that contain only whitespace
+  &__description:blank,
+  &__effects:blank,
+  &__cost-section:blank {
+    display: none;
+  }
+
+  // Improve spacing when sections are conditionally hidden
+  &__description + &__effects {
+    margin-top: 0.75rem;
+  }
+
+  // Remove extra spacing when description is missing
+  &__header + &__effects {
+    margin-top: 0;
+  }
+
+  // Ensure proper spacing between sections
+  &__cost-section + .chat-card__initiative,
+  &__cost-section + .chat-card__combat-roll {
+    margin-top: 0.5rem;
+  }
+
+  // Handle cases where roll-info might be empty
+  &__initiative:empty,
+  &__combat-roll:empty {
+    display: none;
+  }
+
+  // Adjust spacing when roll sections are hidden
+  &__cost-section + &__description {
+    margin-top: 0.5rem;
+  }
+
+  &__header + &__description {
+    margin-top: 0;
+  }
+
+  // Handle completely empty chat cards (edge case)
+  &:empty {
+    display: none;
+  }
+
+  // Ensure consistent bottom margins for all sections
+  &__description,
+  &__effects,
+  &__cost-section,
+  &__initiative,
+  &__combat-roll {
+    &:last-child {
+      margin-bottom: 0;
+    }
   }
 }
 

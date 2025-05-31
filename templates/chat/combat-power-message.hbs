@@ -6,16 +6,20 @@
   </div>
   
   {{!-- Cost section directly below header --}}
-  <div class="chat-card__cost-section">
-    <div class="chat-card__cost-info">
-      {{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.Cost"}}: {{system.cost}}
+  {{#if (or system.cost className)}}
+    <div class="chat-card__cost-section">
+      {{#if system.cost}}
+        <div class="chat-card__cost-info">
+          {{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.Cost"}}: {{system.cost}}
+        </div>
+      {{/if}}
+      {{#if className}}
+        <div class="chat-card__type-info">
+          Type: {{className}}
+        </div>
+      {{/if}}
     </div>
-    {{#if className}}
-      <div class="chat-card__type-info">
-        Type: {{className}}
-      </div>
-    {{/if}}
-  </div>
+  {{/if}}
   
   {{> roll-info cardClass="combat-roll" cardType="power"}}
   {{> card-ac-check}}
@@ -28,5 +32,4 @@
       {{{system.description}}}
     </div>
   {{/if}}
-
 </div>

@@ -1556,6 +1556,9 @@ label,
   border-radius: 4px;
   border-left: 3px solid var(--theme-secondary);
 }
+.chat-card__description:last-child {
+  margin-bottom: 0;
+}
 .chat-card__effects {
   text-align: justify;
   font-size: 0.85rem;
@@ -2005,6 +2008,42 @@ label,
   font-size: 0.8rem;
   opacity: 0.8;
   font-style: normal;
+}
+.chat-card__section--hidden {
+  display: none !important;
+}
+.chat-card__section--empty {
+  display: none !important;
+}
+.chat-card__description:empty, .chat-card__effects:empty, .chat-card__cost-section:empty {
+  display: none;
+}
+.chat-card__description:blank, .chat-card__effects:blank, .chat-card__cost-section:blank {
+  display: none;
+}
+.chat-card__description + .chat-card__effects {
+  margin-top: 0.75rem;
+}
+.chat-card__header + .chat-card__effects {
+  margin-top: 0;
+}
+.chat-card__cost-section + .chat-card__initiative, .chat-card__cost-section + .chat-card__combat-roll {
+  margin-top: 0.5rem;
+}
+.chat-card__initiative:empty, .chat-card__combat-roll:empty {
+  display: none;
+}
+.chat-card__cost-section + .chat-card__description {
+  margin-top: 0.5rem;
+}
+.chat-card__header + .chat-card__description {
+  margin-top: 0;
+}
+.chat-card:empty {
+  display: none;
+}
+.chat-card__description:last-child, .chat-card__effects:last-child, .chat-card__cost-section:last-child, .chat-card__initiative:last-child, .chat-card__combat-roll:last-child {
+  margin-bottom: 0;
 }
 
 @keyframes pulse-glow {
