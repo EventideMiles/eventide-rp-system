@@ -64,7 +64,16 @@ export const ActorRollsMixin = (BaseClass) =>
         const rollType = diceAdjustments.mode;
 
         // Generate the formula based on dice adjustments
-        const formula = `${absTotal + 1}d${actorRollData.hiddenAbilities.dice.total}${rollType} + ${abilityData.total}`;
+        let diceFormula;
+        if (absTotal > 0) {
+          // When there are dice adjustments, roll multiple dice and keep the best/worst
+          diceFormula = `${absTotal + 1}d${actorRollData.hiddenAbilities.dice.total}${rollType}1`;
+        } else {
+          // When no dice adjustments, roll a single die
+          diceFormula = `1d${actorRollData.hiddenAbilities.dice.total}`;
+        }
+
+        const formula = `${diceFormula} + ${abilityData.total}`;
 
         Logger.debug(
           `Generated formula for ${ability}: ${formula}`,
