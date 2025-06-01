@@ -186,6 +186,19 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
       }),
     });
 
+    // CR and XP fields (primarily for NPCs but available to all actors)
+    schema.cr = new fields.NumberField({
+      ...requiredInteger,
+      initial: 1,
+      min: 0,
+    });
+
+    schema.xp = new fields.NumberField({
+      ...requiredInteger,
+      initial: 0,
+      min: 0,
+    });
+
     return schema;
   }
 
@@ -245,6 +258,11 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
       (this.abilities.acro.total + this.abilities.wits.total) / 2;
 
     this.statTotal.subInit = this.statTotal.value / 100;
+
+    // Calculate XP from CR using the configurable formula (primarily for NPCs)
+    if (this.cr !== undefined && this.cr >= 0) {
+      this.xp = this.calculateXPFromCR();
+    }
   }
 
   /**
@@ -275,7 +293,38 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
 
     data.lvl = this.attributes.level.value;
     data.statTotal = this.statTotal.value;
+    data.cr = this.cr;
+    data.xp = this.xp;
 
     return data;
+  }
+
+  /**
+   * Calculate XP value from Challenge Rating using the configurable formula
+   * @returns {number} The calculated XP value
+   */
+  calculateXPFromCR() {
+    try {
+      // Get the CR-to-XP formula from settings
+      const formula =
+        game.settings?.get("eventide-rp-system", "crToXpFormula") ||
+        "Math.max(10, Math.floor(@cr * 200 * Math.pow(1.5, @cr)))";
+
+      // Get roll data for formula evaluation
+      const rollData = this.getRollData();
+
+      // Replace @cr with the actual CR value in the formula
+      const processedFormula = formula.replace(/@cr/g, this.cr);
+
+      // Use Foundry's Roll class to safely evaluate the formula
+      const roll = new Roll(processedFormula, rollData);
+      const result = roll.evaluateSync();
+
+      return Math.max(0, Math.floor(result.total));
+    } catch (error) {
+      console.warn("ERPS | Error calculating XP from CR:", error);
+      // Fallback to simple calculation
+      return Math.max(10, Math.floor(this.cr * 200));
+    }
   }
 }

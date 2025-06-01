@@ -23,8 +23,8 @@ These settings affect only your personal experience and can be configured by any
 
 ### Application Theme
 
-**Setting**: `sheetTheme`  
-**Default**: Night (Blue)  
+**Setting**: `sheetTheme`
+**Default**: Night (Blue)
 **Options**:
 
 - **Night (Blue)**: Dark blue theme with cool tones
@@ -38,8 +38,8 @@ These settings affect only your personal experience and can be configured by any
 
 ### Default Character Sheet Tab
 
-**Setting**: `defaultCharacterTab`  
-**Default**: Features  
+**Setting**: `defaultCharacterTab`
+**Default**: Features
 **Options**:
 
 - **Features**: Character traits and abilities
@@ -52,8 +52,8 @@ These settings affect only your personal experience and can be configured by any
 
 ### Enable System Sounds
 
-**Setting**: `enableSystemSounds`  
-**Default**: Enabled  
+**Setting**: `enableSystemSounds`
+**Default**: Enabled
 **Options**: Enabled/Disabled
 
 **Effect**: Controls whether you hear system sound effects for various actions like damage, healing, and status changes.
@@ -66,8 +66,8 @@ These settings affect game mechanics and are restricted to GM access.
 
 #### Initiative Formula
 
-**Setting**: `initativeFormula`  
-**Default**: `1d@hiddenAbilities.dice.total + @statTotal.mainInit + @statTotal.subInit`  
+**Setting**: `initativeFormula`
+**Default**: `1d@hiddenAbilities.dice.total + @statTotal.mainInit + @statTotal.subInit`
 **Requires Reload**: Yes
 
 **Function**: Determines how initiative is calculated in combat.
@@ -83,38 +83,38 @@ These settings affect game mechanics and are restricted to GM access.
 
 #### Initiative Decimal Places
 
-**Setting**: `initiativeDecimals`  
-**Default**: 2  
-**Range**: 0-4  
+**Setting**: `initiativeDecimals`
+**Default**: 2
+**Range**: 0-4
 **Requires Reload**: Yes
 
 **Effect**: Controls how many decimal places are shown for initiative values. Higher precision helps with tiebreaking.
 
 #### Auto-Roll NPC Initiative
 
-**Setting**: `autoRollNpcInitiative`  
+**Setting**: `autoRollNpcInitiative`
 **Default**: Enabled
 
 **Effect**: Automatically rolls initiative for NPCs when they're added to combat, speeding up encounter setup.
 
 #### Hide NPC Initiative Rolls
 
-**Setting**: `hideNpcInitiativeRolls`  
+**Setting**: `hideNpcInitiativeRolls`
 **Default**: Disabled
 
 **Effect**: Conceals NPC initiative roll results from players, maintaining mystery about enemy capabilities.
 
 #### Auto-Roll Player Initiative
 
-**Setting**: `autoRollPlayerInitiative`  
+**Setting**: `autoRollPlayerInitiative`
 **Default**: Disabled
 
 **Effect**: Automatically rolls initiative for player characters when combat begins. Some groups prefer manual rolling for player agency.
 
 #### Default Combat Round Duration
 
-**Setting**: `defaultCombatRoundDuration`  
-**Default**: 6 seconds  
+**Setting**: `defaultCombatRoundDuration`
+**Default**: 6 seconds
 **Range**: 1-60 seconds
 
 **Effect**: Sets the default duration for combat rounds. This is primarily for narrative reference and doesn't affect status effect durations (which are GM-controlled).
@@ -123,30 +123,37 @@ These settings affect game mechanics and are restricted to GM access.
 
 #### Show Gear Equip Messages
 
-**Setting**: `showGearEquipMessages`  
+**Setting**: `showGearEquipMessages`
 **Default**: Enabled
 
 **Effect**: Creates chat messages when gear items are equipped or unequipped, providing transparency about character changes.
 
 #### Gear Creator: Default Equipped
 
-**Setting**: `gearEquippedDefault`  
+**Setting**: `gearEquippedDefault`
 **Default**: Enabled
 
 **Effect**: When using the Gear Creator, new gear items are marked as equipped by default. Disable if you prefer gear to start unequipped.
 
-#### Auto-Link Character Tokens
+#### Token Linking Behavior
 
-**Setting**: `autoLinkCharacterTokens`  
-**Default**: Enabled
+**Automatic**: No setting required
 
-**Effect**: Automatically links newly created character-type tokens to their actor data, ensuring changes to the character sheet affect all tokens.
+**Effect**: Character actors are automatically linked to their tokens (changes to character sheet affect all tokens), while NPC actors remain unlinked (each token has independent data). This behavior is hardcoded and cannot be changed.
+
+#### Default Token Vision Range
+
+**Setting**: `defaultTokenVisionRange`
+**Default**: 50 grid units
+**Range**: 0-1000 grid units
+
+**Effect**: Sets the default vision range for newly created actor tokens. All actor tokens automatically start with vision enabled using this range. Existing tokens are not affected when this setting is changed.
 
 ### Developer Settings
 
 #### Testing Mode
 
-**Setting**: `testingMode`  
+**Setting**: `testingMode`
 **Default**: Disabled
 
 **Effect**: Enables additional debugging information and developer features. Only useful for system development and troubleshooting.
@@ -165,38 +172,38 @@ Advanced audio customization is available through a dedicated sound settings men
 
 #### Healing Sound
 
-**Setting**: `sound_healing`  
-**Default**: System-provided healing sound  
+**Setting**: `sound_healing`
+**Default**: System-provided healing sound
 **Effect**: Played when healing is applied to characters
 
 #### Damage Sound
 
-**Setting**: `sound_damage`  
-**Default**: System-provided damage sound  
+**Setting**: `sound_damage`
+**Default**: System-provided damage sound
 **Effect**: Played when damage is applied to characters
 
 #### Status Apply Sound
 
-**Setting**: `sound_statusApply`  
-**Default**: System-provided status sound  
+**Setting**: `sound_statusApply`
+**Default**: System-provided status sound
 **Effect**: Played when status effects are applied
 
 #### Equipment Change Sound
 
-**Setting**: `sound_equipmentChange`  
-**Default**: System-provided equipment sound  
+**Setting**: `sound_equipmentChange`
+**Default**: System-provided equipment sound
 **Effect**: Played when gear is equipped or unequipped
 
 #### Combat Power Sound
 
-**Setting**: `sound_combatPower`  
-**Default**: System-provided power sound  
+**Setting**: `sound_combatPower`
+**Default**: System-provided power sound
 **Effect**: Played when combat powers are used
 
 #### Initiative Roll Sound
 
-**Setting**: `sound_initiativeRoll`  
-**Default**: System-provided initiative sound  
+**Setting**: `sound_initiativeRoll`
+**Default**: System-provided initiative sound
 **Effect**: Played when initiative is rolled
 
 ### Sound Management Tools

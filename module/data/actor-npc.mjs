@@ -1,7 +1,7 @@
 /**
- * This now matches the actor-character sheet and may change a bit depending on what
- * I end up finding out about linked tokens vs unlinked tokens: or if I need NPCs to
- * have different sheets.
+ * NPC actor data model for the Eventide RP System.
+ * Extends the base actor model. CR and XP fields are now handled in the base model.
+ * @extends {EventideRpSystemActorBase}
  */
 
 import EventideRpSystemActorBase from "./base-actor.mjs";
@@ -10,14 +10,25 @@ export default class EventideRpSystemNPC extends EventideRpSystemActorBase {
   static defineSchema() {
     const schema = super.defineSchema();
 
+    // NPC-specific schema extensions can be added here if needed
+    // CR and XP are now handled in the base actor model
+
     return schema;
   }
 
   prepareDerivedData() {
     super.prepareDerivedData();
+
+    // NPC-specific derived data calculations can be added here if needed
+    // XP calculation is now handled in the base actor model
   }
 
   getRollData() {
-    super.getRollData();
+    const data = super.getRollData();
+
+    // NPC-specific roll data can be added here if needed
+    // CR and XP are now included in the base roll data
+
+    return data;
   }
 }

@@ -509,15 +509,60 @@ export const registerSettings = function () {
     default: true,
   });
 
-  // Auto-Link Character Tokens (can be changed immediately)
-  game.settings.register("eventide-rp-system", "autoLinkCharacterTokens", {
-    name: "SETTINGS.AutoLinkCharacterTokensName",
-    hint: "SETTINGS.AutoLinkCharacterTokensHint",
+  // ===========================================
+  // NPC SETTINGS (GM Only - No Reload Needed)
+  // ===========================================
+
+  // CR to XP Calculation Formula (can be changed immediately)
+  game.settings.register("eventide-rp-system", "crToXpFormula", {
+    name: "SETTINGS.CrToXpFormulaName",
+    hint: "SETTINGS.CrToXpFormulaHint",
     scope: "world",
     config: true,
     restricted: true,
-    type: Boolean,
-    default: true,
+    type: String,
+    default: "Math.max(10, Math.floor(@cr * 200 * Math.pow(1.5, @cr)))",
+    onChange: (value) => {
+      // If the value is empty, reset it to the default
+      if (!value || value.trim() === "") {
+        const defaultFormula =
+          "Math.max(10, Math.floor(@cr * 200 * Math.pow(1.5, @cr)))";
+        game.settings.set(
+          "eventide-rp-system",
+          "crToXpFormula",
+          defaultFormula,
+        );
+        ui.notifications.warn(
+          "CR to XP formula cannot be empty. Resetting to default.",
+        );
+      } else {
+        // Refresh any open NPC sheets to show updated XP values
+        Object.values(ui.windows).forEach((app) => {
+          if (
+            app instanceof CONFIG.Actor.sheetClass &&
+            app.actor?.type === "npc"
+          ) {
+            app.render();
+          }
+        });
+      }
+    },
+  });
+
+  // Default Token Vision Range (can be changed immediately)
+  game.settings.register("eventide-rp-system", "defaultTokenVisionRange", {
+    name: "SETTINGS.DefaultTokenVisionRangeName",
+    hint: "SETTINGS.DefaultTokenVisionRangeHint",
+    scope: "world",
+    config: true,
+    restricted: true,
+    type: Number,
+    default: 50,
+    range: {
+      min: 0,
+      max: 1000,
+      step: 5,
+    },
   });
 
   // ===========================================

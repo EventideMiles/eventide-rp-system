@@ -35,7 +35,7 @@ export class EventideRpSystemActor extends ActorTransformationMixin(
   }
 
   /**
-   * Handle actor creation to automatically link character tokens if the setting is enabled
+   * Handle actor creation to automatically link character tokens and ensure NPCs are unlinked
    * @param {object} data - The initial data object provided to the document creation request
    * @param {object} options - Additional options which modify the creation request
    * @param {string} userId - The ID of the requesting user
@@ -50,31 +50,45 @@ export class EventideRpSystemActor extends ActorTransformationMixin(
 
     await super._onCreate(data, options, userId);
 
-    // Only proceed if this is a character type and the setting is enabled
-    if (data.type === "character") {
-      try {
-        const autoLinkSetting = getSetting("autoLinkCharacterTokens");
+    // Handle token linking and vision setup based on actor type
+    try {
+      // Get the default vision range from settings
+      const visionRange = getSetting("defaultTokenVisionRange") || 50;
 
-        if (autoLinkSetting) {
-          // Update the prototype token to be linked
-          await this.update({
-            "prototypeToken.actorLink": true,
-          });
+      if (data.type === "character") {
+        // Characters should ALWAYS be linked to their tokens
+        await this.update({
+          "prototypeToken.actorLink": true,
+          "prototypeToken.sight.enabled": true,
+          "prototypeToken.sight.range": visionRange,
+        });
 
-          Logger.debug(
-            `Auto-linked prototype token for character actor: ${this.name}`,
-            null,
-            "ACTOR_CREATION",
-          );
-        }
-      } catch (error) {
-        Logger.warn(
-          `Failed to auto-link prototype token for character actor: ${this.name}`,
-          error,
+        Logger.debug(
+          `Auto-linked prototype token and enabled vision for character actor: ${this.name}`,
+          { visionRange },
           "ACTOR_CREATION",
         );
-        // Don't throw the error - token linking failure shouldn't prevent actor creation
+      } else if (data.type === "npc") {
+        // NPCs should ALWAYS be unlinked from their tokens
+        await this.update({
+          "prototypeToken.actorLink": false,
+          "prototypeToken.sight.enabled": true,
+          "prototypeToken.sight.range": visionRange,
+        });
+
+        Logger.debug(
+          `Ensured prototype token is unlinked and enabled vision for NPC actor: ${this.name}`,
+          { visionRange },
+          "ACTOR_CREATION",
+        );
       }
+    } catch (error) {
+      Logger.warn(
+        `Failed to set prototype token configuration for ${data.type} actor: ${this.name}`,
+        error,
+        "ACTOR_CREATION",
+      );
+      // Don't throw the error - token configuration failure shouldn't prevent actor creation
     }
 
     Logger.methodExit("EventideRpSystemActor", "_onCreate");
