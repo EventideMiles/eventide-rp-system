@@ -5,11 +5,16 @@
 
     {{#if item.system.description}}
       <div class="erps-form__section">
-        <div class="erps-form__header">{{item.actor.name}}</div> 
+        <div class="erps-form__header">{{item.actor.name}}</div>
         <div class="erps-form__description">
           {{{item.system.description}}}
         </div>
       </div>
+    {{/if}}
+
+    {{!-- Show roll information if the feature has roll capability --}}
+    {{#if (and item.system.roll (ne item.system.roll.type "none"))}}
+      {{> popup-roll}}
     {{/if}}
 
     <hr class="erps-form__divider" />

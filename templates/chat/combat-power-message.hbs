@@ -1,11 +1,13 @@
 {{!-- Combat Power Chat Card --}}
 <div class="chat-card">
   <div class="chat-card__header chat-card__header--status chat-card__header--image" style="{{style}}">
-    <img src="{{img}}" class="chat-card__image--primary" /> 
+    <img src="{{img}}" class="chat-card__image--primary" />
     <div>{{name}}</div>
   </div>
-  
-  {{!-- Cost section directly below header --}}
+
+  {{> roll-info cardClass="combat-roll" cardType="power"}}
+
+  {{!-- Cost section after roll info --}}
   {{#if (or system.cost className)}}
     <div class="chat-card__cost-section">
       {{#if system.cost}}
@@ -20,14 +22,13 @@
       {{/if}}
     </div>
   {{/if}}
-  
-  {{> roll-info cardClass="combat-roll" cardType="power"}}
+
   {{> card-ac-check}}
 
   {{#if system.description}}
     <div class="chat-card__description">
       {{#if system.rollActorName}}
-        <div class="chat-card__description--header">{{actor.name}}. . . </div> 
+        <div class="chat-card__description--header">{{actor.name}}. . . </div>
       {{/if}}
       {{{system.description}}}
     </div>

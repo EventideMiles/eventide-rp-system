@@ -529,6 +529,39 @@ export class CreatorApplication extends EventideSheetHelpers {
           }
         : {};
 
+    // Extract roll data for features
+    const featureRollType = formData.get("rollType");
+    const featureAdvantageValue =
+      featureRollType === "roll"
+        ? parseInt(formData.get("rollAdvantage"), 10) || 0
+        : 0;
+    const featureDisadvantageValue =
+      featureRollType === "roll"
+        ? parseInt(formData.get("rollDisadvantage"), 10) || 0
+        : 0;
+    const featureRollData =
+      type === "feature"
+        ? {
+            type: featureRollType || "none",
+            ability:
+              featureRollType !== "none"
+                ? formData.get("rollAbility") || "unaugmented"
+                : "unaugmented",
+            bonus:
+              featureRollType !== "none"
+                ? parseInt(formData.get("rollBonus"), 10) || 0
+                : 0,
+            diceAdjustments: {
+              advantage: featureAdvantageValue,
+              disadvantage: featureDisadvantageValue,
+              total: featureAdvantageValue - featureDisadvantageValue,
+            },
+          }
+        : {};
+
+    // Extract targeted setting for features
+    const featureTargeted = type === "feature" ? formData.get("rollTargeted") === "true" : false;
+
     // Process abilities from the instance's addedAbilities array
     // Note: It's valid to have an item with no changes
     const changes = [];
@@ -580,15 +613,20 @@ export class CreatorApplication extends EventideSheetHelpers {
               cursed: gearData.cursed,
               equipped: gearData.equipped,
             }
-          : type === "transformation"
+          : type === "feature"
             ? {
-                size: transformationData.size,
-                cursed: transformationData.cursed,
-                embeddedCombatPowers: transformationData.embeddedCombatPowers,
-                resolveAdjustment: transformationData.resolveAdjustment,
-                powerAdjustment: transformationData.powerAdjustment,
+                roll: featureRollData,
+                targeted: featureTargeted,
               }
-            : {}),
+            : type === "transformation"
+              ? {
+                  size: transformationData.size,
+                  cursed: transformationData.cursed,
+                  embeddedCombatPowers: transformationData.embeddedCombatPowers,
+                  resolveAdjustment: transformationData.resolveAdjustment,
+                  powerAdjustment: transformationData.powerAdjustment,
+                }
+              : {}),
       },
       effects: [
         {
@@ -626,6 +664,14 @@ export class CreatorApplication extends EventideSheetHelpers {
       iconTint: basicData.iconTint,
       displayOnToken: basicData.displayOnToken,
       type,
+      ...(type === "feature" && {
+        rollType: featureRollType,
+        rollAbility: formData.get("rollAbility"),
+        rollBonus: formData.get("rollBonus"),
+        rollTargeted: formData.get("rollTargeted"),
+        rollAdvantage: formData.get("rollAdvantage"),
+        rollDisadvantage: formData.get("rollDisadvantage"),
+      }),
     });
 
     if (this.targetArray.length > 0 && this.gmCheck === "gm") {
@@ -812,6 +858,16 @@ export class CreatorApplication extends EventideSheetHelpers {
     if (instance.keyType === "effect") {
       storageData[`${instance.keyType}_${instance.number}_type`] =
         formValues.type;
+
+      // Store roll data for features created via effect creator
+      if (formValues.type === "feature") {
+        storageData[`effect_${instance.number}_rollType`] = formValues.rollType;
+        storageData[`effect_${instance.number}_rollAbility`] = formValues.rollAbility;
+        storageData[`effect_${instance.number}_rollBonus`] = formValues.rollBonus;
+        storageData[`effect_${instance.number}_rollTargeted`] = formValues.rollTargeted;
+        storageData[`effect_${instance.number}_rollAdvantage`] = formValues.rollAdvantage;
+        storageData[`effect_${instance.number}_rollDisadvantage`] = formValues.rollDisadvantage;
+      }
     }
 
     erps.utils.storeMultipleUserFlags(storageData);
@@ -870,6 +926,22 @@ export class CreatorApplication extends EventideSheetHelpers {
       }
     });
 
+    // Save dynamic section visibility states
+    const featureRollSection = form.querySelector('.feature-roll-section');
+    if (featureRollSection) {
+      savedData["_featureRollSectionDisplay"] = featureRollSection.style.display;
+    }
+
+    const rollDetails = form.querySelector('.roll-details');
+    if (rollDetails) {
+      savedData["_rollDetailsDisplay"] = rollDetails.style.display;
+    }
+
+    Logger.debug("Saved dynamic section states", {
+      featureRollSection: savedData["_featureRollSectionDisplay"],
+      rollDetails: savedData["_rollDetailsDisplay"]
+    }, "CREATOR_APP");
+
     return savedData;
   }
 
@@ -908,6 +980,25 @@ export class CreatorApplication extends EventideSheetHelpers {
             displayImage.src = value;
             Logger.debug(`Restored displayImage`, { value }, "CREATOR_APP");
           }
+        }
+        return;
+      }
+
+      // Handle dynamic section visibility states
+      if (name === "_featureRollSectionDisplay") {
+        const featureRollSection = form.querySelector('.feature-roll-section');
+        if (featureRollSection && value) {
+          featureRollSection.style.display = value;
+          Logger.debug(`Restored feature roll section display`, { value }, "CREATOR_APP");
+        }
+        return;
+      }
+
+      if (name === "_rollDetailsDisplay") {
+        const rollDetails = form.querySelector('.roll-details');
+        if (rollDetails && value) {
+          rollDetails.style.display = value;
+          Logger.debug(`Restored roll details display`, { value }, "CREATOR_APP");
         }
         return;
       }

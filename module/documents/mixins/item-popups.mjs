@@ -111,7 +111,7 @@ export const ItemPopupsMixin = (BaseClass) =>
         feature: {
           type: "feature",
           className: "FeaturePopup",
-          requiresFormula: false,
+          requiresFormula: this.canRoll ? this.canRoll() : false,
         },
       };
 

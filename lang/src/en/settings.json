@@ -89,8 +89,14 @@
     "SoundCombatPowerName": "Combat Power Sound",
     "SoundCombatPowerHint": "Sound played when a combat power is used.",
 
+    "SoundFeatureRollName": "Feature Roll Sound",
+    "SoundFeatureRollHint": "Sound played when a feature with roll capability is used.",
+
     "SoundInitiativeName": "Initiative Sound",
     "SoundInitiativeHint": "Sound played when initiative is rolled.",
+
+    "SoundDiceRollName": "Dice Roll Sound",
+    "SoundDiceRollHint": "Sound played when a dice roll is made.",
 
     "NoSoundSelected": "No sound file selected.",
     "ErrorPlayingSound": "Error playing sound",

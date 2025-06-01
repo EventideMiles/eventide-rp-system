@@ -96,26 +96,138 @@ class ERPSMessageHandler {
   }
 
   /**
-   * Creates a chat message for the given feature item, including its name, description, and active effects.
+   * Creates a chat message for a feature item, handling both roll and non-roll cases.
    * @param {Item} item - The feature item to generate the message for.
+   * @param {Object} [options={}] - Additional options for the message
+   * @param {string} [options.rollMode] - The roll mode to use for the message
    * @returns {Promise<ChatMessage>} The created chat message.
    */
-  async createFeatureMessage(item) {
-    const effects = item.effects.toObject();
+  async createFeatureMessage(item, options = {}) {
+    // Early return if the item doesn't have the necessary data
+    if (!item || !item.system) return null;
+
+    // Get the roll type from the item
+    const rollType = item.system.roll?.type || "none";
     const style = ERPSRollUtilities.getItemStyle(item);
+    const isRoll = rollType !== "none";
 
-    const data = {
-      item,
-      effects,
-      style,
-    };
+    // Get the roll mode from options or use the default game setting
+    const rollMode = options.rollMode || game.settings.get("core", "rollMode");
 
-    return this._createChatMessage("feature", data, {
-      speaker: ERPSRollUtilities.getSpeaker(
-        item.parent,
-        "EVENTIDE_RP_SYSTEM.MessageHeaders.Feature",
-      ),
-    });
+    // Get the actor
+    const actor = item.parent;
+
+    // If this is a non-roll feature
+    if (!isRoll) {
+      const effects = item.effects.toObject();
+      const data = {
+        item,
+        effects,
+        style,
+        hasRoll: false,
+        actor,
+      };
+
+      return this._createChatMessage("feature", data, {
+        speaker: ERPSRollUtilities.getSpeaker(
+          actor,
+          "EVENTIDE_RP_SYSTEM.MessageHeaders.Feature",
+        ),
+        rollMode,
+      });
+    }
+
+    // For roll-type features
+    try {
+      // Get the formula using the item's getCombatRollFormula method
+      const formula = item.getCombatRollFormula();
+
+      // Check if formula exists and is valid
+      if (!formula || typeof formula !== "string" || formula.trim() === "") {
+        throw new Error("Invalid roll formula");
+      }
+
+      // Get the actor's roll data
+      const rollData = actor.getRollData();
+
+      // Create the roll
+      const roll = new Roll(formula, rollData);
+      const result = await roll.evaluate();
+
+      // Features don't typically target, but we'll check if they have targeting capability
+      const targetArray = await erps.utils.getTargetArray();
+      const addCheck =
+        item.system.targeted && targetArray.length ? true : false;
+
+      // Determine critical states
+      const { critHit, critMiss, stolenCrit, savedMiss } =
+        ERPSRollUtilities.determineCriticalStates({
+          roll: result,
+          thresholds: rollData.hiddenAbilities,
+          formula,
+          critAllowed: true,
+        });
+
+      // Prepare target data if needed
+      const targetRollData = addCheck
+        ? targetArray.map((target) => ({
+            name: target.actor.name,
+            compare: result.total,
+            ...target.actor.getRollData(),
+          }))
+        : [];
+
+      // Prepare the template data
+      const effects = item.effects.toObject();
+      const data = {
+        item,
+        effects,
+        style,
+        roll: result,
+        rollData,
+        hasRoll: true,
+        pickedType: rollType.toLowerCase(),
+        critHit: critHit ?? false,
+        critMiss: critMiss ?? false,
+        savedMiss: savedMiss ?? false,
+        stolenCrit: stolenCrit ?? false,
+        acCheck: addCheck,
+        targetArray,
+        targetRollData,
+        critAllowed: true,
+        actor,
+      };
+
+      // Play feature roll sound locally and add to message
+      await erpsSoundManager._playLocalSound("featureRoll");
+      return this._createChatMessage("feature", data, {
+        speaker: ERPSRollUtilities.getSpeaker(
+          actor,
+          "EVENTIDE_RP_SYSTEM.MessageHeaders.Feature",
+        ),
+        rollMode,
+      }, { soundKey: "featureRoll" });
+    } catch (error) {
+      console.error("Error creating feature roll message:", error);
+
+      // Fallback to non-roll message
+      const effects = item.effects.toObject();
+      const data = {
+        item,
+        effects,
+        style,
+        hasRoll: false,
+        actor,
+      };
+
+      return this._createChatMessage("feature", data, {
+        speaker: ERPSRollUtilities.getSpeaker(
+          actor,
+          "EVENTIDE_RP_SYSTEM.MessageHeaders.Feature",
+        ),
+        rollMode,
+      });
+    }
   }
 
   /**

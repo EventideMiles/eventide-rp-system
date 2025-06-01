@@ -90,6 +90,9 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
       deleteCharacterEffect: this._deleteCharacterEffect,
       toggleEffectDisplay: this._toggleEffectDisplay,
       removeCombatPower: this._removeCombatPower,
+      incrementDiceAdjustment: this._incrementDiceAdjustment,
+      decrementDiceAdjustment: this._decrementDiceAdjustment,
+      onDiceAdjustmentChange: this._onDiceAdjustmentChange,
     },
     position: {
       width: 800,
@@ -183,7 +186,7 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
     // Control which parts show based on document subtype
     switch (this.document.type) {
       case "feature":
-        options.parts.push("characterEffects");
+        options.parts.push("attributesFeature", "characterEffects");
         break;
       case "status":
         options.parts.push("characterEffects");
@@ -325,7 +328,7 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
       case "attributesTransformation":
         // Necessary for preserving active tab on re-render
         context.tab = context.tabs[partId];
-        if (partId === "attributesCombatPower" || partId === "attributesGear") {
+        if (partId === "attributesCombatPower" || partId === "attributesGear" || partId === "attributesFeature") {
           // Add roll type options
           context.rollTypes = EventideSheetHelpers.rollTypeObject;
           context.abilities = {
@@ -609,6 +612,63 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
       return;
     }
     await this.item.system.removeCombatPower(powerId);
+  }
+
+  /**
+   * Handle incrementing a dice adjustment value
+   *
+   * @this EventideRpSystemItemSheet
+   * @param {PointerEvent} event   The originating click event
+   * @param {HTMLElement} target   The capturing HTML element which defined a [data-action]
+   * @protected
+   */
+  static async _incrementDiceAdjustment(_event, target) {
+    const field = target.dataset.field;
+    if (!field) return;
+
+    const input = target.parentElement.querySelector('input[type="number"]');
+    if (!input) return;
+
+    const currentValue = parseInt(input.value, 10) || 0;
+    input.value = currentValue + 1;
+
+    // Trigger a change event to update the form
+    input.dispatchEvent(new Event('change', { bubbles: true }));
+  }
+
+  /**
+   * Handle decrementing a dice adjustment value
+   *
+   * @this EventideRpSystemItemSheet
+   * @param {PointerEvent} event   The originating click event
+   * @param {HTMLElement} target   The capturing HTML element which defined a [data-action]
+   * @protected
+   */
+  static async _decrementDiceAdjustment(_event, target) {
+    const field = target.dataset.field;
+    if (!field) return;
+
+    const input = target.parentElement.querySelector('input[type="number"]');
+    if (!input) return;
+
+    const currentValue = parseInt(input.value, 10) || 0;
+    input.value = Math.max(0, currentValue - 1); // Don't allow negative values
+
+    // Trigger a change event to update the form
+    input.dispatchEvent(new Event('change', { bubbles: true }));
+  }
+
+  /**
+   * Handle dice adjustment input changes to recalculate totals
+   *
+   * @this EventideRpSystemItemSheet
+   * @param {Event} event   The originating change event
+   * @param {HTMLElement} _target   The capturing HTML element which defined a [data-action]
+   * @protected
+   */
+  static async _onDiceAdjustmentChange(_event, _target) {
+    // The form submission will handle the actual update and recalculation
+    // This is just a placeholder for any additional logic if needed
   }
 
   /*****************

@@ -96,3 +96,7 @@ http://www.apache.org/licenses/LICENSE-2.0
 ### By Little Robot Sound Factory under CC-BY from opengameart.org : www.littlerobotsoundfactory.com
 
 - Trap_00.wav
+
+### By celestialghost8 under cc0 from opengameart.org
+
+- 4.wav

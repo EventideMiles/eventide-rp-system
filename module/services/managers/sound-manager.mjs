@@ -33,6 +33,7 @@ export class ERPSSoundManager {
       damage: "systems/eventide-rp-system/assets/sounds/swish_4.wav",
       initiative: "systems/eventide-rp-system/assets/sounds/levelup.wav",
       diceRoll: "sounds/dice.wav", // Standard Foundry dice sound for ability rolls
+      featureRoll: "systems/eventide-rp-system/assets/sounds/4.wav",
     };
 
     /**

@@ -7,12 +7,12 @@
       </label>
       <select class="erps-select" id="type" name="type">
         {{#if (eq playerMode false)}}
-          <option value="status" 
+          <option value="status"
             {{#if (eq storedData.effect_type "status")}}selected{{/if}}>
             {{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Status"}}}
           </option>
         {{/if}}
-        <option value="feature" 
+        <option value="feature"
           {{#if (eq storedData.effect_type "feature")}}selected{{/if}}>
           {{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Feature"}}}
         </option>
@@ -22,20 +22,20 @@
       <label class="erps-form__label" for="name">
         {{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Name"}}}:
       </label>
-      <input class="erps-input" 
-        autofocus 
-        type="text" 
-        id="name" 
-        name="name" 
+      <input class="erps-input"
+        autofocus
+        type="text"
+        id="name"
+        name="name"
         placeholder="{{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.Name"}}}">
     </div>
     <div class="erps-form__group">
       <label class="erps-form__label" for="description">
         {{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Description"}}}:
       </label>
-      <textarea class="erps-textarea" 
-        id="description" 
-        name="description" 
+      <textarea class="erps-textarea"
+        id="description"
+        name="description"
         placeholder="{{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.Description"}}}"></textarea>
     </div>
     <div class="erps-form__group">
@@ -52,22 +52,128 @@
         name="displayImage"
         id="displayImage"
       />
-      <input 
-        class="erps-hidden-input" 
-        type="hidden" 
-        name="img" 
+      <input
+        class="erps-hidden-input"
+        type="hidden"
+        name="img"
         value="{{ifThen storedData.effect_img storedData.effect_img "icons/svg/stoned.svg"}}">
     </div>
     {{> color-pickers type="effect"}}
-    
+
+    {{! Roll functionality - only show for features }}
+    <div class="erps-form__group feature-roll-section" style="display: {{#if (eq storedData.effect_type "feature")}}block{{else}}none{{/if}};">
+      <div class="erps-form__header">{{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Roll"}}}</div>
+      <div class="erps-form__group">
+        <label class="erps-form__label" for="rollType">
+          {{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RollType"}}}:
+        </label>
+        <select class="erps-select" id="rollType" name="rollType">
+          <option value="none" {{#if (eq storedData.effect_rollType "none")}}selected{{/if}}>
+            {{{localize "EVENTIDE_RP_SYSTEM.RollTypes.None"}}}
+          </option>
+          <option value="roll" {{#if (eq storedData.effect_rollType "roll")}}selected{{/if}}>
+            {{{localize "EVENTIDE_RP_SYSTEM.RollTypes.Roll"}}}
+          </option>
+          <option value="flat" {{#if (eq storedData.effect_rollType "flat")}}selected{{/if}}>
+            {{{localize "EVENTIDE_RP_SYSTEM.RollTypes.Flat"}}}
+          </option>
+        </select>
+      </div>
+      <div class="roll-details" style="display: {{#if (ne storedData.effect_rollType "none")}}block{{else}}none{{/if}};">
+        <div class="erps-form__group">
+          <label class="erps-toggles erps-toggles--label-left">
+            <input
+              class="erps-toggles__input"
+              type="checkbox"
+              id="rollTargeted"
+              name="rollTargeted"
+              {{#if storedData.effect_rollTargeted}}checked{{/if}}>
+            <div class="erps-toggles__container">
+              <span class="erps-toggles__track">
+                <span class="erps-toggles__thumb"></span>
+              </span>
+              <span class="erps-toggles__label">
+                {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Targeted"}}
+              </span>
+            </div>
+          </label>
+        </div>
+        <div class="erps-form__group">
+          <label class="erps-form__label" for="rollAbility">
+            {{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RollAbility"}}}:
+          </label>
+          <select class="erps-select" id="rollAbility" name="rollAbility">
+            <option value="unaugmented" {{#if (eq storedData.effect_rollAbility "unaugmented")}}selected{{/if}}>
+              {{{localize "EVENTIDE_RP_SYSTEM.CombatOptions.Unaugmented"}}}
+            </option>
+            <option value="acro" {{#if (eq storedData.effect_rollAbility "acro")}}selected{{/if}}>
+              {{{localize "EVENTIDE_RP_SYSTEM.Ability.Acro.long"}}}
+            </option>
+            <option value="phys" {{#if (eq storedData.effect_rollAbility "phys")}}selected{{/if}}>
+              {{{localize "EVENTIDE_RP_SYSTEM.Ability.Phys.long"}}}
+            </option>
+            <option value="fort" {{#if (eq storedData.effect_rollAbility "fort")}}selected{{/if}}>
+              {{{localize "EVENTIDE_RP_SYSTEM.Ability.Fort.long"}}}
+            </option>
+            <option value="will" {{#if (eq storedData.effect_rollAbility "will")}}selected{{/if}}>
+              {{{localize "EVENTIDE_RP_SYSTEM.Ability.Will.long"}}}
+            </option>
+            <option value="wits" {{#if (eq storedData.effect_rollAbility "wits")}}selected{{/if}}>
+              {{{localize "EVENTIDE_RP_SYSTEM.Ability.Wits.long"}}}
+            </option>
+          </select>
+        </div>
+        <div class="erps-form__group">
+          <label class="erps-form__label" for="rollBonus">
+            {{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RollBonus"}}}:
+          </label>
+          <input class="erps-input"
+            type="number"
+            id="rollBonus"
+            name="rollBonus"
+            value="{{storedData.effect_rollBonus}}">
+        </div>
+        <div class="erps-form__group">
+          <label class="erps-form__label" for="rollAdvantage">
+            {{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RollAdvantage"}}}:
+          </label>
+          <div class="erps-number-input">
+            <button type="button" class="erps-number-input__button erps-number-input__button--decrement" data-action="decrement">−</button>
+            <input
+              class="erps-number-input__input"
+              type="number"
+              id="rollAdvantage"
+              name="rollAdvantage"
+              value="{{storedData.effect_rollAdvantage}}">
+            <button type="button" class="erps-number-input__button erps-number-input__button--increment" data-action="increment">+</button>
+          </div>
+        </div>
+        <div class="erps-form__group">
+          <label class="erps-form__label" for="rollDisadvantage">
+            {{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RollDisadvantage"}}}:
+          </label>
+          <div class="erps-number-input">
+            <button type="button" class="erps-number-input__button erps-number-input__button--decrement" data-action="decrement">−</button>
+            <input
+              class="erps-number-input__input"
+              type="number"
+              id="rollDisadvantage"
+              name="rollDisadvantage"
+              value="{{storedData.effect_rollDisadvantage}}">
+            <button type="button" class="erps-number-input__button erps-number-input__button--increment" data-action="increment">+</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="erps-form__header">{{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Effects"}}}</div>
     <div class="erps-form__group">
       <label class="erps-toggles erps-toggles--label-left">
-        <input 
-          class="erps-toggles__input" 
-          type="checkbox" 
-          id="displayOnToken" 
-          name="displayOnToken" 
+        <input
+          class="erps-toggles__input"
+          type="checkbox"
+          id="displayOnToken"
+          name="displayOnToken"
           {{#if storedData.effect_displayOnToken}}checked{{/if}}>
         <div class="erps-toggles__container">
           <span class="erps-toggles__track">
@@ -81,6 +187,6 @@
     </div>
     {{> character-effects}}
   </div>
-  
+
   {{> macro-footer}}
 </div>
