@@ -55,8 +55,19 @@ export class ERPSRollUtilities {
     const isKeepHighest = formulaLower.includes("k") && !isKeepLowest;
 
     // Check for basic crit hit/miss conditions
+    /**
+     * Checks if a die result is within the critical hit range
+     * @param {Object} die - The die result object
+     * @returns {boolean} True if the die result is a critical hit
+     */
     const hasCritValue = (die) =>
       die.result <= cmax.total && die.result >= cmin.total;
+
+    /**
+     * Checks if a die result is within the critical miss range
+     * @param {Object} die - The die result object
+     * @returns {boolean} True if the die result is a critical miss
+     */
     const hasMissValue = (die) =>
       die.result <= fmax.total && die.result >= fmin.total;
 

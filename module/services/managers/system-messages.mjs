@@ -598,19 +598,66 @@ erpsMessageHandler.createTransformationMessage =
   erpsMessageHandler.createTransformationMessage.bind(erpsMessageHandler);
 
 // Export individual functions for backward compatibility
+/**
+ * Creates a status message for an item
+ * @param {Item} item - The status item
+ * @returns {Promise<ChatMessage>} The created chat message
+ */
 export const createStatusMessage = (item) =>
   erpsMessageHandler.createStatusMessage(item);
+
+/**
+ * Creates a feature message for an item
+ * @param {Item} item - The feature item
+ * @returns {Promise<ChatMessage>} The created chat message
+ */
 export const featureMessage = (item) =>
   erpsMessageHandler.createFeatureMessage(item);
+
+/**
+ * Creates a delete status message for an item
+ * @param {Item} item - The status item being deleted
+ * @param {Object} [options] - Additional options for the message
+ * @returns {Promise<ChatMessage>} The created chat message
+ */
 export const deleteStatusMessage = (item, options) =>
   erpsMessageHandler.createDeleteStatusMessage(item, options);
+
+/**
+ * Creates a restore message
+ * @param {Object} options - Options for the restore message
+ * @returns {Promise<ChatMessage>} The created chat message
+ */
 export const createRestoreMessage = (options) =>
   erpsMessageHandler.createRestoreMessage(options);
-// Keep the old name for backward compatibility with macros
+
+/**
+ * Creates a restore message (legacy alias for createRestoreMessage)
+ * @param {Object} options - Options for the restore message
+ * @returns {Promise<ChatMessage>} The created chat message
+ * @deprecated Use createRestoreMessage instead
+ */
 export const restoreMessage = (options) =>
   erpsMessageHandler.createRestoreMessage(options);
+
+/**
+ * Creates a combat power message for an item
+ * @param {Item} item - The combat power item
+ * @param {Object} [options] - Additional options for the message
+ * @returns {Promise<ChatMessage>} The created chat message
+ */
 export const combatPowerMessage = (item, options) =>
   erpsMessageHandler.createCombatPowerMessage(item, options);
+
+/**
+ * Creates a gear transfer message
+ * @param {Item} item - The gear item being transferred
+ * @param {Actor} sourceActor - The actor transferring the gear
+ * @param {Actor} destActor - The actor receiving the gear
+ * @param {number} quantity - The quantity being transferred
+ * @param {string} [description] - Optional description of the transfer
+ * @returns {Promise<ChatMessage>} The created chat message
+ */
 export const gearTransferMessage = (
   item,
   sourceActor,
@@ -625,7 +672,22 @@ export const gearTransferMessage = (
     quantity,
     description,
   );
+
+/**
+ * Creates a gear equip/unequip message for an item
+ * @param {Item} item - The gear item being equipped/unequipped
+ * @returns {Promise<ChatMessage>} The created chat message
+ */
 export const gearEquipMessage = (item) =>
   erpsMessageHandler.createGearEquipMessage(item);
+
+/**
+ * Creates a transformation message
+ * @param {Object} options - Options for the transformation message
+ * @param {Actor} options.actor - The actor being transformed
+ * @param {Item} options.transformation - The transformation item
+ * @param {boolean} options.isApplying - Whether the transformation is being applied
+ * @returns {Promise<ChatMessage>} The created chat message
+ */
 export const transformationMessage = (options) =>
   erpsMessageHandler.createTransformationMessage(options);
