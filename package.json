@@ -1,6 +1,6 @@
 {
   "name": "eventide-rp-system",
-  "version": "13.10.0",
+  "version": "13.10.1",
   "type": "module",
   "description": "Build tools and development scripts for the Eventide Roleplaying System",
   "scripts": {
@@ -27,7 +27,7 @@
     "last 3 versions"
   ],
   "author": "Miles Eventide",
-  "license": "Apache-2.0",
+  "license": "LGPL-2.1-or-later",
   "private": true,
   "devDependencies": {
     "eslint": "^9.15.0",
