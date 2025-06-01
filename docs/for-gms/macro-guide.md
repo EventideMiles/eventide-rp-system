@@ -12,7 +12,7 @@ Macros are automated scripts that perform complex tasks with a single click. In 
 - **Game Management**: Utilities for damage, healing, and status management
 - **Player Tools**: Simplified interfaces for common actions
 - **Automation**: Streamlined workflows for repetitive tasks
-- **Muitlple Available**: For things like damage scripts and creators you can have many available that save information between uses to make it easier to keep things such as character colors and damage types available
+- **Multiple Available**: For things like damage scripts and creators you can have many available that save information between uses to make it easier to keep things such as character colors and damage types available
   just add a "number" in the function call's options object and you're on your way to another creator / applicator
 
 ### Accessing Macros
@@ -22,11 +22,22 @@ Macros are automated scripts that perform complex tasks with a single click. In 
 3. **Import desired macros** to your macro bar
 4. **Execute macros** by clicking them or using hotkeys
 
+### Technical Implementation
+
+The macro system is built using Foundry VTT's Application V2 architecture and includes:
+
+- **Creator Applications**: Located in `module/ui/creators/` for gear, effects, and transformations
+- **Error Handling**: Comprehensive error management using the system's ErrorHandler
+- **State Persistence**: Macro settings are saved between uses for convenience
+- **Localization**: Full internationalization support for all macro interfaces
+
 ## Content Creation Macros
 
 ### Gear Creator
 
 **Purpose**: Create equipment with mechanical effects and rich descriptions.
+
+**Technical Details**: Implemented in `module/ui/creators/gear-creator.mjs` using Application V2 architecture.
 
 #### **Basic Usage**
 
@@ -44,7 +55,7 @@ Macros are automated scripts that perform complex tasks with a single click. In 
 
 - **Roll Settings**: Configure how the gear behaves when used
   - **Roll Type**: None, Roll, or Flat damage
-  - **Ability**: Which ability to use for rolls
+  - **Ability**: Which ability to use for rolls (acro, phys, fort, will, wits, unaugmented)
   - **Modifiers**: Advantage/disadvantage settings
 - **Effects**: Modify character abilities when equipped
 - **Display Options**: Show icons on tokens
@@ -68,6 +79,8 @@ Macros are automated scripts that perform complex tasks with a single click. In 
 
 **Purpose**: Create status effects and character features with ability modifications.
 
+**Technical Details**: Implemented in `module/ui/creators/effect-creator.mjs` with comprehensive effect management.
+
 #### **Basic Usage**
 
 1. **Import** the Effect Creator macro
@@ -82,10 +95,19 @@ Macros are automated scripts that perform complex tasks with a single click. In 
 
 #### **Effect Configuration**
 
-- **Ability Modifications**: Bonuses/penalties to core abilities
+- **Ability Modifications**: Bonuses/penalties to core abilities (acro, phys, fort, will, wits)
 - **Resource Changes**: Affect Resolve or Power pools
 - **Hidden Abilities**: Modify dice pools, critical ranges
 - **Display Settings**: Token icons, colors, visibility
+
+#### **Effect Types and Categories**
+
+The system supports multiple effect modification types:
+
+- **Add**: Cumulative bonuses/penalties
+- **Override**: Replace base values entirely
+- **Advantage**: Modify dice roll advantages
+- **Disadvantage**: Modify dice roll disadvantages
 
 #### **Common Use Cases**
 
@@ -105,9 +127,11 @@ Macros are automated scripts that perform complex tasks with a single click. In 
 
 **Purpose**: Create comprehensive character transformations with multiple effects.
 
+**Technical Details**: Implemented in `module/ui/creators/transformation-creator.mjs` with advanced transformation management.
+
 #### **Unique Features**
 
-- **Size Changes**: Modify token size and scale
+- **Size Changes**: Modify token size and scale (Tiny: 0.25, Small: 0.5, Medium: 1, Large: 2, etc.)
 - **Resource Adjustments**: Temporary changes to Resolve/Power maximums
 - **Embedded Combat Powers**: Include special abilities only available while transformed / limit player abilities in the event of a curse
 - **Cursed Transformations**: Prevent player removal without GM intervention
@@ -115,10 +139,10 @@ Macros are automated scripts that perform complex tasks with a single click. In 
 #### **Configuration Options**
 
 - **Basic Info**: Name, description, image
-- **Size Setting**: Tiny (0.25), Small (0.5), Medium (1), Large (2), etc.
-- **Resource Changes**: Positive or negative adjustments
+- **Size Setting**: Precise token scaling options
+- **Resource Changes**: Positive or negative adjustments to maximum values
 - **Combat Powers**: Drag and drop powers from other sources: you CANNOT edit them on these items at the moment so create them elsewhere
-- **Effects**: Standard ability modifications
+- **Effects**: Standard ability modifications using the same system as Effect Creator
 
 #### **Use Cases**
 
@@ -223,11 +247,13 @@ Macros are automated scripts that perform complex tasks with a single click. In 
 
 **Purpose**: Make ability checks with custom modifiers.
 
+**Technical Details**: Uses the actor's `rollAbility()` method from the ActorRollsMixin.
+
 **Usage**:
 
 1. **Select character** to roll for
 2. **Run the macro**
-3. **Choose ability** to roll
+3. **Choose ability** to roll (acro, phys, fort, will, wits, unaugmented)
 4. **Add modifiers** (situational bonuses/penalties)
 5. **Roll** and see results
 
@@ -356,6 +382,44 @@ Many macros remember your preferences:
 - **Quick Reference**: Provide macro usage summaries
 - **Troubleshooting**: Help players when macros don't work as expected
 - **Feedback**: Gather input on macro usefulness and usability
+
+## Technical Implementation Details
+
+### Error Handling
+
+All macros use the system's comprehensive ErrorHandler for robust error management:
+
+```javascript
+// Example from macro implementation
+const [result, error] = await ErrorHandler.handleAsync(
+  operation(),
+  {
+    context: "Macro Operation",
+    userMessage: "Failed to complete macro action",
+    errorType: ErrorHandler.ERROR_TYPES.UI,
+  }
+);
+
+if (error) {
+  return; // Error already handled and user notified
+}
+```
+
+### Settings Integration
+
+Macros integrate with system settings, including the initiative formula setting:
+
+**Note**: The initiative formula setting has a known spelling error (`"initativeFormula"` instead of `"initiativeFormula"`) that is maintained for production compatibility. This does not affect macro functionality but is important for developers extending the system.
+
+### Localization Support
+
+All macro interfaces support the system's localization framework:
+
+```javascript
+// Localized text in macros
+const title = game.i18n.localize("EVENTIDE_RP_SYSTEM.Macros.GearCreator.Title");
+const hint = game.i18n.localize("EVENTIDE_RP_SYSTEM.Macros.GearCreator.Hint");
+```
 
 ## Future Macro Development
 

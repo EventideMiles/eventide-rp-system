@@ -16,11 +16,17 @@ eventide-rp-system/
 │   ├── helpers/           # Utility functions and helpers
 │   ├── services/          # System services (settings, hooks, etc.)
 │   ├── ui/                # User interface components
-│   └── utils/             # General utilities
+│   │   ├── sheets/        # Application V2 actor and item sheets
+│   │   ├── creators/      # Macro creator applications
+│   │   ├── popups/        # Dialog and popup applications
+│   │   └── components/    # Reusable UI components
+│   └── utils/             # General utilities and error handling
 ├── templates/             # Handlebars templates
 ├── css/                   # Compiled CSS (from SCSS)
 ├── src/scss/              # SCSS source files
 ├── lang/                  # Localization files
+├── macros/                # System macro files
+├── packs/                 # Compendium data
 └── assets/                # Images, sounds, and other assets
 ```
 
@@ -31,6 +37,33 @@ eventide-rp-system/
 - **Handlebars**: Template engine for UI
 - **SCSS**: CSS preprocessing with BEM methodology
 - **DataModels**: Foundry's schema-based data system
+- **Mixin Pattern**: Compositional architecture for actors
+
+### Architecture Patterns
+
+#### Mixin Composition
+
+The system uses mixins to compose functionality, particularly for actors:
+
+```javascript
+// module/documents/actor.mjs
+import {
+  ActorTransformationMixin,
+  ActorResourceMixin,
+  ActorRollsMixin,
+} from "./mixins/_module.mjs";
+
+export class EventideRpSystemActor extends ActorTransformationMixin(
+  ActorResourceMixin(ActorRollsMixin(Actor)),
+) {
+  // Actor implementation with composed functionality
+}
+```
+
+This pattern allows for:
+- **Separation of Concerns**: Each mixin handles specific functionality
+- **Reusability**: Mixins can be applied to different base classes
+- **Maintainability**: Changes to specific features are isolated
 
 ## Development Setup
 
@@ -97,32 +130,73 @@ eventide-rp-system/
 
 #### Actor Data Models
 
-Located in `module/data/`, these define the schema for character data:
+Located in `module/data/`, these define the schema for character data. The actual implementation is more complex than basic examples:
 
 ```javascript
 // module/data/base-actor.mjs
-export default class EventideRpSystemActorBase extends foundry.abstract
-  .TypeDataModel {
+import EventideRpSystemDataModel from "./base-model.mjs";
+
+export default class EventideRpSystemActorBase extends EventideRpSystemDataModel {
   static defineSchema() {
     const fields = foundry.data.fields;
+    const requiredInteger = { required: true, nullable: false, integer: true };
+    const overrideInteger = { integer: true, required: false, nullable: true };
     const schema = {};
 
-    // Define abilities schema
+    // Resource pools
+    schema.resolve = new fields.SchemaField({
+      value: new fields.NumberField({
+        ...requiredInteger,
+        initial: 10,
+        min: 0,
+      }),
+      max: new fields.NumberField({ ...requiredInteger, initial: 10, min: 1 }),
+    });
+
+    schema.power = new fields.SchemaField({
+      value: new fields.NumberField({ ...requiredInteger, initial: 5, min: 0 }),
+      max: new fields.NumberField({
+        required: true,
+        initial: 5,
+        min: 0,
+      }),
+    });
+
+    // Core abilities with complex structure
     schema.abilities = new fields.SchemaField(
       Object.keys(CONFIG.EVENTIDE_RP_SYSTEM.abilities).reduce(
         (obj, ability) => {
           obj[ability] = new fields.SchemaField({
-            value: new fields.NumberField({
-              required: true,
-              integer: true,
-              initial: 1,
+            value: new fields.NumberField({ ...requiredInteger, initial: 1 }),
+            override: new fields.NumberField({
+              ...overrideInteger,
+              initial: null,
             }),
-            total: new fields.NumberField({
-              required: true,
-              integer: true,
-              initial: 1,
+            transform: new fields.NumberField({
+              ...requiredInteger,
+              initial: 0,
             }),
-            // ... more fields
+            change: new fields.NumberField({ ...requiredInteger, initial: 0 }),
+            total: new fields.NumberField({ ...requiredInteger, initial: 1 }),
+            ac: new fields.NumberField({ ...requiredInteger, initial: 11 }),
+            diceAdjustments: new fields.SchemaField({
+              advantage: new fields.NumberField({
+                ...requiredInteger,
+                initial: 0,
+              }),
+              disadvantage: new fields.NumberField({
+                ...requiredInteger,
+                initial: 0,
+              }),
+              total: new fields.NumberField({
+                ...requiredInteger,
+                initial: 0,
+              }),
+              mode: new fields.StringField({
+                required: false,
+                initial: "",
+              }),
+            }),
           });
           return obj;
         },
@@ -130,7 +204,31 @@ export default class EventideRpSystemActorBase extends foundry.abstract
       ),
     );
 
+    // Hidden abilities for advanced mechanics
+    schema.hiddenAbilities = new fields.SchemaField({
+      dice: new fields.SchemaField({
+        value: new fields.NumberField({
+          ...requiredInteger,
+          initial: 20,
+          min: 0,
+        }),
+        total: new fields.NumberField({
+          ...requiredInteger,
+          initial: 20,
+          min: 0,
+        }),
+        override: new fields.NumberField({ ...overrideInteger, initial: null }),
+        change: new fields.NumberField({ ...requiredInteger, initial: 0 }),
+      }),
+      // ... additional hidden abilities (cmax, cmin, fmin, fmax, vuln)
+    });
+
     return schema;
+  }
+
+  prepareDerivedData() {
+    super.prepareDerivedData();
+    // Derived data calculations happen here
   }
 }
 ```
@@ -141,21 +239,66 @@ Define schemas for different item types:
 
 ```javascript
 // module/data/item-gear.mjs
-export default class EventideRpSystemGear extends foundry.abstract
-  .TypeDataModel {
+import EventideRpSystemItemBase from "./base-item.mjs";
+
+export default class EventideRpSystemGear extends EventideRpSystemItemBase {
+  static LOCALIZATION_PREFIXES = [
+    "EVENTIDE_RP_SYSTEM.Item.base",
+    "EVENTIDE_RP_SYSTEM.Item.Gear",
+  ];
+
   static defineSchema() {
     const fields = foundry.data.fields;
+    const requiredInteger = { required: true, nullable: false, integer: true };
+    const schema = super.defineSchema();
 
-    return {
-      description: new fields.HTMLField(),
-      quantity: new fields.NumberField({
+    schema.equipped = new fields.BooleanField({
+      required: true,
+      initial: true,
+    });
+
+    schema.cursed = new fields.BooleanField({
+      required: true,
+      initial: false,
+    });
+
+    schema.quantity = new fields.NumberField({
+      ...requiredInteger,
+      initial: 1,
+      min: 0,
+    });
+
+    schema.roll = new fields.SchemaField({
+      type: new fields.StringField({
+        initial: "roll",
         required: true,
-        integer: true,
-        initial: 1,
+        nullable: false,
+        choices: ["roll", "flat", "none"],
       }),
-      equipped: new fields.BooleanField({ initial: true }),
-      // ... more fields
-    };
+      ability: new fields.StringField({
+        required: true,
+        nullable: false,
+        choices: ["acro", "phys", "fort", "will", "wits", "unaugmented"],
+        initial: "unaugmented",
+      }),
+      bonus: new fields.NumberField({ initial: 0 }),
+      diceAdjustments: new fields.SchemaField({
+        advantage: new fields.NumberField({ initial: 0, ...requiredInteger }),
+        disadvantage: new fields.NumberField({
+          initial: 0,
+          ...requiredInteger,
+        }),
+        total: new fields.NumberField({ initial: 0, ...requiredInteger }),
+      }),
+    });
+
+    return schema;
+  }
+
+  prepareDerivedData() {
+    this.roll.diceAdjustments.total =
+      this.roll.diceAdjustments.advantage -
+      this.roll.diceAdjustments.disadvantage;
   }
 }
 ```
@@ -164,27 +307,61 @@ export default class EventideRpSystemGear extends foundry.abstract
 
 #### Actor Documents
 
-Extend Foundry's Actor class with system-specific functionality:
+The actor class uses mixin composition for functionality:
 
 ```javascript
 // module/documents/actor.mjs
-export default class EventideRpSystemActor extends Actor {
-  prepareDerivedData() {
-    super.prepareDerivedData();
+import { Logger } from "../services/logger.mjs";
+import {
+  ActorTransformationMixin,
+  ActorResourceMixin,
+  ActorRollsMixin,
+} from "./mixins/_module.mjs";
+import { getSetting } from "../services/_module.mjs";
 
-    // Calculate derived values
-    for (const [key, ability] of Object.entries(this.system.abilities)) {
-      ability.total = ability.value + ability.change + ability.transform;
-      ability.ac = ability.total + 11;
+export class EventideRpSystemActor extends ActorTransformationMixin(
+  ActorResourceMixin(ActorRollsMixin(Actor)),
+) {
+  prepareData() {
+    Logger.methodEntry("EventideRpSystemActor", "prepareData");
+    super.prepareData();
+    Logger.methodExit("EventideRpSystemActor", "prepareData");
+  }
+
+  async _onCreate(data, options, userId) {
+    Logger.methodEntry("EventideRpSystemActor", "_onCreate", {
+      actorName: data.name,
+      actorType: data.type,
+      userId,
+    });
+
+    await super._onCreate(data, options, userId);
+
+    // Auto-link character tokens if setting is enabled
+    if (data.type === "character") {
+      try {
+        const autoLinkSetting = getSetting("autoLinkCharacterTokens");
+        if (autoLinkSetting) {
+          await this.update({
+            "prototypeToken.actorLink": true,
+          });
+        }
+      } catch (error) {
+        Logger.warn(
+          `Failed to auto-link prototype token for character actor: ${this.name}`,
+          error,
+          "ACTOR_CREATION",
+        );
+      }
     }
+
+    Logger.methodExit("EventideRpSystemActor", "_onCreate");
   }
 
-  async rollAbility(abilityId, options = {}) {
-    // Custom rolling logic
-    const ability = this.system.abilities[abilityId];
-    const roll = new Roll(`1d20 + ${ability.total}`, this.getRollData());
-    return roll.evaluate();
-  }
+  // Additional methods provided by mixins:
+  // - rollAbility() from ActorRollsMixin
+  // - applyTransformation() from ActorTransformationMixin
+  // - getResourcePercentages() from ActorResourceMixin
 }
 ```
 
@@ -196,15 +373,84 @@ Modern Foundry applications using the new architecture:
 
 ```javascript
 // module/ui/sheets/actor-sheet.mjs
-export class EventideRpSystemActorSheet extends foundry.applications.sheets
-  .ActorSheetV2 {
+import { CommonFoundryTasks } from "../../utils/_module.mjs";
+import { erpsRollHandler, Logger } from "../../services/_module.mjs";
+import { ErrorHandler } from "../../utils/error-handler.mjs";
+
+const { api, sheets } = foundry.applications;
+
+export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
+  sheets.ActorSheetV2,
+) {
+  constructor(options = {}) {
+    Logger.methodEntry("EventideRpSystemActorSheet", "constructor", {
+      actorId: options?.document?.id,
+      actorName: options?.document?.name,
+      actorType: options?.document?.type,
+    });
+
+    try {
+      super(options);
+      this.#dragDrop = this.#createDragDropHandlers();
+      this.themeManager = null;
+
+      Logger.debug(
+        "Actor sheet initialized successfully",
+        {
+          sheetId: this.id,
+          actorName: this.actor?.name,
+          dragDropHandlers: this.#dragDrop?.length,
+        },
+        "ACTOR_SHEET",
+      );
+    } catch (error) {
+      Logger.error("Failed to initialize actor sheet", error, "ACTOR_SHEET");
+      throw error;
+    }
+  }
+
   static DEFAULT_OPTIONS = {
-    classes: ["eventide-sheet"],
-    position: { width: 920, height: 950 },
+    classes: ["eventide-sheet", "eventide-sheet--scrollbars"],
+    position: {
+      width: 920,
+      height: 950,
+    },
+    window: {
+      controls: [
+        // Custom window controls
+        {
+          action: "configureToken",
+          icon: "fas fa-user-circle",
+          label: "EVENTIDE_RP_SYSTEM.WindowTitles.ConfigureToken",
+          ownership: "OWNER",
+        },
+        {
+          action: "setSheetTheme",
+          icon: "fas fa-palette",
+          label: "EVENTIDE_RP_SYSTEM.WindowTitles.SheetTheme",
+          ownership: "OWNER",
+        },
+      ],
+    },
     actions: {
+      onEditImage: this._onEditImage,
+      viewDoc: this._viewDoc,
+      createDoc: this._createDoc,
+      deleteDoc: this._deleteDoc,
+      toggleEffect: this._toggleEffect,
       roll: this._onRoll,
       toggleGear: this._toggleGear,
       // ... more actions
+    },
+    dragDrop: [
+      {
+        dragSelector:
+          "[data-drag], .erps-data-table__row[data-item-id], .erps-data-table__row[data-document-class], .eventide-transformation-card[data-item-id]",
+        dropSelector: null,
+      },
+    ],
+    form: {
+      submitOnChange: true,
     },
   };
 
@@ -212,18 +458,52 @@ export class EventideRpSystemActorSheet extends foundry.applications.sheets
     header: {
       template: "systems/eventide-rp-system/templates/actor/header.hbs",
     },
-    tabs: { template: "templates/generic/tab-navigation.hbs" },
-    // ... more parts
+    tabs: {
+      template: "templates/generic/tab-navigation.hbs",
+    },
+    features: {
+      template: "systems/eventide-rp-system/templates/actor/features.hbs",
+    },
+    biography: {
+      template: "systems/eventide-rp-system/templates/actor/biography.hbs",
+    },
+    statuses: {
+      template: "systems/eventide-rp-system/templates/actor/statuses.hbs",
+    },
+    gear: {
+      template: "systems/eventide-rp-system/templates/actor/gear.hbs",
+    },
+    combatPowers: {
+      template: "systems/eventide-rp-system/templates/actor/combat-powers.hbs",
+    },
   };
 
   async _prepareContext(options) {
-    const context = await super._prepareContext(options);
+    Logger.methodEntry("EventideRpSystemActorSheet", "_prepareContext", {
+      actorName: this.actor?.name,
+      optionsParts: options?.parts,
+    });
 
-    // Add system-specific context
-    context.config = CONFIG.EVENTIDE_RP_SYSTEM;
-    context.abilities = this.actor.system.abilities;
+    try {
+      const context = {
+        editable: this.isEditable,
+        owner: this.document.isOwner,
+        limited: this.document.limited,
+        actor: this.actor,
+        system: this.actor.system,
+        flags: this.actor.flags,
+        config: CONFIG.EVENTIDE_RP_SYSTEM,
+        tabs: this._getTabs(options.parts),
+        fields: this.document.schema.fields,
+        systemFields: this.document.system.schema.fields,
+        // ... additional context preparation
+      };
 
-    return context;
+      return context;
+    } catch (error) {
+      Logger.error("Failed to prepare actor sheet context", error, "ACTOR_SHEET");
+      throw error;
+    }
   }
 }
 ```
@@ -232,13 +512,19 @@ export class EventideRpSystemActorSheet extends foundry.applications.sheets
 
 #### Settings Service
 
-Manages system configuration:
+Manages system configuration. **Note**: There is a known spelling error in the setting name that is maintained for production compatibility:
 
 ```javascript
 // module/services/settings/settings.mjs
+import { EventideSheetHelpers } from "../../ui/_module.mjs";
+import { erpsSoundManager, Logger } from "../_module.mjs";
+
 export const registerSettings = function () {
+  // NOTE: "initativeFormula" is intentionally misspelled for production compatibility
+  // This setting name likely cannot be changed without breaking existing worlds
   game.settings.register("eventide-rp-system", "initativeFormula", {
     name: "SETTINGS.InitativeFormulaName",
+    hint: "SETTINGS.InitativeFormulaHint",
     scope: "world",
     config: true,
     restricted: true,
@@ -247,8 +533,62 @@ export const registerSettings = function () {
       "1d@hiddenAbilities.dice.total + @statTotal.mainInit + @statTotal.subInit",
   });
 
+  game.settings.register("eventide-rp-system", "initiativeDecimals", {
+    name: "SETTINGS.InitiativeDecimalsName",
+    hint: "SETTINGS.InitiativeDecimalsHint",
+    scope: "world",
+    config: true,
+    restricted: true,
+    type: Number,
+    default: 2,
+    range: {
+      min: 0,
+      max: 3,
+      step: 1,
+    },
+  });
+
   // ... more settings
 };
+```
+
+#### Logger Service
+
+The system includes a comprehensive logging service for debugging and monitoring:
+
+```javascript
+// module/services/logger.mjs
+export class Logger {
+  static methodEntry(className, methodName, params = {}) {
+    if (this.isDebugEnabled()) {
+      console.log(`[ERPS] ENTRY | ${className}.${methodName}`, params);
+    }
+  }
+
+  static methodExit(className, methodName, result = null) {
+    if (this.isDebugEnabled()) {
+      console.log(`[ERPS] EXIT | ${className}.${methodName}`, result);
+    }
+  }
+
+  static debug(message, data = null, category = "GENERAL") {
+    if (this.isDebugEnabled()) {
+      console.log(`[ERPS] DEBUG | ${category} | ${message}`, data);
+    }
+  }
+
+  static warn(message, error = null, category = "GENERAL") {
+    console.warn(`[ERPS] WARN | ${category} | ${message}`, error);
+  }
+
+  static error(message, error = null, category = "GENERAL") {
+    console.error(`[ERPS] ERROR | ${category} | ${message}`, error);
+  }
+
+  static isDebugEnabled() {
+    return game.settings?.get("eventide-rp-system", "testingMode") || false;
+  }
+}
 ```
 
 #### Hook Services
@@ -257,15 +597,145 @@ Manage Foundry VTT hooks and events:
 
 ```javascript
 // module/services/hooks/combat.mjs
+import { Logger } from "../logger.mjs";
+import { getSetting } from "../settings/settings.mjs";
+
 export const initializeCombatHooks = function () {
   Hooks.on("createCombatant", async (combatant, options, userId) => {
-    const settings = getCombatSettings();
+    Logger.methodEntry("CombatHooks", "createCombatant", {
+      combatantId: combatant.id,
+      actorType: combatant.actor?.type,
+    });
 
-    if (settings.autoRollNpcInitiative && combatant.actor.type === "npc") {
-      await combatant.rollInitiative();
+    try {
+      const settings = {
+        autoRollNpcInitiative: getSetting("autoRollNpcInitiative"),
+        hideNpcInitiativeRolls: getSetting("hideNpcInitiativeRolls"),
+      };
+
+      if (settings.autoRollNpcInitiative && combatant.actor.type === "npc") {
+        await combatant.rollInitiative({
+          messageOptions: {
+            whisper: settings.hideNpcInitiativeRolls ? [game.user.id] : [],
+          },
+        });
+      }
+    } catch (error) {
+      Logger.error("Failed to auto-roll NPC initiative", error, "COMBAT");
     }
+
+    Logger.methodExit("CombatHooks", "createCombatant");
   });
 };
+```
+
+## Error Handling System
+
+The Eventide RP System includes a comprehensive error handling library (`module/utils/error-handler.mjs`) that provides consistent error management throughout the system.
+
+### ErrorHandler Class
+
+The `ErrorHandler` class provides centralized error handling with user notifications, structured logging, and categorization:
+
+```javascript
+import { ErrorHandler } from "./utils/error-handler.mjs";
+
+// Wrap async operations with error handling
+const [result, error] = await ErrorHandler.handleAsync(someAsyncOperation(), {
+  context: "User Operation Description",
+  userMessage: "Custom user-friendly message",
+  showToUser: true,
+  errorType: ErrorHandler.ERROR_TYPES.VALIDATION,
+});
+
+if (error) {
+  // Handle error case
+  return null;
+}
+
+// Use successful result
+return result;
+```
+
+### Error Types
+
+The system categorizes errors for better handling and logging:
+
+```javascript
+ErrorHandler.ERROR_TYPES = {
+  VALIDATION: "validation", // Input validation errors
+  NETWORK: "network", // Network/fetch errors
+  PERMISSION: "permission", // Access/permission errors
+  DATA: "data", // Data processing errors
+  UI: "ui", // User interface errors
+  FOUNDRY_API: "foundry_api", // Foundry VTT API errors
+  UNKNOWN: "unknown", // Unclassified errors
+};
+```
+
+### Specialized Error Handlers
+
+#### Document Operations
+
+```javascript
+// Handle Foundry document operations
+const [actor, error] = await ErrorHandler.handleDocumentOperation(
+  Actor.create(actorData),
+  "create actor",
+  "actor",
+);
+```
+
+#### Sheet Rendering
+
+```javascript
+// Handle sheet rendering errors
+const [rendered, error] = await ErrorHandler.handleSheetRender(
+  this.render(true),
+  "Character Sheet",
+);
+```
+
+#### Validation
+
+```javascript
+// Handle validation results
+const validationResult = validateInput(data);
+const isValid = ErrorHandler.handleValidation(
+  validationResult,
+  "Character Creation",
+);
+
+if (!isValid) {
+  return; // Validation failed, user notified
+}
+```
+
+### Safe Execution
+
+For event handlers and UI callbacks that shouldn't throw:
+
+```javascript
+// Safely execute functions with error boundary
+const result = ErrorHandler.safeExecute(
+  riskyFunction,
+  this, // context
+  arg1,
+  arg2, // arguments
+);
+```
+
+### Integration with Logger
+
+The ErrorHandler integrates with the system's Logger service for structured logging:
+
+```javascript
+// Errors are automatically logged with context
+const [result, error] = await ErrorHandler.handleAsync(operation(), {
+  context: "Important Operation",
+  errorType: ErrorHandler.ERROR_TYPES.DATA,
+});
+// Logs: "ERROR | Error in Important Operation: [error details]"
 ```
 
 ## Customization Patterns
@@ -276,14 +746,22 @@ export const initializeCombatHooks = function () {
 
 ```javascript
 // module/data/item-custom.mjs
-export default class EventideRpSystemCustom extends foundry.abstract
-  .TypeDataModel {
+import EventideRpSystemItemBase from "./base-item.mjs";
+
+export default class EventideRpSystemCustom extends EventideRpSystemItemBase {
+  static LOCALIZATION_PREFIXES = [
+    "EVENTIDE_RP_SYSTEM.Item.base",
+    "EVENTIDE_RP_SYSTEM.Item.Custom",
+  ];
+
   static defineSchema() {
     const fields = foundry.data.fields;
-    return {
-      customProperty: new fields.StringField({ initial: "" }),
-      customNumber: new fields.NumberField({ initial: 0 }),
-    };
+    const schema = super.defineSchema();
+
+    schema.customProperty = new fields.StringField({ initial: "" });
+    schema.customNumber = new fields.NumberField({ initial: 0 });
+
+    return schema;
   }
 }
 ```
@@ -291,7 +769,17 @@ export default class EventideRpSystemCustom extends foundry.abstract
 2. **Register in System**:
 
 ```javascript
+// module/data/_module.mjs
+import EventideRpSystemCustom from "./item-custom.mjs";
+
+export const models = {
+  // ... existing models
+  EventideRpSystemCustom,
+};
+
 // module/eventide-rp-system.mjs
+import { models } from "./data/_module.mjs";
+
 CONFIG.Item.dataModels.custom = models.EventideRpSystemCustom;
 ```
 
@@ -300,12 +788,8 @@ CONFIG.Item.dataModels.custom = models.EventideRpSystemCustom;
 ```handlebars
 {{! templates/item/custom.hbs }}
 <div class="custom-item">
-  <input name="system.customProperty" value="{{system.customProperty}}" />
-  <input
-    name="system.customNumber"
-    value="{{system.customNumber}}"
-    type="number"
-  />
+  {{formInput fields.customProperty value=system.customProperty name="system.customProperty"}}
+  {{formInput fields.customNumber value=system.customNumber name="system.customNumber" type="number"}}
 </div>
 ```
 
@@ -321,15 +805,29 @@ export const CustomActorMixin = (BaseClass) =>
     }
 
     async performCustomAction(options = {}) {
-      // Custom action implementation
-      const roll = await this.rollAbility("wits", options);
-      // Handle results
+      const [result, error] = await ErrorHandler.handleAsync(
+        this.rollAbility("wits", options),
+        {
+          context: "Custom Action",
+          errorType: ErrorHandler.ERROR_TYPES.FOUNDRY_API,
+        }
+      );
+
+      if (error) {
+        return null;
+      }
+
+      return result;
     }
   };
 
 // Apply mixin to actor class
-export default class EventideRpSystemActor extends CustomActorMixin(Actor) {
-  // Actor implementation
+import { CustomActorMixin } from "./mixins/custom-actor-mixin.mjs";
+
+export default class EventideRpSystemActor extends CustomActorMixin(
+  ActorTransformationMixin(ActorResourceMixin(ActorRollsMixin(Actor)))
+) {
+  // Actor implementation with composed functionality
 }
 ```
 
@@ -348,8 +846,21 @@ async function customMacro() {
   for (const token of selected) {
     const actor = token.actor;
 
-    // Perform custom logic
-    await actor.performCustomAction();
+    // Use error handling for safety
+    const [result, error] = await ErrorHandler.handleAsync(
+      actor.performCustomAction(),
+      {
+        context: "Custom Macro Execution",
+        userMessage: "Failed to perform custom action",
+      }
+    );
+
+    if (error) {
+      continue; // Skip this token and continue with others
+    }
+
+    // Handle successful result
+    console.log(`Custom action result for ${actor.name}:`, result);
   }
 }
 
@@ -503,144 +1014,19 @@ Themes are implemented using CSS custom properties:
  * @returns {Promise<number>} The calculated initiative value
  */
 async function calculateInitiative(actor, { bonus = 0 } = {}) {
-  // Implementation
+  const [result, error] = await ErrorHandler.handleAsync(
+    actor.rollInitiative({ bonus }),
+    {
+      context: "Calculate Initiative",
+      errorType: ErrorHandler.ERROR_TYPES.FOUNDRY_API,
+    }
+  );
+
+  return result || 0;
 }
 ```
 
-### Error Handling
-
-The Eventide RP System includes a comprehensive error handling library (`module/utils/error-handler.mjs`) that provides consistent error management throughout the system.
-
-#### ErrorHandler Class
-
-The `ErrorHandler` class provides centralized error handling with user notifications, structured logging, and categorization:
-
-```javascript
-import { ErrorHandler } from "./utils/error-handler.mjs";
-
-// Wrap async operations with error handling
-const [result, error] = await ErrorHandler.handleAsync(someAsyncOperation(), {
-  context: "User Operation Description",
-  userMessage: "Custom user-friendly message",
-  showToUser: true,
-  errorType: ErrorHandler.ERROR_TYPES.VALIDATION,
-});
-
-if (error) {
-  // Handle error case
-  return null;
-}
-
-// Use successful result
-return result;
-```
-
-#### Error Types
-
-The system categorizes errors for better handling and logging:
-
-```javascript
-ErrorHandler.ERROR_TYPES = {
-  VALIDATION: "validation", // Input validation errors
-  NETWORK: "network", // Network/fetch errors
-  PERMISSION: "permission", // Access/permission errors
-  DATA: "data", // Data processing errors
-  UI: "ui", // User interface errors
-  FOUNDRY_API: "foundry_api", // Foundry VTT API errors
-  UNKNOWN: "unknown", // Unclassified errors
-};
-```
-
-#### Specialized Error Handlers
-
-##### Document Operations
-
-```javascript
-// Handle Foundry document operations
-const [actor, error] = await ErrorHandler.handleDocumentOperation(
-  Actor.create(actorData),
-  "create actor",
-  "actor",
-);
-```
-
-##### Sheet Rendering
-
-```javascript
-// Handle sheet rendering errors
-const [rendered, error] = await ErrorHandler.handleSheetRender(
-  this.render(true),
-  "Character Sheet",
-);
-```
-
-##### Validation
-
-```javascript
-// Handle validation results
-const validationResult = validateInput(data);
-const isValid = ErrorHandler.handleValidation(
-  validationResult,
-  "Character Creation",
-);
-
-if (!isValid) {
-  return; // Validation failed, user notified
-}
-```
-
-#### Safe Execution
-
-For event handlers and UI callbacks that shouldn't throw:
-
-```javascript
-// Safely execute functions with error boundary
-const result = ErrorHandler.safeExecute(
-  riskyFunction,
-  this, // context
-  arg1,
-  arg2, // arguments
-);
-```
-
-#### Assertions and Preconditions
-
-```javascript
-// Assert conditions with proper error handling
-ErrorHandler.assert(
-  actor.type === "character",
-  "Operation requires character actor",
-  ErrorHandler.ERROR_TYPES.VALIDATION,
-);
-```
-
-#### Validation Helpers
-
-```javascript
-// Create validation error objects
-const validationError = ErrorHandler.createValidationError([
-  "Name is required",
-  "Value must be positive",
-]);
-
-// Create success result
-const validationSuccess = ErrorHandler.createValidationSuccess();
-```
-
-#### Integration with Logger
-
-The ErrorHandler integrates with the system's Logger service for structured logging:
-
-```javascript
-// Errors are automatically logged with context
-const [result, error] = await ErrorHandler.handleAsync(operation(), {
-  context: "Important Operation",
-  errorType: ErrorHandler.ERROR_TYPES.DATA,
-});
-// Logs: "ERROR | Error in Important Operation: [error details]"
-```
-
-#### Best Practices
+### Best Practices
 
 1. **Always use ErrorHandler for async operations**:
 
@@ -694,6 +1080,8 @@ const [result, error] = await ErrorHandler.handleAsync(operation(), {
 - Follow existing naming conventions
 - Add JSDoc comments for public methods
 - Use meaningful variable and function names
+- Always use ErrorHandler for async operations
+- Use Logger for debugging and monitoring
 
 ### Git Workflow
 
@@ -764,6 +1152,29 @@ function getCachedData(key) {
   return cachedData.get(key);
 }
 ```
+
+## Known Issues and Workarounds
+
+### Setting Name Spelling Error
+
+**Issue**: The initiative formula setting is named `"initativeFormula"` (missing 'i') instead of `"initiativeFormula"`.
+
+**Status**: This is a known issue that likely cannot be corrected without breaking existing worlds in production.
+
+**Workaround**: When referencing this setting in code or documentation, use the actual (misspelled) name:
+
+```javascript
+// Correct usage (with spelling error)
+const formula = game.settings.get("eventide-rp-system", "initativeFormula");
+
+// Do NOT use (would break existing worlds)
+const formula = game.settings.get("eventide-rp-system", "initiativeFormula");
+```
+
+**Impact**: This affects:
+- Setting registration in `module/services/settings/settings.mjs`
+- Setting retrieval in `module/eventide-rp-system.mjs`
+- Localization keys in `lang/src/en/settings.json`
 
 ## Resources and References
 

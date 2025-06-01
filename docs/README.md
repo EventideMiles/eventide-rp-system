@@ -75,6 +75,41 @@ Tips, tricks, and advanced configuration techniques.
 - **Integration** with other Foundry modules
 - **Troubleshooting** complex issues
 
+## Documentation Quality and Accuracy
+
+### Recent Improvements
+
+This documentation has been thoroughly reviewed and updated to ensure accuracy with the current codebase:
+
+- **Code Examples**: All code partials have been verified against the actual implementation
+- **Architecture Details**: Enhanced coverage of the mixin pattern and Application V2 architecture
+- **Error Handling**: Comprehensive documentation of the ErrorHandler and Logger systems
+- **Technical Accuracy**: Updated examples to reflect real implementation complexity
+
+### Known Issues
+
+#### Setting Name Spelling Error
+
+**Important for Developers**: The initiative formula setting is named `"initativeFormula"` (missing 'i') instead of `"initiativeFormula"`. This is a known issue that likely cannot be corrected without breaking existing worlds in production.
+
+**Impact**: This affects:
+- Setting registration and retrieval in code
+- Localization keys
+- Any custom development that references this setting
+
+**Usage**: Always use the actual (misspelled) name when referencing this setting:
+```javascript
+// Correct usage
+const formula = game.settings.get("eventide-rp-system", "initativeFormula");
+```
+
+### Documentation Standards
+
+- **Accuracy**: All code examples are verified against the current codebase
+- **Completeness**: Examples include proper imports and error handling
+- **Clarity**: Complex implementations are explained with context
+- **Maintenance**: Documentation is updated with each system release
+
 ## Key System Features
 
 ### Dynamic Character System
