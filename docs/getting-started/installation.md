@@ -140,8 +140,10 @@ Now that you have Eventide RP System installed:
 - **Players**: Continue to [For Players](../for-players/README.md)
 - **Everyone**: Explore [System Features](../system-features/README.md) for detailed mechanics
 
-## Version Information
+## System Information
 
-- **Current Version**: 13.2.0
+- **Current Version**: 13.10.0
 - **Foundry Compatibility**: v13.341 minimum, v13.344 verified
 - **Last Updated**: Check [GitHub Releases](https://github.com/EventideMiles/eventide-rp-system/releases) for latest information
+- **Installation Method**: Foundry Package Manager (recommended) or Manual
+- **Dependencies**: None required

@@ -9,6 +9,10 @@ Welcome to the comprehensive documentation for the Eventide Roleplaying System f
 - **[Installation Guide](getting-started/installation.md)** - Complete setup instructions
 - **[Quick Start Guide](getting-started/quick-start.md)** - Get playing in 10 minutes or less
 
+### What's New?
+
+- **[What's New in v13.10.0](WHATS_NEW.md)** - Latest features and improvements
+
 ### Ready to Dive Deeper?
 
 - **[Getting Started](getting-started/README.md)** - Comprehensive introduction and setup
@@ -191,7 +195,7 @@ This documentation is organized by user role and complexity:
 
 ## Version Information
 
-- **System Version**: 13.2.0
+- **System Version**: 13.10.0
 - **Foundry Compatibility**: v13.341 minimum, v13.344 verified
 - **Documentation Version**: Updated for latest release
 - **Last Updated**: Check [GitHub Releases](https://github.com/EventideMiles/eventide-rp-system/releases) for latest information
