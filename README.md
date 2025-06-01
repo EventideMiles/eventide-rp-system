@@ -7,8 +7,6 @@
 
 ## Installation
 
-- WIP
-
 1. In Foundry VTT, navigate to the "Game Systems" tab
 2. Click "Install System"
 3. In the "Manifest URL" field, paste: https://github.com/EventideMiles/eventide-rp-system/releases/latest/download/system.json
@@ -17,101 +15,243 @@
 Alternatively, you can download the latest release from the [Releases](https://github.com/EventideMiles/eventide-rp-system/releases) page and install it manually.
 
 ![Foundry v13.341+](https://img.shields.io/badge/foundry-v13.341+-green)
-[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![License: LGPL 2.1+](https://img.shields.io/badge/License-LGPL_2.1+-blue.svg)](https://www.gnu.org/licenses/lgpl-2.1.html)
 
-A custom roleplaying system for Foundry VTT that emphasizes dynamic character abilities through status effects features, and gear. The system is focused on providing an intuitive and flexible gaming experience.
+A comprehensive roleplaying system for Foundry VTT that emphasizes dynamic character abilities through status effects, features, and gear. The system provides an intuitive and flexible gaming experience with powerful tools for both players and Game Masters.
 
 ## Core Features
 
-### Character Management
+### Five-Ability System
 
-- Five core abilities: Acrobatics, Physical, Fortitude, Will, and Wits
-- Rich HTML-supported biography fields for both characters and NPCs
-- Streamlined character creation and management
-- Gear, Status, Feature, and Combat Power management easy via the item system and system provided macros
+The Eventide system is built around five core abilities that determine all character capabilities:
 
-### Dynamic Ability System
+- **Acrobatics**: Agility, balance, finesse combat, ranged attacks, stealth
+- **Physical**: Raw strength, heavy combat, grappling, intimidation, lifting
+- **Fortitude**: Resilience, stamina, damage resistance, endurance (affects Resolve/health)
+- **Will**: Mental fortitude, magic, combat powers, leadership (affects Power/mana)
+- **Wits**: Intelligence, perception, tactics, awareness, problem-solving
 
-- Status effects and gear that modify character abilities dynamically - allowing for prep work before session and improvization during session to react to unexpected player choices
-- Feature-based ability modifications for lasting character changes - reflect your character's background and development
-- Hidden abilities support for GM-controlled special effects - such as changing rolled dice, adding advantage / disadvantage, or modifying critical ranges
-- Intuitive dialogs for formatted system control
+### Dynamic Character Modification
 
-### Equipment and Powers
+#### **Status Effects System**
+- **Temporary conditions** applied during gameplay (poisoned, blessed, frightened)
+- **Environmental effects** from circumstances (wet, cold, inspired)
+- **Visual token indicators** for easy tracking
+- **Flexible creation tools** with the Effect Creator macro
+- **Stacking and interaction** mechanics for complex scenarios
 
-- Extensive Combat Gear Management system - Quick and easy to manage combat gear and use it:
-  - As extensive as you want it to be: items can have effects on stats, roll data like a combat power, they can track uses, and can be equipped and unequipped
-  - Equipped/unequipped status can be toggled directly from item sheets or character sheets
-  - Optional chat messages for equipment changes (configurable in system settings)
-  - Cursed Items - items that a player cannot unequip at will, and which may come with powers and drawbacks different than their first appearance
-- Combat powers with detailed descriptions and reminders to ensure you fulfill their requirements / have enough power to use them
-- Status effect tracking and management - formatted chat messages for when they apply and expire
-- You can have features, statuses, and gear display their icon on the player's token: reminders of the most important changes to their stats
+#### **Features System**
+- **Permanent character traits** representing background and training
+- **Racial or species abilities** for fantasy settings
+- **Character development** rewards for growth and achievement
+- **Rich HTML descriptions** for immersive storytelling
+- **Active roll capabilities** with flexible mechanics
 
-### Combat and Initiative
+#### **Gear System**
+- **Dynamic equipment effects** that modify abilities when equipped/unequipped
+- **Cursed items** that cannot be easily removed
+- **Usage tracking** for limited-use items
+- **Equipment categories** (weapons, armor, tools, etc.)
+- **Combat integration** for gear that functions as weapons
+- **Optional chat messages** for equipment changes
 
-- Customizable initiative formula with configurable decimal places
-- Options to automatically roll initiative for NPCs and/or players
-- Privacy control for NPC initiative rolls - can be hidden from players and shown only to the GM
-- Configurable combat round duration
+#### **Hidden Abilities System**
+- **GM-controlled modifiers** for special scenarios
+- **Dice pool modifications** that change what dice characters roll
+- **Critical range adjustments** for enhanced or reduced critical chances
+- **Special vulnerability mechanics** for unique character states
 
-### User Interface
+### Combat System
 
-- Multiple theme options: Dark is the default, but Light is also available
-- System sounds for key actions like healing, damage, status effects, and more: all configurable in the system settings
+#### **Flexible Initiative**
+- **Customizable initiative formula** with configurable decimal places
+- **Automatic rolling options** for NPCs and/or players
+- **Privacy controls** for NPC initiative (hidden from players)
+- **Configurable combat round duration**
 
-### Powerful System Macros
+#### **Ability-Based Combat**
+- **Any ability can be used** for attacks based on narrative context
+- **Armor Class calculation** (Ability + 11) shown automatically to GMs
+- **Critical success and failure** mechanics with customizable ranges
+- **Tactical depth** through positioning, status effects, and gear
 
-- Makes creating and managing gear, statuses, and features easy and quick
-- Available in a system compendium: import to your world and drag to the hotbar
-- Provide players with the tools they need to manage their own gear and statuses: player versions of the effect and gear creator are available
-- Need to make a status effect slightly worse or better? Intensify and Weaken are available for statuses and features. Intensify makes every positive number bigger and every negative number smaller. Weaken does the opposite till the limit of 1 on either side
-- Damage scripts handle formatting and describing what is happening to the target
-- Most macros save your settings: so if you need to have a specific status modified over many turns, you can use the same macro and it will remember your settings
-- Fully extensible: see a macro with a number argument? You can use it as a template to create one with a new number than can remember new settings
+#### **Combat Powers**
+- **Special abilities** that cost Power to use
+- **Ability-based activation** with flexible targeting
+- **Rich descriptions** with HTML formatting support
+- **Prerequisites system** for complex abilities
+- **Integration** with status effects and transformations
 
+### Advanced Systems
 
-### Coming Soon
+#### **Transformation System**
+- **Comprehensive character changes** affecting abilities, resources, and appearance
+- **Embedded combat powers** available only while transformed
+- **Token modifications** for visual representation
+- **Narrative integration** with rich descriptions
 
-- An RPG system that uses this system as a base - feel free to use it however you wish but I will be providing documentation and support for the official use and development of this system
-- See a feature you want that we don't have? Open an issue and as long as its not antithetical to my vision for the system and isn't far too complex, I will be happy to add it
+#### **Resource Management**
+- **Resolve** (health/stamina) derived from Fortitude
+- **Power** (mana/special abilities) derived from Will
+- **Dynamic modification** through gear, status effects, and features
+- **Healing and damage** application with formatted chat messages
+
+### User Interface and Experience
+
+#### **Multiple Themes**
+- **Blue theme** (default) balances visuals with ease of use
+- **Dark theme** best for long play sessions
+- **Green theme** perfect to get into character with nature feel
+- **Light theme** available for bright environments
+- **Orange theme** reminicent of sunset
+- **Purple theme** a bright dark mode theme for those who love purple
+
+#### **System Sounds**
+- **Configurable audio feedback** for key actions
+- **Volume controls** and enable/disable options
+- **Custom sounds** for healing, damage, status effects, gear changes, combat powers, and initiative
+- **Immersive audio experience** that enhances gameplay
+
+#### **Rich Text Support**
+- **HTML formatting** in descriptions and biographies
+- **Color customization** for effects and items
+- **Visual indicators** on tokens for status effects and gear
+
+### Powerful Macro System
+
+The system includes a comprehensive macro library (ERPS Macros compendium):
+
+#### **Creation Tools**
+- **Effect Creator**: Intuitive interface for creating status effects and features
+- **Gear Creator**: Comprehensive tool for creating equipment with effects
+- **Transformation Creator**: Advanced tool for character transformations
+
+#### **Player Tools**
+- **Player versions** of creation macros for self-management
+- **Ability rolling** macros for quick access
+- **Gear management** tools for equipment handling
+
+#### **GM Tools**
+- **Damage and healing** scripts with formatted chat output
+- **Status effect management** with intensify/weaken options
+- **Target selection** and effect application tools
+- **Settings memory** for frequently used configurations
+
+#### **Extensible Design**
+- **API** for creating custom macros
+- **Documentation** for learning about how to integrate with the system
+- **Configurable parameters** for different scenarios
+- **Integration** with all system features
+
+## Item Types and Functionality
+
+### Features
+- **Permanent character traits** with lasting effects
+- **Background abilities** reflecting training and experience
+- **Optional rolling capabilities** with ability-based mechanics
+- **Rich descriptions** with HTML formatting support
+
+### Gear
+- **Equippable items** with dynamic effects
+- **Class categorization** for organization
+- **Usage tracking** for consumables
+- **Combat integration** for weapons and tools
+- **Cursed item support** for items that resist removal
+
+### Status Effects
+- **Temporary modifications** applied during gameplay
+- **Environmental conditions** from circumstances
+- **Combat conditions** like poisoned, blessed, or stunned
+- **Visual representation** on tokens
+
+### Combat Powers
+- **Special abilities** with Power costs
+- **Ability-based activation** rolls
+- **Damage or effect** application
+- **Prerequisites** for complex abilities
+
+### Transformations
+- **Comprehensive character changes** affecting multiple aspects
+- **Embedded combat powers** available only while transformed
+- **Resource modifications** to health and power pools
+- **Visual changes** including token modifications
 
 ## Usage
 
 ### For Game Masters
 
-- Modify character abilities through status effects and features
-- Create gear, place it in the world, and let your players interact with whatever you can imagine
-- Manage abilities and hidden abilities using the status system, feature system, and gear via the effect and gear creator
-- Design NPCs with custom combat powers, inflictable status effects, and features
-- Track combat powers and their effects
-- Popup system provides details on anything on any player - simply click the item and get information about it
-- Apply damage and healing to characters - with chat messages to keep tabs on what's happening
-- Configure system sounds for various actions:
-  - Enable/disable system sounds
-  - Adjust system sound volume
-  - Configure custom sounds for healing, damage, status effects, gear equipping/unequipping, combat powers, and initiative rolls
-- Configure system settings to customize your game experience:
-  - Adjust initiative formula and display precision
-  - Control visibility of NPC initiative rolls
-  - Toggle automatic initiative rolling for NPCs and players
-  - Set default combat round duration
-  - Enable/disable gear equipment change messages
-  - Choose UI theme that works best for your group
+#### **Character and World Management**
+- **Modify character abilities** through status effects, features, and gear
+- **Create custom equipment** and place it in the world
+- **Design NPCs** with unique combat powers and abilities
+- **Apply environmental effects** through status effects
+
+#### **Combat and Encounter Management**
+- **Track initiative** with flexible, automated options
+- **Apply damage and healing** with formatted chat messages
+- **Manage status effects** with visual indicators
+- **Control hidden abilities** for special scenarios
+
+#### **System Configuration**
+- **Customize initiative** formulas and automation
+- **Configure audio settings** for immersive experience
+- **Set privacy controls** for NPC information
+- **Choose themes** that work best for your group
+
+#### **Advanced Features**
+- **Hidden abilities system** for special mechanics
+- **Transformation management** for dramatic character changes
+- **Macro customization** for campaign-specific needs
+- **Integration tools** for complex scenarios
 
 ### For Players
 
-- Create and customize characters with unique combinations of features
-- Manage equipment and combat powers - your creativity and the GM's guidance are the limits of what you can do
-  - Easily equip and unequip gear items directly from item sheets
-  - View equipped items separately from unequipped items for better inventory management
-- Track active status effects - clicking to roll them shows you the status but doesn't reroll it to the chat
-- Roll abilities directly from character sheets or using one of the macros included in the system
-- Configure your interface with different theme options
+#### **Character Creation and Development**
+- **Build characters** with unique combinations of features
+- **Manage equipment** with dynamic effects
+- **Track character growth** through features and abilities
+- **Customize appearance** with rich text descriptions
+
+#### **Gameplay**
+- **Roll abilities** directly from character sheets
+- **Use combat powers** with integrated resource management
+- **Manage equipment** with easy equip/unequip controls
+- **Track status effects** with visual indicators
+
+#### **Interface Customization**
+- **Choose themes** for comfortable viewing
+- **Configure audio** preferences
+- **Organize inventory** with equipped/unequipped separation
+- **Access information** through popup details
+
+## System Settings and Configuration
+
+### Combat Settings
+- **Initiative formula** customization
+- **Automatic rolling** for NPCs and players
+- **Privacy controls** for NPC information
+- **Combat round duration** configuration
+
+### Interface Settings
+- **Theme selection** (Dark/Light)
+- **Equipment change messages** toggle
+- **Token icon display** options
+- **Chat message formatting** preferences
+
+### Audio Settings
+- **System sounds** enable/disable
+- **Volume controls** for all sound types
+- **Custom sound** configuration
+- **Individual sound** toggles for specific actions
+
+### Performance Settings
+- **Optimization options** for large campaigns
+- **Memory management** for extensive item libraries
+- **Network optimization** for remote play
 
 ## Contributing
 
-This project is licensed under the Apache License 2.0. When contributing:
+This project is licensed under the GNU Lesser General Public License 2.1+. When contributing:
 
 1. Fork the repository
 2. Create a feature branch
@@ -120,65 +260,65 @@ This project is licensed under the Apache License 2.0. When contributing:
 
 Important licensing notes:
 
-- All modifications to existing files must be shared under Apache License 2.0
-- New files you create can be licensed differently if desired: do not submit pull requests to the main repository with files that are not under Apache License 2.0
-- Asacolips Projects / Foundry Mods may use contributions under the MIT license
-- Include appropriate copyright notices in new files
+- **Core system modifications** must be shared under LGPL 2.1+
+- **New core features** should be licensed under LGPL 2.1+
+- **Module packs and extensions** can use different licenses
+- **Include appropriate copyright notices** in new files
 
 ## Development
 
 ### Prerequisites
 
-- Foundry VTT (v12 or higher)
+- Foundry VTT (v13.341 or higher)
 - Basic knowledge of JavaScript and Foundry VTT systems
-- Node.js (for building language files / scss / terser)
+- Node.js (for building language files, SCSS, and minification)
 
 ### Setup for Development
 
 1. Clone the repository
 2. Link or copy to your Foundry systems directory
-3. Run npm install to install dependencies for sass and terser
+3. Run `npm install` to install dependencies
 4. Restart Foundry VTT
-5. Make any changes in your favorite development tools and test them against a running foundry world
+5. Make changes and test in a running Foundry world
 
-- **Optional**: if you want to build your modifications for distribution you can run npm run release:win or npm run release:linux to build a minified .zip file.
+**Optional**: Build for distribution with `npm run release:win` or `npm run release:linux`
 
 ### Language File Organization
 
-The system uses a modular approach to manage language files:
+The system uses a modular approach for language files:
 
-1. Source files are organized in the `lang/src/<language-code>` directory (e.g., `lang/src/en` for English)
-2. Each language directory contains multiple JSON files, each focused on a specific section of the UI:
+1. **Source files** in `lang/src/<language-code>` directories
+2. **Organized by function**: abilities, actors, errors, forms, items, messages, settings, misc, ui
+3. **Build process** combines source files into single language files
+4. **Easy localization** with clear file organization
 
-   - `abilities.json`: Character abilities and hidden abilities
-   - `actor.json`: Actor-related translations
-   - `errors.json`: Error messages and notifications
-   - `forms.json`: Form labels, buttons, and UI elements
-   - `item.json`: Item-related translations
-   - `messages.json`: Chat and notification messages
-   - `settings.json`: System settings translations
-   - `misc.json`: Miscellaneous translations
-   - `ui.json`: UI elements and window titles
-
-3. These source files are combined into a single language file (e.g., `lang/en.json`) using the build script
-
-### Building Language Files
-
-To build the language files:
-
-1. Make changes to the source files in the `lang/src/<language-code>` directory
-2. Run the build script:
-   ```
-   npm run build:lang
-   ```
-3. The script will process all language directories in `lang/src` and generate corresponding language files in the `lang` directory
+To build language files: `npm run build:lang`
 
 To add a new language:
+1. Create directory in `lang/src` with language code
+2. Copy and translate JSON files from existing language
+3. Run build script
+4. Update `system.json` to include new language
 
-1. Create a new directory in `lang/src` with the language code (e.g., `lang/src/fr` for French)
-2. Copy the JSON files from an existing language directory and translate the values
-3. Run the build script to generate the language file
-4. Update the `system.json` file to include the new language
+## Compendiums and Content
+
+### ERPS Macros Compendium
+- **Effect Creator**: Create status effects and features
+- **Gear Creator**: Create equipment with effects
+- **Transformation Creator**: Create character transformations
+- **Player Tools**: Self-management macros for players
+- **GM Tools**: Advanced management and application tools
+
+### NPC Compendium
+- **Example NPCs** demonstrating system capabilities
+- **Template characters** for quick campaign setup
+- **Stat blocks** optimized for the Eventide system
+
+### Items Compendium
+- **Example gear** showing equipment possibilities
+- **Status effects** for common conditions
+- **Features** for character backgrounds and development
+- **Combat powers** demonstrating special abilities
 
 ## Acknowledgements
 
@@ -186,26 +326,24 @@ This system evolved from the excellent [Boilerplate System](https://github.com/a
 
 ## License
 
-This project is licensed under the Apache License 2.0 - see the [LICENSE.md](LICENSE.md) file for details.
+This project is licensed under the GNU Lesser General Public License 2.1+ - see the [LICENSE.md](LICENSE.md) file for details.
 
 Key points:
 
-- Source code must remain open source
-- Modifications must be shared under Apache License 2.0
-- Commercial use is permitted
-- Original Boilerplate code remains under MIT license
-- Out of gratitude for our starting point: contributions to this project may be used by Asacolips Projects under MIT license
+- **Core system** remains open source under LGPL 2.1+
+- **Modifications to core** must be shared under LGPL 2.1+
+- **Module packs and extensions** can use different licenses
+- **Commercial use** is permitted for both core and extensions
+- **Asset compatibility** with all included Creative Commons and open source assets
 
 ## Support
 
-For bug reports and feature requests, please use the GitHub issues system. For general support:
-
-WIP
+For bug reports and feature requests, please use the GitHub issues system.
 
 - Review existing issues before reporting bugs and feature requests
-- Join our [Discord community](https://discord.gg/your-discord-link) for real-time help
-- Check the [Wiki](https://github.com/yourusername/eventide-rp-system/wiki) for documentation
+- Check the documentation in the `docs/` directory
+- Join discussions in GitHub Discussions for general questions
 
 ## Changelog
 
-See the [Releases](https://github.com/yourusername/eventide-rp-system/releases) page for version notes.
+See the [Releases](https://github.com/EventideMiles/eventide-rp-system/releases) page for version notes and system updates.

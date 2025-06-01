@@ -8,13 +8,13 @@ This system was started on the back of the Boilerplate system and though it
 has grown a lot since then I could not have gotten as far as I have without
 their code. Their code: https://github.com/asacolips-projects/boilerplate
 
-## APACHE LICENSE VERSION 2.0
+## GNU LESSER GENERAL PUBLIC LICENSE VERSION 2.1+
 
-This project is licensed under the Apache License, Version 2.0 (the "License");
+This project is licensed under the GNU Lesser General Public License, Version 2.1 or later (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+    https://www.gnu.org/licenses/lgpl-2.1.html
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,14 +22,48 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-## Additional Grant of License:
+## LICENSING RATIONALE
 
-The original Boilerplate code by Asacolips Projects / Foundry Mods is licensed under MIT License.
-Any contributions made to this project may also be used by Asacolips Projects / Foundry Mods
-under the terms of the MIT License, while remaining Apache-2.0 for all other users.
+The LGPL 2.1+ license was chosen to:
 
-The full text of the Apache-2.0 license can be found at:
-http://www.apache.org/licenses/LICENSE-2.0
+1. **Keep the core system open source** - All modifications to the core Eventide RP System must remain open source
+2. **Allow proprietary extensions** - Module packs, campaigns, and other extensions can be licensed differently
+3. **Encourage contributions** - Improvements to the core system benefit the entire community
+4. **Enable commercial use** - Both the core system and extensions can be used commercially
+5. **Maintain compatibility** - All included assets are compatible with LGPL licensing
+
+## WHAT THIS MEANS FOR USERS
+
+### Using the Core System
+- **Free to use** for any purpose, including commercial
+- **Modifications must be shared** if you distribute the modified core system
+- **No restrictions** on creating content that uses the system
+
+### Creating Extensions
+- **Module packs** can use any license you choose
+- **Campaign content** can be proprietary
+- **Third-party tools** that use the system API can be closed source
+- **Commercial products** are explicitly permitted
+
+### Contributing to Core
+- **Contributions welcome** under LGPL 2.1+
+- **Shared improvements** benefit everyone
+- **Clear licensing** ensures long-term sustainability
+
+## Additional Licensing Provisions:
+
+### Author's Discretionary Licensing
+The author (Dalton Sterritt) reserves the right to contribute portions of this codebase to other projects under different licenses on a case-by-case basis. This provision allows for:
+- **Selective contributions** to compatible open source projects
+- **Educational use** in tutorials or examples
+- **Community assistance** where different licensing may be beneficial
+- **Future collaboration** opportunities
+Contact the author if you wish to discuss usage under a different license so your use case can be evaluated.
+
+This discretionary licensing applies only to contributions made by the original author and does not affect the LGPL 2.1+ licensing of the core system or the rights of other contributors.
+
+The full text of the LGPL 2.1 license can be found at:
+https://www.gnu.org/licenses/lgpl-2.1.html
 
 ## IMAGE LICENSES
 
@@ -100,3 +134,31 @@ http://www.apache.org/licenses/LICENSE-2.0
 ### By celestialghost8 under cc0 from opengameart.org
 
 - 4.wav
+
+## ASSET COMPATIBILITY
+
+All included assets (images and sounds) are licensed under Creative Commons or public domain licenses
+that are fully compatible with the LGPL 2.1+ license. This ensures that:
+
+- **No licensing conflicts** exist in the distributed system
+- **Commercial use** is permitted for all components
+- **Redistribution** is allowed under appropriate terms
+- **Attribution requirements** are clearly documented
+
+## FREQUENTLY ASKED QUESTIONS
+
+### Can I sell content made with this system?
+**Yes.** You can create and sell module packs, campaigns, adventures, and other content that uses the Eventide RP System.
+
+### Do I need to open source my module pack?
+**No.** Module packs and extensions that use the system as a library can be licensed however you choose.
+
+### What if I modify the core system?
+**If you distribute** a modified version of the core system, those modifications must be shared under LGPL 2.1+.
+**If you only use** the system internally, you don't need to share modifications.
+
+### Can I include this system in a commercial product?
+**Yes.** Both the core system and your extensions can be used commercially.
+
+### What about the included assets?
+**All included assets** are compatible with commercial use and LGPL licensing. Attribution requirements are documented above.
