@@ -73,7 +73,7 @@ For developers looking to extend the system:
    - Status effect application has accessible events
 
 2. **Custom Development**:
-   - Follow the Apache 2.0 license requirements for modifications
+   - Follow the LGPL 2.1+ license requirements for modifications
    - Use the existing codebase as a reference for styling and behavior
    - Maintain compatibility with the core system structure
 
