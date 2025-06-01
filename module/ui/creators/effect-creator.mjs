@@ -93,29 +93,31 @@ export class EffectCreator extends CreatorApplication {
     super._onRender(context, options);
 
     // Set up event listeners for dynamic form behavior
-    const typeSelect = this.element.querySelector('#type');
-    const rollTypeSelect = this.element.querySelector('#rollType');
-    const featureRollSection = this.element.querySelector('.feature-roll-section');
-    const rollDetails = this.element.querySelector('.roll-details');
+    const typeSelect = this.element.querySelector("#type");
+    const rollTypeSelect = this.element.querySelector("#rollType");
+    const featureRollSection = this.element.querySelector(
+      ".feature-roll-section",
+    );
+    const rollDetails = this.element.querySelector(".roll-details");
 
     // Handle type change (show/hide roll section)
     if (typeSelect && featureRollSection) {
-      typeSelect.addEventListener('change', (event) => {
-        const isFeature = event.target.value === 'feature';
-        featureRollSection.style.display = isFeature ? 'block' : 'none';
+      typeSelect.addEventListener("change", (event) => {
+        const isFeature = event.target.value === "feature";
+        featureRollSection.style.display = isFeature ? "block" : "none";
       });
     }
 
     // Handle roll type change (show/hide roll details)
     if (rollTypeSelect && rollDetails) {
-      rollTypeSelect.addEventListener('change', (event) => {
-        const showDetails = event.target.value !== 'none';
-        rollDetails.style.display = showDetails ? 'block' : 'none';
+      rollTypeSelect.addEventListener("change", (event) => {
+        const showDetails = event.target.value !== "none";
+        rollDetails.style.display = showDetails ? "block" : "none";
       });
 
       // Set initial state based on current value
-      const showDetails = rollTypeSelect.value !== 'none';
-      rollDetails.style.display = showDetails ? 'block' : 'none';
+      const showDetails = rollTypeSelect.value !== "none";
+      rollDetails.style.display = showDetails ? "block" : "none";
     }
   }
 }

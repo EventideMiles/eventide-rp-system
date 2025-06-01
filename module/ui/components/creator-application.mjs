@@ -560,7 +560,8 @@ export class CreatorApplication extends EventideSheetHelpers {
         : {};
 
     // Extract targeted setting for features
-    const featureTargeted = type === "feature" ? formData.get("rollTargeted") === "true" : false;
+    const featureTargeted =
+      type === "feature" ? formData.get("rollTargeted") === "true" : false;
 
     // Process abilities from the instance's addedAbilities array
     // Note: It's valid to have an item with no changes
@@ -862,11 +863,16 @@ export class CreatorApplication extends EventideSheetHelpers {
       // Store roll data for features created via effect creator
       if (formValues.type === "feature") {
         storageData[`effect_${instance.number}_rollType`] = formValues.rollType;
-        storageData[`effect_${instance.number}_rollAbility`] = formValues.rollAbility;
-        storageData[`effect_${instance.number}_rollBonus`] = formValues.rollBonus;
-        storageData[`effect_${instance.number}_rollTargeted`] = formValues.rollTargeted;
-        storageData[`effect_${instance.number}_rollAdvantage`] = formValues.rollAdvantage;
-        storageData[`effect_${instance.number}_rollDisadvantage`] = formValues.rollDisadvantage;
+        storageData[`effect_${instance.number}_rollAbility`] =
+          formValues.rollAbility;
+        storageData[`effect_${instance.number}_rollBonus`] =
+          formValues.rollBonus;
+        storageData[`effect_${instance.number}_rollTargeted`] =
+          formValues.rollTargeted;
+        storageData[`effect_${instance.number}_rollAdvantage`] =
+          formValues.rollAdvantage;
+        storageData[`effect_${instance.number}_rollDisadvantage`] =
+          formValues.rollDisadvantage;
       }
     }
 
@@ -927,20 +933,25 @@ export class CreatorApplication extends EventideSheetHelpers {
     });
 
     // Save dynamic section visibility states
-    const featureRollSection = form.querySelector('.feature-roll-section');
+    const featureRollSection = form.querySelector(".feature-roll-section");
     if (featureRollSection) {
-      savedData["_featureRollSectionDisplay"] = featureRollSection.style.display;
+      savedData["_featureRollSectionDisplay"] =
+        featureRollSection.style.display;
     }
 
-    const rollDetails = form.querySelector('.roll-details');
+    const rollDetails = form.querySelector(".roll-details");
     if (rollDetails) {
       savedData["_rollDetailsDisplay"] = rollDetails.style.display;
     }
 
-    Logger.debug("Saved dynamic section states", {
-      featureRollSection: savedData["_featureRollSectionDisplay"],
-      rollDetails: savedData["_rollDetailsDisplay"]
-    }, "CREATOR_APP");
+    Logger.debug(
+      "Saved dynamic section states",
+      {
+        featureRollSection: savedData["_featureRollSectionDisplay"],
+        rollDetails: savedData["_rollDetailsDisplay"],
+      },
+      "CREATOR_APP",
+    );
 
     return savedData;
   }
@@ -986,19 +997,27 @@ export class CreatorApplication extends EventideSheetHelpers {
 
       // Handle dynamic section visibility states
       if (name === "_featureRollSectionDisplay") {
-        const featureRollSection = form.querySelector('.feature-roll-section');
+        const featureRollSection = form.querySelector(".feature-roll-section");
         if (featureRollSection && value) {
           featureRollSection.style.display = value;
-          Logger.debug(`Restored feature roll section display`, { value }, "CREATOR_APP");
+          Logger.debug(
+            `Restored feature roll section display`,
+            { value },
+            "CREATOR_APP",
+          );
         }
         return;
       }
 
       if (name === "_rollDetailsDisplay") {
-        const rollDetails = form.querySelector('.roll-details');
+        const rollDetails = form.querySelector(".roll-details");
         if (rollDetails && value) {
           rollDetails.style.display = value;
-          Logger.debug(`Restored roll details display`, { value }, "CREATOR_APP");
+          Logger.debug(
+            `Restored roll details display`,
+            { value },
+            "CREATOR_APP",
+          );
         }
         return;
       }

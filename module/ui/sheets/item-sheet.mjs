@@ -328,7 +328,11 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
       case "attributesTransformation":
         // Necessary for preserving active tab on re-render
         context.tab = context.tabs[partId];
-        if (partId === "attributesCombatPower" || partId === "attributesGear" || partId === "attributesFeature") {
+        if (
+          partId === "attributesCombatPower" ||
+          partId === "attributesGear" ||
+          partId === "attributesFeature"
+        ) {
           // Add roll type options
           context.rollTypes = EventideSheetHelpers.rollTypeObject;
           context.abilities = {
@@ -633,7 +637,7 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
     input.value = currentValue + 1;
 
     // Trigger a change event to update the form
-    input.dispatchEvent(new Event('change', { bubbles: true }));
+    input.dispatchEvent(new Event("change", { bubbles: true }));
   }
 
   /**
@@ -655,7 +659,7 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
     input.value = Math.max(0, currentValue - 1); // Don't allow negative values
 
     // Trigger a change event to update the form
-    input.dispatchEvent(new Event('change', { bubbles: true }));
+    input.dispatchEvent(new Event("change", { bubbles: true }));
   }
 
   /**

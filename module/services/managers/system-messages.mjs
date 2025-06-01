@@ -200,13 +200,18 @@ class ERPSMessageHandler {
 
       // Play feature roll sound locally and add to message
       await erpsSoundManager._playLocalSound("featureRoll");
-      return this._createChatMessage("feature", data, {
-        speaker: ERPSRollUtilities.getSpeaker(
-          actor,
-          "EVENTIDE_RP_SYSTEM.MessageHeaders.Feature",
-        ),
-        rollMode,
-      }, { soundKey: "featureRoll" });
+      return this._createChatMessage(
+        "feature",
+        data,
+        {
+          speaker: ERPSRollUtilities.getSpeaker(
+            actor,
+            "EVENTIDE_RP_SYSTEM.MessageHeaders.Feature",
+          ),
+          rollMode,
+        },
+        { soundKey: "featureRoll" },
+      );
     } catch (error) {
       console.error("Error creating feature roll message:", error);
 
