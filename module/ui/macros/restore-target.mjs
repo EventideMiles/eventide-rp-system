@@ -1,4 +1,9 @@
 import { EventideSheetHelpers } from "../components/_module.mjs";
+import {
+  initThemeManager,
+  THEME_PRESETS,
+  cleanupThemeManager,
+} from "../../helpers/_module.mjs";
 
 /**
  * Application for managing resource restoration of targeted tokens.
@@ -15,7 +20,7 @@ export class RestoreTarget extends EventideSheetHelpers {
   /** @override */
   static DEFAULT_OPTIONS = {
     id: "restore-target",
-    classes: ["eventide-rp-system", "standard-form", "restore-target"],
+    classes: ["eventide-sheet", "eventide-sheet--scrollbars", "restore-target"],
     position: {
       width: 320,
       height: "auto",
@@ -79,17 +84,69 @@ export class RestoreTarget extends EventideSheetHelpers {
       {
         label: game.i18n.localize("EVENTIDE_RP_SYSTEM.Forms.Buttons.Restore"),
         type: "submit",
-        cssClass: "base-form__button base-form__button--primary",
+        cssClass: "erps-button erps-button--primary",
       },
       {
         label: game.i18n.localize("EVENTIDE_RP_SYSTEM.Forms.Buttons.Close"),
         type: "button",
-        cssClass: "base-form__button",
+        cssClass: "erps-button",
         action: "close",
       },
     ];
 
     return context;
+  }
+
+  /**
+   * Handle rendering of the restore target application
+   * @param {ApplicationRenderContext} context      Prepared context data
+   * @param {RenderOptions} options                 Provided render options
+   * @protected
+   */
+  _onRender(_context, _options) {
+    super._onRender(_context, _options);
+
+    // Re-apply themes on re-render (but don't reinitialize)
+    if (this.themeManager) {
+      this.themeManager.applyThemes();
+    }
+  }
+
+  /**
+   * Handle the first render of the restore target application
+   * @override
+   * @protected
+   */
+  _onFirstRender() {
+    super._onFirstRender();
+
+    // Initialize theme management only on first render
+    if (!this.themeManager) {
+      this.themeManager = initThemeManager(
+        this,
+        THEME_PRESETS.CREATOR_APPLICATION,
+      );
+    }
+  }
+
+  /**
+   * Clean up resources before closing the application
+   * @param {Object} options - The options for closing
+   * @returns {Promise<void>}
+   * @override
+   */
+  async _preClose(options) {
+    // Clean up theme management for this specific instance
+    if (this.themeManager) {
+      cleanupThemeManager(this);
+      this.themeManager = null;
+    }
+
+    // Clear references to arrays and objects
+    this.targetTokens = null;
+    this.statusEffects = null;
+
+    await super._preClose(options);
   }
 
   /**

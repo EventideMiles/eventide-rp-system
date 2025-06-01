@@ -1,0 +1,27 @@
+@use "../../../utils/themes" as themes;
+@use "../../../utils/sheet-tokens" as tokens;
+@use "sass:map";
+
+// ===================================
+// ITEMS PANEL CONFIGURATION
+// ===================================
+// Configuration variables and settings for items panel components
+
+// ===================================
+// CONFIGURATION VARIABLES
+// ===================================
+// Using sheet-tokens for consistent design system integration
+
+$panel-border-radius: tokens.$sheet-radius-lg;
+$panel-border-width: tokens.$sheet-border-base;
+$panel-padding: tokens.$sheet-spacing-base;
+$panel-gap: tokens.$sheet-spacing-sm;
+$header-height: tokens.$sheet-height-header;
+$header-padding: tokens.$sheet-padding-cell;
+$header-font-size: tokens.$sheet-font-size-value-md;
+$header-font-weight: tokens.$sheet-font-weight-semibold;
+$item-height: 3.5rem;
+$item-padding: tokens.$sheet-padding-cell;
+$item-font-size: tokens.$sheet-font-size-label-lg;
+$control-button-size: 2.5rem;
+$control-gap: tokens.$sheet-spacing-sm; 

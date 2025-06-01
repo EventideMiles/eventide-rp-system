@@ -1,0 +1,982 @@
+// ===================================
+// EVENTIDE THEME SYSTEM
+// ===================================
+// This file contains all theme definitions for the Eventide RP System
+// Each theme includes both CSS variables (for runtime switching) and SCSS variables (for compile-time usage)
+
+@use "sass:map";
+@use "sass:math";
+@use "sass:list";
+@use "sass:meta";
+@use "sass:color";
+@use "sass:string";
+
+// ===================================
+// MODERN FUNCTIONAL COLOR SYSTEM
+// ===================================
+// Programmatic color generation with any opacity value - no lookup tables needed!
+
+// ===================================
+// BASIC COLOR DEFINITIONS
+// ===================================
+// Standard colors for direct use - no function calls needed
+// Usage: rgb(255 255 255 / 30%) for white with 30% opacity
+
+// Grayscale
+$white: 255 255 255;
+$black: 0 0 0;
+$gray: 100 100 100;
+$gray-light: 160 160 160;
+$gray-dark: 80 80 80;
+
+// Primary colors
+$blue: 59 130 246;
+$green: 34 197 94;
+$red: 239 68 68;
+$orange: 217 119 6;
+$purple: 138 43 226;
+$yellow: 255 193 7;
+
+// Core color definitions - RGB values without opacity (source of truth)
+// This map is still needed by the existing color functions
+$color-definitions: (
+  // Primary theme colors
+  blue: (59, 130, 246),
+  blue-dark: (30, 58, 138),
+  green: (34, 197, 94),
+  green-dark: (21, 128, 61),
+  red: (239, 68, 68),
+  red-dark: (185, 28, 28),
+  red-danger: (220, 53, 69),
+  orange: (217, 119, 6),
+  orange-dark: (180, 83, 9),
+  purple: (138, 43, 226),
+  purple-dark: (75, 0, 130),
+  purple-theme: (147, 51, 234),
+  yellow: (255, 193, 7),
+  yellow-dark: (184, 134, 11),
+
+  // Status colors for status cards
+  success: (34, 197, 94),
+  warning: (255, 193, 7),
+  danger: (220, 53, 69),
+  info: (59, 130, 246),
+
+  // Neutral colors
+  gray: (100, 100, 100),
+  gray-light: (160, 160, 160),
+  gray-dark: (80, 80, 80),
+  white: (255, 255, 255),
+  black: (0, 0, 0),
+
+  // Special effect colors for status cards
+  cursed: (138, 43, 226),
+  cursed-dark: (75, 0, 130),
+  cursed-deadly: (139, 0, 0),
+  transformation: (77, 148, 255),
+  health-critical: (220, 53, 69),
+  health-wounded: (255, 193, 7),
+  effects-beneficial: (40, 167, 69),
+  effects-harmful: (220, 53, 69)
+);
+
+// ===================================
+// PROGRAMMATIC COLOR FUNCTIONS
+// ===================================
+
+// Helper function to check if a value is a predefined color name or a direct color value
+@function is-predefined-color($color-value) {
+  @return map.has-key($color-definitions, $color-value);
+}
+
+// Enhanced color function that handles both predefined names and direct hex/color values
+@function color($color-name, $opacity: 100) {
+  // Handle legacy string/identifier opacity values
+  @if meta.type-of($opacity) != number {
+    @return get-semantic-color($color-name, "#{$opacity}");
+  }
+
+  // Check if it's a predefined color name
+  @if is-predefined-color($color-name) {
+    $rgb-values: map.get($color-definitions, $color-name);
+    $r: list.nth($rgb-values, 1);
+    $g: list.nth($rgb-values, 2);
+    $b: list.nth($rgb-values, 3);
+    $alpha: $opacity * 0.01; // Convert percentage to decimal (0-1)
+
+    @return rgba($r, $g, $b, $alpha);
+  }
+
+  // Handle direct color values (hex, rgb, etc.)
+  @if meta.type-of($color-name) == color {
+    @if $opacity == 100 {
+      @return $color-name;
+    } @else {
+      @return color.change($color-name, $alpha: $opacity * 0.01);
+    }
+  }
+
+  // Handle string color values (like hex strings)
+  @if meta.type-of($color-name) == string {
+    // For hex strings, Sass can parse them directly
+    $parsed-color: #{$color-name};
+
+    @if $opacity == 100 {
+      @return $parsed-color;
+    } @else {
+      @return color.change($parsed-color, $alpha: $opacity * 0.01);
+    }
+  }
+
+  @warn "Unknown color: #{$color-name}. Available predefined colors: #{map.keys($color-definitions)}";
+
+  // Fallback to blue
+  $rgb-values: map.get($color-definitions, blue);
+  $r: list.nth($rgb-values, 1);
+  $g: list.nth($rgb-values, 2);
+  $b: list.nth($rgb-values, 3);
+  $alpha: $opacity * 0.01;
+
+  @return rgba($r, $g, $b, $alpha);
+}
+
+// Legacy support function - maps old opacity strings to numeric values
+$legacy-opacity-map: (
+  "8": 8, "10": 10, "15": 15, "20": 20, "25": 25, "30": 30, "40": 40,
+  "60": 60, "70": 70, "80": 80, "90": 90, "base": 100,
+  "dark-15": 15, "dark-20": 20, "dark-30": 30, "dark-40": 40, "dark-50": 50,
+  "dark-60": 60, "dark-70": 70, "dark-80": 80, "dark-90": 90,
+  "light-40": 40, "light-70": 70, "danger-60": 60, "danger-90": 90
+);
+
+// Generate lightened version of a color
+@function color-light($color-name, $amount: 20, $opacity: 100) {
+  $base-color: null;
+
+  // Get base color using enhanced color function
+  @if is-predefined-color($color-name) or meta.type-of($color-name) == color or meta.type-of($color-name) == string {
+    $base-color: color($color-name, 100);
+  } @else {
+    @warn "Invalid color for lightening: #{$color-name}";
+
+    $base-color: color(blue, 100);
+  }
+
+  $lightened: color.scale($base-color, $lightness: $amount * 1%);
+
+  @if $opacity != 100 {
+    @return color.change($lightened, $alpha: $opacity * 0.01);
+  }
+
+  @return $lightened;
+}
+
+// Generate darkened version of a color
+@function color-dark($color-name, $amount: 20, $opacity: 100) {
+  $base-color: null;
+
+  // Get base color using enhanced color function
+  @if is-predefined-color($color-name) or meta.type-of($color-name) == color or meta.type-of($color-name) == string {
+    $base-color: color($color-name, 100);
+  } @else {
+    @warn "Invalid color for darkening: #{$color-name}";
+
+    $base-color: color(blue, 100);
+  }
+
+  $darkened: color.scale($base-color, $lightness: $amount * -1%);
+
+  @if $opacity != 100 {
+    @return color.change($darkened, $alpha: $opacity * 0.01);
+  }
+
+  @return $darkened;
+}
+
+// Generate desaturated version of a color
+@function color-muted($color-name, $amount: 30, $opacity: 100) {
+  $base-color: null;
+
+  // Get base color using enhanced color function
+  @if is-predefined-color($color-name) or meta.type-of($color-name) == color or meta.type-of($color-name) == string {
+    $base-color: color($color-name, 100);
+  } @else {
+    @warn "Invalid color for muting: #{$color-name}";
+
+    $base-color: color(blue, 100);
+  }
+
+  $muted: color.scale($base-color, $saturation: $amount * -1%);
+
+  @if $opacity != 100 {
+    @return color.change($muted, $alpha: $opacity * 0.01);
+  }
+
+  @return $muted;
+}
+
+// Universal colors (white/black with opacity)
+@function universal-color($color-name, $opacity: 100) {
+  @if $color-name == white {
+    @return color(white, $opacity);
+  } @else if $color-name == black {
+    @return color(black, $opacity);
+  } @else {
+    @warn "Unknown universal color: #{$color-name}. Use 'white' or 'black'.";
+    @return color(white, $opacity);
+  }
+}
+
+// Legacy function for backward compatibility
+@function get-semantic-color($color-name, $opacity-key: "base") {
+  // Handle numeric opacity values directly
+  @if meta.type-of($opacity-key) == number {
+    @return color($color-name, $opacity-key);
+  }
+
+  // Handle string opacity keys
+  $numeric-opacity: map.get($legacy-opacity-map, $opacity-key);
+
+  @if not $numeric-opacity {
+    @warn "Unknown opacity key: #{$opacity-key}. Using base opacity.";
+
+    $numeric-opacity: 100;
+  }
+
+  // Handle special dark/light/danger variants
+  @if meta.type-of($opacity-key) == string {
+    @if string.index($opacity-key, "dark-") {
+      @return color-dark($color-name, 20, $numeric-opacity);
+    } @else if string.index($opacity-key, "light-") {
+      @return color-light($color-name, 20, $numeric-opacity);
+    } @else if string.index($opacity-key, "danger-") {
+      @return color(red-danger, $numeric-opacity);
+    }
+  }
+
+  @return color($color-name, $numeric-opacity);
+}
+
+// Convenience function for universal colors (kept for backward compatibility)
+@function get-universal-color($color-name, $opacity) {
+  @return universal-color($color-name, $opacity);
+}
+
+// ===================================
+// STATUS COLOR SYSTEM
+// ===================================
+
+// Specialized function for status cards with semantic naming
+@function status-color($type, $variant: "base", $opacity: 100) {
+  $color-map: (
+    transformation: (base: transformation, cursed: cursed, locked: gray),
+    health: (base: health-critical, critical: health-critical, wounded: health-wounded, healthy: success),
+    effects: (base: warning, beneficial: effects-beneficial, harmful: effects-harmful, neutral: info),
+    cursed: (base: cursed, warning: cursed, deadly: cursed-deadly, dangerous: purple-dark)
+  );
+
+  // Get the color map for the given type
+  $type-colors: map.get($color-map, $type);
+
+  @if not $type-colors {
+    @warn "Unknown status type: #{$type}. Available types: #{map.keys($color-map)}";
+    @return color(blue, $opacity);
+  }
+
+  $color-name: map.get($type-colors, $variant);
+
+  @if not $color-name {
+    @warn "Unknown variant '#{$variant}' for status type '#{$type}'. Available variants: #{map.keys($type-colors)}";
+
+    $color-name: map.get($type-colors, base);
+  }
+
+  @return color($color-name, $opacity);
+}
+
+// ===================================
+// PROGRAMMATIC THEME SYSTEM
+// ===================================
+
+// Direct theme definitions using exact JavaScript theme manager values
+// This ensures perfect consistency between CSS and JavaScript theming
+$blue-theme: (
+  primary: rgb(21 101 192 / 90%),          // Deep royal blue for headers
+  secondary: rgb(25 118 210 / 80%),        // Medium blue for secondary elements
+  tertiary: rgb(66 165 245 / 80%),         // Lighter blue accents
+  accent: rgb(13 71 161 / 95%),            // Dark navy blue for backgrounds
+  light: rgb(100 181 246 / 70%),           // Soft blue highlights
+  glow: rgb(25 118 210 / 50%),             // Subtle blue glow
+  text: #fff,
+  bright: rgb(144 202 249 / 100%),         // Bright blue for emphasis
+  pattern: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.15'%3E%3Cpath d='M10 2l3 3-3 3-3-3z'/%3E%3Cpath d='M10 12l3 3-3 3-3-3z'/%3E%3C/g%3E%3C/svg%3E"),
+  toggle-track: #1565c0,
+  image-bg: #0d47a1,
+  // Input glow colors for different states
+  input-glow: rgb(59 130 246 / 60%),       // Blue glow for inputs
+  button-glow: rgb(59 130 246 / 60%),      // Blue glow for buttons
+  success-glow: rgb(34 197 94 / 60%),      // Green glow for success states
+  warning-glow: rgb(249 115 22 / 60%),     // Orange glow for warning states
+  danger-glow: rgb(220 38 38 / 60%),       // Red glow for danger states
+  purple-glow: rgb(147 51 234 / 60%),      // Purple glow for special states
+  // Resource box colors
+  resource-health-primary: rgb(153 27 27 / 90%),     // Dark red for health boxes
+  resource-health-secondary: rgb(220 38 38 / 50%),   // Medium red for health borders
+  resource-health-glow: rgb(220 38 38 / 20%),        // Light red for health glow
+  resource-resolve-primary: rgb(147 51 234 / 90%),   // Dark purple for resolve boxes
+  resource-resolve-secondary: rgb(147 51 234 / 50%),  // Medium purple for resolve borders
+  resource-resolve-glow: rgb(147 51 234 / 20%),      // Light purple for resolve glow
+  resource-mana-primary: rgb(30 58 138 / 90%),       // Dark blue for mana boxes
+  resource-mana-secondary: rgb(59 130 246 / 50%),    // Medium blue for mana borders
+  resource-mana-glow: rgb(59 130 246 / 20%),         // Light blue for mana glow
+  resource-stamina-primary: rgb(20 83 45 / 90%),     // Dark green for stamina boxes
+  resource-stamina-secondary: rgb(34 197 94 / 50%),  // Medium green for stamina borders
+  resource-stamina-glow: rgb(34 197 94 / 20%)        // Light green for stamina glow
+);
+$black-theme: (
+  primary: rgb(45 45 45 / 90%),            // Dark charcoal for headers
+  secondary: rgb(66 66 66 / 80%),          // Medium gray for secondary elements
+  tertiary: rgb(97 97 97 / 80%),           // Lighter gray accents
+  accent: rgb(33 33 33 / 95%),             // Deep charcoal for backgrounds
+  light: rgb(117 117 117 / 70%),           // Muted gray highlights
+  glow: rgb(78 90 102 / 50%),              // Subtle blue-gray glow
+  text: #fff,
+  bright: rgb(189 189 189 / 100%),         // Light gray for emphasis
+  pattern: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.15'%3E%3Cpath d='M10 0l2 8h8l-6 4 2 8-6-4-6 4 2-8-6-4h8z'/%3E%3C/g%3E%3C/svg%3E"),
+  toggle-track: #424242,
+  image-bg: #1a1a1a,
+  // Input glow colors for different states
+  input-glow: rgb(100 100 100 / 60%),      // Gray glow for inputs
+  button-glow: rgb(100 100 100 / 60%),     // Gray glow for buttons
+  success-glow: rgb(34 197 94 / 60%),      // Green glow for success states
+  warning-glow: rgb(249 115 22 / 60%),     // Orange glow for warning states
+  danger-glow: rgb(220 38 38 / 60%),       // Red glow for danger states
+  purple-glow: rgb(147 51 234 / 60%),      // Purple glow for special states
+  // Resource box colors
+  resource-health-primary: rgb(153 27 27 / 90%),     // Dark red for health boxes
+  resource-health-secondary: rgb(220 38 38 / 50%),   // Medium red for health borders
+  resource-health-glow: rgb(220 38 38 / 20%),        // Light red for health glow
+  resource-resolve-primary: rgb(147 51 234 / 90%),   // Dark purple for resolve boxes
+  resource-resolve-secondary: rgb(147 51 234 / 50%),  // Medium purple for resolve borders
+  resource-resolve-glow: rgb(147 51 234 / 20%),      // Light purple for resolve glow
+  resource-mana-primary: rgb(30 58 138 / 90%),       // Dark blue for mana boxes
+  resource-mana-secondary: rgb(59 130 246 / 50%),    // Medium blue for mana borders
+  resource-mana-glow: rgb(59 130 246 / 20%),         // Light blue for mana glow
+  resource-stamina-primary: rgb(20 83 45 / 90%),     // Dark green for stamina boxes
+  resource-stamina-secondary: rgb(34 197 94 / 50%),  // Medium green for stamina borders
+  resource-stamina-glow: rgb(34 197 94 / 20%)        // Light green for stamina glow
+);
+$green-theme: (
+  primary: rgb(27 94 32 / 90%),            // Deep forest green for headers
+  secondary: rgb(46 125 50 / 80%),         // Medium forest green for secondary elements
+  tertiary: rgb(76 175 80 / 80%),          // Lighter green accents
+  accent: rgb(21 76 25 / 95%),             // Dark forest green for backgrounds
+  light: rgb(129 199 132 / 70%),           // Muted green highlights
+  glow: rgb(102 187 106 / 45%),            // Subtle green glow
+  text: #fff,
+  bright: rgb(165 214 167 / 100%),         // Light green for emphasis
+  pattern: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.15'%3E%3Ccircle cx='10' cy='10' r='2'/%3E%3Ccircle cx='10' cy='4' r='1'/%3E%3Ccircle cx='10' cy='16' r='1'/%3E%3Ccircle cx='4' cy='10' r='1'/%3E%3Ccircle cx='16' cy='10' r='1'/%3E%3C/g%3E%3C/svg%3E"),
+  toggle-track: #388e3c,
+  image-bg: #1b5e20,
+  // Input glow colors for different states
+  input-glow: rgb(34 197 94 / 60%),        // Green glow for inputs
+  button-glow: rgb(34 197 94 / 60%),       // Green glow for buttons
+  success-glow: rgb(34 197 94 / 60%),      // Green glow for success states
+  warning-glow: rgb(249 115 22 / 60%),     // Orange glow for warning states
+  danger-glow: rgb(220 38 38 / 60%),       // Red glow for danger states
+  purple-glow: rgb(147 51 234 / 60%),      // Purple glow for special states
+  // Resource box colors
+  resource-health-primary: rgb(153 27 27 / 90%),     // Dark red for health boxes
+  resource-health-secondary: rgb(220 38 38 / 50%),   // Medium red for health borders
+  resource-health-glow: rgb(220 38 38 / 20%),        // Light red for health glow
+  resource-resolve-primary: rgb(147 51 234 / 90%),   // Dark purple for resolve boxes
+  resource-resolve-secondary: rgb(147 51 234 / 50%),  // Medium purple for resolve borders
+  resource-resolve-glow: rgb(147 51 234 / 20%),      // Light purple for resolve glow
+  resource-mana-primary: rgb(30 58 138 / 90%),       // Dark blue for mana boxes
+  resource-mana-secondary: rgb(59 130 246 / 50%),    // Medium blue for mana borders
+  resource-mana-glow: rgb(59 130 246 / 20%),         // Light blue for mana glow
+  resource-stamina-primary: rgb(20 83 45 / 90%),     // Dark green for stamina boxes
+  resource-stamina-secondary: rgb(34 197 94 / 50%),  // Medium green for stamina borders
+  resource-stamina-glow: rgb(34 197 94 / 20%)        // Light green for stamina glow
+);
+$light-theme: (
+  primary: rgb(203 213 225 / 75%),         // Light silver-gray for headers (readable with dark text)
+  secondary: rgb(226 232 240 / 80%),       // Very light silver for secondary elements
+  tertiary: rgb(241 245 249 / 85%),        // Near-white silver for tertiary elements
+  accent: rgb(248 250 252 / 95%),          // Near-white for backgrounds (ethereal feel)
+  light: rgb(148 163 184 / 60%),           // Muted slate for highlights
+  glow: rgb(59 130 246 / 25%),             // Subtle cool blue glow (ethereal energy)
+  text: #1e293b,                           // Dark slate text for readability
+  bright: rgb(255 255 255 / 100%),         // Pure white for bright elements
+  pattern: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23475569' fill-opacity='0.08'%3E%3Cpath d='M10 2l3 3-3 3-3-3z'/%3E%3Cpath d='M10 12l3 3-3 3-3-3z'/%3E%3Cpath d='M2 10l3-3 3 3-3 3z'/%3E%3Cpath d='M12 10l3-3 3 3-3 3z'/%3E%3C/g%3E%3C/svg%3E"),
+  toggle-track: #94a3b8,                   // Light slate for toggles
+  image-bg: #374151,                       // Dark gray for image backgrounds (unchanged)
+  // Input glow colors for different states
+  input-glow: rgb(59 130 246 / 40%),       // Blue glow for inputs (higher opacity for light theme)
+  button-glow: rgb(59 130 246 / 40%),      // Blue glow for buttons
+  success-glow: rgb(34 197 94 / 40%),      // Green glow for success states
+  warning-glow: rgb(249 115 22 / 40%),     // Orange glow for warning states
+  danger-glow: rgb(220 38 38 / 40%),       // Red glow for danger states
+  purple-glow: rgb(147 51 234 / 40%),      // Purple glow for special states
+  // Resource box colors
+  resource-health-primary: rgb(153 27 27 / 90%),     // Dark red for health boxes
+  resource-health-secondary: rgb(220 38 38 / 50%),   // Medium red for health borders
+  resource-health-glow: rgb(220 38 38 / 20%),        // Light red for health glow
+  resource-resolve-primary: rgb(147 51 234 / 90%),   // Dark purple for resolve boxes
+  resource-resolve-secondary: rgb(147 51 234 / 50%),  // Medium purple for resolve borders
+  resource-resolve-glow: rgb(147 51 234 / 20%),      // Light purple for resolve glow
+  resource-mana-primary: rgb(30 58 138 / 90%),       // Dark blue for mana boxes
+  resource-mana-secondary: rgb(59 130 246 / 50%),    // Medium blue for mana borders
+  resource-mana-glow: rgb(59 130 246 / 20%),         // Light blue for mana glow
+  resource-stamina-primary: rgb(20 83 45 / 90%),     // Dark green for stamina boxes
+  resource-stamina-secondary: rgb(34 197 94 / 50%),  // Medium green for stamina borders
+  resource-stamina-glow: rgb(34 197 94 / 20%)        // Light green for stamina glow
+);
+$gold-theme: (
+  primary: rgb(191 54 12 / 90%),           // Deep burnt orange for headers
+  secondary: rgb(230 81 0 / 80%),          // Medium orange for secondary elements
+  tertiary: rgb(255 152 0 / 80%),          // Lighter orange accents
+  accent: rgb(162 39 5 / 95%),             // Dark burnt orange for backgrounds
+  light: rgb(255 183 77 / 70%),            // Muted orange highlights
+  glow: rgb(230 81 0 / 45%),               // Subtle orange glow
+  text: #fff,
+  bright: rgb(255 204 128 / 100%),         // Light orange for emphasis
+  pattern: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.15'%3E%3Cpath d='M12 2l2 6h6l-5 4 2 6-5-4-5 4 2-6-5-4h6z'/%3E%3C/g%3E%3C/svg%3E"),
+  toggle-track: #e65100,
+  image-bg: #bf360c,
+  // Input glow colors for different states
+  input-glow: rgb(249 115 22 / 60%),       // Orange glow for inputs
+  button-glow: rgb(249 115 22 / 60%),      // Orange glow for buttons
+  success-glow: rgb(34 197 94 / 60%),      // Green glow for success states
+  warning-glow: rgb(249 115 22 / 60%),     // Orange glow for warning states
+  danger-glow: rgb(220 38 38 / 60%),       // Red glow for danger states
+  purple-glow: rgb(147 51 234 / 60%),      // Purple glow for special states
+  // Resource box colors
+  resource-health-primary: rgb(153 27 27 / 90%),     // Dark red for health boxes
+  resource-health-secondary: rgb(220 38 38 / 50%),   // Medium red for health borders
+  resource-health-glow: rgb(220 38 38 / 20%),        // Light red for health glow
+  resource-resolve-primary: rgb(147 51 234 / 90%),   // Dark purple for resolve boxes
+  resource-resolve-secondary: rgb(147 51 234 / 50%),  // Medium purple for resolve borders
+  resource-resolve-glow: rgb(147 51 234 / 20%),      // Light purple for resolve glow
+  resource-mana-primary: rgb(30 58 138 / 90%),       // Dark blue for mana boxes
+  resource-mana-secondary: rgb(59 130 246 / 50%),    // Medium blue for mana borders
+  resource-mana-glow: rgb(59 130 246 / 20%),         // Light blue for mana glow
+  resource-stamina-primary: rgb(20 83 45 / 90%),     // Dark green for stamina boxes
+  resource-stamina-secondary: rgb(34 197 94 / 50%),  // Medium green for stamina borders
+  resource-stamina-glow: rgb(34 197 94 / 20%)        // Light green for stamina glow
+);
+$purple-theme: (
+  primary: rgb(74 20 140 / 90%),           // Deep violet for headers
+  secondary: rgb(106 27 154 / 80%),        // Medium purple for secondary elements
+  tertiary: rgb(142 36 170 / 80%),         // Lighter purple accents
+  accent: rgb(49 12 96 / 95%),             // Dark violet for backgrounds
+  light: rgb(156 39 176 / 70%),            // Muted purple highlights
+  glow: rgb(106 27 154 / 45%),             // Subtle purple glow
+  text: #fff,
+  bright: rgb(186 85 211 / 100%),          // Light purple for emphasis
+  pattern: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.15'%3E%3Cpath d='M10 1l1 3 3 1-3 1-1 3-1-3-3-1 3-1z'/%3E%3Cpath d='M5 5l1 2 2 1-2 1-1 2-1-2-2-1 2-1z'/%3E%3Cpath d='M15 15l1 2 2 1-2 1-1 2-1-2-2-1 2-1z'/%3E%3C/g%3E%3C/svg%3E"),
+  toggle-track: #7b1fa2,
+  image-bg: #4a148c,
+  // Input glow colors for different states
+  input-glow: rgb(147 51 234 / 60%),       // Purple glow for inputs
+  button-glow: rgb(147 51 234 / 60%),      // Purple glow for buttons
+  success-glow: rgb(34 197 94 / 60%),      // Green glow for success states
+  warning-glow: rgb(249 115 22 / 60%),     // Orange glow for warning states
+  danger-glow: rgb(220 38 38 / 60%),       // Red glow for danger states
+  purple-glow: rgb(147 51 234 / 60%),      // Purple glow for special states
+  // Resource box colors
+  resource-health-primary: rgb(153 27 27 / 90%),     // Dark red for health boxes
+  resource-health-secondary: rgb(220 38 38 / 50%),   // Medium red for health borders
+  resource-health-glow: rgb(220 38 38 / 20%),        // Light red for health glow
+  resource-resolve-primary: rgb(147 51 234 / 90%),   // Dark purple for resolve boxes
+  resource-resolve-secondary: rgb(147 51 234 / 50%),  // Medium purple for resolve borders
+  resource-resolve-glow: rgb(147 51 234 / 20%),      // Light purple for resolve glow
+  resource-mana-primary: rgb(30 58 138 / 90%),       // Dark blue for mana boxes
+  resource-mana-secondary: rgb(59 130 246 / 50%),    // Medium blue for mana borders
+  resource-mana-glow: rgb(59 130 246 / 20%),         // Light blue for mana glow
+  resource-stamina-primary: rgb(20 83 45 / 90%),     // Dark green for stamina boxes
+  resource-stamina-secondary: rgb(34 197 94 / 50%),  // Medium green for stamina borders
+  resource-stamina-glow: rgb(34 197 94 / 20%)        // Light green for stamina glow
+);
+
+// ===================================
+// THEME MIXIN SYSTEM
+// ===================================
+
+// Mixin to define CSS variables for a theme
+@mixin define-theme-css-vars($primary, $secondary, $tertiary, $accent, $light, $glow, $text, $pattern, $toggle-track, $image-bg, $input-glow, $button-glow, $success-glow, $warning-glow, $danger-glow, $purple-glow, $resource-health-primary, $resource-health-secondary, $resource-health-glow, $resource-resolve-primary, $resource-resolve-secondary, $resource-resolve-glow, $resource-mana-primary, $resource-mana-secondary, $resource-mana-glow, $resource-stamina-primary, $resource-stamina-secondary, $resource-stamina-glow) {
+  --theme-primary: #{$primary};
+  --theme-secondary: #{$secondary};
+  --theme-tertiary: #{$tertiary};
+  --theme-accent: #{$accent};
+  --theme-light: #{$light};
+  --theme-glow: #{$glow};
+  --theme-text: #{$text};
+  --theme-pattern: #{$pattern};
+  --theme-toggle-track: #{$toggle-track};
+  --theme-image-bg: #{$image-bg};
+  --theme-input-glow: #{$input-glow};
+  --theme-button-glow: #{$button-glow};
+  --theme-success-glow: #{$success-glow};
+  --theme-warning-glow: #{$warning-glow};
+  --theme-danger-glow: #{$danger-glow};
+  --theme-purple-glow: #{$purple-glow};
+  --theme-resource-health-primary: #{$resource-health-primary};
+  --theme-resource-health-secondary: #{$resource-health-secondary};
+  --theme-resource-health-glow: #{$resource-health-glow};
+  --theme-resource-resolve-primary: #{$resource-resolve-primary};
+  --theme-resource-resolve-secondary: #{$resource-resolve-secondary};
+  --theme-resource-resolve-glow: #{$resource-resolve-glow};
+  --theme-resource-mana-primary: #{$resource-mana-primary};
+  --theme-resource-mana-secondary: #{$resource-mana-secondary};
+  --theme-resource-mana-glow: #{$resource-mana-glow};
+  --theme-resource-stamina-primary: #{$resource-stamina-primary};
+  --theme-resource-stamina-secondary: #{$resource-stamina-secondary};
+  --theme-resource-stamina-glow: #{$resource-stamina-glow};
+}
+
+// Generate theme application mixins programmatically
+@mixin apply-blue-theme {
+  @include define-theme-css-vars(
+    map.get($blue-theme, primary), map.get($blue-theme, secondary), map.get($blue-theme, tertiary), map.get($blue-theme, accent),
+    map.get($blue-theme, light), map.get($blue-theme, glow), map.get($blue-theme, text), map.get($blue-theme, pattern),
+    map.get($blue-theme, toggle-track), map.get($blue-theme, image-bg), map.get($blue-theme, input-glow), map.get($blue-theme, button-glow),
+    map.get($blue-theme, success-glow), map.get($blue-theme, warning-glow), map.get($blue-theme, danger-glow), map.get($blue-theme, purple-glow),
+    map.get($blue-theme, resource-health-primary), map.get($blue-theme, resource-health-secondary), map.get($blue-theme, resource-health-glow),
+    map.get($blue-theme, resource-resolve-primary), map.get($blue-theme, resource-resolve-secondary), map.get($blue-theme, resource-resolve-glow),
+    map.get($blue-theme, resource-mana-primary), map.get($blue-theme, resource-mana-secondary), map.get($blue-theme, resource-mana-glow),
+    map.get($blue-theme, resource-stamina-primary), map.get($blue-theme, resource-stamina-secondary), map.get($blue-theme, resource-stamina-glow)
+  );
+}
+
+@mixin apply-gold-theme {
+  @include define-theme-css-vars(
+    map.get($gold-theme, primary), map.get($gold-theme, secondary), map.get($gold-theme, tertiary), map.get($gold-theme, accent),
+    map.get($gold-theme, light), map.get($gold-theme, glow), map.get($gold-theme, text), map.get($gold-theme, pattern),
+    map.get($gold-theme, toggle-track), map.get($gold-theme, image-bg), map.get($gold-theme, input-glow), map.get($gold-theme, button-glow),
+    map.get($gold-theme, success-glow), map.get($gold-theme, warning-glow), map.get($gold-theme, danger-glow), map.get($gold-theme, purple-glow),
+    map.get($gold-theme, resource-health-primary), map.get($gold-theme, resource-health-secondary), map.get($gold-theme, resource-health-glow),
+    map.get($gold-theme, resource-resolve-primary), map.get($gold-theme, resource-resolve-secondary), map.get($gold-theme, resource-resolve-glow),
+    map.get($gold-theme, resource-mana-primary), map.get($gold-theme, resource-mana-secondary), map.get($gold-theme, resource-mana-glow),
+    map.get($gold-theme, resource-stamina-primary), map.get($gold-theme, resource-stamina-secondary), map.get($gold-theme, resource-stamina-glow)
+  );
+}
+
+@mixin apply-green-theme {
+  @include define-theme-css-vars(
+    map.get($green-theme, primary), map.get($green-theme, secondary), map.get($green-theme, tertiary), map.get($green-theme, accent),
+    map.get($green-theme, light), map.get($green-theme, glow), map.get($green-theme, text), map.get($green-theme, pattern),
+    map.get($green-theme, toggle-track), map.get($green-theme, image-bg), map.get($green-theme, input-glow), map.get($green-theme, button-glow),
+    map.get($green-theme, success-glow), map.get($green-theme, warning-glow), map.get($green-theme, danger-glow), map.get($green-theme, purple-glow),
+    map.get($green-theme, resource-health-primary), map.get($green-theme, resource-health-secondary), map.get($green-theme, resource-health-glow),
+    map.get($green-theme, resource-resolve-primary), map.get($green-theme, resource-resolve-secondary), map.get($green-theme, resource-resolve-glow),
+    map.get($green-theme, resource-mana-primary), map.get($green-theme, resource-mana-secondary), map.get($green-theme, resource-mana-glow),
+    map.get($green-theme, resource-stamina-primary), map.get($green-theme, resource-stamina-secondary), map.get($green-theme, resource-stamina-glow)
+  );
+}
+
+@mixin apply-black-theme {
+  @include define-theme-css-vars(
+    map.get($black-theme, primary), map.get($black-theme, secondary), map.get($black-theme, tertiary), map.get($black-theme, accent),
+    map.get($black-theme, light), map.get($black-theme, glow), map.get($black-theme, text), map.get($black-theme, pattern),
+    map.get($black-theme, toggle-track), map.get($black-theme, image-bg), map.get($black-theme, input-glow), map.get($black-theme, button-glow),
+    map.get($black-theme, success-glow), map.get($black-theme, warning-glow), map.get($black-theme, danger-glow), map.get($black-theme, purple-glow),
+    map.get($black-theme, resource-health-primary), map.get($black-theme, resource-health-secondary), map.get($black-theme, resource-health-glow),
+    map.get($black-theme, resource-resolve-primary), map.get($black-theme, resource-resolve-secondary), map.get($black-theme, resource-resolve-glow),
+    map.get($black-theme, resource-mana-primary), map.get($black-theme, resource-mana-secondary), map.get($black-theme, resource-mana-glow),
+    map.get($black-theme, resource-stamina-primary), map.get($black-theme, resource-stamina-secondary), map.get($black-theme, resource-stamina-glow)
+  );
+}
+
+@mixin apply-purple-theme {
+  @include define-theme-css-vars(
+    map.get($purple-theme, primary), map.get($purple-theme, secondary), map.get($purple-theme, tertiary), map.get($purple-theme, accent),
+    map.get($purple-theme, light), map.get($purple-theme, glow), map.get($purple-theme, text), map.get($purple-theme, pattern),
+    map.get($purple-theme, toggle-track), map.get($purple-theme, image-bg), map.get($purple-theme, input-glow), map.get($purple-theme, button-glow),
+    map.get($purple-theme, success-glow), map.get($purple-theme, warning-glow), map.get($purple-theme, danger-glow), map.get($purple-theme, purple-glow),
+    map.get($purple-theme, resource-health-primary), map.get($purple-theme, resource-health-secondary), map.get($purple-theme, resource-health-glow),
+    map.get($purple-theme, resource-resolve-primary), map.get($purple-theme, resource-resolve-secondary), map.get($purple-theme, resource-resolve-glow),
+    map.get($purple-theme, resource-mana-primary), map.get($purple-theme, resource-mana-secondary), map.get($purple-theme, resource-mana-glow),
+    map.get($purple-theme, resource-stamina-primary), map.get($purple-theme, resource-stamina-secondary), map.get($purple-theme, resource-stamina-glow)
+  );
+}
+
+@mixin apply-light-theme {
+  @include define-theme-css-vars(
+    map.get($light-theme, primary), map.get($light-theme, secondary), map.get($light-theme, tertiary), map.get($light-theme, accent),
+    map.get($light-theme, light), map.get($light-theme, glow), map.get($light-theme, text), map.get($light-theme, pattern),
+    map.get($light-theme, toggle-track), map.get($light-theme, image-bg), map.get($light-theme, input-glow), map.get($light-theme, button-glow),
+    map.get($light-theme, success-glow), map.get($light-theme, warning-glow), map.get($light-theme, danger-glow), map.get($light-theme, purple-glow),
+    map.get($light-theme, resource-health-primary), map.get($light-theme, resource-health-secondary), map.get($light-theme, resource-health-glow),
+    map.get($light-theme, resource-resolve-primary), map.get($light-theme, resource-resolve-secondary), map.get($light-theme, resource-resolve-glow),
+    map.get($light-theme, resource-mana-primary), map.get($light-theme, resource-mana-secondary), map.get($light-theme, resource-mana-glow),
+    map.get($light-theme, resource-stamina-primary), map.get($light-theme, resource-stamina-secondary), map.get($light-theme, resource-stamina-glow)
+  );
+}
+
+// ===================================
+// DEFAULT THEME VARIABLES
+// ===================================
+
+$default-theme-primary: map.get($blue-theme, primary) !default;
+$default-theme-secondary: map.get($blue-theme, secondary) !default;
+$default-theme-accent: map.get($blue-theme, accent) !default;
+$default-theme-light: map.get($blue-theme, light) !default;
+$default-theme-glow: map.get($blue-theme, glow) !default;
+$default-theme-text: map.get($blue-theme, text) !default;
+$default-theme-pattern: map.get($blue-theme, pattern) !default;
+$default-theme-toggle-track: map.get($blue-theme, toggle-track) !default;
+$default-theme-image-bg: map.get($blue-theme, image-bg) !default;
+
+// ===================================
+// THEME UTILITY FUNCTIONS
+// ===================================
+
+// Consolidated theme property getter
+@function get-theme-property($theme-name, $property) {
+  $theme-map: null;
+
+  @if $theme-name == "blue" { $theme-map: $blue-theme; } @else if $theme-name == "gold" { $theme-map: $gold-theme; } @else if $theme-name == "green" { $theme-map: $green-theme; } @else if $theme-name == "black" { $theme-map: $black-theme; } @else if $theme-name == "purple" { $theme-map: $purple-theme; } @else if $theme-name == "light" { $theme-map: $light-theme; } @else {
+    @warn "Unknown theme: #{$theme-name}. Falling back to blue theme.";
+
+    $theme-map: $blue-theme;
+  }
+
+  @return map.get($theme-map, $property);
+}
+
+// ===================================
+// THEME UTILITY MIXINS
+// ===================================
+
+// Input glow mixins - theme-aware
+@mixin input-glow {
+  box-shadow: 0 0 8px var(--theme-input-glow);
+}
+
+@mixin button-glow {
+  box-shadow: 0 0 8px var(--theme-button-glow);
+}
+
+@mixin success-glow {
+  box-shadow: 0 0 8px var(--theme-success-glow);
+}
+
+@mixin warning-glow {
+  box-shadow: 0 0 8px var(--theme-warning-glow);
+}
+
+@mixin danger-glow {
+  box-shadow: 0 0 8px var(--theme-danger-glow);
+}
+
+@mixin purple-glow {
+  box-shadow: 0 0 8px var(--theme-purple-glow);
+}
+
+// Resource box mixins - theme-aware
+@mixin resource-box-health {
+  background: linear-gradient(
+    135deg,
+    var(--erps-resource-health-primary) 0%,
+    var(--erps-resource-health-primary) 100%
+  );
+  border-color: var(--erps-resource-health-secondary);
+  box-shadow: 0 0 12px var(--erps-resource-health-glow);
+}
+
+@mixin resource-box-mana {
+  background: linear-gradient(
+    135deg,
+    var(--erps-resource-mana-primary) 0%,
+    var(--erps-resource-mana-primary) 100%
+  );
+  border-color: var(--erps-resource-mana-secondary);
+  box-shadow: 0 0 12px var(--erps-resource-mana-glow);
+}
+
+@mixin resource-box-resolve {
+  background: linear-gradient(
+    135deg,
+    var(--erps-resource-resolve-primary) 0%,
+    var(--erps-resource-resolve-primary) 100%
+  );
+  border-color: var(--erps-resource-resolve-secondary);
+  box-shadow: 0 0 12px var(--erps-resource-resolve-glow);
+}
+
+@mixin resource-box-stamina {
+  background: linear-gradient(
+    135deg,
+    var(--erps-resource-stamina-primary) 0%,
+    var(--erps-resource-stamina-primary) 100%
+  );
+  border-color: var(--erps-resource-stamina-secondary);
+  box-shadow: 0 0 12px var(--erps-resource-stamina-glow);
+}
+
+@mixin resource-box-generic {
+  background: linear-gradient(
+    135deg,
+    rgb(80 80 80 / 90%) 0%,
+    rgb(80 80 80 / 80%) 100%
+  );
+  border-color: rgb(160 160 160 / 50%);
+  box-shadow: 0 0 12px rgb(160 160 160 / 20%);
+}
+
+// Apply all themes to a component with a specific data attribute
+@mixin apply-all-themes($attribute-name: 'theme') {
+  &:not([data-#{$attribute-name}]), &[data-#{$attribute-name}="blue"] { @include apply-blue-theme; }
+  &[data-#{$attribute-name}="gold"] { @include apply-gold-theme; }
+  &[data-#{$attribute-name}="green"] { @include apply-green-theme; }
+  &[data-#{$attribute-name}="black"] { @include apply-black-theme; }
+  &[data-#{$attribute-name}="purple"] { @include apply-purple-theme; }
+  &[data-#{$attribute-name}="light"] { @include apply-light-theme; }
+}
+
+// Common themed background patterns
+@mixin themed-gradient-background {
+  background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-secondary) 50%, var(--theme-primary) 100%) !important;
+}
+
+@mixin themed-accent-background { background: var(--theme-accent) !important; }
+
+@mixin themed-pattern-background {
+  background: var(--theme-pattern), linear-gradient(135deg, var(--theme-accent) 0%, var(--theme-primary) 100%) !important;
+  background-size: 20px 20px, 100% 100% !important;
+}
+
+// Common themed borders and shadows
+@mixin themed-border($opacity: 0.1) { border: 2px solid rgb(255 255 255 / #{$opacity}) !important; }
+
+@mixin themed-glow-shadow {
+  box-shadow: 0 4px 12px rgb(0 0 0 / 30%), inset 0 1px 0 rgb(255 255 255 / 10%) !important;
+}
+
+@mixin themed-active-glow {
+  box-shadow: 0 4px 12px rgb(0 0 0 / 30%), 0 0 20px var(--theme-glow) !important;
+}
+
+// ===================================
+// STREAMLINED IMAGE BACKGROUND SYSTEM
+// ===================================
+
+// Base image background mixin
+@mixin themed-image-background($opacity: 80) {
+  background: var(--theme-image-bg, rgba(0, 0, 0, $opacity * 0.01)) !important;
+  border-radius: 4px !important;
+  padding: 2px !important;
+  box-shadow: inset 0 1px 3px rgb(0 0 0 / 30%) !important;
+}
+
+// Light theme specific image background
+@mixin light-theme-image-background {
+  background: var(--theme-image-bg, rgb(75 85 99 / 85%)) !important;
+  border: 1px solid rgb(0 0 0 / 15%) !important;
+  border-radius: 4px !important;
+  padding: 1px !important;
+  box-shadow: inset 0 1px 2px rgb(0 0 0 / 40%), 0 1px 1px rgb(0 0 0 / 15%) !important;
+}
+
+// Programmatic profile image background generator
+@mixin profile-image-background($theme-name, $opacity: 80) {
+  $theme-primary: get-theme-property($theme-name, primary);
+
+  background: #{$theme-primary} !important;
+  background-clip: content-box !important;
+  padding: 3px !important;
+  box-sizing: border-box !important;
+
+  @if $theme-name == 'light' {
+    background: rgb(0 0 0 / 75%) !important;
+    box-shadow: inset 0 2px 4px rgb(0 0 0 / 35%) !important;
+  }
+}
+
+// Data table image background mixin
+@mixin themed-data-table-image-background {
+  background: var(--theme-image-bg, rgb(0 0 0 / 80%)) !important;
+  border-radius: 4px !important;
+  padding: 1px !important;
+  box-shadow: inset 0 1px 2px rgb(0 0 0 / 30%) !important;
+}
+
+// Apply image backgrounds to all themes
+@mixin apply-all-image-backgrounds($attribute-name: 'theme') {
+  &:not([data-#{$attribute-name}]), &[data-#{$attribute-name}="blue"],
+  &[data-#{$attribute-name}="gold"], &[data-#{$attribute-name}="green"],
+  &[data-#{$attribute-name}="black"], &[data-#{$attribute-name}="purple"] {
+    @include themed-image-background(75);
+  }
+  &[data-#{$attribute-name}="light"] { @include light-theme-image-background; }
+}
+
+// Apply profile image backgrounds to all themes
+@mixin apply-all-profile-image-backgrounds($attribute-name: 'theme') {
+  // Blue theme (default)
+  &:not([data-#{$attribute-name}]), &[data-#{$attribute-name}="blue"] {
+    .eventide-sheet__profile-img { @include profile-image-background("blue"); }
+  }
+
+  // Other themes
+  &[data-#{$attribute-name}="gold"] {
+    .eventide-sheet__profile-img { @include profile-image-background("gold"); }
+  }
+  &[data-#{$attribute-name}="green"] {
+    .eventide-sheet__profile-img { @include profile-image-background("green"); }
+  }
+  &[data-#{$attribute-name}="black"] {
+    .eventide-sheet__profile-img { @include profile-image-background("black"); }
+  }
+  &[data-#{$attribute-name}="purple"] {
+    .eventide-sheet__profile-img { @include profile-image-background("purple"); }
+  }
+  &[data-#{$attribute-name}="light"] {
+    .eventide-sheet__profile-img { @include profile-image-background("light"); }
+  }
+}
+
+// Apply data table image backgrounds to all themes
+@mixin apply-all-data-table-image-backgrounds($attribute-name: 'theme') {
+  &:not([data-#{$attribute-name}]), &[data-#{$attribute-name}="blue"],
+  &[data-#{$attribute-name}="gold"], &[data-#{$attribute-name}="green"],
+  &[data-#{$attribute-name}="black"], &[data-#{$attribute-name}="purple"] {
+    @include themed-data-table-image-background;
+  }
+  &[data-#{$attribute-name}="light"] {
+    background: var(--theme-image-bg, rgb(75 85 99 / 85%)) !important;
+    border: 1px solid rgb(0 0 0 / 15%) !important;
+    border-radius: 4px !important;
+    padding: 1px !important;
+    box-shadow: inset 0 1px 2px rgb(0 0 0 / 40%), 0 1px 1px rgb(0 0 0 / 15%) !important;
+  }
+}
+
+// Apply any theme by name
+@mixin apply-theme($theme-name) {
+  @if $theme-name == 'blue' { @include apply-blue-theme; } @else if $theme-name == 'gold' { @include apply-gold-theme; } @else if $theme-name == 'green' { @include apply-green-theme; } @else if $theme-name == 'black' { @include apply-black-theme; } @else if $theme-name == 'purple' { @include apply-purple-theme; } @else if $theme-name == 'light' { @include apply-light-theme; } @else {
+    @warn "Unknown theme: #{$theme-name}. Applying blue theme as fallback.";
+    @include apply-blue-theme;
+  }
+}
+
+// ===================================
+// BACKGROUND THEME MIXINS
+// ===================================
+
+// Blue theme background (Night) - Starfield pattern
+@mixin blue-background-theme {
+  background:
+    url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%234d94ff' fill-opacity='0.04'%3E%3Ccircle cx='20' cy='20' r='1'/%3E%3Ccircle cx='80' cy='15' r='0.5'/%3E%3Ccircle cx='45' cy='35' r='1.5'/%3E%3Ccircle cx='15' cy='75' r='0.8'/%3E%3Ccircle cx='90' cy='85' r='1'/%3E%3Ccircle cx='65' cy='95' r='0.5'/%3E%3Ccircle cx='100' cy='40' r='0.8'/%3E%3Cpath d='M60 50l1 3 3 1-3 1-1 3-1-3-3-1 3-1z'/%3E%3C/g%3E%3C/svg%3E"),
+    radial-gradient(ellipse at 30% 20%, rgb(77 148 255 / 6%) 0%, transparent 70%),
+    linear-gradient(135deg, rgb(8 15 25 / 95%) 0%, rgb(15 25 40 / 90%) 50%, rgb(25 35 55 / 85%) 100%);
+  background-size: 120px 120px, 800px 600px, 100% 100%;
+  background-position: 0 0, 0 0, 0 0;
+  border: 2px solid rgb(77 148 255 / 30%);
+  animation: gentle-float 15s ease-in-out infinite;
+}
+
+// Gold theme background (Twilight) - Ornate filigree pattern
+@mixin gold-background-theme {
+  background:
+    url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23d97706' fill-opacity='0.05'%3E%3Cpath d='M50 10c-5 0-10 5-10 10s5 10 10 10 10-5 10-10-5-10-10-10zm0 15c-2.5 0-5-2.5-5-5s2.5-5 5-5 5 2.5 5 5-2.5 5-5 5z'/%3E%3Cpath d='M20 50c0-5-5-10-10-10s-10 5-10 10 5 10 10 10 10-5 10-10zm-15 0c0-2.5 2.5-5 5-5s5 2.5 5 5-2.5 5-5 5-5-2.5-5-5z'/%3E%3Cpath d='M90 50c0-5 5-10 10-10s10 5 10 10-5 10-10 10-10-5-10-10zm15 0c0-2.5-2.5-5-5-5s-5 2.5-5 5 2.5 5 5 5 5-2.5 5-5z'/%3E%3Cpath d='M50 90c5 0 10-5 10-10s-5-10-10-10-10 5-10 10 5 10 10 10zm0-15c2.5 0 5 2.5 5 5s-2.5 5-5 5-5-2.5-5-5 2.5-5 5-5z'/%3E%3C/g%3E%3C/svg%3E"),
+    radial-gradient(ellipse at 70% 30%, rgb(217 119 6 / 8%) 0%, transparent 60%),
+    linear-gradient(45deg, rgb(25 15 8 / 95%) 0%, rgb(40 25 15 / 90%) 50%, rgb(55 35 25 / 85%) 100%);
+  background-size: 100px 100px, 600px 400px, 100% 100%;
+  background-position: 0 0, 0 0, 0 0;
+  border: 2px solid rgb(217 119 6 / 30%);
+  animation: gentle-pulse 12s ease-in-out infinite;
+}
+
+// Green theme background (Dawn) - Organic leaf pattern
+@mixin green-background-theme {
+  background:
+    url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%2322c55e' fill-opacity='0.06'%3E%3Cpath d='M20 20c0-5 5-10 10-5 5 5 0 10-5 10s-5-5-5-5z'/%3E%3Cpath d='M60 20c0-5-5-10-10-5-5 5 0 10 5 10s5-5 5-5z'/%3E%3Cpath d='M20 60c0 5 5 10 10 5 5-5 0-10-5-10s-5 5-5 5z'/%3E%3Cpath d='M60 60c0 5-5 10-10 5-5-5 0-10 5-10s5 5 5 5z'/%3E%3Cpath d='M40 10c-3 0-5 2-5 5v10c0 3 2 5 5 5s5-2 5-5V15c0-3-2-5-5-5z'/%3E%3Cpath d='M40 50c-3 0-5 2-5 5v10c0 3 2 5 5 5s5-2 5-5V55c0-3-2-5-5-5z'/%3E%3C/g%3E%3C/svg%3E"),
+    radial-gradient(ellipse at 20% 80%, rgb(34 197 94 / 5%) 0%, transparent 80%),
+    linear-gradient(180deg, rgb(8 25 15 / 95%) 0%, rgb(15 40 25 / 90%) 50%, rgb(25 55 35 / 85%) 100%);
+  background-size: 80px 80px, 500px 700px, 100% 100%;
+  background-position: 0 0, 0 0, 0 0;
+  border: 2px solid rgb(34 197 94 / 30%);
+  animation: gentle-grow 18s ease-in-out infinite;
+}
+
+// Black theme background (Midnight) - Minimalist geometric pattern
+@mixin black-background-theme {
+  background:
+    url("data:image/svg+xml,%3Csvg width='150' height='150' viewBox='0 0 150 150' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23a0a0a0' stroke-opacity='0.08' stroke-width='1'%3E%3Cpath d='M75 25L125 75L75 125L25 75Z'/%3E%3Cpath d='M75 50L100 75L75 100L50 75Z'/%3E%3Cline x1='75' y1='0' x2='75' y2='150'/%3E%3Cline x1='0' y1='75' x2='150' y2='75'/%3E%3C/g%3E%3C/svg%3E"),
+    radial-gradient(circle at 50% 50%, rgb(160 160 160 / 6%) 0%, transparent 70%),
+    linear-gradient(90deg, rgb(5 5 5 / 95%) 0%, rgb(10 10 10 / 90%) 50%, rgb(20 20 20 / 85%) 100%);
+  background-size: 150px 150px, 400px 400px, 100% 100%;
+  background-position: 0 0, 0 0, 0 0;
+  border: 2px solid rgb(160 160 160 / 30%);
+  animation: subtle-shift 20s linear infinite;
+}
+
+// Purple theme background (Dusk) - Mystical crystal pattern
+@mixin purple-background-theme {
+  background:
+    url("data:image/svg+xml,%3Csvg width='90' height='90' viewBox='0 0 90 90' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%239333ea' fill-opacity='0.05'%3E%3Cpath d='M45 15l8 15h-16z'/%3E%3Cpath d='M45 75l8-15h-16z'/%3E%3Cpath d='M15 45l15-8v16z'/%3E%3Cpath d='M75 45l-15-8v16z'/%3E%3Cpath d='M30 30l6-6 6 6-6 6z'/%3E%3Cpath d='M60 60l6-6 6 6-6 6z'/%3E%3Cpath d='M30 60l6 6 6-6-6-6z'/%3E%3Cpath d='M60 30l6 6 6-6-6-6z'/%3E%3C/g%3E%3C/svg%3E"),
+    radial-gradient(ellipse at 80% 20%, rgb(147 51 234 / 7%) 0%, transparent 65%),
+    linear-gradient(225deg, rgb(15 5 25 / 95%) 0%, rgb(30 10 50 / 90%) 50%, rgb(45 15 75 / 85%) 100%);
+  background-size: 90px 90px, 450px 350px, 100% 100%;
+  background-position: 0 0, 0 0, 0 0;
+  border: 2px solid rgb(147 51 234 / 30%);
+  animation: mystic-glow 16s ease-in-out infinite;
+}
+
+// Light theme background (Noon) - Clean radial pattern
+@mixin light-background-theme {
+  background:
+    url("data:image/svg+xml,%3Csvg width='110' height='110' viewBox='0 0 110 110' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%2394a3b8' stroke-opacity='0.08' stroke-width='1'%3E%3Ccircle cx='55' cy='55' r='20'/%3E%3Ccircle cx='55' cy='55' r='35'/%3E%3Cpath d='M55 15v10M55 85v10M15 55h10M85 55h10M25 25l7 7M78 78l7 7M25 85l7-7M78 32l7-7'/%3E%3C/g%3E%3C/svg%3E"),
+    radial-gradient(circle at 60% 40%, rgb(148 163 184 / 8%) 0%, transparent 75%),
+    linear-gradient(135deg, rgb(248 250 252 / 95%) 0%, rgb(241 245 249 / 90%) 50%, rgb(226 232 240 / 85%) 100%);
+  background-size: 110px 110px, 600px 500px, 100% 100%;
+  background-position: 0 0, 0 0, 0 0;
+  border: 2px solid rgb(148 163 184 / 30%);
+  animation: gentle-breeze 24s ease-in-out infinite;
+}
+
+// Apply all background themes to a component
+@mixin apply-all-background-themes {
+  &:not([data-bg-theme]), &[data-bg-theme="blue"] { @include blue-background-theme; }
+  &[data-bg-theme="gold"] { @include gold-background-theme; }
+  &[data-bg-theme="green"] { @include green-background-theme; }
+  &[data-bg-theme="black"] { @include black-background-theme; }
+  &[data-bg-theme="purple"] { @include purple-background-theme; }
+  &[data-bg-theme="light"] { @include light-background-theme; }
+}
+
+// ===================================
+// BACKGROUND ANIMATION KEYFRAMES
+// ===================================
+
+@keyframes gentle-float {
+  0%, 100% { background-position: 0 0, 0 0, 0 0; }
+  50% { background-position: 25px 25px, 60px 40px, 0 0; }
+}
+
+@keyframes gentle-pulse {
+  0%, 100% { background-position: 0 0, 0 0, 0 0; }
+  50% { background-position: 20px 20px, 50px 50px, 0 0; }
+}
+
+@keyframes gentle-grow {
+  0%, 100% { background-position: 0 0, 0 0, 0 0; }
+  50% { background-position: 22px 22px, 45px 80px, 0 0; }
+}
+
+@keyframes subtle-shift {
+  0% { background-position: 0 0, 0 0, 0 0; }
+  100% { background-position: 200px 200px, 75px 75px, 0 0; }
+}
+
+@keyframes mystic-glow {
+  0%, 100% { background-position: 0 0, 0 0, 0 0; }
+  50% { background-position: 30px 30px, 80px 50px, 0 0; }
+}
+
+@keyframes gentle-breeze {
+  0%, 100% { background-position: 0 0, 0 0, 0 0; }
+  50% { background-position: 35px 35px, 70px 45px, 0 0; }
+}

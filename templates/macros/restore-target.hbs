@@ -1,44 +1,76 @@
-<div class="{{cssClass}} base-form" autocomplete="off">
-  <header class="base-form__callout-box">
-    <div class="base-form__callout base-form__callout--information">
+{{!-- Restore Target Form --}}
+<div class="{{cssClass}} erps-form" autocomplete="off">
+  <div class="erps-callouts">
+    <div class="erps-callout erps-callout--information">
       <i class="fas fa-info-circle"></i>
       {{localize "EVENTIDE_RP_SYSTEM.Forms.Callouts.Gear.RestoreTarget" target=actor.name}}
     </div>
-  </header>
-  <div class="base-form__content">
-    <div class="base-form__group base-form__group--checkbox">
-      <label class="base-form__label" for="restoreResolve">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RestoreResolve"}}</label>
-      <div class="toggle-switch-wrapper">
-        <input class="base-form__toggle-switch" autofocus type="checkbox" id="restoreResolve" name="restoreResolve" {{checked defaultOptions.restoreResolve}}>
-        <label class="toggle-switch-display" for="restoreResolve"></label>
+  </div>
+  
+  <div class="erps-form__content">
+    <label class="erps-toggles erps-toggles--restore-row" for="restoreResolve">
+      <input 
+        class="erps-toggles__input" 
+        autofocus 
+        type="checkbox" 
+        id="restoreResolve" 
+        name="restoreResolve" 
+        {{#if defaultOptions.restoreResolve}}checked{{/if}}>
+      <div class="erps-toggles__container">
+        <span class="erps-toggles__label">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RestoreResolve"}}</span>
+        <span class="erps-toggles__track">
+          <span class="erps-toggles__thumb"></span>
+        </span>
       </div>
-    </div>
-    <div class="base-form__group base-form__group--checkbox">
-      <label class="base-form__label" for="restorePower">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RestorePower"}}</label>
-      <div class="toggle-switch-wrapper">
-        <input class="base-form__toggle-switch" type="checkbox" id="restorePower" name="restorePower" {{checked defaultOptions.restorePower}}>
-        <label class="toggle-switch-display" for="restorePower"></label>
+    </label>
+    
+    <label class="erps-toggles erps-toggles--restore-row" for="restorePower">
+      <input 
+        class="erps-toggles__input" 
+        type="checkbox" 
+        id="restorePower" 
+        name="restorePower" 
+        {{#if defaultOptions.restorePower}}checked{{/if}}>
+      <div class="erps-toggles__container">
+        <span class="erps-toggles__label">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RestorePower"}}</span>
+        <span class="erps-toggles__track">
+          <span class="erps-toggles__thumb"></span>
+        </span>
       </div>
-    </div>
-    <hr />
-    <div class="base-form__group base-form__group--checkbox base-form__group--header">
-      <label class="base-form__header">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RemoveStatuses"}}</label>
-    </div>
-    <div class="base-form__group base-form__group--checkbox">
-      <label class="base-form__label" for="all">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.All"}}</label>
-      <div class="toggle-switch-wrapper">
-        <input class="base-form__toggle-switch" type="checkbox" id="all" name="all">
-        <label class="toggle-switch-display" for="all"></label>
+    </label>
+    
+    <hr class="erps-form__divider" />
+    
+    <div class="erps-form__header">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RemoveStatuses"}}</div>
+    
+    <label class="erps-toggles erps-toggles--restore-row" for="all">
+      <input 
+        class="erps-toggles__input" 
+        type="checkbox" 
+        id="all" 
+        name="all">
+      <div class="erps-toggles__container">
+        <span class="erps-toggles__label">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.All"}}</span>
+        <span class="erps-toggles__track">
+          <span class="erps-toggles__thumb"></span>
+        </span>
       </div>
-    </div>
+    </label>
+    
     {{#each statusEffects as |status|}}
-      <div class="base-form__group base-form__group--checkbox">
-        <label class="base-form__label" for="{{status.id}}">{{status.name}}</label>
-        <div class="toggle-switch-wrapper">
-          <input class="base-form__toggle-switch" type="checkbox" name="{{status.id}}" id="{{status.id}}">
-          <label class="toggle-switch-display" for="{{status.id}}"></label>
+      <label class="erps-toggles erps-toggles--restore-row" for="{{status.id}}">
+        <input 
+          class="erps-toggles__input" 
+          type="checkbox" 
+          id="{{status.id}}" 
+          name="{{status.id}}">
+        <div class="erps-toggles__container">
+          <span class="erps-toggles__label">{{status.name}}</span>
+          <span class="erps-toggles__track">
+            <span class="erps-toggles__thumb"></span>
+          </span>
         </div>
-      </div>
+      </label>
     {{/each}}
   </div>
   

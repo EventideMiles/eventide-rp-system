@@ -1,28 +1,31 @@
-<div class="{{cssClass}} base-form" autocomplete="off">
+{{!-- Combat Power Popup --}}
+<div class="{{cssClass}} erps-form" autocomplete="off">
     {{> callout-box}}
-    <div class="popup-form__main">
+    <div class="erps-form__content">
         {{> popup-header}}
-        <div class="popup-form__subheader">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Details"}}</div>
+        <div class="erps-form__header">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Details"}}</div>
         
         {{#if item.system.description}}
-        <div class="popup-form__content popup-form__content--description">
-            <div class="popup-form__subheader">{{item.actor.name}}</div> 
-            {{{item.system.description}}}
+        <div class="erps-form__section">
+            <div class="erps-form__header erps-form__header--small">{{item.actor.name}}</div> 
+            <div class="erps-form__description">
+                {{{item.system.description}}}
+            </div>
         </div>
         {{/if}}
 
         {{> popup-roll}}
 
         {{#if item.system.prerequisites}}
-        <div class="popup-form__section">
-            <div class="popup-form__subheader">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Prerequisites"}}</div>
-            <div class="popup-form__content popup-form__content--data">{{item.system.prerequisites}}</div>
+        <div class="erps-form__section">
+            <div class="erps-form__header erps-form__header--small">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Prerequisites"}}</div>
+            <div class="erps-form__description erps-form__description--compact">{{item.system.prerequisites}}</div>
         </div>
         {{/if}}
 
         {{#if item.system.usageInfo}}
-        <div class="popup-form__section popup-form__section--usage">
-            <div class="popup-form__content popup-form__content--usage">{{item.system.usageInfo}}</div>
+        <div class="erps-form__section">
+            <div class="erps-form__description erps-form__description--highlighted">{{item.system.usageInfo}}</div>
         </div>
         {{/if}}
     </div>

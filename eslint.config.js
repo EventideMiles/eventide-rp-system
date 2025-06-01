@@ -14,6 +14,7 @@ export default [
         setInterval: "readonly",
         clearTimeout: "readonly",
         clearInterval: "readonly",
+        CustomEvent: "readonly",
 
         // Node.js globals
         process: "readonly",

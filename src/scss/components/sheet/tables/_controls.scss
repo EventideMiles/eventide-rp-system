@@ -1,0 +1,107 @@
+@use "config" as *;
+@use "core-mixins" as *;
+@use "../../../utils/themes" as themes;
+@use "../../../utils/sheet-tokens" as tokens;
+
+// ===================================
+// TABLE CONTROLS COMPONENT
+// ===================================
+// Control buttons and interactive elements for data tables
+
+.erps-data-table {
+  // Controls system
+  &__controls {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: $erps-table-gap-medium;
+    flex-wrap: nowrap;
+    height: 100%;
+    min-height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: $erps-table-cell-padding-controls;
+    box-sizing: border-box;
+  }
+
+  &__control-button {
+    @include control-button-base;
+
+    // Action modifiers
+    &--create {
+      @include create-button;
+    }
+
+    &--edit {
+      @include edit-button;
+    }
+
+    &--delete {
+      @include delete-button;
+    }
+
+    &--equip {
+      @include equip-button;
+    }
+
+    // Special states
+    &--disabled {
+      opacity: $erps-table-opacity-disabled;
+      cursor: not-allowed;
+      pointer-events: none;
+      background: themes.color(gray, 20);
+      border-color: themes.color(gray, 30);
+    }
+
+    // Locked control buttons for transformation state
+    &--locked {
+      background: linear-gradient(135deg, themes.color(purple, 30), themes.color(purple, 40));
+      border-color: themes.color(purple, 60);
+      animation: erps-cursed-pulse $erps-table-animation-duration-pulse ease-in-out infinite;
+
+      i {
+        color: themes.color(red, 90);
+        text-shadow: 0 0 6px themes.color(red, 60);
+      }
+
+      &:hover {
+        background: themes.color(purple, 60);
+        border-color: themes.color(purple, 80);
+        box-shadow: 0 0 15px themes.color(purple, 80);
+      }
+    }
+  }
+
+  // Create button with text (for headers)
+  &__create-button {
+    display: inline-flex;
+    align-items: center;
+    gap: $erps-table-gap-small;
+    padding: $erps-table-create-button-padding;
+    border-radius: $erps-table-control-border-radius;
+    background: linear-gradient(135deg, themes.color(green, 20), themes.color(green, 30));
+    border: $erps-table-border-width solid themes.color(green, 40);
+    color: var(--theme-text, #fff);
+    cursor: pointer;
+    transition: all $erps-table-transition-duration ease;
+    font-family: var(--erps-ui-font);
+    font-size: $erps-table-create-button-font-size;
+    font-weight: $erps-table-header-font-weight;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: $erps-table-header-letter-spacing;
+
+    &:hover {
+      background: themes.color(green, 80);
+      border-color: themes.color(green, 80);
+      box-shadow: 0 0 tokens.$sheet-shadow-blur-lg themes.color(green, 60);
+      transform: translateY($erps-table-transform-hover-y);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+} 

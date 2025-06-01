@@ -1,0 +1,115 @@
+@use "config" as *;
+@use "sass:math";
+@use "sass:list";
+@use "../../../utils/themes" as themes;
+
+// ===================================
+// ERPS DATA TABLES LAYOUT MIXINS
+// ===================================
+// Layout and responsive mixins for table components
+
+// ===================================
+// LAYOUT MIXINS
+// ===================================
+
+// Generic column distribution mixins for flexible layouts
+@mixin table-columns-equal($count) {
+  table-layout: fixed;
+
+  @for $i from 1 through $count {
+    .erps-data-table__header-cell:nth-child(#{$i}),
+    .erps-data-table__cell:nth-child(#{$i}) {
+      width: math.percentage(math.div(1, $count));
+    }
+  }
+}
+
+@mixin table-columns-custom($widths...) {
+  table-layout: fixed;
+
+  @for $i from 1 through list.length($widths) {
+    .erps-data-table__header-cell:nth-child(#{$i}),
+    .erps-data-table__cell:nth-child(#{$i}) {
+      width: list.nth($widths, $i);
+    }
+  }
+}
+
+@mixin table-columns-auto-last($fixed-widths...) {
+  table-layout: auto;
+
+  @for $i from 1 through list.length($fixed-widths) {
+    .erps-data-table__header-cell:nth-child(#{$i}),
+    .erps-data-table__cell:nth-child(#{$i}) {
+      width: list.nth($fixed-widths, $i);
+    }
+  }
+
+  .erps-data-table__header-cell:last-child,
+  .erps-data-table__cell:last-child {
+    width: auto;
+  }
+}
+
+@mixin table-columns-flex-last($fixed-widths...) {
+  table-layout: auto;
+
+  @for $i from 1 through list.length($fixed-widths) {
+    .erps-data-table__header-cell:nth-child(#{$i}),
+    .erps-data-table__cell:nth-child(#{$i}) {
+      width: list.nth($fixed-widths, $i);
+    }
+  }
+
+  .erps-data-table__header-cell:last-child,
+  .erps-data-table__cell:last-child {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}
+
+// ===================================
+// RESPONSIVE TABLE MIXINS
+// ===================================
+
+// Responsive table mixins
+@mixin table-responsive-stack {
+  @media (width <= $erps-table-responsive-breakpoint) {
+    .erps-data-table__header {
+      display: none;
+    }
+
+    .erps-data-table__row {
+      display: block;
+      border: $erps-table-border-width solid themes.color(white, 10);
+      border-radius: $erps-table-border-radius;
+      margin-bottom: $erps-table-responsive-margin;
+    }
+
+    .erps-data-table__cell {
+      display: block;
+      text-align: left;
+      padding: $erps-table-responsive-padding;
+      border-bottom: none;
+
+      &::before {
+        content: attr(data-label) ": ";
+        font-weight: bold;
+        display: inline-block;
+        width: $erps-table-responsive-label-width;
+      }
+
+      &--controls {
+        text-align: right;
+        justify-content: flex-end;
+      }
+    }
+  }
+}
+
+@mixin table-responsive-scroll {
+  .erps-data-table__container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+} 

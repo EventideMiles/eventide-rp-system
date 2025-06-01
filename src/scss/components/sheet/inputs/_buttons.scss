@@ -1,0 +1,216 @@
+@use "config" as *;
+@use "../../../utils/sheet-tokens" as tokens;
+
+// ===================================
+// ERPS BUTTONS
+// ===================================
+// Button components for the Eventide RP System
+
+.erps-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  height: $button-height;
+  padding: $button-padding;
+  font-family: var(--erps-ui-font, sans-serif);
+  font-size: $button-font-size;
+  line-height: $button-line-height;
+  font-weight: $button-font-weight;
+  color: var(--erps-current-text, var(--theme-text, var(--erps-default-text)));
+  background: var(--erps-current-primary, var(--theme-primary, var(--erps-default-primary)));
+  border: $button-border-width solid var(--erps-current-secondary, var(--theme-secondary, var(--erps-default-secondary)));
+  border-radius: $button-border-radius;
+  transition: $button-transition;
+  outline: none;
+  cursor: pointer;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+
+  // Animated background effect
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: radial-gradient(circle, var(--erps-current-bright, var(--theme-bright, var(--erps-default-bright))) 0%, transparent 70%);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: all 0.3s ease;
+    z-index: 1;
+  }
+
+  // Content above background effect
+  & > * {
+    position: relative;
+    z-index: 2;
+  }
+
+  &:hover {
+    background: var(--erps-current-secondary, var(--theme-secondary, var(--erps-default-secondary)));
+    border-color: var(--erps-current-bright, var(--theme-bright, var(--erps-default-bright)));
+    box-shadow: 0 0 0 2px var(--erps-current-glow, var(--theme-glow, var(--erps-default-glow)));
+    transform: translateY(-1px);
+
+    &::before {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  &:active {
+    transform: translateY(0) scale(0.98);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background: rgb(100 100 100 / 30%);
+    border-color: rgb(100 100 100 / 40%);
+    transform: none;
+
+    &:hover {
+      transform: none;
+      box-shadow: none;
+    }
+  }
+
+  // ===================================
+  // BUTTON VARIANTS
+  // ===================================
+
+  // Bright variant - high contrast, vibrant
+  &--bright {
+    @include button-gradient(blue, 40, 60);
+
+    border-color: var(--theme-glow, rgb(59 130 246 / 60%));
+    box-shadow: 0 2px 8px rgb(0 0 0 / 30%);
+
+    &:hover {
+      @include button-gradient(blue, 60, 80);
+      @include button-glow("button");
+
+      border-color: var(--theme-text, #fff);
+    }
+  }
+
+  // Dim variant - subtle, muted
+  &--dim {
+    @include button-gradient(gray, 20, 30);
+
+    border-color: rgb(100 100 100 / 40%);
+    color: rgb(255 255 255 / 80%);
+
+    &:hover {
+      @include button-gradient(gray, 30, 40);
+      @include button-glow("button");
+
+      border-color: rgb(100 100 100 / 60%);
+      color: #fff;
+    }
+  }
+
+  // On variant - active/selected state
+  &--on {
+    @include button-gradient(green, 40, 60);
+    @include button-glow("success");
+
+    border-color: rgb(34 197 94 / 60%);
+
+    &:hover {
+      @include button-gradient(green, 60, 80);
+      @include button-glow("success");
+
+      border-color: rgb(34 197 94 / 80%);
+    }
+  }
+
+  // Size variants
+  &--small {
+    height: tokens.$sheet-height-button-compact;
+    padding: tokens.$sheet-padding-button-compact;
+    font-size: 0.9rem;
+  }
+
+  &--large {
+    height: tokens.$sheet-height-button-large;
+    padding: tokens.$sheet-padding-button-large;
+    font-size: 1.1rem;
+  }
+
+  // Icon-only variant
+  &--icon {
+    width: $button-height;
+    padding: 0;
+
+    &.erps-button--small {
+      width: tokens.$sheet-height-button-compact;
+    }
+
+    &.erps-button--large {
+      width: tokens.$sheet-height-button-large;
+    }
+  }
+}
+
+// ===================================
+// SPECIALIZED BUTTON TYPES
+// ===================================
+
+.erps-button--create {
+  @include button-gradient(green, 30, 50);
+
+  border-color: rgb(34 197 94 / 40%);
+
+  &:hover {
+    @include button-gradient(green, 50, 70);
+    @include button-glow("success");
+
+    border-color: rgb(34 197 94 / 80%);
+  }
+}
+
+.erps-button--edit {
+  @include button-gradient(blue, 30, 50);
+
+  border-color: rgb(59 130 246 / 40%);
+
+  &:hover {
+    @include button-gradient(blue, 50, 70);
+    @include button-glow("button");
+
+    border-color: rgb(59 130 246 / 80%);
+  }
+}
+
+.erps-button--delete {
+  @include button-gradient(red, 30, 50);
+
+  border-color: rgb(220 38 38 / 40%);
+
+  &:hover {
+    @include button-gradient(red, 50, 70);
+    @include button-glow("danger");
+
+    border-color: rgb(220 38 38 / 80%);
+  }
+}
+
+.erps-button--warning {
+  @include button-gradient(orange, 30, 50);
+
+  border-color: rgb(249 115 22 / 40%);
+
+  &:hover {
+    @include button-gradient(orange, 50, 70);
+    @include button-glow("warning");
+
+    border-color: rgb(249 115 22 / 80%);
+  }
+} 

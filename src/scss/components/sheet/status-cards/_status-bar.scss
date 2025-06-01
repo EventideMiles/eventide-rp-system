@@ -1,0 +1,104 @@
+@use "config" as *;
+@use "../../../utils/themes" as themes;
+
+// ===================================
+// STATUS BAR CONTAINER
+// ===================================
+// Main container for status cards with scrolling and arrow indicators
+
+.eventide-header__status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: $status-card-gap;
+  width: 100%;
+  margin-top: $status-bar-margin-top;
+  padding: $status-bar-padding;
+  background: themes.color(black, 30);
+  border-radius: $status-bar-border-radius;
+  border: $status-bar-border-width solid themes.color(white, 15);
+  box-shadow: inset 0 $shadow-inset-offset 3px themes.color(black, 20);
+  position: relative;
+
+  // Horizontal scrolling with hidden scrollbar
+  overflow: auto hidden;
+  flex-wrap: nowrap;
+  scroll-behavior: smooth;
+  scrollbar-width: none; // Firefox
+  -ms-overflow-style: none; // IE/Edge
+
+  &::-webkit-scrollbar {
+    display: none; // Chrome/Safari/Opera
+  }
+
+  // Draggable cursor
+  cursor: grab;
+
+  &:active {
+    cursor: grabbing;
+    transform: translateY(0);
+  }
+
+  &.dragging {
+    opacity: $card-dragging-opacity;
+    transform: rotate($card-dragging-rotation);
+    z-index: $status-card-z-index-dragging;
+  }
+
+  // Directional arrow indicators
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-style: solid;
+    opacity: $opacity-arrow-hidden;
+    transition: opacity $status-card-transition-duration ease, border-color $button-transition-duration ease, transform $button-transition-duration ease;
+    pointer-events: none;
+    z-index: 10;
+    cursor: pointer;
+  }
+
+  // Left arrow
+  &::before {
+    left: var(--arrow-left-position, $status-bar-arrow-position-offset);
+    border-width: $status-bar-arrow-size 0;
+    border-color: transparent themes.color(white, 50) transparent transparent;
+  }
+
+  // Right arrow
+  &::after {
+    left: var(--arrow-right-position, calc(100% - #{$status-bar-arrow-right-offset}));
+    border-width: $status-bar-arrow-size;
+    border-color: transparent transparent transparent themes.color(white, 50);
+  }
+
+  // Show arrows when scrollable (classes added via JavaScript)
+  &.scrollable-left::before {
+    opacity: $opacity-arrow-visible;
+    pointer-events: auto;
+
+    &:hover {
+      border-color: transparent themes.color(white, 100) transparent transparent;
+      transform: translateY(-50%) scale($status-bar-arrow-hover-scale);
+    }
+  }
+
+  &.scrollable-right::after {
+    opacity: $opacity-arrow-visible;
+    pointer-events: auto;
+
+    &:hover {
+      border-color: transparent transparent transparent themes.color(white, 100);
+      transform: translateY(-50%) scale($status-bar-arrow-hover-scale);
+    }
+  }
+
+  // Hide when empty
+  &:empty {
+    display: none;
+  }
+} 

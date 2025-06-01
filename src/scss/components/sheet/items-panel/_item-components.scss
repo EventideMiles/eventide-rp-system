@@ -1,0 +1,77 @@
+@use "config" as *;
+@use "mixins" as *;
+@use "../../../utils/sheet-tokens" as tokens;
+
+// ===================================
+// ITEM COMPONENTS
+// ===================================
+// Image, name, and control button styling
+
+.erps-items-panel {
+  // ===================================
+  // ITEM IMAGE
+  // ===================================
+
+  &__image {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: tokens.$sheet-radius-sm;
+    border: 1px solid var(--theme-secondary);
+    object-fit: cover;
+    flex-shrink: 0;
+
+    &:hover {
+      border-color: var(--theme-light);
+      box-shadow: 0 0 tokens.$sheet-glow-blur-sm var(--theme-glow);
+    }
+  }
+
+  // ===================================
+  // ITEM NAME
+  // ===================================
+
+  &__name {
+    font-weight: tokens.$sheet-font-weight-medium;
+    color: var(--theme-text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: block;
+    min-width: 0;
+
+    &:hover {
+      color: var(--theme-light);
+    }
+  }
+
+  // ===================================
+  // CONTROL BUTTONS
+  // ===================================
+
+  &__control {
+    @include control-button-base;
+
+    // Control button variants
+    &--view {
+      @include control-button-variant(blue);
+    }
+
+    &--edit {
+      @include control-button-variant(green);
+    }
+
+    &--delete {
+      @include control-button-variant(red);
+    }
+
+    &--warning {
+      @include control-button-variant(orange);
+    }
+
+    &--disabled {
+      opacity: tokens.$sheet-opacity-disabled;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+  }
+} 

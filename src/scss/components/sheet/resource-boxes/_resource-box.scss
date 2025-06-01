@@ -1,0 +1,104 @@
+@use "config" as *;
+@use "mixins" as *;
+@use "theme-variants" as *;
+
+// ===================================
+// ENHANCED RESOURCE BOX COMPONENT
+// ===================================
+// Main resource box component for primary resources
+
+.erps-resource-box {
+  @include resource-container-base;
+
+  // Move all direct declarations before nested rules and includes with nested content
+  background: linear-gradient(
+    135deg,
+    rgb(30 58 138 / 90%) 0%,
+    rgb(30 58 138 / 80%) 100%
+  );
+  border-color: rgb(59 130 246 / 50%);
+  box-shadow:
+    0 $resource-shadow-blur-xs $resource-shadow-blur-xxl rgb(0 0 0 / 30%),
+    inset 0 $resource-shadow-offset-xs 0 rgb(255 255 255 / 10%);
+
+  // Include glow animation last since it contains nested rules
+  @include resource-glow-animation(rgb(59 130 246 / 20%));
+
+  // Upper section - always contains the main label
+  &__upper {
+    @include resource-upper-section;
+  }
+
+  // Lower section - contains inputs or data
+  &__lower {
+    @include resource-lower-section;
+  }
+
+  // Optional third section - for resource labels (can be above or below lower)
+  &__third {
+    @include resource-third-section;
+  }
+
+  // Label styling
+  &__label {
+    @include resource-text-base;
+
+    font-size: $resource-font-size-label-md !important;
+    color: rgb(255 255 255 / 90%) !important;
+    letter-spacing: $resource-letter-spacing-loose !important;
+    line-height: 1.2 !important;
+  }
+
+  // Input styling
+  &__input {
+    font-family: var(--erps-mono-font) !important;
+    font-size: $resource-font-size-value-md !important;
+    font-weight: 600 !important;
+    color: #fff !important;
+    background: rgb(30 58 138 / 80%) !important;
+    border: 1px solid rgb(59 130 246 / 40%) !important;
+    border-radius: $resource-radius-sm !important;
+    padding: $resource-padding-input !important;
+    text-align: center !important;
+    text-shadow: 0 $resource-shadow-offset-xs $resource-shadow-offset-sm rgb(0 0 0 / 80%) !important;
+    transition: all $resource-transition-base ease !important;
+
+    &:focus {
+      border-color: rgb(59 130 246 / 80%) !important;
+      box-shadow:
+        0 0 0 2px rgb(59 130 246 / 30%),
+        0 0 $resource-glow-blur-md rgb(59 130 246 / 40%) !important;
+      outline: none !important;
+    }
+  }
+
+  // Separator styling (like "/")
+  &__separator {
+    font-family: var(--erps-mono-font) !important;
+    font-size: $resource-font-size-label-lg !important;
+    color: rgb(255 255 255 / 80%) !important;
+    text-shadow: 0 $resource-shadow-offset-xs $resource-shadow-offset-sm rgb(0 0 0 / 80%) !important;
+    flex-shrink: 0;
+  }
+
+  // Value display styling
+  &__value {
+    @include resource-value-base;
+
+    font-size: $resource-font-size-value-xl !important;
+    text-align: center;
+  }
+
+  // Color variants
+  &--health {
+    @include resource-box-health;
+  }
+
+  &--mana {
+    @include resource-box-mana;
+  }
+
+  &--neutral {
+    @include resource-box-generic;
+  }
+} 

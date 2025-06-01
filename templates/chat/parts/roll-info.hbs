@@ -1,3 +1,4 @@
+{{#if (or hasRoll roll)}}
 <div class="chat-card__{{cardClass}}">
     {{#if hasRoll}}
         {{#if critHit}}
@@ -13,6 +14,7 @@
         <div class="chat-card__header chat-card__header--saved-miss">{{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.SavedMiss"}}</div>
         {{/if}}
     {{/if}}
+    {{#if roll}}
     <div class="chat-card__formula-toggle formula-toggle">
       <span class="chat-card__formula">{{roll.formula}}</span>
       <i class="fas fa-chevron-down formula-toggle-icon"></i>
@@ -34,4 +36,6 @@
     <div class="chat-card__{{cardClass}}--result">
       <span class="chat-card__value chat-card__value--{{#if pickedType}}{{pickedType}}{{else}}{{cardType}}{{/if}}">{{roll.total}}</span>
     </div>
+    {{/if}}
 </div>
+{{/if}}

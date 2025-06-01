@@ -1,4 +1,9 @@
 import { EventideSheetHelpers } from "../components/_module.mjs";
+import {
+  initThemeManager,
+  THEME_PRESETS,
+  cleanupThemeManager,
+} from "../../helpers/_module.mjs";
 
 /**
  * A form application for transferring gear from target to selected token.
@@ -13,7 +18,7 @@ export class GearTransfer extends EventideSheetHelpers {
 
   static DEFAULT_OPTIONS = {
     id: "gear-transfer",
-    classes: ["eventide-rp-system", "standard-form", "gear-transfer"],
+    classes: ["eventide-sheet", "eventide-sheet--scrollbars", "gear-transfer"],
     position: {
       width: 600,
       height: "auto",
@@ -39,19 +44,6 @@ export class GearTransfer extends EventideSheetHelpers {
 
   constructor(_options = {}) {
     super();
-  }
-
-  /**
-   * Clean up number inputs before closing the application
-   * @param {Object} options - The options for closing
-   * @returns {Promise<void>}
-   * @override
-   */
-  async _preClose(options) {
-    if (this.element) {
-      erps.utils.cleanupNumberInputs(this.element);
-    }
-    await super._preClose(options);
   }
 
   /**
@@ -145,7 +137,7 @@ export class GearTransfer extends EventideSheetHelpers {
       {
         label: game.i18n.localize("EVENTIDE_RP_SYSTEM.Forms.Buttons.Transfer"),
         type: "submit",
-        cssClass: "base-form__button base-form__button--primary",
+        cssClass: "erps-button erps-button--primary",
       },
     ];
 
@@ -228,5 +220,64 @@ export class GearTransfer extends EventideSheetHelpers {
       transferQuantity,
       finalDescription,
     );
+  }
+
+  /**
+   * Handle rendering of the gear transfer application
+   * @param {ApplicationRenderContext} context      Prepared context data
+   * @param {RenderOptions} options                 Provided render options
+   * @protected
+   */
+  _onRender(_context, _options) {
+    super._onRender(_context, _options);
+
+    // Re-apply themes on re-render (but don't reinitialize)
+    if (this.themeManager) {
+      this.themeManager.applyThemes();
+    }
+  }
+
+  /**
+   * Handle the first render of the gear transfer application
+   * @override
+   * @protected
+   */
+  _onFirstRender() {
+    super._onFirstRender();
+
+    // Initialize theme management only on first render
+    if (!this.themeManager) {
+      this.themeManager = initThemeManager(
+        this,
+        THEME_PRESETS.CREATOR_APPLICATION,
+      );
+    }
+  }
+
+  /**
+   * Clean up number inputs and theme management before closing the application
+   * @param {Object} options - The options for closing
+   * @returns {Promise<void>}
+   * @override
+   */
+  async _preClose(options) {
+    // Clean up theme management for this specific instance
+    if (this.themeManager) {
+      cleanupThemeManager(this);
+      this.themeManager = null;
+    }
+
+    // Clean up number inputs
+    if (this.element) {
+      erps.utils.cleanupNumberInputs(this.element);
+    }
+
+    // Clear references to arrays and objects
+    this.targetTokens = null;
+    this.selectedTokens = null;
+    this.targetToken = null;
+    this.selectedToken = null;
+
+    await super._preClose(options);
   }
 }

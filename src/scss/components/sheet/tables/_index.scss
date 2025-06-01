@@ -1,0 +1,21 @@
+// ===================================
+// ERPS DATA TABLES INDEX
+// ===================================
+// Main entry point for all table components
+
+// Import shared configuration and mixins first
+@use "config";
+@use "layout-mixins";
+@use "core-mixins";
+
+// Import component modules
+@use "base-table";
+@use "controls";
+@use "table-variants";
+@use "transformations";
+@use "animations";
+@use "legacy-compatibility";
+
+// Note: The main table component styles would be imported here
+// when we extract them from the original _erps-data-tables.scss file
+// For now, we'll continue using the original file until fully split 

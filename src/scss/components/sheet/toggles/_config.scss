@@ -1,0 +1,42 @@
+@use "../../../utils/themes" as themes;
+@use "../../../utils/sheet-tokens" as tokens;
+
+// ===================================
+// TOGGLES CONFIGURATION
+// ===================================
+// Configuration variables and settings for toggle components
+
+// ===================================
+// CONFIGURATION VARIABLES
+// ===================================
+// Using sheet-tokens for consistent design system integration
+
+// Toggle sizing
+$toggle-width: 3rem;
+$toggle-height: 1.5rem;
+$toggle-thumb-size: 1.2rem;
+$toggle-border-radius: tokens.$sheet-radius-lg;
+$toggle-thumb-border-radius: tokens.$sheet-radius-circle;
+
+// Spacing and positioning
+$toggle-thumb-offset: calc(tokens.$sheet-spacing-xs - 3px); // Adjusted 1px left for better visual alignment
+$toggle-thumb-travel: calc($toggle-width - $toggle-thumb-size - ($toggle-thumb-offset * 2));
+$toggle-border-width: tokens.$sheet-border-base;
+
+// Typography
+$toggle-label-font-size: tokens.$sheet-font-size-label-md;
+$toggle-label-gap: tokens.$sheet-spacing-sm;
+$toggle-font-weight: tokens.$sheet-font-weight-medium;
+
+// Transitions
+$toggle-transition-duration: tokens.$sheet-transition-medium;
+$toggle-transition-easing: ease-in-out;
+
+// Shadows and effects
+$toggle-shadow-blur: tokens.$sheet-shadow-blur-xs;
+$toggle-glow-blur: tokens.$sheet-glow-blur-sm;
+$toggle-thumb-shadow: 0 tokens.$sheet-shadow-offset-sm tokens.$sheet-shadow-blur-xs;
+
+// Opacity values
+$toggle-disabled-opacity: tokens.$sheet-opacity-disabled;
+$toggle-focus-opacity: 0.3; 

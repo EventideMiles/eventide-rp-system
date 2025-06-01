@@ -4,5 +4,169 @@
   data-group='primary'
   data-tab='attributes'
 >
-  {{! As you add new fields, add them in here! }}
+  <div class='eventide-sheet__scrollable-container'>
+    <div class='grid grid-3col'>
+      <div>
+        <label class='erps-input-label'>
+          {{localize 'EVENTIDE_RP_SYSTEM.Item.Roll.Type.label'}}
+        </label>
+        <select
+          name='system.roll.type'
+          class="erps-select"
+        >
+          {{#each rollTypes as |name key|}}
+            <option
+              value="{{key}}"
+              {{#if (eq ../system.roll.type key)}}selected{{/if}}
+            >
+              {{localize (lookup @root.config.rollTypes key)}}
+            </option>
+          {{/each}}
+        </select>
+      </div>
+      <div class="eventide-sheet__toggle-group">
+        <label class="erps-toggles erps-toggles--label-left">
+          <input
+            type="checkbox"
+            class="erps-toggles__input"
+            name="system.targeted"
+            id="system.targeted"
+            {{checked system.targeted}}
+          />
+          <div class="erps-toggles__container">
+            <span class="erps-toggles__label" title='{{localize "EVENTIDE_RP_SYSTEM.Item.Roll.Targeted.label"}}'>
+              {{localize "EVENTIDE_RP_SYSTEM.Item.Roll.Targeted.label"}}
+            </span>
+            <span class="erps-toggles__track">
+              <span class="erps-toggles__thumb"></span>
+            </span>
+          </div>
+        </label>
+      </div>
+      <div>
+        {{! Empty column to match combat power layout }}
+      </div>
+    </div>
+
+    {{#if (ne system.roll.type "none")}}
+      <div class='grid grid-2col'>
+        <div>
+          <label class='erps-input-label'>
+            {{localize 'EVENTIDE_RP_SYSTEM.Item.Roll.Ability.label'}}
+          </label>
+          <select
+            class="erps-select"
+            name='system.roll.ability'
+          >
+            {{#each abilities as |name key|}}
+              <option value="{{key}}" {{#if (eq ../system.roll.ability key)}}selected{{/if}}>
+                {{#if (eq key "unaugmented")}}
+                  {{localize "EVENTIDE_RP_SYSTEM.CombatOptions.Unaugmented"}}
+                {{else}}
+                  {{localize (lookup @root.config.abilities key)}}
+                {{/if}}
+              </option>
+            {{/each}}
+          </select>
+        </div>
+        <div>
+          <label class='erps-input-label'>
+            {{localize 'EVENTIDE_RP_SYSTEM.Item.Roll.Bonus.label'}}
+          </label>
+          <input
+            type="number"
+            class="erps-input"
+            name="system.roll.bonus"
+            value="{{system.roll.bonus}}"
+            data-dtype="Number"
+          />
+        </div>
+      </div>
+    {{/if}}
+
+    {{#if (eq system.roll.type "roll")}}
+      <div class='dice-adjustments'>
+        <label class='erps-input-label'>
+          {{localize 'EVENTIDE_RP_SYSTEM.Item.Roll.DiceAdjustments.label'}}
+        </label>
+        <div class='grid grid-3col'>
+          <div>
+            <label class='erps-input-label'>
+              {{localize 'EVENTIDE_RP_SYSTEM.Item.Roll.DiceAdjustments.Advantage.label'}}
+            </label>
+            <div class="erps-number-input">
+              <button
+                type="button"
+                class="erps-number-input__button erps-number-input__button--decrement"
+                data-action="decrementDiceAdjustment"
+                data-field="advantage"
+              >
+                <i class="fas fa-minus"></i>
+              </button>
+              <input
+                class="erps-number-input__input"
+                type="number"
+                name="system.roll.diceAdjustments.advantage"
+                value="{{system.roll.diceAdjustments.advantage}}"
+                data-dtype="Number"
+                {{#if editable}}data-action='onDiceAdjustmentChange'{{/if}}
+              />
+              <button
+                type="button"
+                class="erps-number-input__button erps-number-input__button--increment"
+                data-action="incrementDiceAdjustment"
+                data-field="advantage"
+              >
+                <i class="fas fa-plus"></i>
+              </button>
+            </div>
+          </div>
+          <div>
+            <label class='erps-input-label'>
+              {{localize 'EVENTIDE_RP_SYSTEM.Item.Roll.DiceAdjustments.Disadvantage.label'}}
+            </label>
+            <div class="erps-number-input">
+              <button
+                type="button"
+                class="erps-number-input__button erps-number-input__button--decrement"
+                data-action="decrementDiceAdjustment"
+                data-field="disadvantage"
+              >
+                <i class="fas fa-minus"></i>
+              </button>
+              <input
+                class="erps-number-input__input"
+                type="number"
+                name="system.roll.diceAdjustments.disadvantage"
+                value="{{system.roll.diceAdjustments.disadvantage}}"
+                data-dtype="Number"
+                {{#if editable}}data-action='onDiceAdjustmentChange'{{/if}}
+              >
+              <button
+                type="button"
+                class="erps-number-input__button erps-number-input__button--increment"
+                data-action="incrementDiceAdjustment"
+                data-field="disadvantage"
+              >
+                <i class="fas fa-plus"></i>
+              </button>
+            </div>
+          </div>
+          <div>
+            <label class='erps-input-label'>
+              {{localize 'EVENTIDE_RP_SYSTEM.Item.Roll.DiceAdjustments.Total.label'}}
+            </label>
+            <input
+              class="erps-input"
+              type='number'
+              name='system.roll.diceAdjustments.total'
+              value='{{system.roll.diceAdjustments.total}}'
+              data-dtype='Number'
+              disabled
+            />
+          </div>
+        </div>
+      </div>
+    {{/if}}
+  </div>
 </section>

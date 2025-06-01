@@ -566,8 +566,23 @@ class ERPSRollHandler {
 // Export a singleton instance
 export const erpsRollHandler = new ERPSRollHandler();
 
-// For backward compatibility
+/**
+ * Handle a roll for an actor (backward compatibility function)
+ * @param {Object} options - Roll options
+ * @param {Actor} actor - The actor performing the roll
+ * @returns {Promise<ChatMessage>} The created chat message
+ */
 export const handleRoll = (options, actor) =>
   erpsRollHandler.handleRoll(options, actor);
+
+/**
+ * Roll initiative for a combatant (backward compatibility function)
+ * @param {Object} options - Initiative roll options
+ * @param {Combatant} options.combatant - The combatant rolling initiative
+ * @param {boolean} [options.whisperMode=false] - Whether to whisper the roll
+ * @param {string} [options.description=""] - Optional description
+ * @param {string} [options.customFlavor=""] - Optional custom flavor text
+ * @returns {Promise<Roll>} The evaluated roll
+ */
 export const rollInitiative = (options) =>
   erpsRollHandler.rollInitiative(options);

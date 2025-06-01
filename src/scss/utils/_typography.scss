@@ -1,5 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Combo&family=Amatic+SC:wght@400;700&family=Merienda:wght@300..900&family=Protest+Revolution&family=Underdog&family=Carlito:ital,wght@0,400;0,700;1,400;1,700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Goblin+One&display=swap');
+// Font imports moved to main SCSS file to prevent duplication and CSS parsing errors
 
 $font-primary: 'Roboto',
 sans-serif;
@@ -8,45 +7,65 @@ sans-serif;
 $underdog: 'Underdog',
 serif;
 $font-decorative: 'Protest Revolution',
-sans-serif;
+serif;
 
-.protest-revolution-regular {
+%protest-revolution-regular {
   font-family: "Protest Revolution", serif;
   font-weight: 400;
   font-style: normal;
 }
 
+.protest-revolution-regular {
+  @extend %protest-revolution-regular;
+}
+
 .combo-regular {
-  font-family: "Combo", serif;
+  font-family: Combo, serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+%combo-regular {
+  font-family: Combo, serif;
   font-weight: 400;
   font-style: normal;
 }
 
 @mixin combo-regular {
-  @extend .combo-regular;
+  @extend %combo-regular;
 }
 
-.underdog-regular {
-  font-family: "Underdog", serif;
+%underdog-regular {
+  font-family: Underdog, serif;
   font-weight: 400;
   font-style: normal;
 }
 
+.underdog-regular {
+  @extend %underdog-regular;
+}
+
 .merienda-regular {
-  font-family: "Merienda", serif;
+  font-family: Merienda, serif;
   font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;
 }
 
 .carlito-regular {
-  font-family: "Carlito", sans-serif;
+  font-family: Carlito, sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+%carlito-regular {
+  font-family: Carlito, sans-serif;
   font-weight: 400;
   font-style: normal;
 }
 
 @mixin carlito-regular {
-  @extend .carlito-regular;
+  @extend %carlito-regular;
 }
 
 .space-mono-regular {
@@ -55,38 +74,56 @@ sans-serif;
   font-style: normal;
 }
 
-@mixin space-mono-regular {
-  @extend .space-mono-regular;
+%space-mono-regular {
+  font-family: "Space Mono", monospace;
+  font-weight: 400;
+  font-style: normal;
 }
 
-.goblin-one-regular {
+@mixin space-mono-regular {
+  @extend %space-mono-regular;
+}
+
+%goblin-one-regular {
   font-family: "Goblin One", sans-serif;
   font-weight: 400;
   font-style: normal;
 }
 
-@mixin goblin-one-regular {
-  @extend .goblin-one-regular;
+.goblin-one-regular {
+  @extend %goblin-one-regular;
 }
 
-.amatic-sc-regular {
+@mixin goblin-one-regular {
+  @extend %goblin-one-regular;
+}
+
+%amatic-sc-regular {
   font-family: "Amatic SC", serif;
   font-weight: 400;
   font-style: normal;
 }
 
-@mixin amatic-sc-regular {
-  @extend .amatic-sc-regular;
+.amatic-sc-regular {
+  @extend %amatic-sc-regular;
 }
 
-.amatic-sc-bold {
+@mixin amatic-sc-regular {
+  @extend %amatic-sc-regular;
+}
+
+%amatic-sc-bold {
   font-family: "Amatic SC", serif;
   font-weight: 700;
   font-style: normal;
 }
 
+.amatic-sc-bold {
+  @extend %amatic-sc-bold;
+}
+
 @mixin amatic-sc-bold {
-  @extend .amatic-sc-bold;
+  @extend %amatic-sc-bold;
 }
 
 // .merienda-<uniquifier> {

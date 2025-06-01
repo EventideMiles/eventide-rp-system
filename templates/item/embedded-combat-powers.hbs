@@ -1,61 +1,65 @@
 <section class="tab embedded-combat-powers {{tab.cssClass}}" data-group="primary" data-tab="embeddedCombatPowers">
-  <div class="items-panel__section-header">
-    {{localize "EVENTIDE_RP_SYSTEM.Item.Transformation.EmbeddedPowers"}}
-  </div>
-  
-  {{#if embeddedCombatPowers.length}}
-    <ol class="items-panel__list items-panel__list--three-column">
-      <li class="items-panel__list-item items-panel__header">
-        <div class="items-panel__prop items-panel__header-cell">{{localize 'Image'}}</div>
-        <div class='items-panel__name items-panel__header-cell'>{{localize 'Name'}}</div>
-        <div class='items-panel__controls items-panel__header-cell'>{{localize 'Controls'}}</div>
-      </li>
-      {{#each embeddedCombatPowers as |power|}}
-        <li
-          class="items-panel__list-item"
-          data-item-id="{{power.id}}"
-          data-drag="true"
-          data-document-class="Item"
-        >
-          <div class="items-panel__prop items-panel__list-cell">
-            <div class="items-panel__image">
-              <img
-                src="{{power.img}}"
-                title="{{power.name}}"
-                width="24"
-                height="24"
-              />
-            </div>
-          </div>
-          <div class="items-panel__name items-panel__list-cell">
-            {{power.name}}
-          </div>
-          <div class="items-panel__controls items-panel__list-cell">
-            <a 
-              class="items-panel__control" 
-              data-action="viewDoc" 
-              title="{{localize 'EVENTIDE_RP_SYSTEM.UI.View'}}"
+  <div class="eventide-sheet__scrollable-container">
+    <div class="erps-items-panel">
+      <div class="erps-items-panel__section-header">
+        {{localize "EVENTIDE_RP_SYSTEM.Item.Transformation.EmbeddedPowers"}}
+      </div>
+
+      {{#if embeddedCombatPowers.length}}
+        <ol class="erps-items-panel__list erps-items-panel__list--three-column">
+          <li class="erps-items-panel__item erps-items-panel__item--header">
+            <div class="erps-items-panel__cell erps-items-panel__cell--image">{{localize 'Image'}}</div>
+            <div class='erps-items-panel__cell erps-items-panel__cell--name'>{{localize 'Name'}}</div>
+            <div class='erps-items-panel__cell erps-items-panel__cell--controls'>{{localize 'Controls'}}</div>
+          </li>
+          {{#each embeddedCombatPowers as |power|}}
+            <li
+              class="erps-items-panel__item"
+              data-item-id="{{power.id}}"
+              data-drag="true"
+              data-document-class="Item"
             >
-              <i class="fas fa-eye"></i>
-            </a>
-            <a 
-              class="items-panel__control" 
-              data-action="removeCombatPower" 
-              data-power-id="{{power.id}}" 
-              title="{{localize 'EVENTIDE_RP_SYSTEM.UI.Remove'}}"
-            >
-              <i class="fas fa-trash"></i>
-            </a>
-          </div>
-        </li>
-      {{/each}}
-    </ol>
-  {{else}}
-    <p class="embedded-combat-powers__empty-message">{{localize "EVENTIDE_RP_SYSTEM.Item.Transformation.NoPowers"}}</p>
-  {{/if}}
-  
-  <div class="embedded-combat-powers__drop-zone" data-drop-zone="combatPower">
-    <p>{{localize "EVENTIDE_RP_SYSTEM.Item.Transformation.DropPowerHere"}}</p>
+              <div class="erps-items-panel__cell erps-items-panel__cell--image">
+                <img
+                  class="erps-items-panel__image"
+                  src="{{power.img}}"
+                  title="{{power.name}}"
+                  width="24"
+                  height="24"
+                />
+              </div>
+              <div class="erps-items-panel__cell erps-items-panel__cell--name">
+                <span class="erps-items-panel__name">{{power.name}}</span>
+              </div>
+              <div class="erps-items-panel__cell erps-items-panel__cell--controls">
+                <a
+                  class="erps-items-panel__control erps-items-panel__control--view"
+                  data-action="viewDoc"
+                  title="{{localize 'EVENTIDE_RP_SYSTEM.UI.View'}}"
+                >
+                  <i class="fas fa-eye"></i>
+                </a>
+                <a
+                  class="erps-items-panel__control erps-items-panel__control--delete"
+                  data-action="removeCombatPower"
+                  data-power-id="{{power.id}}"
+                  title="{{localize 'EVENTIDE_RP_SYSTEM.UI.Remove'}}"
+                >
+                  <i class="fas fa-trash"></i>
+                </a>
+              </div>
+            </li>
+          {{/each}}
+        </ol>
+      {{else}}
+        <div class="erps-items-panel__empty">{{localize "EVENTIDE_RP_SYSTEM.Item.Transformation.NoPowers"}}</div>
+      {{/if}}
+
+      <div class="erps-items-panel__drop-zone" data-drop-zone="combatPower">
+        <p>{{localize "EVENTIDE_RP_SYSTEM.Item.Transformation.DropPowerHere"}}</p>
+      </div>
+
+      <div class="erps-items-panel__notes">{{localize "EVENTIDE_RP_SYSTEM.Item.Transformation.Notes"}}</div>
+    </div>
   </div>
-  <p class="notes">{{localize "EVENTIDE_RP_SYSTEM.Item.Transformation.Notes"}}</p> 
-</section> 
+</section>

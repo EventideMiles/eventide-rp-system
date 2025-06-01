@@ -1,0 +1,75 @@
+@use "config" as *;
+@use "../../../utils/sheet-tokens" as tokens;
+
+// ===================================
+// FORM HEADERS
+// ===================================
+// Header styling with decorative effects and variants
+
+.erps-form__header {
+  font-size: $header-font-size;
+  font-weight: $header-font-weight;
+  font-family: var(--erps-display-font, serif);
+  color: var(--theme-text, var(--erps-sheet-text));
+  margin: $header-margin;
+  padding: $header-padding;
+  border-bottom: $header-border-width solid var(--theme-secondary, var(--erps-sheet-secondary));
+  letter-spacing: tokens.$sheet-letter-spacing-base;
+  text-transform: uppercase;
+  position: relative;
+
+  // Decorative underline effect
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -$header-border-width;
+    left: 0;
+    width: 3rem;
+    height: $header-border-width;
+    background: var(--theme-glow, var(--erps-sheet-glow));
+    transition: width tokens.$sheet-transition-medium ease;
+  }
+
+  &:hover::after {
+    width: 6rem;
+  }
+
+  // Header variants
+  &--large {
+    font-size: tokens.$sheet-font-size-value-xl;
+    margin: tokens.$sheet-spacing-xl 0 tokens.$sheet-spacing-lg 0;
+  }
+
+  &--small {
+    font-size: tokens.$sheet-font-size-value-lg;
+    margin: tokens.$sheet-spacing-md 0 tokens.$sheet-spacing-sm 0;
+    text-transform: none;
+  }
+
+  &--no-margin {
+    margin-bottom: tokens.$sheet-spacing-xs;
+  }
+
+  &--centered {
+    text-align: center;
+
+    &::after {
+      left: 50%;
+      transform: translateX(-50%);
+    }
+  }
+
+  &--no-border {
+    border-bottom: none;
+    padding-bottom: 0;
+
+    &::after {
+      display: none;
+    }
+  }
+
+  // First header shouldn't have top margin
+  &:first-child {
+    margin-top: 0;
+  }
+} 

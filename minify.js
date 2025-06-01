@@ -1,13 +1,13 @@
-const fs = require('fs');
-const path = require('path');
-const { minify } = require('terser');
+import fs from 'fs';
+import path from 'path';
+import { minify } from 'terser';
 
 async function minifyJsFiles(directory) {
     const files = fs.readdirSync(directory, { withFileTypes: true });
 
     for (const file of files) {
         const fullPath = path.join(directory, file.name);
-        
+
         if (file.isDirectory()) {
             // Skip node_modules and src directories
             if (file.name !== 'node_modules' && file.name !== 'src') {
@@ -26,7 +26,7 @@ async function minifyJsFiles(directory) {
                         comments: false
                     }
                 });
-                
+
                 if (result.code) {
                     fs.writeFileSync(fullPath, result.code);
                     console.log(`Minified: ${fullPath}`);

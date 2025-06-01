@@ -1,0 +1,77 @@
+@use "config" as *;
+@use "mixins" as *;
+@use "theme-variants" as *;
+
+// ===================================
+// SECONDARY STAT BOX COMPONENT
+// ===================================
+// Secondary stat box component for smaller stats
+
+.erps-stat-box {
+  @include resource-container-base;
+
+  background: linear-gradient(
+    135deg,
+    rgb(30 58 138 / 70%) 0%,
+    rgb(30 58 138 / 60%) 100%
+  );
+  border-color: rgb(59 130 246 / 40%);
+  box-shadow:
+    0 $resource-shadow-offset-sm $resource-shadow-blur-md rgb(0 0 0 / 20%),
+    inset 0 $resource-shadow-offset-xs 0 rgb(255 255 255 / 5%);
+
+  // Upper section - always contains the main label
+  &__upper {
+    @include resource-upper-section;
+  }
+
+  // Lower section - contains values or data
+  &__lower {
+    @include resource-lower-section;
+  }
+
+  // Optional third section - for resource labels
+  &__third {
+    @include resource-third-section;
+  }
+
+  // Label styling
+  &__label {
+    @include resource-text-base;
+
+    font-size: $resource-font-size-label-sm !important;
+    color: rgb(255 255 255 / 80%) !important;
+    letter-spacing: $resource-letter-spacing-base !important;
+    line-height: $resource-line-height-base !important;
+  }
+
+  // Value styling
+  &__value {
+    @include resource-value-base;
+
+    font-size: $resource-font-size-value-lg !important;
+    text-align: center;
+  }
+
+  // Separator styling (like "-")
+  &__separator {
+    font-family: var(--erps-mono-font) !important;
+    font-size: $resource-font-size-value-lg !important;
+    color: rgb(255 255 255 / 80%) !important;
+    text-shadow: 0 $resource-shadow-offset-xs $resource-shadow-offset-sm rgb(0 0 0 / 80%) !important;
+    flex-shrink: 0;
+  }
+
+  // Color variants for stat boxes
+  &--health {
+    @include resource-box-health;
+  }
+
+  &--mana {
+    @include resource-box-mana;
+  }
+
+  &--neutral {
+    @include resource-box-generic;
+  }
+} 

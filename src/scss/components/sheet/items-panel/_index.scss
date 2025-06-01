@@ -1,0 +1,22 @@
+// ===================================
+// ITEMS PANEL INDEX
+// ===================================
+// Main entry point for all items panel components
+
+// Import shared configuration first
+@use "config";
+
+// Import utility mixins
+@use "mixins";
+
+// Import core components
+@use "main-container";
+
+// Import grid system
+@use "grid-system";
+
+// Import item components
+@use "item-components";
+
+// Import special components
+@use "special-components"; 

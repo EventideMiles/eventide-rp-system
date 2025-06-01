@@ -251,6 +251,11 @@ Handlebars.registerHelper("capitalize", (str) => {
   return str.charAt(0).toUpperCase() + str.slice(1);
 });
 
+Handlebars.registerHelper("hasCursedItems", (items) => {
+  if (!Array.isArray(items)) return false;
+  return items.some((item) => item.system?.cursed === true);
+});
+
 /* -------------------------------------------- */
 /*  Ready Hook                                  */
 /* -------------------------------------------- */

@@ -1,110 +1,122 @@
-<div class="eventide-item-sheet base-form__part">
-    <div class="eventide-item-sheet__effects-section">
-      <div class="eventide-item-sheet__effects-grid">
-        <div class="eventide-item-sheet__effects-grid-header">
-          <div class="eventide-item-sheet__effects-grid-cell">Attribute</div>
-          <div class="eventide-item-sheet__effects-grid-cell">Mode</div>
-          <div class="eventide-item-sheet__effects-grid-cell">Value</div>
-          <div class="eventide-item-sheet__effects-grid-cell">Actions</div>
-        </div>
-        
-        {{#each addedAbilities as |ability index|}}
-          <div class="eventide-item-sheet__effects-grid-row base-form">
-            <div class="eventide-item-sheet__effects-grid-cell">
-              <select 
-                class="base-form__select"
-                name="addedAbilities.{{index}}.attribute"
-                data-index="{{index}}"
-              >
+{{!-- Character Effects Component --}}
+{{!-- Supports narrow variant for constrained layouts --}}
+<div class="erps-form__section {{#if narrow}}erps-form__section--narrow{{/if}}">
+  <div class="erps-form__header erps-form__header--small">Character Effects</div>
+  
+  <table class="erps-data-table erps-data-table--effects erps-data-table--flush-top {{#if narrow}}erps-data-table--narrow{{/if}}">
+    <thead class="erps-data-table__header">
+      <tr class="erps-data-table__header-row">
+        <th class="erps-data-table__header-cell erps-data-table__header-cell--center">{{#if narrow}}Attr{{else}}Attribute{{/if}}</th>
+        <th class="erps-data-table__header-cell erps-data-table__header-cell--center">Mode</th>
+        <th class="erps-data-table__header-cell erps-data-table__header-cell--center">{{#if narrow}}Val{{else}}Value{{/if}}</th>
+        <th class="erps-data-table__header-cell erps-data-table__header-cell--controls">
+          <button
+            type="button"
+            class="erps-data-table__create-button"
+            data-action="onAddAbility"
+            data-type="abilities"
+            data-ability="acro"
+            title="Add new effect"
+          >
+            <i class="fas fa-plus"></i>{{#unless narrow}} Add Effect{{/unless}}
+          </button>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each addedAbilities as |ability index|}}
+        <tr class="erps-data-table__row">
+          <td class="erps-data-table__cell erps-data-table__cell--center">
+            <select
+              class="erps-select"
+              name="addedAbilities.{{index}}.attribute"
+              data-index="{{index}}"
+            >
               {{#if (not (eq ../calloutGroup "Transformation"))}}
                 {{#each ../allAbilities as |label key|}}
                   <option value="{{toLowerCase label}}" {{#if (eq ability.attribute (toLowerCase label))}}selected{{/if}}>
-                    {{localize label}}
+                    {{#if ../narrow}}{{localize (lookup @root.config.abilityAbbreviations label)}}{{else}}{{localize label}}{{/if}}
                   </option>
                 {{/each}}
               {{else}}
                 {{#each ../abilities as |label key|}}
                   <option value="{{toLowerCase label}}" {{#if (eq ability.attribute (toLowerCase label))}}selected{{/if}}>
-                    {{localize label}}
+                    {{#if ../narrow}}{{localize (lookup @root.config.abilityAbbreviations label)}}{{else}}{{localize label}}{{/if}}
                   </option>
                 {{/each}}
               {{/if}}
-              </select>
-            </div>
-            
-            <div class="eventide-item-sheet__effects-grid-cell">
-              <select 
-                class="base-form__select"
-                name="addedAbilities.{{@index}}.mode"
+            </select>
+          </td>
+
+          <td class="erps-data-table__cell erps-data-table__cell--center">
+            <select
+              class="erps-select"
+              name="addedAbilities.{{@index}}.mode"
+              data-index="{{@index}}"
+              {{#if (eq ../calloutGroup "Transformation")}}disabled{{/if}}
+            >
+              {{#if (not (eq ../calloutGroup "Transformation"))}}
+                <option value="add" {{#if (eq mode "change")}}selected{{/if}}>Add</option>
+                <option value="override" {{#if (eq mode "override")}}selected{{/if}}>{{#if ../narrow}}Over{{else}}Override{{/if}}</option>
+                <option value="advantage" {{#if (eq mode "advantage")}}selected{{/if}}>{{#if ../narrow}}Adv{{else}}Advantage{{/if}}</option>
+                <option value="disadvantage" {{#if (eq mode "disadvantage")}}selected{{/if}}>{{#if ../narrow}}Dis{{else}}Disadvantage{{/if}}</option>
+              {{else}}
+                <option value="transform">{{#if ../narrow}}Trans{{else}}Transform{{/if}}</option>
+              {{/if}}
+            </select>
+          </td>
+
+          <td class="erps-data-table__cell erps-data-table__cell--center">
+            <div class="erps-number-input{{#if narrow}} erps-number-input--narrow{{/if}}">
+              <button
+                type="button"
+                class="erps-number-input__button erps-number-input__button--decrement"
+                data-action="decrementEffect"
                 data-index="{{@index}}"
-                {{#if (eq ../calloutGroup "Transformation")}}
-                  disabled
-                {{/if}}
               >
-                {{#if (not (eq ../calloutGroup "Transformation"))}}
-                  <option value="add" {{#if (eq mode "change")}}selected{{/if}}>Add</option>
-                  <option value="override" {{#if (eq mode "override")}}selected{{/if}}>Override</option>
-                  <option value="advantage" {{#if (eq mode "advantage")}}selected{{/if}}>Advantage</option>
-                  <option value="disadvantage" {{#if (eq mode "disadvantage")}}selected{{/if}}>Disadvantage</option>
-                {{else}}
-                  <option value="transform">Transform</option>
-                {{/if}}
-              </select>
+                <i class="fas fa-minus"></i>
+              </button>
+              <input
+                type="number"
+                class="erps-number-input__input"
+                name="addedAbilities.{{@index}}.value"
+                value="{{value}}"
+                step="1"
+                data-index="{{@index}}"
+              >
+              <button
+                type="button"
+                class="erps-number-input__button erps-number-input__button--increment"
+                data-action="incrementEffect"
+                data-index="{{@index}}"
+              >
+                <i class="fas fa-plus"></i>
+              </button>
             </div>
-            
-            <div class="eventide-item-sheet__effects-grid-cell">
-              <div class="base-form__number-input-wrapper">
-                <button type="button" 
-                  class="decrement" 
-                  data-action="decrementEffect" 
-                  data-index="{{@index}}"
-                >
-                  −
-                </button>
-                <input 
-                  type="number" 
-                  class="base-form__number-input"
-                  name="addedAbilities.{{@index}}.value"
-                  value="{{value}}" 
-                  step="1"
-                  data-index="{{@index}}"
-                >
-                <button type="button" 
-                  class="increment" 
-                  data-action="incrementEffect" 
-                  data-index="{{@index}}"
-                >
-                  +
-                </button>
-              </div>
-            </div>
-            
-            <div class="eventide-item-sheet__effects-grid-cell">
-              <button 
-                type="button" 
-                class="base-form__button"
-                data-action="onRemoveAbility" 
+          </td>
+
+          <td class="erps-data-table__cell erps-data-table__cell--controls">
+            <div class="erps-data-table__controls">
+              <button
+                type="button"
+                class="erps-data-table__control-button erps-data-table__control-button--delete"
+                data-action="onRemoveAbility"
                 data-index="{{@index}}"
                 title="Remove effect"
               >
                 <i class="fas fa-trash"></i>
               </button>
             </div>
-          </div>
-        {{/each}}
-      </div>
-      
-      <div class="eventide-item-sheet__effect-controls">
-        <button 
-          type="button" 
-          class="eventide-item-sheet__add-effect base-form__button"
-          data-action="onAddAbility" 
-          data-type="abilities"
-          data-ability="acro"
-          title="Add new effect"
-        >
-          <i class="fas fa-plus"></i> Add Effect
-        </button>
-      </div>
-    </div>
+          </td>
+        </tr>
+      {{/each}}
+      {{#unless addedAbilities.length}}
+        <tr class="erps-data-table__row">
+          <td colspan="4" class="erps-data-table__cell erps-data-table__cell--center" style="font-style: italic; opacity: 0.7;">
+            No effects configured
+          </td>
+        </tr>
+      {{/unless}}
+    </tbody>
+  </table>
 </div>

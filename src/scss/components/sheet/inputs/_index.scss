@@ -1,0 +1,15 @@
+// ===================================
+// ERPS INPUTS INDEX
+// ===================================
+// Main entry point for all input components
+
+// Import shared configuration first
+@use "config";
+
+// Import individual component files
+@use "text-inputs";
+@use "select-inputs";
+@use "buttons";
+@use "specialized-inputs";
+@use "advanced-inputs";
+@use "responsive-variants"; 

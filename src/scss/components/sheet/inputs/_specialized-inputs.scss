@@ -1,0 +1,232 @@
+@use "config" as *;
+@use "../../../utils/sheet-tokens" as tokens;
+
+// ===================================
+// ERPS SPECIALIZED INPUTS
+// ===================================
+// Complex input components like number inputs with controls
+
+// ===================================
+// INPUT GROUPS
+// ===================================
+
+.erps-input-group {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+
+  &--stacked {
+    flex-direction: column;
+    align-items: stretch;
+
+    .erps-input,
+    .erps-select,
+    .erps-button {
+      width: 100%;
+    }
+  }
+
+  &--inline {
+    flex-flow: row wrap;
+  }
+}
+
+.erps-input-label {
+  font-family: var(--erps-ui-font, sans-serif);
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--erps-current-text, var(--theme-text, var(--erps-default-text)));
+  text-shadow: 0 1px 2px rgb(0 0 0 / 60%);
+  margin-bottom: 0.25rem;
+  display: block;
+}
+
+// ===================================
+// NUMBER INPUT WITH CONTROLS
+// ===================================
+
+.erps-number-input {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+
+  &__input {
+    display: block;
+    width: 100%;
+    height: $input-height;
+    padding: $input-padding;
+    font-family: var(--erps-ui-font, sans-serif);
+    font-size: $input-font-size;
+    line-height: $input-line-height;
+    font-weight: 500;
+    color: var(--erps-current-text, var(--theme-text, var(--erps-default-text)));
+    background: var(--erps-current-primary, var(--theme-primary, var(--erps-default-primary)));
+    border: $input-border-width solid var(--erps-current-secondary, var(--theme-secondary, var(--erps-default-secondary)));
+    border-radius: $input-border-radius;
+    transition: $input-transition;
+    outline: none;
+    text-align: center;
+    min-width: 4rem;
+    flex: 1;
+    box-sizing: border-box;
+
+    &:hover {
+      border-color: var(--erps-current-bright, var(--theme-bright, var(--erps-default-bright)));
+      background-color: rgb(255 255 255 / 5%);
+      box-shadow: 0 0 0 2px var(--erps-current-glow, var(--theme-glow, var(--erps-default-glow)));
+    }
+
+    &:focus {
+      border-color: var(--erps-current-bright, var(--theme-bright, var(--erps-default-bright)));
+      background-color: rgb(255 255 255 / 10%);
+      box-shadow: 0 0 0 2px var(--erps-current-glow, var(--theme-glow, var(--erps-default-glow)));
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      background: rgb(100 100 100 / 30%);
+      border-color: rgb(100 100 100 / 40%);
+    }
+  }
+
+  &__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    height: tokens.$sheet-height-button-compact;
+    padding: 0;
+    width: tokens.$sheet-height-button-compact;
+    font-family: var(--erps-ui-font, sans-serif);
+    font-size: 0.9rem;
+    line-height: 1.2;
+    font-weight: $button-font-weight;
+    color: var(--erps-current-text, var(--theme-text, var(--erps-default-text)));
+    background: var(--erps-current-primary, var(--theme-primary, var(--erps-default-primary)));
+    border: $button-border-width solid var(--erps-current-secondary, var(--theme-secondary, var(--erps-default-secondary)));
+    border-radius: $button-border-radius;
+    transition: $button-transition;
+    outline: none;
+    cursor: pointer;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: radial-gradient(circle, var(--erps-current-bright, var(--theme-bright, var(--erps-default-bright))) 0%, transparent 70%);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: all 0.3s ease;
+      z-index: 1;
+    }
+
+    & > * {
+      position: relative;
+      z-index: 2;
+    }
+
+    &:hover {
+      background: var(--erps-current-secondary, var(--theme-secondary, var(--erps-default-secondary)));
+      border-color: var(--erps-current-bright, var(--theme-bright, var(--erps-default-bright)));
+      box-shadow: 0 0 0 2px var(--erps-current-glow, var(--theme-glow, var(--erps-default-glow)));
+      transform: translateY(-1px);
+
+      &::before {
+        width: 100%;
+        height: 100%;
+      }
+    }
+
+    &:active {
+      transform: translateY(0) scale(0.98);
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      background: rgb(100 100 100 / 30%);
+      border-color: rgb(100 100 100 / 40%);
+      transform: none;
+
+      &:hover {
+        transform: none;
+        box-shadow: none;
+      }
+    }
+
+    &--decrement {
+      background: linear-gradient(135deg, rgb(100 100 100 / 20%), rgb(100 100 100 / 30%));
+      border-color: rgb(100 100 100 / 40%);
+      color: rgb(160 160 160 / 90%);
+
+      &:hover {
+        background: linear-gradient(135deg, rgb(100 100 100 / 30%), rgb(100 100 100 / 40%));
+        border-color: rgb(100 100 100 / 50%);
+        color: rgb(160 160 160 / 95%);
+        box-shadow: 0 0 8px rgb(100 100 100 / 30%);
+      }
+
+      // Special handling for light theme
+      .eventide-sheet[data-bg-theme="light"] & {
+        background: linear-gradient(135deg, rgb(80 80 80 / 20%), rgb(80 80 80 / 30%));
+        border-color: rgb(80 80 80 / 40%);
+        color: rgb(80 80 80 / 90%);
+
+        &:hover {
+          background: linear-gradient(135deg, rgb(80 80 80 / 30%), rgb(80 80 80 / 40%));
+          border-color: rgb(80 80 80 / 50%);
+          color: rgb(80 80 80 / 95%);
+          box-shadow: 0 0 8px rgb(80 80 80 / 30%);
+        }
+      }
+
+      // Special handling for black theme (needs even more contrast)
+      .eventide-sheet[data-bg-theme="black"] & {
+        background: linear-gradient(135deg, rgb(120 120 120 / 25%), rgb(120 120 120 / 35%));
+        border-color: rgb(120 120 120 / 45%);
+        color: rgb(255 255 255 / 90%);
+
+        &:hover {
+          background: linear-gradient(135deg, rgb(120 120 120 / 35%), rgb(120 120 120 / 45%));
+          border-color: rgb(120 120 120 / 55%);
+          color: rgb(255 255 255 / 95%);
+          box-shadow: 0 0 8px rgb(120 120 120 / 35%);
+        }
+      }
+    }
+
+    &--increment {
+      background: linear-gradient(135deg, var(--erps-current-primary, var(--theme-primary, var(--erps-default-primary))), var(--erps-current-secondary, var(--theme-secondary, var(--erps-default-secondary))));
+      border-color: var(--erps-current-bright, var(--theme-bright, var(--erps-default-bright)));
+      box-shadow: 0 2px 8px rgb(0 0 0 / 30%);
+
+      &:hover {
+        background: linear-gradient(135deg, var(--erps-current-secondary, var(--theme-secondary, var(--erps-default-secondary))), var(--erps-current-bright, var(--theme-bright, var(--erps-default-bright))));
+        border-color: #fff;
+        box-shadow: 0 0 12px var(--erps-current-glow, var(--theme-glow, var(--erps-default-glow)));
+      }
+    }
+
+    // Narrow variant without buttons for very constrained spaces
+    &--narrow {
+      .erps-number-input__input {
+        width: 50px;
+        text-align: center;
+      }
+
+      .erps-number-input__button {
+        display: none;
+      }
+    }
+  }
+} 

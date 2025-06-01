@@ -1,67 +1,67 @@
-<header class='base-form__sheet-header'>
+<header class='eventide-sheet__header eventide-sheet__header--item'>
   <img
-    class='base-form__sheet-profile-img'
+    class='eventide-profile-image'
     src='{{item.img}}'
     data-edit='img'
     data-action='onEditImage'
     title='{{item.name}}'
   />
-  <div class='base-form__sheet-header-fields'>
-    <div class='document-name'>
-      <input 
-        name='name' 
-        type='text' 
-        class="base-form__text-input"
-        value='{{item.name}}' 
-        placeholder='{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.Name"}}' 
+  <div class='eventide-sheet__header-fields'>
+    <div>
+      <input
+        name='name'
+        type='text'
+        class="erps-input"
+        value='{{item.name}}'
+        placeholder='{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.Name"}}'
       />
     </div>
     {{#if (eq item.type 'gear')}}
       <div class='grid grid-4col'>
         <div>
-          <label class='base-form__label--small'>
+          <label class='erps-input-label'>
             {{localize 'EVENTIDE_RP_SYSTEM.Item.Inventory.Quantity.label'}}
           </label>
           <input
             type="number"
-            class="base-form__number-input"
+            class="erps-input"
             name="system.quantity"
             value="{{system.quantity}}"
             data-dtype="Number"
           />
         </div>
         <div>
-          <label class='base-form__label--small'>
+          <label class='erps-input-label'>
             {{localize 'EVENTIDE_RP_SYSTEM.Item.Inventory.Weight.label'}}
           </label>
           <input
             type="number"
-            class="base-form__number-input"
+            class="erps-input"
             name="system.weight"
             value="{{system.weight}}"
             data-dtype="Number"
           />
         </div>
         <div>
-          <label class='base-form__label--small'>
+          <label class='erps-input-label'>
             {{localize 'EVENTIDE_RP_SYSTEM.Item.Inventory.Cost.label'}}
           </label>
-          <input 
-            type="number" 
-            class="base-form__number-input"
-            name="system.cost" 
-            value="{{system.cost}}" 
-            data-dtype="Number" 
+          <input
+            type="number"
+            class="erps-input"
+            name="system.cost"
+            value="{{system.cost}}"
+            data-dtype="Number"
           />
         </div>
         <div>
-          <label class="base-form__label--small">
+          <label class="erps-input-label">
             {{localize 'EVENTIDE_RP_SYSTEM.Forms.Sections.ClassName'}}
           </label>
-          <select name="system.className" class="base-form__select">
+          <select name="system.className" class="erps-select">
             {{#each @root.config.classNames as |name key|}}
-              <option 
-                value="{{key}}" 
+              <option
+                value="{{key}}"
                 {{#if (eq ../system.className key)}}selected{{/if}}
               >
                 {{localize (lookup @root.config.classNames key)}}
@@ -74,161 +74,123 @@
     <div class="grid grid-2-col">
       {{#if (eq item.type 'combatPower')}}
         <div class="grid-span-2">
-          <label class='base-form__label--small'>
+          <label class='erps-input-label'>
             {{localize 'EVENTIDE_RP_SYSTEM.Item.Inventory.Cost.label'}}
           </label>
-          <input 
-            type="number" 
-            class="base-form__number-input"
-            name="system.cost" 
-            value="{{system.cost}}" 
-            data-dtype="Number" 
+          <input
+            type="number"
+            class="erps-input"
+            name="system.cost"
+            value="{{system.cost}}"
+            data-dtype="Number"
           />
         </div>
       {{/if}}
       {{#if (not (eq item.type 'transformation'))}}
         <div>
-          <label class="base-form__label--small" for="color-textColor">
-            {{localize 'EVENTIDE_RP_SYSTEM.Item.Colors.TextColor.label'}}
-          </label>
-          <div class="base-form__color-picker-with-hex color-picker-with-hex">
-            <div class="color-picker-container">
-              <div class="color-preview" id="preview-textColor" style="background-color: {{system.textColor}}"></div>
-              <input 
-                type="color" 
-                class="color-picker" 
-                id="color-textColor" 
-                value="{{system.textColor}}" 
-                name="display.textColor"
-                data-edit="system.textColor"
-              >
-              <input type="text" 
-                class="hex-input" 
-                id="hex-textColor" 
-                placeholder="{{localize 'EVENTIDE_RP_SYSTEM.Item.Colors.TextColor.placeholder'}}" 
-                value="{{system.textColor}}" 
-                name="system.textColor"
-                data-edit="system.textColor"
-              >
-            </div>
-          </div>
+          {{> erps-color-picker
+            name="system.textColor"
+            value=system.textColor
+            labelPosition="above"
+            label=(localize "EVENTIDE_RP_SYSTEM.Item.Colors.TextColor.label")
+            placeholder=(localize "EVENTIDE_RP_SYSTEM.Item.Colors.TextColor.placeholder")
+          }}
         </div>
         <div>
-          <label class="base-form__label--small" for="color-bgColor">
-            {{localize 'EVENTIDE_RP_SYSTEM.Item.Colors.BgColor.label'}}
-          </label>
-          <div class="base-form__color-picker-with-hex color-picker-with-hex">
-            <div class="color-picker-container">
-              <div class="color-preview" id="preview-bgColor" style="background-color: {{system.bgColor}}"></div>
-              <input 
-                type="color" 
-                class="color-picker" 
-                id="color-bgColor" 
-                value="{{system.bgColor}}"
-                name="display.bgColor"
-                data-edit="system.bgColor"
-              >
-              <input type="text" 
-                class="hex-input" 
-                id="hex-bgColor" 
-                placeholder="{{localize 'EVENTIDE_RP_SYSTEM.Item.Colors.BgColor.placeholder'}}" 
-                value="{{system.bgColor}}" 
-                name="system.bgColor" 
-                data-edit="system.bgColor"
-              >
-            </div>
-          </div>
+          {{> erps-color-picker
+            name="system.bgColor"
+            value=system.bgColor
+            labelPosition="above"
+            label=(localize "EVENTIDE_RP_SYSTEM.Item.Colors.BgColor.label")
+            placeholder=(localize "EVENTIDE_RP_SYSTEM.Item.Colors.BgColor.placeholder")
+          }}
         </div>
       {{/if}}
     </div>
     <div class="grid grid-3col">
       {{#if (not (eq item.type 'transformation'))}}
-      <div class="checkbox-resource">
-        <div class="checkbox-container">
-          <label 
-            class="resource-label checkbox-label"
-            title='{{localize "EVENTIDE_RP_SYSTEM.Item.Descriptors.RollActorName.label"}}'
-          >
-            {{localize "EVENTIDE_RP_SYSTEM.Item.Descriptors.RollActorName.label"}}
-          </label>
-          <div class="toggle-switch-wrapper">
-            <input 
-              type="checkbox" 
-              class="base-form__toggle-switch" 
-              name="system.rollActorName" 
-              id="system.rollActorName"
-              {{checked system.rollActorName}}
-            />
-            <label class="toggle-switch-display" for="system.rollActorName"></label>
+      <div class="eventide-sheet__toggle-group">
+        <label class="erps-toggles erps-toggles--label-left">
+          <input
+            type="checkbox"
+            class="erps-toggles__input"
+            name="system.rollActorName"
+            id="system.rollActorName"
+            {{checked system.rollActorName}}
+          />
+          <div class="erps-toggles__container">
+            <span class="erps-toggles__label" title='{{localize "EVENTIDE_RP_SYSTEM.Item.Descriptors.RollActorName.label"}}'>
+              {{localize "EVENTIDE_RP_SYSTEM.Item.Descriptors.RollActorName.label"}}
+            </span>
+            <span class="erps-toggles__track">
+              <span class="erps-toggles__thumb"></span>
+            </span>
           </div>
-        </div>
+        </label>
       </div>
       {{else}}
       {{#if isGM}}
-          <div class="resource checkbox-resource">
-            <div class="checkbox-container">
-              <label 
-                class="resource-label checkbox-label"
-                title='{{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Cursed.label"}}'
-              >
-                {{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Cursed.label"}}
-              </label>
-              <div class="toggle-switch-wrapper">
-                <input 
-                  type="checkbox" 
-                  class="base-form__toggle-switch" 
-                  name="system.cursed" 
-                  id="system.cursed"
-                  {{checked system.cursed}}
-                />
-                <label class="toggle-switch-display" for="system.cursed"></label>
+          <div class="eventide-sheet__toggle-group">
+            <label class="erps-toggles erps-toggles--label-left">
+              <input
+                type="checkbox"
+                class="erps-toggles__input"
+                name="system.cursed"
+                id="system.cursed"
+                {{checked system.cursed}}
+              />
+              <div class="erps-toggles__container">
+                <span class="erps-toggles__label" title='{{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Cursed.label"}}'>
+                  {{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Cursed.label"}}
+                </span>
+                <span class="erps-toggles__track">
+                  <span class="erps-toggles__thumb"></span>
+                </span>
               </div>
-            </div>
+            </label>
           </div>
         {{/if}}
       {{/if}}
       {{#if (eq item.type 'gear')}}
-        <div class="resource checkbox-resource">
-          <div class="checkbox-container">
-            <label 
-              class="resource-label checkbox-label"
-              title='{{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Equipped.label"}}'
-            >
-              {{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Equipped.label"}}
-            </label>
-            <div class="toggle-switch-wrapper">
-              <input 
-                type="checkbox" 
-                class="base-form__toggle-switch" 
-                name="system.equipped" 
-                id="system.equipped"
-                {{checked system.equipped}}
-                {{#ifCond system.quantity "<=" 0}}disabled{{/ifCond}}
-              />
-              <label class="toggle-switch-display" for="system.equipped"></label>
+        <div class="eventide-sheet__toggle-group">
+          <label class="erps-toggles erps-toggles--label-left">
+            <input
+              type="checkbox"
+              class="erps-toggles__input"
+              name="system.equipped"
+              id="system.equipped"
+              {{checked system.equipped}}
+              {{#if (lte system.quantity 0)}}disabled{{/if}}
+            />
+            <div class="erps-toggles__container">
+              <span class="erps-toggles__label" title='{{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Equipped.label"}}'>
+                {{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Equipped.label"}}
+              </span>
+              <span class="erps-toggles__track">
+                <span class="erps-toggles__thumb"></span>
+              </span>
             </div>
-          </div>
+          </label>
         </div>
         {{#if isGM}}
-          <div class="resource checkbox-resource">
-            <div class="checkbox-container">
-              <label 
-                class="resource-label checkbox-label"
-                title='{{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Cursed.label"}}'
-              >
-                {{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Cursed.label"}}
-              </label>
-              <div class="toggle-switch-wrapper">
-                <input 
-                  type="checkbox" 
-                  class="base-form__toggle-switch" 
-                  name="system.cursed" 
-                  id="system.cursed"
-                  {{checked system.cursed}}
-                />
-                <label class="toggle-switch-display" for="system.cursed"></label>
+          <div class="eventide-sheet__toggle-group">
+            <label class="erps-toggles erps-toggles--label-left">
+              <input
+                type="checkbox"
+                class="erps-toggles__input"
+                name="system.cursed"
+                id="system.cursed"
+                {{checked system.cursed}}
+              />
+              <div class="erps-toggles__container">
+                <span class="erps-toggles__label" title='{{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Cursed.label"}}'>
+                  {{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Cursed.label"}}
+                </span>
+                <span class="erps-toggles__track">
+                  <span class="erps-toggles__thumb"></span>
+                </span>
               </div>
-            </div>
+            </label>
           </div>
         {{/if}}
       {{/if}}

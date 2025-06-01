@@ -1,0 +1,108 @@
+@use "config" as *;
+@use "mixins" as *;
+
+// ===================================
+// ABILITY CARDS CONTAINER
+// ===================================
+
+.header-abilities {
+  gap: $spacing-xs;
+  padding: $spacing-xs;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+// ===================================
+// MAIN ABILITY CARD COMPONENT
+// ===================================
+
+.eventide-ability-card {
+  @include ability-card-base;
+
+  // Base styling with left border indicator
+  &::before {
+    @include ability-card-border-indicator;
+  }
+
+  &__content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    gap: $card-gap;
+    justify-content: space-between;
+  }
+
+  &__header {
+    flex-shrink: 0;
+    min-width: $header-min-width;
+    max-width: $header-max-width;
+    width: $header-width;
+  }
+
+  &__label {
+    font-size: $label-font-size;
+    font-weight: $font-weight-semibold;
+    color: rgb(255 255 255 / 80%);
+    text-transform: uppercase;
+    letter-spacing: $letter-spacing;
+    line-height: $line-height;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: help;
+    transition: color $transition-base ease;
+
+    &:hover {
+      color: rgb(255 255 255 / 100%);
+    }
+  }
+
+  &__stats {
+    display: flex;
+    align-items: center;
+    gap: $card-gap;
+    flex-grow: 1;
+  }
+
+  &__input {
+    @include ability-card-input;
+  }
+
+  &__total-button {
+    @include ability-card-button;
+  }
+
+  &__status {
+    @include ability-card-status;
+  }
+
+  &__lock {
+    @include ability-card-icon;
+
+    color: #ff6b6b;
+    text-shadow: 0 0 $shadow-blur-xs rgb(255 107 107 / 60%);
+  }
+
+  &__unlock {
+    @include ability-card-icon;
+
+    color: #4CAF50;
+    text-shadow: 0 0 $shadow-blur-xs rgb(76 175 80 / 60%);
+  }
+
+  // Hover effects
+  &:hover {
+    transform: translateY($transform-hover-sm);
+    box-shadow: 0 $shadow-offset-sm $shadow-blur-md rgb(0 0 0 / 30%);
+
+    &::before {
+      width: 100%;
+      opacity: 0.15;
+    }
+  }
+} 

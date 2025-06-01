@@ -1,33 +1,39 @@
 // Add custom fonts by visiting and search https://fonts.google.com
-// Import utilities.
+// Import utilities - ALL @use statements must come first
 @use "sass:meta";
-@use 'utils/tokens';
 @use 'utils/typography';
 @use 'utils/colors';
-@use 'utils/mixins';
 @use 'utils/variables';
+@use 'utils/sheet-tokens';
 
 /* Global styles */
 @use 'global/window';
 @use 'global/grid';
 @use 'global/flex';
-@use 'global/character-sheet';
-@use 'global/form-elements';
+@use 'global/eventide-sheet';
 @use 'global/global-overrides';
 
 /* Styles limited to eventide-rp-system sheets */
 @use 'components/chat-cards';
-@use 'components/popup-forms';
 @use 'components/gear-creator';
-@use 'components/effect-creator';
 @use 'components/sound-settings';
-@use 'components/data-table';
-@use 'components/enhanced-grid';
-@use 'components/range-slider';
 
-.eventide-rp-system {
-  @include meta.load-css('components/forms');
-  @include meta.load-css('components/resource');
-  @include meta.load-css('components/items');
-  @include meta.load-css('components/effects');
-}
+// New components
+@use 'components/sheet/tables';
+@use 'components/sheet/tabs';
+@use 'components/sheet/status-cards';
+@use 'components/sheet/resource-boxes';
+@use 'components/sheet/ability-cards';
+@use 'components/sheet/erps-profile-images';
+@use 'components/sheet/toggles';
+@use 'components/sheet/inputs';
+@use 'components/sheet/items-panel';
+@use 'components/sheet/forms';
+@use 'components/sheet/erps-callouts';
+@use 'components/sheet/erps-form-footer';
+
+// Import Google Fonts after ALL @use statements to avoid CSS parsing errors
+@import 'https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap';
+@import 'https://fonts.googleapis.com/css2?family=Combo&family=Amatic+SC:wght@400;700&family=Merienda:wght@300..900&family=Protest+Revolution&family=Underdog&family=Carlito:ital,wght@0,400;0,700;1,400;1,700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Goblin+One&display=swap';
+@import 'https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Crimson+Text:wght@400;600&family=Libre+Baskerville:wght@400;700&family=Roboto+Condensed:wght@400;700&display=swap';
+

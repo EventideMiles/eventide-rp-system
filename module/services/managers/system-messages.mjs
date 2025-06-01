@@ -96,26 +96,143 @@ class ERPSMessageHandler {
   }
 
   /**
-   * Creates a chat message for the given feature item, including its name, description, and active effects.
+   * Creates a chat message for a feature item, handling both roll and non-roll cases.
    * @param {Item} item - The feature item to generate the message for.
+   * @param {Object} [options={}] - Additional options for the message
+   * @param {string} [options.rollMode] - The roll mode to use for the message
    * @returns {Promise<ChatMessage>} The created chat message.
    */
-  async createFeatureMessage(item) {
-    const effects = item.effects.toObject();
+  async createFeatureMessage(item, options = {}) {
+    // Early return if the item doesn't have the necessary data
+    if (!item || !item.system) return null;
+
+    // Get the roll type from the item
+    const rollType = item.system.roll?.type || "none";
     const style = ERPSRollUtilities.getItemStyle(item);
+    const isRoll = rollType !== "none";
 
-    const data = {
-      item,
-      effects,
-      style,
-    };
+    // Get the roll mode from options or use the default game setting
+    const rollMode = options.rollMode || game.settings.get("core", "rollMode");
 
-    return this._createChatMessage("feature", data, {
-      speaker: ERPSRollUtilities.getSpeaker(
-        item.parent,
-        "EVENTIDE_RP_SYSTEM.MessageHeaders.Feature",
-      ),
-    });
+    // Get the actor
+    const actor = item.parent;
+
+    // If this is a non-roll feature
+    if (!isRoll) {
+      const effects = item.effects.toObject();
+      const data = {
+        item,
+        effects,
+        style,
+        hasRoll: false,
+        actor,
+      };
+
+      return this._createChatMessage("feature", data, {
+        speaker: ERPSRollUtilities.getSpeaker(
+          actor,
+          "EVENTIDE_RP_SYSTEM.MessageHeaders.Feature",
+        ),
+        rollMode,
+      });
+    }
+
+    // For roll-type features
+    try {
+      // Get the formula using the item's getCombatRollFormula method
+      const formula = item.getCombatRollFormula();
+
+      // Check if formula exists and is valid
+      if (!formula || typeof formula !== "string" || formula.trim() === "") {
+        throw new Error("Invalid roll formula");
+      }
+
+      // Get the actor's roll data
+      const rollData = actor.getRollData();
+
+      // Create the roll
+      const roll = new Roll(formula, rollData);
+      const result = await roll.evaluate();
+
+      // Features don't typically target, but we'll check if they have targeting capability
+      const targetArray = await erps.utils.getTargetArray();
+      const addCheck =
+        item.system.targeted && targetArray.length ? true : false;
+
+      // Determine critical states
+      const { critHit, critMiss, stolenCrit, savedMiss } =
+        ERPSRollUtilities.determineCriticalStates({
+          roll: result,
+          thresholds: rollData.hiddenAbilities,
+          formula,
+          critAllowed: true,
+        });
+
+      // Prepare target data if needed
+      const targetRollData = addCheck
+        ? targetArray.map((target) => ({
+            name: target.actor.name,
+            compare: result.total,
+            ...target.actor.getRollData(),
+          }))
+        : [];
+
+      // Prepare the template data
+      const effects = item.effects.toObject();
+      const data = {
+        item,
+        effects,
+        style,
+        roll: result,
+        rollData,
+        hasRoll: true,
+        pickedType: rollType.toLowerCase(),
+        critHit: critHit ?? false,
+        critMiss: critMiss ?? false,
+        savedMiss: savedMiss ?? false,
+        stolenCrit: stolenCrit ?? false,
+        acCheck: addCheck,
+        targetArray,
+        targetRollData,
+        critAllowed: true,
+        actor,
+      };
+
+      // Play feature roll sound locally and add to message
+      await erpsSoundManager._playLocalSound("featureRoll");
+      return this._createChatMessage(
+        "feature",
+        data,
+        {
+          speaker: ERPSRollUtilities.getSpeaker(
+            actor,
+            "EVENTIDE_RP_SYSTEM.MessageHeaders.Feature",
+          ),
+          rollMode,
+        },
+        { soundKey: "featureRoll" },
+      );
+    } catch (error) {
+      console.error("Error creating feature roll message:", error);
+
+      // Fallback to non-roll message
+      const effects = item.effects.toObject();
+      const data = {
+        item,
+        effects,
+        style,
+        hasRoll: false,
+        actor,
+      };
+
+      return this._createChatMessage("feature", data, {
+        speaker: ERPSRollUtilities.getSpeaker(
+          actor,
+          "EVENTIDE_RP_SYSTEM.MessageHeaders.Feature",
+        ),
+        rollMode,
+      });
+    }
   }
 
   /**
@@ -481,19 +598,66 @@ erpsMessageHandler.createTransformationMessage =
   erpsMessageHandler.createTransformationMessage.bind(erpsMessageHandler);
 
 // Export individual functions for backward compatibility
+/**
+ * Creates a status message for an item
+ * @param {Item} item - The status item
+ * @returns {Promise<ChatMessage>} The created chat message
+ */
 export const createStatusMessage = (item) =>
   erpsMessageHandler.createStatusMessage(item);
+
+/**
+ * Creates a feature message for an item
+ * @param {Item} item - The feature item
+ * @returns {Promise<ChatMessage>} The created chat message
+ */
 export const featureMessage = (item) =>
   erpsMessageHandler.createFeatureMessage(item);
+
+/**
+ * Creates a delete status message for an item
+ * @param {Item} item - The status item being deleted
+ * @param {Object} [options] - Additional options for the message
+ * @returns {Promise<ChatMessage>} The created chat message
+ */
 export const deleteStatusMessage = (item, options) =>
   erpsMessageHandler.createDeleteStatusMessage(item, options);
+
+/**
+ * Creates a restore message
+ * @param {Object} options - Options for the restore message
+ * @returns {Promise<ChatMessage>} The created chat message
+ */
 export const createRestoreMessage = (options) =>
   erpsMessageHandler.createRestoreMessage(options);
-// Keep the old name for backward compatibility with macros
+
+/**
+ * Creates a restore message (legacy alias for createRestoreMessage)
+ * @param {Object} options - Options for the restore message
+ * @returns {Promise<ChatMessage>} The created chat message
+ * @deprecated Use createRestoreMessage instead
+ */
 export const restoreMessage = (options) =>
   erpsMessageHandler.createRestoreMessage(options);
+
+/**
+ * Creates a combat power message for an item
+ * @param {Item} item - The combat power item
+ * @param {Object} [options] - Additional options for the message
+ * @returns {Promise<ChatMessage>} The created chat message
+ */
 export const combatPowerMessage = (item, options) =>
   erpsMessageHandler.createCombatPowerMessage(item, options);
+
+/**
+ * Creates a gear transfer message
+ * @param {Item} item - The gear item being transferred
+ * @param {Actor} sourceActor - The actor transferring the gear
+ * @param {Actor} destActor - The actor receiving the gear
+ * @param {number} quantity - The quantity being transferred
+ * @param {string} [description] - Optional description of the transfer
+ * @returns {Promise<ChatMessage>} The created chat message
+ */
 export const gearTransferMessage = (
   item,
   sourceActor,
@@ -508,7 +672,22 @@ export const gearTransferMessage = (
     quantity,
     description,
   );
+
+/**
+ * Creates a gear equip/unequip message for an item
+ * @param {Item} item - The gear item being equipped/unequipped
+ * @returns {Promise<ChatMessage>} The created chat message
+ */
 export const gearEquipMessage = (item) =>
   erpsMessageHandler.createGearEquipMessage(item);
+
+/**
+ * Creates a transformation message
+ * @param {Object} options - Options for the transformation message
+ * @param {Actor} options.actor - The actor being transformed
+ * @param {Item} options.transformation - The transformation item
+ * @param {boolean} options.isApplying - Whether the transformation is being applied
+ * @returns {Promise<ChatMessage>} The created chat message
+ */
 export const transformationMessage = (options) =>
   erpsMessageHandler.createTransformationMessage(options);

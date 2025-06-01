@@ -1,6 +1,16 @@
 import { CommonFoundryTasks } from "../../utils/_module.mjs";
 import { erpsRollHandler, Logger } from "../../services/_module.mjs";
 import { ErrorHandler } from "../../utils/error-handler.mjs";
+import {
+  initTabContainerStyling,
+  cleanupTabContainerStyling,
+} from "../../helpers/tab-container-styling.mjs";
+import {
+  initThemeManager,
+  cleanupThemeManager,
+  triggerGlobalThemeChange,
+  THEME_PRESETS,
+} from "../../helpers/theme-manager.mjs";
 
 const { api, sheets } = foundry.applications;
 const { DragDrop, TextEditor } = foundry.applications.ux;
@@ -13,6 +23,10 @@ const FilePicker = foundry.applications.apps.FilePicker.implementation;
 export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
   sheets.ActorSheetV2,
 ) {
+  // Private fields
+  #dragDrop;
+  #statusBarEventHandlers;
+
   constructor(options = {}) {
     Logger.methodEntry("EventideRpSystemActorSheet", "constructor", {
       actorId: options?.document?.id,
@@ -23,6 +37,9 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
     try {
       super(options);
       this.#dragDrop = this.#createDragDropHandlers();
+
+      // Initialize theme manager (will be set up properly in _onRender)
+      this.themeManager = null;
 
       Logger.debug(
         "Actor sheet initialized successfully",
@@ -45,16 +62,39 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
   /** @override */
   static DEFAULT_OPTIONS = {
     classes: [
-      "eventide-rp-system",
-      "eventide-character-sheet",
-      "eventide-character-sheet--scrollbars",
+      // "eventide-rp-system",
+      "eventide-sheet",
+      "eventide-sheet--scrollbars",
     ],
     position: {
-      width: 600,
-      height: 750,
+      width: 920,
+      height: 950,
     },
     window: {
-      controls: [...super.DEFAULT_OPTIONS.window.controls],
+      controls: [
+        ...super.DEFAULT_OPTIONS.window.controls.filter(
+          (control) =>
+            ![
+              "configureToken",
+              "showArtwork",
+              "showTokenArtwork",
+              "configurePrototypeToken",
+              "showPortraitArtwork",
+            ].includes(control.action),
+        ),
+        {
+          action: "configureToken",
+          icon: "fas fa-user-circle",
+          label: "EVENTIDE_RP_SYSTEM.WindowTitles.ConfigureToken",
+          ownership: "OWNER",
+        },
+        {
+          action: "setSheetTheme",
+          icon: "fas fa-palette",
+          label: "EVENTIDE_RP_SYSTEM.WindowTitles.SheetTheme",
+          ownership: "OWNER",
+        },
+      ],
     },
     actions: {
       onEditImage: this._onEditImage,
@@ -68,9 +108,18 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
       decrementGear: this._decrementGear,
       applyTransformation: this._applyTransformation,
       removeTransformation: this._removeTransformation,
+      toggleAutoTokenUpdate: this._toggleAutoTokenUpdate,
+      configureToken: this._onConfigureToken,
+      setSheetTheme: this._setSheetTheme,
     },
     // Custom property that's merged into `this.options`
-    dragDrop: [{ dragSelector: "[data-drag]", dropSelector: null }],
+    dragDrop: [
+      {
+        dragSelector:
+          "[data-drag], .erps-data-table__row[data-item-id], .erps-data-table__row[data-document-class], .eventide-transformation-card[data-item-id]",
+        dropSelector: null,
+      },
+    ],
     form: {
       submitOnChange: true,
     },
@@ -150,6 +199,19 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
         fields: this.document.schema.fields,
         systemFields: this.document.system.schema.fields,
         isGM: game.user.isGM,
+        lowHealth:
+          this.actor.system.resolve.value / this.actor.system.resolve.max <=
+          0.3,
+        // Add user's theme preference with debugging
+        userSheetTheme: (() => {
+          const theme = CommonFoundryTasks.retrieveSheetTheme();
+          Logger.debug("User theme retrieved for context", {
+            theme,
+            userFlags: game.user.flags,
+            systemFlags: game.user.flags?.["eventide-rp-system"],
+          });
+          return theme;
+        })(),
       };
 
       // Offloading context prep to a helper function
@@ -362,8 +424,12 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
           "eventide-rp-system",
           "defaultCharacterTab",
         );
-      } catch {
-        console.warn("Could not get default tab setting, using 'features'");
+      } catch (error) {
+        Logger.warn(
+          "Could not get default tab setting, using 'features'",
+          error,
+          "ACTOR_SHEET",
+        );
       }
     }
 
@@ -412,7 +478,9 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
             // Append to transformations
             transformations.push(i);
             if (i.system?.embeddedCombatPowers?.length > 0) {
-              transformationCombatPowers.push(...i.system.embeddedCombatPowers);
+              transformationCombatPowers.push(
+                ...i.system.getEmbeddedCombatPowers(),
+              );
             }
           } else {
             Logger.warn(
@@ -450,6 +518,7 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
         context.transformations = transformations.sort(
           (a, b) => (a.sort || 0) - (b.sort || 0),
         );
+        context.activeTransformation = transformations[0];
       } catch (sortError) {
         Logger.error("Error sorting items", sortError, "ACTOR_SHEET");
 
@@ -462,6 +531,7 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
         context.combatPowers = combatPowers;
         context.transformationCombatPowers = transformationCombatPowers;
         context.transformations = transformations;
+        context.activeTransformation = transformations[0];
       }
 
       Logger.debug(
@@ -500,7 +570,7 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
   }
 
   /**
-   * Actions performed after any render of the Application.
+   * Actions performed after any render of this Application.
    * Post-render steps are not awaited by the render process.
    * @param {ApplicationRenderContext} context      Prepared context data
    * @param {RenderOptions} options                 Provided render options
@@ -508,8 +578,76 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
    * @override
    */
   _onRender(_context, _options) {
-    this.#dragDrop.forEach((d) => d.bind(this.element));
+    // Debug drag drop setup
+    const transformationCards = this.element.querySelectorAll(
+      ".eventide-transformation-card[data-item-id]",
+    );
+    const allDraggableElements = this.element.querySelectorAll(
+      "[data-drag], .erps-data-table__row[data-item-id], .erps-data-table__row[data-document-class], .eventide-transformation-card[data-item-id]",
+    );
+
+    Logger.debug(
+      "Setting up drag drop handlers",
+      {
+        sheetId: this.id,
+        actorName: this.actor?.name,
+        dragDropHandlers: this.#dragDrop?.length,
+        dragSelectors: this.#dragDrop?.map((d) => d.dragSelector),
+        element: this.element,
+        draggableElements: allDraggableElements.length,
+        transformationCards: transformationCards.length,
+        transformationCardDetails: Array.from(transformationCards).map(
+          (card) => ({
+            id: card.dataset.itemId,
+            classes: card.className,
+            dataset: card.dataset,
+          }),
+        ),
+        activeTransformation: this.actor.getFlag(
+          "eventide-rp-system",
+          "activeTransformation",
+        ),
+      },
+      "ACTOR_SHEET",
+    );
+
+    // Bind drag drop handlers
+    this.#dragDrop.forEach((d, index) => {
+      Logger.debug(
+        `Binding drag drop handler ${index}`,
+        {
+          dragSelector: d.dragSelector,
+          dropSelector: d.dropSelector,
+          matchingElements: this.element.querySelectorAll(d.dragSelector)
+            .length,
+        },
+        "ACTOR_SHEET",
+      );
+      d.bind(this.element);
+    });
     this.#disableOverrides();
+
+    // Set theme properties immediately to prevent flashing
+    // const currentTheme = CommonFoundryTasks.retrieveSheetTheme();
+    // TESTING: Comment out JavaScript theme property setting to test pure CSS
+    // this._setImmediateThemeProperties(currentTheme);
+
+    // Initialize centralized theme management
+    if (!this.themeManager) {
+      this.themeManager = initThemeManager(this, THEME_PRESETS.CHARACTER_SHEET);
+    } else {
+      // Re-apply themes on re-render
+      this.themeManager.applyThemes();
+    }
+
+    // Initialize drag-scrolling for status bar
+    this.#initStatusBarScrolling();
+
+    // Initialize gear tab functionality (preserve state across renders)
+    this.#initGearTabs();
+
+    // Initialize tab container styling (dynamic border radius based on active tab)
+    initTabContainerStyling(this.element);
 
     // Debug the transformation display
     if (CommonFoundryTasks.isTestingMode) this._debugTransformation();
@@ -517,6 +655,282 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
     // You may want to add other special handling here
     // Foundry comes with a large number of utility classes, e.g. SearchFilter
     // That you may want to implement yourself.
+  }
+
+  /**
+   * Set theme properties immediately on the sheet element to prevent flashing
+   * This is a synchronous operation that happens before theme manager initialization
+   * @param {string} theme - The current theme name
+   * @private
+   */
+  _setImmediateThemeProperties(theme) {
+    // Theme color mappings (same as in theme manager)
+    const themeColors = {
+      blue: {
+        primary: "#4a90e2",
+        secondary: "#357abd",
+        bright: "#6bb6ff",
+        glow: "rgba(74, 144, 226, 0.3)",
+      },
+      black: {
+        primary: "#2c2c2c",
+        secondary: "#1a1a1a",
+        bright: "#4a4a4a",
+        glow: "rgba(44, 44, 44, 0.3)",
+      },
+      green: {
+        primary: "#4a9e4a",
+        secondary: "#357a35",
+        bright: "#6bb66b",
+        glow: "rgba(74, 158, 74, 0.3)",
+      },
+      light: {
+        primary: "#cbd5e1", // Light silver-gray (matches rgba(203, 213, 225, 0.75) at full opacity)
+        secondary: "#e2e8f0", // Very light silver (matches rgba(226, 232, 240, 0.8) at full opacity)
+        bright: "#ffffff", // Pure white
+        glow: "rgba(59, 130, 246, 0.25)", // Subtle cool blue glow
+      },
+      gold: {
+        primary: "#d4af37",
+        secondary: "#b8941f",
+        bright: "#f4d03f",
+        glow: "rgba(212, 175, 55, 0.3)",
+      },
+      purple: {
+        primary: "#8e44ad",
+        secondary: "#7d3c98",
+        bright: "#a569bd",
+        glow: "rgba(142, 68, 173, 0.3)",
+      },
+    };
+
+    const colors = themeColors[theme] || themeColors.blue;
+
+    // Find the target element and set properties immediately
+    let targetElement = null;
+    if (this.element.querySelector(".eventide-sheet")) {
+      targetElement = this.element.querySelector(".eventide-sheet");
+    } else if (
+      this.element.classList &&
+      this.element.classList.contains("eventide-sheet")
+    ) {
+      targetElement = this.element;
+    } else {
+      targetElement = this.element;
+    }
+
+    if (targetElement && targetElement.style) {
+      targetElement.style.setProperty("--theme-primary", colors.primary);
+      targetElement.style.setProperty("--theme-secondary", colors.secondary);
+      targetElement.style.setProperty("--theme-bright", colors.bright);
+      targetElement.style.setProperty("--theme-glow", colors.glow);
+    }
+  }
+
+  /**
+   * Initialize drag-scrolling functionality for the status bar
+   * @private
+   */
+  #initStatusBarScrolling() {
+    const statusBar = this.element.querySelector(
+      ".eventide-header__status-bar",
+    );
+    if (!statusBar) return;
+
+    let isDown = false;
+    let startX;
+    let scrollLeft;
+
+    // Function to update arrow visibility and positioning
+    const updateArrows = () => {
+      const scrollLeft = statusBar.scrollLeft;
+      const maxScrollLeft = statusBar.scrollWidth - statusBar.clientWidth;
+
+      // Show left arrow if we can scroll left (scrollLeft > 0)
+      const canScrollLeft = scrollLeft > 0;
+      // Show right arrow if we can scroll right (not at the end) AND there's actually content to scroll
+      const canScrollRight = scrollLeft < maxScrollLeft && maxScrollLeft > 0;
+
+      statusBar.classList.toggle("scrollable-left", canScrollLeft);
+      statusBar.classList.toggle("scrollable-right", canScrollRight);
+
+      // Calculate arrow positions to keep them at the visible edges
+      // Left arrow: always at 0.5rem from the left edge of the visible area
+      const leftArrowPosition = `${scrollLeft + 8}px`; // 8px = 0.5rem
+
+      // Right arrow: always at 0.5rem from the right edge of the visible area
+      // Calculate position from left edge of container to right edge of visible area
+      const containerWidth = statusBar.clientWidth;
+      const rightArrowPosition = `${scrollLeft + containerWidth - 16}px`; // 16px = 8px more to the left
+
+      // Set CSS custom properties for dynamic positioning
+      statusBar.style.setProperty("--arrow-left-position", leftArrowPosition);
+      statusBar.style.setProperty("--arrow-right-position", rightArrowPosition);
+    };
+
+    // Arrow click handlers
+    const handleLeftArrowClick = (e) => {
+      // Check if click is on the left arrow area
+      const rect = statusBar.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+
+      if (clickX <= 32 && statusBar.classList.contains("scrollable-left")) {
+        // 32px = arrow area
+        e.preventDefault();
+        e.stopPropagation();
+
+        // Scroll left by container width
+        const scrollAmount = statusBar.clientWidth;
+        statusBar.scrollBy({
+          left: -scrollAmount,
+          behavior: "smooth",
+        });
+
+        // Update arrows after scroll animation
+        setTimeout(updateArrows, 300);
+      }
+    };
+
+    const handleRightArrowClick = (e) => {
+      // Check if click is on the right arrow area
+      const rect = statusBar.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const rightArrowStart = rect.width - 32; // 32px = arrow area
+
+      if (
+        clickX >= rightArrowStart &&
+        statusBar.classList.contains("scrollable-right")
+      ) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        // Scroll right by container width
+        const scrollAmount = statusBar.clientWidth;
+        statusBar.scrollBy({
+          left: scrollAmount,
+          behavior: "smooth",
+        });
+
+        // Update arrows after scroll animation
+        setTimeout(updateArrows, 300);
+      }
+    };
+
+    // Combined click handler
+    const handleArrowClick = (e) => {
+      handleLeftArrowClick(e);
+      handleRightArrowClick(e);
+    };
+
+    // Mouse events
+    const handleMouseDown = (e) => {
+      // Don't start drag if clicking on arrow areas
+      const rect = statusBar.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const rightArrowStart = rect.width - 32;
+
+      if (
+        (clickX <= 32 && statusBar.classList.contains("scrollable-left")) ||
+        (clickX >= rightArrowStart &&
+          statusBar.classList.contains("scrollable-right"))
+      ) {
+        return; // Let arrow click handler deal with it
+      }
+
+      // Don't interfere with drag operations on transformation cards
+      if (e.target.closest(".eventide-transformation-card")) {
+        Logger.debug(
+          "Skipping status bar drag for transformation card",
+          {
+            target: e.target,
+            closest: e.target.closest(".eventide-transformation-card"),
+          },
+          "ACTOR_SHEET",
+        );
+        return; // Let the drag and drop system handle it
+      }
+
+      isDown = true;
+      statusBar.style.cursor = "grabbing";
+      startX = e.pageX - statusBar.offsetLeft;
+      scrollLeft = statusBar.scrollLeft;
+      e.preventDefault();
+    };
+
+    const handleMouseLeave = () => {
+      isDown = false;
+      statusBar.style.cursor = "grab";
+    };
+
+    const handleMouseUp = () => {
+      isDown = false;
+      statusBar.style.cursor = "grab";
+    };
+
+    const handleMouseMove = (e) => {
+      if (!isDown) return;
+      e.preventDefault();
+      const x = e.pageX - statusBar.offsetLeft;
+      const walk = (x - startX) * 2; // Scroll speed multiplier
+      statusBar.scrollLeft = scrollLeft - walk;
+      updateArrows();
+    };
+
+    // Touch events for mobile support
+    const handleTouchStart = (e) => {
+      const touch = e.touches[0];
+      startX = touch.pageX - statusBar.offsetLeft;
+      scrollLeft = statusBar.scrollLeft;
+    };
+
+    const handleTouchMove = (e) => {
+      if (!startX) return;
+      e.preventDefault();
+      const touch = e.touches[0];
+      const x = touch.pageX - statusBar.offsetLeft;
+      const walk = (x - startX) * 2;
+      statusBar.scrollLeft = scrollLeft - walk;
+      updateArrows();
+    };
+
+    const handleTouchEnd = () => {
+      startX = null;
+    };
+
+    const handleScroll = () => {
+      updateArrows();
+    };
+
+    // Add event listeners
+    statusBar.addEventListener("click", handleArrowClick);
+    statusBar.addEventListener("mousedown", handleMouseDown);
+    statusBar.addEventListener("mouseleave", handleMouseLeave);
+    statusBar.addEventListener("mouseup", handleMouseUp);
+    statusBar.addEventListener("mousemove", handleMouseMove);
+    statusBar.addEventListener("touchstart", handleTouchStart);
+    statusBar.addEventListener("touchmove", handleTouchMove);
+    statusBar.addEventListener("touchend", handleTouchEnd);
+    statusBar.addEventListener("scroll", handleScroll);
+
+    // Store references for cleanup
+    this.#statusBarEventHandlers = {
+      statusBar,
+      handleArrowClick,
+      handleMouseDown,
+      handleMouseLeave,
+      handleMouseUp,
+      handleMouseMove,
+      handleTouchStart,
+      handleTouchMove,
+      handleTouchEnd,
+      handleScroll,
+    };
+
+    // Initial arrow state
+    updateArrows();
+
+    // Update arrows when content changes (with a small delay to ensure DOM is updated)
+    setTimeout(updateArrows, 100);
   }
 
   /**
@@ -549,6 +963,211 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
     }
   }
 
+  /**
+   * Actions performed before closing the application
+   * @param {object} options - Close options
+   * @returns {Promise<void>}
+   * @protected
+   * @override
+   */
+  async _preClose(options) {
+    // Clean up status bar event listeners
+    this.#cleanupStatusBarScrolling();
+
+    // Clean up centralized theme management
+    if (this.themeManager) {
+      cleanupThemeManager(this);
+      this.themeManager = null;
+    }
+
+    // Clean up gear tab state
+    this.#cleanupGearTabState();
+
+    // Clean up tab container styling
+    cleanupTabContainerStyling(this.element);
+
+    // Call parent cleanup
+    return super._preClose(options);
+  }
+
+  /**
+   * Clean up status bar scrolling event listeners
+   * @private
+   */
+  #cleanupStatusBarScrolling() {
+    if (!this.#statusBarEventHandlers) return;
+
+    const {
+      statusBar,
+      handleArrowClick,
+      handleMouseDown,
+      handleMouseLeave,
+      handleMouseUp,
+      handleMouseMove,
+      handleTouchStart,
+      handleTouchMove,
+      handleTouchEnd,
+      handleScroll,
+    } = this.#statusBarEventHandlers;
+
+    // Remove all event listeners
+    statusBar.removeEventListener("click", handleArrowClick);
+    statusBar.removeEventListener("mousedown", handleMouseDown);
+    statusBar.removeEventListener("mouseleave", handleMouseLeave);
+    statusBar.removeEventListener("mouseup", handleMouseUp);
+    statusBar.removeEventListener("mousemove", handleMouseMove);
+    statusBar.removeEventListener("touchstart", handleTouchStart);
+    statusBar.removeEventListener("touchmove", handleTouchMove);
+    statusBar.removeEventListener("touchend", handleTouchEnd);
+    statusBar.removeEventListener("scroll", handleScroll);
+
+    // Clear the reference
+    this.#statusBarEventHandlers = null;
+  }
+
+  /**
+   * Clean up gear tab state
+   * @private
+   */
+  #cleanupGearTabState() {
+    // Clear gear tab state
+    delete this._currentGearTab;
+
+    Logger.debug("Gear tab state cleaned up", {
+      appId: this.id,
+      appName: this.constructor.name,
+    });
+  }
+
+  /**
+   * Initialize gear tab functionality with state preservation
+   * @private
+   */
+  #initGearTabs() {
+    const gearTabButtons = this.element.querySelectorAll(".gear-tab-button");
+    const gearTabContents = this.element.querySelectorAll(".gear-tab-content");
+
+    if (gearTabButtons.length === 0 || gearTabContents.length === 0) {
+      return; // No gear tabs found, probably not on gear tab
+    }
+
+    // Store current active tab before re-initialization (if any)
+    let currentActiveTab = this._currentGearTab;
+    if (!currentActiveTab) {
+      // Check if there's already an active tab in the DOM
+      const activeButton = this.element.querySelector(
+        ".gear-tab-button.active",
+      );
+      if (activeButton) {
+        currentActiveTab = activeButton.getAttribute("data-gear-tab");
+      } else {
+        // Default to 'equipped' if no active tab found
+        currentActiveTab = "equipped";
+      }
+    }
+
+    // Remove existing event listeners to prevent duplicates
+    gearTabButtons.forEach((button) => {
+      // Clone the button to remove all event listeners
+      const newButton = button.cloneNode(true);
+      button.parentNode.replaceChild(newButton, button);
+    });
+
+    // Re-query buttons after cloning
+    const newGearTabButtons = this.element.querySelectorAll(".gear-tab-button");
+
+    // Handle tab button clicks
+    newGearTabButtons.forEach((button) => {
+      button.addEventListener("click", (event) => {
+        event.preventDefault();
+
+        const targetTab = button.getAttribute("data-gear-tab");
+
+        // Store the selected tab
+        this._currentGearTab = targetTab;
+
+        // Remove active class from all buttons and contents
+        newGearTabButtons.forEach((btn) => btn.classList.remove("active"));
+        gearTabContents.forEach((content) =>
+          content.classList.remove("active"),
+        );
+
+        // Add active class to clicked button and corresponding content
+        button.classList.add("active");
+        const targetContent = this.element.querySelector(
+          `[data-gear-content="${targetTab}"]`,
+        );
+        if (targetContent) {
+          targetContent.classList.add("active");
+        }
+
+        Logger.debug("Gear tab switched", {
+          sheetId: this.id,
+          actorName: this.actor?.name,
+          targetTab,
+        });
+      });
+    });
+
+    // Restore the previously active tab
+    this.#restoreGearTabState(
+      currentActiveTab,
+      newGearTabButtons,
+      gearTabContents,
+    );
+
+    Logger.debug("Gear tabs initialized with state preservation", {
+      sheetId: this.id,
+      actorName: this.actor?.name,
+      buttonCount: newGearTabButtons.length,
+      contentCount: gearTabContents.length,
+      activeTab: currentActiveTab,
+    });
+  }
+
+  /**
+   * Restore the gear tab state to the specified tab
+   * @private
+   * @param {string} targetTab - The tab to activate
+   * @param {NodeList} buttons - The gear tab buttons
+   * @param {NodeList} contents - The gear tab contents
+   */
+  #restoreGearTabState(targetTab, buttons, contents) {
+    // Remove active class from all buttons and contents
+    buttons.forEach((btn) => btn.classList.remove("active"));
+    contents.forEach((content) => content.classList.remove("active"));
+
+    // Find and activate the target tab
+    const targetButton = this.element.querySelector(
+      `[data-gear-tab="${targetTab}"]`,
+    );
+    const targetContent = this.element.querySelector(
+      `[data-gear-content="${targetTab}"]`,
+    );
+
+    if (targetButton && targetContent) {
+      targetButton.classList.add("active");
+      targetContent.classList.add("active");
+      this._currentGearTab = targetTab;
+    } else {
+      // Fallback to first available tab if target not found
+      const firstButton = buttons[0];
+      const firstContent = contents[0];
+      if (firstButton && firstContent) {
+        firstButton.classList.add("active");
+        firstContent.classList.add("active");
+        this._currentGearTab = firstButton.getAttribute("data-gear-tab");
+      }
+    }
+
+    Logger.debug("Gear tab state restored", {
+      sheetId: this.id,
+      actorName: this.actor?.name,
+      targetTab,
+      actualTab: this._currentGearTab,
+    });
+  }
+
   /**************
    *
    *   ACTIONS
@@ -565,22 +1184,145 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
    * @protected
    */
   static async _onEditImage(_event, target) {
-    const attr = target.dataset.edit;
-    const current = foundry.utils.getProperty(this.document, attr);
-    const { img } =
-      this.document.constructor.getDefaultArtwork?.(this.document.toObject()) ??
-      {};
-    const fp = new FilePicker({
-      current,
-      type: "image",
-      redirectToRoot: img ? [img] : [],
-      callback: (path) => {
-        this.document.update({ [attr]: path });
-      },
-      top: this.position.top + 40,
-      left: this.position.left + 10,
+    Logger.methodEntry("EventideRpSystemActorSheet", "_onEditImage", {
+      actorName: this.actor?.name,
+      autoTokenUpdate: this.actor.getFlag(
+        "eventide-rp-system",
+        "autoTokenUpdate",
+      ),
+      hasActiveTransformation: !!this.actor.getFlag(
+        "eventide-rp-system",
+        "activeTransformation",
+      ),
     });
-    return fp.browse();
+
+    try {
+      // Check if actor has an active transformation - if so, prevent image changes
+      const activeTransformation = this.actor.getFlag(
+        "eventide-rp-system",
+        "activeTransformation",
+      );
+      if (activeTransformation) {
+        ui.notifications.warn(
+          game.i18n.localize(
+            "EVENTIDE_RP_SYSTEM.Warnings.CannotChangeImageWhileTransformed",
+          ) ||
+            "Cannot change actor image while transformed. Remove the transformation first.",
+        );
+
+        Logger.warn(
+          "Blocked image change attempt while actor is transformed",
+          {
+            actorName: this.actor.name,
+            transformationId: activeTransformation,
+          },
+          "ACTOR_SHEET",
+        );
+
+        Logger.methodExit("EventideRpSystemActorSheet", "_onEditImage", false);
+        return false;
+      }
+
+      const attr = target.dataset.edit;
+      const current = foundry.utils.getProperty(this.document, attr);
+      const { img } =
+        this.document.constructor.getDefaultArtwork?.(
+          this.document.toObject(),
+        ) ?? {};
+
+      const fp = new FilePicker({
+        current,
+        type: "image",
+        redirectToRoot: img ? [img] : [],
+        callback: async (path) => {
+          const updateData = { [attr]: path };
+
+          // If auto token update is enabled, also update the token image
+          const autoTokenUpdate = this.actor.getFlag(
+            "eventide-rp-system",
+            "autoTokenUpdate",
+          );
+          if (autoTokenUpdate && attr === "img") {
+            updateData["prototypeToken.texture.src"] = path;
+
+            Logger.info(
+              "Auto token update: updating token image along with actor image",
+              {
+                actorName: this.actor.name,
+                imagePath: path,
+              },
+              "ACTOR_SHEET",
+            );
+
+            // Also update any existing tokens on the scene
+            const tokens = this.actor.getActiveTokens();
+            if (tokens.length > 0) {
+              // Update tokens on their respective scenes
+              const sceneUpdates = new Map();
+              for (const token of tokens) {
+                const sceneId = token.scene.id;
+                if (!sceneUpdates.has(sceneId)) {
+                  sceneUpdates.set(sceneId, []);
+                }
+                sceneUpdates.get(sceneId).push({
+                  _id: token.id,
+                  "texture.src": path,
+                });
+              }
+
+              // Execute updates for each scene
+              for (const [sceneId, updates] of sceneUpdates) {
+                const scene = game.scenes.get(sceneId);
+                if (scene) {
+                  await scene.updateEmbeddedDocuments("Token", updates);
+                  Logger.info(
+                    `Updated ${updates.length} token(s) on scene: ${scene.name}`,
+                    {
+                      actorName: this.actor.name,
+                      sceneId,
+                      tokenCount: updates.length,
+                    },
+                    "ACTOR_SHEET",
+                  );
+                }
+              }
+            }
+          }
+
+          await this.document.update(updateData);
+
+          Logger.info(
+            `Image updated successfully`,
+            {
+              actorName: this.actor.name,
+              attribute: attr,
+              path,
+              tokenUpdated: autoTokenUpdate && attr === "img",
+            },
+            "ACTOR_SHEET",
+          );
+        },
+        top: this.position.top + 40,
+        left: this.position.left + 10,
+      });
+
+      const result = fp.browse();
+      Logger.methodExit("EventideRpSystemActorSheet", "_onEditImage", result);
+      return result;
+    } catch (error) {
+      await ErrorHandler.handleAsync(Promise.reject(error), {
+        context: `Edit image for ${this.actor?.name}`,
+        errorType: ErrorHandler.ERROR_TYPES.FOUNDRY_API,
+        userMessage: game.i18n.format(
+          "EVENTIDE_RP_SYSTEM.Errors.EditImageError",
+          {
+            actorName: this.actor?.name || "Unknown",
+          },
+        ),
+      });
+
+      Logger.methodExit("EventideRpSystemActorSheet", "_onEditImage", null);
+    }
   }
 
   /**
@@ -763,6 +1505,136 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
   }
 
   /**
+   * Toggle the auto token update flag
+   * @this EventideRpSystemActorSheet
+   * @param {PointerEvent} event   The originating click event
+   * @param {HTMLElement} target   The capturing HTML element which defined a [data-action]
+   * @protected
+   */
+  static async _toggleAutoTokenUpdate(_event, _target) {
+    Logger.methodEntry("EventideRpSystemActorSheet", "_toggleAutoTokenUpdate", {
+      actorName: this.actor?.name,
+      currentValue: this.actor.getFlag("eventide-rp-system", "autoTokenUpdate"),
+    });
+
+    try {
+      const currentValue =
+        this.actor.getFlag("eventide-rp-system", "autoTokenUpdate") || false;
+      const newValue = !currentValue;
+
+      await this.actor.setFlag(
+        "eventide-rp-system",
+        "autoTokenUpdate",
+        newValue,
+      );
+
+      Logger.info(
+        `Auto token update toggled to: ${newValue}`,
+        {
+          actorName: this.actor.name,
+          previousValue: currentValue,
+          newValue,
+        },
+        "ACTOR_SHEET",
+      );
+
+      Logger.methodExit(
+        "EventideRpSystemActorSheet",
+        "_toggleAutoTokenUpdate",
+        newValue,
+      );
+    } catch (error) {
+      await ErrorHandler.handleAsync(Promise.reject(error), {
+        context: `Toggle auto token update for ${this.actor?.name}`,
+        errorType: ErrorHandler.ERROR_TYPES.FOUNDRY_API,
+        userMessage: game.i18n.format(
+          "EVENTIDE_RP_SYSTEM.Errors.ToggleAutoTokenUpdateError",
+          {
+            actorName: this.actor?.name || "Unknown",
+          },
+        ),
+      });
+
+      Logger.methodExit(
+        "EventideRpSystemActorSheet",
+        "_toggleAutoTokenUpdate",
+        null,
+      );
+    }
+  }
+
+  /**
+   * Handle configuring the actor's token
+   * @this EventideRpSystemActorSheet
+   * @param {PointerEvent} event   The originating click event
+   * @param {HTMLElement} target   The capturing HTML element which defined a [data-action]
+   * @protected
+   */
+  static async _onConfigureToken(_event, _target) {
+    Logger.methodEntry("EventideRpSystemActorSheet", "_onConfigureToken", {
+      actorName: this.actor?.name,
+      hasActiveTokens: this.actor.getActiveTokens().length > 0,
+    });
+
+    try {
+      // First, try to get an active token on the current scene
+      const activeTokens = this.actor.getActiveTokens();
+      let token = null;
+
+      if (activeTokens.length > 0) {
+        // Use the first active token if available
+        token = activeTokens[0];
+        Logger.info(
+          `Using active token for configuration`,
+          {
+            actorName: this.actor.name,
+            tokenId: token.id,
+            sceneName: token.scene.name,
+          },
+          "ACTOR_SHEET",
+        );
+      } else {
+        // No active token found, use the prototype token seamlessly
+        token = this.actor.prototypeToken;
+        Logger.info(
+          `No active token found, configuring prototype token`,
+          {
+            actorName: this.actor.name,
+            prototypeTokenName: token.name,
+          },
+          "ACTOR_SHEET",
+        );
+      }
+
+      // Open the token configuration sheet
+      const result = token.sheet.render(true);
+      Logger.methodExit(
+        "EventideRpSystemActorSheet",
+        "_onConfigureToken",
+        result,
+      );
+      return result;
+    } catch (error) {
+      await ErrorHandler.handleAsync(Promise.reject(error), {
+        context: `Configure token for ${this.actor?.name}`,
+        errorType: ErrorHandler.ERROR_TYPES.FOUNDRY_API,
+        userMessage: game.i18n.format(
+          "EVENTIDE_RP_SYSTEM.Errors.ConfigureTokenError",
+          {
+            actorName: this.actor?.name || "Unknown",
+          },
+        ),
+      });
+
+      Logger.methodExit(
+        "EventideRpSystemActorSheet",
+        "_onConfigureToken",
+        null,
+      );
+    }
+  }
+
+  /**
    * Handle clickable rolls.
    * @this EventideRpSystemActorSheet
    * @param {PointerEvent} event   The originating click event
@@ -875,16 +1747,113 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
    * @returns {Item | ActiveEffect} The embedded Item or ActiveEffect
    */
   _getEmbeddedDocument(target) {
-    const docRow = target.closest("li[data-document-class]");
-    if (docRow.dataset.documentClass === "Item") {
-      return this.actor.items.get(docRow.dataset.itemId);
-    } else if (docRow.dataset.documentClass === "ActiveEffect") {
-      const parent =
-        docRow.dataset.parentId === this.actor.id
-          ? this.actor
-          : this.actor.items.get(docRow?.dataset.parentId);
-      return parent.effects.get(docRow?.dataset.effectId);
-    } else return console.warn("Could not find document class");
+    // Support li, tr elements, and transformation cards for different template structures
+    const docRow =
+      target.closest(
+        "li[data-document-class], tr[data-document-class], .eventide-transformation-card[data-item-id]",
+      ) || target.closest("[data-item-id]");
+
+    if (docRow) {
+      const itemId = docRow.dataset.itemId;
+
+      // Handle transformation cards specifically
+      if (docRow.classList.contains("eventide-transformation-card")) {
+        const transformationItem = this.actor.items.get(itemId);
+        if (
+          transformationItem &&
+          transformationItem.type === "transformation"
+        ) {
+          Logger.debug(
+            "Found transformation item for drag",
+            {
+              itemId,
+              itemName: transformationItem.name,
+              itemType: transformationItem.type,
+            },
+            "ACTOR_SHEET",
+          );
+          return transformationItem;
+        }
+      }
+
+      // Handle direct item ID reference
+      if (itemId && !docRow.dataset.documentClass) {
+        // First try to find in actor's items
+        let item = this.actor.items.get(itemId);
+        if (item) return item;
+
+        // If not found, check transformation combat powers
+        item = this._findTransformationCombatPower(itemId);
+        if (item) return item;
+      }
+
+      // Handle document class structure
+      if (docRow.dataset.documentClass === "Item") {
+        // First try to find in actor's items
+        let item = this.actor.items.get(itemId);
+        if (item) return item;
+
+        // If not found, check transformation combat powers
+        item = this._findTransformationCombatPower(itemId);
+        if (item) return item;
+      } else if (docRow.dataset.documentClass === "ActiveEffect") {
+        const parent =
+          docRow.dataset.parentId === this.actor.id
+            ? this.actor
+            : this.actor.items.get(docRow?.dataset.parentId);
+        return parent.effects.get(docRow?.dataset.effectId);
+      }
+    }
+
+    // Fallback: check if target itself has item-id
+    if (target.dataset.itemId) {
+      // First try to find in actor's items
+      let item = this.actor.items.get(target.dataset.itemId);
+      if (item) return item;
+
+      // If not found, check transformation combat powers
+      item = this._findTransformationCombatPower(target.dataset.itemId);
+      if (item) return item;
+    }
+
+    Logger.warn(
+      "Could not find document class or item ID",
+      {
+        target,
+        docRow,
+        itemId: docRow?.dataset?.itemId,
+        documentClass: docRow?.dataset?.documentClass,
+        isTransformationCard: docRow?.classList?.contains(
+          "eventide-transformation-card",
+        ),
+      },
+      "ACTOR_SHEET",
+    );
+    return null;
+  }
+
+  /**
+   * Find a transformation combat power by ID
+   * @param {string} itemId - The item ID to search for
+   * @returns {Item|null} The transformation combat power item or null if not found
+   * @private
+   */
+  _findTransformationCombatPower(itemId) {
+    // Get all transformation items
+    const transformations = this.actor.items.filter(
+      (i) => i.type === "transformation",
+    );
+
+    // Search through all embedded combat powers
+    for (const transformation of transformations) {
+      const embeddedPowers = transformation.system.getEmbeddedCombatPowers();
+      const power = embeddedPowers.find((p) => p.id === itemId);
+      if (power) {
+        return power;
+      }
+    }
+
+    return null;
   }
 
   /***************
@@ -899,9 +1868,19 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
    * @returns {boolean}             Can the current user drag this selector?
    * @protected
    */
-  _canDragStart(_selector) {
-    // game.user fetches the current user
-    return this.isEditable;
+  _canDragStart(selector) {
+    const canDrag = this.isEditable;
+    Logger.debug(
+      "Drag permission check",
+      {
+        selector,
+        canDrag,
+        isEditable: this.isEditable,
+        actorName: this.actor?.name,
+      },
+      "ACTOR_SHEET",
+    );
+    return canDrag;
   }
 
   /**
@@ -909,41 +1888,199 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
    * @param {string} selector       The candidate HTML selector for the drop target
    * @returns {boolean}             Can the current user drop on this selector?
    * @protected
+   * @override
    */
-  _canDragDrop(_selector) {
-    // game.user fetches the current user
-    return this.isEditable;
+  _canDragDrop(selector) {
+    const canDrop = this.isEditable;
+    Logger.debug(
+      "Drop permission check",
+      {
+        selector,
+        canDrop,
+        isEditable: this.isEditable,
+        actorName: this.actor?.name,
+      },
+      "ACTOR_SHEET",
+    );
+    return canDrop;
   }
 
   /**
    * Begins a drag operation from a popped out sheet
    * @param {DragEvent} event   The originating DragEvent
    * @protected
+   * @override
    */
   _onDragStart(event) {
-    const docRow = event.currentTarget.closest("li");
-    if ("link" in event.target.dataset) return;
+    Logger.debug(
+      "Drag start event triggered",
+      {
+        currentTarget: event.currentTarget,
+        target: event.target,
+        targetDataset: event.target.dataset,
+        currentTargetDataset: event.currentTarget.dataset,
+        currentTargetClasses: event.currentTarget.className,
+      },
+      "ACTOR_SHEET",
+    );
 
-    // Chained operation
-    const dragData = this._getEmbeddedDocument(docRow)?.toDragData();
+    // Support li, tr elements, and transformation cards
+    const docRow = event.currentTarget.closest(
+      "li, tr, .eventide-transformation-card",
+    );
+    if (!docRow) {
+      Logger.warn(
+        "No draggable element found",
+        {
+          target: event.currentTarget,
+          targetClasses: event.currentTarget.className,
+          targetDataset: event.currentTarget.dataset,
+        },
+        "ACTOR_SHEET",
+      );
+      return;
+    }
 
-    if (!dragData) return;
+    Logger.debug(
+      "Found draggable element",
+      {
+        docRow,
+        docRowClasses: docRow.className,
+        docRowDataset: docRow.dataset,
+        isTransformationCard: docRow.classList.contains(
+          "eventide-transformation-card",
+        ),
+      },
+      "ACTOR_SHEET",
+    );
+
+    // Don't drag if clicking on a link or button (except the transformation card itself)
+    if ("link" in event.target.dataset) {
+      Logger.debug(
+        "Preventing drag on link element",
+        { target: event.target },
+        "ACTOR_SHEET",
+      );
+      return;
+    }
+
+    // Allow dragging transformation cards even when clicking buttons, but prevent if clicking the revert button specifically
+    if (event.target.closest(".eventide-transformation-card__revert")) {
+      Logger.debug(
+        "Preventing drag on revert button",
+        { target: event.target },
+        "ACTOR_SHEET",
+      );
+      return;
+    }
+
+    // Get the embedded document for this element
+    const document = this._getEmbeddedDocument(docRow);
+    if (!document) {
+      Logger.warn(
+        "No document found for drag operation",
+        {
+          docRow,
+          itemId: docRow.dataset?.itemId,
+          documentClass: docRow.dataset?.documentClass,
+          elementClass: docRow.className,
+          actorItems: this.actor.items.size,
+          activeTransformation: this.actor.getFlag(
+            "eventide-rp-system",
+            "activeTransformation",
+          ),
+        },
+        "ACTOR_SHEET",
+      );
+      return;
+    }
+
+    Logger.debug(
+      "Found document for drag",
+      {
+        documentId: document.id,
+        documentName: document.name,
+        documentType: document.type || document.documentName,
+      },
+      "ACTOR_SHEET",
+    );
+
+    // Get drag data from the document
+    const dragData = document.toDragData();
+    if (!dragData) {
+      Logger.warn(
+        "No drag data available for document",
+        {
+          documentId: document.id,
+          documentType: document.type || document.documentName,
+        },
+        "ACTOR_SHEET",
+      );
+      return;
+    }
+
+    // Add visual feedback
+    if (docRow.classList.contains("eventide-transformation-card")) {
+      docRow.classList.add("dragging");
+    }
 
     // Set data transfer
     event.dataTransfer.setData("text/plain", JSON.stringify(dragData));
+
+    Logger.info(
+      "Drag operation started successfully",
+      {
+        documentId: document.id,
+        documentName: document.name,
+        documentType: document.type || document.documentName,
+        dragDataType: dragData.type,
+        elementType: docRow.classList.contains("eventide-transformation-card")
+          ? "transformation-card"
+          : "table-row",
+      },
+      "ACTOR_SHEET",
+    );
   }
 
   /**
    * Callback actions which occur when a dragged element is over a drop target.
    * @param {DragEvent} event       The originating DragEvent
    * @protected
+   * @override
    */
   _onDragOver(_event) {}
+
+  /**
+   * Callback actions which occur when a drag operation ends.
+   * @param {DragEvent} event       The originating DragEvent
+   * @protected
+   */
+  _onDragEnd(event) {
+    // Remove visual feedback
+    const docRow = event.currentTarget.closest(
+      "li, tr, .eventide-transformation-card",
+    );
+    if (docRow && docRow.classList.contains("eventide-transformation-card")) {
+      docRow.classList.remove("dragging");
+    }
+
+    Logger.debug(
+      "Drag operation ended",
+      {
+        currentTarget: event.currentTarget,
+        elementType: docRow?.classList.contains("eventide-transformation-card")
+          ? "transformation-card"
+          : "table-row",
+      },
+      "ACTOR_SHEET",
+    );
+  }
 
   /**
    * Callback actions which occur when a dragged element is dropped on a target.
    * @param {DragEvent} event       The originating DragEvent
    * @protected
+   * @override
    */
   async _onDrop(event) {
     const data = TextEditor.implementation.getDragEventData(event);
@@ -1170,10 +2307,6 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
     return this.#dragDrop;
   }
 
-  // This is marked as private because there's no real need
-  // for subclasses or external hooks to mess with it directly
-  #dragDrop;
-
   /**
    * Create drag-and-drop workflow handlers for this Application
    * @returns {DragDrop.implementation[]}     An array of DragDrop handlers
@@ -1188,6 +2321,7 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
       d.callbacks = {
         dragstart: this._onDragStart.bind(this),
         dragover: this._onDragOver.bind(this),
+        dragend: this._onDragEnd.bind(this),
         drop: this._onDrop.bind(this),
       };
       return new DragDrop.implementation(d);
@@ -1199,6 +2333,50 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
    * Actor Override Handling
    *
    ********************/
+
+  _onChangeForm(formConfig, event) {
+    if (event.target.name === "system.power.value") {
+      this.actor.update({
+        "system.power.value": Math.min(
+          event.target.value,
+          this.actor.system.power.max,
+        ),
+      });
+
+      event.target.value = this.actor.system.power.value;
+    }
+
+    if (event.target.name === "system.power.max") {
+      // ceck if value is less than system.power.value
+      if (event.target.value < this.actor.system.power.value) {
+        // update system.power.value to match new max and then update the power value in the form
+        this.actor.update({
+          "system.power.value": event.target.value,
+        });
+      }
+    }
+
+    if (event.target.name === "system.resolve.value") {
+      this.actor.update({
+        "system.resolve.value": Math.min(
+          event.target.value,
+          this.actor.system.resolve.max,
+        ),
+      });
+
+      event.target.value = this.actor.system.resolve.value;
+    }
+
+    if (event.target.name === "system.resolve.max") {
+      if (event.target.value < this.actor.system.resolve.value) {
+        this.actor.update({
+          "system.resolve.value": event.target.value,
+        });
+      }
+    }
+
+    super._onChangeForm(formConfig, event);
+  }
 
   /**
    * Submit a document update based on the processed form data.
@@ -1225,6 +2403,76 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
       if (input) {
         input.disabled = true;
       }
+    }
+  }
+
+  /**
+   * Handle setting the user's sheet theme preference (cycles through available themes)
+   * @param {PointerEvent} event   The originating click event
+   * @param {HTMLElement} target   The capturing HTML element which defined a [data-action]
+   * @protected
+   */
+  static async _setSheetTheme(_event, _target) {
+    const currentTheme = CommonFoundryTasks.retrieveSheetTheme();
+    Logger.methodEntry("EventideRpSystemActorSheet", "_setSheetTheme", {
+      actorName: this.actor?.name,
+      currentTheme,
+      userFlags: game.user.flags,
+    });
+
+    try {
+      // Define the theme cycle order
+      const themes = ["blue", "black", "green", "light", "gold", "purple"];
+
+      // Find current theme index and move to next
+      // Handle case where currentTheme might not be in the themes array
+      let currentIndex = themes.indexOf(currentTheme);
+      if (currentIndex === -1) {
+        // If current theme is not found (corrupted data), default to blue (index 0)
+        currentIndex = 0;
+      }
+      const nextIndex = (currentIndex + 1) % themes.length;
+      const nextTheme = themes[nextIndex];
+
+      Logger.debug("Theme cycling", {
+        currentTheme,
+        currentIndex,
+        nextIndex,
+        nextTheme,
+        availableThemes: themes,
+      });
+
+      // Update both the user flag and the setting
+      await CommonFoundryTasks.storeUserFlag("sheetTheme", nextTheme);
+      await game.settings.set("eventide-rp-system", "sheetTheme", nextTheme);
+
+      Logger.info("User theme flag and setting updated", {
+        userName: game.user.name,
+        newTheme: nextTheme,
+        flagPath: "eventide-rp-system.sheetTheme",
+        settingPath: "eventide-rp-system.sheetTheme",
+      });
+
+      // Trigger global theme change (this will handle re-rendering and notifications)
+      triggerGlobalThemeChange(nextTheme, game.user.id);
+
+      Logger.info("Sheet theme cycled successfully", {
+        userName: game.user.name,
+        previousTheme: currentTheme,
+        newTheme: nextTheme,
+      });
+    } catch (error) {
+      Logger.error("Failed to cycle sheet theme", {
+        userName: game.user?.name,
+        error: error.message,
+        stack: error.stack,
+      });
+
+      ui.notifications.error(
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.SetSheetThemeError", {
+          userName: game.user?.name || "Unknown",
+        }),
+      );
     }
   }
 }

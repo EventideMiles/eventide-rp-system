@@ -3,6 +3,7 @@
     "WindowTitles": {
       "ChangeTargetStatus": "Change Target Status",
       "CombatPowerPopup": "Combat Power Details",
+      "ConfigureToken": "Configure Token",
       "DamageTargets": "Damage Targets",
       "EffectCreator": "Effect Creator",
       "FeaturePopup": "Feature Information",
@@ -11,6 +12,7 @@
       "GearTransfer": "Transfer Gear",
       "RestoreTarget": "Restore Target",
       "SelectAbilityRoll": "Select Ability Roll",
+      "SheetTheme": "Cycle Sheet Theme",
       "StatusPopup": "Status Information",
       "TransformationCreator": "Transformation Creator"
     },

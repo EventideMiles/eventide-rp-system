@@ -1,76 +1,80 @@
 {{! Effects Tab -- Depreciated! }}
 <section class='tab effects {{tab.cssClass}}' data-group='primary' data-tab='effects'>
-  <ol class='items-panel__list'>
-  {{#each effects as |section sid|}}
-    <li class='items-panel__list-item items-panel__header' data-effect-type='{{section.type}}'>
-      <div class='items-panel__name'>{{localize section.label}}</div>
-      <div class='effect-source'>{{localize 'EVENTIDE_RP_SYSTEM.Effect.Source'}}</div>
-      <div class='effect-source'>{{localize 'EFFECT.TabDuration'}}</div>
-      <div class='items-panel__controls'>
-          <a
-            class='effect-control'
-            data-action='createDoc'
-            data-document-class='ActiveEffect'
-            data-origin="{{@root.item.uuid}}"
-            data-img="icons/svg/aura.svg"
-            {{#if (eq section.type "inactive")}}
-              data-disabled="true"
-            {{else if (eq section.type "temporary")}}
-              data-duration.rounds="1"
-            {{/if}}
-            title='{{localize "DOCUMENT.Create" type='Effect'}}'
-          >
-            <i class='fas fa-plus'></i>
-            {{localize 'DOCUMENT.New' type='Effect'}}
-          </a>
-        </div>
-      </li>
-      <ol class='items-panel__list'>
-        {{#each section.effects as |effect|}}
-          <li
-            class='items-panel__list-item effect flexrow'
-            data-effect-id='{{effect.id}}'
-            data-parent-id='{{effect.parent.id}}'
-            data-drag="true"
-          >
-            <div class='items-panel__name items-panel__name flexrow'>
-              <img class='items-panel__image' src='{{effect.img}}' height="24" width="24"/>
-              <div>{{effect.name}}</div>
-            </div>
-            <div class='effect-source'>{{effect.sourceName}}</div>
-            <div class='effect-duration'>{{effect.duration.label}}</div>
-            <div class='items-panel__controls items-panel__controls flexrow'>
-              {{#if @root.editable}}
+  <div class="eventide-sheet__scrollable-container">
+    <div class="erps-items-panel">
+      <ol class='erps-items-panel__list erps-items-panel__list--default'>
+      {{#each effects as |section sid|}}
+        <li class='erps-items-panel__item erps-items-panel__item--header' data-effect-type='{{section.type}}'>
+          <div class='erps-items-panel__cell erps-items-panel__cell--name'>{{localize section.label}}</div>
+          <div class='erps-items-panel__cell erps-items-panel__cell--center'>{{localize 'EVENTIDE_RP_SYSTEM.Effect.Source'}}</div>
+          <div class='erps-items-panel__cell erps-items-panel__cell--center'>{{localize 'EFFECT.TabDuration'}}</div>
+          <div class='erps-items-panel__cell erps-items-panel__cell--controls'>
               <a
-                class='effect-control'
-                data-action='toggleEffect'
-                title='{{localize "EVENTIDE_RP_SYSTEM.Effect.Toggle"}}'
-              >
-                <i class='fas {{#if effect.disabled}}fa-check{{else}}fa-times{{/if}}'></i>
-              </a>
-              {{/if}}
-              <a
-                class='effect-control'
-                data-action='viewDoc'
+                class='erps-items-panel__control erps-items-panel__control--edit'
+                data-action='createDoc'
                 data-document-class='ActiveEffect'
-                title='{{localize "DOCUMENT.Update" type='Effect'}}'
+                data-origin="{{@root.item.uuid}}"
+                data-img="icons/svg/aura.svg"
+                {{#if (eq section.type "inactive")}}
+                  data-disabled="true"
+                {{else if (eq section.type "temporary")}}
+                  data-duration.rounds="1"
+                {{/if}}
+                title='{{localize "DOCUMENT.Create" type='Effect'}}'
               >
-                <i class='fas fa-edit'></i>
+                <i class='fas fa-plus'></i>
+                {{localize 'DOCUMENT.New' type='Effect'}}
               </a>
-              {{#if @root.editable}}
-              <a
-                class='effect-control'
-                data-action='deleteDoc'
-                data-document-class='ActiveEffect'
-                title='{{localize "DOCUMENT.Delete" type='Effect'}}'
-              >
-                <i class='fas fa-trash'></i>
-              </a>
-              {{/if}}
             </div>
           </li>
+          <ol class='erps-items-panel__list erps-items-panel__list--default'>
+            {{#each section.effects as |effect|}}
+              <li
+                class='erps-items-panel__item'
+                data-effect-id='{{effect.id}}'
+                data-parent-id='{{effect.parent.id}}'
+                data-drag="true"
+              >
+                <div class='erps-items-panel__cell erps-items-panel__cell--name'>
+                  <img class='erps-items-panel__image' src='{{effect.img}}' height="24" width="24"/>
+                  <span class="erps-items-panel__name">{{effect.name}}</span>
+                </div>
+                <div class='erps-items-panel__cell erps-items-panel__cell--center'>{{effect.sourceName}}</div>
+                <div class='erps-items-panel__cell erps-items-panel__cell--center'>{{effect.duration.label}}</div>
+                <div class='erps-items-panel__cell erps-items-panel__cell--controls'>
+                  {{#if @root.editable}}
+                  <a
+                    class='erps-items-panel__control'
+                    data-action='toggleEffect'
+                    title='{{localize "EVENTIDE_RP_SYSTEM.Effect.Toggle"}}'
+                  >
+                    <i class='fas {{#if effect.disabled}}fa-check{{else}}fa-times{{/if}}'></i>
+                  </a>
+                  {{/if}}
+                  <a
+                    class='erps-items-panel__control erps-items-panel__control--view'
+                    data-action='viewDoc'
+                    data-document-class='ActiveEffect'
+                    title='{{localize "DOCUMENT.Update" type='Effect'}}'
+                  >
+                    <i class='fas fa-edit'></i>
+                  </a>
+                  {{#if @root.editable}}
+                  <a
+                    class='erps-items-panel__control erps-items-panel__control--delete'
+                    data-action='deleteDoc'
+                    data-document-class='ActiveEffect'
+                    title='{{localize "DOCUMENT.Delete" type='Effect'}}'
+                  >
+                    <i class='fas fa-trash'></i>
+                  </a>
+                  {{/if}}
+                </div>
+              </li>
+            {{/each}}
+          </ol>
         {{/each}}
       </ol>
-    {{/each}}
-  </ol>
+    </div>
+  </div>
 </section>

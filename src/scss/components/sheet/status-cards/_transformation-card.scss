@@ -1,0 +1,84 @@
+@use "config" as *;
+@use "../../../utils/themes" as themes;
+
+// ===================================
+// TRANSFORMATION CARD
+// ===================================
+// Status card for character transformations
+
+.eventide-transformation-card {
+  @include status-card-base;
+  @include status-card-variant(blue);
+
+  // Draggable states
+  cursor: grab;
+  user-select: none;
+
+  &__header {
+    @include status-card-header;
+  }
+
+  &__icon {
+    @include status-card-icon(blue);
+  }
+
+  &__info {
+    @include status-card-info;
+  }
+
+  &__label {
+    @include status-card-label;
+  }
+
+  &__name {
+    @include status-card-details(blue);
+  }
+
+  &__revert {
+    @include status-card-button(white);
+
+    &:hover {
+      background: themes.color(white, 20);
+      border-color: themes.color(white, 50);
+      box-shadow: 0 0 $text-shadow-blur themes.color(white, 30);
+    }
+  }
+
+  &__locked {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: $status-card-button-size;
+    height: $status-card-button-size;
+    border-radius: $button-border-radius;
+    background: themes.color(black, 30);
+    border: $button-border-width solid themes.color(white, 20);
+    color: themes.color(white, 60);
+    margin-left: $status-card-gap;
+    flex-shrink: 0;
+    cursor: not-allowed;
+
+    i {
+      font-size: $status-card-button-icon-size;
+    }
+  }
+
+  // Cursed variant
+  &--cursed {
+    @include status-card-variant(purple, cursed-transformation-glow, $status-card-animation-duration-fast);
+
+    .eventide-transformation-card__icon {
+      @include status-card-icon(purple);
+    }
+
+    .eventide-transformation-card__name {
+      @include status-card-details(purple);
+    }
+
+    .eventide-transformation-card__locked {
+      background: themes.color(purple, 30);
+      border-color: themes.color(purple, 60);
+      color: themes.color(white, 80);
+    }
+  }
+} 

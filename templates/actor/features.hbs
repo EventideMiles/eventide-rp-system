@@ -4,118 +4,69 @@
   data-group='primary'
   data-tab='features'
 >
-  <section class='grid grid-5col'>
-    <aside class='sidebar'>
-      {{! The grid classes are defined in scss/global/_grid.scss. To use,
-          use both the "grid" and "grid-Ncol" class where "N" can be any number
-          from 1 to 12 and will create that number of columns.  }}
-      <div class='abilities flexcol'>
-        {{#each system.abilities as |ability key|}}
-          <section class="eventide-ability-{{key}}-box eventide-ability-row">
-            <div class="ability gridrow">
-              <div class='ability flexrow flex-group-center'>
-                <label
-                  class='resource-label rollable flexlarge align-center'
-                  data-action='roll'
-                  data-type="{{key}}"
-                  data-roll='{{lookup ../formulas key}}'
-                  data-label='{{localize (lookup @root.config.abilities key)}}'
-                >{{localize (lookup @root.config.abilities key)}}</label>
-              </div>
-              <div class='ability flexrow flex-group-center'>
-                <input
-                  type='text'
-                  name='system.abilities.{{key}}.value'
-                  value='{{ability.value}}'
-                  class="ability-score align-center"
-                  data-dtype='Number'
-                />
-              </div>
-              <div class='ability gridrow'>
-                <div
-                  class='ability-total rollable align-center'
-                  data-action='roll'
-                  data-type="{{key}}"
-                  data-roll='{{lookup ../formulas key}}'
-                  data-label='{{localize (lookup @root.config.abilities key)}}'
-                >Total: {{numberFormat ability.total decimals=0 sign=true}}</div>
-                <div class="ability-override">
-                {{#if ability.override}}
-                  <i class="fas fa-lock" style="color: red"></i>
-                  <span style="color: white"> Capped</span>
-                {{else}}
-                  <i class="fas fa-unlock-alt" style="color: #4CAF50"></i>
-                  <span style="color: white"> Uncapped</span>
-                {{/if}}
-                </div>
-              </div>
-            </div>
-          </section>
-        {{/each}}
-      </div>
-    </aside>
-
-    {{! For the main features list, span the right two columns }}
-    <section class='main grid-span-4'>
-      <ol class='items-panel__list items-panel__list--spanning'>
-  <li class='items-panel__list-item items-panel__header'>
-    <div class='items-panel__name items-panel__header-cell'>{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Name"}}</div>
-    <div class='items-panel__controls items-panel__header-cell'>
-      {{#if @root.editable}}
-        <a
-          class='items-panel__control item-create'
-          title='Create item'
-          data-action='createDoc'
+  <table class='erps-data-table erps-data-table--features erps-data-table--flush-top'>
+    <thead class='erps-data-table__header'>
+      <tr class='erps-data-table__header-row'>
+        <th class='erps-data-table__header-cell erps-data-table__header-cell--name'>{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Name"}}</th>
+        <th class='erps-data-table__header-cell erps-data-table__header-cell--controls'>
+          {{#if @root.editable}}
+            <a
+              class='erps-data-table__create-button'
+              title='Create item'
+              data-action='createDoc'
+              data-document-class='Item'
+              data-type='feature'
+            >
+              <i class='fas fa-plus'></i>
+              {{localize 'DOCUMENT.New' type='feature'}}
+            </a>
+          {{/if}}
+        </th>
+      </tr>
+    </thead>
+    <tbody class='erps-data-table__body'>
+      {{#each features as |item id|}}
+        <tr
+          class='erps-data-table__row'
+          data-item-id='{{item._id}}'
+          data-drag='true'
           data-document-class='Item'
-          data-type='feature'
         >
-          <i class='fas fa-plus'></i>
-          {{localize 'DOCUMENT.New' type='feature'}}
-        </a>
-      {{/if}}
-    </div>
-  </li>
-        {{#each features as |item id|}}
-          <li
-            class='items-panel__list-item'
-            data-item-id='{{item._id}}'
-            data-drag='true'
-            data-document-class='Item'
-          >
-            <div class='items-panel__name items-panel__list-cell'>
-              <div class='items-panel__image'>
-                <a class='rollable' data-roll-type='item' data-action='roll'>
-                  <img
-                    src='{{item.img}}'
-                    title='{{item.name}}'
-                    width='24'
-                    height='24'
-                  />
-                </a>
-              </div>
-              <div>{{item.name}}</div>
+          <td class='erps-data-table__cell erps-data-table__cell--name rollable' data-roll-type='item' data-action='roll' data-item-id='{{item._id}}'>
+            <div class='erps-data-table__name-content'>
+              <img
+                src='{{item.img}}'
+                title='{{item.name}}'
+                width='24'
+                height='24'
+              />
+              <span>{{item.name}}</span>
             </div>
-            <div class='items-panel__controls items-panel__list-cell'>
+          </td>
+          <td class='erps-data-table__cell erps-data-table__cell--controls'>
+            <div class='erps-data-table__controls'>
               <a
-                class='items-panel__control item-edit'
+                class='erps-data-table__control-button erps-data-table__control-button--edit'
                 title='{{localize "DOCUMENT.Update" type='feature'}}'
                 data-action='viewDoc'
+                data-item-id='{{item._id}}'
               >
                 <i class='fas fa-edit'></i>
               </a>
               {{#if @root.editable}}
                 <a
-                  class='items-panel__control item-delete'
+                  class='erps-data-table__control-button erps-data-table__control-button--delete'
                   title='{{localize "DOCUMENT.Delete" type='feature'}}'
                   data-action='deleteDoc'
+                  data-item-id='{{item._id}}'
                 >
                   <i class='fas fa-trash'></i>
                 </a>
               {{/if}}
             </div>
-          </li>
-        {{/each}}
-      </ol>
-    </section>
-  </section>
+          </td>
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
 </section>

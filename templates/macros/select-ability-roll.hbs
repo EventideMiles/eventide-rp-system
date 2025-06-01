@@ -1,12 +1,13 @@
-<div class="{{cssClass}} base-form" autocomplete="off">
-  <div class="base-form__content">
-    <div class="base-form__header">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.SelectAbilityRoll"}}:</div>
-    <div class="base-form__group">
-        <select class="base-form__select" autofocus name="attribute-choice">
-            {{#each abilities}}
-            <option value="{{this}}">{{this}}</option>
-            {{/each}}
-        </select>
+{{!-- Select Ability Roll Form --}}
+<div class="{{cssClass}} erps-form" autocomplete="off">
+  <div class="erps-form__content">
+    <div class="erps-form__header">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.SelectAbilityRoll"}}</div>
+    <div class="erps-form__group">
+      <select class="erps-select" autofocus name="attribute-choice">
+        {{#each abilities}}
+        <option value="{{this}}">{{this}}</option>
+        {{/each}}
+      </select>
     </div>
   </div>
   

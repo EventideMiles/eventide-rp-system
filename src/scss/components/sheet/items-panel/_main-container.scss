@@ -1,0 +1,30 @@
+@use "config" as *;
+@use "../../../utils/sheet-tokens" as tokens;
+
+// ===================================
+// MAIN PANEL CONTAINER
+// ===================================
+
+.erps-items-panel {
+  background: var(--theme-primary);
+  border: $panel-border-width solid var(--theme-secondary);
+  border-radius: $panel-border-radius;
+  overflow: hidden;
+  box-shadow: 0 tokens.$sheet-shadow-blur-xs tokens.$sheet-shadow-blur-md rgb(0 0 0 / 30%);
+
+  &__section-header {
+    font-family: var(--erps-ui-font);
+    font-size: $header-font-size;
+    font-weight: $header-font-weight;
+    color: var(--theme-text);
+    text-transform: uppercase;
+    letter-spacing: tokens.$sheet-letter-spacing-base;
+    margin-bottom: tokens.$sheet-spacing-md;
+    padding: tokens.$sheet-spacing-sm tokens.$sheet-spacing-base;
+    background: linear-gradient(135deg, var(--theme-primary), var(--theme-secondary));
+    border-radius: tokens.$sheet-radius-md tokens.$sheet-radius-md 0 0;
+    border-bottom: tokens.$sheet-border-base solid rgb(255 255 255 / 20%);
+    text-shadow: 0 1px 2px rgb(0 0 0 / 80%);
+    text-align: center;
+  }
+} 

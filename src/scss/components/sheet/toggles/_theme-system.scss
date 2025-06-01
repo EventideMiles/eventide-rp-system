@@ -1,0 +1,25 @@
+@use "config" as *;
+
+// ===================================
+// THEME-AWARE SYSTEM
+// ===================================
+// Theme-aware system using CSS custom properties that inherit from the main theme
+
+// Default theme variables that inherit from the main theme system
+:root {
+  --erps-toggle-primary: var(--theme-toggle-track, #2563eb); // Use unique toggle track color with blue fallback
+  --erps-toggle-secondary: var(--theme-secondary, #357abd);
+  --erps-toggle-bright: var(--theme-light, #6bb6ff);
+  --erps-toggle-glow: var(--theme-glow, rgb(74 144 226 / 30%));
+  --erps-toggle-text: var(--theme-text, #fff);
+}
+
+// Theme-aware variants that inherit from the sheet's theme context
+.eventide-sheet {
+  // Inherit theme colors from the main theme system
+  --erps-toggle-primary: var(--theme-toggle-track); // Use unique toggle track color
+  --erps-toggle-secondary: var(--theme-secondary);
+  --erps-toggle-bright: var(--theme-light);
+  --erps-toggle-glow: var(--theme-glow);
+  --erps-toggle-text: var(--theme-text);
+} 

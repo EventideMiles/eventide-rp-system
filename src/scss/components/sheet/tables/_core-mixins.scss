@@ -1,0 +1,311 @@
+@use "config" as *;
+@use "../../../utils/sheet-tokens" as tokens;
+@use "../../../utils/themes" as themes;
+
+// ===================================
+// ERPS DATA TABLES CORE MIXINS
+// ===================================
+// Core styling mixins for table components
+
+// ===================================
+// HEADER STYLING MIXINS
+// ===================================
+
+@mixin table-header-gradient {
+  background: linear-gradient(135deg,
+    var(--theme-primary) 0%,
+    var(--theme-secondary) 50%,
+    var(--theme-primary) 100%);
+}
+
+@mixin animated-header-glow {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: tokens.$sheet-glow-width;
+  height: 100%;
+  background: linear-gradient(90deg,
+    transparent,
+    themes.color(white, 10),
+    transparent);
+  animation: erps-table-header-glow $erps-table-animation-duration-glow ease-in-out infinite;
+  z-index: $erps-table-z-index-overlay;
+}
+
+@mixin header-cell-base {
+  padding: $erps-table-cell-padding;
+  font-family: var(--erps-ui-font);
+  font-size: $erps-table-header-font-size;
+  font-weight: $erps-table-header-font-weight;
+  color: var(--theme-text);
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: $erps-table-header-letter-spacing;
+  border-bottom: $erps-table-border-width-thick solid themes.color(white, 20);
+  position: relative;
+  z-index: $erps-table-z-index-header;
+  text-shadow: 0 1px 2px themes.color(black, 80);
+  vertical-align: middle;
+  min-height: $erps-table-header-height;
+  height: $erps-table-header-height;
+}
+
+// ===================================
+// ROW STYLING MIXINS
+// ===================================
+
+@mixin table-row-base {
+  background: var(--theme-accent);
+  transition: all $erps-table-transition-duration ease;
+  border-bottom: $erps-table-border-width solid themes.color(white, 5);
+
+  &:hover {
+    background: var(--theme-pattern),
+      linear-gradient(135deg,
+        var(--theme-accent) 0%,
+        var(--theme-primary) 100%);
+    background-size: tokens.$sheet-table-pattern-size tokens.$sheet-table-pattern-size, 100% 100%;
+    animation: erps-pattern-shift $erps-table-animation-duration-shift linear infinite;
+    box-shadow: inset 0 0 tokens.$sheet-shadow-blur-xl themes.color(white, 10);
+  }
+}
+
+@mixin selected-row {
+  background: linear-gradient(135deg,
+    themes.color(blue, 20) 0%,
+    var(--theme-accent) 100%);
+  border-left: $erps-table-border-width-highlight solid themes.color(blue, 80);
+}
+
+@mixin equipped-row {
+  border-left: $erps-table-border-width-accent solid themes.color(green, 60);
+  background: linear-gradient(135deg,
+    themes.color(green, 8) 0%,
+    var(--theme-accent) 100%);
+}
+
+@mixin unequipped-row {
+  opacity: $erps-table-opacity-unequipped;
+  border-left: $erps-table-border-width-accent solid themes.color(gray, 40);
+  background: linear-gradient(135deg,
+    themes.color(gray, 10) 0%,
+    var(--theme-accent) 100%);
+}
+
+@mixin cursed-row {
+  background: linear-gradient(135deg,
+    themes.color(purple, 30) 0%,
+    var(--theme-accent) 100%);
+  border-left: $erps-table-border-width-highlight solid themes.color(purple, 80);
+  animation: erps-cursed-pulse $erps-table-animation-duration-pulse ease-in-out infinite;
+}
+
+@mixin disabled-row {
+  opacity: $erps-table-opacity-disabled;
+  pointer-events: none;
+}
+
+// ===================================
+// CELL STYLING MIXINS
+// ===================================
+
+@mixin table-cell-base {
+  padding: $erps-table-cell-padding;
+  font-family: var(--erps-info-font);
+  font-size: $erps-table-cell-font-size;
+  color: var(--theme-text);
+  text-align: center;
+  vertical-align: middle;
+  border-bottom: $erps-table-border-width solid themes.color(white, 5);
+}
+
+@mixin name-cell {
+  text-align: left;
+  padding: $erps-table-cell-padding-name;
+  vertical-align: middle;
+}
+
+@mixin numeric-cell {
+  font-family: var(--erps-mono-font);
+  font-weight: 500;
+  text-align: right;
+  vertical-align: middle;
+}
+
+@mixin controls-cell {
+  text-align: right;
+  white-space: nowrap;
+  width: auto;
+  min-width: min-content;
+  padding: 0;
+  vertical-align: middle;
+  position: relative;
+}
+
+// ===================================
+// CONTROL BUTTON MIXINS
+// ===================================
+
+@mixin control-button-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: $erps-table-control-size;
+  height: $erps-table-control-size;
+  min-width: $erps-table-control-size;
+  min-height: $erps-table-control-size;
+  border-radius: $erps-table-control-border-radius;
+  background: themes.color(white, 10);
+  border: $erps-table-border-width solid themes.color(white, 20);
+  color: var(--theme-text, #fff);
+  cursor: pointer;
+  transition: all $erps-table-transition-duration ease;
+  font-size: $erps-table-control-font-size;
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: radial-gradient(circle, var(--theme-light, #{themes.color(blue, 70)}) 0%, transparent 70%);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: all $erps-table-transition-duration-long ease;
+    z-index: $erps-table-z-index-base;
+  }
+
+  i {
+    position: relative;
+    z-index: $erps-table-z-index-overlay;
+  }
+
+  &:hover {
+    background: var(--theme-primary, #{themes.color(blue, 90)});
+    border-color: var(--theme-light, #{themes.color(blue, 70)});
+    box-shadow: 0 0 tokens.$sheet-shadow-blur-lg var(--theme-glow, #{themes.color(blue, 60)});
+    transform: translateY($erps-table-transform-hover-y) scale($erps-table-transform-hover-scale);
+
+    &::before {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  &:active {
+    transform: translateY(0) scale($erps-table-transform-active-scale);
+  }
+}
+
+@mixin create-button {
+  @include button-gradient(green);
+
+  border-color: themes.color(green, 40);
+
+  &:hover {
+    background: themes.color(green, 80);
+    border-color: themes.color(green, 80);
+
+    @include button-glow(green, 60);
+  }
+}
+
+@mixin edit-button {
+  @include button-gradient(blue);
+
+  border-color: themes.color(blue, 40);
+
+  &:hover {
+    background: themes.color(blue, 80);
+    border-color: themes.color(blue, 80);
+
+    @include button-glow(blue, 60);
+  }
+}
+
+@mixin delete-button {
+  @include button-gradient(red);
+
+  border-color: themes.color(red, 40);
+
+  &:hover {
+    background: themes.color(red, 80);
+    border-color: themes.color(red, 80);
+
+    @include button-glow(red, 60);
+  }
+}
+
+@mixin equip-button {
+  background: linear-gradient(135deg, themes.color(orange, 20), themes.color(orange, 30));
+  border-color: themes.color(orange, 40);
+
+  &:hover {
+    background: themes.color(orange, 80);
+    border-color: themes.color(orange, 80);
+
+    @include button-glow(orange);
+  }
+}
+
+@mixin toggle-button {
+  @include button-gradient(gray);
+
+  border-color: themes.color(gray, 40);
+
+  &:hover {
+    background: themes.color(gray, 80);
+    border-color: themes.color(gray, 80);
+
+    @include button-glow(gray, 60);
+  }
+
+  &--active {
+    @include button-gradient(green);
+
+    border-color: themes.color(green, 60);
+
+    &:hover {
+      background: themes.color(green, 90);
+      border-color: themes.color(green, 90);
+      
+      @include button-glow(green, 80);
+    }
+  }
+}
+
+// ===================================
+// TABLE MODIFIER MIXINS
+// ===================================
+
+@mixin compact-table {
+  .erps-data-table__header-cell,
+  .erps-data-table__cell {
+    padding: $erps-table-cell-padding-compact;
+    font-size: $erps-table-cell-font-size-compact;
+  }
+
+  .erps-data-table__header-cell {
+    height: $erps-table-header-height-compact;
+    min-height: $erps-table-header-height-compact;
+  }
+}
+
+@mixin bordered-table {
+  border: $erps-table-border-width-thick solid var(--theme-light, #{themes.color(blue, 70)});
+  box-shadow: 0 0 tokens.$sheet-shadow-blur-xl var(--theme-glow, #{themes.color(blue, 60)});
+}
+
+@mixin striped-table {
+  .erps-data-table__row:nth-child(even) {
+    background: linear-gradient(135deg,
+      themes.color(white, 5) 0%,
+      var(--theme-accent) 100%);
+  }
+} 

@@ -1,0 +1,20 @@
+// ===================================
+// TABS INDEX
+// ===================================
+// Main entry point for all tab components
+
+// Import shared configuration first
+@use "config";
+
+// Import utility mixins
+@use "mixins";
+
+// Import core components
+@use "main-component";
+@use "modern-subtabs";
+
+// Import animations
+@use "animations";
+
+// Import theme integration last
+@use "theme-integration"; 

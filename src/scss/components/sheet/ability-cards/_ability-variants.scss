@@ -1,0 +1,29 @@
+@use "config" as *;
+@use "variant-mixins" as *;
+
+// ===================================
+// ABILITY-SPECIFIC STYLING
+// ===================================
+// Generated ability variants with unique colors and patterns
+
+.eventide-ability-card {
+  // Generate ability variants
+  @each $ability, $color in $ability-colors {
+    &--#{$ability} {
+      @include ability-variant($color);
+
+      // Ability-specific patterns
+      @if $ability == "acro" {
+        @include ability-pattern($color, "%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23bf4400' fill-opacity='0.1'%3E%3Cpath d='M10 2l2 6h6l-5 4 2 6-5-4-5 4 2-6-5-4h6z'/%3E%3C/g%3E%3C/svg%3E");
+      } @else if $ability == "phys" {
+        @include ability-pattern($color, "%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23a80303' fill-opacity='0.1'%3E%3Crect x='8' y='2' width='4' height='16'/%3E%3Crect x='2' y='8' width='16' height='4'/%3E%3C/g%3E%3C/svg%3E");
+      } @else if $ability == "fort" {
+        @include ability-pattern($color, "%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%232d682d' fill-opacity='0.1'%3E%3Cpath d='M10 2L4 6v8l6 4 6-4V6z'/%3E%3C/g%3E%3C/svg%3E");
+      } @else if $ability == "will" {
+        @include ability-pattern($color, "%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%236a1b9a' fill-opacity='0.1'%3E%3Ccircle cx='10' cy='10' r='8'/%3E%3Ccircle cx='10' cy='10' r='4'/%3E%3C/g%3E%3C/svg%3E");
+      } @else if $ability == "wits" {
+        @include ability-pattern($color, "%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%230e4380' fill-opacity='0.1'%3E%3Cpath d='M10 2l8 6-8 2-8-2z'/%3E%3Cpath d='M10 12l8 6-8-2-8 2z'/%3E%3C/g%3E%3C/svg%3E");
+      }
+    }
+  }
+} 

@@ -1,0 +1,50 @@
+@use "config" as *;
+@use "../../../utils/sheet-tokens" as tokens;
+
+// ===================================
+// FORM LABELS
+// ===================================
+// Label styling with variants and interactive states
+
+.erps-form__label {
+  display: block;
+  font-size: $label-font-size;
+  font-weight: $label-font-weight;
+  font-family: var(--erps-info-font, serif);
+  color: var(--theme-text, var(--erps-sheet-text));
+  margin-bottom: $label-margin-bottom;
+  letter-spacing: tokens.$sheet-letter-spacing-tight;
+  line-height: tokens.$sheet-line-height-tight;
+
+  // Label variants
+  &--required {
+    &::after {
+      content: ' *';
+      color: rgb(220 38 38 / 80%);
+      font-weight: bold;
+    }
+  }
+
+  &--optional {
+    &::after {
+      content: ' (optional)';
+      font-weight: normal;
+      opacity: 0.7;
+      font-style: italic;
+    }
+  }
+
+  &--large {
+    font-size: tokens.$sheet-font-size-label-lg;
+  }
+
+  &--small {
+    font-size: tokens.$sheet-font-size-label-sm;
+  }
+
+  // Interactive label states
+  &:hover {
+    color: var(--theme-light, var(--erps-sheet-light));
+    transition: color tokens.$sheet-transition-fast ease;
+  }
+}

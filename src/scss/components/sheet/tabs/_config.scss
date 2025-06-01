@@ -1,0 +1,83 @@
+@use "../../../utils/themes" as themes;
+@use "../../../utils/sheet-tokens" as tokens;
+@use "sass:map";
+
+// ===================================
+// TABS CONFIGURATION
+// ===================================
+// Configuration variables, theme system, and base settings
+
+// ===================================
+// CONFIGURATION VARIABLES
+// ===================================
+// Using sheet-tokens for consistent design system integration
+
+// Tab spacing and sizing
+$tab-padding: tokens.$sheet-padding-tab;
+$tab-padding-large: tokens.$sheet-padding-tab-large;
+$tab-container-padding: tokens.$sheet-padding-tab-container;
+$tab-gap: tokens.$sheet-spacing-sm;
+$tab-margin-right: tokens.$sheet-margin-tab-right;
+$tab-nav-margin-bottom: tokens.$sheet-margin-tab-nav-bottom;
+
+// Tab dimensions
+$tab-height-large: tokens.$sheet-height-tab-large;
+$tab-count-size: tokens.$sheet-size-tab-count;
+$tab-content-height-scrollable: tokens.$sheet-tab-content-height-scrollable;
+
+// Typography
+$tab-font-size: tokens.$sheet-font-size-xs;
+$tab-font-size-sm: tokens.$sheet-font-size-sm;
+$tab-font-size-md: tokens.$sheet-font-size-md;
+$tab-font-weight: tokens.$sheet-font-weight-semibold;
+$tab-font-weight-bold: tokens.$sheet-font-weight-bold;
+$tab-letter-spacing: tokens.$sheet-letter-spacing-base;
+$tab-line-height: tokens.$sheet-line-height-tight;
+
+// Borders and radius
+$tab-border-thin: tokens.$sheet-border-thin;
+$tab-border-base: tokens.$sheet-border-base;
+$tab-border-accent: tokens.$sheet-border-accent;
+$tab-radius-sm: tokens.$sheet-radius-sm;
+$tab-radius-md: tokens.$sheet-radius-md;
+$tab-radius-lg: tokens.$sheet-radius-lg;
+$tab-radius-xxl: tokens.$sheet-radius-xxl;
+
+// Shadows and effects
+$tab-shadow-blur-md: tokens.$sheet-shadow-blur-md;
+$tab-shadow-blur-lg: tokens.$sheet-shadow-blur-lg;
+$tab-shadow-blur-xxl: tokens.$sheet-shadow-blur-xxl;
+$tab-glow-blur-sm: tokens.$sheet-glow-blur-sm;
+$tab-glow-blur-md: tokens.$sheet-glow-blur-md;
+$tab-glow-width: tokens.$sheet-glow-width;
+
+// Transitions and animations
+$tab-transition-base: tokens.$sheet-transition-base;
+$tab-transition-medium: tokens.$sheet-transition-medium;
+$tab-transition-slow: tokens.$sheet-transition-slow;
+$tab-animation-glow: tokens.$sheet-animation-glow;
+
+// Transforms and positioning
+$tab-transform-hover-sm: tokens.$sheet-transform-hover-sm;
+$tab-transform-hover-md: tokens.$sheet-transform-hover-md;
+$tab-transform-fade: tokens.$sheet-transform-fade;
+$tab-opacity-full: tokens.$sheet-opacity-full;
+$tab-opacity-unequipped: tokens.$sheet-opacity-unequipped;
+
+// Z-index values
+$tab-z-index-base: tokens.$sheet-z-index-base;
+$tab-z-index-overlay: tokens.$sheet-z-index-overlay;
+
+// ===================================
+// THEME SYSTEM
+// ===================================
+// Theme-aware system using CSS custom properties that inherit from the main theme
+
+// Default theme variables that inherit from the main theme system
+:root {
+  --erps-tab-primary: var(--theme-primary, #4a90e2);
+  --erps-tab-secondary: var(--theme-secondary, #357abd);
+  --erps-tab-bright: var(--theme-light, #6bb6ff);
+  --erps-tab-glow: var(--theme-glow, rgb(74 144 226 / 30%));
+  --erps-tab-text: var(--theme-text, #fff);
+} 

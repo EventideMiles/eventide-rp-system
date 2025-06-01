@@ -1,0 +1,174 @@
+@use "config" as *;
+@use "../../../utils/sheet-tokens" as tokens;
+
+// ===================================
+// GEAR CREATOR LAYOUT
+// ===================================
+// Gear creator specific layout components
+
+.gear-creator {
+  // Upper section with 3/5 + 2/5 layout
+  &__upper-section {
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    gap: tokens.$sheet-spacing-lg;
+    margin-bottom: tokens.$sheet-spacing-lg;
+    padding-bottom: tokens.$sheet-spacing-lg;
+    border-bottom: 1px solid var(--erps-border-color, #444);
+
+    @media (width <= 768px) {
+      grid-template-columns: 1fr;
+      gap: tokens.$sheet-spacing-md;
+    }
+  }
+
+  // Main info section (3/5 width)
+  &__main-info {
+    display: flex;
+    flex-direction: column;
+    gap: tokens.$sheet-spacing-md;
+  }
+
+  // Visual info section (2/5 width)
+  &__visual-info {
+    display: flex;
+    flex-direction: column;
+    gap: tokens.$sheet-spacing-md;
+    align-items: stretch;
+
+    // Color picker grid layout
+    .erps-color-picker-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: tokens.$sheet-spacing-sm;
+    }
+  }
+
+  // Image group styling
+  &__image-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  // Three-column layout for bottom section
+  &__columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: tokens.$sheet-spacing-lg;
+
+    @media (width <= 1024px) {
+      grid-template-columns: 1fr 1fr;
+
+      // Effects column spans full width on medium screens
+      .gear-creator__column:nth-child(3) {
+        grid-column: 1 / -1;
+      }
+    }
+
+    @media (width <= 768px) {
+      grid-template-columns: 1fr;
+      gap: tokens.$sheet-spacing-md;
+    }
+  }
+
+  // Individual column styling
+  &__column {
+    display: flex;
+    flex-direction: column;
+    gap: tokens.$sheet-spacing-md;
+
+    // Effects column (third column) gets special narrow styling
+    &:nth-child(3) {
+      // Apply narrow styling directly to avoid @extend issues
+      .erps-form__section {
+        .erps-form__header {
+          font-size: tokens.$sheet-font-size-value-sm;
+          padding: tokens.$sheet-spacing-sm 0;
+          margin-bottom: tokens.$sheet-spacing-sm;
+        }
+
+        .erps-form__group {
+          margin-bottom: tokens.$sheet-spacing-sm;
+        }
+
+        .erps-form__label {
+          font-size: tokens.$sheet-font-size-value-sm;
+          margin-bottom: tokens.$sheet-spacing-xs;
+        }
+      }
+
+      .erps-data-table {
+        font-size: tokens.$sheet-font-size-value-sm;
+
+        .erps-data-table__header-cell,
+        .erps-data-table__cell {
+          padding: tokens.$sheet-spacing-xs tokens.$sheet-spacing-sm;
+        }
+
+        .erps-data-table__header-cell {
+          font-size: tokens.$sheet-font-size-value-sm;
+          font-weight: tokens.$sheet-font-weight-semibold;
+        }
+
+        .erps-data-table__create-button {
+          padding: tokens.$sheet-spacing-xs;
+          font-size: tokens.$sheet-font-size-value-sm;
+
+          i {
+            margin-right: tokens.$sheet-spacing-xs;
+          }
+        }
+
+        .erps-data-table__control-button {
+          padding: tokens.$sheet-spacing-xs;
+          min-width: auto;
+          width: 24px;
+          height: 24px;
+
+          i {
+            font-size: tokens.$sheet-font-size-value-sm;
+          }
+        }
+
+        .erps-select {
+          padding: tokens.$sheet-spacing-xs;
+          font-size: tokens.$sheet-font-size-value-sm;
+          min-height: 28px;
+        }
+
+        .erps-number-input {
+          &__input {
+            padding: tokens.$sheet-spacing-xs;
+            font-size: tokens.$sheet-font-size-value-sm;
+            min-height: 28px;
+            width: 60px;
+          }
+
+          &__button {
+            width: 24px;
+            height: 28px;
+            padding: 0;
+
+            i {
+              font-size: tokens.$sheet-font-size-value-sm;
+            }
+          }
+
+          // Apply narrow styling directly in gear creator effects column
+          &.erps-number-input--narrow {
+            .erps-number-input__input {
+              width: 50px;
+              text-align: center;
+            }
+
+            .erps-number-input__button {
+              display: none;
+            }
+          }
+        }
+      }
+    }
+  }
+} 

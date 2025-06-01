@@ -1,0 +1,30 @@
+@use "config" as *;
+@use "../../../utils/sheet-tokens" as tokens;
+
+// ===================================
+// FORM SECTIONS
+// ===================================
+// Section container styling with variants
+
+.erps-form__section {
+  margin-bottom: tokens.$sheet-spacing-xl;
+  padding: tokens.$sheet-spacing-md;
+  background: rgb(0 0 0 / 10%);
+  border: 1px solid var(--theme-secondary, var(--erps-sheet-secondary));
+  border-radius: tokens.$sheet-radius-md;
+
+  &--highlighted {
+    background: var(--theme-primary, var(--erps-sheet-primary));
+    border-color: var(--theme-light, var(--erps-sheet-light));
+    box-shadow: 0 0 10px var(--theme-glow, var(--erps-sheet-glow));
+  }
+
+  &--compact {
+    padding: tokens.$sheet-spacing-sm;
+    margin-bottom: tokens.$sheet-spacing-md;
+  }
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+} 

@@ -337,7 +337,14 @@ export const ItemRollsMixin = (BaseClass) =>
       const dieSize = rollData.actor.hiddenAbilities.dice.total;
       const diceMode = diceAdjustments.mode;
 
-      let formula = `${diceCount}d${dieSize}${diceMode}`;
+      let formula;
+      if (diceAdjustments.absTotal > 0) {
+        // When there are dice adjustments, roll multiple dice and keep the best/worst
+        formula = `${diceCount}d${dieSize}${diceMode}1`;
+      } else {
+        // When no dice adjustments, roll a single die
+        formula = `1d${dieSize}`;
+      }
 
       // Add ability modifier if not unaugmented
       if (rollData.roll.ability !== "unaugmented") {

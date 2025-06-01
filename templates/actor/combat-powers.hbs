@@ -1,103 +1,115 @@
 {{! Combat Powers Tab }}
 <section class='tab combat-powers {{tab.cssClass}}' data-group='primary' data-tab='combatPowers'>
-  <ol class='items-panel__list'>
-  <li class='items-panel__list-item items-panel__header'>
-    <div class='items-panel__name items-panel__header-cell'>{{localize 'EVENTIDE_RP_SYSTEM.Forms.Sections.Name'}}</div>
-    <div class='items-panel__prop items-panel__header-cell'>{{localize 'EVENTIDE_RP_SYSTEM.Item.Inventory.Cost.label'}}</div>
-    <div class='items-panel__usage items-panel__header-cell'>{{localize 'EVENTIDE_RP_SYSTEM.Item.Descriptors.UsageInfo.label'}}</div>
-    <div class='items-panel__controls items-panel__header-cell'>
-      {{#if (eq transformationCombatPowers.length 0)}}
-        {{#if @root.editable }}
-          <a
-            class='items-panel__control items-panel__create'
-            title='{{localize "DOCUMENT.Create" type='Item'}}'
-            data-action='createDoc'
-            data-document-class='Item'
-            data-type='combatPower'
-          >
-            <i class='fas fa-plus'></i>
-            {{localize 'DOCUMENT.New' type='item'}}
-          </a>
-        {{/if}}
-      {{else}}
-        <div class='items-panel__control items-panel__transformed-indicator'>
-          <i class='fas fa-lock' title='{{localize "EVENTIDE_RP_SYSTEM.Actor.CombatPowers.TransformedLocked"}}'></i>
-          <span>{{localize "EVENTIDE_RP_SYSTEM.Actor.CombatPowers.Transformed"}}</span>
-        </div>
-      {{/if}}
-    </div>
-    </li>
-    {{#if (eq transformationCombatPowers.length 0)}}
-        {{#each combatPowers as |item id|}}
-      <li
-        class='items-panel__list-item'
-        data-item-id='{{item._id}}'
-        data-drag='true'
-        data-document-class='Item'
-      >
-        <div class='items-panel__name items-panel__list-cell'>
-          <div class='items-panel__image'>
-            <a class='rollable' data-roll-type='item' data-action='roll'>
-              <img
-                src='{{item.img}}'
-                title='{{item.name}}'
-                width='24'
-                height='24'
-              />
-            </a>
-          </div>
-          <div>{{item.name}}</div>
-        </div>
-        <div class='item-cost items-panel__prop items-panel__list-cell'>{{item.system.cost}}</div>
-        <div class='items-panel__usage items-panel__list-cell'><div>{{item.system.usageInfo}}</div></div>
-        <div class='items-panel__controls items-panel__list-cell'>
-          <a
-            class='items-panel__control item-edit'
-            title='{{localize "DOCUMENT.Update" type='Combat Power'}}'
-            data-action='viewDoc'
-          >
-            <i class='fas fa-edit'></i>
-          </a>
-          {{#if @root.editable}}
-            <a
-              class='items-panel__control item-delete'
-              title='{{localize "DOCUMENT.Delete" type='Combat Power'}}'
-              data-action='deleteDoc'
-            >
-              <i class='fas fa-trash'></i>
-            </a>
+  <table class='erps-data-table erps-data-table--combat-powers erps-data-table--flush-top'>
+    <thead class='erps-data-table__header'>
+      <tr class='erps-data-table__header-row'>
+        <th class='erps-data-table__header-cell erps-data-table__header-cell--name'>{{localize 'EVENTIDE_RP_SYSTEM.Forms.Sections.Name'}}</th>
+        <th class='erps-data-table__header-cell erps-data-table__header-cell--center'>{{localize 'EVENTIDE_RP_SYSTEM.Item.Inventory.Cost.label'}}</th>
+        <th class='erps-data-table__header-cell erps-data-table__header-cell--center'>{{localize 'EVENTIDE_RP_SYSTEM.Item.Descriptors.UsageInfo.label'}}</th>
+        <th class='erps-data-table__header-cell erps-data-table__header-cell--controls'>
+          {{#if (eq transformationCombatPowers.length 0)}}
+            {{#if @root.editable }}
+              <a
+                class='erps-data-table__create-button'
+                title='{{localize "DOCUMENT.Create" type='Item'}}'
+                data-action='createDoc'
+                data-document-class='Item'
+                data-type='combatPower'
+              >
+                <i class='fas fa-plus'></i>
+                {{localize 'DOCUMENT.New' type='item'}}
+              </a>
+            {{/if}}
+          {{else}}
+            <div class='erps-data-table__transformation-notice' title='{{localize "EVENTIDE_RP_SYSTEM.Actor.CombatPowers.TransformedLocked"}}'>
+              <span>{{localize "EVENTIDE_RP_SYSTEM.Actor.CombatPowers.Transformed"}}</span>
+              <i class='fas fa-lock'></i>
+            </div>
           {{/if}}
-        </div>
-      </li>
-    {{/each}}
-    {{else}}
-      {{#each transformationCombatPowers as |item id|}}
-        <li
-        class='items-panel__list-item'
-        data-item-id='{{item._id}}'
-        data-drag='true'
-        data-document-class='Item'
-      >
-        <div class='items-panel__name items-panel__list-cell'>
-          <div class='items-panel__image'>
-            <a class='rollable' data-roll-type='item' data-action='roll'>
-              <img
-                src='{{item.img}}'
-                title='{{item.name}}'
-                width='24'
-                height='24'
-              />
-            </a>
-          </div>
-          <div>{{item.name}}</div>
-        </div>
-        <div class='item-cost items-panel__prop items-panel__list-cell'>{{item.system.cost}}</div>
-        <div class='items-panel__usage items-panel__list-cell'><div>{{item.system.usageInfo}}</div></div>
-        <div class='items-panel__controls items-panel__list-cell'>
-
-        </div>
-      </li>
-      {{/each}}
-    {{/if}}
-  </ol>
+        </th>
+      </tr>
+    </thead>
+    <tbody class='erps-data-table__body'>
+      {{#if (eq transformationCombatPowers.length 0)}}
+        {{#each combatPowers as |item id|}}
+          <tr
+            class='erps-data-table__row'
+            data-item-id='{{item._id}}'
+            data-drag='true'
+            data-document-class='Item'
+          >
+            <td class='erps-data-table__cell erps-data-table__cell--name rollable' data-roll-type='item' data-action='roll' data-item-id='{{item._id}}'>
+              <div class='erps-data-table__name-content'>
+                <img
+                  src='{{item.img}}'
+                  title='{{item.name}}'
+                  width='24'
+                  height='24'
+                />
+                <span>{{item.name}}</span>
+              </div>
+            </td>
+            <td class='erps-data-table__cell erps-data-table__cell--center rollable' data-roll-type='item' data-action='roll' data-item-id='{{item._id}}'>{{item.system.cost}}</td>
+            <td class='erps-data-table__cell erps-data-table__cell--center rollable' data-roll-type='item' data-action='roll' data-item-id='{{item._id}}'>{{item.system.usageInfo}}</td>
+            <td class='erps-data-table__cell erps-data-table__cell--controls'>
+              <div class='erps-data-table__controls'>
+                <a
+                  class='erps-data-table__control-button erps-data-table__control-button--edit'
+                  title='{{localize "DOCUMENT.Update" type='Combat Power'}}'
+                  data-action='viewDoc'
+                  data-item-id='{{item._id}}'
+                >
+                  <i class='fas fa-edit'></i>
+                </a>
+                {{#if @root.editable}}
+                  <a
+                    class='erps-data-table__control-button erps-data-table__control-button--delete'
+                    title='{{localize "DOCUMENT.Delete" type='Combat Power'}}'
+                    data-action='deleteDoc'
+                    data-item-id='{{item._id}}'
+                  >
+                    <i class='fas fa-trash'></i>
+                  </a>
+                {{/if}}
+              </div>
+            </td>
+          </tr>
+        {{/each}}
+      {{else}}
+        {{#each transformationCombatPowers as |item id|}}
+          <tr
+            class='erps-data-table__row'
+            data-item-id='{{item._id}}'
+            data-drag='true'
+            data-document-class='Item'
+          >
+            <td class='erps-data-table__cell erps-data-table__cell--name rollable' data-roll-type='item' data-action='roll'>
+              <div class='erps-data-table__name-content'>
+                <img
+                  src='{{item.img}}'
+                  title='{{item.name}}'
+                  width='24'
+                  height='24'
+                />
+                <span>{{item.name}}</span>
+                <i class='fas fa-magic erps-data-table__transformation-indicator' title='{{localize "EVENTIDE_RP_SYSTEM.Actor.CombatPowers.TransformationPower"}}'></i>
+              </div>
+            </td>
+            <td class='erps-data-table__cell erps-data-table__cell--center rollable' data-roll-type='item' data-action='roll'>{{item.system.cost}}</td>
+            <td class='erps-data-table__cell erps-data-table__cell--center rollable' data-roll-type='item' data-action='roll'>{{item.system.usageInfo}}</td>
+            <td class='erps-data-table__cell erps-data-table__cell--controls'>
+              <div class='erps-data-table__controls'>
+                <div class='erps-data-table__control-button erps-data-table__control-button--disabled erps-data-table__control-button--locked' title='{{localize "EVENTIDE_RP_SYSTEM.Actor.CombatPowers.TransformedLocked"}}'>
+                  <i class='fas fa-lock'></i>
+                </div>
+                <div class='erps-data-table__control-button erps-data-table__control-button--disabled erps-data-table__control-button--locked' title='{{localize "EVENTIDE_RP_SYSTEM.Actor.CombatPowers.TransformedLocked"}}'>
+                  <i class='fas fa-lock'></i>
+                </div>
+              </div>
+            </td>
+          </tr>
+        {{/each}}
+      {{/if}}
+    </tbody>
+  </table>
 </section>

@@ -1,0 +1,67 @@
+@use "config" as *;
+@use "../../../utils/themes" as themes;
+
+// ===================================
+// CURSED ITEMS CARD
+// ===================================
+// Status card for cursed items and dangerous conditions
+
+.eventide-cursed-card {
+  @include status-card-base;
+  @include status-card-variant(purple, ominous-glow, $status-card-animation-duration-slow);
+
+  &__header {
+    @include status-card-header;
+  }
+
+  &__icon {
+    @include status-card-icon(purple);
+
+    i {
+      animation: ominous-float $status-card-animation-duration-fast ease-in-out infinite;
+    }
+  }
+
+  &__info {
+    @include status-card-info;
+  }
+
+  &__label {
+    @include status-card-label;
+  }
+
+  &__details {
+    @include status-card-details(purple);
+  }
+
+  &__warning {
+    @include status-card-button(red);
+
+    i {
+      animation: ominous-pulse $status-card-animation-duration-medium ease-in-out infinite;
+    }
+  }
+
+  // Warning variant (default)
+  &--warning {
+    animation: cursed-shimmer 5s ease-in-out infinite;
+  }
+
+  // Deadly variant
+  &--deadly {
+    @include status-card-variant(red, deadly-glow, $status-card-animation-duration-fast);
+
+    .eventide-cursed-card__icon {
+      background: themes.color(red, dark-50);
+      border-color: themes.color(red, dark-80);
+
+      i {
+        text-shadow: 0 0 8px themes.color(red, dark-90);
+      }
+    }
+
+    .eventide-cursed-card__details {
+      @include status-card-details(red);
+    }
+  }
+} 

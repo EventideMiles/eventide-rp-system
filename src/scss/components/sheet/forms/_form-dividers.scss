@@ -1,0 +1,45 @@
+@use "config" as *;
+@use "../../../utils/sheet-tokens" as tokens;
+
+// ===================================
+// FORM DIVIDERS
+// ===================================
+// Divider styling with gradient and visual variants
+
+.erps-form__divider {
+  border: none;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--theme-secondary, var(--erps-sheet-secondary)) 20%,
+    var(--theme-secondary, var(--erps-sheet-secondary)) 80%,
+    transparent
+  );
+  margin: tokens.$sheet-spacing-lg 0;
+  opacity: 0.6;
+
+  // Divider variants
+  &--thick {
+    height: 2px;
+    opacity: 0.8;
+  }
+
+  &--solid {
+    background: var(--theme-secondary, var(--erps-sheet-secondary));
+  }
+
+  &--glow {
+    background: var(--theme-glow, var(--erps-sheet-glow));
+    box-shadow: 0 0 4px var(--theme-glow, var(--erps-sheet-glow));
+    opacity: 0.8;
+  }
+
+  &--compact {
+    margin: tokens.$sheet-spacing-md 0;
+  }
+
+  &--spaced {
+    margin: tokens.$sheet-spacing-xl 0;
+  }
+} 

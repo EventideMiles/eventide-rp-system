@@ -1,0 +1,62 @@
+@use "config" as *;
+@use "../../../utils/themes" as themes;
+
+// ===================================
+// HEALTH STATUS CARD
+// ===================================
+// Status card for health and critical conditions
+
+.eventide-health-card {
+  @include status-card-base;
+  @include status-card-variant(red);
+
+  &__header {
+    @include status-card-header;
+  }
+
+  &__icon {
+    @include status-card-icon(red);
+
+    i {
+      animation: heartbeat $animation-heartbeat-duration ease-in-out infinite;
+    }
+  }
+
+  &__info {
+    @include status-card-info;
+  }
+
+  &__label {
+    @include status-card-label;
+  }
+
+  &__details {
+    @include status-card-details(red);
+  }
+
+  &__warning {
+    @include status-card-button(yellow);
+
+    i {
+      animation: pulse $animation-pulse-duration ease-in-out infinite;
+    }
+  }
+
+  // Critical variant (default)
+  &--critical {
+    animation: critical-border $status-card-animation-duration-medium ease-in-out infinite;
+  }
+
+  // Wounded variant
+  &--wounded {
+    @include status-card-variant(yellow, wounded-glow, $status-card-animation-duration-slow);
+
+    .eventide-health-card__icon {
+      @include status-card-icon(yellow);
+    }
+
+    .eventide-health-card__details {
+      @include status-card-details(yellow);
+    }
+  }
+} 

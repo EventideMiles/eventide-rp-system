@@ -1,10 +1,12 @@
-<header class="base-form__callout-box">
+<div class="erps-callouts">
     {{#each callouts as |callout|}}
         {{#if callout}}
-            <div class="base-form__callout base-form__callout--{{callout.type}}">
+            <div class="erps-callout erps-callout--{{callout.type}}">
                 <i class="{{callout.faIcon}}"></i>
-                {{{callout.text}}}
+                <div class="erps-callout__content">
+                    {{{callout.text}}}
+                </div>
             </div>
         {{/if}}
     {{/each}}
-</header>
+</div>

@@ -1,0 +1,193 @@
+@use "config" as *;
+@use "core-mixins" as *;
+@use "layout-mixins" as *;
+@use "../../../utils/themes" as themes;
+@use "../../../utils/sheet-tokens" as tokens;
+
+// ===================================
+// TABLE VARIANTS AND MODIFIERS
+// ===================================
+// Different table layouts and styling variants
+
+.erps-data-table {
+  // Table modifiers
+  &--compact {
+    @include compact-table;
+  }
+
+  &--bordered {
+    @include bordered-table;
+  }
+
+  &--striped {
+    @include striped-table;
+  }
+
+  // Border radius modifiers
+  &--no-radius {
+    @include table-border-radius-none;
+  }
+
+  &--radius-top-only {
+    @include table-border-radius-top-only;
+  }
+
+  &--radius-bottom-only {
+    @include table-border-radius-bottom-only;
+  }
+
+  &--radius-full {
+    @include table-border-radius-full;
+  }
+
+  // Tab-specific styling for data tables (legacy - use --radius-bottom-only instead)
+  &--flush-top {
+    margin-top: 0;
+
+    @include table-border-radius-bottom-only;
+  }
+
+  // Combination modifiers for common use cases
+  &--flush-top-compact {
+    @include compact-table;
+    @include table-border-radius-bottom-only;
+
+    margin-top: 0;
+  }
+
+  &--seamless {
+    @include table-border-radius-none;
+
+    margin: 0;
+  }
+
+  // Features layout
+  &--features {
+    @include table-columns-flex-last(100%);
+
+    // Ensure consistent padding with other table types
+    .erps-data-table__header-cell,
+    .erps-data-table__cell {
+      padding: $erps-table-cell-padding;
+      font-size: $erps-table-cell-font-size;
+    }
+
+    .erps-data-table__header-cell {
+      height: $erps-table-header-height;
+      min-height: $erps-table-header-height;
+    }
+  }
+
+  // Gear layout
+  &--gear {
+    @include table-columns-auto-last($erps-table-width-half, $erps-table-width-quarter, $erps-table-width-quarter);
+
+    // Special styling for equipped gear tables
+    &.erps-data-table--equipped {
+      border-left: $erps-table-transformation-border-width solid themes.color(green, 60);
+      box-shadow:
+        0 2px tokens.$sheet-shadow-blur-md themes.color(black, 30),
+        inset 0 1px 0 themes.color(white, 10),
+        inset $erps-table-transformation-border-width 0 0 themes.color(green, 20);
+    }
+
+    // Special styling for unequipped gear tables
+    &.erps-data-table--unequipped {
+      border-left: $erps-table-transformation-border-width solid themes.color(gray, 40);
+      opacity: $erps-table-opacity-unequipped-table;
+      box-shadow:
+        0 2px tokens.$sheet-shadow-blur-md themes.color(black, 30),
+        inset 0 1px 0 themes.color(white, 10),
+        inset $erps-table-transformation-border-width 0 0 themes.color(gray, 15);
+    }
+  }
+
+  // Combat powers layout
+  &--combat-powers {
+    @include table-columns-auto-last($erps-table-width-two-fifths, $erps-table-width-one-fifth, $erps-table-width-two-fifths);
+  }
+
+  // Effects layout
+  &--effects {
+    @include table-columns-custom($erps-table-width-third, $erps-table-width-fifth, $erps-table-width-fifth, $erps-table-width-quarter-plus);
+
+    // Ensure adequate space for 3rem ERPS inputs
+    .erps-data-table__header-cell,
+    .erps-data-table__cell {
+      padding: 1rem; // Increased from 0.75rem 1rem to accommodate 3rem inputs
+      vertical-align: middle;
+      box-sizing: border-box;
+    }
+
+    .erps-data-table__header-cell {
+      height: $erps-table-header-height;
+      min-height: $erps-table-header-height;
+    }
+
+    // Ensure cells have adequate height for inputs without breaking layout
+    .erps-data-table__cell {
+      height: auto;
+      min-height: 5rem; // Increased to 5rem for more breathing room
+      position: relative;
+
+      // Keep default table cell display, don't use flexbox
+    }
+
+    // Ensure ERPS inputs within effects table cells are properly sized
+    .erps-input,
+    .erps-select {
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+    }
+
+    .erps-number-input {
+      width: 100%;
+      max-width: 100%;
+      display: flex;
+      align-items: center;
+      box-sizing: border-box;
+
+      &__input {
+        width: 100%;
+        flex: 1;
+        min-width: 0;
+        box-sizing: border-box;
+      }
+
+      &__button {
+        flex-shrink: 0;
+        box-sizing: border-box;
+      }
+    }
+
+    // Ensure control buttons are properly positioned without breaking cell layout
+    .erps-data-table__cell--controls {
+      text-align: center;
+      vertical-align: middle;
+      padding: 0.5rem;
+
+      .erps-data-table__control-button {
+        display: inline-flex;
+      }
+    }
+  }
+
+  // Statuses layout
+  &--statuses {
+    @include table-columns-auto-last(100%);
+
+    // Ensure consistent padding with other table types
+    .erps-data-table__header-cell,
+    .erps-data-table__cell {
+      padding: $erps-table-cell-padding;
+      font-size: $erps-table-cell-font-size;
+    }
+
+    .erps-data-table__header-cell {
+      height: $erps-table-header-height;
+      min-height: $erps-table-header-height;
+    }
+  }
+} 

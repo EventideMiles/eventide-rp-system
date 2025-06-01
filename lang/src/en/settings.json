@@ -6,10 +6,10 @@
     "InitativeFormulaHint": "Formula used to calculate initiative in combat. Cannot be empty. Leave empty and save to reset to default.",
     "InitiativeFormulaReloadTitle": "Reload Recommended",
     "InitiativeFormulaReloadPrompt": "The initiative formula has been updated. It's recommended to reload the game for this change to fully take effect. Reload now?",
-    
+
     "InitiativeDecimalsName": "Initiative Decimal Places",
     "InitiativeDecimalsHint": "Number of decimal places to display for initiative values.",
-    
+
     "DefaultCharacterTabName": "Default Character Sheet Tab",
     "DefaultCharacterTabHint": "The tab that will be active by default when opening a character sheet.",
     "TabFeatures": "Features",
@@ -17,45 +17,47 @@
     "TabStatuses": "Statuses",
     "TabGear": "Gear",
     "TabCombatPowers": "Combat Powers",
-    
+
     "DefaultDiceRollModeName": "Default Dice Roll Mode",
     "DefaultDiceRollModeHint": "The default visibility mode for dice rolls.",
     "DiceRollModePublic": "Public Roll",
     "DiceRollModeGM": "GM Roll",
     "DiceRollModeBlind": "Blind Roll",
     "DiceRollModeSelf": "Self Roll",
-    
+
     "AutoRollNpcInitiativeName": "Auto-Roll NPC Initiative",
     "AutoRollNpcInitiativeHint": "Automatically roll initiative for NPCs when added to initiative.",
     "AutoRollPlayerInitiativeName": "Auto-Roll Player Initiative",
     "AutoRollPlayerInitiativeHint": "Automatically roll initiative for players when added to initiative.",
-    
+
     "HideNpcInitiativeRollsName": "Hide NPC Initiative Rolls",
     "HideNpcInitiativeRollsHint": "Hide the initiative roll results for NPCs from players.",
-    
+
     "DefaultCombatRoundDurationName": "Default Combat Round Duration",
     "DefaultCombatRoundDurationHint": "Default duration of a combat round in seconds.",
-    
-    "UiThemeName": "UI Theme",
-    "UiThemeHint": "Choose a visual theme for the user interface.",
-    "UiThemeDefault": "Default",
-    "UiThemeDark": "Dark",
-    "UiThemeLight": "Light",
-    "UiThemeContrast": "High Contrast",
-    
+
+    "SheetThemeName": "Application Theme",
+    "SheetThemeHint": "Choose a visual theme for all system applications. This affects the background, colors, and overall aesthetic of character sheets, item sheets, and other system windows.",
+    "SheetThemeBlue": "Night (Blue)",
+    "SheetThemeGold": "Twilight (Gold)",
+    "SheetThemeGreen": "Dawn (Green)",
+    "SheetThemeBlack": "Midnight (Black)",
+    "SheetThemePurple": "Dusk (Purple)",
+    "SheetThemeLight": "Noon (Light)",
+
     "ShowGearEquipMessagesName": "Show Gear Equip Messages",
     "ShowGearEquipMessagesHint": "If enabled, chat messages will be created when gear items are equipped or unequipped.",
 
     "GearEquippedDefaultName": "Gear Creator: Default Equipped",
     "GearEquippedDefaultHint": "If enabled, gear creator will mark new gear as equipped by default.",
-    
+
     "AutoLinkCharacterTokensName": "Auto-Link Character Tokens",
     "AutoLinkCharacterTokensHint": "When enabled, all newly created tokens of the 'character' type will automatically be linked to their actor.",
-    
+
     "EnableSystemSoundsName": "Enable System Sounds",
     "EnableSystemSoundsHint": "Enable or disable system sound effects.",
-    
-    
+
+
     "SoundSettingsName": "Sound Effects",
     "SoundSettingsLabel": "Configure Sound Effects",
     "SoundSettingsHint": "Configure custom sound effects for various game events.",
@@ -65,31 +67,37 @@
     "ResetAllSounds": "Reset All Sounds",
     "SaveSoundSettings": "Save Sound Settings",
     "SoundSettingsSaved": "Sound settings saved successfully.",
-    
+
     "SoundHealingName": "Healing Sound",
     "SoundHealingHint": "Sound played when healing is applied.",
-    
+
     "SoundDamageName": "Damage Sound",
     "SoundDamageHint": "Sound played when damage is applied.",
-    
+
     "SoundStatusApplyName": "Status Apply Sound",
     "SoundStatusApplyHint": "Sound played when a status effect is applied.",
-    
+
     "SoundStatusRemoveName": "Status Remove Sound",
     "SoundStatusRemoveHint": "Sound played when a status effect is removed.",
-    
+
     "SoundGearEquipName": "Gear Equip Sound",
     "SoundGearEquipHint": "Sound played when gear is equipped.",
-    
+
     "SoundGearUnequipName": "Gear Unequip Sound",
     "SoundGearUnequipHint": "Sound played when gear is unequipped.",
-    
+
     "SoundCombatPowerName": "Combat Power Sound",
     "SoundCombatPowerHint": "Sound played when a combat power is used.",
-    
+
+    "SoundFeatureRollName": "Feature Roll Sound",
+    "SoundFeatureRollHint": "Sound played when a feature with roll capability is used.",
+
     "SoundInitiativeName": "Initiative Sound",
     "SoundInitiativeHint": "Sound played when initiative is rolled.",
-    
+
+    "SoundDiceRollName": "Dice Roll Sound",
+    "SoundDiceRollHint": "Sound played when a dice roll is made.",
+
     "NoSoundSelected": "No sound file selected.",
     "ErrorPlayingSound": "Error playing sound",
     "ErrorResettingSound": "Error resetting sound",

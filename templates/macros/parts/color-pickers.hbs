@@ -1,26 +1,28 @@
-<color-pickers>
-    <div class="base-form__color-picker-with-hex color-picker-with-hex">
-        <label class="color-picker-label" for="color-bgColor">{{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Background"}}}:</label>
-        <div class="color-picker-container">
-        <div class="color-preview" id="preview-bgColor" style="background-color: {{ifThen (lookup storedData (concat type '_bgColor')) (lookup storedData (concat type '_bgColor')) '#7B4874'}}"></div>
-        <input type="color" class="color-picker" id="color-bgColor" name="bgColor" value="{{ifThen (lookup storedData (concat type '_bgColor')) (lookup storedData (concat type '_bgColor')) '#7B4874'}}">
-        <input type="text" class="hex-input" id="hex-bgColor" placeholder="Hex color" value="{{ifThen (lookup storedData (concat type '_bgColor')) (lookup storedData (concat type '_bgColor')) '#7B4874'}}">
-        </div>
-    </div>
-    <div class="base-form__color-picker-with-hex color-picker-with-hex">
-        <label class="color-picker-label" for="color-textColor">{{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Text"}}}:</label>
-        <div class="color-picker-container">
-        <div class="color-preview" id="preview-textColor" style="background-color: {{ifThen (lookup storedData (concat type '_textColor')) (lookup storedData (concat type '_textColor')) '#ffffff'}}"></div>
-        <input type="color" class="color-picker" id="color-textColor" name="textColor" value="{{ifThen (lookup storedData (concat type '_textColor')) (lookup storedData (concat type '_textColor')) '#ffffff'}}">
-        <input type="text" class="hex-input" id="hex-textColor" placeholder="Hex color" value="{{ifThen (lookup storedData (concat type '_textColor')) (lookup storedData (concat type '_textColor')) '#FFFFFF'}}">
-        </div>
-    </div>
-    <div class="base-form__color-picker-with-hex color-picker-with-hex">
-        <label class="color-picker-label" for="color-iconTint">{{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.IconTint"}}}:</label>
-        <div class="color-picker-container">
-        <div class="color-preview" id="preview-iconTint" style="background-color: {{ifThen (lookup storedData (concat type '_iconTint')) (lookup storedData (concat type '_iconTint')) '#ffffff'}}"></div>
-        <input type="color" class="color-picker" id="color-iconTint" name="iconTint" value="{{ifThen (lookup storedData (concat type '_iconTint')) (lookup storedData (concat type '_iconTint')) '#ffffff'}}">
-        <input type="text" class="hex-input" id="hex-iconTint" placeholder="Hex color" value="{{ifThen (lookup storedData (concat type '_iconTint')) (lookup storedData (concat type '_iconTint')) '#FFFFFF'}}">
-        </div>
-    </div>
-</color-pickers>
+<div class="erps-form__group erps-form__group--grid erps-form__group--grid-3">
+    {{> erps-color-picker 
+        name="bgColor"
+        stacked=stacked
+        labelPosition="above" 
+        value=(ifThen (lookup storedData (concat type '_bgColor')) (lookup storedData (concat type '_bgColor')) '#7B4874') 
+        label=(localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Background")
+        placeholder="#7B4874"
+    }}
+    
+    {{> erps-color-picker 
+        name="textColor" 
+        stacked=stacked
+        labelPosition="above" 
+        value=(ifThen (lookup storedData (concat type '_textColor')) (lookup storedData (concat type '_textColor')) '#ffffff') 
+        label=(localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Text")
+        placeholder="#FFFFFF"
+    }}
+    
+    {{> erps-color-picker 
+        name="iconTint" 
+        stacked=stacked
+        labelPosition="above" 
+        value=(ifThen (lookup storedData (concat type '_iconTint')) (lookup storedData (concat type '_iconTint')) '#ffffff') 
+        label=(localize "EVENTIDE_RP_SYSTEM.Forms.Sections.IconTint")
+        placeholder="#FFFFFF"
+    }}
+</div>

@@ -1,5 +1,11 @@
 import { EventideSheetHelpers } from "./eventide-sheet-helpers.mjs";
 import { Logger } from "../../services/_module.mjs";
+import {
+  initThemeManager,
+  THEME_PRESETS,
+  cleanupThemeManager,
+} from "../../helpers/_module.mjs";
+import { CommonFoundryTasks } from "../../utils/_module.mjs";
 
 /**
  * Base class for creator applications that handle item creation (effects, gear, etc.)
@@ -16,8 +22,9 @@ export class CreatorApplication extends EventideSheetHelpers {
    */
   static DEFAULT_OPTIONS = {
     id: "creator-application",
+    classes: ["eventide-sheet", "eventide-sheet--scrollbars"],
     position: {
-      width: "auto",
+      width: 850,
       height: 800,
     },
     tag: "form",
@@ -133,6 +140,12 @@ export class CreatorApplication extends EventideSheetHelpers {
 
     context.footerButtons = await this._prepareFooterButtons();
 
+    // Add theme context for proper theming
+    context.userSheetTheme = CommonFoundryTasks.retrieveSheetTheme();
+
+    // Add CSS class for template compatibility
+    context.cssClass = "eventide-sheet eventide-sheet--scrollbars";
+
     return context;
   }
 
@@ -216,9 +229,29 @@ export class CreatorApplication extends EventideSheetHelpers {
               )
             : game.i18n.localize("EVENTIDE_RP_SYSTEM.Forms.Buttons.Create"),
         type: "submit",
-        cssClass: "base-form__button base-form__button--primary",
+        cssClass: "erps-button erps-button--primary",
       },
     ];
+  }
+
+  /**
+   * Actions performed after any render of the Application.
+   * Post-render steps are not awaited by the render process.
+   * @param {ApplicationRenderContext} context      Prepared context data
+   * @param {RenderOptions} options                 Provided render options
+   * @protected
+   */
+  _onRender(_context, _options) {
+    // Initialize centralized theme management for creator applications
+    if (!this.themeManager) {
+      this.themeManager = initThemeManager(
+        this,
+        THEME_PRESETS.CREATOR_APPLICATION,
+      );
+    } else {
+      // Re-apply themes on re-render
+      this.themeManager.applyThemes();
+    }
   }
 
   /**
@@ -277,7 +310,7 @@ export class CreatorApplication extends EventideSheetHelpers {
     // Render the form and scroll to the previous position
     await app.render();
     CreatorApplication._restoreFormData(app, formData);
-    const contentElement = app.element.querySelector(".base-form__content");
+    const contentElement = app.element.querySelector(".erps-form__content");
     if (contentElement) {
       contentElement.scrollTop = oldPosition;
     }
@@ -307,7 +340,7 @@ export class CreatorApplication extends EventideSheetHelpers {
     // Render the form and restore previous scroll position
     await app.render();
     CreatorApplication._restoreFormData(app, formData);
-    const contentElement = app.element.querySelector(".base-form__content");
+    const contentElement = app.element.querySelector(".erps-form__content");
     if (contentElement) {
       contentElement.scrollTop = oldPosition;
     }
@@ -365,6 +398,12 @@ export class CreatorApplication extends EventideSheetHelpers {
       this.allAbilities = null;
       this.storedData = null;
       this.calloutGroup = null;
+    }
+
+    // Clean up theme management
+    if (this.themeManager) {
+      cleanupThemeManager(this);
+      this.themeManager = null;
     }
 
     // Call the parent class's _preClose method which will handle number input cleanup
@@ -490,6 +529,40 @@ export class CreatorApplication extends EventideSheetHelpers {
           }
         : {};
 
+    // Extract roll data for features
+    const featureRollType = formData.get("rollType");
+    const featureAdvantageValue =
+      featureRollType === "roll"
+        ? parseInt(formData.get("rollAdvantage"), 10) || 0
+        : 0;
+    const featureDisadvantageValue =
+      featureRollType === "roll"
+        ? parseInt(formData.get("rollDisadvantage"), 10) || 0
+        : 0;
+    const featureRollData =
+      type === "feature"
+        ? {
+            type: featureRollType || "none",
+            ability:
+              featureRollType !== "none"
+                ? formData.get("rollAbility") || "unaugmented"
+                : "unaugmented",
+            bonus:
+              featureRollType !== "none"
+                ? parseInt(formData.get("rollBonus"), 10) || 0
+                : 0,
+            diceAdjustments: {
+              advantage: featureAdvantageValue,
+              disadvantage: featureDisadvantageValue,
+              total: featureAdvantageValue - featureDisadvantageValue,
+            },
+          }
+        : {};
+
+    // Extract targeted setting for features
+    const featureTargeted =
+      type === "feature" ? formData.get("rollTargeted") === "true" : false;
+
     // Process abilities from the instance's addedAbilities array
     // Note: It's valid to have an item with no changes
     const changes = [];
@@ -541,15 +614,20 @@ export class CreatorApplication extends EventideSheetHelpers {
               cursed: gearData.cursed,
               equipped: gearData.equipped,
             }
-          : type === "transformation"
+          : type === "feature"
             ? {
-                size: transformationData.size,
-                cursed: transformationData.cursed,
-                embeddedCombatPowers: transformationData.embeddedCombatPowers,
-                resolveAdjustment: transformationData.resolveAdjustment,
-                powerAdjustment: transformationData.powerAdjustment,
+                roll: featureRollData,
+                targeted: featureTargeted,
               }
-            : {}),
+            : type === "transformation"
+              ? {
+                  size: transformationData.size,
+                  cursed: transformationData.cursed,
+                  embeddedCombatPowers: transformationData.embeddedCombatPowers,
+                  resolveAdjustment: transformationData.resolveAdjustment,
+                  powerAdjustment: transformationData.powerAdjustment,
+                }
+              : {}),
       },
       effects: [
         {
@@ -587,6 +665,14 @@ export class CreatorApplication extends EventideSheetHelpers {
       iconTint: basicData.iconTint,
       displayOnToken: basicData.displayOnToken,
       type,
+      ...(type === "feature" && {
+        rollType: featureRollType,
+        rollAbility: formData.get("rollAbility"),
+        rollBonus: formData.get("rollBonus"),
+        rollTargeted: formData.get("rollTargeted"),
+        rollAdvantage: formData.get("rollAdvantage"),
+        rollDisadvantage: formData.get("rollDisadvantage"),
+      }),
     });
 
     if (this.targetArray.length > 0 && this.gmCheck === "gm") {
@@ -773,6 +859,21 @@ export class CreatorApplication extends EventideSheetHelpers {
     if (instance.keyType === "effect") {
       storageData[`${instance.keyType}_${instance.number}_type`] =
         formValues.type;
+
+      // Store roll data for features created via effect creator
+      if (formValues.type === "feature") {
+        storageData[`effect_${instance.number}_rollType`] = formValues.rollType;
+        storageData[`effect_${instance.number}_rollAbility`] =
+          formValues.rollAbility;
+        storageData[`effect_${instance.number}_rollBonus`] =
+          formValues.rollBonus;
+        storageData[`effect_${instance.number}_rollTargeted`] =
+          formValues.rollTargeted;
+        storageData[`effect_${instance.number}_rollAdvantage`] =
+          formValues.rollAdvantage;
+        storageData[`effect_${instance.number}_rollDisadvantage`] =
+          formValues.rollDisadvantage;
+      }
     }
 
     erps.utils.storeMultipleUserFlags(storageData);
@@ -831,6 +932,27 @@ export class CreatorApplication extends EventideSheetHelpers {
       }
     });
 
+    // Save dynamic section visibility states
+    const featureRollSection = form.querySelector(".feature-roll-section");
+    if (featureRollSection) {
+      savedData["_featureRollSectionDisplay"] =
+        featureRollSection.style.display;
+    }
+
+    const rollDetails = form.querySelector(".roll-details");
+    if (rollDetails) {
+      savedData["_rollDetailsDisplay"] = rollDetails.style.display;
+    }
+
+    Logger.debug(
+      "Saved dynamic section states",
+      {
+        featureRollSection: savedData["_featureRollSectionDisplay"],
+        rollDetails: savedData["_rollDetailsDisplay"],
+      },
+      "CREATOR_APP",
+    );
+
     return savedData;
   }
 
@@ -869,6 +991,33 @@ export class CreatorApplication extends EventideSheetHelpers {
             displayImage.src = value;
             Logger.debug(`Restored displayImage`, { value }, "CREATOR_APP");
           }
+        }
+        return;
+      }
+
+      // Handle dynamic section visibility states
+      if (name === "_featureRollSectionDisplay") {
+        const featureRollSection = form.querySelector(".feature-roll-section");
+        if (featureRollSection && value) {
+          featureRollSection.style.display = value;
+          Logger.debug(
+            `Restored feature roll section display`,
+            { value },
+            "CREATOR_APP",
+          );
+        }
+        return;
+      }
+
+      if (name === "_rollDetailsDisplay") {
+        const rollDetails = form.querySelector(".roll-details");
+        if (rollDetails && value) {
+          rollDetails.style.display = value;
+          Logger.debug(
+            `Restored roll details display`,
+            { value },
+            "CREATOR_APP",
+          );
         }
         return;
       }

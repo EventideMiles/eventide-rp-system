@@ -1,0 +1,147 @@
+@use "../../../utils/themes" as themes;
+@use "../../../utils/colors" as colors;
+@use "../../../utils/typography" as typography;
+@use "../../../utils/sheet-tokens" as tokens;
+@use "sass:math";
+@use "sass:list";
+
+// ===================================
+// ERPS DATA TABLES SHARED CONFIGURATION
+// ===================================
+// Shared configuration, variables, and mixins for all table components
+
+// ===================================
+// CONFIGURATION VARIABLES
+// ===================================
+// Using sheet-tokens where possible, only defining table-specific values
+
+// Spacing and sizing (using sheet-tokens)
+$erps-table-border-radius: tokens.$sheet-radius-lg !default;
+$erps-table-header-height: tokens.$sheet-height-header !default;
+$erps-table-header-height-compact: tokens.$sheet-height-header-compact !default;
+$erps-table-cell-padding: tokens.$sheet-padding-cell !default;
+$erps-table-cell-padding-compact: tokens.$sheet-padding-cell-compact !default;
+$erps-table-cell-padding-name: tokens.$sheet-spacing-sm tokens.$sheet-spacing-base !default;
+$erps-table-cell-padding-controls: tokens.$sheet-spacing-md !default;
+$erps-table-control-gap: tokens.$sheet-spacing-xs !default;
+
+// Control buttons
+$erps-table-control-size: 2rem !default;
+$erps-table-control-border-radius: tokens.$sheet-radius-md !default;
+
+// Typography (using sheet-tokens)
+$erps-table-header-font-size: tokens.$sheet-font-size-sm !default;
+$erps-table-cell-font-size: tokens.$sheet-font-size-sm !default;
+$erps-table-cell-font-size-compact: tokens.$sheet-font-size-xs !default;
+$erps-table-control-font-size: tokens.$sheet-font-size-xs !default;
+$erps-table-header-font-weight: tokens.$sheet-font-weight-semibold !default;
+$erps-table-header-letter-spacing: tokens.$sheet-letter-spacing-base !default;
+
+// Borders and effects (using sheet-tokens)
+$erps-table-border-width: tokens.$sheet-border-thin !default;
+$erps-table-border-width-thick: tokens.$sheet-border-base !default;
+$erps-table-border-width-accent: tokens.$sheet-border-thick !default;
+$erps-table-border-width-highlight: tokens.$sheet-border-accent !default;
+
+// Transitions and animations (using sheet-tokens)
+$erps-table-transition-duration: tokens.$sheet-transition-fast !default;
+$erps-table-transition-duration-long: tokens.$sheet-transition-base !default;
+$erps-table-animation-duration-glow: tokens.$sheet-animation-glow !default;
+$erps-table-animation-duration-shift: tokens.$sheet-animation-shift !default;
+$erps-table-animation-duration-pulse: tokens.$sheet-animation-pulse !default;
+
+// Opacity values (using sheet-tokens)
+$erps-table-opacity-disabled: tokens.$sheet-opacity-disabled !default;
+$erps-table-opacity-unequipped: tokens.$sheet-opacity-unequipped !default;
+$erps-table-opacity-unequipped-table: tokens.$sheet-opacity-default !default;
+
+// Z-index values (using sheet-tokens)
+$erps-table-z-index-base: tokens.$sheet-z-index-base !default;
+$erps-table-z-index-overlay: tokens.$sheet-z-index-overlay !default;
+$erps-table-z-index-header: tokens.$sheet-z-index-header !default;
+
+// Transform values (using sheet-tokens)
+$erps-table-transform-hover-y: tokens.$sheet-transform-hover-sm !default;
+$erps-table-transform-hover-scale: tokens.$sheet-transform-scale-hover !default;
+$erps-table-transform-active-scale: tokens.$sheet-transform-scale-active !default;
+$erps-table-transform-glow-scale: 1.1 !default;
+
+// Image and icon sizes (using sheet-tokens)
+$erps-table-image-size: tokens.$sheet-size-image !default;
+$erps-table-image-border-radius: tokens.$sheet-radius-sm !default;
+$erps-table-icon-size: 15pt !default;
+$erps-table-icon-size-large: 14pt !default;
+
+// Line height and spacing (using sheet-tokens)
+$erps-table-line-height: tokens.$sheet-line-height-tight !default;
+$erps-table-gap-small: tokens.$sheet-spacing-sm !default;
+$erps-table-gap-medium: tokens.$sheet-spacing-xs !default;
+
+// Create button specific (using sheet-tokens)
+$erps-table-create-button-padding: tokens.$sheet-spacing-sm tokens.$sheet-spacing-base !default;
+$erps-table-create-button-font-size: tokens.$sheet-font-size-xs !default;
+
+// Layout percentages
+$erps-table-width-half: tokens.$sheet-percent-half !default;
+$erps-table-width-quarter: tokens.$sheet-percent-quarter !default;
+$erps-table-width-third: tokens.$sheet-percent-third !default;
+$erps-table-width-fifth: 22% !default;
+$erps-table-width-two-fifths: 40% !default;
+$erps-table-width-one-fifth: 20% !default;
+$erps-table-width-quarter-plus: 26% !default;
+
+// Responsive breakpoint (using sheet-tokens)
+$erps-table-responsive-breakpoint: tokens.$sheet-table-responsive-breakpoint !default;
+$erps-table-responsive-label-width: tokens.$sheet-table-responsive-label-width !default;
+$erps-table-responsive-margin: tokens.$sheet-spacing-sm !default;
+$erps-table-responsive-padding: tokens.$sheet-spacing-sm !default;
+
+// Transformation specific
+$erps-table-transformation-min-width: 200px !default;
+$erps-table-transformation-border-width: tokens.$sheet-border-accent !default;
+
+// ===================================
+// UTILITY MIXINS
+// ===================================
+// Using the theme system and tokens for cleaner, more maintainable code
+
+// Utility mixins for common patterns
+@mixin button-glow($color, $opacity: 60) {
+  box-shadow: 0 0 12px themes.color($color, $opacity);
+}
+
+@mixin element-glow($color, $opacity: 60, $size: 8px) {
+  box-shadow: 0 0 $size themes.color($color, $opacity);
+}
+
+@mixin multi-shadow($shadows...) {
+  box-shadow: $shadows;
+}
+
+// Gradient mixins for common patterns
+@mixin button-gradient($color, $start-opacity: 20, $end-opacity: 30) {
+  background: linear-gradient(135deg, themes.color($color, $start-opacity), themes.color($color, $end-opacity));
+}
+
+@mixin state-gradient($color, $start-opacity: 15, $end-var: var(--theme-accent)) {
+  background: linear-gradient(135deg, themes.color($color, $start-opacity) 0%, $end-var 100%);
+}
+
+// Border radius utility mixins
+@mixin table-border-radius-none {
+  border-radius: 0;
+  overflow: visible;
+}
+
+@mixin table-border-radius-top-only {
+  border-radius: $erps-table-border-radius $erps-table-border-radius 0 0;
+}
+
+@mixin table-border-radius-bottom-only {
+  border-radius: 0 0 $erps-table-border-radius $erps-table-border-radius;
+}
+
+@mixin table-border-radius-full {
+  border-radius: $erps-table-border-radius;
+  overflow: hidden;
+} 

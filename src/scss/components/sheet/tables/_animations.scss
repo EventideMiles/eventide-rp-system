@@ -1,0 +1,39 @@
+@use "config" as *;
+@use "../../../utils/themes" as themes;
+@use "../../../utils/sheet-tokens" as tokens;
+
+// ===================================
+// TABLE ANIMATIONS
+// ===================================
+// Keyframe animations for table components
+
+@keyframes erps-table-header-glow {
+  0%, 100% {
+    left: -100%;
+  }
+
+  50% {
+    left: 100%;
+  }
+}
+
+@keyframes erps-pattern-shift {
+  0% {
+    background-position: 0 0, 0 0;
+  }
+
+  100% {
+    background-position: tokens.$sheet-table-pattern-size tokens.$sheet-table-pattern-size, 0 0;
+  }
+}
+
+@keyframes erps-cursed-pulse {
+  0%, 100% {
+    box-shadow: 0 0 5px themes.color(purple, 40);
+  }
+
+  50% {
+    box-shadow: 0 0 20px themes.color(purple, 80),
+                inset 0 0 10px themes.color(purple, 30);
+  }
+} 

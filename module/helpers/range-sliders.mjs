@@ -104,6 +104,7 @@ const updateRangeValueDisplay = (event) => {
 export const cleanupRangeSliders = (element) => {
   if (!element) {
     Logger.debug("No element provided for cleanup", {}, "RANGE_SLIDER");
+    return;
   }
 
   Logger.debug(

@@ -1,27 +1,36 @@
-{{!-- Header always shows with item styling --}}
+{{!-- Combat Power Chat Card --}}
 <div class="chat-card">
-  <div class="chat-card__header" style="{{style}}">
-    <div class="chat-card__header--status chat-card__header--image">
-      <img src="{{img}}" class="chat-card__image--primary" /> 
-      <div>{{name}}</div>
-    </div>
-    <div class="chat-card__header--subheader">({{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.Cost"}}: {{system.cost}})
-    {{#if className}}
-      Type: {{className}}
-    {{/if}}
-    </div>
+  <div class="chat-card__header chat-card__header--status chat-card__header--image" style="{{style}}">
+    <img src="{{img}}" class="chat-card__image--primary" />
+    <div>{{name}}</div>
   </div>
-  
-    {{> roll-info cardClass="combat-roll" cardType="power"}}
-    {{> card-ac-check}}
+
+  {{> roll-info cardClass="combat-roll" cardType="power"}}
+
+  {{!-- Cost section after roll info --}}
+  {{#if (or system.cost className)}}
+    <div class="chat-card__cost-section">
+      {{#if system.cost}}
+        <div class="chat-card__cost-info">
+          {{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.Cost"}}: {{system.cost}}
+        </div>
+      {{/if}}
+      {{#if className}}
+        <div class="chat-card__type-info">
+          Type: {{className}}
+        </div>
+      {{/if}}
+    </div>
+  {{/if}}
+
+  {{> card-ac-check}}
 
   {{#if system.description}}
     <div class="chat-card__description">
       {{#if system.rollActorName}}
-        <div class="chat-card__description--header">{{actor.name}}. . . </div> 
+        <div class="chat-card__description--header">{{actor.name}}. . . </div>
       {{/if}}
       {{{system.description}}}
     </div>
   {{/if}}
-
 </div>

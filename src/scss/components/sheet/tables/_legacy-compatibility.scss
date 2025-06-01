@@ -1,0 +1,66 @@
+@use "config" as *;
+@use "../../../utils/themes" as themes;
+
+// ===================================
+// LEGACY COMPATIBILITY SELECTORS
+// ===================================
+// Maintain compatibility with existing selectors from character sheet
+
+.eventide-ability-row {
+  border-radius: $erps-table-border-radius;
+  padding: $erps-table-cell-padding-compact;
+  color: themes.color(white);
+  text-align: center;
+
+  // Also target any children of ability-override (moved before main selector to fix specificity)
+  .ability-override * {
+    text-shadow: none;
+
+    &:hover {
+      text-shadow: none;
+    }
+  }
+
+  // Apply hover effect only to direct children that are not inputs or ability-override
+  > *:not(input, .ability-override):hover {
+    text-shadow: 0 0 0.125rem themes.color(white), 0 0 0.25rem themes.color(white), 0 0 0.375rem themes.color(white);
+    color: themes.color(white);
+  }
+
+  // Ensure ability-override never gets the hover effect
+  .ability-override {
+    color: themes.color(white);
+    text-shadow: none;
+
+    &:hover {
+      text-shadow: none;
+    }
+  }
+}
+
+// ===================================
+// THEME-AWARE SYSTEM
+// ===================================
+// Theme-aware system using CSS custom properties that inherit from the main theme
+// This eliminates the need for JavaScript theme management
+
+// Default theme variables that inherit from the main theme system
+:root {
+  --erps-table-primary: var(--theme-primary, #4a90e2);
+  --erps-table-secondary: var(--theme-secondary, #357abd);
+  --erps-table-bright: var(--theme-light, #6bb6ff);
+  --erps-table-glow: var(--theme-glow, rgb(74 144 226 / 30%));
+  --erps-table-text: var(--theme-text, #fff);
+  --erps-table-accent: var(--theme-accent, #2c3e50);
+}
+
+// Theme-aware variants that inherit from the sheet's theme context
+.eventide-sheet {
+  // Inherit theme colors from the main theme system
+  --erps-table-primary: var(--theme-primary);
+  --erps-table-secondary: var(--theme-secondary);
+  --erps-table-bright: var(--theme-light);
+  --erps-table-glow: var(--theme-glow);
+  --erps-table-text: var(--theme-text);
+  --erps-table-accent: var(--theme-accent);
+} 

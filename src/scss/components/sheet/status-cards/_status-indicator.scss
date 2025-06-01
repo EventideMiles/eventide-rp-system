@@ -1,0 +1,48 @@
+@use "config" as *;
+@use "../../../utils/themes" as themes;
+
+// ===================================
+// GENERIC STATUS INDICATOR
+// ===================================
+// Basic status indicator component with variants
+
+.eventide-header__status-indicator {
+  display: flex;
+  align-items: center;
+  gap: $status-indicator-gap;
+  padding: $status-indicator-padding;
+  background: themes.color(white, 10);
+  border-radius: $status-card-border-radius;
+  font-size: $status-indicator-font-size;
+  color: themes.color(white);
+  font-weight: 500;
+  text-shadow: $shadow-text-offset themes.color(black, 80);
+  border: $status-indicator-border-width solid themes.color(white, 10);
+  transition: all $button-transition-duration ease;
+  flex: 0 0 auto;
+  white-space: nowrap;
+
+  i {
+    font-size: $status-indicator-icon-font-size;
+    opacity: $opacity-icon;
+  }
+
+  &:hover {
+    background: themes.color(white, 15);
+    transform: translateY($status-indicator-hover-translate);
+    box-shadow: 0 $shadow-box-blur themes.color(black, 20);
+  }
+
+  // Variant states
+  &--active {
+    @include status-indicator-variant(blue);
+  }
+
+  &--warning {
+    @include status-indicator-variant(yellow);
+  }
+
+  &--danger {
+    @include status-indicator-variant(red);
+  }
+} 

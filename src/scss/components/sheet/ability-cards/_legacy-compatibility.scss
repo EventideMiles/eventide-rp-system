@@ -1,0 +1,14 @@
+@use "config" as *;
+@use "sass:color";
+
+// ===================================
+// LEGACY ABILITY BOX SELECTORS
+// ===================================
+// These provide backward compatibility for existing templates
+
+@each $ability, $color in $ability-colors {
+  .eventide-ability-#{$ability}-box {
+    background-color: color.change($color, $alpha: 0.1);
+    border-left: $spacing-sm solid $color;
+  }
+} 

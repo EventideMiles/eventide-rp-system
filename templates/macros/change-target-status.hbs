@@ -1,128 +1,160 @@
-<div class="{{cssClass}} base-form" autocomplete="off">
+{{!-- Change Target Status Form --}}
+<div class="{{cssClass}} erps-form" autocomplete="off">
   {{> callout-box}}
 
-  <div class="base-form__content">
-    <div class="base-form__group">
-      <label class="base-form__label" for="statusSelector">
-        {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Status"}}:
+  <div class="erps-form__content">
+    <div class="erps-form__group">
+      <label class="erps-form__label" for="statusSelector">
+        {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Status"}}
       </label>
-      <select class="base-form__select" id="statusSelector" name="statusSelector">
+      <select class="erps-select" id="statusSelector" name="statusSelector">
         {{#each statuses as |status|}}
-          <option class="base-form__select-option" 
-          value="{{status.id}}" 
+          <option value="{{status.id}}" 
           {{#if (eq status.id ../storedData.changeTargetStatus_statusSelector)}}selected{{/if}}>
             {{status.name}}
           </option>
         {{/each}}
       </select>
     </div>
-    <div class="base-form__group">
-      <label class="base-form__label" 
-        for="adjustmentChange">
-          {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Effects"}}:
-      </label>
-      <select class="base-form__select" 
-      id="adjustmentMode" 
-      name="adjustmentMode">
-        {{#each modes as |mode|}}
-          <option value="{{toLowerCase mode}}" 
-          {{#if (eq ../storedData.changeTargetStatus_adjustmentMode (toLowerCase mode))}}selected{{/if}}>
-            {{mode}}
-          </option>
-        {{/each}}
-      </select>
-      <div class="base-form__number-input-wrapper">
-        <button type="button" class="decrement" data-action="decrement">−</button>
-        <input 
-          class="base-form__number-input" 
-          autofocus 
-          type="number" 
-          id="adjustmentChange" 
-          name="adjustmentChange" 
-          value="{{ifThen storedData.changeTargetStatus_adjustmentChange storedData.changeTargetStatus_adjustmentChange "0"}}" 
-          placeholder="{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.ChangeValue"}}">
-        <button type="button" class="increment" data-action="increment">+</button>
+    
+    <div class="erps-form__grid-section">
+      <div class="erps-form__grid-header">
+        <span class="erps-form__grid-header-cell">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Type"}}</span>
+        <span class="erps-form__grid-header-cell">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Mode"}}</span>
+        <span class="erps-form__grid-header-cell">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Value"}}</span>
       </div>
-    </div>
-    <div class="base-form__group">
-      <label class="base-form__label" 
-      for="overrideChange">
-        {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.OverrideValues"}}:
-      </label>
-      <select class="base-form__select" 
-      id="overrideMode" 
-      name="overrideMode">
-        {{#each modes as |mode|}}
-          <option value="{{toLowerCase mode}}" 
-          {{#if (eq ../storedData.changeTargetStatus_overrideMode (toLowerCase mode))}}selected{{/if}}>
-            {{mode}}
-          </option>
-        {{/each}}
-      </select>
-      <div class="base-form__number-input-wrapper">
-        <button type="button" class="decrement" data-action="decrement">−</button>
-        <input 
-          class="base-form__number-input" 
-          type="number" 
-          id="overrideChange" 
-          name="overrideChange" 
-          value="{{ifThen storedData.changeTargetStatus_overrideChange storedData.changeTargetStatus_overrideChange "0"}}" 
-          placeholder="{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.ChangeValue"}}">
-        <button type="button" class="increment" data-action="increment">+</button>
+      
+      <div class="erps-form__grid-row">
+        <label class="erps-form__grid-cell erps-form__grid-label" for="adjustmentChange">
+          {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Effects"}}
+        </label>
+        <div class="erps-form__grid-cell">
+          <select class="erps-select" id="adjustmentMode" name="adjustmentMode">
+            {{#each modes as |mode|}}
+              <option value="{{toLowerCase mode}}" 
+              {{#if (eq ../storedData.changeTargetStatus_adjustmentMode (toLowerCase mode))}}selected{{/if}}>
+                {{mode}}
+              </option>
+            {{/each}}
+          </select>
+        </div>
+        <div class="erps-form__grid-cell">
+          <div class="erps-number-input">
+            <button type="button" class="erps-number-input__button erps-number-input__button--decrement" data-action="decrement">
+              <i class="fas fa-minus"></i>
+            </button>
+            <input 
+              class="erps-number-input__input" 
+              autofocus 
+              type="number" 
+              id="adjustmentChange" 
+              name="adjustmentChange" 
+              value="{{ifThen storedData.changeTargetStatus_adjustmentChange storedData.changeTargetStatus_adjustmentChange "0"}}" 
+              placeholder="{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.ChangeValue"}}">
+            <button type="button" class="erps-number-input__button erps-number-input__button--increment" data-action="increment">
+              <i class="fas fa-plus"></i>
+            </button>
+          </div>
+        </div>
       </div>
-    </div>
-    <div class="base-form__group">
-      <label class="base-form__label" 
-      for="advantageChange">
-        {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RollAdvantage"}}:
-      </label>
-      <select class="base-form__select" 
-      id="advantageMode" 
-      name="advantageMode">
-        {{#each modes as |mode|}}
-          <option value="{{toLowerCase mode}}" 
-          {{#if (eq ../storedData.changeTargetStatus_advantageMode (toLowerCase mode))}}selected{{/if}}>
-            {{mode}}
-          </option>
-        {{/each}}
-      </select>
-      <div class="base-form__number-input-wrapper">
-        <button type="button" class="decrement" data-action="decrement">−</button>
-        <input 
-          class="base-form__number-input" 
-          type="number" 
-          id="advantageChange" 
-          name="advantageChange" 
-          value="{{ifThen storedData.changeTargetStatus_advantageChange storedData.changeTargetStatus_advantageChange "0"}}" 
-          placeholder="{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.ChangeValue"}}">
-        <button type="button" class="increment" data-action="increment">+</button>
+      
+      <div class="erps-form__grid-row">
+        <label class="erps-form__grid-cell erps-form__grid-label" for="overrideChange">
+          {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.OverrideValues"}}
+        </label>
+        <div class="erps-form__grid-cell">
+          <select class="erps-select" id="overrideMode" name="overrideMode">
+            {{#each modes as |mode|}}
+              <option value="{{toLowerCase mode}}" 
+              {{#if (eq ../storedData.changeTargetStatus_overrideMode (toLowerCase mode))}}selected{{/if}}>
+                {{mode}}
+              </option>
+            {{/each}}
+          </select>
+        </div>
+        <div class="erps-form__grid-cell">
+          <div class="erps-number-input">
+            <button type="button" class="erps-number-input__button erps-number-input__button--decrement" data-action="decrement">
+              <i class="fas fa-minus"></i>
+            </button>
+            <input 
+              class="erps-number-input__input" 
+              type="number" 
+              id="overrideChange" 
+              name="overrideChange" 
+              value="{{ifThen storedData.changeTargetStatus_overrideChange storedData.changeTargetStatus_overrideChange "0"}}" 
+              placeholder="{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.ChangeValue"}}">
+            <button type="button" class="erps-number-input__button erps-number-input__button--increment" data-action="increment">
+              <i class="fas fa-plus"></i>
+            </button>
+          </div>
+        </div>
       </div>
-    </div>
-    <div class="base-form__group">
-      <label class="base-form__label" 
-      for="disadvantageChange">
-        {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RollDisadvantage"}}:
-      </label>
-      <select class="base-form__select" 
-      id="disadvantageMode" 
-      name="disadvantageMode">
-        {{#each modes as |mode|}}
-          <option value="{{toLowerCase mode}}" 
-          {{#if (eq ../storedData.changeTargetStatus_disadvantageMode (toLowerCase mode))}}selected{{/if}}>
-            {{mode}}
-          </option>
-        {{/each}}
-      </select>
-      <div class="base-form__number-input-wrapper">
-        <button type="button" class="decrement" data-action="decrement">−</button>
-        <input 
-          class="base-form__number-input" 
-          type="number" 
-          id="disadvantageChange" 
-          name="disadvantageChange" 
-          value="{{ifThen storedData.changeTargetStatus_disadvantageChange storedData.changeTargetStatus_disadvantageChange "0"}}" 
-          placeholder="{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.ChangeValue"}}">
-        <button type="button" class="increment" data-action="increment">+</button>
+      
+      <div class="erps-form__grid-row">
+        <label class="erps-form__grid-cell erps-form__grid-label" for="advantageChange">
+          {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RollAdvantage"}}
+        </label>
+        <div class="erps-form__grid-cell">
+          <select class="erps-select" id="advantageMode" name="advantageMode">
+            {{#each modes as |mode|}}
+              <option value="{{toLowerCase mode}}" 
+              {{#if (eq ../storedData.changeTargetStatus_advantageMode (toLowerCase mode))}}selected{{/if}}>
+                {{mode}}
+              </option>
+            {{/each}}
+          </select>
+        </div>
+        <div class="erps-form__grid-cell">
+          <div class="erps-number-input">
+            <button type="button" class="erps-number-input__button erps-number-input__button--decrement" data-action="decrement">
+              <i class="fas fa-minus"></i>
+            </button>
+            <input 
+              class="erps-number-input__input" 
+              type="number" 
+              id="advantageChange" 
+              name="advantageChange" 
+              value="{{ifThen storedData.changeTargetStatus_advantageChange storedData.changeTargetStatus_advantageChange "0"}}" 
+              placeholder="{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.ChangeValue"}}">
+            <button type="button" class="erps-number-input__button erps-number-input__button--increment" data-action="increment">
+              <i class="fas fa-plus"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="erps-form__grid-row">
+        <label class="erps-form__grid-cell erps-form__grid-label" for="disadvantageChange">
+          {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.RollDisadvantage"}}
+        </label>
+        <div class="erps-form__grid-cell">
+          <select class="erps-select" id="disadvantageMode" name="disadvantageMode">
+            {{#each modes as |mode|}}
+              <option value="{{toLowerCase mode}}" 
+              {{#if (eq ../storedData.changeTargetStatus_disadvantageMode (toLowerCase mode))}}selected{{/if}}>
+                {{mode}}
+              </option>
+            {{/each}}
+          </select>
+        </div>
+        <div class="erps-form__grid-cell">
+          <div class="erps-number-input">
+            <button type="button" class="erps-number-input__button erps-number-input__button--decrement" data-action="decrement">
+              <i class="fas fa-minus"></i>
+            </button>
+            <input 
+              class="erps-number-input__input" 
+              type="number" 
+              id="disadvantageChange" 
+              name="disadvantageChange" 
+              value="{{ifThen storedData.changeTargetStatus_disadvantageChange storedData.changeTargetStatus_disadvantageChange "0"}}" 
+              placeholder="{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.ChangeValue"}}">
+            <button type="button" class="erps-number-input__button erps-number-input__button--increment" data-action="increment">
+              <i class="fas fa-plus"></i>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>

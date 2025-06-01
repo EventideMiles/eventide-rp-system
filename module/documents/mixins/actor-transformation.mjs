@@ -187,14 +187,14 @@ export const ActorTransformationMixin = (BaseClass) =>
           });
         }
 
-        // Remove all transformation items
-        await this._removeTransformationItems();
-
         // Restore original token data
         await this._restoreOriginalTokenData(tokens, originalTokenData);
 
         // Restore original resolve and power values
         await this._restoreOriginalStats(originalTokenData);
+
+        // Remove all transformation items
+        await this._removeTransformationItems();
 
         // Clear the transformation flags
         await this._clearTransformationFlags();
@@ -379,10 +379,8 @@ export const ActorTransformationMixin = (BaseClass) =>
       );
 
       // Check if there's already an active transformation
-      const hasActiveTransformation = this.getFlag(
-        "eventide-rp-system",
-        "activeTransformation",
-      );
+      const hasActiveTransformation =
+        this.items.filter((item) => item.type === "transformation").length > 0;
 
       // Only store original token data if there isn't already a transformation active
       // This ensures we maintain the original appearance, not the appearance of a previous transformation
@@ -392,6 +390,11 @@ export const ActorTransformationMixin = (BaseClass) =>
           null,
           "TRANSFORMATION",
         );
+        Logger.methodExit(
+          "ActorTransformationMixin",
+          "_storeOriginalTokenData",
+        );
+        return;
       }
 
       // Store original token data in flags
@@ -645,6 +648,8 @@ export const ActorTransformationMixin = (BaseClass) =>
           null,
           "TRANSFORMATION",
         );
+        Logger.methodExit("ActorTransformationMixin", "_restoreOriginalStats");
+        return;
       }
 
       const restoreData = {

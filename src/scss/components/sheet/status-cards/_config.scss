@@ -1,0 +1,308 @@
+@use "../../../utils/themes" as themes;
+@use "../../../utils/sheet-tokens" as tokens;
+
+// ===================================
+// STATUS CARDS CONFIGURATION
+// ===================================
+// Configuration variables, theme system, and utility mixins
+
+// ===================================
+// CONFIGURATION VARIABLES
+// ===================================
+// Using sheet-tokens where possible, only defining status-specific values
+
+// Spacing and sizing (using sheet-tokens)
+$status-card-padding: tokens.$sheet-padding-card;
+$status-card-border-radius: tokens.$sheet-radius-md;
+$status-card-gap: tokens.$sheet-spacing-md;
+$status-card-max-width: tokens.$sheet-width-status-max;
+$status-card-icon-size: tokens.$sheet-size-status-element;
+$status-card-button-size: tokens.$sheet-size-status-button;
+
+// Typography (using sheet-tokens)
+$status-card-label-font-size: tokens.$sheet-font-size-label-xs;
+$status-card-details-font-size: tokens.$sheet-font-size-value-sm;
+$status-card-icon-font-size: tokens.$sheet-font-size-value-sm;
+$status-card-button-icon-size: tokens.$sheet-font-size-label-sm;
+
+// Borders and effects (using sheet-tokens)
+$status-card-border-width: tokens.$sheet-border-base;
+$status-card-glow-blur: tokens.$sheet-glow-blur-sm;
+$status-card-hover-glow-blur: tokens.$sheet-glow-blur-md;
+
+// Transitions and animations (using sheet-tokens)
+$status-card-transition-duration: tokens.$sheet-transition-medium;
+$status-card-animation-duration-fast: tokens.$sheet-animation-fast;
+$status-card-animation-duration-medium: tokens.$sheet-animation-medium;
+$status-card-animation-duration-slow: tokens.$sheet-animation-slow;
+
+// Z-index values (using sheet-tokens)
+$status-card-z-index-base: tokens.$sheet-z-index-base;
+$status-card-z-index-content: tokens.$sheet-z-index-overlay;
+$status-card-z-index-dragging: 1000; // Keep high value for dragging
+
+// ===================================
+// CONSOLIDATED VARIABLES
+// ===================================
+// Reduced redundant variables by using tokens and logical grouping
+
+// Status bar container (using sheet-tokens)
+$status-bar-margin-top: tokens.$sheet-margin-status-top;
+$status-bar-padding: tokens.$sheet-spacing-sm tokens.$sheet-spacing-base;
+$status-bar-border-radius: tokens.$sheet-radius-lg;
+$status-bar-border-width: tokens.$sheet-border-thin;
+$status-bar-arrow-position-offset: tokens.$sheet-status-arrow-offset;
+$status-bar-arrow-right-offset: tokens.$sheet-status-arrow-right-offset;
+$status-bar-arrow-size: tokens.$sheet-status-arrow-size;
+$status-bar-arrow-hover-scale: tokens.$sheet-transform-scale-icon;
+
+// Generic status indicator (using sheet-tokens)
+$status-indicator-gap: tokens.$sheet-spacing-xs;
+$status-indicator-padding: tokens.$sheet-padding-status-indicator;
+$status-indicator-font-size: tokens.$sheet-font-size-label-md;
+$status-indicator-icon-font-size: tokens.$sheet-font-size-label-lg;
+$status-indicator-border-width: tokens.$sheet-border-thin;
+$status-indicator-hover-translate: tokens.$sheet-transform-hover-sm;
+
+// Card transforms and positioning (using sheet-tokens)
+$card-hover-translate-y: tokens.$sheet-transform-hover-md;
+$card-dragging-rotation: 5deg; // Keep specific value
+$card-dragging-opacity: tokens.$sheet-opacity-disabled;
+$card-glow-position-offset: -2px; // Keep specific positioning
+$card-glow-height-offset: 4px; // Keep specific positioning
+$card-glow-width-percentage: tokens.$sheet-glow-width;
+$card-glow-left-start: -50%; // Keep specific positioning
+
+// Button styling (using sheet-tokens)
+$button-border-radius: tokens.$sheet-radius-sm;
+$button-border-width: tokens.$sheet-border-thin;
+$button-hover-scale: tokens.$sheet-transform-scale-hover;
+$button-active-scale: tokens.$sheet-transform-scale-active;
+$button-transition-duration: tokens.$sheet-transition-base;
+
+// Text styling (using sheet-tokens)
+$text-letter-spacing: tokens.$sheet-letter-spacing-base;
+$text-margin-bottom: tokens.$sheet-spacing-xxs;
+$text-line-height: tokens.$sheet-line-height-base;
+$text-shadow-blur: tokens.$sheet-shadow-blur-sm;
+
+// Shadow and glow effects (using sheet-tokens)
+$shadow-inset-offset: tokens.$sheet-shadow-offset-xs;
+$shadow-hover-blur: tokens.$sheet-shadow-blur-sm tokens.$sheet-shadow-blur-md;
+$shadow-box-blur: tokens.$sheet-shadow-offset-sm tokens.$sheet-shadow-blur-sm;
+$shadow-text-offset: tokens.$sheet-shadow-offset-xs tokens.$sheet-shadow-offset-xs tokens.$sheet-shadow-offset-sm;
+$glow-enhanced-blur: tokens.$sheet-glow-blur-lg;
+
+// Animation-specific durations (using sheet-tokens)
+$animation-pulse-duration: tokens.$sheet-animation-fast;
+$animation-golden-sparkle-duration: tokens.$sheet-animation-medium;
+$animation-golden-glow-duration: tokens.$sheet-animation-slow;
+$animation-heartbeat-duration: tokens.$sheet-animation-pulse;
+
+// Gradient angles (keep specific values)
+$gradient-angle-standard: 135deg;
+$gradient-angle-glow: 90deg;
+
+// Opacity values (using sheet-tokens)
+$opacity-icon: tokens.$sheet-opacity-default;
+$opacity-dragging: tokens.$sheet-opacity-disabled;
+$opacity-arrow-hidden: 0;
+$opacity-arrow-visible: tokens.$sheet-opacity-full;
+
+// ===================================
+// THEME-AWARE SYSTEM
+// ===================================
+// Theme-aware system using CSS custom properties that inherit from the main theme
+
+// Default theme variables that inherit from the main theme system
+:root {
+  --erps-status-primary: var(--theme-primary, rgb(30 58 138 / 90%));
+  --erps-status-secondary: var(--theme-secondary, rgb(59 130 246 / 80%));
+  --erps-status-bright: var(--theme-light, rgb(59 130 246 / 70%));
+  --erps-status-glow: var(--theme-glow, rgb(59 130 246 / 60%));
+  --erps-status-text: var(--theme-text, #fff);
+  --erps-status-accent: var(--theme-accent, rgb(30 58 138 / 95%));
+}
+
+// Theme-aware variants that inherit from the sheet's theme context
+.eventide-sheet {
+  // Inherit theme colors from the main theme system
+  --erps-status-primary: var(--theme-primary);
+  --erps-status-secondary: var(--theme-secondary);
+  --erps-status-bright: var(--theme-light);
+  --erps-status-glow: var(--theme-glow);
+  --erps-status-text: var(--theme-text);
+  --erps-status-accent: var(--theme-accent);
+}
+
+// ===================================
+// UTILITY MIXINS
+// ===================================
+
+// Base status card structure
+@mixin status-card-base {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: $status-card-padding;
+  border-radius: $status-card-border-radius;
+  border: $status-card-border-width solid;
+  transition: all $status-card-transition-duration ease;
+  position: relative;
+  overflow: hidden;
+  flex: 0 0 auto;
+  max-width: $status-card-max-width;
+  box-shadow:
+    0 0 $status-card-glow-blur,
+    inset 0 $shadow-inset-offset 0 themes.color(white, 10);
+}
+
+// Animated glow effect
+@mixin status-card-glow($color, $animation-name, $duration: $status-card-animation-duration-medium) {
+  &::before {
+    content: '';
+    position: absolute;
+    top: $card-glow-position-offset;
+    left: $card-glow-left-start;
+    width: $card-glow-width-percentage;
+    height: calc(100% + #{$card-glow-height-offset});
+    background: linear-gradient(
+      $gradient-angle-glow,
+      transparent,
+      themes.color($color, 40),
+      transparent
+    );
+    animation: #{$animation-name} $duration ease-in-out infinite;
+    z-index: $status-card-z-index-base;
+  }
+}
+
+// Status card icon styling
+@mixin status-card-icon($color) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: $status-card-icon-size;
+  height: $status-card-icon-size;
+  border-radius: 50%;
+  background: themes.color($color, 40);
+  border: $status-card-border-width solid themes.color($color, 70);
+  margin-right: $status-card-gap;
+  flex-shrink: 0;
+
+  i {
+    font-size: $status-card-icon-font-size;
+    color: #fff;
+    text-shadow: 0 0 $text-shadow-blur themes.color($color, 80);
+  }
+}
+
+// Status card button styling
+@mixin status-card-button($color) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: $status-card-button-size;
+  height: $status-card-button-size;
+  border-radius: $button-border-radius;
+  background: themes.color($color, 30);
+  border: $button-border-width solid themes.color($color, 60);
+  color: #fff;
+  margin-left: $status-card-gap;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: all $button-transition-duration ease;
+
+  i {
+    font-size: $status-card-button-icon-size;
+  }
+
+  &:hover {
+    background: themes.color($color, 50);
+    border-color: themes.color($color, 80);
+    transform: scale($button-hover-scale);
+    box-shadow: 0 0 $text-shadow-blur themes.color($color, 60);
+  }
+
+  &:active {
+    transform: scale($button-active-scale);
+  }
+}
+
+// Status indicator variant mixin
+@mixin status-indicator-variant($color) {
+  background: themes.color($color, 40);
+  border: $status-indicator-border-width solid themes.color($color, 60);
+  color: #fff;
+
+  &:hover {
+    background: themes.color($color, 50);
+  }
+}
+
+// Status card variant mixin (consolidates repetitive card patterns)
+@mixin status-card-variant($color, $animation-name: null, $animation-duration: $status-card-animation-duration-medium) {
+  border-color: themes.color($color, 60);
+  background: linear-gradient(
+    $gradient-angle-standard,
+    themes.color($color, 15) 0%,
+    themes.color($color, dark-80) 50%,
+    themes.color($color, 10) 100%
+  );
+  box-shadow:
+    0 0 $status-card-glow-blur themes.color($color, 30),
+    inset 0 $shadow-inset-offset 0 themes.color(white, 10);
+
+  @if $animation-name {
+    @include status-card-glow($color, $animation-name, $animation-duration);
+  }
+
+  &:hover {
+    transform: translateY($card-hover-translate-y);
+    box-shadow:
+      0 0 $status-card-hover-glow-blur themes.color($color, 50),
+      inset 0 $shadow-inset-offset 0 themes.color(white, 15),
+      0 $shadow-hover-blur themes.color(black, 20);
+    border-color: themes.color($color, 80);
+  }
+}
+
+// Common card header structure
+@mixin status-card-header {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  position: relative;
+  z-index: $status-card-z-index-content;
+}
+
+// Common card info structure
+@mixin status-card-info {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  min-width: 0;
+}
+
+// Common card label styling
+@mixin status-card-label {
+  font-size: $status-card-label-font-size;
+  font-weight: 600;
+  color: themes.color(white, 90);
+  text-transform: uppercase;
+  letter-spacing: $text-letter-spacing;
+  margin-bottom: $text-margin-bottom;
+  line-height: 1;
+}
+
+// Common card details styling
+@mixin status-card-details($color) {
+  font-size: $status-card-details-font-size;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 0 0 $text-shadow-blur themes.color($color, 60);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: $text-line-height;
+} 

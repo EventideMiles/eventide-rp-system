@@ -1,0 +1,18 @@
+// ===================================
+// STATUS CARDS INDEX
+// ===================================
+// Main entry point for all status card components
+
+// Import shared configuration and mixins first
+@use "config";
+
+// Import component modules
+@use "status-bar";
+@use "status-indicator";
+@use "transformation-card";
+@use "health-card";
+@use "effects-card";
+@use "cursed-card";
+
+// Import animations last
+@use "animations"; 

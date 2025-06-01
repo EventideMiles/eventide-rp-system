@@ -1,0 +1,64 @@
+@use "../../../utils/themes" as themes;
+@use "../../../utils/sheet-tokens" as tokens;
+
+// ===================================
+// RESOURCE BOXES CONFIGURATION
+// ===================================
+// Configuration variables and base settings for resource box components
+
+// ===================================
+// CONFIGURATION VARIABLES
+// ===================================
+// Using sheet-tokens for consistent design system integration
+
+// Resource dimensions and spacing
+$resource-height-upper: tokens.$sheet-height-section-upper;
+$resource-height-lower: tokens.$sheet-height-section-lower;
+$resource-height-third: tokens.$sheet-height-section-third;
+$resource-padding-input: tokens.$sheet-padding-input-resource;
+$resource-spacing-xs: tokens.$sheet-spacing-xs;
+$resource-spacing-sm: tokens.$sheet-spacing-sm;
+$resource-spacing-base: tokens.$sheet-spacing-base;
+
+// Typography
+$resource-font-size-label-xs: tokens.$sheet-font-size-label-xs;
+$resource-font-size-label-sm: tokens.$sheet-font-size-label-sm;
+$resource-font-size-label-md: tokens.$sheet-font-size-label-md;
+$resource-font-size-label-lg: tokens.$sheet-font-size-label-lg;
+$resource-font-size-value-md: tokens.$sheet-font-size-value-md;
+$resource-font-size-value-lg: tokens.$sheet-font-size-value-lg;
+$resource-font-size-value-xl: tokens.$sheet-font-size-value-xl;
+$resource-font-weight-semibold: tokens.$sheet-font-weight-semibold;
+$resource-font-weight-bold: tokens.$sheet-font-weight-bold;
+$resource-letter-spacing-base: tokens.$sheet-letter-spacing-base;
+$resource-letter-spacing-loose: tokens.$sheet-letter-spacing-loose;
+$resource-line-height-base: tokens.$sheet-line-height-base;
+
+// Borders and radius
+$resource-border-base: tokens.$sheet-border-base;
+$resource-border-thin: tokens.$sheet-border-thin;
+$resource-radius-xs: tokens.$sheet-radius-xs;
+$resource-radius-sm: tokens.$sheet-radius-sm;
+$resource-radius-xl: tokens.$sheet-radius-xl;
+
+// Shadows and effects
+$resource-shadow-offset-xs: tokens.$sheet-shadow-offset-xs;
+$resource-shadow-offset-sm: tokens.$sheet-shadow-offset-sm;
+$resource-shadow-offset-md: tokens.$sheet-shadow-offset-md;
+$resource-shadow-blur-xs: tokens.$sheet-shadow-blur-xs;
+$resource-shadow-blur-sm: tokens.$sheet-shadow-blur-sm;
+$resource-shadow-blur-md: tokens.$sheet-shadow-blur-md;
+$resource-shadow-blur-xxl: tokens.$sheet-shadow-blur-xxl;
+$resource-glow-blur-sm: tokens.$sheet-glow-blur-sm;
+$resource-glow-blur-md: tokens.$sheet-glow-blur-md;
+
+// Transitions and animations
+$resource-transition-base: tokens.$sheet-transition-base;
+$resource-transition-medium: tokens.$sheet-transition-medium;
+$resource-transition-slow: tokens.$sheet-transition-slow;
+
+// Layout dimensions
+$resource-width-input-min: tokens.$sheet-width-input-min;
+$resource-percent-full: tokens.$sheet-percent-full;
+$resource-opacity-default: tokens.$sheet-opacity-default;
+$resource-opacity-full: tokens.$sheet-opacity-full; 

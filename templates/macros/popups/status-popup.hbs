@@ -1,17 +1,21 @@
-<div class="{{cssClass}} popup-form" autocomplete="off">
-    <div class="popup-form__main chat-card">
-        {{> popup-header}}
+{{!-- Status Popup --}}
+<div class="{{cssClass}} erps-form" autocomplete="off">
+  <div class="erps-form__content">
+    {{> popup-header}}
 
-        {{#if item.system.description}}
-        <div class="popup-form__content popup-form__content--description">
-            <div class="popup-form__header">{{item.actor.name}}</div> 
-            {{{item.system.description}}}
+    {{#if item.system.description}}
+      <div class="erps-form__section">
+        <div class="erps-form__header">{{item.actor.name}}</div> 
+        <div class="erps-form__description">
+          {{{item.system.description}}}
         </div>
-        {{/if}}
+      </div>
+    {{/if}}
 
-        <hr />
+    <hr class="erps-form__divider" />
 
-        {{> popup-effects}}
+    {{> popup-effects}}
+  </div>
 
-    {{> macro-footer}}
+  {{> macro-footer}}
 </div>

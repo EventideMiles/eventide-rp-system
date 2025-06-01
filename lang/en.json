@@ -86,10 +86,20 @@
         },
         "Transformation": {
           "label": "Transformation",
-          "Remove": "Remove Transformation"
+          "Remove": "Remove Transformation",
+          "DragHint": "Drag to share this transformation with another character"
         },
         "XP": {
           "label": "XP"
+        }
+      },
+      "Errors": {
+        "ActiveTransformation": "Image editing disabled while transformed"
+      },
+      "Controls": {
+        "AutoTokenUpdate": {
+          "label": "Auto Token Update",
+          "hint": "Automatically update the token's image when the actor's image is updated"
         }
       },
       "Tabs": {
@@ -138,12 +148,15 @@
       "InvalidCost": "Cost must be a valid number",
       "TransformationItemTypes": "Only combat powers can be added to transformations.",
       "MissingAbility": "Missing ability",
-      "MissingTransformation": "Missing transformation"
+      "MissingTransformation": "Missing transformation",
+      "ConfigureTokenError": "Failed to configure token for {actorName}",
+      "SetSheetThemeError": "Failed to set sheet theme for {userName}"
     },
     "Info": {
       "CompendiumItemCreated": "Created {keyType} item {name} in the {packLabel} compendium",
       "TokenItemCreated": "Created {keyType} item {name} on {count} {targetType} token(s) and in the {packLabel} compendium",
-      "Stored": "Stored {keyType} information in localStorage"
+      "Stored": "Stored {keyType} information in localStorage",
+      "SheetThemeChanged": "Sheet theme changed to {themeName} for {userName}"
     },
     "Forms": {
       "ScriptExplanations": {
@@ -171,6 +184,7 @@
         "IsHeal": "Is Heal",
         "ItemDetails": "Item Details",
         "Label": "Label",
+        "Mode": "Mode",
         "Name": "Name",
         "Neutral": "Neutral",
         "Optional": "(Optional)",
@@ -180,6 +194,7 @@
         "RemoveStatuses": "Remove Statuses",
         "RestorePower": "Restore Power",
         "RestoreResolve": "Restore Resolve",
+        "Roll": "Roll",
         "RollAbility": "Roll Ability",
         "RollAdvantage": "Advantage",
         "RollBonus": "Roll Bonus",
@@ -195,6 +210,7 @@
         "Type": "Type",
         "UnequippedGear": "Unequipped Gear",
         "UsageInfo": "Usage Information",
+        "Value": "Value",
         "Weight": "Weight",
         "ClassName": "Class",
         "Cursed": "Cursed",
@@ -420,6 +436,7 @@
     "WindowTitles": {
       "ChangeTargetStatus": "Change Target Status",
       "CombatPowerPopup": "Combat Power Details",
+      "ConfigureToken": "Configure Token",
       "DamageTargets": "Damage Targets",
       "EffectCreator": "Effect Creator",
       "FeaturePopup": "Feature Information",
@@ -428,6 +445,7 @@
       "GearTransfer": "Transfer Gear",
       "RestoreTarget": "Restore Target",
       "SelectAbilityRoll": "Select Ability Roll",
+      "SheetTheme": "Cycle Sheet Theme",
       "StatusPopup": "Status Information",
       "TransformationCreator": "Transformation Creator"
     }
@@ -476,12 +494,14 @@
     "HideNpcInitiativeRollsHint": "Hide the initiative roll results for NPCs from players.",
     "DefaultCombatRoundDurationName": "Default Combat Round Duration",
     "DefaultCombatRoundDurationHint": "Default duration of a combat round in seconds.",
-    "UiThemeName": "UI Theme",
-    "UiThemeHint": "Choose a visual theme for the user interface.",
-    "UiThemeDefault": "Default",
-    "UiThemeDark": "Dark",
-    "UiThemeLight": "Light",
-    "UiThemeContrast": "High Contrast",
+    "SheetThemeName": "Application Theme",
+    "SheetThemeHint": "Choose a visual theme for all system applications. This affects the background, colors, and overall aesthetic of character sheets, item sheets, and other system windows.",
+    "SheetThemeBlue": "Night (Blue)",
+    "SheetThemeGold": "Twilight (Gold)",
+    "SheetThemeGreen": "Dawn (Green)",
+    "SheetThemeBlack": "Midnight (Black)",
+    "SheetThemePurple": "Dusk (Purple)",
+    "SheetThemeLight": "Noon (Light)",
     "ShowGearEquipMessagesName": "Show Gear Equip Messages",
     "ShowGearEquipMessagesHint": "If enabled, chat messages will be created when gear items are equipped or unequipped.",
     "GearEquippedDefaultName": "Gear Creator: Default Equipped",
@@ -513,8 +533,12 @@
     "SoundGearUnequipHint": "Sound played when gear is unequipped.",
     "SoundCombatPowerName": "Combat Power Sound",
     "SoundCombatPowerHint": "Sound played when a combat power is used.",
+    "SoundFeatureRollName": "Feature Roll Sound",
+    "SoundFeatureRollHint": "Sound played when a feature with roll capability is used.",
     "SoundInitiativeName": "Initiative Sound",
     "SoundInitiativeHint": "Sound played when initiative is rolled.",
+    "SoundDiceRollName": "Dice Roll Sound",
+    "SoundDiceRollHint": "Sound played when a dice roll is made.",
     "NoSoundSelected": "No sound file selected.",
     "ErrorPlayingSound": "Error playing sound",
     "ErrorResettingSound": "Error resetting sound",

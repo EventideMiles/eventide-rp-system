@@ -1,0 +1,86 @@
+@use "config" as *;
+@use "../../../utils/themes" as themes;
+
+// ===================================
+// EFFECTS STATUS CARD
+// ===================================
+// Status card for magical effects, buffs, and debuffs
+
+.eventide-effects-card {
+  @include status-card-base;
+  @include status-card-variant(yellow, golden-glow, $animation-golden-glow-duration);
+
+  &__header {
+    @include status-card-header;
+  }
+
+  &__icon {
+    @include status-card-icon(yellow);
+
+    i {
+      animation: golden-sparkle $animation-golden-sparkle-duration ease-in-out infinite;
+    }
+  }
+
+  &__info {
+    @include status-card-info;
+  }
+
+  &__label {
+    @include status-card-label;
+  }
+
+  &__details {
+    @include status-card-details(yellow);
+  }
+
+  &__indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: $status-card-button-size;
+    height: $status-card-button-size;
+    border-radius: $button-border-radius;
+    background: themes.color(yellow, light-40);
+    border: $button-border-width solid themes.color(yellow, light-70);
+    color: #fff;
+    margin-left: $status-card-gap;
+    flex-shrink: 0;
+
+    i {
+      font-size: $status-card-button-icon-size;
+      animation: golden-twinkle 1.8s ease-in-out infinite;
+    }
+  }
+
+  // Active variant (default)
+  &--active {
+    animation: golden-shimmer $status-card-animation-duration-slow ease-in-out infinite;
+  }
+
+  // Beneficial variant
+  &--beneficial {
+    @include status-card-variant(green, beneficial-glow, $status-card-animation-duration-slow);
+
+    .eventide-effects-card__icon {
+      @include status-card-icon(green);
+    }
+
+    .eventide-effects-card__details {
+      @include status-card-details(green);
+    }
+  }
+
+  // Harmful variant
+  &--harmful {
+    @include status-card-variant(red, harmful-glow, 2.5s);
+
+    .eventide-effects-card__icon {
+      @include status-card-icon(red);
+    }
+
+    .eventide-effects-card__details {
+      @include status-card-details(red);
+    }
+  }
+} 
