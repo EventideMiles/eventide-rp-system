@@ -152,3 +152,52 @@ Your character has **five core abilities**:
 ---
 
 **Remember**: Eventide RP System is designed to be intuitive. When in doubt, try clicking on things - most elements are interactive and provide immediate feedback!
+
+## Character Features and Bonuses
+
+### Understanding Features
+
+Features represent permanent character traits that reflect background, training, and inherent abilities. They provide both passive bonuses and active roll capabilities.
+
+#### **Feature Types**
+
+- **Passive Features**: Constant bonuses to abilities or resources
+- **Active Features**: Clickable features that can make their own rolls
+- **Circumstantial Features**: Bonuses that apply only in specific situations
+
+#### **Circumstantial Bonuses**
+
+One of the most engaging aspects of Eventide RP is circumstantial bonuses - advantages that apply when your character's background is relevant.
+
+**Examples:**
+- **City-Raised**: +2 to Wits rolls in urban environments
+- **Military Veteran**: +2 to Wits rolls during tactical situations
+- **Scholar**: +3 to Wits rolls when researching information
+- **Wilderness Survivor**: +3 to Fortitude rolls in natural environments
+
+#### **Using Features**
+
+1. **Passive Features**: Bonuses apply automatically
+2. **Active Features**: Click the feature to make a roll
+3. **Circumstantial Bonuses**: Communicate with your GM when you think they apply
+4. **Roleplay**: Use feature moments to highlight your character's background
+
+### Feature Creation (GM)
+
+GMs can create custom features using the Feature Creator:
+
+1. **Open Creator**: Use the macro or compendium
+2. **Set Basic Info**: Name, description, and icon
+3. **Configure Rolls**: Choose roll type and abilities
+4. **Add Effects**: Set ability modifications and bonuses
+5. **Save and Apply**: Add to characters as appropriate
+
+**Quick Feature Template:**
+```
+Name: [Background/Training Type]
+Description: [How the character gained this ability]
+Roll Type: Ability-Based
+Target Ability: [Most relevant ability]
+Bonus: +1 to +3 (based on specificity)
+Circumstance: [When the bonus applies]
+```

@@ -12,6 +12,8 @@ The Eventide character sheet is organized into several tabs that help you manage
 
 - **Core Abilities**: Your five fundamental capabilities
 - **Character Features**: Permanent traits and background abilities
+- **Feature Rolls**: Click features with roll capabilities to make specialized rolls
+- **Circumstantial Bonuses**: Situational advantages based on your background
 - **Resources**: Current and maximum Resolve (health) and Power (magical energy)
 - **Derived Statistics**: Initiative, Armor Class, and other calculated values
 
@@ -110,6 +112,125 @@ Your character has two primary resources that fuel different aspects of gameplay
 - **Management**: Strategic resource requiring careful planning and conservation
 - **Recovery**: Rest periods, spending actions to restore power points in combat, magical restoration
 - **Display**: Shows current/maximum (e.g., "15/20")
+
+### Character Features and Circumstantial Bonuses
+
+Features represent permanent aspects of your character that reflect their background, training, and inherent traits. The Eventide system includes powerful support for circumstantial bonuses that apply in specific situations.
+
+#### **Understanding Features**
+
+##### **Passive Features**
+- **Constant Bonuses**: Always-active modifications to your abilities
+- **Resource Enhancements**: Permanent increases to Resolve or Power
+- **Special Capabilities**: Unique traits that set your character apart
+- **Background Traits**: Reflect your character's history and training
+
+##### **Active Features (Roll-Enabled)**
+- **Clickable Rolls**: Features that can be activated like ability rolls
+- **Specialized Mechanics**: Custom roll types for unique situations
+- **Targeted Abilities**: Features that can target other characters
+- **Sound Effects**: Audio feedback when using feature rolls
+
+#### **Circumstantial Bonuses**
+
+One of the most exciting aspects of the Eventide system is the support for circumstantial bonuses - advantages that apply only in specific situations related to your character's background.
+
+##### **How They Work**
+
+Circumstantial bonuses represent the idea that characters excel in familiar environments or situations where their background gives them an edge. These bonuses are typically built into features and apply automatically when the circumstances are right and you roll the feature instead of the basic roll.
+
+##### **Common Examples**
+
+###### **Background-Based Advantages**
+
+**City-Raised Character**
+- **Bonus**: +2 to Wits rolls in urban environments
+- **When It Applies**: Navigating city streets, understanding urban politics, dealing with crowds
+- **Roleplay Opportunity**: Highlight your character's comfort in metropolitan settings
+
+**Wilderness Survivor**
+- **Bonus**: +3 to Fortitude rolls in natural environments
+- **When It Applies**: Surviving harsh weather, finding food and shelter, resisting natural hazards
+- **Roleplay Opportunity**: Demonstrate your connection to nature and survival instincts
+
+**Noble Education**
+- **Bonus**: +2 to Will rolls in formal social situations
+- **When It Applies**: Court intrigue, diplomatic negotiations, high society events
+- **Roleplay Opportunity**: Show off your refined manners and political acumen
+
+###### **Professional Training**
+
+**Military Veteran**
+- **Bonus**: +2 to Wits rolls during combat or tactical situations
+- **When It Applies**: Battle planning, recognizing military formations, understanding strategy
+- **Roleplay Opportunity**: Draw on your military experience and discipline
+
+**Scholar's Training**
+- **Bonus**: +3 to Wits rolls when researching or recalling information
+- **When It Applies**: Library research, academic discussions, identifying historical artifacts
+- **Roleplay Opportunity**: Showcase your intellectual pursuits and analytical mind
+
+**Merchant's Apprentice**
+- **Bonus**: +2 to Will rolls when negotiating or assessing value
+- **When It Applies**: Trading, bartering, evaluating goods, reading people's intentions
+- **Roleplay Opportunity**: Demonstrate your commercial savvy and people skills
+
+##### **Using Circumstantial Bonuses**
+
+###### **Communication with Your GM**
+- **Speak Up**: When you think a circumstantial bonus applies, mention it to your GM
+- **Explain the Connection**: Briefly describe why your background is relevant
+- **Accept Decisions**: Respect your GM's judgment about when bonuses apply
+- **Stay Engaged**: Look for opportunities where your background matters
+
+###### **Roleplay Enhancement**
+- **Embrace Your Background**: Use these moments to highlight your character's history
+- **Tell Stories**: Share brief anecdotes about how you gained this expertise
+- **Show Confidence**: Let your character shine in their areas of expertise
+- **Acknowledge Limitations**: Accept when you're outside your comfort zone
+
+###### **Strategic Thinking**
+- **Plan Ahead**: Consider how your background might help in upcoming challenges
+- **Team Coordination**: Share your advantages with other players for group planning
+- **Character Development**: Think about how your experiences might lead to new features
+- **Story Integration**: Work with your GM to create situations where your background matters
+
+#### **Feature Rolls**
+
+Some features include their own roll mechanics, allowing you to make specialized rolls beyond the basic five abilities.
+
+##### **Making Feature Rolls**
+
+1. **Identify Roll-Enabled Features**: Look for features with dice icons or roll buttons
+2. **Click to Roll**: Activate the feature just like clicking an ability
+3. **Automatic Calculation**: The system applies all relevant bonuses and modifiers
+4. **Chat Results**: Results appear in chat with appropriate formatting and sound effects
+5. **Targeting**: Some features can target other characters for combat or interaction
+
+##### **Types of Feature Rolls**
+
+###### **Flat Bonus Rolls**
+- **Mechanics**: Roll 1d20 + fixed bonus
+- **Use Cases**: Simple skill checks, basic abilities, straightforward actions
+- **Advantages**: Reliable, predictable results
+
+###### **Ability-Based Rolls**
+- **Mechanics**: Roll 1d20 + ability score + bonuses
+- **Use Cases**: Complex actions that benefit from core abilities
+- **Advantages**: Scale with character development, integrate with other bonuses
+
+###### **Targeted Rolls**
+- **Mechanics**: Roll against selected targets' defenses
+- **Use Cases**: Combat abilities, social powers, magical effects
+- **Advantages**: Direct interaction with other characters
+
+##### **Feature Roll Strategy**
+
+- **Know Your Options**: Familiarize yourself with all your roll-enabled features
+- **Situational Awareness**: Consider when feature rolls might be more appropriate than ability rolls
+- **Resource Management**: Some features might have limited uses or costs
+- **Timing**: Choose the right moment to use specialized abilities
+- **Coordination**: Communicate with your team about your unique capabilities
 
 ## Playing Your Character
 

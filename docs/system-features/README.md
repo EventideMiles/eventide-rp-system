@@ -4,6 +4,18 @@ This section provides detailed documentation on the core features and mechanics 
 
 ## Core System Mechanics
 
+### [Features System](features.md)
+
+Comprehensive character customization through permanent traits and circumstantial bonuses.
+
+**Key Features:**
+
+- **Permanent character traits** representing background and training
+- **Circumstantial bonuses** for situational advantages
+- **Active roll capabilities** with flexible mechanics
+- **Rich descriptions** with HTML formatting support
+- **Integration** with all other system components
+
 ### [Combat System](combat.md)
 
 Comprehensive guide to combat mechanics, initiative, and tactical options.

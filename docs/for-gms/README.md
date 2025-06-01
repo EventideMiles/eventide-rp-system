@@ -313,72 +313,270 @@ The Gear Creator is one of your most powerful tools:
 
 ## Advanced GM Techniques
 
-### Transformation System
+### Managing Features and Circumstantial Bonuses
 
-#### **Comprehensive Character Changes**
+The Features system provides powerful tools for character customization and storytelling. As a GM, you can use features to enhance player engagement and create meaningful character differentiation.
 
-Transformations go beyond simple status effects:
+#### **Creating Circumstantial Features**
 
-- **Physical Alterations**: Size changes, token image updates
-- **Ability Overhauls**: Major modifications to character capabilities
-- **Resource Adjustments**: Changes to maximum Resolve and Power
-- **Power Integration**: Access to transformation-specific abilities
-- **Cursed Variants**: Transformations players cannot remove
+Circumstantial bonuses are one of the most engaging aspects of the Eventide system, allowing characters to excel in situations related to their background and training.
 
-#### **Transformation Applications**
+##### **Design Principles**
 
-##### **Magical Effects**
+###### **Connect to Character Background**
+- **Personal History**: Tie bonuses to the character's past experiences
+- **Cultural Heritage**: Reflect species, regional, or cultural advantages
+- **Professional Training**: Represent specialized skills and knowledge
+- **Character Development**: Reward growth and learning through play
 
-- **Polymorph Spells**: Animal forms, elemental shapes
-- **Size Magic**: Enlarge/reduce effects with mechanical impact
-- **Elemental Infusion**: Temporary elemental creature traits
-- **Planar Influence**: Adaptations for different planes of existence
+###### **Balance Considerations**
+- **Frequency of Use**: More common circumstances warrant smaller bonuses (+1 to +2)
+- **Specificity**: Highly specific situations can have larger bonuses (+3 to +4)
+- **Campaign Relevance**: Ensure bonuses will matter in your campaign setting
+- **Player Engagement**: Create opportunities for all characters to shine
 
-##### **Character States**
+##### **Implementation Guidelines**
 
-- **Rage States**: Barbarian fury, berserker transformations
-- **Magical Overload**: Enhanced power with physical costs
-- **Divine Blessing**: Temporary divine champion status
-- **Corruption**: Gradual transformation due to dark influences
+###### **Bonus Scaling**
+- **+1**: Very common circumstances (urban environments in a city campaign)
+- **+2**: Moderately common circumstances (social situations for a diplomat)
+- **+3**: Specific but meaningful circumstances (academic research for a scholar)
+- **+4 or higher**: Very rare or highly specialized circumstances
 
-##### **Environmental Adaptations**
+###### **Ability Selection**
+- **Acrobatics**: Agility-based advantages (climbing, stealth, precision)
+- **Physical**: Strength-based advantages (lifting, breaking, intimidation)
+- **Fortitude**: Endurance-based advantages (survival, resistance, stamina)
+- **Will**: Mental/social advantages (leadership, magic, determination)
+- **Wits**: Knowledge/perception advantages (research, tactics, awareness)
 
-- **Underwater Forms**: Breathing and movement adaptations
-- **Flight Capabilities**: Temporary aerial forms and abilities
-- **Extreme Environment**: Adaptations for harsh conditions
-- **Social Disguises**: Complete identity changes for infiltration
+##### **Example Feature Templates**
 
-### Macro System Mastery
+###### **Background-Based Features**
 
-#### **Content Creation Workflow**
+**Urban Native**
+```
+Name: City Streets
+Description: You grew up navigating the complex social and physical landscape of a major city.
+Roll Type: Ability-Based (Wits)
+Bonus: +2
+Circumstance: When in urban environments or dealing with city politics
+```
 
-1. **Preparation Phase**: Create effects, gear, and transformations before sessions
-2. **Real-Time Creation**: Use creators during play for unexpected needs
-3. **Library Building**: Develop collections of reusable content
-4. **Player Collaboration**: Work with players on custom content
+**Wilderness Guide**
+```
+Name: Nature's Child
+Description: Years in the wild have taught you to read the signs of nature and survive in harsh conditions.
+Roll Type: Ability-Based (Fortitude)
+Bonus: +3
+Circumstance: When in natural environments or surviving outdoors
+```
 
-#### **Advanced Macro Techniques**
+**Noble Upbringing**
+```
+Name: Courtly Manners
+Description: Your aristocratic education included extensive training in etiquette and social graces.
+Roll Type: Ability-Based (Will)
+Bonus: +2
+Circumstance: When dealing with nobility or in formal social situations
+```
 
-- **Macro Customization**: Modify existing macros for specific campaign needs
-- **Batch Operations**: Use macros to affect multiple targets efficiently
-- **Conditional Effects**: Create effects that work differently in various situations
-- **Integration**: Combine multiple system features for complex scenarios
+###### **Professional Features**
 
-### Campaign Integration
+**Military Training**
+```
+Name: Tactical Awareness
+Description: Your military service taught you to read battlefields and coordinate with allies.
+Roll Type: Ability-Based (Wits)
+Bonus: +2
+Circumstance: During combat or when planning tactical operations
+```
 
-#### **Setting Reinforcement**
+**Scholar's Education**
+```
+Name: Academic Research
+Description: Years of study have given you exceptional research and analytical skills.
+Roll Type: Ability-Based (Wits)
+Bonus: +3
+Circumstance: When researching information or recalling academic knowledge
+```
 
-- **Thematic Effects**: Use status effects to reinforce campaign themes
-- **Cultural Elements**: Create gear and features that reflect different cultures
-- **Environmental Storytelling**: Use effects to represent different locations
-- **Power Levels**: Adjust system elements to match campaign scope
+**Merchant Experience**
+```
+Name: Commercial Acumen
+Description: Your trading background has sharpened your ability to assess value and read people.
+Roll Type: Ability-Based (Will)
+Bonus: +2
+Circumstance: When negotiating, trading, or assessing the value of goods
+```
 
-#### **Player Development**
+#### **Managing Circumstantial Bonuses in Play**
 
-- **Character Growth**: Use features to represent character advancement
-- **Story Rewards**: Grant mechanical benefits for narrative achievements
-- **Relationship Mechanics**: Create effects that represent character connections
-- **Legacy Elements**: Build long-term character development through system features
+##### **Recognizing Opportunities**
+
+###### **Player Communication**
+- **Encourage Participation**: Ask players to speak up when they think bonuses apply
+- **Listen Actively**: Consider player suggestions about when their background is relevant
+- **Be Consistent**: Apply similar standards across all characters
+- **Explain Decisions**: Help players understand when and why bonuses apply
+
+###### **Proactive Application**
+- **Scene Setting**: Describe environments and situations that might trigger bonuses
+- **Character Spotlights**: Create moments where each character's background shines
+- **Story Integration**: Weave character backgrounds into the narrative
+- **Balanced Opportunities**: Ensure all characters get chances to use their advantages
+
+##### **Adjudication Guidelines**
+
+###### **When to Apply Bonuses**
+- **Clear Connection**: The character's background directly relates to the situation
+- **Meaningful Advantage**: The bonus represents genuine expertise or familiarity
+- **Story Enhancement**: Applying the bonus improves the narrative
+- **Player Engagement**: The bonus encourages roleplay and character development
+
+###### **When to Decline Bonuses**
+- **Weak Connection**: The background doesn't clearly relate to the current situation
+- **Overuse**: The player is trying to apply the same bonus too frequently
+- **Balance Concerns**: Applying the bonus would overshadow other characters
+- **Narrative Conflict**: The bonus doesn't fit the current story context
+
+##### **Encouraging Roleplay**
+
+###### **Bonus Moments as Story Beats**
+- **Character Spotlight**: Use bonus applications as opportunities to focus on individual characters
+- **Background Exploration**: Ask players to describe how their background helps
+- **Story Connections**: Link bonus applications to ongoing narrative threads
+- **Character Development**: Show how past experiences inform present actions
+
+###### **Group Dynamics**
+- **Shared Success**: Encourage characters to help each other succeed
+- **Complementary Skills**: Highlight how different backgrounds work together
+- **Learning Opportunities**: Let characters teach each other about their expertise
+- **Mutual Respect**: Foster appreciation for each character's unique contributions
+
+#### **Feature Creation Tools**
+
+##### **Using the Feature Creator**
+
+The Feature Creator provides comprehensive tools for designing custom features:
+
+###### **Basic Setup**
+1. **Name**: Choose descriptive, evocative names
+2. **Description**: Write rich, detailed descriptions that enhance immersion
+3. **Icon**: Select appropriate visual representations
+4. **Roll Configuration**: Set up roll mechanics if desired
+
+###### **Roll Configuration Options**
+- **Roll Type**: None (passive), Flat Bonus, or Ability-Based
+- **Target Ability**: Choose which of the five abilities to use
+- **Bonus Value**: Set flat modifiers to add to rolls
+- **Dice Adjustments**: Configure advantage/disadvantage dice
+- **Targeting**: Enable targeting for interactive features
+
+###### **Character Effects**
+- **Ability Modifications**: Permanent changes to ability scores
+- **Resource Adjustments**: Modifications to Resolve and Power maximums
+- **Special Mechanics**: Custom effects for unique features
+
+##### **Collaborative Creation**
+
+###### **Player Input**
+- **Character Concepts**: Work with players to realize their character visions
+- **Background Details**: Incorporate player-created backstory elements
+- **Mechanical Preferences**: Consider player preferences for roll types and abilities
+- **Balance Feedback**: Listen to player concerns about fairness and fun
+
+###### **Campaign Integration**
+- **Setting Consistency**: Ensure features fit your campaign world
+- **Story Relevance**: Create features that will matter in your planned adventures
+- **Group Balance**: Consider how features interact across the entire party
+- **Future Development**: Plan for how features might evolve during play
+
+#### **Advanced Feature Concepts**
+
+##### **Evolving Features**
+
+Features that change and grow during play:
+
+###### **Experience-Based Growth**
+- **Usage Tracking**: Features that improve through repeated use
+- **Story Milestones**: Features that evolve based on character experiences
+- **Training Opportunities**: Features that can be enhanced through in-game learning
+- **Relationship Development**: Features that change based on character interactions
+
+###### **Conditional Evolution**
+- **Environmental Adaptation**: Features that change based on where characters spend time
+- **Cultural Integration**: Features that develop through interaction with different societies
+- **Skill Mastery**: Features that represent advancing expertise in specific areas
+- **Magical Awakening**: Features that unlock latent supernatural abilities
+
+##### **Linked Feature Systems**
+
+Features that work together to create complex character concepts:
+
+###### **Prerequisite Chains**
+- **Basic to Advanced**: Simple features that unlock more powerful abilities
+- **Specialization Paths**: Different development routes for similar concepts
+- **Mastery Requirements**: High-level features requiring multiple prerequisites
+- **Cross-Training**: Features that combine different areas of expertise
+
+###### **Synergy Bonuses**
+- **Complementary Skills**: Features that enhance each other when combined
+- **Cultural Packages**: Sets of features representing specific backgrounds
+- **Professional Suites**: Collections of features for particular careers
+- **Magical Traditions**: Linked features representing different schools of magic
+
+#### **Troubleshooting Common Issues**
+
+##### **Balance Problems**
+
+###### **Overpowered Features**
+- **Reduce Frequency**: Make circumstances more specific
+- **Lower Bonuses**: Decrease numerical advantages
+- **Add Limitations**: Include drawbacks or restrictions
+- **Increase Costs**: Require resources or actions to activate
+
+###### **Underpowered Features**
+- **Increase Relevance**: Make circumstances more common
+- **Raise Bonuses**: Increase numerical advantages
+- **Add Flexibility**: Allow features to apply in more situations
+- **Remove Restrictions**: Eliminate unnecessary limitations
+
+##### **Player Engagement Issues**
+
+###### **Forgotten Features**
+- **Regular Reminders**: Prompt players about their features during relevant scenes
+- **Visual Aids**: Use tokens or cards to represent active features
+- **Mechanical Integration**: Ensure features interact meaningfully with other systems
+- **Story Emphasis**: Highlight features in narrative descriptions
+
+###### **Overused Features**
+- **Circumstance Limits**: Be more specific about when features apply
+- **Cooldown Periods**: Introduce rest requirements between uses
+- **Narrative Consequences**: Show how overreliance affects character development
+- **Alternative Challenges**: Create situations where features don't help
+
+#### **Best Practices Summary**
+
+##### **For Feature Design**
+- **Start Simple**: Begin with straightforward bonuses and add complexity gradually
+- **Focus on Story**: Prioritize narrative enhancement over mechanical optimization
+- **Encourage Diversity**: Create features that promote different character concepts
+- **Plan for Growth**: Design features that can evolve during play
+
+##### **For Game Management**
+- **Be Consistent**: Apply similar standards to all characters and situations
+- **Stay Flexible**: Adapt features based on how they work in actual play
+- **Communicate Clearly**: Explain your decisions and reasoning to players
+- **Embrace Creativity**: Support player ideas while maintaining game balance
+
+##### **For Player Engagement**
+- **Spotlight Moments**: Create opportunities for each character to shine
+- **Collaborative Storytelling**: Use features as prompts for character development
+- **Balanced Challenges**: Ensure all characters face appropriate difficulties
+- **Ongoing Development**: Allow features to grow and change with the characters
+
+The Features system provides a powerful foundation for character customization and storytelling. By thoughtfully designing and managing features, you can create rich, engaging characters that enhance both mechanical gameplay and narrative depth in your Eventide RP campaigns.
 
 ## System Customization
 

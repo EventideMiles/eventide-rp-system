@@ -57,6 +57,7 @@ Detailed explanation of system mechanics and features.
 
 **Contents:**
 
+- **[Features System](system-features/features.md)** - Character customization and circumstantial bonuses
 - **[Combat Mechanics](system-features/combat.md)** - Complete combat system guide
 - **[Status Effects](system-features/status-effects.md)** - Dynamic character modification system
 - **[System Settings](system-features/settings.md)** - Configuration and customization options
