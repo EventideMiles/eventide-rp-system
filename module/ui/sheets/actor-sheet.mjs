@@ -11,7 +11,7 @@ import {
   triggerGlobalThemeChange,
   THEME_PRESETS,
 } from "../../helpers/theme-manager.mjs";
-import { WindowSizingFixMixin } from "../components/_module.mjs";
+import { BaselineSheetMixins } from "../components/_module.mjs";
 
 const { api, sheets } = foundry.applications;
 const { DragDrop, TextEditor } = foundry.applications.ux;
@@ -21,7 +21,7 @@ const FilePicker = foundry.applications.apps.FilePicker.implementation;
  * Extend the basic ActorSheet with some very simple modifications
  * @extends {ActorSheetV2}
  */
-export class EventideRpSystemActorSheet extends WindowSizingFixMixin(
+export class EventideRpSystemActorSheet extends BaselineSheetMixins(
   api.HandlebarsApplicationMixin(sheets.ActorSheetV2),
 ) {
   // Private fields

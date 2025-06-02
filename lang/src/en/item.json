@@ -85,7 +85,8 @@
         "Notes": "Transformations can store combat powers that are available when the character transforms.",
         "EmbeddedPowers": "Combat Powers",
         "NoPowers": "No combat powers added yet.",
-        "DropPowerHere": "Drop a combat power here to add it to this transformation."
+        "DropPowerHere": "Drop a combat power here to add it to this transformation.",
+        "ReadOnlyNote": "Note: Embedded combat powers open in read-only mode. To edit a power, modify the original item in the actor's inventory."
       }
     }
   }

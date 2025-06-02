@@ -8,7 +8,7 @@ import {
   THEME_PRESETS,
   cleanupThemeManager,
 } from "../../helpers/_module.mjs";
-import { WindowSizingFixMixin } from "../components/_module.mjs";
+import { BaselineSheetMixins } from "../components/_module.mjs";
 
 const { api, sheets } = foundry.applications;
 const { DragDrop, TextEditor } = foundry.applications.ux;
@@ -23,7 +23,7 @@ const FilePicker = foundry.applications.apps.FilePicker.implementation;
  * @extends {HandlebarsApplicationMixin(ItemSheetV2)}
  * @class
  */
-export class EventideRpSystemItemSheet extends WindowSizingFixMixin(
+export class EventideRpSystemItemSheet extends BaselineSheetMixins(
   api.HandlebarsApplicationMixin(sheets.ItemSheetV2),
 ) {
   /**
@@ -1144,7 +1144,9 @@ export class EventideRpSystemItemSheet extends WindowSizingFixMixin(
       const power = embeddedPowers.find((p) => p.id === powerId);
 
       if (power) {
-        return power.sheet.render(true);
+        // Open the sheet in read-only mode since these are temporary items
+        // that can't be properly saved due to their parent relationship
+        return power.sheet.render(true, { readOnly: true });
       }
     }
 

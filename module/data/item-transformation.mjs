@@ -103,7 +103,35 @@ export default class EventideRpSystemTransformation extends EventideRpSystemItem
       // Create a temporary Item instance from the data
       // Use the transformation item's parent (the actor) as the parent for the combat power
       const actor = this.parent?.parent || this.parent;
-      return new CONFIG.Item.documentClass(powerData, { parent: actor });
+      const tempItem = new CONFIG.Item.documentClass(powerData, {
+        parent: actor,
+      });
+
+      // Override the isEditable property to make this item read-only
+      Object.defineProperty(tempItem, "isEditable", {
+        value: false,
+        writable: false,
+        configurable: false,
+      });
+
+      // Also override the sheet's isEditable property when it's accessed
+      const originalSheet = tempItem.sheet;
+      Object.defineProperty(tempItem, "sheet", {
+        get() {
+          if (originalSheet && !originalSheet._readOnlyOverridden) {
+            Object.defineProperty(originalSheet, "isEditable", {
+              value: false,
+              writable: false,
+              configurable: false,
+            });
+            originalSheet._readOnlyOverridden = true;
+          }
+          return originalSheet;
+        },
+        configurable: true,
+      });
+
+      return tempItem;
     });
   }
 
