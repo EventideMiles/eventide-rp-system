@@ -375,7 +375,10 @@
         "Notes": "Transformations can store combat powers that are available when the character transforms.",
         "EmbeddedPowers": "Combat Powers",
         "NoPowers": "No combat powers added yet.",
-        "DropPowerHere": "Drop a combat power here to add it to this transformation."
+        "DropPowerHere": "Drop a combat power here to add it to this transformation.",
+        "ReadOnlyNote": "Note: Embedded combat powers open in read-only mode. To edit a power, modify the original item in the actor's inventory.",
+        "DragToExtract": "Drag to extract this combat power as a new item",
+        "DragNote": "Tip: Drag combat powers to actors, compendiums, or item tabs to create copies."
       }
     },
     "Messages": {
@@ -431,6 +434,8 @@
     },
     "UI": {
       "View": "View",
+      "ViewReadOnly": "View (Read-Only)",
+      "ReadOnly": "Read-Only",
       "Remove": "Remove"
     },
     "WindowTitles": {
@@ -507,7 +512,7 @@
     "GearEquippedDefaultName": "Gear Creator: Default Equipped",
     "GearEquippedDefaultHint": "If enabled, gear creator will mark new gear as equipped by default.",
     "CrToXpFormulaName": "CR to XP Calculation",
-    "CrToXpFormulaHint": "Formula for converting Challenge Rating to Experience Points. Use @cr to reference the CR value. Example: 'Math.max(10, Math.floor(@cr * 200 * Math.pow(1.5, @cr)))'",
+    "CrToXpFormulaHint": "Formula for converting Challenge Rating to Experience Points. Use @cr to reference the CR value. Use simple math operations (+, -, *, /) and dice notation. Example: '@cr * 200 + @cr * @cr * 50'",
     "DefaultTokenVisionRangeName": "Default Token Vision Range",
     "DefaultTokenVisionRangeHint": "Default vision range in grid units for newly created actor tokens. All tokens start with vision enabled.",
     "EnableSystemSoundsName": "Enable System Sounds",

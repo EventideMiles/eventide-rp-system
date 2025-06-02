@@ -14,10 +14,11 @@
           </li>
           {{#each embeddedCombatPowers as |power|}}
             <li
-              class="erps-items-panel__item"
+              class="erps-items-panel__item erps-items-panel__item--draggable"
               data-item-id="{{power.id}}"
               data-drag="true"
               data-document-class="Item"
+              title="{{localize 'EVENTIDE_RP_SYSTEM.Item.Transformation.DragToExtract'}}"
             >
               <div class="erps-items-panel__cell erps-items-panel__cell--image">
                 <img
@@ -27,6 +28,7 @@
                   width="24"
                   height="24"
                 />
+                <i class="fas fa-arrows-alt erps-items-panel__drag-indicator" title="{{localize 'EVENTIDE_RP_SYSTEM.Item.Transformation.DragToExtract'}}"></i>
               </div>
               <div class="erps-items-panel__cell erps-items-panel__cell--name">
                 <span class="erps-items-panel__name">{{power.name}}</span>
@@ -35,7 +37,7 @@
                 <a
                   class="erps-items-panel__control erps-items-panel__control--view"
                   data-action="viewDoc"
-                  title="{{localize 'EVENTIDE_RP_SYSTEM.UI.View'}}"
+                  title="{{localize 'EVENTIDE_RP_SYSTEM.UI.View'}} ({{localize 'EVENTIDE_RP_SYSTEM.UI.ReadOnly'}})"
                 >
                   <i class="fas fa-eye"></i>
                 </a>
@@ -59,7 +61,11 @@
         <p>{{localize "EVENTIDE_RP_SYSTEM.Item.Transformation.DropPowerHere"}}</p>
       </div>
 
-      <div class="erps-items-panel__notes">{{localize "EVENTIDE_RP_SYSTEM.Item.Transformation.Notes"}}</div>
+      <div class="erps-items-panel__notes">
+        <p>{{localize "EVENTIDE_RP_SYSTEM.Item.Transformation.Notes"}}</p>
+        <p><em>{{localize "EVENTIDE_RP_SYSTEM.Item.Transformation.ReadOnlyNote"}}</em></p>
+        <p><strong>{{localize "EVENTIDE_RP_SYSTEM.Item.Transformation.DragNote"}}</strong></p>
+      </div>
     </div>
   </div>
 </section>

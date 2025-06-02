@@ -75,6 +75,7 @@ Tips, tricks, and advanced configuration techniques.
 **Contents:**
 
 - **[Developer Guide](advanced-usage/developer-guide.md)** - System architecture and development
+- **[ApplicationV2 Window Sizing Fix](advanced-usage/applicationv2-window-sizing-fix.md)** - Fix for double-click maximize issues
 - **Advanced customization** techniques
 - **Performance optimization** strategies
 - **Integration** with other Foundry modules

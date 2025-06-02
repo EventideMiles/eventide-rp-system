@@ -16,6 +16,8 @@
     },
     "UI": {
       "View": "View",
+      "ViewReadOnly": "View (Read-Only)",
+      "ReadOnly": "Read-Only",
       "Remove": "Remove"
     }
   },

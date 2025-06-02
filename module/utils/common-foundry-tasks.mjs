@@ -220,6 +220,14 @@ export class CommonFoundryTasks {
       : false;
   }
 
+  /**
+   * Logs a message to console only if testing mode is disabled
+   * This prevents console spam during automated testing
+   *
+   * @param {string} message - The message to log
+   * @param {*} [data] - Optional data to log alongside the message
+   * @static
+   */
   static logIfTesting(message, data) {
     if (!CommonFoundryTasks.isTestingMode) {
       if (data !== undefined) {

@@ -521,12 +521,11 @@ export const registerSettings = function () {
     config: true,
     restricted: true,
     type: String,
-    default: "Math.max(10, Math.floor(@cr * 200 * Math.pow(1.5, @cr)))",
+    default: "@cr * 200 + @cr * @cr * 50",
     onChange: (value) => {
       // If the value is empty, reset it to the default
       if (!value || value.trim() === "") {
-        const defaultFormula =
-          "Math.max(10, Math.floor(@cr * 200 * Math.pow(1.5, @cr)))";
+        const defaultFormula = "@cr * 200 + @cr * @cr * 50";
         game.settings.set(
           "eventide-rp-system",
           "crToXpFormula",

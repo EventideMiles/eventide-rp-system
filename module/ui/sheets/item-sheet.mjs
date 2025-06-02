@@ -8,6 +8,7 @@ import {
   THEME_PRESETS,
   cleanupThemeManager,
 } from "../../helpers/_module.mjs";
+import { BaselineSheetMixins } from "../components/_module.mjs";
 
 const { api, sheets } = foundry.applications;
 const { DragDrop, TextEditor } = foundry.applications.ux;
@@ -22,8 +23,8 @@ const FilePicker = foundry.applications.apps.FilePicker.implementation;
  * @extends {HandlebarsApplicationMixin(ItemSheetV2)}
  * @class
  */
-export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
-  sheets.ItemSheetV2,
+export class EventideRpSystemItemSheet extends BaselineSheetMixins(
+  api.HandlebarsApplicationMixin(sheets.ItemSheetV2),
 ) {
   /**
    * Creates a new instance of the EventideRpSystemItemSheet.
@@ -156,6 +157,9 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
    * @override
    */
   async _preClose(options) {
+    // Call mixin cleanup first
+    await super._preClose(options);
+
     if (this.element) {
       // Clean up number inputs
       erps.utils.cleanupNumberInputs(this.element);
@@ -172,8 +176,6 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
         this.themeManager = null;
       }
     }
-
-    await super._preClose(options);
   }
 
   /** @override */
@@ -714,8 +716,24 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
 
     let dragData = null;
 
+    // Handle embedded combat powers from transformations
+    if (this.item.type === "transformation" && li.dataset.itemId) {
+      const powerId = li.dataset.itemId;
+      const embeddedPowers = this.item.system.getEmbeddedCombatPowers();
+      const power = embeddedPowers.find((p) => p.id === powerId);
+
+      if (power) {
+        // Create clean drag data without parent relationship to avoid embedded document errors
+        const powerData = power.toObject();
+        dragData = {
+          type: "Item",
+          data: powerData,
+          // Don't include uuid or parent information that would make Foundry think this is an embedded document
+        };
+      }
+    }
     // Active Effect
-    if (li.dataset.effectId) {
+    else if (li.dataset.effectId) {
       const effect = this.item.effects.get(li.dataset.effectId);
       dragData = effect.toDragData();
     }
@@ -1142,7 +1160,9 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
       const power = embeddedPowers.find((p) => p.id === powerId);
 
       if (power) {
-        return power.sheet.render(true);
+        // Open the sheet in read-only mode since these are temporary items
+        // that can't be properly saved due to their parent relationship
+        return power.sheet.render(true, { readOnly: true });
       }
     }
 

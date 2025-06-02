@@ -11,6 +11,7 @@ import {
   triggerGlobalThemeChange,
   THEME_PRESETS,
 } from "../../helpers/theme-manager.mjs";
+import { BaselineSheetMixins } from "../components/_module.mjs";
 
 const { api, sheets } = foundry.applications;
 const { DragDrop, TextEditor } = foundry.applications.ux;
@@ -20,8 +21,8 @@ const FilePicker = foundry.applications.apps.FilePicker.implementation;
  * Extend the basic ActorSheet with some very simple modifications
  * @extends {ActorSheetV2}
  */
-export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
-  sheets.ActorSheetV2,
+export class EventideRpSystemActorSheet extends BaselineSheetMixins(
+  api.HandlebarsApplicationMixin(sheets.ActorSheetV2),
 ) {
   // Private fields
   #dragDrop;
@@ -971,6 +972,9 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
    * @override
    */
   async _preClose(options) {
+    // Call mixin cleanup first
+    await super._preClose(options);
+
     // Clean up status bar event listeners
     this.#cleanupStatusBarScrolling();
 
@@ -985,9 +989,6 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
 
     // Clean up tab container styling
     cleanupTabContainerStyling(this.element);
-
-    // Call parent cleanup
-    return super._preClose(options);
   }
 
   /**
@@ -2473,6 +2474,105 @@ export class EventideRpSystemActorSheet extends api.HandlebarsApplicationMixin(
           userName: game.user?.name || "Unknown",
         }),
       );
+    }
+  }
+
+  /**
+   * Override the maximize method to fix double-click window sizing issues
+   * @returns {Promise<void>}
+   * @override
+   */
+  async maximize() {
+    Logger.methodEntry("EventideRpSystemActorSheet", "maximize", {
+      actorName: this.actor?.name,
+      currentPosition: this.position,
+      minimized: this.minimized,
+    });
+
+    try {
+      // Store the current position before maximizing if we're not already minimized
+      if (!this.minimized && !this._storedPosition) {
+        this._storedPosition = {
+          width: this.position.width,
+          height: this.position.height,
+          left: this.position.left,
+          top: this.position.top,
+        };
+
+        Logger.debug("Stored current position before maximize", {
+          storedPosition: this._storedPosition,
+          actorName: this.actor?.name,
+        });
+      }
+
+      // Call the parent maximize method
+      await super.maximize();
+
+      // If we have a stored position and we're no longer minimized, restore it
+      if (this._storedPosition && !this.minimized) {
+        // Use a small delay to ensure the maximize operation is complete
+        setTimeout(() => {
+          this.setPosition(this._storedPosition);
+
+          Logger.info("Restored position after maximize", {
+            restoredPosition: this._storedPosition,
+            actorName: this.actor?.name,
+          });
+
+          // Clear the stored position after restoring
+          this._storedPosition = null;
+        }, 50);
+      }
+
+      Logger.methodExit("EventideRpSystemActorSheet", "maximize", true);
+    } catch (error) {
+      Logger.error("Failed to maximize actor sheet", {
+        error: error.message,
+        stack: error.stack,
+        actorName: this.actor?.name,
+      });
+
+      // Still call parent method as fallback
+      await super.maximize();
+
+      Logger.methodExit("EventideRpSystemActorSheet", "maximize", false);
+    }
+  }
+
+  /**
+   * Override the minimize method to clear stored position
+   * @returns {Promise<void>}
+   * @override
+   */
+  async minimize() {
+    Logger.methodEntry("EventideRpSystemActorSheet", "minimize", {
+      actorName: this.actor?.name,
+      currentPosition: this.position,
+    });
+
+    try {
+      // Clear any stored position when minimizing
+      this._storedPosition = null;
+
+      // Call the parent minimize method
+      await super.minimize();
+
+      Logger.info("Actor sheet minimized successfully", {
+        actorName: this.actor?.name,
+      });
+
+      Logger.methodExit("EventideRpSystemActorSheet", "minimize", true);
+    } catch (error) {
+      Logger.error("Failed to minimize actor sheet", {
+        error: error.message,
+        stack: error.stack,
+        actorName: this.actor?.name,
+      });
+
+      // Still call parent method as fallback
+      await super.minimize();
+
+      Logger.methodExit("EventideRpSystemActorSheet", "minimize", false);
     }
   }
 }

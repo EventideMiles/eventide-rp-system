@@ -6182,10 +6182,59 @@ label,
   border: 1px solid var(--theme-secondary);
   object-fit: cover;
   flex-shrink: 0;
+  position: relative;
+  transition: all 0.2s ease;
+}
+.erps-items-panel__image:not([data-table-theme]), .erps-items-panel__image[data-table-theme=blue], .erps-items-panel__image[data-table-theme=gold], .erps-items-panel__image[data-table-theme=green], .erps-items-panel__image[data-table-theme=black], .erps-items-panel__image[data-table-theme=purple] {
+  background: var(--theme-image-bg, rgba(0, 0, 0, 0.8)) !important;
+  border-radius: 4px !important;
+  padding: 1px !important;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+}
+.erps-items-panel__image[data-table-theme=light] {
+  background: var(--theme-image-bg, rgba(75, 85, 99, 0.85)) !important;
+  border: 1px solid rgba(0, 0, 0, 0.15) !important;
+  border-radius: 4px !important;
+  padding: 1px !important;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.4), 0 1px 1px rgba(0, 0, 0, 0.15) !important;
 }
 .erps-items-panel__image:hover {
   border-color: var(--theme-light);
   box-shadow: 0 0 10px var(--theme-glow);
+}
+.erps-items-panel__drag-indicator {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  font-size: 0.75rem;
+  color: var(--theme-secondary);
+  background: var(--theme-background);
+  border-radius: 50%;
+  width: 1rem;
+  height: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+.erps-items-panel__item--draggable {
+  cursor: grab;
+  transition: all 0.2s ease;
+}
+.erps-items-panel__item--draggable:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+.erps-items-panel__item--draggable:hover .erps-items-panel__drag-indicator {
+  opacity: 1;
+  color: var(--theme-accent);
+}
+.erps-items-panel__item--draggable:active {
+  cursor: grabbing;
+  transform: translateY(0);
 }
 .erps-items-panel__name {
   font-weight: 500;
@@ -6203,72 +6252,94 @@ label,
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 2.5rem;
-  height: 2.5rem;
-  padding: 0;
-  font-size: 0.9rem;
-  color: var(--theme-text);
-  background: var(--theme-primary);
-  border: 1px solid var(--theme-secondary);
-  border-radius: 4px;
-  transition: all 0.2s ease;
+  width: 2rem;
+  height: 2rem;
+  min-width: 2rem;
+  min-height: 2rem;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--theme-text, #fff);
   cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 12pt;
   text-decoration: none;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.erps-items-panel__control::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: radial-gradient(circle, var(--theme-light, rgba(59, 130, 246, 0.7)) 0%, transparent 70%);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: all 0.3s ease;
+  z-index: 1;
+}
+.erps-items-panel__control i {
+  position: relative;
+  z-index: 2;
 }
 .erps-items-panel__control:hover {
-  background: var(--theme-secondary);
-  border-color: var(--theme-light);
-  color: var(--theme-light);
-  box-shadow: 0 0 10px var(--theme-glow);
-  transform: translateY(-1px);
+  background: var(--theme-primary, rgba(59, 130, 246, 0.9));
+  border-color: var(--theme-light, rgba(59, 130, 246, 0.7));
+  box-shadow: 0 0 12px var(--theme-glow, rgba(59, 130, 246, 0.6));
+  transform: translateY(-1px) scale(1.05);
+}
+.erps-items-panel__control:hover::before {
+  width: 100%;
+  height: 100%;
 }
 .erps-items-panel__control:active {
   transform: translateY(0) scale(0.95);
 }
 .erps-items-panel__control--view {
-  color: rgba(100, 100, 100, 0.7);
-  border-color: rgba(100, 100, 100, 0.4);
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(59, 130, 246, 0.3));
+  border-color: rgba(59, 130, 246, 0.4);
 }
 .erps-items-panel__control--view:hover {
-  background: rgba(100, 100, 100, 0.2);
-  border-color: rgba(100, 100, 100, 0.8);
-  color: rgba(100, 100, 100, 0.9);
-  box-shadow: 0 0 10px rgba(100, 100, 100, 0.4);
+  background: rgba(59, 130, 246, 0.8);
+  border-color: rgba(59, 130, 246, 0.8);
+  box-shadow: 0 0 12px rgba(59, 130, 246, 0.6);
 }
 .erps-items-panel__control--edit {
-  color: rgba(100, 100, 100, 0.7);
-  border-color: rgba(100, 100, 100, 0.4);
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(34, 197, 94, 0.3));
+  border-color: rgba(34, 197, 94, 0.4);
 }
 .erps-items-panel__control--edit:hover {
-  background: rgba(100, 100, 100, 0.2);
-  border-color: rgba(100, 100, 100, 0.8);
-  color: rgba(100, 100, 100, 0.9);
-  box-shadow: 0 0 10px rgba(100, 100, 100, 0.4);
+  background: rgba(34, 197, 94, 0.8);
+  border-color: rgba(34, 197, 94, 0.8);
+  box-shadow: 0 0 12px rgba(34, 197, 94, 0.6);
 }
 .erps-items-panel__control--delete {
-  color: rgba(100, 100, 100, 0.7);
-  border-color: rgba(100, 100, 100, 0.4);
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(239, 68, 68, 0.3));
+  border-color: rgba(239, 68, 68, 0.4);
 }
 .erps-items-panel__control--delete:hover {
-  background: rgba(100, 100, 100, 0.2);
-  border-color: rgba(100, 100, 100, 0.8);
-  color: rgba(100, 100, 100, 0.9);
-  box-shadow: 0 0 10px rgba(100, 100, 100, 0.4);
+  background: rgba(239, 68, 68, 0.8);
+  border-color: rgba(239, 68, 68, 0.8);
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.6);
 }
 .erps-items-panel__control--warning {
-  color: rgba(100, 100, 100, 0.7);
-  border-color: rgba(100, 100, 100, 0.4);
+  background: linear-gradient(135deg, rgba(217, 119, 6, 0.2), rgba(217, 119, 6, 0.3));
+  border-color: rgba(217, 119, 6, 0.4);
 }
 .erps-items-panel__control--warning:hover {
-  background: rgba(100, 100, 100, 0.2);
-  border-color: rgba(100, 100, 100, 0.8);
-  color: rgba(100, 100, 100, 0.9);
-  box-shadow: 0 0 10px rgba(100, 100, 100, 0.4);
+  background: rgba(217, 119, 6, 0.8);
+  border-color: rgba(217, 119, 6, 0.8);
+  box-shadow: 0 0 12px rgba(217, 119, 6, 0.6);
 }
 .erps-items-panel__control--disabled {
   opacity: 0.5;
   cursor: not-allowed;
   pointer-events: none;
+  background: rgba(100, 100, 100, 0.2);
+  border-color: rgba(100, 100, 100, 0.3);
 }
 
 .erps-items-panel__create-button {

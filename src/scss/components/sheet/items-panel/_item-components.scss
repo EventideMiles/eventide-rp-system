@@ -1,6 +1,7 @@
 @use "config" as *;
 @use "mixins" as *;
 @use "../../../utils/sheet-tokens" as tokens;
+@use "../../../utils/themes" as themes;
 
 // ===================================
 // ITEM COMPONENTS
@@ -19,10 +20,62 @@
     border: 1px solid var(--theme-secondary);
     object-fit: cover;
     flex-shrink: 0;
+    position: relative;
+    transition: all 0.2s ease;
+
+    // Apply themed image backgrounds for all themes (same as data tables)
+    @include themes.apply-all-data-table-image-backgrounds('table-theme');
 
     &:hover {
       border-color: var(--theme-light);
       box-shadow: 0 0 tokens.$sheet-glow-blur-sm var(--theme-glow);
+    }
+  }
+
+  // ===================================
+  // DRAG INDICATOR
+  // ===================================
+
+  &__drag-indicator {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    font-size: 0.75rem;
+    color: var(--theme-secondary);
+    background: var(--theme-background);
+    border-radius: 50%;
+    width: 1rem;
+    height: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  // ===================================
+  // DRAGGABLE ITEM STATES
+  // ===================================
+
+  &__item--draggable {
+    cursor: grab;
+    transition: all 0.2s ease;
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgb(0 0 0 / 20%);
+
+      .erps-items-panel__drag-indicator {
+        opacity: 1;
+        color: var(--theme-accent);
+      }
+    }
+
+    &:active {
+      cursor: grabbing;
+      transform: translateY(0);
     }
   }
 
@@ -45,33 +98,115 @@
   }
 
   // ===================================
-  // CONTROL BUTTONS
+  // CONTROL BUTTONS (Data Table Style)
   // ===================================
 
   &__control {
-    @include control-button-base;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    min-width: 2rem;
+    min-height: 2rem;
+    border-radius: tokens.$sheet-radius-md;
+    background: themes.color(white, 10);
+    border: 1px solid themes.color(white, 20);
+    color: var(--theme-text, #fff);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: tokens.$sheet-font-size-xs;
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
 
-    // Control button variants
+    &::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: radial-gradient(circle, var(--theme-light, #{themes.color(blue, 70)}) 0%, transparent 70%);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: all 0.3s ease;
+      z-index: 1;
+    }
+
+    i {
+      position: relative;
+      z-index: 2;
+    }
+
+    &:hover {
+      background: var(--theme-primary, #{themes.color(blue, 90)});
+      border-color: var(--theme-light, #{themes.color(blue, 70)});
+      box-shadow: 0 0 tokens.$sheet-shadow-blur-lg var(--theme-glow, #{themes.color(blue, 60)});
+      transform: translateY(-1px) scale(1.05);
+
+      &::before {
+        width: 100%;
+        height: 100%;
+      }
+    }
+
+    &:active {
+      transform: translateY(0) scale(0.95);
+    }
+
+    // Control button variants with data table styling
     &--view {
-      @include control-button-variant(blue);
+      background: linear-gradient(135deg, themes.color(blue, 20), themes.color(blue, 30));
+      border-color: themes.color(blue, 40);
+
+      &:hover {
+        background: themes.color(blue, 80);
+        border-color: themes.color(blue, 80);
+        box-shadow: 0 0 12px themes.color(blue, 60);
+      }
     }
 
     &--edit {
-      @include control-button-variant(green);
+      background: linear-gradient(135deg, themes.color(green, 20), themes.color(green, 30));
+      border-color: themes.color(green, 40);
+
+      &:hover {
+        background: themes.color(green, 80);
+        border-color: themes.color(green, 80);
+        box-shadow: 0 0 12px themes.color(green, 60);
+      }
     }
 
     &--delete {
-      @include control-button-variant(red);
+      background: linear-gradient(135deg, themes.color(red, 20), themes.color(red, 30));
+      border-color: themes.color(red, 40);
+
+      &:hover {
+        background: themes.color(red, 80);
+        border-color: themes.color(red, 80);
+        box-shadow: 0 0 12px themes.color(red, 60);
+      }
     }
 
     &--warning {
-      @include control-button-variant(orange);
+      background: linear-gradient(135deg, themes.color(orange, 20), themes.color(orange, 30));
+      border-color: themes.color(orange, 40);
+
+      &:hover {
+        background: themes.color(orange, 80);
+        border-color: themes.color(orange, 80);
+        box-shadow: 0 0 12px themes.color(orange, 60);
+      }
     }
 
     &--disabled {
       opacity: tokens.$sheet-opacity-disabled;
       cursor: not-allowed;
       pointer-events: none;
+      background: themes.color(gray, 20);
+      border-color: themes.color(gray, 30);
     }
   }
-} 
+}
