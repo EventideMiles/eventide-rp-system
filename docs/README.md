@@ -12,6 +12,7 @@ Welcome to the comprehensive documentation for the Eventide Roleplaying System f
 ### What's New?
 
 - **[What's New in v13.10.0](WHATS_NEW.md)** - Latest features and improvements
+- **What's New In v13.10.2** - Several bugfixes and a few default changes
 
 ### Ready to Dive Deeper?
 
