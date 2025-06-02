@@ -48,6 +48,17 @@ export default class EventideRpSystemTransformation extends EventideRpSystemItem
     return schema;
   }
 
+  /**
+   * Add a combat power to this transformation's embedded combat powers
+   *
+   * Creates a complete copy of the combat power data and stores it in the transformation.
+   * The combat power must be of type "combatPower" and will be ignored if it already exists.
+   *
+   * @param {Item} combatPower - The combat power item to add to this transformation
+   * @returns {Promise<EventideRpSystemTransformation>} This transformation instance for method chaining
+   * @throws {Error} If the provided item is not a combat power
+   * @async
+   */
   async addCombatPower(combatPower) {
     if (combatPower.type !== "combatPower") {
       throw new Error(
@@ -74,6 +85,16 @@ export default class EventideRpSystemTransformation extends EventideRpSystemItem
     return this;
   }
 
+  /**
+   * Remove a combat power from this transformation's embedded combat powers
+   *
+   * Removes the combat power with the specified ID from the embedded combat powers array.
+   * If the power is not found, the method returns without making changes.
+   *
+   * @param {string} powerId - The ID of the combat power to remove
+   * @returns {Promise<EventideRpSystemTransformation>} This transformation instance for method chaining
+   * @async
+   */
   async removeCombatPower(powerId) {
     // Get current powers
     const powers = foundry.utils.deepClone(this.embeddedCombatPowers || []);

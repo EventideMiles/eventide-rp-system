@@ -186,11 +186,23 @@ Hooks.once("init", async () => {
 /*  Handlebars Helpers                          */
 /* -------------------------------------------- */
 
-// If you need to add Handlebars helpers, here is a useful example:
+/**
+ * Convert a string to lowercase
+ * @param {string} str - The string to convert
+ * @returns {string} The lowercase string
+ */
 Handlebars.registerHelper("toLowerCase", (str) => {
   return str.toLowerCase();
 });
 
+/**
+ * Conditional helper for comparing two values with various operators
+ * @param {*} v1 - First value to compare
+ * @param {string} operator - Comparison operator (==, ===, !=, !==, <, <=, >, >=, &&, ||)
+ * @param {*} v2 - Second value to compare
+ * @param {Object} options - Handlebars options object with fn and inverse functions
+ * @returns {string} Result of the conditional template rendering
+ */
 Handlebars.registerHelper("ifCond", function (v1, operator, v2, options) {
   switch (operator) {
     case "==":
@@ -218,18 +230,37 @@ Handlebars.registerHelper("ifCond", function (v1, operator, v2, options) {
   }
 });
 
+/**
+ * Split a key by dots and return the specified part
+ * @param {string} key - The key to split (e.g., "system.abilities.acro")
+ * @param {number} choice - The index of the part to return (0-based)
+ * @returns {string} The specified part of the split key
+ */
 Handlebars.registerHelper("keySplit", (key, choice) => {
   return key.split(".")[choice];
 });
 
+/**
+ * Get the absolute value of a number
+ * @param {number} value - The number to get the absolute value of
+ * @returns {number} The absolute value
+ */
 Handlebars.registerHelper("abs", (value) => {
   return Math.abs(value);
 });
 
+/**
+ * Console log helper for debugging templates
+ * @param {*} str - The value to log to console
+ */
 Handlebars.registerHelper("console", (str) => {
   console.info(str);
 });
 
+/**
+ * Debug helper that logs the current context and optional value to console
+ * @param {*} [optionalValue] - Optional value to also log
+ */
 Handlebars.registerHelper("debug", function (optionalValue) {
   console.info("Current Context");
   console.info("====================");
@@ -241,16 +272,31 @@ Handlebars.registerHelper("debug", function (optionalValue) {
   }
 });
 
+/**
+ * Convert a string to lowercase (alternative implementation)
+ * @param {string} str - The string to convert
+ * @returns {string} The lowercase string
+ */
 Handlebars.registerHelper("lowercase", (str) => {
   return (str || "").toLowerCase();
 });
 
+/**
+ * Capitalize the first letter of a string
+ * @param {string} str - The string to capitalize
+ * @returns {string} The string with the first letter capitalized
+ */
 Handlebars.registerHelper("capitalize", (str) => {
   if (!str) return "";
   str = String(str);
   return str.charAt(0).toUpperCase() + str.slice(1);
 });
 
+/**
+ * Check if any items in an array have the cursed property set to true
+ * @param {Array} items - Array of items to check
+ * @returns {boolean} True if any item is cursed, false otherwise
+ */
 Handlebars.registerHelper("hasCursedItems", (items) => {
   if (!Array.isArray(items)) return false;
   return items.some((item) => item.system?.cursed === true);

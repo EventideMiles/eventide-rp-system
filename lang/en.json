@@ -512,7 +512,7 @@
     "GearEquippedDefaultName": "Gear Creator: Default Equipped",
     "GearEquippedDefaultHint": "If enabled, gear creator will mark new gear as equipped by default.",
     "CrToXpFormulaName": "CR to XP Calculation",
-    "CrToXpFormulaHint": "Formula for converting Challenge Rating to Experience Points. Use @cr to reference the CR value. Example: 'Math.max(10, Math.floor(@cr * 200 * Math.pow(1.5, @cr)))'",
+    "CrToXpFormulaHint": "Formula for converting Challenge Rating to Experience Points. Use @cr to reference the CR value. Use simple math operations (+, -, *, /) and dice notation. Example: '@cr * 200 + @cr * @cr * 50'",
     "DefaultTokenVisionRangeName": "Default Token Vision Range",
     "DefaultTokenVisionRangeHint": "Default vision range in grid units for newly created actor tokens. All tokens start with vision enabled.",
     "EnableSystemSoundsName": "Enable System Sounds",

@@ -301,6 +301,11 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
 
   /**
    * Calculate XP value from Challenge Rating using the configurable formula
+   *
+   * Uses the system setting for CR-to-XP conversion formula, with a fallback
+   * to a simple calculation if the formula evaluation fails. The formula can
+   * reference @cr as the challenge rating value.
+   *
    * @returns {number} The calculated XP value
    */
   calculateXPFromCR() {
@@ -308,7 +313,7 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
       // Get the CR-to-XP formula from settings
       const formula =
         game.settings?.get("eventide-rp-system", "crToXpFormula") ||
-        "Math.max(10, Math.floor(@cr * 200 * Math.pow(1.5, @cr)))";
+        "@cr * 200 + @cr * @cr * 50";
 
       // Get roll data for formula evaluation
       const rollData = this.getRollData();
