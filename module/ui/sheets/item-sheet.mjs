@@ -716,8 +716,24 @@ export class EventideRpSystemItemSheet extends BaselineSheetMixins(
 
     let dragData = null;
 
+    // Handle embedded combat powers from transformations
+    if (this.item.type === "transformation" && li.dataset.itemId) {
+      const powerId = li.dataset.itemId;
+      const embeddedPowers = this.item.system.getEmbeddedCombatPowers();
+      const power = embeddedPowers.find((p) => p.id === powerId);
+
+      if (power) {
+        // Create clean drag data without parent relationship to avoid embedded document errors
+        const powerData = power.toObject();
+        dragData = {
+          type: "Item",
+          data: powerData,
+          // Don't include uuid or parent information that would make Foundry think this is an embedded document
+        };
+      }
+    }
     // Active Effect
-    if (li.dataset.effectId) {
+    else if (li.dataset.effectId) {
       const effect = this.item.effects.get(li.dataset.effectId);
       dragData = effect.toDragData();
     }

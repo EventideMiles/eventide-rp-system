@@ -6182,10 +6182,45 @@ label,
   border: 1px solid var(--theme-secondary);
   object-fit: cover;
   flex-shrink: 0;
+  position: relative;
 }
 .erps-items-panel__image:hover {
   border-color: var(--theme-light);
   box-shadow: 0 0 10px var(--theme-glow);
+}
+.erps-items-panel__drag-indicator {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  font-size: 0.75rem;
+  color: var(--theme-secondary);
+  background: var(--theme-background);
+  border-radius: 50%;
+  width: 1rem;
+  height: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+.erps-items-panel__item--draggable {
+  cursor: grab;
+  transition: all 0.2s ease;
+}
+.erps-items-panel__item--draggable:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+.erps-items-panel__item--draggable:hover .erps-items-panel__drag-indicator {
+  opacity: 1;
+  color: var(--theme-accent);
+}
+.erps-items-panel__item--draggable:active {
+  cursor: grabbing;
+  transform: translateY(0);
 }
 .erps-items-panel__name {
   font-weight: 500;
