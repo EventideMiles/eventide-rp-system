@@ -20,11 +20,15 @@ export function WindowSizingFixMixin(BaseClass) {
      * @override
      */
     async _preClose(options) {
-      Logger.debug("Cleaning up stored dimensions on close", {
-        className: this.constructor.name,
-        hasStoredDimensions: !!this._storedDimensions,
-        hasBaselineDimensions: !!this._baselineDimensions,
-      }, "WINDOW_SIZING");
+      Logger.debug(
+        "Cleaning up stored dimensions on close",
+        {
+          className: this.constructor.name,
+          hasStoredDimensions: !!this._storedDimensions,
+          hasBaselineDimensions: !!this._baselineDimensions,
+        },
+        "WINDOW_SIZING",
+      );
 
       // Clean up stored dimensions
       this._storedDimensions = null;
@@ -48,10 +52,14 @@ export function WindowSizingFixMixin(BaseClass) {
           height: this.position.height,
         };
 
-        Logger.debug("Captured baseline dimensions", {
-          className: this.constructor.name,
-          dimensions: this._baselineDimensions,
-        }, "WINDOW_SIZING");
+        Logger.debug(
+          "Captured baseline dimensions",
+          {
+            className: this.constructor.name,
+            dimensions: this._baselineDimensions,
+          },
+          "WINDOW_SIZING",
+        );
       }
 
       // Call parent _onRender if it exists
@@ -81,18 +89,26 @@ export function WindowSizingFixMixin(BaseClass) {
             height: this.position.height,
           };
 
-          Logger.debug("Stored dimensions before minimize", {
-            className: this.constructor.name,
-            storedDimensions: this._storedDimensions,
-          }, "WINDOW_SIZING");
+          Logger.debug(
+            "Stored dimensions before minimize",
+            {
+              className: this.constructor.name,
+              storedDimensions: this._storedDimensions,
+            },
+            "WINDOW_SIZING",
+          );
 
           // Ensure we have a baseline fallback
           if (!this._baselineDimensions) {
             this._baselineDimensions = { ...this._storedDimensions };
-            Logger.debug("Created baseline dimensions from stored dimensions", {
-              className: this.constructor.name,
-              baselineDimensions: this._baselineDimensions,
-            }, "WINDOW_SIZING");
+            Logger.debug(
+              "Created baseline dimensions from stored dimensions",
+              {
+                className: this.constructor.name,
+                baselineDimensions: this._baselineDimensions,
+              },
+              "WINDOW_SIZING",
+            );
           }
         }
 
@@ -125,7 +141,9 @@ export function WindowSizingFixMixin(BaseClass) {
           // Determine the best dimensions to restore
           if (this._storedDimensions && this._baselineDimensions) {
             // Compare heights and use the larger one
-            if (this._storedDimensions.height >= this._baselineDimensions.height) {
+            if (
+              this._storedDimensions.height >= this._baselineDimensions.height
+            ) {
               dimensionsToRestore = this._storedDimensions;
               dimensionsSource = "stored";
             } else {
@@ -140,13 +158,17 @@ export function WindowSizingFixMixin(BaseClass) {
             dimensionsSource = "baseline";
           }
 
-          Logger.debug("Determined dimensions to restore", {
-            className: this.constructor.name,
-            dimensionsSource,
-            dimensionsToRestore,
-            storedHeight: this._storedDimensions?.height,
-            baselineHeight: this._baselineDimensions?.height,
-          }, "WINDOW_SIZING");
+          Logger.debug(
+            "Determined dimensions to restore",
+            {
+              className: this.constructor.name,
+              dimensionsSource,
+              dimensionsToRestore,
+              storedHeight: this._storedDimensions?.height,
+              baselineHeight: this._baselineDimensions?.height,
+            },
+            "WINDOW_SIZING",
+          );
 
           if (dimensionsToRestore) {
             await super.maximize();
@@ -158,19 +180,27 @@ export function WindowSizingFixMixin(BaseClass) {
                 height: dimensionsToRestore.height,
               });
 
-              Logger.debug("Restored window dimensions", {
-                className: this.constructor.name,
-                restoredDimensions: dimensionsToRestore,
-                source: dimensionsSource,
-              }, "WINDOW_SIZING");
+              Logger.debug(
+                "Restored window dimensions",
+                {
+                  className: this.constructor.name,
+                  restoredDimensions: dimensionsToRestore,
+                  source: dimensionsSource,
+                },
+                "WINDOW_SIZING",
+              );
 
               // Clear the stored dimensions after successful restoration
               this._storedDimensions = null;
             }, 50);
           } else {
-            Logger.warn("No dimensions available to restore, using default maximize", {
-              className: this.constructor.name,
-            }, "WINDOW_SIZING");
+            Logger.warn(
+              "No dimensions available to restore, using default maximize",
+              {
+                className: this.constructor.name,
+              },
+              "WINDOW_SIZING",
+            );
             await super.maximize();
           }
         } else {
@@ -206,11 +236,15 @@ export function WindowSizingFixMixin(BaseClass) {
 
           if (hasSignificantChange) {
             this._baselineDimensions = newBaseline;
-            Logger.debug("Updated baseline dimensions", {
-              className: this.constructor.name,
-              newBaseline,
-              trigger: "setPosition",
-            }, "WINDOW_SIZING");
+            Logger.debug(
+              "Updated baseline dimensions",
+              {
+                className: this.constructor.name,
+                newBaseline,
+                trigger: "setPosition",
+              },
+              "WINDOW_SIZING",
+            );
           }
         }
       }
