@@ -1,7 +1,8 @@
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
+import { WindowSizingFixMixin } from "./_module.mjs";
 
-export class EventidePopupHelpers extends HandlebarsApplicationMixin(
-  ApplicationV2,
+export class EventidePopupHelpers extends WindowSizingFixMixin(
+  HandlebarsApplicationMixin(ApplicationV2),
 ) {
   static DEFAULT_OPTIONS = {
     id: "popup",
@@ -171,5 +172,16 @@ export class EventidePopupHelpers extends HandlebarsApplicationMixin(
     }
 
     return problems;
+  }
+
+  /**
+   * Clean up resources before closing the application
+   * @param {Object} options - The options for closing
+   * @returns {Promise<void>}
+   * @override
+   */
+  async _preClose(options) {
+    // Call mixin cleanup first
+    await super._preClose(options);
   }
 }

@@ -8,6 +8,7 @@ import {
   THEME_PRESETS,
   cleanupThemeManager,
 } from "../../helpers/_module.mjs";
+import { WindowSizingFixMixin } from "../components/_module.mjs";
 
 const { api, sheets } = foundry.applications;
 const { DragDrop, TextEditor } = foundry.applications.ux;
@@ -22,8 +23,8 @@ const FilePicker = foundry.applications.apps.FilePicker.implementation;
  * @extends {HandlebarsApplicationMixin(ItemSheetV2)}
  * @class
  */
-export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
-  sheets.ItemSheetV2,
+export class EventideRpSystemItemSheet extends WindowSizingFixMixin(
+  api.HandlebarsApplicationMixin(sheets.ItemSheetV2),
 ) {
   /**
    * Creates a new instance of the EventideRpSystemItemSheet.
@@ -156,6 +157,9 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
    * @override
    */
   async _preClose(options) {
+    // Call mixin cleanup first
+    await super._preClose(options);
+
     if (this.element) {
       // Clean up number inputs
       erps.utils.cleanupNumberInputs(this.element);
@@ -172,8 +176,6 @@ export class EventideRpSystemItemSheet extends api.HandlebarsApplicationMixin(
         this.themeManager = null;
       }
     }
-
-    await super._preClose(options);
   }
 
   /** @override */

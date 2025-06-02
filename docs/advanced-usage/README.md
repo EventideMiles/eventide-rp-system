@@ -2,6 +2,17 @@
 
 This section covers advanced techniques and customizations for the Eventide Roleplaying System.
 
+## Developer Resources
+
+### ApplicationV2 Window Sizing Fix
+
+The system includes a comprehensive fix for ApplicationV2 double-click maximize issues:
+
+1. **[ApplicationV2 Window Sizing Fix](applicationv2-window-sizing-fix.md)** - Complete documentation of the fix implementation
+2. **[Standalone Version](applicationv2-window-sizing-fix-standalone.md)** - Copy-paste ready code for other developers
+
+This fix prevents windows from restoring to incorrect dimensions when maximized from a minimized state, particularly addressing cut-off height issues.
+
 ## Advanced Macro Usage
 
 ### Creating Custom Macros

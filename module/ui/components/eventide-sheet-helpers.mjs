@@ -1,12 +1,13 @@
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 const FilePicker = foundry.applications.apps.FilePicker.implementation;
+import { WindowSizingFixMixin } from "./_module.mjs";
 
 /**
  * Base class for creator applications that handle item creation
  * @extends {HandlebarsApplicationMixin(ApplicationV2)}
  */
-export class EventideSheetHelpers extends HandlebarsApplicationMixin(
-  ApplicationV2,
+export class EventideSheetHelpers extends WindowSizingFixMixin(
+  HandlebarsApplicationMixin(ApplicationV2),
 ) {
   constructor() {
     super();
@@ -19,6 +20,9 @@ export class EventideSheetHelpers extends HandlebarsApplicationMixin(
    * @override
    */
   async _preClose(options) {
+    // Call mixin cleanup first
+    await super._preClose(options);
+
     if (this.element) {
       // Clean up number inputs
       erps.utils.cleanupNumberInputs(this.element);
