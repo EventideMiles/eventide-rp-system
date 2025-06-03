@@ -98,24 +98,20 @@
               <button
                 type="button"
                 class="erps-number-input__button erps-number-input__button--decrement"
-                data-action="decrementDiceAdjustment"
-                data-field="advantage"
               >
                 <i class="fas fa-minus"></i>
               </button>
               <input
+                type='number'
                 class="erps-number-input__input"
-                type="number"
-                name="system.roll.diceAdjustments.advantage"
-                value="{{system.roll.diceAdjustments.advantage}}"
-                data-dtype="Number"
+                name='system.roll.diceAdjustments.advantage'
+                value='{{system.roll.diceAdjustments.advantage}}'
+                data-dtype='Number'
                 {{#if editable}}data-action='onDiceAdjustmentChange'{{/if}}
               />
               <button
                 type="button"
                 class="erps-number-input__button erps-number-input__button--increment"
-                data-action="incrementDiceAdjustment"
-                data-field="advantage"
               >
                 <i class="fas fa-plus"></i>
               </button>
@@ -129,24 +125,20 @@
               <button
                 type="button"
                 class="erps-number-input__button erps-number-input__button--decrement"
-                data-action="decrementDiceAdjustment"
-                data-field="disadvantage"
               >
                 <i class="fas fa-minus"></i>
               </button>
               <input
+                type='number'
                 class="erps-number-input__input"
-                type="number"
-                name="system.roll.diceAdjustments.disadvantage"
-                value="{{system.roll.diceAdjustments.disadvantage}}"
-                data-dtype="Number"
+                name='system.roll.diceAdjustments.disadvantage'
+                value='{{system.roll.diceAdjustments.disadvantage}}'
+                data-dtype='Number'
                 {{#if editable}}data-action='onDiceAdjustmentChange'{{/if}}
-              >
+              />
               <button
                 type="button"
                 class="erps-number-input__button erps-number-input__button--increment"
-                data-action="incrementDiceAdjustment"
-                data-field="disadvantage"
               >
                 <i class="fas fa-plus"></i>
               </button>
@@ -157,8 +149,8 @@
               {{localize 'EVENTIDE_RP_SYSTEM.Item.Roll.DiceAdjustments.Total.label'}}
             </label>
             <input
-              class="erps-input"
               type='number'
+              class="erps-input"
               name='system.roll.diceAdjustments.total'
               value='{{system.roll.diceAdjustments.total}}'
               data-dtype='Number'

@@ -23,6 +23,7 @@ export const initNumberInputs = () => {
   if (isInitialized) {
     // If already initialized, just update the responsive behavior
     updateNumberInputResponsiveness();
+    return;
   }
 
   isInitialized = true;
@@ -133,6 +134,17 @@ const handleNumberInputClick = (event) => {
     const isIncrement = target.classList.contains(
       "erps-number-input__button--increment",
     );
+
+    Logger.debug(
+      "Global number input handler processing click",
+      {
+        isIncrement,
+        currentValue: input.value,
+        inputName: input.name || input.id,
+      },
+      "NUMBER_INPUT",
+    );
+
     updateNumberInputValue(input, isIncrement);
     return;
   }
@@ -157,6 +169,17 @@ const handleNumberInputClick = (event) => {
     const isIncrement = button.classList.contains(
       "erps-number-input__button--increment",
     );
+
+    Logger.debug(
+      "Global number input handler processing icon click",
+      {
+        isIncrement,
+        currentValue: input.value,
+        inputName: input.name || input.id,
+      },
+      "NUMBER_INPUT",
+    );
+
     updateNumberInputValue(input, isIncrement);
   }
 };

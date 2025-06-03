@@ -97,9 +97,6 @@
                   <button
                     type="button"
                     class="erps-number-input__button erps-number-input__button--decrement"
-                    data-action="decrementEffect"
-                    data-index="{{@index}}"
-                    data-type="visible"
                   >
                     <i class="fas fa-minus"></i>
                   </button>
@@ -115,9 +112,6 @@
                   <button
                     type="button"
                     class="erps-number-input__button erps-number-input__button--increment"
-                    data-action="incrementEffect"
-                    data-index="{{@index}}"
-                    data-type="visible"
                   >
                     <i class="fas fa-plus"></i>
                   </button>
@@ -211,7 +205,7 @@
 
                 <td class="erps-data-table__cell erps-data-table__cell--center">
                   <div class="erps-number-input">
-                    <button type="button" class="erps-number-input__button erps-number-input__button--decrement" data-action="decrementEffect" data-index="{{@index}}" data-type="hiddenEffects">
+                    <button type="button" class="erps-number-input__button erps-number-input__button--decrement" disabled>
                       <i class="fas fa-minus"></i>
                     </button>
                     <input
@@ -221,9 +215,10 @@
                       value="{{value}}"
                       step="1"
                       data-index="{{@index}}"
-                      data-type="hiddenEffects"
+                      data-type="hidden"
+                      disabled
                     >
-                    <button type="button" class="erps-number-input__button erps-number-input__button--increment" data-action="incrementEffect" data-index="{{@index}}" data-type="hiddenEffects">
+                    <button type="button" class="erps-number-input__button erps-number-input__button--increment" disabled>
                       <i class="fas fa-plus"></i>
                     </button>
                   </div>
@@ -309,7 +304,7 @@
 
                 <td class="erps-data-table__cell erps-data-table__cell--center">
                   <div class="erps-number-input">
-                    <button type="button" class="erps-number-input__button erps-number-input__button--decrement" data-action="decrementEffect" data-index="{{@index}}" data-type="hidden" disabled>
+                    <button type="button" class="erps-number-input__button erps-number-input__button--decrement" disabled>
                       <i class="fas fa-minus"></i>
                     </button>
                     <input
@@ -322,7 +317,7 @@
                       data-type="hidden"
                       disabled
                     >
-                    <button type="button" class="erps-number-input__button erps-number-input__button--increment" data-action="incrementEffect" data-index="{{@index}}" data-type="hidden" disabled>
+                    <button type="button" class="erps-number-input__button erps-number-input__button--increment" disabled>
                       <i class="fas fa-plus"></i>
                     </button>
                   </div>

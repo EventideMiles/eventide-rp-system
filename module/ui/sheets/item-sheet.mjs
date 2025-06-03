@@ -91,8 +91,6 @@ export class EventideRpSystemItemSheet extends BaselineSheetMixins(
       deleteCharacterEffect: this._deleteCharacterEffect,
       toggleEffectDisplay: this._toggleEffectDisplay,
       removeCombatPower: this._removeCombatPower,
-      incrementDiceAdjustment: this._incrementDiceAdjustment,
-      decrementDiceAdjustment: this._decrementDiceAdjustment,
       onDiceAdjustmentChange: this._onDiceAdjustmentChange,
     },
     position: {
@@ -618,50 +616,6 @@ export class EventideRpSystemItemSheet extends BaselineSheetMixins(
       return;
     }
     await this.item.system.removeCombatPower(powerId);
-  }
-
-  /**
-   * Handle incrementing a dice adjustment value
-   *
-   * @this EventideRpSystemItemSheet
-   * @param {PointerEvent} event   The originating click event
-   * @param {HTMLElement} target   The capturing HTML element which defined a [data-action]
-   * @protected
-   */
-  static async _incrementDiceAdjustment(_event, target) {
-    const field = target.dataset.field;
-    if (!field) return;
-
-    const input = target.parentElement.querySelector('input[type="number"]');
-    if (!input) return;
-
-    const currentValue = parseInt(input.value, 10) || 0;
-    input.value = currentValue + 1;
-
-    // Trigger a change event to update the form
-    input.dispatchEvent(new Event("change", { bubbles: true }));
-  }
-
-  /**
-   * Handle decrementing a dice adjustment value
-   *
-   * @this EventideRpSystemItemSheet
-   * @param {PointerEvent} event   The originating click event
-   * @param {HTMLElement} target   The capturing HTML element which defined a [data-action]
-   * @protected
-   */
-  static async _decrementDiceAdjustment(_event, target) {
-    const field = target.dataset.field;
-    if (!field) return;
-
-    const input = target.parentElement.querySelector('input[type="number"]');
-    if (!input) return;
-
-    const currentValue = parseInt(input.value, 10) || 0;
-    input.value = Math.max(0, currentValue - 1); // Don't allow negative values
-
-    // Trigger a change event to update the form
-    input.dispatchEvent(new Event("change", { bubbles: true }));
   }
 
   /**
