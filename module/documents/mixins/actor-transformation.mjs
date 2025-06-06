@@ -378,9 +378,12 @@ export const ActorTransformationMixin = (BaseClass) =>
         },
       );
 
-      // Check if there's already an active transformation
-      const hasActiveTransformation =
-        this.items.filter((item) => item.type === "transformation").length > 0;
+      // Check if there's already an active transformation by checking the flag
+      // This is more reliable than counting items since items can be added before flags are set
+      const hasActiveTransformation = this.getFlag(
+        "eventide-rp-system",
+        "activeTransformation",
+      );
 
       // Only store original token data if there isn't already a transformation active
       // This ensures we maintain the original appearance, not the appearance of a previous transformation

@@ -494,6 +494,11 @@ export class CreatorApplication extends EventideSheetHelpers {
             resolveAdjustment:
               parseFloat(formData.get("resolveAdjustment")) || 0,
             powerAdjustment: parseFloat(formData.get("powerAdjustment")) || 0,
+            tokenImage:
+              basicData.img !== "icons/svg/ice-aura.svg" &&
+              basicData.img !== "icons/svg/item-bag.svg"
+                ? basicData.img
+                : "",
           }
         : {};
 
@@ -626,6 +631,7 @@ export class CreatorApplication extends EventideSheetHelpers {
                   embeddedCombatPowers: transformationData.embeddedCombatPowers,
                   resolveAdjustment: transformationData.resolveAdjustment,
                   powerAdjustment: transformationData.powerAdjustment,
+                  tokenImage: transformationData.tokenImage,
                 }
               : {}),
       },
