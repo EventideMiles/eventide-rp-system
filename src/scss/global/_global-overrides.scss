@@ -1,6 +1,15 @@
 @use '../utils/colors';
+@use '../utils/themes';
 
-// Scrollbar Override
+// ===================================
+// GLOBAL THEME APPLICATION
+// ===================================
+// Apply scrollbar theme variables to body for global scrollbar theming only
+body {
+  @include themes.apply-all-global-scrollbar-themes('data-theme');
+}
+
+// Global Scrollbar Override (fallback)
 * {
   // Firefox scrollbar styling
   scrollbar-width: thin;
@@ -29,60 +38,55 @@
     border-radius: 10rem;
     margin: 0;
   }
+}
 
-  // // Global Tab Styling
-  // &.sheet-tabs, .tabs {
-  //   display: flex;
-  //   flex-wrap: wrap;
-  //   border-bottom: 1px solid colors.$c-faint;
-  // }
+// Global theme-aware scrollbars (for any element that has theme variables available)
+// This will work for dialogs, popups, and other UI elements that inherit theme variables
+body *,
+.window-app *,
+.dialog *,
+.notification *,
+.tooltip *,
+.context-menu *,
+.foundry-app *,
+.app * {
+  // Firefox scrollbar styling with theme fallback
+  scrollbar-color: var(--theme-scrollbar-thumb, colors.$scrollbar-color) var(--theme-scrollbar-track, colors.$scrollbar-bg);
 
-  // .sheet-tabs.tabs a[data-action="tab"] {
-  //   position: relative;
-  //   padding: 5px 10px;
-  //   border: 1px solid transparent;
-  //   border-bottom: none;
-  //   border-radius: 5px 5px 0 0;
-  //   font-weight: 500;
-  //   transition: all 0.2s ease;
-  // }
+  // Chrome/Safari/Edge scrollbar styling with theme fallback
+  // stylelint-disable-next-line no-descending-specificity
+  &::-webkit-scrollbar-thumb { // linter disabled because its not able to be before where it wants to be
+    background-color: var(--theme-scrollbar-thumb, colors.$scrollbar-color);
 
-  // .sheet-tabs.tabs a[data-action="tab"].active {
-  //   position: relative;
-  //   background-color: transparent;
-  //   color: #fff;
-  //   border: none;
-  //   z-index: 1;
-  //   padding: 5px 15px;
+    &:hover {
+      background-color: var(--theme-scrollbar-thumb, colors.$input-focus);
+      opacity: 0.9;
+    }
+  }
 
-  //   // Create parallelogram background
-  //   &::before {
-  //     content: '';
-  //     position: absolute;
-  //     inset: 0;
-  //     background-color: colors.$tab-active-bg;
-  //     transform: skewX(-15deg);
-  //     transform-origin: bottom;
-  //     z-index: -1;
-  //   }
-  // }
+  &::-webkit-scrollbar-track {
+    background-color: var(--theme-scrollbar-track, colors.$scrollbar-bg);
+  }
+}
 
-  // .sheet-tabs.tabs a[data-action="tab"]:hover:not(.active) {
-  //   position: relative;
-  //   color: colors.$scrollbar-color;
-  //   border: none;
-  //   background-color: transparent;
+// Theme-aware Scrollbar Override (within eventide-sheet context - most specific)
+.eventide-sheet * {
+  // Firefox scrollbar styling
+  scrollbar-color: var(--theme-scrollbar-thumb, var(--erps-scrollbar-color, #04a)) var(--theme-scrollbar-track, var(--erps-scrollbar-bg, #45454530));
 
-  //   // Create parallelogram background for hover state
-  //   &::before {
-  //     content: '';
-  //     position: absolute;
-  //     inset: 0;
-  //     background-color: rgba(colors.$scrollbar-color, 0.1);
-  //     transform: skewX(-15deg);
-  //     transform-origin: bottom;
-  //     z-index: -1;
-  //   }
-  // }
+  // Chrome/Safari/Edge scrollbar styling
+  // stylelint-disable-next-line no-descending-specificity
+  &::-webkit-scrollbar-thumb { // linter disabled because its not able to be before where it wants to be
+    background-color: var(--theme-scrollbar-thumb, var(--erps-scrollbar-color, #04a));
+
+    &:hover {
+      background-color: var(--theme-scrollbar-thumb, colors.$input-focus);
+      opacity: 0.9;
+    }
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: var(--theme-scrollbar-track, var(--erps-scrollbar-bg, #45454530));
+  }
 }
 

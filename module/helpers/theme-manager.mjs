@@ -146,6 +146,9 @@ class ThemeManagerInstance {
 
     const currentTheme = CommonFoundryTasks.retrieveSheetTheme();
 
+    // Apply global theme to body element for global scrollbars and UI elements
+    this.applyGlobalTheme(currentTheme);
+
     // Apply background theme
     this.applyThemeToSelector(
       this.options.backgroundSelector,
@@ -283,6 +286,31 @@ class ThemeManagerInstance {
       },
       "THEME_MANAGER",
     );
+  }
+
+  /**
+   * Apply global theme to body element for global UI elements
+   * @param {string} theme - The theme to apply
+   */
+  applyGlobalTheme(theme) {
+    if (document.body) {
+      const currentBodyTheme = document.body.getAttribute("data-theme");
+
+      // Only update if different to avoid unnecessary DOM manipulation
+      if (currentBodyTheme !== theme) {
+        document.body.setAttribute("data-theme", theme);
+
+        Logger.debug(
+          "Global theme applied to body",
+          {
+            appId: this.appId,
+            previousTheme: currentBodyTheme,
+            newTheme: theme,
+          },
+          "THEME_MANAGER",
+        );
+      }
+    }
   }
 
   /**
@@ -842,6 +870,9 @@ export const removeGlobalThemeListener = (listener) => {
 export const triggerGlobalThemeChange = (newTheme, userId = game.user.id) => {
   const data = { newTheme, userId };
 
+  // Apply global theme to body element immediately
+  applyGlobalThemeStatic(newTheme);
+
   // Trigger Foundry hook
   Hooks.callAll("eventide-rp-system.themeChanged", data);
 
@@ -871,6 +902,46 @@ export const triggerGlobalThemeChange = (newTheme, userId = game.user.id) => {
       userId,
       activeInstances: activeInstances.size,
       globalListeners: globalListeners.size,
+    },
+    "THEME_MANAGER",
+  );
+};
+
+/**
+ * Apply global theme to body element (static version for global use)
+ * @param {string} theme - The theme to apply
+ */
+const applyGlobalThemeStatic = (theme) => {
+  if (document.body) {
+    const currentBodyTheme = document.body.getAttribute("data-theme");
+
+    // Only update if different to avoid unnecessary DOM manipulation
+    if (currentBodyTheme !== theme) {
+      document.body.setAttribute("data-theme", theme);
+
+      Logger.debug(
+        "Global theme applied to body (static)",
+        {
+          previousTheme: currentBodyTheme,
+          newTheme: theme,
+        },
+        "THEME_MANAGER",
+      );
+    }
+  }
+};
+
+/**
+ * Initialize global theme on system startup
+ */
+export const initializeGlobalTheme = () => {
+  const currentTheme = CommonFoundryTasks.retrieveSheetTheme();
+  applyGlobalThemeStatic(currentTheme);
+
+  Logger.info(
+    "Global theme initialized",
+    {
+      theme: currentTheme,
     },
     "THEME_MANAGER",
   );

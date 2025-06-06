@@ -312,6 +312,9 @@ $blue-theme: (
   pattern: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.15'%3E%3Cpath d='M10 2l3 3-3 3-3-3z'/%3E%3Cpath d='M10 12l3 3-3 3-3-3z'/%3E%3C/g%3E%3C/svg%3E"),
   toggle-track: #1565c0,
   image-bg: #0d47a1,
+  // Scrollbar colors
+  scrollbar-thumb: rgb(59 130 246 / 80%),  // Blue scrollbar thumb
+  scrollbar-track: rgb(69 69 69 / 30%),    // Dark track background
   // Input glow colors for different states
   input-glow: rgb(59 130 246 / 60%),       // Blue glow for inputs
   button-glow: rgb(59 130 246 / 60%),      // Blue glow for buttons
@@ -345,6 +348,9 @@ $black-theme: (
   pattern: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.15'%3E%3Cpath d='M10 0l2 8h8l-6 4 2 8-6-4-6 4 2-8-6-4h8z'/%3E%3C/g%3E%3C/svg%3E"),
   toggle-track: #424242,
   image-bg: #1a1a1a,
+  // Scrollbar colors
+  scrollbar-thumb: rgb(100 100 100 / 70%),  // Gray scrollbar thumb
+  scrollbar-track: rgb(69 69 69 / 30%),     // Dark track background
   // Input glow colors for different states
   input-glow: rgb(100 100 100 / 60%),      // Gray glow for inputs
   button-glow: rgb(100 100 100 / 60%),     // Gray glow for buttons
@@ -378,6 +384,9 @@ $green-theme: (
   pattern: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.15'%3E%3Ccircle cx='10' cy='10' r='2'/%3E%3Ccircle cx='10' cy='4' r='1'/%3E%3Ccircle cx='10' cy='16' r='1'/%3E%3Ccircle cx='4' cy='10' r='1'/%3E%3Ccircle cx='16' cy='10' r='1'/%3E%3C/g%3E%3C/svg%3E"),
   toggle-track: #388e3c,
   image-bg: #1b5e20,
+  // Scrollbar colors
+  scrollbar-thumb: rgb(34 197 94 / 80%),   // Green scrollbar thumb
+  scrollbar-track: rgb(69 69 69 / 30%),    // Dark track background
   // Input glow colors for different states
   input-glow: rgb(34 197 94 / 60%),        // Green glow for inputs
   button-glow: rgb(34 197 94 / 60%),       // Green glow for buttons
@@ -411,6 +420,9 @@ $light-theme: (
   pattern: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23475569' fill-opacity='0.08'%3E%3Cpath d='M10 2l3 3-3 3-3-3z'/%3E%3Cpath d='M10 12l3 3-3 3-3-3z'/%3E%3Cpath d='M2 10l3-3 3 3-3 3z'/%3E%3Cpath d='M12 10l3-3 3 3-3 3z'/%3E%3C/g%3E%3C/svg%3E"),
   toggle-track: #94a3b8,                   // Light slate for toggles
   image-bg: #374151,                       // Dark gray for image backgrounds (unchanged)
+  // Scrollbar colors
+  scrollbar-thumb: rgb(148 163 184 / 80%), // Slate scrollbar thumb
+  scrollbar-track: rgb(241 245 249 / 60%), // Light track background
   // Input glow colors for different states
   input-glow: rgb(59 130 246 / 40%),       // Blue glow for inputs (higher opacity for light theme)
   button-glow: rgb(59 130 246 / 40%),      // Blue glow for buttons
@@ -444,6 +456,9 @@ $gold-theme: (
   pattern: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.15'%3E%3Cpath d='M12 2l2 6h6l-5 4 2 6-5-4-5 4 2-6-5-4h6z'/%3E%3C/g%3E%3C/svg%3E"),
   toggle-track: #e65100,
   image-bg: #bf360c,
+  // Scrollbar colors
+  scrollbar-thumb: rgb(249 115 22 / 80%),  // Orange scrollbar thumb
+  scrollbar-track: rgb(69 69 69 / 30%),    // Dark track background
   // Input glow colors for different states
   input-glow: rgb(249 115 22 / 60%),       // Orange glow for inputs
   button-glow: rgb(249 115 22 / 60%),      // Orange glow for buttons
@@ -477,6 +492,9 @@ $purple-theme: (
   pattern: url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.15'%3E%3Cpath d='M10 1l1 3 3 1-3 1-1 3-1-3-3-1 3-1z'/%3E%3Cpath d='M5 5l1 2 2 1-2 1-1 2-1-2-2-1 2-1z'/%3E%3Cpath d='M15 15l1 2 2 1-2 1-1 2-1-2-2-1 2-1z'/%3E%3C/g%3E%3C/svg%3E"),
   toggle-track: #7b1fa2,
   image-bg: #4a148c,
+  // Scrollbar colors
+  scrollbar-thumb: rgb(147 51 234 / 80%),  // Purple scrollbar thumb
+  scrollbar-track: rgb(69 69 69 / 30%),    // Dark track background
   // Input glow colors for different states
   input-glow: rgb(147 51 234 / 60%),       // Purple glow for inputs
   button-glow: rgb(147 51 234 / 60%),      // Purple glow for buttons
@@ -504,7 +522,7 @@ $purple-theme: (
 // ===================================
 
 // Mixin to define CSS variables for a theme
-@mixin define-theme-css-vars($primary, $secondary, $tertiary, $accent, $light, $glow, $text, $pattern, $toggle-track, $image-bg, $input-glow, $button-glow, $success-glow, $warning-glow, $danger-glow, $purple-glow, $resource-health-primary, $resource-health-secondary, $resource-health-glow, $resource-resolve-primary, $resource-resolve-secondary, $resource-resolve-glow, $resource-mana-primary, $resource-mana-secondary, $resource-mana-glow, $resource-stamina-primary, $resource-stamina-secondary, $resource-stamina-glow) {
+@mixin define-theme-css-vars($primary, $secondary, $tertiary, $accent, $light, $glow, $text, $pattern, $toggle-track, $image-bg, $scrollbar-thumb, $scrollbar-track, $input-glow, $button-glow, $success-glow, $warning-glow, $danger-glow, $purple-glow, $resource-health-primary, $resource-health-secondary, $resource-health-glow, $resource-resolve-primary, $resource-resolve-secondary, $resource-resolve-glow, $resource-mana-primary, $resource-mana-secondary, $resource-mana-glow, $resource-stamina-primary, $resource-stamina-secondary, $resource-stamina-glow) {
   --theme-primary: #{$primary};
   --theme-secondary: #{$secondary};
   --theme-tertiary: #{$tertiary};
@@ -515,6 +533,8 @@ $purple-theme: (
   --theme-pattern: #{$pattern};
   --theme-toggle-track: #{$toggle-track};
   --theme-image-bg: #{$image-bg};
+  --theme-scrollbar-thumb: #{$scrollbar-thumb};
+  --theme-scrollbar-track: #{$scrollbar-track};
   --theme-input-glow: #{$input-glow};
   --theme-button-glow: #{$button-glow};
   --theme-success-glow: #{$success-glow};
@@ -540,10 +560,10 @@ $purple-theme: (
   @include define-theme-css-vars(
     map.get($blue-theme, primary), map.get($blue-theme, secondary), map.get($blue-theme, tertiary), map.get($blue-theme, accent),
     map.get($blue-theme, light), map.get($blue-theme, glow), map.get($blue-theme, text), map.get($blue-theme, pattern),
-    map.get($blue-theme, toggle-track), map.get($blue-theme, image-bg), map.get($blue-theme, input-glow), map.get($blue-theme, button-glow),
-    map.get($blue-theme, success-glow), map.get($blue-theme, warning-glow), map.get($blue-theme, danger-glow), map.get($blue-theme, purple-glow),
-    map.get($blue-theme, resource-health-primary), map.get($blue-theme, resource-health-secondary), map.get($blue-theme, resource-health-glow),
-    map.get($blue-theme, resource-resolve-primary), map.get($blue-theme, resource-resolve-secondary), map.get($blue-theme, resource-resolve-glow),
+    map.get($blue-theme, toggle-track), map.get($blue-theme, image-bg), map.get($blue-theme, scrollbar-thumb), map.get($blue-theme, scrollbar-track),
+    map.get($blue-theme, input-glow), map.get($blue-theme, button-glow), map.get($blue-theme, success-glow), map.get($blue-theme, warning-glow),
+    map.get($blue-theme, danger-glow), map.get($blue-theme, purple-glow), map.get($blue-theme, resource-health-primary), map.get($blue-theme, resource-health-secondary),
+    map.get($blue-theme, resource-health-glow), map.get($blue-theme, resource-resolve-primary), map.get($blue-theme, resource-resolve-secondary), map.get($blue-theme, resource-resolve-glow),
     map.get($blue-theme, resource-mana-primary), map.get($blue-theme, resource-mana-secondary), map.get($blue-theme, resource-mana-glow),
     map.get($blue-theme, resource-stamina-primary), map.get($blue-theme, resource-stamina-secondary), map.get($blue-theme, resource-stamina-glow)
   );
@@ -553,10 +573,10 @@ $purple-theme: (
   @include define-theme-css-vars(
     map.get($gold-theme, primary), map.get($gold-theme, secondary), map.get($gold-theme, tertiary), map.get($gold-theme, accent),
     map.get($gold-theme, light), map.get($gold-theme, glow), map.get($gold-theme, text), map.get($gold-theme, pattern),
-    map.get($gold-theme, toggle-track), map.get($gold-theme, image-bg), map.get($gold-theme, input-glow), map.get($gold-theme, button-glow),
-    map.get($gold-theme, success-glow), map.get($gold-theme, warning-glow), map.get($gold-theme, danger-glow), map.get($gold-theme, purple-glow),
-    map.get($gold-theme, resource-health-primary), map.get($gold-theme, resource-health-secondary), map.get($gold-theme, resource-health-glow),
-    map.get($gold-theme, resource-resolve-primary), map.get($gold-theme, resource-resolve-secondary), map.get($gold-theme, resource-resolve-glow),
+    map.get($gold-theme, toggle-track), map.get($gold-theme, image-bg), map.get($gold-theme, scrollbar-thumb), map.get($gold-theme, scrollbar-track),
+    map.get($gold-theme, input-glow), map.get($gold-theme, button-glow), map.get($gold-theme, success-glow), map.get($gold-theme, warning-glow),
+    map.get($gold-theme, danger-glow), map.get($gold-theme, purple-glow), map.get($gold-theme, resource-health-primary), map.get($gold-theme, resource-health-secondary),
+    map.get($gold-theme, resource-health-glow), map.get($gold-theme, resource-resolve-primary), map.get($gold-theme, resource-resolve-secondary), map.get($gold-theme, resource-resolve-glow),
     map.get($gold-theme, resource-mana-primary), map.get($gold-theme, resource-mana-secondary), map.get($gold-theme, resource-mana-glow),
     map.get($gold-theme, resource-stamina-primary), map.get($gold-theme, resource-stamina-secondary), map.get($gold-theme, resource-stamina-glow)
   );
@@ -566,10 +586,10 @@ $purple-theme: (
   @include define-theme-css-vars(
     map.get($green-theme, primary), map.get($green-theme, secondary), map.get($green-theme, tertiary), map.get($green-theme, accent),
     map.get($green-theme, light), map.get($green-theme, glow), map.get($green-theme, text), map.get($green-theme, pattern),
-    map.get($green-theme, toggle-track), map.get($green-theme, image-bg), map.get($green-theme, input-glow), map.get($green-theme, button-glow),
-    map.get($green-theme, success-glow), map.get($green-theme, warning-glow), map.get($green-theme, danger-glow), map.get($green-theme, purple-glow),
-    map.get($green-theme, resource-health-primary), map.get($green-theme, resource-health-secondary), map.get($green-theme, resource-health-glow),
-    map.get($green-theme, resource-resolve-primary), map.get($green-theme, resource-resolve-secondary), map.get($green-theme, resource-resolve-glow),
+    map.get($green-theme, toggle-track), map.get($green-theme, image-bg), map.get($green-theme, scrollbar-thumb), map.get($green-theme, scrollbar-track),
+    map.get($green-theme, input-glow), map.get($green-theme, button-glow), map.get($green-theme, success-glow), map.get($green-theme, warning-glow),
+    map.get($green-theme, danger-glow), map.get($green-theme, purple-glow), map.get($green-theme, resource-health-primary), map.get($green-theme, resource-health-secondary),
+    map.get($green-theme, resource-health-glow), map.get($green-theme, resource-resolve-primary), map.get($green-theme, resource-resolve-secondary), map.get($green-theme, resource-resolve-glow),
     map.get($green-theme, resource-mana-primary), map.get($green-theme, resource-mana-secondary), map.get($green-theme, resource-mana-glow),
     map.get($green-theme, resource-stamina-primary), map.get($green-theme, resource-stamina-secondary), map.get($green-theme, resource-stamina-glow)
   );
@@ -579,10 +599,10 @@ $purple-theme: (
   @include define-theme-css-vars(
     map.get($black-theme, primary), map.get($black-theme, secondary), map.get($black-theme, tertiary), map.get($black-theme, accent),
     map.get($black-theme, light), map.get($black-theme, glow), map.get($black-theme, text), map.get($black-theme, pattern),
-    map.get($black-theme, toggle-track), map.get($black-theme, image-bg), map.get($black-theme, input-glow), map.get($black-theme, button-glow),
-    map.get($black-theme, success-glow), map.get($black-theme, warning-glow), map.get($black-theme, danger-glow), map.get($black-theme, purple-glow),
-    map.get($black-theme, resource-health-primary), map.get($black-theme, resource-health-secondary), map.get($black-theme, resource-health-glow),
-    map.get($black-theme, resource-resolve-primary), map.get($black-theme, resource-resolve-secondary), map.get($black-theme, resource-resolve-glow),
+    map.get($black-theme, toggle-track), map.get($black-theme, image-bg), map.get($black-theme, scrollbar-thumb), map.get($black-theme, scrollbar-track),
+    map.get($black-theme, input-glow), map.get($black-theme, button-glow), map.get($black-theme, success-glow), map.get($black-theme, warning-glow),
+    map.get($black-theme, danger-glow), map.get($black-theme, purple-glow), map.get($black-theme, resource-health-primary), map.get($black-theme, resource-health-secondary),
+    map.get($black-theme, resource-health-glow), map.get($black-theme, resource-resolve-primary), map.get($black-theme, resource-resolve-secondary), map.get($black-theme, resource-resolve-glow),
     map.get($black-theme, resource-mana-primary), map.get($black-theme, resource-mana-secondary), map.get($black-theme, resource-mana-glow),
     map.get($black-theme, resource-stamina-primary), map.get($black-theme, resource-stamina-secondary), map.get($black-theme, resource-stamina-glow)
   );
@@ -592,10 +612,10 @@ $purple-theme: (
   @include define-theme-css-vars(
     map.get($purple-theme, primary), map.get($purple-theme, secondary), map.get($purple-theme, tertiary), map.get($purple-theme, accent),
     map.get($purple-theme, light), map.get($purple-theme, glow), map.get($purple-theme, text), map.get($purple-theme, pattern),
-    map.get($purple-theme, toggle-track), map.get($purple-theme, image-bg), map.get($purple-theme, input-glow), map.get($purple-theme, button-glow),
-    map.get($purple-theme, success-glow), map.get($purple-theme, warning-glow), map.get($purple-theme, danger-glow), map.get($purple-theme, purple-glow),
-    map.get($purple-theme, resource-health-primary), map.get($purple-theme, resource-health-secondary), map.get($purple-theme, resource-health-glow),
-    map.get($purple-theme, resource-resolve-primary), map.get($purple-theme, resource-resolve-secondary), map.get($purple-theme, resource-resolve-glow),
+    map.get($purple-theme, toggle-track), map.get($purple-theme, image-bg), map.get($purple-theme, scrollbar-thumb), map.get($purple-theme, scrollbar-track),
+    map.get($purple-theme, input-glow), map.get($purple-theme, button-glow), map.get($purple-theme, success-glow), map.get($purple-theme, warning-glow),
+    map.get($purple-theme, danger-glow), map.get($purple-theme, purple-glow), map.get($purple-theme, resource-health-primary), map.get($purple-theme, resource-health-secondary),
+    map.get($purple-theme, resource-health-glow), map.get($purple-theme, resource-resolve-primary), map.get($purple-theme, resource-resolve-secondary), map.get($purple-theme, resource-resolve-glow),
     map.get($purple-theme, resource-mana-primary), map.get($purple-theme, resource-mana-secondary), map.get($purple-theme, resource-mana-glow),
     map.get($purple-theme, resource-stamina-primary), map.get($purple-theme, resource-stamina-secondary), map.get($purple-theme, resource-stamina-glow)
   );
@@ -605,10 +625,10 @@ $purple-theme: (
   @include define-theme-css-vars(
     map.get($light-theme, primary), map.get($light-theme, secondary), map.get($light-theme, tertiary), map.get($light-theme, accent),
     map.get($light-theme, light), map.get($light-theme, glow), map.get($light-theme, text), map.get($light-theme, pattern),
-    map.get($light-theme, toggle-track), map.get($light-theme, image-bg), map.get($light-theme, input-glow), map.get($light-theme, button-glow),
-    map.get($light-theme, success-glow), map.get($light-theme, warning-glow), map.get($light-theme, danger-glow), map.get($light-theme, purple-glow),
-    map.get($light-theme, resource-health-primary), map.get($light-theme, resource-health-secondary), map.get($light-theme, resource-health-glow),
-    map.get($light-theme, resource-resolve-primary), map.get($light-theme, resource-resolve-secondary), map.get($light-theme, resource-resolve-glow),
+    map.get($light-theme, toggle-track), map.get($light-theme, image-bg), map.get($light-theme, scrollbar-thumb), map.get($light-theme, scrollbar-track),
+    map.get($light-theme, input-glow), map.get($light-theme, button-glow), map.get($light-theme, success-glow), map.get($light-theme, warning-glow),
+    map.get($light-theme, danger-glow), map.get($light-theme, purple-glow), map.get($light-theme, resource-health-primary), map.get($light-theme, resource-health-secondary),
+    map.get($light-theme, resource-health-glow), map.get($light-theme, resource-resolve-primary), map.get($light-theme, resource-resolve-secondary), map.get($light-theme, resource-resolve-glow),
     map.get($light-theme, resource-mana-primary), map.get($light-theme, resource-mana-secondary), map.get($light-theme, resource-mana-glow),
     map.get($light-theme, resource-stamina-primary), map.get($light-theme, resource-stamina-secondary), map.get($light-theme, resource-stamina-glow)
   );
@@ -979,4 +999,47 @@ $default-theme-image-bg: map.get($blue-theme, image-bg) !default;
 @keyframes gentle-breeze {
   0%, 100% { background-position: 0 0, 0 0, 0 0; }
   50% { background-position: 35px 35px, 70px 45px, 0 0; }
+}
+
+// ===================================
+// GLOBAL THEME VARIABLE APPLICATION
+// ===================================
+// Apply theme CSS variables globally for scrollbars and other global UI elements
+
+// Apply only scrollbar theme variables globally (for global scrollbar theming only)
+@mixin apply-all-global-scrollbar-themes($attribute-name: 'data-theme') {
+  &:not([#{$attribute-name}]), &[#{$attribute-name}="blue"] {
+    --theme-scrollbar-thumb: #{map.get($blue-theme, scrollbar-thumb)};
+    --theme-scrollbar-track: #{map.get($blue-theme, scrollbar-track)};
+  }
+  &[#{$attribute-name}="gold"] {
+    --theme-scrollbar-thumb: #{map.get($gold-theme, scrollbar-thumb)};
+    --theme-scrollbar-track: #{map.get($gold-theme, scrollbar-track)};
+  }
+  &[#{$attribute-name}="green"] {
+    --theme-scrollbar-thumb: #{map.get($green-theme, scrollbar-thumb)};
+    --theme-scrollbar-track: #{map.get($green-theme, scrollbar-track)};
+  }
+  &[#{$attribute-name}="black"] {
+    --theme-scrollbar-thumb: #{map.get($black-theme, scrollbar-thumb)};
+    --theme-scrollbar-track: #{map.get($black-theme, scrollbar-track)};
+  }
+  &[#{$attribute-name}="purple"] {
+    --theme-scrollbar-thumb: #{map.get($purple-theme, scrollbar-thumb)};
+    --theme-scrollbar-track: #{map.get($purple-theme, scrollbar-track)};
+  }
+  &[#{$attribute-name}="light"] {
+    --theme-scrollbar-thumb: #{map.get($light-theme, scrollbar-thumb)};
+    --theme-scrollbar-track: #{map.get($light-theme, scrollbar-track)};
+  }
+}
+
+// Apply all theme CSS variables to a global context (like body) - FULL THEMING
+@mixin apply-all-global-themes($attribute-name: 'data-theme') {
+  &:not([#{$attribute-name}]), &[#{$attribute-name}="blue"] { @include apply-blue-theme; }
+  &[#{$attribute-name}="gold"] { @include apply-gold-theme; }
+  &[#{$attribute-name}="green"] { @include apply-green-theme; }
+  &[#{$attribute-name}="black"] { @include apply-black-theme; }
+  &[#{$attribute-name}="purple"] { @include apply-purple-theme; }
+  &[#{$attribute-name}="light"] { @include apply-light-theme; }
 }

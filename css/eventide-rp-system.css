@@ -1007,6 +1007,8 @@
   --erps-sheet-text: #fff;
   --erps-sheet-accent: rgba(13, 71, 161, 0.95);
   --erps-sheet-light: rgba(100, 181, 246, 0.7);
+  --theme-scrollbar-thumb: rgba(59, 130, 246, 0.8);
+  --theme-scrollbar-track: rgba(69, 69, 69, 0.3);
   --erps-resource-health-primary: var(--theme-resource-health-primary, rgb(153 27 27 / 90%));
   --erps-resource-health-secondary: var(--theme-resource-health-secondary, rgb(220 38 38 / 50%));
   --erps-resource-health-glow: var(--theme-resource-health-glow, rgb(220 38 38 / 20%));
@@ -1030,6 +1032,8 @@
   --theme-glow: rgba(25, 118, 210, 0.5);
   --theme-text: #fff;
   --theme-bright: rgb(144, 202, 249);
+  --theme-scrollbar-thumb: rgba(59, 130, 246, 0.8);
+  --theme-scrollbar-track: rgba(69, 69, 69, 0.3);
   --theme-resource-health-primary: rgba(153, 27, 27, 0.9);
   --theme-resource-health-secondary: rgba(220, 38, 38, 0.5);
   --theme-resource-health-glow: rgba(220, 38, 38, 0.2);
@@ -1060,6 +1064,8 @@
   --theme-glow: rgba(78, 90, 102, 0.5);
   --theme-text: #fff;
   --theme-bright: rgb(189, 189, 189);
+  --theme-scrollbar-thumb: rgba(100, 100, 100, 0.7);
+  --theme-scrollbar-track: rgba(69, 69, 69, 0.3);
   --theme-resource-health-primary: rgba(153, 27, 27, 0.9);
   --theme-resource-health-secondary: rgba(220, 38, 38, 0.5);
   --theme-resource-health-glow: rgba(220, 38, 38, 0.2);
@@ -1090,6 +1096,8 @@
   --theme-glow: rgba(102, 187, 106, 0.45);
   --theme-text: #fff;
   --theme-bright: rgb(165, 214, 167);
+  --theme-scrollbar-thumb: rgba(34, 197, 94, 0.8);
+  --theme-scrollbar-track: rgba(69, 69, 69, 0.3);
   --theme-resource-health-primary: rgba(153, 27, 27, 0.9);
   --theme-resource-health-secondary: rgba(220, 38, 38, 0.5);
   --theme-resource-health-glow: rgba(220, 38, 38, 0.2);
@@ -1120,6 +1128,8 @@
   --theme-glow: rgba(59, 130, 246, 0.25);
   --theme-text: #1e293b;
   --theme-bright: rgb(255, 255, 255);
+  --theme-scrollbar-thumb: rgba(148, 163, 184, 0.8);
+  --theme-scrollbar-track: rgba(241, 245, 249, 0.6);
   --theme-resource-health-primary: rgba(153, 27, 27, 0.9);
   --theme-resource-health-secondary: rgba(220, 38, 38, 0.5);
   --theme-resource-health-glow: rgba(220, 38, 38, 0.2);
@@ -1150,6 +1160,8 @@
   --theme-glow: rgba(230, 81, 0, 0.45);
   --theme-text: #fff;
   --theme-bright: rgb(255, 204, 128);
+  --theme-scrollbar-thumb: rgba(249, 115, 22, 0.8);
+  --theme-scrollbar-track: rgba(69, 69, 69, 0.3);
   --theme-resource-health-primary: rgba(153, 27, 27, 0.9);
   --theme-resource-health-secondary: rgba(220, 38, 38, 0.5);
   --theme-resource-health-glow: rgba(220, 38, 38, 0.2);
@@ -1180,6 +1192,8 @@
   --theme-glow: rgba(106, 27, 154, 0.45);
   --theme-text: #fff;
   --theme-bright: rgb(186, 85, 211);
+  --theme-scrollbar-thumb: rgba(147, 51, 234, 0.8);
+  --theme-scrollbar-track: rgba(69, 69, 69, 0.3);
   --theme-resource-health-primary: rgba(153, 27, 27, 0.9);
   --theme-resource-health-secondary: rgba(220, 38, 38, 0.5);
   --theme-resource-health-glow: rgba(220, 38, 38, 0.2);
@@ -1491,6 +1505,31 @@ label,
   min-height: 35rem;
 }
 
+body:not([data-theme]), body[data-theme=blue] {
+  --theme-scrollbar-thumb: rgba(59, 130, 246, 0.8);
+  --theme-scrollbar-track: rgba(69, 69, 69, 0.3);
+}
+body[data-theme=gold] {
+  --theme-scrollbar-thumb: rgba(249, 115, 22, 0.8);
+  --theme-scrollbar-track: rgba(69, 69, 69, 0.3);
+}
+body[data-theme=green] {
+  --theme-scrollbar-thumb: rgba(34, 197, 94, 0.8);
+  --theme-scrollbar-track: rgba(69, 69, 69, 0.3);
+}
+body[data-theme=black] {
+  --theme-scrollbar-thumb: rgba(100, 100, 100, 0.7);
+  --theme-scrollbar-track: rgba(69, 69, 69, 0.3);
+}
+body[data-theme=purple] {
+  --theme-scrollbar-thumb: rgba(147, 51, 234, 0.8);
+  --theme-scrollbar-track: rgba(69, 69, 69, 0.3);
+}
+body[data-theme=light] {
+  --theme-scrollbar-thumb: rgba(148, 163, 184, 0.8);
+  --theme-scrollbar-track: rgba(241, 245, 249, 0.6);
+}
+
 * {
   scrollbar-width: thin;
   scrollbar-color: var(--erps-scrollbar-color) var(--erps-scrollbar-bg);
@@ -1513,6 +1552,62 @@ label,
   background-color: var(--erps-scrollbar-bg);
   border-radius: 10rem;
   margin: 0;
+}
+
+body *,
+.window-app *,
+.dialog *,
+.notification *,
+.tooltip *,
+.context-menu *,
+.foundry-app *,
+.app * {
+  scrollbar-color: var(--theme-scrollbar-thumb, var(--erps-scrollbar-color)) var(--theme-scrollbar-track, var(--erps-scrollbar-bg));
+}
+body *::-webkit-scrollbar-thumb,
+.window-app *::-webkit-scrollbar-thumb,
+.dialog *::-webkit-scrollbar-thumb,
+.notification *::-webkit-scrollbar-thumb,
+.tooltip *::-webkit-scrollbar-thumb,
+.context-menu *::-webkit-scrollbar-thumb,
+.foundry-app *::-webkit-scrollbar-thumb,
+.app *::-webkit-scrollbar-thumb {
+  background-color: var(--theme-scrollbar-thumb, var(--erps-scrollbar-color));
+}
+body *::-webkit-scrollbar-thumb:hover,
+.window-app *::-webkit-scrollbar-thumb:hover,
+.dialog *::-webkit-scrollbar-thumb:hover,
+.notification *::-webkit-scrollbar-thumb:hover,
+.tooltip *::-webkit-scrollbar-thumb:hover,
+.context-menu *::-webkit-scrollbar-thumb:hover,
+.foundry-app *::-webkit-scrollbar-thumb:hover,
+.app *::-webkit-scrollbar-thumb:hover {
+  background-color: var(--theme-scrollbar-thumb, var(--erps-input-focus));
+  opacity: 0.9;
+}
+body *::-webkit-scrollbar-track,
+.window-app *::-webkit-scrollbar-track,
+.dialog *::-webkit-scrollbar-track,
+.notification *::-webkit-scrollbar-track,
+.tooltip *::-webkit-scrollbar-track,
+.context-menu *::-webkit-scrollbar-track,
+.foundry-app *::-webkit-scrollbar-track,
+.app *::-webkit-scrollbar-track {
+  background-color: var(--theme-scrollbar-track, var(--erps-scrollbar-bg));
+}
+
+.eventide-sheet * {
+  scrollbar-color: var(--theme-scrollbar-thumb, var(--erps-scrollbar-color, #04a)) var(--theme-scrollbar-track, var(--erps-scrollbar-bg, rgba(69, 69, 69, 0.1882352941)));
+}
+.eventide-sheet *::-webkit-scrollbar-thumb {
+  background-color: var(--theme-scrollbar-thumb, var(--erps-scrollbar-color, #04a));
+}
+.eventide-sheet *::-webkit-scrollbar-thumb:hover {
+  background-color: var(--theme-scrollbar-thumb, var(--erps-input-focus));
+  opacity: 0.9;
+}
+.eventide-sheet *::-webkit-scrollbar-track {
+  background-color: var(--theme-scrollbar-track, var(--erps-scrollbar-bg, rgba(69, 69, 69, 0.1882352941)));
 }
 
 /* Styles limited to eventide-rp-system sheets */
@@ -7382,3 +7477,5 @@ label,
     flex: 1;
   }
 }
+
+/*# sourceMappingURL=eventide-rp-system.css.map */

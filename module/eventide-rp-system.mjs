@@ -57,6 +57,7 @@ import {
   cleanupNumberInputs,
   initRangeSliders,
   cleanupRangeSliders,
+  initializeGlobalTheme,
 } from "./helpers/_module.mjs";
 
 const { Actors, Items } = foundry.documents.collections;
@@ -307,6 +308,9 @@ Handlebars.registerHelper("hasCursedItems", (items) => {
 /* -------------------------------------------- */
 
 Hooks.once("ready", () => {
+  // Initialize global theme for scrollbars and other global UI elements
+  initializeGlobalTheme();
+
   // Wait to register hotbar drop hook on ready so that modules could register earlier if they want to
   Hooks.on("hotbarDrop", (bar, data, slot) => createDocMacro(data, slot));
 });

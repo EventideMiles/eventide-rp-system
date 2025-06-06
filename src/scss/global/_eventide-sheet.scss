@@ -19,6 +19,10 @@
   --erps-sheet-accent: #{map.get(themes.$blue-theme, accent)};
   --erps-sheet-light: #{map.get(themes.$blue-theme, light)};
 
+  // Default scrollbar theme variables (blue theme)
+  --theme-scrollbar-thumb: #{map.get(themes.$blue-theme, scrollbar-thumb)};
+  --theme-scrollbar-track: #{map.get(themes.$blue-theme, scrollbar-track)};
+
   // Resource box fallback variables with theme references and fallbacks
   --erps-resource-health-primary: var(--theme-resource-health-primary, rgb(153 27 27 / 90%));
   --erps-resource-health-secondary: var(--theme-resource-health-secondary, rgb(220 38 38 / 50%));
@@ -54,6 +58,10 @@ $theme-map: (
     --theme-glow: #{map.get($theme-colors, glow)};
     --theme-text: #{map.get($theme-colors, text)};
     --theme-bright: #{map.get($theme-colors, bright)};
+
+    // Scrollbar theme variables
+    --theme-scrollbar-thumb: #{map.get($theme-colors, scrollbar-thumb)};
+    --theme-scrollbar-track: #{map.get($theme-colors, scrollbar-track)};
 
     // Resource box theme variables
     --theme-resource-health-primary: #{map.get($theme-colors, resource-health-primary)};
