@@ -13,6 +13,7 @@ Welcome to the comprehensive documentation for the Eventide Roleplaying System f
 
 - **[What's New in v13.10.0](WHATS_NEW.md)** - Latest features and improvements
 - **What's New In v13.10.2** - Several bugfixes and a few default changes
+- **What's New IN v13.10.3** - Bugfixes regarding transformation creator, applied theming system to global scrollbars.
 
 ### Ready to Dive Deeper?
 
