@@ -9,6 +9,7 @@ import {
   cleanupThemeManager,
 } from "../../helpers/_module.mjs";
 import { BaselineSheetMixins } from "../components/_module.mjs";
+import { EmbeddedCombatPowerSheet } from "./embedded-combat-power-sheet.mjs";
 
 const { api, sheets } = foundry.applications;
 const { DragDrop, TextEditor } = foundry.applications.ux;
@@ -84,8 +85,9 @@ export class EventideRpSystemItemSheet extends BaselineSheetMixins(
     actions: {
       onEditImage: this._onEditImage,
       viewDoc: this._viewDoc,
-      createDoc: this._createEffect,
-      deleteDoc: this._deleteEffect,
+      createEffect: this._createEffect,
+      editEffect: this._editEffect,
+      deleteEffect: this._deleteEffect,
       toggleEffect: this._toggleEffect,
       newCharacterEffect: this._newCharacterEffect,
       deleteCharacterEffect: this._deleteCharacterEffect,
@@ -256,6 +258,13 @@ export class EventideRpSystemItemSheet extends BaselineSheetMixins(
       context.isGM = game.user.isGM;
 
       context.userSheetTheme = CommonFoundryTasks.retrieveSheetTheme();
+      /**
+       * A flag to indicate that this sheet is for an embedded document.
+       * This is always false for the standard item sheet, but is used by the
+       * template to render the correct version of the rich text editor.
+       * @type {boolean}
+       */
+      context.isEmbedded = false;
 
       Logger.debug(
         "Item sheet context prepared",
@@ -631,6 +640,47 @@ export class EventideRpSystemItemSheet extends BaselineSheetMixins(
     // This is just a placeholder for any additional logic if needed
   }
 
+  /**
+   * Overrides the default click action handler to manage the specialized workflow
+   * for editing an embedded combat power. This approach is necessary to ensure the
+   * correct `this` context is maintained, allowing the parent sheet to re-render
+   * itself after the child (embedded) sheet is closed.
+   *
+   * For all other actions, it delegates back to the parent class's implementation.
+   *
+   * @param {PointerEvent} event   - The originating click event.
+   * @param {HTMLElement} target   - The element that was clicked, containing the `data-action`.
+   * @override
+   * @protected
+   */
+  async _onClickAction(event, target) {
+    const action = target.dataset.action;
+    if (action === "editEmbeddedPower") {
+      const powerId = target.closest("[data-item-id]")?.dataset.itemId;
+      if (!powerId) return;
+
+      const powerData = this.item.system.embeddedCombatPowers.find(
+        (p) => p._id === powerId,
+      );
+
+      if (powerData) {
+        const embeddedSheet = new EmbeddedCombatPowerSheet(
+          powerData,
+          this.item,
+        );
+        // When the embedded sheet is closed, re-render the parent sheet to reflect changes.
+        Hooks.once(`close${EmbeddedCombatPowerSheet.name}`, (app) => {
+          if (app.id === embeddedSheet.id) {
+            this.render(true);
+          }
+        });
+        embeddedSheet.render(true);
+      }
+    } else {
+      return super._onClickAction(event, target);
+    }
+  }
+
   /*****************
    *
    *   DragDrop
@@ -679,6 +729,9 @@ export class EventideRpSystemItemSheet extends BaselineSheetMixins(
       if (power) {
         // Create clean drag data without parent relationship to avoid embedded document errors
         const powerData = power.toObject();
+        // Strip ID to prevent Foundry colliding IDs.
+        delete powerData._id;
+
         dragData = {
           type: "Item",
           data: powerData,
@@ -759,7 +812,6 @@ export class EventideRpSystemItemSheet extends BaselineSheetMixins(
         return false;
       }
 
-      // Add the combat power to the transformation
       await this.item.system.addCombatPower(droppedItem);
       return true;
     }
