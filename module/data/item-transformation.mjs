@@ -168,7 +168,13 @@ export default class EventideRpSystemTransformation extends EventideRpSystemItem
   }
 
   prepareDerivedData() {
-    const DEFAULT_IMAGES = ["icons/svg/item-bag.svg", "icons/svg/ice-aura.svg"];
+    const DEFAULT_IMAGES = [
+      "icons/svg/item-bag.svg",
+      "icons/svg/ice-aura.svg",
+      "",
+      null,
+      undefined,
+    ];
     super.prepareDerivedData?.();
 
     if (!DEFAULT_IMAGES.includes(this.parent.img)) {
