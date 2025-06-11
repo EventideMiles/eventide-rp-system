@@ -227,7 +227,15 @@
   &__header--fortitude { background-color: var(--erps-abilities-fort); }
   &__header--will { background-color: var(--erps-abilities-will); }
   &__header--wits { background-color: var(--erps-abilities-wits); }
-  &__header--gear { background-color: var(--erps-card-header-gear); }
+
+  &__header--gear {
+    font-size: 1.25rem;
+    font-family: "Protest Revolution", serif;
+    font-weight: 400;
+    font-style: normal;
+    padding: 1rem 0.75rem;
+    line-height: 22.5px;
+  }
   &__header--initiative { background-color: var(--erps-card-header-initiative); }
   &__header--initiative-npc { background-color: var(--erps-card-header-initiative-npc); }
   &__header--initiative-pc { background-color: var(--erps-card-header-initiative-pc); }
@@ -299,6 +307,7 @@
     padding: 1rem 0.75rem;
     line-height: 22.5px;
   }
+
   &__header--damage { background-color: var(--erps-card-header-damage); }
   &__header--heal { background-color: var(--erps-card-header-heal); }
   &__header--delete { background-color: var(--erps-card-header-delete); }
@@ -320,6 +329,21 @@
     font-size: 1.2rem;
     color: colors.$universal-tan;
     border-bottom: 1px solid colors.$description-hr;
+  }
+
+  &__context {
+    background: rgb(0 0 0 / 20%);
+    padding: 0.5rem 0.75rem;
+    font-size: 0.9rem;
+    font-style: italic;
+    color: colors.$universal-tan;
+    border-left: 3px solid rgb(255 255 255 / 30%);
+    margin: 0.5rem 0;
+
+    i {
+      margin-right: 0.5rem;
+      opacity: 0.7;
+    }
   }
 
   &__initiative,
@@ -690,6 +714,8 @@
     height: 16px;
     border-radius: 2px;
   }
+
+
 
   &__status-name {
     font-size: 0.8rem;

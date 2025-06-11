@@ -1819,7 +1819,12 @@ body *::-webkit-scrollbar-track,
   background-color: var(--erps-abilities-wits);
 }
 .chat-card__header--gear {
-  background-color: var(--erps-card-header-gear);
+  font-size: 1.25rem;
+  font-family: "Protest Revolution", serif;
+  font-weight: 400;
+  font-style: normal;
+  padding: 1rem 0.75rem;
+  line-height: 22.5px;
 }
 .chat-card__header--initiative {
   background-color: var(--erps-card-header-initiative);
@@ -1929,6 +1934,19 @@ body *::-webkit-scrollbar-track,
   font-size: 1.2rem;
   color: var(--erps-neutral-gray);
   border-bottom: 1px solid var(--erps-description-hr);
+}
+.chat-card__context {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 0.5rem 0.75rem;
+  font-size: 0.9rem;
+  font-style: italic;
+  color: var(--erps-neutral-gray);
+  border-left: 3px solid rgba(255, 255, 255, 0.3);
+  margin: 0.5rem 0;
+}
+.chat-card__context i {
+  margin-right: 0.5rem;
+  opacity: 0.7;
 }
 .chat-card__initiative, .chat-card__combat-roll {
   display: flex;

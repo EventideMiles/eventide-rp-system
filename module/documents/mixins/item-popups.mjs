@@ -508,7 +508,7 @@ export const ItemPopupsMixin = (BaseClass) =>
 
         case "status":
           // Status items just send to chat
-          result = await erps.messages.createStatusMessage(this);
+          result = await erps.messages.createStatusMessage(this, null);
           break;
 
         case "actionCard":

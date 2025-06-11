@@ -108,7 +108,7 @@ export class StatusPopup extends EventidePopupHelpers {
   }
 
   static async #toChat() {
-    erps.messages.createStatusMessage(this.item);
+    erps.messages.createStatusMessage(this.item, null);
     this.close();
   }
 }

@@ -187,9 +187,11 @@ const handleApplyActionCardStatus = async (button, message) => {
         statusData,
       ]);
 
-      // Trigger status message for status items
+      // Trigger appropriate message for different effect types
       if (statusData.type === "status" && createdItems[0]) {
-        await erps.messages.createStatusMessage(createdItems[0]);
+        await erps.messages.createStatusMessage(createdItems[0], null);
+      } else if (statusData.type === "gear" && createdItems[0]) {
+        await erps.messages.gearEffectMessage(createdItems[0], target);
       }
 
       appliedCount++;
@@ -308,7 +310,7 @@ function setupItemUpdateHooks() {
     if (!item.actor) return;
 
     if (item.type === "status") {
-      erps.messages.createStatusMessage(item);
+      erps.messages.createStatusMessage(item, null);
     }
   });
 
@@ -351,12 +353,28 @@ function setupItemCreationHooks() {
 
     // Handle status message creation
     if (item.type === "status" && item.system.description) {
-      erps.messages.createStatusMessage(item);
+      erps.messages.createStatusMessage(
+        item,
+        item.flags?.["eventide-rp-system"]?.isEffect
+          ? "Applied as effect from action card"
+          : null,
+      );
     }
 
     // Handle feature message creation
     if (item.type === "feature" && item.system.description) {
       erps.messages.createFeatureMessage(item);
+    }
+
+    // Handle gear message creation (show what any new gear does)
+    if (item.type === "gear" && item.system.description) {
+      // Use new gear message to show what the gear does
+      erps.messages.createGearMessage(
+        item,
+        item.flags?.["eventide-rp-system"]?.isEffect
+          ? "Applied as effect from action card"
+          : "New gear acquired",
+      );
     }
 
     // Handle gear equip state

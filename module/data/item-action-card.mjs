@@ -964,16 +964,23 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
               if (game.user.isGM) {
                 // GM applies status effects directly
                 try {
-                  // Create the status item on the target
-                  const createdItems =
-                    await result.target.createEmbeddedDocuments("Item", [
-                      effectData,
-                    ]);
-
-                  // Trigger status message for status items
-                  if (effectData.type === "status" && createdItems[0]) {
-                    await erps.messages.createStatusMessage(createdItems[0]);
+                  // Set flag for effects to trigger appropriate message via createItem hook
+                  if (
+                    effectData.type === "gear" ||
+                    effectData.type === "status"
+                  ) {
+                    effectData.flags = effectData.flags || {};
+                    effectData.flags["eventide-rp-system"] =
+                      effectData.flags["eventide-rp-system"] || {};
+                    effectData.flags["eventide-rp-system"].isEffect = true;
                   }
+
+                  // Create the effect item on the target
+                  await result.target.createEmbeddedDocuments("Item", [
+                    effectData,
+                  ]);
+
+                  // Messages are handled by createItem hook
                   statusResults.push({
                     target: result.target,
                     effect: effectData,
@@ -1325,16 +1332,23 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
               if (game.user.isGM) {
                 // GM applies status effects directly
                 try {
-                  // Create the status item on the target
-                  const createdItems =
-                    await result.target.createEmbeddedDocuments("Item", [
-                      effectData,
-                    ]);
-
-                  // Trigger status message for status items
-                  if (effectData.type === "status" && createdItems[0]) {
-                    await erps.messages.createStatusMessage(createdItems[0]);
+                  // Set flag for effects to trigger appropriate message via createItem hook
+                  if (
+                    effectData.type === "gear" ||
+                    effectData.type === "status"
+                  ) {
+                    effectData.flags = effectData.flags || {};
+                    effectData.flags["eventide-rp-system"] =
+                      effectData.flags["eventide-rp-system"] || {};
+                    effectData.flags["eventide-rp-system"].isEffect = true;
                   }
+
+                  // Create the effect item on the target
+                  await result.target.createEmbeddedDocuments("Item", [
+                    effectData,
+                  ]);
+
+                  // Messages are handled by createItem hook
                   statusResults.push({
                     target: result.target,
                     effect: effectData,
