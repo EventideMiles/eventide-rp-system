@@ -76,10 +76,11 @@ export function initGMControlHooks() {
 
       // Only show if there are pending applications
       if (stats.totalMessages > 0) {
-        const statusElement = html.find("#chat-controls");
-        if (statusElement.length > 0) {
-          const existingStatus = statusElement.find(".gm-control-status");
-          if (existingStatus.length === 0) {
+        const statusElement = html.querySelector("#chat-controls");
+        if (statusElement) {
+          const existingStatus =
+            statusElement.querySelector(".gm-control-status");
+          if (!existingStatus) {
             const statusHtml = `
               <div class="gm-control-status" style="
                 background: rgba(255, 193, 7, 0.1);
@@ -110,10 +111,13 @@ export function initGMControlHooks() {
                 </button>
               </div>
             `;
-            statusElement.prepend(statusHtml);
+            statusElement.insertAdjacentHTML("afterbegin", statusHtml);
 
             // Add click handler for cleanup button
-            html.find(".gm-bulk-cleanup-btn").on("click", async () => {
+            const cleanupBtn = statusElement.querySelector(
+              ".gm-bulk-cleanup-btn",
+            );
+            cleanupBtn.addEventListener("click", async () => {
               const cleanedCount =
                 await gmControlManager.bulkCleanupResolvedMessages(0); // Clean all resolved
               if (cleanedCount > 0) {
