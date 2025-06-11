@@ -189,13 +189,6 @@ class GMControlManager {
           ]);
 
           if (createdItems[0]) {
-            // Trigger appropriate message for different effect types
-            if (statusData.type === "status") {
-              await erps.messages.createStatusMessage(createdItems[0], null);
-            } else if (statusData.type === "gear") {
-              await erps.messages.gearEffectMessage(createdItems[0], target);
-            }
-
             appliedCount++;
             Logger.debug(
               `Applied status effect: ${statusData.name}`,
