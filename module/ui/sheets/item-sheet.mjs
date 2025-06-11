@@ -13,6 +13,7 @@ import {
 } from "../../helpers/_module.mjs";
 import { BaselineSheetMixins } from "../components/_module.mjs";
 import { EmbeddedCombatPowerSheet } from "./embedded-combat-power-sheet.mjs";
+import { EmbeddedItemSheet } from "./embedded-item-sheet.mjs";
 
 const { api, sheets } = foundry.applications;
 const { DragDrop, TextEditor } = foundry.applications.ux;
@@ -1662,6 +1663,45 @@ export class EventideRpSystemItemSheet extends BaselineSheetMixins(
         return;
       }
 
+      // Check if user has permission to edit this action card
+      Logger.info(
+        "DEBUG: Permission check for embedded item",
+        {
+          itemName: item.name,
+          userId: game.user.id,
+          isOwner: item.isOwner,
+          isEditable: item.isEditable,
+          canUserModify: item.canUserModify(game.user, "update"),
+          ownership: item.ownership,
+          testPermission: item.testUserPermission(game.user, "OWNER"),
+        },
+        "ITEM_SHEET",
+      );
+
+      // Use a more reliable permission check
+      const hasPermission =
+        item.isOwner ||
+        item.canUserModify(game.user, "update") ||
+        game.user.isGM;
+
+      if (!hasPermission) {
+        Logger.warn(
+          "User lacks permission to edit embedded item",
+          {
+            itemName: item.name,
+            userId: game.user.id,
+            isOwner: item.isOwner,
+            canUserModify: item.canUserModify(game.user, "update"),
+            isGM: game.user.isGM,
+          },
+          "ITEM_SHEET",
+        );
+        ui.notifications.warn(
+          "You don't have permission to edit this action card's embedded items",
+        );
+        return;
+      }
+
       await item.system.clearEmbeddedItem();
 
       Logger.info("Embedded item cleared successfully", null, "ITEM_SHEET");
@@ -1693,14 +1733,50 @@ export class EventideRpSystemItemSheet extends BaselineSheetMixins(
         return;
       }
 
+      // Check if user has permission to edit this action card
+      Logger.info(
+        "DEBUG: Permission check for embedded item",
+        {
+          itemName: item.name,
+          userId: game.user.id,
+          isOwner: item.isOwner,
+          isEditable: item.isEditable,
+          canUserModify: item.canUserModify(game.user, "update"),
+          ownership: item.ownership,
+          testPermission: item.testUserPermission(game.user, "OWNER"),
+        },
+        "ITEM_SHEET",
+      );
+
+      // Use a more reliable permission check
+      const hasPermission =
+        item.isOwner ||
+        item.canUserModify(game.user, "update") ||
+        game.user.isGM;
+
+      if (!hasPermission) {
+        Logger.warn(
+          "User lacks permission to edit embedded item",
+          {
+            itemName: item.name,
+            userId: game.user.id,
+            isOwner: item.isOwner,
+            canUserModify: item.canUserModify(game.user, "update"),
+            isGM: game.user.isGM,
+          },
+          "ITEM_SHEET",
+        );
+        ui.notifications.warn(
+          "You don't have permission to edit this action card's embedded items",
+        );
+        return;
+      }
+
       const embeddedItem = item.system.getEmbeddedItem();
       if (!embeddedItem) {
         Logger.warn("No embedded item found to edit", null, "ITEM_SHEET");
         return;
       }
-
-      // Import the EmbeddedItemSheet class
-      const { EmbeddedItemSheet } = await import("./embedded-item-sheet.mjs");
 
       // Create and render the embedded item sheet
       const sheet = new EmbeddedItemSheet(embeddedItem.toObject(), item);
@@ -1741,6 +1817,30 @@ export class EventideRpSystemItemSheet extends BaselineSheetMixins(
         return;
       }
 
+      // Check if user has permission to edit this action card
+      const hasPermission =
+        item.isOwner ||
+        item.canUserModify(game.user, "update") ||
+        game.user.isGM;
+
+      if (!hasPermission) {
+        Logger.warn(
+          "User lacks permission to edit embedded effect",
+          {
+            itemName: item.name,
+            userId: game.user.id,
+            isOwner: item.isOwner,
+            canUserModify: item.canUserModify(game.user, "update"),
+            isGM: game.user.isGM,
+          },
+          "ITEM_SHEET",
+        );
+        ui.notifications.warn(
+          "You don't have permission to edit this action card's embedded effects",
+        );
+        return;
+      }
+
       if (!effectId) {
         Logger.warn("No effect ID provided for editing", null, "ITEM_SHEET");
         return;
@@ -1753,9 +1853,6 @@ export class EventideRpSystemItemSheet extends BaselineSheetMixins(
         Logger.warn("Embedded effect not found", { effectId }, "ITEM_SHEET");
         return;
       }
-
-      // Import the EmbeddedItemSheet class
-      const { EmbeddedItemSheet } = await import("./embedded-item-sheet.mjs");
 
       // Create and render the embedded effect sheet
       const sheet = new EmbeddedItemSheet(effect.toObject(), item, {}, true);
@@ -1792,6 +1889,30 @@ export class EventideRpSystemItemSheet extends BaselineSheetMixins(
           "Remove embedded effect called on non-action card",
           { itemType: item?.type },
           "ITEM_SHEET",
+        );
+        return;
+      }
+
+      // Check if user has permission to edit this action card
+      const hasPermission =
+        item.isOwner ||
+        item.canUserModify(game.user, "update") ||
+        game.user.isGM;
+
+      if (!hasPermission) {
+        Logger.warn(
+          "User lacks permission to remove embedded effect",
+          {
+            itemName: item.name,
+            userId: game.user.id,
+            isOwner: item.isOwner,
+            canUserModify: item.canUserModify(game.user, "update"),
+            isGM: game.user.isGM,
+          },
+          "ITEM_SHEET",
+        );
+        ui.notifications.warn(
+          "You don't have permission to edit this action card's embedded effects",
         );
         return;
       }

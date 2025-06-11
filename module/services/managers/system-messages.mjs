@@ -578,6 +578,42 @@ class ERPSMessageHandler {
   }
 
   /**
+   * Creates a chat message for gear effects applied without cost deduction
+   * @param {Item} item - The gear item being applied as an effect
+   * @param {Actor} target - The target actor receiving the gear effect
+   * @param {string} [context] - Optional context message to display
+   * @returns {Promise<ChatMessage>} The created chat message
+   */
+  async gearEffectMessage(item, target, context = null) {
+    const effects = item.effects.toObject();
+    const style = ERPSRollUtilities.getItemStyle(item);
+
+    const data = {
+      item,
+      effects,
+      style,
+      context: context || "Applied as effect (no cost)",
+      isEffect: true,
+      target,
+    };
+
+    // Play gear effect sound locally (similar to gear equip but distinct)
+    await erpsSoundManager._playLocalSound("gearEquip");
+
+    return this._createChatMessage(
+      "gear",
+      data,
+      {
+        speaker: ERPSRollUtilities.getSpeaker(
+          target,
+          "EVENTIDE_RP_SYSTEM.MessageHeaders.GearEffect",
+        ),
+      },
+      { soundKey: "gearEquip" },
+    );
+  }
+
+  /**
    * Creates a chat message for transformation application or removal
    * @param {Object} options - Options for the transformation message
    * @param {Actor} options.actor - The actor being transformed
@@ -634,6 +670,8 @@ erpsMessageHandler.createGearEquipMessage =
   erpsMessageHandler.createGearEquipMessage.bind(erpsMessageHandler);
 erpsMessageHandler.createTransformationMessage =
   erpsMessageHandler.createTransformationMessage.bind(erpsMessageHandler);
+erpsMessageHandler.gearEffectMessage =
+  erpsMessageHandler.gearEffectMessage.bind(erpsMessageHandler);
 
 // Export individual functions for backward compatibility
 /**
@@ -739,3 +777,13 @@ export const gearEquipMessage = (item) =>
  */
 export const transformationMessage = (options) =>
   erpsMessageHandler.createTransformationMessage(options);
+
+/**
+ * Creates a gear effect message for an item applied without cost
+ * @param {Item} item - The gear item being applied as an effect
+ * @param {Actor} target - The target actor receiving the gear effect
+ * @param {string} [context] - Optional context message
+ * @returns {Promise<ChatMessage>} The created chat message
+ */
+export const gearEffectMessage = (item, target, context) =>
+  erpsMessageHandler.gearEffectMessage(item, target, context);

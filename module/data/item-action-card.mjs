@@ -1,5 +1,7 @@
-import EventideRpSystemItemBase from "./base-item.mjs";
-import { Logger } from "../services/logger.mjs";
+import { EventideRpSystemItemBase } from "./_module.mjs";
+import { Logger } from "../services/_module.mjs";
+import { MessageFlags } from "../helpers/_module.mjs";
+import { ERPSRollUtilities } from "../utils/_module.mjs";
 
 export default class EventideRpSystemActionCard extends EventideRpSystemItemBase {
   static defineSchema() {
@@ -910,12 +912,23 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
             }
           } else {
             // Player creates GM apply card
-            damageResults.push({
+            const gmApplyResult = {
               target: result.target,
               needsGMApplication: true,
               formula: this.attackChain.damageFormula,
               type: this.attackChain.damageType,
-            });
+            };
+            damageResults.push(gmApplyResult);
+            Logger.info(
+              "DEBUG: Attack chain - Player flagged for GM application",
+              {
+                targetName: result.target.name,
+                needsGMApplication: gmApplyResult.needsGMApplication,
+                formula: gmApplyResult.formula,
+                type: gmApplyResult.type,
+              },
+              "ACTION_CARD",
+            );
           }
         }
       }
@@ -1011,18 +1024,19 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
                 }
               } else {
                 // Player creates GM apply card
-                statusResults.push({
+                const statusApplyResult = {
                   target: result.target,
                   effect: effectData,
                   needsGMApplication: true,
-                });
+                };
+                statusResults.push(statusApplyResult);
 
-                Logger.debug(
-                  `Flagged effect "${effectData.name}" for GM application to target "${result.target.name}"`,
+                Logger.info(
+                  "DEBUG: Attack chain - Status effect flagged for GM application",
                   {
-                    statusCondition: this.attackChain.statusCondition,
-                    statusThreshold: this.attackChain.statusThreshold,
-                    rollTotal: rollResult?.total || 0,
+                    targetName: result.target.name,
+                    effectName: effectData.name,
+                    needsGMApplication: statusApplyResult.needsGMApplication,
                   },
                   "ACTION_CARD",
                 );
@@ -1041,6 +1055,23 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
         damageResults,
         statusResults,
       };
+
+      Logger.info(
+        "DEBUG: Final attack chain result",
+        {
+          success: chainResult.success,
+          mode: chainResult.mode,
+          damageResultsCount: chainResult.damageResults.length,
+          statusResultsCount: chainResult.statusResults.length,
+          damageResultsWithGMFlag: chainResult.damageResults.filter(
+            (r) => r.needsGMApplication,
+          ).length,
+          statusResultsWithGMFlag: chainResult.statusResults.filter(
+            (r) => r.needsGMApplication,
+          ).length,
+        },
+        "ACTION_CARD",
+      );
 
       Logger.info(
         `Attack chain executed successfully with provided roll result`,
@@ -1278,12 +1309,23 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
             }
           } else {
             // Player creates GM apply card
-            damageResults.push({
+            const gmApplyResult = {
               target: result.target,
               needsGMApplication: true,
               formula: this.attackChain.damageFormula,
               type: this.attackChain.damageType,
-            });
+            };
+            damageResults.push(gmApplyResult);
+            Logger.info(
+              "DEBUG: Attack chain - Player flagged for GM application",
+              {
+                targetName: result.target.name,
+                needsGMApplication: gmApplyResult.needsGMApplication,
+                formula: gmApplyResult.formula,
+                type: gmApplyResult.type,
+              },
+              "ACTION_CARD",
+            );
           }
         }
       }
@@ -1379,18 +1421,19 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
                 }
               } else {
                 // Player creates GM apply card
-                statusResults.push({
+                const statusApplyResult = {
                   target: result.target,
                   effect: effectData,
                   needsGMApplication: true,
-                });
+                };
+                statusResults.push(statusApplyResult);
 
-                Logger.debug(
-                  `Flagged effect "${effectData.name}" for GM application to target "${result.target.name}"`,
+                Logger.info(
+                  "DEBUG: Attack chain - Status effect flagged for GM application",
                   {
-                    statusCondition: this.attackChain.statusCondition,
-                    statusThreshold: this.attackChain.statusThreshold,
-                    rollTotal: rollResult?.total || 0,
+                    targetName: result.target.name,
+                    effectName: effectData.name,
+                    needsGMApplication: statusApplyResult.needsGMApplication,
                   },
                   "ACTION_CARD",
                 );
@@ -1472,19 +1515,59 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
       // Apply saved damage to each target
       for (const target of targetArray) {
         try {
-          const damageRoll = await target.actor.damageResolve({
-            formula: this.savedDamage.formula,
-            label: this.parent.name,
-            description:
-              this.parent.system.description || this.savedDamage.description,
-            type: this.savedDamage.type,
-            // Use action card image unless it's default
-            img: this._getEffectiveImage(),
-            bgColor: this.bgColor,
-            textColor: this.textColor,
-          });
+          Logger.info(
+            "DEBUG: Processing target for saved damage",
+            {
+              targetId: target.actor.id,
+              targetName: target.actor.name,
+              isGM: game.user.isGM,
+            },
+            "ACTION_CARD",
+          );
 
-          damageResults.push({ target: target.actor, roll: damageRoll });
+          if (game.user.isGM) {
+            // GM applies damage directly
+            const damageRoll = await target.actor.damageResolve({
+              formula: this.savedDamage.formula,
+              label: this.parent.name,
+              description:
+                this.parent.system.description || this.savedDamage.description,
+              type: this.savedDamage.type,
+              // Use action card image unless it's default
+              img: this._getEffectiveImage(),
+              bgColor: this.bgColor,
+              textColor: this.textColor,
+            });
+
+            damageResults.push({ target: target.actor, roll: damageRoll });
+            Logger.info(
+              "DEBUG: GM applied damage directly",
+              {
+                targetName: target.actor.name,
+                rollId: damageRoll?.id,
+              },
+              "ACTION_CARD",
+            );
+          } else {
+            // Player creates GM apply card
+            const gmApplyResult = {
+              target: target.actor,
+              needsGMApplication: true,
+              formula: this.savedDamage.formula,
+              type: this.savedDamage.type,
+            };
+            damageResults.push(gmApplyResult);
+            Logger.info(
+              "DEBUG: Player flagged for GM application",
+              {
+                targetName: target.actor.name,
+                needsGMApplication: gmApplyResult.needsGMApplication,
+                formula: gmApplyResult.formula,
+                type: gmApplyResult.type,
+              },
+              "ACTION_CARD",
+            );
+          }
         } catch (damageError) {
           Logger.error(
             "Failed to apply saved damage",
@@ -1499,6 +1582,19 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
         mode: "savedDamage",
         damageResults,
       };
+
+      Logger.info(
+        "DEBUG: Final saved damage result",
+        {
+          success: result.success,
+          mode: result.mode,
+          damageResultsCount: result.damageResults.length,
+          damageResultsWithGMFlag: result.damageResults.filter(
+            (r) => r.needsGMApplication,
+          ).length,
+        },
+        "ACTION_CARD",
+      );
 
       Logger.info(
         `Saved damage executed successfully`,
@@ -1517,6 +1613,493 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
       Logger.methodExit(
         "EventideRpSystemActionCard",
         "executeSavedDamage",
+        null,
+      );
+      throw error;
+    }
+  }
+
+  /**
+   * Create a GM apply message for saved damage results that need GM approval
+   * @param {Object} savedDamageResult - The result from executeSavedDamage
+   * @param {Actor} actor - The actor who executed the action card
+   * @returns {Promise<ChatMessage|null>} The created GM apply message or null if no GM application needed
+   */
+  async createSavedDamageMessage(savedDamageResult, actor) {
+    Logger.methodEntry(
+      "EventideRpSystemActionCard",
+      "createSavedDamageMessage",
+      {
+        actorName: actor?.name,
+        actionCardName: this.parent?.name,
+        hasDamageResults: !!savedDamageResult.damageResults?.length,
+      },
+    );
+
+    try {
+      // DEBUG: Log the current user and GM status
+      Logger.info(
+        "DEBUG: User and GM status check",
+        {
+          currentUserId: game.user.id,
+          currentUserName: game.user.name,
+          isGM: game.user.isGM,
+          damageResultsCount: savedDamageResult.damageResults?.length || 0,
+        },
+        "ACTION_CARD",
+      );
+
+      // DEBUG: Log each damage result
+      if (savedDamageResult.damageResults) {
+        savedDamageResult.damageResults.forEach((result, index) => {
+          Logger.info(
+            `DEBUG: Damage result ${index}`,
+            {
+              targetId: result.target?.id,
+              targetName: result.target?.name,
+              needsGMApplication: result.needsGMApplication,
+              hasFormula: !!result.formula,
+              hasType: !!result.type,
+            },
+            "ACTION_CARD",
+          );
+        });
+      }
+
+      // Import the required modules
+      const { renderTemplate } = foundry.applications.handlebars;
+
+      // Check if there are any results that need GM application
+      const needsGMDamage = savedDamageResult.damageResults?.some(
+        (result) => result.needsGMApplication,
+      );
+
+      Logger.info(
+        "DEBUG: GM application check",
+        {
+          needsGMDamage,
+          totalResults: savedDamageResult.damageResults?.length || 0,
+        },
+        "ACTION_CARD",
+      );
+
+      if (!needsGMDamage) {
+        Logger.debug(
+          "No GM application needed for saved damage",
+          {
+            actionCardName: this.parent.name,
+          },
+          "ACTION_CARD",
+        );
+        Logger.methodExit(
+          "EventideRpSystemActionCard",
+          "createSavedDamageMessage",
+          null,
+        );
+        return null;
+      }
+
+      // Create a message for each target that needs GM application
+      const createdMessages = [];
+      const damageTargets = savedDamageResult.damageResults.filter(
+        (result) => result.needsGMApplication,
+      );
+
+      Logger.info(
+        "DEBUG: Creating GM apply messages",
+        {
+          damageTargetsCount: damageTargets.length,
+        },
+        "ACTION_CARD",
+      );
+
+      for (const result of damageTargets) {
+        Logger.info(
+          "DEBUG: Processing damage target",
+          {
+            targetId: result.target?.id,
+            targetName: result.target?.name,
+            formula: result.formula,
+            type: result.type,
+          },
+          "ACTION_CARD",
+        );
+
+        // Create GM apply flag
+        const gmApplyFlag = MessageFlags.createGMApplyFlag({
+          damage: {
+            targetId: result.target.id,
+            targetName: result.target.name,
+            formula: result.formula,
+            type: result.type,
+          },
+          status: null,
+          actionCardId: this.parent.id,
+          actorId: actor.id,
+        });
+
+        Logger.info(
+          "DEBUG: Created GM apply flag",
+          {
+            flagId: gmApplyFlag.id,
+            hasDamage: !!gmApplyFlag.damage,
+            hasStatus: !!gmApplyFlag.status,
+          },
+          "ACTION_CARD",
+        );
+
+        // Prepare message data
+        const messageData = {
+          content: await renderTemplate(
+            "systems/eventide-rp-system/templates/chat/roll-message.hbs",
+            {
+              item: this.parent,
+              actor,
+              label: `${this.parent.name} - GM Apply Required`,
+              description: `${actor.name} used ${this.parent.name}. GM approval required for damage to ${result.target.name}.`,
+              gmApplySection: gmApplyFlag,
+              messageId: null, // Will be set after message creation
+              bgColor: this.bgColor,
+              textColor: this.textColor,
+            },
+          ),
+          speaker: ERPSRollUtilities.getSpeaker(
+            actor,
+            "EVENTIDE_RP_SYSTEM.MessageHeaders.ActionCard",
+          ),
+          flags: {
+            "eventide-rp-system": {
+              gmApplySection: gmApplyFlag,
+            },
+          },
+          whisper: game.users.filter((u) => u.isGM).map((u) => u.id),
+        };
+
+        Logger.info(
+          "DEBUG: Prepared message data",
+          {
+            hasContent: !!messageData.content,
+            hasSpeaker: !!messageData.speaker,
+            hasFlags: !!messageData.flags,
+            whisperCount: messageData.whisper?.length || 0,
+          },
+          "ACTION_CARD",
+        );
+
+        // Create the message
+        const message = await ChatMessage.create(messageData);
+
+        Logger.info(
+          "DEBUG: Created chat message",
+          {
+            messageId: message?.id,
+            messageCreated: !!message,
+          },
+          "ACTION_CARD",
+        );
+
+        // Update the message with its own ID for template reference
+        if (message) {
+          await message.update({
+            content: await renderTemplate(
+              "systems/eventide-rp-system/templates/chat/roll-message.hbs",
+              {
+                item: this.parent,
+                actor,
+                label: `${this.parent.name} - GM Apply Required`,
+                description: `${actor.name} used ${this.parent.name}. GM approval required for damage to ${result.target.name}.`,
+                gmApplySection: gmApplyFlag,
+                messageId: message.id,
+                bgColor: this.bgColor,
+                textColor: this.textColor,
+              },
+            ),
+          });
+
+          createdMessages.push(message);
+          Logger.info(
+            "DEBUG: Updated message with ID",
+            {
+              messageId: message.id,
+            },
+            "ACTION_CARD",
+          );
+        }
+      }
+
+      Logger.info(
+        `Created ${createdMessages.length} GM apply message(s) for saved damage`,
+        {
+          actionCardName: this.parent.name,
+          actorName: actor.name,
+          messageCount: createdMessages.length,
+        },
+        "ACTION_CARD",
+      );
+
+      Logger.methodExit(
+        "EventideRpSystemActionCard",
+        "createSavedDamageMessage",
+        createdMessages[0] || null,
+      );
+      return createdMessages[0] || null; // Return first message for compatibility
+    } catch (error) {
+      Logger.error(
+        "Failed to create saved damage GM apply message",
+        error,
+        "ACTION_CARD",
+      );
+      Logger.methodExit(
+        "EventideRpSystemActionCard",
+        "createSavedDamageMessage",
+        null,
+      );
+      throw error;
+    }
+  }
+
+  /**
+   * Create a GM apply message for attack chain results that need GM approval
+   * @param {Object} chainResult - The result from executeAttackChain or executeAttackChainWithRollResult
+   * @param {Actor} actor - The actor who executed the action card
+   * @returns {Promise<ChatMessage|null>} The created GM apply message or null if no GM application needed
+   */
+  async createAttackChainMessage(chainResult, actor) {
+    Logger.methodEntry(
+      "EventideRpSystemActionCard",
+      "createAttackChainMessage",
+      {
+        actorName: actor?.name,
+        actionCardName: this.parent?.name,
+        hasDamageResults: !!chainResult.damageResults?.length,
+        hasStatusResults: !!chainResult.statusResults?.length,
+      },
+    );
+
+    try {
+      // DEBUG: Log the current user and GM status
+      Logger.info(
+        "DEBUG: User and GM status check (attack chain)",
+        {
+          currentUserId: game.user.id,
+          currentUserName: game.user.name,
+          isGM: game.user.isGM,
+          damageResultsCount: chainResult.damageResults?.length || 0,
+          statusResultsCount: chainResult.statusResults?.length || 0,
+        },
+        "ACTION_CARD",
+      );
+
+      // DEBUG: Log each damage result
+      if (chainResult.damageResults) {
+        chainResult.damageResults.forEach((result, index) => {
+          Logger.info(
+            `DEBUG: Attack chain damage result ${index}`,
+            {
+              targetId: result.target?.id,
+              targetName: result.target?.name,
+              needsGMApplication: result.needsGMApplication,
+              hasFormula: !!result.formula,
+              hasType: !!result.type,
+            },
+            "ACTION_CARD",
+          );
+        });
+      }
+
+      // DEBUG: Log each status result
+      if (chainResult.statusResults) {
+        chainResult.statusResults.forEach((result, index) => {
+          Logger.info(
+            `DEBUG: Attack chain status result ${index}`,
+            {
+              targetId: result.target?.id,
+              targetName: result.target?.name,
+              needsGMApplication: result.needsGMApplication,
+              effectName: result.effect?.name,
+            },
+            "ACTION_CARD",
+          );
+        });
+      }
+
+      // Import the required modules
+      const { renderTemplate } = foundry.applications.handlebars;
+
+      // Check if there are any results that need GM application
+      const needsGMDamage = chainResult.damageResults?.some(
+        (result) => result.needsGMApplication,
+      );
+      const needsGMStatus = chainResult.statusResults?.some(
+        (result) => result.needsGMApplication,
+      );
+
+      Logger.info(
+        "DEBUG: GM application check (attack chain)",
+        {
+          needsGMDamage,
+          needsGMStatus,
+          totalDamageResults: chainResult.damageResults?.length || 0,
+          totalStatusResults: chainResult.statusResults?.length || 0,
+        },
+        "ACTION_CARD",
+      );
+
+      if (!needsGMDamage && !needsGMStatus) {
+        Logger.debug(
+          "No GM application needed for attack chain",
+          {
+            actionCardName: this.parent.name,
+          },
+          "ACTION_CARD",
+        );
+        Logger.methodExit(
+          "EventideRpSystemActionCard",
+          "createAttackChainMessage",
+          null,
+        );
+        return null;
+      }
+
+      // Group results by target for cleaner messages
+      const targetGroups = new Map();
+
+      // Process damage results
+      if (needsGMDamage) {
+        chainResult.damageResults
+          .filter((result) => result.needsGMApplication)
+          .forEach((result) => {
+            const targetId = result.target.id;
+            if (!targetGroups.has(targetId)) {
+              targetGroups.set(targetId, {
+                target: result.target,
+                damage: null,
+                status: null,
+              });
+            }
+            targetGroups.get(targetId).damage = {
+              targetId: result.target.id,
+              targetName: result.target.name,
+              formula: result.formula,
+              type: result.type,
+            };
+          });
+      }
+
+      // Process status results
+      if (needsGMStatus) {
+        chainResult.statusResults
+          .filter((result) => result.needsGMApplication)
+          .forEach((result) => {
+            const targetId = result.target.id;
+            if (!targetGroups.has(targetId)) {
+              targetGroups.set(targetId, {
+                target: result.target,
+                damage: null,
+                status: null,
+              });
+            }
+
+            const targetGroup = targetGroups.get(targetId);
+            if (!targetGroup.status) {
+              targetGroup.status = {
+                targetId: result.target.id,
+                targetName: result.target.name,
+                effects: [],
+              };
+            }
+            targetGroup.status.effects.push(result.effect);
+          });
+      }
+
+      // Create a message for each target that needs GM application
+      const createdMessages = [];
+      for (const [_targetId, group] of targetGroups) {
+        // Create GM apply flag
+        const gmApplyFlag = MessageFlags.createGMApplyFlag({
+          damage: group.damage,
+          status: group.status,
+          actionCardId: this.parent.id,
+          actorId: actor.id,
+        });
+
+        // Prepare message data
+        const messageData = {
+          content: await renderTemplate(
+            "systems/eventide-rp-system/templates/chat/roll-message.hbs",
+            {
+              item: this.parent,
+              actor,
+              label: `${this.parent.name} - GM Apply Required`,
+              description: `${actor.name} used ${this.parent.name}. GM approval required for effects on ${group.target.name}.`,
+              gmApplySection: gmApplyFlag,
+              messageId: null, // Will be set after message creation
+              bgColor: this.bgColor,
+              textColor: this.textColor,
+            },
+          ),
+          speaker: ERPSRollUtilities.getSpeaker(
+            actor,
+            "EVENTIDE_RP_SYSTEM.MessageHeaders.ActionCard",
+          ),
+          flags: {
+            "eventide-rp-system": {
+              gmApplySection: gmApplyFlag,
+            },
+          },
+          whisper: game.users.filter((u) => u.isGM).map((u) => u.id),
+        };
+
+        // Create the message
+        const message = await ChatMessage.create(messageData);
+
+        // Update the message with its own ID for template reference
+        if (message) {
+          await message.update({
+            content: await renderTemplate(
+              "systems/eventide-rp-system/templates/chat/roll-message.hbs",
+              {
+                item: this.parent,
+                actor,
+                label: `${this.parent.name} - GM Apply Required`,
+                description: `${actor.name} used ${this.parent.name}. GM approval required for effects on ${group.target.name}.`,
+                gmApplySection: gmApplyFlag,
+                messageId: message.id,
+                bgColor: this.bgColor,
+                textColor: this.textColor,
+              },
+            ),
+          });
+
+          createdMessages.push(message);
+        }
+      }
+
+      Logger.info(
+        `Created ${createdMessages.length} GM apply message(s) for attack chain`,
+        {
+          actionCardName: this.parent.name,
+          actorName: actor.name,
+          messageCount: createdMessages.length,
+        },
+        "ACTION_CARD",
+      );
+
+      Logger.methodExit(
+        "EventideRpSystemActionCard",
+        "createAttackChainMessage",
+        createdMessages[0] || null,
+      );
+      return createdMessages[0] || null; // Return first message for compatibility
+    } catch (error) {
+      Logger.error(
+        "Failed to create attack chain GM apply message",
+        error,
+        "ACTION_CARD",
+      );
+      Logger.methodExit(
+        "EventideRpSystemActionCard",
+        "createAttackChainMessage",
         null,
       );
       throw error;

@@ -1,5 +1,6 @@
 import { Logger } from "../../services/logger.mjs";
 import { ErrorHandler } from "../../utils/error-handler.mjs";
+import { erpsMessageHandler } from "../../services/_module.mjs";
 
 /**
  * Actor Transformation Mixin
@@ -70,9 +71,6 @@ export const ActorTransformationMixin = (BaseClass) =>
         await this._updateTokensForTransformation(tokens, transformationItem);
 
         // Create a chat message about the transformation
-        const { erpsMessageHandler } = await import(
-          "../../services/_module.mjs"
-        );
         await erpsMessageHandler.createTransformationMessage({
           actor: this,
           transformation: transformationItem,
@@ -177,9 +175,6 @@ export const ActorTransformationMixin = (BaseClass) =>
 
         // Create a chat message about the transformation being removed
         if (transformationItem) {
-          const { erpsMessageHandler } = await import(
-            "../../services/_module.mjs"
-          );
           await erpsMessageHandler.createTransformationMessage({
             actor: this,
             transformation: transformationItem,

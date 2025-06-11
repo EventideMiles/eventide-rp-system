@@ -290,6 +290,11 @@
         "Applied": "Applied",
         "ApplyDamage": "Apply Damage",
         "ApplyStatus": "Apply Status Effects",
+        "DiscardDamage": "Discard",
+        "DiscardStatus": "Discard",
+        "ApplyAll": "Apply All",
+        "DiscardAll": "Discard All",
+        "MultipleEffectsPending": "Multiple Effects Pending",
         "TargetUnavailable": "Target no longer available"
       }
     },
@@ -540,7 +545,8 @@
       "GearEquip": "Equipment Change: {name}",
       "Transformation": "Transformation: {name}",
       "GearEffect": "Gear Effect: {name}",
-      "GearEffectTransfer": "Gear Effect Transfer: {name}"
+      "GearEffectTransfer": "Gear Effect Transfer: {name}",
+      "ActionCard": "Action Card: {name}"
     },
     "PartialTransfer": "Only {quantity} items were available to transfer.",
     "Effect": {

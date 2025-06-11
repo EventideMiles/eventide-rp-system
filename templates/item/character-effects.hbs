@@ -43,16 +43,18 @@
             <th class="erps-data-table__header-cell erps-data-table__header-cell--center">Mode</th>
             <th class="erps-data-table__header-cell erps-data-table__header-cell--center">Value</th>
             <th class="erps-data-table__header-cell erps-data-table__header-cell--controls">
-              <button
-                type="button"
-                class="erps-data-table__create-button"
-                data-action="newCharacterEffect"
-                data-type="abilities"
-                data-ability="acro"
-                title="Add new effect"
-              >
-                <i class="fas fa-plus"></i> Add Effect
-              </button>
+              {{#if @root.editable}}
+                <button
+                  type="button"
+                  class="erps-data-table__create-button"
+                  data-action="newCharacterEffect"
+                  data-type="abilities"
+                  data-ability="acro"
+                  title="Add new effect"
+                >
+                  <i class="fas fa-plus"></i> Add Effect
+                </button>
+              {{/if}}
             </th>
           </tr>
         </thead>
@@ -119,18 +121,20 @@
               </td>
 
               <td class="erps-data-table__cell erps-data-table__cell--controls">
-                <div class="erps-data-table__controls">
-                  <button
-                    type="button"
-                    class="erps-data-table__control-button erps-data-table__control-button--delete"
-                    data-action="deleteCharacterEffect"
-                    data-index="{{@index}}"
-                    data-type="regularEffects"
-                    title="Remove effect"
-                  >
-                    <i class="fas fa-trash"></i>
-                  </button>
-                </div>
+                {{#if @root.editable}}
+                  <div class="erps-data-table__controls">
+                    <button
+                      type="button"
+                      class="erps-data-table__control-button erps-data-table__control-button--delete"
+                      data-action="deleteCharacterEffect"
+                      data-index="{{@index}}"
+                      data-type="regularEffects"
+                      title="Remove effect"
+                    >
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </div>
+                {{/if}}
               </td>
             </tr>
           {{/each}}
@@ -160,16 +164,18 @@
               <th class="erps-data-table__header-cell erps-data-table__header-cell--center">Mode</th>
               <th class="erps-data-table__header-cell erps-data-table__header-cell--center">Value</th>
               <th class="erps-data-table__header-cell erps-data-table__header-cell--controls">
-                <button
-                  type="button"
-                  class="erps-data-table__create-button"
-                  data-action="newCharacterEffect"
-                  data-type="hiddenAbilities"
-                  data-ability="dice"
-                  title="Add new hidden effect"
-                >
-                  <i class="fas fa-plus"></i> Add Effect
-                </button>
+                {{#if @root.editable}}
+                  <button
+                    type="button"
+                    class="erps-data-table__create-button"
+                    data-action="newCharacterEffect"
+                    data-type="hiddenAbilities"
+                    data-ability="dice"
+                    title="Add new hidden effect"
+                  >
+                    <i class="fas fa-plus"></i> Add Effect
+                  </button>
+                {{/if}}
               </th>
             </tr>
           </thead>
@@ -230,18 +236,20 @@
                 </td>
 
                 <td class="erps-data-table__cell erps-data-table__cell--controls">
-                  <div class="erps-data-table__controls">
-                    <button
-                      type="button"
-                      class="erps-data-table__control-button erps-data-table__control-button--delete"
-                      data-action="deleteCharacterEffect"
-                      data-index="{{@index}}"
-                      data-type="hiddenEffects"
-                      title="Remove hidden effect"
-                    >
-                      <i class="fas fa-trash"></i>
-                    </button>
-                  </div>
+                  {{#if @root.editable}}
+                    <div class="erps-data-table__controls">
+                      <button
+                        type="button"
+                        class="erps-data-table__control-button erps-data-table__control-button--delete"
+                        data-action="deleteCharacterEffect"
+                        data-index="{{@index}}"
+                        data-type="hiddenEffects"
+                        title="Remove hidden effect"
+                      >
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </div>
+                  {{/if}}
                 </td>
               </tr>
             {{/each}}

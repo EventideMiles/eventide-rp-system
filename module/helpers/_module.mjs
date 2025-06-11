@@ -12,3 +12,4 @@ export * from "./range-sliders.mjs";
 export * from "./character-effects.mjs";
 export * from "./effects.mjs";
 export * from "./theme-manager.mjs";
+export * from "./message-flags.mjs";

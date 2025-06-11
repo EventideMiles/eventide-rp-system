@@ -131,6 +131,21 @@ export class EmbeddedItemSheet extends BaselineSheetMixins(
       configurable: true,
     });
 
+    // Copy ownership from the action card to ensure proper permissions
+    Object.defineProperty(tempItem, "ownership", {
+      value: actionCardItem.ownership,
+      configurable: true,
+    });
+
+    // Override permission methods to use action card permissions
+    tempItem.canUserModify = function (user, action) {
+      return actionCardItem.canUserModify(user, action);
+    };
+
+    tempItem.testUserPermission = function (user, permission, options) {
+      return actionCardItem.testUserPermission(user, permission, options);
+    };
+
     const sheetOptions = foundry.utils.mergeObject(options, {
       document: tempItem,
       title: `${game.i18n.localize("EVENTIDE_RP_SYSTEM.UI.Edit")}: ${

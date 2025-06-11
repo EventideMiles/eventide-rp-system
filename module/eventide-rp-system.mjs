@@ -35,6 +35,7 @@ import {
   registerSettings,
   initializeCombatHooks,
   initChatListeners,
+  initGMControlHooks,
   erpsMessageHandler,
   initHandlebarsPartials,
   getSetting,
@@ -107,6 +108,7 @@ globalThis.erps = {
   messages: erpsMessageHandler,
   models,
   Logger,
+  gmControl: null, // Will be set after import
 };
 
 /**
@@ -128,6 +130,13 @@ Hooks.once("init", async () => {
   initializeCombatHooks();
   // Initialize chat message listeners
   initChatListeners();
+  // Initialize GM control hooks
+  initGMControlHooks();
+
+  // Set up GM control manager in global scope (async)
+  import("./services/managers/gm-control.mjs").then(({ gmControlManager }) => {
+    globalThis.erps.gmControl = gmControlManager;
+  });
   /**
    * Configure initiative settings
    */

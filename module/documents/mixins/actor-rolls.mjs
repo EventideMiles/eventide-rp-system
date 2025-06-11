@@ -1,5 +1,6 @@
 import { Logger } from "../../services/logger.mjs";
 import { ErrorHandler } from "../../utils/error-handler.mjs";
+import { erpsRollHandler } from "../../services/_module.mjs";
 
 /**
  * Actor Rolls Mixin
@@ -222,8 +223,7 @@ export const ActorRollsMixin = (BaseClass) =>
           "ROLLS",
         );
 
-        // Import roll handler dynamically to avoid circular imports
-        const { erpsRollHandler } = await import("../../services/_module.mjs");
+        // Use the imported roll handler
         const roll = await erpsRollHandler.handleRoll(rollData, this);
 
         Logger.info(
@@ -299,8 +299,7 @@ export const ActorRollsMixin = (BaseClass) =>
 
         Logger.debug(`Rolling custom formula: ${formula}`, rollConfig, "ROLLS");
 
-        // Import roll handler dynamically to avoid circular imports
-        const { erpsRollHandler } = await import("../../services/_module.mjs");
+        // Use the imported roll handler
         const roll = await erpsRollHandler.handleRoll(rollConfig, this);
 
         Logger.info(

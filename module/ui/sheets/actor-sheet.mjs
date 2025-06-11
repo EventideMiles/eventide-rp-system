@@ -2624,14 +2624,53 @@ export class EventideRpSystemActorSheet extends BaselineSheetMixins(
 
       const result = await actionCard.system.execute(this.actor);
 
+      Logger.info(
+        "DEBUG: Action card execution result",
+        {
+          hasResult: !!result,
+          success: result?.success,
+          mode: result?.mode,
+          hasDamageResults: !!result?.damageResults?.length,
+          hasStatusResults: !!result?.statusResults?.length,
+          damageResultsWithGMFlag:
+            result?.damageResults?.filter((r) => r.needsGMApplication)
+              ?.length || 0,
+          statusResultsWithGMFlag:
+            result?.statusResults?.filter((r) => r.needsGMApplication)
+              ?.length || 0,
+        },
+        "ACTOR_SHEET",
+      );
+
       if (result.success) {
         if (result.mode === "attackChain") {
           // Attack chain mode - create follow-up message if needed
+          Logger.info(
+            "DEBUG: About to call createAttackChainMessage",
+            {
+              hasResult: !!result,
+              mode: result.mode,
+              hasDamageResults: !!result.damageResults?.length,
+              hasStatusResults: !!result.statusResults?.length,
+              isGM: game.user.isGM,
+            },
+            "ACTOR_SHEET",
+          );
+
           const followUpMessage =
             await actionCard.system.createAttackChainMessage(
               result,
               this.actor,
             );
+
+          Logger.info(
+            "DEBUG: createAttackChainMessage returned",
+            {
+              followUpMessage: !!followUpMessage,
+              messageId: followUpMessage?.id,
+            },
+            "ACTOR_SHEET",
+          );
 
           if (followUpMessage) {
             ui.notifications.info(
@@ -2650,10 +2689,42 @@ export class EventideRpSystemActorSheet extends BaselineSheetMixins(
             "ACTOR_SHEET",
           );
         } else if (result.mode === "savedDamage") {
-          // Saved damage mode - damage already applied
-          ui.notifications.info(
-            `Saved damage applied to ${result.damageResults.length} target(s)`,
+          // Saved damage mode - create follow-up message if needed
+          Logger.info(
+            "DEBUG: About to call createSavedDamageMessage",
+            {
+              hasResult: !!result,
+              mode: result.mode,
+              hasDamageResults: !!result.damageResults?.length,
+              isGM: game.user.isGM,
+            },
+            "ACTOR_SHEET",
           );
+
+          const followUpMessage =
+            await actionCard.system.createSavedDamageMessage(
+              result,
+              this.actor,
+            );
+
+          Logger.info(
+            "DEBUG: createSavedDamageMessage returned",
+            {
+              followUpMessage: !!followUpMessage,
+              messageId: followUpMessage?.id,
+            },
+            "ACTOR_SHEET",
+          );
+
+          if (followUpMessage) {
+            ui.notifications.info(
+              `Saved damage executed - GM apply effects created`,
+            );
+          } else {
+            ui.notifications.info(
+              `Saved damage applied to ${result.damageResults.length} target(s)`,
+            );
+          }
           Logger.info(
             "Action card saved damage executed",
             {

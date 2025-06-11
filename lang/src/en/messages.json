@@ -42,7 +42,8 @@
       "GearEquip": "Equipment Change: {name}",
       "Transformation": "Transformation: {name}",
       "GearEffect": "Gear Effect: {name}",
-      "GearEffectTransfer": "Gear Effect Transfer: {name}"
+      "GearEffectTransfer": "Gear Effect Transfer: {name}",
+      "ActionCard": "Action Card: {name}"
     },
     "PartialTransfer": "Only {quantity} items were available to transfer."
   }

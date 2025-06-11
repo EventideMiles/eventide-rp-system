@@ -492,16 +492,36 @@ export class ActionCardPopup extends EventidePopupHelpers {
 
       if (result.success) {
         if (result.mode === "attackChain") {
-          ui.notifications.info("Attack chain executed successfully");
+          // Attack chain mode - create follow-up message if needed
+          const followUpMessage =
+            await this.item.system.createAttackChainMessage(result, actor);
+
+          if (followUpMessage) {
+            ui.notifications.info(
+              "Attack chain executed - GM apply effects created",
+            );
+          } else {
+            ui.notifications.info("Attack chain executed successfully");
+          }
           Logger.info("Action card attack chain executed from popup", {
             itemId: this.item.id,
             targetsHit:
               result.targetResults?.filter((r) => r.oneHit).length || 0,
           });
         } else if (result.mode === "savedDamage") {
-          ui.notifications.info(
-            `Saved damage applied to ${result.damageResults.length} target(s)`,
-          );
+          // Saved damage mode - create follow-up message if needed
+          const followUpMessage =
+            await this.item.system.createSavedDamageMessage(result, actor);
+
+          if (followUpMessage) {
+            ui.notifications.info(
+              "Saved damage executed - GM apply effects created",
+            );
+          } else {
+            ui.notifications.info(
+              `Saved damage applied to ${result.damageResults.length} target(s)`,
+            );
+          }
           Logger.info("Action card saved damage executed from popup", {
             itemId: this.item.id,
             targetsAffected: result.damageResults.length,

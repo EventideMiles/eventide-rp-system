@@ -35,20 +35,22 @@
               <span class="erps-items-panel__name">{{embeddedItem.name}}</span>
             </div>
             <div class="erps-items-panel__cell erps-items-panel__cell--controls">
-              <a
-                class="erps-items-panel__control erps-items-panel__control--edit"
-                data-action="editEmbeddedItem"
-                title="{{localize 'EVENTIDE_RP_SYSTEM.UI.Edit'}}"
-              >
-                <i class="fas fa-edit"></i>
-              </a>
-              <a
-                class="erps-items-panel__control erps-items-panel__control--delete"
-                data-action="clearEmbeddedItem"
-                title="{{localize 'EVENTIDE_RP_SYSTEM.UI.Remove'}}"
-              >
-                <i class="fas fa-trash"></i>
-              </a>
+              {{#if @root.editable}}
+                <a
+                  class="erps-items-panel__control erps-items-panel__control--edit"
+                  data-action="editEmbeddedItem"
+                  title="{{localize 'EVENTIDE_RP_SYSTEM.UI.Edit'}}"
+                >
+                  <i class="fas fa-edit"></i>
+                </a>
+                <a
+                  class="erps-items-panel__control erps-items-panel__control--delete"
+                  data-action="clearEmbeddedItem"
+                  title="{{localize 'EVENTIDE_RP_SYSTEM.UI.Remove'}}"
+                >
+                  <i class="fas fa-trash"></i>
+                </a>
+              {{/if}}
             </div>
           </li>
         </ol>
@@ -56,9 +58,11 @@
         <div class="erps-items-panel__empty">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.NoActionItem"}}</div>
       {{/if}}
 
-      <div class="erps-items-panel__drop-zone" data-drop-zone="actionItem">
-        <p>{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.DropActionItemHere"}}</p>
-      </div>
+      {{#if @root.editable}}
+        <div class="erps-items-panel__drop-zone" data-drop-zone="actionItem">
+          <p>{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.DropActionItemHere"}}</p>
+        </div>
+      {{/if}}
     </div>
 
     <!-- Effects Section -->
@@ -97,22 +101,24 @@
                 <span class="erps-items-panel__type">({{effect.type}})</span>
               </div>
               <div class="erps-items-panel__cell erps-items-panel__cell--controls">
-                <a
-                  class="erps-items-panel__control erps-items-panel__control--edit"
-                  data-action="editEmbeddedEffect"
-                  data-effect-id="{{effect.originalId}}"
-                  title="{{localize 'EVENTIDE_RP_SYSTEM.UI.Edit'}}"
-                >
-                  <i class="fas fa-edit"></i>
-                </a>
-                <a
-                  class="erps-items-panel__control erps-items-panel__control--delete"
-                  data-action="removeEmbeddedEffect"
-                  data-effect-id="{{effect.originalId}}"
-                  title="{{localize 'EVENTIDE_RP_SYSTEM.UI.Remove'}}"
-                >
-                  <i class="fas fa-trash"></i>
-                </a>
+                {{#if @root.editable}}
+                  <a
+                    class="erps-items-panel__control erps-items-panel__control--edit"
+                    data-action="editEmbeddedEffect"
+                    data-effect-id="{{effect.originalId}}"
+                    title="{{localize 'EVENTIDE_RP_SYSTEM.UI.Edit'}}"
+                  >
+                    <i class="fas fa-edit"></i>
+                  </a>
+                  <a
+                    class="erps-items-panel__control erps-items-panel__control--delete"
+                    data-action="removeEmbeddedEffect"
+                    data-effect-id="{{effect.originalId}}"
+                    title="{{localize 'EVENTIDE_RP_SYSTEM.UI.Remove'}}"
+                  >
+                    <i class="fas fa-trash"></i>
+                  </a>
+                {{/if}}
               </div>
             </li>
           {{/each}}
@@ -121,9 +127,11 @@
         <div class="erps-items-panel__empty">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.NoEffects"}}</div>
       {{/if}}
 
-      <div class="erps-items-panel__drop-zone" data-drop-zone="effect">
-        <p>{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.DropEffectHere"}}</p>
-      </div>
+      {{#if @root.editable}}
+        <div class="erps-items-panel__drop-zone" data-drop-zone="effect">
+          <p>{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.DropEffectHere"}}</p>
+        </div>
+      {{/if}}
 
       <div class="erps-items-panel__notes">
         <p>{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.EffectNotes"}}</p>

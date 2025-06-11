@@ -3,6 +3,9 @@
  * @module helpers/chat-listeners
  */
 
+import { MessageFlags } from "../../helpers/message-flags.mjs";
+import { gmControlManager } from "../managers/gm-control.mjs";
+
 /**
  * Initializes all chat-related event listeners for the Eventide RP System
  *
@@ -84,9 +87,11 @@ const addGMApplyButtonFunctionality = (html, message) => {
     return;
   }
 
-  // Add click event listeners for apply buttons
-  const applyButtons = html.querySelectorAll(".chat-card__apply-button");
-  applyButtons.forEach((button) => {
+  // Add click event listeners for apply and discard buttons
+  const actionButtons = html.querySelectorAll(
+    ".chat-card__apply-button, .chat-card__discard-button",
+  );
+  actionButtons.forEach((button) => {
     button.addEventListener("click", async (event) => {
       event.preventDefault();
       const action = button.dataset.action;
@@ -96,6 +101,14 @@ const addGMApplyButtonFunctionality = (html, message) => {
           await handleApplyActionCardDamage(button, message);
         } else if (action === "applyActionCardStatus") {
           await handleApplyActionCardStatus(button, message);
+        } else if (action === "discardActionCardDamage") {
+          await handleDiscardActionCardDamage(button, message);
+        } else if (action === "discardActionCardStatus") {
+          await handleDiscardActionCardStatus(button, message);
+        } else if (action === "applyAllActionCardEffects") {
+          await handleApplyAllActionCardEffects(button, message);
+        } else if (action === "discardAllActionCardEffects") {
+          await handleDiscardAllActionCardEffects(button, message);
         }
       } catch (error) {
         console.error("Error handling GM apply action:", error);
@@ -120,34 +133,8 @@ const handleApplyActionCardDamage = async (button, message) => {
   const formula = button.dataset.formula;
   const type = button.dataset.type;
 
-  // Find the target actor
-  const target = game.actors.get(targetId);
-  if (!target) {
-    ui.notifications.warn("Target actor no longer exists");
-    await updateMessageApplyState(message, "damage", {
-      applied: false,
-      targetValid: false,
-    });
-    return;
-  }
-
-  // Apply the damage
-  const damageRoll = await target.damageResolve({
-    formula,
-    label: "Action Card Damage",
-    description: "Damage from action card attack chain",
-    type,
-  });
-
-  // Mark as applied in the message
-  await updateMessageApplyState(message, "damage", {
-    applied: true,
-    targetValid: true,
-  });
-
-  ui.notifications.info(
-    `Applied ${damageRoll.total} ${type} to ${target.name}`,
-  );
+  // Use the GM control manager to apply damage
+  await gmControlManager.applyDamage(message, targetId, formula, type);
 };
 
 /**
@@ -160,55 +147,56 @@ const handleApplyActionCardDamage = async (button, message) => {
 const handleApplyActionCardStatus = async (button, message) => {
   const targetId = button.dataset.targetId;
 
-  // Find the target actor
-  const target = game.actors.get(targetId);
-  if (!target) {
-    ui.notifications.warn("Target actor no longer exists");
-    await updateMessageApplyState(message, "status", {
-      applied: false,
-      targetValid: false,
-    });
-    return;
-  }
+  // Use the GM control manager to apply status effects
+  await gmControlManager.applyStatusEffects(message, targetId);
+};
 
-  // Get status effects from message flags
-  const gmApplySection = message.flags?.["eventide-rp-system"]?.gmApplySection;
-  if (!gmApplySection?.status?.effects) {
-    ui.notifications.error("No status effects found in message");
-    return;
-  }
+/**
+ * Handle discarding action card damage
+ *
+ * @private
+ * @param {HTMLElement} button - The clicked button
+ * @param {ChatMessage} message - The chat message document
+ */
+const handleDiscardActionCardDamage = async (button, message) => {
+  // Use the GM control manager to discard damage
+  await gmControlManager.discardDamage(message);
+};
 
-  // Apply each status effect
-  let appliedCount = 0;
-  for (const statusData of gmApplySection.status.effects) {
-    try {
-      // Create the status item on the target
-      const createdItems = await target.createEmbeddedDocuments("Item", [
-        statusData,
-      ]);
+/**
+ * Handle discarding action card status effects
+ *
+ * @private
+ * @param {HTMLElement} button - The clicked button
+ * @param {ChatMessage} message - The chat message document
+ */
+const handleDiscardActionCardStatus = async (button, message) => {
+  // Use the GM control manager to discard status effects
+  await gmControlManager.discardStatusEffects(message);
+};
 
-      // Trigger appropriate message for different effect types
-      if (statusData.type === "status" && createdItems[0]) {
-        await erps.messages.createStatusMessage(createdItems[0], null);
-      } else if (statusData.type === "gear" && createdItems[0]) {
-        await erps.messages.gearEffectMessage(createdItems[0], target);
-      }
+/**
+ * Handle applying all action card effects at once
+ *
+ * @private
+ * @param {HTMLElement} button - The clicked button
+ * @param {ChatMessage} message - The chat message document
+ */
+const handleApplyAllActionCardEffects = async (_button, message) => {
+  // Use the GM control manager to apply all effects
+  await gmControlManager.applyAllEffects(message);
+};
 
-      appliedCount++;
-    } catch (error) {
-      console.error("Failed to apply status effect:", error);
-    }
-  }
-
-  // Mark as applied in the message
-  await updateMessageApplyState(message, "status", {
-    applied: true,
-    targetValid: true,
-  });
-
-  ui.notifications.info(
-    `Applied ${appliedCount} status effect(s) to ${target.name}`,
-  );
+/**
+ * Handle discarding all action card effects at once
+ *
+ * @private
+ * @param {HTMLElement} button - The clicked button
+ * @param {ChatMessage} message - The chat message document
+ */
+const handleDiscardAllActionCardEffects = async (_button, message) => {
+  // Use the GM control manager to discard all effects
+  await gmControlManager.discardAllEffects(message);
 };
 
 /**
@@ -219,17 +207,8 @@ const handleApplyActionCardStatus = async (button, message) => {
  * @param {string} type - The type of application ("damage" or "status")
  * @param {Object} state - The new state
  */
-const updateMessageApplyState = async (message, type, state) => {
-  const flags = foundry.utils.deepClone(message.flags || {});
-  flags["eventide-rp-system"] = flags["eventide-rp-system"] || {};
-  flags["eventide-rp-system"].gmApplySection =
-    flags["eventide-rp-system"].gmApplySection || {};
-  flags["eventide-rp-system"].gmApplySection[type] = {
-    ...flags["eventide-rp-system"].gmApplySection[type],
-    ...state,
-  };
-
-  await message.update({ flags });
+const _updateMessageApplyState = async (message, type, state) => {
+  await MessageFlags.updateGMApplyFlag(message, type, state);
 };
 
 /**
@@ -240,46 +219,7 @@ const updateMessageApplyState = async (message, type, state) => {
  * @param {ChatMessage} message - The chat message document
  */
 const updateTargetValidity = async (html, message) => {
-  const gmApplySection = message.flags?.["eventide-rp-system"]?.gmApplySection;
-  if (!gmApplySection) return;
-
-  let needsUpdate = false;
-  const updates = {};
-
-  // Check damage target validity
-  if (gmApplySection.damage && !gmApplySection.damage.applied) {
-    const targetExists = game.actors.get(gmApplySection.damage.targetId);
-    if (gmApplySection.damage.targetValid !== !!targetExists) {
-      updates.damage = {
-        ...gmApplySection.damage,
-        targetValid: !!targetExists,
-      };
-      needsUpdate = true;
-    }
-  }
-
-  // Check status target validity
-  if (gmApplySection.status && !gmApplySection.status.applied) {
-    const targetExists = game.actors.get(gmApplySection.status.targetId);
-    if (gmApplySection.status.targetValid !== !!targetExists) {
-      updates.status = {
-        ...gmApplySection.status,
-        targetValid: !!targetExists,
-      };
-      needsUpdate = true;
-    }
-  }
-
-  // Update the message if needed
-  if (needsUpdate) {
-    const flags = foundry.utils.deepClone(message.flags || {});
-    flags["eventide-rp-system"] = flags["eventide-rp-system"] || {};
-    flags["eventide-rp-system"].gmApplySection = {
-      ...flags["eventide-rp-system"].gmApplySection,
-      ...updates,
-    };
-    await message.update({ flags });
-  }
+  await MessageFlags.validateTargets(message);
 };
 
 /**
