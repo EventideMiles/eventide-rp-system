@@ -2622,7 +2622,7 @@ export class EventideRpSystemActorSheet extends BaselineSheetMixins(
         return;
       }
 
-      const result = await actionCard.system.execute(this.actor);
+      const result = await actionCard.execute(this.actor);
 
       Logger.info(
         "DEBUG: Action card execution result",
@@ -2657,11 +2657,10 @@ export class EventideRpSystemActorSheet extends BaselineSheetMixins(
             "ACTOR_SHEET",
           );
 
-          const followUpMessage =
-            await actionCard.system.createAttackChainMessage(
-              result,
-              this.actor,
-            );
+          const followUpMessage = await actionCard.createAttackChainMessage(
+            result,
+            this.actor,
+          );
 
           Logger.info(
             "DEBUG: createAttackChainMessage returned",
@@ -2701,11 +2700,10 @@ export class EventideRpSystemActorSheet extends BaselineSheetMixins(
             "ACTOR_SHEET",
           );
 
-          const followUpMessage =
-            await actionCard.system.createSavedDamageMessage(
-              result,
-              this.actor,
-            );
+          const followUpMessage = await actionCard.createSavedDamageMessage(
+            result,
+            this.actor,
+          );
 
           Logger.info(
             "DEBUG: createSavedDamageMessage returned",

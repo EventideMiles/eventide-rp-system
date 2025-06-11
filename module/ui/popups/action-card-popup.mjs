@@ -124,7 +124,7 @@ export class ActionCardPopup extends EventidePopupHelpers {
     context.cssClass = ActionCardPopup.DEFAULT_OPTIONS.classes.join(" ");
 
     // Get the embedded item
-    const embeddedItem = this.item.system.getEmbeddedItem({
+    const embeddedItem = this.item.getEmbeddedItem({
       executionContext: true,
     });
 
@@ -190,7 +190,7 @@ export class ActionCardPopup extends EventidePopupHelpers {
     };
 
     // Check if embedded item exists (not required for saved damage mode)
-    const embeddedItem = this.item.system.getEmbeddedItem();
+    const embeddedItem = this.item.getEmbeddedItem();
     if (!embeddedItem && this.item.system.mode !== "savedDamage") {
       problems.embeddedItem = true;
       return problems;
@@ -374,7 +374,7 @@ export class ActionCardPopup extends EventidePopupHelpers {
       }
 
       // Get the embedded item (not required for saved damage mode)
-      const embeddedItem = this.item.system.getEmbeddedItem({
+      const embeddedItem = this.item.getEmbeddedItem({
         executionContext: true,
       });
       if (!embeddedItem && this.item.system.mode !== "savedDamage") {
@@ -485,16 +485,15 @@ export class ActionCardPopup extends EventidePopupHelpers {
       }
 
       // Execute the action card chain processing with the roll result
-      const result = await this.item.system.executeWithRollResult(
-        actor,
-        rollResult,
-      );
+      const result = await this.item.executeWithRollResult(actor, rollResult);
 
       if (result.success) {
         if (result.mode === "attackChain") {
           // Attack chain mode - create follow-up message if needed
-          const followUpMessage =
-            await this.item.system.createAttackChainMessage(result, actor);
+          const followUpMessage = await this.item.createAttackChainMessage(
+            result,
+            actor,
+          );
 
           if (followUpMessage) {
             ui.notifications.info(
@@ -510,8 +509,10 @@ export class ActionCardPopup extends EventidePopupHelpers {
           });
         } else if (result.mode === "savedDamage") {
           // Saved damage mode - create follow-up message if needed
-          const followUpMessage =
-            await this.item.system.createSavedDamageMessage(result, actor);
+          const followUpMessage = await this.item.createSavedDamageMessage(
+            result,
+            actor,
+          );
 
           if (followUpMessage) {
             ui.notifications.info(

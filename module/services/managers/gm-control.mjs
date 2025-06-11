@@ -667,21 +667,58 @@ class GMControlManager {
     });
 
     try {
+      const messageId = message.id;
+
       // Add a small delay to allow users to see the final state
       setTimeout(async () => {
         try {
-          await message.delete();
+          // Check if the message still exists in the collection before attempting deletion
+          const currentMessage = game.messages.get(messageId);
+          if (!currentMessage) {
+            Logger.debug(
+              `Message ${messageId} already deleted, skipping force cleanup`,
+              { reason },
+              "GM_CONTROL",
+            );
+            return;
+          }
+
+          // Verify the message object is still valid
+          if (!currentMessage.id || currentMessage.id !== messageId) {
+            Logger.debug(
+              `Message ${messageId} is no longer valid, skipping force cleanup`,
+              { reason },
+              "GM_CONTROL",
+            );
+            return;
+          }
+
+          await currentMessage.delete();
           Logger.info(
             `Force cleanup completed: ${reason}`,
-            { messageId: message.id },
+            { messageId },
             "GM_CONTROL",
           );
         } catch (error) {
-          Logger.warn(
-            `Failed to delete message during force cleanup`,
-            error,
-            "GM_CONTROL",
-          );
+          // Check if the error is because the message doesn't exist
+          if (
+            error.message &&
+            error.message.includes(
+              "does not exist in the ChatMessages collection",
+            )
+          ) {
+            Logger.debug(
+              `Message ${messageId} was already deleted during force cleanup delay`,
+              { reason },
+              "GM_CONTROL",
+            );
+          } else {
+            Logger.warn(
+              `Failed to delete message during force cleanup`,
+              error,
+              "GM_CONTROL",
+            );
+          }
         }
       }, 1500); // 1.5 second delay
 

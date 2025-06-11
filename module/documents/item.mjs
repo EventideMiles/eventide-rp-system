@@ -3,6 +3,8 @@ import {
   ItemRollsMixin,
   ItemPopupsMixin,
   ItemUtilitiesMixin,
+  ItemActionCardMixin,
+  ItemActionCardExecutionMixin,
 } from "./mixins/_module.mjs";
 
 /**
@@ -14,8 +16,10 @@ import {
  *
  * @extends {foundry.documents.Item}
  */
-export class EventideRpSystemItem extends ItemRollsMixin(
-  ItemPopupsMixin(ItemUtilitiesMixin(Item)),
+export class EventideRpSystemItem extends ItemActionCardExecutionMixin(
+  ItemActionCardMixin(
+    ItemRollsMixin(ItemPopupsMixin(ItemUtilitiesMixin(Item))),
+  ),
 ) {
   /**
    * Prepare base item data

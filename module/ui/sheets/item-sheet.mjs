@@ -403,8 +403,8 @@ export class EventideRpSystemItemSheet extends BaselineSheetMixins(
       case "embeddedItems":
         context.tab = context.tabs[partId];
         // Get embedded item and effects as temporary items
-        context.embeddedItem = this.item.system.getEmbeddedItem();
-        context.embeddedEffects = this.item.system.getEmbeddedEffects();
+        context.embeddedItem = this.item.getEmbeddedItem();
+        context.embeddedEffects = this.item.getEmbeddedEffects();
         break;
       case "effects":
         context.tab = context.tabs[partId];
@@ -944,7 +944,7 @@ export class EventideRpSystemItemSheet extends BaselineSheetMixins(
           return false;
         }
 
-        await this.item.system.setEmbeddedItem(droppedItem);
+        await this.item.setEmbeddedItem(droppedItem);
         return true;
       } else if (dropType === "effect") {
         // Handle effect drops (both status effects and gear)
@@ -962,7 +962,7 @@ export class EventideRpSystemItemSheet extends BaselineSheetMixins(
           return false;
         }
 
-        await this.item.system.addEmbeddedEffect(droppedItem);
+        await this.item.addEmbeddedEffect(droppedItem);
         return true;
       } else {
         // Universal drop - no specific drop zone found, route based on item type
@@ -1008,7 +1008,7 @@ export class EventideRpSystemItemSheet extends BaselineSheetMixins(
 
     // Route to the appropriate destination
     if (destination === "actionItem") {
-      await this.item.system.setEmbeddedItem(droppedItem);
+      await this.item.setEmbeddedItem(droppedItem);
       ui.notifications.info(
         game.i18n.format(
           "EVENTIDE_RP_SYSTEM.Item.ActionCard.ItemAddedToAction",
@@ -1019,7 +1019,7 @@ export class EventideRpSystemItemSheet extends BaselineSheetMixins(
       );
       return true;
     } else if (destination === "effect") {
-      await this.item.system.addEmbeddedEffect(droppedItem);
+      await this.item.addEmbeddedEffect(droppedItem);
       ui.notifications.info(
         game.i18n.format(
           "EVENTIDE_RP_SYSTEM.Item.ActionCard.ItemAddedToEffects",
@@ -1070,7 +1070,7 @@ export class EventideRpSystemItemSheet extends BaselineSheetMixins(
       // Add the gear item to the selected category
       if (choice === "actionItem") {
         Logger.debug("Adding gear as action item", {}, "ITEM_SHEET");
-        await this.item.system.setEmbeddedItem(gearItem);
+        await this.item.setEmbeddedItem(gearItem);
         ui.notifications.info(
           game.i18n.format(
             "EVENTIDE_RP_SYSTEM.Item.ActionCard.GearAddedToAction",
@@ -1081,7 +1081,7 @@ export class EventideRpSystemItemSheet extends BaselineSheetMixins(
         );
       } else if (choice === "effect") {
         Logger.debug("Adding gear as effect", {}, "ITEM_SHEET");
-        await this.item.system.addEmbeddedEffect(gearItem);
+        await this.item.addEmbeddedEffect(gearItem);
         ui.notifications.info(
           game.i18n.format(
             "EVENTIDE_RP_SYSTEM.Item.ActionCard.GearAddedToEffects",
@@ -1702,7 +1702,7 @@ export class EventideRpSystemItemSheet extends BaselineSheetMixins(
         return;
       }
 
-      await item.system.clearEmbeddedItem();
+      await item.clearEmbeddedItem();
 
       Logger.info("Embedded item cleared successfully", null, "ITEM_SHEET");
       Logger.methodExit("EventideRpSystemItemSheet", "_clearEmbeddedItem");
@@ -1772,7 +1772,7 @@ export class EventideRpSystemItemSheet extends BaselineSheetMixins(
         return;
       }
 
-      const embeddedItem = item.system.getEmbeddedItem();
+      const embeddedItem = item.getEmbeddedItem();
       if (!embeddedItem) {
         Logger.warn("No embedded item found to edit", null, "ITEM_SHEET");
         return;
@@ -1846,7 +1846,7 @@ export class EventideRpSystemItemSheet extends BaselineSheetMixins(
         return;
       }
 
-      const embeddedEffects = item.system.getEmbeddedEffects();
+      const embeddedEffects = item.getEmbeddedEffects();
       const effect = embeddedEffects.find((e) => e.originalId === effectId);
 
       if (!effect) {
@@ -1922,7 +1922,7 @@ export class EventideRpSystemItemSheet extends BaselineSheetMixins(
         return;
       }
 
-      await item.system.removeEmbeddedEffect(effectId);
+      await item.removeEmbeddedEffect(effectId);
 
       Logger.info(
         "Embedded effect removed successfully",
