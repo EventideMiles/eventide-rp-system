@@ -183,9 +183,15 @@ const handleApplyActionCardStatus = async (button, message) => {
   for (const statusData of gmApplySection.status.effects) {
     try {
       // Create the status item on the target
-      const _statusItem = await target.createEmbeddedDocuments("Item", [
+      const createdItems = await target.createEmbeddedDocuments("Item", [
         statusData,
       ]);
+
+      // Trigger status message for status items
+      if (statusData.type === "status" && createdItems[0]) {
+        await erps.messages.createStatusMessage(createdItems[0]);
+      }
+
       appliedCount++;
     } catch (error) {
       console.error("Failed to apply status effect:", error);

@@ -111,21 +111,42 @@
         <div class="erps-form__subsection">
           <div class="erps-form__header erps-form__header--small">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.StatusConfig"}}</div>
 
-          <div>
-            <label class="erps-input-label">
-              {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.StatusCondition"}}
-            </label>
-            <select class="erps-select" name="system.attackChain.statusCondition">
-              <option value="never" {{#if (eq system.attackChain.statusCondition "never")}}selected{{/if}}>
-                {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Never"}}
-              </option>
-              <option value="oneSuccess" {{#if (eq system.attackChain.statusCondition "oneSuccess")}}selected{{/if}}>
-                {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.OneSuccess"}}
-              </option>
-              <option value="twoSuccesses" {{#if (eq system.attackChain.statusCondition "twoSuccesses")}}selected{{/if}}>
-                {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.TwoSuccesses"}}
-              </option>
-            </select>
+          <div class="grid grid-2col">
+            <div>
+              <label class="erps-input-label">
+                {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.StatusCondition"}}
+              </label>
+              <select class="erps-select" name="system.attackChain.statusCondition">
+                <option value="never" {{#if (eq system.attackChain.statusCondition "never")}}selected{{/if}}>
+                  {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Never"}}
+                </option>
+                <option value="oneSuccess" {{#if (eq system.attackChain.statusCondition "oneSuccess")}}selected{{/if}}>
+                  {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.OneSuccess"}}
+                </option>
+                <option value="twoSuccesses" {{#if (eq system.attackChain.statusCondition "twoSuccesses")}}selected{{/if}}>
+                  {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.TwoSuccesses"}}
+                </option>
+                <option value="rollValue" {{#if (eq system.attackChain.statusCondition "rollValue")}}selected{{/if}}>
+                  {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.RollValue"}}
+                </option>
+              </select>
+            </div>
+            {{#if (eq system.attackChain.statusCondition "rollValue")}}
+            <div>
+              <label class="erps-input-label">
+                {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.StatusThreshold"}}
+              </label>
+              <input
+                type="number"
+                class="erps-input"
+                name="system.attackChain.statusThreshold"
+                value="{{system.attackChain.statusThreshold}}"
+                min="1"
+                max="30"
+                placeholder="15"
+              />
+            </div>
+            {{/if}}
           </div>
         </div>
 

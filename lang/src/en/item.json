@@ -137,7 +137,9 @@
         "ItemAddedToAction": "Item added to action slot",
         "ItemAddedToEffects": "Item added to effects",
         "GearAddedToAction": "Gear added to action slot",
-        "GearAddedToEffects": "Gear added to effects"
+        "GearAddedToEffects": "Gear added to effects",
+        "RollValue": "Roll Value",
+        "StatusThreshold": "Threshold Value"
       }
     }
   }

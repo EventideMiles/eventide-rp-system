@@ -68,35 +68,24 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
       statusCondition: new fields.StringField({
         required: true,
         initial: "never",
-        choices: ["never", "oneSuccess", "twoSuccesses"],
+        choices: ["never", "oneSuccess", "twoSuccesses", "rollValue"],
+      }),
+      statusThreshold: new fields.NumberField({
+        required: false,
+        initial: 15,
+        integer: true,
+        min: 1,
+        max: 30,
       }),
     });
 
     /**
      * Embedded effects that can be applied on chain hits
-     * Can contain both status effects and gear items with threshold configuration
+     * Contains status effects and gear items that are applied based on the attack chain status condition
      */
     schema.embeddedStatusEffects = new fields.ArrayField(
-      new fields.SchemaField({
-        // The actual item/effect data
-        itemData: new fields.ObjectField({
-          required: true,
-        }),
-        // Threshold configuration for when this effect should be applied
-        threshold: new fields.SchemaField({
-          type: new fields.StringField({
-            required: true,
-            initial: "never",
-            choices: ["never", "oneSuccess", "twoSuccesses", "rollValue"],
-          }),
-          value: new fields.NumberField({
-            required: false,
-            initial: 15,
-            integer: true,
-            min: 1,
-            max: 30,
-          }),
-        }),
+      new fields.ObjectField({
+        required: true,
       }),
       {
         required: true,
@@ -294,14 +283,20 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
   }
 
   /**
-   * Get the embedded item as a temporary Item instance
-   * @returns {Item|null} Temporary Item instance or null if no item embedded
+   * Get the embedded item for this action card as a temporary item document.
+   * Creates a temporary item with overridden update methods to persist changes.
+   *
+   * @param {Object} [options={}] - Options for retrieving the embedded item
+   * @param {boolean} [options.executionContext=false] - Whether this is being called during execution (vs editing)
+   * @returns {Item|null} The embedded item as a temporary document or null if none exists
    */
-  getEmbeddedItem() {
+  getEmbeddedItem(options = {}) {
+    const { executionContext = false } = options;
+
     Logger.methodEntry("EventideRpSystemActionCard", "getEmbeddedItem", {
-      hasEmbeddedItem: !!(
-        this.embeddedItem && Object.keys(this.embeddedItem).length > 0
-      ),
+      actionCardName: this.parent?.name,
+      hasEmbeddedItem: !!this.embeddedItem,
+      executionContext,
     });
 
     try {
@@ -374,8 +369,11 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
         tempItem.updateSource(updatedItemData);
 
         // Close the temporary sheet and re-render the action card sheet
+        // Only render the sheet if we're in an editing context, not during execution
         tempItem.sheet.close();
-        actionCard.sheet.render(true);
+        if (!executionContext) {
+          actionCard.sheet.render(true);
+        }
         return tempItem;
       };
 
@@ -480,17 +478,8 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
         ];
       }
 
-      // Create the effect entry with threshold configuration
-      const effectEntry = {
-        itemData: effectData,
-        threshold: {
-          type: "oneSuccess", // Default threshold type
-          value: 15, // Default threshold value
-        },
-      };
-
-      // Add to the array
-      effects.push(effectEntry);
+      // Add the effect data directly to the array
+      effects.push(effectData);
 
       // Update the parent document
       await this.parent.update({
@@ -537,17 +526,17 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
       const effects = foundry.utils.deepClone(this.embeddedStatusEffects || []);
 
       // Find the effect to remove
-      const index = effects.findIndex((e) => {
+      const index = effects.findIndex((effectData) => {
         // Handle malformed entries gracefully
-        if (!e || !e.itemData || !e.itemData._id) {
+        if (!effectData || !effectData._id) {
           Logger.warn(
             "Malformed effect entry found during removal, skipping",
-            { effectEntry: e, effectId },
+            { effectData, effectId },
             "ACTION_CARD",
           );
           return false;
         }
-        return e.itemData._id === effectId;
+        return effectData._id === effectId;
       });
 
       if (index === -1) {
@@ -593,9 +582,12 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
 
   /**
    * Get all embedded effects as temporary Item instances
+   * @param {Object} [options={}] - Options for retrieving the embedded effects
+   * @param {boolean} [options.executionContext=false] - Whether this is being called during execution (vs editing)
    * @returns {Item[]} Array of temporary Item instances
    */
-  getEmbeddedEffects() {
+  getEmbeddedEffects(options = {}) {
+    const { executionContext = false } = options;
     Logger.methodEntry("EventideRpSystemActionCard", "getEmbeddedEffects", {
       effectCount: this.embeddedStatusEffects?.length || 0,
     });
@@ -613,18 +605,16 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
 
       const actionCard = this.parent;
 
-      const effects = this.embeddedStatusEffects.map((effectEntry) => {
+      const effects = this.embeddedStatusEffects.map((effectData) => {
         // Validate effect entry structure
-        if (!effectEntry || !effectEntry.itemData || !effectEntry.threshold) {
+        if (!effectData) {
           Logger.warn(
             "Invalid effect entry structure in getEmbeddedEffects, skipping",
-            { effectEntry, actionCardName: this.parent.name },
+            { effectData, actionCardName: this.parent.name },
             "ACTION_CARD",
           );
           return null; // Will be filtered out
         }
-
-        const effectData = effectEntry.itemData;
         // Use the action card's actor as the parent, or null if unowned
         const actor = actionCard?.isOwned ? actionCard.parent : null;
         const tempItem = new CONFIG.Item.documentClass(effectData, {
@@ -661,12 +651,6 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
           configurable: true,
         });
 
-        // Store the threshold configuration for template access
-        Object.defineProperty(tempItem, "threshold", {
-          value: effectEntry.threshold,
-          configurable: true,
-        });
-
         // Override the update method to persist changes back to the action card
         tempItem.update = async (data) => {
           const currentEffects = foundry.utils.deepClone(
@@ -696,8 +680,11 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
           tempItem.updateSource(updatedEffectData);
 
           // Close the temporary sheet and re-render the action card sheet
+          // Only render the sheet if we're in an editing context, not during execution
           tempItem.sheet.close();
-          actionCard.sheet.render(true);
+          if (!executionContext) {
+            actionCard.sheet.render(true);
+          }
           return tempItem;
         };
 
@@ -842,7 +829,7 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
         return { success: false, reason: "noTargets" };
       }
 
-      const embeddedItem = this.getEmbeddedItem();
+      const embeddedItem = this.getEmbeddedItem({ executionContext: true });
       if (!embeddedItem) {
         const error = new Error("No embedded item found for attack chain");
         Logger.error("No embedded item for attack chain", error, "ACTION_CARD");
@@ -894,6 +881,8 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
           this.attackChain.damageCondition,
           result.oneHit,
           result.bothHit,
+          rollResult?.total || 0,
+          this.attackChain.statusThreshold || 15,
         );
 
         if (shouldApplyDamage && this.attackChain.damageFormula) {
@@ -947,53 +936,55 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
       } else {
         // Process each target for effect application
         for (const result of results) {
-          for (const effectEntry of this.embeddedStatusEffects) {
-            // Validate effect entry structure
-            if (
-              !effectEntry ||
-              !effectEntry.itemData ||
-              !effectEntry.threshold
-            ) {
-              Logger.warn(
-                "Invalid effect entry structure, skipping",
-                {
-                  effectEntry,
-                  actionCardName: this.parent.name,
-                  targetName: result.target.name,
-                },
-                "ACTION_CARD",
-              );
-              continue;
-            }
+          // Check if status effects should be applied based on attack chain condition
+          const shouldApplyStatus = this._shouldApplyEffect(
+            this.attackChain.statusCondition,
+            result.oneHit,
+            result.bothHit,
+            rollResult?.total || 0,
+            this.attackChain.statusThreshold || 15,
+          );
 
-            // Check if threshold is met using the new threshold system
-            const shouldApply = this._shouldApplyEffectWithThreshold(
-              effectEntry.threshold,
-              result.oneHit,
-              result.bothHit,
-              rollResult?.total || 0,
-            );
+          if (shouldApplyStatus) {
+            for (const effectData of this.embeddedStatusEffects) {
+              // Validate effect entry structure
+              if (!effectData) {
+                Logger.warn(
+                  "Invalid effect entry structure, skipping",
+                  {
+                    effectData,
+                    actionCardName: this.parent.name,
+                    targetName: result.target.name,
+                  },
+                  "ACTION_CARD",
+                );
+                continue;
+              }
 
-            if (shouldApply) {
               if (game.user.isGM) {
                 // GM applies status effects directly
                 try {
                   // Create the status item on the target
-                  await result.target.createEmbeddedDocuments("Item", [
-                    effectEntry.itemData,
-                  ]);
+                  const createdItems =
+                    await result.target.createEmbeddedDocuments("Item", [
+                      effectData,
+                    ]);
+
+                  // Trigger status message for status items
+                  if (effectData.type === "status" && createdItems[0]) {
+                    await erps.messages.createStatusMessage(createdItems[0]);
+                  }
                   statusResults.push({
                     target: result.target,
-                    effect: effectEntry.itemData,
-                    threshold: effectEntry.threshold,
+                    effect: effectData,
                     applied: true,
                   });
 
                   Logger.info(
-                    `Applied effect "${effectEntry.itemData.name}" to target "${result.target.name}"`,
+                    `Applied effect "${effectData.name}" to target "${result.target.name}"`,
                     {
-                      thresholdType: effectEntry.threshold.type,
-                      thresholdValue: effectEntry.threshold.value,
+                      statusCondition: this.attackChain.statusCondition,
+                      statusThreshold: this.attackChain.statusThreshold,
                       rollTotal: rollResult?.total || 0,
                     },
                     "ACTION_CARD",
@@ -1006,8 +997,7 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
                   );
                   statusResults.push({
                     target: result.target,
-                    effect: effectEntry.itemData,
-                    threshold: effectEntry.threshold,
+                    effect: effectData,
                     applied: false,
                     error: statusError.message,
                   });
@@ -1016,16 +1006,15 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
                 // Player creates GM apply card
                 statusResults.push({
                   target: result.target,
-                  effect: effectEntry.itemData,
-                  threshold: effectEntry.threshold,
+                  effect: effectData,
                   needsGMApplication: true,
                 });
 
                 Logger.debug(
-                  `Flagged effect "${effectEntry.itemData.name}" for GM application to target "${result.target.name}"`,
+                  `Flagged effect "${effectData.name}" for GM application to target "${result.target.name}"`,
                   {
-                    thresholdType: effectEntry.threshold.type,
-                    thresholdValue: effectEntry.threshold.value,
+                    statusCondition: this.attackChain.statusCondition,
+                    statusThreshold: this.attackChain.statusThreshold,
                     rollTotal: rollResult?.total || 0,
                   },
                   "ACTION_CARD",
@@ -1111,7 +1100,7 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
         throw error;
       }
 
-      const embeddedItem = this.getEmbeddedItem();
+      const embeddedItem = this.getEmbeddedItem({ executionContext: true });
       if (!embeddedItem) {
         const error = new Error("No embedded item found for attack chain");
         Logger.error("No embedded item for attack chain", error, "ACTION_CARD");
@@ -1253,6 +1242,8 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
           this.attackChain.damageCondition,
           result.oneHit,
           result.bothHit,
+          rollResult?.total || 0,
+          this.attackChain.statusThreshold || 15,
         );
 
         if (shouldApplyDamage && this.attackChain.damageFormula) {
@@ -1306,53 +1297,55 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
       } else {
         // Process each target for effect application
         for (const result of results) {
-          for (const effectEntry of this.embeddedStatusEffects) {
-            // Validate effect entry structure
-            if (
-              !effectEntry ||
-              !effectEntry.itemData ||
-              !effectEntry.threshold
-            ) {
-              Logger.warn(
-                "Invalid effect entry structure, skipping",
-                {
-                  effectEntry,
-                  actionCardName: this.parent.name,
-                  targetName: result.target.name,
-                },
-                "ACTION_CARD",
-              );
-              continue;
-            }
+          // Check if status effects should be applied based on attack chain condition
+          const shouldApplyStatus = this._shouldApplyEffect(
+            this.attackChain.statusCondition,
+            result.oneHit,
+            result.bothHit,
+            rollResult?.total || 0,
+            this.attackChain.statusThreshold || 15,
+          );
 
-            // Check if threshold is met using the new threshold system
-            const shouldApply = this._shouldApplyEffectWithThreshold(
-              effectEntry.threshold,
-              result.oneHit,
-              result.bothHit,
-              rollResult?.total || 0,
-            );
+          if (shouldApplyStatus) {
+            for (const effectData of this.embeddedStatusEffects) {
+              // Validate effect entry structure
+              if (!effectData) {
+                Logger.warn(
+                  "Invalid effect entry structure, skipping",
+                  {
+                    effectData,
+                    actionCardName: this.parent.name,
+                    targetName: result.target.name,
+                  },
+                  "ACTION_CARD",
+                );
+                continue;
+              }
 
-            if (shouldApply) {
               if (game.user.isGM) {
                 // GM applies status effects directly
                 try {
                   // Create the status item on the target
-                  await result.target.createEmbeddedDocuments("Item", [
-                    effectEntry.itemData,
-                  ]);
+                  const createdItems =
+                    await result.target.createEmbeddedDocuments("Item", [
+                      effectData,
+                    ]);
+
+                  // Trigger status message for status items
+                  if (effectData.type === "status" && createdItems[0]) {
+                    await erps.messages.createStatusMessage(createdItems[0]);
+                  }
                   statusResults.push({
                     target: result.target,
-                    effect: effectEntry.itemData,
-                    threshold: effectEntry.threshold,
+                    effect: effectData,
                     applied: true,
                   });
 
                   Logger.info(
-                    `Applied effect "${effectEntry.itemData.name}" to target "${result.target.name}"`,
+                    `Applied effect "${effectData.name}" to target "${result.target.name}"`,
                     {
-                      thresholdType: effectEntry.threshold.type,
-                      thresholdValue: effectEntry.threshold.value,
+                      statusCondition: this.attackChain.statusCondition,
+                      statusThreshold: this.attackChain.statusThreshold,
                       rollTotal: rollResult?.total || 0,
                     },
                     "ACTION_CARD",
@@ -1365,8 +1358,7 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
                   );
                   statusResults.push({
                     target: result.target,
-                    effect: effectEntry.itemData,
-                    threshold: effectEntry.threshold,
+                    effect: effectData,
                     applied: false,
                     error: statusError.message,
                   });
@@ -1375,16 +1367,15 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
                 // Player creates GM apply card
                 statusResults.push({
                   target: result.target,
-                  effect: effectEntry.itemData,
-                  threshold: effectEntry.threshold,
+                  effect: effectData,
                   needsGMApplication: true,
                 });
 
                 Logger.debug(
-                  `Flagged effect "${effectEntry.itemData.name}" for GM application to target "${result.target.name}"`,
+                  `Flagged effect "${effectData.name}" for GM application to target "${result.target.name}"`,
                   {
-                    thresholdType: effectEntry.threshold.type,
-                    thresholdValue: effectEntry.threshold.value,
+                    statusCondition: this.attackChain.statusCondition,
+                    statusThreshold: this.attackChain.statusThreshold,
                     rollTotal: rollResult?.total || 0,
                   },
                   "ACTION_CARD",
@@ -1546,9 +1537,21 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
 
   /**
    * Helper method to determine if an effect should be applied based on conditions
+   * @param {string} condition - The condition type
+   * @param {boolean} oneHit - Whether at least one AC was hit
+   * @param {boolean} bothHit - Whether both ACs were hit
+   * @param {number} rollTotal - The total roll result (for rollValue condition)
+   * @param {number} threshold - The threshold value (for rollValue condition)
+   * @returns {boolean} Whether the effect should be applied
    * @private
    */
-  _shouldApplyEffect(condition, oneHit, bothHit) {
+  _shouldApplyEffect(
+    condition,
+    oneHit,
+    bothHit,
+    rollTotal = 0,
+    threshold = 15,
+  ) {
     switch (condition) {
       case "never":
         return false;
@@ -1556,37 +1559,10 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
         return oneHit;
       case "twoSuccesses":
         return bothHit;
-      default:
-        return false;
-    }
-  }
-
-  /**
-   * Helper method to determine if an effect should be applied based on threshold configuration
-   * @param {Object} threshold - The threshold configuration
-   * @param {boolean} oneHit - Whether at least one AC was hit
-   * @param {boolean} bothHit - Whether both ACs were hit
-   * @param {number} rollTotal - The total roll result
-   * @returns {boolean} Whether the effect should be applied
-   * @private
-   */
-  _shouldApplyEffectWithThreshold(threshold, oneHit, bothHit, rollTotal) {
-    if (!threshold) {
-      // Fallback to oneSuccess for effects without threshold configuration
-      return oneHit;
-    }
-
-    switch (threshold.type) {
-      case "never":
-        return false;
-      case "oneSuccess":
-        return oneHit;
-      case "twoSuccesses":
-        return bothHit;
       case "rollValue":
-        return rollTotal >= (threshold.value || 15);
+        return rollTotal >= threshold;
       default:
-        return oneHit; // Default fallback
+        return false;
     }
   }
 }

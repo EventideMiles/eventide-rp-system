@@ -124,7 +124,9 @@ export class ActionCardPopup extends EventidePopupHelpers {
     context.cssClass = ActionCardPopup.DEFAULT_OPTIONS.classes.join(" ");
 
     // Get the embedded item
-    const embeddedItem = this.item.system.getEmbeddedItem();
+    const embeddedItem = this.item.system.getEmbeddedItem({
+      executionContext: true,
+    });
 
     // For saved damage mode, embedded item is not required
     if (!embeddedItem && this.item.system.mode !== "savedDamage") {
@@ -372,7 +374,9 @@ export class ActionCardPopup extends EventidePopupHelpers {
       }
 
       // Get the embedded item (not required for saved damage mode)
-      const embeddedItem = this.item.system.getEmbeddedItem();
+      const embeddedItem = this.item.system.getEmbeddedItem({
+        executionContext: true,
+      });
       if (!embeddedItem && this.item.system.mode !== "savedDamage") {
         ui.notifications.warn("Action card has no embedded item configured");
         return;

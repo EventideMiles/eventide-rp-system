@@ -112,6 +112,9 @@
           <div class="erps-form__chain-effect">
             <i class="fas fa-magic"></i>
             <span>{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.StatusOn"}} {{attackChain.statusCondition}}</span>
+            {{#if (eq attackChain.statusCondition "rollValue")}}
+              <span class="erps-form__threshold">{{attackChain.statusThreshold}}</span>
+            {{/if}}
           </div>
         {{/if}}
       </div>

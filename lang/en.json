@@ -120,7 +120,9 @@
         "StatusOn": "Status on",
         "SavedDamageConfiguration": "Saved Damage Configuration",
         "ApplyDamage": "Apply Damage",
-        "ChainConfiguration": "Chain Configuration"
+        "ChainConfiguration": "Chain Configuration",
+        "RollValue": "Roll Value",
+        "StatusThreshold": "Threshold Value"
       },
       "Colors": {
         "BgColor": {
