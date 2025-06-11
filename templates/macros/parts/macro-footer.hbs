@@ -5,8 +5,10 @@
       type="{{current.type}}"
       class="erps-button {{current.cssClass}}"
       {{#if current.action}}data-action="{{current.action}}"{{/if}}
+      {{#if current.buttonAction}}data-button-action="{{current.buttonAction}}"{{/if}}
+      {{#if current.buttonData}}data-button-data="{{current.buttonData}}"{{/if}}
     >
-      {{current.label}}
+      {{#if current.icon}}<i class="{{current.icon}}"></i> {{/if}}{{current.label}}
     </button>
     {{/if}}
   {{/each}}

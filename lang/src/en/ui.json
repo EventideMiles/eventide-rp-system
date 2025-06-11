@@ -19,6 +19,11 @@
     "MessageHeaders": {
       "Feature": "Feature: {name}",
       "Status": "Status: {name}"
+    },
+    "UI": {
+      "Edit": "Edit",
+      "Remove": "Remove",
+      "View": "View"
     }
   }
 }

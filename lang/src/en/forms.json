@@ -119,6 +119,9 @@
           "NoTargets": "There are no targets selected. This will create a transformation for the compendium only.",
           "PlayerMode": "You are using the transformation creator in player mode. This can only be used to create transformations for tokens you control. You currently have <strong>{count} tokens(s)</strong> selected.",
           "WithTargets": "There are <strong>{count} target(s)</strong> selected. This will create a transformation for each target and your compendium."
+        },
+        "ActionCard": {
+          "NoEmbeddedItem": "This action card has no embedded item configured. Please add an item to the action slot before executing."
         }
       },
       "Placeholders": {

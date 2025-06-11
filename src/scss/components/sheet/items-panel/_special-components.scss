@@ -87,6 +87,38 @@
   }
 
   // ===================================
+  // DRAG FEEDBACK
+  // ===================================
+
+  // Global drag active state for action card sheets
+  .tab.embedded-items.drag-active {
+    background: rgb(255 255 255 / 5%);
+    border-radius: tokens.$sheet-radius-sm;
+    border: 2px dashed var(--theme-accent);
+    padding: tokens.$sheet-spacing-sm;
+
+    .erps-items-panel__drop-zone {
+      animation: pulse-glow 1.5s ease-in-out infinite;
+      border-color: var(--theme-accent) !important;
+      background-color: rgb(255 255 255 / 10%) !important;
+      opacity: 1 !important;
+    }
+  }
+
+  // Pulse animation for drag feedback
+
+  @keyframes pulse-glow {
+    0%, 100% {
+      box-shadow: 0 0 tokens.$sheet-shadow-blur-md var(--theme-glow);
+    }
+
+    50% {
+      box-shadow: 0 0 tokens.$sheet-shadow-blur-lg var(--theme-glow),
+                  0 0 tokens.$sheet-shadow-blur-xl var(--theme-glow);
+    }
+  }
+
+  // ===================================
   // NOTES
   // ===================================
 
@@ -101,4 +133,4 @@
     border-radius: tokens.$sheet-radius-sm;
     border-left: 3px solid var(--theme-secondary);
   }
-} 
+}

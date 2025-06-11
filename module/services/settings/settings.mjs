@@ -510,6 +510,21 @@ export const registerSettings = function () {
   });
 
   // ===========================================
+  // ACTION CARD SETTINGS (GM Only - No Reload Needed)
+  // ===========================================
+
+  // Enable Action Card Attack Chains (can be changed immediately)
+  game.settings.register("eventide-rp-system", "enableActionCardChains", {
+    name: "SETTINGS.EnableActionCardChainsName",
+    hint: "SETTINGS.EnableActionCardChainsHint",
+    scope: "world",
+    config: true,
+    restricted: true,
+    type: Boolean,
+    default: true,
+  });
+
+  // ===========================================
   // NPC SETTINGS (GM Only - No Reload Needed)
   // ===========================================
 

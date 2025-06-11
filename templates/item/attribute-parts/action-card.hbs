@@ -1,0 +1,174 @@
+{{!-- Action Card Attributes Tab --}}
+<section class="tab action-card-attributes {{tab.cssClass}}" data-group="primary" data-tab="attributes">
+  <div class="eventide-sheet__scrollable-container">
+
+    {{!-- Mode Selection --}}
+    <div class="erps-form__section">
+      <div class="erps-form__header">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Mode"}}</div>
+
+      <div>
+        <label class="erps-input-label">
+          {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.SelectMode"}}
+        </label>
+        <select class="erps-select" name="system.mode">
+          <option value="attackChain" {{#if (eq system.mode "attackChain")}}selected{{/if}}>
+            {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.AttackChainMode"}}
+          </option>
+          <option value="savedDamage" {{#if (eq system.mode "savedDamage")}}selected{{/if}}>
+            {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.SavedDamageMode"}}
+          </option>
+        </select>
+      </div>
+    </div>
+
+
+
+    {{!-- Attack Chain Configuration --}}
+    {{#if (eq system.mode "attackChain")}}
+    <div class="erps-form__section">
+      <div class="erps-form__header">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.AttackChain"}}</div>
+        <div class="grid grid-2col">
+          <div>
+            <label class="erps-input-label">
+              {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.FirstStat"}}
+            </label>
+            <select class="erps-select" name="system.attackChain.firstStat">
+              {{#each abilities as |name key|}}
+                {{#unless (eq key "unaugmented")}}
+                  <option value="{{key}}" {{#if (eq ../system.attackChain.firstStat key)}}selected{{/if}}>
+                    {{localize (lookup @root.config.abilities key)}}
+                  </option>
+                {{/unless}}
+              {{/each}}
+            </select>
+          </div>
+          <div>
+            <label class="erps-input-label">
+              {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.SecondStat"}}
+            </label>
+            <select class="erps-select" name="system.attackChain.secondStat">
+              {{#each abilities as |name key|}}
+                {{#unless (eq key "unaugmented")}}
+                  <option value="{{key}}" {{#if (eq ../system.attackChain.secondStat key)}}selected{{/if}}>
+                    {{localize (lookup @root.config.abilities key)}}
+                  </option>
+                {{/unless}}
+              {{/each}}
+            </select>
+          </div>
+        </div>
+
+        {{!-- Damage Configuration --}}
+        <div class="erps-form__subsection">
+          <div class="erps-form__header erps-form__header--small">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.DamageConfig"}}</div>
+
+          <div class="grid grid-3col">
+            <div>
+              <label class="erps-input-label">
+                {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.DamageCondition"}}
+              </label>
+              <select class="erps-select" name="system.attackChain.damageCondition">
+                <option value="never" {{#if (eq system.attackChain.damageCondition "never")}}selected{{/if}}>
+                  {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Never"}}
+                </option>
+                <option value="oneSuccess" {{#if (eq system.attackChain.damageCondition "oneSuccess")}}selected{{/if}}>
+                  {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.OneSuccess"}}
+                </option>
+                <option value="twoSuccesses" {{#if (eq system.attackChain.damageCondition "twoSuccesses")}}selected{{/if}}>
+                  {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.TwoSuccesses"}}
+                </option>
+              </select>
+            </div>
+            <div>
+              <label class="erps-input-label">
+                {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.DamageFormula"}}
+              </label>
+              <input
+                type="text"
+                class="erps-input"
+                name="system.attackChain.damageFormula"
+                value="{{system.attackChain.damageFormula}}"
+                placeholder="1d6"
+              />
+            </div>
+            <div>
+              <label class="erps-input-label">
+                {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.DamageType"}}
+              </label>
+              <select class="erps-select" name="system.attackChain.damageType">
+                <option value="damage" {{#if (eq system.attackChain.damageType "damage")}}selected{{/if}}>
+                  {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Damage"}}
+                </option>
+                <option value="heal" {{#if (eq system.attackChain.damageType "heal")}}selected{{/if}}>
+                  {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Heal"}}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        {{!-- Status Configuration --}}
+        <div class="erps-form__subsection">
+          <div class="erps-form__header erps-form__header--small">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.StatusConfig"}}</div>
+
+          <div>
+            <label class="erps-input-label">
+              {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.StatusCondition"}}
+            </label>
+            <select class="erps-select" name="system.attackChain.statusCondition">
+              <option value="never" {{#if (eq system.attackChain.statusCondition "never")}}selected{{/if}}>
+                {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Never"}}
+              </option>
+              <option value="oneSuccess" {{#if (eq system.attackChain.statusCondition "oneSuccess")}}selected{{/if}}>
+                {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.OneSuccess"}}
+              </option>
+              <option value="twoSuccesses" {{#if (eq system.attackChain.statusCondition "twoSuccesses")}}selected{{/if}}>
+                {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.TwoSuccesses"}}
+              </option>
+            </select>
+          </div>
+        </div>
+
+
+      </div>
+    {{/if}}
+
+    {{!-- Saved Damage Configuration --}}
+    {{#if (eq system.mode "savedDamage")}}
+    <div class="erps-form__section">
+      <div class="erps-form__header">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.SavedDamage"}}</div>
+
+      <div class="grid grid-2col">
+        <div>
+          <label class="erps-input-label">
+            {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.SavedFormula"}}
+          </label>
+          <input
+            type="text"
+            class="erps-input"
+            name="system.savedDamage.formula"
+            value="{{system.savedDamage.formula}}"
+            placeholder="1d6"
+          />
+        </div>
+        <div>
+          <label class="erps-input-label">
+            {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.SavedType"}}
+          </label>
+          <select class="erps-select" name="system.savedDamage.type">
+            <option value="damage" {{#if (eq system.savedDamage.type "damage")}}selected{{/if}}>
+              {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Damage"}}
+            </option>
+            <option value="heal" {{#if (eq system.savedDamage.type "heal")}}selected{{/if}}>
+              {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Heal"}}
+            </option>
+          </select>
+        </div>
+      </div>
+    </div>
+    {{/if}}
+
+
+
+  </div>
+</section>

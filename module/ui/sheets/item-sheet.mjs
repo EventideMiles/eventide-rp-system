@@ -1,6 +1,9 @@
 import { prepareActiveEffectCategories } from "../../helpers/_module.mjs";
 import { prepareCharacterEffects } from "../../helpers/_module.mjs";
-import { EventideSheetHelpers } from "../components/_module.mjs";
+import {
+  EventideSheetHelpers,
+  EventideDialog,
+} from "../components/_module.mjs";
 import { Logger } from "../../services/_module.mjs";
 import { ErrorHandler, CommonFoundryTasks } from "../../utils/_module.mjs";
 import {
@@ -94,6 +97,11 @@ export class EventideRpSystemItemSheet extends BaselineSheetMixins(
       toggleEffectDisplay: this._toggleEffectDisplay,
       removeCombatPower: this._removeCombatPower,
       onDiceAdjustmentChange: this._onDiceAdjustmentChange,
+      clearEmbeddedItem: this._clearEmbeddedItem,
+
+      editEmbeddedItem: this._editEmbeddedItem,
+      editEmbeddedEffect: this._editEmbeddedEffect,
+      removeEmbeddedEffect: this._removeEmbeddedEffect,
     },
     position: {
       width: 800,
@@ -137,6 +145,10 @@ export class EventideRpSystemItemSheet extends BaselineSheetMixins(
       template:
         "systems/eventide-rp-system/templates/item/attribute-parts/transformation.hbs",
     },
+    attributesActionCard: {
+      template:
+        "systems/eventide-rp-system/templates/item/attribute-parts/action-card.hbs",
+    },
     effects: {
       template: "systems/eventide-rp-system/templates/item/effects.hbs",
     },
@@ -147,6 +159,9 @@ export class EventideRpSystemItemSheet extends BaselineSheetMixins(
     embeddedCombatPowers: {
       template:
         "systems/eventide-rp-system/templates/item/embedded-combat-powers.hbs",
+    },
+    embeddedItems: {
+      template: "systems/eventide-rp-system/templates/item/embedded-items.hbs",
     },
   };
 
@@ -205,6 +220,9 @@ export class EventideRpSystemItemSheet extends BaselineSheetMixins(
           "embeddedCombatPowers",
           "characterEffects",
         );
+        break;
+      case "actionCard":
+        options.parts.push("attributesActionCard", "embeddedItems");
         break;
     }
   }
@@ -335,12 +353,14 @@ export class EventideRpSystemItemSheet extends BaselineSheetMixins(
       case "attributesGear":
       case "attributesCombatPower":
       case "attributesTransformation":
+      case "attributesActionCard":
         // Necessary for preserving active tab on re-render
         context.tab = context.tabs[partId];
         if (
           partId === "attributesCombatPower" ||
           partId === "attributesGear" ||
-          partId === "attributesFeature"
+          partId === "attributesFeature" ||
+          partId === "attributesActionCard"
         ) {
           // Add roll type options
           context.rollTypes = EventideSheetHelpers.rollTypeObject;
@@ -378,6 +398,12 @@ export class EventideRpSystemItemSheet extends BaselineSheetMixins(
         // Get embedded combat powers as temporary items
         context.embeddedCombatPowers =
           this.item.system.getEmbeddedCombatPowers();
+        break;
+      case "embeddedItems":
+        context.tab = context.tabs[partId];
+        // Get embedded item and effects as temporary items
+        context.embeddedItem = this.item.system.getEmbeddedItem();
+        context.embeddedEffects = this.item.system.getEmbeddedEffects();
         break;
       case "effects":
         context.tab = context.tabs[partId];
@@ -445,10 +471,15 @@ export class EventideRpSystemItemSheet extends BaselineSheetMixins(
           tab.id = "embeddedCombatPowers";
           tab.label += "CombatPowers";
           break;
+        case "embeddedItems":
+          tab.id = "embeddedItems";
+          tab.label += "EmbeddedItems";
+          break;
         case "attributesFeature":
         case "attributesGear":
         case "attributesCombatPower":
         case "attributesTransformation":
+        case "attributesActionCard":
           tab.id = "attributes";
           tab.label += "Attributes";
           break;
@@ -752,13 +783,6 @@ export class EventideRpSystemItemSheet extends BaselineSheetMixins(
   }
 
   /**
-   * Callback actions which occur when a dragged element is over a drop target.
-   * @param {DragEvent} event       The originating DragEvent
-   * @protected
-   */
-  _onDragOver(_event) {}
-
-  /**
    * Callback actions which occur when a dragged element is dropped on a target.
    * @param {DragEvent} event       The originating DragEvent
    * @protected
@@ -785,15 +809,98 @@ export class EventideRpSystemItemSheet extends BaselineSheetMixins(
   /* -------------------------------------------- */
 
   /**
-   * Handles dropping of an item reference or item data onto an Item Sheet.
-   * Specifically handles combat powers being added to transformations.
-   *
-   * @param {DragEvent} event - The concluding DragEvent which contains drop data
-   * @param {Object} data - The data transfer extracted from the event
-   * @returns {Promise<boolean>} Whether the drop was successful
+   * Callback actions which occur when a dragged element enters a drop target.
+   * @param {DragEvent} event - The drag enter event
    * @protected
    */
-  async _onDropItem(_event, data) {
+  _onDragOver(event) {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "copy";
+
+    // Add visual feedback for action card sheets
+    if (this.item.type === "actionCard") {
+      this._addDragFeedback(event);
+    }
+  }
+
+  /**
+   * Callback actions which occur when a dragged element leaves a drop target.
+   * @param {DragEvent} event - The drag leave event
+   * @protected
+   */
+  _onDragLeave(event) {
+    // Only remove feedback if we're actually leaving the sheet
+    if (!this.element.contains(event.relatedTarget)) {
+      this._removeDragFeedback();
+    }
+  }
+
+  /**
+   * Add visual feedback during drag operations
+   * @param {DragEvent} event - The drag event
+   * @private
+   */
+  _addDragFeedback(_event) {
+    // Remove any existing feedback first
+    this._removeDragFeedback();
+
+    // For action cards, always highlight drop zones during drag
+    if (this.item.type === "actionCard") {
+      this._highlightValidDropZones("universal");
+    }
+  }
+
+  /**
+   * Highlight valid drop zones based on item type
+   * @param {string} itemType - The type of item being dragged
+   * @private
+   */
+  _highlightValidDropZones(_itemType) {
+    const dropZones = this.element.querySelectorAll(
+      ".erps-items-panel__drop-zone",
+    );
+    const actionCardSheet = this.element.querySelector(".tab.embedded-items");
+
+    // Add drag-over class to all drop zones for universal feedback
+    dropZones.forEach((zone) => {
+      zone.classList.add("drag-over");
+    });
+
+    // Add a general drag feedback class to the action card sheet
+    if (actionCardSheet) {
+      actionCardSheet.classList.add("drag-active");
+    }
+  }
+
+  /**
+   * Remove all drag feedback
+   * @private
+   */
+  _removeDragFeedback() {
+    const dropZones = this.element.querySelectorAll(
+      ".erps-items-panel__drop-zone",
+    );
+    const actionCardSheet = this.element.querySelector(".tab.embedded-items");
+
+    dropZones.forEach((zone) => {
+      zone.classList.remove("drag-over");
+    });
+
+    if (actionCardSheet) {
+      actionCardSheet.classList.remove("drag-active");
+    }
+  }
+
+  /**
+   * Handles dropping of an Item onto this Item Sheet
+   * @param {DragEvent} event            The concluding DragEvent which contains drop data
+   * @param {object} data                The data transfer extracted from the event
+   * @returns {Promise<Item[]|boolean>}  The created Item objects or false if the drop was not permitted.
+   * @protected
+   */
+  async _onDropItem(event, data) {
+    // Remove drag feedback when drop occurs
+    this._removeDragFeedback();
     if (!this.item.isOwner) return false;
 
     // Get the dropped item
@@ -816,7 +923,289 @@ export class EventideRpSystemItemSheet extends BaselineSheetMixins(
       return true;
     }
 
+    // Handle action cards receiving items and status effects
+    if (this.item.type === "actionCard") {
+      // Check what type of drop zone this is
+      const dropZone = event.target.closest("[data-drop-zone]");
+      const dropType = dropZone?.dataset.dropZone;
+
+      // If dropped on a specific drop zone, use that logic
+      if (dropType === "actionItem") {
+        // Handle embedded item drops
+        const supportedTypes = ["combatPower", "gear", "feature"];
+        if (!supportedTypes.includes(droppedItem.type)) {
+          ui.notifications.warn(
+            game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.ActionCardItemTypes", {
+              type: droppedItem.type,
+              supported: supportedTypes.join(", "),
+            }),
+          );
+          return false;
+        }
+
+        await this.item.system.setEmbeddedItem(droppedItem);
+        return true;
+      } else if (dropType === "effect") {
+        // Handle effect drops (both status effects and gear)
+        const supportedTypes = ["status", "gear"];
+        if (!supportedTypes.includes(droppedItem.type)) {
+          ui.notifications.warn(
+            game.i18n.format(
+              "EVENTIDE_RP_SYSTEM.Errors.ActionCardEffectTypes",
+              {
+                type: droppedItem.type,
+                supported: supportedTypes.join(", "),
+              },
+            ),
+          );
+          return false;
+        }
+
+        await this.item.system.addEmbeddedEffect(droppedItem);
+        return true;
+      } else {
+        // Universal drop - no specific drop zone found, route based on item type
+        return this._handleUniversalActionCardDrop(droppedItem, event);
+      }
+    }
+
     return false;
+  }
+
+  /**
+   * Handle universal drops on action cards when no specific drop zone is targeted
+   * @param {Item} droppedItem - The item being dropped
+   * @param {DragEvent} event - The drop event
+   * @returns {Promise<boolean>} True if handled successfully
+   * @private
+   */
+  async _handleUniversalActionCardDrop(droppedItem, _event) {
+    // Determine where the item should go based on its type
+    const itemRouting = {
+      combatPower: "actionItem",
+      feature: "actionItem",
+      status: "effect",
+      gear: "needsSelection", // Special case - needs user choice
+    };
+
+    const destination = itemRouting[droppedItem.type];
+
+    if (!destination) {
+      ui.notifications.warn(
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.ActionCardItemTypes", {
+          type: droppedItem.type,
+          supported: Object.keys(itemRouting).join(", "),
+        }),
+      );
+      return false;
+    }
+
+    // Handle gear items that need category selection
+    if (destination === "needsSelection") {
+      return this._showGearCategoryDialog(droppedItem);
+    }
+
+    // Route to the appropriate destination
+    if (destination === "actionItem") {
+      await this.item.system.setEmbeddedItem(droppedItem);
+      ui.notifications.info(
+        game.i18n.format(
+          "EVENTIDE_RP_SYSTEM.Item.ActionCard.ItemAddedToAction",
+          {
+            itemName: droppedItem.name,
+          },
+        ),
+      );
+      return true;
+    } else if (destination === "effect") {
+      await this.item.system.addEmbeddedEffect(droppedItem);
+      ui.notifications.info(
+        game.i18n.format(
+          "EVENTIDE_RP_SYSTEM.Item.ActionCard.ItemAddedToEffects",
+          {
+            itemName: droppedItem.name,
+          },
+        ),
+      );
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
+   * Show gear category selection dialog using EventideDialog
+   * @param {Item} gearItem - The gear item to categorize
+   * @returns {Promise<boolean>} True if handled successfully
+   * @private
+   */
+  async _showGearCategoryDialog(gearItem) {
+    try {
+      Logger.debug(
+        "Showing gear category dialog",
+        {
+          gearItemName: gearItem.name,
+          gearItemId: gearItem.id,
+        },
+        "ITEM_SHEET",
+      );
+
+      const choice = await this._createGearCategoryDialog(gearItem);
+
+      Logger.debug(
+        "Gear category dialog result",
+        {
+          choice,
+          gearItemName: gearItem.name,
+        },
+        "ITEM_SHEET",
+      );
+
+      if (!choice) {
+        Logger.debug("No choice made, dialog was cancelled", {}, "ITEM_SHEET");
+        return false;
+      }
+
+      // Add the gear item to the selected category
+      if (choice === "actionItem") {
+        Logger.debug("Adding gear as action item", {}, "ITEM_SHEET");
+        await this.item.system.setEmbeddedItem(gearItem);
+        ui.notifications.info(
+          game.i18n.format(
+            "EVENTIDE_RP_SYSTEM.Item.ActionCard.GearAddedToAction",
+            {
+              itemName: gearItem.name,
+            },
+          ),
+        );
+      } else if (choice === "effect") {
+        Logger.debug("Adding gear as effect", {}, "ITEM_SHEET");
+        await this.item.system.addEmbeddedEffect(gearItem);
+        ui.notifications.info(
+          game.i18n.format(
+            "EVENTIDE_RP_SYSTEM.Item.ActionCard.GearAddedToEffects",
+            {
+              itemName: gearItem.name,
+            },
+          ),
+        );
+      }
+
+      return true;
+    } catch (error) {
+      Logger.error("Failed to show gear category dialog", error, "ITEM_SHEET");
+      ui.notifications.error("Failed to show gear category dialog");
+      return false;
+    }
+  }
+
+  /**
+   * Create and show an EventideDialog for gear category selection
+   * @param {Item} gearItem - The gear item to categorize
+   * @returns {Promise<string|null>} The selected category or null if cancelled
+   * @private
+   */
+  async _createGearCategoryDialog(gearItem) {
+    let resolveChoice;
+    const choicePromise = new Promise((resolve) => {
+      resolveChoice = resolve;
+    });
+
+    const buttons = [
+      {
+        label: game.i18n.localize(
+          "EVENTIDE_RP_SYSTEM.Dialogs.GearMode.UseAsAction",
+        ),
+        action: "actionItem",
+        cssClass: "erps-button erps-button--primary",
+        icon: "fas fa-bolt",
+      },
+      {
+        label: game.i18n.localize(
+          "EVENTIDE_RP_SYSTEM.Dialogs.GearMode.UseAsEffect",
+        ),
+        action: "effect",
+        cssClass: "erps-button erps-button--primary",
+        icon: "fas fa-magic",
+      },
+      {
+        label: game.i18n.localize("EVENTIDE_RP_SYSTEM.Forms.Buttons.Close"),
+        action: "cancel",
+        cssClass: "erps-button",
+        icon: "fas fa-times",
+      },
+    ];
+
+    const callback = async (action, _data, _dialog) => {
+      Logger.debug("Gear category dialog callback triggered", {
+        action,
+        gearItemName: gearItem.name,
+      });
+
+      if (action === "actionItem") {
+        resolveChoice("actionItem");
+        return true; // Close dialog
+      } else if (action === "effect") {
+        resolveChoice("effect");
+        return true; // Close dialog
+      } else if (action === "cancel") {
+        resolveChoice(null);
+        return true; // Close dialog
+      }
+      return false; // Keep dialog open
+    };
+
+    const templateData = {
+      gearItem: {
+        name: gearItem.name,
+        img: gearItem.img,
+      },
+      questionText: game.i18n.format(
+        "EVENTIDE_RP_SYSTEM.Item.ActionCard.GearCategoryQuestion",
+        { itemName: gearItem.name },
+      ),
+      actionItemTitle: game.i18n.localize(
+        "EVENTIDE_RP_SYSTEM.Item.ActionCard.ActionItem",
+      ),
+      actionItemDescription: game.i18n.localize(
+        "EVENTIDE_RP_SYSTEM.Item.ActionCard.ActionItemDescription",
+      ),
+      effectsTitle: game.i18n.localize(
+        "EVENTIDE_RP_SYSTEM.Item.ActionCard.Effects",
+      ),
+      effectsDescription: game.i18n.localize(
+        "EVENTIDE_RP_SYSTEM.Item.ActionCard.EffectsDescription",
+      ),
+    };
+
+    try {
+      const dialog = await EventideDialog.show({
+        title: game.i18n.localize("EVENTIDE_RP_SYSTEM.Dialogs.GearMode.Title"),
+        template:
+          "systems/eventide-rp-system/templates/dialogs/gear-category-dialog.hbs",
+        data: templateData,
+        buttons,
+        callback,
+        windowOptions: {
+          icon: "fa-solid fa-sack",
+          width: 650,
+          height: "auto",
+        },
+      });
+
+      // Set up a close handler to resolve with null if dialog is closed without selection
+      const originalClose = dialog.close.bind(dialog);
+      dialog.close = function (...args) {
+        resolveChoice(null);
+        return originalClose(...args);
+      };
+
+      // Wait for the user's choice
+      return await choicePromise;
+    } catch (error) {
+      Logger.error("Failed to show gear category dialog", error);
+      return null;
+    }
   }
 
   /* -------------------------------------------- */
@@ -943,6 +1332,7 @@ export class EventideRpSystemItemSheet extends BaselineSheetMixins(
       d.callbacks = {
         dragstart: this._onDragStart.bind(this),
         dragover: this._onDragOver.bind(this),
+        dragleave: this._onDragLeave.bind(this),
         drop: this._onDrop.bind(this),
       };
       return new DragDrop.implementation(d);
@@ -1249,5 +1639,180 @@ export class EventideRpSystemItemSheet extends BaselineSheetMixins(
   _getEffect(target) {
     const li = target.closest(".effect");
     return this.item.effects.get(li?.dataset?.effectId);
+  }
+
+  /**
+   * Handle clearing the embedded item from an action card
+   * @param {Event} event - The click event
+   * @param {HTMLElement} target - The target element
+   * @private
+   */
+  static async _clearEmbeddedItem(_event, _target) {
+    Logger.methodEntry("EventideRpSystemItemSheet", "_clearEmbeddedItem");
+
+    try {
+      // Get the item from the sheet instance, not from the form
+      const item = this.item;
+      if (!item || item.type !== "actionCard") {
+        Logger.warn(
+          "Clear embedded item called on non-action card",
+          { itemType: item?.type },
+          "ITEM_SHEET",
+        );
+        return;
+      }
+
+      await item.system.clearEmbeddedItem();
+
+      Logger.info("Embedded item cleared successfully", null, "ITEM_SHEET");
+      Logger.methodExit("EventideRpSystemItemSheet", "_clearEmbeddedItem");
+    } catch (error) {
+      Logger.error("Failed to clear embedded item", error, "ITEM_SHEET");
+      ui.notifications.error("Failed to clear embedded item");
+      Logger.methodExit("EventideRpSystemItemSheet", "_clearEmbeddedItem");
+    }
+  }
+
+  /**
+   * Handle editing an embedded item from an action card
+   * @param {Event} event - The click event
+   * @param {HTMLElement} target - The target element
+   * @private
+   */
+  static async _editEmbeddedItem(_event, _target) {
+    Logger.methodEntry("EventideRpSystemItemSheet", "_editEmbeddedItem");
+
+    try {
+      const item = this.item;
+      if (!item || item.type !== "actionCard") {
+        Logger.warn(
+          "Edit embedded item called on non-action card",
+          { itemType: item?.type },
+          "ITEM_SHEET",
+        );
+        return;
+      }
+
+      const embeddedItem = item.system.getEmbeddedItem();
+      if (!embeddedItem) {
+        Logger.warn("No embedded item found to edit", null, "ITEM_SHEET");
+        return;
+      }
+
+      // Import the EmbeddedItemSheet class
+      const { EmbeddedItemSheet } = await import("./embedded-item-sheet.mjs");
+
+      // Create and render the embedded item sheet
+      const sheet = new EmbeddedItemSheet(embeddedItem.toObject(), item);
+      sheet.render(true);
+
+      Logger.info(
+        "Embedded item sheet opened",
+        { itemName: embeddedItem.name },
+        "ITEM_SHEET",
+      );
+      Logger.methodExit("EventideRpSystemItemSheet", "_editEmbeddedItem");
+    } catch (error) {
+      Logger.error("Failed to edit embedded item", error, "ITEM_SHEET");
+      ui.notifications.error("Failed to edit embedded item");
+      Logger.methodExit("EventideRpSystemItemSheet", "_editEmbeddedItem");
+    }
+  }
+
+  /**
+   * Handle editing an embedded effect from an action card
+   * @param {Event} event - The click event
+   * @param {HTMLElement} target - The target element
+   * @private
+   */
+  static async _editEmbeddedEffect(_event, target) {
+    Logger.methodEntry("EventideRpSystemItemSheet", "_editEmbeddedEffect");
+
+    try {
+      const item = this.item;
+      const effectId = target.dataset.effectId;
+
+      if (!item || item.type !== "actionCard") {
+        Logger.warn(
+          "Edit embedded effect called on non-action card",
+          { itemType: item?.type },
+          "ITEM_SHEET",
+        );
+        return;
+      }
+
+      if (!effectId) {
+        Logger.warn("No effect ID provided for editing", null, "ITEM_SHEET");
+        return;
+      }
+
+      const embeddedEffects = item.system.getEmbeddedEffects();
+      const effect = embeddedEffects.find((e) => e.originalId === effectId);
+
+      if (!effect) {
+        Logger.warn("Embedded effect not found", { effectId }, "ITEM_SHEET");
+        return;
+      }
+
+      // Import the EmbeddedItemSheet class
+      const { EmbeddedItemSheet } = await import("./embedded-item-sheet.mjs");
+
+      // Create and render the embedded effect sheet
+      const sheet = new EmbeddedItemSheet(effect.toObject(), item, {}, true);
+      sheet.render(true);
+
+      Logger.info(
+        "Embedded effect sheet opened",
+        { effectName: effect.name },
+        "ITEM_SHEET",
+      );
+      Logger.methodExit("EventideRpSystemItemSheet", "_editEmbeddedEffect");
+    } catch (error) {
+      Logger.error("Failed to edit embedded effect", error, "ITEM_SHEET");
+      ui.notifications.error("Failed to edit embedded effect");
+      Logger.methodExit("EventideRpSystemItemSheet", "_editEmbeddedEffect");
+    }
+  }
+
+  /**
+   * Handle removing an embedded effect from an action card
+   * @param {Event} event - The click event
+   * @param {HTMLElement} target - The target element
+   * @private
+   */
+  static async _removeEmbeddedEffect(_event, target) {
+    Logger.methodEntry("EventideRpSystemItemSheet", "_removeEmbeddedEffect");
+
+    try {
+      const item = this.item;
+      const effectId = target.dataset.effectId;
+
+      if (!item || item.type !== "actionCard") {
+        Logger.warn(
+          "Remove embedded effect called on non-action card",
+          { itemType: item?.type },
+          "ITEM_SHEET",
+        );
+        return;
+      }
+
+      if (!effectId) {
+        Logger.warn("No effect ID provided for removal", null, "ITEM_SHEET");
+        return;
+      }
+
+      await item.system.removeEmbeddedEffect(effectId);
+
+      Logger.info(
+        "Embedded effect removed successfully",
+        { effectId },
+        "ITEM_SHEET",
+      );
+      Logger.methodExit("EventideRpSystemItemSheet", "_removeEmbeddedEffect");
+    } catch (error) {
+      Logger.error("Failed to remove embedded effect", error, "ITEM_SHEET");
+      ui.notifications.error("Failed to remove embedded effect");
+      Logger.methodExit("EventideRpSystemItemSheet", "_removeEmbeddedEffect");
+    }
   }
 }

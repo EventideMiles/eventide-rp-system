@@ -117,6 +117,9 @@ export const ActorResourceMixin = (BaseClass) =>
       critAllowed = false,
       acCheck = false,
       soundKey = null,
+      img = null,
+      bgColor = null,
+      textColor = null,
     } = {}) {
       Logger.methodEntry("ActorResourceMixin", "damageResolve", {
         formula,
@@ -141,6 +144,9 @@ export const ActorResourceMixin = (BaseClass) =>
         description,
         acCheck,
         soundKey,
+        img,
+        bgColor,
+        textColor,
       };
 
       try {

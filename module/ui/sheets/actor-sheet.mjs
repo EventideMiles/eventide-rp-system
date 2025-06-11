@@ -112,6 +112,7 @@ export class EventideRpSystemActorSheet extends BaselineSheetMixins(
       toggleAutoTokenUpdate: this._toggleAutoTokenUpdate,
       configureToken: this._onConfigureToken,
       setSheetTheme: this._setSheetTheme,
+      executeActionCard: this._executeActionCard,
     },
     // Custom property that's merged into `this.options`
     dragDrop: [
@@ -150,6 +151,9 @@ export class EventideRpSystemActorSheet extends BaselineSheetMixins(
     combatPowers: {
       template: "systems/eventide-rp-system/templates/actor/combat-powers.hbs",
     },
+    actionCards: {
+      template: "systems/eventide-rp-system/templates/actor/action-cards.hbs",
+    },
   };
 
   /** @override */
@@ -161,6 +165,7 @@ export class EventideRpSystemActorSheet extends BaselineSheetMixins(
       "tabs",
       "features",
       "combatPowers",
+      "actionCards",
       "biography",
       "statuses",
       "gear",
@@ -274,6 +279,7 @@ export class EventideRpSystemActorSheet extends BaselineSheetMixins(
         case "features":
         case "statuses":
         case "combatPowers":
+        case "actionCards":
           context.tab = context.tabs[partId];
           break;
         case "biography":
@@ -387,6 +393,10 @@ export class EventideRpSystemActorSheet extends BaselineSheetMixins(
           tab.id = "combatPowers";
           tab.label += "CombatPowers";
           break;
+        case "actionCards":
+          tab.id = "actionCards";
+          tab.label += "ActionCards";
+          break;
         case "biography":
           tab.id = "biography";
           tab.label += "Biography";
@@ -459,6 +469,7 @@ export class EventideRpSystemActorSheet extends BaselineSheetMixins(
       const combatPowers = [];
       const transformations = [];
       const transformationCombatPowers = [];
+      const actionCards = [];
 
       // Iterate through items, allocating to containers
       for (const i of this.document.items) {
@@ -483,6 +494,9 @@ export class EventideRpSystemActorSheet extends BaselineSheetMixins(
                 ...i.system.getEmbeddedCombatPowers(),
               );
             }
+          } else if (i.type === "actionCard") {
+            // Append to action cards
+            actionCards.push(i);
           } else {
             Logger.warn(
               `Unknown item type: ${i.type}`,
@@ -519,6 +533,9 @@ export class EventideRpSystemActorSheet extends BaselineSheetMixins(
         context.transformations = transformations.sort(
           (a, b) => (a.sort || 0) - (b.sort || 0),
         );
+        context.actionCards = actionCards.sort(
+          (a, b) => (a.sort || 0) - (b.sort || 0),
+        );
         context.activeTransformation = transformations[0];
       } catch (sortError) {
         Logger.error("Error sorting items", sortError, "ACTOR_SHEET");
@@ -532,6 +549,7 @@ export class EventideRpSystemActorSheet extends BaselineSheetMixins(
         context.combatPowers = combatPowers;
         context.transformationCombatPowers = transformationCombatPowers;
         context.transformations = transformations;
+        context.actionCards = actionCards;
         context.activeTransformation = transformations[0];
       }
 
@@ -544,6 +562,7 @@ export class EventideRpSystemActorSheet extends BaselineSheetMixins(
           combatPowersCount: combatPowers.length,
           transformationsCount: transformations.length,
           transformationCombatPowersCount: transformationCombatPowers.length,
+          actionCardsCount: actionCards.length,
         },
         "ACTOR_SHEET",
       );
@@ -565,6 +584,7 @@ export class EventideRpSystemActorSheet extends BaselineSheetMixins(
       context.combatPowers = [];
       context.transformationCombatPowers = [];
       context.transformations = [];
+      context.actionCards = [];
 
       Logger.methodExit("EventideRpSystemActorSheet", "_prepareItems", context);
     }
@@ -2196,10 +2216,10 @@ export class EventideRpSystemActorSheet extends BaselineSheetMixins(
   /* -------------------------------------------- */
 
   /**
-   * Handle dropping of an item reference or item data onto an Actor Sheet
+   * Handle dropping of an Item onto this Actor Sheet
    * @param {DragEvent} event            The concluding DragEvent which contains drop data
    * @param {object} data                The data transfer extracted from the event
-   * @returns {Promise<Item[]|boolean>}  The created or updated Item instances, or false if the drop was not permitted.
+   * @returns {Promise<Item[]|boolean>}  The created Item objects or false if the drop was not permitted.
    * @protected
    */
   async _onDropItem(event, data) {
@@ -2573,6 +2593,90 @@ export class EventideRpSystemActorSheet extends BaselineSheetMixins(
       await super.minimize();
 
       Logger.methodExit("EventideRpSystemActorSheet", "minimize", false);
+    }
+  }
+
+  /**
+   * Handle executing an action card's attack chain
+   * @param {PointerEvent} _event   The originating click event
+   * @param {HTMLElement} target   The capturing HTML element which defined a [data-action]
+   * @protected
+   */
+  static async _executeActionCard(_event, target) {
+    Logger.methodEntry("EventideRpSystemActorSheet", "_executeActionCard", {
+      actorName: this.actor?.name,
+      itemId: target.dataset.itemId,
+    });
+
+    try {
+      const itemId = target.dataset.itemId;
+      const actionCard = this.actor.items.get(itemId);
+
+      if (!actionCard || actionCard.type !== "actionCard") {
+        Logger.warn(
+          "Invalid action card for execution",
+          { itemId },
+          "ACTOR_SHEET",
+        );
+        ui.notifications.warn("Invalid action card");
+        return;
+      }
+
+      const result = await actionCard.system.execute(this.actor);
+
+      if (result.success) {
+        if (result.mode === "attackChain") {
+          // Attack chain mode - create follow-up message if needed
+          const followUpMessage =
+            await actionCard.system.createAttackChainMessage(
+              result,
+              this.actor,
+            );
+
+          if (followUpMessage) {
+            ui.notifications.info(
+              `Attack chain executed - GM apply effects created`,
+            );
+          } else {
+            ui.notifications.info(`Attack chain executed successfully`);
+          }
+          Logger.info(
+            "Action card attack chain executed",
+            {
+              itemId,
+              targetsHit:
+                result.targetResults?.filter((r) => r.oneHit).length || 0,
+            },
+            "ACTOR_SHEET",
+          );
+        } else if (result.mode === "savedDamage") {
+          // Saved damage mode - damage already applied
+          ui.notifications.info(
+            `Saved damage applied to ${result.damageResults.length} target(s)`,
+          );
+          Logger.info(
+            "Action card saved damage executed",
+            {
+              itemId,
+              targetsAffected: result.damageResults.length,
+            },
+            "ACTOR_SHEET",
+          );
+        }
+      } else {
+        ui.notifications.warn(`Action card execution failed: ${result.reason}`);
+        Logger.warn(
+          "Action card execution failed",
+          { itemId, reason: result.reason },
+          "ACTOR_SHEET",
+        );
+      }
+
+      Logger.methodExit("EventideRpSystemActorSheet", "_executeActionCard");
+    } catch (error) {
+      Logger.error("Failed to execute action card", error, "ACTOR_SHEET");
+      ui.notifications.error("Failed to execute action card");
+      Logger.methodExit("EventideRpSystemActorSheet", "_executeActionCard");
     }
   }
 }

@@ -576,6 +576,209 @@
       margin-bottom: 0;
     }
   }
+
+  // ===================================
+  // GM APPLY SECTION STYLES
+  // ===================================
+
+  &__gm-apply-section {
+    background: rgb(0 0 0 / 20%);
+    border-top: 1px solid rgb(255 255 255 / 10%);
+    padding: 0.75rem;
+    margin-top: 0.5rem;
+  }
+
+  &__gm-apply-damage,
+  &__gm-apply-status {
+    margin-bottom: 0.75rem;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &__gm-apply-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    color: var(--theme-text);
+    font-size: 0.9rem;
+
+    i {
+      margin-right: 0.5rem;
+      color: var(--theme-accent);
+    }
+  }
+
+  &__applied-badge {
+    background: var(--erps-chat-details-hit);
+    color: colors.$universal-white;
+    padding: 0.125rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+
+  &__gm-apply-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  &__target-name {
+    font-weight: bold;
+    color: var(--theme-text);
+    font-size: 0.85rem;
+  }
+
+  &__target-invalid {
+    color: var(--erps-chat-details-miss);
+    font-style: italic;
+    font-size: 0.8rem;
+    text-align: center;
+    padding: 0.5rem;
+  }
+
+  &__apply-button {
+    background: var(--theme-accent);
+    color: colors.$universal-white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background: var(--theme-secondary);
+    }
+
+    &:active {
+      transform: translateY(1px);
+    }
+
+    &:disabled {
+      background: rgb(128 128 128 / 50%);
+      cursor: not-allowed;
+      transform: none;
+    }
+  }
+
+  &__status-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    margin: 0.5rem 0;
+  }
+
+  &__status-effect {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem;
+    background: rgb(255 255 255 / 5%);
+    border-radius: 3px;
+  }
+
+  &__status-icon {
+    width: 16px;
+    height: 16px;
+    border-radius: 2px;
+  }
+
+  &__status-name {
+    font-size: 0.8rem;
+    color: var(--theme-text);
+  }
+
+  // Action card specific header styling
+  &__header--action-card {
+    background: linear-gradient(135deg, var(--theme-accent), var(--theme-secondary));
+  }
+}
+
+// ===================================
+// ACTION CARD DATA TABLE STYLES
+// ===================================
+
+.erps-data-table {
+  // &--action-cards {
+  //   // Action card specific table styling
+  // }
+
+  &__embedded-item {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.8rem;
+
+    img {
+      border-radius: 2px;
+    }
+  }
+
+  &__attack-chain-info {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.8rem;
+  }
+
+  &__attack-chain-stats {
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+  }
+
+  &__chain-icon {
+    color: var(--theme-accent);
+    font-size: 0.7rem;
+  }
+
+  &__empty-state {
+    font-style: italic;
+    opacity: 0.6;
+    font-size: 0.8rem;
+  }
+
+  &__control-button {
+    &--execute {
+      color: var(--theme-accent);
+
+      &:hover {
+        color: var(--theme-bright);
+      }
+    }
+
+    &--damage {
+      color: #e74c3c;
+
+      &:hover {
+        color: #c0392b;
+      }
+    }
+  }
+
+  &__empty-message {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 2rem;
+    color: var(--theme-text);
+    opacity: 0.6;
+    font-style: italic;
+
+    i {
+      font-size: 1.2rem;
+      color: var(--theme-accent);
+    }
+  }
 }
 
 // Animation for critical hits

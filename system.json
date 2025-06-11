@@ -32,6 +32,9 @@
       },
       "transformation": {
         "htmlFields": ["description"]
+      },
+      "actionCard": {
+        "htmlFields": ["description"]
       }
     }
   },

@@ -1,0 +1,50 @@
+@use "../utils/colors" as colors;
+
+// ===================================
+// DAMAGE CARDS
+// ===================================
+// Damage card specific styling and color theme support
+
+.chat-card {
+  // Damage card header styling
+  &__header--damage {
+    // Default damage color (can be overridden by inline styles)
+    background-color: var(--erps-card-header-damage);
+
+    // Ensure text remains readable when custom colors are applied
+    &[style*="background-color"] {
+      // When custom background is applied, ensure proper contrast
+      text-shadow: 0 1px 2px rgb(0 0 0 / 50%);
+    }
+
+    &[style*="color"] {
+      // When custom text color is applied, ensure it's visible
+      text-shadow: 0 1px 2px rgb(0 0 0 / 30%);
+    }
+  }
+
+  // Heal card header styling (also used for healing damage cards)
+  &__header--heal {
+    // Default heal color (can be overridden by inline styles)
+    background-color: var(--erps-card-header-heal);
+
+    // Ensure text remains readable when custom colors are applied
+    &[style*="background-color"] {
+      text-shadow: 0 1px 2px rgb(0 0 0 / 50%);
+    }
+
+    &[style*="color"] {
+      text-shadow: 0 1px 2px rgb(0 0 0 / 30%);
+    }
+  }
+
+  // Damage value styling
+  &__value--damage {
+    color: var(--erps-card-header-damage);
+  }
+
+  // Heal value styling
+  &__value--heal {
+    color: var(--erps-card-header-heal);
+  }
+}

@@ -19,6 +19,12 @@
       "ViewReadOnly": "View (Read-Only)",
       "ReadOnly": "Read-Only",
       "Remove": "Remove"
+    },
+    "General": {
+      "None": "None",
+      "Disabled": "Disabled",
+      "Enabled": "Enabled",
+      "Unknown": "Unknown"
     }
   },
   "TYPES": {
@@ -27,6 +33,7 @@
       "npc": "NPC"
     },
     "Item": {
+      "actionCard": "Action Card",
       "combatPower": "Combat Power",
       "effect": "Effect",
       "feature": "Feature",

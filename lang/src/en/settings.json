@@ -51,6 +51,9 @@
     "GearEquippedDefaultName": "Gear Creator: Default Equipped",
     "GearEquippedDefaultHint": "If enabled, gear creator will mark new gear as equipped by default.",
 
+    "EnableActionCardChainsName": "Enable Action Card Attack Chains",
+    "EnableActionCardChainsHint": "If enabled, players can use action cards with attack chains that automatically proceed to damage rolls when both attacks hit. Disable to prevent automatic damage forwarding.",
+
     "CrToXpFormulaName": "CR to XP Calculation",
     "CrToXpFormulaHint": "Formula for converting Challenge Rating to Experience Points. Use @cr to reference the CR value. Use simple math operations (+, -, *, /) and dice notation. Example: '@cr * 200 + @cr * @cr * 50'",
 

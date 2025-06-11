@@ -164,6 +164,7 @@ Hooks.once("init", async () => {
     status: models.EventideRpSystemStatus,
     combatPower: models.EventideRpSystemCombatPower,
     transformation: models.EventideRpSystemTransformation,
+    actionCard: models.EventideRpSystemActionCard,
   };
   // Configure Active Effect behavior
   // Setting to false means Active Effects are never copied to the Actor directly,
