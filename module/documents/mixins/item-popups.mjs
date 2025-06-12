@@ -258,16 +258,26 @@ export const ItemPopupsMixin = (BaseClass) =>
       try {
         // Map class names to their import paths
         const classMap = {
-          ActionCardPopup: () =>
-            import("../../ui/_module.mjs").then((m) => m.ActionCardPopup),
-          CombatPowerPopup: () =>
-            import("../../ui/_module.mjs").then((m) => m.CombatPowerPopup),
-          GearPopup: () =>
-            import("../../ui/_module.mjs").then((m) => m.GearPopup),
-          StatusPopup: () =>
-            import("../../ui/_module.mjs").then((m) => m.StatusPopup),
-          FeaturePopup: () =>
-            import("../../ui/_module.mjs").then((m) => m.FeaturePopup),
+          ActionCardPopup: async () => {
+            const m = await import("../../ui/_module.mjs");
+            return m.ActionCardPopup;
+          },
+          CombatPowerPopup: async () => {
+            const m = await import("../../ui/_module.mjs");
+            return m.CombatPowerPopup;
+          },
+          GearPopup: async () => {
+            const m = await import("../../ui/_module.mjs");
+            return m.GearPopup;
+          },
+          StatusPopup: async () => {
+            const m = await import("../../ui/_module.mjs");
+            return m.StatusPopup;
+          },
+          FeaturePopup: async () => {
+            const m = await import("../../ui/_module.mjs");
+            return m.FeaturePopup;
+          },
         };
 
         const importFn = classMap[className];

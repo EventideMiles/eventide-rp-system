@@ -83,7 +83,7 @@
             data-drag='true'
             data-document-class='Item'
           >
-            <td class='erps-data-table__cell erps-data-table__cell--name rollable' data-roll-type='item' data-action='roll'>
+            <td class='erps-data-table__cell erps-data-table__cell--name rollable' data-roll-type='item' data-action='roll' data-item-id='{{item._id}}'>
               <div class='erps-data-table__name-content'>
                 <img
                   src='{{item.img}}'
@@ -95,8 +95,8 @@
                 <i class='fas fa-magic erps-data-table__transformation-indicator' title='{{localize "EVENTIDE_RP_SYSTEM.Actor.CombatPowers.TransformationPower"}}'></i>
               </div>
             </td>
-            <td class='erps-data-table__cell erps-data-table__cell--center rollable' data-roll-type='item' data-action='roll'>{{item.system.cost}}</td>
-            <td class='erps-data-table__cell erps-data-table__cell--center rollable' data-roll-type='item' data-action='roll'>{{item.system.usageInfo}}</td>
+            <td class='erps-data-table__cell erps-data-table__cell--center rollable' data-roll-type='item' data-action='roll' data-item-id='{{item._id}}'>{{item.system.cost}}</td>
+            <td class='erps-data-table__cell erps-data-table__cell--center rollable' data-roll-type='item' data-action='roll' data-item-id='{{item._id}}'>{{item.system.usageInfo}}</td>
             <td class='erps-data-table__cell erps-data-table__cell--controls'>
               <div class='erps-data-table__controls'>
                 <div class='erps-data-table__control-button erps-data-table__control-button--disabled erps-data-table__control-button--locked' title='{{localize "EVENTIDE_RP_SYSTEM.Actor.CombatPowers.TransformedLocked"}}'>

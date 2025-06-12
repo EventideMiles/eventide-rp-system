@@ -134,9 +134,14 @@ Hooks.once("init", async () => {
   initGMControlHooks();
 
   // Set up GM control manager in global scope (async)
-  import("./services/managers/gm-control.mjs").then(({ gmControlManager }) => {
+  try {
+    const { gmControlManager } = await import(
+      "./services/managers/gm-control.mjs"
+    );
     globalThis.erps.gmControl = gmControlManager;
-  });
+  } catch (error) {
+    console.error("ERPS | Failed to load GM control manager", error);
+  }
   /**
    * Configure initiative settings
    */
@@ -379,7 +384,9 @@ async function rollItemMacro(itemUuid) {
     uuid: itemUuid,
   };
   // Load the item from the uuid.
-  Item.fromDropData(dropData).then((item) => {
+  try {
+    const item = await Item.fromDropData(dropData);
+
     // Determine if the item loaded and if it's an owned item.
     if (!item || !item.parent) {
       const itemName = item?.name ?? itemUuid;
@@ -392,5 +399,12 @@ async function rollItemMacro(itemUuid) {
 
     // Trigger the item roll
     item.roll();
-  });
+  } catch (error) {
+    console.error("ERPS | Failed to load item for macro", error);
+    ui.notifications.error(
+      game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.MacroExecutionError", {
+        item: itemUuid,
+      }),
+    );
+  }
 }
