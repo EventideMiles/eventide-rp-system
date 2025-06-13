@@ -7,4 +7,5 @@
 export * from "./common-foundry-tasks.mjs";
 export * from "./roll-utilities.mjs";
 export * from "./error-handler.mjs";
+export * from "./error-patterns.mjs";
 export * from "./system-cleanup.mjs";

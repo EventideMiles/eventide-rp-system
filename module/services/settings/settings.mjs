@@ -128,7 +128,7 @@ export class SoundSettingsApplication extends EventideSheetHelpers {
         ui.notifications.warn(game.i18n.localize("SETTINGS.NoSoundSelected"));
       }
     } catch (error) {
-      console.error("Error in _onPlaySound:", error);
+      Logger.error("Error in _onPlaySound", error, "SETTINGS");
       ui.notifications.error(game.i18n.localize("SETTINGS.ErrorPlayingSound"));
     }
   }
@@ -151,7 +151,7 @@ export class SoundSettingsApplication extends EventideSheetHelpers {
       // Dispatch a change event to ensure the form knows the value changed
       input.dispatchEvent(new Event("change"));
     } catch (error) {
-      console.error("Error in _onResetSound:", error);
+      Logger.error("Error in _onResetSound", error, "SETTINGS");
       ui.notifications.error(
         game.i18n.localize("SETTINGS.ErrorResettingSound"),
       );
@@ -183,7 +183,7 @@ export class SoundSettingsApplication extends EventideSheetHelpers {
         }
       }
     } catch (error) {
-      console.error("Error in _onTestAllSounds:", error);
+      Logger.error("Error in _onTestAllSounds", error, "SETTINGS");
       ui.notifications.error(game.i18n.localize("SETTINGS.ErrorTestingSounds"));
     }
   }
@@ -207,7 +207,7 @@ export class SoundSettingsApplication extends EventideSheetHelpers {
       }
       ui.notifications.info(game.i18n.localize("SETTINGS.AllSoundsReset"));
     } catch (error) {
-      console.error("Error in _onResetAllSounds:", error);
+      Logger.error("Error in _onResetAllSounds", error, "SETTINGS");
       ui.notifications.error(
         game.i18n.localize("SETTINGS.ErrorResettingAllSounds"),
       );
@@ -242,11 +242,13 @@ export class SoundSettingsApplication extends EventideSheetHelpers {
         const value = formData.get(settingKey);
 
         if (value) {
-          console.info(`Saving ${settingKey} with value ${value}`);
+          Logger.info("Saving setting", { settingKey, value }, "SETTINGS");
           await setSetting(settingKey, value);
         } else {
-          console.warn(
-            `Sound setting ${settingKey} not found in form elements`,
+          Logger.warn(
+            "Sound setting not found in form elements",
+            { settingKey },
+            "SETTINGS",
           );
         }
       }
@@ -260,7 +262,7 @@ export class SoundSettingsApplication extends EventideSheetHelpers {
       });
       return true;
     } catch (error) {
-      console.error("Error in _onSubmit:", error);
+      Logger.error("Error in _onSubmit", error, "SETTINGS");
       ui.notifications.error(
         game.i18n.localize("SETTINGS.ErrorSavingSoundSettings"),
       );
@@ -627,7 +629,7 @@ export const registerSettings = function () {
     type: Boolean,
     default: false,
     onChange: (value) => {
-      console.info(`Testing mode set to ${value}`);
+      Logger.info("Testing mode setting changed", { value }, "SETTINGS");
       // No reload needed - can be checked at runtime
     },
   });
@@ -679,10 +681,16 @@ export const registerSettings = function () {
 /**
  * Get a setting value
  * @param {string} key - The setting key to retrieve
- * @returns {any} The setting value
+ * @returns {any} The setting value, or null if not available
  */
 export const getSetting = function (key) {
-  return game.settings.get("eventide-rp-system", key);
+  try {
+    return game.settings.get("eventide-rp-system", key);
+  } catch {
+    // Setting not registered yet or game not ready
+    // Don't use Logger here to avoid circular dependency
+    return null;
+  }
 };
 
 /**

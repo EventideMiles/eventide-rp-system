@@ -1,4 +1,5 @@
 import EventideRpSystemDataModel from "./base-model.mjs";
+import { Logger } from "../services/logger.mjs";
 /**
  * Base actor data model for the Eventide RP System.
  * Defines the common data schema shared by all actor types.
@@ -327,7 +328,7 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
 
       return Math.max(0, Math.floor(result.total));
     } catch (error) {
-      console.warn("ERPS | Error calculating XP from CR:", error);
+      Logger.warn("Error calculating XP from CR", error, "BASE_ACTOR");
       // Fallback to simple calculation
       return Math.max(10, Math.floor(this.cr * 200));
     }

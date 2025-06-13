@@ -1,7 +1,18 @@
 /**
  * Base data model for the Eventide RP System.
- * Provides common functionality for all system data models.
+ *
+ * This class serves as the foundation for all data models in the system,
+ * providing common functionality and utilities that are shared across
+ * actors, items, and other document types.
+ *
+ * Key Features:
+ * - Provides a `toPlainObject()` method for serialization
+ * - Extends Foundry's TypeDataModel with system-specific functionality
+ * - Serves as the base class for all system data models
+ *
  * @extends {foundry.abstract.TypeDataModel}
+ * @abstract
+ * @since 1.0.0
  */
 export default class EventideRpSystemDataModel extends foundry.abstract
   .TypeDataModel {

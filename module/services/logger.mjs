@@ -62,12 +62,17 @@ export class Logger {
    * @private
    */
   static #isTestingMode() {
-    return (
-      typeof erps !== "undefined" &&
-      erps.settings &&
-      typeof erps.settings.getSetting === "function" &&
-      erps.settings.getSetting("testingMode")
-    );
+    try {
+      return (
+        typeof erps !== "undefined" &&
+        erps.settings &&
+        typeof erps.settings.getSetting === "function" &&
+        erps.settings.getSetting("testingMode")
+      );
+    } catch {
+      // Settings not available yet or testingMode not registered
+      return false;
+    }
   }
 
   /**

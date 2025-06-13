@@ -8,15 +8,16 @@
  */
 import { Logger } from "../services/_module.mjs";
 
-// Track initialization state
+// Global state tracking
 let isInitialized = false;
+let globalClickHandler = null;
+let globalResizeHandler = null;
 
 /**
- * Initialize number inputs with increment/decrement functionality
+ * Initialize number input functionality
  *
- * This function sets up global event handlers for number input buttons
- * and initializes responsive behavior. It only runs once to avoid
- * duplicate event listeners.
+ * Sets up global event handlers for number input increment/decrement buttons
+ * and responsive behavior.
  */
 export const initNumberInputs = () => {
   if (isInitialized) {
@@ -27,17 +28,18 @@ export const initNumberInputs = () => {
   Logger.debug("Initializing number inputs", {}, "NUMBER_INPUT");
 
   try {
+    // Store references to handlers for cleanup
+    globalClickHandler = handleNumberInputClick;
+    globalResizeHandler = debounce(updateNumberInputResponsiveness, 250);
+
     // Add the global click handler for all number input buttons
-    document.addEventListener("click", handleNumberInputClick);
+    document.addEventListener("click", globalClickHandler);
 
     // Initial check of number input sizes
     updateNumberInputResponsiveness();
 
     // Listen for window resize events to update compact state
-    window.addEventListener(
-      "resize",
-      debounce(updateNumberInputResponsiveness, 250),
-    );
+    window.addEventListener("resize", globalResizeHandler);
 
     isInitialized = true;
 
@@ -240,6 +242,47 @@ const debounce = (func, wait) => {
     clearTimeout(timeout);
     timeout = setTimeout(() => func.apply(context, args), wait);
   };
+};
+
+// Global cleanup function for number inputs
+export const cleanupNumberInputsGlobal = () => {
+  if (!isInitialized) {
+    Logger.debug(
+      "Number inputs not initialized, nothing to cleanup",
+      {},
+      "NUMBER_INPUT",
+    );
+    return;
+  }
+
+  Logger.debug("Cleaning up global number input handlers", {}, "NUMBER_INPUT");
+
+  try {
+    // Remove global event listeners
+    if (globalClickHandler) {
+      document.removeEventListener("click", globalClickHandler);
+      globalClickHandler = null;
+    }
+
+    if (globalResizeHandler) {
+      window.removeEventListener("resize", globalResizeHandler);
+      globalResizeHandler = null;
+    }
+
+    isInitialized = false;
+
+    Logger.debug(
+      "Global number input handlers cleaned up successfully",
+      {},
+      "NUMBER_INPUT",
+    );
+  } catch (error) {
+    Logger.error(
+      "Failed to cleanup global number input handlers",
+      error,
+      "NUMBER_INPUT",
+    );
+  }
 };
 
 // Initialize number inputs when ready
