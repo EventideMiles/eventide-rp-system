@@ -12,6 +12,32 @@ import { Logger } from "../services/_module.mjs";
 const eventHandlers = new WeakMap();
 
 /**
+ * Safe logging function that works before Logger is initialized
+ * @param {string} level - Log level (debug, info, warn, error)
+ * @param {string} message - Message to log
+ * @param {*} data - Optional data to log
+ */
+function safeLog(level, message, data = null) {
+  try {
+    // Try to use Logger if available and settings are registered
+    if (typeof Logger !== "undefined" && game?.settings?.get) {
+      Logger[level](message, data || {}, "COLOR_PICKER");
+    } else {
+      // Fall back to console logging
+      const logMessage = `ERPS | COLOR_PICKER | ${message}`;
+      if (data) {
+        console[level](logMessage, data);
+      } else {
+        console[level](logMessage);
+      }
+    }
+  } catch {
+    // If all else fails, use basic console logging
+    console.info(`ERPS | COLOR_PICKER | ${message}`, data || "");
+  }
+}
+
+/**
  * Initialize color pickers with hex input fields
  *
  * This function finds all color picker containers matching the selector
@@ -26,33 +52,21 @@ export function initColorPickersWithHex(
 ) {
   // Use a slight delay to ensure the DOM is fully rendered
   setTimeout(() => {
-    Logger.debug(
-      "Initializing color pickers with hex input",
-      { selector },
-      "COLOR_PICKER",
-    );
+    safeLog("debug", "Initializing color pickers with hex input", { selector });
 
     try {
       const colorPickers = document.querySelectorAll(selector);
-      Logger.debug(
-        "Found color pickers",
-        { count: colorPickers.length },
-        "COLOR_PICKER",
-      );
+      safeLog("debug", "Found color pickers", { count: colorPickers.length });
 
       colorPickers.forEach((container, index) => {
         try {
           setupSingleColorPicker(container, index);
         } catch (error) {
-          Logger.warn(
-            `Failed to setup color picker ${index}`,
-            error,
-            "COLOR_PICKER",
-          );
+          safeLog("warn", `Failed to setup color picker ${index}`, error);
         }
       });
     } catch (error) {
-      Logger.error("Failed to initialize color pickers", error, "COLOR_PICKER");
+      safeLog("error", "Failed to initialize color pickers", error);
     }
   }, 100); // Short delay to ensure DOM is fully rendered
 }
@@ -64,17 +78,13 @@ export function initColorPickersWithHex(
  * present during the initial render. It's useful to call this after dynamic content updates.
  */
 export function enhanceExistingColorPickers() {
-  Logger.debug("Enhancing existing color pickers", {}, "COLOR_PICKER");
+  safeLog("debug", "Enhancing existing color pickers", {});
 
   try {
     // Find all color pickers and initialize them
     initColorPickersWithHex();
   } catch (error) {
-    Logger.error(
-      "Failed to enhance existing color pickers",
-      error,
-      "COLOR_PICKER",
-    );
+    safeLog("error", "Failed to enhance existing color pickers", error);
   }
 }
 
@@ -89,40 +99,62 @@ export function enhanceExistingColorPickers() {
  */
 export function cleanupColorPickers(element) {
   if (!element) {
-    Logger.debug("No element provided for cleanup", {}, "COLOR_PICKER");
+    safeLog("debug", "No element provided for cleanup", {});
     return;
   }
 
-  Logger.debug(
-    "Cleaning up color pickers",
-    { elementTag: element.tagName },
-    "COLOR_PICKER",
-  );
+  safeLog("debug", "Cleaning up color pickers", {
+    elementTag: element.tagName,
+  });
 
   try {
     // Find all color pickers within the element (both legacy and ERPS)
     const colorPickers = element.querySelectorAll(
       ".color-picker-with-hex, .erps-color-picker",
     );
-    Logger.debug(
-      "Found color pickers to clean up",
-      { count: colorPickers.length },
-      "COLOR_PICKER",
-    );
+    safeLog("debug", "Found color pickers to clean up", {
+      count: colorPickers.length,
+    });
 
     colorPickers.forEach((container, index) => {
       try {
         cleanupSingleColorPicker(container);
       } catch (error) {
-        Logger.warn(
-          `Failed to cleanup color picker ${index}`,
-          error,
-          "COLOR_PICKER",
-        );
+        safeLog("warn", `Failed to cleanup color picker ${index}`, error);
       }
     });
   } catch (error) {
-    Logger.error("Failed to cleanup color pickers", error, "COLOR_PICKER");
+    safeLog("error", "Failed to cleanup color pickers", error);
+  }
+}
+
+/**
+ * Clean up global color picker resources
+ * This should be called when the system is being disabled or reloaded
+ */
+export function cleanupGlobalColorPickers() {
+  safeLog("debug", "Cleaning up global color picker resources", {});
+
+  try {
+    // Clear the WeakMap to help with garbage collection
+    // Note: WeakMaps don't have a clear method, but removing references helps
+
+    // Find any orphaned color pickers in the document and clean them up
+    const orphanedColorPickers = document.querySelectorAll(
+      ".color-picker-with-hex, .erps-color-picker",
+    );
+
+    orphanedColorPickers.forEach((container) => {
+      try {
+        cleanupSingleColorPicker(container);
+      } catch (error) {
+        safeLog("warn", "Failed to cleanup orphaned color picker", error);
+      }
+    });
+
+    safeLog("debug", "Global color picker cleanup completed", {});
+  } catch (error) {
+    safeLog("error", "Failed to cleanup global color pickers", error);
   }
 }
 
@@ -158,17 +190,13 @@ function setupSingleColorPicker(container, _index) {
   }
 
   if (!colorInput || !hexInput || !preview) {
-    Logger.debug(
-      "Missing required elements for color picker",
-      {
-        colorInput: !!colorInput,
-        hexInput: !!hexInput,
-        preview: !!preview,
-        isERPSColorPicker,
-        containerClasses: container.className,
-      },
-      "COLOR_PICKER",
-    );
+    safeLog("debug", "Missing required elements for color picker", {
+      colorInput: !!colorInput,
+      hexInput: !!hexInput,
+      preview: !!preview,
+      isERPSColorPicker,
+      containerClasses: container.className,
+    });
     return;
   }
 
@@ -184,15 +212,11 @@ function setupSingleColorPicker(container, _index) {
   colorInput.dataset.initialized = "true";
   hexInput.dataset.initialized = "true";
 
-  Logger.debug(
-    "Setting up color picker",
-    {
-      isERPSColorPicker,
-      initialColor,
-      containerClasses: container.className,
-    },
-    "COLOR_PICKER",
-  );
+  safeLog("debug", "Setting up color picker", {
+    isERPSColorPicker,
+    initialColor,
+    containerClasses: container.className,
+  });
 
   /**
    * Update the preview element
@@ -206,7 +230,12 @@ function setupSingleColorPicker(container, _index) {
    * @param {Event} event - The input event
    */
   function handleColorInput(event) {
-    Logger.debug("Color input changed:", event.target.value, "COLOR_PICKER");
+    safeLog(
+      "debug",
+      "Color input changed:",
+      event.target.value,
+      "COLOR_PICKER",
+    );
     hexInput.value = event.target.value.toUpperCase();
     updatePreview();
   }
@@ -217,7 +246,7 @@ function setupSingleColorPicker(container, _index) {
    */
   function handleHexInput(event) {
     let value = event.target.value;
-    Logger.debug("Hex input changed:", value, "COLOR_PICKER");
+    safeLog("debug", "Hex input changed:", value, "COLOR_PICKER");
 
     // Add # if it's missing
     if (value.charAt(0) !== "#") {

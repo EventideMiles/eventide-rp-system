@@ -284,6 +284,21 @@ export const registerSettings = function () {
   });
 
   // Character Sheet Theme Options (Client preference)
+  /**
+   * Theme setting registration for character sheets and applications
+   * Handles theme changes through a robust hook system that ensures proper
+   * propagation across all applications and components.
+   *
+   * @type {ClientSetting}
+   * @property {string} name - Localized setting name
+   * @property {string} hint - Localized setting hint
+   * @property {string} scope - Setting scope (client)
+   * @property {boolean} config - Whether the setting is configurable
+   * @property {string} type - Setting type (String)
+   * @property {string} default - Default theme value
+   * @property {Object} choices - Available theme choices
+   * @property {Function} onChange - Theme change handler
+   */
   game.settings.register("eventide-rp-system", "sheetTheme", {
     name: "SETTINGS.SheetThemeName",
     hint: "SETTINGS.SheetThemeHint",
@@ -300,11 +315,10 @@ export const registerSettings = function () {
       light: "SETTINGS.SheetThemeLight",
     },
     onChange: async (value) => {
-      // Update user flag for immediate effect on all themed applications
-      await game.user.setFlag("eventide-rp-system", "sheetTheme", value);
+      try {
+        // Update user flag for immediate effect on all themed applications
+        await game.user.setFlag("eventide-rp-system", "sheetTheme", value);
 
-      // Use setTimeout to ensure the flag is set before triggering theme updates
-      setTimeout(() => {
         Logger.info("Theme setting changed - broadcasting theme update", {
           userName: game.user.name,
           newTheme: value,
@@ -329,9 +343,13 @@ export const registerSettings = function () {
           hookCalled: true,
           userNotified: true,
         });
-      }, 100); // Small delay to ensure flag is set
-
-      // No reload needed - immediate update via hook system
+      } catch (error) {
+        Logger.error("Failed to update theme", {
+          error: error.message,
+          stack: error.stack,
+        });
+        ui.notifications.error("Failed to update theme. Please try again.");
+      }
     },
   });
 

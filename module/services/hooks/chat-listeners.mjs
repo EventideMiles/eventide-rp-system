@@ -3,6 +3,7 @@
  * @module helpers/chat-listeners
  */
 
+import { Logger } from "../logger.mjs";
 import { MessageFlags } from "../../helpers/message-flags.mjs";
 import { gmControlManager } from "../managers/gm-control.mjs";
 
@@ -219,6 +220,46 @@ const _updateMessageApplyState = async (message, type, state) => {
  * @param {ChatMessage} message - The chat message document
  */
 const updateTargetValidity = async (html, message) => {
+  // Only validate if the message has GM apply sections in the HTML
+  const hasGMApplySections = html.querySelector(".chat-card__gm-apply-section");
+  if (!hasGMApplySections) {
+    return;
+  }
+
+  // Only validate if the message actually has GM apply flags
+  const flag = MessageFlags.getGMApplyFlag(message);
+  if (!flag) {
+    return;
+  }
+
+  // Only validate if there are pending applications
+  if (!MessageFlags.hasPendingApplications(message)) {
+    return;
+  }
+
+  // Throttle validation to prevent excessive calls during rapid renders
+  if (!updateTargetValidity._throttleMap) {
+    updateTargetValidity._throttleMap = new Map();
+  }
+
+  const messageId = message.id;
+  const now = Date.now();
+  const lastValidation = updateTargetValidity._throttleMap.get(messageId);
+
+  // Only validate once per 5 seconds per message
+  if (lastValidation && now - lastValidation < 5000) {
+    return;
+  }
+
+  updateTargetValidity._throttleMap.set(messageId, now);
+
+  // Clean up old throttle entries (older than 1 minute)
+  for (const [id, timestamp] of updateTargetValidity._throttleMap.entries()) {
+    if (now - timestamp > 60000) {
+      updateTargetValidity._throttleMap.delete(id);
+    }
+  }
+
   await MessageFlags.validateTargets(message);
 };
 
@@ -340,3 +381,28 @@ function setupItemDeletionHooks() {
     }
   });
 }
+
+/**
+ * Set up chat message hooks
+ */
+export const setupChatListeners = () => {
+  Logger.methodEntry("ChatListeners", "setupChatListeners");
+
+  setupChatMessageRendering();
+  setupItemUpdateHooks();
+  setupItemCreationHooks();
+  setupItemDeletionHooks();
+
+  Logger.methodExit("ChatListeners", "setupChatListeners", 0);
+};
+
+/**
+ * Clean up chat listener resources
+ */
+export const cleanupChatListeners = () => {
+  // Clear throttle map
+  if (updateTargetValidity._throttleMap) {
+    updateTargetValidity._throttleMap.clear();
+    delete updateTargetValidity._throttleMap;
+  }
+};

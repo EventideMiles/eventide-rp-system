@@ -47,7 +47,13 @@ import {
 import * as models from "./data/_module.mjs";
 
 // Import utility functions
-import { commonTasks, ErrorHandler } from "./utils/_module.mjs";
+import {
+  commonTasks,
+  ErrorHandler,
+  performSystemCleanup,
+  performPreInitCleanup,
+  initializeCleanupHooks,
+} from "./utils/_module.mjs";
 
 //import helper functions
 import {
@@ -90,6 +96,7 @@ globalThis.erps = {
     initRangeSliders,
     cleanupRangeSliders,
     ErrorHandler,
+    performSystemCleanup,
   },
   macros: {
     GearTransfer,
@@ -109,6 +116,48 @@ globalThis.erps = {
   models,
   Logger,
   gmControl: null, // Will be set after import
+
+  // Manual cleanup functions for debugging and emergency cleanup
+  cleanup: performSystemCleanup,
+  forceCleanup: () => {
+    console.warn(
+      "ERPS | Performing FORCE cleanup - this will clear ALL intervals and timeouts!",
+    );
+    performPreInitCleanup();
+    performSystemCleanup();
+    console.info("ERPS | Force cleanup completed");
+  },
+
+  // Diagnostic function to check system state
+  diagnostics: () => {
+    const trackedIntervals = window._erpsIntervalIds
+      ? window._erpsIntervalIds.size
+      : 0;
+    let memoryInfo = "Memory info not available";
+    // eslint-disable-next-line no-undef
+    if (typeof performance !== "undefined" && performance.memory) {
+      memoryInfo = {
+        // eslint-disable-next-line no-undef
+        used: `${Math.round(performance.memory.usedJSHeapSize / 1024 / 1024)} MB`,
+        // eslint-disable-next-line no-undef
+        total: `${Math.round(performance.memory.totalJSHeapSize / 1024 / 1024)} MB`,
+        // eslint-disable-next-line no-undef
+        limit: `${Math.round(performance.memory.jsHeapSizeLimit / 1024 / 1024)} MB`,
+      };
+    }
+
+    const diagnostics = {
+      trackedIntervals,
+      memoryInfo,
+      gmControlHooksInitialized: typeof autoCleanupInterval !== "undefined",
+      numberInputsInitialized: typeof isInitialized !== "undefined",
+      activeThemeInstances:
+        globalThis.erps?.utils?.getActiveThemeInstances?.() || "Unknown",
+    };
+
+    console.info("ERPS | System Diagnostics:", diagnostics);
+    return diagnostics;
+  },
 };
 
 /**
@@ -117,6 +166,14 @@ globalThis.erps = {
  */
 Hooks.once("init", async () => {
   console.info("ERPS | Initializing Eventide RP System");
+
+  // Perform aggressive cleanup before initialization to prevent memory leaks
+  console.info("ERPS | Performing pre-initialization cleanup");
+  try {
+    performPreInitCleanup();
+  } catch (error) {
+    console.warn("ERPS | Pre-initialization cleanup failed", error);
+  }
 
   // Add custom constants for configuration
   CONFIG.EVENTIDE_RP_SYSTEM = EVENTIDE_RP_SYSTEM;
@@ -132,6 +189,9 @@ Hooks.once("init", async () => {
   initChatListeners();
   // Initialize GM control hooks
   initGMControlHooks();
+
+  // Initialize system cleanup hooks
+  initializeCleanupHooks();
 
   // Set up GM control manager in global scope (async)
   try {
@@ -377,7 +437,7 @@ async function createDocMacro(data, slot) {
  * @returns {Promise<void>}
  */
 async function rollItemMacro(itemUuid) {
-  console.info(`Rolling item macro for ${itemUuid}`);
+  console.info(`ERPS | Rolling item macro for ${itemUuid}`);
   // Reconstruct the drop data so that we can load the item.
   const dropData = {
     type: "Item",
@@ -407,4 +467,37 @@ async function rollItemMacro(itemUuid) {
       }),
     );
   }
+}
+
+/* -------------------------------------------- */
+/*  System Cleanup                             */
+/* -------------------------------------------- */
+
+/**
+ * Clean up system resources when the world is being shut down
+ * This helps prevent memory leaks and ensures proper cleanup
+ */
+Hooks.on("paused", (paused) => {
+  // If the game is being paused (which can indicate shutdown), perform cleanup
+  if (paused && game.user.isGM) {
+    console.info("ERPS | Performing system cleanup on pause");
+    try {
+      performSystemCleanup();
+    } catch (error) {
+      console.error("ERPS | Failed to perform cleanup on pause", error);
+    }
+  }
+});
+
+// Also clean up on any system disable/reload events if available
+if (typeof Hooks.on === "function") {
+  // Listen for any potential system disable events
+  Hooks.on("closeApplication", (app) => {
+    // If this is a system-critical application closing, consider cleanup
+    if (app.constructor.name.includes("EventideRpSystem")) {
+      console.info(
+        "ERPS | System application closing, checking for cleanup needs",
+      );
+    }
+  });
 }

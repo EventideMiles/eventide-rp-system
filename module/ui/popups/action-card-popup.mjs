@@ -3,6 +3,7 @@ import {
   initThemeManager,
   THEME_PRESETS,
   cleanupThemeManager,
+  InventoryUtils,
 } from "../../helpers/_module.mjs";
 import { Logger } from "../../services/logger.mjs";
 
@@ -175,19 +176,35 @@ export class ActionCardPopup extends EventidePopupHelpers {
   }
 
   /**
-   * Checks if the action card is eligible for use based on targeting and embedded item.
-   * Uses the embedded item's own validation logic.
+   * Checks if the action card is eligible for use based on targeting, embedded item, and gear requirements.
+   * Uses comprehensive gear validation for action items.
    * @returns {Object} An object containing the eligibility status for each check.
    * @override
    */
   async checkEligibility() {
+    Logger.methodEntry("ActionCardPopup", "checkEligibility", {
+      actionCardName: this.item.name,
+      mode: this.item.system.mode,
+    });
+
     const problems = {
       targeting: false,
       embeddedItem: false,
       power: false,
       quantity: false,
       equipped: false,
+      gearValidation: [], // Array to store detailed gear validation errors
     };
+
+    // Get the actor that owns this action card
+    const actor = this.item.actor;
+    if (!actor) {
+      Logger.warn("No actor found for action card eligibility check", {
+        actionCardId: this.item.id,
+      });
+      problems.embeddedItem = true;
+      return problems;
+    }
 
     // Check if embedded item exists (not required for saved damage mode)
     const embeddedItem = this.item.getEmbeddedItem();
@@ -198,11 +215,52 @@ export class ActionCardPopup extends EventidePopupHelpers {
 
     // For saved damage mode, skip embedded item validation
     if (this.item.system.mode === "savedDamage") {
+      Logger.methodExit("ActionCardPopup", "checkEligibility", problems);
       return problems;
     }
 
+    // Perform comprehensive gear validation using InventoryUtils
+    try {
+      const gearValidation = InventoryUtils.validateActionCardGearRequirements(
+        actor,
+        this.item,
+      );
+
+      if (!gearValidation.isValid) {
+        Logger.debug("Gear validation failed for action card", {
+          actionCardName: this.item.name,
+          errors: gearValidation.errors,
+          gearChecks: gearValidation.gearChecks,
+        });
+
+        // Set general flags based on gear validation results
+        for (const gearCheck of gearValidation.gearChecks) {
+          if (!gearCheck.isValid) {
+            for (const error of gearCheck.errors) {
+              if (error.includes("not equipped")) {
+                problems.equipped = true;
+              }
+              if (error.includes("Insufficient quantity")) {
+                problems.quantity = true;
+              }
+            }
+          }
+        }
+
+        // Store detailed validation errors for callouts
+        problems.gearValidation = gearValidation.errors;
+      }
+    } catch (error) {
+      Logger.error("Error during gear validation", error);
+      problems.gearValidation = [`Gear validation error: ${error.message}`];
+    }
+
     // Use the embedded item's own eligibility checking if it has popup support
-    if (embeddedItem.hasPopupSupport && embeddedItem.hasPopupSupport()) {
+    if (
+      embeddedItem &&
+      embeddedItem.hasPopupSupport &&
+      embeddedItem.hasPopupSupport()
+    ) {
       try {
         // Create a temporary popup helper to get the embedded item's validation
         const tempPopupType =
@@ -224,13 +282,18 @@ export class ActionCardPopup extends EventidePopupHelpers {
             }
 
             if (embeddedItem.type === "gear") {
-              if (
-                embeddedItem.system.cost > (embeddedItem.system.quantity || 0)
-              ) {
-                itemProblems.quantity = true;
-              }
-              if (!embeddedItem.system.equipped) {
-                itemProblems.equipped = true;
+              // Use inventory validation for gear items instead of simple checks
+              const gearStatus = InventoryUtils.getGearStatus(
+                actor,
+                embeddedItem.name,
+              );
+              if (!gearStatus.canUse) {
+                if (!gearStatus.equipped) {
+                  itemProblems.equipped = true;
+                }
+                if (gearStatus.quantity < gearStatus.cost) {
+                  itemProblems.quantity = true;
+                }
               }
             }
 
@@ -249,8 +312,14 @@ export class ActionCardPopup extends EventidePopupHelpers {
 
         const embeddedProblems = await tempPopup.checkEligibility();
 
-        // Merge the embedded item's problems into our problems
-        Object.assign(problems, embeddedProblems);
+        // Merge the embedded item's problems into our problems (but don't override gear validation)
+        problems.targeting = problems.targeting || embeddedProblems.targeting;
+        problems.power = problems.power || embeddedProblems.power;
+        // Only use embedded item validation for gear if we don't have comprehensive validation
+        if (problems.gearValidation.length === 0) {
+          problems.quantity = problems.quantity || embeddedProblems.quantity;
+          problems.equipped = problems.equipped || embeddedProblems.equipped;
+        }
       } catch (error) {
         Logger.warn("Failed to check embedded item eligibility", error);
         // Fall back to basic checks
@@ -259,12 +328,22 @@ export class ActionCardPopup extends EventidePopupHelpers {
           if (targetArray.length === 0) problems.targeting = true;
         }
 
-        if (embeddedItem.type === "gear") {
-          if (embeddedItem.system.cost > (embeddedItem.system.quantity || 0)) {
-            problems.quantity = true;
-          }
-          if (!embeddedItem.system.equipped) {
-            problems.equipped = true;
+        if (
+          embeddedItem.type === "gear" &&
+          problems.gearValidation.length === 0
+        ) {
+          // Only use fallback gear checks if comprehensive validation wasn't performed
+          const gearStatus = InventoryUtils.getGearStatus(
+            actor,
+            embeddedItem.name,
+          );
+          if (!gearStatus.canUse) {
+            if (!gearStatus.equipped) {
+              problems.equipped = true;
+            }
+            if (gearStatus.quantity < gearStatus.cost) {
+              problems.quantity = true;
+            }
           }
         }
 
@@ -278,6 +357,15 @@ export class ActionCardPopup extends EventidePopupHelpers {
       }
     }
 
+    Logger.debug("Action card eligibility check complete", {
+      actionCardName: this.item.name,
+      problems,
+      hasGearValidationErrors: problems.gearValidation.length > 0,
+      embeddedItemName: embeddedItem?.name,
+      embeddedItemType: embeddedItem?.type,
+    });
+
+    Logger.methodExit("ActionCardPopup", "checkEligibility", problems);
     return problems;
   }
 
@@ -286,7 +374,9 @@ export class ActionCardPopup extends EventidePopupHelpers {
    * @override
    */
   async _prepareCallouts() {
-    const callouts = await super._prepareCallouts();
+    // Don't call super._prepareCallouts() to avoid duplicate validation messages
+    // Action cards have their own comprehensive validation system
+    const callouts = [];
 
     if (this.problems.embeddedItem) {
       callouts.push({
@@ -298,7 +388,51 @@ export class ActionCardPopup extends EventidePopupHelpers {
       });
     }
 
+    // Add detailed gear validation error callouts
+    if (
+      this.problems.gearValidation &&
+      this.problems.gearValidation.length > 0
+    ) {
+      for (const error of this.problems.gearValidation) {
+        callouts.push({
+          type: "warning",
+          faIcon: "fas fa-exclamation-triangle",
+          text: error,
+        });
+      }
+    }
+
     return callouts;
+  }
+
+  /**
+   * Check if there are any actual validation problems
+   * @param {Object} problems - The problems object from checkEligibility
+   * @returns {boolean} True if there are problems that should block execution
+   * @private
+   */
+  _hasValidationProblems(problems) {
+    return ActionCardPopup._hasValidationProblems(problems);
+  }
+
+  /**
+   * Static version of validation problems check for use in static methods
+   * @param {Object} problems - The problems object from checkEligibility
+   * @returns {boolean} True if there are problems that should block execution
+   * @private
+   * @static
+   */
+  static _hasValidationProblems(problems) {
+    if (!problems) return false;
+
+    return Object.entries(problems).some(([key, value]) => {
+      if (key === "gearValidation") {
+        // For gearValidation, check if the array has any items
+        return Array.isArray(value) && value.length > 0;
+      }
+      // For other problems, check truthiness
+      return value;
+    });
   }
 
   /**
@@ -308,10 +442,7 @@ export class ActionCardPopup extends EventidePopupHelpers {
   async _prepareFooterButtons() {
     const buttons = [];
 
-    if (
-      !this.problems ||
-      !Object.values(this.problems).some((value) => value)
-    ) {
+    if (!this._hasValidationProblems(this.problems)) {
       const mode = this.item.system.mode;
       let buttonLabel;
 
@@ -357,7 +488,8 @@ export class ActionCardPopup extends EventidePopupHelpers {
 
       // Check eligibility before execution
       const problems = await this.checkEligibility();
-      if (Object.values(problems).some((value) => value)) {
+
+      if (ActionCardPopup._hasValidationProblems(problems)) {
         return ui.notifications.error(
           game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.ActionCardError"),
         );
@@ -451,8 +583,15 @@ export class ActionCardPopup extends EventidePopupHelpers {
       let rollResult = null;
       if (embeddedItem && this.item.system.mode !== "savedDamage") {
         try {
-          // Call the embedded item's roll method with bypass parameter
-          await embeddedItem.roll({ bypass: true });
+          // Call the embedded item's roll method with bypass parameter and action card context
+          await embeddedItem.roll({
+            bypass: true,
+            actionCardContext: {
+              actionCard: this.item,
+              isFromActionCard: true,
+              executionMode: this.item.system.mode,
+            },
+          });
 
           // Wait for the roll result
           if (rollResultPromise) {

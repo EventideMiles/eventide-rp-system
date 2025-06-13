@@ -65,6 +65,18 @@ export const ItemPopupsMixin = (BaseClass) =>
           );
 
           // Check if the item has a custom bypass handler
+          Logger.debug(
+            "Checking for custom bypass handler",
+            {
+              itemType: this.type,
+              itemName: this.name,
+              hasHandleBypass: typeof this.handleBypass === "function",
+              handleBypassType: typeof this.handleBypass,
+              itemConstructorName: this.constructor.name,
+            },
+            "ITEM_POPUPS",
+          );
+
           if (typeof this.handleBypass === "function") {
             Logger.debug(
               `Using custom bypass handler for ${this.type} item "${this.name}"`,
@@ -502,6 +514,18 @@ export const ItemPopupsMixin = (BaseClass) =>
 
         case "gear":
           // Handle quantity cost and create combat power message (gear uses same message type)
+          Logger.debug(
+            "Using default gear bypass logic (handleBypass not found)",
+            {
+              itemName: this.name,
+              currentQuantity: this.system.quantity,
+              cost: this.system.cost,
+              actorName: this.actor?.name,
+              itemId: this.id,
+            },
+            "ITEM_POPUPS",
+          );
+
           await this.update({
             "system.quantity": Math.max(
               0,

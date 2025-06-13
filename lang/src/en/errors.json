@@ -8,6 +8,7 @@
       "EditAudio": "Failed to open file picker for audio",
       "EditFile": "Failed to open file picker for file",
       "GearError": "Cannot use Gear right now!",
+      "GearNotFoundInInventory": "Gear '{gearName}' not found in actor's inventory",
       "GMOnly": "Only GMs can use this script in this mode.",
       "ItemNotFound": "Item not found",
       "LocalStorage": "There was some sort of error storing values locally.",

@@ -620,8 +620,14 @@ class ThemeManagerInstance {
   }
 
   /**
-   * Handle theme change events
+   * Handle theme change events and ensure proper propagation
+   * This method is called when a theme change is detected and ensures that:
+   * 1. The new theme is immediately applied to the current application
+   * 2. The application is fully re-rendered to ensure all theme changes are visible
+   * 3. Appropriate notifications are shown if enabled
+   *
    * @param {string} newTheme - The new theme to apply
+   * @private
    */
   handleThemeChange(newTheme) {
     // Apply themes immediately
@@ -629,30 +635,30 @@ class ThemeManagerInstance {
 
     // Trigger application re-render if available
     if (this.application && typeof this.application.render === "function") {
-      setTimeout(() => {
-        try {
-          this.application.render(false);
-          Logger.debug(
-            "Application re-rendered for theme change",
-            {
-              appId: this.appId,
-              appType: this.appType,
-              newTheme,
-            },
-            "THEME_MANAGER",
-          );
-        } catch (error) {
-          Logger.warn(
-            "Failed to re-render application for theme change",
-            {
-              appId: this.appId,
-              appType: this.appType,
-              error: error.message,
-            },
-            "THEME_MANAGER",
-          );
-        }
-      }, 50);
+      try {
+        // Force a full re-render to ensure all theme changes are applied
+        this.application.render(true);
+
+        Logger.debug(
+          "Application re-rendered for theme change",
+          {
+            appId: this.appId,
+            appType: this.appType,
+            newTheme,
+          },
+          "THEME_MANAGER",
+        );
+      } catch (error) {
+        Logger.warn(
+          "Failed to re-render application for theme change",
+          {
+            appId: this.appId,
+            appType: this.appType,
+            error: error.message,
+          },
+          "THEME_MANAGER",
+        );
+      }
     }
 
     // Show notification if enabled
@@ -774,11 +780,68 @@ export const cleanupThemeManager = (applicationOrId) => {
   } else {
     Logger.debug(
       "No theme manager instance found for cleanup",
-      {
-        appId,
-      },
+      { appId },
       "THEME_MANAGER",
     );
+  }
+};
+
+/**
+ * Clean up all theme manager instances and global resources
+ * This should be called when the system is being disabled or reloaded
+ */
+export const cleanupGlobalThemeManager = () => {
+  // Safe logging function that works before Logger is initialized
+  function safeLog(level, message, data = null) {
+    try {
+      // Try to use Logger if available and settings are registered
+      if (typeof Logger !== "undefined" && game?.settings?.get) {
+        Logger[level](message, data || {}, "THEME_MANAGER");
+      } else {
+        // Fall back to console logging
+        const logMessage = `ERPS | THEME_MANAGER | ${message}`;
+        if (data) {
+          console[level](logMessage, data);
+        } else {
+          console[level](logMessage);
+        }
+      }
+    } catch {
+      // If all else fails, use basic console logging
+      console.info(`ERPS | THEME_MANAGER | ${message}`, data || "");
+    }
+  }
+
+  safeLog("info", "Cleaning up global theme manager resources");
+
+  try {
+    // Clean up all active instances
+    const instanceCount = activeInstances.size;
+    for (const [appId, instance] of activeInstances.entries()) {
+      try {
+        instance.cleanup();
+      } catch (error) {
+        safeLog(
+          "warn",
+          `Failed to cleanup theme manager instance ${appId}`,
+          error,
+        );
+      }
+    }
+
+    // Clear the active instances map
+    activeInstances.clear();
+
+    // Clear global listeners
+    globalListeners.clear();
+
+    safeLog(
+      "info",
+      `Global theme manager cleanup completed - cleaned up ${instanceCount} instances`,
+      { instanceCount },
+    );
+  } catch (error) {
+    safeLog("error", "Failed to cleanup global theme manager", error);
   }
 };
 

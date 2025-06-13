@@ -104,8 +104,8 @@ class GMControlManager {
         targetValid: true,
       });
 
-      // Force cleanup when individual damage is applied
-      await this._forceCleanup(message, "Applied damage - message cleaned up");
+      // Check if message should be cleaned up immediately
+      await this._checkAutoCleanup(message);
 
       ui.notifications.info(
         `Applied ${damageRoll.total} ${type} damage to ${target.name}`,
@@ -192,14 +192,18 @@ class GMControlManager {
             appliedCount++;
             Logger.debug(
               `Applied status effect: ${statusData.name}`,
-              { targetName: target.name, effectType: statusData.type },
+              {
+                targetName: target.name,
+                statusName: statusData.name,
+                statusType: statusData.type,
+              },
               "GM_CONTROL",
             );
           }
-        } catch (error) {
-          Logger.error(
+        } catch (statusError) {
+          Logger.warn(
             `Failed to apply status effect: ${statusData.name}`,
-            error,
+            statusError,
             "GM_CONTROL",
           );
         }
@@ -209,24 +213,26 @@ class GMControlManager {
       await MessageFlags.updateGMApplyFlag(message, "status", {
         applied: true,
         targetValid: true,
+        appliedCount,
       });
 
-      // Force cleanup when individual status is applied
-      await this._forceCleanup(
-        message,
-        "Applied status effects - message cleaned up",
-      );
+      // Check if message should be cleaned up immediately
+      await this._checkAutoCleanup(message);
 
-      ui.notifications.info(
-        `Applied ${appliedCount} status effect(s) to ${target.name}`,
-      );
+      if (appliedCount > 0) {
+        ui.notifications.info(
+          `Applied ${appliedCount} status effect(s) to ${target.name}`,
+        );
+      } else {
+        ui.notifications.warn("No status effects were successfully applied");
+      }
 
       Logger.info(
-        `Successfully applied status effects via GM control`,
+        `Applied status effects via GM control`,
         {
           targetName: target.name,
-          appliedCount,
           totalEffects: effects.length,
+          appliedCount,
         },
         "GM_CONTROL",
       );
@@ -246,7 +252,7 @@ class GMControlManager {
   }
 
   /**
-   * Discard/deny damage application from a GM apply message
+   * Discard damage from a GM apply message
    * @param {ChatMessage} message - The message containing the GM apply flag
    * @returns {Promise<boolean>} True if discard was successful
    */
@@ -256,22 +262,19 @@ class GMControlManager {
     });
 
     try {
-      // Mark as applied (discarded) in the message
+      // Mark damage as applied (discarded) in the message
       await MessageFlags.updateGMApplyFlag(message, "damage", {
         applied: true,
         discarded: true,
       });
 
-      // Force cleanup when damage is discarded
-      await this._forceCleanup(
-        message,
-        "Discarded damage - message cleaned up",
-      );
+      // Check if message should be cleaned up immediately
+      await this._checkAutoCleanup(message);
 
-      ui.notifications.info("Damage application discarded");
+      ui.notifications.info("Damage discarded");
 
       Logger.info(
-        "Damage application discarded by GM",
+        `Discarded damage via GM control`,
         { messageId: message.id },
         "GM_CONTROL",
       );
@@ -279,7 +282,11 @@ class GMControlManager {
       Logger.methodExit("GMControlManager", "discardDamage", true);
       return true;
     } catch (error) {
-      Logger.error("Failed to discard damage", error, "GM_CONTROL");
+      Logger.error(
+        "Failed to discard damage via GM control",
+        error,
+        "GM_CONTROL",
+      );
       ui.notifications.error("Failed to discard damage");
       Logger.methodExit("GMControlManager", "discardDamage", false);
       return false;
@@ -287,7 +294,7 @@ class GMControlManager {
   }
 
   /**
-   * Discard/deny status effect application from a GM apply message
+   * Discard status effects from a GM apply message
    * @param {ChatMessage} message - The message containing the GM apply flag
    * @returns {Promise<boolean>} True if discard was successful
    */
@@ -297,22 +304,19 @@ class GMControlManager {
     });
 
     try {
-      // Mark as applied (discarded) in the message
+      // Mark status as applied (discarded) in the message
       await MessageFlags.updateGMApplyFlag(message, "status", {
         applied: true,
         discarded: true,
       });
 
-      // Force cleanup when status is discarded
-      await this._forceCleanup(
-        message,
-        "Discarded status effects - message cleaned up",
-      );
+      // Check if message should be cleaned up immediately
+      await this._checkAutoCleanup(message);
 
-      ui.notifications.info("Status effect application discarded");
+      ui.notifications.info("Status effects discarded");
 
       Logger.info(
-        "Status effect application discarded by GM",
+        `Discarded status effects via GM control`,
         { messageId: message.id },
         "GM_CONTROL",
       );
@@ -320,7 +324,11 @@ class GMControlManager {
       Logger.methodExit("GMControlManager", "discardStatusEffects", true);
       return true;
     } catch (error) {
-      Logger.error("Failed to discard status effects", error, "GM_CONTROL");
+      Logger.error(
+        "Failed to discard status effects via GM control",
+        error,
+        "GM_CONTROL",
+      );
       ui.notifications.error("Failed to discard status effects");
       Logger.methodExit("GMControlManager", "discardStatusEffects", false);
       return false;
@@ -328,39 +336,37 @@ class GMControlManager {
   }
 
   /**
-   * Check if a user has permission to apply GM controls
-   * @param {User} user - The user to check
-   * @returns {boolean} True if user has GM permissions
-   */
-  hasGMPermission(user = game.user) {
-    return user.isGM;
-  }
-
-  /**
-   * Validate all pending GM apply messages and update target validity
+   * Validate all pending GM apply messages
    * @returns {Promise<number>} Number of messages updated
    */
   async validateAllPendingMessages() {
     Logger.methodEntry("GMControlManager", "validateAllPendingMessages");
 
     try {
-      let updatedCount = 0;
-
-      // Find all messages with GM apply flags
       const messages = game.messages.filter((message) => {
-        return MessageFlags.getGMApplyFlag(message) !== null;
+        return MessageFlags.hasPendingApplications(message);
       });
+
+      let updatedCount = 0;
 
       // Validate each message
       for (const message of messages) {
-        const wasUpdated = await MessageFlags.validateTargets(message);
-        if (wasUpdated) {
-          updatedCount++;
+        try {
+          const wasUpdated = await MessageFlags.validateTargets(message);
+          if (wasUpdated) {
+            updatedCount++;
+          }
+        } catch (error) {
+          Logger.warn(
+            `Failed to validate message ${message.id}`,
+            error,
+            "GM_CONTROL",
+          );
         }
       }
 
       Logger.info(
-        `Validated ${messages.length} GM apply messages, updated ${updatedCount}`,
+        `Validated ${messages.length} pending GM apply messages, updated ${updatedCount}`,
         { totalMessages: messages.length, updatedCount },
         "GM_CONTROL",
       );
@@ -401,22 +407,19 @@ class GMControlManager {
       const statusResolved = !flag.status || flag.status.applied;
 
       if (damageResolved && statusResolved) {
-        // Add a small delay to allow users to see the final state
-        setTimeout(async () => {
-          try {
-            await message.delete();
-            Logger.info(
-              "Auto-cleaned up resolved GM apply message",
-              { messageId: message.id },
-              "GM_CONTROL",
-            );
-          } catch (error) {
-            Logger.warn("Failed to auto-cleanup message", error, "GM_CONTROL");
-          }
-        }, 3000); // 3 second delay
-
-        Logger.methodExit("GMControlManager", "_checkAutoCleanup", true);
-        return true;
+        // Delete immediately - no need for artificial delays
+        try {
+          await message.delete();
+          Logger.info(
+            "Auto-cleaned up resolved GM apply message",
+            { messageId: message.id },
+            "GM_CONTROL",
+          );
+          Logger.methodExit("GMControlManager", "_checkAutoCleanup", true);
+          return true;
+        } catch (error) {
+          Logger.warn("Failed to auto-cleanup message", error, "GM_CONTROL");
+        }
       }
 
       Logger.methodExit("GMControlManager", "_checkAutoCleanup", false);
@@ -426,6 +429,15 @@ class GMControlManager {
       Logger.methodExit("GMControlManager", "_checkAutoCleanup", false);
       return false;
     }
+  }
+
+  /**
+   * Check if a user has permission to apply GM controls
+   * @param {User} user - The user to check
+   * @returns {boolean} True if user has GM permissions
+   */
+  hasGMPermission(user = game.user) {
+    return user.isGM;
   }
 
   /**
@@ -654,81 +666,10 @@ class GMControlManager {
   }
 
   /**
-   * Force cleanup of a message immediately, regardless of other pending effects
-   * @param {ChatMessage} message - The message to clean up
-   * @param {string} [reason="Message cleaned up"] - Reason for cleanup (for logging)
-   * @returns {Promise<boolean>} True if message was deleted
-   * @private
+   * Clean up all tracked timeouts (for system cleanup)
    */
-  async _forceCleanup(message, reason = "Message cleaned up") {
-    Logger.methodEntry("GMControlManager", "_forceCleanup", {
-      messageId: message.id,
-      reason,
-    });
-
-    try {
-      const messageId = message.id;
-
-      // Add a small delay to allow users to see the final state
-      setTimeout(async () => {
-        try {
-          // Check if the message still exists in the collection before attempting deletion
-          const currentMessage = game.messages.get(messageId);
-          if (!currentMessage) {
-            Logger.debug(
-              `Message ${messageId} already deleted, skipping force cleanup`,
-              { reason },
-              "GM_CONTROL",
-            );
-            return;
-          }
-
-          // Verify the message object is still valid
-          if (!currentMessage.id || currentMessage.id !== messageId) {
-            Logger.debug(
-              `Message ${messageId} is no longer valid, skipping force cleanup`,
-              { reason },
-              "GM_CONTROL",
-            );
-            return;
-          }
-
-          await currentMessage.delete();
-          Logger.info(
-            `Force cleanup completed: ${reason}`,
-            { messageId },
-            "GM_CONTROL",
-          );
-        } catch (error) {
-          // Check if the error is because the message doesn't exist
-          if (
-            error.message &&
-            error.message.includes(
-              "does not exist in the ChatMessages collection",
-            )
-          ) {
-            Logger.debug(
-              `Message ${messageId} was already deleted during force cleanup delay`,
-              { reason },
-              "GM_CONTROL",
-            );
-          } else {
-            Logger.warn(
-              `Failed to delete message during force cleanup`,
-              error,
-              "GM_CONTROL",
-            );
-          }
-        }
-      }, 1500); // 1.5 second delay
-
-      Logger.methodExit("GMControlManager", "_forceCleanup", true);
-      return true;
-    } catch (error) {
-      Logger.error("Failed to schedule force cleanup", error, "GM_CONTROL");
-      Logger.methodExit("GMControlManager", "_forceCleanup", false);
-      return false;
-    }
+  cleanup() {
+    Logger.debug("Cleaning up GM Control Manager", {}, "GM_CONTROL");
   }
 }
 

@@ -203,38 +203,204 @@ export class MessageFlags {
       return false;
     }
 
+    // Quick check - if no pending applications, no need to validate
+    if (!this.hasPendingApplications(message)) {
+      Logger.methodExit("MessageFlags", "validateTargets", false);
+      return false;
+    }
+
     let needsUpdate = false;
     const updates = {};
 
+    // Cache for actor existence checks to avoid multiple lookups
+    const actorExistsCache = new Map();
+
+    const checkActorExists = (actorId) => {
+      if (!actorExistsCache.has(actorId)) {
+        actorExistsCache.set(actorId, !!game.actors.get(actorId));
+      }
+      return actorExistsCache.get(actorId);
+    };
+
     // Check damage target validity
-    if (flag.damage && !flag.damage.applied) {
-      const targetExists = !!game.actors.get(flag.damage.targetId);
+    if (flag.damage && !flag.damage.applied && flag.damage.targetId) {
+      const targetExists = checkActorExists(flag.damage.targetId);
       if (flag.damage.targetValid !== targetExists) {
         updates.damage = { ...flag.damage, targetValid: targetExists };
         needsUpdate = true;
+        Logger.debug(
+          `Damage target validity changed`,
+          {
+            targetId: flag.damage.targetId,
+            wasValid: flag.damage.targetValid,
+            isValid: targetExists,
+          },
+          "MESSAGE_FLAGS",
+        );
       }
     }
 
     // Check status target validity
-    if (flag.status && !flag.status.applied) {
-      const targetExists = !!game.actors.get(flag.status.targetId);
+    if (flag.status && !flag.status.applied && flag.status.targetId) {
+      const targetExists = checkActorExists(flag.status.targetId);
       if (flag.status.targetValid !== targetExists) {
         updates.status = { ...flag.status, targetValid: targetExists };
         needsUpdate = true;
+        Logger.debug(
+          `Status target validity changed`,
+          {
+            targetId: flag.status.targetId,
+            wasValid: flag.status.targetValid,
+            isValid: targetExists,
+          },
+          "MESSAGE_FLAGS",
+        );
       }
     }
 
     if (needsUpdate) {
-      const flags = foundry.utils.deepClone(message.flags || {});
-      flags["eventide-rp-system"].gmApplySection = {
-        ...flags["eventide-rp-system"].gmApplySection,
-        ...updates,
-      };
-      await message.update({ flags });
+      try {
+        const flags = foundry.utils.deepClone(message.flags || {});
+        flags["eventide-rp-system"].gmApplySection = {
+          ...flags["eventide-rp-system"].gmApplySection,
+          ...updates,
+        };
+        await message.update({ flags });
+        Logger.debug(
+          `Updated message flags for target validity`,
+          { messageId: message.id, updates },
+          "MESSAGE_FLAGS",
+        );
+      } catch (error) {
+        Logger.warn(
+          `Failed to update message flags`,
+          { messageId: message.id, error },
+          "MESSAGE_FLAGS",
+        );
+        needsUpdate = false;
+      }
     }
 
     Logger.methodExit("MessageFlags", "validateTargets", needsUpdate);
     return needsUpdate;
+  }
+
+  /**
+   * Efficiently validate multiple messages with shared actor cache
+   * @param {ChatMessage[]} messages - Array of messages to validate
+   * @returns {Promise<number>} Number of messages that were updated
+   */
+  static async validateTargetsBulk(messages) {
+    Logger.methodEntry("MessageFlags", "validateTargetsBulk", {
+      messageCount: messages.length,
+    });
+
+    if (!messages || messages.length === 0) {
+      Logger.methodExit("MessageFlags", "validateTargetsBulk", 0);
+      return 0;
+    }
+
+    // Filter to only messages with pending applications
+    const pendingMessages = messages.filter((message) => {
+      const flag = this.getGMApplyFlag(message);
+      return flag && this.hasPendingApplications(message);
+    });
+
+    if (pendingMessages.length === 0) {
+      Logger.methodExit("MessageFlags", "validateTargetsBulk", 0);
+      return 0;
+    }
+
+    // Shared cache for all actor existence checks
+    const actorExistsCache = new Map();
+    const checkActorExists = (actorId) => {
+      if (!actorExistsCache.has(actorId)) {
+        actorExistsCache.set(actorId, !!game.actors.get(actorId));
+      }
+      return actorExistsCache.get(actorId);
+    };
+
+    let updatedCount = 0;
+    const updatePromises = [];
+
+    for (const message of pendingMessages) {
+      try {
+        const flag = this.getGMApplyFlag(message);
+        if (!flag) continue;
+
+        let needsUpdate = false;
+        const updates = {};
+
+        // Check damage target validity
+        if (flag.damage && !flag.damage.applied && flag.damage.targetId) {
+          const targetExists = checkActorExists(flag.damage.targetId);
+          if (flag.damage.targetValid !== targetExists) {
+            updates.damage = { ...flag.damage, targetValid: targetExists };
+            needsUpdate = true;
+          }
+        }
+
+        // Check status target validity
+        if (flag.status && !flag.status.applied && flag.status.targetId) {
+          const targetExists = checkActorExists(flag.status.targetId);
+          if (flag.status.targetValid !== targetExists) {
+            updates.status = { ...flag.status, targetValid: targetExists };
+            needsUpdate = true;
+          }
+        }
+
+        if (needsUpdate) {
+          const flags = foundry.utils.deepClone(message.flags || {});
+          flags["eventide-rp-system"].gmApplySection = {
+            ...flags["eventide-rp-system"].gmApplySection,
+            ...updates,
+          };
+
+          // Queue the update
+          updatePromises.push(
+            message
+              .update({ flags })
+              .then(() => {
+                updatedCount++;
+                return true;
+              })
+              .catch((error) => {
+                Logger.warn(
+                  `Failed to update message ${message.id}`,
+                  error,
+                  "MESSAGE_FLAGS",
+                );
+                return false;
+              }),
+          );
+        }
+      } catch (error) {
+        Logger.warn(
+          `Failed to process message ${message.id}`,
+          error,
+          "MESSAGE_FLAGS",
+        );
+      }
+    }
+
+    // Execute all updates in parallel
+    if (updatePromises.length > 0) {
+      await Promise.allSettled(updatePromises);
+    }
+
+    Logger.info(
+      `Bulk validated ${pendingMessages.length} messages, updated ${updatedCount}`,
+      {
+        totalMessages: messages.length,
+        pendingMessages: pendingMessages.length,
+        updatedCount,
+        cacheSize: actorExistsCache.size,
+      },
+      "MESSAGE_FLAGS",
+    );
+
+    Logger.methodExit("MessageFlags", "validateTargetsBulk", updatedCount);
+    return updatedCount;
   }
 
   /**

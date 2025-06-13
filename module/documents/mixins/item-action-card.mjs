@@ -287,6 +287,40 @@ export function ItemActionCardMixin(Base) {
           return tempItem;
         };
 
+        // Delegate handleBypass method from data model to item document if it exists
+        if (typeof tempItem.system.handleBypass === "function") {
+          tempItem.handleBypass = async (popupConfig, options) => {
+            Logger.debug(
+              "Delegating handleBypass to data model",
+              {
+                itemType: tempItem.type,
+                itemName: tempItem.name,
+                hasSystemHandleBypass:
+                  typeof tempItem.system.handleBypass === "function",
+              },
+              "ACTION_CARD",
+            );
+
+            // Call the data model method with the item document as context
+            // This ensures the method has access to this.actor, this.name, this.id, etc.
+            return await tempItem.system.handleBypass.call(
+              tempItem,
+              popupConfig,
+              options,
+            );
+          };
+
+          Logger.debug(
+            "Added handleBypass delegation to embedded item",
+            {
+              itemType: tempItem.type,
+              itemName: tempItem.name,
+              hasHandleBypass: typeof tempItem.handleBypass === "function",
+            },
+            "ACTION_CARD",
+          );
+        }
+
         Logger.debug(
           `Retrieved embedded item: ${tempItem.type} "${tempItem.name}"`,
           { itemId: tempItem.id },

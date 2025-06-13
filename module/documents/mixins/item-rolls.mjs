@@ -1,4 +1,5 @@
 import { Logger } from "../../services/logger.mjs";
+import { getSetting } from "../../services/_module.mjs";
 import { ErrorHandler } from "../../utils/error-handler.mjs";
 
 /**
@@ -399,27 +400,27 @@ export const ItemRollsMixin = (BaseClass) =>
      * @returns {boolean} Whether the item can roll
      */
     canRoll() {
-      Logger.methodEntry("ItemRollsMixin", "canRoll");
-
       const hasActor = !!this.actor;
       const hasRollData = !!this.system?.roll?.type;
       const isNotNoneType = this.system?.roll?.type !== "none";
 
       const canRoll = hasActor && hasRollData && isNotNoneType;
 
-      Logger.debug(
-        `Item roll validation`,
-        {
-          hasActor,
-          hasRollData,
-          isNotNoneType,
-          rollType: this.system?.roll?.type,
-          canRoll,
-        },
-        "ITEM_ROLLS",
-      );
+      // Only log in testing mode to reduce noise
+      if (getSetting("testingMode")) {
+        Logger.debug(
+          `Item roll validation`,
+          {
+            hasActor,
+            hasRollData,
+            isNotNoneType,
+            rollType: this.system?.roll?.type,
+            canRoll,
+          },
+          "ITEM_ROLLS",
+        );
+      }
 
-      Logger.methodExit("ItemRollsMixin", "canRoll", canRoll);
       return canRoll;
     }
 

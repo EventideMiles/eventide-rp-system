@@ -8,46 +8,80 @@
  */
 import { Logger } from "../services/_module.mjs";
 
-// Track initialization to prevent duplicate handlers
+// Track initialization state
 let isInitialized = false;
 
+// Store event handler references for cleanup
+let globalClickHandler = null;
+let globalResizeHandler = null;
+
 /**
- * Initialize number input functionality
+ * Safe logging function that works before Logger is initialized
+ * @param {string} level - Log level (debug, info, warn, error)
+ * @param {string} message - Message to log
+ * @param {*} data - Optional data to log
+ */
+function safeLog(level, message, data = null) {
+  try {
+    // Try to use Logger if available and settings are registered
+    if (typeof Logger !== "undefined" && game?.settings?.get) {
+      Logger[level](message, data || {}, "NUMBER_INPUT");
+    } else {
+      // Fall back to console logging
+      const logMessage = `ERPS | NUMBER_INPUT | ${message}`;
+      if (data) {
+        console[level](logMessage, data);
+      } else {
+        console[level](logMessage);
+      }
+    }
+  } catch {
+    // If all else fails, use basic console logging
+    console.info(`ERPS | NUMBER_INPUT | ${message}`, data || "");
+  }
+}
+
+/**
+ * Initialize number inputs with increment/decrement functionality
  *
- * Sets up event listeners for number input buttons and initializes responsive behavior.
- * This function is designed to be called only once, with subsequent calls
- * only updating the responsive behavior.
+ * This function sets up global event handlers for number input buttons
+ * and initializes responsive behavior. It only runs once to avoid
+ * duplicate event listeners.
  */
 export const initNumberInputs = () => {
-  // Prevent multiple initializations of event handlers
   if (isInitialized) {
-    // If already initialized, just update the responsive behavior
+    safeLog(
+      "debug",
+      "Number inputs already initialized, updating responsiveness only",
+    );
     updateNumberInputResponsiveness();
     return;
   }
 
-  isInitialized = true;
+  safeLog("debug", "Initializing number inputs for the first time");
+
+  // Clean up any existing handlers first (safety measure)
+  cleanupGlobalNumberInputs();
 
   try {
+    // Create the event handlers
+    globalClickHandler = handleNumberInputClick;
+    globalResizeHandler = debounce(updateNumberInputResponsiveness, 250);
+
     // Add the global click handler for all number input buttons
-    document.addEventListener("click", handleNumberInputClick);
+    document.addEventListener("click", globalClickHandler);
 
     // Initial check of number input sizes
     updateNumberInputResponsiveness();
 
     // Listen for window resize events to update compact state
-    window.addEventListener(
-      "resize",
-      debounce(updateNumberInputResponsiveness, 250),
-    );
+    window.addEventListener("resize", globalResizeHandler);
 
-    Logger.debug(
-      "Number inputs initialized with responsive behavior",
-      {},
-      "NUMBER_INPUT",
-    );
+    isInitialized = true;
+
+    safeLog("debug", "Number inputs initialized with responsive behavior");
   } catch (error) {
-    Logger.error("Failed to initialize number inputs", error, "NUMBER_INPUT");
+    safeLog("error", "Failed to initialize number inputs", error);
   }
 };
 
@@ -61,20 +95,14 @@ export const enhanceExistingNumberInputs = () => {
   try {
     // Initialize ERPS number inputs (they come pre-structured, just need event handling)
     const erpsNumberInputs = document.querySelectorAll(".erps-number-input");
-    Logger.debug(
-      "Found ERPS number inputs",
-      { count: erpsNumberInputs.length },
-      "NUMBER_INPUT",
-    );
+    safeLog("debug", "Found ERPS number inputs", {
+      count: erpsNumberInputs.length,
+    });
 
     // Update responsive behavior for all wrappers
     updateNumberInputResponsiveness();
   } catch (error) {
-    Logger.error(
-      "Failed to enhance existing number inputs",
-      error,
-      "NUMBER_INPUT",
-    );
+    safeLog("error", "Failed to enhance existing number inputs", error);
   }
 };
 
@@ -89,15 +117,13 @@ export const enhanceExistingNumberInputs = () => {
  */
 export const cleanupNumberInputs = (element) => {
   if (!element) {
-    Logger.debug("No element provided for cleanup", {}, "NUMBER_INPUT");
+    safeLog("debug", "No element provided for cleanup");
     return;
   }
 
-  Logger.debug(
-    "Cleaning up number inputs",
-    { elementTag: element.tagName },
-    "NUMBER_INPUT",
-  );
+  safeLog("debug", "Cleaning up number inputs", {
+    elementTag: element.tagName,
+  });
 
   try {
     // Remove any tab click listeners that might have been added for number inputs
@@ -106,7 +132,33 @@ export const cleanupNumberInputs = (element) => {
     // Clean up any number input wrappers
     cleanupNumberInputWrappers(element);
   } catch (error) {
-    Logger.error("Failed to cleanup number inputs", error, "NUMBER_INPUT");
+    safeLog("error", "Failed to cleanup number inputs", error);
+  }
+};
+
+/**
+ * Clean up global number input event listeners
+ * This should be called when the system is being disabled or reloaded
+ */
+export const cleanupGlobalNumberInputs = () => {
+  safeLog("debug", "Cleaning up global number input handlers");
+
+  try {
+    if (globalClickHandler) {
+      document.removeEventListener("click", globalClickHandler);
+      globalClickHandler = null;
+    }
+
+    if (globalResizeHandler) {
+      window.removeEventListener("resize", globalResizeHandler);
+      globalResizeHandler = null;
+    }
+
+    isInitialized = false;
+
+    safeLog("debug", "Global number input handlers cleaned up");
+  } catch (error) {
+    safeLog("error", "Failed to cleanup global number input handlers", error);
   }
 };
 
