@@ -2,25 +2,61 @@
 
 This guide is for developers who want to extend, modify, or contribute to the Eventide RP System. It covers the system architecture, development setup, and best practices for customization.
 
+## Table of Contents
+
+- [System Architecture](#system-architecture)
+- [Design Patterns](#design-patterns)
+- [Development Setup](#development-setup)
+- [Core Components](#core-components)
+- [Theme System Architecture](#theme-system-architecture)
+- [Error Handling Architecture](#error-handling-architecture)
+- [Migration Strategy](#migration-strategy)
+- [Development Guidelines](#development-guidelines)
+- [Testing and Quality Assurance](#testing-and-quality-assurance)
+- [Contributing Guidelines](#contributing-guidelines)
+- [Advanced Topics](#advanced-topics)
+- [Known Issues and Workarounds](#known-issues-and-workarounds)
+- [Resources and References](#resources-and-references)
+
 ## System Architecture
 
 ### Overview
 
-The Eventide RP System is built using modern Foundry VTT v13+ APIs and follows a modular architecture:
+The Eventide RP System is built using modern Foundry VTT v13+ APIs and follows a modular architecture with clear separation of concerns:
 
 ```
 eventide-rp-system/
 ├── module/                 # Core system logic
 │   ├── data/              # Data models and schemas
-│   ├── documents/         # Actor and Item document classes
-│   ├── helpers/           # Utility functions and helpers
-│   ├── services/          # System services (settings, hooks, etc.)
+│   │   ├── base-model.mjs      # Base data model class
+│   │   ├── base-actor.mjs      # Base actor functionality
+│   │   ├── base-item.mjs       # Base item functionality
+│   │   └── item-*.mjs          # Specific item type models
+│   ├── documents/         # Foundry document classes
+│   │   ├── actor.mjs          # Actor document class
+│   │   ├── item.mjs           # Item document class
+│   │   └── mixins/            # Reusable functionality mixins
+│   ├── helpers/           # UI helpers and utilities
+│   │   ├── theme/             # Modular theme management
+│   │   ├── color-pickers.mjs  # Color picker functionality
+│   │   ├── number-inputs.mjs  # Enhanced number inputs
+│   │   └── *.mjs              # Other UI helpers
+│   ├── services/          # Core system services
+│   │   ├── hooks/             # Foundry hook handlers
+│   │   ├── managers/          # System managers
+│   │   ├── settings/          # Settings management
+│   │   └── logger.mjs         # Centralized logging
 │   ├── ui/                # User interface components
-│   │   ├── sheets/        # Application V2 actor and item sheets
-│   │   ├── creators/      # Macro creator applications
-│   │   ├── popups/        # Dialog and popup applications
-│   │   └── components/    # Reusable UI components
-│   └── utils/             # General utilities and error handling
+│   │   ├── sheets/            # Application V2 actor and item sheets
+│   │   ├── creators/          # Macro creator applications
+│   │   ├── popups/            # Dialog and popup applications
+│   │   ├── components/        # Reusable UI components
+│   │   └── mixins/            # UI functionality mixins
+│   ├── utils/             # Utility functions
+│   │   ├── error-handler.mjs  # Error handling utilities
+│   │   ├── error-patterns.mjs # Standardized error patterns
+│   │   └── *.mjs              # Other utilities
+│   └── eventide-rp-system.mjs # Main system entry point
 ├── templates/             # Handlebars templates
 ├── css/                   # Compiled CSS (from SCSS)
 ├── src/scss/              # SCSS source files
@@ -29,6 +65,14 @@ eventide-rp-system/
 ├── packs/                 # Compendium data
 └── assets/                # Images, sounds, and other assets
 ```
+
+### Core Principles
+
+1. **Modular Design** - Functionality is organized into focused, reusable modules
+2. **Separation of Concerns** - Clear boundaries between data, UI, and business logic
+3. **Consistent Error Handling** - Standardized error patterns throughout the system
+4. **Theme Management** - Comprehensive theming system for customization
+5. **Performance** - Optimized for smooth gameplay experience
 
 ### Key Technologies
 
@@ -39,11 +83,11 @@ eventide-rp-system/
 - **DataModels**: Foundry's schema-based data system
 - **Mixin Pattern**: Compositional architecture for actors
 
-### Architecture Patterns
+## Design Patterns
 
-#### Mixin Composition
+### Mixin Pattern
 
-The system uses mixins to compose functionality, particularly for actors:
+The system extensively uses mixins to compose functionality, particularly for actors:
 
 ```javascript
 // module/documents/actor.mjs
@@ -60,10 +104,43 @@ export class EventideRpSystemActor extends ActorTransformationMixin(
 }
 ```
 
-This pattern allows for:
+**Benefits:**
 - **Separation of Concerns**: Each mixin handles specific functionality
 - **Reusability**: Mixins can be applied to different base classes
 - **Maintainability**: Changes to specific features are isolated
+- **Avoids deep inheritance hierarchies**
+- **Enables composition over inheritance**
+
+### Module Pattern
+
+Each major feature area is organized as a module with clear exports:
+
+```javascript
+// module/helpers/_module.mjs
+export * from "./color-pickers.mjs";
+export * from "./theme/_module.mjs";
+// ... other exports
+```
+
+**Benefits:**
+- Clear dependency management
+- Easy to import specific functionality
+- Supports tree-shaking for performance
+
+### Error Handling Pattern
+
+Standardized error handling using the ErrorHandler class and patterns:
+
+```javascript
+import { ErrorPatterns } from "../utils/error-patterns.mjs";
+
+// Consistent error handling
+const [result, error] = await ErrorPatterns.documentOperation(
+  actor.update(data),
+  "update actor",
+  "character"
+);
+```
 
 ## Development Setup
 
@@ -125,6 +202,173 @@ This pattern allows for:
   - `npm run release:linux`: build a zip release on a linux system in the releases folder
 
 ## Core Components
+
+### Data Management
+
+The system uses Foundry's DataModel system for type-safe data schemas:
+
+```javascript
+export class EventideRpSystemCharacter extends foundry.abstract.TypeDataModel {
+  static defineSchema() {
+    return {
+      abilities: new foundry.data.fields.SchemaField({
+        // ... ability definitions
+      }),
+      // ... other fields
+    };
+  }
+}
+```
+
+### Document Classes
+
+Custom document classes extend Foundry's base documents:
+
+```javascript
+export class EventideRpSystemActor extends Actor {
+  // System-specific actor functionality
+}
+```
+
+## Theme System Architecture
+
+The theme system has been refactored into a modular architecture to eliminate theme flashing and provide comprehensive theming capabilities:
+
+### Theme Modules
+
+- **theme-instance.mjs** - Instance management and lifecycle
+- **theme-applicator.mjs** - DOM manipulation and theme application
+- **theme-events.mjs** - Event handling and global listeners
+- **theme-presets.mjs** - Configuration presets for different sheet types
+
+### Multi-Layer Theme Application
+
+The system uses a three-layer approach to eliminate theme flashing:
+
+1. **CSS-Based Default Theme** - Immediate application via CSS rules
+2. **JavaScript Immediate Application** - Synchronous theme application when elements are available
+3. **Dynamic Style Injection** - Runtime style injection with smooth transitions
+
+### Usage
+
+```javascript
+import { initializeThemeManager } from "./helpers/theme/_module.mjs";
+
+// Initialize theme management for a sheet
+const themeManager = await initializeThemeManager(application, "CHARACTER_SHEET");
+```
+
+## Error Handling Architecture
+
+### Error Handler Class
+
+Centralized error handling with consistent patterns:
+
+```javascript
+import { ErrorHandler } from "./utils/error-handler.mjs";
+
+// Handle async operations
+const [result, error] = await ErrorHandler.handleAsync(
+  someAsyncOperation(),
+  {
+    context: "Operation Description",
+    userMessage: "User-friendly error message",
+    errorType: ErrorHandler.ERROR_TYPES.VALIDATION
+  }
+);
+```
+
+### Error Patterns
+
+Standardized patterns for common operations:
+
+```javascript
+import { ErrorPatterns, ValidationPatterns } from "./utils/error-patterns.mjs";
+
+// Document operations
+const [actor, error] = await ErrorPatterns.documentOperation(
+  Actor.create(data),
+  "create actor",
+  "character"
+);
+
+// Validation
+const validation = ValidationPatterns.validateRequired(data, ["name", "type"]);
+```
+
+## Migration Strategy
+
+### Current Approach
+
+The system currently does **not** include a migrations directory or migration system. This is an intentional architectural decision based on the following considerations:
+
+#### Why No Migrations Directory
+
+1. **Foundry's Built-in Migration** - Foundry VTT provides its own migration system through the `system.json` version field and `migrate()` methods on documents.
+
+2. **Data Model Evolution** - The system uses Foundry's DataModel system which handles schema evolution automatically in many cases.
+
+3. **Simplicity** - Avoiding custom migration complexity reduces maintenance burden and potential for data corruption.
+
+4. **Version Control** - System updates are handled through Foundry's package management system.
+
+#### Future Migration Strategy
+
+If migrations become necessary, the recommended approach would be:
+
+1. **Create migrations directory** when the first migration is needed
+2. **Use Foundry's migration hooks** (`migrateWorldData`, `migrateActorData`, etc.)
+3. **Version-based migrations** using semantic versioning
+4. **Rollback capabilities** for critical migrations
+
+```javascript
+// Future migration structure (when needed)
+module/
+└── migrations/
+    ├── _module.mjs           # Migration system exports
+    ├── migration-manager.mjs # Migration orchestration
+    └── versions/
+        ├── 1.0.0.mjs        # Version-specific migrations
+        └── 1.1.0.mjs
+```
+
+### Data Compatibility
+
+The system maintains backward compatibility through:
+
+- **Conservative schema changes** - Additive rather than breaking changes
+- **Default values** - Sensible defaults for new fields
+- **Graceful degradation** - System continues to function with older data
+
+## Development Guidelines
+
+### Code Organization
+
+1. **Single Responsibility** - Each module should have a clear, focused purpose
+2. **Consistent Naming** - Use descriptive names following established conventions
+3. **Documentation** - All public APIs should be documented with JSDoc
+4. **Error Handling** - Use standardized error patterns throughout
+
+### Performance Considerations
+
+1. **Lazy Loading** - Use dynamic imports for non-critical functionality
+2. **Event Delegation** - Minimize event listeners through delegation
+3. **DOM Optimization** - Batch DOM updates and avoid unnecessary manipulations
+4. **Memory Management** - Clean up resources in cleanup methods
+
+### Testing Strategy
+
+1. **Unit Tests** - Test individual functions and classes
+2. **Integration Tests** - Test module interactions
+3. **Manual Testing** - Comprehensive testing in Foundry environment
+4. **Performance Testing** - Monitor system performance impact
+
+### Contribution Guidelines
+
+1. **Follow existing patterns** - Maintain consistency with established code patterns
+2. **Add documentation** - Update this document for architectural changes
+3. **Error handling** - Use standardized error patterns
+4. **Testing** - Include appropriate tests for new functionality
 
 ### Data Models
 
