@@ -31,10 +31,11 @@ export function ItemActionCardExecutionMixin(Base) {
       });
 
       try {
+        let result;
         if (this.system.mode === "attackChain") {
-          return await this.executeAttackChain(actor);
+          result = await this.executeAttackChain(actor);
         } else if (this.system.mode === "savedDamage") {
-          return await this.executeSavedDamage(actor);
+          result = await this.executeSavedDamage(actor);
         } else {
           const error = new Error(
             `Unknown action card mode: ${this.system.mode}`,
@@ -42,6 +43,22 @@ export function ItemActionCardExecutionMixin(Base) {
           Logger.error("Unknown action card mode", error, "ACTION_CARD");
           throw error;
         }
+
+        // Advance initiative if setting is enabled
+        if (this.system.advanceInitiative) {
+          const combat = game.combat;
+          if (combat) {
+            await combat.nextTurn();
+            Logger.info(
+              "Advanced initiative to next turn after action card execution",
+              { actionCardName: this.name },
+              "ACTION_CARD",
+            );
+          }
+        }
+
+        Logger.methodExit("ItemActionCardExecutionMixin", "execute", result);
+        return result;
       } catch (error) {
         Logger.error("Failed to execute action card", error, "ACTION_CARD");
         Logger.methodExit("ItemActionCardExecutionMixin", "execute", null);
@@ -75,10 +92,14 @@ export function ItemActionCardExecutionMixin(Base) {
       );
 
       try {
+        let result;
         if (this.system.mode === "attackChain") {
-          return await this.executeAttackChainWithRollResult(actor, rollResult);
+          result = await this.executeAttackChainWithRollResult(
+            actor,
+            rollResult,
+          );
         } else if (this.system.mode === "savedDamage") {
-          return await this.executeSavedDamage(actor);
+          result = await this.executeSavedDamage(actor);
         } else {
           const error = new Error(
             `Unknown action card mode: ${this.system.mode}`,
@@ -86,6 +107,26 @@ export function ItemActionCardExecutionMixin(Base) {
           Logger.error("Unknown action card mode", error, "ACTION_CARD");
           throw error;
         }
+
+        // Advance initiative if setting is enabled
+        if (this.system.advanceInitiative) {
+          const combat = game.combat;
+          if (combat) {
+            await combat.nextTurn();
+            Logger.info(
+              "Advanced initiative to next turn after action card execution",
+              { actionCardName: this.name },
+              "ACTION_CARD",
+            );
+          }
+        }
+
+        Logger.methodExit(
+          "ItemActionCardExecutionMixin",
+          "executeWithRollResult",
+          result,
+        );
+        return result;
       } catch (error) {
         Logger.error(
           "Failed to execute action card with roll result",
@@ -353,8 +394,10 @@ export function ItemActionCardExecutionMixin(Base) {
           };
         });
 
-        // Add delay after roll calculation but before damage application
-        await this._waitForExecutionDelay();
+        // Add delay after roll calculation but before damage application (GM only)
+        if (game.user.isGM) {
+          await this._waitForExecutionDelay();
+        }
 
         // Handle damage and status effects with delays
         const damageResults = await this._processDamageResults(

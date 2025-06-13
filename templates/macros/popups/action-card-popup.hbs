@@ -5,8 +5,8 @@
     {{> popup-header}}
 
     {{!-- Action Card Mode Display --}}
-    <div class="erps-form__section">
-      <div class="erps-form__header erps-form__header--small">
+    <div class="erps-form__section erps-form__section--compact">
+      <div class="erps-form__header erps-form__header--small erps-form__header--no-margin">
         {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Mode"}}
       </div>
       <div class="erps-form__mode-display">
@@ -35,17 +35,46 @@
     {{/if}}
 
     {{!-- Embedded Item Section --}}
-    <div class="erps-form__section">
-      <div class="erps-form__header erps-form__header--small">
-        {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.EmbeddedItem"}}
-      </div>
+    {{#unless (eq mode "savedDamage")}}
+      <div class="erps-form__section">
+        <div class="erps-form__header erps-form__header--small erps-form__header--no-margin">
+          {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.EmbeddedItem"}}
+        </div>
 
-      <div class="erps-form__embedded-item">
-        <div class="erps-form__embedded-item-header">
-          <img src="{{embeddedItem.img}}" class="erps-form__embedded-item-icon" />
-          <div class="erps-form__embedded-item-info">
-            <h4>{{embeddedItem.name}}</h4>
-            <span class="erps-form__embedded-item-type">{{embeddedItem.type}}</span>
+        <div class="erps-form__group erps-form__group--grid erps-form__group--grid-2">
+          {{!-- Item Header with Image and Name --}}
+          <div class="erps-form__group erps-form__group--compact">
+            <div class="erps-form__embedded-item-header">
+              <img src="{{embeddedItem.img}}" class="erps-form__image" />
+              <div class="erps-form__embedded-item-info">
+                <h4>{{embeddedItem.name}}</h4>
+                <span class="erps-form__embedded-item-type">{{embeddedItem.type}}</span>
+              </div>
+            </div>
+          </div>
+
+          {{!-- Item Stats --}}
+          <div class="erps-form__group erps-form__group--compact">
+            <div class="erps-form__group erps-form__group--grid erps-form__group--grid-2 erps-form__group--compact">
+              {{#if embeddedItem.cost}}
+                <div class="erps-form__group erps-form__group--compact">
+                  <label class="erps-form__label">{{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Cost.label"}}</label>
+                  <div class="erps-form__description erps-form__description--data">{{embeddedItem.cost}}</div>
+                </div>
+              {{/if}}
+              {{#if embeddedItem.usageInfo}}
+                <div class="erps-form__group erps-form__group--compact">
+                  <label class="erps-form__label">{{localize "EVENTIDE_RP_SYSTEM.Item.Descriptors.UsageInfo.label"}}</label>
+                  <div class="erps-form__description erps-form__description--data">{{embeddedItem.usageInfo}}</div>
+                </div>
+              {{/if}}
+              {{#if embeddedItem.formula}}
+                <div class="erps-form__group erps-form__group--compact">
+                  <label class="erps-form__label">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Formula"}}</label>
+                  <div class="erps-form__description erps-form__description--data">{{embeddedItem.formula}}</div>
+                </div>
+              {{/if}}
+            </div>
           </div>
         </div>
 
@@ -54,84 +83,68 @@
             {{{embeddedItem.description}}}
           </div>
         {{/if}}
-
-        {{#if (or embeddedItem.cost embeddedItem.usageInfo embeddedItem.formula)}}
-          <div class="erps-form__embedded-item-stats">
-            {{#if embeddedItem.cost}}
-              <div class="erps-form__stat">
-                <span class="erps-form__stat-label">{{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.Cost.label"}}</span>
-                <span class="erps-form__stat-value">{{embeddedItem.cost}}</span>
-              </div>
-            {{/if}}
-            {{#if embeddedItem.usageInfo}}
-              <div class="erps-form__stat">
-                <span class="erps-form__stat-label">{{localize "EVENTIDE_RP_SYSTEM.Item.Descriptors.UsageInfo.label"}}</span>
-                <span class="erps-form__stat-value">{{embeddedItem.usageInfo}}</span>
-              </div>
-            {{/if}}
-            {{#if embeddedItem.formula}}
-              <div class="erps-form__stat">
-                <span class="erps-form__stat-label">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Formula"}}</span>
-                <span class="erps-form__stat-value">{{embeddedItem.formula}}</span>
-              </div>
-            {{/if}}
-          </div>
-        {{/if}}
       </div>
-    </div>
+    {{/unless}}
 
     {{!-- Mode-specific Configuration Display --}}
     {{#if (eq mode "attackChain")}}
-      <div class="erps-form__section">
-        <div class="erps-form__header erps-form__header--small">
+      <div class="erps-form__section erps-form__section--compact">
+        <div class="erps-form__header erps-form__header--small erps-form__header--no-margin">
           {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.ChainConfiguration"}}
         </div>
 
-        <div class="erps-form__chain-stats">
-          <div class="erps-form__stat">
-            <span class="erps-form__stat-label">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.FirstStat"}}</span>
-            <span class="erps-form__stat-value">{{attackChain.firstStat}}</span>
+        <div class="erps-form__group erps-form__group--grid erps-form__group--grid-2 erps-form__group--compact">
+          <div class="erps-form__group erps-form__group--compact">
+            <label class="erps-form__label">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.FirstStat"}}</label>
+            <div class="erps-form__description erps-form__description--data">{{attackChain.firstStat}}</div>
           </div>
-          <div class="erps-form__stat">
-            <span class="erps-form__stat-label">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.SecondStat"}}</span>
-            <span class="erps-form__stat-value">{{attackChain.secondStat}}</span>
+          <div class="erps-form__group erps-form__group--compact">
+            <label class="erps-form__label">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.SecondStat"}}</label>
+            <div class="erps-form__description erps-form__description--data">{{attackChain.secondStat}}</div>
           </div>
         </div>
 
         {{#if (ne attackChain.damageCondition "never")}}
-          <div class="erps-form__chain-effect">
-            <i class="fas fa-sword"></i>
-            <span>{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.DamageOn"}} {{attackChain.damageCondition}}</span>
-            {{#if attackChain.damageFormula}}
-              <span class="erps-form__formula">{{attackChain.damageFormula}}</span>
-            {{/if}}
+          <div class="erps-form__group erps-form__group--compact">
+            <label class="erps-form__label">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.DamageConfig"}}</label>
+            <div class="erps-form__description erps-form__description--data">
+              <i class="fas fa-sword"></i>
+              {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.DamageOn"}} {{attackChain.damageCondition}}
+              {{#if attackChain.damageFormula}}
+                <span class="erps-form__formula">{{attackChain.damageFormula}}</span>
+              {{/if}}
+            </div>
           </div>
         {{/if}}
 
         {{#if (ne attackChain.statusCondition "never")}}
-          <div class="erps-form__chain-effect">
-            <i class="fas fa-magic"></i>
-            <span>{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.StatusOn"}} {{attackChain.statusCondition}}</span>
-            {{#if (eq attackChain.statusCondition "rollValue")}}
-              <span class="erps-form__threshold">{{attackChain.statusThreshold}}</span>
-            {{/if}}
+          <div class="erps-form__group erps-form__group--compact">
+            <label class="erps-form__label">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.StatusConfig"}}</label>
+            <div class="erps-form__description erps-form__description--data">
+              <i class="fas fa-magic"></i>
+              {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.StatusOn"}} {{attackChain.statusCondition}}
+              {{#if (eq attackChain.statusCondition "rollValue")}}
+                <span class="erps-form__threshold">{{attackChain.statusThreshold}}</span>
+              {{/if}}
+            </div>
           </div>
         {{/if}}
       </div>
     {{else if (eq mode "savedDamage")}}
-      <div class="erps-form__section">
-        <div class="erps-form__header erps-form__header--small">
+      <div class="erps-form__section erps-form__section--compact">
+        <div class="erps-form__header erps-form__header--small erps-form__header--no-margin">
           {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.SavedDamageConfiguration"}}
         </div>
 
-        <div class="erps-form__stat">
-          <span class="erps-form__stat-label">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Formula"}}</span>
-          <span class="erps-form__stat-value">{{savedDamage.formula}}</span>
-        </div>
-
-        <div class="erps-form__stat">
-          <span class="erps-form__stat-label">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.DamageType"}}</span>
-          <span class="erps-form__stat-value">{{savedDamage.type}}</span>
+        <div class="erps-form__group erps-form__group--grid erps-form__group--grid-2 erps-form__group--compact">
+          <div class="erps-form__group erps-form__group--compact">
+            <label class="erps-form__label">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Formula"}}</label>
+            <div class="erps-form__description erps-form__description--data">{{savedDamage.formula}}</div>
+          </div>
+          <div class="erps-form__group erps-form__group--compact">
+            <label class="erps-form__label">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.DamageType"}}</label>
+            <div class="erps-form__description erps-form__description--data">{{savedDamage.type}}</div>
+          </div>
         </div>
       </div>
     {{/if}}

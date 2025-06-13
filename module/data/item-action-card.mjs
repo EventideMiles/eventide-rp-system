@@ -119,6 +119,14 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
       }),
     });
 
+    /**
+     * Whether to advance initiative after execution
+     */
+    schema.advanceInitiative = new fields.BooleanField({
+      required: true,
+      initial: false,
+    });
+
     return schema;
   }
 }

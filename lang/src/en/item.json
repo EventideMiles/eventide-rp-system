@@ -139,7 +139,12 @@
         "GearAddedToAction": "Gear added to action slot",
         "GearAddedToEffects": "Gear added to effects",
         "RollValue": "Roll Value",
-        "StatusThreshold": "Threshold Value"
+        "StatusThreshold": "Threshold Value",
+        "AdvanceInitiative": {
+          "label": "Advance Initiative",
+          "hint": "When enabled, advances initiative after execution. Can only be used on your turn."
+        },
+        "AdvanceInitiativeTurnError": "You can only use this action card on your turn when 'Advance Initiative' is enabled."
       }
     }
   }

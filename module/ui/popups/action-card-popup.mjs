@@ -357,6 +357,20 @@ export class ActionCardPopup extends EventidePopupHelpers {
       }
     }
 
+    // Turn validation for advanceInitiative
+    if (this.item.system.advanceInitiative) {
+      const combat = game.combat;
+      if (combat) {
+        const currentCombatant = combat.combatant;
+        if (!currentCombatant || currentCombatant.actorId !== actor.id) {
+          problems.turn = true;
+          problems.turnMessage = game.i18n.localize(
+            "EVENTIDE_RP_SYSTEM.Item.ActionCard.AdvanceInitiativeTurnError",
+          );
+        }
+      }
+    }
+
     Logger.debug("Action card eligibility check complete", {
       actionCardName: this.item.name,
       problems,
@@ -384,6 +398,30 @@ export class ActionCardPopup extends EventidePopupHelpers {
         faIcon: "fas fa-exclamation-circle",
         text: game.i18n.localize(
           "EVENTIDE_RP_SYSTEM.Forms.Callouts.ActionCard.NoEmbeddedItem",
+        ),
+      });
+    }
+
+    // Add targeting validation callout
+    if (this.problems.targeting) {
+      callouts.push({
+        type: "error",
+        faIcon: "fas fa-exclamation-circle",
+        text:
+          this.problems.targetingMessage ||
+          game.i18n.localize(
+            "EVENTIDE_RP_SYSTEM.Forms.Callouts.ActionCard.TargetingError",
+          ),
+      });
+    }
+
+    // Add turn validation callout
+    if (this.problems.turn) {
+      callouts.push({
+        type: "error",
+        faIcon: "fas fa-exclamation-circle",
+        text: game.i18n.localize(
+          "EVENTIDE_RP_SYSTEM.Item.ActionCard.AdvanceInitiativeTurnError",
         ),
       });
     }

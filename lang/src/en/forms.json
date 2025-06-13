@@ -121,7 +121,8 @@
           "WithTargets": "There are <strong>{count} target(s)</strong> selected. This will create a transformation for each target and your compendium."
         },
         "ActionCard": {
-          "NoEmbeddedItem": "This action card has no embedded item configured. Please add an item to the action slot before executing."
+          "NoEmbeddedItem": "This action card has no embedded item configured. Please add an item to the action slot before executing.",
+          "TargetingError": "You do not have the correct targets selected for this action card."
         }
       },
       "Placeholders": {

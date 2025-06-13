@@ -104,6 +104,12 @@ class GMControlManager {
         targetValid: true,
       });
 
+      // Wait for execution delay before allowing status effects
+      const delay =
+        game.settings.get("eventide-rp-system", "actionCardExecutionDelay") ||
+        2000;
+      await new Promise((resolve) => setTimeout(resolve, delay));
+
       // Check if message should be cleaned up immediately
       await this._checkAutoCleanup(message);
 
