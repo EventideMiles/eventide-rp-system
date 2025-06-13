@@ -550,21 +550,34 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
       "activeTransformation",
     );
     if (activeTransformationId) {
-      console.info("Active transformation ID:", activeTransformationId);
+      Logger.debug(
+        "Active transformation ID",
+        { activeTransformationId },
+        "ACTOR_SHEET",
+      );
 
       // Find the transformation item
       const transformation = this.actor.items.get(activeTransformationId);
-      console.info("Transformation item:", transformation);
+      Logger.debug(
+        "Transformation item",
+        { transformationName: transformation?.name },
+        "ACTOR_SHEET",
+      );
 
       // Check if the transformation element exists in the DOM
       const transformationElement = this.element.querySelector(
         ".transformation-header__name",
       );
-      console.info("Transformation element:", transformationElement);
+      Logger.debug(
+        "Transformation element",
+        { elementExists: !!transformationElement },
+        "ACTOR_SHEET",
+      );
       if (transformationElement) {
-        console.info(
-          "Transformation element text:",
-          transformationElement.textContent.trim(),
+        Logger.debug(
+          "Transformation element text",
+          { text: transformationElement.textContent.trim() },
+          "ACTOR_SHEET",
         );
       }
     }

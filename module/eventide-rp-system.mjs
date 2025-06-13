@@ -62,9 +62,12 @@ import {
   enhanceExistingColorPickers,
   initNumberInputs,
   cleanupNumberInputs,
+  cleanupNumberInputsGlobal,
   initRangeSliders,
   cleanupRangeSliders,
   initializeGlobalTheme,
+  injectImmediateThemeStyles,
+  removeImmediateThemeStyles,
 } from "./helpers/_module.mjs";
 
 const { Actors, Items } = foundry.documents.collections;
@@ -92,6 +95,7 @@ globalThis.erps = {
     enhanceExistingColorPickers,
     initNumberInputs,
     cleanupNumberInputs,
+    cleanupNumberInputsGlobal,
     cleanupColorPickers,
     initRangeSliders,
     cleanupRangeSliders,
@@ -120,12 +124,14 @@ globalThis.erps = {
   // Manual cleanup functions for debugging and emergency cleanup
   cleanup: performSystemCleanup,
   forceCleanup: () => {
-    console.warn(
-      "ERPS | Performing FORCE cleanup - this will clear ALL intervals and timeouts!",
+    Logger.warn(
+      "Performing FORCE cleanup - this will clear ALL intervals and timeouts!",
+      null,
+      "SYSTEM_INIT",
     );
     performPreInitCleanup();
     performSystemCleanup();
-    console.info("ERPS | Force cleanup completed");
+    Logger.info("Force cleanup completed", null, "SYSTEM_INIT");
   },
 
   // Diagnostic function to check system state
@@ -155,7 +161,7 @@ globalThis.erps = {
         globalThis.erps?.utils?.getActiveThemeInstances?.() || "Unknown",
     };
 
-    console.info("ERPS | System Diagnostics:", diagnostics);
+    Logger.info("System Diagnostics", diagnostics, "SYSTEM_DIAGNOSTICS");
     return diagnostics;
   },
 };
@@ -165,20 +171,22 @@ globalThis.erps = {
  * Sets up system configuration, registers document classes, initializes hooks and listeners
  */
 Hooks.once("init", async () => {
-  console.info("ERPS | Initializing Eventide RP System");
+  // Register system settings FIRST - before any Logger calls
+  // This ensures testingMode setting is available for Logger
+  registerSettings();
+
+  Logger.info("Initializing Eventide RP System", null, "SYSTEM_INIT");
 
   // Perform aggressive cleanup before initialization to prevent memory leaks
-  console.info("ERPS | Performing pre-initialization cleanup");
+  Logger.info("Performing pre-initialization cleanup", null, "SYSTEM_INIT");
   try {
     performPreInitCleanup();
   } catch (error) {
-    console.warn("ERPS | Pre-initialization cleanup failed", error);
+    Logger.warn("Pre-initialization cleanup failed", error, "SYSTEM_INIT");
   }
 
   // Add custom constants for configuration
   CONFIG.EVENTIDE_RP_SYSTEM = EVENTIDE_RP_SYSTEM;
-  // Register system settings
-  registerSettings();
   // Preload Handlebars templates
   await preloadHandlebarsTemplates();
   // Initialize handlebars partials
@@ -200,7 +208,7 @@ Hooks.once("init", async () => {
     );
     globalThis.erps.gmControl = gmControlManager;
   } catch (error) {
-    console.error("ERPS | Failed to load GM control manager", error);
+    Logger.error("Failed to load GM control manager", error, "SYSTEM_INIT");
   }
   /**
    * Configure initiative settings
@@ -217,9 +225,10 @@ Hooks.once("init", async () => {
         decimals: game.settings.get("eventide-rp-system", "initiativeDecimals"),
       };
     } catch (error) {
-      console.warn(
-        "ERPS | Could not get initiative settings, using defaults",
+      Logger.warn(
+        "Could not get initiative settings, using defaults",
         error,
+        "SYSTEM_INIT",
       );
     }
   }
@@ -255,7 +264,11 @@ Hooks.once("init", async () => {
     makeDefault: true,
     label: "EVENTIDE_RP_SYSTEM.SheetLabels.Item",
   });
-  console.info("ERPS | Eventide RP System Initialization Complete");
+  Logger.info(
+    "Eventide RP System Initialization Complete",
+    null,
+    "SYSTEM_INIT",
+  );
 });
 
 /* -------------------------------------------- */
@@ -330,7 +343,7 @@ Handlebars.registerHelper("abs", (value) => {
  * @param {*} str - The value to log to console
  */
 Handlebars.registerHelper("console", (str) => {
-  console.info(str);
+  Logger.debug("Handlebars log helper", { message: str }, "HANDLEBARS");
 });
 
 /**
@@ -338,13 +351,13 @@ Handlebars.registerHelper("console", (str) => {
  * @param {*} [optionalValue] - Optional value to also log
  */
 Handlebars.registerHelper("debug", function (optionalValue) {
-  console.info("Current Context");
-  console.info("====================");
-  console.info(this);
+  Logger.debug("Handlebars debug helper - Current Context", this, "HANDLEBARS");
   if (optionalValue) {
-    console.info("Value");
-    console.info("====================");
-    console.info(optionalValue);
+    Logger.debug(
+      "Handlebars debug helper - Value",
+      optionalValue,
+      "HANDLEBARS",
+    );
   }
 });
 
@@ -379,12 +392,45 @@ Handlebars.registerHelper("hasCursedItems", (items) => {
 });
 
 /* -------------------------------------------- */
+/*  Setup Hook                                  */
+/* -------------------------------------------- */
+
+/**
+ * Setup hook - called after init but before ready
+ * This is the optimal time to inject immediate theme styles
+ */
+Hooks.once("setup", () => {
+  // Inject immediate theme styles to prevent flashing
+  // This happens after game.user is available but before sheets render
+  try {
+    injectImmediateThemeStyles();
+    Logger.info(
+      "Immediate theme styles injected during setup",
+      null,
+      "SYSTEM_INIT",
+    );
+  } catch (error) {
+    Logger.warn(
+      "Failed to inject immediate theme styles during setup",
+      error,
+      "SYSTEM_INIT",
+    );
+  }
+});
+
+/* -------------------------------------------- */
 /*  Ready Hook                                  */
 /* -------------------------------------------- */
 
 Hooks.once("ready", () => {
   // Initialize global theme for scrollbars and other global UI elements
   initializeGlobalTheme();
+
+  // Remove immediate theme styles now that the full theme system is loaded
+  // Add a small delay to ensure all initial sheets have been themed
+  setTimeout(() => {
+    removeImmediateThemeStyles();
+  }, 500);
 
   // Wait to register hotbar drop hook on ready so that modules could register earlier if they want to
   Hooks.on("hotbarDrop", (bar, data, slot) => createDocMacro(data, slot));
@@ -437,7 +483,7 @@ async function createDocMacro(data, slot) {
  * @returns {Promise<void>}
  */
 async function rollItemMacro(itemUuid) {
-  console.info(`ERPS | Rolling item macro for ${itemUuid}`);
+  Logger.info("Rolling item macro", { itemUuid }, "MACRO");
   // Reconstruct the drop data so that we can load the item.
   const dropData = {
     type: "Item",
@@ -460,7 +506,7 @@ async function rollItemMacro(itemUuid) {
     // Trigger the item roll
     item.roll();
   } catch (error) {
-    console.error("ERPS | Failed to load item for macro", error);
+    Logger.error("Failed to load item for macro", error, "MACRO");
     ui.notifications.error(
       game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.MacroExecutionError", {
         item: itemUuid,
@@ -480,11 +526,15 @@ async function rollItemMacro(itemUuid) {
 Hooks.on("paused", (paused) => {
   // If the game is being paused (which can indicate shutdown), perform cleanup
   if (paused && game.user.isGM) {
-    console.info("ERPS | Performing system cleanup on pause");
+    Logger.info("Performing system cleanup on pause", null, "SYSTEM_CLEANUP");
     try {
       performSystemCleanup();
     } catch (error) {
-      console.error("ERPS | Failed to perform cleanup on pause", error);
+      Logger.error(
+        "Failed to perform cleanup on pause",
+        error,
+        "SYSTEM_CLEANUP",
+      );
     }
   }
 });
@@ -495,8 +545,10 @@ if (typeof Hooks.on === "function") {
   Hooks.on("closeApplication", (app) => {
     // If this is a system-critical application closing, consider cleanup
     if (app.constructor.name.includes("EventideRpSystem")) {
-      console.info(
-        "ERPS | System application closing, checking for cleanup needs",
+      Logger.info(
+        "System application closing, checking for cleanup needs",
+        { appName: app.constructor.name },
+        "SYSTEM_CLEANUP",
       );
     }
   });

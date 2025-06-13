@@ -4,6 +4,7 @@
  * @module services/managers/sound-manager
  */
 import { getSetting } from "../settings/_module.mjs";
+import { Logger } from "../logger.mjs";
 
 /**
  * Sound Manager for Eventide RP System
@@ -80,8 +81,10 @@ export class ERPSSoundManager {
     const soundData = flags["eventide-rp-system"]?.sound;
 
     if (soundData && soundData.key) {
-      console.info(
-        `Eventide RP System | Playing sound from chat message: ${soundData.key}`,
+      Logger.info(
+        "Playing sound from chat message",
+        { soundKey: soundData.key },
+        "SOUND_MANAGER",
       );
       // Play the sound locally without broadcasting to avoid loops
       this._playLocalSound(soundData.key, {
@@ -134,7 +137,11 @@ export class ERPSSoundManager {
       this.sounds[key] = soundPath;
     } catch {
       // If setting doesn't exist yet, use default
-      console.info(`Sound setting ${settingKey} not found, using default`);
+      Logger.info(
+        "Sound setting not found, using default",
+        { settingKey },
+        "SOUND_MANAGER",
+      );
       this.sounds[key] = defaultPath;
     }
   }
@@ -184,8 +191,10 @@ export class ERPSSoundManager {
     // Get the sound path
     const soundPath = this.sounds[soundKey];
     if (!soundPath) {
-      console.info(
-        `Eventide RP System | Sound key "${soundKey}" not found or not yet implemented`,
+      Logger.info(
+        "Sound key not found or not yet implemented",
+        { soundKey },
+        "SOUND_MANAGER",
       );
       return;
     }

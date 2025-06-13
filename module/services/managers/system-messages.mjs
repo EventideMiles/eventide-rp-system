@@ -1,5 +1,6 @@
 import { ERPSRollUtilities } from "../../utils/_module.mjs";
 import { erpsSoundManager } from "./sound-manager.mjs";
+import { Logger } from "../logger.mjs";
 
 const { renderTemplate } = foundry.applications.handlebars;
 
@@ -249,7 +250,11 @@ class ERPSMessageHandler {
         { soundKey: "featureRoll" },
       );
     } catch (error) {
-      console.error("Error creating feature roll message:", error);
+      Logger.error(
+        "Error creating feature roll message",
+        error,
+        "SYSTEM_MESSAGES",
+      );
 
       // Fallback to non-roll message
       const effects = item.effects.toObject();
@@ -458,7 +463,11 @@ class ERPSMessageHandler {
         { soundKey: "combatPower" },
       );
     } catch (error) {
-      console.error("Error creating combat power roll:", error);
+      Logger.error(
+        "Error creating combat power roll",
+        error,
+        "SYSTEM_MESSAGES",
+      );
 
       // Create a non-roll message as fallback
       const data = {
@@ -622,7 +631,6 @@ class ERPSMessageHandler {
    * @returns {Promise<ChatMessage>} The created chat message
    */
   async createTransformationMessage({ actor, transformation, isApplying }) {
-    // console.info("createTransformationMessage", { actor, transformation, isApplying });
     const data = {
       actor,
       transformation,

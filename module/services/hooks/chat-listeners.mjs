@@ -112,7 +112,7 @@ const addGMApplyButtonFunctionality = (html, message) => {
           await handleDiscardAllActionCardEffects(button, message);
         }
       } catch (error) {
-        console.error("Error handling GM apply action:", error);
+        Logger.error("Error handling GM apply action", error, "CHAT_LISTENERS");
         ui.notifications.error("Failed to apply action card effect");
       }
     });

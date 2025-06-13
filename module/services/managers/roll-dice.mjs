@@ -5,7 +5,7 @@
  */
 import { getSetting } from "../_module.mjs";
 import { ERPSRollUtilities } from "../../utils/_module.mjs";
-import { erpsSoundManager } from "../_module.mjs";
+import { erpsSoundManager, Logger } from "../_module.mjs";
 
 const { renderTemplate } = foundry.applications.handlebars;
 
@@ -492,7 +492,11 @@ class ERPSRollHandler {
     try {
       return getSetting("hideNpcInitiativeRolls");
     } catch (error) {
-      console.warn("Error getting hideNpcInitiativeRolls setting:", error);
+      Logger.warn(
+        "Error getting hideNpcInitiativeRolls setting",
+        error,
+        "ROLL_DICE",
+      );
       return false;
     }
   }
