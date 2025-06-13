@@ -113,7 +113,11 @@ const addGMApplyButtonFunctionality = (html, message) => {
         }
       } catch (error) {
         Logger.error("Error handling GM apply action", error, "CHAT_LISTENERS");
-        ui.notifications.error("Failed to apply action card effect");
+        ui.notifications.error(
+          game.i18n.localize(
+            "EVENTIDE_RP_SYSTEM.Errors.ActionCardEffectFailed",
+          ),
+        );
       }
     });
   });

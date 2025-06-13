@@ -13,7 +13,7 @@
         data-action="toggleEffectDisplay"
       />
       <div class="erps-toggles__container">
-        <span class="erps-toggles__label" title="When enabled, this effect will be displayed on tokens">
+        <span class="erps-toggles__label" title="{{localize 'EVENTIDE_RP_SYSTEM.UI.TokenDisplayTooltip'}}">
           Icon Displayed On Token
         </span>
         <span class="erps-toggles__track">
@@ -50,7 +50,7 @@
                   data-action="newCharacterEffect"
                   data-type="abilities"
                   data-ability="acro"
-                  title="Add new effect"
+                  title="{{localize 'EVENTIDE_RP_SYSTEM.UI.AddNewEffect'}}"
                 >
                   <i class="fas fa-plus"></i> Add Effect
                 </button>
@@ -129,7 +129,7 @@
                       data-action="deleteCharacterEffect"
                       data-index="{{@index}}"
                       data-type="regularEffects"
-                      title="Remove effect"
+                      title="{{localize 'EVENTIDE_RP_SYSTEM.UI.RemoveEffect'}}"
                     >
                       <i class="fas fa-trash"></i>
                     </button>
@@ -171,9 +171,9 @@
                     data-action="newCharacterEffect"
                     data-type="hiddenAbilities"
                     data-ability="dice"
-                    title="Add new hidden effect"
+                    title="{{localize 'EVENTIDE_RP_SYSTEM.UI.AddNewHiddenEffect'}}"
                   >
-                    <i class="fas fa-plus"></i> Add Effect
+                    <i class="fas fa-plus"></i> {{localize "EVENTIDE_RP_SYSTEM.UI.AddEffect"}}
                   </button>
                 {{/if}}
               </th>
@@ -244,7 +244,7 @@
                         data-action="deleteCharacterEffect"
                         data-index="{{@index}}"
                         data-type="hiddenEffects"
-                        title="Remove hidden effect"
+                        title="{{localize 'EVENTIDE_RP_SYSTEM.UI.RemoveEffect'}}"
                       >
                         <i class="fas fa-trash"></i>
                       </button>
@@ -338,7 +338,7 @@
 
                 <td class="erps-data-table__cell erps-data-table__cell--controls">
                   <div class="erps-data-table__controls">
-                    <i class="fas fa-eye-slash" title="Hidden effect (only visible to GM)" style="opacity: 0.7;"></i>
+                    <i class="fas fa-eye-slash" title="{{localize 'EVENTIDE_RP_SYSTEM.UI.HiddenEffect'}}" style="opacity: 0.7;"></i>
                   </div>
                 </td>
               </tr>

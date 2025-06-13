@@ -135,7 +135,11 @@ export class ActionCardPopup extends EventidePopupHelpers {
         actionCardId: this.item.id,
         mode: this.item.system.mode,
       });
-      ui.notifications.warn("Action card has no embedded item configured");
+      ui.notifications.warn(
+        game.i18n.localize(
+          "EVENTIDE_RP_SYSTEM.Errors.ActionCardNoEmbeddedItem",
+        ),
+      );
       this.close();
       return context;
     }
@@ -539,7 +543,9 @@ export class ActionCardPopup extends EventidePopupHelpers {
         Logger.warn("No actor found for action card", {
           actionCardId: this.item.id,
         });
-        ui.notifications.warn("Action card has no associated actor");
+        ui.notifications.warn(
+          game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.ActionCardNoActor"),
+        );
         return;
       }
 
@@ -548,7 +554,11 @@ export class ActionCardPopup extends EventidePopupHelpers {
         executionContext: true,
       });
       if (!embeddedItem && this.item.system.mode !== "savedDamage") {
-        ui.notifications.warn("Action card has no embedded item configured");
+        ui.notifications.warn(
+          game.i18n.localize(
+            "EVENTIDE_RP_SYSTEM.Errors.ActionCardNoEmbeddedItem",
+          ),
+        );
         return;
       }
 
@@ -677,7 +687,9 @@ export class ActionCardPopup extends EventidePopupHelpers {
               "Attack chain executed - GM apply effects created",
             );
           } else {
-            ui.notifications.info("Attack chain executed successfully");
+            ui.notifications.info(
+              game.i18n.localize("EVENTIDE_RP_SYSTEM.Info.AttackChainExecuted"),
+            );
           }
           Logger.info("Action card attack chain executed from popup", {
             itemId: this.item.id,
@@ -716,7 +728,9 @@ export class ActionCardPopup extends EventidePopupHelpers {
       Logger.methodExit("ActionCardPopup", "#onSubmit");
     } catch (error) {
       Logger.error("Failed to execute action card from popup", error);
-      ui.notifications.error("Failed to execute action card");
+      ui.notifications.error(
+        game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.ActionCardExecuteFailed"),
+      );
       Logger.methodExit("ActionCardPopup", "#onSubmit");
     }
   }

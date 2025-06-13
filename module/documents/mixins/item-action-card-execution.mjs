@@ -258,7 +258,11 @@ export function ItemActionCardExecutionMixin(Base) {
         const targetArray = await erps.utils.getTargetArray();
         if (targetArray.length === 0) {
           Logger.warn("No targets found for attack chain", null, "ACTION_CARD");
-          ui.notifications.warn("No targets selected for attack chain");
+          ui.notifications.warn(
+            game.i18n.localize(
+              "EVENTIDE_RP_SYSTEM.Errors.NoTargetsAttackChain",
+            ),
+          );
           return { success: false, reason: "noTargets" };
         }
 
@@ -340,7 +344,11 @@ export function ItemActionCardExecutionMixin(Base) {
         const targetArray = await erps.utils.getTargetArray();
         if (targetArray.length === 0) {
           Logger.warn("No targets found for attack chain", null, "ACTION_CARD");
-          ui.notifications.warn("No targets selected for attack chain");
+          ui.notifications.warn(
+            game.i18n.localize(
+              "EVENTIDE_RP_SYSTEM.Errors.NoTargetsAttackChain",
+            ),
+          );
           return { success: false, reason: "noTargets" };
         }
 
@@ -468,7 +476,11 @@ export function ItemActionCardExecutionMixin(Base) {
         const targetArray = await erps.utils.getTargetArray();
         if (targetArray.length === 0) {
           Logger.warn("No targets found for saved damage", null, "ACTION_CARD");
-          ui.notifications.warn("No targets selected for saved damage");
+          ui.notifications.warn(
+            game.i18n.localize(
+              "EVENTIDE_RP_SYSTEM.Errors.NoTargetsSavedDamage",
+            ),
+          );
           return { success: false, reason: "noTargets" };
         }
 

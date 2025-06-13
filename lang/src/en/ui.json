@@ -23,7 +23,66 @@
     "UI": {
       "Edit": "Edit",
       "Remove": "Remove",
-      "View": "View"
+      "View": "View",
+      "AddEffect": "Add Effect",
+      "AddNewEffect": "Add New Effect",
+      "AddNewHiddenEffect": "Add New Hidden Effect",
+      "RemoveEffect": "Remove Effect",
+      "EffectImage": "Effect Image",
+      "HiddenEffect": "Hidden Effect",
+      "TokenDisplayTooltip": "Controls whether this effect is displayed on the token",
+      "AvailableDice": "Available dice for rolling",
+      "FailMinimum": "Minimum value for failure",
+      "FailMaximum": "Maximum value for failure",
+      "CriticalMinimum": "Minimum value for critical success",
+      "CriticalMaximum": "Maximum value for critical success",
+      "TotalStatPoints": "Total stat points allocated",
+      "ReadOnly": "Read Only",
+      "ViewReadOnly": "View (Read Only)"
+    },
+    "Actor": {
+      "Sections": {
+        "Effects": "Effects"
+      },
+      "CombatPowers": {
+        "TransformationPower": "Transformation Power"
+      },
+      "Attributes": {
+        "Ability": {
+          "Locked": "Locked",
+          "Unlocked": "Unlocked"
+        }
+      }
+    },
+    "Forms": {
+      "Buttons": {
+        "Cancel": "Cancel",
+        "Confirm": "Confirm"
+      }
+    },
+    "Item": {
+      "ActionCard": {
+        "Apply": "Apply",
+        "Discard": "Discard"
+      },
+      "Inventory": {
+        "Equip": {
+          "label": "Equip"
+        }
+      },
+      "CombatPower": "Combat Power",
+      "Gear": "Gear",
+      "base": "Base Item",
+      "Transformation": {
+        "TokenImage": "Token Image",
+        "TokenImageHint": "Image to use for the token when this transformation is applied"
+      }
+    },
+    "Messages": {
+      "PartialTransfer": "Partial Transfer"
+    },
+    "Notifications": {
+      "ThemeChanged": "Theme changed successfully"
     }
   }
 }

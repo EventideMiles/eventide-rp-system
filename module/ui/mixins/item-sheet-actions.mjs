@@ -425,7 +425,11 @@ export const ItemSheetActionsMixin = (BaseClass) =>
         Logger.methodExit("ItemSheetActionsMixin", "_clearEmbeddedItem");
       } catch (error) {
         Logger.error("Failed to clear embedded item", error, "ITEM_ACTIONS");
-        ui.notifications.error("Failed to clear embedded item");
+        ui.notifications.error(
+          game.i18n.localize(
+            "EVENTIDE_RP_SYSTEM.Errors.ClearEmbeddedItemFailed",
+          ),
+        );
         Logger.methodExit("ItemSheetActionsMixin", "_clearEmbeddedItem");
       }
     }
@@ -495,7 +499,11 @@ export const ItemSheetActionsMixin = (BaseClass) =>
         Logger.methodExit("ItemSheetActionsMixin", "_editEmbeddedItem");
       } catch (error) {
         Logger.error("Failed to edit embedded item", error, "ITEM_ACTIONS");
-        ui.notifications.error("Failed to edit embedded item");
+        ui.notifications.error(
+          game.i18n.localize(
+            "EVENTIDE_RP_SYSTEM.Errors.EditEmbeddedItemFailed",
+          ),
+        );
         Logger.methodExit("ItemSheetActionsMixin", "_editEmbeddedItem");
       }
     }
@@ -583,7 +591,11 @@ export const ItemSheetActionsMixin = (BaseClass) =>
         Logger.methodExit("ItemSheetActionsMixin", "_editEmbeddedEffect");
       } catch (error) {
         Logger.error("Failed to edit embedded effect", error, "ITEM_ACTIONS");
-        ui.notifications.error("Failed to edit embedded effect");
+        ui.notifications.error(
+          game.i18n.localize(
+            "EVENTIDE_RP_SYSTEM.Errors.EditEmbeddedEffectFailed",
+          ),
+        );
         Logger.methodExit("ItemSheetActionsMixin", "_editEmbeddedEffect");
       }
     }
@@ -657,7 +669,11 @@ export const ItemSheetActionsMixin = (BaseClass) =>
         Logger.methodExit("ItemSheetActionsMixin", "_removeEmbeddedEffect");
       } catch (error) {
         Logger.error("Failed to remove embedded effect", error, "ITEM_ACTIONS");
-        ui.notifications.error("Failed to remove embedded effect");
+        ui.notifications.error(
+          game.i18n.localize(
+            "EVENTIDE_RP_SYSTEM.Errors.RemoveEmbeddedEffectFailed",
+          ),
+        );
         Logger.methodExit("ItemSheetActionsMixin", "_removeEmbeddedEffect");
       }
     }

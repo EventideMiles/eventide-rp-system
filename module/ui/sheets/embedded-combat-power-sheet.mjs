@@ -354,7 +354,11 @@ export class EmbeddedCombatPowerSheet extends BaselineSheetMixins(
         "system.embeddedCombatPowers": powers,
       });
 
-      ui.notifications.info("Combat Power description saved.");
+      ui.notifications.info(
+        game.i18n.localize(
+          "EVENTIDE_RP_SYSTEM.Info.CombatPowerDescriptionSaved",
+        ),
+      );
     } catch (error) {
       Logger.error(
         "EmbeddedCombatPowerSheet | Failed to save description",

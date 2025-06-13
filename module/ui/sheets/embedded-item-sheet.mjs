@@ -429,7 +429,11 @@ export class EmbeddedItemSheet extends BaselineSheetMixins(
               { error, statusEffects, effectData },
               "EMBEDDED_ITEM_SHEET",
             );
-            ui.notifications.error("Failed to save effect image.");
+            ui.notifications.error(
+              game.i18n.localize(
+                "EVENTIDE_RP_SYSTEM.Errors.SaveEffectImageFailed",
+              ),
+            );
           }
         } else {
           // Update the embedded item in the action card
@@ -449,7 +453,11 @@ export class EmbeddedItemSheet extends BaselineSheetMixins(
               { error, itemData },
               "EMBEDDED_ITEM_SHEET",
             );
-            ui.notifications.error("Failed to save item image.");
+            ui.notifications.error(
+              game.i18n.localize(
+                "EVENTIDE_RP_SYSTEM.Errors.SaveItemImageFailed",
+              ),
+            );
           }
         }
       },
@@ -546,7 +554,9 @@ export class EmbeddedItemSheet extends BaselineSheetMixins(
           "system.embeddedStatusEffects": statusEffects,
         });
 
-        ui.notifications.info("Effect description saved.");
+        ui.notifications.info(
+          game.i18n.localize("EVENTIDE_RP_SYSTEM.Info.EffectDescriptionSaved"),
+        );
       } catch (error) {
         Logger.error(
           "EmbeddedItemSheet | Failed to save effect description",
@@ -571,14 +581,18 @@ export class EmbeddedItemSheet extends BaselineSheetMixins(
           "system.embeddedItem": itemData,
         });
 
-        ui.notifications.info("Item description saved.");
+        ui.notifications.info(
+          game.i18n.localize("EVENTIDE_RP_SYSTEM.Info.ItemDescriptionSaved"),
+        );
       } catch (error) {
         Logger.error(
           "EmbeddedItemSheet | Failed to save description",
           { error, itemData },
           "EMBEDDED_ITEM_SHEET",
         );
-        ui.notifications.error("Failed to save item. See console for details.");
+        ui.notifications.error(
+          game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.SaveItemFailed"),
+        );
       }
     }
   }
@@ -634,7 +648,11 @@ export class EmbeddedItemSheet extends BaselineSheetMixins(
                 { error, statusEffects, effectData },
                 "EMBEDDED_ITEM_SHEET",
               );
-              ui.notifications.error("Failed to save effect icon tint.");
+              ui.notifications.error(
+                game.i18n.localize(
+                  "EVENTIDE_RP_SYSTEM.Errors.SaveEffectIconTintFailed",
+                ),
+              );
             }
           }
         } else {
@@ -663,7 +681,11 @@ export class EmbeddedItemSheet extends BaselineSheetMixins(
               { error, itemData },
               "EMBEDDED_ITEM_SHEET",
             );
-            ui.notifications.error("Failed to save item icon tint.");
+            ui.notifications.error(
+              game.i18n.localize(
+                "EVENTIDE_RP_SYSTEM.Errors.SaveItemIconTintFailed",
+              ),
+            );
           }
         }
       }
@@ -718,7 +740,7 @@ export class EmbeddedItemSheet extends BaselineSheetMixins(
           "EMBEDDED_ITEM_SHEET",
         );
         ui.notifications.error(
-          "Failed to save effect. See console for details.",
+          game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.SaveItemFailed"),
         );
         Logger.methodExit("EmbeddedItemSheet", "_onSubmitForm", { error });
         return;
@@ -744,7 +766,9 @@ export class EmbeddedItemSheet extends BaselineSheetMixins(
           { error, itemData, formData },
           "EMBEDDED_ITEM_SHEET",
         );
-        ui.notifications.error("Failed to save item. See console for details.");
+        ui.notifications.error(
+          game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.SaveItemFailed"),
+        );
         Logger.methodExit("EmbeddedItemSheet", "_onSubmitForm", { error });
         return;
       }
@@ -960,7 +984,11 @@ export class EmbeddedItemSheet extends BaselineSheetMixins(
           { error, statusEffects, statusData },
           "EMBEDDED_ITEM_SHEET",
         );
-        ui.notifications.error("Failed to toggle effect display.");
+        ui.notifications.error(
+          game.i18n.localize(
+            "EVENTIDE_RP_SYSTEM.Errors.ToggleEffectDisplayFailed",
+          ),
+        );
       }
     } else {
       const itemData = foundry.utils.deepClone(
@@ -1064,7 +1092,11 @@ export class EmbeddedItemSheet extends BaselineSheetMixins(
           { error, itemData },
           "EMBEDDED_ITEM_SHEET",
         );
-        ui.notifications.error("Failed to toggle effect display.");
+        ui.notifications.error(
+          game.i18n.localize(
+            "EVENTIDE_RP_SYSTEM.Errors.ToggleEffectDisplayFailed",
+          ),
+        );
       }
     }
 
@@ -1267,7 +1299,11 @@ export class EmbeddedItemSheet extends BaselineSheetMixins(
           { error, statusEffects, statusData },
           "EMBEDDED_ITEM_SHEET",
         );
-        ui.notifications.error("Failed to save effect character effects.");
+        ui.notifications.error(
+          game.i18n.localize(
+            "EVENTIDE_RP_SYSTEM.Errors.SaveEffectCharacterEffectsFailed",
+          ),
+        );
       }
     } else {
       const itemData = foundry.utils.deepClone(
@@ -1305,7 +1341,11 @@ export class EmbeddedItemSheet extends BaselineSheetMixins(
           { error, itemData },
           "EMBEDDED_ITEM_SHEET",
         );
-        ui.notifications.error("Failed to save item character effects.");
+        ui.notifications.error(
+          game.i18n.localize(
+            "EVENTIDE_RP_SYSTEM.Errors.SaveItemCharacterEffectsFailed",
+          ),
+        );
       }
     }
   }

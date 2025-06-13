@@ -539,7 +539,11 @@ export const ItemSheetDragDropMixin = (BaseClass) =>
         return false;
       } catch (error) {
         Logger.error("Failed to show gear category dialog", error, "DRAG_DROP");
-        ui.notifications.error("Failed to show gear category dialog");
+        ui.notifications.error(
+          game.i18n.localize(
+            "EVENTIDE_RP_SYSTEM.Errors.ShowGearCategoryDialogFailed",
+          ),
+        );
         return false;
       }
     }

@@ -190,7 +190,11 @@ export function initGMControlHooks() {
                   // Refresh the chat to update the status
                   ui.chat.render();
                 } else {
-                  ui.notifications.info("No resolved messages to clean up");
+                  ui.notifications.info(
+                    game.i18n.localize(
+                      "EVENTIDE_RP_SYSTEM.Info.NoResolvedMessages",
+                    ),
+                  );
                 }
               });
             }

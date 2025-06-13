@@ -2,6 +2,7 @@
   "EVENTIDE_RP_SYSTEM": {
     "Item": {
       "ActionCard": {
+        "PopupTitle": "Action Card",
         "EmbeddedItem": "Embedded Item",
         "DropItemHere": "Drop an item here to embed it",
         "SupportedTypes": "Supports: Combat Powers, Gear, Features",
@@ -11,6 +12,8 @@
         "AttackChainMode": "Attack Chain",
         "SavedDamageMode": "Saved Damage",
         "AttackChain": "Attack Chain Configuration",
+        "ChainConfiguration": "Chain Configuration",
+        "SavedDamageConfiguration": "Saved Damage Configuration",
         "EnableChain": "Enable Attack Chain",
         "FirstStat": "First Stat",
         "SecondStat": "Second Stat",
@@ -18,8 +21,10 @@
         "DamageCondition": "Apply Damage",
         "DamageFormula": "Damage Formula",
         "DamageType": "Damage Type",
+        "DamageOn": "Damage on",
         "StatusConfig": "Status Configuration",
         "StatusCondition": "Apply Status",
+        "StatusOn": "Status on",
         "StatusEffects": "Embedded Status Effects",
         "DropStatusHere": "Drop status effects here",
         "StatusHint": "Status effects to apply when chain conditions are met",
@@ -37,6 +42,7 @@
         "Heal": "Heal",
         "Execute": "Execute Action Card",
         "ExecuteChain": "Execute Attack Chain",
+        "ApplyDamage": "Apply Damage",
         "ApplySavedDamage": "Apply Saved Damage",
         "ActionItem": "Action Item",
         "NoActionItem": "No action item embedded yet.",

@@ -32,7 +32,9 @@ class GMControlManager {
       // Find the target actor
       const target = game.actors.get(targetId);
       if (!target) {
-        ui.notifications.warn("Target actor no longer exists");
+        ui.notifications.warn(
+          game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.TargetActorMissing"),
+        );
         await MessageFlags.updateGMApplyFlag(message, "damage", {
           applied: false,
           targetValid: false,
@@ -136,7 +138,9 @@ class GMControlManager {
         error,
         "GM_CONTROL",
       );
-      ui.notifications.error("Failed to apply damage");
+      ui.notifications.error(
+        game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.ApplyDamageFailed"),
+      );
       Logger.methodExit("GMControlManager", "applyDamage", false);
       return false;
     }
@@ -158,7 +162,9 @@ class GMControlManager {
       // Find the target actor
       const target = game.actors.get(targetId);
       if (!target) {
-        ui.notifications.warn("Target actor no longer exists");
+        ui.notifications.warn(
+          game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.TargetActorMissing"),
+        );
         await MessageFlags.updateGMApplyFlag(message, "status", {
           applied: false,
           targetValid: false,
@@ -170,7 +176,11 @@ class GMControlManager {
       // Get status effects from message flags
       const flag = MessageFlags.getGMApplyFlag(message);
       if (!flag?.status?.effects) {
-        ui.notifications.error("No status effects found in message");
+        ui.notifications.error(
+          game.i18n.localize(
+            "EVENTIDE_RP_SYSTEM.Errors.NoStatusEffectsInMessage",
+          ),
+        );
         Logger.methodExit("GMControlManager", "applyStatusEffects", false);
         return false;
       }
@@ -230,7 +240,9 @@ class GMControlManager {
           `Applied ${appliedCount} status effect(s) to ${target.name}`,
         );
       } else {
-        ui.notifications.warn("No status effects were successfully applied");
+        ui.notifications.warn(
+          game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.NoStatusApplied"),
+        );
       }
 
       Logger.info(
@@ -251,7 +263,9 @@ class GMControlManager {
         error,
         "GM_CONTROL",
       );
-      ui.notifications.error("Failed to apply status effects");
+      ui.notifications.error(
+        game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.ApplyStatusFailed"),
+      );
       Logger.methodExit("GMControlManager", "applyStatusEffects", false);
       return false;
     }
@@ -277,7 +291,9 @@ class GMControlManager {
       // Check if message should be cleaned up immediately
       await this._checkAutoCleanup(message);
 
-      ui.notifications.info("Damage discarded");
+      ui.notifications.info(
+        game.i18n.localize("EVENTIDE_RP_SYSTEM.Info.DamageDiscarded"),
+      );
 
       Logger.info(
         `Discarded damage via GM control`,
@@ -293,7 +309,9 @@ class GMControlManager {
         error,
         "GM_CONTROL",
       );
-      ui.notifications.error("Failed to discard damage");
+      ui.notifications.error(
+        game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.DiscardDamageFailed"),
+      );
       Logger.methodExit("GMControlManager", "discardDamage", false);
       return false;
     }
@@ -319,7 +337,9 @@ class GMControlManager {
       // Check if message should be cleaned up immediately
       await this._checkAutoCleanup(message);
 
-      ui.notifications.info("Status effects discarded");
+      ui.notifications.info(
+        game.i18n.localize("EVENTIDE_RP_SYSTEM.Info.StatusEffectsDiscarded"),
+      );
 
       Logger.info(
         `Discarded status effects via GM control`,
@@ -335,7 +355,9 @@ class GMControlManager {
         error,
         "GM_CONTROL",
       );
-      ui.notifications.error("Failed to discard status effects");
+      ui.notifications.error(
+        game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.DiscardStatusFailed"),
+      );
       Logger.methodExit("GMControlManager", "discardStatusEffects", false);
       return false;
     }
@@ -459,7 +481,9 @@ class GMControlManager {
     try {
       const flag = MessageFlags.getGMApplyFlag(message);
       if (!flag) {
-        ui.notifications.warn("No GM apply data found in message");
+        ui.notifications.warn(
+          game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.NoGMApplyData"),
+        );
         Logger.methodExit("GMControlManager", "applyAllEffects", false);
         return false;
       }
@@ -490,9 +514,13 @@ class GMControlManager {
       }
 
       if (allSuccessful) {
-        ui.notifications.info("All effects applied successfully");
+        ui.notifications.info(
+          game.i18n.localize("EVENTIDE_RP_SYSTEM.Info.AllEffectsApplied"),
+        );
       } else {
-        ui.notifications.warn("Some effects failed to apply");
+        ui.notifications.warn(
+          game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.SomeEffectsFailed"),
+        );
       }
 
       Logger.info(
@@ -509,7 +537,9 @@ class GMControlManager {
       return allSuccessful;
     } catch (error) {
       Logger.error("Failed to apply all effects", error, "GM_CONTROL");
-      ui.notifications.error("Failed to apply effects");
+      ui.notifications.error(
+        game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.ApplyEffectsFailed"),
+      );
       Logger.methodExit("GMControlManager", "applyAllEffects", false);
       return false;
     }
@@ -528,7 +558,9 @@ class GMControlManager {
     try {
       const flag = MessageFlags.getGMApplyFlag(message);
       if (!flag) {
-        ui.notifications.warn("No GM apply data found in message");
+        ui.notifications.warn(
+          game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.NoGMApplyData"),
+        );
         Logger.methodExit("GMControlManager", "discardAllEffects", false);
         return false;
       }
@@ -551,9 +583,13 @@ class GMControlManager {
       }
 
       if (allSuccessful) {
-        ui.notifications.info("All effects discarded");
+        ui.notifications.info(
+          game.i18n.localize("EVENTIDE_RP_SYSTEM.Info.AllEffectsDiscarded"),
+        );
       } else {
-        ui.notifications.warn("Some effects failed to discard");
+        ui.notifications.warn(
+          game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.SomeDiscardFailed"),
+        );
       }
 
       Logger.info(
@@ -570,7 +606,9 @@ class GMControlManager {
       return allSuccessful;
     } catch (error) {
       Logger.error("Failed to discard all effects", error, "GM_CONTROL");
-      ui.notifications.error("Failed to discard effects");
+      ui.notifications.error(
+        game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.DiscardEffectsFailed"),
+      );
       Logger.methodExit("GMControlManager", "discardAllEffects", false);
       return false;
     }

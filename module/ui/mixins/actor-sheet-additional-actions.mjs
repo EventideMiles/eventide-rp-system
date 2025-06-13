@@ -453,7 +453,9 @@ export const ActorSheetAdditionalActionsMixin = (BaseClass) =>
             { itemId },
             "ADDITIONAL_ACTIONS",
           );
-          ui.notifications.warn("Invalid action card");
+          ui.notifications.warn(
+            game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.ActionCardInvalid"),
+          );
           return;
         }
 
@@ -596,7 +598,11 @@ export const ActorSheetAdditionalActionsMixin = (BaseClass) =>
           error,
           "ADDITIONAL_ACTIONS",
         );
-        ui.notifications.error("Failed to execute action card");
+        ui.notifications.error(
+          game.i18n.localize(
+            "EVENTIDE_RP_SYSTEM.Errors.ActionCardExecuteFailed",
+          ),
+        );
         Logger.methodExit(
           "ActorSheetAdditionalActionsMixin",
           "_executeActionCard",

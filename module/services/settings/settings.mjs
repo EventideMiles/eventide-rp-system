@@ -350,7 +350,9 @@ export const registerSettings = function () {
           error: error.message,
           stack: error.stack,
         });
-        ui.notifications.error("Failed to update theme. Please try again.");
+        ui.notifications.error(
+          game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.ThemeUpdateFailed"),
+        );
       }
     },
   });
