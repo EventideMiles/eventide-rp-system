@@ -104,14 +104,21 @@ class ThemeManagerInstance {
       return;
     }
 
-    this.setupChangeListeners();
+    // Check if theme is already applied before setting up listeners
+    const currentTheme = CommonFoundryTasks.retrieveSheetTheme();
+    const bodyTheme = document.body.getAttribute("data-current-theme");
 
-    if (this.options.autoApply) {
-      this.applyThemes();
-    }
+    // Only apply themes if they're not already set
+    if (!bodyTheme || bodyTheme !== currentTheme) {
+      this.setupChangeListeners();
 
-    if (this.options.verify) {
-      this.verifyThemes();
+      if (this.options.autoApply) {
+        this.applyThemes();
+      }
+
+      if (this.options.verify) {
+        this.verifyThemes();
+      }
     }
 
     this.isSetup = true;
@@ -685,24 +692,24 @@ class ThemeManagerInstance {
    * Clean up theme change listeners and remove from active instances
    */
   cleanup() {
-    // Remove hook listener
+    // Remove hook listeners
     if (this.hookId) {
-      Hooks.off("eventide-rp-system.themeChanged", this.hookId);
+      Hooks.off("renderApplication", this.hookId);
       this.hookId = null;
     }
 
-    // Remove DOM event listener
+    // Remove DOM event listeners
     if (this.domEventHandler) {
-      document.removeEventListener(
-        "eventide-theme-change",
-        this.domEventHandler,
-      );
+      this.element.removeEventListener("change", this.domEventHandler);
       this.domEventHandler = null;
     }
 
     // Remove from active instances
     activeInstances.delete(this.appId);
     this.isSetup = false;
+
+    // Don't remove theme attributes during cleanup
+    // This ensures theme persists across re-renders
 
     Logger.debug(
       "Theme manager cleaned up",

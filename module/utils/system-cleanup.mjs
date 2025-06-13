@@ -171,6 +171,13 @@ function cleanupOrphanedElements() {
       }
     });
 
+    // Only clean up theme attributes if we're doing a full system cleanup
+    // This prevents theme loss during alt-tab
+    if (document.visibilityState === "hidden") {
+      safeLog("debug", "Skipping theme cleanup during visibility change");
+      return;
+    }
+
     // Remove any orphaned theme-related elements and attributes
     /**
      * Clean up all theme-related attributes and elements to prevent memory leaks
