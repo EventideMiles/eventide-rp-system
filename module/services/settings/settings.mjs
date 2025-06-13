@@ -542,6 +542,22 @@ export const registerSettings = function () {
     default: true,
   });
 
+  // Action Card Execution Delay (can be changed immediately)
+  game.settings.register("eventide-rp-system", "actionCardExecutionDelay", {
+    name: "SETTINGS.ActionCardExecutionDelayName",
+    hint: "SETTINGS.ActionCardExecutionDelayHint",
+    scope: "world",
+    config: true,
+    restricted: true,
+    type: Number,
+    default: 2000,
+    range: {
+      min: 0,
+      max: 10000,
+      step: 100,
+    },
+  });
+
   // ===========================================
   // NPC SETTINGS (GM Only - No Reload Needed)
   // ===========================================

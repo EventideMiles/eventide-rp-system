@@ -159,6 +159,26 @@ export function ItemActionCardExecutionMixin(Base) {
     }
 
     /**
+     * Helper method to wait for the configured execution delay
+     * @private
+     * @returns {Promise<void>}
+     */
+    async _waitForExecutionDelay() {
+      const delay = game.settings.get(
+        "eventide-rp-system",
+        "actionCardExecutionDelay",
+      );
+      if (delay > 0) {
+        Logger.debug(
+          `Waiting ${delay}ms for execution delay`,
+          null,
+          "ACTION_CARD",
+        );
+        await new Promise((resolve) => setTimeout(resolve, delay));
+      }
+    }
+
+    /**
      * Execute the action card's attack chain
      * @param {Actor} actor - The actor executing the action card
      * @returns {Promise<Object>} Result of the attack chain execution
@@ -333,11 +353,15 @@ export function ItemActionCardExecutionMixin(Base) {
           };
         });
 
-        // Handle damage and status effects
+        // Add delay after roll calculation but before damage application
+        await this._waitForExecutionDelay();
+
+        // Handle damage and status effects with delays
         const damageResults = await this._processDamageResults(
           results,
           rollResult,
         );
+        await this._waitForExecutionDelay();
         const statusResults = await this._processStatusResults(
           results,
           rollResult,
