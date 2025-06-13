@@ -40,6 +40,27 @@
           </div>
         </label>
       </div>
+
+      {{!-- Attempt Inventory Reduction Toggle --}}
+      <div class="eventide-sheet__toggle-group">
+        <label class="erps-toggles erps-toggles--label-left">
+          <input
+            type="checkbox"
+            class="erps-toggles__input"
+            name="system.attemptInventoryReduction"
+            id="system.attemptInventoryReduction"
+            {{checked system.attemptInventoryReduction}}
+          />
+          <div class="erps-toggles__container">
+            <span class="erps-toggles__label" title='{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.AttemptInventoryReduction.label"}}'>
+              {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.AttemptInventoryReduction.label"}}
+            </span>
+            <span class="erps-toggles__track">
+              <span class="erps-toggles__thumb"></span>
+            </span>
+          </div>
+        </label>
+      </div>
     </div>
 
 

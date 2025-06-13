@@ -115,6 +115,19 @@
         "ItemAddedToEffects": "Item added to effects",
         "GearAddedToAction": "Gear added to action slot",
         "GearAddedToEffects": "Gear added to effects",
+        "AdvanceInitiative": {
+          "label": "Advance Initiative",
+          "hint": "When enabled, advances initiative after execution. Can only be used on your turn."
+        },
+        "AdvanceInitiativeTurnError": "You can only use this action card on your turn when 'Advance Initiative' is enabled.",
+        "AttemptInventoryReduction": {
+          "label": "Attempt Effect Inventory Reduction",
+          "hint": "When enabled, attempts to reduce your inventory when applying gear effects. If disabled, gear effects will be applied without checking inventory."
+        },
+        "GearEffectInventoryWarning": "You don't have enough {gearName} in your inventory to apply this effect.",
+        "GearEffectNotFoundWarning": "You don't have {gearName} in your inventory to apply this effect.",
+        "GearEffectInsufficientWarning": "You don't have enough {gearName} in your inventory to apply this effect (need {required}, have {available}).",
+        "GearEffectInventoryError": "Failed to apply gear effect: {error}",
         "PopupTitle": "Execute Action Card",
         "DamageOn": "Damage on",
         "StatusOn": "Status on",
@@ -122,12 +135,7 @@
         "ApplyDamage": "Apply Damage",
         "ChainConfiguration": "Chain Configuration",
         "RollValue": "Roll Value",
-        "StatusThreshold": "Threshold Value",
-        "AdvanceInitiative": {
-          "label": "Advance Initiative",
-          "hint": "When enabled, advances initiative after execution. Can only be used on your turn."
-        },
-        "AdvanceInitiativeTurnError": "You can only use this action card on your turn when 'Advance Initiative' is enabled."
+        "StatusThreshold": "Threshold Value"
       },
       "Colors": {
         "BgColor": {

@@ -79,45 +79,7 @@ export const ActorSheetDocumentActionsMixin = (BaseClass) =>
           throw new Error("Document not found");
         }
 
-        // Show confirmation dialog for deletion using V2 API
-        const confirmed = await foundry.applications.api.DialogV2.confirm({
-          window: {
-            title: game.i18n.format(
-              "EVENTIDE_RP_SYSTEM.Dialogs.DeleteDocument.Title",
-              {
-                type: doc.type,
-                name: doc.name,
-              },
-            ),
-          },
-          content: game.i18n.format(
-            "EVENTIDE_RP_SYSTEM.Dialogs.DeleteDocument.Content",
-            {
-              type: doc.type,
-              name: doc.name,
-            },
-          ),
-          rejectClose: false,
-          modal: true,
-        });
-
-        if (!confirmed) {
-          Logger.debug(
-            "Document deletion cancelled by user",
-            {
-              documentId: doc.id,
-              documentName: doc.name,
-            },
-            "DOCUMENT_ACTIONS",
-          );
-          Logger.methodExit(
-            "ActorSheetDocumentActionsMixin",
-            "_deleteDoc",
-            false,
-          );
-          return false;
-        }
-
+        // Delete directly without confirmation
         const result = await doc.delete();
 
         Logger.info(

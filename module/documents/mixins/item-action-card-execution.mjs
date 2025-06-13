@@ -1,6 +1,7 @@
-import { Logger } from "../../services/_module.mjs";
+import { Logger } from "../../services/logger.mjs";
 import { MessageFlags } from "../../helpers/_module.mjs";
 import { ERPSRollUtilities } from "../../utils/_module.mjs";
+import { InventoryUtils } from "../../helpers/_module.mjs";
 
 const { renderTemplate } = foundry.applications.handlebars;
 
@@ -605,110 +606,300 @@ export function ItemActionCardExecutionMixin(Base) {
      * @returns {Promise<Array>} Status results
      */
     async _processStatusResults(results, rollResult) {
+      Logger.methodEntry(
+        "ItemActionCardExecutionMixin",
+        "_processStatusResults",
+        {
+          resultsCount: results.length,
+          rollResult: rollResult?.total,
+        },
+      );
+
       const statusResults = [];
 
-      // Early exit if no embedded effects
-      if (
-        !this.system.embeddedStatusEffects ||
-        this.system.embeddedStatusEffects.length === 0
-      ) {
-        Logger.debug(
-          "No embedded status effects to process",
-          { actionCardName: this.name },
-          "ACTION_CARD",
-        );
-        return statusResults;
-      }
+      try {
+        for (const result of results) {
+          // Skip invalid results
+          if (!result || !result.target) {
+            Logger.warn(
+              "Invalid result structure in _processStatusResults, skipping",
+              { result },
+              "ACTION_CARD",
+            );
+            continue;
+          }
 
-      // Process each target for effect application
-      for (const result of results) {
-        // Check if status effects should be applied based on attack chain condition
-        const shouldApplyStatus = this._shouldApplyEffect(
-          this.system.attackChain.statusCondition,
-          result.oneHit,
-          result.bothHit,
-          rollResult?.total || 0,
-          this.system.attackChain.statusThreshold || 15,
-        );
+          // Determine if status effects should be applied based on chain configuration
+          const shouldApplyStatus = this._shouldApplyEffect(
+            this.system.attackChain.statusCondition,
+            result.oneHit,
+            result.bothHit,
+            rollResult?.total || 0,
+            this.system.attackChain.statusThreshold || 15,
+          );
 
-        if (shouldApplyStatus) {
-          for (const effectData of this.system.embeddedStatusEffects) {
-            // Validate effect entry structure
-            if (!effectData) {
-              Logger.warn(
-                "Invalid effect entry structure, skipping",
-                {
-                  effectData,
-                  actionCardName: this.name,
-                  targetName: result.target.name,
-                },
-                "ACTION_CARD",
-              );
-              continue;
-            }
-
-            if (game.user.isGM) {
-              // GM applies status effects directly
-              try {
-                // Set flag for effects to trigger appropriate message via createItem hook
-                if (
-                  effectData.type === "gear" ||
-                  effectData.type === "status"
-                ) {
-                  effectData.flags = effectData.flags || {};
-                  effectData.flags["eventide-rp-system"] =
-                    effectData.flags["eventide-rp-system"] || {};
-                  effectData.flags["eventide-rp-system"].isEffect = true;
-                }
-
-                // Create the effect item on the target
-                await result.target.createEmbeddedDocuments("Item", [
-                  effectData,
-                ]);
-
-                // Messages are handled by createItem hook
-                statusResults.push({
-                  target: result.target,
-                  effect: effectData,
-                  applied: true,
-                });
-
-                Logger.info(
-                  `Applied effect "${effectData.name}" to target "${result.target.name}"`,
+          if (shouldApplyStatus) {
+            for (const effectData of this.system.embeddedStatusEffects) {
+              // Validate effect entry structure
+              if (!effectData) {
+                Logger.warn(
+                  "Invalid effect entry structure, skipping",
                   {
-                    statusCondition: this.system.attackChain.statusCondition,
-                    statusThreshold: this.system.attackChain.statusThreshold,
-                    rollTotal: rollResult?.total || 0,
+                    effectData,
+                    actionCardName: this.name,
+                    targetName: result.target.name,
                   },
                   "ACTION_CARD",
                 );
-              } catch (statusError) {
-                Logger.error(
-                  "Failed to apply status effect",
-                  statusError,
-                  "ACTION_CARD",
-                );
-                statusResults.push({
+                continue;
+              }
+
+              // Handle gear effects differently based on attemptInventoryReduction setting
+              if (
+                effectData.type === "gear" &&
+                this.system.attemptInventoryReduction
+              ) {
+                try {
+                  // Check if the actor has the gear item
+                  const actualGearItem = InventoryUtils.findGearByName(
+                    this.actor,
+                    effectData.name,
+                  );
+
+                  if (!actualGearItem) {
+                    // Log warning and continue without applying the effect
+                    Logger.warn(
+                      `Gear effect "${effectData.name}" not found in actor inventory`,
+                      {
+                        actorName: this.actor.name,
+                        effectName: effectData.name,
+                        targetName: result.target.name,
+                      },
+                      "ACTION_CARD",
+                    );
+
+                    // Add warning to results
+                    statusResults.push({
+                      target: result.target,
+                      effect: effectData,
+                      applied: false,
+                      warning: game.i18n.format(
+                        "EVENTIDE_RP_SYSTEM.Item.ActionCard.GearEffectNotFoundWarning",
+                        { gearName: effectData.name },
+                      ),
+                    });
+
+                    // Show UI notification to user
+                    ui.notifications.warn(
+                      game.i18n.format(
+                        "EVENTIDE_RP_SYSTEM.Item.ActionCard.GearEffectNotFoundWarning",
+                        { gearName: effectData.name },
+                      ),
+                    );
+                    continue;
+                  }
+
+                  // Check if there's enough quantity
+                  const requiredQuantity = effectData.system.cost || 0;
+                  if (actualGearItem.system.quantity < requiredQuantity) {
+                    // Log warning and continue without applying the effect
+                    Logger.warn(
+                      `Insufficient quantity of "${effectData.name}" in actor inventory`,
+                      {
+                        actorName: this.actor.name,
+                        effectName: effectData.name,
+                        requiredQuantity,
+                        availableQuantity: actualGearItem.system.quantity,
+                        targetName: result.target.name,
+                      },
+                      "ACTION_CARD",
+                    );
+
+                    // Add warning to results
+                    statusResults.push({
+                      target: result.target,
+                      effect: effectData,
+                      applied: false,
+                      warning: game.i18n.format(
+                        "EVENTIDE_RP_SYSTEM.Item.ActionCard.GearEffectInsufficientWarning",
+                        {
+                          gearName: effectData.name,
+                          required: requiredQuantity,
+                          available: actualGearItem.system.quantity,
+                        },
+                      ),
+                    });
+
+                    // Show UI notification to user
+                    ui.notifications.warn(
+                      game.i18n.format(
+                        "EVENTIDE_RP_SYSTEM.Item.ActionCard.GearEffectInsufficientWarning",
+                        {
+                          gearName: effectData.name,
+                          required: requiredQuantity,
+                          available: actualGearItem.system.quantity,
+                        },
+                      ),
+                    );
+                    continue;
+                  }
+
+                  // Reduce quantity from inventory
+                  const currentQuantity = actualGearItem.system.quantity;
+                  const newQuantity = Math.max(
+                    0,
+                    currentQuantity - requiredQuantity,
+                  );
+                  await actualGearItem.update({
+                    "system.quantity": newQuantity,
+                  });
+
+                  Logger.info(
+                    `Reduced quantity of "${effectData.name}" in actor inventory`,
+                    {
+                      actorName: this.actor.name,
+                      effectName: effectData.name,
+                      previousQuantity: currentQuantity,
+                      newQuantity,
+                      costDeducted: requiredQuantity,
+                    },
+                    "ACTION_CARD",
+                  );
+                } catch (error) {
+                  Logger.error(
+                    `Failed to process gear effect "${effectData.name}"`,
+                    error,
+                    "ACTION_CARD",
+                  );
+
+                  // Add error to results
+                  statusResults.push({
+                    target: result.target,
+                    effect: effectData,
+                    applied: false,
+                    error: game.i18n.format(
+                      "EVENTIDE_RP_SYSTEM.Item.ActionCard.GearEffectInventoryError",
+                      { error: error.message },
+                    ),
+                  });
+                  continue;
+                }
+              }
+
+              if (game.user.isGM) {
+                // GM applies status effects directly
+                try {
+                  // Set flag for effects to trigger appropriate message via createItem hook
+                  if (
+                    effectData.type === "gear" ||
+                    effectData.type === "status"
+                  ) {
+                    effectData.flags = effectData.flags || {};
+                    effectData.flags["eventide-rp-system"] =
+                      effectData.flags["eventide-rp-system"] || {};
+                    effectData.flags["eventide-rp-system"].isEffect = true;
+                  }
+
+                  // Ensure gear effects are equipped when transferred
+                  if (effectData.type === "gear") {
+                    effectData.system = effectData.system || {};
+                    effectData.system.equipped = true;
+                    effectData.system.quantity = 1;
+
+                    Logger.debug(
+                      `Setting gear effect "${effectData.name}" to equipped state for transfer`,
+                      {
+                        targetName: result.target.name,
+                        gearName: effectData.name,
+                        equipped: true,
+                      },
+                      "ACTION_CARD",
+                    );
+                  }
+
+                  // Create the effect item on the target
+                  await result.target.createEmbeddedDocuments("Item", [
+                    effectData,
+                  ]);
+
+                  // Messages are handled by createItem hook
+                  statusResults.push({
+                    target: result.target,
+                    effect: effectData,
+                    applied: true,
+                  });
+
+                  Logger.info(
+                    `Applied effect "${effectData.name}" to target "${result.target.name}"`,
+                    {
+                      statusCondition: this.system.attackChain.statusCondition,
+                      statusThreshold: this.system.attackChain.statusThreshold,
+                      rollTotal: rollResult?.total || 0,
+                      equipped:
+                        effectData.type === "gear"
+                          ? effectData.system.equipped
+                          : "N/A",
+                    },
+                    "ACTION_CARD",
+                  );
+                } catch (error) {
+                  Logger.error(
+                    `Failed to apply effect "${effectData.name}" to target "${result.target.name}"`,
+                    error,
+                    "ACTION_CARD",
+                  );
+
+                  // Add error to results
+                  statusResults.push({
+                    target: result.target,
+                    effect: effectData,
+                    applied: false,
+                    error: error.message,
+                  });
+                }
+              } else {
+                // Player creates GM apply card - also ensure gear is equipped in the data
+                if (effectData.type === "gear") {
+                  effectData.system = effectData.system || {};
+                  effectData.system.equipped = true;
+
+                  Logger.debug(
+                    `Setting gear effect "${effectData.name}" to equipped state for GM application`,
+                    {
+                      targetName: result.target.name,
+                      gearName: effectData.name,
+                      equipped: true,
+                    },
+                    "ACTION_CARD",
+                  );
+                }
+
+                const gmApplyResult = {
                   target: result.target,
                   effect: effectData,
-                  applied: false,
-                  error: statusError.message,
-                });
+                  needsGMApplication: true,
+                };
+                statusResults.push(gmApplyResult);
               }
-            } else {
-              // Player creates GM apply card
-              const statusApplyResult = {
-                target: result.target,
-                effect: effectData,
-                needsGMApplication: true,
-              };
-              statusResults.push(statusApplyResult);
             }
           }
         }
-      }
 
-      return statusResults;
+        Logger.methodExit(
+          "ItemActionCardExecutionMixin",
+          "_processStatusResults",
+          statusResults,
+        );
+        return statusResults;
+      } catch (error) {
+        Logger.error("Failed to process status results", error, "ACTION_CARD");
+        Logger.methodExit(
+          "ItemActionCardExecutionMixin",
+          "_processStatusResults",
+          null,
+        );
+        throw error;
+      }
     }
 
     /**

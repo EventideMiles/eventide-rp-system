@@ -1,0 +1,52 @@
+{{!-- GM Resolution Card --}}
+<div class="erps-chat-card erps-chat-card--gm-resolution">
+  <div class="erps-chat-card__header">
+    <h3 class="erps-chat-card__title">{{title}}</h3>
+  </div>
+
+  <div class="erps-chat-card__content">
+    {{!-- Target Info --}}
+    <div class="erps-chat-card__target">
+      <img src="{{target.img}}" alt="{{target.name}}" class="erps-chat-card__target-image" />
+      <span class="erps-chat-card__target-name">{{target.name}}</span>
+    </div>
+
+    {{!-- Effect Info --}}
+    {{#if effect}}
+      <div class="erps-chat-card__effect">
+        <img src="{{effect.img}}" alt="{{effect.name}}" class="erps-chat-card__effect-image" />
+        <span class="erps-chat-card__effect-name">{{effect.name}}</span>
+      </div>
+    {{/if}}
+
+    {{!-- Warnings --}}
+    {{#if warning}}
+      <div class="erps-chat-card__warning">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span>{{warning}}</span>
+      </div>
+    {{/if}}
+
+    {{!-- Errors --}}
+    {{#if error}}
+      <div class="erps-chat-card__error">
+        <i class="fas fa-exclamation-circle"></i>
+        <span>{{error}}</span>
+      </div>
+    {{/if}}
+
+    {{!-- GM Controls --}}
+    {{#if (and (not warning) (not error))}}
+      <div class="erps-chat-card__controls">
+        <button class="erps-button erps-button--apply" data-action="apply">
+          <i class="fas fa-check"></i>
+          {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Apply"}}
+        </button>
+        <button class="erps-button erps-button--discard" data-action="discard">
+          <i class="fas fa-times"></i>
+          {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Discard"}}
+        </button>
+      </div>
+    {{/if}}
+  </div>
+</div>

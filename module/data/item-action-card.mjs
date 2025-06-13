@@ -127,6 +127,14 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
       initial: false,
     });
 
+    /**
+     * Whether to attempt to reduce user inventory when transferring gear from effects column
+     */
+    schema.attemptInventoryReduction = new fields.BooleanField({
+      required: true,
+      initial: false,
+    });
+
     return schema;
   }
 }

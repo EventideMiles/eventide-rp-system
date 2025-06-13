@@ -8,7 +8,6 @@
  */
 
 import { Logger } from "../services/logger.mjs";
-import { cleanupGlobalNumberInputs } from "../helpers/number-inputs.mjs";
 import { cleanupGlobalColorPickers } from "../helpers/color-pickers.mjs";
 import { cleanupGlobalThemeManager } from "../helpers/theme-manager.mjs";
 import { cleanupGMControlHooks } from "../services/hooks/gm-control-hooks.mjs";
@@ -58,7 +57,6 @@ export function performSystemCleanup() {
     cleanupChatListeners();
 
     // Clean up global event listeners
-    cleanupGlobalNumberInputs();
     cleanupGlobalColorPickers();
 
     // Clean up theme manager instances
@@ -91,7 +89,6 @@ export function performPreInitCleanup() {
     cleanupOrphanedElements();
 
     // Force cleanup of any existing global handlers
-    cleanupGlobalNumberInputs();
     cleanupGlobalColorPickers();
     cleanupGlobalThemeManager();
     cleanupGMControlHooks();
