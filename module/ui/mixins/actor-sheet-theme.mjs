@@ -6,7 +6,8 @@ import {
   cleanupThemeManager,
   triggerGlobalThemeChange,
   THEME_PRESETS,
-} from "../../helpers/theme-manager.mjs";
+} from "../../helpers/_module.mjs";
+import { applyThemeImmediate } from "../../helpers/theme/theme-applicator.mjs";
 
 /**
  * Actor Sheet Theme Management Mixin
@@ -108,24 +109,39 @@ export const ActorSheetThemeMixin = (BaseClass) =>
      * @protected
      */
     _initThemeManagement() {
+      // Apply theme immediately to prevent flashing - this is synchronous and fast
+      applyThemeImmediate(this.element);
+
       // Set theme properties immediately to prevent flashing
       // const currentTheme = CommonFoundryTasks.retrieveSheetTheme();
       // TESTING: Comment out JavaScript theme property setting to test pure CSS
       // this._setImmediateThemeProperties(currentTheme);
 
-      // Initialize centralized theme management
+      // Initialize centralized theme management (this handles full theme application)
       if (!this.themeManager) {
-        this.themeManager = initThemeManager(
-          this,
-          THEME_PRESETS.CHARACTER_SHEET,
-        );
+        // Handle the async initialization properly
+        initThemeManager(this, THEME_PRESETS.CHARACTER_SHEET)
+          .then((manager) => {
+            this.themeManager = manager;
+            Logger.debug(
+              "Theme management initialized asynchronously",
+              {
+                hasThemeManager: !!this.themeManager,
+                sheetId: this.id,
+              },
+              "THEME",
+            );
+          })
+          .catch((error) => {
+            Logger.error("Failed to initialize theme manager", error, "THEME");
+          });
       } else {
         // Re-apply themes on re-render
         this.themeManager.applyThemes();
       }
 
       Logger.debug(
-        "Theme management initialized",
+        "Theme management initialization started",
         {
           hasThemeManager: !!this.themeManager,
           sheetId: this.id,

@@ -1505,6 +1505,38 @@ label,
   min-height: 35rem;
 }
 
+.eventide-sheet:not([data-bg-theme]) {
+  --theme-primary: rgba(21, 101, 192, 0.9);
+  --theme-secondary: rgba(25, 118, 210, 0.8);
+  --theme-tertiary: rgba(66, 165, 245, 0.8);
+  --theme-accent: rgba(13, 71, 161, 0.95);
+  --theme-light: rgba(100, 181, 246, 0.7);
+  --theme-glow: rgba(25, 118, 210, 0.5);
+  --theme-text: #fff;
+  --theme-bright: rgb(144, 202, 249);
+  --theme-scrollbar-thumb: rgba(59, 130, 246, 0.8);
+  --theme-scrollbar-track: rgba(69, 69, 69, 0.3);
+  --theme-resource-health-primary: rgba(153, 27, 27, 0.9);
+  --theme-resource-health-secondary: rgba(220, 38, 38, 0.5);
+  --theme-resource-health-glow: rgba(220, 38, 38, 0.2);
+  --theme-resource-resolve-primary: rgba(147, 51, 234, 0.9);
+  --theme-resource-resolve-secondary: rgba(147, 51, 234, 0.5);
+  --theme-resource-resolve-glow: rgba(147, 51, 234, 0.2);
+  --theme-resource-mana-primary: rgba(30, 58, 138, 0.9);
+  --theme-resource-mana-secondary: rgba(59, 130, 246, 0.5);
+  --theme-resource-mana-glow: rgba(59, 130, 246, 0.2);
+  --theme-resource-stamina-primary: rgba(20, 83, 45, 0.9);
+  --theme-resource-stamina-secondary: rgba(34, 197, 94, 0.5);
+  --theme-resource-stamina-glow: rgba(34, 197, 94, 0.2);
+  --erps-sheet-primary: rgba(21, 101, 192, 0.9);
+  --erps-sheet-secondary: rgba(25, 118, 210, 0.8);
+  --erps-sheet-bright: rgba(100, 181, 246, 0.7);
+  --erps-sheet-glow: rgba(25, 118, 210, 0.5);
+  --erps-sheet-text: #fff;
+  --erps-sheet-accent: rgba(13, 71, 161, 0.95);
+  --erps-sheet-light: rgba(100, 181, 246, 0.7);
+}
+
 body:not([data-theme]), body[data-theme=blue] {
   --theme-scrollbar-thumb: rgba(59, 130, 246, 0.8);
   --theme-scrollbar-track: rgba(69, 69, 69, 0.3);
@@ -7813,3 +7845,5 @@ body *::-webkit-scrollbar-track,
     flex: 1;
   }
 }
+
+/*# sourceMappingURL=eventide-rp-system.css.map */

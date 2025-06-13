@@ -9,7 +9,7 @@
 
 import { Logger } from "../services/logger.mjs";
 import { cleanupGlobalColorPickers } from "../helpers/color-pickers.mjs";
-import { cleanupGlobalThemeManager } from "../helpers/theme-manager.mjs";
+import { cleanupGlobalThemeManager } from "../helpers/_module.mjs";
 import { cleanupGMControlHooks } from "../services/hooks/gm-control-hooks.mjs";
 import { cleanupChatListeners } from "../services/hooks/chat-listeners.mjs";
 
@@ -31,13 +31,16 @@ function safeLog(level, message, data = null) {
       // Fall back to console logging
       const logMessage = `ERPS | SYSTEM_CLEANUP | ${message}`;
       if (data) {
+        // eslint-disable-next-line no-console
         console[level](logMessage, data);
       } else {
+        // eslint-disable-next-line no-console
         console[level](logMessage);
       }
     }
   } catch {
     // If all else fails, use basic console logging
+
     console.info(`ERPS | SYSTEM_CLEANUP | ${message}`, data || "");
   }
 }
@@ -90,6 +93,7 @@ export function performPreInitCleanup() {
 
     // Force cleanup of any existing global handlers
     cleanupGlobalColorPickers();
+    cleanupGlobalNumberInputs();
     cleanupGlobalThemeManager();
     cleanupGMControlHooks();
     cleanupChatListeners();
@@ -277,4 +281,19 @@ export function initializeCleanupHooks() {
   }
 
   cleanupInitialized = true;
+}
+
+/**
+ * Clean up global number inputs
+ * @private
+ */
+function cleanupGlobalNumberInputs() {
+  try {
+    if (typeof erps !== "undefined" && erps.utils?.cleanupNumberInputsGlobal) {
+      erps.utils.cleanupNumberInputsGlobal();
+    }
+    safeLog("debug", "Global number inputs cleaned up");
+  } catch (error) {
+    safeLog("warn", "Failed to cleanup global number inputs", error);
+  }
 }

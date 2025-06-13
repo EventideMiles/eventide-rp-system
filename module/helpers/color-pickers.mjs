@@ -26,13 +26,16 @@ function safeLog(level, message, data = null) {
       // Fall back to console logging
       const logMessage = `ERPS | COLOR_PICKER | ${message}`;
       if (data) {
+        // eslint-disable-next-line no-console
         console[level](logMessage, data);
       } else {
+        // eslint-disable-next-line no-console
         console[level](logMessage);
       }
     }
   } catch {
     // If all else fails, use basic console logging
+
     console.info(`ERPS | COLOR_PICKER | ${message}`, data || "");
   }
 }

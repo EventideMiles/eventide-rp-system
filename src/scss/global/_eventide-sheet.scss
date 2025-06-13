@@ -48,6 +48,8 @@ $theme-map: (
   "purple": themes.$purple-theme
 );
 
+
+
 @each $theme-name, $theme-colors in $theme-map {
   .eventide-sheet[data-bg-theme="#{$theme-name}"] {
     --theme-primary: #{map.get($theme-colors, primary)};
@@ -477,4 +479,44 @@ label,
   &.eventide-sheet--scrollbars .tab.biography .editor {
     min-height: 35rem;
   }
+}
+
+// Default theme application for sheets without data-bg-theme attribute
+// This prevents flashing by applying the default blue theme immediately
+.eventide-sheet:not([data-bg-theme]) {
+  --theme-primary: #{map.get(themes.$blue-theme, primary)};
+  --theme-secondary: #{map.get(themes.$blue-theme, secondary)};
+  --theme-tertiary: #{map.get(themes.$blue-theme, tertiary)};
+  --theme-accent: #{map.get(themes.$blue-theme, accent)};
+  --theme-light: #{map.get(themes.$blue-theme, light)};
+  --theme-glow: #{map.get(themes.$blue-theme, glow)};
+  --theme-text: #{map.get(themes.$blue-theme, text)};
+  --theme-bright: #{map.get(themes.$blue-theme, bright)};
+
+  // Scrollbar theme variables
+  --theme-scrollbar-thumb: #{map.get(themes.$blue-theme, scrollbar-thumb)};
+  --theme-scrollbar-track: #{map.get(themes.$blue-theme, scrollbar-track)};
+
+  // Resource box theme variables
+  --theme-resource-health-primary: #{map.get(themes.$blue-theme, resource-health-primary)};
+  --theme-resource-health-secondary: #{map.get(themes.$blue-theme, resource-health-secondary)};
+  --theme-resource-health-glow: #{map.get(themes.$blue-theme, resource-health-glow)};
+  --theme-resource-resolve-primary: #{map.get(themes.$blue-theme, resource-resolve-primary)};
+  --theme-resource-resolve-secondary: #{map.get(themes.$blue-theme, resource-resolve-secondary)};
+  --theme-resource-resolve-glow: #{map.get(themes.$blue-theme, resource-resolve-glow)};
+  --theme-resource-mana-primary: #{map.get(themes.$blue-theme, resource-mana-primary)};
+  --theme-resource-mana-secondary: #{map.get(themes.$blue-theme, resource-mana-secondary)};
+  --theme-resource-mana-glow: #{map.get(themes.$blue-theme, resource-mana-glow)};
+  --theme-resource-stamina-primary: #{map.get(themes.$blue-theme, resource-stamina-primary)};
+  --theme-resource-stamina-secondary: #{map.get(themes.$blue-theme, resource-stamina-secondary)};
+  --theme-resource-stamina-glow: #{map.get(themes.$blue-theme, resource-stamina-glow)};
+
+  // Legacy sheet properties for backward compatibility
+  --erps-sheet-primary: #{map.get(themes.$blue-theme, primary)};
+  --erps-sheet-secondary: #{map.get(themes.$blue-theme, secondary)};
+  --erps-sheet-bright: #{map.get(themes.$blue-theme, light)};
+  --erps-sheet-glow: #{map.get(themes.$blue-theme, glow)};
+  --erps-sheet-text: #{map.get(themes.$blue-theme, text)};
+  --erps-sheet-accent: #{map.get(themes.$blue-theme, accent)};
+  --erps-sheet-light: #{map.get(themes.$blue-theme, light)};
 }

@@ -11,6 +11,6 @@ export * from "./number-inputs.mjs";
 export * from "./range-sliders.mjs";
 export * from "./character-effects.mjs";
 export * from "./effects.mjs";
-export * from "./theme-manager.mjs";
+export * from "./theme/_module.mjs";
 export * from "./message-flags.mjs";
 export * from "./inventory-utils.mjs";

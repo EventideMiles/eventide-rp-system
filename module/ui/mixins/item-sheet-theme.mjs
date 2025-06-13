@@ -5,7 +5,8 @@ import {
   cleanupThemeManager,
   triggerGlobalThemeChange,
   THEME_PRESETS,
-} from "../../helpers/theme-manager.mjs";
+} from "../../helpers/_module.mjs";
+import { applyThemeImmediate } from "../../helpers/theme/theme-applicator.mjs";
 
 /**
  * Item Sheet Theme Management Mixin
@@ -110,6 +111,9 @@ export const ItemSheetThemeMixin = (BaseClass) =>
      * @protected
      */
     _initThemeManagement() {
+      // Apply theme immediately to prevent flashing - this is synchronous and fast
+      applyThemeImmediate(this.element);
+
       // Set theme properties immediately to prevent flashing
       // const currentTheme = CommonFoundryTasks.retrieveSheetTheme();
       // TESTING: Comment out JavaScript theme property setting to test pure CSS
@@ -117,14 +121,35 @@ export const ItemSheetThemeMixin = (BaseClass) =>
 
       // Initialize centralized theme management with item sheet preset
       if (!this.themeManager) {
-        this.themeManager = initThemeManager(this, THEME_PRESETS.ITEM_SHEET);
+        // Handle the async initialization properly
+        initThemeManager(this, THEME_PRESETS.ITEM_SHEET)
+          .then((manager) => {
+            this.themeManager = manager;
+            Logger.debug(
+              "Theme management initialized asynchronously for item sheet",
+              {
+                hasThemeManager: !!this.themeManager,
+                sheetId: this.id,
+                itemName: this.item?.name,
+                itemType: this.item?.type,
+              },
+              "THEME",
+            );
+          })
+          .catch((error) => {
+            Logger.error(
+              "Failed to initialize theme manager for item sheet",
+              error,
+              "THEME",
+            );
+          });
       } else {
         // Re-apply themes on re-render
         this.themeManager.applyThemes();
       }
 
       Logger.debug(
-        "Theme management initialized for item sheet",
+        "Theme management initialization started for item sheet",
         {
           hasThemeManager: !!this.themeManager,
           sheetId: this.id,
