@@ -77,6 +77,7 @@ https://www.gnu.org/licenses/lgpl-2.1.html
 - fire-ray.svg
 - split-cross.svg
 - oppression.svg
+- processor.svg
 - werewolf.svg
 
 ### By Delapouite under CC BY 3.0 from game-icons.net
