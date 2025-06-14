@@ -38,3 +38,11 @@ export { ItemSheetEffectGuardsMixin } from "./item-sheet-effect-guards.mjs";
 
 // Combined Item Sheet Mixin
 export { ItemSheetAllMixins } from "./item-sheet-all-mixins.mjs";
+
+// Embedded Item Sheet Mixins
+export { EmbeddedItemConstructorMixin } from "./embedded-item-constructor.mjs";
+export { EmbeddedItemDataMixin } from "./embedded-item-data.mjs";
+export { EmbeddedItemCharacterEffectsMixin } from "./embedded-item-character-effects.mjs";
+
+// Combined Embedded Item Sheet Mixin
+export { EmbeddedItemAllMixins } from "./embedded-item-all-mixins.mjs";

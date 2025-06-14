@@ -6,14 +6,14 @@ This document details the solution to a complex state management problem: editin
 
 - A "Transformation" `Item` stores an array of "Combat Power" data objects in its system data (`system.embeddedCombatPowers`).
 - We want to allow users to click an "Edit" button next to a Combat Power on the Transformation's sheet.
-- This should open a new, separate sheet (`EmbeddedCombatPowerSheet`) dedicated to editing only that single Combat Power.
+- This should open a new, separate sheet (`EmbeddedItemSheet`) dedicated to editing only that single Combat Power.
 - Changes made in this embedded sheet, including a rich text description using `ProseMirror`, must be saved back to the parent Transformation item reliably.
 
 ## The Core Problem: The "Every Other Save" Bug
 
 The primary challenge we faced was a classic but brutal state management issue that manifested as the "every other save" bug. Here's the sequence of events that caused it:
 
-1.  **State Mismatch:** The `EmbeddedCombatPowerSheet` holds a reference to the parent Transformation item (`this.transformationItem`). When a change is saved, the item in the database is updated. However, the `transformationItem` object held in the sheet's memory is now **stale**—it does not reflect the changes that were just saved.
+1.  **State Mismatch:** The `EmbeddedItemSheet` holds a reference to the parent Transformation item (`this.actionCardItem` or `this.transformationItem`). When a change is saved, the item in the database is updated. However, the parent item object held in the sheet's memory is now **stale**—it does not reflect the changes that were just saved.
 2.  **First Save (Works):** The user saves a change. The data is correctly sent to the database.
 3.  **Second Save (Fails):** The user saves a second change. The sheet's save logic reads the **stale** data from its `this.transformationItem` property, modifies it, and saves it. This overwrites the changes from the first save, making it appear as if the save was "discarded".
 
@@ -42,12 +42,12 @@ The parent sheet that opens the editor must be responsible for refreshing itself
       );
 
       if (powerData) {
-        const embeddedSheet = new EmbeddedCombatPowerSheet(
+        const embeddedSheet = new EmbeddedItemSheet(
           powerData,
           this.item,
         );
         // When the embedded sheet is closed, re-render the parent sheet to reflect changes.
-        Hooks.once(`close${EmbeddedCombatPowerSheet.name}`, (app) => {
+        Hooks.once(`close${EmbeddedItemSheet.name}`, (app) => {
           if (app.id === embeddedSheet.id) {
             this.render(true);
           }
@@ -60,51 +60,58 @@ The parent sheet that opens the editor must be responsible for refreshing itself
   }
 ```
 
-### Part 2: The Embedded Sheet (`embedded-combat-power-sheet.mjs`)
+### Part 2: The Embedded Sheet (`embedded-item-sheet.mjs`)
 
 This is where the core of the "every other save" bug is solved. The save handler must ensure that the sheet's local data is updated *before* any asynchronous database operations.
 
 ```javascript
-// module/ui/sheets/embedded-combat-power-sheet.mjs
+// module/ui/sheets/embedded-item-sheet.mjs
 
   /** @override */
   async _onEditorSave(target, content) {
-    const powerIndex =
-      this.transformationItem.system.embeddedCombatPowers.findIndex(
-        (p) => p._id === this.document.id,
+    // Handle transformation items (embedded combat powers)
+    if (this.parentItem.type === "transformation") {
+      const powerIndex = this.parentItem.system.embeddedCombatPowers.findIndex(
+        (p) => p._id === this.originalItemId,
       );
-    if (powerIndex === -1) return;
+      if (powerIndex === -1) return;
 
-    // Use the full array update, as it's the only data-safe method.
-    const powers = foundry.utils.deepClone(
-      this.transformationItem.system.embeddedCombatPowers,
-    );
-    const powerData = powers[powerIndex];
-    foundry.utils.setProperty(powerData, target, content);
-
-    try {
-      // Pre-emptively update the local source to prevent a race condition.
-      // This ensures our data is fresh before we send it to the database.
-      this.transformationItem.updateSource({
-        "system.embeddedCombatPowers": powers,
-      });
-      this.document.updateSource(powerData);
-
-      await this.transformationItem.update({
-        "system.embeddedCombatPowers": powers,
-      });
-
-      ui.notifications.info("Combat Power description saved.");
-    } catch (error) {
-      Logger.error(
-        "EmbeddedCombatPowerSheet | Failed to save description",
-        { error, powers, powerData },
-        "EMBEDDED_POWER_SHEET",
+      // Use the full array update, as it's the only data-safe method.
+      const powers = foundry.utils.deepClone(
+        this.parentItem.system.embeddedCombatPowers,
       );
-      ui.notifications.error(
-        "Failed to save Combat Power. See console for details.",
-      );
+      const powerData = powers[powerIndex];
+      foundry.utils.setProperty(powerData, target, content);
+
+      try {
+        // Pre-emptively update the local source to prevent a race condition.
+        // This ensures our data is fresh before we send it to the database.
+        this.parentItem.updateSource({
+          "system.embeddedCombatPowers": powers,
+        });
+        this.document.updateSource(powerData);
+
+        await this.parentItem.update({
+          "system.embeddedCombatPowers": powers,
+        });
+
+        ui.notifications.info(
+          game.i18n.localize(
+            "EVENTIDE_RP_SYSTEM.Info.CombatPowerDescriptionSaved",
+          ),
+        );
+      } catch (error) {
+        Logger.error(
+          "EmbeddedItemSheet | Failed to save combat power description",
+          { error, powers, powerData },
+          "EMBEDDED_ITEM_SHEET",
+        );
+        ui.notifications.error(
+          "Failed to save Combat Power. See console for details.",
+        );
+      }
     }
+    // ... handle other parent item types (action cards, etc.)
   }
 ```
 

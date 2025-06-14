@@ -1,5 +1,4 @@
 import { Logger } from "../../services/logger.mjs";
-import { EmbeddedItemSheet } from "../sheets/embedded-item-sheet.mjs";
 
 const FilePicker = foundry.applications.apps.FilePicker.implementation;
 
@@ -487,7 +486,10 @@ export const ItemSheetActionsMixin = (BaseClass) =>
           return;
         }
 
-        // Create and render the embedded item sheet
+        // Create and render the embedded item sheet using dynamic import
+        const { EmbeddedItemSheet } = await import(
+          "../sheets/embedded-item-sheet.mjs"
+        );
         const sheet = new EmbeddedItemSheet(embeddedItem.toObject(), item);
         sheet.render(true);
 
@@ -579,7 +581,10 @@ export const ItemSheetActionsMixin = (BaseClass) =>
           return;
         }
 
-        // Create and render the embedded effect sheet
+        // Create and render the embedded effect sheet using dynamic import
+        const { EmbeddedItemSheet } = await import(
+          "../sheets/embedded-item-sheet.mjs"
+        );
         const sheet = new EmbeddedItemSheet(effect.toObject(), item, {}, true);
         sheet.render(true);
 

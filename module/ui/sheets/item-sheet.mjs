@@ -5,7 +5,7 @@ import { Logger } from "../../services/_module.mjs";
 import { ErrorHandler, CommonFoundryTasks } from "../../utils/_module.mjs";
 import { BaselineSheetMixins } from "../components/_module.mjs";
 import { ItemSheetAllMixins } from "../mixins/_module.mjs";
-import { EmbeddedCombatPowerSheet } from "./embedded-combat-power-sheet.mjs";
+import { EmbeddedItemSheet } from "./embedded-item-sheet.mjs";
 
 const { api, sheets } = foundry.applications;
 const { TextEditor } = foundry.applications.ux;
@@ -565,12 +565,9 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
       );
 
       if (powerData) {
-        const embeddedSheet = new EmbeddedCombatPowerSheet(
-          powerData,
-          this.item,
-        );
+        const embeddedSheet = new EmbeddedItemSheet(powerData, this.item);
         // When the embedded sheet is closed, re-render the parent sheet to reflect changes.
-        Hooks.once(`close${EmbeddedCombatPowerSheet.name}`, (app) => {
+        Hooks.once(`close${EmbeddedItemSheet.name}`, (app) => {
           if (app.id === embeddedSheet.id) {
             this.render(true);
           }

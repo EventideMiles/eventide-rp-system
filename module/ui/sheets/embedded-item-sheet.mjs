@@ -1,40 +1,76 @@
 import { BaselineSheetMixins } from "../components/_module.mjs";
 import { EventideSheetHelpers } from "../components/_module.mjs";
-import {
-  initThemeManager,
-  cleanupThemeManager,
-  THEME_PRESETS,
-  applyThemeImmediate,
-  prepareCharacterEffects,
-} from "../../helpers/_module.mjs";
+import { EmbeddedItemAllMixins } from "../mixins/_module.mjs";
+import { prepareCharacterEffects } from "../../helpers/_module.mjs";
 import { Logger } from "../../services/_module.mjs";
 import { CommonFoundryTasks } from "../../utils/_module.mjs";
 
 const { api, sheets } = foundry.applications;
-const { TextEditor, FormDataExtended } = foundry.applications.ux;
+const { TextEditor } = foundry.applications.ux;
 const FilePicker = foundry.applications.apps.FilePicker.implementation;
 
 /**
  * A specialized item sheet for editing items embedded within Action Card items.
  * Based on the working embedded-combat-power-sheet.mjs pattern.
  */
-export class EmbeddedItemSheet extends BaselineSheetMixins(
-  api.HandlebarsApplicationMixin(sheets.ItemSheetV2),
+export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
+  BaselineSheetMixins(api.HandlebarsApplicationMixin(sheets.ItemSheetV2)),
 ) {
   /**
    * @param {object} itemData          The raw data of the item to edit.
-   * @param {Item} actionCardItem      The parent action card item document.
+   * @param {Item} parentItem          The parent item document (action card or transformation).
    * @param {object} [options={}]      Additional sheet options.
    * @param {boolean} [isEffect=false] Whether this is an embedded effect (vs main embedded item).
    */
-  constructor(itemData, actionCardItem, options = {}, isEffect = false) {
+  constructor(itemData, parentItem, options = {}, isEffect = false) {
     Logger.methodEntry("EmbeddedItemSheet", "constructor", {
       itemData,
-      actionCardItem,
+      parentItem,
       options,
     });
 
-    // Create a temporary, un-parented Item document to represent the embedded item.
+    // Create the temporary item using static method to avoid 'this' before super()
+    const tempItem = EmbeddedItemSheet._createTempItem(
+      itemData,
+      parentItem,
+      isEffect,
+    );
+
+    const sheetOptions = foundry.utils.mergeObject(options, {
+      document: tempItem,
+      title: `${game.i18n.localize("EVENTIDE_RP_SYSTEM.UI.Edit")}: ${
+        tempItem.name
+      }`,
+    });
+
+    super(sheetOptions);
+
+    // Store the original embedded item ID for lookups (must be after super() call)
+    this.originalItemId = itemData._id;
+    this.parentItem = parentItem;
+    this.isEffect = isEffect;
+    this.isStatusEffect = itemData.type === "status";
+    Logger.methodExit("EmbeddedItemSheet", "constructor", this);
+  }
+
+  /**
+   * Static method to create a temporary item document for embedded item editing
+   * This is static to avoid 'this' before super() issues in the constructor
+   * @param {object} itemData - The raw data of the item to edit
+   * @param {Item} parentItem - The parent item document (action card or transformation)
+   * @param {boolean} isEffect - Whether this is an embedded effect (vs main embedded item)
+   * @returns {Item} The temporary item document
+   * @static
+   * @private
+   */
+  static _createTempItem(itemData, parentItem, isEffect = false) {
+    Logger.methodEntry("EmbeddedItemSheet", "_createTempItem", {
+      itemData,
+      parentItem: parentItem?.name,
+      isEffect,
+    });
+
+    // Create a temporary, un-parented Item document to represent the embedded item
     const tempItem = new CONFIG.Item.documentClass(itemData, {
       parent: null,
     });
@@ -45,17 +81,34 @@ export class EmbeddedItemSheet extends BaselineSheetMixins(
     }
 
     Logger.debug(
-      "EmbeddedItemSheet | Constructor - processing item data",
+      "EmbeddedItemSheet | Processing item data",
       {
         itemType: itemData.type,
         itemName: itemData.name,
         hasEffectsData: !!(itemData.effects && Array.isArray(itemData.effects)),
         effectsCount: itemData.effects?.length || 0,
-        effectsData: itemData.effects,
       },
       "EMBEDDED_ITEM_SHEET",
     );
 
+    // Initialize active effects from stored data
+    EmbeddedItemSheet._initializeActiveEffects(tempItem, itemData);
+
+    // Set up permissions based on parent item
+    EmbeddedItemSheet._setupPermissions(tempItem, parentItem);
+
+    Logger.methodExit("EmbeddedItemSheet", "_createTempItem", tempItem);
+    return tempItem;
+  }
+
+  /**
+   * Initialize active effects for the temporary item
+   * @param {Item} tempItem - The temporary item document
+   * @param {object} itemData - The raw item data
+   * @static
+   * @private
+   */
+  static _initializeActiveEffects(tempItem, itemData) {
     // If the item data has effects, create temporary ActiveEffect documents
     if (itemData.effects && Array.isArray(itemData.effects)) {
       for (const effectData of itemData.effects) {
@@ -77,26 +130,8 @@ export class EmbeddedItemSheet extends BaselineSheetMixins(
       }
     } else if (itemData.type === "status" || itemData.type === "gear") {
       // Create a default ActiveEffect for status effects and gear if none exists
-      const defaultEffectData = {
-        _id: foundry.utils.randomID(),
-        name: tempItem.name,
-        icon: tempItem.img,
-        changes: [],
-        disabled: false,
-        duration: {
-          seconds: 0,
-          startTime: null,
-          combat: "",
-          rounds: 0,
-          turns: 0,
-          startRound: 0,
-          startTurn: 0,
-        },
-        flags: {},
-        tint: "#ffffff",
-        transfer: true,
-        statuses: [],
-      };
+      const defaultEffectData =
+        EmbeddedItemSheet._createDefaultEffect(tempItem);
 
       Logger.debug(
         "EmbeddedItemSheet | Creating default effect for status/gear",
@@ -121,47 +156,80 @@ export class EmbeddedItemSheet extends BaselineSheetMixins(
       }
       itemData.effects.push(defaultEffectData);
     }
+  }
 
-    // Set permissions based on the containing action card item
+  /**
+   * Create a default active effect for status and gear items
+   * @param {Item} tempItem - The temporary item document
+   * @returns {object} Default effect data
+   * @static
+   * @private
+   */
+  static _createDefaultEffect(tempItem) {
+    return {
+      _id: foundry.utils.randomID(),
+      name: tempItem.name,
+      icon: tempItem.img,
+      changes: [],
+      disabled: false,
+      duration: {
+        seconds: 0,
+        startTime: null,
+        combat: "",
+        rounds: 0,
+        turns: 0,
+        startRound: 0,
+        startTurn: 0,
+      },
+      flags: {},
+      tint: "#ffffff",
+      transfer: true,
+      statuses: [],
+    };
+  }
+
+  /**
+   * Set up permissions for the temporary item based on the parent item
+   * @param {Item} tempItem - The temporary item document
+   * @param {Item} parentItem - The parent item document
+   * @static
+   * @private
+   */
+  static _setupPermissions(tempItem, parentItem) {
+    // Set permissions based on the containing parent item
     Object.defineProperty(tempItem, "isOwner", {
-      value: actionCardItem.isOwner,
+      value: parentItem.isOwner,
       configurable: true,
     });
     Object.defineProperty(tempItem, "isEditable", {
-      value: actionCardItem.isEditable,
+      value: parentItem.isEditable,
       configurable: true,
     });
 
-    // Copy ownership from the action card to ensure proper permissions
+    // Copy ownership from the parent item to ensure proper permissions
     Object.defineProperty(tempItem, "ownership", {
-      value: actionCardItem.ownership,
+      value: parentItem.ownership,
       configurable: true,
     });
 
-    // Override permission methods to use action card permissions
+    // Override permission methods to use parent item permissions
     tempItem.canUserModify = function (user, action) {
-      return actionCardItem.canUserModify(user, action);
+      return parentItem.canUserModify(user, action);
     };
 
     tempItem.testUserPermission = function (user, permission, options) {
-      return actionCardItem.testUserPermission(user, permission, options);
+      return parentItem.testUserPermission(user, permission, options);
     };
 
-    const sheetOptions = foundry.utils.mergeObject(options, {
-      document: tempItem,
-      title: `${game.i18n.localize("EVENTIDE_RP_SYSTEM.UI.Edit")}: ${
-        tempItem.name
-      }`,
-    });
-
-    super(sheetOptions);
-
-    // Store the original embedded item ID for lookups (must be after super() call)
-    this.originalItemId = itemData._id;
-    this.actionCardItem = actionCardItem;
-    this.isEffect = isEffect;
-    this.isStatusEffect = itemData.type === "status";
-    Logger.methodExit("EmbeddedItemSheet", "constructor", this);
+    Logger.debug(
+      "EmbeddedItemSheet | Permissions set up",
+      {
+        isOwner: tempItem.isOwner,
+        isEditable: tempItem.isEditable,
+        parentName: parentItem.name,
+      },
+      "EMBEDDED_ITEM_SHEET",
+    );
   }
 
   /** @override */
@@ -183,8 +251,8 @@ export class EmbeddedItemSheet extends BaselineSheetMixins(
       },
       actions: {
         onEditImage: this._onEditImage,
-        newCharacterEffect: this._newCharacterEffect,
-        deleteCharacterEffect: this._deleteCharacterEffect,
+        newCharacterEffect: this._newEmbeddedCharacterEffect,
+        deleteCharacterEffect: this._deleteEmbeddedCharacterEffect,
         toggleEffectDisplay: this._toggleEffectDisplay,
       },
     },
@@ -319,8 +387,8 @@ export class EmbeddedItemSheet extends BaselineSheetMixins(
             this.document.system.description,
             {
               secrets: this.document.isOwner,
-              rollData: this.actionCardItem.getRollData(),
-              relativeTo: this.actionCardItem,
+              rollData: this.parentItem.getRollData(),
+              relativeTo: this.parentItem,
             },
           );
         break;
@@ -405,22 +473,52 @@ export class EmbeddedItemSheet extends BaselineSheetMixins(
       type: "image",
       redirectToRoot: img ? [img] : [],
       callback: async (path) => {
-        if (this.isEffect) {
-          // Find the effect in the action card's embedded effects
+        // Handle transformation items (embedded combat powers)
+        if (this.parentItem.type === "transformation") {
+          const powerIndex =
+            this.parentItem.system.embeddedCombatPowers.findIndex(
+              (p) => p._id === this.originalItemId,
+            );
+          if (powerIndex === -1) return;
+
+          const powers = foundry.utils.deepClone(
+            this.parentItem.system.embeddedCombatPowers,
+          );
+          const powerData = powers[powerIndex];
+          foundry.utils.setProperty(powerData, attr, path);
+
+          try {
+            await this.parentItem.update({
+              "system.embeddedCombatPowers": powers,
+            });
+            this.document.updateSource(powerData);
+            this.render();
+          } catch (error) {
+            Logger.error(
+              "EmbeddedItemSheet | Failed to save combat power image",
+              { error, powers, powerData },
+              "EMBEDDED_ITEM_SHEET",
+            );
+            ui.notifications.error(
+              "Failed to save Combat Power. See console for details.",
+            );
+          }
+        } else if (this.isEffect) {
+          // Handle action card embedded effects
           const effectIndex =
-            this.actionCardItem.system.embeddedStatusEffects.findIndex(
+            this.parentItem.system.embeddedStatusEffects.findIndex(
               (s) => s._id === this.originalItemId,
             );
           if (effectIndex === -1) return;
 
           const statusEffects = foundry.utils.deepClone(
-            this.actionCardItem.system.embeddedStatusEffects,
+            this.parentItem.system.embeddedStatusEffects,
           );
           const effectData = statusEffects[effectIndex];
           foundry.utils.setProperty(effectData, attr, path);
 
           try {
-            await this.actionCardItem.update({
+            await this.parentItem.update({
               "system.embeddedStatusEffects": statusEffects,
             });
             this.render();
@@ -437,14 +535,14 @@ export class EmbeddedItemSheet extends BaselineSheetMixins(
             );
           }
         } else {
-          // Update the embedded item in the action card
+          // Handle action card embedded items
           const itemData = foundry.utils.deepClone(
-            this.actionCardItem.system.embeddedItem,
+            this.parentItem.system.embeddedItem,
           );
           foundry.utils.setProperty(itemData, attr, path);
 
           try {
-            await this.actionCardItem.update({
+            await this.parentItem.update({
               "system.embeddedItem": itemData,
             });
             this.render();
@@ -471,43 +569,15 @@ export class EmbeddedItemSheet extends BaselineSheetMixins(
   /** @override */
   async _preClose() {
     await super._preClose();
-    if (this.themeManager) {
-      cleanupThemeManager(this);
-      this.themeManager = null;
-    }
+    this._cleanupThemeManagement();
   }
 
   /** @override */
   async _onFirstRender(context, options) {
     super._onFirstRender(context, options);
 
-    // Apply theme immediately to prevent flashing
-    applyThemeImmediate(this.element);
-
-    // Initialize theme management only on first render (non-blocking like actor/item sheets)
-    if (!this.themeManager) {
-      initThemeManager(this, THEME_PRESETS.ITEM_SHEET)
-        .then((manager) => {
-          this.themeManager = manager;
-          Logger.debug(
-            "Theme management initialized asynchronously for embedded item sheet",
-            {
-              hasThemeManager: !!this.themeManager,
-              sheetId: this.id,
-              itemName: this.document?.name,
-              itemType: this.document?.type,
-            },
-            "THEME",
-          );
-        })
-        .catch((error) => {
-          Logger.error(
-            "Failed to initialize theme manager for embedded item sheet",
-            error,
-            "THEME",
-          );
-        });
-    }
+    // Initialize theme management using the mixin
+    this._initThemeManagement();
 
     if (this.element) {
       this.element.addEventListener("save", (event) => {
@@ -526,10 +596,8 @@ export class EmbeddedItemSheet extends BaselineSheetMixins(
   async _onRender(context, options) {
     super._onRender(context, options);
 
-    // Re-apply themes on re-render (but don't reinitialize)
-    if (this.themeManager) {
-      this.themeManager.applyThemes();
-    }
+    // Re-apply themes on re-render using the mixin
+    this._initThemeManagement();
   }
 
   /**
@@ -561,69 +629,7 @@ export class EmbeddedItemSheet extends BaselineSheetMixins(
    * @protected
    */
   async _onEditorSave(target, content) {
-    if (this.isEffect) {
-      // Find the effect in the action card's embedded effects
-      const effectIndex =
-        this.actionCardItem.system.embeddedStatusEffects.findIndex(
-          (s) => s._id === this.originalItemId,
-        );
-      if (effectIndex === -1) return;
-
-      const statusEffects = foundry.utils.deepClone(
-        this.actionCardItem.system.embeddedStatusEffects,
-      );
-      const effectData = statusEffects[effectIndex];
-      foundry.utils.setProperty(effectData, target, content);
-
-      try {
-        // Update the temporary document's source data first
-        this.document.updateSource(effectData);
-
-        await this.actionCardItem.update({
-          "system.embeddedStatusEffects": statusEffects,
-        });
-
-        ui.notifications.info(
-          game.i18n.localize("EVENTIDE_RP_SYSTEM.Info.EffectDescriptionSaved"),
-        );
-      } catch (error) {
-        Logger.error(
-          "EmbeddedItemSheet | Failed to save effect description",
-          { error, statusEffects, effectData },
-          "EMBEDDED_ITEM_SHEET",
-        );
-        ui.notifications.error(
-          "Failed to save effect. See console for details.",
-        );
-      }
-    } else {
-      const itemData = foundry.utils.deepClone(
-        this.actionCardItem.system.embeddedItem,
-      );
-      foundry.utils.setProperty(itemData, target, content);
-
-      try {
-        // Update the temporary document's source data first
-        this.document.updateSource(itemData);
-
-        await this.actionCardItem.update({
-          "system.embeddedItem": itemData,
-        });
-
-        ui.notifications.info(
-          game.i18n.localize("EVENTIDE_RP_SYSTEM.Info.ItemDescriptionSaved"),
-        );
-      } catch (error) {
-        Logger.error(
-          "EmbeddedItemSheet | Failed to save description",
-          { error, itemData },
-          "EMBEDDED_ITEM_SHEET",
-        );
-        ui.notifications.error(
-          game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.SaveItemFailed"),
-        );
-      }
-    }
+    await this._saveEmbeddedEditorContent(target, content);
   }
 
   /**
@@ -635,89 +641,14 @@ export class EmbeddedItemSheet extends BaselineSheetMixins(
    */
   async _onChangeForm(formConfig, event) {
     if (event.target.name.includes("characterEffects")) {
-      await this._updateCharacterEffects();
+      await this._updateEmbeddedCharacterEffects();
       event.target.focus();
       return;
     }
 
     // Handle icon tint changes for status effects and gear
     if (event.target.name.includes("iconTint")) {
-      const firstEffect = this.document.effects.contents[0];
-      if (firstEffect) {
-        // Update the embedded item data in the action card
-        if (this.isEffect) {
-          const effectIndex =
-            this.actionCardItem.system.embeddedStatusEffects.findIndex(
-              (s) => s._id === this.originalItemId,
-            );
-          if (effectIndex >= 0) {
-            const statusEffects = foundry.utils.deepClone(
-              this.actionCardItem.system.embeddedStatusEffects,
-            );
-            const effectData = statusEffects[effectIndex];
-
-            if (!effectData.effects) effectData.effects = [];
-            const activeEffectIndex = effectData.effects.findIndex(
-              (e) => e._id === firstEffect.id,
-            );
-            if (activeEffectIndex >= 0) {
-              effectData.effects[activeEffectIndex].tint = event.target.value;
-            }
-
-            try {
-              // Update the temporary document's source data first
-              this.document.updateSource(effectData);
-
-              await this.actionCardItem.update({
-                "system.embeddedStatusEffects": statusEffects,
-              });
-            } catch (error) {
-              Logger.error(
-                "EmbeddedItemSheet | Failed to save effect icon tint",
-                { error, statusEffects, effectData },
-                "EMBEDDED_ITEM_SHEET",
-              );
-              ui.notifications.error(
-                game.i18n.localize(
-                  "EVENTIDE_RP_SYSTEM.Errors.SaveEffectIconTintFailed",
-                ),
-              );
-            }
-          }
-        } else {
-          const itemData = foundry.utils.deepClone(
-            this.actionCardItem.system.embeddedItem,
-          );
-
-          if (!itemData.effects) itemData.effects = [];
-          const effectIndex = itemData.effects.findIndex(
-            (e) => e._id === firstEffect.id,
-          );
-          if (effectIndex >= 0) {
-            itemData.effects[effectIndex].tint = event.target.value;
-          }
-
-          try {
-            // Update the temporary document's source data first
-            this.document.updateSource(itemData);
-
-            await this.actionCardItem.update({
-              "system.embeddedItem": itemData,
-            });
-          } catch (error) {
-            Logger.error(
-              "EmbeddedItemSheet | Failed to save item icon tint",
-              { error, itemData },
-              "EMBEDDED_ITEM_SHEET",
-            );
-            ui.notifications.error(
-              game.i18n.localize(
-                "EVENTIDE_RP_SYSTEM.Errors.SaveItemIconTintFailed",
-              ),
-            );
-          }
-        }
-      }
+      await this._handleIconTintChange(event);
       return;
     }
 
@@ -731,107 +662,8 @@ export class EmbeddedItemSheet extends BaselineSheetMixins(
    * @override
    * @protected
    */
-  async _onSubmitForm(_formConfig, _event) {
-    Logger.methodEntry("EmbeddedItemSheet", "_onSubmitForm");
-    const formData = new FormDataExtended(this.form).object;
-
-    if (this.isEffect) {
-      // Find the effect in the action card's embedded effects
-      const effectIndex =
-        this.actionCardItem.system.embeddedStatusEffects.findIndex(
-          (s) => s._id === this.originalItemId,
-        );
-      if (effectIndex === -1) {
-        Logger.methodExit("EmbeddedItemSheet", "_onSubmitForm", {
-          reason: "Effect not found",
-        });
-        return;
-      }
-
-      const statusEffects = foundry.utils.deepClone(
-        this.actionCardItem.system.embeddedStatusEffects,
-      );
-      const effectData = statusEffects[effectIndex];
-      foundry.utils.mergeObject(effectData, formData);
-
-      try {
-        // Update the temporary document's source data first
-        this.document.updateSource(effectData);
-
-        await this.actionCardItem.update({
-          "system.embeddedStatusEffects": statusEffects,
-        });
-        this.render();
-      } catch (error) {
-        Logger.error(
-          "EmbeddedItemSheet | Failed to save effect form data",
-          { error, statusEffects, effectData, formData },
-          "EMBEDDED_ITEM_SHEET",
-        );
-        ui.notifications.error(
-          game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.SaveItemFailed"),
-        );
-        Logger.methodExit("EmbeddedItemSheet", "_onSubmitForm", { error });
-        return;
-      }
-    } else {
-      // Find the embedded item in the action card
-      const itemData = foundry.utils.deepClone(
-        this.actionCardItem.system.embeddedItem,
-      );
-      foundry.utils.mergeObject(itemData, formData);
-
-      try {
-        // Update the temporary document's source data first
-        this.document.updateSource(itemData);
-
-        await this.actionCardItem.update({
-          "system.embeddedItem": itemData,
-        });
-        this.render();
-      } catch (error) {
-        Logger.error(
-          "EmbeddedItemSheet | Failed to save form data",
-          { error, itemData, formData },
-          "EMBEDDED_ITEM_SHEET",
-        );
-        ui.notifications.error(
-          game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.SaveItemFailed"),
-        );
-        Logger.methodExit("EmbeddedItemSheet", "_onSubmitForm", { error });
-        return;
-      }
-    }
-    Logger.methodExit("EmbeddedItemSheet", "_onSubmitForm");
-  }
-
-  /**
-   * Handle adding a new character effect
-   * @param {Event} event - The click event
-   * @param {HTMLElement} target - The target element
-   * @private
-   */
-  static async _newCharacterEffect(event, target) {
-    const { type, ability } = target.dataset;
-    const newEffect = {
-      type,
-      ability,
-    };
-    await this._updateCharacterEffects({ newEffect });
-    this.render();
-    event.target.focus();
-  }
-
-  /**
-   * Handle deleting a character effect
-   * @param {Event} event - The click event
-   * @param {HTMLElement} target - The target element
-   * @private
-   */
-  static async _deleteCharacterEffect(_event, target) {
-    const index = target.dataset.index;
-    const type = target.dataset.type;
-    await this._updateCharacterEffects({ remove: { index, type } });
+  async _onSubmitForm(formConfig, event) {
+    await this._submitEmbeddedForm(formConfig, event);
   }
 
   /**
@@ -895,10 +727,132 @@ export class EmbeddedItemSheet extends BaselineSheetMixins(
       "EMBEDDED_ITEM_SHEET",
     );
 
-    // Update the embedded item data in the action card
-    if (this.isEffect) {
+    // Update the embedded item data in the parent item
+    if (this.parentItem.type === "transformation") {
+      // Handle transformation items - combat powers don't typically use effect display toggles
+      // but we'll handle it for completeness
+      const powerIndex = this.parentItem.system.embeddedCombatPowers.findIndex(
+        (p) => p._id === this.originalItemId,
+      );
+
+      Logger.debug(
+        "EmbeddedItemSheet | Processing embedded combat power",
+        {
+          powerIndex,
+          totalPowers: this.parentItem.system.embeddedCombatPowers.length,
+          originalItemId: this.originalItemId,
+        },
+        "EMBEDDED_ITEM_SHEET",
+      );
+
+      if (powerIndex === -1) {
+        Logger.error(
+          "EmbeddedItemSheet | Combat power not found in transformation",
+          null,
+          "EMBEDDED_ITEM_SHEET",
+        );
+        return;
+      }
+
+      const powers = foundry.utils.deepClone(
+        this.parentItem.system.embeddedCombatPowers,
+      );
+      const powerData = powers[powerIndex];
+
+      // Ensure effects array exists
+      if (!powerData.effects) powerData.effects = [];
+
+      // Find or create the active effect in the stored data
+      let activeEffectIndex = powerData.effects.findIndex(
+        (e) => e._id === firstEffect.id,
+      );
+
+      Logger.debug(
+        "EmbeddedItemSheet | Combat power data before update",
+        {
+          powerData,
+          activeEffectIndex,
+          totalActiveEffects: powerData.effects.length,
+          firstEffectId: firstEffect.id,
+        },
+        "EMBEDDED_ITEM_SHEET",
+      );
+
+      if (activeEffectIndex >= 0) {
+        // Update existing effect
+        powerData.effects[activeEffectIndex].duration = duration;
+        Logger.debug(
+          "EmbeddedItemSheet | Updated existing combat power effect",
+          {
+            activeEffectIndex,
+            updatedEffect: powerData.effects[activeEffectIndex],
+          },
+          "EMBEDDED_ITEM_SHEET",
+        );
+      } else {
+        // Create new effect from the temporary effect
+        const newEffect = firstEffect.toObject();
+        newEffect.duration = duration;
+        powerData.effects.push(newEffect);
+        activeEffectIndex = powerData.effects.length - 1;
+        Logger.debug(
+          "EmbeddedItemSheet | Created new combat power effect",
+          {
+            newEffect,
+            activeEffectIndex,
+          },
+          "EMBEDDED_ITEM_SHEET",
+        );
+      }
+
+      Logger.debug(
+        "EmbeddedItemSheet | Final combat power data to save",
+        {
+          powers,
+          updatedPowerData: powerData,
+          effectDuration: powerData.effects[activeEffectIndex].duration,
+        },
+        "EMBEDDED_ITEM_SHEET",
+      );
+
+      try {
+        // Step 1: Update the temporary document's effect directly
+        firstEffect.updateSource({ duration });
+        Logger.debug(
+          "EmbeddedItemSheet | Updated temporary document effect",
+          {
+            effectId: firstEffect.id,
+            newDuration: firstEffect.duration,
+          },
+          "EMBEDDED_ITEM_SHEET",
+        );
+
+        // Step 2: Update the transformation with the new data
+        this.parentItem.update({
+          "system.embeddedCombatPowers": powers,
+        });
+
+        Logger.debug(
+          "EmbeddedItemSheet | Successfully updated transformation",
+          null,
+          "EMBEDDED_ITEM_SHEET",
+        );
+
+        // Step 3: Re-render the sheet
+        this.render();
+      } catch (error) {
+        Logger.error(
+          "EmbeddedItemSheet | Failed to toggle combat power effect display",
+          { error, powers, powerData },
+          "EMBEDDED_ITEM_SHEET",
+        );
+        ui.notifications.error(
+          "Failed to save Combat Power. See console for details.",
+        );
+      }
+    } else if (this.isEffect) {
       const effectIndex =
-        this.actionCardItem.system.embeddedStatusEffects.findIndex(
+        this.parentItem.system.embeddedStatusEffects.findIndex(
           (s) => s._id === this.originalItemId,
         );
 
@@ -906,7 +860,7 @@ export class EmbeddedItemSheet extends BaselineSheetMixins(
         "EmbeddedItemSheet | Processing embedded effect",
         {
           effectIndex,
-          totalEffects: this.actionCardItem.system.embeddedStatusEffects.length,
+          totalEffects: this.parentItem.system.embeddedStatusEffects.length,
           originalItemId: this.originalItemId,
         },
         "EMBEDDED_ITEM_SHEET",
@@ -922,7 +876,7 @@ export class EmbeddedItemSheet extends BaselineSheetMixins(
       }
 
       const statusEffects = foundry.utils.deepClone(
-        this.actionCardItem.system.embeddedStatusEffects,
+        this.parentItem.system.embeddedStatusEffects,
       );
       const statusData = statusEffects[effectIndex];
 
@@ -995,7 +949,7 @@ export class EmbeddedItemSheet extends BaselineSheetMixins(
         );
 
         // Step 2: Update the action card with the new data
-        this.actionCardItem.update({
+        this.parentItem.update({
           "system.embeddedStatusEffects": statusEffects,
         });
 
@@ -1021,7 +975,7 @@ export class EmbeddedItemSheet extends BaselineSheetMixins(
       }
     } else {
       const itemData = foundry.utils.deepClone(
-        this.actionCardItem.system.embeddedItem,
+        this.parentItem.system.embeddedItem,
       );
 
       Logger.debug(
@@ -1103,7 +1057,7 @@ export class EmbeddedItemSheet extends BaselineSheetMixins(
         );
 
         // Step 2: Update the action card with the new data
-        this.actionCardItem.update({
+        this.parentItem.update({
           "system.embeddedItem": itemData,
         });
 
@@ -1130,252 +1084,5 @@ export class EmbeddedItemSheet extends BaselineSheetMixins(
     }
 
     event.target.focus();
-  }
-
-  /**
-   * Update character effects for embedded items
-   * @param {Object} options - Update options
-   * @param {Object} [options.newEffect] - Configuration for a new effect to add
-   * @param {Object} [options.remove] - Configuration for removing an existing effect
-   * @returns {Promise<void>}
-   * @private
-   */
-  async _updateCharacterEffects({
-    newEffect = { type: null, ability: null },
-    remove = { index: null, type: null },
-  } = {}) {
-    // Get all form elements that include "characterEffects" in their name
-    let formElements = this.form.querySelectorAll('[name*="characterEffects"]');
-
-    if (remove.type && remove.index) {
-      formElements = Array.from(formElements).filter(
-        (el) => !el.name.includes(`${remove.type}.${remove.index}`),
-      );
-    }
-
-    // Create an object to store the values
-    const characterEffects = {
-      regularEffects: [],
-      hiddenEffects: [],
-    };
-
-    // Process each form element
-    for (const element of formElements) {
-      const name = element.name;
-      const value = element.value;
-
-      if (!name.includes("regularEffects") && !name.includes("hiddenEffects")) {
-        continue;
-      }
-
-      const parts = name.split(".");
-      if (parts.length < 3) continue;
-
-      const type = parts[1]; // regularEffects or hiddenEffects
-      const index = parseInt(parts[2], 10);
-      const property = parts[3]; // ability, mode, value, etc.
-
-      // Ensure the array has an object at this index
-      if (!characterEffects[type][index]) {
-        characterEffects[type][index] = {};
-      }
-
-      // Set the property value
-      characterEffects[type][index][property] = value;
-    }
-
-    // Clean up the arrays
-    characterEffects.regularEffects = characterEffects.regularEffects.filter(
-      (e) => e,
-    );
-    characterEffects.hiddenEffects = characterEffects.hiddenEffects.filter(
-      (e) => e,
-    );
-
-    const processEffects = async (effects, isRegular) => {
-      return effects.map((effect) => {
-        let key;
-
-        if (isRegular) {
-          key = `system.abilities.${effect.ability}.${
-            effect.mode === "add"
-              ? "change"
-              : effect.mode === "override"
-                ? "override"
-                : effect.mode === "advantage"
-                  ? "diceAdjustments.advantage"
-                  : effect.mode === "disadvantage"
-                    ? "diceAdjustments.disadvantage"
-                    : "transform"
-          }`;
-        } else {
-          key = `system.hiddenAbilities.${effect.ability}.${
-            effect.mode === "add" ? "change" : "override"
-          }`;
-        }
-
-        const mode =
-          (isRegular && effect.mode !== "override") ||
-          (!isRegular && effect.mode === "add")
-            ? CONST.ACTIVE_EFFECT_MODES.ADD
-            : CONST.ACTIVE_EFFECT_MODES.OVERRIDE;
-
-        return { key, mode, value: effect.value };
-      });
-    };
-
-    const newEffects = [
-      ...(await processEffects(characterEffects.regularEffects, true)),
-      ...(await processEffects(characterEffects.hiddenEffects, false)),
-    ];
-
-    if (newEffect.type && newEffect.ability) {
-      newEffects.push({
-        key: `system.${newEffect.type}.${newEffect.ability}.change`,
-        mode: CONST.ACTIVE_EFFECT_MODES.ADD,
-        value: 0,
-      });
-    }
-
-    // Get the first effect from the temporary item, or create one if needed
-    let firstEffect = this.document.effects.contents[0];
-    if (
-      !firstEffect &&
-      (this.document.type === "status" || this.document.type === "gear")
-    ) {
-      // Create a default ActiveEffect if none exists for status effects and gear
-      const defaultEffectData = {
-        _id: foundry.utils.randomID(),
-        name: this.document.name,
-        icon: this.document.img,
-        changes: [],
-        disabled: false,
-        duration: {},
-        flags: {},
-        tint: "#ffffff",
-        transfer: true,
-        statuses: [],
-      };
-
-      firstEffect = new CONFIG.ActiveEffect.documentClass(defaultEffectData, {
-        parent: this.document,
-      });
-      this.document.effects.set(defaultEffectData._id, firstEffect);
-
-      // Also update the source data
-      if (!this.document._source.effects) {
-        this.document._source.effects = [];
-      }
-      this.document._source.effects.push(defaultEffectData);
-    }
-
-    if (!firstEffect) {
-      Logger.warn(
-        "No active effect found and could not create one for embedded item",
-        null,
-        "EMBEDDED_ITEM_SHEET",
-      );
-      return;
-    }
-
-    // Update the effect data
-    const effectData = {
-      _id: firstEffect.id,
-      changes: newEffects,
-    };
-
-    // Update the embedded item data in the action card
-    if (this.isEffect) {
-      const effectIndex =
-        this.actionCardItem.system.embeddedStatusEffects.findIndex(
-          (s) => s._id === this.originalItemId,
-        );
-      if (effectIndex === -1) return;
-
-      const statusEffects = foundry.utils.deepClone(
-        this.actionCardItem.system.embeddedStatusEffects,
-      );
-      const statusData = statusEffects[effectIndex];
-
-      // Update the effects array in the status data
-      if (!statusData.effects) statusData.effects = [];
-      const activeEffectIndex = statusData.effects.findIndex(
-        (e) => e._id === firstEffect.id,
-      );
-      if (activeEffectIndex >= 0) {
-        statusData.effects[activeEffectIndex] = foundry.utils.mergeObject(
-          statusData.effects[activeEffectIndex],
-          effectData,
-        );
-      } else {
-        // Add the effect if it doesn't exist yet
-        statusData.effects.push(
-          foundry.utils.mergeObject(firstEffect.toObject(), effectData),
-        );
-      }
-
-      try {
-        // Update the temporary document's source data first
-        this.document.updateSource(statusData);
-
-        await this.actionCardItem.update({
-          "system.embeddedStatusEffects": statusEffects,
-        });
-        this.render();
-      } catch (error) {
-        Logger.error(
-          "EmbeddedItemSheet | Failed to save effect character effects",
-          { error, statusEffects, statusData },
-          "EMBEDDED_ITEM_SHEET",
-        );
-        ui.notifications.error(
-          game.i18n.localize(
-            "EVENTIDE_RP_SYSTEM.Errors.SaveEffectCharacterEffectsFailed",
-          ),
-        );
-      }
-    } else {
-      const itemData = foundry.utils.deepClone(
-        this.actionCardItem.system.embeddedItem,
-      );
-
-      // Update the effects array in the item data
-      if (!itemData.effects) itemData.effects = [];
-      const activeEffectIndex = itemData.effects.findIndex(
-        (e) => e._id === firstEffect.id,
-      );
-      if (activeEffectIndex >= 0) {
-        itemData.effects[activeEffectIndex] = foundry.utils.mergeObject(
-          itemData.effects[activeEffectIndex],
-          effectData,
-        );
-      } else {
-        // Add the effect if it doesn't exist yet
-        itemData.effects.push(
-          foundry.utils.mergeObject(firstEffect.toObject(), effectData),
-        );
-      }
-
-      try {
-        // Update the temporary document's source data first
-        this.document.updateSource(itemData);
-
-        await this.actionCardItem.update({
-          "system.embeddedItem": itemData,
-        });
-        this.render();
-      } catch (error) {
-        Logger.error(
-          "EmbeddedItemSheet | Failed to save item character effects",
-          { error, itemData },
-          "EMBEDDED_ITEM_SHEET",
-        );
-        ui.notifications.error(
-          game.i18n.localize(
-            "EVENTIDE_RP_SYSTEM.Errors.SaveItemCharacterEffectsFailed",
-          ),
-        );
-      }
-    }
   }
 }
