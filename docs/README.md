@@ -198,8 +198,8 @@ This documentation is organized by user role and complexity:
 
 ## Version Information
 
-- **System Version**: 13.10.0
-- **Foundry Compatibility**: v13.341 minimum, v13.344 verified
+- **System Version**: 13.11.0
+- **Foundry Compatibility**: v13.341 minimum, v13.345 verified (NOTE: We will not be tracking . foundry releases after v13.345 since they do not make major api changes mid-major version and I don't want the system complaining about compatibility with minor version bumps)
 - **Documentation Version**: Updated for latest release
 - **Last Updated**: Check [GitHub Releases](https://github.com/EventideMiles/eventide-rp-system/releases) for latest information
 
