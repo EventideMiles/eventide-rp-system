@@ -4,10 +4,10 @@ import { CommonFoundryTasks } from "../../utils/_module.mjs";
 import {
   initThemeManager,
   cleanupThemeManager,
+  applyThemeImmediate,
   triggerGlobalThemeChange,
   THEME_PRESETS,
 } from "../../helpers/_module.mjs";
-import { applyThemeImmediate } from "../../helpers/theme/theme-applicator.mjs";
 
 /**
  * Actor Sheet Theme Management Mixin

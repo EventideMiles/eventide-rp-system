@@ -417,6 +417,14 @@ export const getAllThemeManagers = () => {
 };
 
 /**
+ * Get the count of active theme instances for diagnostics
+ * @returns {number} Number of active theme manager instances
+ */
+export const getActiveThemeInstances = () => {
+  return activeInstances.size;
+};
+
+/**
  * Apply themes to all active instances
  */
 export const applyThemesToAll = () => {

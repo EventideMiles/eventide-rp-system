@@ -43,6 +43,9 @@ export const initNumberInputs = () => {
 
     isInitialized = true;
 
+    // Set a flag on document for diagnostics detection
+    document._erpsNumberInputsInitialized = true;
+
     Logger.debug("Number inputs initialized successfully", {}, "NUMBER_INPUT");
   } catch (error) {
     Logger.error("Failed to initialize number inputs", error, "NUMBER_INPUT");
@@ -270,6 +273,9 @@ export const cleanupNumberInputsGlobal = () => {
     }
 
     isInitialized = false;
+
+    // Clear the diagnostics flag
+    document._erpsNumberInputsInitialized = false;
 
     Logger.debug(
       "Global number input handlers cleaned up successfully",

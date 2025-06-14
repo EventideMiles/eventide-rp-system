@@ -3,6 +3,7 @@ import { Logger } from "../../services/_module.mjs";
 import {
   initThemeManager,
   THEME_PRESETS,
+  applyThemeImmediate,
   cleanupThemeManager,
 } from "../../helpers/_module.mjs";
 import { CommonFoundryTasks } from "../../utils/_module.mjs";
@@ -241,13 +242,31 @@ export class CreatorApplication extends EventideSheetHelpers {
    * @param {RenderOptions} options                 Provided render options
    * @protected
    */
-  _onRender(_context, _options) {
-    // Initialize centralized theme management for creator applications
+  async _onRender(_context, _options) {
+    // Apply theme immediately to prevent flashing
+    applyThemeImmediate(this.element);
+
+    // Initialize centralized theme management for creator applications (non-blocking like actor/item sheets)
     if (!this.themeManager) {
-      this.themeManager = initThemeManager(
-        this,
-        THEME_PRESETS.CREATOR_APPLICATION,
-      );
+      initThemeManager(this, THEME_PRESETS.CREATOR_APPLICATION)
+        .then((manager) => {
+          this.themeManager = manager;
+          Logger.debug(
+            "Theme management initialized asynchronously for creator application",
+            {
+              hasThemeManager: !!this.themeManager,
+              sheetId: this.id,
+            },
+            "THEME",
+          );
+        })
+        .catch((error) => {
+          Logger.error(
+            "Failed to initialize theme manager for creator application",
+            error,
+            "THEME",
+          );
+        });
     } else {
       // Re-apply themes on re-render
       this.themeManager.applyThemes();

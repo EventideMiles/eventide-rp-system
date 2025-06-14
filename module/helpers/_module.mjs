@@ -14,3 +14,4 @@ export * from "./effects.mjs";
 export * from "./theme/_module.mjs";
 export * from "./message-flags.mjs";
 export * from "./inventory-utils.mjs";
+export * from "./theme/_module.mjs";

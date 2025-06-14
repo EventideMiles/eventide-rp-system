@@ -14,6 +14,7 @@ export {
   ThemeManagerInstance,
   getThemeManager,
   getAllThemeManagers,
+  getActiveThemeInstances,
   applyThemesToAll,
   cleanupAllInstances,
 } from "./theme-instance.mjs";

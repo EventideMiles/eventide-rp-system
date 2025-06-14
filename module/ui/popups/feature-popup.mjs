@@ -2,8 +2,10 @@ import { EventidePopupHelpers } from "../components/_module.mjs";
 import {
   initThemeManager,
   THEME_PRESETS,
+  applyThemeImmediate,
   cleanupThemeManager,
 } from "../../helpers/_module.mjs";
+import { Logger } from "../../services/_module.mjs";
 
 /**
  * Application for displaying feature information in a popup.
@@ -67,15 +69,33 @@ export class FeaturePopup extends EventidePopupHelpers {
    * @override
    * @protected
    */
-  _onFirstRender() {
+  async _onFirstRender() {
     super._onFirstRender();
 
-    // Initialize theme management only on first render
+    // Apply theme immediately to prevent flashing
+    applyThemeImmediate(this.element);
+
+    // Initialize theme management only on first render (non-blocking like actor/item sheets)
     if (!this.themeManager) {
-      this.themeManager = initThemeManager(
-        this,
-        THEME_PRESETS.CREATOR_APPLICATION,
-      );
+      initThemeManager(this, THEME_PRESETS.CREATOR_APPLICATION)
+        .then((manager) => {
+          this.themeManager = manager;
+          Logger.debug(
+            "Theme management initialized asynchronously for feature popup",
+            {
+              hasThemeManager: !!this.themeManager,
+              sheetId: this.id,
+            },
+            "THEME",
+          );
+        })
+        .catch((error) => {
+          Logger.error(
+            "Failed to initialize theme manager for feature popup",
+            error,
+            "THEME",
+          );
+        });
     }
   }
 
