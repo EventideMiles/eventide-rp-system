@@ -279,6 +279,9 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
       for (const [k, v] of Object.entries(this.abilities)) {
         data[k] = foundry.utils.deepClone(v);
       }
+
+      // Also preserve the abilities object structure for item roll code
+      data.abilities = foundry.utils.deepClone(this.abilities);
     }
 
     // Keep hiddenAbilities as a nested object for critical detection
