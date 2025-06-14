@@ -5,7 +5,7 @@
  */
 import { getSetting } from "../_module.mjs";
 import { ERPSRollUtilities } from "../../utils/_module.mjs";
-import { erpsSoundManager } from "../_module.mjs";
+import { erpsSoundManager, Logger } from "../_module.mjs";
 
 const { renderTemplate } = foundry.applications.handlebars;
 
@@ -215,6 +215,9 @@ class ERPSRollHandler {
       toMessage = this.defaults.toMessage,
       rollMode = this.defaults.rollMode,
       soundKey = this.defaults.soundKey,
+      img = null,
+      bgColor = null,
+      textColor = null,
     } = {},
     actor,
   ) {
@@ -249,6 +252,9 @@ class ERPSRollHandler {
       targetArray,
       targetRollData,
       criticalStates,
+      img,
+      bgColor,
+      textColor,
     });
 
     // Render the template and create chat message if requested
@@ -354,6 +360,9 @@ class ERPSRollHandler {
     targetArray,
     targetRollData,
     criticalStates,
+    img,
+    bgColor,
+    textColor,
   }) {
     // Get styling for this roll type
     const pickedType = type.toLowerCase();
@@ -384,6 +393,10 @@ class ERPSRollHandler {
       name: actor.name,
       total: roll.total,
       formula,
+      // Add image and styling data
+      item: img ? { img, name: label } : null,
+      bgColor,
+      textColor,
     };
   }
 
@@ -479,7 +492,11 @@ class ERPSRollHandler {
     try {
       return getSetting("hideNpcInitiativeRolls");
     } catch (error) {
-      console.warn("Error getting hideNpcInitiativeRolls setting:", error);
+      Logger.warn(
+        "Error getting hideNpcInitiativeRolls setting",
+        error,
+        "ROLL_DICE",
+      );
       return false;
     }
   }

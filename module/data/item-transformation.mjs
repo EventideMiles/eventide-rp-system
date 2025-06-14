@@ -49,14 +49,15 @@ export default class EventideRpSystemTransformation extends EventideRpSystemItem
   }
 
   /**
-   * Add a combat power to this transformation's embedded combat powers
+   * Add a combat power to this transformation's embedded combat powers.
    *
-   * Creates a complete copy of the combat power data and stores it in the transformation.
-   * The combat power must be of type "combatPower" and will be ignored if it already exists.
+   * This method always creates a new, unique copy of the combat power data,
+   * assigning it a new ID to prevent conflicts. It is stored directly in the
+   * transformation's `system.embeddedCombatPowers` array.
    *
-   * @param {Item} combatPower - The combat power item to add to this transformation
-   * @returns {Promise<EventideRpSystemTransformation>} This transformation instance for method chaining
-   * @throws {Error} If the provided item is not a combat power
+   * @param {Item} combatPower - The combat power item to add to this transformation.
+   * @returns {Promise<EventideRpSystemTransformation>} This transformation instance for method chaining.
+   * @throws {Error} If the provided item is not a combat power.
    * @async
    */
   async addCombatPower(combatPower) {
@@ -69,13 +70,13 @@ export default class EventideRpSystemTransformation extends EventideRpSystemItem
     // Get current powers
     const powers = foundry.utils.deepClone(this.embeddedCombatPowers || []);
 
-    // Check if it already exists
-    if (powers.some((p) => p._id === combatPower.id)) {
-      return this; // Already exists
-    }
-
-    // Create a complete copy of the combat power data
+    // Create a complete copy of the combat power data.
     const powerData = combatPower.toObject();
+
+    // Assign a new random ID to the copied data. This is crucial to ensure the
+    // embedded power is treated as a distinct entity from its source, preventing
+    // a range of ID-related conflicts and editor issues.
+    powerData._id = foundry.utils.randomID();
 
     // Add to the array
     powers.push(powerData);
@@ -119,45 +120,61 @@ export default class EventideRpSystemTransformation extends EventideRpSystemItem
    */
   getEmbeddedCombatPowers() {
     if (!this.embeddedCombatPowers?.length) return [];
+    const transformationItem = this.parent;
 
     return this.embeddedCombatPowers.map((powerData) => {
-      // Create a temporary Item instance from the data
-      // Use the transformation item's parent (the actor) as the parent for the combat power
-      const actor = this.parent?.parent || this.parent;
+      // Use the transformation's actor as the parent, or null if unowned.
+      const actor = transformationItem?.isOwned
+        ? transformationItem.parent
+        : null;
       const tempItem = new CONFIG.Item.documentClass(powerData, {
         parent: actor,
       });
 
-      // Override the isEditable property to make this item read-only
+      // The temporary item is editable if the transformation is editable.
       Object.defineProperty(tempItem, "isEditable", {
-        value: false,
-        writable: false,
-        configurable: false,
-      });
-
-      // Also override the sheet's isEditable property when it's accessed
-      const originalSheet = tempItem.sheet;
-      Object.defineProperty(tempItem, "sheet", {
-        get() {
-          if (originalSheet && !originalSheet._readOnlyOverridden) {
-            Object.defineProperty(originalSheet, "isEditable", {
-              value: false,
-              writable: false,
-              configurable: false,
-            });
-            originalSheet._readOnlyOverridden = true;
-          }
-          return originalSheet;
-        },
+        value: transformationItem.isEditable,
         configurable: true,
       });
+
+      // Override the update method to persist changes back to the transformation.
+      tempItem.update = async (data) => {
+        const powers = foundry.utils.deepClone(this.embeddedCombatPowers);
+        const powerIndex = powers.findIndex((p) => p._id === tempItem.id);
+        if (powerIndex === -1) {
+          throw new Error("Could not find embedded combat power to update.");
+        }
+
+        // Merge the updates into the stored data.
+        powers[powerIndex] = foundry.utils.mergeObject(
+          powers[powerIndex],
+          data,
+          { inplace: false },
+        );
+
+        // Persist the changes to the transformation item.
+        await transformationItem.update({
+          "system.embeddedCombatPowers": powers,
+        });
+
+        // Close the temporary sheet and re-render the transformation sheet.
+        tempItem.sheet.close();
+        transformationItem.sheet.render(true);
+        return tempItem;
+      };
 
       return tempItem;
     });
   }
 
   prepareDerivedData() {
-    const DEFAULT_IMAGES = ["icons/svg/item-bag.svg", "icons/svg/ice-aura.svg"];
+    const DEFAULT_IMAGES = [
+      "icons/svg/item-bag.svg",
+      "icons/svg/ice-aura.svg",
+      "",
+      null,
+      undefined,
+    ];
     super.prepareDerivedData?.();
 
     if (!DEFAULT_IMAGES.includes(this.parent.img)) {

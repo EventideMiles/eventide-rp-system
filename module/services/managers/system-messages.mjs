@@ -1,5 +1,6 @@
 import { ERPSRollUtilities } from "../../utils/_module.mjs";
 import { erpsSoundManager } from "./sound-manager.mjs";
+import { Logger } from "../logger.mjs";
 
 const { renderTemplate } = foundry.applications.handlebars;
 
@@ -12,6 +13,7 @@ class ERPSMessageHandler {
     // Template paths for different message types
     this.templates = {
       status: "systems/eventide-rp-system/templates/chat/status-message.hbs",
+      gear: "systems/eventide-rp-system/templates/chat/gear-message.hbs",
       feature: "systems/eventide-rp-system/templates/chat/feature-message.hbs",
       deleteStatus:
         "systems/eventide-rp-system/templates/chat/delete-status-message.hbs",
@@ -67,9 +69,10 @@ class ERPSMessageHandler {
   /**
    * Creates a chat message for the given status effect item, including its name, description, and active effects.
    * @param {Item} item - The status effect item to generate the message for.
+   * @param {string} [context] - Optional context message to display
    * @returns {Promise<ChatMessage>} The created chat message.
    */
-  async createStatusMessage(item) {
+  async createStatusMessage(item, context = null) {
     const effects = item.effects.toObject();
     const style = ERPSRollUtilities.getItemStyle(item);
 
@@ -77,6 +80,7 @@ class ERPSMessageHandler {
       item,
       effects,
       style,
+      context,
     };
 
     // Play status apply sound locally
@@ -92,6 +96,39 @@ class ERPSMessageHandler {
         ),
       },
       { soundKey: "statusApply" },
+    );
+  }
+
+  /**
+   * Creates a chat message for the given gear item, including its name, description, and active effects.
+   * @param {Item} item - The gear item to generate the message for.
+   * @param {string} [context] - Optional context message to display
+   * @returns {Promise<ChatMessage>} The created chat message.
+   */
+  async createGearMessage(item, context = null) {
+    const effects = item.effects.toObject();
+    const style = ERPSRollUtilities.getItemStyle(item);
+
+    const data = {
+      item,
+      effects,
+      style,
+      context,
+    };
+
+    // Play gear equip sound locally (similar to status apply)
+    await erpsSoundManager._playLocalSound("gearEquip");
+
+    return this._createChatMessage(
+      "gear",
+      data,
+      {
+        speaker: ERPSRollUtilities.getSpeaker(
+          item.parent,
+          "EVENTIDE_RP_SYSTEM.MessageHeaders.Gear",
+        ),
+      },
+      { soundKey: "gearEquip" },
     );
   }
 
@@ -213,7 +250,11 @@ class ERPSMessageHandler {
         { soundKey: "featureRoll" },
       );
     } catch (error) {
-      console.error("Error creating feature roll message:", error);
+      Logger.error(
+        "Error creating feature roll message",
+        error,
+        "SYSTEM_MESSAGES",
+      );
 
       // Fallback to non-roll message
       const effects = item.effects.toObject();
@@ -422,7 +463,11 @@ class ERPSMessageHandler {
         { soundKey: "combatPower" },
       );
     } catch (error) {
-      console.error("Error creating combat power roll:", error);
+      Logger.error(
+        "Error creating combat power roll",
+        error,
+        "SYSTEM_MESSAGES",
+      );
 
       // Create a non-roll message as fallback
       const data = {
@@ -542,6 +587,42 @@ class ERPSMessageHandler {
   }
 
   /**
+   * Creates a chat message for gear effects applied without cost deduction
+   * @param {Item} item - The gear item being applied as an effect
+   * @param {Actor} target - The target actor receiving the gear effect
+   * @param {string} [context] - Optional context message to display
+   * @returns {Promise<ChatMessage>} The created chat message
+   */
+  async gearEffectMessage(item, target, context = null) {
+    const effects = item.effects.toObject();
+    const style = ERPSRollUtilities.getItemStyle(item);
+
+    const data = {
+      item,
+      effects,
+      style,
+      context: context || "Applied as effect (no cost)",
+      isEffect: true,
+      target,
+    };
+
+    // Play gear effect sound locally (similar to gear equip but distinct)
+    await erpsSoundManager._playLocalSound("gearEquip");
+
+    return this._createChatMessage(
+      "gear",
+      data,
+      {
+        speaker: ERPSRollUtilities.getSpeaker(
+          target,
+          "EVENTIDE_RP_SYSTEM.MessageHeaders.GearEffect",
+        ),
+      },
+      { soundKey: "gearEquip" },
+    );
+  }
+
+  /**
    * Creates a chat message for transformation application or removal
    * @param {Object} options - Options for the transformation message
    * @param {Actor} options.actor - The actor being transformed
@@ -550,7 +631,6 @@ class ERPSMessageHandler {
    * @returns {Promise<ChatMessage>} The created chat message
    */
   async createTransformationMessage({ actor, transformation, isApplying }) {
-    // console.info("createTransformationMessage", { actor, transformation, isApplying });
     const data = {
       actor,
       transformation,
@@ -582,6 +662,8 @@ export const erpsMessageHandler = new ERPSMessageHandler();
 // Add the methods to the handler instance for erps.messages access
 erpsMessageHandler.createStatusMessage =
   erpsMessageHandler.createStatusMessage.bind(erpsMessageHandler);
+erpsMessageHandler.createGearMessage =
+  erpsMessageHandler.createGearMessage.bind(erpsMessageHandler);
 erpsMessageHandler.createFeatureMessage =
   erpsMessageHandler.createFeatureMessage.bind(erpsMessageHandler);
 erpsMessageHandler.createDeleteStatusMessage =
@@ -596,15 +678,27 @@ erpsMessageHandler.createGearEquipMessage =
   erpsMessageHandler.createGearEquipMessage.bind(erpsMessageHandler);
 erpsMessageHandler.createTransformationMessage =
   erpsMessageHandler.createTransformationMessage.bind(erpsMessageHandler);
+erpsMessageHandler.gearEffectMessage =
+  erpsMessageHandler.gearEffectMessage.bind(erpsMessageHandler);
 
 // Export individual functions for backward compatibility
 /**
  * Creates a status message for an item
  * @param {Item} item - The status item
+ * @param {string} [context] - Optional context message
  * @returns {Promise<ChatMessage>} The created chat message
  */
-export const createStatusMessage = (item) =>
-  erpsMessageHandler.createStatusMessage(item);
+export const createStatusMessage = (item, context) =>
+  erpsMessageHandler.createStatusMessage(item, context);
+
+/**
+ * Creates a gear message for an item
+ * @param {Item} item - The gear item
+ * @param {string} [context] - Optional context message
+ * @returns {Promise<ChatMessage>} The created chat message
+ */
+export const createGearMessage = (item, context) =>
+  erpsMessageHandler.createGearMessage(item, context);
 
 /**
  * Creates a feature message for an item
@@ -691,3 +785,13 @@ export const gearEquipMessage = (item) =>
  */
 export const transformationMessage = (options) =>
   erpsMessageHandler.createTransformationMessage(options);
+
+/**
+ * Creates a gear effect message for an item applied without cost
+ * @param {Item} item - The gear item being applied as an effect
+ * @param {Actor} target - The target actor receiving the gear effect
+ * @param {string} [context] - Optional context message
+ * @returns {Promise<ChatMessage>} The created chat message
+ */
+export const gearEffectMessage = (item, target, context) =>
+  erpsMessageHandler.gearEffectMessage(item, target, context);

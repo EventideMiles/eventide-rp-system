@@ -1,0 +1,297 @@
+// ===================================
+// PERFORMANCE DASHBOARD COMPONENT
+// ===================================
+// Styling for the ApplicationV2-based performance monitoring dashboard
+
+.eventide-performance-dashboard {
+  font-family: var(--font-primary);
+  color: var(--color-text-primary);
+  background: var(--color-bg-primary);
+  padding: 0;
+
+  .dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: var(--color-bg-secondary);
+    border-bottom: 1px solid var(--color-border-primary);
+
+    h1 {
+      margin: 0;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--color-text-primary);
+
+      i {
+        margin-right: 0.5rem;
+        color: var(--color-accent-primary);
+      }
+    }
+
+    .dashboard-controls {
+      display: flex;
+      gap: 0.5rem;
+
+      button {
+        padding: 0.5rem;
+        background: var(--color-bg-primary);
+        border: 1px solid var(--color-border-primary);
+        border-radius: 4px;
+        color: var(--color-text-secondary);
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        &:hover {
+          background: var(--color-bg-hover);
+          color: var(--color-text-primary);
+        }
+
+        &.active {
+          background: var(--color-accent-primary);
+          color: var(--color-text-on-accent);
+          border-color: var(--color-accent-primary);
+        }
+      }
+    }
+  }
+
+  .dashboard-content {
+    padding: 1rem;
+    max-height: 70vh;
+    overflow-y: auto;
+
+    section {
+      margin-bottom: 1.5rem;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      h2 {
+        margin: 0 0 0.75rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--color-text-primary);
+        display: flex;
+        align-items: center;
+
+        i {
+          margin-right: 0.5rem;
+          width: 1.2rem;
+          text-align: center;
+        }
+      }
+    }
+  }
+
+  // Health Overview Section
+  .health-overview {
+    .health-status {
+      padding: 0.75rem;
+      background: var(--color-bg-secondary);
+      border-radius: 4px;
+
+      .status-text {
+        font-weight: 600;
+        font-size: 1rem;
+      }
+
+      .health-warnings {
+        margin: 0.5rem 0 0;
+        padding: 0;
+        list-style: none;
+
+        li {
+          margin: 0.25rem 0;
+          color: var(--color-warning);
+
+          i {
+            margin-right: 0.5rem;
+          }
+        }
+      }
+    }
+  }
+
+  // Memory Section
+  .memory-section {
+    .memory-info {
+      background: var(--color-bg-secondary);
+      padding: 0.75rem;
+      border-radius: 4px;
+
+      .memory-bar {
+        height: 20px;
+        background: var(--color-bg-primary);
+        border-radius: 10px;
+        overflow: hidden;
+        margin-bottom: 0.75rem;
+        border: 1px solid var(--color-border-primary);
+
+        .memory-fill {
+          height: 100%;
+          transition: width 0.3s ease;
+          border-radius: 10px;
+        }
+      }
+
+      .memory-details {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 0.5rem;
+
+        .memory-stat {
+          display: flex;
+          justify-content: space-between;
+
+          .label {
+            color: var(--color-text-secondary);
+          }
+
+          .value {
+            font-weight: 600;
+            color: var(--color-text-primary);
+          }
+        }
+      }
+    }
+
+    .memory-unavailable {
+      padding: 0.75rem;
+      background: var(--color-bg-secondary);
+      border-radius: 4px;
+      color: var(--color-text-secondary);
+      text-align: center;
+
+      i {
+        margin-right: 0.5rem;
+      }
+    }
+  }
+
+  // Resources and Game Data Sections
+  .resources-section,
+  .game-data-section,
+  .version-section {
+    .resources-grid,
+    .game-data-grid,
+    .version-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 0.5rem;
+      background: var(--color-bg-secondary);
+      padding: 0.75rem;
+      border-radius: 4px;
+
+      .resource-item,
+      .data-item,
+      .version-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .resource-label,
+        .data-label,
+        .version-label {
+          color: var(--color-text-secondary);
+        }
+
+        .resource-value,
+        .data-value,
+        .version-value {
+          font-weight: 600;
+
+          &.good {
+            color: #0f0;
+          }
+
+          &.warning {
+            color: #fa0;
+          }
+
+          &.critical {
+            color: #f44;
+          }
+        }
+      }
+    }
+  }
+
+  // Tips Section
+  .tips-section {
+    .tips-list {
+      margin: 0;
+      background: var(--color-bg-secondary);
+      padding: 0.75rem 0.75rem 0.75rem 2rem;
+      border-radius: 4px;
+
+      li {
+        margin: 0.5rem 0;
+        color: var(--color-text-secondary);
+        line-height: 1.4;
+
+        &:first-child {
+          margin-top: 0;
+        }
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
+
+  // Actions Section
+  .actions-section {
+    .action-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+
+      button {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 4px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+
+        &.cleanup-btn {
+          background: var(--color-accent-primary);
+          color: var(--color-text-on-accent);
+
+          &:hover {
+            background: var(--color-accent-hover);
+          }
+        }
+
+        &.force-cleanup-btn {
+          background: var(--color-warning);
+          color: var(--color-text-on-accent);
+
+          &:hover {
+            background: var(--color-danger);
+          }
+        }
+      }
+    }
+  }
+}
+
+// Dark theme adjustments
+[data-theme="dark"] .eventide-performance-dashboard {
+  .memory-bar .memory-fill {
+    box-shadow: 0 0 10px rgb(255 255 255 / 10%);
+  }
+}
+
+// Light theme adjustments
+[data-theme="light"] .eventide-performance-dashboard {
+  .dashboard-header {
+    box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
+  }
+}

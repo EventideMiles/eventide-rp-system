@@ -3,16 +3,12 @@ import { prepareCharacterEffects } from "../../helpers/_module.mjs";
 import { EventideSheetHelpers } from "../components/_module.mjs";
 import { Logger } from "../../services/_module.mjs";
 import { ErrorHandler, CommonFoundryTasks } from "../../utils/_module.mjs";
-import {
-  initThemeManager,
-  THEME_PRESETS,
-  cleanupThemeManager,
-} from "../../helpers/_module.mjs";
 import { BaselineSheetMixins } from "../components/_module.mjs";
+import { ItemSheetAllMixins } from "../mixins/_module.mjs";
+import { EmbeddedItemSheet } from "./embedded-item-sheet.mjs";
 
 const { api, sheets } = foundry.applications;
-const { DragDrop, TextEditor } = foundry.applications.ux;
-const FilePicker = foundry.applications.apps.FilePicker.implementation;
+const { TextEditor } = foundry.applications.ux;
 
 /**
  * Item sheet implementation for the Eventide RP System.
@@ -20,11 +16,11 @@ const FilePicker = foundry.applications.apps.FilePicker.implementation;
  * This class handles the rendering and interaction with item sheets, including features, gear, combat powers,
  * transformations, and their associated effects.
  *
- * @extends {HandlebarsApplicationMixin(ItemSheetV2)}
+ * @extends {ItemSheetAllMixins(BaselineSheetMixins(HandlebarsApplicationMixin(ItemSheetV2)))}
  * @class
  */
-export class EventideRpSystemItemSheet extends BaselineSheetMixins(
-  api.HandlebarsApplicationMixin(sheets.ItemSheetV2),
+export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
+  BaselineSheetMixins(api.HandlebarsApplicationMixin(sheets.ItemSheetV2)),
 ) {
   /**
    * Creates a new instance of the EventideRpSystemItemSheet.
@@ -84,14 +80,20 @@ export class EventideRpSystemItemSheet extends BaselineSheetMixins(
     actions: {
       onEditImage: this._onEditImage,
       viewDoc: this._viewDoc,
-      createDoc: this._createEffect,
-      deleteDoc: this._deleteEffect,
+      createEffect: this._createEffect,
+      editEffect: this._editEffect,
+      deleteEffect: this._deleteEffect,
       toggleEffect: this._toggleEffect,
       newCharacterEffect: this._newCharacterEffect,
       deleteCharacterEffect: this._deleteCharacterEffect,
       toggleEffectDisplay: this._toggleEffectDisplay,
       removeCombatPower: this._removeCombatPower,
       onDiceAdjustmentChange: this._onDiceAdjustmentChange,
+      clearEmbeddedItem: this._clearEmbeddedItem,
+
+      editEmbeddedItem: this._editEmbeddedItem,
+      editEmbeddedEffect: this._editEmbeddedEffect,
+      removeEmbeddedEffect: this._removeEmbeddedEffect,
     },
     position: {
       width: 800,
@@ -135,6 +137,10 @@ export class EventideRpSystemItemSheet extends BaselineSheetMixins(
       template:
         "systems/eventide-rp-system/templates/item/attribute-parts/transformation.hbs",
     },
+    attributesActionCard: {
+      template:
+        "systems/eventide-rp-system/templates/item/attribute-parts/action-card.hbs",
+    },
     effects: {
       template: "systems/eventide-rp-system/templates/item/effects.hbs",
     },
@@ -146,35 +152,10 @@ export class EventideRpSystemItemSheet extends BaselineSheetMixins(
       template:
         "systems/eventide-rp-system/templates/item/embedded-combat-powers.hbs",
     },
+    embeddedItems: {
+      template: "systems/eventide-rp-system/templates/item/embedded-items.hbs",
+    },
   };
-
-  /**
-   * Clean up resources before closing the application
-   * @param {Object} options - The options for closing
-   * @returns {Promise<void>}
-   * @override
-   */
-  async _preClose(options) {
-    // Call mixin cleanup first
-    await super._preClose(options);
-
-    if (this.element) {
-      // Clean up number inputs
-      erps.utils.cleanupNumberInputs(this.element);
-
-      // Clean up color pickers
-      erps.utils.cleanupColorPickers(this.element);
-
-      // Clean up range sliders
-      erps.utils.cleanupRangeSliders(this.element);
-
-      // Clean up centralized theme management
-      if (this.themeManager) {
-        cleanupThemeManager(this);
-        this.themeManager = null;
-      }
-    }
-  }
 
   /** @override */
   _configureRenderOptions(options) {
@@ -204,6 +185,9 @@ export class EventideRpSystemItemSheet extends BaselineSheetMixins(
           "characterEffects",
         );
         break;
+      case "actionCard":
+        options.parts.push("attributesActionCard", "embeddedItems");
+        break;
     }
   }
 
@@ -227,7 +211,7 @@ export class EventideRpSystemItemSheet extends BaselineSheetMixins(
 
       // Handle effect guards with error handling
       try {
-        await this.eventideItemEffectGuards();
+        await this._initEffectGuards();
       } catch (guardError) {
         Logger.warn("Effect guards failed", guardError, "ITEM_SHEET");
       }
@@ -256,6 +240,13 @@ export class EventideRpSystemItemSheet extends BaselineSheetMixins(
       context.isGM = game.user.isGM;
 
       context.userSheetTheme = CommonFoundryTasks.retrieveSheetTheme();
+      /**
+       * A flag to indicate that this sheet is for an embedded document.
+       * This is always false for the standard item sheet, but is used by the
+       * template to render the correct version of the rich text editor.
+       * @type {boolean}
+       */
+      context.isEmbedded = false;
 
       Logger.debug(
         "Item sheet context prepared",
@@ -326,12 +317,14 @@ export class EventideRpSystemItemSheet extends BaselineSheetMixins(
       case "attributesGear":
       case "attributesCombatPower":
       case "attributesTransformation":
+      case "attributesActionCard":
         // Necessary for preserving active tab on re-render
         context.tab = context.tabs[partId];
         if (
           partId === "attributesCombatPower" ||
           partId === "attributesGear" ||
-          partId === "attributesFeature"
+          partId === "attributesFeature" ||
+          partId === "attributesActionCard"
         ) {
           // Add roll type options
           context.rollTypes = EventideSheetHelpers.rollTypeObject;
@@ -369,6 +362,12 @@ export class EventideRpSystemItemSheet extends BaselineSheetMixins(
         // Get embedded combat powers as temporary items
         context.embeddedCombatPowers =
           this.item.system.getEmbeddedCombatPowers();
+        break;
+      case "embeddedItems":
+        context.tab = context.tabs[partId];
+        // Get embedded item and effects as temporary items
+        context.embeddedItem = this.item.getEmbeddedItem();
+        context.embeddedEffects = this.item.getEmbeddedEffects();
         break;
       case "effects":
         context.tab = context.tabs[partId];
@@ -436,10 +435,15 @@ export class EventideRpSystemItemSheet extends BaselineSheetMixins(
           tab.id = "embeddedCombatPowers";
           tab.label += "CombatPowers";
           break;
+        case "embeddedItems":
+          tab.id = "embeddedItems";
+          tab.label += "EmbeddedItems";
+          break;
         case "attributesFeature":
         case "attributesGear":
         case "attributesCombatPower":
         case "attributesTransformation":
+        case "attributesActionCard":
           tab.id = "attributes";
           tab.label += "Attributes";
           break;
@@ -466,16 +470,8 @@ export class EventideRpSystemItemSheet extends BaselineSheetMixins(
   _onRender(_context, _options) {
     this.#dragDrop.forEach((d) => d.bind(this.element));
 
-    // TESTING: Comment out JavaScript theme property setting to test pure CSS
-    // this._setImmediateThemeProperties(currentTheme);
-
-    // Initialize centralized theme management
-    if (!this.themeManager) {
-      this.themeManager = initThemeManager(this, THEME_PRESETS.ITEM_SHEET);
-    } else {
-      // Re-apply themes on re-render
-      this.themeManager.applyThemes();
-    }
+    // Initialize theme management from mixin
+    this._initThemeManagement();
   }
 
   /**
@@ -540,325 +536,47 @@ export class EventideRpSystemItemSheet extends BaselineSheetMixins(
       Hooks.call("erpsUpdateItem", this.item, this.item, {}, game.user.id);
     }
     this.#formChanged = false;
-  }
 
-  /**************
-   *
-   *   ACTIONS
-   *
-   **************/
-
-  /**
-   * Handle changing a Document's image.
-   *
-   * @this EventideRpSystemItemSheet
-   * @param {PointerEvent} event   The originating click event
-   * @param {HTMLElement} target   The capturing HTML element which defined a [data-action]
-   * @returns {Promise}
-   * @protected
-   */
-  static async _onEditImage(_event, target) {
-    const attr = target.dataset.edit;
-    const current = foundry.utils.getProperty(this.document, attr);
-    const { img } =
-      this.document.constructor.getDefaultArtwork?.(this.document.toObject()) ??
-      {};
-    const fp = new FilePicker({
-      current,
-      type: "image",
-      redirectToRoot: img ? [img] : [],
-      callback: (path) => {
-        this.document.update({ [attr]: path });
-      },
-      top: this.position.top + 40,
-      left: this.position.left + 10,
-    });
-    return fp.browse();
-  }
-
-  static async _newCharacterEffect(event, target) {
-    const { type, ability } = target.dataset;
-    const newEffect = {
-      type,
-      ability,
-    };
-    this._updateCharacterEffects({ newEffect });
-    event.target.focus();
-  }
-
-  static async _deleteCharacterEffect(_event, target) {
-    const index = target.dataset.index;
-    const type = target.dataset.type;
-    this._updateCharacterEffects({ remove: { index, type } });
-  }
-
-  static async _toggleEffectDisplay(event, target) {
-    const duration = target.checked ? { seconds: 604800 } : { seconds: 0 };
-    const updateData = {
-      _id: this.item.effects.contents[0]._id,
-      duration,
-    };
-    await this.item.updateEmbeddedDocuments("ActiveEffect", [updateData]);
-    event.target.focus();
+    // Clean up theme management from mixin
+    this._cleanupThemeManagement();
   }
 
   /**
-   * Handle removing a combat power from a transformation
+   * Overrides the default click action handler to manage the specialized workflow
+   * for editing an embedded combat power. This approach is necessary to ensure the
+   * correct `this` context is maintained, allowing the parent sheet to re-render
+   * itself after the child (embedded) sheet is closed.
    *
-   * @this EventideRpSystemItemSheet
-   * @param {PointerEvent} event   The originating click event
-   * @param {HTMLElement} target   The capturing HTML element which defined a [data-action]
-   * @protected
-   */
-  static async _removeCombatPower(_event, target) {
-    const powerId = target.dataset.powerId;
-    if (!powerId) {
-      return;
-    }
-    await this.item.system.removeCombatPower(powerId);
-  }
-
-  /**
-   * Handle dice adjustment input changes to recalculate totals
+   * For all other actions, it delegates back to the parent class's implementation.
    *
-   * @this EventideRpSystemItemSheet
-   * @param {Event} event   The originating change event
-   * @param {HTMLElement} _target   The capturing HTML element which defined a [data-action]
+   * @param {PointerEvent} event   - The originating click event.
+   * @param {HTMLElement} target   - The element that was clicked, containing the `data-action`.
+   * @override
    * @protected
    */
-  static async _onDiceAdjustmentChange(_event, _target) {
-    // The form submission will handle the actual update and recalculation
-    // This is just a placeholder for any additional logic if needed
-  }
+  async _onClickAction(event, target) {
+    const action = target.dataset.action;
+    if (action === "editEmbeddedPower") {
+      const powerId = target.closest("[data-item-id]")?.dataset.itemId;
+      if (!powerId) return;
 
-  /*****************
-   *
-   *   DragDrop
-   *
-   *****************/
+      const powerData = this.item.system.embeddedCombatPowers.find(
+        (p) => p._id === powerId,
+      );
 
-  /**
-   * Define whether a user is able to begin a dragstart workflow for a given drag selector
-   * @param {string} selector       The candidate HTML selector for dragging
-   * @returns {boolean}             Can the current user drag this selector?
-   * @protected
-   */
-  _canDragStart(_selector) {
-    // game.user fetches the current user
-    return this.isEditable;
-  }
-
-  /**
-   * Define whether a user is able to conclude a drag-and-drop workflow for a given drop selector
-   * @param {string} selector       The candidate HTML selector for the drop target
-   * @returns {boolean}             Can the current user drop on this selector?
-   * @protected
-   */
-  _canDragDrop(_selector) {
-    // game.user fetches the current user
-    return this.isEditable;
-  }
-
-  /**
-   * Callback actions which occur at the beginning of a drag start workflow.
-   * @param {DragEvent} event       The originating DragEvent
-   * @protected
-   */
-  _onDragStart(event) {
-    const li = event.currentTarget;
-    if ("link" in event.target.dataset) return;
-
-    let dragData = null;
-
-    // Handle embedded combat powers from transformations
-    if (this.item.type === "transformation" && li.dataset.itemId) {
-      const powerId = li.dataset.itemId;
-      const embeddedPowers = this.item.system.getEmbeddedCombatPowers();
-      const power = embeddedPowers.find((p) => p.id === powerId);
-
-      if (power) {
-        // Create clean drag data without parent relationship to avoid embedded document errors
-        const powerData = power.toObject();
-        dragData = {
-          type: "Item",
-          data: powerData,
-          // Don't include uuid or parent information that would make Foundry think this is an embedded document
-        };
+      if (powerData) {
+        const embeddedSheet = new EmbeddedItemSheet(powerData, this.item);
+        // When the embedded sheet is closed, re-render the parent sheet to reflect changes.
+        Hooks.once(`close${EmbeddedItemSheet.name}`, (app) => {
+          if (app.id === embeddedSheet.id) {
+            this.render(true);
+          }
+        });
+        embeddedSheet.render(true);
       }
+    } else {
+      return super._onClickAction(event, target);
     }
-    // Active Effect
-    else if (li.dataset.effectId) {
-      const effect = this.item.effects.get(li.dataset.effectId);
-      dragData = effect.toDragData();
-    }
-
-    if (!dragData) return;
-
-    // Set data transfer
-    event.dataTransfer.setData("text/plain", JSON.stringify(dragData));
-  }
-
-  /**
-   * Callback actions which occur when a dragged element is over a drop target.
-   * @param {DragEvent} event       The originating DragEvent
-   * @protected
-   */
-  _onDragOver(_event) {}
-
-  /**
-   * Callback actions which occur when a dragged element is dropped on a target.
-   * @param {DragEvent} event       The originating DragEvent
-   * @protected
-   */
-  async _onDrop(event) {
-    const data = TextEditor.implementation.getDragEventData(event);
-    const item = this.item;
-    const allowed = Hooks.call("dropItemSheetData", item, this, data);
-    if (allowed === false) return;
-
-    // Handle different data types
-    switch (data.type) {
-      case "ActiveEffect":
-        return this._onDropActiveEffect(event, data);
-      case "Actor":
-        return this._onDropActor(event, data);
-      case "Item":
-        return this._onDropItem(event, data);
-      case "Folder":
-        return this._onDropFolder(event, data);
-    }
-  }
-
-  /* -------------------------------------------- */
-
-  /**
-   * Handles dropping of an item reference or item data onto an Item Sheet.
-   * Specifically handles combat powers being added to transformations.
-   *
-   * @param {DragEvent} event - The concluding DragEvent which contains drop data
-   * @param {Object} data - The data transfer extracted from the event
-   * @returns {Promise<boolean>} Whether the drop was successful
-   * @protected
-   */
-  async _onDropItem(_event, data) {
-    if (!this.item.isOwner) return false;
-
-    // Get the dropped item
-    const droppedItem = await Item.implementation.fromDropData(data);
-    if (!droppedItem) return false;
-
-    // Handle transformation items receiving combat powers
-    if (this.item.type === "transformation") {
-      // Only allow combat powers to be added to transformations
-      if (droppedItem.type !== "combatPower") {
-        ui.notifications.warn(
-          game.i18n.localize(
-            "EVENTIDE_RP_SYSTEM.Errors.TransformationItemTypes",
-          ),
-        );
-        return false;
-      }
-
-      // Add the combat power to the transformation
-      await this.item.system.addCombatPower(droppedItem);
-      return true;
-    }
-
-    return false;
-  }
-
-  /* -------------------------------------------- */
-
-  /**
-   * Handles the dropping of ActiveEffect data onto an Actor Sheet.
-   * Creates new effects or sorts existing ones.
-   *
-   * @param {DragEvent} event - The concluding DragEvent which contains drop data
-   * @param {Object} data - The data transfer extracted from the event
-   * @returns {Promise<ActiveEffect|boolean>} The created ActiveEffect object or false if it couldn't be created
-   * @protected
-   */
-  async _onDropActiveEffect(event, data) {
-    const aeCls = foundry.utils.getDocumentClass("ActiveEffect");
-    const effect = await aeCls.fromDropData(data);
-    if (!this.item.isOwner || !effect) return false;
-
-    if (this.item.uuid === effect.parent?.uuid) {
-      return this._onEffectSort(event, effect);
-    }
-    return aeCls.create(effect, { parent: this.item });
-  }
-
-  /* -------------------------------------------- */
-
-  /**
-   * Sorts an Active Effect based on its surrounding attributes.
-   *
-   * @param {DragEvent} event - The drag event
-   * @param {ActiveEffect} effect - The effect being sorted
-   * @returns {Promise<void>}
-   * @protected
-   */
-  _onEffectSort(event, effect) {
-    const effects = this.item.effects;
-    const dropTarget = event.target.closest("[data-effect-id]");
-    if (!dropTarget) return;
-
-    const target = effects.get(dropTarget.dataset.effectId);
-
-    // Don't sort on yourself
-    if (effect.id === target.id) return;
-
-    // Identify sibling items based on adjacent HTML elements
-    const siblings = [];
-    for (const el of dropTarget.parentElement.children) {
-      const siblingId = el.dataset.effectId;
-      if (siblingId && siblingId !== effect.id) {
-        siblings.push(effects.get(el.dataset.effectId));
-      }
-    }
-
-    // Perform the sort
-    const sortUpdates = SortingHelpers.performIntegerSort(effect, {
-      target,
-      siblings,
-    });
-    const updateData = sortUpdates.map((u) => {
-      const update = u.update;
-      update._id = u.target._id;
-      return update;
-    });
-
-    // Perform the update
-    return this.item.updateEmbeddedDocuments("ActiveEffect", updateData);
-  }
-
-  /* -------------------------------------------- */
-
-  /**
-   * Handle dropping of an Actor data onto another Actor sheet
-   * @param {DragEvent} event            The concluding DragEvent which contains drop data
-   * @param {object} data                The data transfer extracted from the event
-   * @returns {Promise<object|boolean>}  A data object which describes the result of the drop, or false if the drop was
-   *                                     not permitted.
-   * @protected
-   */
-  async _onDropActor(_event, _data) {
-    if (!this.item.isOwner) return false;
-  }
-
-  /* -------------------------------------------- */
-
-  /**
-   * Handle dropping of a Folder on an Actor Sheet.
-   * The core sheet currently supports dropping a Folder of Items to create all items as owned items.
-   * @param {DragEvent} event     The concluding DragEvent which contains drop data
-   * @param {object} data         The data transfer extracted from the event
-   * @returns {Promise<Item[]>}
-   * @protected
-   */
-  async _onDropFolder(_event, _data) {
-    if (!this.item.isOwner) return [];
   }
 
   /** The following pieces set up drag handling and are unlikely to need modification  */
@@ -891,311 +609,10 @@ export class EventideRpSystemItemSheet extends BaselineSheetMixins(
       d.callbacks = {
         dragstart: this._onDragStart.bind(this),
         dragover: this._onDragOver.bind(this),
+        dragleave: this._onDragLeave.bind(this),
         drop: this._onDrop.bind(this),
       };
-      return new DragDrop.implementation(d);
+      return new foundry.applications.ux.DragDrop.implementation(d);
     });
-  }
-
-  /**************************
-   *
-   *   SANITIZATION / GUARDS
-   *
-   **************************/
-
-  /**
-   * Ensures that each item has exactly one active effect.
-   * Creates a default effect if none exists, or consolidates multiple effects into one.
-   *
-   * @returns {Promise<void>}
-   * @private
-   */
-  async eventideItemEffectGuards() {
-    const effects = Array.from(this.item.effects);
-
-    if (effects.length > 1) {
-      const keepEffect = this.item.effects.contents[0];
-
-      const effectIds = effects.map((effect) => effect._id);
-
-      await this.item.deleteEmbeddedDocuments("ActiveEffect", effectIds);
-      await this.item.createEmbeddedDocuments("ActiveEffect", [keepEffect]);
-    }
-
-    if (effects.length === 0) {
-      const newEffect = new ActiveEffect({
-        _id: foundry.utils.randomID(),
-        name: this.item.name,
-        img: this.item.img,
-        changes: [],
-        disabled: false,
-        duration: {
-          startTime: null,
-          seconds:
-            this.item.type === "status" || this.item.type === "feature"
-              ? 18000
-              : 0,
-          combat: "",
-          rounds: 0,
-          turns: 0,
-          startRound: 0,
-          startTurn: 0,
-        },
-        description: "",
-        origin: "",
-        tint: "#ffffff",
-        transfer: true,
-        statuses: new Set(),
-        flags: {},
-      });
-      await this.item.createEmbeddedDocuments("ActiveEffect", [newEffect]);
-    }
-
-    if (
-      !this.item.effects.contents.find(
-        (effect) =>
-          effect.name === this.item.name && effect.img === this.item.img,
-      )
-    ) {
-      const keepEffectId = this.item.effects.contents[0]._id;
-
-      const updateData = {
-        _id: keepEffectId,
-        name: this.item.name,
-        img: this.item.img,
-      };
-      await this.item.updateEmbeddedDocuments("ActiveEffect", [updateData]);
-    }
-  }
-
-  /**
-   * Updates the character effects for the item.
-   * Processes both regular and hidden effects, handling additions and removals.
-   *
-   * @param {Object} [options={}] - Options for updating character effects
-   * @param {Object} [options.newEffect] - Configuration for a new effect to add
-   * @param {(null|"abilities"|"hiddenAbilities")} [options.newEffect.type] - Type of effect
-   * @param {string} [options.newEffect.ability] - Ability identifier for the new effect
-   * @param {Object} [options.remove] - Configuration for removing an existing effect
-   * @param {number} [options.remove.index] - Index of the effect to remove
-   * @param {(null|"regularEffects"|"hiddenEffects")} [options.remove.type] - Type of effect to remove
-   * @returns {Promise<void>}
-   * @protected
-   */
-  async _updateCharacterEffects({
-    newEffect = { type: null, ability: null },
-    remove = { index: null, type: null },
-  } = {}) {
-    // Get all form elements that include "characterEffects" in their name
-    // Filter out elements that match the remove value if one is provided
-    let formElements = this.form.querySelectorAll('[name*="characterEffects"]');
-
-    if (remove.type && remove.index) {
-      formElements = Array.from(formElements).filter(
-        (el) => !el.name.includes(`${remove.type}.${remove.index}`),
-      );
-    }
-
-    // Create an object to store the values
-    const characterEffects = {
-      regularEffects: [],
-      hiddenEffects: [],
-    };
-
-    // Process each form element using for...of instead of forEach for async safety
-    for (const element of formElements) {
-      const name = element.name;
-      const value = element.value;
-
-      if (!name.includes("regularEffects") && !name.includes("hiddenEffects")) {
-        continue;
-      }
-
-      const parts = name.split(".");
-      if (parts.length < 3) continue;
-
-      // Parse the name to extract the type (regularEffects or hiddenEffects) and index
-      const type = parts[1]; // regularEffects or hiddenEffects
-      const index = parseInt(parts[2], 10);
-      const property = parts[3]; // ability, mode, value, etc.
-
-      // Ensure the array has an object at this index
-      if (!characterEffects[type][index]) {
-        characterEffects[type][index] = {};
-      }
-
-      // Set the property value
-      characterEffects[type][index][property] = value;
-    }
-
-    // Clean up the arrays (remove any undefined entries)
-    characterEffects.regularEffects = characterEffects.regularEffects.filter(
-      (e) => e,
-    );
-    characterEffects.hiddenEffects = characterEffects.hiddenEffects.filter(
-      (e) => e,
-    );
-
-    const processEffects = async (effects, isRegular) => {
-      return effects.map((effect) => {
-        let key;
-
-        if (isRegular) {
-          key = `system.abilities.${effect.ability}.${
-            effect.mode === "add"
-              ? "change"
-              : effect.mode === "override"
-                ? "override"
-                : effect.mode === "advantage"
-                  ? "diceAdjustments.advantage"
-                  : effect.mode === "disadvantage"
-                    ? "diceAdjustments.disadvantage"
-                    : "transform"
-          }`;
-        } else {
-          key = `system.hiddenAbilities.${effect.ability}.${
-            effect.mode === "add" ? "change" : "override"
-          }`;
-        }
-
-        const mode =
-          (isRegular && effect.mode !== "override") ||
-          (!isRegular && effect.mode === "add")
-            ? CONST.ACTIVE_EFFECT_MODES.ADD
-            : CONST.ACTIVE_EFFECT_MODES.OVERRIDE;
-
-        return { key, mode, value: effect.value };
-      });
-    };
-
-    const newEffects = [
-      ...(await processEffects(characterEffects.regularEffects, true)),
-      ...(await processEffects(characterEffects.hiddenEffects, false)),
-    ];
-
-    if (newEffect.type && newEffect.ability) {
-      newEffects.push({
-        key: `system.${newEffect.type}.${newEffect.ability}.change`,
-        mode: CONST.ACTIVE_EFFECT_MODES.ADD,
-        value: 0,
-      });
-    }
-
-    const updateData = {
-      _id: this.item.effects.contents[0]._id,
-      changes: newEffects,
-    };
-
-    await this.item.updateEmbeddedDocuments("ActiveEffect", [updateData]);
-  }
-
-  /*************************************************
-   *
-   *   ORIGINAL EFFECT FUNCTIONS (Legacy / Unused)
-   *
-   *************************************************/
-
-  /**
-   * Renders an embedded document's sheet.
-   * Handles both combat powers and effects.
-   *
-   * @param {PointerEvent} event - The originating click event
-   * @param {HTMLElement} target - The capturing HTML element which defined a [data-action]
-   * @returns {Promise<void>}
-   * @protected
-   */
-  static async _viewDoc(_event, target) {
-    const docRow = target.closest("li");
-
-    // Handle viewing embedded combat powers
-    if (this.item.type === "transformation" && docRow.dataset.itemId) {
-      const powerId = docRow.dataset.itemId;
-      const embeddedPowers = this.item.system.getEmbeddedCombatPowers();
-      const power = embeddedPowers.find((p) => p.id === powerId);
-
-      if (power) {
-        // Open the sheet in read-only mode since these are temporary items
-        // that can't be properly saved due to their parent relationship
-        return power.sheet.render(true, { readOnly: true });
-      }
-    }
-
-    // Handle viewing effects
-    if (docRow.dataset.effectId) {
-      const effect = this.item.effects.get(docRow.dataset.effectId);
-      effect?.sheet.render(true);
-    }
-  }
-
-  /**
-   * Handles item deletion.
-   *
-   * @param {PointerEvent} event - The originating click event
-   * @param {HTMLElement} target - The capturing HTML element which defined a [data-action]
-   * @returns {Promise<void>}
-   * @protected
-   */
-  static async _deleteEffect(_event, target) {
-    const effect = this._getEffect(target);
-    await effect.delete();
-  }
-
-  /**
-   * Creates a new Owned Item or ActiveEffect for the actor using initial data defined in the HTML dataset.
-   *
-   * @param {PointerEvent} event - The originating click event
-   * @param {HTMLElement} target - The capturing HTML element which defined a [data-action]
-   * @returns {Promise<void>}
-   * @private
-   */
-  static async _createEffect(_event, target) {
-    // Retrieve the configured document class for ActiveEffect
-    const aeCls = foundry.utils.getDocumentClass("ActiveEffect");
-    // Prepare the document creation data by initializing it a default name.
-    // As of v12, you can define custom Active Effect subtypes just like Item subtypes if you want
-    const effectData = {
-      name: aeCls.defaultName({
-        // defaultName handles an undefined type gracefully
-        type: target.dataset.type,
-        parent: this.item,
-      }),
-    };
-    // Loop through the dataset and add it to our effectData
-    for (const [dataKey, value] of Object.entries(target.dataset)) {
-      // These data attributes are reserved for the action handling
-      if (["action", "documentClass"].includes(dataKey)) continue;
-      // Nested properties require dot notation in the HTML, e.g. anything with `system`
-      foundry.utils.setProperty(effectData, dataKey, value);
-    }
-
-    // Finally, create the embedded document!
-    await aeCls.create(effectData, { parent: this.item });
-  }
-
-  /**
-   * Toggles the disabled state of an effect.
-   *
-   * @param {PointerEvent} event - The originating click event
-   * @param {HTMLElement} target - The capturing HTML element which defined a [data-action]
-   * @returns {Promise<void>}
-   * @private
-   */
-  static async _toggleEffect(_event, target) {
-    const effect = this._getEffect(target);
-    await effect.update({ disabled: !effect.disabled });
-  }
-
-  /** Helper Functions */
-
-  /**
-   * Fetches the row with the data for the rendered embedded document.
-   *
-   * @param {HTMLElement} target - The element with the action
-   * @returns {HTMLLIElement} The document's row
-   * @private
-   */
-  _getEffect(target) {
-    const li = target.closest(".effect");
-    return this.item.effects.get(li?.dataset?.effectId);
   }
 }

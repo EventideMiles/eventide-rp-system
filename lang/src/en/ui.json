@@ -19,6 +19,115 @@
     "MessageHeaders": {
       "Feature": "Feature: {name}",
       "Status": "Status: {name}"
+    },
+    "UI": {
+      "Edit": "Edit",
+      "Remove": "Remove",
+      "View": "View",
+      "AddEffect": "Add Effect",
+      "AddNewEffect": "Add New Effect",
+      "AddNewHiddenEffect": "Add New Hidden Effect",
+      "RemoveEffect": "Remove Effect",
+      "EffectImage": "Effect Image",
+      "HiddenEffect": "Hidden Effect",
+      "TokenDisplayTooltip": "Token Display",
+      "StrengthTooltip": "Strength determines physical power and carrying capacity",
+      "AgilityTooltip": "Agility affects speed, dexterity, and reflexes",
+      "IntellectTooltip": "Intellect governs reasoning, memory, and magical ability",
+      "WillpowerTooltip": "Willpower represents mental fortitude and determination",
+      "FocusTooltip": "Focus affects concentration and precision",
+      "AcrobaticsTooltip": "Acrobatics covers balance, tumbling, and athletic feats",
+      "WitsTooltip": "Wits represent quick thinking and situational awareness",
+      "PerformanceDashboard": "Performance Dashboard",
+      "Refresh": "Refresh",
+      "AutoRefresh": "Auto Refresh",
+      "SystemHealth": "System Health",
+      "SystemHealthGood": "System Running Optimally",
+      "SystemHealthWarning": "System Performance Warning",
+      "SystemHealthCritical": "Critical System Issues Detected",
+      "MemoryUsage": "Memory Usage",
+      "Used": "Used",
+      "Total": "Total",
+      "Limit": "Limit",
+      "Usage": "Usage",
+      "MemoryInfoUnavailable": "Memory information not available in this browser",
+      "SystemResources": "System Resources",
+      "TrackedIntervals": "Tracked Intervals",
+      "ActiveThemeInstances": "Active Theme Instances",
+      "GMControlHooks": "GM Control Hooks",
+      "NumberInputs": "Number Input Handlers",
+      "Active": "Active",
+      "Inactive": "Inactive",
+      "GameData": "Game Data",
+      "Actors": "Actors",
+      "Items": "Items",
+      "Messages": "Messages",
+      "Scenes": "Scenes",
+      "Users": "Users",
+      "VersionInfo": "Version Information",
+      "SystemVersion": "System Version",
+      "FoundryVersion": "Foundry Version",
+      "LastUpdated": "Last Updated",
+      "Enabled": "Enabled",
+      "PerformanceTips": "Performance Tips",
+      "TipIntervals": "Keep tracked intervals below 10 for optimal performance",
+      "TipMemory": "Monitor memory usage during long gaming sessions",
+      "TipCleanup": "Use regular cleanup to maintain system performance",
+      "TipForceCleanup": "Use force cleanup only when experiencing serious issues",
+      "RunCleanup": "Run Cleanup",
+      "ForceCleanup": "Force Cleanup",
+      "AvailableDice": "Available dice for rolling",
+      "FailMinimum": "Minimum value for failure",
+      "FailMaximum": "Maximum value for failure",
+      "CriticalMinimum": "Minimum value for critical success",
+      "CriticalMaximum": "Maximum value for critical success",
+      "TotalStatPoints": "Total stat points allocated",
+      "ReadOnly": "Read Only",
+      "ViewReadOnly": "View (Read Only)"
+    },
+    "Actor": {
+      "Sections": {
+        "Effects": "Effects"
+      },
+      "CombatPowers": {
+        "TransformationPower": "Transformation Power"
+      },
+      "Attributes": {
+        "Ability": {
+          "Locked": "Locked",
+          "Unlocked": "Unlocked"
+        }
+      }
+    },
+    "Forms": {
+      "Buttons": {
+        "Cancel": "Cancel",
+        "Confirm": "Confirm"
+      }
+    },
+    "Item": {
+      "ActionCard": {
+        "Apply": "Apply",
+        "Discard": "Discard"
+      },
+      "Inventory": {
+        "Equip": {
+          "label": "Equip"
+        }
+      },
+      "CombatPower": "Combat Power",
+      "Gear": "Gear",
+      "base": "Base Item",
+      "Transformation": {
+        "TokenImage": "Token Image",
+        "TokenImageHint": "Image to use for the token when this transformation is applied"
+      }
+    },
+    "Messages": {
+      "PartialTransfer": "Partial transfer completed"
+    },
+    "Notifications": {
+      "ThemeChanged": "Theme changed successfully"
     }
   }
 }

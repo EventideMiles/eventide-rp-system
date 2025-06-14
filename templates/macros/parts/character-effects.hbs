@@ -2,7 +2,7 @@
 {{!-- Supports narrow variant for constrained layouts --}}
 <div class="erps-form__section {{#if narrow}}erps-form__section--narrow{{/if}}">
   <div class="erps-form__header erps-form__header--small">Character Effects</div>
-  
+
   <table class="erps-data-table erps-data-table--effects erps-data-table--flush-top {{#if narrow}}erps-data-table--narrow{{/if}}">
     <thead class="erps-data-table__header">
       <tr class="erps-data-table__header-row">
@@ -16,9 +16,9 @@
             data-action="onAddAbility"
             data-type="abilities"
             data-ability="acro"
-            title="Add new effect"
+            title="{{localize 'EVENTIDE_RP_SYSTEM.UI.AddNewEffect'}}"
           >
-            <i class="fas fa-plus"></i>{{#unless narrow}} Add Effect{{/unless}}
+                          <i class="fas fa-plus"></i>{{#unless narrow}} {{localize "EVENTIDE_RP_SYSTEM.UI.AddEffect"}}{{/unless}}
           </button>
         </th>
       </tr>
@@ -99,7 +99,7 @@
                 class="erps-data-table__control-button erps-data-table__control-button--delete"
                 data-action="onRemoveAbility"
                 data-index="{{@index}}"
-                title="Remove effect"
+                title="{{localize 'EVENTIDE_RP_SYSTEM.UI.RemoveEffect'}}"
               >
                 <i class="fas fa-trash"></i>
               </button>

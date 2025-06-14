@@ -35,6 +35,7 @@ import {
   registerSettings,
   initializeCombatHooks,
   initChatListeners,
+  initGMControlHooks,
   erpsMessageHandler,
   initHandlebarsPartials,
   getSetting,
@@ -46,7 +47,13 @@ import {
 import * as models from "./data/_module.mjs";
 
 // Import utility functions
-import { commonTasks, ErrorHandler } from "./utils/_module.mjs";
+import {
+  commonTasks,
+  ErrorHandler,
+  performSystemCleanup,
+  performPreInitCleanup,
+  initializeCleanupHooks,
+} from "./utils/_module.mjs";
 
 //import helper functions
 import {
@@ -55,9 +62,13 @@ import {
   enhanceExistingColorPickers,
   initNumberInputs,
   cleanupNumberInputs,
+  cleanupNumberInputsGlobal,
   initRangeSliders,
   cleanupRangeSliders,
+  getActiveThemeInstances,
   initializeGlobalTheme,
+  injectImmediateThemeStyles,
+  removeImmediateThemeStyles,
 } from "./helpers/_module.mjs";
 
 const { Actors, Items } = foundry.documents.collections;
@@ -85,10 +96,13 @@ globalThis.erps = {
     enhanceExistingColorPickers,
     initNumberInputs,
     cleanupNumberInputs,
+    cleanupNumberInputsGlobal,
     cleanupColorPickers,
     initRangeSliders,
     cleanupRangeSliders,
+    getActiveThemeInstances,
     ErrorHandler,
+    performSystemCleanup,
   },
   macros: {
     GearTransfer,
@@ -107,6 +121,114 @@ globalThis.erps = {
   messages: erpsMessageHandler,
   models,
   Logger,
+  gmControl: null, // Will be set after import
+
+  // Manual cleanup functions for debugging and emergency cleanup
+  cleanup: performSystemCleanup,
+  forceCleanup: () => {
+    Logger.warn(
+      "Performing FORCE cleanup - this will clear ALL intervals and timeouts!",
+      null,
+      "SYSTEM_INIT",
+    );
+    performPreInitCleanup();
+    performSystemCleanup();
+    Logger.info("Force cleanup completed", null, "SYSTEM_INIT");
+  },
+
+  // Diagnostic function to check system state
+  diagnostics: () => {
+    const trackedIntervals = window._erpsIntervalIds
+      ? window._erpsIntervalIds.size
+      : 0;
+
+    let memoryInfo = "Memory info not available";
+    /* eslint-disable no-undef */
+    if (typeof performance !== "undefined" && performance.memory) {
+      const usedMB = Math.round(
+        performance.memory.usedJSHeapSize / 1024 / 1024,
+      );
+
+      const totalMB = Math.round(
+        performance.memory.totalJSHeapSize / 1024 / 1024,
+      );
+
+      const limitMB = Math.round(
+        performance.memory.jsHeapSizeLimit / 1024 / 1024,
+      );
+      /* eslint-enable no-undef */
+
+      memoryInfo = {
+        used: `${usedMB} MB`,
+
+        total: `${totalMB} MB`,
+
+        limit: `${limitMB} MB`,
+      };
+    }
+
+    // Check if GM control hooks are initialized by looking for the global manager
+    const gmControlHooksInitialized = !!(
+      globalThis.erps?.gmControl &&
+      typeof globalThis.erps.gmControl.getPendingStats === "function"
+    );
+
+    // Check if number inputs are initialized by looking for the global click handler
+    // Since number input elements might not be rendered yet, we check for the initialization state
+    const numberInputsInitialized = !!(
+      // Check if there are any number input elements currently in the DOM
+      (
+        document.querySelector(".erps-number-input") ||
+        // Check if the global click handler is attached (more reliable)
+        document._erpsNumberInputsInitialized === true ||
+        // Check if the utility function is available
+        (globalThis.erps?.utils?.enhanceExistingNumberInputs &&
+          typeof globalThis.erps.utils.enhanceExistingNumberInputs ===
+            "function")
+      )
+    );
+
+    const diagnostics = {
+      trackedIntervals,
+      memoryInfo,
+      gmControlHooksInitialized,
+      numberInputsInitialized,
+      activeThemeInstances:
+        globalThis.erps?.utils?.getActiveThemeInstances?.() || "Unknown",
+      actorCount: game.actors?.size || 0,
+      itemCount: game.items?.size || 0,
+      messageCount: game.messages?.size || 0,
+      sceneCount: game.scenes?.size || 0,
+      userCount: game.users?.size || 0,
+      systemVersion: game.system.version,
+      foundryVersion: game.version,
+      timestamp: new Date().toISOString(),
+    };
+
+    Logger.info("System Diagnostics", diagnostics, "SYSTEM_DIAGNOSTICS");
+    return diagnostics;
+  },
+
+  // Performance monitoring dashboard
+  showPerformanceDashboard: () => {
+    // Import and create the performance dashboard application
+    import("./ui/components/performance-dashboard.mjs")
+      .then(({ PerformanceDashboard }) => {
+        new PerformanceDashboard().render(true);
+      })
+      .catch((error) => {
+        Logger.error(
+          "Failed to load performance dashboard",
+          error,
+          "SYSTEM_DIAGNOSTICS",
+        );
+        // Fallback to simple notification
+        const diagnostics = globalThis.erps.diagnostics();
+        ui.notifications.info(
+          `System Status: ${diagnostics.trackedIntervals} intervals, ${typeof diagnostics.memoryInfo === "object" ? diagnostics.memoryInfo.used : "Memory info unavailable"}`,
+        );
+      });
+  },
 };
 
 /**
@@ -114,12 +236,22 @@ globalThis.erps = {
  * Sets up system configuration, registers document classes, initializes hooks and listeners
  */
 Hooks.once("init", async () => {
-  console.info("ERPS | Initializing Eventide RP System");
+  // Register system settings FIRST - before any Logger calls
+  // This ensures testingMode setting is available for Logger
+  registerSettings();
+
+  Logger.info("Initializing Eventide RP System", null, "SYSTEM_INIT");
+
+  // Perform aggressive cleanup before initialization to prevent memory leaks
+  Logger.info("Performing pre-initialization cleanup", null, "SYSTEM_INIT");
+  try {
+    performPreInitCleanup();
+  } catch (error) {
+    Logger.warn("Pre-initialization cleanup failed", error, "SYSTEM_INIT");
+  }
 
   // Add custom constants for configuration
   CONFIG.EVENTIDE_RP_SYSTEM = EVENTIDE_RP_SYSTEM;
-  // Register system settings
-  registerSettings();
   // Preload Handlebars templates
   await preloadHandlebarsTemplates();
   // Initialize handlebars partials
@@ -128,6 +260,21 @@ Hooks.once("init", async () => {
   initializeCombatHooks();
   // Initialize chat message listeners
   initChatListeners();
+  // Initialize GM control hooks
+  initGMControlHooks();
+
+  // Initialize system cleanup hooks
+  initializeCleanupHooks();
+
+  // Set up GM control manager in global scope (async)
+  try {
+    const { gmControlManager } = await import(
+      "./services/managers/gm-control.mjs"
+    );
+    globalThis.erps.gmControl = gmControlManager;
+  } catch (error) {
+    Logger.error("Failed to load GM control manager", error, "SYSTEM_INIT");
+  }
   /**
    * Configure initiative settings
    */
@@ -143,9 +290,10 @@ Hooks.once("init", async () => {
         decimals: game.settings.get("eventide-rp-system", "initiativeDecimals"),
       };
     } catch (error) {
-      console.warn(
-        "ERPS | Could not get initiative settings, using defaults",
+      Logger.warn(
+        "Could not get initiative settings, using defaults",
         error,
+        "SYSTEM_INIT",
       );
     }
   }
@@ -164,6 +312,7 @@ Hooks.once("init", async () => {
     status: models.EventideRpSystemStatus,
     combatPower: models.EventideRpSystemCombatPower,
     transformation: models.EventideRpSystemTransformation,
+    actionCard: models.EventideRpSystemActionCard,
   };
   // Configure Active Effect behavior
   // Setting to false means Active Effects are never copied to the Actor directly,
@@ -180,7 +329,11 @@ Hooks.once("init", async () => {
     makeDefault: true,
     label: "EVENTIDE_RP_SYSTEM.SheetLabels.Item",
   });
-  console.info("ERPS | Eventide RP System Initialization Complete");
+  Logger.info(
+    "Eventide RP System Initialization Complete",
+    null,
+    "SYSTEM_INIT",
+  );
 });
 
 /* -------------------------------------------- */
@@ -255,7 +408,7 @@ Handlebars.registerHelper("abs", (value) => {
  * @param {*} str - The value to log to console
  */
 Handlebars.registerHelper("console", (str) => {
-  console.info(str);
+  Logger.debug("Handlebars log helper", { message: str }, "HANDLEBARS");
 });
 
 /**
@@ -263,13 +416,13 @@ Handlebars.registerHelper("console", (str) => {
  * @param {*} [optionalValue] - Optional value to also log
  */
 Handlebars.registerHelper("debug", function (optionalValue) {
-  console.info("Current Context");
-  console.info("====================");
-  console.info(this);
+  Logger.debug("Handlebars debug helper - Current Context", this, "HANDLEBARS");
   if (optionalValue) {
-    console.info("Value");
-    console.info("====================");
-    console.info(optionalValue);
+    Logger.debug(
+      "Handlebars debug helper - Value",
+      optionalValue,
+      "HANDLEBARS",
+    );
   }
 });
 
@@ -304,12 +457,45 @@ Handlebars.registerHelper("hasCursedItems", (items) => {
 });
 
 /* -------------------------------------------- */
+/*  Setup Hook                                  */
+/* -------------------------------------------- */
+
+/**
+ * Setup hook - called after init but before ready
+ * This is the optimal time to inject immediate theme styles
+ */
+Hooks.once("setup", () => {
+  // Inject immediate theme styles to prevent flashing
+  // This happens after game.user is available but before sheets render
+  try {
+    injectImmediateThemeStyles();
+    Logger.info(
+      "Immediate theme styles injected during setup",
+      null,
+      "SYSTEM_INIT",
+    );
+  } catch (error) {
+    Logger.warn(
+      "Failed to inject immediate theme styles during setup",
+      error,
+      "SYSTEM_INIT",
+    );
+  }
+});
+
+/* -------------------------------------------- */
 /*  Ready Hook                                  */
 /* -------------------------------------------- */
 
 Hooks.once("ready", () => {
   // Initialize global theme for scrollbars and other global UI elements
   initializeGlobalTheme();
+
+  // Remove immediate theme styles now that the full theme system is loaded
+  // Add a small delay to ensure all initial sheets have been themed
+  setTimeout(() => {
+    removeImmediateThemeStyles();
+  }, 500);
 
   // Wait to register hotbar drop hook on ready so that modules could register earlier if they want to
   Hooks.on("hotbarDrop", (bar, data, slot) => createDocMacro(data, slot));
@@ -362,14 +548,16 @@ async function createDocMacro(data, slot) {
  * @returns {Promise<void>}
  */
 async function rollItemMacro(itemUuid) {
-  console.info(`Rolling item macro for ${itemUuid}`);
+  Logger.info("Rolling item macro", { itemUuid }, "MACRO");
   // Reconstruct the drop data so that we can load the item.
   const dropData = {
     type: "Item",
     uuid: itemUuid,
   };
   // Load the item from the uuid.
-  Item.fromDropData(dropData).then((item) => {
+  try {
+    const item = await Item.fromDropData(dropData);
+
     // Determine if the item loaded and if it's an owned item.
     if (!item || !item.parent) {
       const itemName = item?.name ?? itemUuid;
@@ -382,5 +570,51 @@ async function rollItemMacro(itemUuid) {
 
     // Trigger the item roll
     item.roll();
+  } catch (error) {
+    Logger.error("Failed to load item for macro", error, "MACRO");
+    ui.notifications.error(
+      game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.MacroExecutionError", {
+        item: itemUuid,
+      }),
+    );
+  }
+}
+
+/* -------------------------------------------- */
+/*  System Cleanup                             */
+/* -------------------------------------------- */
+
+/**
+ * Clean up system resources when the world is being shut down
+ * This helps prevent memory leaks and ensures proper cleanup
+ */
+Hooks.on("paused", (paused) => {
+  // If the game is being paused (which can indicate shutdown), perform cleanup
+  if (paused && game.user.isGM) {
+    Logger.info("Performing system cleanup on pause", null, "SYSTEM_CLEANUP");
+    try {
+      performSystemCleanup();
+    } catch (error) {
+      Logger.error(
+        "Failed to perform cleanup on pause",
+        error,
+        "SYSTEM_CLEANUP",
+      );
+    }
+  }
+});
+
+// Also clean up on any system disable/reload events if available
+if (typeof Hooks.on === "function") {
+  // Listen for any potential system disable events
+  Hooks.on("closeApplication", (app) => {
+    // If this is a system-critical application closing, consider cleanup
+    if (app.constructor.name.includes("EventideRpSystem")) {
+      Logger.info(
+        "System application closing, checking for cleanup needs",
+        { appName: app.constructor.name },
+        "SYSTEM_CLEANUP",
+      );
+    }
   });
 }

@@ -12,7 +12,10 @@ import { EditModeCheckMixin } from "./edit-mode-check.mjs";
  * @returns {Class} Extended class with all baseline sheet functionality
  */
 export function BaselineSheetMixins(BaseClass) {
-  return WindowSizingFixMixin(EditModeCheckMixin(BaseClass));
+  const { api } = foundry.applications;
+  return api.HandlebarsApplicationMixin(
+    WindowSizingFixMixin(EditModeCheckMixin(BaseClass)),
+  );
 }
 
 // Export individual mixins for cases where only specific functionality is needed

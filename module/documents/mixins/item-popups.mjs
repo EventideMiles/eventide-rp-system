@@ -15,13 +15,22 @@ export const ItemPopupsMixin = (BaseClass) =>
     /**
      * Handle a click event on the item, displaying appropriate popup based on item type.
      *
-     * @param {Event} [event] - The triggering click event (optional)
+     * @param {Event|Object} [eventOrOptions] - The triggering click event or options object
      * @returns {Promise<Application|null>} The opened application or null if no handler
      */
-    async roll(_event) {
+    async roll(eventOrOptions) {
+      const options =
+        eventOrOptions &&
+        typeof eventOrOptions === "object" &&
+        !eventOrOptions.type
+          ? eventOrOptions
+          : {};
+      const bypass = options.bypass || false;
+
       Logger.methodEntry("ItemPopupsMixin", "roll", {
         itemName: this.name,
         itemType: this.type,
+        bypass,
       });
 
       try {
@@ -45,6 +54,39 @@ export const ItemPopupsMixin = (BaseClass) =>
             "ITEM_POPUPS",
           );
           return null;
+        }
+
+        // If bypass is true, execute the popup logic directly without UI
+        if (bypass) {
+          Logger.debug(
+            `Bypassing popup UI for ${this.type} item "${this.name}"`,
+            { itemType: this.type },
+            "ITEM_POPUPS",
+          );
+
+          // Check if the item has a custom bypass handler
+          Logger.debug(
+            "Checking for custom bypass handler",
+            {
+              itemType: this.type,
+              itemName: this.name,
+              hasHandleBypass: typeof this.handleBypass === "function",
+              handleBypassType: typeof this.handleBypass,
+              itemConstructorName: this.constructor.name,
+            },
+            "ITEM_POPUPS",
+          );
+
+          if (typeof this.handleBypass === "function") {
+            Logger.debug(
+              `Using custom bypass handler for ${this.type} item "${this.name}"`,
+              { itemType: this.type },
+              "ITEM_POPUPS",
+            );
+            return await this.handleBypass(popupConfig, options);
+          }
+
+          return await this._executePopupLogicDirectly(popupConfig);
         }
 
         // Prepare the item data for the popup
@@ -93,6 +135,11 @@ export const ItemPopupsMixin = (BaseClass) =>
       });
 
       const popupConfigs = {
+        actionCard: {
+          type: "actionCard",
+          className: "ActionCardPopup",
+          requiresFormula: false,
+        },
         combatPower: {
           type: "combatPower",
           className: "CombatPowerPopup",
@@ -223,14 +270,26 @@ export const ItemPopupsMixin = (BaseClass) =>
       try {
         // Map class names to their import paths
         const classMap = {
-          CombatPowerPopup: () =>
-            import("../../ui/_module.mjs").then((m) => m.CombatPowerPopup),
-          GearPopup: () =>
-            import("../../ui/_module.mjs").then((m) => m.GearPopup),
-          StatusPopup: () =>
-            import("../../ui/_module.mjs").then((m) => m.StatusPopup),
-          FeaturePopup: () =>
-            import("../../ui/_module.mjs").then((m) => m.FeaturePopup),
+          ActionCardPopup: async () => {
+            const m = await import("../../ui/_module.mjs");
+            return m.ActionCardPopup;
+          },
+          CombatPowerPopup: async () => {
+            const m = await import("../../ui/_module.mjs");
+            return m.CombatPowerPopup;
+          },
+          GearPopup: async () => {
+            const m = await import("../../ui/_module.mjs");
+            return m.GearPopup;
+          },
+          StatusPopup: async () => {
+            const m = await import("../../ui/_module.mjs");
+            return m.StatusPopup;
+          },
+          FeaturePopup: async () => {
+            const m = await import("../../ui/_module.mjs");
+            return m.FeaturePopup;
+          },
         };
 
         const importFn = classMap[className];
@@ -268,7 +327,13 @@ export const ItemPopupsMixin = (BaseClass) =>
      * @returns {boolean} Whether the item type has popup support
      */
     hasPopupSupport() {
-      const supportedTypes = ["combatPower", "gear", "status", "feature"];
+      const supportedTypes = [
+        "actionCard",
+        "combatPower",
+        "gear",
+        "status",
+        "feature",
+      ];
       return supportedTypes.includes(this.type);
     }
 
@@ -281,6 +346,277 @@ export const ItemPopupsMixin = (BaseClass) =>
       const config = this._getPopupConfig();
       return config?.type || null;
     }
+
+    /**
+     * Execute the popup logic directly without showing UI (for bypass mode)
+     *
+     * @private
+     * @param {Object} popupConfig - The popup configuration
+     * @returns {Promise<Object>} Result of the execution
+     */
+    async _executePopupLogicDirectly(popupConfig) {
+      Logger.methodEntry("ItemPopupsMixin", "_executePopupLogicDirectly", {
+        className: popupConfig.className,
+        itemType: this.type,
+        itemName: this.name,
+      });
+
+      try {
+        // Dynamically import the required popup class
+        const popupClass = await this._importPopupClass(popupConfig.className);
+
+        if (!popupClass) {
+          const error = new Error(
+            `Failed to import popup class: ${popupConfig.className}`,
+          );
+          Logger.error(
+            "Popup class import failed in bypass mode",
+            error,
+            "ITEM_POPUPS",
+          );
+          ui.notifications.error(
+            game.i18n.format(
+              "EVENTIDE_RP_SYSTEM.Errors.PopupClassImportError",
+              {
+                className: popupConfig.className,
+                itemName: this.name,
+              },
+            ),
+          );
+          throw error;
+        }
+
+        // Create a temporary popup instance for validation and execution
+        const tempPopup = new popupClass({ item: this });
+
+        // Check eligibility using the popup's validation logic
+        const problems = await tempPopup.checkEligibility();
+        const hasProblems = Object.values(problems).some((value) => value);
+
+        if (hasProblems) {
+          const problemDetails = Object.entries(problems)
+            .filter(([, value]) => value)
+            .map(([key, value]) => `${key}: ${value}`)
+            .join(", ");
+
+          Logger.warn(
+            "Item failed eligibility check in bypass mode",
+            { problems, itemType: this.type, itemName: this.name },
+            "ITEM_POPUPS",
+          );
+
+          // Show user-friendly error message based on item type
+          const errorKey = this._getEligibilityErrorKey();
+          ui.notifications.error(
+            game.i18n.format(errorKey, {
+              itemName: this.name,
+              details: problemDetails,
+            }),
+          );
+
+          const error = new Error(
+            `Item failed eligibility check: ${problemDetails}`,
+          );
+          error.problems = problems;
+          throw error;
+        }
+
+        // Prepare item data if needed (for formula generation, etc.)
+        await this._prepareItemForPopup(popupConfig);
+
+        // Execute the appropriate action based on item type
+        let result = null;
+
+        try {
+          result = await this._executeBypassActionForType();
+
+          Logger.debug(
+            `Successfully executed ${popupConfig.className} logic directly`,
+            {
+              result: result ? "success" : "no result",
+              itemType: this.type,
+              itemName: this.name,
+            },
+            "ITEM_POPUPS",
+          );
+        } catch (actionError) {
+          Logger.error(
+            `Failed to execute bypass action for ${this.type}`,
+            actionError,
+            "ITEM_POPUPS",
+          );
+
+          ui.notifications.error(
+            game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.BypassExecutionError", {
+              itemName: this.name,
+              itemType: this.type,
+              error: actionError.message,
+            }),
+          );
+
+          throw actionError;
+        }
+
+        Logger.methodExit(
+          "ItemPopupsMixin",
+          "_executePopupLogicDirectly",
+          result,
+        );
+        return result;
+      } catch (error) {
+        Logger.error(
+          `Failed to execute popup logic directly: ${popupConfig.className}`,
+          error,
+          "ITEM_POPUPS",
+        );
+
+        // Don't show additional notifications if we already showed one above
+        if (
+          !error.problems &&
+          !error.message.includes("Failed to execute bypass action")
+        ) {
+          ui.notifications.error(
+            game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.BypassError", {
+              itemName: this.name,
+              error: error.message,
+            }),
+          );
+        }
+
+        Logger.methodExit(
+          "ItemPopupsMixin",
+          "_executePopupLogicDirectly",
+          null,
+        );
+        throw error;
+      }
+    }
+
+    /**
+     * Execute the bypass action for the specific item type
+     *
+     * @private
+     * @returns {Promise<Object>} Result of the execution
+     */
+    async _executeBypassActionForType() {
+      Logger.methodEntry("ItemPopupsMixin", "_executeBypassActionForType", {
+        itemType: this.type,
+      });
+
+      let result = null;
+
+      switch (this.type) {
+        case "combatPower":
+          // Handle power cost and create combat power message
+          this.actor.addPower(-this.system.cost);
+          result = await erps.messages.createCombatPowerMessage(this);
+          break;
+
+        case "gear":
+          // Handle quantity cost and create combat power message (gear uses same message type)
+          Logger.debug(
+            "Using default gear bypass logic (handleBypass not found)",
+            {
+              itemName: this.name,
+              currentQuantity: this.system.quantity,
+              cost: this.system.cost,
+              actorName: this.actor?.name,
+              itemId: this.id,
+            },
+            "ITEM_POPUPS",
+          );
+
+          await this.update({
+            "system.quantity": Math.max(
+              0,
+              (this.system.quantity || 0) - (this.system.cost || 1),
+            ),
+          });
+          result = await erps.messages.createCombatPowerMessage(this);
+          break;
+
+        case "feature":
+          // Features just send to chat
+          result = await erps.messages.createFeatureMessage(this);
+          break;
+
+        case "status":
+          // Status items just send to chat
+          result = await erps.messages.createStatusMessage(this, null);
+          break;
+
+        case "actionCard":
+          // Action cards should not be bypassed - they handle their own flow
+          throw new Error(
+            "Action cards cannot be bypassed - they manage their own execution flow",
+          );
+
+        default:
+          throw new Error(`Unsupported item type for bypass: ${this.type}`);
+      }
+
+      Logger.debug(
+        `Executed bypass action for ${this.type}`,
+        { hasResult: !!result },
+        "ITEM_POPUPS",
+      );
+
+      Logger.methodExit(
+        "ItemPopupsMixin",
+        "_executeBypassActionForType",
+        result,
+      );
+      return result;
+    }
+
+    /**
+     * Get the appropriate error message key for eligibility failures
+     *
+     * @private
+     * @returns {string} The localization key for the error message
+     */
+    _getEligibilityErrorKey() {
+      const errorKeys = {
+        combatPower: "EVENTIDE_RP_SYSTEM.Errors.CombatPowerError",
+        gear: "EVENTIDE_RP_SYSTEM.Errors.GearError",
+        feature: "EVENTIDE_RP_SYSTEM.Errors.FeatureError",
+        status: "EVENTIDE_RP_SYSTEM.Errors.StatusError",
+        actionCard: "EVENTIDE_RP_SYSTEM.Errors.ActionCardError",
+      };
+
+      return errorKeys[this.type] || "EVENTIDE_RP_SYSTEM.Errors.ItemError";
+    }
+
+    /**
+     * Custom bypass handler - override this method in item data models to provide
+     * custom bypass logic for specific item types.
+     *
+     * This method will be called instead of the default bypass logic when:
+     * 1. The item's roll() method is called with { bypass: true }
+     * 2. The item implements this method
+     *
+     * @param {Object} popupConfig - The popup configuration object
+     * @param {Object} options - The options passed to roll() method
+     * @returns {Promise<Object>} Result of the bypass execution
+     *
+     * @example
+     * // In your item data model:
+     * async handleBypass(popupConfig, options) {
+     *   // Custom validation
+     *   if (!this.canExecute()) {
+     *     throw new Error("Cannot execute this item");
+     *   }
+     *
+     *   // Custom execution logic
+     *   const result = await this.customExecution();
+     *
+     *   // Return result for action card chain processing
+     *   return result;
+     * }
+     */
+    // handleBypass(popupConfig, options) {
+    //   // Override this method in item data models for custom bypass handling
+    // }
 
     /**
      * Check if the item type requires a roll formula for its popup

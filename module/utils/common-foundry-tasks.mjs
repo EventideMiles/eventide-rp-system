@@ -99,6 +99,20 @@ export class CommonFoundryTasks {
    * @static
    */
   static retrieveSheetTheme() {
+    // Handle case where game.user is not available yet (during early initialization)
+    if (!game.user) {
+      // Try to get from settings if available, otherwise default to blue
+      try {
+        const settingTheme = game.settings.get(
+          "eventide-rp-system",
+          "sheetTheme",
+        );
+        return settingTheme || "blue";
+      } catch {
+        return "blue";
+      }
+    }
+
     // First check user flag (for backward compatibility and immediate updates)
     const flagTheme = game.user.getFlag(
       CommonFoundryTasks.SYSTEM_ID,
@@ -109,9 +123,16 @@ export class CommonFoundryTasks {
     }
 
     // Fallback to setting if flag doesn't exist
-    const settingTheme = game.settings.get("eventide-rp-system", "sheetTheme");
-    if (settingTheme) {
-      return settingTheme;
+    try {
+      const settingTheme = game.settings.get(
+        "eventide-rp-system",
+        "sheetTheme",
+      );
+      if (settingTheme) {
+        return settingTheme;
+      }
+    } catch {
+      // Settings might not be available yet
     }
 
     // Final fallback to default
@@ -213,11 +234,16 @@ export class CommonFoundryTasks {
    * @static
    */
   static get isTestingMode() {
-    return typeof erps !== "undefined" &&
-      erps.settings &&
-      typeof erps.settings.getSetting === "function"
-      ? erps.settings.getSetting("testingMode")
-      : false;
+    try {
+      return typeof erps !== "undefined" &&
+        erps.settings &&
+        typeof erps.settings.getSetting === "function"
+        ? erps.settings.getSetting("testingMode")
+        : false;
+    } catch {
+      // Settings not available yet or testingMode not registered
+      return false;
+    }
   }
 
   /**

@@ -1,6 +1,7 @@
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 const FilePicker = foundry.applications.apps.FilePicker.implementation;
 import { WindowSizingFixMixin } from "./_module.mjs";
+import { Logger } from "../../services/logger.mjs";
 
 /**
  * Base class for creator applications that handle item creation
@@ -190,7 +191,7 @@ export class EventideSheetHelpers extends WindowSizingFixMixin(
       });
       return fp.browse();
     } catch (error) {
-      console.error("Error in fileHandler:", error);
+      Logger.error("Error in fileHandler", error, "SHEET_HELPERS");
       if (type === "image") {
         ui.notifications.error(
           game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.EditImage"),

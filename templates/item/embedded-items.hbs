@@ -1,0 +1,142 @@
+<section class="tab embedded-items {{tab.cssClass}}" data-group="primary" data-tab="embeddedItems">
+  <div class="eventide-sheet__scrollable-container">
+
+    <!-- Action Item Section -->
+    <div class="erps-items-panel">
+      <div class="erps-items-panel__section-header">
+        {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.ActionItem"}}
+      </div>
+
+      {{#if embeddedItem}}
+        <ol class="erps-items-panel__list erps-items-panel__list--three-column">
+          <li class="erps-items-panel__item erps-items-panel__item--header">
+            <div class="erps-items-panel__cell erps-items-panel__cell--image">{{localize 'Image'}}</div>
+            <div class='erps-items-panel__cell erps-items-panel__cell--name'>{{localize 'Name'}}</div>
+            <div class='erps-items-panel__cell erps-items-panel__cell--controls'>{{localize 'Controls'}}</div>
+          </li>
+          <li
+            class="erps-items-panel__item erps-items-panel__item--draggable"
+            data-item-id="{{embeddedItem.id}}"
+            data-drag="true"
+            data-document-class="Item"
+            title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.DragToExtract'}}"
+          >
+            <div class="erps-items-panel__cell erps-items-panel__cell--image">
+              <img
+                class="erps-items-panel__image"
+                src="{{embeddedItem.img}}"
+                title="{{embeddedItem.name}}"
+                width="24"
+                height="24"
+              />
+              <i class="fas fa-arrows-alt erps-items-panel__drag-indicator" title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.DragToExtract'}}"></i>
+            </div>
+            <div class="erps-items-panel__cell erps-items-panel__cell--name">
+              <span class="erps-items-panel__name">{{embeddedItem.name}}</span>
+            </div>
+            <div class="erps-items-panel__cell erps-items-panel__cell--controls">
+              {{#if @root.editable}}
+                <a
+                  class="erps-items-panel__control erps-items-panel__control--edit"
+                  data-action="editEmbeddedItem"
+                  title="{{localize 'EVENTIDE_RP_SYSTEM.UI.Edit'}}"
+                >
+                  <i class="fas fa-edit"></i>
+                </a>
+                <a
+                  class="erps-items-panel__control erps-items-panel__control--delete"
+                  data-action="clearEmbeddedItem"
+                  title="{{localize 'EVENTIDE_RP_SYSTEM.UI.Remove'}}"
+                >
+                  <i class="fas fa-trash"></i>
+                </a>
+              {{/if}}
+            </div>
+          </li>
+        </ol>
+      {{else}}
+        <div class="erps-items-panel__empty">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.NoActionItem"}}</div>
+      {{/if}}
+
+      {{#if @root.editable}}
+        <div class="erps-items-panel__drop-zone" data-drop-zone="actionItem">
+          <p>{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.DropActionItemHere"}}</p>
+        </div>
+      {{/if}}
+    </div>
+
+    <!-- Effects Section -->
+    <div class="erps-items-panel">
+      <div class="erps-items-panel__section-header">
+        {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Effects"}}
+      </div>
+
+      {{#if embeddedEffects.length}}
+        <ol class="erps-items-panel__list erps-items-panel__list--three-column">
+          <li class="erps-items-panel__item erps-items-panel__item--header">
+            <div class="erps-items-panel__cell erps-items-panel__cell--image">{{localize 'Image'}}</div>
+            <div class='erps-items-panel__cell erps-items-panel__cell--name'>{{localize 'Name'}}</div>
+            <div class='erps-items-panel__cell erps-items-panel__cell--controls'>{{localize 'Controls'}}</div>
+          </li>
+          {{#each embeddedEffects as |effect|}}
+            <li
+              class="erps-items-panel__item erps-items-panel__item--draggable"
+              data-item-id="{{effect.id}}"
+              data-drag="true"
+              data-document-class="Item"
+              title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.DragToExtract'}}"
+            >
+              <div class="erps-items-panel__cell erps-items-panel__cell--image">
+                <img
+                  class="erps-items-panel__image"
+                  src="{{effect.img}}"
+                  title="{{effect.name}}"
+                  width="24"
+                  height="24"
+                />
+                <i class="fas fa-arrows-alt erps-items-panel__drag-indicator" title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.DragToExtract'}}"></i>
+              </div>
+              <div class="erps-items-panel__cell erps-items-panel__cell--name">
+                <span class="erps-items-panel__name">{{effect.name}}</span>
+                <span class="erps-items-panel__type">({{effect.type}})</span>
+              </div>
+              <div class="erps-items-panel__cell erps-items-panel__cell--controls">
+                {{#if @root.editable}}
+                  <a
+                    class="erps-items-panel__control erps-items-panel__control--edit"
+                    data-action="editEmbeddedEffect"
+                    data-effect-id="{{effect.originalId}}"
+                    title="{{localize 'EVENTIDE_RP_SYSTEM.UI.Edit'}}"
+                  >
+                    <i class="fas fa-edit"></i>
+                  </a>
+                  <a
+                    class="erps-items-panel__control erps-items-panel__control--delete"
+                    data-action="removeEmbeddedEffect"
+                    data-effect-id="{{effect.originalId}}"
+                    title="{{localize 'EVENTIDE_RP_SYSTEM.UI.Remove'}}"
+                  >
+                    <i class="fas fa-trash"></i>
+                  </a>
+                {{/if}}
+              </div>
+            </li>
+          {{/each}}
+        </ol>
+      {{else}}
+        <div class="erps-items-panel__empty">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.NoEffects"}}</div>
+      {{/if}}
+
+      {{#if @root.editable}}
+        <div class="erps-items-panel__drop-zone" data-drop-zone="effect">
+          <p>{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.DropEffectHere"}}</p>
+        </div>
+      {{/if}}
+
+      <div class="erps-items-panel__notes">
+        <p>{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.EffectNotes"}}</p>
+        <p><strong>{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.DragNote"}}</strong></p>
+      </div>
+    </div>
+  </div>
+</section>

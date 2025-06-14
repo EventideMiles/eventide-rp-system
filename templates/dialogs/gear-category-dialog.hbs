@@ -1,0 +1,44 @@
+{{!-- Gear Category Selection Dialog --}}
+<div class="{{cssClass}} erps-form" autocomplete="off">
+  {{> callout-box}}
+  <div class="erps-form__content">
+    {{!-- Gear Item Header --}}
+    <div class="erps-form__group">
+      <div class="erps-form__header erps-form__header--small erps-form__header--no-border" style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+        <img src="{{gearItem.img}}" alt="{{gearItem.name}}" style="width: 48px; height: 48px; border-radius: 4px; border: 1px solid rgba(255, 255, 255, 0.2); object-fit: cover;" />
+        <span>{{gearItem.name}}</span>
+      </div>
+    </div>
+
+    {{!-- Question --}}
+    <div class="erps-form__group">
+      <p class="erps-form__description">{{questionText}}</p>
+    </div>
+
+    {{!-- Options --}}
+    <div class="erps-form__group erps-form__group--grid erps-form__group--grid-2">
+      <div class="erps-callout erps-callout--information">
+        <div class="erps-callout__header">
+          <i class="fas fa-bolt"></i>
+          <strong>{{actionItemTitle}}</strong>
+        </div>
+        <div class="erps-callout__content">
+          <p>{{actionItemDescription}}</p>
+        </div>
+      </div>
+
+      <div class="erps-callout erps-callout--information">
+        <div class="erps-callout__header">
+          <i class="fas fa-magic"></i>
+          <strong>{{effectsTitle}}</strong>
+        </div>
+        <div class="erps-callout__content">
+          <p>{{effectsDescription}}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {{!-- Footer with buttons --}}
+  {{> macro-footer}}
+</div>

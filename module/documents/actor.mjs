@@ -23,15 +23,11 @@ export class EventideRpSystemActor extends ActorTransformationMixin(
    * @override
    */
   prepareData() {
-    Logger.methodEntry("EventideRpSystemActor", "prepareData");
-
     // Prepare data for the actor. Calling the super version of this executes
     // the following, in order: data reset (to clear active effects),
     // prepareBaseData(), prepareEmbeddedDocuments() (including active effects),
     // prepareDerivedData().
     super.prepareData();
-
-    Logger.methodExit("EventideRpSystemActor", "prepareData");
   }
 
   /**
@@ -99,14 +95,10 @@ export class EventideRpSystemActor extends ActorTransformationMixin(
    * @override
    */
   prepareBaseData() {
-    Logger.methodEntry("EventideRpSystemActor", "prepareBaseData");
-
     // This method is intentionally left empty as all data preparation happens
     // in prepareDerivedData() after active effects have been applied.
     // In the future, any data that needs to be initialized before active effects
     // should be set up here.
-
-    Logger.methodExit("EventideRpSystemActor", "prepareBaseData");
   }
 
   /**
@@ -118,8 +110,6 @@ export class EventideRpSystemActor extends ActorTransformationMixin(
    * @override
    */
   prepareDerivedData() {
-    Logger.methodEntry("EventideRpSystemActor", "prepareDerivedData");
-
     const actorData = this;
     const flags =
       foundry.utils.getProperty(actorData.flags, "eventide-rp-system") || {};
@@ -127,23 +117,34 @@ export class EventideRpSystemActor extends ActorTransformationMixin(
     // Make these variables available for future derived data calculations
     const systemData = actorData.system;
 
-    // TODO: Add derived data calculations here, such as:
-    // - Calculating total abilities from base values and modifiers
-    // - Deriving secondary statistics from primary ones
-    // - Applying effects from items or status effects
-    // - Computing resource maximums
+    // Call the parent's prepareDerivedData which handles all the core calculations
+    // in the data model layer (base-actor.mjs) including:
+    // - Ability totals with overrides, changes, and transformations
+    // - Armor class calculations
+    // - Dice adjustments for advantage/disadvantage
+    // - Hidden abilities calculations
+    // - Initiative calculations (mainInit, subInit)
+    // - Stat totals and aggregations
+    // - XP from CR calculations
+    // - Localization for ability labels
+    super.prepareDerivedData();
 
-    Logger.debug(
-      "Prepared derived data for actor",
-      {
-        actorName: this.name,
-        systemDataKeys: Object.keys(systemData),
-        flagsKeys: Object.keys(flags),
-      },
-      "ACTOR_DATA",
-    );
+    // Any additional document-level derived data calculations would go here
+    // For example: cross-referencing with items, effects, or other documents
+    // Currently, all necessary calculations are handled in the data model layer
 
-    Logger.methodExit("EventideRpSystemActor", "prepareDerivedData");
+    // Only log derived data preparation in testing mode or when specifically debugging actors
+    if (getSetting("testingMode")) {
+      Logger.debug(
+        "Prepared derived data for actor",
+        {
+          actorName: this.name,
+          systemDataKeys: Object.keys(systemData),
+          flagsKeys: Object.keys(flags),
+        },
+        "ACTOR_DATA",
+      );
+    }
   }
 
   /**

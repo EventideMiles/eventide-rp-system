@@ -1,0 +1,16 @@
+{
+  "EVENTIDE_RP_SYSTEM": {
+    "Dialogs": {
+      "GearMode": {
+        "Title": "Embed Gear Item",
+        "Description": "How would you like to use this gear item in the action card?",
+        "ActionMode": "Use as Action",
+        "ActionModeDescription": "Use this gear for rolling attacks or abilities.",
+        "EffectMode": "Use as Effect",
+        "EffectModeDescription": "Apply this gear as a status effect to targets.",
+        "UseAsAction": "Use as Action",
+        "UseAsEffect": "Use as Effect"
+      }
+    }
+  }
+}

@@ -1505,6 +1505,38 @@ label,
   min-height: 35rem;
 }
 
+.eventide-sheet:not([data-bg-theme]) {
+  --theme-primary: rgba(21, 101, 192, 0.9);
+  --theme-secondary: rgba(25, 118, 210, 0.8);
+  --theme-tertiary: rgba(66, 165, 245, 0.8);
+  --theme-accent: rgba(13, 71, 161, 0.95);
+  --theme-light: rgba(100, 181, 246, 0.7);
+  --theme-glow: rgba(25, 118, 210, 0.5);
+  --theme-text: #fff;
+  --theme-bright: rgb(144, 202, 249);
+  --theme-scrollbar-thumb: rgba(59, 130, 246, 0.8);
+  --theme-scrollbar-track: rgba(69, 69, 69, 0.3);
+  --theme-resource-health-primary: rgba(153, 27, 27, 0.9);
+  --theme-resource-health-secondary: rgba(220, 38, 38, 0.5);
+  --theme-resource-health-glow: rgba(220, 38, 38, 0.2);
+  --theme-resource-resolve-primary: rgba(147, 51, 234, 0.9);
+  --theme-resource-resolve-secondary: rgba(147, 51, 234, 0.5);
+  --theme-resource-resolve-glow: rgba(147, 51, 234, 0.2);
+  --theme-resource-mana-primary: rgba(30, 58, 138, 0.9);
+  --theme-resource-mana-secondary: rgba(59, 130, 246, 0.5);
+  --theme-resource-mana-glow: rgba(59, 130, 246, 0.2);
+  --theme-resource-stamina-primary: rgba(20, 83, 45, 0.9);
+  --theme-resource-stamina-secondary: rgba(34, 197, 94, 0.5);
+  --theme-resource-stamina-glow: rgba(34, 197, 94, 0.2);
+  --erps-sheet-primary: rgba(21, 101, 192, 0.9);
+  --erps-sheet-secondary: rgba(25, 118, 210, 0.8);
+  --erps-sheet-bright: rgba(100, 181, 246, 0.7);
+  --erps-sheet-glow: rgba(25, 118, 210, 0.5);
+  --erps-sheet-text: #fff;
+  --erps-sheet-accent: rgba(13, 71, 161, 0.95);
+  --erps-sheet-light: rgba(100, 181, 246, 0.7);
+}
+
 body:not([data-theme]), body[data-theme=blue] {
   --theme-scrollbar-thumb: rgba(59, 130, 246, 0.8);
   --theme-scrollbar-track: rgba(69, 69, 69, 0.3);
@@ -1819,7 +1851,12 @@ body *::-webkit-scrollbar-track,
   background-color: var(--erps-abilities-wits);
 }
 .chat-card__header--gear {
-  background-color: var(--erps-card-header-gear);
+  font-size: 1.25rem;
+  font-family: "Protest Revolution", serif;
+  font-weight: 400;
+  font-style: normal;
+  padding: 1rem 0.75rem;
+  line-height: 22.5px;
 }
 .chat-card__header--initiative {
   background-color: var(--erps-card-header-initiative);
@@ -1929,6 +1966,19 @@ body *::-webkit-scrollbar-track,
   font-size: 1.2rem;
   color: var(--erps-neutral-gray);
   border-bottom: 1px solid var(--erps-description-hr);
+}
+.chat-card__context {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 0.5rem 0.75rem;
+  font-size: 0.9rem;
+  font-style: italic;
+  color: var(--erps-neutral-gray);
+  border-left: 3px solid rgba(255, 255, 255, 0.3);
+  margin: 0.5rem 0;
+}
+.chat-card__context i {
+  margin-right: 0.5rem;
+  opacity: 0.7;
 }
 .chat-card__initiative, .chat-card__combat-roll {
   display: flex;
@@ -2140,6 +2190,279 @@ body *::-webkit-scrollbar-track,
 .chat-card__description:last-child, .chat-card__effects:last-child, .chat-card__cost-section:last-child, .chat-card__initiative:last-child, .chat-card__combat-roll:last-child {
   margin-bottom: 0;
 }
+.chat-card__gm-apply-section {
+  background: rgba(0, 0, 0, 0.2);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.75rem;
+  margin-top: 0.5rem;
+}
+.chat-card__gm-apply-damage, .chat-card__gm-apply-status {
+  margin-bottom: 0.75rem;
+}
+.chat-card__gm-apply-damage:last-child, .chat-card__gm-apply-status:last-child {
+  margin-bottom: 0;
+}
+.chat-card__gm-apply-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+  color: var(--theme-text);
+  font-size: 0.9rem;
+}
+.chat-card__gm-apply-header i {
+  margin-right: 0.5rem;
+  color: var(--theme-accent);
+}
+.chat-card__applied-badge {
+  background: var(--erps-chat-details-hit);
+  color: var(--erps-white);
+  padding: 0.125rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+.chat-card__gm-apply-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+.chat-card__gm-apply-controls--status {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.75rem;
+}
+.chat-card__button-group {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+.chat-card__button-group--status {
+  justify-content: center;
+  gap: 1rem;
+}
+.chat-card__target-info {
+  text-align: center;
+  padding: 0.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+}
+.chat-card__bulk-actions {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  padding: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+.chat-card__bulk-actions-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+  color: var(--theme-accent);
+  font-size: 0.85rem;
+}
+.chat-card__bulk-actions-header i {
+  margin-right: 0.5rem;
+}
+.chat-card__bulk-button {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  padding: 0.4rem 0.8rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.2s ease;
+}
+.chat-card__bulk-button.chat-card__apply-button {
+  background: #27ae60;
+  color: var(--erps-white);
+}
+.chat-card__bulk-button.chat-card__apply-button:hover {
+  background: #229954;
+  transform: translateY(-1px);
+}
+.chat-card__bulk-button.chat-card__discard-button {
+  background: #e74c3c;
+  color: var(--erps-white);
+}
+.chat-card__bulk-button.chat-card__discard-button:hover {
+  background: #c0392b;
+  transform: translateY(-1px);
+}
+.chat-card__bulk-button i {
+  font-size: 0.7rem;
+}
+.chat-card__target-name {
+  font-weight: bold;
+  color: var(--theme-text);
+  font-size: 0.85rem;
+}
+.chat-card__target-invalid {
+  color: var(--erps-chat-details-miss);
+  font-style: italic;
+  font-size: 0.8rem;
+  text-align: center;
+  padding: 0.5rem;
+}
+.chat-card__apply-button {
+  background: #27ae60 !important;
+  color: var(--erps-white) !important;
+  border: 1px solid #27ae60 !important;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+.chat-card__apply-button:hover {
+  background: #229954 !important;
+  border-color: #229954 !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+.chat-card__apply-button:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+.chat-card__apply-button:disabled {
+  background: rgba(128, 128, 128, 0.5) !important;
+  border-color: rgba(128, 128, 128, 0.5) !important;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+.chat-card__discard-button {
+  background: #e74c3c !important;
+  color: var(--erps-white) !important;
+  border: 1px solid #e74c3c !important;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+.chat-card__discard-button:hover {
+  background: #c0392b !important;
+  border-color: #c0392b !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+.chat-card__discard-button:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+.chat-card__discard-button:disabled {
+  background: rgba(128, 128, 128, 0.5) !important;
+  border-color: rgba(128, 128, 128, 0.5) !important;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+.chat-card__status-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.chat-card__status-effect {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  transition: background-color 0.2s ease;
+}
+.chat-card__status-effect:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+.chat-card__status-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 3px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
+}
+.chat-card__status-name {
+  font-size: 0.9rem;
+  color: var(--theme-text);
+  font-weight: 500;
+  flex-grow: 1;
+}
+.chat-card__header--action-card {
+  background: linear-gradient(135deg, var(--theme-accent), var(--theme-secondary));
+}
+
+.erps-data-table__embedded-item {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.8rem;
+}
+.erps-data-table__embedded-item img {
+  border-radius: 2px;
+}
+.erps-data-table__attack-chain-info {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.8rem;
+}
+.erps-data-table__attack-chain-stats {
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+}
+.erps-data-table__chain-icon {
+  color: var(--theme-accent);
+  font-size: 0.7rem;
+}
+.erps-data-table__empty-state {
+  font-style: italic;
+  opacity: 0.6;
+  font-size: 0.8rem;
+}
+.erps-data-table__control-button--execute {
+  color: var(--theme-accent);
+}
+.erps-data-table__control-button--execute:hover {
+  color: var(--theme-bright);
+}
+.erps-data-table__control-button--damage {
+  color: #e74c3c;
+}
+.erps-data-table__control-button--damage:hover {
+  color: #c0392b;
+}
+.erps-data-table__empty-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 2rem;
+  color: var(--theme-text);
+  opacity: 0.6;
+  font-style: italic;
+}
+.erps-data-table__empty-message i {
+  font-size: 1.2rem;
+  color: var(--theme-accent);
+}
 
 @keyframes pulse-glow {
   0% {
@@ -2149,6 +2472,31 @@ body *::-webkit-scrollbar-track,
     box-shadow: 0 0 20px var(--erps-critical-hit), 0 0 30px var(--erps-critical-hit);
   }
 }
+.chat-card__header--damage {
+  background-color: var(--erps-card-header-damage);
+}
+.chat-card__header--damage[style*=background-color] {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+.chat-card__header--damage[style*=color] {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+.chat-card__header--heal {
+  background-color: var(--erps-card-header-heal);
+}
+.chat-card__header--heal[style*=background-color] {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+.chat-card__header--heal[style*=color] {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+.chat-card__value--damage {
+  color: var(--erps-card-header-damage);
+}
+.chat-card__value--heal {
+  color: var(--erps-card-header-heal);
+}
+
 .gear-creator {
   display: flex;
   flex-direction: column;
@@ -2308,6 +2656,659 @@ body *::-webkit-scrollbar-track,
 .sound-settings [data-action=resetAllSounds] {
   background-color: var(--erps-reset-button-bg);
   color: var(--erps-reset-button-text);
+}
+
+.eventide-performance-dashboard {
+  font-family: var(--font-primary);
+  color: var(--color-text-primary);
+  background: var(--color-bg-primary);
+  padding: 0;
+}
+.eventide-performance-dashboard .dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: var(--color-bg-secondary);
+  border-bottom: 1px solid var(--color-border-primary);
+}
+.eventide-performance-dashboard .dashboard-header h1 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+.eventide-performance-dashboard .dashboard-header h1 i {
+  margin-right: 0.5rem;
+  color: var(--color-accent-primary);
+}
+.eventide-performance-dashboard .dashboard-header .dashboard-controls {
+  display: flex;
+  gap: 0.5rem;
+}
+.eventide-performance-dashboard .dashboard-header .dashboard-controls button {
+  padding: 0.5rem;
+  background: var(--color-bg-primary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: 4px;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.eventide-performance-dashboard .dashboard-header .dashboard-controls button:hover {
+  background: var(--color-bg-hover);
+  color: var(--color-text-primary);
+}
+.eventide-performance-dashboard .dashboard-header .dashboard-controls button.active {
+  background: var(--color-accent-primary);
+  color: var(--color-text-on-accent);
+  border-color: var(--color-accent-primary);
+}
+.eventide-performance-dashboard .dashboard-content {
+  padding: 1rem;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+.eventide-performance-dashboard .dashboard-content section {
+  margin-bottom: 1.5rem;
+}
+.eventide-performance-dashboard .dashboard-content section:last-child {
+  margin-bottom: 0;
+}
+.eventide-performance-dashboard .dashboard-content section h2 {
+  margin: 0 0 0.75rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  display: flex;
+  align-items: center;
+}
+.eventide-performance-dashboard .dashboard-content section h2 i {
+  margin-right: 0.5rem;
+  width: 1.2rem;
+  text-align: center;
+}
+.eventide-performance-dashboard .health-overview .health-status {
+  padding: 0.75rem;
+  background: var(--color-bg-secondary);
+  border-radius: 4px;
+}
+.eventide-performance-dashboard .health-overview .health-status .status-text {
+  font-weight: 600;
+  font-size: 1rem;
+}
+.eventide-performance-dashboard .health-overview .health-status .health-warnings {
+  margin: 0.5rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+.eventide-performance-dashboard .health-overview .health-status .health-warnings li {
+  margin: 0.25rem 0;
+  color: var(--color-warning);
+}
+.eventide-performance-dashboard .health-overview .health-status .health-warnings li i {
+  margin-right: 0.5rem;
+}
+.eventide-performance-dashboard .memory-section .memory-info {
+  background: var(--color-bg-secondary);
+  padding: 0.75rem;
+  border-radius: 4px;
+}
+.eventide-performance-dashboard .memory-section .memory-info .memory-bar {
+  height: 20px;
+  background: var(--color-bg-primary);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 0.75rem;
+  border: 1px solid var(--color-border-primary);
+}
+.eventide-performance-dashboard .memory-section .memory-info .memory-bar .memory-fill {
+  height: 100%;
+  transition: width 0.3s ease;
+  border-radius: 10px;
+}
+.eventide-performance-dashboard .memory-section .memory-info .memory-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 0.5rem;
+}
+.eventide-performance-dashboard .memory-section .memory-info .memory-details .memory-stat {
+  display: flex;
+  justify-content: space-between;
+}
+.eventide-performance-dashboard .memory-section .memory-info .memory-details .memory-stat .label {
+  color: var(--color-text-secondary);
+}
+.eventide-performance-dashboard .memory-section .memory-info .memory-details .memory-stat .value {
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+.eventide-performance-dashboard .memory-section .memory-unavailable {
+  padding: 0.75rem;
+  background: var(--color-bg-secondary);
+  border-radius: 4px;
+  color: var(--color-text-secondary);
+  text-align: center;
+}
+.eventide-performance-dashboard .memory-section .memory-unavailable i {
+  margin-right: 0.5rem;
+}
+.eventide-performance-dashboard .resources-section .resources-grid,
+.eventide-performance-dashboard .resources-section .game-data-grid,
+.eventide-performance-dashboard .resources-section .version-grid,
+.eventide-performance-dashboard .game-data-section .resources-grid,
+.eventide-performance-dashboard .game-data-section .game-data-grid,
+.eventide-performance-dashboard .game-data-section .version-grid,
+.eventide-performance-dashboard .version-section .resources-grid,
+.eventide-performance-dashboard .version-section .game-data-grid,
+.eventide-performance-dashboard .version-section .version-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.5rem;
+  background: var(--color-bg-secondary);
+  padding: 0.75rem;
+  border-radius: 4px;
+}
+.eventide-performance-dashboard .resources-section .resources-grid .resource-item,
+.eventide-performance-dashboard .resources-section .resources-grid .data-item,
+.eventide-performance-dashboard .resources-section .resources-grid .version-item,
+.eventide-performance-dashboard .resources-section .game-data-grid .resource-item,
+.eventide-performance-dashboard .resources-section .game-data-grid .data-item,
+.eventide-performance-dashboard .resources-section .game-data-grid .version-item,
+.eventide-performance-dashboard .resources-section .version-grid .resource-item,
+.eventide-performance-dashboard .resources-section .version-grid .data-item,
+.eventide-performance-dashboard .resources-section .version-grid .version-item,
+.eventide-performance-dashboard .game-data-section .resources-grid .resource-item,
+.eventide-performance-dashboard .game-data-section .resources-grid .data-item,
+.eventide-performance-dashboard .game-data-section .resources-grid .version-item,
+.eventide-performance-dashboard .game-data-section .game-data-grid .resource-item,
+.eventide-performance-dashboard .game-data-section .game-data-grid .data-item,
+.eventide-performance-dashboard .game-data-section .game-data-grid .version-item,
+.eventide-performance-dashboard .game-data-section .version-grid .resource-item,
+.eventide-performance-dashboard .game-data-section .version-grid .data-item,
+.eventide-performance-dashboard .game-data-section .version-grid .version-item,
+.eventide-performance-dashboard .version-section .resources-grid .resource-item,
+.eventide-performance-dashboard .version-section .resources-grid .data-item,
+.eventide-performance-dashboard .version-section .resources-grid .version-item,
+.eventide-performance-dashboard .version-section .game-data-grid .resource-item,
+.eventide-performance-dashboard .version-section .game-data-grid .data-item,
+.eventide-performance-dashboard .version-section .game-data-grid .version-item,
+.eventide-performance-dashboard .version-section .version-grid .resource-item,
+.eventide-performance-dashboard .version-section .version-grid .data-item,
+.eventide-performance-dashboard .version-section .version-grid .version-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.eventide-performance-dashboard .resources-section .resources-grid .resource-item .resource-label,
+.eventide-performance-dashboard .resources-section .resources-grid .resource-item .data-label,
+.eventide-performance-dashboard .resources-section .resources-grid .resource-item .version-label,
+.eventide-performance-dashboard .resources-section .resources-grid .data-item .resource-label,
+.eventide-performance-dashboard .resources-section .resources-grid .data-item .data-label,
+.eventide-performance-dashboard .resources-section .resources-grid .data-item .version-label,
+.eventide-performance-dashboard .resources-section .resources-grid .version-item .resource-label,
+.eventide-performance-dashboard .resources-section .resources-grid .version-item .data-label,
+.eventide-performance-dashboard .resources-section .resources-grid .version-item .version-label,
+.eventide-performance-dashboard .resources-section .game-data-grid .resource-item .resource-label,
+.eventide-performance-dashboard .resources-section .game-data-grid .resource-item .data-label,
+.eventide-performance-dashboard .resources-section .game-data-grid .resource-item .version-label,
+.eventide-performance-dashboard .resources-section .game-data-grid .data-item .resource-label,
+.eventide-performance-dashboard .resources-section .game-data-grid .data-item .data-label,
+.eventide-performance-dashboard .resources-section .game-data-grid .data-item .version-label,
+.eventide-performance-dashboard .resources-section .game-data-grid .version-item .resource-label,
+.eventide-performance-dashboard .resources-section .game-data-grid .version-item .data-label,
+.eventide-performance-dashboard .resources-section .game-data-grid .version-item .version-label,
+.eventide-performance-dashboard .resources-section .version-grid .resource-item .resource-label,
+.eventide-performance-dashboard .resources-section .version-grid .resource-item .data-label,
+.eventide-performance-dashboard .resources-section .version-grid .resource-item .version-label,
+.eventide-performance-dashboard .resources-section .version-grid .data-item .resource-label,
+.eventide-performance-dashboard .resources-section .version-grid .data-item .data-label,
+.eventide-performance-dashboard .resources-section .version-grid .data-item .version-label,
+.eventide-performance-dashboard .resources-section .version-grid .version-item .resource-label,
+.eventide-performance-dashboard .resources-section .version-grid .version-item .data-label,
+.eventide-performance-dashboard .resources-section .version-grid .version-item .version-label,
+.eventide-performance-dashboard .game-data-section .resources-grid .resource-item .resource-label,
+.eventide-performance-dashboard .game-data-section .resources-grid .resource-item .data-label,
+.eventide-performance-dashboard .game-data-section .resources-grid .resource-item .version-label,
+.eventide-performance-dashboard .game-data-section .resources-grid .data-item .resource-label,
+.eventide-performance-dashboard .game-data-section .resources-grid .data-item .data-label,
+.eventide-performance-dashboard .game-data-section .resources-grid .data-item .version-label,
+.eventide-performance-dashboard .game-data-section .resources-grid .version-item .resource-label,
+.eventide-performance-dashboard .game-data-section .resources-grid .version-item .data-label,
+.eventide-performance-dashboard .game-data-section .resources-grid .version-item .version-label,
+.eventide-performance-dashboard .game-data-section .game-data-grid .resource-item .resource-label,
+.eventide-performance-dashboard .game-data-section .game-data-grid .resource-item .data-label,
+.eventide-performance-dashboard .game-data-section .game-data-grid .resource-item .version-label,
+.eventide-performance-dashboard .game-data-section .game-data-grid .data-item .resource-label,
+.eventide-performance-dashboard .game-data-section .game-data-grid .data-item .data-label,
+.eventide-performance-dashboard .game-data-section .game-data-grid .data-item .version-label,
+.eventide-performance-dashboard .game-data-section .game-data-grid .version-item .resource-label,
+.eventide-performance-dashboard .game-data-section .game-data-grid .version-item .data-label,
+.eventide-performance-dashboard .game-data-section .game-data-grid .version-item .version-label,
+.eventide-performance-dashboard .game-data-section .version-grid .resource-item .resource-label,
+.eventide-performance-dashboard .game-data-section .version-grid .resource-item .data-label,
+.eventide-performance-dashboard .game-data-section .version-grid .resource-item .version-label,
+.eventide-performance-dashboard .game-data-section .version-grid .data-item .resource-label,
+.eventide-performance-dashboard .game-data-section .version-grid .data-item .data-label,
+.eventide-performance-dashboard .game-data-section .version-grid .data-item .version-label,
+.eventide-performance-dashboard .game-data-section .version-grid .version-item .resource-label,
+.eventide-performance-dashboard .game-data-section .version-grid .version-item .data-label,
+.eventide-performance-dashboard .game-data-section .version-grid .version-item .version-label,
+.eventide-performance-dashboard .version-section .resources-grid .resource-item .resource-label,
+.eventide-performance-dashboard .version-section .resources-grid .resource-item .data-label,
+.eventide-performance-dashboard .version-section .resources-grid .resource-item .version-label,
+.eventide-performance-dashboard .version-section .resources-grid .data-item .resource-label,
+.eventide-performance-dashboard .version-section .resources-grid .data-item .data-label,
+.eventide-performance-dashboard .version-section .resources-grid .data-item .version-label,
+.eventide-performance-dashboard .version-section .resources-grid .version-item .resource-label,
+.eventide-performance-dashboard .version-section .resources-grid .version-item .data-label,
+.eventide-performance-dashboard .version-section .resources-grid .version-item .version-label,
+.eventide-performance-dashboard .version-section .game-data-grid .resource-item .resource-label,
+.eventide-performance-dashboard .version-section .game-data-grid .resource-item .data-label,
+.eventide-performance-dashboard .version-section .game-data-grid .resource-item .version-label,
+.eventide-performance-dashboard .version-section .game-data-grid .data-item .resource-label,
+.eventide-performance-dashboard .version-section .game-data-grid .data-item .data-label,
+.eventide-performance-dashboard .version-section .game-data-grid .data-item .version-label,
+.eventide-performance-dashboard .version-section .game-data-grid .version-item .resource-label,
+.eventide-performance-dashboard .version-section .game-data-grid .version-item .data-label,
+.eventide-performance-dashboard .version-section .game-data-grid .version-item .version-label,
+.eventide-performance-dashboard .version-section .version-grid .resource-item .resource-label,
+.eventide-performance-dashboard .version-section .version-grid .resource-item .data-label,
+.eventide-performance-dashboard .version-section .version-grid .resource-item .version-label,
+.eventide-performance-dashboard .version-section .version-grid .data-item .resource-label,
+.eventide-performance-dashboard .version-section .version-grid .data-item .data-label,
+.eventide-performance-dashboard .version-section .version-grid .data-item .version-label,
+.eventide-performance-dashboard .version-section .version-grid .version-item .resource-label,
+.eventide-performance-dashboard .version-section .version-grid .version-item .data-label,
+.eventide-performance-dashboard .version-section .version-grid .version-item .version-label {
+  color: var(--color-text-secondary);
+}
+.eventide-performance-dashboard .resources-section .resources-grid .resource-item .resource-value,
+.eventide-performance-dashboard .resources-section .resources-grid .resource-item .data-value,
+.eventide-performance-dashboard .resources-section .resources-grid .resource-item .version-value,
+.eventide-performance-dashboard .resources-section .resources-grid .data-item .resource-value,
+.eventide-performance-dashboard .resources-section .resources-grid .data-item .data-value,
+.eventide-performance-dashboard .resources-section .resources-grid .data-item .version-value,
+.eventide-performance-dashboard .resources-section .resources-grid .version-item .resource-value,
+.eventide-performance-dashboard .resources-section .resources-grid .version-item .data-value,
+.eventide-performance-dashboard .resources-section .resources-grid .version-item .version-value,
+.eventide-performance-dashboard .resources-section .game-data-grid .resource-item .resource-value,
+.eventide-performance-dashboard .resources-section .game-data-grid .resource-item .data-value,
+.eventide-performance-dashboard .resources-section .game-data-grid .resource-item .version-value,
+.eventide-performance-dashboard .resources-section .game-data-grid .data-item .resource-value,
+.eventide-performance-dashboard .resources-section .game-data-grid .data-item .data-value,
+.eventide-performance-dashboard .resources-section .game-data-grid .data-item .version-value,
+.eventide-performance-dashboard .resources-section .game-data-grid .version-item .resource-value,
+.eventide-performance-dashboard .resources-section .game-data-grid .version-item .data-value,
+.eventide-performance-dashboard .resources-section .game-data-grid .version-item .version-value,
+.eventide-performance-dashboard .resources-section .version-grid .resource-item .resource-value,
+.eventide-performance-dashboard .resources-section .version-grid .resource-item .data-value,
+.eventide-performance-dashboard .resources-section .version-grid .resource-item .version-value,
+.eventide-performance-dashboard .resources-section .version-grid .data-item .resource-value,
+.eventide-performance-dashboard .resources-section .version-grid .data-item .data-value,
+.eventide-performance-dashboard .resources-section .version-grid .data-item .version-value,
+.eventide-performance-dashboard .resources-section .version-grid .version-item .resource-value,
+.eventide-performance-dashboard .resources-section .version-grid .version-item .data-value,
+.eventide-performance-dashboard .resources-section .version-grid .version-item .version-value,
+.eventide-performance-dashboard .game-data-section .resources-grid .resource-item .resource-value,
+.eventide-performance-dashboard .game-data-section .resources-grid .resource-item .data-value,
+.eventide-performance-dashboard .game-data-section .resources-grid .resource-item .version-value,
+.eventide-performance-dashboard .game-data-section .resources-grid .data-item .resource-value,
+.eventide-performance-dashboard .game-data-section .resources-grid .data-item .data-value,
+.eventide-performance-dashboard .game-data-section .resources-grid .data-item .version-value,
+.eventide-performance-dashboard .game-data-section .resources-grid .version-item .resource-value,
+.eventide-performance-dashboard .game-data-section .resources-grid .version-item .data-value,
+.eventide-performance-dashboard .game-data-section .resources-grid .version-item .version-value,
+.eventide-performance-dashboard .game-data-section .game-data-grid .resource-item .resource-value,
+.eventide-performance-dashboard .game-data-section .game-data-grid .resource-item .data-value,
+.eventide-performance-dashboard .game-data-section .game-data-grid .resource-item .version-value,
+.eventide-performance-dashboard .game-data-section .game-data-grid .data-item .resource-value,
+.eventide-performance-dashboard .game-data-section .game-data-grid .data-item .data-value,
+.eventide-performance-dashboard .game-data-section .game-data-grid .data-item .version-value,
+.eventide-performance-dashboard .game-data-section .game-data-grid .version-item .resource-value,
+.eventide-performance-dashboard .game-data-section .game-data-grid .version-item .data-value,
+.eventide-performance-dashboard .game-data-section .game-data-grid .version-item .version-value,
+.eventide-performance-dashboard .game-data-section .version-grid .resource-item .resource-value,
+.eventide-performance-dashboard .game-data-section .version-grid .resource-item .data-value,
+.eventide-performance-dashboard .game-data-section .version-grid .resource-item .version-value,
+.eventide-performance-dashboard .game-data-section .version-grid .data-item .resource-value,
+.eventide-performance-dashboard .game-data-section .version-grid .data-item .data-value,
+.eventide-performance-dashboard .game-data-section .version-grid .data-item .version-value,
+.eventide-performance-dashboard .game-data-section .version-grid .version-item .resource-value,
+.eventide-performance-dashboard .game-data-section .version-grid .version-item .data-value,
+.eventide-performance-dashboard .game-data-section .version-grid .version-item .version-value,
+.eventide-performance-dashboard .version-section .resources-grid .resource-item .resource-value,
+.eventide-performance-dashboard .version-section .resources-grid .resource-item .data-value,
+.eventide-performance-dashboard .version-section .resources-grid .resource-item .version-value,
+.eventide-performance-dashboard .version-section .resources-grid .data-item .resource-value,
+.eventide-performance-dashboard .version-section .resources-grid .data-item .data-value,
+.eventide-performance-dashboard .version-section .resources-grid .data-item .version-value,
+.eventide-performance-dashboard .version-section .resources-grid .version-item .resource-value,
+.eventide-performance-dashboard .version-section .resources-grid .version-item .data-value,
+.eventide-performance-dashboard .version-section .resources-grid .version-item .version-value,
+.eventide-performance-dashboard .version-section .game-data-grid .resource-item .resource-value,
+.eventide-performance-dashboard .version-section .game-data-grid .resource-item .data-value,
+.eventide-performance-dashboard .version-section .game-data-grid .resource-item .version-value,
+.eventide-performance-dashboard .version-section .game-data-grid .data-item .resource-value,
+.eventide-performance-dashboard .version-section .game-data-grid .data-item .data-value,
+.eventide-performance-dashboard .version-section .game-data-grid .data-item .version-value,
+.eventide-performance-dashboard .version-section .game-data-grid .version-item .resource-value,
+.eventide-performance-dashboard .version-section .game-data-grid .version-item .data-value,
+.eventide-performance-dashboard .version-section .game-data-grid .version-item .version-value,
+.eventide-performance-dashboard .version-section .version-grid .resource-item .resource-value,
+.eventide-performance-dashboard .version-section .version-grid .resource-item .data-value,
+.eventide-performance-dashboard .version-section .version-grid .resource-item .version-value,
+.eventide-performance-dashboard .version-section .version-grid .data-item .resource-value,
+.eventide-performance-dashboard .version-section .version-grid .data-item .data-value,
+.eventide-performance-dashboard .version-section .version-grid .data-item .version-value,
+.eventide-performance-dashboard .version-section .version-grid .version-item .resource-value,
+.eventide-performance-dashboard .version-section .version-grid .version-item .data-value,
+.eventide-performance-dashboard .version-section .version-grid .version-item .version-value {
+  font-weight: 600;
+}
+.eventide-performance-dashboard .resources-section .resources-grid .resource-item .resource-value.good,
+.eventide-performance-dashboard .resources-section .resources-grid .resource-item .data-value.good,
+.eventide-performance-dashboard .resources-section .resources-grid .resource-item .version-value.good,
+.eventide-performance-dashboard .resources-section .resources-grid .data-item .resource-value.good,
+.eventide-performance-dashboard .resources-section .resources-grid .data-item .data-value.good,
+.eventide-performance-dashboard .resources-section .resources-grid .data-item .version-value.good,
+.eventide-performance-dashboard .resources-section .resources-grid .version-item .resource-value.good,
+.eventide-performance-dashboard .resources-section .resources-grid .version-item .data-value.good,
+.eventide-performance-dashboard .resources-section .resources-grid .version-item .version-value.good,
+.eventide-performance-dashboard .resources-section .game-data-grid .resource-item .resource-value.good,
+.eventide-performance-dashboard .resources-section .game-data-grid .resource-item .data-value.good,
+.eventide-performance-dashboard .resources-section .game-data-grid .resource-item .version-value.good,
+.eventide-performance-dashboard .resources-section .game-data-grid .data-item .resource-value.good,
+.eventide-performance-dashboard .resources-section .game-data-grid .data-item .data-value.good,
+.eventide-performance-dashboard .resources-section .game-data-grid .data-item .version-value.good,
+.eventide-performance-dashboard .resources-section .game-data-grid .version-item .resource-value.good,
+.eventide-performance-dashboard .resources-section .game-data-grid .version-item .data-value.good,
+.eventide-performance-dashboard .resources-section .game-data-grid .version-item .version-value.good,
+.eventide-performance-dashboard .resources-section .version-grid .resource-item .resource-value.good,
+.eventide-performance-dashboard .resources-section .version-grid .resource-item .data-value.good,
+.eventide-performance-dashboard .resources-section .version-grid .resource-item .version-value.good,
+.eventide-performance-dashboard .resources-section .version-grid .data-item .resource-value.good,
+.eventide-performance-dashboard .resources-section .version-grid .data-item .data-value.good,
+.eventide-performance-dashboard .resources-section .version-grid .data-item .version-value.good,
+.eventide-performance-dashboard .resources-section .version-grid .version-item .resource-value.good,
+.eventide-performance-dashboard .resources-section .version-grid .version-item .data-value.good,
+.eventide-performance-dashboard .resources-section .version-grid .version-item .version-value.good,
+.eventide-performance-dashboard .game-data-section .resources-grid .resource-item .resource-value.good,
+.eventide-performance-dashboard .game-data-section .resources-grid .resource-item .data-value.good,
+.eventide-performance-dashboard .game-data-section .resources-grid .resource-item .version-value.good,
+.eventide-performance-dashboard .game-data-section .resources-grid .data-item .resource-value.good,
+.eventide-performance-dashboard .game-data-section .resources-grid .data-item .data-value.good,
+.eventide-performance-dashboard .game-data-section .resources-grid .data-item .version-value.good,
+.eventide-performance-dashboard .game-data-section .resources-grid .version-item .resource-value.good,
+.eventide-performance-dashboard .game-data-section .resources-grid .version-item .data-value.good,
+.eventide-performance-dashboard .game-data-section .resources-grid .version-item .version-value.good,
+.eventide-performance-dashboard .game-data-section .game-data-grid .resource-item .resource-value.good,
+.eventide-performance-dashboard .game-data-section .game-data-grid .resource-item .data-value.good,
+.eventide-performance-dashboard .game-data-section .game-data-grid .resource-item .version-value.good,
+.eventide-performance-dashboard .game-data-section .game-data-grid .data-item .resource-value.good,
+.eventide-performance-dashboard .game-data-section .game-data-grid .data-item .data-value.good,
+.eventide-performance-dashboard .game-data-section .game-data-grid .data-item .version-value.good,
+.eventide-performance-dashboard .game-data-section .game-data-grid .version-item .resource-value.good,
+.eventide-performance-dashboard .game-data-section .game-data-grid .version-item .data-value.good,
+.eventide-performance-dashboard .game-data-section .game-data-grid .version-item .version-value.good,
+.eventide-performance-dashboard .game-data-section .version-grid .resource-item .resource-value.good,
+.eventide-performance-dashboard .game-data-section .version-grid .resource-item .data-value.good,
+.eventide-performance-dashboard .game-data-section .version-grid .resource-item .version-value.good,
+.eventide-performance-dashboard .game-data-section .version-grid .data-item .resource-value.good,
+.eventide-performance-dashboard .game-data-section .version-grid .data-item .data-value.good,
+.eventide-performance-dashboard .game-data-section .version-grid .data-item .version-value.good,
+.eventide-performance-dashboard .game-data-section .version-grid .version-item .resource-value.good,
+.eventide-performance-dashboard .game-data-section .version-grid .version-item .data-value.good,
+.eventide-performance-dashboard .game-data-section .version-grid .version-item .version-value.good,
+.eventide-performance-dashboard .version-section .resources-grid .resource-item .resource-value.good,
+.eventide-performance-dashboard .version-section .resources-grid .resource-item .data-value.good,
+.eventide-performance-dashboard .version-section .resources-grid .resource-item .version-value.good,
+.eventide-performance-dashboard .version-section .resources-grid .data-item .resource-value.good,
+.eventide-performance-dashboard .version-section .resources-grid .data-item .data-value.good,
+.eventide-performance-dashboard .version-section .resources-grid .data-item .version-value.good,
+.eventide-performance-dashboard .version-section .resources-grid .version-item .resource-value.good,
+.eventide-performance-dashboard .version-section .resources-grid .version-item .data-value.good,
+.eventide-performance-dashboard .version-section .resources-grid .version-item .version-value.good,
+.eventide-performance-dashboard .version-section .game-data-grid .resource-item .resource-value.good,
+.eventide-performance-dashboard .version-section .game-data-grid .resource-item .data-value.good,
+.eventide-performance-dashboard .version-section .game-data-grid .resource-item .version-value.good,
+.eventide-performance-dashboard .version-section .game-data-grid .data-item .resource-value.good,
+.eventide-performance-dashboard .version-section .game-data-grid .data-item .data-value.good,
+.eventide-performance-dashboard .version-section .game-data-grid .data-item .version-value.good,
+.eventide-performance-dashboard .version-section .game-data-grid .version-item .resource-value.good,
+.eventide-performance-dashboard .version-section .game-data-grid .version-item .data-value.good,
+.eventide-performance-dashboard .version-section .game-data-grid .version-item .version-value.good,
+.eventide-performance-dashboard .version-section .version-grid .resource-item .resource-value.good,
+.eventide-performance-dashboard .version-section .version-grid .resource-item .data-value.good,
+.eventide-performance-dashboard .version-section .version-grid .resource-item .version-value.good,
+.eventide-performance-dashboard .version-section .version-grid .data-item .resource-value.good,
+.eventide-performance-dashboard .version-section .version-grid .data-item .data-value.good,
+.eventide-performance-dashboard .version-section .version-grid .data-item .version-value.good,
+.eventide-performance-dashboard .version-section .version-grid .version-item .resource-value.good,
+.eventide-performance-dashboard .version-section .version-grid .version-item .data-value.good,
+.eventide-performance-dashboard .version-section .version-grid .version-item .version-value.good {
+  color: #0f0;
+}
+.eventide-performance-dashboard .resources-section .resources-grid .resource-item .resource-value.warning,
+.eventide-performance-dashboard .resources-section .resources-grid .resource-item .data-value.warning,
+.eventide-performance-dashboard .resources-section .resources-grid .resource-item .version-value.warning,
+.eventide-performance-dashboard .resources-section .resources-grid .data-item .resource-value.warning,
+.eventide-performance-dashboard .resources-section .resources-grid .data-item .data-value.warning,
+.eventide-performance-dashboard .resources-section .resources-grid .data-item .version-value.warning,
+.eventide-performance-dashboard .resources-section .resources-grid .version-item .resource-value.warning,
+.eventide-performance-dashboard .resources-section .resources-grid .version-item .data-value.warning,
+.eventide-performance-dashboard .resources-section .resources-grid .version-item .version-value.warning,
+.eventide-performance-dashboard .resources-section .game-data-grid .resource-item .resource-value.warning,
+.eventide-performance-dashboard .resources-section .game-data-grid .resource-item .data-value.warning,
+.eventide-performance-dashboard .resources-section .game-data-grid .resource-item .version-value.warning,
+.eventide-performance-dashboard .resources-section .game-data-grid .data-item .resource-value.warning,
+.eventide-performance-dashboard .resources-section .game-data-grid .data-item .data-value.warning,
+.eventide-performance-dashboard .resources-section .game-data-grid .data-item .version-value.warning,
+.eventide-performance-dashboard .resources-section .game-data-grid .version-item .resource-value.warning,
+.eventide-performance-dashboard .resources-section .game-data-grid .version-item .data-value.warning,
+.eventide-performance-dashboard .resources-section .game-data-grid .version-item .version-value.warning,
+.eventide-performance-dashboard .resources-section .version-grid .resource-item .resource-value.warning,
+.eventide-performance-dashboard .resources-section .version-grid .resource-item .data-value.warning,
+.eventide-performance-dashboard .resources-section .version-grid .resource-item .version-value.warning,
+.eventide-performance-dashboard .resources-section .version-grid .data-item .resource-value.warning,
+.eventide-performance-dashboard .resources-section .version-grid .data-item .data-value.warning,
+.eventide-performance-dashboard .resources-section .version-grid .data-item .version-value.warning,
+.eventide-performance-dashboard .resources-section .version-grid .version-item .resource-value.warning,
+.eventide-performance-dashboard .resources-section .version-grid .version-item .data-value.warning,
+.eventide-performance-dashboard .resources-section .version-grid .version-item .version-value.warning,
+.eventide-performance-dashboard .game-data-section .resources-grid .resource-item .resource-value.warning,
+.eventide-performance-dashboard .game-data-section .resources-grid .resource-item .data-value.warning,
+.eventide-performance-dashboard .game-data-section .resources-grid .resource-item .version-value.warning,
+.eventide-performance-dashboard .game-data-section .resources-grid .data-item .resource-value.warning,
+.eventide-performance-dashboard .game-data-section .resources-grid .data-item .data-value.warning,
+.eventide-performance-dashboard .game-data-section .resources-grid .data-item .version-value.warning,
+.eventide-performance-dashboard .game-data-section .resources-grid .version-item .resource-value.warning,
+.eventide-performance-dashboard .game-data-section .resources-grid .version-item .data-value.warning,
+.eventide-performance-dashboard .game-data-section .resources-grid .version-item .version-value.warning,
+.eventide-performance-dashboard .game-data-section .game-data-grid .resource-item .resource-value.warning,
+.eventide-performance-dashboard .game-data-section .game-data-grid .resource-item .data-value.warning,
+.eventide-performance-dashboard .game-data-section .game-data-grid .resource-item .version-value.warning,
+.eventide-performance-dashboard .game-data-section .game-data-grid .data-item .resource-value.warning,
+.eventide-performance-dashboard .game-data-section .game-data-grid .data-item .data-value.warning,
+.eventide-performance-dashboard .game-data-section .game-data-grid .data-item .version-value.warning,
+.eventide-performance-dashboard .game-data-section .game-data-grid .version-item .resource-value.warning,
+.eventide-performance-dashboard .game-data-section .game-data-grid .version-item .data-value.warning,
+.eventide-performance-dashboard .game-data-section .game-data-grid .version-item .version-value.warning,
+.eventide-performance-dashboard .game-data-section .version-grid .resource-item .resource-value.warning,
+.eventide-performance-dashboard .game-data-section .version-grid .resource-item .data-value.warning,
+.eventide-performance-dashboard .game-data-section .version-grid .resource-item .version-value.warning,
+.eventide-performance-dashboard .game-data-section .version-grid .data-item .resource-value.warning,
+.eventide-performance-dashboard .game-data-section .version-grid .data-item .data-value.warning,
+.eventide-performance-dashboard .game-data-section .version-grid .data-item .version-value.warning,
+.eventide-performance-dashboard .game-data-section .version-grid .version-item .resource-value.warning,
+.eventide-performance-dashboard .game-data-section .version-grid .version-item .data-value.warning,
+.eventide-performance-dashboard .game-data-section .version-grid .version-item .version-value.warning,
+.eventide-performance-dashboard .version-section .resources-grid .resource-item .resource-value.warning,
+.eventide-performance-dashboard .version-section .resources-grid .resource-item .data-value.warning,
+.eventide-performance-dashboard .version-section .resources-grid .resource-item .version-value.warning,
+.eventide-performance-dashboard .version-section .resources-grid .data-item .resource-value.warning,
+.eventide-performance-dashboard .version-section .resources-grid .data-item .data-value.warning,
+.eventide-performance-dashboard .version-section .resources-grid .data-item .version-value.warning,
+.eventide-performance-dashboard .version-section .resources-grid .version-item .resource-value.warning,
+.eventide-performance-dashboard .version-section .resources-grid .version-item .data-value.warning,
+.eventide-performance-dashboard .version-section .resources-grid .version-item .version-value.warning,
+.eventide-performance-dashboard .version-section .game-data-grid .resource-item .resource-value.warning,
+.eventide-performance-dashboard .version-section .game-data-grid .resource-item .data-value.warning,
+.eventide-performance-dashboard .version-section .game-data-grid .resource-item .version-value.warning,
+.eventide-performance-dashboard .version-section .game-data-grid .data-item .resource-value.warning,
+.eventide-performance-dashboard .version-section .game-data-grid .data-item .data-value.warning,
+.eventide-performance-dashboard .version-section .game-data-grid .data-item .version-value.warning,
+.eventide-performance-dashboard .version-section .game-data-grid .version-item .resource-value.warning,
+.eventide-performance-dashboard .version-section .game-data-grid .version-item .data-value.warning,
+.eventide-performance-dashboard .version-section .game-data-grid .version-item .version-value.warning,
+.eventide-performance-dashboard .version-section .version-grid .resource-item .resource-value.warning,
+.eventide-performance-dashboard .version-section .version-grid .resource-item .data-value.warning,
+.eventide-performance-dashboard .version-section .version-grid .resource-item .version-value.warning,
+.eventide-performance-dashboard .version-section .version-grid .data-item .resource-value.warning,
+.eventide-performance-dashboard .version-section .version-grid .data-item .data-value.warning,
+.eventide-performance-dashboard .version-section .version-grid .data-item .version-value.warning,
+.eventide-performance-dashboard .version-section .version-grid .version-item .resource-value.warning,
+.eventide-performance-dashboard .version-section .version-grid .version-item .data-value.warning,
+.eventide-performance-dashboard .version-section .version-grid .version-item .version-value.warning {
+  color: #fa0;
+}
+.eventide-performance-dashboard .resources-section .resources-grid .resource-item .resource-value.critical,
+.eventide-performance-dashboard .resources-section .resources-grid .resource-item .data-value.critical,
+.eventide-performance-dashboard .resources-section .resources-grid .resource-item .version-value.critical,
+.eventide-performance-dashboard .resources-section .resources-grid .data-item .resource-value.critical,
+.eventide-performance-dashboard .resources-section .resources-grid .data-item .data-value.critical,
+.eventide-performance-dashboard .resources-section .resources-grid .data-item .version-value.critical,
+.eventide-performance-dashboard .resources-section .resources-grid .version-item .resource-value.critical,
+.eventide-performance-dashboard .resources-section .resources-grid .version-item .data-value.critical,
+.eventide-performance-dashboard .resources-section .resources-grid .version-item .version-value.critical,
+.eventide-performance-dashboard .resources-section .game-data-grid .resource-item .resource-value.critical,
+.eventide-performance-dashboard .resources-section .game-data-grid .resource-item .data-value.critical,
+.eventide-performance-dashboard .resources-section .game-data-grid .resource-item .version-value.critical,
+.eventide-performance-dashboard .resources-section .game-data-grid .data-item .resource-value.critical,
+.eventide-performance-dashboard .resources-section .game-data-grid .data-item .data-value.critical,
+.eventide-performance-dashboard .resources-section .game-data-grid .data-item .version-value.critical,
+.eventide-performance-dashboard .resources-section .game-data-grid .version-item .resource-value.critical,
+.eventide-performance-dashboard .resources-section .game-data-grid .version-item .data-value.critical,
+.eventide-performance-dashboard .resources-section .game-data-grid .version-item .version-value.critical,
+.eventide-performance-dashboard .resources-section .version-grid .resource-item .resource-value.critical,
+.eventide-performance-dashboard .resources-section .version-grid .resource-item .data-value.critical,
+.eventide-performance-dashboard .resources-section .version-grid .resource-item .version-value.critical,
+.eventide-performance-dashboard .resources-section .version-grid .data-item .resource-value.critical,
+.eventide-performance-dashboard .resources-section .version-grid .data-item .data-value.critical,
+.eventide-performance-dashboard .resources-section .version-grid .data-item .version-value.critical,
+.eventide-performance-dashboard .resources-section .version-grid .version-item .resource-value.critical,
+.eventide-performance-dashboard .resources-section .version-grid .version-item .data-value.critical,
+.eventide-performance-dashboard .resources-section .version-grid .version-item .version-value.critical,
+.eventide-performance-dashboard .game-data-section .resources-grid .resource-item .resource-value.critical,
+.eventide-performance-dashboard .game-data-section .resources-grid .resource-item .data-value.critical,
+.eventide-performance-dashboard .game-data-section .resources-grid .resource-item .version-value.critical,
+.eventide-performance-dashboard .game-data-section .resources-grid .data-item .resource-value.critical,
+.eventide-performance-dashboard .game-data-section .resources-grid .data-item .data-value.critical,
+.eventide-performance-dashboard .game-data-section .resources-grid .data-item .version-value.critical,
+.eventide-performance-dashboard .game-data-section .resources-grid .version-item .resource-value.critical,
+.eventide-performance-dashboard .game-data-section .resources-grid .version-item .data-value.critical,
+.eventide-performance-dashboard .game-data-section .resources-grid .version-item .version-value.critical,
+.eventide-performance-dashboard .game-data-section .game-data-grid .resource-item .resource-value.critical,
+.eventide-performance-dashboard .game-data-section .game-data-grid .resource-item .data-value.critical,
+.eventide-performance-dashboard .game-data-section .game-data-grid .resource-item .version-value.critical,
+.eventide-performance-dashboard .game-data-section .game-data-grid .data-item .resource-value.critical,
+.eventide-performance-dashboard .game-data-section .game-data-grid .data-item .data-value.critical,
+.eventide-performance-dashboard .game-data-section .game-data-grid .data-item .version-value.critical,
+.eventide-performance-dashboard .game-data-section .game-data-grid .version-item .resource-value.critical,
+.eventide-performance-dashboard .game-data-section .game-data-grid .version-item .data-value.critical,
+.eventide-performance-dashboard .game-data-section .game-data-grid .version-item .version-value.critical,
+.eventide-performance-dashboard .game-data-section .version-grid .resource-item .resource-value.critical,
+.eventide-performance-dashboard .game-data-section .version-grid .resource-item .data-value.critical,
+.eventide-performance-dashboard .game-data-section .version-grid .resource-item .version-value.critical,
+.eventide-performance-dashboard .game-data-section .version-grid .data-item .resource-value.critical,
+.eventide-performance-dashboard .game-data-section .version-grid .data-item .data-value.critical,
+.eventide-performance-dashboard .game-data-section .version-grid .data-item .version-value.critical,
+.eventide-performance-dashboard .game-data-section .version-grid .version-item .resource-value.critical,
+.eventide-performance-dashboard .game-data-section .version-grid .version-item .data-value.critical,
+.eventide-performance-dashboard .game-data-section .version-grid .version-item .version-value.critical,
+.eventide-performance-dashboard .version-section .resources-grid .resource-item .resource-value.critical,
+.eventide-performance-dashboard .version-section .resources-grid .resource-item .data-value.critical,
+.eventide-performance-dashboard .version-section .resources-grid .resource-item .version-value.critical,
+.eventide-performance-dashboard .version-section .resources-grid .data-item .resource-value.critical,
+.eventide-performance-dashboard .version-section .resources-grid .data-item .data-value.critical,
+.eventide-performance-dashboard .version-section .resources-grid .data-item .version-value.critical,
+.eventide-performance-dashboard .version-section .resources-grid .version-item .resource-value.critical,
+.eventide-performance-dashboard .version-section .resources-grid .version-item .data-value.critical,
+.eventide-performance-dashboard .version-section .resources-grid .version-item .version-value.critical,
+.eventide-performance-dashboard .version-section .game-data-grid .resource-item .resource-value.critical,
+.eventide-performance-dashboard .version-section .game-data-grid .resource-item .data-value.critical,
+.eventide-performance-dashboard .version-section .game-data-grid .resource-item .version-value.critical,
+.eventide-performance-dashboard .version-section .game-data-grid .data-item .resource-value.critical,
+.eventide-performance-dashboard .version-section .game-data-grid .data-item .data-value.critical,
+.eventide-performance-dashboard .version-section .game-data-grid .data-item .version-value.critical,
+.eventide-performance-dashboard .version-section .game-data-grid .version-item .resource-value.critical,
+.eventide-performance-dashboard .version-section .game-data-grid .version-item .data-value.critical,
+.eventide-performance-dashboard .version-section .game-data-grid .version-item .version-value.critical,
+.eventide-performance-dashboard .version-section .version-grid .resource-item .resource-value.critical,
+.eventide-performance-dashboard .version-section .version-grid .resource-item .data-value.critical,
+.eventide-performance-dashboard .version-section .version-grid .resource-item .version-value.critical,
+.eventide-performance-dashboard .version-section .version-grid .data-item .resource-value.critical,
+.eventide-performance-dashboard .version-section .version-grid .data-item .data-value.critical,
+.eventide-performance-dashboard .version-section .version-grid .data-item .version-value.critical,
+.eventide-performance-dashboard .version-section .version-grid .version-item .resource-value.critical,
+.eventide-performance-dashboard .version-section .version-grid .version-item .data-value.critical,
+.eventide-performance-dashboard .version-section .version-grid .version-item .version-value.critical {
+  color: #f44;
+}
+.eventide-performance-dashboard .tips-section .tips-list {
+  margin: 0;
+  background: var(--color-bg-secondary);
+  padding: 0.75rem 0.75rem 0.75rem 2rem;
+  border-radius: 4px;
+}
+.eventide-performance-dashboard .tips-section .tips-list li {
+  margin: 0.5rem 0;
+  color: var(--color-text-secondary);
+  line-height: 1.4;
+}
+.eventide-performance-dashboard .tips-section .tips-list li:first-child {
+  margin-top: 0;
+}
+.eventide-performance-dashboard .tips-section .tips-list li:last-child {
+  margin-bottom: 0;
+}
+.eventide-performance-dashboard .actions-section .action-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+.eventide-performance-dashboard .actions-section .action-buttons button {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.eventide-performance-dashboard .actions-section .action-buttons button.cleanup-btn {
+  background: var(--color-accent-primary);
+  color: var(--color-text-on-accent);
+}
+.eventide-performance-dashboard .actions-section .action-buttons button.cleanup-btn:hover {
+  background: var(--color-accent-hover);
+}
+.eventide-performance-dashboard .actions-section .action-buttons button.force-cleanup-btn {
+  background: var(--color-warning);
+  color: var(--color-text-on-accent);
+}
+.eventide-performance-dashboard .actions-section .action-buttons button.force-cleanup-btn:hover {
+  background: var(--color-danger);
+}
+
+[data-theme=dark] .eventide-performance-dashboard .memory-bar .memory-fill {
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+}
+
+[data-theme=light] .eventide-performance-dashboard .dashboard-header {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .erps-data-table {
@@ -6496,6 +7497,26 @@ body *::-webkit-scrollbar-track,
   font-size: 0.9rem;
   font-weight: 500;
 }
+.erps-items-panel .tab.embedded-items.drag-active {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  border: 2px dashed var(--theme-accent);
+  padding: 0.5rem;
+}
+.erps-items-panel .tab.embedded-items.drag-active .erps-items-panel__drop-zone {
+  animation: pulse-glow 1.5s ease-in-out infinite;
+  border-color: var(--theme-accent) !important;
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  opacity: 1 !important;
+}
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 8px var(--theme-glow);
+  }
+  50% {
+    box-shadow: 0 0 12px var(--theme-glow), 0 0 15px var(--theme-glow);
+  }
+}
 .erps-items-panel__notes {
   margin-top: 1rem;
   padding: 0.75rem;
@@ -7477,5 +8498,3 @@ body *::-webkit-scrollbar-track,
     flex: 1;
   }
 }
-
-/*# sourceMappingURL=eventide-rp-system.css.map */

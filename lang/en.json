@@ -60,6 +60,186 @@
       "Spell": "Spell",
       "Other": "Other"
     },
+    "Item": {
+      "ActionCard": {
+        "PopupTitle": "Execute Action Card",
+        "EmbeddedItem": "Embedded Item",
+        "DropItemHere": "Drop an item here to embed it",
+        "SupportedTypes": "Supports: Combat Powers, Gear, Features",
+        "ClearItem": "Clear embedded item",
+        "Mode": "Mode",
+        "SelectMode": "Select action card mode",
+        "AttackChainMode": "Attack Chain",
+        "SavedDamageMode": "Saved Damage",
+        "AttackChain": "Attack Chain Configuration",
+        "ChainConfiguration": "Chain Configuration",
+        "SavedDamageConfiguration": "Saved Damage Configuration",
+        "EnableChain": "Enable Attack Chain",
+        "FirstStat": "First Stat",
+        "SecondStat": "Second Stat",
+        "DamageConfig": "Damage Configuration",
+        "DamageCondition": "Apply Damage",
+        "DamageFormula": "Damage Formula",
+        "DamageType": "Damage Type",
+        "DamageOn": "Damage on",
+        "StatusConfig": "Status Configuration",
+        "StatusCondition": "Apply Status",
+        "StatusOn": "Status on",
+        "StatusEffects": "Embedded Status Effects",
+        "DropStatusHere": "Drop status effects here",
+        "StatusHint": "Status effects to apply when chain conditions are met",
+        "RemoveStatus": "Remove status effect",
+        "SavedDamage": "Saved Damage Configuration",
+        "EnableSavedDamage": "Enable Saved Damage",
+        "SavedFormula": "Damage Formula",
+        "SavedType": "Damage Type",
+        "SavedDescription": "Description",
+        "SavedDescriptionHint": "Description for the saved damage application",
+        "Never": "Never",
+        "OneSuccess": "One Success",
+        "TwoSuccesses": "Two Successes",
+        "Damage": "Damage",
+        "Heal": "Heal",
+        "Execute": "Execute",
+        "ExecuteChain": "Execute Chain",
+        "ApplyDamage": "Apply Damage",
+        "ApplySavedDamage": "Apply Saved Damage",
+        "ActionItem": "Action Item",
+        "NoActionItem": "No action item configured",
+        "DropActionItemHere": "Drop an action item here",
+        "Effects": "Effects",
+        "NoEffects": "No effects configured",
+        "DropEffectHere": "Drop status effects or gear here",
+        "EffectNotes": "Effects are applied when chain conditions are met",
+        "DragToExtract": "Drag to extract this item",
+        "DragNote": "Tip: Drag items to extract copies",
+        "GearCategoryTitle": "Choose Gear Category",
+        "GearCategoryQuestion": "Where should this gear be placed?",
+        "ActionItemDescription": "The item that will be rolled when this action card is executed",
+        "EffectsDescription": "Status effects and gear that will be applied when chain conditions are met",
+        "ItemAddedToAction": "Item added to action slot",
+        "ItemAddedToEffects": "Item added to effects",
+        "GearAddedToAction": "Gear added to action slot",
+        "GearAddedToEffects": "Gear added to effects",
+        "AdvanceInitiative": {
+          "label": "Advance Initiative",
+          "hint": "When enabled, advances initiative after execution. Can only be used on your turn."
+        },
+        "AdvanceInitiativeTurnError": "You can only use this action card on your turn when 'Advance Initiative' is enabled.",
+        "AttemptInventoryReduction": {
+          "label": "Attempt Effect Inventory Reduction",
+          "hint": "When enabled, attempts to reduce your inventory when applying gear effects. If disabled, gear effects will be applied without checking inventory."
+        },
+        "GearEffectInventoryWarning": "You don't have enough {gearName} in your inventory to apply this effect.",
+        "GearEffectNotFoundWarning": "You don't have {gearName} in your inventory to apply this effect.",
+        "GearEffectInsufficientWarning": "You don't have enough {gearName} in your inventory to apply this effect (need {required}, have {available}).",
+        "GearEffectInventoryError": "Failed to apply gear effect: {error}",
+        "RollValue": "Roll Value",
+        "StatusThreshold": "Threshold Value",
+        "Apply": "Apply",
+        "Discard": "Discard"
+      },
+      "Colors": {
+        "BgColor": {
+          "label": "Background Color",
+          "placeholder": "Enter background color"
+        },
+        "TextColor": {
+          "label": "Text Color",
+          "placeholder": "Enter text color"
+        }
+      },
+      "Descriptors": {
+        "RollActorName": {
+          "label": "Roll Name"
+        },
+        "UsageInfo": {
+          "label": "Usage Info",
+          "placeholder": "e.g., 1/day"
+        }
+      },
+      "Inventory": {
+        "Cost": {
+          "label": "Cost"
+        },
+        "Equipped": {
+          "label": "Equipped"
+        },
+        "Cursed": {
+          "label": "Cursed"
+        },
+        "Quantity": {
+          "label": "Quantity"
+        },
+        "Unequip": {
+          "label": "Unequip"
+        },
+        "Weight": {
+          "label": "Weight"
+        },
+        "Increment": {
+          "label": "Increment"
+        },
+        "Decrement": {
+          "label": "Decrement"
+        },
+        "Equip": {
+          "label": "Equip"
+        }
+      },
+      "Roll": {
+        "Ability": {
+          "label": "Ability"
+        },
+        "Bonus": {
+          "label": "Bonus"
+        },
+        "DiceAdjustments": {
+          "label": "Dice Adjustments",
+          "Advantage": {
+            "label": "Advantage"
+          },
+          "Disadvantage": {
+            "label": "Disadvantage"
+          },
+          "Total": {
+            "label": "Total Adjustment"
+          }
+        },
+        "Targeted": {
+          "label": "Requires Target?"
+        },
+        "Type": {
+          "label": "Roll Type"
+        }
+      },
+      "Tabs": {
+        "Description": "Description",
+        "Attributes": "Attributes",
+        "Effects": "Effects",
+        "CharacterEffects": "Character Effects",
+        "Prerequisites": "Prerequisites",
+        "CombatPowers": "Combat Powers",
+        "EmbeddedItems": "Embedded Items"
+      },
+      "Transformation": {
+        "PowerAdjustment": "Power Adjustment",
+        "ResolveAdjustment": "Resolve Adjustment",
+        "Size": "Size",
+        "Notes": "Transformations can store combat powers that are available when the character transforms.",
+        "EmbeddedPowers": "Combat Powers",
+        "NoPowers": "No combat powers added yet.",
+        "DropPowerHere": "Drop a combat power here to add it to this transformation.",
+        "ReadOnlyNote": "Note: Embedded combat powers open in read-only mode. To edit a power, modify the original item in the actor's inventory.",
+        "DragToExtract": "Drag to extract this combat power as a new item",
+        "DragNote": "Tip: Drag combat powers to actors, compendiums, or item tabs to create copies.",
+        "TokenImage": "Token Image",
+        "TokenImageHint": "Image to use for the token when this transformation is applied"
+      },
+      "CombatPower": "Combat Power",
+      "Gear": "Gear",
+      "base": "Base Item"
+    },
     "Actor": {
       "Attributes": {
         "CR": {
@@ -91,6 +271,10 @@
         },
         "XP": {
           "label": "XP"
+        },
+        "Ability": {
+          "Locked": "Locked",
+          "Unlocked": "Unlocked"
         }
       },
       "Errors": {
@@ -103,6 +287,7 @@
         }
       },
       "Tabs": {
+        "ActionCards": "Action Cards",
         "Biography": "Biography",
         "CombatPowers": "Combat Powers",
         "Features": "Features",
@@ -111,7 +296,37 @@
       },
       "CombatPowers": {
         "Transformed": "Transformed",
-        "TransformedLocked": "Combat powers are provided by active transformation - cannot create new powers while transformed"
+        "TransformedLocked": "Combat powers are provided by active transformation - cannot create new powers while transformed",
+        "TransformationPower": "Transformation Power"
+      },
+      "Inventory": {
+        "Name": "Name",
+        "Controls": "Controls",
+        "Edit": "Edit",
+        "Delete": "Delete",
+        "NoActionCards": "No action cards available",
+        "CreateActionCard": "Create Action Card"
+      },
+      "ActionCards": {
+        "CreatedActionCard": "Created action card '{actionCardName}'"
+      },
+      "Sections": {
+        "Effects": "Effects"
+      }
+    },
+    "Chat": {
+      "GMApply": {
+        "DamageHeader": "GM Apply Damage",
+        "StatusHeader": "GM Apply Status Effects",
+        "Applied": "Applied",
+        "ApplyDamage": "Apply Damage",
+        "ApplyStatus": "Apply Status Effects",
+        "DiscardDamage": "Discard",
+        "DiscardStatus": "Discard",
+        "ApplyAll": "Apply All",
+        "DiscardAll": "Discard All",
+        "MultipleEffectsPending": "Multiple Effects Pending",
+        "TargetUnavailable": "Target no longer available"
       }
     },
     "Errors": {
@@ -122,6 +337,7 @@
       "EditAudio": "Failed to open file picker for audio",
       "EditFile": "Failed to open file picker for file",
       "GearError": "Cannot use Gear right now!",
+      "GearNotFoundInInventory": "Gear '{gearName}' not found in actor's inventory",
       "GMOnly": "Only GMs can use this script in this mode.",
       "ItemNotFound": "Item not found",
       "LocalStorage": "There was some sort of error storing values locally.",
@@ -144,19 +360,129 @@
       "NameRequired": "Item name is required",
       "ImageRequired": "Item image is required",
       "InvalidQuantity": "Quantity must be a positive number",
+      "ActionCardItemTypes": "Action cards can only embed items of type: {supported}. Cannot add {type}.",
+      "ActionCardEffectTypes": "Action cards can only embed effects of type: {supported}. Cannot add {type}.",
+      "ActionCardStatusTypes": "Action cards can only embed status effects. Cannot add {type}.",
+      "TransformationItemTypes": "Transformations can only embed combat powers.",
       "InvalidWeight": "Weight must be a valid number",
       "InvalidCost": "Cost must be a valid number",
-      "TransformationItemTypes": "Only combat powers can be added to transformations.",
       "MissingAbility": "Missing ability",
       "MissingTransformation": "Missing transformation",
       "ConfigureTokenError": "Failed to configure token for {actorName}",
-      "SetSheetThemeError": "Failed to set sheet theme for {userName}"
+      "SetSheetThemeError": "Failed to set sheet theme for {userName}",
+      "PopupClassImportError": "Failed to load popup for {itemName} ({className})",
+      "BypassExecutionError": "Failed to execute {itemType} '{itemName}': {error}",
+      "BypassError": "Failed to execute '{itemName}': {error}",
+      "FeatureError": "Cannot use Feature right now!",
+      "StatusError": "Cannot use Status right now!",
+      "ItemError": "Cannot use Item right now!",
+      "ActionCardError": "Cannot execute Action Card right now!",
+      "SheetContextError": "Failed to prepare sheet context for {itemName}",
+      "RollError": "Failed to execute roll for {itemName}",
+      "SheetRender": "Failed to render sheet for {itemName}",
+      "Validation": "Validation failed for {itemName}",
+      "NoPermission": "You do not have permission to perform this action",
+      "NotTransformation": "Item is not a transformation",
+      "ThemeUpdateFailed": "Failed to update theme. Please try again.",
+      "TargetActorMissing": "Target actor no longer exists",
+      "ApplyDamageFailed": "Failed to apply damage",
+      "NoStatusEffectsInMessage": "No status effects found in message",
+      "NoStatusApplied": "No status effects were successfully applied",
+      "ApplyStatusFailed": "Failed to apply status effects",
+      "DiscardDamageFailed": "Failed to discard damage",
+      "DiscardStatusFailed": "Failed to discard status effects",
+      "NoGMApplyData": "No GM apply data found in message",
+      "ApplyEffectsFailed": "Failed to apply effects",
+      "SomeEffectsFailed": "Some effects failed to apply",
+      "DiscardEffectsFailed": "Failed to discard effects",
+      "SomeDiscardFailed": "Some effects failed to discard",
+      "ActionCardNoEmbeddedItem": "Action card has no embedded item configured",
+      "ActionCardNoActor": "Action card has no associated actor",
+      "ActionCardExecuteFailed": "Failed to execute action card",
+      "NoTargetsAttackChain": "No targets selected for attack chain",
+      "NoTargetsSavedDamage": "No targets selected for saved damage",
+      "ActionCardInvalid": "Invalid action card",
+      "ActionCardEffectFailed": "Failed to apply action card effect",
+      "SaveEffectImageFailed": "Failed to save effect image.",
+      "SaveItemImageFailed": "Failed to save item image.",
+      "SaveItemFailed": "Failed to save item. See console for details.",
+      "SaveEffectIconTintFailed": "Failed to save effect icon tint.",
+      "SaveItemIconTintFailed": "Failed to save item icon tint.",
+      "ToggleEffectDisplayFailed": "Failed to toggle effect display.",
+      "SaveEffectCharacterEffectsFailed": "Failed to save effect character effects.",
+      "SaveItemCharacterEffectsFailed": "Failed to save item character effects.",
+      "ShowGearCategoryDialogFailed": "Failed to show gear category dialog",
+      "ClearEmbeddedItemFailed": "Failed to clear embedded item",
+      "EditEmbeddedItemFailed": "Failed to edit embedded item",
+      "EditEmbeddedEffectFailed": "Failed to edit embedded effect",
+      "RemoveEmbeddedEffectFailed": "Failed to remove embedded effect",
+      "DocumentViewFailed": "Failed to view document for {itemName}",
+      "EffectCreationFailed": "Failed to create effect for {itemName}",
+      "EffectDeletionFailed": "Failed to delete effect for {itemName}",
+      "EffectNotFound": "Effect not found",
+      "EffectToggleFailed": "Failed to toggle effect for {itemName}",
+      "FailedToAddCombatPower": "Failed to add combat power {itemName}",
+      "ImagePickerFailed": "Failed to open image picker for {itemName}",
+      "MacroExecutionError": "Failed to execute macro",
+      "UnexpectedError": "An unexpected error occurred",
+      "ActionCardExecuteError": "Failed to execute action card",
+      "ActorDataPreparationError": "Failed to prepare actor data",
+      "CharacterEffectCreationFailed": "Failed to create character effect",
+      "CharacterEffectDeletionFailed": "Failed to delete character effect",
+      "CharacterEffectsUpdateFailed": "Failed to update character effects",
+      "CombatPowerRemovalFailed": "Failed to remove combat power",
+      "ContextEnrichmentError": "Failed to enrich context",
+      "DocumentCreateError": "Failed to create document",
+      "DocumentDeleteError": "Failed to delete document",
+      "DocumentOperation": "Document operation failed",
+      "DocumentViewError": "Failed to view document",
+      "DropError": "Drop operation failed",
+      "EditImageError": "Failed to edit image",
+      "EffectDisplayToggleFailed": "Failed to toggle effect display",
+      "EffectDropError": "Failed to drop effect",
+      "EffectGuardsFailed": "Effect guards failed",
+      "EffectSortError": "Failed to sort effects",
+      "EffectToggleError": "Failed to toggle effect",
+      "FailedToAddEffectToActionCard": "Failed to add effect to action card",
+      "FailedToAddItemToActionCard": "Failed to add item to action card",
+      "FolderDropError": "Failed to drop folder",
+      "GearQuantityError": "Gear quantity error",
+      "GearToggleError": "Failed to toggle gear",
+      "ItemCreateError": "Failed to create item",
+      "ItemDropError": "Failed to drop item",
+      "ItemOperation": "Item operation failed",
+      "ItemPreparationError": "Failed to prepare item",
+      "ItemSortError": "Failed to sort items",
+      "PopupError": "Popup error occurred",
+      "RollFailed": "Roll failed",
+      "SettingsOperation": "Settings operation failed",
+      "SheetContextFailed": "Sheet context failed",
+      "SheetContextPreparationError": "Failed to prepare sheet context",
+      "ThemeOperation": "Theme operation failed",
+      "ToggleAutoTokenUpdateError": "Failed to toggle auto token update",
+      "TransformationApplyError": "Failed to apply transformation",
+      "TransformationRemoveError": "Failed to remove transformation"
     },
     "Info": {
       "CompendiumItemCreated": "Created {keyType} item {name} in the {packLabel} compendium",
       "TokenItemCreated": "Created {keyType} item {name} on {count} {targetType} token(s) and in the {packLabel} compendium",
       "Stored": "Stored {keyType} information in localStorage",
-      "SheetThemeChanged": "Sheet theme changed to {themeName} for {userName}"
+      "SheetThemeChanged": "Sheet theme changed to {themeName} for {userName}",
+      "DamageDiscarded": "Damage discarded",
+      "StatusEffectsDiscarded": "Status effects discarded",
+      "AllEffectsApplied": "All effects applied successfully",
+      "AllEffectsDiscarded": "All effects discarded",
+      "NoResolvedMessages": "No resolved messages to clean up",
+      "AttackChainExecuted": "Attack chain executed successfully",
+      "EffectDescriptionSaved": "Effect description saved.",
+      "ItemDescriptionSaved": "Item description saved.",
+      "CombatPowerDescriptionSaved": "Combat Power description saved."
+    },
+    "Warnings": {
+      "CannotChangeImageWhileTransformed": "Cannot change image while transformed",
+      "FieldLockedDuringTransformation": "This field is locked during transformation",
+      "InsufficientPermissions": "Insufficient permissions",
+      "NoActiveTransformation": "No active transformation"
     },
     "Forms": {
       "ScriptExplanations": {
@@ -234,7 +560,9 @@
         "Store": "Store",
         "Transfer": "Transfer",
         "UseItem": "Use Item",
-        "UsePower": "Use Power"
+        "UsePower": "Use Power",
+        "Cancel": "Cancel",
+        "Confirm": "Confirm"
       },
       "Modifications": {
         "Add": "Change",
@@ -277,6 +605,10 @@
           "NoTargets": "There are no targets selected. This will create a transformation for the compendium only.",
           "PlayerMode": "You are using the transformation creator in player mode. This can only be used to create transformations for tokens you control. You currently have <strong>{count} tokens(s)</strong> selected.",
           "WithTargets": "There are <strong>{count} target(s)</strong> selected. This will create a transformation for each target and your compendium."
+        },
+        "ActionCard": {
+          "NoEmbeddedItem": "This action card has no embedded item configured. Please add an item to the action slot before executing.",
+          "TargetingError": "You do not have the correct targets selected for this action card."
         }
       },
       "Placeholders": {
@@ -288,97 +620,16 @@
         "TransferNote": "Add a note about this transfer"
       }
     },
-    "Item": {
-      "Colors": {
-        "BgColor": {
-          "label": "Background Color",
-          "placeholder": "Enter background color"
-        },
-        "TextColor": {
-          "label": "Text Color",
-          "placeholder": "Enter text color"
-        }
-      },
-      "Descriptors": {
-        "RollActorName": {
-          "label": "Roll Name"
-        },
-        "UsageInfo": {
-          "label": "Usage Info",
-          "placeholder": "e.g., 1/day"
-        }
-      },
-      "Inventory": {
-        "Cost": {
-          "label": "Cost"
-        },
-        "Equipped": {
-          "label": "Equipped"
-        },
-        "Cursed": {
-          "label": "Cursed"
-        },
-        "Quantity": {
-          "label": "Quantity"
-        },
-        "Unequip": {
-          "label": "Unequip"
-        },
-        "Weight": {
-          "label": "Weight"
-        },
-        "Increment": {
-          "label": "Increment"
-        },
-        "Decrement": {
-          "label": "Decrement"
-        }
-      },
-      "Roll": {
-        "Ability": {
-          "label": "Ability"
-        },
-        "Bonus": {
-          "label": "Bonus"
-        },
-        "DiceAdjustments": {
-          "label": "Dice Adjustments",
-          "Advantage": {
-            "label": "Advantage"
-          },
-          "Disadvantage": {
-            "label": "Disadvantage"
-          },
-          "Total": {
-            "label": "Total Adjustment"
-          }
-        },
-        "Targeted": {
-          "label": "Requires Target?"
-        },
-        "Type": {
-          "label": "Roll Type"
-        }
-      },
-      "Tabs": {
-        "Description": "Description",
-        "Attributes": "Attributes",
-        "Effects": "Effects",
-        "CharacterEffects": "Character Effects",
-        "Prerequisites": "Prerequisites",
-        "CombatPowers": "Combat Powers"
-      },
-      "Transformation": {
-        "PowerAdjustment": "Power Adjustment",
-        "ResolveAdjustment": "Resolve Adjustment",
-        "Size": "Size",
-        "Notes": "Transformations can store combat powers that are available when the character transforms.",
-        "EmbeddedPowers": "Combat Powers",
-        "NoPowers": "No combat powers added yet.",
-        "DropPowerHere": "Drop a combat power here to add it to this transformation.",
-        "ReadOnlyNote": "Note: Embedded combat powers open in read-only mode. To edit a power, modify the original item in the actor's inventory.",
-        "DragToExtract": "Drag to extract this combat power as a new item",
-        "DragNote": "Tip: Drag combat powers to actors, compendiums, or item tabs to create copies."
+    "Dialogs": {
+      "GearMode": {
+        "Title": "Embed Gear Item",
+        "Description": "How would you like to use this gear item in the action card?",
+        "ActionMode": "Use as Action",
+        "ActionModeDescription": "Use this gear for rolling attacks or abilities.",
+        "EffectMode": "Use as Effect",
+        "EffectModeDescription": "Apply this gear as a status effect to targets.",
+        "UseAsAction": "Use as Action",
+        "UseAsEffect": "Use as Effect"
       }
     },
     "Messages": {
@@ -405,17 +656,27 @@
         "StolenCrit": "Stolen Critical!",
         "Transferred": "Transferred",
         "Unequipped": "Unequipped",
-        "Trns": "Trns"
-      }
+        "Trns": "Trns",
+        "GearEffect": "Gear Effect",
+        "GearEffectApplied": "Applied as effect:",
+        "GearEffectReceived": "Received gear effect:",
+        "Effect": "Effect",
+        "OutOfStock": "Source was out of stock"
+      },
+      "PartialTransfer": "Partial transfer completed"
     },
     "MessageHeaders": {
       "Status": "Status: {name}",
+      "Gear": "Gear: {name}",
       "Feature": "Feature: {name}",
       "CombatPower": "Combat Power: {name}",
       "GearTransfer": "Gear Transfer: {name}",
       "Restore": "Restoration: {name}",
       "GearEquip": "Equipment Change: {name}",
-      "Transformation": "Transformation: {name}"
+      "Transformation": "Transformation: {name}",
+      "GearEffect": "Gear Effect: {name}",
+      "GearEffectTransfer": "Gear Effect Transfer: {name}",
+      "ActionCard": "Action Card: {name}"
     },
     "PartialTransfer": "Only {quantity} items were available to transfer.",
     "Effect": {
@@ -434,9 +695,74 @@
     },
     "UI": {
       "View": "View",
-      "ViewReadOnly": "View (Read-Only)",
-      "ReadOnly": "Read-Only",
-      "Remove": "Remove"
+      "ViewReadOnly": "View (Read Only)",
+      "ReadOnly": "Read Only",
+      "Remove": "Remove",
+      "Edit": "Edit",
+      "AddEffect": "Add Effect",
+      "AddNewEffect": "Add New Effect",
+      "AddNewHiddenEffect": "Add New Hidden Effect",
+      "RemoveEffect": "Remove Effect",
+      "EffectImage": "Effect Image",
+      "HiddenEffect": "Hidden Effect",
+      "TokenDisplayTooltip": "Token Display",
+      "StrengthTooltip": "Strength determines physical power and carrying capacity",
+      "AgilityTooltip": "Agility affects speed, dexterity, and reflexes",
+      "IntellectTooltip": "Intellect governs reasoning, memory, and magical ability",
+      "WillpowerTooltip": "Willpower represents mental fortitude and determination",
+      "FocusTooltip": "Focus affects concentration and precision",
+      "AcrobaticsTooltip": "Acrobatics covers balance, tumbling, and athletic feats",
+      "WitsTooltip": "Wits represent quick thinking and situational awareness",
+      "PerformanceDashboard": "Performance Dashboard",
+      "Refresh": "Refresh",
+      "AutoRefresh": "Auto Refresh",
+      "SystemHealth": "System Health",
+      "SystemHealthGood": "System Running Optimally",
+      "SystemHealthWarning": "System Performance Warning",
+      "SystemHealthCritical": "Critical System Issues Detected",
+      "MemoryUsage": "Memory Usage",
+      "Used": "Used",
+      "Total": "Total",
+      "Limit": "Limit",
+      "Usage": "Usage",
+      "MemoryInfoUnavailable": "Memory information not available in this browser",
+      "SystemResources": "System Resources",
+      "TrackedIntervals": "Tracked Intervals",
+      "ActiveThemeInstances": "Active Theme Instances",
+      "GMControlHooks": "GM Control Hooks",
+      "NumberInputs": "Number Input Handlers",
+      "Active": "Active",
+      "Inactive": "Inactive",
+      "GameData": "Game Data",
+      "Actors": "Actors",
+      "Items": "Items",
+      "Messages": "Messages",
+      "Scenes": "Scenes",
+      "Users": "Users",
+      "VersionInfo": "Version Information",
+      "SystemVersion": "System Version",
+      "FoundryVersion": "Foundry Version",
+      "LastUpdated": "Last Updated",
+      "Enabled": "Enabled",
+      "PerformanceTips": "Performance Tips",
+      "TipIntervals": "Keep tracked intervals below 10 for optimal performance",
+      "TipMemory": "Monitor memory usage during long gaming sessions",
+      "TipCleanup": "Use regular cleanup to maintain system performance",
+      "TipForceCleanup": "Use force cleanup only when experiencing serious issues",
+      "RunCleanup": "Run Cleanup",
+      "ForceCleanup": "Force Cleanup",
+      "AvailableDice": "Available dice for rolling",
+      "FailMinimum": "Minimum value for failure",
+      "FailMaximum": "Maximum value for failure",
+      "CriticalMinimum": "Minimum value for critical success",
+      "CriticalMaximum": "Maximum value for critical success",
+      "TotalStatPoints": "Total stat points allocated"
+    },
+    "General": {
+      "None": "None",
+      "Disabled": "Disabled",
+      "Enabled": "Enabled",
+      "Unknown": "Unknown"
     },
     "WindowTitles": {
       "ChangeTargetStatus": "Change Target Status",
@@ -453,6 +779,9 @@
       "SheetTheme": "Cycle Sheet Theme",
       "StatusPopup": "Status Information",
       "TransformationCreator": "Transformation Creator"
+    },
+    "Notifications": {
+      "ThemeChanged": "Theme changed successfully"
     }
   },
   "TYPES": {
@@ -461,6 +790,7 @@
       "npc": "NPC"
     },
     "Item": {
+      "actionCard": "Action Card",
       "combatPower": "Combat Power",
       "effect": "Effect",
       "feature": "Feature",
@@ -511,6 +841,10 @@
     "ShowGearEquipMessagesHint": "If enabled, chat messages will be created when gear items are equipped or unequipped.",
     "GearEquippedDefaultName": "Gear Creator: Default Equipped",
     "GearEquippedDefaultHint": "If enabled, gear creator will mark new gear as equipped by default.",
+    "EnableActionCardChainsName": "Enable Action Card Attack Chains",
+    "EnableActionCardChainsHint": "When enabled, action cards can use attack chains to apply damage and status effects based on roll results.",
+    "ActionCardExecutionDelayName": "Action Card Execution Delay",
+    "ActionCardExecutionDelayHint": "Delay in milliseconds between each step of action card execution (0-10000ms, in 100ms increments).",
     "CrToXpFormulaName": "CR to XP Calculation",
     "CrToXpFormulaHint": "Formula for converting Challenge Rating to Experience Points. Use @cr to reference the CR value. Use simple math operations (+, -, *, /) and dice notation. Example: '@cr * 200 + @cr * @cr * 50'",
     "DefaultTokenVisionRangeName": "Default Token Vision Range",

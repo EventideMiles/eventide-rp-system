@@ -1,10 +1,113 @@
 <div class="chat-card">
-  <div class="chat-card__header {{pickedCardClass}}">
-    <i class="{{pickedIcon}}"></i> {{label}}
+  <div class="chat-card__header {{pickedCardClass}}
+    {{#if item.img}}chat-card__header--image{{/if}}"
+    {{#if (or bgColor textColor)}} style="{{#if bgColor}}background-color: {{bgColor}};{{/if}}{{#if textColor}} color: {{textColor}};{{/if}}"
+    {{/if}}>
+    {{#if item.img}}
+      <img src="{{item.img}}" class="chat-card__image--primary" />
+      <div>{{label}}</div>
+    {{else}}
+      <i class="{{pickedIcon}}"></i> {{label}}
+    {{/if}}
   </div>
-  
+
   {{> roll-info cardClass="combat-roll" cardType="combat-roll"}}
   {{> card-ac-check}}
+
+  {{!-- GM Apply Section for Action Card Damage/Status --}}
+  {{#if gmApplySection}}
+    <div class="chat-card__gm-apply-section" data-message-id="{{messageId}}">
+      {{!-- Bulk Action Buttons (shown when multiple effects are pending) --}}
+      {{#if (and (or (and gmApplySection.damage (not gmApplySection.damage.applied)) (and gmApplySection.status (not gmApplySection.status.applied))) (and gmApplySection.damage gmApplySection.status))}}
+        <div class="chat-card__bulk-actions">
+          <div class="chat-card__bulk-actions-header">
+            <i class="fas fa-layer-group"></i>
+            Multiple Effects Pending
+          </div>
+          <div class="chat-card__button-group">
+            <button type="button" class="chat-card__apply-button chat-card__bulk-button" data-action="applyAllActionCardEffects">
+              <i class="fas fa-check-double"></i> Apply All
+            </button>
+            <button type="button" class="chat-card__discard-button chat-card__bulk-button" data-action="discardAllActionCardEffects">
+              <i class="fas fa-times-circle"></i> Discard All
+            </button>
+          </div>
+        </div>
+      {{/if}}
+      {{#if gmApplySection.damage}}
+        <div class="chat-card__gm-apply-damage">
+          <div class="chat-card__gm-apply-header">
+            <i class="fas fa-sword"></i>
+            {{localize "EVENTIDE_RP_SYSTEM.Chat.GMApply.DamageHeader"}}
+            {{#if gmApplySection.damage.applied}}
+              <span class="chat-card__applied-badge">{{localize "EVENTIDE_RP_SYSTEM.Chat.GMApply.Applied"}}</span>
+            {{/if}}
+          </div>
+          {{#unless gmApplySection.damage.applied}}
+            {{#if gmApplySection.damage.targetValid}}
+              <div class="chat-card__gm-apply-controls">
+                <span class="chat-card__target-name">{{gmApplySection.damage.targetName}}</span>
+                <div class="chat-card__button-group">
+                  <button type="button" class="chat-card__apply-button" data-action="applyActionCardDamage" data-target-id="{{gmApplySection.damage.targetId}}" data-formula="{{gmApplySection.damage.formula}}" data-type="{{gmApplySection.damage.type}}">
+                    {{localize "EVENTIDE_RP_SYSTEM.Chat.GMApply.ApplyDamage"}}
+                  </button>
+                  <button type="button" class="chat-card__discard-button" data-action="discardActionCardDamage">
+                    {{localize "EVENTIDE_RP_SYSTEM.Chat.GMApply.DiscardDamage"}}
+                  </button>
+                </div>
+              </div>
+            {{else}}
+              <div class="chat-card__target-invalid">
+                {{localize "EVENTIDE_RP_SYSTEM.Chat.GMApply.TargetUnavailable"}}
+              </div>
+            {{/if}}
+          {{/unless}}
+        </div>
+      {{/if}}
+
+      {{#if gmApplySection.status}}
+        <div class="chat-card__gm-apply-status">
+          <div class="chat-card__gm-apply-header">
+            <i class="fas fa-magic"></i>
+            {{localize "EVENTIDE_RP_SYSTEM.Chat.GMApply.StatusHeader"}}
+            {{#if gmApplySection.status.applied}}
+              <span class="chat-card__applied-badge">{{localize "EVENTIDE_RP_SYSTEM.Chat.GMApply.Applied"}}</span>
+            {{/if}}
+          </div>
+          {{#unless gmApplySection.status.applied}}
+            {{#if gmApplySection.status.targetValid}}
+              <div class="chat-card__gm-apply-controls chat-card__gm-apply-controls--status">
+                <div class="chat-card__target-info">
+                  <span class="chat-card__target-name">{{gmApplySection.status.targetName}}</span>
+                </div>
+                <div class="chat-card__status-list">
+                  {{#each gmApplySection.status.effects}}
+                    <div class="chat-card__status-effect">
+                      <img src="{{img}}" class="chat-card__status-icon" />
+                      <span class="chat-card__status-name">{{name}}</span>
+                    </div>
+                  {{/each}}
+                </div>
+                <div class="chat-card__button-group chat-card__button-group--status">
+                  <button type="button" class="chat-card__apply-button" data-action="applyActionCardStatus" data-target-id="{{gmApplySection.status.targetId}}">
+                    {{localize "EVENTIDE_RP_SYSTEM.Chat.GMApply.ApplyStatus"}}
+                  </button>
+                  <button type="button" class="chat-card__discard-button" data-action="discardActionCardStatus">
+                    {{localize "EVENTIDE_RP_SYSTEM.Chat.GMApply.DiscardStatus"}}
+                  </button>
+                </div>
+              </div>
+            {{else}}
+              <div class="chat-card__target-invalid">
+                {{localize "EVENTIDE_RP_SYSTEM.Chat.GMApply.TargetUnavailable"}}
+              </div>
+            {{/if}}
+          {{/unless}}
+        </div>
+      {{/if}}
+    </div>
+  {{/if}}
+
   {{#if description}}
     <div class="chat-card__description">
       <div class="chat-card__description--header">{{actor.name}}. . . </div>

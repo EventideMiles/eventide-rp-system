@@ -1,5 +1,6 @@
 import { Logger } from "../../services/logger.mjs";
 import { ErrorHandler } from "../../utils/error-handler.mjs";
+import { erpsMessageHandler } from "../../services/_module.mjs";
 
 /**
  * Actor Transformation Mixin
@@ -60,27 +61,31 @@ export const ActorTransformationMixin = (BaseClass) =>
         // Store original token data if needed
         await this._storeOriginalTokenData(tokens);
 
+        // Ensure the transformation item is on the actor
+        const actorTransformationItem =
+          await this._ensureTransformationItemOnActor(transformationItem);
+
         // Apply transformation resolve and power adjustments
-        await this._transformPowerAndResolveUpdate(transformationItem);
+        await this._transformPowerAndResolveUpdate(actorTransformationItem);
 
         // Set flags indicating active transformation
-        await this._setTransformationFlags(transformationItem);
+        await this._setTransformationFlags(actorTransformationItem);
 
         // Update tokens with the transformation appearance
-        await this._updateTokensForTransformation(tokens, transformationItem);
+        await this._updateTokensForTransformation(
+          tokens,
+          actorTransformationItem,
+        );
 
         // Create a chat message about the transformation
-        const { erpsMessageHandler } = await import(
-          "../../services/_module.mjs"
-        );
         await erpsMessageHandler.createTransformationMessage({
           actor: this,
-          transformation: transformationItem,
+          transformation: actorTransformationItem,
           isApplying: true,
         });
 
         Logger.info(
-          `Applied transformation "${transformationItem.name}" to actor "${this.name}"`,
+          `Applied transformation "${actorTransformationItem.name}" to actor "${this.name}"`,
           null,
           "TRANSFORMATION",
         );
@@ -177,9 +182,6 @@ export const ActorTransformationMixin = (BaseClass) =>
 
         // Create a chat message about the transformation being removed
         if (transformationItem) {
-          const { erpsMessageHandler } = await import(
-            "../../services/_module.mjs"
-          );
           await erpsMessageHandler.createTransformationMessage({
             actor: this,
             transformation: transformationItem,
@@ -234,51 +236,37 @@ export const ActorTransformationMixin = (BaseClass) =>
      * If there's a current transformation, calculates the difference between the current and new adjustments.
      * If there's no current transformation, applies the new adjustments directly.
      *
-     * @param {Object} transformationItem - The transformation item being applied
-     * @param {number} transformationItem.system.powerAdjustment - The power adjustment value from the transformation
-     * @param {number} transformationItem.system.resolveAdjustment - The resolve adjustment value from the transformation
+     * @param {Object} actorTransformationItem - The transformation item on the actor
+     * @param {number} actorTransformationItem.system.powerAdjustment - The power adjustment value from the transformation
+     * @param {number} actorTransformationItem.system.resolveAdjustment - The resolve adjustment value from the transformation
      * @returns {Promise<Actor>} A promise that resolves to the updated actor
      * @private
      */
-    async _transformPowerAndResolveUpdate(transformationItem) {
+    async _transformPowerAndResolveUpdate(actorTransformationItem) {
       Logger.methodEntry(
         "ActorTransformationMixin",
         "_transformPowerAndResolveUpdate",
         {
-          powerAdjustment: transformationItem.system.powerAdjustment,
-          resolveAdjustment: transformationItem.system.resolveAdjustment,
+          powerAdjustment: actorTransformationItem.system.powerAdjustment,
+          resolveAdjustment: actorTransformationItem.system.resolveAdjustment,
         },
       );
 
-      // Get the current transformation item
-      const currentTransformationItem = this.items.find(
-        (item) => item.type === "transformation",
-      );
-
       Logger.debug(
-        "Current transformation item:",
-        currentTransformationItem,
-        "TRANSFORMATION",
-      );
-      Logger.debug(
-        "New transformation item:",
-        transformationItem,
+        "Using transformation item from actor",
+        {
+          transformationId: actorTransformationItem.id,
+          transformationName: actorTransformationItem.name,
+        },
         "TRANSFORMATION",
       );
 
       const newPowerAdjustment = Number(
-        transformationItem.system.powerAdjustment,
+        actorTransformationItem.system.powerAdjustment,
       );
       const newResolveAdjustment = Number(
-        transformationItem.system.resolveAdjustment,
+        actorTransformationItem.system.resolveAdjustment,
       );
-
-      if (this.getFlag("eventide-rp-system", "activeTransformation")) {
-        // Remove the current transformation item
-        await this.deleteEmbeddedDocuments("Item", [
-          currentTransformationItem.id,
-        ]);
-      }
 
       // Apply the new adjustments
       const updateData = {
@@ -443,6 +431,13 @@ export const ActorTransformationMixin = (BaseClass) =>
         },
       );
 
+      // Get embedded combat powers data
+      const embeddedCombatPowers =
+        transformationItem.system.getEmbeddedCombatPowers();
+      const embeddedCombatPowersData = embeddedCombatPowers.map((power) =>
+        power.toObject(),
+      );
+
       await this.setFlag(
         "eventide-rp-system",
         "activeTransformation",
@@ -457,6 +452,21 @@ export const ActorTransformationMixin = (BaseClass) =>
         "eventide-rp-system",
         "activeTransformationCursed",
         transformationItem.system.cursed,
+      );
+      await this.setFlag(
+        "eventide-rp-system",
+        "activeTransformationCombatPowers",
+        embeddedCombatPowersData,
+      );
+
+      Logger.debug(
+        "Stored transformation combat powers in flags",
+        {
+          transformationName: transformationItem.name,
+          embeddedPowerCount: embeddedCombatPowersData.length,
+          embeddedPowerNames: embeddedCombatPowersData.map((p) => p.name),
+        },
+        "TRANSFORMATION",
       );
 
       Logger.methodExit("ActorTransformationMixin", "_setTransformationFlags");
@@ -691,6 +701,10 @@ export const ActorTransformationMixin = (BaseClass) =>
       await this.unsetFlag("eventide-rp-system", "activeTransformation");
       await this.unsetFlag("eventide-rp-system", "activeTransformationName");
       await this.unsetFlag("eventide-rp-system", "activeTransformationCursed");
+      await this.unsetFlag(
+        "eventide-rp-system",
+        "activeTransformationCombatPowers",
+      );
 
       Logger.methodExit(
         "ActorTransformationMixin",
@@ -709,5 +723,99 @@ export const ActorTransformationMixin = (BaseClass) =>
      */
     _clampValue(value, min, max) {
       return Math.min(Math.max(value, min), max);
+    }
+
+    /**
+     * Ensure the transformation item is on the actor
+     * If the transformation item is not already on the actor, create a copy
+     * If there's a different transformation already on the actor, remove it first
+     *
+     * @private
+     * @param {Item} transformationItem - The transformation item to ensure is on the actor
+     * @returns {Promise<Item>} The transformation item that is now on the actor
+     */
+    async _ensureTransformationItemOnActor(transformationItem) {
+      Logger.methodEntry(
+        "ActorTransformationMixin",
+        "_ensureTransformationItemOnActor",
+        {
+          transformationId: transformationItem.id,
+          transformationName: transformationItem.name,
+          isOwnedByActor: transformationItem.parent === this,
+        },
+      );
+
+      // Check if this transformation is already on the actor
+      const existingTransformation = this.items.get(transformationItem.id);
+      if (existingTransformation) {
+        Logger.debug(
+          "Transformation item already exists on actor",
+          {
+            transformationId: transformationItem.id,
+            transformationName: transformationItem.name,
+          },
+          "TRANSFORMATION",
+        );
+        Logger.methodExit(
+          "ActorTransformationMixin",
+          "_ensureTransformationItemOnActor",
+          existingTransformation,
+        );
+        return existingTransformation;
+      }
+
+      // Check for any other transformation items on the actor
+      const currentTransformations = this.items.filter(
+        (item) => item.type === "transformation",
+      );
+
+      // Remove any existing transformation items (there should only be one)
+      if (currentTransformations.length > 0) {
+        Logger.debug(
+          "Removing existing transformation items",
+          {
+            count: currentTransformations.length,
+            transformationNames: currentTransformations.map((t) => t.name),
+          },
+          "TRANSFORMATION",
+        );
+        await this.deleteEmbeddedDocuments(
+          "Item",
+          currentTransformations.map((t) => t.id),
+        );
+      }
+
+      // If the transformation item is not owned by this actor, create a copy
+      if (transformationItem.parent !== this) {
+        Logger.debug(
+          "Creating copy of transformation item on actor",
+          {
+            transformationId: transformationItem.id,
+            transformationName: transformationItem.name,
+            originalParent: transformationItem.parent?.name || "World",
+          },
+          "TRANSFORMATION",
+        );
+
+        const transformationData = transformationItem.toObject();
+        const [createdItem] = await this.createEmbeddedDocuments("Item", [
+          transformationData,
+        ]);
+
+        Logger.methodExit(
+          "ActorTransformationMixin",
+          "_ensureTransformationItemOnActor",
+          createdItem,
+        );
+        return createdItem;
+      }
+
+      // The transformation is already owned by this actor
+      Logger.methodExit(
+        "ActorTransformationMixin",
+        "_ensureTransformationItemOnActor",
+        transformationItem,
+      );
+      return transformationItem;
     }
   };

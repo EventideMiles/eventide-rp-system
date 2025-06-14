@@ -128,7 +128,7 @@ export class SoundSettingsApplication extends EventideSheetHelpers {
         ui.notifications.warn(game.i18n.localize("SETTINGS.NoSoundSelected"));
       }
     } catch (error) {
-      console.error("Error in _onPlaySound:", error);
+      Logger.error("Error in _onPlaySound", error, "SETTINGS");
       ui.notifications.error(game.i18n.localize("SETTINGS.ErrorPlayingSound"));
     }
   }
@@ -151,7 +151,7 @@ export class SoundSettingsApplication extends EventideSheetHelpers {
       // Dispatch a change event to ensure the form knows the value changed
       input.dispatchEvent(new Event("change"));
     } catch (error) {
-      console.error("Error in _onResetSound:", error);
+      Logger.error("Error in _onResetSound", error, "SETTINGS");
       ui.notifications.error(
         game.i18n.localize("SETTINGS.ErrorResettingSound"),
       );
@@ -183,7 +183,7 @@ export class SoundSettingsApplication extends EventideSheetHelpers {
         }
       }
     } catch (error) {
-      console.error("Error in _onTestAllSounds:", error);
+      Logger.error("Error in _onTestAllSounds", error, "SETTINGS");
       ui.notifications.error(game.i18n.localize("SETTINGS.ErrorTestingSounds"));
     }
   }
@@ -207,7 +207,7 @@ export class SoundSettingsApplication extends EventideSheetHelpers {
       }
       ui.notifications.info(game.i18n.localize("SETTINGS.AllSoundsReset"));
     } catch (error) {
-      console.error("Error in _onResetAllSounds:", error);
+      Logger.error("Error in _onResetAllSounds", error, "SETTINGS");
       ui.notifications.error(
         game.i18n.localize("SETTINGS.ErrorResettingAllSounds"),
       );
@@ -242,11 +242,13 @@ export class SoundSettingsApplication extends EventideSheetHelpers {
         const value = formData.get(settingKey);
 
         if (value) {
-          console.info(`Saving ${settingKey} with value ${value}`);
+          Logger.info("Saving setting", { settingKey, value }, "SETTINGS");
           await setSetting(settingKey, value);
         } else {
-          console.warn(
-            `Sound setting ${settingKey} not found in form elements`,
+          Logger.warn(
+            "Sound setting not found in form elements",
+            { settingKey },
+            "SETTINGS",
           );
         }
       }
@@ -260,7 +262,7 @@ export class SoundSettingsApplication extends EventideSheetHelpers {
       });
       return true;
     } catch (error) {
-      console.error("Error in _onSubmit:", error);
+      Logger.error("Error in _onSubmit", error, "SETTINGS");
       ui.notifications.error(
         game.i18n.localize("SETTINGS.ErrorSavingSoundSettings"),
       );
@@ -284,6 +286,21 @@ export const registerSettings = function () {
   });
 
   // Character Sheet Theme Options (Client preference)
+  /**
+   * Theme setting registration for character sheets and applications
+   * Handles theme changes through a robust hook system that ensures proper
+   * propagation across all applications and components.
+   *
+   * @type {ClientSetting}
+   * @property {string} name - Localized setting name
+   * @property {string} hint - Localized setting hint
+   * @property {string} scope - Setting scope (client)
+   * @property {boolean} config - Whether the setting is configurable
+   * @property {string} type - Setting type (String)
+   * @property {string} default - Default theme value
+   * @property {Object} choices - Available theme choices
+   * @property {Function} onChange - Theme change handler
+   */
   game.settings.register("eventide-rp-system", "sheetTheme", {
     name: "SETTINGS.SheetThemeName",
     hint: "SETTINGS.SheetThemeHint",
@@ -300,11 +317,10 @@ export const registerSettings = function () {
       light: "SETTINGS.SheetThemeLight",
     },
     onChange: async (value) => {
-      // Update user flag for immediate effect on all themed applications
-      await game.user.setFlag("eventide-rp-system", "sheetTheme", value);
+      try {
+        // Update user flag for immediate effect on all themed applications
+        await game.user.setFlag("eventide-rp-system", "sheetTheme", value);
 
-      // Use setTimeout to ensure the flag is set before triggering theme updates
-      setTimeout(() => {
         Logger.info("Theme setting changed - broadcasting theme update", {
           userName: game.user.name,
           newTheme: value,
@@ -329,9 +345,15 @@ export const registerSettings = function () {
           hookCalled: true,
           userNotified: true,
         });
-      }, 100); // Small delay to ensure flag is set
-
-      // No reload needed - immediate update via hook system
+      } catch (error) {
+        Logger.error("Failed to update theme", {
+          error: error.message,
+          stack: error.stack,
+        });
+        ui.notifications.error(
+          game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.ThemeUpdateFailed"),
+        );
+      }
     },
   });
 
@@ -510,6 +532,37 @@ export const registerSettings = function () {
   });
 
   // ===========================================
+  // ACTION CARD SETTINGS (GM Only - No Reload Needed)
+  // ===========================================
+
+  // Enable Action Card Attack Chains (can be changed immediately)
+  game.settings.register("eventide-rp-system", "enableActionCardChains", {
+    name: "SETTINGS.EnableActionCardChainsName",
+    hint: "SETTINGS.EnableActionCardChainsHint",
+    scope: "world",
+    config: true,
+    restricted: true,
+    type: Boolean,
+    default: true,
+  });
+
+  // Action Card Execution Delay (can be changed immediately)
+  game.settings.register("eventide-rp-system", "actionCardExecutionDelay", {
+    name: "SETTINGS.ActionCardExecutionDelayName",
+    hint: "SETTINGS.ActionCardExecutionDelayHint",
+    scope: "world",
+    config: true,
+    restricted: true,
+    type: Number,
+    default: 2000,
+    range: {
+      min: 0,
+      max: 10000,
+      step: 100,
+    },
+  });
+
+  // ===========================================
   // NPC SETTINGS (GM Only - No Reload Needed)
   // ===========================================
 
@@ -578,7 +631,7 @@ export const registerSettings = function () {
     type: Boolean,
     default: false,
     onChange: (value) => {
-      console.info(`Testing mode set to ${value}`);
+      Logger.info("Testing mode setting changed", { value }, "SETTINGS");
       // No reload needed - can be checked at runtime
     },
   });
@@ -630,10 +683,16 @@ export const registerSettings = function () {
 /**
  * Get a setting value
  * @param {string} key - The setting key to retrieve
- * @returns {any} The setting value
+ * @returns {any} The setting value, or null if not available
  */
 export const getSetting = function (key) {
-  return game.settings.get("eventide-rp-system", key);
+  try {
+    return game.settings.get("eventide-rp-system", key);
+  } catch {
+    // Setting not registered yet or game not ready
+    // Don't use Logger here to avoid circular dependency
+    return null;
+  }
 };
 
 /**

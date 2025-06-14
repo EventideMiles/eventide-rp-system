@@ -1,5 +1,7 @@
 import { Logger } from "../../services/logger.mjs";
+import { getSetting } from "../../services/_module.mjs";
 import { ErrorHandler } from "../../utils/error-handler.mjs";
+import { erpsRollHandler } from "../../services/_module.mjs";
 
 /**
  * Actor Rolls Mixin
@@ -222,8 +224,7 @@ export const ActorRollsMixin = (BaseClass) =>
           "ROLLS",
         );
 
-        // Import roll handler dynamically to avoid circular imports
-        const { erpsRollHandler } = await import("../../services/_module.mjs");
+        // Use the imported roll handler
         const roll = await erpsRollHandler.handleRoll(rollData, this);
 
         Logger.info(
@@ -299,8 +300,7 @@ export const ActorRollsMixin = (BaseClass) =>
 
         Logger.debug(`Rolling custom formula: ${formula}`, rollConfig, "ROLLS");
 
-        // Import roll handler dynamically to avoid circular imports
-        const { erpsRollHandler } = await import("../../services/_module.mjs");
+        // Use the imported roll handler
         const roll = await erpsRollHandler.handleRoll(rollConfig, this);
 
         Logger.info(
@@ -335,8 +335,6 @@ export const ActorRollsMixin = (BaseClass) =>
      * @override
      */
     getRollData() {
-      Logger.methodEntry("ActorRollsMixin", "getRollData");
-
       try {
         // Get base roll data from parent class
         const baseRollData = super.getRollData();
@@ -350,23 +348,24 @@ export const ActorRollsMixin = (BaseClass) =>
           ...systemRollData,
         };
 
-        Logger.debug(
-          "Generated roll data",
-          {
-            hasBaseData: !!baseRollData,
-            hasSystemData: !!systemRollData,
-            abilityCount: combinedRollData.abilities
-              ? Object.keys(combinedRollData.abilities).length
-              : 0,
-          },
-          "ROLLS",
-        );
+        // Only log in testing mode to reduce noise
+        if (getSetting("testingMode")) {
+          Logger.debug(
+            "Generated roll data",
+            {
+              hasBaseData: !!baseRollData,
+              hasSystemData: !!systemRollData,
+              abilityCount: combinedRollData.abilities
+                ? Object.keys(combinedRollData.abilities).length
+                : 0,
+            },
+            "ROLLS",
+          );
+        }
 
-        Logger.methodExit("ActorRollsMixin", "getRollData", combinedRollData);
         return combinedRollData;
       } catch (error) {
         Logger.error("Error generating roll data", error, "ROLLS");
-        Logger.methodExit("ActorRollsMixin", "getRollData", {});
 
         // Return minimal roll data as fallback
         return {
@@ -408,8 +407,6 @@ export const ActorRollsMixin = (BaseClass) =>
      * @returns {string[]} Array of ability identifiers that can be rolled
      */
     getRollableAbilities() {
-      Logger.methodEntry("ActorRollsMixin", "getRollableAbilities");
-
       try {
         const abilities = [];
 
@@ -430,19 +427,18 @@ export const ActorRollsMixin = (BaseClass) =>
           }
         }
 
-        Logger.debug(
-          `Found ${abilities.length} rollable abilities: ${abilities.join(", ")}`,
-          null,
-          "ROLLS",
-        );
-        Logger.methodExit("ActorRollsMixin", "getRollableAbilities", abilities);
+        // Only log in testing mode to reduce noise
+        if (getSetting("testingMode")) {
+          Logger.debug(
+            `Found ${abilities.length} rollable abilities: ${abilities.join(", ")}`,
+            null,
+            "ROLLS",
+          );
+        }
 
         return abilities;
       } catch (error) {
         Logger.error("Error getting rollable abilities", error, "ROLLS");
-        Logger.methodExit("ActorRollsMixin", "getRollableAbilities", [
-          "unaugmented",
-        ]);
 
         // Return minimal fallback
         return ["unaugmented"];

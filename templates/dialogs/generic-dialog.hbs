@@ -1,0 +1,27 @@
+{{!-- Generic Eventide Dialog --}}
+<div class="{{cssClass}} erps-form" autocomplete="off">
+  {{> callout-box}}
+  <div class="erps-form__content">
+    {{#if title}}
+      <div class="erps-form__header erps-form__header--small erps-form__header--centered">
+        {{title}}
+      </div>
+    {{/if}}
+
+    {{#if content}}
+      <div class="erps-form__group">
+        <div class="erps-form__description">
+          {{{content}}}
+        </div>
+      </div>
+    {{/if}}
+
+    {{!-- Custom content area - templates can override this --}}
+    {{#if hasCustomContent}}
+      {{> dialog-content}}
+    {{/if}}
+  </div>
+
+  {{!-- Footer with buttons --}}
+  {{> macro-footer}}
+</div>

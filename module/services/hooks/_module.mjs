@@ -6,3 +6,4 @@
  */
 export * from "./combat.mjs";
 export * from "./chat-listeners.mjs";
+export * from "./gm-control-hooks.mjs";

@@ -32,6 +32,9 @@
       },
       "transformation": {
         "htmlFields": ["description"]
+      },
+      "actionCard": {
+        "htmlFields": ["description"]
       }
     }
   },
@@ -53,10 +56,10 @@
       "thumbnail": "systems/eventide-rp-system/assets/anvil-impact.png"
     }
   ],
-  "version": "13.10.3",
+  "version": "13.11.0",
   "compatibility": {
-    "minimum": "13.341",
-    "verified": "13.344"
+    "minimum": "13",
+    "verified": "13"
   },
   "esmodules": ["module/eventide-rp-system.mjs"],
   "styles": ["css/eventide-rp-system.css"],

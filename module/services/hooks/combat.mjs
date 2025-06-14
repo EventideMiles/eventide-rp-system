@@ -3,6 +3,7 @@
  * @module services/hooks/combat
  */
 import { erpsRollHandler } from "../managers/_module.mjs";
+import { Logger } from "../logger.mjs";
 
 /**
  * Initialize combat-related hooks
@@ -56,9 +57,10 @@ export const initializeCombatHooks = async () => {
         combat.update({ roundTime: roundDuration });
       }
     } catch (error) {
-      console.warn(
+      Logger.warn(
         "Could not get combat round duration setting, using default",
         error,
+        "COMBAT_HOOKS",
       );
     }
   });
@@ -90,7 +92,11 @@ const getCombatSettings = () => {
         "autoRollPlayerInitiative",
       );
     } catch (error) {
-      console.warn("Could not get initiative settings, using defaults", error);
+      Logger.warn(
+        "Could not get initiative settings, using defaults",
+        error,
+        "COMBAT_HOOKS",
+      );
     }
   }
 
@@ -121,9 +127,10 @@ const rollInitiativeForCombatant = async (combatant, isNpc, whisperMode) => {
       } rolls for Initiative!`,
     });
   } catch (error) {
-    console.error(
-      `Error rolling initiative for ${isNpc ? "NPC" : "player"}:`,
+    Logger.error(
+      `Error rolling initiative for ${isNpc ? "NPC" : "player"}`,
       error,
+      "COMBAT_HOOKS",
     );
     // Fall back to the default method if our custom approach fails
     combatant.parent.rollInitiative(combatant.id);
@@ -145,9 +152,10 @@ const overrideCombatRollInitiative = () => {
         "hideNpcInitiativeRolls",
       );
     } catch (error) {
-      console.warn(
+      Logger.warn(
         "Could not get hideNpcInitiativeRolls setting, using default",
         error,
+        "COMBAT_HOOKS",
       );
     }
 
@@ -196,9 +204,10 @@ const overrideCombatantRollInitiative = () => {
         "hideNpcInitiativeRolls",
       );
     } catch (error) {
-      console.warn(
+      Logger.warn(
         "Could not get hideNpcInitiativeRolls setting, using default",
         error,
+        "COMBAT_HOOKS",
       );
     }
 

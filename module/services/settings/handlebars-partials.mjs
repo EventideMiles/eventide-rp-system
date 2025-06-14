@@ -2,6 +2,7 @@
  * Handlebars partials initialization for Eventide RP System
  * @module services/settings/handlebars-partials
  */
+import { Logger } from "../logger.mjs";
 
 /**
  * Initialize and register Handlebars partials
@@ -57,7 +58,11 @@ export const initHandlebarsPartials = async () => {
         const template = await fetchPartialTemplate(path);
         Handlebars.registerPartial(name, template);
       } catch (error) {
-        console.error(`Failed to load Handlebars partial '${name}':`, error);
+        Logger.error(
+          `Failed to load Handlebars partial '${name}'`,
+          error,
+          "HANDLEBARS",
+        );
       }
     }),
   );

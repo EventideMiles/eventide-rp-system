@@ -43,6 +43,7 @@
         }
       },
       "Tabs": {
+        "ActionCards": "Action Cards",
         "Biography": "Biography",
         "CombatPowers": "Combat Powers",
         "Features": "Features",
@@ -52,6 +53,17 @@
       "CombatPowers": {
         "Transformed": "Transformed",
         "TransformedLocked": "Combat powers are provided by active transformation - cannot create new powers while transformed"
+      },
+      "Inventory": {
+        "Name": "Name",
+        "Controls": "Controls",
+        "Edit": "Edit",
+        "Delete": "Delete",
+        "NoActionCards": "No action cards available",
+        "CreateActionCard": "Create Action Card"
+      },
+      "ActionCards": {
+        "CreatedActionCard": "Created action card '{actionCardName}'"
       }
     }
   }

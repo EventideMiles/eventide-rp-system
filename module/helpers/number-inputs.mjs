@@ -8,44 +8,45 @@
  */
 import { Logger } from "../services/_module.mjs";
 
-// Track initialization to prevent duplicate handlers
+// Global state tracking
 let isInitialized = false;
+let globalClickHandler = null;
+let globalResizeHandler = null;
 
 /**
  * Initialize number input functionality
  *
- * Sets up event listeners for number input buttons and initializes responsive behavior.
- * This function is designed to be called only once, with subsequent calls
- * only updating the responsive behavior.
+ * Sets up global event handlers for number input increment/decrement buttons
+ * and responsive behavior.
  */
 export const initNumberInputs = () => {
-  // Prevent multiple initializations of event handlers
   if (isInitialized) {
-    // If already initialized, just update the responsive behavior
-    updateNumberInputResponsiveness();
+    Logger.debug("Number inputs already initialized", {}, "NUMBER_INPUT");
     return;
   }
 
-  isInitialized = true;
+  Logger.debug("Initializing number inputs", {}, "NUMBER_INPUT");
 
   try {
+    // Store references to handlers for cleanup
+    globalClickHandler = handleNumberInputClick;
+    globalResizeHandler = debounce(updateNumberInputResponsiveness, 250);
+
     // Add the global click handler for all number input buttons
-    document.addEventListener("click", handleNumberInputClick);
+    document.addEventListener("click", globalClickHandler);
 
     // Initial check of number input sizes
     updateNumberInputResponsiveness();
 
     // Listen for window resize events to update compact state
-    window.addEventListener(
-      "resize",
-      debounce(updateNumberInputResponsiveness, 250),
-    );
+    window.addEventListener("resize", globalResizeHandler);
 
-    Logger.debug(
-      "Number inputs initialized with responsive behavior",
-      {},
-      "NUMBER_INPUT",
-    );
+    isInitialized = true;
+
+    // Set a flag on document for diagnostics detection
+    document._erpsNumberInputsInitialized = true;
+
+    Logger.debug("Number inputs initialized successfully", {}, "NUMBER_INPUT");
   } catch (error) {
     Logger.error("Failed to initialize number inputs", error, "NUMBER_INPUT");
   }
@@ -54,21 +55,14 @@ export const initNumberInputs = () => {
 /**
  * Enhance number inputs that may have been added dynamically
  *
- * This function initializes ERPS number inputs and updates responsive behavior.
- * Legacy base-form support has been removed as it's no longer used.
+ * This function updates responsive behavior for all number inputs.
  */
 export const enhanceExistingNumberInputs = () => {
   try {
-    // Initialize ERPS number inputs (they come pre-structured, just need event handling)
-    const erpsNumberInputs = document.querySelectorAll(".erps-number-input");
-    Logger.debug(
-      "Found ERPS number inputs",
-      { count: erpsNumberInputs.length },
-      "NUMBER_INPUT",
-    );
-
-    // Update responsive behavior for all wrappers
+    // Just update responsive behavior - the global click handler will handle functionality
     updateNumberInputResponsiveness();
+
+    Logger.debug("Enhanced existing number inputs", {}, "NUMBER_INPUT");
   } catch (error) {
     Logger.error(
       "Failed to enhance existing number inputs",
@@ -80,10 +74,7 @@ export const enhanceExistingNumberInputs = () => {
 
 /**
  * Clean up number input enhancements for a specific application element
- *
- * This function removes event listeners from number inputs and tab containers
- * by replacing them with clones, preserving their current values. It should be
- * called in the _preClose method of applications that use enhanced number inputs.
+ * This removes any state markers and attributes we've added
  *
  * @param {HTMLElement} element - The application's element (typically this.element)
  */
@@ -93,18 +84,27 @@ export const cleanupNumberInputs = (element) => {
     return;
   }
 
-  Logger.debug(
-    "Cleaning up number inputs",
-    { elementTag: element.tagName },
-    "NUMBER_INPUT",
-  );
-
   try {
-    // Remove any tab click listeners that might have been added for number inputs
-    cleanupTabListeners(element);
+    // Find all number inputs within the element and clean up our state
+    const numberInputs = element.querySelectorAll(".erps-number-input");
 
-    // Clean up any number input wrappers
-    cleanupNumberInputWrappers(element);
+    if (numberInputs.length > 0) {
+      Logger.debug(
+        "Cleaning up number input state",
+        { count: numberInputs.length },
+        "NUMBER_INPUT",
+      );
+
+      numberInputs.forEach((wrapper) => {
+        // Remove any processing markers we've added
+        if (wrapper.dataset.erpsProcessed) {
+          delete wrapper.dataset.erpsProcessed;
+        }
+
+        // Remove compact class to reset state
+        wrapper.classList.remove("compact");
+      });
+    }
   } catch (error) {
     Logger.error("Failed to cleanup number inputs", error, "NUMBER_INPUT");
   }
@@ -136,7 +136,7 @@ const handleNumberInputClick = (event) => {
     );
 
     Logger.debug(
-      "Global number input handler processing click",
+      "Number input button clicked",
       {
         isIncrement,
         currentValue: input.value,
@@ -171,7 +171,7 @@ const handleNumberInputClick = (event) => {
     );
 
     Logger.debug(
-      "Global number input handler processing icon click",
+      "Number input icon clicked",
       {
         isIncrement,
         currentValue: input.value,
@@ -231,55 +231,6 @@ const updateNumberInputResponsiveness = () => {
 };
 
 /**
- * Clean up tab container event listeners
- *
- * @private
- * @param {HTMLElement} element - The element containing tabs
- */
-const cleanupTabListeners = (element) => {
-  const tabsContainer = element.querySelector(".tabs");
-  if (tabsContainer) {
-    const clone = tabsContainer.cloneNode(true);
-    tabsContainer.parentNode.replaceChild(clone, tabsContainer);
-  }
-};
-
-/**
- * Clean up number input wrappers by replacing inputs with clones
- *
- * @private
- * @param {HTMLElement} element - The element containing number inputs
- */
-const cleanupNumberInputWrappers = (element) => {
-  // Clean up ERPS number inputs
-  const erpsNumberInputs = element.querySelectorAll(".erps-number-input");
-
-  Logger.debug(
-    "Found ERPS number inputs to clean up",
-    { count: erpsNumberInputs.length },
-    "NUMBER_INPUT",
-  );
-
-  erpsNumberInputs.forEach((wrapper) => {
-    // Remove event listeners by cloning and replacing the input
-    const input = wrapper.querySelector(".erps-number-input__input");
-    if (input) {
-      const newInput = input.cloneNode(true);
-      // Preserve the current value
-      newInput.value = input.value;
-      input.parentNode.replaceChild(newInput, input);
-    }
-
-    // Also clone and replace the buttons to remove event listeners
-    const buttons = wrapper.querySelectorAll(".erps-number-input__button");
-    buttons.forEach((button) => {
-      const newButton = button.cloneNode(true);
-      button.parentNode.replaceChild(newButton, button);
-    });
-  });
-};
-
-/**
  * Debounce function to limit how often a function is called
  *
  * @private
@@ -296,31 +247,77 @@ const debounce = (func, wait) => {
   };
 };
 
-// Initialize number inputs when relevant hooks fire
+// Global cleanup function for number inputs
+export const cleanupNumberInputsGlobal = () => {
+  if (!isInitialized) {
+    Logger.debug(
+      "Number inputs not initialized, nothing to cleanup",
+      {},
+      "NUMBER_INPUT",
+    );
+    return;
+  }
+
+  Logger.debug("Cleaning up global number input handlers", {}, "NUMBER_INPUT");
+
+  try {
+    // Remove global event listeners
+    if (globalClickHandler) {
+      document.removeEventListener("click", globalClickHandler);
+      globalClickHandler = null;
+    }
+
+    if (globalResizeHandler) {
+      window.removeEventListener("resize", globalResizeHandler);
+      globalResizeHandler = null;
+    }
+
+    isInitialized = false;
+
+    // Clear the diagnostics flag
+    document._erpsNumberInputsInitialized = false;
+
+    Logger.debug(
+      "Global number input handlers cleaned up successfully",
+      {},
+      "NUMBER_INPUT",
+    );
+  } catch (error) {
+    Logger.error(
+      "Failed to cleanup global number input handlers",
+      error,
+      "NUMBER_INPUT",
+    );
+  }
+};
+
+// Initialize number inputs when ready
 Hooks.on("ready", () => {
   initNumberInputs();
 });
 
-// Hook into all relevant render events to ensure number inputs are enhanced
-Hooks.on("renderItemV2", (_app, _html) => {
-  enhanceExistingNumberInputs();
+// Hook into render events to update responsiveness
+Hooks.on("renderApplication", () => {
+  setTimeout(() => {
+    enhanceExistingNumberInputs();
+  }, 100);
 });
 
-Hooks.on("renderEventideRpSystemItemSheet", (_app, html) => {
-  enhanceExistingNumberInputs();
+Hooks.on("renderApplicationV2", () => {
+  setTimeout(() => {
+    enhanceExistingNumberInputs();
+  }, 100);
+});
 
-  const tabsContainer = html.querySelector(".tabs");
-  if (tabsContainer) {
-    tabsContainer.addEventListener("click", (_event) => {
-      setTimeout(() => {
-        updateNumberInputResponsiveness();
-      }, 50);
-    });
+// Hook into application close events to clean up number input state
+Hooks.on("closeApplication", (app) => {
+  if (app.element) {
+    cleanupNumberInputs(app.element);
   }
 });
 
-// Catch any other application renders
-Hooks.on("renderApplicationV2", () => {
-  updateNumberInputResponsiveness();
-  Logger.debug("Number inputs updated", {}, "NUMBER_INPUT");
+Hooks.on("closeApplicationV2", (app) => {
+  if (app.element) {
+    cleanupNumberInputs(app.element);
+  }
 });

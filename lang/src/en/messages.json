@@ -24,17 +24,26 @@
         "StolenCrit": "Stolen Critical!",
         "Transferred": "Transferred",
         "Unequipped": "Unequipped",
-        "Trns": "Trns"
+        "Trns": "Trns",
+        "GearEffect": "Gear Effect",
+        "GearEffectApplied": "Applied as effect:",
+        "GearEffectReceived": "Received gear effect:",
+        "Effect": "Effect",
+        "OutOfStock": "Source was out of stock"
       }
     },
     "MessageHeaders": {
       "Status": "Status Effect: {name}",
+      "Gear": "Gear: {name}",
       "Feature": "Feature: {name}",
       "CombatPower": "Combat Power: {name}",
       "GearTransfer": "Gear Transfer: {name}",
       "Restore": "Restoration: {name}",
       "GearEquip": "Equipment Change: {name}",
-      "Transformation": "Transformation: {name}"
+      "Transformation": "Transformation: {name}",
+      "GearEffect": "Gear Effect: {name}",
+      "GearEffectTransfer": "Gear Effect Transfer: {name}",
+      "ActionCard": "Action Card: {name}"
     },
     "PartialTransfer": "Only {quantity} items were available to transfer."
   }

@@ -11,9 +11,8 @@ Welcome to the comprehensive documentation for the Eventide Roleplaying System f
 
 ### What's New?
 
-- **[What's New in v13.10.0](WHATS_NEW.md)** - Latest features and improvements
-- **What's New In v13.10.2** - Several bugfixes and a few default changes
-- **What's New IN v13.10.3** - Bugfixes regarding transformation creator, applied theming system to global scrollbars.
+- **[What's New in v13.11.0](WHATS_NEW.md)** - Action Cards system and combat automation revolution
+- **What's New In v13.10.x** - Feature Roll system, circumstantial bonuses, and various improvements
 
 ### Ready to Dive Deeper?
 
@@ -76,7 +75,8 @@ Tips, tricks, and advanced configuration techniques.
 
 **Contents:**
 
-- **[Developer Guide](advanced-usage/developer-guide.md)** - System architecture and development
+- **[Action Cards Guide](advanced-usage/action-cards.md)** - Combat automation and complex action sequences
+- **[Developer Guide](advanced-usage/developer-guide.md)** - Complete system architecture, design patterns, and development guide
 - **[ApplicationV2 Window Sizing Fix](advanced-usage/applicationv2-window-sizing-fix.md)** - Fix for double-click maximize issues
 - **Advanced customization** techniques
 - **Performance optimization** strategies
@@ -198,8 +198,8 @@ This documentation is organized by user role and complexity:
 
 ## Version Information
 
-- **System Version**: 13.10.0
-- **Foundry Compatibility**: v13.341 minimum, v13.344 verified
+- **System Version**: 13.11.0
+- **Foundry Compatibility**: v13.341 minimum, v13.345 verified (NOTE: We will not be tracking . foundry releases after v13.345 since they do not make major api changes mid-major version and I don't want the system complaining about compatibility with minor version bumps)
 - **Documentation Version**: Updated for latest release
 - **Last Updated**: Check [GitHub Releases](https://github.com/EventideMiles/eventide-rp-system/releases) for latest information
 

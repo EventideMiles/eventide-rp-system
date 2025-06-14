@@ -1,0 +1,19 @@
+{
+  "EVENTIDE_RP_SYSTEM": {
+    "Chat": {
+      "GMApply": {
+        "DamageHeader": "GM Apply Damage",
+        "StatusHeader": "GM Apply Status Effects",
+        "Applied": "Applied",
+        "ApplyDamage": "Apply Damage",
+        "ApplyStatus": "Apply Status Effects",
+        "DiscardDamage": "Discard",
+        "DiscardStatus": "Discard",
+        "ApplyAll": "Apply All",
+        "DiscardAll": "Discard All",
+        "MultipleEffectsPending": "Multiple Effects Pending",
+        "TargetUnavailable": "Target no longer available"
+      }
+    }
+  }
+}

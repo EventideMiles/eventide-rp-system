@@ -227,7 +227,15 @@
   &__header--fortitude { background-color: var(--erps-abilities-fort); }
   &__header--will { background-color: var(--erps-abilities-will); }
   &__header--wits { background-color: var(--erps-abilities-wits); }
-  &__header--gear { background-color: var(--erps-card-header-gear); }
+
+  &__header--gear {
+    font-size: 1.25rem;
+    font-family: "Protest Revolution", serif;
+    font-weight: 400;
+    font-style: normal;
+    padding: 1rem 0.75rem;
+    line-height: 22.5px;
+  }
   &__header--initiative { background-color: var(--erps-card-header-initiative); }
   &__header--initiative-npc { background-color: var(--erps-card-header-initiative-npc); }
   &__header--initiative-pc { background-color: var(--erps-card-header-initiative-pc); }
@@ -299,6 +307,7 @@
     padding: 1rem 0.75rem;
     line-height: 22.5px;
   }
+
   &__header--damage { background-color: var(--erps-card-header-damage); }
   &__header--heal { background-color: var(--erps-card-header-heal); }
   &__header--delete { background-color: var(--erps-card-header-delete); }
@@ -320,6 +329,21 @@
     font-size: 1.2rem;
     color: colors.$universal-tan;
     border-bottom: 1px solid colors.$description-hr;
+  }
+
+  &__context {
+    background: rgb(0 0 0 / 20%);
+    padding: 0.5rem 0.75rem;
+    font-size: 0.9rem;
+    font-style: italic;
+    color: colors.$universal-tan;
+    border-left: 3px solid rgb(255 255 255 / 30%);
+    margin: 0.5rem 0;
+
+    i {
+      margin-right: 0.5rem;
+      opacity: 0.7;
+    }
   }
 
   &__initiative,
@@ -574,6 +598,348 @@
   &__combat-roll {
     &:last-child {
       margin-bottom: 0;
+    }
+  }
+
+  // ===================================
+  // GM APPLY SECTION STYLES
+  // ===================================
+
+  &__gm-apply-section {
+    background: rgb(0 0 0 / 20%);
+    border-top: 1px solid rgb(255 255 255 / 10%);
+    padding: 0.75rem;
+    margin-top: 0.5rem;
+  }
+
+  &__gm-apply-damage,
+  &__gm-apply-status {
+    margin-bottom: 0.75rem;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &__gm-apply-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    color: var(--theme-text);
+    font-size: 0.9rem;
+
+    i {
+      margin-right: 0.5rem;
+      color: var(--theme-accent);
+    }
+  }
+
+  &__applied-badge {
+    background: var(--erps-chat-details-hit);
+    color: colors.$universal-white;
+    padding: 0.125rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+
+  &__gm-apply-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+
+    // Special layout for status effects section
+    &--status {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.75rem;
+    }
+  }
+
+  &__button-group {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+
+    // Status button group takes full width
+    &--status {
+      justify-content: center;
+      gap: 1rem;
+    }
+  }
+
+  &__target-info {
+    text-align: center;
+    padding: 0.5rem;
+    background: rgb(255 255 255 / 5%);
+    border-radius: 4px;
+  }
+
+  &__bulk-actions {
+    background: rgb(255 255 255 / 5%);
+    border: 1px solid rgb(255 255 255 / 10%);
+    border-radius: 4px;
+    padding: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  &__bulk-actions-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    color: var(--theme-accent);
+    font-size: 0.85rem;
+
+    i {
+      margin-right: 0.5rem;
+    }
+  }
+
+  &__bulk-button {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.75rem;
+    padding: 0.4rem 0.8rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.2s ease;
+
+    &.chat-card__apply-button {
+      background: #27ae60; // Green for apply actions
+      color: colors.$universal-white;
+
+      &:hover {
+        background: #229954; // Darker green on hover
+        transform: translateY(-1px);
+      }
+    }
+
+    &.chat-card__discard-button {
+      background: #e74c3c;
+      color: colors.$universal-white;
+
+      &:hover {
+        background: #c0392b;
+        transform: translateY(-1px);
+      }
+    }
+
+    i {
+      font-size: 0.7rem;
+    }
+  }
+
+  &__target-name {
+    font-weight: bold;
+    color: var(--theme-text);
+    font-size: 0.85rem;
+  }
+
+  &__target-invalid {
+    color: var(--erps-chat-details-miss);
+    font-style: italic;
+    font-size: 0.8rem;
+    text-align: center;
+    padding: 0.5rem;
+  }
+
+  &__apply-button {
+    background: #27ae60 !important; // Green for apply actions
+    color: colors.$universal-white !important;
+    border: 1px solid #27ae60 !important;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgb(0 0 0 / 20%);
+
+    &:hover {
+      background: #229954 !important; // Darker green on hover
+      border-color: #229954 !important;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgb(0 0 0 / 30%);
+    }
+
+    &:active {
+      transform: translateY(1px);
+      box-shadow: 0 1px 2px rgb(0 0 0 / 20%);
+    }
+
+    &:disabled {
+      background: rgb(128 128 128 / 50%) !important;
+      border-color: rgb(128 128 128 / 50%) !important;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+  }
+
+  &__discard-button {
+    background: #e74c3c !important;
+    color: colors.$universal-white !important;
+    border: 1px solid #e74c3c !important;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgb(0 0 0 / 20%);
+
+    &:hover {
+      background: #c0392b !important;
+      border-color: #c0392b !important;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgb(0 0 0 / 30%);
+    }
+
+    &:active {
+      transform: translateY(1px);
+      box-shadow: 0 1px 2px rgb(0 0 0 / 20%);
+    }
+
+    &:disabled {
+      background: rgb(128 128 128 / 50%) !important;
+      border-color: rgb(128 128 128 / 50%) !important;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+  }
+
+  &__status-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    background: rgb(255 255 255 / 8%);
+    border-radius: 6px;
+    border: 1px solid rgb(255 255 255 / 10%);
+  }
+
+  &__status-effect {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem;
+    background: rgb(255 255 255 / 8%);
+    border-radius: 4px;
+    border: 1px solid rgb(255 255 255 / 5%);
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background: rgb(255 255 255 / 12%);
+    }
+  }
+
+  &__status-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 3px;
+    border: 1px solid rgb(255 255 255 / 20%);
+    flex-shrink: 0;
+  }
+
+
+
+  &__status-name {
+    font-size: 0.9rem;
+    color: var(--theme-text);
+    font-weight: 500;
+    flex-grow: 1;
+  }
+
+  // Action card specific header styling
+  &__header--action-card {
+    background: linear-gradient(135deg, var(--theme-accent), var(--theme-secondary));
+  }
+}
+
+// ===================================
+// ACTION CARD DATA TABLE STYLES
+// ===================================
+
+.erps-data-table {
+  // &--action-cards {
+  //   // Action card specific table styling
+  // }
+
+  &__embedded-item {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.8rem;
+
+    img {
+      border-radius: 2px;
+    }
+  }
+
+  &__attack-chain-info {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.8rem;
+  }
+
+  &__attack-chain-stats {
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+  }
+
+  &__chain-icon {
+    color: var(--theme-accent);
+    font-size: 0.7rem;
+  }
+
+  &__empty-state {
+    font-style: italic;
+    opacity: 0.6;
+    font-size: 0.8rem;
+  }
+
+  &__control-button {
+    &--execute {
+      color: var(--theme-accent);
+
+      &:hover {
+        color: var(--theme-bright);
+      }
+    }
+
+    &--damage {
+      color: #e74c3c;
+
+      &:hover {
+        color: #c0392b;
+      }
+    }
+  }
+
+  &__empty-message {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 2rem;
+    color: var(--theme-text);
+    opacity: 0.6;
+    font-style: italic;
+
+    i {
+      font-size: 1.2rem;
+      color: var(--theme-accent);
     }
   }
 }

@@ -2,7 +2,33 @@
 
 This section covers advanced techniques and customizations for the Eventide Roleplaying System.
 
+## Action Cards System
+
+### Combat Automation Revolution
+
+The Action Cards system is a powerful new feature that revolutionizes combat automation:
+
+1. **[Action Cards Guide](action-cards.md)** - Complete documentation for creating and using action cards
+   - **Saved Damage Cards** - Simple, consistent damage/healing effects
+   - **Attack Chain Cards** - Complex multi-step automated actions
+   - **Automation Features** - GM/Player workflows, conditional effects, inventory management
+   - **Perfect for** - Streamlined combat, spell effects, monster abilities, recurring actions
+
+Action Cards transform repetitive combat sequences into streamlined, thematic experiences with sophisticated targeting, damage application, and effect management.
+
 ## Developer Resources
+
+### System Architecture and Development
+
+For developers looking to extend, modify, or contribute to the system:
+
+1. **[Developer Guide](developer-guide.md)** - Comprehensive development documentation including:
+   - Complete system architecture overview
+   - Design patterns and best practices
+   - Theme system architecture
+   - Error handling patterns
+   - Migration strategy
+   - Development setup and guidelines
 
 ### ApplicationV2 Window Sizing Fix
 

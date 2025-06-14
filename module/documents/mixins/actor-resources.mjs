@@ -1,5 +1,9 @@
 import { Logger } from "../../services/logger.mjs";
 import { ErrorHandler } from "../../utils/error-handler.mjs";
+import {
+  erpsRollHandler,
+  erpsMessageHandler,
+} from "../../services/_module.mjs";
 
 /**
  * Actor Resource Management Mixin
@@ -117,6 +121,9 @@ export const ActorResourceMixin = (BaseClass) =>
       critAllowed = false,
       acCheck = false,
       soundKey = null,
+      img = null,
+      bgColor = null,
+      textColor = null,
     } = {}) {
       Logger.methodEntry("ActorResourceMixin", "damageResolve", {
         formula,
@@ -141,11 +148,13 @@ export const ActorResourceMixin = (BaseClass) =>
         description,
         acCheck,
         soundKey,
+        img,
+        bgColor,
+        textColor,
       };
 
       try {
-        // Import roll handler dynamically to avoid circular imports
-        const { erpsRollHandler } = await import("../../services/_module.mjs");
+        // Use the imported roll handler
         const roll = await erpsRollHandler.handleRoll(rollData, this);
 
         // Only apply damage if user has permission
@@ -259,9 +268,6 @@ export const ActorResourceMixin = (BaseClass) =>
         }
 
         // Create chat message about the restoration
-        const { erpsMessageHandler } = await import(
-          "../../services/_module.mjs"
-        );
         const chatMessage = await erpsMessageHandler.createRestoreMessage({
           all,
           resolve,
