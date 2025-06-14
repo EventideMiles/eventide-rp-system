@@ -21,6 +21,7 @@ The action chain type is much more complex than just saved damage. It requires y
 **One thing to note:** action chains with a 'none' roll type will be treated as an automatic two successes. If that's undesired you can add a roll or flat type action to the action chain and it will be treated as a normal action comparing against the target's AC.
 
 Attack chains allow you to set the following parameters:
+
 - Whether to advance the initative after the action card is used.
 - Whether to attempt inventory reduction for and gear effects applied to the target.
 - The first and second stats you'll be comparing against on the target.
@@ -31,11 +32,25 @@ They also have the "Embedded Items" tab that is used to configure the combat pow
 
 **Important:** for combat powers the cost kept on the internal card will be the one applied to the user. So, if you change the power its best to reapply it to the action card. The same applies to gear but with one major caveat. The gear's cost will be applied against the same named gear item in your inventory and requires that you have the same gear equipped. So if you change the gear's cost the best way to keep it in-sync is to reapply it to the action card.
 
-## How to use
+## Using Action Cards
 
-Using an action card is as simple as targeting an opponent and clicking the action card's row on your character sheet. From there you'll be presented with a popup confirming the details of the action you're about to take and giving you the options to execute it or cancel. If you choose to execute it the flow will go one of two ways:
+Using an action card is as simple as targeting an opponent and either:
+
+- Clicking the action card's row on your character sheet, or
+- Clicking the execute button (⚡/💔/▶️) in the controls column
+
+Both methods will present you with a popup confirming the details of the action you're about to take, showing:
+
+- The embedded item's details and roll formula (if applicable)
+- Attack chain configuration (damage conditions, status conditions, thresholds)
+- Saved damage configuration (formula, type, description)
+- Any validation warnings or errors
+- Proper callouts for what will happen when executed
+
+From the popup, you can choose to execute the action or cancel. If you choose to execute it, the flow will go one of two ways:
 
 ### The GM Path
+
 - Your roll will be executed and, of course, display its results in the chat log.
 - If your attack chain's success conditions are met then damage, effects, or both will be applied to the target.
 - If your attack chain's success conditions are not met then nothing will be applied to the target.
@@ -43,12 +58,12 @@ Using an action card is as simple as targeting an opponent and clicking the acti
 - If the 'advance initiative' setting is enabled then the initiative will be advanced after the action card is used.
 
 ### The Player Path
+
 - Your roll will be executed and, of course, display its results in the chat log.
 - If your attack chain's success conditions are met then your GM will receive a notification that they need to apply the effects to the target.
 - Your GM will then confirm the effects to apply and they will be applied to the target: they can elect not to apply the damage or the effects since they may know something about the target that you don't.
 - If the 'attempt inventory reduction' setting is enabled then the gear effects will be applied and the gear will be removed from your inventory. This will always apply the gear in equipped mode so you don't have to worry about that: don't equip cursed gear to yourself just to get it to the opponent.
 - If the 'advance initiative' setting is enabled then the initiative will be advanced after the action card is used.
-
 
 ### When to use an Action Card
 

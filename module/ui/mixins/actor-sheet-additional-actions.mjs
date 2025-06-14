@@ -459,131 +459,20 @@ export const ActorSheetAdditionalActionsMixin = (BaseClass) =>
           return;
         }
 
-        const result = await actionCard.execute(this.actor);
-
+        // Use the same popup flow as row clicks to ensure consistent behavior and proper callouts
         Logger.info(
-          "DEBUG: Action card execution result",
-          {
-            hasResult: !!result,
-            success: result?.success,
-            mode: result?.mode,
-            hasDamageResults: !!result?.damageResults?.length,
-            hasStatusResults: !!result?.statusResults?.length,
-            damageResultsWithGMFlag:
-              result?.damageResults?.filter((r) => r.needsGMApplication)
-                ?.length || 0,
-            statusResultsWithGMFlag:
-              result?.statusResults?.filter((r) => r.needsGMApplication)
-                ?.length || 0,
-          },
+          `Opening action card popup: ${actionCard.name}`,
+          { itemId: actionCard.id, itemType: actionCard.type },
           "ADDITIONAL_ACTIONS",
         );
 
-        if (result.success) {
-          if (result.mode === "attackChain") {
-            // Attack chain mode - create follow-up message if needed
-            Logger.info(
-              "DEBUG: About to call createAttackChainMessage",
-              {
-                hasResult: !!result,
-                mode: result.mode,
-                hasDamageResults: !!result.damageResults?.length,
-                hasStatusResults: !!result.statusResults?.length,
-                isGM: game.user.isGM,
-              },
-              "ADDITIONAL_ACTIONS",
-            );
-
-            const followUpMessage = await actionCard.createAttackChainMessage(
-              result,
-              this.actor,
-            );
-
-            Logger.info(
-              "DEBUG: createAttackChainMessage returned",
-              {
-                followUpMessage: !!followUpMessage,
-                messageId: followUpMessage?.id,
-              },
-              "ADDITIONAL_ACTIONS",
-            );
-
-            if (followUpMessage) {
-              ui.notifications.info(
-                `Attack chain executed - GM apply effects created`,
-              );
-            } else {
-              ui.notifications.info(`Attack chain executed successfully`);
-            }
-            Logger.info(
-              "Action card attack chain executed",
-              {
-                itemId,
-                targetsHit:
-                  result.targetResults?.filter((r) => r.oneHit).length || 0,
-              },
-              "ADDITIONAL_ACTIONS",
-            );
-          } else if (result.mode === "savedDamage") {
-            // Saved damage mode - create follow-up message if needed
-            Logger.info(
-              "DEBUG: About to call createSavedDamageMessage",
-              {
-                hasResult: !!result,
-                mode: result.mode,
-                hasDamageResults: !!result.damageResults?.length,
-                isGM: game.user.isGM,
-              },
-              "ADDITIONAL_ACTIONS",
-            );
-
-            const followUpMessage = await actionCard.createSavedDamageMessage(
-              result,
-              this.actor,
-            );
-
-            Logger.info(
-              "DEBUG: createSavedDamageMessage returned",
-              {
-                followUpMessage: !!followUpMessage,
-                messageId: followUpMessage?.id,
-              },
-              "ADDITIONAL_ACTIONS",
-            );
-
-            if (followUpMessage) {
-              ui.notifications.info(
-                `Saved damage executed - GM apply effects created`,
-              );
-            } else {
-              ui.notifications.info(
-                `Saved damage applied to ${result.damageResults.length} target(s)`,
-              );
-            }
-            Logger.info(
-              "Action card saved damage executed",
-              {
-                itemId,
-                targetsAffected: result.damageResults.length,
-              },
-              "ADDITIONAL_ACTIONS",
-            );
-          }
-        } else {
-          ui.notifications.warn(
-            `Action card execution failed: ${result.reason}`,
-          );
-          Logger.warn(
-            "Action card execution failed",
-            { itemId, reason: result.reason },
-            "ADDITIONAL_ACTIONS",
-          );
-        }
-
+        const rollResult = await actionCard.roll();
         Logger.methodExit(
           "ActorSheetAdditionalActionsMixin",
           "_executeActionCard",
+          rollResult,
         );
+        return rollResult;
       } catch (error) {
         await ErrorHandler.handleAsync(Promise.reject(error), {
           context: `Execute action card for ${this.actor?.name}`,
