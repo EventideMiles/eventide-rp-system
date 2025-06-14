@@ -2,6 +2,7 @@ import { Logger } from "../../services/logger.mjs";
 import { MessageFlags } from "../../helpers/_module.mjs";
 import { ERPSRollUtilities } from "../../utils/_module.mjs";
 import { InventoryUtils } from "../../helpers/_module.mjs";
+import { StatusIntensification } from "../../helpers/status-intensification.mjs";
 
 const { renderTemplate } = foundry.applications.handlebars;
 
@@ -829,20 +830,26 @@ export function ItemActionCardExecutionMixin(Base) {
                     );
                   }
 
-                  // Create the effect item on the target
-                  await result.target.createEmbeddedDocuments("Item", [
-                    effectData,
-                  ]);
+                  // Apply or intensify the effect on the target
+                  const applicationResult =
+                    await StatusIntensification.applyOrIntensifyStatus(
+                      result.target,
+                      effectData,
+                    );
+
+                  // Wait for execution delay after applying status effects
+                  await this._waitForExecutionDelay();
 
                   // Messages are handled by createItem hook
                   statusResults.push({
                     target: result.target,
                     effect: effectData,
-                    applied: true,
+                    applied: applicationResult.applied,
+                    intensified: applicationResult.intensified,
                   });
 
                   Logger.info(
-                    `Applied effect "${effectData.name}" to target "${result.target.name}"`,
+                    `${applicationResult.intensified ? "Intensified" : "Applied"} effect "${effectData.name}" to target "${result.target.name}"`,
                     {
                       statusCondition: this.system.attackChain.statusCondition,
                       statusThreshold: this.system.attackChain.statusThreshold,
@@ -851,6 +858,7 @@ export function ItemActionCardExecutionMixin(Base) {
                         effectData.type === "gear"
                           ? effectData.system.equipped
                           : "N/A",
+                      intensified: applicationResult.intensified,
                     },
                     "ACTION_CARD",
                   );

@@ -73,7 +73,9 @@
         "GearEffectInventoryWarning": "You don't have enough {gearName} in your inventory to apply this effect.",
         "GearEffectNotFoundWarning": "You don't have {gearName} in your inventory to apply this effect.",
         "GearEffectInsufficientWarning": "You don't have enough {gearName} in your inventory to apply this effect (need {required}, have {available}).",
-        "GearEffectInventoryError": "Failed to apply gear effect: {error}"
+        "GearEffectInventoryError": "Failed to apply gear effect: {error}",
+        "StatusIntensified": "Status effect '{statusName}' intensified on {targetName}",
+        "StatusApplied": "Status effect '{statusName}' applied to {targetName}"
       }
     }
   }

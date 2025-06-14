@@ -134,6 +134,8 @@
         "GearEffectNotFoundWarning": "You don't have {gearName} in your inventory to apply this effect.",
         "GearEffectInsufficientWarning": "You don't have enough {gearName} in your inventory to apply this effect (need {required}, have {available}).",
         "GearEffectInventoryError": "Failed to apply gear effect: {error}",
+        "StatusIntensified": "Status effect '{statusName}' intensified on {targetName}",
+        "StatusApplied": "Status effect '{statusName}' applied to {targetName}",
         "RollValue": "Roll Value",
         "StatusThreshold": "Threshold Value",
         "Apply": "Apply",
@@ -661,7 +663,9 @@
         "GearEffectApplied": "Applied as effect:",
         "GearEffectReceived": "Received gear effect:",
         "Effect": "Effect",
-        "OutOfStock": "Source was out of stock"
+        "OutOfStock": "Source was out of stock",
+        "StatusIntensified": "Status intensified:",
+        "StatusApplied": "Status applied:"
       },
       "PartialTransfer": "Partial transfer completed"
     },

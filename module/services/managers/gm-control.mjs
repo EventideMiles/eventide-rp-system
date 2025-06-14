@@ -1,5 +1,6 @@
 import { Logger } from "../logger.mjs";
 import { MessageFlags } from "../../helpers/message-flags.mjs";
+import { StatusIntensification } from "../../helpers/status-intensification.mjs";
 
 /**
  * Manager for GM control of action card effects
@@ -199,19 +200,22 @@ class GMControlManager {
             statusData.flags["eventide-rp-system"].isEffect = true;
           }
 
-          // Create the status item on the target
-          const createdItems = await target.createEmbeddedDocuments("Item", [
-            statusData,
-          ]);
+          // Apply or intensify the status effect on the target
+          const applicationResult =
+            await StatusIntensification.applyOrIntensifyStatus(
+              target,
+              statusData,
+            );
 
-          if (createdItems[0]) {
+          if (applicationResult.applied) {
             appliedCount++;
             Logger.debug(
-              `Applied status effect: ${statusData.name}`,
+              `${applicationResult.intensified ? "Intensified" : "Applied"} status effect: ${statusData.name}`,
               {
                 targetName: target.name,
                 statusName: statusData.name,
                 statusType: statusData.type,
+                intensified: applicationResult.intensified,
               },
               "GM_CONTROL",
             );
@@ -231,6 +235,12 @@ class GMControlManager {
         targetValid: true,
         appliedCount,
       });
+
+      // Wait for execution delay before cleanup
+      const delay =
+        game.settings.get("eventide-rp-system", "actionCardExecutionDelay") ||
+        2000;
+      await new Promise((resolve) => setTimeout(resolve, delay));
 
       // Check if message should be cleaned up immediately
       await this._checkAutoCleanup(message);

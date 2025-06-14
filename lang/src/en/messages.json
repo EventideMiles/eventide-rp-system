@@ -29,7 +29,9 @@
         "GearEffectApplied": "Applied as effect:",
         "GearEffectReceived": "Received gear effect:",
         "Effect": "Effect",
-        "OutOfStock": "Source was out of stock"
+        "OutOfStock": "Source was out of stock",
+        "StatusIntensified": "Status intensified:",
+        "StatusApplied": "Status applied:"
       }
     },
     "MessageHeaders": {
