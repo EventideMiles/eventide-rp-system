@@ -31,10 +31,10 @@ export class ActionCardPopup extends EventidePopupHelpers {
       "eventide-sheet--scrollbars",
       "action-card-popup",
     ],
-    // position: {
-    //   width: 500,
-    //   height: "auto",
-    // },
+    position: {
+      width: 600,
+      height: "auto",
+    },
     window: {
       icon: "fas fa-bolt",
     },
@@ -435,6 +435,53 @@ export class ActionCardPopup extends EventidePopupHelpers {
           game.i18n.localize(
             "EVENTIDE_RP_SYSTEM.Forms.Callouts.ActionCard.TargetingError",
           ),
+      });
+    }
+
+    // Add power validation callout for embedded combat powers
+    if (this.problems.power) {
+      const embeddedItem = this.item.getEmbeddedItem();
+      if (embeddedItem && embeddedItem.type === "combatPower") {
+        callouts.push({
+          type: "warning",
+          faIcon: "fas fa-exclamation-triangle",
+          text: game.i18n.format(
+            "EVENTIDE_RP_SYSTEM.Forms.Callouts.Power.InsufficientPower",
+            {
+              cost: embeddedItem.system.cost,
+              actorPower: this.item.actor.system.power.value,
+            },
+          ),
+        });
+      }
+    }
+
+    // Add quantity validation callout for embedded gear
+    if (this.problems.quantity) {
+      const embeddedItem = this.item.getEmbeddedItem();
+      if (embeddedItem && embeddedItem.type === "gear") {
+        callouts.push({
+          type: "warning",
+          faIcon: "fas fa-exclamation-triangle",
+          text: game.i18n.format(
+            "EVENTIDE_RP_SYSTEM.Forms.Callouts.Gear.InsufficientQuantity",
+            {
+              cost: embeddedItem.system.cost,
+              quantity: embeddedItem.system.quantity,
+            },
+          ),
+        });
+      }
+    }
+
+    // Add equipped validation callout for embedded gear
+    if (this.problems.equipped) {
+      callouts.push({
+        type: "warning",
+        faIcon: "fas fa-exclamation-triangle",
+        text: game.i18n.localize(
+          "EVENTIDE_RP_SYSTEM.Forms.Callouts.Gear.NotEquipped",
+        ),
       });
     }
 

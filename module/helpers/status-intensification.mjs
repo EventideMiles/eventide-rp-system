@@ -27,10 +27,10 @@ export class StatusIntensification {
   /**
    * Intensify an existing status effect using the same logic as the change-target-status macro
    * @param {Item} existingStatus - The existing status item to intensify
-   * @param {Object} newEffectData - The new effect data containing the values to intensify with
+   * @param {Object} _newEffectData - The new effect data containing the values to intensify with (currently not used: may be implmented in a new mode option in the future)
    * @returns {Promise<boolean>} True if intensification was successful
    */
-  static async intensifyStatus(existingStatus, newEffectData) {
+  static async intensifyStatus(existingStatus, _newEffectData) {
     Logger.methodEntry("StatusIntensification", "intensifyStatus", {
       statusName: existingStatus.name,
       targetName: existingStatus.actor.name,
