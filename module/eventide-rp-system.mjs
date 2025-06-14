@@ -65,6 +65,7 @@ import {
   cleanupNumberInputsGlobal,
   initRangeSliders,
   cleanupRangeSliders,
+  getActiveThemeInstances,
   initializeGlobalTheme,
   injectImmediateThemeStyles,
   removeImmediateThemeStyles,
@@ -99,6 +100,7 @@ globalThis.erps = {
     cleanupColorPickers,
     initRangeSliders,
     cleanupRangeSliders,
+    getActiveThemeInstances,
     ErrorHandler,
     performSystemCleanup,
   },
@@ -139,30 +141,93 @@ globalThis.erps = {
     const trackedIntervals = window._erpsIntervalIds
       ? window._erpsIntervalIds.size
       : 0;
+
     let memoryInfo = "Memory info not available";
-    // eslint-disable-next-line no-undef
+    /* eslint-disable no-undef */
     if (typeof performance !== "undefined" && performance.memory) {
+      const usedMB = Math.round(
+        performance.memory.usedJSHeapSize / 1024 / 1024,
+      );
+
+      const totalMB = Math.round(
+        performance.memory.totalJSHeapSize / 1024 / 1024,
+      );
+
+      const limitMB = Math.round(
+        performance.memory.jsHeapSizeLimit / 1024 / 1024,
+      );
+      /* eslint-enable no-undef */
+
       memoryInfo = {
-        // eslint-disable-next-line no-undef
-        used: `${Math.round(performance.memory.usedJSHeapSize / 1024 / 1024)} MB`,
-        // eslint-disable-next-line no-undef
-        total: `${Math.round(performance.memory.totalJSHeapSize / 1024 / 1024)} MB`,
-        // eslint-disable-next-line no-undef
-        limit: `${Math.round(performance.memory.jsHeapSizeLimit / 1024 / 1024)} MB`,
+        used: `${usedMB} MB`,
+
+        total: `${totalMB} MB`,
+
+        limit: `${limitMB} MB`,
       };
     }
+
+    // Check if GM control hooks are initialized by looking for the global manager
+    const gmControlHooksInitialized = !!(
+      globalThis.erps?.gmControl &&
+      typeof globalThis.erps.gmControl.getPendingStats === "function"
+    );
+
+    // Check if number inputs are initialized by looking for the global click handler
+    // Since number input elements might not be rendered yet, we check for the initialization state
+    const numberInputsInitialized = !!(
+      // Check if there are any number input elements currently in the DOM
+      (
+        document.querySelector(".erps-number-input") ||
+        // Check if the global click handler is attached (more reliable)
+        document._erpsNumberInputsInitialized === true ||
+        // Check if the utility function is available
+        (globalThis.erps?.utils?.enhanceExistingNumberInputs &&
+          typeof globalThis.erps.utils.enhanceExistingNumberInputs ===
+            "function")
+      )
+    );
 
     const diagnostics = {
       trackedIntervals,
       memoryInfo,
-      gmControlHooksInitialized: typeof autoCleanupInterval !== "undefined",
-      numberInputsInitialized: typeof isInitialized !== "undefined",
+      gmControlHooksInitialized,
+      numberInputsInitialized,
       activeThemeInstances:
         globalThis.erps?.utils?.getActiveThemeInstances?.() || "Unknown",
+      actorCount: game.actors?.size || 0,
+      itemCount: game.items?.size || 0,
+      messageCount: game.messages?.size || 0,
+      sceneCount: game.scenes?.size || 0,
+      userCount: game.users?.size || 0,
+      systemVersion: game.system.version,
+      foundryVersion: game.version,
+      timestamp: new Date().toISOString(),
     };
 
     Logger.info("System Diagnostics", diagnostics, "SYSTEM_DIAGNOSTICS");
     return diagnostics;
+  },
+
+  // Performance monitoring dashboard
+  showPerformanceDashboard: () => {
+    // Import and create the performance dashboard application
+    import("./ui/components/performance-dashboard.mjs")
+      .then(({ PerformanceDashboard }) => {
+        new PerformanceDashboard().render(true);
+      })
+      .catch((error) => {
+        Logger.error(
+          "Failed to load performance dashboard",
+          error,
+          "SYSTEM_DIAGNOSTICS",
+        );
+        // Fallback to simple notification
+        const diagnostics = globalThis.erps.diagnostics();
+        ui.notifications.info(
+          `System Status: ${diagnostics.trackedIntervals} intervals, ${typeof diagnostics.memoryInfo === "object" ? diagnostics.memoryInfo.used : "Memory info unavailable"}`,
+        );
+      });
   },
 };
 

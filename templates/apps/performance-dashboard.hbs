@@ -1,0 +1,204 @@
+<div class="eventide-performance-dashboard">
+  <header class="dashboard-header">
+    <h1>
+      <i class="fas fa-tachometer-alt"></i>
+      {{localize "EVENTIDE_RP_SYSTEM.UI.PerformanceDashboard"}}
+    </h1>
+    <div class="dashboard-controls">
+      <button type="button" data-action="refresh" title="{{localize 'EVENTIDE_RP_SYSTEM.UI.Refresh'}}">
+        <i class="fas fa-sync-alt"></i>
+      </button>
+      <button type="button" class="auto-refresh-toggle {{#if autoRefresh}}active{{/if}}"
+              onclick="this.closest('[data-application-id]').application.toggleAutoRefresh()"
+              title="{{localize 'EVENTIDE_RP_SYSTEM.UI.AutoRefresh'}}">
+        <i class="fas fa-clock"></i>
+      </button>
+    </div>
+  </header>
+
+  <div class="dashboard-content">
+    <!-- System Health Overview -->
+    <section class="health-overview">
+      <h2>
+        <i class="{{systemHealth.statusIcon}}" style="color: {{systemHealth.statusColor}};"></i>
+        {{localize "EVENTIDE_RP_SYSTEM.UI.SystemHealth"}}
+      </h2>
+      <div class="health-status" style="border-left: 4px solid {{systemHealth.statusColor}};">
+        <span class="status-text" style="color: {{systemHealth.statusColor}};">
+          {{#if (eq systemHealth.status "good")}}{{localize "EVENTIDE_RP_SYSTEM.UI.SystemHealthGood"}}{{/if}}
+          {{#if (eq systemHealth.status "warning")}}{{localize "EVENTIDE_RP_SYSTEM.UI.SystemHealthWarning"}}{{/if}}
+          {{#if (eq systemHealth.status "critical")}}{{localize "EVENTIDE_RP_SYSTEM.UI.SystemHealthCritical"}}{{/if}}
+        </span>
+        {{#if systemHealth.warnings}}
+          <ul class="health-warnings">
+            {{#each systemHealth.warnings}}
+              <li><i class="fas fa-exclamation-triangle"></i> {{this}}</li>
+            {{/each}}
+          </ul>
+        {{/if}}
+      </div>
+    </section>
+
+    <!-- Memory Usage -->
+    {{#if memoryInfo}}
+    <section class="memory-section">
+      <h2>
+        <i class="fas fa-memory"></i>
+        {{localize "EVENTIDE_RP_SYSTEM.UI.MemoryUsage"}}
+      </h2>
+      <div class="memory-info">
+        <div class="memory-bar">
+          <div class="memory-fill" style="width: {{memoryInfo.usedPercent}}%; background-color: {{#if (gt memoryInfo.usedPercent 80)}}#ff4444{{else if (gt memoryInfo.usedPercent 60)}}#ffaa00{{else}}#00ff00{{/if}};"></div>
+        </div>
+        <div class="memory-details">
+          <div class="memory-stat">
+            <span class="label">{{localize "EVENTIDE_RP_SYSTEM.UI.Used"}}:</span>
+            <span class="value">{{memoryInfo.used}}</span>
+          </div>
+          <div class="memory-stat">
+            <span class="label">{{localize "EVENTIDE_RP_SYSTEM.UI.Total"}}:</span>
+            <span class="value">{{memoryInfo.total}}</span>
+          </div>
+          <div class="memory-stat">
+            <span class="label">{{localize "EVENTIDE_RP_SYSTEM.UI.Limit"}}:</span>
+            <span class="value">{{memoryInfo.limit}}</span>
+          </div>
+          <div class="memory-stat">
+            <span class="label">{{localize "EVENTIDE_RP_SYSTEM.UI.Usage"}}:</span>
+            <span class="value">{{memoryInfo.usedPercent}}%</span>
+          </div>
+        </div>
+      </div>
+    </section>
+    {{else}}
+    <section class="memory-section">
+      <h2>
+        <i class="fas fa-memory"></i>
+        {{localize "EVENTIDE_RP_SYSTEM.UI.MemoryUsage"}}
+      </h2>
+      <div class="memory-unavailable">
+        <i class="fas fa-info-circle"></i>
+        {{localize "EVENTIDE_RP_SYSTEM.UI.MemoryInfoUnavailable"}}
+      </div>
+    </section>
+    {{/if}}
+
+    <!-- System Resources -->
+    <section class="resources-section">
+      <h2>
+        <i class="fas fa-cogs"></i>
+        {{localize "EVENTIDE_RP_SYSTEM.UI.SystemResources"}}
+      </h2>
+      <div class="resources-grid">
+        <div class="resource-item">
+          <span class="resource-label">{{localize "EVENTIDE_RP_SYSTEM.UI.TrackedIntervals"}}:</span>
+          <span class="resource-value {{#if (gt diagnostics.trackedIntervals 10)}}warning{{/if}} {{#if (gt diagnostics.trackedIntervals 25)}}critical{{/if}}">
+            {{diagnostics.trackedIntervals}}
+          </span>
+        </div>
+        <div class="resource-item">
+          <span class="resource-label">{{localize "EVENTIDE_RP_SYSTEM.UI.ActiveThemeInstances"}}:</span>
+          <span class="resource-value">{{diagnostics.activeThemeInstances}}</span>
+        </div>
+        <div class="resource-item">
+          <span class="resource-label">{{localize "EVENTIDE_RP_SYSTEM.UI.GMControlHooks"}}:</span>
+          <span class="resource-value {{#if diagnostics.gmControlHooksInitialized}}good{{else}}warning{{/if}}">
+            {{#if diagnostics.gmControlHooksInitialized}}{{localize "EVENTIDE_RP_SYSTEM.UI.Active"}}{{else}}{{localize "EVENTIDE_RP_SYSTEM.UI.Inactive"}}{{/if}}
+          </span>
+        </div>
+        <div class="resource-item">
+          <span class="resource-label">{{localize "EVENTIDE_RP_SYSTEM.UI.NumberInputs"}}:</span>
+          <span class="resource-value {{#if diagnostics.numberInputsInitialized}}good{{else}}warning{{/if}}">
+            {{#if diagnostics.numberInputsInitialized}}{{localize "EVENTIDE_RP_SYSTEM.UI.Active"}}{{else}}{{localize "EVENTIDE_RP_SYSTEM.UI.Inactive"}}{{/if}}
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Game Data -->
+    <section class="game-data-section">
+      <h2>
+        <i class="fas fa-database"></i>
+        {{localize "EVENTIDE_RP_SYSTEM.UI.GameData"}}
+      </h2>
+      <div class="game-data-grid">
+        <div class="data-item">
+          <span class="data-label">{{localize "EVENTIDE_RP_SYSTEM.UI.Actors"}}:</span>
+          <span class="data-value">{{diagnostics.actorCount}}</span>
+        </div>
+        <div class="data-item">
+          <span class="data-label">{{localize "EVENTIDE_RP_SYSTEM.UI.Items"}}:</span>
+          <span class="data-value">{{diagnostics.itemCount}}</span>
+        </div>
+        <div class="data-item">
+          <span class="data-label">{{localize "EVENTIDE_RP_SYSTEM.UI.Messages"}}:</span>
+          <span class="data-value">{{diagnostics.messageCount}}</span>
+        </div>
+        <div class="data-item">
+          <span class="data-label">{{localize "EVENTIDE_RP_SYSTEM.UI.Scenes"}}:</span>
+          <span class="data-value">{{diagnostics.sceneCount}}</span>
+        </div>
+        <div class="data-item">
+          <span class="data-label">{{localize "EVENTIDE_RP_SYSTEM.UI.Users"}}:</span>
+          <span class="data-value">{{diagnostics.userCount}}</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Version Info -->
+    <section class="version-section">
+      <h2>
+        <i class="fas fa-info-circle"></i>
+        {{localize "EVENTIDE_RP_SYSTEM.UI.VersionInfo"}}
+      </h2>
+      <div class="version-grid">
+        <div class="version-item">
+          <span class="version-label">{{localize "EVENTIDE_RP_SYSTEM.UI.SystemVersion"}}:</span>
+          <span class="version-value">{{diagnostics.systemVersion}}</span>
+        </div>
+        <div class="version-item">
+          <span class="version-label">{{localize "EVENTIDE_RP_SYSTEM.UI.FoundryVersion"}}:</span>
+          <span class="version-value">{{diagnostics.foundryVersion}}</span>
+        </div>
+        <div class="version-item">
+          <span class="version-label">{{localize "EVENTIDE_RP_SYSTEM.UI.LastUpdated"}}:</span>
+          <span class="version-value">{{timestamp}}</span>
+        </div>
+        {{#if autoRefresh}}
+        <div class="version-item">
+          <span class="version-label">{{localize "EVENTIDE_RP_SYSTEM.UI.AutoRefresh"}}:</span>
+          <span class="version-value good">{{localize "EVENTIDE_RP_SYSTEM.UI.Enabled"}} (5s)</span>
+        </div>
+        {{/if}}
+      </div>
+    </section>
+
+    <!-- Performance Tips -->
+    <section class="tips-section">
+      <h2>
+        <i class="fas fa-lightbulb"></i>
+        {{localize "EVENTIDE_RP_SYSTEM.UI.PerformanceTips"}}
+      </h2>
+      <ul class="tips-list">
+        <li>{{localize "EVENTIDE_RP_SYSTEM.UI.TipIntervals"}}</li>
+        <li>{{localize "EVENTIDE_RP_SYSTEM.UI.TipMemory"}}</li>
+        <li>{{localize "EVENTIDE_RP_SYSTEM.UI.TipCleanup"}}</li>
+        <li>{{localize "EVENTIDE_RP_SYSTEM.UI.TipForceCleanup"}}</li>
+      </ul>
+    </section>
+
+    <!-- Action Buttons -->
+    <section class="actions-section">
+      <div class="action-buttons">
+        <button type="button" data-action="cleanup" class="cleanup-btn">
+          <i class="fas fa-broom"></i>
+          {{localize "EVENTIDE_RP_SYSTEM.UI.RunCleanup"}}
+        </button>
+        <button type="button" data-action="forceCleanup" class="force-cleanup-btn">
+          <i class="fas fa-exclamation-triangle"></i>
+          {{localize "EVENTIDE_RP_SYSTEM.UI.ForceCleanup"}}
+        </button>
+      </div>
+    </section>
+  </div>
+</div>

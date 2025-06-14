@@ -3,6 +3,7 @@ import { EventideSheetHelpers } from "../components/_module.mjs";
 import {
   initThemeManager,
   cleanupThemeManager,
+  applyThemeImmediate,
   THEME_PRESETS,
 } from "../../helpers/_module.mjs";
 import { Logger } from "../../services/_module.mjs";
@@ -276,6 +277,34 @@ export class EmbeddedCombatPowerSheet extends BaselineSheetMixins(
   async _onFirstRender(context, options) {
     super._onFirstRender(context, options);
 
+    // Apply theme immediately to prevent flashing
+    applyThemeImmediate(this.element);
+
+    // Initialize theme management only on first render (non-blocking like actor/item sheets)
+    if (!this.themeManager) {
+      initThemeManager(this, THEME_PRESETS.ITEM_SHEET)
+        .then((manager) => {
+          this.themeManager = manager;
+          Logger.debug(
+            "Theme management initialized asynchronously for embedded combat power sheet",
+            {
+              hasThemeManager: !!this.themeManager,
+              sheetId: this.id,
+              itemName: this.document?.name,
+              itemType: this.document?.type,
+            },
+            "THEME",
+          );
+        })
+        .catch((error) => {
+          Logger.error(
+            "Failed to initialize theme manager for embedded combat power sheet",
+            error,
+            "THEME",
+          );
+        });
+    }
+
     if (this.element) {
       this.element.addEventListener("save", (event) => {
         if (!event.target.matches("prose-mirror")) return;
@@ -292,9 +321,9 @@ export class EmbeddedCombatPowerSheet extends BaselineSheetMixins(
   /** @override */
   async _onRender(context, options) {
     super._onRender(context, options);
-    if (!this.themeManager) {
-      this.themeManager = initThemeManager(this, THEME_PRESETS.ITEM_SHEET);
-    } else {
+
+    // Re-apply themes on re-render (but don't reinitialize)
+    if (this.themeManager) {
       this.themeManager.applyThemes();
     }
   }
