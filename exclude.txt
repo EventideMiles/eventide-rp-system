@@ -3,7 +3,11 @@ node_modules\
 package.json
 package-lock.json
 .gitignore
+.gitattributes
 .prettierignore
+.prettierrc.json
+.stylelintrc
+eslint.config.js
 .vscode\
 exclude.txt
 css\eventide-rp-system.css.map
@@ -12,4 +16,6 @@ release_script.bat
 minify.js
 .git
 releases\
-
+build-lang.js
+.claude
+plans\
