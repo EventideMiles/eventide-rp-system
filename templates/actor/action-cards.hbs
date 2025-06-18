@@ -31,10 +31,13 @@
           <tbody class="erps-data-table__body">
             {{#each actionCards as |item id|}}
               <tr
-                class="erps-data-table__row"
+                class="erps-data-table__row erps-data-table__row--hoverable"
                 data-item-id="{{item._id}}"
                 data-drag="true"
                 data-document-class="Item"
+                {{#if item.system.description}}
+                title="{{item.system.description}}"
+                {{/if}}
               >
                 <td class="erps-data-table__cell erps-data-table__cell--name rollable" data-roll-type="item" data-action="roll" data-item-id="{{item._id}}">
                   <div class="erps-data-table__name-content">
@@ -64,21 +67,23 @@
                 </td>
                 <td class="erps-data-table__cell erps-data-table__cell--center rollable" data-roll-type="item" data-action="roll" data-item-id="{{item._id}}">
                   {{#if (eq item.system.mode "attackChain")}}
-                    <div class="erps-data-table__attack-chain-info">
+                    <div class="erps-data-table__attack-chain-info" 
+                         title="Attack Chain: {{item.system.attackChain.firstStat}} + {{item.system.attackChain.secondStat}}{{#if (ne item.system.attackChain.damageCondition 'never')}}&#10;Damage: {{item.system.attackChain.damageCondition}} ({{item.system.attackChain.damageFormula}} {{item.system.attackChain.damageType}}){{/if}}{{#if (ne item.system.attackChain.statusCondition 'never')}}&#10;Status: {{item.system.attackChain.statusCondition}} (threshold {{item.system.attackChain.statusThreshold}}){{/if}}">
                       <span class="erps-data-table__attack-chain-stats">
                         {{item.system.attackChain.firstStat}} + {{item.system.attackChain.secondStat}}
                       </span>
                       {{#if (ne item.system.attackChain.damageCondition "never")}}
-                        <i class="fas fa-sword erps-data-table__chain-icon" title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.DamageConfig'}}"></i>
+                        <i class="fas fa-sword erps-data-table__chain-icon" title="Damage applies on {{item.system.attackChain.damageCondition}}: {{item.system.attackChain.damageFormula}} {{item.system.attackChain.damageType}}"></i>
                       {{/if}}
                       {{#if (ne item.system.attackChain.statusCondition "never")}}
-                        <i class="fas fa-magic erps-data-table__chain-icon" title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.StatusConfig'}}"></i>
+                        <i class="fas fa-magic erps-data-table__chain-icon" title="Status applies on {{item.system.attackChain.statusCondition}} with threshold {{item.system.attackChain.statusThreshold}}"></i>
                       {{/if}}
                     </div>
                   {{else if (eq item.system.mode "savedDamage")}}
-                    <div class="erps-data-table__saved-damage-info">
+                    <div class="erps-data-table__saved-damage-info" 
+                         title="Saved Damage: {{item.system.savedDamage.formula}} {{item.system.savedDamage.type}}{{#if item.system.savedDamage.description}}&#10;{{item.system.savedDamage.description}}{{/if}}">
                       <span class="erps-data-table__saved-damage-formula">{{item.system.savedDamage.formula}}</span>
-                      <i class="fas fa-heart-broken erps-data-table__chain-icon" title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.SavedDamage'}}"></i>
+                      <i class="fas fa-heart-broken erps-data-table__chain-icon" title="{{item.system.savedDamage.formula}} {{item.system.savedDamage.type}}"></i>
                     </div>
                   {{else}}
                     <span class="erps-data-table__empty-state">{{localize "EVENTIDE_RP_SYSTEM.General.Unknown"}}</span>

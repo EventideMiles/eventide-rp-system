@@ -391,12 +391,37 @@ export const ItemPopupsMixin = (BaseClass) =>
 
         // Check eligibility using the popup's validation logic
         const problems = await tempPopup.checkEligibility();
-        const hasProblems = Object.values(problems).some((value) => value);
+        
+        // Use the popup's own validation method if it exists, otherwise use generic check
+        let hasProblems;
+        if (typeof tempPopup._hasValidationProblems === 'function') {
+          hasProblems = tempPopup._hasValidationProblems(problems);
+        } else if (typeof popupClass._hasValidationProblems === 'function') {
+          hasProblems = popupClass._hasValidationProblems(problems);
+        } else {
+          // Generic validation check - handle gearValidation array properly
+          hasProblems = Object.entries(problems).some(([key, value]) => {
+            if (key === "gearValidation") {
+              return Array.isArray(value) && value.length > 0;
+            }
+            return value;
+          });
+        }
 
         if (hasProblems) {
           const problemDetails = Object.entries(problems)
-            .filter(([, value]) => value)
-            .map(([key, value]) => `${key}: ${value}`)
+            .filter(([key, value]) => {
+              if (key === "gearValidation") {
+                return Array.isArray(value) && value.length > 0;
+              }
+              return value;
+            })
+            .map(([key, value]) => {
+              if (key === "gearValidation" && Array.isArray(value)) {
+                return `${key}: ${value.join(", ")}`;
+              }
+              return `${key}: ${value}`;
+            })
             .join(", ");
 
           Logger.warn(
