@@ -1155,9 +1155,10 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
           type: "actionCard",
           img: item.img || "icons/svg/item-bag.svg",
           system: {
+            description: item.system?.description || "",
             mode: "attackChain",
-            bgColor: "#8B4513",
-            textColor: "#ffffff",
+            bgColor: item.system?.bgColor || "#8B4513",
+            textColor: item.system?.textColor || "#ffffff",
             advanceInitiative: false,
             attemptInventoryReduction: false,
             attackChain: {

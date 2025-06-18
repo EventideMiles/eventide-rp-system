@@ -492,8 +492,15 @@ export function ItemActionCardExecutionMixin(Base) {
           try {
             if (game.user.isGM) {
               // GM applies damage directly
+              // Apply vulnerability modifier to damage formula
+              const originalFormula = this.system.savedDamage.formula;
+              const formula = this.system.savedDamage.type !== "heal" &&
+                target.actor.system.hiddenAbilities.vuln.total > 0
+                ? `${originalFormula} + ${Math.abs(target.actor.system.hiddenAbilities.vuln.total)}`
+                : originalFormula;
+
               const damageRoll = await target.actor.damageResolve({
-                formula: this.system.savedDamage.formula,
+                formula,
                 label: this.name,
                 description:
                   this.system.description ||
@@ -506,7 +513,7 @@ export function ItemActionCardExecutionMixin(Base) {
 
               damageResults.push({ target: target.actor, roll: damageRoll });
             } else {
-              // Player creates GM apply card
+              // Player creates GM apply card - vulnerability will be applied by GM
               const gmApplyResult = {
                 target: target.actor,
                 needsGMApplication: true,
@@ -576,8 +583,15 @@ export function ItemActionCardExecutionMixin(Base) {
           if (game.user.isGM) {
             // GM applies damage directly
             try {
+              // Apply vulnerability modifier to damage formula
+              const originalFormula = this.system.attackChain.damageFormula;
+              const formula = this.system.attackChain.damageType !== "heal" &&
+                result.target.system.hiddenAbilities.vuln.total > 0
+                ? `${originalFormula} + ${Math.abs(result.target.system.hiddenAbilities.vuln.total)}`
+                : originalFormula;
+
               const damageRoll = await result.target.damageResolve({
-                formula: this.system.attackChain.damageFormula,
+                formula,
                 label: this.name,
                 description:
                   this.system.description ||
@@ -596,7 +610,7 @@ export function ItemActionCardExecutionMixin(Base) {
               );
             }
           } else {
-            // Player creates GM apply card
+            // Player creates GM apply card - vulnerability will be applied by GM
             const gmApplyResult = {
               target: result.target,
               needsGMApplication: true,

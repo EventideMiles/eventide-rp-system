@@ -75,8 +75,14 @@ class GMControlManager {
       // Apply the damage with enhanced error handling
       let damageRoll;
       try {
+        // Apply vulnerability modifier to damage formula
+        const finalFormula = type !== "heal" &&
+          target.system.hiddenAbilities.vuln.total > 0
+          ? `${formula} + ${Math.abs(target.system.hiddenAbilities.vuln.total)}`
+          : formula;
+
         damageRoll = await target.damageResolve({
-          formula,
+          formula: finalFormula,
           label: actionCardName,
           description: actionCardDescription,
           type,

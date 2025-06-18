@@ -368,13 +368,17 @@ export const ActorSheetAdditionalActionsMixin = (BaseClass) =>
               return;
             }
 
+            // Check for ctrl+click to bypass dialog (exclude action cards)
+            const bypassableTypes = ["combatPower", "gear", "feature", "status"];
+            const bypass = (event.ctrlKey || event.metaKey) && bypassableTypes.includes(item.type);
+
             Logger.info(
-              `Rolling item: ${item.name}`,
-              { itemId: item.id, itemType: item.type },
+              `Rolling item: ${item.name}${bypass ? " (bypass dialog)" : ""}`,
+              { itemId: item.id, itemType: item.type, bypass, ctrlKey: event.ctrlKey || event.metaKey },
               "ADDITIONAL_ACTIONS",
             );
 
-            const rollResult = await item.roll();
+            const rollResult = await item.roll({ bypass });
             Logger.methodExit(
               "ActorSheetAdditionalActionsMixin",
               "_onRoll",
