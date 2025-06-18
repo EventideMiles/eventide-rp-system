@@ -84,6 +84,33 @@
       font-size: $item-font-size;
       font-weight: tokens.$sheet-font-weight-medium;
     }
+
+    small {
+      margin-top: tokens.$sheet-spacing-xs;
+      display: block;
+      font-size: tokens.$sheet-font-size-label-sm;
+      opacity: 0.8;
+    }
+
+    // Action card specific drop zone
+    &--action-cards {
+      margin-top: tokens.$sheet-spacing-lg;
+      background: linear-gradient(135deg, rgb(139 69 19 / 10%), rgb(139 69 19 / 20%));
+      border-color: rgb(139 69 19 / 40%);
+      
+      &:hover,
+      &.drag-over {
+        border-color: rgb(139 69 19 / 80%);
+        background: linear-gradient(135deg, rgb(139 69 19 / 20%), rgb(139 69 19 / 40%));
+        box-shadow: 0 0 tokens.$sheet-shadow-blur-md rgb(139 69 19 / 40%);
+      }
+
+      i {
+        font-size: 1.5rem;
+        margin-bottom: tokens.$sheet-spacing-sm;
+        color: rgb(255 193 7);
+      }
+    }
   }
 
   // ===================================

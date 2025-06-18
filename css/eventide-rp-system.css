@@ -7497,6 +7497,27 @@ body *::-webkit-scrollbar-track,
   font-size: 0.9rem;
   font-weight: 500;
 }
+.erps-items-panel__drop-zone small {
+  margin-top: 0.25rem;
+  display: block;
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+.erps-items-panel__drop-zone--action-cards {
+  margin-top: 1.5rem;
+  background: linear-gradient(135deg, rgba(139, 69, 19, 0.1), rgba(139, 69, 19, 0.2));
+  border-color: rgba(139, 69, 19, 0.4);
+}
+.erps-items-panel__drop-zone--action-cards:hover, .erps-items-panel__drop-zone--action-cards.drag-over {
+  border-color: rgba(139, 69, 19, 0.8);
+  background: linear-gradient(135deg, rgba(139, 69, 19, 0.2), rgba(139, 69, 19, 0.4));
+  box-shadow: 0 0 8px rgba(139, 69, 19, 0.4);
+}
+.erps-items-panel__drop-zone--action-cards i {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: rgb(255, 193, 7);
+}
 .erps-items-panel .tab.embedded-items.drag-active {
   background: rgba(255, 255, 255, 0.05);
   border-radius: 4px;

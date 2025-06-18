@@ -333,6 +333,8 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
       });
 
       try {
+        // Remove drag feedback when drop occurs
+        this._removeDragFeedback();
         if (!this.actor.isOwner) {
           Logger.debug("Drop not allowed - no ownership", null, "DRAG_DROP");
           Logger.methodExit("ActorSheetDragDropMixin", "_onDropItem", false);
@@ -349,6 +351,24 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
             "DRAG_DROP",
           );
           const result = await this._onSortItem(event, item);
+          Logger.methodExit("ActorSheetDragDropMixin", "_onDropItem", result);
+          return result;
+        }
+
+        // Check if dropped on action cards drop zone
+        const actionCardDropZone = event.target.closest('[data-drop-zone="actionCard"]');
+        if (actionCardDropZone && ["feature", "combatPower", "gear", "status"].includes(item.type)) {
+          Logger.info(
+            `Creating action card from ${item.type}: ${item.name}`,
+            {
+              itemId: item.id,
+              itemName: item.name,
+              itemType: item.type,
+            },
+            "DRAG_DROP",
+          );
+          
+          const result = await this._createActionCardFromItem(item, event);
           Logger.methodExit("ActorSheetDragDropMixin", "_onDropItem", result);
           return result;
         }
@@ -812,10 +832,16 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
 
     /**
      * Callback actions which occur when a dragged element is over a drop target.
-     * @param {DragEvent} _event - The originating DragEvent
+     * @param {DragEvent} event - The originating DragEvent
      * @protected
      */
-    _onDragOver(_event) {}
+    _onDragOver(event) {
+      event.preventDefault();
+      event.dataTransfer.dropEffect = "copy";
+
+      // Add visual feedback for action card drop zones
+      this._addDragFeedback(event);
+    }
 
     /**
      * Callback actions which occur when a drag operation ends.
@@ -843,6 +869,61 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
         },
         "DRAG_DROP",
       );
+    }
+
+    /**
+     * Add visual feedback during drag operations
+     * @param {DragEvent} event - The drag event
+     * @private
+     */
+    _addDragFeedback(event) {
+      // Only add feedback if we're dragging something that can create action cards
+      try {
+        const dragData = event.dataTransfer.getData("text/plain");
+        if (!dragData) return;
+
+        const data = JSON.parse(dragData);
+        if (data.type === "Item" && ["feature", "combatPower", "gear", "status"].includes(data.data?.type)) {
+          this._highlightActionCardDropZone();
+        }
+      } catch (error) {
+        // Ignore parsing errors - not all drags will have valid JSON data
+        Logger.debug("Could not parse drag data for feedback", { error }, "DRAG_DROP");
+      }
+    }
+
+    /**
+     * Highlight the action card drop zone
+     * @private
+     */
+    _highlightActionCardDropZone() {
+      const dropZone = this.element.querySelector('[data-drop-zone="actionCard"]');
+      if (dropZone) {
+        dropZone.classList.add("drag-over");
+      }
+    }
+
+    /**
+     * Remove drag feedback from action card drop zone
+     * @private
+     */
+    _removeDragFeedback() {
+      const dropZone = this.element.querySelector('[data-drop-zone="actionCard"]');
+      if (dropZone) {
+        dropZone.classList.remove("drag-over");
+      }
+    }
+
+    /**
+     * Callback actions which occur when a dragged element leaves a drop target.
+     * @param {DragEvent} event - The drag leave event
+     * @protected
+     */
+    _onDragLeave(event) {
+      // Only remove feedback if we're actually leaving the sheet
+      if (!this.element.contains(event.relatedTarget)) {
+        this._removeDragFeedback();
+      }
     }
 
     /**
@@ -1044,5 +1125,197 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
       }
 
       return null;
+    }
+
+    /**
+     * Create an action card from a dropped item
+     * @param {Item} item - The item to create an action card from
+     * @param {DragEvent} event - The drop event
+     * @returns {Promise<Item[]>} The created action card
+     * @private
+     */
+    async _createActionCardFromItem(item, event) {
+      Logger.methodEntry("ActorSheetDragDropMixin", "_createActionCardFromItem", {
+        itemName: item?.name,
+        itemType: item?.type,
+        actorName: this.actor?.name,
+      });
+
+      try {
+        // Handle status items differently - create saved damage action cards
+        if (item.type === "status") {
+          return await this._createStatusActionCard(item);
+        }
+
+        // Create the action card data for non-status items
+        const actionCardData = {
+          name: game.i18n.format("EVENTIDE_RP_SYSTEM.Actor.ActionCards.GeneratedName", {
+            itemName: item.name,
+          }),
+          type: "actionCard",
+          img: item.img || "icons/svg/item-bag.svg",
+          system: {
+            mode: "attackChain",
+            bgColor: "#8B4513",
+            textColor: "#ffffff",
+            advanceInitiative: false,
+            attemptInventoryReduction: false,
+            attackChain: {
+              firstStat: "acro",
+              secondStat: "phys",
+              damageCondition: "never",
+              damageFormula: "1d6",
+              damageType: "damage",
+              statusCondition: "never",
+              statusThreshold: 15,
+            },
+            embeddedStatusEffects: [],
+          },
+        };
+
+        // Create the action card
+        const createdItems = await this.actor.createEmbeddedDocuments("Item", [actionCardData]);
+        const actionCard = createdItems[0];
+
+        if (!actionCard) {
+          throw new Error("Failed to create action card");
+        }
+
+        // Set the embedded item
+        await actionCard.setEmbeddedItem(item);
+
+        // Show success notification
+        ui.notifications.info(
+          game.i18n.format("EVENTIDE_RP_SYSTEM.Actor.ActionCards.CreatedFromItem", {
+            actionCardName: actionCard.name,
+            itemName: item.name,
+          }),
+        );
+
+        Logger.info(
+          `Successfully created action card "${actionCard.name}" from ${item.type} "${item.name}"`,
+          {
+            actionCardId: actionCard.id,
+            itemId: item.id,
+          },
+          "DRAG_DROP",
+        );
+
+        Logger.methodExit("ActorSheetDragDropMixin", "_createActionCardFromItem", [actionCard]);
+        return [actionCard];
+      } catch (error) {
+        Logger.error("Failed to create action card from item", error, "DRAG_DROP");
+        
+        ui.notifications.error(
+          game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.FailedToCreateActionCard", {
+            itemName: item.name,
+          }),
+        );
+
+        Logger.methodExit("ActorSheetDragDropMixin", "_createActionCardFromItem", []);
+        return [];
+      }
+    }
+
+    /**
+     * Create a saved damage action card from a status item
+     * @param {Item} statusItem - The status item to create an action card from
+     * @returns {Promise<Item[]>} The created action card
+     * @private
+     */
+    async _createStatusActionCard(statusItem) {
+      Logger.methodEntry("ActorSheetDragDropMixin", "_createStatusActionCard", {
+        statusName: statusItem?.name,
+        statusType: statusItem?.type,
+        actorName: this.actor?.name,
+      });
+
+      try {
+        // Extract data from the status item with sensible defaults
+        const statusSystem = statusItem.system || {};
+        const statusImg = statusItem.img || "icons/svg/aura.svg";
+        const statusName = statusItem.name || "Unknown Damage";
+        const statusDescription = statusSystem.description || "";
+        
+        // Extract colors with defaults
+        const bgColor = statusSystem.bgColor || "#8B4513";
+        const textColor = statusSystem.textColor || "#ffffff";
+
+        // Create saved damage action card data with status appearance
+        const actionCardData = {
+          name: game.i18n.format("EVENTIDE_RP_SYSTEM.Actor.ActionCards.StatusGeneratedName", {
+            statusName: statusName,
+          }),
+          type: "actionCard",
+          img: statusImg,
+          system: {
+            description: statusDescription,
+            mode: "savedDamage",
+            bgColor: bgColor,
+            textColor: textColor,
+            advanceInitiative: false,
+            attemptInventoryReduction: false,
+            attackChain: {
+              firstStat: "acro", 
+              secondStat: "phys",
+              damageCondition: "never",
+              damageFormula: "1d6",
+              damageType: "damage",
+              statusCondition: "never",
+              statusThreshold: 15,
+            },
+            savedDamage: {
+              formula: "1d8",
+              type: "damage",
+              description: game.i18n.format("EVENTIDE_RP_SYSTEM.Actor.ActionCards.StatusDamageDescription", {
+                statusName: statusName,
+              }),
+            },
+            embeddedStatusEffects: [],
+          },
+        };
+
+        // Create the action card
+        const createdItems = await this.actor.createEmbeddedDocuments("Item", [actionCardData]);
+        const actionCard = createdItems[0];
+
+        if (!actionCard) {
+          throw new Error("Failed to create status action card");
+        }
+
+        // Show success notification
+        ui.notifications.info(
+          game.i18n.format("EVENTIDE_RP_SYSTEM.Actor.ActionCards.CreatedStatusActionCard", {
+            actionCardName: actionCard.name,
+            statusName: statusName,
+          }),
+        );
+
+        Logger.info(
+          `Successfully created saved damage action card "${actionCard.name}" from status "${statusName}"`,
+          {
+            actionCardId: actionCard.id,
+            statusId: statusItem.id,
+            damageFormula: "1d8",
+            inheritedBgColor: bgColor,
+            inheritedTextColor: textColor,
+          },
+          "DRAG_DROP",
+        );
+
+        Logger.methodExit("ActorSheetDragDropMixin", "_createStatusActionCard", [actionCard]);
+        return [actionCard];
+      } catch (error) {
+        Logger.error("Failed to create status action card", error, "DRAG_DROP");
+        
+        ui.notifications.error(
+          game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.FailedToCreateStatusActionCard", {
+            statusName: statusItem.name || "Unknown Status",
+          }),
+        );
+
+        Logger.methodExit("ActorSheetDragDropMixin", "_createStatusActionCard", []);
+        return [];
+      }
     }
   };

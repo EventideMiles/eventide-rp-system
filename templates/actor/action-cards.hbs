@@ -133,4 +133,14 @@
       {{/each}}
     </tbody>
   </table>
+
+  {{#if @root.editable}}
+    <div class="erps-items-panel__drop-zone erps-items-panel__drop-zone--action-cards" data-drop-zone="actionCard">
+      <div class="erps-items-panel__drop-zone-content">
+        <i class="fas fa-bolt"></i>
+        <p>{{localize "EVENTIDE_RP_SYSTEM.Actor.ActionCards.DropItemHere"}}</p>
+        <small>{{localize "EVENTIDE_RP_SYSTEM.Actor.ActionCards.DropHelpText"}}</small>
+      </div>
+    </div>
+  {{/if}}
 </section>

@@ -310,7 +310,14 @@
         "CreateActionCard": "Create Action Card"
       },
       "ActionCards": {
-        "CreatedActionCard": "Created action card '{actionCardName}'"
+        "CreatedActionCard": "Created action card '{actionCardName}'",
+        "DropItemHere": "Drop features, combat powers, gear, or status effects here to create action cards",
+        "DropHelpText": "Automatically creates action cards with embedded items ready to use",
+        "GeneratedName": "{itemName} Action",
+        "StatusGeneratedName": "{statusName} Damage",
+        "CreatedFromItem": "Created action card '{actionCardName}' from '{itemName}'",
+        "CreatedStatusActionCard": "Created damage action card '{actionCardName}' from status '{statusName}'",
+        "StatusDamageDescription": "Direct damage application using {statusName} energy"
       },
       "Sections": {
         "Effects": "Effects"
@@ -405,6 +412,8 @@
       "NoTargetsSavedDamage": "No targets selected for saved damage",
       "ActionCardInvalid": "Invalid action card",
       "ActionCardEffectFailed": "Failed to apply action card effect",
+      "FailedToCreateActionCard": "Failed to create action card from '{itemName}'",
+      "FailedToCreateStatusActionCard": "Failed to create damage action card from status '{statusName}'",
       "SaveEffectImageFailed": "Failed to save effect image.",
       "SaveItemImageFailed": "Failed to save item image.",
       "SaveItemFailed": "Failed to save item. See console for details.",
