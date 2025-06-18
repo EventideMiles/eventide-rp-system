@@ -236,8 +236,17 @@ export class ActionCardPopup extends EventidePopupHelpers {
       return problems;
     }
 
-    // For saved damage mode, skip embedded item validation
+    // For saved damage mode, perform target validation but skip embedded item validation
     if (this.item.system.mode === "savedDamage") {
+      // Check if targets are required and available
+      const targetArray = await erps.utils.getTargetArray();
+      if (targetArray.length === 0) {
+        problems.targeting = true;
+        problems.targetingMessage = game.i18n.localize(
+          "EVENTIDE_RP_SYSTEM.Errors.NoTargetsSavedDamage",
+        );
+      }
+
       Logger.methodExit("ActionCardPopup", "checkEligibility", problems);
       return problems;
     }
@@ -377,6 +386,17 @@ export class ActionCardPopup extends EventidePopupHelpers {
             problems.power = true;
           }
         }
+      }
+    }
+
+    // General target validation for attack chain mode (if not already validated by embedded item)
+    if (this.item.system.mode === "attackChain" && !problems.targeting) {
+      const targetArray = await erps.utils.getTargetArray();
+      if (targetArray.length === 0) {
+        problems.targeting = true;
+        problems.targetingMessage = game.i18n.localize(
+          "EVENTIDE_RP_SYSTEM.Errors.NoTargetsAttackChain",
+        );
       }
     }
 
