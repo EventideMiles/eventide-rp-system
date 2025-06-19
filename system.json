@@ -52,8 +52,8 @@
   "media": [
     {
       "type": "setup",
-      "url": "systems/eventide-rp-system/assets/anvil-impact.png",
-      "thumbnail": "systems/eventide-rp-system/assets/anvil-impact.png"
+      "url": "systems/eventide-rp-system/assets/icons/magic-gate.svg",
+      "thumbnail": "systems/eventide-rp-system/assets/icons/magic-gate.svg"
     }
   ],
   "version": "13.11.2",

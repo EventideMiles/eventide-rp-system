@@ -79,6 +79,7 @@ https://www.gnu.org/licenses/lgpl-2.1.html
 - oppression.svg
 - processor.svg
 - werewolf.svg
+- magic-gate.svg
 
 ### By Delapouite under CC BY 3.0 from game-icons.net
 
