@@ -80,6 +80,7 @@ const { ActorSheet, ItemSheet } = foundry.appv1.sheets;
 
 // Add key classes to the global scope so they can be more easily used
 // by downstream developers
+/** @type {EventideRPSystemGlobal} */
 globalThis.erps = {
   documents: {
     EventideRpSystemActor,
