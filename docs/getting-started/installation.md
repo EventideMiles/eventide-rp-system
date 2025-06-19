@@ -142,7 +142,7 @@ Now that you have Eventide RP System installed:
 
 ## System Information
 
-- **Current Version**: 13.11.0
+- **Current Version**: 13.12.0
 - **Foundry Compatibility**: v13.341 minimum, v13.345 verified (NOTE: We will not be tracking . foundry releases after v13.345 since they do not make major api changes mid-major version and I don't want the system complaining about compatibility with minor version bumps)
 - **Last Updated**: Check [GitHub Releases](https://github.com/EventideMiles/eventide-rp-system/releases) for latest information
 - **Installation Method**: Foundry Package Manager (recommended) or Manual
