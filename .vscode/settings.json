@@ -1,0 +1,29 @@
+{
+  "javascript.suggest.autoImports": true,
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  "typescript.suggest.autoImports": true,
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "js/ts.implicitProjectConfig.checkJs": true,
+  "js/ts.implicitProjectConfig.experimentalDecorators": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "eslint.workingDirectories": ["."],
+  "files.associations": {
+    "*.mjs": "javascript"
+  },
+  "emmet.includeLanguages": {
+    "handlebars": "html"
+  },
+  "files.exclude": {
+    "**/node_modules": true,
+    "**/packs": true,
+    "**/.git": true,
+    "**/releases": true
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/packs": true,
+    "**/releases": true
+  }
+}
