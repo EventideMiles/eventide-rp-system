@@ -61,7 +61,10 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
             }),
             change: new fields.NumberField({ ...requiredInteger, initial: 0 }),
             total: new fields.NumberField({ ...requiredInteger, initial: 1 }),
-            ac: new fields.NumberField({ ...requiredInteger, initial: 11 }),
+            ac: new fields.SchemaField({
+              change: new fields.NumberField({ ...requiredInteger, initial: 0 }),
+              total: new fields.NumberField({ ...requiredInteger, initial: 11 }),
+            }),
             diceAdjustments: new fields.SchemaField({
               advantage: new fields.NumberField({
                 ...requiredInteger,
@@ -222,7 +225,7 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
       current.total = current.override
         ? current.override + current.change + current.transform
         : current.value + current.change + current.transform;
-      current.ac = current.total + 11;
+      current.ac.total = (current.total + 11) + current.ac.change;
 
       // Calculate total for diceAdjustments
       current.diceAdjustments.total =

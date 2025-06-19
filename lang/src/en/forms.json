@@ -6,6 +6,7 @@
         "DamageTargets": "This script is designed to damage targets and heal selected tokens. If its in heal mode it will always heal selected over damaging targets."
       },
       "Sections": {
+        "ACEffects": "AC Effects",
         "ActiveGear": "Active Gear",
         "Adjustments": "Adjustments",
         "Adv": "Adv",

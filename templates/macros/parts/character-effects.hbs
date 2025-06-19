@@ -60,6 +60,7 @@
                 <option value="override" {{#if (eq mode "override")}}selected{{/if}}>{{#if ../narrow}}Over{{else}}Override{{/if}}</option>
                 <option value="advantage" {{#if (eq mode "advantage")}}selected{{/if}}>{{#if ../narrow}}Adv{{else}}Advantage{{/if}}</option>
                 <option value="disadvantage" {{#if (eq mode "disadvantage")}}selected{{/if}}>{{#if ../narrow}}Dis{{else}}Disadvantage{{/if}}</option>
+                <option value="AC" {{#if (eq mode "ac.change")}}selected{{/if}}>{{#if ../narrow}}AC{{else}}AC Only{{/if}}</option>
               {{else}}
                 <option value="transform">{{#if ../narrow}}Trans{{else}}Transform{{/if}}</option>
               {{/if}}

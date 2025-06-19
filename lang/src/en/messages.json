@@ -2,6 +2,7 @@
   "EVENTIDE_RP_SYSTEM": {
     "Messages": {
       "Sections": {
+        "AC": "AC",
         "ACCheck": "AC Check",
         "Add": "add",
         "Adv": "adv",

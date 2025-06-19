@@ -32,7 +32,8 @@
           <select class="erps-select" id="adjustmentMode" name="adjustmentMode">
             {{#each modes as |mode|}}
               <option value="{{toLowerCase mode}}" 
-              {{#if (eq ../storedData.changeTargetStatus_adjustmentMode (toLowerCase mode))}}selected{{/if}}>
+              {{#if (or (eq ../storedData.changeTargetStatus_adjustmentMode (toLowerCase mode)) 
+                       (and (not ../storedData.changeTargetStatus_adjustmentMode) (eq (toLowerCase mode) "intensify")))}}selected{{/if}}>
                 {{mode}}
               </option>
             {{/each}}
@@ -66,7 +67,8 @@
           <select class="erps-select" id="overrideMode" name="overrideMode">
             {{#each modes as |mode|}}
               <option value="{{toLowerCase mode}}" 
-              {{#if (eq ../storedData.changeTargetStatus_overrideMode (toLowerCase mode))}}selected{{/if}}>
+              {{#if (or (eq ../storedData.changeTargetStatus_overrideMode (toLowerCase mode)) 
+                       (and (not ../storedData.changeTargetStatus_overrideMode) (eq (toLowerCase mode) "intensify")))}}selected{{/if}}>
                 {{mode}}
               </option>
             {{/each}}
@@ -99,7 +101,8 @@
           <select class="erps-select" id="advantageMode" name="advantageMode">
             {{#each modes as |mode|}}
               <option value="{{toLowerCase mode}}" 
-              {{#if (eq ../storedData.changeTargetStatus_advantageMode (toLowerCase mode))}}selected{{/if}}>
+              {{#if (or (eq ../storedData.changeTargetStatus_advantageMode (toLowerCase mode)) 
+                       (and (not ../storedData.changeTargetStatus_advantageMode) (eq (toLowerCase mode) "intensify")))}}selected{{/if}}>
                 {{mode}}
               </option>
             {{/each}}
@@ -132,7 +135,8 @@
           <select class="erps-select" id="disadvantageMode" name="disadvantageMode">
             {{#each modes as |mode|}}
               <option value="{{toLowerCase mode}}" 
-              {{#if (eq ../storedData.changeTargetStatus_disadvantageMode (toLowerCase mode))}}selected{{/if}}>
+              {{#if (or (eq ../storedData.changeTargetStatus_disadvantageMode (toLowerCase mode)) 
+                       (and (not ../storedData.changeTargetStatus_disadvantageMode) (eq (toLowerCase mode) "intensify")))}}selected{{/if}}>
                 {{mode}}
               </option>
             {{/each}}
@@ -149,6 +153,40 @@
               id="disadvantageChange" 
               name="disadvantageChange" 
               value="{{ifThen storedData.changeTargetStatus_disadvantageChange storedData.changeTargetStatus_disadvantageChange "0"}}" 
+              placeholder="{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.ChangeValue"}}">
+            <button type="button" class="erps-number-input__button erps-number-input__button--increment" data-action="increment">
+              <i class="fas fa-plus"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="erps-form__grid-row">
+        <label class="erps-form__grid-cell erps-form__grid-label" for="acChange">
+          {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.ACEffects"}}
+        </label>
+        <div class="erps-form__grid-cell">
+          <select class="erps-select" id="acMode" name="acMode">
+            {{#each modes as |mode|}}
+              <option value="{{toLowerCase mode}}" 
+              {{#if (or (eq ../storedData.changeTargetStatus_acMode (toLowerCase mode)) 
+                       (and (not ../storedData.changeTargetStatus_acMode) (eq (toLowerCase mode) "intensify")))}}selected{{/if}}>
+                {{mode}}
+              </option>
+            {{/each}}
+          </select>
+        </div>
+        <div class="erps-form__grid-cell">
+          <div class="erps-number-input">
+            <button type="button" class="erps-number-input__button erps-number-input__button--decrement" data-action="decrement">
+              <i class="fas fa-minus"></i>
+            </button>
+            <input 
+              class="erps-number-input__input" 
+              type="number" 
+              id="acChange" 
+              name="acChange" 
+              value="{{ifThen storedData.changeTargetStatus_acChange storedData.changeTargetStatus_acChange "0"}}" 
               placeholder="{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.ChangeValue"}}">
             <button type="button" class="erps-number-input__button erps-number-input__button--increment" data-action="increment">
               <i class="fas fa-plus"></i>
