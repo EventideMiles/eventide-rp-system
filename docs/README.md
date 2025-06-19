@@ -10,7 +10,7 @@ Welcome to the comprehensive documentation for the Eventide Roleplaying System f
 - **[Quick Start Guide](getting-started/quick-start.md)** - Get playing in 10 minutes or less
 
 ### What's New?
-
+- **What's New in v13.12.0** - New feature: ac mode. This allows for changes to AC only for a particular stat set allowing for greater sets of armor customization without it all having to have an impact on active rolls.
 - **What's New in v13.11.1** - Minor bugfixes found after major release. Added intensify mode by default to action cards for status effects contained within action rolls.
 - **[What's New in v13.11.0](WHATS_NEW.md)** - Action Cards system and combat automation revolution
 - **What's New In v13.10.x** - Feature Roll system, circumstantial bonuses, and various improvements

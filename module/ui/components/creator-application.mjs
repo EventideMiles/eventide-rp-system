@@ -602,7 +602,9 @@ export class CreatorApplication extends EventideSheetHelpers {
             ? "override"
             : ability.mode === "transform"
               ? "transform"
-              : `diceAdjustments.${ability.mode}`
+              : ability.mode === "AC"
+                ? "ac.change"
+                : `diceAdjustments.${ability.mode}`
       }`;
       const mode =
         ability.mode !== "override"

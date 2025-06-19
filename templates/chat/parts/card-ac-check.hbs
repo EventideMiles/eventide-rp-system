@@ -7,7 +7,7 @@
         <span>{{this.name}}:</span>
         <div>
           {{#each this.abilities as |ability key|}}
-            {{#if (gte target.compare ability.ac)}}
+            {{#if (gte target.compare ability.ac.total)}}
               <span class="chat-card__effects--hit">{{ability.abbr}}</span>
             {{else}}
               <span class="chat-card__effects--miss">{{ability.abbr}}</span>

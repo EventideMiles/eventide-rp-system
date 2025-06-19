@@ -368,10 +368,10 @@ export function ItemActionCardExecutionMixin(Base) {
         const results = targetArray.map((target) => {
           const targetRollData = target.actor.getRollData();
           const firstAC =
-            targetRollData.abilities[this.system.attackChain.firstStat]?.ac ||
+            targetRollData.abilities[this.system.attackChain.firstStat]?.ac?.total ||
             11;
           const secondAC =
-            targetRollData.abilities[this.system.attackChain.secondStat]?.ac ||
+            targetRollData.abilities[this.system.attackChain.secondStat]?.ac?.total ||
             11;
 
           // Handle "none" roll types as automatic two successes

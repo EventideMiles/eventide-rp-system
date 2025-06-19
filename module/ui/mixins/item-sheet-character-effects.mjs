@@ -113,7 +113,9 @@ export const ItemSheetCharacterEffectsMixin = (BaseClass) =>
                       ? "diceAdjustments.advantage"
                       : effect.mode === "disadvantage"
                         ? "diceAdjustments.disadvantage"
-                        : "transform"
+                        : effect.mode === "AC"
+                          ? "ac.change"
+                          : "transform"
               }`;
             } else {
               key = `system.hiddenAbilities.${effect.ability}.${

@@ -65,6 +65,8 @@ export class ChangeTargetStatus extends EventideSheetHelpers {
     "changeTargetStatus_advantageMode",
     "changeTargetStatus_disadvantageChange",
     "changeTargetStatus_disadvantageMode",
+    "changeTargetStatus_acChange",
+    "changeTargetStatus_acMode",
   ];
 
   /**
@@ -265,10 +267,12 @@ export class ChangeTargetStatus extends EventideSheetHelpers {
     const overrideChange = formData.get("overrideChange");
     const advantageChange = formData.get("advantageChange");
     const disadvantageChange = formData.get("disadvantageChange");
+    const acChange = formData.get("acChange");
     const adjustmentMode = formData.get("adjustmentMode");
     const overrideMode = formData.get("overrideMode");
     const advantageMode = formData.get("advantageMode");
     const disadvantageMode = formData.get("disadvantageMode");
+    const acMode = formData.get("acMode");
 
     const storageObject = {
       changeTargetStatus_statusSelector: statusId,
@@ -276,10 +280,12 @@ export class ChangeTargetStatus extends EventideSheetHelpers {
       changeTargetStatus_overrideChange: overrideChange,
       changeTargetStatus_advantageChange: advantageChange,
       changeTargetStatus_disadvantageChange: disadvantageChange,
+      changeTargetStatus_acChange: acChange,
       changeTargetStatus_adjustmentMode: adjustmentMode,
       changeTargetStatus_overrideMode: overrideMode,
       changeTargetStatus_advantageMode: advantageMode,
       changeTargetStatus_disadvantageMode: disadvantageMode,
+      changeTargetStatus_acMode: acMode,
     };
 
     await erps.utils.storeMultipleUserFlags(storageObject);
@@ -337,6 +343,7 @@ export class ChangeTargetStatus extends EventideSheetHelpers {
       overrides: [],
       advantages: [],
       disadvantages: [],
+      ac: [],
     };
     const updateData = [];
 
@@ -390,6 +397,11 @@ export class ChangeTargetStatus extends EventideSheetHelpers {
         case "override":
           old.overrides.push(effect);
           break;
+        case "ac":
+          if (effect.key.split(".")[4] === "change") {
+            old.ac.push(effect);
+          }
+          break;
         case "diceAdjustments":
           if (effect.key.split(".")[4] === "advantage") {
             old.advantages.push(effect);
@@ -406,6 +418,7 @@ export class ChangeTargetStatus extends EventideSheetHelpers {
       overrides: "override",
       advantages: "advantage",
       disadvantages: "disadvantage",
+      ac: "ac",
     };
 
     // Process each category in the old object
@@ -477,6 +490,10 @@ export class ChangeTargetStatus extends EventideSheetHelpers {
       disadvantage: {
         change: formData.get("disadvantageChange"),
         mode: formData.get("disadvantageMode"),
+      },
+      ac: {
+        change: formData.get("acChange"),
+        mode: formData.get("acMode"),
       },
     };
 
