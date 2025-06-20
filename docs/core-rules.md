@@ -80,6 +80,32 @@ Your Game Master (GM) sets a target number called a Difficulty Class (DC). If yo
 
 The beauty of this scale is that it grows with your character. What starts as an impossible challenge (DC 40) for a new character becomes achievable for an experienced adventurer with the right training and equipment.
 
+### Sweet Spot Guidelines for GMs
+
+While the DC scale remains constant, character capabilities grow significantly. Use these guidelines to maintain appropriate challenge levels:
+
+**Levels 1-5 (Starting Characters)**
+- Sweet Spot Challenge: DC 25 (50-70% success rate)
+- Difficult Challenge: DC 30-35
+- Near Impossible: DC 40+
+
+**Levels 6-10 (Experienced Adventurers)**  
+- Sweet Spot Challenge: DC 30 (50-70% success rate)
+- Difficult Challenge: DC 35-40
+- Near Impossible: DC 45+
+
+**Levels 11-15 (Veteran Adventurers)**
+- Sweet Spot Challenge: DC 35 (50-70% success rate)  
+- Difficult Challenge: DC 40-45
+- Near Impossible: DC 50+
+
+**Levels 16-20 (Legendary Heroes)**
+- Sweet Spot Challenge: DC 40 (50-70% success rate)
+- Difficult Challenge: DC 45-50  
+- Near Impossible: DC 55+
+
+Remember: Lower DCs become trivial as intended - this represents character growth and mastery!
+
 ### Example
 Sarah's character has Acrobatics 14 and wants to sneak past a guard. The GM decides this is a moderate challenge (DC 25). Sarah rolls a d20 and gets 12. Her total is 12 + 14 = 26, which beats the DC 25 - she successfully sneaks past!
 
@@ -103,6 +129,29 @@ Equipment can enhance your abilities when it's relevant to what you're doing:
 
 **Important**: Gear bonuses only apply when the equipment actually helps. Lockpicks don't help you climb walls!
 
+### Equipment Attunement
+
+To prevent overwhelming power accumulation, characters have limited **Attunement Slots** for their most powerful magical items:
+
+**Attunement Slot Progression:**
+- **Levels 1-5:** 2 attunement slots
+- **Levels 6-10:** 3 attunement slots  
+- **Levels 11-15:** 4 attunement slots
+- **Levels 16-20:** 5 attunement slots
+
+**Items Requiring Attunement:**
+- Ability-boosting items with +2 or higher bonuses
+- Weapons with +3 or higher enhancement bonuses
+- Armor with universal AC bonuses
+- Items with active magical powers
+
+**Items NOT Requiring Attunement:**
+- Basic +1 enhancement bonuses
+- Single-stat AC bonuses (like +3 Physical AC armor)
+- Mundane equipment and tools
+
+This system ensures characters make meaningful choices about their most powerful equipment while preventing unlimited power stacking.
+
 #### AC-Only Effects
 Some equipment provides defensive benefits without making you stronger overall:
 - **Armor and Shields**: Provide AC bonuses that only apply to defense calculations
@@ -114,6 +163,27 @@ These represent temporary conditions affecting your character:
 - **Blessed** might give +3 Will while active
 - **Poisoned** might give -2 Physical and -2 Fortitude
 - **Exhausted** might give -1 to all abilities
+
+### Status Effect Scaling
+
+Status effects become more severe as campaigns progress to remain relevant against powerful characters:
+
+**Early Game (Levels 1-5):**
+- Light effects: -2 to one ability
+- Moderate effects: -2 to two abilities, or -3 to one ability
+- Severe effects: -4 to one ability, or disadvantage on specific actions
+
+**Mid Game (Levels 6-10):**
+- Light effects: -3 to one ability  
+- Moderate effects: -4 to one ability, or -2 to three abilities
+- Severe effects: -6 to one ability, or disadvantage on one ability type
+
+**Late Game (Levels 11+):**
+- Light effects: -4 to one ability, or 10% penalty (whichever is higher)
+- Moderate effects: -6 to one ability, or 15% penalty (whichever is higher)  
+- Severe effects: -8 to one ability, or 20% penalty, or disadvantage on multiple abilities
+
+**Status Effect Dogpiling:** High-level enemies often apply multiple status effects in sequence, creating cumulative penalties that remain threatening even against powerful characters.
 
 ### Everything Stacks!
 When multiple bonuses apply to the same ability for the same situation, they all add together. 
@@ -141,12 +211,31 @@ Usually this means Physical + 11 for melee defense, or Acrobatics + 11 for range
 ### Damage
 When you hit, you deal damage based on your weapon and experience level:
 
-**Early Career:**
-- **Light weapons** (daggers, clubs): 2-4 damage
-- **Medium weapons** (swords, axes): 3-6 damage  
-- **Heavy weapons** (greatswords, mauls): 4-8 damage
+### Damage and Weapon Scaling
 
-**As characters advance**, damage scales through better equipment, combat training features, and action card combinations. Experienced adventurers might deal 6-10 damage with heavy weapon types.
+Weapon damage increases as characters advance to maintain combat pacing:
+
+**Early Career (Levels 1-5):**
+- **Light weapons** (daggers, clubs): 3-6 damage
+- **Medium weapons** (swords, axes): 4-8 damage  
+- **Heavy weapons** (greatswords, mauls): 5-10 damage
+
+**Experienced Adventurers (Levels 6-10):**
+- **Light weapons**: 5-10 damage
+- **Medium weapons**: 7-14 damage
+- **Heavy weapons**: 9-18 damage
+
+**Veteran Adventurers (Levels 11-15):**
+- **Light weapons**: 8-16 damage
+- **Medium weapons**: 12-24 damage  
+- **Heavy weapons**: 15-30 damage
+
+**Legendary Heroes (Levels 16-20):**
+- **Light weapons**: 12-24 damage
+- **Medium weapons**: 18-36 damage
+- **Heavy weapons**: 22-44 damage
+
+This scaling reflects better weapons, combat training, and tactical expertise. Enhanced by features, critical hits, and action card combinations. **Combat Powers and spells follow similar scaling progression.**
 
 Damage reduces the target's **Resolve** (their health/stamina pool).
 
@@ -158,12 +247,29 @@ Some characters have special abilities that cost **Power** points to use. These 
 ### Encounter Difficulty Rating
 Since ability scores are used directly in rolls, encounter balance focuses on total combat capability relative to your party:
 
-- **Easy**: Single NPC with abilities 2-3 points lower than party average, or multiple weak NPCs
-- **Moderate**: Single NPC with abilities matching party average, or 2-3 NPCs with lower abilities  
-- **Hard**: Single NPC with abilities 2-3 points higher than party average, or multiple moderate NPCs
-- **Deadly**: Multiple strong NPCs or single NPC with abilities 5+ points higher than party average
+Use these benchmarks when creating enemies for different campaign phases:
 
-**Example**: If your party has average abilities of 14, a moderate encounter might feature an NPC with abilities around 14, while a hard encounter could have an NPC with abilities of 17.
+**Early Game Enemies (Levels 1-5):**
+- Weak enemies: Abilities 8-12
+- Standard enemies: Abilities 12-16  
+- Strong enemies: Abilities 16-20
+
+**Mid Game Enemies (Levels 6-10):**
+- Weak enemies: Abilities 12-16
+- Standard enemies: Abilities 16-20
+- Strong enemies: Abilities 20-24
+
+**Late Game Enemies (Levels 11-15):**
+- Weak enemies: Abilities 16-20
+- Standard enemies: Abilities 20-24
+- Strong enemies: Abilities 24-28
+
+**End Game Enemies (Levels 16-20):**
+- Weak enemies: Abilities 20-24
+- Standard enemies: Abilities 24-28
+- Strong enemies: Abilities 28-32
+
+Enemies don't need complex feature builds - their raw ability scores should match or slightly exceed party capabilities for appropriate challenge levels.
 
 ### Action Economy Balance
 The number of actions per side matters as much as individual strength:
@@ -184,13 +290,55 @@ The number of actions per side matters as much as individual strength:
 - Balance total threat level against party capabilities
 
 ### Combat Length Guidelines
-Target these durations for engaging but decisive combat:
 
-- **Regular Encounters**: 5 rounds maximum
-- **Major Boss Fights**: 7 rounds maximum  
-- **Quick Skirmishes**: 2-3 rounds
+Target these durations for engaging encounters:
 
-**Health and Damage Scaling**: The universal Experienced (+5 Fortitude) and Veteran (+5 Fortitude) features ensure all characters' health scales appropriately. Weapons and combat abilities should scale to maintain these target combat lengths across character progression.
+**Quick Skirmishes:** 2-3 rounds
+- Minor threats, random encounters
+- Single weak enemy or few very weak enemies
+
+**Standard Encounters:** 4-5 rounds  
+- Main adventure encounters
+- Balanced challenge for party level
+- Most combat encounters should target this range
+
+**Boss Encounters:** 6-8 rounds
+- Major story antagonists
+- Phase transitions, legendary actions
+- Double normal enemy health, special abilities
+
+**Epic Encounters:** 8+ rounds
+- Campaign climax battles
+- Multiple phases, environmental hazards
+- Legendary resistance, ongoing effects
+
+**Maintaining Combat Pace:** The damage scaling and status effect progression ensure these targets remain achievable across all character levels.
+
+### Fail-Forward Philosophy
+
+Combat outcomes shouldn't be binary win/lose scenarios. Encourage varied results that drive story forward:
+
+**Victory Variations:**
+- **Clean Victory**: Enemies defeated, party unharmed - story continues smoothly
+- **Costly Victory**: Success with injuries/resource drain - consequences for future encounters  
+- **Pyrrhic Victory**: Win with major losses - story complications and difficult choices
+
+**Defeat Variations:**
+- **Capture**: Enemies need information or hostages - interrogation/rescue scenarios
+- **Retreat**: Party or enemies flee - pursuit, regrouping, or temporary setbacks
+- **Partial Defeat**: Some party members escape - rescue missions and split objectives
+
+**Environmental Outcomes:**
+- **Time Pressure**: Collapses, reinforcements, or other pressures force tactical decisions
+- **Escape Routes**: Combat ends with pursuit, chase scenes, or strategic withdrawals
+- **Objectives**: Combat success/failure affects broader mission goals beyond just defeating enemies
+
+**Social Consequences:**
+- **Reputation**: Combat outcomes affect how NPCs react to the party
+- **Legal Issues**: Defeating guards might create legal problems despite victory
+- **Political Ramifications**: Who the party fights affects larger story dynamics
+
+GMs should prepare multiple outcome paths for each encounter, considering how different results advance the narrative and create meaningful consequences for player choices.
 
 ## Character Creation Quick Start
 
