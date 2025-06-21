@@ -75,6 +75,11 @@
       "name": "erps-macros",
       "label": "ERPS Macros",
       "type": "Macro"
+    },
+    {
+      "name": "erps-features",
+      "label": "Core Features",
+      "type": "Item"
     }
   ],
   "packFolders": [],

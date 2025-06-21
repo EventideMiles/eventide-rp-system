@@ -119,7 +119,80 @@ Features represent your character's background, training, and inherent abilities
 - **Give you special rolls** for specific situations
 - **Do both**
 
-**Example**: Military Training might give you +1 Physical and +1 Acrobatics (from conditioning), *plus* let you make a special "tactical knowledge" roll in combat situations.
+**Example**: Military Training might give you +1 Physical and +1 Acrobatics (from conditioning), *plus* let you make Wits rolls with advantage for tactical analysis in combat situations.
+
+## Common Features
+
+Here are some widely available Features that can represent many different character backgrounds:
+
+### Background Features
+
+#### Military Training
+You served in an organized military force: learning discipline, tactics, and combat techniques. Your body has been conditioned for warfare and your mind trained to read battlefields.
+**Stat Changes**: +1 Physical, +1 Acrobatics
+**Specialty Roll**: Wits roll with advantage for tactical analysis (reading enemy formations, predicting battle outcomes, understanding military strategies)
+
+#### Scholar's Education
+You spent years studying in libraries, universities, or under learned masters. Your mind is sharp and your knowledge broad across many academic disciplines.
+**Stat Changes**: +2 Wits
+**Specialty Roll**: Wits roll with +3 bonus for academic research (recalling historical facts, understanding ancient texts, identifying scholarly references, knowing academic protocols)
+
+#### Wilderness Survivor
+You learned to thrive in the wild, whether by choice or necessity. Nature holds few mysteries for you, and harsh conditions only strengthen your resolve.
+**Stat Changes**: +2 Fortitude
+**Specialty Roll**: Wits roll with +3 bonus for wilderness survival (tracking, foraging, weather prediction, animal behavior, natural navigation)
+
+#### City-Raised
+You grew up in bustling urban environments, learning to navigate complex social structures and crowded spaces. The rhythm of city life is second nature to you.
+**Stat Changes**: +2 Wits
+**Specialty Roll**: Wits roll with +3 bonus for urban knowledge (knowing local customs, finding services, understanding bureaucracy, navigating social hierarchies)
+
+#### Noble Heritage
+Born or raised among the upper classes, you understand the subtle arts of diplomacy, etiquette, and social influence. Your bearing commands respect.
+**Stat Changes**: +2 Will
+**Specialty Roll**: Will roll with advantage for social etiquette (courtly manners, diplomatic protocol, reading social situations, commanding respect through bearing)
+
+### Professional Features
+
+#### Artisan's Training
+You mastered a specific craft or trade, developing both the technical skills and keen eye for quality that marks a true professional.
+**Stat Changes**: +2 wits
+**Specialty Roll**: Acrobatics, Athletics, Fortitude, Will, or Wits roll (depending on profession and GM discretion) with advantage for craft expertise (identifying quality materials, appraising finished goods, understanding production techniques, solving technical problems in your field) and for using your profession for production.
+
+#### Merchant's Eye
+Whether through formal training or hard experience, you've learned to evaluate goods, negotiate deals, and read the motivations of buyers and sellers.
+**Stat Changes**: +2 Wits
+**Specialty Roll**: Wits roll with +3 bonus for commerce (appraising item values, detecting fraud, understanding market conditions, negotiating fair deals)
+
+#### Temple Acolyte
+You served in a religious institution, learning sacred rites, theological principles, and the art of providing spiritual guidance to others.
+**Stat Changes**: +2 Will
+**Specialty Roll**: Wits roll with advantage for religious knowledge (performing ceremonies, understanding theological disputes, recognizing religious symbols, recalling religious history)
+
+#### Athlete's Training
+You dedicated yourself to physical excellence through sports, martial arts, or rigorous conditioning programs.
+**Stat Changes**: +2 Physical
+**Specialty Roll**: Physical roll with advantage for athletic feats (climbing difficult surfaces, swimming in rough water, jumping gaps, endurance challenges)
+
+#### Entertainer
+You performed for crowds as a musician, actor, storyteller, or other entertainer, learning to read audiences and command attention.
+**Stat Changes**: +2 Will
+**Specialty Roll**: Will roll with +3 bonus for performance (captivating audiences, remembering songs/stories, understanding crowd psychology, inspiring others)
+
+#### Scout Training
+You served as a messenger, spy, or advance scout, learning to move unseen and react quickly to danger.
+**Stat Changes**: +2 Acrobatics
+**Specialty Roll**: Acrobatics roll with +3 bonus for stealth and mobility (moving silently, hiding in shadows, quick escapes, navigating difficult terrain)
+
+#### Laborer
+You worked hard physical jobs - construction, mining, farming, or similar demanding work that built your endurance and resilience.
+**Stat Changes**: +2 Fortitude
+**Specialty Roll**: Fortitude roll with advantage for endurance tasks (working long hours, resisting fatigue, surviving harsh conditions, recovering from exhaustion)
+
+#### Courtier's Training
+You learned the intricate social dances of noble courts, diplomatic circles, or other high-society environments.
+**Stat Changes**: +2 Will
+**Specialty Roll**: Will roll with advantage for social manipulation (reading hidden motives, detecting lies, navigating complex social situations, influencing through charm)
 
 ### Gear (Equipment Effects)
 Equipment can enhance your abilities when it's relevant to what you're doing:
