@@ -1504,6 +1504,9 @@ label,
 .eventide-sheet.eventide-sheet--scrollbars .tab.biography .editor {
   min-height: 35rem;
 }
+.eventide-sheet.eventide-sheet--scrollbars .tab.description .editor {
+  min-height: 48rem;
+}
 
 .eventide-sheet:not([data-bg-theme]) {
   --theme-primary: rgba(21, 101, 192, 0.9);
@@ -8519,3 +8522,5 @@ body *::-webkit-scrollbar-track,
     flex: 1;
   }
 }
+
+/*# sourceMappingURL=eventide-rp-system.css.map */
