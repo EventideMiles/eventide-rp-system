@@ -479,6 +479,10 @@ label,
   &.eventide-sheet--scrollbars .tab.biography .editor {
     min-height: 35rem;
   }
+
+  &.eventide-sheet--scrollbars .tab.description .editor {
+    min-height: 48rem;
+  }
 }
 
 // Default theme application for sheets without data-bg-theme attribute
