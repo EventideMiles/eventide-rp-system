@@ -80,6 +80,26 @@ https://www.gnu.org/licenses/lgpl-2.1.html
 - processor.svg
 - werewolf.svg
 - magic-gate.svg
+- crossed-swords.svg
+- anvil.svg
+- drama-masks.svg
+- battle-gear.svg
+- mineral-heart.svg
+- crowned-heart.svg
+- magnifying-glass.svg
+- meditation.svg
+- campfire.svg
+- third-eye.svg
+- lightning-branches.svg
+- telepathy.svg
+- angel-wings.svg
+- rune-stone.svg
+- glowing-hands.svg
+- target-arrows.svg
+- condor-emblem.svg
+- charm.svg
+- aura.svg
+- shieldcomb.svg
 
 ### By Delapouite under CC BY 3.0 from game-icons.net
 
@@ -91,10 +111,41 @@ https://www.gnu.org/licenses/lgpl-2.1.html
 - van-damme-split.svg
 - power-up.svg (originally called upgrade)
 - power-down.svg (originally called upgrade)
+- book-pile.svg
+- forest-camp.svg
+- castle.svg
+- coins.svg
+- egyptian-temple.svg
+- biceps.svg
+- spy.svg
+- mining-helmet.svg
+- convince.svg
+- shield-bash.svg
+- sword-altar.svg
+- spell-book.svg
+- wine-bottle.svg
+- enrage.svg
+- knight-banner.svg
+- quick-man.svg
+- star-formation.svg
+- encirclement.svg
+- wizard-face.svg
+- dice-twenty-faces-twenty.svg
+- sword-brandish.svg
+
+### By DarkZaitzev under CC BY 3.0 from game-icons.net
+
+- acrobatic.svg
+- ninja-heroic-stance.svg
+
+### By Caro Asercion under CC BY 3.0 from game-icons.net
+
+- clock-tower.svg
 
 ### By Skoll under CC BY 3.0 from game-icons.net
 
 - chess-pawn.svg
+- chess-king.svg
 
 ### By Marek Szturc under Unsplash license from unsplash.com
 
