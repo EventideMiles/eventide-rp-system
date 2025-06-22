@@ -100,6 +100,7 @@ https://www.gnu.org/licenses/lgpl-2.1.html
 - charm.svg
 - aura.svg
 - shieldcomb.svg
+- wizard-staff.svg
 
 ### By Delapouite under CC BY 3.0 from game-icons.net
 
@@ -132,6 +133,13 @@ https://www.gnu.org/licenses/lgpl-2.1.html
 - wizard-face.svg
 - dice-twenty-faces-twenty.svg
 - sword-brandish.svg
+- caduceus.svg
+- teacher.svg
+- magic-trick.svg
+- robber.svg
+- poncho.svg
+- plague-doctor-profile.svg
+- island.svg
 
 ### By DarkZaitzev under CC BY 3.0 from game-icons.net
 
