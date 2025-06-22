@@ -140,6 +140,7 @@ https://www.gnu.org/licenses/lgpl-2.1.html
 - poncho.svg
 - plague-doctor-profile.svg
 - island.svg
+- swords-power.svg
 
 ### By DarkZaitzev under CC BY 3.0 from game-icons.net
 
@@ -154,6 +155,7 @@ https://www.gnu.org/licenses/lgpl-2.1.html
 
 - chess-pawn.svg
 - chess-king.svg
+- mounted-knight.svg
 
 ### By Marek Szturc under Unsplash license from unsplash.com
 
