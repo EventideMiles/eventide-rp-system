@@ -35,6 +35,7 @@ import {
   registerSettings,
   initializeCombatHooks,
   initChatListeners,
+  initPopupListeners,
   initGMControlHooks,
   erpsMessageHandler,
   initHandlebarsPartials,
@@ -262,6 +263,8 @@ Hooks.once("init", async () => {
   initializeCombatHooks();
   // Initialize chat message listeners
   initChatListeners();
+  // Initialize popup listeners
+  initPopupListeners();
   // Initialize GM control hooks
   initGMControlHooks();
 
