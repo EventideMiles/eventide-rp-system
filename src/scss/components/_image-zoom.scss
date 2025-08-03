@@ -1,0 +1,123 @@
+@use "../utils/sheet-tokens" as tokens;
+
+// =============================================================================
+// IMAGE ZOOM OVERLAY COMPONENT
+// =============================================================================
+// Chat card image zoom functionality with modal overlay
+
+.erps-image-zoom {
+  // Main overlay backdrop
+  &__overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 10000; // Very high to ensure it appears above all content
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    transition: 
+      opacity tokens.$sheet-transition-medium ease,
+      visibility tokens.$sheet-transition-medium ease;
+    
+    // Visible state
+    &--visible {
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+
+  // Image container
+  &__container {
+    position: relative;
+    max-width: 90vw;
+    max-height: 90vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: default; // Don't close when clicking on container
+  }
+
+  // The zoomed image itself
+  &__image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: tokens.$sheet-radius-lg;
+    box-shadow: 
+      0 tokens.$sheet-shadow-blur-xxl tokens.$sheet-shadow-blur-xxl rgba(0, 0, 0, 0.5),
+      0 0 tokens.$sheet-glow-blur-md rgba(255, 255, 255, 0.1);
+    transform: scale(0.8);
+    transition: transform tokens.$sheet-transition-medium ease;
+    
+    // Animate to full scale when overlay is visible
+    .erps-image-zoom__overlay--visible & {
+      transform: scale(1);
+    }
+  }
+
+  // Close button
+  &__close {
+    position: absolute;
+    top: -#{tokens.$sheet-spacing-lg};
+    right: -#{tokens.$sheet-spacing-lg};
+    width: 40px;
+    height: 40px;
+    background: var(--erps-current-primary);
+    border: tokens.$sheet-border-base solid var(--erps-current-secondary);
+    border-radius: tokens.$sheet-radius-circle;
+    color: var(--theme-text);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: tokens.$sheet-font-size-lg;
+    font-weight: tokens.$sheet-font-weight-bold;
+    transition: 
+      background-color tokens.$sheet-transition-base ease,
+      transform tokens.$sheet-transition-base ease,
+      box-shadow tokens.$sheet-transition-base ease;
+    box-shadow: 0 tokens.$sheet-shadow-blur-sm tokens.$sheet-shadow-blur-md rgba(0, 0, 0, 0.3);
+    
+    &:hover {
+      background: var(--erps-current-secondary);
+      transform: scale(tokens.$sheet-transform-scale-icon);
+      box-shadow: 
+        0 tokens.$sheet-shadow-blur-md tokens.$sheet-shadow-blur-lg rgba(0, 0, 0, 0.4),
+        0 0 tokens.$sheet-glow-blur-sm var(--theme-glow);
+    }
+    
+    &:active {
+      transform: scale(tokens.$sheet-transform-scale-active);
+    }
+  }
+}
+
+// Modify chat card primary images to indicate they're clickable
+.chat-card__image--primary {
+  cursor: zoom-in;
+  transition: 
+    opacity tokens.$sheet-transition-base ease,
+    transform tokens.$sheet-transition-base ease,
+    filter tokens.$sheet-transition-base ease;
+  
+  &:hover {
+    opacity: 0.8;
+    transform: scale(1.02);
+    filter: brightness(1.1);
+  }
+  
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+// Ensure body scroll lock works properly
+body.erps-image-zoom-active {
+  overflow: hidden;
+}

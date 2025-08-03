@@ -9,3 +9,4 @@ export * from "./hooks/_module.mjs";
 export * from "./managers/_module.mjs";
 export * from "./settings/_module.mjs";
 export * from "./logger.mjs";
+export * from "./image-zoom.mjs";
