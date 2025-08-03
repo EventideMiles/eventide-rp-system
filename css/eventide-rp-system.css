@@ -3396,6 +3396,19 @@ body *::-webkit-scrollbar-track,
   transform: scale(0.98);
 }
 
+.erps-form__image--zoomable {
+  cursor: zoom-in;
+  transition: opacity 0.2s ease, transform 0.2s ease, filter 0.2s ease;
+}
+.erps-form__image--zoomable:hover {
+  opacity: 0.8;
+  transform: scale(1.02);
+  filter: brightness(1.1);
+}
+.erps-form__image--zoomable:active {
+  transform: scale(0.98);
+}
+
 body.erps-image-zoom-active {
   overflow: hidden;
 }

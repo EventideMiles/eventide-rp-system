@@ -117,6 +117,25 @@
   }
 }
 
+// Modify popup form images to indicate they're clickable when zoomable
+.erps-form__image--zoomable {
+  cursor: zoom-in;
+  transition: 
+    opacity tokens.$sheet-transition-base ease,
+    transform tokens.$sheet-transition-base ease,
+    filter tokens.$sheet-transition-base ease;
+  
+  &:hover {
+    opacity: 0.8;
+    transform: scale(1.02);
+    filter: brightness(1.1);
+  }
+  
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
 // Ensure body scroll lock works properly
 body.erps-image-zoom-active {
   overflow: hidden;
