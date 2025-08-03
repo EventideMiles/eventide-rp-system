@@ -6,6 +6,7 @@
 import { Logger } from "../logger.mjs";
 import { MessageFlags } from "../../helpers/message-flags.mjs";
 import { gmControlManager } from "../managers/gm-control.mjs";
+import { ImageZoomService } from "../image-zoom.mjs";
 
 /**
  * Initializes all chat-related event listeners for the Eventide RP System
@@ -31,6 +32,7 @@ const setupChatMessageRendering = () => {
   Hooks.on("renderChatMessageHTML", (message, html, _data) => {
     addFormulaToggleFunctionality(html);
     addGMApplyButtonFunctionality(html, message);
+    addImageZoomFunctionality(html);
     removeRestrictedElementsForNonGMs(html);
   });
 };
@@ -69,6 +71,36 @@ const addFormulaToggleFunctionality = (html) => {
         rollDetails.style.display = "block";
       }
     });
+  });
+};
+
+/**
+ * Add image zoom functionality to chat card images
+ *
+ * @private
+ * @param {HTMLElement} html - The chat message HTML element
+ */
+const addImageZoomFunctionality = (html) => {
+  // Find all primary chat card images
+  const primaryImages = html.querySelectorAll(".chat-card__image--primary");
+
+  // Add click event listener for image zoom
+  primaryImages.forEach((image) => {
+    image.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+
+      const imageSrc = image.src;
+      const imageAlt = image.alt || image.closest('.chat-card')?.querySelector('.chat-card__header div')?.textContent || 'Chat card image';
+
+      // Show the zoomed image
+      ImageZoomService.showZoom(imageSrc, imageAlt);
+    });
+
+    // Add title attribute for better UX
+    if (!image.title) {
+      image.title = 'Click to enlarge';
+    }
   });
 };
 

@@ -41,6 +41,7 @@ import {
   getSetting,
   setSetting,
   Logger,
+  ImageZoomService,
 } from "./services/_module.mjs";
 
 // Import DataModel classes
@@ -491,6 +492,14 @@ Hooks.once("setup", () => {
 Hooks.once("ready", () => {
   // Initialize global theme for scrollbars and other global UI elements
   initializeGlobalTheme();
+
+  // Initialize image zoom service for chat card images
+  try {
+    ImageZoomService.init();
+    Logger.info("Image zoom service initialized", null, "SYSTEM_INIT");
+  } catch (error) {
+    Logger.error("Failed to initialize image zoom service", error, "SYSTEM_INIT");
+  }
 
   // Remove immediate theme styles now that the full theme system is loaded
   // Add a small delay to ensure all initial sheets have been themed

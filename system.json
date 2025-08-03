@@ -56,7 +56,7 @@
       "thumbnail": "systems/eventide-rp-system/assets/icons/magic-gate.svg"
     }
   ],
-  "version": "13.12.0",
+  "version": "13.12.1",
   "compatibility": {
     "minimum": "13",
     "verified": "13"
@@ -75,6 +75,11 @@
       "name": "erps-macros",
       "label": "ERPS Macros",
       "type": "Macro"
+    },
+    {
+      "name": "erps-features",
+      "label": "Core Features",
+      "type": "Item"
     }
   ],
   "packFolders": [],

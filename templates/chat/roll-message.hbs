@@ -4,7 +4,7 @@
     {{#if (or bgColor textColor)}} style="{{#if bgColor}}background-color: {{bgColor}};{{/if}}{{#if textColor}} color: {{textColor}};{{/if}}"
     {{/if}}>
     {{#if item.img}}
-      <img src="{{item.img}}" class="chat-card__image--primary" />
+      <img src="{{item.img}}" class="chat-card__image--primary" alt="{{item.name}}" title="Click to enlarge" />
       <div>{{label}}</div>
     {{else}}
       <i class="{{pickedIcon}}"></i> {{label}}
