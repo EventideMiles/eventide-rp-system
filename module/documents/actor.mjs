@@ -261,4 +261,189 @@ export class EventideRpSystemActor extends ActorTransformationMixin(
 
     return displayName;
   }
+
+  /**
+   * Hook to handle post token creation - applies transformations to new tokens if actor is transformed
+   * @param {TokenDocument} tokenDocument - The token document that was just created
+   * @param {object} data - The creation data
+   * @param {object} options - Creation options
+   * @param {string} userId - ID of the user who created the token
+   * @static
+   */
+  static async _onCreateToken(tokenDocument, data, options, userId) {
+    Logger.methodEntry("EventideRpSystemActor", "_onCreateToken", {
+      tokenId: tokenDocument.id,
+      actorId: tokenDocument.actorId,
+      userId,
+    });
+
+    // Only proceed if this token belongs to an EventideRpSystemActor
+    const actor = tokenDocument.actor;
+    if (!(actor instanceof EventideRpSystemActor)) {
+      Logger.debug(
+        "Token creation hook skipped - not an EventideRpSystemActor",
+        { actorType: actor?.constructor?.name },
+        "TRANSFORMATION",
+      );
+      return;
+    }
+
+    // Check if the actor has an active transformation
+    const activeTransformationId = actor.getFlag(
+      "eventide-rp-system",
+      "activeTransformation",
+    );
+
+    if (!activeTransformationId) {
+      Logger.debug(
+        "No active transformation found on actor",
+        { actorName: actor.name },
+        "TRANSFORMATION",
+      );
+      Logger.methodExit("EventideRpSystemActor", "_onCreateToken");
+      return;
+    }
+
+    try {
+      // Apply the transformation to the newly created token
+      await actor._applyTransformationToNewToken(tokenDocument);
+
+      Logger.info(
+        `Applied transformation to newly created token for actor "${actor.name}"`,
+        {
+          tokenId: tokenDocument.id,
+          transformationId: activeTransformationId,
+        },
+        "TRANSFORMATION",
+      );
+    } catch (error) {
+      Logger.error(
+        `Failed to apply transformation to new token for actor "${actor.name}"`,
+        error,
+        "TRANSFORMATION",
+      );
+      // Don't throw the error - transformation failure shouldn't prevent token creation
+    }
+
+    Logger.methodExit("EventideRpSystemActor", "_onCreateToken");
+  }
+
+  /**
+   * Hook to handle canvas ready - ensures transformation consistency when switching scenes
+   * @static
+   */
+  static async _onCanvasReady() {
+    Logger.methodEntry("EventideRpSystemActor", "_onCanvasReady");
+
+    try {
+      // Find all actors with active transformations
+      const transformedActors = game.actors.filter((actor) => {
+        if (!(actor instanceof EventideRpSystemActor)) return false;
+        return actor.getFlag("eventide-rp-system", "activeTransformation");
+      });
+
+      if (transformedActors.length === 0) {
+        Logger.debug(
+          "No actors with active transformations found",
+          null,
+          "TRANSFORMATION",
+        );
+        Logger.methodExit("EventideRpSystemActor", "_onCanvasReady");
+        return;
+      }
+
+      Logger.debug(
+        `Found ${transformedActors.length} actors with active transformations`,
+        { actorNames: transformedActors.map((a) => a.name) },
+        "TRANSFORMATION",
+      );
+
+      // Check tokens in the current scene for transformation consistency
+      for (const actor of transformedActors) {
+        const activeTransformationId = actor.getFlag(
+          "eventide-rp-system",
+          "activeTransformation",
+        );
+        const transformationItem = actor.items.get(activeTransformationId);
+
+        if (!transformationItem) {
+          Logger.warn(
+            `Active transformation item not found for actor ${actor.name}`,
+            { transformationId: activeTransformationId },
+            "TRANSFORMATION",
+          );
+          continue;
+        }
+
+        // Get tokens for this actor in the current scene only
+        const currentSceneTokens = canvas.tokens.placeables.filter(
+          (token) => token.document.actorId === actor.id,
+        );
+
+        if (currentSceneTokens.length === 0) continue;
+
+        // Check if transformation appearance needs to be applied to any tokens
+        const transformationUpdates =
+          actor._getTokenTransformationUpdates(transformationItem);
+        if (Object.keys(transformationUpdates).length === 0) continue;
+
+        const tokensNeedingUpdate = [];
+        for (const token of currentSceneTokens) {
+          // Check if token already has the correct transformation appearance
+          let needsUpdate = false;
+
+          if (
+            transformationUpdates["texture.src"] &&
+            token.document.texture.src !== transformationUpdates["texture.src"]
+          ) {
+            needsUpdate = true;
+          }
+
+          if (
+            transformationUpdates.width &&
+            token.document.width !== transformationUpdates.width
+          ) {
+            needsUpdate = true;
+          }
+
+          if (
+            transformationUpdates.height &&
+            token.document.height !== transformationUpdates.height
+          ) {
+            needsUpdate = true;
+          }
+
+          if (needsUpdate) {
+            tokensNeedingUpdate.push({
+              _id: token.id,
+              ...transformationUpdates,
+            });
+          }
+        }
+
+        // Apply updates if needed
+        if (tokensNeedingUpdate.length > 0) {
+          Logger.info(
+            `Applying transformation consistency updates to ${tokensNeedingUpdate.length} tokens for actor "${actor.name}" in scene "${canvas.scene.name}"`,
+            { transformationName: transformationItem.name },
+            "TRANSFORMATION",
+          );
+
+          await canvas.scene.updateEmbeddedDocuments(
+            "Token",
+            tokensNeedingUpdate,
+          );
+        }
+      }
+    } catch (error) {
+      Logger.error(
+        "Failed to ensure transformation consistency on scene change",
+        error,
+        "TRANSFORMATION",
+      );
+      // Don't throw the error - transformation consistency failure shouldn't break scene loading
+    }
+
+    Logger.methodExit("EventideRpSystemActor", "_onCanvasReady");
+  }
 }

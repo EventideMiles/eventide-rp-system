@@ -46,11 +46,11 @@ export const ActorTransformationMixin = (BaseClass) =>
         return this;
       }
 
-      // Get all tokens linked to this actor
-      const tokens = this.getActiveTokens();
+      // Get all tokens linked to this actor across all scenes
+      const tokens = this._getAllTokensAcrossScenes();
       if (!tokens.length) {
         Logger.warn(
-          "No active tokens found for transformation",
+          "No tokens found for transformation across any scenes",
           null,
           "TRANSFORMATION",
         );
@@ -169,11 +169,11 @@ export const ActorTransformationMixin = (BaseClass) =>
           return this;
         }
 
-        // Get all tokens linked to this actor
-        const tokens = this.getActiveTokens();
+        // Get all tokens linked to this actor across all scenes
+        const tokens = this._getAllTokensAcrossScenes();
         if (!tokens.length) {
           Logger.warn(
-            "No active tokens found for transformation removal",
+            "No tokens found for transformation removal across any scenes",
             null,
             "TRANSFORMATION",
           );
@@ -388,16 +388,22 @@ export const ActorTransformationMixin = (BaseClass) =>
         return;
       }
 
-      // Store original token data in flags
-      const originalTokenData = tokens.map((token) => ({
-        tokenId: token.id,
-        img: token.document.texture.src,
-        scale: token.document.texture.scaleX,
-        width: token.document.width,
-        height: token.document.height,
-        maxResolve: token.actor.system.resolve.max,
-        maxPower: token.actor.system.power.max,
-      }));
+      // Store original token data in flags with scene information for cross-scene support
+      const originalTokenData = tokens.map((tokenInfo) => {
+        const tokenDoc = tokenInfo.document;
+        const scene = tokenInfo.scene;
+        return {
+          tokenId: tokenDoc.id,
+          sceneId: scene.id,
+          sceneName: scene.name,
+          img: tokenDoc.texture.src,
+          scale: tokenDoc.texture.scaleX,
+          width: tokenDoc.width,
+          height: tokenDoc.height,
+          maxResolve: this.system.resolve.max,
+          maxPower: this.system.power.max,
+        };
+      });
 
       Logger.debug(
         "Storing original token data:",
@@ -473,10 +479,10 @@ export const ActorTransformationMixin = (BaseClass) =>
     }
 
     /**
-     * Update tokens with the transformation appearance
+     * Update tokens with the transformation appearance across all scenes
      *
      * @private
-     * @param {Token[]} tokens - Array of tokens to update
+     * @param {Object[]|Token[]} tokens - Array of token objects (with scene info) or legacy token array
      * @param {Item} transformationItem - The transformation item
      * @returns {Promise<void>}
      */
@@ -489,17 +495,68 @@ export const ActorTransformationMixin = (BaseClass) =>
         },
       );
 
-      for (const token of tokens) {
-        const updates = this._getTokenTransformationUpdates(transformationItem);
+      const transformationUpdates =
+        this._getTokenTransformationUpdates(transformationItem);
 
-        // Apply updates if we have any
-        if (Object.keys(updates).length > 0) {
-          Logger.debug(
-            `Updating token ${token.id}:`,
-            updates,
+      if (Object.keys(transformationUpdates).length === 0) {
+        Logger.debug(
+          "No transformation updates needed",
+          null,
+          "TRANSFORMATION",
+        );
+        Logger.methodExit(
+          "ActorTransformationMixin",
+          "_updateTokensForTransformation",
+        );
+        return;
+      }
+
+      // Group tokens by scene for efficient batch updates
+      const sceneUpdates = new Map();
+
+      for (const tokenInfo of tokens) {
+        const tokenDoc = tokenInfo.document;
+        const scene = tokenInfo.scene;
+
+        if (!scene) {
+          Logger.warn(
+            `Could not find scene for token ${tokenDoc.id}`,
+            null,
             "TRANSFORMATION",
           );
-          await token.document.update(updates);
+          continue;
+        }
+
+        const sceneId = scene.id;
+        if (!sceneUpdates.has(sceneId)) {
+          sceneUpdates.set(sceneId, []);
+        }
+
+        // Add transformation updates to this token
+        sceneUpdates.get(sceneId).push({
+          _id: tokenDoc.id,
+          ...transformationUpdates,
+        });
+      }
+
+      // Execute batch updates for each scene
+      for (const [sceneId, updates] of sceneUpdates) {
+        const scene = game.scenes.get(sceneId);
+        if (scene && updates.length > 0) {
+          try {
+            Logger.debug(
+              `Updating ${updates.length} tokens in scene "${scene.name}"`,
+              { sceneId, updates },
+              "TRANSFORMATION",
+            );
+            await scene.updateEmbeddedDocuments("Token", updates);
+          } catch (error) {
+            Logger.error(
+              `Failed to update tokens in scene "${scene.name}"`,
+              error,
+              "TRANSFORMATION",
+            );
+          }
         }
       }
 
@@ -593,11 +650,11 @@ export const ActorTransformationMixin = (BaseClass) =>
     }
 
     /**
-     * Restore original token data for all tokens
+     * Restore original token data for all tokens across all scenes
      *
      * @private
-     * @param {Token[]} tokens - Array of tokens to restore
-     * @param {Object[]} originalTokenData - Original token data array
+     * @param {Object[]|Token[]} tokens - Array of token objects (with scene info) or legacy token array
+     * @param {Object[]} originalTokenData - Original token data array (with scene information)
      * @returns {Promise<void>}
      */
     async _restoreOriginalTokenData(tokens, originalTokenData) {
@@ -606,23 +663,48 @@ export const ActorTransformationMixin = (BaseClass) =>
         "_restoreOriginalTokenData",
         {
           tokenCount: tokens.length,
+          originalDataCount: originalTokenData.length,
         },
       );
 
-      for (const token of tokens) {
-        const originalData = originalTokenData.find(
-          (d) => d.tokenId === token.id,
-        );
-        if (!originalData) {
+      // Group restoration updates by scene for efficient batch updates
+      const sceneRestoreUpdates = new Map();
+
+      for (const tokenInfo of tokens) {
+        const tokenDoc = tokenInfo.document;
+        const scene = tokenInfo.scene;
+
+        if (!scene) {
           Logger.warn(
-            `No original data found for token ${token.id}`,
+            `Could not find scene for token ${tokenDoc.id}`,
             null,
             "TRANSFORMATION",
           );
           continue;
         }
 
+        // Find original data for this token, considering both tokenId and sceneId for uniqueness
+        const originalData = originalTokenData.find(
+          (d) =>
+            d.tokenId === tokenDoc.id && (d.sceneId === scene.id || !d.sceneId), // Handle legacy data without sceneId
+        );
+
+        if (!originalData) {
+          Logger.warn(
+            `No original data found for token ${tokenDoc.id} in scene ${scene.name}`,
+            null,
+            "TRANSFORMATION",
+          );
+          continue;
+        }
+
+        const sceneId = scene.id;
+        if (!sceneRestoreUpdates.has(sceneId)) {
+          sceneRestoreUpdates.set(sceneId, []);
+        }
+
         const restoreUpdates = {
+          _id: tokenDoc.id,
           "texture.src": originalData.img,
           "texture.scaleX": originalData.scale,
           "texture.scaleY": originalData.scale,
@@ -630,12 +712,28 @@ export const ActorTransformationMixin = (BaseClass) =>
           height: originalData.height,
         };
 
-        Logger.debug(
-          `Restoring token ${token.id}:`,
-          restoreUpdates,
-          "TRANSFORMATION",
-        );
-        await token.document.update(restoreUpdates);
+        sceneRestoreUpdates.get(sceneId).push(restoreUpdates);
+      }
+
+      // Execute batch restoration updates for each scene
+      for (const [sceneId, updates] of sceneRestoreUpdates) {
+        const scene = game.scenes.get(sceneId);
+        if (scene && updates.length > 0) {
+          try {
+            Logger.debug(
+              `Restoring ${updates.length} tokens in scene "${scene.name}"`,
+              { sceneId, updates },
+              "TRANSFORMATION",
+            );
+            await scene.updateEmbeddedDocuments("Token", updates);
+          } catch (error) {
+            Logger.error(
+              `Failed to restore tokens in scene "${scene.name}"`,
+              error,
+              "TRANSFORMATION",
+            );
+          }
+        }
       }
 
       Logger.methodExit(
@@ -817,5 +915,151 @@ export const ActorTransformationMixin = (BaseClass) =>
         transformationItem,
       );
       return transformationItem;
+    }
+
+    /**
+     * Apply transformation appearance to a newly created token
+     * This method is called when a token is created from an actor that has an active transformation
+     *
+     * @param {TokenDocument} tokenDocument - The newly created token document
+     * @returns {Promise<void>}
+     */
+    async _applyTransformationToNewToken(tokenDocument) {
+      Logger.methodEntry(
+        "ActorTransformationMixin",
+        "_applyTransformationToNewToken",
+        {
+          tokenId: tokenDocument.id,
+          actorName: this.name,
+        },
+      );
+
+      // Get the active transformation ID from flags
+      const activeTransformationId = this.getFlag(
+        "eventide-rp-system",
+        "activeTransformation",
+      );
+
+      if (!activeTransformationId) {
+        Logger.warn(
+          "No active transformation found when trying to apply to new token",
+          null,
+          "TRANSFORMATION",
+        );
+        Logger.methodExit(
+          "ActorTransformationMixin",
+          "_applyTransformationToNewToken",
+        );
+        return;
+      }
+
+      // Find the transformation item on the actor
+      const transformationItem = this.items.get(activeTransformationId);
+      if (!transformationItem) {
+        Logger.warn(
+          `Active transformation item not found: ${activeTransformationId}`,
+          null,
+          "TRANSFORMATION",
+        );
+        Logger.methodExit(
+          "ActorTransformationMixin",
+          "_applyTransformationToNewToken",
+        );
+        return;
+      }
+
+      try {
+        // Calculate the transformation updates using existing logic
+        const updates = this._getTokenTransformationUpdates(transformationItem);
+
+        // Apply updates if we have any
+        if (Object.keys(updates).length > 0) {
+          Logger.debug(
+            `Applying transformation to new token ${tokenDocument.id}:`,
+            updates,
+            "TRANSFORMATION",
+          );
+          await tokenDocument.update(updates);
+
+          Logger.info(
+            `Successfully applied transformation "${transformationItem.name}" to new token`,
+            {
+              tokenId: tokenDocument.id,
+              transformationName: transformationItem.name,
+              updates,
+            },
+            "TRANSFORMATION",
+          );
+        } else {
+          Logger.debug(
+            "No transformation updates needed for new token",
+            { transformationName: transformationItem.name },
+            "TRANSFORMATION",
+          );
+        }
+      } catch (error) {
+        Logger.error(
+          `Failed to apply transformation updates to new token ${tokenDocument.id}`,
+          error,
+          "TRANSFORMATION",
+        );
+        throw error;
+      }
+
+      Logger.methodExit(
+        "ActorTransformationMixin",
+        "_applyTransformationToNewToken",
+      );
+    }
+
+    /**
+     * Get all tokens for this actor across all scenes
+     * This method finds token documents from all scenes, regardless of render state
+     *
+     * @private
+     * @returns {Object[]} Array of token document objects with scene information
+     */
+    _getAllTokensAcrossScenes() {
+      Logger.methodEntry(
+        "ActorTransformationMixin",
+        "_getAllTokensAcrossScenes",
+      );
+
+      const tokens = [];
+
+      // Iterate through all scenes to find tokens for this actor
+      for (const scene of game.scenes.contents) {
+        // Find token documents in this scene that belong to this actor
+        const sceneTokens = scene.tokens.filter(
+          (tokenDoc) => tokenDoc.actorId === this.id && tokenDoc.actor,
+        );
+
+        // Add all token documents (regardless of whether they're currently rendered)
+        for (const tokenDoc of sceneTokens) {
+          tokens.push({
+            document: tokenDoc,
+            scene,
+          });
+        }
+      }
+
+      Logger.debug(
+        `Found ${tokens.length} tokens across ${game.scenes.contents.length} scenes`,
+        {
+          actorName: this.name,
+          sceneTokenCounts: tokens.reduce((acc, t) => {
+            acc[t.scene.name] = (acc[t.scene.name] || 0) + 1;
+            return acc;
+          }, {}),
+        },
+        "TRANSFORMATION",
+      );
+
+      Logger.methodExit(
+        "ActorTransformationMixin",
+        "_getAllTokensAcrossScenes",
+        tokens,
+      );
+      return tokens;
     }
   };
