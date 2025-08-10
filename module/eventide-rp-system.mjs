@@ -512,6 +512,16 @@ Hooks.once("ready", () => {
 
   // Wait to register hotbar drop hook on ready so that modules could register earlier if they want to
   Hooks.on("hotbarDrop", (bar, data, slot) => createDocMacro(data, slot));
+
+  // Register token creation hook to apply transformations to newly created tokens
+  Hooks.on("createToken", (tokenDocument, data, options, userId) => {
+    EventideRpSystemActor._onCreateToken(tokenDocument, data, options, userId);
+  });
+
+  // Register canvas ready hook to ensure transformation consistency when switching scenes
+  Hooks.on("canvasReady", () => {
+    EventideRpSystemActor._onCanvasReady();
+  });
 });
 
 /* -------------------------------------------- */
