@@ -127,8 +127,8 @@
         },
         "AdvanceInitiativeTurnError": "You can only use this action card on your turn when 'Advance Initiative' is enabled.",
         "AttemptInventoryReduction": {
-          "label": "Attempt Effect Inventory Reduction",
-          "hint": "When enabled, attempts to reduce your inventory when applying gear effects. If disabled, gear effects will be applied without checking inventory."
+          "label": "Reduce Inventory",
+          "hint": "When enabled, reduces inventory quantities when transferring gear effects."
         },
         "GearEffectInventoryWarning": "You don't have enough {gearName} in your inventory to apply this effect.",
         "GearEffectNotFoundWarning": "You don't have {gearName} in your inventory to apply this effect.",
@@ -138,6 +138,36 @@
         "StatusApplied": "Status effect '{statusName}' applied to {targetName}",
         "RollValue": "Roll Value",
         "StatusThreshold": "Threshold Value",
+        "Repetitions": {
+          "label": "Repetitions",
+          "hint": "Roll formula for number of repetitions (e.g. '3', '1d4', '2d6+1')"
+        },
+        "RepeatToHit": {
+          "label": "Repeat to Hit",
+          "hint": "Re-roll the embedded item for each repetition (attack chains only)"
+        },
+        "DamageApplication": {
+          "label": "Damage Per Success",
+          "hint": "Apply damage on every repetition instead of just the first success"
+        },
+        "StatusPerSuccess": {
+          "label": "Status Per Success",
+          "hint": "Apply/intensify status effects on every repetition"
+        },
+        "TimingOverride": {
+          "label": "Timing Override (seconds)",
+          "hint": "Custom delay between repetitions. <strong>0 uses system default</strong>"
+        },
+        "CostOnRepetition": {
+          "label": "Cost Per Repetition",
+          "hint": "When enabled, applies resource costs (power/gear) on each repetition instead of just the first"
+        },
+        "InsufficientPowerError": "Insufficient power for {itemName}: requires {required}, available {available}",
+        "InsufficientQuantityError": "Insufficient quantity for {itemName}: requires {required}, available {available}",
+        "Config": {
+          "RepetitionsHeader": "Repetition Settings",
+          "BehaviorHeader": "Repetition Behavior"
+        },
         "Apply": "Apply",
         "Discard": "Discard"
       },
@@ -218,6 +248,7 @@
       "Tabs": {
         "Description": "Description",
         "Attributes": "Attributes",
+        "Config": "Config",
         "Effects": "Effects",
         "CharacterEffects": "Character Effects",
         "Prerequisites": "Prerequisites",
