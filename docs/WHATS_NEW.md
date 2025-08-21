@@ -1,8 +1,65 @@
-# What's New in Eventide RP System v13.11.0
+# What's New in Eventide RP System v13.13.3
 
 ## Major Features and Improvements
 
-### 🎴 Action Cards System - Combat Automation Revolution
+### 🔄 Action Modes - Advanced Repetition System (v13.13.3)
+
+**The newest addition is the powerful Action Modes system that transforms action cards into dynamic, repeatable actions with sophisticated control over repetition behavior.**
+
+#### **What are Action Modes?**
+
+Action Modes extend action cards with advanced repetition capabilities, allowing you to execute actions multiple times with configurable behavior for each repetition. This feature is perfect for multi-attack sequences, burst effects, channeled spells, and variable-outcome abilities.
+
+#### **Key Action Modes Features**
+
+- **Dynamic Repetitions**: Use roll formulas (e.g., "3", "1d4", "2d6+1") to determine execution count
+- **Repeat to Hit**: Re-roll embedded items for each repetition in attack chains
+- **Selective Damage Application**: Control whether damage applies per repetition or first success only
+- **Status Per Success**: Configure status effect application/intensification per repetition
+- **Cost Control**: Toggle resource consumption per repetition vs. first-time only
+- **Custom Timing**: Override system delays with per-card timing configuration
+
+#### **Advanced Repetition Controls**
+
+**Repetitions Field**
+- Support for roll formulas with actor data integration
+- Automatic evaluation with `Math.floor()` for integer results
+- Graceful failure handling for invalid formulas (≤0 results)
+
+**Repetition Behavior Toggles**
+- **Repeat to Hit**: Re-execute embedded items for fresh roll results
+- **Damage Application**: Apply damage effects on every repetition
+- **Status Per Success**: Apply/intensify status effects per repetition
+- **Cost on Repetition**: Consume resources on each execution vs. first only
+
+**Timing Configuration**
+- **Timing Override**: Custom delays between repetitions (0 = system default)
+- **Step Preservation**: Maintains existing timing delays within each repetition
+- **Consistent Flow**: Smooth execution pacing across all repetition counts
+
+#### **Resource Management**
+
+- **Pre-execution Validation**: Check resource availability before starting repetitions
+- **Mid-execution Monitoring**: Halt execution on resource depletion with clear feedback
+- **Professional Failure Messages**: Dedicated chat card template for execution failures
+- **Partial Success Tracking**: Report completed repetitions when execution stops early
+
+#### **Perfect For**
+
+- **Multi-attack Sequences**: Execute complex attack combinations with variable hit counts
+- **Channeled Spells**: Create spells that intensify or repeat based on casting power
+- **Burst Effects**: Random repetition counts for unpredictable magical effects
+- **Resource Management**: Control when costs apply for strategic resource usage
+- **Combat Automation**: Streamline repetitive actions with intelligent automation
+
+#### **New Config Tab Interface**
+
+- **Dedicated Configuration**: New "Config" tab in action card item sheets
+- **Intuitive Controls**: Toggle switches following existing ERPS design patterns
+- **Comprehensive Localization**: Full English language support with helpful hints
+- **Form Validation**: Real-time validation with clear error feedback
+
+### 🎴 Action Cards System - Combat Automation Revolution (v13.11.0)
 
 **The biggest addition to this release is the comprehensive Action Cards system that revolutionizes combat automation and action management in the Eventide RP System.**
 
@@ -219,12 +276,49 @@ Based on the development work completed, this release addresses several key area
 
 ## Version Information
 
-- **Release Version**: 13.11.0
-- **Foundry Compatibility**: v13.341 minimum, v13.344 verified
-- **Release Date**: June 2025
-- **Major Features**: Action Cards System, Combat Automation, Attack Chains
-- **Previous Version**: v13.10.0 introduced Feature Roll System and Circumstantial Bonuses
+- **Release Version**: 13.13.3
+- **Foundry Compatibility**: v13+ minimum, v13+ verified
+- **Release Date**: August 2025
+- **Major Features**: Action Modes System, Advanced Repetition Controls, Resource Management
+- **Previous Version**: v13.11.0 introduced Action Cards System and Combat Automation
+- **v13.10.0**: Feature Roll System and Circumstantial Bonuses
 - **Documentation**: Completely updated and expanded
+
+## Getting Started with Action Modes
+
+### **For Players**
+
+1. **Open the Config Tab**: Edit any action card and click the new "Config" tab
+2. **Start Simple**: Begin with basic repetition counts like "2" or "3"
+3. **Explore Variables**: Try roll formulas like "1d3" for random repetitions
+4. **Control Costs**: Use the "Cost on Repetition" toggle to manage resource consumption
+5. **Experiment with Timing**: Adjust timing overrides for dramatic effect pacing
+
+### **For Game Masters**
+
+1. **Create Multi-attack NPCs**: Design monsters with variable attack patterns using repetition formulas
+2. **Design Channeled Effects**: Build spells that intensify with repetition counts
+3. **Manage Resources**: Use cost controls to create strategic resource decisions
+4. **Enhance Drama**: Custom timing creates cinematic combat sequences
+
+### **Getting Started Examples**
+
+**Simple Multi-attack**
+- Repetitions: "3"
+- Repeat to Hit: ✓
+- Result: 3 separate attack rolls with independent damage
+
+**Variable Burst Spell**
+- Repetitions: "1d4+1" 
+- Status Per Success: ✓
+- Cost on Repetition: ✗
+- Result: Random spell intensity (2-5 effects) with single resource cost
+
+**Channeled Healing**
+- Repetitions: "2d3"
+- Damage Application: ✓
+- Timing Override: 1.5
+- Result: Multiple healing applications with dramatic 1.5-second intervals
 
 ## Getting Started with Action Cards
 
@@ -262,10 +356,11 @@ We encourage users to:
 
 ### **Documentation Links**
 
+- **[Action Modes Pull Request](advanced-usage/action-modes-pull-request.md)** - Complete Action Modes implementation documentation
 - **[Action Cards Guide](advanced-usage/action-cards.md)** - Complete action cards documentation
 - **[Features System Guide](system-features/features.md)** - Circumstantial bonuses and feature rolls
 - **[Quick Start Guide](getting-started/quick-start.md)** - Get started with the system immediately
 
 ---
 
-**Ready to revolutionize your combat?** Check out the [Action Cards Guide](advanced-usage/action-cards.md) for comprehensive information on creating and using action cards, or explore the [Features System Guide](system-features/features.md) for circumstantial bonuses and feature rolls!
+**Ready to supercharge your action cards?** Check out the [Action Modes Pull Request](advanced-usage/action-modes-pull-request.md) for comprehensive information on the new repetition system, or explore the [Action Cards Guide](advanced-usage/action-cards.md) for fundamental action card usage!
