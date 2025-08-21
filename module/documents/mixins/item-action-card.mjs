@@ -218,10 +218,26 @@ export function ItemActionCardMixin(Base) {
 
         const actionCard = this;
 
+        // Check if we're in a repetition context and should apply cost control
+        let embeddedItemData = this.system.embeddedItem;
+        if (this._currentRepetitionContext && 
+            !this._currentRepetitionContext.shouldApplyCost &&
+            embeddedItemData.system && 
+            embeddedItemData.system.cost !== undefined) {
+          // Create a modified copy with zero cost for this execution
+          embeddedItemData = foundry.utils.deepClone(this.system.embeddedItem);
+          embeddedItemData.system.cost = 0;
+          Logger.debug(
+            `Using zero-cost embedded item for repetition ${this._currentRepetitionContext.repetitionIndex + 1}`,
+            { actionCardName: this.name, originalCost: this.system.embeddedItem.system.cost },
+            "ACTION_CARD",
+          );
+        }
+
         // Use the action card's actor as the parent, or null if unowned
         const actor = actionCard?.isOwned ? actionCard.parent : null;
         const tempItem = new CONFIG.Item.documentClass(
-          this.system.embeddedItem,
+          embeddedItemData,
           {
             parent: actor,
           },
@@ -234,10 +250,10 @@ export function ItemActionCardMixin(Base) {
 
         // If the item data has effects, create temporary ActiveEffect documents
         if (
-          this.system.embeddedItem.effects &&
-          Array.isArray(this.system.embeddedItem.effects)
+          embeddedItemData.effects &&
+          Array.isArray(embeddedItemData.effects)
         ) {
-          for (const effectData of this.system.embeddedItem.effects) {
+          for (const effectData of embeddedItemData.effects) {
             const tempEffect = new CONFIG.ActiveEffect.documentClass(
               effectData,
               {

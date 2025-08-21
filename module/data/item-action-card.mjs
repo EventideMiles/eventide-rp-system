@@ -80,7 +80,7 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
         initial: 15,
         integer: true,
         min: 1,
-        max: 30,
+        max: 100,
       }),
     });
 
@@ -131,6 +131,61 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
      * Whether to attempt to reduce user inventory when transferring gear from effects column
      */
     schema.attemptInventoryReduction = new fields.BooleanField({
+      required: true,
+      initial: false,
+    });
+
+    /**
+     * Repetition configuration - new action modes feature
+     */
+
+    /**
+     * Number of repetitions to execute (roll formula)
+     */
+    schema.repetitions = new fields.StringField({
+      required: true,
+      initial: "1",
+      blank: false,
+    });
+
+    /**
+     * Whether to re-roll the embedded item for each repetition (attack chains only)
+     */
+    schema.repeatToHit = new fields.BooleanField({
+      required: true,
+      initial: false,
+    });
+
+    /**
+     * Whether damage applies on every repetition (true) or just first success (false)
+     */
+    schema.damageApplication = new fields.BooleanField({
+      required: true,
+      initial: false,
+    });
+
+    /**
+     * Whether status effects apply/intensify on every repetition
+     */
+    schema.statusPerSuccess = new fields.BooleanField({
+      required: true,
+      initial: false,
+    });
+
+    /**
+     * Custom timing override between repetitions in seconds (0 = use system default)
+     */
+    schema.timingOverride = new fields.NumberField({
+      required: true,
+      initial: 0.0,
+      min: 0,
+      nullable: false,
+    });
+
+    /**
+     * Whether to apply resource costs on each repetition (true) or just first execution (false)
+     */
+    schema.costOnRepetition = new fields.BooleanField({
       required: true,
       initial: false,
     });
