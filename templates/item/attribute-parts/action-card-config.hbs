@@ -1,0 +1,133 @@
+<section class="tab action-card-config {{tab.cssClass}}" 
+         data-group="primary" data-tab="config">
+  <div class="eventide-sheet__scrollable-container">
+    
+    {{!-- Repetitions Section --}}
+  <div class="erps-form__section">
+    <h3 class="erps-form__header">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Config.RepetitionsHeader"}}</h3>
+    <div class="grid grid-2col">
+      <div class="erps-form__group">
+        <label class="erps-input-label" for="{{item.id}}-repetitions">
+          {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Repetitions.label"}}
+        </label>
+        <input type="text" 
+               id="{{item.id}}-repetitions"
+               name="system.repetitions" 
+               value="{{item.system.repetitions}}"
+               placeholder="1"
+               class="erps-input"
+               data-dtype="String" />
+        <p class="erps-form__hint">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Repetitions.hint"}}</p>
+      </div>
+      
+      <div class="erps-form__group">
+        <label class="erps-input-label" for="{{item.id}}-timing-override">
+          {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.TimingOverride.label"}}
+        </label>
+        <input type="number" 
+               id="{{item.id}}-timing-override"
+               name="system.timingOverride" 
+               value="{{item.system.timingOverride}}"
+               min="0"
+               step="0.1"
+               class="erps-input"
+               data-dtype="Number" />
+        <p class="erps-form__hint">{{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.TimingOverride.hint"}}}</p>
+      </div>
+    </div>
+  </div>
+
+  {{!-- Boolean Configuration Section --}}
+  <div class="erps-form__section">
+    <h3 class="erps-form__header">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Config.BehaviorHeader"}}</h3>
+    
+    {{!-- Repeat to Hit Toggle --}}
+    <div class="eventide-sheet__toggle-group">
+      <label class="erps-toggles erps-toggles--label-left">
+        <input
+          type="checkbox"
+          class="erps-toggles__input"
+          name="system.repeatToHit"
+          id="system.repeatToHit"
+          {{checked system.repeatToHit}}
+        />
+        <div class="erps-toggles__container">
+          <span class="erps-toggles__label" title='{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.RepeatToHit.hint"}}'>
+            {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.RepeatToHit.label"}}
+          </span>
+          <span class="erps-toggles__track">
+            <span class="erps-toggles__thumb"></span>
+          </span>
+        </div>
+      </label>
+      <p class="erps-form__hint">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.RepeatToHit.hint"}}</p>
+    </div>
+
+    {{!-- Damage Application Toggle --}}
+    <div class="eventide-sheet__toggle-group">
+      <label class="erps-toggles erps-toggles--label-left">
+        <input
+          type="checkbox"
+          class="erps-toggles__input"
+          name="system.damageApplication"
+          id="system.damageApplication"
+          {{checked system.damageApplication}}
+        />
+        <div class="erps-toggles__container">
+          <span class="erps-toggles__label" title='{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.DamageApplication.hint"}}'>
+            {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.DamageApplication.label"}}
+          </span>
+          <span class="erps-toggles__track">
+            <span class="erps-toggles__thumb"></span>
+          </span>
+        </div>
+      </label>
+      <p class="erps-form__hint">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.DamageApplication.hint"}}</p>
+    </div>
+
+    {{!-- Status Per Success Toggle --}}
+    <div class="eventide-sheet__toggle-group">
+      <label class="erps-toggles erps-toggles--label-left">
+        <input
+          type="checkbox"
+          class="erps-toggles__input"
+          name="system.statusPerSuccess"
+          id="system.statusPerSuccess"
+          {{checked system.statusPerSuccess}}
+        />
+        <div class="erps-toggles__container">
+          <span class="erps-toggles__label" title='{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.StatusPerSuccess.hint"}}'>
+            {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.StatusPerSuccess.label"}}
+          </span>
+          <span class="erps-toggles__track">
+            <span class="erps-toggles__thumb"></span>
+          </span>
+        </div>
+      </label>
+      <p class="erps-form__hint">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.StatusPerSuccess.hint"}}</p>
+    </div>
+
+    {{!-- Cost On Repetition Toggle --}}
+    <div class="eventide-sheet__toggle-group">
+      <label class="erps-toggles erps-toggles--label-left">
+        <input
+          type="checkbox"
+          class="erps-toggles__input"
+          name="system.costOnRepetition"
+          id="system.costOnRepetition"
+          {{checked system.costOnRepetition}}
+        />
+        <div class="erps-toggles__container">
+          <span class="erps-toggles__label" title='{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.CostOnRepetition.hint"}}'>
+            {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.CostOnRepetition.label"}}
+          </span>
+          <span class="erps-toggles__track">
+            <span class="erps-toggles__thumb"></span>
+          </span>
+        </div>
+      </label>
+      <p class="erps-form__hint">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.CostOnRepetition.hint"}}</p>
+    </div>
+
+  </div>
+</section>

@@ -141,6 +141,10 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
       template:
         "systems/eventide-rp-system/templates/item/attribute-parts/action-card.hbs",
     },
+    attributesActionCardConfig: {
+      template:
+        "systems/eventide-rp-system/templates/item/attribute-parts/action-card-config.hbs",
+    },
     effects: {
       template: "systems/eventide-rp-system/templates/item/effects.hbs",
     },
@@ -186,7 +190,7 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
         );
         break;
       case "actionCard":
-        options.parts.push("attributesActionCard", "embeddedItems");
+        options.parts.push("attributesActionCard", "attributesActionCardConfig", "embeddedItems");
         break;
     }
   }
@@ -318,13 +322,15 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
       case "attributesCombatPower":
       case "attributesTransformation":
       case "attributesActionCard":
+      case "attributesActionCardConfig":
         // Necessary for preserving active tab on re-render
         context.tab = context.tabs[partId];
         if (
           partId === "attributesCombatPower" ||
           partId === "attributesGear" ||
           partId === "attributesFeature" ||
-          partId === "attributesActionCard"
+          partId === "attributesActionCard" ||
+          partId === "attributesActionCardConfig"
         ) {
           // Add roll type options
           context.rollTypes = EventideSheetHelpers.rollTypeObject;
@@ -446,6 +452,10 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
         case "attributesActionCard":
           tab.id = "attributes";
           tab.label += "Attributes";
+          break;
+        case "attributesActionCardConfig":
+          tab.id = "config";
+          tab.label += "Config";
           break;
       }
       if (this.tabGroups[tabGroup] === tab.id) tab.cssClass = "active";

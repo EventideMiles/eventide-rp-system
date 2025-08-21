@@ -1,0 +1,50 @@
+{{!-- Action Card Execution Failure Chat Card --}}
+<div class="chat-card chat-card--failure">
+  <div class="chat-card__header chat-card__header--failure chat-card__header--image" style="{{style}}">
+    <img src="{{actionCard.img}}" class="chat-card__image--primary" alt="{{actionCard.name}}" title="{{actionCard.name}}" />
+    <div>{{actionCard.name}} - Execution Failed</div>
+  </div>
+
+  {{#if repetitionInfo}}
+    <div class="chat-card__repetition-info">
+      <div class="chat-card__repetition-count">
+        <i class="fas fa-repeat"></i>
+        Repetition {{repetitionInfo.current}} of {{repetitionInfo.total}}
+      </div>
+      {{#if repetitionInfo.completed}}
+        <div class="chat-card__completed-info">
+          <i class="fas fa-check-circle"></i>
+          {{repetitionInfo.completed}} repetitions completed successfully
+        </div>
+      {{/if}}
+    </div>
+  {{/if}}
+
+  <div class="chat-card__failure-reason">
+    <div class="chat-card__failure-icon">
+      <i class="fas fa-exclamation-triangle"></i>
+    </div>
+    <div class="chat-card__failure-details">
+      <div class="chat-card__failure-title">{{failureTitle}}</div>
+      <div class="chat-card__failure-message">{{{failureMessage}}}</div>
+    </div>
+  </div>
+
+  {{#if resourceInfo}}
+    <div class="chat-card__resource-info">
+      <div class="chat-card__resource-required">
+        <span class="chat-card__resource-label">Required:</span>
+        <span class="chat-card__resource-value">{{resourceInfo.required}}</span>
+      </div>
+      <div class="chat-card__resource-available">
+        <span class="chat-card__resource-label">Available:</span>
+        <span class="chat-card__resource-value">{{resourceInfo.available}}</span>
+      </div>
+    </div>
+  {{/if}}
+
+  <div class="chat-card__failure-note">
+    <i class="fas fa-info-circle"></i>
+    Execution stopped due to insufficient resources.
+  </div>
+</div>
