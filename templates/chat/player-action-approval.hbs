@@ -1,0 +1,106 @@
+{{!-- Player Action Approval Request --}}
+<div class="chat-card">
+  <div class="chat-card__header chat-card__header--gm-approval">
+    <i class="fas fa-user-shield"></i>
+    {{localize "EVENTIDE_RP_SYSTEM.Chat.PlayerActionApproval.Title"}}
+  </div>
+
+  <div class="chat-card__content">
+    {{!-- Player Info --}}
+    <div class="chat-card__player-info">
+      <div class="chat-card__info-section">
+        <strong>{{localize "EVENTIDE_RP_SYSTEM.Chat.PlayerActionApproval.Player"}}:</strong>
+        <span>{{playerName}}</span>
+      </div>
+      <div class="chat-card__info-section">
+        <strong>{{localize "EVENTIDE_RP_SYSTEM.Chat.PlayerActionApproval.Actor"}}:</strong>
+        <img src="{{actor.img}}" alt="{{actor.name}}" class="chat-card__actor-image" />
+        <span>{{actor.name}}</span>
+      </div>
+    </div>
+
+    {{!-- Action Card Info --}}
+    <div class="chat-card__action-info">
+      <div class="chat-card__action-header">
+        <img src="{{actionCard.img}}" alt="{{actionCard.name}}" class="chat-card__action-image" />
+        <div>
+          <div class="chat-card__action-name">{{actionCard.name}}</div>
+        </div>
+      </div>
+      <table class="chat-card__action-details">
+        <thead>
+          <tr><th colspan="2" style="text-align: center;">Repetition Information</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>{{localize "EVENTIDE_RP_SYSTEM.Chat.PlayerActionApproval.Repetitions"}}:</strong></td> <td>{{actionCard.repetitions}}</td></tr>
+          <tr><td><strong>{{localize "EVENTIDE_RP_SYSTEM.Chat.PlayerActionApproval.ToHit"}}:</strong></td> <td>{{ifThen actionCard.repeatToHit "✅" "❌" }}</td></tr>
+          <tr><td><strong>{{localize "EVENTIDE_RP_SYSTEM.Chat.PlayerActionApproval.Damage"}}:</strong></td> <td>{{ifThen actionCard.damageApplication "✅" "❌"}}</td></tr>
+          <tr><td><strong>{{localize "EVENTIDE_RP_SYSTEM.Chat.PlayerActionApproval.Status"}}:</strong></td> <td>{{ifThen actionCard.statusPerSuccess "✅" "❌"}}</td></tr>
+          <tr><td><strong>{{localize "EVENTIDE_RP_SYSTEM.Chat.PlayerActionApproval.Cost"}}:</strong></td> <td>{{ifThen actionCard.costOnRepetition "✅" "❌"}}</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    {{!-- Target Info --}}
+    <div class="chat-card__targets-info">
+      <div class="chat-card__targets-header">
+        <strong>{{localize "EVENTIDE_RP_SYSTEM.Chat.PlayerActionApproval.Targets"}}:</strong>
+      </div>
+      <div class="chat-card__targets-list">
+        {{#each targets}}
+          <div class="chat-card__target-item">
+            <img src="{{img}}" alt="{{name}}" class="chat-card__target-image" />
+            <span class="chat-card__target-name">{{name}}</span>
+            {{#unless isOwned}}
+              <span class="chat-card__not-owned-badge">{{localize "EVENTIDE_RP_SYSTEM.Chat.PlayerActionApproval.NotOwned"}}</span>
+            {{/unless}}
+          </div>
+        {{/each}}
+      </div>
+    </div>
+
+    {{!-- Roll Result Info --}}
+    {{#if rollResult}}
+      <div class="chat-card__roll-info">
+        <div class="chat-card__roll-header">
+          <strong>{{localize "EVENTIDE_RP_SYSTEM.Chat.PlayerActionApproval.RollFormula"}}:</strong>
+        </div>
+        <div class="chat-card__roll-details">
+          {{#if rollResult.formula}}
+            <span class="chat-card__roll-formula">{{rollResult.formula}}</span>
+          {{/if}}
+        </div>
+      </div>
+    {{/if}}
+
+    {{!-- GM Controls --}}
+    {{#unless processed}}
+      <div class="chat-card__gm-controls">
+        <div class="chat-card__controls-header">
+          {{localize "EVENTIDE_RP_SYSTEM.Chat.PlayerActionApproval.GMDecision"}}
+        </div>
+        <div class="chat-card__button-group">
+          <button type="button" class="chat-card__apply-button" data-action="approvePlayerAction" data-message-id="{{messageId}}">
+            <i class="fas fa-check"></i>
+            {{localize "EVENTIDE_RP_SYSTEM.Chat.PlayerActionApproval.Approve"}}
+          </button>
+          <button type="button" class="chat-card__discard-button" data-action="denyPlayerAction" data-message-id="{{messageId}}">
+            <i class="fas fa-times"></i>
+            {{localize "EVENTIDE_RP_SYSTEM.Chat.PlayerActionApproval.Deny"}}
+          </button>
+        </div>
+      </div>
+    {{else}}
+      <div class="chat-card__processed-notice">
+        {{#if approved}}
+          <i class="fas fa-check-circle"></i>
+          {{localize "EVENTIDE_RP_SYSTEM.Chat.PlayerActionApproval.Approved"}}
+        {{else}}
+          <i class="fas fa-times-circle"></i>
+          {{localize "EVENTIDE_RP_SYSTEM.Chat.PlayerActionApproval.Denied"}}
+        {{/if}}
+        <span class="chat-card__processed-by">{{localize "EVENTIDE_RP_SYSTEM.Chat.PlayerActionApproval.ProcessedBy"}} {{processedBy}}</span>
+      </div>
+    {{/unless}}
+  </div>
+</div>
