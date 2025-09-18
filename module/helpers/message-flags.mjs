@@ -477,6 +477,162 @@ export class MessageFlags {
   }
 
   /**
+   * Create a player action approval flag structure
+   * @param {Object} options - Options for creating the flag
+   * @param {string} options.actorId - ID of the actor who used the action card
+   * @param {string} options.actionCardId - ID of the action card being used
+   * @param {string} options.playerId - ID of the player requesting approval
+   * @param {string} options.playerName - Name of the player requesting approval
+   * @param {Array} options.targetIds - Array of target actor IDs
+   * @param {Object} options.rollResult - Roll result data for the action
+   * @returns {Object} Player action approval flag structure
+   */
+  static createPlayerActionApprovalFlag({
+    actorId,
+    actionCardId,
+    playerId,
+    playerName,
+    targetIds,
+    rollResult,
+  }) {
+    Logger.methodEntry("MessageFlags", "createPlayerActionApprovalFlag", {
+      actorId,
+      actionCardId,
+      playerId,
+      targetCount: targetIds?.length,
+    });
+
+    const flag = {
+      actorId,
+      actionCardId,
+      playerId,
+      playerName,
+      targetIds: targetIds || [],
+      rollResult,
+      timestamp: Date.now(),
+      processed: false,
+      approved: false,
+      processedBy: null,
+      processedAt: null,
+    };
+
+    Logger.methodExit("MessageFlags", "createPlayerActionApprovalFlag", flag);
+    return flag;
+  }
+
+  /**
+   * Update a player action approval flag's processing state
+   * @param {ChatMessage} message - The chat message containing the flag
+   * @param {boolean} approved - Whether the action was approved
+   * @param {string} processedBy - Name of the GM who processed the request
+   * @returns {Promise<ChatMessage>} The updated message
+   */
+  static async updatePlayerActionApprovalFlag(message, approved, processedBy) {
+    Logger.methodEntry("MessageFlags", "updatePlayerActionApprovalFlag", {
+      messageId: message.id,
+      approved,
+      processedBy,
+    });
+
+    try {
+      const flags = foundry.utils.deepClone(message.flags || {});
+      flags["eventide-rp-system"] = flags["eventide-rp-system"] || {};
+
+      if (!flags["eventide-rp-system"].playerActionApproval) {
+        Logger.warn(
+          "No player action approval section found in flag",
+          { messageId: message.id },
+          "MESSAGE_FLAGS",
+        );
+        return message;
+      }
+
+      // Apply updates
+      flags["eventide-rp-system"].playerActionApproval = {
+        ...flags["eventide-rp-system"].playerActionApproval,
+        processed: true,
+        approved,
+        processedBy,
+        processedAt: Date.now(),
+      };
+
+      const updatedMessage = await message.update({ flags });
+      Logger.methodExit(
+        "MessageFlags",
+        "updatePlayerActionApprovalFlag",
+        updatedMessage,
+      );
+      return updatedMessage;
+    } catch (error) {
+      Logger.error(
+        "Failed to update player action approval flag",
+        error,
+        "MESSAGE_FLAGS",
+      );
+      Logger.methodExit("MessageFlags", "updatePlayerActionApprovalFlag", null);
+      throw error;
+    }
+  }
+
+  /**
+   * Get player action approval flag data from a message
+   * @param {ChatMessage} message - The chat message to extract flags from
+   * @returns {Object|null} Player action approval flag data or null if not found
+   */
+  static getPlayerActionApprovalFlag(message) {
+    try {
+      const flag = message.flags?.["eventide-rp-system"]?.playerActionApproval;
+
+      // Validate flag structure
+      if (flag && this._validatePlayerActionApprovalStructure(flag)) {
+        return flag;
+      }
+
+      return null;
+    } catch (error) {
+      Logger.warn(
+        "Failed to get player action approval flag",
+        error,
+        "MESSAGE_FLAGS",
+      );
+      return null;
+    }
+  }
+
+  /**
+   * Validate the structure of a player action approval flag
+   * @param {Object} flag - The flag to validate
+   * @returns {boolean} True if flag structure is valid
+   * @private
+   */
+  static _validatePlayerActionApprovalStructure(flag) {
+    if (!flag || typeof flag !== "object") return false;
+
+    // Check required fields
+    if (
+      !flag.actorId ||
+      !flag.actionCardId ||
+      !flag.playerId ||
+      !flag.playerName
+    )
+      return false;
+    if (!flag.timestamp || typeof flag.processed !== "boolean") return false;
+    if (!Array.isArray(flag.targetIds)) return false;
+
+    return true;
+  }
+
+  /**
+   * Check if a player action approval message is still pending
+   * @param {ChatMessage} message - The chat message to check
+   * @returns {boolean} True if the approval is still pending
+   */
+  static isPlayerActionApprovalPending(message) {
+    const flag = this.getPlayerActionApprovalFlag(message);
+    return flag && !flag.processed;
+  }
+
+  /**
    * Clean up old GM apply messages that have been fully resolved
    * @param {number} [maxAge=86400000] - Maximum age in milliseconds (default: 24 hours)
    * @returns {Promise<number>} Number of messages cleaned up
@@ -489,13 +645,19 @@ export class MessageFlags {
       let cleanedCount = 0;
 
       // Find messages with GM apply flags
-      const messages = game.messages.filter((message) => {
+      const gmApplyMessages = game.messages.filter((message) => {
         const flag = this.getGMApplyFlag(message);
         return flag && flag.timestamp && flag.timestamp < cutoffTime;
       });
 
-      // Delete fully resolved messages
-      for (const message of messages) {
+      // Find messages with player action approval flags
+      const playerApprovalMessages = game.messages.filter((message) => {
+        const flag = this.getPlayerActionApprovalFlag(message);
+        return flag && flag.timestamp && flag.timestamp < cutoffTime;
+      });
+
+      // Delete fully resolved GM apply messages
+      for (const message of gmApplyMessages) {
         const flag = this.getGMApplyFlag(message);
         const allResolved =
           (!flag.damage || flag.damage.applied) &&
@@ -507,9 +669,22 @@ export class MessageFlags {
         }
       }
 
+      // Delete processed player action approval messages
+      for (const message of playerApprovalMessages) {
+        const flag = this.getPlayerActionApprovalFlag(message);
+        if (flag.processed) {
+          await message.delete();
+          cleanedCount++;
+        }
+      }
+
       Logger.info(
-        `Cleaned up ${cleanedCount} old GM apply messages`,
-        { cleanedCount, totalChecked: messages.length },
+        `Cleaned up ${cleanedCount} old messages`,
+        {
+          cleanedCount,
+          gmApplyMessages: gmApplyMessages.length,
+          playerApprovalMessages: playerApprovalMessages.length,
+        },
         "MESSAGE_FLAGS",
       );
 

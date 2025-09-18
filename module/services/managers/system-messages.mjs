@@ -26,6 +26,8 @@ class ERPSMessageHandler {
         "systems/eventide-rp-system/templates/chat/gear-equip-message.hbs",
       transformation:
         "systems/eventide-rp-system/templates/chat/transformation-message.hbs",
+      playerActionApproval:
+        "systems/eventide-rp-system/templates/chat/player-action-approval.hbs",
     };
   }
 
@@ -654,6 +656,179 @@ class ERPSMessageHandler {
       { soundKey },
     );
   }
+
+  /**
+   * Creates a private message to GMs requesting approval for a player action
+   * @param {Object} options - Options for the approval request
+   * @param {Actor} options.actor - The actor using the action card
+   * @param {Item} options.actionCard - The action card being used
+   * @param {string} options.playerId - ID of the player requesting approval
+   * @param {string} options.playerName - Name of the player requesting approval
+   * @param {Actor[]} options.targets - Array of target actors
+   * @param {Object} options.rollResult - Roll result data
+   * @returns {Promise<ChatMessage>} The created chat message
+   */
+  async createPlayerActionApprovalRequest({
+    actor,
+    actionCard,
+    playerId,
+    playerName,
+    targets,
+    rollResult,
+  }) {
+    Logger.methodEntry("SystemMessages", "createPlayerActionApprovalRequest", {
+      actorId: actor.id,
+      actionCardId: actionCard.id,
+      playerId,
+      targetCount: targets.length,
+    });
+
+    const { MessageFlags } = await import("../../helpers/message-flags.mjs");
+
+    // Prepare target data with ownership information
+    const targetData = targets.map((target) => ({
+      id: target.id,
+      name: target.name,
+      img: target.img,
+      isOwned: target.isOwner,
+    }));
+
+    const data = {
+      playerName,
+      actor: {
+        id: actor.id,
+        name: actor.name,
+        img: actor.img,
+      },
+      actionCard: {
+        id: actionCard.id,
+        name: actionCard.name,
+        img: actionCard.img,
+        description: actionCard.system.description,
+        repetitions: actionCard.system.repetitions,
+        damageApplication: actionCard.system.damageApplication,
+        statusPerSuccess: actionCard.system.statusPerSuccess,
+        costOnRepetition: actionCard.system.costOnRepetition,
+      },
+      targets: targetData,
+      rollResult,
+      processed: false,
+      messageId: null, // Will be set after message creation
+    };
+
+    // Create player action approval flag
+    const approvalFlag = MessageFlags.createPlayerActionApprovalFlag({
+      actorId: actor.id,
+      actionCardId: actionCard.id,
+      playerId,
+      playerName,
+      targetIds: targets.map((t) => t.id),
+      rollResult,
+    });
+
+    // Create the private message to GMs
+    const content = await renderTemplate(
+      this.templates.playerActionApproval,
+      data,
+    );
+
+    const messageData = {
+      content,
+      whisper: game.users.filter((u) => u.isGM).map((u) => u.id),
+      speaker: {
+        alias: `${game.i18n.localize("EVENTIDE_RP_SYSTEM.Chat.PlayerActionApproval.Title")} - ${playerName}`,
+      },
+      flags: {
+        "eventide-rp-system": {
+          playerActionApproval: approvalFlag,
+        },
+      },
+    };
+
+    const message = await ChatMessage.create(messageData);
+
+    // Update the message data with the actual message ID for template context
+    if (message) {
+      const updatedData = { ...data, messageId: message.id };
+      const updatedContent = await renderTemplate(
+        this.templates.playerActionApproval,
+        updatedData,
+      );
+      await message.update({ content: updatedContent });
+    }
+
+    Logger.methodExit(
+      "SystemMessages",
+      "createPlayerActionApprovalRequest",
+      message,
+    );
+    return message;
+  }
+
+  /**
+   * Notifies the player about the result of their action approval request
+   * @param {string} playerId - ID of the player to notify
+   * @param {string} playerName - Name of the player
+   * @param {string} actionCardName - Name of the action card
+   * @param {boolean} approved - Whether the action was approved
+   * @param {string} gmName - Name of the GM who made the decision
+   * @returns {Promise<ChatMessage>} The created notification message
+   */
+  async notifyPlayerActionResult(
+    playerId,
+    playerName,
+    actionCardName,
+    approved,
+    gmName,
+  ) {
+    Logger.methodEntry("SystemMessages", "notifyPlayerActionResult", {
+      playerId,
+      actionCardName,
+      approved,
+      gmName,
+    });
+
+    const actorsInScene = await canvas.scene.tokens
+      .map((token) => token.actor)
+      .filter((actor) => actor !== null);
+    let foundItem = null;
+
+    for await (const actor of actorsInScene) {
+      const item = actor.items.get(actionCardName);
+      if (item) {
+        foundItem = item;
+        break;
+      }
+    }
+
+    const resultKey = approved ? "Approved" : "Denied";
+    const messageContent = game.i18n.format(
+      `EVENTIDE_RP_SYSTEM.Chat.PlayerActionApproval.Result${resultKey}`,
+      {
+        actionCard: foundItem ? foundItem.name : actionCardName,
+        gm: gmName,
+      },
+    );
+
+    const messageData = {
+      content: `<div class="chat-card">
+        <div class="chat-card__header chat-card__header--${approved ? "approved" : "denied"}">
+          <i class="fas fa-${approved ? "check-circle" : "times-circle"}"></i>
+          ${messageContent}
+        </div>
+      </div>`,
+      whisper: [playerId],
+      speaker: {
+        alias: game.i18n.localize(
+          "EVENTIDE_RP_SYSTEM.Chat.PlayerActionApproval.GMDecision",
+        ),
+      },
+    };
+
+    const message = await ChatMessage.create(messageData);
+    Logger.methodExit("SystemMessages", "notifyPlayerActionResult", message);
+    return message;
+  }
 }
 
 // Create a singleton instance
@@ -680,6 +855,10 @@ erpsMessageHandler.createTransformationMessage =
   erpsMessageHandler.createTransformationMessage.bind(erpsMessageHandler);
 erpsMessageHandler.gearEffectMessage =
   erpsMessageHandler.gearEffectMessage.bind(erpsMessageHandler);
+erpsMessageHandler.createPlayerActionApprovalRequest =
+  erpsMessageHandler.createPlayerActionApprovalRequest.bind(erpsMessageHandler);
+erpsMessageHandler.notifyPlayerActionResult =
+  erpsMessageHandler.notifyPlayerActionResult.bind(erpsMessageHandler);
 
 // Export individual functions for backward compatibility
 /**
@@ -795,3 +974,35 @@ export const transformationMessage = (options) =>
  */
 export const gearEffectMessage = (item, target, context) =>
   erpsMessageHandler.gearEffectMessage(item, target, context);
+
+/**
+ * Creates a private message to GMs requesting approval for a player action
+ * @param {Object} options - Options for the approval request
+ * @returns {Promise<ChatMessage>} The created chat message
+ */
+export const createPlayerActionApprovalRequest = (options) =>
+  erpsMessageHandler.createPlayerActionApprovalRequest(options);
+
+/**
+ * Notifies the player about the result of their action approval request
+ * @param {string} playerId - ID of the player to notify
+ * @param {string} playerName - Name of the player
+ * @param {string} actionCardName - Name of the action card
+ * @param {boolean} approved - Whether the action was approved
+ * @param {string} gmName - Name of the GM who made the decision
+ * @returns {Promise<ChatMessage>} The created notification message
+ */
+export const notifyPlayerActionResult = (
+  playerId,
+  playerName,
+  actionCardName,
+  approved,
+  gmName,
+) =>
+  erpsMessageHandler.notifyPlayerActionResult(
+    playerId,
+    playerName,
+    actionCardName,
+    approved,
+    gmName,
+  );

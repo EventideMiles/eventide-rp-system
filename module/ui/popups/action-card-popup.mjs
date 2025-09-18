@@ -757,7 +757,54 @@ export class ActionCardPopup extends EventidePopupHelpers {
         );
       }
 
-      // Execute the action card chain processing with the roll result
+      // Check if the player owns all targets before execution
+      const targets = await erps.utils.getTargetArray();
+      const playerOwnsAllTargets = targets.length === 0 || targets.every(target => target.actor.isOwner);
+
+      if (!playerOwnsAllTargets) {
+        // Player doesn't own all targets - send to GM for approval
+        Logger.debug("Player doesn't own all targets, requesting GM approval", {
+          targetCount: targets.length,
+          playerId: game.user.id,
+          playerName: game.user.name,
+        });
+
+        try {
+          const { erpsMessageHandler } = await import("../../services/managers/system-messages.mjs");
+          
+          await erpsMessageHandler.createPlayerActionApprovalRequest({
+            actor,
+            actionCard: this.item,
+            playerId: game.user.id,
+            playerName: game.user.name,
+            targets: targets.map(t => t.actor),
+            rollResult,
+          });
+
+          ui.notifications.info(
+            game.i18n.localize("EVENTIDE_RP_SYSTEM.Chat.PlayerActionApproval.RequestSent")
+          );
+
+          Logger.info("GM approval request sent for action card", {
+            actionCardId: this.item.id,
+            actorId: actor.id,
+            playerId: game.user.id,
+            targetCount: targets.length,
+          });
+
+          Logger.methodExit("ActionCardPopup", "#onSubmit");
+          return;
+        } catch (error) {
+          Logger.error("Failed to create GM approval request", error);
+          ui.notifications.error(
+            game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.ApprovalRequestFailed")
+          );
+          Logger.methodExit("ActionCardPopup", "#onSubmit");
+          return;
+        }
+      }
+
+      // Player owns all targets - execute normally
       const result = await this.item.executeWithRollResult(actor, rollResult);
 
       if (result.success) {

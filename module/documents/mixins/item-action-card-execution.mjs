@@ -649,9 +649,13 @@ export function ItemActionCardExecutionMixin(Base) {
         const damageResults = [];
 
         // Apply saved damage to each target
+        const currentTargets = await erps.utils.getTargetArray();
+        const playerOwnsAllTargets =
+          currentTargets.length === 0 ||
+          currentTargets.every((target) => target.actor.isOwner);
         for (const target of targetArray) {
           try {
-            if (game.user.isGM) {
+            if (game.user.isGM || playerOwnsAllTargets) {
               // GM applies damage directly
               // Apply vulnerability modifier to damage formula
               const originalFormula = this.system.savedDamage.formula;
@@ -742,8 +746,13 @@ export function ItemActionCardExecutionMixin(Base) {
           this.system.attackChain.statusThreshold || 15,
         );
 
+        const currentTargets = await erps.utils.getTargetArray();
+        const playerOwnsAllTargets =
+          currentTargets.length === 0 ||
+          currentTargets.every((target) => target.actor.isOwner);
+
         if (shouldApplyDamage && this.system.attackChain.damageFormula) {
-          if (game.user.isGM) {
+          if (game.user.isGM || playerOwnsAllTargets) {
             // GM applies damage directly
             try {
               // Apply vulnerability modifier to damage formula
@@ -984,7 +993,11 @@ export function ItemActionCardExecutionMixin(Base) {
                 }
               }
 
-              if (game.user.isGM) {
+              const currentTargets = await erps.utils.getTargetArray();
+              const playerOwnsAllTargets =
+                currentTargets.length === 0 ||
+                currentTargets.every((target) => target.actor.isOwner);
+              if (game.user.isGM || playerOwnsAllTargets) {
                 // GM applies status effects directly
                 try {
                   // Set flag for effects to trigger appropriate message via createItem hook

@@ -142,6 +142,10 @@ const addGMApplyButtonFunctionality = (html, message) => {
           await handleApplyAllActionCardEffects(button, message);
         } else if (action === "discardAllActionCardEffects") {
           await handleDiscardAllActionCardEffects(button, message);
+        } else if (action === "approvePlayerAction") {
+          await handleApprovePlayerAction(button, message);
+        } else if (action === "denyPlayerAction") {
+          await handleDenyPlayerAction(button, message);
         }
       } catch (error) {
         Logger.error("Error handling GM apply action", error, "CHAT_LISTENERS");
@@ -234,6 +238,30 @@ const handleApplyAllActionCardEffects = async (_button, message) => {
 const handleDiscardAllActionCardEffects = async (_button, message) => {
   // Use the GM control manager to discard all effects
   await gmControlManager.discardAllEffects(message);
+};
+
+/**
+ * Handle approving a player action request
+ *
+ * @private
+ * @param {HTMLElement} button - The clicked button
+ * @param {ChatMessage} message - The chat message document
+ */
+const handleApprovePlayerAction = async (button, message) => {
+  // Use the GM control manager to approve the player action
+  await gmControlManager.approvePlayerAction(message, true);
+};
+
+/**
+ * Handle denying a player action request
+ *
+ * @private
+ * @param {HTMLElement} button - The clicked button
+ * @param {ChatMessage} message - The chat message document
+ */
+const handleDenyPlayerAction = async (button, message) => {
+  // Use the GM control manager to deny the player action
+  await gmControlManager.approvePlayerAction(message, false);
 };
 
 /**
