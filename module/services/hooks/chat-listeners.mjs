@@ -31,7 +31,7 @@ export const initChatListeners = () => {
 const setupChatMessageRendering = () => {
   Hooks.on("renderChatMessageHTML", (message, html, _data) => {
     addFormulaToggleFunctionality(html);
-    addGMApplyButtonFunctionality(html, message);
+    addPlayerActionApprovalButtons(html, message);
     addImageZoomFunctionality(html);
     removeRestrictedElementsForNonGMs(html);
   });
@@ -105,24 +105,21 @@ const addImageZoomFunctionality = (html) => {
 };
 
 /**
- * Add GM apply button functionality to chat messages
+ * Add player action approval button functionality to chat messages
  *
  * @private
  * @param {HTMLElement} html - The chat message HTML element
  * @param {ChatMessage} message - The chat message document
  */
-const addGMApplyButtonFunctionality = (html, message) => {
-  // Only show GM apply sections to GMs
+const addPlayerActionApprovalButtons = (html, message) => {
+  // Only show approval buttons to GMs
   if (!game.user.isGM) {
-    html.querySelectorAll(".chat-card__gm-apply-section").forEach((el) => {
-      el.remove();
-    });
     return;
   }
 
-  // Add click event listeners for apply and discard buttons
+  // Add click event listeners for approval buttons
   const actionButtons = html.querySelectorAll(
-    ".chat-card__apply-button, .chat-card__discard-button",
+    "[data-action='approvePlayerAction'], [data-action='denyPlayerAction']",
   );
   actionButtons.forEach((button) => {
     button.addEventListener("click", async (event) => {
@@ -130,25 +127,13 @@ const addGMApplyButtonFunctionality = (html, message) => {
       const action = button.dataset.action;
 
       try {
-        if (action === "applyActionCardDamage") {
-          await handleApplyActionCardDamage(button, message);
-        } else if (action === "applyActionCardStatus") {
-          await handleApplyActionCardStatus(button, message);
-        } else if (action === "discardActionCardDamage") {
-          await handleDiscardActionCardDamage(button, message);
-        } else if (action === "discardActionCardStatus") {
-          await handleDiscardActionCardStatus(button, message);
-        } else if (action === "applyAllActionCardEffects") {
-          await handleApplyAllActionCardEffects(button, message);
-        } else if (action === "discardAllActionCardEffects") {
-          await handleDiscardAllActionCardEffects(button, message);
-        } else if (action === "approvePlayerAction") {
+        if (action === "approvePlayerAction") {
           await handleApprovePlayerAction(button, message);
         } else if (action === "denyPlayerAction") {
           await handleDenyPlayerAction(button, message);
         }
       } catch (error) {
-        Logger.error("Error handling GM apply action", error, "CHAT_LISTENERS");
+        Logger.error("Error handling player action approval", error, "CHAT_LISTENERS");
         ui.notifications.error(
           game.i18n.localize(
             "EVENTIDE_RP_SYSTEM.Errors.ActionCardEffectFailed",
@@ -157,88 +142,8 @@ const addGMApplyButtonFunctionality = (html, message) => {
       }
     });
   });
-
-  // Check target validity on render
-  updateTargetValidity(html, message);
 };
 
-/**
- * Handle applying action card damage
- *
- * @private
- * @param {HTMLElement} button - The clicked button
- * @param {ChatMessage} message - The chat message document
- */
-const handleApplyActionCardDamage = async (button, message) => {
-  const targetId = button.dataset.targetId;
-  const formula = button.dataset.formula;
-  const type = button.dataset.type;
-
-  // Use the GM control manager to apply damage
-  await gmControlManager.applyDamage(message, targetId, formula, type);
-};
-
-/**
- * Handle applying action card status effects
- *
- * @private
- * @param {HTMLElement} button - The clicked button
- * @param {ChatMessage} message - The chat message document
- */
-const handleApplyActionCardStatus = async (button, message) => {
-  const targetId = button.dataset.targetId;
-
-  // Use the GM control manager to apply status effects
-  await gmControlManager.applyStatusEffects(message, targetId);
-};
-
-/**
- * Handle discarding action card damage
- *
- * @private
- * @param {HTMLElement} button - The clicked button
- * @param {ChatMessage} message - The chat message document
- */
-const handleDiscardActionCardDamage = async (button, message) => {
-  // Use the GM control manager to discard damage
-  await gmControlManager.discardDamage(message);
-};
-
-/**
- * Handle discarding action card status effects
- *
- * @private
- * @param {HTMLElement} button - The clicked button
- * @param {ChatMessage} message - The chat message document
- */
-const handleDiscardActionCardStatus = async (button, message) => {
-  // Use the GM control manager to discard status effects
-  await gmControlManager.discardStatusEffects(message);
-};
-
-/**
- * Handle applying all action card effects at once
- *
- * @private
- * @param {HTMLElement} button - The clicked button
- * @param {ChatMessage} message - The chat message document
- */
-const handleApplyAllActionCardEffects = async (_button, message) => {
-  // Use the GM control manager to apply all effects
-  await gmControlManager.applyAllEffects(message);
-};
-
-/**
- * Handle discarding all action card effects at once
- *
- * @private
- * @param {HTMLElement} button - The clicked button
- * @param {ChatMessage} message - The chat message document
- */
-const handleDiscardAllActionCardEffects = async (_button, message) => {
-  // Use the GM control manager to discard all effects
-  await gmControlManager.discardAllEffects(message);
-};
 
 /**
  * Handle approving a player action request
@@ -264,68 +169,6 @@ const handleDenyPlayerAction = async (button, message) => {
   await gmControlManager.approvePlayerAction(message, false);
 };
 
-/**
- * Update the apply state in a chat message
- *
- * @private
- * @param {ChatMessage} message - The chat message document
- * @param {string} type - The type of application ("damage" or "status")
- * @param {Object} state - The new state
- */
-const _updateMessageApplyState = async (message, type, state) => {
-  await MessageFlags.updateGMApplyFlag(message, type, state);
-};
-
-/**
- * Update target validity in GM apply sections
- *
- * @private
- * @param {HTMLElement} html - The chat message HTML element
- * @param {ChatMessage} message - The chat message document
- */
-const updateTargetValidity = async (html, message) => {
-  // Only validate if the message has GM apply sections in the HTML
-  const hasGMApplySections = html.querySelector(".chat-card__gm-apply-section");
-  if (!hasGMApplySections) {
-    return;
-  }
-
-  // Only validate if the message actually has GM apply flags
-  const flag = MessageFlags.getGMApplyFlag(message);
-  if (!flag) {
-    return;
-  }
-
-  // Only validate if there are pending applications
-  if (!MessageFlags.hasPendingApplications(message)) {
-    return;
-  }
-
-  // Throttle validation to prevent excessive calls during rapid renders
-  if (!updateTargetValidity._throttleMap) {
-    updateTargetValidity._throttleMap = new Map();
-  }
-
-  const messageId = message.id;
-  const now = Date.now();
-  const lastValidation = updateTargetValidity._throttleMap.get(messageId);
-
-  // Only validate once per 5 seconds per message
-  if (lastValidation && now - lastValidation < 5000) {
-    return;
-  }
-
-  updateTargetValidity._throttleMap.set(messageId, now);
-
-  // Clean up old throttle entries (older than 1 minute)
-  for (const [id, timestamp] of updateTargetValidity._throttleMap.entries()) {
-    if (now - timestamp > 60000) {
-      updateTargetValidity._throttleMap.delete(id);
-    }
-  }
-
-  await MessageFlags.validateTargets(message);
-};
 
 /**
  * Remove elements that should not be visible to non-GM users
@@ -464,9 +307,5 @@ export const setupChatListeners = () => {
  * Clean up chat listener resources
  */
 export const cleanupChatListeners = () => {
-  // Clear throttle map
-  if (updateTargetValidity._throttleMap) {
-    updateTargetValidity._throttleMap.clear();
-    delete updateTargetValidity._throttleMap;
-  }
+  // No cleanup needed for current implementation
 };

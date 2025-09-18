@@ -62,7 +62,6 @@
       "ApplyStatusFailed": "Failed to apply status effects",
       "DiscardDamageFailed": "Failed to discard damage",
       "DiscardStatusFailed": "Failed to discard status effects",
-      "NoGMApplyData": "No GM apply data found in message",
       "ApplyEffectsFailed": "Failed to apply effects",
       "SomeEffectsFailed": "Some effects failed to apply",
       "DiscardEffectsFailed": "Failed to discard effects",

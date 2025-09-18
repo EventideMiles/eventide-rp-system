@@ -355,19 +355,6 @@
       }
     },
     "Chat": {
-      "GMApply": {
-        "DamageHeader": "GM Apply Damage",
-        "StatusHeader": "GM Apply Status Effects",
-        "Applied": "Applied",
-        "ApplyDamage": "Apply Damage",
-        "ApplyStatus": "Apply Status Effects",
-        "DiscardDamage": "Discard",
-        "DiscardStatus": "Discard",
-        "ApplyAll": "Apply All",
-        "DiscardAll": "Discard All",
-        "MultipleEffectsPending": "Multiple Effects Pending",
-        "TargetUnavailable": "Target no longer available"
-      },
       "PlayerActionApproval": {
         "Title": "GM Approval Required",
         "Player": "Player",
@@ -454,7 +441,6 @@
       "ApplyStatusFailed": "Failed to apply status effects",
       "DiscardDamageFailed": "Failed to discard damage",
       "DiscardStatusFailed": "Failed to discard status effects",
-      "NoGMApplyData": "No GM apply data found in message",
       "ApplyEffectsFailed": "Failed to apply effects",
       "SomeEffectsFailed": "Some effects failed to apply",
       "DiscardEffectsFailed": "Failed to discard effects",
