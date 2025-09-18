@@ -72,6 +72,7 @@
       "ActionCardExecuteFailed": "Failed to execute action card",
       "NoTargetsAttackChain": "No targets selected for attack chain",
       "NoTargetsSavedDamage": "No targets selected for saved damage",
+      "ApprovalRequestFailed": "Failed to send approval request to GM",
       "ActionCardInvalid": "Invalid action card",
       "ActionCardEffectFailed": "Failed to apply action card effect",
       "FailedToCreateActionCard": "Failed to create action card from '{itemName}'",
