@@ -316,6 +316,9 @@
   &__header--equip { background-color: var(--erps-card-header-gear); }
   &__header--transformation { background: var(--erps-card-header-transformation); }
   &__header--transformation-remove { background: var(--erps-card-header-transformation-remove); }
+  &__header--gm-approval { background-color: var(--erps-card-header-gm-approval); }
+  &__header--approved { background-color: var(--erps-card-header-approved); }
+  &__header--denied { background-color: var(--erps-card-header-denied); }
 
   &__description--header {
     text-align: justify;

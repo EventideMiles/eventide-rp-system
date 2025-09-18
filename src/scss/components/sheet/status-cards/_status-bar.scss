@@ -19,6 +19,7 @@
   border: $status-bar-border-width solid themes.color(white, 15);
   box-shadow: inset 0 $shadow-inset-offset 3px themes.color(black, 20);
   position: relative;
+  min-height: 4.2rem;
 
   // Horizontal scrolling with hidden scrollbar
   overflow: auto hidden;

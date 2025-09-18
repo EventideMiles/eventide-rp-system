@@ -1,18 +1,28 @@
 {
   "EVENTIDE_RP_SYSTEM": {
     "Chat": {
-      "GMApply": {
-        "DamageHeader": "GM Apply Damage",
-        "StatusHeader": "GM Apply Status Effects",
-        "Applied": "Applied",
-        "ApplyDamage": "Apply Damage",
-        "ApplyStatus": "Apply Status Effects",
-        "DiscardDamage": "Discard",
-        "DiscardStatus": "Discard",
-        "ApplyAll": "Apply All",
-        "DiscardAll": "Discard All",
-        "MultipleEffectsPending": "Multiple Effects Pending",
-        "TargetUnavailable": "Target no longer available"
+      "PlayerActionApproval": {
+        "Title": "GM Approval Required",
+        "Player": "Player",
+        "Actor": "Actor",
+        "ActionCard": "Action Card",
+        "Targets": "Targets",
+        "NotOwned": "Not Owned",
+        "RollFormula": "Roll Formula",
+        "GMDecision": "GM Decision",
+        "Approve": "Approve",
+        "Deny": "Deny",
+        "Approved": "Approved",
+        "Denied": "Denied",
+        "ProcessedBy": "by",
+        "RequestSent": "Approval request sent to GM",
+        "ResultApproved": "Your action '{actionCard}' has been approved by {gm}",
+        "ResultDenied": "Your action '{actionCard}' has been denied by {gm}",
+        "Repetitions": "Repetitons",
+        "ToHit": "To Hit",
+        "Damage": "Damage",
+        "Status": "Status",
+        "Cost": "Cost"
       }
     }
   }

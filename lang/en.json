@@ -355,18 +355,28 @@
       }
     },
     "Chat": {
-      "GMApply": {
-        "DamageHeader": "GM Apply Damage",
-        "StatusHeader": "GM Apply Status Effects",
-        "Applied": "Applied",
-        "ApplyDamage": "Apply Damage",
-        "ApplyStatus": "Apply Status Effects",
-        "DiscardDamage": "Discard",
-        "DiscardStatus": "Discard",
-        "ApplyAll": "Apply All",
-        "DiscardAll": "Discard All",
-        "MultipleEffectsPending": "Multiple Effects Pending",
-        "TargetUnavailable": "Target no longer available"
+      "PlayerActionApproval": {
+        "Title": "GM Approval Required",
+        "Player": "Player",
+        "Actor": "Actor",
+        "ActionCard": "Action Card",
+        "Targets": "Targets",
+        "NotOwned": "Not Owned",
+        "RollFormula": "Roll Formula",
+        "GMDecision": "GM Decision",
+        "Approve": "Approve",
+        "Deny": "Deny",
+        "Approved": "Approved",
+        "Denied": "Denied",
+        "ProcessedBy": "by",
+        "RequestSent": "Approval request sent to GM",
+        "ResultApproved": "Your action '{actionCard}' has been approved by {gm}",
+        "ResultDenied": "Your action '{actionCard}' has been denied by {gm}",
+        "Repetitions": "Repetitons",
+        "ToHit": "To Hit",
+        "Damage": "Damage",
+        "Status": "Status",
+        "Cost": "Cost"
       }
     },
     "Errors": {
@@ -431,7 +441,6 @@
       "ApplyStatusFailed": "Failed to apply status effects",
       "DiscardDamageFailed": "Failed to discard damage",
       "DiscardStatusFailed": "Failed to discard status effects",
-      "NoGMApplyData": "No GM apply data found in message",
       "ApplyEffectsFailed": "Failed to apply effects",
       "SomeEffectsFailed": "Some effects failed to apply",
       "DiscardEffectsFailed": "Failed to discard effects",
@@ -441,6 +450,7 @@
       "ActionCardExecuteFailed": "Failed to execute action card",
       "NoTargetsAttackChain": "No targets selected for attack chain",
       "NoTargetsSavedDamage": "No targets selected for saved damage",
+      "ApprovalRequestFailed": "Failed to send approval request to GM",
       "ActionCardInvalid": "Invalid action card",
       "ActionCardEffectFailed": "Failed to apply action card effect",
       "FailedToCreateActionCard": "Failed to create action card from '{itemName}'",

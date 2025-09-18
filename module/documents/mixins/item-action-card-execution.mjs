@@ -1,6 +1,4 @@
 import { Logger } from "../../services/logger.mjs";
-import { MessageFlags } from "../../helpers/_module.mjs";
-import { ERPSRollUtilities } from "../../utils/_module.mjs";
 import { InventoryUtils } from "../../helpers/_module.mjs";
 import { StatusIntensification } from "../../helpers/status-intensification.mjs";
 
@@ -651,39 +649,27 @@ export function ItemActionCardExecutionMixin(Base) {
         // Apply saved damage to each target
         for (const target of targetArray) {
           try {
-            if (game.user.isGM) {
-              // GM applies damage directly
-              // Apply vulnerability modifier to damage formula
-              const originalFormula = this.system.savedDamage.formula;
-              const formula =
-                this.system.savedDamage.type !== "heal" &&
-                target.actor.system.hiddenAbilities.vuln.total > 0
-                  ? `${originalFormula} + ${Math.abs(target.actor.system.hiddenAbilities.vuln.total)}`
-                  : originalFormula;
+            // Apply damage directly (GM or player owns all targets)
+            // Apply vulnerability modifier to damage formula
+            const originalFormula = this.system.savedDamage.formula;
+            const formula =
+              this.system.savedDamage.type !== "heal" &&
+              target.actor.system.hiddenAbilities.vuln.total > 0
+                ? `${originalFormula} + ${Math.abs(target.actor.system.hiddenAbilities.vuln.total)}`
+                : originalFormula;
 
-              const damageRoll = await target.actor.damageResolve({
-                formula,
-                label: this.name,
-                description:
-                  this.system.description ||
-                  this.system.savedDamage.description,
-                type: this.system.savedDamage.type,
-                img: this._getEffectiveImage(),
-                bgColor: this.system.bgColor,
-                textColor: this.system.textColor,
-              });
+            const damageRoll = await target.actor.damageResolve({
+              formula,
+              label: this.name,
+              description:
+                this.system.description || this.system.savedDamage.description,
+              type: this.system.savedDamage.type,
+              img: this._getEffectiveImage(),
+              bgColor: this.system.bgColor,
+              textColor: this.system.textColor,
+            });
 
-              damageResults.push({ target: target.actor, roll: damageRoll });
-            } else {
-              // Player creates GM apply card - vulnerability will be applied by GM
-              const gmApplyResult = {
-                target: target.actor,
-                needsGMApplication: true,
-                formula: this.system.savedDamage.formula,
-                type: this.system.savedDamage.type,
-              };
-              damageResults.push(gmApplyResult);
-            }
+            damageResults.push({ target: target.actor, roll: damageRoll });
           } catch (damageError) {
             Logger.error(
               "Failed to apply saved damage",
@@ -743,45 +729,34 @@ export function ItemActionCardExecutionMixin(Base) {
         );
 
         if (shouldApplyDamage && this.system.attackChain.damageFormula) {
-          if (game.user.isGM) {
-            // GM applies damage directly
-            try {
-              // Apply vulnerability modifier to damage formula
-              const originalFormula = this.system.attackChain.damageFormula;
-              const formula =
-                this.system.attackChain.damageType !== "heal" &&
-                result.target.system.hiddenAbilities.vuln.total > 0
-                  ? `${originalFormula} + ${Math.abs(result.target.system.hiddenAbilities.vuln.total)}`
-                  : originalFormula;
+          // Apply damage directly (GM or player owns all targets)
+          try {
+            // Apply vulnerability modifier to damage formula
+            const originalFormula = this.system.attackChain.damageFormula;
+            const formula =
+              this.system.attackChain.damageType !== "heal" &&
+              result.target.system.hiddenAbilities.vuln.total > 0
+                ? `${originalFormula} + ${Math.abs(result.target.system.hiddenAbilities.vuln.total)}`
+                : originalFormula;
 
-              const damageRoll = await result.target.damageResolve({
-                formula,
-                label: this.name,
-                description:
-                  this.system.description ||
-                  `Attack chain damage from ${this.name}`,
-                type: this.system.attackChain.damageType,
-                img: this._getEffectiveImage(),
-                bgColor: this.system.bgColor,
-                textColor: this.system.textColor,
-              });
-              damageResults.push({ target: result.target, roll: damageRoll });
-            } catch (damageError) {
-              Logger.error(
-                "Failed to apply chain damage",
-                damageError,
-                "ACTION_CARD",
-              );
-            }
-          } else {
-            // Player creates GM apply card - vulnerability will be applied by GM
-            const gmApplyResult = {
-              target: result.target,
-              needsGMApplication: true,
-              formula: this.system.attackChain.damageFormula,
+            const damageRoll = await result.target.damageResolve({
+              formula,
+              label: this.name,
+              description:
+                this.system.description ||
+                `Attack chain damage from ${this.name}`,
               type: this.system.attackChain.damageType,
-            };
-            damageResults.push(gmApplyResult);
+              img: this._getEffectiveImage(),
+              bgColor: this.system.bgColor,
+              textColor: this.system.textColor,
+            });
+            damageResults.push({ target: result.target, roll: damageRoll });
+          } catch (damageError) {
+            Logger.error(
+              "Failed to apply chain damage",
+              damageError,
+              "ACTION_CARD",
+            );
           }
         }
       }
@@ -984,95 +959,27 @@ export function ItemActionCardExecutionMixin(Base) {
                 }
               }
 
-              if (game.user.isGM) {
-                // GM applies status effects directly
-                try {
-                  // Set flag for effects to trigger appropriate message via createItem hook
-                  if (
-                    effectData.type === "gear" ||
-                    effectData.type === "status"
-                  ) {
-                    effectData.flags = effectData.flags || {};
-                    effectData.flags["eventide-rp-system"] =
-                      effectData.flags["eventide-rp-system"] || {};
-                    effectData.flags["eventide-rp-system"].isEffect = true;
-                  }
-
-                  // Ensure gear effects are equipped when transferred
-                  if (effectData.type === "gear") {
-                    effectData.system = effectData.system || {};
-                    effectData.system.equipped = true;
-                    effectData.system.quantity = 1;
-
-                    Logger.debug(
-                      `Setting gear effect "${effectData.name}" to equipped state for transfer`,
-                      {
-                        targetName: result.target.name,
-                        gearName: effectData.name,
-                        equipped: true,
-                      },
-                      "ACTION_CARD",
-                    );
-                  }
-
-                  // Apply or intensify the effect on the target
-                  const applicationResult =
-                    await StatusIntensification.applyOrIntensifyStatus(
-                      result.target,
-                      effectData,
-                    );
-
-                  // Wait for execution delay after applying status effects
-                  // Delay except on final repetition (where sequence ends)
-                  if (!disableDelays && !isFinalRepetition) {
-                    await this._waitForExecutionDelay();
-                  }
-
-                  // Messages are handled by createItem hook
-                  statusResults.push({
-                    target: result.target,
-                    effect: effectData,
-                    applied: applicationResult.applied,
-                    intensified: applicationResult.intensified,
-                  });
-
-                  Logger.info(
-                    `${applicationResult.intensified ? "Intensified" : "Applied"} effect "${effectData.name}" to target "${result.target.name}"`,
-                    {
-                      statusCondition: this.system.attackChain.statusCondition,
-                      statusThreshold: this.system.attackChain.statusThreshold,
-                      rollTotal: rollResult?.total || 0,
-                      equipped:
-                        effectData.type === "gear"
-                          ? effectData.system.equipped
-                          : "N/A",
-                      intensified: applicationResult.intensified,
-                    },
-                    "ACTION_CARD",
-                  );
-                } catch (error) {
-                  Logger.error(
-                    `Failed to apply effect "${effectData.name}" to target "${result.target.name}"`,
-                    error,
-                    "ACTION_CARD",
-                  );
-
-                  // Add error to results
-                  statusResults.push({
-                    target: result.target,
-                    effect: effectData,
-                    applied: false,
-                    error: error.message,
-                  });
+              // Apply status effects directly (GM or player owns all targets)
+              try {
+                // Set flag for effects to trigger appropriate message via createItem hook
+                if (
+                  effectData.type === "gear" ||
+                  effectData.type === "status"
+                ) {
+                  effectData.flags = effectData.flags || {};
+                  effectData.flags["eventide-rp-system"] =
+                    effectData.flags["eventide-rp-system"] || {};
+                  effectData.flags["eventide-rp-system"].isEffect = true;
                 }
-              } else {
-                // Player creates GM apply card - also ensure gear is equipped in the data
+
+                // Ensure gear effects are equipped when transferred
                 if (effectData.type === "gear") {
                   effectData.system = effectData.system || {};
                   effectData.system.equipped = true;
+                  effectData.system.quantity = 1;
 
                   Logger.debug(
-                    `Setting gear effect "${effectData.name}" to equipped state for GM application`,
+                    `Setting gear effect "${effectData.name}" to equipped state for transfer`,
                     {
                       targetName: result.target.name,
                       gearName: effectData.name,
@@ -1082,12 +989,55 @@ export function ItemActionCardExecutionMixin(Base) {
                   );
                 }
 
-                const gmApplyResult = {
+                // Apply or intensify the effect on the target
+                const applicationResult =
+                  await StatusIntensification.applyOrIntensifyStatus(
+                    result.target,
+                    effectData,
+                  );
+
+                // Wait for execution delay after applying status effects
+                // Delay except on final repetition (where sequence ends)
+                if (!disableDelays && !isFinalRepetition) {
+                  await this._waitForExecutionDelay();
+                }
+
+                // Messages are handled by createItem hook
+                statusResults.push({
                   target: result.target,
                   effect: effectData,
-                  needsGMApplication: true,
-                };
-                statusResults.push(gmApplyResult);
+                  applied: applicationResult.applied,
+                  intensified: applicationResult.intensified,
+                });
+
+                Logger.info(
+                  `${applicationResult.intensified ? "Intensified" : "Applied"} effect "${effectData.name}" to target "${result.target.name}"`,
+                  {
+                    statusCondition: this.system.attackChain.statusCondition,
+                    statusThreshold: this.system.attackChain.statusThreshold,
+                    rollTotal: rollResult?.total || 0,
+                    equipped:
+                      effectData.type === "gear"
+                        ? effectData.system.equipped
+                        : "N/A",
+                    intensified: applicationResult.intensified,
+                  },
+                  "ACTION_CARD",
+                );
+              } catch (error) {
+                Logger.error(
+                  `Failed to apply effect "${effectData.name}" to target "${result.target.name}"`,
+                  error,
+                  "ACTION_CARD",
+                );
+
+                // Add error to results
+                statusResults.push({
+                  target: result.target,
+                  effect: effectData,
+                  applied: false,
+                  error: error.message,
+                });
               }
             }
           }
@@ -1107,269 +1057,6 @@ export function ItemActionCardExecutionMixin(Base) {
           null,
         );
         throw error;
-      }
-    }
-
-    /**
-     * Create GM apply messages for attack chain results
-     * @param {Object} chainResult - The attack chain result
-     * @param {Actor} actor - The actor who executed the action card
-     * @returns {Promise<ChatMessage[]>} Array of created messages
-     */
-    async createAttackChainMessage(chainResult, actor) {
-      // Only action cards can create messages
-      if (this.type !== "actionCard") {
-        return [];
-      }
-
-      Logger.methodEntry(
-        "ItemActionCardExecutionMixin",
-        "createAttackChainMessage",
-        {
-          actorName: actor?.name,
-          actionCardName: this.name,
-        },
-      );
-
-      try {
-        // Check if there are any results that need GM application
-        const needsGMDamage = chainResult.damageResults?.some(
-          (result) => result.needsGMApplication,
-        );
-        const needsGMStatus = chainResult.statusResults?.some(
-          (result) => result.needsGMApplication,
-        );
-
-        if (!needsGMDamage && !needsGMStatus) {
-          Logger.debug(
-            "No GM application needed for attack chain",
-            { actionCardName: this.name },
-            "ACTION_CARD",
-          );
-          return [];
-        }
-
-        // Group results by target for cleaner messages
-        const targetGroups = new Map();
-
-        // Process damage results
-        if (needsGMDamage) {
-          chainResult.damageResults
-            .filter((result) => result.needsGMApplication)
-            .forEach((result) => {
-              const targetId = result.target.id;
-              if (!targetGroups.has(targetId)) {
-                targetGroups.set(targetId, {
-                  target: result.target,
-                  damage: null,
-                  status: null,
-                });
-              }
-              targetGroups.get(targetId).damage = {
-                targetId: result.target.id,
-                targetName: result.target.name,
-                formula: result.formula,
-                type: result.type,
-              };
-            });
-        }
-
-        // Process status results
-        if (needsGMStatus) {
-          chainResult.statusResults
-            .filter((result) => result.needsGMApplication)
-            .forEach((result) => {
-              const targetId = result.target.id;
-              if (!targetGroups.has(targetId)) {
-                targetGroups.set(targetId, {
-                  target: result.target,
-                  damage: null,
-                  status: null,
-                });
-              }
-
-              const targetGroup = targetGroups.get(targetId);
-              if (!targetGroup.status) {
-                targetGroup.status = {
-                  targetId: result.target.id,
-                  targetName: result.target.name,
-                  effects: [],
-                };
-              }
-              targetGroup.status.effects.push(result.effect);
-            });
-        }
-
-        // Create messages
-        const createdMessages = [];
-        for (const [_targetId, group] of targetGroups) {
-          const message = await this._createGMApplyMessage(
-            group,
-            actor,
-            "attack chain",
-          );
-          if (message) {
-            createdMessages.push(message);
-          }
-        }
-
-        return createdMessages;
-      } catch (error) {
-        Logger.error(
-          "Failed to create attack chain message",
-          error,
-          "ACTION_CARD",
-        );
-        return [];
-      }
-    }
-
-    /**
-     * Create GM apply messages for saved damage results
-     * @param {Object} savedDamageResult - The saved damage result
-     * @param {Actor} actor - The actor who executed the action card
-     * @returns {Promise<ChatMessage[]>} Array of created messages
-     */
-    async createSavedDamageMessage(savedDamageResult, actor) {
-      // Only action cards can create messages
-      if (this.type !== "actionCard") {
-        return [];
-      }
-
-      Logger.methodEntry(
-        "ItemActionCardExecutionMixin",
-        "createSavedDamageMessage",
-        {
-          actorName: actor?.name,
-          actionCardName: this.name,
-        },
-      );
-
-      try {
-        // Check if there are any results that need GM application
-        const needsGMDamage = savedDamageResult.damageResults?.some(
-          (result) => result.needsGMApplication,
-        );
-
-        if (!needsGMDamage) {
-          Logger.debug(
-            "No GM application needed for saved damage",
-            { actionCardName: this.name },
-            "ACTION_CARD",
-          );
-          return [];
-        }
-
-        // Create a message for each target that needs GM application
-        const createdMessages = [];
-        const damageTargets = savedDamageResult.damageResults.filter(
-          (result) => result.needsGMApplication,
-        );
-
-        for (const result of damageTargets) {
-          const group = {
-            target: result.target,
-            damage: {
-              targetId: result.target.id,
-              targetName: result.target.name,
-              formula: result.formula,
-              type: result.type,
-            },
-            status: null,
-          };
-
-          const message = await this._createGMApplyMessage(
-            group,
-            actor,
-            "saved damage",
-          );
-          if (message) {
-            createdMessages.push(message);
-          }
-        }
-
-        return createdMessages;
-      } catch (error) {
-        Logger.error(
-          "Failed to create saved damage message",
-          error,
-          "ACTION_CARD",
-        );
-        return [];
-      }
-    }
-
-    /**
-     * Create a single GM apply message
-     * @private
-     * @param {Object} group - The target group with damage and status data
-     * @param {Actor} actor - The actor who executed the action card
-     * @param {string} context - Context string for the message
-     * @returns {Promise<ChatMessage|null>} The created message or null
-     */
-    async _createGMApplyMessage(group, actor, context) {
-      try {
-        // Create GM apply flag
-        const gmApplyFlag = MessageFlags.createGMApplyFlag({
-          damage: group.damage,
-          status: group.status,
-          actionCardId: this.id,
-          actorId: actor.id,
-        });
-
-        // Prepare message data
-        const messageData = {
-          content: await renderTemplate(
-            "systems/eventide-rp-system/templates/chat/roll-message.hbs",
-            {
-              item: this,
-              actor,
-              label: `${this.name} - GM Apply Required`,
-              description: `${actor.name} used ${this.name} (${context}). GM approval required for effects on ${group.target.name}.`,
-              gmApplySection: gmApplyFlag,
-              messageId: null, // Will be set after message creation
-              bgColor: this.system.bgColor,
-              textColor: this.system.textColor,
-            },
-          ),
-          speaker: ERPSRollUtilities.getSpeaker(
-            actor,
-            "EVENTIDE_RP_SYSTEM.MessageHeaders.ActionCard",
-          ),
-          flags: {
-            "eventide-rp-system": {
-              gmApplySection: gmApplyFlag,
-            },
-          },
-          whisper: game.users.filter((u) => u.isGM).map((u) => u.id),
-        };
-
-        // Create the message
-        const message = await ChatMessage.create(messageData);
-
-        // Update the message with its own ID for template reference
-        if (message) {
-          await message.update({
-            content: await renderTemplate(
-              "systems/eventide-rp-system/templates/chat/roll-message.hbs",
-              {
-                item: this,
-                actor,
-                label: `${this.name} - GM Apply Required`,
-                description: `${actor.name} used ${this.name} (${context}). GM approval required for effects on ${group.target.name}.`,
-                gmApplySection: gmApplyFlag,
-                messageId: message.id,
-                bgColor: this.system.bgColor,
-                textColor: this.system.textColor,
-              },
-            ),
-          });
-        }
-
-        return message;
-      } catch (error) {
-        Logger.error("Failed to create GM apply message", error, "ACTION_CARD");
-        return null;
       }
     }
 

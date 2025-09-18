@@ -76,10 +76,10 @@ class GMControlManager {
       let damageRoll;
       try {
         // Apply vulnerability modifier to damage formula
-        const finalFormula = type !== "heal" &&
-          target.system.hiddenAbilities.vuln.total > 0
-          ? `${formula} + ${Math.abs(target.system.hiddenAbilities.vuln.total)}`
-          : formula;
+        const finalFormula =
+          type !== "heal" && target.system.hiddenAbilities.vuln.total > 0
+            ? `${formula} + ${Math.abs(target.system.hiddenAbilities.vuln.total)}`
+            : formula;
 
         damageRoll = await target.damageResolve({
           formula: finalFormula,
@@ -644,16 +644,16 @@ class GMControlManager {
       const cutoffTime = Date.now() - maxAge;
       let cleanedCount = 0;
 
-      // Find all resolved GM apply messages
+      // Find all resolved player action approval messages (backup cleanup)
+      // Note: These should normally be auto-deleted immediately when processed,
+      // but this serves as a backup cleanup for any that might have failed to delete
       const messages = game.messages.filter((message) => {
-        const flag = MessageFlags.getGMApplyFlag(message);
+        const flag = MessageFlags.getPlayerActionApprovalFlag(message);
         if (!flag || !flag.timestamp) return false;
 
         // Check if message is old enough and fully resolved
         const isOldEnough = flag.timestamp < cutoffTime;
-        const isFullyResolved =
-          (!flag.damage || flag.damage.applied) &&
-          (!flag.status || flag.status.applied);
+        const isFullyResolved = flag.processed;
 
         return isOldEnough && isFullyResolved;
       });
@@ -697,6 +697,207 @@ class GMControlManager {
       Logger.error("Failed to bulk cleanup messages", error, "GM_CONTROL");
       Logger.methodExit("GMControlManager", "bulkCleanupResolvedMessages", 0);
       return 0;
+    }
+  }
+
+  /**
+   * Process a player action approval request (approve or deny)
+   * @param {ChatMessage} message - The message containing the player action approval flag
+   * @param {boolean} approved - Whether the action was approved
+   * @returns {Promise<boolean>} True if processing was successful
+   */
+  async approvePlayerAction(message, approved) {
+    Logger.methodEntry("GMControlManager", "approvePlayerAction", {
+      messageId: message.id,
+      approved,
+      gmName: game.user.name,
+    });
+
+    try {
+      // Get player action approval flag
+      const flag = MessageFlags.getPlayerActionApprovalFlag(message);
+      if (!flag) {
+        ui.notifications.warn("No player action approval found in message");
+        Logger.methodExit("GMControlManager", "approvePlayerAction", false);
+        return false;
+      }
+
+      // Check if already processed
+      if (flag.processed) {
+        ui.notifications.warn("This action has already been processed");
+        Logger.methodExit("GMControlManager", "approvePlayerAction", false);
+        return false;
+      }
+
+      // Update the message flag to mark as processed
+      await MessageFlags.updatePlayerActionApprovalFlag(
+        message,
+        approved,
+        game.user.name,
+      );
+
+      // Delete the approval message immediately since it's no longer actionable
+      try {
+        await message.delete();
+        Logger.info(
+          "Auto-deleted processed player action approval message",
+          { 
+            messageId: message.id, 
+            approved, 
+            processedBy: game.user.name 
+          },
+          "GM_CONTROL"
+        );
+      } catch (deleteError) {
+        Logger.warn(
+          "Failed to auto-delete approval message", 
+          { 
+            error: deleteError.message,
+            messageId: message.id 
+          }, 
+          "GM_CONTROL"
+        );
+        // Don't fail the entire operation if deletion fails
+      }
+
+      // Notify the player of the result
+      const { notifyPlayerActionResult } = await import(
+        "./system-messages.mjs"
+      );
+      await notifyPlayerActionResult(
+        flag.playerId,
+        flag.playerName,
+        flag.actionCardId,
+        approved,
+        game.user.name,
+      );
+
+      if (approved) {
+        // Execute the action as if the GM initiated it
+        try {
+          // Get the actor and action card
+          const actor = game.actors.get(flag.actorId);
+          const actionCard = actor?.items.get(flag.actionCardId);
+
+          if (!actor || !actionCard) {
+            ui.notifications.error(
+              "Unable to find actor or action card for execution",
+            );
+            Logger.warn("Missing actor or action card for approved action", {
+              actorId: flag.actorId,
+              actionCardId: flag.actionCardId,
+            });
+            Logger.methodExit("GMControlManager", "approvePlayerAction", false);
+            return false;
+          }
+
+          // Set targets based on the stored target IDs
+          const targetTokens = [];
+          for (const targetId of flag.targetIds) {
+            const targetActor = game.actors.get(targetId);
+            if (targetActor) {
+              // Find tokens for this actor on the current scene
+              const tokens =
+                canvas.tokens?.placeables?.filter(
+                  (t) => t.actor?.id === targetId,
+                ) || [];
+              if (tokens.length > 0) {
+                targetTokens.push(tokens[0]); // Use the first token found
+              }
+            }
+          }
+
+          // Set targets for the execution using Foundry v13 API
+          let targetsSet = false;
+          if (targetTokens.length > 0) {
+            try {
+              // Use the correct Foundry v13 targeting API
+              canvas.tokens.setTargets(targetTokens.map((t) => t.id));
+              targetsSet = true;
+              Logger.debug(
+                "Successfully set targets for GM approval execution",
+                {
+                  targetCount: targetTokens.length,
+                  targetTokenIds: targetTokens.map((t) => t.id),
+                },
+              );
+            } catch (targetError) {
+              Logger.warn(
+                "Failed to set targets programmatically, proceeding without targeting",
+                {
+                  error: targetError.message,
+                  targetCount: targetTokens.length,
+                },
+              );
+              // Don't fail the entire operation - action cards can work without canvas targeting
+              // if the target information is passed directly to the execution
+            }
+          }
+
+          // Execute the action card with the stored roll result
+          const result = await actionCard.executeWithRollResult(
+            actor,
+            flag.rollResult,
+          );
+
+          if (result.success) {
+            ui.notifications.info(
+              `Action "${actionCard.name}" executed successfully for ${flag.playerName}`,
+            );
+            Logger.info("Player action executed by GM approval", {
+              actionCardId: flag.actionCardId,
+              actorId: flag.actorId,
+              playerId: flag.playerId,
+              gmId: game.user.id,
+              targetsSet,
+            });
+          } else {
+            ui.notifications.warn(`Action execution failed: ${result.reason}`);
+            Logger.warn("GM-approved action execution failed", {
+              actionCardId: flag.actionCardId,
+              reason: result.reason,
+            });
+          }
+
+          // Clear targets if they were set
+          if (targetsSet) {
+            try {
+              canvas.tokens.setTargets([]);
+              Logger.debug(
+                "Successfully cleared targets after GM approval execution",
+              );
+            } catch (clearError) {
+              Logger.warn("Failed to clear targets after execution", {
+                error: clearError.message,
+              });
+              // Non-critical error - don't fail the operation
+            }
+          }
+        } catch (execError) {
+          Logger.error("Failed to execute approved player action", execError);
+          ui.notifications.error("Failed to execute the approved action");
+          Logger.methodExit("GMControlManager", "approvePlayerAction", false);
+          return false;
+        }
+      } else {
+        // Action was denied
+        ui.notifications.info(
+          `Action request from ${flag.playerName} has been denied`,
+        );
+        Logger.info("Player action denied by GM", {
+          actionCardId: flag.actionCardId,
+          playerId: flag.playerId,
+          gmId: game.user.id,
+        });
+      }
+
+      Logger.methodExit("GMControlManager", "approvePlayerAction", true);
+      return true;
+    } catch (error) {
+      Logger.error("Failed to process player action approval", error);
+      ui.notifications.error("Failed to process action approval");
+      Logger.methodExit("GMControlManager", "approvePlayerAction", false);
+      return false;
     }
   }
 
