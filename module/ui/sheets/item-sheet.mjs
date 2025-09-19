@@ -88,6 +88,8 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
       deleteCharacterEffect: this._deleteCharacterEffect,
       toggleEffectDisplay: this._toggleEffectDisplay,
       removeCombatPower: this._removeCombatPower,
+      removeActionCard: this._removeActionCard,
+      editEmbeddedActionCard: this._editEmbeddedActionCard,
       onDiceAdjustmentChange: this._onDiceAdjustmentChange,
       clearEmbeddedItem: this._clearEmbeddedItem,
 
@@ -156,6 +158,10 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
       template:
         "systems/eventide-rp-system/templates/item/embedded-combat-powers.hbs",
     },
+    embeddedActionCards: {
+      template:
+        "systems/eventide-rp-system/templates/item/embedded-action-cards.hbs",
+    },
     embeddedItems: {
       template: "systems/eventide-rp-system/templates/item/embedded-items.hbs",
     },
@@ -186,8 +192,11 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
         options.parts.push(
           "attributesTransformation",
           "embeddedCombatPowers",
+          "embeddedActionCards",
           "characterEffects",
         );
+        // Increase width for transformations due to additional content (combat powers + action cards)
+        options.position = { ...options.position, width: 1000 };
         break;
       case "actionCard":
         options.parts.push("attributesActionCard", "attributesActionCardConfig", "embeddedItems");
@@ -369,6 +378,12 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
         context.embeddedCombatPowers =
           this.item.system.getEmbeddedCombatPowers();
         break;
+      case "embeddedActionCards":
+        context.tab = context.tabs[partId];
+        // Get embedded action cards as temporary items
+        context.embeddedActionCards =
+          this.item.system.getEmbeddedActionCards();
+        break;
       case "embeddedItems":
         context.tab = context.tabs[partId];
         // Get embedded item and effects as temporary items
@@ -440,6 +455,10 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
         case "embeddedCombatPowers":
           tab.id = "embeddedCombatPowers";
           tab.label += "CombatPowers";
+          break;
+        case "embeddedActionCards":
+          tab.id = "embeddedActionCards";
+          tab.label += "ActionCards";
           break;
         case "embeddedItems":
           tab.id = "embeddedItems";

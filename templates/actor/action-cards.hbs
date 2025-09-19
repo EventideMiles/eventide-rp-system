@@ -1,5 +1,11 @@
 {{! Action Cards Tab }}
 <section class='tab action-cards {{tab.cssClass}}' data-group='primary' data-tab='actionCards'>
+  {{#if (and isTransformed hasTransformationActionCards)}}
+    <div class="erps-transformation-indicator">
+      <i class="fas fa-mask"></i>
+      <span>{{localize "EVENTIDE_RP_SYSTEM.Actor.ActionCards.TransformationActionCards"}}</span>
+    </div>
+  {{/if}}
   <table class='erps-data-table erps-data-table--action-cards erps-data-table--flush-top'>
           <thead class="erps-data-table__header">
             <tr class="erps-data-table__header-row">
@@ -13,23 +19,31 @@
                 {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Mode"}}
               </th>
               <th class="erps-data-table__header-cell erps-data-table__header-cell--controls">
-                {{#if @root.editable }}
-                  <a
-                    class="erps-data-table__create-button"
-                    title="{{localize 'DOCUMENT.Create' type='Item'}}"
-                    data-action="createDoc"
-                    data-document-class="Item"
-                    data-type="actionCard"
-                  >
-                    <i class="fas fa-plus"></i>
-                    {{localize "DOCUMENT.New" type="item"}}
-                  </a>
+                {{#if (eq transformationActionCards.length 0)}}
+                  {{#if @root.editable }}
+                    <a
+                      class="erps-data-table__create-button"
+                      title="{{localize 'DOCUMENT.Create' type='Item'}}"
+                      data-action="createDoc"
+                      data-document-class="Item"
+                      data-type="actionCard"
+                    >
+                      <i class="fas fa-plus"></i>
+                      {{localize "DOCUMENT.New" type="item"}}
+                    </a>
+                  {{/if}}
+                {{else}}
+                  <div class="erps-data-table__transformation-notice" title="{{localize 'EVENTIDE_RP_SYSTEM.Actor.ActionCards.TransformedLocked'}}">
+                    <span>{{localize "EVENTIDE_RP_SYSTEM.Actor.ActionCards.Transformed"}}</span>
+                    <i class="fas fa-lock"></i>
+                  </div>
                 {{/if}}
               </th>
             </tr>
           </thead>
           <tbody class="erps-data-table__body">
-            {{#each actionCards as |item id|}}
+            {{#if (eq transformationActionCards.length 0)}}
+              {{#each actionCards as |item id|}}
               <tr
                 class="erps-data-table__row erps-data-table__row--hoverable"
                 data-item-id="{{item._id}}"
@@ -126,7 +140,97 @@
                   </div>
                 </td>
               </tr>
+              {{/each}}
             {{else}}
+              {{#each transformationActionCards as |item id|}}
+                <tr
+                  class="erps-data-table__row erps-data-table__row--hoverable"
+                  data-item-id="{{item._id}}"
+                  data-drag="true"
+                  data-document-class="Item"
+                  {{#if item.system.description}}
+                  title="{{item.system.description}}"
+                  {{/if}}
+                >
+                  <td class="erps-data-table__cell erps-data-table__cell--name rollable" data-roll-type="item" data-action="roll" data-item-id="{{item._id}}">
+                    <div class="erps-data-table__name-content">
+                      <img
+                        src="{{item.img}}"
+                        title="{{item.name}}"
+                        width="24"
+                        height="24"
+                      />
+                      <span>{{item.name}}</span>
+                      <i class="fas fa-magic erps-data-table__transformation-indicator" title="{{localize 'EVENTIDE_RP_SYSTEM.Actor.ActionCards.TransformationActionCard'}}"></i>
+                    </div>
+                  </td>
+                  <td class="erps-data-table__cell erps-data-table__cell--center rollable" data-roll-type="item" data-action="roll" data-item-id="{{item._id}}">
+                    {{#if item.system.embeddedItem._id}}
+                      <div class="erps-data-table__embedded-item">
+                        <img
+                          src="{{item.system.embeddedItem.img}}"
+                          title="{{item.system.embeddedItem.name}}"
+                          width="24"
+                          height="24"
+                        />
+                        <span>{{item.system.embeddedItem.name}}</span>
+                      </div>
+                    {{else}}
+                      <span class="erps-data-table__empty-state">{{localize "EVENTIDE_RP_SYSTEM.General.None"}}</span>
+                    {{/if}}
+                  </td>
+                  <td class="erps-data-table__cell erps-data-table__cell--center rollable" data-roll-type="item" data-action="roll" data-item-id="{{item._id}}">
+                    {{#if (eq item.system.mode "attackChain")}}
+                      <div class="erps-data-table__attack-chain-info"
+                           title="Attack Chain: {{item.system.attackChain.firstStat}} + {{item.system.attackChain.secondStat}}{{#if (ne item.system.attackChain.damageCondition 'never')}}&#10;Damage: {{item.system.attackChain.damageCondition}} ({{item.system.attackChain.damageFormula}} {{item.system.attackChain.damageType}}){{/if}}{{#if (ne item.system.attackChain.statusCondition 'never')}}&#10;Status: {{item.system.attackChain.statusCondition}} (threshold {{item.system.attackChain.statusThreshold}}){{/if}}">
+                        <span class="erps-data-table__attack-chain-stats">
+                          {{item.system.attackChain.firstStat}} + {{item.system.attackChain.secondStat}}
+                        </span>
+                        {{#if (ne item.system.attackChain.damageCondition "never")}}
+                          <i class="fas fa-sword erps-data-table__chain-icon" title="Damage applies on {{item.system.attackChain.damageCondition}}: {{item.system.attackChain.damageFormula}} {{item.system.attackChain.damageType}}"></i>
+                        {{/if}}
+                        {{#if (ne item.system.attackChain.statusCondition "never")}}
+                          <i class="fas fa-magic erps-data-table__chain-icon" title="Status applies on {{item.system.attackChain.statusCondition}} with threshold {{item.system.attackChain.statusThreshold}}"></i>
+                        {{/if}}
+                      </div>
+                    {{else if (eq item.system.mode "savedDamage")}}
+                      <div class="erps-data-table__saved-damage-info"
+                           title="Saved Damage: {{item.system.savedDamage.formula}} {{item.system.savedDamage.type}}{{#if item.system.savedDamage.description}}&#10;{{item.system.savedDamage.description}}{{/if}}">
+                        <span class="erps-data-table__saved-damage-formula">{{item.system.savedDamage.formula}}</span>
+                        <i class="fas fa-heart-broken erps-data-table__chain-icon" title="{{item.system.savedDamage.formula}} {{item.system.savedDamage.type}}"></i>
+                      </div>
+                    {{else}}
+                      <span class="erps-data-table__empty-state">{{localize "EVENTIDE_RP_SYSTEM.General.Unknown"}}</span>
+                    {{/if}}
+                  </td>
+                  <td class="erps-data-table__cell erps-data-table__cell--controls">
+                    <div class="erps-data-table__controls">
+                      <a
+                        class="erps-data-table__control-button erps-data-table__control-button--execute"
+                        title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.Execute'}}"
+                        data-action="executeActionCard"
+                        data-item-id="{{item._id}}"
+                      >
+                        {{#if (eq item.system.mode "attackChain")}}
+                          <i class="fas fa-bolt"></i>
+                        {{else if (eq item.system.mode "savedDamage")}}
+                          <i class="fas fa-heart-broken"></i>
+                        {{else}}
+                          <i class="fas fa-play"></i>
+                        {{/if}}
+                      </a>
+                      <div class="erps-data-table__control-button erps-data-table__control-button--disabled erps-data-table__control-button--locked" title="{{localize 'EVENTIDE_RP_SYSTEM.Actor.ActionCards.TransformedLocked'}}">
+                        <i class="fas fa-lock"></i>
+                      </div>
+                      <div class="erps-data-table__control-button erps-data-table__control-button--disabled erps-data-table__control-button--locked" title="{{localize 'EVENTIDE_RP_SYSTEM.Actor.ActionCards.TransformedLocked'}}">
+                        <i class="fas fa-lock"></i>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              {{/each}}
+            {{/if}}
+            {{#if (and (eq actionCards.length 0) (eq transformationActionCards.length 0))}}
               <tr class="erps-data-table__row erps-data-table__row--empty">
                 <td class="erps-data-table__cell erps-data-table__cell--empty" colspan="4">
                   <div class="erps-data-table__empty-message">
@@ -135,17 +239,19 @@
                   </div>
                 </td>
               </tr>
-      {{/each}}
+            {{/if}}
     </tbody>
   </table>
 
   {{#if @root.editable}}
-    <div class="erps-items-panel__drop-zone erps-items-panel__drop-zone--action-cards" data-drop-zone="actionCard">
-      <div class="erps-items-panel__drop-zone-content">
-        <i class="fas fa-bolt"></i>
-        <p>{{localize "EVENTIDE_RP_SYSTEM.Actor.ActionCards.DropItemHere"}}</p>
-        <small>{{localize "EVENTIDE_RP_SYSTEM.Actor.ActionCards.DropHelpText"}}</small>
+    {{#if (eq transformationActionCards.length 0)}}
+      <div class="erps-items-panel__drop-zone erps-items-panel__drop-zone--action-cards" data-drop-zone="actionCard">
+        <div class="erps-items-panel__drop-zone-content">
+          <i class="fas fa-bolt"></i>
+          <p>{{localize "EVENTIDE_RP_SYSTEM.Actor.ActionCards.DropItemHere"}}</p>
+          <small>{{localize "EVENTIDE_RP_SYSTEM.Actor.ActionCards.DropHelpText"}}</small>
+        </div>
       </div>
-    </div>
+    {{/if}}
   {{/if}}
 </section>

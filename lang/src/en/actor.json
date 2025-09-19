@@ -51,6 +51,7 @@
         "Statuses": "Statuses"
       },
       "CombatPowers": {
+        "TransformationCombatPowers": "Combat powers are provided by active transformation",
         "Transformed": "Transformed",
         "TransformedLocked": "Combat powers are provided by active transformation - cannot create new powers while transformed"
       },
@@ -70,7 +71,11 @@
         "StatusGeneratedName": "{statusName} Damage",
         "CreatedFromItem": "Created action card '{actionCardName}' from '{itemName}'",
         "CreatedStatusActionCard": "Created damage action card '{actionCardName}' from status '{statusName}'",
-        "StatusDamageDescription": "Direct damage application using {statusName} energy"
+        "StatusDamageDescription": "Direct damage application using {statusName} energy",
+        "TransformationActionCards": "Action cards are provided by active transformation",
+        "TransformationActionCard": "Action card from active transformation",
+        "Transformed": "Transformed",
+        "TransformedLocked": "Action cards are provided by active transformation - cannot create or modify while transformed"
       }
     }
   }

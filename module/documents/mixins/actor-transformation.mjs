@@ -444,6 +444,13 @@ export const ActorTransformationMixin = (BaseClass) =>
         power.toObject(),
       );
 
+      // Get embedded action cards data
+      const embeddedActionCards =
+        transformationItem.system.getEmbeddedActionCards();
+      const embeddedActionCardsData = embeddedActionCards.map((actionCard) =>
+        actionCard.toObject(),
+      );
+
       await this.setFlag(
         "eventide-rp-system",
         "activeTransformation",
@@ -464,13 +471,20 @@ export const ActorTransformationMixin = (BaseClass) =>
         "activeTransformationCombatPowers",
         embeddedCombatPowersData,
       );
+      await this.setFlag(
+        "eventide-rp-system",
+        "activeTransformationActionCards",
+        embeddedActionCardsData,
+      );
 
       Logger.debug(
-        "Stored transformation combat powers in flags",
+        "Stored transformation combat powers and action cards in flags",
         {
           transformationName: transformationItem.name,
           embeddedPowerCount: embeddedCombatPowersData.length,
           embeddedPowerNames: embeddedCombatPowersData.map((p) => p.name),
+          embeddedActionCardCount: embeddedActionCardsData.length,
+          embeddedActionCardNames: embeddedActionCardsData.map((ac) => ac.name),
         },
         "TRANSFORMATION",
       );
@@ -803,6 +817,10 @@ export const ActorTransformationMixin = (BaseClass) =>
         "eventide-rp-system",
         "activeTransformationCombatPowers",
       );
+      await this.unsetFlag(
+        "eventide-rp-system",
+        "activeTransformationActionCards",
+      );
 
       Logger.methodExit(
         "ActorTransformationMixin",
@@ -1061,5 +1079,85 @@ export const ActorTransformationMixin = (BaseClass) =>
         tokens,
       );
       return tokens;
+    }
+
+    /**
+     * Get the current action cards for this actor, accounting for transformation overrides
+     * When transformed, returns transformation action cards; otherwise returns actor's own action cards
+     *
+     * @returns {Item[]} Array of action card items (temporary items for transformation action cards)
+     */
+    getCurrentActionCards() {
+      Logger.methodEntry("ActorTransformationMixin", "getCurrentActionCards");
+
+      // Check if actor is transformed
+      const transformationActionCards = this.getFlag(
+        "eventide-rp-system",
+        "activeTransformationActionCards",
+      );
+
+      if (transformationActionCards && transformationActionCards.length > 0) {
+        // Actor is transformed and has transformation action cards - return them as temporary items
+        Logger.debug(
+          "Returning transformation action cards",
+          {
+            count: transformationActionCards.length,
+            names: transformationActionCards.map((ac) => ac.name),
+          },
+          "TRANSFORMATION",
+        );
+
+        const transformationActionCardItems = transformationActionCards.map((actionCardData) => {
+          const tempItem = new CONFIG.Item.documentClass(actionCardData, {
+            parent: this,
+          });
+
+          // The temporary item is editable if the actor is editable
+          Object.defineProperty(tempItem, "isEditable", {
+            value: this.isEditable,
+            configurable: true,
+          });
+
+          return tempItem;
+        });
+
+        Logger.methodExit(
+          "ActorTransformationMixin",
+          "getCurrentActionCards",
+          transformationActionCardItems,
+        );
+        return transformationActionCardItems;
+      }
+
+      // No transformation or no transformation action cards - return actor's own action cards
+      const actorActionCards = this.items.filter((item) => item.type === "actionCard");
+      Logger.debug(
+        "Returning actor's own action cards",
+        {
+          count: actorActionCards.length,
+          names: actorActionCards.map((ac) => ac.name),
+        },
+        "TRANSFORMATION",
+      );
+
+      Logger.methodExit(
+        "ActorTransformationMixin",
+        "getCurrentActionCards",
+        actorActionCards,
+      );
+      return actorActionCards;
+    }
+
+    /**
+     * Check if the actor currently has transformation action cards active
+     *
+     * @returns {boolean} True if transformation action cards are active
+     */
+    hasTransformationActionCards() {
+      const transformationActionCards = this.getFlag(
+        "eventide-rp-system",
+        "activeTransformationActionCards",
+      );
+      return transformationActionCards && transformationActionCards.length > 0;
     }
   };

@@ -123,6 +123,108 @@ export const ItemSheetActionsMixin = (BaseClass) =>
     }
 
     /**
+     * Handle removing an action card from a transformation
+     *
+     * @param {PointerEvent} _event - The originating click event
+     * @param {HTMLElement} target - The capturing HTML element which defined a [data-action]
+     * @protected
+     */
+    static async _removeActionCard(_event, target) {
+      Logger.methodEntry("ItemSheetActionsMixin", "_removeActionCard", {
+        itemName: this.item?.name,
+        itemType: this.item?.type,
+        actionCardId: target.dataset.actionCardId,
+      });
+
+      try {
+        const actionCardId = target.dataset.actionCardId;
+        if (!actionCardId) {
+          Logger.warn("No action card ID provided for removal", {}, "ITEM_ACTIONS");
+          return;
+        }
+
+        await this.item.system.removeActionCard(actionCardId);
+
+        Logger.info(
+          "Action card removed from transformation",
+          {
+            transformationName: this.item.name,
+            actionCardId,
+          },
+          "ITEM_ACTIONS",
+        );
+
+        Logger.methodExit("ItemSheetActionsMixin", "_removeActionCard");
+      } catch (error) {
+        Logger.error("Failed to remove action card", error, "ITEM_ACTIONS");
+        ui.notifications.error(
+          game.i18n.format(
+            "EVENTIDE_RP_SYSTEM.Errors.ActionCardRemovalFailed",
+            {
+              itemName: this.item?.name || "Unknown",
+            },
+          ),
+        );
+        Logger.methodExit("ItemSheetActionsMixin", "_removeActionCard");
+      }
+    }
+
+    /**
+     * Handle editing an embedded action card from a transformation
+     *
+     * @param {PointerEvent} _event - The originating click event
+     * @param {HTMLElement} target - The capturing HTML element which defined a [data-action]
+     * @protected
+     */
+    static async _editEmbeddedActionCard(_event, target) {
+      Logger.methodEntry("ItemSheetActionsMixin", "_editEmbeddedActionCard", {
+        itemName: this.item?.name,
+        itemType: this.item?.type,
+      });
+
+      try {
+        // Find the action card in the embedded action cards
+        const actionCardList = this.item.system.getEmbeddedActionCards();
+        if (!actionCardList || actionCardList.length === 0) {
+          Logger.warn("No embedded action cards found", {}, "ITEM_ACTIONS");
+          return;
+        }
+
+        // For now, edit the first action card. In the future, this could be enhanced
+        // to identify which specific action card to edit based on the target
+        const actionCard = actionCardList[0];
+        if (!actionCard) {
+          Logger.warn("Action card not found for editing", {}, "ITEM_ACTIONS");
+          return;
+        }
+
+        Logger.info(
+          "Opening embedded action card for editing",
+          {
+            transformationName: this.item.name,
+            actionCardName: actionCard.name,
+            actionCardId: actionCard.id,
+          },
+          "ITEM_ACTIONS",
+        );
+
+        actionCard.sheet.render(true);
+        Logger.methodExit("ItemSheetActionsMixin", "_editEmbeddedActionCard");
+      } catch (error) {
+        Logger.error("Failed to edit embedded action card", error, "ITEM_ACTIONS");
+        ui.notifications.error(
+          game.i18n.format(
+            "EVENTIDE_RP_SYSTEM.Errors.ActionCardEditFailed",
+            {
+              itemName: this.item?.name || "Unknown",
+            },
+          ),
+        );
+        Logger.methodExit("ItemSheetActionsMixin", "_editEmbeddedActionCard");
+      }
+    }
+
+    /**
      * Handle dice adjustment input changes to recalculate totals
      *
      * @param {Event} _event - The originating change event

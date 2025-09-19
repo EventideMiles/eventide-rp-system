@@ -78,6 +78,7 @@
         "CharacterEffects": "Character Effects",
         "Prerequisites": "Prerequisites",
         "CombatPowers": "Combat Powers",
+        "ActionCards": "Action Cards",
         "EmbeddedItems": "Embedded Items"
       },
       "Transformation": {
@@ -88,9 +89,13 @@
         "EmbeddedPowers": "Combat Powers",
         "NoPowers": "No combat powers added yet.",
         "DropPowerHere": "Drop a combat power here to add it to this transformation.",
+        "EmbeddedActionCards": "Action Cards",
+        "NoActionCards": "No action cards added yet.",
+        "DropActionCardHere": "Drop an action card here to add it to this transformation.",
+        "ActionCardNotes": "Action cards from transformations override the character's action cards while transformed.",
         "ReadOnlyNote": "Note: Embedded combat powers open in read-only mode. To edit a power, modify the original item in the actor's inventory.",
-        "DragToExtract": "Drag to extract this combat power as a new item",
-        "DragNote": "Tip: Drag combat powers to actors, compendiums, or item tabs to create copies."
+        "DragToExtract": "Drag to extract this item as a new item",
+        "DragNote": "Tip: Drag items to actors, compendiums, or item tabs to create copies."
       },
       "ActionCard": {
         "PopupTitle": "Execute Action Card",

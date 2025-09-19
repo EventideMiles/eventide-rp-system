@@ -63,6 +63,7 @@
         "Size": "Size",
         "TransformationAttributes": "Transformation Attributes",
         "CombatPowers": "Combat Powers",
+        "ActionCards": "Action Cards",
         "DropCombatPowers": "Drop combat powers here"
       },
       "Buttons": {

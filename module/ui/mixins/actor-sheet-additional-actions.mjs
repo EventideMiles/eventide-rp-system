@@ -449,7 +449,7 @@ export const ActorSheetAdditionalActionsMixin = (BaseClass) =>
 
       try {
         const itemId = target.dataset.itemId;
-        const actionCard = this.actor.items.get(itemId);
+        const actionCard = this._getEmbeddedDocument(target);
 
         if (!actionCard || actionCard.type !== "actionCard") {
           Logger.warn(
