@@ -6,6 +6,8 @@ import { ErrorHandler, CommonFoundryTasks } from "../../utils/_module.mjs";
 import { BaselineSheetMixins } from "../components/_module.mjs";
 import { ItemSheetAllMixins } from "../mixins/_module.mjs";
 import { EmbeddedItemSheet } from "./embedded-item-sheet.mjs";
+import { ItemSelectorComboBox } from "../components/item-selector-combo-box.mjs";
+import { ItemSourceCollector } from "../../helpers/item-source-collector.mjs";
 
 const { api, sheets } = foundry.applications;
 const { TextEditor } = foundry.applications.ux;
@@ -501,6 +503,12 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
 
     // Initialize theme management from mixin
     this._initThemeManagement();
+
+    // Initialize item selector combo boxes for action cards
+    // Don't await this to avoid blocking the render process
+    this._initializeItemSelectors().catch(error => {
+      console.error("Failed to initialize item selectors:", error);
+    });
   }
 
   /**
@@ -553,6 +561,147 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
   }
 
   /**
+   * Initialize item selector combo boxes for action cards
+   * @protected
+   */
+  async _initializeItemSelectors() {
+    try {
+      console.log("ItemSheet: Initializing item selectors for item type:", this.item.type);
+
+      // Only initialize for action card items
+      if (this.item.type !== "actionCard") {
+        console.log("ItemSheet: Skipping selector initialization - not an action card");
+        return;
+      }
+
+      // Clean up existing selectors
+      this._cleanupItemSelectors();
+
+      // Initialize action item selector
+      const actionItemContainer = this.element.querySelector('[data-selector="action-item"]');
+      console.log("ItemSheet: Action item container found:", !!actionItemContainer);
+
+      if (actionItemContainer) {
+        console.log("ItemSheet: Creating action item selector with types:", ItemSourceCollector.getActionItemTypes());
+        this.#actionItemSelector = new ItemSelectorComboBox({
+          container: actionItemContainer,
+          itemTypes: ItemSourceCollector.getActionItemTypes(),
+          onSelect: this._onActionItemSelected.bind(this),
+          placeholder: game.i18n.localize("EVENTIDE_RP_SYSTEM.Forms.ActionItemSelector.Placeholder"),
+          selectorType: "action-item"
+        });
+      }
+
+      // Initialize effects selector
+      const effectsContainer = this.element.querySelector('[data-selector="effects"]');
+      console.log("ItemSheet: Effects container found:", !!effectsContainer);
+
+      if (effectsContainer) {
+        console.log("ItemSheet: Creating effects selector with types:", ItemSourceCollector.getEffectItemTypes());
+        this.#effectsSelector = new ItemSelectorComboBox({
+          container: effectsContainer,
+          itemTypes: ItemSourceCollector.getEffectItemTypes(),
+          onSelect: this._onEffectSelected.bind(this),
+          placeholder: game.i18n.localize("EVENTIDE_RP_SYSTEM.Forms.EffectsSelector.Placeholder"),
+          selectorType: "effects"
+        });
+      }
+
+      console.log("ItemSheet: Item selectors initialized", {
+        actionItemSelector: !!this.#actionItemSelector,
+        effectsSelector: !!this.#effectsSelector
+      });
+
+      Logger.debug("Item selectors initialized successfully", {
+        actionItemSelector: !!this.#actionItemSelector,
+        effectsSelector: !!this.#effectsSelector
+      }, "ITEM_SHEET");
+
+    } catch (error) {
+      console.error("ItemSheet: Failed to initialize item selectors:", error);
+      Logger.error("Failed to initialize item selectors", error, "ITEM_SHEET");
+    }
+  }
+
+  /**
+   * Clean up item selector instances
+   * @protected
+   */
+  _cleanupItemSelectors() {
+    try {
+      if (this.#actionItemSelector) {
+        this.#actionItemSelector.destroy();
+        this.#actionItemSelector = null;
+      }
+
+      if (this.#effectsSelector) {
+        this.#effectsSelector.destroy();
+        this.#effectsSelector = null;
+      }
+    } catch (error) {
+      Logger.warn("Error cleaning up item selectors", error, "ITEM_SHEET");
+    }
+  }
+
+  /**
+   * Handle selection of an action item
+   * @param {Item} droppedItem - The Foundry item document (same as drag-and-drop)
+   * @protected
+   */
+  async _onActionItemSelected(droppedItem) {
+    try {
+      Logger.debug("Action item selected", {
+        itemName: droppedItem.name,
+        itemType: droppedItem.type,
+        itemUuid: droppedItem.uuid
+      }, "ITEM_SHEET");
+
+      // Set the embedded item (same as drag-and-drop)
+      await this.item.setEmbeddedItem(droppedItem);
+
+      // Re-render the sheet to show the new item
+      this.render();
+
+      ui.notifications.info(game.i18n.format("EVENTIDE_RP_SYSTEM.Forms.ActionItemSelector.ItemSelected", {
+        itemName: droppedItem.name
+      }));
+
+    } catch (error) {
+      Logger.error("Failed to set action item", error, "ITEM_SHEET");
+      ui.notifications.error(game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.FailedToSetActionItem"));
+    }
+  }
+
+  /**
+   * Handle selection of an effect item
+   * @param {Item} droppedItem - The Foundry item document (same as drag-and-drop)
+   * @protected
+   */
+  async _onEffectSelected(droppedItem) {
+    try {
+      Logger.debug("Effect selected", {
+        itemName: droppedItem.name,
+        itemType: droppedItem.type,
+        itemUuid: droppedItem.uuid
+      }, "ITEM_SHEET");
+
+      // Add the embedded effect (same as drag-and-drop)
+      await this.item.addEmbeddedEffect(droppedItem);
+
+      // Re-render the sheet to show the new effect
+      this.render();
+
+      ui.notifications.info(game.i18n.format("EVENTIDE_RP_SYSTEM.Forms.EffectsSelector.ItemAdded", {
+        itemName: droppedItem.name
+      }));
+
+    } catch (error) {
+      Logger.error("Failed to add effect", error, "ITEM_SHEET");
+      ui.notifications.error(game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.FailedToAddEffect"));
+    }
+  }
+
+  /**
    * Handles the closing of the sheet.
    * Calls the erpsUpdateItem hook if the form was changed.
    *
@@ -565,6 +714,9 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
       Hooks.call("erpsUpdateItem", this.item, this.item, {}, game.user.id);
     }
     this.#formChanged = false;
+
+    // Clean up item selectors
+    this._cleanupItemSelectors();
 
     // Clean up theme management from mixin
     this._cleanupThemeManagement();
@@ -622,6 +774,8 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
   // for subclasses or external hooks to mess with it directly
   #dragDrop;
   #formChanged; // Flag to track if form has been changed
+  #actionItemSelector; // Item selector for action items
+  #effectsSelector; // Item selector for effects
 
   /**
    * Creates drag-and-drop workflow handlers for this Application.

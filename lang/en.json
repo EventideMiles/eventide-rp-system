@@ -526,7 +526,9 @@
       "ThemeOperation": "Theme operation failed",
       "ToggleAutoTokenUpdateError": "Failed to toggle auto token update",
       "TransformationApplyError": "Failed to apply transformation",
-      "TransformationRemoveError": "Failed to remove transformation"
+      "TransformationRemoveError": "Failed to remove transformation",
+      "FailedToSetActionItem": "Failed to set action item",
+      "FailedToAddEffect": "Failed to add effect"
     },
     "Info": {
       "CompendiumItemCreated": "Created {keyType} item {name} in the {packLabel} compendium",
@@ -677,6 +679,22 @@
           "NoEmbeddedItem": "This action card has no embedded item configured. Please add an item to the action slot before executing.",
           "TargetingError": "You do not have the correct targets selected for this action card."
         }
+      },
+      "ItemSelector": {
+        "ToggleDropdown": "Toggle dropdown",
+        "ItemList": "Item list",
+        "Loading": "Loading available items...",
+        "NoResults": "No items found matching your search"
+      },
+      "ActionItemSelector": {
+        "Placeholder": "Search for combat power, gear, or feature...",
+        "AriaLabel": "Search and select an action item",
+        "ItemSelected": "Action item '{itemName}' selected"
+      },
+      "EffectsSelector": {
+        "Placeholder": "Search for effect to add...",
+        "AriaLabel": "Search and select an effect",
+        "ItemAdded": "Effect '{itemName}' added"
       },
       "Placeholders": {
         "ChangeValue": "Change Value",

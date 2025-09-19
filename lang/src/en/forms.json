@@ -127,6 +127,22 @@
           "TargetingError": "You do not have the correct targets selected for this action card."
         }
       },
+      "ItemSelector": {
+        "ToggleDropdown": "Toggle dropdown",
+        "ItemList": "Item list",
+        "Loading": "Loading available items...",
+        "NoResults": "No items found matching your search"
+      },
+      "ActionItemSelector": {
+        "Placeholder": "Search for combat power, gear, or feature...",
+        "AriaLabel": "Search and select an action item",
+        "ItemSelected": "Action item '{itemName}' selected"
+      },
+      "EffectsSelector": {
+        "Placeholder": "Search for effect to add...",
+        "AriaLabel": "Search and select an effect",
+        "ItemAdded": "Effect '{itemName}' added"
+      },
       "Placeholders": {
         "ChangeValue": "Change Value",
         "Description": "Description",

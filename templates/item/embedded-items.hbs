@@ -59,6 +59,14 @@
       {{/if}}
 
       {{#if @root.editable}}
+        <!-- Item Selector for Action Items - Always shown for replacement -->
+        <div class="erps-item-selector-container" data-selector="action-item">
+          {{> "components/item-selector-combo-box"
+              selectorType="action-item"
+              placeholder=(localize "EVENTIDE_RP_SYSTEM.Forms.ActionItemSelector.Placeholder")
+              ariaLabel=(localize "EVENTIDE_RP_SYSTEM.Forms.ActionItemSelector.AriaLabel")}}
+        </div>
+
         <div class="erps-items-panel__drop-zone" data-drop-zone="actionItem">
           <p>{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.DropActionItemHere"}}</p>
         </div>
@@ -128,6 +136,14 @@
       {{/if}}
 
       {{#if @root.editable}}
+        <!-- Item Selector for Effects -->
+        <div class="erps-item-selector-container" data-selector="effects">
+          {{> "components/item-selector-combo-box"
+              selectorType="effects"
+              placeholder=(localize "EVENTIDE_RP_SYSTEM.Forms.EffectsSelector.Placeholder")
+              ariaLabel=(localize "EVENTIDE_RP_SYSTEM.Forms.EffectsSelector.AriaLabel")}}
+        </div>
+
         <div class="erps-items-panel__drop-zone" data-drop-zone="effect">
           <p>{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.DropEffectHere"}}</p>
         </div>

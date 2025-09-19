@@ -103,9 +103,16 @@ export function ItemActionCardMixin(Base) {
 
         // Data sanitization: ensure proper roll configuration
         if (!itemData.system.roll) {
-          // Create roll configuration if it doesn't exist
+          // Create basic roll configuration if it doesn't exist
           itemData.system.roll = {
             type: sanitizedRollType,
+            ability: "unaugmented",
+            bonus: 0,
+            diceAdjustments: {
+              advantage: 0,
+              disadvantage: 0,
+              total: 0
+            },
             requiresTarget: sanitizedRollType !== "none", // "none" types don't need targets
           };
           Logger.debug(
@@ -114,15 +121,19 @@ export function ItemActionCardMixin(Base) {
             "ACTION_CARD",
           );
         } else {
-          // Apply sanitized roll type and set requiresTarget appropriately
-          itemData.system.roll.type = sanitizedRollType;
-          itemData.system.roll.requiresTarget = sanitizedRollType !== "none"; // "none" types don't need targets
+          // Preserve all existing roll properties, only update type and requiresTarget
+          itemData.system.roll = {
+            ...itemData.system.roll, // Preserve all existing properties
+            type: sanitizedRollType,
+            requiresTarget: sanitizedRollType !== "none" // "none" types don't need targets
+          };
           Logger.debug(
-            "Sanitized roll configuration for embedded item",
+            "Preserved roll configuration for embedded item",
             {
               itemName: item.name,
               originalType: rollType,
               sanitizedType: sanitizedRollType,
+              preservedProperties: Object.keys(itemData.system.roll),
               requiresTarget: sanitizedRollType !== "none",
             },
             "ACTION_CARD",
