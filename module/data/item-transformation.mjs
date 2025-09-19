@@ -264,7 +264,9 @@ export default class EventideRpSystemTransformation extends EventideRpSystemItem
       // Override the update method to persist changes back to the transformation.
       tempItem.update = async (data) => {
         const actionCards = foundry.utils.deepClone(this.embeddedActionCards);
-        const actionCardIndex = actionCards.findIndex((ac) => ac._id === tempItem.id);
+        const actionCardIndex = actionCards.findIndex(
+          (ac) => ac._id === tempItem.id,
+        );
         if (actionCardIndex === -1) {
           throw new Error("Could not find embedded action card to update.");
         }

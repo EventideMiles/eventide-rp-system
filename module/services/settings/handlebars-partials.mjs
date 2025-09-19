@@ -19,6 +19,9 @@ export const initHandlebarsPartials = async () => {
     // universal partials
     "erps-color-picker":
       "systems/eventide-rp-system/templates/partials/erps-color-picker.hbs",
+    // components
+    "components/item-selector-combo-box":
+      "systems/eventide-rp-system/templates/components/item-selector-combo-box.hbs",
     // macro partials
     "character-effects":
       "systems/eventide-rp-system/templates/macros/parts/character-effects.hbs",

@@ -1,0 +1,42 @@
+<div class="erps-item-selector-combo-box" data-selector-type="{{selectorType}}">
+  <div class="erps-item-selector-combo-box__input-container">
+    <input type="text"
+           class="erps-item-selector-combo-box__input erps-input"
+           placeholder="{{placeholder}}"
+           autocomplete="off"
+           aria-expanded="false"
+           aria-haspopup="listbox"
+           aria-label="{{ariaLabel}}"
+           role="combobox">
+    <button type="button"
+            class="erps-item-selector-combo-box__dropdown-arrow"
+            aria-label="{{localize 'ERPS.ItemSelector.ToggleDropdown'}}"
+            tabindex="-1">
+      <i class="fas fa-chevron-down"></i>
+    </button>
+  </div>
+
+  <div class="erps-item-selector-combo-box__dropdown"
+       role="listbox"
+       aria-hidden="true"
+       aria-label="{{localize 'ERPS.ItemSelector.ItemList'}}">
+
+    <div class="erps-item-selector-combo-box__loading" style="display: none;">
+      <div class="erps-item-selector-combo-box__loading-content">
+        <i class="fas fa-spinner fa-spin"></i>
+        <span>{{localize "ERPS.ItemSelector.Loading"}}</span>
+      </div>
+    </div>
+
+    <div class="erps-item-selector-combo-box__empty" style="display: none;">
+      <div class="erps-item-selector-combo-box__empty-content">
+        <i class="fas fa-search"></i>
+        <span>{{localize "ERPS.ItemSelector.NoResults"}}</span>
+      </div>
+    </div>
+
+    <ul class="erps-item-selector-combo-box__list">
+      <!-- Items will be populated dynamically via JavaScript -->
+    </ul>
+  </div>
+</div>

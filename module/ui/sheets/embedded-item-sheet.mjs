@@ -379,6 +379,11 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
         break;
       case "attributesFeature":
         context.tab = context.tabs[partId];
+        context.rollTypes = EventideSheetHelpers.rollTypeObject;
+        context.abilities = {
+          ...EventideSheetHelpers.abilityObject,
+          unaugmented: "unaugmented",
+        };
         break;
       case "description":
         context.tab = context.tabs[partId];

@@ -137,7 +137,9 @@
       "ThemeOperation": "Theme operation failed",
       "ToggleAutoTokenUpdateError": "Failed to toggle auto token update",
       "TransformationApplyError": "Failed to apply transformation",
-      "TransformationRemoveError": "Failed to remove transformation"
+      "TransformationRemoveError": "Failed to remove transformation",
+      "FailedToSetActionItem": "Failed to set action item",
+      "FailedToAddEffect": "Failed to add effect"
     },
     "Info": {
       "CompendiumItemCreated": "Created {keyType} item {name} in the {packLabel} compendium",
