@@ -256,8 +256,8 @@ export const ItemSheetDragDropMixin = (BaseClass) =>
      * @private
      */
     async _handleTransformationDrop(droppedItem) {
-      // Only allow combat powers to be added to transformations
-      if (droppedItem.type !== "combatPower") {
+      // Allow combat powers and action cards to be added to transformations
+      if (droppedItem.type !== "combatPower" && droppedItem.type !== "actionCard") {
         ui.notifications.warn(
           game.i18n.localize(
             "EVENTIDE_RP_SYSTEM.Errors.TransformationItemTypes",
@@ -267,25 +267,38 @@ export const ItemSheetDragDropMixin = (BaseClass) =>
       }
 
       try {
-        await this.item.system.addCombatPower(droppedItem);
-        Logger.info(
-          "Combat power added to transformation",
-          {
-            transformationName: this.item.name,
-            combatPowerName: droppedItem.name,
-          },
-          "DRAG_DROP",
-        );
+        if (droppedItem.type === "combatPower") {
+          await this.item.system.addCombatPower(droppedItem);
+          Logger.info(
+            "Combat power added to transformation",
+            {
+              transformationName: this.item.name,
+              combatPowerName: droppedItem.name,
+            },
+            "DRAG_DROP",
+          );
+        } else if (droppedItem.type === "actionCard") {
+          await this.item.system.addActionCard(droppedItem);
+          Logger.info(
+            "Action card added to transformation",
+            {
+              transformationName: this.item.name,
+              actionCardName: droppedItem.name,
+            },
+            "DRAG_DROP",
+          );
+        }
         return true;
       } catch (error) {
         Logger.error(
-          "Failed to add combat power to transformation",
+          `Failed to add ${droppedItem.type} to transformation`,
           error,
           "DRAG_DROP",
         );
         ui.notifications.error(
-          game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.FailedToAddCombatPower", {
-            powerName: droppedItem.name,
+          game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.FailedToAddItemToTransformation", {
+            itemName: droppedItem.name,
+            itemType: droppedItem.type,
             transformationName: this.item.name,
           }),
         );

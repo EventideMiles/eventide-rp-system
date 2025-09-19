@@ -35,7 +35,7 @@ export const ActorSheetContextPreparationMixin = (BaseClass) =>
         const features = [];
         const effects = [];
         const transformations = [];
-        const actionCards = [];
+        const baseActionCards = [];
         const combatPowers = [];
 
         // Process each item and categorize by type
@@ -73,7 +73,7 @@ export const ActorSheetContextPreparationMixin = (BaseClass) =>
               transformations.push(itemData);
               break;
             case "actionCard":
-              actionCards.push(itemData);
+              baseActionCards.push(itemData);
               break;
             case "combatPower":
               combatPowers.push(itemData);
@@ -94,7 +94,7 @@ export const ActorSheetContextPreparationMixin = (BaseClass) =>
         features.sort((a, b) => a.name.localeCompare(b.name));
         effects.sort((a, b) => a.name.localeCompare(b.name));
         transformations.sort((a, b) => a.name.localeCompare(b.name));
-        actionCards.sort((a, b) => a.name.localeCompare(b.name));
+        baseActionCards.sort((a, b) => a.name.localeCompare(b.name));
         combatPowers.sort((a, b) => a.name.localeCompare(b.name));
 
         // Separate equipped and unequipped gear
@@ -197,6 +197,98 @@ export const ActorSheetContextPreparationMixin = (BaseClass) =>
           }
         }
 
+        // Handle transformation action cards similar to combat powers
+        let transformationActionCards = [];
+
+        // Check if actor is transformed and get transformation action cards
+        if (activeTransformationId) {
+          // Try to get action cards from stored flag data first
+          const storedActionCardsData = this.actor.getFlag(
+            "eventide-rp-system",
+            "activeTransformationActionCards",
+          );
+
+          if (storedActionCardsData && Array.isArray(storedActionCardsData)) {
+            // Create temporary Item instances from the stored data
+            transformationActionCards = storedActionCardsData.map(
+              (actionCardData) => {
+                const tempItem = new CONFIG.Item.documentClass(actionCardData, {
+                  parent: this.actor,
+                });
+
+                // Make the temporary item editable based on actor permissions
+                Object.defineProperty(tempItem, "isEditable", {
+                  value: this.actor.isEditable,
+                  configurable: true,
+                });
+
+                return tempItem;
+              },
+            );
+
+            Logger.debug(
+              "Retrieved transformation action cards from flags",
+              {
+                actorName: this.actor.name,
+                embeddedActionCardCount: transformationActionCards.length,
+                embeddedActionCardNames: transformationActionCards.map(
+                  (ac) => ac.name,
+                ),
+              },
+              "CONTEXT_PREPARATION",
+            );
+          } else {
+            // Fallback: try to find the transformation item in actor's items
+            const activeTransformation = this.actor.items.get(
+              activeTransformationId,
+            );
+
+            Logger.debug(
+              "Fallback: looking for transformation item in actor's items for action cards",
+              {
+                actorName: this.actor.name,
+                transformationId: activeTransformationId,
+                transformationFound: !!activeTransformation,
+                transformationType: activeTransformation?.type,
+                transformationName: activeTransformation?.name,
+              },
+              "CONTEXT_PREPARATION",
+            );
+
+            if (
+              activeTransformation &&
+              activeTransformation.type === "transformation"
+            ) {
+              transformationActionCards =
+                activeTransformation.system.getEmbeddedActionCards();
+
+              Logger.debug(
+                "Retrieved transformation action cards from item",
+                {
+                  actorName: this.actor.name,
+                  transformationName: activeTransformation.name,
+                  embeddedActionCardCount: transformationActionCards.length,
+                  embeddedActionCardNames: transformationActionCards.map(
+                    (ac) => ac.name,
+                  ),
+                },
+                "CONTEXT_PREPARATION",
+              );
+            }
+          }
+        }
+
+        Logger.debug(
+          "Processed action cards for display",
+          {
+            actorName: this.actor.name,
+            baseActionCardCount: baseActionCards.length,
+            transformationActionCardCount: transformationActionCards.length,
+            hasTransformationActionCards: transformationActionCards.length > 0,
+          },
+          "CONTEXT_PREPARATION",
+        );
+
         // Add to context
         context.gear = gear;
         context.equippedGear = equippedGear;
@@ -206,7 +298,8 @@ export const ActorSheetContextPreparationMixin = (BaseClass) =>
         context.effects = effects;
         context.statuses = effects; // Templates expect 'statuses' for status effects
         context.transformations = transformations;
-        context.actionCards = actionCards;
+        context.actionCards = baseActionCards;
+        context.transformationActionCards = transformationActionCards;
         context.combatPowers = combatPowers;
         context.transformationCombatPowers = transformationCombatPowers;
 
@@ -219,7 +312,8 @@ export const ActorSheetContextPreparationMixin = (BaseClass) =>
         context.effectCount = effects.length;
         context.statusCount = effects.length; // Templates expect 'statusCount'
         context.transformationCount = transformations.length;
-        context.actionCardCount = actionCards.length;
+        context.actionCardCount = baseActionCards.length;
+        context.transformationActionCardCount = transformationActionCards.length;
         context.combatPowerCount = combatPowers.length;
         context.transformationCombatPowerCount =
           transformationCombatPowers.length;
@@ -235,7 +329,7 @@ export const ActorSheetContextPreparationMixin = (BaseClass) =>
             featureCount: features.length,
             effectCount: effects.length,
             transformationCount: transformations.length,
-            actionCardCount: actionCards.length,
+            actionCardCount: baseActionCards.length,
             combatPowerCount: combatPowers.length,
             transformationCombatPowerCount: transformationCombatPowers.length,
           },
@@ -244,13 +338,17 @@ export const ActorSheetContextPreparationMixin = (BaseClass) =>
 
         return context;
       } catch (error) {
-        ErrorHandler.handleSync(error, {
-          context: `Prepare items for ${this.actor?.name}`,
-          errorType: ErrorHandler.ERROR_TYPES.DATA_PROCESSING,
-          userMessage: game.i18n.localize(
+        Logger.error(
+          `Error preparing items for ${this.actor?.name}`,
+          error,
+          "DATA_PROCESSING"
+        );
+
+        ui.notifications.error(
+          game.i18n.localize(
             "EVENTIDE_RP_SYSTEM.Errors.ItemPreparationError",
           ),
-        });
+        );
 
         // Return context with empty arrays to prevent template errors
         context.gear = [];
@@ -298,6 +396,9 @@ export const ActorSheetContextPreparationMixin = (BaseClass) =>
           "eventide-rp-system",
           "activeTransformation",
         );
+        context.hasTransformationActionCards = this.actor.hasTransformationActionCards
+          ? this.actor.hasTransformationActionCards()
+          : false;
         context.autoTokenUpdate = this.actor.getFlag(
           "eventide-rp-system",
           "autoTokenUpdate",
@@ -365,13 +466,17 @@ export const ActorSheetContextPreparationMixin = (BaseClass) =>
 
         return context;
       } catch (error) {
-        ErrorHandler.handleSync(error, {
-          context: `Prepare actor data for ${this.actor?.name}`,
-          errorType: ErrorHandler.ERROR_TYPES.DATA_PROCESSING,
-          userMessage: game.i18n.localize(
+        Logger.error(
+          `Error preparing actor data for ${this.actor?.name}`,
+          error,
+          "DATA_PROCESSING"
+        );
+
+        ui.notifications.error(
+          game.i18n.localize(
             "EVENTIDE_RP_SYSTEM.Errors.ActorDataPreparationError",
           ),
-        });
+        );
 
         // Return context with safe defaults
         context.isTransformed = false;
@@ -452,13 +557,17 @@ export const ActorSheetContextPreparationMixin = (BaseClass) =>
 
         return context;
       } catch (error) {
-        ErrorHandler.handleSync(error, {
-          context: `Enrich context for ${this.actor?.name}`,
-          errorType: ErrorHandler.ERROR_TYPES.DATA_PROCESSING,
-          userMessage: game.i18n.localize(
+        Logger.error(
+          `Error enriching context for ${this.actor?.name}`,
+          error,
+          "DATA_PROCESSING"
+        );
+
+        ui.notifications.error(
+          game.i18n.localize(
             "EVENTIDE_RP_SYSTEM.Errors.ContextEnrichmentError",
           ),
-        });
+        );
 
         // Return context with safe defaults
         context.helpers = {};
@@ -512,13 +621,17 @@ export const ActorSheetContextPreparationMixin = (BaseClass) =>
 
         return context;
       } catch (error) {
-        ErrorHandler.handleSync(error, {
-          context: `Prepare sheet context for ${this.actor?.name}`,
-          errorType: ErrorHandler.ERROR_TYPES.DATA_PROCESSING,
-          userMessage: game.i18n.localize(
+        Logger.error(
+          `Error preparing sheet context for ${this.actor?.name}`,
+          error,
+          "DATA_PROCESSING"
+        );
+
+        ui.notifications.error(
+          game.i18n.localize(
             "EVENTIDE_RP_SYSTEM.Errors.SheetContextPreparationError",
           ),
-        });
+        );
 
         return context;
       }

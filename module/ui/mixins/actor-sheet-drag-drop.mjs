@@ -1056,6 +1056,10 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
           // If not found, check transformation combat powers
           item = this._findTransformationCombatPower(itemId);
           if (item) return item;
+
+          // If still not found, check transformation action cards
+          item = this._findTransformationActionCard(itemId);
+          if (item) return item;
         }
 
         // Handle document class structure
@@ -1066,6 +1070,10 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
 
           // If not found, check transformation combat powers
           item = this._findTransformationCombatPower(itemId);
+          if (item) return item;
+
+          // If still not found, check transformation action cards
+          item = this._findTransformationActionCard(itemId);
           if (item) return item;
         } else if (docRow.dataset.documentClass === "ActiveEffect") {
           const parent =
@@ -1121,6 +1129,24 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
         const power = embeddedPowers.find((p) => p.id === itemId);
         if (power) {
           return power;
+        }
+      }
+
+      return null;
+    }
+
+    _findTransformationActionCard(itemId) {
+      // Get all transformation items
+      const transformations = this.actor.items.filter(
+        (i) => i.type === "transformation",
+      );
+
+      // Search through all embedded action cards
+      for (const transformation of transformations) {
+        const embeddedActionCards = transformation.system.getEmbeddedActionCards();
+        const actionCard = embeddedActionCards.find((ac) => ac.id === itemId);
+        if (actionCard) {
+          return actionCard;
         }
       }
 

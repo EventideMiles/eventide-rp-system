@@ -102,6 +102,31 @@ Unlike other item types, transformations can "hold" combat power items:
   - Creates helpless states for dramatic effect
   - Forces reliance on basic abilities only
 
+### Action Cards Integration
+
+#### **Action Card Override System**
+
+Similar to combat powers, transformations can completely override a character's action cards:
+
+- **Drag and Drop**: Add action cards from character sheets, items directory, or compendiums
+- **Complete Override**: When transformed, ONLY transformation action cards are available
+- **Total Replacement**: Character's normal action cards are temporarily disabled
+- **Preparation Required**: Action cards must be added before transformation is applied
+
+#### **Action Card Management**
+
+- **Include Essential Actions**: Add any action sequences the transformed character needs
+- **Consider Resource Costs**: Ensure embedded items have proper power/inventory requirements
+- **Balance Considerations**: Transformation action cards should reflect the new form's capabilities
+- **Automatic Restoration**: Original action cards return when transformation ends
+
+#### **Strategic Applications**
+
+- **Form-Specific Actions**: Beast forms get bite, claw, and pounce action cards
+- **Disable Complex Actions**: Simple forms lose access to spellcasting or tool use action cards
+- **Class Features**: Rage transformations get berserker-specific action sequences
+- **Cursed Limitations**: Baleful polymorphs replace useful actions with ineffective ones
+
 ### Effects System
 
 #### **Transformation Type Effects**
@@ -174,6 +199,7 @@ Configure how the transformation affects core abilities:
 - **Power**: -3 (reduced magical capacity)
 - **Abilities**: +2 Physical, +1 Acrobatics, -2 Will, -1 Wits
 - **Combat Powers**: Bite Attack, Pack Tactics, Enhanced Senses
+- **Action Cards**: Hunting Pounce, Pack Coordination, Tracking Prowess
 - **Use Case**: Druid shapeshifting, lycanthropy
 
 #### **Giant Eagle Form**
@@ -218,6 +244,7 @@ Configure how the transformation affects core abilities:
 - **Power**: -5 (reduced magical focus)
 - **Abilities**: +3 Physical, +2 Fortitude, -2 Will, -1 Wits
 - **Combat Powers**: Reckless Attack, Intimidating Shout, Berserker's Resilience
+- **Action Cards**: Berserker Combo, Intimidation Strike, Rage Fueled Assault
 - **Use Case**: Class feature representation
 
 #### **Vampiric Form**

@@ -501,7 +501,11 @@ Hooks.once("ready", () => {
     ImageZoomService.init();
     Logger.info("Image zoom service initialized", null, "SYSTEM_INIT");
   } catch (error) {
-    Logger.error("Failed to initialize image zoom service", error, "SYSTEM_INIT");
+    Logger.error(
+      "Failed to initialize image zoom service",
+      error,
+      "SYSTEM_INIT",
+    );
   }
 
   // Remove immediate theme styles now that the full theme system is loaded
@@ -536,6 +540,9 @@ Hooks.once("ready", () => {
  * @returns {Promise<Macro|null>} The created or existing macro, or null if creation fails
  */
 async function createDocMacro(data, slot) {
+  // this process isn't required for macro type items.
+  if (data.type === "Macro") return;
+
   // First, determine if this is a valid owned item.
   if (data.type !== "Item") {
     if (!data.uuid.includes("Actor.") && !data.uuid.includes("Token.")) {

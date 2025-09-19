@@ -33,6 +33,8 @@ export class TransformationCreator extends CreatorApplication {
     actions: {
       removeCombatPower: this._removeCombatPower,
       viewCombatPower: this._viewCombatPower,
+      removeActionCard: this._removeActionCard,
+      viewActionCard: this._viewActionCard,
     },
   };
 
@@ -50,6 +52,7 @@ export class TransformationCreator extends CreatorApplication {
     super({ advanced, number, playerMode, keyType: "transformation" });
     this.calloutGroup = "Transformation";
     this.embeddedCombatPowers = [];
+    this.embeddedActionCards = [];
     this.#dragDrop = this.#createDragDropHandlers();
   }
 
@@ -89,6 +92,7 @@ export class TransformationCreator extends CreatorApplication {
       { value: "5", label: "Colossal (5x)" },
     ];
     context.embeddedCombatPowers = this.embeddedCombatPowers;
+    context.embeddedActionCards = this.embeddedActionCards;
     return context;
   }
 
@@ -178,11 +182,24 @@ export class TransformationCreator extends CreatorApplication {
 
     if (!data || data.type !== "Item") return;
 
-    const combatPower = await Item.implementation.fromDropData(data);
-    if (!combatPower || combatPower.type !== "combatPower") return;
+    const item = await Item.implementation.fromDropData(data);
+    if (!item) return;
 
     const oldPosition = this.position.height;
-    this.embeddedCombatPowers.push(combatPower);
+
+    // Handle combat powers
+    if (item.type === "combatPower") {
+      this.embeddedCombatPowers.push(item);
+    }
+    // Handle action cards
+    else if (item.type === "actionCard") {
+      this.embeddedActionCards.push(item);
+    }
+    else {
+      // Item type not supported
+      return;
+    }
+
     await this.render();
     CreatorApplication._restoreFormData(this, formData);
 
@@ -231,6 +248,73 @@ export class TransformationCreator extends CreatorApplication {
     if (!power) return;
 
     power.sheet.render(true);
+  }
+
+  /**
+   * Handle removing an action card from the transformation
+   * @param {PointerEvent} event   The originating click event
+   * @param {HTMLElement} target   The capturing HTML element which defined a [data-action]
+   * @protected
+   */
+  static async _removeActionCard(event, target) {
+    const formData = CreatorApplication._saveFormData(this);
+    const actionCardId = target.dataset.actionCardId;
+    if (!actionCardId) return;
+
+    const index = this.embeddedActionCards.findIndex((ac) => ac.id === actionCardId);
+    if (index === -1) return;
+
+    this.embeddedActionCards.splice(index, 1);
+    const oldPosition = this.position.height;
+    await this.render();
+    CreatorApplication._restoreFormData(this, formData);
+
+    const contentElement = this.element.querySelector(".erps-form__content");
+    if (contentElement) {
+      contentElement.scrollTop = oldPosition;
+    }
+  }
+
+  /**
+   * Handle viewing an action card's details
+   * @param {PointerEvent} event   The originating click event
+   * @param {HTMLElement} target   The capturing HTML element which defined a [data-action]
+   * @protected
+   */
+  static async _viewActionCard(_event, target) {
+    const actionCardId = target.dataset.actionCardId;
+    if (!actionCardId) return;
+
+    const actionCard = this.embeddedActionCards.find((ac) => ac.id === actionCardId);
+    if (!actionCard) return;
+
+    actionCard.sheet.render(true);
+  }
+
+  /**
+   * Update the transformation item with embedded combat powers and action cards
+   * @param {Event} event      The form submission event
+   * @param {Object} formData  The extracted form data
+   * @returns {Promise<Item>}  The created transformation item
+   * @override
+   */
+  async _updateObject(event, formData) {
+    // Create the transformation item using the parent class method
+    const item = await super._updateObject(event, formData);
+
+    if (!item) return item;
+
+    // Add embedded combat powers if any
+    for (const combatPower of this.embeddedCombatPowers) {
+      await item.system.addCombatPower(combatPower);
+    }
+
+    // Add embedded action cards if any
+    for (const actionCard of this.embeddedActionCards) {
+      await item.system.addActionCard(actionCard);
+    }
+
+    return item;
   }
 
   /** The following pieces set up drag handling and are unlikely to need modification  */

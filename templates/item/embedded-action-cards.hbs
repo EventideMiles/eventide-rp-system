@@ -1,0 +1,70 @@
+<section class="tab embedded-action-cards {{tab.cssClass}}" data-group="primary" data-tab="embeddedActionCards">
+  <div class="eventide-sheet__scrollable-container">
+    <div class="erps-items-panel">
+      <div class="erps-items-panel__section-header">
+        {{localize "EVENTIDE_RP_SYSTEM.Item.Transformation.EmbeddedActionCards"}}
+      </div>
+
+      {{#if embeddedActionCards.length}}
+        <ol class="erps-items-panel__list erps-items-panel__list--three-column">
+          <li class="erps-items-panel__item erps-items-panel__item--header">
+            <div class="erps-items-panel__cell erps-items-panel__cell--image">{{localize 'Image'}}</div>
+            <div class='erps-items-panel__cell erps-items-panel__cell--name'>{{localize 'Name'}}</div>
+            <div class='erps-items-panel__cell erps-items-panel__cell--controls'>{{localize 'Controls'}}</div>
+          </li>
+          {{#each embeddedActionCards as |actionCard|}}
+            <li
+              class="erps-items-panel__item erps-items-panel__item--draggable"
+              data-item-id="{{actionCard.id}}"
+              data-drag="true"
+              data-document-class="Item"
+              title="{{localize 'EVENTIDE_RP_SYSTEM.Item.Transformation.DragToExtract'}}"
+            >
+              <div class="erps-items-panel__cell erps-items-panel__cell--image">
+                <img
+                  class="erps-items-panel__image"
+                  src="{{actionCard.img}}"
+                  title="{{actionCard.name}}"
+                  width="24"
+                  height="24"
+                />
+                <i class="fas fa-arrows-alt erps-items-panel__drag-indicator" title="{{localize 'EVENTIDE_RP_SYSTEM.Item.Transformation.DragToExtract'}}"></i>
+              </div>
+              <div class="erps-items-panel__cell erps-items-panel__cell--name">
+                <span class="erps-items-panel__name">{{actionCard.name}}</span>
+              </div>
+              <div class="erps-items-panel__cell erps-items-panel__cell--controls">
+                <a
+                  class="erps-items-panel__control erps-items-panel__control--edit"
+                  data-action="editEmbeddedActionCard"
+                  title="{{localize 'EVENTIDE_RP_SYSTEM.UI.Edit'}}"
+                >
+                  <i class="fas fa-edit"></i>
+                </a>
+                <a
+                  class="erps-items-panel__control erps-items-panel__control--delete"
+                  data-action="removeActionCard"
+                  data-action-card-id="{{actionCard.id}}"
+                  title="{{localize 'EVENTIDE_RP_SYSTEM.UI.Remove'}}"
+                >
+                  <i class="fas fa-trash"></i>
+                </a>
+              </div>
+            </li>
+          {{/each}}
+        </ol>
+      {{else}}
+        <div class="erps-items-panel__empty">{{localize "EVENTIDE_RP_SYSTEM.Item.Transformation.NoActionCards"}}</div>
+      {{/if}}
+
+      <div class="erps-items-panel__drop-zone" data-drop-zone="actionCard">
+        <p>{{localize "EVENTIDE_RP_SYSTEM.Item.Transformation.DropActionCardHere"}}</p>
+      </div>
+
+      <div class="erps-items-panel__notes">
+        <p>{{localize "EVENTIDE_RP_SYSTEM.Item.Transformation.ActionCardNotes"}}</p>
+        <p><strong>{{localize "EVENTIDE_RP_SYSTEM.Item.Transformation.DragNote"}}</strong></p>
+      </div>
+    </div>
+  </div>
+</section>
