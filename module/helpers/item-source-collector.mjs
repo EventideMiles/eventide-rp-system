@@ -13,8 +13,6 @@ export class ItemSourceCollector {
     const allItems = [];
 
     try {
-      console.log("ItemSourceCollector: Loading items with types:", itemTypes);
-
       // Get items from all sources in parallel for better performance
       const [compendiumItems, characterItems, worldItems] = await Promise.all([
         this.getCompendiumItems(itemTypes, user),
@@ -22,21 +20,10 @@ export class ItemSourceCollector {
         this.getWorldItems(itemTypes, user),
       ]);
 
-      console.log("ItemSourceCollector: Found items:", {
-        compendium: compendiumItems.length,
-        character: characterItems.length,
-        world: worldItems.length,
-      });
-
       allItems.push(...compendiumItems, ...characterItems, ...worldItems);
 
       // Remove duplicates based on UUID and sort by name
       const uniqueItems = this._removeDuplicates(allItems);
-
-      console.log(
-        "ItemSourceCollector: Final unique items:",
-        uniqueItems.length,
-      );
 
       return uniqueItems.sort((a, b) => a.name.localeCompare(b.name));
     } catch (error) {
@@ -57,17 +44,7 @@ export class ItemSourceCollector {
   static async getCompendiumItems(itemTypes = [], _user = game.user) {
     const items = [];
 
-    console.log("ItemSourceCollector: Starting compendium scan...");
-
     for (const pack of game.packs) {
-      console.log("ItemSourceCollector: Checking pack:", {
-        id: pack.id,
-        collection: pack.collection,
-        metadata: pack.metadata,
-        visible: pack.visible,
-        documentName: pack.documentName,
-      });
-
       // Skip if user doesn't have permission to view this pack
       if (!pack.visible) continue;
 
@@ -77,19 +54,8 @@ export class ItemSourceCollector {
       try {
         // Get pack index for performance (avoids loading full documents)
         const index = await pack.getIndex();
-        console.log(
-          `ItemSourceCollector: Pack ${pack.id || pack.collection} has ${index.size} items`,
-        );
 
         for (const indexEntry of index) {
-          console.log("ItemSourceCollector: Processing index entry:", {
-            _id: indexEntry._id,
-            name: indexEntry.name,
-            type: indexEntry.type,
-            packId: pack.id,
-            packCollection: pack.collection,
-          });
-
           // Filter by item type if specified
           if (itemTypes.length > 0 && !itemTypes.includes(indexEntry.type)) {
             continue;
@@ -99,14 +65,12 @@ export class ItemSourceCollector {
           const packIdentifier = pack.id || pack.collection;
           const uuid = `Compendium.${packIdentifier}.Item.${indexEntry._id}`;
 
-          console.log("ItemSourceCollector: Generated UUID:", uuid);
-
           // Create lightweight item representation
           const formattedItem = this.formatItemForDisplay(indexEntry, {
             source: `Compendium: ${pack.metadata.label}`,
             sourceType: "compendium",
             packId: packIdentifier,
-            uuid: uuid,
+            uuid,
           });
 
           items.push(formattedItem);
@@ -131,11 +95,6 @@ export class ItemSourceCollector {
   static async getCharacterSheetItems(itemTypes = [], user = game.user) {
     const items = [];
 
-    console.log(
-      "ItemSourceCollector: Scanning character sheets for types:",
-      itemTypes,
-    );
-
     for (const actor of game.actors) {
       // Skip if user doesn't have permission to view this actor
       if (!actor.testUserPermission(user, "LIMITED")) continue;
@@ -143,20 +102,9 @@ export class ItemSourceCollector {
       // Skip non-character actors (if we only want characters)
       if (actor.type !== "character") continue;
 
-      console.log(
-        `ItemSourceCollector: Checking actor "${actor.name}" with ${actor.items.size} items`,
-      );
-
       for (const item of actor.items) {
-        console.log(
-          `ItemSourceCollector: Found item "${item.name}" (type: "${item.type}")`,
-        );
-
         // Filter by item type if specified
         if (itemTypes.length > 0 && !itemTypes.includes(item.type)) {
-          console.log(
-            `ItemSourceCollector: Filtering out "${item.name}" - type "${item.type}" not in [${itemTypes.join(", ")}]`,
-          );
           continue;
         }
 
@@ -167,16 +115,10 @@ export class ItemSourceCollector {
           uuid: item.uuid,
         });
 
-        console.log(
-          `ItemSourceCollector: Including item "${item.name}" from ${actor.name}`,
-        );
         items.push(formattedItem);
       }
     }
 
-    console.log(
-      `ItemSourceCollector: Character sheet scan complete, found ${items.length} items`,
-    );
     return items;
   }
 
@@ -315,19 +257,9 @@ export class ItemSourceCollector {
 
         // Check if item has a valid roll type (not "none")
         const rollType = itemDoc.system?.roll?.type;
-        console.log(
-          `ItemSourceCollector: Item "${item.name}" has roll type: "${rollType}"`,
-        );
 
         if (rollType && rollType !== "none") {
           validItems.push(item);
-          console.log(
-            `ItemSourceCollector: Including "${item.name}" (roll type: ${rollType})`,
-          );
-        } else {
-          console.log(
-            `ItemSourceCollector: Filtering out "${item.name}" (roll type: ${rollType || "undefined"})`,
-          );
         }
       } catch (error) {
         console.warn(
@@ -346,7 +278,6 @@ export class ItemSourceCollector {
    */
   static getActionItemTypes() {
     const types = ["combatPower", "gear", "feature"];
-    console.log("ItemSourceCollector: getActionItemTypes() returning:", types);
     return types;
   }
 
@@ -356,7 +287,6 @@ export class ItemSourceCollector {
    */
   static getEffectItemTypes() {
     const types = ["gear", "status"];
-    console.log("ItemSourceCollector: getEffectItemTypes() returning:", types);
     return types;
   }
 }
