@@ -59,7 +59,21 @@ class GMControlManager {
       if (actionCardId && actorId) {
         const sourceActor = game.actors.get(actorId);
         if (sourceActor) {
-          const actionCard = sourceActor.items.get(actionCardId);
+          // First try to get action card from actor's items
+          let actionCard = sourceActor.items.get(actionCardId);
+
+          // If not found, check if we have stored action card data in the flag
+          if (!actionCard && flag?.actionCardData) {
+            // Create temporary action card from stored data (for transformation support)
+            actionCard = new CONFIG.Item.documentClass(flag.actionCardData, {
+              parent: sourceActor,
+            });
+            Logger.debug("Using stored action card data for damage application", {
+              actionCardId,
+              actionCardName: actionCard.name,
+            });
+          }
+
           if (actionCard) {
             actionCardName = actionCard.name;
             actionCardDescription =
@@ -775,17 +789,40 @@ class GMControlManager {
       if (approved) {
         // Execute the action as if the GM initiated it
         try {
-          // Get the actor and action card
+          // Get the actor
           const actor = game.actors.get(flag.actorId);
-          const actionCard = actor?.items.get(flag.actionCardId);
+          if (!actor) {
+            ui.notifications.error("Unable to find actor for execution");
+            Logger.warn("Missing actor for approved action", {
+              actorId: flag.actorId,
+            });
+            Logger.methodExit("GMControlManager", "approvePlayerAction", false);
+            return false;
+          }
 
-          if (!actor || !actionCard) {
+          // Get the action card - first try from actor's items, then use stored data
+          let actionCard = actor.items.get(flag.actionCardId);
+
+          if (!actionCard && flag.actionCardData) {
+            // Action card not found in actor items (likely from transformation)
+            // Create a temporary action card from the stored data
+            actionCard = new CONFIG.Item.documentClass(flag.actionCardData, {
+              parent: actor,
+            });
+            Logger.debug("Using stored action card data for transformation-sourced action", {
+              actionCardId: flag.actionCardId,
+              actionCardName: actionCard.name,
+            });
+          }
+
+          if (!actionCard) {
             ui.notifications.error(
-              "Unable to find actor or action card for execution",
+              "Unable to find action card for execution",
             );
-            Logger.warn("Missing actor or action card for approved action", {
+            Logger.warn("Missing action card for approved action", {
               actorId: flag.actorId,
               actionCardId: flag.actionCardId,
+              hasStoredData: !!flag.actionCardData,
             });
             Logger.methodExit("GMControlManager", "approvePlayerAction", false);
             return false;
