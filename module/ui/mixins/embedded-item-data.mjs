@@ -254,12 +254,11 @@ export const EmbeddedItemDataMixin = (BaseClass) =>
       foundry.utils.mergeObject(effectData, formData);
 
       try {
-        // Update the temporary document's source data first
-        this.document.updateSource(effectData);
-
         await this.parentItem.update({
           "system.embeddedStatusEffects": statusEffects,
         });
+        // Update the temporary document's source data after parent update
+        this.document.updateSource(effectData);
         this.render();
       } catch (error) {
         Logger.error(
@@ -286,12 +285,11 @@ export const EmbeddedItemDataMixin = (BaseClass) =>
       foundry.utils.mergeObject(itemData, formData);
 
       try {
-        // Update the temporary document's source data first
-        this.document.updateSource(itemData);
-
         await this.parentItem.update({
           "system.embeddedItem": itemData,
         });
+        // Update the temporary document's source data after parent update
+        this.document.updateSource(itemData);
         this.render();
       } catch (error) {
         Logger.error(

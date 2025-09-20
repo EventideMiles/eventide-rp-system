@@ -526,6 +526,7 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
             await this.parentItem.update({
               "system.embeddedStatusEffects": statusEffects,
             });
+            this.document.updateSource(effectData);
             this.render();
           } catch (error) {
             Logger.error(
@@ -550,6 +551,7 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
             await this.parentItem.update({
               "system.embeddedItem": itemData,
             });
+            this.document.updateSource(itemData);
             this.render();
           } catch (error) {
             Logger.error(
