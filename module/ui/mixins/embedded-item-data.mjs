@@ -130,6 +130,12 @@ export const EmbeddedItemDataMixin = (BaseClass) =>
      * @private
      */
     async _saveActionCardItemContent(target, content) {
+      // Check if this action card is embedded within a transformation
+      if (this._isActionCardEmbeddedInTransformation()) {
+        await this._saveEmbeddedActionCardItemContent(target, content);
+        return;
+      }
+
       const itemData = foundry.utils.deepClone(
         this.parentItem.system.embeddedItem,
       );
@@ -150,6 +156,89 @@ export const EmbeddedItemDataMixin = (BaseClass) =>
         Logger.error(
           "EmbeddedItemDataMixin | Failed to save description",
           { error, itemData },
+          "EMBEDDED_DATA",
+        );
+        ui.notifications.error(
+          game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.SaveItemFailed"),
+        );
+      }
+    }
+
+    /**
+     * Check if this action card is embedded within a transformation
+     * @returns {boolean} True if the parent action card is embedded in a transformation
+     * @private
+     */
+    _isActionCardEmbeddedInTransformation() {
+      // Check if the parent item is an action card and find a transformation that contains it
+      if (this.parentItem.type !== "actionCard") return false;
+
+      // Check if there's a direct parent reference to a transformation
+      if (this.parentItem.parent && this.parentItem.parent.type === "transformation") {
+        return true;
+      }
+
+      // Alternative: Check if the parent action card has a transformation context
+      // This might be set when the embedded item sheet is created from a transformation
+      if (this.parentItem._transformationParent) {
+        return true;
+      }
+
+      return false;
+    }
+
+    /**
+     * Save content for action card items that are embedded within transformations
+     * @param {string} target - The data path to update
+     * @param {string} content - The new content
+     * @private
+     */
+    async _saveEmbeddedActionCardItemContent(target, content) {
+      const transformation = this.parentItem.parent || this.parentItem._transformationParent;
+      const actionCardId = this.parentItem.id;
+
+      // Find the action card in the transformation's embedded action cards
+      const embeddedActionCards = foundry.utils.deepClone(
+        transformation.system.embeddedActionCards || [],
+      );
+      const actionCardIndex = embeddedActionCards.findIndex(
+        (ac) => ac._id === actionCardId,
+      );
+
+      if (actionCardIndex === -1) {
+        Logger.error(
+          "EmbeddedItemDataMixin | Action card not found in transformation",
+          { actionCardId, transformationId: transformation.id },
+          "EMBEDDED_DATA",
+        );
+        return;
+      }
+
+      // Update the embedded item within the action card
+      const actionCardData = embeddedActionCards[actionCardIndex];
+      if (!actionCardData.system) actionCardData.system = {};
+      if (!actionCardData.system.embeddedItem) actionCardData.system.embeddedItem = {};
+
+      const itemData = foundry.utils.deepClone(actionCardData.system.embeddedItem);
+      foundry.utils.setProperty(itemData, target, content);
+      actionCardData.system.embeddedItem = itemData;
+
+      try {
+        // Update the temporary document's source data first
+        this.document.updateSource(itemData);
+
+        // Update the transformation with the modified action cards array
+        await transformation.update({
+          "system.embeddedActionCards": embeddedActionCards,
+        });
+
+        ui.notifications.info(
+          game.i18n.localize("EVENTIDE_RP_SYSTEM.Info.ItemDescriptionSaved"),
+        );
+      } catch (error) {
+        Logger.error(
+          "EmbeddedItemDataMixin | Failed to save embedded action card item description",
+          { error, itemData, actionCardData },
           "EMBEDDED_DATA",
         );
         ui.notifications.error(
@@ -279,6 +368,12 @@ export const EmbeddedItemDataMixin = (BaseClass) =>
      * @private
      */
     async _submitActionCardItemForm(formData) {
+      // Check if this action card is embedded within a transformation
+      if (this._isActionCardEmbeddedInTransformation()) {
+        await this._submitEmbeddedActionCardItemForm(formData);
+        return;
+      }
+
       const itemData = foundry.utils.deepClone(
         this.parentItem.system.embeddedItem,
       );
@@ -295,6 +390,62 @@ export const EmbeddedItemDataMixin = (BaseClass) =>
         Logger.error(
           "EmbeddedItemDataMixin | Failed to save form data",
           { error, itemData, formData },
+          "EMBEDDED_DATA",
+        );
+        ui.notifications.error(
+          game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.SaveItemFailed"),
+        );
+        throw error;
+      }
+    }
+
+    /**
+     * Submit form for action card items that are embedded within transformations
+     * @param {object} formData - The form data
+     * @private
+     */
+    async _submitEmbeddedActionCardItemForm(formData) {
+      const transformation = this.parentItem.parent || this.parentItem._transformationParent;
+      const actionCardId = this.parentItem.id;
+
+      // Find the action card in the transformation's embedded action cards
+      const embeddedActionCards = foundry.utils.deepClone(
+        transformation.system.embeddedActionCards || [],
+      );
+      const actionCardIndex = embeddedActionCards.findIndex(
+        (ac) => ac._id === actionCardId,
+      );
+
+      if (actionCardIndex === -1) {
+        Logger.error(
+          "EmbeddedItemDataMixin | Action card not found in transformation",
+          { actionCardId, transformationId: transformation.id },
+          "EMBEDDED_DATA",
+        );
+        return;
+      }
+
+      // Update the embedded item within the action card
+      const actionCardData = embeddedActionCards[actionCardIndex];
+      if (!actionCardData.system) actionCardData.system = {};
+      if (!actionCardData.system.embeddedItem) actionCardData.system.embeddedItem = {};
+
+      const itemData = foundry.utils.deepClone(actionCardData.system.embeddedItem);
+      foundry.utils.mergeObject(itemData, formData);
+      actionCardData.system.embeddedItem = itemData;
+
+      try {
+        // Update the transformation with the modified action cards array
+        await transformation.update({
+          "system.embeddedActionCards": embeddedActionCards,
+        });
+        // Update the temporary document's source data after parent update
+        this.document.updateSource(itemData);
+        this.render();
+      } catch (error) {
+        Logger.error(
+          "EmbeddedItemDataMixin | Failed to save embedded action card item form data",
+          { error, itemData, formData, actionCardData },
           "EMBEDDED_DATA",
         );
         ui.notifications.error(
@@ -426,6 +577,12 @@ export const EmbeddedItemDataMixin = (BaseClass) =>
      * @private
      */
     async _updateActionCardItemIconTint(tintValue, firstEffect) {
+      // Check if this action card is embedded within a transformation
+      if (this._isActionCardEmbeddedInTransformation()) {
+        await this._updateEmbeddedActionCardItemIconTint(tintValue, firstEffect);
+        return;
+      }
+
       const itemData = foundry.utils.deepClone(
         this.parentItem.system.embeddedItem,
       );
@@ -447,6 +604,68 @@ export const EmbeddedItemDataMixin = (BaseClass) =>
         Logger.error(
           "EmbeddedItemDataMixin | Failed to save item icon tint",
           { error, itemData },
+          "EMBEDDED_DATA",
+        );
+        ui.notifications.error(
+          game.i18n.localize(
+            "EVENTIDE_RP_SYSTEM.Errors.SaveItemIconTintFailed",
+          ),
+        );
+      }
+    }
+
+    /**
+     * Update icon tint for action card items that are embedded within transformations
+     * @param {string} tintValue - The new tint value
+     * @param {ActiveEffect} firstEffect - The first effect
+     * @private
+     */
+    async _updateEmbeddedActionCardItemIconTint(tintValue, firstEffect) {
+      const transformation = this.parentItem.parent || this.parentItem._transformationParent;
+      const actionCardId = this.parentItem.id;
+
+      // Find the action card in the transformation's embedded action cards
+      const embeddedActionCards = foundry.utils.deepClone(
+        transformation.system.embeddedActionCards || [],
+      );
+      const actionCardIndex = embeddedActionCards.findIndex(
+        (ac) => ac._id === actionCardId,
+      );
+
+      if (actionCardIndex === -1) {
+        Logger.error(
+          "EmbeddedItemDataMixin | Action card not found in transformation",
+          { actionCardId, transformationId: transformation.id },
+          "EMBEDDED_DATA",
+        );
+        return;
+      }
+
+      // Update the icon tint in the embedded item within the action card
+      const actionCardData = embeddedActionCards[actionCardIndex];
+      if (!actionCardData.system) actionCardData.system = {};
+      if (!actionCardData.system.embeddedItem) actionCardData.system.embeddedItem = {};
+
+      const itemData = foundry.utils.deepClone(actionCardData.system.embeddedItem);
+      if (!itemData.effects) itemData.effects = [];
+      const effectIndex = itemData.effects.findIndex(
+        (e) => e._id === firstEffect.id,
+      );
+      if (effectIndex >= 0) {
+        itemData.effects[effectIndex].tint = tintValue;
+      }
+      actionCardData.system.embeddedItem = itemData;
+
+      try {
+        this.document.updateSource(itemData);
+        // Update the transformation with the modified action cards array
+        await transformation.update({
+          "system.embeddedActionCards": embeddedActionCards,
+        });
+      } catch (error) {
+        Logger.error(
+          "EmbeddedItemDataMixin | Failed to save embedded action card item icon tint",
+          { error, itemData, actionCardData },
           "EMBEDDED_DATA",
         );
         ui.notifications.error(
