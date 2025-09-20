@@ -68,6 +68,54 @@ export const ItemSheetDragDropMixin = (BaseClass) =>
           };
         }
       }
+      // Handle embedded items and effects from action cards
+      else if (this.item.type === "actionCard" && li.dataset.itemId && li.dataset.embeddedType) {
+        const embeddedType = li.dataset.embeddedType;
+        const targetId = li.dataset.itemId;
+
+        if (embeddedType === "action-item") {
+          // Handle embedded action item
+          const embeddedItem = this.item.getEmbeddedItem();
+          if (embeddedItem && embeddedItem.id === targetId) {
+            // Create clean drag data for the embedded action item
+            const itemData = foundry.utils.deepClone(this.item.system.embeddedItem);
+            // Strip ID to prevent Foundry colliding IDs
+            delete itemData._id;
+
+            dragData = {
+              type: "Item",
+              data: itemData,
+              // Don't include uuid or parent information that would make Foundry think this is an embedded document
+            };
+          }
+        } else if (embeddedType === "effect") {
+          // Handle embedded effects
+          const embeddedEffects = this.item.getEmbeddedEffects();
+          const targetEffect = embeddedEffects.find((effect) => effect.id === targetId);
+
+          if (targetEffect) {
+            // Get the original effect data from the raw storage
+            // We need to find the matching effect data by recreating temp items and matching IDs
+            const originalEffectData = this.item.system.embeddedStatusEffects?.find((effectData) => {
+              const tempItem = new CONFIG.Item.documentClass(effectData, { parent: null });
+              return tempItem.id === targetId;
+            });
+
+            if (originalEffectData) {
+              // Create clean drag data for the embedded effect
+              const effectData = foundry.utils.deepClone(originalEffectData);
+              // Strip ID to prevent Foundry colliding IDs
+              delete effectData._id;
+
+              dragData = {
+                type: "Item",
+                data: effectData,
+                // Don't include uuid or parent information that would make Foundry think this is an embedded document
+              };
+            }
+          }
+        }
+      }
       // Active Effect
       else if (li.dataset.effectId) {
         const effect = this.item.effects.get(li.dataset.effectId);
