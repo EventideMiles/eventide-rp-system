@@ -136,6 +136,7 @@
         "GearEffectInventoryError": "Failed to apply gear effect: {error}",
         "StatusIntensified": "Status effect '{statusName}' intensified on {targetName}",
         "StatusApplied": "Status effect '{statusName}' applied to {targetName}",
+        "CreateNewPower": "Create New Power",
         "RollValue": "Roll Value",
         "StatusThreshold": "Threshold Value",
         "Repetitions": {
@@ -475,6 +476,7 @@
       "SaveItemCharacterEffectsFailed": "Failed to save item character effects.",
       "ShowGearCategoryDialogFailed": "Failed to show gear category dialog",
       "ClearEmbeddedItemFailed": "Failed to clear embedded item",
+      "CreateNewPowerFailed": "Failed to create new combat power",
       "EditEmbeddedItemFailed": "Failed to edit embedded item",
       "EditEmbeddedEffectFailed": "Failed to edit embedded effect",
       "RemoveEmbeddedEffectFailed": "Failed to remove embedded effect",

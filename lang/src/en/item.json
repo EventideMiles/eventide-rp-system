@@ -133,6 +133,7 @@
         "EffectsDescription": "Status effects and gear that will be applied when chain conditions are met",
         "ChainConfiguration": "Chain Configuration",
         "NoActionItem": "No action item configured",
+        "CreateNewPower": "Create New Power",
         "DropActionItemHere": "Drop an action item here",
         "NoEffects": "No effects configured",
         "DropEffectHere": "Drop status effects or gear here",
