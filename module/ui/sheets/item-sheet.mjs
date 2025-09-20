@@ -94,6 +94,7 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
       editEmbeddedActionCard: this._editEmbeddedActionCard,
       onDiceAdjustmentChange: this._onDiceAdjustmentChange,
       clearEmbeddedItem: this._clearEmbeddedItem,
+      createNewPower: this._createNewPower,
 
       editEmbeddedItem: this._editEmbeddedItem,
       editEmbeddedEffect: this._editEmbeddedEffect,
