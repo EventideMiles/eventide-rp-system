@@ -676,6 +676,18 @@ export const ItemSheetActionsMixin = (BaseClass) =>
           return;
         }
 
+        // Double-check that there are no existing embedded effects (race condition protection)
+        const currentEffects = item.system.embeddedStatusEffects || [];
+        if (currentEffects.length > 0) {
+          Logger.warn(
+            "Create new status called but effects still exist - possible race condition",
+            { currentEffectCount: currentEffects.length },
+            "ITEM_ACTIONS"
+          );
+          ui.notifications.warn("Please wait for the previous operation to complete");
+          return;
+        }
+
         // Create a new status effect with default data inherited from the action card
         const newStatusData = {
           name: item.name,
@@ -686,6 +698,30 @@ export const ItemSheetActionsMixin = (BaseClass) =>
             bgColor: item.system.bgColor,
             textColor: item.system.textColor,
           },
+          effects: [
+            {
+              _id: foundry.utils.randomID(),
+              name: `${item.name} Effect`,
+              img: item.img,
+              changes: [],
+              disabled: false,
+              duration: {
+                startTime: null,
+                seconds: 18000, // 5 hours - matches the effect creator pattern for displayOnToken
+                combat: "",
+                rounds: 0,
+                turns: 0,
+                startRound: 0,
+                startTurn: 0,
+              },
+              description: "",
+              origin: "",
+              tint: item.system.textColor || "#ffffff",
+              transfer: true,
+              statuses: new Set(),
+              flags: {},
+            },
+          ],
         };
 
         // Create a temporary Item document from the data
