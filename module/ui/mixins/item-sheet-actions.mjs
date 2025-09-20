@@ -621,6 +621,85 @@ export const ItemSheetActionsMixin = (BaseClass) =>
     }
 
     /**
+     * Handle creating a new status effect as an embedded effect in an action card
+     * @param {Event} _event - The click event
+     * @param {HTMLElement} _target - The target element
+     * @private
+     */
+    static async _createNewStatus(_event, _target) {
+      Logger.methodEntry("ItemSheetActionsMixin", "_createNewStatus", {
+        itemName: this.item?.name,
+        itemType: this.item?.type,
+      });
+
+      try {
+        const item = this.item;
+        if (!item || item.type !== "actionCard") {
+          Logger.warn(
+            "Create new status called on non-action card",
+            { itemType: item?.type },
+            "ITEM_ACTIONS",
+          );
+          return;
+        }
+
+        // Use a more reliable permission check
+        const hasPermission =
+          item.isOwner ||
+          item.canUserModify(game.user, "update") ||
+          game.user.isGM;
+
+        if (!hasPermission) {
+          Logger.warn(
+            "User lacks permission to create new status",
+            {
+              itemName: item.name,
+              userId: game.user.id,
+              isOwner: item.isOwner,
+              canUserModify: item.canUserModify(game.user, "update"),
+              isGM: game.user.isGM,
+            },
+            "ITEM_ACTIONS",
+          );
+          ui.notifications.warn(
+            "You don't have permission to edit this action card's embedded items",
+          );
+          return;
+        }
+
+        // Create a new status effect with default data inherited from the action card
+        const newStatusData = {
+          name: item.name,
+          type: "status",
+          img: item.img,
+          system: {
+            description: item.system.description,
+            bgColor: item.system.bgColor,
+            textColor: item.system.textColor,
+          },
+        };
+
+        // Create a temporary Item document from the data
+        const tempItem = new CONFIG.Item.documentClass(newStatusData, {
+          parent: null,
+        });
+
+        await item.addEmbeddedEffect(tempItem);
+
+        Logger.info("New status created successfully", null, "ITEM_ACTIONS");
+        Logger.methodExit("ItemSheetActionsMixin", "_createNewStatus");
+      } catch (error) {
+        Logger.error("Failed to create new status", error, "ITEM_ACTIONS");
+        ui.notifications.error(
+          game.i18n.localize(
+            "EVENTIDE_RP_SYSTEM.Errors.CreateNewStatusFailed",
+          ),
+        );
+        Logger.methodExit("ItemSheetActionsMixin", "_createNewStatus");
+      }
+    }
+
+    /**
      * Handle editing an embedded item from an action card
      * @param {Event} _event - The click event
      * @param {HTMLElement} _target - The target element

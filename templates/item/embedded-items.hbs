@@ -139,7 +139,14 @@
           {{/each}}
         </ol>
       {{else}}
-        <div class="erps-items-panel__empty">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.NoEffects"}}</div>
+        <div class="erps-items-panel__empty">
+          <p>{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.NoEffects"}}</p>
+          {{#if @root.editable}}
+            <button type="button" class="erps-button erps-button--primary" data-action="createNewStatus">
+              <i class="fas fa-plus"></i> {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.CreateNewStatus"}}
+            </button>
+          {{/if}}
+        </div>
       {{/if}}
 
       {{#if @root.editable}}
