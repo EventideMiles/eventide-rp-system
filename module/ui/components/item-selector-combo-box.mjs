@@ -68,7 +68,7 @@ export class ItemSelectorComboBox {
 
     // Render the component template into the container
     const templatePath = "systems/eventide-rp-system/templates/components/item-selector-combo-box.hbs";
-    const html = await renderTemplate(templatePath, this.getData());
+    const html = await foundry.applications.handlebars.renderTemplate(templatePath, this.getData());
     containerElement.innerHTML = html;
 
     // Cache DOM elements for performance (native DOM)

@@ -86,6 +86,8 @@
       "SaveItemCharacterEffectsFailed": "Failed to save item character effects.",
       "ShowGearCategoryDialogFailed": "Failed to show gear category dialog",
       "ClearEmbeddedItemFailed": "Failed to clear embedded item",
+      "CreateNewPowerFailed": "Failed to create new combat power",
+      "CreateNewStatusFailed": "Failed to create new status effect",
       "EditEmbeddedItemFailed": "Failed to edit embedded item",
       "EditEmbeddedEffectFailed": "Failed to edit embedded effect",
       "RemoveEmbeddedEffectFailed": "Failed to remove embedded effect",
