@@ -49,14 +49,16 @@ export const ItemSheetDragDropMixin = (BaseClass) =>
 
       let dragData = null;
 
-      // Handle embedded combat powers from transformations
+      // Handle embedded items from transformations (combat powers and action cards)
       if (this.item.type === "transformation" && li.dataset.itemId) {
-        const powerId = li.dataset.itemId;
+        const itemId = li.dataset.itemId;
+
+        // First try to find it in embedded combat powers
         const embeddedPowers = this.item.system.getEmbeddedCombatPowers();
-        const power = embeddedPowers.find((p) => p.id === powerId);
+        const power = embeddedPowers.find((p) => p.id === itemId);
 
         if (power) {
-          // Create clean drag data without parent relationship to avoid embedded document errors
+          // Create clean drag data for combat power
           const powerData = power.toObject();
           // Strip ID to prevent Foundry colliding IDs.
           delete powerData._id;
@@ -66,6 +68,23 @@ export const ItemSheetDragDropMixin = (BaseClass) =>
             data: powerData,
             // Don't include uuid or parent information that would make Foundry think this is an embedded document
           };
+        } else {
+          // Try to find it in embedded action cards
+          const embeddedActionCards = this.item.system.getEmbeddedActionCards();
+          const actionCard = embeddedActionCards.find((ac) => ac.id === itemId);
+
+          if (actionCard) {
+            // Create clean drag data for action card
+            const actionCardData = actionCard.toObject();
+            // Strip ID to prevent Foundry colliding IDs.
+            delete actionCardData._id;
+
+            dragData = {
+              type: "Item",
+              data: actionCardData,
+              // Don't include uuid or parent information that would make Foundry think this is an embedded document
+            };
+          }
         }
       }
       // Handle embedded items and effects from action cards

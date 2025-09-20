@@ -183,18 +183,27 @@ export const ItemSheetActionsMixin = (BaseClass) =>
       });
 
       try {
-        // Find the action card in the embedded action cards
+        // Find the specific action card to edit using the data-action-card-id
+        const actionCardId = target.dataset.actionCardId;
+        if (!actionCardId) {
+          Logger.warn("No action card ID found on target element", {}, "ITEM_ACTIONS");
+          return;
+        }
+
         const actionCardList = this.item.system.getEmbeddedActionCards();
         if (!actionCardList || actionCardList.length === 0) {
           Logger.warn("No embedded action cards found", {}, "ITEM_ACTIONS");
           return;
         }
 
-        // For now, edit the first action card. In the future, this could be enhanced
-        // to identify which specific action card to edit based on the target
-        const actionCard = actionCardList[0];
+        // Find the specific action card by ID
+        const actionCard = actionCardList.find((ac) => ac.id === actionCardId);
         if (!actionCard) {
-          Logger.warn("Action card not found for editing", {}, "ITEM_ACTIONS");
+          Logger.warn(
+            "Action card not found for editing",
+            { actionCardId, availableIds: actionCardList.map(ac => ac.id) },
+            "ITEM_ACTIONS"
+          );
           return;
         }
 
