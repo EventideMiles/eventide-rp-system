@@ -136,6 +136,7 @@
         "CreateNewPower": "Create New Power",
         "DropActionItemHere": "Drop an action item here",
         "NoEffects": "No effects configured",
+        "CreateNewStatus": "Create New Status",
         "DropEffectHere": "Drop status effects or gear here",
         "EffectNotes": "Effects are applied when chain conditions are met",
         "DragNote": "Tip: Drag items to extract copies",
