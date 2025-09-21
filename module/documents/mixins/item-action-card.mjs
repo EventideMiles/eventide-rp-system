@@ -282,7 +282,7 @@ export function ItemActionCardMixin(Base) {
         });
 
         // Override the update method to persist changes back to the action card
-        tempItem.update = async (data) => {
+        tempItem.update = async (data, options = {}) => {
           Logger.debug("Updating embedded item", { data }, "ACTION_CARD");
 
           // Get the current embedded item data
@@ -300,18 +300,52 @@ export function ItemActionCardMixin(Base) {
           // Persist the changes to the action card
           await actionCard.update({
             "system.embeddedItem": updatedItemData,
-          });
+          }, options);
 
           // Update the temporary item's source data
           tempItem.updateSource(updatedItemData);
 
-          // Close the temporary sheet and re-render the action card sheet
-          // Only render the sheet if we're in an editing context, not during execution
-          tempItem.sheet.close();
-          if (!executionContext) {
-            actionCard.sheet.render(true);
+          // Only close the sheet if this is a direct item update, not an embedded item update
+          if (!options.fromEmbeddedItem) {
+            // Close the temporary sheet and re-render the action card sheet
+            // Only render the sheet if we're in an editing context, not during execution
+            tempItem.sheet.close();
+            if (!executionContext) {
+              actionCard.sheet.render(true);
+            }
+          } else {
+            // For embedded item updates, just refresh the sheet without closing
+            if (tempItem.sheet?.rendered) {
+              tempItem.sheet.render(false);
+            }
           }
           return tempItem;
+        };
+
+        // Override updateEmbeddedDocuments to also respect the fromEmbeddedItem flag
+        tempItem.updateEmbeddedDocuments = async (embeddedName, updates, options = {}) => {
+          Logger.debug("Updating embedded documents", { embeddedName, updates, options }, "ACTION_CARD");
+
+          // Use the standard updateEmbeddedDocuments for the actual update
+          const result = await CONFIG.Item.documentClass.prototype.updateEmbeddedDocuments.call(
+            tempItem, embeddedName, updates, options
+          );
+
+          // Handle sheet closure based on fromEmbeddedItem flag
+          if (!options.fromEmbeddedItem) {
+            // Close the temporary sheet and re-render the action card sheet
+            tempItem.sheet.close();
+            if (!executionContext) {
+              actionCard.sheet.render(true);
+            }
+          } else {
+            // For embedded item updates, just refresh the sheet without closing
+            if (tempItem.sheet?.rendered) {
+              tempItem.sheet.render(false);
+            }
+          }
+
+          return result;
         };
 
         // Delegate handleBypass method from data model to item document if it exists
@@ -628,7 +662,7 @@ export function ItemActionCardMixin(Base) {
           });
 
           // Override the update method to persist changes back to the action card
-          tempItem.update = async (data) => {
+          tempItem.update = async (data, options = {}) => {
             const currentEffects = foundry.utils.deepClone(
               this.system.embeddedStatusEffects,
             );
@@ -650,18 +684,52 @@ export function ItemActionCardMixin(Base) {
             // Persist the changes to the action card
             await actionCard.update({
               "system.embeddedStatusEffects": currentEffects,
-            });
+            }, options);
 
             // Update the temporary item's source data
             tempItem.updateSource(updatedEffectData);
 
-            // Close the temporary sheet and re-render the action card sheet
-            // Only render the sheet if we're in an editing context, not during execution
-            tempItem.sheet.close();
-            if (!executionContext) {
-              actionCard.sheet.render(true);
+            // Only close the sheet if this is a direct item update, not an embedded item update
+            if (!options.fromEmbeddedItem) {
+              // Close the temporary sheet and re-render the action card sheet
+              // Only render the sheet if we're in an editing context, not during execution
+              tempItem.sheet.close();
+              if (!executionContext) {
+                actionCard.sheet.render(true);
+              }
+            } else {
+              // For embedded item updates, just refresh the sheet without closing
+              if (tempItem.sheet?.rendered) {
+                tempItem.sheet.render(false);
+              }
             }
             return tempItem;
+          };
+
+          // Override updateEmbeddedDocuments to also respect the fromEmbeddedItem flag for status effects
+          tempItem.updateEmbeddedDocuments = async (embeddedName, updates, options = {}) => {
+            Logger.debug("Updating embedded documents on status effect", { embeddedName, updates, options }, "ACTION_CARD");
+
+            // Use the standard updateEmbeddedDocuments for the actual update
+            const result = await CONFIG.Item.documentClass.prototype.updateEmbeddedDocuments.call(
+              tempItem, embeddedName, updates, options
+            );
+
+            // Handle sheet closure based on fromEmbeddedItem flag
+            if (!options.fromEmbeddedItem) {
+              // Close the temporary sheet and re-render the action card sheet
+              tempItem.sheet.close();
+              if (!executionContext) {
+                actionCard.sheet.render(true);
+              }
+            } else {
+              // For embedded item updates, just refresh the sheet without closing
+              if (tempItem.sheet?.rendered) {
+                tempItem.sheet.render(false);
+              }
+            }
+
+            return result;
           };
 
           return tempItem;

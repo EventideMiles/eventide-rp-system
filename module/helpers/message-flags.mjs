@@ -490,6 +490,7 @@ export class MessageFlags {
   static createPlayerActionApprovalFlag({
     actorId,
     actionCardId,
+    actionCardData,
     playerId,
     playerName,
     targetIds,
@@ -500,11 +501,13 @@ export class MessageFlags {
       actionCardId,
       playerId,
       targetCount: targetIds?.length,
+      hasActionCardData: !!actionCardData,
     });
 
     const flag = {
       actorId,
       actionCardId,
+      actionCardData, // Store the full action card data for transformation support
       playerId,
       playerName,
       targetIds: targetIds || [],

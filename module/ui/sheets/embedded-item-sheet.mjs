@@ -250,10 +250,10 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
         closeOnSubmit: false,
       },
       actions: {
-        onEditImage: this._onEditImage,
-        newCharacterEffect: this._newEmbeddedCharacterEffect,
-        deleteCharacterEffect: this._deleteEmbeddedCharacterEffect,
-        toggleEffectDisplay: this._toggleEffectDisplay,
+        onEditImage: EmbeddedItemSheet._onEditImage,
+        newCharacterEffect: EmbeddedItemSheet._newEmbeddedCharacterEffect,
+        deleteCharacterEffect: EmbeddedItemSheet._deleteEmbeddedCharacterEffect,
+        toggleEffectDisplay: EmbeddedItemSheet._toggleEffectDisplay,
       },
     },
   );
@@ -495,7 +495,7 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
           try {
             await this.parentItem.update({
               "system.embeddedCombatPowers": powers,
-            });
+            }, { fromEmbeddedItem: true });
             this.document.updateSource(powerData);
             this.render();
           } catch (error) {
@@ -525,7 +525,8 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
           try {
             await this.parentItem.update({
               "system.embeddedStatusEffects": statusEffects,
-            });
+            }, { fromEmbeddedItem: true });
+            this.document.updateSource(effectData);
             this.render();
           } catch (error) {
             Logger.error(
@@ -549,7 +550,8 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
           try {
             await this.parentItem.update({
               "system.embeddedItem": itemData,
-            });
+            }, { fromEmbeddedItem: true });
+            this.document.updateSource(itemData);
             this.render();
           } catch (error) {
             Logger.error(
@@ -1089,5 +1091,21 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
     }
 
     event.target.focus();
+  }
+
+  /**
+   * Override editor options to disable collaborative editing for temporary documents
+   * @param {string} target - The target field being edited
+   * @returns {object} Editor configuration options
+   * @override
+   */
+  _getEditorOptions(target) {
+    const options = super._getEditorOptions?.(target) || {};
+
+    // Disable collaborative editing for temporary documents (like embedded items)
+    // since they don't exist in the database
+    options.collaborative = false;
+
+    return options;
   }
 }

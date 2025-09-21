@@ -6,8 +6,8 @@
 >
   {{! Editors must receive enriched text data from getData to properly handle rolls, UUID links, etc. }}
   {{#if editable}}
-    {{#if isEmbedded}}
-      {{!-- Embedded combat powers CANNOT be in collaboration mode. --}}
+    {{#if (or isEmbedded isTransformationActionCard)}}
+      {{!-- Embedded combat powers and transformation action cards CANNOT be in collaboration mode. --}}
       <prose-mirror
         name="system.description"
         value="{{system.description}}"

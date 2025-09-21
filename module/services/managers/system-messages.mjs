@@ -720,6 +720,7 @@ class ERPSMessageHandler {
     const approvalFlag = MessageFlags.createPlayerActionApprovalFlag({
       actorId: actor.id,
       actionCardId: actionCard.id,
+      actionCardData: actionCard.toObject(), // Store full action card data for transformation support
       playerId,
       playerName,
       targetIds: targets.map((t) => t.id),

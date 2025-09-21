@@ -33,6 +33,25 @@ export const ItemSheetEffectGuardsMixin = (BaseClass) =>
         },
       );
 
+      // Additional check - skip effect guards for temporary items at the method level
+      if (!this.item.collection ||
+          !this.item.isEmbedded ||
+          (this.item.update && this.item.update.toString().includes('embeddedActionCards'))) {
+        Logger.debug(
+          "Skipping effect guards - temporary or transformation item detected",
+          {
+            itemName: this.item?.name,
+            itemType: this.item?.type,
+            itemId: this.item?.id,
+            hasCollection: !!this.item.collection,
+            isEmbedded: this.item.isEmbedded,
+            hasCustomUpdate: this.item.update && this.item.update.toString().includes('embeddedActionCards'),
+          },
+          "EFFECT_GUARDS",
+        );
+        return;
+      }
+
       try {
         const effects = Array.from(this.item.effects);
 
@@ -180,6 +199,35 @@ export const ItemSheetEffectGuardsMixin = (BaseClass) =>
      * @protected
      */
     async _initEffectGuards() {
+      // Add comprehensive debugging
+      Logger.debug(
+        "Effect guards check - item details",
+        {
+          itemName: this.item?.name,
+          itemType: this.item?.type,
+          itemId: this.item?.id,
+          hasCollection: !!this.item.collection,
+          collection: this.item.collection?.constructor?.name,
+          isTemporary: !this.item.collection,
+          itemKeys: Object.keys(this.item || {}),
+        },
+        "EFFECT_GUARDS",
+      );
+
+      // Skip effect guards for temporary items (like action cards from transformations)
+      if (!this.item.collection) {
+        Logger.debug(
+          "Skipping effect guards for temporary item",
+          {
+            itemName: this.item?.name,
+            itemType: this.item?.type,
+            itemId: this.item?.id,
+          },
+          "EFFECT_GUARDS",
+        );
+        return;
+      }
+
       try {
         await this.eventideItemEffectGuards();
 
