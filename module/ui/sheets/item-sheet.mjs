@@ -265,6 +265,13 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
        */
       context.isEmbedded = false;
 
+      /**
+       * A flag to indicate that this sheet is for a temporary action card from a transformation.
+       * This is used by the template to disable collaborative editing for temporary documents.
+       * @type {boolean}
+       */
+      context.isTransformationActionCard = this._isTransformationActionCard();
+
       Logger.debug(
         "Item sheet context prepared",
         {
@@ -550,6 +557,13 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
         event.target.value = defaultColor;
       }
     }
+    // Check if this is a temporary action card from a transformation first
+    if (this._isTransformationActionCard()) {
+      // Handle transformation action card form changes specially
+      await this._onChangeTransformationActionCard(formConfig, event);
+      return;
+    }
+
     if (event.target.name.includes("iconTint")) {
       const updateData = {
         _id: this.item.effects.contents[0]._id,
@@ -560,6 +574,121 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
     }
 
     await super._onChangeForm(formConfig, event);
+  }
+
+  /**
+   * Handle form submission
+   * @param {object} formConfig - The form configuration
+   * @param {Event} event - The form submission event
+   * @returns {Promise<void>}
+   * @override
+   */
+  async _onSubmitForm(formConfig, event) {
+    // Check if this is a temporary action card from a transformation
+    if (this._isTransformationActionCard()) {
+      // Handle transformation action card form submission specially
+      await this._onSubmitTransformationActionCard(formConfig, event);
+      return;
+    }
+
+    // Use the standard form submission for regular items
+    await super._onSubmitForm(formConfig, event);
+  }
+
+  /**
+   * Check if this is a temporary action card created from a transformation
+   * @returns {boolean} True if this is a transformation action card
+   * @private
+   */
+  _isTransformationActionCard() {
+    // Check if the item has a custom update method (indicating it's from a transformation)
+    const hasCustomUpdate = this.item.update && this.item.update.toString().includes('embeddedActionCards');
+
+    // Also check if the item type is actionCard and it's not persisted (no collection)
+    const isTemporaryActionCard = this.item.type === "actionCard" && !this.item.collection;
+
+    return hasCustomUpdate || isTemporaryActionCard;
+  }
+
+  /**
+   * Handle form changes for transformation action cards
+   * @param {object} formConfig - The form configuration
+   * @param {Event} event - The form change event
+   * @private
+   */
+  async _onChangeTransformationActionCard(formConfig, event) {
+    // Get the changed field name and value
+    const fieldName = event.target.name;
+    const fieldValue = event.target.value;
+
+    // Handle icon tint changes specially for transformation action cards
+    if (fieldName.includes("iconTint")) {
+      try {
+        // Use updateEmbeddedDocuments with the fromEmbeddedItem flag to prevent sheet closure
+        const firstEffect = this.item.effects.contents[0];
+        if (firstEffect) {
+          const updateData = {
+            _id: firstEffect._id,
+            tint: fieldValue,
+          };
+          await this.item.updateEmbeddedDocuments("ActiveEffect", [updateData], { fromEmbeddedItem: true });
+        }
+      } catch (error) {
+        console.error("Failed to update transformation action card icon tint:", error);
+      }
+      return;
+    }
+
+    // Handle other field changes normally
+    const updateData = {};
+    foundry.utils.setProperty(updateData, fieldName, fieldValue);
+
+    try {
+      // Use the action card's custom update method with fromEmbeddedItem flag
+      // to prevent the sheet from closing
+      await this.item.update(updateData, { fromEmbeddedItem: true });
+    } catch (error) {
+      console.error("Failed to update transformation action card:", error);
+    }
+  }
+
+  /**
+   * Handle form submission for transformation action cards
+   * @param {object} formConfig - The form configuration
+   * @param {Event} event - The form submission event
+   * @private
+   */
+  async _onSubmitTransformationActionCard(formConfig, event) {
+    // Get all form data
+    const { FormDataExtended } = foundry.applications.ux;
+    const formData = new FormDataExtended(event.target).object;
+
+    try {
+      // Use the action card's custom update method
+      // Don't use fromEmbeddedItem flag for full form submissions to allow normal behavior
+      await this.item.update(formData);
+    } catch (error) {
+      console.error("Failed to submit transformation action card form:", error);
+      ui.notifications.error("Failed to save action card. See console for details.");
+    }
+  }
+
+  /**
+   * Override editor options to disable collaborative editing for temporary documents
+   * @param {string} target - The target field being edited
+   * @returns {object} Editor configuration options
+   * @override
+   */
+  _getEditorOptions(target) {
+    const options = super._getEditorOptions?.(target) || {};
+
+    // Disable collaborative editing for temporary documents (like action cards from transformations)
+    // since they don't exist in the database
+    if (this._isTransformationActionCard()) {
+      options.collaborative = false;
+    }
+
+    return options;
   }
 
   /**
