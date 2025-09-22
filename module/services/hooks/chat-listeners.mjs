@@ -4,7 +4,6 @@
  */
 
 import { Logger } from "../logger.mjs";
-import { MessageFlags } from "../../helpers/message-flags.mjs";
 import { gmControlManager } from "../managers/gm-control.mjs";
 import { ImageZoomService } from "../image-zoom.mjs";
 

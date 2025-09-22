@@ -494,7 +494,7 @@ export const ItemSheetActionsMixin = (BaseClass) =>
             itemName: this.item.name,
             documentName: createdDoc.name,
             documentId: createdDoc.id,
-            documentClass: documentClass,
+            documentClass,
           },
           "ITEM_ACTIONS",
         );

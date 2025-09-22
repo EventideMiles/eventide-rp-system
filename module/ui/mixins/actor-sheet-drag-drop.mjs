@@ -1160,7 +1160,7 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
      * @returns {Promise<Item[]>} The created action card
      * @private
      */
-    async _createActionCardFromItem(item, event) {
+    async _createActionCardFromItem(item, _event) {
       Logger.methodEntry("ActorSheetDragDropMixin", "_createActionCardFromItem", {
         itemName: item?.name,
         itemType: item?.type,
@@ -1271,15 +1271,15 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
         // Create saved damage action card data with status appearance
         const actionCardData = {
           name: game.i18n.format("EVENTIDE_RP_SYSTEM.Actor.ActionCards.StatusGeneratedName", {
-            statusName: statusName,
+            statusName,
           }),
           type: "actionCard",
           img: statusImg,
           system: {
             description: statusDescription,
             mode: "savedDamage",
-            bgColor: bgColor,
-            textColor: textColor,
+            bgColor,
+            textColor,
             advanceInitiative: false,
             attemptInventoryReduction: false,
             attackChain: {
@@ -1295,7 +1295,7 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
               formula: "1d8",
               type: "damage",
               description: game.i18n.format("EVENTIDE_RP_SYSTEM.Actor.ActionCards.StatusDamageDescription", {
-                statusName: statusName,
+                statusName,
               }),
             },
             embeddedStatusEffects: [],
@@ -1314,7 +1314,7 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
         ui.notifications.info(
           game.i18n.format("EVENTIDE_RP_SYSTEM.Actor.ActionCards.CreatedStatusActionCard", {
             actionCardName: actionCard.name,
-            statusName: statusName,
+            statusName,
           }),
         );
 
