@@ -140,6 +140,12 @@
         "CreateNewStatus": "Create New Status",
         "RollValue": "Roll Value",
         "StatusThreshold": "Threshold Value",
+        "TransformationConfig": "Transformation Configuration",
+        "TransformationCondition": "Apply Transformations",
+        "TransformationThreshold": "Transformation Threshold",
+        "TransformationSelection": "Select Transformations",
+        "NoTransformation": "No Transformation",
+        "NoTargetsForTransformation": "No targets selected for transformation selection.",
         "Repetitions": {
           "label": "Repetitions",
           "hint": "Roll formula for number of repetitions (e.g. '3', '1d4', '2d6+1')"
@@ -166,6 +172,19 @@
         },
         "InsufficientPowerError": "Insufficient power for {itemName}: requires {required}, available {available}",
         "InsufficientQuantityError": "Insufficient quantity for {itemName}: requires {required}, available {available}",
+        "TransformationSelectionTitle": "Select Transformation",
+        "TransformationSelectionPrompt": "This action card has multiple transformations. Choose which one to apply:",
+        "TransformationSelectionLabel": "Transformation",
+        "TransformationSelectionApply": "Apply",
+        "TransformationSelectionCancel": "Cancel",
+        "TransformationDuplicateNameWarning": "Cannot apply transformation '{transformationName}' - character already has a transformation with the same name.",
+        "TransformationCursedOverrideDenied": "Cannot apply transformation '{newTransformation}' - current cursed transformation '{currentTransformation}' can only be overridden by another cursed transformation.",
+        "TransformationAddedToEffects": "Transformation '{transformationName}' added to action card",
+        "Transformations": "Transformations",
+        "NoTransformations": "No transformations configured",
+        "CreateNewTransformation": "Create New Transformation",
+        "DropTransformationHere": "Drop transformations here",
+        "TransformationNotes": "Transformations are applied when action card conditions are met",
         "Config": {
           "RepetitionsHeader": "Repetition Settings",
           "BehaviorHeader": "Repetition Behavior"
@@ -425,6 +444,7 @@
       "ActionCardItemTypes": "Action cards can only embed items of type: {supported}. Cannot add {type}.",
       "ActionCardEffectTypes": "Action cards can only embed effects of type: {supported}. Cannot add {type}.",
       "ActionCardStatusTypes": "Action cards can only embed status effects. Cannot add {type}.",
+      "ActionCardTransformationTypes": "Action cards can only embed transformations. Cannot add {type}.",
       "TransformationItemTypes": "Transformations can only embed combat powers and action cards.",
       "InvalidWeight": "Weight must be a valid number",
       "InvalidCost": "Cost must be a valid number",
@@ -514,6 +534,10 @@
       "EffectToggleError": "Failed to toggle effect",
       "FailedToAddEffectToActionCard": "Failed to add effect to action card",
       "FailedToAddItemToActionCard": "Failed to add item to action card",
+      "FailedToAddTransformationToActionCard": "Failed to add transformation '{transformationName}' to action card '{actionCardName}'",
+      "EditEmbeddedTransformationFailed": "Failed to edit embedded transformation",
+      "RemoveEmbeddedTransformationFailed": "Failed to remove embedded transformation",
+      "FailedToAddTransformation": "Failed to add transformation",
       "FolderDropError": "Failed to drop folder",
       "GearQuantityError": "Gear quantity error",
       "GearToggleError": "Failed to toggle gear",
@@ -699,6 +723,11 @@
         "Placeholder": "Search for effect to add...",
         "AriaLabel": "Search and select an effect",
         "ItemAdded": "Effect '{itemName}' added"
+      },
+      "TransformationsSelector": {
+        "Placeholder": "Search for transformation to add...",
+        "AriaLabel": "Search and select a transformation",
+        "ItemAdded": "Transformation '{itemName}' added"
       },
       "Placeholders": {
         "ChangeValue": "Change Value",

@@ -143,6 +143,11 @@
         "AriaLabel": "Search and select an effect",
         "ItemAdded": "Effect '{itemName}' added"
       },
+      "TransformationsSelector": {
+        "Placeholder": "Search for transformation to add...",
+        "AriaLabel": "Search and select a transformation",
+        "ItemAdded": "Transformation '{itemName}' added"
+      },
       "Placeholders": {
         "ChangeValue": "Change Value",
         "Description": "Description",
