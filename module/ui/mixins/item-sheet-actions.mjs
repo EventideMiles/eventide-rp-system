@@ -17,6 +17,8 @@ const FilePicker = foundry.applications.apps.FilePicker.implementation;
  */
 export const ItemSheetActionsMixin = (BaseClass) =>
   class extends BaseClass {
+
+
     /**
      * Handle changing a Document's image.
      * Reused pattern from actor sheet for consistency.
@@ -422,6 +424,7 @@ export const ItemSheetActionsMixin = (BaseClass) =>
           "ITEM_ACTIONS",
         );
 
+
         Logger.methodExit("ItemSheetActionsMixin", "_createEffect");
       } catch (error) {
         Logger.error("Failed to create effect", error, "ITEM_ACTIONS");
@@ -431,6 +434,126 @@ export const ItemSheetActionsMixin = (BaseClass) =>
           }),
         );
         Logger.methodExit("ItemSheetActionsMixin", "_createEffect");
+      }
+    }
+
+    /**
+     * Create a new document (like ActiveEffect) on this item
+     * This method handles document creation
+     * @param {Event} _event - The triggering event
+     * @param {HTMLElement} target - The capturing HTML element which defined a [data-action]
+     * @returns {Promise<void>}
+     * @private
+     */
+    static async _createDoc(_event, target) {
+      Logger.methodEntry("ItemSheetActionsMixin", "_createDoc", {
+        itemName: this.item?.name,
+        itemType: this.item?.type,
+        targetDataset: target.dataset,
+      });
+
+
+      try {
+        const { documentClass } = target.dataset;
+
+        if (!documentClass) {
+          throw new Error("Document class not specified");
+        }
+
+        // Get the document class
+        const docCls = foundry.utils.getDocumentClass(documentClass);
+
+        if (!docCls) {
+          throw new Error(`Document class ${documentClass} not found`);
+        }
+
+        // Prepare the document creation data
+        const createData = {
+          name: docCls.defaultName({
+            type: target.dataset.type,
+            parent: this.item,
+          }),
+        };
+
+        // Loop through the dataset and add it to our createData
+        for (const [dataKey, value] of Object.entries(target.dataset)) {
+          // These data attributes are reserved for the action handling
+          if (["action", "documentClass"].includes(dataKey)) continue;
+          // Nested properties require dot notation in the HTML
+          foundry.utils.setProperty(createData, dataKey, value);
+        }
+
+        // Create the embedded document
+        const createdDoc = await docCls.create(createData, {
+          parent: this.item,
+        });
+
+        Logger.info(
+          `Document created successfully: ${createdDoc.name}`,
+          {
+            itemName: this.item.name,
+            documentName: createdDoc.name,
+            documentId: createdDoc.id,
+            documentClass: documentClass,
+          },
+          "ITEM_ACTIONS",
+        );
+
+
+        Logger.methodExit("ItemSheetActionsMixin", "_createDoc");
+      } catch (error) {
+        Logger.error("Failed to create document", error, "ITEM_ACTIONS");
+        ui.notifications.error(
+          game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.DocumentCreationFailed", {
+            itemName: this.item?.name || "Unknown",
+            documentClass: target.dataset.documentClass || "Unknown",
+          }),
+        );
+        Logger.methodExit("ItemSheetActionsMixin", "_createDoc");
+      }
+    }
+
+    /**
+     * Delete a document (like ActiveEffect) from this item
+     * Routes to the appropriate specific delete method
+     * @param {Event} event - The triggering event
+     * @param {HTMLElement} target - The capturing HTML element which defined a [data-action]
+     * @returns {Promise<void>}
+     * @private
+     */
+    static async _deleteDoc(event, target) {
+      Logger.methodEntry("ItemSheetActionsMixin", "_deleteDoc", {
+        itemName: this.item?.name,
+        itemType: this.item?.type,
+        targetDataset: target.dataset,
+      });
+
+      try {
+        const { documentClass } = target.dataset;
+
+        if (!documentClass) {
+          throw new Error("Document class not specified");
+        }
+
+        // Route to the appropriate specific delete method
+        if (documentClass === "ActiveEffect") {
+          // Call the existing deleteEffect method
+          await this._deleteEffect(event, target);
+        } else {
+          // Handle other document types if needed in the future
+          throw new Error(`Deletion of ${documentClass} not yet implemented`);
+        }
+
+        Logger.methodExit("ItemSheetActionsMixin", "_deleteDoc");
+      } catch (error) {
+        Logger.error("Failed to delete document", error, "ITEM_ACTIONS");
+        ui.notifications.error(
+          game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.DocumentDeletionFailed", {
+            itemName: this.item?.name || "Unknown",
+            documentClass: target.dataset.documentClass || "Unknown",
+          }),
+        );
+        Logger.methodExit("ItemSheetActionsMixin", "_deleteDoc");
       }
     }
 
@@ -493,6 +616,7 @@ export const ItemSheetActionsMixin = (BaseClass) =>
         itemType: this.item?.type,
       });
 
+
       try {
         // Get the item from the sheet instance, not from the form
         const item = this.item;
@@ -531,6 +655,10 @@ export const ItemSheetActionsMixin = (BaseClass) =>
 
         await item.clearEmbeddedItem();
 
+        // Explicitly render the sheet to ensure it updates
+        this.render();
+
+
         Logger.info("Embedded item cleared successfully", null, "ITEM_ACTIONS");
         Logger.methodExit("ItemSheetActionsMixin", "_clearEmbeddedItem");
       } catch (error) {
@@ -555,6 +683,7 @@ export const ItemSheetActionsMixin = (BaseClass) =>
         itemName: this.item?.name,
         itemType: this.item?.type,
       });
+
 
       try {
         const item = this.item;
@@ -616,6 +745,10 @@ export const ItemSheetActionsMixin = (BaseClass) =>
 
         await item.setEmbeddedItem(tempItem);
 
+        // Explicitly render the sheet to ensure it updates
+        this.render();
+
+
         Logger.info("New power created successfully", null, "ITEM_ACTIONS");
         Logger.methodExit("ItemSheetActionsMixin", "_createNewPower");
       } catch (error) {
@@ -627,6 +760,7 @@ export const ItemSheetActionsMixin = (BaseClass) =>
         );
         Logger.methodExit("ItemSheetActionsMixin", "_createNewPower");
       }
+
     }
 
     /**
@@ -640,6 +774,7 @@ export const ItemSheetActionsMixin = (BaseClass) =>
         itemName: this.item?.name,
         itemType: this.item?.type,
       });
+
 
       try {
         const item = this.item;
@@ -731,6 +866,10 @@ export const ItemSheetActionsMixin = (BaseClass) =>
 
         await item.addEmbeddedEffect(tempItem);
 
+        // Explicitly render the sheet to ensure it updates
+        this.render();
+
+
         Logger.info("New status created successfully", null, "ITEM_ACTIONS");
         Logger.methodExit("ItemSheetActionsMixin", "_createNewStatus");
       } catch (error) {
@@ -742,6 +881,96 @@ export const ItemSheetActionsMixin = (BaseClass) =>
         );
         Logger.methodExit("ItemSheetActionsMixin", "_createNewStatus");
       }
+
+    }
+
+    /**
+     * Handle creating a new transformation as an embedded transformation in an action card
+     * @param {Event} _event - The click event
+     * @param {HTMLElement} _target - The target element
+     * @private
+     */
+    static async _createNewTransformation(_event, _target) {
+      Logger.methodEntry("ItemSheetActionsMixin", "_createNewTransformation", {
+        itemName: this.item?.name,
+        itemType: this.item?.type,
+      });
+
+
+      try {
+        const item = this.item;
+        if (!item || item.type !== "actionCard") {
+          Logger.warn(
+            "Create new transformation called on non-action card",
+            { itemType: item?.type },
+            "ITEM_ACTIONS",
+          );
+          return;
+        }
+
+        // Use a more reliable permission check
+        const hasPermission =
+          item.isOwner ||
+          item.canUserModify(game.user, "update") ||
+          game.user.isGM;
+
+        if (!hasPermission) {
+          Logger.warn(
+            "User lacks permission to create new transformation",
+            {
+              itemName: item.name,
+              userId: game.user.id,
+              isOwner: item.isOwner,
+              canUserModify: item.canUserModify(game.user, "update"),
+              isGM: game.user.isGM,
+            },
+            "ITEM_ACTIONS",
+          );
+          ui.notifications.warn(
+            "You don't have permission to edit this action card's embedded items",
+          );
+          return;
+        }
+
+        // Create a new transformation with default data inherited from the action card
+        const newTransformationData = {
+          name: item.name,
+          type: "transformation",
+          img: item.img,
+          system: {
+            description: item.system.description,
+            size: 1,
+            cursed: false,
+            embeddedCombatPowers: [],
+            resolveAdjustment: 0,
+            powerAdjustment: 0,
+            tokenImage: "",
+          },
+        };
+
+        // Create a temporary Item document from the data
+        const tempItem = new CONFIG.Item.documentClass(newTransformationData, {
+          parent: null,
+        });
+
+        await item.addEmbeddedTransformation(tempItem);
+
+        // Explicitly render the sheet to ensure it updates
+        this.render();
+
+
+        Logger.info("New transformation created successfully", null, "ITEM_ACTIONS");
+        Logger.methodExit("ItemSheetActionsMixin", "_createNewTransformation");
+      } catch (error) {
+        Logger.error("Failed to create new transformation", error, "ITEM_ACTIONS");
+        ui.notifications.error(
+          game.i18n.localize(
+            "EVENTIDE_RP_SYSTEM.Errors.CreateNewTransformationFailed",
+          ),
+        );
+        Logger.methodExit("ItemSheetActionsMixin", "_createNewTransformation");
+      }
+
     }
 
     /**
@@ -929,6 +1158,7 @@ export const ItemSheetActionsMixin = (BaseClass) =>
         effectId: target.dataset.effectId,
       });
 
+
       try {
         const item = this.item;
         const effectId = target.dataset.effectId;
@@ -977,6 +1207,10 @@ export const ItemSheetActionsMixin = (BaseClass) =>
 
         await item.removeEmbeddedEffect(effectId);
 
+        // Explicitly render the sheet to ensure it updates
+        this.render();
+
+
         Logger.info(
           "Embedded effect removed successfully",
           { effectId },
@@ -992,6 +1226,181 @@ export const ItemSheetActionsMixin = (BaseClass) =>
         );
         Logger.methodExit("ItemSheetActionsMixin", "_removeEmbeddedEffect");
       }
+
+    }
+
+
+    /**
+     * Handle editing an embedded transformation on an action card
+     * @param {Event} _event - The click event
+     * @param {HTMLElement} target - The target element
+     * @private
+     */
+    static async _editEmbeddedTransformation(_event, target) {
+      Logger.methodEntry("ItemSheetActionsMixin", "_editEmbeddedTransformation", {
+        itemName: this.item?.name,
+        itemType: this.item?.type,
+        transformationId: target.dataset.transformationId,
+      });
+
+      try {
+        const item = this.item;
+        const transformationId = target.dataset.transformationId;
+
+        if (!item || item.type !== "actionCard") {
+          Logger.warn(
+            "Edit embedded transformation called on non-action card",
+            { itemType: item?.type },
+            "ITEM_ACTIONS",
+          );
+          return;
+        }
+
+        // Check if user has permission to edit this action card
+        const hasPermission =
+          item.isOwner || game.user.isGM || item.getUserLevel() >= 2;
+
+        if (!hasPermission) {
+          Logger.warn(
+            "User does not have permission to edit embedded transformations",
+            {
+              userId: game.user.id,
+              userName: game.user.name,
+              itemOwnerId: item.ownership,
+              userLevel: item.getUserLevel(),
+            },
+            "ITEM_ACTIONS",
+          );
+          ui.notifications.warn(
+            "You don't have permission to edit this action card's embedded transformations",
+          );
+          return;
+        }
+
+        if (!transformationId) {
+          Logger.warn(
+            "No transformation ID provided for editing",
+            null,
+            "ITEM_ACTIONS",
+          );
+          return;
+        }
+
+        // Get the embedded transformations
+        const embeddedTransformations = await item.getEmbeddedTransformations();
+        const transformation = embeddedTransformations.find(
+          (t) => t.id === transformationId,
+        );
+
+        if (!transformation) {
+          Logger.warn(
+            "Transformation not found in embedded transformations",
+            { transformationId },
+            "ITEM_ACTIONS",
+          );
+          return;
+        }
+
+        // Open the transformation sheet
+        await transformation.sheet.render(true);
+
+        Logger.info(
+          "Embedded transformation editor opened successfully",
+          { transformationId },
+          "ITEM_ACTIONS",
+        );
+        Logger.methodExit("ItemSheetActionsMixin", "_editEmbeddedTransformation");
+      } catch (error) {
+        Logger.error("Failed to edit embedded transformation", error, "ITEM_ACTIONS");
+        ui.notifications.error(
+          game.i18n.localize(
+            "EVENTIDE_RP_SYSTEM.Errors.EditEmbeddedTransformationFailed",
+          ),
+        );
+        Logger.methodExit("ItemSheetActionsMixin", "_editEmbeddedTransformation");
+      }
+    }
+
+    /**
+     * Handle removing an embedded transformation from an action card
+     * @param {Event} _event - The click event
+     * @param {HTMLElement} target - The target element
+     * @private
+     */
+    static async _removeEmbeddedTransformation(_event, target) {
+      Logger.methodEntry("ItemSheetActionsMixin", "_removeEmbeddedTransformation", {
+        itemName: this.item?.name,
+        itemType: this.item?.type,
+        transformationId: target.dataset.transformationId,
+      });
+
+
+      try {
+        const item = this.item;
+        const transformationId = target.dataset.transformationId;
+
+        if (!item || item.type !== "actionCard") {
+          Logger.warn(
+            "Remove embedded transformation called on non-action card",
+            { itemType: item?.type },
+            "ITEM_ACTIONS",
+          );
+          return;
+        }
+
+        // Check if user has permission to edit this action card
+        const hasPermission =
+          item.isOwner || game.user.isGM || item.getUserLevel() >= 2;
+
+        if (!hasPermission) {
+          Logger.warn(
+            "User does not have permission to remove embedded transformations",
+            {
+              userId: game.user.id,
+              userName: game.user.name,
+              itemOwnerId: item.ownership,
+              userLevel: item.getUserLevel(),
+            },
+            "ITEM_ACTIONS",
+          );
+          ui.notifications.warn(
+            "You don't have permission to edit this action card's embedded transformations",
+          );
+          return;
+        }
+
+        if (!transformationId) {
+          Logger.warn(
+            "No transformation ID provided for removal",
+            null,
+            "ITEM_ACTIONS",
+          );
+          return;
+        }
+
+
+        await item.removeEmbeddedTransformation(transformationId);
+
+        // Explicitly render the sheet to ensure it updates
+        this.render();
+
+
+        Logger.info(
+          "Embedded transformation removed successfully",
+          { transformationId },
+          "ITEM_ACTIONS",
+        );
+        Logger.methodExit("ItemSheetActionsMixin", "_removeEmbeddedTransformation");
+      } catch (error) {
+        Logger.error("Failed to remove embedded transformation", error, "ITEM_ACTIONS");
+        ui.notifications.error(
+          game.i18n.localize(
+            "EVENTIDE_RP_SYSTEM.Errors.RemoveEmbeddedTransformationFailed",
+          ),
+        );
+        Logger.methodExit("ItemSheetActionsMixin", "_removeEmbeddedTransformation");
+      }
+
     }
 
     /**

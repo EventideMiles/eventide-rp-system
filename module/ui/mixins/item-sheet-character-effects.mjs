@@ -261,6 +261,11 @@ export const ItemSheetCharacterEffectsMixin = (BaseClass) =>
      * @protected
      */
     static async _deleteCharacterEffect(_event, target) {
+      // Check scroll position IMMEDIATELY before anything else happens
+      const immediateScrollContainer = this.element?.querySelector(".eventide-sheet__scrollable-container");
+      const immediateScrollTop = immediateScrollContainer?.scrollTop || 0;
+
+
       Logger.methodEntry(
         "ItemSheetCharacterEffectsMixin",
         "_deleteCharacterEffect",

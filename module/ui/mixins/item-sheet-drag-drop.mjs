@@ -133,6 +133,32 @@ export const ItemSheetDragDropMixin = (BaseClass) =>
               };
             }
           }
+        } else if (embeddedType === "transformation") {
+          // Handle embedded transformations
+          const embeddedTransformations = this.item.getEmbeddedTransformations();
+          const targetTransformation = embeddedTransformations.find((transformation) => transformation.id === targetId);
+
+          if (targetTransformation) {
+            // Get the original transformation data from the raw storage
+            // We need to find the matching transformation data by recreating temp items and matching IDs
+            const originalTransformationData = this.item.system.embeddedTransformations?.find((transformationData) => {
+              const tempItem = new CONFIG.Item.documentClass(transformationData, { parent: null });
+              return tempItem.id === targetId;
+            });
+
+            if (originalTransformationData) {
+              // Create clean drag data for the embedded transformation
+              const transformationData = foundry.utils.deepClone(originalTransformationData);
+              // Strip ID to prevent Foundry colliding IDs
+              delete transformationData._id;
+
+              dragData = {
+                type: "Item",
+                data: transformationData,
+                // Don't include uuid or parent information that would make Foundry think this is an embedded document
+              };
+            }
+          }
         }
       }
       // Active Effect
@@ -390,6 +416,8 @@ export const ItemSheetDragDropMixin = (BaseClass) =>
         return this._handleActionItemDrop(droppedItem);
       } else if (dropType === "effect") {
         return this._handleEffectDrop(droppedItem);
+      } else if (dropType === "transformation") {
+        return this._handleTransformationEffectDrop(droppedItem);
       } else {
         // Universal drop - no specific drop zone found, route based on item type
         return this._handleUniversalActionCardDrop(droppedItem);
@@ -487,6 +515,55 @@ export const ItemSheetDragDropMixin = (BaseClass) =>
     }
 
     /**
+     * Handle drops on transformation drop zones
+     * @param {Item} droppedItem - The item being dropped
+     * @returns {Promise<boolean>} True if handled successfully
+     * @private
+     */
+    async _handleTransformationEffectDrop(droppedItem) {
+      const supportedTypes = ["transformation"];
+      if (!supportedTypes.includes(droppedItem.type)) {
+        ui.notifications.warn(
+          game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.ActionCardTransformationTypes", {
+            type: droppedItem.type,
+            supported: supportedTypes.join(", "),
+          }),
+        );
+        return false;
+      }
+
+      try {
+
+        await this.item.addEmbeddedTransformation(droppedItem);
+
+        Logger.info(
+          "Transformation added to action card as effect",
+          {
+            actionCardName: this.item.name,
+            transformationName: droppedItem.name,
+            transformationType: droppedItem.type,
+          },
+          "DRAG_DROP",
+        );
+
+
+        return true;
+      } catch (error) {
+        Logger.error("Failed to add transformation to action card", error, "DRAG_DROP");
+        ui.notifications.error(
+          game.i18n.format(
+            "EVENTIDE_RP_SYSTEM.Errors.FailedToAddTransformationToActionCard",
+            {
+              transformationName: droppedItem.name,
+              actionCardName: this.item.name,
+            },
+          ),
+        );
+        return false;
+      }
+    }
+
+    /**
      * Handle universal drops on action cards when no specific drop zone is targeted
      * @param {Item} droppedItem - The item being dropped
      * @returns {Promise<boolean>} True if handled successfully
@@ -499,6 +576,7 @@ export const ItemSheetDragDropMixin = (BaseClass) =>
         feature: "actionItem",
         status: "effect",
         gear: "needsSelection", // Special case - needs user choice
+        transformation: "transformation",
       };
 
       const destination = itemRouting[droppedItem.type];
@@ -540,6 +618,19 @@ export const ItemSheetDragDropMixin = (BaseClass) =>
               "EVENTIDE_RP_SYSTEM.Item.ActionCard.ItemAddedToEffects",
               {
                 itemName: droppedItem.name,
+              },
+            ),
+          );
+        }
+        return success;
+      } else if (destination === "transformation") {
+        const success = await this._handleTransformationEffectDrop(droppedItem);
+        if (success) {
+          ui.notifications.info(
+            game.i18n.format(
+              "EVENTIDE_RP_SYSTEM.Item.ActionCard.TransformationAddedToEffects",
+              {
+                transformationName: droppedItem.name,
               },
             ),
           );

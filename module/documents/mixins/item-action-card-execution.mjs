@@ -70,9 +70,11 @@ export function ItemActionCardExecutionMixin(Base) {
      * Execute the action card with a pre-computed roll result
      * @param {Actor} actor - The actor executing the action card
      * @param {Roll} rollResult - The pre-computed roll result from the embedded item
+     * @param {Object} options - Additional execution options
+     * @param {Map} options.transformationSelections - Map of target IDs to selected transformation IDs
      * @returns {Promise<Object>} Result of the execution
      */
-    async executeWithRollResult(actor, rollResult) {
+    async executeWithRollResult(actor, rollResult, options = {}) {
       // Only action cards can be executed
       if (this.type !== "actionCard") {
         throw new Error(
@@ -146,6 +148,8 @@ export function ItemActionCardExecutionMixin(Base) {
         this._currentRepetitionContext = {
           inExecution: true,
           costOnRepetition: this.system.costOnRepetition,
+          appliedTransformations: new Set(), // Track which transformations have been applied
+          transformationSelections: options.transformationSelections || new Map(), // Pre-selected transformations
         };
 
         // Execute repetitions
@@ -579,6 +583,17 @@ export function ItemActionCardExecutionMixin(Base) {
           );
         }
 
+        // Process transformations after status effects
+        let transformationResults = [];
+        if (this.system.embeddedTransformations.length > 0) {
+          transformationResults = await this._processTransformationResults(
+            results,
+            rollResult,
+            disableDelays,
+            isFinalRepetition,
+          );
+        }
+
         const chainResult = {
           success: true,
           mode: "attackChain",
@@ -587,6 +602,7 @@ export function ItemActionCardExecutionMixin(Base) {
           targetResults: results,
           damageResults,
           statusResults,
+          transformationResults,
         };
 
         Logger.info(
@@ -679,10 +695,22 @@ export function ItemActionCardExecutionMixin(Base) {
           }
         }
 
+        // Process transformations after damage for saved damage mode
+        let transformationResults = [];
+        if (this.system.embeddedTransformations.length > 0) {
+          transformationResults = await this._processTransformationResults(
+            targetArray.map((target) => ({ target: target.actor })),
+            null,
+            false,
+            true,
+          );
+        }
+
         const result = {
           success: true,
           mode: "savedDamage",
           damageResults,
+          transformationResults,
         };
 
         Logger.info(
@@ -1489,6 +1517,442 @@ export function ItemActionCardExecutionMixin(Base) {
       }
 
       return combinedResult;
+    }
+
+    /**
+     * Process transformation results for action card execution
+     * @private
+     * @param {Array} results - Target hit results
+     * @param {Roll} rollResult - The roll result
+     * @param {boolean} disableDelays - If true, skip internal timing delays
+     * @param {boolean} isFinalRepetition - If true, allow final delay
+     * @returns {Promise<Array>} Transformation results
+     */
+    async _processTransformationResults(
+      results,
+      rollResult,
+      disableDelays = false,
+      isFinalRepetition = true,
+    ) {
+      Logger.methodEntry(
+        "ItemActionCardExecutionMixin",
+        "_processTransformationResults",
+        {
+          resultsCount: results.length,
+          transformationCount: this.system.embeddedTransformations.length,
+        },
+      );
+
+      const transformationResults = [];
+
+      try {
+        // Skip if no transformations embedded
+        if (this.system.embeddedTransformations.length === 0) {
+          Logger.debug(
+            "No embedded transformations to process",
+            null,
+            "ACTION_CARD",
+          );
+          return transformationResults;
+        }
+
+        Logger.debug(
+          "Processing transformations",
+          {
+            transformationCount: this.system.embeddedTransformations.length,
+            transformationConfig: this.system.transformationConfig,
+            resultsCount: results.length,
+            mode: this.system.mode,
+          },
+          "ACTION_CARD",
+        );
+
+        // Apply transformations to each target based on pre-selections or default logic
+        for (const result of results) {
+          // Skip invalid results
+          if (!result || !result.target) {
+            Logger.warn(
+              "Invalid result structure in _processTransformationResults, skipping",
+              { result },
+              "ACTION_CARD",
+            );
+            continue;
+          }
+
+          // Determine which transformation to apply for this target
+          let selectedTransformation = null;
+          const transformationSelections = this._currentRepetitionContext?.transformationSelections;
+
+          Logger.debug(
+            `Transformation selection logic for target ${result.target.name}`,
+            {
+              targetId: result.target.id,
+              hasTransformationSelections: !!transformationSelections,
+              transformationSelectionsSize: transformationSelections?.size || 0,
+              transformationSelectionsEntries: transformationSelections ? Object.fromEntries(transformationSelections) : {},
+              availableTransformationsCount: this.system.embeddedTransformations.length,
+              availableTransformations: this.system.embeddedTransformations.map(t => ({ id: t.id, originalId: t.originalId, name: t.name })),
+            },
+            "ACTION_CARD",
+          );
+
+          // Check multiple possible target ID formats for robust lookup
+          let selectedTransformationId = null;
+          if (transformationSelections) {
+            // Try actor ID first
+            if (transformationSelections.has(result.target.id)) {
+              selectedTransformationId = transformationSelections.get(result.target.id);
+            }
+            // Try actor UUID as fallback
+            else if (result.target.uuid && transformationSelections.has(result.target.uuid)) {
+              selectedTransformationId = transformationSelections.get(result.target.uuid);
+            }
+            // Try token ID if actor is connected to a token
+            else if (result.target.token?.id && transformationSelections.has(result.target.token.id)) {
+              selectedTransformationId = transformationSelections.get(result.target.token.id);
+            }
+          }
+
+          if (selectedTransformationId) {
+            // Use pre-selected transformation for this target
+            // First get the embedded transformations as temporary items
+            const embeddedTransformations = await this.getEmbeddedTransformations({ executionContext: true });
+            selectedTransformation = embeddedTransformations.find(
+              t => t.originalId === selectedTransformationId
+            );
+
+            Logger.debug(
+              `Using pre-selected transformation for target ${result.target.name}`,
+              {
+                targetId: result.target.id,
+                selectedTransformationId,
+                selectedTransformationName: selectedTransformation?.name,
+                foundTransformation: !!selectedTransformation,
+              },
+              "ACTION_CARD",
+            );
+          } else if (this.system.embeddedTransformations.length === 1) {
+            // Only one transformation available, use it by default
+            const embeddedTransformations = await this.getEmbeddedTransformations({ executionContext: true });
+            selectedTransformation = embeddedTransformations[0];
+            Logger.debug(
+              `Using single available transformation for target ${result.target.name}`,
+              {
+                targetId: result.target.id,
+                transformationName: selectedTransformation.name,
+              },
+              "ACTION_CARD",
+            );
+          } else if (this.system.embeddedTransformations.length > 1) {
+            // Multiple transformations but no pre-selection - fallback to GM prompt
+            Logger.debug(
+              `Multiple transformations available but no pre-selection, prompting GM`,
+              {
+                targetId: result.target.id,
+                transformationCount: this.system.embeddedTransformations.length,
+              },
+              "ACTION_CARD",
+            );
+            selectedTransformation = await this._promptGMForTransformationChoice();
+            if (!selectedTransformation) {
+              Logger.info(
+                "GM cancelled transformation selection",
+                null,
+                "ACTION_CARD",
+              );
+              continue; // Skip this target instead of returning
+            }
+          }
+
+          // Skip if no transformation was selected
+          if (!selectedTransformation) {
+            Logger.warn(
+              `No transformation selected for target ${result.target.name}, skipping transformation application`,
+              {
+                targetId: result.target.id,
+                hasSelections: !!transformationSelections,
+                transformationCount: this.system.embeddedTransformations.length,
+              },
+              "ACTION_CARD",
+            );
+            continue;
+          }
+
+          // Check if transformation should be applied based on configuration
+          let shouldApplyTransformation = true;
+          if (this.system.mode === "attackChain") {
+            shouldApplyTransformation = this._shouldApplyEffect(
+              this.system.transformationConfig.condition,
+              result.oneHit,
+              result.bothHit,
+              rollResult?.total || 0,
+              this.system.transformationConfig.threshold || 15,
+            );
+
+            Logger.debug(
+              `Transformation application check for target ${result.target.name}`,
+              {
+                transformationName: selectedTransformation.name,
+                condition: this.system.transformationConfig.condition,
+                oneHit: result.oneHit,
+                bothHit: result.bothHit,
+                rollTotal: rollResult?.total || 0,
+                threshold: this.system.transformationConfig.threshold || 15,
+                shouldApplyTransformation,
+              },
+              "ACTION_CARD",
+            );
+          } else if (this.system.mode === "savedDamage") {
+            // For saved damage mode, check transformation condition
+            // Since there's no roll result, we only apply if condition is "never" -> false or anything else -> true
+            shouldApplyTransformation = this.system.transformationConfig.condition !== "never";
+
+            Logger.debug(
+              `Transformation application check for saved damage mode`,
+              {
+                transformationName: selectedTransformation.name,
+                condition: this.system.transformationConfig.condition,
+                shouldApplyTransformation,
+              },
+              "ACTION_CARD",
+            );
+          }
+
+          if (shouldApplyTransformation) {
+            // Check if this transformation has already been applied during repetitions
+            const transformationKey = `${result.target.id}-${selectedTransformation.originalId || selectedTransformation.id}`;
+            const hasRepetitionContext = !!this._currentRepetitionContext;
+            const hasAppliedTransformations = !!this._currentRepetitionContext?.appliedTransformations;
+            const alreadyApplied = this._currentRepetitionContext?.appliedTransformations?.has(transformationKey);
+
+            Logger.debug(
+              `Transformation first-time check for "${selectedTransformation.name}"`,
+              {
+                transformationName: selectedTransformation.name,
+                targetName: result.target.name,
+                transformationKey,
+                hasRepetitionContext,
+                hasAppliedTransformations,
+                alreadyApplied,
+                appliedTransformationsSize: this._currentRepetitionContext?.appliedTransformations?.size || 0,
+              },
+              "ACTION_CARD",
+            );
+
+            if (alreadyApplied) {
+              Logger.debug(
+                `Skipping transformation "${selectedTransformation.name}" for target "${result.target.name}" - already applied during previous repetition`,
+                {
+                  transformationName: selectedTransformation.name,
+                  targetName: result.target.name,
+                  transformationKey,
+                },
+                "ACTION_CARD",
+              );
+              continue;
+            }
+
+            try {
+              const applicationResult = await this._applyTransformationWithValidation(
+                result.target,
+                selectedTransformation,
+              );
+
+              // Track that this transformation has been applied to this target
+              if (applicationResult.applied && this._currentRepetitionContext?.appliedTransformations) {
+                this._currentRepetitionContext.appliedTransformations.add(transformationKey);
+                Logger.debug(
+                  `Tracked transformation application: ${transformationKey}`,
+                  { transformationName: selectedTransformation.name, targetName: result.target.name },
+                  "ACTION_CARD",
+                );
+              }
+
+              transformationResults.push({
+                target: result.target,
+                transformation: selectedTransformation,
+                applied: applicationResult.applied,
+                reason: applicationResult.reason,
+                warning: applicationResult.warning,
+              });
+
+              if (applicationResult.applied) {
+                Logger.info(
+                  `Applied transformation "${selectedTransformation.name}" to target "${result.target.name}"`,
+                  {
+                    transformationName: selectedTransformation.name,
+                    targetName: result.target.name,
+                  },
+                  "ACTION_CARD",
+                );
+              }
+            } catch (error) {
+              Logger.error(
+                `Failed to apply transformation "${selectedTransformation.name}" to target "${result.target.name}"`,
+                error,
+                "ACTION_CARD",
+              );
+
+              transformationResults.push({
+                target: result.target,
+                transformation: selectedTransformation,
+                applied: false,
+                error: error.message,
+              });
+            }
+          }
+        }
+
+        // Wait for execution delay if not final repetition
+        if (!disableDelays && !isFinalRepetition) {
+          await this._waitForExecutionDelay();
+        }
+
+        Logger.methodExit(
+          "ItemActionCardExecutionMixin",
+          "_processTransformationResults",
+          transformationResults,
+        );
+        return transformationResults;
+      } catch (error) {
+        Logger.error(
+          "Failed to process transformation results",
+          error,
+          "ACTION_CARD",
+        );
+        Logger.methodExit(
+          "ItemActionCardExecutionMixin",
+          "_processTransformationResults",
+          null,
+        );
+        throw error;
+      }
+    }
+
+    /**
+     * Apply transformation with validation checks
+     * @private
+     * @param {Actor} targetActor - The actor to apply transformation to
+     * @param {Object} transformationData - The transformation data
+     * @returns {Promise<Object>} Application result
+     */
+    async _applyTransformationWithValidation(targetActor, transformationData) {
+      // Check if actor already has a transformation with the same name
+      const activeTransformationName = targetActor.getFlag(
+        "eventide-rp-system",
+        "activeTransformationName",
+      );
+
+      if (activeTransformationName === transformationData.name) {
+        return {
+          applied: false,
+          reason: "duplicate_name",
+          warning: game.i18n.format(
+            "EVENTIDE_RP_SYSTEM.Item.ActionCard.TransformationDuplicateNameWarning",
+            { transformationName: transformationData.name },
+          ),
+        };
+      }
+
+      // Check cursed transformation precedence
+      const activeTransformationCursed = targetActor.getFlag(
+        "eventide-rp-system",
+        "activeTransformationCursed",
+      );
+      const newTransformationCursed = transformationData.system?.cursed || false;
+
+      // If actor has an active transformation
+      if (activeTransformationName) {
+        // If current transformation is cursed and new one is not cursed, deny
+        if (activeTransformationCursed && !newTransformationCursed) {
+          return {
+            applied: false,
+            reason: "cursed_override_denied",
+            warning: game.i18n.format(
+              "EVENTIDE_RP_SYSTEM.Item.ActionCard.TransformationCursedOverrideDenied",
+              {
+                currentTransformation: activeTransformationName,
+                newTransformation: transformationData.name,
+              },
+            ),
+          };
+        }
+      }
+
+      // Create temporary transformation item for application
+      const tempTransformationItem = new CONFIG.Item.documentClass(
+        transformationData,
+        { parent: targetActor },
+      );
+
+      // Apply the transformation
+      try {
+        await targetActor.applyTransformation(tempTransformationItem);
+        return {
+          applied: true,
+          reason: "success",
+        };
+      } catch (error) {
+        return {
+          applied: false,
+          reason: "application_error",
+          error: error.message,
+        };
+      }
+    }
+
+    /**
+     * Prompt GM to choose which transformation to apply from multiple options
+     * @private
+     * @returns {Promise<Object|null>} Selected transformation data or null if cancelled
+     */
+    async _promptGMForTransformationChoice() {
+      return new Promise((resolve) => {
+        // Create dialog content
+        const transformationOptions = this.system.embeddedTransformations
+          .map(
+            (transformation, index) =>
+              `<option value="${index}">${transformation.name}</option>`,
+          )
+          .join("");
+
+        const content = `
+          <div class="transformation-selection">
+            <p>${game.i18n.localize("EVENTIDE_RP_SYSTEM.Item.ActionCard.TransformationSelectionPrompt")}</p>
+            <div class="form-group">
+              <label>${game.i18n.localize("EVENTIDE_RP_SYSTEM.Item.ActionCard.TransformationSelectionLabel")}</label>
+              <select id="transformation-choice" style="width: 100%;">
+                ${transformationOptions}
+              </select>
+            </div>
+          </div>
+        `;
+
+        new Dialog({
+          title: game.i18n.localize("EVENTIDE_RP_SYSTEM.Item.ActionCard.TransformationSelectionTitle"),
+          content,
+          buttons: {
+            apply: {
+              icon: '<i class="fas fa-check"></i>',
+              label: game.i18n.localize("EVENTIDE_RP_SYSTEM.Item.ActionCard.TransformationSelectionApply"),
+              callback: (html) => {
+                const selectedIndex = parseInt(
+                  html.find("#transformation-choice").val(),
+                  10,
+                );
+                resolve(this.system.embeddedTransformations[selectedIndex]);
+              },
+            },
+            cancel: {
+              icon: '<i class="fas fa-times"></i>',
+              label: game.i18n.localize("EVENTIDE_RP_SYSTEM.Item.ActionCard.TransformationSelectionCancel"),
+              callback: () => resolve(null),
+            },
+          },
+          default: "apply",
+          close: () => resolve(null),
+        }).render(true);
+      });
     }
   };
 }

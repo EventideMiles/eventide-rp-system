@@ -196,6 +196,49 @@
       </div>
     {{/if}}
 
+    {{!-- Transformation Configuration --}}
+    <div class="erps-form__section">
+      <div class="erps-form__header">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.TransformationConfig"}}</div>
+
+      <div class="grid grid-2col">
+        <div>
+          <label class="erps-input-label">
+            {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.TransformationCondition"}}
+          </label>
+          <select class="erps-select" name="system.transformationConfig.condition">
+            <option value="never" {{#if (eq system.transformationConfig.condition "never")}}selected{{/if}}>
+              {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Never"}}
+            </option>
+            <option value="oneSuccess" {{#if (eq system.transformationConfig.condition "oneSuccess")}}selected{{/if}}>
+              {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.OneSuccess"}}
+            </option>
+            <option value="twoSuccesses" {{#if (eq system.transformationConfig.condition "twoSuccesses")}}selected{{/if}}>
+              {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.TwoSuccesses"}}
+            </option>
+            <option value="rollValue" {{#if (eq system.transformationConfig.condition "rollValue")}}selected{{/if}}>
+              {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.RollValue"}}
+            </option>
+          </select>
+        </div>
+        {{#if (eq system.transformationConfig.condition "rollValue")}}
+        <div>
+          <label class="erps-input-label">
+            {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.TransformationThreshold"}}
+          </label>
+          <input
+            type="number"
+            class="erps-input"
+            name="system.transformationConfig.threshold"
+            value="{{system.transformationConfig.threshold}}"
+            min="1"
+            max="30"
+            placeholder="15"
+          />
+        </div>
+        {{/if}}
+      </div>
+    </div>
+
     {{!-- Saved Damage Configuration --}}
     {{#if (eq system.mode "savedDamage")}}
     <div class="erps-form__section">

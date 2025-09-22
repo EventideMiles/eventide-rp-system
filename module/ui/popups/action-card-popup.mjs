@@ -78,6 +78,76 @@ export class ActionCardPopup extends EventidePopupHelpers {
     if (this.themeManager) {
       this.themeManager.applyThemes();
     }
+
+    // Initialize transformation selection styling
+    this._initializeTransformationSelection();
+  }
+
+  /**
+   * Initialize transformation selection styling and click handlers
+   * @private
+   */
+  _initializeTransformationSelection() {
+    const transformationRows = this.element.querySelectorAll(
+      "[data-transformation-option]",
+    );
+
+    transformationRows.forEach((row) => {
+      const targetId = row.dataset.transformationOption;
+      const value = row.dataset.transformationValue;
+      const radio = this.element.querySelector(
+        `input[name="transformation-${targetId}"][value="${value}"]`,
+      );
+
+      // Set initial border based on radio state
+      if (radio && radio.checked) {
+        row.style.border = "2px solid #007bff";
+        row.style.backgroundColor = "rgba(0, 123, 255, 0.1)";
+      }
+
+      // Add click handler
+      row.addEventListener("click", (event) => {
+        event.preventDefault();
+
+        // Clear all selections for this target
+        const allRows = this.element.querySelectorAll(
+          `[data-transformation-option="${targetId}"]`,
+        );
+        allRows.forEach((r) => {
+          r.style.border = "2px solid transparent";
+          r.style.backgroundColor = "transparent";
+          const radioInput = this.element.querySelector(
+            `input[name="transformation-${targetId}"][value="${r.dataset.transformationValue}"]`,
+          );
+          if (radioInput) radioInput.checked = false;
+        });
+
+        // Select this option
+        row.style.border = "2px solid #007bff";
+        row.style.backgroundColor = "rgba(0, 123, 255, 0.1)";
+        if (radio) {
+          radio.checked = true;
+        }
+
+        Logger.debug("Transformation selection changed", {
+          targetId,
+          selectedValue: value,
+        });
+      });
+
+      // Add hover effects
+      row.addEventListener("mouseenter", () => {
+        if (!radio || !radio.checked) {
+          row.style.backgroundColor = "rgba(0, 0, 0, 0.05)";
+        }
+      });
+
+      row.addEventListener("mouseleave", () => {
+        if (!radio || !radio.checked) {
+          row.style.backgroundColor = "transparent";
+        }
+      });
+    });
   }
 
   /**
@@ -193,6 +263,37 @@ export class ActionCardPopup extends EventidePopupHelpers {
     context.mode = this.item.system.mode;
     context.attackChain = this.item.system.attackChain;
     context.savedDamage = this.item.system.savedDamage;
+    context.transformationConfig = this.item.system.transformationConfig;
+
+    // Prepare embedded transformations data for display
+    const embeddedTransformations =
+      await this.item.getEmbeddedTransformations();
+    context.embeddedTransformations = embeddedTransformations.map(
+      (transformation) => ({
+        id: transformation.originalId || transformation.id,
+        name: transformation.name,
+        img: transformation.img,
+        description: transformation.system.description,
+      }),
+    );
+
+    // Get target actors for transformation selection
+    const targetArray = await erps.utils.getTargetArray();
+    context.targets = targetArray.map((target) => ({
+      id: target.actor.id,
+      name: target.actor.name,
+      img: target.actor.img,
+    }));
+
+    Logger.debug("Popup target preparation", {
+      targetCount: targetArray.length,
+      targets: context.targets,
+      rawTargets: targetArray.map((t) => ({
+        tokenId: t.id,
+        actorId: t.actor?.id,
+        actorName: t.actor?.name,
+      })),
+    });
 
     Logger.methodExit("ActionCardPopup", "_prepareContext", context);
     return context;
@@ -606,13 +707,78 @@ export class ActionCardPopup extends EventidePopupHelpers {
    * @param {FormData} formData - The form data
    * @private
    */
-  static async #onSubmit(event, _form, _formData) {
+  static async #onSubmit(event, form, formData) {
     Logger.methodEntry("ActionCardPopup", "#onSubmit", {
       actionCardName: this.item?.name,
     });
 
     try {
       event.preventDefault();
+
+      Logger.debug("Form submission started", {
+        hasForm: !!form,
+        hasFormData: !!formData,
+        itemName: this.item?.name,
+      });
+
+      // Extract transformation selections from form data
+      const transformationSelections = new Map();
+      let allFormEntries = [];
+
+      try {
+        allFormEntries = Array.from(formData.entries());
+        Logger.debug("Raw form data entries", {
+          allEntries: allFormEntries,
+          transformationEntries: allFormEntries.filter(([key]) =>
+            key.startsWith("transformation-"),
+          ),
+        });
+      } catch (formError) {
+        Logger.error("Error processing form data", formError);
+        allFormEntries = [];
+      }
+
+      for (const [key, value] of formData.entries()) {
+        if (key.startsWith("transformation-")) {
+          const targetId = key.replace("transformation-", "");
+          if (value !== "none") {
+            transformationSelections.set(targetId, value);
+            Logger.debug(`Stored transformation selection`, {
+              targetId,
+              transformationId: value,
+              formKey: key,
+            });
+          } else {
+            Logger.debug(`Skipped "none" transformation selection`, {
+              targetId,
+              formKey: key,
+            });
+          }
+        }
+      }
+
+      // Debug: Check actual radio button states in DOM
+      const radioButtons = form.querySelectorAll(
+        'input[type="radio"][name^="transformation-"]',
+      );
+      const radioStates = Array.from(radioButtons).map((radio) => ({
+        name: radio.name,
+        value: radio.value,
+        checked: radio.checked,
+        id: radio.id,
+      }));
+
+      Logger.debug("Radio button states in DOM", {
+        radioCount: radioButtons.length,
+        radioStates,
+        checkedRadios: radioStates.filter((r) => r.checked),
+      });
+
+      Logger.debug("Final transformation selections captured from form", {
+        selectionsCount: transformationSelections.size,
+        selections: Object.fromEntries(transformationSelections),
+        allFormDataEntries: allFormEntries,
+      });
 
       // Check eligibility before execution
       const problems = await this.checkEligibility();
@@ -759,7 +925,8 @@ export class ActionCardPopup extends EventidePopupHelpers {
 
       // Check if the player owns all targets before execution
       const targets = await erps.utils.getTargetArray();
-      const playerOwnsAllTargets = targets.length === 0 || targets.every(target => target.actor.isOwner);
+      const playerOwnsAllTargets =
+        targets.length === 0 || targets.every((target) => target.actor.isOwner);
 
       if (!playerOwnsAllTargets) {
         // Player doesn't own all targets - send to GM for approval
@@ -770,19 +937,26 @@ export class ActionCardPopup extends EventidePopupHelpers {
         });
 
         try {
-          const { erpsMessageHandler } = await import("../../services/managers/system-messages.mjs");
-          
+          const { erpsMessageHandler } = await import(
+            "../../services/managers/system-messages.mjs"
+          );
+
           await erpsMessageHandler.createPlayerActionApprovalRequest({
             actor,
             actionCard: this.item,
             playerId: game.user.id,
             playerName: game.user.name,
-            targets: targets.map(t => t.actor),
+            targets: targets.map((t) => t.actor),
             rollResult,
+            transformationSelections: Object.fromEntries(
+              transformationSelections,
+            ),
           });
 
           ui.notifications.info(
-            game.i18n.localize("EVENTIDE_RP_SYSTEM.Chat.PlayerActionApproval.RequestSent")
+            game.i18n.localize(
+              "EVENTIDE_RP_SYSTEM.Chat.PlayerActionApproval.RequestSent",
+            ),
           );
 
           Logger.info("GM approval request sent for action card", {
@@ -797,7 +971,9 @@ export class ActionCardPopup extends EventidePopupHelpers {
         } catch (error) {
           Logger.error("Failed to create GM approval request", error);
           ui.notifications.error(
-            game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.ApprovalRequestFailed")
+            game.i18n.localize(
+              "EVENTIDE_RP_SYSTEM.Errors.ApprovalRequestFailed",
+            ),
           );
           Logger.methodExit("ActionCardPopup", "#onSubmit");
           return;
@@ -805,7 +981,9 @@ export class ActionCardPopup extends EventidePopupHelpers {
       }
 
       // Player owns all targets - execute normally
-      const result = await this.item.executeWithRollResult(actor, rollResult);
+      const result = await this.item.executeWithRollResult(actor, rollResult, {
+        transformationSelections,
+      });
 
       if (result.success) {
         if (result.mode === "attackChain") {

@@ -99,6 +99,38 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
     );
 
     /**
+     * Embedded transformations that can be applied on successful action card execution
+     * Contains transformation items that are applied based on the success conditions
+     */
+    schema.embeddedTransformations = new fields.ArrayField(
+      new fields.ObjectField({
+        required: true,
+      }),
+      {
+        required: true,
+        initial: [],
+      },
+    );
+
+    /**
+     * Transformation configuration for when to apply embedded transformations
+     */
+    schema.transformationConfig = new fields.SchemaField({
+      condition: new fields.StringField({
+        required: true,
+        initial: "oneSuccess",
+        choices: ["never", "oneSuccess", "twoSuccesses", "rollValue"],
+      }),
+      threshold: new fields.NumberField({
+        required: false,
+        initial: 15,
+        integer: true,
+        min: 1,
+        max: 100,
+      }),
+    });
+
+    /**
      * Saved damage configuration (only used when mode is "savedDamage")
      */
     schema.savedDamage = new fields.SchemaField({

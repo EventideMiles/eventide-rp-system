@@ -540,6 +540,40 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
               ),
             );
           }
+        } else if (this.parentItem.type === "actionCard" && this.parentItem.system.embeddedTransformations?.some(t => t._id === this.originalItemId)) {
+          // Handle action card embedded transformations
+          const transformationIndex =
+            this.parentItem.system.embeddedTransformations.findIndex(
+              (t) => t._id === this.originalItemId,
+            );
+          if (transformationIndex === -1) return;
+
+          const transformations = foundry.utils.deepClone(
+            this.parentItem.system.embeddedTransformations,
+          );
+          const transformationData = transformations[transformationIndex];
+          foundry.utils.setProperty(transformationData, attr, path);
+
+          try {
+            await this.parentItem.update({
+              "system.embeddedTransformations": transformations,
+            }, { fromEmbeddedItem: true });
+            this.document.updateSource(transformationData);
+            this.render();
+          } catch (error) {
+            Logger.error(
+              "EmbeddedItemSheet | Failed to save transformation image",
+              { error, transformations, transformationData },
+              "EMBEDDED_ITEM_SHEET",
+            );
+            ui.notifications.error(
+              "Failed to save transformation image. See console for details.",
+            );
+          }
+        } else if (this.parentItem.type === "actionCard" && this._isNestedInEmbeddedTransformation()) {
+          // Handle multi-level: items nested within transformations that are embedded within action cards
+          // This covers: Action Card → embeddedTransformations → [transformation] → embeddedCombatPowers → [combat power]
+          await this._handleNestedTransformationItemImageUpdate(attr, path);
         } else {
           // Handle action card embedded items
           const itemData = foundry.utils.deepClone(
@@ -1094,6 +1128,204 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
   }
 
   /**
+   * Check if this item is nested within a transformation that's embedded in an action card
+   * @returns {boolean} True if this item is nested in an embedded transformation
+   * @private
+   */
+  _isNestedInEmbeddedTransformation() {
+    // Must be an action card parent
+    if (this.parentItem.type !== "actionCard") return false;
+
+    // Must have embedded transformations
+    if (!this.parentItem.system.embeddedTransformations?.length) return false;
+
+    // Check if this item exists within any of the embedded transformations
+    for (const transformation of this.parentItem.system.embeddedTransformations) {
+      // Check embedded combat powers
+      if (transformation.embeddedCombatPowers?.some(p => p._id === this.originalItemId)) {
+        return true;
+      }
+      // Check embedded action cards
+      if (transformation.embeddedActionCards?.some(ac => ac._id === this.originalItemId)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  /**
+   * Handle image updates for items nested within transformations that are embedded within action cards
+   * @param {string} attr - The attribute being updated
+   * @param {string} path - The new image path
+   * @private
+   */
+  async _handleNestedTransformationItemImageUpdate(attr, path) {
+    const transformations = foundry.utils.deepClone(
+      this.parentItem.system.embeddedTransformations,
+    );
+
+    let foundTransformationIndex = -1;
+    let foundItemIndex = -1;
+    let foundItemType = null;
+    let foundTransformation = null;
+
+    // Find which transformation contains this item
+    for (let transformationIndex = 0; transformationIndex < transformations.length; transformationIndex++) {
+      const transformation = transformations[transformationIndex];
+
+      // Check embedded combat powers
+      if (transformation.embeddedCombatPowers?.length) {
+        const powerIndex = transformation.embeddedCombatPowers.findIndex(p => p._id === this.originalItemId);
+        if (powerIndex !== -1) {
+          foundTransformationIndex = transformationIndex;
+          foundItemIndex = powerIndex;
+          foundItemType = 'embeddedCombatPowers';
+          foundTransformation = transformation;
+          break;
+        }
+      }
+
+      // Check embedded action cards
+      if (transformation.embeddedActionCards?.length) {
+        const actionCardIndex = transformation.embeddedActionCards.findIndex(ac => ac._id === this.originalItemId);
+        if (actionCardIndex !== -1) {
+          foundTransformationIndex = transformationIndex;
+          foundItemIndex = actionCardIndex;
+          foundItemType = 'embeddedActionCards';
+          foundTransformation = transformation;
+          break;
+        }
+      }
+    }
+
+    if (foundTransformationIndex === -1 || foundItemIndex === -1 || !foundItemType || !foundTransformation) {
+      Logger.error(
+        "EmbeddedItemSheet | Could not find nested item in embedded transformations",
+        {
+          originalItemId: this.originalItemId,
+          parentItemType: this.parentItem.type,
+          transformationCount: transformations.length
+        },
+        "EMBEDDED_ITEM_SHEET",
+      );
+      return;
+    }
+
+    // Update the nested item's image
+    const nestedItemData = transformations[foundTransformationIndex][foundItemType][foundItemIndex];
+    foundry.utils.setProperty(nestedItemData, attr, path);
+
+    try {
+      Logger.debug(
+        "EmbeddedItemSheet | Starting nested transformation item image update",
+        {
+          originalItemId: this.originalItemId,
+          parentItemType: this.parentItem.type,
+          parentItemId: this.parentItem.id,
+          foundTransformationIndex,
+          foundItemIndex,
+          foundItemType,
+          attribute: attr,
+          path
+        },
+        "EMBEDDED_ITEM_SHEET_DEBUG",
+      );
+
+      // Find the temp transformation item that corresponds to this transformation
+      // We need to call the temp transformation's update method, not the root action card's
+      const tempTransformations = this.parentItem.getEmbeddedTransformations?.() || [];
+
+      Logger.debug(
+        "EmbeddedItemSheet | Found temp transformations",
+        {
+          tempTransformationCount: tempTransformations.length,
+          tempTransformationIds: tempTransformations.map(t => ({ id: t.id, name: t.name })),
+          lookingForId: foundTransformation._id,
+          getEmbeddedTransformationsExists: !!this.parentItem.getEmbeddedTransformations,
+          parentItemType: this.parentItem.type,
+          parentItemId: this.parentItem.id
+        },
+        "EMBEDDED_ITEM_SHEET_DEBUG",
+      );
+
+      const tempTransformation = tempTransformations.find(t => t.id === foundTransformation._id);
+
+      if (tempTransformation) {
+        Logger.debug(
+          "EmbeddedItemSheet | Found temp transformation, calling its update method",
+          {
+            tempTransformationId: tempTransformation.id,
+            tempTransformationName: tempTransformation.name,
+            updateData: `system.${foundItemType}`,
+            hasSheet: !!tempTransformation.sheet,
+            sheetRendered: tempTransformation.sheet?.rendered
+          },
+          "EMBEDDED_ITEM_SHEET_DEBUG",
+        );
+
+        // Update the temp transformation item using its embedded collection update
+        // This should trigger the transformation's dual-override pattern
+        const transformationUpdateData = {};
+        transformationUpdateData[`system.${foundItemType}`] = foundTransformation[foundItemType];
+
+        await tempTransformation.update(transformationUpdateData, { fromEmbeddedItem: true });
+
+        Logger.debug(
+          "EmbeddedItemSheet | Temp transformation update completed",
+          {
+            tempTransformationId: tempTransformation.id,
+            sheetStillOpen: tempTransformation.sheet?.rendered
+          },
+          "EMBEDDED_ITEM_SHEET_DEBUG",
+        );
+      } else {
+        Logger.debug(
+          "EmbeddedItemSheet | Temp transformation not found, using fallback direct update",
+          {
+            lookingForId: foundTransformation._id,
+            availableIds: tempTransformations.map(t => t.id)
+          },
+          "EMBEDDED_ITEM_SHEET_DEBUG",
+        );
+
+        // Fallback to direct update if temp transformation not found
+        await this.parentItem.update({
+          "system.embeddedTransformations": transformations,
+        }, { fromEmbeddedItem: true });
+      }
+
+      this.document.updateSource(nestedItemData);
+      this.render();
+
+      Logger.debug(
+        "EmbeddedItemSheet | Successfully updated nested transformation item image",
+        {
+          transformationIndex: foundTransformationIndex,
+          itemIndex: foundItemIndex,
+          itemType: foundItemType,
+          attribute: attr
+        },
+        "EMBEDDED_ITEM_SHEET",
+      );
+    } catch (error) {
+      Logger.error(
+        "EmbeddedItemSheet | Failed to save nested transformation item image",
+        {
+          error,
+          transformationIndex: foundTransformationIndex,
+          itemIndex: foundItemIndex,
+          itemType: foundItemType
+        },
+        "EMBEDDED_ITEM_SHEET",
+      );
+      ui.notifications.error(
+        "Failed to save nested transformation item image. See console for details.",
+      );
+    }
+  }
+
+  /**
    * Override editor options to disable collaborative editing for temporary documents
    * @param {string} target - The target field being edited
    * @returns {object} Editor configuration options
@@ -1107,5 +1339,53 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
     options.collaborative = false;
 
     return options;
+  }
+
+  /**
+   * Override render method to preserve scroll position using the working pattern from creator-application.mjs
+   * @param {boolean} force - Force a re-render
+   * @param {Object} options - Render options
+   * @returns {Promise<this>} The rendered application
+   * @override
+   */
+  async render(force, options = {}) {
+    // Find the actual scrolling element by checking what has scrollTop > 0
+    let actualScrollingElement = null;
+    let oldPosition = 0;
+
+    if (this.element) {
+      // Check all elements for scrollTop > 0
+      const allElements = Array.from(this.element.querySelectorAll('*'));
+      const scrollableElements = allElements.filter(el => el.scrollTop > 0);
+
+
+      if (scrollableElements.length > 0) {
+        actualScrollingElement = scrollableElements[0];
+        oldPosition = actualScrollingElement.scrollTop;
+      }
+    }
+
+    // Call parent render
+    const result = await super.render(force, options);
+
+    // Restore scroll position
+    if (actualScrollingElement && oldPosition > 0) {
+      // Find the element again after render
+      let restoreElement = null;
+      if (actualScrollingElement.className) {
+        restoreElement = this.element?.querySelector(`.${actualScrollingElement.className.split(' ').join('.')}`);
+      }
+      if (!restoreElement && actualScrollingElement.tagName) {
+        const selector = actualScrollingElement.tagName.toLowerCase() +
+                        (actualScrollingElement.className ? `.${actualScrollingElement.className.split(' ').join('.')}` : '');
+        restoreElement = this.element?.querySelector(selector);
+      }
+
+      if (restoreElement) {
+        restoreElement.scrollTop = oldPosition;
+      }
+    }
+
+    return result;
   }
 }

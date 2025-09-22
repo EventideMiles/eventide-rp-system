@@ -170,5 +170,96 @@
         <p><strong>{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.DragNote"}}</strong></p>
       </div>
     </div>
+
+    <!-- Transformations Section -->
+    <div class="erps-items-panel">
+      <div class="erps-items-panel__section-header">
+        {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Transformations"}}
+      </div>
+
+      {{#if embeddedTransformations.length}}
+        <ol class="erps-items-panel__list erps-items-panel__list--three-column">
+          <li class="erps-items-panel__item erps-items-panel__item--header">
+            <div class="erps-items-panel__cell erps-items-panel__cell--image">{{localize 'Image'}}</div>
+            <div class='erps-items-panel__cell erps-items-panel__cell--name'>{{localize 'Name'}}</div>
+            <div class='erps-items-panel__cell erps-items-panel__cell--controls'>{{localize 'Controls'}}</div>
+          </li>
+          {{#each embeddedTransformations as |transformation|}}
+            <li
+              class="erps-items-panel__item erps-items-panel__item--draggable"
+              data-item-id="{{transformation.id}}"
+              data-embedded-type="transformation"
+              data-drag="true"
+              data-document-class="Item"
+              title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.DragToExtract'}}"
+            >
+              <div class="erps-items-panel__cell erps-items-panel__cell--image">
+                <img
+                  class="erps-items-panel__image"
+                  src="{{transformation.img}}"
+                  title="{{transformation.name}}"
+                  width="24"
+                  height="24"
+                />
+                <i class="fas fa-arrows-alt erps-items-panel__drag-indicator" title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.DragToExtract'}}"></i>
+              </div>
+              <div class="erps-items-panel__cell erps-items-panel__cell--name">
+                <span class="erps-items-panel__name">{{transformation.name}}</span>
+                {{#if transformation.system.cursed}}
+                  <span class="erps-items-panel__type">(cursed)</span>
+                {{/if}}
+              </div>
+              <div class="erps-items-panel__cell erps-items-panel__cell--controls">
+                {{#if @root.editable}}
+                  <a
+                    class="erps-items-panel__control erps-items-panel__control--edit"
+                    data-action="editEmbeddedTransformation"
+                    data-transformation-id="{{transformation.originalId}}"
+                    title="{{localize 'EVENTIDE_RP_SYSTEM.UI.Edit'}}"
+                  >
+                    <i class="fas fa-edit"></i>
+                  </a>
+                  <a
+                    class="erps-items-panel__control erps-items-panel__control--delete"
+                    data-action="removeEmbeddedTransformation"
+                    data-transformation-id="{{transformation.originalId}}"
+                    title="{{localize 'EVENTIDE_RP_SYSTEM.UI.Remove'}}"
+                  >
+                    <i class="fas fa-trash"></i>
+                  </a>
+                {{/if}}
+              </div>
+            </li>
+          {{/each}}
+        </ol>
+      {{else}}
+        <div class="erps-items-panel__empty">
+          <p>{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.NoTransformations"}}</p>
+          {{#if @root.editable}}
+            <button type="button" class="erps-button erps-button--primary" data-action="createNewTransformation">
+              <i class="fas fa-plus"></i> {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.CreateNewTransformation"}}
+            </button>
+          {{/if}}
+        </div>
+      {{/if}}
+
+      {{#if @root.editable}}
+        <!-- Item Selector for Transformations -->
+        <div class="erps-item-selector-container" data-selector="transformations">
+          {{> "components/item-selector-combo-box"
+              selectorType="transformations"
+              placeholder=(localize "EVENTIDE_RP_SYSTEM.Forms.TransformationsSelector.Placeholder")
+              ariaLabel=(localize "EVENTIDE_RP_SYSTEM.Forms.TransformationsSelector.AriaLabel")}}
+        </div>
+
+        <div class="erps-items-panel__drop-zone" data-drop-zone="transformation">
+          <p>{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.DropTransformationHere"}}</p>
+        </div>
+      {{/if}}
+
+      <div class="erps-items-panel__notes">
+        <p>{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.TransformationNotes"}}</p>
+      </div>
+    </div>
   </div>
 </section>
