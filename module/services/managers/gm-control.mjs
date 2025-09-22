@@ -68,10 +68,6 @@ class GMControlManager {
             actionCard = new CONFIG.Item.documentClass(flag.actionCardData, {
               parent: sourceActor,
             });
-            Logger.debug("Using stored action card data for damage application", {
-              actionCardId,
-              actionCardName: actionCard.name,
-            });
           }
 
           if (actionCard) {
@@ -229,16 +225,6 @@ class GMControlManager {
 
           if (applicationResult.applied) {
             appliedCount++;
-            Logger.debug(
-              `${applicationResult.intensified ? "Intensified" : "Applied"} status effect: ${statusData.name}`,
-              {
-                targetName: target.name,
-                statusName: statusData.name,
-                statusType: statusData.type,
-                intensified: applicationResult.intensified,
-              },
-              "GM_CONTROL",
-            );
           }
         } catch (statusError) {
           Logger.warn(
@@ -307,10 +293,6 @@ class GMControlManager {
    * @returns {Promise<boolean>} True if discard was successful
    */
   async discardDamage(message) {
-    Logger.methodEntry("GMControlManager", "discardDamage", {
-      messageId: message.id,
-    });
-
     try {
       // Mark damage as applied (discarded) in the message
       await MessageFlags.updateGMApplyFlag(message, "damage", {
@@ -325,13 +307,6 @@ class GMControlManager {
         game.i18n.localize("EVENTIDE_RP_SYSTEM.Info.DamageDiscarded"),
       );
 
-      Logger.info(
-        `Discarded damage via GM control`,
-        { messageId: message.id },
-        "GM_CONTROL",
-      );
-
-      Logger.methodExit("GMControlManager", "discardDamage", true);
       return true;
     } catch (error) {
       Logger.error(
@@ -342,7 +317,6 @@ class GMControlManager {
       ui.notifications.error(
         game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.DiscardDamageFailed"),
       );
-      Logger.methodExit("GMControlManager", "discardDamage", false);
       return false;
     }
   }
@@ -353,10 +327,6 @@ class GMControlManager {
    * @returns {Promise<boolean>} True if discard was successful
    */
   async discardStatusEffects(message) {
-    Logger.methodEntry("GMControlManager", "discardStatusEffects", {
-      messageId: message.id,
-    });
-
     try {
       // Mark status as applied (discarded) in the message
       await MessageFlags.updateGMApplyFlag(message, "status", {
@@ -371,13 +341,6 @@ class GMControlManager {
         game.i18n.localize("EVENTIDE_RP_SYSTEM.Info.StatusEffectsDiscarded"),
       );
 
-      Logger.info(
-        `Discarded status effects via GM control`,
-        { messageId: message.id },
-        "GM_CONTROL",
-      );
-
-      Logger.methodExit("GMControlManager", "discardStatusEffects", true);
       return true;
     } catch (error) {
       Logger.error(
@@ -388,7 +351,6 @@ class GMControlManager {
       ui.notifications.error(
         game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.DiscardStatusFailed"),
       );
-      Logger.methodExit("GMControlManager", "discardStatusEffects", false);
       return false;
     }
   }
@@ -398,8 +360,6 @@ class GMControlManager {
    * @returns {Promise<number>} Number of messages updated
    */
   async validateAllPendingMessages() {
-    Logger.methodEntry("GMControlManager", "validateAllPendingMessages");
-
     try {
       const messages = game.messages.filter((message) => {
         return MessageFlags.hasPendingApplications(message);
@@ -429,15 +389,9 @@ class GMControlManager {
         "GM_CONTROL",
       );
 
-      Logger.methodExit(
-        "GMControlManager",
-        "validateAllPendingMessages",
-        updatedCount,
-      );
       return updatedCount;
     } catch (error) {
       Logger.error("Failed to validate pending messages", error, "GM_CONTROL");
-      Logger.methodExit("GMControlManager", "validateAllPendingMessages", 0);
       return 0;
     }
   }
@@ -449,14 +403,9 @@ class GMControlManager {
    * @private
    */
   async _checkAutoCleanup(message) {
-    Logger.methodEntry("GMControlManager", "_checkAutoCleanup", {
-      messageId: message.id,
-    });
-
     try {
       const flag = MessageFlags.getGMApplyFlag(message);
       if (!flag) {
-        Logger.methodExit("GMControlManager", "_checkAutoCleanup", false);
         return false;
       }
 
@@ -468,23 +417,15 @@ class GMControlManager {
         // Delete immediately - no need for artificial delays
         try {
           await message.delete();
-          Logger.info(
-            "Auto-cleaned up resolved GM apply message",
-            { messageId: message.id },
-            "GM_CONTROL",
-          );
-          Logger.methodExit("GMControlManager", "_checkAutoCleanup", true);
           return true;
         } catch (error) {
           Logger.warn("Failed to auto-cleanup message", error, "GM_CONTROL");
         }
       }
 
-      Logger.methodExit("GMControlManager", "_checkAutoCleanup", false);
       return false;
     } catch (error) {
       Logger.error("Failed to check auto-cleanup", error, "GM_CONTROL");
-      Logger.methodExit("GMControlManager", "_checkAutoCleanup", false);
       return false;
     }
   }
@@ -504,17 +445,12 @@ class GMControlManager {
    * @returns {Promise<boolean>} True if all applications were successful
    */
   async applyAllEffects(message) {
-    Logger.methodEntry("GMControlManager", "applyAllEffects", {
-      messageId: message.id,
-    });
-
     try {
       const flag = MessageFlags.getGMApplyFlag(message);
       if (!flag) {
         ui.notifications.warn(
           game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.NoGMApplyData"),
         );
-        Logger.methodExit("GMControlManager", "applyAllEffects", false);
         return false;
       }
 
@@ -563,14 +499,12 @@ class GMControlManager {
         "GM_CONTROL",
       );
 
-      Logger.methodExit("GMControlManager", "applyAllEffects", allSuccessful);
       return allSuccessful;
     } catch (error) {
       Logger.error("Failed to apply all effects", error, "GM_CONTROL");
       ui.notifications.error(
         game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.ApplyEffectsFailed"),
       );
-      Logger.methodExit("GMControlManager", "applyAllEffects", false);
       return false;
     }
   }
@@ -581,17 +515,12 @@ class GMControlManager {
    * @returns {Promise<boolean>} True if all discards were successful
    */
   async discardAllEffects(message) {
-    Logger.methodEntry("GMControlManager", "discardAllEffects", {
-      messageId: message.id,
-    });
-
     try {
       const flag = MessageFlags.getGMApplyFlag(message);
       if (!flag) {
         ui.notifications.warn(
           game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.NoGMApplyData"),
         );
-        Logger.methodExit("GMControlManager", "discardAllEffects", false);
         return false;
       }
 
@@ -632,14 +561,12 @@ class GMControlManager {
         "GM_CONTROL",
       );
 
-      Logger.methodExit("GMControlManager", "discardAllEffects", allSuccessful);
       return allSuccessful;
     } catch (error) {
       Logger.error("Failed to discard all effects", error, "GM_CONTROL");
       ui.notifications.error(
         game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.DiscardEffectsFailed"),
       );
-      Logger.methodExit("GMControlManager", "discardAllEffects", false);
       return false;
     }
   }
@@ -650,10 +577,6 @@ class GMControlManager {
    * @returns {Promise<number>} Number of messages cleaned up
    */
   async bulkCleanupResolvedMessages(maxAge = 3600000) {
-    Logger.methodEntry("GMControlManager", "bulkCleanupResolvedMessages", {
-      maxAge,
-    });
-
     try {
       const cutoffTime = Date.now() - maxAge;
       let cleanedCount = 0;
@@ -692,24 +615,9 @@ class GMControlManager {
         );
       }
 
-      Logger.info(
-        `Bulk cleanup completed`,
-        {
-          cleanedCount,
-          totalChecked: messages.length,
-        },
-        "GM_CONTROL",
-      );
-
-      Logger.methodExit(
-        "GMControlManager",
-        "bulkCleanupResolvedMessages",
-        cleanedCount,
-      );
       return cleanedCount;
     } catch (error) {
       Logger.error("Failed to bulk cleanup messages", error, "GM_CONTROL");
-      Logger.methodExit("GMControlManager", "bulkCleanupResolvedMessages", 0);
       return 0;
     }
   }
@@ -793,9 +701,6 @@ class GMControlManager {
           const actor = game.actors.get(flag.actorId);
           if (!actor) {
             ui.notifications.error("Unable to find actor for execution");
-            Logger.warn("Missing actor for approved action", {
-              actorId: flag.actorId,
-            });
             Logger.methodExit("GMControlManager", "approvePlayerAction", false);
             return false;
           }
@@ -819,11 +724,6 @@ class GMControlManager {
             ui.notifications.error(
               "Unable to find action card for execution",
             );
-            Logger.warn("Missing action card for approved action", {
-              actorId: flag.actorId,
-              actionCardId: flag.actionCardId,
-              hasStoredData: !!flag.actionCardData,
-            });
             Logger.methodExit("GMControlManager", "approvePlayerAction", false);
             return false;
           }
@@ -851,21 +751,7 @@ class GMControlManager {
               // Use the correct Foundry v13 targeting API
               canvas.tokens.setTargets(targetTokens.map((t) => t.id));
               targetsSet = true;
-              Logger.debug(
-                "Successfully set targets for GM approval execution",
-                {
-                  targetCount: targetTokens.length,
-                  targetTokenIds: targetTokens.map((t) => t.id),
-                },
-              );
-            } catch (targetError) {
-              Logger.warn(
-                "Failed to set targets programmatically, proceeding without targeting",
-                {
-                  error: targetError.message,
-                  targetCount: targetTokens.length,
-                },
-              );
+            } catch {
               // Don't fail the entire operation - action cards can work without canvas targeting
               // if the target information is passed directly to the execution
             }
@@ -881,32 +767,15 @@ class GMControlManager {
             ui.notifications.info(
               `Action "${actionCard.name}" executed successfully for ${flag.playerName}`,
             );
-            Logger.info("Player action executed by GM approval", {
-              actionCardId: flag.actionCardId,
-              actorId: flag.actorId,
-              playerId: flag.playerId,
-              gmId: game.user.id,
-              targetsSet,
-            });
           } else {
             ui.notifications.warn(`Action execution failed: ${result.reason}`);
-            Logger.warn("GM-approved action execution failed", {
-              actionCardId: flag.actionCardId,
-              reason: result.reason,
-            });
           }
 
           // Clear targets if they were set
           if (targetsSet) {
             try {
               canvas.tokens.setTargets([]);
-              Logger.debug(
-                "Successfully cleared targets after GM approval execution",
-              );
-            } catch (clearError) {
-              Logger.warn("Failed to clear targets after execution", {
-                error: clearError.message,
-              });
+            } catch {
               // Non-critical error - don't fail the operation
             }
           }
@@ -921,11 +790,6 @@ class GMControlManager {
         ui.notifications.info(
           `Action request from ${flag.playerName} has been denied`,
         );
-        Logger.info("Player action denied by GM", {
-          actionCardId: flag.actionCardId,
-          playerId: flag.playerId,
-          gmId: game.user.id,
-        });
       }
 
       Logger.methodExit("GMControlManager", "approvePlayerAction", true);
@@ -967,7 +831,7 @@ class GMControlManager {
    * Clean up all tracked timeouts (for system cleanup)
    */
   cleanup() {
-    Logger.debug("Cleaning up GM Control Manager", {}, "GM_CONTROL");
+    // Cleanup method for system cleanup
   }
 }
 

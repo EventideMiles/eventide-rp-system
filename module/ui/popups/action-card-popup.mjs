@@ -59,10 +59,6 @@ export class ActionCardPopup extends EventidePopupHelpers {
       throw new Error("ActionCardPopup requires an action card item");
     }
 
-    Logger.debug("ActionCardPopup created", {
-      itemName: this.item.name,
-      itemId: this.item.id,
-    });
   }
 
   /**
@@ -129,10 +125,6 @@ export class ActionCardPopup extends EventidePopupHelpers {
           radio.checked = true;
         }
 
-        Logger.debug("Transformation selection changed", {
-          targetId,
-          selectedValue: value,
-        });
       });
 
       // Add hover effects
@@ -166,14 +158,6 @@ export class ActionCardPopup extends EventidePopupHelpers {
       initThemeManager(this, THEME_PRESETS.CREATOR_APPLICATION)
         .then((manager) => {
           this.themeManager = manager;
-          Logger.debug(
-            "Theme management initialized asynchronously for action card popup",
-            {
-              hasThemeManager: !!this.themeManager,
-              sheetId: this.id,
-            },
-            "THEME",
-          );
         })
         .catch((error) => {
           Logger.error(
@@ -206,9 +190,6 @@ export class ActionCardPopup extends EventidePopupHelpers {
    * @override
    */
   async _prepareContext(options) {
-    Logger.methodEntry("ActionCardPopup", "_prepareContext", {
-      itemName: this.item.name,
-    });
 
     const context = await super._prepareContext(options);
     context.cssClass = ActionCardPopup.DEFAULT_OPTIONS.classes.join(" ");
@@ -285,17 +266,7 @@ export class ActionCardPopup extends EventidePopupHelpers {
       img: target.actor.img,
     }));
 
-    Logger.debug("Popup target preparation", {
-      targetCount: targetArray.length,
-      targets: context.targets,
-      rawTargets: targetArray.map((t) => ({
-        tokenId: t.id,
-        actorId: t.actor?.id,
-        actorName: t.actor?.name,
-      })),
-    });
 
-    Logger.methodExit("ActionCardPopup", "_prepareContext", context);
     return context;
   }
 
@@ -306,10 +277,6 @@ export class ActionCardPopup extends EventidePopupHelpers {
    * @override
    */
   async checkEligibility() {
-    Logger.methodEntry("ActionCardPopup", "checkEligibility", {
-      actionCardName: this.item.name,
-      mode: this.item.system.mode,
-    });
 
     const problems = {
       targeting: false,
@@ -348,7 +315,6 @@ export class ActionCardPopup extends EventidePopupHelpers {
         );
       }
 
-      Logger.methodExit("ActionCardPopup", "checkEligibility", problems);
       return problems;
     }
 
@@ -515,15 +481,7 @@ export class ActionCardPopup extends EventidePopupHelpers {
       }
     }
 
-    Logger.debug("Action card eligibility check complete", {
-      actionCardName: this.item.name,
-      problems,
-      hasGearValidationErrors: problems.gearValidation.length > 0,
-      embeddedItemName: embeddedItem?.name,
-      embeddedItemType: embeddedItem?.type,
-    });
 
-    Logger.methodExit("ActionCardPopup", "checkEligibility", problems);
     return problems;
   }
 
@@ -708,77 +666,23 @@ export class ActionCardPopup extends EventidePopupHelpers {
    * @private
    */
   static async #onSubmit(event, form, formData) {
-    Logger.methodEntry("ActionCardPopup", "#onSubmit", {
-      actionCardName: this.item?.name,
-    });
 
     try {
       event.preventDefault();
 
-      Logger.debug("Form submission started", {
-        hasForm: !!form,
-        hasFormData: !!formData,
-        itemName: this.item?.name,
-      });
 
       // Extract transformation selections from form data
       const transformationSelections = new Map();
-      let allFormEntries = [];
-
-      try {
-        allFormEntries = Array.from(formData.entries());
-        Logger.debug("Raw form data entries", {
-          allEntries: allFormEntries,
-          transformationEntries: allFormEntries.filter(([key]) =>
-            key.startsWith("transformation-"),
-          ),
-        });
-      } catch (formError) {
-        Logger.error("Error processing form data", formError);
-        allFormEntries = [];
-      }
 
       for (const [key, value] of formData.entries()) {
         if (key.startsWith("transformation-")) {
           const targetId = key.replace("transformation-", "");
           if (value !== "none") {
             transformationSelections.set(targetId, value);
-            Logger.debug(`Stored transformation selection`, {
-              targetId,
-              transformationId: value,
-              formKey: key,
-            });
-          } else {
-            Logger.debug(`Skipped "none" transformation selection`, {
-              targetId,
-              formKey: key,
-            });
           }
         }
       }
 
-      // Debug: Check actual radio button states in DOM
-      const radioButtons = form.querySelectorAll(
-        'input[type="radio"][name^="transformation-"]',
-      );
-      const radioStates = Array.from(radioButtons).map((radio) => ({
-        name: radio.name,
-        value: radio.value,
-        checked: radio.checked,
-        id: radio.id,
-      }));
-
-      Logger.debug("Radio button states in DOM", {
-        radioCount: radioButtons.length,
-        radioStates,
-        checkedRadios: radioStates.filter((r) => r.checked),
-      });
-
-      Logger.debug("Final transformation selections captured from form", {
-        selectionsCount: transformationSelections.size,
-        selections: Object.fromEntries(transformationSelections),
-        allFormDataEntries: allFormEntries,
-      });
 
       // Check eligibility before execution
       const problems = await this.checkEligibility();
@@ -838,15 +742,6 @@ export class ActionCardPopup extends EventidePopupHelpers {
             if (isFromOurActor) {
               const roll = message.rolls?.[0];
               if (roll) {
-                Logger.debug(
-                  "Captured roll result from embedded item execution",
-                  {
-                    total: roll.total,
-                    formula: roll.formula,
-                    messageId: message.id,
-                  },
-                  "ACTION_CARD",
-                );
                 // Add messageId to the roll object
                 roll.messageId = message.id;
                 resolved = true;
@@ -854,11 +749,6 @@ export class ActionCardPopup extends EventidePopupHelpers {
                 resolve(roll);
               } else {
                 // Non-roll message from our actor - still counts as completion
-                Logger.debug(
-                  "Captured non-roll message from embedded item execution",
-                  { messageId: message.id },
-                  "ACTION_CARD",
-                );
                 resolved = true;
                 Hooks.off("createChatMessage", hookId);
                 resolve(null);
@@ -898,15 +788,6 @@ export class ActionCardPopup extends EventidePopupHelpers {
             rollResult = await rollResultPromise;
           }
 
-          Logger.debug(
-            "Embedded item executed with bypass, captured roll result",
-            {
-              rollResult,
-              total: rollResult?.total,
-              formula: rollResult?.formula,
-            },
-            "ACTION_CARD",
-          );
         } catch (error) {
           Logger.warn(
             "Failed to execute embedded item with bypass or capture result",
@@ -915,12 +796,6 @@ export class ActionCardPopup extends EventidePopupHelpers {
           );
           // Continue without roll result for non-roll items or errors
         }
-      } else if (this.item.system.mode === "savedDamage") {
-        Logger.debug(
-          "Skipping embedded item execution for saved damage mode",
-          { actionCardId: this.item.id },
-          "ACTION_CARD",
-        );
       }
 
       // Check if the player owns all targets before execution
@@ -930,11 +805,6 @@ export class ActionCardPopup extends EventidePopupHelpers {
 
       if (!playerOwnsAllTargets) {
         // Player doesn't own all targets - send to GM for approval
-        Logger.debug("Player doesn't own all targets, requesting GM approval", {
-          targetCount: targets.length,
-          playerId: game.user.id,
-          playerName: game.user.name,
-        });
 
         try {
           const { erpsMessageHandler } = await import(
@@ -966,7 +836,6 @@ export class ActionCardPopup extends EventidePopupHelpers {
             targetCount: targets.length,
           });
 
-          Logger.methodExit("ActionCardPopup", "#onSubmit");
           return;
         } catch (error) {
           Logger.error("Failed to create GM approval request", error);
@@ -975,7 +844,6 @@ export class ActionCardPopup extends EventidePopupHelpers {
               "EVENTIDE_RP_SYSTEM.Errors.ApprovalRequestFailed",
             ),
           );
-          Logger.methodExit("ActionCardPopup", "#onSubmit");
           return;
         }
       }
@@ -1011,14 +879,11 @@ export class ActionCardPopup extends EventidePopupHelpers {
           reason: result.reason,
         });
       }
-
-      Logger.methodExit("ActionCardPopup", "#onSubmit");
     } catch (error) {
       Logger.error("Failed to execute action card from popup", error);
       ui.notifications.error(
         game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.ActionCardExecuteFailed"),
       );
-      Logger.methodExit("ActionCardPopup", "#onSubmit");
     }
   }
 }

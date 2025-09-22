@@ -29,12 +29,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @protected
      */
     static async _onEditImage(_event, target) {
-      Logger.methodEntry("ItemSheetActionsMixin", "_onEditImage", {
-        itemName: this.item?.name,
-        itemType: this.item?.type,
-        targetDataset: target.dataset,
-      });
-
       try {
         const attr = target.dataset.edit;
         const current = foundry.utils.getProperty(this.document, attr);
@@ -53,17 +47,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
           left: this.position.left + 10,
         });
 
-        Logger.info(
-          "Image picker opened for item",
-          {
-            itemName: this.item.name,
-            currentImage: current,
-            attribute: attr,
-          },
-          "ITEM_ACTIONS",
-        );
-
-        Logger.methodExit("ItemSheetActionsMixin", "_onEditImage");
         return fp.browse();
       } catch (error) {
         Logger.error("Failed to open image picker", error, "ITEM_ACTIONS");
@@ -72,7 +55,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
             itemName: this.item?.name || "Unknown",
           }),
         );
-        Logger.methodExit("ItemSheetActionsMixin", "_onEditImage");
         throw error;
       }
     }
@@ -85,12 +67,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @protected
      */
     static async _removeCombatPower(_event, target) {
-      Logger.methodEntry("ItemSheetActionsMixin", "_removeCombatPower", {
-        itemName: this.item?.name,
-        itemType: this.item?.type,
-        powerId: target.dataset.powerId,
-      });
-
       try {
         const powerId = target.dataset.powerId;
         if (!powerId) {
@@ -99,17 +75,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
         }
 
         await this.item.system.removeCombatPower(powerId);
-
-        Logger.info(
-          "Combat power removed from transformation",
-          {
-            transformationName: this.item.name,
-            powerId,
-          },
-          "ITEM_ACTIONS",
-        );
-
-        Logger.methodExit("ItemSheetActionsMixin", "_removeCombatPower");
       } catch (error) {
         Logger.error("Failed to remove combat power", error, "ITEM_ACTIONS");
         ui.notifications.error(
@@ -120,7 +85,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
             },
           ),
         );
-        Logger.methodExit("ItemSheetActionsMixin", "_removeCombatPower");
       }
     }
 
@@ -132,12 +96,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @protected
      */
     static async _removeActionCard(_event, target) {
-      Logger.methodEntry("ItemSheetActionsMixin", "_removeActionCard", {
-        itemName: this.item?.name,
-        itemType: this.item?.type,
-        actionCardId: target.dataset.actionCardId,
-      });
-
       try {
         const actionCardId = target.dataset.actionCardId;
         if (!actionCardId) {
@@ -146,17 +104,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
         }
 
         await this.item.system.removeActionCard(actionCardId);
-
-        Logger.info(
-          "Action card removed from transformation",
-          {
-            transformationName: this.item.name,
-            actionCardId,
-          },
-          "ITEM_ACTIONS",
-        );
-
-        Logger.methodExit("ItemSheetActionsMixin", "_removeActionCard");
       } catch (error) {
         Logger.error("Failed to remove action card", error, "ITEM_ACTIONS");
         ui.notifications.error(
@@ -167,7 +114,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
             },
           ),
         );
-        Logger.methodExit("ItemSheetActionsMixin", "_removeActionCard");
       }
     }
 
@@ -179,11 +125,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @protected
      */
     static async _editEmbeddedActionCard(_event, target) {
-      Logger.methodEntry("ItemSheetActionsMixin", "_editEmbeddedActionCard", {
-        itemName: this.item?.name,
-        itemType: this.item?.type,
-      });
-
       try {
         // Find the specific action card to edit using the data-action-card-id
         const actionCardId = target.dataset.actionCardId;
@@ -209,18 +150,7 @@ export const ItemSheetActionsMixin = (BaseClass) =>
           return;
         }
 
-        Logger.info(
-          "Opening embedded action card for editing",
-          {
-            transformationName: this.item.name,
-            actionCardName: actionCard.name,
-            actionCardId: actionCard.id,
-          },
-          "ITEM_ACTIONS",
-        );
-
         actionCard.sheet.render(true);
-        Logger.methodExit("ItemSheetActionsMixin", "_editEmbeddedActionCard");
       } catch (error) {
         Logger.error("Failed to edit embedded action card", error, "ITEM_ACTIONS");
         ui.notifications.error(
@@ -231,7 +161,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
             },
           ),
         );
-        Logger.methodExit("ItemSheetActionsMixin", "_editEmbeddedActionCard");
       }
     }
 
@@ -245,14 +174,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
     static async _onDiceAdjustmentChange(_event, _target) {
       // The form submission will handle the actual update and recalculation
       // This is just a placeholder for any additional logic if needed
-      Logger.debug(
-        "Dice adjustment change detected",
-        {
-          itemName: this.item?.name,
-          itemType: this.item?.type,
-        },
-        "ITEM_ACTIONS",
-      );
     }
 
     /**
@@ -265,11 +186,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @protected
      */
     static async _viewDoc(_event, target) {
-      Logger.methodEntry("ItemSheetActionsMixin", "_viewDoc", {
-        itemName: this.item?.name,
-        itemType: this.item?.type,
-        targetDataset: target.dataset,
-      });
 
       try {
         const docRow = target.closest("li");
@@ -281,19 +197,8 @@ export const ItemSheetActionsMixin = (BaseClass) =>
           const power = embeddedPowers.find((p) => p.id === powerId);
 
           if (power) {
-            Logger.info(
-              "Opening embedded combat power sheet",
-              {
-                transformationName: this.item.name,
-                powerName: power.name,
-                powerId,
-              },
-              "ITEM_ACTIONS",
-            );
-
             // Open the sheet in read-only mode since these are temporary items
             // that can't be properly saved due to their parent relationship
-            Logger.methodExit("ItemSheetActionsMixin", "_viewDoc");
             return power.sheet.render(true, { readOnly: true });
           }
         }
@@ -302,21 +207,9 @@ export const ItemSheetActionsMixin = (BaseClass) =>
         if (docRow.dataset.effectId) {
           const effect = this.item.effects.get(docRow.dataset.effectId);
           if (effect) {
-            Logger.info(
-              "Opening effect sheet",
-              {
-                itemName: this.item.name,
-                effectName: effect.name,
-                effectId: docRow.dataset.effectId,
-              },
-              "ITEM_ACTIONS",
-            );
-
             effect.sheet.render(true);
           }
         }
-
-        Logger.methodExit("ItemSheetActionsMixin", "_viewDoc");
       } catch (error) {
         Logger.error("Failed to view document", error, "ITEM_ACTIONS");
         ui.notifications.error(
@@ -324,7 +217,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
             itemName: this.item?.name || "Unknown",
           }),
         );
-        Logger.methodExit("ItemSheetActionsMixin", "_viewDoc");
       }
     }
 
@@ -337,11 +229,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @protected
      */
     static async _deleteEffect(_event, target) {
-      Logger.methodEntry("ItemSheetActionsMixin", "_deleteEffect", {
-        itemName: this.item?.name,
-        itemType: this.item?.type,
-        targetDataset: target.dataset,
-      });
 
       try {
         const effect = this._getEffect(target);
@@ -352,17 +239,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
 
         await effect.delete();
 
-        Logger.info(
-          "Effect deleted successfully",
-          {
-            itemName: this.item.name,
-            effectName: effect.name,
-            effectId: effect.id,
-          },
-          "ITEM_ACTIONS",
-        );
-
-        Logger.methodExit("ItemSheetActionsMixin", "_deleteEffect");
       } catch (error) {
         Logger.error("Failed to delete effect", error, "ITEM_ACTIONS");
         ui.notifications.error(
@@ -370,7 +246,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
             itemName: this.item?.name || "Unknown",
           }),
         );
-        Logger.methodExit("ItemSheetActionsMixin", "_deleteEffect");
       }
     }
 
@@ -383,11 +258,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @private
      */
     static async _createEffect(_event, target) {
-      Logger.methodEntry("ItemSheetActionsMixin", "_createEffect", {
-        itemName: this.item?.name,
-        itemType: this.item?.type,
-        targetDataset: target.dataset,
-      });
 
       try {
         // Retrieve the configured document class for ActiveEffect
@@ -410,22 +280,10 @@ export const ItemSheetActionsMixin = (BaseClass) =>
         }
 
         // Finally, create the embedded document!
-        const createdEffect = await aeCls.create(effectData, {
+        await aeCls.create(effectData, {
           parent: this.item,
         });
 
-        Logger.info(
-          "Effect created successfully",
-          {
-            itemName: this.item.name,
-            effectName: createdEffect.name,
-            effectId: createdEffect.id,
-          },
-          "ITEM_ACTIONS",
-        );
-
-
-        Logger.methodExit("ItemSheetActionsMixin", "_createEffect");
       } catch (error) {
         Logger.error("Failed to create effect", error, "ITEM_ACTIONS");
         ui.notifications.error(
@@ -433,7 +291,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
             itemName: this.item?.name || "Unknown",
           }),
         );
-        Logger.methodExit("ItemSheetActionsMixin", "_createEffect");
       }
     }
 
@@ -446,12 +303,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @private
      */
     static async _createDoc(_event, target) {
-      Logger.methodEntry("ItemSheetActionsMixin", "_createDoc", {
-        itemName: this.item?.name,
-        itemType: this.item?.type,
-        targetDataset: target.dataset,
-      });
-
 
       try {
         const { documentClass } = target.dataset;
@@ -484,23 +335,10 @@ export const ItemSheetActionsMixin = (BaseClass) =>
         }
 
         // Create the embedded document
-        const createdDoc = await docCls.create(createData, {
+        await docCls.create(createData, {
           parent: this.item,
         });
 
-        Logger.info(
-          `Document created successfully: ${createdDoc.name}`,
-          {
-            itemName: this.item.name,
-            documentName: createdDoc.name,
-            documentId: createdDoc.id,
-            documentClass,
-          },
-          "ITEM_ACTIONS",
-        );
-
-
-        Logger.methodExit("ItemSheetActionsMixin", "_createDoc");
       } catch (error) {
         Logger.error("Failed to create document", error, "ITEM_ACTIONS");
         ui.notifications.error(
@@ -509,7 +347,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
             documentClass: target.dataset.documentClass || "Unknown",
           }),
         );
-        Logger.methodExit("ItemSheetActionsMixin", "_createDoc");
       }
     }
 
@@ -522,11 +359,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @private
      */
     static async _deleteDoc(event, target) {
-      Logger.methodEntry("ItemSheetActionsMixin", "_deleteDoc", {
-        itemName: this.item?.name,
-        itemType: this.item?.type,
-        targetDataset: target.dataset,
-      });
 
       try {
         const { documentClass } = target.dataset;
@@ -543,8 +375,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
           // Handle other document types if needed in the future
           throw new Error(`Deletion of ${documentClass} not yet implemented`);
         }
-
-        Logger.methodExit("ItemSheetActionsMixin", "_deleteDoc");
       } catch (error) {
         Logger.error("Failed to delete document", error, "ITEM_ACTIONS");
         ui.notifications.error(
@@ -553,7 +383,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
             documentClass: target.dataset.documentClass || "Unknown",
           }),
         );
-        Logger.methodExit("ItemSheetActionsMixin", "_deleteDoc");
       }
     }
 
@@ -566,11 +395,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @private
      */
     static async _toggleEffect(_event, target) {
-      Logger.methodEntry("ItemSheetActionsMixin", "_toggleEffect", {
-        itemName: this.item?.name,
-        itemType: this.item?.type,
-        targetDataset: target.dataset,
-      });
 
       try {
         const effect = this._getEffect(target);
@@ -581,18 +405,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
 
         await effect.update({ disabled: !effect.disabled });
 
-        Logger.info(
-          "Effect toggled successfully",
-          {
-            itemName: this.item.name,
-            effectName: effect.name,
-            effectId: effect.id,
-            newDisabledState: !effect.disabled,
-          },
-          "ITEM_ACTIONS",
-        );
-
-        Logger.methodExit("ItemSheetActionsMixin", "_toggleEffect");
       } catch (error) {
         Logger.error("Failed to toggle effect", error, "ITEM_ACTIONS");
         ui.notifications.error(
@@ -600,7 +412,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
             itemName: this.item?.name || "Unknown",
           }),
         );
-        Logger.methodExit("ItemSheetActionsMixin", "_toggleEffect");
       }
     }
 
@@ -611,11 +422,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @private
      */
     static async _clearEmbeddedItem(_event, _target) {
-      Logger.methodEntry("ItemSheetActionsMixin", "_clearEmbeddedItem", {
-        itemName: this.item?.name,
-        itemType: this.item?.type,
-      });
-
 
       try {
         // Get the item from the sheet instance, not from the form
@@ -658,9 +464,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
         // Explicitly render the sheet to ensure it updates
         this.render();
 
-
-        Logger.info("Embedded item cleared successfully", null, "ITEM_ACTIONS");
-        Logger.methodExit("ItemSheetActionsMixin", "_clearEmbeddedItem");
       } catch (error) {
         Logger.error("Failed to clear embedded item", error, "ITEM_ACTIONS");
         ui.notifications.error(
@@ -668,7 +471,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
             "EVENTIDE_RP_SYSTEM.Errors.ClearEmbeddedItemFailed",
           ),
         );
-        Logger.methodExit("ItemSheetActionsMixin", "_clearEmbeddedItem");
       }
     }
 
@@ -679,11 +481,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @private
      */
     static async _createNewPower(_event, _target) {
-      Logger.methodEntry("ItemSheetActionsMixin", "_createNewPower", {
-        itemName: this.item?.name,
-        itemType: this.item?.type,
-      });
-
 
       try {
         const item = this.item;
@@ -748,9 +545,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
         // Explicitly render the sheet to ensure it updates
         this.render();
 
-
-        Logger.info("New power created successfully", null, "ITEM_ACTIONS");
-        Logger.methodExit("ItemSheetActionsMixin", "_createNewPower");
       } catch (error) {
         Logger.error("Failed to create new power", error, "ITEM_ACTIONS");
         ui.notifications.error(
@@ -758,7 +552,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
             "EVENTIDE_RP_SYSTEM.Errors.CreateNewPowerFailed",
           ),
         );
-        Logger.methodExit("ItemSheetActionsMixin", "_createNewPower");
       }
 
     }
@@ -770,11 +563,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @private
      */
     static async _createNewStatus(_event, _target) {
-      Logger.methodEntry("ItemSheetActionsMixin", "_createNewStatus", {
-        itemName: this.item?.name,
-        itemType: this.item?.type,
-      });
-
 
       try {
         const item = this.item;
@@ -869,9 +657,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
         // Explicitly render the sheet to ensure it updates
         this.render();
 
-
-        Logger.info("New status created successfully", null, "ITEM_ACTIONS");
-        Logger.methodExit("ItemSheetActionsMixin", "_createNewStatus");
       } catch (error) {
         Logger.error("Failed to create new status", error, "ITEM_ACTIONS");
         ui.notifications.error(
@@ -879,7 +664,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
             "EVENTIDE_RP_SYSTEM.Errors.CreateNewStatusFailed",
           ),
         );
-        Logger.methodExit("ItemSheetActionsMixin", "_createNewStatus");
       }
 
     }
@@ -891,11 +675,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @private
      */
     static async _createNewTransformation(_event, _target) {
-      Logger.methodEntry("ItemSheetActionsMixin", "_createNewTransformation", {
-        itemName: this.item?.name,
-        itemType: this.item?.type,
-      });
-
 
       try {
         const item = this.item;
@@ -958,9 +737,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
         // Explicitly render the sheet to ensure it updates
         this.render();
 
-
-        Logger.info("New transformation created successfully", null, "ITEM_ACTIONS");
-        Logger.methodExit("ItemSheetActionsMixin", "_createNewTransformation");
       } catch (error) {
         Logger.error("Failed to create new transformation", error, "ITEM_ACTIONS");
         ui.notifications.error(
@@ -968,7 +744,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
             "EVENTIDE_RP_SYSTEM.Errors.CreateNewTransformationFailed",
           ),
         );
-        Logger.methodExit("ItemSheetActionsMixin", "_createNewTransformation");
       }
 
     }
@@ -980,10 +755,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @private
      */
     static async _editEmbeddedItem(_event, _target) {
-      Logger.methodEntry("ItemSheetActionsMixin", "_editEmbeddedItem", {
-        itemName: this.item?.name,
-        itemType: this.item?.type,
-      });
 
       try {
         const item = this.item;
@@ -1033,12 +804,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
         const sheet = new EmbeddedItemSheet(embeddedItem.toObject(), item);
         sheet.render(true);
 
-        Logger.info(
-          "Embedded item sheet opened",
-          { itemName: embeddedItem.name },
-          "ITEM_ACTIONS",
-        );
-        Logger.methodExit("ItemSheetActionsMixin", "_editEmbeddedItem");
       } catch (error) {
         Logger.error("Failed to edit embedded item", error, "ITEM_ACTIONS");
         ui.notifications.error(
@@ -1046,7 +811,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
             "EVENTIDE_RP_SYSTEM.Errors.EditEmbeddedItemFailed",
           ),
         );
-        Logger.methodExit("ItemSheetActionsMixin", "_editEmbeddedItem");
       }
     }
 
@@ -1057,11 +821,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @private
      */
     static async _editEmbeddedEffect(_event, target) {
-      Logger.methodEntry("ItemSheetActionsMixin", "_editEmbeddedEffect", {
-        itemName: this.item?.name,
-        itemType: this.item?.type,
-        effectId: target.dataset.effectId,
-      });
 
       try {
         const item = this.item;
@@ -1128,12 +887,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
         const sheet = new EmbeddedItemSheet(effect.toObject(), item, {}, true);
         sheet.render(true);
 
-        Logger.info(
-          "Embedded effect sheet opened",
-          { effectName: effect.name },
-          "ITEM_ACTIONS",
-        );
-        Logger.methodExit("ItemSheetActionsMixin", "_editEmbeddedEffect");
       } catch (error) {
         Logger.error("Failed to edit embedded effect", error, "ITEM_ACTIONS");
         ui.notifications.error(
@@ -1141,7 +894,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
             "EVENTIDE_RP_SYSTEM.Errors.EditEmbeddedEffectFailed",
           ),
         );
-        Logger.methodExit("ItemSheetActionsMixin", "_editEmbeddedEffect");
       }
     }
 
@@ -1152,12 +904,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @private
      */
     static async _removeEmbeddedEffect(_event, target) {
-      Logger.methodEntry("ItemSheetActionsMixin", "_removeEmbeddedEffect", {
-        itemName: this.item?.name,
-        itemType: this.item?.type,
-        effectId: target.dataset.effectId,
-      });
-
 
       try {
         const item = this.item;
@@ -1210,13 +956,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
         // Explicitly render the sheet to ensure it updates
         this.render();
 
-
-        Logger.info(
-          "Embedded effect removed successfully",
-          { effectId },
-          "ITEM_ACTIONS",
-        );
-        Logger.methodExit("ItemSheetActionsMixin", "_removeEmbeddedEffect");
       } catch (error) {
         Logger.error("Failed to remove embedded effect", error, "ITEM_ACTIONS");
         ui.notifications.error(
@@ -1224,7 +963,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
             "EVENTIDE_RP_SYSTEM.Errors.RemoveEmbeddedEffectFailed",
           ),
         );
-        Logger.methodExit("ItemSheetActionsMixin", "_removeEmbeddedEffect");
       }
 
     }
@@ -1237,11 +975,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @private
      */
     static async _editEmbeddedTransformation(_event, target) {
-      Logger.methodEntry("ItemSheetActionsMixin", "_editEmbeddedTransformation", {
-        itemName: this.item?.name,
-        itemType: this.item?.type,
-        transformationId: target.dataset.transformationId,
-      });
 
       try {
         const item = this.item;
@@ -1304,12 +1037,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
         // Open the transformation sheet
         await transformation.sheet.render(true);
 
-        Logger.info(
-          "Embedded transformation editor opened successfully",
-          { transformationId },
-          "ITEM_ACTIONS",
-        );
-        Logger.methodExit("ItemSheetActionsMixin", "_editEmbeddedTransformation");
       } catch (error) {
         Logger.error("Failed to edit embedded transformation", error, "ITEM_ACTIONS");
         ui.notifications.error(
@@ -1317,7 +1044,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
             "EVENTIDE_RP_SYSTEM.Errors.EditEmbeddedTransformationFailed",
           ),
         );
-        Logger.methodExit("ItemSheetActionsMixin", "_editEmbeddedTransformation");
       }
     }
 
@@ -1328,12 +1054,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @private
      */
     static async _removeEmbeddedTransformation(_event, target) {
-      Logger.methodEntry("ItemSheetActionsMixin", "_removeEmbeddedTransformation", {
-        itemName: this.item?.name,
-        itemType: this.item?.type,
-        transformationId: target.dataset.transformationId,
-      });
-
 
       try {
         const item = this.item;
@@ -1384,13 +1104,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
         // Explicitly render the sheet to ensure it updates
         this.render();
 
-
-        Logger.info(
-          "Embedded transformation removed successfully",
-          { transformationId },
-          "ITEM_ACTIONS",
-        );
-        Logger.methodExit("ItemSheetActionsMixin", "_removeEmbeddedTransformation");
       } catch (error) {
         Logger.error("Failed to remove embedded transformation", error, "ITEM_ACTIONS");
         ui.notifications.error(
@@ -1398,7 +1111,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
             "EVENTIDE_RP_SYSTEM.Errors.RemoveEmbeddedTransformationFailed",
           ),
         );
-        Logger.methodExit("ItemSheetActionsMixin", "_removeEmbeddedTransformation");
       }
 
     }

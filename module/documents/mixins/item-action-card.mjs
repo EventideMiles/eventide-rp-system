@@ -26,12 +26,6 @@ export function ItemActionCardMixin(Base) {
         );
       }
 
-      Logger.methodEntry("ItemActionCardMixin", "setEmbeddedItem", {
-        itemName: item?.name,
-        itemType: item?.type,
-        actionCardName: this.name,
-      });
-
       try {
         const supportedTypes = ["combatPower", "gear", "feature"];
         if (!supportedTypes.includes(item.type)) {
@@ -56,14 +50,6 @@ export function ItemActionCardMixin(Base) {
         if (rollType === "none" || !rollType) {
           // Keep "none" type but mark it for special handling (automatic two successes)
           sanitizedRollType = "none";
-          Logger.info(
-            `Item "${item.name}" has roll type "none" - will be treated as automatic two successes in action card execution`,
-            {
-              originalType: rollType,
-              specialHandling: "automaticTwoSuccesses",
-            },
-            "ACTION_CARD",
-          );
         } else if (!["roll", "flat", "none"].includes(rollType)) {
           // Default to "roll" for unsupported roll types
           sanitizedRollType = "roll";
@@ -115,11 +101,6 @@ export function ItemActionCardMixin(Base) {
             },
             requiresTarget: sanitizedRollType !== "none", // "none" types don't need targets
           };
-          Logger.debug(
-            "Created roll configuration for embedded item",
-            { itemName: item.name, rollType: sanitizedRollType },
-            "ACTION_CARD",
-          );
         } else {
           // Preserve all existing roll properties, only update type and requiresTarget
           itemData.system.roll = {
@@ -127,33 +108,14 @@ export function ItemActionCardMixin(Base) {
             type: sanitizedRollType,
             requiresTarget: sanitizedRollType !== "none", // "none" types don't need targets
           };
-          Logger.debug(
-            "Preserved roll configuration for embedded item",
-            {
-              itemName: item.name,
-              originalType: rollType,
-              sanitizedType: sanitizedRollType,
-              preservedProperties: Object.keys(itemData.system.roll),
-              requiresTarget: sanitizedRollType !== "none",
-            },
-            "ACTION_CARD",
-          );
         }
 
         // Update the document
         await this.update({ "system.embeddedItem": itemData });
 
-        Logger.info(
-          `Successfully embedded ${item.type} "${item.name}" in action card "${this.name}"`,
-          { itemId: itemData._id },
-          "ACTION_CARD",
-        );
-
-        Logger.methodExit("ItemActionCardMixin", "setEmbeddedItem", this);
         return this;
       } catch (error) {
         Logger.error("Failed to set embedded item", error, "ACTION_CARD");
-        Logger.methodExit("ItemActionCardMixin", "setEmbeddedItem", null);
         throw error;
       }
     }
@@ -172,24 +134,11 @@ export function ItemActionCardMixin(Base) {
         );
       }
 
-      Logger.methodEntry("ItemActionCardMixin", "clearEmbeddedItem", {
-        actionCardName: this.name,
-      });
-
       try {
         await this.update({ "system.embeddedItem": null });
-
-        Logger.info(
-          `Cleared embedded item from action card "${this.name}"`,
-          null,
-          "ACTION_CARD",
-        );
-
-        Logger.methodExit("ItemActionCardMixin", "clearEmbeddedItem", this);
         return this;
       } catch (error) {
         Logger.error("Failed to clear embedded item", error, "ACTION_CARD");
-        Logger.methodExit("ItemActionCardMixin", "clearEmbeddedItem", null);
         throw error;
       }
     }
@@ -210,20 +159,12 @@ export function ItemActionCardMixin(Base) {
 
       const { executionContext = false } = options;
 
-      Logger.methodEntry("ItemActionCardMixin", "getEmbeddedItem", {
-        actionCardName: this.name,
-        hasEmbeddedItem: !!this.system.embeddedItem,
-        executionContext,
-      });
-
       try {
         if (
           !this.system.embeddedItem ||
           this.system.embeddedItem === null ||
           Object.keys(this.system.embeddedItem).length === 0
         ) {
-          Logger.debug("No embedded item found", null, "ACTION_CARD");
-          Logger.methodExit("ItemActionCardMixin", "getEmbeddedItem", null);
           return null;
         }
 
@@ -240,14 +181,6 @@ export function ItemActionCardMixin(Base) {
           // Create a modified copy with zero cost for this execution
           embeddedItemData = foundry.utils.deepClone(this.system.embeddedItem);
           embeddedItemData.system.cost = 0;
-          Logger.debug(
-            `Using zero-cost embedded item for repetition ${this._currentRepetitionContext.repetitionIndex + 1}`,
-            {
-              actionCardName: this.name,
-              originalCost: this.system.embeddedItem.system.cost,
-            },
-            "ACTION_CARD",
-          );
         }
 
         // Use the action card's actor as the parent, or null if unowned
@@ -285,8 +218,6 @@ export function ItemActionCardMixin(Base) {
 
         // Override the update method to persist changes back to the action card
         tempItem.update = async (data, options = {}) => {
-          Logger.debug("Updating embedded item", { data }, "ACTION_CARD");
-
           // Get the current embedded item data
           const currentItemData = foundry.utils.deepClone(
             this.system.embeddedItem,
@@ -333,12 +264,6 @@ export function ItemActionCardMixin(Base) {
           updates,
           options = {},
         ) => {
-          Logger.debug(
-            "Updating embedded documents",
-            { embeddedName, updates, options },
-            "ACTION_CARD",
-          );
-
           // Use the standard updateEmbeddedDocuments for the actual update
           const result =
             await CONFIG.Item.documentClass.prototype.updateEmbeddedDocuments.call(
@@ -368,17 +293,6 @@ export function ItemActionCardMixin(Base) {
         // Delegate handleBypass method from data model to item document if it exists
         if (typeof tempItem.system.handleBypass === "function") {
           tempItem.handleBypass = async (popupConfig, options) => {
-            Logger.debug(
-              "Delegating handleBypass to data model",
-              {
-                itemType: tempItem.type,
-                itemName: tempItem.name,
-                hasSystemHandleBypass:
-                  typeof tempItem.system.handleBypass === "function",
-              },
-              "ACTION_CARD",
-            );
-
             // Call the data model method with the item document as context
             // This ensures the method has access to this.actor, this.name, this.id, etc.
             return await tempItem.system.handleBypass.call(
@@ -387,29 +301,11 @@ export function ItemActionCardMixin(Base) {
               options,
             );
           };
-
-          Logger.debug(
-            "Added handleBypass delegation to embedded item",
-            {
-              itemType: tempItem.type,
-              itemName: tempItem.name,
-              hasHandleBypass: typeof tempItem.handleBypass === "function",
-            },
-            "ACTION_CARD",
-          );
         }
 
-        Logger.debug(
-          `Retrieved embedded item: ${tempItem.type} "${tempItem.name}"`,
-          { itemId: tempItem.id },
-          "ACTION_CARD",
-        );
-
-        Logger.methodExit("ItemActionCardMixin", "getEmbeddedItem", tempItem);
         return tempItem;
       } catch (error) {
         Logger.error("Failed to get embedded item", error, "ACTION_CARD");
-        Logger.methodExit("ItemActionCardMixin", "getEmbeddedItem", null);
         return null;
       }
     }
@@ -430,11 +326,6 @@ export function ItemActionCardMixin(Base) {
           "addEmbeddedEffect can only be called on action card items",
         );
       }
-
-      Logger.methodEntry("ItemActionCardMixin", "addEmbeddedEffect", {
-        effectName: effectItem?.name,
-        effectType: effectItem?.type,
-      });
 
       try {
         // Validate supported effect types
@@ -467,17 +358,7 @@ export function ItemActionCardMixin(Base) {
         // Sanitize roll type for gear effects (they might be used in gear effect hooks)
         if (effectData.type === "gear" && effectData.system?.roll) {
           const rollType = effectData.system.roll.type;
-          if (rollType === "none") {
-            // Keep "none" type for special handling (automatic two successes)
-            Logger.info(
-              `Gear effect "${effectItem.name}" has roll type "none" - will be treated as automatic two successes`,
-              {
-                originalType: rollType,
-                specialHandling: "automaticTwoSuccesses",
-              },
-              "ACTION_CARD",
-            );
-          } else if (
+          if (
             !rollType ||
             !["roll", "flat", "none"].includes(rollType)
           ) {
@@ -519,17 +400,9 @@ export function ItemActionCardMixin(Base) {
           "system.embeddedStatusEffects": effects,
         });
 
-        Logger.info(
-          `Added ${effectItem.type} effect "${effectItem.name}" to action card "${this.name}"`,
-          { effectId: effectData._id },
-          "ACTION_CARD",
-        );
-
-        Logger.methodExit("ItemActionCardMixin", "addEmbeddedEffect", this);
         return this;
       } catch (error) {
         Logger.error("Failed to add embedded effect", error, "ACTION_CARD");
-        Logger.methodExit("ItemActionCardMixin", "addEmbeddedEffect", null);
         throw error;
       }
     }
@@ -548,10 +421,6 @@ export function ItemActionCardMixin(Base) {
           "removeEmbeddedEffect can only be called on action card items",
         );
       }
-
-      Logger.methodEntry("ItemActionCardMixin", "removeEmbeddedEffect", {
-        effectId,
-      });
 
       try {
         // Get current effects
@@ -574,12 +443,6 @@ export function ItemActionCardMixin(Base) {
         });
 
         if (index === -1) {
-          Logger.debug("Effect not found", { effectId }, "ACTION_CARD");
-          Logger.methodExit(
-            "ItemActionCardMixin",
-            "removeEmbeddedEffect",
-            this,
-          );
           return this; // Not found
         }
 
@@ -591,17 +454,9 @@ export function ItemActionCardMixin(Base) {
           "system.embeddedStatusEffects": effects,
         });
 
-        Logger.info(
-          `Removed embedded effect from action card "${this.name}"`,
-          { effectId },
-          "ACTION_CARD",
-        );
-
-        Logger.methodExit("ItemActionCardMixin", "removeEmbeddedEffect", this);
         return this;
       } catch (error) {
         Logger.error("Failed to remove embedded effect", error, "ACTION_CARD");
-        Logger.methodExit("ItemActionCardMixin", "removeEmbeddedEffect", null);
         throw error;
       }
     }
@@ -619,14 +474,9 @@ export function ItemActionCardMixin(Base) {
       }
 
       const { executionContext = false } = options;
-      Logger.methodEntry("ItemActionCardMixin", "getEmbeddedEffects", {
-        effectCount: this.system.embeddedStatusEffects?.length || 0,
-      });
 
       try {
         if (!this.system.embeddedStatusEffects?.length) {
-          Logger.debug("No embedded effects found", null, "ACTION_CARD");
-          Logger.methodExit("ItemActionCardMixin", "getEmbeddedEffects", []);
           return [];
         }
 
@@ -770,21 +620,9 @@ export function ItemActionCardMixin(Base) {
         // Filter out null values
         const filteredEffects = effects.filter((item) => item !== null);
 
-        Logger.debug(
-          `Retrieved ${filteredEffects.length} embedded effects`,
-          null,
-          "ACTION_CARD",
-        );
-
-        Logger.methodExit(
-          "ItemActionCardMixin",
-          "getEmbeddedEffects",
-          filteredEffects,
-        );
         return filteredEffects;
       } catch (error) {
         Logger.error("Failed to get embedded effects", error, "ACTION_CARD");
-        Logger.methodExit("ItemActionCardMixin", "getEmbeddedEffects", []);
         return [];
       }
     }
@@ -844,31 +682,12 @@ export function ItemActionCardMixin(Base) {
           "system.embeddedTransformations": transformations,
         });
 
-        Logger.info(
-          `Added transformation "${transformationItem.name}" to action card "${this.name}"`,
-          {
-            transformationId: transformationData._id,
-            transformationsCount: transformations.length,
-          },
-          "ACTION_CARD",
-        );
-
-        Logger.methodExit(
-          "ItemActionCardMixin",
-          "addEmbeddedTransformation",
-          this,
-        );
         return this;
       } catch (error) {
         Logger.error(
           "Failed to add embedded transformation",
           error,
           "ACTION_CARD",
-        );
-        Logger.methodExit(
-          "ItemActionCardMixin",
-          "addEmbeddedTransformation",
-          null,
         );
         throw error;
       }
@@ -980,11 +799,6 @@ export function ItemActionCardMixin(Base) {
 
       const { executionContext = false } = options;
 
-      Logger.methodEntry("ItemActionCardMixin", "getEmbeddedTransformations", {
-        transformationCount: this.system.embeddedTransformations?.length || 0,
-        executionContext,
-      });
-
       try {
         const transformationData = this.system.embeddedTransformations || [];
 
@@ -1017,20 +831,6 @@ export function ItemActionCardMixin(Base) {
 
           // Override the update method to persist changes back to the action card
           tempItem.update = async (updateData, options = {}) => {
-            Logger.debug(
-              "ACTION_CARD_DEBUG | First override - temp transformation update called",
-              {
-                transformationId: data._id,
-                transformationName: data.name,
-                updateDataKeys: Object.keys(updateData),
-                fullUpdateData: updateData,
-                options,
-                sheetRendered: tempItem.sheet?.rendered,
-                hasImgUpdate: updateData.img !== undefined,
-              },
-              "ACTION_CARD_DEBUG",
-            );
-
             // Save scroll position before update
             const scrollPosition = this.sheet?._saveScrollPosition?.() || 0;
 
@@ -1069,29 +869,7 @@ export function ItemActionCardMixin(Base) {
             // Also treat image updates as embedded item updates to prevent unwanted sheet closure
             const isImageUpdate = updateData.img !== undefined;
 
-            Logger.debug(
-              "ACTION_CARD_DEBUG | First override - deciding whether to close transformation sheet",
-              {
-                transformationId: data._id,
-                fromEmbeddedItem: options.fromEmbeddedItem,
-                isImageUpdate,
-                willClose: !options.fromEmbeddedItem && !isImageUpdate,
-                sheetCurrentlyRendered: tempItem.sheet?.rendered,
-                updateDataKeys: Object.keys(updateData),
-              },
-              "ACTION_CARD_DEBUG",
-            );
-
             if (!options.fromEmbeddedItem && !isImageUpdate) {
-              Logger.debug(
-                "ACTION_CARD_DEBUG | First override - CLOSING transformation sheet",
-                {
-                  transformationId: data._id,
-                  reason:
-                    "Not fromEmbeddedItem and not image update in first override",
-                },
-                "ACTION_CARD_DEBUG",
-              );
               // Close the temporary sheet and re-render the action card sheet
               // Only render the sheet if we're in an editing context, not during execution
               tempItem.sheet.close();
@@ -1099,16 +877,6 @@ export function ItemActionCardMixin(Base) {
                 this.sheet.render(true);
               }
             } else {
-              Logger.debug(
-                "ACTION_CARD_DEBUG | First override - NOT closing transformation sheet - just refreshing",
-                {
-                  transformationId: data._id,
-                  reason: options.fromEmbeddedItem
-                    ? "fromEmbeddedItem=true in first override"
-                    : "image update in first override",
-                },
-                "ACTION_CARD_DEBUG",
-              );
               // For embedded item updates and image updates, just refresh the sheet without closing
               if (tempItem.sheet?.rendered) {
                 tempItem.sheet.render(false);
@@ -1125,22 +893,6 @@ export function ItemActionCardMixin(Base) {
           // This handles updates from embedded items within action card transformations
           const originalUpdate = tempItem.update;
           tempItem.update = async (updateData, options = {}) => {
-            Logger.debug(
-              "ACTION_CARD_DEBUG | Dual-override transformation update called",
-              {
-                transformationId: tempItem.id,
-                updateDataKeys: Object.keys(updateData),
-                updateData,
-                options,
-                hasEmbeddedCombatPowers:
-                  !!updateData["system.embeddedCombatPowers"],
-                hasEmbeddedActionCards:
-                  !!updateData["system.embeddedActionCards"],
-                hasImgUpdate: updateData.img !== undefined,
-              },
-              "ACTION_CARD_DEBUG",
-            );
-
             // If this is an update to embedded combat powers or action cards, handle it specially
             if (
               updateData["system.embeddedCombatPowers"] ||
@@ -1148,14 +900,6 @@ export function ItemActionCardMixin(Base) {
             ) {
               // Save scroll position before update
               const scrollPosition = this.sheet?._saveScrollPosition?.() || 0;
-
-              Logger.debug(
-                "ACTION_CARD_DEBUG | Dual-override handling embedded collection update",
-                {
-                  transformationId: tempItem.id,
-                },
-                "ACTION_CARD_DEBUG",
-              );
               // Update the transformation data in the action card's embedded transformations array
               const currentTransformations = foundry.utils.deepClone(
                 this.system.embeddedTransformations,
@@ -1198,34 +942,9 @@ export function ItemActionCardMixin(Base) {
               // For dual-override embedded collection updates, always treat as embedded item updates
               // This covers cases where embedded action cards have their images updated, which
               // comes through as system.embeddedActionCards updates rather than direct img updates
-              const isImageUpdate = updateData.img !== undefined;
-              const isEmbeddedCollectionUpdate = true; // This is always true in the dual-override path
-
-              Logger.debug(
-                "ACTION_CARD_DEBUG | Dual-override deciding sheet closure",
-                {
-                  transformationId: tempItem.id,
-                  fromEmbeddedItem: options.fromEmbeddedItem,
-                  isImageUpdate,
-                  isEmbeddedCollectionUpdate,
-                  willClose: false, // Always false for embedded collection updates
-                },
-                "ACTION_CARD_DEBUG",
-              );
 
               // Always treat dual-override embedded collection updates as embedded item updates
               // Never close the transformation sheet for these updates
-              // Note: Previously had conditional logic to close sheets, but for embedded collection
-              // updates we always keep the transformation sheet open and just refresh it
-              Logger.debug(
-                "ACTION_CARD_DEBUG | Dual-override NOT closing transformation sheet",
-                {
-                  transformationId: tempItem.id,
-                  reason:
-                    "embedded collection update in dual-override (never close)",
-                },
-                "ACTION_CARD_DEBUG",
-              );
               if (tempItem.sheet?.rendered) {
                 tempItem.sheet.render(false);
                 // Restore scroll position for transformation sheet after re-render
@@ -1243,14 +962,6 @@ export function ItemActionCardMixin(Base) {
 
               return tempItem;
             } else {
-              Logger.debug(
-                "ACTION_CARD_DEBUG | Dual-override delegating to original update",
-                {
-                  transformationId: tempItem.id,
-                  updateDataKeys: Object.keys(updateData),
-                },
-                "ACTION_CARD_DEBUG",
-              );
               // For other updates, use the original transformation update method
               return originalUpdate.call(tempItem, updateData, options);
             }
@@ -1262,12 +973,6 @@ export function ItemActionCardMixin(Base) {
             updates,
             options = {},
           ) => {
-            Logger.debug(
-              "Updating embedded documents on transformation",
-              { embeddedName, updates, options },
-              "ACTION_CARD",
-            );
-
             // Use the standard updateEmbeddedDocuments for the actual update
             const result =
               await CONFIG.Item.documentClass.prototype.updateEmbeddedDocuments.call(
@@ -1297,16 +1002,6 @@ export function ItemActionCardMixin(Base) {
           // Delegate handleBypass method from data model to item document if it exists
           if (typeof tempItem.system.handleBypass === "function") {
             tempItem.handleBypass = async (popupConfig, options) => {
-              Logger.debug(
-                "Delegating handleBypass to data model",
-                {
-                  itemType: tempItem.type,
-                  itemName: tempItem.name,
-                  hasSystemHandleBypass:
-                    typeof tempItem.system.handleBypass === "function",
-                },
-                "ACTION_CARD",
-              );
               return await tempItem.system.handleBypass(popupConfig, options);
             };
           }
@@ -1319,28 +1014,12 @@ export function ItemActionCardMixin(Base) {
           (item) => item !== null,
         );
 
-        Logger.debug(
-          `Retrieved ${filteredTransformations.length} embedded transformations`,
-          null,
-          "ACTION_CARD",
-        );
-
-        Logger.methodExit(
-          "ItemActionCardMixin",
-          "getEmbeddedTransformations",
-          filteredTransformations,
-        );
         return filteredTransformations;
       } catch (error) {
         Logger.error(
           "Failed to get embedded transformations",
           error,
           "ACTION_CARD",
-        );
-        Logger.methodExit(
-          "ItemActionCardMixin",
-          "getEmbeddedTransformations",
-          [],
         );
         return [];
       }

@@ -21,11 +21,8 @@ let globalResizeHandler = null;
  */
 export const initNumberInputs = () => {
   if (isInitialized) {
-    Logger.debug("Number inputs already initialized", {}, "NUMBER_INPUT");
     return;
   }
-
-  Logger.debug("Initializing number inputs", {}, "NUMBER_INPUT");
 
   try {
     // Store references to handlers for cleanup
@@ -45,8 +42,6 @@ export const initNumberInputs = () => {
 
     // Set a flag on document for diagnostics detection
     document._erpsNumberInputsInitialized = true;
-
-    Logger.debug("Number inputs initialized successfully", {}, "NUMBER_INPUT");
   } catch (error) {
     Logger.error("Failed to initialize number inputs", error, "NUMBER_INPUT");
   }
@@ -61,8 +56,6 @@ export const enhanceExistingNumberInputs = () => {
   try {
     // Just update responsive behavior - the global click handler will handle functionality
     updateNumberInputResponsiveness();
-
-    Logger.debug("Enhanced existing number inputs", {}, "NUMBER_INPUT");
   } catch (error) {
     Logger.error(
       "Failed to enhance existing number inputs",
@@ -80,7 +73,6 @@ export const enhanceExistingNumberInputs = () => {
  */
 export const cleanupNumberInputs = (element) => {
   if (!element) {
-    Logger.debug("No element provided for cleanup", {}, "NUMBER_INPUT");
     return;
   }
 
@@ -89,12 +81,6 @@ export const cleanupNumberInputs = (element) => {
     const numberInputs = element.querySelectorAll(".erps-number-input");
 
     if (numberInputs.length > 0) {
-      Logger.debug(
-        "Cleaning up number input state",
-        { count: numberInputs.length },
-        "NUMBER_INPUT",
-      );
-
       numberInputs.forEach((wrapper) => {
         // Remove any processing markers we've added
         if (wrapper.dataset.erpsProcessed) {
@@ -135,16 +121,6 @@ const handleNumberInputClick = (event) => {
       "erps-number-input__button--increment",
     );
 
-    Logger.debug(
-      "Number input button clicked",
-      {
-        isIncrement,
-        currentValue: input.value,
-        inputName: input.name || input.id,
-      },
-      "NUMBER_INPUT",
-    );
-
     updateNumberInputValue(input, isIncrement);
     return;
   }
@@ -168,16 +144,6 @@ const handleNumberInputClick = (event) => {
 
     const isIncrement = button.classList.contains(
       "erps-number-input__button--increment",
-    );
-
-    Logger.debug(
-      "Number input icon clicked",
-      {
-        isIncrement,
-        currentValue: input.value,
-        inputName: input.name || input.id,
-      },
-      "NUMBER_INPUT",
     );
 
     updateNumberInputValue(input, isIncrement);
@@ -250,15 +216,8 @@ const debounce = (func, wait) => {
 // Global cleanup function for number inputs
 export const cleanupNumberInputsGlobal = () => {
   if (!isInitialized) {
-    Logger.debug(
-      "Number inputs not initialized, nothing to cleanup",
-      {},
-      "NUMBER_INPUT",
-    );
     return;
   }
-
-  Logger.debug("Cleaning up global number input handlers", {}, "NUMBER_INPUT");
 
   try {
     // Remove global event listeners
@@ -276,12 +235,6 @@ export const cleanupNumberInputsGlobal = () => {
 
     // Clear the diagnostics flag
     document._erpsNumberInputsInitialized = false;
-
-    Logger.debug(
-      "Global number input handlers cleaned up successfully",
-      {},
-      "NUMBER_INPUT",
-    );
   } catch (error) {
     Logger.error(
       "Failed to cleanup global number input handlers",

@@ -33,30 +33,14 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
   ActorSheetActionsMixin(BaselineSheetMixins(sheets.ActorSheetV2)),
 ) {
   constructor(options = {}) {
-    Logger.methodEntry("EventideRpSystemActorSheet", "constructor", {
-      actorId: options?.document?.id,
-      actorName: options?.document?.name,
-      actorType: options?.document?.type,
-    });
 
     try {
       super(options);
       // Note: All functionality is now provided by mixins
 
-      Logger.debug(
-        "Actor sheet initialized successfully",
-        {
-          sheetId: this.id,
-          actorName: this.actor?.name,
-          dragDropHandlers: this.dragDrop?.length,
-        },
-        "ACTOR_SHEET",
-      );
 
-      Logger.methodExit("EventideRpSystemActorSheet", "constructor", this);
     } catch (error) {
       Logger.error("Failed to initialize actor sheet", error, "ACTOR_SHEET");
-      Logger.methodExit("EventideRpSystemActorSheet", "constructor", null);
       throw error;
     }
   }
@@ -182,10 +166,6 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
 
   /** @override */
   async _prepareContext(options) {
-    Logger.methodEntry("EventideRpSystemActorSheet", "_prepareContext", {
-      actorName: this.actor?.name,
-      optionsParts: options?.parts,
-    });
 
     try {
       // Output initialization
@@ -212,11 +192,6 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
         // Add user's theme preference with debugging
         userSheetTheme: (() => {
           const theme = CommonFoundryTasks.retrieveSheetTheme();
-          Logger.debug("User theme retrieved for context", {
-            theme,
-            userFlags: game.user.flags,
-            systemFlags: game.user.flags?.["eventide-rp-system"],
-          });
           return theme;
         })(),
       };
@@ -224,23 +199,7 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
       // Use mixin for context preparation
       const enrichedContext = this._prepareSheetContext(context);
 
-      Logger.debug(
-        "Actor sheet context prepared",
-        {
-          actorName: this.actor.name,
-          contextKeys: Object.keys(enrichedContext),
-          tabCount: Object.keys(enrichedContext.tabs).length,
-          editable: enrichedContext.editable,
-          limited: enrichedContext.limited,
-        },
-        "ACTOR_SHEET",
-      );
 
-      Logger.methodExit(
-        "EventideRpSystemActorSheet",
-        "_prepareContext",
-        enrichedContext,
-      );
       return enrichedContext;
     } catch (error) {
       await ErrorHandler.handleAsync(Promise.reject(error), {
@@ -267,10 +226,6 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
 
   /** @override */
   async _preparePartContext(partId, context) {
-    Logger.methodEntry("EventideRpSystemActorSheet", "_preparePartContext", {
-      partId,
-      actorName: this.actor?.name,
-    });
 
     try {
       switch (partId) {
@@ -320,22 +275,7 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
         context.formulas = {};
       }
 
-      Logger.debug(
-        `Part context prepared for ${partId}`,
-        {
-          partId,
-          hasTab: !!context.tab,
-          hasFormulas: !!context.formulas,
-          hasEnrichedBiography: !!context.enrichedBiography,
-        },
-        "ACTOR_SHEET",
-      );
 
-      Logger.methodExit(
-        "EventideRpSystemActorSheet",
-        "_preparePartContext",
-        context,
-      );
       return context;
     } catch (error) {
       Logger.error(
@@ -351,11 +291,6 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
         context.enrichedBiography = this.actor?.system?.biography || "";
       }
 
-      Logger.methodExit(
-        "EventideRpSystemActorSheet",
-        "_preparePartContext",
-        context,
-      );
       return context;
     }
   }
@@ -459,52 +394,10 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
    * @override
    */
   _onRender(_context, _options) {
-    // Debug drag drop setup
-    const transformationCards = this.element.querySelectorAll(
-      ".eventide-transformation-card[data-item-id]",
-    );
-    const allDraggableElements = this.element.querySelectorAll(
-      "[data-drag], .erps-data-table__row[data-item-id], .erps-data-table__row[data-document-class], .eventide-transformation-card[data-item-id]",
-    );
-
-    Logger.debug(
-      "Setting up drag drop handlers",
-      {
-        sheetId: this.id,
-        actorName: this.actor?.name,
-        dragDropHandlers: this.dragDrop?.length,
-        dragSelectors: this.dragDrop?.map((d) => d.dragSelector),
-        element: this.element,
-        draggableElements: allDraggableElements.length,
-        transformationCards: transformationCards.length,
-        transformationCardDetails: Array.from(transformationCards).map(
-          (card) => ({
-            id: card.dataset.itemId,
-            classes: card.className,
-            dataset: card.dataset,
-          }),
-        ),
-        activeTransformation: this.actor.getFlag(
-          "eventide-rp-system",
-          "activeTransformation",
-        ),
-      },
-      "ACTOR_SHEET",
-    );
 
     // Bind drag drop handlers
     if (this.dragDrop && this.dragDrop.length > 0) {
-      this.dragDrop.forEach((d, index) => {
-        Logger.debug(
-          `Binding drag drop handler ${index}`,
-          {
-            dragSelector: d.dragSelector,
-            dropSelector: d.dropSelector,
-            matchingElements: this.element.querySelectorAll(d.dragSelector)
-              .length,
-          },
-          "ACTOR_SHEET",
-        );
+      this.dragDrop.forEach((d) => {
         d.bind(this.element);
       });
     } else {
@@ -550,35 +443,13 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
       "activeTransformation",
     );
     if (activeTransformationId) {
-      Logger.debug(
-        "Active transformation ID",
-        { activeTransformationId },
-        "ACTOR_SHEET",
-      );
-
-      // Find the transformation item
-      const transformation = this.actor.items.get(activeTransformationId);
-      Logger.debug(
-        "Transformation item",
-        { transformationName: transformation?.name },
-        "ACTOR_SHEET",
-      );
 
       // Check if the transformation element exists in the DOM
       const transformationElement = this.element.querySelector(
         ".transformation-header__name",
       );
-      Logger.debug(
-        "Transformation element",
-        { elementExists: !!transformationElement },
-        "ACTOR_SHEET",
-      );
       if (transformationElement) {
-        Logger.debug(
-          "Transformation element text",
-          { text: transformationElement.textContent.trim() },
-          "ACTOR_SHEET",
-        );
+        // Transformation element found in DOM
       }
     }
   }
@@ -691,11 +562,6 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
    * @override
    */
   async maximize() {
-    Logger.methodEntry("EventideRpSystemActorSheet", "maximize", {
-      actorName: this.actor?.name,
-      currentPosition: this.position,
-      minimized: this.minimized,
-    });
 
     try {
       // Store the current position before maximizing if we're not already minimized
@@ -707,10 +573,6 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
           top: this.position.top,
         };
 
-        Logger.debug("Stored current position before maximize", {
-          storedPosition: this._storedPosition,
-          actorName: this.actor?.name,
-        });
       }
 
       // Call the parent maximize method
@@ -722,17 +584,12 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
         setTimeout(() => {
           this.setPosition(this._storedPosition);
 
-          Logger.info("Restored position after maximize", {
-            restoredPosition: this._storedPosition,
-            actorName: this.actor?.name,
-          });
 
           // Clear the stored position after restoring
           this._storedPosition = null;
         }, 50);
       }
 
-      Logger.methodExit("EventideRpSystemActorSheet", "maximize", true);
     } catch (error) {
       Logger.error("Failed to maximize actor sheet", {
         error: error.message,
@@ -743,7 +600,6 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
       // Still call parent method as fallback
       await super.maximize();
 
-      Logger.methodExit("EventideRpSystemActorSheet", "maximize", false);
     }
   }
 
@@ -753,10 +609,6 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
    * @override
    */
   async minimize() {
-    Logger.methodEntry("EventideRpSystemActorSheet", "minimize", {
-      actorName: this.actor?.name,
-      currentPosition: this.position,
-    });
 
     try {
       // Clear any stored position when minimizing
@@ -765,11 +617,7 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
       // Call the parent minimize method
       await super.minimize();
 
-      Logger.info("Actor sheet minimized successfully", {
-        actorName: this.actor?.name,
-      });
 
-      Logger.methodExit("EventideRpSystemActorSheet", "minimize", true);
     } catch (error) {
       Logger.error("Failed to minimize actor sheet", {
         error: error.message,
@@ -780,7 +628,6 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
       // Still call parent method as fallback
       await super.minimize();
 
-      Logger.methodExit("EventideRpSystemActorSheet", "minimize", false);
     }
   }
 

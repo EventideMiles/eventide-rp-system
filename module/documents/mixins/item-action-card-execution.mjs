@@ -24,11 +24,6 @@ export function ItemActionCardExecutionMixin(Base) {
         throw new Error("execute can only be called on action card items");
       }
 
-      Logger.methodEntry("ItemActionCardExecutionMixin", "execute", {
-        actorName: actor?.name,
-        actionCardName: this.name,
-        mode: this.system.mode,
-      });
 
       try {
         let result;
@@ -49,19 +44,12 @@ export function ItemActionCardExecutionMixin(Base) {
           const combat = game.combat;
           if (combat) {
             await combat.nextTurn();
-            Logger.info(
-              "Advanced initiative to next turn after action card execution",
-              { actionCardName: this.name },
-              "ACTION_CARD",
-            );
           }
         }
 
-        Logger.methodExit("ItemActionCardExecutionMixin", "execute", result);
         return result;
       } catch (error) {
         Logger.error("Failed to execute action card", error, "ACTION_CARD");
-        Logger.methodExit("ItemActionCardExecutionMixin", "execute", null);
         throw error;
       }
     }
@@ -82,17 +70,6 @@ export function ItemActionCardExecutionMixin(Base) {
         );
       }
 
-      Logger.methodEntry(
-        "ItemActionCardExecutionMixin",
-        "executeWithRollResult",
-        {
-          actorName: actor?.name,
-          actionCardName: this.name,
-          mode: this.system.mode,
-          hasRollResult: !!rollResult,
-          repetitions: this.system.repetitions,
-        },
-      );
 
       try {
         // Calculate number of repetitions
@@ -103,23 +80,9 @@ export function ItemActionCardExecutionMixin(Base) {
         await repetitionsRoll.evaluate();
         const repetitionCount = Math.floor(repetitionsRoll.total);
 
-        Logger.info(
-          `Action card repetition roll result: ${repetitionCount}`,
-          {
-            actionCardName: this.name,
-            repetitionsFormula: this.system.repetitions,
-            repetitionCount,
-          },
-          "ACTION_CARD",
-        );
 
         // Check if action fails due to insufficient repetitions
         if (repetitionCount <= 0) {
-          Logger.info(
-            `Action card execution failed - insufficient repetitions: ${repetitionCount}`,
-            { actionCardName: this.name },
-            "ACTION_CARD",
-          );
 
           // Send failure message to chat
           await this.sendFailureMessage(
@@ -136,11 +99,6 @@ export function ItemActionCardExecutionMixin(Base) {
             reason: "insufficientRepetitions",
           };
 
-          Logger.methodExit(
-            "ItemActionCardExecutionMixin",
-            "executeWithRollResult",
-            failureResult,
-          );
           return failureResult;
         }
 
@@ -155,13 +113,6 @@ export function ItemActionCardExecutionMixin(Base) {
         // Execute repetitions
         const results = [];
         for (let i = 0; i < repetitionCount; i++) {
-          Logger.info(
-            `Executing repetition ${i + 1} of ${repetitionCount}`,
-            {
-              actionCardName: this.name,
-            },
-            "ACTION_CARD",
-          );
 
           // Check resource constraints before execution
           const embeddedItem = this.getEmbeddedItem();
@@ -200,11 +151,6 @@ export function ItemActionCardExecutionMixin(Base) {
                 resourceFailure: resourceCheck,
               };
 
-              Logger.methodExit(
-                "ItemActionCardExecutionMixin",
-                "executeWithRollResult",
-                partialResult,
-              );
               return partialResult;
             }
           }
@@ -242,11 +188,6 @@ export function ItemActionCardExecutionMixin(Base) {
           const combat = game.combat;
           if (combat) {
             await combat.nextTurn();
-            Logger.info(
-              "Advanced initiative to next turn after action card execution",
-              { actionCardName: this.name },
-              "ACTION_CARD",
-            );
           }
         }
 
@@ -259,11 +200,6 @@ export function ItemActionCardExecutionMixin(Base) {
           repetitionCount,
         );
 
-        Logger.methodExit(
-          "ItemActionCardExecutionMixin",
-          "executeWithRollResult",
-          combinedResult,
-        );
         return combinedResult;
       } catch (error) {
         // Clean up repetition context on error
@@ -273,11 +209,6 @@ export function ItemActionCardExecutionMixin(Base) {
           "Failed to execute action card with roll result",
           error,
           "ACTION_CARD",
-        );
-        Logger.methodExit(
-          "ItemActionCardExecutionMixin",
-          "executeWithRollResult",
-          null,
         );
         throw error;
       }
@@ -353,11 +284,6 @@ export function ItemActionCardExecutionMixin(Base) {
           : game.settings.get("eventide-rp-system", "actionCardExecutionDelay");
 
       if (delay > 0) {
-        Logger.debug(
-          `Waiting ${delay}ms for execution delay (${this.system.timingOverride ? "override" : "system default"})`,
-          null,
-          "ACTION_CARD",
-        );
         await new Promise((resolve) => setTimeout(resolve, delay));
       }
     }
@@ -367,11 +293,7 @@ export function ItemActionCardExecutionMixin(Base) {
      * @param {Actor} actor - The actor executing the action card
      * @returns {Promise<Object>} Result of the attack chain execution
      */
-    async executeAttackChain(actor) {
-      Logger.methodEntry("ItemActionCardExecutionMixin", "executeAttackChain", {
-        actorName: actor?.name,
-        actionCardName: this.name,
-      });
+    async executeAttackChain(_actor) {
 
       try {
         // Check if attack chains are enabled globally
@@ -409,11 +331,6 @@ export function ItemActionCardExecutionMixin(Base) {
         }
 
         // Execute the embedded item's roll and capture result
-        Logger.info(
-          `Executing embedded item roll: ${embeddedItem.name}`,
-          { itemType: embeddedItem.type },
-          "ACTION_CARD",
-        );
 
         // For now, we'll execute without capturing the roll result
         // This can be enhanced later to capture the actual roll
@@ -439,27 +356,10 @@ export function ItemActionCardExecutionMixin(Base) {
           statusResults: [],
         };
 
-        Logger.info(
-          `Attack chain executed successfully`,
-          {
-            targetsHit: chainResult.targetResults.length,
-          },
-          "ACTION_CARD",
-        );
 
-        Logger.methodExit(
-          "ItemActionCardExecutionMixin",
-          "executeAttackChain",
-          chainResult,
-        );
         return chainResult;
       } catch (error) {
         Logger.error("Failed to execute attack chain", error, "ACTION_CARD");
-        Logger.methodExit(
-          "ItemActionCardExecutionMixin",
-          "executeAttackChain",
-          null,
-        );
         throw error;
       }
     }
@@ -482,15 +382,6 @@ export function ItemActionCardExecutionMixin(Base) {
       shouldApplyStatus = true,
       isFinalRepetition = true,
     ) {
-      Logger.methodEntry(
-        "ItemActionCardExecutionMixin",
-        "executeAttackChainWithRollResult",
-        {
-          actorName: actor?.name,
-          actionCardName: this.name,
-          rollTotal: rollResult?.total,
-        },
-      );
 
       try {
         // Get targets for AC checking
@@ -528,11 +419,6 @@ export function ItemActionCardExecutionMixin(Base) {
 
           // Handle "none" roll types as automatic two successes
           if (embeddedItem.system.roll?.type === "none") {
-            Logger.debug(
-              "Embedded item has 'none' roll type - treating as automatic two successes",
-              { itemName: embeddedItem.name, targetName: target.actor.name },
-              "ACTION_CARD",
-            );
             return {
               target: target.actor,
               firstHit: true,
@@ -605,32 +491,13 @@ export function ItemActionCardExecutionMixin(Base) {
           transformationResults,
         };
 
-        Logger.info(
-          `Attack chain executed successfully`,
-          {
-            targetsHit: results.filter((r) => r.oneHit).length,
-            damageApplications: damageResults.length,
-            statusApplications: statusResults.length,
-          },
-          "ACTION_CARD",
-        );
 
-        Logger.methodExit(
-          "ItemActionCardExecutionMixin",
-          "executeAttackChainWithRollResult",
-          chainResult,
-        );
         return chainResult;
       } catch (error) {
         Logger.error(
           "Failed to execute attack chain with roll result",
           error,
           "ACTION_CARD",
-        );
-        Logger.methodExit(
-          "ItemActionCardExecutionMixin",
-          "executeAttackChainWithRollResult",
-          null,
         );
         throw error;
       }
@@ -641,11 +508,7 @@ export function ItemActionCardExecutionMixin(Base) {
      * @param {Actor} actor - The actor executing the action card
      * @returns {Promise<Object>} Result of the saved damage execution
      */
-    async executeSavedDamage(actor) {
-      Logger.methodEntry("ItemActionCardExecutionMixin", "executeSavedDamage", {
-        actorName: actor?.name,
-        actionCardName: this.name,
-      });
+    async executeSavedDamage(_actor) {
 
       try {
         // Get targets
@@ -713,25 +576,10 @@ export function ItemActionCardExecutionMixin(Base) {
           transformationResults,
         };
 
-        Logger.info(
-          `Saved damage executed successfully`,
-          { targetsAffected: damageResults.length },
-          "ACTION_CARD",
-        );
 
-        Logger.methodExit(
-          "ItemActionCardExecutionMixin",
-          "executeSavedDamage",
-          result,
-        );
         return result;
       } catch (error) {
         Logger.error("Failed to execute saved damage", error, "ACTION_CARD");
-        Logger.methodExit(
-          "ItemActionCardExecutionMixin",
-          "executeSavedDamage",
-          null,
-        );
         throw error;
       }
     }
@@ -807,14 +655,6 @@ export function ItemActionCardExecutionMixin(Base) {
       disableDelays = false,
       isFinalRepetition = true,
     ) {
-      Logger.methodEntry(
-        "ItemActionCardExecutionMixin",
-        "_processStatusResults",
-        {
-          resultsCount: results.length,
-          rollResult: rollResult?.total,
-        },
-      );
 
       const statusResults = [];
 
@@ -955,17 +795,6 @@ export function ItemActionCardExecutionMixin(Base) {
                     "system.quantity": newQuantity,
                   });
 
-                  Logger.info(
-                    `Reduced quantity of "${effectData.name}" in actor inventory`,
-                    {
-                      actorName: this.actor.name,
-                      effectName: effectData.name,
-                      previousQuantity: currentQuantity,
-                      newQuantity,
-                      costDeducted: requiredQuantity,
-                    },
-                    "ACTION_CARD",
-                  );
                 } catch (error) {
                   Logger.error(
                     `Failed to process gear effect "${effectData.name}"`,
@@ -1006,15 +835,6 @@ export function ItemActionCardExecutionMixin(Base) {
                   effectData.system.equipped = true;
                   effectData.system.quantity = 1;
 
-                  Logger.debug(
-                    `Setting gear effect "${effectData.name}" to equipped state for transfer`,
-                    {
-                      targetName: result.target.name,
-                      gearName: effectData.name,
-                      equipped: true,
-                    },
-                    "ACTION_CARD",
-                  );
                 }
 
                 // Apply or intensify the effect on the target
@@ -1038,20 +858,6 @@ export function ItemActionCardExecutionMixin(Base) {
                   intensified: applicationResult.intensified,
                 });
 
-                Logger.info(
-                  `${applicationResult.intensified ? "Intensified" : "Applied"} effect "${effectData.name}" to target "${result.target.name}"`,
-                  {
-                    statusCondition: this.system.attackChain.statusCondition,
-                    statusThreshold: this.system.attackChain.statusThreshold,
-                    rollTotal: rollResult?.total || 0,
-                    equipped:
-                      effectData.type === "gear"
-                        ? effectData.system.equipped
-                        : "N/A",
-                    intensified: applicationResult.intensified,
-                  },
-                  "ACTION_CARD",
-                );
               } catch (error) {
                 Logger.error(
                   `Failed to apply effect "${effectData.name}" to target "${result.target.name}"`,
@@ -1071,19 +877,9 @@ export function ItemActionCardExecutionMixin(Base) {
           }
         }
 
-        Logger.methodExit(
-          "ItemActionCardExecutionMixin",
-          "_processStatusResults",
-          statusResults,
-        );
         return statusResults;
       } catch (error) {
         Logger.error("Failed to process status results", error, "ACTION_CARD");
-        Logger.methodExit(
-          "ItemActionCardExecutionMixin",
-          "_processStatusResults",
-          null,
-        );
         throw error;
       }
     }
@@ -1197,15 +993,6 @@ export function ItemActionCardExecutionMixin(Base) {
         };
 
         await ChatMessage.create(messageData);
-        Logger.info(
-          "Sent action card resource failure message to chat",
-          {
-            actionCardName: this.name,
-            repetitionIndex,
-            reason: resourceCheck.reason,
-          },
-          "ACTION_CARD",
-        );
       } catch (error) {
         Logger.error(
           "Failed to send resource failure message",
@@ -1236,11 +1023,6 @@ export function ItemActionCardExecutionMixin(Base) {
         };
 
         await ChatMessage.create(messageData);
-        Logger.info(
-          "Sent action card failure message to chat",
-          { actionCardName: this.name, repetitionCount },
-          "ACTION_CARD",
-        );
       } catch (error) {
         Logger.error("Failed to send failure message", error, "ACTION_CARD");
       }
@@ -1282,11 +1064,6 @@ export function ItemActionCardExecutionMixin(Base) {
             if (isFromOurActor) {
               const roll = message.rolls?.[0];
               if (roll) {
-                Logger.debug(
-                  "Captured fresh roll result for repeatToHit",
-                  { rollTotal: roll.total, itemName: embeddedItem.name },
-                  "ACTION_CARD",
-                );
                 // Add messageId to the roll object
                 roll.messageId = message.id;
                 resolved = true;
@@ -1294,11 +1071,6 @@ export function ItemActionCardExecutionMixin(Base) {
                 resolve(roll);
               } else {
                 // Non-roll message from our actor - still counts as completion
-                Logger.debug(
-                  "Captured non-roll message from embedded item repetition",
-                  { messageId: message.id, itemName: embeddedItem.name },
-                  "ACTION_CARD",
-                );
                 resolved = true;
                 Hooks.off("createChatMessage", hookId);
                 resolve(null);
@@ -1327,11 +1099,6 @@ export function ItemActionCardExecutionMixin(Base) {
         // Wait for the roll result
         const rollResult = await rollResultPromise;
 
-        Logger.debug(
-          "Completed embedded item execution for repeatToHit repetition",
-          { itemName: embeddedItem.name, hasRoll: !!rollResult },
-          "ACTION_CARD",
-        );
 
         return rollResult;
       } catch (error) {
@@ -1473,13 +1240,6 @@ export function ItemActionCardExecutionMixin(Base) {
           : game.settings.get("eventide-rp-system", "actionCardExecutionDelay");
 
       if (delay > 0) {
-        Logger.debug(
-          `Applying ${delay}ms delay between repetitions`,
-          {
-            actionCardName: this.name,
-          },
-          "ACTION_CARD",
-        );
         await new Promise((resolve) => setTimeout(resolve, delay));
       }
     }
@@ -1534,38 +1294,15 @@ export function ItemActionCardExecutionMixin(Base) {
       disableDelays = false,
       isFinalRepetition = true,
     ) {
-      Logger.methodEntry(
-        "ItemActionCardExecutionMixin",
-        "_processTransformationResults",
-        {
-          resultsCount: results.length,
-          transformationCount: this.system.embeddedTransformations.length,
-        },
-      );
 
       const transformationResults = [];
 
       try {
         // Skip if no transformations embedded
         if (this.system.embeddedTransformations.length === 0) {
-          Logger.debug(
-            "No embedded transformations to process",
-            null,
-            "ACTION_CARD",
-          );
           return transformationResults;
         }
 
-        Logger.debug(
-          "Processing transformations",
-          {
-            transformationCount: this.system.embeddedTransformations.length,
-            transformationConfig: this.system.transformationConfig,
-            resultsCount: results.length,
-            mode: this.system.mode,
-          },
-          "ACTION_CARD",
-        );
 
         // Apply transformations to each target based on pre-selections or default logic
         for (const result of results) {
@@ -1583,18 +1320,6 @@ export function ItemActionCardExecutionMixin(Base) {
           let selectedTransformation = null;
           const transformationSelections = this._currentRepetitionContext?.transformationSelections;
 
-          Logger.debug(
-            `Transformation selection logic for target ${result.target.name}`,
-            {
-              targetId: result.target.id,
-              hasTransformationSelections: !!transformationSelections,
-              transformationSelectionsSize: transformationSelections?.size || 0,
-              transformationSelectionsEntries: transformationSelections ? Object.fromEntries(transformationSelections) : {},
-              availableTransformationsCount: this.system.embeddedTransformations.length,
-              availableTransformations: this.system.embeddedTransformations.map(t => ({ id: t.id, originalId: t.originalId, name: t.name })),
-            },
-            "ACTION_CARD",
-          );
 
           // Check multiple possible target ID formats for robust lookup
           let selectedTransformationId = null;
@@ -1621,45 +1346,14 @@ export function ItemActionCardExecutionMixin(Base) {
               t => t.originalId === selectedTransformationId
             );
 
-            Logger.debug(
-              `Using pre-selected transformation for target ${result.target.name}`,
-              {
-                targetId: result.target.id,
-                selectedTransformationId,
-                selectedTransformationName: selectedTransformation?.name,
-                foundTransformation: !!selectedTransformation,
-              },
-              "ACTION_CARD",
-            );
           } else if (this.system.embeddedTransformations.length === 1) {
             // Only one transformation available, use it by default
             const embeddedTransformations = await this.getEmbeddedTransformations({ executionContext: true });
             selectedTransformation = embeddedTransformations[0];
-            Logger.debug(
-              `Using single available transformation for target ${result.target.name}`,
-              {
-                targetId: result.target.id,
-                transformationName: selectedTransformation.name,
-              },
-              "ACTION_CARD",
-            );
           } else if (this.system.embeddedTransformations.length > 1) {
             // Multiple transformations but no pre-selection - fallback to GM prompt
-            Logger.debug(
-              `Multiple transformations available but no pre-selection, prompting GM`,
-              {
-                targetId: result.target.id,
-                transformationCount: this.system.embeddedTransformations.length,
-              },
-              "ACTION_CARD",
-            );
             selectedTransformation = await this._promptGMForTransformationChoice();
             if (!selectedTransformation) {
-              Logger.info(
-                "GM cancelled transformation selection",
-                null,
-                "ACTION_CARD",
-              );
               continue; // Skip this target instead of returning
             }
           }
@@ -1689,66 +1383,20 @@ export function ItemActionCardExecutionMixin(Base) {
               this.system.transformationConfig.threshold || 15,
             );
 
-            Logger.debug(
-              `Transformation application check for target ${result.target.name}`,
-              {
-                transformationName: selectedTransformation.name,
-                condition: this.system.transformationConfig.condition,
-                oneHit: result.oneHit,
-                bothHit: result.bothHit,
-                rollTotal: rollResult?.total || 0,
-                threshold: this.system.transformationConfig.threshold || 15,
-                shouldApplyTransformation,
-              },
-              "ACTION_CARD",
-            );
           } else if (this.system.mode === "savedDamage") {
             // For saved damage mode, check transformation condition
             // Since there's no roll result, we only apply if condition is "never" -> false or anything else -> true
             shouldApplyTransformation = this.system.transformationConfig.condition !== "never";
 
-            Logger.debug(
-              `Transformation application check for saved damage mode`,
-              {
-                transformationName: selectedTransformation.name,
-                condition: this.system.transformationConfig.condition,
-                shouldApplyTransformation,
-              },
-              "ACTION_CARD",
-            );
           }
 
           if (shouldApplyTransformation) {
             // Check if this transformation has already been applied during repetitions
             const transformationKey = `${result.target.id}-${selectedTransformation.originalId || selectedTransformation.id}`;
-            const hasRepetitionContext = !!this._currentRepetitionContext;
-            const hasAppliedTransformations = !!this._currentRepetitionContext?.appliedTransformations;
             const alreadyApplied = this._currentRepetitionContext?.appliedTransformations?.has(transformationKey);
 
-            Logger.debug(
-              `Transformation first-time check for "${selectedTransformation.name}"`,
-              {
-                transformationName: selectedTransformation.name,
-                targetName: result.target.name,
-                transformationKey,
-                hasRepetitionContext,
-                hasAppliedTransformations,
-                alreadyApplied,
-                appliedTransformationsSize: this._currentRepetitionContext?.appliedTransformations?.size || 0,
-              },
-              "ACTION_CARD",
-            );
 
             if (alreadyApplied) {
-              Logger.debug(
-                `Skipping transformation "${selectedTransformation.name}" for target "${result.target.name}" - already applied during previous repetition`,
-                {
-                  transformationName: selectedTransformation.name,
-                  targetName: result.target.name,
-                  transformationKey,
-                },
-                "ACTION_CARD",
-              );
               continue;
             }
 
@@ -1761,11 +1409,6 @@ export function ItemActionCardExecutionMixin(Base) {
               // Track that this transformation has been applied to this target
               if (applicationResult.applied && this._currentRepetitionContext?.appliedTransformations) {
                 this._currentRepetitionContext.appliedTransformations.add(transformationKey);
-                Logger.debug(
-                  `Tracked transformation application: ${transformationKey}`,
-                  { transformationName: selectedTransformation.name, targetName: result.target.name },
-                  "ACTION_CARD",
-                );
               }
 
               transformationResults.push({
@@ -1775,17 +1418,6 @@ export function ItemActionCardExecutionMixin(Base) {
                 reason: applicationResult.reason,
                 warning: applicationResult.warning,
               });
-
-              if (applicationResult.applied) {
-                Logger.info(
-                  `Applied transformation "${selectedTransformation.name}" to target "${result.target.name}"`,
-                  {
-                    transformationName: selectedTransformation.name,
-                    targetName: result.target.name,
-                  },
-                  "ACTION_CARD",
-                );
-              }
             } catch (error) {
               Logger.error(
                 `Failed to apply transformation "${selectedTransformation.name}" to target "${result.target.name}"`,
@@ -1808,22 +1440,12 @@ export function ItemActionCardExecutionMixin(Base) {
           await this._waitForExecutionDelay();
         }
 
-        Logger.methodExit(
-          "ItemActionCardExecutionMixin",
-          "_processTransformationResults",
-          transformationResults,
-        );
         return transformationResults;
       } catch (error) {
         Logger.error(
           "Failed to process transformation results",
           error,
           "ACTION_CARD",
-        );
-        Logger.methodExit(
-          "ItemActionCardExecutionMixin",
-          "_processTransformationResults",
-          null,
         );
         throw error;
       }

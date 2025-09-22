@@ -34,11 +34,6 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
    * @param {Object} [options.submitOnChange=false] - Whether to submit the form on change
    */
   constructor(options = {}) {
-    Logger.methodEntry("EventideRpSystemItemSheet", "constructor", {
-      itemId: options?.document?.id,
-      itemName: options?.document?.name,
-      itemType: options?.document?.type,
-    });
 
     try {
       super(options);
@@ -46,21 +41,8 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
       this.#formChanged = false; // Track if the form has been changed
 
 
-      Logger.debug(
-        "Item sheet initialized successfully",
-        {
-          sheetId: this.id,
-          itemName: this.item?.name,
-          itemType: this.item?.type,
-          dragDropHandlers: this.#dragDrop?.length,
-        },
-        "ITEM_SHEET",
-      );
-
-      Logger.methodExit("EventideRpSystemItemSheet", "constructor", this);
     } catch (error) {
       Logger.error("Failed to initialize item sheet", error, "ITEM_SHEET");
-      Logger.methodExit("EventideRpSystemItemSheet", "constructor", null);
       throw error;
     }
   }
@@ -209,7 +191,11 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
         options.position = { ...options.position, width: 1000 };
         break;
       case "actionCard":
-        options.parts.push("attributesActionCard", "attributesActionCardConfig", "embeddedItems");
+        options.parts.push(
+          "attributesActionCard",
+          "attributesActionCardConfig",
+          "embeddedItems",
+        );
         break;
     }
   }
@@ -278,19 +264,6 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
        */
       context.isTransformationActionCard = this._isTransformationActionCard();
 
-      Logger.debug(
-        "Item sheet context prepared",
-        {
-          itemName: this.item.name,
-          itemType: this.item.type,
-          contextKeys: Object.keys(context),
-          tabCount: Object.keys(context.tabs).length,
-          editable: context.editable,
-          limited: context.limited,
-          hasActiveEffect: !!context.activeEffect,
-        },
-        "ITEM_SHEET",
-      );
 
       Logger.methodExit(
         "EventideRpSystemItemSheet",
@@ -398,8 +371,7 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
       case "embeddedActionCards":
         context.tab = context.tabs[partId];
         // Get embedded action cards as temporary items
-        context.embeddedActionCards =
-          this.item.system.getEmbeddedActionCards();
+        context.embeddedActionCards = this.item.system.getEmbeddedActionCards();
         break;
       case "embeddedItems":
         context.tab = context.tabs[partId];
@@ -412,11 +384,6 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
           ? await this.item.getEmbeddedTransformations()
           : [];
 
-        console.log("Context preparation debug - FIXED:", {
-          embeddedTransformationsLength: context.embeddedTransformations.length,
-          embeddedTransformationsData: context.embeddedTransformations.map(t => ({ id: t.id, name: t.name })),
-          rawSystemData: this.item.system.embeddedTransformations?.length || 0
-        });
         break;
       case "effects":
         context.tab = context.tabs[partId];
@@ -425,7 +392,7 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
           this.item.effects,
         );
         break;
-      case "characterEffects":
+      case "characterEffects": {
         context.tab = context.tabs[partId];
         // Prepare active effects for easier access
         const firstEffect = this.item.effects.contents[0];
@@ -440,6 +407,7 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
           };
         }
         break;
+      }
     }
     return context;
   }
@@ -540,7 +508,7 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
 
     // Initialize item selector combo boxes for action cards
     // Don't await this to avoid blocking the render process
-    this._initializeItemSelectors().catch(error => {
+    this._initializeItemSelectors().catch((error) => {
       console.error("Failed to initialize item selectors:", error);
     });
   }
@@ -627,15 +595,16 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
    */
   _isTransformationActionCard() {
     // Check if the item has a custom update method (indicating it's from a transformation or action card)
-    const hasCustomUpdate = this.item.update && (
-      this.item.update.toString().includes('embeddedActionCards') ||
-      this.item.update.toString().includes('embeddedTransformations') ||
-      this.item.update.toString().includes('embeddedStatusEffects') ||
-      this.item.update.toString().includes('embeddedItem')
-    );
+    const hasCustomUpdate =
+      this.item.update &&
+      (this.item.update.toString().includes("embeddedActionCards") ||
+        this.item.update.toString().includes("embeddedTransformations") ||
+        this.item.update.toString().includes("embeddedStatusEffects") ||
+        this.item.update.toString().includes("embeddedItem"));
 
     // Also check if the item type is actionCard and it's not persisted (no collection)
-    const isTemporaryActionCard = this.item.type === "actionCard" && !this.item.collection;
+    const isTemporaryActionCard =
+      this.item.type === "actionCard" && !this.item.collection;
 
     // Check if it's any embedded item type with an originalId property
     const isEmbeddedItem = this.item.originalId && !this.item.collection;
@@ -664,10 +633,17 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
             _id: firstEffect._id,
             tint: fieldValue,
           };
-          await this.item.updateEmbeddedDocuments("ActiveEffect", [updateData], { fromEmbeddedItem: true });
+          await this.item.updateEmbeddedDocuments(
+            "ActiveEffect",
+            [updateData],
+            { fromEmbeddedItem: true },
+          );
         }
       } catch (error) {
-        console.error("Failed to update transformation action card icon tint:", error);
+        console.error(
+          "Failed to update transformation action card icon tint:",
+          error,
+        );
       }
       return;
     }
@@ -702,7 +678,9 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
       await this.item.update(formData);
     } catch (error) {
       console.error("Failed to submit transformation action card form:", error);
-      ui.notifications.error("Failed to save action card. See console for details.");
+      ui.notifications.error(
+        "Failed to save action card. See console for details.",
+      );
     }
   }
 
@@ -730,11 +708,9 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
    */
   async _initializeItemSelectors() {
     try {
-      console.log("ItemSheet: Initializing item selectors for item type:", this.item.type);
 
       // Only initialize for action card items
       if (this.item.type !== "actionCard") {
-        console.log("ItemSheet: Skipping selector initialization - not an action card");
         return;
       }
 
@@ -742,61 +718,56 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
       this._cleanupItemSelectors();
 
       // Initialize action item selector
-      const actionItemContainer = this.element.querySelector('[data-selector="action-item"]');
-      console.log("ItemSheet: Action item container found:", !!actionItemContainer);
+      const actionItemContainer = this.element.querySelector(
+        '[data-selector="action-item"]',
+      );
 
       if (actionItemContainer) {
-        console.log("ItemSheet: Creating action item selector with types:", ItemSourceCollector.getActionItemTypes());
         this.#actionItemSelector = new ItemSelectorComboBox({
           container: actionItemContainer,
           itemTypes: ItemSourceCollector.getActionItemTypes(),
           onSelect: this._onActionItemSelected.bind(this),
-          placeholder: game.i18n.localize("EVENTIDE_RP_SYSTEM.Forms.ActionItemSelector.Placeholder"),
-          selectorType: "action-item"
+          placeholder: game.i18n.localize(
+            "EVENTIDE_RP_SYSTEM.Forms.ActionItemSelector.Placeholder",
+          ),
+          selectorType: "action-item",
         });
       }
 
       // Initialize effects selector
-      const effectsContainer = this.element.querySelector('[data-selector="effects"]');
-      console.log("ItemSheet: Effects container found:", !!effectsContainer);
+      const effectsContainer = this.element.querySelector(
+        '[data-selector="effects"]',
+      );
 
       if (effectsContainer) {
-        console.log("ItemSheet: Creating effects selector with types:", ItemSourceCollector.getEffectItemTypes());
         this.#effectsSelector = new ItemSelectorComboBox({
           container: effectsContainer,
           itemTypes: ItemSourceCollector.getEffectItemTypes(),
           onSelect: this._onEffectSelected.bind(this),
-          placeholder: game.i18n.localize("EVENTIDE_RP_SYSTEM.Forms.EffectsSelector.Placeholder"),
-          selectorType: "effects"
+          placeholder: game.i18n.localize(
+            "EVENTIDE_RP_SYSTEM.Forms.EffectsSelector.Placeholder",
+          ),
+          selectorType: "effects",
         });
       }
 
       // Initialize transformations selector
-      const transformationsContainer = this.element.querySelector('[data-selector="transformations"]');
-      console.log("ItemSheet: Transformations container found:", !!transformationsContainer);
+      const transformationsContainer = this.element.querySelector(
+        '[data-selector="transformations"]',
+      );
 
       if (transformationsContainer) {
-        console.log("ItemSheet: Creating transformations selector with types:", ["transformation"]);
         this.#transformationsSelector = new ItemSelectorComboBox({
           container: transformationsContainer,
           itemTypes: ["transformation"],
           onSelect: this._onTransformationSelected.bind(this),
-          placeholder: game.i18n.localize("EVENTIDE_RP_SYSTEM.Forms.TransformationsSelector.Placeholder"),
-          selectorType: "transformations"
+          placeholder: game.i18n.localize(
+            "EVENTIDE_RP_SYSTEM.Forms.TransformationsSelector.Placeholder",
+          ),
+          selectorType: "transformations",
         });
       }
 
-      console.log("ItemSheet: Item selectors initialized", {
-        actionItemSelector: !!this.#actionItemSelector,
-        effectsSelector: !!this.#effectsSelector,
-        transformationsSelector: !!this.#transformationsSelector
-      });
-
-      Logger.debug("Item selectors initialized successfully", {
-        actionItemSelector: !!this.#actionItemSelector,
-        effectsSelector: !!this.#effectsSelector,
-        transformationsSelector: !!this.#transformationsSelector
-      }, "ITEM_SHEET");
 
     } catch (error) {
       console.error("ItemSheet: Failed to initialize item selectors:", error);
@@ -836,12 +807,6 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
    */
   async _onActionItemSelected(droppedItem) {
     try {
-      Logger.debug("Action item selected", {
-        itemName: droppedItem.name,
-        itemType: droppedItem.type,
-        itemUuid: droppedItem.uuid
-      }, "ITEM_SHEET");
-
 
       // Set the embedded item (same as drag-and-drop)
       await this.item.setEmbeddedItem(droppedItem);
@@ -849,14 +814,19 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
       // Re-render the sheet to show the new item
       this.render();
 
-
-      ui.notifications.info(game.i18n.format("EVENTIDE_RP_SYSTEM.Forms.ActionItemSelector.ItemSelected", {
-        itemName: droppedItem.name
-      }));
-
+      ui.notifications.info(
+        game.i18n.format(
+          "EVENTIDE_RP_SYSTEM.Forms.ActionItemSelector.ItemSelected",
+          {
+            itemName: droppedItem.name,
+          },
+        ),
+      );
     } catch (error) {
       Logger.error("Failed to set action item", error, "ITEM_SHEET");
-      ui.notifications.error(game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.FailedToSetActionItem"));
+      ui.notifications.error(
+        game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.FailedToSetActionItem"),
+      );
     }
   }
 
@@ -867,12 +837,6 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
    */
   async _onEffectSelected(droppedItem) {
     try {
-      Logger.debug("Effect selected", {
-        itemName: droppedItem.name,
-        itemType: droppedItem.type,
-        itemUuid: droppedItem.uuid
-      }, "ITEM_SHEET");
-
 
       // Add the embedded effect (same as drag-and-drop)
       await this.item.addEmbeddedEffect(droppedItem);
@@ -880,14 +844,16 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
       // Re-render the sheet to show the new effect
       this.render();
 
-
-      ui.notifications.info(game.i18n.format("EVENTIDE_RP_SYSTEM.Forms.EffectsSelector.ItemAdded", {
-        itemName: droppedItem.name
-      }));
-
+      ui.notifications.info(
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Forms.EffectsSelector.ItemAdded", {
+          itemName: droppedItem.name,
+        }),
+      );
     } catch (error) {
       Logger.error("Failed to add effect", error, "ITEM_SHEET");
-      ui.notifications.error(game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.FailedToAddEffect"));
+      ui.notifications.error(
+        game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.FailedToAddEffect"),
+      );
     }
   }
 
@@ -899,12 +865,6 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
    */
   async _onTransformationSelected(droppedItem) {
     try {
-      Logger.debug("Transformation selected", {
-        itemName: droppedItem.name,
-        itemType: droppedItem.type,
-        itemUuid: droppedItem.uuid
-      }, "ITEM_SHEET");
-
 
       // Add the embedded transformation (same as drag-and-drop)
       await this.item.addEmbeddedTransformation(droppedItem);
@@ -912,14 +872,21 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
       // Re-render the sheet to show the new transformation
       this.render();
 
-
-      ui.notifications.info(game.i18n.format("EVENTIDE_RP_SYSTEM.Forms.TransformationsSelector.ItemAdded", {
-        itemName: droppedItem.name
-      }));
-
+      ui.notifications.info(
+        game.i18n.format(
+          "EVENTIDE_RP_SYSTEM.Forms.TransformationsSelector.ItemAdded",
+          {
+            itemName: droppedItem.name,
+          },
+        ),
+      );
     } catch (error) {
       Logger.error("Failed to add transformation", error, "ITEM_SHEET");
-      ui.notifications.error(game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.FailedToAddTransformation"));
+      ui.notifications.error(
+        game.i18n.localize(
+          "EVENTIDE_RP_SYSTEM.Errors.FailedToAddTransformation",
+        ),
+      );
     }
   }
 
@@ -1014,9 +981,8 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
 
     if (this.element) {
       // Check all elements for scrollTop > 0
-      const allElements = Array.from(this.element.querySelectorAll('*'));
-      const scrollableElements = allElements.filter(el => el.scrollTop > 0);
-
+      const allElements = Array.from(this.element.querySelectorAll("*"));
+      const scrollableElements = allElements.filter((el) => el.scrollTop > 0);
 
       if (scrollableElements.length > 0) {
         actualScrollingElement = scrollableElements[0];
@@ -1032,11 +998,16 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
       // Find the element again after render
       let restoreElement = null;
       if (actualScrollingElement.className) {
-        restoreElement = this.element?.querySelector(`.${actualScrollingElement.className.split(' ').join('.')}`);
+        restoreElement = this.element?.querySelector(
+          `.${actualScrollingElement.className.split(" ").join(".")}`,
+        );
       }
       if (!restoreElement && actualScrollingElement.tagName) {
-        const selector = actualScrollingElement.tagName.toLowerCase() +
-                        (actualScrollingElement.className ? `.${actualScrollingElement.className.split(' ').join('.')}` : '');
+        const selector =
+          actualScrollingElement.tagName.toLowerCase() +
+          (actualScrollingElement.className
+            ? `.${actualScrollingElement.className.split(" ").join(".")}`
+            : "");
         restoreElement = this.element?.querySelector(selector);
       }
 
@@ -1044,7 +1015,6 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
         restoreElement.scrollTop = oldPosition;
       }
     }
-
 
     return result;
   }
