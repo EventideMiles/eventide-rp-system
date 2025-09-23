@@ -45,11 +45,17 @@ export class EmbeddedItemExporter {
       ui.notifications.error(
         game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.GMOnlyOperation"),
       );
-      return { success: 0, failed: 0, errors: ["User is not GM"] };
+      return {
+        success: 0,
+        failed: 0,
+        errors: [game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.UserIsNotGM")],
+      };
     }
 
     if (sourceItem.type !== "transformation") {
-      const error = "Source item is not a transformation";
+      const error = game.i18n.localize(
+        "EVENTIDE_RP_SYSTEM.Errors.SourceItemNotTransformation",
+      );
       Logger.warn(error, { itemType: sourceItem.type }, "EMBEDDED_EXPORTER");
       return { success: 0, failed: 1, errors: [error] };
     }
@@ -75,11 +81,17 @@ export class EmbeddedItemExporter {
       ui.notifications.error(
         game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.GMOnlyOperation"),
       );
-      return { success: 0, failed: 0, errors: ["User is not GM"] };
+      return {
+        success: 0,
+        failed: 0,
+        errors: [game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.UserIsNotGM")],
+      };
     }
 
     if (sourceItem.type !== "transformation") {
-      const error = "Source item is not a transformation";
+      const error = game.i18n.localize(
+        "EVENTIDE_RP_SYSTEM.Errors.SourceItemNotTransformation",
+      );
       Logger.warn(error, { itemType: sourceItem.type }, "EMBEDDED_EXPORTER");
       return { success: 0, failed: 1, errors: [error] };
     }
@@ -105,11 +117,17 @@ export class EmbeddedItemExporter {
       ui.notifications.error(
         game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.GMOnlyOperation"),
       );
-      return { success: 0, failed: 0, errors: ["User is not GM"] };
+      return {
+        success: 0,
+        failed: 0,
+        errors: [game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.UserIsNotGM")],
+      };
     }
 
     if (sourceItem.type !== "actionCard") {
-      const error = "Source item is not an action card";
+      const error = game.i18n.localize(
+        "EVENTIDE_RP_SYSTEM.Errors.SourceItemNotActionCard",
+      );
       Logger.warn(error, { itemType: sourceItem.type }, "EMBEDDED_EXPORTER");
       return { success: 0, failed: 1, errors: [error] };
     }
@@ -135,7 +153,12 @@ export class EmbeddedItemExporter {
         compendiumType = "gear";
         break;
       default: {
-        const error = `Unsupported embedded item type: ${embeddedItem.type}`;
+        const error = game.i18n.format(
+          "EVENTIDE_RP_SYSTEM.Errors.UnsupportedEmbeddedItemType",
+          {
+            itemType: embeddedItem.type,
+          },
+        );
         Logger.warn(
           error,
           { itemType: embeddedItem.type },
@@ -158,11 +181,17 @@ export class EmbeddedItemExporter {
       ui.notifications.error(
         game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.GMOnlyOperation"),
       );
-      return { success: 0, failed: 0, errors: ["User is not GM"] };
+      return {
+        success: 0,
+        failed: 0,
+        errors: [game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.UserIsNotGM")],
+      };
     }
 
     if (sourceItem.type !== "actionCard") {
-      const error = "Source item is not an action card";
+      const error = game.i18n.localize(
+        "EVENTIDE_RP_SYSTEM.Errors.SourceItemNotActionCard",
+      );
       Logger.warn(error, { itemType: sourceItem.type }, "EMBEDDED_EXPORTER");
       return { success: 0, failed: 1, errors: [error] };
     }
@@ -223,11 +252,17 @@ export class EmbeddedItemExporter {
       ui.notifications.error(
         game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.GMOnlyOperation"),
       );
-      return { success: 0, failed: 0, errors: ["User is not GM"] };
+      return {
+        success: 0,
+        failed: 0,
+        errors: [game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.UserIsNotGM")],
+      };
     }
 
     if (sourceItem.type !== "actionCard") {
-      const error = "Source item is not an action card";
+      const error = game.i18n.localize(
+        "EVENTIDE_RP_SYSTEM.Errors.SourceItemNotActionCard",
+      );
       Logger.warn(error, { itemType: sourceItem.type }, "EMBEDDED_EXPORTER");
       return { success: 0, failed: 1, errors: [error] };
     }
@@ -254,11 +289,17 @@ export class EmbeddedItemExporter {
       ui.notifications.error(
         game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.GMOnlyOperation"),
       );
-      return { success: 0, failed: 0, errors: ["User is not GM"] };
+      return {
+        success: 0,
+        failed: 0,
+        errors: [game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.UserIsNotGM")],
+      };
     }
 
     if (!["transformation", "actionCard"].includes(sourceItem.type)) {
-      const error = "Source item is not a transformation or action card";
+      const error = game.i18n.localize(
+        "EVENTIDE_RP_SYSTEM.Errors.SourceItemNotTransformationOrActionCard",
+      );
       Logger.warn(error, { itemType: sourceItem.type }, "EMBEDDED_EXPORTER");
       return { success: 0, failed: 1, errors: [error] };
     }

@@ -566,7 +566,12 @@
       "TransformationCreationFailed": "Failed to create transformation",
       "GMOnlyOperation": "Only GMs can perform this operation",
       "ExportOperationFailed": "Export operation failed",
-      "CompendiumCreationFailed": "Failed to create compendium '{label}'"
+      "CompendiumCreationFailed": "Failed to create compendium '{label}'",
+      "SourceItemNotTransformation": "Source item is not a transformation",
+      "SourceItemNotActionCard": "Source item is not an action card",
+      "SourceItemNotTransformationOrActionCard": "Source item is not a transformation or action card",
+      "UnsupportedEmbeddedItemType": "Unsupported embedded item type: {itemType}",
+      "UserIsNotGM": "User is not GM"
     },
     "Info": {
       "CompendiumItemCreated": "Created {keyType} item {name} in the {packLabel} compendium",
