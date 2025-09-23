@@ -81,6 +81,7 @@
         "DamageCondition": "Apply Damage",
         "DamageFormula": "Damage Formula",
         "DamageType": "Damage Type",
+        "DamageThreshold": "Damage Threshold",
         "DamageOn": "Damage on",
         "StatusConfig": "Status Configuration",
         "StatusCondition": "Apply Status",

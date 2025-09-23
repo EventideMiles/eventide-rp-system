@@ -110,6 +110,9 @@
             <div class="erps-form__description erps-form__description--data">
               <i class="fas fa-sword"></i>
               {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.DamageOn"}} {{attackChain.damageCondition}}
+              {{#if (eq attackChain.damageCondition "rollValue")}}
+                <span class="erps-form__threshold">{{attackChain.damageThreshold}}</span>
+              {{/if}}
               {{#if attackChain.damageFormula}}
                 <span class="erps-form__formula">{{attackChain.damageFormula}}</span>
               {{/if}}

@@ -601,7 +601,7 @@ export function ItemActionCardExecutionMixin(Base) {
           result.oneHit,
           result.bothHit,
           rollResult?.total || 0,
-          this.system.attackChain.statusThreshold || 15,
+          this.system.attackChain.damageThreshold || 15,
         );
 
         if (shouldApplyDamage && this.system.attackChain.damageFormula) {

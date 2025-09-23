@@ -82,12 +82,12 @@
                 <td class="erps-data-table__cell erps-data-table__cell--center rollable" data-roll-type="item" data-action="roll" data-item-id="{{item._id}}">
                   {{#if (eq item.system.mode "attackChain")}}
                     <div class="erps-data-table__attack-chain-info" 
-                         title="Attack Chain: {{item.system.attackChain.firstStat}} + {{item.system.attackChain.secondStat}}{{#if (ne item.system.attackChain.damageCondition 'never')}}&#10;Damage: {{item.system.attackChain.damageCondition}} ({{item.system.attackChain.damageFormula}} {{item.system.attackChain.damageType}}){{/if}}{{#if (ne item.system.attackChain.statusCondition 'never')}}&#10;Status: {{item.system.attackChain.statusCondition}} (threshold {{item.system.attackChain.statusThreshold}}){{/if}}">
+                         title="Attack Chain: {{item.system.attackChain.firstStat}} + {{item.system.attackChain.secondStat}}{{#if (ne item.system.attackChain.damageCondition 'never')}}&#10;Damage: {{item.system.attackChain.damageCondition}}{{#if (eq item.system.attackChain.damageCondition 'rollValue')}} (threshold {{item.system.attackChain.damageThreshold}}){{/if}} ({{item.system.attackChain.damageFormula}} {{item.system.attackChain.damageType}}){{/if}}{{#if (ne item.system.attackChain.statusCondition 'never')}}&#10;Status: {{item.system.attackChain.statusCondition}} (threshold {{item.system.attackChain.statusThreshold}}){{/if}}">
                       <span class="erps-data-table__attack-chain-stats">
                         {{item.system.attackChain.firstStat}} + {{item.system.attackChain.secondStat}}
                       </span>
                       {{#if (ne item.system.attackChain.damageCondition "never")}}
-                        <i class="fas fa-sword erps-data-table__chain-icon" title="Damage applies on {{item.system.attackChain.damageCondition}}: {{item.system.attackChain.damageFormula}} {{item.system.attackChain.damageType}}"></i>
+                        <i class="fas fa-sword erps-data-table__chain-icon" title="Damage applies on {{item.system.attackChain.damageCondition}}{{#if (eq item.system.attackChain.damageCondition 'rollValue')}} (threshold {{item.system.attackChain.damageThreshold}}){{/if}}: {{item.system.attackChain.damageFormula}} {{item.system.attackChain.damageType}}"></i>
                       {{/if}}
                       {{#if (ne item.system.attackChain.statusCondition "never")}}
                         <i class="fas fa-magic erps-data-table__chain-icon" title="Status applies on {{item.system.attackChain.statusCondition}} with threshold {{item.system.attackChain.statusThreshold}}"></i>
@@ -182,12 +182,12 @@
                   <td class="erps-data-table__cell erps-data-table__cell--center rollable" data-roll-type="item" data-action="roll" data-item-id="{{item._id}}">
                     {{#if (eq item.system.mode "attackChain")}}
                       <div class="erps-data-table__attack-chain-info"
-                           title="Attack Chain: {{item.system.attackChain.firstStat}} + {{item.system.attackChain.secondStat}}{{#if (ne item.system.attackChain.damageCondition 'never')}}&#10;Damage: {{item.system.attackChain.damageCondition}} ({{item.system.attackChain.damageFormula}} {{item.system.attackChain.damageType}}){{/if}}{{#if (ne item.system.attackChain.statusCondition 'never')}}&#10;Status: {{item.system.attackChain.statusCondition}} (threshold {{item.system.attackChain.statusThreshold}}){{/if}}">
+                           title="Attack Chain: {{item.system.attackChain.firstStat}} + {{item.system.attackChain.secondStat}}{{#if (ne item.system.attackChain.damageCondition 'never')}}&#10;Damage: {{item.system.attackChain.damageCondition}}{{#if (eq item.system.attackChain.damageCondition 'rollValue')}} (threshold {{item.system.attackChain.damageThreshold}}){{/if}} ({{item.system.attackChain.damageFormula}} {{item.system.attackChain.damageType}}){{/if}}{{#if (ne item.system.attackChain.statusCondition 'never')}}&#10;Status: {{item.system.attackChain.statusCondition}} (threshold {{item.system.attackChain.statusThreshold}}){{/if}}">
                         <span class="erps-data-table__attack-chain-stats">
                           {{item.system.attackChain.firstStat}} + {{item.system.attackChain.secondStat}}
                         </span>
                         {{#if (ne item.system.attackChain.damageCondition "never")}}
-                          <i class="fas fa-sword erps-data-table__chain-icon" title="Damage applies on {{item.system.attackChain.damageCondition}}: {{item.system.attackChain.damageFormula}} {{item.system.attackChain.damageType}}"></i>
+                          <i class="fas fa-sword erps-data-table__chain-icon" title="Damage applies on {{item.system.attackChain.damageCondition}}{{#if (eq item.system.attackChain.damageCondition 'rollValue')}} (threshold {{item.system.attackChain.damageThreshold}}){{/if}}: {{item.system.attackChain.damageFormula}} {{item.system.attackChain.damageType}}"></i>
                         {{/if}}
                         {{#if (ne item.system.attackChain.statusCondition "never")}}
                           <i class="fas fa-magic erps-data-table__chain-icon" title="Status applies on {{item.system.attackChain.statusCondition}} with threshold {{item.system.attackChain.statusThreshold}}"></i>

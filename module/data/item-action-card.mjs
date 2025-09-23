@@ -58,7 +58,7 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
       damageCondition: new fields.StringField({
         required: true,
         initial: "never",
-        choices: ["never", "oneSuccess", "twoSuccesses"],
+        choices: ["never", "oneSuccess", "twoSuccesses", "rollValue"],
       }),
       damageFormula: new fields.StringField({
         required: true,
@@ -70,6 +70,12 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
         initial: "damage",
         choices: ["damage", "heal"],
       }),
+      damageThreshold: new fields.NumberField({
+        required: false,
+        initial: 15,
+        integer: true,
+        min: 1,
+      }),
       statusCondition: new fields.StringField({
         required: true,
         initial: "never",
@@ -80,7 +86,6 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
         initial: 15,
         integer: true,
         min: 1,
-        max: 100,
       }),
     });
 
@@ -126,7 +131,6 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
         initial: 15,
         integer: true,
         min: 1,
-        max: 100,
       }),
     });
 
