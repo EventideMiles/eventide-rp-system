@@ -174,7 +174,8 @@
       "ItemDescriptionSaved": "Item description saved.",
       "CombatPowerDescriptionSaved": "Combat Power description saved.",
       "TransformationCreated": "Transformation '{name}' created successfully",
-      "CustomTransformationsCompendiumCreated": "Custom Transformations compendium created"
+      "CustomTransformationsCompendiumCreated": "Custom Transformations compendium created",
+      "TransformationUsageGuidance": "Your transformation was created in the Custom Transformations compendium. Drag it to a character sheet when you're ready to transform them!"
     },
     "Warnings": {
       "CannotChangeImageWhileTransformed": "Cannot change image while transformed",

@@ -65,6 +65,13 @@ export class TransformationCreator {
             name: item.name,
           }),
         );
+        // Show additional guidance notification
+        setTimeout(() => {
+          ui.notifications.info(
+            game.i18n.localize("EVENTIDE_RP_SYSTEM.Info.TransformationUsageGuidance"),
+            { permanent: false }
+          );
+        }, 1500); // Delay so it shows after the creation message
       }
 
       return item;
