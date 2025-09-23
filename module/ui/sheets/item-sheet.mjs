@@ -8,6 +8,7 @@ import { ItemSheetAllMixins } from "../mixins/_module.mjs";
 import { EmbeddedItemSheet } from "./embedded-item-sheet.mjs";
 import { ItemSelectorComboBox } from "../components/item-selector-combo-box.mjs";
 import { ItemSourceCollector } from "../../helpers/item-source-collector.mjs";
+import { EmbeddedItemExporter } from "../../services/embedded-item-exporter.mjs";
 
 const { api, sheets } = foundry.applications;
 const { TextEditor } = foundry.applications.ux;
@@ -40,6 +41,11 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
       this.#dragDrop = this.#createDragDropHandlers();
       this.#formChanged = false; // Track if the form has been changed
 
+      // Add our custom actions to the options after parent construction
+      foundry.utils.mergeObject(this.options.actions, {
+        exportEmbeddedCombatPowers: this._exportEmbeddedCombatPowers.bind(this),
+        exportEmbeddedActionCards: this._exportEmbeddedActionCards.bind(this),
+      });
 
     } catch (error) {
       Logger.error("Failed to initialize item sheet", error, "ITEM_SHEET");
@@ -53,54 +59,55 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
    *
    *********************/
 
-  /** @override */
-  static DEFAULT_OPTIONS = {
-    classes: [
-      // "eventide-rp-system",
-      // "sheet",
-      // "item",
-      "eventide-sheet",
-      "eventide-sheet--scrollbars",
-    ],
-    actions: {
-      onEditImage: this._onEditImage,
-      viewDoc: this._viewDoc,
-      createDoc: this._createDoc,
-      deleteDoc: this._deleteDoc,
-      createEffect: this._createEffect,
-      editEffect: this._editEffect,
-      deleteEffect: this._deleteEffect,
-      toggleEffect: this._toggleEffect,
-      newCharacterEffect: this._newCharacterEffect,
-      deleteCharacterEffect: this._deleteCharacterEffect,
-      toggleEffectDisplay: this._toggleEffectDisplay,
-      removeCombatPower: this._removeCombatPower,
-      removeActionCard: this._removeActionCard,
-      editEmbeddedActionCard: this._editEmbeddedActionCard,
-      onDiceAdjustmentChange: this._onDiceAdjustmentChange,
-      clearEmbeddedItem: this._clearEmbeddedItem,
-      createNewPower: this._createNewPower,
-      createNewStatus: this._createNewStatus,
-      createNewTransformation: this._createNewTransformation,
-      createNewCombatPower: this._createNewCombatPower,
-      createNewActionCard: this._createNewActionCard,
 
-      editEmbeddedItem: this._editEmbeddedItem,
-      editEmbeddedEffect: this._editEmbeddedEffect,
-      removeEmbeddedEffect: this._removeEmbeddedEffect,
-      editEmbeddedTransformation: this._editEmbeddedTransformation,
-      removeEmbeddedTransformation: this._removeEmbeddedTransformation,
-    },
-    position: {
-      width: 800,
-      height: "auto",
-    },
-    form: {
-      submitOnChange: true,
-    },
-    // Custom property that's merged into `this.options`
-    dragDrop: [{ dragSelector: "[data-drag]", dropSelector: null }],
-  };
+  /** @override */
+  static get DEFAULT_OPTIONS() {
+    const options = foundry.utils.mergeObject(super.DEFAULT_OPTIONS, {
+      classes: [
+        "eventide-sheet",
+        "eventide-sheet--scrollbars",
+      ],
+      actions: {
+        onEditImage: this._onEditImage,
+        viewDoc: this._viewDoc,
+        createDoc: this._createDoc,
+        deleteDoc: this._deleteDoc,
+        createEffect: this._createEffect,
+        editEffect: this._editEffect,
+        deleteEffect: this._deleteEffect,
+        toggleEffect: this._toggleEffect,
+        newCharacterEffect: this._newCharacterEffect,
+        deleteCharacterEffect: this._deleteCharacterEffect,
+        toggleEffectDisplay: this._toggleEffectDisplay,
+        removeCombatPower: this._removeCombatPower,
+        removeActionCard: this._removeActionCard,
+        editEmbeddedActionCard: this._editEmbeddedActionCard,
+        onDiceAdjustmentChange: this._onDiceAdjustmentChange,
+        clearEmbeddedItem: this._clearEmbeddedItem,
+        createNewPower: this._createNewPower,
+        createNewStatus: this._createNewStatus,
+        createNewTransformation: this._createNewTransformation,
+        createNewCombatPower: this._createNewCombatPower,
+        createNewActionCard: this._createNewActionCard,
+        editEmbeddedItem: this._editEmbeddedItem,
+        editEmbeddedEffect: this._editEmbeddedEffect,
+        removeEmbeddedEffect: this._removeEmbeddedEffect,
+        editEmbeddedTransformation: this._editEmbeddedTransformation,
+        removeEmbeddedTransformation: this._removeEmbeddedTransformation,
+      },
+      position: {
+        width: 800,
+        height: "auto",
+      },
+      form: {
+        submitOnChange: true,
+      },
+      window: {},
+      // Custom property that's merged into `this.options`
+      dragDrop: [{ dragSelector: "[data-drag]", dropSelector: null }],
+    });
+    return options;
+  }
 
   /** @override */
   static PARTS = {
@@ -487,6 +494,40 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
       tabs[partId] = tab;
       return tabs;
     }, {});
+  }
+
+  /**
+   * Override to add custom header controls for transformation items
+   * @returns {Array} Array of header control objects
+   * @protected
+   */
+  _getHeaderControls() {
+    const controls = super._getHeaderControls();
+
+    // Only add export controls for transformation items when user is GM
+    if (this.item.type === "transformation" && game.user.isGM) {
+      // Add combat powers export button if there are embedded combat powers
+      if (this.item.system?.embeddedCombatPowers?.length > 0) {
+        controls.push({
+          action: "exportEmbeddedCombatPowers",
+          icon: "fas fa-swords",
+          label: "EVENTIDE_RP_SYSTEM.UI.ExportEmbeddedCombatPowers",
+          ownership: "OWNER"
+        });
+      }
+
+      // Add action cards export button if there are embedded action cards
+      if (this.item.system?.embeddedActionCards?.length > 0) {
+        controls.push({
+          action: "exportEmbeddedActionCards",
+          icon: "fas fa-cards-blank",
+          label: "EVENTIDE_RP_SYSTEM.UI.ExportEmbeddedActionCards",
+          ownership: "OWNER"
+        });
+      }
+    }
+
+    return controls;
   }
 
   /*********************
@@ -996,6 +1037,38 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
           "EVENTIDE_RP_SYSTEM.Errors.FailedToAddTransformation",
         ),
       );
+    }
+  }
+
+  /**
+   * Export embedded combat powers to the custom combat powers compendium
+   * @param {Event} _event - The triggering event
+   * @param {HTMLElement} _target - The clicked element
+   * @returns {Promise<void>}
+   * @protected
+   */
+  async _exportEmbeddedCombatPowers(_event, _target) {
+    try {
+      const results = await EmbeddedItemExporter.exportEmbeddedCombatPowers(this.item);
+      Logger.debug("Combat powers export completed", results, "ITEM_SHEET");
+    } catch (error) {
+      Logger.error("Failed to export embedded combat powers", error, "ITEM_SHEET");
+    }
+  }
+
+  /**
+   * Export embedded action cards to the custom action cards compendium
+   * @param {Event} _event - The triggering event
+   * @param {HTMLElement} _target - The clicked element
+   * @returns {Promise<void>}
+   * @protected
+   */
+  async _exportEmbeddedActionCards(_event, _target) {
+    try {
+      const results = await EmbeddedItemExporter.exportEmbeddedActionCards(this.item);
+      Logger.debug("Action cards export completed", results, "ITEM_SHEET");
+    } catch (error) {
+      Logger.error("Failed to export embedded action cards", error, "ITEM_SHEET");
     }
   }
 

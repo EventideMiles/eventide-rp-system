@@ -563,7 +563,10 @@
       "CreateNewCombatPowerFailed": "Failed to create new combat power",
       "CreateNewActionCardFailed": "Failed to create new action card",
       "FailedToAddActionCard": "Failed to add action card",
-      "TransformationCreationFailed": "Failed to create transformation"
+      "TransformationCreationFailed": "Failed to create transformation",
+      "GMOnlyOperation": "Only GMs can perform this operation",
+      "ExportOperationFailed": "Export operation failed",
+      "CompendiumCreationFailed": "Failed to create compendium '{label}'"
     },
     "Info": {
       "CompendiumItemCreated": "Created {keyType} item {name} in the {packLabel} compendium",
@@ -581,13 +584,17 @@
       "CombatPowerDescriptionSaved": "Combat Power description saved.",
       "TransformationCreated": "Transformation '{name}' created successfully",
       "CustomTransformationsCompendiumCreated": "Custom Transformations compendium created",
-      "TransformationUsageGuidance": "Your transformation was created in the Custom Transformations compendium. Drag it to a character sheet when you're ready to transform them!"
+      "TransformationUsageGuidance": "Your transformation was created in the Custom Transformations compendium. Drag it to a character sheet when you're ready to transform them!",
+      "NoEmbeddedItemsToExport": "No embedded items to export",
+      "ItemsExportedToCompendium": "{count} {itemType} exported to {compendiumLabel}",
+      "CompendiumCreated": "Compendium '{label}' created"
     },
     "Warnings": {
       "CannotChangeImageWhileTransformed": "Cannot change image while transformed",
       "FieldLockedDuringTransformation": "This field is locked during transformation",
       "InsufficientPermissions": "Insufficient permissions",
-      "NoActiveTransformation": "No active transformation"
+      "NoActiveTransformation": "No active transformation",
+      "SomeItemsFailedToExport": "{failed} of {total} items failed to export"
     },
     "Forms": {
       "ScriptExplanations": {
@@ -839,6 +846,8 @@
       "ViewReadOnly": "View (Read Only)",
       "ReadOnly": "Read Only",
       "Remove": "Remove",
+      "ExportEmbeddedCombatPowers": "Export Combat Powers",
+      "ExportEmbeddedActionCards": "Export Action Cards",
       "Edit": "Edit",
       "AddEffect": "Add Effect",
       "AddNewEffect": "Add New Effect",
