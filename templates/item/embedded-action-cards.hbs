@@ -62,6 +62,21 @@
         <p>{{localize "EVENTIDE_RP_SYSTEM.Item.Transformation.DropActionCardHere"}}</p>
       </div>
 
+      {{!-- Action buttons section --}}
+      <div class="erps-items-panel__actions">
+        <div class="erps-form-actions">
+          <button type="button" class="erps-button erps-button--secondary" data-action="createNewActionCard" title="{{localize 'EVENTIDE_RP_SYSTEM.CreationButtons.CreateNew'}}">
+            <i class="fas fa-plus"></i> {{localize "EVENTIDE_RP_SYSTEM.CreationButtons.CreateNewActionCard"}}
+          </button>
+        </div>
+
+        {{!-- Search and add existing action cards --}}
+        <div class="erps-form-group">
+          <label class="erps-form-label">{{localize "EVENTIDE_RP_SYSTEM.Forms.AddExisting"}}</label>
+          <div class="erps-item-selector" data-selector="action-cards"></div>
+        </div>
+      </div>
+
       <div class="erps-items-panel__notes">
         <p>{{localize "EVENTIDE_RP_SYSTEM.Item.Transformation.ActionCardNotes"}}</p>
         <p><strong>{{localize "EVENTIDE_RP_SYSTEM.Item.Transformation.DragNote"}}</strong></p>

@@ -49,11 +49,6 @@ export const ActorTransformationMixin = (BaseClass) =>
       // Get all tokens linked to this actor across all scenes
       const tokens = this._getAllTokensAcrossScenes();
       if (!tokens.length) {
-        Logger.warn(
-          "No tokens found for transformation across any scenes",
-          null,
-          "TRANSFORMATION",
-        );
         return this;
       }
 
@@ -84,17 +79,6 @@ export const ActorTransformationMixin = (BaseClass) =>
           isApplying: true,
         });
 
-        Logger.info(
-          `Applied transformation "${actorTransformationItem.name}" to actor "${this.name}"`,
-          null,
-          "TRANSFORMATION",
-        );
-        Logger.methodExit(
-          "ActorTransformationMixin",
-          "applyTransformation",
-          this,
-        );
-
         return this;
       } catch (error) {
         const [, _handledError] = await ErrorHandler.handleAsync(
@@ -105,11 +89,6 @@ export const ActorTransformationMixin = (BaseClass) =>
           },
         );
 
-        Logger.methodExit(
-          "ActorTransformationMixin",
-          "applyTransformation",
-          null,
-        );
         return this;
       }
     }
@@ -120,17 +99,10 @@ export const ActorTransformationMixin = (BaseClass) =>
      * @returns {Promise<Actor>} This actor after the update
      */
     async removeTransformation() {
-      Logger.methodEntry("ActorTransformationMixin", "removeTransformation");
-
       // Check permissions
       if (!this.isOwner) {
         ui.notifications.warn(
           game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.NoPermission"),
-        );
-        Logger.warn(
-          "User lacks permission to remove transformation",
-          null,
-          "TRANSFORMATION",
         );
         return this;
       }
@@ -141,11 +113,6 @@ export const ActorTransformationMixin = (BaseClass) =>
         "activeTransformation",
       );
       if (!transformationId) {
-        Logger.debug(
-          "No active transformation found to remove",
-          null,
-          "TRANSFORMATION",
-        );
         return this;
       }
 
@@ -172,11 +139,6 @@ export const ActorTransformationMixin = (BaseClass) =>
         // Get all tokens linked to this actor across all scenes
         const tokens = this._getAllTokensAcrossScenes();
         if (!tokens.length) {
-          Logger.warn(
-            "No tokens found for transformation removal across any scenes",
-            null,
-            "TRANSFORMATION",
-          );
           return this;
         }
 
@@ -201,17 +163,6 @@ export const ActorTransformationMixin = (BaseClass) =>
         // Clear the transformation flags
         await this._clearTransformationFlags();
 
-        Logger.info(
-          `Removed transformation from actor "${this.name}"`,
-          null,
-          "TRANSFORMATION",
-        );
-        Logger.methodExit(
-          "ActorTransformationMixin",
-          "removeTransformation",
-          this,
-        );
-
         return this;
       } catch (error) {
         const [, _handledError] = await ErrorHandler.handleAsync(
@@ -222,11 +173,6 @@ export const ActorTransformationMixin = (BaseClass) =>
           },
         );
 
-        Logger.methodExit(
-          "ActorTransformationMixin",
-          "removeTransformation",
-          null,
-        );
         return this;
       }
     }
@@ -243,23 +189,6 @@ export const ActorTransformationMixin = (BaseClass) =>
      * @private
      */
     async _transformPowerAndResolveUpdate(actorTransformationItem) {
-      Logger.methodEntry(
-        "ActorTransformationMixin",
-        "_transformPowerAndResolveUpdate",
-        {
-          powerAdjustment: actorTransformationItem.system.powerAdjustment,
-          resolveAdjustment: actorTransformationItem.system.resolveAdjustment,
-        },
-      );
-
-      Logger.debug(
-        "Using transformation item from actor",
-        {
-          transformationId: actorTransformationItem.id,
-          transformationName: actorTransformationItem.name,
-        },
-        "TRANSFORMATION",
-      );
 
       const newPowerAdjustment = Number(
         actorTransformationItem.system.powerAdjustment,
@@ -290,12 +219,6 @@ export const ActorTransformationMixin = (BaseClass) =>
         ),
       };
 
-      Logger.debug("Applying stat updates:", updateData, "TRANSFORMATION");
-      Logger.methodExit(
-        "ActorTransformationMixin",
-        "_transformPowerAndResolveUpdate",
-      );
-
       return await this.update(updateData);
     }
 
@@ -307,24 +230,10 @@ export const ActorTransformationMixin = (BaseClass) =>
      * @returns {boolean} Whether the transformation can proceed
      */
     _validateTransformationOperation(transformationItem) {
-      Logger.methodEntry(
-        "ActorTransformationMixin",
-        "_validateTransformationOperation",
-        {
-          itemType: transformationItem?.type,
-          hasOwnership: this.isOwner,
-        },
-      );
-
       // Check permissions
       if (!this.isOwner) {
         ui.notifications.warn(
           game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.NoPermission"),
-        );
-        Logger.warn(
-          "Permission check failed for transformation",
-          null,
-          "TRANSFORMATION",
         );
         return false;
       }
@@ -334,19 +243,9 @@ export const ActorTransformationMixin = (BaseClass) =>
         ui.notifications.error(
           game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.NotTransformation"),
         );
-        Logger.warn(
-          "Invalid transformation item type",
-          { type: transformationItem?.type },
-          "TRANSFORMATION",
-        );
         return false;
       }
 
-      Logger.methodExit(
-        "ActorTransformationMixin",
-        "_validateTransformationOperation",
-        true,
-      );
       return true;
     }
 
@@ -358,14 +257,6 @@ export const ActorTransformationMixin = (BaseClass) =>
      * @returns {Promise<void>}
      */
     async _storeOriginalTokenData(tokens) {
-      Logger.methodEntry(
-        "ActorTransformationMixin",
-        "_storeOriginalTokenData",
-        {
-          tokenCount: tokens.length,
-        },
-      );
-
       // Check if there's already an active transformation by checking the flag
       // This is more reliable than counting items since items can be added before flags are set
       const hasActiveTransformation = this.getFlag(
@@ -376,15 +267,6 @@ export const ActorTransformationMixin = (BaseClass) =>
       // Only store original token data if there isn't already a transformation active
       // This ensures we maintain the original appearance, not the appearance of a previous transformation
       if (hasActiveTransformation) {
-        Logger.debug(
-          "Active transformation exists, not storing token data",
-          null,
-          "TRANSFORMATION",
-        );
-        Logger.methodExit(
-          "ActorTransformationMixin",
-          "_storeOriginalTokenData",
-        );
         return;
       }
 
@@ -405,19 +287,12 @@ export const ActorTransformationMixin = (BaseClass) =>
         };
       });
 
-      Logger.debug(
-        "Storing original token data:",
-        originalTokenData,
-        "TRANSFORMATION",
-      );
-
       // Set flag with original token data
       await this.setFlag(
         "eventide-rp-system",
         "originalTokenData",
         originalTokenData,
       );
-      Logger.methodExit("ActorTransformationMixin", "_storeOriginalTokenData");
     }
 
     /**
@@ -428,14 +303,6 @@ export const ActorTransformationMixin = (BaseClass) =>
      * @returns {Promise<void>}
      */
     async _setTransformationFlags(transformationItem) {
-      Logger.methodEntry(
-        "ActorTransformationMixin",
-        "_setTransformationFlags",
-        {
-          transformationId: transformationItem.id,
-          transformationName: transformationItem.name,
-        },
-      );
 
       // Get embedded combat powers data
       const embeddedCombatPowers =
@@ -477,19 +344,6 @@ export const ActorTransformationMixin = (BaseClass) =>
         embeddedActionCardsData,
       );
 
-      Logger.debug(
-        "Stored transformation combat powers and action cards in flags",
-        {
-          transformationName: transformationItem.name,
-          embeddedPowerCount: embeddedCombatPowersData.length,
-          embeddedPowerNames: embeddedCombatPowersData.map((p) => p.name),
-          embeddedActionCardCount: embeddedActionCardsData.length,
-          embeddedActionCardNames: embeddedActionCardsData.map((ac) => ac.name),
-        },
-        "TRANSFORMATION",
-      );
-
-      Logger.methodExit("ActorTransformationMixin", "_setTransformationFlags");
     }
 
     /**
@@ -501,27 +355,10 @@ export const ActorTransformationMixin = (BaseClass) =>
      * @returns {Promise<void>}
      */
     async _updateTokensForTransformation(tokens, transformationItem) {
-      Logger.methodEntry(
-        "ActorTransformationMixin",
-        "_updateTokensForTransformation",
-        {
-          tokenCount: tokens.length,
-        },
-      );
-
       const transformationUpdates =
         this._getTokenTransformationUpdates(transformationItem);
 
       if (Object.keys(transformationUpdates).length === 0) {
-        Logger.debug(
-          "No transformation updates needed",
-          null,
-          "TRANSFORMATION",
-        );
-        Logger.methodExit(
-          "ActorTransformationMixin",
-          "_updateTokensForTransformation",
-        );
         return;
       }
 
@@ -533,11 +370,6 @@ export const ActorTransformationMixin = (BaseClass) =>
         const scene = tokenInfo.scene;
 
         if (!scene) {
-          Logger.warn(
-            `Could not find scene for token ${tokenDoc.id}`,
-            null,
-            "TRANSFORMATION",
-          );
           continue;
         }
 
@@ -558,11 +390,6 @@ export const ActorTransformationMixin = (BaseClass) =>
         const scene = game.scenes.get(sceneId);
         if (scene && updates.length > 0) {
           try {
-            Logger.debug(
-              `Updating ${updates.length} tokens in scene "${scene.name}"`,
-              { sceneId, updates },
-              "TRANSFORMATION",
-            );
             await scene.updateEmbeddedDocuments("Token", updates);
           } catch (error) {
             Logger.error(
@@ -573,11 +400,6 @@ export const ActorTransformationMixin = (BaseClass) =>
           }
         }
       }
-
-      Logger.methodExit(
-        "ActorTransformationMixin",
-        "_updateTokensForTransformation",
-      );
     }
 
     /**
@@ -596,10 +418,13 @@ export const ActorTransformationMixin = (BaseClass) =>
       }
 
       // Calculate size and scale based on the transformation size
-      this._calculateTransformationSize(
-        updates,
-        transformationItem.system.size,
-      );
+      // Skip size changes if size is 0 ("no size change")
+      if (transformationItem.system.size > 0) {
+        this._calculateTransformationSize(
+          updates,
+          transformationItem.system.size,
+        );
+      }
 
       return updates;
     }
@@ -654,11 +479,6 @@ export const ActorTransformationMixin = (BaseClass) =>
         .map((item) => item.id);
 
       if (transformationIds.length > 0) {
-        Logger.debug(
-          "Removing transformation items:",
-          transformationIds,
-          "TRANSFORMATION",
-        );
         await this.deleteEmbeddedDocuments("Item", transformationIds);
       }
     }
@@ -672,14 +492,6 @@ export const ActorTransformationMixin = (BaseClass) =>
      * @returns {Promise<void>}
      */
     async _restoreOriginalTokenData(tokens, originalTokenData) {
-      Logger.methodEntry(
-        "ActorTransformationMixin",
-        "_restoreOriginalTokenData",
-        {
-          tokenCount: tokens.length,
-          originalDataCount: originalTokenData.length,
-        },
-      );
 
       // Group restoration updates by scene for efficient batch updates
       const sceneRestoreUpdates = new Map();
@@ -689,11 +501,6 @@ export const ActorTransformationMixin = (BaseClass) =>
         const scene = tokenInfo.scene;
 
         if (!scene) {
-          Logger.warn(
-            `Could not find scene for token ${tokenDoc.id}`,
-            null,
-            "TRANSFORMATION",
-          );
           continue;
         }
 
@@ -704,11 +511,6 @@ export const ActorTransformationMixin = (BaseClass) =>
         );
 
         if (!originalData) {
-          Logger.warn(
-            `No original data found for token ${tokenDoc.id} in scene ${scene.name}`,
-            null,
-            "TRANSFORMATION",
-          );
           continue;
         }
 
@@ -734,11 +536,6 @@ export const ActorTransformationMixin = (BaseClass) =>
         const scene = game.scenes.get(sceneId);
         if (scene && updates.length > 0) {
           try {
-            Logger.debug(
-              `Restoring ${updates.length} tokens in scene "${scene.name}"`,
-              { sceneId, updates },
-              "TRANSFORMATION",
-            );
             await scene.updateEmbeddedDocuments("Token", updates);
           } catch (error) {
             Logger.error(
@@ -749,11 +546,6 @@ export const ActorTransformationMixin = (BaseClass) =>
           }
         }
       }
-
-      Logger.methodExit(
-        "ActorTransformationMixin",
-        "_restoreOriginalTokenData",
-      );
     }
 
     /**
@@ -764,16 +556,8 @@ export const ActorTransformationMixin = (BaseClass) =>
      * @returns {Promise<void>}
      */
     async _restoreOriginalStats(originalTokenData) {
-      Logger.methodEntry("ActorTransformationMixin", "_restoreOriginalStats");
-
       const originalData = originalTokenData[0]; // All tokens share the same actor stats
       if (!originalData) {
-        Logger.warn(
-          "No original data found for stat restoration",
-          null,
-          "TRANSFORMATION",
-        );
-        Logger.methodExit("ActorTransformationMixin", "_restoreOriginalStats");
         return;
       }
 
@@ -792,9 +576,7 @@ export const ActorTransformationMixin = (BaseClass) =>
         ),
       };
 
-      Logger.debug("Restoring stats:", restoreData, "TRANSFORMATION");
       await this.update(restoreData);
-      Logger.methodExit("ActorTransformationMixin", "_restoreOriginalStats");
     }
 
     /**
@@ -804,10 +586,6 @@ export const ActorTransformationMixin = (BaseClass) =>
      * @returns {Promise<void>}
      */
     async _clearTransformationFlags() {
-      Logger.methodEntry(
-        "ActorTransformationMixin",
-        "_clearTransformationFlags",
-      );
 
       await this.unsetFlag("eventide-rp-system", "originalTokenData");
       await this.unsetFlag("eventide-rp-system", "activeTransformation");
@@ -820,11 +598,6 @@ export const ActorTransformationMixin = (BaseClass) =>
       await this.unsetFlag(
         "eventide-rp-system",
         "activeTransformationActionCards",
-      );
-
-      Logger.methodExit(
-        "ActorTransformationMixin",
-        "_clearTransformationFlags",
       );
     }
 
@@ -851,32 +624,9 @@ export const ActorTransformationMixin = (BaseClass) =>
      * @returns {Promise<Item>} The transformation item that is now on the actor
      */
     async _ensureTransformationItemOnActor(transformationItem) {
-      Logger.methodEntry(
-        "ActorTransformationMixin",
-        "_ensureTransformationItemOnActor",
-        {
-          transformationId: transformationItem.id,
-          transformationName: transformationItem.name,
-          isOwnedByActor: transformationItem.parent === this,
-        },
-      );
-
       // Check if this transformation is already on the actor
       const existingTransformation = this.items.get(transformationItem.id);
       if (existingTransformation) {
-        Logger.debug(
-          "Transformation item already exists on actor",
-          {
-            transformationId: transformationItem.id,
-            transformationName: transformationItem.name,
-          },
-          "TRANSFORMATION",
-        );
-        Logger.methodExit(
-          "ActorTransformationMixin",
-          "_ensureTransformationItemOnActor",
-          existingTransformation,
-        );
         return existingTransformation;
       }
 
@@ -887,14 +637,6 @@ export const ActorTransformationMixin = (BaseClass) =>
 
       // Remove any existing transformation items (there should only be one)
       if (currentTransformations.length > 0) {
-        Logger.debug(
-          "Removing existing transformation items",
-          {
-            count: currentTransformations.length,
-            transformationNames: currentTransformations.map((t) => t.name),
-          },
-          "TRANSFORMATION",
-        );
         await this.deleteEmbeddedDocuments(
           "Item",
           currentTransformations.map((t) => t.id),
@@ -903,35 +645,15 @@ export const ActorTransformationMixin = (BaseClass) =>
 
       // If the transformation item is not owned by this actor, create a copy
       if (transformationItem.parent !== this) {
-        Logger.debug(
-          "Creating copy of transformation item on actor",
-          {
-            transformationId: transformationItem.id,
-            transformationName: transformationItem.name,
-            originalParent: transformationItem.parent?.name || "World",
-          },
-          "TRANSFORMATION",
-        );
-
         const transformationData = transformationItem.toObject();
         const [createdItem] = await this.createEmbeddedDocuments("Item", [
           transformationData,
         ]);
 
-        Logger.methodExit(
-          "ActorTransformationMixin",
-          "_ensureTransformationItemOnActor",
-          createdItem,
-        );
         return createdItem;
       }
 
       // The transformation is already owned by this actor
-      Logger.methodExit(
-        "ActorTransformationMixin",
-        "_ensureTransformationItemOnActor",
-        transformationItem,
-      );
       return transformationItem;
     }
 
@@ -943,15 +665,6 @@ export const ActorTransformationMixin = (BaseClass) =>
      * @returns {Promise<void>}
      */
     async _applyTransformationToNewToken(tokenDocument) {
-      Logger.methodEntry(
-        "ActorTransformationMixin",
-        "_applyTransformationToNewToken",
-        {
-          tokenId: tokenDocument.id,
-          actorName: this.name,
-        },
-      );
-
       // Get the active transformation ID from flags
       const activeTransformationId = this.getFlag(
         "eventide-rp-system",
@@ -959,30 +672,12 @@ export const ActorTransformationMixin = (BaseClass) =>
       );
 
       if (!activeTransformationId) {
-        Logger.warn(
-          "No active transformation found when trying to apply to new token",
-          null,
-          "TRANSFORMATION",
-        );
-        Logger.methodExit(
-          "ActorTransformationMixin",
-          "_applyTransformationToNewToken",
-        );
         return;
       }
 
       // Find the transformation item on the actor
       const transformationItem = this.items.get(activeTransformationId);
       if (!transformationItem) {
-        Logger.warn(
-          `Active transformation item not found: ${activeTransformationId}`,
-          null,
-          "TRANSFORMATION",
-        );
-        Logger.methodExit(
-          "ActorTransformationMixin",
-          "_applyTransformationToNewToken",
-        );
         return;
       }
 
@@ -992,28 +687,7 @@ export const ActorTransformationMixin = (BaseClass) =>
 
         // Apply updates if we have any
         if (Object.keys(updates).length > 0) {
-          Logger.debug(
-            `Applying transformation to new token ${tokenDocument.id}:`,
-            updates,
-            "TRANSFORMATION",
-          );
           await tokenDocument.update(updates);
-
-          Logger.info(
-            `Successfully applied transformation "${transformationItem.name}" to new token`,
-            {
-              tokenId: tokenDocument.id,
-              transformationName: transformationItem.name,
-              updates,
-            },
-            "TRANSFORMATION",
-          );
-        } else {
-          Logger.debug(
-            "No transformation updates needed for new token",
-            { transformationName: transformationItem.name },
-            "TRANSFORMATION",
-          );
         }
       } catch (error) {
         Logger.error(
@@ -1023,11 +697,6 @@ export const ActorTransformationMixin = (BaseClass) =>
         );
         throw error;
       }
-
-      Logger.methodExit(
-        "ActorTransformationMixin",
-        "_applyTransformationToNewToken",
-      );
     }
 
     /**

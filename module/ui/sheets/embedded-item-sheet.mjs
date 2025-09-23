@@ -23,12 +23,6 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
    * @param {boolean} [isEffect=false] Whether this is an embedded effect (vs main embedded item).
    */
   constructor(itemData, parentItem, options = {}, isEffect = false) {
-    Logger.methodEntry("EmbeddedItemSheet", "constructor", {
-      itemData,
-      parentItem,
-      options,
-    });
-
     // Create the temporary item using static method to avoid 'this' before super()
     const tempItem = EmbeddedItemSheet._createTempItem(
       itemData,
@@ -50,7 +44,6 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
     this.parentItem = parentItem;
     this.isEffect = isEffect;
     this.isStatusEffect = itemData.type === "status";
-    Logger.methodExit("EmbeddedItemSheet", "constructor", this);
   }
 
   /**
@@ -63,13 +56,7 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
    * @static
    * @private
    */
-  static _createTempItem(itemData, parentItem, isEffect = false) {
-    Logger.methodEntry("EmbeddedItemSheet", "_createTempItem", {
-      itemData,
-      parentItem: parentItem?.name,
-      isEffect,
-    });
-
+  static _createTempItem(itemData, parentItem, _isEffect = false) {
     // Create a temporary, un-parented Item document to represent the embedded item
     const tempItem = new CONFIG.Item.documentClass(itemData, {
       parent: null,
@@ -80,24 +67,12 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
       tempItem.effects = new foundry.utils.Collection();
     }
 
-    Logger.debug(
-      "EmbeddedItemSheet | Processing item data",
-      {
-        itemType: itemData.type,
-        itemName: itemData.name,
-        hasEffectsData: !!(itemData.effects && Array.isArray(itemData.effects)),
-        effectsCount: itemData.effects?.length || 0,
-      },
-      "EMBEDDED_ITEM_SHEET",
-    );
-
     // Initialize active effects from stored data
     EmbeddedItemSheet._initializeActiveEffects(tempItem, itemData);
 
     // Set up permissions based on parent item
     EmbeddedItemSheet._setupPermissions(tempItem, parentItem);
 
-    Logger.methodExit("EmbeddedItemSheet", "_createTempItem", tempItem);
     return tempItem;
   }
 
@@ -112,17 +87,6 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
     // If the item data has effects, create temporary ActiveEffect documents
     if (itemData.effects && Array.isArray(itemData.effects)) {
       for (const effectData of itemData.effects) {
-        Logger.debug(
-          "EmbeddedItemSheet | Creating temp effect from stored data",
-          {
-            effectId: effectData._id,
-            effectName: effectData.name,
-            duration: effectData.duration,
-            durationSeconds: effectData.duration?.seconds,
-          },
-          "EMBEDDED_ITEM_SHEET",
-        );
-
         const tempEffect = new CONFIG.ActiveEffect.documentClass(effectData, {
           parent: tempItem,
         });
@@ -132,15 +96,6 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
       // Create a default ActiveEffect for status effects and gear if none exists
       const defaultEffectData =
         EmbeddedItemSheet._createDefaultEffect(tempItem);
-
-      Logger.debug(
-        "EmbeddedItemSheet | Creating default effect for status/gear",
-        {
-          itemType: itemData.type,
-          defaultEffectData,
-        },
-        "EMBEDDED_ITEM_SHEET",
-      );
 
       const tempEffect = new CONFIG.ActiveEffect.documentClass(
         defaultEffectData,
@@ -220,16 +175,6 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
     tempItem.testUserPermission = function (user, permission, options) {
       return parentItem.testUserPermission(user, permission, options);
     };
-
-    Logger.debug(
-      "EmbeddedItemSheet | Permissions set up",
-      {
-        isOwner: tempItem.isOwner,
-        isEditable: tempItem.isEditable,
-        parentName: parentItem.name,
-      },
-      "EMBEDDED_ITEM_SHEET",
-    );
   }
 
   /** @override */
@@ -314,9 +259,6 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
 
   /** @override */
   async _prepareContext(options) {
-    Logger.methodEntry("EmbeddedItemSheet", "_prepareContext", {
-      options,
-    });
     const context = {};
 
     // Set up active effect data for status effects and gear items
@@ -324,21 +266,6 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
       const firstEffect = this.document.effects.contents[0];
       context.activeEffect = firstEffect;
       context.iconTint = firstEffect?.tint;
-
-      // Debug logging for toggle state
-      Logger.debug(
-        "EmbeddedItemSheet | _prepareContext activeEffect data",
-        {
-          hasActiveEffect: !!firstEffect,
-          effectId: firstEffect?.id,
-          effectName: firstEffect?.name,
-          duration: firstEffect?.duration,
-          durationSeconds: firstEffect?.duration?.seconds,
-          toggleShouldBeChecked: !!firstEffect?.duration?.seconds,
-          documentType: this.document.type,
-        },
-        "EMBEDDED_ITEM_SHEET",
-      );
     }
 
     context.editable = this.isEditable;
@@ -354,7 +281,6 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
     context.isGM = game.user.isGM;
     context.userSheetTheme = CommonFoundryTasks.retrieveSheetTheme();
     context.isEmbedded = true;
-    Logger.methodExit("EmbeddedItemSheet", "_prepareContext", context);
     return context;
   }
 
@@ -540,6 +466,40 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
               ),
             );
           }
+        } else if (this.parentItem.type === "actionCard" && this.parentItem.system.embeddedTransformations?.some(t => t._id === this.originalItemId)) {
+          // Handle action card embedded transformations
+          const transformationIndex =
+            this.parentItem.system.embeddedTransformations.findIndex(
+              (t) => t._id === this.originalItemId,
+            );
+          if (transformationIndex === -1) return;
+
+          const transformations = foundry.utils.deepClone(
+            this.parentItem.system.embeddedTransformations,
+          );
+          const transformationData = transformations[transformationIndex];
+          foundry.utils.setProperty(transformationData, attr, path);
+
+          try {
+            await this.parentItem.update({
+              "system.embeddedTransformations": transformations,
+            }, { fromEmbeddedItem: true });
+            this.document.updateSource(transformationData);
+            this.render();
+          } catch (error) {
+            Logger.error(
+              "EmbeddedItemSheet | Failed to save transformation image",
+              { error, transformations, transformationData },
+              "EMBEDDED_ITEM_SHEET",
+            );
+            ui.notifications.error(
+              "Failed to save transformation image. See console for details.",
+            );
+          }
+        } else if (this.parentItem.type === "actionCard" && this._isNestedInEmbeddedTransformation()) {
+          // Handle multi-level: items nested within transformations that are embedded within action cards
+          // This covers: Action Card → embeddedTransformations → [transformation] → embeddedCombatPowers → [combat power]
+          await this._handleNestedTransformationItemImageUpdate(attr, path);
         } else {
           // Handle action card embedded items
           const itemData = foundry.utils.deepClone(
@@ -589,11 +549,6 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
     if (this.element) {
       this.element.addEventListener("save", (event) => {
         if (!event.target.matches("prose-mirror")) return;
-        Logger.debug(
-          "EmbeddedItemSheet | Delegated save event | Event triggered",
-          { event },
-          "EMBEDDED_ITEM_SHEET",
-        );
         this._onProseMirrorSave(event);
       });
     }
@@ -619,12 +574,6 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
 
     if (target && typeof content !== "undefined") {
       await this._onEditorSave(target, content);
-    } else {
-      Logger.warn(
-        "EmbeddedItemSheet | _onProseMirrorSave | Could not extract target name or content value from editor element",
-        { editorElement },
-        "EMBEDDED_ITEM_SHEET",
-      );
     }
   }
 
@@ -680,16 +629,6 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
    * @private
    */
   static _toggleEffectDisplay(event, target) {
-    Logger.debug(
-      "EmbeddedItemSheet | Toggle effect display triggered",
-      {
-        checked: target.checked,
-        isEffect: this.isEffect,
-        originalItemId: this.originalItemId,
-        documentType: this.document.type,
-      },
-      "EMBEDDED_ITEM_SHEET",
-    );
 
     // Create proper duration structure - ON = 604800 seconds, OFF = 0 seconds
     const duration = target.checked
@@ -723,33 +662,12 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
       return;
     }
 
-    Logger.debug(
-      "EmbeddedItemSheet | First effect found",
-      {
-        effectId: firstEffect.id,
-        effectName: firstEffect.name,
-        currentDuration: firstEffect.duration,
-        newDuration: duration,
-      },
-      "EMBEDDED_ITEM_SHEET",
-    );
-
     // Update the embedded item data in the parent item
     if (this.parentItem.type === "transformation") {
       // Handle transformation items - combat powers don't typically use effect display toggles
       // but we'll handle it for completeness
       const powerIndex = this.parentItem.system.embeddedCombatPowers.findIndex(
         (p) => p._id === this.originalItemId,
-      );
-
-      Logger.debug(
-        "EmbeddedItemSheet | Processing embedded combat power",
-        {
-          powerIndex,
-          totalPowers: this.parentItem.system.embeddedCombatPowers.length,
-          originalItemId: this.originalItemId,
-        },
-        "EMBEDDED_ITEM_SHEET",
       );
 
       if (powerIndex === -1) {
@@ -774,76 +692,25 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
         (e) => e._id === firstEffect.id,
       );
 
-      Logger.debug(
-        "EmbeddedItemSheet | Combat power data before update",
-        {
-          powerData,
-          activeEffectIndex,
-          totalActiveEffects: powerData.effects.length,
-          firstEffectId: firstEffect.id,
-        },
-        "EMBEDDED_ITEM_SHEET",
-      );
-
       if (activeEffectIndex >= 0) {
         // Update existing effect
         powerData.effects[activeEffectIndex].duration = duration;
-        Logger.debug(
-          "EmbeddedItemSheet | Updated existing combat power effect",
-          {
-            activeEffectIndex,
-            updatedEffect: powerData.effects[activeEffectIndex],
-          },
-          "EMBEDDED_ITEM_SHEET",
-        );
       } else {
         // Create new effect from the temporary effect
         const newEffect = firstEffect.toObject();
         newEffect.duration = duration;
         powerData.effects.push(newEffect);
         activeEffectIndex = powerData.effects.length - 1;
-        Logger.debug(
-          "EmbeddedItemSheet | Created new combat power effect",
-          {
-            newEffect,
-            activeEffectIndex,
-          },
-          "EMBEDDED_ITEM_SHEET",
-        );
       }
-
-      Logger.debug(
-        "EmbeddedItemSheet | Final combat power data to save",
-        {
-          powers,
-          updatedPowerData: powerData,
-          effectDuration: powerData.effects[activeEffectIndex].duration,
-        },
-        "EMBEDDED_ITEM_SHEET",
-      );
 
       try {
         // Step 1: Update the temporary document's effect directly
         firstEffect.updateSource({ duration });
-        Logger.debug(
-          "EmbeddedItemSheet | Updated temporary document effect",
-          {
-            effectId: firstEffect.id,
-            newDuration: firstEffect.duration,
-          },
-          "EMBEDDED_ITEM_SHEET",
-        );
 
         // Step 2: Update the transformation with the new data
         this.parentItem.update({
           "system.embeddedCombatPowers": powers,
         });
-
-        Logger.debug(
-          "EmbeddedItemSheet | Successfully updated transformation",
-          null,
-          "EMBEDDED_ITEM_SHEET",
-        );
 
         // Step 3: Re-render the sheet
         this.render();
@@ -862,16 +729,6 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
         this.parentItem.system.embeddedStatusEffects.findIndex(
           (s) => s._id === this.originalItemId,
         );
-
-      Logger.debug(
-        "EmbeddedItemSheet | Processing embedded effect",
-        {
-          effectIndex,
-          totalEffects: this.parentItem.system.embeddedStatusEffects.length,
-          originalItemId: this.originalItemId,
-        },
-        "EMBEDDED_ITEM_SHEET",
-      );
 
       if (effectIndex === -1) {
         Logger.error(
@@ -895,76 +752,25 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
         (e) => e._id === firstEffect.id,
       );
 
-      Logger.debug(
-        "EmbeddedItemSheet | Status data before update",
-        {
-          statusData,
-          activeEffectIndex,
-          totalActiveEffects: statusData.effects.length,
-          firstEffectId: firstEffect.id,
-        },
-        "EMBEDDED_ITEM_SHEET",
-      );
-
       if (activeEffectIndex >= 0) {
         // Update existing effect
         statusData.effects[activeEffectIndex].duration = duration;
-        Logger.debug(
-          "EmbeddedItemSheet | Updated existing active effect",
-          {
-            activeEffectIndex,
-            updatedEffect: statusData.effects[activeEffectIndex],
-          },
-          "EMBEDDED_ITEM_SHEET",
-        );
       } else {
         // Create new effect from the temporary effect
         const newEffect = firstEffect.toObject();
         newEffect.duration = duration;
         statusData.effects.push(newEffect);
         activeEffectIndex = statusData.effects.length - 1;
-        Logger.debug(
-          "EmbeddedItemSheet | Created new active effect",
-          {
-            newEffect,
-            activeEffectIndex,
-          },
-          "EMBEDDED_ITEM_SHEET",
-        );
       }
-
-      Logger.debug(
-        "EmbeddedItemSheet | Final status effects data to save",
-        {
-          statusEffects,
-          updatedStatusData: statusData,
-          effectDuration: statusData.effects[activeEffectIndex].duration,
-        },
-        "EMBEDDED_ITEM_SHEET",
-      );
 
       try {
         // Step 1: Update the temporary document's effect directly
         firstEffect.updateSource({ duration });
-        Logger.debug(
-          "EmbeddedItemSheet | Updated temporary document effect",
-          {
-            effectId: firstEffect.id,
-            newDuration: firstEffect.duration,
-          },
-          "EMBEDDED_ITEM_SHEET",
-        );
 
         // Step 2: Update the action card with the new data
         this.parentItem.update({
           "system.embeddedStatusEffects": statusEffects,
         });
-
-        Logger.debug(
-          "EmbeddedItemSheet | Successfully updated action card",
-          null,
-          "EMBEDDED_ITEM_SHEET",
-        );
 
         // Step 3: Re-render the sheet
         this.render();
@@ -985,17 +791,6 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
         this.parentItem.system.embeddedItem,
       );
 
-      Logger.debug(
-        "EmbeddedItemSheet | Processing embedded item",
-        {
-          itemType: itemData.type,
-          itemName: itemData.name,
-          hasEffects: !!itemData.effects,
-          effectsCount: itemData.effects?.length || 0,
-        },
-        "EMBEDDED_ITEM_SHEET",
-      );
-
       // Ensure effects array exists
       if (!itemData.effects) itemData.effects = [];
 
@@ -1004,75 +799,25 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
         (e) => e._id === firstEffect.id,
       );
 
-      Logger.debug(
-        "EmbeddedItemSheet | Item data before update",
-        {
-          activeEffectIndex,
-          totalActiveEffects: itemData.effects.length,
-          firstEffectId: firstEffect.id,
-          itemEffects: itemData.effects,
-        },
-        "EMBEDDED_ITEM_SHEET",
-      );
-
       if (activeEffectIndex >= 0) {
         // Update existing effect
         itemData.effects[activeEffectIndex].duration = duration;
-        Logger.debug(
-          "EmbeddedItemSheet | Updated existing item effect",
-          {
-            activeEffectIndex,
-            updatedEffect: itemData.effects[activeEffectIndex],
-          },
-          "EMBEDDED_ITEM_SHEET",
-        );
       } else {
         // Create new effect from the temporary effect
         const newEffect = firstEffect.toObject();
         newEffect.duration = duration;
         itemData.effects.push(newEffect);
         activeEffectIndex = itemData.effects.length - 1;
-        Logger.debug(
-          "EmbeddedItemSheet | Created new item effect",
-          {
-            newEffect,
-            activeEffectIndex,
-          },
-          "EMBEDDED_ITEM_SHEET",
-        );
       }
-
-      Logger.debug(
-        "EmbeddedItemSheet | Final item data to save",
-        {
-          itemData,
-          effectDuration: itemData.effects[activeEffectIndex].duration,
-        },
-        "EMBEDDED_ITEM_SHEET",
-      );
 
       try {
         // Step 1: Update the temporary document's effect directly
         firstEffect.updateSource({ duration });
-        Logger.debug(
-          "EmbeddedItemSheet | Updated temporary document effect",
-          {
-            effectId: firstEffect.id,
-            newDuration: firstEffect.duration,
-          },
-          "EMBEDDED_ITEM_SHEET",
-        );
 
         // Step 2: Update the action card with the new data
         this.parentItem.update({
           "system.embeddedItem": itemData,
         });
-
-        Logger.debug(
-          "EmbeddedItemSheet | Successfully updated action card",
-          null,
-          "EMBEDDED_ITEM_SHEET",
-        );
 
         // Step 3: Re-render the sheet
         this.render();
@@ -1094,6 +839,128 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
   }
 
   /**
+   * Check if this item is nested within a transformation that's embedded in an action card
+   * @returns {boolean} True if this item is nested in an embedded transformation
+   * @private
+   */
+  _isNestedInEmbeddedTransformation() {
+    // Must be an action card parent
+    if (this.parentItem.type !== "actionCard") return false;
+
+    // Must have embedded transformations
+    if (!this.parentItem.system.embeddedTransformations?.length) return false;
+
+    // Check if this item exists within any of the embedded transformations
+    for (const transformation of this.parentItem.system.embeddedTransformations) {
+      // Check embedded combat powers
+      if (transformation.embeddedCombatPowers?.some(p => p._id === this.originalItemId)) {
+        return true;
+      }
+      // Check embedded action cards
+      if (transformation.embeddedActionCards?.some(ac => ac._id === this.originalItemId)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  /**
+   * Handle image updates for items nested within transformations that are embedded within action cards
+   * @param {string} attr - The attribute being updated
+   * @param {string} path - The new image path
+   * @private
+   */
+  async _handleNestedTransformationItemImageUpdate(attr, path) {
+    const transformations = foundry.utils.deepClone(
+      this.parentItem.system.embeddedTransformations,
+    );
+
+    let foundTransformationIndex = -1;
+    let foundItemIndex = -1;
+    let foundItemType = null;
+    let foundTransformation = null;
+
+    // Find which transformation contains this item
+    for (let transformationIndex = 0; transformationIndex < transformations.length; transformationIndex++) {
+      const transformation = transformations[transformationIndex];
+
+      // Check embedded combat powers
+      if (transformation.embeddedCombatPowers?.length) {
+        const powerIndex = transformation.embeddedCombatPowers.findIndex(p => p._id === this.originalItemId);
+        if (powerIndex !== -1) {
+          foundTransformationIndex = transformationIndex;
+          foundItemIndex = powerIndex;
+          foundItemType = 'embeddedCombatPowers';
+          foundTransformation = transformation;
+          break;
+        }
+      }
+
+      // Check embedded action cards
+      if (transformation.embeddedActionCards?.length) {
+        const actionCardIndex = transformation.embeddedActionCards.findIndex(ac => ac._id === this.originalItemId);
+        if (actionCardIndex !== -1) {
+          foundTransformationIndex = transformationIndex;
+          foundItemIndex = actionCardIndex;
+          foundItemType = 'embeddedActionCards';
+          foundTransformation = transformation;
+          break;
+        }
+      }
+    }
+
+    if (foundTransformationIndex === -1 || foundItemIndex === -1 || !foundItemType || !foundTransformation) {
+      return;
+    }
+
+    // Update the nested item's image
+    const nestedItemData = transformations[foundTransformationIndex][foundItemType][foundItemIndex];
+    foundry.utils.setProperty(nestedItemData, attr, path);
+
+    try {
+      // Find the temp transformation item that corresponds to this transformation
+      // We need to call the temp transformation's update method, not the root action card's
+      const tempTransformations = this.parentItem.getEmbeddedTransformations?.() || [];
+
+      const tempTransformation = tempTransformations.find(t => t.id === foundTransformation._id);
+
+      if (tempTransformation) {
+
+        // Update the temp transformation item using its embedded collection update
+        // This should trigger the transformation's dual-override pattern
+        const transformationUpdateData = {};
+        transformationUpdateData[`system.${foundItemType}`] = foundTransformation[foundItemType];
+
+        await tempTransformation.update(transformationUpdateData, { fromEmbeddedItem: true });
+      } else {
+
+        // Fallback to direct update if temp transformation not found
+        await this.parentItem.update({
+          "system.embeddedTransformations": transformations,
+        }, { fromEmbeddedItem: true });
+      }
+
+      this.document.updateSource(nestedItemData);
+      this.render();
+    } catch (error) {
+      Logger.error(
+        "EmbeddedItemSheet | Failed to save nested transformation item image",
+        {
+          error,
+          transformationIndex: foundTransformationIndex,
+          itemIndex: foundItemIndex,
+          itemType: foundItemType
+        },
+        "EMBEDDED_ITEM_SHEET",
+      );
+      ui.notifications.error(
+        "Failed to save nested transformation item image. See console for details.",
+      );
+    }
+  }
+
+  /**
    * Override editor options to disable collaborative editing for temporary documents
    * @param {string} target - The target field being edited
    * @returns {object} Editor configuration options
@@ -1107,5 +974,53 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
     options.collaborative = false;
 
     return options;
+  }
+
+  /**
+   * Override render method to preserve scroll position using the working pattern from creator-application.mjs
+   * @param {boolean} force - Force a re-render
+   * @param {Object} options - Render options
+   * @returns {Promise<this>} The rendered application
+   * @override
+   */
+  async render(force, options = {}) {
+    // Find the actual scrolling element by checking what has scrollTop > 0
+    let actualScrollingElement = null;
+    let oldPosition = 0;
+
+    if (this.element) {
+      // Check all elements for scrollTop > 0
+      const allElements = Array.from(this.element.querySelectorAll('*'));
+      const scrollableElements = allElements.filter(el => el.scrollTop > 0);
+
+
+      if (scrollableElements.length > 0) {
+        actualScrollingElement = scrollableElements[0];
+        oldPosition = actualScrollingElement.scrollTop;
+      }
+    }
+
+    // Call parent render
+    const result = await super.render(force, options);
+
+    // Restore scroll position
+    if (actualScrollingElement && oldPosition > 0) {
+      // Find the element again after render
+      let restoreElement = null;
+      if (actualScrollingElement.className) {
+        restoreElement = this.element?.querySelector(`.${actualScrollingElement.className.split(' ').join('.')}`);
+      }
+      if (!restoreElement && actualScrollingElement.tagName) {
+        const selector = actualScrollingElement.tagName.toLowerCase() +
+                        (actualScrollingElement.className ? `.${actualScrollingElement.className.split(' ').join('.')}` : '');
+        restoreElement = this.element?.querySelector(selector);
+      }
+
+      if (restoreElement) {
+        restoreElement.scrollTop = oldPosition;
+      }
+    }
+
+    return result;
   }
 }

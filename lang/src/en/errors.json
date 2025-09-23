@@ -34,6 +34,7 @@
       "ActionCardItemTypes": "Action cards can only embed items of type: {supported}. Cannot add {type}.",
       "ActionCardEffectTypes": "Action cards can only embed effects of type: {supported}. Cannot add {type}.",
       "ActionCardStatusTypes": "Action cards can only embed status effects. Cannot add {type}.",
+      "ActionCardTransformationTypes": "Action cards can only embed transformations. Cannot add {type}.",
       "TransformationItemTypes": "Transformations can only embed combat powers and action cards.",
       "InvalidWeight": "Weight must be a valid number",
       "InvalidCost": "Cost must be a valid number",
@@ -123,6 +124,10 @@
       "EffectToggleError": "Failed to toggle effect",
       "FailedToAddEffectToActionCard": "Failed to add effect to action card",
       "FailedToAddItemToActionCard": "Failed to add item to action card",
+      "FailedToAddTransformationToActionCard": "Failed to add transformation '{transformationName}' to action card '{actionCardName}'",
+      "EditEmbeddedTransformationFailed": "Failed to edit embedded transformation",
+      "RemoveEmbeddedTransformationFailed": "Failed to remove embedded transformation",
+      "FailedToAddTransformation": "Failed to add transformation",
       "FolderDropError": "Failed to drop folder",
       "GearQuantityError": "Gear quantity error",
       "GearToggleError": "Failed to toggle gear",
@@ -141,7 +146,26 @@
       "TransformationApplyError": "Failed to apply transformation",
       "TransformationRemoveError": "Failed to remove transformation",
       "FailedToSetActionItem": "Failed to set action item",
-      "FailedToAddEffect": "Failed to add effect"
+      "FailedToAddEffect": "Failed to add effect",
+      "NoPlayerActionApproval": "No player action approval found in message",
+      "ActionAlreadyProcessed": "This action has already been processed",
+      "UnableToFindActor": "Unable to find actor for execution",
+      "FailedToExecuteAction": "Failed to execute the approved action",
+      "FailedToProcessApproval": "Failed to process action approval",
+      "FailedToSaveActionCard": "Failed to save action card. See console for details.",
+      "CreateNewCombatPowerFailed": "Failed to create new combat power",
+      "CreateNewActionCardFailed": "Failed to create new action card",
+      "FailedToAddCombatPower": "Failed to add combat power",
+      "FailedToAddActionCard": "Failed to add action card",
+      "TransformationCreationFailed": "Failed to create transformation",
+      "GMOnlyOperation": "Only GMs can perform this operation",
+      "ExportOperationFailed": "Export operation failed",
+      "CompendiumCreationFailed": "Failed to create compendium '{label}'",
+      "SourceItemNotTransformation": "Source item is not a transformation",
+      "SourceItemNotActionCard": "Source item is not an action card",
+      "SourceItemNotTransformationOrActionCard": "Source item is not a transformation or action card",
+      "UnsupportedEmbeddedItemType": "Unsupported embedded item type: {itemType}",
+      "UserIsNotGM": "User is not GM"
     },
     "Info": {
       "CompendiumItemCreated": "Created {keyType} item {name} in the {packLabel} compendium",
@@ -156,13 +180,20 @@
       "AttackChainExecuted": "Attack chain executed successfully",
       "EffectDescriptionSaved": "Effect description saved.",
       "ItemDescriptionSaved": "Item description saved.",
-      "CombatPowerDescriptionSaved": "Combat Power description saved."
+      "CombatPowerDescriptionSaved": "Combat Power description saved.",
+      "TransformationCreated": "Transformation '{name}' created successfully",
+      "CustomTransformationsCompendiumCreated": "Custom Transformations compendium created",
+      "TransformationUsageGuidance": "Your transformation was created in the Custom Transformations compendium. Drag it to a character sheet when you're ready to transform them!",
+      "NoEmbeddedItemsToExport": "No embedded items to export",
+      "ItemsExportedToCompendium": "{count} {itemType} exported to {compendiumLabel}",
+      "CompendiumCreated": "Compendium '{label}' created"
     },
     "Warnings": {
       "CannotChangeImageWhileTransformed": "Cannot change image while transformed",
       "FieldLockedDuringTransformation": "This field is locked during transformation",
       "InsufficientPermissions": "Insufficient permissions",
-      "NoActiveTransformation": "No active transformation"
+      "NoActiveTransformation": "No active transformation",
+      "SomeItemsFailedToExport": "{failed} of {total} items failed to export"
     }
   }
 }

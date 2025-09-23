@@ -18,10 +18,10 @@ export default class EventideRpSystemTransformation extends EventideRpSystemItem
 
     schema.size = new fields.NumberField({
       required: true,
-      initial: 1,
-      min: 0.5,
+      initial: 0, // Default to "no size change"
+      min: 0,
       max: 5,
-      choices: [0.5, 0.75, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5],
+      choices: [0, 0.5, 0.75, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5],
     });
 
     // Add token image property with proper categories
@@ -282,11 +282,14 @@ export default class EventideRpSystemTransformation extends EventideRpSystemItem
         // Pass through the fromEmbeddedItem flag while maintaining render: false
         const updateOptions = {
           render: false, // Always use render: false to prevent focus stealing
-          ...options // Include any options passed from embedded item updates
+          ...options, // Include any options passed from embedded item updates
         };
-        await transformationItem.update({
-          "system.embeddedActionCards": actionCards,
-        }, updateOptions);
+        await transformationItem.update(
+          {
+            "system.embeddedActionCards": actionCards,
+          },
+          updateOptions,
+        );
 
         // Update the temporary item's source data to stay in sync
         tempItem.updateSource(actionCards[actionCardIndex]);
@@ -317,7 +320,10 @@ export default class EventideRpSystemTransformation extends EventideRpSystemItem
       const originalUpdate = tempItem.update;
       tempItem.update = async (data, options = {}) => {
         // If this is an update to embedded item or status effects, handle it specially
-        if (data["system.embeddedItem"] || data["system.embeddedStatusEffects"]) {
+        if (
+          data["system.embeddedItem"] ||
+          data["system.embeddedStatusEffects"]
+        ) {
           // Update the action card data in the transformation's embedded action cards array
           const actionCards = foundry.utils.deepClone(this.embeddedActionCards);
           const actionCardIndex = actionCards.findIndex(
@@ -337,11 +343,14 @@ export default class EventideRpSystemTransformation extends EventideRpSystemItem
           // Persist the changes to the transformation item
           const updateOptions = {
             render: false, // Always use render: false to prevent focus stealing
-            ...options // Include any options passed from embedded item updates
+            ...options, // Include any options passed from embedded item updates
           };
-          await transformationItem.update({
-            "system.embeddedActionCards": actionCards,
-          }, updateOptions);
+          await transformationItem.update(
+            {
+              "system.embeddedActionCards": actionCards,
+            },
+            updateOptions,
+          );
 
           // Update the temporary item's source data to stay in sync
           tempItem.updateSource(actionCards[actionCardIndex]);

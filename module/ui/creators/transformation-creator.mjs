@@ -1,354 +1,131 @@
-import { CreatorApplication } from "../_module.mjs";
-
-const { DragDrop, TextEditor } = foundry.applications.ux;
-
 /**
- * A form application for creating and managing transformation items.
- * @extends {CreatorApplication}
+ * Utility class for creating transformation items.
+ * Directly creates transformations in the custom transformations compendium.
  */
-export class TransformationCreator extends CreatorApplication {
-  static PARTS = {
-    transformationCreator: {
-      template:
-        "/systems/eventide-rp-system/templates/macros/transformation-creator.hbs",
-    },
-  };
-
-  static DEFAULT_OPTIONS = {
-    ...super.DEFAULT_OPTIONS,
-    classes: [
-      "eventide-sheet",
-      "eventide-sheet--scrollbars",
-      "transformation-creator",
-    ],
-    window: {
-      icon: "fa-solid fa-mask",
-    },
-    form: {
-      handler: super._onSubmit,
-      submitOnChange: false,
-      closeOnSubmit: true,
-    },
-    dragDrop: [{ dragSelector: ".item", dropSelector: null }],
-    actions: {
-      removeCombatPower: this._removeCombatPower,
-      viewCombatPower: this._viewCombatPower,
-      removeActionCard: this._removeActionCard,
-      viewActionCard: this._viewActionCard,
-    },
-  };
-
+export class TransformationCreator {
   /**
-   * Get the localized window title
-   * @returns {string} The localized window title
+   * Constructor that immediately creates a transformation instead of showing a form
+   * @param {Object} options - Creation options
+   * @param {string} [options.name] - Optional name for the transformation
    */
-  get title() {
-    return game.i18n.format(
-      "EVENTIDE_RP_SYSTEM.WindowTitles.TransformationCreator",
-    );
-  }
-
-  constructor({ advanced = false, number = 0, playerMode = false } = {}) {
-    super({ advanced, number, playerMode, keyType: "transformation" });
-    this.calloutGroup = "Transformation";
-    this.embeddedCombatPowers = [];
-    this.embeddedActionCards = [];
-    this.#dragDrop = this.#createDragDropHandlers();
+  constructor({ name = null } = {}) {
+    // Immediately create the transformation when instantiated
+    this.createTransformation({ name });
   }
 
   /**
-   * Prepares the main context data for the transformation creator.
-   * @param {Object} options - Form options
-   * @returns {Promise<Object>} The prepared context containing abilities, stored preferences, and target information
-   * @throws {Error} Implicitly closes the form if a player has no selected tokens
+   * Render method for compatibility with existing macro calls
+   * Does nothing since we create immediately in constructor
+   * @param {boolean} force - Ignored
+   * @returns {this} Returns this for chaining
    */
-  async _prepareContext(options) {
-    const context = await super._prepareContext(options);
-
-    context.calloutGroup = this.calloutGroup;
-
-    context.storedData = {
-      transformation_img:
-        this.storedData[this.storageKeys[0]] || "icons/svg/ice-aura.svg",
-      transformation_bgColor: this.storedData[this.storageKeys[1]],
-      transformation_textColor: this.storedData[this.storageKeys[2]],
-      transformation_iconTint: this.storedData[this.storageKeys[3]],
-      transformation_displayOnToken: this.storedData[this.storageKeys[4]],
-      transformation_cursed: this.storedData[this.storageKeys[5]] || false,
-      transformation_size: this.storedData[this.storageKeys[6]] || "1",
-    };
-
-    context.sizeOptions = [
-      { value: "0.5", label: "Tiny (0.5x)" },
-      { value: "0.75", label: "Small (0.75x)" },
-      { value: "1", label: "Medium (1x)" },
-      { value: "1.5", label: "Large (1.5x)" },
-      { value: "2", label: "Large (2x)" },
-      { value: "2.5", label: "Huge (2.5x)" },
-      { value: "3", label: "Huge (3x)" },
-      { value: "3.5", label: "Gargantuan (3.5x)" },
-      { value: "4", label: "Gargantuan (4x)" },
-      { value: "4.5", label: "Colossal (4.5x)" },
-      { value: "5", label: "Colossal (5x)" },
-    ];
-    context.embeddedCombatPowers = this.embeddedCombatPowers;
-    context.embeddedActionCards = this.embeddedActionCards;
-    return context;
+  render(_force = false) {
+    // No-op since creation happens in constructor
+    return this;
   }
 
   /**
-   * Handle the first render of the application
-   * @override
-   * @protected
+   * Create a new transformation item in the custom transformations compendium
+   * @param {Object} options - Creation options
+   * @param {string} [options.name] - Optional name for the transformation
+   * @returns {Promise<Item>} The created transformation item
    */
-  async _onFirstRender() {
-    await super._onFirstRender();
-    this.#dragDrop.forEach((d) => d.bind(this.element));
-  }
+  async createTransformation({ name = null } = {}) {
+    try {
+      // Ensure the custom transformations compendium exists
+      const pack = await this._ensureCustomTransformationsCompendium();
 
-  /**
-   * Clean up resources before the application is closed
-   * @param {Object} options - The options for closing
-   * @returns {Promise<void>}
-   * @override
-   */
-  async _preClose(options) {
-    await super._preClose(options);
-    // this.#dragDrop.forEach((d) => d.unbind());
-  }
+      // Create default transformation data
+      const transformationData = {
+        name: name || "New Transformation",
+        type: "transformation",
+        img: "icons/svg/ice-aura.svg",
+        system: {
+          description: "",
+          size: 0, // Default to "no size change"
+          cursed: false,
+          embeddedCombatPowers: [],
+          embeddedActionCards: [],
+          resolveAdjustment: 0,
+          powerAdjustment: 0,
+          tokenImage: "",
+        },
+      };
 
-  /**
-   * Define whether a user is able to begin a dragstart workflow for a given drag selector
-   * @param {string} selector       The candidate HTML selector for dragging
-   * @returns {boolean}             Can the current user drag this selector?
-   * @protected
-   */
-  _canDragStart(_selector) {
-    return true;
-  }
+      // Create the transformation item in the compendium
+      const item = await Item.create(transformationData, {
+        pack: pack.collection,
+      });
 
-  /**
-   * Define whether a user is able to conclude a drag-and-drop workflow for a given drop selector
-   * @param {string} selector       The candidate HTML selector for the drop target
-   * @returns {boolean}             Can the current user drop on this selector?
-   * @protected
-   */
-  _canDragDrop(_selector) {
-    return true;
-  }
+      // Open the item sheet for editing
+      if (item) {
+        item.sheet.render(true);
+        ui.notifications.info(
+          game.i18n.format("EVENTIDE_RP_SYSTEM.Info.TransformationCreated", {
+            name: item.name,
+          }),
+        );
+        // Show additional guidance notification
+        setTimeout(() => {
+          ui.notifications.info(
+            game.i18n.localize("EVENTIDE_RP_SYSTEM.Info.TransformationUsageGuidance"),
+            { permanent: false }
+          );
+        }, 1500); // Delay so it shows after the creation message
+      }
 
-  /**
-   * Callback actions which occur at the beginning of a drag start workflow.
-   * @param {DragEvent} event       The originating DragEvent
-   * @protected
-   */
-  _onDragStart(event) {
-    const li = event.currentTarget;
-    if ("link" in event.target.dataset) return;
-
-    let dragData = null;
-
-    // Active Effect
-    if (li.dataset.effectId) {
-      const effect = this.item.effects.get(li.dataset.effectId);
-      dragData = effect.toDragData();
-    }
-
-    if (!dragData) return;
-
-    // Set data transfer
-    event.dataTransfer.setData("text/plain", JSON.stringify(dragData));
-  }
-
-  /**
-   * Callback actions which occur when a dragged element is over a drop target.
-   * @param {DragEvent} event       The originating DragEvent
-   * @protected
-   */
-  _onDragOver(event) {
-    event.preventDefault();
-    event.dataTransfer.dropEffect = "copy";
-  }
-
-  /**
-   * Callback actions which occur when a dragged element is dropped on a target.
-   * @param {DragEvent} event       The originating DragEvent
-   * @protected
-   */
-  async _onDrop(event) {
-    const formData = CreatorApplication._saveFormData(this);
-    const data = TextEditor.implementation.getDragEventData(event);
-    event.preventDefault();
-
-    if (!data || data.type !== "Item") return;
-
-    const item = await Item.implementation.fromDropData(data);
-    if (!item) return;
-
-    const oldPosition = this.position.height;
-
-    // Handle combat powers
-    if (item.type === "combatPower") {
-      this.embeddedCombatPowers.push(item);
-    }
-    // Handle action cards
-    else if (item.type === "actionCard") {
-      this.embeddedActionCards.push(item);
-    }
-    else {
-      // Item type not supported
-      return;
-    }
-
-    await this.render();
-    CreatorApplication._restoreFormData(this, formData);
-
-    const contentElement = this.element.querySelector(".erps-form__content");
-    if (contentElement) {
-      contentElement.scrollTop = oldPosition;
+      return item;
+    } catch (error) {
+      console.error("Failed to create transformation:", error);
+      ui.notifications.error(
+        game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.TransformationCreationFailed"),
+      );
+      throw error;
     }
   }
 
   /**
-   * Handle removing a combat power from the transformation
-   * @param {PointerEvent} event   The originating click event
-   * @param {HTMLElement} target   The capturing HTML element which defined a [data-action]
-   * @protected
+   * Static version for direct calls
+   * @param {Object} options - Creation options
+   * @returns {Promise<Item>} The created transformation item
    */
-  static async _removeCombatPower(event, target) {
-    const formData = CreatorApplication._saveFormData(this);
-    const powerId = target.dataset.powerId;
-    if (!powerId) return;
-
-    const index = this.embeddedCombatPowers.findIndex((p) => p.id === powerId);
-    if (index === -1) return;
-
-    this.embeddedCombatPowers.splice(index, 1);
-    const oldPosition = this.position.height;
-    await this.render();
-    CreatorApplication._restoreFormData(this, formData);
-
-    const contentElement = this.element.querySelector(".erps-form__content");
-    if (contentElement) {
-      contentElement.scrollTop = oldPosition;
-    }
+  static async createTransformation(options = {}) {
+    const instance = new TransformationCreator();
+    return await instance.createTransformation(options);
   }
 
   /**
-   * Handle viewing a combat power's details
-   * @param {PointerEvent} event   The originating click event
-   * @param {HTMLElement} target   The capturing HTML element which defined a [data-action]
-   * @protected
-   */
-  static async _viewCombatPower(_event, target) {
-    const powerId = target.dataset.powerId;
-    if (!powerId) return;
-
-    const power = this.embeddedCombatPowers.find((p) => p.id === powerId);
-    if (!power) return;
-
-    power.sheet.render(true);
-  }
-
-  /**
-   * Handle removing an action card from the transformation
-   * @param {PointerEvent} event   The originating click event
-   * @param {HTMLElement} target   The capturing HTML element which defined a [data-action]
-   * @protected
-   */
-  static async _removeActionCard(event, target) {
-    const formData = CreatorApplication._saveFormData(this);
-    const actionCardId = target.dataset.actionCardId;
-    if (!actionCardId) return;
-
-    const index = this.embeddedActionCards.findIndex((ac) => ac.id === actionCardId);
-    if (index === -1) return;
-
-    this.embeddedActionCards.splice(index, 1);
-    const oldPosition = this.position.height;
-    await this.render();
-    CreatorApplication._restoreFormData(this, formData);
-
-    const contentElement = this.element.querySelector(".erps-form__content");
-    if (contentElement) {
-      contentElement.scrollTop = oldPosition;
-    }
-  }
-
-  /**
-   * Handle viewing an action card's details
-   * @param {PointerEvent} event   The originating click event
-   * @param {HTMLElement} target   The capturing HTML element which defined a [data-action]
-   * @protected
-   */
-  static async _viewActionCard(_event, target) {
-    const actionCardId = target.dataset.actionCardId;
-    if (!actionCardId) return;
-
-    const actionCard = this.embeddedActionCards.find((ac) => ac.id === actionCardId);
-    if (!actionCard) return;
-
-    actionCard.sheet.render(true);
-  }
-
-  /**
-   * Update the transformation item with embedded combat powers and action cards
-   * @param {Event} event      The form submission event
-   * @param {Object} formData  The extracted form data
-   * @returns {Promise<Item>}  The created transformation item
-   * @override
-   */
-  async _updateObject(event, formData) {
-    // Create the transformation item using the parent class method
-    const item = await super._updateObject(event, formData);
-
-    if (!item) return item;
-
-    // Add embedded combat powers if any
-    for (const combatPower of this.embeddedCombatPowers) {
-      await item.system.addCombatPower(combatPower);
-    }
-
-    // Add embedded action cards if any
-    for (const actionCard of this.embeddedActionCards) {
-      await item.system.addActionCard(actionCard);
-    }
-
-    return item;
-  }
-
-  /** The following pieces set up drag handling and are unlikely to need modification  */
-
-  /**
-   * Returns an array of DragDrop instances
-   * @type {DragDrop.implementation[]}
-   */
-  get dragDrop() {
-    return this.#dragDrop;
-  }
-
-  // This is marked as private because there's no real need
-  // for subclasses or external hooks to mess with it directly
-  #dragDrop;
-
-  /**
-   * Creates drag-and-drop workflow handlers for this Application.
-   *
-   * @returns {DragDrop.implementation[]} An array of DragDrop handlers
+   * Ensure the custom transformations compendium exists, create it if it doesn't
+   * @returns {Promise<CompendiumCollection>} The custom transformations compendium
    * @private
    */
-  #createDragDropHandlers() {
-    return this.options.dragDrop.map((d) => {
-      d.permissions = {
-        dragstart: this._canDragStart.bind(this),
-        drop: this._canDragDrop.bind(this),
+  async _ensureCustomTransformationsCompendium() {
+    const packId = "world.customtransformations";
+    let pack = game.packs.get(packId);
+
+    if (!pack) {
+      const packData = {
+        name: "customtransformations",
+        label: "Custom Transformations",
+        type: "Item",
       };
-      d.callbacks = {
-        dragstart: this._onDragStart.bind(this),
-        dragover: this._onDragOver.bind(this),
-        drop: this._onDrop.bind(this),
-      };
-      return new DragDrop.implementation(d);
-    });
+
+      pack = await foundry.documents.collections.CompendiumCollection.createCompendium(packData);
+
+      ui.notifications.info(
+        game.i18n.localize("EVENTIDE_RP_SYSTEM.Info.CustomTransformationsCompendiumCreated"),
+      );
+    }
+
+    return pack;
+  }
+
+
+  /**
+   * Legacy method to maintain compatibility with existing macro calls
+   * @deprecated Use TransformationCreator.createTransformation() instead
+   */
+  static async create(options = {}) {
+    return await this.createTransformation(options);
   }
 }

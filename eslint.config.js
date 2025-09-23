@@ -1,6 +1,7 @@
 import js from "@eslint/js";
 
 export default [
+  // Main configuration for module files - restrict console.log
   {
     languageOptions: {
       ecmaVersion: "latest",
@@ -60,10 +61,11 @@ export default [
       },
     },
     files: ["module/**/*.mjs"],
+    ignores: ["node_modules/**", "lib/**", "module/services/logger.mjs"],
     rules: {
       ...js.configs.recommended.rules,
 
-      // Console and debugging
+      // Console and debugging - restrict console.log in application code
       "no-console": ["warn", { allow: ["warn", "error", "info"] }],
 
       // Variable handling
@@ -106,4 +108,40 @@ export default [
       yoda: "error",
     },
   },
+
+  // Separate configuration for build scripts - allow console.log
+  {
+    languageOptions: {
+      ecmaVersion: "latest",
+      sourceType: "module", // Build scripts use ES modules
+      globals: {
+        // Node.js globals for build scripts
+        process: "readonly",
+        Buffer: "readonly",
+        __dirname: "readonly",
+        __filename: "readonly",
+        console: "readonly",
+        global: "readonly",
+      },
+    },
+    files: ["build-lang.js", "minify.js"],
+    rules: {
+      ...js.configs.recommended.rules,
+
+      // Allow all console usage in build scripts
+      "no-console": "off",
+
+      // Variable handling
+      "no-unused-vars": [
+        "error",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+        },
+      ],
+      "no-var": "error",
+      "prefer-const": "error",
+    },
+  },
+
 ];

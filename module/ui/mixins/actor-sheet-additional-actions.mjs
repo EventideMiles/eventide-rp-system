@@ -23,17 +23,6 @@ export const ActorSheetAdditionalActionsMixin = (BaseClass) =>
      * @protected
      */
     static async _onEditImage(_event, target) {
-      Logger.methodEntry("ActorSheetAdditionalActionsMixin", "_onEditImage", {
-        actorName: this.actor?.name,
-        autoTokenUpdate: this.actor.getFlag(
-          "eventide-rp-system",
-          "autoTokenUpdate",
-        ),
-        hasActiveTransformation: !!this.actor.getFlag(
-          "eventide-rp-system",
-          "activeTransformation",
-        ),
-      });
 
       try {
         // Check if actor has an active transformation - if so, prevent image changes
@@ -58,11 +47,6 @@ export const ActorSheetAdditionalActionsMixin = (BaseClass) =>
             "ADDITIONAL_ACTIONS",
           );
 
-          Logger.methodExit(
-            "ActorSheetAdditionalActionsMixin",
-            "_onEditImage",
-            false,
-          );
           return false;
         }
 
@@ -88,14 +72,6 @@ export const ActorSheetAdditionalActionsMixin = (BaseClass) =>
             if (autoTokenUpdate && attr === "img") {
               updateData["prototypeToken.texture.src"] = path;
 
-              Logger.info(
-                "Auto token update: updating token image along with actor image",
-                {
-                  actorName: this.actor.name,
-                  imagePath: path,
-                },
-                "ADDITIONAL_ACTIONS",
-              );
 
               // Also update any existing tokens on the scene
               const tokens = this.actor.getActiveTokens();
@@ -118,15 +94,6 @@ export const ActorSheetAdditionalActionsMixin = (BaseClass) =>
                   const scene = game.scenes.get(sceneId);
                   if (scene) {
                     await scene.updateEmbeddedDocuments("Token", updates);
-                    Logger.info(
-                      `Updated ${updates.length} token(s) on scene: ${scene.name}`,
-                      {
-                        actorName: this.actor.name,
-                        sceneId,
-                        tokenCount: updates.length,
-                      },
-                      "ADDITIONAL_ACTIONS",
-                    );
                   }
                 }
               }
@@ -134,27 +101,12 @@ export const ActorSheetAdditionalActionsMixin = (BaseClass) =>
 
             await this.document.update(updateData);
 
-            Logger.info(
-              `Image updated successfully`,
-              {
-                actorName: this.actor.name,
-                attribute: attr,
-                path,
-                tokenUpdated: autoTokenUpdate && attr === "img",
-              },
-              "ADDITIONAL_ACTIONS",
-            );
           },
           top: this.position.top + 40,
           left: this.position.left + 10,
         });
 
         const result = fp.browse();
-        Logger.methodExit(
-          "ActorSheetAdditionalActionsMixin",
-          "_onEditImage",
-          result,
-        );
         return result;
       } catch (error) {
         await ErrorHandler.handleAsync(Promise.reject(error), {
@@ -168,11 +120,6 @@ export const ActorSheetAdditionalActionsMixin = (BaseClass) =>
           ),
         });
 
-        Logger.methodExit(
-          "ActorSheetAdditionalActionsMixin",
-          "_onEditImage",
-          null,
-        );
       }
     }
 
@@ -183,10 +130,6 @@ export const ActorSheetAdditionalActionsMixin = (BaseClass) =>
      * @private
      */
     static async _toggleEffect(_event, target) {
-      Logger.methodEntry("ActorSheetAdditionalActionsMixin", "_toggleEffect", {
-        actorName: this.actor?.name,
-        targetDataset: target.dataset,
-      });
 
       try {
         const effect = this._getEmbeddedDocument(target);
@@ -199,31 +142,12 @@ export const ActorSheetAdditionalActionsMixin = (BaseClass) =>
           ui.notifications.warn(
             game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.EffectNotFound"),
           );
-          Logger.methodExit(
-            "ActorSheetAdditionalActionsMixin",
-            "_toggleEffect",
-            null,
-          );
           return;
         }
 
         const result = await effect.update({ disabled: !effect.disabled });
 
-        Logger.info(
-          `Effect ${effect.disabled ? "disabled" : "enabled"}: ${effect.name}`,
-          {
-            effectId: effect.id,
-            effectName: effect.name,
-            disabled: effect.disabled,
-          },
-          "ADDITIONAL_ACTIONS",
-        );
 
-        Logger.methodExit(
-          "ActorSheetAdditionalActionsMixin",
-          "_toggleEffect",
-          result,
-        );
         return result;
       } catch (error) {
         await ErrorHandler.handleAsync(Promise.reject(error), {
@@ -234,11 +158,6 @@ export const ActorSheetAdditionalActionsMixin = (BaseClass) =>
           ),
         });
 
-        Logger.methodExit(
-          "ActorSheetAdditionalActionsMixin",
-          "_toggleEffect",
-          null,
-        );
       }
     }
 
@@ -249,14 +168,6 @@ export const ActorSheetAdditionalActionsMixin = (BaseClass) =>
      * @protected
      */
     static async _onConfigureToken(_event, _target) {
-      Logger.methodEntry(
-        "ActorSheetAdditionalActionsMixin",
-        "_onConfigureToken",
-        {
-          actorName: this.actor?.name,
-          hasActiveTokens: this.actor.getActiveTokens().length > 0,
-        },
-      );
 
       try {
         // First, try to get an active token on the current scene
@@ -266,35 +177,13 @@ export const ActorSheetAdditionalActionsMixin = (BaseClass) =>
         if (activeTokens.length > 0) {
           // Use the first active token if available
           token = activeTokens[0];
-          Logger.info(
-            `Using active token for configuration`,
-            {
-              actorName: this.actor.name,
-              tokenId: token.id,
-              sceneName: token.scene.name,
-            },
-            "ADDITIONAL_ACTIONS",
-          );
         } else {
           // No active token found, use the prototype token seamlessly
           token = this.actor.prototypeToken;
-          Logger.info(
-            `No active token found, configuring prototype token`,
-            {
-              actorName: this.actor.name,
-              prototypeTokenName: token.name,
-            },
-            "ADDITIONAL_ACTIONS",
-          );
         }
 
         // Open the token configuration sheet
         const result = token.sheet.render(true);
-        Logger.methodExit(
-          "ActorSheetAdditionalActionsMixin",
-          "_onConfigureToken",
-          result,
-        );
         return result;
       } catch (error) {
         await ErrorHandler.handleAsync(Promise.reject(error), {
@@ -308,11 +197,6 @@ export const ActorSheetAdditionalActionsMixin = (BaseClass) =>
           ),
         });
 
-        Logger.methodExit(
-          "ActorSheetAdditionalActionsMixin",
-          "_onConfigureToken",
-          null,
-        );
       }
     }
 
@@ -323,11 +207,6 @@ export const ActorSheetAdditionalActionsMixin = (BaseClass) =>
      * @protected
      */
     static async _onRoll(event, target) {
-      Logger.methodEntry("ActorSheetAdditionalActionsMixin", "_onRoll", {
-        actorName: this.actor?.name,
-        rollType: target.dataset.rollType,
-        roll: target.dataset.roll,
-      });
 
       try {
         event.preventDefault();
@@ -337,15 +216,6 @@ export const ActorSheetAdditionalActionsMixin = (BaseClass) =>
           formula: target.dataset.roll,
         };
 
-        Logger.debug(
-          "Processing roll request",
-          {
-            rollType: dataset.rollType,
-            formula: dataset.formula,
-            datasetKeys: Object.keys(dataset),
-          },
-          "ADDITIONAL_ACTIONS",
-        );
 
         // Handle item rolls.
         switch (dataset.rollType) {
@@ -360,11 +230,6 @@ export const ActorSheetAdditionalActionsMixin = (BaseClass) =>
               ui.notifications.warn(
                 game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.ItemNotFound"),
               );
-              Logger.methodExit(
-                "ActorSheetAdditionalActionsMixin",
-                "_onRoll",
-                null,
-              );
               return;
             }
 
@@ -372,29 +237,14 @@ export const ActorSheetAdditionalActionsMixin = (BaseClass) =>
             const bypassableTypes = ["combatPower", "gear", "feature", "status"];
             const bypass = (event.ctrlKey || event.metaKey) && bypassableTypes.includes(item.type);
 
-            Logger.info(
-              `Rolling item: ${item.name}${bypass ? " (bypass dialog)" : ""}`,
-              { itemId: item.id, itemType: item.type, bypass, ctrlKey: event.ctrlKey || event.metaKey },
-              "ADDITIONAL_ACTIONS",
-            );
 
             const rollResult = await item.roll({ bypass });
-            Logger.methodExit(
-              "ActorSheetAdditionalActionsMixin",
-              "_onRoll",
-              rollResult,
-            );
             return rollResult;
           }
         }
 
         // Handle rolls that supply the formula directly.
         if (dataset.roll) {
-          Logger.info(
-            `Rolling formula: ${dataset.roll}`,
-            { formula: dataset.roll, actorName: this.actor.name },
-            "ADDITIONAL_ACTIONS",
-          );
 
           // Add the current roll mode to the dataset
           const rollData = {
@@ -403,11 +253,6 @@ export const ActorSheetAdditionalActionsMixin = (BaseClass) =>
           };
 
           const roll = await erpsRollHandler.handleRoll(rollData, this.actor);
-          Logger.methodExit(
-            "ActorSheetAdditionalActionsMixin",
-            "_onRoll",
-            roll,
-          );
           return roll;
         }
 
@@ -416,8 +261,6 @@ export const ActorSheetAdditionalActionsMixin = (BaseClass) =>
           { dataset },
           "ADDITIONAL_ACTIONS",
         );
-
-        Logger.methodExit("ActorSheetAdditionalActionsMixin", "_onRoll", null);
       } catch (error) {
         await ErrorHandler.handleAsync(Promise.reject(error), {
           context: `Roll Action for ${this.actor?.name}`,
@@ -426,8 +269,6 @@ export const ActorSheetAdditionalActionsMixin = (BaseClass) =>
             actorName: this.actor?.name || "Unknown",
           }),
         });
-
-        Logger.methodExit("ActorSheetAdditionalActionsMixin", "_onRoll", null);
       }
     }
 
@@ -438,14 +279,6 @@ export const ActorSheetAdditionalActionsMixin = (BaseClass) =>
      * @protected
      */
     static async _executeActionCard(_event, target) {
-      Logger.methodEntry(
-        "ActorSheetAdditionalActionsMixin",
-        "_executeActionCard",
-        {
-          actorName: this.actor?.name,
-          itemId: target.dataset.itemId,
-        },
-      );
 
       try {
         const itemId = target.dataset.itemId;
@@ -464,18 +297,8 @@ export const ActorSheetAdditionalActionsMixin = (BaseClass) =>
         }
 
         // Use the same popup flow as row clicks to ensure consistent behavior and proper callouts
-        Logger.info(
-          `Opening action card popup: ${actionCard.name}`,
-          { itemId: actionCard.id, itemType: actionCard.type },
-          "ADDITIONAL_ACTIONS",
-        );
 
         const rollResult = await actionCard.roll();
-        Logger.methodExit(
-          "ActorSheetAdditionalActionsMixin",
-          "_executeActionCard",
-          rollResult,
-        );
         return rollResult;
       } catch (error) {
         await ErrorHandler.handleAsync(Promise.reject(error), {
@@ -495,10 +318,6 @@ export const ActorSheetAdditionalActionsMixin = (BaseClass) =>
           game.i18n.localize(
             "EVENTIDE_RP_SYSTEM.Errors.ActionCardExecuteFailed",
           ),
-        );
-        Logger.methodExit(
-          "ActorSheetAdditionalActionsMixin",
-          "_executeActionCard",
         );
       }
     }

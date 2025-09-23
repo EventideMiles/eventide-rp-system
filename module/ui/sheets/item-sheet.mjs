@@ -8,6 +8,7 @@ import { ItemSheetAllMixins } from "../mixins/_module.mjs";
 import { EmbeddedItemSheet } from "./embedded-item-sheet.mjs";
 import { ItemSelectorComboBox } from "../components/item-selector-combo-box.mjs";
 import { ItemSourceCollector } from "../../helpers/item-source-collector.mjs";
+import { EmbeddedItemExporter } from "../../services/embedded-item-exporter.mjs";
 
 const { api, sheets } = foundry.applications;
 const { TextEditor } = foundry.applications.ux;
@@ -34,32 +35,24 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
    * @param {Object} [options.submitOnChange=false] - Whether to submit the form on change
    */
   constructor(options = {}) {
-    Logger.methodEntry("EventideRpSystemItemSheet", "constructor", {
-      itemId: options?.document?.id,
-      itemName: options?.document?.name,
-      itemType: options?.document?.type,
-    });
 
     try {
       super(options);
       this.#dragDrop = this.#createDragDropHandlers();
       this.#formChanged = false; // Track if the form has been changed
 
-      Logger.debug(
-        "Item sheet initialized successfully",
-        {
-          sheetId: this.id,
-          itemName: this.item?.name,
-          itemType: this.item?.type,
-          dragDropHandlers: this.#dragDrop?.length,
-        },
-        "ITEM_SHEET",
-      );
+      // Add our custom actions to the options after parent construction
+      foundry.utils.mergeObject(this.options.actions, {
+        exportEmbeddedCombatPowers: this._exportEmbeddedCombatPowers.bind(this),
+        exportEmbeddedActionCards: this._exportEmbeddedActionCards.bind(this),
+        exportEmbeddedActionItem: this._exportEmbeddedActionItem.bind(this),
+        exportEmbeddedEffects: this._exportEmbeddedEffects.bind(this),
+        exportEmbeddedTransformations: this._exportEmbeddedTransformations.bind(this),
+        exportAllEmbeddedItems: this._exportAllEmbeddedItems.bind(this),
+      });
 
-      Logger.methodExit("EventideRpSystemItemSheet", "constructor", this);
     } catch (error) {
       Logger.error("Failed to initialize item sheet", error, "ITEM_SHEET");
-      Logger.methodExit("EventideRpSystemItemSheet", "constructor", null);
       throw error;
     }
   }
@@ -70,47 +63,55 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
    *
    *********************/
 
-  /** @override */
-  static DEFAULT_OPTIONS = {
-    classes: [
-      // "eventide-rp-system",
-      // "sheet",
-      // "item",
-      "eventide-sheet",
-      "eventide-sheet--scrollbars",
-    ],
-    actions: {
-      onEditImage: this._onEditImage,
-      viewDoc: this._viewDoc,
-      createEffect: this._createEffect,
-      editEffect: this._editEffect,
-      deleteEffect: this._deleteEffect,
-      toggleEffect: this._toggleEffect,
-      newCharacterEffect: this._newCharacterEffect,
-      deleteCharacterEffect: this._deleteCharacterEffect,
-      toggleEffectDisplay: this._toggleEffectDisplay,
-      removeCombatPower: this._removeCombatPower,
-      removeActionCard: this._removeActionCard,
-      editEmbeddedActionCard: this._editEmbeddedActionCard,
-      onDiceAdjustmentChange: this._onDiceAdjustmentChange,
-      clearEmbeddedItem: this._clearEmbeddedItem,
-      createNewPower: this._createNewPower,
-      createNewStatus: this._createNewStatus,
 
-      editEmbeddedItem: this._editEmbeddedItem,
-      editEmbeddedEffect: this._editEmbeddedEffect,
-      removeEmbeddedEffect: this._removeEmbeddedEffect,
-    },
-    position: {
-      width: 800,
-      height: "auto",
-    },
-    form: {
-      submitOnChange: true,
-    },
-    // Custom property that's merged into `this.options`
-    dragDrop: [{ dragSelector: "[data-drag]", dropSelector: null }],
-  };
+  /** @override */
+  static get DEFAULT_OPTIONS() {
+    const options = foundry.utils.mergeObject(super.DEFAULT_OPTIONS, {
+      classes: [
+        "eventide-sheet",
+        "eventide-sheet--scrollbars",
+      ],
+      actions: {
+        onEditImage: this._onEditImage,
+        viewDoc: this._viewDoc,
+        createDoc: this._createDoc,
+        deleteDoc: this._deleteDoc,
+        createEffect: this._createEffect,
+        editEffect: this._editEffect,
+        deleteEffect: this._deleteEffect,
+        toggleEffect: this._toggleEffect,
+        newCharacterEffect: this._newCharacterEffect,
+        deleteCharacterEffect: this._deleteCharacterEffect,
+        toggleEffectDisplay: this._toggleEffectDisplay,
+        removeCombatPower: this._removeCombatPower,
+        removeActionCard: this._removeActionCard,
+        editEmbeddedActionCard: this._editEmbeddedActionCard,
+        onDiceAdjustmentChange: this._onDiceAdjustmentChange,
+        clearEmbeddedItem: this._clearEmbeddedItem,
+        createNewPower: this._createNewPower,
+        createNewStatus: this._createNewStatus,
+        createNewTransformation: this._createNewTransformation,
+        createNewCombatPower: this._createNewCombatPower,
+        createNewActionCard: this._createNewActionCard,
+        editEmbeddedItem: this._editEmbeddedItem,
+        editEmbeddedEffect: this._editEmbeddedEffect,
+        removeEmbeddedEffect: this._removeEmbeddedEffect,
+        editEmbeddedTransformation: this._editEmbeddedTransformation,
+        removeEmbeddedTransformation: this._removeEmbeddedTransformation,
+      },
+      position: {
+        width: 800,
+        height: "auto",
+      },
+      form: {
+        submitOnChange: true,
+      },
+      window: {},
+      // Custom property that's merged into `this.options`
+      dragDrop: [{ dragSelector: "[data-drag]", dropSelector: null }],
+    });
+    return options;
+  }
 
   /** @override */
   static PARTS = {
@@ -203,7 +204,11 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
         options.position = { ...options.position, width: 1000 };
         break;
       case "actionCard":
-        options.parts.push("attributesActionCard", "attributesActionCardConfig", "embeddedItems");
+        options.parts.push(
+          "attributesActionCard",
+          "attributesActionCardConfig",
+          "embeddedItems",
+        );
         break;
     }
   }
@@ -272,19 +277,6 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
        */
       context.isTransformationActionCard = this._isTransformationActionCard();
 
-      Logger.debug(
-        "Item sheet context prepared",
-        {
-          itemName: this.item.name,
-          itemType: this.item.type,
-          contextKeys: Object.keys(context),
-          tabCount: Object.keys(context.tabs).length,
-          editable: context.editable,
-          limited: context.limited,
-          hasActiveEffect: !!context.activeEffect,
-        },
-        "ITEM_SHEET",
-      );
 
       Logger.methodExit(
         "EventideRpSystemItemSheet",
@@ -360,7 +352,7 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
           };
         }
         // Add size options for the select
-        context.sizeOptions = [0.5, 0.75, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5];
+        context.sizeOptions = [0, 0.5, 0.75, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5];
         break;
       case "description":
         context.tab = context.tabs[partId];
@@ -392,14 +384,19 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
       case "embeddedActionCards":
         context.tab = context.tabs[partId];
         // Get embedded action cards as temporary items
-        context.embeddedActionCards =
-          this.item.system.getEmbeddedActionCards();
+        context.embeddedActionCards = this.item.system.getEmbeddedActionCards();
         break;
       case "embeddedItems":
         context.tab = context.tabs[partId];
-        // Get embedded item and effects as temporary items
+        // Get embedded item, effects, and transformations as temporary items
         context.embeddedItem = this.item.getEmbeddedItem();
         context.embeddedEffects = this.item.getEmbeddedEffects();
+
+        // getEmbeddedTransformations is async, so we need to await it
+        context.embeddedTransformations = this.item.getEmbeddedTransformations
+          ? await this.item.getEmbeddedTransformations()
+          : [];
+
         break;
       case "effects":
         context.tab = context.tabs[partId];
@@ -408,13 +405,22 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
           this.item.effects,
         );
         break;
-      case "characterEffects":
+      case "characterEffects": {
         context.tab = context.tabs[partId];
         // Prepare active effects for easier access
-        context.characterEffects = await prepareCharacterEffects(
-          this.item.effects.contents[0],
-        );
+        const firstEffect = this.item.effects.contents[0];
+        if (firstEffect) {
+          context.characterEffects = await prepareCharacterEffects(firstEffect);
+        } else {
+          // Return empty character effects structure if no effects exist
+          context.characterEffects = {
+            fullEffects: [],
+            regularEffects: [],
+            hiddenEffects: [],
+          };
+        }
         break;
+      }
     }
     return context;
   }
@@ -494,6 +500,95 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
     }, {});
   }
 
+  /**
+   * Override to add custom header controls for transformation items
+   * @returns {Array} Array of header control objects
+   * @protected
+   */
+  _getHeaderControls() {
+    const controls = super._getHeaderControls();
+
+    // Only add export controls when user is GM
+    if (game.user.isGM) {
+      if (this.item.type === "transformation") {
+        // Transformation export buttons
+        if (this.item.system?.embeddedCombatPowers?.length > 0) {
+          controls.push({
+            action: "exportEmbeddedCombatPowers",
+            icon: "fas fa-swords",
+            label: "EVENTIDE_RP_SYSTEM.UI.ExportEmbeddedCombatPowers",
+            ownership: "OWNER"
+          });
+        }
+
+        if (this.item.system?.embeddedActionCards?.length > 0) {
+          controls.push({
+            action: "exportEmbeddedActionCards",
+            icon: "fas fa-cards-blank",
+            label: "EVENTIDE_RP_SYSTEM.UI.ExportEmbeddedActionCards",
+            ownership: "OWNER"
+          });
+        }
+
+        // Add "Export All" button if there are any embedded items
+        if ((this.item.system?.embeddedCombatPowers?.length > 0) ||
+            (this.item.system?.embeddedActionCards?.length > 0)) {
+          controls.push({
+            action: "exportAllEmbeddedItems",
+            icon: "fas fa-file-export",
+            label: "EVENTIDE_RP_SYSTEM.UI.ExportAllEmbeddedItems",
+            ownership: "OWNER"
+          });
+        }
+
+      } else if (this.item.type === "actionCard") {
+        // Action Card export buttons
+        const embeddedItem = this.item.getEmbeddedItem();
+        if (embeddedItem) {
+          controls.push({
+            action: "exportEmbeddedActionItem",
+            icon: "fas fa-magic",
+            label: "EVENTIDE_RP_SYSTEM.UI.ExportEmbeddedActionItem",
+            ownership: "OWNER"
+          });
+        }
+
+        const embeddedEffects = this.item.getEmbeddedEffects();
+        if (embeddedEffects && embeddedEffects.length > 0) {
+          controls.push({
+            action: "exportEmbeddedEffects",
+            icon: "fas fa-sparkles",
+            label: "EVENTIDE_RP_SYSTEM.UI.ExportEmbeddedEffects",
+            ownership: "OWNER"
+          });
+        }
+
+        // Check for embedded transformations (async, so we need to be careful)
+        const hasEmbeddedTransformations = this.item.system?.embeddedTransformations?.length > 0;
+        if (hasEmbeddedTransformations) {
+          controls.push({
+            action: "exportEmbeddedTransformations",
+            icon: "fas fa-exchange-alt",
+            label: "EVENTIDE_RP_SYSTEM.UI.ExportEmbeddedTransformations",
+            ownership: "OWNER"
+          });
+        }
+
+        // Add "Export All" button if there are any embedded items
+        if (embeddedItem || (embeddedEffects && embeddedEffects.length > 0) || hasEmbeddedTransformations) {
+          controls.push({
+            action: "exportAllEmbeddedItems",
+            icon: "fas fa-file-export",
+            label: "EVENTIDE_RP_SYSTEM.UI.ExportAllEmbeddedItems",
+            ownership: "OWNER"
+          });
+        }
+      }
+    }
+
+    return controls;
+  }
+
   /*********************
    *
    *   EVENT HANDLERS
@@ -515,7 +610,7 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
 
     // Initialize item selector combo boxes for action cards
     // Don't await this to avoid blocking the render process
-    this._initializeItemSelectors().catch(error => {
+    this._initializeItemSelectors().catch((error) => {
       console.error("Failed to initialize item selectors:", error);
     });
   }
@@ -596,18 +691,27 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
   }
 
   /**
-   * Check if this is a temporary action card created from a transformation
-   * @returns {boolean} True if this is a transformation action card
+   * Check if this is a temporary or embedded item (action card, transformation, etc.)
+   * @returns {boolean} True if this is a temporary/embedded item
    * @private
    */
   _isTransformationActionCard() {
-    // Check if the item has a custom update method (indicating it's from a transformation)
-    const hasCustomUpdate = this.item.update && this.item.update.toString().includes('embeddedActionCards');
+    // Check if the item has a custom update method (indicating it's from a transformation or action card)
+    const hasCustomUpdate =
+      this.item.update &&
+      (this.item.update.toString().includes("embeddedActionCards") ||
+        this.item.update.toString().includes("embeddedTransformations") ||
+        this.item.update.toString().includes("embeddedStatusEffects") ||
+        this.item.update.toString().includes("embeddedItem"));
 
     // Also check if the item type is actionCard and it's not persisted (no collection)
-    const isTemporaryActionCard = this.item.type === "actionCard" && !this.item.collection;
+    const isTemporaryActionCard =
+      this.item.type === "actionCard" && !this.item.collection;
 
-    return hasCustomUpdate || isTemporaryActionCard;
+    // Check if it's any embedded item type with an originalId property
+    const isEmbeddedItem = this.item.originalId && !this.item.collection;
+
+    return hasCustomUpdate || isTemporaryActionCard || isEmbeddedItem;
   }
 
   /**
@@ -631,10 +735,17 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
             _id: firstEffect._id,
             tint: fieldValue,
           };
-          await this.item.updateEmbeddedDocuments("ActiveEffect", [updateData], { fromEmbeddedItem: true });
+          await this.item.updateEmbeddedDocuments(
+            "ActiveEffect",
+            [updateData],
+            { fromEmbeddedItem: true },
+          );
         }
       } catch (error) {
-        console.error("Failed to update transformation action card icon tint:", error);
+        console.error(
+          "Failed to update transformation action card icon tint:",
+          error,
+        );
       }
       return;
     }
@@ -669,7 +780,9 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
       await this.item.update(formData);
     } catch (error) {
       console.error("Failed to submit transformation action card form:", error);
-      ui.notifications.error("Failed to save action card. See console for details.");
+      ui.notifications.error(
+        "Failed to save action card. See console for details.",
+      );
     }
   }
 
@@ -697,11 +810,9 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
    */
   async _initializeItemSelectors() {
     try {
-      console.log("ItemSheet: Initializing item selectors for item type:", this.item.type);
 
-      // Only initialize for action card items
-      if (this.item.type !== "actionCard") {
-        console.log("ItemSheet: Skipping selector initialization - not an action card");
+      // Only initialize for action card and transformation items
+      if (this.item.type !== "actionCard" && this.item.type !== "transformation") {
         return;
       }
 
@@ -709,44 +820,89 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
       this._cleanupItemSelectors();
 
       // Initialize action item selector
-      const actionItemContainer = this.element.querySelector('[data-selector="action-item"]');
-      console.log("ItemSheet: Action item container found:", !!actionItemContainer);
+      const actionItemContainer = this.element.querySelector(
+        '[data-selector="action-item"]',
+      );
 
       if (actionItemContainer) {
-        console.log("ItemSheet: Creating action item selector with types:", ItemSourceCollector.getActionItemTypes());
         this.#actionItemSelector = new ItemSelectorComboBox({
           container: actionItemContainer,
           itemTypes: ItemSourceCollector.getActionItemTypes(),
           onSelect: this._onActionItemSelected.bind(this),
-          placeholder: game.i18n.localize("EVENTIDE_RP_SYSTEM.Forms.ActionItemSelector.Placeholder"),
-          selectorType: "action-item"
+          placeholder: game.i18n.localize(
+            "EVENTIDE_RP_SYSTEM.Forms.ActionItemSelector.Placeholder",
+          ),
+          selectorType: "action-item",
         });
       }
 
       // Initialize effects selector
-      const effectsContainer = this.element.querySelector('[data-selector="effects"]');
-      console.log("ItemSheet: Effects container found:", !!effectsContainer);
+      const effectsContainer = this.element.querySelector(
+        '[data-selector="effects"]',
+      );
 
       if (effectsContainer) {
-        console.log("ItemSheet: Creating effects selector with types:", ItemSourceCollector.getEffectItemTypes());
         this.#effectsSelector = new ItemSelectorComboBox({
           container: effectsContainer,
           itemTypes: ItemSourceCollector.getEffectItemTypes(),
           onSelect: this._onEffectSelected.bind(this),
-          placeholder: game.i18n.localize("EVENTIDE_RP_SYSTEM.Forms.EffectsSelector.Placeholder"),
-          selectorType: "effects"
+          placeholder: game.i18n.localize(
+            "EVENTIDE_RP_SYSTEM.Forms.EffectsSelector.Placeholder",
+          ),
+          selectorType: "effects",
         });
       }
 
-      console.log("ItemSheet: Item selectors initialized", {
-        actionItemSelector: !!this.#actionItemSelector,
-        effectsSelector: !!this.#effectsSelector
-      });
+      // Initialize transformations selector
+      const transformationsContainer = this.element.querySelector(
+        '[data-selector="transformations"]',
+      );
 
-      Logger.debug("Item selectors initialized successfully", {
-        actionItemSelector: !!this.#actionItemSelector,
-        effectsSelector: !!this.#effectsSelector
-      }, "ITEM_SHEET");
+      if (transformationsContainer) {
+        this.#transformationsSelector = new ItemSelectorComboBox({
+          container: transformationsContainer,
+          itemTypes: ["transformation"],
+          onSelect: this._onTransformationSelected.bind(this),
+          placeholder: game.i18n.localize(
+            "EVENTIDE_RP_SYSTEM.Forms.TransformationsSelector.Placeholder",
+          ),
+          selectorType: "transformations",
+        });
+      }
+
+      // Initialize combat powers selector for transformations
+      const combatPowersContainer = this.element.querySelector(
+        '[data-selector="combat-powers"]',
+      );
+
+      if (combatPowersContainer && this.item.type === "transformation") {
+        this.#combatPowersSelector = new ItemSelectorComboBox({
+          container: combatPowersContainer,
+          itemTypes: ["combatPower"],
+          onSelect: this._onCombatPowerSelected.bind(this),
+          placeholder: game.i18n.localize(
+            "EVENTIDE_RP_SYSTEM.Forms.CombatPowersSelector.Placeholder",
+          ),
+          selectorType: "combat-powers",
+        });
+      }
+
+      // Initialize action cards selector for transformations
+      const actionCardsContainer = this.element.querySelector(
+        '[data-selector="action-cards"]',
+      );
+
+      if (actionCardsContainer && this.item.type === "transformation") {
+        this.#actionCardsSelector = new ItemSelectorComboBox({
+          container: actionCardsContainer,
+          itemTypes: ["actionCard"],
+          onSelect: this._onActionCardSelected.bind(this),
+          placeholder: game.i18n.localize(
+            "EVENTIDE_RP_SYSTEM.Forms.ActionCardsSelector.Placeholder",
+          ),
+          selectorType: "action-cards",
+        });
+      }
 
     } catch (error) {
       console.error("ItemSheet: Failed to initialize item selectors:", error);
@@ -769,6 +925,21 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
         this.#effectsSelector.destroy();
         this.#effectsSelector = null;
       }
+
+      if (this.#transformationsSelector) {
+        this.#transformationsSelector.destroy();
+        this.#transformationsSelector = null;
+      }
+
+      if (this.#combatPowersSelector) {
+        this.#combatPowersSelector.destroy();
+        this.#combatPowersSelector = null;
+      }
+
+      if (this.#actionCardsSelector) {
+        this.#actionCardsSelector.destroy();
+        this.#actionCardsSelector = null;
+      }
     } catch (error) {
       Logger.warn("Error cleaning up item selectors", error, "ITEM_SHEET");
     }
@@ -781,11 +952,6 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
    */
   async _onActionItemSelected(droppedItem) {
     try {
-      Logger.debug("Action item selected", {
-        itemName: droppedItem.name,
-        itemType: droppedItem.type,
-        itemUuid: droppedItem.uuid
-      }, "ITEM_SHEET");
 
       // Set the embedded item (same as drag-and-drop)
       await this.item.setEmbeddedItem(droppedItem);
@@ -793,13 +959,19 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
       // Re-render the sheet to show the new item
       this.render();
 
-      ui.notifications.info(game.i18n.format("EVENTIDE_RP_SYSTEM.Forms.ActionItemSelector.ItemSelected", {
-        itemName: droppedItem.name
-      }));
-
+      ui.notifications.info(
+        game.i18n.format(
+          "EVENTIDE_RP_SYSTEM.Forms.ActionItemSelector.ItemSelected",
+          {
+            itemName: droppedItem.name,
+          },
+        ),
+      );
     } catch (error) {
       Logger.error("Failed to set action item", error, "ITEM_SHEET");
-      ui.notifications.error(game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.FailedToSetActionItem"));
+      ui.notifications.error(
+        game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.FailedToSetActionItem"),
+      );
     }
   }
 
@@ -810,11 +982,6 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
    */
   async _onEffectSelected(droppedItem) {
     try {
-      Logger.debug("Effect selected", {
-        itemName: droppedItem.name,
-        itemType: droppedItem.type,
-        itemUuid: droppedItem.uuid
-      }, "ITEM_SHEET");
 
       // Add the embedded effect (same as drag-and-drop)
       await this.item.addEmbeddedEffect(droppedItem);
@@ -822,13 +989,209 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
       // Re-render the sheet to show the new effect
       this.render();
 
-      ui.notifications.info(game.i18n.format("EVENTIDE_RP_SYSTEM.Forms.EffectsSelector.ItemAdded", {
-        itemName: droppedItem.name
-      }));
-
+      ui.notifications.info(
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Forms.EffectsSelector.ItemAdded", {
+          itemName: droppedItem.name,
+        }),
+      );
     } catch (error) {
       Logger.error("Failed to add effect", error, "ITEM_SHEET");
-      ui.notifications.error(game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.FailedToAddEffect"));
+      ui.notifications.error(
+        game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.FailedToAddEffect"),
+      );
+    }
+  }
+
+  /**
+   * Handle combat power selection from the combat powers selector
+   * @param {Item} droppedItem - The combat power item that was selected
+   * @returns {Promise<void>}
+   * @protected
+   */
+  async _onCombatPowerSelected(droppedItem) {
+    try {
+      // Add the combat power to the transformation (same as drag-and-drop)
+      await this.item.system.addCombatPower(droppedItem);
+
+      // Re-render the sheet to show the new combat power
+      this.render();
+
+      ui.notifications.info(
+        game.i18n.format(
+          "EVENTIDE_RP_SYSTEM.Forms.CombatPowersSelector.ItemAdded",
+          {
+            itemName: droppedItem.name,
+          },
+        ),
+      );
+    } catch (error) {
+      Logger.error("Failed to add combat power", error, "ITEM_SHEET");
+      ui.notifications.error(
+        game.i18n.localize(
+          "EVENTIDE_RP_SYSTEM.Errors.FailedToAddCombatPower",
+        ),
+      );
+    }
+  }
+
+  /**
+   * Handle action card selection from the action cards selector
+   * @param {Item} droppedItem - The action card item that was selected
+   * @returns {Promise<void>}
+   * @protected
+   */
+  async _onActionCardSelected(droppedItem) {
+    try {
+      // Add the action card to the transformation (same as drag-and-drop)
+      await this.item.system.addActionCard(droppedItem);
+
+      // Re-render the sheet to show the new action card
+      this.render();
+
+      ui.notifications.info(
+        game.i18n.format(
+          "EVENTIDE_RP_SYSTEM.Forms.ActionCardsSelector.ItemAdded",
+          {
+            itemName: droppedItem.name,
+          },
+        ),
+      );
+    } catch (error) {
+      Logger.error("Failed to add action card", error, "ITEM_SHEET");
+      ui.notifications.error(
+        game.i18n.localize(
+          "EVENTIDE_RP_SYSTEM.Errors.FailedToAddActionCard",
+        ),
+      );
+    }
+  }
+
+  /**
+   * Handle transformation selection from the transformations selector
+   * @param {Item} droppedItem - The transformation item that was selected
+   * @returns {Promise<void>}
+   * @protected
+   */
+  async _onTransformationSelected(droppedItem) {
+    try {
+
+      // Add the embedded transformation (same as drag-and-drop)
+      await this.item.addEmbeddedTransformation(droppedItem);
+
+      // Re-render the sheet to show the new transformation
+      this.render();
+
+      ui.notifications.info(
+        game.i18n.format(
+          "EVENTIDE_RP_SYSTEM.Forms.TransformationsSelector.ItemAdded",
+          {
+            itemName: droppedItem.name,
+          },
+        ),
+      );
+    } catch (error) {
+      Logger.error("Failed to add transformation", error, "ITEM_SHEET");
+      ui.notifications.error(
+        game.i18n.localize(
+          "EVENTIDE_RP_SYSTEM.Errors.FailedToAddTransformation",
+        ),
+      );
+    }
+  }
+
+  /**
+   * Export embedded combat powers to the custom combat powers compendium
+   * @param {Event} _event - The triggering event
+   * @param {HTMLElement} _target - The clicked element
+   * @returns {Promise<void>}
+   * @protected
+   */
+  async _exportEmbeddedCombatPowers(_event, _target) {
+    try {
+      const results = await EmbeddedItemExporter.exportEmbeddedCombatPowers(this.item);
+      Logger.debug("Combat powers export completed", results, "ITEM_SHEET");
+    } catch (error) {
+      Logger.error("Failed to export embedded combat powers", error, "ITEM_SHEET");
+    }
+  }
+
+  /**
+   * Export embedded action cards to the custom action cards compendium
+   * @param {Event} _event - The triggering event
+   * @param {HTMLElement} _target - The clicked element
+   * @returns {Promise<void>}
+   * @protected
+   */
+  async _exportEmbeddedActionCards(_event, _target) {
+    try {
+      const results = await EmbeddedItemExporter.exportEmbeddedActionCards(this.item);
+      Logger.debug("Action cards export completed", results, "ITEM_SHEET");
+    } catch (error) {
+      Logger.error("Failed to export embedded action cards", error, "ITEM_SHEET");
+    }
+  }
+
+  /**
+   * Export embedded action item to the appropriate compendium
+   * @param {Event} _event - The triggering event
+   * @param {HTMLElement} _target - The clicked element
+   * @returns {Promise<void>}
+   * @protected
+   */
+  async _exportEmbeddedActionItem(_event, _target) {
+    try {
+      const results = await EmbeddedItemExporter.exportEmbeddedActionItem(this.item);
+      Logger.debug("Action item export completed", results, "ITEM_SHEET");
+    } catch (error) {
+      Logger.error("Failed to export embedded action item", error, "ITEM_SHEET");
+    }
+  }
+
+  /**
+   * Export embedded effects, sorting them by type
+   * @param {Event} _event - The triggering event
+   * @param {HTMLElement} _target - The clicked element
+   * @returns {Promise<void>}
+   * @protected
+   */
+  async _exportEmbeddedEffects(_event, _target) {
+    try {
+      const results = await EmbeddedItemExporter.exportEmbeddedEffects(this.item);
+      Logger.debug("Effects export completed", results, "ITEM_SHEET");
+    } catch (error) {
+      Logger.error("Failed to export embedded effects", error, "ITEM_SHEET");
+    }
+  }
+
+  /**
+   * Export embedded transformations to the custom transformations compendium
+   * @param {Event} _event - The triggering event
+   * @param {HTMLElement} _target - The clicked element
+   * @returns {Promise<void>}
+   * @protected
+   */
+  async _exportEmbeddedTransformations(_event, _target) {
+    try {
+      const results = await EmbeddedItemExporter.exportEmbeddedTransformations(this.item);
+      Logger.debug("Transformations export completed", results, "ITEM_SHEET");
+    } catch (error) {
+      Logger.error("Failed to export embedded transformations", error, "ITEM_SHEET");
+    }
+  }
+
+  /**
+   * Export all embedded items, sorting them into appropriate compendiums
+   * @param {Event} _event - The triggering event
+   * @param {HTMLElement} _target - The clicked element
+   * @returns {Promise<void>}
+   * @protected
+   */
+  async _exportAllEmbeddedItems(_event, _target) {
+    try {
+      const results = await EmbeddedItemExporter.exportAllEmbeddedItems(this.item);
+      Logger.debug("All embedded items export completed", results, "ITEM_SHEET");
+    } catch (error) {
+      Logger.error("Failed to export all embedded items", error, "ITEM_SHEET");
     }
   }
 
@@ -907,6 +1270,61 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
   #formChanged; // Flag to track if form has been changed
   #actionItemSelector; // Item selector for action items
   #effectsSelector; // Item selector for effects
+  #transformationsSelector; // Item selector for transformations
+  #combatPowersSelector; // Item selector for combat powers (transformations)
+  #actionCardsSelector; // Item selector for action cards (transformations)
+
+  /**
+   * Override render method to preserve scroll position using the working pattern from creator-application.mjs
+   * @param {boolean} force - Force a re-render
+   * @param {Object} options - Render options
+   * @returns {Promise<this>} The rendered application
+   * @override
+   */
+  async render(force, options = {}) {
+    // Find the actual scrolling element by checking what has scrollTop > 0
+    let actualScrollingElement = null;
+    let oldPosition = 0;
+
+    if (this.element) {
+      // Check all elements for scrollTop > 0
+      const allElements = Array.from(this.element.querySelectorAll("*"));
+      const scrollableElements = allElements.filter((el) => el.scrollTop > 0);
+
+      if (scrollableElements.length > 0) {
+        actualScrollingElement = scrollableElements[0];
+        oldPosition = actualScrollingElement.scrollTop;
+      }
+    }
+
+    // Call parent render
+    const result = await super.render(force, options);
+
+    // Restore scroll position
+    if (actualScrollingElement && oldPosition > 0) {
+      // Find the element again after render
+      let restoreElement = null;
+      if (actualScrollingElement.className) {
+        restoreElement = this.element?.querySelector(
+          `.${actualScrollingElement.className.split(" ").join(".")}`,
+        );
+      }
+      if (!restoreElement && actualScrollingElement.tagName) {
+        const selector =
+          actualScrollingElement.tagName.toLowerCase() +
+          (actualScrollingElement.className
+            ? `.${actualScrollingElement.className.split(" ").join(".")}`
+            : "");
+        restoreElement = this.element?.querySelector(selector);
+      }
+
+      if (restoreElement) {
+        restoreElement.scrollTop = oldPosition;
+      }
+    }
+
+    return result;
+  }
 
   /**
    * Creates drag-and-drop workflow handlers for this Application.

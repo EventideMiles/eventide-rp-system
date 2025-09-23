@@ -18,6 +18,10 @@ const sourceDir = path.join(__dirname, "lang", "src");
 const outputDir = path.join(__dirname, "lang");
 
 // Function to deep merge objects
+/**
+ * @param {{ [x: string]: any; }} target
+ * @param {{ [x: string]: any; }} source
+ */
 function deepMerge(target, source) {
   const output = { ...target };
 
@@ -39,6 +43,9 @@ function deepMerge(target, source) {
 }
 
 // Function to build a language file for a specific language
+/**
+ * @param {string} langCode
+ */
 function buildLanguageFile(langCode) {
   console.log(`Building language file for ${langCode}...`);
 
@@ -112,7 +119,7 @@ function buildAllLanguageFiles() {
     }
 
     console.log(
-      `Successfully built ${successCount} out of ${langDirs.length} language files.`
+      `Successfully built ${successCount} out of ${langDirs.length} language files.`,
     );
   } catch (error) {
     console.error("Error building language files:", error);

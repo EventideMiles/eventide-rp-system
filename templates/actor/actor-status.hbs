@@ -37,7 +37,7 @@
             <i class="fas fa-skull-crossbones"></i>
           </div>
           <div class="eventide-cursed-card__info">
-            <span class="eventide-cursed-card__label">Cursed Items</span>
+            <span class="eventide-cursed-card__label">{{localize "EVENTIDE_RP_SYSTEM.UI.CursedItems"}}</span>
             <span class="eventide-cursed-card__details">Equipped Cursed Gear</span>
           </div>
           <div class="eventide-cursed-card__warning">
@@ -55,7 +55,7 @@
             <i class="fas fa-magic"></i>
           </div>
           <div class="eventide-effects-card__info">
-            <span class="eventide-effects-card__label">Status Effects</span>
+            <span class="eventide-effects-card__label">{{localize "EVENTIDE_RP_SYSTEM.UI.StatusEffects"}}</span>
             <span class="eventide-effects-card__details">{{statuses.length}} {{#if (eq statuses.length 1)}}Effect{{else}}Effects{{/if}} Active</span>
           </div>
           <div class="eventide-effects-card__indicator">
@@ -73,7 +73,7 @@
             <i class="fas fa-heart-broken"></i>
           </div>
           <div class="eventide-health-card__info">
-            <span class="eventide-health-card__label">Critical Health</span>
+            <span class="eventide-health-card__label">{{localize "EVENTIDE_RP_SYSTEM.UI.CriticalHealth"}}</span>
             <span class="eventide-health-card__details">{{system.resolve.value}}/{{system.resolve.max}} Resolve</span>
           </div>
           <div class="eventide-health-card__warning">

@@ -45,16 +45,17 @@
 
   // The zoomed image itself
   &__image {
+    // Default fallback sizing (overridden by JavaScript for dynamic sizing)
     max-width: 100%;
     max-height: 100%;
     object-fit: contain;
     border-radius: tokens.$sheet-radius-lg;
-    box-shadow: 
+    box-shadow:
       0 tokens.$sheet-shadow-blur-xxl tokens.$sheet-shadow-blur-xxl rgba(0, 0, 0, 0.5),
       0 0 tokens.$sheet-glow-blur-md rgba(255, 255, 255, 0.1);
     transform: scale(0.8);
     transition: transform tokens.$sheet-transition-medium ease;
-    
+
     // Animate to full scale when overlay is visible
     .erps-image-zoom__overlay--visible & {
       transform: scale(1);

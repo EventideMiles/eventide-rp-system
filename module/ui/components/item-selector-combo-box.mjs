@@ -1,4 +1,5 @@
 import { ItemSourceCollector } from "../../helpers/item-source-collector.mjs";
+import { Logger } from "../../services/logger.mjs";
 
 /**
  * Reusable combo box component for selecting items from various sources
@@ -47,12 +48,12 @@ export class ItemSelectorComboBox {
    * Initialize the combo box component
    */
   async init() {
-    console.log("ItemSelectorComboBox: Initializing...", {
+    Logger.debug("Initializing item selector combo box", {
       container: this.container,
       containerType: this.container?.constructor?.name,
       itemTypes: this.itemTypes,
       selectorType: this.selectorType
-    });
+    }, "ITEM_SELECTOR");
 
     if (!this.container) {
       console.error("ItemSelectorComboBox: No container provided");
@@ -80,15 +81,6 @@ export class ItemSelectorComboBox {
     this.empty = this.element?.querySelector(".erps-item-selector-combo-box__empty");
     this.dropdownArrow = this.element?.querySelector(".erps-item-selector-combo-box__dropdown-arrow");
 
-    console.log("ItemSelectorComboBox: DOM elements found:", {
-      element: !!this.element,
-      input: !!this.input,
-      dropdown: !!this.dropdown,
-      list: !!this.list,
-      loading: !!this.loading,
-      empty: !!this.empty,
-      dropdownArrow: !!this.dropdownArrow
-    });
 
     if (!this.element || !this.input) {
       console.error("ItemSelectorComboBox: Required DOM elements not found");
@@ -101,7 +93,6 @@ export class ItemSelectorComboBox {
     // Load items initially
     await this.loadItems();
 
-    console.log("ItemSelectorComboBox: Initialization complete");
   }
 
   /**
@@ -129,13 +120,9 @@ export class ItemSelectorComboBox {
 
     // List item clicks (delegated with capture to ensure we get it first)
     this.boundListClick = (event) => {
-      console.log("ItemSelectorComboBox: List click event:", event.target);
       const item = event.target.closest(".erps-item-selector-combo-box__item");
       if (item) {
-        console.log("ItemSelectorComboBox: Found item element:", item);
         this.onItemClick(event, item);
-      } else {
-        console.log("ItemSelectorComboBox: No item element found for click");
       }
     };
     this.list.addEventListener("click", this.boundListClick, true); // Use capture phase
@@ -157,10 +144,10 @@ export class ItemSelectorComboBox {
    * Load all available items based on item types
    */
   async loadItems() {
-    console.log("ItemSelectorComboBox: Starting to load items...", {
+    Logger.debug("Starting to load items", {
       itemTypes: this.itemTypes,
       selectorType: this.selectorType
-    });
+    }, "ITEM_SELECTOR");
 
     this.showLoading(true);
 
@@ -169,28 +156,16 @@ export class ItemSelectorComboBox {
 
       // For action items, filter out items with roll type "none"
       if (this.selectorType === "action-item") {
-        console.log("ItemSelectorComboBox: Filtering action items by roll type...");
         this.allItems = await ItemSourceCollector.filterActionItemsByRollType(this.allItems);
-        console.log(`ItemSelectorComboBox: After roll type filtering: ${this.allItems.length} items remain`);
       }
 
       this.filteredItems = [...this.allItems];
 
-      console.log("ItemSelectorComboBox: Items loaded successfully", {
-        totalItems: this.allItems.length,
-        selectorType: this.selectorType,
-        sampleItems: this.allItems.slice(0, 3).map(item => ({
-          name: item.name,
-          type: item.type,
-          uuid: item.uuid,
-          id: item.id
-        }))
-      });
 
       this.renderItems();
     } catch (error) {
       console.error("ItemSelectorComboBox: Failed to load items:", error);
-      ui.notifications.error("Failed to load available items.");
+      ui.notifications.error(game.i18n.localize("EVENTIDE_RP_SYSTEM.UI.FailedToLoadItems"));
     } finally {
       this.showLoading(false);
     }
@@ -275,7 +250,6 @@ export class ItemSelectorComboBox {
    * Show or hide the dropdown
    */
   setDropdownOpen(open) {
-    console.log("ItemSelectorComboBox: Setting dropdown open:", open, "current items:", this.filteredItems.length);
     this.isOpen = open;
     this.dropdown.setAttribute("aria-hidden", !open);
     this.input.setAttribute("aria-expanded", open);
@@ -307,19 +281,16 @@ export class ItemSelectorComboBox {
    * Select an item by index
    */
   async selectItem(index) {
-    console.log("ItemSelectorComboBox: selectItem called with index:", index);
-    console.log("ItemSelectorComboBox: filteredItems.length:", this.filteredItems.length);
 
     if (index < 0 || index >= this.filteredItems.length) {
-      console.warn("ItemSelectorComboBox: Invalid index:", index);
+      Logger.warn("Invalid index provided for item selection", { index, maxIndex: this.filteredItems.length - 1 }, "ITEM_SELECTOR");
       return;
     }
 
     const selectedItem = this.filteredItems[index];
-    console.log("ItemSelectorComboBox: selectedItem:", selectedItem);
 
     if (!selectedItem) {
-      console.error("ItemSelectorComboBox: No item found at index:", index);
+      Logger.error("No item found at index", { index }, "ITEM_SELECTOR");
       return;
     }
 
@@ -331,7 +302,6 @@ export class ItemSelectorComboBox {
    * Select an item by UUID and pass the Foundry document to callback
    */
   async selectItemByUuid(uuid) {
-    console.log("ItemSelectorComboBox: selectItemByUuid called with uuid:", uuid);
 
     if (!uuid) {
       console.error("ItemSelectorComboBox: No UUID provided");
@@ -342,11 +312,10 @@ export class ItemSelectorComboBox {
       // Get the actual Foundry document like drag-and-drop does
       const itemDoc = await fromUuid(uuid);
       if (!itemDoc) {
-        console.error("ItemSelectorComboBox: No document found for UUID:", uuid);
+        Logger.error("No document found for UUID", { uuid }, "ITEM_SELECTOR");
         return;
       }
 
-      console.log("ItemSelectorComboBox: Retrieved document:", itemDoc);
 
       // Pass the Foundry document to the callback (same as drag-and-drop)
       this.onSelect(itemDoc);
@@ -354,7 +323,7 @@ export class ItemSelectorComboBox {
       this.input.blur();
 
     } catch (error) {
-      console.error("ItemSelectorComboBox: Failed to retrieve document:", error);
+      Logger.error("Failed to retrieve document", { error }, "ITEM_SELECTOR");
     }
   }
 
@@ -378,13 +347,11 @@ export class ItemSelectorComboBox {
 
   // Event Handlers
 
-  onInputFocus(event) {
-    console.log("ItemSelectorComboBox: Input focused");
+  onInputFocus(_event) {
     this.setDropdownOpen(true);
   }
 
-  onInputBlur(event) {
-    console.log("ItemSelectorComboBox: Input blurred");
+  onInputBlur(_event) {
     // Clear any existing blur timeout
     if (this.blurTimeout) {
       clearTimeout(this.blurTimeout);
@@ -394,15 +361,13 @@ export class ItemSelectorComboBox {
     this.blurTimeout = setTimeout(() => {
       // Check if any element within the combo box has focus
       if (!this.element.contains(document.activeElement) && this.isOpen) {
-        console.log("ItemSelectorComboBox: Closing dropdown due to blur");
         this.setDropdownOpen(false);
       }
     }, 300);
   }
 
-  onInputChange(event) {
+  onInputChange(_event) {
     const searchText = this.input.value;
-    console.log("ItemSelectorComboBox: Input changed:", searchText);
 
     // Clear previous timeout
     if (this.searchTimeout) {
@@ -411,7 +376,6 @@ export class ItemSelectorComboBox {
 
     // Debounce the search
     this.searchTimeout = setTimeout(() => {
-      console.log("ItemSelectorComboBox: Filtering items for:", searchText);
       this.filterItems(searchText);
       if (!this.isOpen) {
         this.setDropdownOpen(true);
@@ -420,16 +384,13 @@ export class ItemSelectorComboBox {
   }
 
   onInputKeydown(event) {
-    console.log("ItemSelectorComboBox: Key pressed:", event.key);
     switch (event.key) {
       case "ArrowDown":
         event.preventDefault();
-        console.log("ItemSelectorComboBox: ArrowDown - isOpen:", this.isOpen, "filteredItems:", this.filteredItems.length);
         if (!this.isOpen) {
           this.setDropdownOpen(true);
         } else {
           this.selectedIndex = Math.min(this.selectedIndex + 1, this.filteredItems.length - 1);
-          console.log("ItemSelectorComboBox: Selected index:", this.selectedIndex);
           this.updateSelection();
         }
         break;
@@ -471,9 +432,6 @@ export class ItemSelectorComboBox {
     event.preventDefault();
     event.stopPropagation();
 
-    console.log("ItemSelectorComboBox: onItemClick triggered");
-    console.log("ItemSelectorComboBox: itemElement:", itemElement);
-    console.log("ItemSelectorComboBox: itemElement.dataset:", itemElement.dataset);
 
     // Clear any pending blur timeouts that might close the dropdown
     if (this.blurTimeout) {
@@ -481,17 +439,14 @@ export class ItemSelectorComboBox {
       this.blurTimeout = null;
     }
 
-    const index = parseInt(itemElement.dataset.index);
+    const index = parseInt(itemElement.dataset.index, 10);
     const uuid = itemElement.dataset.itemUuid;
-    console.log("ItemSelectorComboBox: parsed index:", index, "uuid:", uuid);
 
     // Try index-based selection first
     if (!isNaN(index)) {
-      console.log("ItemSelectorComboBox: Using index-based selection");
       this.selectItem(index);
     } else if (uuid) {
       // Fallback to UUID-based selection
-      console.log("ItemSelectorComboBox: Using UUID fallback");
       this.selectItemByUuid(uuid);
     } else {
       console.error("ItemSelectorComboBox: Neither index nor UUID available for selection");
@@ -499,7 +454,7 @@ export class ItemSelectorComboBox {
   }
 
   onItemHover(event, itemElement) {
-    const index = parseInt(itemElement.dataset.index);
+    const index = parseInt(itemElement.dataset.index, 10);
     this.selectedIndex = index;
     this.updateSelection();
   }
@@ -513,7 +468,6 @@ export class ItemSelectorComboBox {
     // Add a small delay to allow other event handlers to process first
     setTimeout(() => {
       if (this.isOpen) {
-        console.log("ItemSelectorComboBox: Closing dropdown due to outside click");
         this.setDropdownOpen(false);
       }
     }, 50);

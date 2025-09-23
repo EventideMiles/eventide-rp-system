@@ -141,6 +141,17 @@ export const EmbeddedItemDataMixin = (BaseClass) =>
         return;
       }
 
+      // Check if this is a transformation embedded within an action card
+      if (this._isTransformationEmbeddedInActionCard()) {
+        Logger.debug(
+          "EmbeddedItemDataMixin | Using action card-embedded transformation save",
+          { target, transformationId: this.parentItem.id },
+          "EMBEDDED_DATA",
+        );
+        await this._saveEmbeddedTransformationItemContent(target, content);
+        return;
+      }
+
       Logger.debug(
         "EmbeddedItemDataMixin | Using regular action card save",
         { target, actionCardId: this.parentItem.id },
@@ -235,6 +246,109 @@ export const EmbeddedItemDataMixin = (BaseClass) =>
         "EMBEDDED_DATA",
       );
       return false;
+    }
+
+    /**
+     * Check if the parent transformation is embedded within an action card
+     * @returns {boolean} True if the parent transformation is embedded in an action card
+     * @private
+     */
+    _isTransformationEmbeddedInActionCard() {
+      // Check if the parent item is a transformation and find an action card that contains it
+      if (this.parentItem.type !== "transformation") {
+        Logger.debug(
+          "EmbeddedItemDataMixin | Parent item is not a transformation",
+          { parentType: this.parentItem.type },
+          "EMBEDDED_DATA",
+        );
+        return false;
+      }
+
+      // Check if there's a direct parent reference to an action card
+      if (this.parentItem.parent && this.parentItem.parent.type === "actionCard") {
+        Logger.debug(
+          "EmbeddedItemDataMixin | Transformation has action card parent",
+          { actionCardId: this.parentItem.parent.id },
+          "EMBEDDED_DATA",
+        );
+        return true;
+      }
+
+      // Alternative: Check if the parent transformation has an action card context
+      // This might be set when the embedded item sheet is created from an action card
+      if (this.parentItem._actionCardParent) {
+        Logger.debug(
+          "EmbeddedItemDataMixin | Transformation has _actionCardParent",
+          { actionCardId: this.parentItem._actionCardParent.id },
+          "EMBEDDED_DATA",
+        );
+        return true;
+      }
+
+      // Check if the transformation has a custom update method (indicating it's from an action card)
+      const hasCustomUpdate = this.parentItem.update && this.parentItem.update.toString().includes('embeddedTransformations');
+      if (hasCustomUpdate) {
+        Logger.debug(
+          "EmbeddedItemDataMixin | Transformation has custom update method (action card)",
+          { transformationId: this.parentItem.id },
+          "EMBEDDED_DATA",
+        );
+        return true;
+      }
+
+      Logger.debug(
+        "EmbeddedItemDataMixin | Transformation is not embedded in action card",
+        {
+          transformationId: this.parentItem.id,
+          hasParent: !!this.parentItem.parent,
+          parentType: this.parentItem.parent?.type,
+          hasActionCardParent: !!this.parentItem._actionCardParent,
+          hasCustomUpdate
+        },
+        "EMBEDDED_DATA",
+      );
+      return false;
+    }
+
+    /**
+     * Save content for transformation items that are embedded within action cards
+     * @param {string} target - The data path to update
+     * @param {string} content - The new content
+     * @private
+     */
+    async _saveEmbeddedTransformationItemContent(target, content) {
+      // Use the transformation's enhanced update method with the fromEmbeddedItem flag
+      const itemData = foundry.utils.deepClone(
+        this.document.toObject(),
+      );
+      foundry.utils.setProperty(itemData, target, content);
+
+      try {
+        // Update the temporary document's source data first
+        this.document.updateSource(itemData);
+
+        // Use the transformation's update method with the fromEmbeddedItem flag
+        // This will prevent the transformation sheet from closing
+        await this.parentItem.update(itemData, { fromEmbeddedItem: true });
+
+        // Bring the embedded item sheet back to the front
+        this.bringToFront();
+
+        ui.notifications.info(
+          game.i18n.localize("EVENTIDE_RP_SYSTEM.Info.ItemDescriptionSaved"),
+        );
+      } catch (error) {
+        Logger.error(
+          "EmbeddedItemDataMixin | Failed to save embedded transformation item description",
+          { error, itemData },
+          "EMBEDDED_DATA",
+        );
+        ui.notifications.error(
+          game.i18n.localize(
+            "EVENTIDE_RP_SYSTEM.Errors.SaveItemDescriptionFailed",
+          ),
+        );
+      }
     }
 
     /**
@@ -405,6 +519,12 @@ export const EmbeddedItemDataMixin = (BaseClass) =>
         return;
       }
 
+      // Check if this is a transformation embedded within an action card
+      if (this._isTransformationEmbeddedInActionCard()) {
+        await this._submitEmbeddedTransformationItemForm(formData);
+        return;
+      }
+
       const itemData = foundry.utils.deepClone(
         this.parentItem.system.embeddedItem,
       );
@@ -427,6 +547,43 @@ export const EmbeddedItemDataMixin = (BaseClass) =>
           game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.SaveItemFailed"),
         );
         throw error;
+      }
+    }
+
+    /**
+     * Submit form for transformation items that are embedded within action cards
+     * @param {object} formData - The form data
+     * @private
+     */
+    async _submitEmbeddedTransformationItemForm(formData) {
+      // Use the transformation's enhanced update method with the fromEmbeddedItem flag
+      const itemData = foundry.utils.deepClone(
+        this.document.toObject(),
+      );
+      foundry.utils.mergeObject(itemData, formData);
+
+      try {
+        // Use the transformation's update method with the fromEmbeddedItem flag
+        // This will prevent the transformation sheet from closing
+        await this.parentItem.update(itemData, { fromEmbeddedItem: true });
+
+        // Update the temporary document's source data after parent update
+        this.document.updateSource(itemData);
+        this.render();
+
+        // Bring the embedded item sheet back to the front
+        this.bringToFront();
+      } catch (error) {
+        Logger.error(
+          "EmbeddedItemDataMixin | Failed to save embedded transformation item form data",
+          { error, itemData, formData },
+          "EMBEDDED_DATA",
+        );
+        ui.notifications.error(
+          game.i18n.localize(
+            "EVENTIDE_RP_SYSTEM.Errors.SaveItemFormDataFailed",
+          ),
+        );
       }
     }
 
@@ -596,6 +753,12 @@ export const EmbeddedItemDataMixin = (BaseClass) =>
         return;
       }
 
+      // Check if this is a transformation embedded within an action card
+      if (this._isTransformationEmbeddedInActionCard()) {
+        await this._updateEmbeddedTransformationItemIconTint(tintValue, firstEffect);
+        return;
+      }
+
       const itemData = foundry.utils.deepClone(
         this.parentItem.system.embeddedItem,
       );
@@ -616,6 +779,49 @@ export const EmbeddedItemDataMixin = (BaseClass) =>
       } catch (error) {
         Logger.error(
           "EmbeddedItemDataMixin | Failed to save item icon tint",
+          { error, itemData },
+          "EMBEDDED_DATA",
+        );
+        ui.notifications.error(
+          game.i18n.localize(
+            "EVENTIDE_RP_SYSTEM.Errors.SaveItemIconTintFailed",
+          ),
+        );
+      }
+    }
+
+    /**
+     * Update icon tint for transformation items that are embedded within action cards
+     * @param {string} tintValue - The new tint value
+     * @param {ActiveEffect} firstEffect - The first effect
+     * @private
+     */
+    async _updateEmbeddedTransformationItemIconTint(tintValue, firstEffect) {
+      // Use the transformation's enhanced update method with the fromEmbeddedItem flag
+      const itemData = foundry.utils.deepClone(
+        this.document.toObject(),
+      );
+
+      if (!itemData.effects) itemData.effects = [];
+      const effectIndex = itemData.effects.findIndex(
+        (e) => e._id === firstEffect.id,
+      );
+      if (effectIndex >= 0) {
+        itemData.effects[effectIndex].tint = tintValue;
+      }
+
+      try {
+        this.document.updateSource(itemData);
+
+        // Use the transformation's update method with the fromEmbeddedItem flag
+        // This will prevent the transformation sheet from closing
+        await this.parentItem.update(itemData, { fromEmbeddedItem: true });
+
+        // Bring the embedded item sheet back to the front
+        this.bringToFront();
+      } catch (error) {
+        Logger.error(
+          "EmbeddedItemDataMixin | Failed to save embedded transformation item icon tint",
           { error, itemData },
           "EMBEDDED_DATA",
         );

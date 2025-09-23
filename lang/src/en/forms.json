@@ -143,6 +143,22 @@
         "AriaLabel": "Search and select an effect",
         "ItemAdded": "Effect '{itemName}' added"
       },
+      "TransformationsSelector": {
+        "Placeholder": "Search for transformation to add...",
+        "AriaLabel": "Search and select a transformation",
+        "ItemAdded": "Transformation '{itemName}' added"
+      },
+      "CombatPowersSelector": {
+        "Placeholder": "Search for combat power to add...",
+        "AriaLabel": "Search and select a combat power",
+        "ItemAdded": "Combat power '{itemName}' added"
+      },
+      "ActionCardsSelector": {
+        "Placeholder": "Search for action card to add...",
+        "AriaLabel": "Search and select an action card",
+        "ItemAdded": "Action card '{itemName}' added"
+      },
+      "AddExisting": "Add Existing Items",
       "Placeholders": {
         "ChangeValue": "Change Value",
         "Description": "Description",

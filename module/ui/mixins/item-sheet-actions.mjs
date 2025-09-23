@@ -17,6 +17,8 @@ const FilePicker = foundry.applications.apps.FilePicker.implementation;
  */
 export const ItemSheetActionsMixin = (BaseClass) =>
   class extends BaseClass {
+
+
     /**
      * Handle changing a Document's image.
      * Reused pattern from actor sheet for consistency.
@@ -27,12 +29,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @protected
      */
     static async _onEditImage(_event, target) {
-      Logger.methodEntry("ItemSheetActionsMixin", "_onEditImage", {
-        itemName: this.item?.name,
-        itemType: this.item?.type,
-        targetDataset: target.dataset,
-      });
-
       try {
         const attr = target.dataset.edit;
         const current = foundry.utils.getProperty(this.document, attr);
@@ -51,17 +47,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
           left: this.position.left + 10,
         });
 
-        Logger.info(
-          "Image picker opened for item",
-          {
-            itemName: this.item.name,
-            currentImage: current,
-            attribute: attr,
-          },
-          "ITEM_ACTIONS",
-        );
-
-        Logger.methodExit("ItemSheetActionsMixin", "_onEditImage");
         return fp.browse();
       } catch (error) {
         Logger.error("Failed to open image picker", error, "ITEM_ACTIONS");
@@ -70,7 +55,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
             itemName: this.item?.name || "Unknown",
           }),
         );
-        Logger.methodExit("ItemSheetActionsMixin", "_onEditImage");
         throw error;
       }
     }
@@ -83,12 +67,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @protected
      */
     static async _removeCombatPower(_event, target) {
-      Logger.methodEntry("ItemSheetActionsMixin", "_removeCombatPower", {
-        itemName: this.item?.name,
-        itemType: this.item?.type,
-        powerId: target.dataset.powerId,
-      });
-
       try {
         const powerId = target.dataset.powerId;
         if (!powerId) {
@@ -97,17 +75,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
         }
 
         await this.item.system.removeCombatPower(powerId);
-
-        Logger.info(
-          "Combat power removed from transformation",
-          {
-            transformationName: this.item.name,
-            powerId,
-          },
-          "ITEM_ACTIONS",
-        );
-
-        Logger.methodExit("ItemSheetActionsMixin", "_removeCombatPower");
       } catch (error) {
         Logger.error("Failed to remove combat power", error, "ITEM_ACTIONS");
         ui.notifications.error(
@@ -118,7 +85,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
             },
           ),
         );
-        Logger.methodExit("ItemSheetActionsMixin", "_removeCombatPower");
       }
     }
 
@@ -130,12 +96,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @protected
      */
     static async _removeActionCard(_event, target) {
-      Logger.methodEntry("ItemSheetActionsMixin", "_removeActionCard", {
-        itemName: this.item?.name,
-        itemType: this.item?.type,
-        actionCardId: target.dataset.actionCardId,
-      });
-
       try {
         const actionCardId = target.dataset.actionCardId;
         if (!actionCardId) {
@@ -144,17 +104,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
         }
 
         await this.item.system.removeActionCard(actionCardId);
-
-        Logger.info(
-          "Action card removed from transformation",
-          {
-            transformationName: this.item.name,
-            actionCardId,
-          },
-          "ITEM_ACTIONS",
-        );
-
-        Logger.methodExit("ItemSheetActionsMixin", "_removeActionCard");
       } catch (error) {
         Logger.error("Failed to remove action card", error, "ITEM_ACTIONS");
         ui.notifications.error(
@@ -165,7 +114,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
             },
           ),
         );
-        Logger.methodExit("ItemSheetActionsMixin", "_removeActionCard");
       }
     }
 
@@ -177,11 +125,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @protected
      */
     static async _editEmbeddedActionCard(_event, target) {
-      Logger.methodEntry("ItemSheetActionsMixin", "_editEmbeddedActionCard", {
-        itemName: this.item?.name,
-        itemType: this.item?.type,
-      });
-
       try {
         // Find the specific action card to edit using the data-action-card-id
         const actionCardId = target.dataset.actionCardId;
@@ -207,18 +150,7 @@ export const ItemSheetActionsMixin = (BaseClass) =>
           return;
         }
 
-        Logger.info(
-          "Opening embedded action card for editing",
-          {
-            transformationName: this.item.name,
-            actionCardName: actionCard.name,
-            actionCardId: actionCard.id,
-          },
-          "ITEM_ACTIONS",
-        );
-
         actionCard.sheet.render(true);
-        Logger.methodExit("ItemSheetActionsMixin", "_editEmbeddedActionCard");
       } catch (error) {
         Logger.error("Failed to edit embedded action card", error, "ITEM_ACTIONS");
         ui.notifications.error(
@@ -229,7 +161,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
             },
           ),
         );
-        Logger.methodExit("ItemSheetActionsMixin", "_editEmbeddedActionCard");
       }
     }
 
@@ -243,14 +174,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
     static async _onDiceAdjustmentChange(_event, _target) {
       // The form submission will handle the actual update and recalculation
       // This is just a placeholder for any additional logic if needed
-      Logger.debug(
-        "Dice adjustment change detected",
-        {
-          itemName: this.item?.name,
-          itemType: this.item?.type,
-        },
-        "ITEM_ACTIONS",
-      );
     }
 
     /**
@@ -263,11 +186,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @protected
      */
     static async _viewDoc(_event, target) {
-      Logger.methodEntry("ItemSheetActionsMixin", "_viewDoc", {
-        itemName: this.item?.name,
-        itemType: this.item?.type,
-        targetDataset: target.dataset,
-      });
 
       try {
         const docRow = target.closest("li");
@@ -279,19 +197,8 @@ export const ItemSheetActionsMixin = (BaseClass) =>
           const power = embeddedPowers.find((p) => p.id === powerId);
 
           if (power) {
-            Logger.info(
-              "Opening embedded combat power sheet",
-              {
-                transformationName: this.item.name,
-                powerName: power.name,
-                powerId,
-              },
-              "ITEM_ACTIONS",
-            );
-
             // Open the sheet in read-only mode since these are temporary items
             // that can't be properly saved due to their parent relationship
-            Logger.methodExit("ItemSheetActionsMixin", "_viewDoc");
             return power.sheet.render(true, { readOnly: true });
           }
         }
@@ -300,21 +207,9 @@ export const ItemSheetActionsMixin = (BaseClass) =>
         if (docRow.dataset.effectId) {
           const effect = this.item.effects.get(docRow.dataset.effectId);
           if (effect) {
-            Logger.info(
-              "Opening effect sheet",
-              {
-                itemName: this.item.name,
-                effectName: effect.name,
-                effectId: docRow.dataset.effectId,
-              },
-              "ITEM_ACTIONS",
-            );
-
             effect.sheet.render(true);
           }
         }
-
-        Logger.methodExit("ItemSheetActionsMixin", "_viewDoc");
       } catch (error) {
         Logger.error("Failed to view document", error, "ITEM_ACTIONS");
         ui.notifications.error(
@@ -322,7 +217,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
             itemName: this.item?.name || "Unknown",
           }),
         );
-        Logger.methodExit("ItemSheetActionsMixin", "_viewDoc");
       }
     }
 
@@ -335,11 +229,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @protected
      */
     static async _deleteEffect(_event, target) {
-      Logger.methodEntry("ItemSheetActionsMixin", "_deleteEffect", {
-        itemName: this.item?.name,
-        itemType: this.item?.type,
-        targetDataset: target.dataset,
-      });
 
       try {
         const effect = this._getEffect(target);
@@ -350,17 +239,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
 
         await effect.delete();
 
-        Logger.info(
-          "Effect deleted successfully",
-          {
-            itemName: this.item.name,
-            effectName: effect.name,
-            effectId: effect.id,
-          },
-          "ITEM_ACTIONS",
-        );
-
-        Logger.methodExit("ItemSheetActionsMixin", "_deleteEffect");
       } catch (error) {
         Logger.error("Failed to delete effect", error, "ITEM_ACTIONS");
         ui.notifications.error(
@@ -368,7 +246,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
             itemName: this.item?.name || "Unknown",
           }),
         );
-        Logger.methodExit("ItemSheetActionsMixin", "_deleteEffect");
       }
     }
 
@@ -381,11 +258,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @private
      */
     static async _createEffect(_event, target) {
-      Logger.methodEntry("ItemSheetActionsMixin", "_createEffect", {
-        itemName: this.item?.name,
-        itemType: this.item?.type,
-        targetDataset: target.dataset,
-      });
 
       try {
         // Retrieve the configured document class for ActiveEffect
@@ -408,21 +280,10 @@ export const ItemSheetActionsMixin = (BaseClass) =>
         }
 
         // Finally, create the embedded document!
-        const createdEffect = await aeCls.create(effectData, {
+        await aeCls.create(effectData, {
           parent: this.item,
         });
 
-        Logger.info(
-          "Effect created successfully",
-          {
-            itemName: this.item.name,
-            effectName: createdEffect.name,
-            effectId: createdEffect.id,
-          },
-          "ITEM_ACTIONS",
-        );
-
-        Logger.methodExit("ItemSheetActionsMixin", "_createEffect");
       } catch (error) {
         Logger.error("Failed to create effect", error, "ITEM_ACTIONS");
         ui.notifications.error(
@@ -430,7 +291,98 @@ export const ItemSheetActionsMixin = (BaseClass) =>
             itemName: this.item?.name || "Unknown",
           }),
         );
-        Logger.methodExit("ItemSheetActionsMixin", "_createEffect");
+      }
+    }
+
+    /**
+     * Create a new document (like ActiveEffect) on this item
+     * This method handles document creation
+     * @param {Event} _event - The triggering event
+     * @param {HTMLElement} target - The capturing HTML element which defined a [data-action]
+     * @returns {Promise<void>}
+     * @private
+     */
+    static async _createDoc(_event, target) {
+
+      try {
+        const { documentClass } = target.dataset;
+
+        if (!documentClass) {
+          throw new Error("Document class not specified");
+        }
+
+        // Get the document class
+        const docCls = foundry.utils.getDocumentClass(documentClass);
+
+        if (!docCls) {
+          throw new Error(`Document class ${documentClass} not found`);
+        }
+
+        // Prepare the document creation data
+        const createData = {
+          name: docCls.defaultName({
+            type: target.dataset.type,
+            parent: this.item,
+          }),
+        };
+
+        // Loop through the dataset and add it to our createData
+        for (const [dataKey, value] of Object.entries(target.dataset)) {
+          // These data attributes are reserved for the action handling
+          if (["action", "documentClass"].includes(dataKey)) continue;
+          // Nested properties require dot notation in the HTML
+          foundry.utils.setProperty(createData, dataKey, value);
+        }
+
+        // Create the embedded document
+        await docCls.create(createData, {
+          parent: this.item,
+        });
+
+      } catch (error) {
+        Logger.error("Failed to create document", error, "ITEM_ACTIONS");
+        ui.notifications.error(
+          game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.DocumentCreationFailed", {
+            itemName: this.item?.name || "Unknown",
+            documentClass: target.dataset.documentClass || "Unknown",
+          }),
+        );
+      }
+    }
+
+    /**
+     * Delete a document (like ActiveEffect) from this item
+     * Routes to the appropriate specific delete method
+     * @param {Event} event - The triggering event
+     * @param {HTMLElement} target - The capturing HTML element which defined a [data-action]
+     * @returns {Promise<void>}
+     * @private
+     */
+    static async _deleteDoc(event, target) {
+
+      try {
+        const { documentClass } = target.dataset;
+
+        if (!documentClass) {
+          throw new Error("Document class not specified");
+        }
+
+        // Route to the appropriate specific delete method
+        if (documentClass === "ActiveEffect") {
+          // Call the existing deleteEffect method
+          await this._deleteEffect(event, target);
+        } else {
+          // Handle other document types if needed in the future
+          throw new Error(`Deletion of ${documentClass} not yet implemented`);
+        }
+      } catch (error) {
+        Logger.error("Failed to delete document", error, "ITEM_ACTIONS");
+        ui.notifications.error(
+          game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.DocumentDeletionFailed", {
+            itemName: this.item?.name || "Unknown",
+            documentClass: target.dataset.documentClass || "Unknown",
+          }),
+        );
       }
     }
 
@@ -443,11 +395,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @private
      */
     static async _toggleEffect(_event, target) {
-      Logger.methodEntry("ItemSheetActionsMixin", "_toggleEffect", {
-        itemName: this.item?.name,
-        itemType: this.item?.type,
-        targetDataset: target.dataset,
-      });
 
       try {
         const effect = this._getEffect(target);
@@ -458,18 +405,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
 
         await effect.update({ disabled: !effect.disabled });
 
-        Logger.info(
-          "Effect toggled successfully",
-          {
-            itemName: this.item.name,
-            effectName: effect.name,
-            effectId: effect.id,
-            newDisabledState: !effect.disabled,
-          },
-          "ITEM_ACTIONS",
-        );
-
-        Logger.methodExit("ItemSheetActionsMixin", "_toggleEffect");
       } catch (error) {
         Logger.error("Failed to toggle effect", error, "ITEM_ACTIONS");
         ui.notifications.error(
@@ -477,7 +412,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
             itemName: this.item?.name || "Unknown",
           }),
         );
-        Logger.methodExit("ItemSheetActionsMixin", "_toggleEffect");
       }
     }
 
@@ -488,10 +422,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @private
      */
     static async _clearEmbeddedItem(_event, _target) {
-      Logger.methodEntry("ItemSheetActionsMixin", "_clearEmbeddedItem", {
-        itemName: this.item?.name,
-        itemType: this.item?.type,
-      });
 
       try {
         // Get the item from the sheet instance, not from the form
@@ -531,8 +461,9 @@ export const ItemSheetActionsMixin = (BaseClass) =>
 
         await item.clearEmbeddedItem();
 
-        Logger.info("Embedded item cleared successfully", null, "ITEM_ACTIONS");
-        Logger.methodExit("ItemSheetActionsMixin", "_clearEmbeddedItem");
+        // Explicitly render the sheet to ensure it updates
+        this.render();
+
       } catch (error) {
         Logger.error("Failed to clear embedded item", error, "ITEM_ACTIONS");
         ui.notifications.error(
@@ -540,7 +471,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
             "EVENTIDE_RP_SYSTEM.Errors.ClearEmbeddedItemFailed",
           ),
         );
-        Logger.methodExit("ItemSheetActionsMixin", "_clearEmbeddedItem");
       }
     }
 
@@ -551,10 +481,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @private
      */
     static async _createNewPower(_event, _target) {
-      Logger.methodEntry("ItemSheetActionsMixin", "_createNewPower", {
-        itemName: this.item?.name,
-        itemType: this.item?.type,
-      });
 
       try {
         const item = this.item;
@@ -616,8 +542,9 @@ export const ItemSheetActionsMixin = (BaseClass) =>
 
         await item.setEmbeddedItem(tempItem);
 
-        Logger.info("New power created successfully", null, "ITEM_ACTIONS");
-        Logger.methodExit("ItemSheetActionsMixin", "_createNewPower");
+        // Explicitly render the sheet to ensure it updates
+        this.render();
+
       } catch (error) {
         Logger.error("Failed to create new power", error, "ITEM_ACTIONS");
         ui.notifications.error(
@@ -625,8 +552,8 @@ export const ItemSheetActionsMixin = (BaseClass) =>
             "EVENTIDE_RP_SYSTEM.Errors.CreateNewPowerFailed",
           ),
         );
-        Logger.methodExit("ItemSheetActionsMixin", "_createNewPower");
       }
+
     }
 
     /**
@@ -636,10 +563,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @private
      */
     static async _createNewStatus(_event, _target) {
-      Logger.methodEntry("ItemSheetActionsMixin", "_createNewStatus", {
-        itemName: this.item?.name,
-        itemType: this.item?.type,
-      });
 
       try {
         const item = this.item;
@@ -684,7 +607,7 @@ export const ItemSheetActionsMixin = (BaseClass) =>
             { currentEffectCount: currentEffects.length },
             "ITEM_ACTIONS"
           );
-          ui.notifications.warn("Please wait for the previous operation to complete");
+          ui.notifications.warn(game.i18n.localize("EVENTIDE_RP_SYSTEM.UI.PleaseWait"));
           return;
         }
 
@@ -731,8 +654,9 @@ export const ItemSheetActionsMixin = (BaseClass) =>
 
         await item.addEmbeddedEffect(tempItem);
 
-        Logger.info("New status created successfully", null, "ITEM_ACTIONS");
-        Logger.methodExit("ItemSheetActionsMixin", "_createNewStatus");
+        // Explicitly render the sheet to ensure it updates
+        this.render();
+
       } catch (error) {
         Logger.error("Failed to create new status", error, "ITEM_ACTIONS");
         ui.notifications.error(
@@ -740,8 +664,88 @@ export const ItemSheetActionsMixin = (BaseClass) =>
             "EVENTIDE_RP_SYSTEM.Errors.CreateNewStatusFailed",
           ),
         );
-        Logger.methodExit("ItemSheetActionsMixin", "_createNewStatus");
       }
+
+    }
+
+    /**
+     * Handle creating a new transformation as an embedded transformation in an action card
+     * @param {Event} _event - The click event
+     * @param {HTMLElement} _target - The target element
+     * @private
+     */
+    static async _createNewTransformation(_event, _target) {
+
+      try {
+        const item = this.item;
+        if (!item || item.type !== "actionCard") {
+          Logger.warn(
+            "Create new transformation called on non-action card",
+            { itemType: item?.type },
+            "ITEM_ACTIONS",
+          );
+          return;
+        }
+
+        // Use a more reliable permission check
+        const hasPermission =
+          item.isOwner ||
+          item.canUserModify(game.user, "update") ||
+          game.user.isGM;
+
+        if (!hasPermission) {
+          Logger.warn(
+            "User lacks permission to create new transformation",
+            {
+              itemName: item.name,
+              userId: game.user.id,
+              isOwner: item.isOwner,
+              canUserModify: item.canUserModify(game.user, "update"),
+              isGM: game.user.isGM,
+            },
+            "ITEM_ACTIONS",
+          );
+          ui.notifications.warn(
+            "You don't have permission to edit this action card's embedded items",
+          );
+          return;
+        }
+
+        // Create a new transformation with default data inherited from the action card
+        const newTransformationData = {
+          name: item.name,
+          type: "transformation",
+          img: item.img,
+          system: {
+            description: item.system.description,
+            size: 1,
+            cursed: false,
+            embeddedCombatPowers: [],
+            resolveAdjustment: 0,
+            powerAdjustment: 0,
+            tokenImage: "",
+          },
+        };
+
+        // Create a temporary Item document from the data
+        const tempItem = new CONFIG.Item.documentClass(newTransformationData, {
+          parent: null,
+        });
+
+        await item.addEmbeddedTransformation(tempItem);
+
+        // Explicitly render the sheet to ensure it updates
+        this.render();
+
+      } catch (error) {
+        Logger.error("Failed to create new transformation", error, "ITEM_ACTIONS");
+        ui.notifications.error(
+          game.i18n.localize(
+            "EVENTIDE_RP_SYSTEM.Errors.CreateNewTransformationFailed",
+          ),
+        );
+      }
+
     }
 
     /**
@@ -751,10 +755,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @private
      */
     static async _editEmbeddedItem(_event, _target) {
-      Logger.methodEntry("ItemSheetActionsMixin", "_editEmbeddedItem", {
-        itemName: this.item?.name,
-        itemType: this.item?.type,
-      });
 
       try {
         const item = this.item;
@@ -804,12 +804,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
         const sheet = new EmbeddedItemSheet(embeddedItem.toObject(), item);
         sheet.render(true);
 
-        Logger.info(
-          "Embedded item sheet opened",
-          { itemName: embeddedItem.name },
-          "ITEM_ACTIONS",
-        );
-        Logger.methodExit("ItemSheetActionsMixin", "_editEmbeddedItem");
       } catch (error) {
         Logger.error("Failed to edit embedded item", error, "ITEM_ACTIONS");
         ui.notifications.error(
@@ -817,7 +811,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
             "EVENTIDE_RP_SYSTEM.Errors.EditEmbeddedItemFailed",
           ),
         );
-        Logger.methodExit("ItemSheetActionsMixin", "_editEmbeddedItem");
       }
     }
 
@@ -828,11 +821,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @private
      */
     static async _editEmbeddedEffect(_event, target) {
-      Logger.methodEntry("ItemSheetActionsMixin", "_editEmbeddedEffect", {
-        itemName: this.item?.name,
-        itemType: this.item?.type,
-        effectId: target.dataset.effectId,
-      });
 
       try {
         const item = this.item;
@@ -899,12 +887,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
         const sheet = new EmbeddedItemSheet(effect.toObject(), item, {}, true);
         sheet.render(true);
 
-        Logger.info(
-          "Embedded effect sheet opened",
-          { effectName: effect.name },
-          "ITEM_ACTIONS",
-        );
-        Logger.methodExit("ItemSheetActionsMixin", "_editEmbeddedEffect");
       } catch (error) {
         Logger.error("Failed to edit embedded effect", error, "ITEM_ACTIONS");
         ui.notifications.error(
@@ -912,7 +894,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
             "EVENTIDE_RP_SYSTEM.Errors.EditEmbeddedEffectFailed",
           ),
         );
-        Logger.methodExit("ItemSheetActionsMixin", "_editEmbeddedEffect");
       }
     }
 
@@ -923,11 +904,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @private
      */
     static async _removeEmbeddedEffect(_event, target) {
-      Logger.methodEntry("ItemSheetActionsMixin", "_removeEmbeddedEffect", {
-        itemName: this.item?.name,
-        itemType: this.item?.type,
-        effectId: target.dataset.effectId,
-      });
 
       try {
         const item = this.item;
@@ -977,12 +953,9 @@ export const ItemSheetActionsMixin = (BaseClass) =>
 
         await item.removeEmbeddedEffect(effectId);
 
-        Logger.info(
-          "Embedded effect removed successfully",
-          { effectId },
-          "ITEM_ACTIONS",
-        );
-        Logger.methodExit("ItemSheetActionsMixin", "_removeEmbeddedEffect");
+        // Explicitly render the sheet to ensure it updates
+        this.render();
+
       } catch (error) {
         Logger.error("Failed to remove embedded effect", error, "ITEM_ACTIONS");
         ui.notifications.error(
@@ -990,8 +963,347 @@ export const ItemSheetActionsMixin = (BaseClass) =>
             "EVENTIDE_RP_SYSTEM.Errors.RemoveEmbeddedEffectFailed",
           ),
         );
-        Logger.methodExit("ItemSheetActionsMixin", "_removeEmbeddedEffect");
       }
+
+    }
+
+
+    /**
+     * Handle editing an embedded transformation on an action card
+     * @param {Event} _event - The click event
+     * @param {HTMLElement} target - The target element
+     * @private
+     */
+    static async _editEmbeddedTransformation(_event, target) {
+
+      try {
+        const item = this.item;
+        const transformationId = target.dataset.transformationId;
+
+        if (!item || item.type !== "actionCard") {
+          Logger.warn(
+            "Edit embedded transformation called on non-action card",
+            { itemType: item?.type },
+            "ITEM_ACTIONS",
+          );
+          return;
+        }
+
+        // Check if user has permission to edit this action card
+        const hasPermission =
+          item.isOwner || game.user.isGM || item.getUserLevel() >= 2;
+
+        if (!hasPermission) {
+          Logger.warn(
+            "User does not have permission to edit embedded transformations",
+            {
+              userId: game.user.id,
+              userName: game.user.name,
+              itemOwnerId: item.ownership,
+              userLevel: item.getUserLevel(),
+            },
+            "ITEM_ACTIONS",
+          );
+          ui.notifications.warn(
+            "You don't have permission to edit this action card's embedded transformations",
+          );
+          return;
+        }
+
+        if (!transformationId) {
+          Logger.warn(
+            "No transformation ID provided for editing",
+            null,
+            "ITEM_ACTIONS",
+          );
+          return;
+        }
+
+        // Get the embedded transformations
+        const embeddedTransformations = await item.getEmbeddedTransformations();
+        const transformation = embeddedTransformations.find(
+          (t) => t.id === transformationId,
+        );
+
+        if (!transformation) {
+          Logger.warn(
+            "Transformation not found in embedded transformations",
+            { transformationId },
+            "ITEM_ACTIONS",
+          );
+          return;
+        }
+
+        // Open the transformation sheet
+        await transformation.sheet.render(true);
+
+      } catch (error) {
+        Logger.error("Failed to edit embedded transformation", error, "ITEM_ACTIONS");
+        ui.notifications.error(
+          game.i18n.localize(
+            "EVENTIDE_RP_SYSTEM.Errors.EditEmbeddedTransformationFailed",
+          ),
+        );
+      }
+    }
+
+    /**
+     * Handle creating a new combat power for a transformation
+     * @param {Event} _event - The click event
+     * @param {HTMLElement} _target - The target element
+     * @private
+     */
+    static async _createNewCombatPower(_event, _target) {
+      try {
+        const item = this.item;
+        if (!item || item.type !== "transformation") {
+          Logger.warn(
+            "Create new combat power called on non-transformation",
+            { itemType: item?.type },
+            "ITEM_ACTIONS",
+          );
+          return;
+        }
+
+        // Use a more reliable permission check
+        const hasPermission =
+          item.isOwner ||
+          item.canUserModify(game.user, "update") ||
+          game.user.isGM;
+
+        if (!hasPermission) {
+          Logger.warn(
+            "User lacks permission to create new combat power",
+            {
+              itemName: item.name,
+              userId: game.user.id,
+              isOwner: item.isOwner,
+              canUserModify: item.canUserModify(game.user, "update"),
+              isGM: game.user.isGM,
+            },
+            "ITEM_ACTIONS",
+          );
+          ui.notifications.warn(
+            "You don't have permission to edit this transformation's combat powers",
+          );
+          return;
+        }
+
+        // Create a new combat power with default data inherited from the transformation
+        const newPowerData = {
+          name: `${item.name} Power`,
+          type: "combatPower",
+          img: item.img,
+          system: {
+            description: `Combat power from ${item.name} transformation`,
+            prerequisites: "",
+            targeted: true,
+            bgColor: "#8B4513",
+            textColor: "#ffffff",
+            roll: {
+              type: "roll",
+              ability: "unaugmented",
+              bonus: 0,
+              diceAdjustments: {
+                advantage: 0,
+                disadvantage: 0,
+                total: 0,
+              },
+            },
+          },
+        };
+
+        // Create a temporary Item document from the data
+        const tempItem = new CONFIG.Item.documentClass(newPowerData, {
+          parent: null,
+        });
+
+        await item.system.addCombatPower(tempItem);
+
+        // Explicitly render the sheet to ensure it updates
+        this.render();
+
+      } catch (error) {
+        Logger.error("Failed to create new combat power", error, "ITEM_ACTIONS");
+        ui.notifications.error(
+          game.i18n.localize(
+            "EVENTIDE_RP_SYSTEM.Errors.CreateNewCombatPowerFailed",
+          ),
+        );
+      }
+    }
+
+    /**
+     * Handle creating a new action card for a transformation
+     * @param {Event} _event - The click event
+     * @param {HTMLElement} _target - The target element
+     * @private
+     */
+    static async _createNewActionCard(_event, _target) {
+      try {
+        const item = this.item;
+        if (!item || item.type !== "transformation") {
+          Logger.warn(
+            "Create new action card called on non-transformation",
+            { itemType: item?.type },
+            "ITEM_ACTIONS",
+          );
+          return;
+        }
+
+        // Use a more reliable permission check
+        const hasPermission =
+          item.isOwner ||
+          item.canUserModify(game.user, "update") ||
+          game.user.isGM;
+
+        if (!hasPermission) {
+          Logger.warn(
+            "User lacks permission to create new action card",
+            {
+              itemName: item.name,
+              userId: game.user.id,
+              isOwner: item.isOwner,
+              canUserModify: item.canUserModify(game.user, "update"),
+              isGM: game.user.isGM,
+            },
+            "ITEM_ACTIONS",
+          );
+          ui.notifications.warn(
+            "You don't have permission to edit this transformation's action cards",
+          );
+          return;
+        }
+
+        // Create a new action card with default data inherited from the transformation
+        const newActionCardData = {
+          name: `${item.name} Action`,
+          type: "actionCard",
+          img: item.img,
+          system: {
+            description: `Action card from ${item.name} transformation`,
+            bgColor: "#8B4513",
+            textColor: "#ffffff",
+            mode: "attackChain",
+            attackChain: {
+              firstStat: "acro",
+              secondStat: "phys",
+              damageCondition: "never",
+              damageFormula: "1d6",
+              damageType: "damage",
+              damageThreshold: 15,
+              statusCondition: "never",
+              statusThreshold: 15,
+            },
+            embeddedItem: {},
+            embeddedStatusEffects: [],
+            embeddedTransformations: [],
+            transformationConfig: {
+              condition: "oneSuccess",
+              threshold: 15,
+            },
+            savedDamage: {
+              formula: "1d6",
+              type: "damage",
+              description: "",
+            },
+            advanceInitiative: false,
+            attemptInventoryReduction: false,
+            repetitions: "1",
+            repeatToHit: false,
+            damageApplication: false,
+            statusPerSuccess: false,
+            timingOverride: 0.0,
+            costOnRepetition: false,
+          },
+        };
+
+        // Create a temporary Item document from the data
+        const tempItem = new CONFIG.Item.documentClass(newActionCardData, {
+          parent: null,
+        });
+
+        await item.system.addActionCard(tempItem);
+
+        // Explicitly render the sheet to ensure it updates
+        this.render();
+
+      } catch (error) {
+        Logger.error("Failed to create new action card", error, "ITEM_ACTIONS");
+        ui.notifications.error(
+          game.i18n.localize(
+            "EVENTIDE_RP_SYSTEM.Errors.CreateNewActionCardFailed",
+          ),
+        );
+      }
+    }
+
+    /**
+     * Handle removing an embedded transformation from an action card
+     * @param {Event} _event - The click event
+     * @param {HTMLElement} target - The target element
+     * @private
+     */
+    static async _removeEmbeddedTransformation(_event, target) {
+
+      try {
+        const item = this.item;
+        const transformationId = target.dataset.transformationId;
+
+        if (!item || item.type !== "actionCard") {
+          Logger.warn(
+            "Remove embedded transformation called on non-action card",
+            { itemType: item?.type },
+            "ITEM_ACTIONS",
+          );
+          return;
+        }
+
+        // Check if user has permission to edit this action card
+        const hasPermission =
+          item.isOwner || game.user.isGM || item.getUserLevel() >= 2;
+
+        if (!hasPermission) {
+          Logger.warn(
+            "User does not have permission to remove embedded transformations",
+            {
+              userId: game.user.id,
+              userName: game.user.name,
+              itemOwnerId: item.ownership,
+              userLevel: item.getUserLevel(),
+            },
+            "ITEM_ACTIONS",
+          );
+          ui.notifications.warn(
+            "You don't have permission to edit this action card's embedded transformations",
+          );
+          return;
+        }
+
+        if (!transformationId) {
+          Logger.warn(
+            "No transformation ID provided for removal",
+            null,
+            "ITEM_ACTIONS",
+          );
+          return;
+        }
+
+
+        await item.removeEmbeddedTransformation(transformationId);
+
+        // Explicitly render the sheet to ensure it updates
+        this.render();
+
+      } catch (error) {
+        Logger.error("Failed to remove embedded transformation", error, "ITEM_ACTIONS");
+        ui.notifications.error(
+          game.i18n.localize(
+            "EVENTIDE_RP_SYSTEM.Errors.RemoveEmbeddedTransformationFailed",
+          ),
+        );
+      }
+
     }
 
     /**

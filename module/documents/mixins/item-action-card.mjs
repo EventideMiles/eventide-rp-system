@@ -26,12 +26,6 @@ export function ItemActionCardMixin(Base) {
         );
       }
 
-      Logger.methodEntry("ItemActionCardMixin", "setEmbeddedItem", {
-        itemName: item?.name,
-        itemType: item?.type,
-        actionCardName: this.name,
-      });
-
       try {
         const supportedTypes = ["combatPower", "gear", "feature"];
         if (!supportedTypes.includes(item.type)) {
@@ -56,14 +50,6 @@ export function ItemActionCardMixin(Base) {
         if (rollType === "none" || !rollType) {
           // Keep "none" type but mark it for special handling (automatic two successes)
           sanitizedRollType = "none";
-          Logger.info(
-            `Item "${item.name}" has roll type "none" - will be treated as automatic two successes in action card execution`,
-            {
-              originalType: rollType,
-              specialHandling: "automaticTwoSuccesses",
-            },
-            "ACTION_CARD",
-          );
         } else if (!["roll", "flat", "none"].includes(rollType)) {
           // Default to "roll" for unsupported roll types
           sanitizedRollType = "roll";
@@ -111,49 +97,25 @@ export function ItemActionCardMixin(Base) {
             diceAdjustments: {
               advantage: 0,
               disadvantage: 0,
-              total: 0
+              total: 0,
             },
             requiresTarget: sanitizedRollType !== "none", // "none" types don't need targets
           };
-          Logger.debug(
-            "Created roll configuration for embedded item",
-            { itemName: item.name, rollType: sanitizedRollType },
-            "ACTION_CARD",
-          );
         } else {
           // Preserve all existing roll properties, only update type and requiresTarget
           itemData.system.roll = {
             ...itemData.system.roll, // Preserve all existing properties
             type: sanitizedRollType,
-            requiresTarget: sanitizedRollType !== "none" // "none" types don't need targets
+            requiresTarget: sanitizedRollType !== "none", // "none" types don't need targets
           };
-          Logger.debug(
-            "Preserved roll configuration for embedded item",
-            {
-              itemName: item.name,
-              originalType: rollType,
-              sanitizedType: sanitizedRollType,
-              preservedProperties: Object.keys(itemData.system.roll),
-              requiresTarget: sanitizedRollType !== "none",
-            },
-            "ACTION_CARD",
-          );
         }
 
         // Update the document
         await this.update({ "system.embeddedItem": itemData });
 
-        Logger.info(
-          `Successfully embedded ${item.type} "${item.name}" in action card "${this.name}"`,
-          { itemId: itemData._id },
-          "ACTION_CARD",
-        );
-
-        Logger.methodExit("ItemActionCardMixin", "setEmbeddedItem", this);
         return this;
       } catch (error) {
         Logger.error("Failed to set embedded item", error, "ACTION_CARD");
-        Logger.methodExit("ItemActionCardMixin", "setEmbeddedItem", null);
         throw error;
       }
     }
@@ -172,24 +134,11 @@ export function ItemActionCardMixin(Base) {
         );
       }
 
-      Logger.methodEntry("ItemActionCardMixin", "clearEmbeddedItem", {
-        actionCardName: this.name,
-      });
-
       try {
         await this.update({ "system.embeddedItem": null });
-
-        Logger.info(
-          `Cleared embedded item from action card "${this.name}"`,
-          null,
-          "ACTION_CARD",
-        );
-
-        Logger.methodExit("ItemActionCardMixin", "clearEmbeddedItem", this);
         return this;
       } catch (error) {
         Logger.error("Failed to clear embedded item", error, "ACTION_CARD");
-        Logger.methodExit("ItemActionCardMixin", "clearEmbeddedItem", null);
         throw error;
       }
     }
@@ -210,20 +159,12 @@ export function ItemActionCardMixin(Base) {
 
       const { executionContext = false } = options;
 
-      Logger.methodEntry("ItemActionCardMixin", "getEmbeddedItem", {
-        actionCardName: this.name,
-        hasEmbeddedItem: !!this.system.embeddedItem,
-        executionContext,
-      });
-
       try {
         if (
           !this.system.embeddedItem ||
           this.system.embeddedItem === null ||
           Object.keys(this.system.embeddedItem).length === 0
         ) {
-          Logger.debug("No embedded item found", null, "ACTION_CARD");
-          Logger.methodExit("ItemActionCardMixin", "getEmbeddedItem", null);
           return null;
         }
 
@@ -231,28 +172,22 @@ export function ItemActionCardMixin(Base) {
 
         // Check if we're in a repetition context and should apply cost control
         let embeddedItemData = this.system.embeddedItem;
-        if (this._currentRepetitionContext && 
-            !this._currentRepetitionContext.shouldApplyCost &&
-            embeddedItemData.system && 
-            embeddedItemData.system.cost !== undefined) {
+        if (
+          this._currentRepetitionContext &&
+          !this._currentRepetitionContext.shouldApplyCost &&
+          embeddedItemData.system &&
+          embeddedItemData.system.cost !== undefined
+        ) {
           // Create a modified copy with zero cost for this execution
           embeddedItemData = foundry.utils.deepClone(this.system.embeddedItem);
           embeddedItemData.system.cost = 0;
-          Logger.debug(
-            `Using zero-cost embedded item for repetition ${this._currentRepetitionContext.repetitionIndex + 1}`,
-            { actionCardName: this.name, originalCost: this.system.embeddedItem.system.cost },
-            "ACTION_CARD",
-          );
         }
 
         // Use the action card's actor as the parent, or null if unowned
         const actor = actionCard?.isOwned ? actionCard.parent : null;
-        const tempItem = new CONFIG.Item.documentClass(
-          embeddedItemData,
-          {
-            parent: actor,
-          },
-        );
+        const tempItem = new CONFIG.Item.documentClass(embeddedItemData, {
+          parent: actor,
+        });
 
         // Initialize effects collection if it doesn't exist
         if (!tempItem.effects) {
@@ -283,8 +218,6 @@ export function ItemActionCardMixin(Base) {
 
         // Override the update method to persist changes back to the action card
         tempItem.update = async (data, options = {}) => {
-          Logger.debug("Updating embedded item", { data }, "ACTION_CARD");
-
           // Get the current embedded item data
           const currentItemData = foundry.utils.deepClone(
             this.system.embeddedItem,
@@ -298,9 +231,12 @@ export function ItemActionCardMixin(Base) {
           );
 
           // Persist the changes to the action card
-          await actionCard.update({
-            "system.embeddedItem": updatedItemData,
-          }, options);
+          await actionCard.update(
+            {
+              "system.embeddedItem": updatedItemData,
+            },
+            options,
+          );
 
           // Update the temporary item's source data
           tempItem.updateSource(updatedItemData);
@@ -323,13 +259,19 @@ export function ItemActionCardMixin(Base) {
         };
 
         // Override updateEmbeddedDocuments to also respect the fromEmbeddedItem flag
-        tempItem.updateEmbeddedDocuments = async (embeddedName, updates, options = {}) => {
-          Logger.debug("Updating embedded documents", { embeddedName, updates, options }, "ACTION_CARD");
-
+        tempItem.updateEmbeddedDocuments = async (
+          embeddedName,
+          updates,
+          options = {},
+        ) => {
           // Use the standard updateEmbeddedDocuments for the actual update
-          const result = await CONFIG.Item.documentClass.prototype.updateEmbeddedDocuments.call(
-            tempItem, embeddedName, updates, options
-          );
+          const result =
+            await CONFIG.Item.documentClass.prototype.updateEmbeddedDocuments.call(
+              tempItem,
+              embeddedName,
+              updates,
+              options,
+            );
 
           // Handle sheet closure based on fromEmbeddedItem flag
           if (!options.fromEmbeddedItem) {
@@ -351,17 +293,6 @@ export function ItemActionCardMixin(Base) {
         // Delegate handleBypass method from data model to item document if it exists
         if (typeof tempItem.system.handleBypass === "function") {
           tempItem.handleBypass = async (popupConfig, options) => {
-            Logger.debug(
-              "Delegating handleBypass to data model",
-              {
-                itemType: tempItem.type,
-                itemName: tempItem.name,
-                hasSystemHandleBypass:
-                  typeof tempItem.system.handleBypass === "function",
-              },
-              "ACTION_CARD",
-            );
-
             // Call the data model method with the item document as context
             // This ensures the method has access to this.actor, this.name, this.id, etc.
             return await tempItem.system.handleBypass.call(
@@ -370,29 +301,11 @@ export function ItemActionCardMixin(Base) {
               options,
             );
           };
-
-          Logger.debug(
-            "Added handleBypass delegation to embedded item",
-            {
-              itemType: tempItem.type,
-              itemName: tempItem.name,
-              hasHandleBypass: typeof tempItem.handleBypass === "function",
-            },
-            "ACTION_CARD",
-          );
         }
 
-        Logger.debug(
-          `Retrieved embedded item: ${tempItem.type} "${tempItem.name}"`,
-          { itemId: tempItem.id },
-          "ACTION_CARD",
-        );
-
-        Logger.methodExit("ItemActionCardMixin", "getEmbeddedItem", tempItem);
         return tempItem;
       } catch (error) {
         Logger.error("Failed to get embedded item", error, "ACTION_CARD");
-        Logger.methodExit("ItemActionCardMixin", "getEmbeddedItem", null);
         return null;
       }
     }
@@ -413,11 +326,6 @@ export function ItemActionCardMixin(Base) {
           "addEmbeddedEffect can only be called on action card items",
         );
       }
-
-      Logger.methodEntry("ItemActionCardMixin", "addEmbeddedEffect", {
-        effectName: effectItem?.name,
-        effectType: effectItem?.type,
-      });
 
       try {
         // Validate supported effect types
@@ -450,17 +358,7 @@ export function ItemActionCardMixin(Base) {
         // Sanitize roll type for gear effects (they might be used in gear effect hooks)
         if (effectData.type === "gear" && effectData.system?.roll) {
           const rollType = effectData.system.roll.type;
-          if (rollType === "none") {
-            // Keep "none" type for special handling (automatic two successes)
-            Logger.info(
-              `Gear effect "${effectItem.name}" has roll type "none" - will be treated as automatic two successes`,
-              {
-                originalType: rollType,
-                specialHandling: "automaticTwoSuccesses",
-              },
-              "ACTION_CARD",
-            );
-          } else if (
+          if (
             !rollType ||
             !["roll", "flat", "none"].includes(rollType)
           ) {
@@ -502,17 +400,9 @@ export function ItemActionCardMixin(Base) {
           "system.embeddedStatusEffects": effects,
         });
 
-        Logger.info(
-          `Added ${effectItem.type} effect "${effectItem.name}" to action card "${this.name}"`,
-          { effectId: effectData._id },
-          "ACTION_CARD",
-        );
-
-        Logger.methodExit("ItemActionCardMixin", "addEmbeddedEffect", this);
         return this;
       } catch (error) {
         Logger.error("Failed to add embedded effect", error, "ACTION_CARD");
-        Logger.methodExit("ItemActionCardMixin", "addEmbeddedEffect", null);
         throw error;
       }
     }
@@ -531,10 +421,6 @@ export function ItemActionCardMixin(Base) {
           "removeEmbeddedEffect can only be called on action card items",
         );
       }
-
-      Logger.methodEntry("ItemActionCardMixin", "removeEmbeddedEffect", {
-        effectId,
-      });
 
       try {
         // Get current effects
@@ -557,12 +443,6 @@ export function ItemActionCardMixin(Base) {
         });
 
         if (index === -1) {
-          Logger.debug("Effect not found", { effectId }, "ACTION_CARD");
-          Logger.methodExit(
-            "ItemActionCardMixin",
-            "removeEmbeddedEffect",
-            this,
-          );
           return this; // Not found
         }
 
@@ -574,17 +454,9 @@ export function ItemActionCardMixin(Base) {
           "system.embeddedStatusEffects": effects,
         });
 
-        Logger.info(
-          `Removed embedded effect from action card "${this.name}"`,
-          { effectId },
-          "ACTION_CARD",
-        );
-
-        Logger.methodExit("ItemActionCardMixin", "removeEmbeddedEffect", this);
         return this;
       } catch (error) {
         Logger.error("Failed to remove embedded effect", error, "ACTION_CARD");
-        Logger.methodExit("ItemActionCardMixin", "removeEmbeddedEffect", null);
         throw error;
       }
     }
@@ -602,14 +474,9 @@ export function ItemActionCardMixin(Base) {
       }
 
       const { executionContext = false } = options;
-      Logger.methodEntry("ItemActionCardMixin", "getEmbeddedEffects", {
-        effectCount: this.system.embeddedStatusEffects?.length || 0,
-      });
 
       try {
         if (!this.system.embeddedStatusEffects?.length) {
-          Logger.debug("No embedded effects found", null, "ACTION_CARD");
-          Logger.methodExit("ItemActionCardMixin", "getEmbeddedEffects", []);
           return [];
         }
 
@@ -682,9 +549,12 @@ export function ItemActionCardMixin(Base) {
             currentEffects[effectIndex] = updatedEffectData;
 
             // Persist the changes to the action card
-            await actionCard.update({
-              "system.embeddedStatusEffects": currentEffects,
-            }, options);
+            await actionCard.update(
+              {
+                "system.embeddedStatusEffects": currentEffects,
+              },
+              options,
+            );
 
             // Update the temporary item's source data
             tempItem.updateSource(updatedEffectData);
@@ -707,13 +577,25 @@ export function ItemActionCardMixin(Base) {
           };
 
           // Override updateEmbeddedDocuments to also respect the fromEmbeddedItem flag for status effects
-          tempItem.updateEmbeddedDocuments = async (embeddedName, updates, options = {}) => {
-            Logger.debug("Updating embedded documents on status effect", { embeddedName, updates, options }, "ACTION_CARD");
+          tempItem.updateEmbeddedDocuments = async (
+            embeddedName,
+            updates,
+            options = {},
+          ) => {
+            Logger.debug(
+              "Updating embedded documents on status effect",
+              { embeddedName, updates, options },
+              "ACTION_CARD",
+            );
 
             // Use the standard updateEmbeddedDocuments for the actual update
-            const result = await CONFIG.Item.documentClass.prototype.updateEmbeddedDocuments.call(
-              tempItem, embeddedName, updates, options
-            );
+            const result =
+              await CONFIG.Item.documentClass.prototype.updateEmbeddedDocuments.call(
+                tempItem,
+                embeddedName,
+                updates,
+                options,
+              );
 
             // Handle sheet closure based on fromEmbeddedItem flag
             if (!options.fromEmbeddedItem) {
@@ -738,21 +620,407 @@ export function ItemActionCardMixin(Base) {
         // Filter out null values
         const filteredEffects = effects.filter((item) => item !== null);
 
-        Logger.debug(
-          `Retrieved ${filteredEffects.length} embedded effects`,
-          null,
+        return filteredEffects;
+      } catch (error) {
+        Logger.error("Failed to get embedded effects", error, "ACTION_CARD");
+        return [];
+      }
+    }
+
+    /**
+     * Add a transformation to this action card's embedded transformations
+     *
+     * @param {Item} transformationItem - The transformation item to add
+     * @returns {Promise<Item>} This action card instance for method chaining
+     * @async
+     */
+    async addEmbeddedTransformation(transformationItem) {
+      // Only action cards can have embedded transformations
+      if (this.type !== "actionCard") {
+        throw new Error(
+          "addEmbeddedTransformation can only be called on action card items",
+        );
+      }
+
+      Logger.methodEntry("ItemActionCardMixin", "addEmbeddedTransformation", {
+        transformationName: transformationItem?.name,
+        transformationType: transformationItem?.type,
+      });
+
+      try {
+        // Validate transformation type
+        if (transformationItem.type !== "transformation") {
+          const error = new Error(
+            game.i18n.format(
+              "EVENTIDE_RP_SYSTEM.Errors.ActionCardTransformationTypes",
+              {
+                type: transformationItem.type,
+                supported: "transformation",
+              },
+            ),
+          );
+          Logger.error("Invalid transformation type", error, "ACTION_CARD");
+          throw error;
+        }
+
+        // Get current transformations
+        const transformations = foundry.utils.deepClone(
+          this.system.embeddedTransformations || [],
+        );
+
+        // Create a complete copy of the transformation data
+        const transformationData = transformationItem.toObject();
+
+        // Assign a new random ID to prevent conflicts
+        transformationData._id = foundry.utils.randomID();
+
+        // Add the transformation to the array
+        transformations.push(transformationData);
+
+        // Update the action card with the new transformations array
+        await this.update({
+          "system.embeddedTransformations": transformations,
+        });
+
+        return this;
+      } catch (error) {
+        Logger.error(
+          "Failed to add embedded transformation",
+          error,
+          "ACTION_CARD",
+        );
+        throw error;
+      }
+    }
+
+    /**
+     * Remove an embedded transformation from this action card's embedded transformations
+     *
+     * @param {string} transformationId - The ID of the transformation to remove
+     * @returns {Promise<Item>} This action card instance for method chaining
+     * @async
+     */
+    async removeEmbeddedTransformation(transformationId) {
+      // Only action cards can have embedded transformations
+      if (this.type !== "actionCard") {
+        throw new Error(
+          "removeEmbeddedTransformation can only be called on action card items",
+        );
+      }
+
+      Logger.methodEntry(
+        "ItemActionCardMixin",
+        "removeEmbeddedTransformation",
+        {
+          transformationId,
+        },
+      );
+
+      try {
+        // Get current transformations
+        const transformations = foundry.utils.deepClone(
+          this.system.embeddedTransformations || [],
+        );
+
+        // Find the transformation to remove
+        const index = transformations.findIndex((transformationData) => {
+          // Handle malformed entries gracefully
+          if (!transformationData || !transformationData._id) {
+            Logger.warn(
+              "Malformed transformation entry found during removal, skipping",
+              { transformationData, transformationId },
+              "ACTION_CARD",
+            );
+            return false;
+          }
+          return transformationData._id === transformationId;
+        });
+
+        if (index === -1) {
+          Logger.warn(
+            `Transformation with ID ${transformationId} not found in embedded transformations`,
+            null,
+            "ACTION_CARD",
+          );
+          return this;
+        }
+
+        // Remove the transformation
+        const removedTransformation = transformations.splice(index, 1)[0];
+
+        // Update the action card
+        await this.update({
+          "system.embeddedTransformations": transformations,
+        });
+
+        Logger.info(
+          `Removed transformation "${removedTransformation.name}" from action card "${this.name}"`,
+          {
+            transformationId,
+            remainingCount: transformations.length,
+          },
           "ACTION_CARD",
         );
 
         Logger.methodExit(
           "ItemActionCardMixin",
-          "getEmbeddedEffects",
-          filteredEffects,
+          "removeEmbeddedTransformation",
+          this,
         );
-        return filteredEffects;
+        return this;
       } catch (error) {
-        Logger.error("Failed to get embedded effects", error, "ACTION_CARD");
-        Logger.methodExit("ItemActionCardMixin", "getEmbeddedEffects", []);
+        Logger.error(
+          "Failed to remove embedded transformation",
+          error,
+          "ACTION_CARD",
+        );
+        Logger.methodExit(
+          "ItemActionCardMixin",
+          "removeEmbeddedTransformation",
+          null,
+        );
+        throw error;
+      }
+    }
+
+    /**
+     * Get temporary Item instances for embedded transformations
+     *
+     * @param {Object} options - Options for creating temporary items
+     * @param {boolean} options.executionContext - Whether this is being called during execution
+     * @returns {Array<Item>} Array of temporary Item instances for embedded transformations
+     * @async
+     */
+    async getEmbeddedTransformations(options = {}) {
+      // Only action cards can have embedded transformations
+      if (this.type !== "actionCard") {
+        return [];
+      }
+
+      const { executionContext = false } = options;
+
+      try {
+        const transformationData = this.system.embeddedTransformations || [];
+
+        const transformations = transformationData.map((data) => {
+          if (!data || typeof data !== "object") {
+            Logger.warn(
+              "Invalid transformation data found, skipping",
+              { data },
+              "ACTION_CARD",
+            );
+            return null;
+          }
+
+          // Create temporary transformation item
+          const tempItem = new CONFIG.Item.documentClass(data, {
+            parent: null,
+          });
+
+          // The temporary item is editable if the action card is editable
+          Object.defineProperty(tempItem, "isEditable", {
+            value: this.isEditable,
+            configurable: true,
+          });
+
+          // Store the original embedded ID for template access
+          Object.defineProperty(tempItem, "originalId", {
+            value: data._id,
+            configurable: true,
+          });
+
+          // Override the update method to persist changes back to the action card
+          tempItem.update = async (updateData, options = {}) => {
+            // Save scroll position before update
+            const scrollPosition = this.sheet?._saveScrollPosition?.() || 0;
+
+            const currentTransformations = foundry.utils.deepClone(
+              this.system.embeddedTransformations,
+            );
+            const transformationIndex = currentTransformations.findIndex(
+              (t) => t._id === data._id,
+            );
+            if (transformationIndex === -1) {
+              throw new Error(
+                "Could not find embedded transformation to update.",
+              );
+            }
+
+            // Merge the updates into the stored data
+            const updatedTransformationData = foundry.utils.mergeObject(
+              currentTransformations[transformationIndex],
+              updateData,
+              { inplace: false },
+            );
+
+            // Update the array
+            currentTransformations[transformationIndex] =
+              updatedTransformationData;
+
+            // Persist the changes to the action card
+            await this.update({
+              "system.embeddedTransformations": currentTransformations,
+            });
+
+            // Update the temporary document's source data after parent update
+            tempItem.updateSource(updatedTransformationData);
+
+            // Handle sheet closure based on fromEmbeddedItem flag
+            // Also treat image updates as embedded item updates to prevent unwanted sheet closure
+            const isImageUpdate = updateData.img !== undefined;
+
+            if (!options.fromEmbeddedItem && !isImageUpdate) {
+              // Close the temporary sheet and re-render the action card sheet
+              // Only render the sheet if we're in an editing context, not during execution
+              tempItem.sheet.close();
+              if (!executionContext) {
+                this.sheet.render(true);
+              }
+            } else {
+              // For embedded item updates and image updates, just refresh the sheet without closing
+              if (tempItem.sheet?.rendered) {
+                tempItem.sheet.render(false);
+                // Restore scroll position after re-render
+                setTimeout(() => {
+                  this.sheet?._restoreScrollPosition?.(scrollPosition);
+                }, 100);
+              }
+            }
+            return tempItem;
+          };
+
+          // Add embedded item update handling for action card transformations
+          // This handles updates from embedded items within action card transformations
+          const originalUpdate = tempItem.update;
+          tempItem.update = async (updateData, options = {}) => {
+            // If this is an update to embedded combat powers or action cards, handle it specially
+            if (
+              updateData["system.embeddedCombatPowers"] ||
+              updateData["system.embeddedActionCards"]
+            ) {
+              // Save scroll position before update
+              const scrollPosition = this.sheet?._saveScrollPosition?.() || 0;
+              // Update the transformation data in the action card's embedded transformations array
+              const currentTransformations = foundry.utils.deepClone(
+                this.system.embeddedTransformations,
+              );
+              const transformationIndex = currentTransformations.findIndex(
+                (t) => t._id === tempItem.id,
+              );
+              if (transformationIndex === -1) {
+                throw new Error(
+                  "Could not find embedded transformation to update.",
+                );
+              }
+
+              // Merge the updates into the stored data
+              currentTransformations[transformationIndex] =
+                foundry.utils.mergeObject(
+                  currentTransformations[transformationIndex],
+                  updateData,
+                  { inplace: false },
+                );
+
+              // Persist the changes to the action card
+              const updateOptions = {
+                render: false, // Always use render: false to prevent focus stealing
+                ...options, // Include any options passed from embedded item updates
+              };
+              await this.update(
+                {
+                  "system.embeddedTransformations": currentTransformations,
+                },
+                updateOptions,
+              );
+
+              // Update the temporary item's source data to stay in sync
+              tempItem.updateSource(
+                currentTransformations[transformationIndex],
+              );
+
+              // Handle sheet lifecycle - don't close for embedded item updates
+              // For dual-override embedded collection updates, always treat as embedded item updates
+              // This covers cases where embedded action cards have their images updated, which
+              // comes through as system.embeddedActionCards updates rather than direct img updates
+
+              // Always treat dual-override embedded collection updates as embedded item updates
+              // Never close the transformation sheet for these updates
+              if (tempItem.sheet?.rendered) {
+                tempItem.sheet.render(false);
+                // Restore scroll position for transformation sheet after re-render
+                setTimeout(() => {
+                  tempItem.sheet._restoreScrollPosition?.(scrollPosition);
+                }, 100);
+              }
+              if (this.sheet?.rendered) {
+                this.sheet.render(false);
+                // Restore scroll position for action card sheet after re-render
+                setTimeout(() => {
+                  this.sheet?._restoreScrollPosition?.(scrollPosition);
+                }, 100);
+              }
+
+              return tempItem;
+            } else {
+              // For other updates, use the original transformation update method
+              return originalUpdate.call(tempItem, updateData, options);
+            }
+          };
+
+          // Override updateEmbeddedDocuments to also respect the fromEmbeddedItem flag for transformations
+          tempItem.updateEmbeddedDocuments = async (
+            embeddedName,
+            updates,
+            options = {},
+          ) => {
+            // Use the standard updateEmbeddedDocuments for the actual update
+            const result =
+              await CONFIG.Item.documentClass.prototype.updateEmbeddedDocuments.call(
+                tempItem,
+                embeddedName,
+                updates,
+                options,
+              );
+
+            // Handle sheet closure based on fromEmbeddedItem flag
+            if (!options.fromEmbeddedItem) {
+              // Close the temporary sheet and re-render the action card sheet
+              tempItem.sheet.close();
+              if (!executionContext) {
+                this.sheet.render(true);
+              }
+            } else {
+              // For embedded item updates, just refresh the sheet without closing
+              if (tempItem.sheet?.rendered) {
+                tempItem.sheet.render(false);
+              }
+            }
+
+            return result;
+          };
+
+          // Delegate handleBypass method from data model to item document if it exists
+          if (typeof tempItem.system.handleBypass === "function") {
+            tempItem.handleBypass = async (popupConfig, options) => {
+              return await tempItem.system.handleBypass(popupConfig, options);
+            };
+          }
+
+          return tempItem;
+        });
+
+        // Filter out null values
+        const filteredTransformations = transformations.filter(
+          (item) => item !== null,
+        );
+
+        return filteredTransformations;
+      } catch (error) {
+        Logger.error(
+          "Failed to get embedded transformations",
+          error,
+          "ACTION_CARD",
+        );
         return [];
       }
     }

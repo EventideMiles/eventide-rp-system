@@ -58,7 +58,7 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
       damageCondition: new fields.StringField({
         required: true,
         initial: "never",
-        choices: ["never", "oneSuccess", "twoSuccesses"],
+        choices: ["never", "oneSuccess", "twoSuccesses", "rollValue"],
       }),
       damageFormula: new fields.StringField({
         required: true,
@@ -70,6 +70,12 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
         initial: "damage",
         choices: ["damage", "heal"],
       }),
+      damageThreshold: new fields.NumberField({
+        required: false,
+        initial: 15,
+        integer: true,
+        min: 1,
+      }),
       statusCondition: new fields.StringField({
         required: true,
         initial: "never",
@@ -80,7 +86,6 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
         initial: 15,
         integer: true,
         min: 1,
-        max: 100,
       }),
     });
 
@@ -97,6 +102,37 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
         initial: [],
       },
     );
+
+    /**
+     * Embedded transformations that can be applied on successful action card execution
+     * Contains transformation items that are applied based on the success conditions
+     */
+    schema.embeddedTransformations = new fields.ArrayField(
+      new fields.ObjectField({
+        required: true,
+      }),
+      {
+        required: true,
+        initial: [],
+      },
+    );
+
+    /**
+     * Transformation configuration for when to apply embedded transformations
+     */
+    schema.transformationConfig = new fields.SchemaField({
+      condition: new fields.StringField({
+        required: true,
+        initial: "oneSuccess",
+        choices: ["never", "oneSuccess", "twoSuccesses", "rollValue"],
+      }),
+      threshold: new fields.NumberField({
+        required: false,
+        initial: 15,
+        integer: true,
+        min: 1,
+      }),
+    });
 
     /**
      * Saved damage configuration (only used when mode is "savedDamage")

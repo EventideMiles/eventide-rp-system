@@ -18,13 +18,24 @@
       "View": "View",
       "ViewReadOnly": "View (Read-Only)",
       "ReadOnly": "Read-Only",
-      "Remove": "Remove"
+      "Remove": "Remove",
+      "ExportEmbeddedCombatPowers": "Export Combat Powers",
+      "ExportEmbeddedActionCards": "Export Action Cards",
+      "ExportEmbeddedActionItem": "Export Action Item",
+      "ExportEmbeddedEffects": "Export Effects",
+      "ExportEmbeddedTransformations": "Export Transformations",
+      "ExportAllEmbeddedItems": "Export All Embedded Items"
     },
     "General": {
       "None": "None",
       "Disabled": "Disabled",
       "Enabled": "Enabled",
       "Unknown": "Unknown"
+    },
+    "CreationButtons": {
+      "CreateNew": "Create New",
+      "CreateNewPower": "Create New Power",
+      "CreateNewActionCard": "Create New Action Card"
     }
   },
   "TYPES": {

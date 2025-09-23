@@ -33,10 +33,6 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
      * @override
      */
     async _onDrop(event) {
-      Logger.methodEntry("ActorSheetDragDropMixin", "_onDrop", {
-        actorName: this.actor?.name,
-        eventType: event.type,
-      });
 
       try {
         const data = TextEditor.implementation.getDragEventData(event);
@@ -44,8 +40,6 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
         const allowed = Hooks.call("dropActorSheetData", actor, this, data);
 
         if (allowed === false) {
-          Logger.debug("Drop prevented by hook", { data }, "DRAG_DROP");
-          Logger.methodExit("ActorSheetDragDropMixin", "_onDrop", false);
           return false;
         }
 
@@ -73,7 +67,6 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
             result = false;
         }
 
-        Logger.methodExit("ActorSheetDragDropMixin", "_onDrop", result);
         return result;
       } catch (error) {
         await ErrorHandler.handleAsync(Promise.reject(error), {
@@ -84,7 +77,6 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
           ),
         });
 
-        Logger.methodExit("ActorSheetDragDropMixin", "_onDrop", null);
         return false;
       }
     }
@@ -97,63 +89,22 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
      * @protected
      */
     async _onDropActiveEffect(event, data) {
-      Logger.methodEntry("ActorSheetDragDropMixin", "_onDropActiveEffect", {
-        actorName: this.actor?.name,
-        effectData: data,
-      });
 
       try {
         const aeCls = getDocumentClass("ActiveEffect");
         const effect = await aeCls.fromDropData(data);
 
         if (!this.actor.isOwner || !effect) {
-          Logger.debug(
-            "Drop not allowed - no ownership or effect",
-            {
-              isOwner: this.actor.isOwner,
-              hasEffect: !!effect,
-            },
-            "DRAG_DROP",
-          );
-          Logger.methodExit(
-            "ActorSheetDragDropMixin",
-            "_onDropActiveEffect",
-            false,
-          );
           return false;
         }
 
         if (effect.target === this.actor) {
-          Logger.debug(
-            "Sorting existing effect",
-            { effectId: effect.id },
-            "DRAG_DROP",
-          );
           const result = await this._onSortActiveEffect(event, effect);
-          Logger.methodExit(
-            "ActorSheetDragDropMixin",
-            "_onDropActiveEffect",
-            result,
-          );
           return result;
         }
 
         const result = await aeCls.create(effect, { parent: this.actor });
 
-        Logger.info(
-          `Created new active effect: ${effect.name}`,
-          {
-            effectId: result.id,
-            effectName: result.name,
-          },
-          "DRAG_DROP",
-        );
-
-        Logger.methodExit(
-          "ActorSheetDragDropMixin",
-          "_onDropActiveEffect",
-          result,
-        );
         return result;
       } catch (error) {
         await ErrorHandler.handleAsync(Promise.reject(error), {
@@ -164,11 +115,6 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
           ),
         });
 
-        Logger.methodExit(
-          "ActorSheetDragDropMixin",
-          "_onDropActiveEffect",
-          null,
-        );
         return false;
       }
     }
@@ -181,20 +127,10 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
      * @protected
      */
     async _onSortActiveEffect(event, effect) {
-      Logger.methodEntry("ActorSheetDragDropMixin", "_onSortActiveEffect", {
-        effectId: effect.id,
-        effectName: effect.name,
-      });
 
       try {
         const dropTarget = event.target.closest("[data-effect-id]");
         if (!dropTarget) {
-          Logger.debug("No valid drop target found", null, "DRAG_DROP");
-          Logger.methodExit(
-            "ActorSheetDragDropMixin",
-            "_onSortActiveEffect",
-            null,
-          );
           return null;
         }
 
@@ -202,16 +138,6 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
 
         // Don't sort on yourself
         if (effect.uuid === target.uuid) {
-          Logger.debug(
-            "Cannot sort effect on itself",
-            { effectId: effect.id },
-            "DRAG_DROP",
-          );
-          Logger.methodExit(
-            "ActorSheetDragDropMixin",
-            "_onSortActiveEffect",
-            null,
-          );
           return null;
         }
 
@@ -262,20 +188,6 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
           directUpdates,
         );
 
-        Logger.debug(
-          "Effect sorting completed",
-          {
-            effectId: effect.id,
-            updatesCount: directUpdates.length,
-          },
-          "DRAG_DROP",
-        );
-
-        Logger.methodExit(
-          "ActorSheetDragDropMixin",
-          "_onSortActiveEffect",
-          result,
-        );
         return result;
       } catch (error) {
         await ErrorHandler.handleAsync(Promise.reject(error), {
@@ -286,11 +198,6 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
           ),
         });
 
-        Logger.methodExit(
-          "ActorSheetDragDropMixin",
-          "_onSortActiveEffect",
-          null,
-        );
         return null;
       }
     }
@@ -303,19 +210,12 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
      * @protected
      */
     async _onDropActor(_event, _data) {
-      Logger.methodEntry("ActorSheetDragDropMixin", "_onDropActor", {
-        actorName: this.actor?.name,
-        isOwner: this.actor.isOwner,
-      });
 
       if (!this.actor.isOwner) {
-        Logger.debug("Drop not allowed - no ownership", null, "DRAG_DROP");
-        Logger.methodExit("ActorSheetDragDropMixin", "_onDropActor", false);
         return false;
       }
 
       // Currently no specific actor-on-actor drop behavior implemented
-      Logger.methodExit("ActorSheetDragDropMixin", "_onDropActor", false);
       return false;
     }
 
@@ -327,17 +227,11 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
      * @protected
      */
     async _onDropItem(event, data) {
-      Logger.methodEntry("ActorSheetDragDropMixin", "_onDropItem", {
-        actorName: this.actor?.name,
-        itemData: data,
-      });
 
       try {
         // Remove drag feedback when drop occurs
         this._removeDragFeedback();
         if (!this.actor.isOwner) {
-          Logger.debug("Drop not allowed - no ownership", null, "DRAG_DROP");
-          Logger.methodExit("ActorSheetDragDropMixin", "_onDropItem", false);
           return false;
         }
 
@@ -345,70 +239,30 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
 
         // Handle item sorting within the same Actor
         if (this.actor.uuid === item.parent?.uuid) {
-          Logger.debug(
-            "Sorting existing item",
-            { itemId: item.id },
-            "DRAG_DROP",
-          );
           const result = await this._onSortItem(event, item);
-          Logger.methodExit("ActorSheetDragDropMixin", "_onDropItem", result);
           return result;
         }
 
         // Check if dropped on action cards drop zone
         const actionCardDropZone = event.target.closest('[data-drop-zone="actionCard"]');
         if (actionCardDropZone && ["feature", "combatPower", "gear", "status"].includes(item.type)) {
-          Logger.info(
-            `Creating action card from ${item.type}: ${item.name}`,
-            {
-              itemId: item.id,
-              itemName: item.name,
-              itemType: item.type,
-            },
-            "DRAG_DROP",
-          );
-          
           const result = await this._createActionCardFromItem(item, event);
-          Logger.methodExit("ActorSheetDragDropMixin", "_onDropItem", result);
           return result;
         }
 
         // Handle dropping a transformation directly on the actor
         if (item.type === "transformation") {
-          Logger.info(
-            `Applying transformation: ${item.name}`,
-            {
-              itemId: item.id,
-              itemName: item.name,
-            },
-            "DRAG_DROP",
-          );
-
           // Apply the transformation (this will handle adding the item to the actor)
           await this.actor.applyTransformation(item);
 
           // Get the transformation item that was added to the actor
           const actorTransformationItem = this.actor.items.get(item.id);
-          Logger.methodExit("ActorSheetDragDropMixin", "_onDropItem", [
-            actorTransformationItem,
-          ]);
           return [actorTransformationItem];
         }
 
         // Create the owned item
         const result = await this._onDropItemCreate(item, event);
 
-        Logger.info(
-          `Created item: ${item.name}`,
-          {
-            itemId: result[0]?.id,
-            itemName: result[0]?.name,
-            itemType: result[0]?.type,
-          },
-          "DRAG_DROP",
-        );
-
-        Logger.methodExit("ActorSheetDragDropMixin", "_onDropItem", result);
         return result;
       } catch (error) {
         await ErrorHandler.handleAsync(Promise.reject(error), {
@@ -419,7 +273,6 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
           ),
         });
 
-        Logger.methodExit("ActorSheetDragDropMixin", "_onDropItem", null);
         return false;
       }
     }
@@ -433,27 +286,15 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
      * @protected
      */
     async _onDropFolder(event, data) {
-      Logger.methodEntry("ActorSheetDragDropMixin", "_onDropFolder", {
-        actorName: this.actor?.name,
-        folderData: data,
-      });
 
       try {
         if (!this.actor.isOwner) {
-          Logger.debug("Drop not allowed - no ownership", null, "DRAG_DROP");
-          Logger.methodExit("ActorSheetDragDropMixin", "_onDropFolder", []);
           return [];
         }
 
         const folder = await Folder.implementation.fromDropData(data);
 
         if (folder.type !== "Item") {
-          Logger.debug(
-            "Folder is not an Item folder",
-            { folderType: folder.type },
-            "DRAG_DROP",
-          );
-          Logger.methodExit("ActorSheetDragDropMixin", "_onDropFolder", []);
           return [];
         }
 
@@ -466,17 +307,6 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
 
         const result = await this._onDropItemCreate(droppedItemData, event);
 
-        Logger.info(
-          `Created ${result.length} items from folder: ${folder.name}`,
-          {
-            folderId: folder.id,
-            folderName: folder.name,
-            itemCount: result.length,
-          },
-          "DRAG_DROP",
-        );
-
-        Logger.methodExit("ActorSheetDragDropMixin", "_onDropFolder", result);
         return result;
       } catch (error) {
         await ErrorHandler.handleAsync(Promise.reject(error), {
@@ -487,7 +317,6 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
           ),
         });
 
-        Logger.methodExit("ActorSheetDragDropMixin", "_onDropFolder", []);
         return [];
       }
     }
@@ -500,9 +329,6 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
      * @private
      */
     async _onDropItemCreate(itemData, _event) {
-      Logger.methodEntry("ActorSheetDragDropMixin", "_onDropItemCreate", {
-        itemCount: Array.isArray(itemData) ? itemData.length : 1,
-      });
 
       try {
         itemData = itemData instanceof Array ? itemData : [itemData];
@@ -511,11 +337,6 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
           itemData,
         );
 
-        Logger.methodExit(
-          "ActorSheetDragDropMixin",
-          "_onDropItemCreate",
-          result,
-        );
         return result;
       } catch (error) {
         await ErrorHandler.handleAsync(Promise.reject(error), {
@@ -526,7 +347,6 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
           ),
         });
 
-        Logger.methodExit("ActorSheetDragDropMixin", "_onDropItemCreate", []);
         return [];
       }
     }
@@ -539,10 +359,6 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
      * @private
      */
     async _onSortItem(event, item) {
-      Logger.methodEntry("ActorSheetDragDropMixin", "_onSortItem", {
-        itemId: item.id,
-        itemName: item.name,
-      });
 
       try {
         // Get the drag source and drop target
@@ -550,8 +366,6 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
         const dropTarget = event.target.closest("[data-item-id]");
 
         if (!dropTarget) {
-          Logger.debug("No valid drop target found", null, "DRAG_DROP");
-          Logger.methodExit("ActorSheetDragDropMixin", "_onSortItem", null);
           return null;
         }
 
@@ -559,12 +373,6 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
 
         // Don't sort on yourself
         if (item.id === target.id) {
-          Logger.debug(
-            "Cannot sort item on itself",
-            { itemId: item.id },
-            "DRAG_DROP",
-          );
-          Logger.methodExit("ActorSheetDragDropMixin", "_onSortItem", null);
           return null;
         }
 
@@ -592,16 +400,6 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
           updateData,
         );
 
-        Logger.debug(
-          "Item sorting completed",
-          {
-            itemId: item.id,
-            updatesCount: updateData.length,
-          },
-          "DRAG_DROP",
-        );
-
-        Logger.methodExit("ActorSheetDragDropMixin", "_onSortItem", result);
         return result;
       } catch (error) {
         await ErrorHandler.handleAsync(Promise.reject(error), {
@@ -612,7 +410,6 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
           ),
         });
 
-        Logger.methodExit("ActorSheetDragDropMixin", "_onSortItem", null);
         return null;
       }
     }
@@ -658,18 +455,8 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
      * @returns {boolean} Can the current user drag this selector?
      * @protected
      */
-    _canDragStart(selector) {
+    _canDragStart(_selector) {
       const canDrag = this.isEditable;
-      Logger.debug(
-        "Drag permission check",
-        {
-          selector,
-          canDrag,
-          isEditable: this.isEditable,
-          actorName: this.actor?.name,
-        },
-        "DRAG_DROP",
-      );
       return canDrag;
     }
 
@@ -679,18 +466,8 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
      * @returns {boolean} Can the current user drop on this selector?
      * @protected
      */
-    _canDragDrop(selector) {
+    _canDragDrop(_selector) {
       const canDrop = this.isEditable;
-      Logger.debug(
-        "Drop permission check",
-        {
-          selector,
-          canDrop,
-          isEditable: this.isEditable,
-          actorName: this.actor?.name,
-        },
-        "DRAG_DROP",
-      );
       return canDrop;
     }
 
@@ -700,17 +477,6 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
      * @protected
      */
     _onDragStart(event) {
-      Logger.debug(
-        "Drag start event triggered",
-        {
-          currentTarget: event.currentTarget,
-          target: event.target,
-          targetDataset: event.target.dataset,
-          currentTargetDataset: event.currentTarget.dataset,
-          currentTargetClasses: event.currentTarget.className,
-        },
-        "DRAG_DROP",
-      );
 
       // Support li, tr elements, and transformation cards
       const docRow = event.currentTarget.closest(
@@ -729,36 +495,14 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
         return;
       }
 
-      Logger.debug(
-        "Found draggable element",
-        {
-          docRow,
-          docRowClasses: docRow.className,
-          docRowDataset: docRow.dataset,
-          isTransformationCard: docRow.classList.contains(
-            "eventide-transformation-card",
-          ),
-        },
-        "DRAG_DROP",
-      );
 
       // Don't drag if clicking on a link or button (except the transformation card itself)
       if ("link" in event.target.dataset) {
-        Logger.debug(
-          "Preventing drag on link element",
-          { target: event.target },
-          "DRAG_DROP",
-        );
         return;
       }
 
       // Allow dragging transformation cards even when clicking buttons, but prevent if clicking the revert button specifically
       if (event.target.closest(".eventide-transformation-card__revert")) {
-        Logger.debug(
-          "Preventing drag on revert button",
-          { target: event.target },
-          "DRAG_DROP",
-        );
         return;
       }
 
@@ -783,15 +527,6 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
         return;
       }
 
-      Logger.debug(
-        "Found document for drag",
-        {
-          documentId: document.id,
-          documentName: document.name,
-          documentType: document.type || document.documentName,
-        },
-        "DRAG_DROP",
-      );
 
       // Get drag data from the document
       const dragData = document.toDragData();
@@ -815,19 +550,6 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
       // Set data transfer
       event.dataTransfer.setData("text/plain", JSON.stringify(dragData));
 
-      Logger.info(
-        "Drag operation started successfully",
-        {
-          documentId: document.id,
-          documentName: document.name,
-          documentType: document.type || document.documentName,
-          dragDataType: dragData.type,
-          elementType: docRow.classList.contains("eventide-transformation-card")
-            ? "transformation-card"
-            : "table-row",
-        },
-        "DRAG_DROP",
-      );
     }
 
     /**
@@ -857,18 +579,6 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
         docRow.classList.remove("dragging");
       }
 
-      Logger.debug(
-        "Drag operation ended",
-        {
-          currentTarget: event.currentTarget,
-          elementType: docRow?.classList.contains(
-            "eventide-transformation-card",
-          )
-            ? "transformation-card"
-            : "table-row",
-        },
-        "DRAG_DROP",
-      );
     }
 
     /**
@@ -886,9 +596,8 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
         if (data.type === "Item" && ["feature", "combatPower", "gear", "status"].includes(data.data?.type)) {
           this._highlightActionCardDropZone();
         }
-      } catch (error) {
+      } catch {
         // Ignore parsing errors - not all drags will have valid JSON data
-        Logger.debug("Could not parse drag data for feedback", { error }, "DRAG_DROP");
       }
     }
 
@@ -949,15 +658,6 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
             transformationItem &&
             transformationItem.type === "transformation"
           ) {
-            Logger.debug(
-              "Found transformation item in actor's items for drag",
-              {
-                itemId,
-                itemName: transformationItem.name,
-                itemType: transformationItem.type,
-              },
-              "DRAG_DROP",
-            );
             return transformationItem;
           }
 
@@ -968,15 +668,6 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
             transformationItem &&
             transformationItem.type === "transformation"
           ) {
-            Logger.debug(
-              "Found transformation item in world items for drag",
-              {
-                itemId,
-                itemName: transformationItem.name,
-                itemType: transformationItem.type,
-              },
-              "DRAG_DROP",
-            );
             return transformationItem;
           }
 
@@ -1018,15 +709,6 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
                 },
               );
 
-              Logger.debug(
-                "Created temporary transformation item for drag from flags",
-                {
-                  itemId,
-                  itemName: transformationName,
-                  itemType: "transformation",
-                },
-                "DRAG_DROP",
-              );
               return tempItem;
             }
           }
@@ -1160,12 +842,7 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
      * @returns {Promise<Item[]>} The created action card
      * @private
      */
-    async _createActionCardFromItem(item, event) {
-      Logger.methodEntry("ActorSheetDragDropMixin", "_createActionCardFromItem", {
-        itemName: item?.name,
-        itemType: item?.type,
-        actorName: this.actor?.name,
-      });
+    async _createActionCardFromItem(item, _event) {
 
       try {
         // Handle status items differently - create saved damage action cards
@@ -1219,16 +896,6 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
           }),
         );
 
-        Logger.info(
-          `Successfully created action card "${actionCard.name}" from ${item.type} "${item.name}"`,
-          {
-            actionCardId: actionCard.id,
-            itemId: item.id,
-          },
-          "DRAG_DROP",
-        );
-
-        Logger.methodExit("ActorSheetDragDropMixin", "_createActionCardFromItem", [actionCard]);
         return [actionCard];
       } catch (error) {
         Logger.error("Failed to create action card from item", error, "DRAG_DROP");
@@ -1239,7 +906,6 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
           }),
         );
 
-        Logger.methodExit("ActorSheetDragDropMixin", "_createActionCardFromItem", []);
         return [];
       }
     }
@@ -1251,11 +917,6 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
      * @private
      */
     async _createStatusActionCard(statusItem) {
-      Logger.methodEntry("ActorSheetDragDropMixin", "_createStatusActionCard", {
-        statusName: statusItem?.name,
-        statusType: statusItem?.type,
-        actorName: this.actor?.name,
-      });
 
       try {
         // Extract data from the status item with sensible defaults
@@ -1271,15 +932,15 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
         // Create saved damage action card data with status appearance
         const actionCardData = {
           name: game.i18n.format("EVENTIDE_RP_SYSTEM.Actor.ActionCards.StatusGeneratedName", {
-            statusName: statusName,
+            statusName,
           }),
           type: "actionCard",
           img: statusImg,
           system: {
             description: statusDescription,
             mode: "savedDamage",
-            bgColor: bgColor,
-            textColor: textColor,
+            bgColor,
+            textColor,
             advanceInitiative: false,
             attemptInventoryReduction: false,
             attackChain: {
@@ -1295,7 +956,7 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
               formula: "1d8",
               type: "damage",
               description: game.i18n.format("EVENTIDE_RP_SYSTEM.Actor.ActionCards.StatusDamageDescription", {
-                statusName: statusName,
+                statusName,
               }),
             },
             embeddedStatusEffects: [],
@@ -1314,23 +975,10 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
         ui.notifications.info(
           game.i18n.format("EVENTIDE_RP_SYSTEM.Actor.ActionCards.CreatedStatusActionCard", {
             actionCardName: actionCard.name,
-            statusName: statusName,
+            statusName,
           }),
         );
 
-        Logger.info(
-          `Successfully created saved damage action card "${actionCard.name}" from status "${statusName}"`,
-          {
-            actionCardId: actionCard.id,
-            statusId: statusItem.id,
-            damageFormula: "1d8",
-            inheritedBgColor: bgColor,
-            inheritedTextColor: textColor,
-          },
-          "DRAG_DROP",
-        );
-
-        Logger.methodExit("ActorSheetDragDropMixin", "_createStatusActionCard", [actionCard]);
         return [actionCard];
       } catch (error) {
         Logger.error("Failed to create status action card", error, "DRAG_DROP");
@@ -1341,7 +989,6 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
           }),
         );
 
-        Logger.methodExit("ActorSheetDragDropMixin", "_createStatusActionCard", []);
         return [];
       }
     }

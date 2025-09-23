@@ -1,4 +1,3 @@
-import { Logger } from "../../services/logger.mjs";
 
 /**
  * Actor Sheet Gear Tab Management Mixin
@@ -78,11 +77,6 @@ export const ActorSheetGearTabsMixin = (BaseClass) =>
             targetContent.classList.add("active");
           }
 
-          Logger.debug("Gear tab switched", {
-            sheetId: this.id,
-            actorName: this.actor?.name,
-            targetTab,
-          });
         });
       });
 
@@ -93,13 +87,6 @@ export const ActorSheetGearTabsMixin = (BaseClass) =>
         gearTabContents,
       );
 
-      Logger.debug("Gear tabs initialized with state preservation", {
-        sheetId: this.id,
-        actorName: this.actor?.name,
-        buttonCount: newGearTabButtons.length,
-        contentCount: gearTabContents.length,
-        activeTab: currentActiveTab,
-      });
     }
 
     /**
@@ -137,12 +124,6 @@ export const ActorSheetGearTabsMixin = (BaseClass) =>
         }
       }
 
-      Logger.debug("Gear tab state restored", {
-        sheetId: this.id,
-        actorName: this.actor?.name,
-        targetTab,
-        actualTab: this._currentGearTab,
-      });
     }
 
     /**
@@ -153,10 +134,6 @@ export const ActorSheetGearTabsMixin = (BaseClass) =>
       // Clear gear tab state
       delete this._currentGearTab;
 
-      Logger.debug("Gear tab state cleaned up", {
-        appId: this.id,
-        appName: this.constructor.name,
-      });
     }
 
     /**
