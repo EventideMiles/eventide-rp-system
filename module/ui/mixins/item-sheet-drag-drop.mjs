@@ -791,7 +791,7 @@ export const ItemSheetDragDropMixin = (BaseClass) =>
           "EVENTIDE_RP_SYSTEM.Item.ActionCard.ActionItemDescription",
         ),
         effectsTitle: game.i18n.localize(
-          "EVENTIDE_RP_SYSTEM.Item.ActionCard.Effects",
+          "EVENTIDE_RP_SYSTEM.Forms.Sections.Effects",
         ),
         effectsDescription: game.i18n.localize(
           "EVENTIDE_RP_SYSTEM.Item.ActionCard.EffectsDescription",

@@ -31,13 +31,20 @@
       "EffectImage": "Effect Image",
       "HiddenEffect": "Hidden Effect",
       "TokenDisplayTooltip": "Token Display",
-      "StrengthTooltip": "Strength determines physical power and carrying capacity",
-      "AgilityTooltip": "Agility affects speed, dexterity, and reflexes",
-      "IntellectTooltip": "Intellect governs reasoning, memory, and magical ability",
-      "WillpowerTooltip": "Willpower represents mental fortitude and determination",
-      "FocusTooltip": "Focus affects concentration and precision",
-      "AcrobaticsTooltip": "Acrobatics covers balance, tumbling, and athletic feats",
-      "WitsTooltip": "Wits represent quick thinking and situational awareness",
+      "PleaseWait": "Please wait for the previous operation to complete",
+      "FailedToLoadItems": "Failed to load available items",
+      "DashboardRefreshed": "Performance dashboard refreshed",
+      "CleanupCompleted": "System cleanup completed successfully",
+      "CursedItems": "Cursed Items",
+      "StatusEffects": "Status Effects",
+      "CriticalHealth": "Critical Health",
+      "DicePool": "Dice Pool",
+      "FailRange": "Fail Range",
+      "CritRange": "Crit Range",
+      "StatTotal": "Stat Total",
+      "CharacterEffects": "Character Effects",
+      "Mode": "Mode",
+      "Add": "Add",
       "PerformanceDashboard": "Performance Dashboard",
       "Refresh": "Refresh",
       "AutoRefresh": "Auto Refresh",
@@ -85,10 +92,13 @@
       "ReadOnly": "Read Only",
       "ViewReadOnly": "View (Read Only)"
     },
+    "AriaLabels": {
+      "DicePoolValue": "Dice Pool Value",
+      "FailRangeValue": "Fail Range Value",
+      "CriticalRangeValue": "Critical Range Value",
+      "TotalStatPointsValue": "Total Stat Points Value"
+    },
     "Actor": {
-      "Sections": {
-        "Effects": "Effects"
-      },
       "CombatPowers": {
         "TransformationPower": "Transformation Power"
       },

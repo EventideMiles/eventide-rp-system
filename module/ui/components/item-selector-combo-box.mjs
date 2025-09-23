@@ -165,7 +165,7 @@ export class ItemSelectorComboBox {
       this.renderItems();
     } catch (error) {
       console.error("ItemSelectorComboBox: Failed to load items:", error);
-      ui.notifications.error("Failed to load available items.");
+      ui.notifications.error(game.i18n.localize("EVENTIDE_RP_SYSTEM.UI.FailedToLoadItems"));
     } finally {
       this.showLoading(false);
     }

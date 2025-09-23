@@ -108,7 +108,6 @@
         "ActionItem": "Action Item",
         "NoActionItem": "No action item configured",
         "DropActionItemHere": "Drop an action item here",
-        "Effects": "Effects",
         "NoEffects": "No effects configured",
         "DropEffectHere": "Drop status effects or gear here",
         "EffectNotes": "Effects are applied when chain conditions are met",
@@ -347,9 +346,9 @@
         }
       },
       "Tabs": {
+        "CombatPowers": "Combat Powers",
         "ActionCards": "Action Cards",
         "Biography": "Biography",
-        "CombatPowers": "Combat Powers",
         "Features": "Features",
         "Gear": "Gear",
         "Statuses": "Statuses"
@@ -381,9 +380,6 @@
         "TransformationActionCard": "Action card from active transformation",
         "Transformed": "Transformed",
         "TransformedLocked": "Action cards are provided by active transformation - cannot create or modify while transformed"
-      },
-      "Sections": {
-        "Effects": "Effects"
       }
     },
     "Chat": {
@@ -557,7 +553,13 @@
       "TransformationApplyError": "Failed to apply transformation",
       "TransformationRemoveError": "Failed to remove transformation",
       "FailedToSetActionItem": "Failed to set action item",
-      "FailedToAddEffect": "Failed to add effect"
+      "FailedToAddEffect": "Failed to add effect",
+      "NoPlayerActionApproval": "No player action approval found in message",
+      "ActionAlreadyProcessed": "This action has already been processed",
+      "UnableToFindActor": "Unable to find actor for execution",
+      "FailedToExecuteAction": "Failed to execute the approved action",
+      "FailedToProcessApproval": "Failed to process action approval",
+      "FailedToSaveActionCard": "Failed to save action card. See console for details."
     },
     "Info": {
       "CompendiumItemCreated": "Created {keyType} item {name} in the {packLabel} compendium",
@@ -762,7 +764,6 @@
         "CriticaMiss": "Critical Miss!",
         "CriticalHit": "Critical Hit!",
         "Dis": "dis",
-        "Effects": "Effects",
         "Equipped": "Equipped",
         "Power": "Power",
         "Removed": "Removed",
@@ -828,13 +829,20 @@
       "EffectImage": "Effect Image",
       "HiddenEffect": "Hidden Effect",
       "TokenDisplayTooltip": "Token Display",
-      "StrengthTooltip": "Strength determines physical power and carrying capacity",
-      "AgilityTooltip": "Agility affects speed, dexterity, and reflexes",
-      "IntellectTooltip": "Intellect governs reasoning, memory, and magical ability",
-      "WillpowerTooltip": "Willpower represents mental fortitude and determination",
-      "FocusTooltip": "Focus affects concentration and precision",
-      "AcrobaticsTooltip": "Acrobatics covers balance, tumbling, and athletic feats",
-      "WitsTooltip": "Wits represent quick thinking and situational awareness",
+      "PleaseWait": "Please wait for the previous operation to complete",
+      "FailedToLoadItems": "Failed to load available items",
+      "DashboardRefreshed": "Performance dashboard refreshed",
+      "CleanupCompleted": "System cleanup completed successfully",
+      "CursedItems": "Cursed Items",
+      "StatusEffects": "Status Effects",
+      "CriticalHealth": "Critical Health",
+      "DicePool": "Dice Pool",
+      "FailRange": "Fail Range",
+      "CritRange": "Crit Range",
+      "StatTotal": "Stat Total",
+      "CharacterEffects": "Character Effects",
+      "Mode": "Mode",
+      "Add": "Add",
       "PerformanceDashboard": "Performance Dashboard",
       "Refresh": "Refresh",
       "AutoRefresh": "Auto Refresh",
@@ -901,6 +909,12 @@
       "SheetTheme": "Cycle Sheet Theme",
       "StatusPopup": "Status Information",
       "TransformationCreator": "Transformation Creator"
+    },
+    "AriaLabels": {
+      "DicePoolValue": "Dice Pool Value",
+      "FailRangeValue": "Fail Range Value",
+      "CriticalRangeValue": "Critical Range Value",
+      "TotalStatPointsValue": "Total Stat Points Value"
     },
     "Notifications": {
       "ThemeChanged": "Theme changed successfully"

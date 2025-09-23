@@ -129,7 +129,6 @@
         "ApplyDamage": "Apply Damage",
         "ActionItem": "Action Item",
         "ActionItemDescription": "The item that will be rolled when this action card is executed",
-        "Effects": "Effects",
         "EffectsDescription": "Status effects and gear that will be applied when chain conditions are met",
         "ChainConfiguration": "Chain Configuration",
         "NoActionItem": "No action item configured",

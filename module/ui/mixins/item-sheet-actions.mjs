@@ -607,7 +607,7 @@ export const ItemSheetActionsMixin = (BaseClass) =>
             { currentEffectCount: currentEffects.length },
             "ITEM_ACTIONS"
           );
-          ui.notifications.warn("Please wait for the previous operation to complete");
+          ui.notifications.warn(game.i18n.localize("EVENTIDE_RP_SYSTEM.UI.PleaseWait"));
           return;
         }
 

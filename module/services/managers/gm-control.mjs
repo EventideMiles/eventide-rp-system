@@ -639,14 +639,14 @@ class GMControlManager {
       // Get player action approval flag
       const flag = MessageFlags.getPlayerActionApprovalFlag(message);
       if (!flag) {
-        ui.notifications.warn("No player action approval found in message");
+        ui.notifications.warn(game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.NoPlayerActionApproval"));
         Logger.methodExit("GMControlManager", "approvePlayerAction", false);
         return false;
       }
 
       // Check if already processed
       if (flag.processed) {
-        ui.notifications.warn("This action has already been processed");
+        ui.notifications.warn(game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.ActionAlreadyProcessed"));
         Logger.methodExit("GMControlManager", "approvePlayerAction", false);
         return false;
       }
@@ -700,7 +700,7 @@ class GMControlManager {
           // Get the actor
           const actor = game.actors.get(flag.actorId);
           if (!actor) {
-            ui.notifications.error("Unable to find actor for execution");
+            ui.notifications.error(game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.UnableToFindActor"));
             Logger.methodExit("GMControlManager", "approvePlayerAction", false);
             return false;
           }
@@ -781,7 +781,7 @@ class GMControlManager {
           }
         } catch (execError) {
           Logger.error("Failed to execute approved player action", execError);
-          ui.notifications.error("Failed to execute the approved action");
+          ui.notifications.error(game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.FailedToExecuteAction"));
           Logger.methodExit("GMControlManager", "approvePlayerAction", false);
           return false;
         }
@@ -796,7 +796,7 @@ class GMControlManager {
       return true;
     } catch (error) {
       Logger.error("Failed to process player action approval", error);
-      ui.notifications.error("Failed to process action approval");
+      ui.notifications.error(game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.FailedToProcessApproval"));
       Logger.methodExit("GMControlManager", "approvePlayerAction", false);
       return false;
     }

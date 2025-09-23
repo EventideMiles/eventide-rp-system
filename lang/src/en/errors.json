@@ -146,7 +146,13 @@
       "TransformationApplyError": "Failed to apply transformation",
       "TransformationRemoveError": "Failed to remove transformation",
       "FailedToSetActionItem": "Failed to set action item",
-      "FailedToAddEffect": "Failed to add effect"
+      "FailedToAddEffect": "Failed to add effect",
+      "NoPlayerActionApproval": "No player action approval found in message",
+      "ActionAlreadyProcessed": "This action has already been processed",
+      "UnableToFindActor": "Unable to find actor for execution",
+      "FailedToExecuteAction": "Failed to execute the approved action",
+      "FailedToProcessApproval": "Failed to process action approval",
+      "FailedToSaveActionCard": "Failed to save action card. See console for details."
     },
     "Info": {
       "CompendiumItemCreated": "Created {keyType} item {name} in the {packLabel} compendium",
