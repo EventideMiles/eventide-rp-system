@@ -45,6 +45,10 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
       foundry.utils.mergeObject(this.options.actions, {
         exportEmbeddedCombatPowers: this._exportEmbeddedCombatPowers.bind(this),
         exportEmbeddedActionCards: this._exportEmbeddedActionCards.bind(this),
+        exportEmbeddedActionItem: this._exportEmbeddedActionItem.bind(this),
+        exportEmbeddedEffects: this._exportEmbeddedEffects.bind(this),
+        exportEmbeddedTransformations: this._exportEmbeddedTransformations.bind(this),
+        exportAllEmbeddedItems: this._exportAllEmbeddedItems.bind(this),
       });
 
     } catch (error) {
@@ -504,26 +508,81 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
   _getHeaderControls() {
     const controls = super._getHeaderControls();
 
-    // Only add export controls for transformation items when user is GM
-    if (this.item.type === "transformation" && game.user.isGM) {
-      // Add combat powers export button if there are embedded combat powers
-      if (this.item.system?.embeddedCombatPowers?.length > 0) {
-        controls.push({
-          action: "exportEmbeddedCombatPowers",
-          icon: "fas fa-swords",
-          label: "EVENTIDE_RP_SYSTEM.UI.ExportEmbeddedCombatPowers",
-          ownership: "OWNER"
-        });
-      }
+    // Only add export controls when user is GM
+    if (game.user.isGM) {
+      if (this.item.type === "transformation") {
+        // Transformation export buttons
+        if (this.item.system?.embeddedCombatPowers?.length > 0) {
+          controls.push({
+            action: "exportEmbeddedCombatPowers",
+            icon: "fas fa-swords",
+            label: "EVENTIDE_RP_SYSTEM.UI.ExportEmbeddedCombatPowers",
+            ownership: "OWNER"
+          });
+        }
 
-      // Add action cards export button if there are embedded action cards
-      if (this.item.system?.embeddedActionCards?.length > 0) {
-        controls.push({
-          action: "exportEmbeddedActionCards",
-          icon: "fas fa-cards-blank",
-          label: "EVENTIDE_RP_SYSTEM.UI.ExportEmbeddedActionCards",
-          ownership: "OWNER"
-        });
+        if (this.item.system?.embeddedActionCards?.length > 0) {
+          controls.push({
+            action: "exportEmbeddedActionCards",
+            icon: "fas fa-cards-blank",
+            label: "EVENTIDE_RP_SYSTEM.UI.ExportEmbeddedActionCards",
+            ownership: "OWNER"
+          });
+        }
+
+        // Add "Export All" button if there are any embedded items
+        if ((this.item.system?.embeddedCombatPowers?.length > 0) ||
+            (this.item.system?.embeddedActionCards?.length > 0)) {
+          controls.push({
+            action: "exportAllEmbeddedItems",
+            icon: "fas fa-file-export",
+            label: "EVENTIDE_RP_SYSTEM.UI.ExportAllEmbeddedItems",
+            ownership: "OWNER"
+          });
+        }
+
+      } else if (this.item.type === "actionCard") {
+        // Action Card export buttons
+        const embeddedItem = this.item.getEmbeddedItem();
+        if (embeddedItem) {
+          controls.push({
+            action: "exportEmbeddedActionItem",
+            icon: "fas fa-magic",
+            label: "EVENTIDE_RP_SYSTEM.UI.ExportEmbeddedActionItem",
+            ownership: "OWNER"
+          });
+        }
+
+        const embeddedEffects = this.item.getEmbeddedEffects();
+        if (embeddedEffects && embeddedEffects.length > 0) {
+          controls.push({
+            action: "exportEmbeddedEffects",
+            icon: "fas fa-sparkles",
+            label: "EVENTIDE_RP_SYSTEM.UI.ExportEmbeddedEffects",
+            ownership: "OWNER"
+          });
+        }
+
+        // Check for embedded transformations (async, so we need to be careful)
+        const hasEmbeddedTransformations = this.item.system?.embeddedTransformations?.length > 0;
+        if (hasEmbeddedTransformations) {
+          controls.push({
+            action: "exportEmbeddedTransformations",
+            icon: "fas fa-exchange-alt",
+            label: "EVENTIDE_RP_SYSTEM.UI.ExportEmbeddedTransformations",
+            ownership: "OWNER"
+          });
+        }
+
+        // Add "Export All" button if there are any embedded items
+        if (embeddedItem || (embeddedEffects && embeddedEffects.length > 0) || hasEmbeddedTransformations) {
+          controls.push({
+            action: "exportAllEmbeddedItems",
+            icon: "fas fa-file-export",
+            label: "EVENTIDE_RP_SYSTEM.UI.ExportAllEmbeddedItems",
+            ownership: "OWNER"
+          });
+        }
       }
     }
 
@@ -1069,6 +1128,70 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
       Logger.debug("Action cards export completed", results, "ITEM_SHEET");
     } catch (error) {
       Logger.error("Failed to export embedded action cards", error, "ITEM_SHEET");
+    }
+  }
+
+  /**
+   * Export embedded action item to the appropriate compendium
+   * @param {Event} _event - The triggering event
+   * @param {HTMLElement} _target - The clicked element
+   * @returns {Promise<void>}
+   * @protected
+   */
+  async _exportEmbeddedActionItem(_event, _target) {
+    try {
+      const results = await EmbeddedItemExporter.exportEmbeddedActionItem(this.item);
+      Logger.debug("Action item export completed", results, "ITEM_SHEET");
+    } catch (error) {
+      Logger.error("Failed to export embedded action item", error, "ITEM_SHEET");
+    }
+  }
+
+  /**
+   * Export embedded effects, sorting them by type
+   * @param {Event} _event - The triggering event
+   * @param {HTMLElement} _target - The clicked element
+   * @returns {Promise<void>}
+   * @protected
+   */
+  async _exportEmbeddedEffects(_event, _target) {
+    try {
+      const results = await EmbeddedItemExporter.exportEmbeddedEffects(this.item);
+      Logger.debug("Effects export completed", results, "ITEM_SHEET");
+    } catch (error) {
+      Logger.error("Failed to export embedded effects", error, "ITEM_SHEET");
+    }
+  }
+
+  /**
+   * Export embedded transformations to the custom transformations compendium
+   * @param {Event} _event - The triggering event
+   * @param {HTMLElement} _target - The clicked element
+   * @returns {Promise<void>}
+   * @protected
+   */
+  async _exportEmbeddedTransformations(_event, _target) {
+    try {
+      const results = await EmbeddedItemExporter.exportEmbeddedTransformations(this.item);
+      Logger.debug("Transformations export completed", results, "ITEM_SHEET");
+    } catch (error) {
+      Logger.error("Failed to export embedded transformations", error, "ITEM_SHEET");
+    }
+  }
+
+  /**
+   * Export all embedded items, sorting them into appropriate compendiums
+   * @param {Event} _event - The triggering event
+   * @param {HTMLElement} _target - The clicked element
+   * @returns {Promise<void>}
+   * @protected
+   */
+  async _exportAllEmbeddedItems(_event, _target) {
+    try {
+      const results = await EmbeddedItemExporter.exportAllEmbeddedItems(this.item);
+      Logger.debug("All embedded items export completed", results, "ITEM_SHEET");
+    } catch (error) {
+      Logger.error("Failed to export all embedded items", error, "ITEM_SHEET");
     }
   }
 

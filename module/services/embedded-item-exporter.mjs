@@ -96,6 +96,292 @@ export class EmbeddedItemExporter {
   }
 
   /**
+   * Export embedded action item from an action card to the appropriate compendium
+   * @param {Item} sourceItem - The action card item containing embedded action item
+   * @returns {Promise<{success: number, failed: number, errors: Array}>} Export results
+   */
+  static async exportEmbeddedActionItem(sourceItem) {
+    if (!game.user.isGM) {
+      ui.notifications.error(
+        game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.GMOnlyOperation"),
+      );
+      return { success: 0, failed: 0, errors: ["User is not GM"] };
+    }
+
+    if (sourceItem.type !== "actionCard") {
+      const error = "Source item is not an action card";
+      Logger.warn(error, { itemType: sourceItem.type }, "EMBEDDED_EXPORTER");
+      return { success: 0, failed: 1, errors: [error] };
+    }
+
+    const embeddedItem = sourceItem.getEmbeddedItem();
+    if (!embeddedItem) {
+      ui.notifications.info(
+        game.i18n.localize("EVENTIDE_RP_SYSTEM.Info.NoEmbeddedItemsToExport"),
+      );
+      return { success: 0, failed: 0, errors: [] };
+    }
+
+    // Determine the appropriate compendium type based on the embedded item type
+    let compendiumType;
+    switch (embeddedItem.type) {
+      case "combatPower":
+        compendiumType = "combatPower";
+        break;
+      case "feature":
+        compendiumType = "feature";
+        break;
+      case "gear":
+        compendiumType = "gear";
+        break;
+      default: {
+        const error = `Unsupported embedded item type: ${embeddedItem.type}`;
+        Logger.warn(
+          error,
+          { itemType: embeddedItem.type },
+          "EMBEDDED_EXPORTER",
+        );
+        return { success: 0, failed: 1, errors: [error] };
+      }
+    }
+
+    return await this._exportItems([embeddedItem], compendiumType);
+  }
+
+  /**
+   * Export embedded effects from an action card, sorting them by type
+   * @param {Item} sourceItem - The action card item containing embedded effects
+   * @returns {Promise<{success: number, failed: number, errors: Array}>} Export results
+   */
+  static async exportEmbeddedEffects(sourceItem) {
+    if (!game.user.isGM) {
+      ui.notifications.error(
+        game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.GMOnlyOperation"),
+      );
+      return { success: 0, failed: 0, errors: ["User is not GM"] };
+    }
+
+    if (sourceItem.type !== "actionCard") {
+      const error = "Source item is not an action card";
+      Logger.warn(error, { itemType: sourceItem.type }, "EMBEDDED_EXPORTER");
+      return { success: 0, failed: 1, errors: [error] };
+    }
+
+    const embeddedEffects = sourceItem.getEmbeddedEffects();
+    if (!embeddedEffects || embeddedEffects.length === 0) {
+      ui.notifications.info(
+        game.i18n.localize("EVENTIDE_RP_SYSTEM.Info.NoEmbeddedItemsToExport"),
+      );
+      return { success: 0, failed: 0, errors: [] };
+    }
+
+    // Sort effects by type and export to appropriate compendiums
+    const results = { success: 0, failed: 0, errors: [] };
+
+    for (const effect of embeddedEffects) {
+      try {
+        let compendiumType;
+        switch (effect.type) {
+          case "status":
+            compendiumType = "status";
+            break;
+          case "feature":
+            compendiumType = "feature";
+            break;
+          default:
+            compendiumType = "status"; // Default to status compendium
+            break;
+        }
+
+        const exportResult = await this._exportItems([effect], compendiumType);
+        results.success += exportResult.success;
+        results.failed += exportResult.failed;
+        results.errors.push(...exportResult.errors);
+      } catch (error) {
+        Logger.error(
+          "Failed to export effect",
+          { effectName: effect.name, error },
+          "EMBEDDED_EXPORTER",
+        );
+        results.failed++;
+        results.errors.push(
+          `Failed to export ${effect.name}: ${error.message}`,
+        );
+      }
+    }
+
+    return results;
+  }
+
+  /**
+   * Export embedded transformations from an action card to the custom transformations compendium
+   * @param {Item} sourceItem - The action card item containing embedded transformations
+   * @returns {Promise<{success: number, failed: number, errors: Array}>} Export results
+   */
+  static async exportEmbeddedTransformations(sourceItem) {
+    if (!game.user.isGM) {
+      ui.notifications.error(
+        game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.GMOnlyOperation"),
+      );
+      return { success: 0, failed: 0, errors: ["User is not GM"] };
+    }
+
+    if (sourceItem.type !== "actionCard") {
+      const error = "Source item is not an action card";
+      Logger.warn(error, { itemType: sourceItem.type }, "EMBEDDED_EXPORTER");
+      return { success: 0, failed: 1, errors: [error] };
+    }
+
+    const embeddedTransformations =
+      await sourceItem.getEmbeddedTransformations();
+    if (!embeddedTransformations || embeddedTransformations.length === 0) {
+      ui.notifications.info(
+        game.i18n.localize("EVENTIDE_RP_SYSTEM.Info.NoEmbeddedItemsToExport"),
+      );
+      return { success: 0, failed: 0, errors: [] };
+    }
+
+    return await this._exportItems(embeddedTransformations, "transformation");
+  }
+
+  /**
+   * Export all embedded items from a source item, sorting them into appropriate compendiums
+   * @param {Item} sourceItem - The source item (transformation or action card)
+   * @returns {Promise<{success: number, failed: number, errors: Array}>} Export results
+   */
+  static async exportAllEmbeddedItems(sourceItem) {
+    if (!game.user.isGM) {
+      ui.notifications.error(
+        game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.GMOnlyOperation"),
+      );
+      return { success: 0, failed: 0, errors: ["User is not GM"] };
+    }
+
+    if (!["transformation", "actionCard"].includes(sourceItem.type)) {
+      const error = "Source item is not a transformation or action card";
+      Logger.warn(error, { itemType: sourceItem.type }, "EMBEDDED_EXPORTER");
+      return { success: 0, failed: 1, errors: [error] };
+    }
+
+    const results = { success: 0, failed: 0, errors: [] };
+
+    try {
+      if (sourceItem.type === "transformation") {
+        // Export embedded combat powers
+        const combatPowers = sourceItem.system.getEmbeddedCombatPowers();
+        if (combatPowers && combatPowers.length > 0) {
+          const combatResult = await this._exportItems(
+            combatPowers,
+            "combatPower",
+          );
+          results.success += combatResult.success;
+          results.failed += combatResult.failed;
+          results.errors.push(...combatResult.errors);
+        }
+
+        // Export embedded action cards
+        const actionCards = sourceItem.system.getEmbeddedActionCards();
+        if (actionCards && actionCards.length > 0) {
+          const actionResult = await this._exportItems(
+            actionCards,
+            "actionCard",
+          );
+          results.success += actionResult.success;
+          results.failed += actionResult.failed;
+          results.errors.push(...actionResult.errors);
+        }
+      } else if (sourceItem.type === "actionCard") {
+        // Export embedded action item
+        const embeddedItem = sourceItem.getEmbeddedItem();
+        if (embeddedItem) {
+          let compendiumType;
+          switch (embeddedItem.type) {
+            case "combatPower":
+              compendiumType = "combatPower";
+              break;
+            case "feature":
+              compendiumType = "feature";
+              break;
+            case "gear":
+              compendiumType = "gear";
+              break;
+            default:
+              compendiumType = "feature"; // Default fallback
+              break;
+          }
+
+          const itemResult = await this._exportItems(
+            [embeddedItem],
+            compendiumType,
+          );
+          results.success += itemResult.success;
+          results.failed += itemResult.failed;
+          results.errors.push(...itemResult.errors);
+        }
+
+        // Export embedded effects
+        const embeddedEffects = sourceItem.getEmbeddedEffects();
+        if (embeddedEffects && embeddedEffects.length > 0) {
+          for (const effect of embeddedEffects) {
+            let compendiumType;
+            switch (effect.type) {
+              case "status":
+                compendiumType = "status";
+                break;
+              case "feature":
+                compendiumType = "feature";
+                break;
+              default:
+                compendiumType = "status"; // Default to status compendium
+                break;
+            }
+
+            const effectResult = await this._exportItems(
+              [effect],
+              compendiumType,
+            );
+            results.success += effectResult.success;
+            results.failed += effectResult.failed;
+            results.errors.push(...effectResult.errors);
+          }
+        }
+
+        // Export embedded transformations
+        const embeddedTransformations =
+          await sourceItem.getEmbeddedTransformations();
+        if (embeddedTransformations && embeddedTransformations.length > 0) {
+          const transformResult = await this._exportItems(
+            embeddedTransformations,
+            "transformation",
+          );
+          results.success += transformResult.success;
+          results.failed += transformResult.failed;
+          results.errors.push(...transformResult.errors);
+        }
+      }
+
+      if (results.success === 0 && results.failed === 0) {
+        ui.notifications.info(
+          game.i18n.localize("EVENTIDE_RP_SYSTEM.Info.NoEmbeddedItemsToExport"),
+        );
+      }
+    } catch (error) {
+      Logger.error(
+        "Failed to export all embedded items",
+        error,
+        "EMBEDDED_EXPORTER",
+      );
+      results.errors.push(`Export all operation failed: ${error.message}`);
+      results.failed++;
+      ui.notifications.error(
+        game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.ExportOperationFailed"),
+      );
+    }
+
+    return results;
+  }
+
+  /**
    * Generic method to export items to their appropriate compendium
    * @param {Array} items - Array of items to export
    * @param {string} itemType - Type of items being exported

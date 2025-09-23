@@ -20,7 +20,11 @@
       "ReadOnly": "Read-Only",
       "Remove": "Remove",
       "ExportEmbeddedCombatPowers": "Export Combat Powers",
-      "ExportEmbeddedActionCards": "Export Action Cards"
+      "ExportEmbeddedActionCards": "Export Action Cards",
+      "ExportEmbeddedActionItem": "Export Action Item",
+      "ExportEmbeddedEffects": "Export Effects",
+      "ExportEmbeddedTransformations": "Export Transformations",
+      "ExportAllEmbeddedItems": "Export All Embedded Items"
     },
     "General": {
       "None": "None",
