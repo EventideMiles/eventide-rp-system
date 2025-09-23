@@ -18,10 +18,10 @@ export default class EventideRpSystemTransformation extends EventideRpSystemItem
 
     schema.size = new fields.NumberField({
       required: true,
-      initial: 1,
-      min: 0.5,
+      initial: 0, // Default to "no size change"
+      min: 0,
       max: 5,
-      choices: [0.5, 0.75, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5],
+      choices: [0, 0.5, 0.75, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5],
     });
 
     // Add token image property with proper categories

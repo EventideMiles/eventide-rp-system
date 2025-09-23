@@ -504,7 +504,7 @@
       "EffectDeletionFailed": "Failed to delete effect for {itemName}",
       "EffectNotFound": "Effect not found",
       "EffectToggleFailed": "Failed to toggle effect for {itemName}",
-      "FailedToAddCombatPower": "Failed to add combat power {itemName}",
+      "FailedToAddCombatPower": "Failed to add combat power",
       "ImagePickerFailed": "Failed to open image picker for {itemName}",
       "MacroExecutionError": "Failed to execute macro",
       "UnexpectedError": "An unexpected error occurred",
@@ -559,7 +559,11 @@
       "UnableToFindActor": "Unable to find actor for execution",
       "FailedToExecuteAction": "Failed to execute the approved action",
       "FailedToProcessApproval": "Failed to process action approval",
-      "FailedToSaveActionCard": "Failed to save action card. See console for details."
+      "FailedToSaveActionCard": "Failed to save action card. See console for details.",
+      "CreateNewCombatPowerFailed": "Failed to create new combat power",
+      "CreateNewActionCardFailed": "Failed to create new action card",
+      "FailedToAddActionCard": "Failed to add action card",
+      "TransformationCreationFailed": "Failed to create transformation"
     },
     "Info": {
       "CompendiumItemCreated": "Created {keyType} item {name} in the {packLabel} compendium",
@@ -574,7 +578,9 @@
       "AttackChainExecuted": "Attack chain executed successfully",
       "EffectDescriptionSaved": "Effect description saved.",
       "ItemDescriptionSaved": "Item description saved.",
-      "CombatPowerDescriptionSaved": "Combat Power description saved."
+      "CombatPowerDescriptionSaved": "Combat Power description saved.",
+      "TransformationCreated": "Transformation '{name}' created successfully",
+      "CustomTransformationsCompendiumCreated": "Custom Transformations compendium created"
     },
     "Warnings": {
       "CannotChangeImageWhileTransformed": "Cannot change image while transformed",
@@ -732,6 +738,17 @@
         "AriaLabel": "Search and select a transformation",
         "ItemAdded": "Transformation '{itemName}' added"
       },
+      "CombatPowersSelector": {
+        "Placeholder": "Search for combat power to add...",
+        "AriaLabel": "Search and select a combat power",
+        "ItemAdded": "Combat power '{itemName}' added"
+      },
+      "ActionCardsSelector": {
+        "Placeholder": "Search for action card to add...",
+        "AriaLabel": "Search and select an action card",
+        "ItemAdded": "Action card '{itemName}' added"
+      },
+      "AddExisting": "Add Existing Items",
       "Placeholders": {
         "ChangeValue": "Change Value",
         "Description": "Description",
@@ -893,6 +910,11 @@
       "Disabled": "Disabled",
       "Enabled": "Enabled",
       "Unknown": "Unknown"
+    },
+    "CreationButtons": {
+      "CreateNew": "Create New",
+      "CreateNewPower": "Create New Power",
+      "CreateNewActionCard": "Create New Action Card"
     },
     "WindowTitles": {
       "ChangeTargetStatus": "Change Target Status",

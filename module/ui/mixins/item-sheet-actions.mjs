@@ -1048,6 +1048,197 @@ export const ItemSheetActionsMixin = (BaseClass) =>
     }
 
     /**
+     * Handle creating a new combat power for a transformation
+     * @param {Event} _event - The click event
+     * @param {HTMLElement} _target - The target element
+     * @private
+     */
+    static async _createNewCombatPower(_event, _target) {
+      try {
+        const item = this.item;
+        if (!item || item.type !== "transformation") {
+          Logger.warn(
+            "Create new combat power called on non-transformation",
+            { itemType: item?.type },
+            "ITEM_ACTIONS",
+          );
+          return;
+        }
+
+        // Use a more reliable permission check
+        const hasPermission =
+          item.isOwner ||
+          item.canUserModify(game.user, "update") ||
+          game.user.isGM;
+
+        if (!hasPermission) {
+          Logger.warn(
+            "User lacks permission to create new combat power",
+            {
+              itemName: item.name,
+              userId: game.user.id,
+              isOwner: item.isOwner,
+              canUserModify: item.canUserModify(game.user, "update"),
+              isGM: game.user.isGM,
+            },
+            "ITEM_ACTIONS",
+          );
+          ui.notifications.warn(
+            "You don't have permission to edit this transformation's combat powers",
+          );
+          return;
+        }
+
+        // Create a new combat power with default data inherited from the transformation
+        const newPowerData = {
+          name: `${item.name} Power`,
+          type: "combatPower",
+          img: item.img,
+          system: {
+            description: `Combat power from ${item.name} transformation`,
+            prerequisites: "",
+            targeted: true,
+            bgColor: "#8B4513",
+            textColor: "#ffffff",
+            roll: {
+              type: "roll",
+              ability: "unaugmented",
+              bonus: 0,
+              diceAdjustments: {
+                advantage: 0,
+                disadvantage: 0,
+                total: 0,
+              },
+            },
+          },
+        };
+
+        // Create a temporary Item document from the data
+        const tempItem = new CONFIG.Item.documentClass(newPowerData, {
+          parent: null,
+        });
+
+        await item.system.addCombatPower(tempItem);
+
+        // Explicitly render the sheet to ensure it updates
+        this.render();
+
+      } catch (error) {
+        Logger.error("Failed to create new combat power", error, "ITEM_ACTIONS");
+        ui.notifications.error(
+          game.i18n.localize(
+            "EVENTIDE_RP_SYSTEM.Errors.CreateNewCombatPowerFailed",
+          ),
+        );
+      }
+    }
+
+    /**
+     * Handle creating a new action card for a transformation
+     * @param {Event} _event - The click event
+     * @param {HTMLElement} _target - The target element
+     * @private
+     */
+    static async _createNewActionCard(_event, _target) {
+      try {
+        const item = this.item;
+        if (!item || item.type !== "transformation") {
+          Logger.warn(
+            "Create new action card called on non-transformation",
+            { itemType: item?.type },
+            "ITEM_ACTIONS",
+          );
+          return;
+        }
+
+        // Use a more reliable permission check
+        const hasPermission =
+          item.isOwner ||
+          item.canUserModify(game.user, "update") ||
+          game.user.isGM;
+
+        if (!hasPermission) {
+          Logger.warn(
+            "User lacks permission to create new action card",
+            {
+              itemName: item.name,
+              userId: game.user.id,
+              isOwner: item.isOwner,
+              canUserModify: item.canUserModify(game.user, "update"),
+              isGM: game.user.isGM,
+            },
+            "ITEM_ACTIONS",
+          );
+          ui.notifications.warn(
+            "You don't have permission to edit this transformation's action cards",
+          );
+          return;
+        }
+
+        // Create a new action card with default data inherited from the transformation
+        const newActionCardData = {
+          name: `${item.name} Action`,
+          type: "actionCard",
+          img: item.img,
+          system: {
+            description: `Action card from ${item.name} transformation`,
+            bgColor: "#8B4513",
+            textColor: "#ffffff",
+            mode: "attackChain",
+            attackChain: {
+              firstStat: "acro",
+              secondStat: "phys",
+              damageCondition: "never",
+              damageFormula: "1d6",
+              damageType: "damage",
+              damageThreshold: 15,
+              statusCondition: "never",
+              statusThreshold: 15,
+            },
+            embeddedItem: {},
+            embeddedStatusEffects: [],
+            embeddedTransformations: [],
+            transformationConfig: {
+              condition: "oneSuccess",
+              threshold: 15,
+            },
+            savedDamage: {
+              formula: "1d6",
+              type: "damage",
+              description: "",
+            },
+            advanceInitiative: false,
+            attemptInventoryReduction: false,
+            repetitions: "1",
+            repeatToHit: false,
+            damageApplication: false,
+            statusPerSuccess: false,
+            timingOverride: 0.0,
+            costOnRepetition: false,
+          },
+        };
+
+        // Create a temporary Item document from the data
+        const tempItem = new CONFIG.Item.documentClass(newActionCardData, {
+          parent: null,
+        });
+
+        await item.system.addActionCard(tempItem);
+
+        // Explicitly render the sheet to ensure it updates
+        this.render();
+
+      } catch (error) {
+        Logger.error("Failed to create new action card", error, "ITEM_ACTIONS");
+        ui.notifications.error(
+          game.i18n.localize(
+            "EVENTIDE_RP_SYSTEM.Errors.CreateNewActionCardFailed",
+          ),
+        );
+      }
+    }
+
+    /**
      * Handle removing an embedded transformation from an action card
      * @param {Event} _event - The click event
      * @param {HTMLElement} target - The target element

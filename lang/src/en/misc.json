@@ -25,6 +25,11 @@
       "Disabled": "Disabled",
       "Enabled": "Enabled",
       "Unknown": "Unknown"
+    },
+    "CreationButtons": {
+      "CreateNew": "Create New",
+      "CreateNewPower": "Create New Power",
+      "CreateNewActionCard": "Create New Action Card"
     }
   },
   "TYPES": {

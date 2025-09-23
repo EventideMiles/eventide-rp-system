@@ -152,7 +152,12 @@
       "UnableToFindActor": "Unable to find actor for execution",
       "FailedToExecuteAction": "Failed to execute the approved action",
       "FailedToProcessApproval": "Failed to process action approval",
-      "FailedToSaveActionCard": "Failed to save action card. See console for details."
+      "FailedToSaveActionCard": "Failed to save action card. See console for details.",
+      "CreateNewCombatPowerFailed": "Failed to create new combat power",
+      "CreateNewActionCardFailed": "Failed to create new action card",
+      "FailedToAddCombatPower": "Failed to add combat power",
+      "FailedToAddActionCard": "Failed to add action card",
+      "TransformationCreationFailed": "Failed to create transformation"
     },
     "Info": {
       "CompendiumItemCreated": "Created {keyType} item {name} in the {packLabel} compendium",
@@ -167,7 +172,9 @@
       "AttackChainExecuted": "Attack chain executed successfully",
       "EffectDescriptionSaved": "Effect description saved.",
       "ItemDescriptionSaved": "Item description saved.",
-      "CombatPowerDescriptionSaved": "Combat Power description saved."
+      "CombatPowerDescriptionSaved": "Combat Power description saved.",
+      "TransformationCreated": "Transformation '{name}' created successfully",
+      "CustomTransformationsCompendiumCreated": "Custom Transformations compendium created"
     },
     "Warnings": {
       "CannotChangeImageWhileTransformed": "Cannot change image while transformed",

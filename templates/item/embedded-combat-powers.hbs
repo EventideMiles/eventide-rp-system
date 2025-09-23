@@ -61,6 +61,21 @@
         <p>{{localize "EVENTIDE_RP_SYSTEM.Item.Transformation.DropPowerHere"}}</p>
       </div>
 
+      {{!-- Action buttons section --}}
+      <div class="erps-items-panel__actions">
+        <div class="erps-form-actions">
+          <button type="button" class="erps-button erps-button--secondary" data-action="createNewCombatPower" title="{{localize 'EVENTIDE_RP_SYSTEM.CreationButtons.CreateNew'}}">
+            <i class="fas fa-plus"></i> {{localize "EVENTIDE_RP_SYSTEM.CreationButtons.CreateNewPower"}}
+          </button>
+        </div>
+
+        {{!-- Search and add existing powers --}}
+        <div class="erps-form-group">
+          <label class="erps-form-label">{{localize "EVENTIDE_RP_SYSTEM.Forms.AddExisting"}}</label>
+          <div class="erps-item-selector" data-selector="combat-powers"></div>
+        </div>
+      </div>
+
       <div class="erps-items-panel__notes">
         <p>{{localize "EVENTIDE_RP_SYSTEM.Item.Transformation.Notes"}}</p>
         <p><strong>{{localize "EVENTIDE_RP_SYSTEM.Item.Transformation.DragNote"}}</strong></p>

@@ -418,10 +418,13 @@ export const ActorTransformationMixin = (BaseClass) =>
       }
 
       // Calculate size and scale based on the transformation size
-      this._calculateTransformationSize(
-        updates,
-        transformationItem.system.size,
-      );
+      // Skip size changes if size is 0 ("no size change")
+      if (transformationItem.system.size > 0) {
+        this._calculateTransformationSize(
+          updates,
+          transformationItem.system.size,
+        );
+      }
 
       return updates;
     }

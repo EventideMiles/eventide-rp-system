@@ -5,7 +5,9 @@
       <div class="form-fields">
         <select class="erps-select" name="system.size" data-dtype="Number">
           {{#each sizeOptions as |size|}}
-            <option value="{{size}}" {{#if (eq ../system.size size)}}selected{{/if}}>{{size}}×</option>
+            <option value="{{size}}" {{#if (eq ../system.size size)}}selected{{/if}}>
+              {{#if (eq size 0)}}No Size Change{{else}}{{size}}×{{/if}}
+            </option>
           {{/each}}
         </select>
       </div>

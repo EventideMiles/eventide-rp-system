@@ -82,6 +82,8 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
       createNewPower: this._createNewPower,
       createNewStatus: this._createNewStatus,
       createNewTransformation: this._createNewTransformation,
+      createNewCombatPower: this._createNewCombatPower,
+      createNewActionCard: this._createNewActionCard,
 
       editEmbeddedItem: this._editEmbeddedItem,
       editEmbeddedEffect: this._editEmbeddedEffect,
@@ -339,7 +341,7 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
           };
         }
         // Add size options for the select
-        context.sizeOptions = [0.5, 0.75, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5];
+        context.sizeOptions = [0, 0.5, 0.75, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5];
         break;
       case "description":
         context.tab = context.tabs[partId];
@@ -709,8 +711,8 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
   async _initializeItemSelectors() {
     try {
 
-      // Only initialize for action card items
-      if (this.item.type !== "actionCard") {
+      // Only initialize for action card and transformation items
+      if (this.item.type !== "actionCard" && this.item.type !== "transformation") {
         return;
       }
 
@@ -768,6 +770,39 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
         });
       }
 
+      // Initialize combat powers selector for transformations
+      const combatPowersContainer = this.element.querySelector(
+        '[data-selector="combat-powers"]',
+      );
+
+      if (combatPowersContainer && this.item.type === "transformation") {
+        this.#combatPowersSelector = new ItemSelectorComboBox({
+          container: combatPowersContainer,
+          itemTypes: ["combatPower"],
+          onSelect: this._onCombatPowerSelected.bind(this),
+          placeholder: game.i18n.localize(
+            "EVENTIDE_RP_SYSTEM.Forms.CombatPowersSelector.Placeholder",
+          ),
+          selectorType: "combat-powers",
+        });
+      }
+
+      // Initialize action cards selector for transformations
+      const actionCardsContainer = this.element.querySelector(
+        '[data-selector="action-cards"]',
+      );
+
+      if (actionCardsContainer && this.item.type === "transformation") {
+        this.#actionCardsSelector = new ItemSelectorComboBox({
+          container: actionCardsContainer,
+          itemTypes: ["actionCard"],
+          onSelect: this._onActionCardSelected.bind(this),
+          placeholder: game.i18n.localize(
+            "EVENTIDE_RP_SYSTEM.Forms.ActionCardsSelector.Placeholder",
+          ),
+          selectorType: "action-cards",
+        });
+      }
 
     } catch (error) {
       console.error("ItemSheet: Failed to initialize item selectors:", error);
@@ -794,6 +829,16 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
       if (this.#transformationsSelector) {
         this.#transformationsSelector.destroy();
         this.#transformationsSelector = null;
+      }
+
+      if (this.#combatPowersSelector) {
+        this.#combatPowersSelector.destroy();
+        this.#combatPowersSelector = null;
+      }
+
+      if (this.#actionCardsSelector) {
+        this.#actionCardsSelector.destroy();
+        this.#actionCardsSelector = null;
       }
     } catch (error) {
       Logger.warn("Error cleaning up item selectors", error, "ITEM_SHEET");
@@ -853,6 +898,70 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
       Logger.error("Failed to add effect", error, "ITEM_SHEET");
       ui.notifications.error(
         game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.FailedToAddEffect"),
+      );
+    }
+  }
+
+  /**
+   * Handle combat power selection from the combat powers selector
+   * @param {Item} droppedItem - The combat power item that was selected
+   * @returns {Promise<void>}
+   * @protected
+   */
+  async _onCombatPowerSelected(droppedItem) {
+    try {
+      // Add the combat power to the transformation (same as drag-and-drop)
+      await this.item.system.addCombatPower(droppedItem);
+
+      // Re-render the sheet to show the new combat power
+      this.render();
+
+      ui.notifications.info(
+        game.i18n.format(
+          "EVENTIDE_RP_SYSTEM.Forms.CombatPowersSelector.ItemAdded",
+          {
+            itemName: droppedItem.name,
+          },
+        ),
+      );
+    } catch (error) {
+      Logger.error("Failed to add combat power", error, "ITEM_SHEET");
+      ui.notifications.error(
+        game.i18n.localize(
+          "EVENTIDE_RP_SYSTEM.Errors.FailedToAddCombatPower",
+        ),
+      );
+    }
+  }
+
+  /**
+   * Handle action card selection from the action cards selector
+   * @param {Item} droppedItem - The action card item that was selected
+   * @returns {Promise<void>}
+   * @protected
+   */
+  async _onActionCardSelected(droppedItem) {
+    try {
+      // Add the action card to the transformation (same as drag-and-drop)
+      await this.item.system.addActionCard(droppedItem);
+
+      // Re-render the sheet to show the new action card
+      this.render();
+
+      ui.notifications.info(
+        game.i18n.format(
+          "EVENTIDE_RP_SYSTEM.Forms.ActionCardsSelector.ItemAdded",
+          {
+            itemName: droppedItem.name,
+          },
+        ),
+      );
+    } catch (error) {
+      Logger.error("Failed to add action card", error, "ITEM_SHEET");
+      ui.notifications.error(
+        game.i18n.localize(
+          "EVENTIDE_RP_SYSTEM.Errors.FailedToAddActionCard",
+        ),
       );
     }
   }
@@ -966,6 +1075,8 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
   #actionItemSelector; // Item selector for action items
   #effectsSelector; // Item selector for effects
   #transformationsSelector; // Item selector for transformations
+  #combatPowersSelector; // Item selector for combat powers (transformations)
+  #actionCardsSelector; // Item selector for action cards (transformations)
 
   /**
    * Override render method to preserve scroll position using the working pattern from creator-application.mjs
