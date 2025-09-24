@@ -12,6 +12,7 @@
         "CriticalHit": "Critical Hit!",
         "Dis": "dis",
         "Equipped": "Equipped",
+        "Effects": "Effects",
         "Power": "Power",
         "Removed": "Removed",
         "RemovedMessage": "had a status effect removed",
