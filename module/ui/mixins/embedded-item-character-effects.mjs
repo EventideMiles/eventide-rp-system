@@ -377,4 +377,35 @@ export const EmbeddedItemCharacterEffectsMixin = (BaseClass) =>
       const type = target.dataset.type;
       await this._updateEmbeddedCharacterEffects({ remove: { index, type } });
     }
+
+    /**
+     * Bridge method to forward regular character effects calls to embedded equivalents
+     * This ensures compatibility when regular item sheet methods are called on embedded items
+     * @param {Object} options - Update options
+     * @returns {Promise<void>}
+     * @protected
+     */
+    async _updateCharacterEffects(options = {}) {
+      return this._updateEmbeddedCharacterEffects(options);
+    }
+
+    /**
+     * Bridge method to forward regular character effect creation to embedded equivalent
+     * @param {PointerEvent} event - The originating click event
+     * @param {HTMLElement} target - The capturing HTML element which defined a [data-action]
+     * @protected
+     */
+    static async _newCharacterEffect(event, target) {
+      return this._newEmbeddedCharacterEffect(event, target);
+    }
+
+    /**
+     * Bridge method to forward regular character effect deletion to embedded equivalent
+     * @param {PointerEvent} event - The originating click event
+     * @param {HTMLElement} target - The capturing HTML element which defined a [data-action]
+     * @protected
+     */
+    static async _deleteCharacterEffect(event, target) {
+      return this._deleteEmbeddedCharacterEffect(event, target);
+    }
   };
