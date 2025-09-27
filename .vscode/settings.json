@@ -9,9 +9,6 @@
     "source.fixAll.eslint": "explicit"
   },
   "eslint.workingDirectories": ["."],
-  "files.associations": {
-    "*.mjs": "javascript"
-  },
   "emmet.includeLanguages": {
     "handlebars": "html"
   },
@@ -19,11 +16,15 @@
     "**/node_modules": true,
     "**/packs": true,
     "**/.git": true,
-    "**/releases": true
+    "**/coverage": true
   },
   "search.exclude": {
     "**/node_modules": true,
     "**/packs": true,
-    "**/releases": true
+    "**/releases": true,
+    "**/coverage": true
+  },
+  "files.associations": {
+    "*.mjs": "javascript"
   }
 }

@@ -213,8 +213,39 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
   }
 
   /**
-   * Prepare base actor data, calculating derived values.
-   * @param {Object} actorData - The actor's data object.
+   * Prepare derived data for this actor after base data preparation.
+   *
+   * Calculates total ability scores, armor classes, dice adjustments, and
+   * other derived statistics. This method is called automatically by FoundryVTT
+   * during data preparation cycles and is critical for character sheet accuracy.
+   *
+   * @override
+   * @returns {void}
+   *
+   * @example
+   * // Automatic call during data preparation
+   * actor.prepareDerivedData();
+   * // Results in calculated totals for abilities and resources
+   *
+   * @sideeffects
+   * - Modifies this.abilities[ability].total for all abilities
+   * - Updates this.abilities[ability].ac.total (armor class)
+   * - Calculates this.abilities[ability].diceAdjustments.total and mode
+   * - Updates this.hiddenAbilities[ability].total for all hidden abilities
+   * - Calculates this.statTotal.value (sum of all ability totals)
+   * - Updates this.statTotal.mainInit (acro + wits) / 2
+   * - Sets this.statTotal.subInit to statTotal.value / 100
+   * - Localizes all ability labels and abbreviations
+   *
+   * @performance Called frequently during sheet updates and data changes.
+   *             Should avoid heavy computations or async operations.
+   *
+   * @since 13.0.0
+   * @author Eventide RP System
+   *
+   * @critical Core character data calculations. Errors here affect all
+   *          character statistics, rolling mechanics, and sheet display.
+   *          This method is essential for proper game functionality.
    */
   prepareDerivedData() {
     super.prepareDerivedData();

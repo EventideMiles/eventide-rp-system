@@ -29,6 +29,18 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @protected
      */
     static async _onEditImage(_event, target) {
+      // CRITICAL FIX: Detect if this is being called on an embedded item sheet
+      // and delegate to the correct embedded item method
+      if (this.constructor.name === 'EmbeddedItemSheet' || this.parentItem) {
+        // Call the embedded item sheet's image editing method directly
+        if (typeof this._onEditImageEmbedded === 'function') {
+          return this._onEditImageEmbedded(_event, target);
+        } else if (this.constructor._onEditImageEmbedded) {
+          return this.constructor._onEditImageEmbedded.call(this, _event, target);
+        }
+        return;
+      }
+
       try {
         const attr = target.dataset.edit;
         const current = foundry.utils.getProperty(this.document, attr);

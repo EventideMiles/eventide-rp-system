@@ -15,11 +15,52 @@ import { erpsRollHandler } from "../../services/_module.mjs";
 export const ActorRollsMixin = (BaseClass) =>
   class extends BaseClass {
     /**
-     * Generate a roll formula string for an ability roll
+     * Calculate and return the roll formula for a specific ability.
      *
-     * @param {Object} params - Parameters for the ability roll
-     * @param {string} params.ability - The ability identifier
-     * @returns {Promise<string>} The roll formula string
+     * Generates dice formulas considering ability scores, transformations,
+     * advantages/disadvantages, and actor-specific modifiers. This is a critical
+     * path for all dice rolling in the system.
+     *
+     * @async
+     * @param {Object} options - Rolling configuration options
+     * @param {string} options.ability - Ability name (acro, phys, fort, will, wits, unaugmented)
+     *
+     * @returns {Promise<string>} The complete dice formula (e.g., "1d20+5", "2d20kh1+3")
+     * @returns {Promise<null>} If the ability cannot be rolled
+     *
+     * @example
+     * // Standard ability roll
+     * const formula = await actor.getRollFormula({ ability: 'acro' });
+     * // Returns: "1d20+3" (if acro total is 3)
+     *
+     * @example
+     * // Advantage roll (positive dice adjustments)
+     * const formula = await actor.getRollFormula({ ability: 'phys' });
+     * // Returns: "2d20kh1+4" (roll twice, keep highest)
+     *
+     * @example
+     * // Disadvantage roll (negative dice adjustments)
+     * const formula = await actor.getRollFormula({ ability: 'fort' });
+     * // Returns: "3d20kl1+2" (roll three, keep lowest)
+     *
+     * @example
+     * // Unaugmented roll (no ability bonus)
+     * const formula = await actor.getRollFormula({ ability: 'unaugmented' });
+     * // Returns: "1d20" (pure dice roll)
+     *
+     * @throws {Error} If ability parameter is invalid or missing
+     * @throws {Error} If ability is not found in actor data
+     * @throws {Error} If actor data is corrupted or missing
+     *
+     * @since 13.0.0
+     * @author Eventide RP System
+     *
+     * @critical This method is used by ALL rolling mechanics in the system.
+     *          Changes affect every dice roll and require extensive testing.
+     *          Removal or modification can break core gameplay functionality.
+     *
+     * @performance Called frequently during ability checks and combat.
+     *             Should avoid heavy computations or async operations.
      */
     async getRollFormula({ ability }) {
       Logger.methodEntry("ActorRollsMixin", "getRollFormula", { ability });

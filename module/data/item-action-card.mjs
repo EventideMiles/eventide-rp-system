@@ -7,6 +7,43 @@ import { EventideRpSystemItemBase } from "./_module.mjs";
  * and can execute complex attack chains or apply saved damage.
  */
 export default class EventideRpSystemActionCard extends EventideRpSystemItemBase {
+  /**
+   * Define the data schema for Action Card items.
+   *
+   * This schema defines the complete structure and validation rules for the most
+   * complex item type in the Eventide RP System. Action cards support two modes:
+   * attack chains with embedded items and saved damage for direct application.
+   * Schema changes require careful migration planning and version compatibility checks.
+   *
+   * @static
+   * @returns {Object} The complete data schema definition for action cards
+   * @property {ObjectField} embeddedItem - Single embedded item for attack chains
+   * @property {StringField} mode - Operating mode: "attackChain" or "savedDamage"
+   * @property {SchemaField} attackChain - Attack chain configuration with dual stats
+   * @property {SchemaField} savedDamage - Saved damage configuration for direct application
+   * @property {ArrayField} embeddedStatusEffects - Collection of status effects to apply
+   * @property {ArrayField} embeddedTransformations - Collection of transformations to apply
+   * @property {SchemaField} transformationConfig - Transformation trigger conditions
+   * @property {ColorField} bgColor - Background color for action card display
+   * @property {ColorField} textColor - Text color for action card display
+   * @property {StringField} repetitions - Number of repetitions formula (e.g., "1", "1d4")
+   * @property {BooleanField} advanceInitiative - Whether to advance initiative after execution
+   *
+   * @example
+   * // Access schema definition
+   * const schema = EventideRpSystemActionCard.defineSchema();
+   * console.log(schema.mode.choices); // ["attackChain", "savedDamage"]
+   * console.log(schema.attackChain.fields.firstStat.choices); // ["acro", "phys", ...]
+   *
+   * @throws {Error} If field validation fails during schema creation
+   *
+   * @since 13.15.0
+   * @author Eventide RP System
+   *
+   * @critical This method defines the core data structure for action cards.
+   *          Modifications can break save compatibility and require migration scripts.
+   *          Action cards are the primary complex workflow mechanism in the system.
+   */
   static defineSchema() {
     const fields = foundry.data.fields;
     const schema = super.defineSchema();

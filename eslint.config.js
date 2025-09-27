@@ -1,6 +1,11 @@
 import js from "@eslint/js";
 
 export default [
+  // Global ignores
+  {
+    ignores: ["coverage/**", "node_modules/**", "tests/**"]
+  },
+
   // Main configuration for module files - restrict console.log
   {
     languageOptions: {
@@ -61,7 +66,7 @@ export default [
       },
     },
     files: ["module/**/*.mjs"],
-    ignores: ["node_modules/**", "lib/**", "module/services/logger.mjs"],
+    ignores: ["node_modules/**", "lib/**", "module/services/logger.mjs", "coverage/**"],
     rules: {
       ...js.configs.recommended.rules,
 
