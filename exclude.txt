@@ -19,3 +19,9 @@ releases\
 build-lang.js
 .claude
 plans\
+tests\
+jest.config.js
+coverage\
+.husky\
+types\
+jsconfig.json

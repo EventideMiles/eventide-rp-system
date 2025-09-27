@@ -17,8 +17,36 @@ WORKING_DIR=$(pwd)
 # Create a new directory for the release
 mkdir -p "$TEMP_DIR/eventide-rp-system"
 
-# Copy all files into the new directory
-rsync -av --exclude='src/' --exclude='node_modules/' --exclude=".git/" --exclude='plans/' --exclude='package.json' --exclude='package-lock.json' --exclude='.gitignore' --exclude='.gitattributes' --exclude='.prettierignore' --exclude='.prettierrc.json' --exclude='.stylelintrc' --exclude='.claude/' --exclude='eslint.config.js' --exclude='build-lang.js' --exclude='.vscode/' --exclude='exclude.txt' --exclude='css/eventide-rp-system.css.map' --exclude='release_script.sh' --exclude='release_script.bat' --exclude='minify.js' --exclude='releases/' . "$TEMP_DIR/eventide-rp-system/"
+# Copy all files into the new directory with comprehensive exclusions
+rsync -av \
+    --exclude='src/' \
+    --exclude='node_modules/' \
+    --exclude='package.json' \
+    --exclude='package-lock.json' \
+    --exclude='.gitignore' \
+    --exclude='.gitattributes' \
+    --exclude='.prettierignore' \
+    --exclude='.prettierrc.json' \
+    --exclude='.stylelintrc' \
+    --exclude='eslint.config.js' \
+    --exclude='.vscode/' \
+    --exclude='exclude.txt' \
+    --exclude='css/eventide-rp-system.css.map' \
+    --exclude='release_script.sh' \
+    --exclude='release_script.bat' \
+    --exclude='minify.js' \
+    --exclude='.git/' \
+    --exclude='releases/' \
+    --exclude='build-lang.js' \
+    --exclude='.claude/' \
+    --exclude='plans/' \
+    --exclude='tests/' \
+    --exclude='jest.config.js' \
+    --exclude='coverage/' \
+    --exclude='.husky/' \
+    --exclude='types/' \
+    --exclude='jsconfig.json' \
+    . "$TEMP_DIR/eventide-rp-system/"
 
 # Minify JavaScript files
 node minify.js "$TEMP_DIR/eventide-rp-system"

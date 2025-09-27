@@ -3,3 +3,7 @@ package-lock.json
 releases
 .adocs/
 plans/
+
+# Testing generated files
+coverage/
+*.tgz
