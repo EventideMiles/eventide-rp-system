@@ -22,12 +22,13 @@
   "include": [
     "module/**/*",
     "macros/**/*",
-    "types/**/*",
     "*.mjs"
   ],
   "exclude": [
     "node_modules",
     "dist",
-    "build"
+    "build",
+    "tests",
+    "coverage"
   ]
 }
