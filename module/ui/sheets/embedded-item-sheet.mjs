@@ -387,43 +387,70 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
   }
 
   /**
-   * Handle changing a Document's image.
+   * OVERRIDE: Completely override the _onEditImage method to prevent inheritance issues
    * @param {PointerEvent} event   The originating click event
    * @param {HTMLElement} target   The capturing HTML element which defined a [data-action]
    * @returns {Promise}
    * @protected
    */
   static async _onEditImage(event, target) {
+    return EmbeddedItemSheet._onEditImageEmbedded.call(this, event, target);
+  }
+
+  /**
+   * Wrapper method to ensure the correct embedded item image editing logic is called
+   * @param {PointerEvent} event   The originating click event
+   * @param {HTMLElement} target   The capturing HTML element which defined a [data-action]
+   * @returns {Promise}
+   * @protected
+   */
+  static async _onEditImageWrapper(event, target) {
+    return this._onEditImageEmbedded(event, target);
+  }
+
+  /**
+   * Handle changing a Document's image for embedded items.
+   * @param {PointerEvent} event   The originating click event
+   * @param {HTMLElement} target   The capturing HTML element which defined a [data-action]
+   * @returns {Promise}
+   * @protected
+   */
+  static async _onEditImageEmbedded(event, target) {
+
     const attr = target.dataset.edit;
     const current = foundry.utils.getProperty(this.document, attr);
     const { img } =
       this.document.constructor.getDefaultArtwork?.(this.document.toObject()) ??
       {};
+
+    // Capture the sheet context to prevent context loss in callback
+    const sheet = this;
+
     const fp = new FilePicker({
       current,
       type: "image",
       redirectToRoot: img ? [img] : [],
       callback: async (path) => {
         // Handle transformation items (embedded combat powers)
-        if (this.parentItem.type === "transformation") {
+        if (sheet.parentItem.type === "transformation") {
           const powerIndex =
-            this.parentItem.system.embeddedCombatPowers.findIndex(
-              (p) => p._id === this.originalItemId,
+            sheet.parentItem.system.embeddedCombatPowers.findIndex(
+              (p) => p._id === sheet.originalItemId,
             );
           if (powerIndex === -1) return;
 
           const powers = foundry.utils.deepClone(
-            this.parentItem.system.embeddedCombatPowers,
+            sheet.parentItem.system.embeddedCombatPowers,
           );
           const powerData = powers[powerIndex];
           foundry.utils.setProperty(powerData, attr, path);
 
           try {
-            await this.parentItem.update({
+            await sheet.parentItem.update({
               "system.embeddedCombatPowers": powers,
             }, { fromEmbeddedItem: true });
-            this.document.updateSource(powerData);
-            this.render();
+            sheet.document.updateSource(powerData);
+            sheet.render();
           } catch (error) {
             Logger.error(
               "EmbeddedItemSheet | Failed to save combat power image",
@@ -434,26 +461,26 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
               "Failed to save Combat Power. See console for details.",
             );
           }
-        } else if (this.isEffect) {
+        } else if (sheet.isEffect) {
           // Handle action card embedded effects
           const effectIndex =
-            this.parentItem.system.embeddedStatusEffects.findIndex(
-              (s) => s._id === this.originalItemId,
+            sheet.parentItem.system.embeddedStatusEffects.findIndex(
+              (s) => s._id === sheet.originalItemId,
             );
           if (effectIndex === -1) return;
 
           const statusEffects = foundry.utils.deepClone(
-            this.parentItem.system.embeddedStatusEffects,
+            sheet.parentItem.system.embeddedStatusEffects,
           );
           const effectData = statusEffects[effectIndex];
           foundry.utils.setProperty(effectData, attr, path);
 
           try {
-            await this.parentItem.update({
+            await sheet.parentItem.update({
               "system.embeddedStatusEffects": statusEffects,
             }, { fromEmbeddedItem: true });
-            this.document.updateSource(effectData);
-            this.render();
+            sheet.document.updateSource(effectData);
+            sheet.render();
           } catch (error) {
             Logger.error(
               "EmbeddedItemSheet | Failed to save effect image",
@@ -466,26 +493,26 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
               ),
             );
           }
-        } else if (this.parentItem.type === "actionCard" && this.parentItem.system.embeddedTransformations?.some(t => t._id === this.originalItemId)) {
+        } else if (sheet.parentItem.type === "actionCard" && sheet.parentItem.system.embeddedTransformations?.some(t => t._id === sheet.originalItemId)) {
           // Handle action card embedded transformations
           const transformationIndex =
-            this.parentItem.system.embeddedTransformations.findIndex(
-              (t) => t._id === this.originalItemId,
+            sheet.parentItem.system.embeddedTransformations.findIndex(
+              (t) => t._id === sheet.originalItemId,
             );
           if (transformationIndex === -1) return;
 
           const transformations = foundry.utils.deepClone(
-            this.parentItem.system.embeddedTransformations,
+            sheet.parentItem.system.embeddedTransformations,
           );
           const transformationData = transformations[transformationIndex];
           foundry.utils.setProperty(transformationData, attr, path);
 
           try {
-            await this.parentItem.update({
+            await sheet.parentItem.update({
               "system.embeddedTransformations": transformations,
             }, { fromEmbeddedItem: true });
-            this.document.updateSource(transformationData);
-            this.render();
+            sheet.document.updateSource(transformationData);
+            sheet.render();
           } catch (error) {
             Logger.error(
               "EmbeddedItemSheet | Failed to save transformation image",
@@ -496,23 +523,23 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
               "Failed to save transformation image. See console for details.",
             );
           }
-        } else if (this.parentItem.type === "actionCard" && this._isNestedInEmbeddedTransformation()) {
+        } else if (sheet.parentItem.type === "actionCard" && sheet._isNestedInEmbeddedTransformation()) {
           // Handle multi-level: items nested within transformations that are embedded within action cards
           // This covers: Action Card → embeddedTransformations → [transformation] → embeddedCombatPowers → [combat power]
-          await this._handleNestedTransformationItemImageUpdate(attr, path);
+          await sheet._handleNestedTransformationItemImageUpdate(attr, path);
         } else {
           // Handle action card embedded items
           const itemData = foundry.utils.deepClone(
-            this.parentItem.system.embeddedItem,
+            sheet.parentItem.system.embeddedItem,
           );
           foundry.utils.setProperty(itemData, attr, path);
 
           try {
-            await this.parentItem.update({
+            await sheet.parentItem.update({
               "system.embeddedItem": itemData,
             }, { fromEmbeddedItem: true });
-            this.document.updateSource(itemData);
-            this.render();
+            sheet.document.updateSource(itemData);
+            sheet.render();
           } catch (error) {
             Logger.error(
               "EmbeddedItemSheet | Failed to save image",
@@ -526,9 +553,10 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
             );
           }
         }
+
       },
-      top: this.position.top + 40,
-      left: this.position.left + 10,
+      top: sheet.position.top + 40,
+      left: sheet.position.left + 10,
     });
     return fp.browse();
   }

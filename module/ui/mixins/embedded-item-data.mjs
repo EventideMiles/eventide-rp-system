@@ -442,10 +442,12 @@ export const EmbeddedItemDataMixin = (BaseClass) =>
       foundry.utils.mergeObject(powerData, formData);
 
       try {
+        // Pre-emptively update the local source to prevent a race condition
+        this.document.updateSource(powerData);
+
         await this.parentItem.update({
           "system.embeddedCombatPowers": powers,
         });
-        this.document.updateSource(powerData);
         this.render();
       } catch (error) {
         Logger.error(
@@ -488,11 +490,12 @@ export const EmbeddedItemDataMixin = (BaseClass) =>
       foundry.utils.mergeObject(effectData, formData);
 
       try {
+        // Pre-emptively update the local source to prevent a race condition
+        this.document.updateSource(effectData);
+
         await this.parentItem.update({
           "system.embeddedStatusEffects": statusEffects,
         });
-        // Update the temporary document's source data after parent update
-        this.document.updateSource(effectData);
         this.render();
       } catch (error) {
         Logger.error(
@@ -531,11 +534,12 @@ export const EmbeddedItemDataMixin = (BaseClass) =>
       foundry.utils.mergeObject(itemData, formData);
 
       try {
+        // Pre-emptively update the local source to prevent a race condition
+        this.document.updateSource(itemData);
+
         await this.parentItem.update({
           "system.embeddedItem": itemData,
         });
-        // Update the temporary document's source data after parent update
-        this.document.updateSource(itemData);
         this.render();
       } catch (error) {
         Logger.error(
@@ -563,12 +567,13 @@ export const EmbeddedItemDataMixin = (BaseClass) =>
       foundry.utils.mergeObject(itemData, formData);
 
       try {
+        // Pre-emptively update the local source to prevent a race condition
+        this.document.updateSource(itemData);
+
         // Use the transformation's update method with the fromEmbeddedItem flag
         // This will prevent the transformation sheet from closing
         await this.parentItem.update(itemData, { fromEmbeddedItem: true });
 
-        // Update the temporary document's source data after parent update
-        this.document.updateSource(itemData);
         this.render();
 
         // Bring the embedded item sheet back to the front
@@ -600,14 +605,15 @@ export const EmbeddedItemDataMixin = (BaseClass) =>
       foundry.utils.mergeObject(itemData, formData);
 
       try {
+        // Pre-emptively update the local source to prevent a race condition
+        this.document.updateSource(itemData);
+
         // Use the action card's update method with the fromEmbeddedItem flag
         // This will prevent the action card sheet from closing
         await this.parentItem.update({
           "system.embeddedItem": itemData,
         }, { fromEmbeddedItem: true });
 
-        // Update the temporary document's source data after parent update
-        this.document.updateSource(itemData);
         this.render();
 
         // Bring the embedded item sheet back to the front
