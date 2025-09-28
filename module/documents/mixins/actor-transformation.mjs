@@ -624,6 +624,7 @@ export const ActorTransformationMixin = (BaseClass) =>
      * @returns {Promise<Item>} The transformation item that is now on the actor
      */
     async _ensureTransformationItemOnActor(transformationItem) {
+
       // Check if this transformation is already on the actor
       const existingTransformation = this.items.get(transformationItem.id);
       if (existingTransformation) {
@@ -643,12 +644,24 @@ export const ActorTransformationMixin = (BaseClass) =>
         );
       }
 
-      // If the transformation item is not owned by this actor, create a copy
-      if (transformationItem.parent !== this) {
+      // If the transformation item is not embedded in this actor's collection, create a copy
+      // Note: temporary items may have a parent but not be in the collection
+      if (transformationItem.parent !== this || !transformationItem.collection) {
         const transformationData = transformationItem.toObject();
+
+        // Ensure effects are properly included for embedded transformations
+        if (transformationItem.effects && transformationItem.effects.size > 0) {
+          transformationData.effects = [];
+          for (const effect of transformationItem.effects) {
+            const effectData = effect.toObject();
+            transformationData.effects.push(effectData);
+          }
+        }
+
         const [createdItem] = await this.createEmbeddedDocuments("Item", [
           transformationData,
         ]);
+
 
         return createdItem;
       }

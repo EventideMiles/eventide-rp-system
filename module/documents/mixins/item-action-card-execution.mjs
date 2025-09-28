@@ -1502,14 +1502,46 @@ export function ItemActionCardExecutionMixin(Base) {
       }
 
       // Create temporary transformation item for application
+      // Ensure effects data is preserved from the embedded transformation
+
+      let transformationItemData;
+      if (transformationData.toObject) {
+        // This is a temporary item, get its full data including effects
+        transformationItemData = foundry.utils.deepClone(transformationData.toObject());
+
+        // Ensure effects are included - if the temporary item has effects, preserve them
+        if (transformationData.effects && transformationData.effects.size > 0) {
+          transformationItemData.effects = [];
+          for (const effect of transformationData.effects) {
+            const effectData = effect.toObject();
+            transformationItemData.effects.push(effectData);
+          }
+        }
+      } else {
+        // This is raw data, use as is
+        transformationItemData = foundry.utils.deepClone(transformationData);
+      }
+
+      // Ensure the temporary item has a unique ID to avoid conflicts
+      transformationItemData._id = foundry.utils.randomID();
+
+      // Create temporary item WITHOUT parent to avoid automatic collection embedding
       const tempTransformationItem = new CONFIG.Item.documentClass(
-        transformationData,
-        { parent: targetActor },
+        transformationItemData,
       );
 
       // Apply the transformation
       try {
         await targetActor.applyTransformation(tempTransformationItem);
+
+        Logger.debug(
+          "Applied embedded transformation to target actor",
+          {
+            targetActorName: targetActor.name,
+            transformationName: tempTransformationItem.name,
+          },
+          "TRANSFORMATION_APPLICATION"
+        );
         return {
           applied: true,
           reason: "success",
