@@ -146,12 +146,71 @@ export const ItemSheetCharacterEffectsMixin = (BaseClass) =>
           });
         }
 
+        // Get the first effect from the item, or create one if needed
+        let firstEffect = this.item.effects.contents[0];
+
+        // Check if this is a virtual/temporary item using the same logic as the base item sheet
+        const hasCustomUpdate =
+          this.item.update &&
+          (this.item.update.toString().includes("embeddedActionCards") ||
+            this.item.update.toString().includes("embeddedTransformations") ||
+            this.item.update.toString().includes("embeddedStatusEffects") ||
+            this.item.update.toString().includes("embeddedItem"));
+
+        const isTemporaryActionCard =
+          this.item.type === "actionCard" && !this.item.collection;
+
+        const isEmbeddedItem = this.item.originalId && !this.item.collection;
+
+        const isVirtualItem = hasCustomUpdate || isTemporaryActionCard || isEmbeddedItem;
+
+        if (!firstEffect) {
+          // Create a default ActiveEffect if none exists
+          const defaultEffectData = {
+            _id: foundry.utils.randomID(),
+            name: this.item.name,
+            icon: this.item.img,
+            changes: [],
+            disabled: false,
+            duration: {},
+            flags: {},
+            tint: "#ffffff",
+            transfer: true,
+            statuses: [],
+          };
+
+          if (isVirtualItem) {
+            // For virtual items, create the effect in memory and update source
+            firstEffect = new CONFIG.ActiveEffect.documentClass(defaultEffectData, {
+              parent: this.item,
+            });
+            this.item.effects.set(defaultEffectData._id, firstEffect);
+
+            // Also update the source data
+            if (!this.item._source.effects) {
+              this.item._source.effects = [];
+            }
+            this.item._source.effects.push(defaultEffectData);
+          } else {
+            // For regular items, create the effect in the database
+            const createdEffects = await this.item.createEmbeddedDocuments("ActiveEffect", [defaultEffectData]);
+            firstEffect = createdEffects[0];
+          }
+        }
+
         const updateData = {
-          _id: this.item.effects.contents[0]._id,
+          _id: firstEffect._id,
           changes: newEffects,
         };
 
-        await this.item.updateEmbeddedDocuments("ActiveEffect", [updateData]);
+        if (isVirtualItem) {
+          // For virtual items, use the custom update method to route through parent
+          // Use fromEmbeddedItem flag to prevent sheet closure
+          await this.item.update({ effects: [{ ...firstEffect.toObject(), ...updateData }] }, { fromEmbeddedItem: true });
+        } else {
+          // For regular items, update the embedded documents directly
+          await this.item.updateEmbeddedDocuments("ActiveEffect", [updateData]);
+        }
 
         Logger.info(
           "Character effects updated successfully",
@@ -331,12 +390,72 @@ export const ItemSheetCharacterEffectsMixin = (BaseClass) =>
 
       try {
         const duration = target.checked ? { seconds: 604800 } : { seconds: 0 };
+
+        // Get the first effect from the item, or create one if needed
+        let firstEffect = this.item.effects.contents[0];
+
+        // Check if this is a virtual/temporary item using the same logic as the base item sheet
+        const hasCustomUpdate =
+          this.item.update &&
+          (this.item.update.toString().includes("embeddedActionCards") ||
+            this.item.update.toString().includes("embeddedTransformations") ||
+            this.item.update.toString().includes("embeddedStatusEffects") ||
+            this.item.update.toString().includes("embeddedItem"));
+
+        const isTemporaryActionCard =
+          this.item.type === "actionCard" && !this.item.collection;
+
+        const isEmbeddedItem = this.item.originalId && !this.item.collection;
+
+        const isVirtualItem = hasCustomUpdate || isTemporaryActionCard || isEmbeddedItem;
+
+        if (!firstEffect) {
+          // Create a default ActiveEffect if none exists
+          const defaultEffectData = {
+            _id: foundry.utils.randomID(),
+            name: this.item.name,
+            icon: this.item.img,
+            changes: [],
+            disabled: false,
+            duration,
+            flags: {},
+            tint: "#ffffff",
+            transfer: true,
+            statuses: [],
+          };
+
+          if (isVirtualItem) {
+            // For virtual items, create the effect in memory and update source
+            firstEffect = new CONFIG.ActiveEffect.documentClass(defaultEffectData, {
+              parent: this.item,
+            });
+            this.item.effects.set(defaultEffectData._id, firstEffect);
+
+            // Also update the source data
+            if (!this.item._source.effects) {
+              this.item._source.effects = [];
+            }
+            this.item._source.effects.push(defaultEffectData);
+          } else {
+            // For regular items, create the effect in the database
+            const createdEffects = await this.item.createEmbeddedDocuments("ActiveEffect", [defaultEffectData]);
+            firstEffect = createdEffects[0];
+          }
+        }
+
         const updateData = {
-          _id: this.item.effects.contents[0]._id,
+          _id: firstEffect._id,
           duration,
         };
 
-        await this.item.updateEmbeddedDocuments("ActiveEffect", [updateData]);
+        if (isVirtualItem) {
+          // For virtual items, use the custom update method to route through parent
+          // Use fromEmbeddedItem flag to prevent sheet closure
+          await this.item.update({ effects: [{ ...firstEffect.toObject(), ...updateData }] }, { fromEmbeddedItem: true });
+        } else {
+          // For regular items, update the embedded documents directly
+          await this.item.updateEmbeddedDocuments("ActiveEffect", [updateData]);
+        }
         event.target.focus();
 
         Logger.info(

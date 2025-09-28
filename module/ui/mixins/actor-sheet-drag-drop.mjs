@@ -800,7 +800,16 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
      * @private
      */
     _findTransformationCombatPower(itemId) {
-      // Get all transformation items
+      // First check if actor has getCurrentCombatPowers method (from transformation mixin)
+      if (typeof this.actor.getCurrentCombatPowers === 'function') {
+        const currentCombatPowers = this.actor.getCurrentCombatPowers();
+        const power = currentCombatPowers.find((p) => p.id === itemId);
+        if (power) {
+          return power;
+        }
+      }
+
+      // Fallback: Get all transformation items and search embedded combat powers
       const transformations = this.actor.items.filter(
         (i) => i.type === "transformation",
       );
@@ -818,7 +827,16 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
     }
 
     _findTransformationActionCard(itemId) {
-      // Get all transformation items
+      // First check if actor has getCurrentActionCards method (from transformation mixin)
+      if (typeof this.actor.getCurrentActionCards === 'function') {
+        const currentActionCards = this.actor.getCurrentActionCards();
+        const actionCard = currentActionCards.find((ac) => ac.id === itemId);
+        if (actionCard) {
+          return actionCard;
+        }
+      }
+
+      // Fallback: Get all transformation items and search embedded action cards
       const transformations = this.actor.items.filter(
         (i) => i.type === "transformation",
       );

@@ -318,9 +318,11 @@ export const EmbeddedItemDataMixin = (BaseClass) =>
      */
     async _saveEmbeddedTransformationItemContent(target, content) {
       // Use the transformation's enhanced update method with the fromEmbeddedItem flag
-      const itemData = foundry.utils.deepClone(
-        this.document.toObject(),
-      );
+      const itemData = {
+        ...foundry.utils.deepClone(
+          this.document.toObject(),
+        ),
+      };
       foundry.utils.setProperty(itemData, target, content);
 
       try {
@@ -561,9 +563,11 @@ export const EmbeddedItemDataMixin = (BaseClass) =>
      */
     async _submitEmbeddedTransformationItemForm(formData) {
       // Use the transformation's enhanced update method with the fromEmbeddedItem flag
-      const itemData = foundry.utils.deepClone(
-        this.document.toObject(),
-      );
+      const itemData = {
+        ...foundry.utils.deepClone(
+          this.document.toObject(),
+        ),
+      };
       foundry.utils.mergeObject(itemData, formData);
 
       try {
@@ -804,9 +808,11 @@ export const EmbeddedItemDataMixin = (BaseClass) =>
      */
     async _updateEmbeddedTransformationItemIconTint(tintValue, firstEffect) {
       // Use the transformation's enhanced update method with the fromEmbeddedItem flag
-      const itemData = foundry.utils.deepClone(
-        this.document.toObject(),
-      );
+      const itemData = {
+        ...foundry.utils.deepClone(
+          this.document.toObject(),
+        ),
+      };
 
       if (!itemData.effects) itemData.effects = [];
       const effectIndex = itemData.effects.findIndex(
