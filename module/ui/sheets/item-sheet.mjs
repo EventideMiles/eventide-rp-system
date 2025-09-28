@@ -752,7 +752,13 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
 
     // Handle other field changes normally
     const updateData = {};
-    foundry.utils.setProperty(updateData, fieldName, fieldValue);
+
+    // Special handling for checkbox inputs (like cursed toggle)
+    if (event.target.type === "checkbox") {
+      foundry.utils.setProperty(updateData, fieldName, event.target.checked);
+    } else {
+      foundry.utils.setProperty(updateData, fieldName, fieldValue);
+    }
 
     try {
       // Use the action card's custom update method with fromEmbeddedItem flag
