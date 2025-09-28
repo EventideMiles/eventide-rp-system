@@ -818,6 +818,86 @@ export const ActorTransformationMixin = (BaseClass) =>
     }
 
     /**
+     * Get the current combat powers for this actor, accounting for transformation overrides
+     * When transformed, returns transformation combat powers; otherwise returns actor's own combat powers
+     *
+     * @returns {Item[]} Array of combat power items (temporary items for transformation combat powers)
+     */
+    getCurrentCombatPowers() {
+      Logger.methodEntry("ActorTransformationMixin", "getCurrentCombatPowers");
+
+      // Check if actor is transformed
+      const transformationCombatPowers = this.getFlag(
+        "eventide-rp-system",
+        "activeTransformationCombatPowers",
+      );
+
+      if (transformationCombatPowers && transformationCombatPowers.length > 0) {
+        // Actor is transformed and has transformation combat powers - return them as temporary items
+        Logger.debug(
+          "Returning transformation combat powers",
+          {
+            count: transformationCombatPowers.length,
+            names: transformationCombatPowers.map((cp) => cp.name),
+          },
+          "TRANSFORMATION",
+        );
+
+        const transformationCombatPowerItems = transformationCombatPowers.map((combatPowerData) => {
+          const tempItem = new CONFIG.Item.documentClass(combatPowerData, {
+            parent: this,
+          });
+
+          // The temporary item is editable if the actor is editable
+          Object.defineProperty(tempItem, "isEditable", {
+            value: this.isEditable,
+            configurable: true,
+          });
+
+          return tempItem;
+        });
+
+        Logger.methodExit(
+          "ActorTransformationMixin",
+          "getCurrentCombatPowers",
+          transformationCombatPowerItems,
+        );
+        return transformationCombatPowerItems;
+      }
+
+      // No transformation or no transformation combat powers - return actor's own combat powers
+      const actorCombatPowers = this.items.filter((item) => item.type === "combatPower");
+      Logger.debug(
+        "Returning actor's own combat powers",
+        {
+          count: actorCombatPowers.length,
+          names: actorCombatPowers.map((cp) => cp.name),
+        },
+        "TRANSFORMATION",
+      );
+
+      Logger.methodExit(
+        "ActorTransformationMixin",
+        "getCurrentCombatPowers",
+        actorCombatPowers,
+      );
+      return actorCombatPowers;
+    }
+
+    /**
+     * Check if the actor currently has transformation combat powers active
+     *
+     * @returns {boolean} True if transformation combat powers are active
+     */
+    hasTransformationCombatPowers() {
+      const transformationCombatPowers = this.getFlag(
+        "eventide-rp-system",
+        "activeTransformationCombatPowers",
+      );
+      return transformationCombatPowers && transformationCombatPowers.length > 0;
+    }
+
+    /**
      * Check if the actor currently has transformation action cards active
      *
      * @returns {boolean} True if transformation action cards are active
