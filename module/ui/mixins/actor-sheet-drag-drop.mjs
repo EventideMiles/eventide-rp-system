@@ -527,9 +527,28 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
         return;
       }
 
+      // Determine if this is a transformation item (not owned by actor)
+      // This includes both action cards and combat powers from transformations
+      const isTransformationItem = (document.type === "actionCard" || document.type === "combatPower") &&
+        !this.actor.items.has(document.id);
 
       // Get drag data from the document
-      const dragData = document.toDragData();
+      let dragData;
+      if (isTransformationItem) {
+        // For transformation items, create clean drag data without parent/UUID
+        // This allows them to be dragged to other actors or compendiums
+        const itemData = document.toObject();
+        delete itemData._id; // Remove ID to prevent collisions
+
+        dragData = {
+          type: "Item",
+          data: itemData,
+          // Don't include uuid or parent information
+        };
+      } else {
+        // For regular items, use standard drag data
+        dragData = document.toDragData();
+      }
       if (!dragData) {
         Logger.warn(
           "No drag data available for document",
