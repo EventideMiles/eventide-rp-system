@@ -658,6 +658,11 @@ export function ItemActionCardExecutionMixin(Base) {
 
       const statusResults = [];
 
+      // Early exit if no embedded status effects to apply
+      if (!this.system.embeddedStatusEffects || this.system.embeddedStatusEffects.length === 0) {
+        return statusResults;
+      }
+
       try {
         for (const result of results) {
           // Skip invalid results

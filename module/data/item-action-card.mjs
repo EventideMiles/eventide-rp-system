@@ -115,7 +115,7 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
       }),
       statusCondition: new fields.StringField({
         required: true,
-        initial: "never",
+        initial: "oneSuccess",
         choices: ["never", "oneSuccess", "twoSuccesses", "rollValue"],
       }),
       statusThreshold: new fields.NumberField({
