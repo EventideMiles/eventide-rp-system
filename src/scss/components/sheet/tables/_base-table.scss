@@ -115,6 +115,10 @@
     &--cursed {
       @include cursed-row;
     }
+
+    &--warning {
+      @include warning-row;
+    }
   }
 
   &__cell {

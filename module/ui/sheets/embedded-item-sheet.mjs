@@ -208,6 +208,9 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
     header: {
       template: "systems/eventide-rp-system/templates/item/header.hbs",
     },
+    callouts: {
+      template: "systems/eventide-rp-system/templates/item/callouts.hbs",
+    },
     tabs: {
       template: "templates/generic/tab-navigation.hbs",
     },
@@ -238,7 +241,7 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
   /** @override */
   _configureRenderOptions(options) {
     super._configureRenderOptions(options);
-    options.parts = ["header", "tabs", "description"];
+    options.parts = ["header", "callouts", "tabs", "description"];
 
     // Add type-specific parts
     switch (this.document.type) {
@@ -253,6 +256,11 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
         break;
       case "status":
         options.parts.push("characterEffects");
+        break;
+      case "actionCard":
+        options.parts.push("attributesActionCard", "attributesActionCardConfig", "embeddedItems");
+        // Increase width for action cards due to additional content
+        options.position = { ...options.position, width: 1000 };
         break;
     }
   }
@@ -281,7 +289,30 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
     context.isGM = game.user.isGM;
     context.userSheetTheme = CommonFoundryTasks.retrieveSheetTheme();
     context.isEmbedded = true;
+    context.callouts = this._prepareCallouts();
     return context;
+  }
+
+  /**
+   * Prepares callouts for the embedded item sheet
+   * @returns {Array} Array of callout objects
+   * @private
+   */
+  _prepareCallouts() {
+    const callouts = [];
+
+    // Check for action cards in attack chain mode without embedded item
+    if (this.item.type === "actionCard") {
+      if (this.item.system.mode === "attackChain" && !this.item.system.embeddedItem?._id) {
+        callouts.push({
+          type: "warning",
+          faIcon: "fas fa-exclamation-triangle",
+          text: game.i18n.localize("EVENTIDE_RP_SYSTEM.Forms.Callouts.ActionCard.NoEmbeddedItem")
+        });
+      }
+    }
+
+    return callouts;
   }
 
   /** @override */
@@ -310,6 +341,22 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
           ...EventideSheetHelpers.abilityObject,
           unaugmented: "unaugmented",
         };
+        break;
+      case "attributesActionCard":
+      case "attributesActionCardConfig":
+        context.tab = context.tabs[partId];
+        context.rollTypes = EventideSheetHelpers.rollTypeObject;
+        context.abilities = {
+          ...EventideSheetHelpers.abilityObject,
+          unaugmented: "unaugmented",
+        };
+        context.sizeOptions = [0, 0.5, 0.75, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5];
+        break;
+      case "embeddedItems":
+        context.tab = context.tabs[partId];
+        context.embeddedItem = this.item.getEmbeddedItem();
+        context.embeddedEffects = this.item.getEmbeddedEffects();
+        context.embeddedTransformations = await this.item.getEmbeddedTransformations();
         break;
       case "description":
         context.tab = context.tabs[partId];
@@ -359,6 +406,7 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
       };
       switch (partId) {
         case "header":
+        case "callouts":
         case "tabs":
           return tabs;
         case "description":
@@ -376,8 +424,17 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
         case "attributesCombatPower":
         case "attributesGear":
         case "attributesFeature":
+        case "attributesActionCard":
           tab.id = "attributes";
           tab.label += "Attributes";
+          break;
+        case "attributesActionCardConfig":
+          tab.id = "config";
+          tab.label += "Config";
+          break;
+        case "embeddedItems":
+          tab.id = "embeddedItems";
+          tab.label += "EmbeddedItems";
           break;
       }
       if (this.tabGroups[tabGroup] === tab.id) tab.cssClass = "active";

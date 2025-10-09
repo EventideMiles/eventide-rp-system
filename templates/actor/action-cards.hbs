@@ -45,7 +45,7 @@
             {{#if (eq transformationActionCards.length 0)}}
               {{#each actionCards as |item id|}}
               <tr
-                class="erps-data-table__row erps-data-table__row--hoverable"
+                class="erps-data-table__row erps-data-table__row--hoverable {{#if (eq item.system.mode 'attackChain')}}{{#unless item.system.embeddedItem._id}}erps-data-table__row--warning{{/unless}}{{/if}}"
                 data-item-id="{{item._id}}"
                 data-drag="true"
                 data-document-class="Item"
@@ -144,7 +144,7 @@
             {{else}}
               {{#each transformationActionCards as |item id|}}
                 <tr
-                  class="erps-data-table__row erps-data-table__row--hoverable"
+                  class="erps-data-table__row erps-data-table__row--hoverable {{#if (eq item.system.mode 'attackChain')}}{{#unless item.system.embeddedItem._id}}erps-data-table__row--warning{{/unless}}{{/if}}"
                   data-item-id="{{item._id}}"
                   data-drag="true"
                   data-document-class="Item"

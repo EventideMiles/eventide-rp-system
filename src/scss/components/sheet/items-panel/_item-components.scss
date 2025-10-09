@@ -79,6 +79,32 @@
     }
   }
 
+  &__item--warning {
+    // Bright red/orange/yellow gradient that's visible in all themes
+    background: linear-gradient(135deg,
+      rgb(220 38 38) 0%,      // Bright red
+      rgb(249 115 22) 50%,    // Bright orange
+      rgb(234 179 8) 100%) !important;   // Bright yellow
+    border-left: 4px solid rgb(220 38 38) !important;
+    animation: erps-warning-pulse 2s ease-in-out infinite;
+
+    // Ensure text is readable on bright background
+    .erps-items-panel__name,
+    .erps-items-panel__cell {
+      color: #fff !important;
+    }
+
+    // Make icons and links visible
+    a, i {
+      color: #fff !important;
+      opacity: 0.8;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+
   // ===================================
   // ITEM NAME
   // ===================================

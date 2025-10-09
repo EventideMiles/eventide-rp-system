@@ -14,7 +14,7 @@
           </li>
           {{#each embeddedActionCards as |actionCard|}}
             <li
-              class="erps-items-panel__item erps-items-panel__item--draggable"
+              class="erps-items-panel__item erps-items-panel__item--draggable {{#if (eq actionCard.system.mode 'attackChain')}}{{#unless actionCard.system.embeddedItem._id}}erps-items-panel__item--warning{{/unless}}{{/if}}"
               data-item-id="{{actionCard.id}}"
               data-drag="true"
               data-document-class="Item"

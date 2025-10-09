@@ -118,6 +118,9 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
     header: {
       template: "systems/eventide-rp-system/templates/item/header.hbs",
     },
+    callouts: {
+      template: "systems/eventide-rp-system/templates/item/callouts.hbs",
+    },
     tabs: {
       // Foundry-provided generic template
       template: "templates/generic/tab-navigation.hbs",
@@ -176,7 +179,7 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
   _configureRenderOptions(options) {
     super._configureRenderOptions(options);
     // Not all parts always render
-    options.parts = ["header", "tabs", "description"];
+    options.parts = ["header", "callouts", "tabs", "description"];
     // Don't show the other tabs if only limited view
     if (this.document.limited) return;
     // Control which parts show based on document subtype
@@ -277,6 +280,10 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
        */
       context.isTransformationActionCard = this._isTransformationActionCard();
 
+      /**
+       * Prepare callouts for action cards
+       */
+      context.callouts = this._prepareCallouts();
 
       Logger.methodExit(
         "EventideRpSystemItemSheet",
@@ -316,6 +323,28 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
         hasError: true,
       };
     }
+  }
+
+  /**
+   * Prepares callouts for the item sheet
+   * @returns {Array} Array of callout objects
+   * @private
+   */
+  _prepareCallouts() {
+    const callouts = [];
+
+    // Check for action cards in attack chain mode without embedded item
+    if (this.item.type === "actionCard") {
+      if (this.item.system.mode === "attackChain" && !this.item.system.embeddedItem?._id) {
+        callouts.push({
+          type: "warning",
+          faIcon: "fas fa-exclamation-triangle",
+          text: game.i18n.localize("EVENTIDE_RP_SYSTEM.Forms.Callouts.ActionCard.NoEmbeddedItem")
+        });
+      }
+    }
+
+    return callouts;
   }
 
   /**
@@ -451,6 +480,7 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
       };
       switch (partId) {
         case "header":
+        case "callouts":
         case "tabs":
           return tabs;
         case "description":

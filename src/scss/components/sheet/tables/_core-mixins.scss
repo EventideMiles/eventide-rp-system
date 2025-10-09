@@ -101,6 +101,36 @@
   animation: erps-cursed-pulse $erps-table-animation-duration-pulse ease-in-out infinite;
 }
 
+@mixin warning-row {
+  // Bright red/orange/yellow gradient that's visible in all themes
+  background: linear-gradient(135deg,
+    rgb(220 38 38) 0%,      // Bright red
+    rgb(249 115 22) 50%,    // Bright orange
+    rgb(234 179 8) 100%);   // Bright yellow
+  border-left: $erps-table-border-width-highlight solid rgb(220 38 38);
+  position: relative;
+
+  // Add subtle pulse animation
+  animation: erps-warning-pulse 2s ease-in-out infinite;
+
+  // Ensure text is readable on bright background
+  color: #fff !important;
+
+  .erps-data-table__cell {
+    color: #fff !important;
+  }
+
+  // Make icons and links visible
+  a, i {
+    color: #fff !important;
+    opacity: 0.8;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+}
+
 @mixin disabled-row {
   opacity: $erps-table-opacity-disabled;
   pointer-events: none;

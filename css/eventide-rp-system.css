@@ -3564,6 +3564,23 @@ body.erps-image-zoom-active {
   border-left: 4px solid rgba(138, 43, 226, 0.8);
   animation: erps-cursed-pulse 3s ease-in-out infinite;
 }
+.erps-data-table__row--warning {
+  background: linear-gradient(135deg, rgb(220, 38, 38) 0%, rgb(249, 115, 22) 50%, rgb(234, 179, 8) 100%);
+  border-left: 4px solid rgb(220, 38, 38);
+  position: relative;
+  animation: erps-warning-pulse 2s ease-in-out infinite;
+  color: #fff !important;
+}
+.erps-data-table__row--warning .erps-data-table__cell {
+  color: #fff !important;
+}
+.erps-data-table__row--warning a, .erps-data-table__row--warning i {
+  color: #fff !important;
+  opacity: 0.8;
+}
+.erps-data-table__row--warning a:hover, .erps-data-table__row--warning i:hover {
+  opacity: 1;
+}
 .erps-data-table__cell {
   padding: 0.75rem 1rem;
   font-family: var(--erps-info-font);
@@ -4108,6 +4125,14 @@ body.erps-image-zoom-active {
   }
   50% {
     box-shadow: 0 0 20px rgba(138, 43, 226, 0.8), inset 0 0 10px rgba(138, 43, 226, 0.3);
+  }
+}
+@keyframes erps-warning-pulse {
+  0%, 100% {
+    box-shadow: 0 0 8px rgba(220, 38, 38, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 16px rgba(249, 115, 22, 0.8), inset 0 0 10px rgba(234, 179, 8, 0.4);
   }
 }
 .eventide-ability-row {
@@ -7727,6 +7752,22 @@ body.erps-image-zoom-active {
 .erps-items-panel__item--draggable:active {
   cursor: grabbing;
   transform: translateY(0);
+}
+.erps-items-panel__item--warning {
+  background: linear-gradient(135deg, rgb(220, 38, 38) 0%, rgb(249, 115, 22) 50%, rgb(234, 179, 8) 100%) !important;
+  border-left: 4px solid rgb(220, 38, 38) !important;
+  animation: erps-warning-pulse 2s ease-in-out infinite;
+}
+.erps-items-panel__item--warning .erps-items-panel__name,
+.erps-items-panel__item--warning .erps-items-panel__cell {
+  color: #fff !important;
+}
+.erps-items-panel__item--warning a, .erps-items-panel__item--warning i {
+  color: #fff !important;
+  opacity: 0.8;
+}
+.erps-items-panel__item--warning a:hover, .erps-items-panel__item--warning i:hover {
+  opacity: 1;
 }
 .erps-items-panel__name {
   font-weight: 500;
