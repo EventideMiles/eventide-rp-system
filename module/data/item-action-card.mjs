@@ -160,7 +160,7 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
     schema.transformationConfig = new fields.SchemaField({
       condition: new fields.StringField({
         required: true,
-        initial: "never",
+        initial: "oneSuccess",
         choices: ["never", "oneSuccess", "twoSuccesses", "rollValue"],
       }),
       threshold: new fields.NumberField({

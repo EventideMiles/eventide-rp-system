@@ -21,6 +21,11 @@
       grid-template-columns: auto 1fr auto auto;
     }
 
+    // 5-column layout: Image | Name | Embedded Item | Mode | Controls
+    &--five-column {
+      grid-template-columns: auto 1fr auto auto auto;
+    }
+
     // 3-column layout: Image | Name | Controls
     &--three-column {
       grid-template-columns: auto 1fr auto;

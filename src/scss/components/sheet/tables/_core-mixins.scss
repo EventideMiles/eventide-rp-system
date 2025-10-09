@@ -102,11 +102,9 @@
 }
 
 @mixin warning-row {
-  // Bright red/orange/yellow gradient that's visible in all themes
-  background: linear-gradient(135deg,
-    rgb(220 38 38) 0%,      // Bright red
-    rgb(249 115 22) 50%,    // Bright orange
-    rgb(234 179 8) 100%);   // Bright yellow
+  background: linear-gradient(0deg,
+        #f00 0%,
+        #000 100%) !important;
   border-left: $erps-table-border-width-highlight solid rgb(220 38 38);
   position: relative;
 

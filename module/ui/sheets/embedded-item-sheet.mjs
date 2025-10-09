@@ -258,7 +258,11 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
         options.parts.push("characterEffects");
         break;
       case "actionCard":
-        options.parts.push("attributesActionCard", "attributesActionCardConfig", "embeddedItems");
+        options.parts.push(
+          "attributesActionCard",
+          "attributesActionCardConfig",
+          "embeddedItems",
+        );
         // Increase width for action cards due to additional content
         options.position = { ...options.position, width: 1000 };
         break;
@@ -303,11 +307,16 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
 
     // Check for action cards in attack chain mode without embedded item
     if (this.item.type === "actionCard") {
-      if (this.item.system.mode === "attackChain" && !this.item.system.embeddedItem?._id) {
+      if (
+        this.item.system.mode === "attackChain" &&
+        !this.item.system.embeddedItem?.type
+      ) {
         callouts.push({
           type: "warning",
           faIcon: "fas fa-exclamation-triangle",
-          text: game.i18n.localize("EVENTIDE_RP_SYSTEM.Forms.Callouts.ActionCard.NoEmbeddedItem")
+          text: game.i18n.localize(
+            "EVENTIDE_RP_SYSTEM.Forms.Callouts.ActionCard.NoEmbeddedItem",
+          ),
         });
       }
     }
@@ -356,7 +365,8 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
         context.tab = context.tabs[partId];
         context.embeddedItem = this.item.getEmbeddedItem();
         context.embeddedEffects = this.item.getEmbeddedEffects();
-        context.embeddedTransformations = await this.item.getEmbeddedTransformations();
+        context.embeddedTransformations =
+          await this.item.getEmbeddedTransformations();
         break;
       case "description":
         context.tab = context.tabs[partId];
@@ -473,7 +483,6 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
    * @protected
    */
   static async _onEditImageEmbedded(event, target) {
-
     const attr = target.dataset.edit;
     const current = foundry.utils.getProperty(this.document, attr);
     const { img } =
@@ -503,9 +512,12 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
           foundry.utils.setProperty(powerData, attr, path);
 
           try {
-            await sheet.parentItem.update({
-              "system.embeddedCombatPowers": powers,
-            }, { fromEmbeddedItem: true });
+            await sheet.parentItem.update(
+              {
+                "system.embeddedCombatPowers": powers,
+              },
+              { fromEmbeddedItem: true },
+            );
             sheet.document.updateSource(powerData);
             sheet.render();
           } catch (error) {
@@ -533,9 +545,12 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
           foundry.utils.setProperty(effectData, attr, path);
 
           try {
-            await sheet.parentItem.update({
-              "system.embeddedStatusEffects": statusEffects,
-            }, { fromEmbeddedItem: true });
+            await sheet.parentItem.update(
+              {
+                "system.embeddedStatusEffects": statusEffects,
+              },
+              { fromEmbeddedItem: true },
+            );
             sheet.document.updateSource(effectData);
             sheet.render();
           } catch (error) {
@@ -550,7 +565,12 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
               ),
             );
           }
-        } else if (sheet.parentItem.type === "actionCard" && sheet.parentItem.system.embeddedTransformations?.some(t => t._id === sheet.originalItemId)) {
+        } else if (
+          sheet.parentItem.type === "actionCard" &&
+          sheet.parentItem.system.embeddedTransformations?.some(
+            (t) => t._id === sheet.originalItemId,
+          )
+        ) {
           // Handle action card embedded transformations
           const transformationIndex =
             sheet.parentItem.system.embeddedTransformations.findIndex(
@@ -565,9 +585,12 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
           foundry.utils.setProperty(transformationData, attr, path);
 
           try {
-            await sheet.parentItem.update({
-              "system.embeddedTransformations": transformations,
-            }, { fromEmbeddedItem: true });
+            await sheet.parentItem.update(
+              {
+                "system.embeddedTransformations": transformations,
+              },
+              { fromEmbeddedItem: true },
+            );
             sheet.document.updateSource(transformationData);
             sheet.render();
           } catch (error) {
@@ -580,7 +603,10 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
               "Failed to save transformation image. See console for details.",
             );
           }
-        } else if (sheet.parentItem.type === "actionCard" && sheet._isNestedInEmbeddedTransformation()) {
+        } else if (
+          sheet.parentItem.type === "actionCard" &&
+          sheet._isNestedInEmbeddedTransformation()
+        ) {
           // Handle multi-level: items nested within transformations that are embedded within action cards
           // This covers: Action Card → embeddedTransformations → [transformation] → embeddedCombatPowers → [combat power]
           await sheet._handleNestedTransformationItemImageUpdate(attr, path);
@@ -592,9 +618,12 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
           foundry.utils.setProperty(itemData, attr, path);
 
           try {
-            await sheet.parentItem.update({
-              "system.embeddedItem": itemData,
-            }, { fromEmbeddedItem: true });
+            await sheet.parentItem.update(
+              {
+                "system.embeddedItem": itemData,
+              },
+              { fromEmbeddedItem: true },
+            );
             sheet.document.updateSource(itemData);
             sheet.render();
           } catch (error) {
@@ -610,7 +639,6 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
             );
           }
         }
-
       },
       top: sheet.position.top + 40,
       left: sheet.position.left + 10,
@@ -714,7 +742,6 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
    * @private
    */
   static _toggleEffectDisplay(event, target) {
-
     // Create proper duration structure - ON = 604800 seconds, OFF = 0 seconds
     const duration = target.checked
       ? {
@@ -936,13 +963,22 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
     if (!this.parentItem.system.embeddedTransformations?.length) return false;
 
     // Check if this item exists within any of the embedded transformations
-    for (const transformation of this.parentItem.system.embeddedTransformations) {
+    for (const transformation of this.parentItem.system
+      .embeddedTransformations) {
       // Check embedded combat powers
-      if (transformation.embeddedCombatPowers?.some(p => p._id === this.originalItemId)) {
+      if (
+        transformation.embeddedCombatPowers?.some(
+          (p) => p._id === this.originalItemId,
+        )
+      ) {
         return true;
       }
       // Check embedded action cards
-      if (transformation.embeddedActionCards?.some(ac => ac._id === this.originalItemId)) {
+      if (
+        transformation.embeddedActionCards?.some(
+          (ac) => ac._id === this.originalItemId,
+        )
+      ) {
         return true;
       }
     }
@@ -967,16 +1003,22 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
     let foundTransformation = null;
 
     // Find which transformation contains this item
-    for (let transformationIndex = 0; transformationIndex < transformations.length; transformationIndex++) {
+    for (
+      let transformationIndex = 0;
+      transformationIndex < transformations.length;
+      transformationIndex++
+    ) {
       const transformation = transformations[transformationIndex];
 
       // Check embedded combat powers
       if (transformation.embeddedCombatPowers?.length) {
-        const powerIndex = transformation.embeddedCombatPowers.findIndex(p => p._id === this.originalItemId);
+        const powerIndex = transformation.embeddedCombatPowers.findIndex(
+          (p) => p._id === this.originalItemId,
+        );
         if (powerIndex !== -1) {
           foundTransformationIndex = transformationIndex;
           foundItemIndex = powerIndex;
-          foundItemType = 'embeddedCombatPowers';
+          foundItemType = "embeddedCombatPowers";
           foundTransformation = transformation;
           break;
         }
@@ -984,46 +1026,61 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
 
       // Check embedded action cards
       if (transformation.embeddedActionCards?.length) {
-        const actionCardIndex = transformation.embeddedActionCards.findIndex(ac => ac._id === this.originalItemId);
+        const actionCardIndex = transformation.embeddedActionCards.findIndex(
+          (ac) => ac._id === this.originalItemId,
+        );
         if (actionCardIndex !== -1) {
           foundTransformationIndex = transformationIndex;
           foundItemIndex = actionCardIndex;
-          foundItemType = 'embeddedActionCards';
+          foundItemType = "embeddedActionCards";
           foundTransformation = transformation;
           break;
         }
       }
     }
 
-    if (foundTransformationIndex === -1 || foundItemIndex === -1 || !foundItemType || !foundTransformation) {
+    if (
+      foundTransformationIndex === -1 ||
+      foundItemIndex === -1 ||
+      !foundItemType ||
+      !foundTransformation
+    ) {
       return;
     }
 
     // Update the nested item's image
-    const nestedItemData = transformations[foundTransformationIndex][foundItemType][foundItemIndex];
+    const nestedItemData =
+      transformations[foundTransformationIndex][foundItemType][foundItemIndex];
     foundry.utils.setProperty(nestedItemData, attr, path);
 
     try {
       // Find the temp transformation item that corresponds to this transformation
       // We need to call the temp transformation's update method, not the root action card's
-      const tempTransformations = this.parentItem.getEmbeddedTransformations?.() || [];
+      const tempTransformations =
+        this.parentItem.getEmbeddedTransformations?.() || [];
 
-      const tempTransformation = tempTransformations.find(t => t.id === foundTransformation._id);
+      const tempTransformation = tempTransformations.find(
+        (t) => t.id === foundTransformation._id,
+      );
 
       if (tempTransformation) {
-
         // Update the temp transformation item using its embedded collection update
         // This should trigger the transformation's dual-override pattern
         const transformationUpdateData = {};
-        transformationUpdateData[`system.${foundItemType}`] = foundTransformation[foundItemType];
+        transformationUpdateData[`system.${foundItemType}`] =
+          foundTransformation[foundItemType];
 
-        await tempTransformation.update(transformationUpdateData, { fromEmbeddedItem: true });
+        await tempTransformation.update(transformationUpdateData, {
+          fromEmbeddedItem: true,
+        });
       } else {
-
         // Fallback to direct update if temp transformation not found
-        await this.parentItem.update({
-          "system.embeddedTransformations": transformations,
-        }, { fromEmbeddedItem: true });
+        await this.parentItem.update(
+          {
+            "system.embeddedTransformations": transformations,
+          },
+          { fromEmbeddedItem: true },
+        );
       }
 
       this.document.updateSource(nestedItemData);
@@ -1035,7 +1092,7 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
           error,
           transformationIndex: foundTransformationIndex,
           itemIndex: foundItemIndex,
-          itemType: foundItemType
+          itemType: foundItemType,
         },
         "EMBEDDED_ITEM_SHEET",
       );
@@ -1075,9 +1132,8 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
 
     if (this.element) {
       // Check all elements for scrollTop > 0
-      const allElements = Array.from(this.element.querySelectorAll('*'));
-      const scrollableElements = allElements.filter(el => el.scrollTop > 0);
-
+      const allElements = Array.from(this.element.querySelectorAll("*"));
+      const scrollableElements = allElements.filter((el) => el.scrollTop > 0);
 
       if (scrollableElements.length > 0) {
         actualScrollingElement = scrollableElements[0];
@@ -1093,11 +1149,16 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
       // Find the element again after render
       let restoreElement = null;
       if (actualScrollingElement.className) {
-        restoreElement = this.element?.querySelector(`.${actualScrollingElement.className.split(' ').join('.')}`);
+        restoreElement = this.element?.querySelector(
+          `.${actualScrollingElement.className.split(" ").join(".")}`,
+        );
       }
       if (!restoreElement && actualScrollingElement.tagName) {
-        const selector = actualScrollingElement.tagName.toLowerCase() +
-                        (actualScrollingElement.className ? `.${actualScrollingElement.className.split(' ').join('.')}` : '');
+        const selector =
+          actualScrollingElement.tagName.toLowerCase() +
+          (actualScrollingElement.className
+            ? `.${actualScrollingElement.className.split(" ").join(".")}`
+            : "");
         restoreElement = this.element?.querySelector(selector);
       }
 
