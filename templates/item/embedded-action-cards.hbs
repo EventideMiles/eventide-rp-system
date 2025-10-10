@@ -6,21 +6,23 @@
       </div>
 
       {{#if embeddedActionCards.length}}
-        <ol class="erps-items-panel__list erps-items-panel__list--three-column">
+        <ol class="erps-items-panel__list erps-items-panel__list--five-column">
           <li class="erps-items-panel__item erps-items-panel__item--header">
             <div class="erps-items-panel__cell erps-items-panel__cell--image">{{localize 'Image'}}</div>
             <div class='erps-items-panel__cell erps-items-panel__cell--name'>{{localize 'Name'}}</div>
+            <div class='erps-items-panel__cell erps-items-panel__cell--center'>{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.EmbeddedItem'}}</div>
+            <div class='erps-items-panel__cell erps-items-panel__cell--center'>{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.Mode'}}</div>
             <div class='erps-items-panel__cell erps-items-panel__cell--controls'>{{localize 'Controls'}}</div>
           </li>
-          {{#each embeddedActionCards as |actionCard|}}
+          {{#each embeddedActionCards as |actionCard|}}            
             <li
-              class="erps-items-panel__item erps-items-panel__item--draggable"
+              class="erps-items-panel__item erps-items-panel__item--draggable {{#if (eq actionCard.system.mode 'attackChain')}}{{#unless actionCard.system.embeddedItem}}erps-items-panel__item--warning{{/unless}}{{/if}}"
               data-item-id="{{actionCard.id}}"
               data-drag="true"
               data-document-class="Item"
               title="{{localize 'EVENTIDE_RP_SYSTEM.Item.Transformation.DragToExtract'}}"
             >
-              <div class="erps-items-panel__cell erps-items-panel__cell--image">
+              <div class="erps-items-panel__cell erps-items-panel__cell--image" style="background: inherit">
                 <img
                   class="erps-items-panel__image"
                   src="{{actionCard.img}}"
@@ -30,10 +32,54 @@
                 />
                 <i class="fas fa-arrows-alt erps-items-panel__drag-indicator" title="{{localize 'EVENTIDE_RP_SYSTEM.Item.Transformation.DragToExtract'}}"></i>
               </div>
-              <div class="erps-items-panel__cell erps-items-panel__cell--name">
+              <div class="erps-items-panel__cell erps-items-panel__cell--name" style="background: inherit">
                 <span class="erps-items-panel__name">{{actionCard.name}}</span>
               </div>
-              <div class="erps-items-panel__cell erps-items-panel__cell--controls">
+              <div class="erps-items-panel__cell erps-items-panel__cell--center" style="background: inherit">
+                {{#if actionCard.system.embeddedItem._id}}
+                  <div class="erps-items-panel__embedded-item">
+                    <img
+                      class="erps-items-panel__embedded-item-img"
+                      src="{{actionCard.system.embeddedItem.img}}"
+                      title="{{actionCard.system.embeddedItem.name}}"
+                      width="18"
+                      height="18"
+                    />
+                    <span class="erps-items-panel__embedded-item-name">{{actionCard.system.embeddedItem.name}}</span>
+                  </div>
+                {{else}}
+                  {{#if (eq actionCard.system.mode "attackChain")}}
+                    <span class="erps-data-table__empty-state">{{localize "EVENTIDE_RP_SYSTEM.General.None"}}</span>
+                  {{else}}
+                    <div class="erps-data-table__embedded-item">
+                      <span>{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.SavedDamageMode"}}</span>
+                    </div>
+                  {{/if}}
+                {{/if}}
+              </div>
+              <div class="erps-items-panel__cell erps-items-panel__cell--center" style="background: inherit">
+                {{#if (eq actionCard.system.mode "attackChain")}}
+                  <div class="erps-items-panel__mode-info" title="Attack Chain: {{actionCard.system.attackChain.firstStat}} + {{actionCard.system.attackChain.secondStat}}">
+                    <span class="erps-items-panel__mode-stats">
+                      {{actionCard.system.attackChain.firstStat}} + {{actionCard.system.attackChain.secondStat}}
+                    </span>
+                    {{#if (ne actionCard.system.attackChain.damageCondition "never")}}
+                      <i class="fas fa-sword" title="Damage on {{actionCard.system.attackChain.damageCondition}}"></i>
+                    {{/if}}
+                    {{#if (ne actionCard.system.attackChain.statusCondition "never")}}
+                      <i class="fas fa-magic" title="Status on {{actionCard.system.attackChain.statusCondition}}"></i>
+                    {{/if}}
+                  </div>
+                {{else if (eq actionCard.system.mode "savedDamage")}}
+                  <div class="erps-items-panel__mode-info" title="Saved Damage: {{actionCard.system.savedDamage.formula}} {{actionCard.system.savedDamage.type}}">
+                    <span class="erps-items-panel__mode-stats">{{actionCard.system.savedDamage.formula}}</span>
+                    <i class="fas fa-heart-broken" title="{{actionCard.system.savedDamage.type}}"></i>
+                  </div>
+                {{else}}
+                  <span class="erps-items-panel__empty-state">{{localize "EVENTIDE_RP_SYSTEM.General.Unknown"}}</span>
+                {{/if}}
+              </div>
+              <div class="erps-items-panel__cell erps-items-panel__cell--controls" style="background: inherit">
                 <a
                   class="erps-items-panel__control erps-items-panel__control--edit"
                   data-action="editEmbeddedActionCard"

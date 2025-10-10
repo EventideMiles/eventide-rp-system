@@ -36,4 +36,15 @@
     box-shadow: 0 0 20px themes.color(purple, 80),
                 inset 0 0 10px themes.color(purple, 30);
   }
+}
+
+@keyframes erps-warning-pulse {
+  0%, 100% {
+    box-shadow: 0 0 8px rgb(220 38 38 / 60%);
+  }
+
+  50% {
+    box-shadow: 0 0 16px rgb(249 115 22 / 80%),
+                inset 0 0 10px rgb(234 179 8 / 40%);
+  }
 } 

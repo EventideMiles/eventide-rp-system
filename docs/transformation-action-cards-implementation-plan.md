@@ -20,6 +20,7 @@ Extend transformations to also support action cards, following the same pattern 
 ### 1. Data Model Extension
 
 **File**: `/module/data/item-transformation.mjs`
+
 - Add `embeddedActionCards` field to transformation schema
 - Add methods for managing embedded action cards:
   - `addActionCard(actionCard)`
@@ -29,16 +30,19 @@ Extend transformations to also support action cards, following the same pattern 
 ### 2. Transformation Creator UI Enhancement
 
 **File**: `/module/ui/creators/transformation-creator.mjs`
+
 - Add action card drag-and-drop support (mirror combat powers implementation)
 - Add action card management UI (add/remove buttons, display list)
 
 **File**: `/templates/macros/transformation-creator.hbs`
+
 - Add action cards section to creation form
 - Include drag-and-drop area and action card list display
 
 ### 3. Actor Transformation Logic Extension
 
 **File**: `/module/documents/mixins/actor-transformation.mjs`
+
 - Extend `applyTransformation()` to handle action cards
 - Extend `removeTransformation()` to restore original action cards
 - Add methods to get current action cards (accounting for transformation override)
@@ -46,24 +50,29 @@ Extend transformations to also support action cards, following the same pattern 
 ### 4. Actor Sheet Integration
 
 **File**: `/templates/actor/action-cards.hbs`
+
 - Update to show transformation action cards when transformed
 - Add visual indication when action cards come from transformation
 
 **File**: `/module/ui/mixins/actor-sheet-additional-actions.mjs`
+
 - Update action card execution to work with transformation action cards
 
 ### 5. Template Updates
 
 **File**: `/templates/item/attribute-parts/transformation.hbs`
+
 - Add action cards display section
 - Show embedded action cards with management controls
 
 ### 6. Documentation and Language Updates
 
 **File**: `/lang/src/en/transformations.json`
+
 - Add localization strings for action card-related UI elements
 
 **File**: `/docs/for-gms/transformations.md`
+
 - Update documentation to include action card functionality
 
 ### 7. Testing Strategy

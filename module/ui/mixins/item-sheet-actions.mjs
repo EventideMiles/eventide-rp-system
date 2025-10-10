@@ -17,8 +17,6 @@ const FilePicker = foundry.applications.apps.FilePicker.implementation;
  */
 export const ItemSheetActionsMixin = (BaseClass) =>
   class extends BaseClass {
-
-
     /**
      * Handle changing a Document's image.
      * Reused pattern from actor sheet for consistency.
@@ -31,12 +29,16 @@ export const ItemSheetActionsMixin = (BaseClass) =>
     static async _onEditImage(_event, target) {
       // CRITICAL FIX: Detect if this is being called on an embedded item sheet
       // and delegate to the correct embedded item method
-      if (this.constructor.name === 'EmbeddedItemSheet' || this.parentItem) {
+      if (this.constructor.name === "EmbeddedItemSheet" || this.parentItem) {
         // Call the embedded item sheet's image editing method directly
-        if (typeof this._onEditImageEmbedded === 'function') {
+        if (typeof this._onEditImageEmbedded === "function") {
           return this._onEditImageEmbedded(_event, target);
         } else if (this.constructor._onEditImageEmbedded) {
-          return this.constructor._onEditImageEmbedded.call(this, _event, target);
+          return this.constructor._onEditImageEmbedded.call(
+            this,
+            _event,
+            target,
+          );
         }
         return;
       }
@@ -111,7 +113,11 @@ export const ItemSheetActionsMixin = (BaseClass) =>
       try {
         const actionCardId = target.dataset.actionCardId;
         if (!actionCardId) {
-          Logger.warn("No action card ID provided for removal", {}, "ITEM_ACTIONS");
+          Logger.warn(
+            "No action card ID provided for removal",
+            {},
+            "ITEM_ACTIONS",
+          );
           return;
         }
 
@@ -141,7 +147,11 @@ export const ItemSheetActionsMixin = (BaseClass) =>
         // Find the specific action card to edit using the data-action-card-id
         const actionCardId = target.dataset.actionCardId;
         if (!actionCardId) {
-          Logger.warn("No action card ID found on target element", {}, "ITEM_ACTIONS");
+          Logger.warn(
+            "No action card ID found on target element",
+            {},
+            "ITEM_ACTIONS",
+          );
           return;
         }
 
@@ -156,22 +166,23 @@ export const ItemSheetActionsMixin = (BaseClass) =>
         if (!actionCard) {
           Logger.warn(
             "Action card not found for editing",
-            { actionCardId, availableIds: actionCardList.map(ac => ac.id) },
-            "ITEM_ACTIONS"
+            { actionCardId, availableIds: actionCardList.map((ac) => ac.id) },
+            "ITEM_ACTIONS",
           );
           return;
         }
 
         actionCard.sheet.render(true);
       } catch (error) {
-        Logger.error("Failed to edit embedded action card", error, "ITEM_ACTIONS");
+        Logger.error(
+          "Failed to edit embedded action card",
+          error,
+          "ITEM_ACTIONS",
+        );
         ui.notifications.error(
-          game.i18n.format(
-            "EVENTIDE_RP_SYSTEM.Errors.ActionCardEditFailed",
-            {
-              itemName: this.item?.name || "Unknown",
-            },
-          ),
+          game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.ActionCardEditFailed", {
+            itemName: this.item?.name || "Unknown",
+          }),
         );
       }
     }
@@ -198,7 +209,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @protected
      */
     static async _viewDoc(_event, target) {
-
       try {
         const docRow = target.closest("li");
 
@@ -241,7 +251,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @protected
      */
     static async _deleteEffect(_event, target) {
-
       try {
         const effect = this._getEffect(target);
         if (!effect) {
@@ -250,7 +259,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
         }
 
         await effect.delete();
-
       } catch (error) {
         Logger.error("Failed to delete effect", error, "ITEM_ACTIONS");
         ui.notifications.error(
@@ -270,7 +278,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @private
      */
     static async _createEffect(_event, target) {
-
       try {
         // Retrieve the configured document class for ActiveEffect
         const aeCls = foundry.utils.getDocumentClass("ActiveEffect");
@@ -295,7 +302,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
         await aeCls.create(effectData, {
           parent: this.item,
         });
-
       } catch (error) {
         Logger.error("Failed to create effect", error, "ITEM_ACTIONS");
         ui.notifications.error(
@@ -315,7 +321,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @private
      */
     static async _createDoc(_event, target) {
-
       try {
         const { documentClass } = target.dataset;
 
@@ -350,7 +355,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
         await docCls.create(createData, {
           parent: this.item,
         });
-
       } catch (error) {
         Logger.error("Failed to create document", error, "ITEM_ACTIONS");
         ui.notifications.error(
@@ -371,7 +375,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @private
      */
     static async _deleteDoc(event, target) {
-
       try {
         const { documentClass } = target.dataset;
 
@@ -407,7 +410,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @private
      */
     static async _toggleEffect(_event, target) {
-
       try {
         const effect = this._getEffect(target);
         if (!effect) {
@@ -416,7 +418,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
         }
 
         await effect.update({ disabled: !effect.disabled });
-
       } catch (error) {
         Logger.error("Failed to toggle effect", error, "ITEM_ACTIONS");
         ui.notifications.error(
@@ -434,7 +435,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @private
      */
     static async _clearEmbeddedItem(_event, _target) {
-
       try {
         // Get the item from the sheet instance, not from the form
         const item = this.item;
@@ -475,7 +475,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
 
         // Explicitly render the sheet to ensure it updates
         this.render();
-
       } catch (error) {
         Logger.error("Failed to clear embedded item", error, "ITEM_ACTIONS");
         ui.notifications.error(
@@ -493,7 +492,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @private
      */
     static async _createNewPower(_event, _target) {
-
       try {
         const item = this.item;
         if (!item || item.type !== "actionCard") {
@@ -556,16 +554,12 @@ export const ItemSheetActionsMixin = (BaseClass) =>
 
         // Explicitly render the sheet to ensure it updates
         this.render();
-
       } catch (error) {
         Logger.error("Failed to create new power", error, "ITEM_ACTIONS");
         ui.notifications.error(
-          game.i18n.localize(
-            "EVENTIDE_RP_SYSTEM.Errors.CreateNewPowerFailed",
-          ),
+          game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.CreateNewPowerFailed"),
         );
       }
-
     }
 
     /**
@@ -575,7 +569,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @private
      */
     static async _createNewStatus(_event, _target) {
-
       try {
         const item = this.item;
         if (!item || item.type !== "actionCard") {
@@ -617,9 +610,11 @@ export const ItemSheetActionsMixin = (BaseClass) =>
           Logger.warn(
             "Create new status called but effects still exist - possible race condition",
             { currentEffectCount: currentEffects.length },
-            "ITEM_ACTIONS"
+            "ITEM_ACTIONS",
           );
-          ui.notifications.warn(game.i18n.localize("EVENTIDE_RP_SYSTEM.UI.PleaseWait"));
+          ui.notifications.warn(
+            game.i18n.localize("EVENTIDE_RP_SYSTEM.UI.PleaseWait"),
+          );
           return;
         }
 
@@ -668,16 +663,12 @@ export const ItemSheetActionsMixin = (BaseClass) =>
 
         // Explicitly render the sheet to ensure it updates
         this.render();
-
       } catch (error) {
         Logger.error("Failed to create new status", error, "ITEM_ACTIONS");
         ui.notifications.error(
-          game.i18n.localize(
-            "EVENTIDE_RP_SYSTEM.Errors.CreateNewStatusFailed",
-          ),
+          game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.CreateNewStatusFailed"),
         );
       }
-
     }
 
     /**
@@ -687,7 +678,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @private
      */
     static async _createNewTransformation(_event, _target) {
-
       try {
         const item = this.item;
         if (!item || item.type !== "actionCard") {
@@ -748,16 +738,18 @@ export const ItemSheetActionsMixin = (BaseClass) =>
 
         // Explicitly render the sheet to ensure it updates
         this.render();
-
       } catch (error) {
-        Logger.error("Failed to create new transformation", error, "ITEM_ACTIONS");
+        Logger.error(
+          "Failed to create new transformation",
+          error,
+          "ITEM_ACTIONS",
+        );
         ui.notifications.error(
           game.i18n.localize(
             "EVENTIDE_RP_SYSTEM.Errors.CreateNewTransformationFailed",
           ),
         );
       }
-
     }
 
     /**
@@ -767,7 +759,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @private
      */
     static async _editEmbeddedItem(_event, _target) {
-
       try {
         const item = this.item;
         if (!item || item.type !== "actionCard") {
@@ -815,7 +806,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
         );
         const sheet = new EmbeddedItemSheet(embeddedItem.toObject(), item);
         sheet.render(true);
-
       } catch (error) {
         Logger.error("Failed to edit embedded item", error, "ITEM_ACTIONS");
         ui.notifications.error(
@@ -833,7 +823,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @private
      */
     static async _editEmbeddedEffect(_event, target) {
-
       try {
         const item = this.item;
         const effectId = target.dataset.effectId;
@@ -898,7 +887,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
         );
         const sheet = new EmbeddedItemSheet(effect.toObject(), item, {}, true);
         sheet.render(true);
-
       } catch (error) {
         Logger.error("Failed to edit embedded effect", error, "ITEM_ACTIONS");
         ui.notifications.error(
@@ -916,7 +904,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @private
      */
     static async _removeEmbeddedEffect(_event, target) {
-
       try {
         const item = this.item;
         const effectId = target.dataset.effectId;
@@ -967,7 +954,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
 
         // Explicitly render the sheet to ensure it updates
         this.render();
-
       } catch (error) {
         Logger.error("Failed to remove embedded effect", error, "ITEM_ACTIONS");
         ui.notifications.error(
@@ -976,9 +962,7 @@ export const ItemSheetActionsMixin = (BaseClass) =>
           ),
         );
       }
-
     }
-
 
     /**
      * Handle editing an embedded transformation on an action card
@@ -987,7 +971,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @private
      */
     static async _editEmbeddedTransformation(_event, target) {
-
       try {
         const item = this.item;
         const transformationId = target.dataset.transformationId;
@@ -1048,9 +1031,12 @@ export const ItemSheetActionsMixin = (BaseClass) =>
 
         // Open the transformation sheet
         await transformation.sheet.render(true);
-
       } catch (error) {
-        Logger.error("Failed to edit embedded transformation", error, "ITEM_ACTIONS");
+        Logger.error(
+          "Failed to edit embedded transformation",
+          error,
+          "ITEM_ACTIONS",
+        );
         ui.notifications.error(
           game.i18n.localize(
             "EVENTIDE_RP_SYSTEM.Errors.EditEmbeddedTransformationFailed",
@@ -1134,9 +1120,12 @@ export const ItemSheetActionsMixin = (BaseClass) =>
 
         // Explicitly render the sheet to ensure it updates
         this.render();
-
       } catch (error) {
-        Logger.error("Failed to create new combat power", error, "ITEM_ACTIONS");
+        Logger.error(
+          "Failed to create new combat power",
+          error,
+          "ITEM_ACTIONS",
+        );
         ui.notifications.error(
           game.i18n.localize(
             "EVENTIDE_RP_SYSTEM.Errors.CreateNewCombatPowerFailed",
@@ -1204,7 +1193,7 @@ export const ItemSheetActionsMixin = (BaseClass) =>
               damageFormula: "1d6",
               damageType: "damage",
               damageThreshold: 15,
-              statusCondition: "never",
+              statusCondition: "oneSuccess",
               statusThreshold: 15,
             },
             embeddedItem: {},
@@ -1239,7 +1228,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
 
         // Explicitly render the sheet to ensure it updates
         this.render();
-
       } catch (error) {
         Logger.error("Failed to create new action card", error, "ITEM_ACTIONS");
         ui.notifications.error(
@@ -1257,7 +1245,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @private
      */
     static async _removeEmbeddedTransformation(_event, target) {
-
       try {
         const item = this.item;
         const transformationId = target.dataset.transformationId;
@@ -1301,21 +1288,22 @@ export const ItemSheetActionsMixin = (BaseClass) =>
           return;
         }
 
-
         await item.removeEmbeddedTransformation(transformationId);
 
         // Explicitly render the sheet to ensure it updates
         this.render();
-
       } catch (error) {
-        Logger.error("Failed to remove embedded transformation", error, "ITEM_ACTIONS");
+        Logger.error(
+          "Failed to remove embedded transformation",
+          error,
+          "ITEM_ACTIONS",
+        );
         ui.notifications.error(
           game.i18n.localize(
             "EVENTIDE_RP_SYSTEM.Errors.RemoveEmbeddedTransformationFailed",
           ),
         );
       }
-
     }
 
     /**

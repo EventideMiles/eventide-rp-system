@@ -45,7 +45,7 @@
             {{#if (eq transformationActionCards.length 0)}}
               {{#each actionCards as |item id|}}
               <tr
-                class="erps-data-table__row erps-data-table__row--hoverable"
+                class="erps-data-table__row erps-data-table__row--hoverable {{#if (eq item.system.mode 'attackChain')}}{{#unless item.system.embeddedItem.type}}erps-data-table__row--warning{{/unless}}{{/if}}"
                 data-item-id="{{item._id}}"
                 data-drag="true"
                 data-document-class="Item"
@@ -76,7 +76,13 @@
                       <span>{{item.system.embeddedItem.name}}</span>
                     </div>
                   {{else}}
-                    <span class="erps-data-table__empty-state">{{localize "EVENTIDE_RP_SYSTEM.General.None"}}</span>
+                    {{#if (eq item.system.mode "attackChain")}}
+                        <span class="erps-data-table__empty-state">{{localize "EVENTIDE_RP_SYSTEM.General.None"}}</span>
+                      {{else}}
+                        <div class="erps-data-table__embedded-item">
+                          <span>{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.SavedDamageMode"}}</span>
+                        </div>
+                      {{/if}}
                   {{/if}}
                 </td>
                 <td class="erps-data-table__cell erps-data-table__cell--center rollable" data-roll-type="item" data-action="roll" data-item-id="{{item._id}}">
@@ -94,9 +100,9 @@
                       {{/if}}
                     </div>
                   {{else if (eq item.system.mode "savedDamage")}}
-                    <div class="erps-data-table__saved-damage-info" 
+                    <div class="erps-data-table__attack-chain-info" 
                          title="Saved Damage: {{item.system.savedDamage.formula}} {{item.system.savedDamage.type}}{{#if item.system.savedDamage.description}}&#10;{{item.system.savedDamage.description}}{{/if}}">
-                      <span class="erps-data-table__saved-damage-formula">{{item.system.savedDamage.formula}}</span>
+                      <span class="erps-data-table__attack-chain-stats">{{item.system.savedDamage.formula}}</span>
                       <i class="fas fa-heart-broken erps-data-table__chain-icon" title="{{item.system.savedDamage.formula}} {{item.system.savedDamage.type}}"></i>
                     </div>
                   {{else}}
@@ -144,7 +150,7 @@
             {{else}}
               {{#each transformationActionCards as |item id|}}
                 <tr
-                  class="erps-data-table__row erps-data-table__row--hoverable"
+                  class="erps-data-table__row erps-data-table__row--hoverable {{#if (eq item.system.mode 'attackChain')}}{{#unless item.system.embeddedItem.type}}erps-data-table__row--warning{{/unless}}{{/if}}"
                   data-item-id="{{item._id}}"
                   data-drag="true"
                   data-document-class="Item"
@@ -176,7 +182,13 @@
                         <span>{{item.system.embeddedItem.name}}</span>
                       </div>
                     {{else}}
-                      <span class="erps-data-table__empty-state">{{localize "EVENTIDE_RP_SYSTEM.General.None"}}</span>
+                      {{#if (eq item.system.mode "attackChain")}}
+                        <span class="erps-data-table__empty-state">{{localize "EVENTIDE_RP_SYSTEM.General.None"}}</span>
+                      {{else}}
+                        <div class="erps-data-table__embedded-item">
+                          <span>{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.SavedDamageMode"}}</span>
+                        </div>
+                      {{/if}}
                     {{/if}}
                   </td>
                   <td class="erps-data-table__cell erps-data-table__cell--center rollable" data-roll-type="item" data-action="roll" data-item-id="{{item._id}}">
@@ -194,9 +206,9 @@
                         {{/if}}
                       </div>
                     {{else if (eq item.system.mode "savedDamage")}}
-                      <div class="erps-data-table__saved-damage-info"
+                      <div class="erps-data-table__attack-chain-info"
                            title="Saved Damage: {{item.system.savedDamage.formula}} {{item.system.savedDamage.type}}{{#if item.system.savedDamage.description}}&#10;{{item.system.savedDamage.description}}{{/if}}">
-                        <span class="erps-data-table__saved-damage-formula">{{item.system.savedDamage.formula}}</span>
+                        <span class="erps-data-table__attack-chain-stats">{{item.system.savedDamage.formula}}</span>
                         <i class="fas fa-heart-broken erps-data-table__chain-icon" title="{{item.system.savedDamage.formula}} {{item.system.savedDamage.type}}"></i>
                       </div>
                     {{else}}

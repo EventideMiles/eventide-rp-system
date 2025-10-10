@@ -226,9 +226,12 @@ export const EmbeddedItemCharacterEffectsMixin = (BaseClass) =>
         // Update the temporary document's source data first
         this.document.updateSource(powerData);
 
-        await this.parentItem.update({
-          "system.embeddedCombatPowers": powers,
-        });
+        await this.parentItem.update(
+          {
+            "system.embeddedCombatPowers": powers,
+          },
+          { fromEmbeddedItem: true },
+        );
         this.render();
       } catch (error) {
         Logger.error(
@@ -281,9 +284,12 @@ export const EmbeddedItemCharacterEffectsMixin = (BaseClass) =>
         // Update the temporary document's source data first
         this.document.updateSource(statusData);
 
-        await this.parentItem.update({
-          "system.embeddedStatusEffects": statusEffects,
-        });
+        await this.parentItem.update(
+          {
+            "system.embeddedStatusEffects": statusEffects,
+          },
+          { fromEmbeddedItem: true },
+        );
         this.render();
       } catch (error) {
         Logger.error(
@@ -331,9 +337,12 @@ export const EmbeddedItemCharacterEffectsMixin = (BaseClass) =>
         // Update the temporary document's source data first
         this.document.updateSource(itemData);
 
-        await this.parentItem.update({
-          "system.embeddedItem": itemData,
-        });
+        await this.parentItem.update(
+          {
+            "system.embeddedItem": itemData,
+          },
+          { fromEmbeddedItem: true },
+        );
         this.render();
       } catch (error) {
         Logger.error(
@@ -407,5 +416,195 @@ export const EmbeddedItemCharacterEffectsMixin = (BaseClass) =>
      */
     static async _deleteCharacterEffect(event, target) {
       return this._deleteEmbeddedCharacterEffect(event, target);
+    }
+
+    /**
+     * Toggle effect display for embedded items
+     * @param {PointerEvent} event - The originating click event
+     * @param {HTMLElement} target - The capturing HTML element which defined a [data-action]
+     * @protected
+     */
+    static async _toggleEmbeddedEffectDisplay(event, target) {
+      const duration = target.checked ? { seconds: 604800 } : { seconds: 0 };
+
+      // Get the first effect from the temporary item, or create one if needed
+      let firstEffect = this.document.effects.contents[0];
+      if (!firstEffect) {
+        // Create a default ActiveEffect if none exists
+        const defaultEffectData = {
+          _id: foundry.utils.randomID(),
+          name: this.document.name,
+          icon: this.document.img,
+          changes: [],
+          disabled: false,
+          duration,
+          flags: {},
+          tint: "#ffffff",
+          transfer: true,
+          statuses: [],
+        };
+
+        firstEffect = new CONFIG.ActiveEffect.documentClass(defaultEffectData, {
+          parent: this.document,
+        });
+        this.document.effects.set(defaultEffectData._id, firstEffect);
+
+        // Also update the source data
+        if (!this.document._source.effects) {
+          this.document._source.effects = [];
+        }
+        this.document._source.effects.push(defaultEffectData);
+      }
+
+      // Update the effect data with new duration
+      const effectData = {
+        _id: firstEffect.id,
+        duration,
+      };
+
+      // Update based on parent type
+      if (this.parentItem.type === "transformation") {
+        await this._updateTransformationEffectDisplay(effectData, firstEffect);
+      } else if (this.isEffect) {
+        await this._updateActionCardEffectDisplay(effectData, firstEffect);
+      } else {
+        await this._updateActionCardItemEffectDisplay(effectData, firstEffect);
+      }
+
+      event.target.focus();
+    }
+
+    /**
+     * Update effect display for transformation items
+     * @param {object} effectData - The effect data to update
+     * @param {ActiveEffect} firstEffect - The first effect
+     * @private
+     */
+    async _updateTransformationEffectDisplay(effectData, firstEffect) {
+      const powerIndex = this.parentItem.system.embeddedCombatPowers.findIndex(
+        (p) => p._id === this.originalItemId,
+      );
+      if (powerIndex === -1) return;
+
+      const powers = foundry.utils.deepClone(
+        this.parentItem.system.embeddedCombatPowers,
+      );
+      const powerData = powers[powerIndex];
+
+      // Update the effects array in the power data
+      if (!powerData.effects) powerData.effects = [];
+      const activeEffectIndex = powerData.effects.findIndex(
+        (e) => e._id === firstEffect.id,
+      );
+      if (activeEffectIndex >= 0) {
+        powerData.effects[activeEffectIndex] = foundry.utils.mergeObject(
+          powerData.effects[activeEffectIndex],
+          effectData,
+        );
+      } else {
+        powerData.effects.push(
+          foundry.utils.mergeObject(firstEffect.toObject(), effectData),
+        );
+      }
+
+      this.document.updateSource(powerData);
+      await this.parentItem.update(
+        {
+          "system.embeddedCombatPowers": powers,
+        },
+        { fromEmbeddedItem: true },
+      );
+      this.render();
+    }
+
+    /**
+     * Update effect display for action card effects
+     * @param {object} effectData - The effect data to update
+     * @param {ActiveEffect} firstEffect - The first effect
+     * @private
+     */
+    async _updateActionCardEffectDisplay(effectData, firstEffect) {
+      const effectIndex =
+        this.parentItem.system.embeddedStatusEffects.findIndex(
+          (s) => s._id === this.originalItemId,
+        );
+      if (effectIndex === -1) return;
+
+      const statusEffects = foundry.utils.deepClone(
+        this.parentItem.system.embeddedStatusEffects,
+      );
+      const statusData = statusEffects[effectIndex];
+
+      // Update the effects array in the status data
+      if (!statusData.effects) statusData.effects = [];
+      const activeEffectIndex = statusData.effects.findIndex(
+        (e) => e._id === firstEffect.id,
+      );
+      if (activeEffectIndex >= 0) {
+        statusData.effects[activeEffectIndex] = foundry.utils.mergeObject(
+          statusData.effects[activeEffectIndex],
+          effectData,
+        );
+      } else {
+        statusData.effects.push(
+          foundry.utils.mergeObject(firstEffect.toObject(), effectData),
+        );
+      }
+
+      this.document.updateSource(statusData);
+      await this.parentItem.update(
+        {
+          "system.embeddedStatusEffects": statusEffects,
+        },
+        { fromEmbeddedItem: true },
+      );
+      this.render();
+    }
+
+    /**
+     * Update effect display for action card items
+     * @param {object} effectData - The effect data to update
+     * @param {ActiveEffect} firstEffect - The first effect
+     * @private
+     */
+    async _updateActionCardItemEffectDisplay(effectData, firstEffect) {
+      const itemData = foundry.utils.deepClone(
+        this.parentItem.system.embeddedItem,
+      );
+
+      // Update the effects array in the item data
+      if (!itemData.effects) itemData.effects = [];
+      const activeEffectIndex = itemData.effects.findIndex(
+        (e) => e._id === firstEffect.id,
+      );
+      if (activeEffectIndex >= 0) {
+        itemData.effects[activeEffectIndex] = foundry.utils.mergeObject(
+          itemData.effects[activeEffectIndex],
+          effectData,
+        );
+      } else {
+        itemData.effects.push(
+          foundry.utils.mergeObject(firstEffect.toObject(), effectData),
+        );
+      }
+
+      this.document.updateSource(itemData);
+      await this.parentItem.update(
+        {
+          "system.embeddedItem": itemData,
+        },
+        { fromEmbeddedItem: true },
+      );
+      this.render();
+    }
+
+    /**
+     * Bridge method to forward regular effect display toggle to embedded equivalent
+     * @param {PointerEvent} event - The originating click event
+     * @param {HTMLElement} target - The capturing HTML element which defined a [data-action]
+     * @protected
+     */
+    static async _toggleEffectDisplay(event, target) {
+      return this._toggleEmbeddedEffectDisplay(event, target);
     }
   };

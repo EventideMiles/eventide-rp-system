@@ -35,7 +35,6 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
    * @param {Object} [options.submitOnChange=false] - Whether to submit the form on change
    */
   constructor(options = {}) {
-
     try {
       super(options);
       this.#dragDrop = this.#createDragDropHandlers();
@@ -47,10 +46,10 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
         exportEmbeddedActionCards: this._exportEmbeddedActionCards.bind(this),
         exportEmbeddedActionItem: this._exportEmbeddedActionItem.bind(this),
         exportEmbeddedEffects: this._exportEmbeddedEffects.bind(this),
-        exportEmbeddedTransformations: this._exportEmbeddedTransformations.bind(this),
+        exportEmbeddedTransformations:
+          this._exportEmbeddedTransformations.bind(this),
         exportAllEmbeddedItems: this._exportAllEmbeddedItems.bind(this),
       });
-
     } catch (error) {
       Logger.error("Failed to initialize item sheet", error, "ITEM_SHEET");
       throw error;
@@ -63,14 +62,10 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
    *
    *********************/
 
-
   /** @override */
   static get DEFAULT_OPTIONS() {
     const options = foundry.utils.mergeObject(super.DEFAULT_OPTIONS, {
-      classes: [
-        "eventide-sheet",
-        "eventide-sheet--scrollbars",
-      ],
+      classes: ["eventide-sheet", "eventide-sheet--scrollbars"],
       actions: {
         onEditImage: this._onEditImage,
         viewDoc: this._viewDoc,
@@ -117,6 +112,9 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
   static PARTS = {
     header: {
       template: "systems/eventide-rp-system/templates/item/header.hbs",
+    },
+    callouts: {
+      template: "systems/eventide-rp-system/templates/item/callouts.hbs",
     },
     tabs: {
       // Foundry-provided generic template
@@ -176,7 +174,7 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
   _configureRenderOptions(options) {
     super._configureRenderOptions(options);
     // Not all parts always render
-    options.parts = ["header", "tabs", "description"];
+    options.parts = ["header", "callouts", "tabs", "description"];
     // Don't show the other tabs if only limited view
     if (this.document.limited) return;
     // Control which parts show based on document subtype
@@ -277,6 +275,10 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
        */
       context.isTransformationActionCard = this._isTransformationActionCard();
 
+      /**
+       * Prepare callouts for action cards
+       */
+      context.callouts = this._prepareCallouts();
 
       Logger.methodExit(
         "EventideRpSystemItemSheet",
@@ -316,6 +318,33 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
         hasError: true,
       };
     }
+  }
+
+  /**
+   * Prepares callouts for the item sheet
+   * @returns {Array} Array of callout objects
+   * @private
+   */
+  _prepareCallouts() {
+    const callouts = [];
+
+    // Check for action cards in attack chain mode without embedded item
+    if (this.item.type === "actionCard") {
+      if (
+        this.item.system.mode === "attackChain" &&
+        !this.item.system.embeddedItem?.type
+      ) {
+        callouts.push({
+          type: "warning",
+          faIcon: "fas fa-exclamation-triangle",
+          text: game.i18n.localize(
+            "EVENTIDE_RP_SYSTEM.Forms.Callouts.ActionCard.NoEmbeddedItem",
+          ),
+        });
+      }
+    }
+
+    return callouts;
   }
 
   /**
@@ -384,6 +413,7 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
       case "embeddedActionCards":
         context.tab = context.tabs[partId];
         // Get embedded action cards as temporary items
+        // Warning styling is handled directly in the template
         context.embeddedActionCards = this.item.system.getEmbeddedActionCards();
         break;
       case "embeddedItems":
@@ -451,6 +481,7 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
       };
       switch (partId) {
         case "header":
+        case "callouts":
         case "tabs":
           return tabs;
         case "description":
@@ -517,7 +548,7 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
             action: "exportEmbeddedCombatPowers",
             icon: "fas fa-swords",
             label: "EVENTIDE_RP_SYSTEM.UI.ExportEmbeddedCombatPowers",
-            ownership: "OWNER"
+            ownership: "OWNER",
           });
         }
 
@@ -526,21 +557,22 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
             action: "exportEmbeddedActionCards",
             icon: "fas fa-cards-blank",
             label: "EVENTIDE_RP_SYSTEM.UI.ExportEmbeddedActionCards",
-            ownership: "OWNER"
+            ownership: "OWNER",
           });
         }
 
         // Add "Export All" button if there are any embedded items
-        if ((this.item.system?.embeddedCombatPowers?.length > 0) ||
-            (this.item.system?.embeddedActionCards?.length > 0)) {
+        if (
+          this.item.system?.embeddedCombatPowers?.length > 0 ||
+          this.item.system?.embeddedActionCards?.length > 0
+        ) {
           controls.push({
             action: "exportAllEmbeddedItems",
             icon: "fas fa-file-export",
             label: "EVENTIDE_RP_SYSTEM.UI.ExportAllEmbeddedItems",
-            ownership: "OWNER"
+            ownership: "OWNER",
           });
         }
-
       } else if (this.item.type === "actionCard") {
         // Action Card export buttons
         const embeddedItem = this.item.getEmbeddedItem();
@@ -549,7 +581,7 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
             action: "exportEmbeddedActionItem",
             icon: "fas fa-magic",
             label: "EVENTIDE_RP_SYSTEM.UI.ExportEmbeddedActionItem",
-            ownership: "OWNER"
+            ownership: "OWNER",
           });
         }
 
@@ -559,28 +591,33 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
             action: "exportEmbeddedEffects",
             icon: "fas fa-sparkles",
             label: "EVENTIDE_RP_SYSTEM.UI.ExportEmbeddedEffects",
-            ownership: "OWNER"
+            ownership: "OWNER",
           });
         }
 
         // Check for embedded transformations (async, so we need to be careful)
-        const hasEmbeddedTransformations = this.item.system?.embeddedTransformations?.length > 0;
+        const hasEmbeddedTransformations =
+          this.item.system?.embeddedTransformations?.length > 0;
         if (hasEmbeddedTransformations) {
           controls.push({
             action: "exportEmbeddedTransformations",
             icon: "fas fa-exchange-alt",
             label: "EVENTIDE_RP_SYSTEM.UI.ExportEmbeddedTransformations",
-            ownership: "OWNER"
+            ownership: "OWNER",
           });
         }
 
         // Add "Export All" button if there are any embedded items
-        if (embeddedItem || (embeddedEffects && embeddedEffects.length > 0) || hasEmbeddedTransformations) {
+        if (
+          embeddedItem ||
+          (embeddedEffects && embeddedEffects.length > 0) ||
+          hasEmbeddedTransformations
+        ) {
           controls.push({
             action: "exportAllEmbeddedItems",
             icon: "fas fa-file-export",
             label: "EVENTIDE_RP_SYSTEM.UI.ExportAllEmbeddedItems",
-            ownership: "OWNER"
+            ownership: "OWNER",
           });
         }
       }
@@ -816,9 +853,11 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
    */
   async _initializeItemSelectors() {
     try {
-
       // Only initialize for action card and transformation items
-      if (this.item.type !== "actionCard" && this.item.type !== "transformation") {
+      if (
+        this.item.type !== "actionCard" &&
+        this.item.type !== "transformation"
+      ) {
         return;
       }
 
@@ -909,7 +948,6 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
           selectorType: "action-cards",
         });
       }
-
     } catch (error) {
       console.error("ItemSheet: Failed to initialize item selectors:", error);
       Logger.error("Failed to initialize item selectors", error, "ITEM_SHEET");
@@ -958,7 +996,6 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
    */
   async _onActionItemSelected(droppedItem) {
     try {
-
       // Set the embedded item (same as drag-and-drop)
       await this.item.setEmbeddedItem(droppedItem);
 
@@ -988,7 +1025,6 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
    */
   async _onEffectSelected(droppedItem) {
     try {
-
       // Add the embedded effect (same as drag-and-drop)
       await this.item.addEmbeddedEffect(droppedItem);
 
@@ -1033,9 +1069,7 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
     } catch (error) {
       Logger.error("Failed to add combat power", error, "ITEM_SHEET");
       ui.notifications.error(
-        game.i18n.localize(
-          "EVENTIDE_RP_SYSTEM.Errors.FailedToAddCombatPower",
-        ),
+        game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.FailedToAddCombatPower"),
       );
     }
   }
@@ -1065,9 +1099,7 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
     } catch (error) {
       Logger.error("Failed to add action card", error, "ITEM_SHEET");
       ui.notifications.error(
-        game.i18n.localize(
-          "EVENTIDE_RP_SYSTEM.Errors.FailedToAddActionCard",
-        ),
+        game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.FailedToAddActionCard"),
       );
     }
   }
@@ -1080,7 +1112,6 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
    */
   async _onTransformationSelected(droppedItem) {
     try {
-
       // Add the embedded transformation (same as drag-and-drop)
       await this.item.addEmbeddedTransformation(droppedItem);
 
@@ -1114,10 +1145,16 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
    */
   async _exportEmbeddedCombatPowers(_event, _target) {
     try {
-      const results = await EmbeddedItemExporter.exportEmbeddedCombatPowers(this.item);
+      const results = await EmbeddedItemExporter.exportEmbeddedCombatPowers(
+        this.item,
+      );
       Logger.debug("Combat powers export completed", results, "ITEM_SHEET");
     } catch (error) {
-      Logger.error("Failed to export embedded combat powers", error, "ITEM_SHEET");
+      Logger.error(
+        "Failed to export embedded combat powers",
+        error,
+        "ITEM_SHEET",
+      );
     }
   }
 
@@ -1130,10 +1167,16 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
    */
   async _exportEmbeddedActionCards(_event, _target) {
     try {
-      const results = await EmbeddedItemExporter.exportEmbeddedActionCards(this.item);
+      const results = await EmbeddedItemExporter.exportEmbeddedActionCards(
+        this.item,
+      );
       Logger.debug("Action cards export completed", results, "ITEM_SHEET");
     } catch (error) {
-      Logger.error("Failed to export embedded action cards", error, "ITEM_SHEET");
+      Logger.error(
+        "Failed to export embedded action cards",
+        error,
+        "ITEM_SHEET",
+      );
     }
   }
 
@@ -1146,10 +1189,16 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
    */
   async _exportEmbeddedActionItem(_event, _target) {
     try {
-      const results = await EmbeddedItemExporter.exportEmbeddedActionItem(this.item);
+      const results = await EmbeddedItemExporter.exportEmbeddedActionItem(
+        this.item,
+      );
       Logger.debug("Action item export completed", results, "ITEM_SHEET");
     } catch (error) {
-      Logger.error("Failed to export embedded action item", error, "ITEM_SHEET");
+      Logger.error(
+        "Failed to export embedded action item",
+        error,
+        "ITEM_SHEET",
+      );
     }
   }
 
@@ -1162,7 +1211,9 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
    */
   async _exportEmbeddedEffects(_event, _target) {
     try {
-      const results = await EmbeddedItemExporter.exportEmbeddedEffects(this.item);
+      const results = await EmbeddedItemExporter.exportEmbeddedEffects(
+        this.item,
+      );
       Logger.debug("Effects export completed", results, "ITEM_SHEET");
     } catch (error) {
       Logger.error("Failed to export embedded effects", error, "ITEM_SHEET");
@@ -1178,10 +1229,16 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
    */
   async _exportEmbeddedTransformations(_event, _target) {
     try {
-      const results = await EmbeddedItemExporter.exportEmbeddedTransformations(this.item);
+      const results = await EmbeddedItemExporter.exportEmbeddedTransformations(
+        this.item,
+      );
       Logger.debug("Transformations export completed", results, "ITEM_SHEET");
     } catch (error) {
-      Logger.error("Failed to export embedded transformations", error, "ITEM_SHEET");
+      Logger.error(
+        "Failed to export embedded transformations",
+        error,
+        "ITEM_SHEET",
+      );
     }
   }
 
@@ -1194,8 +1251,14 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
    */
   async _exportAllEmbeddedItems(_event, _target) {
     try {
-      const results = await EmbeddedItemExporter.exportAllEmbeddedItems(this.item);
-      Logger.debug("All embedded items export completed", results, "ITEM_SHEET");
+      const results = await EmbeddedItemExporter.exportAllEmbeddedItems(
+        this.item,
+      );
+      Logger.debug(
+        "All embedded items export completed",
+        results,
+        "ITEM_SHEET",
+      );
     } catch (error) {
       Logger.error("Failed to export all embedded items", error, "ITEM_SHEET");
     }
@@ -1330,6 +1393,33 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
     }
 
     return result;
+  }
+
+  /**
+   * Pre-close lifecycle hook for diagnostic logging
+   * This helps track why item sheets are closing unexpectedly
+   * @param {Object} options - Close options
+   * @returns {Promise<void>}
+   * @protected
+   * @override
+   */
+  async _preClose(options = {}) {
+    // Get the call stack to understand where close was called from
+    const stack = new Error().stack;
+
+    /* eslint-disable no-console */
+    console.group("🔍 REGULAR ITEM SHEET - _preClose");
+    console.log("Sheet Type: EventideRpSystemItemSheet");
+    console.log("Item:", this.document?.name, `(${this.document?.type})`);
+    console.log("Item ID:", this.document?.id);
+    console.log("Is Embedded:", this.document?.isEmbedded);
+    console.log("Options:", options);
+    console.log("Call Stack:");
+    console.log(stack);
+    console.groupEnd();
+    /* eslint-enable no-console */
+
+    return super._preClose?.(options);
   }
 
   /**

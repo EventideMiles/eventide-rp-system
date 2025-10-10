@@ -193,7 +193,7 @@ export const ItemSheetCharacterEffectsMixin = (BaseClass) =>
             this.item._source.effects.push(defaultEffectData);
           } else {
             // For regular items, create the effect in the database
-            const createdEffects = await this.item.createEmbeddedDocuments("ActiveEffect", [defaultEffectData]);
+            const createdEffects = await this.item.createEmbeddedDocuments("ActiveEffect", [defaultEffectData], { fromEmbeddedItem: true });
             firstEffect = createdEffects[0];
           }
         }
@@ -209,7 +209,7 @@ export const ItemSheetCharacterEffectsMixin = (BaseClass) =>
           await this.item.update({ effects: [{ ...firstEffect.toObject(), ...updateData }] }, { fromEmbeddedItem: true });
         } else {
           // For regular items, update the embedded documents directly
-          await this.item.updateEmbeddedDocuments("ActiveEffect", [updateData]);
+          await this.item.updateEmbeddedDocuments("ActiveEffect", [updateData], { fromEmbeddedItem: true });
         }
 
         Logger.info(
@@ -378,6 +378,15 @@ export const ItemSheetCharacterEffectsMixin = (BaseClass) =>
      * @protected
      */
     static async _toggleEffectDisplay(event, target) {
+      // IMPORTANT: Check if this is being called on an EmbeddedItemSheet
+      // If so, delegate to the embedded item's own handler
+      if (this.constructor.name === "EmbeddedItemSheet" || this.parentItem) {
+        // This is an embedded item sheet - use the class's own method
+        if (this.constructor._toggleEffectDisplay && this.constructor !== ItemSheetCharacterEffectsMixin) {
+          return this.constructor._toggleEffectDisplay.call(this, event, target);
+        }
+      }
+
       Logger.methodEntry(
         "ItemSheetCharacterEffectsMixin",
         "_toggleEffectDisplay",
@@ -438,7 +447,7 @@ export const ItemSheetCharacterEffectsMixin = (BaseClass) =>
             this.item._source.effects.push(defaultEffectData);
           } else {
             // For regular items, create the effect in the database
-            const createdEffects = await this.item.createEmbeddedDocuments("ActiveEffect", [defaultEffectData]);
+            const createdEffects = await this.item.createEmbeddedDocuments("ActiveEffect", [defaultEffectData], { fromEmbeddedItem: true });
             firstEffect = createdEffects[0];
           }
         }
@@ -454,7 +463,7 @@ export const ItemSheetCharacterEffectsMixin = (BaseClass) =>
           await this.item.update({ effects: [{ ...firstEffect.toObject(), ...updateData }] }, { fromEmbeddedItem: true });
         } else {
           // For regular items, update the embedded documents directly
-          await this.item.updateEmbeddedDocuments("ActiveEffect", [updateData]);
+          await this.item.updateEmbeddedDocuments("ActiveEffect", [updateData], { fromEmbeddedItem: true });
         }
         event.target.focus();
 

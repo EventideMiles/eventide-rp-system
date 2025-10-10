@@ -79,6 +79,53 @@
     }
   }
 
+  &__item--warning {
+    background: linear-gradient(0deg,
+        #f00 0%,
+        #000 100%) !important;
+    border-left: 4px solid rgb(220 38 38) !important;
+    animation: erps-warning-pulse 2s ease-in-out infinite;
+
+    // Ensure text is readable on bright background
+    .erps-items-panel__name,
+    .erps-items-panel__cell {
+      color: #fff !important;
+    }
+
+    // Make icons and links visible
+    a, i {
+      color: #fff !important;
+      opacity: 0.8;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+
+    // Override draggable hover states to maintain warning visibility
+    &:hover {
+      background: linear-gradient(0deg,
+        #f00 0%,
+        #000 100%) !important;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgb(220 38 38 / 40%);
+    }
+
+    &:active {
+      cursor: grabbing;
+      transform: translateY(0);
+    }
+
+    .erps-items-panel__drag-indicator {
+      color: #fff;
+      background: rgb(220 38 38);
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+
   // ===================================
   // ITEM NAME
   // ===================================
@@ -208,5 +255,52 @@
       background: themes.color(gray, 20);
       border-color: themes.color(gray, 30);
     }
+  }
+
+  // ===================================
+  // EMBEDDED ITEM AND MODE INFO
+  // ===================================
+
+  &__embedded-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 120px;
+    max-width: 200px;
+  }
+
+  &__embedded-item-img {
+    flex-shrink: 0;
+    border-radius: tokens.$sheet-radius-sm;
+  }
+
+  &__embedded-item-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: tokens.$sheet-font-size-xs;
+  }
+
+  &__mode-info {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    min-width: 100px;
+    font-size: tokens.$sheet-font-size-xs;
+
+    i {
+      font-size: 0.875rem;
+      opacity: 0.7;
+    }
+  }
+
+  &__mode-stats {
+    font-weight: tokens.$sheet-font-weight-medium;
+  }
+
+  &__empty-state {
+    font-size: tokens.$sheet-font-size-xs;
+    font-style: italic;
+    opacity: 0.5;
   }
 }

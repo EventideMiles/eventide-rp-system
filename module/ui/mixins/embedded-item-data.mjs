@@ -60,9 +60,12 @@ export const EmbeddedItemDataMixin = (BaseClass) =>
         });
         this.document.updateSource(powerData);
 
-        await this.parentItem.update({
-          "system.embeddedCombatPowers": powers,
-        });
+        await this.parentItem.update(
+          {
+            "system.embeddedCombatPowers": powers,
+          },
+          { fromEmbeddedItem: true },
+        );
 
         ui.notifications.info(
           game.i18n.localize(
@@ -104,9 +107,12 @@ export const EmbeddedItemDataMixin = (BaseClass) =>
         // Update the temporary document's source data first
         this.document.updateSource(effectData);
 
-        await this.parentItem.update({
-          "system.embeddedStatusEffects": statusEffects,
-        });
+        await this.parentItem.update(
+          {
+            "system.embeddedStatusEffects": statusEffects,
+          },
+          { fromEmbeddedItem: true },
+        );
 
         ui.notifications.info(
           game.i18n.localize("EVENTIDE_RP_SYSTEM.Info.EffectDescriptionSaved"),
@@ -167,9 +173,12 @@ export const EmbeddedItemDataMixin = (BaseClass) =>
         // Update the temporary document's source data first
         this.document.updateSource(itemData);
 
-        await this.parentItem.update({
-          "system.embeddedItem": itemData,
-        });
+        await this.parentItem.update(
+          {
+            "system.embeddedItem": itemData,
+          },
+          { fromEmbeddedItem: true },
+        );
 
         ui.notifications.info(
           game.i18n.localize("EVENTIDE_RP_SYSTEM.Info.ItemDescriptionSaved"),
@@ -447,9 +456,12 @@ export const EmbeddedItemDataMixin = (BaseClass) =>
         // Pre-emptively update the local source to prevent a race condition
         this.document.updateSource(powerData);
 
-        await this.parentItem.update({
-          "system.embeddedCombatPowers": powers,
-        });
+        await this.parentItem.update(
+          {
+            "system.embeddedCombatPowers": powers,
+          },
+          { fromEmbeddedItem: true },
+        );
         this.render();
       } catch (error) {
         Logger.error(
@@ -495,9 +507,12 @@ export const EmbeddedItemDataMixin = (BaseClass) =>
         // Pre-emptively update the local source to prevent a race condition
         this.document.updateSource(effectData);
 
-        await this.parentItem.update({
-          "system.embeddedStatusEffects": statusEffects,
-        });
+        await this.parentItem.update(
+          {
+            "system.embeddedStatusEffects": statusEffects,
+          },
+          { fromEmbeddedItem: true },
+        );
         this.render();
       } catch (error) {
         Logger.error(
@@ -539,9 +554,12 @@ export const EmbeddedItemDataMixin = (BaseClass) =>
         // Pre-emptively update the local source to prevent a race condition
         this.document.updateSource(itemData);
 
-        await this.parentItem.update({
-          "system.embeddedItem": itemData,
-        });
+        await this.parentItem.update(
+          {
+            "system.embeddedItem": itemData,
+          },
+          { fromEmbeddedItem: true },
+        );
         this.render();
       } catch (error) {
         Logger.error(
@@ -690,9 +708,12 @@ export const EmbeddedItemDataMixin = (BaseClass) =>
 
       try {
         this.document.updateSource(powerData);
-        await this.parentItem.update({
-          "system.embeddedCombatPowers": powers,
-        });
+        await this.parentItem.update(
+          {
+            "system.embeddedCombatPowers": powers,
+          },
+          { fromEmbeddedItem: true },
+        );
       } catch (error) {
         Logger.error(
           "EmbeddedItemDataMixin | Failed to save combat power icon tint",
@@ -733,9 +754,12 @@ export const EmbeddedItemDataMixin = (BaseClass) =>
 
       try {
         this.document.updateSource(effectData);
-        await this.parentItem.update({
-          "system.embeddedStatusEffects": statusEffects,
-        });
+        await this.parentItem.update(
+          {
+            "system.embeddedStatusEffects": statusEffects,
+          },
+          { fromEmbeddedItem: true },
+        );
       } catch (error) {
         Logger.error(
           "EmbeddedItemDataMixin | Failed to save effect icon tint",
