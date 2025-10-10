@@ -7,12 +7,15 @@ This document defines JSDoc standards and provides templates for documenting cri
 ## General Standards
 
 ### Critical Function Classification
+
 - **PRIORITY 1**: Core game mechanics (rolling, data preparation, schemas)
 - **PRIORITY 2**: UI handlers, resource management, validation
 - **PRIORITY 3**: Helper functions, utilities, formatting
 
 ### Required Documentation Elements
+
 All PRIORITY 1 functions must include:
+
 - Detailed description with purpose
 - All parameters with types and descriptions
 - Return type and description
@@ -323,6 +326,7 @@ function determineCriticalStates(options) {
 ### Required JSDoc Tags
 
 #### For All Critical Functions
+
 - `@param` - All parameters with types and descriptions
 - `@returns` - Return type and description
 - `@example` - At least one usage example
@@ -330,34 +334,40 @@ function determineCriticalStates(options) {
 - `@author` - Author or system name
 
 #### For PRIORITY 1 Functions (Additional)
+
 - `@throws` - All possible error conditions
 - `@critical` - Warning about importance and impact
 - `@performance` - Performance considerations if relevant
 - `@sideeffects` - All side effects and state changes
 
 #### For UI and Async Functions
+
 - `@async` - Mark async functions
 - `@permissions` - Required permissions
 - `@sideeffects` - UI updates, sound effects, etc.
 
 #### For Service Functions
+
 - `@maintenance` - Maintenance and operational notes
 - `@permissions` - Required user roles
 
 ### Special Warnings
 
-#### Use @critical for:
+#### Use @critical for
+
 - Functions that affect save game compatibility
 - Core game mechanics (rolling, data preparation)
 - Functions whose removal would break major features
 - Functions called by multiple other systems
 
-#### Use @maintenance for:
+#### Use @maintenance for
+
 - Cleanup functions
 - Performance optimization functions
 - System diagnostic functions
 
-#### Use @performance for:
+#### Use @performance for
+
 - Functions called frequently
 - Functions with timing considerations
 - Functions that may block UI
@@ -365,14 +375,18 @@ function determineCriticalStates(options) {
 ## Validation Rules
 
 ### ESLint Integration
+
 The following ESLint rules will validate JSDoc:
+
 - Require JSDoc for all exported functions
 - Validate parameter documentation matches function signature
 - Require @returns documentation for non-void functions
 - Require @example for PRIORITY 1 functions
 
 ### Automated Checks
+
 Pre-commit hooks will validate:
+
 - All PRIORITY 1 functions have complete documentation
 - Parameter types match function signatures
 - Examples are syntactically valid JavaScript
@@ -381,6 +395,7 @@ Pre-commit hooks will validate:
 ## Migration Guide
 
 ### Updating Existing Functions
+
 1. Identify function priority level
 2. Select appropriate template
 3. Document all parameters and return values
@@ -390,8 +405,9 @@ Pre-commit hooks will validate:
 7. Include version information
 
 ### New Function Requirements
+
 All new functions must include appropriate JSDoc before code review approval. Use the templates above as starting points and customize for specific function requirements.
 
 ---
 
-*This document is part of the comprehensive testing and documentation initiative to prevent accidental function removal and improve code maintainability.*
+_This document is part of the comprehensive testing and documentation initiative to prevent accidental function removal and improve code maintainability._

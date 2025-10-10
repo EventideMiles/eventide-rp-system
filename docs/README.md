@@ -10,10 +10,12 @@ Welcome to the comprehensive documentation for the Eventide Roleplaying System f
 - **[Quick Start Guide](getting-started/quick-start.md)** - Get playing in 10 minutes or less
 
 ### What's New?
-- **What's New in v13.12.0** - New feature: ac mode. This allows for changes to AC only for a particular stat set allowing for greater sets of armor customization without it all having to have an impact on active rolls.
-- **What's New in v13.11.1** - Minor bugfixes found after major release. Added intensify mode by default to action cards for status effects contained within action rolls.
-- **[What's New in v13.11.0](WHATS_NEW.md)** - Action Cards system and combat automation revolution
-- **What's New In v13.10.x** - Feature Roll system, circumstantial bonuses, and various improvements
+
+- **[Release Notes](WHATS_NEW.md)** - Complete version history and release notes
+- **Latest: [v13.15.5](release-notes/v13.15.5.md)** - Stability & Polish (October 2025)
+- **[v13.15.0](release-notes/v13.15.0.md)** - Embedded Transformations & Export Features
+- **[v13.14.0](release-notes/v13.14.0.md)** - Player Action Workflows & Item Selection
+- **[v13.13.3](release-notes/v13.13.3.md)** - Action Modes & Advanced Repetition System
 
 ### Ready to Dive Deeper?
 
@@ -120,6 +122,11 @@ const formula = game.settings.get("eventide-rp-system", "initativeFormula");
 - **Completeness**: Examples include proper imports and error handling
 - **Clarity**: Complex implementations are explained with context
 - **Maintenance**: Documentation is updated with each system release
+
+#### For Contributors
+
+- **[JSDoc Standards](developer-jsdoc-standards.md)** - Code documentation standards and templates
+- **[Release Notes Standards](release-notes-standards.md)** - How to write and structure release notes
 
 ## Key System Features
 
