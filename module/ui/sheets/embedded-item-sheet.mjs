@@ -198,7 +198,7 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
         onEditImage: EmbeddedItemSheet._onEditImage,
         newCharacterEffect: EmbeddedItemSheet._newEmbeddedCharacterEffect,
         deleteCharacterEffect: EmbeddedItemSheet._deleteEmbeddedCharacterEffect,
-        toggleEffectDisplay: EmbeddedItemSheet._toggleEffectDisplay,
+        toggleEffectDisplay: this._toggleEffectDisplay,
       },
     },
   );
@@ -646,9 +646,31 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
     return fp.browse();
   }
 
-  /** @override */
-  async _preClose() {
-    await super._preClose();
+  /**
+   * Pre-close lifecycle hook for cleanup and diagnostic logging
+   * @param {Object} options - Close options
+   * @returns {Promise<void>}
+   * @protected
+   * @override
+   */
+  async _preClose(options = {}) {
+    // Get the call stack to understand where close was called from
+    const stack = new Error().stack;
+
+    /* eslint-disable no-console */
+    console.group("🔍 EMBEDDED ITEM SHEET - _preClose");
+    console.log("Sheet Type: EmbeddedItemSheet");
+    console.log("Item:", this.document?.name, `(${this.document?.type})`);
+    console.log("Parent:", this.parentItem?.name, `(${this.parentItem?.type})`);
+    console.log("Original ID:", this.originalItemId);
+    console.log("Is Effect:", this.isEffect);
+    console.log("Options:", options);
+    console.log("Call Stack:");
+    console.log(stack);
+    console.groupEnd();
+    /* eslint-enable no-console */
+
+    await super._preClose(options);
     this._cleanupThemeManagement();
   }
 
@@ -820,9 +842,12 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
         firstEffect.updateSource({ duration });
 
         // Step 2: Update the transformation with the new data
-        this.parentItem.update({
-          "system.embeddedCombatPowers": powers,
-        });
+        this.parentItem.update(
+          {
+            "system.embeddedCombatPowers": powers,
+          },
+          { fromEmbeddedItem: true },
+        );
 
         // Step 3: Re-render the sheet
         this.render();
@@ -880,9 +905,12 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
         firstEffect.updateSource({ duration });
 
         // Step 2: Update the action card with the new data
-        this.parentItem.update({
-          "system.embeddedStatusEffects": statusEffects,
-        });
+        this.parentItem.update(
+          {
+            "system.embeddedStatusEffects": statusEffects,
+          },
+          { fromEmbeddedItem: true },
+        );
 
         // Step 3: Re-render the sheet
         this.render();
@@ -927,9 +955,12 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
         firstEffect.updateSource({ duration });
 
         // Step 2: Update the action card with the new data
-        this.parentItem.update({
-          "system.embeddedItem": itemData,
-        });
+        this.parentItem.update(
+          {
+            "system.embeddedItem": itemData,
+          },
+          { fromEmbeddedItem: true },
+        );
 
         // Step 3: Re-render the sheet
         this.render();

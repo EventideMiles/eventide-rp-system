@@ -110,8 +110,18 @@ export function ItemActionCardMixin(Base) {
           };
         }
 
-        // Update the document
-        await this.update({ "system.embeddedItem": itemData });
+        // Detect if this action card is a virtual/temporary item (e.g., embedded in a transformation)
+        const isVirtualItem =
+          !this.collection ||
+          (this.update &&
+            (this.update.toString().includes("embeddedActionCards") ||
+              this.update.toString().includes("embeddedTransformations")));
+
+        // Update the document, passing fromEmbeddedItem flag for virtual items
+        await this.update(
+          { "system.embeddedItem": itemData },
+          isVirtualItem ? { fromEmbeddedItem: true } : {},
+        );
 
         return this;
       } catch (error) {
@@ -135,7 +145,18 @@ export function ItemActionCardMixin(Base) {
       }
 
       try {
-        await this.update({ "system.embeddedItem": null });
+        // Detect if this action card is a virtual/temporary item (e.g., embedded in a transformation)
+        const isVirtualItem =
+          !this.collection ||
+          (this.update &&
+            (this.update.toString().includes("embeddedActionCards") ||
+              this.update.toString().includes("embeddedTransformations")));
+
+        // Update the document, passing fromEmbeddedItem flag for virtual items
+        await this.update(
+          { "system.embeddedItem": null },
+          isVirtualItem ? { fromEmbeddedItem: true } : {},
+        );
         return this;
       } catch (error) {
         Logger.error("Failed to clear embedded item", error, "ACTION_CARD");
@@ -395,10 +416,20 @@ export function ItemActionCardMixin(Base) {
         // Add the effect data directly to the array
         effects.push(effectData);
 
-        // Update the document
-        await this.update({
-          "system.embeddedStatusEffects": effects,
-        });
+        // Detect if this action card is a virtual/temporary item (e.g., embedded in a transformation)
+        const isVirtualItem =
+          !this.collection ||
+          (this.update &&
+            (this.update.toString().includes("embeddedActionCards") ||
+              this.update.toString().includes("embeddedTransformations")));
+
+        // Update the document, passing fromEmbeddedItem flag for virtual items
+        await this.update(
+          {
+            "system.embeddedStatusEffects": effects,
+          },
+          isVirtualItem ? { fromEmbeddedItem: true } : {},
+        );
 
         return this;
       } catch (error) {
@@ -449,10 +480,20 @@ export function ItemActionCardMixin(Base) {
         // Remove from the array
         effects.splice(index, 1);
 
-        // Update the document
-        await this.update({
-          "system.embeddedStatusEffects": effects,
-        });
+        // Detect if this action card is a virtual/temporary item (e.g., embedded in a transformation)
+        const isVirtualItem =
+          !this.collection ||
+          (this.update &&
+            (this.update.toString().includes("embeddedActionCards") ||
+              this.update.toString().includes("embeddedTransformations")));
+
+        // Update the document, passing fromEmbeddedItem flag for virtual items
+        await this.update(
+          {
+            "system.embeddedStatusEffects": effects,
+          },
+          isVirtualItem ? { fromEmbeddedItem: true } : {},
+        );
 
         return this;
       } catch (error) {
@@ -677,10 +718,20 @@ export function ItemActionCardMixin(Base) {
         // Add the transformation to the array
         transformations.push(transformationData);
 
-        // Update the action card with the new transformations array
-        await this.update({
-          "system.embeddedTransformations": transformations,
-        });
+        // Detect if this action card is a virtual/temporary item (e.g., embedded in a transformation)
+        const isVirtualItem =
+          !this.collection ||
+          (this.update &&
+            (this.update.toString().includes("embeddedActionCards") ||
+              this.update.toString().includes("embeddedTransformations")));
+
+        // Update the action card with the new transformations array, passing fromEmbeddedItem flag for virtual items
+        await this.update(
+          {
+            "system.embeddedTransformations": transformations,
+          },
+          isVirtualItem ? { fromEmbeddedItem: true } : {},
+        );
 
         return this;
       } catch (error) {
@@ -748,10 +799,20 @@ export function ItemActionCardMixin(Base) {
         // Remove the transformation
         const removedTransformation = transformations.splice(index, 1)[0];
 
-        // Update the action card
-        await this.update({
-          "system.embeddedTransformations": transformations,
-        });
+        // Detect if this action card is a virtual/temporary item (e.g., embedded in a transformation)
+        const isVirtualItem =
+          !this.collection ||
+          (this.update &&
+            (this.update.toString().includes("embeddedActionCards") ||
+              this.update.toString().includes("embeddedTransformations")));
+
+        // Update the action card, passing fromEmbeddedItem flag for virtual items
+        await this.update(
+          {
+            "system.embeddedTransformations": transformations,
+          },
+          isVirtualItem ? { fromEmbeddedItem: true } : {},
+        );
 
         Logger.info(
           `Removed transformation "${removedTransformation.name}" from action card "${this.name}"`,

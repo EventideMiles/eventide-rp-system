@@ -1396,6 +1396,33 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
   }
 
   /**
+   * Pre-close lifecycle hook for diagnostic logging
+   * This helps track why item sheets are closing unexpectedly
+   * @param {Object} options - Close options
+   * @returns {Promise<void>}
+   * @protected
+   * @override
+   */
+  async _preClose(options = {}) {
+    // Get the call stack to understand where close was called from
+    const stack = new Error().stack;
+
+    /* eslint-disable no-console */
+    console.group("🔍 REGULAR ITEM SHEET - _preClose");
+    console.log("Sheet Type: EventideRpSystemItemSheet");
+    console.log("Item:", this.document?.name, `(${this.document?.type})`);
+    console.log("Item ID:", this.document?.id);
+    console.log("Is Embedded:", this.document?.isEmbedded);
+    console.log("Options:", options);
+    console.log("Call Stack:");
+    console.log(stack);
+    console.groupEnd();
+    /* eslint-enable no-console */
+
+    return super._preClose?.(options);
+  }
+
+  /**
    * Creates drag-and-drop workflow handlers for this Application.
    *
    * @returns {DragDrop.implementation[]} An array of DragDrop handlers

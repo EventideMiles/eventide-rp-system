@@ -70,8 +70,8 @@ export const ItemSheetEffectGuardsMixin = (BaseClass) =>
           const keepEffect = this.item.effects.contents[0];
           const effectIds = effects.map((effect) => effect._id);
 
-          await this.item.deleteEmbeddedDocuments("ActiveEffect", effectIds);
-          await this.item.createEmbeddedDocuments("ActiveEffect", [keepEffect]);
+          await this.item.deleteEmbeddedDocuments("ActiveEffect", effectIds, { fromEmbeddedItem: true });
+          await this.item.createEmbeddedDocuments("ActiveEffect", [keepEffect], { fromEmbeddedItem: true });
 
           Logger.info(
             "Multiple effects consolidated successfully",
@@ -120,7 +120,7 @@ export const ItemSheetEffectGuardsMixin = (BaseClass) =>
             flags: {},
           });
 
-          await this.item.createEmbeddedDocuments("ActiveEffect", [newEffect]);
+          await this.item.createEmbeddedDocuments("ActiveEffect", [newEffect], { fromEmbeddedItem: true });
 
           Logger.info(
             "Default effect created successfully",
@@ -157,7 +157,7 @@ export const ItemSheetEffectGuardsMixin = (BaseClass) =>
             img: this.item.img,
           };
 
-          await this.item.updateEmbeddedDocuments("ActiveEffect", [updateData]);
+          await this.item.updateEmbeddedDocuments("ActiveEffect", [updateData], { fromEmbeddedItem: true });
 
           Logger.info(
             "Effect synchronized with item successfully",
