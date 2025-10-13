@@ -759,8 +759,13 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
    */
   async _onChangeTransformationActionCard(formConfig, event) {
     // Get the changed field name and value
-    const fieldName = event.target.name;
+    let fieldName = event.target.name;
     const fieldValue = event.target.value;
+
+    // Handle hex input fields - strip the -hex suffix to get the actual color field name
+    if (fieldName.endsWith("-hex")) {
+      fieldName = fieldName.replace(/-hex$/, "");
+    }
 
     // Handle icon tint changes specially for transformation action cards
     if (fieldName.includes("iconTint")) {
