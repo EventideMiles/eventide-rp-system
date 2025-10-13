@@ -1,6 +1,6 @@
 {
   "name": "eventide-rp-system",
-  "version": "13.15.5",
+  "version": "13.15.6",
   "type": "module",
   "description": "Build tools and development scripts for the Eventide Roleplaying System",
   "scripts": {
