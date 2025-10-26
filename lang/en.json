@@ -781,6 +781,17 @@
         "EffectModeDescription": "Apply this gear as a status effect to targets.",
         "UseAsAction": "Use as Action",
         "UseAsEffect": "Use as Effect"
+      },
+      "TokenConfigDuringTransformation": {
+        "Title": "Token is Transformed",
+        "LinkedWarning": "This token's actor is currently transformed. Editing the token configuration while transformed could save the transformed appearance as the default.",
+        "UnlinkedWarning": "This token is currently transformed. Editing the token configuration while transformed could save the transformed appearance.",
+        "Prompt": "Do you want to remove the transformation and continue?"
+      },
+      "PrototypeTokenConfigDuringTransformation": {
+        "Title": "Actor is Transformed",
+        "Warning": "This actor is currently transformed. Editing the prototype token configuration while transformed could save the transformed appearance as the default for all tokens.",
+        "Prompt": "Do you want to remove the transformation from all tokens and continue?"
       }
     },
     "Messages": {
@@ -959,7 +970,9 @@
       "TotalStatPointsValue": "Total Stat Points Value"
     },
     "Notifications": {
-      "ThemeChanged": "Theme changed successfully"
+      "ThemeChanged": "Theme changed successfully",
+      "TokenConfigCancelled": "Token configuration cancelled. Remove the transformation first to edit the token.",
+      "PrototypeTokenConfigCancelled": "Prototype token configuration cancelled. Remove the transformation first to edit the prototype token."
     }
   },
   "TYPES": {
