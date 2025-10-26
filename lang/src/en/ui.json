@@ -137,7 +137,24 @@
       "PartialTransfer": "Partial transfer completed"
     },
     "Notifications": {
-      "ThemeChanged": "Theme changed successfully"
+      "ThemeChanged": "Theme changed successfully",
+      "TokenConfigCancelled": "Token configuration cancelled. Remove the transformation first to edit the token.",
+      "PrototypeTokenConfigCancelled": "Prototype token configuration cancelled. Remove the transformation first to edit the prototype token.",
+      "TokenConfigBlockedForPlayers": "You cannot configure this token while it is transformed.",
+      "PrototypeTokenConfigBlockedForPlayers": "You cannot configure the prototype token while this actor is transformed."
+    },
+    "Dialogs": {
+      "TokenConfigDuringTransformation": {
+        "Title": "Token is Transformed",
+        "LinkedWarning": "This token's actor is currently transformed. Editing the token configuration while transformed could save the transformed appearance as the default.",
+        "UnlinkedWarning": "This token is currently transformed. Editing the token configuration while transformed could save the transformed appearance.",
+        "Prompt": "Do you want to remove the transformation and continue?"
+      },
+      "PrototypeTokenConfigDuringTransformation": {
+        "Title": "Actor is Transformed",
+        "Warning": "This actor is currently transformed. Editing the prototype token configuration while transformed could save the transformed appearance as the default for all tokens.",
+        "Prompt": "Do you want to remove the transformation from all tokens and continue?"
+      }
     }
   }
 }

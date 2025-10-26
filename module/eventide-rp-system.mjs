@@ -45,6 +45,9 @@ import {
   ImageZoomService,
 } from "./services/_module.mjs";
 
+// Import token configuration guards
+import { TokenConfigGuards } from "./services/hooks/token-config-guards.mjs";
+
 // Import DataModel classes
 import * as models from "./data/_module.mjs";
 
@@ -503,6 +506,18 @@ Hooks.once("ready", () => {
   } catch (error) {
     Logger.error(
       "Failed to initialize image zoom service",
+      error,
+      "SYSTEM_INIT",
+    );
+  }
+
+  // Initialize token configuration guards to prevent editing during transformations
+  try {
+    TokenConfigGuards.initialize();
+    Logger.info("Token configuration guards initialized", null, "SYSTEM_INIT");
+  } catch (error) {
+    Logger.error(
+      "Failed to initialize token configuration guards",
       error,
       "SYSTEM_INIT",
     );

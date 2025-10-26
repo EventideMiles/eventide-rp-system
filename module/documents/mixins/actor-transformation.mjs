@@ -23,6 +23,7 @@ export const ActorTransformationMixin = (BaseClass) =>
       Logger.methodEntry("ActorTransformationMixin", "applyTransformation", {
         transformationId: transformationItem?.id,
         transformationName: transformationItem?.name,
+        isTokenActor: this.isToken,
       });
 
       // Check if the operation can proceed
@@ -46,13 +47,19 @@ export const ActorTransformationMixin = (BaseClass) =>
         return this;
       }
 
-      // Get all tokens linked to this actor across all scenes
-      const tokens = this._getAllTokensAcrossScenes();
-      if (!tokens.length) {
-        return this;
-      }
-
       try {
+        // Check if this is an unlinked token actor
+        if (this.isToken) {
+          // For unlinked tokens, only transform THIS specific token
+          return await this._applyTransformationToUnlinkedToken(transformationItem);
+        }
+
+        // For linked actors, transform all tokens across all scenes
+        const tokens = this._getAllTokensAcrossScenes();
+        if (!tokens.length) {
+          return this;
+        }
+
         // Store original token data if needed
         await this._storeOriginalTokenData(tokens);
 
@@ -94,6 +101,113 @@ export const ActorTransformationMixin = (BaseClass) =>
     }
 
     /**
+     * Apply a transformation to a single unlinked token
+     * This method handles transformations for unlinked tokens (actor.isToken === true)
+     * Unlike linked actors, this only affects the specific token, not all tokens sharing the base actor
+     *
+     * @private
+     * @param {Item} transformationItem - The transformation item to apply
+     * @returns {Promise<Actor>} This actor after the update
+     */
+    async _applyTransformationToUnlinkedToken(transformationItem) {
+      Logger.methodEntry(
+        "ActorTransformationMixin",
+        "_applyTransformationToUnlinkedToken",
+        {
+          transformationId: transformationItem?.id,
+          transformationName: transformationItem?.name,
+          tokenId: this.token?.id,
+        },
+      );
+
+      if (!this.token) {
+        Logger.error(
+          "Cannot apply transformation to unlinked token: no token reference found",
+          null,
+          "TRANSFORMATION",
+        );
+        return this;
+      }
+
+      try {
+        // Check if there's already an active transformation
+        // If so, don't overwrite the original data (switching transformations)
+        const hasActiveTransformation = this.getFlag(
+          "eventide-rp-system",
+          "activeTransformation",
+        );
+
+        if (!hasActiveTransformation) {
+          // Store original token data for THIS token only
+          // When we call setFlag on an unlinked token actor, it stores on the token's ActorDelta
+          // We don't need tokenId/sceneId since the flag is stored ON this specific token
+          const originalTokenData = {
+            img: this.token.texture.src,
+            scale: this.token.texture.scaleX,
+            width: this.token.width,
+            height: this.token.height,
+          };
+
+          await this.setFlag(
+            "eventide-rp-system",
+            "originalTokenData",
+            originalTokenData,
+          );
+
+          Logger.debug(
+            "Stored original token data for unlinked token",
+            { tokenId: this.token.id, originalTokenData },
+            "TRANSFORMATION",
+          );
+        } else {
+          Logger.debug(
+            "Skipping originalTokenData storage - unlinked token already transformed",
+            { tokenId: this.token.id },
+            "TRANSFORMATION",
+          );
+        }
+
+        // Ensure the transformation item is on the actor
+        const actorTransformationItem =
+          await this._ensureTransformationItemOnActor(transformationItem);
+
+        // Set flags indicating active transformation
+        await this._setTransformationFlags(actorTransformationItem);
+
+        // Update THIS token with the transformation appearance
+        const updates = this._getTokenTransformationUpdates(actorTransformationItem);
+        if (Object.keys(updates).length > 0) {
+          await this.token.update(updates);
+        }
+
+        // Create a chat message about the transformation
+        await erpsMessageHandler.createTransformationMessage({
+          actor: this,
+          transformation: actorTransformationItem,
+          isApplying: true,
+        });
+
+        Logger.info(
+          `Applied transformation to unlinked token: ${this.name}`,
+          {
+            transformationName: actorTransformationItem.name,
+            tokenId: this.token.id,
+          },
+          "TRANSFORMATION",
+        );
+
+        return this;
+      } catch (error) {
+        Logger.error(
+          "Failed to apply transformation to unlinked token",
+          error,
+          "TRANSFORMATION",
+        );
+        throw error;
+      }
+    }
+
+    /**
      * Remove the active transformation from the actor, restoring the original token appearance
      *
      * @returns {Promise<Actor>} This actor after the update
@@ -117,6 +231,13 @@ export const ActorTransformationMixin = (BaseClass) =>
       }
 
       try {
+        // Check if this is an unlinked token actor
+        if (this.isToken) {
+          // For unlinked tokens, only revert THIS specific token
+          return await this._removeTransformationFromUnlinkedToken();
+        }
+
+        // For linked actors, revert all tokens across all scenes
         // Get the transformation item
         const transformationItem = this.items.find(
           (item) => item.type === "transformation",
@@ -174,6 +295,95 @@ export const ActorTransformationMixin = (BaseClass) =>
         );
 
         return this;
+      }
+    }
+
+    /**
+     * Remove transformation from a single unlinked token
+     * This method handles transformation removal for unlinked tokens (actor.isToken === true)
+     *
+     * @private
+     * @returns {Promise<Actor>} This actor after the update
+     */
+    async _removeTransformationFromUnlinkedToken() {
+      Logger.methodEntry(
+        "ActorTransformationMixin",
+        "_removeTransformationFromUnlinkedToken",
+        {
+          tokenId: this.token?.id,
+        },
+      );
+
+      if (!this.token) {
+        Logger.error(
+          "Cannot remove transformation from unlinked token: no token reference found",
+          null,
+          "TRANSFORMATION",
+        );
+        return this;
+      }
+
+      try {
+        // Get the transformation item
+        const transformationItem = this.items.find(
+          (item) => item.type === "transformation",
+        );
+
+        // Get the original token data (stored on this token's ActorDelta)
+        const originalTokenData = this.getFlag(
+          "eventide-rp-system",
+          "originalTokenData",
+        );
+
+        if (!originalTokenData) {
+          Logger.warn(
+            "No original token data found for unlinked token transformation removal",
+            { tokenId: this.token.id },
+            "TRANSFORMATION",
+          );
+          return this;
+        }
+
+        // Create a chat message about the transformation being removed
+        if (transformationItem) {
+          await erpsMessageHandler.createTransformationMessage({
+            actor: this,
+            transformation: transformationItem,
+            isApplying: false,
+          });
+        }
+
+        // Restore THIS token's original appearance
+        const restoreUpdates = {
+          "texture.src": originalTokenData.img,
+          "texture.scaleX": originalTokenData.scale,
+          "texture.scaleY": originalTokenData.scale,
+          width: originalTokenData.width,
+          height: originalTokenData.height,
+        };
+
+        await this.token.update(restoreUpdates);
+
+        // Remove all transformation items
+        await this._removeTransformationItems();
+
+        // Clear the transformation flags
+        await this._clearTransformationFlags();
+
+        Logger.info(
+          `Removed transformation from unlinked token: ${this.name}`,
+          { tokenId: this.token.id },
+          "TRANSFORMATION",
+        );
+
+        return this;
+      } catch (error) {
+        Logger.error(
+          "Failed to remove transformation from unlinked token",
+          error,
+          "TRANSFORMATION",
+        );
+        throw error;
       }
     }
 
@@ -251,47 +461,59 @@ export const ActorTransformationMixin = (BaseClass) =>
 
     /**
      * Store the original token data before applying a transformation
+     * For linked actors, all tokens should look the same, so we only need to store one template
+     * Only stores if there's no active transformation (to prevent overwriting with transformed appearance)
      *
      * @private
      * @param {Token[]} tokens - Array of tokens to store data for
      * @returns {Promise<void>}
      */
     async _storeOriginalTokenData(tokens) {
-      // Check if there's already an active transformation by checking the flag
-      // This is more reliable than counting items since items can be added before flags are set
+      if (tokens.length === 0) {
+        return;
+      }
+
+      // Check if there's already an active transformation
+      // If so, don't overwrite the original data (it's already stored from the first transformation)
       const hasActiveTransformation = this.getFlag(
         "eventide-rp-system",
         "activeTransformation",
       );
 
-      // Only store original token data if there isn't already a transformation active
-      // This ensures we maintain the original appearance, not the appearance of a previous transformation
       if (hasActiveTransformation) {
+        Logger.debug(
+          "Skipping originalTokenData storage - transformation already active",
+          { actorName: this.name },
+          "TRANSFORMATION",
+        );
         return;
       }
 
-      // Store original token data in flags with scene information for cross-scene support
-      const originalTokenData = tokens.map((tokenInfo) => {
-        const tokenDoc = tokenInfo.document;
-        const scene = tokenInfo.scene;
-        return {
-          tokenId: tokenDoc.id,
-          sceneId: scene.id,
-          sceneName: scene.name,
-          img: tokenDoc.texture.src,
-          scale: tokenDoc.texture.scaleX,
-          width: tokenDoc.width,
-          height: tokenDoc.height,
-          maxResolve: this.system.resolve.max,
-          maxPower: this.system.power.max,
-        };
-      });
+      // For linked actors, all tokens should look identical
+      // So we only need to store one template from any token
+      const firstToken = tokens[0];
+      const tokenDoc = firstToken.document;
 
-      // Set flag with original token data
+      const originalTokenData = {
+        img: tokenDoc.texture.src,
+        scale: tokenDoc.texture.scaleX,
+        width: tokenDoc.width,
+        height: tokenDoc.height,
+        maxResolve: this.system.resolve.max,
+        maxPower: this.system.power.max,
+      };
+
+      // Set flag with original token data template
       await this.setFlag(
         "eventide-rp-system",
         "originalTokenData",
         originalTokenData,
+      );
+
+      Logger.debug(
+        "Stored original token data",
+        { actorName: this.name, originalTokenData },
+        "TRANSFORMATION",
       );
     }
 
@@ -485,32 +707,38 @@ export const ActorTransformationMixin = (BaseClass) =>
 
     /**
      * Restore original token data for all tokens across all scenes
+     * For LINKED actors: Finds ALL current tokens and reverts them using template data
+     * Since linked actors should have identical token appearances, we use the stored template for all tokens
      *
      * @private
-     * @param {Object[]|Token[]} tokens - Array of token objects (with scene info) or legacy token array
-     * @param {Object[]} originalTokenData - Original token data array (with scene information)
+     * @param {Object[]|Token[]} tokens - Array of token objects (with scene info) - UNUSED, kept for compatibility
+     * @param {Object} originalTokenData - Original token data object (template for all tokens)
      * @returns {Promise<void>}
      */
     async _restoreOriginalTokenData(tokens, originalTokenData) {
 
+      // Validate we have template data
+      if (!originalTokenData) {
+        Logger.warn(
+          "No template data found for token restoration",
+          null,
+          "TRANSFORMATION",
+        );
+        return;
+      }
+
       // Group restoration updates by scene for efficient batch updates
       const sceneRestoreUpdates = new Map();
 
-      for (const tokenInfo of tokens) {
+      // Find ALL current tokens for this actor (includes tokens added after transformation)
+      const allCurrentTokens = this._getAllTokensAcrossScenes();
+
+      // Restore all current tokens using the same template data
+      for (const tokenInfo of allCurrentTokens) {
         const tokenDoc = tokenInfo.document;
         const scene = tokenInfo.scene;
 
         if (!scene) {
-          continue;
-        }
-
-        // Find original data for this token, considering both tokenId and sceneId for uniqueness
-        const originalData = originalTokenData.find(
-          (d) =>
-            d.tokenId === tokenDoc.id && (d.sceneId === scene.id || !d.sceneId), // Handle legacy data without sceneId
-        );
-
-        if (!originalData) {
           continue;
         }
 
@@ -519,13 +747,14 @@ export const ActorTransformationMixin = (BaseClass) =>
           sceneRestoreUpdates.set(sceneId, []);
         }
 
+        // All linked tokens get the same restoration data
         const restoreUpdates = {
           _id: tokenDoc.id,
-          "texture.src": originalData.img,
-          "texture.scaleX": originalData.scale,
-          "texture.scaleY": originalData.scale,
-          width: originalData.width,
-          height: originalData.height,
+          "texture.src": originalTokenData.img,
+          "texture.scaleX": originalTokenData.scale,
+          "texture.scaleY": originalTokenData.scale,
+          width: originalTokenData.width,
+          height: originalTokenData.height,
         };
 
         sceneRestoreUpdates.get(sceneId).push(restoreUpdates);
@@ -537,6 +766,11 @@ export const ActorTransformationMixin = (BaseClass) =>
         if (scene && updates.length > 0) {
           try {
             await scene.updateEmbeddedDocuments("Token", updates);
+            Logger.info(
+              `Restored ${updates.length} token(s) in scene "${scene.name}"`,
+              null,
+              "TRANSFORMATION",
+            );
           } catch (error) {
             Logger.error(
               `Failed to restore tokens in scene "${scene.name}"`,
@@ -552,27 +786,26 @@ export const ActorTransformationMixin = (BaseClass) =>
      * Restore original resolve and power values
      *
      * @private
-     * @param {Object[]} originalTokenData - Original token data array
+     * @param {Object} originalTokenData - Original token data object
      * @returns {Promise<void>}
      */
     async _restoreOriginalStats(originalTokenData) {
-      const originalData = originalTokenData[0]; // All tokens share the same actor stats
-      if (!originalData) {
+      if (!originalTokenData) {
         return;
       }
 
       const restoreData = {
-        "system.resolve.max": originalData.maxResolve,
+        "system.resolve.max": originalTokenData.maxResolve,
         "system.resolve.value": this._clampValue(
           this.system.resolve.value,
           0,
-          originalData.maxResolve,
+          originalTokenData.maxResolve,
         ),
-        "system.power.max": originalData.maxPower,
+        "system.power.max": originalTokenData.maxPower,
         "system.power.value": this._clampValue(
           this.system.power.value,
           0,
-          originalData.maxPower,
+          originalTokenData.maxPower,
         ),
       };
 
@@ -587,7 +820,7 @@ export const ActorTransformationMixin = (BaseClass) =>
      */
     async _clearTransformationFlags() {
 
-      await this.unsetFlag("eventide-rp-system", "originalTokenData");
+      // Do NOT clear originalTokenData - keep it for the next transformation to update
       await this.unsetFlag("eventide-rp-system", "activeTransformation");
       await this.unsetFlag("eventide-rp-system", "activeTransformationName");
       await this.unsetFlag("eventide-rp-system", "activeTransformationCursed");
