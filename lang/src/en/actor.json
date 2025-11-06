@@ -76,7 +76,7 @@
         "TransformationActionCard": "Action card from active transformation",
         "Transformed": "Transformed",
         "TransformedLocked": "Action cards are provided by active transformation - cannot create or modify while transformed",
-        "Ungrouped": "Ungrouped Action Cards",
+        "Ungrouped": "Ungrouped Action Cards: Drag Together To Form Groups",
         "DragToReorder": "Drag to reorder",
         "GroupOptions": "Group options",
         "GroupNamePlaceholder": "Group name...",
