@@ -1,0 +1,402 @@
+// =============================================================================
+// ACTION CARD GROUPS
+// =============================================================================
+// Provides theme-aware styling for action card groups with a raised appearance
+
+@use "../../../utils/themes" as themes;
+@use "../../../utils/sheet-tokens" as tokens;
+
+// =============================================================================
+// GROUP CONTAINER
+// =============================================================================
+
+.erps-action-card-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: tokens.$sheet-spacing-base;
+  width: 100%; // Full width of sheet
+
+  // Theme-aware raised styling
+  background: linear-gradient(
+    135deg,
+    var(--theme-accent) 0%,
+    var(--theme-primary) 50%,
+    var(--theme-secondary) 100%
+  );
+
+  // Raised border with transparency
+  border: tokens.$sheet-border-base solid rgb(255 255 255 / 20%);
+  border-radius: tokens.$sheet-radius-lg;
+
+  // Multi-layer shadow for raised effect
+  box-shadow:
+    0 4px 12px rgb(0 0 0 / 30%),           // Drop shadow (depth)
+    inset 0 1px 0 rgb(255 255 255 / 10%),  // Top inner highlight
+    0 0 20px var(--theme-glow);             // Outer glow (theme color)
+
+  // Smooth transitions
+  transition: all tokens.$sheet-transition-medium;
+
+  // Enhanced hover state
+  &:hover {
+    transform: translateY(#{tokens.$sheet-transform-hover-sm});
+    box-shadow:
+      0 8px 20px rgb(0 0 0 / 40%),
+      inset 0 1px 0 rgb(255 255 255 / 15%),
+      0 0 30px var(--theme-glow);
+    border-color: rgb(255 255 255 / 30%);
+  }
+
+  // Collapsed state - less prominent
+  &--collapsed {
+    box-shadow:
+      0 2px 8px rgb(0 0 0 / 25%),
+      inset 0 1px 0 rgb(255 255 255 / 8%),
+      0 0 15px var(--theme-glow);
+
+    &:hover {
+      box-shadow:
+        0 4px 12px rgb(0 0 0 / 35%),
+        inset 0 1px 0 rgb(255 255 255 / 12%),
+        0 0 25px var(--theme-glow);
+    }
+  }
+}
+
+// =============================================================================
+// GROUP HEADER
+// =============================================================================
+
+.erps-action-card-group__header {
+  display: flex;
+  align-items: center;
+  gap: tokens.$sheet-spacing-sm;
+  padding: tokens.$sheet-spacing-md tokens.$sheet-spacing-base;
+  cursor: pointer;
+  user-select: none;
+
+  // Theme-aware text
+  color: var(--theme-text);
+  text-shadow: 0 1px 2px rgb(0 0 0 / 80%);
+
+  // Bottom border when expanded
+  border-bottom: tokens.$sheet-border-thin solid rgb(255 255 255 / 10%);
+
+  transition: all tokens.$sheet-transition-base;
+
+  &:hover {
+    background: rgb(255 255 255 / 5%);
+
+    .erps-action-card-group__name {
+      color: var(--theme-bright);
+    }
+  }
+
+  // Remove border when collapsed
+  .erps-action-card-group--collapsed & {
+    border-bottom: none;
+  }
+}
+
+// =============================================================================
+// HEADER ELEMENTS
+// =============================================================================
+
+.erps-action-card-group__drag-handle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: tokens.$sheet-size-icon-md;
+  height: tokens.$sheet-size-icon-md;
+  color: var(--theme-light);
+  cursor: grab;
+  transition: color tokens.$sheet-transition-fast;
+
+  &:hover {
+    color: var(--theme-bright);
+  }
+
+  &:active {
+    cursor: grabbing;
+  }
+
+  i {
+    font-size: tokens.$sheet-size-icon-md;
+  }
+}
+
+.erps-action-card-group__collapse-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: tokens.$sheet-size-icon-md;
+  height: tokens.$sheet-size-icon-md;
+  color: var(--theme-light);
+  cursor: pointer;
+  text-decoration: none;
+  transition: all tokens.$sheet-transition-base;
+
+  i {
+    font-size: tokens.$sheet-size-icon-md;
+  }
+
+  &:hover {
+    color: var(--theme-bright);
+  }
+
+  // Rotate when expanded
+  .erps-action-card-group:not(.erps-action-card-group--collapsed) & {
+    transform: rotate(90deg);
+  }
+}
+
+.erps-action-card-group__name {
+  flex: 1;
+  min-width: 0; // Allow flex shrink
+  font-family: var(--erps-ui-font, inherit);
+  font-size: tokens.$sheet-font-size-value-lg;
+  font-weight: tokens.$sheet-font-weight-semibold;
+  color: var(--theme-bright);
+  background: transparent;
+  border: tokens.$sheet-border-thin solid transparent;
+  border-radius: tokens.$sheet-radius-sm;
+  padding: tokens.$sheet-spacing-xs tokens.$sheet-spacing-sm;
+  outline: none;
+  transition: all tokens.$sheet-transition-base;
+
+  &:hover:not(:disabled) {
+    background: rgb(255 255 255 / 5%);
+    border-color: var(--theme-secondary);
+  }
+
+  &:focus {
+    background: rgb(0 0 0 / 20%);
+    border-color: var(--theme-bright);
+    box-shadow: 0 0 8px var(--theme-glow);
+  }
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+}
+
+.erps-action-card-group__count {
+  font-size: tokens.$sheet-font-size-label-lg;
+  color: var(--theme-light);
+  opacity: 0.8;
+  margin-left: tokens.$sheet-spacing-sm;
+}
+
+.erps-action-card-group__delete-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: tokens.$sheet-size-icon-lg;
+  height: tokens.$sheet-size-icon-lg;
+  color: var(--theme-light);
+  background: transparent;
+  border-radius: tokens.$sheet-radius-sm;
+  cursor: pointer;
+  padding: 0;
+  margin-left: tokens.$sheet-spacing-sm;
+  text-decoration: none;
+  transition: all tokens.$sheet-transition-base;
+
+  i {
+    font-size: tokens.$sheet-size-icon-md;
+  }
+
+  &:hover {
+    background: rgb(255 0 0 / 20%);
+    color: #ff6b6b;
+  }
+
+  &:active {
+    background: rgb(255 0 0 / 30%);
+    transform: scale(0.95);
+  }
+}
+
+// =============================================================================
+// GROUP CONTENT
+// =============================================================================
+
+.erps-action-card-group__content {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  overflow: hidden;
+
+  // Smooth expand/collapse animation
+  max-height: 2000px; // Arbitrary large value
+  opacity: 1;
+  transition:
+    max-height tokens.$sheet-transition-medium,
+    opacity tokens.$sheet-transition-medium;
+
+  // Collapsed state
+  .erps-action-card-group--collapsed & {
+    max-height: 0;
+    opacity: 0;
+  }
+
+  // Padding around content
+  padding: 0;
+}
+
+// =============================================================================
+// DROP ZONE STYLING
+// =============================================================================
+
+.erps-action-card-group__drop-zone {
+  min-height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: tokens.$sheet-spacing-sm;
+  padding: tokens.$sheet-spacing-md;
+  border: tokens.$sheet-border-base dashed var(--theme-secondary);
+  border-radius: tokens.$sheet-radius-md;
+  color: var(--theme-text);
+  opacity: 0.5;
+  transition: all tokens.$sheet-transition-medium;
+
+  &:hover,
+  &.drag-over {
+    border-color: var(--theme-light);
+    background-color: rgb(255 255 255 / 5%);
+    opacity: 1;
+    box-shadow: 0 0 12px var(--theme-glow);
+  }
+
+  // Empty state message
+  &__message {
+    font-size: tokens.$sheet-font-size-label-lg;
+    font-style: italic;
+    text-align: center;
+  }
+}
+
+// =============================================================================
+// UNGROUPED SECTION
+// =============================================================================
+
+.erps-action-card-ungrouped {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: tokens.$sheet-spacing-lg;
+  width: 100%;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: tokens.$sheet-spacing-sm;
+    padding: tokens.$sheet-spacing-sm 0;
+    margin-bottom: tokens.$sheet-spacing-sm;
+    border-bottom: tokens.$sheet-border-thin solid var(--theme-secondary);
+
+    color: var(--theme-text);
+    opacity: 0.8;
+  }
+
+  &__title {
+    font-family: var(--erps-ui-font, inherit);
+    font-size: tokens.$sheet-font-size-value-md;
+    font-weight: tokens.$sheet-font-weight-medium;
+    color: var(--theme-light);
+  }
+
+  &__count {
+    font-size: tokens.$sheet-font-size-label-md;
+    color: var(--theme-light);
+    opacity: 0.6;
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+}
+
+// =============================================================================
+// DRAG FEEDBACK
+// =============================================================================
+
+.erps-action-card-group--dragging {
+  opacity: 0.5;
+  transform: rotate(2deg);
+  z-index: 1000;
+}
+
+.erps-action-card-group--drag-over {
+  border-color: var(--theme-bright);
+  background: rgb(255 255 255 / 8%);
+  box-shadow:
+    0 8px 24px rgb(0 0 0 / 50%),
+    inset 0 1px 0 rgb(255 255 255 / 20%),
+    0 0 40px var(--theme-glow);
+}
+
+// Cards being dragged
+.erps-data-table__row--dragging {
+  opacity: 0.6;
+  transform: rotate(1deg) scale(0.98);
+  box-shadow: 0 4px 12px rgb(0 0 0 / 40%);
+}
+
+// =============================================================================
+// INTEGRATION WITH DATA TABLES
+// =============================================================================
+
+// Style action cards within groups
+.erps-action-card-group__content {
+  .erps-data-table__row {
+    // Remove borders between items in group for cleaner look
+    &:not(:last-child) {
+      border-bottom: tokens.$sheet-border-thin solid rgb(255 255 255 / 5%);
+    }
+
+    // Slightly darker background for items in groups
+    background: rgb(0 0 0 / 10%);
+
+    &:hover {
+      background: rgb(0 0 0 / 20%);
+    }
+  }
+}
+
+// =============================================================================
+// THEME INTEGRATION
+// =============================================================================
+
+// Ensure groups work with all themes via CSS custom properties
+// All theme-aware colors use var(--theme-*) which are set by the theme system
+
+// Special handling for light theme if needed
+.eventide-sheet[data-bg-theme="light"] {
+  .erps-action-card-group {
+    // Light theme uses darker text
+    text-shadow: 0 1px 2px rgb(255 255 255 / 80%);
+
+    // Adjust borders for light theme
+    border-color: rgb(0 0 0 / 20%);
+
+    &:hover {
+      border-color: rgb(0 0 0 / 30%);
+    }
+  }
+
+  .erps-action-card-group__header:hover {
+    background: rgb(0 0 0 / 5%);
+  }
+
+  .erps-action-card-group__content .erps-data-table__row {
+    background: rgb(0 0 0 / 5%);
+
+    &:hover {
+      background: rgb(0 0 0 / 10%);
+    }
+  }
+}

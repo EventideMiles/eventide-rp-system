@@ -8042,6 +8042,274 @@ body.erps-image-zoom-active {
   border-left: 3px solid var(--theme-secondary);
 }
 
+.erps-action-card-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+  width: 100%;
+  background: linear-gradient(135deg, var(--theme-accent) 0%, var(--theme-primary) 50%, var(--theme-secondary) 100%);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 0 20px var(--theme-glow);
+  transition: all 0.3s;
+}
+.erps-action-card-group:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 0 30px var(--theme-glow);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+.erps-action-card-group--collapsed {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 0 15px var(--theme-glow);
+}
+.erps-action-card-group--collapsed:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 0 25px var(--theme-glow);
+}
+
+.erps-action-card-group__header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  user-select: none;
+  color: var(--theme-text);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.2s;
+}
+.erps-action-card-group__header:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+.erps-action-card-group__header:hover .erps-action-card-group__name {
+  color: var(--theme-bright);
+}
+.erps-action-card-group--collapsed .erps-action-card-group__header {
+  border-bottom: none;
+}
+
+.erps-action-card-group__drag-handle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--theme-light);
+  cursor: grab;
+  transition: color 0.15s;
+}
+.erps-action-card-group__drag-handle:hover {
+  color: var(--theme-bright);
+}
+.erps-action-card-group__drag-handle:active {
+  cursor: grabbing;
+}
+.erps-action-card-group__drag-handle i {
+  font-size: 1.25rem;
+}
+
+.erps-action-card-group__collapse-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--theme-light);
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+.erps-action-card-group__collapse-toggle i {
+  font-size: 1.25rem;
+}
+.erps-action-card-group__collapse-toggle:hover {
+  color: var(--theme-bright);
+}
+.erps-action-card-group:not(.erps-action-card-group--collapsed) .erps-action-card-group__collapse-toggle {
+  transform: rotate(90deg);
+}
+
+.erps-action-card-group__name {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--erps-ui-font, inherit);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--theme-bright);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  padding: 0.25rem 0.5rem;
+  outline: none;
+  transition: all 0.2s;
+}
+.erps-action-card-group__name:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--theme-secondary);
+}
+.erps-action-card-group__name:focus {
+  background: rgba(0, 0, 0, 0.2);
+  border-color: var(--theme-bright);
+  box-shadow: 0 0 8px var(--theme-glow);
+}
+.erps-action-card-group__name:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.erps-action-card-group__count {
+  font-size: 0.9rem;
+  color: var(--theme-light);
+  opacity: 0.8;
+  margin-left: 0.5rem;
+}
+
+.erps-action-card-group__delete-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  color: var(--theme-light);
+  background: transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 0.5rem;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+.erps-action-card-group__delete-button i {
+  font-size: 1.25rem;
+}
+.erps-action-card-group__delete-button:hover {
+  background: rgba(255, 0, 0, 0.2);
+  color: #ff6b6b;
+}
+.erps-action-card-group__delete-button:active {
+  background: rgba(255, 0, 0, 0.3);
+  transform: scale(0.95);
+}
+
+.erps-action-card-group__content {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  overflow: hidden;
+  max-height: 2000px;
+  opacity: 1;
+  transition: max-height 0.3s, opacity 0.3s;
+}
+.erps-action-card-group--collapsed .erps-action-card-group__content {
+  max-height: 0;
+  opacity: 0;
+}
+.erps-action-card-group__content {
+  padding: 0;
+}
+
+.erps-action-card-group__drop-zone {
+  min-height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0.5rem;
+  padding: 0.75rem;
+  border: 2px dashed var(--theme-secondary);
+  border-radius: 6px;
+  color: var(--theme-text);
+  opacity: 0.5;
+  transition: all 0.3s;
+}
+.erps-action-card-group__drop-zone:hover, .erps-action-card-group__drop-zone.drag-over {
+  border-color: var(--theme-light);
+  background-color: rgba(255, 255, 255, 0.05);
+  opacity: 1;
+  box-shadow: 0 0 12px var(--theme-glow);
+}
+.erps-action-card-group__drop-zone__message {
+  font-size: 0.9rem;
+  font-style: italic;
+  text-align: center;
+}
+
+.erps-action-card-ungrouped {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1.5rem;
+  width: 100%;
+}
+.erps-action-card-ungrouped__header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid var(--theme-secondary);
+  color: var(--theme-text);
+  opacity: 0.8;
+}
+.erps-action-card-ungrouped__title {
+  font-family: var(--erps-ui-font, inherit);
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--theme-light);
+}
+.erps-action-card-ungrouped__count {
+  font-size: 0.8rem;
+  color: var(--theme-light);
+  opacity: 0.6;
+}
+.erps-action-card-ungrouped__content {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.erps-action-card-group--dragging {
+  opacity: 0.5;
+  transform: rotate(2deg);
+  z-index: 1000;
+}
+
+.erps-action-card-group--drag-over {
+  border-color: var(--theme-bright);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 0 40px var(--theme-glow);
+}
+
+.erps-data-table__row--dragging {
+  opacity: 0.6;
+  transform: rotate(1deg) scale(0.98);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.erps-action-card-group__content .erps-data-table__row:not(:last-child) {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+.erps-action-card-group__content .erps-data-table__row {
+  background: rgba(0, 0, 0, 0.1);
+}
+.erps-action-card-group__content .erps-data-table__row:hover {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.eventide-sheet[data-bg-theme=light] .erps-action-card-group {
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+  border-color: rgba(0, 0, 0, 0.2);
+}
+.eventide-sheet[data-bg-theme=light] .erps-action-card-group:hover {
+  border-color: rgba(0, 0, 0, 0.3);
+}
+.eventide-sheet[data-bg-theme=light] .erps-action-card-group__header:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+.eventide-sheet[data-bg-theme=light] .erps-action-card-group__content .erps-data-table__row {
+  background: rgba(0, 0, 0, 0.05);
+}
+.eventide-sheet[data-bg-theme=light] .erps-action-card-group__content .erps-data-table__row:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
 .erps-form {
   position: relative;
   display: flex;
