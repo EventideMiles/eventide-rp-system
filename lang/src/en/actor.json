@@ -75,7 +75,16 @@
         "TransformationActionCards": "Action cards are provided by active transformation",
         "TransformationActionCard": "Action card from active transformation",
         "Transformed": "Transformed",
-        "TransformedLocked": "Action cards are provided by active transformation - cannot create or modify while transformed"
+        "TransformedLocked": "Action cards are provided by active transformation - cannot create or modify while transformed",
+        "Ungrouped": "Ungrouped Action Cards",
+        "DragToReorder": "Drag to reorder",
+        "GroupOptions": "Group options",
+        "GroupNamePlaceholder": "Group name...",
+        "DeleteGroup": "Delete group",
+        "CreateGroupSuccess": "Created group: {name}",
+        "DeleteGroupConfirm": "Delete group \"{name}\"? Cards will be moved to ungrouped.",
+        "DeleteGroupSuccess": "Deleted group: {name}",
+        "CardCopied": "Copied action card: {name}"
       }
     }
   }

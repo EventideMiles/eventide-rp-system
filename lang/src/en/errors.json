@@ -186,7 +186,11 @@
       "TransformationUsageGuidance": "Your transformation was created in the Custom Transformations compendium. Drag it to a character sheet when you're ready to transform them!",
       "NoEmbeddedItemsToExport": "No embedded items to export",
       "ItemsExportedToCompendium": "{count} {itemType} exported to {compendiumLabel}",
-      "CompendiumCreated": "Compendium '{label}' created"
+      "CompendiumCreated": "Compendium '{label}' created",
+      "CreateGroupError": "Failed to create action card group",
+      "RenameGroupError": "Failed to rename action card group",
+      "DeleteGroupError": "Failed to delete action card group",
+      "ToggleGroupError": "Failed to toggle group collapse state"
     },
     "Warnings": {
       "CannotChangeImageWhileTransformed": "Cannot change image while transformed",
