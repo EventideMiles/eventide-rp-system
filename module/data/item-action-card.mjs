@@ -263,6 +263,16 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
       initial: false,
     });
 
+    /**
+     * Group ID for organizing action cards
+     * Null means ungrouped
+     */
+    schema.groupId = new fields.StringField({
+      required: false,
+      initial: null,
+      nullable: true,
+    });
+
     return schema;
   }
 }

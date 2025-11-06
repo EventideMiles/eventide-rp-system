@@ -33,7 +33,6 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
      * @override
      */
     async _onDrop(event) {
-
       try {
         const data = TextEditor.implementation.getDragEventData(event);
         const actor = this.actor;
@@ -46,6 +45,9 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
         // Handle different data types
         let result;
         switch (data.type) {
+          case "Group":
+            result = await this._onDropGroup(event, data);
+            break;
           case "ActiveEffect":
             result = await this._onDropActiveEffect(event, data);
             break;
@@ -89,7 +91,6 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
      * @protected
      */
     async _onDropActiveEffect(event, data) {
-
       try {
         const aeCls = getDocumentClass("ActiveEffect");
         const effect = await aeCls.fromDropData(data);
@@ -127,7 +128,6 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
      * @protected
      */
     async _onSortActiveEffect(event, effect) {
-
       try {
         const dropTarget = event.target.closest("[data-effect-id]");
         if (!dropTarget) {
@@ -156,7 +156,7 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
         }
 
         // Perform the sort
-        const sortUpdates = SortingHelpers.performIntegerSort(effect, {
+        const sortUpdates = foundry.utils.performIntegerSort(effect, {
           target,
           siblings,
         });
@@ -210,7 +210,6 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
      * @protected
      */
     async _onDropActor(_event, _data) {
-
       if (!this.actor.isOwner) {
         return false;
       }
@@ -227,7 +226,6 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
      * @protected
      */
     async _onDropItem(event, data) {
-
       try {
         // Remove drag feedback when drop occurs
         this._removeDragFeedback();
@@ -244,8 +242,13 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
         }
 
         // Check if dropped on action cards drop zone
-        const actionCardDropZone = event.target.closest('[data-drop-zone="actionCard"]');
-        if (actionCardDropZone && ["feature", "combatPower", "gear", "status"].includes(item.type)) {
+        const actionCardDropZone = event.target.closest(
+          '[data-drop-zone="actionCard"]',
+        );
+        if (
+          actionCardDropZone &&
+          ["feature", "combatPower", "gear", "status"].includes(item.type)
+        ) {
           const result = await this._createActionCardFromItem(item, event);
           return result;
         }
@@ -286,7 +289,6 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
      * @protected
      */
     async _onDropFolder(event, data) {
-
       try {
         if (!this.actor.isOwner) {
           return [];
@@ -329,7 +331,6 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
      * @private
      */
     async _onDropItemCreate(itemData, _event) {
-
       try {
         itemData = itemData instanceof Array ? itemData : [itemData];
         const result = await this.actor.createEmbeddedDocuments(
@@ -359,13 +360,36 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
      * @private
      */
     async _onSortItem(event, item) {
-
       try {
         // Get the drag source and drop target
         const items = this.actor.items;
         const dropTarget = event.target.closest("[data-item-id]");
 
         if (!dropTarget) {
+          // Check if dropped on the ungrouped zone
+          const ungroupedZone = event.target.closest("[data-ungrouped-zone]");
+          if (
+            ungroupedZone &&
+            item.type === "actionCard" &&
+            item.system.groupId
+          ) {
+            // Ungroup the card by removing its groupId
+            const oldGroupId = item.system.groupId;
+            await item.update({ "system.groupId": null });
+            await this._checkGroupDissolution(oldGroupId);
+            Logger.debug(
+              "Card moved to ungrouped",
+              { cardId: item.id, oldGroupId },
+              "DRAG_DROP",
+            );
+            return [item];
+          }
+
+          // Check if dropped on a group (not on a specific item)
+          const groupTarget = event.target.closest(".erps-action-card-group");
+          if (groupTarget && item.type === "actionCard") {
+            return await this._handleCardDropOnGroup(event, item, groupTarget);
+          }
           return null;
         }
 
@@ -374,6 +398,16 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
         // Don't sort on yourself
         if (item.id === target.id) {
           return null;
+        }
+
+        // Handle action card specific logic
+        if (item.type === "actionCard" && target.type === "actionCard") {
+          return await this._handleActionCardSort(
+            event,
+            item,
+            target,
+            dropTarget,
+          );
         }
 
         // Identify sibling items based on adjacent HTML elements
@@ -386,7 +420,7 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
         }
 
         // Perform the sort
-        const sortUpdates = SortingHelpers.performIntegerSort(item, {
+        const sortUpdates = foundry.utils.performIntegerSort(item, {
           target,
           siblings,
         });
@@ -412,6 +446,201 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
 
         return null;
       }
+    }
+
+    /**
+     * Handle dropping an action card onto another action card
+     * @param {Event} event - The drop event
+     * @param {Item} draggedCard - The dragged action card
+     * @param {Item} targetCard - The target action card
+     * @param {HTMLElement} dropTarget - The drop target element
+     * @returns {Promise<Item[]>} The updated items
+     * @private
+     */
+    async _handleActionCardSort(event, draggedCard, targetCard, dropTarget) {
+      const { shift, ctrl } = this._dragModifiers || {};
+
+      // Shift+drag: Ungroup card
+      if (shift && draggedCard.system.groupId) {
+        const oldGroupId = draggedCard.system.groupId;
+        await draggedCard.update({ "system.groupId": null });
+
+        // Check if the group should be dissolved
+        await this._checkGroupDissolution(oldGroupId);
+
+        Logger.debug(
+          "Ungrouped card via shift+drag",
+          { cardId: draggedCard.id, oldGroupId },
+          "DRAG_DROP",
+        );
+        return [draggedCard];
+      }
+
+      // Ctrl+drag: Copy card
+      if (ctrl) {
+        const newCardData = draggedCard.toObject();
+        delete newCardData._id;
+        newCardData.system.groupId = targetCard.system.groupId || null;
+
+        const [newCard] = await this.actor.createEmbeddedDocuments("Item", [
+          newCardData,
+        ]);
+
+        Logger.debug(
+          "Copied card via ctrl+drag",
+          { originalId: draggedCard.id, newId: newCard.id },
+          "DRAG_DROP",
+        );
+        ui.notifications.info(
+          game.i18n.format("EVENTIDE_RP_SYSTEM.Actor.ActionCards.CardCopied", {
+            name: newCard.name,
+          }),
+        );
+
+        return [newCard];
+      }
+
+      // Check if dragging card onto another card to create a group
+      const draggedGroupId = draggedCard.system.groupId;
+      const targetGroupId = targetCard.system.groupId;
+
+      // Neither card is grouped - create a new group
+      if (!draggedGroupId && !targetGroupId) {
+        const groupId = await this._createActionCardGroup(event, dropTarget, [
+          draggedCard.id,
+          targetCard.id,
+        ]);
+        Logger.debug(
+          "Created group from card drag",
+          { groupId, cards: [draggedCard.id, targetCard.id] },
+          "DRAG_DROP",
+        );
+        return [draggedCard, targetCard];
+      }
+
+      // One card is grouped - add the ungrouped card to that group
+      if (!draggedGroupId && targetGroupId) {
+        await draggedCard.update({ "system.groupId": targetGroupId });
+        Logger.debug(
+          "Added card to existing group",
+          { cardId: draggedCard.id, groupId: targetGroupId },
+          "DRAG_DROP",
+        );
+        return [draggedCard];
+      }
+
+      // Both cards are in the same group - reorder within group
+      if (draggedGroupId === targetGroupId) {
+        const groupCards = this.actor.items.filter(
+          (i) => i.type === "actionCard" && i.system.groupId === draggedGroupId,
+        );
+
+        const siblings = groupCards.filter((c) => c.id !== draggedCard.id);
+
+        const sortUpdates = foundry.utils.performIntegerSort(draggedCard, {
+          target: targetCard,
+          siblings,
+        });
+
+        const updateData = sortUpdates.map((u) => ({
+          _id: u.target.id,
+          ...u.update,
+        }));
+
+        const result = await this.actor.updateEmbeddedDocuments(
+          "Item",
+          updateData,
+        );
+        Logger.debug(
+          "Reordered cards within group",
+          { groupId: draggedGroupId },
+          "DRAG_DROP",
+        );
+        return result;
+      }
+
+      // Cards are in different groups - move dragged card to target's group
+      if (draggedGroupId && targetGroupId && draggedGroupId !== targetGroupId) {
+        const oldGroupId = draggedGroupId;
+        await draggedCard.update({ "system.groupId": targetGroupId });
+
+        // Check if the old group should be dissolved
+        await this._checkGroupDissolution(oldGroupId);
+
+        Logger.debug(
+          "Moved card between groups",
+          { cardId: draggedCard.id, oldGroupId, newGroupId: targetGroupId },
+          "DRAG_DROP",
+        );
+        return [draggedCard];
+      }
+
+      // Default: just sort normally
+      return null;
+    }
+
+    /**
+     * Handle dropping a card onto a group (not on a specific card)
+     * @param {Event} event - The drop event
+     * @param {Item} card - The dropped card
+     * @param {HTMLElement} groupElement - The group element
+     * @returns {Promise<Item[]>} The updated items
+     * @private
+     */
+    async _handleCardDropOnGroup(event, card, groupElement) {
+      const groupId = groupElement.dataset.groupId;
+      if (!groupId) return null;
+
+      const { shift, ctrl } = this._dragModifiers || {};
+
+      // Shift+drag: Ungroup card (only if dropping outside all groups)
+      if (shift && card.system.groupId) {
+        const oldGroupId = card.system.groupId;
+        await card.update({ "system.groupId": null });
+        await this._checkGroupDissolution(oldGroupId);
+        Logger.debug(
+          "Ungrouped card",
+          { cardId: card.id, oldGroupId },
+          "DRAG_DROP",
+        );
+        return [card];
+      }
+
+      // Ctrl+drag: Copy card to group
+      if (ctrl) {
+        const newCardData = card.toObject();
+        delete newCardData._id;
+        newCardData.system.groupId = groupId;
+
+        const [newCard] = await this.actor.createEmbeddedDocuments("Item", [
+          newCardData,
+        ]);
+        Logger.debug(
+          "Copied card to group",
+          { originalId: card.id, newId: newCard.id, groupId },
+          "DRAG_DROP",
+        );
+        return [newCard];
+      }
+
+      // Normal drop: Add card to group
+      const oldGroupId = card.system.groupId;
+      if (oldGroupId !== groupId) {
+        await card.update({ "system.groupId": groupId });
+
+        if (oldGroupId) {
+          await this._checkGroupDissolution(oldGroupId);
+        }
+
+        Logger.debug(
+          "Added card to group",
+          { cardId: card.id, groupId },
+          "DRAG_DROP",
+        );
+        return [card];
+      }
+
+      return null;
     }
 
     /**
@@ -477,10 +706,37 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
      * @protected
      */
     _onDragStart(event) {
+      // Prevent dragging if the click originated from a non-draggable interactive element
+      const target = event.target;
 
-      // Support li, tr elements, and transformation cards
+      // Check if clicking on an element with data-action (which handles its own click events)
+      if (
+        target.closest("[data-action]") ||
+        target.closest(".erps-action-card-group__name") ||
+        target.matches("button") ||
+        target.matches("input") ||
+        target.matches("a")
+      ) {
+        Logger.debug(
+          "Drag prevented - clicked on interactive element",
+          {
+            targetClass: target.className,
+            targetTag: target.tagName,
+          },
+          "DRAG_DROP",
+        );
+        return;
+      }
+
+      // Store modifier keys for drop operation
+      this._dragModifiers = {
+        shift: event.shiftKey,
+        ctrl: event.ctrlKey || event.metaKey,
+      };
+
+      // Support li, tr elements, transformation cards, and group containers
       const docRow = event.currentTarget.closest(
-        "li, tr, .eventide-transformation-card",
+        "li, tr, .eventide-transformation-card, .erps-action-card-group",
       );
       if (!docRow) {
         Logger.warn(
@@ -495,6 +751,41 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
         return;
       }
 
+      // Check if dragging a group - only allow if clicked on drag handle
+      if (docRow.classList.contains("erps-action-card-group")) {
+        // Ensure we're clicking on the drag handle specifically
+        if (!target.closest(".erps-action-card-group__drag-handle")) {
+          Logger.debug(
+            "Drag prevented - not clicking on group drag handle",
+            {},
+            "DRAG_DROP",
+          );
+          return;
+        }
+        const groupId = docRow.dataset.groupId;
+        if (groupId) {
+          const existingGroups = this.actor.system.actionCardGroups || [];
+          const group = existingGroups.find((g) => g._id === groupId);
+
+          if (group) {
+            const dragData = {
+              type: "Group",
+              groupId,
+              actorId: this.actor.id,
+            };
+
+            event.dataTransfer.setData("text/plain", JSON.stringify(dragData));
+            docRow.classList.add("erps-action-card-group--dragging");
+
+            Logger.debug(
+              "Started dragging group",
+              { groupId, groupName: group.name },
+              "DRAG_DROP",
+            );
+            return;
+          }
+        }
+      }
 
       // Don't drag if clicking on a link or button (except the transformation card itself)
       if ("link" in event.target.dataset) {
@@ -527,9 +818,17 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
         return;
       }
 
+      // Store the dragged card's groupId for comparison on drop
+      if (document.type === "actionCard") {
+        this._draggedCardGroupId = document.system?.groupId;
+        // Add dragging class to the row
+        docRow.classList.add("erps-data-table__row--dragging");
+      }
+
       // Determine if this is a transformation item (not owned by actor)
       // This includes both action cards and combat powers from transformations
-      const isTransformationItem = (document.type === "actionCard" || document.type === "combatPower") &&
+      const isTransformationItem =
+        (document.type === "actionCard" || document.type === "combatPower") &&
         !this.actor.items.has(document.id);
 
       // Get drag data from the document
@@ -568,7 +867,6 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
 
       // Set data transfer
       event.dataTransfer.setData("text/plain", JSON.stringify(dragData));
-
     }
 
     /**
@@ -592,12 +890,21 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
     _onDragEnd(event) {
       // Remove visual feedback
       const docRow = event.currentTarget.closest(
-        "li, tr, .eventide-transformation-card",
+        "li, tr, .eventide-transformation-card, .erps-action-card-group",
       );
-      if (docRow && docRow.classList.contains("eventide-transformation-card")) {
-        docRow.classList.remove("dragging");
+      if (docRow) {
+        if (docRow.classList.contains("eventide-transformation-card")) {
+          docRow.classList.remove("dragging");
+        }
+        if (docRow.classList.contains("erps-action-card-group")) {
+          docRow.classList.remove("erps-action-card-group--dragging");
+        }
+        docRow.classList.remove("erps-data-table__row--dragging");
       }
 
+      // Clear drag state
+      this._dragModifiers = null;
+      this._draggedCardGroupId = null;
     }
 
     /**
@@ -612,7 +919,10 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
         if (!dragData) return;
 
         const data = JSON.parse(dragData);
-        if (data.type === "Item" && ["feature", "combatPower", "gear", "status"].includes(data.data?.type)) {
+        if (
+          data.type === "Item" &&
+          ["feature", "combatPower", "gear", "status"].includes(data.data?.type)
+        ) {
           this._highlightActionCardDropZone();
         }
       } catch {
@@ -625,7 +935,9 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
      * @private
      */
     _highlightActionCardDropZone() {
-      const dropZone = this.element.querySelector('[data-drop-zone="actionCard"]');
+      const dropZone = this.element.querySelector(
+        '[data-drop-zone="actionCard"]',
+      );
       if (dropZone) {
         dropZone.classList.add("drag-over");
       }
@@ -636,7 +948,9 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
      * @private
      */
     _removeDragFeedback() {
-      const dropZone = this.element.querySelector('[data-drop-zone="actionCard"]');
+      const dropZone = this.element.querySelector(
+        '[data-drop-zone="actionCard"]',
+      );
       if (dropZone) {
         dropZone.classList.remove("drag-over");
       }
@@ -820,7 +1134,7 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
      */
     _findTransformationCombatPower(itemId) {
       // First check if actor has getCurrentCombatPowers method (from transformation mixin)
-      if (typeof this.actor.getCurrentCombatPowers === 'function') {
+      if (typeof this.actor.getCurrentCombatPowers === "function") {
         const currentCombatPowers = this.actor.getCurrentCombatPowers();
         const power = currentCombatPowers.find((p) => p.id === itemId);
         if (power) {
@@ -847,7 +1161,7 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
 
     _findTransformationActionCard(itemId) {
       // First check if actor has getCurrentActionCards method (from transformation mixin)
-      if (typeof this.actor.getCurrentActionCards === 'function') {
+      if (typeof this.actor.getCurrentActionCards === "function") {
         const currentActionCards = this.actor.getCurrentActionCards();
         const actionCard = currentActionCards.find((ac) => ac.id === itemId);
         if (actionCard) {
@@ -862,7 +1176,8 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
 
       // Search through all embedded action cards
       for (const transformation of transformations) {
-        const embeddedActionCards = transformation.system.getEmbeddedActionCards();
+        const embeddedActionCards =
+          transformation.system.getEmbeddedActionCards();
         const actionCard = embeddedActionCards.find((ac) => ac.id === itemId);
         if (actionCard) {
           return actionCard;
@@ -880,7 +1195,6 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
      * @private
      */
     async _createActionCardFromItem(item, _event) {
-
       try {
         // Handle status items differently - create saved damage action cards
         if (item.type === "status") {
@@ -889,9 +1203,12 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
 
         // Create the action card data for non-status items
         const actionCardData = {
-          name: game.i18n.format("EVENTIDE_RP_SYSTEM.Actor.ActionCards.GeneratedName", {
-            itemName: item.name,
-          }),
+          name: game.i18n.format(
+            "EVENTIDE_RP_SYSTEM.Actor.ActionCards.GeneratedName",
+            {
+              itemName: item.name,
+            },
+          ),
           type: "actionCard",
           img: item.img || "icons/svg/item-bag.svg",
           system: {
@@ -915,7 +1232,9 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
         };
 
         // Create the action card
-        const createdItems = await this.actor.createEmbeddedDocuments("Item", [actionCardData]);
+        const createdItems = await this.actor.createEmbeddedDocuments("Item", [
+          actionCardData,
+        ]);
         const actionCard = createdItems[0];
 
         if (!actionCard) {
@@ -927,20 +1246,30 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
 
         // Show success notification
         ui.notifications.info(
-          game.i18n.format("EVENTIDE_RP_SYSTEM.Actor.ActionCards.CreatedFromItem", {
-            actionCardName: actionCard.name,
-            itemName: item.name,
-          }),
+          game.i18n.format(
+            "EVENTIDE_RP_SYSTEM.Actor.ActionCards.CreatedFromItem",
+            {
+              actionCardName: actionCard.name,
+              itemName: item.name,
+            },
+          ),
         );
 
         return [actionCard];
       } catch (error) {
-        Logger.error("Failed to create action card from item", error, "DRAG_DROP");
-        
+        Logger.error(
+          "Failed to create action card from item",
+          error,
+          "DRAG_DROP",
+        );
+
         ui.notifications.error(
-          game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.FailedToCreateActionCard", {
-            itemName: item.name,
-          }),
+          game.i18n.format(
+            "EVENTIDE_RP_SYSTEM.Errors.FailedToCreateActionCard",
+            {
+              itemName: item.name,
+            },
+          ),
         );
 
         return [];
@@ -954,23 +1283,25 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
      * @private
      */
     async _createStatusActionCard(statusItem) {
-
       try {
         // Extract data from the status item with sensible defaults
         const statusSystem = statusItem.system || {};
         const statusImg = statusItem.img || "icons/svg/aura.svg";
         const statusName = statusItem.name || "Unknown Damage";
         const statusDescription = statusSystem.description || "";
-        
+
         // Extract colors with defaults
         const bgColor = statusSystem.bgColor || "#8B4513";
         const textColor = statusSystem.textColor || "#ffffff";
 
         // Create saved damage action card data with status appearance
         const actionCardData = {
-          name: game.i18n.format("EVENTIDE_RP_SYSTEM.Actor.ActionCards.StatusGeneratedName", {
-            statusName,
-          }),
+          name: game.i18n.format(
+            "EVENTIDE_RP_SYSTEM.Actor.ActionCards.StatusGeneratedName",
+            {
+              statusName,
+            },
+          ),
           type: "actionCard",
           img: statusImg,
           system: {
@@ -981,7 +1312,7 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
             advanceInitiative: false,
             attemptInventoryReduction: false,
             attackChain: {
-              firstStat: "acro", 
+              firstStat: "acro",
               secondStat: "phys",
               damageCondition: "never",
               damageFormula: "1d6",
@@ -992,16 +1323,21 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
             savedDamage: {
               formula: "1d8",
               type: "damage",
-              description: game.i18n.format("EVENTIDE_RP_SYSTEM.Actor.ActionCards.StatusDamageDescription", {
-                statusName,
-              }),
+              description: game.i18n.format(
+                "EVENTIDE_RP_SYSTEM.Actor.ActionCards.StatusDamageDescription",
+                {
+                  statusName,
+                },
+              ),
             },
             embeddedStatusEffects: [],
           },
         };
 
         // Create the action card
-        const createdItems = await this.actor.createEmbeddedDocuments("Item", [actionCardData]);
+        const createdItems = await this.actor.createEmbeddedDocuments("Item", [
+          actionCardData,
+        ]);
         const actionCard = createdItems[0];
 
         if (!actionCard) {
@@ -1010,23 +1346,122 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
 
         // Show success notification
         ui.notifications.info(
-          game.i18n.format("EVENTIDE_RP_SYSTEM.Actor.ActionCards.CreatedStatusActionCard", {
-            actionCardName: actionCard.name,
-            statusName,
-          }),
+          game.i18n.format(
+            "EVENTIDE_RP_SYSTEM.Actor.ActionCards.CreatedStatusActionCard",
+            {
+              actionCardName: actionCard.name,
+              statusName,
+            },
+          ),
         );
 
         return [actionCard];
       } catch (error) {
         Logger.error("Failed to create status action card", error, "DRAG_DROP");
-        
+
         ui.notifications.error(
-          game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.FailedToCreateStatusActionCard", {
-            statusName: statusItem.name || "Unknown Status",
-          }),
+          game.i18n.format(
+            "EVENTIDE_RP_SYSTEM.Errors.FailedToCreateStatusActionCard",
+            {
+              statusName: statusItem.name || "Unknown Status",
+            },
+          ),
         );
 
         return [];
+      }
+    }
+
+    /**
+     * Handle dropping a group to reorder groups
+     * @param {DragEvent} event - The drop event
+     * @param {object} data - The drag data
+     * @returns {Promise<boolean>} Success status
+     * @private
+     */
+    async _onDropGroup(event, data) {
+      try {
+        if (!this.isEditable || data.actorId !== this.actor.id) {
+          return false;
+        }
+
+        const dropTarget = event.target.closest(".erps-action-card-group");
+        if (!dropTarget || dropTarget.dataset.groupId === data.groupId) {
+          return false;
+        }
+
+        const existingGroups = this.actor.system.actionCardGroups || [];
+        const sourceGroup = existingGroups.find((g) => g._id === data.groupId);
+        const targetGroup = existingGroups.find(
+          (g) => g._id === dropTarget.dataset.groupId,
+        );
+
+        if (!sourceGroup || !targetGroup) {
+          return false;
+        }
+
+        // Perform the sort
+        const sortUpdates = foundry.utils.performIntegerSort(sourceGroup, {
+          target: targetGroup,
+          siblings: existingGroups,
+        });
+
+        const updatedGroups = existingGroups.map((g) => {
+          const update = sortUpdates.find((u) => u.target._id === g._id);
+          return update ? { ...g, ...update.update } : g;
+        });
+
+        await this.actor.update({ "system.actionCardGroups": updatedGroups });
+
+        Logger.debug(
+          "Reordered groups",
+          { sourceId: data.groupId, targetId: dropTarget.dataset.groupId },
+          "DRAG_DROP",
+        );
+
+        return true;
+      } catch (error) {
+        Logger.error("Failed to drop group", error, "DRAG_DROP");
+        return false;
+      }
+    }
+
+    /**
+     * Check if a group should be auto-dissolved
+     * @param {string} groupId - The group ID to check
+     * @returns {Promise<void>}
+     * @private
+     */
+    async _checkGroupDissolution(groupId) {
+      try {
+        const cardsInGroup = this.actor.items.filter(
+          (i) => i.type === "actionCard" && i.system.groupId === groupId,
+        );
+
+        if (cardsInGroup.length < 2) {
+          // Ungroup remaining cards
+          const updates = cardsInGroup.map((card) => ({
+            _id: card.id,
+            "system.groupId": null,
+          }));
+
+          if (updates.length > 0) {
+            await this.actor.updateEmbeddedDocuments("Item", updates);
+          }
+
+          // Remove the group
+          const existingGroups = this.actor.system.actionCardGroups || [];
+          const updatedGroups = existingGroups.filter((g) => g._id !== groupId);
+          await this.actor.update({ "system.actionCardGroups": updatedGroups });
+
+          Logger.debug(
+            "Auto-dissolved group",
+            { groupId, remainingCards: cardsInGroup.length },
+            "DRAG_DROP",
+          );
+        }
+      } catch (error) {
+        Logger.error("Failed to check group dissolution", error, "DRAG_DROP");
       }
     }
   };

@@ -209,6 +209,29 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
       min: 0,
     });
 
+    // Action card groups for organizing action cards
+    schema.actionCardGroups = new fields.ArrayField(
+      new fields.SchemaField({
+        _id: new fields.DocumentIdField({
+          readonly: false,
+        }),
+        name: new fields.StringField({
+          required: true,
+          initial: "Group",
+          blank: false,
+        }),
+        collapsed: new fields.BooleanField({
+          required: true,
+          initial: true,
+        }),
+        sort: new fields.NumberField({
+          required: true,
+          initial: 0,
+          integer: true,
+        }),
+      }),
+    );
+
     return schema;
   }
 
