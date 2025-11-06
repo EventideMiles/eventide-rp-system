@@ -61,9 +61,31 @@
           </div>
           <span class="erps-action-card-group__name">{{group.name}}</span>
           <span class="erps-action-card-group__count">({{group.cards.length}})</span>
+          <div class="erps-data-table__control-button erps-data-table__control-button--disabled erps-data-table__control-button--locked" title="{{localize 'EVENTIDE_RP_SYSTEM.Actor.ActionCards.TransformedLocked'}}">
+            <i class="fas fa-lock"></i>
+          </div>
         </div>
         <div class="erps-action-card-group__content">
           <table class='erps-data-table erps-data-table--action-cards'>
+            <thead class="erps-data-table__header">
+              <tr class="erps-data-table__header-row">
+                <th class="erps-data-table__header-cell erps-data-table__header-cell--name">
+                  {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Name"}}
+                </th>
+                <th class="erps-data-table__header-cell erps-data-table__header-cell--center">
+                  {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.EmbeddedItem"}}
+                </th>
+                <th class="erps-data-table__header-cell erps-data-table__header-cell--center">
+                  {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Mode"}}
+                </th>
+                <th class="erps-data-table__header-cell erps-data-table__header-cell--controls">
+                  <div class="erps-data-table__transformation-notice" title="{{localize 'EVENTIDE_RP_SYSTEM.Actor.ActionCards.TransformedLocked'}}">
+                    <span>{{localize "EVENTIDE_RP_SYSTEM.Actor.ActionCards.Transformed"}}</span>
+                    <i class="fas fa-lock"></i>
+                  </div>
+                </th>
+              </tr>
+            </thead>
             <tbody class="erps-data-table__body">
               {{#each group.cards as |item|}}
                 {{> actor/partials/action-card-row item=item isTransformation=true}}
@@ -130,7 +152,6 @@
 
     {{! Grouped Base Action Cards }}
     {{#each groupedActionCards as |group|}}
-      {{debug group}}
       <div class="erps-action-card-group {{#if group.collapsed}}erps-action-card-group--collapsed{{/if}}" data-group-id="{{group.id}}">
         <div class="erps-action-card-group__header">
           <div class="erps-action-card-group__drag-handle" data-drag="true" data-document-class="Group" data-group-id="{{group._id}}" title="{{localize 'EVENTIDE_RP_SYSTEM.Actor.ActionCards.DragToReorder'}}">
@@ -156,6 +177,22 @@
         </div>
         <div class="erps-action-card-group__content">
           <table class='erps-data-table erps-data-table--action-cards'>
+            <thead class="erps-data-table__header">
+              <tr class="erps-data-table__header-row">
+                <th class="erps-data-table__header-cell erps-data-table__header-cell--name">
+                  {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Name"}}
+                </th>
+                <th class="erps-data-table__header-cell erps-data-table__header-cell--center">
+                  {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.EmbeddedItem"}}
+                </th>
+                <th class="erps-data-table__header-cell erps-data-table__header-cell--center">
+                  {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Mode"}}
+                </th>
+                <th class="erps-data-table__header-cell erps-data-table__header-cell--controls">
+                  Controls
+                </th>
+              </tr>
+            </thead>
             <tbody class="erps-data-table__body">
               {{#each group.cards as |item|}}
                 {{> actor/partials/action-card-row item=item isTransformation=false}}

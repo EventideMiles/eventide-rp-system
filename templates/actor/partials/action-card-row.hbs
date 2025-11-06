@@ -16,10 +16,11 @@
         width="24"
         height="24"
       />
-      <span>{{item.name}}</span>
-      {{#if isTransformation}}
-        <i class="fas fa-magic erps-data-table__transformation-indicator" title="{{localize 'EVENTIDE_RP_SYSTEM.Actor.ActionCards.TransformationActionCard'}}"></i>
-      {{/if}}
+      <span>{{item.name}}
+        {{#if isTransformation}}
+          <i class="fas fa-magic erps-data-table__transformation-indicator" title="{{localize 'EVENTIDE_RP_SYSTEM.Actor.ActionCards.TransformationActionCard'}}"></i>
+        {{/if}}
+      </span>
     </div>
   </td>
   <td class="erps-data-table__cell erps-data-table__cell--center rollable" data-roll-type="item" data-action="roll" data-item-id="{{item._id}}">
@@ -83,6 +84,7 @@
           <i class="fas fa-play"></i>
         {{/if}}
       </a>
+      {{#unless isTransformation}}
       <a
         class="erps-data-table__control-button erps-data-table__control-button--edit"
         title="{{localize 'DOCUMENT.Update' type='Action Card'}}"
@@ -91,7 +93,7 @@
       >
         <i class="fas fa-edit"></i>
       </a>
-      {{#unless isTransformation}}
+      
         {{#if @root.editable}}
           <a
             class="erps-data-table__control-button erps-data-table__control-button--delete"
@@ -102,6 +104,13 @@
             <i class="fas fa-trash"></i>
           </a>
         {{/if}}
+      {{else}}
+        <div class="erps-data-table__control-button erps-data-table__control-button--disabled erps-data-table__control-button--locked" title="{{localize 'EVENTIDE_RP_SYSTEM.Actor.ActionCards.TransformedLocked'}}">
+          <i class="fas fa-lock"></i>
+        </div>
+        <div class="erps-data-table__control-button erps-data-table__control-button--disabled erps-data-table__control-button--locked" title="{{localize 'EVENTIDE_RP_SYSTEM.Actor.ActionCards.TransformedLocked'}}">
+          <i class="fas fa-lock"></i>
+        </div>
       {{/unless}}
     </div>
   </td>
