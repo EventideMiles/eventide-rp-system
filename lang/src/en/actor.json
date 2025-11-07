@@ -84,7 +84,9 @@
         "CreateGroupSuccess": "Created group: {name}",
         "DeleteGroupConfirm": "Delete group \"{name}\"? Cards will be moved to ungrouped.",
         "DeleteGroupSuccess": "Deleted group: {name}",
-        "CardCopied": "Copied action card: {name}"
+        "CardCopied": "Copied action card: {name}",
+        "GroupCopied": "Copied group '{groupName}' with {cardCount} action cards",
+        "NoCardsInGroup": "No action cards found in this group"
       }
     }
   }

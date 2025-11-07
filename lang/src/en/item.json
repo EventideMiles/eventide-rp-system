@@ -95,6 +95,7 @@
         "ActionCardNotes": "Action cards from transformations override the character's action cards while transformed.",
         "ReadOnlyNote": "Note: Embedded combat powers open in read-only mode. To edit a power, modify the original item in the actor's inventory.",
         "DragToExtract": "Drag to extract this item as a new item",
+        "DragToGroup": "Drag onto another action card to create a group, or drag to actors/compendiums to extract",
         "DragNote": "Tip: Drag items to actors, compendiums, or item tabs to create copies."
       },
       "ActionCard": {

@@ -77,6 +77,7 @@
       "ActionCardEffectFailed": "Failed to apply action card effect",
       "FailedToCreateActionCard": "Failed to create action card from '{itemName}'",
       "FailedToCreateStatusActionCard": "Failed to create damage action card from status '{statusName}'",
+      "FailedToCopyGroup": "Failed to copy group to this actor",
       "SaveEffectImageFailed": "Failed to save effect image.",
       "SaveItemImageFailed": "Failed to save item image.",
       "SaveItemFailed": "Failed to save item. See console for details.",

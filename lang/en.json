@@ -291,6 +291,7 @@
         "ActionCardNotes": "Action cards from transformations override the character's action cards while transformed.",
         "ReadOnlyNote": "Note: Embedded combat powers open in read-only mode. To edit a power, modify the original item in the actor's inventory.",
         "DragToExtract": "Drag to extract this item as a new item",
+        "DragToGroup": "Drag onto another action card to create a group, or drag to actors/compendiums to extract",
         "DragNote": "Tip: Drag items to actors, compendiums, or item tabs to create copies.",
         "TokenImage": "Token Image",
         "TokenImageHint": "Image to use for the token when this transformation is applied"
@@ -388,7 +389,9 @@
         "CreateGroupSuccess": "Created group: {name}",
         "DeleteGroupConfirm": "Delete group \"{name}\"? Cards will be moved to ungrouped.",
         "DeleteGroupSuccess": "Deleted group: {name}",
-        "CardCopied": "Copied action card: {name}"
+        "CardCopied": "Copied action card: {name}",
+        "GroupCopied": "Copied group '{groupName}' with {cardCount} action cards",
+        "NoCardsInGroup": "No action cards found in this group"
       }
     },
     "Chat": {
@@ -493,6 +496,7 @@
       "ActionCardEffectFailed": "Failed to apply action card effect",
       "FailedToCreateActionCard": "Failed to create action card from '{itemName}'",
       "FailedToCreateStatusActionCard": "Failed to create damage action card from status '{statusName}'",
+      "FailedToCopyGroup": "Failed to copy group to this actor",
       "SaveEffectImageFailed": "Failed to save effect image.",
       "SaveItemImageFailed": "Failed to save item image.",
       "SaveItemFailed": "Failed to save item. See console for details.",
