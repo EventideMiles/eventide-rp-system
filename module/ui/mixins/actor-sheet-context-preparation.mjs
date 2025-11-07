@@ -12,6 +12,86 @@ import { Logger } from "../../services/logger.mjs";
 export const ActorSheetContextPreparationMixin = (BaseClass) =>
   class extends BaseClass {
     /**
+     * Organize action cards into groups
+     * @param {Array} actionCards - Array of action card data objects
+     * @param {Array} groups - Array of group definitions
+     * @param {boolean} isTransformation - Whether these are transformation action cards
+     * @returns {Object} Object containing grouped cards, ungrouped cards, and group data
+     * @protected
+     */
+    _organizeActionCardsIntoGroups(actionCards, groups, isTransformation) {
+      // Initialize session-level collapsed state if not exists
+      if (!this._collapsedGroups) {
+        this._collapsedGroups = new Set();
+      }
+
+      // Build a map of groups with their cards
+      const groupMap = new Map();
+      for (const group of groups) {
+        // assign _id to id for the group for data purposes
+        group.id = group._id;
+
+        groupMap.set(group._id, {
+          ...group,
+          cards: [],
+          // Use session state for collapsed; if not set, default to false (expanded)
+          collapsed: this._collapsedGroups.has(group._id),
+        });
+      }
+
+      // Separate grouped and ungrouped action cards
+      const ungroupedCards = [];
+
+      for (const card of actionCards) {
+        const groupId = card.system?.groupId;
+
+        if (groupId && groupMap.has(groupId)) {
+          // Add to group
+          groupMap.get(groupId).cards.push(card);
+        } else {
+          // Add to ungrouped
+          ungroupedCards.push(card);
+        }
+      }
+
+      // Convert group map to sorted array
+      const sortedGroups = Array.from(groupMap.values()).sort(
+        (a, b) => a.sort - b.sort,
+      );
+
+      // Sort cards within each group by their sort order (or name if no sort)
+      for (const group of sortedGroups) {
+        group.cards.sort((a, b) => {
+          if (a.sort !== undefined && b.sort !== undefined) {
+            return a.sort - b.sort;
+          }
+          return a.name.localeCompare(b.name);
+        });
+      }
+
+      // Sort ungrouped cards by name
+      ungroupedCards.sort((a, b) => a.name.localeCompare(b.name));
+
+      Logger.debug(
+        "Organized action cards into groups",
+        {
+          isTransformation,
+          totalCards: actionCards.length,
+          groupCount: sortedGroups.length,
+          ungroupedCount: ungroupedCards.length,
+          groupNames: sortedGroups.map((g) => g.name),
+        },
+        "CONTEXT_PREPARATION",
+      );
+
+      return {
+        groupedActionCards: sortedGroups,
+        ungroupedActionCards: ungroupedCards,
+        actionCardGroups: sortedGroups,
+      };
+    }
+
+    /**
      * Prepare items for display in the sheet
      * @param {Object} context - The sheet context
      * @returns {Object} The enriched context with prepared items
@@ -93,8 +173,8 @@ export const ActorSheetContextPreparationMixin = (BaseClass) =>
         features.sort((a, b) => a.name.localeCompare(b.name));
         effects.sort((a, b) => a.name.localeCompare(b.name));
         transformations.sort((a, b) => a.name.localeCompare(b.name));
-        baseActionCards.sort((a, b) => a.name.localeCompare(b.name));
         combatPowers.sort((a, b) => a.name.localeCompare(b.name));
+        // Don't sort action cards here - will be sorted within groups
 
         // Separate equipped and unequipped gear
         const equippedGear = gear.filter((item) => item.isEquipped);
@@ -288,6 +368,38 @@ export const ActorSheetContextPreparationMixin = (BaseClass) =>
           "CONTEXT_PREPARATION",
         );
 
+        // Organize action cards into groups
+        const { groupedActionCards, ungroupedActionCards, actionCardGroups } =
+          this._organizeActionCardsIntoGroups(
+            baseActionCards,
+            this.actor.system.actionCardGroups || [],
+            false,
+          );
+
+        // Organize transformation action cards into groups
+        let groupedTransformationActionCards = [];
+        let ungroupedTransformationActionCards = [];
+        let transformationActionCardGroups = [];
+
+        if (transformationActionCards.length > 0) {
+          // Get transformation groups from the active transformation
+          const activeTransformation = this.actor.items.get(
+            activeTransformationId,
+          );
+          const transformationGroups =
+            activeTransformation?.system?.actionCardGroups || [];
+
+          const groupData = this._organizeActionCardsIntoGroups(
+            transformationActionCards.map((item) => item.toObject()),
+            transformationGroups,
+            true,
+          );
+
+          groupedTransformationActionCards = groupData.groupedActionCards;
+          ungroupedTransformationActionCards = groupData.ungroupedActionCards;
+          transformationActionCardGroups = groupData.actionCardGroups;
+        }
+
         // Add to context
         context.gear = gear;
         context.equippedGear = equippedGear;
@@ -298,7 +410,15 @@ export const ActorSheetContextPreparationMixin = (BaseClass) =>
         context.statuses = effects; // Templates expect 'statuses' for status effects
         context.transformations = transformations;
         context.actionCards = baseActionCards;
+        context.groupedActionCards = groupedActionCards;
+        context.ungroupedActionCards = ungroupedActionCards;
+        context.actionCardGroups = actionCardGroups;
         context.transformationActionCards = transformationActionCards;
+        context.groupedTransformationActionCards =
+          groupedTransformationActionCards;
+        context.ungroupedTransformationActionCards =
+          ungroupedTransformationActionCards;
+        context.transformationActionCardGroups = transformationActionCardGroups;
         context.combatPowers = combatPowers;
         context.transformationCombatPowers = transformationCombatPowers;
 
@@ -312,7 +432,8 @@ export const ActorSheetContextPreparationMixin = (BaseClass) =>
         context.statusCount = effects.length; // Templates expect 'statusCount'
         context.transformationCount = transformations.length;
         context.actionCardCount = baseActionCards.length;
-        context.transformationActionCardCount = transformationActionCards.length;
+        context.transformationActionCardCount =
+          transformationActionCards.length;
         context.combatPowerCount = combatPowers.length;
         context.transformationCombatPowerCount =
           transformationCombatPowers.length;
@@ -340,13 +461,11 @@ export const ActorSheetContextPreparationMixin = (BaseClass) =>
         Logger.error(
           `Error preparing items for ${this.actor?.name}`,
           error,
-          "DATA_PROCESSING"
+          "DATA_PROCESSING",
         );
 
         ui.notifications.error(
-          game.i18n.localize(
-            "EVENTIDE_RP_SYSTEM.Errors.ItemPreparationError",
-          ),
+          game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.ItemPreparationError"),
         );
 
         // Return context with empty arrays to prevent template errors
@@ -395,7 +514,8 @@ export const ActorSheetContextPreparationMixin = (BaseClass) =>
           "eventide-rp-system",
           "activeTransformation",
         );
-        context.hasTransformationActionCards = this.actor.hasTransformationActionCards
+        context.hasTransformationActionCards = this.actor
+          .hasTransformationActionCards
           ? this.actor.hasTransformationActionCards()
           : false;
         context.autoTokenUpdate = this.actor.getFlag(
@@ -468,7 +588,7 @@ export const ActorSheetContextPreparationMixin = (BaseClass) =>
         Logger.error(
           `Error preparing actor data for ${this.actor?.name}`,
           error,
-          "DATA_PROCESSING"
+          "DATA_PROCESSING",
         );
 
         ui.notifications.error(
@@ -559,7 +679,7 @@ export const ActorSheetContextPreparationMixin = (BaseClass) =>
         Logger.error(
           `Error enriching context for ${this.actor?.name}`,
           error,
-          "DATA_PROCESSING"
+          "DATA_PROCESSING",
         );
 
         ui.notifications.error(
@@ -623,7 +743,7 @@ export const ActorSheetContextPreparationMixin = (BaseClass) =>
         Logger.error(
           `Error preparing sheet context for ${this.actor?.name}`,
           error,
-          "DATA_PROCESSING"
+          "DATA_PROCESSING",
         );
 
         ui.notifications.error(

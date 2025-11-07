@@ -1317,4 +1317,245 @@ export const ItemSheetActionsMixin = (BaseClass) =>
       const li = target.closest(".effect");
       return this.item.effects.get(li?.dataset?.effectId);
     }
+
+    /**
+     * Attach change listeners to group name inputs
+     * @private
+     */
+    _attachGroupNameListeners() {
+      if (!this.element) return;
+
+      const nameInputs = this.element.querySelectorAll(
+        ".erps-action-card-group__name",
+      );
+      nameInputs.forEach((input) => {
+        // Remove existing listeners to avoid duplicates
+        input.removeEventListener("change", this._handleGroupNameChange);
+        input.removeEventListener("blur", this._handleGroupNameChange);
+
+        // Add listeners
+        input.addEventListener(
+          "change",
+          this._handleGroupNameChange.bind(this),
+        );
+        input.addEventListener("blur", this._handleGroupNameChange.bind(this));
+      });
+    }
+
+    /**
+     * Handle group name input change
+     * @param {Event} event - The change/blur event
+     * @private
+     */
+    async _handleGroupNameChange(event) {
+      const input = event.target;
+      const groupId = input.dataset.groupId;
+      const newName = input.value.trim();
+
+      if (!groupId || !newName) return;
+
+      try {
+        const existingGroups = this.item.system.actionCardGroups || [];
+        const groupIndex = existingGroups.findIndex((g) => g._id === groupId);
+
+        if (groupIndex === -1) return;
+
+        // Only update if name changed
+        if (newName !== existingGroups[groupIndex].name) {
+          const updatedGroups = [...existingGroups];
+          updatedGroups[groupIndex] = {
+            ...updatedGroups[groupIndex],
+            name: newName,
+            _id: groupId,
+          };
+          await this.item.update({ "system.actionCardGroups": updatedGroups });
+
+          Logger.debug(
+            `Renamed group to: ${newName}`,
+            { groupId },
+            "ITEM_SHEET_ACTIONS",
+          );
+        }
+      } catch (error) {
+        Logger.error("Failed to rename group", error, "ITEM_SHEET_ACTIONS");
+        // Revert input to original value
+        const existingGroups = this.item.system.actionCardGroups || [];
+        const group = existingGroups.find((g) => g._id === groupId);
+        if (group) {
+          input.value = group.name;
+        }
+      }
+    }
+
+    /**
+     * Create a new action card group for transformation
+     * @param {Event} event - The click event
+     * @param {HTMLElement} target - The button element
+     * @returns {Promise<void>}
+     * @private
+     */
+    static async _createActionCardGroup(_event, _target) {
+      if (this.item.type !== "transformation") {
+        Logger.warn(
+          "Can only create action card groups on transformations",
+          {},
+          "ITEM_SHEET_ACTIONS",
+        );
+        return;
+      }
+
+      try {
+        const existingGroups = this.item.system.actionCardGroups || [];
+        const newGroupId = foundry.utils.randomID();
+
+        // Find highest group number to generate unique name
+        let highestNumber = 0;
+        for (const group of existingGroups) {
+          const match = group.name.match(/^Group (\d+)$/);
+          if (match) {
+            highestNumber = Math.max(highestNumber, parseInt(match[1], 10));
+          }
+        }
+
+        const newGroupNumber = highestNumber + 1;
+        const newGroupName = `Group ${newGroupNumber}`;
+
+        // Determine sort order for new group
+        const maxSort =
+          existingGroups.length > 0
+            ? Math.max(...existingGroups.map((g) => g.sort || 0))
+            : 0;
+
+        const newGroup = {
+          _id: newGroupId,
+          name: newGroupName,
+          sort: maxSort + 1,
+        };
+
+        const updatedGroups = [...existingGroups, newGroup];
+        await this.item.update({ "system.actionCardGroups": updatedGroups });
+
+        Logger.debug(
+          "Created action card group",
+          { groupId: newGroupId },
+          "ITEM_SHEET_ACTIONS",
+        );
+
+        ui.notifications.info(
+          game.i18n.format(
+            "EVENTIDE_RP_SYSTEM.Actor.ActionCards.CreateGroupSuccess",
+            {
+              name: newGroup.name,
+            },
+          ),
+        );
+      } catch (error) {
+        Logger.error(
+          "Failed to create action card group",
+          error,
+          "ITEM_SHEET_ACTIONS",
+        );
+        ui.notifications.error(
+          game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.CreateGroupError"),
+        );
+      }
+    }
+
+    /**
+     * Delete an action card group from transformation
+     * @param {Event} event - The click event
+     * @param {HTMLElement} target - The button element
+     * @returns {Promise<void>}
+     * @private
+     */
+    static async _deleteActionCardGroup(event, target) {
+      if (this.item.type !== "transformation") {
+        Logger.warn(
+          "Can only delete action card groups from transformations",
+          {},
+          "ITEM_SHEET_ACTIONS",
+        );
+        return;
+      }
+
+      try {
+        const groupId =
+          target.dataset.groupId ||
+          target.closest("[data-group-id]")?.dataset.groupId;
+        if (!groupId) {
+          Logger.warn(
+            "No group ID found for delete",
+            { target },
+            "ITEM_SHEET_ACTIONS",
+          );
+          return;
+        }
+
+        const existingGroups = this.item.system.actionCardGroups || [];
+        const group = existingGroups.find((g) => g._id === groupId);
+
+        if (!group) {
+          Logger.warn("Group not found", { groupId }, "ITEM_SHEET_ACTIONS");
+          return;
+        }
+
+        // Confirm deletion
+        const confirmed = await foundry.applications.api.DialogV2.confirm({
+          title: game.i18n.localize(
+            "EVENTIDE_RP_SYSTEM.Actor.ActionCards.DeleteGroup",
+          ),
+          content: game.i18n.format(
+            "EVENTIDE_RP_SYSTEM.Actor.ActionCards.DeleteGroupConfirm",
+            {
+              name: group.name,
+            },
+          ),
+        });
+
+        if (!confirmed) return;
+
+        // Remove the group
+        const updatedGroups = existingGroups.filter((g) => g._id !== groupId);
+
+        // Un-group all action cards in this group
+        const actionCards = this.item.system.embeddedActionCards || [];
+        const updatedActionCards = actionCards.map((card) => {
+          if (card.system?.groupId === groupId) {
+            const updatedCard = foundry.utils.deepClone(card);
+            delete updatedCard.system.groupId;
+            return updatedCard;
+          }
+          return card;
+        });
+
+        await this.item.update({
+          "system.actionCardGroups": updatedGroups,
+          "system.embeddedActionCards": updatedActionCards,
+        });
+
+        Logger.debug(
+          "Deleted action card group",
+          { groupId },
+          "ITEM_SHEET_ACTIONS",
+        );
+
+        ui.notifications.info(
+          game.i18n.format(
+            "EVENTIDE_RP_SYSTEM.Actor.ActionCards.DeleteGroupSuccess",
+            {
+              name: group.name,
+            },
+          ),
+        );
+      } catch (error) {
+        Logger.error(
+          "Failed to delete action card group",
+          error,
+          "ITEM_SHEET_ACTIONS",
+        );
+        ui.notifications.error(
+          game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.DeleteGroupError"),
+        );
+      }
+    }
   };

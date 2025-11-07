@@ -155,6 +155,19 @@
         "Warning": "This actor is currently transformed. Editing the prototype token configuration while transformed could save the transformed appearance as the default for all tokens.",
         "Prompt": "Do you want to remove the transformation from all tokens and continue?"
       }
+    },
+    "ContextMenu": {
+      "CreateGroup": "Create Group",
+      "RemoveFromGroup": "Remove from Group",
+      "RenameGroup": "Rename Group",
+      "DeleteGroup": "Delete Group",
+      "ExpandAll": "Expand All Groups",
+      "CollapseAll": "Collapse All Groups",
+      "Execute": "Execute",
+      "Edit": "Edit",
+      "Duplicate": "Duplicate",
+      "Delete": "Delete",
+      "SendToChat": "Send to Chat"
     }
   }
 }

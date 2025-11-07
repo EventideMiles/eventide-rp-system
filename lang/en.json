@@ -291,6 +291,7 @@
         "ActionCardNotes": "Action cards from transformations override the character's action cards while transformed.",
         "ReadOnlyNote": "Note: Embedded combat powers open in read-only mode. To edit a power, modify the original item in the actor's inventory.",
         "DragToExtract": "Drag to extract this item as a new item",
+        "DragToGroup": "Drag onto another action card to create a group, or drag to actors/compendiums to extract",
         "DragNote": "Tip: Drag items to actors, compendiums, or item tabs to create copies.",
         "TokenImage": "Token Image",
         "TokenImageHint": "Image to use for the token when this transformation is applied"
@@ -379,7 +380,18 @@
         "TransformationActionCards": "Action cards are provided by active transformation",
         "TransformationActionCard": "Action card from active transformation",
         "Transformed": "Transformed",
-        "TransformedLocked": "Action cards are provided by active transformation - cannot create or modify while transformed"
+        "TransformedLocked": "Action cards are provided by active transformation - cannot create or modify while transformed",
+        "Ungrouped": "Ungrouped Action Cards: Drag Together To Form Groups",
+        "DragToReorder": "Drag to reorder",
+        "GroupOptions": "Group options",
+        "GroupNamePlaceholder": "Group name...",
+        "DeleteGroup": "Delete group",
+        "CreateGroupSuccess": "Created group: {name}",
+        "DeleteGroupConfirm": "Delete group \"{name}\"? Cards will be moved to ungrouped.",
+        "DeleteGroupSuccess": "Deleted group: {name}",
+        "CardCopied": "Copied action card: {name}",
+        "GroupCopied": "Copied group '{groupName}' with {cardCount} action cards",
+        "NoCardsInGroup": "No action cards found in this group"
       }
     },
     "Chat": {
@@ -484,6 +496,7 @@
       "ActionCardEffectFailed": "Failed to apply action card effect",
       "FailedToCreateActionCard": "Failed to create action card from '{itemName}'",
       "FailedToCreateStatusActionCard": "Failed to create damage action card from status '{statusName}'",
+      "FailedToCopyGroup": "Failed to copy group to this actor",
       "SaveEffectImageFailed": "Failed to save effect image.",
       "SaveItemImageFailed": "Failed to save item image.",
       "SaveItemFailed": "Failed to save item. See console for details.",
@@ -592,7 +605,11 @@
       "TransformationUsageGuidance": "Your transformation was created in the Custom Transformations compendium. Drag it to a character sheet when you're ready to transform them!",
       "NoEmbeddedItemsToExport": "No embedded items to export",
       "ItemsExportedToCompendium": "{count} {itemType} exported to {compendiumLabel}",
-      "CompendiumCreated": "Compendium '{label}' created"
+      "CompendiumCreated": "Compendium '{label}' created",
+      "CreateGroupError": "Failed to create action card group",
+      "RenameGroupError": "Failed to rename action card group",
+      "DeleteGroupError": "Failed to delete action card group",
+      "ToggleGroupError": "Failed to toggle group collapse state"
     },
     "Warnings": {
       "CannotChangeImageWhileTransformed": "Cannot change image while transformed",
@@ -972,7 +989,22 @@
     "Notifications": {
       "ThemeChanged": "Theme changed successfully",
       "TokenConfigCancelled": "Token configuration cancelled. Remove the transformation first to edit the token.",
-      "PrototypeTokenConfigCancelled": "Prototype token configuration cancelled. Remove the transformation first to edit the prototype token."
+      "PrototypeTokenConfigCancelled": "Prototype token configuration cancelled. Remove the transformation first to edit the prototype token.",
+      "TokenConfigBlockedForPlayers": "You cannot configure this token while it is transformed.",
+      "PrototypeTokenConfigBlockedForPlayers": "You cannot configure the prototype token while this actor is transformed."
+    },
+    "ContextMenu": {
+      "CreateGroup": "Create Group",
+      "RemoveFromGroup": "Remove from Group",
+      "RenameGroup": "Rename Group",
+      "DeleteGroup": "Delete Group",
+      "ExpandAll": "Expand All Groups",
+      "CollapseAll": "Collapse All Groups",
+      "Execute": "Execute",
+      "Edit": "Edit",
+      "Duplicate": "Duplicate",
+      "Delete": "Delete",
+      "SendToChat": "Send to Chat"
     }
   },
   "TYPES": {

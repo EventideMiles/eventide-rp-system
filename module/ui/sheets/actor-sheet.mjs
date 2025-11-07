@@ -33,12 +33,9 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
   ActorSheetActionsMixin(BaselineSheetMixins(sheets.ActorSheetV2)),
 ) {
   constructor(options = {}) {
-
     try {
       super(options);
       // Note: All functionality is now provided by mixins
-
-
     } catch (error) {
       Logger.error("Failed to initialize actor sheet", error, "ACTOR_SHEET");
       throw error;
@@ -98,6 +95,9 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
       configureToken: this._onConfigureToken,
       setSheetTheme: this._setSheetTheme,
       executeActionCard: this._executeActionCard,
+      toggleGroupCollapse: this._toggleGroupCollapse,
+      deleteGroup: this._deleteActionCardGroup,
+      createGroup: this._createActionCardGroup,
     },
     // Custom property that's merged into `this.options`
     dragDrop: [
@@ -166,7 +166,6 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
 
   /** @override */
   async _prepareContext(options) {
-
     try {
       // Output initialization
       const context = {
@@ -199,7 +198,6 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
       // Use mixin for context preparation
       const enrichedContext = this._prepareSheetContext(context);
 
-
       return enrichedContext;
     } catch (error) {
       await ErrorHandler.handleAsync(Promise.reject(error), {
@@ -226,7 +224,6 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
 
   /** @override */
   async _preparePartContext(partId, context) {
-
     try {
       switch (partId) {
         case "gear":
@@ -274,7 +271,6 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
         Logger.warn("Failed to get roll formulas", formulaError, "ACTOR_SHEET");
         context.formulas = {};
       }
-
 
       return context;
     } catch (error) {
@@ -394,7 +390,6 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
    * @override
    */
   _onRender(_context, _options) {
-
     // Bind drag drop handlers
     if (this.dragDrop && this.dragDrop.length > 0) {
       this.dragDrop.forEach((d) => {
@@ -443,7 +438,6 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
       "activeTransformation",
     );
     if (activeTransformationId) {
-
       // Check if the transformation element exists in the DOM
       const transformationElement = this.element.querySelector(
         ".transformation-header__name",
@@ -534,6 +528,12 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
       }
     }
 
+    if (
+      event.target.dataset?.groupId &&
+      event.target.className === "erps-action-card-group__name"
+    )
+      this._handleGroupNameChange(event);
+
     super._onChangeForm(formConfig, event);
   }
 
@@ -562,7 +562,6 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
    * @override
    */
   async maximize() {
-
     try {
       // Store the current position before maximizing if we're not already minimized
       if (!this.minimized && !this._storedPosition) {
@@ -572,7 +571,6 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
           left: this.position.left,
           top: this.position.top,
         };
-
       }
 
       // Call the parent maximize method
@@ -584,12 +582,10 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
         setTimeout(() => {
           this.setPosition(this._storedPosition);
 
-
           // Clear the stored position after restoring
           this._storedPosition = null;
         }, 50);
       }
-
     } catch (error) {
       Logger.error("Failed to maximize actor sheet", {
         error: error.message,
@@ -599,7 +595,6 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
 
       // Still call parent method as fallback
       await super.maximize();
-
     }
   }
 
@@ -609,15 +604,12 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
    * @override
    */
   async minimize() {
-
     try {
       // Clear any stored position when minimizing
       this._storedPosition = null;
 
       // Call the parent minimize method
       await super.minimize();
-
-
     } catch (error) {
       Logger.error("Failed to minimize actor sheet", {
         error: error.message,
@@ -627,7 +619,6 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
 
       // Still call parent method as fallback
       await super.minimize();
-
     }
   }
 
