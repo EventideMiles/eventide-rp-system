@@ -54,6 +54,9 @@ export const initHandlebarsPartials = async () => {
       "systems/eventide-rp-system/templates/actor/actor-secondary-resources.hbs",
     "actor/partials/action-card-row":
       "systems/eventide-rp-system/templates/actor/partials/action-card-row.hbs",
+    // Item partials
+    "item/partials/transformation-action-card-row":
+      "systems/eventide-rp-system/templates/item/partials/transformation-action-card-row.hbs",
   };
 
   // Load and register each partial

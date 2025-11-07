@@ -86,6 +86,8 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
         createNewPower: this._createNewPower,
         createNewStatus: this._createNewStatus,
         createNewTransformation: this._createNewTransformation,
+        createGroup: this._createActionCardGroup,
+        deleteGroup: this._deleteActionCardGroup,
         createNewCombatPower: this._createNewCombatPower,
         createNewActionCard: this._createNewActionCard,
         editEmbeddedItem: this._editEmbeddedItem,
@@ -410,12 +412,52 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
         context.embeddedCombatPowers =
           this.item.system.getEmbeddedCombatPowers();
         break;
-      case "embeddedActionCards":
+      case "embeddedActionCards": {
         context.tab = context.tabs[partId];
         // Get embedded action cards as temporary items
         // Warning styling is handled directly in the template
         context.embeddedActionCards = this.item.system.getEmbeddedActionCards();
+
+        // Prepare grouped and ungrouped action cards
+        const groups = this.item.system.actionCardGroups || [];
+        const actionCards = context.embeddedActionCards || [];
+
+        // Sort groups by sort order
+        const sortedGroups = [...groups].sort(
+          (a, b) => (a.sort || 0) - (b.sort || 0),
+        );
+
+        // Create grouped action cards
+        context.groupedActionCards = sortedGroups
+          .map((group) => ({
+            ...group,
+            id: group._id, // Add id field for Handlebars template compatibility
+            collapsed: false, // Always show expanded in item sheets
+            cards: actionCards
+              .filter((card) => card.system.groupId === group._id)
+              .map((card) => {
+                const mappedCard = {
+                  ...card,
+                  // Ensure id is set for Handlebars template compatibility
+                  // Item instances have .id, but plain objects only have ._id
+                  id: card.id || card._id,
+                };
+                return mappedCard;
+              }),
+          }))
+          .filter((group) => group.cards.length > 0); // Only include groups with cards
+
+        // Get ungrouped action cards
+        context.ungroupedActionCards = actionCards
+          .filter((card) => !card.system.groupId)
+          .map((card) => ({
+            ...card,
+            // Ensure id is set for Handlebars template compatibility
+            // Item instances have .id, but plain objects only have ._id
+            id: card.id || card._id,
+          }));
         break;
+      }
       case "embeddedItems":
         context.tab = context.tabs[partId];
         // Get embedded item, effects, and transformations as temporary items
@@ -644,6 +686,11 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
 
     // Initialize theme management from mixin
     this._initThemeManagement();
+
+    // Attach group name listeners for transformation action card groups
+    if (this.item.type === "transformation") {
+      this._attachGroupNameListeners();
+    }
 
     // Initialize item selector combo boxes for action cards
     // Don't await this to avoid blocking the render process

@@ -53,7 +53,9 @@ export default class EventideRpSystemTransformation extends EventideRpSystemItem
     // Action card groups for organizing transformation action cards
     schema.actionCardGroups = new fields.ArrayField(
       new fields.SchemaField({
-        _id: new fields.DocumentIdField(),
+        _id: new fields.DocumentIdField({
+          readonly: false,
+        }),
         name: new fields.StringField({
           required: true,
           initial: "Group",
@@ -69,10 +71,6 @@ export default class EventideRpSystemTransformation extends EventideRpSystemItem
           integer: true,
         }),
       }),
-      {
-        required: true,
-        initial: [],
-      },
     );
 
     return schema;

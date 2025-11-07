@@ -1381,47 +1381,187 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
      */
     async _onDropGroup(event, data) {
       try {
-        if (!this.isEditable || data.actorId !== this.actor.id) {
+        if (!this.isEditable) {
           return false;
         }
 
         const dropTarget = event.target.closest(".erps-action-card-group");
-        if (!dropTarget || dropTarget.dataset.groupId === data.groupId) {
+
+        // Don't allow dropping on the same group
+        if (dropTarget && dropTarget.dataset.groupId === data.groupId) {
           return false;
         }
 
+        // Same actor - reorder groups (only if dropping on another group)
+        if (data.actorId === this.actor.id) {
+          if (!dropTarget) {
+            // Dropping in empty space on same actor - do nothing
+            return false;
+          }
+
+          const existingGroups = this.actor.system.actionCardGroups || [];
+          const sourceGroup = existingGroups.find((g) => g._id === data.groupId);
+          const targetGroup = existingGroups.find(
+            (g) => g._id === dropTarget.dataset.groupId,
+          );
+
+          if (!sourceGroup || !targetGroup) {
+            return false;
+          }
+
+          // Perform the sort
+          const sortUpdates = foundry.utils.performIntegerSort(sourceGroup, {
+            target: targetGroup,
+            siblings: existingGroups,
+          });
+
+          const updatedGroups = existingGroups.map((g) => {
+            const update = sortUpdates.find((u) => u.target._id === g._id);
+            return update ? { ...g, ...update.update } : g;
+          });
+
+          await this.actor.update({ "system.actionCardGroups": updatedGroups });
+
+          Logger.debug(
+            "Reordered groups",
+            { sourceId: data.groupId, targetId: dropTarget.dataset.groupId },
+            "DRAG_DROP",
+          );
+
+          return true;
+        }
+
+        // Cross-actor drop - copy the group and its cards
+        return await this._copyGroupFromAnotherActor(data, dropTarget);
+      } catch (error) {
+        Logger.error("Failed to drop group", error, "DRAG_DROP");
+        return false;
+      }
+    }
+
+    /**
+     * Copy a group and its action cards from another actor or transformation
+     * @param {object} data - The drag data containing source info and groupId
+     * @param {HTMLElement} dropTarget - The drop target element (optional, for ordering)
+     * @returns {Promise<boolean>} Success status
+     * @private
+     */
+    async _copyGroupFromAnotherActor(data, dropTarget = null) {
+      try {
+        let sourceGroup;
+        let sourceCards;
+
+        // Determine if source is an actor or transformation
+        if (data.actorId) {
+          // Source is an actor
+          const sourceActor = game.actors.get(data.actorId);
+          if (!sourceActor) {
+            Logger.error("Source actor not found", { actorId: data.actorId }, "DRAG_DROP");
+            return false;
+          }
+
+          const sourceGroups = sourceActor.system.actionCardGroups || [];
+          sourceGroup = sourceGroups.find((g) => g._id === data.groupId);
+          if (!sourceGroup) {
+            Logger.error("Source group not found in actor", { groupId: data.groupId }, "DRAG_DROP");
+            return false;
+          }
+
+          sourceCards = sourceActor.items.filter(
+            (i) => i.type === "actionCard" && i.system.groupId === data.groupId
+          );
+        } else if (data.transformationId) {
+          // Source is a transformation
+          const sourceTransformation = await fromUuid(`Item.${data.transformationId}`);
+          if (!sourceTransformation) {
+            Logger.error("Source transformation not found", { transformationId: data.transformationId }, "DRAG_DROP");
+            return false;
+          }
+
+          const sourceGroups = sourceTransformation.system.actionCardGroups || [];
+          sourceGroup = sourceGroups.find((g) => g._id === data.groupId);
+          if (!sourceGroup) {
+            Logger.error("Source group not found in transformation", { groupId: data.groupId }, "DRAG_DROP");
+            return false;
+          }
+
+          const embeddedActionCards = sourceTransformation.system.getEmbeddedActionCards();
+          sourceCards = embeddedActionCards.filter(
+            (card) => card.system.groupId === data.groupId
+          );
+        } else {
+          Logger.error("Invalid group drag data - no source specified", data, "DRAG_DROP");
+          return false;
+        }
+
+        if (sourceCards.length === 0) {
+          ui.notifications.warn(
+            game.i18n.localize("EVENTIDE_RP_SYSTEM.Actor.ActionCards.NoCardsInGroup")
+          );
+          return false;
+        }
+
+        // Create the new group on this actor
+        const newGroupId = foundry.utils.randomID();
         const existingGroups = this.actor.system.actionCardGroups || [];
-        const sourceGroup = existingGroups.find((g) => g._id === data.groupId);
-        const targetGroup = existingGroups.find(
-          (g) => g._id === dropTarget.dataset.groupId,
-        );
 
-        if (!sourceGroup || !targetGroup) {
-          return false;
+        // Determine sort order for the new group
+        let newGroupSort = 0;
+        if (dropTarget) {
+          const targetGroupId = dropTarget.dataset.groupId;
+          const targetGroup = existingGroups.find((g) => g._id === targetGroupId);
+          if (targetGroup) {
+            newGroupSort = targetGroup.sort || 0;
+          }
+        } else if (existingGroups.length > 0) {
+          newGroupSort = Math.max(...existingGroups.map((g) => g.sort || 0)) + 1;
         }
 
-        // Perform the sort
-        const sortUpdates = foundry.utils.performIntegerSort(sourceGroup, {
-          target: targetGroup,
-          siblings: existingGroups,
-        });
+        const newGroup = {
+          _id: newGroupId,
+          name: sourceGroup.name,
+          sort: newGroupSort,
+        };
 
-        const updatedGroups = existingGroups.map((g) => {
-          const update = sortUpdates.find((u) => u.target._id === g._id);
-          return update ? { ...g, ...update.update } : g;
-        });
-
+        // Update group array with new group
+        const updatedGroups = [...existingGroups, newGroup];
         await this.actor.update({ "system.actionCardGroups": updatedGroups });
 
+        // Copy all action cards
+        const cardDataArray = sourceCards.map((card) => {
+          const cardData = card.toObject ? card.toObject() : foundry.utils.deepClone(card);
+          delete cardData._id; // Let Foundry create new IDs
+          cardData.system.groupId = newGroupId; // Assign to new group
+          return cardData;
+        });
+
+        const createdCards = await this.actor.createEmbeddedDocuments("Item", cardDataArray);
+
         Logger.debug(
-          "Reordered groups",
-          { sourceId: data.groupId, targetId: dropTarget.dataset.groupId },
-          "DRAG_DROP",
+          "Copied group to actor",
+          {
+            sourceType: data.actorId ? "actor" : "transformation",
+            sourceId: data.actorId || data.transformationId,
+            sourceGroupId: data.groupId,
+            newGroupId,
+            cardCount: createdCards.length,
+          },
+          "DRAG_DROP"
+        );
+
+        ui.notifications.info(
+          game.i18n.format("EVENTIDE_RP_SYSTEM.Actor.ActionCards.GroupCopied", {
+            groupName: sourceGroup.name,
+            cardCount: createdCards.length,
+          })
         );
 
         return true;
       } catch (error) {
-        Logger.error("Failed to drop group", error, "DRAG_DROP");
+        Logger.error("Failed to copy group to actor", error, "DRAG_DROP");
+        ui.notifications.error(
+          game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.FailedToCopyGroup")
+        );
         return false;
       }
     }
