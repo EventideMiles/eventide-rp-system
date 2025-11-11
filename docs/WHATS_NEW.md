@@ -4,6 +4,28 @@ Welcome to the Eventide RP System release notes! This page provides an overview 
 
 ## Latest Release
 
+**[v13.17.0](release-notes/v13.17.0.md)** - Transformation to Actor _(November 2025)_
+
+Transformations can create actors now and vice-versa
+
+**Key Features:**
+
+- New scripts: for conversion both directions
+- Drag and Drop implementation for actor to transformation: drag one actor into another's sheet to transform them
+- Migration script for old transformation versions: run once if you used a version prior to 13.17.0 and you'll be all set
+
+## Recent Major Releases
+
+**[v13.16.0](release-notes/v13.16.0.md)** - Action Card Groups _(October 2025)_
+
+Action cards now can be grouped together both within transformations and on actors. They can be drag-and-dropped to and from other actors and transformations.
+
+**Key Highlights:**
+
+- Made action card groups
+- Ensured groups can be migrated the same way singular actions currently can be
+- Ease of use: just drag two skills together to get started with groups
+
 **[v13.15.5](release-notes/v13.15.5.md)** - Stability & Polish _(October 2025)_
 
 Critical bug fixes for multi-level embedded items, enhanced action card UI with configuration callouts, and improved default settings based on user feedback.
@@ -14,8 +36,6 @@ Critical bug fixes for multi-level embedded items, enhanced action card UI with 
 - Enhanced action card display with callouts for misconfigured cards
 - Improved embedded transformation reliability
 - Better default configurations
-
-## Recent Major Releases
 
 ### [v13.15.0](release-notes/v13.15.0.md) - Embedded Transformations & Export Features _(October 2025)_
 
@@ -74,23 +94,28 @@ Enhanced character customization through circumstantial bonuses and feature-base
 
 ## Version Timeline
 
-| Version      | Release Date | Focus                             |
-| ------------ | ------------ | --------------------------------- |
-| **v13.15.5** | October 2025 | Stability & Polish                |
-| v13.15.0     | October 2025 | Embedded Transformations & Export |
-| v13.14.0     | October 2025 | Player Workflows & Item Selection |
-| v13.13.3     | August 2025  | Action Modes & Repetition         |
-| v13.11.0     | 2025         | Action Cards & Combat Automation  |
-| v13.10.0     | 2025         | Feature Rolls & Bonuses           |
+| Version      | Release Date  | Focus                             |
+| ------------ | ------------- | --------------------------------- |
+| **v13.17.0** | November 2025 | Transformation to Actor           |
+| v13.16.0     | October 2025  | Action Card Groups                |
+| v13.15.7     | October 2025  | Token & Transformation Fixes      |
+| v13.15.6     | October 2025  | Embedded Item Fixes               |
+| v13.15.5     | October 2025  | Stability & Polish                |
+| v13.15.0     | October 2025  | Embedded Transformations & Export |
+| v13.14.0     | October 2025  | Player Workflows & Item Selection |
+| v13.13.3     | August 2025   | Action Modes & Repetition         |
+| v13.11.0     | 2025          | Action Cards & Combat Automation  |
+| v13.10.0     | 2025          | Feature Rolls & Bonuses           |
 
 ## Quick Navigation
 
 ### By Feature Area
 
-- **Action Cards**: [v13.11.0](release-notes/v13.11.0.md), [v13.13.3](release-notes/v13.13.3.md), [v13.14.0](release-notes/v13.14.0.md), [v13.15.0](release-notes/v13.15.0.md)
-- **Transformations**: [v13.14.0](release-notes/v13.14.0.md), [v13.15.0](release-notes/v13.15.0.md), [v13.15.5](release-notes/v13.15.5.md)
+- **Action Cards**: [v13.11.0](release-notes/v13.11.0.md), [v13.13.3](release-notes/v13.13.3.md), [v13.14.0](release-notes/v13.14.0.md), [v13.15.0](release-notes/v13.15.0.md), [v13.16.0](release-notes/v13.16.0.md)
+- **Transformations**: [v13.14.0](release-notes/v13.14.0.md), [v13.15.0](release-notes/v13.15.0.md), [v13.15.5](release-notes/v13.15.5.md), [v13.17.0](release-notes/v13.17.0.md)
 - **Features & Bonuses**: [v13.10.0](release-notes/v13.10.0.md)
 - **Combat Automation**: [v13.11.0](release-notes/v13.11.0.md), [v13.13.3](release-notes/v13.13.3.md)
+- **Conversion & Migration**: [v13.17.0](release-notes/v13.17.0.md)
 
 ### Documentation Links
 
@@ -118,4 +143,4 @@ We encourage users to:
 
 ---
 
-**Current Version**: v13.15.5 | **Foundry VTT Compatibility**: v13+ | **Last Updated**: October 2025
+**Current Version**: v13.17.0 | **Foundry VTT Compatibility**: v13+ | **Last Updated**: November 2025
