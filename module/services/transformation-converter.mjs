@@ -232,12 +232,25 @@ export class TransformationConverter {
 
     // Apply token size
     if (transformation.system.size && transformation.system.size > 0) {
-      actorData.prototypeToken.width = transformation.system.size;
-      actorData.prototypeToken.height = transformation.system.size;
+      const size =
+        Math.floor(transformation.system.size) > 1
+          ? Math.floor(transformation.system.size)
+          : transformation.system.size === 0.5
+            ? 0.5
+            : 1;
+      const scale =
+        transformation.system.size === 0.5 ||
+        transformation.system.size % 1 === 0
+          ? 1
+          : transformation.system.size % 1 === 0.75
+            ? 0.75
+            : 1 + 0.5 / size;
+      actorData.prototypeToken.width = size;
+      actorData.prototypeToken.height = size;
       actorData.prototypeToken.texture = {
         ...actorData.prototypeToken.texture,
-        scaleX: transformation.system.size,
-        scaleY: transformation.system.size,
+        scaleX: scale,
+        scaleY: scale,
       };
     }
 
