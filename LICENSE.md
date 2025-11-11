@@ -6,7 +6,7 @@ Copyright (c) 2024 Dalton Sterritt
 
 This system was started on the back of the Boilerplate system and though it
 has grown a lot since then I could not have gotten as far as I have without
-their code. Their code: https://github.com/asacolips-projects/boilerplate
+their code. Their code: <https://github.com/asacolips-projects/boilerplate>
 
 ## GNU LESSER GENERAL PUBLIC LICENSE VERSION 2.1+
 
@@ -35,35 +35,40 @@ The LGPL 2.1+ license was chosen to:
 ## WHAT THIS MEANS FOR USERS
 
 ### Using the Core System
+
 - **Free to use** for any purpose, including commercial
 - **Modifications must be shared** if you distribute the modified core system
 - **No restrictions** on creating content that uses the system
 
 ### Creating Extensions
+
 - **Module packs** can use any license you choose
 - **Campaign content** can be proprietary
 - **Third-party tools** that use the system API can be closed source
 - **Commercial products** are explicitly permitted
 
 ### Contributing to Core
+
 - **Contributions welcome** under LGPL 2.1+
 - **Shared improvements** benefit everyone
 - **Clear licensing** ensures long-term sustainability
 
-## Additional Licensing Provisions:
+## Additional Licensing Provisions
 
 ### Author's Discretionary Licensing
+
 The author (Dalton Sterritt) reserves the right to contribute portions of this codebase to other projects under different licenses on a case-by-case basis. This provision allows for:
+
 - **Selective contributions** to compatible open source projects
 - **Educational use** in tutorials or examples
 - **Community assistance** where different licensing may be beneficial
 - **Future collaboration** opportunities
-Contact the author if you wish to discuss usage under a different license so your use case can be evaluated.
+  Contact the author if you wish to discuss usage under a different license so your use case can be evaluated.
 
 This discretionary licensing applies only to contributions made by the original author and does not affect the LGPL 2.1+ licensing of the core system or the rights of other contributors.
 
 The full text of the LGPL 2.1 license can be found at:
-https://www.gnu.org/licenses/lgpl-2.1.html
+<https://www.gnu.org/licenses/lgpl-2.1.html>
 
 ## IMAGE LICENSES
 
@@ -101,6 +106,8 @@ https://www.gnu.org/licenses/lgpl-2.1.html
 - aura.svg
 - shieldcomb.svg
 - wizard-staff.svg
+- wolf-howl.svg
+- drink-me.svg
 
 ### By Delapouite under CC BY 3.0 from game-icons.net
 
@@ -190,7 +197,7 @@ https://www.gnu.org/licenses/lgpl-2.1.html
 
 - levelup.wav
 
-### By Little Robot Sound Factory under CC-BY from opengameart.org : www.littlerobotsoundfactory.com
+### By Little Robot Sound Factory under CC-BY from opengameart.org : <www.littlerobotsoundfactory.com>
 
 - Trap_00.wav
 
@@ -211,17 +218,22 @@ that are fully compatible with the LGPL 2.1+ license. This ensures that:
 ## FREQUENTLY ASKED QUESTIONS
 
 ### Can I sell content made with this system?
+
 **Yes.** You can create and sell module packs, campaigns, adventures, and other content that uses the Eventide RP System.
 
 ### Do I need to open source my module pack?
+
 **No.** Module packs and extensions that use the system as a library can be licensed however you choose.
 
 ### What if I modify the core system?
+
 **If you distribute** a modified version of the core system, those modifications must be shared under LGPL 2.1+.
 **If you only use** the system internally, you don't need to share modifications.
 
 ### Can I include this system in a commercial product?
+
 **Yes.** Both the core system and your extensions can be used commercially.
 
 ### What about the included assets?
+
 **All included assets** are compatible with commercial use and LGPL licensing. Attribution requirements are documented above.
