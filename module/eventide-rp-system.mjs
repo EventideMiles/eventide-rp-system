@@ -26,6 +26,8 @@ import {
   GearTransfer,
   EffectCreator,
   TransformationCreator,
+  ActorToTransformationConverter,
+  TransformationToActorConverter,
 } from "./ui/_module.mjs";
 
 // import service classes and constants
@@ -121,6 +123,8 @@ globalThis.erps = {
     SelectAbilityRoll,
     EffectCreator,
     TransformationCreator,
+    ActorToTransformationConverter,
+    TransformationToActorConverter,
   },
   settings: {
     getSetting,

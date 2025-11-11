@@ -69,6 +69,7 @@
       "Buttons": {
         "Change": "Change",
         "Close": "Close",
+        "Convert": "Convert",
         "Create": "Create",
         "CreateAndApply": "Create and Apply",
         "Damage": "Damage",
@@ -125,6 +126,12 @@
         "ActionCard": {
           "NoEmbeddedItem": "This action card has no embedded item configured. Please add an item to the action slot before executing.",
           "TargetingError": "You do not have the correct targets selected for this action card."
+        },
+        "Conversion": {
+          "ActorToTransformation": "Convert actor <strong>{actorName}</strong> to a transformation item. This will copy the actor's ability values, combat powers, and action cards.",
+          "TransformationToActor": "Convert transformation <strong>{transformationName}</strong> to an actor. This will create a new actor with the transformation's ability overrides and embedded items.",
+          "ActorToTransformationGeneric": "Select an actor from the world or compendiums to convert into a transformation item. This will copy the actor's ability values, combat powers, and action cards.",
+          "TransformationToActorGeneric": "Select a transformation from the world or compendiums to convert into an actor. This will create a new actor with the transformation's ability overrides and embedded items."
         }
       },
       "ItemSelector": {
@@ -160,12 +167,32 @@
       },
       "AddExisting": "Add Existing Items",
       "Placeholders": {
+        "ActorName": "Actor Name",
         "ChangeValue": "Change Value",
+        "CompendiumId": "world.mycompendium",
         "Description": "Description",
         "Formula": "xdy + z",
         "Label": "Label",
         "Name": "Name",
-        "TransferNote": "Add a note about this transfer"
+        "SelectActor": "Choose an actor to convert...",
+        "SelectTransformation": "Choose a transformation to convert...",
+        "TransferNote": "Add a note about this transfer",
+        "TransformationName": "Transformation Name"
+      },
+      "Labels": {
+        "ActorName": "Actor Name",
+        "ActorType": "Actor Type",
+        "CompendiumId": "Custom Compendium (Optional)",
+        "CreateIn": "Create In",
+        "CreateInWorld": "World Items",
+        "CreateInCompendium": "Compendium Only",
+        "CreateInBoth": "Both World & Compendium",
+        "SelectActor": "Select Actor",
+        "SelectTransformation": "Select Transformation",
+        "TransformationName": "Transformation Name"
+      },
+      "HelpText": {
+        "CompendiumId": "Leave blank to use default compendiums. Format: world.compendiumname"
       }
     }
   }

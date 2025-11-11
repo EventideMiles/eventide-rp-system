@@ -167,7 +167,12 @@
       "SourceItemNotTransformationOrActionCard": "Source item is not a transformation or action card",
       "UnsupportedEmbeddedItemType": "Unsupported embedded item type: {itemType}",
       "UserIsNotGM": "User is not GM",
-      "ItemNotTransformation": "Item is not a transformation"
+      "ItemNotTransformation": "Item is not a transformation",
+      "ActorToTransformationFailed": "Failed to convert actor to transformation",
+      "TransformationToActorFailed": "Failed to convert transformation to actor",
+      "NoActorSelected": "Please select an actor to convert",
+      "NoTransformationSelected": "Please select a transformation to convert",
+      "ActorNotFound": "Could not find the selected actor"
     },
     "Info": {
       "CompendiumItemCreated": "Created {keyType} item {name} in the {packLabel} compendium",

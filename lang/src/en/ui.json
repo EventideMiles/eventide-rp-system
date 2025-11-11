@@ -1,6 +1,7 @@
 {
   "EVENTIDE_RP_SYSTEM": {
     "WindowTitles": {
+      "ActorToTransformation": "Convert Actor to Transformation",
       "ChangeTargetStatus": "Change Target Status",
       "CombatPowerPopup": "Combat Power Details",
       "ConfigureToken": "Configure Token",
@@ -14,7 +15,8 @@
       "SelectAbilityRoll": "Select Ability Roll",
       "SheetTheme": "Cycle Sheet Theme",
       "StatusPopup": "Status Information",
-      "TransformationCreator": "Transformation Creator"
+      "TransformationCreator": "Transformation Creator",
+      "TransformationToActor": "Convert Transformation to Actor"
     },
     "MessageHeaders": {
       "Feature": "Feature: {name}",

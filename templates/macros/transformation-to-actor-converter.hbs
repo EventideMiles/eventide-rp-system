@@ -1,0 +1,68 @@
+{{!-- Transformation to Actor Converter Form --}}
+<div class="{{cssClass}} erps-form" autocomplete="off">
+  {{> callout-box}}
+  <div class="erps-form__content">
+    <div class="erps-form__group">
+      <label class="erps-form__label" for="transformationSelect">{{localize "EVENTIDE_RP_SYSTEM.Forms.Labels.SelectTransformation"}}</label>
+      <select
+        class="erps-select"
+        id="transformationSelect"
+        name="transformationSelect"
+      >
+        <option value="">{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.SelectTransformation"}}</option>
+        {{#each transformations as |transformation|}}
+          <option value="{{transformation.uuid}}">
+            {{transformation.name}} ({{transformation.source}})
+          </option>
+        {{/each}}
+      </select>
+    </div>
+
+    <div class="erps-form__group">
+      <label class="erps-form__label" for="name">{{localize "EVENTIDE_RP_SYSTEM.Forms.Labels.ActorName"}}</label>
+      <input
+        class="erps-input"
+        type="text"
+        id="name"
+        name="name"
+        placeholder="{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.ActorName"}}"
+      />
+    </div>
+
+    <div class="erps-form__group">
+      <label class="erps-form__label" for="actorType">{{localize "EVENTIDE_RP_SYSTEM.Forms.Labels.ActorType"}}</label>
+      <select class="erps-select" id="actorType" name="actorType">
+        {{#each actorTypeOptions as |option|}}
+          <option value="{{option.value}}" {{#if option.selected}}selected{{/if}}>
+            {{option.label}}
+          </option>
+        {{/each}}
+      </select>
+    </div>
+
+    <div class="erps-form__group">
+      <label class="erps-form__label" for="createIn">{{localize "EVENTIDE_RP_SYSTEM.Forms.Labels.CreateIn"}}</label>
+      <select class="erps-select" id="createIn" name="createIn">
+        {{#each createInOptions as |option|}}
+          <option value="{{option.value}}" {{#if option.selected}}selected{{/if}}>
+            {{option.label}}
+          </option>
+        {{/each}}
+      </select>
+    </div>
+
+    <div class="erps-form__group">
+      <label class="erps-form__label erps-form__label--optional" for="compendium">{{localize "EVENTIDE_RP_SYSTEM.Forms.Labels.CompendiumId"}}</label>
+      <input
+        class="erps-input"
+        type="text"
+        id="compendium"
+        name="compendium"
+        placeholder="{{localize "EVENTIDE_RP_SYSTEM.Forms.Placeholders.CompendiumId"}}"
+      />
+      <p class="erps-form__help-text">{{localize "EVENTIDE_RP_SYSTEM.Forms.HelpText.CompendiumId"}}</p>
+    </div>
+  </div>
+
+  {{> macro-footer}}
+</div>
