@@ -84,7 +84,8 @@
                   data-type="visible"
                 >
                   {{#if (eq ../item.type "transformation")}}
-                    <option value="transform" {{#if (eq mode "transform")}}selected{{/if}}>Transform</option>
+                    <option value="transformOverride" {{#if (eq mode "transformOverride")}}selected{{/if}}>Transform Override</option>
+                    <option value="transformChange" {{#if (eq mode "transformChange")}}selected{{/if}}>Transform Change</option>
                   {{else}}
                     <option value="add" {{#if (eq mode "change")}}selected{{/if}}>Add</option>
                     <option value="override" {{#if (eq mode "override")}}selected{{/if}}>Override</option>

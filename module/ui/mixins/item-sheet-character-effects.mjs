@@ -115,7 +115,11 @@ export const ItemSheetCharacterEffectsMixin = (BaseClass) =>
                         ? "diceAdjustments.disadvantage"
                         : effect.mode === "AC"
                           ? "ac.change"
-                          : "transform"
+                          : effect.mode === "transformOverride"
+                            ? "transformOverride"
+                            : effect.mode === "transformChange"
+                              ? "transformChange"
+                              : "transform"
               }`;
             } else {
               key = `system.hiddenAbilities.${effect.ability}.${
@@ -124,7 +128,7 @@ export const ItemSheetCharacterEffectsMixin = (BaseClass) =>
             }
 
             const mode =
-              (isRegular && effect.mode !== "override") ||
+              (isRegular && effect.mode !== "override" && effect.mode !== "transformOverride") ||
               (!isRegular && effect.mode === "add")
                 ? CONST.ACTIVE_EFFECT_MODES.ADD
                 : CONST.ACTIVE_EFFECT_MODES.OVERRIDE;

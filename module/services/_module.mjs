@@ -10,3 +10,4 @@ export * from "./managers/_module.mjs";
 export * from "./settings/_module.mjs";
 export * from "./logger.mjs";
 export * from "./image-zoom.mjs";
+export * from "./transformation-converter.mjs";

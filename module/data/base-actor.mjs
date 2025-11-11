@@ -55,7 +55,11 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
               ...overrideInteger,
               initial: null,
             }),
-            transform: new fields.NumberField({
+            transformOverride: new fields.NumberField({
+              ...overrideInteger,
+              initial: null,
+            }),
+            transformChange: new fields.NumberField({
               ...requiredInteger,
               initial: 0,
             }),
@@ -282,9 +286,9 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
         game.i18n.localize(
           CONFIG.EVENTIDE_RP_SYSTEM.abilityAbbreviations[key],
         ) ?? key;
-      current.total = current.override
-        ? current.override + current.change + current.transform
-        : current.value + current.change + current.transform;
+      const base =
+        current.override ?? current.transformOverride ?? current.value;
+      current.total = base + current.change + current.transformChange;
       current.ac.total = current.total + 11 + current.ac.change;
 
       // Calculate total for diceAdjustments
