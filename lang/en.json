@@ -584,7 +584,8 @@
       "SourceItemNotActionCard": "Source item is not an action card",
       "SourceItemNotTransformationOrActionCard": "Source item is not a transformation or action card",
       "UnsupportedEmbeddedItemType": "Unsupported embedded item type: {itemType}",
-      "UserIsNotGM": "User is not GM"
+      "UserIsNotGM": "User is not GM",
+      "ItemNotTransformation": "Item is not a transformation"
     },
     "Info": {
       "CompendiumItemCreated": "Created {keyType} item {name} in the {packLabel} compendium",
@@ -609,7 +610,9 @@
       "CreateGroupError": "Failed to create action card group",
       "RenameGroupError": "Failed to rename action card group",
       "DeleteGroupError": "Failed to delete action card group",
-      "ToggleGroupError": "Failed to toggle group collapse state"
+      "ToggleGroupError": "Failed to toggle group collapse state",
+      "ActorConvertedToTransformation": "Actor '{name}' has been successfully converted to a transformation",
+      "TransformationConvertedToActor": "Transformation '{name}' has been successfully converted to an actor"
     },
     "Warnings": {
       "CannotChangeImageWhileTransformed": "Cannot change image while transformed",
