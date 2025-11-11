@@ -695,7 +695,7 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
     // Initialize item selector combo boxes for action cards
     // Don't await this to avoid blocking the render process
     this._initializeItemSelectors().catch((error) => {
-      console.error("Failed to initialize item selectors:", error);
+      Logger.error("Failed to initialize item selectors", error, "ItemSheet");
     });
   }
 
@@ -831,9 +831,10 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
           );
         }
       } catch (error) {
-        console.error(
-          "Failed to update transformation action card icon tint:",
+        Logger.error(
+          "Failed to update transformation action card icon tint",
           error,
+          "ItemSheet",
         );
       }
       return;
@@ -854,7 +855,7 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
       // to prevent the sheet from closing
       await this.item.update(updateData, { fromEmbeddedItem: true });
     } catch (error) {
-      console.error("Failed to update transformation action card:", error);
+      Logger.error("Failed to update transformation action card", error, "ItemSheet");
     }
   }
 
@@ -874,7 +875,7 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
       // Don't use fromEmbeddedItem flag for full form submissions to allow normal behavior
       await this.item.update(formData);
     } catch (error) {
-      console.error("Failed to submit transformation action card form:", error);
+      Logger.error("Failed to submit transformation action card form", error, "ItemSheet");
       ui.notifications.error(
         "Failed to save action card. See console for details.",
       );
@@ -1001,8 +1002,7 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
         });
       }
     } catch (error) {
-      console.error("ItemSheet: Failed to initialize item selectors:", error);
-      Logger.error("Failed to initialize item selectors", error, "ITEM_SHEET");
+      Logger.error("Failed to initialize item selectors", error, "ItemSheet");
     }
   }
 

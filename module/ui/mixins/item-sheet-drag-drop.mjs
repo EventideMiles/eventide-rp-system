@@ -503,8 +503,7 @@ export const ItemSheetDragDropMixin = (BaseClass) =>
           );
           return true;
         } catch (error) {
-          console.error("[DRAG_DEBUG] ERROR during sort:", error);
-          console.error("[DRAG_DEBUG] Error stack:", error.stack);
+          Logger.error("ERROR during sort", error, "ItemSheetDragDrop");
           throw error;
         }
       }

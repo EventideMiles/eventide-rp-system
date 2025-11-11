@@ -220,15 +220,12 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
 
       const transformation =
         await erps.utils.TransformationConverter.actorToTransformation(actor);
-      console.warn(transformation.compendium);
 
       // Create the owned item
       const result = await this._onDropItemCreate(
         transformation.compendium,
         event,
       );
-
-      console.warn(result);
 
       // transform the actor
       await this.actor.applyTransformation(

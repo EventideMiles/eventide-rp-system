@@ -1,3 +1,5 @@
+import { Logger } from "../services/logger.mjs";
+
 /**
  * Centralized system for collecting items from all accessible sources
  * including compendiums, character sheets, and world items
@@ -27,7 +29,11 @@ export class ItemSourceCollector {
 
       return uniqueItems.sort((a, b) => a.name.localeCompare(b.name));
     } catch (error) {
-      console.error("Error collecting items from sources:", error);
+      Logger.error(
+        "Error collecting items from sources",
+        error,
+        "ItemSourceCollector",
+      );
       ui.notifications.error(
         "Failed to load available items. Please try again.",
       );
@@ -76,9 +82,10 @@ export class ItemSourceCollector {
           items.push(formattedItem);
         }
       } catch (error) {
-        console.warn(
-          `Failed to load compendium ${pack.id || pack.collection}:`,
+        Logger.warn(
+          `Failed to load compendium ${pack.id || pack.collection}`,
           error,
+          "ItemSourceCollector",
         );
       }
     }
@@ -185,9 +192,10 @@ export class ItemSourceCollector {
     try {
       return await fromUuid(formattedItem.uuid);
     } catch (error) {
-      console.error(
-        `Failed to load item from UUID ${formattedItem.uuid}:`,
+      Logger.error(
+        `Failed to load item from UUID ${formattedItem.uuid}`,
         error,
+        "ItemSourceCollector",
       );
       return null;
     }
@@ -249,8 +257,10 @@ export class ItemSourceCollector {
         // Get the actual document to check roll type
         const itemDoc = await fromUuid(item.uuid);
         if (!itemDoc) {
-          console.warn(
-            `ItemSourceCollector: Could not load item ${item.uuid} for roll type check`,
+          Logger.warn(
+            `Could not load item ${item.uuid} for roll type check`,
+            null,
+            "ItemSourceCollector",
           );
           continue;
         }
@@ -262,9 +272,10 @@ export class ItemSourceCollector {
           validItems.push(item);
         }
       } catch (error) {
-        console.warn(
-          `ItemSourceCollector: Error checking roll type for ${item.name}:`,
+        Logger.warn(
+          `Error checking roll type for ${item.name}`,
           error,
+          "ItemSourceCollector",
         );
       }
     }

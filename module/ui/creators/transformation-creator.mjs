@@ -1,3 +1,5 @@
+import { Logger } from "../../services/logger.mjs";
+
 /**
  * Utility class for creating transformation items.
  * Directly creates transformations in the custom transformations compendium.
@@ -76,7 +78,7 @@ export class TransformationCreator {
 
       return item;
     } catch (error) {
-      console.error("Failed to create transformation:", error);
+      Logger.error("Failed to create transformation", error, "TransformationCreator");
       ui.notifications.error(
         game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.TransformationCreationFailed"),
       );

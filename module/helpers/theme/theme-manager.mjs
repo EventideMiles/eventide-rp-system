@@ -9,6 +9,8 @@
  * - Theme Presets
  */
 
+import { Logger } from "../../services/logger.mjs";
+
 // Import all theme management functionality
 export {
   ThemeManagerInstance,
@@ -71,8 +73,10 @@ export const initializeThemeManager = async (application, options = {}) => {
     if (preset) {
       options = preset;
     } else {
-      console.warn(
+      Logger.warn(
         `Theme preset "${options}" not found, using default options`,
+        null,
+        "ThemeManager",
       );
       options = {};
     }
