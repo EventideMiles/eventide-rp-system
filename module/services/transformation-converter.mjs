@@ -22,7 +22,7 @@ export class TransformationConverter {
    * @param {string} [options.name] - Name for the transformation (defaults to actor name)
    * @param {string} [options.folder] - Folder ID for world item creation
    * @param {string} [options.compendium] - Compendium pack ID (defaults to world.convertedtransformations)
-   * @param {string} [options.createIn="both"] - Where to create: "world", "compendium", or "both"
+   * @param {string} [options.createIn="compendium"] - Where to create: "world", "compendium", or "both"
    * @returns {Promise<{world: Item|null, compendium: Item|null}>} The created transformation items
    */
   static async actorToTransformation(actor, options = {}) {
@@ -34,7 +34,7 @@ export class TransformationConverter {
     }
 
     const name = options.name || actor.name;
-    const createIn = options.createIn || "both";
+    const createIn = options.createIn || "compendium";
     const compendiumName =
       options.compendium || `world.${this.COMPENDIUMS.transformations}`;
 
@@ -169,10 +169,10 @@ export class TransformationConverter {
    * @param {Item} transformation - The transformation item to convert
    * @param {Object} options - Conversion options
    * @param {string} [options.name] - Name for the actor (defaults to transformation name)
-   * @param {string} [options.type="npc"] - Actor type: "character" or "npc"
+   * @param {string} [options.type="character"] - Actor type: "character" or "npc"
    * @param {string} [options.folder] - Folder ID for world actor creation
    * @param {string} [options.compendium] - Compendium pack ID (defaults to world.convertedactors)
-   * @param {string} [options.createIn="both"] - Where to create: "world", "compendium", or "both"
+   * @param {string} [options.createIn="compendium"] - Where to create: "world", "compendium", or "both"
    * @returns {Promise<{world: Actor|null, compendium: Actor|null}>} The created actors
    */
   static async transformationToActor(transformation, options = {}) {
@@ -191,8 +191,8 @@ export class TransformationConverter {
     }
 
     const name = options.name || transformation.name;
-    const type = options.type || "npc";
-    const createIn = options.createIn || "both";
+    const type = options.type || "character";
+    const createIn = options.createIn || "compendium";
     const compendiumName =
       options.compendium || `world.${this.COMPENDIUMS.actors}`;
 
@@ -334,7 +334,8 @@ export class TransformationConverter {
 
   /**
    * Calculate token size from prototype token data
-   * Rounds scale values appropriately: < 1 becomes 0.5 (small), >= 1 rounds to nearest integer
+   * Rounds scale values appropriately: < 1 becomes 0.5 (small), >= 1 rounds to nearest
+   * width integer
    *
    * @param {Object} prototypeToken - The actor's prototype token
    * @returns {number} The calculated size
@@ -342,12 +343,20 @@ export class TransformationConverter {
    */
   static _calculateTokenSize(prototypeToken) {
     const scale = prototypeToken.texture?.scaleX ?? 1;
+    const width = prototypeToken.width ?? 1;
+    const height = prototypeToken.height ?? 1;
 
-    if (scale < 1) {
-      return 0.5; // Small
+    const constrained = Math.min(Math.max(width, height), 5);
+
+    if (scale < 1 && (width < 1 || height < 1)) {
+      return 0.5; // Tiny
+    } else if (scale < 1 && (width === 1 || height === 1)) {
+      return 0.75; // Small
+    } else if (constrained === 5 || scale === 1) {
+      return constrained; // return early since 5.5 doesn't exist
+    } else {
+      return constrained + 0.5; // half size
     }
-
-    return Math.round(scale);
   }
 
   /**
