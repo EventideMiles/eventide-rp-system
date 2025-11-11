@@ -26,6 +26,8 @@ import {
   GearTransfer,
   EffectCreator,
   TransformationCreator,
+  ActorToTransformationConverter,
+  TransformationToActorConverter,
 } from "./ui/_module.mjs";
 
 // import service classes and constants
@@ -43,6 +45,7 @@ import {
   setSetting,
   Logger,
   ImageZoomService,
+  TransformationConverter,
 } from "./services/_module.mjs";
 
 // Import token configuration guards
@@ -109,6 +112,7 @@ globalThis.erps = {
     getActiveThemeInstances,
     ErrorHandler,
     performSystemCleanup,
+    TransformationConverter,
   },
   macros: {
     GearTransfer,
@@ -119,6 +123,8 @@ globalThis.erps = {
     SelectAbilityRoll,
     EffectCreator,
     TransformationCreator,
+    ActorToTransformationConverter,
+    TransformationToActorConverter,
   },
   settings: {
     getSetting,

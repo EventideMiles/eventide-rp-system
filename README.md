@@ -9,7 +9,7 @@
 
 1. In Foundry VTT, navigate to the "Game Systems" tab
 2. Click "Install System"
-3. In the "Manifest URL" field, paste: https://github.com/EventideMiles/eventide-rp-system/releases/latest/download/system.json
+3. In the "Manifest URL" field, paste: <https://github.com/EventideMiles/eventide-rp-system/releases/latest/download/system.json>
 4. Click "Install"
 
 Alternatively, you can download the latest release from the [Releases](https://github.com/EventideMiles/eventide-rp-system/releases) page and install it manually.
@@ -34,6 +34,7 @@ The Eventide system is built around five core abilities that determine all chara
 ### Dynamic Character Modification
 
 #### **Status Effects System**
+
 - **Temporary conditions** applied during gameplay (poisoned, blessed, frightened)
 - **Environmental effects** from circumstances (wet, cold, inspired)
 - **Visual token indicators** for easy tracking
@@ -41,6 +42,7 @@ The Eventide system is built around five core abilities that determine all chara
 - **Stacking and interaction** mechanics for complex scenarios
 
 #### **Features System**
+
 - **Permanent character traits** representing background and training
 - **Racial or species abilities** for fantasy settings
 - **Character development** rewards for growth and achievement
@@ -48,6 +50,7 @@ The Eventide system is built around five core abilities that determine all chara
 - **Active roll capabilities** with flexible mechanics
 
 #### **Gear System**
+
 - **Dynamic equipment effects** that modify abilities when equipped/unequipped
 - **Cursed items** that cannot be easily removed
 - **Usage tracking** for limited-use items
@@ -56,6 +59,7 @@ The Eventide system is built around five core abilities that determine all chara
 - **Optional chat messages** for equipment changes
 
 #### **Hidden Abilities System**
+
 - **GM-controlled modifiers** for special scenarios
 - **Dice pool modifications** that change what dice characters roll
 - **Critical range adjustments** for enhanced or reduced critical chances
@@ -64,18 +68,21 @@ The Eventide system is built around five core abilities that determine all chara
 ### Combat System
 
 #### **Flexible Initiative**
+
 - **Customizable initiative formula** with configurable decimal places
 - **Automatic rolling options** for NPCs and/or players
 - **Privacy controls** for NPC initiative (hidden from players)
 - **Configurable combat round duration**
 
 #### **Ability-Based Combat**
+
 - **Any ability can be used** for attacks based on narrative context
 - **Armor Class calculation** (Ability + 11) shown automatically to GMs
 - **Critical success and failure** mechanics with customizable ranges
 - **Tactical depth** through positioning, status effects, and gear
 
 #### **Combat Powers**
+
 - **Special abilities** that cost Power to use
 - **Ability-based activation** with flexible targeting
 - **Rich descriptions** with HTML formatting support
@@ -85,12 +92,14 @@ The Eventide system is built around five core abilities that determine all chara
 ### Advanced Systems
 
 #### **Transformation System**
+
 - **Comprehensive character changes** affecting abilities, resources, and appearance
 - **Embedded combat powers** available only while transformed
 - **Token modifications** for visual representation
 - **Narrative integration** with rich descriptions
 
 #### **Resource Management**
+
 - **Resolve** (health/stamina) derived from Fortitude
 - **Power** (mana/special abilities) derived from Will
 - **Dynamic modification** through gear, status effects, and features
@@ -99,6 +108,7 @@ The Eventide system is built around five core abilities that determine all chara
 ### User Interface and Experience
 
 #### **Multiple Themes**
+
 - **Blue theme** (default) balances visuals with ease of use
 - **Dark theme** best for long play sessions
 - **Green theme** perfect to get into character with nature feel
@@ -107,12 +117,14 @@ The Eventide system is built around five core abilities that determine all chara
 - **Purple theme** a bright dark mode theme for those who love purple
 
 #### **System Sounds**
+
 - **Configurable audio feedback** for key actions
 - **Volume controls** and enable/disable options
 - **Custom sounds** for healing, damage, status effects, gear changes, combat powers, and initiative
 - **Immersive audio experience** that enhances gameplay
 
 #### **Rich Text Support**
+
 - **HTML formatting** in descriptions and biographies
 - **Color customization** for effects and items
 - **Visual indicators** on tokens for status effects and gear
@@ -122,22 +134,26 @@ The Eventide system is built around five core abilities that determine all chara
 The system includes a comprehensive macro library (ERPS Macros compendium):
 
 #### **Creation Tools**
+
 - **Effect Creator**: Intuitive interface for creating status effects and features
 - **Gear Creator**: Comprehensive tool for creating equipment with effects
 - **Transformation Creator**: Advanced tool for character transformations
 
 #### **Player Tools**
+
 - **Player versions** of creation macros for self-management
 - **Ability rolling** macros for quick access
 - **Gear management** tools for equipment handling
 
 #### **GM Tools**
+
 - **Damage and healing** scripts with formatted chat output
 - **Status effect management** with intensify/weaken options
 - **Target selection** and effect application tools
 - **Settings memory** for frequently used configurations
 
 #### **Extensible Design**
+
 - **API** for creating custom macros
 - **Documentation** for learning about how to integrate with the system
 - **Configurable parameters** for different scenarios
@@ -146,12 +162,14 @@ The system includes a comprehensive macro library (ERPS Macros compendium):
 ## Item Types and Functionality
 
 ### Features
+
 - **Permanent character traits** with lasting effects
 - **Background abilities** reflecting training and experience
 - **Optional rolling capabilities** with ability-based mechanics
 - **Rich descriptions** with HTML formatting support
 
 ### Gear
+
 - **Equippable items** with dynamic effects
 - **Class categorization** for organization
 - **Usage tracking** for consumables
@@ -159,18 +177,21 @@ The system includes a comprehensive macro library (ERPS Macros compendium):
 - **Cursed item support** for items that resist removal
 
 ### Status Effects
+
 - **Temporary modifications** applied during gameplay
 - **Environmental conditions** from circumstances
 - **Combat conditions** like poisoned, blessed, or stunned
 - **Visual representation** on tokens
 
 ### Combat Powers
+
 - **Special abilities** with Power costs
 - **Ability-based activation** rolls
 - **Damage or effect** application
 - **Prerequisites** for complex abilities
 
 ### Transformations
+
 - **Comprehensive character changes** affecting multiple aspects
 - **Embedded combat powers** available only while transformed
 - **Resource modifications** to health and power pools
@@ -181,24 +202,28 @@ The system includes a comprehensive macro library (ERPS Macros compendium):
 ### For Game Masters
 
 #### **Character and World Management**
+
 - **Modify character abilities** through status effects, features, and gear
 - **Create custom equipment** and place it in the world
 - **Design NPCs** with unique combat powers and abilities
 - **Apply environmental effects** through status effects
 
 #### **Combat and Encounter Management**
+
 - **Track initiative** with flexible, automated options
 - **Apply damage and healing** with formatted chat messages
 - **Manage status effects** with visual indicators
 - **Control hidden abilities** for special scenarios
 
 #### **System Configuration**
+
 - **Customize initiative** formulas and automation
 - **Configure audio settings** for immersive experience
 - **Set privacy controls** for NPC information
 - **Choose themes** that work best for your group
 
 #### **Advanced Features**
+
 - **Hidden abilities system** for special mechanics
 - **Transformation management** for dramatic character changes
 - **Macro customization** for campaign-specific needs
@@ -207,18 +232,21 @@ The system includes a comprehensive macro library (ERPS Macros compendium):
 ### For Players
 
 #### **Character Creation and Development**
+
 - **Build characters** with unique combinations of features
 - **Manage equipment** with dynamic effects
 - **Track character growth** through features and abilities
 - **Customize appearance** with rich text descriptions
 
 #### **Gameplay**
+
 - **Roll abilities** directly from character sheets
 - **Use combat powers** with integrated resource management
 - **Manage equipment** with easy equip/unequip controls
 - **Track status effects** with visual indicators
 
 #### **Interface Customization**
+
 - **Choose themes** for comfortable viewing
 - **Configure audio** preferences
 - **Organize inventory** with equipped/unequipped separation
@@ -227,24 +255,28 @@ The system includes a comprehensive macro library (ERPS Macros compendium):
 ## System Settings and Configuration
 
 ### Combat Settings
+
 - **Initiative formula** customization
 - **Automatic rolling** for NPCs and players
 - **Privacy controls** for NPC information
 - **Combat round duration** configuration
 
 ### Interface Settings
+
 - **Theme selection** (Dark/Light)
 - **Equipment change messages** toggle
 - **Token icon display** options
 - **Chat message formatting** preferences
 
 ### Audio Settings
+
 - **System sounds** enable/disable
 - **Volume controls** for all sound types
 - **Custom sound** configuration
 - **Individual sound** toggles for specific actions
 
 ### Performance Settings
+
 - **Optimization options** for large campaigns
 - **Memory management** for extensive item libraries
 - **Network optimization** for remote play
@@ -295,6 +327,7 @@ The system uses a modular approach for language files:
 To build language files: `npm run build:lang`
 
 To add a new language:
+
 1. Create directory in `lang/src` with language code
 2. Copy and translate JSON files from existing language
 3. Run build script
@@ -303,6 +336,7 @@ To add a new language:
 ## Compendiums and Content
 
 ### ERPS Macros Compendium
+
 - **Effect Creator**: Create status effects and features
 - **Gear Creator**: Create equipment with effects
 - **Transformation Creator**: Create character transformations
@@ -310,11 +344,13 @@ To add a new language:
 - **GM Tools**: Advanced management and application tools
 
 ### NPC Compendium
+
 - **Example NPCs** demonstrating system capabilities
 - **Template characters** for quick campaign setup
 - **Stat blocks** optimized for the Eventide system
 
 ### Items Compendium
+
 - **Example gear** showing equipment possibilities
 - **Status effects** for common conditions
 - **Features** for character backgrounds and development

@@ -1,3 +1,5 @@
+import { Logger } from "./logger.mjs";
+
 /**
  * Image zoom service for chat card images
  * Provides modal overlay functionality for enlarging chat card images
@@ -72,7 +74,7 @@ export class ImageZoomService {
   static showZoom(imageSrc, imageAlt = "") {
     const overlay = document.getElementById(this.OVERLAY_ID);
     if (!overlay) {
-      console.warn("ImageZoomService: Overlay not initialized");
+      Logger.warn("Overlay not initialized", null, "ImageZoomService");
       return;
     }
 
@@ -98,7 +100,7 @@ export class ImageZoomService {
     image.onerror = () => {
       // Only show warning if this is still the intended image
       if (image.src === imageSrc) {
-        console.warn("ImageZoomService: Failed to load image", imageSrc);
+        Logger.warn("Failed to load image", imageSrc, "ImageZoomService");
       }
     };
 

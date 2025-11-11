@@ -56,14 +56,14 @@ export class ItemSelectorComboBox {
     }, "ITEM_SELECTOR");
 
     if (!this.container) {
-      console.error("ItemSelectorComboBox: No container provided");
+      Logger.error("No container provided", null, "ItemSelectorComboBox");
       return;
     }
 
     // Handle both native DOM elements and jQuery objects
     const containerElement = this.container.nodeType ? this.container : this.container[0];
     if (!containerElement) {
-      console.error("ItemSelectorComboBox: Invalid container");
+      Logger.error("Invalid container", null, "ItemSelectorComboBox");
       return;
     }
 
@@ -83,7 +83,7 @@ export class ItemSelectorComboBox {
 
 
     if (!this.element || !this.input) {
-      console.error("ItemSelectorComboBox: Required DOM elements not found");
+      Logger.error("Required DOM elements not found", null, "ItemSelectorComboBox");
       return;
     }
 
@@ -164,7 +164,7 @@ export class ItemSelectorComboBox {
 
       this.renderItems();
     } catch (error) {
-      console.error("ItemSelectorComboBox: Failed to load items:", error);
+      Logger.error("Failed to load items", error, "ItemSelectorComboBox");
       ui.notifications.error(game.i18n.localize("EVENTIDE_RP_SYSTEM.UI.FailedToLoadItems"));
     } finally {
       this.showLoading(false);
@@ -304,7 +304,7 @@ export class ItemSelectorComboBox {
   async selectItemByUuid(uuid) {
 
     if (!uuid) {
-      console.error("ItemSelectorComboBox: No UUID provided");
+      Logger.error("No UUID provided", null, "ItemSelectorComboBox");
       return;
     }
 
@@ -449,7 +449,7 @@ export class ItemSelectorComboBox {
       // Fallback to UUID-based selection
       this.selectItemByUuid(uuid);
     } else {
-      console.error("ItemSelectorComboBox: Neither index nor UUID available for selection");
+      Logger.error("Neither index nor UUID available for selection", null, "ItemSelectorComboBox");
     }
   }
 

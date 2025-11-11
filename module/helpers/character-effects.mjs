@@ -77,12 +77,14 @@ const prepareCharacterEffects = async (effect) => {
  *
  * @private
  * @param {Object} change - The change object
- * @returns {string} The mode of the effect ("disadvantage", "advantage", "override", "ac.change", or "change")
+ * @returns {string} The mode of the effect ("disadvantage", "advantage", "override", "ac.change", "transformOverride", "transformChange", or "change")
  */
 const determineEffectMode = (change) => {
   if (change.key.includes("disadvantage")) return "disadvantage";
   if (change.key.includes("advantage")) return "advantage";
   if (change.key.includes("ac.change")) return "ac.change";
+  if (change.key.includes("transformOverride")) return "transformOverride";
+  if (change.key.includes("transformChange")) return "transformChange";
   if (change.mode === 5) return "override";
   return "change";
 };
