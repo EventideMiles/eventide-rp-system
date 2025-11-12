@@ -1723,6 +1723,8 @@ export const ItemSheetActionsMixin = (BaseClass) =>
             const actionCard = actionCards.find((card) => card._id === itemId);
 
             if (actionCard && actionCard.system.groupId) {
+              const removedGroupId = actionCard.system.groupId;
+
               // Update the embedded action card's groupId using deepClone
               const updatedActionCards = actionCards.map((card) => {
                 if (card._id === itemId) {
@@ -1733,7 +1735,21 @@ export const ItemSheetActionsMixin = (BaseClass) =>
                 return card;
               });
 
-              await this.item.update({ "system.embeddedActionCards": updatedActionCards });
+              // Check if the group is now empty
+              let updatedGroups = this.item.system.actionCardGroups || [];
+              const cardsInGroup = updatedActionCards.filter(
+                (card) => card.system?.groupId === removedGroupId,
+              );
+
+              if (cardsInGroup.length === 0) {
+                // Remove the empty group
+                updatedGroups = updatedGroups.filter((g) => g._id !== removedGroupId);
+              }
+
+              await this.item.update({
+                "system.embeddedActionCards": updatedActionCards,
+                "system.actionCardGroups": updatedGroups,
+              });
             }
           },
         },

@@ -710,33 +710,18 @@ export const ItemSheetDragDropMixin = (BaseClass) =>
         (card) => card.system.groupId === groupId,
       );
 
-      if (cardsInGroup.length < 2) {
-        // Ungroup remaining cards
-        const updatedActionCards = embeddedActionCards.map((card) => {
-          if (card.system.groupId === groupId) {
-            return {
-              ...card,
-              system: {
-                ...card.system,
-                groupId: null,
-              },
-            };
-          }
-          return card;
-        });
-
-        // Remove the group
+      if (cardsInGroup.length === 0) {
+        // Remove the empty group
         const existingGroups = this.item.system.actionCardGroups || [];
         const updatedGroups = existingGroups.filter((g) => g._id !== groupId);
 
         await this.item.update({
           "system.actionCardGroups": updatedGroups,
-          "system.embeddedActionCards": updatedActionCards,
         });
 
         Logger.debug(
-          "Auto-dissolved transformation group",
-          { groupId, remainingCards: cardsInGroup.length },
+          "Auto-dissolved empty transformation group",
+          { groupId },
           "DRAG_DROP",
         );
       }
