@@ -1558,4 +1558,298 @@ export const ItemSheetActionsMixin = (BaseClass) =>
         );
       }
     }
+
+    /**
+     * Wrapper for creating context menus with overflow handling
+     * This fixes the issue where context menus get clipped by parent containers with overflow:hidden
+     *
+     * @param {ContextMenu} contextMenu - The context menu instance to enhance
+     * @param {string} stopSelector - CSS selector for the container to stop at when searching for overflow parents
+     * @private
+     */
+    _enhanceContextMenuWithOverflowFix(contextMenu, stopSelector = ".window-content") {
+      if (!contextMenu) return;
+
+      // Override the onOpen callback to fix overflow clipping
+      const originalOnOpen = contextMenu.onOpen;
+      contextMenu.onOpen = (target) => {
+        // Find parent containers with overflow hidden
+        const containers = [];
+        let current = target;
+
+        // Stop at the specified container
+        const stopElement = target.closest(stopSelector);
+
+        while (current && current !== stopElement) {
+          const computedStyle = window.getComputedStyle(current);
+
+          // Check any element with overflow hidden
+          if (
+            computedStyle.overflow === "hidden" ||
+            computedStyle.overflowY === "hidden"
+          ) {
+            containers.push({
+              element: current,
+              overflow: current.style.overflow,
+              overflowY: current.style.overflowY,
+            });
+            current.style.setProperty("overflow", "visible", "important");
+            current.style.setProperty("overflowY", "visible", "important");
+          }
+          current = current.parentElement;
+        }
+        // Store for restoration
+        this._overflowContainers = containers;
+
+        // Add global style to hide all scrollbars with maximum specificity
+        const scrollbarHideStyle = document.createElement('style');
+        scrollbarHideStyle.id = 'erps-context-menu-scrollbar-hide';
+        scrollbarHideStyle.textContent = `
+          .eventide-sheet *,
+          .eventide-sheet *::before,
+          .eventide-sheet *::after,
+          .tab.embedded-action-cards,
+          .tab.embedded-action-cards *,
+          .tab.embedded-action-cards *::before,
+          .tab.embedded-action-cards *::after {
+            scrollbar-width: none !important;
+            -ms-overflow-style: none !important;
+          }
+          .eventide-sheet *::-webkit-scrollbar,
+          .tab.embedded-action-cards::-webkit-scrollbar,
+          .tab.embedded-action-cards *::-webkit-scrollbar {
+            display: none !important;
+            width: 0 !important;
+            height: 0 !important;
+          }
+        `;
+        document.head.appendChild(scrollbarHideStyle);
+        this._scrollbarHideStyle = scrollbarHideStyle;
+
+        if (originalOnOpen) originalOnOpen.call(contextMenu, target);
+      };
+
+      // Override the onClose callback to restore overflow
+      const originalOnClose = contextMenu.onClose;
+      contextMenu.onClose = () => {
+        // Call original close first to allow animation to complete
+        if (originalOnClose) originalOnClose.call(contextMenu);
+
+        // Delay restoration to allow ContextMenu animation to complete
+        // The animation uses getBoundingClientRect which needs the menu visible
+        window.requestAnimationFrame(() => {
+          window.setTimeout(() => {
+            // Restore all overflow values
+            if (this._overflowContainers) {
+              for (const { element, overflow, overflowY } of this._overflowContainers) {
+                element.style.overflow = overflow;
+                element.style.overflowY = overflowY;
+              }
+              this._overflowContainers = [];
+            }
+            // Remove scrollbar hide style
+            if (this._scrollbarHideStyle) {
+              this._scrollbarHideStyle.remove();
+              this._scrollbarHideStyle = null;
+            }
+          }, 100); // Wait for animation to complete (Foundry's default is ~50ms)
+        });
+      };
+    }
+
+    /**
+     * Create context menu for transformation action cards to move them between groups
+     * @private
+     */
+    _createTransformationActionCardContextMenu() {
+      try {
+        const contextMenu = this._createContextMenu(
+          () => this._getTransformationActionCardContextOptions(),
+          ".tab.embedded-action-cards .erps-data-table__row[data-item-id]",
+        );
+
+        // Store reference for potential cleanup
+        if (contextMenu) {
+          this._transformationActionCardContextMenu = contextMenu;
+
+          // Apply overflow fix - stop at the embedded action cards tab (same as actor sheet)
+          this._enhanceContextMenuWithOverflowFix(contextMenu, ".tab.embedded-action-cards");
+        } else {
+          Logger.warn(
+            "Context menu not created for transformation action cards",
+            {},
+            "ITEM_SHEET_ACTIONS",
+          );
+        }
+      } catch (error) {
+        Logger.error(
+          "Failed to create transformation action card context menu",
+          error,
+          "ITEM_SHEET_ACTIONS",
+        );
+      }
+    }
+
+    /**
+     * Get context menu options for transformation action cards
+     * @returns {Array<ContextMenuEntry>} Array of context menu entries
+     * @private
+     */
+    _getTransformationActionCardContextOptions() {
+      const groups = this.item.system.actionCardGroups || [];
+
+      return [
+        {
+          name: "EVENTIDE_RP_SYSTEM.ContextMenu.MoveToGroup",
+          icon: '<i class="fas fa-folder-open"></i>',
+          condition: () => groups.length > 0,
+          callback: (target) => {
+            const itemId = target.dataset.itemId;
+            this._showMoveToGroupDialogForTransformation(itemId, groups);
+          },
+        },
+        {
+          name: "EVENTIDE_RP_SYSTEM.ContextMenu.RemoveFromGroup",
+          icon: '<i class="fas fa-folder-minus"></i>',
+          condition: (target) => {
+            const itemId = target.dataset.itemId;
+            const actionCards = this.item.system.embeddedActionCards || [];
+            const actionCard = actionCards.find((card) => card._id === itemId);
+            return actionCard && actionCard.system.groupId;
+          },
+          callback: async (target) => {
+            const itemId = target.dataset.itemId;
+            const actionCards = this.item.system.embeddedActionCards || [];
+            const actionCard = actionCards.find((card) => card._id === itemId);
+
+            if (actionCard && actionCard.system.groupId) {
+              // Update the embedded action card's groupId using deepClone
+              const updatedActionCards = actionCards.map((card) => {
+                if (card._id === itemId) {
+                  const updatedCard = foundry.utils.deepClone(card);
+                  updatedCard.system.groupId = null;
+                  return updatedCard;
+                }
+                return card;
+              });
+
+              await this.item.update({ "system.embeddedActionCards": updatedActionCards });
+            }
+          },
+        },
+        {
+          name: "EVENTIDE_RP_SYSTEM.ContextMenu.CreateNewGroup",
+          icon: '<i class="fas fa-folder-plus"></i>',
+          callback: async (target) => {
+            const itemId = target.dataset.itemId;
+
+            // Create the new group first
+            const existingGroups = this.item.system.actionCardGroups || [];
+            const newGroupId = foundry.utils.randomID();
+
+            // Find highest group number
+            let highestNumber = 0;
+            for (const group of existingGroups) {
+              const match = group.name.match(/^Group (\d+)$/);
+              if (match) {
+                highestNumber = Math.max(highestNumber, parseInt(match[1], 10));
+              }
+            }
+
+            const newGroupNumber = highestNumber + 1;
+            const newGroupName = `Group ${newGroupNumber}`;
+
+            const maxSort =
+              existingGroups.length > 0
+                ? Math.max(...existingGroups.map((g) => g.sort || 0))
+                : 0;
+
+            const newGroup = {
+              _id: newGroupId,
+              name: newGroupName,
+              sort: maxSort + 1,
+            };
+
+            const updatedGroups = [...existingGroups, newGroup];
+
+            // Update the action card's groupId
+            const actionCards = this.item.system.embeddedActionCards || [];
+            const updatedActionCards = actionCards.map((card) => {
+              if (card._id === itemId) {
+                const updatedCard = foundry.utils.deepClone(card);
+                updatedCard.system.groupId = newGroupId;
+                return updatedCard;
+              }
+              return card;
+            });
+
+            // Update both groups and action cards
+            await this.item.update({
+              "system.actionCardGroups": updatedGroups,
+              "system.embeddedActionCards": updatedActionCards,
+            });
+          },
+        },
+      ];
+    }
+
+    /**
+     * Show dialog to select a group for moving a transformation action card
+     * @param {string} itemId - The ID of the action card
+     * @param {Array} groups - Available groups
+     * @private
+     */
+    async _showMoveToGroupDialogForTransformation(itemId, groups) {
+      // Get the current group of this action card
+      const actionCards = this.item.system.embeddedActionCards || [];
+      const actionCard = actionCards.find((card) => card._id === itemId);
+      const currentGroupId = actionCard?.system.groupId;
+
+      // Filter out the current group from available options
+      const availableGroups = currentGroupId
+        ? groups.filter(group => group._id !== currentGroupId)
+        : groups;
+
+      const groupChoices = availableGroups.reduce((acc, group) => {
+        acc[group._id] = group.name;
+        return acc;
+      }, {});
+
+      const result = await foundry.applications.api.DialogV2.prompt({
+        window: { title: game.i18n.localize("EVENTIDE_RP_SYSTEM.ContextMenu.MoveToGroup") },
+        content: `
+          <form>
+            <div class="form-group">
+              <label>${game.i18n.localize("EVENTIDE_RP_SYSTEM.ContextMenu.SelectGroup")}</label>
+              <select name="groupId">
+                ${Object.entries(groupChoices).map(([id, name]) =>
+                  `<option value="${id}">${name}</option>`
+                ).join('')}
+              </select>
+            </div>
+          </form>
+        `,
+        rejectClose: false,
+        modal: true,
+        ok: {
+          label: game.i18n.localize("EVENTIDE_RP_SYSTEM.Forms.Buttons.Confirm"),
+          callback: (event, button) => button.form.elements.groupId.value,
+        },
+      });
+
+      if (result) {
+        // Update the action card's groupId
+        const actionCards = this.item.system.embeddedActionCards || [];
+        const updatedActionCards = actionCards.map((card) => {
+          if (card._id === itemId) {
+            const updatedCard = foundry.utils.deepClone(card);
+            updatedCard.system.groupId = result;
+            return updatedCard;
+          }
+          return card;
+        });
+
+        await this.item.update({ "system.embeddedActionCards": updatedActionCards });
+      }
+    }
   };

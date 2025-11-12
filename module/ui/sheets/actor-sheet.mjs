@@ -505,20 +505,28 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
     // Override the onClose callback to restore overflow
     const originalOnClose = contextMenu.onClose;
     contextMenu.onClose = () => {
-      // Restore all overflow values
-      if (this._overflowContainers) {
-        for (const { element, overflow, overflowY } of this._overflowContainers) {
-          element.style.overflow = overflow;
-          element.style.overflowY = overflowY;
-        }
-        this._overflowContainers = [];
-      }
-      // Remove scrollbar hide style
-      if (this._scrollbarHideStyle) {
-        this._scrollbarHideStyle.remove();
-        this._scrollbarHideStyle = null;
-      }
+      // Call original close first to allow animation to complete
       if (originalOnClose) originalOnClose.call(contextMenu);
+
+      // Delay restoration to allow ContextMenu animation to complete
+      // The animation uses getBoundingClientRect which needs the menu visible
+      window.requestAnimationFrame(() => {
+        window.setTimeout(() => {
+          // Restore all overflow values
+          if (this._overflowContainers) {
+            for (const { element, overflow, overflowY } of this._overflowContainers) {
+              element.style.overflow = overflow;
+              element.style.overflowY = overflowY;
+            }
+            this._overflowContainers = [];
+          }
+          // Remove scrollbar hide style
+          if (this._scrollbarHideStyle) {
+            this._scrollbarHideStyle.remove();
+            this._scrollbarHideStyle = null;
+          }
+        }, 100); // Wait for animation to complete (Foundry's default is ~50ms)
+      });
     };
   }
 

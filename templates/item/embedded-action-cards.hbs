@@ -9,21 +9,29 @@
 
         {{! Ungrouped Action Cards }}
         {{#if ungroupedActionCards.length}}
-          <div class="erps-items-panel__section-subheader">
-            {{localize "EVENTIDE_RP_SYSTEM.Actor.ActionCards.Ungrouped"}}
+          <div class="erps-action-card-ungrouped">
+            <div class="erps-action-card-ungrouped__header">
+              <span class="erps-action-card-ungrouped__title">{{localize "EVENTIDE_RP_SYSTEM.Actor.ActionCards.Ungrouped"}}</span>
+              <span class="erps-action-card-ungrouped__count">({{ungroupedActionCards.length}})</span>
+            </div>
+            <div class="erps-action-card-ungrouped__content">
+              <table class="erps-data-table erps-data-table--action-cards" data-ungrouped-zone="true">
+                <thead class="erps-data-table__header">
+                  <tr class="erps-data-table__header-row">
+                    <th class="erps-data-table__header-cell erps-data-table__header-cell--name">{{localize 'Name'}}</th>
+                    <th class="erps-data-table__header-cell erps-data-table__header-cell--center">{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.EmbeddedItem'}}</th>
+                    <th class="erps-data-table__header-cell erps-data-table__header-cell--center">{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.Mode'}}</th>
+                    <th class="erps-data-table__header-cell erps-data-table__header-cell--controls">{{localize 'Controls'}}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {{#each ungroupedActionCards as |actionCard|}}
+                    {{> "item/partials/transformation-action-card-row" actionCard=actionCard editable=@root.editable}}
+                  {{/each}}
+                </tbody>
+              </table>
+            </div>
           </div>
-          <ol class="erps-items-panel__list erps-items-panel__list--five-column" data-ungrouped-zone="true">
-            <li class="erps-items-panel__item erps-items-panel__item--header">
-              <div class="erps-items-panel__cell erps-items-panel__cell--image">{{localize 'Image'}}</div>
-              <div class='erps-items-panel__cell erps-items-panel__cell--name'>{{localize 'Name'}}</div>
-              <div class='erps-items-panel__cell erps-items-panel__cell--center'>{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.EmbeddedItem'}}</div>
-              <div class='erps-items-panel__cell erps-items-panel__cell--center'>{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.Mode'}}</div>
-              <div class='erps-items-panel__cell erps-items-panel__cell--controls'>{{localize 'Controls'}}</div>
-            </li>
-            {{#each ungroupedActionCards as |actionCard|}}
-              {{> "item/partials/transformation-action-card-row" actionCard=actionCard editable=@root.editable}}
-            {{/each}}
-          </ol>
         {{/if}}
 
         {{! Grouped Action Cards }}
@@ -49,18 +57,21 @@
               {{/if}}
             </div>
             <div class="erps-action-card-group__content">
-              <ol class="erps-items-panel__list erps-items-panel__list--five-column">
-                <li class="erps-items-panel__item erps-items-panel__item--header">
-                  <div class="erps-items-panel__cell erps-items-panel__cell--image">{{localize 'Image'}}</div>
-                  <div class='erps-items-panel__cell erps-items-panel__cell--name'>{{localize 'Name'}}</div>
-                  <div class='erps-items-panel__cell erps-items-panel__cell--center'>{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.EmbeddedItem'}}</div>
-                  <div class='erps-items-panel__cell erps-items-panel__cell--center'>{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.Mode'}}</div>
-                  <div class='erps-items-panel__cell erps-items-panel__cell--controls'>{{localize 'Controls'}}</div>
-                </li>
-                {{#each group.cards as |actionCard|}}
-                  {{> "item/partials/transformation-action-card-row" actionCard=actionCard editable=@root.editable}}
-                {{/each}}
-              </ol>
+              <table class="erps-data-table erps-data-table--action-cards">
+                <thead class="erps-data-table__header">
+                  <tr class="erps-data-table__header-row">
+                    <th class="erps-data-table__header-cell erps-data-table__header-cell--name">{{localize 'Name'}}</th>
+                    <th class="erps-data-table__header-cell erps-data-table__header-cell--center">{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.EmbeddedItem'}}</th>
+                    <th class="erps-data-table__header-cell erps-data-table__header-cell--center">{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.Mode'}}</th>
+                    <th class="erps-data-table__header-cell erps-data-table__header-cell--controls">{{localize 'Controls'}}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {{#each group.cards as |actionCard|}}
+                    {{> "item/partials/transformation-action-card-row" actionCard=actionCard editable=@root.editable}}
+                  {{/each}}
+                </tbody>
+              </table>
             </div>
           </div>
         {{/each}}
