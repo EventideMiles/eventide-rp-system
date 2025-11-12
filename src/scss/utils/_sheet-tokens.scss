@@ -23,9 +23,9 @@ $sheet-spacing-xxl: 3rem;        // 48px
 // Component heights
 $sheet-height-input: 1.75rem;
 $sheet-height-button: 1.75rem;
-$sheet-height-section-upper: 2rem;
-$sheet-height-section-lower: 2.5rem;
-$sheet-height-section-third: 1.5rem;
+$sheet-height-section-upper: 1.75rem;
+$sheet-height-section-lower: 2rem;
+$sheet-height-section-third: 1.25rem;
 $sheet-height-header: 3rem;
 $sheet-height-header-compact: 2.5rem;
 $sheet-height-tab-large: 3.5rem;
@@ -208,8 +208,8 @@ $sheet-status-arrow-offset: 0.5rem;
 $sheet-status-arrow-right-offset: 2rem;
 
 // Resource box specific
-$sheet-resource-box-min-height: 5.5rem;
-$sheet-resource-stat-box-min-height: 4rem;
+$sheet-resource-box-min-height: 5rem;
+$sheet-resource-stat-box-min-height: 3.5rem;
 
 // Data table specific
 $sheet-table-pattern-size: 20px;
