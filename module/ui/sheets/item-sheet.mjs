@@ -690,6 +690,7 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
     // Attach group name listeners for transformation action card groups
     if (this.item.type === "transformation") {
       this._attachGroupNameListeners();
+      this._createTransformationActionCardContextMenu();
     }
 
     // Initialize item selector combo boxes for action cards

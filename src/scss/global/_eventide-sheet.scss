@@ -141,8 +141,8 @@ label,
     );
     border: 2px solid var(--erps-sheet-glow, var(--theme-glow, var(--erps-sheet-glow)));
     border-radius: 12px;
-    padding: 1.5rem;
-    margin-bottom: 1rem;
+    padding: 1rem;
+    margin-bottom: 0.5rem;
     box-shadow:
       0 8px 32px rgb(0 0 0 / 40%),
       inset 0 1px 0 rgb(255 255 255 / 10%);
@@ -238,17 +238,40 @@ label,
         flex: 1;
         display: flex;
         flex-direction: column;
-        gap: 0.75rem;
+        gap: 0.5rem;
         height: 100%;
         justify-content: space-between;
       }
     }
   }
 
+  // Grid layout for header with status bar positioning
+  .grid-header-layout {
+    grid-auto-flow: dense; // Allow grid items to fill gaps
+
+    .status-bar-wrapper {
+      grid-column: 3 / 7; // Span from column 3 to column 7 (4 columns - same as header-fields)
+      grid-row: 2; // Second row
+    }
+
+    .header-abilities {
+      grid-row: 1 / 3; // Span both rows
+      align-self: start; // Keep abilities at the top, don't stretch
+    }
+
+    .header-fields {
+      grid-row: 1; // First row
+    }
+
+    .flexcol.grid-span-2 {
+      grid-row: 1 / 3; // Span both rows
+    }
+  }
+
   // Character name input theme system with multiple color schemes
   .document-name {
     position: relative;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
 
     // Add subtle animated element to the left
     &::before {
@@ -303,7 +326,7 @@ label,
     padding: 12px 20px;
     width: 100%;
     height: auto;
-    min-height: 7rem;
+    min-height: 3.5rem;
     box-shadow:
       0 2px 8px rgb(0 0 0 / 30%),
       inset 0 1px 0 rgb(255 255 255 / 10%);

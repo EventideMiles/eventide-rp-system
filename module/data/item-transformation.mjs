@@ -200,11 +200,33 @@ export default class EventideRpSystemTransformation extends EventideRpSystemItem
       return this; // Not found
     }
 
+    // Store the groupId before removal for cleanup check
+    const removedCardGroupId = actionCards[index].system?.groupId;
+
     // Remove from the array
     actionCards.splice(index, 1);
 
-    // Update the parent document
-    await this.parent.update({ "system.embeddedActionCards": actionCards });
+    // Check if we need to cleanup empty groups
+    let updatedGroups = this.actionCardGroups || [];
+    if (removedCardGroupId) {
+      // Check if the group now has 0 cards
+      const cardsInGroup = actionCards.filter(
+        (card) => card.system?.groupId === removedCardGroupId,
+      );
+
+      if (cardsInGroup.length === 0) {
+        // Remove the empty group
+        updatedGroups = updatedGroups.filter(
+          (g) => g._id !== removedCardGroupId,
+        );
+      }
+    }
+
+    // Update the parent document with both action cards and groups
+    await this.parent.update({
+      "system.embeddedActionCards": actionCards,
+      "system.actionCardGroups": updatedGroups,
+    });
     return this;
   }
 

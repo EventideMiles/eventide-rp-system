@@ -7,7 +7,7 @@
 
 .resources.grid {
   display: grid;
-  gap: $resource-spacing-base;
+  gap: 0.75rem;
   align-items: stretch; // Force all grid items to stretch to the same height
 
   &.grid-3col {
