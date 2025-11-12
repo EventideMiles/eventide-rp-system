@@ -12,12 +12,12 @@
 // Using sheet-tokens where possible, only defining status-specific values
 
 // Spacing and sizing (using sheet-tokens)
-$status-card-padding: tokens.$sheet-padding-card;
+$status-card-padding: 0.375rem 0.625rem;
 $status-card-border-radius: tokens.$sheet-radius-md;
-$status-card-gap: tokens.$sheet-spacing-md;
+$status-card-gap: 0.5rem;
 $status-card-max-width: tokens.$sheet-width-status-max;
-$status-card-icon-size: tokens.$sheet-size-status-element;
-$status-card-button-size: tokens.$sheet-size-status-button;
+$status-card-icon-size: 1.5rem;
+$status-card-button-size: 1.25rem;
 
 // Typography (using sheet-tokens)
 $status-card-label-font-size: tokens.$sheet-font-size-label-xs;

@@ -1,6 +1,6 @@
 {{! Sheet Header }}
 <header class='eventide-sheet__header eventide-sheet__header--actor'>
-  <div class="grid grid-8col">
+  <div class="grid grid-8col grid-header-layout">
     <div class="flexcol grid-span-2">
       <img
         class='eventide-profile-image--actor {{#if actor.flags.eventide-rp-system.activeTransformation}}eventide-profile-image--disabled{{/if}}'
@@ -48,7 +48,9 @@
       </div>
 
     {{> actor-abilities}}
-  </div>
 
-  {{> actor-status}}
+    <div class="grid-span-6 status-bar-wrapper">
+      {{> actor-status}}
+    </div>
+  </div>
 </header>

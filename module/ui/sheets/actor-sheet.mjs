@@ -54,6 +54,7 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
       height: 950,
     },
     window: {
+      resizable: true,
       controls: [
         ...super.DEFAULT_OPTIONS.window.controls.filter(
           (control) =>

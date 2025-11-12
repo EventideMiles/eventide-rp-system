@@ -29,8 +29,8 @@ $label-margin-bottom: tokens.$sheet-spacing-xs;
 // Header styling
 $header-font-size: tokens.$sheet-font-size-lg;
 $header-font-weight: tokens.$sheet-font-weight-bold;
-$header-margin: tokens.$sheet-spacing-lg 0 tokens.$sheet-spacing-md 0;
-$header-padding: tokens.$sheet-spacing-md 0;
+$header-margin: tokens.$sheet-spacing-md 0 tokens.$sheet-spacing-sm 0;
+$header-padding: tokens.$sheet-spacing-sm 0;
 $header-border-width: tokens.$sheet-border-thin;
 
 // Transitions
