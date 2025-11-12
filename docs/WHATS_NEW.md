@@ -4,6 +4,16 @@ Welcome to the Eventide RP System release notes! This page provides an overview 
 
 ## Latest Release
 
+**[v13.17.2](release-notes/v13.17.2.md)** - UI and Usability Improvements _(November 2025)_
+
+**Key Highlights:**
+
+- Added context menus to action cards on actor sheets for moving between groups
+- Added context menus to action cards on item sheets
+- Optimized actor sheet header layout to provide more room for main content area
+
+## Recent Major Releases
+
 **[v13.17.0](release-notes/v13.17.0.md)** - Transformation to Actor _(November 2025)_
 
 Transformations can create actors now and vice-versa
@@ -13,8 +23,6 @@ Transformations can create actors now and vice-versa
 - New scripts: for conversion both directions
 - Drag and Drop implementation for actor to transformation: drag one actor into another's sheet to transform them
 - Migration script for old transformation versions: run once if you used a version prior to 13.17.0 and you'll be all set
-
-## Recent Major Releases
 
 **[v13.16.0](release-notes/v13.16.0.md)** - Action Card Groups _(October 2025)_
 
@@ -96,10 +104,9 @@ Enhanced character customization through circumstantial bonuses and feature-base
 
 | Version      | Release Date  | Focus                             |
 | ------------ | ------------- | --------------------------------- |
-| **v13.17.0** | November 2025 | Transformation to Actor           |
+| **v13.17.2** | November 2025 | UI and Usability Improvements     |
+| v13.17.0     | November 2025 | Transformation to Actor           |
 | v13.16.0     | October 2025  | Action Card Groups                |
-| v13.15.7     | October 2025  | Token & Transformation Fixes      |
-| v13.15.6     | October 2025  | Embedded Item Fixes               |
 | v13.15.5     | October 2025  | Stability & Polish                |
 | v13.15.0     | October 2025  | Embedded Transformations & Export |
 | v13.14.0     | October 2025  | Player Workflows & Item Selection |
@@ -143,4 +150,4 @@ We encourage users to:
 
 ---
 
-**Current Version**: v13.17.0 | **Foundry VTT Compatibility**: v13+ | **Last Updated**: November 2025
+**Current Version**: v13.17.2 | **Foundry VTT Compatibility**: v13+ | **Last Updated**: November 2025
