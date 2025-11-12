@@ -1631,25 +1631,15 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
           (i) => i.type === "actionCard" && i.system.groupId === groupId,
         );
 
-        if (cardsInGroup.length < 2) {
-          // Ungroup remaining cards
-          const updates = cardsInGroup.map((card) => ({
-            _id: card.id,
-            "system.groupId": null,
-          }));
-
-          if (updates.length > 0) {
-            await this.actor.updateEmbeddedDocuments("Item", updates);
-          }
-
-          // Remove the group
+        if (cardsInGroup.length === 0) {
+          // No cards left in group - remove it
           const existingGroups = this.actor.system.actionCardGroups || [];
           const updatedGroups = existingGroups.filter((g) => g._id !== groupId);
           await this.actor.update({ "system.actionCardGroups": updatedGroups });
 
           Logger.debug(
-            "Auto-dissolved group",
-            { groupId, remainingCards: cardsInGroup.length },
+            "Auto-dissolved empty group",
+            { groupId },
             "DRAG_DROP",
           );
         }

@@ -417,6 +417,9 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
     // Initialize tab container styling (dynamic border radius based on active tab)
     initTabContainerStyling(this.element);
 
+    // Initialize context menu for action cards
+    this._createActionCardContextMenu();
+
     // Debug the transformation display
     if (CommonFoundryTasks.isTestingMode) this._debugTransformation();
 
@@ -428,6 +431,234 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
   // Note: Theme management is now handled by ActorSheetThemeMixin
 
   // Note: Status bar scrolling is now handled by ActorSheetStatusBarMixin
+
+  /**
+   * Wrapper for creating context menus with overflow handling
+   * This fixes the issue where context menus get clipped by parent containers with overflow:hidden
+   *
+   * @param {ContextMenu} contextMenu - The context menu instance to enhance
+   * @param {string} stopSelector - CSS selector for the container to stop at when searching for overflow parents
+   * @private
+   */
+  _enhanceContextMenuWithOverflowFix(contextMenu, stopSelector = ".window-content") {
+    if (!contextMenu) return;
+
+    // Override the onOpen callback to fix overflow clipping
+    const originalOnOpen = contextMenu.onOpen;
+    contextMenu.onOpen = (target) => {
+      // Find parent containers with overflow hidden
+      const containers = [];
+      let current = target;
+
+      // Stop at the specified container
+      const stopElement = target.closest(stopSelector);
+
+      while (current && current !== stopElement) {
+        const computedStyle = window.getComputedStyle(current);
+
+        // Check any element with overflow hidden
+        if (
+          computedStyle.overflow === "hidden" ||
+          computedStyle.overflowY === "hidden"
+        ) {
+          containers.push({
+            element: current,
+            overflow: current.style.overflow,
+            overflowY: current.style.overflowY,
+          });
+          current.style.setProperty("overflow", "visible", "important");
+          current.style.setProperty("overflowY", "visible", "important");
+        }
+        current = current.parentElement;
+      }
+      // Store for restoration
+      this._overflowContainers = containers;
+
+      // Add global style to hide all scrollbars with maximum specificity
+      const scrollbarHideStyle = document.createElement('style');
+      scrollbarHideStyle.id = 'erps-context-menu-scrollbar-hide';
+      scrollbarHideStyle.textContent = `
+        .eventide-sheet *,
+        .eventide-sheet *::before,
+        .eventide-sheet *::after,
+        .tab.action-cards,
+        .tab.action-cards *,
+        .tab.action-cards *::before,
+        .tab.action-cards *::after {
+          scrollbar-width: none !important;
+          -ms-overflow-style: none !important;
+        }
+        .eventide-sheet *::-webkit-scrollbar,
+        .tab.action-cards::-webkit-scrollbar,
+        .tab.action-cards *::-webkit-scrollbar {
+          display: none !important;
+          width: 0 !important;
+          height: 0 !important;
+        }
+      `;
+      document.head.appendChild(scrollbarHideStyle);
+      this._scrollbarHideStyle = scrollbarHideStyle;
+
+      if (originalOnOpen) originalOnOpen.call(contextMenu, target);
+    };
+
+    // Override the onClose callback to restore overflow
+    const originalOnClose = contextMenu.onClose;
+    contextMenu.onClose = () => {
+      // Restore all overflow values
+      if (this._overflowContainers) {
+        for (const { element, overflow, overflowY } of this._overflowContainers) {
+          element.style.overflow = overflow;
+          element.style.overflowY = overflowY;
+        }
+        this._overflowContainers = [];
+      }
+      // Remove scrollbar hide style
+      if (this._scrollbarHideStyle) {
+        this._scrollbarHideStyle.remove();
+        this._scrollbarHideStyle = null;
+      }
+      if (originalOnClose) originalOnClose.call(contextMenu);
+    };
+  }
+
+  /**
+   * Create context menu for action cards to move them between groups
+   * @private
+   */
+  _createActionCardContextMenu() {
+    const contextMenu = this._createContextMenu(
+      () => this._getActionCardContextOptions(),
+      ".erps-data-table--action-cards .erps-data-table__row[data-item-id]",
+    );
+
+    // Store reference for potential cleanup
+    if (contextMenu) {
+      this._actionCardContextMenu = contextMenu;
+
+      // Apply overflow fix - stop at the action cards tab
+      this._enhanceContextMenuWithOverflowFix(contextMenu, ".tab.action-cards");
+    }
+  }
+
+  /**
+   * Get context menu options for action cards
+   * @returns {Array<ContextMenuEntry>} Array of context menu entries
+   * @private
+   */
+  _getActionCardContextOptions() {
+    const groups = this.actor.system.actionCardGroups || [];
+
+    return [
+      {
+        name: "EVENTIDE_RP_SYSTEM.ContextMenu.MoveToGroup",
+        icon: '<i class="fas fa-folder-open"></i>',
+        condition: () => groups.length > 0,
+        callback: (target) => {
+          const itemId = target.dataset.itemId;
+          this._showMoveToGroupDialog(itemId, groups);
+        },
+      },
+      {
+        name: "EVENTIDE_RP_SYSTEM.ContextMenu.RemoveFromGroup",
+        icon: '<i class="fas fa-folder-minus"></i>',
+        condition: (target) => {
+          const itemId = target.dataset.itemId;
+          const item = this.actor.items.get(itemId);
+          return item && item.system.groupId;
+        },
+        callback: async (target) => {
+          const itemId = target.dataset.itemId;
+          const item = this.actor.items.get(itemId);
+          if (item && item.system.groupId) {
+            const oldGroupId = item.system.groupId;
+            await item.update({ "system.groupId": null });
+            // Check if group should be dissolved
+            await this._checkGroupDissolution(oldGroupId);
+            // Clean up any empty groups
+            await this._cleanupEmptyGroups();
+          }
+        },
+      },
+      {
+        name: "EVENTIDE_RP_SYSTEM.ContextMenu.CreateNewGroup",
+        icon: '<i class="fas fa-folder-plus"></i>',
+        callback: async (target) => {
+          const itemId = target.dataset.itemId;
+          const groupId = await this._createActionCardGroup(null, null, [
+            itemId,
+          ]);
+          if (groupId) {
+            const item = this.actor.items.get(itemId);
+            if (item) {
+              await item.update({ "system.groupId": groupId });
+            }
+          }
+        },
+      },
+    ];
+  }
+
+  /**
+   * Show dialog to select which group to move the action card to
+   * @param {string} itemId - The ID of the action card item
+   * @param {Array} groups - Array of available groups
+   * @private
+   */
+  async _showMoveToGroupDialog(itemId, groups) {
+    const item = this.actor.items.get(itemId);
+    if (!item) return;
+
+    const currentGroupId = item.system.groupId;
+
+    // Build list of groups excluding current group
+    const groupChoices = groups
+      .filter((g) => g._id !== currentGroupId)
+      .map(
+        (g) =>
+          `<option value="${g._id}">${game.i18n.localize(g.name)}</option>`,
+      )
+      .join("");
+
+    const content = `
+      <div class="form-group">
+        <label>${game.i18n.localize("EVENTIDE_RP_SYSTEM.ContextMenu.SelectGroup")}</label>
+        <select name="groupId" autofocus>
+          ${groupChoices}
+        </select>
+      </div>
+    `;
+
+    const groupId = await foundry.applications.api.DialogV2.prompt({
+      window: {
+        title: game.i18n.localize("EVENTIDE_RP_SYSTEM.ContextMenu.MoveToGroup"),
+      },
+      content,
+      ok: {
+        label: game.i18n.localize("EVENTIDE_RP_SYSTEM.Forms.Buttons.Confirm"),
+        callback: (event, button, _dialog) =>
+          button.form.elements.groupId.value,
+      },
+      rejectClose: false,
+      modal: true,
+      position: {
+        width: 300,
+      },
+    });
+
+    if (groupId) {
+      const oldGroupId = item.system.groupId;
+      await item.update({ "system.groupId": groupId });
+
+      // Check if old group should be dissolved
+      if (oldGroupId) {
+        await this._checkGroupDissolution(oldGroupId);
+      }
+
+      // Clean up any empty groups
+      await this._cleanupEmptyGroups();
+    }
+  }
 
   /**
    * Debug the transformation display

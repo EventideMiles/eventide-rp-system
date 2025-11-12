@@ -169,7 +169,10 @@
       "Edit": "Edit",
       "Duplicate": "Duplicate",
       "Delete": "Delete",
-      "SendToChat": "Send to Chat"
+      "SendToChat": "Send to Chat",
+      "MoveToGroup": "Move to Group",
+      "CreateNewGroup": "Create New Group",
+      "SelectGroup": "Select target group"
     }
   }
 }

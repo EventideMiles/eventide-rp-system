@@ -352,7 +352,7 @@ export const ActorSheetAdditionalActionsMixin = (BaseClass) =>
      * @param {HTMLElement} target - The capturing HTML element which defined a [data-action]
      * @protected
      */
-    static async _executeActionCard(_event, target) {
+    static async _executeActionCard(event, target) {
       try {
         const itemId = target.dataset.itemId;
         const actionCard = this._getEmbeddedDocument(target);
@@ -616,6 +616,48 @@ export const ActorSheetAdditionalActionsMixin = (BaseClass) =>
             "EVENTIDE_RP_SYSTEM.Errors.ToggleGroupError",
           ),
         });
+      }
+    }
+
+    /**
+     * Clean up all empty action card groups
+     * This checks all groups and removes any that have no action cards
+     * @returns {Promise<void>}
+     * @protected
+     */
+    async _cleanupEmptyGroups() {
+      try {
+        const existingGroups = this.actor.system.actionCardGroups || [];
+        if (existingGroups.length === 0) return;
+
+        // Get all action cards
+        const actionCards = this.actor.items.filter(
+          (i) => i.type === "actionCard",
+        );
+
+        // Find groups with no cards
+        const emptyGroups = existingGroups.filter((group) => {
+          const cardsInGroup = actionCards.filter(
+            (card) => card.system.groupId === group._id,
+          );
+          return cardsInGroup.length === 0;
+        });
+
+        // Remove empty groups if any found
+        if (emptyGroups.length > 0) {
+          const updatedGroups = existingGroups.filter(
+            (g) => !emptyGroups.some((empty) => empty._id === g._id),
+          );
+          await this.actor.update({ "system.actionCardGroups": updatedGroups });
+
+          Logger.debug(
+            "Cleaned up empty groups",
+            { removedCount: emptyGroups.length, removedIds: emptyGroups.map((g) => g._id) },
+            "ADDITIONAL_ACTIONS",
+          );
+        }
+      } catch (error) {
+        Logger.error("Failed to cleanup empty groups", error, "ADDITIONAL_ACTIONS");
       }
     }
   };

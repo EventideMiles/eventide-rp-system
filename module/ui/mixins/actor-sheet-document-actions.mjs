@@ -79,6 +79,9 @@ export const ActorSheetDocumentActionsMixin = (BaseClass) =>
           throw new Error("Document not found");
         }
 
+        // Store groupId if this is an action card
+        const wasActionCard = doc.type === "actionCard";
+
         // Delete directly without confirmation
         const result = await doc.delete();
 
@@ -91,6 +94,11 @@ export const ActorSheetDocumentActionsMixin = (BaseClass) =>
           },
           "DOCUMENT_ACTIONS",
         );
+
+        // Clean up empty groups if we deleted an action card
+        if (wasActionCard && this._cleanupEmptyGroups) {
+          await this._cleanupEmptyGroups();
+        }
 
         Logger.methodExit(
           "ActorSheetDocumentActionsMixin",
