@@ -679,6 +679,7 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
     const groups = this.actor.system.actionCardGroups || [];
 
     return [
+      // Creation options (blank area only)
       {
         name: "EVENTIDE_RP_SYSTEM.ContextMenu.CreateNewActionCard",
         icon: '<i class="fas fa-plus"></i>',
@@ -719,6 +720,29 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
           await this._createItemInTab("combatPower");
         },
       },
+      // Item actions (item-specific)
+      {
+        name: "EVENTIDE_RP_SYSTEM.ContextMenu.Edit",
+        icon: '<i class="fas fa-edit"></i>',
+        condition: (target) => !!target.dataset.itemId,
+        callback: async (target) => {
+          const itemId = target.dataset.itemId;
+          const item = this.actor.items.get(itemId);
+          if (item) {
+            item.sheet.render(true);
+          }
+        },
+      },
+      {
+        name: "EVENTIDE_RP_SYSTEM.ContextMenu.Duplicate",
+        icon: '<i class="fas fa-copy"></i>',
+        condition: (target) => !!target.dataset.itemId,
+        callback: async (target) => {
+          const itemId = target.dataset.itemId;
+          await this._duplicateItem(itemId);
+        },
+      },
+      // Group management (action cards only)
       {
         name: "EVENTIDE_RP_SYSTEM.ContextMenu.MoveToGroup",
         icon: '<i class="fas fa-folder-open"></i>',
@@ -764,6 +788,15 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
               await item.update({ "system.groupId": groupId });
             }
           }
+        },
+      },
+      // Destructive actions (item-specific)
+      {
+        name: "EVENTIDE_RP_SYSTEM.ContextMenu.Delete",
+        icon: '<i class="fas fa-trash"></i>',
+        condition: (target) => !!target.dataset.itemId,
+        callback: async (target) => {
+          await this._deleteItemWithConfirmation(target);
         },
       },
     ];
@@ -886,6 +919,18 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
           }
         },
       },
+      {
+        name: "EVENTIDE_RP_SYSTEM.ContextMenu.DuplicateGroup",
+        icon: '<i class="fas fa-clone"></i>',
+        callback: async (target) => {
+          const groupId =
+            target.dataset.groupId ||
+            target.closest("[data-group-id]")?.dataset.groupId;
+          if (groupId) {
+            await this._duplicateActionCardGroup(groupId);
+          }
+        },
+      },
     ];
   }
 
@@ -912,6 +957,7 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
    */
   _getFeatureContextOptions() {
     return [
+      // Creation options (blank area only)
       {
         name: "EVENTIDE_RP_SYSTEM.ContextMenu.CreateNewFeature",
         icon: '<i class="fas fa-plus"></i>',
@@ -952,6 +998,29 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
           await this._createItemInTab("combatPower");
         },
       },
+      // Item actions (item-specific)
+      {
+        name: "EVENTIDE_RP_SYSTEM.ContextMenu.Edit",
+        icon: '<i class="fas fa-edit"></i>',
+        condition: (target) => !!target.dataset.itemId,
+        callback: async (target) => {
+          const itemId = target.dataset.itemId;
+          const item = this.actor.items.get(itemId);
+          if (item) {
+            item.sheet.render(true);
+          }
+        },
+      },
+      {
+        name: "EVENTIDE_RP_SYSTEM.ContextMenu.Duplicate",
+        icon: '<i class="fas fa-copy"></i>',
+        condition: (target) => !!target.dataset.itemId,
+        callback: async (target) => {
+          const itemId = target.dataset.itemId;
+          await this._duplicateItem(itemId);
+        },
+      },
+      // Conversion actions (item-specific)
       {
         name: "EVENTIDE_RP_SYSTEM.ContextMenu.ConvertToStatus",
         icon: '<i class="fas fa-exchange-alt"></i>',
@@ -959,6 +1028,15 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
         callback: async (target) => {
           const itemId = target.dataset.itemId;
           await this._convertFeatureToStatus(itemId);
+        },
+      },
+      // Destructive actions (item-specific)
+      {
+        name: "EVENTIDE_RP_SYSTEM.ContextMenu.Delete",
+        icon: '<i class="fas fa-trash"></i>',
+        condition: (target) => !!target.dataset.itemId,
+        callback: async (target) => {
+          await this._deleteItemWithConfirmation(target);
         },
       },
     ];
@@ -1035,6 +1113,7 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
    */
   _getStatusContextOptions() {
     return [
+      // Creation options (blank area only)
       {
         name: "EVENTIDE_RP_SYSTEM.ContextMenu.CreateNewStatus",
         icon: '<i class="fas fa-plus"></i>',
@@ -1075,6 +1154,29 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
           await this._createItemInTab("combatPower");
         },
       },
+      // Item actions (item-specific)
+      {
+        name: "EVENTIDE_RP_SYSTEM.ContextMenu.Edit",
+        icon: '<i class="fas fa-edit"></i>',
+        condition: (target) => !!target.dataset.itemId,
+        callback: async (target) => {
+          const itemId = target.dataset.itemId;
+          const item = this.actor.items.get(itemId);
+          if (item) {
+            item.sheet.render(true);
+          }
+        },
+      },
+      {
+        name: "EVENTIDE_RP_SYSTEM.ContextMenu.Duplicate",
+        icon: '<i class="fas fa-copy"></i>',
+        condition: (target) => !!target.dataset.itemId,
+        callback: async (target) => {
+          const itemId = target.dataset.itemId;
+          await this._duplicateItem(itemId);
+        },
+      },
+      // Conversion actions (item-specific)
       {
         name: "EVENTIDE_RP_SYSTEM.ContextMenu.ConvertToFeature",
         icon: '<i class="fas fa-exchange-alt"></i>',
@@ -1082,6 +1184,15 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
         callback: async (target) => {
           const itemId = target.dataset.itemId;
           await this._convertStatusToFeature(itemId);
+        },
+      },
+      // Destructive actions (item-specific)
+      {
+        name: "EVENTIDE_RP_SYSTEM.ContextMenu.Delete",
+        icon: '<i class="fas fa-trash"></i>',
+        condition: (target) => !!target.dataset.itemId,
+        callback: async (target) => {
+          await this._deleteItemWithConfirmation(target);
         },
       },
     ];
@@ -1168,6 +1279,7 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
    */
   _getGearContextOptions() {
     return [
+      // Creation options (blank area only)
       {
         name: "EVENTIDE_RP_SYSTEM.ContextMenu.CreateNewGear",
         icon: '<i class="fas fa-plus"></i>',
@@ -1208,6 +1320,37 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
           await this._createItemInTab("combatPower");
         },
       },
+      // Item actions (item-specific)
+      {
+        name: "EVENTIDE_RP_SYSTEM.ContextMenu.Edit",
+        icon: '<i class="fas fa-edit"></i>',
+        condition: (target) => !!target.dataset.itemId,
+        callback: async (target) => {
+          const itemId = target.dataset.itemId;
+          const item = this.actor.items.get(itemId);
+          if (item) {
+            item.sheet.render(true);
+          }
+        },
+      },
+      {
+        name: "EVENTIDE_RP_SYSTEM.ContextMenu.Duplicate",
+        icon: '<i class="fas fa-copy"></i>',
+        condition: (target) => !!target.dataset.itemId,
+        callback: async (target) => {
+          const itemId = target.dataset.itemId;
+          await this._duplicateItem(itemId);
+        },
+      },
+      // Destructive actions (item-specific)
+      {
+        name: "EVENTIDE_RP_SYSTEM.ContextMenu.Delete",
+        icon: '<i class="fas fa-trash"></i>',
+        condition: (target) => !!target.dataset.itemId,
+        callback: async (target) => {
+          await this._deleteItemWithConfirmation(target);
+        },
+      },
     ];
   }
 
@@ -1237,6 +1380,7 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
    */
   _getCombatPowerContextOptions() {
     return [
+      // Creation options (blank area only)
       {
         name: "EVENTIDE_RP_SYSTEM.ContextMenu.CreateNewCombatPower",
         icon: '<i class="fas fa-plus"></i>',
@@ -1275,6 +1419,37 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
         condition: (target) => !target.dataset.itemId,
         callback: async () => {
           await this._createItemInTab("gear");
+        },
+      },
+      // Item actions (item-specific)
+      {
+        name: "EVENTIDE_RP_SYSTEM.ContextMenu.Edit",
+        icon: '<i class="fas fa-edit"></i>',
+        condition: (target) => !!target.dataset.itemId,
+        callback: async (target) => {
+          const itemId = target.dataset.itemId;
+          const item = this.actor.items.get(itemId);
+          if (item) {
+            item.sheet.render(true);
+          }
+        },
+      },
+      {
+        name: "EVENTIDE_RP_SYSTEM.ContextMenu.Duplicate",
+        icon: '<i class="fas fa-copy"></i>',
+        condition: (target) => !!target.dataset.itemId,
+        callback: async (target) => {
+          const itemId = target.dataset.itemId;
+          await this._duplicateItem(itemId);
+        },
+      },
+      // Destructive actions (item-specific)
+      {
+        name: "EVENTIDE_RP_SYSTEM.ContextMenu.Delete",
+        icon: '<i class="fas fa-trash"></i>',
+        condition: (target) => !!target.dataset.itemId,
+        callback: async (target) => {
+          await this._deleteItemWithConfirmation(target);
         },
       },
     ];
@@ -1317,6 +1492,140 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
     if (created && created[0]) {
       created[0].sheet.render(true);
     }
+  }
+
+  /**
+   * Duplicate an item
+   * @param {string} itemId - The ID of the item to duplicate
+   * @private
+   */
+  async _duplicateItem(itemId) {
+    const item = this.actor.items.get(itemId);
+    if (!item) return;
+
+    // Clone the item data
+    const itemData = item.toObject();
+    itemData._id = foundry.utils.randomID();
+    itemData.name = `${itemData.name} (Copy)`;
+
+    // For action cards, keep the group assignment (as per user request)
+    // No need to modify groupId, it will be preserved
+
+    // Create the duplicate
+    const created = await this.actor.createEmbeddedDocuments("Item", [
+      itemData,
+    ]);
+
+    // Notify user
+    if (created && created[0]) {
+      ui.notifications.info(
+        game.i18n.format("EVENTIDE_RP_SYSTEM.ContextMenu.DuplicateSuccess", {
+          name: item.name,
+        }),
+      );
+
+      // Open for editing
+      created[0].sheet.render(true);
+    }
+  }
+
+  /**
+   * Duplicate an action card group
+   * @param {string} groupId - The ID of the group to duplicate
+   * @private
+   */
+  async _duplicateActionCardGroup(groupId) {
+    const groups = this.actor.system.actionCardGroups || [];
+    const sourceGroup = groups.find((g) => g._id === groupId);
+    if (!sourceGroup) return;
+
+    // Get all cards in this group
+    const cardsInGroup = this.actor.items.filter(
+      (item) => item.type === "actionCard" && item.system.groupId === groupId,
+    );
+
+    // Create new group
+    const newGroupId = foundry.utils.randomID();
+    const newGroup = {
+      _id: newGroupId,
+      name: `${sourceGroup.name} (Copy)`,
+      sort: Math.max(...groups.map((g) => g.sort || 0), 0) + 1,
+      collapsed: false,
+    };
+
+    // Duplicate all cards with new group assignment
+    const duplicatedCards = cardsInGroup.map((card) => {
+      const cardData = card.toObject();
+      cardData._id = foundry.utils.randomID();
+      cardData.name = `${cardData.name} (Copy)`;
+      cardData.system.groupId = newGroupId;
+      return cardData;
+    });
+
+    // Update actor with new group
+    await this.actor.update({
+      "system.actionCardGroups": [...groups, newGroup],
+    });
+
+    // Create duplicated cards
+    if (duplicatedCards.length > 0) {
+      await this.actor.createEmbeddedDocuments("Item", duplicatedCards);
+    }
+
+    // Notify user
+    ui.notifications.info(
+      game.i18n.format("EVENTIDE_RP_SYSTEM.Actor.ActionCards.GroupCopied", {
+        groupName: newGroup.name,
+        cardCount: duplicatedCards.length,
+      }),
+    );
+  }
+
+  /**
+   * Delete an item with confirmation dialog
+   * @param {HTMLElement} target - The clicked element
+   * @private
+   */
+  async _deleteItemWithConfirmation(target) {
+    const itemId = target.closest("[data-item-id]")?.dataset?.itemId;
+    if (!itemId) return;
+
+    const item = this.actor.items.get(itemId);
+    if (!item) return;
+
+    // Show confirmation dialog using DialogV2
+    const confirmed = await foundry.applications.api.DialogV2.confirm({
+      window: {
+        title: game.i18n.localize("EVENTIDE_RP_SYSTEM.ContextMenu.Delete"),
+      },
+      content: `<p>${game.i18n.format("EVENTIDE_RP_SYSTEM.ContextMenu.DeleteConfirm", {
+        name: item.name,
+      })}</p>`,
+      rejectClose: false,
+      modal: true,
+    });
+
+    if (!confirmed) return;
+
+    // Store info for cleanup
+    const wasActionCard = item.type === "actionCard";
+    const oldGroupId = item.system.groupId;
+
+    // Delete the item
+    await item.delete();
+
+    // Clean up empty groups if we deleted an action card
+    if (wasActionCard && oldGroupId) {
+      await this._checkGroupDissolution(oldGroupId);
+      await this._cleanupEmptyGroups();
+    }
+
+    // Notify user
+    ui.notifications.info(
+      game.i18n.format("EVENTIDE_RP_SYSTEM.ContextMenu.DeleteSuccess", {
+        name: item.name,
+      }),
+    );
   }
 
   /**

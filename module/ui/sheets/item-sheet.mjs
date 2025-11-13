@@ -1586,21 +1586,6 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
    * @override
    */
   async _preClose(options = {}) {
-    // Get the call stack to understand where close was called from
-    const stack = new Error().stack;
-
-    /* eslint-disable no-console */
-    console.group("🔍 REGULAR ITEM SHEET - _preClose");
-    console.log("Sheet Type: EventideRpSystemItemSheet");
-    console.log("Item:", this.document?.name, `(${this.document?.type})`);
-    console.log("Item ID:", this.document?.id);
-    console.log("Is Embedded:", this.document?.isEmbedded);
-    console.log("Options:", options);
-    console.log("Call Stack:");
-    console.log(stack);
-    console.groupEnd();
-    /* eslint-enable no-console */
-
     return super._preClose?.(options);
   }
 
