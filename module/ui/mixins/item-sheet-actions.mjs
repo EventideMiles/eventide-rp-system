@@ -1560,8 +1560,9 @@ export const ItemSheetActionsMixin = (BaseClass) =>
     }
 
     /**
-     * Wrapper for creating context menus with overflow handling
+     * Wrapper for creating context menus with overflow handling and drop zone disabling
      * This fixes the issue where context menus get clipped by parent containers with overflow:hidden
+     * and disables drop zones to prevent focus fighting between context menu and drop zones
      *
      * @param {ContextMenu} contextMenu - The context menu instance to enhance
      * @param {string} stopSelector - CSS selector for the container to stop at when searching for overflow parents
@@ -1570,9 +1571,37 @@ export const ItemSheetActionsMixin = (BaseClass) =>
     _enhanceContextMenuWithOverflowFix(contextMenu, stopSelector = ".window-content") {
       if (!contextMenu) return;
 
-      // Override the onOpen callback to fix overflow clipping
+      // Check if this context menu has already been enhanced
+      // This prevents duplicate onOpen/onClose handlers when context menus are rebound
+      if (contextMenu._erpsOverflowFixApplied) {
+        return;
+      }
+
+      // Mark this context menu as enhanced to prevent duplicate enhancement
+      contextMenu._erpsOverflowFixApplied = true;
+
+      // Override the onOpen callback to fix overflow clipping and disable drop zones
       const originalOnOpen = contextMenu.onOpen;
       contextMenu.onOpen = (target) => {
+        // Check if a context menu is already open for this sheet
+        // Multiple context menus can match the same click target (e.g., row selector + tab selector)
+        // Only the first one should create the scrollbar hide style
+        if (this._contextMenuOpen) {
+          if (originalOnOpen) originalOnOpen.call(contextMenu, target);
+          return;
+        }
+
+        // Cancel any pending cleanup from a previous menu close
+        // This handles rapid open/close/reopen scenarios where the cleanup
+        // timer hasn't fired yet but a new menu is being opened
+        if (this._contextMenuCleanupTimer) {
+          clearTimeout(this._contextMenuCleanupTimer);
+          this._contextMenuCleanupTimer = null;
+        }
+
+        // Mark that a context menu is now open
+        this._contextMenuOpen = true;
+
         // Find parent containers with overflow hidden
         const containers = [];
         let current = target;
@@ -1601,23 +1630,24 @@ export const ItemSheetActionsMixin = (BaseClass) =>
         // Store for restoration
         this._overflowContainers = containers;
 
-        // Add global style to hide all scrollbars with maximum specificity
-        const scrollbarHideStyle = document.createElement('style');
-        scrollbarHideStyle.id = 'erps-context-menu-scrollbar-hide';
+        // Disable ALL drop zones globally while context menu is open
+        this._disableAllDropZones();
+
+        // Add scoped style to hide scrollbars only for this specific sheet instance
+        const scrollbarHideStyle = document.createElement("style");
+        scrollbarHideStyle.id = `erps-context-menu-scrollbar-hide-${this.id}`;
+
+        // Get unique identifier for this sheet to scope the style
+        const sheetId = this.element.id || this.element.getAttribute('data-appid');
+
         scrollbarHideStyle.textContent = `
-          .eventide-sheet *,
-          .eventide-sheet *::before,
-          .eventide-sheet *::after,
-          .tab.embedded-action-cards,
-          .tab.embedded-action-cards *,
-          .tab.embedded-action-cards *::before,
-          .tab.embedded-action-cards *::after {
+          #${sheetId} *,
+          #${sheetId} *::before,
+          #${sheetId} *::after {
             scrollbar-width: none !important;
             -ms-overflow-style: none !important;
           }
-          .eventide-sheet *::-webkit-scrollbar,
-          .tab.embedded-action-cards::-webkit-scrollbar,
-          .tab.embedded-action-cards *::-webkit-scrollbar {
+          #${sheetId} *::-webkit-scrollbar {
             display: none !important;
             width: 0 !important;
             height: 0 !important;
@@ -1629,32 +1659,81 @@ export const ItemSheetActionsMixin = (BaseClass) =>
         if (originalOnOpen) originalOnOpen.call(contextMenu, target);
       };
 
-      // Override the onClose callback to restore overflow
+      // Override the onClose callback to restore overflow and re-enable drop zones
       const originalOnClose = contextMenu.onClose;
+      const self = this; // Capture the correct 'this' context for item sheet
       contextMenu.onClose = () => {
+        // Clear the context menu open flag immediately to allow rapid reopen
+        // This must happen synchronously to handle double right-click scenarios
+        self._contextMenuOpen = false;
+
         // Call original close first to allow animation to complete
         if (originalOnClose) originalOnClose.call(contextMenu);
 
         // Delay restoration to allow ContextMenu animation to complete
         // The animation uses getBoundingClientRect which needs the menu visible
         window.requestAnimationFrame(() => {
-          window.setTimeout(() => {
+          self._contextMenuCleanupTimer = window.setTimeout(() => {
+
             // Restore all overflow values
-            if (this._overflowContainers) {
-              for (const { element, overflow, overflowY } of this._overflowContainers) {
+            if (self._overflowContainers) {
+              for (const {
+                element,
+                overflow,
+                overflowY,
+              } of self._overflowContainers) {
                 element.style.overflow = overflow;
                 element.style.overflowY = overflowY;
               }
-              this._overflowContainers = [];
+              self._overflowContainers = [];
             }
+
             // Remove scrollbar hide style
-            if (this._scrollbarHideStyle) {
-              this._scrollbarHideStyle.remove();
-              this._scrollbarHideStyle = null;
+            if (self._scrollbarHideStyle) {
+              self._scrollbarHideStyle.remove();
+              self._scrollbarHideStyle = null;
             }
+
+            // Force scrollbars to redisplay by triggering a reflow
+            // This ensures the browser recalculates scrollbar visibility
+            if (self.element) {
+              // eslint-disable-next-line no-unused-expressions
+              self.element.offsetHeight; // Force reflow
+            }
+
+            // Re-enable ALL drop zones globally
+            self._enableAllDropZones();
+
+            // Clear the cleanup timer reference
+            self._contextMenuCleanupTimer = null;
           }, 100); // Wait for animation to complete (Foundry's default is ~50ms)
         });
       };
+    }
+
+    /**
+     * Disable ALL drop zones globally to prevent focus fighting with context menus
+     * This affects drop zones across all sheets, including other item sheets
+     * @private
+     */
+    _disableAllDropZones() {
+      const dropZones = document.querySelectorAll("[data-drop-zone]");
+      dropZones.forEach((zone) => {
+        zone.classList.add("erps-drop-zone-disabled");
+        zone.style.pointerEvents = "none";
+      });
+    }
+
+    /**
+     * Re-enable ALL drop zones globally after context menu closes
+     * @private
+     */
+    _enableAllDropZones() {
+      const dropZones = document.querySelectorAll("[data-drop-zone]");
+      dropZones.forEach((zone) => {
+        zone.classList.remove("erps-drop-zone-disabled");
+        zone.style.pointerEvents = "";
+      });
     }
 
     /**
@@ -1702,7 +1781,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
         {
           name: "EVENTIDE_RP_SYSTEM.ContextMenu.MoveToGroup",
           icon: '<i class="fas fa-folder-open"></i>',
-          condition: () => groups.length > 0,
           callback: (target) => {
             const itemId = target.dataset.itemId;
             this._showMoveToGroupDialogForTransformation(itemId, groups);
@@ -1823,8 +1901,18 @@ export const ItemSheetActionsMixin = (BaseClass) =>
 
       // Filter out the current group from available options
       const availableGroups = currentGroupId
-        ? groups.filter(group => group._id !== currentGroupId)
+        ? groups.filter((group) => group._id !== currentGroupId)
         : groups;
+
+      // Check if there are no groups available
+      if (availableGroups.length === 0) {
+        ui.notifications.warn(
+          game.i18n.localize(
+            "EVENTIDE_RP_SYSTEM.ContextMenu.NoGroupsAvailable",
+          ),
+        );
+        return;
+      }
 
       const groupChoices = availableGroups.reduce((acc, group) => {
         acc[group._id] = group.name;
@@ -1832,15 +1920,17 @@ export const ItemSheetActionsMixin = (BaseClass) =>
       }, {});
 
       const result = await foundry.applications.api.DialogV2.prompt({
-        window: { title: game.i18n.localize("EVENTIDE_RP_SYSTEM.ContextMenu.MoveToGroup") },
+        window: {
+          title: game.i18n.localize("EVENTIDE_RP_SYSTEM.ContextMenu.MoveToGroup"),
+        },
         content: `
           <form>
             <div class="form-group">
               <label>${game.i18n.localize("EVENTIDE_RP_SYSTEM.ContextMenu.SelectGroup")}</label>
               <select name="groupId">
-                ${Object.entries(groupChoices).map(([id, name]) =>
-                  `<option value="${id}">${name}</option>`
-                ).join('')}
+                ${Object.entries(groupChoices)
+                  .map(([id, name]) => `<option value="${id}">${name}</option>`)
+                  .join("")}
               </select>
             </div>
           </form>
@@ -1865,7 +1955,248 @@ export const ItemSheetActionsMixin = (BaseClass) =>
           return card;
         });
 
-        await this.item.update({ "system.embeddedActionCards": updatedActionCards });
+        await this.item.update({
+          "system.embeddedActionCards": updatedActionCards,
+        });
       }
+    }
+
+    /**
+     * Create context menu for transformation group headers
+     * @private
+     */
+    _createTransformationGroupHeaderContextMenu() {
+      const contextMenu = this._createContextMenu(
+        () => this._getTransformationGroupHeaderContextOptions(),
+        ".erps-action-card-group__header",
+      );
+
+      if (contextMenu) {
+        this._transformationGroupHeaderContextMenu = contextMenu;
+        this._enhanceContextMenuWithOverflowFix(
+          contextMenu,
+          ".tab.embedded-action-cards",
+        );
+      }
+    }
+
+    /**
+     * Get context menu options for transformation group headers
+     * @returns {Array<ContextMenuEntry>} Array of context menu entries
+     * @private
+     */
+    _getTransformationGroupHeaderContextOptions() {
+      return [
+        {
+          name: "EVENTIDE_RP_SYSTEM.ContextMenu.CreateActionInGroup",
+          icon: '<i class="fas fa-plus"></i>',
+          callback: async (target) => {
+            const groupId =
+              target.dataset.groupId ||
+              target.closest("[data-group-id]")?.dataset.groupId;
+            if (groupId) {
+              // Create new embedded action card with groupId
+              const existingCards = this.item.system.embeddedActionCards || [];
+              const newCard = {
+                _id: foundry.utils.randomID(),
+                name: game.i18n.localize(
+                  "EVENTIDE_RP_SYSTEM.Item.New.ActionCard",
+                ),
+                type: "actionCard",
+                img: "icons/svg/item-bag.svg",
+                system: {
+                  groupId,
+                  mode: "attackChain",
+                  bgColor: "#8B4513",
+                  textColor: "#ffffff",
+                },
+              };
+
+              await this.item.update({
+                "system.embeddedActionCards": [...existingCards, newCard],
+              });
+
+              // Open embedded item sheet for editing
+              const EmbeddedItemSheet = (
+                await import("../sheets/embedded-item-sheet.mjs")
+              ).default;
+              const sheet = new EmbeddedItemSheet({
+                document: this.item,
+                embeddedItemId: newCard._id,
+              });
+              sheet.render(true);
+            }
+          },
+        },
+      ];
+    }
+
+    /**
+     * Create context-sensitive context menus for transformation tab content areas
+     * @private
+     */
+    _createTransformationTabContentContextMenus() {
+      // Embedded items tab
+      this._createTransformationTabContextMenu("embeddedItems", "feature");
+      // Embedded combat powers tab
+      this._createTransformationTabContextMenu(
+        "embeddedCombatPowers",
+        "combatPower",
+      );
+      // Embedded action cards tab
+      this._createTransformationTabContextMenu(
+        "embeddedActionCards",
+        "actionCard",
+      );
+    }
+
+    /**
+     * Create a context menu for a specific transformation tab
+     * @param {string} tabName - The tab name (e.g., "embeddedItems")
+     * @param {string} itemType - The item type to create (e.g., "feature")
+     * @private
+     */
+    _createTransformationTabContextMenu(tabName, itemType) {
+      const tabClass = tabName
+        .replace(/([A-Z])/g, "-$1")
+        .toLowerCase()
+        .replace(/^-/, "");
+      const contextMenu = this._createContextMenu(
+        () => this._getTransformationTabContextOptions(itemType),
+        `.tab.${tabClass}`,
+      );
+
+      if (contextMenu) {
+        this[`_${tabName}TabContextMenu`] = contextMenu;
+        this._enhanceContextMenuWithOverflowFix(contextMenu, `.tab.${tabClass}`);
+      }
+    }
+
+    /**
+     * Get context menu options for transformation tab content areas
+     * @param {string} itemType - The item type to create
+     * @returns {Array<ContextMenuEntry>} Array of context menu entries
+     * @private
+     */
+    _getTransformationTabContextOptions(itemType) {
+      return [
+        {
+          name: `EVENTIDE_RP_SYSTEM.ContextMenu.CreateNew${itemType.charAt(0).toUpperCase() + itemType.slice(1)}`,
+          icon: '<i class="fas fa-plus"></i>',
+          callback: async () => {
+            await this._createEmbeddedItemInTab(itemType);
+          },
+        },
+      ];
+    }
+
+    /**
+     * Create an embedded item in the appropriate transformation tab
+     * @param {string} itemType - The item type to create
+     * @private
+     */
+    async _createEmbeddedItemInTab(itemType) {
+      // Map item types to tab IDs and embedded fields
+      const tabMap = {
+        feature: { tabId: "embeddedItems", field: "embeddedActionCards" },
+        status: { tabId: "embeddedItems", field: "embeddedActionCards" },
+        gear: { tabId: "embeddedItems", field: "embeddedActionCards" },
+        combatPower: {
+          tabId: "embeddedCombatPowers",
+          field: "embeddedCombatPowers",
+        },
+        actionCard: {
+          tabId: "embeddedActionCards",
+          field: "embeddedActionCards",
+        },
+      };
+
+      const mapping = tabMap[itemType];
+      if (!mapping) return;
+
+      // Switch to the correct tab
+      if (this.tabGroups.primary !== mapping.tabId) {
+        await this.changeTab(mapping.tabId, "primary");
+      }
+
+      // Create the embedded item
+      const newId = foundry.utils.randomID();
+      const existingItems = this.item.system[mapping.field] || [];
+
+      const newItem = {
+        _id: newId,
+        name: game.i18n.localize(
+          `EVENTIDE_RP_SYSTEM.Item.New.${itemType.charAt(0).toUpperCase() + itemType.slice(1)}`,
+        ),
+        type: itemType,
+        img: "icons/svg/item-bag.svg",
+        system: this._getDefaultSystemData(itemType),
+      };
+
+      await this.item.update({
+        [`system.${mapping.field}`]: [...existingItems, newItem],
+      });
+
+      // Open embedded item sheet for editing
+      const EmbeddedItemSheet = (
+        await import("../sheets/embedded-item-sheet.mjs")
+      ).default;
+      const sheet = new EmbeddedItemSheet({
+        document: this.item,
+        embeddedItemId: newId,
+      });
+      sheet.render(true);
+    }
+
+    /**
+     * Get default system data for a given item type
+     * @param {string} itemType - The item type
+     * @returns {object} Default system data
+     * @private
+     */
+    _getDefaultSystemData(itemType) {
+      const defaults = {
+        feature: {
+          bgColor: "#70B87A",
+          textColor: "#ffffff",
+          targeted: false,
+          roll: {
+            type: "none",
+            ability: "unaugmented",
+            bonus: 0,
+            diceAdjustments: { advantage: 0, disadvantage: 0, total: 0 },
+          },
+        },
+        status: {
+          bgColor: "#7A70B8",
+          textColor: "#ffffff",
+        },
+        gear: {
+          bgColor: "#8B4513",
+          textColor: "#ffffff",
+          equipped: true,
+          quantity: 1,
+          className: "other",
+        },
+        combatPower: {
+          bgColor: "#B8860B",
+          textColor: "#ffffff",
+          cost: 1,
+          targeted: true,
+          roll: {
+            type: "none",
+            ability: "unaugmented",
+            bonus: 0,
+            diceAdjustments: { advantage: 0, disadvantage: 0, total: 0 },
+          },
+        },
+        actionCard: {
+          mode: "attackChain",
+          bgColor: "#8B4513",
+          textColor: "#ffffff",
+        },
+      };
+
+      return defaults[itemType] || {};
     }
   };

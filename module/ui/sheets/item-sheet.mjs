@@ -674,6 +674,27 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
    *
    *********************/
 
+  /** @override */
+  async _onFirstRender(_context, _options) {
+    await super._onFirstRender(_context, _options);
+
+    // Initialize theme management from mixin
+    this._initThemeManagement();
+
+    // Initialize context menus (only once)
+    if (this.item.type === "transformation") {
+      this._createTransformationActionCardContextMenu();
+      this._createTransformationGroupHeaderContextMenu();
+      this._createTransformationTabContentContextMenus();
+    }
+
+    // Create item-type-specific context menus
+    this._createFeatureContextMenu();
+    this._createStatusContextMenu();
+    this._createGearContextMenu();
+    this._createCombatPowerContextMenu();
+  }
+
   /**
    * Actions performed after any render of the Application.
    * Post-render steps are not awaited by the render process.
@@ -682,21 +703,80 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
    * @protected
    */
   _onRender(_context, _options) {
+    // Clean up any orphaned scrollbar-hide styles from other sheets
+    this._cleanupOrphanedScrollbarStyles();
+
     this.#dragDrop.forEach((d) => d.bind(this.element));
 
-    // Initialize theme management from mixin
+    // Re-apply theme management on render
     this._initThemeManagement();
 
     // Attach group name listeners for transformation action card groups
     if (this.item.type === "transformation") {
       this._attachGroupNameListeners();
-      this._createTransformationActionCardContextMenu();
     }
+
+    // Manually bind context menus to ensure they work with dynamically rendered tabs
+    this._bindAllContextMenus();
 
     // Initialize item selector combo boxes for action cards
     // Don't await this to avoid blocking the render process
     this._initializeItemSelectors().catch((error) => {
       Logger.error("Failed to initialize item selectors", error, "ItemSheet");
+    });
+  }
+
+  /**
+   * Clean up any orphaned scrollbar-hide styles that may be left in the document
+   * @private
+   */
+  _cleanupOrphanedScrollbarStyles() {
+    // Find all scrollbar-hide style elements
+    const orphanedStyles = document.querySelectorAll(
+      'style[id^="erps-context-menu-scrollbar-hide"]',
+    );
+
+    orphanedStyles.forEach((style) => {
+      // Check if the style belongs to a sheet that still exists
+      const styleId = style.id;
+      const sheetId = styleId.replace("erps-context-menu-scrollbar-hide-", "");
+
+      // If this isn't our style, check if the owning sheet still exists
+      if (sheetId !== this.id.toString()) {
+        const owningElement = document.getElementById(
+          `app-${sheetId}`,
+        ) || document.querySelector(`[data-appid="${sheetId}"]`);
+
+        // If the owning sheet doesn't exist, remove the orphaned style
+        if (!owningElement) {
+          style.remove();
+        }
+      }
+    });
+  }
+
+  /**
+   * Manually bind all context menus to the current element
+   * This ensures context menus work even when tabs are dynamically rendered
+   * @private
+   */
+  _bindAllContextMenus() {
+    const contextMenus = [
+      this._transformationActionCardContextMenu,
+      this._transformationGroupHeaderContextMenu,
+      this._embeddedItemsTabContextMenu,
+      this._embeddedCombatPowersTabContextMenu,
+      this._embeddedActionCardsTabContextMenu,
+    ];
+
+    contextMenus.forEach((menu) => {
+      if (menu) {
+        try {
+          menu.bind(this.element);
+        } catch {
+          // Silently ignore binding errors for menus that don't have matching elements yet
+        }
+      }
     });
   }
 
@@ -1336,6 +1416,17 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
 
     // Clean up theme management from mixin
     this._cleanupThemeManagement();
+
+    // Clean up any lingering scrollbar hide styles
+    if (this._scrollbarHideStyle) {
+      this._scrollbarHideStyle.remove();
+      this._scrollbarHideStyle = null;
+    }
+
+    // Re-enable any disabled drop zones globally
+    if (this._enableAllDropZones) {
+      this._enableAllDropZones();
+    }
   }
 
   /**
@@ -1446,6 +1537,44 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
     }
 
     return result;
+  }
+
+  /**
+   * Create context menus for features (on feature item sheets)
+   * @private
+   */
+  _createFeatureContextMenu() {
+    // Only create if this is a feature item sheet
+    // Context menu for converting to status
+    // Implementation would go here if needed for individual feature sheets
+  }
+
+  /**
+   * Create context menus for status effects (on status item sheets)
+   * @private
+   */
+  _createStatusContextMenu() {
+    // Only create if this is a status item sheet
+    // Context menu for converting to feature
+    // Implementation would go here if needed for individual status sheets
+  }
+
+  /**
+   * Create context menus for gear (on gear item sheets)
+   * @private
+   */
+  _createGearContextMenu() {
+    // Only create if this is a gear item sheet
+    // Placeholder for future gear-specific options
+  }
+
+  /**
+   * Create context menus for combat powers (on combat power item sheets)
+   * @private
+   */
+  _createCombatPowerContextMenu() {
+    // Only create if this is a combat power item sheet
+    // Placeholder for future combat power-specific options
   }
 
   /**

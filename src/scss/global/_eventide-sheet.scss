@@ -113,9 +113,10 @@ label,
     inset 0 2px 4px rgb(255 255 255 / 5%),
     inset 0 -2px 4px rgb(0 0 0 / 20%);
 
-  // Ensure sheet can resize beyond initial dimensions
+  // Ensure sheet can resize but stays within viewport
   min-height: 0;
-  max-height: none;
+  max-height: 95vh; // 95% of viewport height to leave room for window chrome
+  max-width: 100vw; // Prevent sheets from exceeding viewport width
 
   // Apply theme-aware animated backgrounds
   @include themes.apply-all-background-themes;

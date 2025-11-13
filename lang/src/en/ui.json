@@ -172,7 +172,18 @@
       "SendToChat": "Send to Chat",
       "MoveToGroup": "Move to Group",
       "CreateNewGroup": "Create New Group",
-      "SelectGroup": "Select target group"
+      "SelectGroup": "Select target group",
+      "NoGroupsAvailable": "No groups available. Create a group first.",
+      "CreateActionInGroup": "Create Action Card in Group",
+      "ConvertToStatus": "Convert to Status Effect",
+      "ConvertToFeature": "Convert to Feature",
+      "ConvertConfirm": "Are you sure you want to convert '{name}' from {from} to {to}?",
+      "ConvertSuccess": "Successfully converted '{name}' to {type}",
+      "CreateNewFeature": "Create New Feature",
+      "CreateNewCombatPower": "Create New Combat Power",
+      "CreateNewStatus": "Create New Status",
+      "CreateNewGear": "Create New Gear",
+      "CreateNewActionCard": "Create New Action Card"
     }
   }
 }
