@@ -688,6 +688,38 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
         },
       },
       {
+        name: "EVENTIDE_RP_SYSTEM.ContextMenu.CreateNewFeature",
+        icon: '<i class="fas fa-star"></i>',
+        condition: (target) => !target.dataset.itemId,
+        callback: async () => {
+          await this._createItemInTab("feature");
+        },
+      },
+      {
+        name: "EVENTIDE_RP_SYSTEM.ContextMenu.CreateNewStatus",
+        icon: '<i class="fas fa-circle-notch"></i>',
+        condition: (target) => !target.dataset.itemId,
+        callback: async () => {
+          await this._createItemInTab("status");
+        },
+      },
+      {
+        name: "EVENTIDE_RP_SYSTEM.ContextMenu.CreateNewGear",
+        icon: '<i class="fas fa-suitcase"></i>',
+        condition: (target) => !target.dataset.itemId,
+        callback: async () => {
+          await this._createItemInTab("gear");
+        },
+      },
+      {
+        name: "EVENTIDE_RP_SYSTEM.ContextMenu.CreateNewCombatPower",
+        icon: '<i class="fas fa-fist-raised"></i>',
+        condition: (target) => !target.dataset.itemId,
+        callback: async () => {
+          await this._createItemInTab("combatPower");
+        },
+      },
+      {
         name: "EVENTIDE_RP_SYSTEM.ContextMenu.MoveToGroup",
         icon: '<i class="fas fa-folder-open"></i>',
         condition: (target) => !!target.dataset.itemId,
@@ -889,6 +921,38 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
         },
       },
       {
+        name: "EVENTIDE_RP_SYSTEM.ContextMenu.CreateNewActionCard",
+        icon: '<i class="fas fa-bolt"></i>',
+        condition: (target) => !target.dataset.itemId,
+        callback: async () => {
+          await this._createItemInTab("actionCard");
+        },
+      },
+      {
+        name: "EVENTIDE_RP_SYSTEM.ContextMenu.CreateNewStatus",
+        icon: '<i class="fas fa-circle-notch"></i>',
+        condition: (target) => !target.dataset.itemId,
+        callback: async () => {
+          await this._createItemInTab("status");
+        },
+      },
+      {
+        name: "EVENTIDE_RP_SYSTEM.ContextMenu.CreateNewGear",
+        icon: '<i class="fas fa-suitcase"></i>',
+        condition: (target) => !target.dataset.itemId,
+        callback: async () => {
+          await this._createItemInTab("gear");
+        },
+      },
+      {
+        name: "EVENTIDE_RP_SYSTEM.ContextMenu.CreateNewCombatPower",
+        icon: '<i class="fas fa-fist-raised"></i>',
+        condition: (target) => !target.dataset.itemId,
+        callback: async () => {
+          await this._createItemInTab("combatPower");
+        },
+      },
+      {
         name: "EVENTIDE_RP_SYSTEM.ContextMenu.ConvertToStatus",
         icon: '<i class="fas fa-exchange-alt"></i>',
         condition: (target) => !!target.dataset.itemId,
@@ -977,6 +1041,38 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
         condition: (target) => !target.dataset.itemId,
         callback: async () => {
           await this._createItemInTab("status");
+        },
+      },
+      {
+        name: "EVENTIDE_RP_SYSTEM.ContextMenu.CreateNewActionCard",
+        icon: '<i class="fas fa-bolt"></i>',
+        condition: (target) => !target.dataset.itemId,
+        callback: async () => {
+          await this._createItemInTab("actionCard");
+        },
+      },
+      {
+        name: "EVENTIDE_RP_SYSTEM.ContextMenu.CreateNewFeature",
+        icon: '<i class="fas fa-star"></i>',
+        condition: (target) => !target.dataset.itemId,
+        callback: async () => {
+          await this._createItemInTab("feature");
+        },
+      },
+      {
+        name: "EVENTIDE_RP_SYSTEM.ContextMenu.CreateNewGear",
+        icon: '<i class="fas fa-suitcase"></i>',
+        condition: (target) => !target.dataset.itemId,
+        callback: async () => {
+          await this._createItemInTab("gear");
+        },
+      },
+      {
+        name: "EVENTIDE_RP_SYSTEM.ContextMenu.CreateNewCombatPower",
+        icon: '<i class="fas fa-fist-raised"></i>',
+        condition: (target) => !target.dataset.itemId,
+        callback: async () => {
+          await this._createItemInTab("combatPower");
         },
       },
       {
@@ -1080,6 +1176,38 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
           await this._createItemInTab("gear");
         },
       },
+      {
+        name: "EVENTIDE_RP_SYSTEM.ContextMenu.CreateNewActionCard",
+        icon: '<i class="fas fa-bolt"></i>',
+        condition: (target) => !target.dataset.itemId,
+        callback: async () => {
+          await this._createItemInTab("actionCard");
+        },
+      },
+      {
+        name: "EVENTIDE_RP_SYSTEM.ContextMenu.CreateNewFeature",
+        icon: '<i class="fas fa-star"></i>',
+        condition: (target) => !target.dataset.itemId,
+        callback: async () => {
+          await this._createItemInTab("feature");
+        },
+      },
+      {
+        name: "EVENTIDE_RP_SYSTEM.ContextMenu.CreateNewStatus",
+        icon: '<i class="fas fa-circle-notch"></i>',
+        condition: (target) => !target.dataset.itemId,
+        callback: async () => {
+          await this._createItemInTab("status");
+        },
+      },
+      {
+        name: "EVENTIDE_RP_SYSTEM.ContextMenu.CreateNewCombatPower",
+        icon: '<i class="fas fa-fist-raised"></i>',
+        condition: (target) => !target.dataset.itemId,
+        callback: async () => {
+          await this._createItemInTab("combatPower");
+        },
+      },
     ];
   }
 
@@ -1115,6 +1243,38 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
         condition: (target) => !target.dataset.itemId,
         callback: async () => {
           await this._createItemInTab("combatPower");
+        },
+      },
+      {
+        name: "EVENTIDE_RP_SYSTEM.ContextMenu.CreateNewActionCard",
+        icon: '<i class="fas fa-bolt"></i>',
+        condition: (target) => !target.dataset.itemId,
+        callback: async () => {
+          await this._createItemInTab("actionCard");
+        },
+      },
+      {
+        name: "EVENTIDE_RP_SYSTEM.ContextMenu.CreateNewFeature",
+        icon: '<i class="fas fa-star"></i>',
+        condition: (target) => !target.dataset.itemId,
+        callback: async () => {
+          await this._createItemInTab("feature");
+        },
+      },
+      {
+        name: "EVENTIDE_RP_SYSTEM.ContextMenu.CreateNewStatus",
+        icon: '<i class="fas fa-circle-notch"></i>',
+        condition: (target) => !target.dataset.itemId,
+        callback: async () => {
+          await this._createItemInTab("status");
+        },
+      },
+      {
+        name: "EVENTIDE_RP_SYSTEM.ContextMenu.CreateNewGear",
+        icon: '<i class="fas fa-suitcase"></i>',
+        condition: (target) => !target.dataset.itemId,
+        callback: async () => {
+          await this._createItemInTab("gear");
         },
       },
     ];

@@ -1057,7 +1057,7 @@
       "CreateActionInGroup": "Create Action Card in Group",
       "ConvertToStatus": "Convert to Status Effect",
       "ConvertToFeature": "Convert to Feature",
-      "ConvertConfirm": "Are you sure you want to convert '{name}' from {from} to {to}? This action cannot be undone.",
+      "ConvertConfirm": "Are you sure you want to convert '{name}' from {from} to {to}?",
       "ConvertSuccess": "Successfully converted '{name}' to {type}",
       "CreateNewFeature": "Create New Feature",
       "CreateNewCombatPower": "Create New Combat Power",
