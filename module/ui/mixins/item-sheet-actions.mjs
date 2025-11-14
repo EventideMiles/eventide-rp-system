@@ -466,7 +466,9 @@ export const ItemSheetActionsMixin = (BaseClass) =>
             "ITEM_ACTIONS",
           );
           ui.notifications.warn(
-            "You don't have permission to edit this action card's embedded items",
+            game.i18n.localize(
+              "EVENTIDE_RP_SYSTEM.Errors.NoPermissionEditEmbeddedItems",
+            ),
           );
           return;
         }
@@ -522,7 +524,9 @@ export const ItemSheetActionsMixin = (BaseClass) =>
             "ITEM_ACTIONS",
           );
           ui.notifications.warn(
-            "You don't have permission to edit this action card's embedded items",
+            game.i18n.localize(
+              "EVENTIDE_RP_SYSTEM.Errors.NoPermissionEditEmbeddedItems",
+            ),
           );
           return;
         }
@@ -599,7 +603,9 @@ export const ItemSheetActionsMixin = (BaseClass) =>
             "ITEM_ACTIONS",
           );
           ui.notifications.warn(
-            "You don't have permission to edit this action card's embedded items",
+            game.i18n.localize(
+              "EVENTIDE_RP_SYSTEM.Errors.NoPermissionEditEmbeddedItems",
+            ),
           );
           return;
         }
@@ -708,7 +714,9 @@ export const ItemSheetActionsMixin = (BaseClass) =>
             "ITEM_ACTIONS",
           );
           ui.notifications.warn(
-            "You don't have permission to edit this action card's embedded items",
+            game.i18n.localize(
+              "EVENTIDE_RP_SYSTEM.Errors.NoPermissionEditEmbeddedItems",
+            ),
           );
           return;
         }
@@ -789,7 +797,9 @@ export const ItemSheetActionsMixin = (BaseClass) =>
             "ITEM_ACTIONS",
           );
           ui.notifications.warn(
-            "You don't have permission to edit this action card's embedded items",
+            game.i18n.localize(
+              "EVENTIDE_RP_SYSTEM.Errors.NoPermissionEditEmbeddedItems",
+            ),
           );
           return;
         }
@@ -855,7 +865,9 @@ export const ItemSheetActionsMixin = (BaseClass) =>
             "ITEM_ACTIONS",
           );
           ui.notifications.warn(
-            "You don't have permission to edit this action card's embedded effects",
+            game.i18n.localize(
+              "EVENTIDE_RP_SYSTEM.Errors.NoPermissionEditEmbeddedEffects",
+            ),
           );
           return;
         }
@@ -936,7 +948,9 @@ export const ItemSheetActionsMixin = (BaseClass) =>
             "ITEM_ACTIONS",
           );
           ui.notifications.warn(
-            "You don't have permission to edit this action card's embedded effects",
+            game.i18n.localize(
+              "EVENTIDE_RP_SYSTEM.Errors.NoPermissionEditEmbeddedEffects",
+            ),
           );
           return;
         }
@@ -1000,7 +1014,9 @@ export const ItemSheetActionsMixin = (BaseClass) =>
             "ITEM_ACTIONS",
           );
           ui.notifications.warn(
-            "You don't have permission to edit this action card's embedded transformations",
+            game.i18n.localize(
+              "EVENTIDE_RP_SYSTEM.Errors.NoPermissionEditEmbeddedTransformations",
+            ),
           );
           return;
         }
@@ -1082,7 +1098,9 @@ export const ItemSheetActionsMixin = (BaseClass) =>
             "ITEM_ACTIONS",
           );
           ui.notifications.warn(
-            "You don't have permission to edit this transformation's combat powers",
+            game.i18n.localize(
+              "EVENTIDE_RP_SYSTEM.Errors.NoPermissionEditTransformationCombatPowers",
+            ),
           );
           return;
         }
@@ -1171,7 +1189,9 @@ export const ItemSheetActionsMixin = (BaseClass) =>
             "ITEM_ACTIONS",
           );
           ui.notifications.warn(
-            "You don't have permission to edit this transformation's action cards",
+            game.i18n.localize(
+              "EVENTIDE_RP_SYSTEM.Errors.NoPermissionEditTransformationActionCards",
+            ),
           );
           return;
         }
@@ -1274,7 +1294,9 @@ export const ItemSheetActionsMixin = (BaseClass) =>
             "ITEM_ACTIONS",
           );
           ui.notifications.warn(
-            "You don't have permission to edit this action card's embedded transformations",
+            game.i18n.localize(
+              "EVENTIDE_RP_SYSTEM.Errors.NoPermissionEditEmbeddedTransformations",
+            ),
           );
           return;
         }
@@ -1325,20 +1347,31 @@ export const ItemSheetActionsMixin = (BaseClass) =>
     _attachGroupNameListeners() {
       if (!this.element) return;
 
+      // Initialize bound handler storage if it doesn't exist
+      if (!this._boundGroupNameHandlers) {
+        this._boundGroupNameHandlers = new WeakMap();
+      }
+
       const nameInputs = this.element.querySelectorAll(
         ".erps-action-card-group__name",
       );
       nameInputs.forEach((input) => {
-        // Remove existing listeners to avoid duplicates
-        input.removeEventListener("change", this._handleGroupNameChange);
-        input.removeEventListener("blur", this._handleGroupNameChange);
+        // Get or create bound handler for this input
+        let boundHandler = this._boundGroupNameHandlers.get(input);
 
-        // Add listeners
-        input.addEventListener(
-          "change",
-          this._handleGroupNameChange.bind(this),
-        );
-        input.addEventListener("blur", this._handleGroupNameChange.bind(this));
+        if (boundHandler) {
+          // Remove existing listeners to avoid duplicates
+          input.removeEventListener("change", boundHandler);
+          input.removeEventListener("blur", boundHandler);
+        } else {
+          // Create and store bound handler
+          boundHandler = this._handleGroupNameChange.bind(this);
+          this._boundGroupNameHandlers.set(input, boundHandler);
+        }
+
+        // Add listeners with consistent bound reference
+        input.addEventListener("change", boundHandler);
+        input.addEventListener("blur", boundHandler);
       });
     }
 
