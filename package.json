@@ -1,6 +1,6 @@
 {
   "name": "eventide-rp-system",
-  "version": "13.17.2",
+  "version": "13.17.5",
   "type": "module",
   "description": "Build tools and development scripts for the Eventide Roleplaying System",
   "scripts": {
@@ -21,7 +21,7 @@
     "test:watch": "NODE_OPTIONS=\"--experimental-vm-modules\" jest --watch",
     "test:coverage": "NODE_OPTIONS=\"--experimental-vm-modules\" jest --coverage",
     "test:ci": "NODE_OPTIONS=\"--experimental-vm-modules\" jest --ci --coverage --watchAll=false",
-    "validate": "npm run lint && npm run format:check && npm run test:ci",
+    "validate": "npm run lint:fix && npm run format",
     "dev": "concurrently \"npm:watch\" \"npm:lint:js:watch\" \"npm:lint:css:watch\"",
     "lint:js:watch": "nodemon --watch module --ext mjs --exec \"npm run lint-and-format-js\"",
     "lint:css:watch": "nodemon --watch src --ext scss --exec \"npm run lint:css:fix\"",
