@@ -598,7 +598,14 @@
       "TransformationToActorFailed": "Failed to convert transformation to actor",
       "NoActorSelected": "Please select an actor to convert",
       "NoTransformationSelected": "Please select a transformation to convert",
-      "ActorNotFound": "Could not find the selected actor"
+      "ActorNotFound": "Could not find the selected actor",
+      "NoPermissionEditEmbeddedItems": "You don't have permission to edit this action card's embedded items",
+      "NoPermissionEditEmbeddedEffects": "You don't have permission to edit this action card's embedded effects",
+      "NoPermissionEditEmbeddedTransformations": "You don't have permission to edit this action card's embedded transformations",
+      "NoPermissionEditTransformationCombatPowers": "You don't have permission to edit this transformation's combat powers",
+      "NoPermissionEditTransformationActionCards": "You don't have permission to edit this transformation's action cards",
+      "EmbeddedCombatPowerNotFound": "Could not find embedded combat power to update",
+      "EmbeddedActionCardNotFound": "Could not find embedded action card to update"
     },
     "Info": {
       "CompendiumItemCreated": "Created {keyType} item {name} in the {packLabel} compendium",
