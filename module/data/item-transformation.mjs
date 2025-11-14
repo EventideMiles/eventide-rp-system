@@ -258,7 +258,11 @@ export default class EventideRpSystemTransformation extends EventideRpSystemItem
         const powers = foundry.utils.deepClone(this.embeddedCombatPowers);
         const powerIndex = powers.findIndex((p) => p._id === tempItem.id);
         if (powerIndex === -1) {
-          throw new Error("Could not find embedded combat power to update.");
+          throw new Error(
+            game.i18n.localize(
+              "EVENTIDE_RP_SYSTEM.Errors.EmbeddedCombatPowerNotFound",
+            ),
+          );
         }
 
         // Merge the updates into the stored data.
@@ -313,7 +317,11 @@ export default class EventideRpSystemTransformation extends EventideRpSystemItem
           (ac) => ac._id === tempItem.id,
         );
         if (actionCardIndex === -1) {
-          throw new Error("Could not find embedded action card to update.");
+          throw new Error(
+            game.i18n.localize(
+              "EVENTIDE_RP_SYSTEM.Errors.EmbeddedActionCardNotFound",
+            ),
+          );
         }
 
         // Merge the updates into the stored data.

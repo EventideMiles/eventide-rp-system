@@ -192,6 +192,14 @@
         "Apply": "Apply",
         "Discard": "Discard"
       },
+      "New": {
+        "Feature": "New Feature",
+        "CombatPower": "New Combat Power",
+        "Status": "New Status",
+        "Gear": "New Gear",
+        "ActionCard": "New Action Card",
+        "Transformation": "New Transformation"
+      },
       "Colors": {
         "BgColor": {
           "label": "Background Color",
@@ -590,7 +598,14 @@
       "TransformationToActorFailed": "Failed to convert transformation to actor",
       "NoActorSelected": "Please select an actor to convert",
       "NoTransformationSelected": "Please select a transformation to convert",
-      "ActorNotFound": "Could not find the selected actor"
+      "ActorNotFound": "Could not find the selected actor",
+      "NoPermissionEditEmbeddedItems": "You don't have permission to edit this action card's embedded items",
+      "NoPermissionEditEmbeddedEffects": "You don't have permission to edit this action card's embedded effects",
+      "NoPermissionEditEmbeddedTransformations": "You don't have permission to edit this action card's embedded transformations",
+      "NoPermissionEditTransformationCombatPowers": "You don't have permission to edit this transformation's combat powers",
+      "NoPermissionEditTransformationActionCards": "You don't have permission to edit this transformation's action cards",
+      "EmbeddedCombatPowerNotFound": "Could not find embedded combat power to update",
+      "EmbeddedActionCardNotFound": "Could not find embedded action card to update"
     },
     "Info": {
       "CompendiumItemCreated": "Created {keyType} item {name} in the {packLabel} compendium",
@@ -1035,16 +1050,31 @@
       "RemoveFromGroup": "Remove from Group",
       "RenameGroup": "Rename Group",
       "DeleteGroup": "Delete Group",
+      "DuplicateGroup": "Duplicate Group",
       "ExpandAll": "Expand All Groups",
       "CollapseAll": "Collapse All Groups",
       "Execute": "Execute",
       "Edit": "Edit",
       "Duplicate": "Duplicate",
       "Delete": "Delete",
+      "DeleteConfirm": "Are you sure you want to delete '{name}'?",
+      "DeleteSuccess": "Successfully deleted '{name}'",
+      "DuplicateSuccess": "Successfully duplicated '{name}'",
       "SendToChat": "Send to Chat",
       "MoveToGroup": "Move to Group",
       "CreateNewGroup": "Create New Group",
-      "SelectGroup": "Select target group"
+      "SelectGroup": "Select target group",
+      "NoGroupsAvailable": "No groups available. Create a group first.",
+      "CreateActionInGroup": "Create Action Card in Group",
+      "ConvertToStatus": "Convert to Status Effect",
+      "ConvertToFeature": "Convert to Feature",
+      "ConvertConfirm": "Are you sure you want to convert '{name}' from {from} to {to}?",
+      "ConvertSuccess": "Successfully converted '{name}' to {type}",
+      "CreateNewFeature": "Create New Feature",
+      "CreateNewCombatPower": "Create New Combat Power",
+      "CreateNewStatus": "Create New Status",
+      "CreateNewGear": "Create New Gear",
+      "CreateNewActionCard": "Create New Action Card"
     }
   },
   "TYPES": {

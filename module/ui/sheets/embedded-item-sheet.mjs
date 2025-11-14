@@ -654,22 +654,6 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
    * @override
    */
   async _preClose(options = {}) {
-    // Get the call stack to understand where close was called from
-    const stack = new Error().stack;
-
-    /* eslint-disable no-console */
-    console.group("🔍 EMBEDDED ITEM SHEET - _preClose");
-    console.log("Sheet Type: EmbeddedItemSheet");
-    console.log("Item:", this.document?.name, `(${this.document?.type})`);
-    console.log("Parent:", this.parentItem?.name, `(${this.parentItem?.type})`);
-    console.log("Original ID:", this.originalItemId);
-    console.log("Is Effect:", this.isEffect);
-    console.log("Options:", options);
-    console.log("Call Stack:");
-    console.log(stack);
-    console.groupEnd();
-    /* eslint-enable no-console */
-
     await super._preClose(options);
     this._cleanupThemeManagement();
   }

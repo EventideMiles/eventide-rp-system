@@ -113,6 +113,11 @@ label,
     inset 0 2px 4px rgb(255 255 255 / 5%),
     inset 0 -2px 4px rgb(0 0 0 / 20%);
 
+  // Ensure sheet can resize but stays within viewport
+  min-height: 0;
+  max-height: 95vh; // 95% of viewport height to leave room for window chrome
+  max-width: 100vw; // Prevent sheets from exceeding viewport width
+
   // Apply theme-aware animated backgrounds
   @include themes.apply-all-background-themes;
 
@@ -141,7 +146,7 @@ label,
     );
     border: 2px solid var(--erps-sheet-glow, var(--theme-glow, var(--erps-sheet-glow)));
     border-radius: 12px;
-    padding: 1rem;
+    padding: 0.2rem;
     margin-bottom: 0.5rem;
     box-shadow:
       0 8px 32px rgb(0 0 0 / 40%),
@@ -213,7 +218,7 @@ label,
       box-shadow:
         0 4px 20px rgb(0 0 0 / 60%),
         inset 0 1px 0 rgb(255 255 255 / 10%);
-      padding: 1rem;
+      padding: 0.2rem;
       margin-bottom: 0.5rem;
       position: relative;
 

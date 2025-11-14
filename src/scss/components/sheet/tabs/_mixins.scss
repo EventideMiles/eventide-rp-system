@@ -219,7 +219,8 @@
 }
 
 @mixin tab-content-scrollable {
-  height: $tab-content-height-scrollable;
+  flex: 1 1 auto;
+  min-height: 0; // Allow flex item to shrink below content size
   overflow-y: auto;
 
   section.main, aside.sidebar, .items-list {

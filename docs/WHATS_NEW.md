@@ -4,15 +4,26 @@ Welcome to the Eventide RP System release notes! This page provides an overview 
 
 ## Latest Release
 
+**[v13.17.5](release-notes/v13.17.5.md)** - Enhanced Context Menus & Code Quality _(November 2025)_
+
+**Key Highlights:**
+
+- Universal item creation from context menus on any tab
+- Comprehensive context menus for all item types across all sheets
+- Fixed internationalization issues with hardcoded strings
+- Resolved event listener memory leak for improved long-term performance
+
+## Recent Major Releases
+
 **[v13.17.2](release-notes/v13.17.2.md)** - UI and Usability Improvements _(November 2025)_
+
+Context menus for action card management and optimized header layout.
 
 **Key Highlights:**
 
 - Added context menus to action cards on actor sheets for moving between groups
 - Added context menus to action cards on item sheets
 - Optimized actor sheet header layout to provide more room for main content area
-
-## Recent Major Releases
 
 **[v13.17.0](release-notes/v13.17.0.md)** - Transformation to Actor _(November 2025)_
 
@@ -104,7 +115,8 @@ Enhanced character customization through circumstantial bonuses and feature-base
 
 | Version      | Release Date  | Focus                             |
 | ------------ | ------------- | --------------------------------- |
-| **v13.17.2** | November 2025 | UI and Usability Improvements     |
+| **v13.17.5** | November 2025 | Enhanced Context Menus & Quality  |
+| v13.17.2     | November 2025 | UI and Usability Improvements     |
 | v13.17.0     | November 2025 | Transformation to Actor           |
 | v13.16.0     | October 2025  | Action Card Groups                |
 | v13.15.5     | October 2025  | Stability & Polish                |
@@ -150,4 +162,4 @@ We encourage users to:
 
 ---
 
-**Current Version**: v13.17.2 | **Foundry VTT Compatibility**: v13+ | **Last Updated**: November 2025
+**Current Version**: v13.17.5 | **Foundry VTT Compatibility**: v13+ | **Last Updated**: November 2025

@@ -40,6 +40,24 @@ body {
   }
 }
 
+// Ensure context menus always appear above all other UI elements
+#context-menu {
+  z-index: 10000 !important; // Very high z-index to ensure it appears above everything
+}
+
+// Ensure drop zones appear below context menus and are completely hidden when disabled
+[data-drop-zone] {
+  z-index: 1; // Low z-index to stay below context menus
+  position: relative; // Ensure z-index applies
+
+  &.erps-drop-zone-disabled {
+    pointer-events: none !important;
+    opacity: 0 !important; // Completely invisible when context menu is open
+    visibility: hidden !important; // Also hide from layout to prevent any rendering
+    cursor: not-allowed !important;
+  }
+}
+
 // Global theme-aware scrollbars (for any element that has theme variables available)
 // This will work for dialogs, popups, and other UI elements that inherit theme variables
 body *,
