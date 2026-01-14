@@ -4,16 +4,21 @@ Welcome to the Eventide RP System release notes! This page provides an overview 
 
 ## Latest Release
 
-**[v13.17.5](release-notes/v13.17.5.md)** - Enhanced Context Menus & Code Quality _(November 2025)_
+**[v13.18.0](release-notes/v13.18.0.md)** - GM Action Cards _(January 2026)_
 
 **Key Highlights:**
 
-- Universal item creation from context menus on any tab
-- Comprehensive context menus for all item types across all sheets
-- Fixed internationalization issues with hardcoded strings
-- Resolved event listener memory leak for improved long-term performance
+- GM-only action cards completely hidden from players
+- Dedicated GM Actions tab on character sheets
+- Smart context-aware creation and drag-drop
+- Automatic filtering from transformations
+- Perfect for secret NPC abilities, traps, and plot mechanics
 
 ## Recent Major Releases
+
+**[v13.17.5](release-notes/v13.17.5.md)** - Enhanced Context Menus & Code Quality _(November 2025)_
+
+Universal item creation from context menus, comprehensive internationalization fixes, and resolved event listener memory leak.
 
 **[v13.17.2](release-notes/v13.17.2.md)** - UI and Usability Improvements _(November 2025)_
 
@@ -115,7 +120,8 @@ Enhanced character customization through circumstantial bonuses and feature-base
 
 | Version      | Release Date  | Focus                             |
 | ------------ | ------------- | --------------------------------- |
-| **v13.17.5** | November 2025 | Enhanced Context Menus & Quality  |
+| **v13.18.0** | January 2026  | GM Action Cards                   |
+| v13.17.5     | November 2025 | Enhanced Context Menus & Quality  |
 | v13.17.2     | November 2025 | UI and Usability Improvements     |
 | v13.17.0     | November 2025 | Transformation to Actor           |
 | v13.16.0     | October 2025  | Action Card Groups                |
@@ -130,7 +136,8 @@ Enhanced character customization through circumstantial bonuses and feature-base
 
 ### By Feature Area
 
-- **Action Cards**: [v13.11.0](release-notes/v13.11.0.md), [v13.13.3](release-notes/v13.13.3.md), [v13.14.0](release-notes/v13.14.0.md), [v13.15.0](release-notes/v13.15.0.md), [v13.16.0](release-notes/v13.16.0.md)
+- **Action Cards**: [v13.11.0](release-notes/v13.11.0.md), [v13.13.3](release-notes/v13.13.3.md), [v13.14.0](release-notes/v13.14.0.md), [v13.15.0](release-notes/v13.15.0.md), [v13.16.0](release-notes/v13.16.0.md), [v13.18.0](release-notes/v13.18.0.md)
+- **GM Tools**: [v13.18.0](release-notes/v13.18.0.md)
 - **Transformations**: [v13.14.0](release-notes/v13.14.0.md), [v13.15.0](release-notes/v13.15.0.md), [v13.15.5](release-notes/v13.15.5.md), [v13.17.0](release-notes/v13.17.0.md)
 - **Features & Bonuses**: [v13.10.0](release-notes/v13.10.0.md)
 - **Combat Automation**: [v13.11.0](release-notes/v13.11.0.md), [v13.13.3](release-notes/v13.13.3.md)
@@ -162,4 +169,4 @@ We encourage users to:
 
 ---
 
-**Current Version**: v13.17.5 | **Foundry VTT Compatibility**: v13+ | **Last Updated**: November 2025
+**Current Version**: v13.18.0 | **Foundry VTT Compatibility**: v13+ | **Last Updated**: January 2026
