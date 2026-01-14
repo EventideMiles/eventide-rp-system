@@ -61,6 +61,27 @@
           </div>
         </label>
       </div>
+
+      {{!-- GM Only Toggle --}}
+      <div class="eventide-sheet__toggle-group">
+        <label class="erps-toggles erps-toggles--label-left">
+          <input
+            type="checkbox"
+            class="erps-toggles__input"
+            name="system.gmOnly"
+            id="system.gmOnly"
+            {{checked system.gmOnly}}
+          />
+          <div class="erps-toggles__container">
+            <span class="erps-toggles__label" title='{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.GmOnly.hint"}}'>
+              {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.GmOnly.label"}}
+            </span>
+            <span class="erps-toggles__track">
+              <span class="erps-toggles__thumb"></span>
+            </span>
+          </div>
+        </label>
+      </div>
     </div>
 
 

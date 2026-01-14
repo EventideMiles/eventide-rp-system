@@ -170,6 +170,10 @@
           "label": "Reduce Inventory",
           "hint": "When enabled, reduces inventory quantities when transferring gear effects."
         },
+        "GmOnly": {
+          "label": "GM Only",
+          "hint": "When enabled, this action card is only visible and executable by GMs. It will not be overridden by transformations and appears in a separate GM Actions tab."
+        },
         "AdvanceInitiativeTurnError": "You can only use this action card on your turn when 'Advance Initiative' is enabled.",
         "Repetitions": {
           "label": "Repetitions",

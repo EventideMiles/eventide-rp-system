@@ -115,6 +115,7 @@ export const ActorSheetContextPreparationMixin = (BaseClass) =>
         const effects = [];
         const transformations = [];
         const baseActionCards = [];
+        const gmActionCards = [];
         const combatPowers = [];
 
         // Process each item and categorize by type
@@ -152,7 +153,12 @@ export const ActorSheetContextPreparationMixin = (BaseClass) =>
               transformations.push(itemData);
               break;
             case "actionCard":
-              baseActionCards.push(itemData);
+              // Split action cards into regular and GM-only
+              if (itemData.system.gmOnly) {
+                gmActionCards.push(itemData);
+              } else {
+                baseActionCards.push(itemData);
+              }
               break;
             case "combatPower":
               combatPowers.push(itemData);
@@ -376,6 +382,17 @@ export const ActorSheetContextPreparationMixin = (BaseClass) =>
             false,
           );
 
+        // Organize GM action cards into groups (use same group system)
+        const {
+          groupedActionCards: groupedGmActionCards,
+          ungroupedActionCards: ungroupedGmActionCards,
+          actionCardGroups: gmActionCardGroups,
+        } = this._organizeActionCardsIntoGroups(
+          gmActionCards,
+          this.actor.system.actionCardGroups || [],
+          false,
+        );
+
         // Organize transformation action cards into groups
         let groupedTransformationActionCards = [];
         let ungroupedTransformationActionCards = [];
@@ -413,6 +430,10 @@ export const ActorSheetContextPreparationMixin = (BaseClass) =>
         context.groupedActionCards = groupedActionCards;
         context.ungroupedActionCards = ungroupedActionCards;
         context.actionCardGroups = actionCardGroups;
+        context.gmActionCards = gmActionCards;
+        context.groupedGmActionCards = groupedGmActionCards;
+        context.ungroupedGmActionCards = ungroupedGmActionCards;
+        context.gmActionCardGroups = gmActionCardGroups;
         context.transformationActionCards = transformationActionCards;
         context.groupedTransformationActionCards =
           groupedTransformationActionCards;
@@ -432,6 +453,7 @@ export const ActorSheetContextPreparationMixin = (BaseClass) =>
         context.statusCount = effects.length; // Templates expect 'statusCount'
         context.transformationCount = transformations.length;
         context.actionCardCount = baseActionCards.length;
+        context.gmActionCardCount = gmActionCards.length;
         context.transformationActionCardCount =
           transformationActionCards.length;
         context.combatPowerCount = combatPowers.length;
@@ -478,6 +500,7 @@ export const ActorSheetContextPreparationMixin = (BaseClass) =>
         context.statuses = [];
         context.transformations = [];
         context.actionCards = [];
+        context.gmActionCards = [];
         context.combatPowers = [];
         context.transformationCombatPowers = [];
 

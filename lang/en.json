@@ -146,6 +146,10 @@
         "TransformationSelection": "Select Transformations",
         "NoTransformation": "No Transformation",
         "NoTargetsForTransformation": "No targets selected for transformation selection.",
+        "GmOnly": {
+          "label": "GM Only",
+          "hint": "When enabled, this action card is only visible and executable by GMs. It will not be overridden by transformations and appears in a separate GM Actions tab."
+        },
         "Repetitions": {
           "label": "Repetitions",
           "hint": "Roll formula for number of repetitions (e.g. '3', '1d4', '2d6+1')"
@@ -357,6 +361,7 @@
       "Tabs": {
         "CombatPowers": "Combat Powers",
         "ActionCards": "Action Cards",
+        "GmActionCards": "GM Actions",
         "Biography": "Biography",
         "Features": "Features",
         "Gear": "Gear",

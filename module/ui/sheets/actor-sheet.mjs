@@ -140,6 +140,9 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
     actionCards: {
       template: "systems/eventide-rp-system/templates/actor/action-cards.hbs",
     },
+    gmActionCards: {
+      template: "systems/eventide-rp-system/templates/actor/gm-action-cards.hbs",
+    },
   };
 
   /** @override */
@@ -152,10 +155,19 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
       "features",
       "combatPowers",
       "actionCards",
-      "biography",
-      "statuses",
-      "gear",
     ];
+
+    // Add GM Action Cards tab right after Action Cards for GMs
+    if (game.user.isGM) {
+      options.parts.push("gmActionCards");
+      // Increase width for GMs to accommodate extra tab
+      if (!options.position) options.position = {};
+      options.position.width = 1020;
+    }
+
+    // Add remaining tabs
+    options.parts.push("biography", "statuses", "gear");
+
     // Don't show the other tabs if only limited view
     if (this.document.limited) {
       options.parts = ["header", "tabs", "biography"];
@@ -234,6 +246,7 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
         case "statuses":
         case "combatPowers":
         case "actionCards":
+        case "gmActionCards":
           context.tab = context.tabs[partId];
           break;
         case "biography":
@@ -329,6 +342,11 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
         case "actionCards":
           tab.id = "actionCards";
           tab.label += "ActionCards";
+          break;
+        case "gmActionCards":
+          tab.id = "gmActionCards";
+          tab.label += "GmActionCards";
+          tab.icon = "fas fa-eye-slash";
           break;
         case "biography":
           tab.id = "biography";
