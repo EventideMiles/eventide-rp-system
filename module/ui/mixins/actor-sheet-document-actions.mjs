@@ -154,6 +154,11 @@ export const ActorSheetDocumentActionsMixin = (BaseClass) =>
           type,
         };
 
+        // Set gmOnly flag if creating from GM Actions tab
+        if (target.dataset.gmOnly === "true" && type === "actionCard") {
+          createData.system = { gmOnly: true };
+        }
+
         // Create the document
         const result = await documentClass.create(createData, {
           parent: this.actor,

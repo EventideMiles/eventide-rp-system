@@ -273,6 +273,16 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
       nullable: true,
     });
 
+    /**
+     * Whether this action card is GM-only
+     * GM-only action cards are only visible and executable by GMs
+     * They do not appear in transformations and have their own dedicated tab
+     */
+    schema.gmOnly = new fields.BooleanField({
+      required: true,
+      initial: false,
+    });
+
     return schema;
   }
 }

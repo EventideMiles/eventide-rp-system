@@ -281,7 +281,9 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
         }
 
         // Create the owned item
-        const result = await this._onDropItemCreate(item, event);
+        // Convert Item instance to plain object before passing to _onDropItemCreate
+        const itemData = item.toObject ? item.toObject() : item;
+        const result = await this._onDropItemCreate(itemData, event);
 
         return result;
       } catch (error) {
@@ -350,6 +352,30 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
     async _onDropItemCreate(itemData, _event) {
       try {
         itemData = itemData instanceof Array ? itemData : [itemData];
+
+        // Check if we're currently on the GM Actions tab
+        const isGmActionsTabActive =
+          this.tabGroups?.primary === "gmActionCards" ||
+          this.element?.querySelector(".tab.gm-action-cards.active") !== null;
+
+        // Set gmOnly flag based on active tab for all action cards
+        itemData = itemData.map((data) => {
+          if (data.type === "actionCard") {
+            // Convert to plain object if it's a Document or DataModel instance
+            const plainData = data.toObject ? data.toObject() : foundry.utils.deepClone(data);
+
+            // Ensure system is a plain object
+            if (!plainData.system || typeof plainData.system.toObject === 'function') {
+              plainData.system = plainData.system?.toObject?.() || {};
+            }
+
+            // Set the gmOnly flag based on active tab
+            plainData.system.gmOnly = isGmActionsTabActive;
+            return plainData;
+          }
+          return data;
+        });
+
         const result = await this.actor.createEmbeddedDocuments(
           "Item",
           itemData,
@@ -378,6 +404,18 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
      */
     async _onSortItem(event, item) {
       try {
+        // Check if action card is being moved between tabs (GM Actions vs regular Actions)
+        if (item.type === "actionCard") {
+          const isGmActionsTabActive =
+            this.tabGroups?.primary === "gmActionCards" ||
+            this.element?.querySelector(".tab.gm-action-cards.active") !== null;
+
+          // Update gmOnly flag if it doesn't match the current tab
+          if (item.system.gmOnly !== isGmActionsTabActive) {
+            await item.update({ "system.gmOnly": isGmActionsTabActive });
+          }
+        }
+
         // Get the drag source and drop target
         const items = this.actor.items;
         const dropTarget = event.target.closest("[data-item-id]");
@@ -1218,6 +1256,11 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
           return await this._createStatusActionCard(item);
         }
 
+        // Check if we're currently on the GM Actions tab
+        const isGmActionsTabActive =
+          this.tabGroups?.primary === "gmActionCards" ||
+          this.element?.querySelector(".tab.gm-action-cards.active") !== null;
+
         // Create the action card data for non-status items
         const actionCardData = {
           name: game.i18n.format(
@@ -1235,6 +1278,7 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
             textColor: item.system?.textColor || "#ffffff",
             advanceInitiative: false,
             attemptInventoryReduction: false,
+            gmOnly: isGmActionsTabActive,
             attackChain: {
               firstStat: "acro",
               secondStat: "phys",
@@ -1311,6 +1355,11 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
         const bgColor = statusSystem.bgColor || "#8B4513";
         const textColor = statusSystem.textColor || "#ffffff";
 
+        // Check if we're currently on the GM Actions tab
+        const isGmActionsTabActive =
+          this.tabGroups?.primary === "gmActionCards" ||
+          this.element?.querySelector(".tab.gm-action-cards.active") !== null;
+
         // Create saved damage action card data with status appearance
         const actionCardData = {
           name: game.i18n.format(
@@ -1328,6 +1377,7 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
             textColor,
             advanceInitiative: false,
             attemptInventoryReduction: false,
+            gmOnly: isGmActionsTabActive,
             attackChain: {
               firstStat: "acro",
               secondStat: "phys",
@@ -1637,11 +1687,7 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
           const updatedGroups = existingGroups.filter((g) => g._id !== groupId);
           await this.actor.update({ "system.actionCardGroups": updatedGroups });
 
-          Logger.debug(
-            "Auto-dissolved empty group",
-            { groupId },
-            "DRAG_DROP",
-          );
+          Logger.debug("Auto-dissolved empty group", { groupId }, "DRAG_DROP");
         }
       } catch (error) {
         Logger.error("Failed to check group dissolution", error, "DRAG_DROP");

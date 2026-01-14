@@ -1,0 +1,125 @@
+{{! GM Action Cards Tab - Only visible to GMs }}
+<section class='tab gm-action-cards {{tab.cssClass}}' data-group='primary' data-tab='gmActionCards'>
+  {{! GM-only indicator }}
+  <div class="erps-gm-indicator">
+    <i class="fas fa-user-shield"></i>
+    <span>GM Actions - Not visible to players</span>
+  </div>
+
+  {{! Ungrouped GM Action Cards - Always Show }}
+  <div class="erps-action-card-ungrouped" data-ungrouped-zone="true">
+      <div class="erps-action-card-ungrouped__header">
+        <span class="erps-action-card-ungrouped__title">{{localize "EVENTIDE_RP_SYSTEM.Actor.ActionCards.Ungrouped"}}</span>
+        <span class="erps-action-card-ungrouped__count">({{ungroupedGmActionCards.length}})</span>
+      </div>
+      <div class="erps-action-card-ungrouped__content">
+        <table class='erps-data-table erps-data-table--action-cards'>
+          <thead class="erps-data-table__header">
+            <tr class="erps-data-table__header-row">
+              <th class="erps-data-table__header-cell erps-data-table__header-cell--name">
+                {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Name"}}
+              </th>
+              <th class="erps-data-table__header-cell erps-data-table__header-cell--center">
+                {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.EmbeddedItem"}}
+              </th>
+              <th class="erps-data-table__header-cell erps-data-table__header-cell--center">
+                {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Mode"}}
+              </th>
+              <th class="erps-data-table__header-cell erps-data-table__header-cell--controls">
+                {{#if @root.editable}}
+                  <a
+                    class="erps-data-table__create-button"
+                    title="{{localize 'DOCUMENT.Create' type='Item'}}"
+                    data-action="createDoc"
+                    data-document-class="Item"
+                    data-type="actionCard"
+                    data-gm-only="true"
+                  >
+                    <i class="fas fa-plus"></i>
+                    {{localize "DOCUMENT.New" type="item"}}
+                  </a>
+                {{/if}}
+              </th>
+            </tr>
+          </thead>
+          <tbody class="erps-data-table__body">
+            {{#each ungroupedGmActionCards as |item|}}
+              {{> actor/partials/action-card-row item=item isTransformation=false}}
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
+  </div>
+
+  {{! Grouped GM Action Cards }}
+  {{#each groupedGmActionCards as |group|}}
+    <div class="erps-action-card-group {{#if group.collapsed}}erps-action-card-group--collapsed{{/if}}" data-group-id="{{group.id}}">
+      <div class="erps-action-card-group__header">
+        <div class="erps-action-card-group__drag-handle" data-drag="true" data-document-class="Group" data-group-id="{{group._id}}" title="{{localize 'EVENTIDE_RP_SYSTEM.Actor.ActionCards.DragToReorder'}}">
+          <i class="fas fa-grip-vertical"></i>
+        </div>
+        <a class="erps-action-card-group__collapse-toggle" data-action="toggleGroupCollapse" data-group-id="{{group._id}}">
+          <i class="fas fa-chevron-right"></i>
+        </a>
+        <input
+          type="text"
+          class="erps-action-card-group__name"
+          value="{{group.name}}"
+          data-group-id="{{group.id}}"
+          placeholder="{{localize 'EVENTIDE_RP_SYSTEM.Actor.ActionCards.GroupNamePlaceholder'}}"
+          {{#unless @root.editable}}disabled{{/unless}}
+        />
+        <span class="erps-action-card-group__count">({{group.cards.length}})</span>
+        {{#if @root.editable}}
+          <a class="erps-action-card-group__delete-button" data-action="deleteGroup" data-group-id="{{group.id}}" title="{{localize 'EVENTIDE_RP_SYSTEM.Actor.ActionCards.DeleteGroup'}}">
+            <i class="fas fa-trash"></i>
+          </a>
+        {{/if}}
+      </div>
+      <div class="erps-action-card-group__content">
+        <table class='erps-data-table erps-data-table--action-cards'>
+          <thead class="erps-data-table__header">
+            <tr class="erps-data-table__header-row">
+              <th class="erps-data-table__header-cell erps-data-table__header-cell--name">
+                {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Name"}}
+              </th>
+              <th class="erps-data-table__header-cell erps-data-table__header-cell--center">
+                {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.EmbeddedItem"}}
+              </th>
+              <th class="erps-data-table__header-cell erps-data-table__header-cell--center">
+                {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Mode"}}
+              </th>
+              <th class="erps-data-table__header-cell erps-data-table__header-cell--controls">
+                Controls
+              </th>
+            </tr>
+          </thead>
+          <tbody class="erps-data-table__body">
+            {{#each group.cards as |item|}}
+              {{> actor/partials/action-card-row item=item isTransformation=false}}
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  {{/each}}
+
+  {{! Empty state for GM cards }}
+  {{#if (and (eq ungroupedGmActionCards.length 0) (eq groupedGmActionCards.length 0))}}
+    <div class="erps-data-table__empty-message">
+      <i class="fas fa-user-shield"></i>
+      <span>No GM action cards configured</span>
+    </div>
+  {{/if}}
+
+  {{! Drop zone for creating GM action cards }}
+  {{#if @root.editable}}
+    <div class="erps-items-panel__drop-zone erps-items-panel__drop-zone--action-cards" data-drop-zone="actionCard">
+      <div class="erps-items-panel__drop-zone-content">
+        <i class="fas fa-user-shield"></i>
+        <p>Drop items here to create GM-only action cards</p>
+        <small>These action cards will only be visible and usable by GMs</small>
+      </div>
+    </div>
+  {{/if}}
+</section>

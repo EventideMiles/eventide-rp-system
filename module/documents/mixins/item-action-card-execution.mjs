@@ -24,6 +24,13 @@ export function ItemActionCardExecutionMixin(Base) {
         throw new Error("execute can only be called on action card items");
       }
 
+      // Permission check for GM-only action cards
+      if (this.system.gmOnly && !game.user.isGM) {
+        ui.notifications.error(
+          "Only GMs can execute GM-only action cards.",
+        );
+        throw new Error("Insufficient permissions to execute GM-only action card");
+      }
 
       try {
         let result;
@@ -70,6 +77,13 @@ export function ItemActionCardExecutionMixin(Base) {
         );
       }
 
+      // Permission check for GM-only action cards
+      if (this.system.gmOnly && !game.user.isGM) {
+        ui.notifications.error(
+          "Only GMs can execute GM-only action cards.",
+        );
+        throw new Error("Insufficient permissions to execute GM-only action card");
+      }
 
       try {
         // Calculate number of repetitions

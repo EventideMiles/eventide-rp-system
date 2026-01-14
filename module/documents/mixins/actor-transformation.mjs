@@ -533,12 +533,12 @@ export const ActorTransformationMixin = (BaseClass) =>
         power.toObject(),
       );
 
-      // Get embedded action cards data
+      // Get embedded action cards data (exclude GM-only action cards)
       const embeddedActionCards =
         transformationItem.system.getEmbeddedActionCards();
-      const embeddedActionCardsData = embeddedActionCards.map((actionCard) =>
-        actionCard.toObject(),
-      );
+      const embeddedActionCardsData = embeddedActionCards
+        .filter((actionCard) => !actionCard.system.gmOnly)
+        .map((actionCard) => actionCard.toObject());
 
       await this.setFlag(
         "eventide-rp-system",
