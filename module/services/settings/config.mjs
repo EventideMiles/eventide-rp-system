@@ -79,6 +79,7 @@ EVENTIDE_RP_SYSTEM.rollTypes = {
   none: "EVENTIDE_RP_SYSTEM.RollTypes.None",
   roll: "EVENTIDE_RP_SYSTEM.RollTypes.Roll",
   flat: "EVENTIDE_RP_SYSTEM.RollTypes.Flat",
+  mixedRoll: "EVENTIDE_RP_SYSTEM.RollTypes.MixedRoll",
 };
 
 /**

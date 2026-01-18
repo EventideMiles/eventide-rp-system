@@ -98,6 +98,9 @@ export const ItemRollsMixin = (BaseClass) =>
         case "flat":
           formula = this._getFlatBonusFormula(rollData);
           break;
+        case "mixedRoll":
+          formula = this._getMixedRollFormula(rollData);
+          break;
         case "roll":
         default:
           formula = this._getDiceRollFormula(rollData);
@@ -146,6 +149,109 @@ export const ItemRollsMixin = (BaseClass) =>
       const formula = `${baseBonus} + ${abilityTotal}`;
 
       Logger.methodExit("ItemRollsMixin", "_getFlatBonusFormula", formula);
+      return formula;
+    }
+
+    /**
+     * Calculate formula for mixed roll (averages two abilities)
+     *
+     * @private
+     * @param {Object} rollData - The roll data
+     * @returns {string} The mixed roll formula
+     */
+    _getMixedRollFormula(rollData) {
+      Logger.methodEntry("ItemRollsMixin", "_getMixedRollFormula", {
+        ability: rollData.roll.ability,
+        secondAbility: rollData.roll.secondAbility,
+      });
+
+      // Validate both abilities exist in actor data
+      if (!rollData.actor?.abilities?.[rollData.roll.ability]) {
+        Logger.warn(
+          `Primary ability "${rollData.roll.ability}" not found in actor data`,
+          { availableAbilities: Object.keys(rollData.actor?.abilities || {}) },
+          "ITEM_ROLLS",
+        );
+        // Fallback to regular dice roll
+        const formula = this._getDiceRollFormula(rollData);
+        Logger.methodExit("ItemRollsMixin", "_getMixedRollFormula", formula);
+        return formula;
+      }
+
+      if (!rollData.actor?.abilities?.[rollData.roll.secondAbility]) {
+        Logger.warn(
+          `Second ability "${rollData.roll.secondAbility}" not found in actor data`,
+          { availableAbilities: Object.keys(rollData.actor?.abilities || {}) },
+          "ITEM_ROLLS",
+        );
+        // Fallback to regular dice roll
+        const formula = this._getDiceRollFormula(rollData);
+        Logger.methodExit("ItemRollsMixin", "_getMixedRollFormula", formula);
+        return formula;
+      }
+
+      // Get ability totals
+      const ability1Total = rollData.actor.abilities[rollData.roll.ability].total || 0;
+      const ability2Total = rollData.actor.abilities[rollData.roll.secondAbility].total || 0;
+
+      // Calculate average (rounded up)
+      const averageAbility = Math.ceil((ability1Total + ability2Total) / 2);
+
+      // Get combined dice adjustments from both abilities
+      const ability1DiceAdj = rollData.actor.abilities[rollData.roll.ability].diceAdjustments || {};
+      const ability2DiceAdj = rollData.actor.abilities[rollData.roll.secondAbility].diceAdjustments || {};
+      const itemDiceAdj = rollData.roll.diceAdjustments || {};
+
+      const combinedAdvantage =
+        (ability1DiceAdj.advantage || 0) +
+        (ability2DiceAdj.advantage || 0) +
+        (itemDiceAdj.advantage || 0);
+
+      const combinedDisadvantage =
+        (ability1DiceAdj.disadvantage || 0) +
+        (ability2DiceAdj.disadvantage || 0) +
+        (itemDiceAdj.disadvantage || 0);
+
+      const totalAdjustment = combinedAdvantage - combinedDisadvantage;
+      const absTotal = Math.abs(totalAdjustment);
+      const mode = totalAdjustment >= 0 ? "k" : "kl";
+
+      // Build dice formula
+      const diceCount = absTotal + 1;
+      const dieSize = rollData.actor.hiddenAbilities?.dice?.total || 20;
+
+      let formula;
+      if (absTotal > 0) {
+        formula = `${diceCount}d${dieSize}${mode}1`;
+      } else {
+        formula = `1d${dieSize}`;
+      }
+
+      // Add averaged ability modifier
+      formula += ` + ${averageAbility}`;
+
+      // Add item bonus
+      const bonus = rollData.roll.bonus || 0;
+      if (bonus !== 0) {
+        formula += ` + ${bonus}`;
+      }
+
+      Logger.debug(
+        `Built mixed roll formula: ${formula}`,
+        {
+          ability1: rollData.roll.ability,
+          ability1Total,
+          ability2: rollData.roll.secondAbility,
+          ability2Total,
+          averageAbility,
+          combinedAdvantage,
+          combinedDisadvantage,
+          totalAdjustment,
+        },
+        "ITEM_ROLLS",
+      );
+
+      Logger.methodExit("ItemRollsMixin", "_getMixedRollFormula", formula);
       return formula;
     }
 

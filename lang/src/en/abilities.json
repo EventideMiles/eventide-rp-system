@@ -18,7 +18,8 @@
     "RollTypes": {
       "Flat": "Flat",
       "None": "None",
-      "Roll": "Roll"
+      "Roll": "Roll",
+      "MixedRoll": "Mixed Roll"
     },
     "ClassNames": {
       "Weapon": "Weapon",

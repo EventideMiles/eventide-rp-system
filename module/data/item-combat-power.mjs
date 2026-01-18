@@ -47,13 +47,19 @@ export default class EventideRpSystemCombatPower extends EventideRpSystemItemBas
         initial: "roll",
         required: true,
         nullable: false,
-        choices: ["roll", "flat", "none"],
+        choices: ["roll", "flat", "none", "mixedRoll"],
       }),
       ability: new fields.StringField({
         required: true,
         nullable: false,
         choices: ["acro", "phys", "fort", "will", "wits", "unaugmented"],
         initial: "unaugmented",
+      }),
+      secondAbility: new fields.StringField({
+        required: false,
+        nullable: false,
+        choices: ["acro", "phys", "fort", "will", "wits"],
+        initial: "phys",
       }),
       bonus: new fields.NumberField({ initial: 0 }),
       diceAdjustments: new fields.SchemaField({
