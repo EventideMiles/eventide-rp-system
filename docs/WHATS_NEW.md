@@ -1,8 +1,16 @@
 # Release Notes
 
-Welcome to the Eventide RP System release notes! This page provides an overview of all releases with links to detailed version-specific documentation.
-
 ## Latest Release
+
+**[v13.18.1](release-notes/v13.18.1.md)** - Enhanced Action Chain Control _(February 2026)_
+
+**Key Highlights:**
+
+- Added a new "Mixed Attribute" type of roll for combat powers and action cards that let you take the average of 2 stats for an action
+- Fixed a bug where status effects, if they weren't applied in the first action of an action chain, wouldn't ever apply
+- Added a new way of selecting which status will apply on any given use of an action chain so that status effects can be selectively applied by the GM
+
+## Recent Major Releases
 
 **[v13.18.0](release-notes/v13.18.0.md)** - GM Action Cards _(January 2026)_
 
@@ -13,8 +21,6 @@ Welcome to the Eventide RP System release notes! This page provides an overview 
 - Smart context-aware creation and drag-drop
 - Automatic filtering from transformations
 - Perfect for secret NPC abilities, traps, and plot mechanics
-
-## Recent Major Releases
 
 **[v13.17.5](release-notes/v13.17.5.md)** - Enhanced Context Menus & Code Quality _(November 2025)_
 
@@ -32,7 +38,7 @@ Context menus for action card management and optimized header layout.
 
 **[v13.17.0](release-notes/v13.17.0.md)** - Transformation to Actor _(November 2025)_
 
-Transformations can create actors now and vice-versa
+Transformations can create actors now and vice versa
 
 **Key Features:**
 
@@ -120,7 +126,8 @@ Enhanced character customization through circumstantial bonuses and feature-base
 
 | Version      | Release Date  | Focus                             |
 | ------------ | ------------- | --------------------------------- |
-| **v13.18.0** | January 2026  | GM Action Cards                   |
+| **v13.18.1** | January 2026  | Enhanced Action Chain Control     |
+| v13.18.0     | January 2026  | GM Action Cards                   |
 | v13.17.5     | November 2025 | Enhanced Context Menus & Quality  |
 | v13.17.2     | November 2025 | UI and Usability Improvements     |
 | v13.17.0     | November 2025 | Transformation to Actor           |
@@ -136,8 +143,8 @@ Enhanced character customization through circumstantial bonuses and feature-base
 
 ### By Feature Area
 
-- **Action Cards**: [v13.11.0](release-notes/v13.11.0.md), [v13.13.3](release-notes/v13.13.3.md), [v13.14.0](release-notes/v13.14.0.md), [v13.15.0](release-notes/v13.15.0.md), [v13.16.0](release-notes/v13.16.0.md), [v13.18.0](release-notes/v13.18.0.md)
-- **GM Tools**: [v13.18.0](release-notes/v13.18.0.md)
+- **Action Cards**: [v13.11.0](release-notes/v13.11.0.md), [v13.13.3](release-notes/v13.13.3.md), [v13.14.0](release-notes/v13.14.0.md), [v13.15.0](release-notes/v13.15.0.md), [v13.16.0](release-notes/v13.16.0.md), [v13.18.0](release-notes/v13.18.0.md), [v13.18.1](release-notes/v13.18.1.md)
+- **GM Tools**: [v13.18.0](release-notes/v13.18.0.md), [v13.18.1](release-notes/v13.18.1.md)
 - **Transformations**: [v13.14.0](release-notes/v13.14.0.md), [v13.15.0](release-notes/v13.15.0.md), [v13.15.5](release-notes/v13.15.5.md), [v13.17.0](release-notes/v13.17.0.md)
 - **Features & Bonuses**: [v13.10.0](release-notes/v13.10.0.md)
 - **Combat Automation**: [v13.11.0](release-notes/v13.11.0.md), [v13.13.3](release-notes/v13.13.3.md)
@@ -169,4 +176,4 @@ We encourage users to:
 
 ---
 
-**Current Version**: v13.18.0 | **Foundry VTT Compatibility**: v13+ | **Last Updated**: January 2026
+**Current Version**: v13.18.1 | **Foundry VTT Compatibility**: v13+ | **Last Updated**: January 2026
