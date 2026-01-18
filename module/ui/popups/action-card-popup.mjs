@@ -77,6 +77,47 @@ export class ActionCardPopup extends EventidePopupHelpers {
 
     // Initialize transformation selection styling
     this._initializeTransformationSelection();
+
+    // Initialize status effect selection handlers
+    this._initializeStatusEffectSelection();
+  }
+
+  /**
+   * Initialize status effect selection handlers
+   * @private
+   */
+  _initializeStatusEffectSelection() {
+    // Handle "Select All" button
+    const selectAllButton = this.element.querySelector(
+      '[data-action="selectAllEffects"]',
+    );
+    if (selectAllButton) {
+      selectAllButton.addEventListener("click", (event) => {
+        event.preventDefault();
+        const checkboxes = this.element.querySelectorAll(
+          '.erps-form__status-effect-checkbox',
+        );
+        checkboxes.forEach((checkbox) => {
+          checkbox.checked = true;
+        });
+      });
+    }
+
+    // Handle "Deselect All" button
+    const deselectAllButton = this.element.querySelector(
+      '[data-action="deselectAllEffects"]',
+    );
+    if (deselectAllButton) {
+      deselectAllButton.addEventListener("click", (event) => {
+        event.preventDefault();
+        const checkboxes = this.element.querySelectorAll(
+          '.erps-form__status-effect-checkbox',
+        );
+        checkboxes.forEach((checkbox) => {
+          checkbox.checked = false;
+        });
+      });
+    }
   }
 
   /**
@@ -245,6 +286,17 @@ export class ActionCardPopup extends EventidePopupHelpers {
     context.attackChain = this.item.system.attackChain;
     context.savedDamage = this.item.system.savedDamage;
     context.transformationConfig = this.item.system.transformationConfig;
+
+    // Prepare embedded status effects data for display
+    context.embeddedStatusEffects = (this.item.system.embeddedStatusEffects || []).map(
+      (effect, index) => ({
+        id: effect._id || `effect-${index}`,
+        name: effect.name,
+        img: effect.img,
+        type: effect.type,
+        description: effect.system?.description || "",
+      }),
+    );
 
     // Prepare embedded transformations data for display
     const embeddedTransformations =
@@ -683,6 +735,29 @@ export class ActionCardPopup extends EventidePopupHelpers {
         }
       }
 
+      // Extract selected status effect IDs from form data
+      // Note: Foundry VTT includes unchecked checkboxes with value "null" (string)
+      const selectedEffectIds = [];
+      for (const [key, value] of formData.entries()) {
+        if (key.startsWith("statusEffect-")) {
+          // Only include if the value is truthy and not the string "null"
+          // Checked boxes have value = effectId, unchecked have value = "null"
+          if (value && value !== "null") {
+            const effectId = key.replace("statusEffect-", "");
+            selectedEffectIds.push(effectId);
+          }
+        }
+      }
+
+      Logger.debug(
+        "Status effect selection captured from form",
+        {
+          selectedEffectIds,
+          totalEffects: this.item.system.embeddedStatusEffects?.length || 0,
+        },
+        "ACTION_CARD",
+      );
+
 
       // Check eligibility before execution
       const problems = await this.checkEligibility();
@@ -821,6 +896,7 @@ export class ActionCardPopup extends EventidePopupHelpers {
             transformationSelections: Object.fromEntries(
               transformationSelections,
             ),
+            selectedEffectIds,
           });
 
           ui.notifications.info(
@@ -851,6 +927,7 @@ export class ActionCardPopup extends EventidePopupHelpers {
       // Player owns all targets - execute normally
       const result = await this.item.executeWithRollResult(actor, rollResult, {
         transformationSelections,
+        selectedEffectIds,
       });
 
       if (result.success) {

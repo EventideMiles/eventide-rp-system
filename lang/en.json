@@ -51,7 +51,8 @@
     "RollTypes": {
       "Flat": "Flat",
       "None": "None",
-      "Roll": "Roll"
+      "Roll": "Roll",
+      "MixedRoll": "Mixed Roll"
     },
     "ClassNames": {
       "Weapon": "Weapon",
@@ -143,6 +144,9 @@
         "TransformationConfig": "Transformation Configuration",
         "TransformationCondition": "Apply Transformations",
         "TransformationThreshold": "Transformation Threshold",
+        "StatusEffectSelection": "Select Status Effects to Apply",
+        "SelectAllEffects": "Select All",
+        "DeselectAllEffects": "Deselect All",
         "TransformationSelection": "Select Transformations",
         "NoTransformation": "No Transformation",
         "NoTargetsForTransformation": "No targets selected for transformation selection.",
@@ -255,6 +259,12 @@
       "Roll": {
         "Ability": {
           "label": "Ability"
+        },
+        "FirstAbility": {
+          "label": "First Ability"
+        },
+        "SecondAbility": {
+          "label": "Second Ability"
         },
         "Bonus": {
           "label": "Bonus"

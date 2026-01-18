@@ -58,39 +58,94 @@
     </div>
 
     {{#if (ne system.roll.type "none")}}
-      <div class='grid grid-2col'>
-        <div>
-          <label class='erps-input-label'>
-            {{localize 'EVENTIDE_RP_SYSTEM.Item.Roll.Ability.label'}}
-          </label>
-          <select
-            class="erps-select"
-            name='system.roll.ability'
-          >
-            {{#each abilities as |name key|}}
-              <option value="{{key}}" {{#if (eq ../system.roll.ability key)}}selected{{/if}}>
-                {{#if (eq key "unaugmented")}}
-                  {{localize "EVENTIDE_RP_SYSTEM.CombatOptions.Unaugmented"}}
-                {{else}}
-                  {{localize (lookup @root.config.abilities key)}}
-                {{/if}}
-              </option>
-            {{/each}}
-          </select>
+      {{#if (eq system.roll.type "mixedRoll")}}
+        {{!-- Mixed Roll: Show two ability dropdowns --}}
+        <div class='grid grid-2col'>
+          <div>
+            <label class='erps-input-label'>
+              {{localize 'EVENTIDE_RP_SYSTEM.Item.Roll.FirstAbility.label'}}
+            </label>
+            <select
+              class="erps-select"
+              name='system.roll.ability'
+            >
+              {{#each abilities as |name key|}}
+                {{#unless (eq key "unaugmented")}}
+                  <option value="{{key}}" {{#if (eq ../system.roll.ability key)}}selected{{/if}}>
+                    {{localize (lookup @root.config.abilities key)}}
+                  </option>
+                {{/unless}}
+              {{/each}}
+            </select>
+          </div>
+          <div>
+            <label class='erps-input-label'>
+              {{localize 'EVENTIDE_RP_SYSTEM.Item.Roll.SecondAbility.label'}}
+            </label>
+            <select
+              class="erps-select"
+              name='system.roll.secondAbility'
+            >
+              {{#each abilities as |name key|}}
+                {{#unless (eq key "unaugmented")}}
+                  <option value="{{key}}" {{#if (eq ../system.roll.secondAbility key)}}selected{{/if}}>
+                    {{localize (lookup @root.config.abilities key)}}
+                  </option>
+                {{/unless}}
+              {{/each}}
+            </select>
+          </div>
         </div>
-        <div>
-          <label class='erps-input-label'>
-            {{localize 'EVENTIDE_RP_SYSTEM.Item.Roll.Bonus.label'}}
-          </label>
-          <input
-            type="number"
-            class="erps-input"
-            name="system.roll.bonus"
-            value="{{system.roll.bonus}}"
-            data-dtype="Number"
-          />
+        <div class='grid grid-1col'>
+          <div>
+            <label class='erps-input-label'>
+              {{localize 'EVENTIDE_RP_SYSTEM.Item.Roll.Bonus.label'}}
+            </label>
+            <input
+              type="number"
+              class="erps-input"
+              name="system.roll.bonus"
+              value="{{system.roll.bonus}}"
+              data-dtype="Number"
+            />
+          </div>
         </div>
-      </div>
+      {{else}}
+        {{!-- Standard Roll or Flat: Show single ability dropdown --}}
+        <div class='grid grid-2col'>
+          <div>
+            <label class='erps-input-label'>
+              {{localize 'EVENTIDE_RP_SYSTEM.Item.Roll.Ability.label'}}
+            </label>
+            <select
+              class="erps-select"
+              name='system.roll.ability'
+            >
+              {{#each abilities as |name key|}}
+                <option value="{{key}}" {{#if (eq ../system.roll.ability key)}}selected{{/if}}>
+                  {{#if (eq key "unaugmented")}}
+                    {{localize "EVENTIDE_RP_SYSTEM.CombatOptions.Unaugmented"}}
+                  {{else}}
+                    {{localize (lookup @root.config.abilities key)}}
+                  {{/if}}
+                </option>
+              {{/each}}
+            </select>
+          </div>
+          <div>
+            <label class='erps-input-label'>
+              {{localize 'EVENTIDE_RP_SYSTEM.Item.Roll.Bonus.label'}}
+            </label>
+            <input
+              type="number"
+              class="erps-input"
+              name="system.roll.bonus"
+              value="{{system.roll.bonus}}"
+              data-dtype="Number"
+            />
+          </div>
+        </div>
+      {{/if}}
     {{/if}}
 
     {{#if (eq system.roll.type "roll")}}

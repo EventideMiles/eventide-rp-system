@@ -152,6 +152,57 @@
       </div>
     {{/if}}
 
+    {{!-- Status Effect Selection --}}
+    {{#if embeddedStatusEffects.length}}
+      <div class="erps-form__section erps-form__section--compact">
+        <div class="erps-form__header erps-form__header--small erps-form__header--no-margin">
+          {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.StatusEffectSelection"}}
+        </div>
+
+        <div class="erps-form__group erps-form__group--compact">
+          <div class="erps-form__button-group" style="display: flex; gap: 8px; margin-bottom: 8px;">
+            <button
+              type="button"
+              class="erps-button erps-button--secondary erps-button--small"
+              data-action="selectAllEffects"
+            >
+              <i class="fas fa-check-square"></i> {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.SelectAllEffects"}}
+            </button>
+            <button
+              type="button"
+              class="erps-button erps-button--secondary erps-button--small"
+              data-action="deselectAllEffects"
+            >
+              <i class="fas fa-square"></i> {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.DeselectAllEffects"}}
+            </button>
+          </div>
+
+          <div class="erps-form__status-effects-list">
+            {{#each embeddedStatusEffects}}
+              <label class="erps-form__status-effect-item" style="display: flex; align-items: center; padding: 6px; border: 1px solid #ccc; border-radius: 4px; margin-bottom: 4px; cursor: pointer;">
+                <input
+                  type="checkbox"
+                  class="erps-form__status-effect-checkbox"
+                  name="statusEffect-{{id}}"
+                  value="{{id}}"
+                  checked
+                  style="margin-right: 8px;"
+                />
+                <img src="{{img}}" alt="{{name}}" class="erps-form__effect-icon" style="width: 32px; height: 32px; object-fit: cover; border-radius: 4px; margin-right: 8px;" />
+                <div class="erps-form__effect-details" style="flex: 1;">
+                  <div class="erps-form__effect-name" style="font-weight: 500;">{{name}}</div>
+                  {{#if description}}
+                    <div class="erps-form__effect-description" style="font-size: 0.9em; color: #666;">{{description}}</div>
+                  {{/if}}
+                </div>
+                <span class="erps-form__effect-type" style="font-size: 0.85em; color: #888; text-transform: capitalize;">{{type}}</span>
+              </label>
+            {{/each}}
+          </div>
+        </div>
+      </div>
+    {{/if}}
+
     {{!-- Transformation Selection --}}
     {{#if (and embeddedTransformations.length (ne transformationConfig.condition "never"))}}
       <div class="erps-form__section erps-form__section--compact">

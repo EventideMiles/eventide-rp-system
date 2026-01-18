@@ -122,6 +122,8 @@ export function ItemActionCardExecutionMixin(Base) {
           costOnRepetition: this.system.costOnRepetition,
           appliedTransformations: new Set(), // Track which transformations have been applied
           transformationSelections: options.transformationSelections || new Map(), // Pre-selected transformations
+          selectedEffectIds: options.selectedEffectIds || null, // Selected status effect IDs
+          appliedStatusEffects: new Set(), // Track which status effects have been applied (target-effect pairs)
         };
 
         // Execute repetitions
@@ -677,6 +679,53 @@ export function ItemActionCardExecutionMixin(Base) {
         return statusResults;
       }
 
+      // Filter effects based on selection
+      let effectsToApply = this.system.embeddedStatusEffects;
+      const selectedEffectIds = this._currentRepetitionContext?.selectedEffectIds;
+
+      Logger.debug(
+        `Status effect filtering - checking selection`,
+        {
+          hasContext: !!this._currentRepetitionContext,
+          selectedEffectIds,
+          selectedEffectIdsType: typeof selectedEffectIds,
+          isArray: Array.isArray(selectedEffectIds),
+          totalEffects: this.system.embeddedStatusEffects.length,
+          allEffectIds: this.system.embeddedStatusEffects.map((e, i) => e._id || `effect-${i}`),
+        },
+        "ACTION_CARD",
+      );
+
+      if (selectedEffectIds !== null && selectedEffectIds !== undefined) {
+        // If selection is specified, filter to only selected effects
+        effectsToApply = this.system.embeddedStatusEffects.filter((effect, index) => {
+          const effectId = effect._id || `effect-${index}`;
+          const isIncluded = selectedEffectIds.includes(effectId);
+          Logger.debug(
+            `Checking effect ${effectId}`,
+            {
+              effectName: effect.name,
+              effectId,
+              isIncluded,
+              selectedEffectIds,
+            },
+            "ACTION_CARD",
+          );
+          return isIncluded;
+        });
+
+        Logger.debug(
+          `Filtered status effects based on selection`,
+          {
+            totalEffects: this.system.embeddedStatusEffects.length,
+            selectedCount: effectsToApply.length,
+            selectedIds: selectedEffectIds,
+            filteredEffectNames: effectsToApply.map(e => e.name),
+          },
+          "ACTION_CARD",
+        );
+      }
+
       try {
         for (const result of results) {
           // Skip invalid results
@@ -699,7 +748,7 @@ export function ItemActionCardExecutionMixin(Base) {
           );
 
           if (shouldApplyStatus) {
-            for (const effectData of this.system.embeddedStatusEffects) {
+            for (const effectData of effectsToApply) {
               // Validate effect entry structure
               if (!effectData) {
                 Logger.warn(
@@ -708,6 +757,24 @@ export function ItemActionCardExecutionMixin(Base) {
                     effectData,
                     actionCardName: this.name,
                     targetName: result.target.name,
+                  },
+                  "ACTION_CARD",
+                );
+                continue;
+              }
+
+              // Check if this effect has already been applied to this target
+              // (unless statusPerSuccess is enabled, which allows reapplication)
+              const effectKey = `${result.target.id}-${effectData.name}`;
+              const alreadyApplied = this._currentRepetitionContext?.appliedStatusEffects?.has(effectKey);
+
+              if (alreadyApplied && !this.system.statusPerSuccess) {
+                Logger.debug(
+                  `Skipping effect "${effectData.name}" for target "${result.target.name}" - already applied in previous repetition`,
+                  {
+                    targetId: result.target.id,
+                    effectName: effectData.name,
+                    statusPerSuccess: this.system.statusPerSuccess,
                   },
                   "ACTION_CARD",
                 );
@@ -862,6 +929,12 @@ export function ItemActionCardExecutionMixin(Base) {
                     result.target,
                     effectData,
                   );
+
+                // Track that this effect has been applied to this target
+                if (applicationResult.applied && this._currentRepetitionContext?.appliedStatusEffects) {
+                  const effectKey = `${result.target.id}-${effectData.name}`;
+                  this._currentRepetitionContext.appliedStatusEffects.add(effectKey);
+                }
 
                 // Wait for execution delay after applying status effects
                 // Delay except on final repetition (where sequence ends)
@@ -1180,9 +1253,9 @@ export function ItemActionCardExecutionMixin(Base) {
       const shouldApplyDamage =
         this.system.damageApplication || repetitionIndex === 0;
 
-      // Determine if status should be applied based on statusPerSuccess setting and repetition index
-      const shouldApplyStatus =
-        this.system.statusPerSuccess || repetitionIndex === 0;
+      // IMPORTANT: Always check status conditions on each repetition
+      // The _processStatusResults method will handle tracking which effects have already been applied
+      const shouldApplyStatus = true;
 
       // Determine if this is the final repetition (affects final status delay)
       const isFinalRepetition = repetitionIndex === totalRepetitions - 1;
