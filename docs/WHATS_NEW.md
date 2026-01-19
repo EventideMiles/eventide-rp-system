@@ -16,11 +16,11 @@
 
 **Key Highlights:**
 
-- GM-only action cards completely hidden from players
-- Dedicated GM Actions tab on character sheets
-- Smart context-aware creation and drag-drop
-- Automatic filtering from transformations
-- Perfect for secret NPC abilities, traps, and plot mechanics
+- **GM-only action cards** that are completely hidden from players, ideal for secret NPC abilities, traps, and plot mechanics.
+- **Dedicated GM Actions tab** on character sheets for easy management.
+- **Smart context-aware creation** and drag-drop functionality that automatically sets the `gmOnly` flag.
+- **Automatic filtering** from transformations and visual indicators for GM-only cards.
+- **Backward compatibility** with existing action cards and no migration required.
 
 **[v13.17.5](release-notes/v13.17.5.md)** - Enhanced Context Menus & Code Quality _(November 2025)_
 
@@ -124,20 +124,20 @@ Enhanced character customization through circumstantial bonuses and feature-base
 
 ## Version Timeline
 
-| Version      | Release Date  | Focus                             |
-| ------------ | ------------- | --------------------------------- |
-| **v13.18.1** | January 2026  | Enhanced Action Chain Control     |
-| v13.18.0     | January 2026  | GM Action Cards                   |
-| v13.17.5     | November 2025 | Enhanced Context Menus & Quality  |
-| v13.17.2     | November 2025 | UI and Usability Improvements     |
-| v13.17.0     | November 2025 | Transformation to Actor           |
-| v13.16.0     | October 2025  | Action Card Groups                |
-| v13.15.5     | October 2025  | Stability & Polish                |
-| v13.15.0     | October 2025  | Embedded Transformations & Export |
-| v13.14.0     | October 2025  | Player Workflows & Item Selection |
-| v13.13.3     | August 2025   | Action Modes & Repetition         |
-| v13.11.0     | 2025          | Action Cards & Combat Automation  |
-| v13.10.0     | 2025          | Feature Rolls & Bonuses           |
+| Version      | Release Date  | Focus                                                                                  |
+| ------------ | ------------- | -------------------------------------------------------------------------------------- |
+| **v13.18.1** | January 2026  | Enhanced Action Chain Control, Mixed Attribute Rolls, and Selective Status Application |
+| v13.18.0     | January 2026  | GM Action Cards, Smart Context-Aware Creation, and Backward Compatibility              |
+| v13.17.5     | November 2025 | Enhanced Context Menus & Code Quality                                                  |
+| v13.17.2     | November 2025 | UI and Usability Improvements                                                          |
+| v13.17.0     | November 2025 | Transformation to Actor                                                                |
+| v13.16.0     | October 2025  | Action Card Groups                                                                     |
+| v13.15.5     | October 2025  | Stability & Polish                                                                     |
+| v13.15.0     | October 2025  | Embedded Transformations & Export                                                      |
+| v13.14.0     | October 2025  | Player Workflows & Item Selection                                                      |
+| v13.13.3     | August 2025   | Action Modes & Repetition                                                              |
+| v13.11.0     | 2025          | Action Cards & Combat Automation                                                       |
+| v13.10.0     | 2025          | Feature Rolls & Bonuses                                                                |
 
 ## Quick Navigation
 
@@ -173,6 +173,8 @@ We encourage users to:
 - Check version-specific release notes for detailed feature information
 - Review the documentation guides for comprehensive system information
 - Join community discussions for tips and best practices
+
+- Review the **[v13.18.0](release-notes/v13.18.0.md)** and **[v13.18.1](release-notes/v13.18.1.md)** release notes for detailed feature information and updates.
 
 ---
 
