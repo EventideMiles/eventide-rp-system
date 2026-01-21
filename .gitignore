@@ -7,3 +7,6 @@ plans/
 # Testing generated files
 coverage/
 *.tgz
+
+# Local only testing files
+logs/
