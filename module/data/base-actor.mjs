@@ -315,6 +315,27 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
         : current.value + current.change;
     }
 
+    // Apply minimum dice value (Issue #129)
+    const minimumDiceValue =
+      game.settings?.get("eventide-rp-system", "minimumDiceValue") ?? 1;
+    if (this.hiddenAbilities.dice.total < minimumDiceValue) {
+      this.hiddenAbilities.dice.total = minimumDiceValue;
+    }
+
+    // Calculate derived max power (Issue #125)
+    this.power.max = this.calculateDerivedMaxPower();
+    // Clamp current power value to new max
+    if (this.power.value > this.power.max) {
+      this.power.value = this.power.max;
+    }
+
+    // Calculate derived max resolve (Issue #126)
+    this.resolve.max = this.calculateDerivedMaxResolve();
+    // Clamp current resolve value to new max
+    if (this.resolve.value > this.resolve.max) {
+      this.resolve.value = this.resolve.max;
+    }
+
     this.statTotal.value = Object.values(this.abilities).reduce(
       (total, ability) => {
         return total + ability.total;
@@ -401,6 +422,81 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
       Logger.warn("Error calculating XP from CR", error, "BASE_ACTOR");
       // Fallback to simple calculation
       return Math.max(10, Math.floor(this.cr * 200));
+    }
+  }
+
+  /**
+   * Calculate derived max power using the configurable formula
+   *
+   * Uses the system setting for max power calculation formula, with a fallback
+   * to a simple calculation if the formula evaluation fails.
+   *
+   * @returns {number} The calculated max power value
+   */
+  calculateDerivedMaxPower() {
+    try {
+      const formula =
+        game.settings?.get("eventide-rp-system", "maxPowerFormula") ||
+        "max(5 + @will.total + @fort.total, 1)";
+
+      // Build roll data with ability totals
+      const rollData = {
+        will: this.abilities.will,
+        fort: this.abilities.fort,
+        acro: this.abilities.acro,
+        phys: this.abilities.phys,
+        wits: this.abilities.wits,
+      };
+
+      // Use Foundry's Roll class to safely evaluate the formula
+      const roll = new Roll(formula, rollData);
+      const result = roll.evaluateSync();
+
+      // Ensure minimum of 1
+      return Math.max(1, Math.floor(result.total));
+    } catch (error) {
+      Logger.warn("Error calculating derived max power", error, "BASE_ACTOR");
+      // Fallback to legacy calculation: will + 5
+      const willTotal = this.abilities?.will?.total ?? 0;
+      const fortTotal = this.abilities?.fort?.total ?? 0;
+      return Math.max(1, 5 + willTotal + fortTotal);
+    }
+  }
+
+  /**
+   * Calculate derived max resolve using the configurable formula
+   *
+   * Uses the system setting for max resolve calculation formula, with a fallback
+   * to a simple calculation if the formula evaluation fails.
+   *
+   * @returns {number} The calculated max resolve value
+   */
+  calculateDerivedMaxResolve() {
+    try {
+      const formula =
+        game.settings?.get("eventide-rp-system", "maxResolveFormula") ||
+        "max(100 + (10 * @fort.total), 10)";
+
+      // Build roll data with ability totals
+      const rollData = {
+        will: this.abilities.will,
+        fort: this.abilities.fort,
+        acro: this.abilities.acro,
+        phys: this.abilities.phys,
+        wits: this.abilities.wits,
+      };
+
+      // Use Foundry's Roll class to safely evaluate the formula
+      const roll = new Roll(formula, rollData);
+      const result = roll.evaluateSync();
+
+      // Ensure minimum of 10
+      return Math.max(10, Math.floor(result.total));
+    } catch (error) {
+      Logger.warn("Error calculating derived max resolve", error, "BASE_ACTOR");
+      // Fallback to legacy calculation: 100 + (10 * fort)
+      const fortTotal = this.abilities?.fort?.total ?? 0;
+      return Math.max(10, 100 + 10 * fortTotal);
     }
   }
 }
