@@ -3,7 +3,6 @@
     "dbaeumer.vscode-eslint",
     "esbenp.prettier-vscode",
     "stylelint.vscode-stylelint",
-    "glenn2223.live-sass",
     "ms-vscode.vscode-json"
   ]
 }
