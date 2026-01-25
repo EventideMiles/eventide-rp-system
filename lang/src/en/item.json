@@ -196,10 +196,6 @@
           "label": "Damage Per Success",
           "hint": "Apply damage on every repetition instead of just the first success"
         },
-        "StatusPerSuccess": {
-          "label": "Status Per Success",
-          "hint": "Apply/intensify status effects on every repetition"
-        },
         "TimingOverride": {
           "label": "Timing Override (seconds)",
           "hint": "Custom delay between repetitions. <strong>0 uses system default</strong>"
@@ -208,6 +204,16 @@
           "label": "Cost Per Repetition", 
           "hint": "When enabled, applies resource costs (power/gear) on each repetition instead of just the first"
         },
+        "StatusApplicationLimit": {
+          "label": "Status Application Limit",
+          "hint": "Maximum times status effects can apply per execution. Set to 0 for no limit."
+        },
+        "FailOnFirstMiss": {
+          "label": "Fail on First Miss",
+          "hint": "When enabled with 'Repeat to Hit', stops execution if the initial roll fails to trigger any damage or status effects based on their configured conditions."
+        },
+        "ExecutionLimitReached": "Action card execution limit reached ({limit}). Stopping further executions.",
+        "FirstMissFailed": "Initial attack failed to meet any success conditions - no further executions will occur.",
         "InsufficientPowerError": "Insufficient power for {itemName}: requires {required}, available {available}",
         "InsufficientQuantityError": "Insufficient quantity for {itemName}: requires {required}, available {available}",
         "TransformationSelectionTitle": "Select Transformation",

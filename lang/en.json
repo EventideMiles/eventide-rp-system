@@ -166,10 +166,6 @@
           "label": "Damage Per Success",
           "hint": "Apply damage on every repetition instead of just the first success"
         },
-        "StatusPerSuccess": {
-          "label": "Status Per Success",
-          "hint": "Apply/intensify status effects on every repetition"
-        },
         "TimingOverride": {
           "label": "Timing Override (seconds)",
           "hint": "Custom delay between repetitions. <strong>0 uses system default</strong>"
@@ -178,6 +174,16 @@
           "label": "Cost Per Repetition",
           "hint": "When enabled, applies resource costs (power/gear) on each repetition instead of just the first"
         },
+        "StatusApplicationLimit": {
+          "label": "Status Application Limit",
+          "hint": "Maximum times status effects can apply per execution. Set to 0 for no limit."
+        },
+        "FailOnFirstMiss": {
+          "label": "Fail on First Miss",
+          "hint": "When enabled with 'Repeat to Hit', stops execution if the initial roll fails to trigger any damage or status effects based on their configured conditions."
+        },
+        "ExecutionLimitReached": "Action card execution limit reached ({limit}). Stopping further executions.",
+        "FirstMissFailed": "Initial attack failed to meet any success conditions - no further executions will occur.",
         "InsufficientPowerError": "Insufficient power for {itemName}: requires {required}, available {available}",
         "InsufficientQuantityError": "Insufficient quantity for {itemName}: requires {required}, available {available}",
         "TransformationSelectionTitle": "Select Transformation",
@@ -332,7 +338,8 @@
         },
         "Power": {
           "Max": {
-            "label": "Maximum Power"
+            "label": "Maximum Power",
+            "derived": "Derived from Will + Fort + 5"
           },
           "Value": {
             "label": "Power"
@@ -340,7 +347,8 @@
         },
         "Resolve": {
           "Max": {
-            "label": "Maximum Resolve"
+            "label": "Maximum Resolve",
+            "derived": "Derived from Fort × 10 + 100"
           },
           "Value": {
             "label": "Resolve"
@@ -1199,6 +1207,14 @@
     "SoundResetToDefault": "Sound for {0} reset to default.",
     "NoPlayerPermission": "Players do not have permission to change sound settings.",
     "TestingModeName": "Testing Mode",
-    "TestingModeHint": "Enable or disable testing mode console logging for debugging."
+    "TestingModeHint": "Enable or disable testing mode console logging for debugging.",
+    "MinimumDiceValueName": "Minimum Dice Value",
+    "MinimumDiceValueHint": "Prevents the dice value from going below this minimum. When status effects reduce dice below this value, rolls will use this minimum instead.",
+    "MaxPowerFormulaName": "Max Power Formula",
+    "MaxPowerFormulaHint": "Formula for calculating maximum power. Use @will.total and @fort.total to reference ability scores. Default: max(5 + @will.total + @fort.total, 1)",
+    "MaxResolveFormulaName": "Max Resolve Formula",
+    "MaxResolveFormulaHint": "Formula for calculating maximum resolve. Use @fort.total to reference fortitude. Default: max(100 + (10 * @fort.total), 10)",
+    "ActionCardExecutionLimitName": "Action Card Execution Limit",
+    "ActionCardExecutionLimitHint": "Maximum number of times an action card can execute in a single action. Set to 0 for no limit."
   }
 }
