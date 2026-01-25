@@ -116,6 +116,22 @@ export function ItemActionCardExecutionMixin(Base) {
           return failureResult;
         }
 
+        // Check system-level execution limit (Issue #128)
+        const systemExecutionLimit =
+          game.settings?.get("eventide-rp-system", "actionCardExecutionLimit") ?? 0;
+        const effectiveRepetitionCount =
+          systemExecutionLimit > 0
+            ? Math.min(repetitionCount, systemExecutionLimit)
+            : repetitionCount;
+
+        if (systemExecutionLimit > 0 && repetitionCount > systemExecutionLimit) {
+          Logger.info(
+            `Action card repetitions capped by system limit: ${repetitionCount} -> ${systemExecutionLimit}`,
+            { actionCardName: this.name, originalCount: repetitionCount, limit: systemExecutionLimit },
+            "ACTION_CARD",
+          );
+        }
+
         // Store current repetition context for cost control
         this._currentRepetitionContext = {
           inExecution: true,
@@ -124,11 +140,13 @@ export function ItemActionCardExecutionMixin(Base) {
           transformationSelections: options.transformationSelections || new Map(), // Pre-selected transformations
           selectedEffectIds: options.selectedEffectIds || null, // Selected status effect IDs
           appliedStatusEffects: new Set(), // Track which status effects have been applied (target-effect pairs)
+          statusApplicationCount: 0, // Track status applications for limit (Issue #128)
+          statusApplicationLimit: this.system.statusApplicationLimit ?? 1, // Default to 1 if not set
         };
 
         // Execute repetitions
         const results = [];
-        for (let i = 0; i < repetitionCount; i++) {
+        for (let i = 0; i < effectiveRepetitionCount; i++) {
 
           // Check resource constraints before execution
           const embeddedItem = this.getEmbeddedItem();
@@ -153,13 +171,13 @@ export function ItemActionCardExecutionMixin(Base) {
                 resourceCheck,
                 embeddedItem,
                 i,
-                repetitionCount,
+                effectiveRepetitionCount,
               );
 
               // Return partial results with failure reason
               const partialResult = {
                 success: false,
-                repetitionCount,
+                repetitionCount: effectiveRepetitionCount,
                 completedRepetitions: i,
                 results,
                 mode: this.system.mode,
@@ -194,9 +212,43 @@ export function ItemActionCardExecutionMixin(Base) {
             actor,
             currentRollResult,
             i,
-            repetitionCount,
+            effectiveRepetitionCount,
           );
           results.push(result);
+
+          // Check "fail on first miss" condition after first iteration (Issue #128)
+          if (
+            i === 0 &&
+            this.system.failOnFirstMiss &&
+            this.system.repeatToHit &&
+            this.system.mode === "attackChain" &&
+            effectiveRepetitionCount > 1
+          ) {
+            // Check if first iteration failed to trigger any effects
+            const firstIterationSuccess = this._checkIterationSuccess(result);
+            if (!firstIterationSuccess) {
+              Logger.info(
+                `Action card execution stopped due to failOnFirstMiss`,
+                { actionCardName: this.name, result },
+                "ACTION_CARD",
+              );
+
+              // Return with reason for stopping
+              const partialResult = {
+                success: false,
+                repetitionCount: effectiveRepetitionCount,
+                completedRepetitions: 1,
+                results,
+                mode: this.system.mode,
+                reason: "firstMissFailed",
+              };
+
+              // Clean up repetition context
+              delete this._currentRepetitionContext;
+
+              return partialResult;
+            }
+          }
         }
 
         // Advance initiative if setting is enabled
@@ -254,6 +306,25 @@ export function ItemActionCardExecutionMixin(Base) {
       }
 
       return this.img;
+    }
+
+    /**
+     * Get the effective label for rolls based on rollActorName setting (Issue #130)
+     * @param {Object} [embeddedItem] - Optional embedded item to check for its own rollActorName setting
+     * @returns {string} The label to use for rolls, or empty string if rollActorName is false
+     * @private
+     */
+    _getEffectiveLabel(embeddedItem = null) {
+      // Check embedded item's rollActorName setting first if provided
+      if (embeddedItem && embeddedItem.system?.rollActorName === false) {
+        return "";
+      }
+      // Fall back to action card's rollActorName setting
+      if (this.system.rollActorName === false) {
+        return "";
+      }
+      // Use embedded item name if available, otherwise use action card name
+      return embeddedItem?.name || this.name;
     }
 
     /**
@@ -555,7 +626,7 @@ export function ItemActionCardExecutionMixin(Base) {
 
             const damageRoll = await target.actor.damageResolve({
               formula,
-              label: this.name,
+              label: this._getEffectiveLabel(),
               description:
                 this.system.description || this.system.savedDamage.description,
               type: this.system.savedDamage.type,
@@ -633,10 +704,10 @@ export function ItemActionCardExecutionMixin(Base) {
 
             const damageRoll = await result.target.damageResolve({
               formula,
-              label: this.name,
+              label: this._getEffectiveLabel(),
               description:
                 this.system.description ||
-                `Attack chain damage from ${this.name}`,
+                (this.system.rollActorName !== false ? `Attack chain damage from ${this.name}` : "Attack chain damage"),
               type: this.system.attackChain.damageType,
               img: this._getEffectiveImage(),
               bgColor: this.system.bgColor,
@@ -763,23 +834,32 @@ export function ItemActionCardExecutionMixin(Base) {
                 continue;
               }
 
-              // Check if this effect has already been applied to this target
-              // (unless statusPerSuccess is enabled, which allows reapplication)
-              const effectKey = `${result.target.id}-${effectData.name}`;
-              const alreadyApplied = this._currentRepetitionContext?.appliedStatusEffects?.has(effectKey);
+              // Check status application limit (Issue #128)
+              // statusApplicationLimit = 0 means no limit (apply on every success)
+              // statusApplicationLimit > 0 means apply up to exactly that many times total
+              const statusApplicationLimit = this._currentRepetitionContext?.statusApplicationLimit ?? 1;
+              const statusApplicationCount = this._currentRepetitionContext?.statusApplicationCount ?? 0;
 
-              if (alreadyApplied && !this.system.statusPerSuccess) {
+              if (statusApplicationLimit > 0 && statusApplicationCount >= statusApplicationLimit) {
                 Logger.debug(
-                  `Skipping effect "${effectData.name}" for target "${result.target.name}" - already applied in previous repetition`,
+                  `Skipping effect "${effectData.name}" - status application limit reached (${statusApplicationCount}/${statusApplicationLimit})`,
                   {
                     targetId: result.target.id,
                     effectName: effectData.name,
-                    statusPerSuccess: this.system.statusPerSuccess,
+                    limit: statusApplicationLimit,
+                    count: statusApplicationCount,
                   },
                   "ACTION_CARD",
                 );
                 continue;
               }
+
+              // Track effect application for logging purposes
+              const effectKey = `${result.target.id}-${effectData.name}`;
+
+              Logger.debug("Effect application check", {
+                effectKey
+              }, "ACTION_CARD")
 
               // Handle gear effects differently based on attemptInventoryReduction setting
               if (
@@ -934,6 +1014,11 @@ export function ItemActionCardExecutionMixin(Base) {
                 if (applicationResult.applied && this._currentRepetitionContext?.appliedStatusEffects) {
                   const effectKey = `${result.target.id}-${effectData.name}`;
                   this._currentRepetitionContext.appliedStatusEffects.add(effectKey);
+
+                  // Increment status application counter (Issue #128)
+                  if (this._currentRepetitionContext.statusApplicationCount !== undefined) {
+                    this._currentRepetitionContext.statusApplicationCount++;
+                  }
                 }
 
                 // Wait for execution delay after applying status effects
@@ -1050,9 +1135,10 @@ export function ItemActionCardExecutionMixin(Base) {
           failureMessage = "Unknown resource constraint preventing execution";
         }
 
+        // Issue #130: Respect rollActorName setting for template data
         const templateData = {
           actionCard: {
-            name: this.name,
+            name: this.system.rollActorName !== false ? this.name : "",
             img: this._getEffectiveImage(),
           },
           style: this.system.textColor
@@ -1102,11 +1188,13 @@ export function ItemActionCardExecutionMixin(Base) {
      */
     async sendFailureMessage(actor, repetitionCount, repetitionsRoll) {
       try {
+        // Issue #130: Respect rollActorName setting for failure messages
+        const displayName = this.system.rollActorName !== false ? this.name : "Action Card";
         const messageData = {
           speaker: ChatMessage.getSpeaker({ actor }),
           content: `
             <div class="action-card-failure">
-              <h3>${this.name} - Execution Failed</h3>
+              <h3>${displayName} - Execution Failed</h3>
               <p><strong>Repetitions Roll:</strong> ${repetitionsRoll.formula} = ${repetitionCount}</p>
               <p class="failure-reason">Action failed due to insufficient repetitions (${repetitionCount} ≤ 0)</p>
             </div>
@@ -1369,6 +1457,76 @@ export function ItemActionCardExecutionMixin(Base) {
       }
 
       return combinedResult;
+    }
+
+    /**
+     * Check if an iteration was successful (Issue #128)
+     * Success is determined by whether any damage or status effects would be applied
+     * based on the configured conditions
+     * @private
+     * @param {Object} result - The iteration result
+     * @returns {boolean} Whether the iteration was successful
+     */
+    _checkIterationSuccess(result) {
+      if (!result || !result.targetResults) {
+        return false;
+      }
+
+      const rollTotal = result.baseRoll?.total || 0;
+      const hasStatusEffects = this.system.embeddedStatusEffects?.length > 0;
+      const hasTransformations = this.system.embeddedTransformations?.length > 0;
+      const hasDamageFormula = this.system.attackChain.damageFormula &&
+        this.system.attackChain.damageCondition !== "never";
+
+      // Check each target for any successful condition
+      for (const targetResult of result.targetResults) {
+        // Check damage condition (only if damage formula exists and condition isn't "never")
+        if (hasDamageFormula) {
+          const damageSuccess = this._shouldApplyEffect(
+            this.system.attackChain.damageCondition,
+            targetResult.oneHit,
+            targetResult.bothHit,
+            rollTotal,
+            this.system.attackChain.damageThreshold || 15,
+          );
+
+          if (damageSuccess) {
+            return true;
+          }
+        }
+
+        // Check status condition (only if there are status effects to apply)
+        if (hasStatusEffects) {
+          const statusSuccess = this._shouldApplyEffect(
+            this.system.attackChain.statusCondition,
+            targetResult.oneHit,
+            targetResult.bothHit,
+            rollTotal,
+            this.system.attackChain.statusThreshold || 15,
+          );
+
+          if (statusSuccess) {
+            return true;
+          }
+        }
+
+        // Check transformation condition (only if there are transformations to apply)
+        if (hasTransformations) {
+          const transformationSuccess = this._shouldApplyEffect(
+            this.system.transformationConfig?.condition || "never",
+            targetResult.oneHit,
+            targetResult.bothHit,
+            rollTotal,
+            this.system.transformationConfig?.threshold || 15,
+          );
+
+          if (transformationSuccess) {
+            return true;
+          }
+        }
+      }
+
+      return false;
     }
 
     /**

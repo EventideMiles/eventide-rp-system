@@ -1233,9 +1233,10 @@ export const ItemSheetActionsMixin = (BaseClass) =>
             repetitions: "1",
             repeatToHit: false,
             damageApplication: false,
-            statusPerSuccess: false,
+            statusApplicationLimit: 1,
             timingOverride: 0.0,
             costOnRepetition: false,
+            failOnFirstMiss: true,
           },
         };
 
