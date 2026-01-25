@@ -46,6 +46,7 @@ import {
   Logger,
   ImageZoomService,
   TransformationConverter,
+  EmbeddedImageMigration,
 } from "./services/_module.mjs";
 
 // Import token configuration guards
@@ -528,6 +529,11 @@ Hooks.once("ready", () => {
       "SYSTEM_INIT",
     );
   }
+
+  // Run migrations (Issues #127, #128)
+  EmbeddedImageMigration.run().catch((error) => {
+    Logger.error("Failed to run embedded image migration", error, "SYSTEM_INIT");
+  });
 
   // Remove immediate theme styles now that the full theme system is loaded
   // Add a small delay to ensure all initial sheets have been themed

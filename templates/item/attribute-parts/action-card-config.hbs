@@ -85,26 +85,20 @@
       <p class="erps-form__hint">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.DamageApplication.hint"}}</p>
     </div>
 
-    {{!-- Status Per Success Toggle --}}
-    <div class="eventide-sheet__toggle-group">
-      <label class="erps-toggles erps-toggles--label-left">
-        <input
-          type="checkbox"
-          class="erps-toggles__input"
-          name="system.statusPerSuccess"
-          id="system.statusPerSuccess"
-          {{checked system.statusPerSuccess}}
-        />
-        <div class="erps-toggles__container">
-          <span class="erps-toggles__label" title='{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.StatusPerSuccess.hint"}}'>
-            {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.StatusPerSuccess.label"}}
-          </span>
-          <span class="erps-toggles__track">
-            <span class="erps-toggles__thumb"></span>
-          </span>
-        </div>
+    {{!-- Status Application Limit --}}
+    <div class="erps-form__group">
+      <label class="erps-input-label" for="{{item.id}}-status-application-limit">
+        {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.StatusApplicationLimit.label"}}
       </label>
-      <p class="erps-form__hint">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.StatusPerSuccess.hint"}}</p>
+      <input type="number"
+             id="{{item.id}}-status-application-limit"
+             name="system.statusApplicationLimit"
+             value="{{item.system.statusApplicationLimit}}"
+             min="0"
+             step="1"
+             class="erps-input"
+             data-dtype="Number" />
+      <p class="erps-form__hint">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.StatusApplicationLimit.hint"}}</p>
     </div>
 
     {{!-- Cost On Repetition Toggle --}}
@@ -127,6 +121,28 @@
         </div>
       </label>
       <p class="erps-form__hint">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.CostOnRepetition.hint"}}</p>
+    </div>
+
+    {{!-- Fail On First Miss Toggle --}}
+    <div class="eventide-sheet__toggle-group">
+      <label class="erps-toggles erps-toggles--label-left">
+        <input
+          type="checkbox"
+          class="erps-toggles__input"
+          name="system.failOnFirstMiss"
+          id="system.failOnFirstMiss"
+          {{checked system.failOnFirstMiss}}
+        />
+        <div class="erps-toggles__container">
+          <span class="erps-toggles__label" title='{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.FailOnFirstMiss.hint"}}'>
+            {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.FailOnFirstMiss.label"}}
+          </span>
+          <span class="erps-toggles__track">
+            <span class="erps-toggles__thumb"></span>
+          </span>
+        </div>
+      </label>
+      <p class="erps-form__hint">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.FailOnFirstMiss.hint"}}</p>
     </div>
 
   </div>

@@ -511,6 +511,15 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
           const powerData = powers[powerIndex];
           foundry.utils.setProperty(powerData, attr, path);
 
+          // Issue #127: Sync active effect icons when item image is updated
+          // Update both 'icon' (standard Foundry) and 'img' (legacy) properties
+          if (attr === "img" && powerData.effects && Array.isArray(powerData.effects)) {
+            for (const activeEffect of powerData.effects) {
+              activeEffect.icon = path;
+              activeEffect.img = path;
+            }
+          }
+
           try {
             await sheet.parentItem.update(
               {
@@ -543,6 +552,15 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
           );
           const effectData = statusEffects[effectIndex];
           foundry.utils.setProperty(effectData, attr, path);
+
+          // Issue #127: Sync active effect icons when item image is updated
+          // Update both 'icon' (standard Foundry) and 'img' (legacy) properties
+          if (attr === "img" && effectData.effects && Array.isArray(effectData.effects)) {
+            for (const activeEffect of effectData.effects) {
+              activeEffect.icon = path;
+              activeEffect.img = path;
+            }
+          }
 
           try {
             await sheet.parentItem.update(
@@ -616,6 +634,15 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
             sheet.parentItem.system.embeddedItem,
           );
           foundry.utils.setProperty(itemData, attr, path);
+
+          // Issue #127: Sync active effect icons when item image is updated
+          // Update both 'icon' (standard Foundry) and 'img' (legacy) properties
+          if (attr === "img" && itemData.effects && Array.isArray(itemData.effects)) {
+            for (const activeEffect of itemData.effects) {
+              activeEffect.icon = path;
+              activeEffect.img = path;
+            }
+          }
 
           try {
             await sheet.parentItem.update(

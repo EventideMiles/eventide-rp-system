@@ -2,6 +2,17 @@
 
 ## Latest Release
 
+**[v13.19.0](release-notes/v13.19.0.md)** - Action Card Execution Flow _(January 2026)_
+
+**Key Highlights:**
+- **Status effects can now have different application amounts** This changes from the "all or nothing" flow of before.
+- **Fixed image bug** where embedded status effects wouldn't have their active effect image properly updated.
+- **Fail on first attack miss** now the default for multi-execution action cards so if initial hit doesn't hit the action is over.
+- **Power and Resolve are now derived** To make it easier for systematic application of resolve and power rules and so that statuses can now impact these.
+- **Minimum dice value now set via settings** to prevent status effects from getting fully out of hand.
+
+## Recent Major Releases
+
 **[v13.18.1](release-notes/v13.18.1.md)** - Enhanced Action Chain Control _(February 2026)_
 
 **Key Highlights:**
@@ -9,8 +20,6 @@
 - Added a new "Mixed Attribute" type of roll for combat powers and action cards that let you take the average of 2 stats for an action
 - Fixed a bug where status effects, if they weren't applied in the first action of an action chain, wouldn't ever apply
 - Added a new way of selecting which status will apply on any given use of an action chain so that status effects can be selectively applied by the GM
-
-## Recent Major Releases
 
 **[v13.18.0](release-notes/v13.18.0.md)** - GM Action Cards _(January 2026)_
 
@@ -126,7 +135,8 @@ Enhanced character customization through circumstantial bonuses and feature-base
 
 | Version      | Release Date  | Focus                                                                                  |
 | ------------ | ------------- | -------------------------------------------------------------------------------------- |
-| **v13.18.1** | January 2026  | Enhanced Action Chain Control, Mixed Attribute Rolls, and Selective Status Application |
+| **v13.19.0** | January 2026  | Action Card Execution Flow Update                                                      |
+| v13.18.1     | January 2026  | Enhanced Action Chain Control, Mixed Attribute Rolls, and Selective Status Application |
 | v13.18.0     | January 2026  | GM Action Cards, Smart Context-Aware Creation, and Backward Compatibility              |
 | v13.17.5     | November 2025 | Enhanced Context Menus & Code Quality                                                  |
 | v13.17.2     | November 2025 | UI and Usability Improvements                                                          |
@@ -143,12 +153,12 @@ Enhanced character customization through circumstantial bonuses and feature-base
 
 ### By Feature Area
 
-- **Action Cards**: [v13.11.0](release-notes/v13.11.0.md), [v13.13.3](release-notes/v13.13.3.md), [v13.14.0](release-notes/v13.14.0.md), [v13.15.0](release-notes/v13.15.0.md), [v13.16.0](release-notes/v13.16.0.md), [v13.18.0](release-notes/v13.18.0.md), [v13.18.1](release-notes/v13.18.1.md)
+- **Action Cards**: [v13.11.0](release-notes/v13.11.0.md), [v13.13.3](release-notes/v13.13.3.md), [v13.14.0](release-notes/v13.14.0.md), [v13.15.0](release-notes/v13.15.0.md), [v13.16.0](release-notes/v13.16.0.md), [v13.18.0](release-notes/v13.18.0.md), [v13.18.1](release-notes/v13.18.1.md), [v13.19.0](release-notes/v13.19.0.md)
 - **GM Tools**: [v13.18.0](release-notes/v13.18.0.md), [v13.18.1](release-notes/v13.18.1.md)
 - **Transformations**: [v13.14.0](release-notes/v13.14.0.md), [v13.15.0](release-notes/v13.15.0.md), [v13.15.5](release-notes/v13.15.5.md), [v13.17.0](release-notes/v13.17.0.md)
-- **Features & Bonuses**: [v13.10.0](release-notes/v13.10.0.md)
+- **Features & Bonuses**: [v13.10.0](release-notes/v13.10.0.md), [v13.19.0](release-notes/v13.19.0.md)
 - **Combat Automation**: [v13.11.0](release-notes/v13.11.0.md), [v13.13.3](release-notes/v13.13.3.md)
-- **Conversion & Migration**: [v13.17.0](release-notes/v13.17.0.md)
+- **Conversion & Migration**: [v13.17.0](release-notes/v13.17.0.md), [v13.19.0](release-notes/v13.19.0.md)
 
 ### Documentation Links
 
@@ -174,8 +184,8 @@ We encourage users to:
 - Review the documentation guides for comprehensive system information
 - Join community discussions for tips and best practices
 
-- Review the **[v13.18.0](release-notes/v13.18.0.md)** and **[v13.18.1](release-notes/v13.18.1.md)** release notes for detailed feature information and updates.
+- Review the **[v13.19.0](release-notes/v13.19.0.md)** and **[v13.18.1](release-notes/v13.18.1.md)** release notes for detailed feature information and updates.
 
 ---
 
-**Current Version**: v13.18.1 | **Foundry VTT Compatibility**: v13+ | **Last Updated**: January 2026
+**Current Version**: v13.19.0 | **Foundry VTT Compatibility**: v13+ | **Last Updated**: January 2026

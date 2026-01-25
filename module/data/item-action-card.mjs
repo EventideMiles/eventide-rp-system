@@ -238,11 +238,17 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
     });
 
     /**
-     * Whether status effects apply/intensify on every repetition
+     * Limit on how many times status effects can apply per execution (Issue #128)
+     * 0 = no limit (apply on every success)
+     * 1+ = apply status effects up to this many times
+     * Replaces the old statusPerSuccess boolean toggle
      */
-    schema.statusPerSuccess = new fields.BooleanField({
+    schema.statusApplicationLimit = new fields.NumberField({
       required: true,
-      initial: false,
+      initial: 1,
+      min: 0,
+      integer: true,
+      nullable: false,
     });
 
     /**
@@ -261,6 +267,16 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
     schema.costOnRepetition = new fields.BooleanField({
       required: true,
       initial: false,
+    });
+
+    /**
+     * Whether execution should stop if the first hit misses (Issue #128)
+     * When true (default), if repeatToHit is enabled and the initial roll misses,
+     * no further repetitions are executed
+     */
+    schema.failOnFirstMiss = new fields.BooleanField({
+      required: true,
+      initial: true,
     });
 
     /**

@@ -19,11 +19,12 @@
       <span class='erps-resource-box__separator'> / </span>
       <input
         type='text'
-        name='system.resolve.max'
+        disabled='true'
         value='{{system.resolve.max}}'
         class='erps-resource-box__input'
         data-dtype='Number'
-        aria-label="{{localize 'EVENTIDE_RP_SYSTEM.Actor.Attributes.Resolve.Value.label'}} Maximum"
+        aria-label="{{localize 'EVENTIDE_RP_SYSTEM.Actor.Attributes.Resolve.Value.label'}} Maximum (Derived)"
+        title="{{localize 'EVENTIDE_RP_SYSTEM.Actor.Attributes.Resolve.Max.derived'}}"
       />
     </div>
   </article>
@@ -47,11 +48,12 @@
       <span class='erps-resource-box__separator'> / </span>
       <input
         type='text'
-        name='system.power.max'
+        disabled='true'
         value='{{system.power.max}}'
         class='erps-resource-box__input'
         data-dtype='Number'
-        aria-label="{{localize 'EVENTIDE_RP_SYSTEM.Actor.Attributes.Power.Value.label'}} Maximum"
+        aria-label="{{localize 'EVENTIDE_RP_SYSTEM.Actor.Attributes.Power.Value.label'}} Maximum (Derived)"
+        title="{{localize 'EVENTIDE_RP_SYSTEM.Actor.Attributes.Power.Max.derived'}}"
       />
     </div>
   </article>

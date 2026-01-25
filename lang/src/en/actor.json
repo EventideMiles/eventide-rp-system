@@ -10,7 +10,9 @@
         },
         "Power": {
           "Max": {
-            "label": "Maximum Power"
+            "label": "Maximum Power",
+            "derived": "Derived from Will + Fort + 5"
+
           },
           "Value": {
             "label": "Power"
@@ -18,7 +20,8 @@
         },
         "Resolve": {
           "Max": {
-            "label": "Maximum Resolve"
+            "label": "Maximum Resolve",
+            "derived": "Derived from Fort × 10 + 100"
           },
           "Value": {
             "label": "Resolve"

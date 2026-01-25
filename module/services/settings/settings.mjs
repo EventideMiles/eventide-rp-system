@@ -272,6 +272,44 @@ export class SoundSettingsApplication extends EventideSheetHelpers {
 }
 
 /**
+ * Helper function to refresh all actors' derived data when formula settings change
+ * Used by maxPowerFormula and maxResolveFormula onChange handlers (Issues #125, #126)
+ * @private
+ */
+function _refreshAllActorDerivedData() {
+  // Small delay to ensure setting is fully saved before refreshing
+  setTimeout(() => {
+    for (const actor of game.actors) {
+      // Reset and recalculate derived data
+      actor.reset();
+
+      // Re-render any open sheets for this actor
+      if (actor.sheet?.rendered) {
+        actor.sheet.render(false);
+      }
+    }
+
+    // Also refresh any synthetic token actors on the current scene
+    if (canvas.scene) {
+      for (const token of canvas.scene.tokens) {
+        if (token.actor && !token.isLinked) {
+          token.actor.reset();
+          if (token.actor.sheet?.rendered) {
+            token.actor.sheet.render(false);
+          }
+        }
+      }
+    }
+
+    Logger.debug(
+      "Refreshed all actors after formula setting change",
+      { actorCount: game.actors.size },
+      "SETTINGS"
+    );
+  }, 100);
+}
+
+/**
  * Register system settings for the Eventide RP System
  */
 export const registerSettings = function () {
@@ -634,6 +672,103 @@ export const registerSettings = function () {
       Logger.info("Testing mode setting changed", { value }, "SETTINGS");
       // No reload needed - can be checked at runtime
     },
+  });
+
+  // ===========================================
+  // DERIVED VALUE SETTINGS (GM Only - No Reload Needed)
+  // ===========================================
+
+  // Minimum Dice Value (Issue #129)
+  game.settings.register("eventide-rp-system", "minimumDiceValue", {
+    name: "SETTINGS.MinimumDiceValueName",
+    hint: "SETTINGS.MinimumDiceValueHint",
+    scope: "world",
+    config: true,
+    restricted: true,
+    type: Number,
+    default: 1,
+    range: {
+      min: 1,
+      max: 20,
+      step: 1,
+    },
+  });
+
+  // Max Power Formula (Issue #125)
+  game.settings.register("eventide-rp-system", "maxPowerFormula", {
+    name: "SETTINGS.MaxPowerFormulaName",
+    hint: "SETTINGS.MaxPowerFormulaHint",
+    scope: "world",
+    config: true,
+    restricted: true,
+    type: String,
+    default: "max(5 + @will.total + @fort.total, 1)",
+    onChange: (value) => {
+      if (!value || value.trim() === "") {
+        const defaultFormula = "max(5 + @will.total + @fort.total, 1)";
+        game.settings.set("eventide-rp-system", "maxPowerFormula", defaultFormula);
+        ui.notifications.warn("Max Power formula cannot be empty. Resetting to default.");
+        return;
+      }
+      // Issue #125/#126: Refresh all actors when formula changes
+      _refreshAllActorDerivedData();
+    },
+  });
+
+  // Max Resolve Formula (Issue #126)
+  game.settings.register("eventide-rp-system", "maxResolveFormula", {
+    name: "SETTINGS.MaxResolveFormulaName",
+    hint: "SETTINGS.MaxResolveFormulaHint",
+    scope: "world",
+    config: true,
+    restricted: true,
+    type: String,
+    default: "max(100 + (10 * @fort.total), 10)",
+    onChange: (value) => {
+      if (!value || value.trim() === "") {
+        const defaultFormula = "max(100 + (10 * @fort.total), 10)";
+        game.settings.set("eventide-rp-system", "maxResolveFormula", defaultFormula);
+        ui.notifications.warn("Max Resolve formula cannot be empty. Resetting to default.");
+        return;
+      }
+      // Issue #125/#126: Refresh all actors when formula changes
+      _refreshAllActorDerivedData();
+    },
+  });
+
+  // ===========================================
+  // ACTION CARD EXECUTION SETTINGS (GM Only - Issue #128)
+  // ===========================================
+
+  // Action Card Execution Limit
+  game.settings.register("eventide-rp-system", "actionCardExecutionLimit", {
+    name: "SETTINGS.ActionCardExecutionLimitName",
+    hint: "SETTINGS.ActionCardExecutionLimitHint",
+    scope: "world",
+    config: true,
+    restricted: true,
+    type: Number,
+    default: 30,
+    range: {
+      min: 0,
+      max: 100,
+      step: 1,
+    },
+  });
+
+  // ===========================================
+  // MIGRATION TRACKING SETTINGS (Hidden)
+  // ===========================================
+
+  // Embedded Image Migration Version Tracker (Issue #127)
+  game.settings.register("eventide-rp-system", "embeddedImageMigrationVersion", {
+    name: "Embedded Image Migration Version",
+    hint: "Tracks which version of the embedded image migration has been applied.",
+    scope: "world",
+    config: false, // Hidden from settings menu
+    restricted: true,
+    type: String,
+    default: "",
   });
 
   // ===========================================

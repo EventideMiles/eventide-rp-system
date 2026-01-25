@@ -1,37 +1,50 @@
 # Action Cards
 
-Action cards are an incredibly powerful new automation item type that can be used to create complex and dynamic actions. They allow you to decide what kind of attack you're going to use, how much damage you're going to deal, to apply images to damage that gets dealt, and to apply statuses and gear to the target.
+Action cards are a powerful automation item type enabling complex, dynamic actions. They determine attacks, damage dealt, apply images to damage, and add statuses or gear to targets.
 
 ## Creating an Action Card
 
-Creating an action card is done through either the item creation menu in foundry or through the action card creation menu in the actor sheet.
+Create action cards via Foundry's item creation menu or the actor sheet's action card creation menu. Select "Action Card" as the item type, then configure it with these options:
 
-Simply select the item type "Action Card" in the item creation menu or the "Action Card" button in the actor sheet. Then you'll need to set up the card by going through a few options. The image in the header will be the image that is displayed on any damage that gets dealt as part of the action card as well as its icon on your character sheet. The text and background colors will be used to theme damage cards off these actions. The description tab's contents will be used to apply description to the damage cards from these actions.
+- **Image:** Displayed on damage dealt and character sheet icon.
+- **Text & Background Colors:** Theme damage cards.
+- **Description:** Applied to damage cards.
 
-In the attributes tab we'll be setting up several options. Lets go over the two main card types.
-
+In the attributes tab, choose between two main card types: Saved Damage or Attack Chain.
 ### Saved Damage
 
-The saved damage card type is a very simple one. It allows you to set up the information for a damage card that will be dealt when you execute the action card with a target selected. You can set the damage type (healing or damage), the damage amount, and the damage formula. Notably this card type doesn't actually interact with its embedded items in any way: so you can't add status effects or gear to it that will be applied to the target or anything like that. If you need that functionality pleasee look at the Attack Chain card type.
+Set up a damage card with these parameters:
 
+- **Damage Type** (healing or damage)
+- **Damage Amount**
+- **Damage Formula**
+
+Saved damage doesn't interact with embedded items. Use Attack Chain for additional functionality.
 ### Attack Chain
 
-The action chain type is much more complex than just saved damage. It requires you to put either a gear, feature, or combat power in its action slot. It allows you to add effects to it as well that can be applied based on the results of the action. Effects can be gear or status items, and will be applied based on the setting in the attributes tab.
+More complex than saved damage, it requires an action in the slot and allows adding effects based on results. Set these parameters:
 
-**One thing to note:** action chains with a 'none' roll type will be treated as an automatic two successes. If that's undesired you can add a roll or flat type action to the action chain and it will be treated as a normal action comparing against the target's AC.
+- **Advance Initiative** (after use)
+- **Attempt Inventory Reduction**
+- **Stats Compared Against**
+- **Damage & Status Conditions**, formulas, thresholds
+- **Embedded Items**: Configure combat powers/gear for attack chains and statuses/gear applied to targets.
 
-Attack chains allow you to set the following parameters:
+Action chains with 'none' roll type have automatic two successes. Add a roll or flat action if undesired.
 
-- Whether to advance the initative after the action card is used.
-- Whether to attempt inventory reduction for and gear effects applied to the target.
-- The first and second stats you'll be comparing against on the target.
-- The condition to apply damage, its roll formula, and the type (healing or damage).
-- The condition to apply statuses and, optionally, the roll value above which to apply them.
+**Important:** Update action cards when changing costs of linked items.
 
-They also have the "Embedded Items" tab that is used to configure the combat powers / gear that is used for the attack part of the chain and the statuses / gear that will be applied to the target if the rules for applying them are met.
+## Configuring Action Cards
 
-**Important:** for combat powers the cost kept on the internal card will be the one applied to the user. So, if you change the power its best to reapply it to the action card. The same applies to gear but with one major caveat. The gear's cost will be applied against the same named gear item in your inventory and requires that you have the same gear equipped. So if you change the gear's cost the best way to keep it in-sync is to reapply it to the action card.
+In addition, configure execution behavior:
 
+- **Repetitions** (default: 1)
+- **Timing Override**
+- **Repeat to Hit** (default: false)
+- **Damage per Success** (default: false)
+- **Status Application Limit** (0 = no limit, default: 1)
+- **Cost per Repetition** (default: false)
+- **Fail on First Miss** (default: true)
 ## Using Action Cards
 
 Using an action card is as simple as targeting an opponent and either:
@@ -75,3 +88,9 @@ Action cards are a great way to automate your actions and make your game more st
 - Spells and spell effects
 
 Basically if you have something you do "all the time" that is a flow of action it may be worth it to define it as an action card. This can be particularly helpful for adventure module creators as it can allow you to define and theme a flow of actions that can be used by characters in your game. For instance if you have a slime monster that always does one of a few actions it would be best to define them as action cards so that you can theme them for player immersion and ease of use by your end users.
+
+
+
+### When to Use an Action Card
+Automate actions, apply damage/status, create complex attack chains, apply gear with inventory reduction, cast spells, or standardize frequent actions in adventure modules.
+
