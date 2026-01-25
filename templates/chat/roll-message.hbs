@@ -17,7 +17,9 @@
 
   {{#if description}}
     <div class="chat-card__description">
-      <div class="chat-card__description--header">{{actor.name}}. . . </div>
+      {{#if label}}
+        <div class="chat-card__description--header">{{actor.name}}. . . </div>
+      {{/if}}
       {{{description}}}
     </div>
   {{/if}}
