@@ -14,9 +14,8 @@
  * @abstract
  * @since 1.0.0
  */
-export default class EventideRpSystemDataModel
-  extends foundry.abstract.TypeDataModel
-{
+export default class EventideRpSystemDataModel extends foundry.abstract
+  .TypeDataModel {
   /**
    * Convert the schema to a plain object.
    *
