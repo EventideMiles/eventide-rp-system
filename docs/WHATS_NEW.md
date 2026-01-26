@@ -5,6 +5,7 @@
 **[v13.19.1](release-notes/v13.19.1.md)** - Migration and UI Fixes _(January 2026)_
 
 **Key Highlights:**
+
 - Fixed migration logic for status application limits to properly handle old status applications
 - Resolved configuration field jumping bugs in action card interfaces
 - Updated Jest configuration to support new fields added in v13.19.0
@@ -14,6 +15,7 @@
 **[v13.19.0](release-notes/v13.19.0.md)** - Action Card Execution Flow _(January 2026)_
 
 **Key Highlights:**
+
 - **Status effects can now have different application amounts** This changes from the "all or nothing" flow of before.
 - **Fixed image bug** where embedded status effects wouldn't have their active effect image properly updated.
 - **Fail on first attack miss** now the default for multi-execution action cards so if initial hit doesn't hit the action is over.

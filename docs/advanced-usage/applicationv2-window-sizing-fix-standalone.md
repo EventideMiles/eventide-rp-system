@@ -9,6 +9,7 @@ This is a standalone fix for a bug in Foundry VTT's `ApplicationV2##onWindowDoub
 ## The Problem
 
 When using Foundry VTT's ApplicationV2 windows:
+
 1. Open a window (e.g., actor sheet, item sheet)
 2. Minimize the window
 3. Double-click the minimized window to restore it

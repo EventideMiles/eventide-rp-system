@@ -53,14 +53,14 @@ Your character has two primary resources:
 
 - **What it is**: Your health, stamina, and general well-being
 - **How it works**: Decreases when you take damage, increases when you rest or heal
-- **Derived from**: Primarily your Fortitude ability
+- **Derived from**: Primarily your Fortitude ability. Default is 100 + (10 x Fortitude)
 - **When it reaches 0**: Your character is incapacitated or worse (we encourage GMs to use this to suit your story)
 
 #### **Power**
 
 - **What it is**: Your capacity for special abilities, magic, and extraordinary feats
 - **How it works**: Spent to use Combat Powers and special abilities
-- **Derived from**: Primarily your Will ability
+- **Derived from**: Primarily your Fortitude and Will abilites. Default is 5 + Fortitude + WIll
 - **Regeneration**: Typically recovers during rest periods and by actively spending actions to restore it in combat
 
 ## Character Creation Process

@@ -324,12 +324,14 @@ Circumstantial bonuses are one of the most engaging aspects of the Eventide syst
 ##### **Design Principles**
 
 ###### **Connect to Character Background**
+
 - **Personal History**: Tie bonuses to the character's past experiences
 - **Cultural Heritage**: Reflect species, regional, or cultural advantages
 - **Professional Training**: Represent specialized skills and knowledge
 - **Character Development**: Reward growth and learning through play
 
 ###### **Balance Considerations**
+
 - **Frequency of Use**: More common circumstances warrant smaller bonuses (+1 to +2)
 - **Specificity**: Highly specific situations can have larger bonuses (+3 to +4)
 - **Campaign Relevance**: Ensure bonuses will matter in your campaign setting
@@ -338,12 +340,14 @@ Circumstantial bonuses are one of the most engaging aspects of the Eventide syst
 ##### **Implementation Guidelines**
 
 ###### **Bonus Scaling**
+
 - **+1**: Very common circumstances (urban environments in a city campaign)
 - **+2**: Moderately common circumstances (social situations for a diplomat)
 - **+3**: Specific but meaningful circumstances (academic research for a scholar)
 - **+4 or higher**: Very rare or highly specialized circumstances
 
 ###### **Ability Selection**
+
 - **Acrobatics**: Agility-based advantages (climbing, stealth, precision)
 - **Physical**: Strength-based advantages (lifting, breaking, intimidation)
 - **Fortitude**: Endurance-based advantages (survival, resistance, stamina)
@@ -355,7 +359,8 @@ Circumstantial bonuses are one of the most engaging aspects of the Eventide syst
 ###### **Background-Based Features**
 
 **Urban Native**
-```
+
+```yaml
 Name: City Streets
 Description: You grew up navigating the complex social and physical landscape of a major city.
 Roll Type: Ability-Based (Wits)
@@ -364,7 +369,8 @@ Circumstance: When in urban environments or dealing with city politics
 ```
 
 **Wilderness Guide**
-```
+
+```yaml
 Name: Nature's Child
 Description: Years in the wild have taught you to read the signs of nature and survive in harsh conditions.
 Roll Type: Ability-Based (Fortitude)
@@ -373,7 +379,8 @@ Circumstance: When in natural environments or surviving outdoors
 ```
 
 **Noble Upbringing**
-```
+
+```yaml
 Name: Courtly Manners
 Description: Your aristocratic education included extensive training in etiquette and social graces.
 Roll Type: Ability-Based (Will)
@@ -384,7 +391,8 @@ Circumstance: When dealing with nobility or in formal social situations
 ###### **Professional Features**
 
 **Military Training**
-```
+
+```yaml
 Name: Tactical Awareness
 Description: Your military service taught you to read battlefields and coordinate with allies.
 Roll Type: Ability-Based (Wits)
@@ -393,7 +401,8 @@ Circumstance: During combat or when planning tactical operations
 ```
 
 **Scholar's Education**
-```
+
+```yaml
 Name: Academic Research
 Description: Years of study have given you exceptional research and analytical skills.
 Roll Type: Ability-Based (Wits)
@@ -402,7 +411,8 @@ Circumstance: When researching information or recalling academic knowledge
 ```
 
 **Merchant Experience**
-```
+
+```yaml
 Name: Commercial Acumen
 Description: Your trading background has sharpened your ability to assess value and read people.
 Roll Type: Ability-Based (Will)
@@ -415,12 +425,14 @@ Circumstance: When negotiating, trading, or assessing the value of goods
 ##### **Recognizing Opportunities**
 
 ###### **Player Communication**
+
 - **Encourage Participation**: Ask players to speak up when they think bonuses apply
 - **Listen Actively**: Consider player suggestions about when their background is relevant
 - **Be Consistent**: Apply similar standards across all characters
 - **Explain Decisions**: Help players understand when and why bonuses apply
 
 ###### **Proactive Application**
+
 - **Scene Setting**: Describe environments and situations that might trigger bonuses
 - **Character Spotlights**: Create moments where each character's background shines
 - **Story Integration**: Weave character backgrounds into the narrative
@@ -429,12 +441,14 @@ Circumstance: When negotiating, trading, or assessing the value of goods
 ##### **Adjudication Guidelines**
 
 ###### **When to Apply Bonuses**
+
 - **Clear Connection**: The character's background directly relates to the situation
 - **Meaningful Advantage**: The bonus represents genuine expertise or familiarity
 - **Story Enhancement**: Applying the bonus improves the narrative
 - **Player Engagement**: The bonus encourages roleplay and character development
 
 ###### **When to Decline Bonuses**
+
 - **Weak Connection**: The background doesn't clearly relate to the current situation
 - **Overuse**: The player is trying to apply the same bonus too frequently
 - **Balance Concerns**: Applying the bonus would overshadow other characters
@@ -443,12 +457,14 @@ Circumstance: When negotiating, trading, or assessing the value of goods
 ##### **Encouraging Roleplay**
 
 ###### **Bonus Moments as Story Beats**
+
 - **Character Spotlight**: Use bonus applications as opportunities to focus on individual characters
 - **Background Exploration**: Ask players to describe how their background helps
 - **Story Connections**: Link bonus applications to ongoing narrative threads
 - **Character Development**: Show how past experiences inform present actions
 
 ###### **Group Dynamics**
+
 - **Shared Success**: Encourage characters to help each other succeed
 - **Complementary Skills**: Highlight how different backgrounds work together
 - **Learning Opportunities**: Let characters teach each other about their expertise
@@ -461,12 +477,14 @@ Circumstance: When negotiating, trading, or assessing the value of goods
 The Feature Creator provides comprehensive tools for designing custom features:
 
 ###### **Basic Setup**
+
 1. **Name**: Choose descriptive, evocative names
 2. **Description**: Write rich, detailed descriptions that enhance immersion
 3. **Icon**: Select appropriate visual representations
 4. **Roll Configuration**: Set up roll mechanics if desired
 
 ###### **Roll Configuration Options**
+
 - **Roll Type**: None (passive), Flat Bonus, or Ability-Based
 - **Target Ability**: Choose which of the five abilities to use
 - **Bonus Value**: Set flat modifiers to add to rolls
@@ -474,6 +492,7 @@ The Feature Creator provides comprehensive tools for designing custom features:
 - **Targeting**: Enable targeting for interactive features
 
 ###### **Character Effects**
+
 - **Ability Modifications**: Permanent changes to ability scores
 - **Resource Adjustments**: Modifications to Resolve and Power maximums
 - **Special Mechanics**: Custom effects for unique features
@@ -481,12 +500,14 @@ The Feature Creator provides comprehensive tools for designing custom features:
 ##### **Collaborative Creation**
 
 ###### **Player Input**
+
 - **Character Concepts**: Work with players to realize their character visions
 - **Background Details**: Incorporate player-created backstory elements
 - **Mechanical Preferences**: Consider player preferences for roll types and abilities
 - **Balance Feedback**: Listen to player concerns about fairness and fun
 
 ###### **Campaign Integration**
+
 - **Setting Consistency**: Ensure features fit your campaign world
 - **Story Relevance**: Create features that will matter in your planned adventures
 - **Group Balance**: Consider how features interact across the entire party
@@ -499,12 +520,14 @@ The Feature Creator provides comprehensive tools for designing custom features:
 Features that change and grow during play:
 
 ###### **Experience-Based Growth**
+
 - **Usage Tracking**: Features that improve through repeated use
 - **Story Milestones**: Features that evolve based on character experiences
 - **Training Opportunities**: Features that can be enhanced through in-game learning
 - **Relationship Development**: Features that change based on character interactions
 
 ###### **Conditional Evolution**
+
 - **Environmental Adaptation**: Features that change based on where characters spend time
 - **Cultural Integration**: Features that develop through interaction with different societies
 - **Skill Mastery**: Features that represent advancing expertise in specific areas
@@ -515,12 +538,14 @@ Features that change and grow during play:
 Features that work together to create complex character concepts:
 
 ###### **Prerequisite Chains**
+
 - **Basic to Advanced**: Simple features that unlock more powerful abilities
 - **Specialization Paths**: Different development routes for similar concepts
 - **Mastery Requirements**: High-level features requiring multiple prerequisites
 - **Cross-Training**: Features that combine different areas of expertise
 
 ###### **Synergy Bonuses**
+
 - **Complementary Skills**: Features that enhance each other when combined
 - **Cultural Packages**: Sets of features representing specific backgrounds
 - **Professional Suites**: Collections of features for particular careers
@@ -531,12 +556,14 @@ Features that work together to create complex character concepts:
 ##### **Balance Problems**
 
 ###### **Overpowered Features**
+
 - **Reduce Frequency**: Make circumstances more specific
 - **Lower Bonuses**: Decrease numerical advantages
 - **Add Limitations**: Include drawbacks or restrictions
 - **Increase Costs**: Require resources or actions to activate
 
 ###### **Underpowered Features**
+
 - **Increase Relevance**: Make circumstances more common
 - **Raise Bonuses**: Increase numerical advantages
 - **Add Flexibility**: Allow features to apply in more situations
@@ -545,12 +572,14 @@ Features that work together to create complex character concepts:
 ##### **Player Engagement Issues**
 
 ###### **Forgotten Features**
+
 - **Regular Reminders**: Prompt players about their features during relevant scenes
 - **Visual Aids**: Use tokens or cards to represent active features
 - **Mechanical Integration**: Ensure features interact meaningfully with other systems
 - **Story Emphasis**: Highlight features in narrative descriptions
 
 ###### **Overused Features**
+
 - **Circumstance Limits**: Be more specific about when features apply
 - **Cooldown Periods**: Introduce rest requirements between uses
 - **Narrative Consequences**: Show how overreliance affects character development
@@ -559,18 +588,21 @@ Features that work together to create complex character concepts:
 #### **Best Practices Summary**
 
 ##### **For Feature Design**
+
 - **Start Simple**: Begin with straightforward bonuses and add complexity gradually
 - **Focus on Story**: Prioritize narrative enhancement over mechanical optimization
 - **Encourage Diversity**: Create features that promote different character concepts
 - **Plan for Growth**: Design features that can evolve during play
 
 ##### **For Game Management**
+
 - **Be Consistent**: Apply similar standards to all characters and situations
 - **Stay Flexible**: Adapt features based on how they work in actual play
 - **Communicate Clearly**: Explain your decisions and reasoning to players
 - **Embrace Creativity**: Support player ideas while maintaining game balance
 
 ##### **For Player Engagement**
+
 - **Spotlight Moments**: Create opportunities for each character to shine
 - **Collaborative Storytelling**: Use features as prompts for character development
 - **Balanced Challenges**: Ensure all characters face appropriate difficulties

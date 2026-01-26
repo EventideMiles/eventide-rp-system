@@ -170,6 +170,7 @@ Features represent permanent character traits that reflect background, training,
 One of the most engaging aspects of Eventide RP is circumstantial bonuses - advantages that apply when your character's background is relevant.
 
 **Examples:**
+
 - **City-Raised**: +2 to Wits rolls in urban environments
 - **Military Veteran**: +2 to Wits rolls during tactical situations
 - **Scholar**: +3 to Wits rolls when researching information
@@ -193,7 +194,8 @@ GMs can create custom features using the Feature Creator:
 5. **Save and Apply**: Add to characters as appropriate
 
 **Quick Feature Template:**
-```
+
+```yaml
 Name: [Background/Training Type]
 Description: [How the character gained this ability]
 Roll Type: Ability-Based

@@ -24,7 +24,7 @@ This guide is for developers who want to extend, modify, or contribute to the Ev
 
 The Eventide RP System is built using modern Foundry VTT v13+ APIs and follows a modular architecture with clear separation of concerns:
 
-```
+```text
 eventide-rp-system/
 ├── module/                 # Core system logic
 │   ├── data/              # Data models and schemas
@@ -105,6 +105,7 @@ export class EventideRpSystemActor extends ActorTransformationMixin(
 ```
 
 **Benefits:**
+
 - **Separation of Concerns**: Each mixin handles specific functionality
 - **Reusability**: Mixins can be applied to different base classes
 - **Maintainability**: Changes to specific features are isolated
@@ -123,6 +124,7 @@ export * from "./theme/_module.mjs";
 ```
 
 **Benefits:**
+
 - Clear dependency management
 - Easy to import specific functionality
 - Supports tree-shaking for performance
@@ -182,6 +184,7 @@ const [result, error] = await ErrorPatterns.documentOperation(
    This is how I handle it since simlinks can be complicated with foundry: make sure you're NOT doing this for your production foundry server
 
 4. **Build the system**:
+
    ```bash
    npm run build
    ```
@@ -1033,7 +1036,7 @@ export default class EventideRpSystemCustom extends EventideRpSystemItemBase {
 }
 ```
 
-2. **Register in System**:
+1. **Register in System**:
 
 ```javascript
 // module/data/_module.mjs
@@ -1050,7 +1053,7 @@ import { models } from "./data/_module.mjs";
 CONFIG.Item.dataModels.custom = models.EventideRpSystemCustom;
 ```
 
-3. **Create Templates**:
+1. **Create Templates**:
 
 ```handlebars
 {{! templates/item/custom.hbs }}
@@ -1227,9 +1230,9 @@ Themes are implemented using CSS custom properties:
 }
 ```
 
-2. **Run `npm run build:lang` To Build Lang File**
+1. **Run `npm run build:lang` To Build Lang File**
 
-3. **Register in System**:
+2. **Register in System**:
 
 ```json
 // system.json
@@ -1332,6 +1335,7 @@ async function calculateInitiative(actor, { bonus = 0 } = {}) {
    ```
 
 4. **Leverage safe execution for event handlers**:
+
    ```javascript
    // In event handlers
    onClick(event) {
@@ -1439,6 +1443,7 @@ const formula = game.settings.get("eventide-rp-system", "initiativeFormula");
 ```
 
 **Impact**: This affects:
+
 - Setting registration in `module/services/settings/settings.mjs`
 - Setting retrieval in `module/eventide-rp-system.mjs`
 - Localization keys in `lang/src/en/settings.json`
