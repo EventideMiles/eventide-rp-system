@@ -35,7 +35,7 @@
           <tr><td><strong>{{localize "EVENTIDE_RP_SYSTEM.Chat.PlayerActionApproval.Repetitions"}}:</strong></td> <td>{{actionCard.repetitions}}</td></tr>
           <tr><td><strong>{{localize "EVENTIDE_RP_SYSTEM.Chat.PlayerActionApproval.ToHit"}}:</strong></td> <td>{{ifThen actionCard.repeatToHit "✅" "❌" }}</td></tr>
           <tr><td><strong>{{localize "EVENTIDE_RP_SYSTEM.Chat.PlayerActionApproval.Damage"}}:</strong></td> <td>{{ifThen actionCard.damageApplication "✅" "❌"}}</td></tr>
-          <tr><td><strong>{{localize "EVENTIDE_RP_SYSTEM.Chat.PlayerActionApproval.Status"}}:</strong></td> <td>{{ifThen actionCard.statusPerSuccess "✅" "❌"}}</td></tr>
+          <tr><td><strong>{{localize "EVENTIDE_RP_SYSTEM.Chat.PlayerActionApproval.Status"}}:</strong></td> <td>{{#if (eq actionCard.statusApplicationLimit 0)}}∞{{else}}{{actionCard.statusApplicationLimit}}{{/if}}</td></tr>
           <tr><td><strong>{{localize "EVENTIDE_RP_SYSTEM.Chat.PlayerActionApproval.Cost"}}:</strong></td> <td>{{ifThen actionCard.costOnRepetition "✅" "❌"}}</td></tr>
         </tbody>
       </table>

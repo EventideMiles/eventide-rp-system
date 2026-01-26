@@ -5,34 +5,49 @@
     {{!-- Repetitions Section --}}
   <div class="erps-form__section">
     <h3 class="erps-form__header">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Config.RepetitionsHeader"}}</h3>
-    <div class="grid grid-2col">
+    <div class="grid grid-3col">
       <div class="erps-form__group">
         <label class="erps-input-label" for="{{item.id}}-repetitions">
           {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Repetitions.label"}}
         </label>
-        <input type="text" 
+        <input type="text"
                id="{{item.id}}-repetitions"
-               name="system.repetitions" 
+               name="system.repetitions"
                value="{{item.system.repetitions}}"
                placeholder="1"
                class="erps-input"
                data-dtype="String" />
         <p class="erps-form__hint">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Repetitions.hint"}}</p>
       </div>
-      
+
       <div class="erps-form__group">
         <label class="erps-input-label" for="{{item.id}}-timing-override">
           {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.TimingOverride.label"}}
         </label>
-        <input type="number" 
+        <input type="number"
                id="{{item.id}}-timing-override"
-               name="system.timingOverride" 
+               name="system.timingOverride"
                value="{{item.system.timingOverride}}"
                min="0"
                step="0.1"
                class="erps-input"
                data-dtype="Number" />
         <p class="erps-form__hint">{{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.TimingOverride.hint"}}}</p>
+      </div>
+
+      <div class="erps-form__group">
+        <label class="erps-input-label" for="{{item.id}}-status-application-limit">
+          {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.StatusApplicationLimit.label"}}
+        </label>
+        <input type="number"
+               id="{{item.id}}-status-application-limit"
+               name="system.statusApplicationLimit"
+               value="{{item.system.statusApplicationLimit}}"
+               min="0"
+               step="1"
+               class="erps-input"
+               data-dtype="Number" />
+        <p class="erps-form__hint">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.StatusApplicationLimit.hint"}}</p>
       </div>
     </div>
   </div>
@@ -85,22 +100,6 @@
       <p class="erps-form__hint">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.DamageApplication.hint"}}</p>
     </div>
 
-    {{!-- Status Application Limit --}}
-    <div class="erps-form__group">
-      <label class="erps-input-label" for="{{item.id}}-status-application-limit">
-        {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.StatusApplicationLimit.label"}}
-      </label>
-      <input type="number"
-             id="{{item.id}}-status-application-limit"
-             name="system.statusApplicationLimit"
-             value="{{item.system.statusApplicationLimit}}"
-             min="0"
-             step="1"
-             class="erps-input"
-             data-dtype="Number" />
-      <p class="erps-form__hint">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.StatusApplicationLimit.hint"}}</p>
-    </div>
-
     {{!-- Cost On Repetition Toggle --}}
     <div class="eventide-sheet__toggle-group">
       <label class="erps-toggles erps-toggles--label-left">
@@ -145,5 +144,6 @@
       <p class="erps-form__hint">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.FailOnFirstMiss.hint"}}</p>
     </div>
 
+  </div>
   </div>
 </section>
