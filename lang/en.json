@@ -1010,6 +1010,7 @@
       "VersionInfo": "Version Information",
       "SystemVersion": "System Version",
       "FoundryVersion": "Foundry Version",
+      "MigrationVersion": "Migration Version",
       "LastUpdated": "Last Updated",
       "Enabled": "Enabled",
       "PerformanceTips": "Performance Tips",
@@ -1036,6 +1037,14 @@
       "CreateNew": "Create New",
       "CreateNewPower": "Create New Power",
       "CreateNewActionCard": "Create New Action Card"
+    },
+    "Migration": {
+      "InProgress": "Eventide RP System: Migration in progress. Please do not reload the world until migration is complete.",
+      "Complete": "Migration complete: {message}.",
+      "CompleteNoChanges": "Migration complete: No changes needed.",
+      "Failed": "Embedded image migration failed. Check the console for details.",
+      "FixedEffectImages": "Fixed {effectsFixed} effect images across {itemsFixed} items",
+      "MigratedStatusFields": "Migrated {count} action cards from statusPerSuccess to statusApplicationLimit"
     },
     "WindowTitles": {
       "ActorToTransformation": "Convert Actor to Transformation",
@@ -1207,14 +1216,6 @@
     "SoundResetToDefault": "Sound for {0} reset to default.",
     "NoPlayerPermission": "Players do not have permission to change sound settings.",
     "TestingModeName": "Testing Mode",
-    "TestingModeHint": "Enable or disable testing mode console logging for debugging.",
-    "MinimumDiceValueName": "Minimum Dice Value",
-    "MinimumDiceValueHint": "Prevents the dice value from going below this minimum. When status effects reduce dice below this value, rolls will use this minimum instead.",
-    "MaxPowerFormulaName": "Max Power Formula",
-    "MaxPowerFormulaHint": "Formula for calculating maximum power. Use @will.total and @fort.total to reference ability scores. Default: max(5 + @will.total + @fort.total, 1)",
-    "MaxResolveFormulaName": "Max Resolve Formula",
-    "MaxResolveFormulaHint": "Formula for calculating maximum resolve. Use @fort.total to reference fortitude. Default: max(100 + (10 * @fort.total), 10)",
-    "ActionCardExecutionLimitName": "Action Card Execution Limit",
-    "ActionCardExecutionLimitHint": "Maximum number of times an action card can execute in a single action. Set to 0 for no limit."
+    "TestingModeHint": "Enable or disable testing mode console logging for debugging."
   }
 }

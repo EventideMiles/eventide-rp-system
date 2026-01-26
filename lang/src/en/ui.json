@@ -76,6 +76,7 @@
       "VersionInfo": "Version Information",
       "SystemVersion": "System Version",
       "FoundryVersion": "Foundry Version",
+      "MigrationVersion": "Migration Version",
       "LastUpdated": "Last Updated",
       "Enabled": "Enabled",
       "PerformanceTips": "Performance Tips",

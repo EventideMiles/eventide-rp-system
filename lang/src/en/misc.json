@@ -36,6 +36,14 @@
       "CreateNew": "Create New",
       "CreateNewPower": "Create New Power",
       "CreateNewActionCard": "Create New Action Card"
+    },
+    "Migration": {
+      "InProgress": "Eventide RP System: Migration in progress. Please do not reload the world until migration is complete.",
+      "Complete": "Migration complete: {message}.",
+      "CompleteNoChanges": "Migration complete: No changes needed.",
+      "Failed": "Embedded image migration failed. Check the console for details.",
+      "FixedEffectImages": "Fixed {effectsFixed} effect images across {itemsFixed} items",
+      "MigratedStatusFields": "Migrated {count} action cards from statusPerSuccess to statusApplicationLimit"
     }
   },
   "TYPES": {
