@@ -2,6 +2,15 @@
 
 ## Latest Release
 
+**[v13.19.1](release-notes/v13.19.1.md)** - Migration and UI Fixes _(January 2026)_
+
+**Key Highlights:**
+- Fixed migration logic for status application limits to properly handle old status applications
+- Resolved configuration field jumping bugs in action card interfaces
+- Updated Jest configuration to support new fields added in v13.19.0
+
+## Recent Major Releases
+
 **[v13.19.0](release-notes/v13.19.0.md)** - Action Card Execution Flow _(January 2026)_
 
 **Key Highlights:**
@@ -10,8 +19,6 @@
 - **Fail on first attack miss** now the default for multi-execution action cards so if initial hit doesn't hit the action is over.
 - **Power and Resolve are now derived** To make it easier for systematic application of resolve and power rules and so that statuses can now impact these.
 - **Minimum dice value now set via settings** to prevent status effects from getting fully out of hand.
-
-## Recent Major Releases
 
 **[v13.18.1](release-notes/v13.18.1.md)** - Enhanced Action Chain Control _(February 2026)_
 
@@ -87,7 +94,7 @@ Action cards can now contain embedded transformations, plus new export functiona
 - Enhanced transformation sheets
 - Roll value damage support
 
-### [v13.14.0](release-notes/v13.14.0.md) - Player Action Workflows & Item Selection _(October 2025)_
+**[v13.14.0](release-notes/v13.14.0.md)** - Player Action Workflows & Item Selection _(October 2025)_
 
 New GM approval workflow for player-initiated action cards and enhanced item creation with quick-add buttons.
 
@@ -98,7 +105,7 @@ New GM approval workflow for player-initiated action cards and enhanced item cre
 - Transformation action cards
 - Improved linked token support
 
-### [v13.13.3](release-notes/v13.13.3.md) - Action Modes & Advanced Repetition System _(August 2025)_
+**[v13.13.3](release-notes/v13.13.3.md)** - Action Modes & Advanced Repetition System _(August 2025)_
 
 Powerful Action Modes system that transforms action cards into dynamic, repeatable actions with sophisticated control over repetition behavior.
 
@@ -109,7 +116,7 @@ Powerful Action Modes system that transforms action cards into dynamic, repeatab
 - Resource management and timing control
 - New Config tab interface
 
-### [v13.11.0](release-notes/v13.11.0.md) - Action Cards System & Combat Automation
+**[v13.11.0](release-notes/v13.11.0.md)** - Action Cards System & Combat Automation
 
 Comprehensive Action Cards system that revolutionizes combat automation and action management.
 
@@ -120,7 +127,7 @@ Comprehensive Action Cards system that revolutionizes combat automation and acti
 - Smart targeting and inventory integration
 - GM vs player workflows
 
-### [v13.10.0](release-notes/v13.10.0.md) - Feature Roll System & Circumstantial Bonuses
+**[v13.10.0](release-notes/v13.10.0.md)** - Feature Roll System & Circumstantial Bonuses
 
 Enhanced character customization through circumstantial bonuses and feature-based rolls.
 
@@ -135,7 +142,8 @@ Enhanced character customization through circumstantial bonuses and feature-base
 
 | Version      | Release Date  | Focus                                                                                  |
 | ------------ | ------------- | -------------------------------------------------------------------------------------- |
-| **v13.19.0** | January 2026  | Action Card Execution Flow Update                                                      |
+| **v13.19.1** | January 2026  | Migration and UI Fixes                                                                 |
+| v13.19.0     | January 2026  | Action Card Execution Flow Update                                                      |
 | v13.18.1     | January 2026  | Enhanced Action Chain Control, Mixed Attribute Rolls, and Selective Status Application |
 | v13.18.0     | January 2026  | GM Action Cards, Smart Context-Aware Creation, and Backward Compatibility              |
 | v13.17.5     | November 2025 | Enhanced Context Menus & Code Quality                                                  |
@@ -153,12 +161,12 @@ Enhanced character customization through circumstantial bonuses and feature-base
 
 ### By Feature Area
 
-- **Action Cards**: [v13.11.0](release-notes/v13.11.0.md), [v13.13.3](release-notes/v13.13.3.md), [v13.14.0](release-notes/v13.14.0.md), [v13.15.0](release-notes/v13.15.0.md), [v13.16.0](release-notes/v13.16.0.md), [v13.18.0](release-notes/v13.18.0.md), [v13.18.1](release-notes/v13.18.1.md), [v13.19.0](release-notes/v13.19.0.md)
+- **Action Cards**: [v13.11.0](release-notes/v13.11.0.md), [v13.13.3](release-notes/v13.13.3.md), [v13.14.0](release-notes/v13.14.0.md), [v13.15.0](release-notes/v13.15.0.md), [v13.16.0](release-notes/v13.16.0.md), [v13.18.0](release-notes/v13.18.0.md), [v13.18.1](release-notes/v13.18.1.md), [v13.19.0](release-notes/v13.19.0.md), [v13.19.1](release-notes/v13.19.1.md)
 - **GM Tools**: [v13.18.0](release-notes/v13.18.0.md), [v13.18.1](release-notes/v13.18.1.md)
 - **Transformations**: [v13.14.0](release-notes/v13.14.0.md), [v13.15.0](release-notes/v13.15.0.md), [v13.15.5](release-notes/v13.15.5.md), [v13.17.0](release-notes/v13.17.0.md)
 - **Features & Bonuses**: [v13.10.0](release-notes/v13.10.0.md), [v13.19.0](release-notes/v13.19.0.md)
 - **Combat Automation**: [v13.11.0](release-notes/v13.11.0.md), [v13.13.3](release-notes/v13.13.3.md)
-- **Conversion & Migration**: [v13.17.0](release-notes/v13.17.0.md), [v13.19.0](release-notes/v13.19.0.md)
+- **Conversion & Migration**: [v13.17.0](release-notes/v13.17.0.md), [v13.19.0](release-notes/v13.19.0.md), [v13.19.1](release-notes/v13.19.1.md)
 
 ### Documentation Links
 
@@ -184,8 +192,8 @@ We encourage users to:
 - Review the documentation guides for comprehensive system information
 - Join community discussions for tips and best practices
 
-- Review the **[v13.19.0](release-notes/v13.19.0.md)** and **[v13.18.1](release-notes/v13.18.1.md)** release notes for detailed feature information and updates.
+- Review the **[v13.19.1](release-notes/v13.19.1.md)**, **[v13.19.0](release-notes/v13.19.0.md)**, and **[v13.18.1](release-notes/v13.18.1.md)** release notes for detailed feature information and updates.
 
 ---
 
-**Current Version**: v13.19.0 | **Foundry VTT Compatibility**: v13+ | **Last Updated**: January 2026
+**Current Version**: v13.19.1 | **Foundry VTT Compatibility**: v13+ | **Last Updated**: January 2026
