@@ -1227,10 +1227,10 @@ label,
 }
 
 .eventide-sheet {
-  --erps-display-font: "Cinzel", "Libre Baskerville", serif;
-  --erps-info-font: "Crimson Text", "Times New Roman", serif;
-  --erps-ui-font: "Roboto Condensed", "Arial Narrow", sans-serif;
-  --erps-mono-font: "Consolas", "Monaco", "Courier New", monospace;
+  --erps-display-font: 'Cinzel', 'Libre Baskerville', serif;
+  --erps-info-font: 'Crimson Text', 'Times New Roman', serif;
+  --erps-ui-font: 'Roboto Condensed', 'Arial Narrow', sans-serif;
+  --erps-mono-font: 'Consolas', 'Monaco', 'Courier New', monospace;
   border-radius: 16px;
   box-shadow: 0 0 40px rgba(0, 0, 0, 0.6), inset 0 2px 4px rgba(255, 255, 255, 0.05), inset 0 -2px 4px rgba(0, 0, 0, 0.2);
   min-height: 0;
