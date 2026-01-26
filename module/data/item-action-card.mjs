@@ -28,9 +28,10 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
     // This serves as a safety net for any documents that slip through
     if (source.statusPerSuccess && source._id) {
       source.statusApplicationLimit = source.statusPerSuccess === true ? 0 : 1;
-      console.log( // eslint-disable-line no-console
+      // eslint-disable-next-line no-console
+      console.log(
         `[Eventide RP System] Migrated Action Card statusPerSuccess to statusApplicationLimit for item ID ${source._id}`,
-      ); 
+      );
       source.statusPerSuccess = undefined;
     }
 
@@ -214,11 +215,6 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
         required: true,
         initial: "damage",
         choices: ["damage", "heal"],
-      }),
-      description: new fields.StringField({
-        required: true,
-        initial: "",
-        blank: true,
       }),
     });
 
