@@ -312,12 +312,15 @@ describe('EventideRpSystemActionCard Schema - Priority 1 Critical Definitions', 
       expect(field.options.initial).toBe(false);
     });
 
-    test('should define status per success flag', () => {
-      const field = schema.statusPerSuccess;
+    test('should define status application limit', () => {
+      const field = schema.statusApplicationLimit;
 
       expect(field).toBeDefined();
       expect(field.options.required).toBe(true);
-      expect(field.options.initial).toBe(false);
+      expect(field.options.initial).toBe(1);
+      expect(field.options.min).toBe(0);
+      expect(field.options.integer).toBe(true);
+      expect(field.options.nullable).toBe(false);
     });
 
     test('should define timing override with correct constraints', () => {
@@ -405,8 +408,10 @@ describe('EventideRpSystemActionCard Schema - Priority 1 Critical Definitions', 
       expect(schema.attemptInventoryReduction.options.initial).toBe(false);
       expect(schema.repeatToHit.options.initial).toBe(false);
       expect(schema.damageApplication.options.initial).toBe(false);
-      expect(schema.statusPerSuccess.options.initial).toBe(false);
       expect(schema.costOnRepetition.options.initial).toBe(false);
+
+      // Status application limit should default to 1 (apply once)
+      expect(schema.statusApplicationLimit.options.initial).toBe(1);
     });
   });
 
