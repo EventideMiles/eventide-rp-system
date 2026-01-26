@@ -8,6 +8,36 @@ import { EventideRpSystemItemBase } from "./_module.mjs";
  */
 export default class EventideRpSystemActionCard extends EventideRpSystemItemBase {
   /**
+   * Migrate source data from prior formats into the current specification.
+   *
+   * This method runs BEFORE the schema is applied, allowing us to transform
+   * legacy data fields into their new formats.
+   *
+   * Migrations handled:
+   * - statusPerSuccess (boolean) → statusApplicationLimit (number)
+   *   - true → 0 (no limit, apply on every success)
+   *   - false → 1 (apply once)
+   *
+   * @param {object} source - The raw source data from the database
+   * @returns {object} The migrated source data
+   * @static
+   */
+  static migrateData(source) {
+    // Migrate statusPerSuccess to statusApplicationLimit (Issue #128, #133)
+    // Note: Primary migration happens in EmbeddedImageMigration using game.data
+    // This serves as a safety net for any documents that slip through
+    if (source.statusPerSuccess && source._id) {
+      source.statusApplicationLimit = source.statusPerSuccess === true ? 0 : 1;
+      console.log( // eslint-disable-line no-console
+        `[Eventide RP System] Migrated Action Card statusPerSuccess to statusApplicationLimit for item ID ${source._id}`,
+      ); 
+      source.statusPerSuccess = undefined;
+    }
+
+    return super.migrateData(source);
+  }
+
+  /**
    * Define the data schema for Action Card items.
    *
    * This schema defines the complete structure and validation rules for the most
@@ -234,6 +264,15 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
      */
     schema.damageApplication = new fields.BooleanField({
       required: true,
+      initial: false,
+    });
+
+    /**
+     * Depreciated: statusPerSuccess boolean toggle (replaced by statusApplicationLimit)
+     * Retained for migration purposes only
+     */
+    schema.statusPerSuccess = new fields.BooleanField({
+      required: false,
       initial: false,
     });
 

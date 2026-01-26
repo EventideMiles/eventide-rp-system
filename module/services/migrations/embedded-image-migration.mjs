@@ -1,8 +1,7 @@
 import { Logger } from "../logger.mjs";
 
 /**
- * Migration service for embedded item fixes and action card updates
- *
+ * Migration service for embedded item fixes
  * Handles migrations for:
  * - Issue #127: Fix broken image associations in embedded items
  * - Issue #128: Migrate existing action cards to use statusApplicationLimit
@@ -20,7 +19,7 @@ export class EmbeddedImageMigration {
       return;
     }
 
-    const migrationVersion = "1.0.0";
+    const migrationVersion = "1.2.0";
     const lastMigration = game.settings.get(
       "eventide-rp-system",
       "embeddedImageMigrationVersion"
@@ -45,7 +44,7 @@ export class EmbeddedImageMigration {
       let itemsFixed = 0;
       let effectsFixed = 0;
 
-      // Process all items in the world
+      // Process all items in the world for embedded image fixes
       for (const item of game.items) {
         const result = await this._processItem(item);
         itemsFixed += result.itemsFixed;
@@ -115,14 +114,6 @@ export class EmbeddedImageMigration {
   static async _processItem(item) {
     let itemsFixed = 0;
     let effectsFixed = 0;
-
-    // Migrate action card statusApplicationLimit (Issue #128)
-    if (item.type === "actionCard") {
-      const migrated = await this._migrateActionCardStatusLimit(item);
-      if (migrated) {
-        itemsFixed++;
-      }
-    }
 
     // Handle action cards with embedded status effects
     if (item.type === "actionCard" && item.system.embeddedStatusEffects?.length > 0) {
@@ -354,54 +345,5 @@ export class EmbeddedImageMigration {
     }
 
     return { fixed: needsUpdate, effectsFixed };
-  }
-
-  /**
-   * Migrate action card from statusPerSuccess to statusApplicationLimit (Issue #128)
-   *
-   * The statusApplicationLimit field replaces the old statusPerSuccess boolean:
-   * - If statusPerSuccess was true → statusApplicationLimit = 0 (no limit, apply every time)
-   * - If statusPerSuccess was false → statusApplicationLimit = 1 (apply once)
-   *
-   * @param {Item} item - The action card item
-   * @returns {Promise<boolean>} Whether the item was migrated
-   */
-  static async _migrateActionCardStatusLimit(item) {
-    // Check if statusPerSuccess exists on the raw item data (not the schema-derived value)
-    // If it doesn't exist, the item was created after the migration and doesn't need updating
-    const rawData = item.toObject();
-    if (!Object.prototype.hasOwnProperty.call(rawData.system, "statusPerSuccess")) {
-      return false;
-    }
-
-    // Apply migration rule based on old statusPerSuccess setting
-    // statusPerSuccess true = apply every time = limit 0
-    // statusPerSuccess false = apply once = limit 1
-    const newLimit = rawData.system.statusPerSuccess === true ? 0 : 1;
-
-    try {
-      // Update the statusApplicationLimit and remove the old statusPerSuccess field
-      await item.update({
-        "system.statusApplicationLimit": newLimit,
-        "system.-=statusPerSuccess": null, // Remove the old field
-      });
-      Logger.debug(
-        "Migrated action card from statusPerSuccess to statusApplicationLimit",
-        {
-          itemName: item.name,
-          statusPerSuccess: rawData.system.statusPerSuccess,
-          newLimit,
-        },
-        "MIGRATION"
-      );
-      return true;
-    } catch (error) {
-      Logger.error(
-        "Failed to migrate action card statusApplicationLimit",
-        { itemName: item.name, error },
-        "MIGRATION"
-      );
-      return false;
-    }
   }
 }
