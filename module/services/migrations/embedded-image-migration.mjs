@@ -4,7 +4,7 @@ import { Logger } from "../logger.mjs";
  * Migration service for embedded item fixes
  * Handles migrations for:
  * - Issue #127: Fix broken image associations in embedded items
- * - Issue #128: Migrate existing action cards to use statusApplicationLimit
+ * - Issue #128/#133: Migrate statusPerSuccess (boolean) to statusApplicationLimit (number)
  */
 export class EmbeddedImageMigration {
   /**
@@ -19,7 +19,7 @@ export class EmbeddedImageMigration {
       return;
     }
 
-    const migrationVersion = "1.2.0";
+    const migrationVersion = "1.3.0";
     const lastMigration = game.settings.get(
       "eventide-rp-system",
       "embeddedImageMigrationVersion"
@@ -40,15 +40,23 @@ export class EmbeddedImageMigration {
       "MIGRATION"
     );
 
+    // Warn users not to reload during migration
+    const migrationNotification = ui.notifications.warn(
+      game.i18n.localize("EVENTIDE_RP_SYSTEM.Migration.InProgress"),
+      { permanent: true }
+    );
+
     try {
       let itemsFixed = 0;
       let effectsFixed = 0;
+      let statusFieldsMigrated = 0;
 
       // Process all items in the world for embedded image fixes
       for (const item of game.items) {
         const result = await this._processItem(item);
         itemsFixed += result.itemsFixed;
         effectsFixed += result.effectsFixed;
+        statusFieldsMigrated += result.statusFieldsMigrated;
       }
 
       // Process items in all actors
@@ -57,6 +65,7 @@ export class EmbeddedImageMigration {
           const result = await this._processItem(item);
           itemsFixed += result.itemsFixed;
           effectsFixed += result.effectsFixed;
+          statusFieldsMigrated += result.statusFieldsMigrated;
         }
       }
 
@@ -72,6 +81,7 @@ export class EmbeddedImageMigration {
             const result = await this._processItem(item);
             itemsFixed += result.itemsFixed;
             effectsFixed += result.effectsFixed;
+            statusFieldsMigrated += result.statusFieldsMigrated;
           }
         }
       }
@@ -85,23 +95,45 @@ export class EmbeddedImageMigration {
 
       Logger.info(
         "Embedded image migration completed",
-        { itemsFixed, effectsFixed, version: migrationVersion },
+        { itemsFixed, effectsFixed, statusFieldsMigrated, version: migrationVersion },
         "MIGRATION"
       );
 
-      if (itemsFixed > 0 || effectsFixed > 0) {
-        ui.notifications.info(
-          `Embedded image migration complete: Fixed ${effectsFixed} effect images across ${itemsFixed} items.`
-        );
+      // Build notification message based on what was fixed
+      const messages = [];
+      if (effectsFixed > 0) {
+        messages.push(game.i18n.format("EVENTIDE_RP_SYSTEM.Migration.FixedEffectImages", {
+          effectsFixed,
+          itemsFixed
+        }));
+      }
+      if (statusFieldsMigrated > 0) {
+        messages.push(game.i18n.format("EVENTIDE_RP_SYSTEM.Migration.MigratedStatusFields", {
+          count: statusFieldsMigrated
+        }));
+      }
+
+      // Remove the permanent "in progress" notification
+      migrationNotification.remove();
+
+      if (messages.length > 0) {
+        ui.notifications.info(game.i18n.format("EVENTIDE_RP_SYSTEM.Migration.Complete", {
+          message: messages.join(". ")
+        }));
+      } else {
+        ui.notifications.info(game.i18n.localize("EVENTIDE_RP_SYSTEM.Migration.CompleteNoChanges"));
       }
     } catch (error) {
+      // Remove the permanent "in progress" notification even on failure
+      migrationNotification.remove();
+
       Logger.error(
         "Embedded image migration failed",
         error,
         "MIGRATION"
       );
       ui.notifications.error(
-        "Embedded image migration failed. Check the console for details."
+        game.i18n.localize("EVENTIDE_RP_SYSTEM.Migration.Failed")
       );
     }
   }
@@ -109,11 +141,21 @@ export class EmbeddedImageMigration {
   /**
    * Process a single item and fix any embedded image issues
    * @param {Item} item - The item to process
-   * @returns {Promise<{itemsFixed: number, effectsFixed: number}>}
+   * @returns {Promise<{itemsFixed: number, effectsFixed: number, statusFieldsMigrated: number}>}
    */
   static async _processItem(item) {
     let itemsFixed = 0;
     let effectsFixed = 0;
+    let statusFieldsMigrated = 0;
+
+    // Handle action cards: migrate statusPerSuccess to statusApplicationLimit (Issue #128, #133)
+    if (item.type === "actionCard") {
+      const result = await this._migrateStatusPerSuccess(item);
+      if (result.fixed) {
+        itemsFixed++;
+        statusFieldsMigrated++;
+      }
+    }
 
     // Handle action cards with embedded status effects
     if (item.type === "actionCard" && item.system.embeddedStatusEffects?.length > 0) {
@@ -151,7 +193,7 @@ export class EmbeddedImageMigration {
       }
     }
 
-    return { itemsFixed, effectsFixed };
+    return { itemsFixed, effectsFixed, statusFieldsMigrated };
   }
 
   /**
@@ -241,6 +283,44 @@ export class EmbeddedImageMigration {
   }
 
   /**
+   * Migrate statusPerSuccess (boolean) to statusApplicationLimit (number) for action cards
+   * Issue #128, #133: Convert legacy boolean field to new numeric limit field
+   * - true → 0 (no limit, apply on every success)
+   * - false → 1 (apply once)
+   * @param {Item} item - The action card item
+   * @returns {Promise<{fixed: boolean}>}
+   */
+  static async _migrateStatusPerSuccess(item) {
+    // Check if statusPerSuccess is a boolean (legacy data that needs migration)
+    // After migration, it should be null
+    const statusPerSuccess = item.system.statusPerSuccess;
+
+    if (typeof statusPerSuccess !== "boolean") {
+      return { fixed: false };
+    }
+
+    // Convert boolean to numeric limit
+    const statusApplicationLimit = statusPerSuccess === true ? 0 : 1;
+
+    await item.update({
+      "system.statusApplicationLimit": statusApplicationLimit,
+      "system.statusPerSuccess": null
+    });
+
+    Logger.debug(
+      "Migrated statusPerSuccess to statusApplicationLimit",
+      {
+        itemName: item.name,
+        oldValue: statusPerSuccess,
+        newValue: statusApplicationLimit
+      },
+      "MIGRATION"
+    );
+
+    return { fixed: true };
+  }
+
+  /**
    * Fix embedded combat powers in a transformation
    * @param {Item} item - The transformation item
    * @returns {Promise<{fixed: boolean, effectsFixed: number}>}
@@ -297,6 +377,13 @@ export class EmbeddedImageMigration {
     const embeddedActionCards = foundry.utils.deepClone(item.system.embeddedActionCards);
 
     for (const actionCard of embeddedActionCards) {
+      // Migrate statusPerSuccess to statusApplicationLimit in embedded action cards (Issue #128, #133)
+      if (typeof actionCard.system?.statusPerSuccess === "boolean") {
+        actionCard.system.statusApplicationLimit = actionCard.system.statusPerSuccess === true ? 0 : 1;
+        actionCard.system.statusPerSuccess = null;
+        needsUpdate = true;
+      }
+
       // Fix embedded item in the action card
       if (actionCard.system?.embeddedItem?.effects) {
         const embeddedItem = actionCard.system.embeddedItem;

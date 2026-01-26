@@ -201,6 +201,17 @@ globalThis.erps = {
       )
     );
 
+    // Get migration version from settings
+    let migrationVersion = "Unknown";
+    try {
+      migrationVersion = game.settings.get(
+        "eventide-rp-system",
+        "embeddedImageMigrationVersion"
+      ) || "Not run";
+    } catch {
+      migrationVersion = "Settings unavailable";
+    }
+
     const diagnostics = {
       trackedIntervals,
       memoryInfo,
@@ -215,6 +226,7 @@ globalThis.erps = {
       userCount: game.users?.size || 0,
       systemVersion: game.system.version,
       foundryVersion: game.version,
+      migrationVersion,
       timestamp: new Date().toISOString(),
     };
 
