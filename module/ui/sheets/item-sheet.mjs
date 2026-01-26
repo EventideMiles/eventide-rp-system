@@ -833,6 +833,27 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
       return;
     }
 
+    if (event.target.name === "system.attackChain.damageFormula") {
+      // update system.savedDamage.formula as well
+      const updateData = {
+        "system.attackChain.damageFormula": event.target.value,
+        "system.savedDamage.formula": event.target.value,
+      };      
+      await this.item.update(updateData);
+      return;
+    }
+
+    if (event.target.name === "system.savedDamage.formula") {
+      // update system.attackChain.damageFormula as well
+      const updateData = {
+        "system.savedDamage.formula": event.target.value,
+        "system.attackChain.damageFormula": event.target.value,
+      };
+      console.warn(updateData);
+      await this.item.update(updateData);
+      return;
+    }
+
     await super._onChangeForm(formConfig, event);
   }
 
