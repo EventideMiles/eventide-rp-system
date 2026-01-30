@@ -10,3 +10,6 @@ coverage/
 
 # Local only testing files
 logs/
+
+# Roo code private MCP configs
+.roo/mcp.json
