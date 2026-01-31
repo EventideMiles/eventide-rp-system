@@ -118,6 +118,18 @@ An effect appropriate to what you lined up to do occurs. IE: if you threw a rock
 
 You lose your prepared action and you're left dealing with them taking the action you wanted to stop.
 
+### Opponent Reactions to Prepared Actions
+
+When your Prepared Action triggers and you win the challenge, interrupting the opponent's action, that opponent may choose to use their Reaction to counter your Prepared Action. This creates a back-and-forth contest similar to counterspelling:
+
+- **If you win the initial challenge:** The opponent is interrupted and loses their action. They may now use their Reaction to challenge your Prepared Action (this is a NEW, separate challenge).
+- **If the opponent wins their reaction challenge:** They overcome your interruption and proceed with their original action (though they've now spent their Reaction).
+- **If you win the reaction challenge:** Your interruption stands—the opponent has lost both their action and their Reaction with no effect.
+
+This creates dramatic moments where players must weigh the risk of their Prepared Action being countered by a desperate opponent.
+
+> **In Practice:** Kaelen prepares to interrupt an archer's shot. When the trigger occurs, they engage in a challenge roll. Kaelen wins—the archer is interrupted and loses their action. The archer, desperate to avoid defeat, now uses their Reaction to challenge Kaelen's Prepared Action's effect. This is a new, separate challenge. If the archer wins this reaction challenge, their shot proceeds (though they've already spent their Reaction). If Kaelen wins again, the interruption stands—the archer has lost both their action and their Reaction with nothing to show for it.
+
 ## Criticals
 
 > **Game Master's Guide:** When the dice land on a critical, Foundry flags it—but you decide what it means. Critical hits can grant bonus actions, allowing characters to seize the moment and turn the tide. Critical misses can cost actions, creating setbacks that heighten tension. You choose how these impact the action economy: grant extra turns on hits, deduct actions on misses, or keep things purely narrative. Whatever you decide, make it consistent and make it memorable. Criticals should feel special—whether through mechanical advantage or dramatic storytelling.

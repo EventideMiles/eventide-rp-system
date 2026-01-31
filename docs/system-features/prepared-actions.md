@@ -79,13 +79,20 @@ When you win the challenge, your response takes effect immediately:
 When you lose the challenge:
 
 - **Prepared Action Lost:** You've spent the Full Action with no effect
-- **Enemy Continues:** Their action resolves normally (they still attack, cast the spell, etc.)
+- **Enemy Continues:** Their action resolves normally—they get to press their action card now and see what their action does
 - **You're Exposed:** You're now left dealing with the consequences of their completed action
+
+**Opponent Reactions to Prepared Actions:**
+
+Opponents can use their Reaction to respond to your Prepared Action, creating a back-and-forth contest similar to counterspelling.
+
+- **If the opponent wins the challenge:** They are not interrupted. They must now hit their action card and see how it fares against your AC.
+- **If the opponent loses the challenge:** They are interrupted. They don't make an attack roll—they simply lose that specific action (not action points). They still have their remaining actions to use.
 
 **In Practice:**
 > **Elara's Counterspell Resolves:** The enemy mage begins casting a fireball. The GM pauses: "Elara, your Prepared Action triggers! What do you do?" She explains: "I throw a rock to disrupt him." The GM tells her to roll Acrobatics (for the throw). She rolls 18. The mage rolls Will to maintain concentration: 16. Elara wins! The rock strikes the mage's hand, the spell fizzles, and the mage loses their action for this turn. The party cheers—Elara's preparation saved them all.
 
-> **Seraphina's Failed Interrupt:** Seraphina had prepared to attack an archer when they drew a weapon. The trigger occurs, and they roll a Challenge. Seraphina rolls 14 with her sword attack. The archer rolls 17 on their Wits to react. Seraphina loses—her Prepared Action is consumed, and the archer fires an arrow at her ally. She tried, but the archer was too fast.
+> **Seraphina's Failed Interrupt:** Seraphina had prepared to attack an archer when they drew a weapon. The trigger occurs, and they roll a Challenge. Seraphina rolls 14 with her sword attack. The archer rolls 17 on their Wits to react. Seraphina loses—her Prepared Action is consumed, and the archer is not interrupted. The archer now uses the action card to fire the arrow. If they hit, the arrow flies at her ally. If they miss, the shot goes wild. She tried, but the archer was too fast.
 
 **Under the Hood (Technical Note):**
 The Challenge system is central to Prepared Actions. Unlike Reactions (which happen AFTER an effect), Prepared Actions can interrupt BEFORE the effect completes. This makes them powerful but requires careful GM adjudication. The back-and-forth rolling creates dramatic tension as skill clashes against skill. Remember: whoever loses the Challenge doesn't necessarily suffer any penalty beyond losing the Prepared Action—their action just continues normally. The penalty is purely the wasted opportunity.
@@ -203,7 +210,8 @@ The Challenge system is central to Prepared Actions. Unlike Reactions (which hap
 - The player kicks the molotov away
 - The molotov lands in an empty square and ignites
 - The party avoids the fire damage and burning status effect
-- Note: The player would still take damage if they had been hit by the initial throw before kicking it away, but the fire itself is avoided
+
+> **Note:** If the Prepared Action challenge succeeds, the molotov is kicked away and takes no damage. If the Prepared Action challenge fails, the molotov impacts and deals damage. The prepared character cannot "take damage from the initial throw" if their Prepared Action succeeds—the whole point is to interrupt BEFORE the throw completes.
 
 ---
 
@@ -220,6 +228,18 @@ The Challenge system is central to Prepared Actions. Unlike Reactions (which hap
 - **Outcome:** Challenge roll determines if you interrupt successfully
 
 ### Reactions
+
+**Quick Reference Table:**
+
+| Feature | Prepared Action | Reaction |
+|---------|------------------|----------|
+| Setup | On YOUR turn | Start combat with +1 per turn |
+| Timing | Interrupts BEFORE effect | Happens AFTER effect |
+| Trigger | Specific condition declared in advance | Any threat to yourself |
+| Cost | Converts Full Action | Free resource, replenishes |
+| Resolution | Challenge roll | Challenge roll |
+| Opponent can counter | Yes, with their Reaction | Yes, with another Reaction |
+
 - **Setup:** Start each combat with one, gain one each turn
 - **Timing:** Happens AFTER an effect has already impacted you
 - **Trigger:** Any threat to yourself (within reason)
@@ -298,6 +318,20 @@ The flexibility of Prepared Actions is a feature, not a bug. The system trusts G
 
 ## Advanced Tactics
 
+### Simultaneous Triggers
+
+When multiple Prepared Actions trigger at the same time:
+
+1. **Process in initiative order** – Characters with higher initiative act first
+2. **Each Prepared Action resolves independently** – Successes and failures don't cascade
+3. **Target validity check** – If a later Prepared Action's target is already affected by an earlier one (e.g., dead or unconscious), the GM may rule it invalid
+4. **Unused Prepared Actions remain available** – Prepared Actions that don't trigger stay available for other opportunities
+
+**In Practice:**
+> **Multiple Counterspells:** Three characters all prepared actions to counterspell the enemy mage. When the mage casts a spell, the GM processes them in initiative order. The first character (highest initiative) wins their Challenge and interrupts the spell. The second and third characters' Prepared Actions don't trigger—the spell is already stopped. Their Full Actions are wasted, but the threat is neutralized.
+
+> **Partial Success:** Two characters prepare to attack when enemies burst through a door. When an ogre crashes through, the first character (higher initiative) succeeds and deals heavy damage. The ogre survives. The second character's Prepared Action now triggers—since the ogre is still alive and in range, they can also attack. Both Prepared Actions activate successfully.
+
 ### The Interrupt Chain
 
 Multiple characters can have Prepared Actions with overlapping triggers. When this happens, determine the order of activation:
@@ -336,3 +370,67 @@ The system is intentionally flexible, giving GMs discretion to adjudicate unusua
 Remember: Prepared Actions are tracked manually. Foundry will flag critical hits and misses, but it won't track your preparations. This is by design—the action economy is yours to manage, creating a richer, more engaging combat experience where every choice matters and every action has consequences.
 
 Anticipate, declare, and wait. When the moment comes, be ready.
+
+---
+
+## Frequently Asked Questions
+
+**Q: Can a Prepared Action trigger on my own turn?**
+A: No, Prepared Actions only trigger during OTHER characters' turns. They cannot activate on your own turn—if you want to do something on your turn, simply use a Full Action.
+
+**Q: What if my Prepared Action target moves out of range before the trigger occurs?**
+A: GM discretion—usually the Prepared Action is wasted. However, some GMs may allow you to adjust your response or trigger if the narrative supports it.
+
+**Q: Can I have the same trigger for multiple Prepared Actions?**
+A: Yes, but only the first one to trigger will activate. Once a trigger occurs, all Prepared Actions with that trigger become spent (whether they activated or not).
+
+**Q: Do Prepared Actions expire?**
+A: Yes, they last until your next turn unless triggered. If your next turn arrives and the trigger never occurred, your Prepared Action is wasted.
+
+**Q: Can I change my Prepared Action after I've declared it?**
+A: No, once declared, a Prepared Action cannot be changed. Choose your triggers and responses carefully!
+
+**Q: What happens if my Prepared Action trigger occurs but I'm unable to respond?**
+A: If you're unconscious, paralyzed, or otherwise unable to act when your trigger occurs, the Prepared Action is wasted.
+
+**Q: Can I use a Prepared Action to attack someone who's already dead?**
+A: No—if your target is already dead or unconscious when your trigger occurs, the GM will rule the Prepared Action invalid and it is wasted.
+
+**Q: Can I use a Prepared Action to counter another Prepared Action?**
+A: No, Prepared Actions cannot counter other Prepared Actions. However, Reactions can be used to counter Prepared Actions (see [Opponent Reactions](#prepared-actions-vs-reactions)).
+
+---
+
+## Prepared Action Flowchart
+
+```
+Player declares Prepared Action (on their turn)
+   ↓
+Wait for trigger (during any other character's turn)
+   ↓
+Trigger occurs? → No: Continue waiting → End of player's next turn: Action wasted
+   ↓ Yes
+GM pauses action
+   ↓
+Challenge roll begins: Player rolls, then opponent rolls, alternating...
+   ↓
+Someone fails to beat previous roll
+   ↓
+Player won? → Yes: Opponent interrupted, action lost
+               → Opponent may use Reaction to counter (NEW challenge)
+               → No: Player's Prepared Action consumed, opponent continues
+   ↓
+Resolution complete, combat continues
+```
+
+---
+
+## Related Documentation
+
+For a complete understanding of the action economy and related mechanics, see:
+
+- [Action Economy](./action-economy.md) – Complete guide to all action types and conversions
+- [Cleanse Actions](./cleanse-actions.md) – Removing harmful status effects
+- [Combat Adjudication Guide](../for-gms/combat-adjudication-guide.md) – GM-specific guidance on running combat
+- [ERPS Combat Ruleset](../erps-ruleset/erps-ruleset-combat.md) – Core combat mechanics and challenge rules
+- [Status Effects](./status-effects.md) – Understanding conditions and their impact
