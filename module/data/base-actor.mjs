@@ -20,16 +20,16 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
     schema.resolve = new fields.SchemaField({
       value: new fields.NumberField({
         ...requiredInteger,
-        initial: 10,
+        initial: 110,
         min: 0,
       }),
-      max: new fields.NumberField({ ...requiredInteger, initial: 10, min: 1 }),
+      max: new fields.NumberField({ ...requiredInteger, initial: 110, min: 1 }),
     });
     schema.power = new fields.SchemaField({
-      value: new fields.NumberField({ ...requiredInteger, initial: 5, min: 0 }),
+      value: new fields.NumberField({ ...requiredInteger, initial: 7, min: 0 }),
       max: new fields.NumberField({
         required: true,
-        initial: 5,
+        initial: 7,
         min: 0,
       }),
     });
@@ -322,16 +322,28 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
       this.hiddenAbilities.dice.total = minimumDiceValue;
     }
 
-    // Calculate derived max power (Issue #125)
-    this.power.max = this.calculateDerivedMaxPower();
-    // Clamp current power value to new max
+    // Calculate derived max power (Issue #125) - only if formula is not empty (manual mode)
+    const maxPowerFormula = game.settings?.get(
+      "eventide-rp-system",
+      "maxPowerFormula",
+    );
+    if (maxPowerFormula && maxPowerFormula.trim() !== "") {
+      this.power.max = this.calculateDerivedMaxPower();
+    }
+    // Clamp current power value to max (applies whether max was calculated or manual)
     if (this.power.value > this.power.max) {
       this.power.value = this.power.max;
     }
 
-    // Calculate derived max resolve (Issue #126)
-    this.resolve.max = this.calculateDerivedMaxResolve();
-    // Clamp current resolve value to new max
+    // Calculate derived max resolve (Issue #126) - only if formula is not empty (manual mode)
+    const maxResolveFormula = game.settings?.get(
+      "eventide-rp-system",
+      "maxResolveFormula",
+    );
+    if (maxResolveFormula && maxResolveFormula.trim() !== "") {
+      this.resolve.max = this.calculateDerivedMaxResolve();
+    }
+    // Clamp current resolve value to max (applies whether max was calculated or manual)
     if (this.resolve.value > this.resolve.max) {
       this.resolve.value = this.resolve.max;
     }
