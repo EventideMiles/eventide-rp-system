@@ -704,12 +704,6 @@ export const registerSettings = function () {
     type: String,
     default: "max(5 + @will.total + @fort.total, 1)",
     onChange: (value) => {
-      if (!value || value.trim() === "") {
-        const defaultFormula = "max(5 + @will.total + @fort.total, 1)";
-        game.settings.set("eventide-rp-system", "maxPowerFormula", defaultFormula);
-        ui.notifications.warn("Max Power formula cannot be empty. Resetting to default.");
-        return;
-      }
       // Issue #125/#126: Refresh all actors when formula changes
       _refreshAllActorDerivedData();
     },
@@ -725,12 +719,6 @@ export const registerSettings = function () {
     type: String,
     default: "max(100 + (10 * @fort.total), 10)",
     onChange: (value) => {
-      if (!value || value.trim() === "") {
-        const defaultFormula = "max(100 + (10 * @fort.total), 10)";
-        game.settings.set("eventide-rp-system", "maxResolveFormula", defaultFormula);
-        ui.notifications.warn("Max Resolve formula cannot be empty. Resetting to default.");
-        return;
-      }
       // Issue #125/#126: Refresh all actors when formula changes
       _refreshAllActorDerivedData();
     },
