@@ -142,6 +142,7 @@ When calculating ability values, the system applies effects in this specific ord
 > **In Practice:**
 >
 > A character with base Physical 4 has two transformations active:
+>
 > - Transformation A: `transformOverride` Physical to 7
 > - Transformation B: `transformChange` Physical +2
 > - A blessing effect: `change` Physical +1
@@ -149,7 +150,6 @@ When calculating ability values, the system applies effects in this specific ord
 > Calculation: `transformOverride` (7) + `transformChange` (2) + `change` (1) = **Physical 10**
 >
 > If Transformation A used regular `override` instead of `transformOverride`, it would take highest priority and ignore transformation-specific changes entirely.
-
 > **When These Modes Are Used:**
 >
 > - **Polymorph Effects**: Shapeshifting spells or items that dramatically alter character capabilities

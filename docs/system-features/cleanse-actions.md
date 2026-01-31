@@ -24,7 +24,7 @@ When a harmful effect plagues you, you have two options:
 Choose an ability appropriate to resisting the effect:
 
 | Effect Type | Recommended Ability | Example |
-|-------------|---------------------|---------|
+| ------------- | --------------------- | --------- |
 | Physical wounds, arrows, poisons | **Physical** | Removing an arrow, shaking off a toxin |
 | Mental assaults, charms, domination | **Will** | Resisting mind control, breaking a curse |
 | Maneuver-based effects, grapples | **Acrobatics** | Escaping a net, slipping free from bindings |
@@ -48,9 +48,8 @@ Roll your chosen ability against the AC of the character or creature that create
 ## In Practice
 
 > **Varrick's Desperate Recovery:** Varrick has an arrow lodged in his leg from a skilled elven archer. The arrow has been poisoning him, reducing his combat effectiveness. On his turn, he uses his Cleanse Action, rolling Physical against the archer's AC (which is based on the archer's Acrobatics of 5, giving an AC of 16). He rolls a 17—success! The arrow is dislodged, and the poison ceases to afflict him. Now he can use his Full Actions without the penalty.
-
+>
 > **Seraphina's Mental Struggle:** Seraphina has been charmed by a sorcerer's enchantment. On her turn, she uses her Cleanse Action, rolling Will against the sorcerer's AC (based on Will of 6, giving AC 17). She rolls a 14—failure. The charm lingers, and she must spend another Cleanse Action next turn to try again. Meanwhile, the sorcerer continues to manipulate her actions.
-
 > **Game Master's Guide:** When a character uses a Cleanse action to remove a harmful effect, guide the roll appropriately. They'll roll against the AC of the effect's creator—use the stat tied to that character (Physical for an archer's arrow, Will for a mental assault, etc.). If they succeed, remove the status and celebrate their recovery. If they fail, the effect lingers and the battle continues against them. Cleanse actions represent the struggle to shake off wounds and ailments—make each attempt feel significant.
 
 ---
@@ -59,14 +58,14 @@ Roll your chosen ability against the AC of the character or creature that create
 
 The choice between Cleanse Actions and Reaction Challenges is a tactical decision with important trade-offs.
 
-### Use Cleanse Actions When:
+### Use Cleanse Actions When
 
 - **You can afford to wait** – The effect isn't immediately catastrophic
 - **You want predictable outcomes** – Rolling against static AC reduces variance
 - **You're conserving your Reaction** – Save your Reaction for more urgent threats
 - **The effect is already established** – You're dealing with something that's already affecting you
 
-### Use Reaction Challenges When:
+### Use Reaction Challenges When
 
 - **You need immediate response** – The effect could cause catastrophic harm if left unchecked
 - **You want to prevent the effect entirely** – Reactions happen AFTER the effect, but can still mitigate it
@@ -133,25 +132,21 @@ You may notice that agile opponents (those with high Acrobatics) are harder to c
 ### Removing Physical Afflictions
 
 > **Scenario:** You've been hit by a poisoned arrow. The poison deals damage each turn and reduces your Physical by 2.
->
 > **Solution:** Use your Cleanse Action to roll Physical against the archer's AC. If you succeed, the poison is purged from your system and the penalty is removed.
 
 ### Breaking Mental Control
 
 > **Scenario:** A sorcerer has charmed you, forcing you to attack your allies on their turn.
->
 > **Solution:** Use your Cleanse Action to roll Will against the sorcerer's AC. If you succeed, the charm is broken and you regain control of your actions. If you fail, you'll need to try again next turn—or use your Reaction immediately to challenge the charm before it takes effect.
 
 ### Escaping Environmental Effects
 
 > **Scenario:** You've fallen into a pit of magical tar that slows your movement and deals ongoing damage.
->
 > **Solution:** Use your Cleanse Action to roll Acrobatics against the tar's creator (if it has one) or a GM-determined AC. If you succeed, you pull yourself free and can move normally again.
 
 ### Shaking Off Multiple Effects
 
 > **Scenario:** You're afflicted by three different status effects: poison, fear, and a burning condition.
->
 > **Solution:** You have one free Cleanse Action, so you can attempt to remove one effect. Choose the most debilitating one first. If you need to remove all three, you'll need to convert two Full Actions into additional Cleanse Actions—leaving you with no offensive actions this turn. Sometimes it's better to fight through the effects and end the combat quickly.
 
 ---

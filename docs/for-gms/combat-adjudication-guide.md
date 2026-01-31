@@ -27,7 +27,7 @@ The action economy is the heartbeat of combat. Each combatant has a pool of acti
 At the start of each combatant's turn, they gain:
 
 | Action Type | Quantity | Purpose |
-|-------------|----------|---------|
+| ------------- | ---------- | --------- |
 | **Full Actions** | 2 | Attacks, combat powers, abilities, complex maneuvers |
 | **Move Action** | 1 | Travel 25 feet, reposition tactically |
 | **Cleanse Action** | 1 | Remove harmful status effects |
@@ -38,6 +38,7 @@ At the start of each combatant's turn, they gain:
 Choose a tracking system that works for your table:
 
 #### **Visual Tokens (Recommended)**
+
 Use colored beads, tokens, or dice to represent each action type:
 
 - **White beads** – Full Actions
@@ -48,6 +49,7 @@ Use colored beads, tokens, or dice to represent each action type:
 As players spend actions, they return beads to a central pool. This visual system lets everyone see the tactical landscape at a glance.
 
 #### **Digital Tracking**
+
 Use Foundry's token status effects or a dedicated macro to track actions:
 
 - Create custom status icons for each action type
@@ -55,9 +57,10 @@ Use Foundry's token status effects or a dedicated macro to track actions:
 - Use the token HUD for quick reference
 
 #### **Pen and Paper**
+
 Keep a simple spreadsheet or notepad:
 
-```
+```text
 Turn 1:
 Elara: [Full][Full][Move][Cleanse][React]
 Grim:  [Full][Full][Move][Cleanse][React]
@@ -121,7 +124,7 @@ Challenges are the heart of defensive play—back-and-forth contests where oppon
 - **If you lost:** Your Prepared Action is consumed. The opponent continues with their action and may use their action card normally.
 
 > **In Practice:** Elara prepares to interrupt the sorcerer's spell. When the sorcerer begins casting, Elara throws a rock, rolling Physical 4 + d20 = 16. The sorcerer rolls Will 6 + d20 = 19. The sorcerer wins! Elara's rock misses, and the spell completes. Elara loses her Prepared Action. The sorcerer now presses their action card to determine the spell's effects.
-
+---
 > **Opponent Reaction Example:** Kaelen prepares to interrupt an archer's shot. When the trigger occurs, they engage in a challenge roll. Kaelen wins—the archer is interrupted and loses their action. The archer,desperate to avoid defeat, now uses their Reaction to challenge Kaelen's Prepared Action. This is a new, separate challenge. If the archer wins this reaction challenge, their shot proceeds (though they've already spent their Reaction). If Kaelen wins again, the interruption stands—the archer has lost both their action and their Reaction with nothing to show for it.
 
 ---
@@ -183,7 +186,7 @@ Prepared Actions allow players to convert Full Actions into reactions that trigg
 ### Common Prepared Action Scenarios
 
 | Scenario | Trigger | Roll | Success Outcome |
-|----------|---------|------|-----------------|
+| ---------- | --------- | ------ | ----------------- |
 | Interrupt spellcasting | Enemy begins casting | Physical (throwing) or Will (counterspell) | Spell is interrupted; enemy loses action |
 | Block incoming attack | Enemy attacks | Physical (shield) or Acrobatics (dodge) | Attack is negated |
 | Protect ally | Ally is targeted | Appropriate defense | Ally is protected; you take the effect instead |
@@ -195,16 +198,16 @@ Prepared Actions allow players to convert Full Actions into reactions that trigg
 
 Prepared Actions require manual tracking since Foundry doesn't automate them. Use a simple tracking sheet to keep organized:
 
-```
+```md
 Prepared Actions Tracking Sheet Template:
 
 Character: _________________
-┌─────────┬─────────────────────┬─────────────────────┬──────────┐
+┌──────────┬─────────────────────┬─────────────────────┬──────────┐
 │ Action # │ Trigger             │ Response            │ Status   │
-├─────────┼─────────────────────┼─────────────────────┼──────────┤
+├──────────┼─────────────────────┼─────────────────────┼──────────┤
 │ 1        │                     │                     │ [ ] Ready│
 │ 2        │                     │                     │ [ ] Ready│
-└─────────┴─────────────────────┴─────────────────────┴──────────┘
+└──────────┴─────────────────────┴─────────────────────┴──────────┘
 Status: [X] Used | [ ] Failed | [ ] Triggered but lost
 ```
 
@@ -219,6 +222,7 @@ Status: [X] Used | [ ] Failed | [ ] Triggered but lost
 **Visual Tracking Alternative:**
 
 Use colored index cards or sticky notes for each character:
+
 - **Blue card** – Prepared Action #1
 - **Green card** – Prepared Action #2
 - Write the trigger and response on the card
@@ -227,7 +231,7 @@ Use colored index cards or sticky notes for each character:
 **Quick Reference for Common Prepared Action Scenarios:**
 
 | Scenario | Trigger | Roll | Success Outcome | Failure Outcome |
-|----------|---------|------|-----------------|-----------------|
+| ---------- | --------- | ------ | ----------------- | ----------------- |
 | Interrupt spellcasting | Enemy begins casting | Physical (throwing) or Will (counterspell) | Spell is interrupted; enemy loses action | Prepared Action lost; spell proceeds |
 | Block incoming attack | Enemy attacks | Physical (shield) or Acrobatics (dodge) | Attack is negated | Prepared Action lost; attack proceeds |
 | Protect ally | Ally is targeted | Appropriate defense | Ally is protected; you take effect instead | Prepared Action lost; ally remains at risk |
@@ -315,7 +319,8 @@ Pacing is everything. A well-paced combat feels like a movie scene—tense, dram
 
 ### Issue: Combat Takes Too Long
 
-**Solution:** 
+**Solution:**
+
 - Reduce the number of enemies
 - Use minions that die in one hit
 - Skip minor enemies' turns or summarize them
@@ -323,28 +328,32 @@ Pacing is everything. A well-paced combat feels like a movie scene—tense, dram
 
 ### Issue: Players Overwhelmed by Options
 
-**Solution:** 
+**Solution:**
+
 - Simplify choices: "Attack, defend, or move?"
 - Provide examples: "You could cast a spell, use your sword, or prepare an action"
 - Encourage teamwork: "What can you do to help your ally?"
 
 ### Issue: Criticals Create Unfair Swings
 
-**Solution:** 
+**Solution:**
+
 - Remember that criticals go both ways—players benefit too
 - If a critical miss is devastating, offer a narrative alternative
 - Consider adjusting critical thresholds for more consistent results
 
 ### Issue: Challenges Never End
 
-**Solution:** 
+**Solution:**
+
 - Set a limit: "Three exchanges max, then highest roll wins"
 - Encourage players to concede when they're clearly outmatched
 - Use narrative to end it: "Your strength fails you—the sorcerer's will is too strong"
 
 ### Issue: Players Abuse Action Conversions
 
-**Solution:** 
+**Solution:**
+
 - Enforce the rules strictly: conversions are one-way
 - Remind them of the opportunity cost: "You're giving up an attack for this"
 - Use narrative consequences: "Your desperate push leaves you exhausted"

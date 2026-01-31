@@ -35,18 +35,19 @@ Prepared Actions are NOT tracked automatically by Foundry. This is intentional�
 ### Trigger Guidelines
 
 **Good Triggers:**
+
 - "When the mage casts a spell"
 - "When that archer draws a weapon"
 - "When someone moves through the doorway"
 - "When an ally within 10 feet is attacked"
 
 **Overly Restrictive Triggers (Avoid):**
+
 - "When the mage casts specifically a fireball spell" (Too specific—might not happen)
 - "When the archer looks at me in a threatening way" (Too vague—hard to adjudicate)
 
 **In Practice:**
 > **Kael's Ambush Setup:** Kael knows enemies will burst through the north door any moment. He declares, "I convert both my Full Actions into Prepared Actions. First: when anyone comes through that door, I'm casting a lightning bolt. Second: if someone gets past the first attack and moves toward me, I'm attacking with my sword." Now he waits—two triggers set, two responses ready.
-
 > **Game Master's Guide:** When players announce a prepared action, note both their trigger condition ("when the mage casts a spell") and their planned response ("I throw a rock to disrupt it"). When that trigger occurs during someone else's turn, pause the action and adjudicate the attempt. Run the challenge roll between the prepared character and their target, and award the result: a successful preparation interrupts the action and applies damage, while a failed preparation leaves the character to face the consequence. These moments create cinematic tension—savor them!
 
 ---
@@ -91,7 +92,7 @@ Opponents can use their Reaction to respond to your Prepared Action, creating a 
 
 **In Practice:**
 > **Elara's Counterspell Resolves:** The enemy mage begins casting a fireball. The GM pauses: "Elara, your Prepared Action triggers! What do you do?" She explains: "I throw a rock to disrupt him." The GM tells her to roll Acrobatics (for the throw). She rolls 18. The mage rolls Will to maintain concentration: 16. Elara wins! The rock strikes the mage's hand, the spell fizzles, and the mage loses their action for this turn. The party cheers—Elara's preparation saved them all.
-
+>
 > **Seraphina's Failed Interrupt:** Seraphina had prepared to attack an archer when they drew a weapon. The trigger occurs, and they roll a Challenge. Seraphina rolls 14 with her sword attack. The archer rolls 17 on their Wits to react. Seraphina loses—her Prepared Action is consumed, and the archer is not interrupted. The archer now uses the action card to fire the arrow. If they hit, the arrow flies at her ally. If they miss, the shot goes wild. She tried, but the archer was too fast.
 
 **Under the Hood (Technical Note):**
@@ -106,15 +107,18 @@ The Challenge system is central to Prepared Actions. Unlike Reactions (which hap
 ### Stacking Strategies
 
 **Trigger Stacking:** Set multiple Prepared Actions with different triggers to cover various scenarios
+
 - "When someone comes through the door, I attack with lightning"
 - "If someone casts a spell, I counterspell"
 - "If someone attacks my ally, I defend them"
 
 **Response Stacking:** Set multiple Prepared Actions with the same trigger but different responses
+
 - "When the mage casts a spell, I throw a rock" (Action 1)
 - "When the mage casts a spell, I also ready my shield to block" (Action 2)
 
 **Sequential Stacking:** Set triggers in a logical sequence
+
 - "When the goblin charges, I attack it" (Action 1)
 - "If my first attack fails to stop it, I'll attack again" (Action 2)
 
@@ -130,17 +134,21 @@ The Challenge system is central to Prepared Actions. Unlike Reactions (which hap
 **Situation:** An enemy sorcerer is preparing to cast a devastating spell on the party.
 
 **Player's Preparation:**
+
 - "I convert one Full Action into a Prepared Action. When that sorcerer casts a spell, I'm going to counterspell it."
 
 **Trigger Occurs:**
+
 - The sorcerer's turn begins. The GM announces, "The sorcerer begins casting—he's weaving dark energy!"
 
 **Challenge Roll:**
+
 - Player rolls Will: 19 (counterspell attempt)
 - Sorcerer rolls Will: 16 (maintaining concentration)
 - **Result:** Player wins
 
 **Outcome:**
+
 - The sorcerer's spell fizzles and is lost for this turn
 - The sorcerer wastes their action
 - The party is safe for now
@@ -152,17 +160,21 @@ The Challenge system is central to Prepared Actions. Unlike Reactions (which hap
 **Situation:** The party knows enemies will breach through a narrow doorway soon.
 
 **Player's Preparation:**
+
 - "I convert both Full Actions into Prepared Actions. When anyone comes through that door, I'll hit them with my sword. If a second person comes through, I'll hit them too."
 
 **Trigger Occurs:**
+
 - The GM announces, "An ogre crashes through the door!"
 
 **Challenge Roll:**
+
 - Player rolls Physical: 18 (sword attack)
 - Ogre rolls Physical: 15 (resisting)
 - **Result:** Player wins
 
 **Outcome:**
+
 - The sword strike hits the ogre, dealing damage
 - The ogre's charge is interrupted mid-step
 - The player's second Prepared Action remains available for another intruder
@@ -174,17 +186,21 @@ The Challenge system is central to Prepared Actions. Unlike Reactions (which hap
 **Situation:** A ranger is aiming at the party's healer.
 
 **Player's Preparation:**
+
 - "I convert one Full Action into a Prepared Action. When that ranger fires an arrow at our healer, I'll deflect it with my shield."
 
 **Trigger Occurs:**
+
 - The ranger's turn begins. The GM announces, "The ranger draws their bow and aims at the healer!"
 
 **Challenge Roll:**
+
 - Player rolls Acrobatics: 12 (shield deflection attempt)
 - Ranger rolls Wits: 17 (aiming skill)
 - **Result:** Player loses
 
 **Outcome:**
+
 - The Prepared Action is consumed with no effect
 - The arrow strikes the healer, dealing damage
 - The player has wasted their Full Action and exposed their healer
@@ -196,17 +212,21 @@ The Challenge system is central to Prepared Actions. Unlike Reactions (which hap
 **Situation:** An enemy is throwing molotov cocktails at the party.
 
 **Player's Preparation:**
+
 - "I convert one Full Action into a Prepared Action. When someone throws a molotov, I'll kick it away from us."
 
 **Trigger Occurs:**
+
 - The enemy's turn begins. The GM announces, "The goblin lights a molotov and hurls it toward your group!"
 
 **Challenge Roll:**
+
 - Player rolls Acrobatics: 16 (kick attempt)
 - Goblin rolls Physical: 13 (throw accuracy)
 - **Result:** Player wins
 
 **Outcome:**
+
 - The player kicks the molotov away
 - The molotov lands in an empty square and ignites
 - The party avoids the fire damage and burning status effect
@@ -220,6 +240,7 @@ The Challenge system is central to Prepared Actions. Unlike Reactions (which hap
 **The Rule:** It's crucial to understand the difference between Prepared Actions and Reactions, as they serve different tactical purposes.
 
 ### Prepared Actions
+
 - **Setup:** Declare on YOUR turn, activate on SOMEONE ELSE'S turn
 - **Timing:** Can interrupt BEFORE an action completes
 - **Trigger:** Specific condition you declare in advance
@@ -232,7 +253,7 @@ The Challenge system is central to Prepared Actions. Unlike Reactions (which hap
 **Quick Reference Table:**
 
 | Feature | Prepared Action | Reaction |
-|---------|------------------|----------|
+| --------- | ------------------ | ---------- |
 | Setup | On YOUR turn | Start combat with +1 per turn |
 | Timing | Interrupts BEFORE effect | Happens AFTER effect |
 | Trigger | Specific condition declared in advance | Any threat to yourself |
@@ -249,9 +270,7 @@ The Challenge system is central to Prepared Actions. Unlike Reactions (which hap
 
 **In Practice:**
 > **Prepared Action:** "When the mage casts a spell, I'll throw a rock to stop it." (Preemptive interruption)
->
 > **Reaction:** "The mage's spell hit me and charmed me. I'm using my Reaction to shake off the charm." (Reactive mitigation)
-
 > **Game Master's Guide:** Remember that Reactions happen AFTER the effect—you've already taken damage or been affected. Prepared Actions happen BEFORE the effect completes—you can prevent it from happening. Both use Challenge rolls, but their tactical roles are different. Encourage players to think about which one fits the situation: are you trying to stop something before it happens (Prepared Action), or recover from something that already happened (Reaction)?
 
 ---
@@ -265,11 +284,13 @@ The Challenge system is central to Prepared Actions. Unlike Reactions (which hap
 **Clear Triggers:** If the player's trigger clearly occurs (e.g., "when the mage casts a spell" and the mage casts a spell), activate the Prepared Action immediately.
 
 **Ambiguous Triggers:** If there's doubt about whether the trigger occurred, use your judgment:
+
 - Favor the player slightly—their preparation should feel meaningful
 - Don't be too permissive—triggers should be reasonably specific, not vague attempts to get free actions
 - Consider narrative context: Does the trigger match the spirit of what the player intended?
 
 **Edge Cases:** You may encounter unusual trigger declarations:
+
 - "When anyone hostile makes eye contact with me" → Probably too vague—ask for clarification
 - "When someone uses fire magic" → Clear and reasonable
 - "When the GM laughs evilly" → Fun, but not a valid trigger for combat—rule it out
@@ -279,12 +300,14 @@ The Challenge system is central to Prepared Actions. Unlike Reactions (which hap
 When determining which ability each side rolls in the Challenge, consider:
 
 **Player's Ability:** Base it on their response
+
 - Throwing a rock → Acrobatics (precision throwing)
 - Sword attack → Physical (melee combat)
 - Counterspell → Will (magical resistance)
 - Shield deflection → Acrobatics (reflexes) or Physical (strength)
 
 **Opponent's Ability:** Use their primary ability for the action they're attempting
+
 - Casting a spell → Will
 - Firing a bow → Wits or Acrobatics
 - Charging with a weapon → Physical
@@ -329,7 +352,6 @@ When multiple Prepared Actions trigger at the same time:
 
 **In Practice:**
 > **Multiple Counterspells:** Three characters all prepared actions to counterspell the enemy mage. When the mage casts a spell, the GM processes them in initiative order. The first character (highest initiative) wins their Challenge and interrupts the spell. The second and third characters' Prepared Actions don't trigger—the spell is already stopped. Their Full Actions are wasted, but the threat is neutralized.
-
 > **Partial Success:** Two characters prepare to attack when enemies burst through a door. When an ogre crashes through, the first character (higher initiative) succeeds and deals heavy damage. The ogre survives. The second character's Prepared Action now triggers—since the ogre is still alive and in range, they can also attack. Both Prepared Actions activate successfully.
 
 ### The Interrupt Chain
@@ -403,24 +425,22 @@ A: No, Prepared Actions cannot counter other Prepared Actions. However, Reaction
 
 ## Prepared Action Flowchart
 
-```
-Player declares Prepared Action (on their turn)
-   ↓
-Wait for trigger (during any other character's turn)
-   ↓
-Trigger occurs? → No: Continue waiting → End of player's next turn: Action wasted
-   ↓ Yes
-GM pauses action
-   ↓
-Challenge roll begins: Player rolls, then opponent rolls, alternating...
-   ↓
-Someone fails to beat previous roll
-   ↓
-Player won? → Yes: Opponent interrupted, action lost
-               → Opponent may use Reaction to counter (NEW challenge)
-               → No: Player's Prepared Action consumed, opponent continues
-   ↓
-Resolution complete, combat continues
+```mermaid
+flowchart TD
+    A[Player declares Prepared Action<br/>on their turn] --> B[Wait for trigger<br/>during any other character's turn]
+    B --> C{Trigger occurs?}
+    C -->|No| D[Continue waiting]
+    D --> E[End of player's next turn: Action wasted]
+    C -->|Yes| F[GM pauses action]
+    F --> G[Challenge roll begins:<br/>Player rolls, then opponent rolls, alternating...]
+    G --> H[Someone fails to beat previous roll]
+    H --> I{Player won?}
+    I -->|Yes| J[Opponent interrupted, action lost]
+    I -->|No| K[Player's Prepared Action consumed,<br/>opponent continues]
+    J --> L[Opponent may use Reaction to counter<br/>(NEW challenge)]
+    L --> M[Resolution complete, combat continues]
+    K --> M
+    E --> M
 ```
 
 ---
