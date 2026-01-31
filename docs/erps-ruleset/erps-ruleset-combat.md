@@ -1,10 +1,29 @@
 # ERPS Combat Ruleset
 
+> **Welcome, Game Master!**
+>
+> This document outlines the action economy and tactical mechanics that bring your combats to life. While Foundry handles dice rolling and initiative, you have the freedom to adjudicate these narrative-rich systems at your table. Here's what you'll be guiding:
+>
+> - **Action Economy** (2 Full Actions, Move Action, Cleanse Action, Reaction) - Track these resources for each combatant and watch tactical choices emerge
+> - **Challenge Mechanics** - Facilitate the back-and-forth rolling as opponents test each other's skill, and remember to reward good use of challenges
+> - **Critical Hit/Miss Action Economy Effects** - Decide whether criticals grant bonus actions or cost actions—or go purely narrative. The choice shapes your combat's pace
+> - **Prepared Actions** - Listen for players' triggers and adjudicate whether their prepared responses connect when the moment arrives
+> - **Pushing Rules** - Track when players sacrifice their Move, Reaction, and Cleanse actions for that desperate extra attack—and remember the penalty if they critically miss!
+> - **Cleanse Actions** - Oversee the struggle to shake off harmful effects and determine when characters succeed or fail to remove debilitating conditions
+>
+> Foundry will flag critical hits and misses for you, but the consequences—whether narrative or mechanical—are yours to decide. These systems are designed to keep you at the heart of the action, making rulings that create memorable moments and dramatic tension.
+>
+> Dive in, trust your judgment, and make every combat a story worth telling!
+
+---
+
 ## State-Based Actions
 
 If there's something going on with the map that has nothing to do with a particular character's actions it should execute at the END of each round of combat. IE: if you're standing on a burning area and you do not leave that burning area you'd take the 'burning damage' at the end of the round. same for if the area you're in catches fire mid-turn. You can typically use reaction actions to react to state-based actions spreading on your turn (IE: someone throws a molatov cocktail at you: you react to knock it away or back. You'll still catch the square on fire, but as part of the reaction you can move half your speed as long as your reaction challenge succeeds.)
 
 ## Turn Flow
+
+> **Game Master's Guide:** Track each character's available actions at the start of their turn. A typical turn grants 2 Full Actions, 1 Move Action, 1 Cleanse Action, and 1 Reaction. Encourage players to think tactically about how they spend these resources—unused actions are lost, so remind them to convert leftovers into recovery or decisive strikes. The choices they make with these actions will define the flow and drama of your combat scenes.
 
 Each combat begins with each prepared combatant gaining a reaction action. See [Reaction Actions](#reaction-actions) for what can be done with reactions.
 
@@ -43,6 +62,8 @@ A reaction can be used, within reason, to respond to threats to yourself. Reacti
 
 ## Prepared Actions
 
+> **Game Master's Guide:** When players announce a prepared action, note both their trigger condition ("when the mage casts a spell") and their planned response ("I throw a rock to disrupt it"). When that trigger occurs during someone else's turn, pause the action and adjudicate the attempt. Run the challenge roll between the prepared character and their target, and award the result: a successful preparation interrupts the action and applies damage, while a failed preparation leaves the character to face the consequence. These moments create cinematic tension—savor them!
+
 As a player you might see something coming they can turn their full actions into **preapared actions**. Essentially a prepared action has the following components:
 
 1. The Trigger (what they're looking for)
@@ -59,6 +80,8 @@ A good example of this is if a player knows a mage is about to cast a spell, but
 
 ## Cleanse Actions
 
+> **Game Master's Guide:** When a character uses a Cleanse action to remove a harmful effect, guide the roll appropriately. They'll roll against the AC of the effect's creator—use the stat tied to that character (Physical for an archer's arrow, Will for a mental assault, etc.). If they succeed, remove the status and celebrate their recovery. If they fail, the effect lingers and the battle continues against them. Cleanse actions represent the struggle to shake off wounds and ailments—make each attempt feel significant.
+
 Cleanse actions are a special type of action. You get one free each turn, and after that may convert [full actions](#full-actions) into additional ones.
 
 When you run a cleanse action you roll an appropriate skill against the ability that inflicted the effect on you (IE: if you have an arrow through the knee you would likely roll physical vs their acrobatics AC since their dexterity on placing the shot is what matters for if you can get it out and end the debiliating effect.)
@@ -66,6 +89,8 @@ When you run a cleanse action you roll an appropriate skill against the ability 
 When rolling a cleanse action that is not a challenge **you roll against your opponent's AC in that skill, not against an opponent's actual roll**. Target the one who created the status before you roll: that way your GM will know whether you defeated it (if you forgot to, the AC formula is 11 + stat + any AC specific bonuses your GM would know about)
 
 ## Challenge Rules
+
+> **Game Master's Guide:** Challenges are the heart of defensive play—back-and-forth contests where opponents test each other's skill. When someone challenges an attack or effect, have them roll against the opponent's result. If they beat it, the opponent rolls to top them again. This continues until someone fails to beat the previous roll—and that's where the drama lives! Remember: challenges, while they may happen often, can really alter the flow of battle when they occur. Was someone saving a particularly nasty status effect for when a player / enemy's reactions are down? Choice of when to use it are important to keep in mind. This high-risk, high-reward mechanic keeps combat unpredictable and tactical. Facilitate these exchanges with energy—make each roll feel like a clash of will and skill!
 
 One of the big points of a reaction or prepared action is that you are directly challenging the opponent. For instance, if you're reacting to a mind control spell, you would use your will after the spell's hit to attempt to shake off the effect right away rather than having to use a [cleanse action](#cleanse-actions) on your turn and risk them using you for dastardly purposes in the meantime.
 
@@ -95,6 +120,8 @@ You lose your prepared action and you're left dealing with them taking the actio
 
 ## Criticals
 
+> **Game Master's Guide:** When the dice land on a critical, Foundry flags it—but you decide what it means. Critical hits can grant bonus actions, allowing characters to seize the moment and turn the tide. Critical misses can cost actions, creating setbacks that heighten tension. You choose how these impact the action economy: grant extra turns on hits, deduct actions on misses, or keep things purely narrative. Whatever you decide, make it consistent and make it memorable. Criticals should feel special—whether through mechanical advantage or dramatic storytelling.
+
 Criticals are still a thing in this system, but they impact things differently than you may be used to in that they impact the action economy, not the action in which they took place.
 
 ### Critical Hits
@@ -112,6 +139,8 @@ Critical Hits and Critical Misses can ONLY occur on the first roll of an action 
 In addition, you may sometimes see "Stolen Crit" or "Saved Miss". These status messages indicate that disadvantage or advantage prevented the critical hit / miss. So they do NOT alter the action economy.
 
 ## Pushing Rules
+
+> **Game Master's Guide:** A Push represents a character's desperate gamble to finish a foe—converting Move, Reaction, and Cleanse actions into one final, devastating Full Action. Track this sacrifice carefully: they cannot move, react, or cleanse during that turn. And the risk is real—if they critically miss while pushing, they lose both their Full Actions next turn! These all-or-nothing moments create the most dramatic combat scenes. When a player declares a Push, pause to acknowledge the stakes. When it pays off, celebrate their triumph. When it fails, make the consequences meaningful.
 
 Do you think your opponent is about to be finished off? A push might be just the way to do it. The rules of a push are simple: you convert your move, your reaction, and your cleanse action into an additional full action for this turn. That means you **cannot** have attempted a cleanse this turn and you **cannot** move as part of this turn unless its part of a full action. You also lose your ability to react.
 
