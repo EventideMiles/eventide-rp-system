@@ -329,6 +329,12 @@
       "base": "Base Item"
     },
     "Actor": {
+      "Mode": {
+        "Manual": "Manual",
+        "Derived": "Derived",
+        "ManualTooltip": "Set manually when the formula is empty",
+        "DerivedTooltip": "Automatically calculated from the formula"
+      },
       "Attributes": {
         "CR": {
           "label": "CR"
@@ -339,7 +345,10 @@
         "Power": {
           "Max": {
             "label": "Maximum Power",
-            "derived": "Derived from Will + Fort + 5"
+            "derived": "Derived from Will + Fort + 5",
+            "manual": "Manual",
+            "manualTooltip": "Power max is set manually when the formula is empty",
+            "derivedTooltip": "Power max is automatically calculated using the formula"
           },
           "Value": {
             "label": "Power"
@@ -348,7 +357,10 @@
         "Resolve": {
           "Max": {
             "label": "Maximum Resolve",
-            "derived": "Derived from Fort × 10 + 100"
+            "derived": "Derived from Fort × 10 + 100",
+            "manual": "Manual",
+            "manualTooltip": "Resolve max is set manually when the formula is empty",
+            "derivedTooltip": "Resolve max is automatically calculated using the formula"
           },
           "Value": {
             "label": "Resolve"
@@ -1216,6 +1228,14 @@
     "SoundResetToDefault": "Sound for {0} reset to default.",
     "NoPlayerPermission": "Players do not have permission to change sound settings.",
     "TestingModeName": "Testing Mode",
-    "TestingModeHint": "Enable or disable testing mode console logging for debugging."
+    "TestingModeHint": "Enable or disable testing mode console logging for debugging.",
+    "MinimumDiceValueName": "Minimum Dice Value",
+    "MinimumDiceValueHint": "The minimum value that can be rolled on a dice check",
+    "MaxPowerFormulaName": "Max Power Formula",
+    "MaxPowerFormulaHint": "Formula to calculate the maximum power for an actor. Default: max(5 + @will.total + @fort.total, 1). Leave empty to set max power manually per actor.",
+    "MaxResolveFormulaName": "Max Resolve Formula",
+    "MaxResolveFormulaHint": "Formula to calculate the maximum resolve for an actor. Default: max(100 + (10 * @fort.total), 10). Leave empty to set max resolve manually per actor.",
+    "ActionCardExecutionLimitName": "Action Card Execution Limit",
+    "ActionCardExecutionLimitHint": "Maximum number of action cards that can be executed per turn"
   }
 }
