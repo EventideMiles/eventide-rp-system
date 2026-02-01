@@ -180,10 +180,6 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
   /** @override */
   async _prepareContext(options) {
     try {
-      // Get max power and resolve formulas to determine manual vs derived mode
-      const maxPowerFormula = game.settings?.get("eventide-rp-system", "maxPowerFormula");
-      const maxResolveFormula = game.settings?.get("eventide-rp-system", "maxResolveFormula");
-
       // Output initialization
       const context = {
         // Validates both permissions and compendium status
@@ -205,9 +201,6 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
         lowHealth:
           this.actor.system.resolve.value / this.actor.system.resolve.max <=
           0.3,
-        // Manual mode flags - true when formula is empty (manual), false when formula exists (derived)
-        powerManualMode: !maxPowerFormula,
-        resolveManualMode: !maxResolveFormula,
         // Add user's theme preference with debugging
         userSheetTheme: (() => {
           const theme = CommonFoundryTasks.retrieveSheetTheme();
