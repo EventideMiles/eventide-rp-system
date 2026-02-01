@@ -13,6 +13,26 @@
       "Dice": { "long": "Dice", "abbr": "dice" },
       "Fmax": { "long": "Fail Upper Limit", "abbr": "fmax" },
       "Fmin": { "long": "Fail Lower Limit", "abbr": "fmin" },
+      "PowerMult": {
+        "long": "Power (%)",
+        "abbr": "pwr%",
+        "desc": "Percentage modifier applied to max power. 100 = 100% (no change), 400 = 400% (4x power), 50 = 50% (half power)."
+      },
+      "PowerOverride": {
+        "long": "Power Override",
+        "abbr": "pwr-o",
+        "desc": "Overrides the base max power value before applying percentage multipliers. Only works with GM approval via status effects."
+      },
+      "ResolveMult": {
+        "long": "Resolve (%)",
+        "abbr": "res%",
+        "desc": "Percentage modifier applied to max resolve. 100 = 100% (no change), 400 = 400% (4x resolve), 50 = 50% (half resolve)."
+      },
+      "ResolveOverride": {
+        "long": "Resolve Override",
+        "abbr": "res-o",
+        "desc": "Overrides the base max resolve value before applying percentage multipliers. Only works with GM approval via status effects."
+      },
       "Vuln": { "long": "Vulnerability", "abbr": "vuln" }
     },
     "RollTypes": {

@@ -43,6 +43,26 @@
         "long": "Fail Lower Limit",
         "abbr": "fmin"
       },
+      "PowerMult": {
+        "long": "Power (%)",
+        "abbr": "pwr%",
+        "desc": "Percentage modifier applied to max power. 100 = 100% (no change), 400 = 400% (4x power), 50 = 50% (half power)."
+      },
+      "PowerOverride": {
+        "long": "Power Override",
+        "abbr": "pwr-o",
+        "desc": "Overrides the base max power value before applying percentage multipliers. Only works with GM approval via status effects."
+      },
+      "ResolveMult": {
+        "long": "Resolve (%)",
+        "abbr": "res%",
+        "desc": "Percentage modifier applied to max resolve. 100 = 100% (no change), 400 = 400% (4x resolve), 50 = 50% (half resolve)."
+      },
+      "ResolveOverride": {
+        "long": "Resolve Override",
+        "abbr": "res-o",
+        "desc": "Overrides the base max resolve value before applying percentage multipliers. Only works with GM approval via status effects."
+      },
       "Vuln": {
         "long": "Vulnerability",
         "abbr": "vuln"
@@ -345,9 +365,9 @@
         "Power": {
           "Max": {
             "label": "Maximum Power",
-            "derived": "Derived from Will + Fort + 5",
+            "derived": "Derived from Settings",
             "manual": "Manual",
-            "manualTooltip": "Power max is set manually when the formula is empty",
+            "manualTooltip": "Power max is set manually when the settings formula is empty",
             "derivedTooltip": "Power max is automatically calculated using the formula"
           },
           "Value": {
@@ -357,9 +377,9 @@
         "Resolve": {
           "Max": {
             "label": "Maximum Resolve",
-            "derived": "Derived from Fort × 10 + 100",
+            "derived": "Derived from Settings",
             "manual": "Manual",
-            "manualTooltip": "Resolve max is set manually when the formula is empty",
+            "manualTooltip": "Resolve max is set manually when the settings formula is empty",
             "derivedTooltip": "Resolve max is automatically calculated using the formula"
           },
           "Value": {
@@ -1232,9 +1252,13 @@
     "MinimumDiceValueName": "Minimum Dice Value",
     "MinimumDiceValueHint": "The minimum value that can be rolled on a dice check",
     "MaxPowerFormulaName": "Max Power Formula",
-    "MaxPowerFormulaHint": "Formula to calculate the maximum power for an actor. Default: max(5 + @will.total + @fort.total, 1). Leave empty to set max power manually per actor.",
+    "MaxPowerFormulaHint": "Formula to calculate the maximum power for an actor. Default: max(5 + @will.total + @fort.total, 1).",
     "MaxResolveFormulaName": "Max Resolve Formula",
-    "MaxResolveFormulaHint": "Formula to calculate the maximum resolve for an actor. Default: max(100 + (10 * @fort.total), 10). Leave empty to set max resolve manually per actor.",
+    "MaxResolveFormulaHint": "Formula to calculate the maximum resolve for an actor. Default: max(100 + (10 * @fort.total), 10).",
+    "MinimumPowerValueName": "Minimum Power Value",
+    "MinimumPowerValueHint": "The minimum value that an actor's max power can be. Applies after percentage multipliers.",
+    "MinimumResolveValueName": "Minimum Resolve Value",
+    "MinimumResolveValueHint": "The minimum value that an actor's max resolve can be. Applies after percentage multipliers.",
     "ActionCardExecutionLimitName": "Action Card Execution Limit",
     "ActionCardExecutionLimitHint": "Maximum number of action cards that can be executed per turn"
   }
