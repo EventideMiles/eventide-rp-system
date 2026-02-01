@@ -702,15 +702,23 @@ export const registerSettings = function () {
     config: true,
     restricted: true,
     type: String,
-    default: "max(5 + @will.total + @fort.total, 1)",
+    default: "5 + @will.total + @fort.total",
     onChange: (value) => {
+      // Issue #125/#126: Refresh all actors when formula changes
+      // Revert to default if blank
       if (!value || value.trim() === "") {
-        const defaultFormula = "max(5 + @will.total + @fort.total, 1)";
-        game.settings.set("eventide-rp-system", "maxPowerFormula", defaultFormula);
-        ui.notifications.warn("Max Power formula cannot be empty. Resetting to default.");
+        const defaultFormula = "5 + @will.total + @fort.total";
+        game.settings.set(
+          "eventide-rp-system",
+          "maxPowerFormula",
+          defaultFormula,
+        );
+        ui.notifications.warn(
+          game.i18n.localize("SETTINGS.MaxPowerFormulaWarning"),
+        );
         return;
       }
-      // Issue #125/#126: Refresh all actors when formula changes
+      
       _refreshAllActorDerivedData();
     },
   });
@@ -723,15 +731,94 @@ export const registerSettings = function () {
     config: true,
     restricted: true,
     type: String,
-    default: "max(100 + (10 * @fort.total), 10)",
+    default: "100 + (10 * @fort.total)",
     onChange: (value) => {
+      // Issue #125/#126: Refresh all actors when formula changes
+      // Revert to default if blank
       if (!value || value.trim() === "") {
-        const defaultFormula = "max(100 + (10 * @fort.total), 10)";
-        game.settings.set("eventide-rp-system", "maxResolveFormula", defaultFormula);
-        ui.notifications.warn("Max Resolve formula cannot be empty. Resetting to default.");
+        const defaultFormula = "100 + (10 * @fort.total)";
+        game.settings.set(
+          "eventide-rp-system",
+          "maxResolveFormula",
+          defaultFormula,
+        );
+        ui.notifications.warn(
+          game.i18n.localize("SETTINGS.MaxResolveFormulaWarning"),
+        );
         return;
       }
-      // Issue #125/#126: Refresh all actors when formula changes
+      _refreshAllActorDerivedData();
+    },
+  });
+
+  // ===========================================
+  // POWER/RESOLVE VALUE SETTINGS (GM Only)
+  // ===========================================
+
+  // Minimum Power Value
+  game.settings.register("eventide-rp-system", "minimumPowerValue", {
+    name: "SETTINGS.MinimumPowerValueName",
+    hint: "SETTINGS.MinimumPowerValueHint",
+    scope: "world",
+    config: true,
+    restricted: true,
+    type: Number,
+    default: 1,
+    onChange: (value) => {
+      const defaultValue = 1;
+      let intValue;
+      
+      // Convert value to integer if possible
+      if (typeof value === "number" && !isNaN(value)) {
+        intValue = Math.trunc(value);
+      } else if (typeof value === "string" && value.trim() !== "") {
+        intValue = parseInt(value, 10);
+      }
+
+      // Validate: if not a valid number or below minimum, reset to default
+      if (isNaN(intValue) || intValue < 0) {
+        game.settings.set("eventide-rp-system", "minimumPowerValue", defaultValue);
+        ui.notifications.warn(
+          game.i18n.format("SETTINGS.MinimumPowerValueWarning", [defaultValue]),
+        );
+      } else {
+        game.settings.set("eventide-rp-system", "minimumPowerValue", intValue);
+      }
+      
+      _refreshAllActorDerivedData();
+    },
+  });
+
+  // Minimum Resolve Value
+  game.settings.register("eventide-rp-system", "minimumResolveValue", {
+    name: "SETTINGS.MinimumResolveValueName",
+    hint: "SETTINGS.MinimumResolveValueHint",
+    scope: "world",
+    config: true,
+    restricted: true,
+    type: Number,
+    default: 10,
+    onChange: (value) => {
+      const defaultValue = 10;
+      let intValue;
+      
+      // Convert value to integer if possible
+      if (typeof value === "number" && !isNaN(value)) {
+        intValue = Math.trunc(value);
+      } else if (typeof value === "string" && value.trim() !== "") {
+        intValue = parseInt(value, 10);
+      }
+
+      // Validate: if not a valid number or below minimum, reset to default
+      if (isNaN(intValue) || intValue < 1) {
+        game.settings.set("eventide-rp-system", "minimumResolveValue", defaultValue);
+        ui.notifications.warn(
+          game.i18n.format("SETTINGS.MinimumResolveValueWarning", [defaultValue]),
+        );
+      } else {
+        game.settings.set("eventide-rp-system", "minimumResolveValue", intValue);
+      }
+      
       _refreshAllActorDerivedData();
     },
   });

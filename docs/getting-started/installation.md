@@ -17,9 +17,11 @@ Before installing Eventide RP System, ensure you have:
 1. **Open Foundry VTT** and navigate to the **Game Systems** tab
 2. Click **"Install System"**
 3. In the **Manifest URL** field, paste:
-   ```
+
+   ```text
    https://github.com/EventideMiles/eventide-rp-system/releases/latest/download/system.json
    ```
+
 4. Click **"Install"**
 5. Wait for the installation to complete
 

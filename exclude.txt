@@ -17,7 +17,9 @@ minify.js
 .git
 releases\
 build-lang.js
-.claude
+.claude\
+.roo\
+AGENTS.md
 plans\
 tests\
 jest.config.js

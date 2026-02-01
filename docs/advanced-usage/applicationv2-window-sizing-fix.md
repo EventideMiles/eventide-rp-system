@@ -7,6 +7,7 @@ This document describes the window sizing fix implemented in the Eventide RP Sys
 ## The Problem
 
 When using Foundry VTT's ApplicationV2 windows:
+
 1. Open a window (e.g., actor sheet, item sheet)
 2. Minimize the window
 3. Double-click the minimized window to restore it
@@ -54,11 +55,13 @@ export function WindowSizingFixMixin(BaseClass) {
 The mixin is applied to all ApplicationV2 classes in the system:
 
 **Sheet Applications:**
+
 - `EventideRpSystemActorSheet`
 - `EventideRpSystemItemSheet`
 - `EventideSheetHelpers` (base class)
 
 **Popup Applications:**
+
 - `EventidePopupHelpers` (base class)
 - All popup subclasses inherit the fix automatically
 

@@ -11,6 +11,7 @@ Create action cards via Foundry's item creation menu or the actor sheet's action
 - **Description:** Applied to damage cards.
 
 In the attributes tab, choose between two main card types: Saved Damage or Attack Chain.
+
 ### Saved Damage
 
 Set up a damage card with these parameters:
@@ -20,6 +21,7 @@ Set up a damage card with these parameters:
 - **Damage Formula**
 
 Saved damage doesn't interact with embedded items. Use Attack Chain for additional functionality.
+
 ### Attack Chain
 
 More complex than saved damage, it requires an action in the slot and allows adding effects based on results. Set these parameters:
@@ -45,6 +47,7 @@ In addition, configure execution behavior:
 - **Status Application Limit** (0 = no limit, default: 1)
 - **Cost per Repetition** (default: false)
 - **Fail on First Miss** (default: true)
+
 ## Using Action Cards
 
 Using an action card is as simple as targeting an opponent and either:
@@ -89,8 +92,6 @@ Action cards are a great way to automate your actions and make your game more st
 
 Basically if you have something you do "all the time" that is a flow of action it may be worth it to define it as an action card. This can be particularly helpful for adventure module creators as it can allow you to define and theme a flow of actions that can be used by characters in your game. For instance if you have a slime monster that always does one of a few actions it would be best to define them as action cards so that you can theme them for player immersion and ease of use by your end users.
 
-
-
 ### When to Use an Action Card
-Automate actions, apply damage/status, create complex attack chains, apply gear with inventory reduction, cast spells, or standardize frequent actions in adventure modules.
 
+Automate actions, apply damage/status, create complex attack chains, apply gear with inventory reduction, cast spells, or standardize frequent actions in adventure modules.

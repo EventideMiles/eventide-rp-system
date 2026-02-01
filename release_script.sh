@@ -39,6 +39,8 @@ rsync -av \
     --exclude='releases/' \
     --exclude='build-lang.js' \
     --exclude='.claude/' \
+    --exclude='.roo' \
+    --exclude='AGENTS.md' \
     --exclude='plans/' \
     --exclude='tests/' \
     --exclude='jest.config.js' \

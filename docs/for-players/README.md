@@ -120,12 +120,14 @@ Features represent permanent aspects of your character that reflect their backgr
 #### **Understanding Features**
 
 ##### **Passive Features**
+
 - **Constant Bonuses**: Always-active modifications to your abilities
 - **Resource Enhancements**: Permanent increases to Resolve or Power
 - **Special Capabilities**: Unique traits that set your character apart
 - **Background Traits**: Reflect your character's history and training
 
 ##### **Active Features (Roll-Enabled)**
+
 - **Clickable Rolls**: Features that can be activated like ability rolls
 - **Specialized Mechanics**: Custom roll types for unique situations
 - **Targeted Abilities**: Features that can target other characters
@@ -144,16 +146,19 @@ Circumstantial bonuses represent the idea that characters excel in familiar envi
 ###### **Background-Based Advantages**
 
 **City-Raised Character**
+
 - **Bonus**: +2 to Wits rolls in urban environments
 - **When It Applies**: Navigating city streets, understanding urban politics, dealing with crowds
 - **Roleplay Opportunity**: Highlight your character's comfort in metropolitan settings
 
 **Wilderness Survivor**
+
 - **Bonus**: +3 to Fortitude rolls in natural environments
 - **When It Applies**: Surviving harsh weather, finding food and shelter, resisting natural hazards
 - **Roleplay Opportunity**: Demonstrate your connection to nature and survival instincts
 
 **Noble Education**
+
 - **Bonus**: +2 to Will rolls in formal social situations
 - **When It Applies**: Court intrigue, diplomatic negotiations, high society events
 - **Roleplay Opportunity**: Show off your refined manners and political acumen
@@ -161,16 +166,19 @@ Circumstantial bonuses represent the idea that characters excel in familiar envi
 ###### **Professional Training**
 
 **Military Veteran**
+
 - **Bonus**: +2 to Wits rolls during combat or tactical situations
 - **When It Applies**: Battle planning, recognizing military formations, understanding strategy
 - **Roleplay Opportunity**: Draw on your military experience and discipline
 
 **Scholar's Training**
+
 - **Bonus**: +3 to Wits rolls when researching or recalling information
 - **When It Applies**: Library research, academic discussions, identifying historical artifacts
 - **Roleplay Opportunity**: Showcase your intellectual pursuits and analytical mind
 
 **Merchant's Apprentice**
+
 - **Bonus**: +2 to Will rolls when negotiating or assessing value
 - **When It Applies**: Trading, bartering, evaluating goods, reading people's intentions
 - **Roleplay Opportunity**: Demonstrate your commercial savvy and people skills
@@ -178,18 +186,21 @@ Circumstantial bonuses represent the idea that characters excel in familiar envi
 ##### **Using Circumstantial Bonuses**
 
 ###### **Communication with Your GM**
+
 - **Speak Up**: When you think a circumstantial bonus applies, mention it to your GM
 - **Explain the Connection**: Briefly describe why your background is relevant
 - **Accept Decisions**: Respect your GM's judgment about when bonuses apply
 - **Stay Engaged**: Look for opportunities where your background matters
 
 ###### **Roleplay Enhancement**
+
 - **Embrace Your Background**: Use these moments to highlight your character's history
 - **Tell Stories**: Share brief anecdotes about how you gained this expertise
 - **Show Confidence**: Let your character shine in their areas of expertise
 - **Acknowledge Limitations**: Accept when you're outside your comfort zone
 
 ###### **Strategic Thinking**
+
 - **Plan Ahead**: Consider how your background might help in upcoming challenges
 - **Team Coordination**: Share your advantages with other players for group planning
 - **Character Development**: Think about how your experiences might lead to new features
@@ -210,16 +221,19 @@ Some features include their own roll mechanics, allowing you to make specialized
 ##### **Types of Feature Rolls**
 
 ###### **Flat Bonus Rolls**
+
 - **Mechanics**: Roll 1d20 + fixed bonus
 - **Use Cases**: Simple skill checks, basic abilities, straightforward actions
 - **Advantages**: Reliable, predictable results
 
 ###### **Ability-Based Rolls**
+
 - **Mechanics**: Roll 1d20 + ability score + bonuses
 - **Use Cases**: Complex actions that benefit from core abilities
 - **Advantages**: Scale with character development, integrate with other bonuses
 
 ###### **Targeted Rolls**
+
 - **Mechanics**: Roll against selected targets' defenses
 - **Use Cases**: Combat abilities, social powers, magical effects
 - **Advantages**: Direct interaction with other characters

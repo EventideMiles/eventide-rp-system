@@ -21,10 +21,12 @@ Features represent inherent character traits that define who your character is a
 Passive features provide constant bonuses without requiring activation:
 
 #### **Ability Modifiers**
+
 - **Direct Bonuses**: Add flat values to ability scores
 - **Conditional Bonuses**: Apply only under specific circumstances (IE: the feature is meant to be used under specific circumstances)
 
 #### **Dice Pool Adjustments**
+
 - **Advantage**: Add extra dice to rolls, keeping the highest
 - **Disadvantage**: Add extra dice to rolls, keeping the lowest
 - **Critical Range**: Modify when critical successes/failures occur (GM Only)
@@ -36,11 +38,13 @@ Active features include their own roll mechanics, allowing characters to make fe
 #### **Roll Types**
 
 ##### **Flat Bonus Rolls**
+
 - **Fixed Modifier**: Roll 1d20 + fixed bonus
 - **Simple Mechanics**: Straightforward bonus application
 - **Reliable Results**: Consistent performance
 
 ##### **Ability-Based Rolls**
+
 - **Ability Integration**: Use one of the five core abilities
 - **Flat Bonuses**: Adds to the roll - used for situational features
 - **Dynamic Bonuses**: Benefit from ability improvements
@@ -69,16 +73,19 @@ Circumstantial bonuses represent situational advantages that characters gain bas
 #### **Background-Based Bonuses**
 
 ##### **City-Raised**
+
 - **Description**: "You grew up in a bustling metropolis, learning to navigate crowds and urban environments."
 - **Mechanical Effect**: +2 to Wits rolls when in urban environments
 - **Storytelling Impact**: Reflects familiarity with city life and social dynamics
 
 ##### **Wilderness Survivor**
+
 - **Description**: "Years in the wild have taught you to read nature's signs and survive harsh conditions."
 - **Mechanical Effect**: +3 to Fortitude rolls when in natural environments
 - **Storytelling Impact**: Emphasizes connection to nature and survival skills
 
 ##### **Noble Education**
+
 - **Description**: "Your aristocratic upbringing included extensive education in history, politics, and etiquette."
 - **Mechanical Effect**: +2 to Will rolls when dealing with nobility or formal situations
 - **Storytelling Impact**: Highlights social advantages and cultural knowledge
@@ -86,16 +93,19 @@ Circumstantial bonuses represent situational advantages that characters gain bas
 #### **Professional Training**
 
 ##### **Military Veteran**
+
 - **Description**: "Your service in organized military forces taught you discipline and tactical thinking."
 - **Mechanical Effect**: +2 to Wits rolls during combat or tactical situations
 - **Storytelling Impact**: Reflects strategic training and battlefield experience
 
 ##### **Merchant's Apprentice**
+
 - **Description**: "Years of trading and negotiation have sharpened your ability to read people and situations."
 - **Mechanical Effect**: +2 to Will rolls when negotiating or assessing value
 - **Storytelling Impact**: Emphasizes commercial acumen and social skills
 
 ##### **Scholar's Training**
+
 - **Description**: "Extensive study has given you deep knowledge and analytical thinking skills."
 - **Mechanical Effect**: +3 to Wits rolls when researching or recalling information
 - **Storytelling Impact**: Highlights intellectual pursuits and academic background
@@ -103,11 +113,13 @@ Circumstantial bonuses represent situational advantages that characters gain bas
 #### **Species or Cultural Traits**
 
 ##### **Dwarven Stonework**
+
 - **Description**: "Your people have worked stone for generations, giving you an intuitive understanding of architecture."
 - **Mechanical Effect**: +3 to Physical rolls when working with stone or in underground environments
 - **Storytelling Impact**: Reflects cultural heritage and ancestral knowledge
 
 ##### **Elven Grace**
+
 - **Description**: "Your natural agility and connection to nature manifest in fluid movement."
 - **Mechanical Effect**: +2 to Acrobatics rolls in natural environments
 - **Storytelling Impact**: Emphasizes natural grace and environmental harmony
@@ -162,17 +174,20 @@ Circumstantial bonuses represent situational advantages that characters gain bas
 The Feature Creator provides a comprehensive interface for designing custom features:
 
 #### **Basic Information**
+
 - **Name**: Clear, descriptive title for the feature
 - **Description**: Rich text description with HTML formatting support
 - **Icon**: Optional image for visual representation
 
 #### **Roll Configuration**
+
 - **Roll Type**: Choose between none, flat bonus, or ability-based
 - **Target Ability**: Select which ability to use for rolls
 - **Bonus Value**: Add flat modifiers to the roll result
 - **Advantage/Disadvantage**: Configure extra dice for rolls
 
 #### **Character Effects**
+
 - **Ability Modifications**: Permanent changes to ability scores
 - **Resource Adjustments**: Modifications to Resolve and Power
 - **Special Effects**: Custom mechanical benefits
@@ -180,17 +195,20 @@ The Feature Creator provides a comprehensive interface for designing custom feat
 ### Best Practices
 
 #### **Naming Conventions**
+
 - Use descriptive names that immediately convey the feature's purpose
 - Include the source or type when helpful (e.g., "Dwarven Stonework", "Military Training")
 - Avoid overly generic names like "Bonus" or "Advantage"
 
 #### **Description Writing**
+
 - Start with the character background or source of the ability (On by default)
 - Explain the mechanical effect clearly
 - Include any limitations or specific circumstances
 - Use evocative language that enhances immersion
 
 #### **Mechanical Balance**
+
 - Keep bonuses reasonable for the campaign level
 - Ensure features enhance rather than overshadow core abilities
 - Consider how features interact with other character elements
@@ -199,21 +217,25 @@ The Feature Creator provides a comprehensive interface for designing custom feat
 ## Integration with Other Systems
 
 ### Status Effects
+
 - Features can work alongside temporary status effects
 - Permanent features provide a baseline that status effects modify
 - Some status effects might temporarily suppress feature bonuses
 
 ### Equipment
+
 - Gear bonuses stack with feature bonuses unless specifically noted
 - Some features might enhance equipment effectiveness
 - Cursed items might interact negatively with certain features
 
 ### Combat Powers
+
 - Features can enhance combat power effectiveness
 - Some features might reduce power costs or improve targeting
 - Background features often influence which powers a character learns
 
 ### Transformations
+
 - Transformation effects can temporarily override feature bonuses
 - Some features might influence transformation capabilities
 - Permanent features typically remain active during transformations
@@ -221,19 +243,25 @@ The Feature Creator provides a comprehensive interface for designing custom feat
 ## Advanced Feature Concepts
 
 ### Scaling Features
+
 Features that grow stronger as characters develop:
+
 - **Level-Based**: Bonuses increase with character advancement
 - **Usage-Based**: Features improve through repeated use
 - **Story-Based**: Features evolve based on character experiences
 
 ### Conditional Features
+
 Features with complex activation requirements:
+
 - **Time-Based**: Only active during certain times or seasons
 - **Location-Based**: Stronger in specific environments or regions
 - **Social-Based**: Enhanced when interacting with certain groups
 
 ### Linked Features
+
 Features that work together or build upon each other:
+
 - **Prerequisite Chains**: Advanced features requiring basic ones
 - **Synergy Bonuses**: Multiple features providing combined benefits
 - **Exclusive Options**: Features that prevent taking conflicting abilities
@@ -243,16 +271,19 @@ Features that work together or build upon each other:
 ### Common Issues
 
 #### **Feature Not Applying**
+
 - Check that the feature is properly configured
 - Verify that circumstances match the feature description
 - Ensure the character sheet has updated after changes
 
 #### **Bonus Calculation Errors**
+
 - Confirm the roll type is set correctly
 - Check that ability selection matches the intended design
 - Verify that dice adjustments are configured properly
 
 #### **Performance Issues**
+
 - Limit the number of complex features per character
 - Use simple bonuses when possible
 - Avoid overly complex conditional logic
@@ -260,6 +291,7 @@ Features that work together or build upon each other:
 ### Getting Help
 
 If you encounter issues with the Features system:
+
 1. Check this documentation for guidance
 2. Consult with your GM about intended behavior
 3. Test features in a safe environment before important rolls

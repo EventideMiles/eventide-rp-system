@@ -1,0 +1,13 @@
+{
+  "default": true,
+  // Line length - not practical for documentation prose
+  "MD013": false,
+  // Inline HTML - sometimes needed for complex layouts
+  "MD033": false,
+  // Duplicate headings - common in docs with repeated section structures
+  // (e.g., multiple "Benefits" or "Usage" sections under different features)
+  "MD024": false,
+  // Emphasis as heading - bold text for sub-items is standard in game docs
+  // (e.g., "**Feature Name**" followed by description, rather than adding heading levels)
+  "MD036": false
+}

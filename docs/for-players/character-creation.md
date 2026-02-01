@@ -53,14 +53,14 @@ Your character has two primary resources:
 
 - **What it is**: Your health, stamina, and general well-being
 - **How it works**: Decreases when you take damage, increases when you rest or heal
-- **Derived from**: Primarily your Fortitude ability
+- **Derived from**: Primarily your Fortitude ability. Default is 100 + (10 × Fortitude)
 - **When it reaches 0**: Your character is incapacitated or worse (we encourage GMs to use this to suit your story)
 
 #### **Power**
 
 - **What it is**: Your capacity for special abilities, magic, and extraordinary feats
 - **How it works**: Spent to use Combat Powers and special abilities
-- **Derived from**: Primarily your Will ability
+- **Derived from**: Primarily your Will and Fortitude abilities. Default is 5 + Will + Fortitude
 - **Regeneration**: Typically recovers during rest periods and by actively spending actions to restore it in combat
 
 ## Character Creation Process
@@ -117,8 +117,8 @@ Once you have ability scores, calculate:
 
 #### Resources
 
-- **Resolve**: Usually Fortitude × 5 + base amount (varies by GM)
-- **Power**: Usually Will × 3 + base amount (varies by GM)
+- **Resolve**: 100 + (10 × Fortitude), with a minimum of 10
+- **Power**: 5 + Will + Fortitude, with a minimum of 1
 
 #### Secondary Stats
 
@@ -127,7 +127,7 @@ Once you have ability scores, calculate:
 - **Fail Range**: When you score critical failures (usually 1)
 - **Initiative**: How quickly you act in combat
 
-_Note: Your GM will help calculate these values using values on features or statuses that only they have access to change_
+_Note: These formulas are the system defaults. Your GM may configure different formulas through system settings to suit their campaign._
 
 ### Step 4: Features and Traits
 
@@ -302,8 +302,8 @@ Many groups hold a "Session Zero" before play begins:
 
 **Resources**:
 
-- **Resolve**: 20 (3 Fort × 5 + 5 base)
-- **Power**: 20 (5 Will × 3 + 5 base)
+- **Resolve**: 130 (100 + 10 × 3 Fortitude)
+- **Power**: 13 (5 + 5 Will + 3 Fortitude)
 
 **Features**:
 

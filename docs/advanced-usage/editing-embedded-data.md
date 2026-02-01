@@ -13,9 +13,9 @@ This document details the solution to a complex state management problem: editin
 
 The primary challenge we faced was a classic but brutal state management issue that manifested as the "every other save" bug. Here's the sequence of events that caused it:
 
-1.  **State Mismatch:** The `EmbeddedItemSheet` holds a reference to the parent Transformation item (`this.actionCardItem` or `this.transformationItem`). When a change is saved, the item in the database is updated. However, the parent item object held in the sheet's memory is now **stale**—it does not reflect the changes that were just saved.
-2.  **First Save (Works):** The user saves a change. The data is correctly sent to the database.
-3.  **Second Save (Fails):** The user saves a second change. The sheet's save logic reads the **stale** data from its `this.transformationItem` property, modifies it, and saves it. This overwrites the changes from the first save, making it appear as if the save was "discarded".
+1. **State Mismatch:** The `EmbeddedItemSheet` holds a reference to the parent Transformation item (`this.actionCardItem` or `this.transformationItem`). When a change is saved, the item in the database is updated. However, the parent item object held in the sheet's memory is now **stale**—it does not reflect the changes that were just saved.
+2. **First Save (Works):** The user saves a change. The data is correctly sent to the database.
+3. **Second Save (Fails):** The user saves a second change. The sheet's save logic reads the **stale** data from its `this.transformationItem` property, modifies it, and saves it. This overwrites the changes from the first save, making it appear as if the save was "discarded".
 
 Attempts to fix this by re-rendering the sheet (`this.render()`) failed because it would destroy and recreate the ProseMirror editor, breaking its internal state and preventing subsequent save events.
 
@@ -115,9 +115,9 @@ This is where the core of the "every other save" bug is solved. The save handler
   }
 ```
 
-#### Key Takeaways from the Solution:
+#### Key Takeaways from the Solution
 
-1.  **Data-Safe Updates:** For complex nested data, updating the entire array (`"system.embeddedCombatPowers": powers`) proved to be the only method that did not corrupt the data. Targeted "dot-notation" updates were unreliable in this context.
-2.  **Pre-emptive State Synchronization:** The key to fixing the stale data issue was to call `this.transformationItem.updateSource(...)` *before* the `await this.transformationItem.update(...)` line. This patches the sheet's in-memory data *before* the asynchronous database call, ensuring that no matter what happens during the `await`, the sheet's state is already correct for the next operation.
-3.  **Preserve Editor State:** We must **not** call `this.render()` on the embedded sheet after a ProseMirror save. The editor is a complex component, and re-rendering it breaks its internal state. Simple feedback via `ui.notifications` is the correct approach.
-4.  **Parent Responsibility:** The parent sheet is responsible for refreshing its own view after the editing process is complete, which is handled cleanly by the `close` hook.
+1. **Data-Safe Updates:** For complex nested data, updating the entire array (`"system.embeddedCombatPowers": powers`) proved to be the only method that did not corrupt the data. Targeted "dot-notation" updates were unreliable in this context.
+2. **Pre-emptive State Synchronization:** The key to fixing the stale data issue was to call `this.transformationItem.updateSource(...)` *before* the `await this.transformationItem.update(...)` line. This patches the sheet's in-memory data *before* the asynchronous database call, ensuring that no matter what happens during the `await`, the sheet's state is already correct for the next operation.
+3. **Preserve Editor State:** We must **not** call `this.render()` on the embedded sheet after a ProseMirror save. The editor is a complex component, and re-rendering it breaks its internal state. Simple feedback via `ui.notifications` is the correct approach.
+4. **Parent Responsibility:** The parent sheet is responsible for refreshing its own view after the editing process is complete, which is handled cleanly by the `close` hook.

@@ -65,13 +65,15 @@ Most actions in combat fall into these categories:
 
 These are actually mostly used on your foe's turn: keep in mind not every GM will provide the same options
 
+> **Game Master's Guide:** As the GM, you'll need to facilitate Challenge mechanics manually. When players choose to challenge an attack, guide them through the back-and-forth rolling process. Remember that challenges consume ONLY the Reaction—the loser does NOT skip their next turn. This adds tactical weight to the decision to challenge versus defend. The system won't enforce this automatically, so keep track of who has used their Reaction as the battle unfolds.
+
 - **Challenge**: The core of defensive rolls. You use an appropriate stat to challenge the foe's attack.
   If you beat their original roll they either _defend_ against it or _challenge_ you back. If they _defend_
   then if they're successful nothing happens. If they fail to defend their attack is repelled onto them or
   some other effect occurs at GM discretion. if they _challenge_ then they roll back just like they would for
   a defend, but if their roll beats yours you roll back until one of you rolls lower. Whoever rolls lower first
   gets hit by the attack.
-  _Note: An unsuccessful challenge action for either side means that their next turn is skipped: high risk high reward_
+  _Note: An unsuccessful challenge action for either side means their Reaction is consumed: high risk high reward_
 - **Use Fate Point**: Don't like the result of a roll? This will force the foe to roll it again or give you another chance at it.
   If any resources were spent on the action they're refunded, then the action is repeated, and the new result is taken no matter if
   its worse or better than the original! Players typically get 1 fate point / ingame day but that is at **gm discretion**. Also, it
@@ -143,19 +145,27 @@ Different abilities serve different combat roles:
 
 ### Critical Success and Failure
 
-#### **Critical Success (Natural 20 / Within critical theshold)**
+> **Game Master's Guide:** When a roll lands in the critical range, Foundry flags it for you—but the narrative consequences are yours to decide. Critical hits create moments of heroic triumph; critical misses introduce dramatic complications. You determine what these mean in the context of your story. Some GMs grant bonus actions on critical hits or impose action penalties on critical misses, while others prefer purely narrative effects. Whatever you choose, make it memorable and meaningful for the table.
 
-- **Enhanced Success**: Add 10 to the number shown typically (or optionally make an automatic success)
-- **Enhanced Effect**: Extra damage, additional benefits
+#### **Critical Success (Natural 20 / Within critical threshold)**
+
+When the dice land in your critical hit range, the roll is flagged as a critical success. The system identifies this moment, but the consequences are left to narrative interpretation:
+
 - **Narrative Impact**: Spectacular results that advance the story
-- **Momentum**: May provide advantages for subsequent actions
+- **GM Discretion**: The Game Master may grant additional effects based on the context
+- **Flavor and Story**: Critical hits provide opportunities for memorable moments
+
+> **Important:** The system does **not** automatically add +10 to your result or provide automatic additional actions. Any bonuses beyond the critical flag must be applied by the GM through narrative decisions or specific item/ability effects.
 
 #### **Critical Failure (Natural 1 / Within fail threshold)**
 
-- **Probable Failure**: Subtract 10 from the shown result (or optionally make an automatic failure)
-- **Complications**: Equipment malfunction, positioning problems, awkward situations, battlefield dangers
+When the dice fall in the critical miss range, the roll is flagged as a critical failure. The system marks this unfortunate turn, but the specific consequences are determined by the story:
+
 - **Narrative Consequences**: Setbacks that create story opportunities
-- **Recovery**: Usually temporary setbacks, not permanent harm
+- **GM Discretion**: The Game Master may apply complications based on the situation
+- **Story Opportunities**: Failures that create memorable narrative moments
+
+> **Important:** The system does **not** automatically subtract 10 from your result or impose specific penalties. Any additional consequences beyond the critical flag are determined by the GM.
 
 #### **Modified Critical Ranges**
 

@@ -1,6 +1,12 @@
 {
   "EVENTIDE_RP_SYSTEM": {
     "Actor": {
+      "Mode": {
+        "Manual": "Manual",
+        "Derived": "Derived",
+        "ManualTooltip": "Set manually when the formula is empty",
+        "DerivedTooltip": "Automatically calculated from the formula"
+      },
       "Attributes": {
         "CR": {
           "label": "CR"
@@ -11,8 +17,10 @@
         "Power": {
           "Max": {
             "label": "Maximum Power",
-            "derived": "Derived from Will + Fort + 5"
-
+            "derived": "Derived from Settings",
+            "manual": "Manual",
+            "manualTooltip": "Power max is set manually when the settings formula is empty",
+            "derivedTooltip": "Power max is automatically calculated using the formula"
           },
           "Value": {
             "label": "Power"
@@ -21,7 +29,10 @@
         "Resolve": {
           "Max": {
             "label": "Maximum Resolve",
-            "derived": "Derived from Fort × 10 + 100"
+            "derived": "Derived from Settings",
+            "manual": "Manual",
+            "manualTooltip": "Resolve max is set manually when the settings formula is empty",
+            "derivedTooltip": "Resolve max is automatically calculated using the formula"
           },
           "Value": {
             "label": "Resolve"

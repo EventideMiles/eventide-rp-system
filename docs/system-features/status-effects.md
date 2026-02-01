@@ -110,6 +110,55 @@ GMs can modify these special values to create unique effects:
 - **Important Note**: Cmax and Fmin are disabled by default in the basic effect creator. They're not often used and will need the ADVANCED creator
   if you wish to use them to avoid them being used unintentionally.
 
+#### **Transformation-Specific Modes**
+
+These special modes are used exclusively by the transformation system to apply temporary ability modifications that take priority over regular effects.
+
+#### **TransformOverride Mode**
+
+- **Function**: Sets a transformation-specific override value for abilities
+- **Example**: A wolf transformation might override Physical to 6 regardless of base score
+- **Use Case**: Transformations that establish specific ability values during the transformed state
+- **Priority**: Takes effect AFTER regular `override` modes but BEFORE the base ability value
+- **Temporary**: Applies only while the transformation is active
+
+#### **TransformChange Mode**
+
+- **Function**: Adds or subtracts from abilities as part of a transformation
+- **Example**: +3 to Acrobatics when polymorphed into a cat form
+- **Use Case**: Transformation bonuses or penalties that stack with other effects
+- **Stacking**: Multiple `transformChange` values from different active transformations stack together
+- **Temporary**: Applies only while the transformation is active
+
+#### **Effect Mode Priority Order**
+
+When calculating ability values, the system applies effects in this specific order:
+
+1. **Override** (highest priority) - Sets ability to absolute value
+2. **TransformOverride** - Sets transformation-specific value if no regular override exists
+3. **Base Value** - Character's natural ability score
+4. **Additions** - Sum of `transformChange` + `change` values
+
+> **In Practice:**
+>
+> A character with base Physical 4 has two transformations active:
+>
+> - Transformation A: `transformOverride` Physical to 7
+> - Transformation B: `transformChange` Physical +2
+> - A blessing effect: `change` Physical +1
+>
+> Calculation: `transformOverride` (7) + `transformChange` (2) + `change` (1) = **Physical 10**
+>
+> If Transformation A used regular `override` instead of `transformOverride`, it would take highest priority and ignore transformation-specific changes entirely.
+> **When These Modes Are Used:**
+>
+> - **Polymorph Effects**: Shapeshifting spells or items that dramatically alter character capabilities
+> - **Racial Transformations**: Temporary access to racial traits (e.g., dwarf stoneform, elven grace)
+> - **Power Forms**: Supernatural states like werewolf form, dragon aspects, or elemental manifestations
+> - **Magical Alterations**: Curses or enchantments that temporarily rewrite physical capabilities
+>
+> These modes ensure transformation effects maintain proper priority over regular buffs while still allowing the transformation system to layer multiple effects together.
+
 #### **Vulnerability**
 
 - **Function**: Special modifier for specific damage types or situations

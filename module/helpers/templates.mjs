@@ -8,6 +8,10 @@ const { loadTemplates } = foundry.applications.handlebars;
 export const preloadHandlebarsTemplates = async function () {
   return loadTemplates([
     // Actor partials
+    "systems/eventide-rp-system/templates/actor/actor-primary-resources.hbs",
+    "systems/eventide-rp-system/templates/actor/actor-secondary-resources.hbs",
+    "systems/eventide-rp-system/templates/actor/actor-abilities.hbs",
+    "systems/eventide-rp-system/templates/actor/actor-status.hbs",
     "systems/eventide-rp-system/templates/actor/biography.hbs",
     "systems/eventide-rp-system/templates/actor/combat-powers.hbs",
     "systems/eventide-rp-system/templates/actor/effects.hbs",
