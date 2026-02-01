@@ -124,12 +124,16 @@
     "MinimumDiceValueHint": "The minimum value that can be rolled on a dice check",
     "MaxPowerFormulaName": "Max Power Formula",
     "MaxPowerFormulaHint": "Formula to calculate the maximum power for an actor. Default: max(5 + @will.total + @fort.total, 1).",
+    "MaxPowerFormulaWarning": "Max Power formula cannot be empty. Resetting to default.",
     "MaxResolveFormulaName": "Max Resolve Formula",
     "MaxResolveFormulaHint": "Formula to calculate the maximum resolve for an actor. Default: max(100 + (10 * @fort.total), 10).",
+    "MaxResolveFormulaWarning": "Max Resolve formula cannot be empty. Resetting to default.",
     "MinimumPowerValueName": "Minimum Power Value",
     "MinimumPowerValueHint": "The minimum value that an actor's max power can be. Applies after percentage multipliers.",
+    "MinimumPowerValueWarning": "Minimum Power Value must be a non-negative integer. Resetting to default ({0}).",
     "MinimumResolveValueName": "Minimum Resolve Value",
     "MinimumResolveValueHint": "The minimum value that an actor's max resolve can be. Applies after percentage multipliers.",
+    "MinimumResolveValueWarning": "Minimum Resolve Value must be a positive integer (1 or greater). Resetting to default ({0}).",
     "ActionCardExecutionLimitName": "Action Card Execution Limit",
     "ActionCardExecutionLimitHint": "Maximum number of action cards that can be executed per turn"
   }
