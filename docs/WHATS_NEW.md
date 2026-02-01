@@ -2,6 +2,23 @@
 
 ## Latest Release
 
+**[v13.20.0](release-notes/v13.20.0.md)** - Documentation Overhaul & Derived Value System _(February 2026)_
+
+**Key Highlights:**
+
+- **Derived Max Power/Resolve System** with formula-based calculation using customizable formulas
+- **New settings** for power/resolve formulas, minimum values, and action card execution limits
+- **Enhanced Character Effects** with categorized effects (regular, hidden, override) and new Settings Effects section
+- **Percentage multipliers** (powerMult, resolveMult) for fine-tuned power/resolve adjustments
+- **8 new documentation files** including ERPS ruleset guides, comprehensive GM resources, and detailed character examples
+- **New ruleset documentation** with character creation and combat mechanics guides for core game rules
+- **Comprehensive GM guides** including combat adjudication guide (435 lines) and modern flow guide
+- **Complete character examples** (1,021 lines) with fully detailed character sheets for new players
+- **Enhanced system feature docs** covering action economy, cleanse actions, and prepared actions in depth
+- **2,758 lines added** across 27 documentation files (8 new, 19 modified) with improved cross-references throughout
+
+## Recent Major Releases
+
 **[v13.19.1](release-notes/v13.19.1.md)** - Migration and UI Fixes _(January 2026)_
 
 **Key Highlights:**
@@ -9,8 +26,6 @@
 - Fixed migration logic for status application limits to properly handle old status applications
 - Resolved configuration field jumping bugs in action card interfaces
 - Updated Jest configuration to support new fields added in v13.19.0
-
-## Recent Major Releases
 
 **[v13.19.0](release-notes/v13.19.0.md)** - Action Card Execution Flow _(January 2026)_
 
@@ -144,6 +159,7 @@ Enhanced character customization through circumstantial bonuses and feature-base
 
 | Version      | Release Date  | Focus                                                                                  |
 | ------------ | ------------- | -------------------------------------------------------------------------------------- |
+| **v13.20.0** | February 2026 | Documentation Overhaul                                                                 |
 | **v13.19.1** | January 2026  | Migration and UI Fixes                                                                 |
 | v13.19.0     | January 2026  | Action Card Execution Flow Update                                                      |
 | v13.18.1     | January 2026  | Enhanced Action Chain Control, Mixed Attribute Rolls, and Selective Status Application |
@@ -163,19 +179,28 @@ Enhanced character customization through circumstantial bonuses and feature-base
 
 ### By Feature Area
 
-- **Action Cards**: [v13.11.0](release-notes/v13.11.0.md), [v13.13.3](release-notes/v13.13.3.md), [v13.14.0](release-notes/v13.14.0.md), [v13.15.0](release-notes/v13.15.0.md), [v13.16.0](release-notes/v13.16.0.md), [v13.18.0](release-notes/v13.18.0.md), [v13.18.1](release-notes/v13.18.1.md), [v13.19.0](release-notes/v13.19.0.md), [v13.19.1](release-notes/v13.19.1.md)
-- **GM Tools**: [v13.18.0](release-notes/v13.18.0.md), [v13.18.1](release-notes/v13.18.1.md)
+- **Action Cards**: [v13.11.0](release-notes/v13.11.0.md), [v13.13.3](release-notes/v13.13.3.md), [v13.14.0](release-notes/v13.14.0.md), [v13.15.0](release-notes/v13.15.0.md), [v13.16.0](release-notes/v13.16.0.md), [v13.18.0](release-notes/v13.18.0.md), [v13.18.1](release-notes/v13.18.1.md), [v13.19.0](release-notes/v13.19.0.md), [v13.19.1](release-notes/v13.19.1.md), [v13.20.0](release-notes/v13.20.0.md)
+- **GM Tools**: [v13.18.0](release-notes/v13.18.0.md), [v13.18.1](release-notes/v13.18.1.md), [v13.20.0](release-notes/v13.20.0.md)
 - **Transformations**: [v13.14.0](release-notes/v13.14.0.md), [v13.15.0](release-notes/v13.15.0.md), [v13.15.5](release-notes/v13.15.5.md), [v13.17.0](release-notes/v13.17.0.md)
 - **Features & Bonuses**: [v13.10.0](release-notes/v13.10.0.md), [v13.19.0](release-notes/v13.19.0.md)
 - **Combat Automation**: [v13.11.0](release-notes/v13.11.0.md), [v13.13.3](release-notes/v13.13.3.md)
+- **Documentation**: [v13.20.0](release-notes/v13.20.0.md)
 - **Conversion & Migration**: [v13.17.0](release-notes/v13.17.0.md), [v13.19.0](release-notes/v13.19.0.md), [v13.19.1](release-notes/v13.19.1.md)
 
 ### Documentation Links
 
 - [Action Cards Guide](advanced-usage/action-cards.md) - Complete action cards documentation
+- [Action Economy Guide](system-features/action-economy.md) - All action types explained
+- [Cleanse Actions Guide](system-features/cleanse-actions.md) - Status effect countermeasures
+- [Prepared Actions Guide](system-features/prepared-actions.md) - Converting Full Actions to interrupts
+- [Ruleset Combat Guide](erps-ruleset/erps-ruleset-combat.md) - Core combat mechanics
+- [Ruleset Character Creation](erps-ruleset/erps-ruleset-character-creation.md) - Character creation reference
+- [Character Examples](for-players/character-examples.md) - Complete character sheet examples
+- [Combat Adjudication Guide](for-gms/combat-adjudication-guide.md) - Comprehensive GM combat guide
+- [Modern Flow Guide](for-gms/modern-flow.md) - Action card-based workflow
 - [Action Modes Guide](advanced-usage/action-modes-pull-request.md) - Action modes and repetition system
 - [Features System Guide](system-features/features.md) - Circumstantial bonuses and feature rolls
-- [Quick Start Guide](getting-started/quick-start.md) - Get started with the system
+- [Quick Start Guide](getting-started/quick-start.md) - Get started with system
 
 ## Community and Support
 
@@ -194,8 +219,8 @@ We encourage users to:
 - Review the documentation guides for comprehensive system information
 - Join community discussions for tips and best practices
 
-- Review the **[v13.19.1](release-notes/v13.19.1.md)**, **[v13.19.0](release-notes/v13.19.0.md)**, and **[v13.18.1](release-notes/v13.18.1.md)** release notes for detailed feature information and updates.
+- Review the **[v13.20.0](release-notes/v13.20.0.md)**, **[v13.19.1](release-notes/v13.19.1.md)**, and **[v13.19.0](release-notes/v13.19.0.md)** release notes for detailed feature information and updates.
 
 ---
 
-**Current Version**: v13.19.1 | **Foundry VTT Compatibility**: v13+ | **Last Updated**: January 2026
+**Current Version**: v13.20.0 | **Foundry VTT Compatibility**: v13+ | **Last Updated**: February 2026
