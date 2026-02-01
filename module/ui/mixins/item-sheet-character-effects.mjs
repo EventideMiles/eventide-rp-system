@@ -61,6 +61,7 @@ export const ItemSheetCharacterEffectsMixin = (BaseClass) =>
         const characterEffects = {
           regularEffects: [],
           hiddenEffects: [],
+          overrideEffects: [],
         };
 
         // Process each form element using for...of instead of forEach for async safety
@@ -70,7 +71,8 @@ export const ItemSheetCharacterEffectsMixin = (BaseClass) =>
 
           if (
             !name.includes("regularEffects") &&
-            !name.includes("hiddenEffects")
+            !name.includes("hiddenEffects") &&
+            !name.includes("overrideEffects")
           ) {
             continue;
           }
@@ -98,12 +100,23 @@ export const ItemSheetCharacterEffectsMixin = (BaseClass) =>
         characterEffects.hiddenEffects = characterEffects.hiddenEffects.filter(
           (e) => e,
         );
+        characterEffects.overrideEffects = characterEffects.overrideEffects.filter(
+          (e) => e,
+        );
 
         const processEffects = async (effects, isRegular) => {
           return effects.map((effect) => {
             let key;
+            let mode;
 
-            if (isRegular) {
+            // For override abilities, effect keys map to system.power/resolve.override
+            if (effect.ability === "powerOverride") {
+              key = `system.power.override`;
+              mode = CONST.ACTIVE_EFFECT_MODES.OVERRIDE;
+            } else if (effect.ability === "resolveOverride") {
+              key = `system.resolve.override`;
+              mode = CONST.ACTIVE_EFFECT_MODES.OVERRIDE;
+            } else if (isRegular) {
               key = `system.abilities.${effect.ability}.${
                 effect.mode === "add"
                   ? "change"
@@ -122,16 +135,15 @@ export const ItemSheetCharacterEffectsMixin = (BaseClass) =>
                               : "transform"
               }`;
             } else {
+              // Hidden abilities logic
               key = `system.hiddenAbilities.${effect.ability}.${
                 effect.mode === "add" ? "change" : "override"
               }`;
+              mode =
+                effect.mode === "add"
+                  ? CONST.ACTIVE_EFFECT_MODES.ADD
+                  : CONST.ACTIVE_EFFECT_MODES.OVERRIDE;
             }
-
-            const mode =
-              (isRegular && effect.mode !== "override" && effect.mode !== "transformOverride") ||
-              (!isRegular && effect.mode === "add")
-                ? CONST.ACTIVE_EFFECT_MODES.ADD
-                : CONST.ACTIVE_EFFECT_MODES.OVERRIDE;
 
             return { key, mode, value: effect.value };
           });
@@ -140,12 +152,24 @@ export const ItemSheetCharacterEffectsMixin = (BaseClass) =>
         const newEffects = [
           ...(await processEffects(characterEffects.regularEffects, true)),
           ...(await processEffects(characterEffects.hiddenEffects, false)),
+          ...(await processEffects(characterEffects.overrideEffects, false)),
         ];
 
         if (newEffect.type && newEffect.ability) {
+          // For override abilities (powerOverride, resolveOverride), use correct key format
+          let key;
+          if (newEffect.ability === "powerOverride") {
+            key = `system.power.override`;
+          } else if (newEffect.ability === "resolveOverride") {
+            key = `system.resolve.override`;
+          } else {
+            // Regular and hidden abilities use standard format
+            key = `system.${newEffect.type}.${newEffect.ability}.change`;
+          }
+          
           newEffects.push({
-            key: `system.${newEffect.type}.${newEffect.ability}.change`,
-            mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+            key,
+            mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
             value: 0,
           });
         }
@@ -223,6 +247,7 @@ export const ItemSheetCharacterEffectsMixin = (BaseClass) =>
             effectsCount: newEffects.length,
             regularEffectsCount: characterEffects.regularEffects.length,
             hiddenEffectsCount: characterEffects.hiddenEffects.length,
+            overrideEffectsCount: characterEffects.overrideEffects.length,
           },
           "CHARACTER_EFFECTS",
         );

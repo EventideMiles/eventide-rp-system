@@ -350,5 +350,117 @@
       </div>
     {{/if}}
     {{/if}}
+
+    {{! Settings Effects Section }}
+    <div class="eventide-item-sheet__effects-section">
+      <h3 class="eventide-item-sheet__effects-section-header">
+        Settings Effects ({{characterEffects.overrideEffects.length}})
+      </h3>
+
+      <table class="erps-data-table erps-data-table--effects erps-data-table--flush-top">
+        <thead class="erps-data-table__header">
+          <tr class="erps-data-table__header-row">
+            <th class="erps-data-table__header-cell erps-data-table__header-cell--center">Attribute</th>
+            <th class="erps-data-table__header-cell erps-data-table__header-cell--center">Mode</th>
+            <th class="erps-data-table__header-cell erps-data-table__header-cell--center">Value</th>
+            <th class="erps-data-table__header-cell erps-data-table__header-cell--controls">
+              {{#if @root.editable}}
+                <button
+                  type="button"
+                  class="erps-data-table__create-button"
+                  data-action="newCharacterEffect"
+                  data-type="overrideAbilities"
+                  data-ability="powerOverride"
+                  title="{{localize 'EVENTIDE_RP_SYSTEM.UI.AddNewEffect'}}"
+                >
+                  <i class="fas fa-plus"></i> Add Effect
+                </button>
+              {{/if}}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each characterEffects.overrideEffects}}
+            <tr class="erps-data-table__row">
+              <td class="erps-data-table__cell erps-data-table__cell--center">
+                <select
+                  class="erps-select"
+                  name="characterEffects.overrideEffects.{{@index}}.ability"
+                  data-index="{{@index}}"
+                  data-type="overrideEffects"
+                >
+                  {{#each ../config.overrideAbilities as |label key|}}
+                    <option value="{{key}}" {{#if (eq ../ability key)}}selected{{/if}}>
+                      {{localize label}}
+                    </option>
+                  {{/each}}
+                </select>
+              </td>
+
+              <td class="erps-data-table__cell erps-data-table__cell--center">
+                <select
+                  class="erps-select"
+                  name="characterEffects.overrideEffects.{{@index}}.mode"
+                  data-index="{{@index}}"
+                  data-type="overrideEffects"
+                >
+                  <option value="override" {{#if (eq mode "override")}}selected{{/if}}>Override</option>
+                </select>
+              </td>
+
+              <td class="erps-data-table__cell erps-data-table__cell--center">
+                <div class="erps-number-input">
+                  <button
+                    type="button"
+                    class="erps-number-input__button erps-number-input__button--decrement"
+                  >
+                    <i class="fas fa-minus"></i>
+                  </button>
+                  <input
+                    type="number"
+                    class="erps-number-input__input"
+                    name="characterEffects.overrideEffects.{{@index}}.value"
+                    value="{{value}}"
+                    step="1"
+                    data-index="{{@index}}"
+                    data-type="overrideEffects"
+                  >
+                  <button
+                    type="button"
+                    class="erps-number-input__button erps-number-input__button--increment"
+                  >
+                    <i class="fas fa-plus"></i>
+                  </button>
+                </div>
+              </td>
+
+              <td class="erps-data-table__cell erps-data-table__cell--controls">
+                {{#if @root.editable}}
+                  <div class="erps-data-table__controls">
+                    <button
+                      type="button"
+                      class="erps-data-table__control-button erps-data-table__control-button--delete"
+                      data-action="deleteCharacterEffect"
+                      data-index="{{@index}}"
+                      data-type="overrideEffects"
+                      title="{{localize 'EVENTIDE_RP_SYSTEM.UI.RemoveEffect'}}"
+                    >
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </div>
+                {{/if}}
+              </td>
+            </tr>
+          {{/each}}
+          {{#unless characterEffects.overrideEffects.length}}
+            <tr class="erps-data-table__row">
+              <td colspan="4" class="erps-data-table__cell erps-data-table__cell--center" style="font-style: italic; opacity: 0.7;">
+                No settings effects configured
+              </td>
+            </tr>
+          {{/unless}}
+        </tbody>
+      </table>
+    </div>
   </div>
 </section>

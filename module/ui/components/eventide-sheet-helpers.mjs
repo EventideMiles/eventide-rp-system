@@ -69,10 +69,10 @@ export class EventideSheetHelpers extends WindowSizingFixMixin(
   }
   /**
    * Returns an array of hidden ability keys defined in the system configuration.
-   * @returns {string[]} Array of hidden ability keys (dice, cmin, fmax)
+   * @returns {string[]} Array of hidden ability keys (dice, cmin, fmax, powerMult, resolveMult)
    */
   static get hiddenAbilities() {
-    return ["dice", "cmin", "fmax"];
+    return ["dice", "cmin", "fmax", "powerMult", "resolveMult"];
   }
   /**
    * Returns an array of advanced hidden ability keys defined in the system configuration.

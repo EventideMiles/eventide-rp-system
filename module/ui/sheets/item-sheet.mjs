@@ -97,7 +97,7 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
         removeEmbeddedTransformation: this._removeEmbeddedTransformation,
       },
       position: {
-        width: 800,
+        width: 840,
         height: "auto",
       },
       form: {

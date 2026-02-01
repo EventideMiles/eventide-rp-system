@@ -24,6 +24,7 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
         min: 0,
       }),
       max: new fields.NumberField({ ...requiredInteger, initial: 110, min: 1 }),
+      override: new fields.NumberField({ ...overrideInteger, initial: null }),
     });
     schema.power = new fields.SchemaField({
       value: new fields.NumberField({ ...requiredInteger, initial: 7, min: 0 }),
@@ -32,6 +33,7 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
         initial: 7,
         min: 0,
       }),
+      override: new fields.NumberField({ ...overrideInteger, initial: null }),
     });
     schema.biography = new fields.StringField({ required: true, blank: true }); // equivalent to passing ({initial: ""}) for StringFields
 
@@ -184,6 +186,36 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
         override: new fields.NumberField({ ...overrideInteger, initial: null }),
         change: new fields.NumberField({ ...requiredInteger, initial: 0 }),
       }),
+      // Power percentage multiplier (100 = 100%, 400 = 400%, etc.)
+      powerMult: new fields.SchemaField({
+        value: new fields.NumberField({
+          ...requiredInteger,
+          initial: 100,
+          min: 0,
+        }),
+        total: new fields.NumberField({
+          ...requiredInteger,
+          initial: 100,
+          min: 0,
+        }),
+        override: new fields.NumberField({ ...overrideInteger, initial: null }),
+        change: new fields.NumberField({ ...requiredInteger, initial: 0 }),
+      }),
+      // Resolve percentage multiplier (100 = 100%, 400 = 400%, etc.)
+      resolveMult: new fields.SchemaField({
+        value: new fields.NumberField({
+          ...requiredInteger,
+          initial: 100,
+          min: 0,
+        }),
+        total: new fields.NumberField({
+          ...requiredInteger,
+          initial: 100,
+          min: 0,
+        }),
+        override: new fields.NumberField({ ...overrideInteger, initial: null }),
+        change: new fields.NumberField({ ...requiredInteger, initial: 0 }),
+      }),
     });
 
     schema.statTotal = new fields.SchemaField({
@@ -322,28 +354,72 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
       this.hiddenAbilities.dice.total = minimumDiceValue;
     }
 
-    // Calculate derived max power (Issue #125) - only if formula is not empty (manual mode)
+    // Calculate derived max power
+    // Priority: 1) per-character override, 2) formula derivation, 3) keep existing value
     const maxPowerFormula = game.settings?.get(
       "eventide-rp-system",
       "maxPowerFormula",
     );
-    if (maxPowerFormula && maxPowerFormula.trim() !== "") {
+    if (
+      this.power.override !== null &&
+      this.power.override !== undefined &&
+      this.power.override !== 0
+    ) {
+      // Use per-character override
+      this.power.max = this.power.override;
+    } else if (maxPowerFormula && maxPowerFormula.trim() !== "") {
+      // Use formula derivation
       this.power.max = this.calculateDerivedMaxPower();
     }
-    // Clamp current power value to max (applies whether max was calculated or manual)
+
+    // Apply power percentage multiplier from hiddenAbilities
+    const powerMultiplier = this.hiddenAbilities.powerMult.total / 100;
+    if (powerMultiplier !== 1) {
+      this.power.max = Math.floor(this.power.max * powerMultiplier);
+    }
+
+    // Enforce minimum power value from settings
+    const minPower =
+      game.settings?.get("eventide-rp-system", "minimumPowerValue") ?? 1;
+    if (this.power.max < minPower) {
+      this.power.max = minPower;
+    }
+    // Clamp current power value to max
     if (this.power.value > this.power.max) {
       this.power.value = this.power.max;
     }
 
-    // Calculate derived max resolve (Issue #126) - only if formula is not empty (manual mode)
+    // Calculate derived max resolve
+    // Priority: 1) per-character override, 2) formula derivation, 3) keep existing value
     const maxResolveFormula = game.settings?.get(
       "eventide-rp-system",
       "maxResolveFormula",
     );
-    if (maxResolveFormula && maxResolveFormula.trim() !== "") {
+    if (
+      this.resolve.override !== null &&
+      this.resolve.override !== undefined &&
+      this.resolve.override !== 0
+    ) {
+      // Use per-character override
+      this.resolve.max = this.resolve.override;
+    } else if (maxResolveFormula && maxResolveFormula.trim() !== "") {
+      // Use formula derivation
       this.resolve.max = this.calculateDerivedMaxResolve();
     }
-    // Clamp current resolve value to max (applies whether max was calculated or manual)
+
+    // Apply resolve percentage multiplier from hiddenAbilities
+    const resolveMultiplier = this.hiddenAbilities.resolveMult.total / 100;
+    if (resolveMultiplier !== 1) {
+      this.resolve.max = Math.floor(this.resolve.max * resolveMultiplier);
+    }
+
+    // Enforce minimum resolve value from settings
+    const minResolve =
+      game.settings?.get("eventide-rp-system", "minimumResolveValue") ?? 10;
+    if (this.resolve.max < minResolve) {
+      this.resolve.max = minResolve;
+    }
+    // Clamp current resolve value to max
     if (this.resolve.value > this.resolve.max) {
       this.resolve.value = this.resolve.max;
     }

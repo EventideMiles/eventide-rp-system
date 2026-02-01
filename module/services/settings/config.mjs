@@ -52,6 +52,19 @@ EVENTIDE_RP_SYSTEM.hiddenAbilities = {
   fmax: `EVENTIDE_RP_SYSTEM.HiddenAbilities.Fmax.long`,
   fmin: `EVENTIDE_RP_SYSTEM.HiddenAbilities.Fmin.long`,
   vuln: `EVENTIDE_RP_SYSTEM.HiddenAbilities.Vuln.long`,
+  powerMult: `EVENTIDE_RP_SYSTEM.HiddenAbilities.PowerMult.long`,
+  resolveMult: `EVENTIDE_RP_SYSTEM.HiddenAbilities.ResolveMult.long`,
+};
+
+/**
+ * Override abilities used for Power and Resolve settings overrides.
+ * These are only available in the Settings Effects section, not Hidden Effects.
+ *
+ * @type {Object<string, string>}
+ */
+EVENTIDE_RP_SYSTEM.overrideAbilities = {
+  powerOverride: "EVENTIDE_RP_SYSTEM.HiddenAbilities.PowerOverride.long",
+  resolveOverride: "EVENTIDE_RP_SYSTEM.HiddenAbilities.ResolveOverride.long",
 };
 
 /**
@@ -67,6 +80,18 @@ EVENTIDE_RP_SYSTEM.hiddenAbilityAbbreviations = {
   fmax: `EVENTIDE_RP_SYSTEM.HiddenAbilities.Fmax.abbr`,
   fmin: `EVENTIDE_RP_SYSTEM.HiddenAbilities.Fmin.abbr`,
   vuln: `EVENTIDE_RP_SYSTEM.HiddenAbilities.Vuln.abbr`,
+  powerMult: `EVENTIDE_RP_SYSTEM.HiddenAbilities.PowerMult.abbr`,
+  resolveMult: `EVENTIDE_RP_SYSTEM.HiddenAbilities.ResolveMult.abbr`,
+};
+
+/**
+ * Abbreviated names for override abilities.
+ *
+ * @type {Object<string, string>}
+ */
+EVENTIDE_RP_SYSTEM.overrideAbilityAbbreviations = {
+  powerOverride: "EVENTIDE_RP_SYSTEM.HiddenAbilities.PowerOverride.abbr",
+  resolveOverride: "EVENTIDE_RP_SYSTEM.HiddenAbilities.ResolveOverride.abbr",
 };
 
 /**
