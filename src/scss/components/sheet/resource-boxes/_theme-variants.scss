@@ -112,4 +112,46 @@
       box-shadow: 0 0 $resource-glow-blur-md rgb(100 100 100 / 30%) !important;
     }
   }
-} 
+}
+
+// ===================================
+// SUCCESS VARIANT (Green - Below Max)
+// ===================================
+
+@mixin resource-box-success {
+  background: linear-gradient(
+    135deg,
+    rgb(34 197 94 / 90%) 0%,
+    rgb(34 197 94 / 80%) 100%
+  );
+  border-color: rgb(34 197 94 / 50%);
+
+  @include resource-glow-animation(rgb(34 197 94 / 20%));
+
+  .erps-stat-box__value {
+    text-shadow:
+      0 $resource-shadow-offset-sm $resource-shadow-offset-md rgb(0 0 0 / 80%),
+      0 0 $resource-glow-blur-md rgb(34 197 94 / 60%) !important;
+  }
+}
+
+// ===================================
+// DANGER VARIANT (Red - Over Max)
+// ===================================
+
+@mixin resource-box-danger {
+  background: linear-gradient(
+    135deg,
+    rgb(239 68 68 / 90%) 0%,
+    rgb(239 68 68 / 80%) 100%
+  );
+  border-color: rgb(239 68 68 / 50%);
+
+  @include resource-glow-animation(rgb(239 68 68 / 20%));
+
+  .erps-stat-box__value {
+    text-shadow:
+      0 $resource-shadow-offset-sm $resource-shadow-offset-md rgb(0 0 0 / 80%),
+      0 0 $resource-glow-blur-md rgb(239 68 68 / 60%) !important;
+  }
+}

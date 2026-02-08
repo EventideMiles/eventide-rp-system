@@ -751,6 +751,33 @@ export const registerSettings = function () {
     },
   });
 
+  // Stat Points Formula (Issue #137)
+  game.settings.register("eventide-rp-system", "statPointsFormula", {
+    name: "SETTINGS.StatPointsFormulaName",
+    hint: "SETTINGS.StatPointsFormulaHint",
+    scope: "world",
+    config: true,
+    restricted: true,
+    type: String,
+    default: "14 + (2 * @lvl.value)",
+    onChange: (value) => {
+      // Revert to default if blank
+      if (!value || value.trim() === "") {
+        const defaultFormula = "14 + (2 * @lvl.value)";
+        game.settings.set(
+          "eventide-rp-system",
+          "statPointsFormula",
+          defaultFormula,
+        );
+        ui.notifications.warn(
+          game.i18n.localize("SETTINGS.StatPointsFormulaWarning"),
+        );
+        return;
+      }
+      _refreshAllActorDerivedData();
+    },
+  });
+
   // ===========================================
   // POWER/RESOLVE VALUE SETTINGS (GM Only)
   // ===========================================

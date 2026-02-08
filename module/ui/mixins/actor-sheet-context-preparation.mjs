@@ -746,6 +746,11 @@ export const ActorSheetContextPreparationMixin = (BaseClass) =>
         // Enrich context
         context = this._enrichContext(context);
 
+        // Add stat total color class for Issue #137
+        context.statTotalColorClass = this._getStatTotalColorClass(
+          this.actor.system.statTotal,
+        );
+
         Logger.info(
           "Sheet context prepared successfully",
           {
@@ -777,5 +782,35 @@ export const ActorSheetContextPreparationMixin = (BaseClass) =>
 
         return context;
       }
+    }
+
+    /**
+     * Determine the stat total box color class based on comparison
+     *
+     * @param {Object} statTotal - The statTotal data object
+     * @returns {string} The BEM color class to apply
+     * @protected
+     */
+    _getStatTotalColorClass(statTotal) {
+      // If max is 0, formula is disabled - use neutral
+      if (!statTotal?.max || statTotal.max === 0) {
+        return "erps-stat-box--neutral";
+      }
+
+      const baseValue = statTotal.baseValue ?? 0;
+      const max = statTotal.max;
+
+      // Green if below formula amount
+      if (baseValue < max) {
+        return "erps-stat-box--success";
+      }
+
+      // Grey if exactly at formula amount
+      if (baseValue === max) {
+        return "erps-stat-box--neutral";
+      }
+
+      // Red if over formula amount
+      return "erps-stat-box--danger";
     }
   };

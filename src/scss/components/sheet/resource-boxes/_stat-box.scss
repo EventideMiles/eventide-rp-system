@@ -74,4 +74,12 @@
   &--neutral {
     @include resource-box-generic;
   }
-} 
+
+  &--success {
+    @include resource-box-success;
+  }
+
+  &--danger {
+    @include resource-box-danger;
+  }
+}
