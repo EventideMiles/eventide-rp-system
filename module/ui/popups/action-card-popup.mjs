@@ -41,6 +41,11 @@ export class ActionCardPopup extends EventidePopupHelpers {
     form: {
       handler: this.#onSubmit,
     },
+    actions: {
+      onStatusEffectChange: ActionCardPopup.prototype._onStatusEffectChange,
+      selectAllEffects: ActionCardPopup.prototype._onSelectAllEffects,
+      deselectAllEffects: ActionCardPopup.prototype._onDeselectAllEffects,
+    },
   };
 
   /**
@@ -54,6 +59,7 @@ export class ActionCardPopup extends EventidePopupHelpers {
   constructor({ item }) {
     super({ item });
     this.type = "actionCard";
+    this._selectedEffectIds = null;
 
     if (!this.item || this.item.type !== "actionCard") {
       throw new Error("ActionCardPopup requires an action card item");
@@ -77,47 +83,6 @@ export class ActionCardPopup extends EventidePopupHelpers {
 
     // Initialize transformation selection styling
     this._initializeTransformationSelection();
-
-    // Initialize status effect selection handlers
-    this._initializeStatusEffectSelection();
-  }
-
-  /**
-   * Initialize status effect selection handlers
-   * @private
-   */
-  _initializeStatusEffectSelection() {
-    // Handle "Select All" button
-    const selectAllButton = this.element.querySelector(
-      '[data-action="selectAllEffects"]',
-    );
-    if (selectAllButton) {
-      selectAllButton.addEventListener("click", (event) => {
-        event.preventDefault();
-        const checkboxes = this.element.querySelectorAll(
-          '.erps-form__status-effect-checkbox',
-        );
-        checkboxes.forEach((checkbox) => {
-          checkbox.checked = true;
-        });
-      });
-    }
-
-    // Handle "Deselect All" button
-    const deselectAllButton = this.element.querySelector(
-      '[data-action="deselectAllEffects"]',
-    );
-    if (deselectAllButton) {
-      deselectAllButton.addEventListener("click", (event) => {
-        event.preventDefault();
-        const checkboxes = this.element.querySelectorAll(
-          '.erps-form__status-effect-checkbox',
-        );
-        checkboxes.forEach((checkbox) => {
-          checkbox.checked = false;
-        });
-      });
-    }
   }
 
   /**
@@ -289,13 +254,21 @@ export class ActionCardPopup extends EventidePopupHelpers {
 
     // Prepare embedded status effects data for display
     context.embeddedStatusEffects = (this.item.system.embeddedStatusEffects || []).map(
-      (effect, index) => ({
-        id: effect._id || `effect-${index}`,
-        name: effect.name,
-        img: effect.img,
-        type: effect.type,
-        description: effect.system?.description || "",
-      }),
+      (effect, index) => {
+        const effectId = effect._id || `effect-${index}`;
+        // Check if this effect is selected (default to true if no saved data)
+        const isSelected = this._savedFormData?._selectedEffectIds
+          ? this._savedFormData._selectedEffectIds.includes(effectId)
+          : true;
+        return {
+          id: effectId,
+          name: effect.name,
+          img: effect.img,
+          type: effect.type,
+          description: effect.system?.description || "",
+          selected: isSelected,
+        };
+      },
     );
 
     // Prepare embedded transformations data for display
@@ -337,6 +310,7 @@ export class ActionCardPopup extends EventidePopupHelpers {
       quantity: false,
       equipped: false,
       gearValidation: [], // Array to store detailed gear validation errors
+      statusChoice: false, // Track status choice validation
     };
 
     // Get the actor that owns this action card
@@ -533,6 +507,55 @@ export class ActionCardPopup extends EventidePopupHelpers {
       }
     }
 
+    // Check status effect selection if enforceStatusChoice is enabled
+    if (this.item.system.enforceStatusChoice) {
+      // Get selected effect IDs from saved data (during re-render) or form (initial render)
+      let selectedEffectIds;
+      if (
+        this._savedFormData &&
+        this._savedFormData._selectedEffectIds !== undefined
+      ) {
+        // During re-render, use saved data
+        selectedEffectIds = this._savedFormData._selectedEffectIds;
+      } else if (this.element) {
+        // Initial render with DOM available, read from form
+        const checkboxes = this.element.querySelectorAll(
+          ".erps-form__status-effect-checkbox:checked",
+        );
+        selectedEffectIds =
+          !checkboxes || checkboxes.length === 0
+            ? []
+            : Array.from(checkboxes).map((cb) => cb.value);
+      } else {
+        // Initial render before DOM is ready - assume all effects are selected (default behavior)
+        const embeddedStatusEffects = this.item.system.embeddedStatusEffects || [];
+        selectedEffectIds = embeddedStatusEffects.length > 0
+          ? embeddedStatusEffects.map((effect, index) => effect._id || `effect-${index}`)
+          : [];
+      }
+      const embeddedStatusEffects =
+        this.item.system.embeddedStatusEffects || [];
+
+      // Count how many status effects are currently checked
+      // selectedEffectIds is null when all effects are applied (treat as all checked)
+      // selectedEffectIds is an array when specific effects are selected (including empty array for 0)
+      let checkedCount = 0;
+
+      if (selectedEffectIds == null) {
+        // When null, all embedded effects are considered checked
+        checkedCount = embeddedStatusEffects.length;
+      } else {
+        // When an array, count the explicitly selected effects (including 0 for empty array)
+        checkedCount = selectedEffectIds.length;
+      }
+
+      // Only enforce if there are actually status effects on the card
+      // 0 or 1 selected is allowed, 2+ selected is invalid
+      if (embeddedStatusEffects.length > 0 && checkedCount > 1) {
+        problems.statusChoice = true;
+        problems.statusChoiceCount = checkedCount;
+      }
+    }
 
     return problems;
   }
@@ -641,6 +664,20 @@ export class ActionCardPopup extends EventidePopupHelpers {
       }
     }
 
+    // Add status choice validation callout
+    if (this.problems.statusChoice) {
+      callouts.push({
+        type: "warning",
+        faIcon: "fas fa-exclamation-triangle",
+        text: game.i18n.format(
+          "EVENTIDE_RP_SYSTEM.Forms.Callouts.ActionCard.TooManyStatuses",
+          {
+            count: this.problems.statusChoiceCount,
+          },
+        ),
+      });
+    }
+
     return callouts;
   }
 
@@ -652,6 +689,93 @@ export class ActionCardPopup extends EventidePopupHelpers {
    */
   _hasValidationProblems(problems) {
     return ActionCardPopup._hasValidationProblems(problems);
+  }
+
+  /**
+   * Handle status effect checkbox changes by re-rendering the form
+   * @param {Event} event - The triggering event
+   * @param {HTMLElement} target - The clicked element
+   * @returns {Promise<void>}
+   */
+  async _onStatusEffectChange(event, target) {
+    const savedData = ActionCardPopup._saveFormData(this);
+    // Update the checkbox state based on the event target
+    if (target && target.classList.contains("erps-form__status-effect-checkbox")) {
+      const effectId = target.value;
+      const isChecked = target.checked;
+      if (isChecked) {
+        if (!savedData._selectedEffectIds.includes(effectId)) {
+          savedData._selectedEffectIds.push(effectId);
+        }
+      } else {
+        savedData._selectedEffectIds = savedData._selectedEffectIds.filter(id => id !== effectId);
+      }
+    }
+
+    // Capture scroll position before rendering
+    const contentElement = this.element.querySelector(".erps-form__content");
+    const oldScrollPosition = contentElement ? contentElement.scrollTop : 0;
+
+    this._savedFormData = savedData;
+    await this.render();
+    ActionCardPopup._restoreFormData(this, savedData);
+    const newContentElement = this.element.querySelector(".erps-form__content");
+    if (newContentElement) {
+      newContentElement.scrollTop = oldScrollPosition;
+    }
+  }
+
+  /**
+   * Handle "Select All" button click by selecting all checkboxes and re-rendering
+   * @param {Event} event - The triggering event
+   * @param {HTMLElement} _target - The clicked element
+   * @returns {Promise<void>}
+   */
+  async _onSelectAllEffects(event, _target) {
+    event.preventDefault();
+    const savedData = ActionCardPopup._saveFormData(this);
+    // Select all checkboxes
+    savedData._selectedEffectIds = Array.from(
+      this.element.querySelectorAll(".erps-form__status-effect-checkbox"),
+    ).map((cb) => cb.value);
+
+    // Capture scroll position before rendering
+    const contentElement = this.element.querySelector(".erps-form__content");
+    const oldScrollPosition = contentElement ? contentElement.scrollTop : 0;
+
+    // Update instance property with modified data
+    this._savedFormData = savedData;
+    await this.render();
+    ActionCardPopup._restoreFormData(this, savedData);
+    const newContentElement = this.element.querySelector(".erps-form__content");
+    if (newContentElement) {
+      newContentElement.scrollTop = oldScrollPosition;
+    }
+  }
+
+  /**
+   * Handle "Deselect All" button click by deselecting all checkboxes and re-rendering
+   * @param {Event} event - The triggering event
+   * @param {HTMLElement} _target - The clicked element
+   * @returns {Promise<void>}
+   */
+  async _onDeselectAllEffects(event, _target) {
+    event.preventDefault();
+    const savedData = ActionCardPopup._saveFormData(this);
+    savedData._selectedEffectIds = [];
+
+    // Capture scroll position before rendering
+    const contentElement = this.element.querySelector(".erps-form__content");
+    const oldScrollPosition = contentElement ? contentElement.scrollTop : 0;
+
+    // Update instance property with modified data
+    this._savedFormData = savedData;
+    await this.render();
+    ActionCardPopup._restoreFormData(this, savedData);
+    const newContentElement = this.element.querySelector(".erps-form__content");
+    if (newContentElement) {
+      newContentElement.scrollTop = oldScrollPosition;
+    }
   }
 
   /**
@@ -672,6 +796,74 @@ export class ActionCardPopup extends EventidePopupHelpers {
       // For other problems, check truthiness
       return value;
     });
+  }
+
+  /**
+   * Save the current form state before re-rendering
+   * @param {ActionCardPopup} app - The application instance
+   * @returns {Object} The saved form data including scroll position
+   * @protected
+   */
+  static _saveFormData(app) {
+    if (!app || !app.element) return {};
+
+    const form =
+      app.element.tagName === "FORM"
+        ? app.element
+        : app.element.querySelector("form");
+    if (!form) return {};
+
+    const savedData = {};
+
+    // Save checkbox states
+    const checkboxes = form.querySelectorAll(
+      ".erps-form__status-effect-checkbox",
+    );
+    savedData._selectedEffectIds = Array.from(checkboxes)
+      .filter((cb) => cb.checked)
+      .map((cb) => cb.value);
+
+    // Save scroll position
+    const contentElement = app.element.querySelector(".erps-form__content");
+    if (contentElement) {
+      savedData._scrollTop = contentElement.scrollTop;
+    }
+
+    return savedData;
+  }
+
+  /**
+   * Restore saved form data after re-rendering
+   * @param {ActionCardPopup} app - The application instance
+   * @param {Object} savedData - The saved form data
+   * @protected
+   */
+  static _restoreFormData(app, savedData) {
+    if (!app || !app.element || !savedData) return;
+
+    const form =
+      app.element.tagName === "FORM"
+        ? app.element
+        : app.element.querySelector("form");
+    if (!form) return;
+
+    // Restore checkbox states
+    if (savedData._selectedEffectIds) {
+      const checkboxes = form.querySelectorAll(
+        ".erps-form__status-effect-checkbox",
+      );
+      checkboxes.forEach((cb) => {
+        cb.checked = savedData._selectedEffectIds.includes(cb.value);
+      });
+    }
+
+    // Restore scroll position
+    if (savedData._scrollTop !== undefined) {
+      const contentElement = app.element.querySelector(".erps-form__content");
+      if (contentElement) {
+        contentElement.scrollTop = savedData._scrollTop;
+      }
+    }
   }
 
   /**

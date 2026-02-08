@@ -125,7 +125,8 @@
         },
         "ActionCard": {
           "NoEmbeddedItem": "This action card has no embedded item configured. Please add an item to the action slot before executing.",
-          "TargetingError": "You do not have the correct targets selected for this action card."
+          "TargetingError": "You do not have the correct targets selected for this action card.",
+          "TooManyStatuses": "This action card requires selecting 0 or 1 status effects. Currently {count} status effects are selected. Please deselect all but one status effect to proceed."
         },
         "Conversion": {
           "ActorToTransformation": "Convert actor <strong>{actorName}</strong> to a transformation item. This will copy the actor's ability values, combat powers, and action cards.",

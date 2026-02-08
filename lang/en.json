@@ -157,6 +157,10 @@
         "GearEffectInventoryError": "Failed to apply gear effect: {error}",
         "StatusIntensified": "Status effect '{statusName}' intensified on {targetName}",
         "StatusApplied": "Status effect '{statusName}' applied to {targetName}",
+        "EnforceStatusChoice": {
+          "label": "Enforce Status Choice",
+          "hint": "When enabled, prevents rolling this action card if more than one status effect is selected. Users must select zero or one status effects."
+        },
         "CreateNewPower": "Create New Power",
         "CreateNewStatus": "Create New Status",
         "RollValue": "Roll Value",
@@ -823,7 +827,8 @@
         },
         "ActionCard": {
           "NoEmbeddedItem": "This action card has no embedded item configured. Please add an item to the action slot before executing.",
-          "TargetingError": "You do not have the correct targets selected for this action card."
+          "TargetingError": "You do not have the correct targets selected for this action card.",
+          "TooManyStatuses": "This action card requires selecting 0 or 1 status effects. Currently {count} status effects are selected. Please deselect all but one status effect to proceed."
         },
         "Conversion": {
           "ActorToTransformation": "Convert actor <strong>{actorName}</strong> to a transformation item. This will copy the actor's ability values, combat powers, and action cards.",
