@@ -87,7 +87,7 @@
                     <option value="transformOverride" {{#if (eq mode "transformOverride")}}selected{{/if}}>Transform Override</option>
                     <option value="transformChange" {{#if (eq mode "transformChange")}}selected{{/if}}>Transform Change</option>
                   {{else}}
-                    <option value="add" {{#if (eq mode "change")}}selected{{/if}}>Add</option>
+                    <option value="add" {{#if (eq mode "add")}}selected{{/if}}>Add</option>
                     <option value="override" {{#if (eq mode "override")}}selected{{/if}}>Override</option>
                     <option value="advantage" {{#if (eq mode "advantage")}}selected{{/if}}>Advantage</option>
                     <option value="disadvantage" {{#if (eq mode "disadvantage")}}selected{{/if}}>Disadvantage</option>
@@ -206,7 +206,7 @@
                     data-index="{{@index}}"
                     data-type="hiddenEffects"
                   >
-                    <option value="add" {{#if (eq mode "change")}}selected{{/if}}>Add</option>
+                    <option value="add" {{#if (eq mode "add")}}selected{{/if}}>Add</option>
                     <option value="override" {{#if (eq mode "override")}}selected{{/if}}>Override</option>
                   </select>
                 </td>

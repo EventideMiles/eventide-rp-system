@@ -145,7 +145,7 @@ export const EmbeddedItemCharacterEffectsMixin = (BaseClass) =>
         
         newEffects.push({
           key,
-          mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
+          mode: CONST.ACTIVE_EFFECT_MODES.ADD,
           value: 0,
         });
       }
