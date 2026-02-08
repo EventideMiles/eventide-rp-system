@@ -406,7 +406,33 @@ export function ItemActionCardExecutionMixin(Base) {
         }
 
         // Get targets for AC checking
-        const targetArray = await erps.utils.getTargetArray();
+        let targetArray = await erps.utils.getTargetArray();
+
+        // Handle self-targeting: create synthetic target array with actor's token
+        if (this.system.selfTarget) {
+          const selfToken = this._getSelfTargetToken(_actor);
+          if (selfToken) {
+            targetArray = [selfToken];
+            Logger.debug(
+              "Self-targeting enabled - using synthetic target array",
+              { actorId: _actor.id, actorName: _actor.name },
+              "ACTION_CARD",
+            );
+          } else {
+            Logger.warn(
+              "Self-targeting enabled but no token found for actor",
+              { actorId: _actor.id, actorName: _actor.name },
+              "ACTION_CARD",
+            );
+            ui.notifications.warn(
+              game.i18n.localize(
+                "EVENTIDE_RP_SYSTEM.Errors.SelfTargetNoToken",
+              ),
+            );
+            return { success: false, reason: "noSelfToken" };
+          }
+        }
+
         if (targetArray.length === 0) {
           Logger.warn("No targets found for attack chain", null, "ACTION_CARD");
           ui.notifications.warn(
@@ -599,7 +625,33 @@ export function ItemActionCardExecutionMixin(Base) {
 
       try {
         // Get targets
-        const targetArray = await erps.utils.getTargetArray();
+        let targetArray = await erps.utils.getTargetArray();
+
+        // Handle self-targeting: create synthetic target array with actor's token
+        if (this.system.selfTarget) {
+          const selfToken = this._getSelfTargetToken(_actor);
+          if (selfToken) {
+            targetArray = [selfToken];
+            Logger.debug(
+              "Self-targeting enabled - using synthetic target array",
+              { actorId: _actor.id, actorName: _actor.name },
+              "ACTION_CARD",
+            );
+          } else {
+            Logger.warn(
+              "Self-targeting enabled but no token found for actor",
+              { actorId: _actor.id, actorName: _actor.name },
+              "ACTION_CARD",
+            );
+            ui.notifications.warn(
+              game.i18n.localize(
+                "EVENTIDE_RP_SYSTEM.Errors.SelfTargetNoToken",
+              ),
+            );
+            return { success: false, reason: "noSelfToken" };
+          }
+        }
+
         if (targetArray.length === 0) {
           Logger.warn("No targets found for saved damage", null, "ACTION_CARD");
           ui.notifications.warn(
@@ -1321,6 +1373,29 @@ export function ItemActionCardExecutionMixin(Base) {
       } else {
         throw new Error(`Unknown action card mode: ${this.system.mode}`);
       }
+    }
+
+    /**
+     * Get the actor's token for self-targeting
+     * @param {Actor} actor - The actor to get the token for
+     * @returns {TokenDocument|null} The actor's token or null if not found
+     * @private
+     */
+    _getSelfTargetToken(actor) {
+      // First try to get the actor's synthetic token (preferred)
+      if (actor.token) {
+        return actor.token;
+      }
+
+      // Fallback to getting active tokens from the canvas
+      const activeTokens = actor.getActiveTokens();
+      if (activeTokens.length > 0) {
+        // Return the first active token
+        return activeTokens[0];
+      }
+
+      // No token found
+      return null;
     }
 
     /**

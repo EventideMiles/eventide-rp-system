@@ -79,6 +79,10 @@
         "EnforceStatusChoice": {
           "label": "Enforce Status Choice",
           "hint": "When enabled, prevents rolling this action card if more than one status effect is selected. Users must select zero or one status effects."
+        },
+        "SelfTarget": {
+          "label": "Self-Target",
+          "hint": "When enabled, this action card automatically targets your own actor instead of requiring target selection. Useful for self-buffs and self-healing effects."
         }
       }
     }

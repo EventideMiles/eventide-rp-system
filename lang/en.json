@@ -161,6 +161,10 @@
           "label": "Enforce Status Choice",
           "hint": "When enabled, prevents rolling this action card if more than one status effect is selected. Users must select zero or one status effects."
         },
+        "SelfTarget": {
+          "label": "Self-Target",
+          "hint": "When enabled, this action card automatically targets your own actor instead of requiring target selection. Useful for self-buffs and self-healing effects."
+        },
         "CreateNewPower": "Create New Power",
         "CreateNewStatus": "Create New Status",
         "RollValue": "Roll Value",
@@ -558,6 +562,7 @@
       "ActionCardExecuteFailed": "Failed to execute action card",
       "NoTargetsAttackChain": "No targets selected for attack chain",
       "NoTargetsSavedDamage": "No targets selected for saved damage",
+      "SelfTargetNoToken": "Self-targeting is enabled but your actor does not have a token on the canvas. Please place a token for your actor.",
       "ApprovalRequestFailed": "Failed to send approval request to GM",
       "ActionCardInvalid": "Invalid action card",
       "ActionCardEffectFailed": "Failed to apply action card effect",

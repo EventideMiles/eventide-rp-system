@@ -314,6 +314,16 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
       initial: false,
     });
 
+    /**
+     * Whether this action card targets the user's own actor
+     * When enabled, creates a synthetic target array containing the actor's token
+     * Bypasses normal target validation requirements
+     */
+    schema.selfTarget = new fields.BooleanField({
+      required: true,
+      initial: false,
+    });
+
     return schema;
   }
 }
