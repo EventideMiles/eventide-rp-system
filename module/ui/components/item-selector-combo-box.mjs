@@ -228,20 +228,35 @@ export class ItemSelectorComboBox {
     listItem.setAttribute("role", "option");
     listItem.setAttribute("aria-selected", "false");
 
-    listItem.innerHTML = `
-      <div class="erps-item-selector-combo-box__item-icon">
-        <img src="${item.img}" alt="${item.name}" width="50" height="50">
-      </div>
-      <div class="erps-item-selector-combo-box__item-name">
-        ${item.name}
-      </div>
-      <div class="erps-item-selector-combo-box__item-type">
-        ${item.type}
-      </div>
-      <div class="erps-item-selector-combo-box__item-source">
-        ${item.source}
-      </div>
-    `;
+    // Create icon container
+    const iconDiv = document.createElement("div");
+    iconDiv.className = "erps-item-selector-combo-box__item-icon";
+    const img = document.createElement("img");
+    img.src = item.img;
+    img.alt = item.name;
+    img.width = 50;
+    img.height = 50;
+    iconDiv.appendChild(img);
+
+    // Create name element with textContent (auto-escapes)
+    const nameDiv = document.createElement("div");
+    nameDiv.className = "erps-item-selector-combo-box__item-name";
+    nameDiv.textContent = item.name;
+
+    // Create type element
+    const typeDiv = document.createElement("div");
+    typeDiv.className = "erps-item-selector-combo-box__item-type";
+    typeDiv.textContent = item.type;
+
+    // Create source element
+    const sourceDiv = document.createElement("div");
+    sourceDiv.className = "erps-item-selector-combo-box__item-source";
+    sourceDiv.textContent = item.source;
+
+    listItem.appendChild(iconDiv);
+    listItem.appendChild(nameDiv);
+    listItem.appendChild(typeDiv);
+    listItem.appendChild(sourceDiv);
 
     return listItem;
   }
