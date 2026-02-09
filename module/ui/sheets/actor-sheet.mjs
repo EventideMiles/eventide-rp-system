@@ -599,6 +599,10 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
       document.head.appendChild(scrollbarHideStyle);
       this._scrollbarHideStyle = scrollbarHideStyle;
 
+      // Add CSS class to suppress hover animations on action card groups
+      // This prevents flickering when context menu appears over action card groups
+      this.element.classList.add("context-menu-active");
+
       if (originalOnOpen) originalOnOpen.call(contextMenu, target);
     };
 
@@ -636,6 +640,9 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
             // eslint-disable-next-line no-unused-expressions
             this.element.offsetHeight; // Force reflow
           }
+
+          // Remove CSS class to re-enable hover animations
+          this.element.classList.remove("context-menu-active");
 
           // Re-enable ALL drop zones globally
           this._enableAllDropZones();
