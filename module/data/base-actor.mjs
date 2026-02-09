@@ -220,6 +220,8 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
 
     schema.statTotal = new fields.SchemaField({
       value: new fields.NumberField({ ...requiredInteger, initial: 0 }),
+      baseValue: new fields.NumberField({ ...requiredInteger, initial: 0 }),
+      max: new fields.NumberField({ ...requiredInteger, initial: 0 }),
       mainInit: new fields.NumberField({
         required: true,
         nullable: false,
@@ -424,6 +426,15 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
       this.resolve.value = this.resolve.max;
     }
 
+    // Calculate base stat total (sum of base values only, excluding modifiers)
+    this.statTotal.baseValue = Object.values(this.abilities).reduce(
+      (total, ability) => {
+        return total + ability.value;
+      },
+      0,
+    );
+
+    // Calculate stat total including modifiers
     this.statTotal.value = Object.values(this.abilities).reduce(
       (total, ability) => {
         return total + ability.total;
@@ -435,6 +446,9 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
       (this.abilities.acro.total + this.abilities.wits.total) / 2;
 
     this.statTotal.subInit = this.statTotal.value / 100;
+
+    // Calculate stat points max from formula
+    this.statTotal.max = this.calculateDerivedStatPointsMax();
 
     // Calculate XP from CR using the configurable formula (primarily for NPCs)
     if (this.cr !== undefined && this.cr >= 0) {
@@ -585,6 +599,51 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
       // Fallback to legacy calculation: 100 + (10 * fort)
       const fortTotal = this.abilities?.fort?.total ?? 0;
       return Math.max(10, 100 + 10 * fortTotal);
+    }
+  }
+
+  /**
+   * Calculate derived stat points max using the configurable formula
+   *
+   * Uses the system setting for stat points calculation formula.
+   * Formula set to "0" disables the functionality (returns 0).
+   *
+   * @returns {number} The calculated stat points max value
+   */
+  calculateDerivedStatPointsMax() {
+    try {
+      const formula =
+        game.settings?.get("eventide-rp-system", "statPointsFormula") ||
+        "14 + (2 * @lvl.value)";
+
+      // If formula is "0", disable functionality
+      if (formula === "0") {
+        return 0;
+      }
+
+      // Build roll data manually (getRollData is on the actor document, not the data model)
+      const rollData = {
+        lvl: this.attributes.level,
+        will: this.abilities.will,
+        fort: this.abilities.fort,
+        acro: this.abilities.acro,
+        phys: this.abilities.phys,
+        wits: this.abilities.wits,
+      };
+
+      // Use Foundry's Roll class to safely evaluate the formula
+      const roll = new Roll(formula, rollData);
+      const result = roll.evaluateSync();
+
+      return Math.max(0, Math.floor(result.total));
+    } catch (error) {
+      Logger.warn(
+        "Error calculating derived stat points max",
+        error,
+        "BASE_ACTOR",
+      );
+      // Fallback to 0 on error (disables functionality)
+      return 0;
     }
   }
 }

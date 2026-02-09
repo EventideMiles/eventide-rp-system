@@ -60,6 +60,14 @@ Your character has **five core abilities**:
 - **Resolve**: Your health/stamina (typically derived from Fortitude)
 - **Power**: Resource for special abilities (typically derived from Will)
 
+**Color-Coded Stat Total**:
+
+As you set your abilities, the stat total may change colors to help you stay within your GM's requirements:
+
+- **Green**: You can add more points (under allocated)
+- **Grey**: You're properly balanced or no formula is active
+- **Red**: You've exceeded the allowed total (over allocated)
+
 ### 2. Make Your First Rolls (1 minute)
 
 1. **Click** any ability card to roll that ability

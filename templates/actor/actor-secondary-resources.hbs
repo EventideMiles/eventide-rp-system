@@ -41,13 +41,13 @@
       </div>
     </div>
 
-    <div class='erps-stat-box erps-stat-box--neutral'>
+    <div class='erps-stat-box {{statTotalColorClass}}'>
       <header class='erps-stat-box__upper'>
         <h4 class='erps-stat-box__label'>{{localize "EVENTIDE_RP_SYSTEM.UI.StatTotal"}}</h4>
       </header>
       <div class='erps-stat-box__lower' aria-label="{{localize 'EVENTIDE_RP_SYSTEM.AriaLabels.TotalStatPointsValue'}}">
         <span class="erps-stat-box__value" title="{{localize 'EVENTIDE_RP_SYSTEM.UI.TotalStatPoints'}}">
-          {{system.statTotal.value}}
+          {{system.statTotal.baseValue}}
         </span>
       </div>
     </div>

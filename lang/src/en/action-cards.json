@@ -75,7 +75,15 @@
         "GearEffectInsufficientWarning": "You don't have enough {gearName} in your inventory to apply this effect (need {required}, have {available}).",
         "GearEffectInventoryError": "Failed to apply gear effect: {error}",
         "StatusIntensified": "Status effect '{statusName}' intensified on {targetName}",
-        "StatusApplied": "Status effect '{statusName}' applied to {targetName}"
+        "StatusApplied": "Status effect '{statusName}' applied to {targetName}",
+        "EnforceStatusChoice": {
+          "label": "Enforce Status Choice",
+          "hint": "When enabled, prevents rolling this action card if more than one status effect is selected. Users must select zero or one status effects."
+        },
+        "SelfTarget": {
+          "label": "Self-Target",
+          "hint": "When enabled, this action card automatically targets your own actor instead of requiring target selection. Useful for self-buffs and self-healing effects."
+        }
       }
     }
   }

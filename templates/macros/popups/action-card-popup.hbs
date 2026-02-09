@@ -185,7 +185,8 @@
                   class="erps-form__status-effect-checkbox"
                   name="statusEffect-{{id}}"
                   value="{{id}}"
-                  checked
+                  {{#if selected}}checked{{/if}}
+                  data-action="onStatusEffectChange"
                   style="margin-right: 8px;"
                 />
                 <img src="{{img}}" alt="{{name}}" class="erps-form__effect-icon" style="width: 32px; height: 32px; object-fit: cover; border-radius: 4px; margin-right: 8px;" />

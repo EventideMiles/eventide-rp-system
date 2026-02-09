@@ -157,6 +157,14 @@
         "GearEffectInventoryError": "Failed to apply gear effect: {error}",
         "StatusIntensified": "Status effect '{statusName}' intensified on {targetName}",
         "StatusApplied": "Status effect '{statusName}' applied to {targetName}",
+        "EnforceStatusChoice": {
+          "label": "Enforce Status Choice",
+          "hint": "When enabled, prevents rolling this action card if more than one status effect is selected. Users must select zero or one status effects."
+        },
+        "SelfTarget": {
+          "label": "Self-Target",
+          "hint": "When enabled, this action card automatically targets your own actor instead of requiring target selection. Useful for self-buffs and self-healing effects."
+        },
         "CreateNewPower": "Create New Power",
         "CreateNewStatus": "Create New Status",
         "RollValue": "Roll Value",
@@ -554,6 +562,7 @@
       "ActionCardExecuteFailed": "Failed to execute action card",
       "NoTargetsAttackChain": "No targets selected for attack chain",
       "NoTargetsSavedDamage": "No targets selected for saved damage",
+      "SelfTargetNoToken": "Self-targeting is enabled but your actor does not have a token on the canvas. Please place a token for your actor.",
       "ApprovalRequestFailed": "Failed to send approval request to GM",
       "ActionCardInvalid": "Invalid action card",
       "ActionCardEffectFailed": "Failed to apply action card effect",
@@ -823,7 +832,8 @@
         },
         "ActionCard": {
           "NoEmbeddedItem": "This action card has no embedded item configured. Please add an item to the action slot before executing.",
-          "TargetingError": "You do not have the correct targets selected for this action card."
+          "TargetingError": "You do not have the correct targets selected for this action card.",
+          "TooManyStatuses": "This action card requires selecting 0 or 1 status effects. Currently {count} status effects are selected. Please deselect all but one status effect to proceed."
         },
         "Conversion": {
           "ActorToTransformation": "Convert actor <strong>{actorName}</strong> to a transformation item. This will copy the actor's ability values, combat powers, and action cards.",
@@ -1257,6 +1267,9 @@
     "MaxResolveFormulaName": "Max Resolve Formula",
     "MaxResolveFormulaHint": "Formula to calculate the maximum resolve for an actor. Default: max(100 + (10 * @fort.total), 10).",
     "MaxResolveFormulaWarning": "Max Resolve formula cannot be empty. Resetting to default.",
+    "StatPointsFormulaName": "Stat Points Formula",
+    "StatPointsFormulaHint": "Formula to calculate the maximum stat points for a character. Use @lvl.value for level. Set to '0' to disable color coding. Default: 14 + (2 * @lvl.value).",
+    "StatPointsFormulaWarning": "Stat Points formula cannot be empty. Resetting to default.",
     "MinimumPowerValueName": "Minimum Power Value",
     "MinimumPowerValueHint": "The minimum value that an actor's max power can be. Applies after percentage multipliers.",
     "MinimumPowerValueWarning": "Minimum Power Value must be a non-negative integer. Resetting to default ({0}).",

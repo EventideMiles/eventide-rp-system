@@ -111,6 +111,22 @@ Work with your GM to determine your starting ability scores. Common methods incl
 - Roll dice as directed by your GM
 - Assign results to abilities based on your concept
 
+#### Color-Coded Stat Total Feedback
+
+As you allocate your ability scores, you may notice the stat total display changing colors. This is the **Stat Points Formula** feature, which helps ensure your character meets your GM's requirements:
+
+- **Green**: Your stat total is BELOW the formula result (under allocated - you can add more points)
+- **Grey**: Formula is disabled or satisfied (no validation active OR properly allocated)
+- **Red**: Your stat total EXCEEDS the formula result (over allocated)
+
+The formula is configured by your GM and varies by campaign. If you see:
+
+- **Green**: You have points left to spend - add more to your abilities
+- **Grey**: Your character is properly balanced or no formula is active - you're good to go
+- **Red**: You've exceeded the allowed total - reduce some abilities to meet the formula
+
+If you're unsure about what the colors mean for your campaign, check with your GM about the formula they've configured.
+
 ### Step 3: Calculate Derived Values
 
 Once you have ability scores, calculate:

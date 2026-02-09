@@ -304,6 +304,26 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
       initial: false,
     });
 
+    /**
+     * Whether to enforce single status effect selection
+     * When enabled, users can only select 0 or 1 status effects
+     * Selecting multiple status effects will prevent card execution
+     */
+    schema.enforceStatusChoice = new fields.BooleanField({
+      required: true,
+      initial: false,
+    });
+
+    /**
+     * Whether this action card targets the user's own actor
+     * When enabled, creates a synthetic target array containing the actor's token
+     * Bypasses normal target validation requirements
+     */
+    schema.selfTarget = new fields.BooleanField({
+      required: true,
+      initial: false,
+    });
+
     return schema;
   }
 }

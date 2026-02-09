@@ -72,6 +72,7 @@
       "ActionCardExecuteFailed": "Failed to execute action card",
       "NoTargetsAttackChain": "No targets selected for attack chain",
       "NoTargetsSavedDamage": "No targets selected for saved damage",
+      "SelfTargetNoToken": "Self-targeting is enabled but your actor does not have a token on the canvas. Please place a token for your actor.",
       "ApprovalRequestFailed": "Failed to send approval request to GM",
       "ActionCardInvalid": "Invalid action card",
       "ActionCardEffectFailed": "Failed to apply action card effect",

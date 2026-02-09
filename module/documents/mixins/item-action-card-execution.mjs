@@ -140,7 +140,7 @@ export function ItemActionCardExecutionMixin(Base) {
           transformationSelections: options.transformationSelections || new Map(), // Pre-selected transformations
           selectedEffectIds: options.selectedEffectIds || null, // Selected status effect IDs
           appliedStatusEffects: new Set(), // Track which status effects have been applied (target-effect pairs)
-          statusApplicationCount: 0, // Track status applications for limit (Issue #128)
+          statusApplicationCounts: new Map(), // Track per-target: Map<targetId, count> (Issue #128)
           statusApplicationLimit: this.system.statusApplicationLimit ?? 1, // Default to 1 if not set
         };
 
@@ -406,7 +406,33 @@ export function ItemActionCardExecutionMixin(Base) {
         }
 
         // Get targets for AC checking
-        const targetArray = await erps.utils.getTargetArray();
+        let targetArray = await erps.utils.getTargetArray();
+
+        // Handle self-targeting: create synthetic target array with actor's token
+        if (this.system.selfTarget) {
+          const selfToken = this._getSelfTargetToken(_actor);
+          if (selfToken) {
+            targetArray = [selfToken];
+            Logger.debug(
+              "Self-targeting enabled - using synthetic target array",
+              { actorId: _actor.id, actorName: _actor.name },
+              "ACTION_CARD",
+            );
+          } else {
+            Logger.warn(
+              "Self-targeting enabled but no token found for actor",
+              { actorId: _actor.id, actorName: _actor.name },
+              "ACTION_CARD",
+            );
+            ui.notifications.warn(
+              game.i18n.localize(
+                "EVENTIDE_RP_SYSTEM.Errors.SelfTargetNoToken",
+              ),
+            );
+            return { success: false, reason: "noSelfToken" };
+          }
+        }
+
         if (targetArray.length === 0) {
           Logger.warn("No targets found for attack chain", null, "ACTION_CARD");
           ui.notifications.warn(
@@ -599,7 +625,33 @@ export function ItemActionCardExecutionMixin(Base) {
 
       try {
         // Get targets
-        const targetArray = await erps.utils.getTargetArray();
+        let targetArray = await erps.utils.getTargetArray();
+
+        // Handle self-targeting: create synthetic target array with actor's token
+        if (this.system.selfTarget) {
+          const selfToken = this._getSelfTargetToken(_actor);
+          if (selfToken) {
+            targetArray = [selfToken];
+            Logger.debug(
+              "Self-targeting enabled - using synthetic target array",
+              { actorId: _actor.id, actorName: _actor.name },
+              "ACTION_CARD",
+            );
+          } else {
+            Logger.warn(
+              "Self-targeting enabled but no token found for actor",
+              { actorId: _actor.id, actorName: _actor.name },
+              "ACTION_CARD",
+            );
+            ui.notifications.warn(
+              game.i18n.localize(
+                "EVENTIDE_RP_SYSTEM.Errors.SelfTargetNoToken",
+              ),
+            );
+            return { success: false, reason: "noSelfToken" };
+          }
+        }
+
         if (targetArray.length === 0) {
           Logger.warn("No targets found for saved damage", null, "ACTION_CARD");
           ui.notifications.warn(
@@ -767,8 +819,8 @@ export function ItemActionCardExecutionMixin(Base) {
         "ACTION_CARD",
       );
 
+      // Always respect user selections (enforceStatusChoice is only for front-end validation)
       if (selectedEffectIds !== null && selectedEffectIds !== undefined) {
-        // If selection is specified, filter to only selected effects
         effectsToApply = this.system.embeddedStatusEffects.filter((effect, index) => {
           const effectId = effect._id || `effect-${index}`;
           const isIncluded = selectedEffectIds.includes(effectId);
@@ -786,7 +838,7 @@ export function ItemActionCardExecutionMixin(Base) {
         });
 
         Logger.debug(
-          `Filtered status effects based on selection`,
+          `Filtered status effects based on user selection`,
           {
             totalEffects: this.system.embeddedStatusEffects.length,
             selectedCount: effectsToApply.length,
@@ -819,6 +871,27 @@ export function ItemActionCardExecutionMixin(Base) {
           );
 
           if (shouldApplyStatus) {
+            // Check limit BEFORE entering effects loop (per application, not per effect)
+            const statusApplicationLimit = this._currentRepetitionContext?.statusApplicationLimit ?? 1;
+            const statusApplicationCounts = this._currentRepetitionContext?.statusApplicationCounts ?? new Map();
+            const targetId = result.target.id;
+            const statusApplicationCount = statusApplicationCounts.get(targetId) ?? 0;
+
+            if (statusApplicationLimit > 0 && statusApplicationCount >= statusApplicationLimit) {
+              Logger.debug(
+                `Skipping all effects for target "${result.target.name}" - status application limit reached (${statusApplicationCount}/${statusApplicationLimit})`,
+                {
+                  targetId,
+                  targetName: result.target.name,
+                  limit: statusApplicationLimit,
+                  count: statusApplicationCount,
+                },
+                "ACTION_CARD",
+              );
+              continue; // Skip this target entirely
+            }
+
+            // Apply ALL effects for this target
             for (const effectData of effectsToApply) {
               // Validate effect entry structure
               if (!effectData) {
@@ -828,26 +901,6 @@ export function ItemActionCardExecutionMixin(Base) {
                     effectData,
                     actionCardName: this.name,
                     targetName: result.target.name,
-                  },
-                  "ACTION_CARD",
-                );
-                continue;
-              }
-
-              // Check status application limit (Issue #128)
-              // statusApplicationLimit = 0 means no limit (apply on every success)
-              // statusApplicationLimit > 0 means apply up to exactly that many times total
-              const statusApplicationLimit = this._currentRepetitionContext?.statusApplicationLimit ?? 1;
-              const statusApplicationCount = this._currentRepetitionContext?.statusApplicationCount ?? 0;
-
-              if (statusApplicationLimit > 0 && statusApplicationCount >= statusApplicationLimit) {
-                Logger.debug(
-                  `Skipping effect "${effectData.name}" - status application limit reached (${statusApplicationCount}/${statusApplicationLimit})`,
-                  {
-                    targetId: result.target.id,
-                    effectName: effectData.name,
-                    limit: statusApplicationLimit,
-                    count: statusApplicationCount,
                   },
                   "ACTION_CARD",
                 );
@@ -1014,11 +1067,6 @@ export function ItemActionCardExecutionMixin(Base) {
                 if (applicationResult.applied && this._currentRepetitionContext?.appliedStatusEffects) {
                   const effectKey = `${result.target.id}-${effectData.name}`;
                   this._currentRepetitionContext.appliedStatusEffects.add(effectKey);
-
-                  // Increment status application counter (Issue #128)
-                  if (this._currentRepetitionContext.statusApplicationCount !== undefined) {
-                    this._currentRepetitionContext.statusApplicationCount++;
-                  }
                 }
 
                 // Wait for execution delay after applying status effects
@@ -1050,6 +1098,24 @@ export function ItemActionCardExecutionMixin(Base) {
                   error: error.message,
                 });
               }
+            }
+
+            // Increment count AFTER all effects applied (per application, not per effect)
+            if (this._currentRepetitionContext?.statusApplicationCounts instanceof Map) {
+              const targetId = result.target.id;
+              const currentCount = this._currentRepetitionContext.statusApplicationCounts.get(targetId) ?? 0;
+              this._currentRepetitionContext.statusApplicationCounts.set(targetId, currentCount + 1);
+
+              Logger.debug(
+                `Status application count incremented for target "${result.target.name}"`,
+                {
+                  targetId,
+                  targetName: result.target.name,
+                  newCount: currentCount + 1,
+                  limit: this._currentRepetitionContext.statusApplicationLimit,
+                },
+                "ACTION_CARD",
+              );
             }
           }
         }
@@ -1321,6 +1387,29 @@ export function ItemActionCardExecutionMixin(Base) {
       } else {
         throw new Error(`Unknown action card mode: ${this.system.mode}`);
       }
+    }
+
+    /**
+     * Get the actor's token for self-targeting
+     * @param {Actor} actor - The actor to get the token for
+     * @returns {TokenDocument|null} The actor's token or null if not found
+     * @private
+     */
+    _getSelfTargetToken(actor) {
+      // First try to get the actor's synthetic token (preferred)
+      if (actor.token) {
+        return actor.token;
+      }
+
+      // Fallback to getting active tokens from the canvas
+      const activeTokens = actor.getActiveTokens();
+      if (activeTokens.length > 0) {
+        // Return the first active token
+        return activeTokens[0];
+      }
+
+      // No token found
+      return null;
     }
 
     /**
