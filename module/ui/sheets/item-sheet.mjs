@@ -849,7 +849,6 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
         "system.savedDamage.formula": event.target.value,
         "system.attackChain.damageFormula": event.target.value,
       };
-      console.warn(updateData);
       await this.item.update(updateData);
       return;
     }
