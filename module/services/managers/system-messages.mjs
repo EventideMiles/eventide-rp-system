@@ -3,6 +3,7 @@ import { erpsSoundManager } from "./sound-manager.mjs";
 import { Logger } from "../logger.mjs";
 
 const { renderTemplate } = foundry.applications.handlebars;
+const { TextEditor } = foundry.applications.ux;
 
 /**
  * ERPSMessageHandler - Handles all chat message creation for the Eventide RP System
@@ -69,6 +70,32 @@ class ERPSMessageHandler {
   }
 
   /**
+   * Enriches an item description for safe HTML rendering
+   * @private
+   * @param {Item} item - The item whose description should be enriched
+   * @returns {Promise<string>} The enriched and sanitized HTML
+   */
+  async _enrichDescription(item) {
+    if (!item?.system?.description) {
+      return "";
+    }
+
+    try {
+      return await TextEditor.implementation.enrichHTML(
+        item.system.description,
+        {
+          secrets: item.isOwner ?? false,
+          rollData: item.getRollData?.() ?? {},
+          relativeTo: item,
+        },
+      );
+    } catch (error) {
+      Logger.warn("Failed to enrich description", error, "SYSTEM_MESSAGES");
+      return item.system.description;
+    }
+  }
+
+  /**
    * Creates a chat message for the given status effect item, including its name, description, and active effects.
    * @param {Item} item - The status effect item to generate the message for.
    * @param {string} [context] - Optional context message to display
@@ -77,12 +104,14 @@ class ERPSMessageHandler {
   async createStatusMessage(item, context = null) {
     const effects = item.effects.toObject();
     const style = ERPSRollUtilities.getItemStyle(item);
+    const enrichedDescription = await this._enrichDescription(item);
 
     const data = {
       item,
       effects,
       style,
       context,
+      enrichedDescription,
     };
 
     // Play status apply sound locally
@@ -110,12 +139,14 @@ class ERPSMessageHandler {
   async createGearMessage(item, context = null) {
     const effects = item.effects.toObject();
     const style = ERPSRollUtilities.getItemStyle(item);
+    const enrichedDescription = await this._enrichDescription(item);
 
     const data = {
       item,
       effects,
       style,
       context,
+      enrichedDescription,
     };
 
     // Play gear equip sound locally (similar to status apply)
@@ -159,12 +190,14 @@ class ERPSMessageHandler {
     // If this is a non-roll feature
     if (!isRoll) {
       const effects = item.effects.toObject();
+      const enrichedDescription = await this._enrichDescription(item);
       const data = {
         item,
         effects,
         style,
         hasRoll: false,
         actor,
+        enrichedDescription,
       };
 
       return this._createChatMessage("feature", data, {
@@ -218,6 +251,7 @@ class ERPSMessageHandler {
 
       // Prepare the template data
       const effects = item.effects.toObject();
+      const enrichedDescription = await this._enrichDescription(item);
       const data = {
         item,
         effects,
@@ -235,6 +269,7 @@ class ERPSMessageHandler {
         targetRollData,
         critAllowed: true,
         actor,
+        enrichedDescription,
       };
 
       // Play feature roll sound locally and add to message
@@ -357,6 +392,7 @@ class ERPSMessageHandler {
 
     // If this is a non-roll item
     if (!isRoll) {
+      const enrichedDescription = await this._enrichDescription(item);
       const data = {
         img: item.img,
         name: item.name,
@@ -364,9 +400,9 @@ class ERPSMessageHandler {
         style,
         isGear: item.type === "gear",
         className: item.system.className || "",
-        description: item.system.description,
         hasRoll: false,
         actor,
+        enrichedDescription,
       };
 
       // Play combat power sound locally and add to message
@@ -426,11 +462,11 @@ class ERPSMessageHandler {
         : [];
 
       // Prepare the template data
+      const enrichedDescription = await this._enrichDescription(item);
       const data = {
         img: item.img,
         name: item.name,
         system: item.system,
-        description: item.system.description,
         isGear: item.type === "gear",
         className: item.system.className || "",
         roll: result,
@@ -447,6 +483,7 @@ class ERPSMessageHandler {
         targetRollData,
         critAllowed: true,
         actor,
+        enrichedDescription,
       };
 
       // Play combat power sound locally and add to message
@@ -479,7 +516,6 @@ class ERPSMessageHandler {
         style,
         rollError: true,
         errorMessage: error.message,
-        description: item.system.description,
         hasRoll: false,
         isGear: item.type === "gear",
         actor,
@@ -633,11 +669,13 @@ class ERPSMessageHandler {
    * @returns {Promise<ChatMessage>} The created chat message
    */
   async createTransformationMessage({ actor, transformation, isApplying }) {
+    const enrichedDescription = await this._enrichDescription(transformation);
     const data = {
       actor,
       transformation,
       isApplying,
       embeddedPowers: transformation.system.getEmbeddedCombatPowers(),
+      enrichedDescription,
     };
 
     // Play appropriate sound locally and add to message
