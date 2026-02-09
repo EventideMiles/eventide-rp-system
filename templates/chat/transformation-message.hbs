@@ -5,9 +5,9 @@
   </header>
 
   <div class="chat-card__description">
-    <div class="chat-card__description--header">{{actor.name}}. . . </div> 
+    <div class="chat-card__description--header">{{actor.name}}. . . </div>
     {{#if (and transformation.system.description isApplying)}} {{!-- Apply with description --}}
-      <p>{{{transformation.system.description}}}</p>
+      <p>{{{enrichedDescription}}}</p>
     {{/if}}
     {{#if (and (eq transformation.system.description "") isApplying)}} {{!-- Apply without description --}}
       <p>transforms into {{transformation.name}}!</p>

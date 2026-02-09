@@ -1,4 +1,5 @@
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
+const { TextEditor } = foundry.applications.ux;
 import { WindowSizingFixMixin } from "./_module.mjs";
 
 export class EventidePopupHelpers extends WindowSizingFixMixin(
@@ -19,11 +20,13 @@ export class EventidePopupHelpers extends WindowSizingFixMixin(
   }
 
   async _prepareContext(_options) {
+    const enrichedDescription = await this._enrichDescription();
     const context = {
       item: this.item,
       effects: Array.from(this.item.effects),
       mainEffect: Array.from(this.item.effects)[0],
       isGM: game.user.isGM,
+      enrichedDescription,
     };
 
     this.problems = await this.checkEligibility();
@@ -31,6 +34,30 @@ export class EventidePopupHelpers extends WindowSizingFixMixin(
     context.footerButtons = await this._prepareFooterButtons();
 
     return context;
+  }
+
+  /**
+   * Enriches an item description for safe HTML rendering
+   * @private
+   * @returns {Promise<string>} The enriched and sanitized HTML
+   */
+  async _enrichDescription() {
+    if (!this.item?.system?.description) {
+      return "";
+    }
+
+    try {
+      return await TextEditor.implementation.enrichHTML(
+        this.item.system.description,
+        {
+          secrets: this.item.isOwner ?? false,
+          rollData: this.item.getRollData?.() ?? {},
+          relativeTo: this.item,
+        },
+      );
+    } catch {
+      return this.item.system.description;
+    }
   }
 
   async _preparePartContext(partId, context, _options) {
