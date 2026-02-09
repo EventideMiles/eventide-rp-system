@@ -2,6 +2,18 @@
 
 ## Latest Release
 
+**[v13.21.0](release-notes/v13.21.0.md)** - Action Card Enhancements & Quality of Life _(February 2026)_
+
+**Key Highlights:**
+
+- **Stat Points Formula** with configurable calculation and color-coded feedback (green/grey/red)
+- **Self-Target Action Card Toggle** for automatic self-targeting of self-buff cards
+- **Enforce Status Choice** validation preventing multiple status effect selection
+- **Character Effect Default Mode** fix from OVERRIDE to ADD
+- **Context Menu Flicker** partial fix with documented known limitations
+
+## Recent Major Releases
+
 **[v13.20.0](release-notes/v13.20.0.md)** - Documentation Overhaul & Derived Value System _(February 2026)_
 
 **Key Highlights:**
@@ -16,8 +28,6 @@
 - **Complete character examples** (1,021 lines) with fully detailed character sheets for new players
 - **Enhanced system feature docs** covering action economy, cleanse actions, and prepared actions in depth
 - **2,758 lines added** across 27 documentation files (8 new, 19 modified) with improved cross-references throughout
-
-## Recent Major Releases
 
 **[v13.19.1](release-notes/v13.19.1.md)** - Migration and UI Fixes _(January 2026)_
 
@@ -159,8 +169,9 @@ Enhanced character customization through circumstantial bonuses and feature-base
 
 | Version      | Release Date  | Focus                                                                                  |
 | ------------ | ------------- | -------------------------------------------------------------------------------------- |
-| **v13.20.0** | February 2026 | Documentation Overhaul                                                                 |
-| **v13.19.1** | January 2026  | Migration and UI Fixes                                                                 |
+| **v13.21.0** | February 2026 | Action Card Enhancements & Quality of Life                                             |
+| v13.20.0     | February 2026 | Documentation Overhaul                                                                 |
+| v13.19.1     | January 2026  | Migration and UI Fixes                                                                 |
 | v13.19.0     | January 2026  | Action Card Execution Flow Update                                                      |
 | v13.18.1     | January 2026  | Enhanced Action Chain Control, Mixed Attribute Rolls, and Selective Status Application |
 | v13.18.0     | January 2026  | GM Action Cards, Smart Context-Aware Creation, and Backward Compatibility              |
@@ -179,7 +190,7 @@ Enhanced character customization through circumstantial bonuses and feature-base
 
 ### By Feature Area
 
-- **Action Cards**: [v13.11.0](release-notes/v13.11.0.md), [v13.13.3](release-notes/v13.13.3.md), [v13.14.0](release-notes/v13.14.0.md), [v13.15.0](release-notes/v13.15.0.md), [v13.16.0](release-notes/v13.16.0.md), [v13.18.0](release-notes/v13.18.0.md), [v13.18.1](release-notes/v13.18.1.md), [v13.19.0](release-notes/v13.19.0.md), [v13.19.1](release-notes/v13.19.1.md), [v13.20.0](release-notes/v13.20.0.md)
+- **Action Cards**: [v13.11.0](release-notes/v13.11.0.md), [v13.13.3](release-notes/v13.13.3.md), [v13.14.0](release-notes/v13.14.0.md), [v13.15.0](release-notes/v13.15.0.md), [v13.16.0](release-notes/v13.16.0.md), [v13.18.0](release-notes/v13.18.0.md), [v13.18.1](release-notes/v13.18.1.md), [v13.19.0](release-notes/v13.19.0.md), [v13.19.1](release-notes/v13.19.1.md), [v13.20.0](release-notes/v13.20.0.md), [v13.21.0](release-notes/v13.21.0.md)
 - **GM Tools**: [v13.18.0](release-notes/v13.18.0.md), [v13.18.1](release-notes/v13.18.1.md), [v13.20.0](release-notes/v13.20.0.md)
 - **Transformations**: [v13.14.0](release-notes/v13.14.0.md), [v13.15.0](release-notes/v13.15.0.md), [v13.15.5](release-notes/v13.15.5.md), [v13.17.0](release-notes/v13.17.0.md)
 - **Features & Bonuses**: [v13.10.0](release-notes/v13.10.0.md), [v13.19.0](release-notes/v13.19.0.md)
@@ -219,8 +230,8 @@ We encourage users to:
 - Review the documentation guides for comprehensive system information
 - Join community discussions for tips and best practices
 
-- Review the **[v13.20.0](release-notes/v13.20.0.md)**, **[v13.19.1](release-notes/v13.19.1.md)**, and **[v13.19.0](release-notes/v13.19.0.md)** release notes for detailed feature information and updates.
+- Review the **[v13.21.0](release-notes/v13.21.0.md)** and **[v13.20.0](release-notes/v13.20.0.md)** release notes for detailed feature information and updates.
 
 ---
 
-**Current Version**: v13.20.0 | **Foundry VTT Compatibility**: v13+ | **Last Updated**: February 2026
+**Current Version**: v13.21.0 | **Foundry VTT Compatibility**: v13+ | **Last Updated**: February 2026
