@@ -12,3 +12,12 @@ export * from "./migrations/_module.mjs";
 export * from "./logger.mjs";
 export * from "./image-zoom.mjs";
 export * from "./transformation-converter.mjs";
+
+// Phase 1 Refactoring - New Services
+export * from "./effect-manager.mjs";
+export * from "./document-action-handler.mjs";
+export * from "./context-menu-builder.mjs";
+
+// Phase 2 Refactoring - New Services
+export * from "./permission-validator.mjs";
+export * from "./embedded-item-manager.mjs";
