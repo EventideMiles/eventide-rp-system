@@ -21,3 +21,8 @@ export * from "./context-menu-builder.mjs";
 // Phase 2 Refactoring - New Services
 export * from "./permission-validator.mjs";
 export * from "./embedded-item-manager.mjs";
+
+// Phase 3 Refactoring - New Services
+export * from "./resource-validator.mjs";
+export * from "./transformation-applicator.mjs";
+export * from "./repetition-handler.mjs";

@@ -1,8 +1,9 @@
 import { Logger } from "../../services/logger.mjs";
+import { ResourceValidator } from "../../services/resource-validator.mjs";
+import { TransformationApplicator } from "../../services/transformation-applicator.mjs";
+import { RepetitionHandler } from "../../services/repetition-handler.mjs";
 import { InventoryUtils } from "../../helpers/_module.mjs";
 import { StatusIntensification } from "../../helpers/status-intensification.mjs";
-
-const { renderTemplate } = foundry.applications.handlebars;
 
 /**
  * Mixin that provides action card execution functionality to Item documents.
@@ -86,14 +87,12 @@ export function ItemActionCardExecutionMixin(Base) {
       }
 
       try {
-        // Calculate number of repetitions
-        const repetitionsRoll = new Roll(
-          this.system.repetitions || "1",
-          actor.getRollData(),
-        );
-        await repetitionsRoll.evaluate();
-        const repetitionCount = Math.floor(repetitionsRoll.total);
-
+        // Calculate number of repetitions using RepetitionHandler
+        const { count: repetitionCount, roll: repetitionsRoll } =
+          await RepetitionHandler.calculateRepetitionCount(
+            this.system.repetitions || "1",
+            actor,
+          );
 
         // Check if action fails due to insufficient repetitions
         if (repetitionCount <= 0) {
@@ -116,41 +115,75 @@ export function ItemActionCardExecutionMixin(Base) {
           return failureResult;
         }
 
-        // Check system-level execution limit (Issue #128)
-        const systemExecutionLimit =
-          game.settings?.get("eventide-rp-system", "actionCardExecutionLimit") ?? 0;
-        const effectiveRepetitionCount =
-          systemExecutionLimit > 0
-            ? Math.min(repetitionCount, systemExecutionLimit)
-            : repetitionCount;
+        // Apply system-level execution limit using RepetitionHandler
+        const effectiveRepetitionCount = RepetitionHandler.applySystemLimit(
+          repetitionCount,
+          this.name,
+        );
 
-        if (systemExecutionLimit > 0 && repetitionCount > systemExecutionLimit) {
-          Logger.info(
-            `Action card repetitions capped by system limit: ${repetitionCount} -> ${systemExecutionLimit}`,
-            { actionCardName: this.name, originalCount: repetitionCount, limit: systemExecutionLimit },
-            "ACTION_CARD",
-          );
-        }
-
-        // Store current repetition context for cost control
-        this._currentRepetitionContext = {
-          inExecution: true,
-          costOnRepetition: this.system.costOnRepetition,
-          appliedTransformations: new Set(), // Track which transformations have been applied
-          transformationSelections: options.transformationSelections || new Map(), // Pre-selected transformations
-          selectedEffectIds: options.selectedEffectIds || null, // Selected status effect IDs
-          appliedStatusEffects: new Set(), // Track which status effects have been applied (target-effect pairs)
-          statusApplicationCounts: new Map(), // Track per-target: Map<targetId, count> (Issue #128)
-          statusApplicationLimit: this.system.statusApplicationLimit ?? 1, // Default to 1 if not set
-        };
+        // Create repetition context using RepetitionHandler
+        this._currentRepetitionContext = RepetitionHandler.createContext(
+          this.system,
+          options,
+        );
 
         // Execute repetitions
         const results = [];
         for (let i = 0; i < effectiveRepetitionCount; i++) {
 
+          // Check if resource was depleted in a previous iteration (flag it forward pattern)
+          // This check happens AFTER the first iteration, checking the flag set by handleBypass
+          if (i > 0 && options?.actionCardContext?.resourceDepleted) {
+            Logger.warn(
+              `Action card execution halted at repetition ${i + 1} - resource depleted in previous iteration`,
+              {
+                actionCardName: this.name,
+                depletedType: options.actionCardContext.depletedResourceType,
+                depletedItem: options.actionCardContext.depletedItemName,
+              },
+              "ACTION_CARD",
+            );
+
+            // Create a resource check result from the depletion info
+            const depletionCheck = {
+              canExecute: false,
+              reason: options.actionCardContext.depletedResourceType === "quantity"
+                ? "insufficientQuantity"
+                : "insufficientPower",
+              required: options.actionCardContext.depletedRequired,
+              available: options.actionCardContext.depletedAvailable,
+            };
+
+            // Send resource failure message
+            const embeddedItem = this.getEmbeddedItem();
+            await this.sendResourceFailureMessage(
+              actor,
+              depletionCheck,
+              embeddedItem,
+              i,
+              effectiveRepetitionCount,
+            );
+
+            // Return partial results with failure reason
+            const partialResult = {
+              success: false,
+              repetitionCount: effectiveRepetitionCount,
+              completedRepetitions: i,
+              results,
+              mode: this.system.mode,
+              reason: "insufficientResources",
+              resourceFailure: depletionCheck,
+            };
+
+            return partialResult;
+          }
+
           // Check resource constraints before execution
+          // IMPORTANT: Skip resource check on first iteration if actionCardContext exists,
+          // because handleBypass already consumed the resource and set the depletion flag.
+          // The depletion will be caught on the NEXT iteration via the flag-it-forward check above.
           const embeddedItem = this.getEmbeddedItem();
-          if (embeddedItem) {
+          if (embeddedItem && !(i === 0 && options?.actionCardContext)) {
             // Only check for cost consumption if costs should be applied for this repetition
             const shouldConsumeCost = this.system.costOnRepetition || i === 0;
             const resourceCheck = this.checkEmbeddedItemResources(
@@ -190,9 +223,11 @@ export function ItemActionCardExecutionMixin(Base) {
           }
 
           // Update repetition context for cost control BEFORE any embedded item calls
-          this._currentRepetitionContext.repetitionIndex = i;
-          this._currentRepetitionContext.shouldApplyCost =
-            this.system.costOnRepetition || i === 0;
+          RepetitionHandler.updateContextForIteration(
+            this._currentRepetitionContext,
+            i,
+            this.system.costOnRepetition,
+          );
 
           let currentRollResult = rollResult;
 
@@ -225,7 +260,12 @@ export function ItemActionCardExecutionMixin(Base) {
             effectiveRepetitionCount > 1
           ) {
             // Check if first iteration failed to trigger any effects
-            const firstIterationSuccess = this._checkIterationSuccess(result);
+            const firstIterationSuccess = RepetitionHandler.checkIterationSuccess(
+              result,
+              this.system,
+              (condition, oneHit, bothHit, rollTotal, threshold) =>
+                this._shouldApplyEffect(condition, oneHit, bothHit, rollTotal, threshold),
+            );
             if (!firstIterationSuccess) {
               Logger.info(
                 `Action card execution stopped due to failOnFirstMiss`,
@@ -262,10 +302,11 @@ export function ItemActionCardExecutionMixin(Base) {
         // Clean up repetition context
         delete this._currentRepetitionContext;
 
-        // Aggregate results
-        const combinedResult = this.aggregateRepetitionResults(
+        // Aggregate results using RepetitionHandler
+        const combinedResult = RepetitionHandler.aggregateResults(
           results,
           repetitionCount,
+          this.system.mode,
         );
 
         return combinedResult;
@@ -1129,54 +1170,24 @@ export function ItemActionCardExecutionMixin(Base) {
 
     /**
      * Check if embedded item has sufficient resources to execute
+     * Delegates to ResourceValidator service for validation logic.
      * @param {Item} embeddedItem - The embedded item to check
      * @param {Actor} actor - The actor executing the action card
+     * @param {boolean} [shouldConsumeCost=true] - Whether to check cost consumption
      * @returns {Object} Object with canExecute boolean and reason string
      */
     checkEmbeddedItemResources(embeddedItem, actor, shouldConsumeCost = true) {
-      if (!embeddedItem) {
-        return { canExecute: false, reason: "noEmbeddedItem" };
-      }
-
-      // Check combat power costs
-      if (embeddedItem.type === "combatPower") {
-        const powerCost = shouldConsumeCost ? embeddedItem.system.cost || 0 : 0;
-        const currentPower = actor.system.power?.value || 0;
-
-        if (powerCost > currentPower) {
-          return {
-            canExecute: false,
-            reason: "insufficientPower",
-            required: powerCost,
-            available: currentPower,
-          };
-        }
-      }
-
-      // Check gear quantity costs
-      if (embeddedItem.type === "gear") {
-        const gearCost = shouldConsumeCost ? embeddedItem.system.cost || 0 : 0;
-        const currentQuantity = embeddedItem.system.quantity || 0;
-
-        if (gearCost > currentQuantity) {
-          return {
-            canExecute: false,
-            reason: "insufficientQuantity",
-            required: gearCost,
-            available: currentQuantity,
-          };
-        }
-      }
-
-      return { canExecute: true };
+      return ResourceValidator.checkEmbeddedItemResources(embeddedItem, actor, shouldConsumeCost);
     }
 
     /**
      * Send resource failure message to chat
+     * Delegates to ResourceValidator service for message creation.
      * @param {Actor} actor - The actor executing the action card
      * @param {Object} resourceCheck - The resource check result
      * @param {Item} embeddedItem - The embedded item that failed
      * @param {number} repetitionIndex - Current repetition index
+     * @param {number|null} [repetitionCount=null] - Total repetitions (optional)
      * @returns {Promise<void>}
      */
     async sendResourceFailureMessage(
@@ -1186,64 +1197,20 @@ export function ItemActionCardExecutionMixin(Base) {
       repetitionIndex,
       repetitionCount = null,
     ) {
-      try {
-        let failureTitle = "";
-        let failureMessage = "";
-
-        if (resourceCheck.reason === "insufficientPower") {
-          failureTitle = "Insufficient Power";
-          failureMessage = `Cannot execute <strong>${embeddedItem.name}</strong> - requires ${resourceCheck.required} power but only ${resourceCheck.available} available`;
-        } else if (resourceCheck.reason === "insufficientQuantity") {
-          failureTitle = "Insufficient Quantity";
-          failureMessage = `Cannot execute <strong>${embeddedItem.name}</strong> - requires ${resourceCheck.required} quantity but only ${resourceCheck.available} available`;
-        } else {
-          failureTitle = "Resource Constraint";
-          failureMessage = "Unknown resource constraint preventing execution";
-        }
-
-        // Issue #130: Respect rollActorName setting for template data
-        const templateData = {
-          actionCard: {
-            name: this.system.rollActorName !== false ? this.name : "",
-            img: this._getEffectiveImage(),
-          },
-          style: this.system.textColor
-            ? `color: ${this.system.textColor}; background-color: ${this.system.bgColor || "#8B0000"}`
-            : "background-color: #8B0000",
-          repetitionInfo: repetitionCount
-            ? {
-                current: repetitionIndex + 1,
-                total: repetitionCount,
-                completed: repetitionIndex,
-              }
-            : null,
-          failureTitle,
-          failureMessage,
-          resourceInfo: {
-            required: resourceCheck.required,
-            available: resourceCheck.available,
-          },
-        };
-
-        const content = await renderTemplate(
-          "systems/eventide-rp-system/templates/chat/action-card-failure-message.hbs",
-          templateData,
-        );
-
-        const messageData = {
-          speaker: ChatMessage.getSpeaker({ actor }),
-          content,
-          type: CONST.CHAT_MESSAGE_TYPES.OTHER,
-        };
-
-        await ChatMessage.create(messageData);
-      } catch (error) {
-        Logger.error(
-          "Failed to send resource failure message",
-          error,
-          "ACTION_CARD",
-        );
-      }
+      await ResourceValidator.sendResourceFailureMessage({
+        actor,
+        resourceCheck,
+        embeddedItem,
+        repetitionIndex,
+        repetitionCount,
+        cardData: {
+          name: this.name,
+          img: this._getEffectiveImage(),
+          textColor: this.system.textColor,
+          bgColor: this.system.bgColor,
+          rollActorName: this.system.rollActorName,
+        },
+      });
     }
 
     /**
@@ -1500,122 +1467,42 @@ export function ItemActionCardExecutionMixin(Base) {
 
     /**
      * Wait for the configured repetition delay
+     * Delegates to RepetitionHandler service for delay logic.
      * @returns {Promise<void>}
      */
     async waitForRepetitionDelay() {
-      const delay =
-        this.system.timingOverride > 0
-          ? this.system.timingOverride * 1000 // Convert seconds to milliseconds
-          : game.settings.get("eventide-rp-system", "actionCardExecutionDelay");
-
-      if (delay > 0) {
-        await new Promise((resolve) => setTimeout(resolve, delay));
-      }
+      await RepetitionHandler.waitForDelay(this.system.timingOverride);
     }
 
     /**
      * Aggregate results from multiple repetitions into a combined result
+     * Delegates to RepetitionHandler service for aggregation logic.
      * @param {Array} results - Array of individual repetition results
      * @param {number} repetitionCount - Total number of repetitions executed
      * @returns {Object} Combined result object
      */
     aggregateRepetitionResults(results, repetitionCount) {
-      const combinedResult = {
-        success: results.every((r) => r.success),
-        repetitionCount,
+      return RepetitionHandler.aggregateResults(
         results,
-        mode: this.system.mode,
-      };
-
-      // Aggregate damage results
-      combinedResult.damageResults = results.flatMap(
-        (r) => r.damageResults || [],
+        repetitionCount,
+        this.system.mode,
       );
-
-      // Aggregate status results
-      combinedResult.statusResults = results.flatMap(
-        (r) => r.statusResults || [],
-      );
-
-      // For attack chains, aggregate target results
-      if (this.system.mode === "attackChain") {
-        combinedResult.targetResults = results[0]?.targetResults || [];
-        combinedResult.baseRoll = results[0]?.baseRoll;
-        combinedResult.embeddedItemRollMessage =
-          results[0]?.embeddedItemRollMessage;
-      }
-
-      return combinedResult;
     }
 
     /**
      * Check if an iteration was successful (Issue #128)
-     * Success is determined by whether any damage or status effects would be applied
-     * based on the configured conditions
+     * Delegates to RepetitionHandler service for success checking logic.
      * @private
      * @param {Object} result - The iteration result
      * @returns {boolean} Whether the iteration was successful
      */
     _checkIterationSuccess(result) {
-      if (!result || !result.targetResults) {
-        return false;
-      }
-
-      const rollTotal = result.baseRoll?.total || 0;
-      const hasStatusEffects = this.system.embeddedStatusEffects?.length > 0;
-      const hasTransformations = this.system.embeddedTransformations?.length > 0;
-      const hasDamageFormula = this.system.attackChain.damageFormula &&
-        this.system.attackChain.damageCondition !== "never";
-
-      // Check each target for any successful condition
-      for (const targetResult of result.targetResults) {
-        // Check damage condition (only if damage formula exists and condition isn't "never")
-        if (hasDamageFormula) {
-          const damageSuccess = this._shouldApplyEffect(
-            this.system.attackChain.damageCondition,
-            targetResult.oneHit,
-            targetResult.bothHit,
-            rollTotal,
-            this.system.attackChain.damageThreshold || 15,
-          );
-
-          if (damageSuccess) {
-            return true;
-          }
-        }
-
-        // Check status condition (only if there are status effects to apply)
-        if (hasStatusEffects) {
-          const statusSuccess = this._shouldApplyEffect(
-            this.system.attackChain.statusCondition,
-            targetResult.oneHit,
-            targetResult.bothHit,
-            rollTotal,
-            this.system.attackChain.statusThreshold || 15,
-          );
-
-          if (statusSuccess) {
-            return true;
-          }
-        }
-
-        // Check transformation condition (only if there are transformations to apply)
-        if (hasTransformations) {
-          const transformationSuccess = this._shouldApplyEffect(
-            this.system.transformationConfig?.condition || "never",
-            targetResult.oneHit,
-            targetResult.bothHit,
-            rollTotal,
-            this.system.transformationConfig?.threshold || 15,
-          );
-
-          if (transformationSuccess) {
-            return true;
-          }
-        }
-      }
-
-      return false;
+      return RepetitionHandler.checkIterationSuccess(
+        result,
+        this.system,
+        (condition, oneHit, bothHit, rollTotal, threshold) =>
+          this._shouldApplyEffect(condition, oneHit, bothHit, rollTotal, threshold),
+      );
     }
 
     /**
@@ -1633,161 +1520,21 @@ export function ItemActionCardExecutionMixin(Base) {
       disableDelays = false,
       isFinalRepetition = true,
     ) {
-
-      const transformationResults = [];
-
-      try {
-        // Skip if no transformations embedded
-        if (this.system.embeddedTransformations.length === 0) {
-          return transformationResults;
-        }
-
-
-        // Apply transformations to each target based on pre-selections or default logic
-        for (const result of results) {
-          // Skip invalid results
-          if (!result || !result.target) {
-            Logger.warn(
-              "Invalid result structure in _processTransformationResults, skipping",
-              { result },
-              "ACTION_CARD",
-            );
-            continue;
-          }
-
-          // Determine which transformation to apply for this target
-          let selectedTransformation = null;
-          const transformationSelections = this._currentRepetitionContext?.transformationSelections;
-
-
-          // Check multiple possible target ID formats for robust lookup
-          let selectedTransformationId = null;
-          if (transformationSelections) {
-            // Try actor ID first
-            if (transformationSelections.has(result.target.id)) {
-              selectedTransformationId = transformationSelections.get(result.target.id);
-            }
-            // Try actor UUID as fallback
-            else if (result.target.uuid && transformationSelections.has(result.target.uuid)) {
-              selectedTransformationId = transformationSelections.get(result.target.uuid);
-            }
-            // Try token ID if actor is connected to a token
-            else if (result.target.token?.id && transformationSelections.has(result.target.token.id)) {
-              selectedTransformationId = transformationSelections.get(result.target.token.id);
-            }
-          }
-
-          if (selectedTransformationId) {
-            // Use pre-selected transformation for this target
-            // First get the embedded transformations as temporary items
-            const embeddedTransformations = await this.getEmbeddedTransformations({ executionContext: true });
-            selectedTransformation = embeddedTransformations.find(
-              t => t.originalId === selectedTransformationId
-            );
-
-          } else if (this.system.embeddedTransformations.length === 1) {
-            // Only one transformation available, use it by default
-            const embeddedTransformations = await this.getEmbeddedTransformations({ executionContext: true });
-            selectedTransformation = embeddedTransformations[0];
-          } else if (this.system.embeddedTransformations.length > 1) {
-            // Multiple transformations but no pre-selection - fallback to GM prompt
-            selectedTransformation = await this._promptGMForTransformationChoice();
-            if (!selectedTransformation) {
-              continue; // Skip this target instead of returning
-            }
-          }
-
-          // Skip if no transformation was selected
-          if (!selectedTransformation) {
-            Logger.warn(
-              `No transformation selected for target ${result.target.name}, skipping transformation application`,
-              {
-                targetId: result.target.id,
-                hasSelections: !!transformationSelections,
-                transformationCount: this.system.embeddedTransformations.length,
-              },
-              "ACTION_CARD",
-            );
-            continue;
-          }
-
-          // Check if transformation should be applied based on configuration
-          let shouldApplyTransformation = true;
-          if (this.system.mode === "attackChain") {
-            shouldApplyTransformation = this._shouldApplyEffect(
-              this.system.transformationConfig.condition,
-              result.oneHit,
-              result.bothHit,
-              rollResult?.total || 0,
-              this.system.transformationConfig.threshold || 15,
-            );
-
-          } else if (this.system.mode === "savedDamage") {
-            // For saved damage mode, check transformation condition
-            // Since there's no roll result, we only apply if condition is "never" -> false or anything else -> true
-            shouldApplyTransformation = this.system.transformationConfig.condition !== "never";
-
-          }
-
-          if (shouldApplyTransformation) {
-            // Check if this transformation has already been applied during repetitions
-            const transformationKey = `${result.target.id}-${selectedTransformation.originalId || selectedTransformation.id}`;
-            const alreadyApplied = this._currentRepetitionContext?.appliedTransformations?.has(transformationKey);
-
-
-            if (alreadyApplied) {
-              continue;
-            }
-
-            try {
-              const applicationResult = await this._applyTransformationWithValidation(
-                result.target,
-                selectedTransformation,
-              );
-
-              // Track that this transformation has been applied to this target
-              if (applicationResult.applied && this._currentRepetitionContext?.appliedTransformations) {
-                this._currentRepetitionContext.appliedTransformations.add(transformationKey);
-              }
-
-              transformationResults.push({
-                target: result.target,
-                transformation: selectedTransformation,
-                applied: applicationResult.applied,
-                reason: applicationResult.reason,
-                warning: applicationResult.warning,
-              });
-            } catch (error) {
-              Logger.error(
-                `Failed to apply transformation "${selectedTransformation.name}" to target "${result.target.name}"`,
-                error,
-                "ACTION_CARD",
-              );
-
-              transformationResults.push({
-                target: result.target,
-                transformation: selectedTransformation,
-                applied: false,
-                error: error.message,
-              });
-            }
-          }
-        }
-
-        // Wait for execution delay if not final repetition
-        if (!disableDelays && !isFinalRepetition) {
-          await this._waitForExecutionDelay();
-        }
-
-        return transformationResults;
-      } catch (error) {
-        Logger.error(
-          "Failed to process transformation results",
-          error,
-          "ACTION_CARD",
-        );
-        throw error;
-      }
+      // Delegate to TransformationApplicator service
+      return TransformationApplicator.processTransformationResults({
+        results,
+        rollResult,
+        embeddedTransformations: this.system.embeddedTransformations,
+        transformationConfig: this.system.transformationConfig,
+        repetitionContext: this._currentRepetitionContext,
+        getEmbeddedTransformations: (options) => this.getEmbeddedTransformations(options),
+        shouldApplyEffect: (condition, oneHit, bothHit, rollTotal, threshold) =>
+          this._shouldApplyEffect(condition, oneHit, bothHit, rollTotal, threshold),
+        waitForDelay: () => this._waitForExecutionDelay(),
+        mode: this.system.mode,
+        disableDelays,
+        isFinalRepetition,
+      });
     }
 
     /**
@@ -1798,100 +1545,8 @@ export function ItemActionCardExecutionMixin(Base) {
      * @returns {Promise<Object>} Application result
      */
     async _applyTransformationWithValidation(targetActor, transformationData) {
-      // Check if actor already has a transformation with the same name
-      const activeTransformationName = targetActor.getFlag(
-        "eventide-rp-system",
-        "activeTransformationName",
-      );
-
-      if (activeTransformationName === transformationData.name) {
-        return {
-          applied: false,
-          reason: "duplicate_name",
-          warning: game.i18n.format(
-            "EVENTIDE_RP_SYSTEM.Item.ActionCard.TransformationDuplicateNameWarning",
-            { transformationName: transformationData.name },
-          ),
-        };
-      }
-
-      // Check cursed transformation precedence
-      const activeTransformationCursed = targetActor.getFlag(
-        "eventide-rp-system",
-        "activeTransformationCursed",
-      );
-      const newTransformationCursed = transformationData.system?.cursed || false;
-
-      // If actor has an active transformation
-      if (activeTransformationName) {
-        // If current transformation is cursed and new one is not cursed, deny
-        if (activeTransformationCursed && !newTransformationCursed) {
-          return {
-            applied: false,
-            reason: "cursed_override_denied",
-            warning: game.i18n.format(
-              "EVENTIDE_RP_SYSTEM.Item.ActionCard.TransformationCursedOverrideDenied",
-              {
-                currentTransformation: activeTransformationName,
-                newTransformation: transformationData.name,
-              },
-            ),
-          };
-        }
-      }
-
-      // Create temporary transformation item for application
-      // Ensure effects data is preserved from the embedded transformation
-
-      let transformationItemData;
-      if (transformationData.toObject) {
-        // This is a temporary item, get its full data including effects
-        transformationItemData = foundry.utils.deepClone(transformationData.toObject());
-
-        // Ensure effects are included - if the temporary item has effects, preserve them
-        if (transformationData.effects && transformationData.effects.size > 0) {
-          transformationItemData.effects = [];
-          for (const effect of transformationData.effects) {
-            const effectData = effect.toObject();
-            transformationItemData.effects.push(effectData);
-          }
-        }
-      } else {
-        // This is raw data, use as is
-        transformationItemData = foundry.utils.deepClone(transformationData);
-      }
-
-      // Ensure the temporary item has a unique ID to avoid conflicts
-      transformationItemData._id = foundry.utils.randomID();
-
-      // Create temporary item WITHOUT parent to avoid automatic collection embedding
-      const tempTransformationItem = new CONFIG.Item.documentClass(
-        transformationItemData,
-      );
-
-      // Apply the transformation
-      try {
-        await targetActor.applyTransformation(tempTransformationItem);
-
-        Logger.debug(
-          "Applied embedded transformation to target actor",
-          {
-            targetActorName: targetActor.name,
-            transformationName: tempTransformationItem.name,
-          },
-          "TRANSFORMATION_APPLICATION"
-        );
-        return {
-          applied: true,
-          reason: "success",
-        };
-      } catch (error) {
-        return {
-          applied: false,
-          reason: "application_error",
-          error: error.message,
-        };
-      }
+      // Delegate to TransformationApplicator service
+      return TransformationApplicator.applyWithValidation(targetActor, transformationData);
     }
 
     /**
@@ -1900,52 +1555,8 @@ export function ItemActionCardExecutionMixin(Base) {
      * @returns {Promise<Object|null>} Selected transformation data or null if cancelled
      */
     async _promptGMForTransformationChoice() {
-      return new Promise((resolve) => {
-        // Create dialog content
-        const transformationOptions = this.system.embeddedTransformations
-          .map(
-            (transformation, index) =>
-              `<option value="${index}">${transformation.name}</option>`,
-          )
-          .join("");
-
-        const content = `
-          <div class="transformation-selection">
-            <p>${game.i18n.localize("EVENTIDE_RP_SYSTEM.Item.ActionCard.TransformationSelectionPrompt")}</p>
-            <div class="form-group">
-              <label>${game.i18n.localize("EVENTIDE_RP_SYSTEM.Item.ActionCard.TransformationSelectionLabel")}</label>
-              <select id="transformation-choice" style="width: 100%;">
-                ${transformationOptions}
-              </select>
-            </div>
-          </div>
-        `;
-
-        new Dialog({
-          title: game.i18n.localize("EVENTIDE_RP_SYSTEM.Item.ActionCard.TransformationSelectionTitle"),
-          content,
-          buttons: {
-            apply: {
-              icon: '<i class="fas fa-check"></i>',
-              label: game.i18n.localize("EVENTIDE_RP_SYSTEM.Item.ActionCard.TransformationSelectionApply"),
-              callback: (html) => {
-                const selectedIndex = parseInt(
-                  html.find("#transformation-choice").val(),
-                  10,
-                );
-                resolve(this.system.embeddedTransformations[selectedIndex]);
-              },
-            },
-            cancel: {
-              icon: '<i class="fas fa-times"></i>',
-              label: game.i18n.localize("EVENTIDE_RP_SYSTEM.Item.ActionCard.TransformationSelectionCancel"),
-              callback: () => resolve(null),
-            },
-          },
-          default: "apply",
-          close: () => resolve(null),
-        }).render(true);
-      });
+      // Delegate to TransformationApplicator service
+      return TransformationApplicator.promptForSelection(this.system.embeddedTransformations);
     }
   };
 }
