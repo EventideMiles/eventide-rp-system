@@ -165,6 +165,25 @@
           "label": "Self-Target",
           "hint": "When enabled, this action card automatically targets your own actor instead of requiring target selection. Useful for self-buffs and self-healing effects."
         },
+        "ResourceFailure": {
+          "InsufficientPower": {
+            "Title": "Insufficient Power",
+            "Message": "Cannot execute <strong>{itemName}</strong> - requires {required} power but only {available} available"
+          },
+          "InsufficientQuantity": {
+            "Title": "Insufficient Quantity",
+            "Message": "Cannot execute <strong>{itemName}</strong> - requires {required} quantity but only {available} available"
+          },
+          "GearNotFound": {
+            "Title": "Gear Not Found",
+            "Message": "Cannot execute <strong>{itemName}</strong> - gear item not found in actor's inventory"
+          },
+          "Unknown": {
+            "Title": "Resource Constraint",
+            "Message": "Unknown resource constraint preventing execution"
+          }
+        },
+        "RepetitionCountAdjusted": "Repetition formula resulted in {originalCount}, adjusted to minimum of 1",
         "CreateNewPower": "Create New Power",
         "CreateNewStatus": "Create New Status",
         "RollValue": "Roll Value",
@@ -184,7 +203,7 @@
         },
         "Repetitions": {
           "label": "Repetitions",
-          "hint": "Roll formula for number of repetitions (e.g. '3', '1d4', '2d6+1')"
+          "hint": "Roll formula for number of repetitions (e.g. '3', '1d4', '2d6+1'). Note if this returns a number less than 1, the action will still execute once."
         },
         "RepeatToHit": {
           "label": "Repeat to Hit",
