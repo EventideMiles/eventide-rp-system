@@ -221,13 +221,59 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
       const transformation =
         await erps.utils.TransformationConverter.actorToTransformation(actor);
 
-      // Create the owned item
+      // Get the transformation item data (prefer compendium version)
+      const transformationData = transformation.compendium || transformation.world;
+      if (!transformationData) {
+        Logger.warn("No transformation data available from conversion", null, "DRAG_DROP");
+        return false;
+      }
+
+      // Check cursed transformation precedence BEFORE creating the item
+      // This prevents effects from being applied when the transformation is denied
+      const activeTransformationName = this.actor.getFlag(
+        "eventide-rp-system",
+        "activeTransformationName",
+      );
+      const activeTransformationCursed = this.actor.getFlag(
+        "eventide-rp-system",
+        "activeTransformationCursed",
+      );
+      const newTransformationCursed = transformationData.system?.cursed || false;
+
+      // If actor has an active transformation
+      if (activeTransformationName) {
+        // If current transformation is cursed and new one is not cursed, deny
+        if (activeTransformationCursed && !newTransformationCursed) {
+          ui.notifications.warn(
+            game.i18n.format(
+              "EVENTIDE_RP_SYSTEM.Item.ActionCard.TransformationCursedOverrideDenied",
+              {
+                currentTransformation: activeTransformationName,
+                newTransformation: transformationData.name,
+              },
+            ),
+          );
+          Logger.warn(
+            "Transformation denied - cursed transformation override",
+            {
+              activeTransformationName,
+              activeTransformationCursed,
+              newTransformationName: transformationData.name,
+              newTransformationCursed,
+            },
+            "DRAG_DROP",
+          );
+          return false;
+        }
+      }
+
+      // Create the owned item (effects will be transferred at this point)
       const result = await this._onDropItemCreate(
         transformation.compendium,
         event,
       );
 
-      // transform the actor
+      // Transform the actor
       await this.actor.applyTransformation(
         Item.implementation.fromSource(result[0]),
       );

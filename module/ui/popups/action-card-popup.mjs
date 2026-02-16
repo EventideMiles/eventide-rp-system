@@ -620,6 +620,15 @@ export class ActionCardPopup extends EventidePopupHelpers {
     if (this.problems.quantity) {
       const embeddedItem = this.item.getEmbeddedItem();
       if (embeddedItem && embeddedItem.type === "gear") {
+        // Get the ACTUAL gear item from inventory to show real quantity
+        // (embeddedItem.system.quantity is just a snapshot from creation time)
+        const actualGearItem = InventoryUtils.findGearByName(
+          this.item.actor,
+          embeddedItem.name,
+          embeddedItem.system.cost,
+        );
+        const actualQuantity = actualGearItem?.system?.quantity ?? 0;
+
         callouts.push({
           type: "warning",
           faIcon: "fas fa-exclamation-triangle",
@@ -627,7 +636,7 @@ export class ActionCardPopup extends EventidePopupHelpers {
             "EVENTIDE_RP_SYSTEM.Forms.Callouts.Gear.InsufficientQuantity",
             {
               cost: embeddedItem.system.cost,
-              quantity: embeddedItem.system.quantity,
+              quantity: actualQuantity,
             },
           ),
         });
@@ -657,9 +666,13 @@ export class ActionCardPopup extends EventidePopupHelpers {
     }
 
     // Add detailed gear validation error callouts
+    // IMPORTANT: Skip if we already added a specific callout for quantity/equipped
+    // to avoid duplicate callouts for the same issue
     if (
       this.problems.gearValidation &&
-      this.problems.gearValidation.length > 0
+      this.problems.gearValidation.length > 0 &&
+      !this.problems.quantity &&
+      !this.problems.equipped
     ) {
       for (const error of this.problems.gearValidation) {
         callouts.push({
@@ -1044,16 +1057,20 @@ export class ActionCardPopup extends EventidePopupHelpers {
 
       // Execute the embedded item's roll handler with bypass=true (skip for saved damage mode)
       let rollResult = null;
+      // Create actionCardContext as a mutable object that can be flagged by handleBypass
+      const actionCardContext = {
+        actionCard: this.item,
+        isFromActionCard: true,
+        executionMode: this.item.system.mode,
+        // resourceDepleted will be set by handleBypass if quantity runs out
+      };
+
       if (embeddedItem && this.item.system.mode !== "savedDamage") {
         try {
           // Call the embedded item's roll method with bypass parameter and action card context
           await embeddedItem.roll({
             bypass: true,
-            actionCardContext: {
-              actionCard: this.item,
-              isFromActionCard: true,
-              executionMode: this.item.system.mode,
-            },
+            actionCardContext,
           });
 
           // Wait for the roll result
@@ -1123,9 +1140,11 @@ export class ActionCardPopup extends EventidePopupHelpers {
       }
 
       // Player owns all targets - execute normally
+      // Pass actionCardContext so the repetition loop can check resourceDepleted flag
       const result = await this.item.executeWithRollResult(actor, rollResult, {
         transformationSelections,
         selectedEffectIds,
+        actionCardContext,
       });
 
       if (result.success) {
