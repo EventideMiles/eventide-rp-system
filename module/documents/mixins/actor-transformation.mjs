@@ -47,6 +47,64 @@ export const ActorTransformationMixin = (BaseClass) =>
         return this;
       }
 
+      // Check for duplicate transformation name
+      const activeTransformationName = this.getFlag(
+        "eventide-rp-system",
+        "activeTransformationName",
+      );
+
+      if (activeTransformationName === transformationItem.name) {
+        ui.notifications.warn(
+          game.i18n.format(
+            "EVENTIDE_RP_SYSTEM.Item.ActionCard.TransformationDuplicateNameWarning",
+            { transformationName: transformationItem.name },
+          ),
+        );
+        Logger.warn(
+          "Transformation denied - duplicate name",
+          {
+            activeTransformationName,
+            newTransformationName: transformationItem.name,
+          },
+          "TRANSFORMATION",
+        );
+        return this;
+      }
+
+      // Check cursed transformation precedence
+      const activeTransformationCursed = this.getFlag(
+        "eventide-rp-system",
+        "activeTransformationCursed",
+      );
+      const newTransformationCursed = transformationItem.system?.cursed || false;
+
+      // If actor has an active transformation
+      if (activeTransformationName) {
+        // If current transformation is cursed and new one is not cursed, deny
+        if (activeTransformationCursed && !newTransformationCursed) {
+          ui.notifications.warn(
+            game.i18n.format(
+              "EVENTIDE_RP_SYSTEM.Item.ActionCard.TransformationCursedOverrideDenied",
+              {
+                currentTransformation: activeTransformationName,
+                newTransformation: transformationItem.name,
+              },
+            ),
+          );
+          Logger.warn(
+            "Transformation denied - cursed transformation override",
+            {
+              activeTransformationName,
+              activeTransformationCursed,
+              newTransformationName: transformationItem.name,
+              newTransformationCursed,
+            },
+            "TRANSFORMATION",
+          );
+          return this;
+        }
+      }
+
       try {
         // Check if this is an unlinked token actor
         if (this.isToken) {
