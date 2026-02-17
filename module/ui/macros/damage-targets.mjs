@@ -5,7 +5,7 @@ import {
   applyThemeImmediate,
   cleanupThemeManager,
 } from "../../helpers/_module.mjs";
-import { Logger } from "../../services/_module.mjs";
+import { Logger, DamageProcessor } from "../../services/_module.mjs";
 
 // new place for FormDataExtended
 const FormDataExtended = foundry.applications.ux.FormDataExtended;
@@ -259,26 +259,22 @@ export class DamageTargets extends EventideSheetHelpers {
     ) {
       await Promise.all(
         this.selectedArray.map((token) => {
-          damageOptions.formula =
-            damageOptions.type !== "heal" &&
-            token.actor.system.hiddenAbilities.vuln.total > 0
-              ? `${originalFormula} + ${Math.abs(
-                  token.actor.system.hiddenAbilities.vuln.total,
-                )}`
-              : originalFormula;
+          damageOptions.formula = DamageProcessor.applyVulnerabilityModifier(
+            originalFormula,
+            damageOptions.type,
+            token.actor,
+          );
           token.actor.damageResolve(damageOptions);
         }),
       );
     } else {
       await Promise.all(
         this.targetArray.map((token) => {
-          damageOptions.formula =
-            damageOptions.type !== "heal" &&
-            token.actor.system.hiddenAbilities.vuln.total > 0
-              ? `${originalFormula} + ${Math.abs(
-                  token.actor.system.hiddenAbilities.vuln.total,
-                )}`
-              : originalFormula;
+          damageOptions.formula = DamageProcessor.applyVulnerabilityModifier(
+            originalFormula,
+            damageOptions.type,
+            token.actor,
+          );
           token.actor.damageResolve(damageOptions);
         }),
       );

@@ -2,8 +2,13 @@ import { Logger } from "../../services/logger.mjs";
 import { ResourceValidator } from "../../services/resource-validator.mjs";
 import { TransformationApplicator } from "../../services/transformation-applicator.mjs";
 import { RepetitionHandler } from "../../services/repetition-handler.mjs";
-import { InventoryUtils } from "../../helpers/_module.mjs";
-import { StatusIntensification } from "../../helpers/status-intensification.mjs";
+import {
+  StatusEffectApplicator,
+  TargetResolver,
+  ChatMessageBuilder,
+  DamageProcessor,
+  AttackChainExecutor,
+} from "../../services/_module.mjs";
 
 /**
  * Mixin that provides action card execution functionality to Item documents.
@@ -446,43 +451,16 @@ export function ItemActionCardExecutionMixin(Base) {
           throw error;
         }
 
-        // Get targets for AC checking
-        let targetArray = await erps.utils.getTargetArray();
-
-        // Handle self-targeting: create synthetic target array with actor's token
-        if (this.system.selfTarget) {
-          const selfToken = this._getSelfTargetToken(_actor);
-          if (selfToken) {
-            targetArray = [selfToken];
-            Logger.debug(
-              "Self-targeting enabled - using synthetic target array",
-              { actorId: _actor.id, actorName: _actor.name },
-              "ACTION_CARD",
-            );
-          } else {
-            Logger.warn(
-              "Self-targeting enabled but no token found for actor",
-              { actorId: _actor.id, actorName: _actor.name },
-              "ACTION_CARD",
-            );
-            ui.notifications.warn(
-              game.i18n.localize(
-                "EVENTIDE_RP_SYSTEM.Errors.SelfTargetNoToken",
-              ),
-            );
-            return { success: false, reason: "noSelfToken" };
-          }
+        // Resolve targets using TargetResolver service
+        const resolution = await TargetResolver.resolveTargets({
+          actor: _actor,
+          selfTarget: this.system.selfTarget,
+          contextName: "attack chain",
+        });
+        if (!resolution.success) {
+          return { success: false, reason: resolution.reason };
         }
-
-        if (targetArray.length === 0) {
-          Logger.warn("No targets found for attack chain", null, "ACTION_CARD");
-          ui.notifications.warn(
-            game.i18n.localize(
-              "EVENTIDE_RP_SYSTEM.Errors.NoTargetsAttackChain",
-            ),
-          );
-          return { success: false, reason: "noTargets" };
-        }
+        const targetArray = resolution.targets;
 
         // Execute the embedded item's roll and capture result
 
@@ -536,125 +514,35 @@ export function ItemActionCardExecutionMixin(Base) {
       shouldApplyStatus = true,
       isFinalRepetition = true,
     ) {
-
-      try {
-        // Get targets for AC checking
-        const targetArray = await erps.utils.getTargetArray();
-        if (targetArray.length === 0) {
-          Logger.warn("No targets found for attack chain", null, "ACTION_CARD");
-          ui.notifications.warn(
-            game.i18n.localize(
-              "EVENTIDE_RP_SYSTEM.Errors.NoTargetsAttackChain",
-            ),
-          );
-          return { success: false, reason: "noTargets" };
-        }
-
-        const embeddedItem = this.getEmbeddedItem({ executionContext: true });
-        if (!embeddedItem) {
-          const error = new Error("No embedded item found for attack chain");
-          Logger.error(
-            "No embedded item for attack chain",
-            error,
-            "ACTION_CARD",
-          );
-          throw error;
-        }
-
-        // Check hits against target ACs using the roll result
-        const results = targetArray.map((target) => {
-          const targetRollData = target.actor.getRollData();
-          const firstAC =
-            targetRollData.abilities[this.system.attackChain.firstStat]?.ac
-              ?.total || 11;
-          const secondAC =
-            targetRollData.abilities[this.system.attackChain.secondStat]?.ac
-              ?.total || 11;
-
-          // Handle "none" roll types as automatic two successes
-          if (embeddedItem.system.roll?.type === "none") {
-            return {
-              target: target.actor,
-              firstHit: true,
-              secondHit: true,
-              bothHit: true,
-              oneHit: true,
-            };
-          }
-
-          // Normal roll-based hit calculation
-          const rollTotal = rollResult?.total || 0;
-          const firstHit = rollResult ? rollTotal >= firstAC : false;
-          const secondHit = rollResult ? rollTotal >= secondAC : false;
-
-          return {
-            target: target.actor,
-            firstHit,
-            secondHit,
-            bothHit: firstHit && secondHit,
-            oneHit: firstHit || secondHit,
-          };
-        });
-
-        // Add delay after roll calculation but before damage application (GM only)
-        if (game.user.isGM && !disableDelays) {
-          await this._waitForExecutionDelay();
-        }
-
-        // Handle damage and status effects with delays
-        let damageResults = [];
-        if (shouldApplyDamage) {
-          damageResults = await this._processDamageResults(
-            results,
-            rollResult,
-            disableDelays,
-          );
-          if (!disableDelays) {
-            await this._waitForExecutionDelay();
-          }
-        }
-        let statusResults = [];
-        if (shouldApplyStatus) {
-          statusResults = await this._processStatusResults(
-            results,
-            rollResult,
-            disableDelays,
-            isFinalRepetition,
-          );
-        }
-
-        // Process transformations after status effects
-        let transformationResults = [];
-        if (this.system.embeddedTransformations.length > 0) {
-          transformationResults = await this._processTransformationResults(
-            results,
-            rollResult,
-            disableDelays,
-            isFinalRepetition,
-          );
-        }
-
-        const chainResult = {
-          success: true,
-          mode: "attackChain",
-          baseRoll: rollResult,
-          embeddedItemRollMessage: rollResult?.messageId || null,
-          targetResults: results,
-          damageResults,
-          statusResults,
-          transformationResults,
-        };
-
-
-        return chainResult;
-      } catch (error) {
+      const embeddedItem = this.getEmbeddedItem({ executionContext: true });
+      if (!embeddedItem) {
+        const error = new Error("No embedded item found for attack chain");
         Logger.error(
-          "Failed to execute attack chain with roll result",
+          "No embedded item for attack chain",
           error,
           "ACTION_CARD",
         );
         throw error;
       }
+
+      return AttackChainExecutor.executeWithRollResult({
+        actionCard: this,
+        rollResult,
+        embeddedItem,
+        attackChain: this.system.attackChain,
+        embeddedTransformations: this.system.embeddedTransformations,
+        processDamage: (results, roll, delays) =>
+          this._processDamageResults(results, roll, delays),
+        processStatus: (results, roll, delays, isFinal) =>
+          this._processStatusResults(results, roll, delays, isFinal),
+        processTransformation: (results, roll, delays, isFinal) =>
+          this._processTransformationResults(results, roll, delays, isFinal),
+        waitForDelay: () => this._waitForExecutionDelay(),
+        disableDelays,
+        shouldApplyDamage,
+        shouldApplyStatus,
+        isFinalRepetition,
+      });
     }
 
     /**
@@ -665,43 +553,16 @@ export function ItemActionCardExecutionMixin(Base) {
     async executeSavedDamage(_actor) {
 
       try {
-        // Get targets
-        let targetArray = await erps.utils.getTargetArray();
-
-        // Handle self-targeting: create synthetic target array with actor's token
-        if (this.system.selfTarget) {
-          const selfToken = this._getSelfTargetToken(_actor);
-          if (selfToken) {
-            targetArray = [selfToken];
-            Logger.debug(
-              "Self-targeting enabled - using synthetic target array",
-              { actorId: _actor.id, actorName: _actor.name },
-              "ACTION_CARD",
-            );
-          } else {
-            Logger.warn(
-              "Self-targeting enabled but no token found for actor",
-              { actorId: _actor.id, actorName: _actor.name },
-              "ACTION_CARD",
-            );
-            ui.notifications.warn(
-              game.i18n.localize(
-                "EVENTIDE_RP_SYSTEM.Errors.SelfTargetNoToken",
-              ),
-            );
-            return { success: false, reason: "noSelfToken" };
-          }
+        // Resolve targets using TargetResolver service
+        const resolution = await TargetResolver.resolveTargets({
+          actor: _actor,
+          selfTarget: this.system.selfTarget,
+          contextName: "saved damage",
+        });
+        if (!resolution.success) {
+          return { success: false, reason: resolution.reason };
         }
-
-        if (targetArray.length === 0) {
-          Logger.warn("No targets found for saved damage", null, "ACTION_CARD");
-          ui.notifications.warn(
-            game.i18n.localize(
-              "EVENTIDE_RP_SYSTEM.Errors.NoTargetsSavedDamage",
-            ),
-          );
-          return { success: false, reason: "noTargets" };
-        }
+        const targetArray = resolution.targets;
 
         const damageResults = [];
 
@@ -766,62 +627,32 @@ export function ItemActionCardExecutionMixin(Base) {
 
     /**
      * Process damage results for attack chain
+     * Delegates to DamageProcessor service for damage resolution.
      * @private
      * @param {Array} results - Target hit results
      * @param {Roll} rollResult - The roll result
-     * @param {boolean} disableDelays - If true, skip internal timing delays
+     * @param {boolean} _disableDelays - If true, skip internal timing delays (unused, kept for signature compatibility)
      * @returns {Promise<Array>} Damage results
      */
     async _processDamageResults(results, rollResult, _disableDelays = false) {
-      const damageResults = [];
-
-      for (const result of results) {
-        const shouldApplyDamage = this._shouldApplyEffect(
-          this.system.attackChain.damageCondition,
-          result.oneHit,
-          result.bothHit,
-          rollResult?.total || 0,
-          this.system.attackChain.damageThreshold || 15,
-        );
-
-        if (shouldApplyDamage && this.system.attackChain.damageFormula) {
-          // Apply damage directly (GM or player owns all targets)
-          try {
-            // Apply vulnerability modifier to damage formula
-            const originalFormula = this.system.attackChain.damageFormula;
-            const formula =
-              this.system.attackChain.damageType !== "heal" &&
-              result.target.system.hiddenAbilities.vuln.total > 0
-                ? `${originalFormula} + ${Math.abs(result.target.system.hiddenAbilities.vuln.total)}`
-                : originalFormula;
-
-            const damageRoll = await result.target.damageResolve({
-              formula,
-              label: this._getEffectiveLabel(),
-              description:
-                this.system.description ||
-                (this.system.rollActorName !== false ? `Attack chain damage from ${this.name}` : "Attack chain damage"),
-              type: this.system.attackChain.damageType,
-              img: this._getEffectiveImage(),
-              bgColor: this.system.bgColor,
-              textColor: this.system.textColor,
-            });
-            damageResults.push({ target: result.target, roll: damageRoll });
-          } catch (damageError) {
-            Logger.error(
-              "Failed to apply chain damage",
-              damageError,
-              "ACTION_CARD",
-            );
-          }
-        }
-      }
-
-      return damageResults;
+      return await DamageProcessor.processDamageResults(results, rollResult, {
+        damageFormula: this.system.attackChain.damageFormula,
+        damageType: this.system.attackChain.damageType,
+        damageCondition: this.system.attackChain.damageCondition,
+        damageThreshold: this.system.attackChain.damageThreshold || 15,
+        label: this._getEffectiveLabel(),
+        description:
+          this.system.description ||
+          (this.system.rollActorName !== false ? `Attack chain damage from ${this.name}` : "Attack chain damage"),
+        img: this._getEffectiveImage(),
+        bgColor: this.system.bgColor,
+        textColor: this.system.textColor,
+      });
     }
 
     /**
      * Process status effect results for attack chain
+     * Delegates to StatusEffectApplicator service for status effect application.
      * @private
      * @param {Array} results - Target hit results
      * @param {Roll} rollResult - The roll result
@@ -835,337 +666,19 @@ export function ItemActionCardExecutionMixin(Base) {
       disableDelays = false,
       isFinalRepetition = true,
     ) {
-
-      const statusResults = [];
-
-      // Early exit if no embedded status effects to apply
-      if (!this.system.embeddedStatusEffects || this.system.embeddedStatusEffects.length === 0) {
-        return statusResults;
-      }
-
-      // Filter effects based on selection
-      let effectsToApply = this.system.embeddedStatusEffects;
-      const selectedEffectIds = this._currentRepetitionContext?.selectedEffectIds;
-
-      Logger.debug(
-        `Status effect filtering - checking selection`,
-        {
-          hasContext: !!this._currentRepetitionContext,
-          selectedEffectIds,
-          selectedEffectIdsType: typeof selectedEffectIds,
-          isArray: Array.isArray(selectedEffectIds),
-          totalEffects: this.system.embeddedStatusEffects.length,
-          allEffectIds: this.system.embeddedStatusEffects.map((e, i) => e._id || `effect-${i}`),
-        },
-        "ACTION_CARD",
-      );
-
-      // Always respect user selections (enforceStatusChoice is only for front-end validation)
-      if (selectedEffectIds !== null && selectedEffectIds !== undefined) {
-        effectsToApply = this.system.embeddedStatusEffects.filter((effect, index) => {
-          const effectId = effect._id || `effect-${index}`;
-          const isIncluded = selectedEffectIds.includes(effectId);
-          Logger.debug(
-            `Checking effect ${effectId}`,
-            {
-              effectName: effect.name,
-              effectId,
-              isIncluded,
-              selectedEffectIds,
-            },
-            "ACTION_CARD",
-          );
-          return isIncluded;
-        });
-
-        Logger.debug(
-          `Filtered status effects based on user selection`,
-          {
-            totalEffects: this.system.embeddedStatusEffects.length,
-            selectedCount: effectsToApply.length,
-            selectedIds: selectedEffectIds,
-            filteredEffectNames: effectsToApply.map(e => e.name),
-          },
-          "ACTION_CARD",
-        );
-      }
-
-      try {
-        for (const result of results) {
-          // Skip invalid results
-          if (!result || !result.target) {
-            Logger.warn(
-              "Invalid result structure in _processStatusResults, skipping",
-              { result },
-              "ACTION_CARD",
-            );
-            continue;
-          }
-
-          // Determine if status effects should be applied based on chain configuration
-          const shouldApplyStatus = this._shouldApplyEffect(
-            this.system.attackChain.statusCondition,
-            result.oneHit,
-            result.bothHit,
-            rollResult?.total || 0,
-            this.system.attackChain.statusThreshold || 15,
-          );
-
-          if (shouldApplyStatus) {
-            // Check limit BEFORE entering effects loop (per application, not per effect)
-            const statusApplicationLimit = this._currentRepetitionContext?.statusApplicationLimit ?? 1;
-            const statusApplicationCounts = this._currentRepetitionContext?.statusApplicationCounts ?? new Map();
-            const targetId = result.target.id;
-            const statusApplicationCount = statusApplicationCounts.get(targetId) ?? 0;
-
-            if (statusApplicationLimit > 0 && statusApplicationCount >= statusApplicationLimit) {
-              Logger.debug(
-                `Skipping all effects for target "${result.target.name}" - status application limit reached (${statusApplicationCount}/${statusApplicationLimit})`,
-                {
-                  targetId,
-                  targetName: result.target.name,
-                  limit: statusApplicationLimit,
-                  count: statusApplicationCount,
-                },
-                "ACTION_CARD",
-              );
-              continue; // Skip this target entirely
-            }
-
-            // Apply ALL effects for this target
-            for (const effectData of effectsToApply) {
-              // Validate effect entry structure
-              if (!effectData) {
-                Logger.warn(
-                  "Invalid effect entry structure, skipping",
-                  {
-                    effectData,
-                    actionCardName: this.name,
-                    targetName: result.target.name,
-                  },
-                  "ACTION_CARD",
-                );
-                continue;
-              }
-
-              // Track effect application for logging purposes
-              const effectKey = `${result.target.id}-${effectData.name}`;
-
-              Logger.debug("Effect application check", {
-                effectKey
-              }, "ACTION_CARD")
-
-              // Handle gear effects differently based on attemptInventoryReduction setting
-              if (
-                effectData.type === "gear" &&
-                this.system.attemptInventoryReduction
-              ) {
-                try {
-                  // Check if the actor has the gear item
-                  const actualGearItem = InventoryUtils.findGearByName(
-                    this.actor,
-                    effectData.name,
-                  );
-
-                  if (!actualGearItem) {
-                    // Log warning and continue without applying the effect
-                    Logger.warn(
-                      `Gear effect "${effectData.name}" not found in actor inventory`,
-                      {
-                        actorName: this.actor.name,
-                        effectName: effectData.name,
-                        targetName: result.target.name,
-                      },
-                      "ACTION_CARD",
-                    );
-
-                    // Add warning to results
-                    statusResults.push({
-                      target: result.target,
-                      effect: effectData,
-                      applied: false,
-                      warning: game.i18n.format(
-                        "EVENTIDE_RP_SYSTEM.Item.ActionCard.GearEffectNotFoundWarning",
-                        { gearName: effectData.name },
-                      ),
-                    });
-
-                    // Show UI notification to user
-                    ui.notifications.warn(
-                      game.i18n.format(
-                        "EVENTIDE_RP_SYSTEM.Item.ActionCard.GearEffectNotFoundWarning",
-                        { gearName: effectData.name },
-                      ),
-                    );
-                    continue;
-                  }
-
-                  // Check if there's enough quantity
-                  const requiredQuantity = effectData.system.cost || 0;
-                  if (actualGearItem.system.quantity < requiredQuantity) {
-                    // Log warning and continue without applying the effect
-                    Logger.warn(
-                      `Insufficient quantity of "${effectData.name}" in actor inventory`,
-                      {
-                        actorName: this.actor.name,
-                        effectName: effectData.name,
-                        requiredQuantity,
-                        availableQuantity: actualGearItem.system.quantity,
-                        targetName: result.target.name,
-                      },
-                      "ACTION_CARD",
-                    );
-
-                    // Add warning to results
-                    statusResults.push({
-                      target: result.target,
-                      effect: effectData,
-                      applied: false,
-                      warning: game.i18n.format(
-                        "EVENTIDE_RP_SYSTEM.Item.ActionCard.GearEffectInsufficientWarning",
-                        {
-                          gearName: effectData.name,
-                          required: requiredQuantity,
-                          available: actualGearItem.system.quantity,
-                        },
-                      ),
-                    });
-
-                    // Show UI notification to user
-                    ui.notifications.warn(
-                      game.i18n.format(
-                        "EVENTIDE_RP_SYSTEM.Item.ActionCard.GearEffectInsufficientWarning",
-                        {
-                          gearName: effectData.name,
-                          required: requiredQuantity,
-                          available: actualGearItem.system.quantity,
-                        },
-                      ),
-                    );
-                    continue;
-                  }
-
-                  // Reduce quantity from inventory
-                  const currentQuantity = actualGearItem.system.quantity;
-                  const newQuantity = Math.max(
-                    0,
-                    currentQuantity - requiredQuantity,
-                  );
-                  await actualGearItem.update({
-                    "system.quantity": newQuantity,
-                  });
-
-                } catch (error) {
-                  Logger.error(
-                    `Failed to process gear effect "${effectData.name}"`,
-                    error,
-                    "ACTION_CARD",
-                  );
-
-                  // Add error to results
-                  statusResults.push({
-                    target: result.target,
-                    effect: effectData,
-                    applied: false,
-                    error: game.i18n.format(
-                      "EVENTIDE_RP_SYSTEM.Item.ActionCard.GearEffectInventoryError",
-                      { error: error.message },
-                    ),
-                  });
-                  continue;
-                }
-              }
-
-              // Apply status effects directly (GM or player owns all targets)
-              try {
-                // Set flag for effects to trigger appropriate message via createItem hook
-                if (
-                  effectData.type === "gear" ||
-                  effectData.type === "status"
-                ) {
-                  effectData.flags = effectData.flags || {};
-                  effectData.flags["eventide-rp-system"] =
-                    effectData.flags["eventide-rp-system"] || {};
-                  effectData.flags["eventide-rp-system"].isEffect = true;
-                }
-
-                // Ensure gear effects are equipped when transferred
-                if (effectData.type === "gear") {
-                  effectData.system = effectData.system || {};
-                  effectData.system.equipped = true;
-                  effectData.system.quantity = 1;
-
-                }
-
-                // Apply or intensify the effect on the target
-                const applicationResult =
-                  await StatusIntensification.applyOrIntensifyStatus(
-                    result.target,
-                    effectData,
-                  );
-
-                // Track that this effect has been applied to this target
-                if (applicationResult.applied && this._currentRepetitionContext?.appliedStatusEffects) {
-                  const effectKey = `${result.target.id}-${effectData.name}`;
-                  this._currentRepetitionContext.appliedStatusEffects.add(effectKey);
-                }
-
-                // Wait for execution delay after applying status effects
-                // Delay except on final repetition (where sequence ends)
-                if (!disableDelays && !isFinalRepetition) {
-                  await this._waitForExecutionDelay();
-                }
-
-                // Messages are handled by createItem hook
-                statusResults.push({
-                  target: result.target,
-                  effect: effectData,
-                  applied: applicationResult.applied,
-                  intensified: applicationResult.intensified,
-                });
-
-              } catch (error) {
-                Logger.error(
-                  `Failed to apply effect "${effectData.name}" to target "${result.target.name}"`,
-                  error,
-                  "ACTION_CARD",
-                );
-
-                // Add error to results
-                statusResults.push({
-                  target: result.target,
-                  effect: effectData,
-                  applied: false,
-                  error: error.message,
-                });
-              }
-            }
-
-            // Increment count AFTER all effects applied (per application, not per effect)
-            if (this._currentRepetitionContext?.statusApplicationCounts instanceof Map) {
-              const targetId = result.target.id;
-              const currentCount = this._currentRepetitionContext.statusApplicationCounts.get(targetId) ?? 0;
-              this._currentRepetitionContext.statusApplicationCounts.set(targetId, currentCount + 1);
-
-              Logger.debug(
-                `Status application count incremented for target "${result.target.name}"`,
-                {
-                  targetId,
-                  targetName: result.target.name,
-                  newCount: currentCount + 1,
-                  limit: this._currentRepetitionContext.statusApplicationLimit,
-                },
-                "ACTION_CARD",
-              );
-            }
-          }
-        }
-
-        return statusResults;
-      } catch (error) {
-        Logger.error("Failed to process status results", error, "ACTION_CARD");
-        throw error;
-      }
+      return await StatusEffectApplicator.processStatusResults({
+        results,
+        rollResult,
+        embeddedStatusEffects: this.system.embeddedStatusEffects,
+        attackChain: this.system.attackChain,
+        repetitionContext: this._currentRepetitionContext,
+        sourceActor: this.actor,
+        attemptInventoryReduction: this.system.attemptInventoryReduction,
+        shouldApplyEffect: this._shouldApplyEffect.bind(this),
+        waitForDelay: this._waitForExecutionDelay.bind(this),
+        disableDelays,
+        isFinalRepetition,
+      });
     }
 
     /**
@@ -1215,30 +728,19 @@ export function ItemActionCardExecutionMixin(Base) {
 
     /**
      * Send a failure message to chat when action card execution fails
+     * Delegates to ChatMessageBuilder service for message creation.
      * @param {Actor} actor - The actor that attempted to execute the action card
      * @param {number} repetitionCount - The failed repetition count
      * @param {Roll} repetitionsRoll - The roll that determined the repetition count
      */
     async sendFailureMessage(actor, repetitionCount, repetitionsRoll) {
-      try {
-        // Issue #130: Respect rollActorName setting for failure messages
-        const displayName = this.system.rollActorName !== false ? this.name : "Action Card";
-        const messageData = {
-          speaker: ChatMessage.getSpeaker({ actor }),
-          content: `
-            <div class="action-card-failure">
-              <h3>${displayName} - Execution Failed</h3>
-              <p><strong>Repetitions Roll:</strong> ${repetitionsRoll.formula} = ${repetitionCount}</p>
-              <p class="failure-reason">Action failed due to insufficient repetitions (${repetitionCount} ≤ 0)</p>
-            </div>
-          `,
-          type: CONST.CHAT_MESSAGE_TYPES.OTHER,
-        };
-
-        await ChatMessage.create(messageData);
-      } catch (error) {
-        Logger.error("Failed to send failure message", error, "ACTION_CARD");
-      }
+      await ChatMessageBuilder.sendRepetitionFailureMessage({
+        actor,
+        cardName: this.name,
+        repetitionCount,
+        repetitionsRoll,
+        rollActorName: this.system.rollActorName,
+      });
     }
 
     /**
@@ -1358,25 +860,13 @@ export function ItemActionCardExecutionMixin(Base) {
 
     /**
      * Get the actor's token for self-targeting
+     * Delegates to TargetResolver service for token resolution.
      * @param {Actor} actor - The actor to get the token for
      * @returns {TokenDocument|null} The actor's token or null if not found
      * @private
      */
     _getSelfTargetToken(actor) {
-      // First try to get the actor's synthetic token (preferred)
-      if (actor.token) {
-        return actor.token;
-      }
-
-      // Fallback to getting active tokens from the canvas
-      const activeTokens = actor.getActiveTokens();
-      if (activeTokens.length > 0) {
-        // Return the first active token
-        return activeTokens[0];
-      }
-
-      // No token found
-      return null;
+      return TargetResolver.getSelfTargetToken(actor);
     }
 
     /**

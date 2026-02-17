@@ -8,6 +8,7 @@
  */
 
 import { Logger } from "./logger.mjs";
+import { DefaultDataFactory } from "./default-data-factory.mjs";
 
 /**
  * EmbeddedItemManager class for centralized embedded item operations
@@ -22,165 +23,60 @@ export class EmbeddedItemManager {
   /**
    * Get default data for creating a new combat power
    *
+   * Delegates to DefaultDataFactory for centralized default data generation.
+   *
    * @static
    * @param {Item} parentItem - The parent item to inherit properties from
    * @param {string} context - Context: "actionCard" or "transformation"
    * @returns {object} Default combat power data
    */
   static getDefaultCombatPowerData(parentItem, context = "actionCard") {
-    const baseData = {
-      name: parentItem.name,
-      type: "combatPower",
-      img: parentItem.img,
-      system: {
-        description: parentItem.system.description,
-        prerequisites: "",
-        targeted: true,
-        bgColor: parentItem.system.bgColor || "#8B4513",
-        textColor: parentItem.system.textColor || "#ffffff",
-        roll: {
-          type: "roll",
-          ability: "unaugmented",
-          bonus: 0,
-          diceAdjustments: {
-            advantage: 0,
-            disadvantage: 0,
-            total: 0,
-          },
-        },
-      },
-    };
-
-    if (context === "transformation") {
-      baseData.name = `${parentItem.name} Power`;
-      baseData.system.description = `Combat power from ${parentItem.name} transformation`;
-    }
-
-    return baseData;
+    return DefaultDataFactory.getCombatPowerData(parentItem, context);
   }
 
   /**
    * Get default data for creating a new status effect
+   *
+   * Delegates to DefaultDataFactory for centralized default data generation.
    *
    * @static
    * @param {Item} parentItem - The parent action card
    * @returns {object} Default status effect data
    */
   static getDefaultStatusData(parentItem) {
-    return {
-      name: parentItem.name,
-      type: "status",
-      img: parentItem.img,
-      system: {
-        description: parentItem.system.description,
-        bgColor: parentItem.system.bgColor,
-        textColor: parentItem.system.textColor,
-      },
-      effects: [
-        {
-          _id: foundry.utils.randomID(),
-          name: `${parentItem.name} Effect`,
-          img: parentItem.img,
-          changes: [],
-          disabled: false,
-          duration: {
-            startTime: null,
-            seconds: 18000, // 5 hours - matches the effect creator pattern
-            combat: "",
-            rounds: 0,
-            turns: 0,
-            startRound: 0,
-            startTurn: 0,
-          },
-          description: "",
-          origin: "",
-          tint: parentItem.system.textColor || "#ffffff",
-          transfer: true,
-          statuses: new Set(),
-          flags: {},
-        },
-      ],
-    };
+    return DefaultDataFactory.getStatusData(parentItem);
   }
 
   /**
    * Get default data for creating a new transformation
+   *
+   * Delegates to DefaultDataFactory for centralized default data generation.
    *
    * @static
    * @param {Item} parentItem - The parent action card
    * @returns {object} Default transformation data
    */
   static getDefaultTransformationData(parentItem) {
-    return {
-      name: parentItem.name,
-      type: "transformation",
-      img: parentItem.img,
-      system: {
-        description: parentItem.system.description,
-        size: 1,
-        cursed: false,
-        embeddedCombatPowers: [],
-        resolveAdjustment: 0,
-        powerAdjustment: 0,
-        tokenImage: "",
-      },
-    };
+    return DefaultDataFactory.getTransformationData(parentItem);
   }
 
   /**
    * Get default data for creating a new action card
+   *
+   * Delegates to DefaultDataFactory for centralized default data generation.
    *
    * @static
    * @param {Item} parentItem - The parent transformation
    * @returns {object} Default action card data
    */
   static getDefaultActionCardData(parentItem) {
-    return {
-      name: `${parentItem.name} Action`,
-      type: "actionCard",
-      img: parentItem.img,
-      system: {
-        description: `Action card from ${parentItem.name} transformation`,
-        bgColor: "#8B4513",
-        textColor: "#ffffff",
-        mode: "attackChain",
-        attackChain: {
-          firstStat: "acro",
-          secondStat: "phys",
-          damageCondition: "never",
-          damageFormula: "1d6",
-          damageType: "damage",
-          damageThreshold: 15,
-          statusCondition: "oneSuccess",
-          statusThreshold: 15,
-        },
-        embeddedItem: {},
-        embeddedStatusEffects: [],
-        embeddedTransformations: [],
-        transformationConfig: {
-          condition: "oneSuccess",
-          threshold: 15,
-        },
-        savedDamage: {
-          formula: "1d6",
-          type: "damage",
-          description: "",
-        },
-        advanceInitiative: false,
-        attemptInventoryReduction: false,
-        repetitions: "1",
-        repeatToHit: false,
-        damageApplication: false,
-        statusApplicationLimit: 1,
-        timingOverride: 0.0,
-        costOnRepetition: false,
-        failOnFirstMiss: true,
-      },
-    };
+    return DefaultDataFactory.getActionCardData(parentItem);
   }
 
   /**
    * Get default data for a new item based on item type
+   *
+   * Delegates to DefaultDataFactory for centralized default data generation.
    *
    * @static
    * @param {string} itemType - The type of item to get default data for
@@ -188,23 +84,7 @@ export class EmbeddedItemManager {
    * @returns {object|null} Default item data or null if type not supported
    */
   static getDefaultItemData(itemType, parentItem) {
-    switch (itemType) {
-      case "combatPower":
-        return this.getDefaultCombatPowerData(parentItem, "actionCard");
-      case "status":
-        return this.getDefaultStatusData(parentItem);
-      case "transformation":
-        return this.getDefaultTransformationData(parentItem);
-      case "actionCard":
-        return this.getDefaultActionCardData(parentItem);
-      default:
-        Logger.warn(
-          `Unknown item type for default data: ${itemType}`,
-          {},
-          "EMBEDDED_ITEM_MANAGER",
-        );
-        return null;
-    }
+    return DefaultDataFactory.getItemData(itemType, parentItem);
   }
 
   // =================================

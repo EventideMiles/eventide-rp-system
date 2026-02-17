@@ -8,6 +8,7 @@
  * @see module:item-sheet-actions
  */
 
+import { DefaultDataFactory } from "./default-data-factory.mjs";
 import { Logger } from "./logger.mjs";
 
 /**
@@ -661,54 +662,14 @@ export class ContextMenuBuilder {
   /**
    * Get default system data for a given item type
    *
+   * Delegates to DefaultDataFactory.getSystemData() for centralized default data.
+   *
    * @param {string} itemType - The item type
    * @returns {object} Default system data
    * @private
    */
   _getDefaultSystemData(itemType) {
-    const defaults = {
-      feature: {
-        bgColor: "#70B87A",
-        textColor: "#ffffff",
-        targeted: false,
-        roll: {
-          type: "none",
-          ability: "unaugmented",
-          bonus: 0,
-          diceAdjustments: { advantage: 0, disadvantage: 0, total: 0 },
-        },
-      },
-      status: {
-        bgColor: "#7A70B8",
-        textColor: "#ffffff",
-      },
-      gear: {
-        bgColor: "#8B4513",
-        textColor: "#ffffff",
-        equipped: true,
-        quantity: 1,
-        className: "other",
-      },
-      combatPower: {
-        bgColor: "#B8860B",
-        textColor: "#ffffff",
-        cost: 1,
-        targeted: true,
-        roll: {
-          type: "none",
-          ability: "unaugmented",
-          bonus: 0,
-          diceAdjustments: { advantage: 0, disadvantage: 0, total: 0 },
-        },
-      },
-      actionCard: {
-        mode: "attackChain",
-        bgColor: "#8B4513",
-        textColor: "#ffffff",
-      },
-    };
-
-    return defaults[itemType] || {};
+    return DefaultDataFactory.getSystemData(itemType);
   }
 }
 

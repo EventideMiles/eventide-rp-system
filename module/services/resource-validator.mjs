@@ -11,9 +11,7 @@
 
 import { Logger } from "./logger.mjs";
 import { InventoryUtils } from "../helpers/_module.mjs";
-
-// Import renderTemplate from Foundry
-const { renderTemplate } = foundry.applications.handlebars;
+import { ChatMessageBuilder } from "./chat-message-builder.mjs";
 
 /**
  * @typedef {Object} ResourceCheckResult
@@ -171,104 +169,6 @@ export class ResourceValidator {
    * @returns {Promise<void>}
    */
   static async sendResourceFailureMessage(options) {
-    const {
-      actor,
-      resourceCheck,
-      embeddedItem,
-      repetitionIndex,
-      repetitionCount = null,
-      cardData,
-    } = options;
-
-    try {
-      let failureTitle = "";
-      let failureMessage = "";
-
-      if (resourceCheck.reason === "insufficientPower") {
-        failureTitle = game.i18n.localize(
-          "EVENTIDE_RP_SYSTEM.Item.ActionCard.ResourceFailure.InsufficientPower.Title",
-        );
-        failureMessage = game.i18n.format(
-          "EVENTIDE_RP_SYSTEM.Item.ActionCard.ResourceFailure.InsufficientPower.Message",
-          {
-            itemName: embeddedItem.name,
-            required: resourceCheck.required,
-            available: resourceCheck.available,
-          },
-        );
-      } else if (resourceCheck.reason === "insufficientQuantity") {
-        failureTitle = game.i18n.localize(
-          "EVENTIDE_RP_SYSTEM.Item.ActionCard.ResourceFailure.InsufficientQuantity.Title",
-        );
-        failureMessage = game.i18n.format(
-          "EVENTIDE_RP_SYSTEM.Item.ActionCard.ResourceFailure.InsufficientQuantity.Message",
-          {
-            itemName: embeddedItem.name,
-            required: resourceCheck.required,
-            available: resourceCheck.available,
-          },
-        );
-      } else if (resourceCheck.reason === "noGearInInventory") {
-        failureTitle = game.i18n.localize(
-          "EVENTIDE_RP_SYSTEM.Item.ActionCard.ResourceFailure.GearNotFound.Title",
-        );
-        failureMessage = game.i18n.format(
-          "EVENTIDE_RP_SYSTEM.Item.ActionCard.ResourceFailure.GearNotFound.Message",
-          {
-            itemName: embeddedItem.name,
-          },
-        );
-      } else {
-        failureTitle = game.i18n.localize(
-          "EVENTIDE_RP_SYSTEM.Item.ActionCard.ResourceFailure.Unknown.Title",
-        );
-        failureMessage = game.i18n.localize(
-          "EVENTIDE_RP_SYSTEM.Item.ActionCard.ResourceFailure.Unknown.Message",
-        );
-      }
-
-      // Issue #130: Respect rollActorName setting for template data
-      const templateData = {
-        actionCard: {
-          name: cardData.rollActorName !== false ? cardData.name : "",
-          img: cardData.img,
-        },
-        style: cardData.textColor
-          ? `color: ${cardData.textColor}; background-color: ${cardData.bgColor || "#8B0000"}`
-          : "background-color: #8B0000",
-        repetitionInfo: repetitionCount
-          ? {
-              current: repetitionIndex + 1,
-              total: repetitionCount,
-              completed: repetitionIndex,
-            }
-          : null,
-        failureTitle,
-        failureMessage,
-        resourceInfo: {
-          required: resourceCheck.required,
-          available: resourceCheck.available,
-        },
-      };
-
-      const content = await renderTemplate(
-        "systems/eventide-rp-system/templates/chat/action-card-failure-message.hbs",
-        templateData,
-      );
-
-      const messageData = {
-        speaker: ChatMessage.getSpeaker({ actor }),
-        content,
-        style: CONST.CHAT_MESSAGE_STYLES.OTHER,
-      };
-
-      await ChatMessage.create(messageData);
-    } catch (error) {
-      Logger.error(
-        "Failed to send resource failure message",
-        error,
-        "ACTION_CARD",
-      );
-    }
+    return ChatMessageBuilder.sendResourceFailureMessage(options);
   }
 }

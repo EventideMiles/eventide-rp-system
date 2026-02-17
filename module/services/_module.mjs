@@ -26,3 +26,11 @@ export * from "./embedded-item-manager.mjs";
 export * from "./resource-validator.mjs";
 export * from "./transformation-applicator.mjs";
 export * from "./repetition-handler.mjs";
+
+// Phase 4 Refactoring - New Services
+export * from "./status-effect-applicator.mjs";
+export * from "./attack-chain-executor.mjs";
+export * from "./target-resolver.mjs";
+export * from "./chat-message-builder.mjs";
+export * from "./default-data-factory.mjs";
+export * from "./damage-processor.mjs";
