@@ -10,6 +10,7 @@
  */
 
 import { Logger } from "./logger.mjs";
+import { TargetResolver } from "./target-resolver.mjs";
 
 /**
  * @typedef {Object} TargetHitResult
@@ -36,6 +37,7 @@ import { Logger } from "./logger.mjs";
  * @property {string} [attackChain.damageFormula] - Damage formula if applicable
  * @property {string} [attackChain.damageType] - Type of damage
  * @property {Array} embeddedTransformations - Embedded transformation data
+ * @property {LockedTargetData[]} lockedTargets - Locked targets from popup
  * @property {Function} processDamage - Function to process damage results
  * @property {Function} processStatus - Function to process status results
  * @property {Function} processTransformation - Function to process transformations
@@ -79,6 +81,7 @@ export class AttackChainExecutor {
       embeddedItem,
       attackChain,
       embeddedTransformations,
+      lockedTargets,
       processDamage,
       processStatus,
       processTransformation,
@@ -90,10 +93,20 @@ export class AttackChainExecutor {
     } = context;
 
     try {
-      // Get targets for AC checking
-      const targetArray = await erps.utils.getTargetArray();
+      // Resolve locked targets instead of fetching from game.user.targets
+      const { valid: resolvedTargets, invalid: _invalid } = lockedTargets
+        ? TargetResolver.resolveLockedTargets(lockedTargets)
+        : { valid: await erps.utils.getTargetArray(), invalid: [] };
+
+      // Extract tokens from resolved targets
+      const targetArray = resolvedTargets.map((r) => r.token).filter(Boolean);
+
       if (targetArray.length === 0) {
-        Logger.warn("No targets found for attack chain", null, "ACTION_CARD");
+        Logger.warn(
+          "No valid targets found for attack chain",
+          null,
+          "ACTION_CARD",
+        );
         ui.notifications.warn(
           game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.NoTargetsAttackChain"),
         );

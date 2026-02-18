@@ -1,6 +1,7 @@
 import { ERPSRollUtilities } from "../../utils/_module.mjs";
 import { erpsSoundManager } from "./sound-manager.mjs";
 import { Logger } from "../logger.mjs";
+import { TargetResolver } from "../target-resolver.mjs";
 
 const { renderTemplate } = foundry.applications.handlebars;
 const { TextEditor } = foundry.applications.ux;
@@ -373,11 +374,15 @@ class ERPSMessageHandler {
    * @param {Item} item - The combat power item to create a message for
    * @param {Object} [options={}] - Additional options for the message
    * @param {string} [options.rollMode] - The roll mode to use for the message
+   * @param {Array} [options.lockedTargets] - Locked targets to use for GM section (bypass mode)
    * @returns {Promise<ChatMessage>} The created chat message
    */
   async createCombatPowerMessage(item, options = {}) {
     // Early return if the item doesn't have the necessary data
     if (!item || !item.system) return null;
+
+    // Extract locked targets from options for GM section
+    const lockedTargets = options.lockedTargets;
 
     // Get the roll type from the item
     const rollType = item.system.roll?.type || "none";
@@ -439,7 +444,15 @@ class ERPSMessageHandler {
       const result = await roll.evaluate();
 
       // Check if we need to do AC checks
-      const targetArray = await erps.utils.getTargetArray();
+      // Use locked targets if provided (from action card bypass mode), otherwise get current targets
+      let targetArray;
+      if (lockedTargets) {
+        // resolveLockedTargets returns { valid: [...], invalid: [...] }
+        const resolved = TargetResolver.resolveLockedTargets(lockedTargets);
+        targetArray = resolved.valid;
+      } else {
+        targetArray = await erps.utils.getTargetArray();
+      }
       const addCheck =
         item.system.targeted && targetArray.length ? true : false;
 
@@ -454,11 +467,16 @@ class ERPSMessageHandler {
 
       // Prepare target data if needed
       const targetRollData = addCheck
-        ? targetArray.map((target) => ({
-            name: target.actor.name,
-            compare: result.total,
-            ...target.actor.getRollData(),
-          }))
+        ? targetArray.map((target) => {
+            // Resolved targets have { token, actor, lockedTarget } structure
+            // Regular targets from getTargetArray have just the token with .actor
+            const targetActor = target.actor || target.token?.actor;
+            return {
+              name: targetActor?.name || "Unknown",
+              compare: result.total,
+              ...(targetActor?.getRollData() || {}),
+            };
+          })
         : [];
 
       // Prepare the template data
@@ -704,6 +722,7 @@ class ERPSMessageHandler {
    * @param {string} options.playerName - Name of the player requesting approval
    * @param {Actor[]} options.targets - Array of target actors
    * @param {Object} options.rollResult - Roll result data
+   * @param {Object[]} options.lockedTargets - Locked targets from popup
    * @returns {Promise<ChatMessage>} The created chat message
    */
   async createPlayerActionApprovalRequest({
@@ -713,6 +732,7 @@ class ERPSMessageHandler {
     playerName,
     targets,
     rollResult,
+    lockedTargets,
   }) {
     Logger.methodEntry("SystemMessages", "createPlayerActionApprovalRequest", {
       actorId: actor.id,
@@ -763,6 +783,7 @@ class ERPSMessageHandler {
       playerId,
       playerName,
       targetIds: targets.map((t) => t.id),
+      lockedTargets,
       rollResult,
     });
 
@@ -869,6 +890,65 @@ class ERPSMessageHandler {
     Logger.methodExit("SystemMessages", "notifyPlayerActionResult", message);
     return message;
   }
+
+  /**
+   * Creates a targets exhausted message when all targets are removed during repetitions
+   * @param {Object} options - Options for the targets exhausted message
+   * @param {Actor} options.actor - The actor executing the action card
+   * @param {Item} options.actionCard - The action card being executed
+   * @param {Object} options.repetitionInfo - Repetition information
+   * @param {number} options.repetitionInfo.current - Current repetition number
+   * @param {number} options.repetitionInfo.total - Total repetitions
+   * @param {number} options.repetitionInfo.completed - Completed repetitions
+   * @param {string[]} options.exhaustedTargets - Names of exhausted targets
+   * @returns {Promise<ChatMessage>} The created chat message
+   */
+  async createTargetsExhaustedMessage({
+    actor,
+    actionCard,
+    repetitionInfo,
+    exhaustedTargets,
+  }) {
+    Logger.methodEntry("SystemMessages", "createTargetsExhaustedMessage", {
+      actorId: actor.id,
+      actionCardId: actionCard.id,
+      repetitionInfo,
+      exhaustedTargets,
+    });
+
+    const data = {
+      actor: {
+        id: actor.id,
+        name: actor.name,
+        img: actor.img,
+      },
+      actionCard: {
+        id: actionCard.id,
+        name: actionCard.name,
+        img: actionCard.img,
+        description: actionCard.system.description,
+        textColor: actionCard.system.textColor,
+        bgColor: actionCard.system.bgColor,
+      },
+      repetitionInfo,
+      exhaustedTargets,
+    };
+
+    const messageData = {
+      content: await renderTemplate(
+        "systems/eventide-rp-system/templates/chat/targets-exhausted-message.hbs",
+        data,
+      ),
+      speaker: {
+        actor: actor.id,
+        alias: actor.name,
+      },
+    };
+
+    const message = await ChatMessage.create(messageData);
+    Logger.methodExit("SystemMessages", "createTargetsExhaustedMessage", message);
+    return message;
+  }
 }
 
 // Create a singleton instance
@@ -899,6 +979,8 @@ erpsMessageHandler.createPlayerActionApprovalRequest =
   erpsMessageHandler.createPlayerActionApprovalRequest.bind(erpsMessageHandler);
 erpsMessageHandler.notifyPlayerActionResult =
   erpsMessageHandler.notifyPlayerActionResult.bind(erpsMessageHandler);
+erpsMessageHandler.createTargetsExhaustedMessage =
+  erpsMessageHandler.createTargetsExhaustedMessage.bind(erpsMessageHandler);
 
 // Export individual functions for backward compatibility
 /**
@@ -1046,3 +1128,15 @@ export const notifyPlayerActionResult = (
     approved,
     gmName,
   );
+
+/**
+ * Creates a targets exhausted message when all targets are removed during repetitions
+ * @param {Object} options - Options for the targets exhausted message
+ * @param {Actor} options.actor - The actor executing the action card
+ * @param {Item} options.actionCard - The action card being executed
+ * @param {Object} options.repetitionInfo - Repetition information
+ * @param {string[]} options.exhaustedTargets - Names of exhausted targets
+ * @returns {Promise<ChatMessage>} The created chat message
+ */
+export const createTargetsExhaustedMessage = (options) =>
+  erpsMessageHandler.createTargetsExhaustedMessage(options);

@@ -157,7 +157,6 @@
       "FailedToSaveActionCard": "Failed to save action card. See console for details.",
       "CreateNewCombatPowerFailed": "Failed to create new combat power",
       "CreateNewActionCardFailed": "Failed to create new action card",
-      "FailedToAddCombatPower": "Failed to add combat power",
       "FailedToAddActionCard": "Failed to add action card",
       "TransformationCreationFailed": "Failed to create transformation",
       "GMOnlyOperation": "Only GMs can perform this operation",
@@ -180,7 +179,10 @@
       "NoPermissionEditTransformationCombatPowers": "You don't have permission to edit this transformation's combat powers",
       "NoPermissionEditTransformationActionCards": "You don't have permission to edit this transformation's action cards",
       "EmbeddedCombatPowerNotFound": "Could not find embedded combat power to update",
-      "EmbeddedActionCardNotFound": "Could not find embedded action card to update"
+      "EmbeddedActionCardNotFound": "Could not find embedded action card to update",
+      "AllTargetsDeleted": "All targets have been removed from the scene. Action cancelled.",
+      "SomeTargetsDeleted": "{count} target(s) no longer exist: {names}. Continuing with remaining targets.",
+      "TargetResolutionFailed": "Failed to resolve targets: {message}"
     },
     "Info": {
       "CompendiumItemCreated": "Created {keyType} item {name} in the {packLabel} compendium",

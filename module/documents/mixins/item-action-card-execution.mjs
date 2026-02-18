@@ -73,6 +73,7 @@ export function ItemActionCardExecutionMixin(Base) {
      * @param {Roll} rollResult - The pre-computed roll result from the embedded item
      * @param {Object} options - Additional execution options
      * @param {Map} options.transformationSelections - Map of target IDs to selected transformation IDs
+     * @param {Object[]} options.lockedTargets - Locked targets from popup
      * @returns {Promise<Object>} Result of the execution
      */
     async executeWithRollResult(actor, rollResult, options = {}) {
@@ -92,6 +93,9 @@ export function ItemActionCardExecutionMixin(Base) {
       }
 
       try {
+        // Store locked targets for repetition access
+        this._lockedTargets = options.lockedTargets || [];
+
         // Calculate number of repetitions using RepetitionHandler
         const { count: repetitionCount, roll: repetitionsRoll } =
           await RepetitionHandler.calculateRepetitionCount(
@@ -181,6 +185,59 @@ export function ItemActionCardExecutionMixin(Base) {
             };
 
             return partialResult;
+          }
+
+          // Validate locked targets at the start of each repetition
+          // Skip validation on first iteration - already validated in popup submit
+          if (i > 0) {
+            const validation = this.#validateLockedTargetsForRepetition();
+
+            if (validation.exhausted) {
+              // All targets have been removed - post chat message and stop
+              Logger.warn(
+                `Action card execution halted at repetition ${i + 1} - all targets exhausted`,
+                {
+                  actionCardName: this.name,
+                  removedTargets: validation.removedNames,
+                  completedRepetitions: i,
+                },
+                "ACTION_CARD",
+              );
+
+              // Post targets exhausted chat message
+              await erps.messages.createTargetsExhaustedMessage({
+                actor,
+                actionCard: this,
+                repetitionInfo: {
+                  current: i + 1,
+                  total: effectiveRepetitionCount,
+                  completed: i,
+                },
+                exhaustedTargets: validation.removedNames,
+              });
+
+              // Return partial results
+              const partialResult = {
+                success: false,
+                repetitionCount: effectiveRepetitionCount,
+                completedRepetitions: i,
+                results,
+                mode: this.system.mode,
+                reason: "targetsExhausted",
+              };
+
+              delete this._currentRepetitionContext;
+              return partialResult;
+            }
+
+            // Some targets removed - continue silently with remaining
+            if (validation.removedCount > 0) {
+              Logger.info(
+                `Removed ${validation.removedCount} invalid target(s) at repetition ${i + 1}`,
+                { removedTargets: validation.removedNames },
+                "ACTION_CARD",
+              );
+            }
           }
 
           // Check resource constraints before execution
@@ -497,6 +554,58 @@ export function ItemActionCardExecutionMixin(Base) {
     }
 
     /**
+     * Validate locked targets for a repetition iteration
+     * Removes invalid targets from the locked targets array
+     *
+     * @private
+     * @returns {{valid: boolean, exhausted: boolean, removedCount: number, removedNames: string[]}}
+     *   Validation result with valid flag, exhausted flag, and info about removed targets
+     */
+    #validateLockedTargetsForRepetition() {
+      if (!this._lockedTargets || this._lockedTargets.length === 0) {
+        return { valid: false, exhausted: true, removedCount: 0, removedNames: [] };
+      }
+
+      const result = TargetResolver.resolveLockedTargets(this._lockedTargets);
+
+      // Filter out actor-only targets (actors without tokens) and rebuild locked targets
+      const validWithTokens = result.valid.filter((r) => r.token !== null);
+
+      this._lockedTargets = validWithTokens.map((r) => ({
+        actorId: r.actor.id,
+        tokenId: r.token.id,
+        sceneId: r.token.parent?.id || null,
+        actorName: r.actor.name,
+        tokenName: r.token.name,
+        img: r.actor.img,
+        isLinked: !r.token.isLinked,
+        uuid: r.actor.uuid,
+      }));
+
+      // If all targets are invalid, return exhausted
+      if (result.valid.length === 0) {
+        return {
+          valid: false,
+          exhausted: true,
+          removedCount: this._lockedTargets.length,
+          removedNames: result.invalid.map(t => t.name)
+        };
+      }
+
+      // If some targets are invalid, return info about removed
+      if (result.invalid.length > 0) {
+        return {
+          valid: true,
+          exhausted: false,
+          removedCount: result.invalid.length,
+          removedNames: result.invalid.map(t => t.name)
+        };
+      }
+
+      return { valid: true, exhausted: false, removedCount: 0, removedNames: [] };
+    }
+
+    /**
      * Execute the action card's attack chain with a pre-computed roll result
      * @param {Actor} actor - The actor executing the action card
      * @param {Roll} rollResult - The pre-computed roll result from the embedded item
@@ -531,6 +640,7 @@ export function ItemActionCardExecutionMixin(Base) {
         embeddedItem,
         attackChain: this.system.attackChain,
         embeddedTransformations: this.system.embeddedTransformations,
+        lockedTargets: this._lockedTargets,
         processDamage: (results, roll, delays) =>
           this._processDamageResults(results, roll, delays),
         processStatus: (results, roll, delays, isFinal) =>
@@ -808,8 +918,13 @@ export function ItemActionCardExecutionMixin(Base) {
           }, 3000); // Shorter timeout for repetitions
         });
 
-        // Execute embedded item with bypass
-        await embeddedItem.roll({ bypass: true });
+        // Execute embedded item with bypass, skipping targeting check since
+        // the action card already validated targets on the first repetition
+        await embeddedItem.roll({
+          bypass: true,
+          skipTargetingCheck: true,
+          lockedTargets: this._lockedTargets
+        });
 
         // Wait for the roll result
         const rollResult = await rollResultPromise;

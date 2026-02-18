@@ -7,6 +7,7 @@ import {
   InventoryUtils,
 } from "../../helpers/_module.mjs";
 import { Logger } from "../../services/logger.mjs";
+import { TargetResolver } from "../../services/target-resolver.mjs";
 
 /**
  * Action Card Popup Application
@@ -60,6 +61,7 @@ export class ActionCardPopup extends EventidePopupHelpers {
     super({ item });
     this.type = "actionCard";
     this._selectedEffectIds = null;
+    this._lockedTargets = null;
 
     if (!this.item || this.item.type !== "actionCard") {
       throw new Error("ActionCardPopup requires an action card item");
@@ -283,12 +285,33 @@ export class ActionCardPopup extends EventidePopupHelpers {
       }),
     );
 
-    // Get target actors for transformation selection
-    const targetArray = await erps.utils.getTargetArray();
-    context.targets = targetArray.map((target) => ({
-      id: target.actor.id,
-      name: target.actor.name,
-      img: target.actor.img,
+    // Lock targets at popup open - this is the single source of truth
+    let targetArray = await erps.utils.getTargetArray();
+
+    // Handle self-targeting mode: use actor's token instead of selected targets
+    if (this.item.system.selfTarget) {
+      const actor = this.item.actor;
+      if (actor) {
+        const selfToken = TargetResolver.getSelfTargetToken(actor);
+        if (selfToken) {
+          targetArray = [selfToken];
+        } else {
+          Logger.warn(
+            "Self-targeting enabled but no token found for actor",
+            { actorId: actor.id, actorName: actor.name },
+            "ACTION_CARD",
+          );
+        }
+      }
+    }
+
+    this._lockedTargets = TargetResolver.lockTargets(targetArray);
+
+    // Use locked targets for display context
+    context.targets = this._lockedTargets.map((t) => ({
+      id: t.actorId,
+      name: t.actorName,
+      img: t.img,
     }));
 
 
@@ -1071,6 +1094,7 @@ export class ActionCardPopup extends EventidePopupHelpers {
           await embeddedItem.roll({
             bypass: true,
             actionCardContext,
+            lockedTargets: this._lockedTargets,
           });
 
           // Wait for the roll result
@@ -1088,10 +1112,38 @@ export class ActionCardPopup extends EventidePopupHelpers {
         }
       }
 
-      // Check if the player owns all targets before execution
-      const targets = await erps.utils.getTargetArray();
+      // Resolve locked targets - validates they still exist
+      const { valid: resolvedTargets, invalid } = TargetResolver.resolveLockedTargets(
+        this._lockedTargets,
+      );
+
+      // Handle all targets deleted scenario
+      if (resolvedTargets.length === 0 && this._lockedTargets.length > 0) {
+        ui.notifications.warn(
+          game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.AllTargetsDeleted"),
+        );
+        Logger.warn(
+          "All locked targets were deleted before execution",
+          { invalidTargets: invalid },
+          "ACTION_CARD",
+        );
+        return;
+      }
+
+      // Notify about any deleted targets but continue with remaining
+      if (invalid.length > 0) {
+        ui.notifications.info(
+          game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.SomeTargetsDeleted", {
+            count: invalid.length,
+            names: invalid.map((t) => t.lockedTarget.actorName).join(", "),
+          }),
+        );
+      }
+
+      // Extract tokens from resolved targets for ownership check
+      const targets = resolvedTargets.map((r) => r.token).filter(Boolean);
       const playerOwnsAllTargets =
-        targets.length === 0 || targets.every((target) => target.actor.isOwner);
+        targets.length === 0 || targets.every((target) => target.actor?.isOwner);
 
       if (!playerOwnsAllTargets) {
         // Player doesn't own all targets - send to GM for approval
@@ -1112,6 +1164,7 @@ export class ActionCardPopup extends EventidePopupHelpers {
               transformationSelections,
             ),
             selectedEffectIds,
+            lockedTargets: this._lockedTargets,
           });
 
           ui.notifications.info(
@@ -1145,6 +1198,7 @@ export class ActionCardPopup extends EventidePopupHelpers {
         transformationSelections,
         selectedEffectIds,
         actionCardContext,
+        lockedTargets: this._lockedTargets,
       });
 
       if (result.success) {

@@ -59,6 +59,7 @@ export default [
         FormDataExtended: "readonly",
         getDocumentClass: "readonly",
         fromUuid: "readonly",
+        fromUuidSync: "readonly",
         fetch: "readonly",
         Event: "readonly",
         erps: "readonly",

@@ -484,6 +484,7 @@ export class MessageFlags {
    * @param {string} options.playerId - ID of the player requesting approval
    * @param {string} options.playerName - Name of the player requesting approval
    * @param {Array} options.targetIds - Array of target actor IDs
+   * @param {Object[]} options.lockedTargets - Locked targets from popup
    * @param {Object} options.rollResult - Roll result data for the action
    * @returns {Object} Player action approval flag structure
    */
@@ -494,6 +495,7 @@ export class MessageFlags {
     playerId,
     playerName,
     targetIds,
+    lockedTargets,
     rollResult,
   }) {
     Logger.methodEntry("MessageFlags", "createPlayerActionApprovalFlag", {
@@ -511,6 +513,7 @@ export class MessageFlags {
       playerId,
       playerName,
       targetIds: targetIds || [],
+      lockedTargets,
       rollResult,
       timestamp: Date.now(),
       processed: false,

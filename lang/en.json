@@ -507,6 +507,15 @@
         "Damage": "Damage",
         "Status": "Status",
         "Cost": "Cost"
+      },
+      "TargetsExhausted": {
+        "TargetsExhausted": "Targets Exhausted",
+        "TargetsExhaustedRepetition": "Repetition: {current}/{total}",
+        "TargetsExhaustedCompleted": "Completed: {completed}/{total}",
+        "TargetsExhaustedFailureTitle": "Execution Stopped",
+        "TargetsExhaustedFailureMessage": "None of the original targets still exist.",
+        "TargetsExhaustedTargetsRemoved": "Targets Removed: {names}",
+        "TargetsExhaustedNote": "Remaining repetitions were not executed."
       }
     },
     "Errors": {
@@ -608,7 +617,7 @@
       "EffectDeletionFailed": "Failed to delete effect for {itemName}",
       "EffectNotFound": "Effect not found",
       "EffectToggleFailed": "Failed to toggle effect for {itemName}",
-      "FailedToAddCombatPower": "Failed to add combat power",
+      "FailedToAddCombatPower": "Failed to add combat power {itemName}",
       "ImagePickerFailed": "Failed to open image picker for {itemName}",
       "MacroExecutionError": "Failed to execute macro",
       "UnexpectedError": "An unexpected error occurred",
@@ -688,7 +697,10 @@
       "NoPermissionEditTransformationCombatPowers": "You don't have permission to edit this transformation's combat powers",
       "NoPermissionEditTransformationActionCards": "You don't have permission to edit this transformation's action cards",
       "EmbeddedCombatPowerNotFound": "Could not find embedded combat power to update",
-      "EmbeddedActionCardNotFound": "Could not find embedded action card to update"
+      "EmbeddedActionCardNotFound": "Could not find embedded action card to update",
+      "AllTargetsDeleted": "All targets have been removed from the scene. Action cancelled.",
+      "SomeTargetsDeleted": "{count} target(s) no longer exist: {names}. Continuing with remaining targets.",
+      "TargetResolutionFailed": "Failed to resolve targets: {message}"
     },
     "Info": {
       "CompendiumItemCreated": "Created {keyType} item {name} in the {packLabel} compendium",

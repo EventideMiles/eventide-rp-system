@@ -26,6 +26,46 @@ import { Logger } from "./logger.mjs";
  */
 
 /**
+ * @typedef {Object} LockedTargetData
+ * @property {string|null} actorId - Actor document ID
+ * @property {string} tokenId - Token document ID
+ * @property {string|null} sceneId - Scene ID where token exists
+ * @property {string} actorName - Actor name for logging/notification
+ * @property {string|null} tokenName - Token name (may differ from actor)
+ * @property {string} img - Image for display
+ * @property {boolean} isLinked - Whether token is linked to actor
+ * @property {string|null} uuid - Actor UUID for reliable retrieval
+ */
+
+/**
+ * @typedef {Object} ResolvedTargetsResult
+ * @property {ResolvedTarget[]} valid - Array of successfully resolved targets
+ * @property {InvalidTarget[]} invalid - Array of targets that could not be resolved
+ * @property {boolean} allValid - Whether all targets were successfully resolved
+ */
+
+/**
+ * @typedef {Object} ResolvedTarget
+ * @property {Token|null} token - The resolved token (may be null for actor-only)
+ * @property {Actor} actor - The resolved actor
+ * @property {LockedTargetData} lockedTarget - Original locked target data
+ */
+
+/**
+ * @typedef {Object} InvalidTarget
+ * @property {LockedTargetData} lockedTarget - The locked target that couldn't be resolved
+ * @property {string} reason - Reason the target couldn't be resolved
+ */
+
+/**
+ * @typedef {Object} LockedTargetValidation
+ * @property {boolean} found - Whether the target was found
+ * @property {Token|null} token - The resolved token (null if not found)
+ * @property {Actor|null} actor - The resolved actor (null if not found)
+ * @property {string|null} reason - Failure reason if not found
+ */
+
+/**
  * TargetResolver class for resolving action card targets
  *
  * @class TargetResolver
@@ -184,5 +224,154 @@ export class TargetResolver {
   static createSelfTargetArray(actor) {
     const selfToken = TargetResolver.getSelfTargetToken(actor);
     return selfToken ? [selfToken] : [];
+  }
+
+  /**
+   * Lock targets for persistence across async operations
+   *
+   * Captures all target data needed to survive token deletion,
+   * including actor UUID for reliable retrieval.
+   *
+   * @static
+   * @param {Token[]} tokens - Array of target tokens to lock
+   * @returns {LockedTargetData[]} Array of locked target data objects
+   */
+  static lockTargets(tokens) {
+    if (!tokens || tokens.length === 0) {
+      return [];
+    }
+
+    return tokens.map((token) => {
+      const actor = token.actor;
+      const isLinked = token.isLinked ?? token.document?.isLinked ?? true;
+
+      return {
+        actorId: actor?.id ?? null,
+        tokenId: token.id,
+        sceneId:
+          token.scene?.id ??
+          token.document?.parent?.id ??
+          token.parent?.id ??
+          null,
+        actorName: actor?.name ?? "Unknown",
+        tokenName: token.name ?? null,
+        img: token.texture?.src ?? actor?.img ?? "",
+        isLinked,
+        uuid: actor?.uuid ?? null,
+      };
+    });
+  }
+
+  /**
+   * Resolve locked targets back to tokens/actors
+   *
+   * Attempts to resolve locked targets back to their original tokens,
+   * falling back to actor lookup via UUID if tokens were deleted.
+   *
+   * @static
+   * @param {LockedTargetData[]} lockedTargets - Array of locked target data
+   * @returns {ResolvedTargetsResult} Result with valid tokens and invalid targets
+   */
+  static resolveLockedTargets(lockedTargets) {
+    if (!lockedTargets || lockedTargets.length === 0) {
+      return { valid: [], invalid: [], allValid: true };
+    }
+
+    const valid = [];
+    const invalid = [];
+
+    for (const locked of lockedTargets) {
+      const validation = TargetResolver.validateLockedTarget(locked);
+
+      if (validation.found) {
+        valid.push({
+          token: validation.token,
+          actor: validation.actor,
+          lockedTarget: locked,
+        });
+      } else {
+        invalid.push({
+          lockedTarget: locked,
+          reason: validation.reason,
+        });
+      }
+    }
+
+    return {
+      valid,
+      invalid,
+      allValid: invalid.length === 0,
+    };
+  }
+
+  /**
+   * Validate a single locked target still exists
+   *
+   * Attempts token lookup first, then falls back to actor UUID.
+   *
+   * @static
+   * @param {LockedTargetData} lockedTarget - The locked target to validate
+   * @returns {LockedTargetValidation} Validation result with found status
+   */
+  static validateLockedTarget(lockedTarget) {
+    if (!lockedTarget) {
+      return { found: false, token: null, actor: null, reason: "noData" };
+    }
+
+    // Try token lookup first (for linked tokens still on scene)
+    if (lockedTarget.sceneId && lockedTarget.tokenId) {
+      const scene = game.scenes?.get(lockedTarget.sceneId);
+      if (scene) {
+        const token = scene.tokens.get(lockedTarget.tokenId);
+        if (token && token.actor) {
+          return {
+            found: true,
+            token,
+            actor: token.actor,
+            reason: null,
+          };
+        }
+      }
+    }
+
+    // Fallback to actor lookup via UUID (survives token deletion)
+    if (lockedTarget.uuid) {
+      const actor = fromUuidSync(lockedTarget.uuid);
+      if (actor) {
+        // Try to get an active token for the actor
+        const activeTokens = actor.getActiveTokens?.() ?? [];
+        const token = activeTokens.length > 0 ? activeTokens[0] : null;
+
+        return {
+          found: true,
+          token,
+          actor,
+          reason: token ? null : "actorOnly",
+        };
+      }
+    }
+
+    // Actor lookup by ID as last resort
+    if (lockedTarget.actorId) {
+      const actor = game.actors?.get(lockedTarget.actorId);
+      if (actor) {
+        const activeTokens = actor.getActiveTokens?.() ?? [];
+        const token = activeTokens.length > 0 ? activeTokens[0] : null;
+
+        return {
+          found: true,
+          token,
+          actor,
+          reason: token ? null : "actorOnly",
+        };
+      }
+    }
+
+    return {
+      found: false,
+      token: null,
+      actor: null,
+      reason: "deleted",
+    };
   }
 }

@@ -766,10 +766,11 @@ class GMControlManager {
             }
           }
 
-          // Execute the action card with the stored roll result
+          // Execute the action card with the stored roll result and locked targets
           const result = await actionCard.executeWithRollResult(
             actor,
             flag.rollResult,
+            { lockedTargets: flag.lockedTargets },
           );
 
           if (result.success) {
