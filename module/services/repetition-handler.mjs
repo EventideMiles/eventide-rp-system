@@ -118,11 +118,18 @@ export class RepetitionHandler {
    * @returns {RepetitionContext} New context object
    */
   static createContext(system, options = {}) {
+    // Handle transformationSelections - convert from array if needed
+    let transformationSelections =
+      options.transformationSelections || new Map();
+    if (Array.isArray(transformationSelections)) {
+      transformationSelections = new Map(transformationSelections);
+    }
+
     return {
       inExecution: true,
       costOnRepetition: system.costOnRepetition || false,
       appliedTransformations: new Set(),
-      transformationSelections: options.transformationSelections || new Map(),
+      transformationSelections,
       selectedEffectIds: options.selectedEffectIds || null,
       appliedStatusEffects: new Set(),
       statusApplicationCounts: new Map(),

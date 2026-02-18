@@ -1160,9 +1160,7 @@ export class ActionCardPopup extends EventidePopupHelpers {
             playerName: game.user.name,
             targets: targets.map((t) => t.actor),
             rollResult,
-            transformationSelections: Object.fromEntries(
-              transformationSelections,
-            ),
+            transformationSelections: Array.from(transformationSelections.entries()),
             selectedEffectIds,
             lockedTargets: this._lockedTargets,
           });

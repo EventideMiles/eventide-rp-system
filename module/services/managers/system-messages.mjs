@@ -723,6 +723,8 @@ class ERPSMessageHandler {
    * @param {Actor[]} options.targets - Array of target actors
    * @param {Object} options.rollResult - Roll result data
    * @param {Object[]} options.lockedTargets - Locked targets from popup
+   * @param {Object} options.transformationSelections - Map of target IDs to selected transformation IDs
+   * @param {string[]} options.selectedEffectIds - Array of selected status effect IDs
    * @returns {Promise<ChatMessage>} The created chat message
    */
   async createPlayerActionApprovalRequest({
@@ -733,6 +735,8 @@ class ERPSMessageHandler {
     targets,
     rollResult,
     lockedTargets,
+    transformationSelections,
+    selectedEffectIds,
   }) {
     Logger.methodEntry("SystemMessages", "createPlayerActionApprovalRequest", {
       actorId: actor.id,
@@ -751,6 +755,24 @@ class ERPSMessageHandler {
       isOwned: target.isOwner,
     }));
 
+    // Create a lookup map for transformation names
+    const transformationNameMap = new Map();
+    if (actionCard.system.embeddedTransformations) {
+      for (const transformation of actionCard.system.embeddedTransformations) {
+        transformationNameMap.set(transformation.id, transformation.name);
+        transformationNameMap.set(transformation._id, transformation.name);
+      }
+    }
+
+    // Create formatted transformation selections with names
+    const formattedTransformationSelections = {};
+    if (transformationSelections) {
+      for (const [targetId, transformationId] of transformationSelections) {
+        const transformationName = transformationNameMap.get(transformationId) || transformationId;
+        formattedTransformationSelections[targetId] = transformationName;
+      }
+    }
+
     const data = {
       playerName,
       actor: {
@@ -768,9 +790,12 @@ class ERPSMessageHandler {
         statusApplicationLimit: actionCard.system.statusApplicationLimit,
         costOnRepetition: actionCard.system.costOnRepetition,
         failOnFirstMiss: actionCard.system.failOnFirstMiss,
+        embeddedTransformations: actionCard.system.embeddedTransformations || [],
       },
       targets: targetData,
       rollResult,
+      transformationSelections: formattedTransformationSelections,
+      selectedEffectIds,
       processed: false,
       messageId: null, // Will be set after message creation
     };
@@ -785,6 +810,8 @@ class ERPSMessageHandler {
       targetIds: targets.map((t) => t.id),
       lockedTargets,
       rollResult,
+      transformationSelections,
+      selectedEffectIds,
     });
 
     // Create the private message to GMs
