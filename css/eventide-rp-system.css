@@ -8960,6 +8960,13 @@ body.erps-image-zoom-active {
   border-radius: 3px;
 }
 
+.erps-form__hint {
+  margin: 0.25rem 0 0 0;
+  font-size: 0.85em;
+  color: var(--erps-sheet-text-muted, rgba(255, 255, 255, 0.6));
+  line-height: 1.4;
+}
+
 .erps-text--neutral {
   color: var(--theme-text, var(--erps-sheet-text));
   opacity: 0.8;
