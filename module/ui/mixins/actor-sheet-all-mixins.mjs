@@ -3,6 +3,7 @@ import { ActorSheetThemeMixin } from "./actor-sheet-theme.mjs";
 import { ActorSheetGearTabsMixin } from "./actor-sheet-gear-tabs.mjs";
 import { ActorSheetAdditionalActionsMixin } from "./actor-sheet-additional-actions.mjs";
 import { ActorSheetFormOverrideMixin } from "./actor-sheet-form-overrides.mjs";
+import { ActorSheetFormChangesMixin } from "./actor-sheet-form-changes.mjs";
 import { ActorSheetContextPreparationMixin } from "./actor-sheet-context-preparation.mjs";
 
 /**
@@ -16,10 +17,12 @@ import { ActorSheetContextPreparationMixin } from "./actor-sheet-context-prepara
  */
 export const ActorSheetAllMixins = (BaseClass) =>
   ActorSheetContextPreparationMixin(
-    ActorSheetFormOverrideMixin(
-      ActorSheetAdditionalActionsMixin(
-        ActorSheetGearTabsMixin(
-          ActorSheetThemeMixin(ActorSheetStatusBarMixin(BaseClass)),
+    ActorSheetFormChangesMixin(
+      ActorSheetFormOverrideMixin(
+        ActorSheetAdditionalActionsMixin(
+          ActorSheetGearTabsMixin(
+            ActorSheetThemeMixin(ActorSheetStatusBarMixin(BaseClass)),
+          ),
         ),
       ),
     ),

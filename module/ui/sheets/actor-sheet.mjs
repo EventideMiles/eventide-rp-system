@@ -1721,55 +1721,7 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
    *
    ********************/
 
-  _onChangeForm(formConfig, event) {
-    if (event.target.name === "system.power.value") {
-      this.actor.update({
-        "system.power.value": Math.min(
-          event.target.value,
-          this.actor.system.power.max,
-        ),
-      });
-
-      event.target.value = this.actor.system.power.value;
-    }
-
-    if (event.target.name === "system.power.max") {
-      // ceck if value is less than system.power.value
-      if (event.target.value < this.actor.system.power.value) {
-        // update system.power.value to match new max and then update the power value in the form
-        this.actor.update({
-          "system.power.value": event.target.value,
-        });
-      }
-    }
-
-    if (event.target.name === "system.resolve.value") {
-      this.actor.update({
-        "system.resolve.value": Math.min(
-          event.target.value,
-          this.actor.system.resolve.max,
-        ),
-      });
-
-      event.target.value = this.actor.system.resolve.value;
-    }
-
-    if (event.target.name === "system.resolve.max") {
-      if (event.target.value < this.actor.system.resolve.value) {
-        this.actor.update({
-          "system.resolve.value": event.target.value,
-        });
-      }
-    }
-
-    if (
-      event.target.dataset?.groupId &&
-      event.target.className === "erps-action-card-group__name"
-    )
-      this._handleGroupNameChange(event);
-
-    super._onChangeForm(formConfig, event);
-  }
+  // Note: _onChangeForm is now provided by ActorSheetFormChangesMixin
 
   /**
    * Submit a document update based on the processed form data.

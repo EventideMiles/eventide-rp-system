@@ -24,6 +24,7 @@ export { ActorSheetThemeMixin } from "./actor-sheet-theme.mjs";
 export { ActorSheetGearTabsMixin } from "./actor-sheet-gear-tabs.mjs";
 export { ActorSheetAdditionalActionsMixin } from "./actor-sheet-additional-actions.mjs";
 export { ActorSheetFormOverrideMixin } from "./actor-sheet-form-overrides.mjs";
+export { ActorSheetFormChangesMixin } from "./actor-sheet-form-changes.mjs";
 export { ActorSheetContextPreparationMixin } from "./actor-sheet-context-preparation.mjs";
 
 // Combined Actor Sheet Mixin
