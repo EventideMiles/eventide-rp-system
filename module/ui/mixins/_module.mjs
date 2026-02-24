@@ -9,6 +9,9 @@
  * monolithic files.
  */
 
+// Shared Mixins
+export { ContextMenuMixin } from "./context-menu-mixin.mjs";
+
 // Actor Sheet Action Mixins
 export { ActorSheetGearActionsMixin } from "./actor-sheet-gear-actions.mjs";
 export { ActorSheetDocumentActionsMixin } from "./actor-sheet-document-actions.mjs";

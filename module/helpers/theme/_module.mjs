@@ -13,3 +13,6 @@ export * as ThemeInstance from "./theme-instance.mjs";
 export * as ThemeApplicator from "./theme-applicator.mjs";
 export * as ThemeEvents from "./theme-events.mjs";
 export * as ThemePresets from "./theme-presets.mjs";
+
+// Export shared theme colors
+export { THEME_COLORS } from "./theme-colors.mjs";
