@@ -34,3 +34,8 @@ export * from "./target-resolver.mjs";
 export * from "./chat-message-builder.mjs";
 export * from "./default-data-factory.mjs";
 export * from "./damage-processor.mjs";
+
+// Phase 5.1 Refactoring - New Services
+export * from "./item-selector-manager.mjs";
+export * from "./export-action-handler.mjs";
+export * from "./form-field-helper.mjs";

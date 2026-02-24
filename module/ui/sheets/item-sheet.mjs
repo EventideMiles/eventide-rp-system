@@ -6,9 +6,9 @@ import { ErrorHandler, CommonFoundryTasks } from "../../utils/_module.mjs";
 import { BaselineSheetMixins } from "../components/_module.mjs";
 import { ItemSheetAllMixins } from "../mixins/_module.mjs";
 import { EmbeddedItemSheet } from "./embedded-item-sheet.mjs";
-import { ItemSelectorComboBox } from "../components/item-selector-combo-box.mjs";
-import { ItemSourceCollector } from "../../helpers/item-source-collector.mjs";
-import { EmbeddedItemExporter } from "../../services/embedded-item-exporter.mjs";
+import { ItemSelectorManager } from "../../services/item-selector-manager.mjs";
+import { ExportActionHandler } from "../../services/export-action-handler.mjs";
+import { FormFieldHelper } from "../../services/form-field-helper.mjs";
 
 const { api, sheets } = foundry.applications;
 const { TextEditor } = foundry.applications.ux;
@@ -42,13 +42,12 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
 
       // Add our custom actions to the options after parent construction
       foundry.utils.mergeObject(this.options.actions, {
-        exportEmbeddedCombatPowers: this._exportEmbeddedCombatPowers.bind(this),
-        exportEmbeddedActionCards: this._exportEmbeddedActionCards.bind(this),
-        exportEmbeddedActionItem: this._exportEmbeddedActionItem.bind(this),
-        exportEmbeddedEffects: this._exportEmbeddedEffects.bind(this),
-        exportEmbeddedTransformations:
-          this._exportEmbeddedTransformations.bind(this),
-        exportAllEmbeddedItems: this._exportAllEmbeddedItems.bind(this),
+        exportEmbeddedCombatPowers: (e, t) => this._handleExportAction('exportEmbeddedCombatPowers', e, t),
+        exportEmbeddedActionCards: (e, t) => this._handleExportAction('exportEmbeddedActionCards', e, t),
+        exportEmbeddedActionItem: (e, t) => this._handleExportAction('exportEmbeddedActionItem', e, t),
+        exportEmbeddedEffects: (e, t) => this._handleExportAction('exportEmbeddedEffects', e, t),
+        exportEmbeddedTransformations: (e, t) => this._handleExportAction('exportEmbeddedTransformations', e, t),
+        exportAllEmbeddedItems: (e, t) => this._handleExportAction('exportAllEmbeddedItems', e, t),
       });
     } catch (error) {
       Logger.error("Failed to initialize item sheet", error, "ITEM_SHEET");
@@ -581,88 +580,10 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
   _getHeaderControls() {
     const controls = super._getHeaderControls();
 
-    // Only add export controls when user is GM
+    // Add export controls using the service
     if (game.user.isGM) {
-      if (this.item.type === "transformation") {
-        // Transformation export buttons
-        if (this.item.system?.embeddedCombatPowers?.length > 0) {
-          controls.push({
-            action: "exportEmbeddedCombatPowers",
-            icon: "fas fa-swords",
-            label: "EVENTIDE_RP_SYSTEM.UI.ExportEmbeddedCombatPowers",
-            ownership: "OWNER",
-          });
-        }
-
-        if (this.item.system?.embeddedActionCards?.length > 0) {
-          controls.push({
-            action: "exportEmbeddedActionCards",
-            icon: "fas fa-cards-blank",
-            label: "EVENTIDE_RP_SYSTEM.UI.ExportEmbeddedActionCards",
-            ownership: "OWNER",
-          });
-        }
-
-        // Add "Export All" button if there are any embedded items
-        if (
-          this.item.system?.embeddedCombatPowers?.length > 0 ||
-          this.item.system?.embeddedActionCards?.length > 0
-        ) {
-          controls.push({
-            action: "exportAllEmbeddedItems",
-            icon: "fas fa-file-export",
-            label: "EVENTIDE_RP_SYSTEM.UI.ExportAllEmbeddedItems",
-            ownership: "OWNER",
-          });
-        }
-      } else if (this.item.type === "actionCard") {
-        // Action Card export buttons
-        const embeddedItem = this.item.getEmbeddedItem();
-        if (embeddedItem) {
-          controls.push({
-            action: "exportEmbeddedActionItem",
-            icon: "fas fa-magic",
-            label: "EVENTIDE_RP_SYSTEM.UI.ExportEmbeddedActionItem",
-            ownership: "OWNER",
-          });
-        }
-
-        const embeddedEffects = this.item.getEmbeddedEffects();
-        if (embeddedEffects && embeddedEffects.length > 0) {
-          controls.push({
-            action: "exportEmbeddedEffects",
-            icon: "fas fa-sparkles",
-            label: "EVENTIDE_RP_SYSTEM.UI.ExportEmbeddedEffects",
-            ownership: "OWNER",
-          });
-        }
-
-        // Check for embedded transformations (async, so we need to be careful)
-        const hasEmbeddedTransformations =
-          this.item.system?.embeddedTransformations?.length > 0;
-        if (hasEmbeddedTransformations) {
-          controls.push({
-            action: "exportEmbeddedTransformations",
-            icon: "fas fa-exchange-alt",
-            label: "EVENTIDE_RP_SYSTEM.UI.ExportEmbeddedTransformations",
-            ownership: "OWNER",
-          });
-        }
-
-        // Add "Export All" button if there are any embedded items
-        if (
-          embeddedItem ||
-          (embeddedEffects && embeddedEffects.length > 0) ||
-          hasEmbeddedTransformations
-        ) {
-          controls.push({
-            action: "exportAllEmbeddedItems",
-            icon: "fas fa-file-export",
-            label: "EVENTIDE_RP_SYSTEM.UI.ExportAllEmbeddedItems",
-            ownership: "OWNER",
-          });
-        }
-      }
+      const exportControls = ExportActionHandler.getHeaderControls(this.item);
+      controls.push(...exportControls);
     }
 
     return controls;
@@ -687,12 +608,6 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
       this._createTransformationGroupHeaderContextMenu();
       this._createTransformationTabContentContextMenus();
     }
-
-    // Create item-type-specific context menus
-    this._createFeatureContextMenu();
-    this._createStatusContextMenu();
-    this._createGearContextMenu();
-    this._createCombatPowerContextMenu();
   }
 
   /**
@@ -790,66 +705,40 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
    * @protected
    */
   async _onChangeForm(formConfig, event) {
-    this.#formChanged = true; // Set flag when form changes
+    this.#formChanged = true;
 
+    // Use FormFieldHelper for color and damage formula handling
+    const fieldResult = FormFieldHelper.handleFieldSync(event, this.item);
+    
+    if (fieldResult.normalizedValue !== undefined) {
+      event.target.value = fieldResult.normalizedValue;
+    }
+    
+    if (fieldResult.shouldUpdate && fieldResult.updateData) {
+      await this.item.update(fieldResult.updateData);
+      return;
+    }
+
+    // Handle character effects
     if (event.target.name.includes("characterEffects")) {
       await this._updateCharacterEffects();
       event.target.focus();
       return;
     }
-    if (
-      event.target.name.includes("textColor") ||
-      event.target.name.includes("bgColor") ||
-      event.target.name.includes("iconTint")
-    ) {
-      if (event.target.value.length === 4) {
-        event.target.value = `${event.target.value}${event.target.value.slice(
-          1,
-        )}`;
-      }
-      // if the target is blank or invalid length, reset to default color
-      if (event.target.value.length !== 7) {
-        const defaultColor = event.target.name.includes("textColor")
-          ? "#ffffff"
-          : event.target.name.includes("bgColor")
-            ? "#000000"
-            : "#ffffff"; // Default for iconTint
-        event.target.value = defaultColor;
-      }
-    }
-    // Check if this is a temporary action card from a transformation first
+
+    // Check if this is a temporary action card from a transformation
     if (this._isTransformationActionCard()) {
-      // Handle transformation action card form changes specially
       await this._onChangeTransformationActionCard(formConfig, event);
       return;
     }
 
+    // Handle icon tint changes for regular items
     if (event.target.name.includes("iconTint")) {
       const updateData = {
         _id: this.item.effects.contents[0]._id,
         tint: event.target.value,
       };
       await this.item.updateEmbeddedDocuments("ActiveEffect", [updateData]);
-      return;
-    }
-
-    if (event.target.name === "system.attackChain.damageFormula") {
-      // update system.savedDamage.formula as well
-      const updateData = {
-        "system.attackChain.damageFormula": event.target.value,
-        "system.savedDamage.formula": event.target.value,
-      };      
-      await this.item.update(updateData);
-      return;
-    }
-
-    if (event.target.name === "system.savedDamage.formula") {
-      // update system.attackChain.damageFormula as well
-      const updateData = {
-        "system.savedDamage.formula": event.target.value,
-        "system.attackChain.damageFormula": event.target.value,
-      };
-      await this.item.update(updateData);
       return;
     }
 
@@ -1008,100 +897,26 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
   async _initializeItemSelectors() {
     try {
       // Only initialize for action card and transformation items
-      if (
-        this.item.type !== "actionCard" &&
-        this.item.type !== "transformation"
-      ) {
+      if (this.item.type !== "actionCard" && this.item.type !== "transformation") {
         return;
       }
 
       // Clean up existing selectors
       this._cleanupItemSelectors();
 
-      // Initialize action item selector
-      const actionItemContainer = this.element.querySelector(
-        '[data-selector="action-item"]',
-      );
-
-      if (actionItemContainer) {
-        this.#actionItemSelector = new ItemSelectorComboBox({
-          container: actionItemContainer,
-          itemTypes: ItemSourceCollector.getActionItemTypes(),
-          onSelect: this._onActionItemSelected.bind(this),
-          placeholder: game.i18n.localize(
-            "EVENTIDE_RP_SYSTEM.Forms.ActionItemSelector.Placeholder",
-          ),
-          selectorType: "action-item",
-        });
+      // Determine which selectors to initialize based on item type
+      const selectorTypes = ['action-item', 'effects'];
+      
+      if (this.item.type === "actionCard") {
+        selectorTypes.push('transformations');
+      }
+      
+      if (this.item.type === "transformation") {
+        selectorTypes.push('transformations', 'combat-powers', 'action-cards');
       }
 
-      // Initialize effects selector
-      const effectsContainer = this.element.querySelector(
-        '[data-selector="effects"]',
-      );
-
-      if (effectsContainer) {
-        this.#effectsSelector = new ItemSelectorComboBox({
-          container: effectsContainer,
-          itemTypes: ItemSourceCollector.getEffectItemTypes(),
-          onSelect: this._onEffectSelected.bind(this),
-          placeholder: game.i18n.localize(
-            "EVENTIDE_RP_SYSTEM.Forms.EffectsSelector.Placeholder",
-          ),
-          selectorType: "effects",
-        });
-      }
-
-      // Initialize transformations selector
-      const transformationsContainer = this.element.querySelector(
-        '[data-selector="transformations"]',
-      );
-
-      if (transformationsContainer) {
-        this.#transformationsSelector = new ItemSelectorComboBox({
-          container: transformationsContainer,
-          itemTypes: ["transformation"],
-          onSelect: this._onTransformationSelected.bind(this),
-          placeholder: game.i18n.localize(
-            "EVENTIDE_RP_SYSTEM.Forms.TransformationsSelector.Placeholder",
-          ),
-          selectorType: "transformations",
-        });
-      }
-
-      // Initialize combat powers selector for transformations
-      const combatPowersContainer = this.element.querySelector(
-        '[data-selector="combat-powers"]',
-      );
-
-      if (combatPowersContainer && this.item.type === "transformation") {
-        this.#combatPowersSelector = new ItemSelectorComboBox({
-          container: combatPowersContainer,
-          itemTypes: ["combatPower"],
-          onSelect: this._onCombatPowerSelected.bind(this),
-          placeholder: game.i18n.localize(
-            "EVENTIDE_RP_SYSTEM.Forms.CombatPowersSelector.Placeholder",
-          ),
-          selectorType: "combat-powers",
-        });
-      }
-
-      // Initialize action cards selector for transformations
-      const actionCardsContainer = this.element.querySelector(
-        '[data-selector="action-cards"]',
-      );
-
-      if (actionCardsContainer && this.item.type === "transformation") {
-        this.#actionCardsSelector = new ItemSelectorComboBox({
-          container: actionCardsContainer,
-          itemTypes: ["actionCard"],
-          onSelect: this._onActionCardSelected.bind(this),
-          placeholder: game.i18n.localize(
-            "EVENTIDE_RP_SYSTEM.Forms.ActionCardsSelector.Placeholder",
-          ),
-          selectorType: "action-cards",
-        });
-      }
+      // Initialize selectors using the service
+      this._selectors = ItemSelectorManager.initializeSelectors(this, selectorTypes);
     } catch (error) {
       Logger.error("Failed to initialize item selectors", error, "ItemSheet");
     }
@@ -1113,29 +928,9 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
    */
   _cleanupItemSelectors() {
     try {
-      if (this.#actionItemSelector) {
-        this.#actionItemSelector.destroy();
-        this.#actionItemSelector = null;
-      }
-
-      if (this.#effectsSelector) {
-        this.#effectsSelector.destroy();
-        this.#effectsSelector = null;
-      }
-
-      if (this.#transformationsSelector) {
-        this.#transformationsSelector.destroy();
-        this.#transformationsSelector = null;
-      }
-
-      if (this.#combatPowersSelector) {
-        this.#combatPowersSelector.destroy();
-        this.#combatPowersSelector = null;
-      }
-
-      if (this.#actionCardsSelector) {
-        this.#actionCardsSelector.destroy();
-        this.#actionCardsSelector = null;
+      if (this._selectors) {
+        ItemSelectorManager.cleanupSelectors(this, this._selectors);
+        this._selectors = null;
       }
     } catch (error) {
       Logger.warn("Error cleaning up item selectors", error, "ITEM_SHEET");
@@ -1290,130 +1085,18 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
   }
 
   /**
-   * Export embedded combat powers to the custom combat powers compendium
+   * Handle export actions using the ExportActionHandler service
+   * @param {string} actionKey - The export action key to execute
    * @param {Event} _event - The triggering event
    * @param {HTMLElement} _target - The clicked element
    * @returns {Promise<void>}
    * @protected
    */
-  async _exportEmbeddedCombatPowers(_event, _target) {
+  async _handleExportAction(actionKey, _event, _target) {
     try {
-      const results = await EmbeddedItemExporter.exportEmbeddedCombatPowers(
-        this.item,
-      );
-      Logger.debug("Combat powers export completed", results, "ITEM_SHEET");
+      await ExportActionHandler.executeExport(actionKey, this.item);
     } catch (error) {
-      Logger.error(
-        "Failed to export embedded combat powers",
-        error,
-        "ITEM_SHEET",
-      );
-    }
-  }
-
-  /**
-   * Export embedded action cards to the custom action cards compendium
-   * @param {Event} _event - The triggering event
-   * @param {HTMLElement} _target - The clicked element
-   * @returns {Promise<void>}
-   * @protected
-   */
-  async _exportEmbeddedActionCards(_event, _target) {
-    try {
-      const results = await EmbeddedItemExporter.exportEmbeddedActionCards(
-        this.item,
-      );
-      Logger.debug("Action cards export completed", results, "ITEM_SHEET");
-    } catch (error) {
-      Logger.error(
-        "Failed to export embedded action cards",
-        error,
-        "ITEM_SHEET",
-      );
-    }
-  }
-
-  /**
-   * Export embedded action item to the appropriate compendium
-   * @param {Event} _event - The triggering event
-   * @param {HTMLElement} _target - The clicked element
-   * @returns {Promise<void>}
-   * @protected
-   */
-  async _exportEmbeddedActionItem(_event, _target) {
-    try {
-      const results = await EmbeddedItemExporter.exportEmbeddedActionItem(
-        this.item,
-      );
-      Logger.debug("Action item export completed", results, "ITEM_SHEET");
-    } catch (error) {
-      Logger.error(
-        "Failed to export embedded action item",
-        error,
-        "ITEM_SHEET",
-      );
-    }
-  }
-
-  /**
-   * Export embedded effects, sorting them by type
-   * @param {Event} _event - The triggering event
-   * @param {HTMLElement} _target - The clicked element
-   * @returns {Promise<void>}
-   * @protected
-   */
-  async _exportEmbeddedEffects(_event, _target) {
-    try {
-      const results = await EmbeddedItemExporter.exportEmbeddedEffects(
-        this.item,
-      );
-      Logger.debug("Effects export completed", results, "ITEM_SHEET");
-    } catch (error) {
-      Logger.error("Failed to export embedded effects", error, "ITEM_SHEET");
-    }
-  }
-
-  /**
-   * Export embedded transformations to the custom transformations compendium
-   * @param {Event} _event - The triggering event
-   * @param {HTMLElement} _target - The clicked element
-   * @returns {Promise<void>}
-   * @protected
-   */
-  async _exportEmbeddedTransformations(_event, _target) {
-    try {
-      const results = await EmbeddedItemExporter.exportEmbeddedTransformations(
-        this.item,
-      );
-      Logger.debug("Transformations export completed", results, "ITEM_SHEET");
-    } catch (error) {
-      Logger.error(
-        "Failed to export embedded transformations",
-        error,
-        "ITEM_SHEET",
-      );
-    }
-  }
-
-  /**
-   * Export all embedded items, sorting them into appropriate compendiums
-   * @param {Event} _event - The triggering event
-   * @param {HTMLElement} _target - The clicked element
-   * @returns {Promise<void>}
-   * @protected
-   */
-  async _exportAllEmbeddedItems(_event, _target) {
-    try {
-      const results = await EmbeddedItemExporter.exportAllEmbeddedItems(
-        this.item,
-      );
-      Logger.debug(
-        "All embedded items export completed",
-        results,
-        "ITEM_SHEET",
-      );
-    } catch (error) {
-      Logger.error("Failed to export all embedded items", error, "ITEM_SHEET");
+      Logger.error(`Failed to execute export action: ${actionKey}`, error, "ITEM_SHEET");
     }
   }
 
@@ -1501,11 +1184,7 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
   // for subclasses or external hooks to mess with it directly
   #dragDrop;
   #formChanged; // Flag to track if form has been changed
-  #actionItemSelector; // Item selector for action items
-  #effectsSelector; // Item selector for effects
-  #transformationsSelector; // Item selector for transformations
-  #combatPowersSelector; // Item selector for combat powers (transformations)
-  #actionCardsSelector; // Item selector for action cards (transformations)
+  _selectors; // Item selectors managed by ItemSelectorManager
 
   /**
    * Override render method to preserve scroll position using the working pattern from creator-application.mjs
@@ -1559,43 +1238,6 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
     return result;
   }
 
-  /**
-   * Create context menus for features (on feature item sheets)
-   * @private
-   */
-  _createFeatureContextMenu() {
-    // Only create if this is a feature item sheet
-    // Context menu for converting to status
-    // Implementation would go here if needed for individual feature sheets
-  }
-
-  /**
-   * Create context menus for status effects (on status item sheets)
-   * @private
-   */
-  _createStatusContextMenu() {
-    // Only create if this is a status item sheet
-    // Context menu for converting to feature
-    // Implementation would go here if needed for individual status sheets
-  }
-
-  /**
-   * Create context menus for gear (on gear item sheets)
-   * @private
-   */
-  _createGearContextMenu() {
-    // Only create if this is a gear item sheet
-    // Placeholder for future gear-specific options
-  }
-
-  /**
-   * Create context menus for combat powers (on combat power item sheets)
-   * @private
-   */
-  _createCombatPowerContextMenu() {
-    // Only create if this is a combat power item sheet
-    // Placeholder for future combat power-specific options
-  }
 
   /**
    * Pre-close lifecycle hook for diagnostic logging
