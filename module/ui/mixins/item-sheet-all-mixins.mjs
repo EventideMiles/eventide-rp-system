@@ -3,6 +3,8 @@ import { ItemSheetDragDropMixin } from "./item-sheet-drag-drop.mjs";
 import { ItemSheetCharacterEffectsMixin } from "./item-sheet-character-effects.mjs";
 import { ItemSheetActionsMixin } from "./item-sheet-actions.mjs";
 import { ItemSheetEffectGuardsMixin } from "./item-sheet-effect-guards.mjs";
+import { TransformationActionCardFormMixin } from "./transformation-action-card-form.mjs";
+import { ScrollPreservationMixin } from "./scroll-preservation.mjs";
 
 /**
  * Combined Item Sheet Mixins
@@ -14,15 +16,21 @@ import { ItemSheetEffectGuardsMixin } from "./item-sheet-effect-guards.mjs";
  * - Character effects management
  * - Action methods for various item types
  * - Effect guards and sanitization
+ * - Transformation action card form handling
+ * - Scroll position preservation across re-renders
  *
  * @param {class} BaseClass - The base item sheet class to extend
  * @returns {class} Extended class with all item sheet functionality
  */
 export function ItemSheetAllMixins(BaseClass) {
-  return ItemSheetThemeMixin(
-    ItemSheetDragDropMixin(
-      ItemSheetCharacterEffectsMixin(
-        ItemSheetActionsMixin(ItemSheetEffectGuardsMixin(BaseClass)),
+  return ScrollPreservationMixin(
+    ItemSheetThemeMixin(
+      ItemSheetDragDropMixin(
+        ItemSheetCharacterEffectsMixin(
+          ItemSheetActionsMixin(
+            TransformationActionCardFormMixin(ItemSheetEffectGuardsMixin(BaseClass)),
+          ),
+        ),
       ),
     ),
   );
@@ -35,4 +43,6 @@ export {
   ItemSheetCharacterEffectsMixin,
   ItemSheetActionsMixin,
   ItemSheetEffectGuardsMixin,
+  TransformationActionCardFormMixin,
+  ScrollPreservationMixin,
 };

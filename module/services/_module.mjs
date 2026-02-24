@@ -39,3 +39,6 @@ export * from "./damage-processor.mjs";
 export * from "./item-selector-manager.mjs";
 export * from "./export-action-handler.mjs";
 export * from "./form-field-helper.mjs";
+
+// Phase 5.2 Refactoring - New Services
+export * from "./context-preparation-helper.mjs";
