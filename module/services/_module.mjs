@@ -42,3 +42,6 @@ export * from "./form-field-helper.mjs";
 
 // Phase 5.2 Refactoring - New Services
 export * from "./context-preparation-helper.mjs";
+
+// Phase 8.1 Refactoring - New Services
+export * from "./drag-drop-handler.mjs";
