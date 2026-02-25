@@ -1,5 +1,4 @@
 import { ERPSRollUtilities } from "../../utils/_module.mjs";
-import { erpsSoundManager } from "./sound-manager.mjs";
 import { Logger } from "../logger.mjs";
 import { TargetResolver } from "../target-resolver.mjs";
 
@@ -48,26 +47,16 @@ class ERPSMessageHandler {
     messageOptions,
     soundOptions = null,
   ) {
-    const content = await renderTemplate(this.templates[templateKey], data);
+    const { ChatMessageBuilder } = await import("../chat-message-builder.mjs");
 
-    // Prepare message data
-    const messageData = {
-      ...messageOptions,
-      content,
-    };
-
-    // Add sound flags if provided
-    if (soundOptions && soundOptions.soundKey) {
-      messageData.flags = messageData.flags || {};
-      messageData.flags["eventide-rp-system"] =
-        messageData.flags["eventide-rp-system"] || {};
-      messageData.flags["eventide-rp-system"].sound = {
-        key: soundOptions.soundKey,
-        force: soundOptions.force || false,
-      };
-    }
-
-    return ChatMessage.create(messageData);
+    return ChatMessageBuilder.createMessage({
+      templatePath: this.templates[templateKey],
+      templateData: data,
+      messageOptions,
+      soundKey: soundOptions?.soundKey || null,
+      forceSound: soundOptions?.force || false,
+      useERPSRollUtilitiesSpeaker: true, // Maintain existing behavior
+    });
   }
 
   /**
@@ -115,9 +104,6 @@ class ERPSMessageHandler {
       enrichedDescription,
     };
 
-    // Play status apply sound locally
-    await erpsSoundManager._playLocalSound("statusApply");
-
     return this._createChatMessage(
       "status",
       data,
@@ -149,9 +135,6 @@ class ERPSMessageHandler {
       context,
       enrichedDescription,
     };
-
-    // Play gear equip sound locally (similar to status apply)
-    await erpsSoundManager._playLocalSound("gearEquip");
 
     return this._createChatMessage(
       "gear",
@@ -273,8 +256,6 @@ class ERPSMessageHandler {
         enrichedDescription,
       };
 
-      // Play feature roll sound locally and add to message
-      await erpsSoundManager._playLocalSound("featureRoll");
       return this._createChatMessage(
         "feature",
         data,
@@ -327,9 +308,6 @@ class ERPSMessageHandler {
       options,
     };
 
-    // Play status remove sound locally
-    await erpsSoundManager._playLocalSound("statusRemove");
-
     return this._createChatMessage(
       "deleteStatus",
       data,
@@ -352,9 +330,6 @@ class ERPSMessageHandler {
    */
   async createRestoreMessage({ all, resolve, power, statuses, actor }) {
     const data = { all, resolve, power, statuses, actor };
-
-    // Play status remove sound locally
-    await erpsSoundManager._playLocalSound("statusRemove");
 
     return this._createChatMessage(
       "restore",
@@ -410,8 +385,6 @@ class ERPSMessageHandler {
         enrichedDescription,
       };
 
-      // Play combat power sound locally and add to message
-      await erpsSoundManager._playLocalSound("combatPower");
       return this._createChatMessage(
         "combatPower",
         data,
@@ -504,8 +477,6 @@ class ERPSMessageHandler {
         enrichedDescription,
       };
 
-      // Play combat power sound locally and add to message
-      await erpsSoundManager._playLocalSound("combatPower");
       return this._createChatMessage(
         "combatPower",
         data,
@@ -539,8 +510,6 @@ class ERPSMessageHandler {
         actor,
       };
 
-      // Play combat power sound locally and add to message
-      await erpsSoundManager._playLocalSound("combatPower");
       return this._createChatMessage(
         "combatPower",
         data,
@@ -580,8 +549,6 @@ class ERPSMessageHandler {
       description,
     };
 
-    // Play gear transfer sound locally and add to message
-    await erpsSoundManager._playLocalSound("gearTransfer");
     return this._createChatMessage(
       "gearTransfer",
       data,
@@ -612,9 +579,7 @@ class ERPSMessageHandler {
       equipped: item.system.equipped,
     };
 
-    // Play appropriate sound locally and add to message
     if (item.system.equipped) {
-      await erpsSoundManager._playLocalSound("gearEquip");
       return this._createChatMessage(
         "gearEquip",
         data,
@@ -627,7 +592,6 @@ class ERPSMessageHandler {
         { soundKey: "gearEquip" },
       );
     } else {
-      await erpsSoundManager._playLocalSound("gearUnequip");
       return this._createChatMessage(
         "gearEquip",
         data,
@@ -662,9 +626,6 @@ class ERPSMessageHandler {
       target,
     };
 
-    // Play gear effect sound locally (similar to gear equip but distinct)
-    await erpsSoundManager._playLocalSound("gearEquip");
-
     return this._createChatMessage(
       "gear",
       data,
@@ -696,9 +657,7 @@ class ERPSMessageHandler {
       enrichedDescription,
     };
 
-    // Play appropriate sound locally and add to message
     const soundKey = isApplying ? "combatPower" : "statusRemove";
-    await erpsSoundManager._playLocalSound(soundKey);
 
     return this._createChatMessage(
       "transformation",

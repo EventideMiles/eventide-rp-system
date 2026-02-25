@@ -5,7 +5,7 @@
  */
 import { getSetting } from "../_module.mjs";
 import { ERPSRollUtilities } from "../../utils/_module.mjs";
-import { erpsSoundManager, Logger } from "../_module.mjs";
+import { Logger } from "../_module.mjs";
 
 const { renderTemplate } = foundry.applications.handlebars;
 
@@ -93,6 +93,7 @@ class ERPSRollHandler {
    * Create chat message data with proper visibility settings
    *
    * @private
+   * @async
    * @param {Object} options - Message configuration options
    * @param {ChatSpeakerData} options.speaker - The message speaker
    * @param {string} options.content - The message content HTML
@@ -103,9 +104,9 @@ class ERPSRollHandler {
    * @param {number} [options.total=0] - Roll total
    * @param {string} [options.rollMode="roll"] - Roll visibility mode
    * @param {string} [options.soundKey=null] - Optional custom sound key
-   * @returns {Object} ChatMessage creation data
+   * @returns {Promise<Object>} ChatMessage creation data
    */
-  _createMessageData({
+  async _createMessageData({
     speaker,
     content,
     sound = CONFIG.sounds.dice,
@@ -116,73 +117,17 @@ class ERPSRollHandler {
     rollMode = "roll",
     soundKey = null,
   }) {
-    // Create the message data structure
-    const messageData = {
-      speaker,
+    const { ChatMessageBuilder } = await import("../chat-message-builder.mjs");
+
+    return ChatMessageBuilder.buildMessageData({
       content,
+      speaker,
       sound,
       rolls,
-      flags: {
-        "eventide-rp-system": {
-          roll: {
-            type,
-            formula,
-            total,
-          },
-        },
-      },
-    };
-
-    // Handle custom sounds
-    this._addSoundToMessageData(messageData, soundKey);
-
-    // Apply roll mode visibility settings
-    this._applyRollModeSettings(messageData, rollMode);
-
-    return messageData;
-  }
-
-  /**
-   * Add sound data to message data
-   *
-   * @private
-   * @param {Object} messageData - The message data object to modify
-   * @param {string|null} soundKey - The sound key to add
-   */
-  _addSoundToMessageData(messageData, soundKey) {
-    if (!soundKey) return;
-
-    // Play sound locally for immediate feedback
-    erpsSoundManager._playLocalSound(soundKey);
-
-    // Set built-in sound to null since we're using our own system
-    messageData.sound = null;
-
-    // Add sound data to flags for remote playback
-    messageData.flags["eventide-rp-system"].sound = {
-      key: soundKey,
-      force: false,
-    };
-  }
-
-  /**
-   * Apply roll mode visibility settings to message data
-   *
-   * @private
-   * @param {Object} messageData - The message data object to modify
-   * @param {string} rollMode - The roll mode to apply
-   */
-  _applyRollModeSettings(messageData, rollMode) {
-    if (rollMode !== "roll") {
-      messageData.rollMode = rollMode;
-
-      // Handle GM-only rolls
-      if (rollMode === "gmroll" || rollMode === "blindroll") {
-        messageData.whisper = game.users
-          .filter((user) => user.isGM)
-          .map((user) => user.id);
-      }
-    }
+      rollMode,
+      soundKey,
+      rollFlags: { type, formula, total },
+    });
   }
 
   /**
@@ -420,7 +365,7 @@ class ERPSRollHandler {
     const content = await renderTemplate(this.templates.standard, templateData);
 
     // Create chat message
-    const messageData = this._createMessageData({
+    const messageData = await this._createMessageData({
       speaker: ChatMessage.getSpeaker({ actor }),
       content,
       rolls: [roll],
@@ -565,7 +510,7 @@ class ERPSRollHandler {
     const content = await renderTemplate(this.templates.initiative, data);
 
     // Prepare the message data
-    const messageData = this._createMessageData({
+    const messageData = await this._createMessageData({
       speaker: ChatMessage.getSpeaker({ actor: combatant.actor }),
       content,
       rolls: [roll],
