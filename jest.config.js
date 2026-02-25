@@ -6,7 +6,8 @@ export default {
 
   // Test file patterns - temporarily only run validation tests
   testMatch: [
-    '<rootDir>/tests/jest/utils/test-example.test.mjs'
+    '<rootDir>/tests/jest/utils/test-example.test.mjs',
+    '<rootDir>/tests/unit/services/character-effects-processor.test.mjs'
   ],
 
   // Module resolution
