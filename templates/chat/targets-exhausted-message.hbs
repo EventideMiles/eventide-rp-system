@@ -1,0 +1,48 @@
+{{!-- Targets Exhausted Chat Card --}}
+<div class="chat-card chat-card--failure">
+  <div class="chat-card__header chat-card__header--failure chat-card__header--image" style="background-color: {{actionCard.bgColor}}; color: {{actionCard.textColor}};">
+    <img src="{{actionCard.img}}" class="chat-card__image--primary" alt="{{actionCard.name}}" title="{{actionCard.name}}" />
+    <div>{{actionCard.name}} - {{localize "EVENTIDE_RP_SYSTEM.Chat.TargetsExhausted.TargetsExhausted"}}</div>
+  </div>
+
+  {{#if repetitionInfo}}
+    <div class="chat-card__repetition-info">
+      <div class="chat-card__repetition-count">
+        <i class="fas fa-repeat"></i>
+        {{localize "EVENTIDE_RP_SYSTEM.Chat.TargetsExhausted.TargetsExhaustedRepetition" current=repetitionInfo.current total=repetitionInfo.total}}
+      </div>
+      {{#if repetitionInfo.completed}}
+        <div class="chat-card__completed-info">
+          <i class="fas fa-check-circle"></i>
+          {{localize "EVENTIDE_RP_SYSTEM.Chat.TargetsExhausted.TargetsExhaustedCompleted" completed=repetitionInfo.completed total=repetitionInfo.total}}
+        </div>
+      {{/if}}
+    </div>
+  {{/if}}
+
+  <div class="chat-card__failure-reason">
+    <div class="chat-card__failure-icon">
+      <i class="fas fa-users-slash"></i>
+    </div>
+    <div class="chat-card__failure-details">
+      <div class="chat-card__failure-title">{{localize "EVENTIDE_RP_SYSTEM.Chat.TargetsExhausted.TargetsExhaustedFailureTitle"}}</div>
+      <div class="chat-card__failure-message">
+        {{localize "EVENTIDE_RP_SYSTEM.Chat.TargetsExhausted.TargetsExhaustedFailureMessage"}}
+      </div>
+    </div>
+  </div>
+
+  {{#if exhaustedTargets}}
+    <div class="chat-card__target-list">
+      <div class="chat-card__target-label">
+        <i class="fas fa-user-minus"></i>
+        {{localize "EVENTIDE_RP_SYSTEM.Chat.TargetsExhausted.TargetsExhaustedTargetsRemoved" names=(array-join exhaustedTargets ", ")}}
+      </div>
+    </div>
+  {{/if}}
+
+  <div class="chat-card__failure-note">
+    <i class="fas fa-info-circle"></i>
+    {{localize "EVENTIDE_RP_SYSTEM.Chat.TargetsExhausted.TargetsExhaustedNote"}}
+  </div>
+</div>

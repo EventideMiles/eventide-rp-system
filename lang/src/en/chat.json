@@ -8,6 +8,7 @@
         "ActionCard": "Action Card",
         "Targets": "Targets",
         "NotOwned": "Not Owned",
+        "Transformations": "Transformation Selections",
         "RollFormula": "Roll Formula",
         "GMDecision": "GM Decision",
         "Approve": "Approve",
@@ -23,6 +24,15 @@
         "Damage": "Damage",
         "Status": "Status",
         "Cost": "Cost"
+      },
+      "TargetsExhausted": {
+        "TargetsExhausted": "Targets Exhausted",
+        "TargetsExhaustedRepetition": "Repetition: {current}/{total}",
+        "TargetsExhaustedCompleted": "Completed: {completed}/{total}",
+        "TargetsExhaustedFailureTitle": "Execution Stopped",
+        "TargetsExhaustedFailureMessage": "None of the original targets still exist.",
+        "TargetsExhaustedTargetsRemoved": "Targets Removed: {names}",
+        "TargetsExhaustedNote": "Remaining repetitions were not executed."
       }
     }
   }

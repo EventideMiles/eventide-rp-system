@@ -656,25 +656,6 @@ export const registerSettings = function () {
   });
 
   // ===========================================
-  // DEVELOPER/TESTING SETTINGS (GM Only)
-  // ===========================================
-
-  // Testing Mode (developer setting)
-  game.settings.register("eventide-rp-system", "testingMode", {
-    name: "SETTINGS.TestingModeName",
-    hint: "SETTINGS.TestingModeHint",
-    scope: "world",
-    config: true,
-    restricted: true,
-    type: Boolean,
-    default: false,
-    onChange: (value) => {
-      Logger.info("Testing mode setting changed", { value }, "SETTINGS");
-      // No reload needed - can be checked at runtime
-    },
-  });
-
-  // ===========================================
   // DERIVED VALUE SETTINGS (GM Only - No Reload Needed)
   // ===========================================
 
@@ -867,6 +848,25 @@ export const registerSettings = function () {
       min: 0,
       max: 100,
       step: 1,
+    },
+  });
+
+  // ===========================================
+  // DEVELOPER/TESTING SETTINGS (GM Only)
+  // ===========================================
+
+  // Testing Mode (developer setting)
+  game.settings.register("eventide-rp-system", "testingMode", {
+    name: "SETTINGS.TestingModeName",
+    hint: "SETTINGS.TestingModeHint",
+    scope: "world",
+    config: true,
+    restricted: true,
+    type: Boolean,
+    default: false,
+    onChange: (value) => {
+      Logger.info("Testing mode setting changed", { value }, "SETTINGS");
+      // No reload needed - can be checked at runtime
     },
   });
 

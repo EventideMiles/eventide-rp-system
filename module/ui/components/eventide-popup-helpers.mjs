@@ -167,9 +167,11 @@ export class EventidePopupHelpers extends WindowSizingFixMixin(
 
   /**
    * Checks if the item is eligible for use based on targeting, power, and quantity.
+   * @param {Object} [options={}] - Options for the eligibility check
+   * @param {boolean} [options.skipTargetingCheck] - Skip the targeting eligibility check
    * @returns {Object} An object containing the eligibility status for each check.
    */
-  async checkEligibility() {
+  async checkEligibility(options = {}) {
     const problems = {
       targeting: false,
       power: false,
@@ -177,7 +179,7 @@ export class EventidePopupHelpers extends WindowSizingFixMixin(
       equipped: false,
     };
 
-    if (this.item.system.targeted) {
+    if (!options.skipTargetingCheck && this.item.system.targeted) {
       const targetArray = await erps.utils.getTargetArray();
       if (targetArray.length === 0) problems.targeting = true;
     }

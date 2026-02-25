@@ -83,7 +83,26 @@
         "SelfTarget": {
           "label": "Self-Target",
           "hint": "When enabled, this action card automatically targets your own actor instead of requiring target selection. Useful for self-buffs and self-healing effects."
-        }
+        },
+        "ResourceFailure": {
+          "InsufficientPower": {
+            "Title": "Insufficient Power",
+            "Message": "Cannot execute <strong>{itemName}</strong> - requires {required} power but only {available} available"
+          },
+          "InsufficientQuantity": {
+            "Title": "Insufficient Quantity",
+            "Message": "Cannot execute <strong>{itemName}</strong> - requires {required} quantity but only {available} available"
+          },
+          "GearNotFound": {
+            "Title": "Gear Not Found",
+            "Message": "Cannot execute <strong>{itemName}</strong> - gear item not found in actor's inventory"
+          },
+          "Unknown": {
+            "Title": "Resource Constraint",
+            "Message": "Unknown resource constraint preventing execution"
+          }
+        },
+        "RepetitionCountAdjusted": "Repetition formula resulted in {originalCount}, adjusted to minimum of 1"
       }
     }
   }

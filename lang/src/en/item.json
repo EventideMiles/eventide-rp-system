@@ -186,7 +186,7 @@
         "AdvanceInitiativeTurnError": "You can only use this action card on your turn when 'Advance Initiative' is enabled.",
         "Repetitions": {
           "label": "Repetitions",
-          "hint": "Roll formula for number of repetitions (e.g. '3', '1d4', '2d6+1')"
+          "hint": "Roll formula for number of repetitions (e.g. '3', '1d4', '2d6+1'). Note if this returns a number less than 1, the action will still execute once."
         },
         "RepeatToHit": {
           "label": "Repeat to Hit",

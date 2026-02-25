@@ -165,6 +165,25 @@
           "label": "Self-Target",
           "hint": "When enabled, this action card automatically targets your own actor instead of requiring target selection. Useful for self-buffs and self-healing effects."
         },
+        "ResourceFailure": {
+          "InsufficientPower": {
+            "Title": "Insufficient Power",
+            "Message": "Cannot execute <strong>{itemName}</strong> - requires {required} power but only {available} available"
+          },
+          "InsufficientQuantity": {
+            "Title": "Insufficient Quantity",
+            "Message": "Cannot execute <strong>{itemName}</strong> - requires {required} quantity but only {available} available"
+          },
+          "GearNotFound": {
+            "Title": "Gear Not Found",
+            "Message": "Cannot execute <strong>{itemName}</strong> - gear item not found in actor's inventory"
+          },
+          "Unknown": {
+            "Title": "Resource Constraint",
+            "Message": "Unknown resource constraint preventing execution"
+          }
+        },
+        "RepetitionCountAdjusted": "Repetition formula resulted in {originalCount}, adjusted to minimum of 1",
         "CreateNewPower": "Create New Power",
         "CreateNewStatus": "Create New Status",
         "RollValue": "Roll Value",
@@ -184,7 +203,7 @@
         },
         "Repetitions": {
           "label": "Repetitions",
-          "hint": "Roll formula for number of repetitions (e.g. '3', '1d4', '2d6+1')"
+          "hint": "Roll formula for number of repetitions (e.g. '3', '1d4', '2d6+1'). Note if this returns a number less than 1, the action will still execute once."
         },
         "RepeatToHit": {
           "label": "Repeat to Hit",
@@ -473,6 +492,7 @@
         "ActionCard": "Action Card",
         "Targets": "Targets",
         "NotOwned": "Not Owned",
+        "Transformations": "Transformation Selections",
         "RollFormula": "Roll Formula",
         "GMDecision": "GM Decision",
         "Approve": "Approve",
@@ -488,6 +508,15 @@
         "Damage": "Damage",
         "Status": "Status",
         "Cost": "Cost"
+      },
+      "TargetsExhausted": {
+        "TargetsExhausted": "Targets Exhausted",
+        "TargetsExhaustedRepetition": "Repetition: {current}/{total}",
+        "TargetsExhaustedCompleted": "Completed: {completed}/{total}",
+        "TargetsExhaustedFailureTitle": "Execution Stopped",
+        "TargetsExhaustedFailureMessage": "None of the original targets still exist.",
+        "TargetsExhaustedTargetsRemoved": "Targets Removed: {names}",
+        "TargetsExhaustedNote": "Remaining repetitions were not executed."
       }
     },
     "Errors": {
@@ -589,7 +618,7 @@
       "EffectDeletionFailed": "Failed to delete effect for {itemName}",
       "EffectNotFound": "Effect not found",
       "EffectToggleFailed": "Failed to toggle effect for {itemName}",
-      "FailedToAddCombatPower": "Failed to add combat power",
+      "FailedToAddCombatPower": "Failed to add combat power {itemName}",
       "ImagePickerFailed": "Failed to open image picker for {itemName}",
       "MacroExecutionError": "Failed to execute macro",
       "UnexpectedError": "An unexpected error occurred",
@@ -669,7 +698,10 @@
       "NoPermissionEditTransformationCombatPowers": "You don't have permission to edit this transformation's combat powers",
       "NoPermissionEditTransformationActionCards": "You don't have permission to edit this transformation's action cards",
       "EmbeddedCombatPowerNotFound": "Could not find embedded combat power to update",
-      "EmbeddedActionCardNotFound": "Could not find embedded action card to update"
+      "EmbeddedActionCardNotFound": "Could not find embedded action card to update",
+      "AllTargetsDeleted": "All targets have been removed from the scene. Action cancelled.",
+      "SomeTargetsDeleted": "{count} target(s) no longer exist: {names}. Continuing with remaining targets.",
+      "TargetResolutionFailed": "Failed to resolve targets: {message}"
     },
     "Info": {
       "CompendiumItemCreated": "Created {keyType} item {name} in the {packLabel} compendium",
@@ -703,7 +735,8 @@
       "FieldLockedDuringTransformation": "This field is locked during transformation",
       "InsufficientPermissions": "Insufficient permissions",
       "NoActiveTransformation": "No active transformation",
-      "SomeItemsFailedToExport": "{failed} of {total} items failed to export"
+      "SomeItemsFailedToExport": "{failed} of {total} items failed to export",
+      "TransformationRestriction": "Cannot add {itemType} while transformed into {transformation}. Only status and gear items can be added during transformation."
     },
     "Forms": {
       "ScriptExplanations": {

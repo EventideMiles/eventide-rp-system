@@ -59,6 +59,23 @@
       </div>
     </div>
 
+    {{!-- Transformation Selections Info --}}
+    {{#if transformationSelections}}
+      <div class="chat-card__transformations-info">
+        <div class="chat-card__transformations-header">
+          <strong>{{localize "EVENTIDE_RP_SYSTEM.Chat.PlayerActionApproval.Transformations"}}:</strong>
+        </div>
+        <div class="chat-card__transformations-list">
+          {{#each transformationSelections}}
+            <div class="chat-card__transformation-item">
+              <span class="chat-card__target-name">{{@key}}</span>
+              <span class="chat-card__transformation-value">{{this}}</span>
+            </div>
+          {{/each}}
+        </div>
+      </div>
+    {{/if}}
+
     {{!-- Roll Result Info --}}
     {{#if rollResult}}
       <div class="chat-card__roll-info">

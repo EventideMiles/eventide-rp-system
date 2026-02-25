@@ -86,7 +86,7 @@ export const ItemPopupsMixin = (BaseClass) =>
             return await this.handleBypass(popupConfig, options);
           }
 
-          return await this._executePopupLogicDirectly(popupConfig);
+          return await this._executePopupLogicDirectly(popupConfig, options);
         }
 
         // Prepare the item data for the popup
@@ -352,13 +352,17 @@ export const ItemPopupsMixin = (BaseClass) =>
      *
      * @private
      * @param {Object} popupConfig - The popup configuration
+     * @param {Object} options - Execution options
+     * @param {boolean} [options.skipTargetingCheck] - Skip the targeting eligibility check
+     * @param {Array} [options.lockedTargets] - Locked targets from action card popup
      * @returns {Promise<Object>} Result of the execution
      */
-    async _executePopupLogicDirectly(popupConfig) {
+    async _executePopupLogicDirectly(popupConfig, options = {}) {
       Logger.methodEntry("ItemPopupsMixin", "_executePopupLogicDirectly", {
         className: popupConfig.className,
         itemType: this.type,
         itemName: this.name,
+        lockedTargets: options.lockedTargets,
       });
 
       try {
@@ -390,7 +394,7 @@ export const ItemPopupsMixin = (BaseClass) =>
         const tempPopup = new popupClass({ item: this });
 
         // Check eligibility using the popup's validation logic
-        const problems = await tempPopup.checkEligibility();
+        const problems = await tempPopup.checkEligibility(options);
         
         // Use the popup's own validation method if it exists, otherwise use generic check
         let hasProblems;
@@ -453,7 +457,7 @@ export const ItemPopupsMixin = (BaseClass) =>
         let result = null;
 
         try {
-          result = await this._executeBypassActionForType();
+          result = await this._executeBypassActionForType(options);
 
           Logger.debug(
             `Successfully executed ${popupConfig.className} logic directly`,
@@ -521,11 +525,14 @@ export const ItemPopupsMixin = (BaseClass) =>
      * Execute the bypass action for the specific item type
      *
      * @private
+     * @param {Object} options - Execution options
+     * @param {Array} [options.lockedTargets] - Locked targets to use for GM section
      * @returns {Promise<Object>} Result of the execution
      */
-    async _executeBypassActionForType() {
+    async _executeBypassActionForType(options = {}) {
       Logger.methodEntry("ItemPopupsMixin", "_executeBypassActionForType", {
         itemType: this.type,
+        lockedTargets: options.lockedTargets,
       });
 
       let result = null;
@@ -534,7 +541,9 @@ export const ItemPopupsMixin = (BaseClass) =>
         case "combatPower":
           // Handle power cost and create combat power message
           this.actor.addPower(-this.system.cost);
-          result = await erps.messages.createCombatPowerMessage(this);
+          result = await erps.messages.createCombatPowerMessage(this, {
+            lockedTargets: options.lockedTargets,
+          });
           break;
 
         case "gear":
@@ -557,7 +566,9 @@ export const ItemPopupsMixin = (BaseClass) =>
               (this.system.quantity || 0) - (this.system.cost || 1),
             ),
           });
-          result = await erps.messages.createCombatPowerMessage(this);
+          result = await erps.messages.createCombatPowerMessage(this, {
+            lockedTargets: options.lockedTargets,
+          });
           break;
 
         case "feature":

@@ -1,5 +1,6 @@
 import { Logger } from "../../services/logger.mjs";
 import { ErrorHandler } from "../../utils/error-handler.mjs";
+import { CharacterEffectsProcessor } from "../../services/character-effects-processor.mjs";
 
 /**
  * Item Sheet Character Effects Management Mixin
@@ -45,212 +46,41 @@ export const ItemSheetCharacterEffectsMixin = (BaseClass) =>
       );
 
       try {
-        // Get all form elements that include "characterEffects" in their name
-        // Filter out elements that match the remove value if one is provided
-        let formElements = this.form.querySelectorAll(
-          '[name*="characterEffects"]',
+        // Delegate to service for form parsing
+        const characterEffects =
+          CharacterEffectsProcessor.parseCharacterEffectsForm(this.form, remove);
+
+        // Delegate to service for effect processing (with extended modes)
+        const changes = await CharacterEffectsProcessor.processEffectsToChanges(
+          characterEffects,
+          { supportExtendedModes: true },
         );
 
-        if (remove.type && remove.index) {
-          formElements = Array.from(formElements).filter(
-            (el) => !el.name.includes(`${remove.type}.${remove.index}`),
-          );
-        }
-
-        // Create an object to store the values
-        const characterEffects = {
-          regularEffects: [],
-          hiddenEffects: [],
-          overrideEffects: [],
-        };
-
-        // Process each form element using for...of instead of forEach for async safety
-        for (const element of formElements) {
-          const name = element.name;
-          const value = element.value;
-
-          if (
-            !name.includes("regularEffects") &&
-            !name.includes("hiddenEffects") &&
-            !name.includes("overrideEffects")
-          ) {
-            continue;
-          }
-
-          const parts = name.split(".");
-          if (parts.length < 3) continue;
-
-          // Parse the name to extract the type (regularEffects or hiddenEffects) and index
-          const type = parts[1]; // regularEffects or hiddenEffects
-          const index = parseInt(parts[2], 10);
-          const property = parts[3]; // ability, mode, value, etc.
-
-          // Ensure the array has an object at this index
-          if (!characterEffects[type][index]) {
-            characterEffects[type][index] = {};
-          }
-
-          // Set the property value
-          characterEffects[type][index][property] = value;
-        }
-
-        // Clean up the arrays (remove any undefined entries)
-        characterEffects.regularEffects =
-          characterEffects.regularEffects.filter((e) => e);
-        characterEffects.hiddenEffects = characterEffects.hiddenEffects.filter(
-          (e) => e,
-        );
-        characterEffects.overrideEffects = characterEffects.overrideEffects.filter(
-          (e) => e,
-        );
-
-        const processEffects = async (effects, isRegular) => {
-          return effects.map((effect) => {
-            let key;
-            let mode;
-
-            // For override abilities, effect keys map to system.power/resolve.override
-            if (effect.ability === "powerOverride") {
-              key = `system.power.override`;
-              mode = CONST.ACTIVE_EFFECT_MODES.OVERRIDE;
-            } else if (effect.ability === "resolveOverride") {
-              key = `system.resolve.override`;
-              mode = CONST.ACTIVE_EFFECT_MODES.OVERRIDE;
-            } else if (isRegular) {
-              key = `system.abilities.${effect.ability}.${
-                effect.mode === "add"
-                  ? "change"
-                  : effect.mode === "override"
-                    ? "override"
-                    : effect.mode === "advantage"
-                      ? "diceAdjustments.advantage"
-                      : effect.mode === "disadvantage"
-                        ? "diceAdjustments.disadvantage"
-                        : effect.mode === "AC"
-                          ? "ac.change"
-                          : effect.mode === "transformOverride"
-                            ? "transformOverride"
-                            : effect.mode === "transformChange"
-                              ? "transformChange"
-                              : "transform"
-              }`;
-            } else {
-              // Hidden abilities logic
-              key = `system.hiddenAbilities.${effect.ability}.${
-                effect.mode === "add" ? "change" : "override"
-              }`;
-              mode =
-                effect.mode === "add"
-                  ? CONST.ACTIVE_EFFECT_MODES.ADD
-                  : CONST.ACTIVE_EFFECT_MODES.OVERRIDE;
-            }
-
-            return { key, mode, value: effect.value };
-          });
-        };
-
-        const newEffects = [
-          ...(await processEffects(characterEffects.regularEffects, true)),
-          ...(await processEffects(characterEffects.hiddenEffects, false)),
-          ...(await processEffects(characterEffects.overrideEffects, false)),
-        ];
-
+        // Add new effect if specified
         if (newEffect.type && newEffect.ability) {
-          // For override abilities (powerOverride, resolveOverride), use correct key format
-          let key;
-          if (newEffect.ability === "powerOverride") {
-            key = `system.power.override`;
-          } else if (newEffect.ability === "resolveOverride") {
-            key = `system.resolve.override`;
-          } else {
-            // Regular and hidden abilities use standard format
-            key = `system.${newEffect.type}.${newEffect.ability}.change`;
-          }
-          
-          newEffects.push({
-            key,
-            mode: CONST.ACTIVE_EFFECT_MODES.ADD,
-            value: 0,
-          });
+          const newChange =
+            CharacterEffectsProcessor.generateNewEffectChange(newEffect);
+          changes.push(newChange);
         }
 
-        // Get the first effect from the item, or create one if needed
-        let firstEffect = this.item.effects.contents[0];
+        // Delegate to service for effect creation/retrieval
+        const firstEffect =
+          await CharacterEffectsProcessor.getOrCreateFirstEffect(this.item);
 
-        // Check if this is a virtual/temporary item using the same logic as the base item sheet
-        const hasCustomUpdate =
-          this.item.update &&
-          (this.item.update.toString().includes("embeddedActionCards") ||
-            this.item.update.toString().includes("embeddedTransformations") ||
-            this.item.update.toString().includes("embeddedStatusEffects") ||
-            this.item.update.toString().includes("embeddedItem"));
-
-        const isTemporaryActionCard =
-          this.item.type === "actionCard" && !this.item.collection;
-
-        const isEmbeddedItem = this.item.originalId && !this.item.collection;
-
-        const isVirtualItem = hasCustomUpdate || isTemporaryActionCard || isEmbeddedItem;
-
-        if (!firstEffect) {
-          // Create a default ActiveEffect if none exists
-          const defaultEffectData = {
-            _id: foundry.utils.randomID(),
-            name: this.item.name,
-            icon: this.item.img,
-            changes: [],
-            disabled: false,
-            duration: {},
-            flags: {},
-            tint: "#ffffff",
-            transfer: true,
-            statuses: [],
-          };
-
-          if (isVirtualItem) {
-            // For virtual items, create the effect in memory and update source
-            firstEffect = new CONFIG.ActiveEffect.documentClass(defaultEffectData, {
-              parent: this.item,
-            });
-            this.item.effects.set(defaultEffectData._id, firstEffect);
-
-            // Also update the source data
-            if (!this.item._source.effects) {
-              this.item._source.effects = [];
-            }
-            this.item._source.effects.push(defaultEffectData);
-          } else {
-            // For regular items, create the effect in the database
-            const createdEffects = await this.item.createEmbeddedDocuments("ActiveEffect", [defaultEffectData], { fromEmbeddedItem: true });
-            firstEffect = createdEffects[0];
-          }
-        }
-
-        const updateData = {
-          _id: firstEffect._id,
-          changes: newEffects,
-        };
-
-        if (isVirtualItem) {
-          // For virtual items, use the custom update method to route through parent
-          // Use fromEmbeddedItem flag to prevent sheet closure
-          await this.item.update({ effects: [{ ...firstEffect.toObject(), ...updateData }] }, { fromEmbeddedItem: true });
-        } else {
-          // For regular items, update the embedded documents directly
-          await this.item.updateEmbeddedDocuments("ActiveEffect", [updateData], { fromEmbeddedItem: true });
-        }
-
-        Logger.info(
-          "Character effects updated successfully",
-          {
-            itemName: this.item.name,
-            effectsCount: newEffects.length,
-            regularEffectsCount: characterEffects.regularEffects.length,
-            hiddenEffectsCount: characterEffects.hiddenEffects.length,
-            overrideEffectsCount: characterEffects.overrideEffects.length,
-          },
-          "CHARACTER_EFFECTS",
+        // Delegate to service for effect update
+        await CharacterEffectsProcessor.updateEffectChanges(
+          this.item,
+          firstEffect,
+          { _id: firstEffect._id, changes },
         );
+
+        Logger.info("Character effects updated successfully", {
+          itemName: this.item.name,
+          effectsCount: changes.length,
+          regularEffectsCount: characterEffects.regularEffects.length,
+          hiddenEffectsCount: characterEffects.hiddenEffects.length,
+          overrideEffectsCount: characterEffects.overrideEffects.length,
+        }, "CHARACTER_EFFECTS");
 
         Logger.methodExit(
           "ItemSheetCharacterEffectsMixin",
@@ -307,15 +137,11 @@ export const ItemSheetCharacterEffectsMixin = (BaseClass) =>
         await this._updateCharacterEffects({ newEffect });
         event.target.focus();
 
-        Logger.info(
-          "New character effect created",
-          {
-            itemName: this.item.name,
-            effectType: type,
-            effectAbility: ability,
-          },
-          "CHARACTER_EFFECTS",
-        );
+        Logger.info("New character effect created", {
+          itemName: this.item.name,
+          effectType: type,
+          effectAbility: ability,
+        }, "CHARACTER_EFFECTS");
 
         Logger.methodExit(
           "ItemSheetCharacterEffectsMixin",
@@ -365,15 +191,11 @@ export const ItemSheetCharacterEffectsMixin = (BaseClass) =>
 
         await this._updateCharacterEffects({ remove: { index, type } });
 
-        Logger.info(
-          "Character effect deleted",
-          {
-            itemName: this.item.name,
-            effectIndex: index,
-            effectType: type,
-          },
-          "CHARACTER_EFFECTS",
-        );
+        Logger.info("Character effect deleted", {
+          itemName: this.item.name,
+          effectIndex: index,
+          effectType: type,
+        }, "CHARACTER_EFFECTS");
 
         Logger.methodExit(
           "ItemSheetCharacterEffectsMixin",
@@ -411,7 +233,10 @@ export const ItemSheetCharacterEffectsMixin = (BaseClass) =>
       // If so, delegate to the embedded item's own handler
       if (this.constructor.name === "EmbeddedItemSheet" || this.parentItem) {
         // This is an embedded item sheet - use the class's own method
-        if (this.constructor._toggleEffectDisplay && this.constructor !== ItemSheetCharacterEffectsMixin) {
+        if (
+          this.constructor._toggleEffectDisplay &&
+          this.constructor !== ItemSheetCharacterEffectsMixin
+        ) {
           return this.constructor._toggleEffectDisplay.call(this, event, target);
         }
       }
@@ -429,82 +254,31 @@ export const ItemSheetCharacterEffectsMixin = (BaseClass) =>
       try {
         const duration = target.checked ? { seconds: 604800 } : { seconds: 0 };
 
-        // Get the first effect from the item, or create one if needed
-        let firstEffect = this.item.effects.contents[0];
-
-        // Check if this is a virtual/temporary item using the same logic as the base item sheet
-        const hasCustomUpdate =
-          this.item.update &&
-          (this.item.update.toString().includes("embeddedActionCards") ||
-            this.item.update.toString().includes("embeddedTransformations") ||
-            this.item.update.toString().includes("embeddedStatusEffects") ||
-            this.item.update.toString().includes("embeddedItem"));
-
-        const isTemporaryActionCard =
-          this.item.type === "actionCard" && !this.item.collection;
-
-        const isEmbeddedItem = this.item.originalId && !this.item.collection;
-
-        const isVirtualItem = hasCustomUpdate || isTemporaryActionCard || isEmbeddedItem;
-
-        if (!firstEffect) {
-          // Create a default ActiveEffect if none exists
-          const defaultEffectData = {
-            _id: foundry.utils.randomID(),
-            name: this.item.name,
-            icon: this.item.img,
-            changes: [],
-            disabled: false,
+        // Delegate to service for effect creation/retrieval with duration
+        const firstEffect =
+          await CharacterEffectsProcessor.getOrCreateFirstEffect(
+            this.item,
             duration,
-            flags: {},
-            tint: "#ffffff",
-            transfer: true,
-            statuses: [],
-          };
+          );
 
-          if (isVirtualItem) {
-            // For virtual items, create the effect in memory and update source
-            firstEffect = new CONFIG.ActiveEffect.documentClass(defaultEffectData, {
-              parent: this.item,
-            });
-            this.item.effects.set(defaultEffectData._id, firstEffect);
-
-            // Also update the source data
-            if (!this.item._source.effects) {
-              this.item._source.effects = [];
-            }
-            this.item._source.effects.push(defaultEffectData);
-          } else {
-            // For regular items, create the effect in the database
-            const createdEffects = await this.item.createEmbeddedDocuments("ActiveEffect", [defaultEffectData], { fromEmbeddedItem: true });
-            firstEffect = createdEffects[0];
-          }
-        }
-
+        // Update the effect with new duration
         const updateData = {
           _id: firstEffect._id,
           duration,
         };
 
-        if (isVirtualItem) {
-          // For virtual items, use the custom update method to route through parent
-          // Use fromEmbeddedItem flag to prevent sheet closure
-          await this.item.update({ effects: [{ ...firstEffect.toObject(), ...updateData }] }, { fromEmbeddedItem: true });
-        } else {
-          // For regular items, update the embedded documents directly
-          await this.item.updateEmbeddedDocuments("ActiveEffect", [updateData], { fromEmbeddedItem: true });
-        }
+        await CharacterEffectsProcessor.updateEffectChanges(
+          this.item,
+          firstEffect,
+          updateData,
+        );
         event.target.focus();
 
-        Logger.info(
-          "Effect display toggled",
-          {
-            itemName: this.item.name,
-            displayEnabled: target.checked,
-            durationSeconds: duration.seconds,
-          },
-          "CHARACTER_EFFECTS",
-        );
+        Logger.info("Effect display toggled", {
+          itemName: this.item.name,
+          displayEnabled: target.checked,
+          durationSeconds: duration.seconds,
+        }, "CHARACTER_EFFECTS");
 
         Logger.methodExit(
           "ItemSheetCharacterEffectsMixin",

@@ -1,6 +1,7 @@
 import { Logger } from "../logger.mjs";
 import { MessageFlags } from "../../helpers/message-flags.mjs";
 import { StatusIntensification } from "../../helpers/status-intensification.mjs";
+import { DamageProcessor } from "../damage-processor.mjs";
 
 /**
  * Manager for GM control of action card effects
@@ -86,10 +87,11 @@ class GMControlManager {
       let damageRoll;
       try {
         // Apply vulnerability modifier to damage formula
-        const finalFormula =
-          type !== "heal" && target.system.hiddenAbilities.vuln.total > 0
-            ? `${formula} + ${Math.abs(target.system.hiddenAbilities.vuln.total)}`
-            : formula;
+        const finalFormula = DamageProcessor.applyVulnerabilityModifier(
+          formula,
+          type,
+          target,
+        );
 
         damageRoll = await target.damageResolve({
           formula: finalFormula,
@@ -214,6 +216,13 @@ class GMControlManager {
             statusData.flags["eventide-rp-system"] =
               statusData.flags["eventide-rp-system"] || {};
             statusData.flags["eventide-rp-system"].isEffect = true;
+          }
+
+          // Prepare gear effects with equipped and quantity
+          if (statusData.type === "gear") {
+            statusData.system = statusData.system || {};
+            statusData.system.equipped = true;
+            statusData.system.quantity = 1;
           }
 
           // Apply or intensify the status effect on the target
@@ -757,10 +766,15 @@ class GMControlManager {
             }
           }
 
-          // Execute the action card with the stored roll result
+          // Execute the action card with the stored roll result, locked targets, and transformation selections
           const result = await actionCard.executeWithRollResult(
             actor,
             flag.rollResult,
+            {
+              lockedTargets: flag.lockedTargets,
+              transformationSelections: flag.transformationSelections,
+              selectedEffectIds: flag.selectedEffectIds,
+            },
           );
 
           if (result.success) {

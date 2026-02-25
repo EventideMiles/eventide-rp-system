@@ -200,6 +200,28 @@ export default class EventideRpSystemGear extends EventideRpSystemItemBase {
           "system.quantity": newQuantity,
         });
 
+        // Flag it forward: If quantity is now depleted (or insufficient for another use),
+        // set a flag on the actionCardContext so the repetition loop knows to stop
+        // before the NEXT iteration (this iteration still executes)
+        const gearCost = this.system.cost || 0;
+        if (newQuantity < gearCost && options?.actionCardContext) {
+          options.actionCardContext.resourceDepleted = true;
+          options.actionCardContext.depletedResourceType = "quantity";
+          options.actionCardContext.depletedItemName = this.name;
+          options.actionCardContext.depletedRequired = gearCost;
+          options.actionCardContext.depletedAvailable = newQuantity;
+          Logger.debug(
+            "Gear resource depleted - setting flag for next iteration check",
+            {
+              gearName: actualGearItem.name,
+              remainingQuantity: newQuantity,
+              requiredPerUse: gearCost,
+              actionCardName: options?.actionCardContext?.actionCard?.name,
+            },
+            "GEAR_BYPASS",
+          );
+        }
+
         Logger.info(
           "Successfully updated real gear inventory for action card execution",
           {

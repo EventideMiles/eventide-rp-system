@@ -1,5 +1,6 @@
 import { Logger } from "../../services/logger.mjs";
 import { ErrorHandler } from "../../utils/error-handler.mjs";
+import { DragDropHandler } from "../../services/drag-drop-handler.mjs";
 
 const { TextEditor } = foundry.applications.ux;
 
@@ -8,6 +9,9 @@ const { TextEditor } = foundry.applications.ux;
  *
  * Provides drag and drop functionality for actor sheets, including
  * handling drops of items, actors, effects, and folders.
+ *
+ * This mixin delegates shared functionality to the DragDropHandler service
+ * while keeping actor-specific logic in the mixin.
  *
  * @param {class} BaseClass - The base actor sheet class to extend
  * @returns {class} Extended class with drag and drop functionality
@@ -26,6 +30,7 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
         this.#dragDrop = [];
       }
     }
+
     /**
      * Callback actions which occur when a dragged element is dropped on a target.
      * @param {DragEvent} event - The originating DragEvent
@@ -47,9 +52,6 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
         switch (data.type) {
           case "Group":
             result = await this._onDropGroup(event, data);
-            break;
-          case "ActiveEffect":
-            result = await this._onDropActiveEffect(event, data);
             break;
           case "Actor":
             result = await this._onDropActor(event, data);
@@ -84,125 +86,6 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
     }
 
     /**
-     * Handle the dropping of ActiveEffect data onto an Actor Sheet
-     * @param {DragEvent} event - The concluding DragEvent which contains drop data
-     * @param {object} data - The data transfer extracted from the event
-     * @returns {Promise<ActiveEffect|boolean>} The created ActiveEffect object or false if it couldn't be created.
-     * @protected
-     */
-    async _onDropActiveEffect(event, data) {
-      try {
-        const aeCls = getDocumentClass("ActiveEffect");
-        const effect = await aeCls.fromDropData(data);
-
-        if (!this.actor.isOwner || !effect) {
-          return false;
-        }
-
-        if (effect.target === this.actor) {
-          const result = await this._onSortActiveEffect(event, effect);
-          return result;
-        }
-
-        const result = await aeCls.create(effect, { parent: this.actor });
-
-        return result;
-      } catch (error) {
-        await ErrorHandler.handleAsync(Promise.reject(error), {
-          context: `Drop active effect on ${this.actor?.name}`,
-          errorType: ErrorHandler.ERROR_TYPES.FOUNDRY_API,
-          userMessage: game.i18n.localize(
-            "EVENTIDE_RP_SYSTEM.Errors.EffectDropError",
-          ),
-        });
-
-        return false;
-      }
-    }
-
-    /**
-     * Handle a drop event for an existing embedded Active Effect to sort that Active Effect relative to its siblings
-     * @param {DragEvent} event - The drag event
-     * @param {ActiveEffect} effect - The effect being sorted
-     * @returns {Promise<ActiveEffect[]>} The updated effects
-     * @protected
-     */
-    async _onSortActiveEffect(event, effect) {
-      try {
-        const dropTarget = event.target.closest("[data-effect-id]");
-        if (!dropTarget) {
-          return null;
-        }
-
-        const target = this._getEmbeddedDocument(dropTarget);
-
-        // Don't sort on yourself
-        if (effect.uuid === target.uuid) {
-          return null;
-        }
-
-        // Identify sibling items based on adjacent HTML elements
-        const siblings = [];
-        for (const el of dropTarget.parentElement.children) {
-          const siblingId = el.dataset.effectId;
-          const parentId = el.dataset.parentId;
-          if (
-            siblingId &&
-            parentId &&
-            (siblingId !== effect.id || parentId !== effect.parent.id)
-          ) {
-            siblings.push(this._getEmbeddedDocument(el));
-          }
-        }
-
-        // Perform the sort
-        const sortUpdates = foundry.utils.performIntegerSort(effect, {
-          target,
-          siblings,
-        });
-
-        // Split the updates up by parent document
-        const directUpdates = [];
-        const grandchildUpdateData = sortUpdates.reduce((items, u) => {
-          const parentId = u.target.parent.id;
-          const update = { _id: u.target.id, ...u.update };
-          if (parentId === this.actor.id) {
-            directUpdates.push(update);
-            return items;
-          }
-          if (items[parentId]) items[parentId].push(update);
-          else items[parentId] = [update];
-          return items;
-        }, {});
-
-        // Effects-on-items updates
-        for (const [itemId, updates] of Object.entries(grandchildUpdateData)) {
-          await this.actor.items
-            .get(itemId)
-            .updateEmbeddedDocuments("ActiveEffect", updates);
-        }
-
-        // Update on the main actor
-        const result = await this.actor.updateEmbeddedDocuments(
-          "ActiveEffect",
-          directUpdates,
-        );
-
-        return result;
-      } catch (error) {
-        await ErrorHandler.handleAsync(Promise.reject(error), {
-          context: `Sort active effect for ${this.actor?.name}`,
-          errorType: ErrorHandler.ERROR_TYPES.FOUNDRY_API,
-          userMessage: game.i18n.localize(
-            "EVENTIDE_RP_SYSTEM.Errors.EffectSortError",
-          ),
-        });
-
-        return null;
-      }
-    }
-
-    /**
      * Handle dropping of an Actor data onto another Actor sheet
      * @param {DragEvent} _event - The concluding DragEvent which contains drop data
      * @param {object} _data - The data transfer extracted from the event
@@ -221,13 +104,59 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
       const transformation =
         await erps.utils.TransformationConverter.actorToTransformation(actor);
 
-      // Create the owned item
+      // Get the transformation item data (prefer compendium version)
+      const transformationData = transformation.compendium || transformation.world;
+      if (!transformationData) {
+        Logger.warn("No transformation data available from conversion", null, "DRAG_DROP");
+        return false;
+      }
+
+      // Check cursed transformation precedence BEFORE creating the item
+      // This prevents effects from being applied when the transformation is denied
+      const activeTransformationName = this.actor.getFlag(
+        "eventide-rp-system",
+        "activeTransformationName",
+      );
+      const activeTransformationCursed = this.actor.getFlag(
+        "eventide-rp-system",
+        "activeTransformationCursed",
+      );
+      const newTransformationCursed = transformationData.system?.cursed || false;
+
+      // If actor has an active transformation
+      if (activeTransformationName) {
+        // If current transformation is cursed and new one is not cursed, deny
+        if (activeTransformationCursed && !newTransformationCursed) {
+          ui.notifications.warn(
+            game.i18n.format(
+              "EVENTIDE_RP_SYSTEM.Item.ActionCard.TransformationCursedOverrideDenied",
+              {
+                currentTransformation: activeTransformationName,
+                newTransformation: transformationData.name,
+              },
+            ),
+          );
+          Logger.warn(
+            "Transformation denied - cursed transformation override",
+            {
+              activeTransformationName,
+              activeTransformationCursed,
+              newTransformationName: transformationData.name,
+              newTransformationCursed,
+            },
+            "DRAG_DROP",
+          );
+          return false;
+        }
+      }
+
+      // Create the owned item (effects will be transferred at this point)
       const result = await this._onDropItemCreate(
         transformation.compendium,
         event,
       );
 
-      // transform the actor
+      // Transform the actor
       await this.actor.applyTransformation(
         Item.implementation.fromSource(result[0]),
       );
@@ -245,7 +174,11 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
     async _onDropItem(event, data) {
       try {
         // Remove drag feedback when drop occurs
-        this._removeDragFeedback();
+        DragDropHandler.removeDragFeedback(
+          DragDropHandler.CONFIG.ACTOR,
+          this,
+        );
+
         if (!this.actor.isOwner) {
           return false;
         }
@@ -260,7 +193,7 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
 
         // Check if dropped on action cards drop zone
         const actionCardDropZone = event.target.closest(
-          '[data-drop-zone="actionCard"]',
+          DragDropHandler.CONFIG.ACTOR.dropZoneSelector,
         );
         if (
           actionCardDropZone &&
@@ -278,6 +211,47 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
           // Get the transformation item that was added to the actor
           const actorTransformationItem = this.actor.items.get(item.id);
           return [actorTransformationItem];
+        }
+
+        // Check if actor is currently transformed
+        const activeTransformation = this.actor.getFlag(
+          "eventide-rp-system",
+          "activeTransformation",
+        );
+
+        if (activeTransformation) {
+          // During transformation, only allow status and gear items
+          const allowedTypes = ["status", "gear"];
+
+          if (!allowedTypes.includes(item.type)) {
+            const activeTransformationName = this.actor.getFlag(
+              "eventide-rp-system",
+              "activeTransformationName",
+            );
+
+            ui.notifications.warn(
+              game.i18n.format(
+                "EVENTIDE_RP_SYSTEM.Warnings.TransformationRestriction",
+                {
+                  itemType: game.i18n.localize(`TYPES.Item.${item.type}`),
+                  transformation: activeTransformationName,
+                },
+              ),
+            );
+
+            Logger.warn(
+              "Item drop blocked - actor is transformed",
+              {
+                actorName: this.actor.name,
+                itemType: item.type,
+                itemName: item.name,
+                transformation: activeTransformationName,
+              },
+              "DRAG_DROP",
+            );
+
+            return false;
+          }
         }
 
         // Create the owned item
@@ -355,8 +329,7 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
 
         // Check if we're currently on the GM Actions tab
         const isGmActionsTabActive =
-          this.tabGroups?.primary === "gmActionCards" ||
-          this.element?.querySelector(".tab.gm-action-cards.active") !== null;
+          DragDropHandler.CONFIG.ACTOR.isGmActionsTabActive(this);
 
         // Set gmOnly flag based on active tab for all action cards
         itemData = itemData.map((data) => {
@@ -403,299 +376,12 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
      * @private
      */
     async _onSortItem(event, item) {
-      try {
-        // Check if action card is being moved between tabs (GM Actions vs regular Actions)
-        if (item.type === "actionCard") {
-          const isGmActionsTabActive =
-            this.tabGroups?.primary === "gmActionCards" ||
-            this.element?.querySelector(".tab.gm-action-cards.active") !== null;
-
-          // Update gmOnly flag if it doesn't match the current tab
-          if (item.system.gmOnly !== isGmActionsTabActive) {
-            await item.update({ "system.gmOnly": isGmActionsTabActive });
-          }
-        }
-
-        // Get the drag source and drop target
-        const items = this.actor.items;
-        const dropTarget = event.target.closest("[data-item-id]");
-
-        if (!dropTarget) {
-          // Check if dropped on the ungrouped zone
-          const ungroupedZone = event.target.closest("[data-ungrouped-zone]");
-          if (
-            ungroupedZone &&
-            item.type === "actionCard" &&
-            item.system.groupId
-          ) {
-            // Ungroup the card by removing its groupId
-            const oldGroupId = item.system.groupId;
-            await item.update({ "system.groupId": null });
-            await this._checkGroupDissolution(oldGroupId);
-            Logger.debug(
-              "Card moved to ungrouped",
-              { cardId: item.id, oldGroupId },
-              "DRAG_DROP",
-            );
-            return [item];
-          }
-
-          // Check if dropped on a group (not on a specific item)
-          const groupTarget = event.target.closest(".erps-action-card-group");
-          if (groupTarget && item.type === "actionCard") {
-            return await this._handleCardDropOnGroup(event, item, groupTarget);
-          }
-          return null;
-        }
-
-        const target = items.get(dropTarget.dataset.itemId);
-
-        // Don't sort on yourself
-        if (item.id === target.id) {
-          return null;
-        }
-
-        // Handle action card specific logic
-        if (item.type === "actionCard" && target.type === "actionCard") {
-          return await this._handleActionCardSort(
-            event,
-            item,
-            target,
-            dropTarget,
-          );
-        }
-
-        // Identify sibling items based on adjacent HTML elements
-        const siblings = [];
-        for (const el of dropTarget.parentElement.children) {
-          const siblingId = el.dataset.itemId;
-          if (siblingId && siblingId !== item.id) {
-            siblings.push(items.get(siblingId));
-          }
-        }
-
-        // Perform the sort
-        const sortUpdates = foundry.utils.performIntegerSort(item, {
-          target,
-          siblings,
-        });
-
-        const updateData = sortUpdates.map((u) => ({
-          _id: u.target.id,
-          ...u.update,
-        }));
-        const result = await this.actor.updateEmbeddedDocuments(
-          "Item",
-          updateData,
-        );
-
-        return result;
-      } catch (error) {
-        await ErrorHandler.handleAsync(Promise.reject(error), {
-          context: `Sort item for ${this.actor?.name}`,
-          errorType: ErrorHandler.ERROR_TYPES.FOUNDRY_API,
-          userMessage: game.i18n.localize(
-            "EVENTIDE_RP_SYSTEM.Errors.ItemSortError",
-          ),
-        });
-
-        return null;
-      }
-    }
-
-    /**
-     * Handle dropping an action card onto another action card
-     * @param {Event} event - The drop event
-     * @param {Item} draggedCard - The dragged action card
-     * @param {Item} targetCard - The target action card
-     * @param {HTMLElement} dropTarget - The drop target element
-     * @returns {Promise<Item[]>} The updated items
-     * @private
-     */
-    async _handleActionCardSort(event, draggedCard, targetCard, dropTarget) {
-      const { shift, ctrl } = this._dragModifiers || {};
-
-      // Shift+drag: Ungroup card
-      if (shift && draggedCard.system.groupId) {
-        const oldGroupId = draggedCard.system.groupId;
-        await draggedCard.update({ "system.groupId": null });
-
-        // Check if the group should be dissolved
-        await this._checkGroupDissolution(oldGroupId);
-
-        Logger.debug(
-          "Ungrouped card via shift+drag",
-          { cardId: draggedCard.id, oldGroupId },
-          "DRAG_DROP",
-        );
-        return [draggedCard];
-      }
-
-      // Ctrl+drag: Copy card
-      if (ctrl) {
-        const newCardData = draggedCard.toObject();
-        delete newCardData._id;
-        newCardData.system.groupId = targetCard.system.groupId || null;
-
-        const [newCard] = await this.actor.createEmbeddedDocuments("Item", [
-          newCardData,
-        ]);
-
-        Logger.debug(
-          "Copied card via ctrl+drag",
-          { originalId: draggedCard.id, newId: newCard.id },
-          "DRAG_DROP",
-        );
-        ui.notifications.info(
-          game.i18n.format("EVENTIDE_RP_SYSTEM.Actor.ActionCards.CardCopied", {
-            name: newCard.name,
-          }),
-        );
-
-        return [newCard];
-      }
-
-      // Check if dragging card onto another card to create a group
-      const draggedGroupId = draggedCard.system.groupId;
-      const targetGroupId = targetCard.system.groupId;
-
-      // Neither card is grouped - create a new group
-      if (!draggedGroupId && !targetGroupId) {
-        const groupId = await this._createActionCardGroup(event, dropTarget, [
-          draggedCard.id,
-          targetCard.id,
-        ]);
-        Logger.debug(
-          "Created group from card drag",
-          { groupId, cards: [draggedCard.id, targetCard.id] },
-          "DRAG_DROP",
-        );
-        return [draggedCard, targetCard];
-      }
-
-      // One card is grouped - add the ungrouped card to that group
-      if (!draggedGroupId && targetGroupId) {
-        await draggedCard.update({ "system.groupId": targetGroupId });
-        Logger.debug(
-          "Added card to existing group",
-          { cardId: draggedCard.id, groupId: targetGroupId },
-          "DRAG_DROP",
-        );
-        return [draggedCard];
-      }
-
-      // Both cards are in the same group - reorder within group
-      if (draggedGroupId === targetGroupId) {
-        const groupCards = this.actor.items.filter(
-          (i) => i.type === "actionCard" && i.system.groupId === draggedGroupId,
-        );
-
-        const siblings = groupCards.filter((c) => c.id !== draggedCard.id);
-
-        const sortUpdates = foundry.utils.performIntegerSort(draggedCard, {
-          target: targetCard,
-          siblings,
-        });
-
-        const updateData = sortUpdates.map((u) => ({
-          _id: u.target.id,
-          ...u.update,
-        }));
-
-        const result = await this.actor.updateEmbeddedDocuments(
-          "Item",
-          updateData,
-        );
-        Logger.debug(
-          "Reordered cards within group",
-          { groupId: draggedGroupId },
-          "DRAG_DROP",
-        );
-        return result;
-      }
-
-      // Cards are in different groups - move dragged card to target's group
-      if (draggedGroupId && targetGroupId && draggedGroupId !== targetGroupId) {
-        const oldGroupId = draggedGroupId;
-        await draggedCard.update({ "system.groupId": targetGroupId });
-
-        // Check if the old group should be dissolved
-        await this._checkGroupDissolution(oldGroupId);
-
-        Logger.debug(
-          "Moved card between groups",
-          { cardId: draggedCard.id, oldGroupId, newGroupId: targetGroupId },
-          "DRAG_DROP",
-        );
-        return [draggedCard];
-      }
-
-      // Default: just sort normally
-      return null;
-    }
-
-    /**
-     * Handle dropping a card onto a group (not on a specific card)
-     * @param {Event} event - The drop event
-     * @param {Item} card - The dropped card
-     * @param {HTMLElement} groupElement - The group element
-     * @returns {Promise<Item[]>} The updated items
-     * @private
-     */
-    async _handleCardDropOnGroup(event, card, groupElement) {
-      const groupId = groupElement.dataset.groupId;
-      if (!groupId) return null;
-
-      const { shift, ctrl } = this._dragModifiers || {};
-
-      // Shift+drag: Ungroup card (only if dropping outside all groups)
-      if (shift && card.system.groupId) {
-        const oldGroupId = card.system.groupId;
-        await card.update({ "system.groupId": null });
-        await this._checkGroupDissolution(oldGroupId);
-        Logger.debug(
-          "Ungrouped card",
-          { cardId: card.id, oldGroupId },
-          "DRAG_DROP",
-        );
-        return [card];
-      }
-
-      // Ctrl+drag: Copy card to group
-      if (ctrl) {
-        const newCardData = card.toObject();
-        delete newCardData._id;
-        newCardData.system.groupId = groupId;
-
-        const [newCard] = await this.actor.createEmbeddedDocuments("Item", [
-          newCardData,
-        ]);
-        Logger.debug(
-          "Copied card to group",
-          { originalId: card.id, newId: newCard.id, groupId },
-          "DRAG_DROP",
-        );
-        return [newCard];
-      }
-
-      // Normal drop: Add card to group
-      const oldGroupId = card.system.groupId;
-      if (oldGroupId !== groupId) {
-        await card.update({ "system.groupId": groupId });
-
-        if (oldGroupId) {
-          await this._checkGroupDissolution(oldGroupId);
-        }
-
-        Logger.debug(
-          "Added card to group",
-          { cardId: card.id, groupId },
-          "DRAG_DROP",
-        );
-        return [card];
-      }
-
-      return null;
+      return await DragDropHandler.handleSortItem(
+        DragDropHandler.CONFIG.ACTOR,
+        this,
+        event,
+        item,
+      );
     }
 
     /**
@@ -830,7 +516,7 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
             };
 
             event.dataTransfer.setData("text/plain", JSON.stringify(dragData));
-            docRow.classList.add("erps-action-card-group--dragging");
+            docRow.classList.add(DragDropHandler.CONFIG.ACTOR.groupDraggingClass);
 
             Logger.debug(
               "Started dragging group",
@@ -877,7 +563,7 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
       if (document.type === "actionCard") {
         this._draggedCardGroupId = document.system?.groupId;
         // Add dragging class to the row
-        docRow.classList.add("erps-data-table__row--dragging");
+        docRow.classList.add(DragDropHandler.CONFIG.ACTOR.draggingClass);
       }
 
       // Determine if this is a transformation item (not owned by actor)
@@ -934,7 +620,11 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
       event.dataTransfer.dropEffect = "copy";
 
       // Add visual feedback for action card drop zones
-      this._addDragFeedback(event);
+      DragDropHandler.addDragFeedback(
+        DragDropHandler.CONFIG.ACTOR,
+        this,
+        event,
+      );
     }
 
     /**
@@ -952,63 +642,14 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
           docRow.classList.remove("dragging");
         }
         if (docRow.classList.contains("erps-action-card-group")) {
-          docRow.classList.remove("erps-action-card-group--dragging");
+          docRow.classList.remove(DragDropHandler.CONFIG.ACTOR.groupDraggingClass);
         }
-        docRow.classList.remove("erps-data-table__row--dragging");
+        docRow.classList.remove(DragDropHandler.CONFIG.ACTOR.draggingClass);
       }
 
       // Clear drag state
       this._dragModifiers = null;
       this._draggedCardGroupId = null;
-    }
-
-    /**
-     * Add visual feedback during drag operations
-     * @param {DragEvent} event - The drag event
-     * @private
-     */
-    _addDragFeedback(event) {
-      // Only add feedback if we're dragging something that can create action cards
-      try {
-        const dragData = event.dataTransfer.getData("text/plain");
-        if (!dragData) return;
-
-        const data = JSON.parse(dragData);
-        if (
-          data.type === "Item" &&
-          ["feature", "combatPower", "gear", "status"].includes(data.data?.type)
-        ) {
-          this._highlightActionCardDropZone();
-        }
-      } catch {
-        // Ignore parsing errors - not all drags will have valid JSON data
-      }
-    }
-
-    /**
-     * Highlight the action card drop zone
-     * @private
-     */
-    _highlightActionCardDropZone() {
-      const dropZone = this.element.querySelector(
-        '[data-drop-zone="actionCard"]',
-      );
-      if (dropZone) {
-        dropZone.classList.add("drag-over");
-      }
-    }
-
-    /**
-     * Remove drag feedback from action card drop zone
-     * @private
-     */
-    _removeDragFeedback() {
-      const dropZone = this.element.querySelector(
-        '[data-drop-zone="actionCard"]',
-      );
-      if (dropZone) {
-        dropZone.classList.remove("drag-over");
-      }
     }
 
     /**
@@ -1019,166 +660,24 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
     _onDragLeave(event) {
       // Only remove feedback if we're actually leaving the sheet
       if (!this.element.contains(event.relatedTarget)) {
-        this._removeDragFeedback();
+        DragDropHandler.removeDragFeedback(
+          DragDropHandler.CONFIG.ACTOR,
+          this,
+        );
       }
     }
 
     /**
      * Fetches the embedded document representing the containing HTML element
      * @param {HTMLElement} target - The element subject to search
-     * @returns {Item | ActiveEffect} The embedded Item or ActiveEffect
+     * @returns {Item} The embedded Item
      */
     _getEmbeddedDocument(target) {
-      // Support li, tr elements, and transformation cards for different template structures
-      const docRow =
-        target.closest(
-          "li[data-document-class], tr[data-document-class], .eventide-transformation-card[data-item-id]",
-        ) || target.closest("[data-item-id]");
-
-      if (docRow) {
-        const itemId = docRow.dataset.itemId;
-
-        // Handle transformation cards specifically
-        if (docRow.classList.contains("eventide-transformation-card")) {
-          // First try to find the transformation item in the actor's items
-          let transformationItem = this.actor.items.get(itemId);
-          if (
-            transformationItem &&
-            transformationItem.type === "transformation"
-          ) {
-            return transformationItem;
-          }
-
-          // If not found in actor's items, try to find it in the world or compendiums
-          // This handles the case where the transformation was applied and the item was removed
-          transformationItem = game.items.get(itemId);
-          if (
-            transformationItem &&
-            transformationItem.type === "transformation"
-          ) {
-            return transformationItem;
-          }
-
-          // Last resort: create a temporary item from stored flag data
-          const activeTransformationId = this.actor.getFlag(
-            "eventide-rp-system",
-            "activeTransformation",
-          );
-          if (activeTransformationId === itemId) {
-            const transformationName = this.actor.getFlag(
-              "eventide-rp-system",
-              "activeTransformationName",
-            );
-            const transformationCursed = this.actor.getFlag(
-              "eventide-rp-system",
-              "activeTransformationCursed",
-            );
-            const embeddedCombatPowersData = this.actor.getFlag(
-              "eventide-rp-system",
-              "activeTransformationCombatPowers",
-            );
-
-            if (transformationName) {
-              // Create a minimal transformation item for dragging
-              const tempTransformationData = {
-                _id: itemId,
-                name: transformationName,
-                type: "transformation",
-                system: {
-                  cursed: transformationCursed || false,
-                  embeddedCombatPowers: embeddedCombatPowersData || [],
-                },
-              };
-
-              const tempItem = new CONFIG.Item.documentClass(
-                tempTransformationData,
-                {
-                  parent: null, // No parent since this is a temporary item
-                },
-              );
-
-              return tempItem;
-            }
-          }
-
-          Logger.warn(
-            "Could not find transformation item for drag",
-            {
-              itemId,
-              actorItems: this.actor.items.size,
-              worldItems: game.items.size,
-              activeTransformationId: this.actor.getFlag(
-                "eventide-rp-system",
-                "activeTransformation",
-              ),
-            },
-            "DRAG_DROP",
-          );
-          return null;
-        }
-
-        // Handle direct item ID reference
-        if (itemId && !docRow.dataset.documentClass) {
-          // First try to find in actor's items
-          let item = this.actor.items.get(itemId);
-          if (item) return item;
-
-          // If not found, check transformation combat powers
-          item = this._findTransformationCombatPower(itemId);
-          if (item) return item;
-
-          // If still not found, check transformation action cards
-          item = this._findTransformationActionCard(itemId);
-          if (item) return item;
-        }
-
-        // Handle document class structure
-        if (docRow.dataset.documentClass === "Item") {
-          // First try to find in actor's items
-          let item = this.actor.items.get(itemId);
-          if (item) return item;
-
-          // If not found, check transformation combat powers
-          item = this._findTransformationCombatPower(itemId);
-          if (item) return item;
-
-          // If still not found, check transformation action cards
-          item = this._findTransformationActionCard(itemId);
-          if (item) return item;
-        } else if (docRow.dataset.documentClass === "ActiveEffect") {
-          const parent =
-            docRow.dataset.parentId === this.actor.id
-              ? this.actor
-              : this.actor.items.get(docRow?.dataset.parentId);
-          return parent.effects.get(docRow?.dataset.effectId);
-        }
-      }
-
-      // Fallback: check if target itself has item-id
-      if (target.dataset.itemId) {
-        // First try to find in actor's items
-        let item = this.actor.items.get(target.dataset.itemId);
-        if (item) return item;
-
-        // If not found, check transformation combat powers
-        item = this._findTransformationCombatPower(target.dataset.itemId);
-        if (item) return item;
-      }
-
-      Logger.warn(
-        "Could not find document class or item ID",
-        {
-          target,
-          docRow,
-          itemId: docRow?.dataset?.itemId,
-          documentClass: docRow?.dataset?.documentClass,
-          isTransformationCard: docRow?.classList?.contains(
-            "eventide-transformation-card",
-          ),
-        },
-        "DRAG_DROP",
+      return DragDropHandler.getEmbeddedDocument(
+        DragDropHandler.CONFIG.ACTOR,
+        this,
+        target,
       );
-      return null;
     }
 
     /**
@@ -1188,58 +687,23 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
      * @private
      */
     _findTransformationCombatPower(itemId) {
-      // First check if actor has getCurrentCombatPowers method (from transformation mixin)
-      if (typeof this.actor.getCurrentCombatPowers === "function") {
-        const currentCombatPowers = this.actor.getCurrentCombatPowers();
-        const power = currentCombatPowers.find((p) => p.id === itemId);
-        if (power) {
-          return power;
-        }
-      }
-
-      // Fallback: Get all transformation items and search embedded combat powers
-      const transformations = this.actor.items.filter(
-        (i) => i.type === "transformation",
+      return DragDropHandler.CONFIG.ACTOR.findTransformationCombatPower(
+        this.actor,
+        itemId,
       );
-
-      // Search through all embedded combat powers
-      for (const transformation of transformations) {
-        const embeddedPowers = transformation.system.getEmbeddedCombatPowers();
-        const power = embeddedPowers.find((p) => p.id === itemId);
-        if (power) {
-          return power;
-        }
-      }
-
-      return null;
     }
 
+    /**
+     * Find a transformation action card by ID
+     * @param {string} itemId - The item ID to search for
+     * @returns {Item|null} The transformation action card item or null if not found
+     * @private
+     */
     _findTransformationActionCard(itemId) {
-      // First check if actor has getCurrentActionCards method (from transformation mixin)
-      if (typeof this.actor.getCurrentActionCards === "function") {
-        const currentActionCards = this.actor.getCurrentActionCards();
-        const actionCard = currentActionCards.find((ac) => ac.id === itemId);
-        if (actionCard) {
-          return actionCard;
-        }
-      }
-
-      // Fallback: Get all transformation items and search embedded action cards
-      const transformations = this.actor.items.filter(
-        (i) => i.type === "transformation",
+      return DragDropHandler.CONFIG.ACTOR.findTransformationActionCard(
+        this.actor,
+        itemId,
       );
-
-      // Search through all embedded action cards
-      for (const transformation of transformations) {
-        const embeddedActionCards =
-          transformation.system.getEmbeddedActionCards();
-        const actionCard = embeddedActionCards.find((ac) => ac.id === itemId);
-        if (actionCard) {
-          return actionCard;
-        }
-      }
-
-      return null;
     }
 
     /**
@@ -1258,8 +722,7 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
 
         // Check if we're currently on the GM Actions tab
         const isGmActionsTabActive =
-          this.tabGroups?.primary === "gmActionCards" ||
-          this.element?.querySelector(".tab.gm-action-cards.active") !== null;
+          DragDropHandler.CONFIG.ACTOR.isGmActionsTabActive(this);
 
         // Create the action card data for non-status items
         const actionCardData = {
@@ -1357,8 +820,7 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
 
         // Check if we're currently on the GM Actions tab
         const isGmActionsTabActive =
-          this.tabGroups?.primary === "gmActionCards" ||
-          this.element?.querySelector(".tab.gm-action-cards.active") !== null;
+          DragDropHandler.CONFIG.ACTOR.isGmActionsTabActive(this);
 
         // Create saved damage action card data with status appearance
         const actionCardData = {
@@ -1440,7 +902,7 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
     }
 
     /**
-     * Handle dropping a group to reorder groups
+     * Handle dropping a group to reorder groups or copy from another actor
      * @param {DragEvent} event - The drop event
      * @param {object} data - The drag data
      * @returns {Promise<boolean>} Success status
@@ -1452,7 +914,9 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
           return false;
         }
 
-        const dropTarget = event.target.closest(".erps-action-card-group");
+        const dropTarget = event.target.closest(
+          DragDropHandler.CONFIG.ACTOR.groupSelector,
+        );
 
         // Don't allow dropping on the same group
         if (dropTarget && dropTarget.dataset.groupId === data.groupId) {
@@ -1516,157 +980,12 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
      * @private
      */
     async _copyGroupFromAnotherActor(data, dropTarget = null) {
-      try {
-        let sourceGroup;
-        let sourceCards;
-
-        // Determine if source is an actor or transformation
-        if (data.actorId) {
-          // Source is an actor
-          const sourceActor = game.actors.get(data.actorId);
-          if (!sourceActor) {
-            Logger.error(
-              "Source actor not found",
-              { actorId: data.actorId },
-              "DRAG_DROP",
-            );
-            return false;
-          }
-
-          const sourceGroups = sourceActor.system.actionCardGroups || [];
-          sourceGroup = sourceGroups.find((g) => g._id === data.groupId);
-          if (!sourceGroup) {
-            Logger.error(
-              "Source group not found in actor",
-              { groupId: data.groupId },
-              "DRAG_DROP",
-            );
-            return false;
-          }
-
-          sourceCards = sourceActor.items.filter(
-            (i) => i.type === "actionCard" && i.system.groupId === data.groupId,
-          );
-        } else if (data.transformationId) {
-          // Source is a transformation
-          const sourceTransformation = await fromUuid(
-            `Item.${data.transformationId}`,
-          );
-          if (!sourceTransformation) {
-            Logger.error(
-              "Source transformation not found",
-              { transformationId: data.transformationId },
-              "DRAG_DROP",
-            );
-            return false;
-          }
-
-          const sourceGroups =
-            sourceTransformation.system.actionCardGroups || [];
-          sourceGroup = sourceGroups.find((g) => g._id === data.groupId);
-          if (!sourceGroup) {
-            Logger.error(
-              "Source group not found in transformation",
-              { groupId: data.groupId },
-              "DRAG_DROP",
-            );
-            return false;
-          }
-
-          const embeddedActionCards =
-            sourceTransformation.system.getEmbeddedActionCards();
-          sourceCards = embeddedActionCards.filter(
-            (card) => card.system.groupId === data.groupId,
-          );
-        } else {
-          Logger.error(
-            "Invalid group drag data - no source specified",
-            data,
-            "DRAG_DROP",
-          );
-          return false;
-        }
-
-        if (sourceCards.length === 0) {
-          ui.notifications.warn(
-            game.i18n.localize(
-              "EVENTIDE_RP_SYSTEM.Actor.ActionCards.NoCardsInGroup",
-            ),
-          );
-          return false;
-        }
-
-        // Create the new group on this actor
-        const newGroupId = foundry.utils.randomID();
-        const existingGroups = this.actor.system.actionCardGroups || [];
-
-        // Determine sort order for the new group
-        let newGroupSort = 0;
-        if (dropTarget) {
-          const targetGroupId = dropTarget.dataset.groupId;
-          const targetGroup = existingGroups.find(
-            (g) => g._id === targetGroupId,
-          );
-          if (targetGroup) {
-            newGroupSort = targetGroup.sort || 0;
-          }
-        } else if (existingGroups.length > 0) {
-          newGroupSort =
-            Math.max(...existingGroups.map((g) => g.sort || 0)) + 1;
-        }
-
-        const newGroup = {
-          _id: newGroupId,
-          name: sourceGroup.name,
-          sort: newGroupSort,
-        };
-
-        // Update group array with new group
-        const updatedGroups = [...existingGroups, newGroup];
-        await this.actor.update({ "system.actionCardGroups": updatedGroups });
-
-        // Copy all action cards
-        const cardDataArray = sourceCards.map((card) => {
-          const cardData = card.toObject
-            ? card.toObject()
-            : foundry.utils.deepClone(card);
-          delete cardData._id; // Let Foundry create new IDs
-          cardData.system.groupId = newGroupId; // Assign to new group
-          return cardData;
-        });
-
-        const createdCards = await this.actor.createEmbeddedDocuments(
-          "Item",
-          cardDataArray,
-        );
-
-        Logger.debug(
-          "Copied group to actor",
-          {
-            sourceType: data.actorId ? "actor" : "transformation",
-            sourceId: data.actorId || data.transformationId,
-            sourceGroupId: data.groupId,
-            newGroupId,
-            cardCount: createdCards.length,
-          },
-          "DRAG_DROP",
-        );
-
-        ui.notifications.info(
-          game.i18n.format("EVENTIDE_RP_SYSTEM.Actor.ActionCards.GroupCopied", {
-            groupName: sourceGroup.name,
-            cardCount: createdCards.length,
-          }),
-        );
-
-        return true;
-      } catch (error) {
-        Logger.error("Failed to copy group to actor", error, "DRAG_DROP");
-        ui.notifications.error(
-          game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.FailedToCopyGroup"),
-        );
-        return false;
-      }
+      return await DragDropHandler.copyGroupToDestination(
+        DragDropHandler.CONFIG.ACTOR,
+        this,
+        data,
+        dropTarget,
+      );
     }
 
     /**
@@ -1676,21 +995,10 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
      * @private
      */
     async _checkGroupDissolution(groupId) {
-      try {
-        const cardsInGroup = this.actor.items.filter(
-          (i) => i.type === "actionCard" && i.system.groupId === groupId,
-        );
-
-        if (cardsInGroup.length === 0) {
-          // No cards left in group - remove it
-          const existingGroups = this.actor.system.actionCardGroups || [];
-          const updatedGroups = existingGroups.filter((g) => g._id !== groupId);
-          await this.actor.update({ "system.actionCardGroups": updatedGroups });
-
-          Logger.debug("Auto-dissolved empty group", { groupId }, "DRAG_DROP");
-        }
-      } catch (error) {
-        Logger.error("Failed to check group dissolution", error, "DRAG_DROP");
-      }
+      return await DragDropHandler.checkGroupDissolution(
+        DragDropHandler.CONFIG.ACTOR,
+        this,
+        groupId,
+      );
     }
   };

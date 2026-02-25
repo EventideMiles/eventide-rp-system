@@ -197,8 +197,8 @@ export const ActorSheetStatusBarMixin = (BaseClass) =>
       statusBar.addEventListener("mouseleave", handleMouseLeave);
       statusBar.addEventListener("mouseup", handleMouseUp);
       statusBar.addEventListener("mousemove", handleMouseMove);
-      statusBar.addEventListener("touchstart", handleTouchStart);
-      statusBar.addEventListener("touchmove", handleTouchMove);
+      statusBar.addEventListener("touchstart", handleTouchStart, { passive: true });
+      statusBar.addEventListener("touchmove", handleTouchMove, { passive: true });
       statusBar.addEventListener("touchend", handleTouchEnd);
       statusBar.addEventListener("scroll", handleScroll);
 

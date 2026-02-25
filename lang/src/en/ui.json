@@ -139,6 +139,9 @@
     "Messages": {
       "PartialTransfer": "Partial transfer completed"
     },
+    "Warnings": {
+      "TransformationRestriction": "Cannot add {itemType} while transformed into {transformation}. Only status and gear items can be added during transformation."
+    },
     "Notifications": {
       "ThemeChanged": "Theme changed successfully",
       "TokenConfigCancelled": "Token configuration cancelled. Remove the transformation first to edit the token.",

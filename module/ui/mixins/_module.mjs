@@ -9,6 +9,9 @@
  * monolithic files.
  */
 
+// Shared Mixins
+export { ContextMenuMixin } from "./context-menu-mixin.mjs";
+
 // Actor Sheet Action Mixins
 export { ActorSheetGearActionsMixin } from "./actor-sheet-gear-actions.mjs";
 export { ActorSheetDocumentActionsMixin } from "./actor-sheet-document-actions.mjs";
@@ -24,6 +27,7 @@ export { ActorSheetThemeMixin } from "./actor-sheet-theme.mjs";
 export { ActorSheetGearTabsMixin } from "./actor-sheet-gear-tabs.mjs";
 export { ActorSheetAdditionalActionsMixin } from "./actor-sheet-additional-actions.mjs";
 export { ActorSheetFormOverrideMixin } from "./actor-sheet-form-overrides.mjs";
+export { ActorSheetFormChangesMixin } from "./actor-sheet-form-changes.mjs";
 export { ActorSheetContextPreparationMixin } from "./actor-sheet-context-preparation.mjs";
 
 // Combined Actor Sheet Mixin
@@ -35,6 +39,8 @@ export { ItemSheetDragDropMixin } from "./item-sheet-drag-drop.mjs";
 export { ItemSheetCharacterEffectsMixin } from "./item-sheet-character-effects.mjs";
 export { ItemSheetActionsMixin } from "./item-sheet-actions.mjs";
 export { ItemSheetEffectGuardsMixin } from "./item-sheet-effect-guards.mjs";
+export { TransformationActionCardFormMixin } from "./transformation-action-card-form.mjs";
+export { ScrollPreservationMixin } from "./scroll-preservation.mjs";
 
 // Combined Item Sheet Mixin
 export { ItemSheetAllMixins } from "./item-sheet-all-mixins.mjs";

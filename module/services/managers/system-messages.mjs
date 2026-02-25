@@ -1,6 +1,6 @@
 import { ERPSRollUtilities } from "../../utils/_module.mjs";
-import { erpsSoundManager } from "./sound-manager.mjs";
 import { Logger } from "../logger.mjs";
+import { TargetResolver } from "../target-resolver.mjs";
 
 const { renderTemplate } = foundry.applications.handlebars;
 const { TextEditor } = foundry.applications.ux;
@@ -47,26 +47,16 @@ class ERPSMessageHandler {
     messageOptions,
     soundOptions = null,
   ) {
-    const content = await renderTemplate(this.templates[templateKey], data);
+    const { ChatMessageBuilder } = await import("../chat-message-builder.mjs");
 
-    // Prepare message data
-    const messageData = {
-      ...messageOptions,
-      content,
-    };
-
-    // Add sound flags if provided
-    if (soundOptions && soundOptions.soundKey) {
-      messageData.flags = messageData.flags || {};
-      messageData.flags["eventide-rp-system"] =
-        messageData.flags["eventide-rp-system"] || {};
-      messageData.flags["eventide-rp-system"].sound = {
-        key: soundOptions.soundKey,
-        force: soundOptions.force || false,
-      };
-    }
-
-    return ChatMessage.create(messageData);
+    return ChatMessageBuilder.createMessage({
+      templatePath: this.templates[templateKey],
+      templateData: data,
+      messageOptions,
+      soundKey: soundOptions?.soundKey || null,
+      forceSound: soundOptions?.force || false,
+      useERPSRollUtilitiesSpeaker: true, // Maintain existing behavior
+    });
   }
 
   /**
@@ -114,9 +104,6 @@ class ERPSMessageHandler {
       enrichedDescription,
     };
 
-    // Play status apply sound locally
-    await erpsSoundManager._playLocalSound("statusApply");
-
     return this._createChatMessage(
       "status",
       data,
@@ -148,9 +135,6 @@ class ERPSMessageHandler {
       context,
       enrichedDescription,
     };
-
-    // Play gear equip sound locally (similar to status apply)
-    await erpsSoundManager._playLocalSound("gearEquip");
 
     return this._createChatMessage(
       "gear",
@@ -272,8 +256,6 @@ class ERPSMessageHandler {
         enrichedDescription,
       };
 
-      // Play feature roll sound locally and add to message
-      await erpsSoundManager._playLocalSound("featureRoll");
       return this._createChatMessage(
         "feature",
         data,
@@ -326,9 +308,6 @@ class ERPSMessageHandler {
       options,
     };
 
-    // Play status remove sound locally
-    await erpsSoundManager._playLocalSound("statusRemove");
-
     return this._createChatMessage(
       "deleteStatus",
       data,
@@ -352,9 +331,6 @@ class ERPSMessageHandler {
   async createRestoreMessage({ all, resolve, power, statuses, actor }) {
     const data = { all, resolve, power, statuses, actor };
 
-    // Play status remove sound locally
-    await erpsSoundManager._playLocalSound("statusRemove");
-
     return this._createChatMessage(
       "restore",
       data,
@@ -373,11 +349,15 @@ class ERPSMessageHandler {
    * @param {Item} item - The combat power item to create a message for
    * @param {Object} [options={}] - Additional options for the message
    * @param {string} [options.rollMode] - The roll mode to use for the message
+   * @param {Array} [options.lockedTargets] - Locked targets to use for GM section (bypass mode)
    * @returns {Promise<ChatMessage>} The created chat message
    */
   async createCombatPowerMessage(item, options = {}) {
     // Early return if the item doesn't have the necessary data
     if (!item || !item.system) return null;
+
+    // Extract locked targets from options for GM section
+    const lockedTargets = options.lockedTargets;
 
     // Get the roll type from the item
     const rollType = item.system.roll?.type || "none";
@@ -405,8 +385,6 @@ class ERPSMessageHandler {
         enrichedDescription,
       };
 
-      // Play combat power sound locally and add to message
-      await erpsSoundManager._playLocalSound("combatPower");
       return this._createChatMessage(
         "combatPower",
         data,
@@ -439,7 +417,15 @@ class ERPSMessageHandler {
       const result = await roll.evaluate();
 
       // Check if we need to do AC checks
-      const targetArray = await erps.utils.getTargetArray();
+      // Use locked targets if provided (from action card bypass mode), otherwise get current targets
+      let targetArray;
+      if (lockedTargets) {
+        // resolveLockedTargets returns { valid: [...], invalid: [...] }
+        const resolved = TargetResolver.resolveLockedTargets(lockedTargets);
+        targetArray = resolved.valid;
+      } else {
+        targetArray = await erps.utils.getTargetArray();
+      }
       const addCheck =
         item.system.targeted && targetArray.length ? true : false;
 
@@ -454,11 +440,16 @@ class ERPSMessageHandler {
 
       // Prepare target data if needed
       const targetRollData = addCheck
-        ? targetArray.map((target) => ({
-            name: target.actor.name,
-            compare: result.total,
-            ...target.actor.getRollData(),
-          }))
+        ? targetArray.map((target) => {
+            // Resolved targets have { token, actor, lockedTarget } structure
+            // Regular targets from getTargetArray have just the token with .actor
+            const targetActor = target.actor || target.token?.actor;
+            return {
+              name: targetActor?.name || "Unknown",
+              compare: result.total,
+              ...(targetActor?.getRollData() || {}),
+            };
+          })
         : [];
 
       // Prepare the template data
@@ -486,8 +477,6 @@ class ERPSMessageHandler {
         enrichedDescription,
       };
 
-      // Play combat power sound locally and add to message
-      await erpsSoundManager._playLocalSound("combatPower");
       return this._createChatMessage(
         "combatPower",
         data,
@@ -521,8 +510,6 @@ class ERPSMessageHandler {
         actor,
       };
 
-      // Play combat power sound locally and add to message
-      await erpsSoundManager._playLocalSound("combatPower");
       return this._createChatMessage(
         "combatPower",
         data,
@@ -562,8 +549,6 @@ class ERPSMessageHandler {
       description,
     };
 
-    // Play gear transfer sound locally and add to message
-    await erpsSoundManager._playLocalSound("gearTransfer");
     return this._createChatMessage(
       "gearTransfer",
       data,
@@ -594,9 +579,7 @@ class ERPSMessageHandler {
       equipped: item.system.equipped,
     };
 
-    // Play appropriate sound locally and add to message
     if (item.system.equipped) {
-      await erpsSoundManager._playLocalSound("gearEquip");
       return this._createChatMessage(
         "gearEquip",
         data,
@@ -609,7 +592,6 @@ class ERPSMessageHandler {
         { soundKey: "gearEquip" },
       );
     } else {
-      await erpsSoundManager._playLocalSound("gearUnequip");
       return this._createChatMessage(
         "gearEquip",
         data,
@@ -644,9 +626,6 @@ class ERPSMessageHandler {
       target,
     };
 
-    // Play gear effect sound locally (similar to gear equip but distinct)
-    await erpsSoundManager._playLocalSound("gearEquip");
-
     return this._createChatMessage(
       "gear",
       data,
@@ -678,9 +657,7 @@ class ERPSMessageHandler {
       enrichedDescription,
     };
 
-    // Play appropriate sound locally and add to message
     const soundKey = isApplying ? "combatPower" : "statusRemove";
-    await erpsSoundManager._playLocalSound(soundKey);
 
     return this._createChatMessage(
       "transformation",
@@ -704,6 +681,9 @@ class ERPSMessageHandler {
    * @param {string} options.playerName - Name of the player requesting approval
    * @param {Actor[]} options.targets - Array of target actors
    * @param {Object} options.rollResult - Roll result data
+   * @param {Object[]} options.lockedTargets - Locked targets from popup
+   * @param {Object} options.transformationSelections - Map of target IDs to selected transformation IDs
+   * @param {string[]} options.selectedEffectIds - Array of selected status effect IDs
    * @returns {Promise<ChatMessage>} The created chat message
    */
   async createPlayerActionApprovalRequest({
@@ -713,6 +693,9 @@ class ERPSMessageHandler {
     playerName,
     targets,
     rollResult,
+    lockedTargets,
+    transformationSelections,
+    selectedEffectIds,
   }) {
     Logger.methodEntry("SystemMessages", "createPlayerActionApprovalRequest", {
       actorId: actor.id,
@@ -731,6 +714,24 @@ class ERPSMessageHandler {
       isOwned: target.isOwner,
     }));
 
+    // Create a lookup map for transformation names
+    const transformationNameMap = new Map();
+    if (actionCard.system.embeddedTransformations) {
+      for (const transformation of actionCard.system.embeddedTransformations) {
+        transformationNameMap.set(transformation.id, transformation.name);
+        transformationNameMap.set(transformation._id, transformation.name);
+      }
+    }
+
+    // Create formatted transformation selections with names
+    const formattedTransformationSelections = {};
+    if (transformationSelections) {
+      for (const [targetId, transformationId] of transformationSelections) {
+        const transformationName = transformationNameMap.get(transformationId) || transformationId;
+        formattedTransformationSelections[targetId] = transformationName;
+      }
+    }
+
     const data = {
       playerName,
       actor: {
@@ -748,9 +749,12 @@ class ERPSMessageHandler {
         statusApplicationLimit: actionCard.system.statusApplicationLimit,
         costOnRepetition: actionCard.system.costOnRepetition,
         failOnFirstMiss: actionCard.system.failOnFirstMiss,
+        embeddedTransformations: actionCard.system.embeddedTransformations || [],
       },
       targets: targetData,
       rollResult,
+      transformationSelections: formattedTransformationSelections,
+      selectedEffectIds,
       processed: false,
       messageId: null, // Will be set after message creation
     };
@@ -763,7 +767,10 @@ class ERPSMessageHandler {
       playerId,
       playerName,
       targetIds: targets.map((t) => t.id),
+      lockedTargets,
       rollResult,
+      transformationSelections,
+      selectedEffectIds,
     });
 
     // Create the private message to GMs
@@ -869,6 +876,65 @@ class ERPSMessageHandler {
     Logger.methodExit("SystemMessages", "notifyPlayerActionResult", message);
     return message;
   }
+
+  /**
+   * Creates a targets exhausted message when all targets are removed during repetitions
+   * @param {Object} options - Options for the targets exhausted message
+   * @param {Actor} options.actor - The actor executing the action card
+   * @param {Item} options.actionCard - The action card being executed
+   * @param {Object} options.repetitionInfo - Repetition information
+   * @param {number} options.repetitionInfo.current - Current repetition number
+   * @param {number} options.repetitionInfo.total - Total repetitions
+   * @param {number} options.repetitionInfo.completed - Completed repetitions
+   * @param {string[]} options.exhaustedTargets - Names of exhausted targets
+   * @returns {Promise<ChatMessage>} The created chat message
+   */
+  async createTargetsExhaustedMessage({
+    actor,
+    actionCard,
+    repetitionInfo,
+    exhaustedTargets,
+  }) {
+    Logger.methodEntry("SystemMessages", "createTargetsExhaustedMessage", {
+      actorId: actor.id,
+      actionCardId: actionCard.id,
+      repetitionInfo,
+      exhaustedTargets,
+    });
+
+    const data = {
+      actor: {
+        id: actor.id,
+        name: actor.name,
+        img: actor.img,
+      },
+      actionCard: {
+        id: actionCard.id,
+        name: actionCard.name,
+        img: actionCard.img,
+        description: actionCard.system.description,
+        textColor: actionCard.system.textColor,
+        bgColor: actionCard.system.bgColor,
+      },
+      repetitionInfo,
+      exhaustedTargets,
+    };
+
+    const messageData = {
+      content: await renderTemplate(
+        "systems/eventide-rp-system/templates/chat/targets-exhausted-message.hbs",
+        data,
+      ),
+      speaker: {
+        actor: actor.id,
+        alias: actor.name,
+      },
+    };
+
+    const message = await ChatMessage.create(messageData);
+    Logger.methodExit("SystemMessages", "createTargetsExhaustedMessage", message);
+    return message;
+  }
 }
 
 // Create a singleton instance
@@ -899,6 +965,8 @@ erpsMessageHandler.createPlayerActionApprovalRequest =
   erpsMessageHandler.createPlayerActionApprovalRequest.bind(erpsMessageHandler);
 erpsMessageHandler.notifyPlayerActionResult =
   erpsMessageHandler.notifyPlayerActionResult.bind(erpsMessageHandler);
+erpsMessageHandler.createTargetsExhaustedMessage =
+  erpsMessageHandler.createTargetsExhaustedMessage.bind(erpsMessageHandler);
 
 // Export individual functions for backward compatibility
 /**
@@ -1046,3 +1114,15 @@ export const notifyPlayerActionResult = (
     approved,
     gmName,
   );
+
+/**
+ * Creates a targets exhausted message when all targets are removed during repetitions
+ * @param {Object} options - Options for the targets exhausted message
+ * @param {Actor} options.actor - The actor executing the action card
+ * @param {Item} options.actionCard - The action card being executed
+ * @param {Object} options.repetitionInfo - Repetition information
+ * @param {string[]} options.exhaustedTargets - Names of exhausted targets
+ * @returns {Promise<ChatMessage>} The created chat message
+ */
+export const createTargetsExhaustedMessage = (options) =>
+  erpsMessageHandler.createTargetsExhaustedMessage(options);

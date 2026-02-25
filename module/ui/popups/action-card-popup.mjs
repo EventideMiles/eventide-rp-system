@@ -7,6 +7,7 @@ import {
   InventoryUtils,
 } from "../../helpers/_module.mjs";
 import { Logger } from "../../services/logger.mjs";
+import { TargetResolver } from "../../services/target-resolver.mjs";
 
 /**
  * Action Card Popup Application
@@ -60,6 +61,7 @@ export class ActionCardPopup extends EventidePopupHelpers {
     super({ item });
     this.type = "actionCard";
     this._selectedEffectIds = null;
+    this._lockedTargets = null;
 
     if (!this.item || this.item.type !== "actionCard") {
       throw new Error("ActionCardPopup requires an action card item");
@@ -283,12 +285,33 @@ export class ActionCardPopup extends EventidePopupHelpers {
       }),
     );
 
-    // Get target actors for transformation selection
-    const targetArray = await erps.utils.getTargetArray();
-    context.targets = targetArray.map((target) => ({
-      id: target.actor.id,
-      name: target.actor.name,
-      img: target.actor.img,
+    // Lock targets at popup open - this is the single source of truth
+    let targetArray = await erps.utils.getTargetArray();
+
+    // Handle self-targeting mode: use actor's token instead of selected targets
+    if (this.item.system.selfTarget) {
+      const actor = this.item.actor;
+      if (actor) {
+        const selfToken = TargetResolver.getSelfTargetToken(actor);
+        if (selfToken) {
+          targetArray = [selfToken];
+        } else {
+          Logger.warn(
+            "Self-targeting enabled but no token found for actor",
+            { actorId: actor.id, actorName: actor.name },
+            "ACTION_CARD",
+          );
+        }
+      }
+    }
+
+    this._lockedTargets = TargetResolver.lockTargets(targetArray);
+
+    // Use locked targets for display context
+    context.targets = this._lockedTargets.map((t) => ({
+      id: t.actorId,
+      name: t.actorName,
+      img: t.img,
     }));
 
 
@@ -620,6 +643,15 @@ export class ActionCardPopup extends EventidePopupHelpers {
     if (this.problems.quantity) {
       const embeddedItem = this.item.getEmbeddedItem();
       if (embeddedItem && embeddedItem.type === "gear") {
+        // Get the ACTUAL gear item from inventory to show real quantity
+        // (embeddedItem.system.quantity is just a snapshot from creation time)
+        const actualGearItem = InventoryUtils.findGearByName(
+          this.item.actor,
+          embeddedItem.name,
+          embeddedItem.system.cost,
+        );
+        const actualQuantity = actualGearItem?.system?.quantity ?? 0;
+
         callouts.push({
           type: "warning",
           faIcon: "fas fa-exclamation-triangle",
@@ -627,7 +659,7 @@ export class ActionCardPopup extends EventidePopupHelpers {
             "EVENTIDE_RP_SYSTEM.Forms.Callouts.Gear.InsufficientQuantity",
             {
               cost: embeddedItem.system.cost,
-              quantity: embeddedItem.system.quantity,
+              quantity: actualQuantity,
             },
           ),
         });
@@ -657,9 +689,13 @@ export class ActionCardPopup extends EventidePopupHelpers {
     }
 
     // Add detailed gear validation error callouts
+    // IMPORTANT: Skip if we already added a specific callout for quantity/equipped
+    // to avoid duplicate callouts for the same issue
     if (
       this.problems.gearValidation &&
-      this.problems.gearValidation.length > 0
+      this.problems.gearValidation.length > 0 &&
+      !this.problems.quantity &&
+      !this.problems.equipped
     ) {
       for (const error of this.problems.gearValidation) {
         callouts.push({
@@ -1044,16 +1080,21 @@ export class ActionCardPopup extends EventidePopupHelpers {
 
       // Execute the embedded item's roll handler with bypass=true (skip for saved damage mode)
       let rollResult = null;
+      // Create actionCardContext as a mutable object that can be flagged by handleBypass
+      const actionCardContext = {
+        actionCard: this.item,
+        isFromActionCard: true,
+        executionMode: this.item.system.mode,
+        // resourceDepleted will be set by handleBypass if quantity runs out
+      };
+
       if (embeddedItem && this.item.system.mode !== "savedDamage") {
         try {
           // Call the embedded item's roll method with bypass parameter and action card context
           await embeddedItem.roll({
             bypass: true,
-            actionCardContext: {
-              actionCard: this.item,
-              isFromActionCard: true,
-              executionMode: this.item.system.mode,
-            },
+            actionCardContext,
+            lockedTargets: this._lockedTargets,
           });
 
           // Wait for the roll result
@@ -1071,10 +1112,38 @@ export class ActionCardPopup extends EventidePopupHelpers {
         }
       }
 
-      // Check if the player owns all targets before execution
-      const targets = await erps.utils.getTargetArray();
+      // Resolve locked targets - validates they still exist
+      const { valid: resolvedTargets, invalid } = TargetResolver.resolveLockedTargets(
+        this._lockedTargets,
+      );
+
+      // Handle all targets deleted scenario
+      if (resolvedTargets.length === 0 && this._lockedTargets.length > 0) {
+        ui.notifications.warn(
+          game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.AllTargetsDeleted"),
+        );
+        Logger.warn(
+          "All locked targets were deleted before execution",
+          { invalidTargets: invalid },
+          "ACTION_CARD",
+        );
+        return;
+      }
+
+      // Notify about any deleted targets but continue with remaining
+      if (invalid.length > 0) {
+        ui.notifications.info(
+          game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.SomeTargetsDeleted", {
+            count: invalid.length,
+            names: invalid.map((t) => t.lockedTarget.actorName).join(", "),
+          }),
+        );
+      }
+
+      // Extract tokens from resolved targets for ownership check
+      const targets = resolvedTargets.map((r) => r.token).filter(Boolean);
       const playerOwnsAllTargets =
-        targets.length === 0 || targets.every((target) => target.actor.isOwner);
+        targets.length === 0 || targets.every((target) => target.actor?.isOwner);
 
       if (!playerOwnsAllTargets) {
         // Player doesn't own all targets - send to GM for approval
@@ -1091,10 +1160,9 @@ export class ActionCardPopup extends EventidePopupHelpers {
             playerName: game.user.name,
             targets: targets.map((t) => t.actor),
             rollResult,
-            transformationSelections: Object.fromEntries(
-              transformationSelections,
-            ),
+            transformationSelections: Array.from(transformationSelections.entries()),
             selectedEffectIds,
+            lockedTargets: this._lockedTargets,
           });
 
           ui.notifications.info(
@@ -1123,9 +1191,12 @@ export class ActionCardPopup extends EventidePopupHelpers {
       }
 
       // Player owns all targets - execute normally
+      // Pass actionCardContext so the repetition loop can check resourceDepleted flag
       const result = await this.item.executeWithRollResult(actor, rollResult, {
         transformationSelections,
         selectedEffectIds,
+        actionCardContext,
+        lockedTargets: this._lockedTargets,
       });
 
       if (result.success) {

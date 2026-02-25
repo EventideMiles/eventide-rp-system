@@ -1,0 +1,3 @@
+# markdownlint-cli2 requires glob-style patterns, not gitignore-style
+node_modules/**
+plans/**

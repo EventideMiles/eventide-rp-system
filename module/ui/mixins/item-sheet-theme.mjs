@@ -5,6 +5,7 @@ import {
   cleanupThemeManager,
   triggerGlobalThemeChange,
   THEME_PRESETS,
+  THEME_COLORS,
 } from "../../helpers/_module.mjs";
 import { applyThemeImmediate } from "../../helpers/theme/theme-applicator.mjs";
 
@@ -30,47 +31,7 @@ export const ItemSheetThemeMixin = (BaseClass) =>
      * @private
      */
     _setImmediateThemeProperties(theme) {
-      // Theme color mappings (same as in theme manager)
-      const themeColors = {
-        blue: {
-          primary: "#4a90e2",
-          secondary: "#357abd",
-          bright: "#6bb6ff",
-          glow: "rgba(74, 144, 226, 0.3)",
-        },
-        black: {
-          primary: "#2c2c2c",
-          secondary: "#1a1a1a",
-          bright: "#4a4a4a",
-          glow: "rgba(44, 44, 44, 0.3)",
-        },
-        green: {
-          primary: "#4a9e4a",
-          secondary: "#357a35",
-          bright: "#6bb66b",
-          glow: "rgba(74, 158, 74, 0.3)",
-        },
-        light: {
-          primary: "#cbd5e1", // Light silver-gray
-          secondary: "#e2e8f0", // Very light silver
-          bright: "#ffffff", // Pure white
-          glow: "rgba(59, 130, 246, 0.25)", // Subtle cool blue glow
-        },
-        gold: {
-          primary: "#d4af37",
-          secondary: "#b8941f",
-          bright: "#f4d03f",
-          glow: "rgba(212, 175, 55, 0.3)",
-        },
-        purple: {
-          primary: "#8e44ad",
-          secondary: "#7d3c98",
-          bright: "#a569bd",
-          glow: "rgba(142, 68, 173, 0.3)",
-        },
-      };
-
-      const colors = themeColors[theme] || themeColors.blue;
+      const colors = THEME_COLORS[theme] || THEME_COLORS.blue;
 
       // Find the target element and set properties immediately
       let targetElement = null;
