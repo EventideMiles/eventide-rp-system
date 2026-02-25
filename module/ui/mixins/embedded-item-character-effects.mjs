@@ -1,4 +1,5 @@
 import { Logger } from "../../services/_module.mjs";
+import { CharacterEffectsProcessor } from "../../services/character-effects-processor.mjs";
 
 /**
  * Embedded Item Character Effects Mixin
@@ -24,162 +25,33 @@ export const EmbeddedItemCharacterEffectsMixin = (BaseClass) =>
       newEffect = { type: null, ability: null },
       remove = { index: null, type: null },
     } = {}) {
-      // Get all form elements that include "characterEffects" in their name
-      let formElements = this.form.querySelectorAll(
-        '[name*="characterEffects"]',
+      // Delegate to service for form parsing
+      const characterEffects =
+        CharacterEffectsProcessor.parseCharacterEffectsForm(this.form, remove);
+
+      // Delegate to service for effect processing (without extended modes)
+      const changes = await CharacterEffectsProcessor.processEffectsToChanges(
+        characterEffects,
+        { supportExtendedModes: false },
       );
 
-      if (remove.type && remove.index) {
-        formElements = Array.from(formElements).filter(
-          (el) => !el.name.includes(`${remove.type}.${remove.index}`),
-        );
-      }
-
-      // Create an object to store the values
-      const characterEffects = {
-        regularEffects: [],
-        hiddenEffects: [],
-        overrideEffects: [],
-      };
-
-      // Process each form element
-      for (const element of formElements) {
-        const name = element.name;
-        const value = element.value;
-
-        if (
-          !name.includes("regularEffects") &&
-          !name.includes("hiddenEffects") &&
-          !name.includes("overrideEffects")
-        ) {
-          continue;
-        }
-
-        const parts = name.split(".");
-        if (parts.length < 3) continue;
-
-        const type = parts[1]; // regularEffects or hiddenEffects
-        const index = parseInt(parts[2], 10);
-        const property = parts[3]; // ability, mode, value, etc.
-
-        // Ensure the array has an object at this index
-        if (!characterEffects[type][index]) {
-          characterEffects[type][index] = {};
-        }
-
-        // Set the property value
-        characterEffects[type][index][property] = value;
-      }
-
-      // Clean up the arrays
-      characterEffects.regularEffects = characterEffects.regularEffects.filter(
-        (e) => e,
-      );
-      characterEffects.hiddenEffects = characterEffects.hiddenEffects.filter(
-        (e) => e,
-      );
-      characterEffects.overrideEffects = characterEffects.overrideEffects.filter(
-        (e) => e,
-      );
-
-      const processEffects = async (effects, isRegular) => {
-        return effects.map((effect) => {
-          let key;
-          let mode;
-
-          // For override abilities, effect keys map to system.power/resolve.override
-          if (effect.ability === "powerOverride") {
-            key = `system.power.override`;
-            mode = CONST.ACTIVE_EFFECT_MODES.OVERRIDE;
-          } else if (effect.ability === "resolveOverride") {
-            key = `system.resolve.override`;
-            mode = CONST.ACTIVE_EFFECT_MODES.OVERRIDE;
-          } else if (isRegular) {
-            key = `system.abilities.${effect.ability}.${
-              effect.mode === "add"
-                ? "change"
-                : effect.mode === "override"
-                  ? "override"
-                  : effect.mode === "advantage"
-                    ? "diceAdjustments.advantage"
-                    : effect.mode === "disadvantage"
-                      ? "diceAdjustments.disadvantage"
-                      : "transform"
-            }`;
-            mode =
-              effect.mode !== "override"
-                ? CONST.ACTIVE_EFFECT_MODES.ADD
-                : CONST.ACTIVE_EFFECT_MODES.OVERRIDE;
-          } else {
-            // Hidden abilities logic
-            key = `system.hiddenAbilities.${effect.ability}.${
-              effect.mode === "add" ? "change" : "override"
-            }`;
-            mode =
-              effect.mode === "add"
-                ? CONST.ACTIVE_EFFECT_MODES.ADD
-                : CONST.ACTIVE_EFFECT_MODES.OVERRIDE;
-          }
-
-          return { key, mode, value: effect.value };
-        });
-      };
-
-      const newEffects = [
-        ...(await processEffects(characterEffects.regularEffects, true)),
-        ...(await processEffects(characterEffects.hiddenEffects, false)),
-        ...(await processEffects(characterEffects.overrideEffects, false)),
-      ];
-
+      // Add new effect if specified
       if (newEffect.type && newEffect.ability) {
-        // For override abilities (powerOverride, resolveOverride), use correct key format
-        let key;
-        if (newEffect.ability === "powerOverride") {
-          key = `system.power.override`;
-        } else if (newEffect.ability === "resolveOverride") {
-          key = `system.resolve.override`;
-        } else {
-          // Regular and hidden abilities use standard format
-          key = `system.${newEffect.type}.${newEffect.ability}.change`;
-        }
-        
-        newEffects.push({
-          key,
-          mode: CONST.ACTIVE_EFFECT_MODES.ADD,
-          value: 0,
-        });
+        const newChange =
+          CharacterEffectsProcessor.generateNewEffectChange(newEffect);
+        changes.push(newChange);
       }
 
-      // Get the first effect from the temporary item, or create one if needed
+      // Get or create effect (only for status/gear types)
       let firstEffect = this.document.effects.contents[0];
+
       if (
         !firstEffect &&
         (this.document.type === "status" || this.document.type === "gear")
       ) {
-        // Create a default ActiveEffect if none exists for status effects and gear
-        const defaultEffectData = {
-          _id: foundry.utils.randomID(),
-          name: this.document.name,
-          icon: this.document.img,
-          changes: [],
-          disabled: false,
-          duration: {},
-          flags: {},
-          tint: "#ffffff",
-          transfer: true,
-          statuses: [],
-        };
-
-        firstEffect = new CONFIG.ActiveEffect.documentClass(defaultEffectData, {
-          parent: this.document,
-        });
-        this.document.effects.set(defaultEffectData._id, firstEffect);
-
-        // Also update the source data
-        if (!this.document._source.effects) {
-          this.document._source.effects = [];
-        }
-        this.document._source.effects.push(defaultEffectData);
+        firstEffect = await CharacterEffectsProcessor.getOrCreateFirstEffect(
+          this.document,
+        );
       }
 
       if (!firstEffect) {
@@ -191,18 +63,11 @@ export const EmbeddedItemCharacterEffectsMixin = (BaseClass) =>
         return;
       }
 
-      // Update the effect data
-      const effectData = {
-        _id: firstEffect.id,
-        changes: newEffects,
-      };
+      // Use parent-specific update methods (keep existing logic)
+      const effectData = { _id: firstEffect.id, changes };
 
-      // Update the embedded item data in the parent item
       if (this.parentItem.type === "transformation") {
-        await this._updateTransformationCharacterEffects(
-          effectData,
-          firstEffect,
-        );
+        await this._updateTransformationCharacterEffects(effectData, firstEffect);
       } else if (this.isEffect) {
         await this._updateActionCardEffectCharacterEffects(
           effectData,
@@ -223,9 +88,10 @@ export const EmbeddedItemCharacterEffectsMixin = (BaseClass) =>
      * @private
      */
     async _updateTransformationCharacterEffects(effectData, firstEffect) {
-      const powerIndex = this.parentItem.system.embeddedCombatPowers.findIndex(
-        (p) => p._id === this.originalItemId,
-      );
+      const powerIndex =
+        this.parentItem.system.embeddedCombatPowers.findIndex(
+          (p) => p._id === this.originalItemId,
+        );
       if (powerIndex === -1) return;
 
       const powers = foundry.utils.deepClone(
@@ -459,29 +325,10 @@ export const EmbeddedItemCharacterEffectsMixin = (BaseClass) =>
       let firstEffect = this.document.effects.contents[0];
       if (!firstEffect) {
         // Create a default ActiveEffect if none exists
-        const defaultEffectData = {
-          _id: foundry.utils.randomID(),
-          name: this.document.name,
-          icon: this.document.img,
-          changes: [],
-          disabled: false,
+        firstEffect = await CharacterEffectsProcessor.getOrCreateFirstEffect(
+          this.document,
           duration,
-          flags: {},
-          tint: "#ffffff",
-          transfer: true,
-          statuses: [],
-        };
-
-        firstEffect = new CONFIG.ActiveEffect.documentClass(defaultEffectData, {
-          parent: this.document,
-        });
-        this.document.effects.set(defaultEffectData._id, firstEffect);
-
-        // Also update the source data
-        if (!this.document._source.effects) {
-          this.document._source.effects = [];
-        }
-        this.document._source.effects.push(defaultEffectData);
+        );
       }
 
       // Update the effect data with new duration
@@ -509,9 +356,10 @@ export const EmbeddedItemCharacterEffectsMixin = (BaseClass) =>
      * @private
      */
     async _updateTransformationEffectDisplay(effectData, firstEffect) {
-      const powerIndex = this.parentItem.system.embeddedCombatPowers.findIndex(
-        (p) => p._id === this.originalItemId,
-      );
+      const powerIndex =
+        this.parentItem.system.embeddedCombatPowers.findIndex(
+          (p) => p._id === this.originalItemId,
+        );
       if (powerIndex === -1) return;
 
       const powers = foundry.utils.deepClone(

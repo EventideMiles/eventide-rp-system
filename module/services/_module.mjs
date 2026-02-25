@@ -45,3 +45,6 @@ export * from "./context-preparation-helper.mjs";
 
 // Phase 8.1 Refactoring - New Services
 export * from "./drag-drop-handler.mjs";
+
+// Phase 8.2 Refactoring - New Services
+export * from "./character-effects-processor.mjs";
