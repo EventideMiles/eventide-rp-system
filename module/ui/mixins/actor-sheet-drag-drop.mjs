@@ -213,6 +213,47 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
           return [actorTransformationItem];
         }
 
+        // Check if actor is currently transformed
+        const activeTransformation = this.actor.getFlag(
+          "eventide-rp-system",
+          "activeTransformation",
+        );
+
+        if (activeTransformation) {
+          // During transformation, only allow status and gear items
+          const allowedTypes = ["status", "gear"];
+
+          if (!allowedTypes.includes(item.type)) {
+            const activeTransformationName = this.actor.getFlag(
+              "eventide-rp-system",
+              "activeTransformationName",
+            );
+
+            ui.notifications.warn(
+              game.i18n.format(
+                "EVENTIDE_RP_SYSTEM.Warnings.TransformationRestriction",
+                {
+                  itemType: game.i18n.localize(`TYPES.Item.${item.type}`),
+                  transformation: activeTransformationName,
+                },
+              ),
+            );
+
+            Logger.warn(
+              "Item drop blocked - actor is transformed",
+              {
+                actorName: this.actor.name,
+                itemType: item.type,
+                itemName: item.name,
+                transformation: activeTransformationName,
+              },
+              "DRAG_DROP",
+            );
+
+            return false;
+          }
+        }
+
         // Create the owned item
         // Convert Item instance to plain object before passing to _onDropItemCreate
         const itemData = item.toObject ? item.toObject() : item;

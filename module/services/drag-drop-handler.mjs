@@ -82,7 +82,11 @@ const ACTOR_DRAG_DROP_CONFIG = Object.freeze({
      * @returns {Promise<Item[]>} Updated items
      */
     reorderCards: async (dataStore, updates) => {
-      return await dataStore.updateEmbeddedDocuments("Item", updates);
+      const updateData = updates.map((u) => ({
+        _id: u.target.id || u.target._id,
+        ...u.update,
+      }));
+      return await dataStore.updateEmbeddedDocuments("Item", updateData);
     },
 
     /**

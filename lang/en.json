@@ -735,7 +735,8 @@
       "FieldLockedDuringTransformation": "This field is locked during transformation",
       "InsufficientPermissions": "Insufficient permissions",
       "NoActiveTransformation": "No active transformation",
-      "SomeItemsFailedToExport": "{failed} of {total} items failed to export"
+      "SomeItemsFailedToExport": "{failed} of {total} items failed to export",
+      "TransformationRestriction": "Cannot add {itemType} while transformed into {transformation}. Only status and gear items can be added during transformation."
     },
     "Forms": {
       "ScriptExplanations": {
