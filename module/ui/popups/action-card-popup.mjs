@@ -66,7 +66,6 @@ export class ActionCardPopup extends EventidePopupHelpers {
     if (!this.item || this.item.type !== "actionCard") {
       throw new Error("ActionCardPopup requires an action card item");
     }
-
   }
 
   /**
@@ -132,7 +131,6 @@ export class ActionCardPopup extends EventidePopupHelpers {
         if (radio) {
           radio.checked = true;
         }
-
       });
 
       // Add hover effects
@@ -198,7 +196,6 @@ export class ActionCardPopup extends EventidePopupHelpers {
    * @override
    */
   async _prepareContext(options) {
-
     const context = await super._prepareContext(options);
     context.cssClass = ActionCardPopup.DEFAULT_OPTIONS.classes.join(" ");
 
@@ -255,23 +252,23 @@ export class ActionCardPopup extends EventidePopupHelpers {
     context.transformationConfig = this.item.system.transformationConfig;
 
     // Prepare embedded status effects data for display
-    context.embeddedStatusEffects = (this.item.system.embeddedStatusEffects || []).map(
-      (effect, index) => {
-        const effectId = effect._id || `effect-${index}`;
-        // Check if this effect is selected (default to true if no saved data)
-        const isSelected = this._savedFormData?._selectedEffectIds
-          ? this._savedFormData._selectedEffectIds.includes(effectId)
-          : true;
-        return {
-          id: effectId,
-          name: effect.name,
-          img: effect.img,
-          type: effect.type,
-          description: effect.system?.description || "",
-          selected: isSelected,
-        };
-      },
-    );
+    context.embeddedStatusEffects = (
+      this.item.system.embeddedStatusEffects || []
+    ).map((effect, index) => {
+      const effectId = effect._id || `effect-${index}`;
+      // Check if this effect is selected (default to true if no saved data)
+      const isSelected = this._savedFormData?._selectedEffectIds
+        ? this._savedFormData._selectedEffectIds.includes(effectId)
+        : true;
+      return {
+        id: effectId,
+        name: effect.name,
+        img: effect.img,
+        type: effect.type,
+        description: effect.system?.description || "",
+        selected: isSelected,
+      };
+    });
 
     // Prepare embedded transformations data for display
     const embeddedTransformations =
@@ -314,7 +311,6 @@ export class ActionCardPopup extends EventidePopupHelpers {
       img: t.img,
     }));
 
-
     return context;
   }
 
@@ -325,7 +321,6 @@ export class ActionCardPopup extends EventidePopupHelpers {
    * @override
    */
   async checkEligibility() {
-
     const problems = {
       targeting: false,
       embeddedItem: false,
@@ -428,8 +423,11 @@ export class ActionCardPopup extends EventidePopupHelpers {
             };
 
             if (embeddedItem.system.targeted) {
-              const targetArray = await erps.utils.getTargetArray();
-              if (targetArray.length === 0) itemProblems.targeting = true;
+              // Skip target validation if self-targeting is enabled on parent action card
+              if (!this.item.system.selfTarget) {
+                const targetArray = await erps.utils.getTargetArray();
+                if (targetArray.length === 0) itemProblems.targeting = true;
+              }
             }
 
             if (embeddedItem.type === "gear") {
@@ -474,7 +472,8 @@ export class ActionCardPopup extends EventidePopupHelpers {
       } catch (error) {
         Logger.warn("Failed to check embedded item eligibility", error);
         // Fall back to basic checks
-        if (embeddedItem.system.targeted) {
+        // Skip target validation if self-targeting is enabled
+        if (embeddedItem.system.targeted && !this.item.system.selfTarget) {
           const targetArray = await erps.utils.getTargetArray();
           if (targetArray.length === 0) problems.targeting = true;
         }
@@ -557,10 +556,14 @@ export class ActionCardPopup extends EventidePopupHelpers {
             : Array.from(checkboxes).map((cb) => cb.value);
       } else {
         // Initial render before DOM is ready - assume all effects are selected (default behavior)
-        const embeddedStatusEffects = this.item.system.embeddedStatusEffects || [];
-        selectedEffectIds = embeddedStatusEffects.length > 0
-          ? embeddedStatusEffects.map((effect, index) => effect._id || `effect-${index}`)
-          : [];
+        const embeddedStatusEffects =
+          this.item.system.embeddedStatusEffects || [];
+        selectedEffectIds =
+          embeddedStatusEffects.length > 0
+            ? embeddedStatusEffects.map(
+                (effect, index) => effect._id || `effect-${index}`,
+              )
+            : [];
       }
       const embeddedStatusEffects =
         this.item.system.embeddedStatusEffects || [];
@@ -742,7 +745,10 @@ export class ActionCardPopup extends EventidePopupHelpers {
   async _onStatusEffectChange(event, target) {
     const savedData = ActionCardPopup._saveFormData(this);
     // Update the checkbox state based on the event target
-    if (target && target.classList.contains("erps-form__status-effect-checkbox")) {
+    if (
+      target &&
+      target.classList.contains("erps-form__status-effect-checkbox")
+    ) {
       const effectId = target.value;
       const isChecked = target.checked;
       if (isChecked) {
@@ -750,7 +756,9 @@ export class ActionCardPopup extends EventidePopupHelpers {
           savedData._selectedEffectIds.push(effectId);
         }
       } else {
-        savedData._selectedEffectIds = savedData._selectedEffectIds.filter(id => id !== effectId);
+        savedData._selectedEffectIds = savedData._selectedEffectIds.filter(
+          (id) => id !== effectId,
+        );
       }
     }
 
@@ -952,10 +960,8 @@ export class ActionCardPopup extends EventidePopupHelpers {
    * @private
    */
   static async #onSubmit(event, form, formData) {
-
     try {
       event.preventDefault();
-
 
       // Extract transformation selections from form data
       const transformationSelections = new Map();
@@ -991,7 +997,6 @@ export class ActionCardPopup extends EventidePopupHelpers {
         },
         "ACTION_CARD",
       );
-
 
       // Check eligibility before execution
       const problems = await this.checkEligibility();
@@ -1101,7 +1106,6 @@ export class ActionCardPopup extends EventidePopupHelpers {
           if (rollResultPromise) {
             rollResult = await rollResultPromise;
           }
-
         } catch (error) {
           Logger.warn(
             "Failed to execute embedded item with bypass or capture result",
@@ -1113,9 +1117,8 @@ export class ActionCardPopup extends EventidePopupHelpers {
       }
 
       // Resolve locked targets - validates they still exist
-      const { valid: resolvedTargets, invalid } = TargetResolver.resolveLockedTargets(
-        this._lockedTargets,
-      );
+      const { valid: resolvedTargets, invalid } =
+        TargetResolver.resolveLockedTargets(this._lockedTargets);
 
       // Handle all targets deleted scenario
       if (resolvedTargets.length === 0 && this._lockedTargets.length > 0) {
@@ -1143,15 +1146,15 @@ export class ActionCardPopup extends EventidePopupHelpers {
       // Extract tokens from resolved targets for ownership check
       const targets = resolvedTargets.map((r) => r.token).filter(Boolean);
       const playerOwnsAllTargets =
-        targets.length === 0 || targets.every((target) => target.actor?.isOwner);
+        targets.length === 0 ||
+        targets.every((target) => target.actor?.isOwner);
 
       if (!playerOwnsAllTargets) {
         // Player doesn't own all targets - send to GM for approval
 
         try {
-          const { erpsMessageHandler } = await import(
-            "../../services/managers/system-messages.mjs"
-          );
+          const { erpsMessageHandler } =
+            await import("../../services/managers/system-messages.mjs");
 
           await erpsMessageHandler.createPlayerActionApprovalRequest({
             actor,
@@ -1160,7 +1163,9 @@ export class ActionCardPopup extends EventidePopupHelpers {
             playerName: game.user.name,
             targets: targets.map((t) => t.actor),
             rollResult,
-            transformationSelections: Array.from(transformationSelections.entries()),
+            transformationSelections: Array.from(
+              transformationSelections.entries(),
+            ),
             selectedEffectIds,
             lockedTargets: this._lockedTargets,
           });
