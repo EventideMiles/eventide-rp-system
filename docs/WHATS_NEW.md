@@ -2,6 +2,17 @@
 
 ## Latest Release
 
+**[v13.21.8](release-notes/v13.21.8.md)** - Self-Target Abilities & Display Fixes _(February 2026)_
+
+**Key Highlights:**
+
+- **Self-Target Abilities Fix** - Resolved issue where self-target abilities were incorrectly checking for target problems
+- **Damage Type Display Fix** - Corrected issue with saved damage type not displaying correctly when item contained embedded item data
+- **Translation String Updates** - Moved untranslated string to proper source and added source string
+- **Maintenance Updates** - Version bump and macro updates
+
+## Recent Major Releases
+
 **[v13.21.5](release-notes/v13.21.5.md)** - Security Hardening & GM Control Enhancements _(February 2026)_
 
 **Key Highlights:**
@@ -14,8 +25,6 @@
 - **Gear Depletion Fix** - gear was depleting too early causing n-1 behavior
 - **Character Effects Processing** moved to common service for embedded and regular items
 - **Code Quality Improvements** with drag-drop consolidation, theme/context menu mixins, and ~500+ line reductions in monolith files
-
-## Recent Major Releases
 
 **[v13.21.0](release-notes/v13.21.0.md)** - Action Card Enhancements & Quality of Life _(February 2026)_
 
@@ -182,7 +191,8 @@ Enhanced character customization through circumstantial bonuses and feature-base
 
 | Version      | Release Date  | Focus                                                                                  |
 | ------------ | ------------- | -------------------------------------------------------------------------------------- |
-| **v13.21.5** | February 2026 | Security Hardening & GM Control Enhancements                                           |
+| **v13.21.8** | February 2026 | Self-Target Abilities & Display Fixes                                                  |
+| v13.21.5     | February 2026 | Security Hardening & GM Control Enhancements                                           |
 | v13.21.0     | February 2026 | Action Card Enhancements & Quality of Life                                             |
 | v13.20.0     | February 2026 | Documentation Overhaul                                                                 |
 | v13.19.1     | January 2026  | Migration and UI Fixes                                                                 |
@@ -204,7 +214,7 @@ Enhanced character customization through circumstantial bonuses and feature-base
 
 ### By Feature Area
 
-- **Action Cards**: [v13.11.0](release-notes/v13.11.0.md), [v13.13.3](release-notes/v13.13.3.md), [v13.14.0](release-notes/v13.14.0.md), [v13.15.0](release-notes/v13.15.0.md), [v13.16.0](release-notes/v13.16.0.md), [v13.18.0](release-notes/v13.18.0.md), [v13.18.1](release-notes/v13.18.1.md), [v13.19.0](release-notes/v13.19.0.md), [v13.19.1](release-notes/v13.19.1.md), [v13.20.0](release-notes/v13.20.0.md), [v13.21.0](release-notes/v13.21.0.md), [v13.21.5](release-notes/v13.21.5.md)
+- **Action Cards**: [v13.11.0](release-notes/v13.11.0.md), [v13.13.3](release-notes/v13.13.3.md), [v13.14.0](release-notes/v13.14.0.md), [v13.15.0](release-notes/v13.15.0.md), [v13.16.0](release-notes/v13.16.0.md), [v13.18.0](release-notes/v13.18.0.md), [v13.18.1](release-notes/v13.18.1.md), [v13.19.0](release-notes/v13.19.0.md), [v13.19.1](release-notes/v13.19.1.md), [v13.20.0](release-notes/v13.20.0.md), [v13.21.0](release-notes/v13.21.0.md), [v13.21.5](release-notes/v13.21.5.md), [v13.21.8](release-notes/v13.21.8.md)
 - **GM Tools**: [v13.18.0](release-notes/v13.18.0.md), [v13.18.1](release-notes/v13.18.1.md), [v13.20.0](release-notes/v13.20.0.md)
 - **Transformations**: [v13.14.0](release-notes/v13.14.0.md), [v13.15.0](release-notes/v13.15.0.md), [v13.15.5](release-notes/v13.15.5.md), [v13.17.0](release-notes/v13.17.0.md)
 - **Features & Bonuses**: [v13.10.0](release-notes/v13.10.0.md), [v13.19.0](release-notes/v13.19.0.md)
@@ -244,8 +254,8 @@ We encourage users to:
 - Review the documentation guides for comprehensive system information
 - Join community discussions for tips and best practices
 
-- Review the **[v13.21.5](release-notes/v13.21.5.md)**, **[v13.21.0](release-notes/v13.21.0.md)** and **[v13.20.0](release-notes/v13.20.0.md)** release notes for detailed feature information and updates.
+- Review the **[v13.21.8](release-notes/v13.21.8.md)**, **[v13.21.5](release-notes/v13.21.5.md)**, **[v13.21.0](release-notes/v13.21.0.md)** and **[v13.20.0](release-notes/v13.20.0.md)** release notes for detailed feature information and updates.
 
 ---
 
-**Current Version**: v13.21.5 | **Foundry VTT Compatibility**: v13+ | **Last Updated**: February 2026
+**Current Version**: v13.21.8 | **Foundry VTT Compatibility**: v13+ | **Last Updated**: February 2026
