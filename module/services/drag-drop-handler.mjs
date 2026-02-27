@@ -817,7 +817,7 @@ export class DragDropHandler {
       const groupCount = existingGroups.length + 1;
       const groupName =
         options.groupName ||
-        game.i18n.format("EVENTIDE_RP_SYSTEM.Actor.ActionCards.NewGroupName", {
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Item.ActionCard.NewGroupName", {
           number: groupCount,
         });
 
