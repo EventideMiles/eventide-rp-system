@@ -184,6 +184,7 @@
           }
         },
         "RepetitionCountAdjusted": "Repetition formula resulted in {originalCount}, adjusted to minimum of 1",
+        "NewGroupName": "Group {number}",
         "CreateNewPower": "Create New Power",
         "CreateNewStatus": "Create New Status",
         "RollValue": "Roll Value",
