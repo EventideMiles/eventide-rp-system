@@ -24,24 +24,24 @@
     </div>
   </td>
   <td class="erps-data-table__cell erps-data-table__cell--center rollable" data-roll-type="item" data-action="roll" data-item-id="{{item._id}}">
-    {{#if item.system.embeddedItem._id}}
-      <div class="erps-data-table__embedded-item">
-        <img
-          src="{{item.system.embeddedItem.img}}"
-          title="{{item.system.embeddedItem.name}}"
-          width="24"
-          height="24"
-        />
-        <span>{{item.system.embeddedItem.name}}</span>
-      </div>
-    {{else}}
-      {{#if (eq item.system.mode "attackChain")}}
-        <span class="erps-data-table__empty-state">{{localize "EVENTIDE_RP_SYSTEM.General.None"}}</span>
-      {{else}}
+    {{#if (eq item.system.mode "attackChain")}}
+      {{#if item.system.embeddedItem._id}}
         <div class="erps-data-table__embedded-item">
-          <span>{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.SavedDamageMode"}}</span>
+          <img
+            src="{{item.system.embeddedItem.img}}"
+            title="{{item.system.embeddedItem.name}}"
+            width="24"
+            height="24"
+          />
+          <span>{{item.system.embeddedItem.name}}</span>
         </div>
+      {{else}}
+        <span class="erps-data-table__empty-state">{{localize "EVENTIDE_RP_SYSTEM.General.None"}}</span>
       {{/if}}
+    {{else}}
+      <div class="erps-data-table__embedded-item">
+        <span>{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.SavedDamageMode"}}</span>
+      </div>
     {{/if}}
   </td>
   <td class="erps-data-table__cell erps-data-table__cell--center rollable" data-roll-type="item" data-action="roll" data-item-id="{{item._id}}">
