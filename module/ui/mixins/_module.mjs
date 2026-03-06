@@ -16,6 +16,7 @@ export { ContextMenuMixin } from "./context-menu-mixin.mjs";
 export { ActorSheetGearActionsMixin } from "./actor-sheet-gear-actions.mjs";
 export { ActorSheetDocumentActionsMixin } from "./actor-sheet-document-actions.mjs";
 export { ActorSheetTransformationActionsMixin } from "./actor-sheet-transformation-actions.mjs";
+export { ActorSheetFeatureActionsMixin } from "./actor-sheet-feature-actions.mjs";
 export { ActorSheetDragDropMixin } from "./actor-sheet-drag-drop.mjs";
 
 // Combined Actor Sheet Mixin
@@ -25,6 +26,7 @@ export { ActorSheetActionsMixin } from "./actor-sheet-actions.mjs";
 export { ActorSheetStatusBarMixin } from "./actor-sheet-status-bar.mjs";
 export { ActorSheetThemeMixin } from "./actor-sheet-theme.mjs";
 export { ActorSheetGearTabsMixin } from "./actor-sheet-gear-tabs.mjs";
+export { ActorSheetFeatureTabsMixin } from "./actor-sheet-feature-tabs.mjs";
 export { ActorSheetAdditionalActionsMixin } from "./actor-sheet-additional-actions.mjs";
 export { ActorSheetFormOverrideMixin } from "./actor-sheet-form-overrides.mjs";
 export { ActorSheetFormChangesMixin } from "./actor-sheet-form-changes.mjs";

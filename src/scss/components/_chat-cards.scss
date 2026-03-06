@@ -866,6 +866,38 @@
   &__header--action-card {
     background: linear-gradient(135deg, var(--theme-accent), var(--theme-secondary));
   }
+
+  // Status badge styling
+  &__status-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: rgb(0 0 0 / 15%);
+    border-bottom: 1px solid rgb(255 255 255 / 10%);
+    color: var(--theme-text);
+    opacity: 0.8;
+
+    i {
+      font-size: 0.9rem;
+    }
+
+    &--inactive {
+      background: rgb(231 76 60 / 15%);
+      color: rgb(231 76 60);
+      border-bottom: 1px solid rgb(231 76 60 / 20%);
+      opacity: 0.9;
+
+      i {
+        color: rgb(231 76 60);
+      }
+    }
+  }
 }
 
 // ===================================

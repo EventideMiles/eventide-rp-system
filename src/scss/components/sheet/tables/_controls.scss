@@ -46,6 +46,35 @@
       @include equip-button;
     }
 
+    // Toggle button variants
+    &--toggle {
+      @include toggle-button;
+
+      // Active state (green - for deactivating an active feature)
+      &--active {
+        @include button-gradient(green);
+        border-color: themes.color(green, 60);
+
+        &:hover {
+          background: themes.color(green, 90);
+          border-color: themes.color(green, 90);
+          @include button-glow(green, 80);
+        }
+      }
+
+      // Inactive state (red - for activating an inactive feature)
+      &--inactive {
+        @include button-gradient(red);
+        border-color: themes.color(red, 60);
+
+        &:hover {
+          background: themes.color(red, 90);
+          border-color: themes.color(red, 90);
+          @include button-glow(red, 80);
+        }
+      }
+    }
+
     // Special states
     &--disabled {
       opacity: $erps-table-opacity-disabled;

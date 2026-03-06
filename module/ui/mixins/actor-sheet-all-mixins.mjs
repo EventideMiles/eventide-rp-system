@@ -2,6 +2,7 @@ import { ContextMenuMixin } from "./context-menu-mixin.mjs";
 import { ActorSheetStatusBarMixin } from "./actor-sheet-status-bar.mjs";
 import { ActorSheetThemeMixin } from "./actor-sheet-theme.mjs";
 import { ActorSheetGearTabsMixin } from "./actor-sheet-gear-tabs.mjs";
+import { ActorSheetFeatureTabsMixin } from "./actor-sheet-feature-tabs.mjs";
 import { ActorSheetAdditionalActionsMixin } from "./actor-sheet-additional-actions.mjs";
 import { ActorSheetFormOverrideMixin } from "./actor-sheet-form-overrides.mjs";
 import { ActorSheetFormChangesMixin } from "./actor-sheet-form-changes.mjs";
@@ -21,8 +22,10 @@ export const ActorSheetAllMixins = (BaseClass) =>
     ActorSheetFormChangesMixin(
       ActorSheetFormOverrideMixin(
         ActorSheetAdditionalActionsMixin(
-          ActorSheetGearTabsMixin(
-            ActorSheetThemeMixin(ActorSheetStatusBarMixin(ContextMenuMixin(BaseClass))),
+          ActorSheetFeatureTabsMixin(
+            ActorSheetGearTabsMixin(
+              ActorSheetThemeMixin(ActorSheetStatusBarMixin(ContextMenuMixin(BaseClass))),
+            ),
           ),
         ),
       ),
