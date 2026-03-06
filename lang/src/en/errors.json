@@ -46,6 +46,7 @@
       "BypassExecutionError": "Failed to execute {itemType} '{itemName}': {error}",
       "BypassError": "Failed to execute '{itemName}': {error}",
       "FeatureError": "Cannot use Feature right now!",
+      "FeatureToggleError": "Failed to toggle feature activation state.",
       "StatusError": "Cannot use Status right now!",
       "ItemError": "Cannot use Item right now!",
       "ActionCardError": "Cannot execute Action Card right now!",
