@@ -237,7 +237,16 @@ export const ActorResourceMixin = (BaseClass) =>
         // Determine which status effects to remove
         const statusArray = this._determineStatusesToRemove(statuses, all);
 
-        // Restore resources if requested
+        // Remove status effects FIRST before restoring resources
+        // This is critical because power and resolve are now derived values
+        // calculated in prepareDerivedData(), and status effects can modify
+        // the ability totals and multipliers used in these calculations.
+        // Removing statuses first ensures the restoration uses correct values.
+        if (statusArray && statusArray.length > 0) {
+          await this._removeStatusEffects(statusArray);
+        }
+
+        // Restore resources after status effects have been removed
         const restorationPromises = [];
 
         if (resolve) {
@@ -261,11 +270,6 @@ export const ActorResourceMixin = (BaseClass) =>
         }
 
         await Promise.all(restorationPromises);
-
-        // Remove status effects if any were specified
-        if (statusArray && statusArray.length > 0) {
-          await this._removeStatusEffects(statusArray);
-        }
 
         // Create chat message about the restoration
         const chatMessage = await erpsMessageHandler.createRestoreMessage({
