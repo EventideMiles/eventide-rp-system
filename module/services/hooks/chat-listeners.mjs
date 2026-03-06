@@ -208,6 +208,9 @@ function setupItemUpdateHooks() {
     if (item.type === "gear") {
       handleGearEquipState(item);
     }
+    if (item.type === "feature") {
+      handleFeatureActiveState(item);
+    }
   });
 }
 
@@ -225,6 +228,22 @@ const handleGearEquipState = (item) => {
     // Disable effects when unequipped or no quantity
     item.effects.forEach((effect) => effect.update({ disabled: true }));
     item.update({ "system.equipped": false });
+  }
+};
+
+/**
+ * Handle feature active state changes
+ *
+ * @private
+ * @param {Item} item - The feature item
+ */
+const handleFeatureActiveState = (item) => {
+  if (item.system.active) {
+    // Enable effects when feature is active
+    item.effects.forEach((effect) => effect.update({ disabled: false }));
+  } else {
+    // Disable effects when feature is inactive
+    item.effects.forEach((effect) => effect.update({ disabled: true }));
   }
 };
 
@@ -267,6 +286,11 @@ function setupItemCreationHooks() {
     // Handle gear equip state
     if (item.type === "gear") {
       handleGearEquipState(item);
+    }
+
+    // Handle feature active state
+    if (item.type === "feature") {
+      handleFeatureActiveState(item);
     }
   });
 }

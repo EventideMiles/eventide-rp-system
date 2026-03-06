@@ -90,6 +90,7 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
       toggleGear: this._toggleGear,
       incrementGear: this._incrementGear,
       decrementGear: this._decrementGear,
+      toggleFeature: this._toggleFeature,
       applyTransformation: this._applyTransformation,
       removeTransformation: this._removeTransformation,
       toggleAutoTokenUpdate: this._toggleAutoTokenUpdate,
@@ -447,6 +448,7 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
     this._initThemeManagement();
     this._initStatusBarScrolling();
     this._initGearTabManagement();
+    this._initFeatureTabManagement();
 
     // Initialize tab container styling (dynamic border radius based on active tab)
     initTabContainerStyling(this.element);
@@ -1481,6 +1483,7 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
     this._cleanupStatusBarScrolling();
     this._cleanupThemeManagement();
     this._cleanupGearTabManagement();
+    this._cleanupFeatureTabManagement();
     this._cleanupFormOverrides();
 
     // Clean up tab container styling

@@ -26,6 +26,11 @@
           "placeholder": "e.g., 1/day"
         }
       },
+      "Feature": {
+        "Active": {
+          "label": "Active"
+        }
+      },
       "Inventory": {
         "Cost": {
           "label": "Cost"

@@ -2501,6 +2501,33 @@ body *::-webkit-scrollbar-track,
 .chat-card__header--action-card {
   background: linear-gradient(135deg, var(--theme-accent), var(--theme-secondary));
 }
+.chat-card__status-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: rgba(0, 0, 0, 0.15);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--theme-text);
+  opacity: 0.8;
+}
+.chat-card__status-badge i {
+  font-size: 0.9rem;
+}
+.chat-card__status-badge--inactive {
+  background: rgba(231, 76, 60, 0.15);
+  color: rgb(231, 76, 60);
+  border-bottom: 1px solid rgba(231, 76, 60, 0.2);
+  opacity: 0.9;
+}
+.chat-card__status-badge--inactive i {
+  color: rgb(231, 76, 60);
+}
 
 .erps-data-table__embedded-item {
   display: flex;
@@ -3841,6 +3868,42 @@ body.erps-image-zoom-active {
   border-color: rgba(217, 119, 6, 0.8);
   box-shadow: 0 0 12px rgba(217, 119, 6, 0.6);
 }
+.erps-data-table__control-button--toggle {
+  background: linear-gradient(135deg, rgba(100, 100, 100, 0.2), rgba(100, 100, 100, 0.3));
+  border-color: rgba(100, 100, 100, 0.4);
+}
+.erps-data-table__control-button--toggle:hover {
+  background: rgba(100, 100, 100, 0.8);
+  border-color: rgba(100, 100, 100, 0.8);
+  box-shadow: 0 0 12px rgba(100, 100, 100, 0.6);
+}
+.erps-data-table__control-button--toggle--active {
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(34, 197, 94, 0.3));
+  border-color: rgba(34, 197, 94, 0.6);
+}
+.erps-data-table__control-button--toggle--active:hover {
+  background: rgba(34, 197, 94, 0.9);
+  border-color: rgba(34, 197, 94, 0.9);
+  box-shadow: 0 0 12px rgba(34, 197, 94, 0.8);
+}
+.erps-data-table__control-button--toggle--active {
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(34, 197, 94, 0.3));
+  border-color: rgba(34, 197, 94, 0.6);
+}
+.erps-data-table__control-button--toggle--active:hover {
+  background: rgba(34, 197, 94, 0.9);
+  border-color: rgba(34, 197, 94, 0.9);
+  box-shadow: 0 0 12px rgba(34, 197, 94, 0.8);
+}
+.erps-data-table__control-button--toggle--inactive {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(239, 68, 68, 0.3));
+  border-color: rgba(239, 68, 68, 0.6);
+}
+.erps-data-table__control-button--toggle--inactive:hover {
+  background: rgba(239, 68, 68, 0.9);
+  border-color: rgba(239, 68, 68, 0.9);
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.8);
+}
 .erps-data-table__control-button--disabled {
   opacity: 0.5;
   cursor: not-allowed;
@@ -4599,6 +4662,130 @@ body.erps-image-zoom-active {
   border-left: 4px solid var(--theme-glow);
   opacity: 0.85;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), inset 0 1px 0 var(--erps-tab-bright), inset 4px 0 0 var(--theme-primary);
+}
+
+.feature-tab-nav {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid var(--erps-tab-bright);
+  padding-bottom: 0.5rem;
+}
+
+.feature-tab-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1.5rem;
+  border: none;
+  border-radius: 8px 8px 0 0;
+  background: var(--erps-tab-primary);
+  color: var(--erps-tab-text);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: var(--erps-ui-font);
+  font-size: 14pt;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
+  height: 3.5rem;
+  min-height: 3.5rem;
+  box-sizing: border-box;
+}
+.feature-tab-button i {
+  font-size: 16pt;
+  opacity: 0.8;
+  transition: all 0.2s ease;
+}
+.feature-tab-button:hover i {
+  opacity: 1;
+  transform: scale(1.1);
+}
+.feature-tab-button--active.active, .feature-tab-button--active:hover {
+  --erps-tab-primary: var(--theme-primary);
+  --erps-tab-secondary: var(--theme-secondary);
+  --erps-tab-glow: var(--theme-glow);
+}
+.feature-tab-button--active i {
+  color: var(--theme-text);
+}
+.feature-tab-button--inactive.active, .feature-tab-button--inactive:hover {
+  --erps-tab-primary: var(--theme-primary);
+  --erps-tab-secondary: var(--theme-secondary);
+  --erps-tab-glow: var(--theme-glow);
+}
+.feature-tab-button--inactive i {
+  color: var(--theme-text);
+}
+.feature-tab-button--all.active, .feature-tab-button--all:hover {
+  --erps-tab-primary: var(--theme-primary);
+  --erps-tab-secondary: var(--theme-secondary);
+  --erps-tab-glow: var(--theme-glow);
+}
+.feature-tab-button--all i {
+  color: var(--theme-text);
+}
+.feature-tab-button:hover {
+  background: var(--erps-tab-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+.feature-tab-button:hover .feature-count {
+  background: var(--erps-tab-secondary);
+}
+.feature-tab-button.active {
+  background: var(--erps-tab-secondary);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), 0 0 20px var(--erps-tab-glow);
+}
+.feature-tab-button.active i {
+  opacity: 1;
+  text-shadow: 0 0 8px var(--erps-tab-glow);
+}
+.feature-tab-button.active .feature-count {
+  background: var(--erps-tab-secondary);
+  box-shadow: 0 0 8px var(--erps-tab-glow);
+}
+.feature-tab-button .feature-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.5rem;
+  height: 1.5rem;
+  padding: 0 0.5rem;
+  border-radius: 12px;
+  background: var(--erps-tab-secondary);
+  font-size: 12pt;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.feature-tab-content {
+  display: none;
+  width: 100%;
+  animation: erps-tab-fade-in 0.3s ease-in-out;
+}
+.feature-tab-content.active {
+  display: block;
+}
+.feature-tab-content--active .eventide-actor-data-table, .feature-tab-content--active .erps-data-table {
+  border-left: 4px solid var(--theme-glow);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), inset 0 1px 0 var(--erps-tab-bright), inset 4px 0 0 var(--theme-primary);
+}
+.feature-tab-content--inactive .eventide-actor-data-table, .feature-tab-content--inactive .erps-data-table {
+  border-left: 4px solid var(--theme-glow);
+  opacity: 0.85;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), inset 0 1px 0 var(--erps-tab-bright), inset 4px 0 0 var(--theme-primary);
+}
+.feature-tab-content--all .eventide-actor-data-table, .feature-tab-content--all .erps-data-table {
+  border-left: 4px solid var(--theme-glow);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), inset 0 1px 0 var(--erps-tab-bright), inset 4px 0 0 var(--theme-primary);
+}
+
+.erps-data-table__row--inactive {
+  opacity: 0.85;
 }
 
 @keyframes erps-tab-glow {

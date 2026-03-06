@@ -281,6 +281,11 @@
           "placeholder": "e.g., 1/day"
         }
       },
+      "Feature": {
+        "Active": {
+          "label": "Active"
+        }
+      },
       "Inventory": {
         "Cost": {
           "label": "Cost"
@@ -566,6 +571,7 @@
       "BypassExecutionError": "Failed to execute {itemType} '{itemName}': {error}",
       "BypassError": "Failed to execute '{itemName}': {error}",
       "FeatureError": "Cannot use Feature right now!",
+      "FeatureToggleError": "Failed to toggle feature activation state.",
       "StatusError": "Cannot use Status right now!",
       "ItemError": "Cannot use Item right now!",
       "ActionCardError": "Cannot execute Action Card right now!",
@@ -746,10 +752,12 @@
       },
       "Sections": {
         "ACEffects": "AC Effects",
+        "ActiveFeatures": "Active Features",
         "ActiveGear": "Active Gear",
         "Adjustments": "Adjustments",
         "Adv": "Adv",
         "All": "All",
+        "AllFeatures": "All Features",
         "Attributes": "Attributes",
         "Available": "{number} Available",
         "Background": "Background",
@@ -760,6 +768,7 @@
         "Disadv": "Disadv",
         "Effects": "Effects",
         "Feature": "Feature",
+        "InactiveFeatures": "Inactive Features",
         "Formula": "Formula",
         "IconTint": "Icon Tint",
         "Image": "Image",
@@ -806,12 +815,14 @@
         "DropCombatPowers": "Drop combat powers here"
       },
       "Buttons": {
+        "Activate": "Activate",
         "Change": "Change",
         "Close": "Close",
         "Convert": "Convert",
         "Create": "Create",
         "CreateAndApply": "Create and Apply",
         "Damage": "Damage",
+        "Deactivate": "Deactivate",
         "Restore": "Restore",
         "Roll": "Roll",
         "SendToChat": "Send To Chat",

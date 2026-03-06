@@ -182,6 +182,7 @@ class ERPSMessageHandler {
         hasRoll: false,
         actor,
         enrichedDescription,
+        isActive: item.system.active ?? true,
       };
 
       return this._createChatMessage("feature", data, {
@@ -254,6 +255,7 @@ class ERPSMessageHandler {
         critAllowed: true,
         actor,
         enrichedDescription,
+        isActive: item.system.active ?? true,
       };
 
       return this._createChatMessage(

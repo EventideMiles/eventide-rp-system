@@ -46,6 +46,11 @@ export default class EventideRpSystemFeature extends EventideRpSystemItemBase {
       }),
     });
 
+    schema.active = new fields.BooleanField({
+      required: true,
+      initial: true,
+    });
+
     return schema;
   }
 
