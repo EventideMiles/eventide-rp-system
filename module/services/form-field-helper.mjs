@@ -2,7 +2,8 @@
  * FormFieldHelper Service
  *
  * Provides centralized handling for form field operations in item sheets.
- * Handles color input normalization and damage formula synchronization.
+ * Handles color input normalization, damage formula synchronization, and
+ * formula field sanitization.
  *
  * This service uses the delegation pattern - item sheets delegate form field
  * handling to this service rather than handling it inline.
@@ -12,6 +13,7 @@
  */
 
 import { Logger } from "./logger.mjs";
+import { FormulaValidator } from "./formula-validator.mjs";
 
 /**
  * FormFieldHelper class for handling form field operations
@@ -45,6 +47,14 @@ export class FormFieldHelper {
     "system.attackChain.damageFormula": "system.savedDamage.formula",
     "system.savedDamage.formula": "system.attackChain.damageFormula",
   };
+
+  /**
+   * Formula field names that require sanitization
+   *
+   * @static
+   * @type {string[]}
+   */
+  static FORMULA_FIELDS = ["damageFormula", "formula", "repetitions"];
 
   /**
    * Check if a field name is a color field
@@ -90,6 +100,29 @@ export class FormFieldHelper {
       return false;
     }
     return fieldName in this.DAMAGE_FORMULA_FIELDS;
+  }
+
+  /**
+   * Check if a field name is a formula field that requires sanitization
+   *
+   * A field is considered a formula field if its name contains any of
+   * the formula field names (damageFormula, formula, repetitions).
+   *
+   * @param {string} fieldName - The name of the form field
+   * @returns {boolean} True if the field is a formula field
+   * @static
+   *
+   * @example
+   * FormFieldHelper.isFormulaField("system.attackChain.damageFormula"); // true
+   * FormFieldHelper.isFormulaField("system.savedDamage.formula"); // true
+   * FormFieldHelper.isFormulaField("system.repetitions"); // true
+   * FormFieldHelper.isFormulaField("system.value"); // false
+   */
+  static isFormulaField(fieldName) {
+    if (!fieldName || typeof fieldName !== "string") {
+      return false;
+    }
+    return this.FORMULA_FIELDS.some((field) => fieldName.includes(field));
   }
 
   /**
@@ -187,6 +220,31 @@ export class FormFieldHelper {
   }
 
   /**
+   * Sanitize a formula field value
+   *
+   * Removes invalid characters from formula input using the FormulaValidator.
+   * This allows users to input formulas with typos or invalid characters that
+   * will be automatically corrected.
+   *
+   * @param {string} value - The formula value to sanitize
+   * @returns {string} The sanitized formula value
+   * @static
+   *
+   * @example
+   * FormFieldHelper.sanitizeFormulaInput("1d6 + 2"); // "1d6+2"
+   * FormFieldHelper.sanitizeFormulaInput("1d6@invalid"); // "1d6"
+   */
+  static sanitizeFormulaInput(value) {
+    if (!value || typeof value !== "string") {
+      return value;
+    }
+
+    const sanitized = FormulaValidator.sanitizeFormula(value);
+
+    return sanitized;
+  }
+
+  /**
    * Handle field synchronization for form change events
    *
    * This is the main entry point for handling form field changes.
@@ -227,12 +285,21 @@ export class FormFieldHelper {
     }
 
     const fieldName = event.target.name;
-    const value = event.target.value;
+    let value = event.target.value;
 
     // Handle color field normalization
     if (this.isColorField(fieldName)) {
       const normalized = this.normalizeColorInput(value, fieldName);
       result.normalizedValue = normalized;
+    }
+
+    // Handle formula field sanitization
+    if (this.isFormulaField(fieldName)) {
+      const sanitized = this.sanitizeFormulaInput(value);
+      if (sanitized !== value) {
+        value = sanitized;
+        result.normalizedValue = sanitized;
+      }
     }
 
     // Handle damage formula field synchronization
