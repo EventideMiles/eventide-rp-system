@@ -10,6 +10,7 @@
  */
 
 import { Logger } from "./logger.mjs";
+import { ERPSRollUtilities } from "../utils/roll-utilities.mjs";
 
 /**
  * @typedef {Object} TargetHitResult
@@ -36,6 +37,8 @@ import { Logger } from "./logger.mjs";
  * @property {string} img - Image for the damage roll
  * @property {string} bgColor - Background color for the damage roll
  * @property {string} textColor - Text color for the damage roll
+ * @property {Actor} [actor] - The actor (for critical detection)
+ * @property {string} [formula] - The roll formula (for critical detection)
  */
 
 /**
@@ -78,6 +81,9 @@ export class DamageProcessor {
         result.bothHit,
         rollResult?.total || 0,
         context.damageThreshold || 15,
+        rollResult,
+        context.actor,
+        context.formula,
       );
 
       if (shouldApplyDamage && context.damageFormula) {
@@ -231,6 +237,9 @@ export class DamageProcessor {
    * @param {boolean} bothHit - Whether both ACs were hit
    * @param {number} rollTotal - The total roll result (for rollValue condition)
    * @param {number} threshold - The threshold value (for rollValue condition)
+   * @param {Roll} [roll=null] - The full roll object (for critical detection)
+   * @param {Actor} [actor=null] - The actor (for critical thresholds)
+   * @param {string} [formula=null] - The roll formula (for critical detection)
    * @returns {boolean} Whether the effect should be applied
    */
   static shouldApplyEffect(
@@ -239,6 +248,9 @@ export class DamageProcessor {
     bothHit,
     rollTotal = 0,
     threshold = 15,
+    roll = null,
+    actor = null,
+    formula = null,
   ) {
     switch (condition) {
       case "never":
@@ -249,6 +261,39 @@ export class DamageProcessor {
         return bothHit;
       case "rollValue":
         return rollTotal >= threshold;
+      case "rollUnderValue":
+        return rollTotal < threshold;
+      case "rollEven":
+        return rollTotal % 2 === 0;
+      case "rollOdd":
+        return rollTotal % 2 !== 0;
+      case "rollOnValue":
+        return rollTotal === threshold;
+      case "zeroSuccesses":
+        return !oneHit;
+      case "always":
+        return true;
+      case "criticalSuccess":
+      case "criticalFailure": {
+        if (!roll || !actor || !formula) {
+          return false;
+        }
+
+        const actorRollData = actor.getRollData();
+        const criticalStates = ERPSRollUtilities.determineCriticalStates({
+          roll,
+          thresholds: actorRollData.hiddenAbilities,
+          formula,
+          critAllowed: true,
+        });
+
+        const result =
+          condition === "criticalSuccess"
+            ? criticalStates.critHit && !criticalStates.stolenCrit
+            : criticalStates.critMiss && !criticalStates.savedMiss;
+
+        return result;
+      }
       default:
         return false;
     }

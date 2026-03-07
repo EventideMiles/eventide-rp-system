@@ -25,6 +25,7 @@ import { Logger } from "./logger.mjs";
  * @property {string} mode - Action card mode ("attackChain" | "savedDamage")
  * @property {boolean} disableDelays - Whether to disable delays
  * @property {boolean} isFinalRepetition - Whether this is the final repetition
+ * @property {Actor} [sourceActor] - The source actor (for critical detection)
  */
 
 /**
@@ -80,6 +81,7 @@ export class TransformationApplicator {
       mode,
       disableDelays,
       isFinalRepetition,
+      sourceActor,
     } = context;
 
     const transformationResults = [];
@@ -199,6 +201,9 @@ export class TransformationApplicator {
             result.bothHit,
             rollResult?.total || 0,
             transformationConfig.threshold || 15,
+            rollResult,
+            sourceActor,
+            rollResult?.formula,
           );
         } else if (mode === "savedDamage") {
           // For saved damage mode, check transformation condition

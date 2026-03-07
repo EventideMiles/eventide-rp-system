@@ -89,7 +89,8 @@ export class ERPSRollUtilities {
     if (critHit) savedMiss = false;
     if (critMiss) stolenCrit = false;
 
-    return { critHit, critMiss, stolenCrit, savedMiss };
+    const result = { critHit, critMiss, stolenCrit, savedMiss };
+    return result;
   }
 
   /**
