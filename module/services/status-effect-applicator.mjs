@@ -111,6 +111,9 @@ export class StatusEffectApplicator {
           result.bothHit,
           rollResult?.total || 0,
           attackChain.statusThreshold || 15,
+          rollResult,
+          sourceActor,
+          rollResult?.formula,
         );
 
         if (shouldApplyStatus) {

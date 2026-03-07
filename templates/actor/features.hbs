@@ -1,72 +1,269 @@
 {{! Features Tab }}
-<section
-  class='tab features {{tab.cssClass}}'
-  data-group='primary'
-  data-tab='features'
->
-  <table class='erps-data-table erps-data-table--features erps-data-table--flush-top'>
-    <thead class='erps-data-table__header'>
-      <tr class='erps-data-table__header-row'>
-        <th class='erps-data-table__header-cell erps-data-table__header-cell--name'>{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Name"}}</th>
-        <th class='erps-data-table__header-cell erps-data-table__header-cell--controls'>
-          {{#if @root.editable}}
-            <a
-              class='erps-data-table__create-button'
-              title='Create item'
-              data-action='createDoc'
-              data-document-class='Item'
-              data-type='feature'
-            >
-              <i class='fas fa-plus'></i>
-              {{localize 'DOCUMENT.New' type='feature'}}
-            </a>
-          {{/if}}
-        </th>
-      </tr>
-    </thead>
-    <tbody class='erps-data-table__body'>
-      {{#each features as |item id|}}
-        <tr
-          class='erps-data-table__row'
-          data-item-id='{{item._id}}'
-          data-drag='true'
-          data-document-class='Item'
-        >
-          <td class='erps-data-table__cell erps-data-table__cell--name rollable' data-roll-type='item' data-action='roll' data-item-id='{{item._id}}'>
-            <div class='erps-data-table__name-content'>
-              <img
-                src='{{item.img}}'
-                title='{{item.name}}'
-                width='24'
-                height='24'
-              />
-              <span>{{item.name}}</span>
-            </div>
-          </td>
-          <td class='erps-data-table__cell erps-data-table__cell--controls'>
-            <div class='erps-data-table__controls'>
+<section class='tab features {{tab.cssClass}}' data-group='primary' data-tab='features'>
+
+  {{! Features Tab Navigation }}
+  <div class="feature-tab-nav">
+    <button class="feature-tab-button feature-tab-button--active active" data-feature-tab="active">
+      <i class='fa-solid fa-power-off'></i>
+      {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.ActiveFeatures"}}
+      <span class="feature-count">{{activeFeatureCount}}</span>
+    </button>
+    <button class="feature-tab-button feature-tab-button--inactive" data-feature-tab="inactive">
+      <i class='fa-solid fa-ban'></i>
+      {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.InactiveFeatures"}}
+      <span class="feature-count">{{inactiveFeatureCount}}</span>
+    </button>
+    <button class="feature-tab-button feature-tab-button--all" data-feature-tab="all">
+      <i class='fa-solid fa-list'></i>
+      {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.AllFeatures"}}
+      <span class="feature-count">{{featureCount}}</span>
+    </button>
+  </div>
+
+  {{! Active Features Content }}
+  <div class="feature-tab-content feature-tab-content--active active" data-feature-content="active">
+    <table class='erps-data-table erps-data-table--features erps-data-table--active erps-data-table--flush-top'>
+      <thead class='erps-data-table__header'>
+        <tr class='erps-data-table__header-row'>
+          <th class='erps-data-table__header-cell erps-data-table__header-cell--name'>{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Name"}}</th>
+          <th class='erps-data-table__header-cell erps-data-table__header-cell--controls'>
+            {{#if @root.editable}}
               <a
-                class='erps-data-table__control-button erps-data-table__control-button--edit'
-                title='{{localize "DOCUMENT.Update" type='feature'}}'
-                data-action='viewDoc'
-                data-item-id='{{item._id}}'
+                class='erps-data-table__create-button'
+                title='Create item'
+                data-action='createDoc'
+                data-document-class='Item'
+                data-type='feature'
               >
-                <i class='fas fa-edit'></i>
+                <i class='fas fa-plus'></i>
+                {{localize 'DOCUMENT.New' type='feature'}}
               </a>
-              {{#if @root.editable}}
+            {{/if}}
+          </th>
+        </tr>
+      </thead>
+      <tbody class='erps-data-table__body'>
+        {{#each activeFeatures as |item id|}}
+          <tr
+            class='erps-data-table__row erps-data-table__row--active'
+            data-item-id='{{item._id}}'
+            data-drag='true'
+            data-document-class='Item'
+          >
+            <td class='erps-data-table__cell erps-data-table__cell--name rollable' data-roll-type='item' data-action='roll' data-item-id='{{item._id}}'>
+              <div class='erps-data-table__name-content'>
+                <img
+                  src='{{item.img}}'
+                  title='{{item.name}}'
+                  width='24'
+                  height='24'
+                />
+                <span>{{item.name}}</span>
+              </div>
+            </td>
+            <td class='erps-data-table__cell erps-data-table__cell--controls'>
+              <div class='erps-data-table__controls'>
                 <a
-                  class='erps-data-table__control-button erps-data-table__control-button--delete'
-                  title='{{localize "DOCUMENT.Delete" type='feature'}}'
-                  data-action='deleteDoc'
+                    class="erps-data-table__control-button erps-data-table__control-button--toggle erps-data-table__control-button--toggle--active"
+                  title='{{localize "EVENTIDE_RP_SYSTEM.Forms.Buttons.Deactivate"}}'
+                  data-action='toggleFeature'
                   data-item-id='{{item._id}}'
                 >
-                  <i class='fas fa-trash'></i>
+                  <i class='fa-solid fa-power-off'></i>
                 </a>
-              {{/if}}
-            </div>
-          </td>
+                <a
+                  class='erps-data-table__control-button erps-data-table__control-button--edit'
+                  title='{{localize "DOCUMENT.Update" type='feature'}}'
+                  data-action='viewDoc'
+                  data-item-id='{{item._id}}'
+                >
+                  <i class='fas fa-edit'></i>
+                </a>
+                {{#if @root.editable}}
+                  <a
+                    class='erps-data-table__control-button erps-data-table__control-button--delete'
+                    title='{{localize "DOCUMENT.Delete" type='feature'}}'
+                    data-action='deleteDoc'
+                    data-item-id='{{item._id}}'
+                  >
+                    <i class='fas fa-trash'></i>
+                  </a>
+                {{/if}}
+              </div>
+            </td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+
+  {{! Inactive Features Content }}
+  <div class="feature-tab-content feature-tab-content--inactive" data-feature-content="inactive">
+    <table class='erps-data-table erps-data-table--features erps-data-table--inactive erps-data-table--flush-top'>
+      <thead class='erps-data-table__header'>
+        <tr class='erps-data-table__header-row'>
+          <th class='erps-data-table__header-cell erps-data-table__header-cell--name'>{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Name"}}</th>
+          <th class='erps-data-table__header-cell erps-data-table__header-cell--controls'>
+            {{#if @root.editable}}
+              <a
+                class='erps-data-table__create-button'
+                title='Create item'
+                data-action='createDoc'
+                data-document-class='Item'
+                data-type='feature'
+              >
+                <i class='fas fa-plus'></i>
+                {{localize 'DOCUMENT.New' type='feature'}}
+              </a>
+            {{/if}}
+          </th>
         </tr>
-      {{/each}}
-    </tbody>
-  </table>
+      </thead>
+      <tbody class='erps-data-table__body'>
+        {{#each inactiveFeatures as |item id|}}
+          <tr
+            class='erps-data-table__row erps-data-table__row--inactive'
+            data-item-id='{{item._id}}'
+            data-drag='true'
+            data-document-class='Item'
+          >
+            <td class='erps-data-table__cell erps-data-table__cell--name rollable' data-roll-type='item' data-action='roll' data-item-id='{{item._id}}'>
+              <div class='erps-data-table__name-content'>
+                <img
+                  src='{{item.img}}'
+                  title='{{item.name}}'
+                  width='24'
+                  height='24'
+                />
+                <span>{{item.name}}</span>
+              </div>
+            </td>
+            <td class='erps-data-table__cell erps-data-table__cell--controls'>
+              <div class='erps-data-table__controls'>
+                <a
+                    class="erps-data-table__control-button erps-data-table__control-button--toggle erps-data-table__control-button--toggle--inactive"
+                  title='{{localize "EVENTIDE_RP_SYSTEM.Forms.Buttons.Activate"}}'
+                  data-action='toggleFeature'
+                  data-item-id='{{item._id}}'
+                >
+                  <i class='fa-solid fa-xmark'></i>
+                </a>
+                {{#if @root.isGM}}
+                  <a
+                    class='erps-data-table__control-button erps-data-table__control-button--edit'
+                    title='{{localize "DOCUMENT.Update" type='feature'}}'
+                    data-action='viewDoc'
+                    data-item-id='{{item._id}}'
+                  >
+                    <i class='fas fa-edit'></i>
+                  </a>
+                {{/if}}
+                {{#if @root.editable}}
+                  <a
+                    class='erps-data-table__control-button erps-data-table__control-button--delete'
+                    title='{{localize "DOCUMENT.Delete" type='feature'}}'
+                    data-action='deleteDoc'
+                    data-item-id='{{item._id}}'
+                  >
+                    <i class='fas fa-trash'></i>
+                  </a>
+                {{/if}}
+              </div>
+            </td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+
+  {{! All Features Content }}
+  <div class="feature-tab-content feature-tab-content--all" data-feature-content="all">
+    <table class='erps-data-table erps-data-table--features erps-data-table--all erps-data-table--flush-top'>
+      <thead class='erps-data-table__header'>
+        <tr class='erps-data-table__header-row'>
+          <th class='erps-data-table__header-cell erps-data-table__header-cell--name'>{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Name"}}</th>
+          <th class='erps-data-table__header-cell erps-data-table__header-cell--controls'>
+            {{#if @root.editable}}
+              <a
+                class='erps-data-table__create-button'
+                title='Create item'
+                data-action='createDoc'
+                data-document-class='Item'
+                data-type='feature'
+              >
+                <i class='fas fa-plus'></i>
+                {{localize 'DOCUMENT.New' type='feature'}}
+              </a>
+            {{/if}}
+          </th>
+        </tr>
+      </thead>
+      <tbody class='erps-data-table__body'>
+        {{#each features as |item id|}}
+          <tr
+            class='erps-data-table__row{{#unless item.system.active}} erps-data-table__row--inactive{{/unless}}'
+            data-item-id='{{item._id}}'
+            data-drag='true'
+            data-document-class='Item'
+          >
+            <td class='erps-data-table__cell erps-data-table__cell--name rollable' data-roll-type='item' data-action='roll' data-item-id='{{item._id}}'>
+              <div class='erps-data-table__name-content'>
+                <img
+                  src='{{item.img}}'
+                  title='{{item.name}}'
+                  width='24'
+                  height='24'
+                />
+                <span>{{item.name}}</span>
+              </div>
+            </td>
+            <td class='erps-data-table__cell erps-data-table__cell--controls'>
+              <div class='erps-data-table__controls'>
+                {{#if item.system.active}}
+                  <a
+                    class="erps-data-table__control-button erps-data-table__control-button--toggle erps-data-table__control-button--toggle--active"
+                    title='{{localize "EVENTIDE_RP_SYSTEM.Forms.Buttons.Deactivate"}}'
+                    data-action='toggleFeature'
+                    data-item-id='{{item._id}}'
+                  >
+                    <i class='fa-solid fa-power-off'></i>
+                  </a>
+                {{else}}
+                  <a
+                    class="erps-data-table__control-button erps-data-table__control-button--toggle erps-data-table__control-button--toggle--inactive"
+                    title='{{localize "EVENTIDE_RP_SYSTEM.Forms.Buttons.Activate"}}'
+                    data-action='toggleFeature'
+                    data-item-id='{{item._id}}'
+                  >
+                    <i class='fa-solid fa-xmark'></i>
+                  </a>
+                {{/if}}
+                {{#if @root.isGM}}
+                  <a
+                    class='erps-data-table__control-button erps-data-table__control-button--edit'
+                    title='{{localize "DOCUMENT.Update" type='feature'}}'
+                    data-action='viewDoc'
+                    data-item-id='{{item._id}}'
+                  >
+                    <i class='fas fa-edit'></i>
+                  </a>
+                {{/if}}
+                {{#if @root.editable}}
+                  <a
+                    class='erps-data-table__control-button erps-data-table__control-button--delete'
+                    title='{{localize "DOCUMENT.Delete" type='feature'}}'
+                    data-action='deleteDoc'
+                    data-item-id='{{item._id}}'
+                  >
+                    <i class='fas fa-trash'></i>
+                  </a>
+                {{/if}}
+              </div>
+            </td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+
 </section>

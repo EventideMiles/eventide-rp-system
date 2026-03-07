@@ -4,6 +4,13 @@
   <div>{{item.name}}</div>
 </div>
 
+{{#unless isActive}}
+  <div class="chat-card__status-badge chat-card__status-badge--inactive">
+    <i class="fas fa-power-off"></i>
+    {{localize "EVENTIDE_RP_SYSTEM.UI.Inactive"}}
+  </div>
+{{/unless}}
+
 {{!-- Roll information section --}}
 {{#if hasRoll}}
   {{> roll-info cardClass="combat-roll" cardType="feature"}}

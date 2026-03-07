@@ -182,6 +182,10 @@ export const ActorSheetContextPreparationMixin = (BaseClass) =>
         combatPowers.sort((a, b) => a.name.localeCompare(b.name));
         // Don't sort action cards here - will be sorted within groups
 
+        // Separate active and inactive features
+        const activeFeatures = features.filter((f) => f.isActive);
+        const inactiveFeatures = features.filter((f) => !f.isActive);
+
         // Separate equipped and unequipped gear
         const equippedGear = gear.filter((item) => item.isEquipped);
         const unequippedGear = gear.filter((item) => !item.isEquipped);
@@ -423,6 +427,8 @@ export const ActorSheetContextPreparationMixin = (BaseClass) =>
         context.unequippedGear = unequippedGear;
         context.spells = spells;
         context.features = features;
+        context.activeFeatures = activeFeatures;
+        context.inactiveFeatures = inactiveFeatures;
         context.effects = effects;
         context.statuses = effects; // Templates expect 'statuses' for status effects
         context.transformations = transformations;
@@ -449,6 +455,8 @@ export const ActorSheetContextPreparationMixin = (BaseClass) =>
         context.unequippedGearCount = unequippedGear.length;
         context.spellCount = spells.length;
         context.featureCount = features.length;
+        context.activeFeatureCount = activeFeatures.length;
+        context.inactiveFeatureCount = inactiveFeatures.length;
         context.effectCount = effects.length;
         context.statusCount = effects.length; // Templates expect 'statusCount'
         context.transformationCount = transformations.length;

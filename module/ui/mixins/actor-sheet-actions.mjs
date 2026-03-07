@@ -2,6 +2,7 @@ import {
   ActorSheetGearActionsMixin,
   ActorSheetDocumentActionsMixin,
   ActorSheetTransformationActionsMixin,
+  ActorSheetFeatureActionsMixin,
   ActorSheetDragDropMixin,
 } from "./_module.mjs";
 
@@ -12,6 +13,7 @@ import {
  * - ActorSheetGearActionsMixin: Gear management functionality
  * - ActorSheetDocumentActionsMixin: Document CRUD operations
  * - ActorSheetTransformationActionsMixin: Transformation management
+ * - ActorSheetFeatureActionsMixin: Feature management functionality
  * - ActorSheetDragDropMixin: Drag and drop functionality
  *
  * @param {Class} BaseClass - The base actor sheet class to extend
@@ -19,8 +21,10 @@ import {
  */
 export function ActorSheetActionsMixin(BaseClass) {
   return ActorSheetDragDropMixin(
-    ActorSheetTransformationActionsMixin(
-      ActorSheetDocumentActionsMixin(ActorSheetGearActionsMixin(BaseClass)),
+    ActorSheetFeatureActionsMixin(
+      ActorSheetTransformationActionsMixin(
+        ActorSheetDocumentActionsMixin(ActorSheetGearActionsMixin(BaseClass)),
+      ),
     ),
   );
 }

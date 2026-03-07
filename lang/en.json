@@ -185,9 +185,26 @@
         },
         "RepetitionCountAdjusted": "Repetition formula resulted in {originalCount}, adjusted to minimum of 1",
         "NewGroupName": "Group {number}",
+        "RollValue": "Roll Value",
+        "RollValueHint": "Activate when the roll total is at or above the threshold value",
+        "RollUnderValue": "Roll Under Value",
+        "RollUnderValueHint": "Activate when the roll total is below the threshold value",
+        "Always": "Always",
+        "AlwaysHint": "Always activate this effect (attack chain mode only)",
+        "ZeroSuccesses": "Zero Successes",
+        "ZeroSuccessesHint": "Activate only when both AC checks fail",
+        "CriticalSuccess": "Critical Hit",
+        "CriticalSuccessHint": "Activate on a critical hit (based on die result, not total)",
+        "CriticalFailure": "Critical Miss",
+        "CriticalFailureHint": "Activate on a critical miss (based on die result, not total)",
+        "RollEven": "Roll Even",
+        "RollEvenHint": "Activate when the roll total is an even number",
+        "RollOdd": "Roll Odd",
+        "RollOddHint": "Activate when the roll total is an odd number",
+        "RollOnValue": "Roll Exact Value",
+        "RollOnValueHint": "Activate only when the roll equals the exact threshold value (rare condition)",
         "CreateNewPower": "Create New Power",
         "CreateNewStatus": "Create New Status",
-        "RollValue": "Roll Value",
         "StatusThreshold": "Threshold Value",
         "TransformationConfig": "Transformation Configuration",
         "TransformationCondition": "Apply Transformations",
@@ -279,6 +296,11 @@
         "UsageInfo": {
           "label": "Usage Info",
           "placeholder": "e.g., 1/day"
+        }
+      },
+      "Feature": {
+        "Active": {
+          "label": "Active"
         }
       },
       "Inventory": {
@@ -521,6 +543,28 @@
       }
     },
     "Errors": {
+      "Formula": {
+        "EmptyFormula": "Formula cannot be empty",
+        "InvalidSyntax": "Invalid formula syntax",
+        "Unparseable": "Formula cannot be parsed: {formula}",
+        "InvalidModifier": "Invalid roll modifier: {modifier}",
+        "InvalidDataRef": "Invalid data reference: {ref}",
+        "NegativeResult": "Formula may produce negative values",
+        "TooComplex": "Formula is too complex to validate",
+        "InvalidDiceNotation": "Invalid dice notation: {notation}",
+        "MaxRepetitionsExceeded": "Repetitions may exceed maximum of {max}",
+        "MissingRequiredDataRef": "Formula must include {missingRefs} data reference",
+        "StaticEvaluationFailed": "Could not evaluate formula: {error}",
+        "InvalidDamageFormula": "Invalid damage formula: {formula}. Errors: {errors}",
+        "InvalidRepetitionFormula": "Invalid repetition formula: {formula}. Errors: {errors}",
+        "InvalidDiceTrailingChars": "Invalid dice notation '{notation}'. Dice notation cannot have trailing characters. Did you mean '{suggestion}'?",
+        "InvalidDiceMissingCount": "Invalid dice notation '{notation}'. Missing dice count. Did you mean '{suggestion}'?",
+        "InvalidDiceMissingSize": "Invalid dice notation '{notation}'. Missing die size. Did you mean '{suggestion}'?",
+        "InvalidModifierMissingValue": "Invalid modifier '{modifier}'. This modifier requires a value. Did you mean '{suggestion}'?",
+        "MismatchedParentheses": "Mismatched parentheses in formula. Missing {missing} parenthesis.",
+        "InvalidOperatorPosition": "Invalid operator position in formula: {formula}. {issue, operator_at_start, Formula cannot start with an operator}{issue, operator_at_end, Formula cannot end with an operator}{issue, consecutive_operators, Formula has consecutive operators: {operators}}{issue, operator_near_parentheses, Invalid operator position near parentheses: {patterns}}",
+        "InvalidNumberFormat": "Invalid number format in formula: {formula}. {issue, multiple_decimals, Numbers cannot have multiple decimal points: {numbers}}{issue, invalid_decimal, Invalid decimal format: {patterns}}"
+      },
       "BothFirst": "Please select a token and target another token",
       "CompendiumOnly": "If you proceed {keyType} will only be created in compendium: not applied.",
       "CombatPowerError": "Cannot use Combat Power right now!",
@@ -566,6 +610,7 @@
       "BypassExecutionError": "Failed to execute {itemType} '{itemName}': {error}",
       "BypassError": "Failed to execute '{itemName}': {error}",
       "FeatureError": "Cannot use Feature right now!",
+      "FeatureToggleError": "Failed to toggle feature activation state.",
       "StatusError": "Cannot use Status right now!",
       "ItemError": "Cannot use Item right now!",
       "ActionCardError": "Cannot execute Action Card right now!",
@@ -746,10 +791,12 @@
       },
       "Sections": {
         "ACEffects": "AC Effects",
+        "ActiveFeatures": "Active Features",
         "ActiveGear": "Active Gear",
         "Adjustments": "Adjustments",
         "Adv": "Adv",
         "All": "All",
+        "AllFeatures": "All Features",
         "Attributes": "Attributes",
         "Available": "{number} Available",
         "Background": "Background",
@@ -760,6 +807,7 @@
         "Disadv": "Disadv",
         "Effects": "Effects",
         "Feature": "Feature",
+        "InactiveFeatures": "Inactive Features",
         "Formula": "Formula",
         "IconTint": "Icon Tint",
         "Image": "Image",
@@ -806,12 +854,14 @@
         "DropCombatPowers": "Drop combat powers here"
       },
       "Buttons": {
+        "Activate": "Activate",
         "Change": "Change",
         "Close": "Close",
         "Convert": "Convert",
         "Create": "Create",
         "CreateAndApply": "Create and Apply",
         "Damage": "Damage",
+        "Deactivate": "Deactivate",
         "Restore": "Restore",
         "Roll": "Roll",
         "SendToChat": "Send To Chat",
@@ -934,7 +984,22 @@
         "TransformationName": "Transformation Name"
       },
       "HelpText": {
-        "CompendiumId": "Leave blank to use default compendiums. Format: world.compendiumname"
+        "CompendiumId": "Leave blank to use default compendiums. Format: world.compendiumname",
+        "DamageFormula": "Enter a dice formula (e.g., 1d6, 2d8+3) or include data references (e.g., @str.mod)",
+        "RepetitionFormula": "Enter a number or dice formula for repetitions (e.g., 1, 1d4)",
+        "SettingFormula": "Enter a formula using dice notation and data references (e.g., 1d6 + @stat.value)"
+      },
+      "Validation": {
+        "InvalidFormula": "Invalid formula: {error}",
+        "FormulaRequired": "Formula is required",
+        "FormulaTooLong": "Formula is too long (maximum {max} characters)",
+        "InvalidDiceNotation": "Invalid dice notation: {notation}",
+        "MissingDataRef": "Formula must include {ref} data reference",
+        "RepetitionsExceeded": "Repetitions may exceed maximum of {max}"
+      },
+      "Sanitization": {
+        "InvalidCharactersRemoved": "Invalid characters were removed from your formula. Original: \"{original}\" → Sanitized: \"{sanitized}\"",
+        "InvalidFormulaReverted": "Invalid formula \"{formula}\" has been reverted to default: \"{default}\""
       }
     },
     "Dialogs": {

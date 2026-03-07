@@ -194,6 +194,27 @@
           </div>
         {{/if}}
       {{/if}}
+      {{#if (eq item.type 'feature')}}
+        <div class="eventide-sheet__toggle-group">
+          <label class="erps-toggles erps-toggles--label-left">
+            <input
+              type="checkbox"
+              class="erps-toggles__input"
+              name="system.active"
+              id="system.active"
+              {{checked system.active}}
+            />
+            <div class="erps-toggles__container">
+              <span class="erps-toggles__label" title='{{localize "EVENTIDE_RP_SYSTEM.Item.Feature.Active.label"}}'>
+                {{localize "EVENTIDE_RP_SYSTEM.Item.Feature.Active.label"}}
+              </span>
+              <span class="erps-toggles__track">
+                <span class="erps-toggles__thumb"></span>
+              </span>
+            </div>
+          </label>
+        </div>
+      {{/if}}
     </div>
   </div>
 </header>

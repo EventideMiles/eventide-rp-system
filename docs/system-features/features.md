@@ -14,6 +14,81 @@ Features represent inherent character traits that define who your character is a
 - **Visual Representation**: Optional token icons for easy identification
 - **Flexible Bonuses**: Support for ability modifications, dice adjustments, and special mechanics
 
+## Active/Inactive Feature System
+
+Features can now be marked as active or inactive, providing greater control over when character abilities apply. This system allows players to temporarily disable features without deleting them, making it easy to manage conditional abilities, temporary bonuses, and equipment-based features.
+
+### How Active/Inactive Features Work
+
+- **Active Features**: Apply their bonuses, abilities, and active effects to the character
+- **Inactive Features**: Can still be rolled but don't apply their passive effects or bonuses
+- **Automatic Management**: The system automatically handles active effects when features are toggled
+- **Clear Communication**: Chat cards clearly indicate when inactive features are rolled
+
+### Feature State Management
+
+When you toggle a feature between active and inactive states:
+
+1. **Active Effects**: The system automatically adds or removes the feature's active effects
+2. **Derived Data**: Character calculations update immediately to reflect the change
+3. **Visual Indicators**: The feature's state is clearly visible in the UI
+4. **Chat Messages**: Rolling an inactive feature shows a clear indicator in the chat card
+
+### UI Organization
+
+Features are organized into tabs on character sheets for easy management:
+
+- **Active Tab**: Shows all features currently applying their effects
+- **Inactive Tab**: Shows disabled features that can still be rolled
+- **All Tab**: Displays all features regardless of state
+- **Toggle Controls**: Easy switching between active and inactive states
+
+### When to Use Inactive Features
+
+Inactive features are perfect for:
+
+- **Conditional Abilities**: Features that only apply in specific situations (e.g., "City-Raised" bonus when in urban environments)
+- **Temporary Bonuses**: Short-term enhancements that can be toggled on when needed
+- **Equipment-Based Features**: Abilities tied to specific items that aren't always available
+- **Situational Traits**: Background features that apply only under certain circumstances
+- **Testing and Balance**: Temporarily disabling features to test character builds
+
+### Example Use Cases
+
+#### **Conditional Background Feature**
+
+A character with "Wilderness Survivor" feature:
+
+- **Active**: When exploring natural environments
+- **Inactive**: When in cities or dungeons
+- **Benefit**: +3 to Fortitude rolls in wilderness settings
+- **Usage**: Toggle on when entering wilderness, toggle off when leaving
+
+#### **Equipment-Dependent Ability**
+
+A character with "Archery Training" feature:
+
+- **Active**: When using a bow
+- **Inactive**: When using other weapons
+- **Benefit**: +2 to Physical rolls with bows
+- **Usage**: Toggle based on current weapon
+
+#### **Temporary Enhancement**
+
+A character with "Combat Focus" feature:
+
+- **Active**: During intense combat encounters
+- **Inactive**: Outside of combat or during exploration
+- **Benefit**: +1 to all combat-related rolls
+- **Usage**: Toggle on at start of combat, toggle off when resting
+
+### Best Practices
+
+- **Clear Communication**: Let your GM know when you're toggling features
+- **Consistent Usage**: Establish patterns for when features should be active
+- **Documentation**: Note in feature descriptions when it should be toggled
+- **GM Oversight**: Be prepared to explain why a feature is inactive if questioned
+
 ## Feature Types
 
 ### Passive Features

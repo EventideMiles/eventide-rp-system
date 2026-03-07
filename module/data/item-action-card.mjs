@@ -1,4 +1,5 @@
 import { EventideRpSystemItemBase } from "./_module.mjs";
+import { FormulaValidator } from "../services/formula-validator.mjs";
 
 /**
  * Data model for Action Card items in the Eventide RP System.
@@ -95,12 +96,42 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
       damageCondition: new fields.StringField({
         required: true,
         initial: "never",
-        choices: ["never", "oneSuccess", "twoSuccesses", "rollValue"],
+        choices: [
+          "never",
+          "oneSuccess",
+          "twoSuccesses",
+          "rollValue",
+          "rollUnderValue",
+          "rollEven",
+          "rollOdd",
+          "rollOnValue",
+          "zeroSuccesses",
+          "always",
+          "criticalSuccess",
+          "criticalFailure",
+        ],
       }),
       damageFormula: new fields.StringField({
         required: true,
         initial: "1d6",
-        blank: true,
+        validate: (value) => {
+          // Sanitize the value first to handle legacy data with invalid formulas
+          const sanitized = FormulaValidator.sanitizeFormula(value);
+
+          const validator = new FormulaValidator();
+          const result = validator.validateDamageFormula(sanitized, {
+            allowBlank: true,
+            allowDataRefs: true,
+          });
+
+          if (!result.isValid) {
+            throw new Error(
+              game.i18n.format(result.errorKey, result.details || {}),
+            );
+          }
+
+          return true;
+        },
       }),
       damageType: new fields.StringField({
         required: true,
@@ -116,7 +147,20 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
       statusCondition: new fields.StringField({
         required: true,
         initial: "oneSuccess",
-        choices: ["never", "oneSuccess", "twoSuccesses", "rollValue"],
+        choices: [
+          "never",
+          "oneSuccess",
+          "twoSuccesses",
+          "rollValue",
+          "rollUnderValue",
+          "rollEven",
+          "rollOdd",
+          "rollOnValue",
+          "zeroSuccesses",
+          "always",
+          "criticalSuccess",
+          "criticalFailure",
+        ],
       }),
       statusThreshold: new fields.NumberField({
         required: false,
@@ -161,7 +205,20 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
       condition: new fields.StringField({
         required: true,
         initial: "oneSuccess",
-        choices: ["never", "oneSuccess", "twoSuccesses", "rollValue"],
+        choices: [
+          "never",
+          "oneSuccess",
+          "twoSuccesses",
+          "rollValue",
+          "rollUnderValue",
+          "rollEven",
+          "rollOdd",
+          "rollOnValue",
+          "zeroSuccesses",
+          "always",
+          "criticalSuccess",
+          "criticalFailure",
+        ],
       }),
       threshold: new fields.NumberField({
         required: false,
@@ -178,7 +235,22 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
       formula: new fields.StringField({
         required: true,
         initial: "1d6",
-        blank: true,
+        validate: (value) => {
+          // Sanitize the value first to handle legacy data with invalid formulas
+          const sanitized = FormulaValidator.sanitizeFormula(value);
+
+          const validator = new FormulaValidator();
+          const result = validator.validateDamageFormula(sanitized, {
+            allowBlank: true,
+            allowDataRefs: false,
+          });
+          if (!result.isValid) {
+            throw new Error(
+              game.i18n.format(result.errorKey, result.details || {}),
+            );
+          }
+          return true;
+        },
       }),
       type: new fields.StringField({
         required: true,
@@ -214,6 +286,21 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
       required: true,
       initial: "1",
       blank: false,
+      validate: (value) => {
+        // Sanitize the value first to handle legacy data with invalid formulas
+        const sanitized = FormulaValidator.sanitizeFormula(value);
+
+        const validator = new FormulaValidator();
+        const result = validator.validateRepetitionFormula(sanitized, {
+          maxRepetitions: 100,
+        });
+        if (!result.isValid) {
+          throw new Error(
+            game.i18n.format(result.errorKey, result.details || {}),
+          );
+        }
+        return true;
+      },
     });
 
     /**

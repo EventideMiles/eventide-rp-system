@@ -220,6 +220,59 @@ When calculating ability values, the system applies effects in this specific ord
 - **Transformation End**: Some effects end when transformations are removed (see [Transformations](../for-gms/transformations.md) for more information)
 - **Gear Removal**: Gear can have automatic effects as well - unequipping it or having it taken will automatically remove those effects
 
+### Restoration Process
+
+The restoration process handles healing characters and removing status effects through a carefully sequenced workflow to ensure correct calculations.
+
+#### **Restoration Timing**
+
+When restoring a character (via the Restore Target macro or other restoration methods), the system follows this specific sequence:
+
+1. **Status Effect Removal First**: Status effects are removed at the beginning of the restoration process
+2. **Resource Restoration**: Power and Resolve are restored after status effects are removed
+3. **Derived Data Recalculation**: Character calculations update with the new values
+
+#### **Why This Order Matters**
+
+This sequencing is critical because:
+
+- **Derived Values**: Power and Resolve maximums are now derived values calculated in [`prepareDerivedData()`](../../module/documents/mixins/actor-resources.mjs:240)
+- **Status Effect Influence**: Status effects can modify ability totals and multipliers used in these calculations
+- **Correct Restoration**: Removing statuses first ensures restoration uses the correct base values without status effect modifications
+
+#### **Restoration Flow**
+
+```md
+1. Determine which status effects to remove
+2. Remove status effects (clears their modifications)
+3. Restore Resolve to maximum (using clean values)
+4. Restore Power to maximum (using clean values)
+5. Generate chat message documenting the restoration
+```
+
+#### **Impact on Gameplay**
+
+This restoration timing ensures:
+
+- **Accurate Healing**: Characters are restored to their true maximum values
+- **No Double-Dipping**: Status effects don't artificially inflate restoration amounts
+- **Clear Communication**: Chat messages accurately reflect what was restored
+- **Macro Reliability**: The Restore Target macro functions correctly with proper status effect handling
+
+#### **Technical Implementation**
+
+The restoration logic is implemented in [`ActorResourceMixin.restore()`](../../module/documents/mixins/actor-resources.mjs:236) with explicit comments explaining the importance of this sequencing:
+
+```javascript
+// Remove status effects FIRST before restoring resources
+// This is critical because power and resolve are now derived values
+// calculated in prepareDerivedData(), and status effects can modify
+// the ability totals and multipliers used in these calculations.
+// Removing statuses first ensures the restoration uses correct values.
+```
+
+This change was introduced in v13.22.0 to fix issues with the Restore Target macro and ensure consistent behavior across all restoration methods.
+
 ### Visual Indicators
 
 #### **Token Icons**
