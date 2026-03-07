@@ -198,7 +198,22 @@
         "TransformationName": "Transformation Name"
       },
       "HelpText": {
-        "CompendiumId": "Leave blank to use default compendiums. Format: world.compendiumname"
+        "CompendiumId": "Leave blank to use default compendiums. Format: world.compendiumname",
+        "DamageFormula": "Enter a dice formula (e.g., 1d6, 2d8+3) or include data references (e.g., @str.mod)",
+        "RepetitionFormula": "Enter a number or dice formula for repetitions (e.g., 1, 1d4)",
+        "SettingFormula": "Enter a formula using dice notation and data references (e.g., 1d6 + @stat.value)"
+      },
+      "Validation": {
+        "InvalidFormula": "Invalid formula: {error}",
+        "FormulaRequired": "Formula is required",
+        "FormulaTooLong": "Formula is too long (maximum {max} characters)",
+        "InvalidDiceNotation": "Invalid dice notation: {notation}",
+        "MissingDataRef": "Formula must include {ref} data reference",
+        "RepetitionsExceeded": "Repetitions may exceed maximum of {max}"
+      },
+      "Sanitization": {
+        "InvalidCharactersRemoved": "Invalid characters were removed from your formula. Original: \"{original}\" → Sanitized: \"{sanitized}\"",
+        "InvalidFormulaReverted": "Invalid formula \"{formula}\" has been reverted to default: \"{default}\""
       }
     }
   }

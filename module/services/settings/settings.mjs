@@ -1,5 +1,6 @@
 import { EventideSheetHelpers } from "../../ui/_module.mjs";
 import { erpsSoundManager, Logger } from "../_module.mjs";
+import { FormulaValidator } from "../formula-validator.mjs";
 
 /**
  * EVENTIDE RP SYSTEM - SETTINGS CONFIGURATION
@@ -444,27 +445,54 @@ export const registerSettings = function () {
     default:
       "1d@hiddenAbilities.dice.total + @statTotal.mainInit + @statTotal.subInit",
     onChange: (value) => {
-      // If the value is empty, reset it to the default
-      if (!value || value.trim() === "") {
-        const defaultFormula =
-          "1d@hiddenAbilities.dice.total + @statTotal.mainInit + @statTotal.subInit";
-        game.settings.set(
+      // Sanitize formula first
+      const sanitized = FormulaValidator.sanitizeFormula(value);
+      
+      // Validate formula before applying
+      const validator = new FormulaValidator();
+      const result = validator.validateSettingFormula(sanitized, "initative", {
+        allowBlank: false,
+        allowDataRefs: true,
+        requiredRefs: ["@hiddenAbilities", "@statTotal"],
+      });
+
+      if (!result.isValid) {
+        ui.notifications.error(
+          game.i18n.format(result.errorKey, result.details || {}),
+        );
+        // Revert to previous value
+        const currentValue = game.settings.get(
           "eventide-rp-system",
           "initativeFormula",
-          defaultFormula,
         );
-        ui.notifications.warn(
-          "Initiative formula cannot be empty. Resetting to default.",
-        );
-      } else {
-        // Update the initiative formula in the current session
-        CONFIG.Combat.initiative.formula = value;
+        game.settings.set("eventide-rp-system", "initativeFormula", currentValue);
+        return;
+      }
 
-        // Prompt for reload to ensure all initiative calculations use the new formula
-        foundry.applications.settings.SettingsConfig.reloadConfirm({
-          world: true,
+      // Warn user if characters were removed
+      if (sanitized !== value) {
+        ui.notifications.warn(
+          game.i18n.format("EVENTIDE_RP_SYSTEM.Forms.Sanitization.InvalidCharactersRemoved", {
+            original: value,
+            sanitized,
+          }),
+        );
+      }
+
+      // Show warnings if any
+      if (result.warnings?.length > 0) {
+        result.warnings.forEach((warning) => {
+          ui.notifications.warn(warning);
         });
       }
+
+      // Update the initiative formula in the current session
+      CONFIG.Combat.initiative.formula = sanitized;
+
+      // Prompt for reload to ensure all initiative calculations use the new formula
+      foundry.applications.settings.SettingsConfig.reloadConfirm({
+        world: true,
+      });
     },
   });
 
@@ -614,28 +642,58 @@ export const registerSettings = function () {
     type: String,
     default: "@cr * 200 + @cr * @cr * 50",
     onChange: (value) => {
-      // If the value is empty, reset it to the default
-      if (!value || value.trim() === "") {
+      // Sanitize formula first
+      const sanitized = FormulaValidator.sanitizeFormula(value);
+      
+      // Validate formula before applying
+      const validator = new FormulaValidator();
+      const result = validator.validateSettingFormula(sanitized, "crToXp", {
+        allowBlank: false,
+        allowDataRefs: true,
+        requiredRefs: ["@cr"],
+      });
+
+      if (!result.isValid) {
+        ui.notifications.error(
+          game.i18n.format(result.errorKey, result.details || {}),
+        );
         const defaultFormula = "@cr * 200 + @cr * @cr * 50";
-        game.settings.set(
-          "eventide-rp-system",
-          "crToXpFormula",
-          defaultFormula,
-        );
+        game.settings.set("eventide-rp-system", "crToXpFormula", defaultFormula);
         ui.notifications.warn(
-          "CR to XP formula cannot be empty. Resetting to default.",
+          game.i18n.format("EVENTIDE_RP_SYSTEM.Forms.Sanitization.InvalidFormulaReverted", {
+            formula: value,
+            default: defaultFormula,
+          }),
         );
-      } else {
-        // Refresh any open NPC sheets to show updated XP values
-        Object.values(ui.windows).forEach((app) => {
-          if (
-            app instanceof CONFIG.Actor.sheetClass &&
-            app.actor?.type === "npc"
-          ) {
-            app.render();
-          }
+        return;
+      }
+
+      // Warn user if characters were removed
+      if (sanitized !== value) {
+        ui.notifications.warn(
+          game.i18n.format("EVENTIDE_RP_SYSTEM.Forms.Sanitization.InvalidCharactersRemoved", {
+            original: value,
+            sanitized,
+          }),
+        );
+      }
+
+      // Show warnings if any
+      if (result.warnings?.length > 0) {
+        result.warnings.forEach((warning) => {
+          ui.notifications.warn(warning);
         });
       }
+
+      // Refresh any open NPC sheets to show updated XP values
+      Object.values(ui.windows).forEach((app) => {
+        if (
+          app instanceof CONFIG.Actor.sheetClass &&
+          app.actor?.type === "npc"
+        ) {
+          app.render();
+        }
+      });
     },
   });
 
@@ -685,21 +743,49 @@ export const registerSettings = function () {
     type: String,
     default: "5 + @will.total + @fort.total",
     onChange: (value) => {
-      // Issue #125/#126: Refresh all actors when formula changes
-      // Revert to default if blank
-      if (!value || value.trim() === "") {
-        const defaultFormula = "5 + @will.total + @fort.total";
-        game.settings.set(
-          "eventide-rp-system",
-          "maxPowerFormula",
-          defaultFormula,
+      // Sanitize formula first
+      const sanitized = FormulaValidator.sanitizeFormula(value);
+      
+      // Validate formula before applying
+      const validator = new FormulaValidator();
+      const result = validator.validateSettingFormula(sanitized, "maxPower", {
+        allowBlank: false,
+        allowDataRefs: true,
+        requiredRefs: ["@will", "@fort"],
+      });
+
+      if (!result.isValid) {
+        ui.notifications.error(
+          game.i18n.format(result.errorKey, result.details || {}),
         );
+        const defaultFormula = "5 + @will.total + @fort.total";
+        game.settings.set("eventide-rp-system", "maxPowerFormula", defaultFormula);
         ui.notifications.warn(
-          game.i18n.localize("SETTINGS.MaxPowerFormulaWarning"),
+          game.i18n.format("EVENTIDE_RP_SYSTEM.Forms.Sanitization.InvalidFormulaReverted", {
+            formula: value,
+            default: defaultFormula,
+          }),
         );
         return;
       }
-      
+
+      // Warn user if characters were removed
+      if (sanitized !== value) {
+        ui.notifications.warn(
+          game.i18n.format("EVENTIDE_RP_SYSTEM.Forms.Sanitization.InvalidCharactersRemoved", {
+            original: value,
+            sanitized,
+          }),
+        );
+      }
+
+      // Show warnings if any
+      if (result.warnings?.length > 0) {
+        result.warnings.forEach((warning) => {
+          ui.notifications.warn(warning);
+        });
+      }
+
       _refreshAllActorDerivedData();
     },
   });
@@ -714,20 +800,49 @@ export const registerSettings = function () {
     type: String,
     default: "100 + (10 * @fort.total)",
     onChange: (value) => {
-      // Issue #125/#126: Refresh all actors when formula changes
-      // Revert to default if blank
-      if (!value || value.trim() === "") {
-        const defaultFormula = "100 + (10 * @fort.total)";
-        game.settings.set(
-          "eventide-rp-system",
-          "maxResolveFormula",
-          defaultFormula,
+      // Sanitize formula first
+      const sanitized = FormulaValidator.sanitizeFormula(value);
+      
+      // Validate formula before applying
+      const validator = new FormulaValidator();
+      const result = validator.validateSettingFormula(sanitized, "maxResolve", {
+        allowBlank: false,
+        allowDataRefs: true,
+        requiredRefs: ["@fort"],
+      });
+
+      if (!result.isValid) {
+        ui.notifications.error(
+          game.i18n.format(result.errorKey, result.details || {}),
         );
+        const defaultFormula = "100 + (10 * @fort.total)";
+        game.settings.set("eventide-rp-system", "maxResolveFormula", defaultFormula);
         ui.notifications.warn(
-          game.i18n.localize("SETTINGS.MaxResolveFormulaWarning"),
+          game.i18n.format("EVENTIDE_RP_SYSTEM.Forms.Sanitization.InvalidFormulaReverted", {
+            formula: value,
+            default: defaultFormula,
+          }),
         );
         return;
       }
+
+      // Warn user if characters were removed
+      if (sanitized !== value) {
+        ui.notifications.warn(
+          game.i18n.format("EVENTIDE_RP_SYSTEM.Forms.Sanitization.InvalidCharactersRemoved", {
+            original: value,
+            sanitized,
+          }),
+        );
+      }
+
+      // Show warnings if any
+      if (result.warnings?.length > 0) {
+        result.warnings.forEach((warning) => {
+          ui.notifications.warn(warning);
+        });
+      }
+
       _refreshAllActorDerivedData();
     },
   });
@@ -742,19 +857,49 @@ export const registerSettings = function () {
     type: String,
     default: "14 + (2 * @lvl.value)",
     onChange: (value) => {
-      // Revert to default if blank
-      if (!value || value.trim() === "") {
-        const defaultFormula = "14 + (2 * @lvl.value)";
-        game.settings.set(
-          "eventide-rp-system",
-          "statPointsFormula",
-          defaultFormula,
+      // Sanitize formula first
+      const sanitized = FormulaValidator.sanitizeFormula(value);
+      
+      // Validate formula before applying
+      const validator = new FormulaValidator();
+      const result = validator.validateSettingFormula(sanitized, "statPoints", {
+        allowBlank: false,
+        allowDataRefs: true,
+        requiredRefs: ["@lvl"],
+      });
+
+      if (!result.isValid) {
+        ui.notifications.error(
+          game.i18n.format(result.errorKey, result.details || {}),
         );
+        const defaultFormula = "14 + (2 * @lvl.value)";
+        game.settings.set("eventide-rp-system", "statPointsFormula", defaultFormula);
         ui.notifications.warn(
-          game.i18n.localize("SETTINGS.StatPointsFormulaWarning"),
+          game.i18n.format("EVENTIDE_RP_SYSTEM.Forms.Sanitization.InvalidFormulaReverted", {
+            formula: value,
+            default: defaultFormula,
+          }),
         );
         return;
       }
+
+      // Warn user if characters were removed
+      if (sanitized !== value) {
+        ui.notifications.warn(
+          game.i18n.format("EVENTIDE_RP_SYSTEM.Forms.Sanitization.InvalidCharactersRemoved", {
+            original: value,
+            sanitized,
+          }),
+        );
+      }
+
+      // Show warnings if any
+      if (result.warnings?.length > 0) {
+        result.warnings.forEach((warning) => {
+          ui.notifications.warn(warning);
+        });
+      }
+
       _refreshAllActorDerivedData();
     },
   });

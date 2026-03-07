@@ -1,6 +1,28 @@
 {
   "EVENTIDE_RP_SYSTEM": {
     "Errors": {
+      "Formula": {
+        "EmptyFormula": "Formula cannot be empty",
+        "InvalidSyntax": "Invalid formula syntax",
+        "Unparseable": "Formula cannot be parsed: {formula}",
+        "InvalidModifier": "Invalid roll modifier: {modifier}",
+        "InvalidDataRef": "Invalid data reference: {ref}",
+        "NegativeResult": "Formula may produce negative values",
+        "TooComplex": "Formula is too complex to validate",
+        "InvalidDiceNotation": "Invalid dice notation: {notation}",
+        "MaxRepetitionsExceeded": "Repetitions may exceed maximum of {max}",
+        "MissingRequiredDataRef": "Formula must include {missingRefs} data reference",
+        "StaticEvaluationFailed": "Could not evaluate formula: {error}",
+        "InvalidDamageFormula": "Invalid damage formula: {formula}. Errors: {errors}",
+        "InvalidRepetitionFormula": "Invalid repetition formula: {formula}. Errors: {errors}",
+        "InvalidDiceTrailingChars": "Invalid dice notation '{notation}'. Dice notation cannot have trailing characters. Did you mean '{suggestion}'?",
+        "InvalidDiceMissingCount": "Invalid dice notation '{notation}'. Missing dice count. Did you mean '{suggestion}'?",
+        "InvalidDiceMissingSize": "Invalid dice notation '{notation}'. Missing die size. Did you mean '{suggestion}'?",
+        "InvalidModifierMissingValue": "Invalid modifier '{modifier}'. This modifier requires a value. Did you mean '{suggestion}'?",
+        "MismatchedParentheses": "Mismatched parentheses in formula. Missing {missing} parenthesis.",
+        "InvalidOperatorPosition": "Invalid operator position in formula: {formula}. {issue, operator_at_start, Formula cannot start with an operator}{issue, operator_at_end, Formula cannot end with an operator}{issue, consecutive_operators, Formula has consecutive operators: {operators}}{issue, operator_near_parentheses, Invalid operator position near parentheses: {patterns}}",
+        "InvalidNumberFormat": "Invalid number format in formula: {formula}. {issue, multiple_decimals, Numbers cannot have multiple decimal points: {numbers}}{issue, invalid_decimal, Invalid decimal format: {patterns}}"
+      },
       "BothFirst": "Please select a token and target another token",
       "CompendiumOnly": "If you proceed {keyType} will only be created in compendium: not applied.",
       "CombatPowerError": "Cannot use Combat Power right now!",
