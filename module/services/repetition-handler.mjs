@@ -192,14 +192,16 @@ export class RepetitionHandler {
    * @param {Object} result - Iteration result
    * @param {Object} system - Action card system data
    * @param {Function} shouldApplyEffect - Function to check effect conditions
+   * @param {Object} actor - The actor to use for effect condition checks
    * @returns {boolean} Whether iteration was successful
    */
-  static checkIterationSuccess(result, system, shouldApplyEffect) {
+  static checkIterationSuccess(result, system, shouldApplyEffect, actor) {
     if (!result || !result.targetResults) {
       return false;
     }
 
     const rollTotal = result.baseRoll?.total || 0;
+    const rollResult = result.baseRoll;
     const hasStatusEffects = system.embeddedStatusEffects?.length > 0;
     const hasTransformations = system.embeddedTransformations?.length > 0;
     const hasDamageFormula =
@@ -216,6 +218,9 @@ export class RepetitionHandler {
           targetResult.bothHit,
           rollTotal,
           system.attackChain.damageThreshold || 15,
+          rollResult,
+          actor,
+          rollResult?.formula,
         );
 
         if (damageSuccess) {
@@ -231,6 +236,9 @@ export class RepetitionHandler {
           targetResult.bothHit,
           rollTotal,
           system.attackChain.statusThreshold || 15,
+          rollResult,
+          actor,
+          rollResult?.formula,
         );
 
         if (statusSuccess) {
@@ -246,6 +254,9 @@ export class RepetitionHandler {
           targetResult.bothHit,
           rollTotal,
           system.transformationConfig?.threshold || 15,
+          rollResult,
+          actor,
+          rollResult?.formula,
         );
 
         if (transformationSuccess) {

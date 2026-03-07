@@ -135,7 +135,20 @@ describe('EventideRpSystemActionCard Schema - Priority 1 Critical Definitions', 
       expect(damageCondition).toBeDefined();
       expect(damageCondition.options.required).toBe(true);
       expect(damageCondition.options.initial).toBe('never');
-      expect(damageCondition.options.choices).toEqual(['never', 'oneSuccess', 'twoSuccesses', 'rollValue']);
+      expect(damageCondition.options.choices).toEqual([
+        'never',
+        'oneSuccess',
+        'twoSuccesses',
+        'rollValue',
+        'rollUnderValue',
+        'rollEven',
+        'rollOdd',
+        'rollOnValue',
+        'zeroSuccesses',
+        'always',
+        'criticalSuccess',
+        'criticalFailure',
+      ]);
     });
 
     test('should define damage formula with correct defaults', () => {
@@ -172,7 +185,20 @@ describe('EventideRpSystemActionCard Schema - Priority 1 Critical Definitions', 
       expect(statusCondition).toBeDefined();
       expect(statusCondition.options.required).toBe(true);
       expect(statusCondition.options.initial).toBe('never');
-      expect(statusCondition.options.choices).toEqual(['never', 'oneSuccess', 'twoSuccesses', 'rollValue']);
+      expect(statusCondition.options.choices).toEqual([
+        'never',
+        'oneSuccess',
+        'twoSuccesses',
+        'rollValue',
+        'rollUnderValue',
+        'rollEven',
+        'rollOdd',
+        'rollOnValue',
+        'zeroSuccesses',
+        'always',
+        'criticalSuccess',
+        'criticalFailure',
+      ]);
     });
 
     test('should define status threshold with correct constraints', () => {
@@ -218,7 +244,20 @@ describe('EventideRpSystemActionCard Schema - Priority 1 Critical Definitions', 
       expect(condition).toBeDefined();
       expect(condition.options.required).toBe(true);
       expect(condition.options.initial).toBe('never'); // Updated default per user request
-      expect(condition.options.choices).toEqual(['never', 'oneSuccess', 'twoSuccesses', 'rollValue']);
+      expect(condition.options.choices).toEqual([
+        'never',
+        'oneSuccess',
+        'twoSuccesses',
+        'rollValue',
+        'rollUnderValue',
+        'rollEven',
+        'rollOdd',
+        'rollOnValue',
+        'zeroSuccesses',
+        'always',
+        'criticalSuccess',
+        'criticalFailure',
+      ]);
     });
 
     test('should define transformation threshold with correct constraints', () => {
@@ -345,7 +384,20 @@ describe('EventideRpSystemActionCard Schema - Priority 1 Critical Definitions', 
   describe('Schema Validation and Data Integrity', () => {
     test('should have consistent field types across similar configurations', () => {
       // All condition fields should have the same choices
-      const conditionChoices = ['never', 'oneSuccess', 'twoSuccesses', 'rollValue'];
+      const conditionChoices = [
+        'never',
+        'oneSuccess',
+        'twoSuccesses',
+        'rollValue',
+        'rollUnderValue',
+        'rollEven',
+        'rollOdd',
+        'rollOnValue',
+        'zeroSuccesses',
+        'always',
+        'criticalSuccess',
+        'criticalFailure',
+      ];
 
       expect(schema.attackChain.fields.damageCondition.options.choices).toEqual(conditionChoices);
       expect(schema.attackChain.fields.statusCondition.options.choices).toEqual(conditionChoices);

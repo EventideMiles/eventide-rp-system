@@ -2,6 +2,7 @@ import { Logger } from "../../services/logger.mjs";
 import { ResourceValidator } from "../../services/resource-validator.mjs";
 import { TransformationApplicator } from "../../services/transformation-applicator.mjs";
 import { RepetitionHandler } from "../../services/repetition-handler.mjs";
+import { ERPSRollUtilities } from "../../utils/roll-utilities.mjs";
 import {
   StatusEffectApplicator,
   TargetResolver,
@@ -325,8 +326,9 @@ export function ItemActionCardExecutionMixin(Base) {
             const firstIterationSuccess = RepetitionHandler.checkIterationSuccess(
               result,
               this.system,
-              (condition, oneHit, bothHit, rollTotal, threshold) =>
-                this._shouldApplyEffect(condition, oneHit, bothHit, rollTotal, threshold),
+              (condition, oneHit, bothHit, rollTotal, threshold, roll, actor, formula) =>
+                this._shouldApplyEffect(condition, oneHit, bothHit, rollTotal, threshold, roll, actor, formula),
+              this.actor,
             );
             if (!firstIterationSuccess) {
               Logger.info(
@@ -437,6 +439,9 @@ export function ItemActionCardExecutionMixin(Base) {
      * @param {boolean} bothHit - Whether both ACs were hit
      * @param {number} rollTotal - The total roll result (for rollValue condition)
      * @param {number} threshold - The threshold value (for rollValue condition)
+     * @param {Roll} [roll=null] - The full roll object (for critical detection)
+     * @param {Actor} [actor=null] - The actor (for critical thresholds)
+     * @param {string} [formula=null] - The roll formula (for critical detection)
      * @returns {boolean} Whether the effect should be applied
      * @private
      */
@@ -446,6 +451,9 @@ export function ItemActionCardExecutionMixin(Base) {
       bothHit,
       rollTotal = 0,
       threshold = 15,
+      roll = null,
+      actor = null,
+      formula = null,
     ) {
       switch (condition) {
         case "never":
@@ -456,6 +464,38 @@ export function ItemActionCardExecutionMixin(Base) {
           return bothHit;
         case "rollValue":
           return rollTotal >= threshold;
+        case "rollUnderValue":
+          return rollTotal < threshold;
+        case "rollEven":
+          return rollTotal % 2 === 0;
+        case "rollOdd":
+          return rollTotal % 2 !== 0;
+        case "rollOnValue":
+          return rollTotal === threshold;
+        case "zeroSuccesses":
+          return !oneHit;
+        case "always":
+          return true;
+        case "criticalSuccess":
+        case "criticalFailure": {
+          if (!roll || !actor || !formula) {
+            return false;
+          }
+
+          const actorRollData = actor.getRollData();
+          const criticalStates = ERPSRollUtilities.determineCriticalStates({
+            roll,
+            thresholds: actorRollData.hiddenAbilities,
+            formula,
+            critAllowed: true,
+          });
+          
+          const result = condition === "criticalSuccess"
+            ? criticalStates.critHit && !criticalStates.stolenCrit
+            : criticalStates.critMiss && !criticalStates.savedMiss;
+
+          return result;
+        }
         default:
           return false;
       }
@@ -757,6 +797,8 @@ export function ItemActionCardExecutionMixin(Base) {
         img: this._getEffectiveImage(),
         bgColor: this.system.bgColor,
         textColor: this.system.textColor,
+        actor: this.actor,
+        formula: rollResult?.formula,
       });
     }
 
@@ -1105,8 +1147,9 @@ export function ItemActionCardExecutionMixin(Base) {
       return RepetitionHandler.checkIterationSuccess(
         result,
         this.system,
-        (condition, oneHit, bothHit, rollTotal, threshold) =>
-          this._shouldApplyEffect(condition, oneHit, bothHit, rollTotal, threshold),
+        (condition, oneHit, bothHit, rollTotal, threshold, roll, actor, formula) =>
+          this._shouldApplyEffect(condition, oneHit, bothHit, rollTotal, threshold, roll, actor, formula),
+        this.actor,
       );
     }
 
@@ -1133,12 +1176,13 @@ export function ItemActionCardExecutionMixin(Base) {
         transformationConfig: this.system.transformationConfig,
         repetitionContext: this._currentRepetitionContext,
         getEmbeddedTransformations: (options) => this.getEmbeddedTransformations(options),
-        shouldApplyEffect: (condition, oneHit, bothHit, rollTotal, threshold) =>
-          this._shouldApplyEffect(condition, oneHit, bothHit, rollTotal, threshold),
+        shouldApplyEffect: (condition, oneHit, bothHit, rollTotal, threshold, roll, actor, formula) =>
+          this._shouldApplyEffect(condition, oneHit, bothHit, rollTotal, threshold, roll, actor, formula),
         waitForDelay: () => this._waitForExecutionDelay(),
         mode: this.system.mode,
         disableDelays,
         isFinalRepetition,
+        sourceActor: this.actor,
       });
     }
 
