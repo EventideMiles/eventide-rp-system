@@ -48,6 +48,172 @@ In addition, configure execution behavior:
 - **Cost per Repetition** (default: false)
 - **Fail on First Miss** (default: true)
 
+## Activation Methods
+
+Action cards use activation methods (also called conditions) to determine when damage, status effects, and transformations are applied. These conditions are evaluated based on the roll result from the embedded item in attack chain mode, or based on the saved damage application in saved damage mode.
+
+### Understanding Activation Conditions
+
+Activation conditions are configured separately for:
+
+- **Damage Conditions**: When damage is applied to targets
+- **Status Conditions**: When status effects and gear are applied to targets
+- **Transformation Conditions**: When transformations are applied to targets
+
+Each condition type can use any of the available activation methods, allowing for complex and nuanced action card behavior.
+
+### Available Activation Methods
+
+#### Success-Based Conditions
+
+**Never**
+
+- Never activates the effect
+- Use case: Temporarily disable an effect without removing it from the configuration
+- Example: A poison effect that's currently inactive but might be re-enabled later
+
+**One Success**
+
+- Activates when at least one of the two AC (Ability Check) rolls succeeds
+- Use case: Standard attacks where partial success is sufficient
+- Example: A sword strike that deals damage on any hit
+
+**Two Successes**
+
+- Activates only when both AC rolls succeed
+- Use case: Powerful abilities that require exceptional performance
+- Example: A precise strike that only applies bonus damage on a perfect hit
+
+**Zero Successes**
+
+- Activates only when both AC checks fail
+- Use case: Counter-attacks or effects that trigger on failure
+- Example: A defensive maneuver that applies a buff when you miss your attack
+
+#### Roll Value Conditions
+
+**Roll Value**
+
+- Activates when the roll total is at or above the threshold value
+- Use case: Effects that require a minimum level of performance
+- Example: A fireball that deals extra damage if you roll 15 or higher
+- Configuration: Set the threshold value (default: 15)
+
+**Roll Under Value**
+
+- Activates when the roll total is below the threshold value
+- Use case: Effects that trigger on poor performance or low rolls
+- Example: A clumsy attack that causes you to drop your weapon if you roll below 10
+- Configuration: Set the threshold value (default: 15)
+
+**Roll Exact Value**
+
+- Activates only when the roll equals the exact threshold value
+- Use case: Rare, special effects that trigger on specific results
+- Example: A magical effect that only activates when you roll exactly a 20
+- Configuration: Set the threshold value (default: 15)
+- Note: This is a rare condition and should be used carefully
+
+#### Roll Parity Conditions
+
+**Roll Even**
+
+- Activates when the roll total is an even number
+- Use case: Effects based on mathematical properties of the roll
+- Example: A blessing that heals you on even-numbered rolls
+
+**Roll Odd**
+
+- Activates when the roll total is an odd number
+- Use case: Effects based on mathematical properties of the roll
+- Example: A curse that applies on odd-numbered rolls
+
+#### Critical Conditions
+
+**Critical Success**
+
+- Activates on a critical hit (based on die result, not total)
+- Use case: Powerful effects that trigger on exceptional success
+- Example: A devastating attack that applies a stun effect on a critical hit
+- Note: This checks the actual die roll result, not the modified total
+
+**Critical Failure**
+
+- Activates on a critical miss (based on die result, not total)
+- Use case: Negative effects that trigger on catastrophic failure
+- Example: A spell that backfires and damages the caster on a critical miss
+- Note: This checks the actual die roll result, not the modified total
+
+#### Universal Conditions
+
+**Always**
+
+- Always activates the effect regardless of roll result
+- Use case: Effects that should apply every time the action card is used
+- Example: A battle cry that always applies a morale buff to allies
+- Note: Only available in attack chain mode
+
+### Choosing the Right Activation Method
+
+When configuring your action cards, consider these guidelines:
+
+1. **For Standard Attacks**: Use "One Success" for damage and status effects
+2. **For Powerful Abilities**: Use "Two Successes" to require exceptional performance
+3. **For Conditional Effects**: Use "Roll Value" with an appropriate threshold
+4. **For Risk/Reward Mechanics**: Use "Critical Success" or "Critical Failure"
+5. **For Guaranteed Effects**: Use "Always" (attack chain mode only)
+6. **For Temporary Disabling**: Use "Never" to keep the configuration but disable the effect
+
+### Combining Multiple Conditions
+
+You can configure different activation methods for damage, status effects, and transformations within the same action card. This allows for sophisticated gameplay mechanics:
+
+**Example: A Complex Fire Spell**
+
+- Damage: "One Success" (deals damage on any hit)
+- Status Effect (Burn): "Two Successes" (only applies burn on perfect hits)
+- Transformation (Fire Form): "Critical Success" (transforms on critical hits)
+
+**Example: A Defensive Counter-Attack**
+
+- Damage: "Zero Successes" (deals damage when you miss)
+- Status Effect (Stun): "Roll Value" with threshold 18 (stuns on high rolls even when missing)
+- Transformation (Defensive Stance): "Always" (always enters defensive stance)
+
+### Threshold Configuration
+
+For conditions that use a threshold value ("Roll Value", "Roll Under Value", "Roll Exact Value"), you can configure the threshold in the action card settings:
+
+- **Default Threshold**: 15
+- **Minimum Threshold**: 1
+- **Recommended Thresholds**:
+  - Easy conditions: 10-12
+  - Moderate conditions: 13-15
+  - Hard conditions: 16-18
+  - Very hard conditions: 19-20
+
+### Critical Detection
+
+Critical success and failure conditions are based on the actual die roll result, not the modified total. This means:
+
+- A natural 20 on the die triggers "Critical Success" even if modifiers reduce the total below 20
+- A natural 1 on the die triggers "Critical Failure" even if modifiers increase the total above 1
+
+This distinction is important for abilities that should trigger based on the raw luck of the roll rather than the final result.
+
+### Mode-Specific Considerations
+
+**Attack Chain Mode**
+
+- All activation methods are available
+- Conditions are evaluated based on the embedded item's roll result
+- "Always" condition is available for guaranteed effects
+
+**Saved Damage Mode**
+
+- Damage is applied directly without condition evaluation
+- Status effects and transformations are not supported in saved damage mode
+
 ## Using Action Cards
 
 Using an action card is as simple as targeting an opponent and either:
