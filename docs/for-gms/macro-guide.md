@@ -177,24 +177,59 @@ The system supports multiple effect modification types:
 
 #### **Restore Target**
 
-**Purpose**: Heal characters and restore resources.
+**Purpose**: Heal characters and restore resources while removing status effects.
+
+**Technical Details**: Implemented in [`module/ui/macros/restore-target.mjs`](../../module/ui/macros/restore-target.mjs) with proper restoration sequencing.
 
 **Usage**:
 
-1. **Select or target** characters to heal
+1. **Select or target** a single character to restore
 2. **Run the macro**
-3. **Choose restoration type**:
-   - **Resolve**: Heal health/stamina
-   - **Power**: Restore magical energy
-   - **Both**: Full restoration
-4. **Enter amount** or choose full healing
+3. **Configure restoration options**:
+   - **Restore Resolve**: Check to heal health/stamina to maximum
+   - **Restore Power**: Check to restore magical energy to maximum
+   - **Remove All Statuses**: Check to remove all status effects
+   - **Select Individual Statuses**: Choose specific status effects to remove
+4. **Click Restore** to apply changes
 
 **Features**:
 
-- **Flexible Healing**: Partial or complete restoration
-- **Resource Selection**: Heal specific resources
-- **Batch Processing**: Heal multiple characters
-- **Visual Feedback**: Clear indication of healing applied
+- **Flexible Healing**: Restore Resolve, Power, or both to maximum
+- **Status Effect Management**: Remove all status effects or select specific ones
+- **Single Target**: Works on one targeted token at a time
+- **Visual Feedback**: Clear chat message documenting what was restored
+- **Proper Sequencing**: Status effects are removed before resource restoration
+
+**How It Works**:
+
+The Restore Target macro follows a carefully designed sequence to ensure correct restoration:
+
+1. **Status Effect Removal**: Selected status effects are removed first
+2. **Resource Restoration**: Resolve and Power are restored to maximum
+3. **Derived Data Update**: Character calculations update with clean values
+
+**Why This Order Matters**:
+
+This sequencing is critical because Power and Resolve maximums are derived values calculated in [`prepareDerivedData()`](../../module/documents/mixins/actor-resources.mjs:240). Status effects can modify ability totals and multipliers used in these calculations. By removing status effects first, the restoration ensures characters are restored to their true maximum values without status effect modifications interfering.
+
+**Bug Fix (v13.22.0)**:
+
+Prior to v13.22.0, the Restore Target macro had an issue where status effect removal happened too late in the restoration process. This could cause incorrect restoration values if status effects modified the abilities used to calculate maximum Power or Resolve.
+
+**The Fix**: Status effect removal now happens at the beginning of the restoration process, before any resource restoration occurs. This ensures:
+
+- Characters are restored to their correct maximum values
+- No double-dipping from status effect modifications
+- Accurate chat messages reflecting true restoration amounts
+- Consistent behavior across all restoration methods
+
+**Best Practices**:
+
+- **Use for Full Restoration**: Ideal for healing characters between encounters
+- **Clear Status Effects**: Remove detrimental effects when restoring
+- **Single Target**: Only works on one character at a time
+- **GM Only**: Requires GM permissions to execute
+- **Chat Documentation**: All restoration actions are logged to chat for transparency
 
 ### Status Management Macros
 
