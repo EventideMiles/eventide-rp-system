@@ -1,5 +1,5 @@
-import { BaselineSheetMixins } from "../components/_module.mjs";
-import { EventideSheetHelpers } from "../components/_module.mjs";
+import { BaselineSheetMixins } from "../components/baseline-sheet-mixins.mjs";
+import { EventideSheetHelpers } from "../components/eventide-sheet-helpers.mjs";
 import { EmbeddedItemAllMixins } from "../mixins/_module.mjs";
 import { prepareCharacterEffects } from "../../helpers/_module.mjs";
 import { Logger } from "../../services/_module.mjs";

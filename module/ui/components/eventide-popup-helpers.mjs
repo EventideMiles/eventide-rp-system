@@ -1,6 +1,6 @@
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 const { TextEditor } = foundry.applications.ux;
-import { WindowSizingFixMixin } from "./_module.mjs";
+import { WindowSizingFixMixin } from "./window-sizing-fix-mixin.mjs";
 
 export class EventidePopupHelpers extends WindowSizingFixMixin(
   HandlebarsApplicationMixin(ApplicationV2),

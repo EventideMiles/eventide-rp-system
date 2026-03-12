@@ -1,6 +1,6 @@
 import { Logger } from "../../services/_module.mjs";
 import { ErrorHandler, CommonFoundryTasks } from "../../utils/_module.mjs";
-import { BaselineSheetMixins } from "../components/_module.mjs";
+import { BaselineSheetMixins } from "../components/baseline-sheet-mixins.mjs";
 import { ItemSheetAllMixins } from "../mixins/_module.mjs";
 import { EmbeddedItemSheet } from "./embedded-item-sheet.mjs";
 import { ItemSelectorManager } from "../../services/item-selector-manager.mjs";

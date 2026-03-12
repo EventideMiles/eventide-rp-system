@@ -6,7 +6,8 @@
  * character effects processing for item sheets.
  */
 
-import { describe, test, expect, beforeEach, jest } from '@jest/globals';
+// Vitest globals are enabled, so we don't need to import them
+// describe, test, expect, beforeEach, vi are available globally
 import { CharacterEffectsProcessor } from '../../../module/services/character-effects-processor.mjs';
 
 describe('CharacterEffectsProcessor', () => {
@@ -16,7 +17,7 @@ describe('CharacterEffectsProcessor', () => {
     beforeEach(() => {
       // Create a mock form element with querySelectorAll
       mockForm = {
-        querySelectorAll: jest.fn()
+        querySelectorAll: vi.fn()
       };
     });
 
@@ -628,7 +629,7 @@ describe('CharacterEffectsProcessor', () => {
       // Ensure foundry.utils is mocked
       global.foundry = global.foundry || { utils: {} };
       global.foundry.utils = global.foundry.utils || {};
-      global.foundry.utils.randomID = jest.fn(() => 'test-effect-id');
+      global.foundry.utils.randomID = vi.fn(() => 'test-effect-id');
       
       // Ensure CONFIG is mocked
       global.CONFIG = global.CONFIG || {};
@@ -648,12 +649,12 @@ describe('CharacterEffectsProcessor', () => {
         img: 'icons/test.png',
         effects: {
           contents: [],
-          set: jest.fn()
+          set: vi.fn()
         },
         _source: {
           effects: []
         },
-        createEmbeddedDocuments: jest.fn()
+        createEmbeddedDocuments: vi.fn()
       };
     });
 
@@ -729,17 +730,17 @@ describe('CharacterEffectsProcessor', () => {
       mockEffect = {
         _id: 'effect-id',
         name: 'Test Effect',
-        toObject: jest.fn(() => ({ _id: 'effect-id', name: 'Test Effect', changes: [] }))
+        toObject: vi.fn(() => ({ _id: 'effect-id', name: 'Test Effect', changes: [] }))
       };
 
       mockItem = {
-        update: jest.fn(),
-        updateEmbeddedDocuments: jest.fn()
+        update: vi.fn(),
+        updateEmbeddedDocuments: vi.fn()
       };
     });
 
     test('updates effect for virtual item using update method', async () => {
-      const mockUpdate = jest.fn();
+      const mockUpdate = vi.fn();
       mockItem.update = mockUpdate;
       mockItem.update.toString = () => 'function update() { embeddedItem }';
 

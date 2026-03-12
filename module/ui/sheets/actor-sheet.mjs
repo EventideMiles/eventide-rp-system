@@ -5,7 +5,7 @@ import {
   initTabContainerStyling,
   cleanupTabContainerStyling,
 } from "../../helpers/tab-container-styling.mjs";
-import { BaselineSheetMixins } from "../components/_module.mjs";
+import { BaselineSheetMixins } from "../components/baseline-sheet-mixins.mjs";
 import {
   ActorSheetActionsMixin,
   ActorSheetAllMixins,
