@@ -1,5 +1,5 @@
 const { ApplicationV2 } = foundry.applications.api;
-import { BaselineSheetMixins } from "./_module.mjs";
+import { BaselineSheetMixins } from "./baseline-sheet-mixins.mjs";
 import {
   initThemeManager,
   THEME_PRESETS,

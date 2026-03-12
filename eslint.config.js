@@ -3,7 +3,7 @@ import js from "@eslint/js";
 export default [
   // Global ignores
   {
-    ignores: ["coverage/**", "node_modules/**", "tests/**"]
+    ignores: ["coverage/**", "node_modules/**"]
   },
 
   // Main configuration for module files - restrict console.log
@@ -147,6 +147,113 @@ export default [
       ],
       "no-var": "error",
       "prefer-const": "error",
+    },
+  },
+
+  // Mock file configuration - allow global modifications
+  {
+    files: ["tests/jest/mocks/**/*.mjs", "tests/jest/mocks/**/*.js", "tests/global-setup.mjs", "tests/jest/global-setup.mjs"],
+    languageOptions: {
+      ecmaVersion: "latest",
+      sourceType: "module",
+      globals: {
+        // Node.js globals
+        process: "readonly",
+        console: "readonly",
+        globalThis: "writable",
+        global: "writable",
+        setTimeout: "readonly",
+      },
+    },
+    rules: {
+      ...js.configs.recommended.rules,
+
+      // Allow all console usage in mocks
+      "no-console": "off",
+
+      // Variable handling
+      "no-unused-vars": [
+        "error",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+        },
+      ],
+    },
+  },
+
+  // Test file configuration - allow test globals
+  {
+    files: ["tests/**/*.mjs", "tests/**/*.js"],
+    languageOptions: {
+      ecmaVersion: "latest",
+      sourceType: "module",
+      globals: {
+        // Vitest globals
+        describe: "readonly",
+        test: "readonly",
+        it: "readonly",
+        expect: "readonly",
+        beforeEach: "readonly",
+        afterEach: "readonly",
+        beforeAll: "readonly",
+        afterAll: "readonly",
+        vi: "readonly",
+        
+        // FoundryVTT globals
+        game: "readonly",
+        ui: "readonly",
+        canvas: "readonly",
+        foundry: "readonly",
+        CONFIG: "readonly",
+        CONST: "readonly",
+        Hooks: "readonly",
+        Handlebars: "readonly",
+        Actor: "readonly",
+        Item: "readonly",
+        Token: "readonly",
+        User: "readonly",
+        Macro: "readonly",
+        Roll: "readonly",
+        ChatMessage: "readonly",
+        Combat: "readonly",
+        Combatant: "readonly",
+        ActiveEffect: "readonly",
+        FilePicker: "readonly",
+        Dialog: "readonly",
+        Application: "readonly",
+        FormApplication: "readonly",
+        DocumentSheet: "readonly",
+        ActorSheet: "readonly",
+        ItemSheet: "readonly",
+        Folder: "readonly",
+        SortingHelpers: "readonly",
+        FormDataExtended: "readonly",
+        getDocumentClass: "readonly",
+        fromUuid: "readonly",
+        fromUuidSync: "readonly",
+        fetch: "readonly",
+        Event: "readonly",
+        globalThis: "writable",
+        global: "writable",
+        console: "readonly",
+        setTimeout: "readonly",
+      },
+    },
+    rules: {
+      ...js.configs.recommended.rules,
+
+      // Allow all console usage in tests
+      "no-console": "off",
+
+      // Variable handling
+      "no-unused-vars": [
+        "error",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+        },
+      ],
     },
   },
 

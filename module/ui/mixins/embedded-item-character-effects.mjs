@@ -1,4 +1,4 @@
-import { Logger } from "../../services/_module.mjs";
+import { Logger } from "../../services/logger.mjs";
 import { CharacterEffectsProcessor } from "../../services/character-effects-processor.mjs";
 
 /**

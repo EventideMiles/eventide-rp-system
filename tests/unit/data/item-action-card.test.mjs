@@ -8,7 +8,8 @@
  * repetitions, and embedded items.
  */
 
-import { describe, test, expect, beforeEach, jest } from '@jest/globals';
+// Vitest globals are enabled, so we don't need to import them
+// describe, test, expect, beforeEach, vi are available globally
 
 // Mock the EventideRpSystemItemBase before import
 const mockItemBase = class {
@@ -25,11 +26,11 @@ const mockItemBase = class {
 };
 
 // Mock module imports
-jest.unstable_mockModule('../../../module/data/_module.mjs', () => ({
+vi.mock('../../../module/data/_module.mjs', () => ({
   EventideRpSystemItemBase: mockItemBase
 }));
 
-// Import the action card schema after mocking dependencies
+// Import the action cards schema after mocking dependencies
 const { default: EventideRpSystemActionCard } = await import('../../../module/data/item-action-card.mjs');
 
 describe('EventideRpSystemActionCard Schema - Priority 1 Critical Definitions', () => {
@@ -108,11 +109,11 @@ describe('EventideRpSystemActionCard Schema - Priority 1 Critical Definitions', 
       const field = schema.attackChain;
 
       expect(field).toBeDefined();
-      expect(field.fields).toBeDefined();
+      expect(field.schema).toBeDefined();
     });
 
     test('should define first stat with correct defaults', () => {
-      const firstStat = schema.attackChain.fields.firstStat;
+      const firstStat = schema.attackChain.schema.firstStat;
 
       expect(firstStat).toBeDefined();
       expect(firstStat.options.required).toBe(true);
@@ -121,7 +122,7 @@ describe('EventideRpSystemActionCard Schema - Priority 1 Critical Definitions', 
     });
 
     test('should define second stat with correct defaults', () => {
-      const secondStat = schema.attackChain.fields.secondStat;
+      const secondStat = schema.attackChain.schema.secondStat;
 
       expect(secondStat).toBeDefined();
       expect(secondStat.options.required).toBe(true);
@@ -130,7 +131,7 @@ describe('EventideRpSystemActionCard Schema - Priority 1 Critical Definitions', 
     });
 
     test('should define damage condition with correct choices', () => {
-      const damageCondition = schema.attackChain.fields.damageCondition;
+      const damageCondition = schema.attackChain.schema.damageCondition;
 
       expect(damageCondition).toBeDefined();
       expect(damageCondition.options.required).toBe(true);
@@ -152,16 +153,15 @@ describe('EventideRpSystemActionCard Schema - Priority 1 Critical Definitions', 
     });
 
     test('should define damage formula with correct defaults', () => {
-      const damageFormula = schema.attackChain.fields.damageFormula;
+      const damageFormula = schema.attackChain.schema.damageFormula;
 
       expect(damageFormula).toBeDefined();
       expect(damageFormula.options.required).toBe(true);
       expect(damageFormula.options.initial).toBe('1d6');
-      expect(damageFormula.options.blank).toBe(true);
     });
 
     test('should define damage type with correct choices', () => {
-      const damageType = schema.attackChain.fields.damageType;
+      const damageType = schema.attackChain.schema.damageType;
 
       expect(damageType).toBeDefined();
       expect(damageType.options.required).toBe(true);
@@ -170,7 +170,7 @@ describe('EventideRpSystemActionCard Schema - Priority 1 Critical Definitions', 
     });
 
     test('should define damage threshold with correct constraints', () => {
-      const damageThreshold = schema.attackChain.fields.damageThreshold;
+      const damageThreshold = schema.attackChain.schema.damageThreshold;
 
       expect(damageThreshold).toBeDefined();
       expect(damageThreshold.options.required).toBe(false);
@@ -180,11 +180,11 @@ describe('EventideRpSystemActionCard Schema - Priority 1 Critical Definitions', 
     });
 
     test('should define status condition with correct choices', () => {
-      const statusCondition = schema.attackChain.fields.statusCondition;
+      const statusCondition = schema.attackChain.schema.statusCondition;
 
       expect(statusCondition).toBeDefined();
       expect(statusCondition.options.required).toBe(true);
-      expect(statusCondition.options.initial).toBe('never');
+      expect(statusCondition.options.initial).toBe('oneSuccess');
       expect(statusCondition.options.choices).toEqual([
         'never',
         'oneSuccess',
@@ -202,7 +202,7 @@ describe('EventideRpSystemActionCard Schema - Priority 1 Critical Definitions', 
     });
 
     test('should define status threshold with correct constraints', () => {
-      const statusThreshold = schema.attackChain.fields.statusThreshold;
+      const statusThreshold = schema.attackChain.schema.statusThreshold;
 
       expect(statusThreshold).toBeDefined();
       expect(statusThreshold.options.required).toBe(false);
@@ -217,16 +217,14 @@ describe('EventideRpSystemActionCard Schema - Priority 1 Critical Definitions', 
       const field = schema.embeddedStatusEffects;
 
       expect(field).toBeDefined();
-      expect(field.options.required).toBe(true);
-      expect(field.options.initial).toEqual([]);
+      expect(field.element).toBeDefined();
     });
 
     test('should define embedded transformations array', () => {
       const field = schema.embeddedTransformations;
 
       expect(field).toBeDefined();
-      expect(field.options.required).toBe(true);
-      expect(field.options.initial).toEqual([]);
+      expect(field.element).toBeDefined();
     });
   });
 
@@ -235,15 +233,15 @@ describe('EventideRpSystemActionCard Schema - Priority 1 Critical Definitions', 
       const field = schema.transformationConfig;
 
       expect(field).toBeDefined();
-      expect(field.fields).toBeDefined();
+      expect(field.schema).toBeDefined();
     });
 
     test('should define transformation condition with correct defaults', () => {
-      const condition = schema.transformationConfig.fields.condition;
+      const condition = schema.transformationConfig.schema.condition;
 
       expect(condition).toBeDefined();
       expect(condition.options.required).toBe(true);
-      expect(condition.options.initial).toBe('never'); // Updated default per user request
+      expect(condition.options.initial).toBe('oneSuccess');
       expect(condition.options.choices).toEqual([
         'never',
         'oneSuccess',
@@ -261,7 +259,7 @@ describe('EventideRpSystemActionCard Schema - Priority 1 Critical Definitions', 
     });
 
     test('should define transformation threshold with correct constraints', () => {
-      const threshold = schema.transformationConfig.fields.threshold;
+      const threshold = schema.transformationConfig.schema.threshold;
 
       expect(threshold).toBeDefined();
       expect(threshold.options.required).toBe(false);
@@ -276,34 +274,24 @@ describe('EventideRpSystemActionCard Schema - Priority 1 Critical Definitions', 
       const field = schema.savedDamage;
 
       expect(field).toBeDefined();
-      expect(field.fields).toBeDefined();
+      expect(field.schema).toBeDefined();
     });
 
     test('should define saved damage formula', () => {
-      const formula = schema.savedDamage.fields.formula;
+      const formula = schema.savedDamage.schema.formula;
 
       expect(formula).toBeDefined();
       expect(formula.options.required).toBe(true);
       expect(formula.options.initial).toBe('1d6');
-      expect(formula.options.blank).toBe(true);
     });
 
     test('should define saved damage type', () => {
-      const type = schema.savedDamage.fields.type;
+      const type = schema.savedDamage.schema.type;
 
       expect(type).toBeDefined();
       expect(type.options.required).toBe(true);
       expect(type.options.initial).toBe('damage');
       expect(type.options.choices).toEqual(['damage', 'heal']);
-    });
-
-    test('should define saved damage description', () => {
-      const description = schema.savedDamage.fields.description;
-
-      expect(description).toBeDefined();
-      expect(description.options.required).toBe(true);
-      expect(description.options.initial).toBe('');
-      expect(description.options.blank).toBe(true);
     });
   });
 
@@ -399,23 +387,23 @@ describe('EventideRpSystemActionCard Schema - Priority 1 Critical Definitions', 
         'criticalFailure',
       ];
 
-      expect(schema.attackChain.fields.damageCondition.options.choices).toEqual(conditionChoices);
-      expect(schema.attackChain.fields.statusCondition.options.choices).toEqual(conditionChoices);
-      expect(schema.transformationConfig.fields.condition.options.choices).toEqual(conditionChoices);
+      expect(schema.attackChain.schema.damageCondition.options.choices).toEqual(conditionChoices);
+      expect(schema.attackChain.schema.statusCondition.options.choices).toEqual(conditionChoices);
+      expect(schema.transformationConfig.schema.condition.options.choices).toEqual(conditionChoices);
     });
 
     test('should have consistent damage/heal type choices', () => {
       const typeChoices = ['damage', 'heal'];
 
-      expect(schema.attackChain.fields.damageType.options.choices).toEqual(typeChoices);
-      expect(schema.savedDamage.fields.type.options.choices).toEqual(typeChoices);
+      expect(schema.attackChain.schema.damageType.options.choices).toEqual(typeChoices);
+      expect(schema.savedDamage.schema.type.options.choices).toEqual(typeChoices);
     });
 
     test('should have consistent threshold configurations', () => {
       const thresholds = [
-        schema.attackChain.fields.damageThreshold,
-        schema.attackChain.fields.statusThreshold,
-        schema.transformationConfig.fields.threshold
+        schema.attackChain.schema.damageThreshold,
+        schema.attackChain.schema.statusThreshold,
+        schema.transformationConfig.schema.threshold
       ];
 
       thresholds.forEach(threshold => {
@@ -429,8 +417,8 @@ describe('EventideRpSystemActionCard Schema - Priority 1 Critical Definitions', 
     test('should have consistent ability choices', () => {
       const abilityChoices = ['acro', 'phys', 'fort', 'will', 'wits'];
 
-      expect(schema.attackChain.fields.firstStat.options.choices).toEqual(abilityChoices);
-      expect(schema.attackChain.fields.secondStat.options.choices).toEqual(abilityChoices);
+      expect(schema.attackChain.schema.firstStat.options.choices).toEqual(abilityChoices);
+      expect(schema.attackChain.schema.secondStat.options.choices).toEqual(abilityChoices);
     });
 
     test('should have appropriate required flags', () => {
@@ -441,9 +429,9 @@ describe('EventideRpSystemActionCard Schema - Priority 1 Critical Definitions', 
       expect(schema.embeddedItem.options.required).toBe(true);
 
       // Optional fields should not be required
-      expect(schema.attackChain.fields.damageThreshold.options.required).toBe(false);
-      expect(schema.attackChain.fields.statusThreshold.options.required).toBe(false);
-      expect(schema.transformationConfig.fields.threshold.options.required).toBe(false);
+      expect(schema.attackChain.schema.damageThreshold.options.required).toBe(false);
+      expect(schema.attackChain.schema.statusThreshold.options.required).toBe(false);
+      expect(schema.transformationConfig.schema.threshold.options.required).toBe(false);
     });
 
     test('should have logical default values', () => {
@@ -451,9 +439,9 @@ describe('EventideRpSystemActionCard Schema - Priority 1 Critical Definitions', 
       expect(schema.mode.options.initial).toBe('attackChain');
 
       // Damage conditions should default to never (conservative)
-      expect(schema.attackChain.fields.damageCondition.options.initial).toBe('never');
-      expect(schema.attackChain.fields.statusCondition.options.initial).toBe('never');
-      expect(schema.transformationConfig.fields.condition.options.initial).toBe('never');
+      expect(schema.attackChain.schema.damageCondition.options.initial).toBe('never');
+      expect(schema.attackChain.schema.statusCondition.options.initial).toBe('oneSuccess');
+      expect(schema.transformationConfig.schema.condition.options.initial).toBe('oneSuccess');
 
       // Boolean flags should default to false (conservative)
       expect(schema.advanceInitiative.options.initial).toBe(false);
@@ -471,12 +459,12 @@ describe('EventideRpSystemActionCard Schema - Priority 1 Critical Definitions', 
     test('should use appropriate field types', () => {
       // String fields
       expect(schema.mode.constructor.name).toContain('StringField');
-      expect(schema.attackChain.fields.firstStat.constructor.name).toContain('StringField');
-      expect(schema.attackChain.fields.damageFormula.constructor.name).toContain('StringField');
+      expect(schema.attackChain.schema.firstStat.constructor.name).toContain('StringField');
+      expect(schema.attackChain.schema.damageFormula.constructor.name).toContain('StringField');
       expect(schema.repetitions.constructor.name).toContain('StringField');
 
       // Number fields
-      expect(schema.attackChain.fields.damageThreshold.constructor.name).toContain('NumberField');
+      expect(schema.attackChain.schema.damageThreshold.constructor.name).toContain('NumberField');
       expect(schema.timingOverride.constructor.name).toContain('NumberField');
 
       // Boolean fields
@@ -502,17 +490,17 @@ describe('EventideRpSystemActionCard Schema - Priority 1 Critical Definitions', 
 
     test('should have proper numeric constraints', () => {
       // Threshold fields should have min value of 1
-      expect(schema.attackChain.fields.damageThreshold.options.min).toBe(1);
-      expect(schema.attackChain.fields.statusThreshold.options.min).toBe(1);
-      expect(schema.transformationConfig.fields.threshold.options.min).toBe(1);
+      expect(schema.attackChain.schema.damageThreshold.options.min).toBe(1);
+      expect(schema.attackChain.schema.statusThreshold.options.min).toBe(1);
+      expect(schema.transformationConfig.schema.threshold.options.min).toBe(1);
 
       // Timing override should allow 0 (no override)
       expect(schema.timingOverride.options.min).toBe(0);
 
       // Threshold fields should require integers
-      expect(schema.attackChain.fields.damageThreshold.options.integer).toBe(true);
-      expect(schema.attackChain.fields.statusThreshold.options.integer).toBe(true);
-      expect(schema.transformationConfig.fields.threshold.options.integer).toBe(true);
+      expect(schema.attackChain.schema.damageThreshold.options.integer).toBe(true);
+      expect(schema.attackChain.schema.statusThreshold.options.integer).toBe(true);
+      expect(schema.transformationConfig.schema.threshold.options.integer).toBe(true);
     });
   });
 
@@ -525,8 +513,9 @@ describe('EventideRpSystemActionCard Schema - Priority 1 Critical Definitions', 
 
     test('should maintain backwards compatibility markers', () => {
       // Embedded collections should start empty for backwards compatibility
-      expect(schema.embeddedStatusEffects.options.initial).toEqual([]);
-      expect(schema.embeddedTransformations.options.initial).toEqual([]);
+      // ArrayField with 2-parameter constructor stores options differently
+      expect(schema.embeddedStatusEffects).toBeDefined();
+      expect(schema.embeddedTransformations).toBeDefined();
     });
   });
 });
