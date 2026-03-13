@@ -128,16 +128,77 @@ if (!global.foundry.utils.deepClone) {
 global.Roll = class MockRoll {
   constructor(formula, data) {
     this.formula = formula;
-    this.data = data;
+    this.data = data || {};
     this._total = 10; // Default mock result
   }
 
+  /**
+   * Resolve a nested property path from data object
+   * @param {string} path - Dot-separated path like "will.total" or "lvl.value"
+   * @param {object} data - Data object to resolve from
+   * @returns {number} The resolved value or 0
+   */
+  _resolvePath(path, data) {
+    const parts = path.split('.');
+    let current = data;
+    for (const part of parts) {
+      if (current === null || current === undefined) return 0;
+      current = current[part];
+    }
+    const num = Number(current);
+    return isNaN(num) ? 0 : num;
+  }
+
+  /**
+   * Simple formula evaluator for basic mathematical expressions
+   * Supports: +, -, *, /, parentheses, max(), and @property references
+   * @param {string} formula - The formula to evaluate
+   * @param {object} data - Data object for @property references
+   * @returns {number} The evaluated result
+   */
+  _evaluateFormula(formula, data) {
+    try {
+      // Replace @property references with actual values
+      // Handle both @prop and @prop.nested formats
+      let processed = formula.replace(/@([a-zA-Z_][a-zA-Z0-9_]*(?:\.[a-zA-Z_][a-zA-Z0-9_]*)*)/g, (match, path) => {
+        const value = this._resolvePath(path, data);
+        return value;
+      });
+
+      // Handle max() function - convert to Math.max
+      processed = processed.replace(/\bmax\s*\(/gi, 'Math.max(');
+
+      // Safely evaluate the expression using Function constructor
+      // This is safe because we've only allowed numbers and basic math
+      const evalFunc = new Function('return (' + processed + ')');
+      const result = evalFunc();
+
+      if (typeof result !== 'number' || isNaN(result)) {
+        return 10; // Default fallback
+      }
+
+      return result;
+    } catch (error) {
+      console.error('Error evaluating formula:', formula, 'with data:', data, 'Error:', error);
+      return 10; // Default fallback on error
+    }
+  }
+
   evaluateSync() {
-    return this;
+    // Evaluate the formula with data
+    this._total = this._evaluateFormula(this.formula, this.data);
+   
+   // Create terms array for critical state detection
+   // This mimics the structure of a real Foundry Roll object
+   this.terms = [{
+     results: [{ result: this._total }]
+   }];
+   
+   return this;
   }
 
   async evaluate() {
-    return this;
+    return this.evaluateSync();
   }
 
   get total() {
