@@ -46,15 +46,15 @@ jobs:
             --title "chore: sync main to develop after ${{ github.event.release.tag_name || 'manual sync' }}" \
             --body "## Automated Sync PR
 
-This PR automatically syncs changes from \`main\` to \`develop\` after a release.
+          This PR automatically syncs changes from `main` to `develop` after a release.
 
-### Changes
-- Version bump from release ${{ github.event.release.tag_name }}
+          ### Changes
+          - Version bump from release ${{ github.event.release.tag_name }}
 
-### Checklist
-- [ ] Review the changes
-- [ ] Ensure no conflicts exist
-- [ ] Merge when ready"
+          ### Checklist
+          - [ ] Review the changes
+          - [ ] Ensure no conflicts exist
+          - [ ] Merge when ready"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -64,14 +64,14 @@ This PR automatically syncs changes from \`main\` to \`develop\` after a release
           gh pr edit ${{ steps.check_pr.outputs.pr_number }} \
             --body "## Automated Sync PR (Updated)
 
-This PR syncs changes from \`main\` to \`develop\`.
+          This PR syncs changes from `main` to `develop`.
 
-### Latest Release
-${{ github.event.release.tag_name }}
+          ### Latest Release
+          ${{ github.event.release.tag_name }}
 
-### Checklist
-- [ ] Review the changes
-- [ ] Ensure no conflicts exist
-- [ ] Merge when ready"
+          ### Checklist
+          - [ ] Review the changes
+          - [ ] Ensure no conflicts exist
+          - [ ] Merge when ready"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
