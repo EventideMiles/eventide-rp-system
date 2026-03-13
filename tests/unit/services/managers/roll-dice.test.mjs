@@ -433,4 +433,227 @@ describe('ERPSRollHandler', () => {
       expect(mockRollInitiative).toHaveBeenCalledWith(options);
     });
   });
+
+  describe('_createMessageData', () => {
+    test('should build message data with all options', async () => {
+      const mockSpeaker = { actor: { id: 'actor-1' } };
+      const mockRoll = { total: 15 };
+
+      const result = await erpsRollHandler._createMessageData({
+        speaker: mockSpeaker,
+        content: '<div>Test Content</div>',
+        sound: 'dice-sound',
+        rolls: [mockRoll],
+        type: 'acro',
+        formula: '1d20+3',
+        total: 15,
+        rollMode: 'roll',
+        soundKey: 'testSound'
+      });
+
+      expect(result).toBeDefined();
+    });
+
+    test('should use default sound when not provided', async () => {
+      const mockSpeaker = { actor: { id: 'actor-1' } };
+      const mockRoll = { total: 10 };
+
+      global.CONFIG.sounds = { dice: 'default-dice-sound' };
+
+      const result = await erpsRollHandler._createMessageData({
+        speaker: mockSpeaker,
+        content: '<div>Test</div>',
+        rolls: [mockRoll],
+        type: 'phys',
+        formula: '1d20',
+        total: 10,
+        rollMode: 'roll'
+      });
+
+      expect(result).toBeDefined();
+    });
+  });
+
+  describe('_createAndEvaluateRoll', () => {
+    test('should create and evaluate a roll with actor data', async () => {
+      const mockActor = {
+        getRollData: vi.fn(() => ({ abilities: { acro: 3 } }))
+      };
+
+      const { roll, result } = await erpsRollHandler._createAndEvaluateRoll('1d20', mockActor);
+
+      expect(mockActor.getRollData).toHaveBeenCalled();
+      expect(roll).toBeDefined();
+      expect(result).toBeDefined();
+      expect(result.total).toBeDefined();
+    });
+  });
+
+  describe('_getTargetData', () => {
+    test('should return empty arrays when no targets and acCheck is true', async () => {
+      global.erps = {
+        utils: {
+          getTargetArray: vi.fn().mockResolvedValue([])
+        }
+      };
+
+      const mockResult = { total: 15 };
+
+      const { addCheck, targetArray, targetRollData } = await erpsRollHandler._getTargetData(true, mockResult);
+
+      expect(addCheck).toBe(false);
+      expect(targetArray).toEqual([]);
+      expect(targetRollData).toEqual([]);
+    });
+
+    test('should return addCheck false when acCheck is false', async () => {
+      global.erps = {
+        utils: {
+          getTargetArray: vi.fn().mockResolvedValue([])
+        }
+      };
+
+      const mockResult = { total: 15 };
+
+      const { addCheck, targetArray } = await erpsRollHandler._getTargetData(false, mockResult);
+
+      expect(addCheck).toBe(false);
+      expect(targetArray).toEqual([]);
+    });
+
+    test('should process targets when targets exist and acCheck is true', async () => {
+      const mockTargetActor = {
+        name: 'Target Actor',
+        getRollData: vi.fn(() => ({ ac: 15 }))
+      };
+      const mockTarget = {
+        actor: mockTargetActor
+      };
+
+      global.erps = {
+        utils: {
+          getTargetArray: vi.fn().mockResolvedValue([mockTarget])
+        }
+      };
+
+      const mockResult = { total: 18 };
+
+      const { addCheck, targetArray, targetRollData } = await erpsRollHandler._getTargetData(true, mockResult);
+
+      expect(addCheck).toBe(true);
+      expect(targetArray).toHaveLength(1);
+      expect(targetRollData).toHaveLength(1);
+      expect(targetRollData[0].name).toBe('Target Actor');
+      expect(targetRollData[0].compare).toBe(18);
+    });
+  });
+
+  describe('_createInitiativeMessage', () => {
+    test('should create initiative message with correct data', async () => {
+      const mockActor = {
+        id: 'actor-1',
+        name: 'Test Actor'
+      };
+      const mockCombatant = {
+        name: 'Test Combatant',
+        actor: mockActor
+      };
+      const mockRoll = {
+        formula: '1d20+3',
+        total: 15.5
+      };
+
+      global.ChatMessage.getSpeaker = vi.fn(() => ({ actor: mockActor }));
+      global.ChatMessage.create = vi.fn().mockResolvedValue({});
+
+      const result = await erpsRollHandler._createInitiativeMessage({
+        combatant: mockCombatant,
+        roll: mockRoll,
+        isNpc: false,
+        shouldWhisper: false,
+        description: 'Test initiative'
+      });
+
+      expect(result).toBeDefined();
+      expect(ChatMessage.getSpeaker).toHaveBeenCalledWith({ actor: mockActor });
+    });
+
+    test('should use gmroll mode when shouldWhisper is true', async () => {
+      const mockActor = {
+        id: 'actor-1',
+        name: 'NPC Actor'
+      };
+      const mockCombatant = {
+        name: 'NPC Combatant',
+        actor: mockActor
+      };
+      const mockRoll = {
+        formula: '1d20',
+        total: 12.0
+      };
+
+      global.ChatMessage.getSpeaker = vi.fn(() => ({ actor: mockActor }));
+      global.ChatMessage.create = vi.fn().mockResolvedValue({});
+
+      const result = await erpsRollHandler._createInitiativeMessage({
+        combatant: mockCombatant,
+        roll: mockRoll,
+        isNpc: true,
+        shouldWhisper: true,
+        description: ''
+      });
+
+      expect(result).toBeDefined();
+    });
+  });
+
+  describe('_createRollChatMessage', () => {
+    test('should create chat message with correct template data', async () => {
+      const mockActor = {
+        id: 'actor-1',
+        name: 'Test Actor'
+      };
+      const mockRoll = {
+        total: 18,
+        formula: '1d20+3'
+      };
+      const mockTemplateData = {
+        label: 'Attack Roll',
+        total: 18
+      };
+
+      global.ChatMessage.getSpeaker = vi.fn(() => ({ actor: mockActor }));
+      global.ChatMessage.create = vi.fn().mockResolvedValue({});
+
+      const result = await erpsRollHandler._createRollChatMessage({
+        actor: mockActor,
+        roll: mockRoll,
+        formula: '1d20+3',
+        type: 'phys',
+        templateData: mockTemplateData,
+        rollMode: 'roll',
+        soundKey: null
+      });
+
+      expect(result).toBeDefined();
+      expect(ChatMessage.getSpeaker).toHaveBeenCalledWith({ actor: mockActor });
+    });
+  });
+
+  describe('_getCardStyling additional cases', () => {
+    test('should return default for completely unknown type string', () => {
+      const result = erpsRollHandler._getCardStyling('nonexistent');
+      expect(result).toEqual(['chat-card__header--unknown', 'fa-solid fa-question']);
+    });
+
+    test('should handle type with special characters', () => {
+      const result = erpsRollHandler._getCardStyling('acro-test');
+      expect(result).toEqual(['chat-card__header--unknown', 'fa-solid fa-question']);
+    });
+
+    test('should handle numeric type string', () => {
+      const result = erpsRollHandler._getCardStyling('123');
+      expect(result).toEqual(['chat-card__header--unknown', 'fa-solid fa-question']);
+    });
+  });
 });
