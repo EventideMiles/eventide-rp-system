@@ -32,7 +32,8 @@
     "release": "npm run release:linux || npm run release:win",
     "release:linux": "bash release_script.sh",
     "release:win": "release_script.bat",
-    "prepare": "husky"
+    "prepare": "husky",
+    "version:bump": "node scripts/bump-version.js"
   },
   "browserslist": [
     "last 3 versions"
