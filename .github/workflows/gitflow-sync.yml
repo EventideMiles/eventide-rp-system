@@ -1,0 +1,77 @@
+name: GitFlow Sync
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  create-sync-pr:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Check for existing sync PR
+        id: check_pr
+        run: |
+          EXISTING=$(gh pr list --base develop --head main --state open --json number -q '.[0].number' 2>/dev/null || echo "")
+          if [ -n "$EXISTING" ]; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+            echo "pr_number=$EXISTING" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create sync PR
+        if: steps.check_pr.outputs.exists == 'false'
+        run: |
+          gh pr create \
+            --base develop \
+            --head main \
+            --title "chore: sync main to develop after ${{ github.event.release.tag_name || 'manual sync' }}" \
+            --body "## Automated Sync PR
+
+          This PR automatically syncs changes from `main` to `develop` after a release.
+
+          ### Changes
+          - Version bump from release ${{ github.event.release.tag_name }}
+
+          ### Checklist
+          - [ ] Review the changes
+          - [ ] Ensure no conflicts exist
+          - [ ] Merge when ready"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update existing PR
+        if: steps.check_pr.outputs.exists == 'true'
+        run: |
+          gh pr edit ${{ steps.check_pr.outputs.pr_number }} \
+            --body "## Automated Sync PR (Updated)
+
+          This PR syncs changes from `main` to `develop`.
+
+          ### Latest Release
+          ${{ github.event.release.tag_name }}
+
+          ### Checklist
+          - [ ] Review the changes
+          - [ ] Ensure no conflicts exist
+          - [ ] Merge when ready"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

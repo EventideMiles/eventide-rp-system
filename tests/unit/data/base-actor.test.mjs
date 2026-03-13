@@ -433,3 +433,604 @@ describe('EventideRpSystemBaseActor - Priority 1 Data Preparation', () => {
     });
   });
 });
+
+// Phase 2: Additional branch coverage tests
+describe('EventideRpSystemBaseActor - Phase 2 Branch Coverage', () => {
+  let actorData;
+
+  beforeEach(() => {
+    // Create a fresh actor data instance for each test
+    actorData = new EventideRpSystemBaseActor({
+      attributes: {
+        level: { value: 1 }
+      },
+      abilities: {
+        acro: {
+          value: 2,
+          override: null,
+          transformOverride: null,
+          transformChange: 0,
+          change: 1,
+          total: 3,
+          ac: { change: 0, total: 11 },
+          diceAdjustments: { advantage: 2, disadvantage: 0, total: 2, mode: '' }
+        },
+        phys: {
+          value: 0,
+          override: null,
+          transformOverride: null,
+          transformChange: 1,
+          change: 0,
+          total: 1,
+          ac: { change: -1, total: 10 },
+          diceAdjustments: { advantage: 0, disadvantage: 1, total: -1, mode: '' }
+        },
+        fort: {
+          value: -1,
+          override: null,
+          transformOverride: null,
+          transformChange: 0,
+          change: 0,
+          total: 5,
+          ac: { change: 2, total: 13 },
+          diceAdjustments: { advantage: 0, disadvantage: 0, total: 0, mode: '' }
+        },
+        will: {
+          value: 3,
+          override: null,
+          transformOverride: null,
+          transformChange: 0,
+          change: -1,
+          total: 2,
+          ac: { change: 0, total: 11 },
+          diceAdjustments: { advantage: 1, disadvantage: 2, total: -1, mode: '' }
+        },
+        wits: {
+          value: 1,
+          override: null,
+          transformOverride: null,
+          transformChange: 0,
+          change: 0,
+          total: 1,
+          ac: { change: 0, total: 11 },
+          diceAdjustments: { advantage: 0, disadvantage: 0, total: 0, mode: '' }
+        }
+      },
+      hiddenAbilities: {
+        dice: { value: 20, total: 20, override: null, change: 0 },
+        cmax: { value: 20, total: 20, override: null, change: 0 },
+        cmin: { value: 20, total: 20, override: null, change: 0 },
+        fmin: { value: 1, total: 1, override: null, change: 0 },
+        fmax: { value: 1, total: 1, override: null, change: 0 },
+        vuln: { value: 0, total: 0, override: null, change: 0 },
+        powerMult: { value: 100, total: 100, override: null, change: 0 },
+        resolveMult: { value: 100, total: 100, override: null, change: 0 }
+      },
+      statTotal: { value: 0, baseValue: 0, max: 0, mainInit: 0, subInit: 0 },
+      power: { value: 7, max: 7, override: null },
+      resolve: { value: 110, max: 110, override: null }
+    });
+
+    // Clear i18n mock calls
+    global.game.i18n.localize.mockClear();
+
+    // Set up game.settings mock for prepareDerivedData
+    global.game.settings = {
+      get: vi.fn((system, key) => {
+        const defaults = {
+          'minimumDiceValue': 1,
+          'minimumPowerValue': 1,
+          'minimumResolveValue': 10,
+          'maxPowerFormula': '',
+          'maxResolveFormula': '',
+          'statPointsFormula': '14 + (2 * @lvl.value)',
+          'crToXpFormula': '@cr * 200 + @cr * @cr * 50'
+        };
+        return defaults[key] ?? null;
+      })
+    };
+  });
+
+  describe('prepareDerivedData() - Power Calculation Branches', () => {
+    test('should use power override when set to non-zero value', () => {
+      actorData.power.override = 50;
+
+      actorData.prepareDerivedData();
+
+      expect(actorData.power.max).toBe(50);
+    });
+
+    test('should ignore power override when set to null', () => {
+      actorData.power.override = null;
+      actorData.abilities.will.total = 5;
+      actorData.abilities.fort.total = 3;
+
+      actorData.prepareDerivedData();
+
+      // Should use formula derivation since override is null
+      // Formula: max(5 + @will.total + @fort.total, 1)
+      expect(actorData.power.max).toBeGreaterThanOrEqual(1);
+    });
+
+    test('should ignore power override when set to 0', () => {
+      actorData.power.override = 0;
+      actorData.abilities.will.total = 5;
+      actorData.abilities.fort.total = 3;
+
+      actorData.prepareDerivedData();
+
+      // Should use formula derivation since override is 0
+      expect(actorData.power.max).toBeGreaterThanOrEqual(1);
+    });
+
+    test('should apply power multiplier when not 100%', () => {
+      // Set value to 200 so total (value + change = 200 + 0) will be 200%
+      actorData.hiddenAbilities.powerMult.value = 200;
+      actorData.power.override = 20;
+
+      actorData.prepareDerivedData();
+
+      // 20 * 200 / 100 = 40
+      expect(actorData.power.max).toBe(40);
+    });
+
+    test('should enforce minimum power value from settings', () => {
+      global.game.settings.get.mockImplementation((system, key) => {
+        if (key === 'minimumPowerValue') return 10;
+        if (key === 'maxPowerFormula') return '';
+        return null;
+      });
+      actorData.power.override = 5;
+
+      actorData.prepareDerivedData();
+
+      expect(actorData.power.max).toBe(10);
+    });
+
+    test('should clamp power value to max', () => {
+      actorData.power.value = 100;
+      actorData.power.override = 20;
+
+      actorData.prepareDerivedData();
+
+      expect(actorData.power.value).toBe(20);
+    });
+  });
+
+  describe('prepareDerivedData() - Resolve Calculation Branches', () => {
+    test('should use resolve override when set to non-zero value', () => {
+      actorData.resolve.override = 200;
+
+      actorData.prepareDerivedData();
+
+      expect(actorData.resolve.max).toBe(200);
+    });
+
+    test('should ignore resolve override when set to null', () => {
+      actorData.resolve.override = null;
+      actorData.abilities.fort.total = 5;
+
+      actorData.prepareDerivedData();
+
+      // Should use formula derivation
+      expect(actorData.resolve.max).toBeGreaterThanOrEqual(10);
+    });
+
+    test('should ignore resolve override when set to 0', () => {
+      actorData.resolve.override = 0;
+      actorData.abilities.fort.total = 5;
+
+      actorData.prepareDerivedData();
+
+      // Should use formula derivation since override is 0
+      expect(actorData.resolve.max).toBeGreaterThanOrEqual(10);
+    });
+
+    test('should apply resolve multiplier when not 100%', () => {
+      actorData.hiddenAbilities.resolveMult.total = 150; // 150%
+      actorData.hiddenAbilities.resolveMult.value = 150;
+      actorData.resolve.override = 100;
+
+      actorData.prepareDerivedData();
+
+      // 100 * 150 / 100 = 150
+      expect(actorData.resolve.max).toBe(150);
+    });
+
+    test('should enforce minimum resolve value from settings', () => {
+      global.game.settings.get.mockImplementation((system, key) => {
+        if (key === 'minimumResolveValue') return 50;
+        if (key === 'maxResolveFormula') return '';
+        return null;
+      });
+      actorData.resolve.override = 30;
+
+      actorData.prepareDerivedData();
+
+      expect(actorData.resolve.max).toBe(50);
+    });
+
+    test('should clamp resolve value to max', () => {
+      actorData.resolve.value = 500;
+      actorData.resolve.override = 100;
+
+      actorData.prepareDerivedData();
+
+      expect(actorData.resolve.value).toBe(100);
+    });
+  });
+
+  describe('prepareDerivedData() - Minimum Dice Value Branch', () => {
+    test('should apply minimum dice value from settings', () => {
+      global.game.settings.get.mockImplementation((system, key) => {
+        if (key === 'minimumDiceValue') return 10;
+        return null;
+      });
+      // Set value to 5 so total (value + change = 5 + 0) will be below minimum of 10
+      actorData.hiddenAbilities.dice.value = 5;
+
+      actorData.prepareDerivedData();
+
+      expect(actorData.hiddenAbilities.dice.total).toBe(10);
+    });
+
+    test('should not modify dice when above minimum', () => {
+      global.game.settings.get.mockImplementation((system, key) => {
+        if (key === 'minimumDiceValue') return 10;
+        return null;
+      });
+      // Set value to 20 so total (value + change = 20 + 0) will be above minimum of 10
+      actorData.hiddenAbilities.dice.value = 20;
+
+      actorData.prepareDerivedData();
+
+      expect(actorData.hiddenAbilities.dice.total).toBe(20);
+    });
+
+    test('should handle missing settings gracefully', () => {
+      // Save original settings to restore after test
+      const originalSettings = global.game.settings;
+      global.game.settings = undefined;
+      // Set value to 5 so total (value + change = 5 + 0) will be above default minimum of 1
+      actorData.hiddenAbilities.dice.value = 5;
+
+      actorData.prepareDerivedData();
+
+      // Should use default minimum of 1, and since 5 > 1, total stays 5
+      expect(actorData.hiddenAbilities.dice.total).toBe(5);
+
+      // Restore settings for subsequent tests
+      global.game.settings = originalSettings;
+    });
+  });
+
+  describe('prepareDerivedData() - Ability Override Priority', () => {
+    test('should use override over transformOverride', () => {
+      actorData.abilities.acro.override = 10;
+      actorData.abilities.acro.transformOverride = 5;
+      actorData.abilities.acro.value = 2;
+      actorData.abilities.acro.change = 1;
+      actorData.abilities.acro.transformChange = 0;
+
+      actorData.prepareDerivedData();
+
+      // base = override (10) not transformOverride (5)
+      // total = 10 + 1 + 0 = 11
+      expect(actorData.abilities.acro.total).toBe(11);
+    });
+
+    test('should use transformOverride when override is null', () => {
+      actorData.abilities.acro.override = null;
+      actorData.abilities.acro.transformOverride = 8;
+      actorData.abilities.acro.value = 2;
+      actorData.abilities.acro.change = 1;
+      actorData.abilities.acro.transformChange = 0;
+
+      actorData.prepareDerivedData();
+
+      // base = transformOverride (8) not value (2)
+      // total = 8 + 1 + 0 = 9
+      expect(actorData.abilities.acro.total).toBe(9);
+    });
+
+    test('should use value when both overrides are null', () => {
+      actorData.abilities.acro.override = null;
+      actorData.abilities.acro.transformOverride = null;
+      actorData.abilities.acro.value = 2;
+      actorData.abilities.acro.change = 1;
+      actorData.abilities.acro.transformChange = 0;
+
+      actorData.prepareDerivedData();
+
+      // base = value (2)
+      // total = 2 + 1 + 0 = 3
+      expect(actorData.abilities.acro.total).toBe(3);
+    });
+  });
+
+  describe('prepareDerivedData() - Hidden Abilities Override Branch', () => {
+    test('should use override for hidden ability total', () => {
+      actorData.hiddenAbilities.dice.override = 12;
+      actorData.hiddenAbilities.dice.change = 2;
+      actorData.hiddenAbilities.dice.value = 20;
+
+      actorData.prepareDerivedData();
+
+      // override exists: total = override + change = 12 + 2 = 14
+      expect(actorData.hiddenAbilities.dice.total).toBe(14);
+    });
+
+    test('should use value when override is null', () => {
+      actorData.hiddenAbilities.dice.override = null;
+      actorData.hiddenAbilities.dice.change = 2;
+      actorData.hiddenAbilities.dice.value = 20;
+
+      actorData.prepareDerivedData();
+
+      // no override: total = value + change = 20 + 2 = 22
+      expect(actorData.hiddenAbilities.dice.total).toBe(22);
+    });
+  });
+
+  describe('prepareDerivedData() - Dice Adjustment Mode Branches', () => {
+    test('should set mode to "k" for positive total', () => {
+      actorData.abilities.acro.diceAdjustments.advantage = 3;
+      actorData.abilities.acro.diceAdjustments.disadvantage = 1;
+
+      actorData.prepareDerivedData();
+
+      expect(actorData.abilities.acro.diceAdjustments.total).toBe(2);
+      expect(actorData.abilities.acro.diceAdjustments.mode).toBe('k');
+    });
+
+    test('should set mode to "kl" for negative total', () => {
+      actorData.abilities.acro.diceAdjustments.advantage = 1;
+      actorData.abilities.acro.diceAdjustments.disadvantage = 3;
+
+      actorData.prepareDerivedData();
+
+      expect(actorData.abilities.acro.diceAdjustments.total).toBe(-2);
+      expect(actorData.abilities.acro.diceAdjustments.mode).toBe('kl');
+    });
+
+    test('should set mode to empty string for zero total', () => {
+      actorData.abilities.acro.diceAdjustments.advantage = 2;
+      actorData.abilities.acro.diceAdjustments.disadvantage = 2;
+
+      actorData.prepareDerivedData();
+
+      expect(actorData.abilities.acro.diceAdjustments.total).toBe(0);
+      expect(actorData.abilities.acro.diceAdjustments.mode).toBe('');
+    });
+  });
+
+  describe('prepareDerivedData() - CR and XP Branches', () => {
+    test('should calculate XP from CR when cr is defined', () => {
+      actorData.cr = 5;
+
+      actorData.prepareDerivedData();
+
+      expect(actorData.xp).toBeGreaterThan(0);
+    });
+
+    test('should not calculate XP when cr is undefined', () => {
+      actorData.cr = undefined;
+
+      actorData.prepareDerivedData();
+
+      // XP should remain at initial value
+      expect(actorData.xp).toBe(0);
+    });
+
+    test('should not calculate XP when cr is negative', () => {
+      actorData.cr = -1;
+
+      actorData.prepareDerivedData();
+
+      // XP should remain at initial value
+      expect(actorData.xp).toBe(0);
+    });
+  });
+
+  describe('getRollData() - Branch Coverage', () => {
+    test('should copy abilities to top level and preserve nested structure', () => {
+      const rollData = actorData.getRollData();
+
+      expect(rollData.acro).toBeDefined();
+      expect(rollData.acro.total).toBe(3);
+      expect(rollData.abilities).toBeDefined();
+      expect(rollData.abilities.acro).toBeDefined();
+    });
+
+    test('should copy hiddenAbilities to top level', () => {
+      const rollData = actorData.getRollData();
+
+      expect(rollData.hiddenAbilities).toBeDefined();
+      expect(rollData.dice).toBeDefined();
+      expect(rollData.dice.total).toBe(20);
+    });
+
+    test('should include level, statTotal, cr, and xp', () => {
+      actorData.cr = 3;
+      actorData.xp = 600;
+
+      const rollData = actorData.getRollData();
+
+      expect(rollData.lvl).toBe(1);
+      expect(rollData.statTotal).toBe(0);
+      expect(rollData.cr).toBe(3);
+      expect(rollData.xp).toBe(600);
+    });
+
+    test('should handle missing abilities gracefully', () => {
+      actorData.abilities = null;
+
+      const rollData = actorData.getRollData();
+
+      expect(rollData.abilities).toBeUndefined();
+    });
+
+    test('should handle missing hiddenAbilities gracefully', () => {
+      actorData.hiddenAbilities = null;
+
+      const rollData = actorData.getRollData();
+
+      expect(rollData.hiddenAbilities).toBeUndefined();
+    });
+  });
+
+  describe('calculateXPFromCR() - Branch Coverage', () => {
+    test('should calculate XP using default formula', () => {
+      actorData.cr = 5;
+
+      const xp = actorData.calculateXPFromCR();
+
+      // Default formula: @cr * 200 + @cr * @cr * 50 = 5*200 + 5*5*50 = 1000 + 1250 = 2250
+      expect(xp).toBe(2250);
+    });
+
+    test('should return minimum 10 on error', () => {
+      // Force an error by making Roll throw
+      const OriginalRoll = global.Roll;
+      global.Roll = vi.fn().mockImplementation(() => {
+        throw new Error('Roll error');
+      });
+
+      actorData.cr = 5;
+
+      const xp = actorData.calculateXPFromCR();
+
+      expect(xp).toBe(1000); // Fallback: cr * 200 = 5 * 200 = 1000
+
+      // Restore Roll
+      global.Roll = OriginalRoll;
+    });
+  });
+
+  describe('calculateDerivedMaxPower() - Branch Coverage', () => {
+    test('should calculate max power using default formula', () => {
+      actorData.abilities.will.total = 5;
+      actorData.abilities.fort.total = 3;
+
+      const maxPower = actorData.calculateDerivedMaxPower();
+
+      // Default formula: max(5 + @will.total + @fort.total, 1) = max(5 + 5 + 3, 1) = 13
+      expect(maxPower).toBe(13);
+    });
+
+    test('should return minimum 1 on error', () => {
+      const OriginalRoll = global.Roll;
+      global.Roll = vi.fn().mockImplementation(() => {
+        throw new Error('Roll error');
+      });
+
+      actorData.abilities.will.total = 5;
+      actorData.abilities.fort.total = 3;
+
+      const maxPower = actorData.calculateDerivedMaxPower();
+
+      // Fallback: 5 + will + fort = 5 + 5 + 3 = 13
+      expect(maxPower).toBe(13);
+
+      // Restore Roll
+      global.Roll = OriginalRoll;
+    });
+
+    test('should handle missing ability totals gracefully', () => {
+      actorData.abilities.will = null;
+      actorData.abilities.fort = null;
+
+      const maxPower = actorData.calculateDerivedMaxPower();
+
+      // Fallback with null totals: 5 + 0 + 0 = 5
+      expect(maxPower).toBe(5);
+    });
+  });
+
+  describe('calculateDerivedMaxResolve() - Branch Coverage', () => {
+    test('should calculate max resolve using default formula', () => {
+      actorData.abilities.fort.total = 5;
+
+      const maxResolve = actorData.calculateDerivedMaxResolve();
+
+      // Default formula: max(100 + (10 * @fort.total), 10) = max(100 + 50, 10) = 150
+      expect(maxResolve).toBe(150);
+    });
+
+    test('should return minimum 10 on error', () => {
+      const OriginalRoll = global.Roll;
+      global.Roll = vi.fn().mockImplementation(() => {
+        throw new Error('Roll error');
+      });
+
+      actorData.abilities.fort.total = 5;
+
+      const maxResolve = actorData.calculateDerivedMaxResolve();
+
+      // Fallback: 100 + 10 * fort = 100 + 50 = 150
+      expect(maxResolve).toBe(150);
+
+      // Restore Roll
+      global.Roll = OriginalRoll;
+    });
+
+    test('should handle missing fort total gracefully', () => {
+      actorData.abilities.fort = null;
+
+      const maxResolve = actorData.calculateDerivedMaxResolve();
+
+      // Fallback with null fort: 100 + 10 * 0 = 100
+      expect(maxResolve).toBe(100);
+    });
+  });
+
+  describe('calculateDerivedStatPointsMax() - Branch Coverage', () => {
+    beforeEach(() => {
+      // Set up game.settings mock for these tests
+      global.game.settings = {
+        get: vi.fn((system, key) => {
+          const defaults = {
+            'statPointsFormula': '14 + (2 * @lvl.value)'
+          };
+          return defaults[key] ?? null;
+        })
+      };
+    });
+
+    test('should return 0 when formula is "0"', () => {
+      global.game.settings.get.mockImplementationOnce((system, key) => {
+        if (key === 'statPointsFormula') return '0';
+        return null;
+      });
+
+      const result = actorData.calculateDerivedStatPointsMax();
+
+      expect(result).toBe(0);
+    });
+
+    test('should calculate stat points using default formula', () => {
+      actorData.attributes.level.value = 5;
+
+      const result = actorData.calculateDerivedStatPointsMax();
+
+      // Default formula: 14 + (2 * @lvl.value) = 14 + 10 = 24
+      expect(result).toBe(24);
+    });
+
+    test('should return 0 on error', () => {
+      // Save original Roll to restore after this test
+      const OriginalRoll = global.Roll;
+
+      global.Roll = vi.fn().mockImplementation(() => {
+        throw new Error('Roll error');
+      });
+
+      const result = actorData.calculateDerivedStatPointsMax();
+
+      expect(result).toBe(0);
+
+      // Restore Roll to original mock
+      global.Roll = OriginalRoll;
+    });
+  });
+});

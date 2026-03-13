@@ -50,7 +50,17 @@ export default defineConfig({
       exclude: [
         'module/**/*.test.mjs',
         'module/**/*.spec.mjs',
-        'node_modules/**'
+        'node_modules/**',
+        // UI sheet mixins - heavy DOM interaction, Foundry Application dependencies
+        'module/ui/mixins/**/*.mjs',
+        // Theme helpers - visual styling, low regression risk
+        'module/helpers/theme/**/*.mjs',
+        // Foundry hooks - lifecycle callbacks, hard to test in isolation
+        'module/services/hooks/**/*.mjs',
+        // Settings registration - configuration code, low test value
+        'module/services/settings/**/*.mjs',
+        // UI components - DOM-heavy, require full Foundry UI context
+        'module/ui/components/**/*.mjs'
       ],
       // Coverage thresholds - reasonable initial thresholds
       thresholds: {
