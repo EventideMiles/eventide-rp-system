@@ -174,6 +174,29 @@ describe('BaseActor', () => {
 
 ### Test Utilities
 
+#### IMPORTANT: Use @rayners/foundry-test-utils - Do Not Reinvent Mocks
+
+**CRITICAL**: Always use `@rayners/foundry-test-utils` for mocking Foundry VTT functions. This library is already configured in [`tests/setup.mjs`](tests/setup.mjs) and provides comprehensive, battle-tested mocks for the Foundry VTT environment.
+
+```javascript
+// ✅ CORRECT: Use global.testUtils from @rayners/foundry-test-utils
+const mockActor = global.testUtils.createMockActor({ ... });
+const mockItem = global.testUtils.createMockItem({ ... });
+const mockRoll = global.testUtils.createMockRoll(...);
+
+// ❌ WRONG: Do not create custom mocks for Foundry globals
+vi.mock('foundry', () => ({ ... }));  // Don't do this!
+```
+
+The library provides mocks for:
+- `game`, `ui`, `canvas`, `CONFIG` globals
+- `foundry.data.fields.*` data field classes
+- `Roll`, `Actor`, `Item`, `ChatMessage` document classes
+- `Hooks`, `Dialog`, `ContextMenu` UI classes
+- And much more - always check `global.testUtils` before creating custom mocks
+
+When you need something not provided by `global.testUtils`, extend the existing mocks rather than replacing them entirely.
+
 #### Available Test Utilities
 
 The test setup provides comprehensive Foundry VTT mocking via [`tests/setup.mjs`](tests/setup.mjs):
