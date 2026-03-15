@@ -31,6 +31,9 @@ if (!global.foundry.applications.ux) {
   global.foundry.applications.ux = {
     TextEditor: class MockTextEditor {
       constructor() {}
+      static implementation = {
+        enrichHTML: vi.fn(() => Promise.resolve('<p>Enriched</p>'))
+      }
     }
   };
 }
