@@ -228,26 +228,34 @@ global.foundry.abstract.TypeDataModel = class EnhancedMockTypeDataModel extends 
   }
   
   _initializeSchemaDefaults(schema, data) {
-    // Recursively initialize schema defaults
+    // Recursively initialize schema defaults and apply data values
     if (!schema) return;
     
     const fields = global.foundry.data.fields;
     for (const [key, field] of Object.entries(schema)) {
+      // First, check if data has a value for this key
+      const hasDataValue = data && key in data;
+      
       if (field instanceof fields.SchemaField) {
         // Initialize nested schema fields
         if (!this[key]) {
           this[key] = {};
         }
-        this._initializeSchemaDefaults(field.fields, data[key] || {});
+        this._initializeSchemaDefaults(field.fields || field.schema, hasDataValue ? data[key] : {});
       } else if (field instanceof fields.ArrayField) {
-        // Initialize array fields
-        if (!this[key]) {
+        // Initialize array fields with data or default
+        if (hasDataValue) {
+          this[key] = data[key];
+        } else if (this[key] === undefined) {
           this[key] = field.options && field.options.initial !== undefined ? field.options.initial : [];
         }
-      } else if (field && (field.initial !== undefined || (field.options && field.options.initial !== undefined))) {
-        // Initialize simple fields with default values
-        if (this[key] === undefined) {
-          this[key] = field.options && field.options.initial !== undefined ? field.options.initial : field.initial;
+      } else {
+        // Initialize simple fields with data value or default
+        const defaultValue = field.options && field.options.initial !== undefined ? field.options.initial : field.initial;
+        if (hasDataValue) {
+          this[key] = data[key];
+        } else if (this[key] === undefined && defaultValue !== undefined) {
+          this[key] = defaultValue;
         }
       }
     }
