@@ -17,6 +17,10 @@ const mockItemBase = class {
       rollActorName: new global.foundry.data.fields.BooleanField({ required: true, initial: true }),
     };
   }
+
+  async update(data, _options = {}) {
+    return this;
+  }
 };
 
 // Mock foundry.utils
@@ -292,7 +296,7 @@ describe('EventideRpSystemTransformation', () => {
   });
 
   describe('removeActionCard()', () => {
-    test('should remove action card by ID', () => {
+    test('should remove action card by ID', async () => {
       transformation.embeddedActionCards = [
         { _id: 'card-1', name: 'Card 1', system: { groupId: 'group-1' } },
         { _id: 'card-2', name: 'Card 2', system: { groupId: 'group-1' } },
@@ -303,7 +307,7 @@ describe('EventideRpSystemTransformation', () => {
         { _id: 'group-2', name: 'Group 2' },
       ];
 
-      transformation.removeActionCard('card-1');
+      await transformation.removeActionCard('card-1');
 
       expect(mockParent.update).toHaveBeenCalledWith({
         'system.embeddedActionCards': [
@@ -316,7 +320,7 @@ describe('EventideRpSystemTransformation', () => {
       });
     });
 
-    test('should remove empty group when last card is removed', () => {
+    test('should remove empty group when last card is removed', async () => {
       transformation.embeddedActionCards = [
         { _id: 'card-1', name: 'Card 1', system: { groupId: 'group-1' } },
       ];
@@ -326,7 +330,7 @@ describe('EventideRpSystemTransformation', () => {
         { _id: 'group-2', name: 'Group 2' },
       ];
 
-      transformation.removeActionCard('card-1');
+      await transformation.removeActionCard('card-1');
 
       expect(mockParent.update).toHaveBeenCalledWith({
         'system.embeddedActionCards': [],
@@ -336,15 +340,15 @@ describe('EventideRpSystemTransformation', () => {
       });
     });
 
-    test('should handle non-existent action card ID gracefully', () => {
+    test('should handle non-existent action card ID gracefully', async () => {
       transformation.embeddedActionCards = [{ _id: 'card-1', name: 'Card 1' }];
 
-      transformation.removeActionCard('non-existent');
+      await transformation.removeActionCard('non-existent');
 
       expect(mockParent.update).not.toHaveBeenCalled();
     });
 
-    test('should handle action card without groupId', () => {
+    test('should handle action card without groupId', async () => {
       transformation.embeddedActionCards = [
         { _id: 'card-1', name: 'Card 1' },
       ];
@@ -353,7 +357,7 @@ describe('EventideRpSystemTransformation', () => {
         { _id: 'group-1', name: 'Group 1' },
       ];
 
-      transformation.removeActionCard('card-1');
+      await transformation.removeActionCard('card-1');
 
       expect(mockParent.update).toHaveBeenCalledWith({
         'system.embeddedActionCards': [],
@@ -361,6 +365,26 @@ describe('EventideRpSystemTransformation', () => {
           { _id: 'group-1', name: 'Group 1' },
         ],
       });
+    });
+
+    test('should return transformation instance for method chaining', async () => {
+      transformation.embeddedActionCards = [
+        { _id: 'card-1', name: 'Card 1' },
+      ];
+
+      const result = await transformation.removeActionCard('card-1');
+
+      expect(result).toBe(transformation);
+    });
+
+    test('should return transformation instance when card not found', async () => {
+      transformation.embeddedActionCards = [
+        { _id: 'card-1', name: 'Card 1' },
+      ];
+
+      const result = await transformation.removeActionCard('non-existent');
+
+      expect(result).toBe(transformation);
     });
   });
 
@@ -408,6 +432,137 @@ describe('EventideRpSystemTransformation', () => {
       const tempItem = mockItemClass.mock.results[0].value;
       expect(tempItem.isEditable).toBe(false);
     });
+
+    test('should create temporary items with correct parent for owned transformation', () => {
+      transformation.embeddedCombatPowers = [{ _id: 'power-1', name: 'Power 1' }];
+
+      const mockItemClass = vi.fn(() => ({
+        sheet: mockParent.sheet,
+        update: vi.fn(),
+      }));
+      global.CONFIG.Item = { documentClass: mockItemClass };
+
+      transformation.getEmbeddedCombatPowers();
+
+      expect(mockItemClass).toHaveBeenCalledWith(
+        { _id: 'power-1', name: 'Power 1' },
+        { parent: mockActor }
+      );
+    });
+
+    test('should create temporary items with null parent for unowned transformation', () => {
+      mockParent.isOwned = false;
+      transformation.embeddedCombatPowers = [{ _id: 'power-1', name: 'Power 1' }];
+
+      const mockItemClass = vi.fn(() => ({
+        sheet: mockParent.sheet,
+        update: vi.fn(),
+      }));
+      global.CONFIG.Item = { documentClass: mockItemClass };
+
+      transformation.getEmbeddedCombatPowers();
+
+      expect(mockItemClass).toHaveBeenCalledWith(
+        { _id: 'power-1', name: 'Power 1' },
+        { parent: null }
+      );
+    });
+
+    test('should provide update method that persists changes to transformation', async () => {
+      transformation.embeddedCombatPowers = [{ _id: 'power-1', name: 'Power 1' }];
+
+      let tempItemInstance;
+      const mockItemClass = vi.fn((data) => {
+        tempItemInstance = {
+          id: data._id,
+          sheet: mockParent.sheet,
+          update: vi.fn(),
+        };
+        return tempItemInstance;
+      });
+      global.CONFIG.Item = { documentClass: mockItemClass };
+
+      const result = transformation.getEmbeddedCombatPowers();
+      const tempItem = result[0];
+
+      // The update method should be overridden
+      expect(typeof tempItem.update).toBe('function');
+    });
+
+    test('should handle null embeddedCombatPowers gracefully', () => {
+      transformation.embeddedCombatPowers = null;
+
+      const result = transformation.getEmbeddedCombatPowers();
+
+      expect(result).toEqual([]);
+    });
+
+    test('should provide update method that updates embedded power data', async () => {
+      transformation.embeddedCombatPowers = [{ _id: 'power-1', name: 'Power 1' }];
+      mockParent.update.mockResolvedValue(transformation);
+
+      let capturedTempItem;
+      const mockItemClass = vi.fn((data) => {
+        capturedTempItem = {
+          id: data._id,
+          sheet: mockParent.sheet,
+        };
+        return capturedTempItem;
+      });
+      global.CONFIG.Item = { documentClass: mockItemClass };
+
+      const result = transformation.getEmbeddedCombatPowers();
+      const tempItem = result[0];
+
+      // Call the custom update method
+      await tempItem.update({ name: 'Updated Power' });
+
+      expect(mockParent.update).toHaveBeenCalledWith({
+        'system.embeddedCombatPowers': [expect.objectContaining({ _id: 'power-1', name: 'Updated Power' })]
+      });
+    });
+
+    test('should close and re-render sheets after updating embedded power', async () => {
+      transformation.embeddedCombatPowers = [{ _id: 'power-1', name: 'Power 1' }];
+      mockParent.update.mockResolvedValue(transformation);
+
+      let capturedTempItem;
+      const mockItemClass = vi.fn((data) => {
+        capturedTempItem = {
+          id: data._id,
+          sheet: mockParent.sheet,
+        };
+        return capturedTempItem;
+      });
+      global.CONFIG.Item = { documentClass: mockItemClass };
+
+      const result = transformation.getEmbeddedCombatPowers();
+      const tempItem = result[0];
+
+      await tempItem.update({ name: 'Updated Power' });
+
+      expect(mockParent.sheet.close).toHaveBeenCalled();
+      expect(mockParent.sheet.render).toHaveBeenCalledWith(true);
+    });
+
+    test('should throw error when updating non-existent embedded power', async () => {
+      transformation.embeddedCombatPowers = [{ _id: 'power-1', name: 'Power 1' }];
+
+      let capturedTempItem;
+      const mockItemClass = vi.fn((_data) => {
+        capturedTempItem = {
+          id: 'different-id',  // This ID doesn't exist in embeddedCombatPowers
+          sheet: mockParent.sheet,
+        };
+        return capturedTempItem;
+      });
+      global.CONFIG.Item = { documentClass: mockItemClass };
+
+      const result = transformation.getEmbeddedCombatPowers();
+      const tempItem = result[0];
+
+      await expect(tempItem.update({ name: 'Updated Power' })).rejects.toThrow();
+    });
   });
 
   describe('getEmbeddedActionCards()', () => {
@@ -436,6 +591,233 @@ describe('EventideRpSystemTransformation', () => {
 
       expect(result).toHaveLength(2);
       expect(mockItemClass).toHaveBeenCalledTimes(2);
+    });
+
+    test('should set editable property based on parent', () => {
+      mockParent.isEditable = false;
+      transformation.embeddedActionCards = [{ _id: 'card-1', name: 'Card 1' }];
+
+      const mockItemClass = vi.fn(() => ({
+        sheet: mockParent.sheet,
+        update: vi.fn(),
+      }));
+      global.CONFIG.Item = { documentClass: mockItemClass };
+
+      transformation.getEmbeddedActionCards();
+
+      const tempItem = mockItemClass.mock.results[0].value;
+      expect(tempItem.isEditable).toBe(false);
+    });
+
+    test('should create temporary items with correct parent for owned transformation', () => {
+      transformation.embeddedActionCards = [{ _id: 'card-1', name: 'Card 1' }];
+
+      const mockItemClass = vi.fn(() => ({
+        sheet: mockParent.sheet,
+        update: vi.fn(),
+      }));
+      global.CONFIG.Item = { documentClass: mockItemClass };
+
+      transformation.getEmbeddedActionCards();
+
+      expect(mockItemClass).toHaveBeenCalledWith(
+        { _id: 'card-1', name: 'Card 1' },
+        { parent: mockActor }
+      );
+    });
+
+    test('should create temporary items with null parent for unowned transformation', () => {
+      mockParent.isOwned = false;
+      transformation.embeddedActionCards = [{ _id: 'card-1', name: 'Card 1' }];
+
+      const mockItemClass = vi.fn(() => ({
+        sheet: mockParent.sheet,
+        update: vi.fn(),
+      }));
+      global.CONFIG.Item = { documentClass: mockItemClass };
+
+      transformation.getEmbeddedActionCards();
+
+      expect(mockItemClass).toHaveBeenCalledWith(
+        { _id: 'card-1', name: 'Card 1' },
+        { parent: null }
+      );
+    });
+
+  });
+
+    describe('getEmbeddedActionCards() - tempItem.update', () => {
+    test('should provide update method that persists changes to transformation', async () => {
+      transformation.embeddedActionCards = [{ _id: 'card-1', name: 'Card 1' }];
+      mockParent.update.mockResolvedValue(transformation);
+
+      let capturedTempItem;
+      const mockItemClass = vi.fn((data) => {
+        capturedTempItem = {
+          id: data._id,
+          sheet: mockParent.sheet,
+          updateSource: vi.fn(),
+        };
+        return capturedTempItem;
+      });
+      global.CONFIG.Item = { documentClass: mockItemClass };
+
+      const result = transformation.getEmbeddedActionCards();
+      const tempItem = result[0];
+
+      // Call the custom update method
+      await tempItem.update({ name: 'Updated Card' });
+
+      expect(mockParent.update).toHaveBeenCalledWith(
+        { 'system.embeddedActionCards': [expect.objectContaining({ _id: 'card-1', name: 'Updated Card' })] },
+        { render: false }
+      );
+    });
+
+    test('should close and re-render sheets for regular updates', async () => {
+      transformation.embeddedActionCards = [{ _id: 'card-1', name: 'Card 1' }];
+      mockParent.update.mockResolvedValue(transformation);
+
+      let capturedTempItem;
+      const mockItemClass = vi.fn((data) => {
+        capturedTempItem = {
+          id: data._id,
+          sheet: mockParent.sheet,
+          updateSource: vi.fn(),
+        };
+        return capturedTempItem;
+      });
+      global.CONFIG.Item = { documentClass: mockItemClass };
+
+      const result = transformation.getEmbeddedActionCards();
+      const tempItem = result[0];
+
+      await tempItem.update({ name: 'Updated Card' });
+
+      expect(mockParent.sheet.close).toHaveBeenCalled();
+      expect(mockParent.sheet.render).toHaveBeenCalledWith(true);
+    });
+
+    test('should refresh sheets without closing for embedded item updates', async () => {
+      transformation.embeddedActionCards = [{ _id: 'card-1', name: 'Card 1' }];
+      mockParent.update.mockResolvedValue(transformation);
+
+      let capturedTempItem;
+      const mockItemClass = vi.fn((data) => {
+        capturedTempItem = {
+          id: data._id,
+          sheet: { ...mockParent.sheet, rendered: true, render: vi.fn() },
+          updateSource: vi.fn(),
+        };
+        return capturedTempItem;
+      });
+      global.CONFIG.Item = { documentClass: mockItemClass };
+
+      const result = transformation.getEmbeddedActionCards();
+      const tempItem = result[0];
+
+      await tempItem.update({ name: 'Updated Card' }, { fromEmbeddedItem: true });
+
+      expect(capturedTempItem.sheet.render).toHaveBeenCalledWith(false);
+      expect(mockParent.sheet.render).toHaveBeenCalledWith(false);
+      expect(mockParent.sheet.close).not.toHaveBeenCalled();
+    });
+
+    test('should refresh sheets without closing for image updates', async () => {
+      transformation.embeddedActionCards = [{ _id: 'card-1', name: 'Card 1' }];
+      mockParent.update.mockResolvedValue(transformation);
+
+      let capturedTempItem;
+      const mockItemClass = vi.fn((data) => {
+        capturedTempItem = {
+          id: data._id,
+          sheet: { ...mockParent.sheet, rendered: true, render: vi.fn() },
+          updateSource: vi.fn(),
+        };
+        return capturedTempItem;
+      });
+      global.CONFIG.Item = { documentClass: mockItemClass };
+
+      const result = transformation.getEmbeddedActionCards();
+      const tempItem = result[0];
+
+      await tempItem.update({ img: 'new-image.png' });
+
+      expect(capturedTempItem.sheet.render).toHaveBeenCalledWith(false);
+      expect(mockParent.sheet.render).toHaveBeenCalledWith(false);
+      expect(mockParent.sheet.close).not.toHaveBeenCalled();
+    });
+
+    test('should throw error when updating non-existent embedded action card', async () => {
+      transformation.embeddedActionCards = [{ _id: 'card-1', name: 'Card 1' }];
+
+      let capturedTempItem;
+      const mockItemClass = vi.fn((_data) => {
+        capturedTempItem = {
+          id: 'different-id',  // This ID doesn't exist in embeddedActionCards
+          sheet: mockParent.sheet,
+          updateSource: vi.fn(),
+        };
+        return capturedTempItem;
+      });
+      global.CONFIG.Item = { documentClass: mockItemClass };
+
+      const result = transformation.getEmbeddedActionCards();
+      const tempItem = result[0];
+
+      await expect(tempItem.update({ name: 'Updated Card' })).rejects.toThrow();
+    });
+
+    test('should handle embedded item updates via system.embeddedItem path', async () => {
+      transformation.embeddedActionCards = [{ _id: 'card-1', name: 'Card 1', system: { embeddedItem: {} } }];
+      mockParent.update.mockResolvedValue(transformation);
+
+      let capturedTempItem;
+      const mockItemClass = vi.fn((data) => {
+        capturedTempItem = {
+          id: data._id,
+          sheet: { ...mockParent.sheet, rendered: true, render: vi.fn() },
+          updateSource: vi.fn(),
+        };
+        return capturedTempItem;
+      });
+      global.CONFIG.Item = { documentClass: mockItemClass };
+
+      const result = transformation.getEmbeddedActionCards();
+      const tempItem = result[0];
+
+      await tempItem.update({ 'system.embeddedItem': { data: 'test' } });
+
+      expect(mockParent.update).toHaveBeenCalledWith(
+        { 'system.embeddedActionCards': expect.arrayContaining([expect.objectContaining({ _id: 'card-1' })]) },
+        { render: false }
+      );
+    });
+
+    test('should handle embedded status effects updates', async () => {
+      transformation.embeddedActionCards = [{ _id: 'card-1', name: 'Card 1', system: { embeddedStatusEffects: [] } }];
+      mockParent.update.mockResolvedValue(transformation);
+
+      let capturedTempItem;
+      const mockItemClass = vi.fn((data) => {
+        capturedTempItem = {
+          id: data._id,
+          sheet: { ...mockParent.sheet, rendered: true, render: vi.fn() },
+          updateSource: vi.fn(),
+        };
+        return capturedTempItem;
+      });
+      global.CONFIG.Item = { documentClass: mockItemClass };
+
+      const result = transformation.getEmbeddedActionCards();
+      const tempItem = result[0];
+
+      await tempItem.update({ 'system.embeddedStatusEffects': [{ effect: 'test' }] });
+
+      expect(mockParent.update).toHaveBeenCalledWith(
+        { 'system.embeddedActionCards': expect.arrayContaining([expect.objectContaining({ _id: 'card-1' })]) },
+        { render: false }
+      );
     });
   });
 
@@ -475,6 +857,60 @@ describe('EventideRpSystemTransformation', () => {
       transformation.prepareDerivedData();
 
       expect(transformation.tokenImage).toBe('custom/token.png');
+    });
+  });
+
+  describe('update()', () => {
+    test('should call parent update for regular updates', async () => {
+      const updateData = { 'system.size': 2 };
+      mockParent.update.mockResolvedValue(transformation);
+
+      const result = await transformation.update(updateData);
+
+      expect(result).toBe(transformation);
+    });
+
+    test('should re-render sheet when sheet is rendered and fromEmbeddedItem is true', async () => {
+      // Set up transformation's own sheet property
+      const mockSheet = {
+        rendered: true,
+        render: vi.fn(),
+      };
+      Object.defineProperty(transformation, 'sheet', {
+        value: mockSheet,
+        configurable: true,
+      });
+      mockParent.update.mockResolvedValue(transformation);
+
+      await transformation.update({}, { fromEmbeddedItem: true });
+
+      expect(mockSheet.render).toHaveBeenCalledWith(false);
+    });
+
+    test('should not re-render sheet when sheet is not rendered', async () => {
+      // Set up transformation's own sheet property
+      const mockSheet = {
+        rendered: false,
+        render: vi.fn(),
+      };
+      Object.defineProperty(transformation, 'sheet', {
+        value: mockSheet,
+        configurable: true,
+      });
+      mockParent.update.mockResolvedValue(transformation);
+
+      await transformation.update({}, { fromEmbeddedItem: true });
+
+      expect(mockSheet.render).not.toHaveBeenCalled();
+    });
+
+    test('should pass through options for regular updates', async () => {
+      const updateData = { 'system.size': 2 };
+      mockParent.update.mockResolvedValue(transformation);
+
+      const result = await transformation.update(updateData, { render: true });
+
+      expect(result).toBe(transformation);
     });
   });
 
