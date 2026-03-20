@@ -51,10 +51,14 @@ describe('EventideRpSystemGear', () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    // Create mock actor
+    // Create mock actor with items collection that supports has(), filter(), map()
+    const mockItems = {
+      has: vi.fn().mockReturnValue(true),
+      filter: vi.fn().mockReturnValue([]),
+    };
     mockActor = {
       name: 'Test Hero',
-      items: new Map(),
+      items: mockItems,
     };
 
     // Create a fresh gear data instance for each test
@@ -67,24 +71,35 @@ describe('EventideRpSystemGear', () => {
     Object.defineProperty(gear, 'actor', {
       value: mockActor,
       writable: true,
+      configurable: true,
     });
 
     // Set name property
     Object.defineProperty(gear, 'name', {
       value: 'Health Potion',
       writable: true,
+      configurable: true,
     });
 
     // Set id property
     Object.defineProperty(gear, 'id', {
       value: 'gear-id',
       writable: true,
+      configurable: true,
     });
 
     // Set parent document
     Object.defineProperty(gear, 'parent', {
       value: { update: vi.fn() },
       writable: true,
+      configurable: true,
+    });
+
+    // Set system property with default cost
+    Object.defineProperty(gear, 'system', {
+      value: { quantity: 5, cost: 1 },
+      writable: true,
+      configurable: true,
     });
   });
 
@@ -244,6 +259,297 @@ describe('EventideRpSystemGear', () => {
       const schema = EventideRpSystemGear.defineSchema();
       expect(schema.roll).toBeDefined();
       expect(schema.roll.schema.type.options.initial).toBe('roll');
+    });
+  });
+
+  describe('prepareDerivedData() - Edge Cases', () => {
+    test('should calculate negative total when disadvantage exceeds advantage', () => {
+      gear.roll = {
+        type: 'roll',
+        ability: 'phys',
+        bonus: 0,
+        diceAdjustments: {
+          advantage: 1,
+          disadvantage: 3,
+          total: 0,
+        },
+      };
+
+      gear.prepareDerivedData();
+
+      expect(gear.roll.diceAdjustments.total).toBe(-2);
+    });
+
+    test('should calculate positive total when advantage exceeds disadvantage', () => {
+      gear.roll = {
+        type: 'roll',
+        ability: 'acro',
+        bonus: 5,
+        diceAdjustments: {
+          advantage: 5,
+          disadvantage: 2,
+          total: 0,
+        },
+      };
+
+      gear.prepareDerivedData();
+
+      expect(gear.roll.diceAdjustments.total).toBe(3);
+    });
+
+    test('should handle equal advantage and disadvantage', () => {
+      gear.roll = {
+        type: 'roll',
+        ability: 'wits',
+        bonus: 2,
+        diceAdjustments: {
+          advantage: 4,
+          disadvantage: 4,
+          total: 0,
+        },
+      };
+
+      gear.prepareDerivedData();
+
+      expect(gear.roll.diceAdjustments.total).toBe(0);
+    });
+  });
+
+  describe('handleBypass()', () => {
+    test('should throw error when actor is null', async () => {
+      // Create a new gear instance with null actor
+      const gearWithNullActor = new EventideRpSystemGear({ description: 'Test' });
+      Object.defineProperty(gearWithNullActor, 'actor', { value: null, writable: true, configurable: true });
+      Object.defineProperty(gearWithNullActor, 'name', { value: 'Test Gear', writable: true, configurable: true });
+      Object.defineProperty(gearWithNullActor, 'system', { value: { cost: 1 }, writable: true, configurable: true });
+
+      await expect(gearWithNullActor.handleBypass({}, {})).rejects.toThrow('Cannot execute gear bypass without an actor');
+    });
+
+    test('should throw error when actor is undefined', async () => {
+      // Create a new gear instance with undefined actor
+      const gearWithUndefinedActor = new EventideRpSystemGear({ description: 'Test' });
+      Object.defineProperty(gearWithUndefinedActor, 'actor', { value: undefined, writable: true, configurable: true });
+      Object.defineProperty(gearWithUndefinedActor, 'name', { value: 'Test Gear', writable: true, configurable: true });
+      Object.defineProperty(gearWithUndefinedActor, 'system', { value: { cost: 1 }, writable: true, configurable: true });
+
+      await expect(gearWithUndefinedActor.handleBypass({}, {})).rejects.toThrow('Cannot execute gear bypass without an actor');
+    });
+
+    test('should update own quantity for direct gear use', async () => {
+      const mockUpdate = vi.fn().mockResolvedValue({});
+      Object.defineProperty(gear, 'update', { value: mockUpdate, writable: true, configurable: true });
+      Object.defineProperty(gear, 'system', {
+        value: {
+          quantity: 5,
+          cost: 1,
+        },
+        writable: true,
+        configurable: true,
+      });
+      mockErpsMessages.createCombatPowerMessage.mockResolvedValue({ success: true });
+
+      const result = await gear.handleBypass({}, {});
+
+      expect(mockUpdate).toHaveBeenCalledWith({ 'system.quantity': 4 });
+      expect(mockErpsMessages.createCombatPowerMessage).toHaveBeenCalledWith(gear);
+      expect(result).toEqual({ success: true });
+    });
+
+    test('should not reduce quantity below zero for direct gear use', async () => {
+      const mockUpdate = vi.fn().mockResolvedValue({});
+      Object.defineProperty(gear, 'update', { value: mockUpdate, writable: true, configurable: true });
+      Object.defineProperty(gear, 'system', {
+        value: {
+          quantity: 1,
+          cost: 5,
+        },
+        writable: true,
+        configurable: true,
+      });
+      mockErpsMessages.createCombatPowerMessage.mockResolvedValue({ success: true });
+
+      await gear.handleBypass({}, {});
+
+      expect(mockUpdate).toHaveBeenCalledWith({ 'system.quantity': 0 });
+    });
+
+    test('should find and update real gear item when from action card', async () => {
+      const mockRealGearItem = {
+        id: 'real-gear-id',
+        name: 'Health Potion',
+        system: { quantity: 10, cost: 1 },
+        update: vi.fn().mockResolvedValue({}),
+      };
+      mockInventoryUtils.findGearByName.mockReturnValue(mockRealGearItem);
+      mockErpsMessages.createCombatPowerMessage.mockResolvedValue({ success: true });
+
+      Object.defineProperty(gear, 'system', {
+        value: { quantity: 5, cost: 2 },
+        writable: true,
+        configurable: true,
+      });
+
+      const options = {
+        actionCardContext: {
+          isFromActionCard: true,
+          actionCard: { name: 'Use Potion' },
+        },
+      };
+
+      const result = await gear.handleBypass({}, options);
+
+      expect(mockInventoryUtils.findGearByName).toHaveBeenCalledWith(mockActor, 'Health Potion', 2);
+      expect(mockRealGearItem.update).toHaveBeenCalledWith({ 'system.quantity': 8 });
+      expect(result).toEqual({ success: true });
+    });
+
+    test('should find and update real gear item when embedded gear', async () => {
+      const mockRealGearItem = {
+        id: 'real-gear-id',
+        name: 'Health Potion',
+        system: { quantity: 5, cost: 1 },
+        update: vi.fn().mockResolvedValue({}),
+      };
+      mockInventoryUtils.findGearByName.mockReturnValue(mockRealGearItem);
+      mockErpsMessages.createCombatPowerMessage.mockResolvedValue({ success: true });
+
+      // Make actor.items.has return false to simulate embedded gear
+      mockActor.items.has = vi.fn().mockReturnValue(false);
+      Object.defineProperty(gear, 'system', {
+        value: { quantity: 3, cost: 2 },
+        writable: true,
+        configurable: true,
+      });
+
+      const options = {};
+
+      await gear.handleBypass({}, options);
+
+      expect(mockInventoryUtils.findGearByName).toHaveBeenCalledWith(mockActor, 'Health Potion', 2);
+      expect(mockRealGearItem.update).toHaveBeenCalledWith({ 'system.quantity': 3 });
+    });
+
+    test('should throw error when gear not found in actor inventory for action card', async () => {
+      mockInventoryUtils.findGearByName.mockReturnValue(null);
+      mockActor.items.filter = vi.fn().mockReturnValue([]);
+      Object.defineProperty(gear, 'system', {
+        value: { quantity: 5, cost: 1 },
+        writable: true,
+        configurable: true,
+      });
+
+      const options = {
+        actionCardContext: {
+          isFromActionCard: true,
+          actionCard: { name: 'Use Potion' },
+        },
+      };
+
+      await expect(gear.handleBypass({}, options)).rejects.toThrow("Gear \"Health Potion\" not found in actor's inventory");
+    });
+
+    test('should set resource depleted flag when quantity insufficient after use', async () => {
+      const mockRealGearItem = {
+        id: 'real-gear-id',
+        name: 'Health Potion',
+        system: { quantity: 2, cost: 2 },
+        update: vi.fn().mockResolvedValue({}),
+      };
+      mockInventoryUtils.findGearByName.mockReturnValue(mockRealGearItem);
+      mockErpsMessages.createCombatPowerMessage.mockResolvedValue({ success: true });
+
+      Object.defineProperty(gear, 'system', {
+        value: { quantity: 2, cost: 2 },
+        writable: true,
+        configurable: true,
+      });
+
+      const actionCardContext = {
+        isFromActionCard: true,
+        actionCard: { name: 'Use Potion' },
+      };
+
+      await gear.handleBypass({}, { actionCardContext });
+
+      expect(actionCardContext.resourceDepleted).toBe(true);
+      expect(actionCardContext.depletedResourceType).toBe('quantity');
+      expect(actionCardContext.depletedItemName).toBe('Health Potion');
+      expect(actionCardContext.depletedRequired).toBe(2);
+      expect(actionCardContext.depletedAvailable).toBe(0);
+    });
+
+    test('should not set resource depleted flag when quantity still sufficient', async () => {
+      const mockRealGearItem = {
+        id: 'real-gear-id',
+        name: 'Health Potion',
+        system: { quantity: 10, cost: 1 },
+        update: vi.fn().mockResolvedValue({}),
+      };
+      mockInventoryUtils.findGearByName.mockReturnValue(mockRealGearItem);
+      mockErpsMessages.createCombatPowerMessage.mockResolvedValue({ success: true });
+
+      Object.defineProperty(gear, 'system', {
+        value: { quantity: 10, cost: 1 },
+        writable: true,
+        configurable: true,
+      });
+
+      const actionCardContext = {
+        isFromActionCard: true,
+        actionCard: { name: 'Use Potion' },
+      };
+
+      await gear.handleBypass({}, { actionCardContext });
+
+      expect(actionCardContext.resourceDepleted).toBeUndefined();
+    });
+
+    test('should handle zero cost for direct gear use', async () => {
+      const mockUpdate = vi.fn().mockResolvedValue({});
+      Object.defineProperty(gear, 'update', { value: mockUpdate, writable: true });
+      Object.defineProperty(gear, 'system', {
+        value: {
+          quantity: 5,
+          cost: 0,
+        },
+        writable: true,
+        configurable: true,
+      });
+      mockErpsMessages.createCombatPowerMessage.mockResolvedValue({ success: true });
+
+      await gear.handleBypass({}, {});
+
+      expect(mockUpdate).toHaveBeenCalledWith({ 'system.quantity': 5 });
+    });
+
+    test('should log method entry and exit', async () => {
+      const mockUpdate = vi.fn().mockResolvedValue({});
+      Object.defineProperty(gear, 'update', { value: mockUpdate, writable: true });
+      Object.defineProperty(gear, 'system', {
+        value: { quantity: 5, cost: 1 },
+        writable: true,
+        configurable: true,
+      });
+      mockErpsMessages.createCombatPowerMessage.mockResolvedValue({ success: true });
+
+      await gear.handleBypass({}, {});
+
+      expect(mockLogger.methodEntry).toHaveBeenCalled();
+      expect(mockLogger.methodExit).toHaveBeenCalled();
+    });
+
+    test('should log error and rethrow when update fails', async () => {
+      const mockUpdate = vi.fn().mockRejectedValue(new Error('Update failed'));
+      Object.defineProperty(gear, 'update', { value: mockUpdate, writable: true });
+      Object.defineProperty(gear, 'system', {
+        value: { quantity: 5, cost: 1 },
+        writable: true,
+        configurable: true,
+      });
+
+      await expect(gear.handleBypass({}, {})).rejects.toThrow('Update failed');
+      expect(mockLogger.error).toHaveBeenCalled();
     });
   });
 
