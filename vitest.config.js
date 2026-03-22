@@ -51,6 +51,8 @@ export default defineConfig({
         'module/**/*.test.mjs',
         'module/**/*.spec.mjs',
         'node_modules/**',
+        // Barrel files - only re-export modules, no testable logic
+        'module/**/_module.mjs',
         // UI sheet mixins - heavy DOM interaction, Foundry Application dependencies
         'module/ui/mixins/**/*.mjs',
         // Theme helpers - visual styling, low regression risk
