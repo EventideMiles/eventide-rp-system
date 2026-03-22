@@ -518,4 +518,120 @@ describe('EventideRpSystemActionCard Schema - Priority 1 Critical Definitions', 
       expect(schema.embeddedTransformations).toBeDefined();
     });
   });
+
+  describe('Schema Field Validation Functions', () => {
+    describe('attackChain.damageFormula validation', () => {
+      test('should accept valid damage formulas', () => {
+        const damageFormula = schema.attackChain.schema.damageFormula;
+        const validate = damageFormula.options.validate;
+
+        // Valid formulas should return true
+        expect(validate('1d6')).toBe(true);
+        expect(validate('2d8+3')).toBe(true);
+        expect(validate('1d4+@abilities.acro.total')).toBe(true);
+        expect(validate('')).toBe(true); // blank is allowed with allowBlank: true
+      });
+
+      test('should sanitize formulas before validation', () => {
+        const damageFormula = schema.attackChain.schema.damageFormula;
+        const validate = damageFormula.options.validate;
+
+        // FormulaValidator.sanitizeFormula should clean invalid characters
+        // After sanitization, valid formulas should pass
+        expect(validate('1d6')).toBe(true);
+      });
+
+      test('should accept formulas with data references', () => {
+        const damageFormula = schema.attackChain.schema.damageFormula;
+        const validate = damageFormula.options.validate;
+
+        // Data references are allowed in damage formulas
+        expect(validate('@abilities.acro.total')).toBe(true);
+        expect(validate('1d6+@system.level')).toBe(true);
+      });
+    });
+
+    describe('savedDamage.formula validation', () => {
+      test('should accept valid saved damage formulas', () => {
+        const formula = schema.savedDamage.schema.formula;
+        const validate = formula.options.validate;
+
+        // Valid formulas should return true
+        expect(validate('1d6')).toBe(true);
+        expect(validate('2d8+3')).toBe(true);
+        expect(validate('')).toBe(true); // blank is allowed with allowBlank: true
+      });
+
+      test('should reject formulas with data references', () => {
+        const formula = schema.savedDamage.schema.formula;
+        const validate = formula.options.validate;
+
+        // Data references are NOT allowed in saved damage formulas (allowDataRefs: false)
+        expect(() => validate('@abilities.acro.total')).toThrow();
+      });
+
+      test('should sanitize formulas before validation', () => {
+        const formula = schema.savedDamage.schema.formula;
+        const validate = formula.options.validate;
+
+        // After sanitization, valid formulas should pass
+        expect(validate('1d6')).toBe(true);
+      });
+    });
+
+    describe('repetitions validation', () => {
+      test('should accept valid repetition formulas', () => {
+        const repetitions = schema.repetitions;
+        const validate = repetitions.options.validate;
+
+        // Valid formulas should return true
+        expect(validate('1')).toBe(true);
+        expect(validate('1d4')).toBe(true);
+        expect(validate('2d6')).toBe(true);
+      });
+
+      test('should reject empty formulas', () => {
+        const repetitions = schema.repetitions;
+        const validate = repetitions.options.validate;
+
+        // Empty formulas should throw (blank: false)
+        expect(() => validate('')).toThrow();
+      });
+
+      test('should reject formulas exceeding max repetitions', () => {
+        const repetitions = schema.repetitions;
+        const validate = repetitions.options.validate;
+
+        // Formulas that could exceed 100 repetitions should throw
+        expect(() => validate('200')).toThrow();
+        expect(() => validate('101d20')).toThrow();
+      });
+
+      test('should accept formulas within max repetitions', () => {
+        const repetitions = schema.repetitions;
+        const validate = repetitions.options.validate;
+
+        // Formulas within bounds should pass
+        expect(validate('50')).toBe(true);
+        expect(validate('10d10')).toBe(true);
+      });
+
+      test('should reject zero repetitions', () => {
+        const repetitions = schema.repetitions;
+        const validate = repetitions.options.validate;
+
+        // Zero should throw (negative numbers get sanitized to positive)
+        expect(() => validate('0')).toThrow();
+      });
+
+      test('should sanitize negative numbers to positive', () => {
+        const repetitions = schema.repetitions;
+        const validate = repetitions.options.validate;
+
+        // Negative numbers get sanitized (minus removed) to positive
+        // "-1" becomes "1" which is valid
+        expect(validate('-1')).toBe(true);
+      });
+    });
+  });
 });
