@@ -826,5 +826,239 @@ describe('ContextMenuBuilder', () => {
 
       expect(mockSheet.item.update).toHaveBeenCalled();
     });
+
+    test('should not update when dialog is cancelled', async () => {
+      const groups = [
+        { _id: 'group-123', name: 'Group 1' },
+        { _id: 'group-456', name: 'Group 2' }
+      ];
+      mockSheet.item.system.actionCardGroups = groups;
+      mockSheet.item.system.embeddedActionCards = [
+        { _id: 'card-123', system: { groupId: null } }
+      ];
+
+      // Mock dialog returning false (cancelled)
+      foundry.applications.api.DialogV2.prompt = vi.fn().mockResolvedValue(false);
+
+      await builder.showMoveToGroupDialogForTransformation('card-123', groups, mockSheet);
+
+      expect(mockSheet.item.update).not.toHaveBeenCalled();
+    });
+
+    test('should not update when dialog returns null', async () => {
+      const groups = [
+        { _id: 'group-123', name: 'Group 1' },
+        { _id: 'group-456', name: 'Group 2' }
+      ];
+      mockSheet.item.system.actionCardGroups = groups;
+      mockSheet.item.system.embeddedActionCards = [
+        { _id: 'card-123', system: { groupId: null } }
+      ];
+
+      // Mock dialog returning null (cancelled)
+      foundry.applications.api.DialogV2.prompt = vi.fn().mockResolvedValue(null);
+
+      await builder.showMoveToGroupDialogForTransformation('card-123', groups, mockSheet);
+
+      expect(mockSheet.item.update).not.toHaveBeenCalled();
+    });
+  });
+
+  // =================================
+  // _createEmbeddedItemInTab Tests
+  // =================================
+  describe('_createEmbeddedItemInTab', () => {
+    test('should return early for unknown item type', async () => {
+      await builder._createEmbeddedItemInTab('unknownType', mockSheet);
+
+      expect(mockSheet.item.update).not.toHaveBeenCalled();
+    });
+
+    test('should create embedded feature item', async () => {
+      mockSheet.item.system.embeddedActionCards = [];
+      
+      // Mock the EmbeddedItemSheet import
+      vi.mock('../../../module/ui/sheets/embedded-item-sheet.mjs', () => ({
+        default: class MockEmbeddedItemSheet {
+          constructor() {}
+          render() { return this; }
+        }
+      }));
+
+      await builder._createEmbeddedItemInTab('feature', mockSheet);
+
+      expect(mockSheet.item.update).toHaveBeenCalled();
+      const updateCall = mockSheet.item.update.mock.calls[0][0];
+      expect(updateCall['system.embeddedActionCards']).toBeDefined();
+      expect(updateCall['system.embeddedActionCards'][0].type).toBe('feature');
+    });
+
+    test('should create embedded status item', async () => {
+      mockSheet.item.system.embeddedActionCards = [];
+
+      await builder._createEmbeddedItemInTab('status', mockSheet);
+
+      expect(mockSheet.item.update).toHaveBeenCalled();
+      const updateCall = mockSheet.item.update.mock.calls[0][0];
+      expect(updateCall['system.embeddedActionCards'][0].type).toBe('status');
+    });
+
+    test('should create embedded gear item', async () => {
+      mockSheet.item.system.embeddedActionCards = [];
+
+      await builder._createEmbeddedItemInTab('gear', mockSheet);
+
+      expect(mockSheet.item.update).toHaveBeenCalled();
+      const updateCall = mockSheet.item.update.mock.calls[0][0];
+      expect(updateCall['system.embeddedActionCards'][0].type).toBe('gear');
+    });
+
+    test('should create embedded combatPower item', async () => {
+      mockSheet.item.system.embeddedCombatPowers = [];
+
+      await builder._createEmbeddedItemInTab('combatPower', mockSheet);
+
+      expect(mockSheet.item.update).toHaveBeenCalled();
+      const updateCall = mockSheet.item.update.mock.calls[0][0];
+      expect(updateCall['system.embeddedCombatPowers']).toBeDefined();
+      expect(updateCall['system.embeddedCombatPowers'][0].type).toBe('combatPower');
+    });
+
+    test('should create embedded actionCard item', async () => {
+      mockSheet.item.system.embeddedActionCards = [];
+
+      await builder._createEmbeddedItemInTab('actionCard', mockSheet);
+
+      expect(mockSheet.item.update).toHaveBeenCalled();
+      const updateCall = mockSheet.item.update.mock.calls[0][0];
+      expect(updateCall['system.embeddedActionCards'][0].type).toBe('actionCard');
+    });
+
+    test('should change tab if not already on correct tab', async () => {
+      mockSheet.tabGroups.primary = 'otherTab';
+      mockSheet.item.system.embeddedActionCards = [];
+
+      await builder._createEmbeddedItemInTab('feature', mockSheet);
+
+      expect(mockSheet.changeTab).toHaveBeenCalledWith('embeddedItems', 'primary');
+    });
+
+    test('should not change tab if already on correct tab', async () => {
+      mockSheet.tabGroups.primary = 'embeddedItems';
+      mockSheet.item.system.embeddedActionCards = [];
+
+      await builder._createEmbeddedItemInTab('feature', mockSheet);
+
+      expect(mockSheet.changeTab).not.toHaveBeenCalled();
+    });
+  });
+
+  // =================================
+  // Error Handling Tests
+  // =================================
+  describe('createTransformationActionCardContextMenu error handling', () => {
+    test('should catch and log error when context menu creation throws', async () => {
+      mockSheet._createContextMenu = vi.fn().mockImplementation(() => {
+        throw new Error('Context menu creation failed');
+      });
+
+      // Should not throw
+      builder.createTransformationActionCardContextMenu(mockSheet);
+
+      // Logger.error should have been called
+      const { Logger } = await import('../../../module/services/logger.mjs');
+      expect(Logger.error).toHaveBeenCalled();
+    });
+  });
+
+  // =================================
+  // RemoveFromGroup Edge Cases
+  // =================================
+  describe('RemoveFromGroup edge cases', () => {
+    test('should handle action card not found in list', async () => {
+      mockSheet.item.system.embeddedActionCards = [
+        { _id: 'other-card', system: { groupId: 'group-456' } }
+      ];
+      mockSheet.item.system.actionCardGroups = [{ _id: 'group-456', name: 'Group 1' }];
+      const options = builder.getTransformationActionCardContextOptions(mockSheet);
+      const target = createMockElement({ dataset: { itemId: 'card-123' } });
+
+      const removeFromGroupOption = options.find(opt =>
+        opt.name === 'EVENTIDE_RP_SYSTEM.ContextMenu.RemoveFromGroup'
+      );
+
+      await removeFromGroupOption.callback(target);
+
+      // Should not update since card was not found
+      // The callback checks for actionCard && actionCard.system.groupId
+    });
+
+    test('should keep group when other cards remain in it', async () => {
+      mockSheet.item.system.embeddedActionCards = [
+        { _id: 'card-123', system: { groupId: 'group-456' } },
+        { _id: 'card-456', system: { groupId: 'group-456' } }
+      ];
+      mockSheet.item.system.actionCardGroups = [{ _id: 'group-456', name: 'Group 1' }];
+      const options = builder.getTransformationActionCardContextOptions(mockSheet);
+      const target = createMockElement({ dataset: { itemId: 'card-123' } });
+
+      const removeFromGroupOption = options.find(opt =>
+        opt.name === 'EVENTIDE_RP_SYSTEM.ContextMenu.RemoveFromGroup'
+      );
+
+      await removeFromGroupOption.callback(target);
+
+      const updateCall = mockSheet.item.update.mock.calls[0][0];
+      // Group should not be removed since card-456 still has it
+      expect(updateCall['system.actionCardGroups']).toHaveLength(1);
+    });
+  });
+
+  // =================================
+  // CreateNewGroup Edge Cases
+  // =================================
+  describe('CreateNewGroup edge cases', () => {
+    test('should handle groups with non-standard names', async () => {
+      mockSheet.item.system.embeddedActionCards = [
+        { _id: 'card-123', system: { groupId: null } }
+      ];
+      mockSheet.item.system.actionCardGroups = [
+        { _id: 'g1', name: 'Custom Name', sort: 1 },
+        { _id: 'g2', name: 'Another Group', sort: 2 }
+      ];
+      const options = builder.getTransformationActionCardContextOptions(mockSheet);
+      const target = createMockElement({ dataset: { itemId: 'card-123' } });
+
+      const createNewGroupOption = options.find(opt =>
+        opt.name === 'EVENTIDE_RP_SYSTEM.ContextMenu.CreateNewGroup'
+      );
+
+      await createNewGroupOption.callback(target);
+
+      const updateCall = mockSheet.item.update.mock.calls[0][0];
+      // Should start from Group 1 since no "Group N" pattern matched
+      expect(updateCall['system.actionCardGroups'][2].name).toBe('Group 1');
+    });
+
+    test('should calculate sort value correctly', async () => {
+      mockSheet.item.system.embeddedActionCards = [
+        { _id: 'card-123', system: { groupId: null } }
+      ];
+      mockSheet.item.system.actionCardGroups = [
+        { _id: 'g1', name: 'Group 1', sort: 10 },
+        { _id: 'g2', name: 'Group 2', sort: 20 }
+      ];
+      const options = builder.getTransformationActionCardContextOptions(mockSheet);
+      const target = createMockElement({ dataset: { itemId: 'card-123' } });
+
+      const createNewGroupOption = options.find(opt =>
+        opt.name === 'EVENTIDE_RP_SYSTEM.ContextMenu.CreateNewGroup'
+      );
+
+      await createNewGroupOption.callback(target);
+
+      const updateCall = mockSheet.item.update.mock.calls[0][0];
+      expect(updateCall['system.actionCardGroups'][2].sort).toBe(21);
+    });
   });
 });

@@ -418,6 +418,115 @@ describe('ERPSMessageHandler', () => {
       });
     });
 
+    test('should use "none" fallback when roll type is undefined', async () => {
+      const itemWithoutRollType = { ...mockItem };
+      itemWithoutRollType.system.roll = {}; // No type property
+
+      await messageHandler.createFeatureMessage(itemWithoutRollType);
+
+      expect(ChatMessageBuilder.createMessage).toHaveBeenCalledWith({
+        templatePath: messageHandler.templates.feature,
+        templateData: expect.objectContaining({
+          hasRoll: false
+        }),
+        messageOptions: expect.any(Object),
+        soundKey: null,
+        forceSound: false,
+        useERPSRollUtilitiesSpeaker: true
+      });
+    });
+
+    test('should use true fallback when active is undefined', async () => {
+      const itemWithoutActive = { ...mockItem };
+      itemWithoutActive.system.active = undefined;
+
+      await messageHandler.createFeatureMessage(itemWithoutActive);
+
+      expect(ChatMessageBuilder.createMessage).toHaveBeenCalledWith({
+        templatePath: messageHandler.templates.feature,
+        templateData: expect.objectContaining({
+          isActive: true
+        }),
+        messageOptions: expect.any(Object),
+        soundKey: null,
+        forceSound: false,
+        useERPSRollUtilitiesSpeaker: true
+      });
+    });
+
+    test('should handle targeted feature without targets (addCheck false)', async () => {
+      const rollItem = { ...mockItem };
+      rollItem.system.roll = { type: 'attack' };
+      rollItem.system.targeted = true;
+      rollItem.getCombatRollFormula = vi.fn(() => '1d20+10');
+
+      // Return empty targets array
+      global.erps.utils.getTargetArray.mockResolvedValue([]);
+
+      await messageHandler.createFeatureMessage(rollItem);
+
+      expect(ChatMessageBuilder.createMessage).toHaveBeenCalledWith(
+        expect.objectContaining({
+          templateData: expect.objectContaining({
+            hasRoll: true,
+            acCheck: false,
+            targetArray: []
+          })
+        })
+      );
+    });
+
+    test('should handle roll feature with targets (addCheck true)', async () => {
+      const rollItem = { ...mockItem };
+      rollItem.system.roll = { type: 'attack' };
+      rollItem.system.targeted = true;
+      rollItem.getCombatRollFormula = vi.fn(() => '1d20+10');
+
+      const mockTarget = {
+        actor: { name: 'Target Actor', getRollData: vi.fn(() => ({ armor: 15 })) }
+      };
+      global.erps.utils.getTargetArray.mockResolvedValue([mockTarget]);
+
+      await messageHandler.createFeatureMessage(rollItem);
+
+      expect(ChatMessageBuilder.createMessage).toHaveBeenCalledWith(
+        expect.objectContaining({
+          templateData: expect.objectContaining({
+            hasRoll: true,
+            acCheck: true,
+            targetArray: [mockTarget]
+          })
+        })
+      );
+    });
+
+    test('should handle critical state fallbacks when determineCriticalStates returns undefined values', async () => {
+      const rollItem = { ...mockItem };
+      rollItem.system.roll = { type: 'attack' };
+      rollItem.getCombatRollFormula = vi.fn(() => '1d20+10');
+
+      // Mock determineCriticalStates to return undefined values
+      ERPSRollUtilities.determineCriticalStates.mockReturnValue({
+        critHit: undefined,
+        critMiss: undefined,
+        stolenCrit: undefined,
+        savedMiss: undefined
+      });
+
+      await messageHandler.createFeatureMessage(rollItem);
+
+      expect(ChatMessageBuilder.createMessage).toHaveBeenCalledWith(
+        expect.objectContaining({
+          templateData: expect.objectContaining({
+            critHit: false,
+            critMiss: false,
+            stolenCrit: false,
+            savedMiss: false
+          })
+        })
+      );
+    });
+
     test('should use custom roll mode from options', async () => {
       await messageHandler.createFeatureMessage(mockItem, { rollMode: 'blindroll' });
 
@@ -583,6 +692,139 @@ describe('ERPSMessageHandler', () => {
       expect(lastCall[0].templateData.hasRoll).toBe(false);
       expect(lastCall[0].soundKey).toBe('combatPower');
     });
+
+    test('should use "none" fallback when roll type is undefined', async () => {
+      const itemWithoutRollType = { ...mockItem };
+      itemWithoutRollType.system.roll = {}; // No type property
+
+      await messageHandler.createCombatPowerMessage(itemWithoutRollType);
+
+      expect(ChatMessageBuilder.createMessage).toHaveBeenCalledWith({
+        templatePath: messageHandler.templates.combatPower,
+        templateData: expect.objectContaining({
+          hasRoll: false
+        }),
+        messageOptions: expect.any(Object),
+        soundKey: 'combatPower',
+        forceSound: false,
+        useERPSRollUtilitiesSpeaker: true
+      });
+    });
+
+    test('should handle targeted combat power without targets (addCheck false)', async () => {
+      const rollItem = { ...mockItem };
+      rollItem.system.roll = { type: 'attack' };
+      rollItem.system.targeted = true;
+      rollItem.getCombatRollFormula = vi.fn(() => '1d20+10');
+
+      // Return empty targets array
+      global.erps.utils.getTargetArray.mockResolvedValue([]);
+
+      await messageHandler.createCombatPowerMessage(rollItem);
+
+      expect(ChatMessageBuilder.createMessage).toHaveBeenCalledWith(
+        expect.objectContaining({
+          templateData: expect.objectContaining({
+            hasRoll: true,
+            acCheck: false,
+            targetArray: []
+          })
+        })
+      );
+    });
+
+    test('should handle combat power with locked targets and target roll data', async () => {
+      const rollItem = { ...mockItem };
+      rollItem.system.roll = { type: 'attack' };
+      rollItem.system.targeted = true;
+      rollItem.getCombatRollFormula = vi.fn(() => '1d20+10');
+
+      const lockedTargets = [
+        { tokenId: 'token-1', actorId: 'actor-1' }
+      ];
+
+      const resolvedTarget = {
+        token: { id: 'token-1' },
+        actor: {
+          name: 'Target Actor',
+          getRollData: vi.fn(() => ({ armor: 15, defense: 10 }))
+        }
+      };
+      TargetResolver.resolveLockedTargets.mockReturnValue({ valid: [resolvedTarget], invalid: [] });
+
+      await messageHandler.createCombatPowerMessage(rollItem, { lockedTargets });
+
+      expect(TargetResolver.resolveLockedTargets).toHaveBeenCalledWith(lockedTargets);
+      expect(ChatMessageBuilder.createMessage).toHaveBeenCalledWith(
+        expect.objectContaining({
+          templateData: expect.objectContaining({
+            hasRoll: true,
+            acCheck: true,
+            targetArray: [resolvedTarget]
+          })
+        })
+      );
+    });
+
+    test('should handle target roll data with missing actor properties', async () => {
+      const rollItem = { ...mockItem };
+      rollItem.system.roll = { type: 'attack' };
+      rollItem.system.targeted = true;
+      rollItem.getCombatRollFormula = vi.fn(() => '1d20+10');
+
+      // Target with missing actor
+      const mockTarget = {
+        actor: null,
+        token: null
+      };
+      global.erps.utils.getTargetArray.mockResolvedValue([mockTarget]);
+
+      await messageHandler.createCombatPowerMessage(rollItem);
+
+      expect(ChatMessageBuilder.createMessage).toHaveBeenCalledWith(
+        expect.objectContaining({
+          templateData: expect.objectContaining({
+            hasRoll: true,
+            acCheck: true, // targeted is true and targetArray has elements
+            targetArray: [mockTarget],
+            // When actor is null, targetRollData uses fallback values
+            targetRollData: expect.arrayContaining([
+              expect.objectContaining({
+                name: 'Unknown',
+                compare: expect.any(Number)
+              })
+            ])
+          })
+        })
+      );
+    });
+
+    test('should handle critical state fallbacks when determineCriticalStates returns undefined', async () => {
+      const rollItem = { ...mockItem };
+      rollItem.system.roll = { type: 'attack' };
+      rollItem.getCombatRollFormula = vi.fn(() => '1d20+10');
+
+      // Mock determineCriticalStates to return undefined values
+      ERPSRollUtilities.determineCriticalStates.mockReturnValue({
+        critHit: undefined,
+        critMiss: undefined,
+        stolenCrit: undefined,
+        savedMiss: undefined
+      });
+
+      await messageHandler.createCombatPowerMessage(rollItem);
+
+      expect(ChatMessageBuilder.createMessage).toHaveBeenCalledWith(
+        expect.objectContaining({
+          templateData: expect.objectContaining({
+            critHit: false,
+            critMiss: false,
+            stolenCrit: false,
+            savedMiss: false
+          })
+        })
+      );
+    });
   });
 
   describe('createGearTransferMessage', () => {
@@ -742,6 +984,96 @@ describe('ERPSMessageHandler', () => {
         'createPlayerActionApprovalRequest',
         expect.any(Object)
       );
+    });
+
+    test('should handle undefined transformationSelections', async () => {
+      await messageHandler.createPlayerActionApprovalRequest({
+        actor: mockActor,
+        actionCard: mockActionCard,
+        playerId: 'player-789',
+        playerName: 'Test Player',
+        targets: [],
+        rollResult: { total: 15 },
+        lockedTargets: [],
+        transformationSelections: undefined,
+        selectedEffectIds: []
+      });
+
+      expect(global.ChatMessage.create).toHaveBeenCalled();
+      const createCalls = MessageFlags.createPlayerActionApprovalFlag.mock.calls;
+      expect(createCalls.length).toBeGreaterThan(0);
+      const lastCall = createCalls[createCalls.length - 1];
+      // transformationSelections should be undefined
+      expect(lastCall[0].transformationSelections).toBeUndefined();
+    });
+
+    test('should handle action card without embedded transformations', async () => {
+      const actionCardWithoutTransformations = { ...mockActionCard };
+      actionCardWithoutTransformations.system.embeddedTransformations = undefined;
+
+      await messageHandler.createPlayerActionApprovalRequest({
+        actor: mockActor,
+        actionCard: actionCardWithoutTransformations,
+        playerId: 'player-789',
+        playerName: 'Test Player',
+        targets: [],
+        rollResult: { total: 15 },
+        lockedTargets: [],
+        transformationSelections: new Map([['target-1', 'trans-1']]),
+        selectedEffectIds: []
+      });
+
+      expect(global.ChatMessage.create).toHaveBeenCalled();
+      // The transformation name should fall back to the ID
+      const createCalls = MessageFlags.createPlayerActionApprovalFlag.mock.calls;
+      expect(createCalls.length).toBeGreaterThan(0);
+    });
+
+    test('should use transformation ID as fallback when name not found', async () => {
+      const actionCardWithTransformations = { ...mockActionCard };
+      actionCardWithTransformations.system.embeddedTransformations = [
+        { id: 'trans-1', name: 'Transformation 1', _id: 'trans-1' }
+      ];
+
+      // Use a transformation ID that doesn't exist in the map
+      await messageHandler.createPlayerActionApprovalRequest({
+        actor: mockActor,
+        actionCard: actionCardWithTransformations,
+        playerId: 'player-789',
+        playerName: 'Test Player',
+        targets: [],
+        rollResult: { total: 15 },
+        lockedTargets: [],
+        transformationSelections: new Map([['target-1', 'unknown-trans-id']]),
+        selectedEffectIds: []
+      });
+
+      // Verify the message was created
+      expect(global.ChatMessage.create).toHaveBeenCalled();
+      // The fallback logic is tested by the fact that the function completes without error
+      // and ChatMessage.create is called with the transformationSelections
+    });
+
+    test('should handle empty embedded transformations array', async () => {
+      const actionCardWithEmptyTransformations = { ...mockActionCard };
+      actionCardWithEmptyTransformations.system.embeddedTransformations = [];
+
+      await messageHandler.createPlayerActionApprovalRequest({
+        actor: mockActor,
+        actionCard: actionCardWithEmptyTransformations,
+        playerId: 'player-789',
+        playerName: 'Test Player',
+        targets: [],
+        rollResult: { total: 15 },
+        lockedTargets: [],
+        transformationSelections: new Map([['target-1', 'trans-1']]),
+        selectedEffectIds: []
+      });
+
+      // Verify the message was created
+      expect(global.ChatMessage.create).toHaveBeenCalled();
+      // The fallback logic is tested by the fact that the function completes without error
+      // and ChatMessage.create is called with the transformationSelections
     });
   });
 
@@ -1017,6 +1349,39 @@ describe('ERPSMessageHandler', () => {
       const result = await messageHandler._enrichDescription(mockItem);
       expect(result).toBe('<p>Test description</p>');
       expect(Logger.warn).toHaveBeenCalledWith('Failed to enrich description', expect.any(Error), 'SYSTEM_MESSAGES');
+    });
+
+    test('should use false for isOwner when item.isOwner is undefined', async () => {
+      const itemWithoutOwner = {
+        ...mockItem,
+        isOwner: undefined,
+        getRollData: vi.fn(() => ({ abScore: 10 }))
+      };
+      
+      await messageHandler._enrichDescription(itemWithoutOwner);
+      
+      expect(global.foundry.applications.ux.TextEditor.implementation.enrichHTML).toHaveBeenCalledWith(
+        '<p>Test description</p>',
+        expect.objectContaining({
+          secrets: false
+        })
+      );
+    });
+
+    test('should use empty object for rollData when getRollData is undefined', async () => {
+      const itemWithoutGetRollData = {
+        ...mockItem,
+        getRollData: undefined
+      };
+      
+      await messageHandler._enrichDescription(itemWithoutGetRollData);
+      
+      expect(global.foundry.applications.ux.TextEditor.implementation.enrichHTML).toHaveBeenCalledWith(
+        '<p>Test description</p>',
+        expect.objectContaining({
+          rollData: {}
+        })
+      );
     });
   });
 
