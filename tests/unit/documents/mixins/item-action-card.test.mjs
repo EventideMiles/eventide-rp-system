@@ -23,33 +23,17 @@ vi.mock('../../../../module/services/_module.mjs', () => ({
   Logger: mockLogger
 }));
 
-// Mock foundry.utils
-const mockRandomID = vi.fn(() => 'random-id-123');
-const mockDeepClone = vi.fn((obj) => JSON.parse(JSON.stringify(obj)));
-const mockMergeObject = vi.fn((obj1, obj2, options) => {
-  const result = { ...obj1 };
-  for (const key of Object.keys(obj2)) {
-    result[key] = obj2[key];
-  }
-  return options?.inplace ? Object.assign(obj1, result) : result;
-});
-
-// Mock Collection
+// Mock Collection (not provided by foundry-test-utils)
 class MockCollection extends Map {
   constructor(iterable) {
     super(iterable);
   }
 }
 
-// Setup global foundry before importing
-global.foundry = {
-  utils: {
-    randomID: mockRandomID,
-    deepClone: mockDeepClone,
-    mergeObject: mockMergeObject,
-    Collection: MockCollection
-  }
-};
+// Setup global foundry.utils.Collection before importing
+global.foundry = global.foundry || {};
+global.foundry.utils = global.foundry.utils || {};
+global.foundry.utils.Collection = MockCollection;
 
 // Mock CONFIG
 global.CONFIG = {
@@ -61,12 +45,10 @@ global.CONFIG = {
   }
 };
 
-// Mock game
-global.game = {
-  i18n: {
-    format: vi.fn((key, data) => `${key} ${JSON.stringify(data)}`)
-  }
-};
+// Mock game (i18n.format is provided by foundry-test-utils)
+if (!global.game) {
+  global.game = {};
+}
 
 // Import the mixin after mocking dependencies
 const { ItemActionCardMixin } = await import('../../../../module/documents/mixins/item-action-card.mjs');
@@ -103,18 +85,36 @@ describe('ItemActionCardMixin', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    
-    // Reset mock randomID to return consistent values
-    mockRandomID.mockReturnValue('random-id-123');
-    mockDeepClone.mockImplementation((obj) => JSON.parse(JSON.stringify(obj)));
-    mockMergeObject.mockImplementation((obj1, obj2, options) => {
-      const result = { ...obj1 };
+
+    // Replace foundry.utils functions with Vitest mocks
+    // This allows tests to override implementations using mockImplementation
+    global.foundry.utils.randomID = vi.fn(() => 'random-id-123');
+    global.foundry.utils.deepClone = vi.fn((obj) => obj ? JSON.parse(JSON.stringify(obj)) : obj);
+    global.foundry.utils.mergeObject = vi.fn((obj1, obj2, options) => {
+      // Deep clone obj1 to avoid mutating the original
+      let result = JSON.parse(JSON.stringify(obj1));
+      
       for (const key of Object.keys(obj2)) {
-        result[key] = obj2[key];
+        if (key.includes('.')) {
+          // Handle dotted path keys like 'system.someProperty'
+          const path = key.split('.');
+          let current = result;
+          for (let i = 0; i < path.length - 1; i++) {
+            if (!current[path[i]]) {
+              current[path[i]] = {};
+            }
+            current = current[path[i]];
+          }
+          current[path[path.length - 1]] = obj2[key];
+        } else {
+          // Normal shallow merge for non-dotted keys
+          result[key] = obj2[key];
+        }
       }
+      
       return options?.inplace ? Object.assign(obj1, result) : result;
     });
-    
+
     // Create fresh item instance
     item = new MixedClass();
   });
@@ -305,7 +305,7 @@ describe('ItemActionCardMixin', () => {
     });
 
     test('should assign new random ID to embedded item', async () => {
-      mockRandomID.mockReturnValue('new-random-id');
+      global.foundry.utils.randomID.mockReturnValue('new-random-id');
 
       const combatPower = {
         type: 'combatPower',
@@ -323,7 +323,7 @@ describe('ItemActionCardMixin', () => {
 
       await item.setEmbeddedItem(combatPower);
 
-      expect(mockRandomID).toHaveBeenCalled();
+      expect(global.foundry.utils.randomID).toHaveBeenCalled();
       const updateCall = item.update.mock.calls[0];
       expect(updateCall[0]['system.embeddedItem']._id).toBe('new-random-id');
     });
@@ -426,7 +426,7 @@ describe('ItemActionCardMixin', () => {
       item.system.embeddedItem = embeddedData;
 
       // Reset deepClone to return proper data
-      mockDeepClone.mockReturnValue({ ...embeddedData });
+      global.foundry.utils.deepClone.mockImplementation(() => ({ ...embeddedData }));
 
       item.getEmbeddedItem();
 
@@ -515,7 +515,7 @@ describe('ItemActionCardMixin', () => {
       item.getEmbeddedItem();
 
       // Verify deepClone was called (indicating modification path was taken)
-      expect(mockDeepClone).toHaveBeenCalled();
+      expect(global.foundry.utils.deepClone).toHaveBeenCalled();
     });
 
     test('should not modify cost when shouldApplyCost is true', () => {
@@ -541,7 +541,7 @@ describe('ItemActionCardMixin', () => {
       item.getEmbeddedItem();
 
       // deepClone should not be called for cost modification
-      expect(mockDeepClone).not.toHaveBeenCalled();
+      expect(global.foundry.utils.deepClone).not.toHaveBeenCalled();
     });
   });
 
@@ -632,7 +632,7 @@ describe('ItemActionCardMixin', () => {
     });
 
     test('should assign new random ID to effect', async () => {
-      mockRandomID.mockReturnValue('new-effect-id');
+      global.foundry.utils.randomID.mockReturnValue('new-effect-id');
 
       const statusEffect = {
         type: 'status',
@@ -1023,7 +1023,7 @@ describe('ItemActionCardMixin', () => {
     });
 
     test('should assign new random ID to transformation', async () => {
-      mockRandomID.mockReturnValue('new-transformation-id');
+      global.foundry.utils.randomID.mockReturnValue('new-transformation-id');
 
       const transformation = {
         type: 'transformation',
@@ -1289,7 +1289,7 @@ describe('ItemActionCardMixin', () => {
         system: {}
       };
       item.system.embeddedItem = embeddedData;
-      mockDeepClone.mockReturnValue({ ...embeddedData });
+      global.foundry.utils.deepClone.mockImplementation(() => ({ ...embeddedData }));
 
       const mockHandleBypass = vi.fn().mockResolvedValue({ success: true });
       const mockTempItem = {
@@ -1562,6 +1562,715 @@ describe('ItemActionCardMixin', () => {
 
       expect(result).toEqual([]);
       expect(mockLogger.error).toHaveBeenCalled();
+    });
+  });
+
+  // Tests for clearEmbeddedItem() error handling (lines 162-164)
+  describe('clearEmbeddedItem() - error handling', () => {
+    test('should log error and rethrow when update fails', async () => {
+      const updateError = new Error('Update failed');
+      item.update.mockRejectedValue(updateError);
+
+      await expect(item.clearEmbeddedItem()).rejects.toThrow('Update failed');
+      expect(mockLogger.error).toHaveBeenCalled();
+    });
+  });
+
+  // Tests for getEmbeddedItem() overridden update method (lines 242-279)
+  describe('getEmbeddedItem() - tempItem.update() method', () => {
+    test('should call actionCard.update with merged data when tempItem.update is called', async () => {
+      const embeddedData = {
+        _id: 'embedded-id',
+        type: 'combatPower',
+        name: 'Test Power',
+        system: { roll: { type: 'roll', ability: 'acro' } }
+      };
+
+      // Verify deepClone is a mock
+      expect(typeof global.foundry.utils.deepClone.mockImplementation).toBe('function');
+
+      // Spy on Logger.error to catch any errors
+      mockLogger.error.mockClear();
+      
+      global.foundry.utils.deepClone.mockImplementation(() => ({ ...embeddedData }));
+
+      const mockTempItem = {
+        effects: new MockCollection(),
+        isEditable: true,
+        system: {},
+        update: vi.fn(),
+        updateEmbeddedDocuments: vi.fn(),
+        updateSource: vi.fn(),
+        sheet: { close: vi.fn(), render: vi.fn() }
+      };
+      // Mock the prototype for updateEmbeddedDocuments calls
+      global.CONFIG.Item.documentClass.prototype = {
+        updateEmbeddedDocuments: vi.fn().mockResolvedValue([])
+      };
+      const documentClassSpy = global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+
+      // Set embeddedItem after configuring mocks
+      item.system.embeddedItem = embeddedData;
+
+      console.log('documentClassSpy.calls:', documentClassSpy.calls);
+
+      console.log('item.type:', item.type);
+      console.log('item.system:', item.system);
+      console.log('Object.keys(item.system.embeddedItem):', Object.keys(item.system.embeddedItem || {}));
+      console.log('CONFIG.Item.documentClass:', global.CONFIG.Item.documentClass);
+      console.log('deepClone mock:', global.foundry.utils.deepClone);
+      console.log('CONFIG.Item.documentClass.prototype:', global.CONFIG.Item.documentClass.prototype);
+      console.log('mockTempItem:', mockTempItem);
+      console.log('documentClassSpy.calls before:', global.CONFIG.Item.documentClass.mock.calls.length);
+      
+      let tempItem;
+      try {
+        tempItem = item.getEmbeddedItem();
+        console.log('tempItem:', tempItem);
+        console.log('documentClassSpy.calls after:', global.CONFIG.Item.documentClass.mock.calls.length);
+      } catch (e) {
+        console.error('Error calling getEmbeddedItem():', e);
+        throw e;
+      }
+      // Check if Logger.error was called (which would indicate an internal error)
+      console.log('Logger.error calls:', mockLogger.error.mock.calls.length);
+      console.log('Logger.error was called with:', mockLogger.error.mock.calls);
+
+      await tempItem.update({ 'system.someProperty': 'newValue' });
+
+      expect(item.update).toHaveBeenCalled();
+      const updateCall = item.update.mock.calls[0];
+      expect(updateCall[0]).toHaveProperty('system.embeddedItem');
+      expect(updateCall[0]['system.embeddedItem'].system.someProperty).toBe('newValue');
+    });
+
+    test('should call updateSource after updating', async () => {
+      const embeddedData = {
+        _id: 'embedded-id',
+        type: 'combatPower',
+        name: 'Test Power',
+        system: {}
+      };
+
+      global.foundry.utils.deepClone.mockImplementation(() => ({ ...embeddedData }));
+
+      const mockTempItem = {
+        effects: new MockCollection(),
+        isEditable: true,
+        system: {},
+        update: vi.fn(),
+        updateEmbeddedDocuments: vi.fn(),
+        updateSource: vi.fn(),
+        sheet: { close: vi.fn(), render: vi.fn() }
+      };
+      // Mock the prototype for updateEmbeddedDocuments calls
+      global.CONFIG.Item.documentClass.prototype = {
+        updateEmbeddedDocuments: vi.fn().mockResolvedValue([])
+      };
+      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+
+      item.system.embeddedItem = embeddedData;
+
+      const tempItem = item.getEmbeddedItem();
+      await tempItem.update({ 'system.someProperty': 'newValue' });
+
+      expect(mockTempItem.updateSource).toHaveBeenCalled();
+    });
+
+    test('should close sheet and render action card sheet when fromEmbeddedItem is false', async () => {
+      const embeddedData = {
+        _id: 'embedded-id',
+        type: 'combatPower',
+        name: 'Test Power',
+        system: {}
+      };
+
+      global.foundry.utils.deepClone.mockImplementation(() => ({ ...embeddedData }));
+
+      const mockSheet = { close: vi.fn(), render: vi.fn(), rendered: true };
+      const mockTempItem = {
+        effects: new MockCollection(),
+        isEditable: true,
+        system: {},
+        update: vi.fn(),
+        updateEmbeddedDocuments: vi.fn(),
+        updateSource: vi.fn(),
+        sheet: mockSheet
+      };
+      // Mock the prototype for updateEmbeddedDocuments calls
+      global.CONFIG.Item.documentClass.prototype = {
+        updateEmbeddedDocuments: vi.fn().mockResolvedValue([])
+      };
+      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+
+      item.system.embeddedItem = embeddedData;
+
+      const tempItem = item.getEmbeddedItem();
+      await tempItem.update({ 'system.someProperty': 'newValue' });
+
+      expect(mockSheet.close).toHaveBeenCalled();
+      expect(item.sheet.render).toHaveBeenCalledWith(true);
+    });
+  });
+
+  // Tests for getEmbeddedEffects() error handling (lines 666-668)
+  describe('getEmbeddedEffects() - error handling', () => {
+    test('should return empty array and log error when exception occurs', () => {
+      item.system.embeddedStatusEffects = [
+        { _id: 'effect-1', type: 'status', name: 'Effect 1', system: {} }
+      ];
+
+      // Make CONFIG.Item.documentClass throw an error
+      global.CONFIG.Item.documentClass.mockImplementation(() => {
+        throw new Error('Test error');
+      });
+
+      const result = item.getEmbeddedEffects();
+
+      expect(result).toEqual([]);
+      expect(mockLogger.error).toHaveBeenCalled();
+    });
+  });
+
+  // Tests for getEmbeddedTransformations() invalid data handling (lines 868-874)
+  describe('getEmbeddedTransformations() - invalid data handling', () => {
+    test('should filter out null entries from transformation data', async () => {
+      item.system.embeddedTransformations = [
+        { _id: 'trans-1', type: 'transformation', name: 'Transformation 1', system: {} },
+        null,
+        { _id: 'trans-2', type: 'transformation', name: 'Transformation 2', system: {} }
+      ];
+
+      const mockTempItem = {
+        isEditable: true,
+        update: vi.fn(),
+        updateEmbeddedDocuments: vi.fn(),
+        updateSource: vi.fn(),
+        sheet: { close: vi.fn(), render: vi.fn() },
+        system: {}
+      };
+      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+
+      const result = await item.getEmbeddedTransformations();
+
+      expect(mockLogger.warn).toHaveBeenCalled();
+      expect(result).toHaveLength(2);
+    });
+
+    test('should filter out invalid object entries from transformation data', async () => {
+      item.system.embeddedTransformations = [
+        { _id: 'trans-1', type: 'transformation', name: 'Transformation 1', system: {} },
+        'invalid string',
+        { _id: 'trans-2', type: 'transformation', name: 'Transformation 2', system: {} }
+      ];
+
+      const mockTempItem = {
+        isEditable: true,
+        update: vi.fn(),
+        updateEmbeddedDocuments: vi.fn(),
+        updateSource: vi.fn(),
+        sheet: { close: vi.fn(), render: vi.fn() },
+        system: {}
+      };
+      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+
+      const result = await item.getEmbeddedTransformations();
+
+      expect(mockLogger.warn).toHaveBeenCalled();
+      expect(result).toHaveLength(2);
+    });
+  });
+
+  // Tests for getEmbeddedTransformations() update method (lines 895-950)
+  describe('getEmbeddedTransformations() - tempItem.update() method', () => {
+    test('should call actionCard.update with merged data', async () => {
+      item.system.embeddedTransformations = [
+        { _id: 'trans-1', type: 'transformation', name: 'Transformation 1', system: {} }
+      ];
+
+      const mockTempItem = {
+        isEditable: true,
+        id: 'trans-1',
+        update: vi.fn(),
+        updateEmbeddedDocuments: vi.fn(),
+        updateSource: vi.fn(),
+        sheet: { close: vi.fn(), render: vi.fn() },
+        system: {}
+      };
+      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+
+      const transformations = await item.getEmbeddedTransformations();
+      const tempTransformation = transformations[0];
+
+      await tempTransformation.update({ 'system.someProperty': 'newValue' });
+
+      expect(item.update).toHaveBeenCalled();
+      const updateCall = item.update.mock.calls[0];
+      expect(updateCall[0]).toHaveProperty('system.embeddedTransformations');
+    });
+
+    test('should throw error when transformation not found', async () => {
+      item.system.embeddedTransformations = [
+        { _id: 'trans-1', type: 'transformation', name: 'Transformation 1', system: {} }
+      ];
+
+      const mockTempItem = {
+        isEditable: true,
+        id: 'trans-1',
+        update: vi.fn(),
+        updateEmbeddedDocuments: vi.fn(),
+        updateSource: vi.fn(),
+        sheet: { close: vi.fn(), render: vi.fn() },
+        system: {}
+      };
+      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+
+      const transformations = await item.getEmbeddedTransformations();
+      const tempTransformation = transformations[0];
+
+      // Change the transformation ID to simulate not found
+      item.system.embeddedTransformations = [
+        { _id: 'different-id', type: 'transformation', name: 'Different Transformation', system: {} }
+      ];
+
+      await expect(tempTransformation.update({ 'system.someProperty': 'newValue' }))
+        .rejects.toThrow('Could not find embedded transformation to update');
+    });
+
+    test('should call updateSource after updating', async () => {
+      item.system.embeddedTransformations = [
+        { _id: 'trans-1', type: 'transformation', name: 'Transformation 1', system: {} }
+      ];
+
+      const mockTempItem = {
+        isEditable: true,
+        id: 'trans-1',
+        update: vi.fn(),
+        updateEmbeddedDocuments: vi.fn(),
+        updateSource: vi.fn(),
+        sheet: { close: vi.fn(), render: vi.fn() },
+        system: {}
+      };
+      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+
+      const transformations = await item.getEmbeddedTransformations();
+      await transformations[0].update({ 'system.someProperty': 'newValue' });
+
+      expect(mockTempItem.updateSource).toHaveBeenCalled();
+    });
+
+    test('should close sheet when fromEmbeddedItem is false', async () => {
+      item.system.embeddedTransformations = [
+        { _id: 'trans-1', type: 'transformation', name: 'Transformation 1', system: {} }
+      ];
+
+      const mockSheet = { close: vi.fn(), render: vi.fn(), rendered: true };
+      const mockTempItem = {
+        isEditable: true,
+        id: 'trans-1',
+        update: vi.fn(),
+        updateEmbeddedDocuments: vi.fn(),
+        updateSource: vi.fn(),
+        sheet: mockSheet,
+        system: {}
+      };
+      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+
+      const transformations = await item.getEmbeddedTransformations();
+      await transformations[0].update({ 'system.someProperty': 'newValue' });
+
+      expect(mockSheet.close).toHaveBeenCalled();
+      expect(item.sheet.render).toHaveBeenCalledWith(true);
+    });
+
+    test('should not close sheet when fromEmbeddedItem is true', async () => {
+      item.system.embeddedTransformations = [
+        { _id: 'trans-1', type: 'transformation', name: 'Transformation 1', system: {} }
+      ];
+
+      const mockSheet = { close: vi.fn(), render: vi.fn(), rendered: true };
+      const mockTempItem = {
+        isEditable: true,
+        id: 'trans-1',
+        update: vi.fn(),
+        updateEmbeddedDocuments: vi.fn(),
+        updateSource: vi.fn(),
+        sheet: mockSheet,
+        system: {}
+      };
+      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+
+      const transformations = await item.getEmbeddedTransformations();
+      await transformations[0].update({ 'system.someProperty': 'newValue' }, { fromEmbeddedItem: true });
+
+      expect(mockSheet.close).not.toHaveBeenCalled();
+      expect(mockSheet.render).toHaveBeenCalledWith(false);
+    });
+
+    test('should not close sheet for image updates', async () => {
+      item.system.embeddedTransformations = [
+        { _id: 'trans-1', type: 'transformation', name: 'Transformation 1', system: {} }
+      ];
+
+      const mockSheet = { close: vi.fn(), render: vi.fn(), rendered: true };
+      const mockTempItem = {
+        isEditable: true,
+        id: 'trans-1',
+        update: vi.fn(),
+        updateEmbeddedDocuments: vi.fn(),
+        updateSource: vi.fn(),
+        sheet: mockSheet,
+        system: {}
+      };
+      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+
+      const transformations = await item.getEmbeddedTransformations();
+      await transformations[0].update({ img: 'new-image.svg' });
+
+      expect(mockSheet.close).not.toHaveBeenCalled();
+      expect(mockSheet.render).toHaveBeenCalledWith(false);
+    });
+
+    test('should not render action card sheet in execution context', async () => {
+      item.system.embeddedTransformations = [
+        { _id: 'trans-1', type: 'transformation', name: 'Transformation 1', system: {} }
+      ];
+
+      const mockSheet = { close: vi.fn(), render: vi.fn(), rendered: true };
+      const mockTempItem = {
+        isEditable: true,
+        id: 'trans-1',
+        update: vi.fn(),
+        updateEmbeddedDocuments: vi.fn(),
+        updateSource: vi.fn(),
+        sheet: mockSheet,
+        system: {}
+      };
+      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+
+      const transformations = await item.getEmbeddedTransformations({ executionContext: true });
+      await transformations[0].update({ 'system.someProperty': 'newValue' });
+
+      expect(mockSheet.close).toHaveBeenCalled();
+      expect(item.sheet.render).not.toHaveBeenCalled();
+    });
+  });
+
+  // Tests for getEmbeddedTransformations() dual-override update method (lines 957-1028)
+  describe('getEmbeddedTransformations() - dual-override update method', () => {
+    test('should handle embeddedCombatPowers updates specially', async () => {
+      item.system.embeddedTransformations = [
+        { _id: 'trans-1', type: 'transformation', name: 'Transformation 1', system: {} }
+      ];
+
+      const mockSheet = { close: vi.fn(), render: vi.fn(), rendered: true };
+      const mockTempItem = {
+        isEditable: true,
+        id: 'trans-1',
+        update: vi.fn(),
+        updateEmbeddedDocuments: vi.fn(),
+        updateSource: vi.fn(),
+        sheet: mockSheet,
+        system: {}
+      };
+      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+
+      const transformations = await item.getEmbeddedTransformations();
+      await transformations[0].update({ 'system.embeddedCombatPowers': [] });
+
+      expect(item.update).toHaveBeenCalled();
+      const updateCall = item.update.mock.calls[0];
+      expect(updateCall[0]).toHaveProperty('system.embeddedTransformations');
+    });
+
+    test('should handle embeddedActionCards updates specially', async () => {
+      item.system.embeddedTransformations = [
+        { _id: 'trans-1', type: 'transformation', name: 'Transformation 1', system: {} }
+      ];
+
+      const mockSheet = { close: vi.fn(), render: vi.fn(), rendered: true };
+      const mockTempItem = {
+        isEditable: true,
+        id: 'trans-1',
+        update: vi.fn(),
+        updateEmbeddedDocuments: vi.fn(),
+        updateSource: vi.fn(),
+        sheet: mockSheet,
+        system: {}
+      };
+      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+
+      const transformations = await item.getEmbeddedTransformations();
+      await transformations[0].update({ 'system.embeddedActionCards': [] });
+
+      expect(item.update).toHaveBeenCalled();
+      const updateCall = item.update.mock.calls[0];
+      expect(updateCall[0]).toHaveProperty('system.embeddedTransformations');
+    });
+
+    test('should throw error when transformation not found during dual-override update', async () => {
+      item.system.embeddedTransformations = [
+        { _id: 'trans-1', type: 'transformation', name: 'Transformation 1', system: {} }
+      ];
+
+      const mockSheet = { close: vi.fn(), render: vi.fn(), rendered: true };
+      const mockTempItem = {
+        isEditable: true,
+        id: 'trans-1',
+        update: vi.fn(),
+        updateEmbeddedDocuments: vi.fn(),
+        updateSource: vi.fn(),
+        sheet: mockSheet,
+        system: {}
+      };
+      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+
+      const transformations = await item.getEmbeddedTransformations();
+      const tempTransformation = transformations[0];
+
+      // Change the transformation ID to simulate not found
+      item.system.embeddedTransformations = [
+        { _id: 'different-id', type: 'transformation', name: 'Different Transformation', system: {} }
+      ];
+
+      await expect(tempTransformation.update({ 'system.embeddedCombatPowers': [] }))
+        .rejects.toThrow('Could not find embedded transformation to update');
+    });
+
+    test('should call updateSource after dual-override update', async () => {
+      item.system.embeddedTransformations = [
+        { _id: 'trans-1', type: 'transformation', name: 'Transformation 1', system: {} }
+      ];
+
+      const mockSheet = { close: vi.fn(), render: vi.fn(), rendered: true };
+      const mockTempItem = {
+        isEditable: true,
+        id: 'trans-1',
+        update: vi.fn(),
+        updateEmbeddedDocuments: vi.fn(),
+        updateSource: vi.fn(),
+        sheet: mockSheet,
+        system: {}
+      };
+      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+
+      const transformations = await item.getEmbeddedTransformations();
+      await transformations[0].update({ 'system.embeddedCombatPowers': [] });
+
+      expect(mockTempItem.updateSource).toHaveBeenCalled();
+    });
+
+    test('should render sheets without closing for dual-override updates', async () => {
+      item.system.embeddedTransformations = [
+        { _id: 'trans-1', type: 'transformation', name: 'Transformation 1', system: {} }
+      ];
+
+      // Set item.sheet.rendered to true so the render call happens
+      item.sheet.rendered = true;
+
+      const mockSheet = { close: vi.fn(), render: vi.fn(), rendered: true };
+      const mockTempItem = {
+        isEditable: true,
+        id: 'trans-1',
+        update: vi.fn(),
+        updateEmbeddedDocuments: vi.fn(),
+        updateSource: vi.fn(),
+        sheet: mockSheet,
+        system: {}
+      };
+      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+
+      const transformations = await item.getEmbeddedTransformations();
+      await transformations[0].update({ 'system.embeddedCombatPowers': [] });
+
+      // Should not close sheets for dual-override updates
+      expect(mockSheet.close).not.toHaveBeenCalled();
+      expect(mockSheet.render).toHaveBeenCalledWith(false);
+      expect(item.sheet.render).toHaveBeenCalledWith(false);
+    });
+  });
+
+  // Tests for getEmbeddedTransformations() updateEmbeddedDocuments method (lines 1033-1060)
+  describe('getEmbeddedTransformations() - tempItem.updateEmbeddedDocuments() method', () => {
+    test('should call prototype updateEmbeddedDocuments', async () => {
+      item.system.embeddedTransformations = [
+        { _id: 'trans-1', type: 'transformation', name: 'Transformation 1', system: {} }
+      ];
+
+      const mockPrototypeUpdate = vi.fn().mockResolvedValue([]);
+      global.CONFIG.Item.documentClass.prototype = {
+        updateEmbeddedDocuments: mockPrototypeUpdate
+      };
+
+      const mockSheet = { close: vi.fn(), render: vi.fn(), rendered: true };
+      const mockTempItem = {
+        isEditable: true,
+        id: 'trans-1',
+        update: vi.fn(),
+        updateEmbeddedDocuments: vi.fn(),
+        updateSource: vi.fn(),
+        sheet: mockSheet,
+        system: {}
+      };
+      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+
+      const transformations = await item.getEmbeddedTransformations();
+      await transformations[0].updateEmbeddedDocuments('ActiveEffect', []);
+
+      expect(mockPrototypeUpdate).toHaveBeenCalled();
+    });
+
+    test('should close sheet when fromEmbeddedItem is false', async () => {
+      item.system.embeddedTransformations = [
+        { _id: 'trans-1', type: 'transformation', name: 'Transformation 1', system: {} }
+      ];
+
+      const mockPrototypeUpdate = vi.fn().mockResolvedValue([]);
+      global.CONFIG.Item.documentClass.prototype = {
+        updateEmbeddedDocuments: mockPrototypeUpdate
+      };
+
+      const mockSheet = { close: vi.fn(), render: vi.fn(), rendered: true };
+      const mockTempItem = {
+        isEditable: true,
+        id: 'trans-1',
+        update: vi.fn(),
+        updateEmbeddedDocuments: vi.fn(),
+        updateSource: vi.fn(),
+        sheet: mockSheet,
+        system: {}
+      };
+      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+
+      const transformations = await item.getEmbeddedTransformations();
+      await transformations[0].updateEmbeddedDocuments('ActiveEffect', []);
+
+      expect(mockSheet.close).toHaveBeenCalled();
+      expect(item.sheet.render).toHaveBeenCalledWith(true);
+    });
+
+    test('should not close sheet when fromEmbeddedItem is true', async () => {
+      item.system.embeddedTransformations = [
+        { _id: 'trans-1', type: 'transformation', name: 'Transformation 1', system: {} }
+      ];
+
+      const mockPrototypeUpdate = vi.fn().mockResolvedValue([]);
+      global.CONFIG.Item.documentClass.prototype = {
+        updateEmbeddedDocuments: mockPrototypeUpdate
+      };
+
+      const mockSheet = { close: vi.fn(), render: vi.fn(), rendered: true };
+      const mockTempItem = {
+        isEditable: true,
+        id: 'trans-1',
+        update: vi.fn(),
+        updateEmbeddedDocuments: vi.fn(),
+        updateSource: vi.fn(),
+        sheet: mockSheet,
+        system: {}
+      };
+      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+
+      const transformations = await item.getEmbeddedTransformations();
+      await transformations[0].updateEmbeddedDocuments('ActiveEffect', [], { fromEmbeddedItem: true });
+
+      expect(mockSheet.close).not.toHaveBeenCalled();
+      expect(mockSheet.render).toHaveBeenCalledWith(false);
+    });
+
+    test('should not render action card sheet in execution context', async () => {
+      item.system.embeddedTransformations = [
+        { _id: 'trans-1', type: 'transformation', name: 'Transformation 1', system: {} }
+      ];
+
+      const mockPrototypeUpdate = vi.fn().mockResolvedValue([]);
+      global.CONFIG.Item.documentClass.prototype = {
+        updateEmbeddedDocuments: mockPrototypeUpdate
+      };
+
+      const mockSheet = { close: vi.fn(), render: vi.fn(), rendered: true };
+      const mockTempItem = {
+        isEditable: true,
+        id: 'trans-1',
+        update: vi.fn(),
+        updateEmbeddedDocuments: vi.fn(),
+        updateSource: vi.fn(),
+        sheet: mockSheet,
+        system: {}
+      };
+      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+
+      const transformations = await item.getEmbeddedTransformations({ executionContext: true });
+      await transformations[0].updateEmbeddedDocuments('ActiveEffect', []);
+
+      expect(mockSheet.close).toHaveBeenCalled();
+      expect(item.sheet.render).not.toHaveBeenCalled();
+    });
+  });
+
+  // Tests for getEmbeddedTransformations() handleBypass delegation (line 1066)
+  describe('getEmbeddedTransformations() - handleBypass delegation', () => {
+    test('should delegate handleBypass when system.handleBypass is a function', async () => {
+      const mockHandleBypass = vi.fn().mockResolvedValue({ success: true });
+      item.system.embeddedTransformations = [
+        {
+          _id: 'trans-1',
+          type: 'transformation',
+          name: 'Transformation 1',
+          system: {
+            handleBypass: mockHandleBypass
+          }
+        }
+      ];
+
+      const mockTempItem = {
+        isEditable: true,
+        id: 'trans-1',
+        update: vi.fn(),
+        updateEmbeddedDocuments: vi.fn(),
+        updateSource: vi.fn(),
+        sheet: { close: vi.fn(), render: vi.fn() },
+        system: {
+          handleBypass: mockHandleBypass
+        }
+      };
+      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+
+      const transformations = await item.getEmbeddedTransformations();
+
+      expect(transformations[0].handleBypass).toBeDefined();
+      await transformations[0].handleBypass({ test: 'config' }, { option: 'value' });
+      expect(mockHandleBypass).toHaveBeenCalled();
+    });
+
+    test('should not add handleBypass when system.handleBypass is not a function', async () => {
+      item.system.embeddedTransformations = [
+        {
+          _id: 'trans-1',
+          type: 'transformation',
+          name: 'Transformation 1',
+          system: {
+            handleBypass: 'not a function'
+          }
+        }
+      ];
+
+      const mockTempItem = {
+        isEditable: true,
+        id: 'trans-1',
+        update: vi.fn(),
+        updateEmbeddedDocuments: vi.fn(),
+        updateSource: vi.fn(),
+        sheet: { close: vi.fn(), render: vi.fn() },
+        system: {
+          handleBypass: 'not a function'
+        }
+      };
+      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+
+      const transformations = await item.getEmbeddedTransformations();
+
+      expect(transformations[0].handleBypass).toBeUndefined();
     });
   });
 });
