@@ -62,7 +62,9 @@ export default defineConfig({
         // Settings registration - configuration code, low test value
         'module/services/settings/**/*.mjs',
         // UI components - DOM-heavy, require full Foundry UI context
-        'module/ui/components/**/*.mjs'
+        'module/ui/components/**/*.mjs',
+        // template helper files - no logic to test
+        'module/helpers/templates.mjs'
       ],
       // Coverage thresholds - reasonable initial thresholds
       thresholds: {
