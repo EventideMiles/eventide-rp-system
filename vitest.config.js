@@ -57,6 +57,11 @@ export default defineConfig({
         'module/ui/mixins/**/*.mjs',
         // Theme helpers - visual styling, low regression risk
         'module/helpers/theme/**/*.mjs',
+        // DOM-heavy UI modules - require integration tests with actual DOM
+        'module/helpers/color-pickers.mjs',
+        'module/helpers/number-inputs.mjs',
+        'module/helpers/range-sliders.mjs',
+        'module/helpers/tab-container-styling.mjs',
         // Foundry hooks - lifecycle callbacks, hard to test in isolation
         'module/services/hooks/**/*.mjs',
         // Settings registration - configuration code, low test value
