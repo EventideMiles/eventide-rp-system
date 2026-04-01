@@ -68,8 +68,18 @@ export default defineConfig({
         'module/services/settings/**/*.mjs',
         // UI components - DOM-heavy, require full Foundry UI context
         'module/ui/components/**/*.mjs',
+        // UI creator applications - DOM-heavy, require full Foundry UI context
+        'module/ui/creators/**/*.mjs',
+        // UI macro applications - DOM-heavy, require full Foundry UI context
+        'module/ui/macros/**/*.mjs',
+        // UI popup applications - DOM-heavy, require full Foundry UI context
+        'module/ui/popups/**/*.mjs',
+        // UI sheet applications - DOM-heavy, require full Foundry UI context
+        'module/ui/sheets/**/*.mjs',
         // template helper files - no logic to test
-        'module/helpers/templates.mjs'
+        'module/helpers/templates.mjs',
+        // Main system initialization - bootstrapping code requiring full Foundry lifecycle
+        'module/eventide-rp-system.mjs'
       ],
       // Coverage thresholds - reasonable initial thresholds
       thresholds: {

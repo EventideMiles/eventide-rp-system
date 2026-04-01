@@ -11,6 +11,26 @@ globalThis.foundry = globalThis.foundry || {};
 // Also expose as top-level foundry for backward compatibility
 global.foundry = globalThis.foundry;
 
+// Add foundry.documents.collections mock for Actor/Item sheet registration
+if (!global.foundry.documents) {
+  global.foundry.documents = {};
+}
+if (!global.foundry.documents.collections) {
+  global.foundry.documents.collections = {
+    Actors: class Actors {},
+    Items: class Items {},
+  };
+}
+if (!global.foundry.appv1) {
+  global.foundry.appv1 = {};
+}
+if (!global.foundry.appv1.sheets) {
+  global.foundry.appv1.sheets = {
+    ActorSheet: class ActorSheet {},
+    ItemSheet: class ItemSheet {},
+  };
+}
+
 // Add missing foundry.applications.handlebars mock
 if (!global.foundry.applications) {
   global.foundry.applications = {};
@@ -361,6 +381,20 @@ if (!global.game?.i18n) {
 } else if (!global.game.i18n.format) {
   global.game.i18n.format = vi.fn((key, _data) => key);
 }
+
+// Mock performance.memory if not available (for Node.js environment)
+/* eslint-disable no-undef */
+if (typeof performance !== 'undefined' && !performance.memory) {
+  Object.defineProperty(performance, 'memory', {
+    value: {
+      usedJSHeapSize: 50 * 1024 * 1024,
+      totalJSHeapSize: 100 * 1024 * 1024,
+      jsHeapSizeLimit: 200 * 1024 * 1024,
+    },
+    configurable: true,
+  });
+}
+/* eslint-enable no-undef */
 
 // Ensure ui.notifications is properly mocked
 if (!global.ui?.notifications) {
