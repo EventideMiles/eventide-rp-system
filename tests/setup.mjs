@@ -6,13 +6,19 @@
 // Import FoundryVTT mocks from @rayners/foundry-test-utils
 import '@rayners/foundry-test-utils/dist/mocks/foundry-mocks.js';
 
+// Expose foundry globally for modules that use bare 'foundry' identifier
+globalThis.foundry = globalThis.foundry || {};
+// Also expose as top-level foundry for backward compatibility
+global.foundry = globalThis.foundry;
+
 // Add missing foundry.applications.handlebars mock
 if (!global.foundry.applications) {
   global.foundry.applications = {};
 }
 if (!global.foundry.applications.handlebars) {
   global.foundry.applications.handlebars = {
-    renderTemplate: vi.fn(() => Promise.resolve('<div>Rendered Template</div>'))
+    renderTemplate: vi.fn(() => Promise.resolve('<div>Rendered Template</div>')),
+    loadTemplates: vi.fn(() => Promise.resolve())
   };
 }
 
@@ -32,8 +38,30 @@ if (!global.foundry.applications.ux) {
     TextEditor: class MockTextEditor {
       constructor() {}
       static implementation = {
-        enrichHTML: vi.fn(() => Promise.resolve('<p>Enriched</p>'))
+        enrichHTML: vi.fn(() => Promise.resolve('<p>Enriched</p>')),
+        getDragEventData: vi.fn(() => ({
+          type: 'Item',
+          itemId: 'item123',
+          actorId: 'actor123',
+          data: { type: 'actionCard' },
+        }))
       }
+    }
+  };
+}
+
+// Also add global TextEditor for modules that reference it directly from foundry scope
+if (!global.TextEditor) {
+  global.TextEditor = {
+    enrichHTML: vi.fn((content => content)),
+    implementation: {
+      enrichHTML: vi.fn(() => Promise.resolve('<p>Enriched</p>')),
+      getDragEventData: vi.fn(() => ({
+        type: 'Item',
+        itemId: 'item123',
+        actorId: 'actor123',
+        data: { type: 'actionCard' },
+      }))
     }
   };
 }
@@ -326,6 +354,22 @@ global.testUtils = {
    */
   nextTick: () => new Promise(resolve => setTimeout(resolve, 0))
 };
+
+// Ensure game.i18n is properly mocked for format() calls
+if (!global.game?.i18n) {
+  global.game = { ...global.game, i18n: { format: vi.fn((key, _data) => key) } };
+} else if (!global.game.i18n.format) {
+  global.game.i18n.format = vi.fn((key, _data) => key);
+}
+
+// Ensure ui.notifications is properly mocked
+if (!global.ui?.notifications) {
+  global.ui = { ...global.ui, notifications: { warn: vi.fn(), info: vi.fn(), error: vi.fn() } };
+} else if (!global.ui.notifications.warn) {
+  global.ui.notifications.warn = vi.fn();
+  global.ui.notifications.info = vi.fn();
+  global.ui.notifications.error = vi.fn();
+}
 
 // Clean up after each test
 afterEach(() => {
