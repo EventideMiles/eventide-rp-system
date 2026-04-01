@@ -837,9 +837,12 @@ class ERPSMessageHandler {
       gmName,
     });
 
-    const actorsInScene = await canvas.scene.tokens
-      .map((token) => token.actor)
-      .filter((actor) => actor !== null);
+    const actorsInScene = [];
+    for (const token of canvas.scene.tokens) {
+      if (token.actor) {
+        actorsInScene.push(token.actor);
+      }
+    }
     let foundItem = null;
 
     for await (const actor of actorsInScene) {

@@ -292,7 +292,7 @@ function _refreshAllActorDerivedData() {
 
     // Also refresh any synthetic token actors on the current scene
     if (canvas.scene) {
-      for (const token of canvas.scene.tokens) {
+      for (const token of canvas.tokens.placeables) {
         if (token.actor && !token.isLinked) {
           token.actor.reset();
           if (token.actor.sheet?.rendered) {
