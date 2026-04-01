@@ -27,12 +27,19 @@ vi.mock('../../../module/utils/roll-utilities.mjs', () => ({
       if (vuln === 0) return formula;
       if (vuln > 0) return `${formula} * (1 + ${vuln / 100})`;
       return `${formula} * (1 - ${Math.abs(vuln) / 100})`;
-    })
+    }),
+    determineCriticalStates: vi.fn(() => ({
+      critHit: false,
+      critMiss: false,
+      stolenCrit: false,
+      savedMiss: false
+    }))
   }
 }));
 
 // Import the service after setting up mocks
 import { DamageProcessor } from '../../../module/services/damage-processor.mjs';
+import { ERPSRollUtilities } from '../../../module/utils/roll-utilities.mjs';
 
 describe('DamageProcessor', () => {
   let mockActor;
@@ -60,7 +67,10 @@ describe('DamageProcessor', () => {
           vuln: { total: 0 }
         }
       },
-      damageResolve: vi.fn(async () => null)
+      damageResolve: vi.fn(async () => null),
+      getRollData: vi.fn(() => ({
+        hiddenAbilities: { acro: 20, miss: 5 }
+      }))
     };
 
     // Create mock action card
@@ -199,6 +209,270 @@ describe('DamageProcessor', () => {
       );
       // Should use default threshold of 15
       expect(result).toBe(true);
+    });
+
+    // New tests for uncovered conditions
+    test('should return false for never condition', () => {
+      const result = DamageProcessor.shouldApplyEffect('never', true, true, 20);
+      expect(result).toBe(false);
+    });
+
+    test('should return true for rollUnderValue when roll below threshold', () => {
+      const result = DamageProcessor.shouldApplyEffect(
+        'rollUnderValue',
+        false,
+        false,
+        10,
+        15
+      );
+      expect(result).toBe(true);
+    });
+
+    test('should return false for rollUnderValue when roll equals threshold', () => {
+      const result = DamageProcessor.shouldApplyEffect(
+        'rollUnderValue',
+        false,
+        false,
+        15,
+        15
+      );
+      expect(result).toBe(false);
+    });
+
+    test('should return false for rollUnderValue when roll above threshold', () => {
+      const result = DamageProcessor.shouldApplyEffect(
+        'rollUnderValue',
+        false,
+        false,
+        20,
+        15
+      );
+      expect(result).toBe(false);
+    });
+
+    test('should return true for rollEven when roll is even', () => {
+      const result = DamageProcessor.shouldApplyEffect('rollEven', false, false, 16);
+      expect(result).toBe(true);
+    });
+
+    test('should return false for rollEven when roll is odd', () => {
+      const result = DamageProcessor.shouldApplyEffect('rollEven', false, false, 15);
+      expect(result).toBe(false);
+    });
+
+    test('should return true for rollOdd when roll is odd', () => {
+      const result = DamageProcessor.shouldApplyEffect('rollOdd', false, false, 15);
+      expect(result).toBe(true);
+    });
+
+    test('should return false for rollOdd when roll is even', () => {
+      const result = DamageProcessor.shouldApplyEffect('rollOdd', false, false, 16);
+      expect(result).toBe(false);
+    });
+
+    test('should return true for rollOnValue when roll equals threshold', () => {
+      const result = DamageProcessor.shouldApplyEffect(
+        'rollOnValue',
+        false,
+        false,
+        15,
+        15
+      );
+      expect(result).toBe(true);
+    });
+
+    test('should return false for rollOnValue when roll does not equal threshold', () => {
+      const result = DamageProcessor.shouldApplyEffect(
+        'rollOnValue',
+        false,
+        false,
+        14,
+        15
+      );
+      expect(result).toBe(false);
+    });
+
+    test('should return true for zeroSuccesses when no hits', () => {
+      const result = DamageProcessor.shouldApplyEffect('zeroSuccesses', false, false, 0);
+      expect(result).toBe(true);
+    });
+
+    test('should return false for zeroSuccesses when one hit', () => {
+      const result = DamageProcessor.shouldApplyEffect('zeroSuccesses', true, false, 0);
+      expect(result).toBe(false);
+    });
+
+    test('should return false for criticalSuccess when roll is null', () => {
+      const result = DamageProcessor.shouldApplyEffect(
+        'criticalSuccess',
+        false,
+        false,
+        0,
+        15,
+        null,
+        mockActor,
+        '2d6'
+      );
+      expect(result).toBe(false);
+    });
+
+    test('should return false for criticalSuccess when actor is null', () => {
+      const result = DamageProcessor.shouldApplyEffect(
+        'criticalSuccess',
+        false,
+        false,
+        0,
+        15,
+        mockRollResult,
+        null,
+        '2d6'
+      );
+      expect(result).toBe(false);
+    });
+
+    test('should return false for criticalSuccess when formula is null', () => {
+      const result = DamageProcessor.shouldApplyEffect(
+        'criticalSuccess',
+        false,
+        false,
+        0,
+        15,
+        mockRollResult,
+        mockActor,
+        null
+      );
+      expect(result).toBe(false);
+    });
+
+    test('should return false for criticalFailure when roll is null', () => {
+      const result = DamageProcessor.shouldApplyEffect(
+        'criticalFailure',
+        false,
+        false,
+        0,
+        15,
+        null,
+        mockActor,
+        '2d6'
+      );
+      expect(result).toBe(false);
+    });
+
+    test('should return false for criticalFailure when actor is null', () => {
+      const result = DamageProcessor.shouldApplyEffect(
+        'criticalFailure',
+        false,
+        false,
+        0,
+        15,
+        mockRollResult,
+        null,
+        '2d6'
+      );
+      expect(result).toBe(false);
+    });
+
+    test('should return false for criticalFailure when formula is null', () => {
+      const result = DamageProcessor.shouldApplyEffect(
+        'criticalFailure',
+        false,
+        false,
+        0,
+        15,
+        mockRollResult,
+        mockActor,
+        null
+      );
+      expect(result).toBe(false);
+    });
+
+    test('should evaluate criticalSuccess with valid parameters', () => {
+      ERPSRollUtilities.determineCriticalStates = vi.fn(() => ({
+        critHit: true,
+        critMiss: false,
+        stolenCrit: false,
+        savedMiss: false
+      }));
+
+      const result = DamageProcessor.shouldApplyEffect(
+        'criticalSuccess',
+        false,
+        false,
+        0,
+        15,
+        mockRollResult,
+        mockActor,
+        '2d6'
+      );
+
+      expect(result).toBe(true);
+      expect(ERPSRollUtilities.determineCriticalStates).toHaveBeenCalled();
+    });
+
+    test('should return false for criticalSuccess when stolenCrit is true', () => {
+      ERPSRollUtilities.determineCriticalStates = vi.fn(() => ({
+        critHit: true,
+        critMiss: false,
+        stolenCrit: true,
+        savedMiss: false
+      }));
+
+      const result = DamageProcessor.shouldApplyEffect(
+        'criticalSuccess',
+        false,
+        false,
+        0,
+        15,
+        mockRollResult,
+        mockActor,
+        '2d6'
+      );
+
+      expect(result).toBe(false);
+    });
+
+    test('should evaluate criticalFailure with valid parameters', () => {
+      ERPSRollUtilities.determineCriticalStates = vi.fn(() => ({
+        critHit: false,
+        critMiss: true,
+        stolenCrit: false,
+        savedMiss: false
+      }));
+
+      const result = DamageProcessor.shouldApplyEffect(
+        'criticalFailure',
+        false,
+        false,
+        0,
+        15,
+        mockRollResult,
+        mockActor,
+        '2d6'
+      );
+
+      expect(result).toBe(true);
+    });
+
+    test('should return false for criticalFailure when savedMiss is true', () => {
+      ERPSRollUtilities.determineCriticalStates = vi.fn(() => ({
+        critHit: false,
+        critMiss: true,
+        stolenCrit: false,
+        savedMiss: true
+      }));
+
+      const result = DamageProcessor.shouldApplyEffect(
+        'criticalFailure',
+        false,
+        false,
+        0,
+        15,
+        mockRollResult,
+        mockActor,
+        '2d6'
+      );
+
+      expect(result).toBe(false);
     });
   });
 
@@ -528,6 +802,160 @@ describe('DamageProcessor', () => {
       const result = await DamageProcessor.processSavedDamage([targetToken], savedContext);
 
       expect(result).toHaveLength(0);
+    });
+  });
+
+  describe('shouldApplyDamage()', () => {
+    test('should return false when damageFormula is missing', () => {
+      const attackChain = { damageCondition: 'always' };
+      const result = DamageProcessor.shouldApplyDamage(attackChain, true, true, 20);
+      expect(result).toBe(false);
+    });
+
+    test('should return true when condition is always and formula exists', () => {
+      const attackChain = { damageFormula: '2d6', damageCondition: 'always' };
+      const result = DamageProcessor.shouldApplyDamage(attackChain, false, false, 0);
+      expect(result).toBe(true);
+    });
+
+    test('should use default threshold when not specified', () => {
+      const attackChain = { damageFormula: '2d6', damageCondition: 'rollValue' };
+      // Default threshold is 15, roll of 18 should pass
+      const result = DamageProcessor.shouldApplyDamage(attackChain, false, false, 18);
+      expect(result).toBe(true);
+    });
+
+    test('should use custom threshold when specified', () => {
+      const attackChain = { damageFormula: '2d6', damageCondition: 'rollValue', damageThreshold: 20 };
+      const result = DamageProcessor.shouldApplyDamage(attackChain, false, false, 18);
+      expect(result).toBe(false);
+    });
+  });
+
+  describe('getVulnerabilityTotal()', () => {
+    test('should return vulnerability total from target', () => {
+      mockActor.system.hiddenAbilities.vuln.total = 15;
+      const result = DamageProcessor.getVulnerabilityTotal(mockActor);
+      expect(result).toBe(15);
+    });
+
+    test('should return 0 when hiddenAbilities is missing', () => {
+      delete mockActor.system.hiddenAbilities;
+      const result = DamageProcessor.getVulnerabilityTotal(mockActor);
+      expect(result).toBe(0);
+    });
+
+    test('should return 0 when vuln is missing', () => {
+      delete mockActor.system.hiddenAbilities.vuln;
+      const result = DamageProcessor.getVulnerabilityTotal(mockActor);
+      expect(result).toBe(0);
+    });
+
+    test('should return 0 when system is missing', () => {
+      delete mockActor.system;
+      const result = DamageProcessor.getVulnerabilityTotal(mockActor);
+      expect(result).toBe(0);
+    });
+  });
+
+  describe('hasVulnerability()', () => {
+    test('should return true when vulnerability is positive', () => {
+      mockActor.system.hiddenAbilities.vuln.total = 10;
+      const result = DamageProcessor.hasVulnerability(mockActor);
+      expect(result).toBe(true);
+    });
+
+    test('should return false when vulnerability is zero', () => {
+      mockActor.system.hiddenAbilities.vuln.total = 0;
+      const result = DamageProcessor.hasVulnerability(mockActor);
+      expect(result).toBe(false);
+    });
+
+    test('should return false when vulnerability is negative', () => {
+      mockActor.system.hiddenAbilities.vuln.total = -5;
+      const result = DamageProcessor.hasVulnerability(mockActor);
+      expect(result).toBe(false);
+    });
+  });
+
+  describe('isHealing()', () => {
+    test('should return true for heal damage type', () => {
+      const result = DamageProcessor.isHealing('heal');
+      expect(result).toBe(true);
+    });
+
+    test('should return false for physical damage type', () => {
+      const result = DamageProcessor.isHealing('physical');
+      expect(result).toBe(false);
+    });
+
+    test('should return false for empty string', () => {
+      const result = DamageProcessor.isHealing('');
+      expect(result).toBe(false);
+    });
+  });
+
+  describe('isValidFormula()', () => {
+    test('should return true for valid formula string', () => {
+      const result = DamageProcessor.isValidFormula('2d6+5');
+      expect(result).toBe(true);
+    });
+
+    test('should return false for empty string', () => {
+      const result = DamageProcessor.isValidFormula('');
+      expect(result).toBe(false);
+    });
+
+    test('should return false for whitespace-only string', () => {
+      const result = DamageProcessor.isValidFormula('   ');
+      expect(result).toBe(false);
+    });
+
+    test('should return false for null', () => {
+      const result = DamageProcessor.isValidFormula(null);
+      expect(result).toBe(false);
+    });
+
+    test('should return false for undefined', () => {
+      const result = DamageProcessor.isValidFormula(undefined);
+      expect(result).toBe(false);
+    });
+
+    test('should return false for number', () => {
+      const result = DamageProcessor.isValidFormula(123);
+      expect(result).toBe(false);
+    });
+  });
+
+  describe('applyVulnerabilityModifier()', () => {
+    test('should add vulnerability to formula for non-healing damage', () => {
+      mockActor.system.hiddenAbilities.vuln.total = 10;
+      const result = DamageProcessor.applyVulnerabilityModifier('2d6', 'physical', mockActor);
+      expect(result).toBe('2d6 + 10');
+    });
+
+    test('should not modify formula for healing damage', () => {
+      mockActor.system.hiddenAbilities.vuln.total = 10;
+      const result = DamageProcessor.applyVulnerabilityModifier('2d6', 'heal', mockActor);
+      expect(result).toBe('2d6');
+    });
+
+    test('should not modify formula when vulnerability is zero', () => {
+      mockActor.system.hiddenAbilities.vuln.total = 0;
+      const result = DamageProcessor.applyVulnerabilityModifier('2d6', 'physical', mockActor);
+      expect(result).toBe('2d6');
+    });
+
+    test('should handle missing hiddenAbilities', () => {
+      delete mockActor.system.hiddenAbilities;
+      const result = DamageProcessor.applyVulnerabilityModifier('2d6', 'physical', mockActor);
+      expect(result).toBe('2d6');
+    });
+
+    test('should handle missing system', () => {
+      delete mockActor.system;
+      const result = DamageProcessor.applyVulnerabilityModifier('2d6', 'physical', mockActor);
+      expect(result).toBe('2d6');
     });
   });
 });

@@ -198,6 +198,10 @@ export default [
         afterEach: "readonly",
         beforeAll: "readonly",
         afterAll: "readonly",
+        
+        // Browser globals for DOM testing
+        document: "writable",
+        window: "writable",
         vi: "readonly",
         
         // FoundryVTT globals

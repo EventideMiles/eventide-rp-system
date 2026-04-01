@@ -6,13 +6,39 @@
 // Import FoundryVTT mocks from @rayners/foundry-test-utils
 import '@rayners/foundry-test-utils/dist/mocks/foundry-mocks.js';
 
+// Expose foundry globally for modules that use bare 'foundry' identifier
+globalThis.foundry = globalThis.foundry || {};
+// Also expose as top-level foundry for backward compatibility
+global.foundry = globalThis.foundry;
+
+// Add foundry.documents.collections mock for Actor/Item sheet registration
+if (!global.foundry.documents) {
+  global.foundry.documents = {};
+}
+if (!global.foundry.documents.collections) {
+  global.foundry.documents.collections = {
+    Actors: class Actors {},
+    Items: class Items {},
+  };
+}
+if (!global.foundry.appv1) {
+  global.foundry.appv1 = {};
+}
+if (!global.foundry.appv1.sheets) {
+  global.foundry.appv1.sheets = {
+    ActorSheet: class ActorSheet {},
+    ItemSheet: class ItemSheet {},
+  };
+}
+
 // Add missing foundry.applications.handlebars mock
 if (!global.foundry.applications) {
   global.foundry.applications = {};
 }
 if (!global.foundry.applications.handlebars) {
   global.foundry.applications.handlebars = {
-    renderTemplate: vi.fn(() => Promise.resolve('<div>Rendered Template</div>'))
+    renderTemplate: vi.fn(() => Promise.resolve('<div>Rendered Template</div>')),
+    loadTemplates: vi.fn(() => Promise.resolve())
   };
 }
 
@@ -31,6 +57,31 @@ if (!global.foundry.applications.ux) {
   global.foundry.applications.ux = {
     TextEditor: class MockTextEditor {
       constructor() {}
+      static implementation = {
+        enrichHTML: vi.fn(() => Promise.resolve('<p>Enriched</p>')),
+        getDragEventData: vi.fn(() => ({
+          type: 'Item',
+          itemId: 'item123',
+          actorId: 'actor123',
+          data: { type: 'actionCard' },
+        }))
+      }
+    }
+  };
+}
+
+// Also add global TextEditor for modules that reference it directly from foundry scope
+if (!global.TextEditor) {
+  global.TextEditor = {
+    enrichHTML: vi.fn((content => content)),
+    implementation: {
+      enrichHTML: vi.fn(() => Promise.resolve('<p>Enriched</p>')),
+      getDragEventData: vi.fn(() => ({
+        type: 'Item',
+        itemId: 'item123',
+        actorId: 'actor123',
+        data: { type: 'actionCard' },
+      }))
     }
   };
 }
@@ -225,26 +276,34 @@ global.foundry.abstract.TypeDataModel = class EnhancedMockTypeDataModel extends 
   }
   
   _initializeSchemaDefaults(schema, data) {
-    // Recursively initialize schema defaults
+    // Recursively initialize schema defaults and apply data values
     if (!schema) return;
     
     const fields = global.foundry.data.fields;
     for (const [key, field] of Object.entries(schema)) {
+      // First, check if data has a value for this key
+      const hasDataValue = data && key in data;
+      
       if (field instanceof fields.SchemaField) {
         // Initialize nested schema fields
         if (!this[key]) {
           this[key] = {};
         }
-        this._initializeSchemaDefaults(field.fields, data[key] || {});
+        this._initializeSchemaDefaults(field.fields || field.schema, hasDataValue ? data[key] : {});
       } else if (field instanceof fields.ArrayField) {
-        // Initialize array fields
-        if (!this[key]) {
+        // Initialize array fields with data or default
+        if (hasDataValue) {
+          this[key] = data[key];
+        } else if (this[key] === undefined) {
           this[key] = field.options && field.options.initial !== undefined ? field.options.initial : [];
         }
-      } else if (field && (field.initial !== undefined || (field.options && field.options.initial !== undefined))) {
-        // Initialize simple fields with default values
-        if (this[key] === undefined) {
-          this[key] = field.options && field.options.initial !== undefined ? field.options.initial : field.initial;
+      } else {
+        // Initialize simple fields with data value or default
+        const defaultValue = field.options && field.options.initial !== undefined ? field.options.initial : field.initial;
+        if (hasDataValue) {
+          this[key] = data[key];
+        } else if (this[key] === undefined && defaultValue !== undefined) {
+          this[key] = defaultValue;
         }
       }
     }
@@ -315,6 +374,36 @@ global.testUtils = {
    */
   nextTick: () => new Promise(resolve => setTimeout(resolve, 0))
 };
+
+// Ensure game.i18n is properly mocked for format() calls
+if (!global.game?.i18n) {
+  global.game = { ...global.game, i18n: { format: vi.fn((key, _data) => key) } };
+} else if (!global.game.i18n.format) {
+  global.game.i18n.format = vi.fn((key, _data) => key);
+}
+
+// Mock performance.memory if not available (for Node.js environment)
+/* eslint-disable no-undef */
+if (typeof performance !== 'undefined' && !performance.memory) {
+  Object.defineProperty(performance, 'memory', {
+    value: {
+      usedJSHeapSize: 50 * 1024 * 1024,
+      totalJSHeapSize: 100 * 1024 * 1024,
+      jsHeapSizeLimit: 200 * 1024 * 1024,
+    },
+    configurable: true,
+  });
+}
+/* eslint-enable no-undef */
+
+// Ensure ui.notifications is properly mocked
+if (!global.ui?.notifications) {
+  global.ui = { ...global.ui, notifications: { warn: vi.fn(), info: vi.fn(), error: vi.fn() } };
+} else if (!global.ui.notifications.warn) {
+  global.ui.notifications.warn = vi.fn();
+  global.ui.notifications.info = vi.fn();
+  global.ui.notifications.error = vi.fn();
+}
 
 // Clean up after each test
 afterEach(() => {

@@ -51,16 +51,35 @@ export default defineConfig({
         'module/**/*.test.mjs',
         'module/**/*.spec.mjs',
         'node_modules/**',
+        // Barrel files - only re-export modules, no testable logic
+        'module/**/_module.mjs',
         // UI sheet mixins - heavy DOM interaction, Foundry Application dependencies
         'module/ui/mixins/**/*.mjs',
         // Theme helpers - visual styling, low regression risk
         'module/helpers/theme/**/*.mjs',
+        // DOM-heavy UI modules - require integration tests with actual DOM
+        'module/helpers/color-pickers.mjs',
+        'module/helpers/number-inputs.mjs',
+        'module/helpers/range-sliders.mjs',
+        'module/helpers/tab-container-styling.mjs',
         // Foundry hooks - lifecycle callbacks, hard to test in isolation
         'module/services/hooks/**/*.mjs',
         // Settings registration - configuration code, low test value
         'module/services/settings/**/*.mjs',
         // UI components - DOM-heavy, require full Foundry UI context
-        'module/ui/components/**/*.mjs'
+        'module/ui/components/**/*.mjs',
+        // UI creator applications - DOM-heavy, require full Foundry UI context
+        'module/ui/creators/**/*.mjs',
+        // UI macro applications - DOM-heavy, require full Foundry UI context
+        'module/ui/macros/**/*.mjs',
+        // UI popup applications - DOM-heavy, require full Foundry UI context
+        'module/ui/popups/**/*.mjs',
+        // UI sheet applications - DOM-heavy, require full Foundry UI context
+        'module/ui/sheets/**/*.mjs',
+        // template helper files - no logic to test
+        'module/helpers/templates.mjs',
+        // Main system initialization - bootstrapping code requiring full Foundry lifecycle
+        'module/eventide-rp-system.mjs'
       ],
       // Coverage thresholds - reasonable initial thresholds
       thresholds: {
