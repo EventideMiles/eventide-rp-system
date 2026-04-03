@@ -5,7 +5,7 @@
     "type": "chrome",
     "request": "attach",
     "name": "Attach to Brave",
-    "port": 9222
+    "port": 9222 // change to the debug port you wish to use.
 }
   ]
 }
