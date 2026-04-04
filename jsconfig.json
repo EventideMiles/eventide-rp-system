@@ -3,7 +3,7 @@
     "target": "esnext",
     "lib": ["ES2022", "DOM"],
     "module": "ES2022",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,
     "strict": false,
     "noImplicitAny": false,
@@ -13,7 +13,6 @@
     "declaration": false,
     "allowJs": true,
     "skipLibCheck": true,
-    "baseUrl": ".",
     "types": [],
     "typeRoots": [
       "./node_modules/@types"
