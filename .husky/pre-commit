@@ -6,4 +6,6 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 
+# Run validation (linting and formatting) before commit
+# Validation ensures code follows stylistic guides of our codebase
 npm run validate
