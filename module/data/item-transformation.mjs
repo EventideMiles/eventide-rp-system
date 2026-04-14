@@ -1,5 +1,14 @@
 import EventideRpSystemItemBase from "./base-item.mjs";
 
+// Default images for transformation items when no image is set
+const DEFAULT_IMAGES = [
+  "icons/svg/item-bag.svg",
+  "icons/svg/ice-aura.svg",
+  "",
+  null,
+  undefined,
+];
+
 export default class EventideRpSystemTransformation extends EventideRpSystemItemBase {
   static defineSchema() {
     const fields = foundry.data.fields;
@@ -311,6 +320,7 @@ export default class EventideRpSystemTransformation extends EventideRpSystemItem
       });
 
       // Override the update method to persist changes back to the transformation.
+      // Handles both regular action card updates and embedded item/status effect updates.
       tempItem.update = async (data, options = {}) => {
         const actionCards = foundry.utils.deepClone(this.embeddedActionCards);
         const actionCardIndex = actionCards.findIndex(
@@ -347,19 +357,25 @@ export default class EventideRpSystemTransformation extends EventideRpSystemItem
         // Update the temporary item's source data to stay in sync
         tempItem.updateSource(actionCards[actionCardIndex]);
 
-        // Only close the sheet if this is a direct action card update, not an embedded item update
-        // Also treat image updates as embedded item updates to prevent unwanted sheet closure
+        // Handle sheet lifecycle based on update type
+        const isEmbeddedItemUpdate =
+          data["system.embeddedItem"] || data["system.embeddedStatusEffects"];
         const isImageUpdate = data.img !== undefined;
-        if (!options.fromEmbeddedItem && !isImageUpdate) {
-          // Close the temporary sheet and re-render the transformation sheet.
+
+        if (
+          !options.fromEmbeddedItem &&
+          !isImageUpdate &&
+          !isEmbeddedItemUpdate
+        ) {
+          // Close the temporary sheet and re-render the transformation sheet for direct updates
           tempItem.sheet.close();
           transformationItem.sheet.render(true);
         } else {
-          // For embedded item updates and image updates, refresh both sheets without closing
+          // For embedded item updates, image updates, and fromEmbeddedItem updates,
+          // refresh both sheets without closing
           if (tempItem.sheet?.rendered) {
             tempItem.sheet.render(false);
           }
-          // Also refresh the transformation sheet to show updated action card data
           if (transformationItem.sheet?.rendered) {
             transformationItem.sheet.render(false);
           }
@@ -368,78 +384,11 @@ export default class EventideRpSystemTransformation extends EventideRpSystemItem
         return tempItem;
       };
 
-      // Add embedded item update handling for transformation action cards
-      // This handles updates from embedded items within transformation action cards
-      const originalUpdate = tempItem.update;
-      tempItem.update = async (data, options = {}) => {
-        // If this is an update to embedded item or status effects, handle it specially
-        if (
-          data["system.embeddedItem"] ||
-          data["system.embeddedStatusEffects"]
-        ) {
-          // Update the action card data in the transformation's embedded action cards array
-          const actionCards = foundry.utils.deepClone(this.embeddedActionCards);
-          const actionCardIndex = actionCards.findIndex(
-            (ac) => ac._id === tempItem.id,
-          );
-          if (actionCardIndex === -1) {
-            throw new Error("Could not find embedded action card to update.");
-          }
-
-          // Merge the updates into the stored data
-          actionCards[actionCardIndex] = foundry.utils.mergeObject(
-            actionCards[actionCardIndex],
-            data,
-            { inplace: false },
-          );
-
-          // Persist the changes to the transformation item
-          const updateOptions = {
-            render: false, // Always use render: false to prevent focus stealing
-            ...options, // Include any options passed from embedded item updates
-          };
-          await transformationItem.update(
-            {
-              "system.embeddedActionCards": actionCards,
-            },
-            updateOptions,
-          );
-
-          // Update the temporary item's source data to stay in sync
-          tempItem.updateSource(actionCards[actionCardIndex]);
-
-          // Handle sheet lifecycle - don't close for embedded item updates
-          if (!options.fromEmbeddedItem) {
-            tempItem.sheet.close();
-            transformationItem.sheet.render(true);
-          } else {
-            if (tempItem.sheet?.rendered) {
-              tempItem.sheet.render(false);
-            }
-            if (transformationItem.sheet?.rendered) {
-              transformationItem.sheet.render(false);
-            }
-          }
-
-          return tempItem;
-        } else {
-          // For other updates, use the original action card update method
-          return originalUpdate.call(tempItem, data, options);
-        }
-      };
-
       return tempItem;
     });
   }
 
   prepareDerivedData() {
-    const DEFAULT_IMAGES = [
-      "icons/svg/item-bag.svg",
-      "icons/svg/ice-aura.svg",
-      "",
-      null,
-      undefined,
-    ];
     super.prepareDerivedData?.();
 
     if (!DEFAULT_IMAGES.includes(this.parent.img)) {
