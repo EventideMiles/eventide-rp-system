@@ -115,7 +115,7 @@ function clearAllSystemIntervals() {
       window._erpsIntervalIds = new Set();
     }
 
-    // Clear any intervals we've been tracking
+    // Clear only the intervals we've been tracking
     let clearedCount = 0;
     window._erpsIntervalIds.forEach((id) => {
       try {
@@ -128,28 +128,8 @@ function clearAllSystemIntervals() {
     });
     window._erpsIntervalIds.clear();
 
-    // Also try to clear a reasonable range of interval IDs
-    // This is less aggressive than clearing ALL intervals
-    const currentId = setTimeout(() => {}, 0);
-    clearTimeout(currentId);
-
-    // Only clear intervals in a reasonable range around the current ID
-    const rangeStart = Math.max(1, currentId - 1000);
-    const rangeEnd = currentId + 10;
-
-    for (let i = rangeStart; i <= rangeEnd; i++) {
-      try {
-        clearInterval(i);
-        clearTimeout(i);
-      } catch {
-        // Ignore errors for non-existent intervals
-      }
-    }
-
-    safeLog("debug", "Cleared system intervals", {
+    safeLog("debug", "Cleared tracked system intervals", {
       trackedIntervals: clearedCount,
-      rangeCleared: `${rangeStart}-${rangeEnd}`,
-      currentId,
     });
   } catch (error) {
     safeLog("warn", "Failed to clear intervals", error);

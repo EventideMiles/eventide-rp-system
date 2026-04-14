@@ -63,7 +63,7 @@ export class ErrorHandler {
 
       // Create user-friendly error message
       const displayMessage =
-        userMessage || ErrorHandler.#createUserMessage(error, context);
+        userMessage || ErrorHandler.createUserMessage(error, context);
 
       // Show notification to user if requested
       if (showToUser && typeof ui !== "undefined" && ui.notifications) {
@@ -162,7 +162,7 @@ export class ErrorHandler {
    * @static
    * @private
    */
-  static #createUserMessage(error, context) {
+  static createUserMessage(error, context) {
     // Use localized error messages when available
     if (typeof game !== "undefined" && game.i18n) {
       // Check for specific error patterns and provide appropriate messages

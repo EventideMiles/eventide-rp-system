@@ -3,7 +3,6 @@
  * @module helpers/popup-listeners
  */
 
-import { Logger } from "../logger.mjs";
 import { ImageZoomService } from "../image-zoom.mjs";
 
 /**
@@ -66,17 +65,6 @@ const addPopupImageZoomFunctionality = (html) => {
     // Add CSS class to indicate the image is clickable
     image.classList.add('erps-form__image--zoomable');
   });
-};
-
-/**
- * Set up popup listeners
- */
-export const setupPopupListeners = () => {
-  Logger.methodEntry("PopupListeners", "setupPopupListeners");
-
-  setupPopupRendering();
-
-  Logger.methodExit("PopupListeners", "setupPopupListeners", 0);
 };
 
 /**

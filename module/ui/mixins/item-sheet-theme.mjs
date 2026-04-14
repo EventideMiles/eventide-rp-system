@@ -77,9 +77,6 @@ export const ItemSheetThemeMixin = (BaseClass) =>
 
       // Set theme properties immediately to prevent flashing
       // const currentTheme = CommonFoundryTasks.retrieveSheetTheme();
-      // TESTING: Comment out JavaScript theme property setting to test pure CSS
-      // this._setImmediateThemeProperties(currentTheme);
-
       // Initialize centralized theme management with item sheet preset
       if (!this.themeManager) {
         // Handle the async initialization properly

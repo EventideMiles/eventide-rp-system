@@ -1,6 +1,13 @@
 import { Logger } from "../../services/logger.mjs";
 import { getSetting } from "../../services/_module.mjs";
 import { ErrorHandler } from "../../utils/error-handler.mjs";
+import {
+  combineDiceAdjustments,
+  calculateMixedRollAdjustments,
+  buildDiceFormula,
+  getDefaultAdjustments,
+  hasAdjustments,
+} from "../../utils/dice-adjustments.mjs";
 
 /**
  * Item Rolls Mixin
@@ -202,30 +209,14 @@ export const ItemRollsMixin = (BaseClass) =>
       const ability2DiceAdj = rollData.actor.abilities[rollData.roll.secondAbility].diceAdjustments || {};
       const itemDiceAdj = rollData.roll.diceAdjustments || {};
 
-      const combinedAdvantage =
-        (ability1DiceAdj.advantage || 0) +
-        (ability2DiceAdj.advantage || 0) +
-        (itemDiceAdj.advantage || 0);
+      const adjustments = calculateMixedRollAdjustments(
+        ability1DiceAdj,
+        ability2DiceAdj,
+        itemDiceAdj,
+      );
 
-      const combinedDisadvantage =
-        (ability1DiceAdj.disadvantage || 0) +
-        (ability2DiceAdj.disadvantage || 0) +
-        (itemDiceAdj.disadvantage || 0);
-
-      const totalAdjustment = combinedAdvantage - combinedDisadvantage;
-      const absTotal = Math.abs(totalAdjustment);
-      const mode = totalAdjustment >= 0 ? "k" : "kl";
-
-      // Build dice formula
-      const diceCount = absTotal + 1;
       const dieSize = rollData.actor.hiddenAbilities?.dice?.total || 20;
-
-      let formula;
-      if (absTotal > 0) {
-        formula = `${diceCount}d${dieSize}${mode}1`;
-      } else {
-        formula = `1d${dieSize}`;
-      }
+      let formula = buildDiceFormula(dieSize, adjustments);
 
       // Add averaged ability modifier
       formula += ` + ${averageAbility}`;
@@ -244,9 +235,7 @@ export const ItemRollsMixin = (BaseClass) =>
           ability2: rollData.roll.secondAbility,
           ability2Total,
           averageAbility,
-          combinedAdvantage,
-          combinedDisadvantage,
-          totalAdjustment,
+          adjustments,
         },
         "ITEM_ROLLS",
       );
@@ -332,7 +321,7 @@ export const ItemRollsMixin = (BaseClass) =>
           { rollData: rollData.roll },
           "ITEM_ROLLS",
         );
-        return this._getDefaultAdjustments();
+        return getDefaultAdjustments();
       }
 
       // Validate actor ability data
@@ -344,7 +333,7 @@ export const ItemRollsMixin = (BaseClass) =>
           { ability: rollData.roll.ability },
           "ITEM_ROLLS",
         );
-        return this._getDefaultAdjustments();
+        return getDefaultAdjustments();
       }
 
       const thisDiceAdjustments = rollData.roll.diceAdjustments;
@@ -352,21 +341,10 @@ export const ItemRollsMixin = (BaseClass) =>
         rollData.actor.abilities[rollData.roll.ability].diceAdjustments;
 
       // Combine adjustments from item and actor
-      const total =
-        (thisDiceAdjustments.total || 0) + (actorDiceAdjustments.total || 0);
-      const absTotal = Math.abs(total);
-
-      const adjustments = {
-        total,
-        advantage:
-          (thisDiceAdjustments.advantage || 0) +
-          (actorDiceAdjustments.advantage || 0),
-        disadvantage:
-          (thisDiceAdjustments.disadvantage || 0) +
-          (actorDiceAdjustments.disadvantage || 0),
-        mode: total >= 0 ? "k" : "kl", // k = keep highest, kl = keep lowest
-        absTotal,
-      };
+      const adjustments = combineDiceAdjustments(
+        thisDiceAdjustments,
+        actorDiceAdjustments,
+      );
 
       Logger.methodExit(
         "ItemRollsMixin",
@@ -393,7 +371,7 @@ export const ItemRollsMixin = (BaseClass) =>
           { rollData: rollData.roll },
           "ITEM_ROLLS",
         );
-        return this._getDefaultAdjustments();
+        return getDefaultAdjustments();
       }
 
       const diceAdjustments = rollData.roll.diceAdjustments;
@@ -435,23 +413,13 @@ export const ItemRollsMixin = (BaseClass) =>
           "ITEM_ROLLS",
         );
         // Fallback to common die size
-        const formula = `${diceAdjustments.absTotal + 1}d20`;
+        const formula = buildDiceFormula(20, diceAdjustments);
         Logger.methodExit("ItemRollsMixin", "_buildDiceFormula", formula);
         return formula;
       }
 
-      const diceCount = diceAdjustments.absTotal + 1;
       const dieSize = rollData.actor.hiddenAbilities.dice.total;
-      const diceMode = diceAdjustments.mode;
-
-      let formula;
-      if (diceAdjustments.absTotal > 0) {
-        // When there are dice adjustments, roll multiple dice and keep the best/worst
-        formula = `${diceCount}d${dieSize}${diceMode}1`;
-      } else {
-        // When no dice adjustments, roll a single die
-        formula = `1d${dieSize}`;
-      }
+      let formula = buildDiceFormula(dieSize, diceAdjustments);
 
       // Add ability modifier if not unaugmented
       if (rollData.roll.ability !== "unaugmented") {
@@ -476,7 +444,7 @@ export const ItemRollsMixin = (BaseClass) =>
 
       Logger.debug(
         `Built dice formula: ${formula}`,
-        { diceCount, dieSize, diceMode, bonus },
+        { dieSize, adjustments: diceAdjustments, bonus },
         "ITEM_ROLLS",
       );
 
@@ -484,21 +452,6 @@ export const ItemRollsMixin = (BaseClass) =>
       return formula;
     }
 
-    /**
-     * Get default dice adjustments as fallback
-     *
-     * @private
-     * @returns {Object} Default adjustments object
-     */
-    _getDefaultAdjustments() {
-      return {
-        total: 0,
-        advantage: 0,
-        disadvantage: 0,
-        mode: "k",
-        absTotal: 0,
-      };
-    }
 
     /**
      * Validate if the item can perform rolls
@@ -563,12 +516,6 @@ export const ItemRollsMixin = (BaseClass) =>
      * @returns {boolean} Whether the item has dice adjustments
      */
     hasDiceAdjustments() {
-      const adjustments = this.system?.roll?.diceAdjustments;
-      if (!adjustments) return false;
-
-      return (
-        (adjustments.advantage || 0) !== 0 ||
-        (adjustments.disadvantage || 0) !== 0
-      );
+      return hasAdjustments(this.system?.roll?.diceAdjustments);
     }
   };

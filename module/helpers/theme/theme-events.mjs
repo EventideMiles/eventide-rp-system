@@ -9,38 +9,6 @@ import { applyGlobalTheme } from "./theme-applicator.mjs";
 const globalListeners = new Set();
 
 /**
- * Add a global theme change listener
- * @param {Function} listener - Function to call when theme changes
- */
-export const addGlobalThemeListener = (listener) => {
-  globalListeners.add(listener);
-
-  Logger.debug(
-    "Global theme listener added",
-    {
-      listenerCount: globalListeners.size,
-    },
-    "THEME_MANAGER",
-  );
-};
-
-/**
- * Remove a global theme change listener
- * @param {Function} listener - Function to remove
- */
-export const removeGlobalThemeListener = (listener) => {
-  globalListeners.delete(listener);
-
-  Logger.debug(
-    "Global theme listener removed",
-    {
-      listenerCount: globalListeners.size,
-    },
-    "THEME_MANAGER",
-  );
-};
-
-/**
  * Clear all global theme listeners
  */
 export const clearGlobalThemeListeners = () => {

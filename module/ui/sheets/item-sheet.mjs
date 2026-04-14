@@ -94,7 +94,7 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
       },
       position: {
         width: 840,
-        height: "auto",
+        height: 950,
       },
       form: {
         submitOnChange: true,
