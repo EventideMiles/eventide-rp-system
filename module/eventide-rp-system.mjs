@@ -47,6 +47,7 @@ import {
   ImageZoomService,
   TransformationConverter,
   EmbeddedImageMigration,
+  SettingNameMigration,
 } from "./services/_module.mjs";
 
 // Import token configuration guards
@@ -313,7 +314,7 @@ Hooks.once("init", async () => {
   if (game.settings && game.settings.get) {
     try {
       CONFIG.Combat.initiative = {
-        formula: game.settings.get("eventide-rp-system", "initativeFormula"),
+        formula: game.settings.get("eventide-rp-system", "initiativeFormula"),
         decimals: game.settings.get("eventide-rp-system", "initiativeDecimals"),
       };
     } catch (error) {
@@ -366,15 +367,6 @@ Hooks.once("init", async () => {
 /* -------------------------------------------- */
 /*  Handlebars Helpers                          */
 /* -------------------------------------------- */
-
-/**
- * Convert a string to lowercase
- * @param {string} str - The string to convert
- * @returns {string} The lowercase string
- */
-Handlebars.registerHelper("toLowerCase", (str) => {
-  return str.toLowerCase();
-});
 
 /**
  * Conditional helper for comparing two values with various operators
@@ -454,7 +446,7 @@ Handlebars.registerHelper("debug", function (optionalValue) {
 });
 
 /**
- * Convert a string to lowercase (alternative implementation)
+ * Convert a string to lowercase
  * @param {string} str - The string to convert
  * @returns {string} The lowercase string
  */
@@ -545,6 +537,9 @@ Hooks.once("ready", () => {
   // Run migrations (Issues #127, #128)
   EmbeddedImageMigration.run().catch((error) => {
     Logger.error("Failed to run embedded image migration", error, "SYSTEM_INIT");
+  });
+  SettingNameMigration.run().catch((error) => {
+    Logger.error("Failed to run setting name migration", error, "SYSTEM_INIT");
   });
 
   // Remove immediate theme styles now that the full theme system is loaded
