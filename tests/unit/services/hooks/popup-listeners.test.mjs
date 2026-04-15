@@ -27,14 +27,6 @@ describe('popup-listeners', () => {
     });
   });
 
-  describe('cleanupPopupListeners()', () => {
-    test('should exist as a callable function', () => {
-      // Arrange & Act & Assert - validates the cleanup pattern
-      const cleanup = () => {};
-      expect(() => cleanup()).not.toThrow();
-    });
-  });
-
   describe('Popup Detection Logic', () => {
     test('should detect apps with Popup in constructor name', () => {
       // Arrange

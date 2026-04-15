@@ -39,11 +39,6 @@ vi.mock('../../../module/services/hooks/gm-control-hooks.mjs', () => ({
   cleanupGMControlHooks: vi.fn(),
 }));
 
-// Mock chat listeners
-vi.mock('../../../module/services/hooks/chat-listeners.mjs', () => ({
-  cleanupChatListeners: vi.fn(),
-}));
-
 // Store original values to restore after tests
 const originalWindow = global.window;
 const originalDocument = global.document;
@@ -67,7 +62,6 @@ import { Logger } from '../../../module/services/logger.mjs';
 import { cleanupGlobalColorPickers } from '../../../module/helpers/color-pickers.mjs';
 import { cleanupGlobalThemeManager } from '../../../module/helpers/_module.mjs';
 import { cleanupGMControlHooks } from '../../../module/services/hooks/gm-control-hooks.mjs';
-import { cleanupChatListeners } from '../../../module/services/hooks/chat-listeners.mjs';
 
 // =================================
 // Helper Functions
@@ -84,7 +78,6 @@ function resetMocks() {
   cleanupGlobalColorPickers.mockClear();
   cleanupGlobalThemeManager.mockClear();
   cleanupGMControlHooks.mockClear();
-  cleanupChatListeners.mockClear();
 }
 
 /**
@@ -172,7 +165,6 @@ describe('system-cleanup.mjs', () => {
       performSystemCleanup();
 
       expect(cleanupGMControlHooks).toHaveBeenCalled();
-      expect(cleanupChatListeners).toHaveBeenCalled();
       expect(cleanupGlobalColorPickers).toHaveBeenCalled();
       expect(cleanupGlobalThemeManager).toHaveBeenCalled();
     });
@@ -214,7 +206,6 @@ describe('system-cleanup.mjs', () => {
       expect(cleanupGlobalColorPickers).toHaveBeenCalled();
       expect(cleanupGlobalThemeManager).toHaveBeenCalled();
       expect(cleanupGMControlHooks).toHaveBeenCalled();
-      expect(cleanupChatListeners).toHaveBeenCalled();
     });
 
     test('should handle errors gracefully', () => {

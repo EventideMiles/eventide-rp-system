@@ -73,11 +73,6 @@ export const ActorSheetThemeMixin = (BaseClass) =>
       // Apply theme immediately to prevent flashing - this is synchronous and fast
       applyThemeImmediate(this.element);
 
-      // Set theme properties immediately to prevent flashing
-      // const currentTheme = CommonFoundryTasks.retrieveSheetTheme();
-      // TESTING: Comment out JavaScript theme property setting to test pure CSS
-      // this._setImmediateThemeProperties(currentTheme);
-
       // Initialize centralized theme management (this handles full theme application)
       if (!this.themeManager) {
         // Handle the async initialization properly

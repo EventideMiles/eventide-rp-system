@@ -184,6 +184,16 @@ global.Roll = class MockRoll {
   }
 
   /**
+   * Validate a dice formula string
+   * @param {string} formula - The formula to validate
+   * @returns {boolean} True if the formula appears valid, false otherwise
+   */
+  static validate(formula) {
+    // Basic validation - check if it looks like a dice formula
+    return typeof formula === 'string' && formula.trim().length > 0;
+  }
+
+  /**
    * Resolve a nested property path from data object
    * @param {string} path - Dot-separated path like "will.total" or "lvl.value"
    * @param {object} data - Data object to resolve from

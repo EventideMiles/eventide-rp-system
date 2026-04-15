@@ -1,5 +1,6 @@
 import { Logger } from "../../services/logger.mjs";
 import { ErrorHandler } from "../../utils/error-handler.mjs";
+import { clampValue } from "../../utils/math-utilities.mjs";
 import {
   erpsRollHandler,
   erpsMessageHandler,
@@ -34,7 +35,7 @@ export const ActorResourceMixin = (BaseClass) =>
         return this;
       }
 
-      const newValue = this._clampValue(
+      const newValue = clampValue(
         this.system.resolve.value + value,
         0,
         this.system.resolve.max,
@@ -76,7 +77,7 @@ export const ActorResourceMixin = (BaseClass) =>
         return this;
       }
 
-      const newValue = this._clampValue(
+      const newValue = clampValue(
         this.system.power.value + value,
         0,
         this.system.power.max,
@@ -395,18 +396,5 @@ export const ActorResourceMixin = (BaseClass) =>
         );
         await this.deleteEmbeddedDocuments("Item", statusIds);
       }
-    }
-
-    /**
-     * Utility method to clamp a value between min and max
-     *
-     * @private
-     * @param {number} value - Value to clamp
-     * @param {number} min - Minimum value
-     * @param {number} max - Maximum value
-     * @returns {number} Clamped value
-     */
-    _clampValue(value, min, max) {
-      return Math.min(Math.max(value, min), max);
     }
   };

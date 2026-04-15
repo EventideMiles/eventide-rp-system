@@ -312,23 +312,3 @@ function setupItemDeletionHooks() {
   });
 }
 
-/**
- * Set up chat message hooks
- */
-export const setupChatListeners = () => {
-  Logger.methodEntry("ChatListeners", "setupChatListeners");
-
-  setupChatMessageRendering();
-  setupItemUpdateHooks();
-  setupItemCreationHooks();
-  setupItemDeletionHooks();
-
-  Logger.methodExit("ChatListeners", "setupChatListeners", 0);
-};
-
-/**
- * Clean up chat listener resources
- */
-export const cleanupChatListeners = () => {
-  // No cleanup needed for current implementation
-};

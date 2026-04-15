@@ -19,26 +19,83 @@ export class EmbeddedImageMigration {
       return;
     }
 
-    const migrationVersion = "1.3.0";
+    const migrationVersion = 1;
+
+    let oldTrackingSetting = null;
+    try {
+      oldTrackingSetting = game.settings.get(
+        "eventide-rp-system",
+        "embeddedImageMigrationVersion"
+      );
+    } catch {
+      // Old setting doesn't exist, which is fine for new installations
+    }
+
     const lastMigration = game.settings.get(
       "eventide-rp-system",
-      "embeddedImageMigrationVersion"
+      "migrationVersion"
     );
 
-    if (lastMigration === migrationVersion) {
+    const migrationLevel = Math.floor(Number(lastMigration) || 0);
+    
+    if (oldTrackingSetting != null) {
+      Logger.info(
+        "Cleaning up old embeddedImageMigrationVersion setting",
+        { oldValue: oldTrackingSetting },
+        "MIGRATION"
+      );
+      await game.settings.set(
+        "eventide-rp-system",
+        "embeddedImageMigrationVersion",
+        null
+      );
+      Logger.info(
+        "Embedded image migration already completed (old setting found)",
+        null,
+        "MIGRATION"
+      );
+
+      // if migrationLevel is not a number or is less than migrationVersion we should set the setting to the migrationVersion
+      if (isNaN(migrationLevel) || migrationLevel < migrationVersion) {
+        await game.settings.set(
+          "eventide-rp-system",
+          "migrationVersion",
+          migrationVersion
+        );
+        Logger.info(
+          "Updated migrationVersion to current version due to old tracking setting",
+          { migrationVersion },
+          "MIGRATION"
+        );
+      }
+      return;
+    }
+
+    if (lastMigration == null) {
+      Logger.info(
+        "Starting embedded image migration (first migration)",
+        null,
+        "MIGRATION"
+      );
+    }
+
+    // already at or past migration level
+    else if (migrationLevel >= migrationVersion) {
       Logger.debug(
         "Embedded image migration already completed",
-        { version: migrationVersion },
+        { level: migrationLevel },
         "MIGRATION"
       );
       return;
     }
-
-    Logger.info(
-      "Starting embedded image migration",
-      { version: migrationVersion },
-      "MIGRATION"
-    );
+    // Case 4: Need to run this migration
+    else {
+      Logger.info(
+        "Starting embedded image migration",
+        { level: migrationLevel },
+        "MIGRATION"
+      );
+    }
 
     // Warn users not to reload during migration
     const migrationNotification = ui.notifications.warn(
@@ -86,16 +143,16 @@ export class EmbeddedImageMigration {
         }
       }
 
-      // Save migration version
+      // Save migration version as numeric
       await game.settings.set(
         "eventide-rp-system",
-        "embeddedImageMigrationVersion",
-        migrationVersion
+        "migrationVersion",
+        1
       );
 
       Logger.info(
         "Embedded image migration completed",
-        { itemsFixed, effectsFixed, statusFieldsMigrated, version: migrationVersion },
+        { itemsFixed, effectsFixed, statusFieldsMigrated, level: 1 },
         "MIGRATION"
       );
 
