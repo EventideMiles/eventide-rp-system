@@ -11,7 +11,6 @@ import { Logger } from "../services/logger.mjs";
 import { cleanupGlobalColorPickers } from "../helpers/color-pickers.mjs";
 import { cleanupGlobalThemeManager } from "../helpers/_module.mjs";
 import { cleanupGMControlHooks } from "../services/hooks/gm-control-hooks.mjs";
-import { cleanupChatListeners } from "../services/hooks/chat-listeners.mjs";
 
 // Track if cleanup has been initialized
 let cleanupInitialized = false;
@@ -56,9 +55,6 @@ export function performSystemCleanup() {
     // Clean up GM control hooks and intervals
     cleanupGMControlHooks();
 
-    // Clean up chat listener resources
-    cleanupChatListeners();
-
     // Clean up global event listeners
     cleanupGlobalColorPickers();
 
@@ -96,7 +92,6 @@ export function performPreInitCleanup() {
     cleanupGlobalNumberInputs();
     cleanupGlobalThemeManager();
     cleanupGMControlHooks();
-    cleanupChatListeners();
 
     safeLog("debug", "Pre-initialization cleanup completed");
   } catch (error) {

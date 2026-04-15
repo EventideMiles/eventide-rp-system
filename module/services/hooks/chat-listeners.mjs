@@ -312,9 +312,3 @@ function setupItemDeletionHooks() {
   });
 }
 
-/**
- * Clean up chat listener resources
- */
-export const cleanupChatListeners = () => {
-  // No cleanup needed for current implementation
-};

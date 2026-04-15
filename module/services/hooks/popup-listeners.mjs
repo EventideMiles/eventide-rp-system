@@ -66,10 +66,3 @@ const addPopupImageZoomFunctionality = (html) => {
     image.classList.add('erps-form__image--zoomable');
   });
 };
-
-/**
- * Clean up popup listener resources
- */
-export const cleanupPopupListeners = () => {
-  // No specific cleanup needed for now
-};
