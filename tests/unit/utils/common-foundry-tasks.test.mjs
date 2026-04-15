@@ -4,7 +4,7 @@
  * Tests token targeting/selection, user flags, permissions, and logging utilities
  */
 
-import { describe, test, expect, beforeEach, vi, afterEach } from 'vitest';
+import { describe, test, expect, vi } from 'vitest';
 import { CommonFoundryTasks, commonTasks } from '../../../module/utils/common-foundry-tasks.mjs';
 
 describe('CommonFoundryTasks', () => {
@@ -66,43 +66,6 @@ describe('CommonFoundryTasks', () => {
     });
   });
 
-  describe('getFirstTarget()', () => {
-    test('should return first targeted token', () => {
-      const mockToken1 = { id: 'token1', name: 'Token 1' };
-      const mockToken2 = { id: 'token2', name: 'Token 2' };
-      
-      global.game = {
-        user: {
-          targets: {
-            size: 2,
-            [Symbol.iterator]: function* () {
-              yield mockToken1;
-              yield mockToken2;
-            }
-          }
-        }
-      };
-
-      const result = CommonFoundryTasks.getFirstTarget();
-      
-      expect(result).toBe(mockToken1);
-    });
-
-    test('should return null when no targets', () => {
-      global.game = {
-        user: {
-          targets: {
-            size: 0
-          }
-        }
-      };
-
-      const result = CommonFoundryTasks.getFirstTarget();
-      
-      expect(result).toBeNull();
-    });
-  });
-
   describe('getSelectedArray()', () => {
     test('should return controlled tokens from canvas', () => {
       const mockTokens = [
@@ -131,77 +94,6 @@ describe('CommonFoundryTasks', () => {
       const result = CommonFoundryTasks.getSelectedArray();
       
       expect(result).toEqual([]);
-    });
-  });
-
-  describe('getFirstSelected()', () => {
-    test('should return first selected token', () => {
-      const mockTokens = [
-        { id: 'token1', name: 'Token 1' },
-        { id: 'token2', name: 'Token 2' }
-      ];
-      
-      global.canvas = {
-        tokens: {
-          controlled: mockTokens
-        }
-      };
-
-      const result = CommonFoundryTasks.getFirstSelected();
-      
-      expect(result).toBe(mockTokens[0]);
-    });
-
-    test('should return null when no tokens selected', () => {
-      global.canvas = {
-        tokens: {
-          controlled: []
-        }
-      };
-
-      const result = CommonFoundryTasks.getFirstSelected();
-      
-      expect(result).toBeNull();
-    });
-
-    test('should return null when controlled is undefined', () => {
-      global.canvas = {
-        tokens: {
-          controlled: undefined
-        }
-      };
-
-      const result = CommonFoundryTasks.getFirstSelected();
-      
-      expect(result).toBeNull();
-    });
-  });
-
-  describe('clamp()', () => {
-    test('should return number within range unchanged', () => {
-      expect(CommonFoundryTasks.clamp(5, 0, 10)).toBe(5);
-    });
-
-    test('should clamp to minimum when below range', () => {
-      expect(CommonFoundryTasks.clamp(-5, 0, 10)).toBe(0);
-    });
-
-    test('should clamp to maximum when above range', () => {
-      expect(CommonFoundryTasks.clamp(15, 0, 10)).toBe(10);
-    });
-
-    test('should handle equal min and max', () => {
-      expect(CommonFoundryTasks.clamp(5, 10, 10)).toBe(10);
-    });
-
-    test('should handle negative ranges', () => {
-      expect(CommonFoundryTasks.clamp(-15, -10, -5)).toBe(-10);
-    });
-
-    test('should handle decimal numbers', () => {
-      expect(CommonFoundryTasks.clamp(2.5, 0, 5)).toBe(2.5);
-      expect(CommonFoundryTasks.clamp(-0.5, 0, 5)).toBe(0);
-      expect(CommonFoundryTasks.clamp(5.5, 0, 5)).toBe(5);
     });
   });
 
@@ -386,37 +278,6 @@ describe('CommonFoundryTasks', () => {
     });
   });
 
-  describe('deleteUserFlag()', () => {
-    test('should call unsetFlag with correct parameters', async () => {
-      const unsetFlagMock = vi.fn().mockResolvedValue({ id: 'user1' });
-      
-      global.game = {
-        user: {
-          unsetFlag: unsetFlagMock
-        }
-      };
-
-      await CommonFoundryTasks.deleteUserFlag('testKey');
-      
-      expect(unsetFlagMock).toHaveBeenCalledWith('eventide-rp-system', 'testKey');
-    });
-
-    test('should return the result from unsetFlag', async () => {
-      const mockResult = { id: 'user1' };
-      const unsetFlagMock = vi.fn().mockResolvedValue(mockResult);
-      
-      global.game = {
-        user: {
-          unsetFlag: unsetFlagMock
-        }
-      };
-
-      const result = await CommonFoundryTasks.deleteUserFlag('testKey');
-      
-      expect(result).toBe(mockResult);
-    });
-  });
-
   describe('storeMultipleUserFlags()', () => {
     test('should store multiple flags', async () => {
       const setFlagMock = vi.fn().mockResolvedValue({ id: 'user1' });
@@ -513,151 +374,6 @@ describe('CommonFoundryTasks', () => {
     });
   });
 
-  describe('deleteMultipleUserFlags()', () => {
-    test('should delete multiple flags', async () => {
-      const unsetFlagMock = vi.fn().mockResolvedValue({ id: 'user1' });
-      
-      global.game = {
-        user: {
-          unsetFlag: unsetFlagMock
-        }
-      };
-
-      await CommonFoundryTasks.deleteMultipleUserFlags(['key1', 'key2', 'key3']);
-      
-      expect(unsetFlagMock).toHaveBeenCalledTimes(3);
-      expect(unsetFlagMock).toHaveBeenCalledWith('eventide-rp-system', 'key1');
-      expect(unsetFlagMock).toHaveBeenCalledWith('eventide-rp-system', 'key2');
-      expect(unsetFlagMock).toHaveBeenCalledWith('eventide-rp-system', 'key3');
-    });
-
-    test('should handle empty array', async () => {
-      const unsetFlagMock = vi.fn();
-      
-      global.game = {
-        user: {
-          unsetFlag: unsetFlagMock
-        }
-      };
-
-      await CommonFoundryTasks.deleteMultipleUserFlags([]);
-      
-      expect(unsetFlagMock).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('permissionLevel()', () => {
-    test('should return "gm" for GM user', () => {
-      global.game = {
-        user: {
-          isGM: true
-        }
-      };
-
-      const result = CommonFoundryTasks.permissionLevel();
-      
-      expect(result).toBe('gm');
-    });
-
-    test('should return "player" for non-GM user', () => {
-      global.game = {
-        user: {
-          isGM: false
-        }
-      };
-
-      const result = CommonFoundryTasks.permissionLevel();
-      
-      expect(result).toBe('player');
-    });
-  });
-
-  describe('permissionCheck()', () => {
-    test('should return "gm" for GM user', () => {
-      global.game = {
-        user: {
-          isGM: true
-        }
-      };
-
-      const result = CommonFoundryTasks.permissionCheck();
-      
-      expect(result).toBe('gm');
-    });
-
-    test('should return "player" when playerMode is true and user is not GM', () => {
-      global.game = {
-        user: {
-          isGM: false
-        }
-      };
-
-      const result = CommonFoundryTasks.permissionCheck({ playerMode: true });
-      
-      expect(result).toBe('player');
-    });
-
-    test('should return "forbidden" and show error when not GM and playerMode is false', () => {
-      const errorMock = vi.fn();
-      
-      global.game = {
-        user: {
-          isGM: false
-        },
-        i18n: {
-          localize: vi.fn().mockReturnValue('GM Only Action')
-        }
-      };
-      
-      global.ui = {
-        notifications: {
-          error: errorMock
-        }
-      };
-
-      const result = CommonFoundryTasks.permissionCheck({ playerMode: false });
-      
-      expect(result).toBe('forbidden');
-      expect(errorMock).toHaveBeenCalledWith('GM Only Action');
-    });
-
-    test('should return "forbidden" with default options', () => {
-      const errorMock = vi.fn();
-      
-      global.game = {
-        user: {
-          isGM: false
-        },
-        i18n: {
-          localize: vi.fn().mockReturnValue('GM Only Action')
-        }
-      };
-      
-      global.ui = {
-        notifications: {
-          error: errorMock
-        }
-      };
-
-      const result = CommonFoundryTasks.permissionCheck();
-      
-      expect(result).toBe('forbidden');
-      expect(errorMock).toHaveBeenCalled();
-    });
-
-    test('should return "gm" for GM even when playerMode is false', () => {
-      global.game = {
-        user: {
-          isGM: true
-        }
-      };
-
-      const result = CommonFoundryTasks.permissionCheck({ playerMode: false });
-      
-      expect(result).toBe('gm');
-    });
-  });
-
   describe('isTestingMode', () => {
     test('should return false when erps is not defined', () => {
       global.erps = undefined;
@@ -724,77 +440,6 @@ describe('CommonFoundryTasks', () => {
       expect(result).toBe(false);
     });
   });
-
-  describe('logIfTesting()', () => {
-    beforeEach(() => {
-      vi.spyOn(console, 'info').mockImplementation(() => {});
-    });
-
-    afterEach(() => {
-      vi.restoreAllMocks();
-    });
-
-    test('should log message when not in testing mode', () => {
-      global.erps = {
-        settings: {
-          getSetting: vi.fn().mockReturnValue(false)
-        }
-      };
-
-      CommonFoundryTasks.logIfTesting('Test message');
-      
-      expect(console.info).toHaveBeenCalledWith('Test message');
-    });
-
-    test('should log message with data when not in testing mode', () => {
-      global.erps = {
-        settings: {
-          getSetting: vi.fn().mockReturnValue(false)
-        }
-      };
-
-      const testData = { key: 'value' };
-      CommonFoundryTasks.logIfTesting('Test message', testData);
-      
-      expect(console.info).toHaveBeenCalledWith('Test message', testData);
-    });
-
-    test('should not log when in testing mode', () => {
-      global.erps = {
-        settings: {
-          getSetting: vi.fn().mockReturnValue(true)
-        }
-      };
-
-      CommonFoundryTasks.logIfTesting('Test message');
-      
-      expect(console.info).not.toHaveBeenCalled();
-    });
-
-    test('should not log with data when in testing mode', () => {
-      global.erps = {
-        settings: {
-          getSetting: vi.fn().mockReturnValue(true)
-        }
-      };
-
-      CommonFoundryTasks.logIfTesting('Test message', { data: 'test' });
-      
-      expect(console.info).not.toHaveBeenCalled();
-    });
-
-    test('should handle undefined data parameter', () => {
-      global.erps = {
-        settings: {
-          getSetting: vi.fn().mockReturnValue(false)
-        }
-      };
-
-      CommonFoundryTasks.logIfTesting('Test message', undefined);
-      
-      expect(console.info).toHaveBeenCalledWith('Test message');
-    });
-  });
 });
 
 describe('commonTasks utility object', () => {
@@ -802,20 +447,8 @@ describe('commonTasks utility object', () => {
     expect(commonTasks.getTargetArray).toBe(CommonFoundryTasks.getTargetArray);
   });
 
-  test('should have getFirstTarget method', () => {
-    expect(commonTasks.getFirstTarget).toBe(CommonFoundryTasks.getFirstTarget);
-  });
-
   test('should have getSelectedArray method', () => {
     expect(commonTasks.getSelectedArray).toBe(CommonFoundryTasks.getSelectedArray);
-  });
-
-  test('should have getFirstSelected method', () => {
-    expect(commonTasks.getFirstSelected).toBe(CommonFoundryTasks.getFirstSelected);
-  });
-
-  test('should have clamp method', () => {
-    expect(commonTasks.clamp).toBe(CommonFoundryTasks.clamp);
   });
 
   test('should have storeUserFlag method', () => {
@@ -830,10 +463,6 @@ describe('commonTasks utility object', () => {
     expect(commonTasks.retrieveSheetTheme).toBe(CommonFoundryTasks.retrieveSheetTheme);
   });
 
-  test('should have deleteUserFlag method', () => {
-    expect(commonTasks.deleteUserFlag).toBe(CommonFoundryTasks.deleteUserFlag);
-  });
-
   test('should have storeMultipleUserFlags method', () => {
     expect(commonTasks.storeMultipleUserFlags).toBe(CommonFoundryTasks.storeMultipleUserFlags);
   });
@@ -842,33 +471,11 @@ describe('commonTasks utility object', () => {
     expect(commonTasks.retrieveMultipleUserFlags).toBe(CommonFoundryTasks.retrieveMultipleUserFlags);
   });
 
-  test('should have deleteMultipleUserFlags method', () => {
-    expect(commonTasks.deleteMultipleUserFlags).toBe(CommonFoundryTasks.deleteMultipleUserFlags);
-  });
-
-  test('should have permissionLevel method', () => {
-    expect(commonTasks.permissionLevel).toBe(CommonFoundryTasks.permissionLevel);
-  });
-
-  test('should have permissionCheck method', () => {
-    expect(commonTasks.permissionCheck).toBe(CommonFoundryTasks.permissionCheck);
-  });
-
   test('should have isTestingMode getter', () => {
     expect(commonTasks.isTestingMode()).toBe(CommonFoundryTasks.isTestingMode);
   });
 
-  test('should have logIfTesting method', () => {
-    expect(commonTasks.logIfTesting).toBe(CommonFoundryTasks.logIfTesting);
-  });
-
   describe('commonTasks functions work correctly', () => {
-    test('clamp should work through commonTasks object', () => {
-      expect(commonTasks.clamp(5, 0, 10)).toBe(5);
-      expect(commonTasks.clamp(-5, 0, 10)).toBe(0);
-      expect(commonTasks.clamp(15, 0, 10)).toBe(10);
-    });
-
     test('getTargetArray should work through commonTasks object', () => {
       const mockToken = { id: 'token1' };
       
@@ -884,16 +491,6 @@ describe('commonTasks utility object', () => {
       const result = commonTasks.getTargetArray();
       
       expect(result).toEqual([mockToken]);
-    });
-
-    test('permissionLevel should work through commonTasks object', () => {
-      global.game = {
-        user: {
-          isGM: true
-        }
-      };
-
-      expect(commonTasks.permissionLevel()).toBe('gm');
     });
   });
 });
