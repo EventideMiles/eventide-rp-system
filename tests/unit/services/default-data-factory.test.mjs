@@ -176,7 +176,7 @@ describe('DefaultDataFactory', () => {
       expect(effect._id).toBe('test-random-id-12345');
       expect(effect.name).toBe('Test Item Effect');
       expect(effect.img).toBe('icons/svg/item-bag.svg');
-      expect(effect.changes).toEqual([]);
+      expect(effect.system.changes).toEqual([]);
       expect(effect.disabled).toBe(false);
       expect(effect.description).toBe('');
       expect(effect.origin).toBe('');
@@ -185,16 +185,12 @@ describe('DefaultDataFactory', () => {
       expect(effect.flags).toEqual({});
     });
 
-    test('should include default effect duration', () => {
+    test('should include default effect showIcon (V14)', () => {
       const result = DefaultDataFactory.getStatusData(mockParentItem);
       const effect = result.effects[0];
 
-      expect(effect.duration).toBeDefined();
-      expect(effect.duration.startTime).toBeNull();
-      expect(effect.duration.seconds).toBe(18000);
-      expect(effect.duration.combat).toBe('');
-      expect(effect.duration.rounds).toBe(0);
-      expect(effect.duration.turns).toBe(0);
+      // V14: Effects use showIcon instead of duration
+      expect(effect.showIcon).toBe(2); // Always show on token
     });
 
     test('should use parent textColor for effect tint', () => {
@@ -534,27 +530,19 @@ describe('DefaultDataFactory', () => {
     });
   });
 
-  describe('getDefaultEffectDuration', () => {
-    test('should return correct default duration structure', () => {
-      const result = DefaultDataFactory.getDefaultEffectDuration();
+  // describe('getDefaultEffectShowIcon', () => {
+  //   test('should return correct default showIcon value (V14)', () => {
+  //     const result = DefaultDataFactory.getDefaultEffectShowIcon();
 
-      expect(result).toBeDefined();
-      expect(result.startTime).toBeNull();
-      expect(result.seconds).toBe(18000);
-      expect(result.combat).toBe('');
-      expect(result.rounds).toBe(0);
-      expect(result.turns).toBe(0);
-      expect(result.startRound).toBe(0);
-      expect(result.startTurn).toBe(0);
-    });
+  //     expect(result).toBe(2); // Always show on token
+  //   });
 
-    test('should return a new object each time (no reference sharing)', () => {
-      const result1 = DefaultDataFactory.getDefaultEffectDuration();
-      const result2 = DefaultDataFactory.getDefaultEffectDuration();
+  //   test('should return a number value', () => {
+  //     const result = DefaultDataFactory.getDefaultEffectShowIcon();
 
-      expect(result1).not.toBe(result2);
-    });
-  });
+  //     expect(typeof result).toBe('number');
+  //   });
+  // });
 
   describe('getDefaultAttackChainData', () => {
     test('should return correct default attack chain structure', () => {

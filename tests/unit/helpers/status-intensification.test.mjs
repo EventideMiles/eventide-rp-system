@@ -126,11 +126,13 @@ describe('StatusIntensification', () => {
         effects: {
           contents: [{
             _id: 'effect1',
-            changes: [
-              { key: 'system.abilities.fort.change', value: '-2' },
-              { key: 'system.abilities.fort.change', value: '3' },
-              { key: 'system.abilities.dice.change', value: '0' }
-            ]
+            system: {
+              changes: [
+                { key: 'system.abilities.fort.change', value: '-2' },
+                { key: 'system.abilities.fort.change', value: '3' },
+                { key: 'system.abilities.dice.change', value: '0' }
+              ]
+            }
           }]
         }
       });
@@ -158,7 +160,7 @@ describe('StatusIntensification', () => {
 
       expect(mockStatusItem.updateEmbeddedDocuments).toHaveBeenCalledWith('ActiveEffect', [{
         _id: 'effect1',
-        changes: expect.any(Array)
+        system: { changes: expect.any(Array) }
       }]);
     });
 
@@ -167,7 +169,7 @@ describe('StatusIntensification', () => {
 
       expect(mockStatusItem.updateEmbeddedDocuments).toHaveBeenCalledWith('ActiveEffect', [{
         _id: 'effect1',
-        changes: expect.any(Array)
+        system: { changes: expect.any(Array) }
       }]);
     });
 
@@ -176,7 +178,7 @@ describe('StatusIntensification', () => {
 
       expect(mockStatusItem.updateEmbeddedDocuments).toHaveBeenCalledWith('ActiveEffect', [{
         _id: 'effect1',
-        changes: expect.any(Array)
+        system: { changes: expect.any(Array) }
       }]);
     });
 
@@ -185,9 +187,9 @@ describe('StatusIntensification', () => {
 
       const callArgs = mockStatusItem.updateEmbeddedDocuments.mock.calls[0];
       expect(callArgs).toBeDefined();
-      // The structure is ["ActiveEffect", [{_id, changes}]]
+      // The structure is ["ActiveEffect", [{_id, system: {changes}}]]
       const updateParams = callArgs[1]; // Second parameter to the call (the update array)
-      const updateData = updateParams[0].changes; // Get changes from the first update object
+      const updateData = updateParams[0].system.changes; // Get changes from the first update object
 
       expect(updateData).toHaveLength(3);
     });
@@ -205,7 +207,7 @@ describe('StatusIntensification', () => {
     });
 
     test('should return false when existingEffects is undefined', async () => {
-      mockStatusItem.effects.contents[0].changes = undefined;
+      mockStatusItem.effects.contents[0].system.changes = undefined;
 
       const result = await StatusIntensification.intensifyStatus(mockStatusItem, mockNewEffectData);
 
@@ -213,7 +215,7 @@ describe('StatusIntensification', () => {
     });
 
     test('should return true when existingEffects is empty and successfully processed', async () => {
-      mockStatusItem.effects.contents[0].changes = [];
+      mockStatusItem.effects.contents[0].system.changes = [];
 
       const result = await StatusIntensification.intensifyStatus(mockStatusItem, mockNewEffectData);
 
@@ -233,7 +235,7 @@ describe('StatusIntensification', () => {
 
       const callArgs = mockStatusItem.updateEmbeddedDocuments.mock.calls[0];
       const updateParams = callArgs[1];
-      const updateData = updateParams[0].changes;
+      const updateData = updateParams[0].system.changes;
 
       // First effect: -2 -> -3
       expect(updateData[0].value).toBe(-3);
@@ -246,7 +248,7 @@ describe('StatusIntensification', () => {
     });
 
     test('should intensify value of 1 to 2', async () => {
-      mockStatusItem.effects.contents[0].changes = [
+      mockStatusItem.effects.contents[0].system.changes = [
         { key: 'system.abilities.test.change', value: '1' }
       ];
 
@@ -254,12 +256,12 @@ describe('StatusIntensification', () => {
 
       const callArgs = mockStatusItem.updateEmbeddedDocuments.mock.calls[0];
       const updateParams = callArgs[1];
-      const updateData = updateParams[0].changes;
+      const updateData = updateParams[0].system.changes;
       expect(updateData[0].value).toBe(2);
     });
 
     test('should intensify value of -1 to -2', async () => {
-      mockStatusItem.effects.contents[0].changes = [
+      mockStatusItem.effects.contents[0].system.changes = [
         { key: 'system.abilities.test.change', value: -1 }
       ];
 
@@ -267,7 +269,7 @@ describe('StatusIntensification', () => {
 
       const callArgs = mockStatusItem.updateEmbeddedDocuments.mock.calls[0];
       const updateParams = callArgs[1];
-      const updateData = updateParams[0].changes;
+      const updateData = updateParams[0].system.changes;
       expect(updateData[0].value).toBe(-2);
     });
 
@@ -278,13 +280,13 @@ describe('StatusIntensification', () => {
         mode: 2,
         priority: 10
       };
-      mockStatusItem.effects.contents[0].changes = [originalEffect];
+      mockStatusItem.effects.contents[0].system.changes = [originalEffect];
 
       await StatusIntensification.intensifyStatus(mockStatusItem, mockNewEffectData);
 
       const callArgs = mockStatusItem.updateEmbeddedDocuments.mock.calls[0];
       const updateParams = callArgs[1];
-      const updateData = updateParams[0].changes;
+      const updateData = updateParams[0].system.changes;
       expect(updateData[0]).toMatchObject({
         key: originalEffect.key,
         mode: originalEffect.mode,
@@ -329,7 +331,7 @@ describe('StatusIntensification', () => {
         effects: {
           contents: [{
             _id: 'effect1',
-            changes: [{ key: 'system.abilities.fort.change', value: '-2' }]
+            system: { changes: [{ key: 'system.abilities.fort.change', value: '-2' }] }
           }]
         }
       });
