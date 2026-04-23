@@ -27,3 +27,6 @@
 - Theme manager tightly coupled with application lifecycle
 - Action card execution depends on chat message flags
 - Item popups require specific effect attachment mechanisms
+
+### ⚠️ Broken Tests
+- **DO NOT RUN `npm test` or `npm run test:*`** — automatic testing is currently broken because `@rayners/foundry-test-utils` is not yet compatible with Foundry VTT v14. Tests will fail. Do not attempt to run the test suite until this library is updated.

@@ -5,6 +5,41 @@
 ### Project Structure
 - ES module project with specific globals configuration in `eslint.config.js`
 - Foundry VTT specific environment with extensive globals (game, ui, canvas, etc.)
+- Actor/item functionality composed through comprehensive mixins (see `module/ui/mixins/`)
+- UI components use embedded-item-all-mixins for shared behavior
+- Sheet mixins provide consistent styling and behavior
+
+### Language File System
+- Source files in `lang/src/en/` are merged by `npm run build:lang` into `lang/en.json`
+- Never edit `lang/en.json` directly - it is auto-generated from source files
+- Translation keys follow pattern: `ERPS.Category.Subcategory.Key`
+
+### Template Organization
+- Handlebars partials must be registered in `module/services/settings/handlebars-partials.mjs`
+- Partials live in `templates/*/partials/` or `templates/*/parts/` subdirectories
+- Template paths use dot notation: `actor.partials.action-card-row`
+
+### Global API Access
+- `globalThis.erps` exposes the complete system API for debugging
+- Access via browser console: `erps.documents`, `erps.services`, `erps.utils`
+- Runtime inspection available for all registered classes and helpers
+
+### Document Lifecycle Management
+- Embedded documents have specialized export/import flows
+- Transformation documents require bidirectional conversion services
+- Event listeners on sheets must be manually removed in `close()` handlers
+
+### Hidden Coupling Points
+- Theme manager tightly coupled with application lifecycle
+- Action card execution depends on chat message flags
+- Item popups require specific effect attachment mechanisms
+
+### SCSS Architecture
+- SCSS architecture documented in `src/scss/README.md` (BEM methodology)
+- Follow BEM methodology with strict adherence to the structure documented there
+
+### Hidden Documentation
+- No JSDoc coverage; rely on file naming and mixin patterns for context
 
 ### Build/Lint/Test Commands
 - `npm run build`: Builds both CSS and language files
@@ -31,12 +66,35 @@
 - Handlebars templates organized in logical directories with partials
 
 ### Critical Gotchas
-- Setting name misspelled: "initativeFormula" instead of "initiativeFormula"
+- ⚠️ **DO NOT RUN `npm test` or `npm run test:*`** — automatic testing is currently broken because `@rayners/foundry-test-utils` is not yet compatible with Foundry VTT v14. Tests will fail. Do not attempt to run the test suite until this library is updated.
 - Memory management requires cleanup via `performSystemCleanup()` and `performPreInitCleanup()`
 - Global scope exposed via `globalThis.erps` with extensive API
 - Pre-commit hooks enforce validation with NVM loading
 
+## Debugging Guidance
+
+### Memory Management
+- Always call `performSystemCleanup()` before system reloads to prevent memory leaks
+- Use `performPreInitCleanup()` during initialization for stale data cleanup
+- Event listeners on sheets must be manually removed in `close()` handlers
+
+### Error Handling
+- Use `ErrorHandler` class from `module/utils/error-handler.mjs` - never throw raw errors
+- Check `globalThis.erps` for runtime API inspection in browser console
+- Silent failures often occur in mixins - check `module/ui/mixins/` for error boundaries
+
+### Theme System Debugging
+- Three-layer theme system can cause visual flashing if layers conflict
+- Check `module/ui/mixins/actor-sheet-theme.mjs` for theme cleanup on sheet close
+- Theme styles are injected immediately during setup - verify CSS specificity
+
+### Silent Failure Gotchas
+- ESLint blocks `console.log` in modules but allows in build scripts
+- Handlebars partials fail silently if not pre-registered in `handlebars-partials.mjs`
+
 ## Testing Guidelines for AI Agents
+
+> ⚠️ **CRITICAL: DO NOT RUN `npm test` OR `npm run test:*`** — Automatic testing is currently broken because `@rayners/foundry-test-utils` is not yet compatible with Foundry VTT v14. Tests will fail. Do not attempt to run the test suite until this library is updated.
 
 ### Test Framework
 
