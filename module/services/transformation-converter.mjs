@@ -75,7 +75,8 @@ export class TransformationConverter {
       // Create Active Effect change for transformation override
       changes.push({
         key: `system.abilities.${key}.transformOverride`,
-        mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
+        type: "override",
+        phase: "initial",
         value: ability.value,
       });
     }
@@ -84,13 +85,17 @@ export class TransformationConverter {
     if (changes.length > 0) {
       transformationData.effects.push({
         name: transformationData.name,
-        icon: transformationData.img,
-        changes,
+        img: transformationData.img,
+        type: "base",
+        system: {
+          changes,
+        },
         disabled: false,
-        duration: {},
+        showIcon: CONST.ACTIVE_EFFECT_SHOW_ICON.NEVER,
         flags: {},
         tint: "#ffffff",
         transfer: true,
+        statuses: [],
       });
     }
 
@@ -259,8 +264,8 @@ export class TransformationConverter {
     const transformOverrides = {};
     if (transformation.effects && transformation.effects.size > 0) {
       for (const effect of transformation.effects) {
-        if (effect.changes) {
-          for (const change of effect.changes) {
+        if (effect.system?.changes) {
+          for (const change of effect.system.changes) {
             // Look for transformOverride changes
             if (change.key.includes("transformOverride")) {
               // Extract the ability key from the change key
