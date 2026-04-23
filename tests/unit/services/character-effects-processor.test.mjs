@@ -676,7 +676,7 @@ describe('CharacterEffectsProcessor', () => {
           expect.objectContaining({
             name: 'Test Item',
             img: 'icons/test.png', // V14: uses img instead of icon
-            showIcon: 0,
+            showIcon: CONST.ACTIVE_EFFECT_SHOW_ICON.NEVER,
             type: 'base', // V14: effect type
             disabled: false,
             transfer: true

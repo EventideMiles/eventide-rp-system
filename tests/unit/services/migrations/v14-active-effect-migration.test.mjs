@@ -82,7 +82,7 @@ describe('V14ActiveEffectMigration', () => {
 
     test('should return null for already migrated effect', () => {
       const effect = {
-        showIcon: 2,
+        showIcon: CONST.ACTIVE_EFFECT_SHOW_ICON.ALWAYS,
         duration: { expired: false, expiry: null, units: 'seconds', value: null },
         origin: null
       };
@@ -98,7 +98,7 @@ describe('V14ActiveEffectMigration', () => {
       };
       const result = V14ActiveEffectMigration._migrateEffectData(effect);
       expect(result).toEqual({
-        showIcon: 2,
+        showIcon: CONST.ACTIVE_EFFECT_SHOW_ICON.ALWAYS,
         duration: {
           expired: false,
           expiry: null,
@@ -113,7 +113,7 @@ describe('V14ActiveEffectMigration', () => {
       const effect = {
         name: 'Test Effect',
         system: { changes: [] },
-        showIcon: 0,
+        showIcon: CONST.ACTIVE_EFFECT_SHOW_ICON.NEVER,
         duration: {},
         origin: null
       };
