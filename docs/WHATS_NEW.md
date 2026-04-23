@@ -2,6 +2,21 @@
 
 ## Latest Release
 
+**[v14.0.0](release-notes/v14.0.0.md)** - Foundry VTT v14 Compatibility & ActiveEffect Schema Migration _(April 2026)_
+
+**⚠️ Major Version — Breaking Change**: Requires Foundry VTT v14 or later. Not compatible with Foundry VTT v13.
+
+**Key Highlights:**
+
+- **Foundry VTT v14 ActiveEffect Schema Migration** — comprehensive automatic migration of all ActiveEffect data to the new v14 schema
+- **ActiveEffect Creation Overhaul** — all effect creation updated to use v14 fields (`img`, `type`, `system.changes`, `showIcon`, string `type` instead of numeric mode)
+- **Effect Display Toggle Refactored** — replaced duration-based visibility workaround with proper `showIcon` property
+- **Damage Condition Default** — changed to `oneSuccess` per user feedback for more consistent behavior
+- **Code Consolidation & Cleanup** — theme management mixin, shared logic consolidation, unused code removal
+- **Development Environment** — JSConfig updated to `bundler` moduleResolution, testing disabled pending v14 test utility compatibility
+
+## Recent Major Releases
+
 **[v13.22.0](release-notes/v13.22.0.md)** - Formula Validation & Feature System Enhancements _(March 2026)_
 
 **Key Highlights:**
@@ -10,8 +25,6 @@
 - **New Action Card Activation Methods** expanding action card versatility and execution options
 - **Active/Inactive Feature System** with automatic state management and clear chat card communication
 - **Restore Target Macro Fix** - moved status effect removal to beginning of restoration process
-
-## Recent Major Releases
 
 **[v13.21.8](release-notes/v13.21.8.md)** - Self-Target Abilities & Display Fixes _(February 2026)_
 
@@ -198,39 +211,41 @@ Enhanced character customization through circumstantial bonuses and feature-base
 
 ## Version Timeline
 
-| Version      | Release Date  | Focus                                                                                  |
-| ------------ | ------------- | -------------------------------------------------------------------------------------- |
-| **v13.22.0** | March 2026    | Formula Validation & Feature System Enhancements                                       |
-| v13.21.8     | February 2026 | Self-Target Abilities & Display Fixes                                                  |
-| v13.21.5     | February 2026 | Security Hardening & GM Control Enhancements                                           |
-| v13.21.0     | February 2026 | Action Card Enhancements & Quality of Life                                             |
-| v13.20.0     | February 2026 | Documentation Overhaul                                                                 |
-| v13.19.1     | January 2026  | Migration and UI Fixes                                                                 |
-| v13.19.0     | January 2026  | Action Card Execution Flow Update                                                      |
-| v13.18.1     | January 2026  | Enhanced Action Chain Control, Mixed Attribute Rolls, and Selective Status Application |
-| v13.18.0     | January 2026  | GM Action Cards, Smart Context-Aware Creation, and Backward Compatibility              |
-| v13.17.5     | November 2025 | Enhanced Context Menus & Code Quality                                                  |
-| v13.17.2     | November 2025 | UI and Usability Improvements                                                          |
-| v13.17.0     | November 2025 | Transformation to Actor                                                                |
-| v13.16.0     | October 2025  | Action Card Groups                                                                     |
-| v13.15.5     | October 2025  | Stability & Polish                                                                     |
-| v13.15.0     | October 2025  | Embedded Transformations & Export                                                      |
-| v13.14.0     | October 2025  | Player Workflows & Item Selection                                                      |
-| v13.13.3     | August 2025   | Action Modes & Repetition                                                              |
-| v13.11.0     | 2025          | Action Cards & Combat Automation                                                       |
-| v13.10.0     | 2025          | Feature Rolls & Bonuses                                                                |
+| Version     | Release Date  | Focus                                                                                  |
+| ----------- | ------------- | -------------------------------------------------------------------------------------- |
+| **v14.0.0** | April 2026    | Foundry VTT v14 Compatibility & ActiveEffect Schema Migration                          |
+| v13.22.0    | March 2026    | Formula Validation & Feature System Enhancements                                       |
+| v13.21.8    | February 2026 | Self-Target Abilities & Display Fixes                                                  |
+| v13.21.5    | February 2026 | Security Hardening & GM Control Enhancements                                           |
+| v13.21.0    | February 2026 | Action Card Enhancements & Quality of Life                                             |
+| v13.20.0    | February 2026 | Documentation Overhaul                                                                 |
+| v13.19.1    | January 2026  | Migration and UI Fixes                                                                 |
+| v13.19.0    | January 2026  | Action Card Execution Flow Update                                                      |
+| v13.18.1    | January 2026  | Enhanced Action Chain Control, Mixed Attribute Rolls, and Selective Status Application |
+| v13.18.0    | January 2026  | GM Action Cards, Smart Context-Aware Creation, and Backward Compatibility              |
+| v13.17.5    | November 2025 | Enhanced Context Menus & Code Quality                                                  |
+| v13.17.2    | November 2025 | UI and Usability Improvements                                                          |
+| v13.17.0    | November 2025 | Transformation to Actor                                                                |
+| v13.16.0    | October 2025  | Action Card Groups                                                                     |
+| v13.15.5    | October 2025  | Stability & Polish                                                                     |
+| v13.15.0    | October 2025  | Embedded Transformations & Export                                                      |
+| v13.14.0    | October 2025  | Player Workflows & Item Selection                                                      |
+| v13.13.3    | August 2025   | Action Modes & Repetition                                                              |
+| v13.11.0    | 2025          | Action Cards & Combat Automation                                                       |
+| v13.10.0    | 2025          | Feature Rolls & Bonuses                                                                |
 
 ## Quick Navigation
 
 ### By Feature Area
 
-- **Action Cards**: [v13.11.0](release-notes/v13.11.0.md), [v13.13.3](release-notes/v13.13.3.md), [v13.14.0](release-notes/v13.14.0.md), [v13.15.0](release-notes/v13.15.0.md), [v13.16.0](release-notes/v13.16.0.md), [v13.18.0](release-notes/v13.18.0.md), [v13.18.1](release-notes/v13.18.1.md), [v13.19.0](release-notes/v13.19.0.md), [v13.19.1](release-notes/v13.19.1.md), [v13.20.0](release-notes/v13.20.0.md), [v13.21.0](release-notes/v13.21.0.md), [v13.21.5](release-notes/v13.21.5.md), [v13.21.8](release-notes/v13.21.8.md), [v13.22.0](release-notes/v13.22.0.md)
+- **Action Cards**: [v14.0.0](release-notes/v14.0.0.md), [v13.11.0](release-notes/v13.11.0.md), [v13.13.3](release-notes/v13.13.3.md), [v13.14.0](release-notes/v13.14.0.md), [v13.15.0](release-notes/v13.15.0.md), [v13.16.0](release-notes/v13.16.0.md), [v13.18.0](release-notes/v13.18.0.md), [v13.18.1](release-notes/v13.18.1.md), [v13.19.0](release-notes/v13.19.0.md), [v13.19.1](release-notes/v13.19.1.md), [v13.20.0](release-notes/v13.20.0.md), [v13.21.0](release-notes/v13.21.0.md), [v13.21.5](release-notes/v13.21.5.md), [v13.21.8](release-notes/v13.21.8.md), [v13.22.0](release-notes/v13.22.0.md)
 - **GM Tools**: [v13.18.0](release-notes/v13.18.0.md), [v13.18.1](release-notes/v13.18.1.md), [v13.20.0](release-notes/v13.20.0.md)
 - **Transformations**: [v13.14.0](release-notes/v13.14.0.md), [v13.15.0](release-notes/v13.15.0.md), [v13.15.5](release-notes/v13.15.5.md), [v13.17.0](release-notes/v13.17.0.md)
 - **Features & Bonuses**: [v13.10.0](release-notes/v13.10.0.md), [v13.19.0](release-notes/v13.19.0.md), [v13.22.0](release-notes/v13.22.0.md)
+- **Status Effects & ActiveEffects**: [v14.0.0](release-notes/v14.0.0.md), [v13.19.0](release-notes/v13.19.0.md)
 - **Combat Automation**: [v13.11.0](release-notes/v13.11.0.md), [v13.13.3](release-notes/v13.13.3.md)
 - **Documentation**: [v13.20.0](release-notes/v13.20.0.md)
-- **Conversion & Migration**: [v13.17.0](release-notes/v13.17.0.md), [v13.19.0](release-notes/v13.19.0.md), [v13.19.1](release-notes/v13.19.1.md)
+- **Conversion & Migration**: [v14.0.0](release-notes/v14.0.0.md), [v13.17.0](release-notes/v13.17.0.md), [v13.19.0](release-notes/v13.19.0.md), [v13.19.1](release-notes/v13.19.1.md)
 
 ### Documentation Links
 
@@ -264,8 +279,8 @@ We encourage users to:
 - Review the documentation guides for comprehensive system information
 - Join community discussions for tips and best practices
 
-- Review the **[v13.22.0](release-notes/v13.22.0.md)**, **[v13.21.8](release-notes/v13.21.8.md)**, **[v13.21.5](release-notes/v13.21.5.md)**, **[v13.21.0](release-notes/v13.21.0.md)** and **[v13.20.0](release-notes/v13.20.0.md)** release notes for detailed feature information and updates.
+- Review the **[v14.0.0](release-notes/v14.0.0.md)** release notes for detailed information about the Foundry VTT v14 migration and compatibility update.
 
 ---
 
-**Current Version**: v13.22.0 | **Foundry VTT Compatibility**: v13+ | **Last Updated**: March 2026
+**Current Version**: v14.0.0 | **Foundry VTT Compatibility**: v14+ | **Last Updated**: April 2026
