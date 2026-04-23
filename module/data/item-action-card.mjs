@@ -95,7 +95,7 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
       }),
       damageCondition: new fields.StringField({
         required: true,
-        initial: "never",
+        initial: "oneSuccess",
         choices: [
           "never",
           "oneSuccess",
