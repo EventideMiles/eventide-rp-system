@@ -51,6 +51,7 @@ export const EmbeddedItemCharacterEffectsMixin = (BaseClass) =>
       ) {
         firstEffect = await CharacterEffectsProcessor.getOrCreateFirstEffect(
           this.document,
+          CONST.ACTIVE_EFFECT_SHOW_ICON.ALWAYS,
         );
       }
 
@@ -64,7 +65,7 @@ export const EmbeddedItemCharacterEffectsMixin = (BaseClass) =>
       }
 
       // Use parent-specific update methods (keep existing logic)
-      const effectData = { _id: firstEffect.id, changes };
+      const effectData = { _id: firstEffect.id, system: { changes } };
 
       if (this.parentItem.type === "transformation") {
         await this._updateTransformationCharacterEffects(effectData, firstEffect);
@@ -184,6 +185,7 @@ export const EmbeddedItemCharacterEffectsMixin = (BaseClass) =>
           },
           { fromEmbeddedItem: true },
         );
+
         this.render();
       } catch (error) {
         Logger.error(
@@ -231,7 +233,7 @@ export const EmbeddedItemCharacterEffectsMixin = (BaseClass) =>
         // Update the temporary document's source data first
         this.document.updateSource(itemData);
 
-        await this.parentItem.update(
+        this.parentItem.update(
           {
             "system.embeddedItem": itemData,
           },
@@ -319,7 +321,7 @@ export const EmbeddedItemCharacterEffectsMixin = (BaseClass) =>
      * @protected
      */
     static async _toggleEmbeddedEffectDisplay(event, target) {
-      const duration = target.checked ? { seconds: 604800 } : { seconds: 0 };
+      const showIcon = target.checked ? CONST.ACTIVE_EFFECT_SHOW_ICON.ALWAYS : CONST.ACTIVE_EFFECT_SHOW_ICON.NEVER;
 
       // Get the first effect from the temporary item, or create one if needed
       let firstEffect = this.document.effects.contents[0];
@@ -327,14 +329,14 @@ export const EmbeddedItemCharacterEffectsMixin = (BaseClass) =>
         // Create a default ActiveEffect if none exists
         firstEffect = await CharacterEffectsProcessor.getOrCreateFirstEffect(
           this.document,
-          duration,
+          showIcon,
         );
       }
 
-      // Update the effect data with new duration
+      // Update the effect data with new showIcon setting
       const effectData = {
         _id: firstEffect.id,
-        duration,
+        showIcon,
       };
 
       // Update based on parent type

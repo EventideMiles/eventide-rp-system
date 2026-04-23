@@ -331,7 +331,7 @@ export class ChangeTargetStatus extends EventideSheetHelpers {
       );
       return;
     }
-    const effects = status.effects.contents[0].changes;
+    const effects = status.effects.contents[0].system?.changes;
     if (!effects) {
       ui.notifications.error(
         game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.NoStatusEffects"),
@@ -448,7 +448,7 @@ export class ChangeTargetStatus extends EventideSheetHelpers {
     }
 
     await status.updateEmbeddedDocuments("ActiveEffect", [
-      { _id: status.effects.contents[0]._id, changes: updateData },
+      { _id: status.effects.contents[0]._id, system: { changes: updateData } },
     ]);
 
     Hooks.call("erpsUpdateItem", status, {}, {}, game.user.id);

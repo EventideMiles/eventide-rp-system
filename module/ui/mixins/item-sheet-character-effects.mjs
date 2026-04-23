@@ -71,7 +71,7 @@ export const ItemSheetCharacterEffectsMixin = (BaseClass) =>
         await CharacterEffectsProcessor.updateEffectChanges(
           this.item,
           firstEffect,
-          { _id: firstEffect._id, changes },
+          { _id: firstEffect._id, system: { changes } },
         );
 
         Logger.info("Character effects updated successfully", {
@@ -252,19 +252,19 @@ export const ItemSheetCharacterEffectsMixin = (BaseClass) =>
       );
 
       try {
-        const duration = target.checked ? { seconds: 604800 } : { seconds: 0 };
+        const showIcon = target.checked ? CONST.ACTIVE_EFFECT_SHOW_ICON.ALWAYS : CONST.ACTIVE_EFFECT_SHOW_ICON.NEVER;
 
-        // Delegate to service for effect creation/retrieval with duration
+        // Delegate to service for effect creation/retrieval
         const firstEffect =
           await CharacterEffectsProcessor.getOrCreateFirstEffect(
             this.item,
-            duration,
+            showIcon,
           );
 
-        // Update the effect with new duration
+        // Update the effect with new showIcon setting
         const updateData = {
           _id: firstEffect._id,
-          duration,
+          showIcon,
         };
 
         await CharacterEffectsProcessor.updateEffectChanges(
@@ -277,7 +277,7 @@ export const ItemSheetCharacterEffectsMixin = (BaseClass) =>
         Logger.info("Effect display toggled", {
           itemName: this.item.name,
           displayEnabled: target.checked,
-          durationSeconds: duration.seconds,
+          showIcon,
         }, "CHARACTER_EFFECTS");
 
         Logger.methodExit(
