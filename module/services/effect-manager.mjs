@@ -76,6 +76,7 @@ export class EffectManager {
           type: target.dataset.type,
           parent: item,
         }),
+        showIcon: CONST.ACTIVE_EFFECT_SHOW_ICON.NEVER,
       };
       // Loop through the dataset and add it to our effectData
       for (const [dataKey, value] of Object.entries(target.dataset)) {

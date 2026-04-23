@@ -124,17 +124,18 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
     return {
       _id: foundry.utils.randomID(),
       name: tempItem.name,
-      icon: tempItem.img,
-      changes: [],
+      img: tempItem.img,
+      type: "base",
+      system: {
+        changes: []
+      },
       disabled: false,
+      showIcon: CONST.ACTIVE_EFFECT_SHOW_ICON.ALWAYS, // V14: 0 = don't show, 2 = show on token
       duration: {
-        seconds: 0,
-        startTime: null,
-        combat: "",
-        rounds: 0,
-        turns: 0,
-        startRound: 0,
-        startTurn: 0,
+        expired: false,
+        expiry: null,
+        units: "seconds",
+        value: null,
       },
       flags: {},
       tint: "#ffffff",
@@ -775,26 +776,7 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
    * @private
    */
   static _toggleEffectDisplay(event, target) {
-    // Create proper duration structure - ON = 604800 seconds, OFF = 0 seconds
-    const duration = target.checked
-      ? {
-          seconds: 604800,
-          startTime: null,
-          combat: "",
-          rounds: 0,
-          turns: 0,
-          startRound: 0,
-          startTurn: 0,
-        }
-      : {
-          seconds: 0,
-          startTime: null,
-          combat: "",
-          rounds: 0,
-          turns: 0,
-          startRound: 0,
-          startTurn: 0,
-        };
+    const showIcon = target.checked ? CONST.ACTIVE_EFFECT_SHOW_ICON.ALWAYS : CONST.ACTIVE_EFFECT_SHOW_ICON.NEVER;
 
     const firstEffect = this.document.effects.contents[0];
 
@@ -839,18 +821,18 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
 
       if (activeEffectIndex >= 0) {
         // Update existing effect
-        powerData.effects[activeEffectIndex].duration = duration;
+        powerData.effects[activeEffectIndex].showIcon = showIcon;
       } else {
         // Create new effect from the temporary effect
         const newEffect = firstEffect.toObject();
-        newEffect.duration = duration;
+        newEffect.showIcon = showIcon;
         powerData.effects.push(newEffect);
         activeEffectIndex = powerData.effects.length - 1;
       }
 
       try {
         // Step 1: Update the temporary document's effect directly
-        firstEffect.updateSource({ duration });
+        firstEffect.updateSource({ showIcon });
 
         // Step 2: Update the transformation with the new data
         this.parentItem.update(
@@ -902,18 +884,18 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
 
       if (activeEffectIndex >= 0) {
         // Update existing effect
-        statusData.effects[activeEffectIndex].duration = duration;
+        statusData.effects[activeEffectIndex].showIcon = showIcon;
       } else {
         // Create new effect from the temporary effect
         const newEffect = firstEffect.toObject();
-        newEffect.duration = duration;
+        newEffect.showIcon = showIcon;
         statusData.effects.push(newEffect);
         activeEffectIndex = statusData.effects.length - 1;
       }
 
       try {
         // Step 1: Update the temporary document's effect directly
-        firstEffect.updateSource({ duration });
+        firstEffect.updateSource({ showIcon });
 
         // Step 2: Update the action card with the new data
         this.parentItem.update(
@@ -952,18 +934,18 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
 
       if (activeEffectIndex >= 0) {
         // Update existing effect
-        itemData.effects[activeEffectIndex].duration = duration;
+        itemData.effects[activeEffectIndex].showIcon = showIcon;
       } else {
         // Create new effect from the temporary effect
         const newEffect = firstEffect.toObject();
-        newEffect.duration = duration;
+        newEffect.showIcon = showIcon;
         itemData.effects.push(newEffect);
         activeEffectIndex = itemData.effects.length - 1;
       }
 
       try {
         // Step 1: Update the temporary document's effect directly
-        firstEffect.updateSource({ duration });
+        firstEffect.updateSource({ showIcon });
 
         // Step 2: Update the action card with the new data
         this.parentItem.update(

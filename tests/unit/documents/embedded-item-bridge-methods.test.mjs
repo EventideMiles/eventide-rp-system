@@ -33,7 +33,7 @@ vi.mock('../../../module/services/character-effects-processor.mjs', () => ({
     getOrCreateFirstEffect: vi.fn(async () => ({
       id: 'effect-123',
       _id: 'effect-123',
-      changes: [],
+      system: { changes: [] },
       toObject: vi.fn(() => ({ id: 'effect-123' }))
     }))
   }

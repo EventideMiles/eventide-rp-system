@@ -15,8 +15,8 @@ describe('character-effects', () => {
 
   describe('prepareCharacterEffects()', () => {
     describe('No changes - returns empty arrays', () => {
-      test('should return empty arrays when effect.changes is undefined', async () => {
-        const effect = { changes: undefined };
+      test('should return empty arrays when effect.system.changes is undefined', async () => {
+        const effect = { system: { changes: undefined } };
         const result = await prepareCharacterEffects(effect);
 
         expect(result).toEqual({
@@ -27,8 +27,8 @@ describe('character-effects', () => {
         });
       });
 
-      test('should return empty arrays when effect.changes is null', async () => {
-        const effect = { changes: null };
+      test('should return empty arrays when effect.system.changes is null', async () => {
+        const effect = { system: { changes: null } };
         const result = await prepareCharacterEffects(effect);
 
         expect(result).toEqual({
@@ -40,7 +40,7 @@ describe('character-effects', () => {
       });
 
       test('should return empty arrays when changes array is empty', async () => {
-        const effect = { changes: [] };
+        const effect = { system: { changes: [] } };
         const result = await prepareCharacterEffects(effect);
 
         expect(result).toEqual({
@@ -55,9 +55,11 @@ describe('character-effects', () => {
     describe('Regular abilities (acro, phys, fort, will, wits)', () => {
       test('should categorize single regular ability change', async () => {
         const effect = {
-          changes: [
-            { key: 'system.abilities.acro', value: '2', mode: 2 }
-          ]
+          system: {
+            changes: [
+              { key: 'system.abilities.acro', value: '2', mode: 2 }
+            ]
+          }
         };
         const result = await prepareCharacterEffects(effect);
 
@@ -76,11 +78,13 @@ describe('character-effects', () => {
 
       test('should categorize multiple regular ability changes', async () => {
         const effect = {
-          changes: [
-            { key: 'system.abilities.acro', value: '2', mode: 2 },
-            { key: 'system.abilities.phys', value: '3', mode: 2 },
-            { key: 'system.abilities.fort', value: '1', mode: 2 }
-          ]
+          system: {
+            changes: [
+              { key: 'system.abilities.acro', value: '2', mode: 2 },
+              { key: 'system.abilities.phys', value: '3', mode: 2 },
+              { key: 'system.abilities.fort', value: '1', mode: 2 }
+            ]
+          }
         };
         const result = await prepareCharacterEffects(effect);
 
@@ -93,10 +97,12 @@ describe('character-effects', () => {
 
       test('should populate regularEffects array correctly', async () => {
         const effect = {
-          changes: [
-            { key: 'system.abilities.will', value: '4', mode: 2 },
-            { key: 'system.abilities.wits', value: '5', mode: 2 }
-          ]
+          system: {
+            changes: [
+              { key: 'system.abilities.will', value: '4', mode: 2 },
+              { key: 'system.abilities.wits', value: '5', mode: 2 }
+            ]
+          }
         };
         const result = await prepareCharacterEffects(effect);
 
@@ -112,9 +118,11 @@ describe('character-effects', () => {
     describe('Hidden abilities (dice, cmax, cmin, fmax, fmin, vuln, powerMult, resolveMult)', () => {
       test('should categorize single hidden ability change', async () => {
         const effect = {
-          changes: [
-            { key: 'system.abilities.dice', value: '1', mode: 2 }
-          ]
+          system: {
+            changes: [
+              { key: 'system.abilities.dice', value: '1', mode: 2 }
+            ]
+          }
         };
         const result = await prepareCharacterEffects(effect);
 
@@ -133,11 +141,13 @@ describe('character-effects', () => {
 
       test('should categorize multiple hidden ability changes', async () => {
         const effect = {
-          changes: [
-            { key: 'system.abilities.cmax', value: '2', mode: 2 },
-            { key: 'system.abilities.cmin', value: '1', mode: 2 },
-            { key: 'system.abilities.fmax', value: '3', mode: 2 }
-          ]
+          system: {
+            changes: [
+              { key: 'system.abilities.cmax', value: '2', mode: 2 },
+              { key: 'system.abilities.cmin', value: '1', mode: 2 },
+              { key: 'system.abilities.fmax', value: '3', mode: 2 }
+            ]
+          }
         };
         const result = await prepareCharacterEffects(effect);
 
@@ -150,11 +160,13 @@ describe('character-effects', () => {
 
       test('should populate hiddenEffects array correctly', async () => {
         const effect = {
-          changes: [
-            { key: 'system.abilities.vuln', value: '5', mode: 2 },
-            { key: 'system.abilities.powerMult', value: '2', mode: 2 },
-            { key: 'system.abilities.resolveMult', value: '1.5', mode: 2 }
-          ]
+          system: {
+            changes: [
+              { key: 'system.abilities.vuln', value: '5', mode: 2 },
+              { key: 'system.abilities.powerMult', value: '2', mode: 2 },
+              { key: 'system.abilities.resolveMult', value: '1.5', mode: 2 }
+            ]
+          }
         };
         const result = await prepareCharacterEffects(effect);
 
@@ -166,9 +178,11 @@ describe('character-effects', () => {
 
       test('should set hidden flag to true for hidden abilities', async () => {
         const effect = {
-          changes: [
-            { key: 'system.abilities.fmin', value: '1', mode: 2 }
-          ]
+          system: {
+            changes: [
+              { key: 'system.abilities.fmin', value: '1', mode: 2 }
+            ]
+          }
         };
         const result = await prepareCharacterEffects(effect);
 
@@ -180,9 +194,11 @@ describe('character-effects', () => {
     describe('Override abilities (powerOverride, resolveOverride)', () => {
       test('should categorize powerOverride via system.power.override key', async () => {
         const effect = {
-          changes: [
-            { key: 'system.power.override', value: '10', mode: 2 }
-          ]
+          system: {
+            changes: [
+              { key: 'system.power.override', value: '10', mode: 2 }
+            ]
+          }
         };
         const result = await prepareCharacterEffects(effect);
 
@@ -201,9 +217,11 @@ describe('character-effects', () => {
 
       test('should categorize resolveOverride via system.resolve.override key', async () => {
         const effect = {
-          changes: [
-            { key: 'system.resolve.override', value: '8', mode: 2 }
-          ]
+          system: {
+            changes: [
+              { key: 'system.resolve.override', value: '8', mode: 2 }
+            ]
+          }
         };
         const result = await prepareCharacterEffects(effect);
 
@@ -222,10 +240,12 @@ describe('character-effects', () => {
 
       test('should populate overrideEffects array correctly', async () => {
         const effect = {
-          changes: [
-            { key: 'system.power.override', value: '10', mode: 2 },
-            { key: 'system.resolve.override', value: '8', mode: 2 }
-          ]
+          system: {
+            changes: [
+              { key: 'system.power.override', value: '10', mode: 2 },
+              { key: 'system.resolve.override', value: '8', mode: 2 }
+            ]
+          }
         };
         const result = await prepareCharacterEffects(effect);
 
@@ -235,9 +255,11 @@ describe('character-effects', () => {
 
       test('should set override flag to true for override abilities', async () => {
         const effect = {
-          changes: [
-            { key: 'system.power.override', value: '10', mode: 2 }
-          ]
+          system: {
+            changes: [
+              { key: 'system.power.override', value: '10', mode: 2 }
+            ]
+          }
         };
         const result = await prepareCharacterEffects(effect);
 
@@ -249,9 +271,11 @@ describe('character-effects', () => {
     describe('Effect modes', () => {
       test('should set disadvantage mode when key includes disadvantage', async () => {
         const effect = {
-          changes: [
-            { key: 'system.abilities.acro.disadvantage', value: '1', mode: 2 }
-          ]
+          system: {
+            changes: [
+              { key: 'system.abilities.acro.disadvantage', value: '1', mode: 2 }
+            ]
+          }
         };
         const result = await prepareCharacterEffects(effect);
 
@@ -260,9 +284,11 @@ describe('character-effects', () => {
 
       test('should set advantage mode when key includes advantage', async () => {
         const effect = {
-          changes: [
-            { key: 'system.abilities.phys.advantage', value: '1', mode: 2 }
-          ]
+          system: {
+            changes: [
+              { key: 'system.abilities.phys.advantage', value: '1', mode: 2 }
+            ]
+          }
         };
         const result = await prepareCharacterEffects(effect);
 
@@ -271,9 +297,11 @@ describe('character-effects', () => {
 
       test('should set ac.change mode when key includes ac.change', async () => {
         const effect = {
-          changes: [
-            { key: 'system.abilities.fort.ac.change', value: '2', mode: 2 }
-          ]
+          system: {
+            changes: [
+              { key: 'system.abilities.fort.ac.change', value: '2', mode: 2 }
+            ]
+          }
         };
         const result = await prepareCharacterEffects(effect);
 
@@ -282,9 +310,11 @@ describe('character-effects', () => {
 
       test('should set transformOverride mode when key includes transformOverride', async () => {
         const effect = {
-          changes: [
-            { key: 'system.abilities.will.transformOverride', value: '5', mode: 2 }
-          ]
+          system: {
+            changes: [
+              { key: 'system.abilities.will.transformOverride', value: '5', mode: 2 }
+            ]
+          }
         };
         const result = await prepareCharacterEffects(effect);
 
@@ -293,9 +323,11 @@ describe('character-effects', () => {
 
       test('should set transformChange mode when key includes transformChange', async () => {
         const effect = {
-          changes: [
-            { key: 'system.abilities.wits.transformChange', value: '3', mode: 2 }
-          ]
+          system: {
+            changes: [
+              { key: 'system.abilities.wits.transformChange', value: '3', mode: 2 }
+            ]
+          }
         };
         const result = await prepareCharacterEffects(effect);
 
@@ -304,9 +336,11 @@ describe('character-effects', () => {
 
       test('should set override mode when mode equals 5', async () => {
         const effect = {
-          changes: [
-            { key: 'system.abilities.acro', value: '5', mode: 5 }
-          ]
+          system: {
+            changes: [
+              { key: 'system.abilities.acro', value: '5', mode: 5 }
+            ]
+          }
         };
         const result = await prepareCharacterEffects(effect);
 
@@ -315,9 +349,11 @@ describe('character-effects', () => {
 
       test('should set default change mode when no special mode applies', async () => {
         const effect = {
-          changes: [
-            { key: 'system.abilities.phys', value: '3', mode: 2 }
-          ]
+          system: {
+            changes: [
+              { key: 'system.abilities.phys', value: '3', mode: 2 }
+            ]
+          }
         };
         const result = await prepareCharacterEffects(effect);
 
@@ -328,11 +364,13 @@ describe('character-effects', () => {
     describe('Mixed effects', () => {
       test('should categorize effect with regular, hidden, and override changes', async () => {
         const effect = {
-          changes: [
-            { key: 'system.abilities.acro', value: '2', mode: 2 },
-            { key: 'system.abilities.dice', value: '1', mode: 2 },
-            { key: 'system.power.override', value: '10', mode: 2 }
-          ]
+          system: {
+            changes: [
+              { key: 'system.abilities.acro', value: '2', mode: 2 },
+              { key: 'system.abilities.dice', value: '1', mode: 2 },
+              { key: 'system.power.override', value: '10', mode: 2 }
+            ]
+          }
         };
         const result = await prepareCharacterEffects(effect);
 
@@ -347,11 +385,13 @@ describe('character-effects', () => {
 
       test('should populate all three effect arrays correctly', async () => {
         const effect = {
-          changes: [
-            { key: 'system.abilities.phys', value: '3', mode: 2 },
-            { key: 'system.abilities.cmax', value: '2', mode: 2 },
-            { key: 'system.resolve.override', value: '8', mode: 5 }
-          ]
+          system: {
+            changes: [
+              { key: 'system.abilities.phys', value: '3', mode: 2 },
+              { key: 'system.abilities.cmax', value: '2', mode: 2 },
+              { key: 'system.resolve.override', value: '8', mode: 5 }
+            ]
+          }
         };
         const result = await prepareCharacterEffects(effect);
 
@@ -382,9 +422,11 @@ describe('character-effects', () => {
     describe('Unknown ability', () => {
       test('should ignore change with unknown ability key', async () => {
         const effect = {
-          changes: [
-            { key: 'system.abilities.unknown', value: '5', mode: 2 }
-          ]
+          system: {
+            changes: [
+              { key: 'system.abilities.unknown', value: '5', mode: 2 }
+            ]
+          }
         };
         const result = await prepareCharacterEffects(effect);
 
@@ -396,9 +438,11 @@ describe('character-effects', () => {
 
       test('should ignore change with non-matching key', async () => {
         const effect = {
-          changes: [
-            { key: 'system.something.else', value: '3', mode: 2 }
-          ]
+          system: {
+            changes: [
+              { key: 'system.something.else', value: '3', mode: 2 }
+            ]
+          }
         };
         const result = await prepareCharacterEffects(effect);
 
@@ -409,10 +453,12 @@ describe('character-effects', () => {
     describe('Edge cases', () => {
       test('should handle effect with changes but no matching ability keys', async () => {
         const effect = {
-          changes: [
-            { key: 'system.unrelated.field', value: '1', mode: 2 },
-            { key: 'another.random.key', value: '2', mode: 2 }
-          ]
+          system: {
+            changes: [
+              { key: 'system.unrelated.field', value: '1', mode: 2 },
+              { key: 'another.random.key', value: '2', mode: 2 }
+            ]
+          }
         };
         const result = await prepareCharacterEffects(effect);
 
@@ -424,9 +470,11 @@ describe('character-effects', () => {
 
       test('should handle effect with mode field missing', async () => {
         const effect = {
-          changes: [
-            { key: 'system.abilities.acro', value: '2' }
-          ]
+          system: {
+            changes: [
+              { key: 'system.abilities.acro', value: '2' }
+            ]
+          }
         };
         const result = await prepareCharacterEffects(effect);
 
@@ -435,9 +483,11 @@ describe('character-effects', () => {
 
       test('should handle effect with value field missing', async () => {
         const effect = {
-          changes: [
-            { key: 'system.abilities.phys', mode: 2 }
-          ]
+          system: {
+            changes: [
+              { key: 'system.abilities.phys', mode: 2 }
+            ]
+          }
         };
         const result = await prepareCharacterEffects(effect);
 

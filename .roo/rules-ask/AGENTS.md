@@ -27,4 +27,6 @@
 ### Hidden Documentation
 - SCSS architecture documented in `src/scss/README.md` (BEM methodology)
 - No JSDoc coverage; rely on file naming and mixin patterns for context
-- Setting "initativeFormula" is intentionally misspelled - use exact key
+
+### ⚠️ Broken Tests
+- **DO NOT RUN `npm test` or `npm run test:*`** — automatic testing is currently broken because `@rayners/foundry-test-utils` is not yet compatible with Foundry VTT v14. Tests will fail. Do not attempt to run the test suite until this library is updated.

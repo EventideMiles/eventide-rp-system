@@ -98,25 +98,18 @@ export const ItemSheetEffectGuardsMixin = (BaseClass) =>
             _id: foundry.utils.randomID(),
             name: this.item.name,
             img: this.item.img,
-            changes: [],
-            disabled: false,
-            duration: {
-              startTime: null,
-              seconds:
-                this.item.type === "status" || this.item.type === "feature"
-                  ? 18000
-                  : 0,
-              combat: "",
-              rounds: 0,
-              turns: 0,
-              startRound: 0,
-              startTurn: 0,
+            type: "base",
+            system: {
+              changes: []
             },
+            disabled: false,
+            showIcon:
+              this.item.type === "status" || this.item.type === "feature" ? CONST.ACTIVE_EFFECT_SHOW_ICON.ALWAYS : CONST.ACTIVE_EFFECT_SHOW_ICON.NEVER,
             description: "",
             origin: "",
             tint: "#ffffff",
             transfer: true,
-            statuses: new Set(),
+            statuses: [],
             flags: {},
           });
 
@@ -196,25 +189,14 @@ export const ItemSheetEffectGuardsMixin = (BaseClass) =>
     /**
      * Initialize effect guards during context preparation
      * Call this from your _prepareContext method
+     *
+     * Defers effect creation to avoid V14 ActiveEffect phase tracking bug.
+     * @see https://github.com/foundryvtt/foundryvtt/issues/11096
+     *
      * @protected
      */
     async _initEffectGuards() {
-      // Add comprehensive debugging
-      Logger.debug(
-        "Effect guards check - item details",
-        {
-          itemName: this.item?.name,
-          itemType: this.item?.type,
-          itemId: this.item?.id,
-          hasCollection: !!this.item.collection,
-          collection: this.item.collection?.constructor?.name,
-          isTemporary: !this.item.collection,
-          itemKeys: Object.keys(this.item || {}),
-        },
-        "EFFECT_GUARDS",
-      );
-
-      // Skip effect guards for temporary items (like action cards from transformations)
+      // Skip for temporary/virtual items
       if (!this.item.collection) {
         Logger.debug(
           "Skipping effect guards for temporary item",
@@ -227,6 +209,10 @@ export const ItemSheetEffectGuardsMixin = (BaseClass) =>
         );
         return;
       }
+
+      // Defer to next event loop tick to avoid phase conflicts during data preparation
+      // Note: foundry.utils.delay doesn't exist in V14, using native Promise
+      // await new Promise((resolve) => setTimeout(resolve, 0));
 
       try {
         await this.eventideItemEffectGuards();

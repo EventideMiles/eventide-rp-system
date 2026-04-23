@@ -1185,7 +1185,11 @@
       "CompleteNoChanges": "Migration complete: No changes needed.",
       "Failed": "Embedded image migration failed. Check the console for details.",
       "FixedEffectImages": "Fixed {effectsFixed} effect images across {itemsFixed} items",
-      "MigratedStatusFields": "Migrated {count} action cards from statusPerSuccess to statusApplicationLimit"
+      "MigratedStatusFields": "Migrated {count} action cards from statusPerSuccess to statusApplicationLimit",
+      "V14InProgress": "Migrating Eventide RP System data to V14...",
+      "V14Complete": "V14 migration complete!",
+      "V14Failed": "V14 migration failed. Check console for details.",
+      "V14FixedShowIcon": "Fixed {count} effects with showIcon=1"
     },
     "WindowTitles": {
       "ActorToTransformation": "Convert Actor to Transformation",

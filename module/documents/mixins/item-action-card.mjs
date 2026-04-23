@@ -75,10 +75,11 @@ export function ItemActionCardMixin(Base) {
             {
               _id: foundry.utils.randomID(),
               name: itemData.name,
-              icon: itemData.img,
+              img: itemData.img,
+              type: "base",
               changes: [],
               disabled: false,
-              duration: {},
+              showIcon: CONST.ACTIVE_EFFECT_SHOW_ICON.NEVER,
               flags: {},
               tint: "#ffffff",
               transfer: true,
@@ -401,10 +402,11 @@ export function ItemActionCardMixin(Base) {
             {
               _id: foundry.utils.randomID(),
               name: effectData.name,
-              icon: effectData.img,
+              img: effectData.img,
+              type: "base",
               changes: [],
               disabled: false,
-              duration: {},
+              showIcon: CONST.ACTIVE_EFFECT_SHOW_ICON.ALWAYS, // default to always, allow to move to never later
               flags: {},
               tint: "#ffffff",
               transfer: true,

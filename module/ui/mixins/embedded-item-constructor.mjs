@@ -135,18 +135,21 @@ export const EmbeddedItemConstructorMixin = (BaseClass) =>
       return {
         _id: foundry.utils.randomID(),
         name: tempItem.name,
-        icon: tempItem.img,
-        changes: [],
-        disabled: false,
-        duration: {
-          seconds: 0,
-          startTime: null,
-          combat: "",
-          rounds: 0,
-          turns: 0,
-          startRound: 0,
-          startTurn: 0,
+        img: tempItem.img,
+        type: "base",
+        system: {
+          changes: []
         },
+        disabled: false,
+        showIcon: CONST.ACTIVE_EFFECT_SHOW_ICON.NEVER,
+        duration: {
+          value: null,
+          units: "seconds",
+          expiry: null,
+          expired: false,
+        },
+        description: "",
+        
         flags: {},
         tint: "#ffffff",
         transfer: true,

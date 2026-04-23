@@ -12,8 +12,8 @@
         {{this.name}}
       </div>
       
-      {{#if (gt this.changes.length 0)}}
-        {{#each this.changes}}
+      {{#if (gt this.system.changes.length 0)}}
+        {{#each this.system.changes}}
           <div class="chat-card__effects-row">
             <div class="chat-card__effects-row-content">
               <div class="chat-card__effects-row-cell chat-card__effects-row-cell--first">
@@ -21,7 +21,7 @@
               </div>
               
               <div class="chat-card__effects-row-cell chat-card__effects-row-cell--middle">
-                {{#if (eq this.mode 5)}}
+                {{#if (eq this.type "override")}}
                   {{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.SetTo"}}
                 {{else}}
                   {{#if (eq (keySplit this.key 4) "advantage")}}

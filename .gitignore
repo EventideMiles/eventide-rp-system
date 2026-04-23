@@ -13,6 +13,9 @@ logs/
 # Roo code private MCP configs
 .roo/mcp.json
 
+# Cline private MCP configs
+.cline/mcp.json
+
 # VSCode debug settings
 .vscode/launch.json
 .vscode/launch.jsonc
