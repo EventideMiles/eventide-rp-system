@@ -48,6 +48,7 @@ import {
   TransformationConverter,
   EmbeddedImageMigration,
   SettingNameMigration,
+  V14ActiveEffectMigration,
 } from "./services/_module.mjs";
 
 // Import token configuration guards
@@ -265,6 +266,15 @@ Hooks.once("init", async () => {
   // Register system settings FIRST - before any Logger calls
   // This ensures testingMode setting is available for Logger
   registerSettings();
+
+  // Register V14 migration setting
+  game.settings.register("eventide-rp-system", "v14MigrationVersion", {
+    name: "V14 Migration Version",
+    scope: "world",
+    config: false,
+    default: "0.0.0",
+    type: String,
+  });
 
   Logger.info("Initializing Eventide RP System", null, "SYSTEM_INIT");
 
@@ -540,6 +550,11 @@ Hooks.once("ready", () => {
   });
   SettingNameMigration.run().catch((error) => {
     Logger.error("Failed to run setting name migration", error, "SYSTEM_INIT");
+  });
+
+  // Run V14 ActiveEffect migration
+  V14ActiveEffectMigration.run().catch((error) => {
+    Logger.error("Failed to run V14 ActiveEffect migration", error, "SYSTEM_INIT");
   });
 
   // Remove immediate theme styles now that the full theme system is loaded
