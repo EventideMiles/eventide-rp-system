@@ -86,6 +86,21 @@ Tips, tricks, and advanced configuration techniques.
 - **Integration** with other Foundry modules
 - **Troubleshooting** complex issues
 
+### [Testing](testing/testing-guide.md)
+
+Comprehensive testing documentation for developers and contributors.
+
+**Contents:**
+
+- **[Testing Guide](testing/testing-guide.md)** - Complete testing infrastructure documentation
+  - Testing strategy and hybrid approach (Vitest + Quench)
+  - Current test suite coverage (161 passing tests)
+  - Running tests locally and in CI
+  - Writing tests and best practices
+  - Future testing plans and goals
+  - Test structure and organization
+  - Troubleshooting common issues
+
 ## Documentation Quality and Accuracy
 
 ### Recent Improvements

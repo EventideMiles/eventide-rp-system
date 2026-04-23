@@ -26,16 +26,6 @@ export class CommonFoundryTasks {
   }
 
   /**
-   * Retrieves the first token which is currently targeted by the user.
-   *
-   * @returns {Token|null} The first targeted token or null if none targeted
-   * @static
-   */
-  static getFirstTarget() {
-    return CommonFoundryTasks.getTargetArray()?.[0] || null;
-  }
-
-  /**
    * Retrieves an array of tokens which are currently selected by the user.
    *
    * @returns {Token[]} Array of selected tokens
@@ -43,29 +33,6 @@ export class CommonFoundryTasks {
    */
   static getSelectedArray() {
     return canvas.tokens.controlled;
-  }
-
-  /**
-   * Retrieves the first token which is currently selected by the user.
-   *
-   * @returns {Token|null} The first selected token or null if none selected
-   * @static
-   */
-  static getFirstSelected() {
-    return CommonFoundryTasks.getSelectedArray()?.[0] || null;
-  }
-
-  /**
-   * Clamps a number between a minimum and maximum value.
-   *
-   * @param {number} num - The number to clamp
-   * @param {number} min - The minimum value
-   * @param {number} max - The maximum value
-   * @returns {number} The clamped value
-   * @static
-   */
-  static clamp(num, min, max) {
-    return Math.min(Math.max(num, min), max);
   }
 
   /**
@@ -140,17 +107,6 @@ export class CommonFoundryTasks {
   }
 
   /**
-   * Deletes a flag from the user's flags for the Eventide system.
-   *
-   * @param {string} key - The key of the flag to delete
-   * @returns {Promise<User>} A Promise which resolves to the updated User
-   * @static
-   */
-  static async deleteUserFlag(key) {
-    return game.user.unsetFlag(CommonFoundryTasks.SYSTEM_ID, key);
-  }
-
-  /**
    * Stores multiple values in the user's flags for the Eventide system.
    *
    * @param {Object} flags - An object containing key-value pairs to store
@@ -183,51 +139,6 @@ export class CommonFoundryTasks {
   }
 
   /**
-   * Deletes multiple flags from the user's flags for the Eventide system.
-   *
-   * @param {string[]} keys - An array of keys to delete
-   * @returns {Promise<void>} A Promise which resolves when all flags are deleted
-   * @static
-   */
-  static async deleteMultipleUserFlags(keys) {
-    const promises = [];
-    for (const key of keys) {
-      promises.push(CommonFoundryTasks.deleteUserFlag(key));
-    }
-    await Promise.all(promises);
-  }
-
-  /**
-   * Determines the permission level of the current user.
-   *
-   * @returns {string} "gm" if the user is a GM, otherwise "player"
-   * @static
-   */
-  static permissionLevel() {
-    return game.user.isGM ? "gm" : "player";
-  }
-
-  /**
-   * Checks if the current user has permission to perform an action.
-   * If not permitted and the user is not a GM, displays an error notification.
-   *
-   * @param {Object} [options={}] - Options object
-   * @param {boolean} [options.playerMode=false] - Whether to allow player access
-   * @returns {string} "gm" if GM, "player" if player and playerMode is true, or "forbidden"
-   * @static
-   */
-  static permissionCheck({ playerMode = false } = {}) {
-    if (game.user.isGM) return "gm";
-    if (playerMode) return "player";
-
-    // Show error notification if action is not permitted for players
-    ui.notifications.error(
-      game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.GMOnly"),
-    );
-    return "forbidden";
-  }
-
-  /**
    * Safely checks if testing mode is enabled in the system settings
    *
    * @returns {boolean} Whether testing mode is enabled
@@ -245,24 +156,6 @@ export class CommonFoundryTasks {
       return false;
     }
   }
-
-  /**
-   * Logs a message to console only if testing mode is disabled
-   * This prevents console spam during automated testing
-   *
-   * @param {string} message - The message to log
-   * @param {*} [data] - Optional data to log alongside the message
-   * @static
-   */
-  static logIfTesting(message, data) {
-    if (!CommonFoundryTasks.isTestingMode) {
-      if (data !== undefined) {
-        console.info(message, data);
-      } else {
-        console.info(message);
-      }
-    }
-  }
 }
 
 /**
@@ -272,19 +165,11 @@ export class CommonFoundryTasks {
  */
 export const commonTasks = {
   getTargetArray: CommonFoundryTasks.getTargetArray,
-  getFirstTarget: CommonFoundryTasks.getFirstTarget,
   getSelectedArray: CommonFoundryTasks.getSelectedArray,
-  getFirstSelected: CommonFoundryTasks.getFirstSelected,
-  clamp: CommonFoundryTasks.clamp,
   storeUserFlag: CommonFoundryTasks.storeUserFlag,
   retrieveUserFlag: CommonFoundryTasks.retrieveUserFlag,
   retrieveSheetTheme: CommonFoundryTasks.retrieveSheetTheme,
-  deleteUserFlag: CommonFoundryTasks.deleteUserFlag,
   storeMultipleUserFlags: CommonFoundryTasks.storeMultipleUserFlags,
   retrieveMultipleUserFlags: CommonFoundryTasks.retrieveMultipleUserFlags,
-  deleteMultipleUserFlags: CommonFoundryTasks.deleteMultipleUserFlags,
-  permissionLevel: CommonFoundryTasks.permissionLevel,
-  permissionCheck: CommonFoundryTasks.permissionCheck,
   isTestingMode: () => CommonFoundryTasks.isTestingMode,
-  logIfTesting: CommonFoundryTasks.logIfTesting,
 };

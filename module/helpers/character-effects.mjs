@@ -10,7 +10,7 @@
  * which abilities they affect and whether those abilities are hidden, override, or regular.
  *
  * @param {Object} effect - The effect object to process
- * @param {Array} [effect.changes] - Array of changes in the effect
+ * @param {Array} [effect.system.changes] - Array of changes in the effect (v14: nested under system)
  * @returns {Object} Object containing categorized effects
  * @returns {Array} returns.fullEffects - All effects
  * @returns {Array} returns.regularEffects - Effects that affect visible abilities
@@ -24,7 +24,7 @@ const prepareCharacterEffects = async (effect) => {
   const overrideEffects = [];
 
   // If there are no changes, return empty arrays
-  if (!effect.changes) {
+  if (!effect.system?.changes) {
     return {
       fullEffects,
       regularEffects,
@@ -49,7 +49,7 @@ const prepareCharacterEffects = async (effect) => {
   const allAbilities = [...abilities, ...hiddenAbilities, ...overrideAbilities];
 
   // Process each change in the effect
-  for (const change of effect.changes) {
+  for (const change of effect.system.changes) {
     // Determine which ability this change affects
     let ability;
 
@@ -110,7 +110,8 @@ const determineEffectMode = (change) => {
   if (change.key.includes("ac.change")) return "ac.change";
   if (change.key.includes("transformOverride")) return "transformOverride";
   if (change.key.includes("transformChange")) return "transformChange";
-  if (change.mode === 5) return "override";
+  // V14: type is a string ("add", "override", etc.) instead of numeric mode
+  if (change.type === "override") return "override";
   return "change";
 };
 

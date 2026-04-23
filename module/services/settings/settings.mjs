@@ -15,7 +15,7 @@ import { FormulaValidator } from "../formula-validator.mjs";
  *   - defaultCharacterTab: Personal default tab preference
  *
  * WORLD SCOPE + RESTRICTED (GM Only):
- *   - initativeFormula: Combat mechanics (REQUIRES RELOAD)
+ *   - initiativeFormula: Combat mechanics (REQUIRES RELOAD)
  *   - initiativeDecimals: Combat display precision (REQUIRES RELOAD)
  *   - autoRollNpcInitiative: Combat automation behavior
  *   - hideNpcInitiativeRolls: Combat display behavior
@@ -27,7 +27,7 @@ import { FormulaValidator } from "../formula-validator.mjs";
  *   - sound_* settings: Audio file paths (hidden from main menu)
  *
  * RELOAD REQUIREMENTS:
- *   - Only initativeFormula and initiativeDecimals require reloads
+ *   - Only initiativeFormula and initiativeDecimals require reloads
  *   - All other settings take effect immediately when checked at runtime
  *   - Sound settings and UI themes have immediate effect without reload
  *
@@ -292,7 +292,7 @@ function _refreshAllActorDerivedData() {
 
     // Also refresh any synthetic token actors on the current scene
     if (canvas.scene) {
-      for (const token of canvas.scene.tokens) {
+      for (const token of canvas.tokens.placeables) {
         if (token.actor && !token.isLinked) {
           token.actor.reset();
           if (token.actor.sheet?.rendered) {
@@ -435,9 +435,9 @@ export const registerSettings = function () {
   // ===========================================
 
   // Initiative Formula (affects combat mechanics - needs reload)
-  game.settings.register("eventide-rp-system", "initativeFormula", {
-    name: "SETTINGS.InitativeFormulaName",
-    hint: "SETTINGS.InitativeFormulaHint",
+  game.settings.register("eventide-rp-system", "initiativeFormula", {
+    name: "SETTINGS.InitiativeFormulaName",
+    hint: "SETTINGS.InitiativeFormulaHint",
     scope: "world",
     config: true,
     restricted: true,
@@ -450,7 +450,7 @@ export const registerSettings = function () {
       
       // Validate formula before applying
       const validator = new FormulaValidator();
-      const result = validator.validateSettingFormula(sanitized, "initative", {
+      const result = validator.validateSettingFormula(sanitized, "initiative", {
         allowBlank: false,
         allowDataRefs: true,
         requiredRefs: ["@hiddenAbilities", "@statTotal"],
@@ -463,9 +463,9 @@ export const registerSettings = function () {
         // Revert to previous value
         const currentValue = game.settings.get(
           "eventide-rp-system",
-          "initativeFormula",
+          "initiativeFormula",
         );
-        game.settings.set("eventide-rp-system", "initativeFormula", currentValue);
+        game.settings.set("eventide-rp-system", "initiativeFormula", currentValue);
         return;
       }
 
@@ -1019,15 +1019,19 @@ export const registerSettings = function () {
   // MIGRATION TRACKING SETTINGS (Hidden)
   // ===========================================
 
-  // Embedded Image Migration Version Tracker (Issue #127)
-  game.settings.register("eventide-rp-system", "embeddedImageMigrationVersion", {
-    name: "Embedded Image Migration Version",
-    hint: "Tracks which version of the embedded image migration has been applied.",
+  // Migration Version Tracker
+  // Tracks the overall migration version using numeric levels:
+  // - 0: No migrations run
+  // - 1: Embedded image migration completed
+  // - 2: Setting name migration completed
+  game.settings.register("eventide-rp-system", "migrationVersion", {
+    name: "Migration Version",
+    hint: "Tracks which migrations have been applied to the world.",
     scope: "world",
     config: false, // Hidden from settings menu
     restricted: true,
-    type: String,
-    default: "",
+    type: Number,
+    default: 0,
   });
 
   // ===========================================

@@ -28,8 +28,7 @@
 - Handlebars templates organized in logical directories with partials
 
 ### Critical Gotchas
-- Setting name misspelled: "initativeFormula" instead of "initiativeFormula"
+- ⚠️ **DO NOT RUN `npm test` or `npm run test:*`** — automatic testing is currently broken because `@rayners/foundry-test-utils` is not yet compatible with Foundry VTT v14. Tests will fail. Do not attempt to run the test suite until this library is updated.
 - Memory management requires cleanup via `performSystemCleanup()` and `performPreInitCleanup()`
 - Global scope exposed via `globalThis.erps` with extensive API
 - Pre-commit hooks enforce validation with NVM loading
-- Test infrastructure exists but has limited coverage

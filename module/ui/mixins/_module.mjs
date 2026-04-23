@@ -47,6 +47,9 @@ export { ScrollPreservationMixin } from "./scroll-preservation.mjs";
 // Combined Item Sheet Mixin
 export { ItemSheetAllMixins } from "./item-sheet-all-mixins.mjs";
 
+// Popup Mixins
+export { ThemeManagedPopupMixin } from "./theme-managed-popup-mixin.mjs";
+
 // Embedded Item Sheet Mixins
 export { EmbeddedItemConstructorMixin } from "./embedded-item-constructor.mjs";
 export { EmbeddedItemDataMixin } from "./embedded-item-data.mjs";

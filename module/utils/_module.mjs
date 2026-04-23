@@ -9,6 +9,9 @@ export * from "./roll-utilities.mjs";
 export * from "./error-handler.mjs";
 export * from "./error-patterns.mjs";
 export * from "./system-cleanup.mjs";
+export * from "./math-utilities.mjs";
+export * from "./dice-adjustments.mjs";
+export * from "./validation.mjs";
 
 // Re-export number inputs for global access
 export {

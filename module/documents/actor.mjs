@@ -95,6 +95,8 @@ export class EventideRpSystemActor extends ActorTransformationMixin(
    * @override
    */
   prepareBaseData() {
+    super.prepareBaseData();
+
     // This method is intentionally left empty as all data preparation happens
     // in prepareDerivedData() after active effects have been applied.
     // In the future, any data that needs to be initialized before active effects

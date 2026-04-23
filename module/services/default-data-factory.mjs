@@ -96,14 +96,23 @@ export class DefaultDataFactory {
           _id: foundry.utils.randomID(),
           name: `${parentItem.name} Effect`,
           img: parentItem.img,
-          changes: [],
+          type: "base",
+          system: {
+            changes: [],
+          },
           disabled: false,
-          duration: this.getDefaultEffectDuration(),
+          showIcon: CONST.ACTIVE_EFFECT_SHOW_ICON.ALWAYS, // Always show on token (V14: replaces duration.seconds > 0)
+          duration: {
+            expired: false,
+            expiry: null,
+            units: "seconds",
+            value: null,
+          },
           description: "",
           origin: "",
           tint: parentItem.system.textColor || "#ffffff",
           transfer: true,
-          statuses: new Set(),
+          statuses: [],
           flags: {},
         },
       ],
@@ -291,24 +300,6 @@ export class DefaultDataFactory {
         disadvantage: 0,
         total: 0,
       },
-    };
-  }
-
-  /**
-   * Get default effect duration structure
-   *
-   * @static
-   * @returns {object} Default duration data
-   */
-  static getDefaultEffectDuration() {
-    return {
-      startTime: null,
-      seconds: 18000, // 5 hours - matches the effect creator pattern
-      combat: "",
-      rounds: 0,
-      turns: 0,
-      startRound: 0,
-      startTurn: 0,
     };
   }
 

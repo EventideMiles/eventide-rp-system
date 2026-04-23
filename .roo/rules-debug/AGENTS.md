@@ -24,6 +24,8 @@
 - Mock Foundry VTT globals (`game`, `ui`, `canvas`) for any new tests
 
 ### Silent Failure Gotchas
-- Setting "initativeFormula" is misspelled - use exact name for debugging
 - ESLint blocks `console.log` in modules but allows in build scripts
 - Handlebars partials fail silently if not pre-registered in `handlebars-partials.mjs`
+
+### ⚠️ Broken Tests
+- **DO NOT RUN `npm test` or `npm run test:*`** — automatic testing is currently broken because `@rayners/foundry-test-utils` is not yet compatible with Foundry VTT v14. Tests will fail. Do not attempt to run the test suite until this library is updated.

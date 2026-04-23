@@ -1,11 +1,6 @@
 import { EventidePopupHelpers } from "../components/_module.mjs";
-import {
-  initThemeManager,
-  THEME_PRESETS,
-  cleanupThemeManager,
-  applyThemeImmediate,
-  InventoryUtils,
-} from "../../helpers/_module.mjs";
+import { ThemeManagedPopupMixin } from "../mixins/_module.mjs";
+import { InventoryUtils } from "../../helpers/_module.mjs";
 import { Logger } from "../../services/logger.mjs";
 import { TargetResolver } from "../../services/target-resolver.mjs";
 
@@ -14,9 +9,9 @@ import { TargetResolver } from "../../services/target-resolver.mjs";
  *
  * Displays the embedded item's details and handles roll submission
  * to trigger the action card's chain logic.
- * @extends {EventidePopupHelpers}
+ * @extends {ThemeManagedPopupMixin(EventidePopupHelpers)}
  */
-export class ActionCardPopup extends EventidePopupHelpers {
+export class ActionCardPopup extends ThemeManagedPopupMixin(EventidePopupHelpers) {
   /** @override */
   static PARTS = {
     actionCardPopup: {
@@ -76,11 +71,6 @@ export class ActionCardPopup extends EventidePopupHelpers {
    */
   _onRender(context, options) {
     super._onRender(context, options);
-
-    // Re-apply themes on re-render (but don't reinitialize)
-    if (this.themeManager) {
-      this.themeManager.applyThemes();
-    }
 
     // Initialize transformation selection styling
     this._initializeTransformationSelection();
@@ -146,49 +136,6 @@ export class ActionCardPopup extends EventidePopupHelpers {
         }
       });
     });
-  }
-
-  /**
-   * Handle the first render of the action card popup application
-   * @override
-   * @protected
-   */
-  async _onFirstRender() {
-    super._onFirstRender();
-
-    // Apply theme immediately to prevent flashing
-    applyThemeImmediate(this.element);
-
-    // Initialize theme management only on first render (non-blocking like actor/item sheets)
-    if (!this.themeManager) {
-      initThemeManager(this, THEME_PRESETS.CREATOR_APPLICATION)
-        .then((manager) => {
-          this.themeManager = manager;
-        })
-        .catch((error) => {
-          Logger.error(
-            "Failed to initialize theme manager for action card popup",
-            error,
-            "THEME",
-          );
-        });
-    }
-  }
-
-  /**
-   * Clean up resources before closing the application
-   * @param {Object} options - The options for closing
-   * @returns {Promise<void>}
-   * @override
-   */
-  async _preClose(options) {
-    // Clean up theme management for this specific instance
-    if (this.themeManager) {
-      cleanupThemeManager(this);
-      this.themeManager = null;
-    }
-
-    await super._preClose(options);
   }
 
   /**

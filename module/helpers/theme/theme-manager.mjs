@@ -14,27 +14,19 @@ import { Logger } from "../../services/logger.mjs";
 // Import all theme management functionality
 export {
   ThemeManagerInstance,
-  getThemeManager,
-  getAllThemeManagers,
   getActiveThemeInstances,
-  applyThemesToAll,
   cleanupAllInstances,
 } from "./theme-instance.mjs";
 
 export {
   applyGlobalTheme,
   applyThemeToSelector,
-  applyMultipleThemes,
-  removeThemeFromSelector,
-  verifyThemeApplication,
   applyThemeImmediate,
   injectImmediateThemeStyles,
   removeImmediateThemeStyles,
 } from "./theme-applicator.mjs";
 
 export {
-  addGlobalThemeListener,
-  removeGlobalThemeListener,
   clearGlobalThemeListeners,
   triggerGlobalThemeChange,
   initializeGlobalTheme,
@@ -88,40 +80,3 @@ export const initializeThemeManager = async (application, options = {}) => {
   return themeManager;
 };
 
-/**
- * Quick setup function for common sheet types
- * @param {Application} application - The Foundry application instance
- * @param {string} [sheetType="CHARACTER_SHEET"] - The type of sheet (CHARACTER_SHEET, ITEM_SHEET, etc.)
- * @returns {ThemeManagerInstance} The created theme manager instance
- */
-export const setupSheetTheme = async (
-  application,
-  sheetType = "CHARACTER_SHEET",
-) => {
-  return initializeThemeManager(application, sheetType);
-};
-
-/**
- * Initialize the global theme system
- * This should be called once during system initialization
- */
-export const initializeGlobalThemeSystem = async () => {
-  const { initializeGlobalTheme, setupGlobalThemeDetection } = await import(
-    "./theme-events.mjs"
-  );
-
-  initializeGlobalTheme();
-  setupGlobalThemeDetection();
-};
-
-/**
- * Clean up the entire theme system
- * This should be called during system cleanup
- */
-export const cleanupGlobalThemeSystem = async () => {
-  const { cleanupAllInstances } = await import("./theme-instance.mjs");
-  const { cleanupGlobalThemeEvents } = await import("./theme-events.mjs");
-
-  cleanupAllInstances();
-  cleanupGlobalThemeEvents();
-};

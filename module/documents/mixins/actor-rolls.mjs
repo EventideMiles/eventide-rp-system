@@ -2,6 +2,8 @@ import { Logger } from "../../services/logger.mjs";
 import { getSetting } from "../../services/_module.mjs";
 import { ErrorHandler } from "../../utils/error-handler.mjs";
 import { erpsRollHandler } from "../../services/_module.mjs";
+import { buildDiceFormula } from "../../utils/dice-adjustments.mjs";
+import { requireString } from "../../utils/validation.mjs";
 
 /**
  * Actor Rolls Mixin
@@ -66,15 +68,7 @@ export const ActorRollsMixin = (BaseClass) =>
       Logger.methodEntry("ActorRollsMixin", "getRollFormula", { ability });
 
       // Validate ability parameter
-      if (!ability || typeof ability !== "string") {
-        const error = new Error(`Invalid ability parameter: ${ability}`);
-        Logger.error(
-          "Invalid ability provided to getRollFormula",
-          error,
-          "ROLLS",
-        );
-        throw error;
-      }
+      requireString(ability, "ability parameter");
 
       try {
         const actorRollData = this.getRollData();
@@ -102,19 +96,12 @@ export const ActorRollsMixin = (BaseClass) =>
 
         const abilityData = actorRollData.abilities[ability];
         const diceAdjustments = abilityData.diceAdjustments;
-        const total = diceAdjustments.total;
-        const absTotal = Math.abs(total);
-        const rollType = diceAdjustments.mode;
 
         // Generate the formula based on dice adjustments
-        let diceFormula;
-        if (absTotal > 0) {
-          // When there are dice adjustments, roll multiple dice and keep the best/worst
-          diceFormula = `${absTotal + 1}d${actorRollData.hiddenAbilities.dice.total}${rollType}1`;
-        } else {
-          // When no dice adjustments, roll a single die
-          diceFormula = `1d${actorRollData.hiddenAbilities.dice.total}`;
-        }
+        const diceFormula = buildDiceFormula(
+          actorRollData.hiddenAbilities.dice.total,
+          diceAdjustments,
+        );
 
         const formula = `${diceFormula} + ${abilityData.total}`;
 

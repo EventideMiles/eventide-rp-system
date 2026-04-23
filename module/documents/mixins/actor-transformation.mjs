@@ -1,5 +1,6 @@
 import { Logger } from "../../services/logger.mjs";
 import { ErrorHandler } from "../../utils/error-handler.mjs";
+import { clampValue } from "../../utils/math-utilities.mjs";
 import { erpsMessageHandler } from "../../services/_module.mjs";
 
 /**
@@ -902,7 +903,7 @@ export const ActorTransformationMixin = (BaseClass) =>
      * @returns {number} Clamped value
      */
     _clampValue(value, min, max) {
-      return Math.min(Math.max(value, min), max);
+      return clampValue(value, min, max);
     }
 
     /**

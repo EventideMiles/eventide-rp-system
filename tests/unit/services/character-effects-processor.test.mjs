@@ -6,7 +6,8 @@
  * character effects processing for item sheets.
  */
 
-import { describe, test, expect, beforeEach, jest } from '@jest/globals';
+// Vitest globals are enabled, so we don't need to import them
+// describe, test, expect, beforeEach, vi are available globally
 import { CharacterEffectsProcessor } from '../../../module/services/character-effects-processor.mjs';
 
 describe('CharacterEffectsProcessor', () => {
@@ -16,7 +17,7 @@ describe('CharacterEffectsProcessor', () => {
     beforeEach(() => {
       // Create a mock form element with querySelectorAll
       mockForm = {
-        querySelectorAll: jest.fn()
+        querySelectorAll: vi.fn()
       };
     });
 
@@ -236,90 +237,66 @@ describe('CharacterEffectsProcessor', () => {
     });
   });
 
-  describe('getModeForEffect', () => {
-    beforeEach(() => {
-      // Ensure CONST.ACTIVE_EFFECT_MODES is properly mocked
-      if (!global.CONST) {
-        global.CONST = {};
-      }
-      if (!global.CONST.ACTIVE_EFFECT_MODES) {
-        global.CONST.ACTIVE_EFFECT_MODES = {
-          ADD: 2,
-          OVERRIDE: 5
-        };
-      }
-    });
-
-    test('returns ADD mode for regular add effects', () => {
+  describe('getTypeForEffect', () => {
+    test('returns "add" type for regular add effects', () => {
       const effect = { ability: 'acro', mode: 'add' };
-      const result = CharacterEffectsProcessor.getModeForEffect(effect, true);
+      const result = CharacterEffectsProcessor.getTypeForEffect(effect, true);
 
-      expect(result).toBe(CONST.ACTIVE_EFFECT_MODES.ADD);
+      expect(result).toBe('add');
     });
 
-    test('returns ADD mode for regular advantage effects', () => {
+    test('returns "add" type for regular advantage effects', () => {
       const effect = { ability: 'acro', mode: 'advantage' };
-      const result = CharacterEffectsProcessor.getModeForEffect(effect, true);
+      const result = CharacterEffectsProcessor.getTypeForEffect(effect, true);
 
-      expect(result).toBe(CONST.ACTIVE_EFFECT_MODES.ADD);
+      expect(result).toBe('add');
     });
 
-    test('returns OVERRIDE mode for regular override effects', () => {
+    test('returns "override" type for regular override effects', () => {
       const effect = { ability: 'acro', mode: 'override' };
-      const result = CharacterEffectsProcessor.getModeForEffect(effect, true);
+      const result = CharacterEffectsProcessor.getTypeForEffect(effect, true);
 
-      expect(result).toBe(CONST.ACTIVE_EFFECT_MODES.OVERRIDE);
+      expect(result).toBe('override');
     });
 
-    test('returns OVERRIDE mode for powerOverride', () => {
+    test('returns "override" type for powerOverride', () => {
       const effect = { ability: 'powerOverride', mode: 'override' };
-      const result = CharacterEffectsProcessor.getModeForEffect(effect, true);
+      const result = CharacterEffectsProcessor.getTypeForEffect(effect, true);
 
-      expect(result).toBe(CONST.ACTIVE_EFFECT_MODES.OVERRIDE);
+      expect(result).toBe('override');
     });
 
-    test('returns OVERRIDE mode for resolveOverride', () => {
+    test('returns "override" type for resolveOverride', () => {
       const effect = { ability: 'resolveOverride', mode: 'override' };
-      const result = CharacterEffectsProcessor.getModeForEffect(effect, true);
+      const result = CharacterEffectsProcessor.getTypeForEffect(effect, true);
 
-      expect(result).toBe(CONST.ACTIVE_EFFECT_MODES.OVERRIDE);
+      expect(result).toBe('override');
     });
 
-    test('returns ADD mode for hidden add effects', () => {
+    test('returns "add" type for hidden add effects', () => {
       const effect = { ability: 'dice', mode: 'add' };
-      const result = CharacterEffectsProcessor.getModeForEffect(effect, false);
+      const result = CharacterEffectsProcessor.getTypeForEffect(effect, false);
 
-      expect(result).toBe(CONST.ACTIVE_EFFECT_MODES.ADD);
+      expect(result).toBe('add');
     });
 
-    test('returns OVERRIDE mode for hidden override effects', () => {
+    test('returns "override" type for hidden override effects', () => {
       const effect = { ability: 'dice', mode: 'override' };
-      const result = CharacterEffectsProcessor.getModeForEffect(effect, false);
+      const result = CharacterEffectsProcessor.getTypeForEffect(effect, false);
 
-      expect(result).toBe(CONST.ACTIVE_EFFECT_MODES.OVERRIDE);
+      expect(result).toBe('override');
     });
   });
 
   describe('generateNewEffectChange', () => {
-    beforeEach(() => {
-      // Ensure CONST.ACTIVE_EFFECT_MODES is properly mocked
-      if (!global.CONST) {
-        global.CONST = {};
-      }
-      if (!global.CONST.ACTIVE_EFFECT_MODES) {
-        global.CONST.ACTIVE_EFFECT_MODES = {
-          ADD: 2
-        };
-      }
-    });
-
     test('generates change for regular ability', () => {
       const newEffect = { type: 'abilities', ability: 'acro' };
       const result = CharacterEffectsProcessor.generateNewEffectChange(newEffect);
 
       expect(result).toEqual({
         key: 'system.abilities.acro.change',
-        mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+        type: 'add',
+        phase: 'initial',
         value: 0
       });
     });
@@ -330,7 +307,8 @@ describe('CharacterEffectsProcessor', () => {
 
       expect(result).toEqual({
         key: 'system.hiddenAbilities.dice.change',
-        mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+        type: 'add',
+        phase: 'initial',
         value: 0
       });
     });
@@ -341,7 +319,8 @@ describe('CharacterEffectsProcessor', () => {
 
       expect(result).toEqual({
         key: 'system.power.override',
-        mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+        type: 'add',
+        phase: 'initial',
         value: 0
       });
     });
@@ -352,7 +331,8 @@ describe('CharacterEffectsProcessor', () => {
 
       expect(result).toEqual({
         key: 'system.resolve.override',
-        mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+        type: 'add',
+        phase: 'initial',
         value: 0
       });
     });
@@ -468,19 +448,6 @@ describe('CharacterEffectsProcessor', () => {
   });
 
   describe('processEffectsToChanges', () => {
-    beforeEach(() => {
-      // Ensure CONST.ACTIVE_EFFECT_MODES is properly mocked
-      if (!global.CONST) {
-        global.CONST = {};
-      }
-      if (!global.CONST.ACTIVE_EFFECT_MODES) {
-        global.CONST.ACTIVE_EFFECT_MODES = {
-          ADD: 2,
-          OVERRIDE: 5
-        };
-      }
-    });
-
     test('processes regular effects with extended modes', async () => {
       const characterEffects = {
         regularEffects: [
@@ -499,17 +466,20 @@ describe('CharacterEffectsProcessor', () => {
       expect(result).toHaveLength(3);
       expect(result[0]).toEqual({
         key: 'system.abilities.acro.change',
-        mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+        type: 'add',
+        phase: 'initial',
         value: '2'
       });
       expect(result[1]).toEqual({
         key: 'system.abilities.phys.override',
-        mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
+        type: 'override',
+        phase: 'initial',
         value: '5'
       });
       expect(result[2]).toEqual({
         key: 'system.abilities.fort.ac.change',
-        mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+        type: 'add',
+        phase: 'initial',
         value: '1'
       });
     });
@@ -532,7 +502,8 @@ describe('CharacterEffectsProcessor', () => {
       expect(result).toHaveLength(3);
       expect(result[2]).toEqual({
         key: 'system.abilities.fort.transform',
-        mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+        type: 'add',
+        phase: 'initial',
         value: '1'
       });
     });
@@ -552,12 +523,14 @@ describe('CharacterEffectsProcessor', () => {
       expect(result).toHaveLength(2);
       expect(result[0]).toEqual({
         key: 'system.hiddenAbilities.dice.change',
-        mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+        type: 'add',
+        phase: 'initial',
         value: '1'
       });
       expect(result[1]).toEqual({
         key: 'system.hiddenAbilities.luck.override',
-        mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
+        type: 'override',
+        phase: 'initial',
         value: '3'
       });
     });
@@ -577,12 +550,14 @@ describe('CharacterEffectsProcessor', () => {
       expect(result).toHaveLength(2);
       expect(result[0]).toEqual({
         key: 'system.power.override',
-        mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
+        type: 'override',
+        phase: 'initial',
         value: '3'
       });
       expect(result[1]).toEqual({
         key: 'system.resolve.override',
-        mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE,
+        type: 'override',
+        phase: 'initial',
         value: '2'
       });
     });
@@ -628,7 +603,7 @@ describe('CharacterEffectsProcessor', () => {
       // Ensure foundry.utils is mocked
       global.foundry = global.foundry || { utils: {} };
       global.foundry.utils = global.foundry.utils || {};
-      global.foundry.utils.randomID = jest.fn(() => 'test-effect-id');
+      global.foundry.utils.randomID = vi.fn(() => 'test-effect-id');
       
       // Ensure CONFIG is mocked
       global.CONFIG = global.CONFIG || {};
@@ -637,7 +612,12 @@ describe('CharacterEffectsProcessor', () => {
           constructor(data, options) {
             this._id = data._id;
             this.name = data.name;
-            this.changes = data.changes;
+            this.system = data.system || {};
+            this.showIcon = data.showIcon;
+            this.type = data.type;
+            this.disabled = data.disabled;
+            this.transfer = data.transfer;
+            this.statuses = data.statuses;
             this.parent = options?.parent;
           }
         }
@@ -648,12 +628,12 @@ describe('CharacterEffectsProcessor', () => {
         img: 'icons/test.png',
         effects: {
           contents: [],
-          set: jest.fn()
+          set: vi.fn()
         },
         _source: {
           effects: []
         },
-        createEmbeddedDocuments: jest.fn()
+        createEmbeddedDocuments: vi.fn()
       };
     });
 
@@ -677,7 +657,8 @@ describe('CharacterEffectsProcessor', () => {
 
       expect(result).toBeDefined();
       expect(result.name).toBe('Test Item');
-      expect(result.changes).toEqual([]);
+      expect(result.system.changes).toEqual([]);
+      expect(result.showIcon).toBe(0); // V14: Default showIcon is 0
       expect(mockItem.effects.set).toHaveBeenCalled();
       expect(mockItem._source.effects).toHaveLength(1);
       expect(mockItem._source.effects[0]._id).toBeDefined();
@@ -694,7 +675,11 @@ describe('CharacterEffectsProcessor', () => {
         expect.arrayContaining([
           expect.objectContaining({
             name: 'Test Item',
-            icon: 'icons/test.png'
+            img: 'icons/test.png', // V14: uses img instead of icon
+            showIcon: CONST.ACTIVE_EFFECT_SHOW_ICON.NEVER,
+            type: 'base', // V14: effect type
+            disabled: false,
+            transfer: true
           })
         ]),
         { fromEmbeddedItem: true }
@@ -702,22 +687,37 @@ describe('CharacterEffectsProcessor', () => {
       expect(result).toBe(createdEffect);
     });
 
-    test('creates effect with duration when provided', async () => {
+    test('creates effect with showIcon field (V14)', async () => {
       mockItem.update = function() { /* embeddedItem logic */ };
       mockItem.update.toString = () => 'function update() { embeddedItem }';
+      mockItem._source = {};
 
-      const duration = { seconds: 604800 };
-      const result = await CharacterEffectsProcessor.getOrCreateFirstEffect(mockItem, duration);
+      const result = await CharacterEffectsProcessor.getOrCreateFirstEffect(mockItem);
 
-      // The effect should have the duration set
+      // V14: Effect should have showIcon field set to 0 by default
       expect(result).toBeDefined();
+      expect(result.showIcon).toBe(0);
     });
 
     test('does not create effect when allowCreate is false', async () => {
-      const result = await CharacterEffectsProcessor.getOrCreateFirstEffect(mockItem, {}, false);
+      const result = await CharacterEffectsProcessor.getOrCreateFirstEffect(mockItem, false);
 
       expect(result).toBeUndefined();
       expect(mockItem.createEmbeddedDocuments).not.toHaveBeenCalled();
+    });
+
+    test('creates effect with correct V14 schema properties', async () => {
+      mockItem.update = function() { /* embeddedItem logic */ };
+      mockItem.update.toString = () => 'function update() { embeddedItem }';
+      mockItem._source = {};
+
+      const result = await CharacterEffectsProcessor.getOrCreateFirstEffect(mockItem);
+
+      // Verify V14 schema: has showIcon, type, and other V14 properties
+      expect(result.showIcon).toBe(0);
+      expect(result.type).toBe('base');
+      expect(result.transfer).toBe(true);
+      expect(result.statuses).toEqual([]);
     });
   });
 
@@ -729,29 +729,29 @@ describe('CharacterEffectsProcessor', () => {
       mockEffect = {
         _id: 'effect-id',
         name: 'Test Effect',
-        toObject: jest.fn(() => ({ _id: 'effect-id', name: 'Test Effect', changes: [] }))
+        toObject: vi.fn(() => ({ _id: 'effect-id', name: 'Test Effect', system: { changes: [] } }))
       };
 
       mockItem = {
-        update: jest.fn(),
-        updateEmbeddedDocuments: jest.fn()
+        update: vi.fn(),
+        updateEmbeddedDocuments: vi.fn()
       };
     });
 
     test('updates effect for virtual item using update method', async () => {
-      const mockUpdate = jest.fn();
+      const mockUpdate = vi.fn();
       mockItem.update = mockUpdate;
       mockItem.update.toString = () => 'function update() { embeddedItem }';
 
       const updateData = {
         _id: 'effect-id',
-        changes: [{ key: 'system.abilities.acro.change', mode: 2, value: '2' }]
+        system: { changes: [{ key: 'system.abilities.acro.change', mode: 2, value: '2' }] }
       };
 
       await CharacterEffectsProcessor.updateEffectChanges(mockItem, mockEffect, updateData);
 
       expect(mockUpdate).toHaveBeenCalledWith(
-        { effects: [{ _id: 'effect-id', name: 'Test Effect', changes: updateData.changes }] },
+        { effects: [{ _id: 'effect-id', name: 'Test Effect', system: { changes: updateData.system.changes } }] },
         { fromEmbeddedItem: true }
       );
       expect(mockItem.updateEmbeddedDocuments).not.toHaveBeenCalled();
@@ -760,7 +760,7 @@ describe('CharacterEffectsProcessor', () => {
     test('updates effect for regular item using updateEmbeddedDocuments', async () => {
       const updateData = {
         _id: 'effect-id',
-        changes: [{ key: 'system.abilities.acro.change', mode: 2, value: '2' }]
+        system: { changes: [{ key: 'system.abilities.acro.change', mode: 2, value: '2' }] }
       };
 
       await CharacterEffectsProcessor.updateEffectChanges(mockItem, mockEffect, updateData);
@@ -776,7 +776,7 @@ describe('CharacterEffectsProcessor', () => {
     test('merges custom options with defaults', async () => {
       const updateData = {
         _id: 'effect-id',
-        changes: [{ key: 'system.abilities.acro.change', mode: 2, value: '2' }]
+        system: { changes: [{ key: 'system.abilities.acro.change', mode: 2, value: '2' }] }
       };
 
       await CharacterEffectsProcessor.updateEffectChanges(mockItem, mockEffect, updateData, {

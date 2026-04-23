@@ -1,7 +1,7 @@
 import { Logger } from "../../services/logger.mjs";
 import { ErrorHandler } from "../../utils/error-handler.mjs";
 import { DragDropHandler } from "../../services/drag-drop-handler.mjs";
-import { EventideDialog } from "../components/_module.mjs";
+import { EventideDialog } from "../components/eventide-dialog.mjs";
 
 const { TextEditor } = foundry.applications.ux;
 

@@ -8,8 +8,6 @@ import EventideRpSystemActorBase from "./base-actor.mjs";
 
 export default class EventideRpSystemCharacter extends EventideRpSystemActorBase {
   static defineSchema() {
-    // const fields = foundry.data.fields;
-    // const requiredInteger = { required: true, nullable: false, integer: true };
     const schema = super.defineSchema();
 
     return schema;
@@ -20,6 +18,6 @@ export default class EventideRpSystemCharacter extends EventideRpSystemActorBase
   }
 
   getRollData() {
-    super.getRollData();
+    return super.getRollData();
   }
 }

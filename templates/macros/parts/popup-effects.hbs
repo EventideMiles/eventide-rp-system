@@ -1,5 +1,5 @@
 {{!-- Popup Effects --}}
-{{#if mainEffect.changes.length}}
+{{#if mainEffect.system.changes.length}}
   <div class="erps-form__section erps-form__section--compact">
     <div class="erps-form__header erps-form__header--small erps-form__header--no-margin">{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Effects"}}</div>
     <div class="erps-form__description erps-form__description--compact erps-form__description--no-margin">
@@ -7,11 +7,11 @@
     </div>
     
     <div class="erps-form__effects-list">
-      {{#each mainEffect.changes}}
+      {{#each mainEffect.system.changes}}
         <div class="erps-form__effects-row">
           <span class="erps-form__effects-ability">{{keySplit this.key 2}}</span>
           <span class="erps-form__effects-mode">
-            {{#if (eq this.mode 5)}}
+            {{#if (eq this.type "override")}}
               {{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.SetTo"}}
             {{else}}
               {{#if (eq (keySplit this.key 4) "advantage")}}

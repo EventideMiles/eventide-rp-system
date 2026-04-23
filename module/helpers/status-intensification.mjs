@@ -38,7 +38,8 @@ export class StatusIntensification {
 
     try {
       // Get the active effects from both the existing status and the new effect data
-      const existingEffects = existingStatus.effects.contents[0]?.changes;
+      const existingEffects =
+        existingStatus.effects.contents[0]?.system?.changes;
 
       if (!existingEffects) {
         Logger.warn(
@@ -87,7 +88,10 @@ export class StatusIntensification {
 
       // Update the existing status with intensified values
       await existingStatus.updateEmbeddedDocuments("ActiveEffect", [
-        { _id: existingStatus.effects.contents[0]._id, changes: updateData },
+        {
+          _id: existingStatus.effects.contents[0]._id,
+          system: { changes: updateData },
+        },
       ]);
 
       // Trigger the erpsUpdateItem hook for consistency with manual status updates

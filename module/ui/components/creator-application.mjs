@@ -606,14 +606,13 @@ export class CreatorApplication extends EventideSheetHelpers {
                 ? "ac.change"
                 : `diceAdjustments.${ability.mode}`
       }`;
-      const mode =
-        ability.mode !== "override"
-          ? foundry.CONST.ACTIVE_EFFECT_MODES.ADD
-          : foundry.CONST.ACTIVE_EFFECT_MODES.OVERRIDE;
+      // V14: Use string type instead of numeric mode constant
+      const type = ability.mode !== "override" ? "add" : "override";
 
       changes.push({
         key,
-        mode,
+        type,
+        phase: "initial",
         value: ability.value,
       });
     }
@@ -661,22 +660,17 @@ export class CreatorApplication extends EventideSheetHelpers {
           _id: foundry.utils.randomID(),
           name: basicData.name,
           img: basicData.img,
-          changes,
-          disabled: false,
-          duration: {
-            startTime: null,
-            seconds: basicData.displayOnToken ? 18000 : 0,
-            combat: "",
-            rounds: 0,
-            turns: 0,
-            startRound: 0,
-            startTurn: 0,
+          type: "base",
+          system: {
+            changes,
           },
+          disabled: false,
+          showIcon: basicData.displayOnToken ? CONST.ACTIVE_EFFECT_SHOW_ICON.ALWAYS : CONST.ACTIVE_EFFECT_SHOW_ICON.NEVER,
           description: basicData.description || "",
           origin: "",
           tint: basicData.iconTint,
           transfer: true,
-          statuses: new Set(),
+          statuses: [],
           flags: {},
         },
       ],

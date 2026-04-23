@@ -105,7 +105,7 @@ export class CharacterEffectsProcessor {
    * @returns {Promise<Array<ActiveEffectChange>>} Array of ActiveEffect change objects
    * @typedef {Object} ActiveEffectChange
    * @property {string} key - The dot-notation path to the property being modified
-   * @property {number} mode - CONST.ACTIVE_EFFECT_MODES value (ADD, OVERRIDE, etc.)
+   * @property {string} type - ActiveEffect change type ("add", "override", etc.)
    * @property {string|number} value - The value to apply
    *
    * @example
@@ -114,7 +114,7 @@ export class CharacterEffectsProcessor {
    *   hiddenEffects: [],
    *   overrideEffects: []
    * });
-   * // Returns: [{ key: 'system.abilities.acro.change', mode: 0, value: '2' }]
+   * // Returns: [{ key: 'system.abilities.acro.change', type: 'add', value: '2' }]
    */
   static async processEffectsToChanges(characterEffects, options = {}) {
     const { supportExtendedModes = true } = options;
@@ -126,9 +126,9 @@ export class CharacterEffectsProcessor {
           isRegular,
           supportExtendedModes,
         );
-        const mode = this.getModeForEffect(effect, isRegular);
+        const type = this.getTypeForEffect(effect, isRegular);
 
-        return { key, mode, value: effect.value };
+        return { key, type, phase: "initial", value: effect.value };
       });
     };
 
@@ -202,42 +202,38 @@ export class CharacterEffectsProcessor {
   }
 
   /**
-   * Get the ActiveEffect mode constant for an effect
+   * Get the ActiveEffect change type for an effect
    *
-   * Converts string mode identifiers to CONST.ACTIVE_EFFECT_MODES values.
-   * Handles mode mapping for regular and hidden effects.
+   * Converts string mode identifiers to ActiveEffect change type strings.
+   * Handles type mapping for regular and hidden effects.
    *
    * @static
-   * @param {CharacterEffect} effect - The effect to get the mode for
+   * @param {CharacterEffect} effect - The effect to get the type for
    * @param {boolean} isRegular - Whether this is a regular (vs hidden) effect
-   * @returns {number} CONST.ACTIVE_EFFECT_MODES value
+   * @returns {string} ActiveEffect change type ("add" or "override")
    *
    * @example
-   * CharacterEffectsProcessor.getModeForEffect(
+   * CharacterEffectsProcessor.getTypeForEffect(
    *   { ability: 'acro', mode: 'add' },
    *   true
    * );
-   * // Returns: CONST.ACTIVE_EFFECT_MODES.ADD (0)
+   * // Returns: "add"
    */
-  static getModeForEffect(effect, isRegular) {
-    // For override abilities, always use OVERRIDE mode
+  static getTypeForEffect(effect, isRegular) {
+    // For override abilities, always use override type
     if (
       effect.ability === "powerOverride" ||
       effect.ability === "resolveOverride"
     ) {
-      return CONST.ACTIVE_EFFECT_MODES.OVERRIDE;
+      return "override";
     }
 
     if (isRegular) {
-      // Regular abilities: only override mode uses OVERRIDE, others use ADD
-      return effect.mode === "override"
-        ? CONST.ACTIVE_EFFECT_MODES.OVERRIDE
-        : CONST.ACTIVE_EFFECT_MODES.ADD;
+      // Regular abilities: only override mode uses override type, others use add
+      return effect.mode === "override" ? "override" : "add";
     } else {
       // Hidden abilities logic
-      return effect.mode === "add"
-        ? CONST.ACTIVE_EFFECT_MODES.ADD
-        : CONST.ACTIVE_EFFECT_MODES.OVERRIDE;
+      return effect.mode === "add" ? "add" : "override";
     }
   }
 
@@ -258,7 +254,7 @@ export class CharacterEffectsProcessor {
    *   type: 'abilities',
    *   ability: 'acro'
    * });
-   * // Returns: { key: 'system.abilities.acro.change', mode: 0, value: 0 }
+   * // Returns: { key: 'system.abilities.acro.change', type: 'add', value: 0 }
    */
   static generateNewEffectChange(newEffect) {
     let key;
@@ -272,7 +268,8 @@ export class CharacterEffectsProcessor {
 
     return {
       key,
-      mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+      type: "add",
+      phase: "initial",
       value: 0,
     };
   }
@@ -318,29 +315,32 @@ export class CharacterEffectsProcessor {
    *
    * @static
    * @param {Item} item - The parent item
-   * @param {Object} [duration={}] - Optional duration for the effect
-   * @param {number} [duration.seconds] - Duration in seconds
+   * @param {number} [showIcon=CONST.ACTIVE_EFFECT_SHOW_ICON.NEVER] - Whether the effect icon should be shown on the token
    * @param {boolean} [allowCreate=true] - Whether to create an effect if none exists
    * @returns {Promise<ActiveEffect>} The first ActiveEffect
    * @throws {Error} If effect cannot be created for embedded items
    *
    * @example
-   * const effect = await CharacterEffectsProcessor.getOrCreateFirstEffect(
-   *   item,
-   *   { seconds: 604800 }
-   * );
+   * const effect = await CharacterEffectsProcessor.getOrCreateFirstEffect(item);
    */
-  static async getOrCreateFirstEffect(item, duration = {}, allowCreate = true) {
+  static async getOrCreateFirstEffect(
+    item,
+    showIcon = CONST.ACTIVE_EFFECT_SHOW_ICON.NEVER,
+    allowCreate = true,
+  ) {
     let firstEffect = item.effects.contents[0];
 
     if (!firstEffect && allowCreate) {
       const defaultEffectData = {
         _id: foundry.utils.randomID(),
         name: item.name,
-        icon: item.img,
-        changes: [],
+        img: item.img,
+        type: "base",
+        system: {
+          changes: [],
+        },
         disabled: false,
-        duration,
+        showIcon, // Default to not showing on token (V14: replaces duration tracking)
         flags: {},
         tint: "#ffffff",
         transfer: true,

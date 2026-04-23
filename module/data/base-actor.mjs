@@ -486,7 +486,7 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
     }
 
     data.lvl = this.attributes.level.value;
-    data.statTotal = this.statTotal.value;
+    data.statTotal = foundry.utils.deepClone(this.statTotal);
     data.cr = this.cr;
     data.xp = this.xp;
 

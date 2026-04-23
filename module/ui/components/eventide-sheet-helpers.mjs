@@ -1,6 +1,6 @@
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 const FilePicker = foundry.applications.apps.FilePicker.implementation;
-import { WindowSizingFixMixin } from "./_module.mjs";
+import { WindowSizingFixMixin } from "./window-sizing-fix-mixin.mjs";
 import { Logger } from "../../services/logger.mjs";
 
 /**

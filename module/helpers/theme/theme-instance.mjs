@@ -398,62 +398,6 @@ export class ThemeManagerInstance {
 }
 
 /**
- * Get theme manager instance for an application
- * @param {Application|string} applicationOrId - The application instance or ID
- * @returns {ThemeManagerInstance|null} The theme manager instance or null if not found
- */
-export const getThemeManager = (applicationOrId) => {
-  const appId =
-    typeof applicationOrId === "string" ? applicationOrId : applicationOrId?.id;
-  return activeInstances.get(appId) || null;
-};
-
-/**
- * Get all active theme manager instances
- * @returns {Map<string, ThemeManagerInstance>} Map of app IDs to theme manager instances
- */
-export const getAllThemeManagers = () => {
-  return new Map(activeInstances);
-};
-
-/**
- * Get the count of active theme instances for diagnostics
- * @returns {number} Number of active theme manager instances
- */
-export const getActiveThemeInstances = () => {
-  return activeInstances.size;
-};
-
-/**
- * Apply themes to all active instances
- */
-export const applyThemesToAll = () => {
-  Logger.debug(
-    "Applying themes to all active instances",
-    {
-      instanceCount: activeInstances.size,
-    },
-    "THEME_MANAGER",
-  );
-
-  for (const instance of activeInstances.values()) {
-    try {
-      instance.applyThemes();
-    } catch (error) {
-      Logger.warn(
-        "Failed to apply themes to instance",
-        {
-          appId: instance.appId,
-          appType: instance.appType,
-          error: error.message,
-        },
-        "THEME_MANAGER",
-      );
-    }
-  }
-};
-
-/**
  * Clean up all theme manager instances
  */
 export const cleanupAllInstances = () => {
@@ -485,4 +429,28 @@ export const cleanupAllInstances = () => {
     { instanceCount },
     "THEME_MANAGER",
   );
+};
+
+/**
+ * Get information about all active theme instances
+ * This is useful for debugging and monitoring theme usage
+ *
+ * @returns {Object} Information about active theme instances
+ */
+export const getActiveThemeInstances = () => {
+  const instances = [];
+  for (const [appId, instance] of activeInstances.entries()) {
+    instances.push({
+      appId,
+      appType: instance.appType,
+      isSetup: instance.isSetup,
+      hasHook: instance.hookId !== null,
+      hasDomHandler: instance.domEventHandler !== null,
+    });
+  }
+
+  return {
+    count: activeInstances.size,
+    instances,
+  };
 };

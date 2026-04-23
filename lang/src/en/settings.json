@@ -2,8 +2,8 @@
   "SETTINGS": {
     "MenuName": "Eventide RP System Settings",
     "MenuHint": "Configure settings for the Eventide RP System.",
-    "InitativeFormulaName": "Initiative Formula",
-    "InitativeFormulaHint": "Formula used to calculate initiative in combat. Cannot be empty. Leave empty and save to reset to default.",
+    "InitiativeFormulaName": "Initiative Formula",
+    "InitiativeFormulaHint": "Formula used to calculate initiative in combat. Cannot be empty. Leave empty and save to reset to default.",
     "InitiativeFormulaReloadTitle": "Reload Recommended",
     "InitiativeFormulaReloadPrompt": "The initiative formula has been updated. It's recommended to reload the game for this change to fully take effect. Reload now?",
 
