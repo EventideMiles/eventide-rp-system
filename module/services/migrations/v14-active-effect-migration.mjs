@@ -23,7 +23,7 @@ import { Logger } from "../logger.mjs";
  * Migrates ActiveEffect data to Foundry VTT v14 schema
  */
 export class V14ActiveEffectMigration {
-  static VERSION = "14.0.1";
+  static VERSION = "14.0.0";
   static SETTING_KEY = "v14MigrationVersion";
 
   /**
