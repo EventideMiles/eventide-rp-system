@@ -66,6 +66,24 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
               initial: 0,
             }),
             change: new fields.NumberField({ ...requiredInteger, initial: 0 }),
+            // Multiplicative effect fields (compounded by ActiveEffect type: "multiply")
+            // These fields accept decimals (e.g., 0.5 for half) and default to 1 (no-op)
+            multiplyNeutral: new fields.NumberField({
+              required: true,
+              initial: 1,
+            }),
+            divideNeutral: new fields.NumberField({
+              required: true,
+              initial: 1,
+            }),
+            multiplyBuff: new fields.NumberField({
+              required: true,
+              initial: 1,
+            }),
+            multiplyDebuff: new fields.NumberField({
+              required: true,
+              initial: 1,
+            }),
             total: new fields.NumberField({ ...requiredInteger, initial: 1 }),
             ac: new fields.SchemaField({
               change: new fields.NumberField({
@@ -102,120 +120,58 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
       ),
     );
 
+    // Helper to create a hidden ability schema with multiply fields
+    const createHiddenAbilitySchema = (
+      valueInitial,
+      totalInitial,
+      valueMin,
+    ) => {
+      const schemaFields = {
+        value: new fields.NumberField({
+          ...requiredInteger,
+          initial: valueInitial,
+          ...(valueMin !== undefined ? { min: valueMin } : {}),
+        }),
+        total: new fields.NumberField({
+          ...requiredInteger,
+          initial: totalInitial,
+          ...(valueMin !== undefined ? { min: valueMin } : {}),
+        }),
+        override: new fields.NumberField({ ...overrideInteger, initial: null }),
+        change: new fields.NumberField({ ...requiredInteger, initial: 0 }),
+        // Multiplicative effect fields (compounded by ActiveEffect type: "multiply")
+        // These fields accept decimals (e.g., 0.5 for half) and default to 1 (no-op)
+        multiplyNeutral: new fields.NumberField({
+          required: true,
+          initial: 1,
+        }),
+        divideNeutral: new fields.NumberField({
+          required: true,
+          initial: 1,
+        }),
+        multiplyBuff: new fields.NumberField({
+          required: true,
+          initial: 1,
+        }),
+        multiplyDebuff: new fields.NumberField({
+          required: true,
+          initial: 1,
+        }),
+      };
+      return new fields.SchemaField(schemaFields);
+    };
+
     schema.hiddenAbilities = new fields.SchemaField({
-      dice: new fields.SchemaField({
-        value: new fields.NumberField({
-          ...requiredInteger,
-          initial: 20,
-          min: 0,
-        }),
-        total: new fields.NumberField({
-          ...requiredInteger,
-          initial: 20,
-          min: 0,
-        }),
-        override: new fields.NumberField({ ...overrideInteger, initial: null }),
-        change: new fields.NumberField({ ...requiredInteger, initial: 0 }),
-      }),
-      cmax: new fields.SchemaField({
-        value: new fields.NumberField({
-          ...requiredInteger,
-          initial: 20,
-          min: 1,
-        }),
-        total: new fields.NumberField({
-          ...requiredInteger,
-          initial: 20,
-          min: 1,
-        }),
-        override: new fields.NumberField({ ...overrideInteger, initial: null }),
-        change: new fields.NumberField({ ...requiredInteger, initial: 0 }),
-      }),
-      cmin: new fields.SchemaField({
-        value: new fields.NumberField({
-          ...requiredInteger,
-          initial: 20,
-          min: 1,
-        }),
-        total: new fields.NumberField({
-          ...requiredInteger,
-          initial: 20,
-          min: 1,
-        }),
-        override: new fields.NumberField({ ...overrideInteger, initial: null }),
-        change: new fields.NumberField({ ...requiredInteger, initial: 0 }),
-      }),
-      fmin: new fields.SchemaField({
-        value: new fields.NumberField({
-          ...requiredInteger,
-          initial: 1,
-          min: 0,
-        }),
-        total: new fields.NumberField({
-          ...requiredInteger,
-          initial: 1,
-          min: 0,
-        }),
-        override: new fields.NumberField({ ...overrideInteger, initial: null }),
-        change: new fields.NumberField({ ...requiredInteger, initial: 0 }),
-      }),
-      fmax: new fields.SchemaField({
-        value: new fields.NumberField({
-          ...requiredInteger,
-          initial: 1,
-          min: 1,
-        }),
-        total: new fields.NumberField({
-          ...requiredInteger,
-          initial: 1,
-          min: 1,
-        }),
-        override: new fields.NumberField({ ...overrideInteger, initial: null }),
-        change: new fields.NumberField({ ...requiredInteger, initial: 0 }),
-      }),
-      vuln: new fields.SchemaField({
-        value: new fields.NumberField({
-          ...requiredInteger,
-          initial: 0,
-        }),
-        total: new fields.NumberField({
-          ...requiredInteger,
-          initial: 0,
-          min: 0,
-        }),
-        override: new fields.NumberField({ ...overrideInteger, initial: null }),
-        change: new fields.NumberField({ ...requiredInteger, initial: 0 }),
-      }),
+      dice: createHiddenAbilitySchema(20, 20, 0),
+      cmax: createHiddenAbilitySchema(20, 20, 1),
+      cmin: createHiddenAbilitySchema(20, 20, 1),
+      fmin: createHiddenAbilitySchema(1, 1, 0),
+      fmax: createHiddenAbilitySchema(1, 1, 1),
+      vuln: createHiddenAbilitySchema(0, 0, 0),
       // Power percentage multiplier (100 = 100%, 400 = 400%, etc.)
-      powerMult: new fields.SchemaField({
-        value: new fields.NumberField({
-          ...requiredInteger,
-          initial: 100,
-          min: 0,
-        }),
-        total: new fields.NumberField({
-          ...requiredInteger,
-          initial: 100,
-          min: 0,
-        }),
-        override: new fields.NumberField({ ...overrideInteger, initial: null }),
-        change: new fields.NumberField({ ...requiredInteger, initial: 0 }),
-      }),
+      powerMult: createHiddenAbilitySchema(100, 100, 0),
       // Resolve percentage multiplier (100 = 100%, 400 = 400%, etc.)
-      resolveMult: new fields.SchemaField({
-        value: new fields.NumberField({
-          ...requiredInteger,
-          initial: 100,
-          min: 0,
-        }),
-        total: new fields.NumberField({
-          ...requiredInteger,
-          initial: 100,
-          min: 0,
-        }),
-        override: new fields.NumberField({ ...overrideInteger, initial: null }),
-        change: new fields.NumberField({ ...requiredInteger, initial: 0 }),
-      }),
+      resolveMult: createHiddenAbilitySchema(100, 100, 0),
     });
 
     schema.statTotal = new fields.SchemaField({
@@ -311,6 +267,9 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
   prepareDerivedData() {
     super.prepareDerivedData();
 
+    // Round to nearest hundredth to prevent floating point accumulation
+    const roundToCent = (n) => Math.round(n * 100) / 100;
+
     for (const key in this.abilities) {
       // Handle ability label localization.
       const current = this.abilities[key];
@@ -320,9 +279,41 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
         game.i18n.localize(
           CONFIG.EVENTIDE_RP_SYSTEM.abilityAbbreviations[key],
         ) ?? key;
+
+      // Step 1: Calculate additive total (base + change + transformChange)
       const base =
         current.override ?? current.transformOverride ?? current.value;
-      current.total = base + current.change + current.transformChange;
+      let total = base + current.change + current.transformChange;
+
+      // Step 2: Apply multiplicative effects (order: neutral multiply, neutral divide, buff, debuff)
+      // Each operation rounds to nearest hundredth to prevent floating point accumulation
+      // Divide-by-zero protection: treat divide by 0 as divide by 1 (no-op)
+      if (current.multiplyNeutral !== 1) {
+        total = roundToCent(total * current.multiplyNeutral);
+      }
+      if (current.divideNeutral !== 1 && current.divideNeutral !== 0) {
+        total = roundToCent(total / current.divideNeutral);
+      }
+      if (current.multiplyBuff !== 1) {
+        // Buff: multiply positives (more positive), divide negatives (less negative)
+        // Zero divisor on negative total: treat as no-op (1)
+        const buffFactor =
+          current.multiplyBuff !== 0 ? current.multiplyBuff : 1;
+        total = roundToCent(
+          total >= 0 ? total * buffFactor : total / buffFactor,
+        );
+      }
+      if (current.multiplyDebuff !== 1) {
+        // Debuff: divide positives (less positive), multiply negatives (more negative)
+        // Zero divisor on positive total: treat as no-op (1)
+        const debuffFactor =
+          current.multiplyDebuff !== 0 ? current.multiplyDebuff : 1;
+        total = roundToCent(
+          total > 0 ? total / debuffFactor : total * debuffFactor,
+        );
+      }
+
+      current.total = Math.round(total);
       current.ac.total = current.total + 11 + current.ac.change;
 
       // Calculate total for diceAdjustments
@@ -344,9 +335,41 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
       current.label =
         game.i18n.localize(CONFIG.EVENTIDE_RP_SYSTEM.hiddenAbilities[key]) ??
         key;
-      current.total = current.override
+
+      // Step 1: Calculate additive total
+      let total = current.override
         ? current.override + current.change
         : current.value + current.change;
+
+      // Step 2: Apply multiplicative effects (order: neutral multiply, neutral divide, buff, debuff)
+      // Each operation rounds to nearest hundredth to prevent floating point accumulation
+      // Divide-by-zero protection: treat divide by 0 as divide by 1 (no-op)
+      if (current.multiplyNeutral !== 1) {
+        total = roundToCent(total * current.multiplyNeutral);
+      }
+      if (current.divideNeutral !== 1 && current.divideNeutral !== 0) {
+        total = roundToCent(total / current.divideNeutral);
+      }
+      if (current.multiplyBuff !== 1) {
+        // Buff: multiply positives (more positive), divide negatives (less negative)
+        // Zero divisor on negative total: treat as no-op (1)
+        const buffFactor =
+          current.multiplyBuff !== 0 ? current.multiplyBuff : 1;
+        total = roundToCent(
+          total >= 0 ? total * buffFactor : total / buffFactor,
+        );
+      }
+      if (current.multiplyDebuff !== 1) {
+        // Debuff: divide positives (less positive), multiply negatives (more negative)
+        // Zero divisor on positive total: treat as no-op (1)
+        const debuffFactor =
+          current.multiplyDebuff !== 0 ? current.multiplyDebuff : 1;
+        total = roundToCent(
+          total > 0 ? total / debuffFactor : total * debuffFactor,
+        );
+      }
+
+      current.total = Math.round(total);
     }
 
     // Apply minimum dice value (Issue #129)
