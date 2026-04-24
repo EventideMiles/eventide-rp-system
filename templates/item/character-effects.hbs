@@ -92,6 +92,10 @@
                     <option value="advantage" {{#if (eq mode "advantage")}}selected{{/if}}>Advantage</option>
                     <option value="disadvantage" {{#if (eq mode "disadvantage")}}selected{{/if}}>Disadvantage</option>
                     <option value="AC" {{#if (eq mode "ac.change")}}selected{{/if}}>AC Only</option>
+                    <option value="multiply" {{#if (eq mode "multiply")}}selected{{/if}}>Multiply</option>
+                    <option value="divide" {{#if (eq mode "divide")}}selected{{/if}}>Divide</option>
+                    <option value="multiplyBuff" {{#if (eq mode "multiplyBuff")}}selected{{/if}}>Multiply (Buff)</option>
+                    <option value="multiplyDebuff" {{#if (eq mode "multiplyDebuff")}}selected{{/if}}>Multiply (Debuff)</option>
                   {{/if}}
                 </select>
               </td>
@@ -104,15 +108,15 @@
                   >
                     <i class="fas fa-minus"></i>
                   </button>
-                  <input
-                    type="number"
-                    class="erps-number-input__input"
-                    name="characterEffects.regularEffects.{{@index}}.value"
-                    value="{{value}}"
-                    step="1"
-                    data-index="{{@index}}"
-                    data-type="visible"
-                  >
+                    <input
+                      type="number"
+                      class="erps-number-input__input"
+                      name="characterEffects.regularEffects.{{@index}}.value"
+                      value="{{value}}"
+                      step="any"
+                      data-index="{{@index}}"
+                      data-type="visible"
+                    >
                   <button
                     type="button"
                     class="erps-number-input__button erps-number-input__button--increment"
@@ -208,6 +212,10 @@
                   >
                     <option value="add" {{#if (eq mode "add")}}selected{{/if}}>Add</option>
                     <option value="override" {{#if (eq mode "override")}}selected{{/if}}>Override</option>
+                    <option value="multiply" {{#if (eq mode "multiply")}}selected{{/if}}>Multiply</option>
+                    <option value="divide" {{#if (eq mode "divide")}}selected{{/if}}>Divide</option>
+                    <option value="multiplyBuff" {{#if (eq mode "multiplyBuff")}}selected{{/if}}>Multiply (Buff)</option>
+                    <option value="multiplyDebuff" {{#if (eq mode "multiplyDebuff")}}selected{{/if}}>Multiply (Debuff)</option>
                   </select>
                 </td>
 
@@ -224,7 +232,7 @@
                       class="erps-number-input__input"
                       name="characterEffects.hiddenEffects.{{@index}}.value"
                       value="{{value}}"
-                      step="1"
+                      step="any"
                       data-index="{{@index}}"
                       data-type="hiddenEffects"
                     >
@@ -314,6 +322,10 @@
                   >
                     <option value="add" {{#if (eq ../mode "change")}}selected{{/if}}>Add</option>
                     <option value="override" {{#if (eq ../mode "override")}}selected{{/if}}>Override</option>
+                    <option value="multiply" {{#if (eq ../mode "multiply")}}selected{{/if}}>Multiply</option>
+                    <option value="divide" {{#if (eq ../mode "divide")}}selected{{/if}}>Divide</option>
+                    <option value="multiplyBuff" {{#if (eq ../mode "multiplyBuff")}}selected{{/if}}>Multiply (Buff)</option>
+                    <option value="multiplyDebuff" {{#if (eq ../mode "multiplyDebuff")}}selected{{/if}}>Multiply (Debuff)</option>
                   </select>
                 </td>
 

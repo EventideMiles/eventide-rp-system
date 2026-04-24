@@ -174,6 +174,14 @@ export class CharacterEffectsProcessor {
       return "system.resolve.override";
     }
 
+    // Multiply mode mapping shared by both regular and hidden abilities
+    const multiplyModeMap = {
+      multiply: "multiplyNeutral",
+      divide: "divideNeutral",
+      multiplyBuff: "multiplyBuff",
+      multiplyDebuff: "multiplyDebuff",
+    };
+
     if (isRegular) {
       const modeMap = supportExtendedModes
         ? {
@@ -184,19 +192,26 @@ export class CharacterEffectsProcessor {
             AC: "ac.change",
             transformOverride: "transformOverride",
             transformChange: "transformChange",
+            ...multiplyModeMap,
           }
         : {
             add: "change",
             override: "override",
             advantage: "diceAdjustments.advantage",
             disadvantage: "diceAdjustments.disadvantage",
+            ...multiplyModeMap,
           };
 
       const suffix = modeMap[effect.mode] || "transform";
       return `system.abilities.${effect.ability}.${suffix}`;
     } else {
       // Hidden abilities logic
-      const suffix = effect.mode === "add" ? "change" : "override";
+      const modeMap = {
+        add: "change",
+        override: "override",
+        ...multiplyModeMap,
+      };
+      const suffix = modeMap[effect.mode] || "change";
       return `system.hiddenAbilities.${effect.ability}.${suffix}`;
     }
   }
@@ -226,6 +241,17 @@ export class CharacterEffectsProcessor {
       effect.ability === "resolveOverride"
     ) {
       return "override";
+    }
+
+    // Multiply modes use Foundry V14's "multiply" change type
+    const multiplyModes = [
+      "multiply",
+      "divide",
+      "multiplyBuff",
+      "multiplyDebuff",
+    ];
+    if (multiplyModes.includes(effect.mode)) {
+      return "multiply";
     }
 
     if (isRegular) {
