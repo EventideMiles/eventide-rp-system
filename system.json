@@ -81,7 +81,7 @@
       "thumbnail": "systems/eventide-rp-system/assets/icons/magic-gate.svg"
     }
   ],
-  "version": "14.0.0",
+  "version": "14.1.0",
   "compatibility": {
     "minimum": "14",
     "verified": "14"
