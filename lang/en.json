@@ -880,7 +880,11 @@
         "Override": "Override",
         "SubtractMode": "Subtract",
         "IntensifyMode": "Intensify",
-        "WeakenMode": "Weaken"
+        "WeakenMode": "Weaken",
+        "Multiply": "Multiply",
+        "Divide": "Divide",
+        "MultiplyBuff": "Multiply (Buff)",
+        "MultiplyDebuff": "Multiply (Debuff)"
       },
       "Callouts": {
         "Damage": {

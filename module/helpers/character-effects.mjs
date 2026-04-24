@@ -110,6 +110,11 @@ const determineEffectMode = (change) => {
   if (change.key.includes("ac.change")) return "ac.change";
   if (change.key.includes("transformOverride")) return "transformOverride";
   if (change.key.includes("transformChange")) return "transformChange";
+  // Multiply mode detection (must check before generic override/add)
+  if (change.key.includes("multiplyBuff")) return "multiplyBuff";
+  if (change.key.includes("multiplyDebuff")) return "multiplyDebuff";
+  if (change.key.includes("multiplyNeutral")) return "multiply";
+  if (change.key.includes("divideNeutral")) return "divide";
   // V14: type is a string ("add", "override", etc.) instead of numeric mode
   if (change.type === "override") return "override";
   return "change";
