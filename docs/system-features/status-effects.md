@@ -88,6 +88,42 @@ each tab for additional information you may need to fill out.
 - **Disadvantage**: Roll extra dice, keep the worst result
 - **Sources**: Positioning, circumstances, magical effects, major impedences
 
+#### **Multiply Mode**
+
+- **Function**: Multiplies the ability total by a value (applied after all additive effects)
+- **Example**: Acrobatics 10 × 2 = 20; Acrobatics 8 × 0.5 = 4
+- **Use Case**: Effects that scale abilities proportionally (doubling, halving)
+- **Neutral**: Works the same on positive and negative totals (−4 × 2 = −8)
+- **Decimal Support**: Enter decimal values like 0.5 for "cut in half"
+- **Stacking**: Multiple Multiply effects compound (two ×2 effects → field becomes 4)
+
+#### **Divide Mode**
+
+- **Function**: Divides the ability total by a value (applied after all additive effects)
+- **Example**: Acrobatics 10 ÷ 2 = 5; Acrobatics 7 ÷ 3 = 2 (rounded)
+- **Use Case**: Effects that reduce abilities proportionally
+- **Neutral**: Works the same on positive and negative totals (−4 ÷ 2 = −2)
+- **Zero Protection**: Dividing by 0 is treated as dividing by 1 (no-op) to prevent invalid math
+- **Stacking**: Multiple Divide effects compound (two ÷2 effects → divisor becomes 4)
+
+#### **Multiply (Buff) Mode**
+
+- **Function**: Exclusively beneficial multiplication — flips behavior for negative totals
+- **On Positive Totals**: Multiplies (10 × 2 = 20 — more positive, which is beneficial)
+- **On Negative Totals**: Divides (−4 ÷ 2 = −2 — less negative, which is beneficial)
+- **Use Case**: Features that are always meant to help the character, even when stats go negative
+- **Example**: A "Doubles Acrobatics" feature should halve a negative Acrobatics rather than double it
+- **Zero Handling**: Zero totals remain zero
+
+#### **Multiply (Debuff) Mode**
+
+- **Function**: Exclusively harmful multiplication — flips behavior for positive totals
+- **On Positive Totals**: Divides (10 ÷ 2 = 5 — less positive, which is harmful)
+- **On Negative Totals**: Multiplies (−4 × 2 = −8 — more negative, which is harmful)
+- **Use Case**: Effects that are always meant to hurt the character
+- **Example**: A curse that "halves Acrobatics" should double a negative Acrobatics rather than halve it
+- **Zero Handling**: Zero totals remain zero
+
 ### Hidden Abilities
 
 GMs can modify these special values to create unique effects:
@@ -138,6 +174,11 @@ When calculating ability values, the system applies effects in this specific ord
 2. **TransformOverride** - Sets transformation-specific value if no regular override exists
 3. **Base Value** - Character's natural ability score
 4. **Additions** - Sum of `transformChange` + `change` values
+5. **Multiplicative Effects** (applied after all additive effects, in this order):
+   - **Multiply (Neutral)** - Compounded multiply factors
+   - **Divide (Neutral)** - Compounded divide factors
+   - **Multiply (Buff)** - Exclusively beneficial multiplication
+   - **Multiply (Debuff)** - Exclusively harmful multiplication
 
 > **In Practice:**
 >
@@ -150,6 +191,17 @@ When calculating ability values, the system applies effects in this specific ord
 > Calculation: `transformOverride` (7) + `transformChange` (2) + `change` (1) = **Physical 10**
 >
 > If Transformation A used regular `override` instead of `transformOverride`, it would take highest priority and ignore transformation-specific changes entirely.
+>
+> **With Multiplicative Effects:**
+>
+> If that same character (additive total: 10) also has:
+>
+> - A "Doubles Physical" feature: `multiplyBuff` 2
+> - A curse halving Physical: `multiplyDebuff` 2
+>
+> Calculation: Additive total (10) → `multiplyBuff` (positive so multiply: 10 × 2 = 20) → `multiplyDebuff` (positive so divide: 20 ÷ 2 = 10) = **Physical 10**
+>
+> If the additive total were instead −4: → `multiplyBuff` (negative so divide: −4 ÷ 2 = −2) → `multiplyDebuff` (negative so multiply: −2 × 2 = −4) = **Physical −4**
 > **When These Modes Are Used:**
 >
 > - **Polymorph Effects**: Shapeshifting spells or items that dramatically alter character capabilities
@@ -400,11 +452,15 @@ This change was introduced in v13.22.0 to fix issues with the Restore Target mac
 - **Add Effects**: Stack together (two +1 bonuses = +2 total)
 - **Override Effects**: Highest value takes precedence
 - **Mixed Types**: Add effects apply to override base values
+- **Multiply Effects**: Compound multiplicatively (two ×2 effects → stored as 4)
+- **Divide Effects**: Compound as divisors (two ÷2 effects → stored as divisor 4)
+- **Multiply (Buff/Debuff)**: Each effect compounds independently
 
 #### **Conflicting Effects**
 
 - **Opposite Bonuses**: +2 and -1 to same ability = +1 net effect
 - **Advantage/Disadvantage**: Cancel each other out if from different sources
+- **Buff vs Debuff Multiply**: Both apply in sequence — buff first, then debuff
 - **GM Arbitration**: Final decision on complex interactions
 
 ### Custom Mechanics

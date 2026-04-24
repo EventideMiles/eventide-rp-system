@@ -2,6 +2,17 @@
 
 ## Latest Release
 
+**[v14.1.0](release-notes/v14.1.0.md)** - Multiply & Divide Character Effect Modes _(April 2026)_
+
+**Key Highlights:**
+
+- **Multiply & Divide Effect Modes** — four new character effect modes leveraging Foundry V14's `multiply` ActiveEffect type
+- **Multiply (Buff) & Multiply (Debuff)** — directional modes that flip behavior based on whether the ability total is positive or negative, ensuring buffs always help and debuffs always hurt
+- **Order of Operations** — multiplicative effects apply after all additive effects (Add, Override, TransformChange) for consistent calculation
+- **Divide-by-Zero Protection** — dividing by 0 is treated as a no-op to prevent invalid math
+- **Decimal Input Support** — effect value inputs now accept decimals (e.g., 0.5 for "cut in half")
+- **Floating Point Precision** — `roundToCent` rounding during calculation prevents floating point accumulation, with final `Math.round` for integer results
+
 **[v14.0.0](release-notes/v14.0.0.md)** - Foundry VTT v14 Compatibility & ActiveEffect Schema Migration _(April 2026)_
 
 **⚠️ Major Version — Breaking Change**: Requires Foundry VTT v14 or later. Not compatible with Foundry VTT v13.
@@ -213,6 +224,7 @@ Enhanced character customization through circumstantial bonuses and feature-base
 
 | Version     | Release Date  | Focus                                                                                  |
 | ----------- | ------------- | -------------------------------------------------------------------------------------- |
+| **v14.1.0** | April 2026    | Multiply & Divide Character Effect Modes                                               |
 | **v14.0.0** | April 2026    | Foundry VTT v14 Compatibility & ActiveEffect Schema Migration                          |
 | v13.22.0    | March 2026    | Formula Validation & Feature System Enhancements                                       |
 | v13.21.8    | February 2026 | Self-Target Abilities & Display Fixes                                                  |
@@ -242,7 +254,7 @@ Enhanced character customization through circumstantial bonuses and feature-base
 - **GM Tools**: [v13.18.0](release-notes/v13.18.0.md), [v13.18.1](release-notes/v13.18.1.md), [v13.20.0](release-notes/v13.20.0.md)
 - **Transformations**: [v13.14.0](release-notes/v13.14.0.md), [v13.15.0](release-notes/v13.15.0.md), [v13.15.5](release-notes/v13.15.5.md), [v13.17.0](release-notes/v13.17.0.md)
 - **Features & Bonuses**: [v13.10.0](release-notes/v13.10.0.md), [v13.19.0](release-notes/v13.19.0.md), [v13.22.0](release-notes/v13.22.0.md)
-- **Status Effects & ActiveEffects**: [v14.0.0](release-notes/v14.0.0.md), [v13.19.0](release-notes/v13.19.0.md)
+- **Status Effects & ActiveEffects**: [v14.1.0](release-notes/v14.1.0.md), [v14.0.0](release-notes/v14.0.0.md), [v13.19.0](release-notes/v13.19.0.md)
 - **Combat Automation**: [v13.11.0](release-notes/v13.11.0.md), [v13.13.3](release-notes/v13.13.3.md)
 - **Documentation**: [v13.20.0](release-notes/v13.20.0.md)
 - **Conversion & Migration**: [v14.0.0](release-notes/v14.0.0.md), [v13.17.0](release-notes/v13.17.0.md), [v13.19.0](release-notes/v13.19.0.md), [v13.19.1](release-notes/v13.19.1.md)
@@ -283,4 +295,4 @@ We encourage users to:
 
 ---
 
-**Current Version**: v14.0.0 | **Foundry VTT Compatibility**: v14+ | **Last Updated**: April 2026
+**Current Version**: v14.1.0 | **Foundry VTT Compatibility**: v14+ | **Last Updated**: April 2026
