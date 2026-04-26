@@ -20,21 +20,26 @@
       <i class="fas fa-chevron-down formula-toggle-icon"></i>
     </div>
     <div class="chat-card__roll-details" style="display: none;">
-    {{#each roll.terms as |term|}}
-        {{#if term.results}}
+    {{#each roll.dice as |die|}}
         <div class="chat-card__roll-term">
-            <span class="chat-card__roll-term-formula">{{term.formula}}</span>
+            <span class="chat-card__roll-term-formula">{{die.formula}}</span>
             <div class="chat-card__roll-term-results">
-            {{#each term.results as |result|}}
+            {{#each die.results as |result|}}
                 <span class="chat-card__die-result {{#if result.discarded}}chat-card__die-result--discarded{{/if}}">{{result.result}}</span>
             {{/each}}
             </div>
         </div>
-        {{/if}}
     {{/each}}
     </div>
     <div class="chat-card__{{cardClass}}--result">
       <span class="chat-card__value chat-card__value--{{#if pickedType}}{{pickedType}}{{else}}{{cardType}}{{/if}}">{{roll.total}}</span>
+    </div>
+    {{/if}}
+    {{!-- Overhealing info (visible to all players) --}}
+    {{#if overhealing}}
+    <div class="chat-card__overhealing-info">
+        <i class="fas fa-heart-pulse"></i>
+        <span class="chat-card__overhealing-text">{{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.Overhealing"}}: {{overhealing}}</span>
     </div>
     {{/if}}
 </div>

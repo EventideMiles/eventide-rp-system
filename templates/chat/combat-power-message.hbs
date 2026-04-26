@@ -5,7 +5,7 @@
     <div>{{name}}</div>
   </div>
 
-  {{> roll-info cardClass="combat-roll" cardType="power"}}
+  {{> roll-info cardClass="combat-roll" cardType="power" overhealing=overhealing}}
 
   {{!-- Cost section after roll info --}}
   {{#if (or system.cost className)}}

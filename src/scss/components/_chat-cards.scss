@@ -898,6 +898,21 @@
       }
     }
   }
+
+  &__overhealing-info {
+    background: rgba(62, 62, 62, 0.5);
+    border-radius: 4px;
+    padding: 0.5rem;
+    font-size: 0.75rem;
+    color: #a4dab0;
+    text-align: center;
+    opacity: 0.4;
+    transition: opacity 0.3s ease;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
 }
 
 // ===================================

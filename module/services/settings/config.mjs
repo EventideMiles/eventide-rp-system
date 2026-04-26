@@ -54,6 +54,7 @@ EVENTIDE_RP_SYSTEM.hiddenAbilities = {
   vuln: `EVENTIDE_RP_SYSTEM.HiddenAbilities.Vuln.long`,
   powerMult: `EVENTIDE_RP_SYSTEM.HiddenAbilities.PowerMult.long`,
   resolveMult: `EVENTIDE_RP_SYSTEM.HiddenAbilities.ResolveMult.long`,
+  healIncrease: `EVENTIDE_RP_SYSTEM.HiddenAbilities.HealIncrease.long`,
 };
 
 /**
@@ -82,6 +83,7 @@ EVENTIDE_RP_SYSTEM.hiddenAbilityAbbreviations = {
   vuln: `EVENTIDE_RP_SYSTEM.HiddenAbilities.Vuln.abbr`,
   powerMult: `EVENTIDE_RP_SYSTEM.HiddenAbilities.PowerMult.abbr`,
   resolveMult: `EVENTIDE_RP_SYSTEM.HiddenAbilities.ResolveMult.abbr`,
+  healIncrease: `EVENTIDE_RP_SYSTEM.HiddenAbilities.HealIncrease.abbr`,
 };
 
 /**

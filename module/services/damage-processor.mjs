@@ -156,8 +156,8 @@ export class DamageProcessor {
   /**
    * Resolve damage for a single target
    *
-   * Applies vulnerability modifiers to the damage formula and
-   * calls the target's damageResolve method.
+   * Applies vulnerability modifiers (for damage) or healing increase modifiers
+   * (for healing) to the formula, then calls the target's damageResolve method.
    *
    * @static
    * @param {Actor} target - The target actor
@@ -182,12 +182,22 @@ export class DamageProcessor {
       textColor,
     } = context;
 
-    // Apply vulnerability modifier to damage formula
-    const formula = DamageProcessor.applyVulnerabilityModifier(
-      damageFormula,
-      damageType,
-      target,
-    );
+    let formula = damageFormula;
+
+    // Apply healing increase modifier for healing type
+    if (damageType === "heal") {
+      formula = DamageProcessor.applyHealingIncreaseModifierToFormula(
+        damageFormula,
+        target,
+      );
+    } else {
+      // Apply vulnerability modifier for non-healing damage
+      formula = DamageProcessor.applyVulnerabilityModifier(
+        damageFormula,
+        damageType,
+        target,
+      );
+    }
 
     const damageRoll = await target.damageResolve({
       formula,
@@ -203,10 +213,114 @@ export class DamageProcessor {
   }
 
   /**
+   * Build a modified formula for hidden abilities with multiplicative modes
+   *
+   * Constructs a formula that properly represents the order of operations:
+   * 1. Additive: formula + (value + change)
+   * 2. Multiplicative: Apply multiply/divide operations
+   *
+   * This creates formulas like:
+   * - Add only: "d20 + 5"
+   * - Multiply: "2 * (d20 + 3)" when vuln has value=3 and multiplyNeutral=2
+   * - Divide: "floor((d20 + 3) / 2)" when vuln has value=3 and divideNeutral=2
+   *
+   * @static
+   * @param {string} baseFormula - The original formula (e.g., "d20", "2d6")
+   * @param {Object} hiddenAbility - The hidden ability object with value, change, and multiply fields
+   * @param {Object} options - Additional options
+   * @param {boolean} options.isHealing - Whether this is for healing (uses min 1 constraint)
+   * @returns {string} The modified formula
+   */
+  static buildModifiedFormula(baseFormula, hiddenAbility, options = {}) {
+    const { isHealing = false } = options;
+
+    if (!hiddenAbility) {
+      return baseFormula;
+    }
+
+    // Get additive portion (value + change)
+    const additiveTotal =
+      (hiddenAbility.value || 0) + (hiddenAbility.change || 0);
+
+    // Get multiplicative values (default to 1 = no-op)
+    const multiplyNeutral = hiddenAbility.multiplyNeutral ?? 1;
+    const divideNeutral = hiddenAbility.divideNeutral ?? 1;
+    const multiplyBuff = hiddenAbility.multiplyBuff ?? 1;
+    const multiplyDebuff = hiddenAbility.multiplyDebuff ?? 1;
+
+    // Check if any multiplicative effects are active
+    const hasMultiplyNeutral = multiplyNeutral !== 1;
+    const hasDivideNeutral = divideNeutral !== 1 && divideNeutral !== 0;
+    const hasMultiplyBuff = multiplyBuff !== 1;
+    const hasMultiplyDebuff = multiplyDebuff !== 1;
+    const hasMultiplicative =
+      hasMultiplyNeutral ||
+      hasDivideNeutral ||
+      hasMultiplyBuff ||
+      hasMultiplyDebuff;
+
+    // If no modifications, return original
+    if (additiveTotal === 0 && !hasMultiplicative) {
+      return baseFormula;
+    }
+
+    // Start with base formula
+    let formula = baseFormula;
+
+    // Step 1: Add additive portion
+    if (additiveTotal !== 0) {
+      if (additiveTotal > 0) {
+        formula = `${formula} + ${additiveTotal}`;
+      } else {
+        formula = `${formula} - ${Math.abs(additiveTotal)}`;
+      }
+    }
+
+    // Step 2: Apply multiplicative operations (order matches prepareDerivedData)
+    if (hasMultiplicative) {
+      // Wrap additive portion in parentheses before applying multiplicative
+      formula = `(${formula})`;
+
+      // Apply multiplyNeutral
+      if (hasMultiplyNeutral) {
+        formula = `${multiplyNeutral} * ${formula}`;
+      }
+
+      // Apply divideNeutral (with zero protection)
+      if (hasDivideNeutral) {
+        formula = `floor(${formula} / ${divideNeutral})`;
+      }
+
+      // Apply multiplyBuff (for positives: multiply, for negatives: divide)
+      if (hasMultiplyBuff) {
+        const buffFactor = multiplyBuff !== 0 ? multiplyBuff : 1;
+        formula = `${buffFactor} * ${formula}`;
+      }
+
+      // Apply multiplyDebuff (for positives: divide, for negatives: multiply)
+      if (hasMultiplyDebuff) {
+        const debuffFactor = multiplyDebuff !== 0 ? multiplyDebuff : 1;
+        formula = `floor(${formula} / ${debuffFactor})`;
+      }
+    }
+
+    // For healing, ensure minimum of 1 (can't turn healing into damage)
+    if (isHealing && (additiveTotal < 0 || hasMultiplicative)) {
+      formula = `max(1, ${formula})`;
+    }
+
+    return formula;
+  }
+
+  /**
    * Apply vulnerability modifier to damage formula
    *
-   * Adds the target's vulnerability total to the damage formula
-   * for non-healing damage types.
+   * Constructs a formula that properly represents vulnerability modifications
+   * including additive and multiplicative effects.
+   *
+   * Example outputs:
+   * - Add mode: "d20 + 5" for vuln with value=5
+   * - Multiply mode: "2 * (d20 + 3)" for vuln with value=3 and multiplyNeutral=2
    *
    * @static
    * @param {string} originalFormula - The original damage formula
@@ -215,14 +329,73 @@ export class DamageProcessor {
    * @returns {string} The modified formula with vulnerability applied
    */
   static applyVulnerabilityModifier(originalFormula, damageType, target) {
-    const vulnerabilityTotal = target.system?.hiddenAbilities?.vuln?.total || 0;
-
     // Only apply vulnerability for non-healing damage
-    if (damageType !== "heal" && vulnerabilityTotal > 0) {
-      return `${originalFormula} + ${Math.abs(vulnerabilityTotal)}`;
+    if (damageType === "heal") {
+      return originalFormula;
     }
 
-    return originalFormula;
+    const vuln = target.system?.hiddenAbilities?.vuln;
+    if (!vuln) {
+      return originalFormula;
+    }
+
+    // Check if there's any modification to apply
+    const additiveTotal = (vuln.value || 0) + (vuln.change || 0);
+    const hasMultiplicative =
+      (vuln.multiplyNeutral ?? 1) !== 1 ||
+      (vuln.divideNeutral ?? 1) !== 1 ||
+      (vuln.multiplyBuff ?? 1) !== 1 ||
+      (vuln.multiplyDebuff ?? 1) !== 1;
+
+    if (additiveTotal === 0 && !hasMultiplicative) {
+      return originalFormula;
+    }
+
+    // Build and return the modified formula
+    return DamageProcessor.buildModifiedFormula(originalFormula, vuln, {
+      isHealing: false,
+    });
+  }
+
+  /**
+   * Apply healing increase modifier to healing formula
+   *
+   * Constructs a formula that properly represents healing increase modifications
+   * including additive and multiplicative effects.
+   *
+   * Example outputs:
+   * - Add mode: "d20 + 5" for healIncrease with value=5
+   * - Multiply mode: "2 * (d20 + 3)" for healIncrease with value=3 and multiplyNeutral=2
+   * - Negative add: "max(1, d20 - 5)" for healIncrease with value=-5
+   *
+   * @static
+   * @param {string} originalFormula - The original healing formula
+   * @param {Actor} target - The target actor receiving healing
+   * @returns {string} The modified formula with healing increase applied
+   */
+  static applyHealingIncreaseModifierToFormula(originalFormula, target) {
+    const healIncrease = target.system?.hiddenAbilities?.healIncrease;
+    if (!healIncrease) {
+      return originalFormula;
+    }
+
+    // Check if there's any modification to apply
+    const additiveTotal =
+      (healIncrease.value || 0) + (healIncrease.change || 0);
+    const hasMultiplicative =
+      (healIncrease.multiplyNeutral ?? 1) !== 1 ||
+      (healIncrease.divideNeutral ?? 1) !== 1 ||
+      (healIncrease.multiplyBuff ?? 1) !== 1 ||
+      (healIncrease.multiplyDebuff ?? 1) !== 1;
+
+    if (additiveTotal === 0 && !hasMultiplicative) {
+      return originalFormula;
+    }
+
+    // Build and return the modified formula (isHealing=true for min 1 constraint)
+    return DamageProcessor.buildModifiedFormula(originalFormula, healIncrease, {
+      isHealing: true,
+    });
   }
 
   /**
@@ -362,6 +535,84 @@ export class DamageProcessor {
    */
   static isHealing(damageType) {
     return damageType === "heal";
+  }
+
+  /**
+   * Apply healing increase modifier to a healing amount
+   *
+   * Calculates the modified healing amount based on the target's healIncrease
+   * hidden ability. Supports add, multiply, divide, multiplyBuff, and multiplyDebuff modes.
+   *
+   * The calculation follows the same order as ability score multiplicative effects:
+   * 1. Add mode: Add healIncrease.change to the rolled amount
+   * 2. Multiply/Divide modes: Apply multiplicative modifiers
+   * 3. Minimum healing of 1 (negative healing increase cannot turn healing into damage)
+   *
+   * @static
+   * @param {number} baseAmount - The base healing amount (from roll)
+   * @param {Actor} target - The target actor receiving healing
+   * @returns {{finalAmount: number, baseAmount: number, healIncreaseTotal: number, overage: number}} Healing result with details
+   */
+  static applyHealingIncreaseModifier(baseAmount, target) {
+    // Get healIncrease from hidden abilities
+    const healIncrease = target.system?.hiddenAbilities?.healIncrease;
+
+    // If no healIncrease or amount is 0, return as-is
+    if (!healIncrease || baseAmount <= 0) {
+      return {
+        finalAmount: baseAmount,
+        baseAmount,
+        healIncreaseTotal: 0,
+        overage: 0,
+      };
+    }
+
+    // Get the total healIncrease value (after modifiers)
+    const healIncreaseTotal = healIncrease.total || 0;
+
+    // If no modification needed, return as-is
+    if (healIncreaseTotal === 0) {
+      return {
+        finalAmount: baseAmount,
+        baseAmount,
+        healIncreaseTotal: 0,
+        overage: 0,
+      };
+    }
+
+    // Calculate modified healing amount
+    // Start with base amount and apply the healIncrease total as an additive bonus
+    // The healIncrease.total represents the combined effect of:
+    // - value + change (additive)
+    // - multiplicative modifiers (multiplyNeutral, divideNeutral, multiplyBuff, multiplyDebuff)
+    let finalAmount = baseAmount + healIncreaseTotal;
+
+    // Ensure minimum healing of 1 (cannot turn healing into damage)
+    finalAmount = Math.max(1, finalAmount);
+
+    // Calculate overage (healing above and beyond max resolve)
+    const currentResolve = target.system.resolve.value;
+    const maxResolve = target.system.resolve.max;
+    const overage = Math.max(0, finalAmount - (maxResolve - currentResolve));
+
+    Logger.debug(
+      `Healing increase applied: ${baseAmount} + ${healIncreaseTotal} = ${finalAmount} (min 1), overage: ${overage}`,
+      {
+        target: target.name,
+        baseAmount,
+        healIncreaseTotal,
+        finalAmount,
+        overage,
+      },
+      "HEALING",
+    );
+
+    return {
+      finalAmount,
+      baseAmount,
+      healIncreaseTotal,
+      overage,
+    };
   }
 
   /**

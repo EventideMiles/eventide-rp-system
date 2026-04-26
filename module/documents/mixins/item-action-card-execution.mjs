@@ -714,40 +714,20 @@ export function ItemActionCardExecutionMixin(Base) {
         }
         const targetArray = resolution.targets;
 
-        const damageResults = [];
-
-        // Apply saved damage to each target
-        for (const target of targetArray) {
-          try {
-            // Apply damage directly (GM or player owns all targets)
-            // Apply vulnerability modifier to damage formula
-            const originalFormula = this.system.savedDamage.formula;
-            const formula =
-              this.system.savedDamage.type !== "heal" &&
-              target.actor.system.hiddenAbilities.vuln.total > 0
-                ? `${originalFormula} + ${Math.abs(target.actor.system.hiddenAbilities.vuln.total)}`
-                : originalFormula;
-
-            const damageRoll = await target.actor.damageResolve({
-              formula,
-              label: this._getEffectiveLabel(),
-              description:
-                this.system.description || this.system.savedDamage.description,
-              type: this.system.savedDamage.type,
-              img: this._getEffectiveImage(),
-              bgColor: this.system.bgColor,
-              textColor: this.system.textColor,
-            });
-
-            damageResults.push({ target: target.actor, roll: damageRoll });
-          } catch (damageError) {
-            Logger.error(
-              "Failed to apply saved damage",
-              damageError,
-              "ACTION_CARD",
-            );
-          }
-        }
+        // Use DamageProcessor to handle saved damage with proper vulnerability/healing formulas
+        const damageResults = await DamageProcessor.processSavedDamage(
+          targetArray,
+          {
+            formula: this.system.savedDamage.formula,
+            type: this.system.savedDamage.type,
+            label: this._getEffectiveLabel(),
+            description:
+              this.system.description || this.system.savedDamage.description,
+            img: this._getEffectiveImage(),
+            bgColor: this.system.bgColor,
+            textColor: this.system.textColor,
+          },
+        );
 
         // Process transformations after damage for saved damage mode
         let transformationResults = [];
