@@ -2,6 +2,18 @@
 
 ## Latest Release
 
+**[v14.3.0](release-notes/v14.3.0.md)** - Action Card Self-Effects _(April 2026)_
+
+**Key Highlights:**
+
+- **Self-Effects System** — action cards can now apply status, gear, and feature effects to the card owner based on configurable conditions
+- **Condition-Based Application** — 12 condition options including success/failure counts, critical results, roll value thresholds, and more
+- **Application Limit Control** — configurable limit on how many times self-effects apply per execution (default: 1)
+- **Status Intensification Integration** — self-applied statuses use the existing intensification system for consistent stacking
+- **Full UI Support** — drag-drop, item selector, edit/remove controls, and inline creation on the Embedded Items tab
+
+## Recent Major Releases
+
 **[v14.2.0](release-notes/v14.2.0.md)** - Healing Increase with Multiplicative Support _(April 2026)_
 
 **Key Highlights:**
@@ -12,8 +24,6 @@
 - **Overhealing Display** — chat cards now show overhealing amount when healing exceeds max resolve
 - **Formula Construction** — proper order of operations for additive and multiplicative healing effects
 - **Consistent Formula Display** — fixed bug where roll terms weren't showing in nested math formulas
-
-## Recent Major Releases
 
 **[v14.1.0](release-notes/v14.1.0.md)** - Multiply & Divide Character Effect Modes _(April 2026)_
 
@@ -235,7 +245,8 @@ Enhanced character customization through circumstantial bonuses and feature-base
 
 | Version     | Release Date  | Focus                                                                                  |
 | ----------- | ------------- | -------------------------------------------------------------------------------------- |
-| **v14.2.0** | April 2026    | Healing Increase with Multiplicative Support                                           |
+| **v14.3.0** | April 2026    | Action Card Self-Effects                                                               |
+| v14.2.0     | April 2026    | Healing Increase with Multiplicative Support                                           |
 | v14.1.0     | April 2026    | Multiply & Divide Character Effect Modes                                               |
 | v14.0.0     | April 2026    | Foundry VTT v14 Compatibility & ActiveEffect Schema Migration                          |
 | v13.22.0    | March 2026    | Formula Validation & Feature System Enhancements                                       |
@@ -262,11 +273,11 @@ Enhanced character customization through circumstantial bonuses and feature-base
 
 ### By Feature Area
 
-- **Action Cards**: [v14.0.0](release-notes/v14.0.0.md), [v13.11.0](release-notes/v13.11.0.md), [v13.13.3](release-notes/v13.13.3.md), [v13.14.0](release-notes/v13.14.0.md), [v13.15.0](release-notes/v13.15.0.md), [v13.16.0](release-notes/v13.16.0.md), [v13.18.0](release-notes/v13.18.0.md), [v13.18.1](release-notes/v13.18.1.md), [v13.19.0](release-notes/v13.19.0.md), [v13.19.1](release-notes/v13.19.1.md), [v13.20.0](release-notes/v13.20.0.md), [v13.21.0](release-notes/v13.21.0.md), [v13.21.5](release-notes/v13.21.5.md), [v13.21.8](release-notes/v13.21.8.md), [v13.22.0](release-notes/v13.22.0.md)
+- **Action Cards**: [v14.3.0](release-notes/v14.3.0.md), [v14.0.0](release-notes/v14.0.0.md), [v13.11.0](release-notes/v13.11.0.md), [v13.13.3](release-notes/v13.13.3.md), [v13.14.0](release-notes/v13.14.0.md), [v13.15.0](release-notes/v13.15.0.md), [v13.16.0](release-notes/v13.16.0.md), [v13.18.0](release-notes/v13.18.0.md), [v13.18.1](release-notes/v13.18.1.md), [v13.19.0](release-notes/v13.19.0.md), [v13.19.1](release-notes/v13.19.1.md), [v13.20.0](release-notes/v13.20.0.md), [v13.21.0](release-notes/v13.21.0.md), [v13.21.5](release-notes/v13.21.5.md), [v13.21.8](release-notes/v13.21.8.md), [v13.22.0](release-notes/v13.22.0.md)
 - **GM Tools**: [v13.18.0](release-notes/v13.18.0.md), [v13.18.1](release-notes/v13.18.1.md), [v13.20.0](release-notes/v13.20.0.md)
 - **Transformations**: [v13.14.0](release-notes/v13.14.0.md), [v13.15.0](release-notes/v13.15.0.md), [v13.15.5](release-notes/v13.15.5.md), [v13.17.0](release-notes/v13.17.0.md)
 - **Features & Bonuses**: [v13.10.0](release-notes/v13.10.0.md), [v13.19.0](release-notes/v13.19.0.md), [v13.22.0](release-notes/v13.22.0.md)
-- **Status Effects & ActiveEffects**: [v14.1.0](release-notes/v14.1.0.md), [v14.0.0](release-notes/v14.0.0.md), [v13.19.0](release-notes/v13.19.0.md)
+- **Status Effects & ActiveEffects**: [v14.3.0](release-notes/v14.3.0.md), [v14.1.0](release-notes/v14.1.0.md), [v14.0.0](release-notes/v14.0.0.md), [v13.19.0](release-notes/v13.19.0.md)
 - **Combat Automation**: [v13.11.0](release-notes/v13.11.0.md), [v13.13.3](release-notes/v13.13.3.md)
 - **Documentation**: [v13.20.0](release-notes/v13.20.0.md)
 - **Conversion & Migration**: [v14.0.0](release-notes/v14.0.0.md), [v13.17.0](release-notes/v13.17.0.md), [v13.19.0](release-notes/v13.19.0.md), [v13.19.1](release-notes/v13.19.1.md)
@@ -307,4 +318,4 @@ We encourage users to:
 
 ---
 
-**Current Version**: v14.2.0 | **Foundry VTT Compatibility**: v14+ | **Last Updated**: April 2026
+**Current Version**: v14.3.0 | **Foundry VTT Compatibility**: v14+ | **Last Updated**: April 2026
