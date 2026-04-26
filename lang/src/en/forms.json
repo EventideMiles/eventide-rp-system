@@ -175,6 +175,11 @@
         "AriaLabel": "Search and select an action card",
         "ItemAdded": "Action card '{itemName}' added"
       },
+      "SelfEffectsSelector": {
+        "Placeholder": "Search for status, gear, or feature...",
+        "AriaLabel": "Self Effects Item Selector",
+        "ItemAdded": "Self-effect '{itemName}' added"
+      },
       "AddExisting": "Add Existing Items",
       "Placeholders": {
         "ActorName": "Actor Name",
