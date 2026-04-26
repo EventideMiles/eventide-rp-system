@@ -5,7 +5,7 @@
     {{!-- Repetitions Section --}}
   <div class="erps-form__section">
     <h3 class="erps-form__header">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Config.RepetitionsHeader"}}</h3>
-    <div class="grid grid-3col">
+    <div class="grid grid-4col">
       <div class="erps-form__group">
         <label class="erps-input-label" for="{{item.id}}-repetitions">
           {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Repetitions.label"}}
@@ -48,6 +48,21 @@
                class="erps-input"
                data-dtype="Number" />
         <p class="erps-form__hint">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.StatusApplicationLimit.hint"}}</p>
+      </div>
+
+      <div class="erps-form__group">
+        <label class="erps-input-label" for="{{item.id}}-self-effects-application-limit">
+          {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.SelfEffectsApplicationLimit"}}
+        </label>
+        <input type="number"
+               id="{{item.id}}-self-effects-application-limit"
+               name="system.selfEffectsApplicationLimit"
+               value="{{item.system.selfEffectsApplicationLimit}}"
+               min="0"
+               step="1"
+               class="erps-input"
+               data-dtype="Number" />
+        <p class="erps-form__hint">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.SelfEffectsApplicationLimitHint"}}</p>
       </div>
     </div>
   </div>
@@ -187,7 +202,6 @@
       </label>
       <p class="erps-form__hint">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.SelfTarget.hint"}}</p>
     </div>
-
   </div>
   </div>
 </section>
