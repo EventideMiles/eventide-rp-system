@@ -257,6 +257,36 @@ export const ItemSheetDragDropMixin = (BaseClass) =>
               };
             }
           }
+        } else if (embeddedType === "self-effect") {
+          // Handle embedded self-effects
+          const embeddedSelfEffects = this.item.getEmbeddedSelfEffects();
+          const targetSelfEffect = embeddedSelfEffects.find(
+            (effect) => effect.id === targetId,
+          );
+
+          if (targetSelfEffect) {
+            // Get the original self-effect data from the raw storage
+            const originalSelfEffectData =
+              this.item.system.embeddedSelfEffects?.find((effectData) => {
+                const tempItem = new CONFIG.Item.documentClass(effectData, {
+                  parent: null,
+                });
+                return tempItem.id === targetId;
+              });
+
+            if (originalSelfEffectData) {
+              // Create clean drag data for the embedded self-effect
+              const effectData = foundry.utils.deepClone(originalSelfEffectData);
+              // Strip ID to prevent Foundry colliding IDs
+              delete effectData._id;
+
+              dragData = {
+                type: "Item",
+                data: effectData,
+                // Don't include uuid or parent information that would make Foundry think this is an embedded document
+              };
+            }
+          }
         }
       }
 
@@ -720,6 +750,8 @@ export const ItemSheetDragDropMixin = (BaseClass) =>
         return this._handleEffectDrop(droppedItem);
       } else if (dropType === "transformation") {
         return this._handleTransformationEffectDrop(droppedItem);
+      } else if (dropType === "self-effect") {
+        return this._handleSelfEffectDrop(droppedItem);
       } else {
         // Universal drop - no specific drop zone found, route based on item type
         return this._handleUniversalActionCardDrop(droppedItem);
@@ -862,6 +894,51 @@ export const ItemSheetDragDropMixin = (BaseClass) =>
             "EVENTIDE_RP_SYSTEM.Errors.FailedToAddTransformationToActionCard",
             {
               transformationName: droppedItem.name,
+              actionCardName: this.item.name,
+            },
+          ),
+        );
+        return false;
+      }
+    }
+
+    /**
+     * Handle drops on self-effect drop zones
+     * @param {Item} droppedItem - The item being dropped
+     * @returns {Promise<boolean>} True if handled successfully
+     * @private
+     */
+    async _handleSelfEffectDrop(droppedItem) {
+      const supportedTypes = ["status", "gear", "feature"];
+      if (!supportedTypes.includes(droppedItem.type)) {
+        ui.notifications.warn(
+          game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.ActionCardSelfEffectTypes", {
+            type: droppedItem.type,
+            supported: supportedTypes.join(", "),
+          }),
+        );
+        return false;
+      }
+
+      try {
+        await this.item.addEmbeddedSelfEffect(droppedItem);
+        Logger.info(
+          "Item added to action card as self-effect",
+          {
+            actionCardName: this.item.name,
+            itemName: droppedItem.name,
+            itemType: droppedItem.type,
+          },
+          "DRAG_DROP",
+        );
+        return true;
+      } catch (error) {
+        Logger.error("Failed to add self-effect to action card", error, "DRAG_DROP");
+        ui.notifications.error(
+          game.i18n.format(
+            "EVENTIDE_RP_SYSTEM.Errors.FailedToAddSelfEffectToActionCard",
+            {
+              itemName: droppedItem.name,
               actionCardName: this.item.name,
             },
           ),

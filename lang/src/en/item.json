@@ -251,6 +251,16 @@
         "CreateNewTransformation": "Create New Transformation",
         "DropTransformationHere": "Drop transformations here",
         "TransformationNotes": "Transformations are applied when action card conditions are met",
+        "SelfEffects": "Self Effects",
+        "SelfEffectsConfig": "Self Effects Configuration",
+        "SelfEffectsCondition": "Self Effects Condition",
+        "SelfEffectsThreshold": "Self Effects Threshold",
+        "SelfEffectsApplicationLimit": "Self Effects Application Limit",
+        "SelfEffectsApplicationLimitHint": "0 = unlimited, 1+ = apply up to this many times per execution",
+        "DropSelfEffectHere": "Drop status, gear, or feature items here to apply to the card owner",
+        "NoSelfEffects": "No self-effects configured",
+        "CreateNewSelfEffect": "Create New Self-Effect",
+        "SelfEffectsNotes": "Self-effects apply to the card owner (you) based on the configured condition. Use for drain attacks, recoil effects, etc.",
         "Config": {
           "RepetitionsHeader": "Repetition Settings",
           "BehaviorHeader": "Repetition Behavior"

@@ -166,7 +166,7 @@ export const ActorResourceMixin = (BaseClass) =>
           if (type === "heal") {
             await this.addResolve(damageAmount);
             Logger.info(
-              `Healed ${damageAmount} resolve for actor "${this.name}"`,
+              `Healed ${damageAmount} resolve for actor "${this.name}"${roll.overhealing > 0 ? ` (${roll.overhealing} overhealing)` : ""}`,
               null,
               "RESOURCES",
             );

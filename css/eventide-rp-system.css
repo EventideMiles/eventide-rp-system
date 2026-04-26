@@ -2528,6 +2528,19 @@ body *::-webkit-scrollbar-track,
 .chat-card__status-badge--inactive i {
   color: rgb(231, 76, 60);
 }
+.chat-card__overhealing-info {
+  background: rgba(62, 62, 62, 0.5);
+  border-radius: 4px;
+  padding: 0.5rem;
+  font-size: 0.75rem;
+  color: #a4dab0;
+  text-align: center;
+  opacity: 0.4;
+  transition: opacity 0.3s ease;
+}
+.chat-card__overhealing-info:hover {
+  opacity: 1;
+}
 
 .erps-data-table__embedded-item {
   display: flex;
@@ -9560,3 +9573,5 @@ body.erps-image-zoom-active {
     flex: 1;
   }
 }
+
+/*# sourceMappingURL=eventide-rp-system.css.map */

@@ -443,16 +443,175 @@ export class StatusEffectApplicator {
   }
 
   /**
+   * Process self-effects for action cards (apply to card owner)
+   *
+   * @static
+   * @param {Object} params - Method parameters
+   * @param {Array} params.results - Target hit results (for condition checking)
+   * @param {Roll} params.rollResult - The roll result
+   * @param {Array} params.embeddedSelfEffects - Self-effect items to apply
+   * @param {Object} params.selfEffectsConfig - Configuration for when to apply
+   * @param {Object} params.repetitionContext - Current repetition context
+   * @param {Actor} params.actor - The card owner (target for self-effects)
+   * @param {boolean} params.attemptInventoryReduction - Whether to reduce inventory
+   * @param {number} params.applicationLimit - How many times to apply (0 = unlimited)
+   * @param {Function} params.shouldApplyEffect - Function to check condition
+   * @param {Function} params.waitForDelay - Function to wait for delays
+   * @param {boolean} params.disableDelays - Skip delays flag
+   * @param {boolean} params.isFinalRepetition - Is this the final repetition?
+   * @returns {Promise<Array>} Self-effect results
+   */
+  static async processSelfEffectResults({
+    results,
+    rollResult,
+    embeddedSelfEffects,
+    selfEffectsConfig,
+    repetitionContext,
+    actor,
+    attemptInventoryReduction: _attemptInventoryReduction,
+    applicationLimit,
+    shouldApplyEffect,
+    waitForDelay,
+    disableDelays = false,
+  }) {
+    if (!embeddedSelfEffects || embeddedSelfEffects.length === 0) {
+      return [];
+    }
+
+    // Determine success condition from results
+    const hasHits = results?.some((r) => r.firstHit || r.secondHit) || false;
+    const oneHit = hasHits;
+    const bothHit = results?.every((r) => r.firstHit && r.secondHit) || false;
+    const rollTotal = rollResult?.total || 0;
+
+    // Check if condition is met
+    const conditionMet = shouldApplyEffect(
+      selfEffectsConfig.condition,
+      oneHit,
+      bothHit,
+      rollTotal,
+      selfEffectsConfig.threshold || 15,
+      rollResult,
+      actor,
+      rollResult?.formula,
+    );
+
+    if (!conditionMet) {
+      Logger.debug(
+        `Self-effects condition not met: ${selfEffectsConfig.condition}`,
+        {
+          condition: selfEffectsConfig.condition,
+          hasHits,
+          oneHit,
+          bothHit,
+          rollTotal,
+          threshold: selfEffectsConfig.threshold,
+        },
+        "ACTION_CARD",
+      );
+      return [];
+    }
+
+    // Check application limit
+    if (repetitionContext) {
+      const selfEffectApplications =
+        repetitionContext.selfEffectApplications || 0;
+      if (applicationLimit > 0 && selfEffectApplications >= applicationLimit) {
+        Logger.debug(
+          `Self-effects application limit reached (${selfEffectApplications}/${applicationLimit})`,
+          {
+            actorName: actor.name,
+            limit: applicationLimit,
+            count: selfEffectApplications,
+          },
+          "ACTION_CARD",
+        );
+        return [];
+      }
+    }
+
+    // Apply each self-effect to the card owner
+    const resultsArray = [];
+    for (const effect of embeddedSelfEffects) {
+      try {
+        // Clone effect data for safe modification
+        const effectData = foundry.utils.deepClone(effect);
+
+        // Set flag for effects to trigger appropriate message via createItem hook
+        if (effectData.type === "gear" || effectData.type === "status") {
+          effectData.flags = effectData.flags || {};
+          effectData.flags["eventide-rp-system"] =
+            effectData.flags["eventide-rp-system"] || {};
+          effectData.flags["eventide-rp-system"].isEffect = true;
+        }
+
+        // Ensure gear effects are equipped when transferred
+        if (effectData.type === "gear") {
+          effectData.system = effectData.system || {};
+          effectData.system.equipped = true;
+          effectData.system.quantity = 1;
+        }
+
+        // Apply or intensify the effect on the actor (same pattern as applySingleEffect)
+        const applicationResult =
+          await StatusIntensification.applyOrIntensifyStatus(actor, effectData);
+
+        // Update repetition context
+        if (repetitionContext) {
+          repetitionContext.selfEffectApplications =
+            (repetitionContext.selfEffectApplications || 0) + 1;
+        }
+
+        resultsArray.push({
+          success: applicationResult.applied,
+          effect: effect.name,
+          target: actor.name,
+          applied: applicationResult.applied,
+          intensified: applicationResult.intensified,
+        });
+
+        Logger.debug(
+          `Applied self-effect "${effect.name}" to actor "${actor.name}"`,
+          {
+            effectName: effect.name,
+            actorName: actor.name,
+            effectType: effect.type,
+          },
+          "ACTION_CARD",
+        );
+
+        // Wait for delay if configured
+        if (!disableDelays && waitForDelay) {
+          await waitForDelay();
+        }
+      } catch (error) {
+        Logger.error(
+          `Failed to apply self-effect "${effect.name}"`,
+          error,
+          "ACTION_CARD",
+        );
+        resultsArray.push({
+          success: false,
+          effect: effect.name,
+          error: error.message,
+        });
+      }
+    }
+
+    return resultsArray;
+  }
+
+  /**
    * Apply a single effect to a target
    *
    * @static
    * @param {Object} params - Application parameters
    * @param {Object} params.effectData - The effect data
    * @param {Actor} params.target - The target actor
-   * @param {string} params.effectKey - Unique key for the effect
+   * @param {string} params.effectKey - Unique key for effect
    * @param {Object} params.repetitionContext - Repetition context
    * @param {boolean} params.disableDelays - Whether to disable delays
-   * @param {boolean} params.isFinalRepetition - Whether this is the final repetition
+   * @param {boolean} params.isFinalRepetition - Whether this is final repetition
    * @param {Function} params.waitForDelay - Function to wait for delay
    * @returns {Promise<StatusEffectResult>} The status effect result
    */

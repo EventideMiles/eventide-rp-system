@@ -1087,5 +1087,339 @@ export function ItemActionCardMixin(Base) {
         return [];
       }
     }
+
+    /**
+     * Add an embedded self-effect to this action card
+     *
+     * @param {Item} effectItem - The status, gear, or feature item to add as a self-effect
+     * @returns {Promise<Item>} This action card instance for method chaining
+     * @async
+     */
+    async addEmbeddedSelfEffect(effectItem) {
+      // Only action cards can have embedded self-effects
+      if (this.type !== "actionCard") {
+        throw new Error(
+          "addEmbeddedSelfEffect can only be called on action card items",
+        );
+      }
+
+      Logger.methodEntry("ItemActionCardMixin", "addEmbeddedSelfEffect", {
+        effectName: effectItem?.name,
+        effectType: effectItem?.type,
+      });
+
+      try {
+        // Validate effect type - self-effects support status, gear, and feature types
+        const supportedTypes = ["status", "gear", "feature"];
+        if (!supportedTypes.includes(effectItem.type)) {
+          const error = new Error(
+            game.i18n.format(
+              "EVENTIDE_RP_SYSTEM.Errors.ActionCardSelfEffectTypes",
+              {
+                type: effectItem.type,
+                supported: supportedTypes.join(", "),
+              },
+            ),
+          );
+          Logger.error("Invalid self-effect type", error, "ACTION_CARD");
+          throw error;
+        }
+
+        // Get current self-effects
+        const selfEffects = foundry.utils.deepClone(
+          this.system.embeddedSelfEffects || [],
+        );
+
+        // Create a complete copy of the effect data
+        const effectData = effectItem.toObject();
+
+        // Assign a new random ID to prevent conflicts
+        effectData._id = foundry.utils.randomID();
+
+        // Add the self-effect to the array
+        selfEffects.push(effectData);
+
+        // Detect if this action card is a virtual/temporary item
+        const isVirtualItem =
+          !this.collection ||
+          (this.update &&
+            (this.update.toString().includes("embeddedActionCards") ||
+              this.update.toString().includes("embeddedTransformations")));
+
+        // Update the action card with the new self-effects array
+        await this.update(
+          {
+            "system.embeddedSelfEffects": selfEffects,
+          },
+          isVirtualItem ? { fromEmbeddedItem: true } : {},
+        );
+
+        return this;
+      } catch (error) {
+        Logger.error(
+          "Failed to add embedded self-effect",
+          error,
+          "ACTION_CARD",
+        );
+        throw error;
+      }
+    }
+
+    /**
+     * Remove an embedded self-effect from this action card
+     *
+     * @param {string} effectId - The ID of the self-effect to remove
+     * @returns {Promise<Item>} This action card instance for method chaining
+     * @async
+     */
+    async removeEmbeddedSelfEffect(effectId) {
+      // Only action cards can have embedded self-effects
+      if (this.type !== "actionCard") {
+        throw new Error(
+          "removeEmbeddedSelfEffect can only be called on action card items",
+        );
+      }
+
+      Logger.methodEntry("ItemActionCardMixin", "removeEmbeddedSelfEffect", {
+        effectId,
+      });
+
+      try {
+        // Get current self-effects
+        const selfEffects = foundry.utils.deepClone(
+          this.system.embeddedSelfEffects || [],
+        );
+
+        // Find the self-effect to remove
+        const index = selfEffects.findIndex((effectData) => {
+          // Handle malformed entries gracefully
+          if (!effectData || !effectData._id) {
+            Logger.warn(
+              "Malformed self-effect entry found during removal, skipping",
+              { effectData, effectId },
+              "ACTION_CARD",
+            );
+            return false;
+          }
+          return effectData._id === effectId;
+        });
+
+        if (index === -1) {
+          Logger.warn(
+            `Self-effect with ID ${effectId} not found in embedded self-effects`,
+            null,
+            "ACTION_CARD",
+          );
+          return this;
+        }
+
+        // Remove the self-effect
+        const removedEffect = selfEffects.splice(index, 1)[0];
+
+        // Detect if this action card is a virtual/temporary item
+        const isVirtualItem =
+          !this.collection ||
+          (this.update &&
+            (this.update.toString().includes("embeddedActionCards") ||
+              this.update.toString().includes("embeddedTransformations")));
+
+        // Update the action card
+        await this.update(
+          {
+            "system.embeddedSelfEffects": selfEffects,
+          },
+          isVirtualItem ? { fromEmbeddedItem: true } : {},
+        );
+
+        Logger.info(
+          `Removed self-effect "${removedEffect.name}" from action card "${this.name}"`,
+          {
+            effectId,
+            remainingCount: selfEffects.length,
+          },
+          "ACTION_CARD",
+        );
+
+        Logger.methodExit(
+          "ItemActionCardMixin",
+          "removeEmbeddedSelfEffect",
+          this,
+        );
+        return this;
+      } catch (error) {
+        Logger.error(
+          "Failed to remove embedded self-effect",
+          error,
+          "ACTION_CARD",
+        );
+        Logger.methodExit(
+          "ItemActionCardMixin",
+          "removeEmbeddedSelfEffect",
+          null,
+        );
+        throw error;
+      }
+    }
+
+    getEmbeddedSelfEffects(options = {}) {
+      // Only action cards can have embedded self-effects
+      if (this.type !== "actionCard") {
+        return [];
+      }
+
+      const { executionContext = false } = options;
+
+      try {
+        if (!this.system.embeddedSelfEffects?.length) {
+          return [];
+        }
+
+        const actionCard = this;
+
+        const selfEffects = this.system.embeddedSelfEffects.map((effectData) => {
+          // Validate effect entry structure
+          if (!effectData) {
+            Logger.warn(
+              "Invalid self-effect entry structure in getEmbeddedSelfEffects, skipping",
+              { effectData, actionCardName: this.name },
+              "ACTION_CARD",
+            );
+            return null; // Will be filtered out
+          }
+
+          // Use action card's actor as parent, or null if unowned
+          const actor = actionCard?.isOwned ? actionCard.parent : null;
+          const tempItem = new CONFIG.Item.documentClass(effectData, {
+            parent: actor,
+          });
+
+          // Initialize effects collection if it doesn't exist
+          if (!tempItem.effects) {
+            tempItem.effects = new foundry.utils.Collection();
+          }
+
+          // If item data has effects, create temporary ActiveEffect documents
+          if (effectData.effects && Array.isArray(effectData.effects)) {
+            for (const activeEffectData of effectData.effects) {
+              const tempEffect = new CONFIG.ActiveEffect.documentClass(
+                activeEffectData,
+                {
+                  parent: tempItem,
+                },
+              );
+              tempItem.effects.set(activeEffectData._id, tempEffect);
+            }
+          }
+
+          // The temporary item is editable if action card is editable
+          Object.defineProperty(tempItem, "isEditable", {
+            value: actionCard.isEditable,
+            configurable: true,
+          });
+
+          // Store the original embedded ID for template access
+          Object.defineProperty(tempItem, "originalId", {
+            value: effectData._id,
+            configurable: true,
+          });
+
+          // Override update method to persist changes back to action card
+          tempItem.update = async (data, options = {}) => {
+            const currentSelfEffects = foundry.utils.deepClone(
+              this.system.embeddedSelfEffects,
+            );
+            const effectIndex = currentSelfEffects.findIndex(
+              (e) => e._id === effectData._id,
+            );
+            if (effectIndex === -1) {
+              throw new Error("Could not find embedded self-effect to update.");
+            }
+
+            // Merge updates into stored data
+            const updatedEffectData = foundry.utils.mergeObject(
+              currentSelfEffects[effectIndex],
+              data,
+              { inplace: false },
+            );
+            currentSelfEffects[effectIndex] = updatedEffectData;
+
+            // Persist changes to action card
+            await actionCard.update(
+              {
+                "system.embeddedSelfEffects": currentSelfEffects,
+              },
+              options,
+            );
+
+            // Update temporary item's source data
+            tempItem.updateSource(updatedEffectData);
+
+            // Only close sheet if this is a direct item update, not an embedded item update
+            if (!options.fromEmbeddedItem) {
+              // Close temporary sheet and re-render action card sheet
+              // Only render sheet if we're in an editing context, not during execution
+              tempItem.sheet.close();
+              if (!executionContext) {
+                actionCard.sheet.render(true);
+              }
+            } else {
+              // For embedded item updates, just refresh sheet without closing
+              if (tempItem.sheet?.rendered) {
+                tempItem.sheet.render(false);
+              }
+            }
+            return tempItem;
+          };
+
+          // Override updateEmbeddedDocuments to also respect fromEmbeddedItem flag for self-effects
+          tempItem.updateEmbeddedDocuments = async (
+            embeddedName,
+            updates,
+            options = {},
+          ) => {
+            Logger.debug(
+              "Updating embedded documents on self-effect",
+              { embeddedName, updates, options },
+              "ACTION_CARD",
+            );
+
+            // Use the standard updateEmbeddedDocuments for the actual update
+            const result =
+              await CONFIG.Item.documentClass.prototype.updateEmbeddedDocuments.call(
+                tempItem,
+                embeddedName,
+                updates,
+                options,
+              );
+
+            // Handle sheet closure based on fromEmbeddedItem flag
+            if (!options.fromEmbeddedItem) {
+              // Close the temporary sheet and re-render the action card sheet
+              tempItem.sheet.close();
+              if (!executionContext) {
+                actionCard.sheet.render(true);
+              }
+            } else {
+              // For embedded item updates, just refresh the sheet without closing
+              if (tempItem.sheet?.rendered) {
+                tempItem.sheet.render(false);
+              }
+            }
+
+            return result;
+          };
+
+          return tempItem;
+        });
+
+        // Filter out null values
+        const filteredSelfEffects = selfEffects.filter((item) => item !== null);
+
+        return filteredSelfEffects;
+      } catch (error) {
+        Logger.error("Failed to get embedded self-effects", error, "ACTION_CARD");
+        return [];
+      }
+    }
   };
 }

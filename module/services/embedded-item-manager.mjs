@@ -512,6 +512,117 @@ export class EmbeddedItemManager {
     }
   }
 
+  /**
+   * Create a new self-effect in an action card
+   *
+   * @static
+   * @param {Item} item - The parent action card
+   * @returns {Promise<boolean>} Success status
+   */
+  static async createNewSelfEffect(item) {
+    try {
+      const newSelfEffectData = this.getDefaultStatusData(item);
+
+      const tempItem = new CONFIG.Item.documentClass(newSelfEffectData, {
+        parent: null,
+      });
+
+      await item.addEmbeddedSelfEffect(tempItem);
+      return true;
+    } catch (error) {
+      Logger.error(
+        "Failed to create new self-effect",
+        error,
+        "EMBEDDED_ITEM_MANAGER",
+      );
+      return false;
+    }
+  }
+
+  /**
+   * Edit an embedded self-effect from an action card
+   *
+   * @static
+   * @param {Item} item - The parent action card
+   * @param {string} effectId - The self-effect ID to edit
+   * @returns {Promise<boolean>} Success status
+   */
+  static async editEmbeddedSelfEffect(item, effectId) {
+    try {
+      if (!effectId) {
+        Logger.warn(
+          "No effect ID provided for editing self-effect",
+          null,
+          "EMBEDDED_ITEM_MANAGER",
+        );
+        return false;
+      }
+
+      const embeddedSelfEffects = item.getEmbeddedSelfEffects();
+      const effect = embeddedSelfEffects.find((e) => e.originalId === effectId);
+
+      if (!effect) {
+        Logger.warn(
+          "Embedded self-effect not found",
+          { effectId },
+          "EMBEDDED_ITEM_MANAGER",
+        );
+        return false;
+      }
+
+      // Create and render the embedded effect sheet using dynamic import
+      const { EmbeddedItemSheet } =
+        await import("../ui/sheets/embedded-item-sheet.mjs");
+      const sheet = new EmbeddedItemSheet(
+        effect.toObject(),
+        item,
+        {},
+        true,
+        true,
+      );
+      sheet.render(true);
+      return true;
+    } catch (error) {
+      Logger.error(
+        "Failed to edit embedded self-effect",
+        error,
+        "EMBEDDED_ITEM_MANAGER",
+      );
+      return false;
+    }
+  }
+
+  /**
+   * Remove an embedded self-effect from an action card
+   *
+   * @static
+   * @param {Item} item - The parent action card
+   * @param {string} effectId - The self-effect ID to remove
+   * @returns {Promise<boolean>} Success status
+   */
+  static async removeEmbeddedSelfEffect(item, effectId) {
+    try {
+      if (!effectId) {
+        Logger.warn(
+          "No effect ID provided for removal of self-effect",
+          null,
+          "EMBEDDED_ITEM_MANAGER",
+        );
+        return false;
+      }
+
+      await item.removeEmbeddedSelfEffect(effectId);
+      return true;
+    } catch (error) {
+      Logger.error(
+        "Failed to remove embedded self-effect",
+        error,
+        "EMBEDDED_ITEM_MANAGER",
+      );
+      return false;
+    }
+  }
+
   // =================================
   // Transformation Creation Methods
   // =================================

@@ -199,6 +199,7 @@ export class ContextPreparationHelper {
     const context = {
       embeddedItem: item.getEmbeddedItem(),
       embeddedEffects: item.getEmbeddedEffects(),
+      embeddedSelfEffects: item.getEmbeddedSelfEffects(),
     };
 
     // getEmbeddedTransformations is async, so we need to await it

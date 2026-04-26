@@ -55,6 +55,7 @@
       "InvalidQuantity": "Quantity must be a positive number",
       "ActionCardItemTypes": "Action cards can only embed items of type: {supported}. Cannot add {type}.",
       "ActionCardEffectTypes": "Action cards can only embed effects of type: {supported}. Cannot add {type}.",
+      "ActionCardSelfEffectTypes": "Action cards can only embed self-effects of type: {supported}. Cannot add {type}.",
       "ActionCardStatusTypes": "Action cards can only embed status effects. Cannot add {type}.",
       "ActionCardTransformationTypes": "Action cards can only embed transformations. Cannot add {type}.",
       "TransformationItemTypes": "Transformations can only embed combat powers and action cards.",

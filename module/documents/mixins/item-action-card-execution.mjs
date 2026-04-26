@@ -680,6 +680,8 @@ export function ItemActionCardExecutionMixin(Base) {
         embeddedItem,
         attackChain: this.system.attackChain,
         embeddedTransformations: this.system.embeddedTransformations,
+        embeddedSelfEffects: this.system.embeddedSelfEffects,
+        selfEffectsConfig: this.system.selfEffectsConfig,
         lockedTargets: this._lockedTargets,
         processDamage: (results, roll, delays) =>
           this._processDamageResults(results, roll, delays),
@@ -687,6 +689,8 @@ export function ItemActionCardExecutionMixin(Base) {
           this._processStatusResults(results, roll, delays, isFinal),
         processTransformation: (results, roll, delays, isFinal) =>
           this._processTransformationResults(results, roll, delays, isFinal),
+        processSelfEffect: (results, roll, delays, isFinal, selfEffectsConfig) =>
+          this._processSelfEffectResults(results, roll, delays, isFinal, selfEffectsConfig),
         waitForDelay: () => this._waitForExecutionDelay(),
         disableDelays,
         shouldApplyDamage,
@@ -714,40 +718,20 @@ export function ItemActionCardExecutionMixin(Base) {
         }
         const targetArray = resolution.targets;
 
-        const damageResults = [];
-
-        // Apply saved damage to each target
-        for (const target of targetArray) {
-          try {
-            // Apply damage directly (GM or player owns all targets)
-            // Apply vulnerability modifier to damage formula
-            const originalFormula = this.system.savedDamage.formula;
-            const formula =
-              this.system.savedDamage.type !== "heal" &&
-              target.actor.system.hiddenAbilities.vuln.total > 0
-                ? `${originalFormula} + ${Math.abs(target.actor.system.hiddenAbilities.vuln.total)}`
-                : originalFormula;
-
-            const damageRoll = await target.actor.damageResolve({
-              formula,
-              label: this._getEffectiveLabel(),
-              description:
-                this.system.description || this.system.savedDamage.description,
-              type: this.system.savedDamage.type,
-              img: this._getEffectiveImage(),
-              bgColor: this.system.bgColor,
-              textColor: this.system.textColor,
-            });
-
-            damageResults.push({ target: target.actor, roll: damageRoll });
-          } catch (damageError) {
-            Logger.error(
-              "Failed to apply saved damage",
-              damageError,
-              "ACTION_CARD",
-            );
-          }
-        }
+        // Use DamageProcessor to handle saved damage with proper vulnerability/healing formulas
+        const damageResults = await DamageProcessor.processSavedDamage(
+          targetArray,
+          {
+            formula: this.system.savedDamage.formula,
+            type: this.system.savedDamage.type,
+            label: this._getEffectiveLabel(),
+            description:
+              this.system.description || this.system.savedDamage.description,
+            img: this._getEffectiveImage(),
+            bgColor: this.system.bgColor,
+            textColor: this.system.textColor,
+          },
+        );
 
         // Process transformations after damage for saved damage mode
         let transformationResults = [];
@@ -984,6 +968,17 @@ export function ItemActionCardExecutionMixin(Base) {
     }
 
     /**
+     * Get actor's token for self-targeting
+     * Delegates to TargetResolver service for token resolution.
+     * @param {Actor} actor - The actor to get token for
+     * @returns {TokenDocument|null} The actor's token or null if not found
+     * @private
+     */
+    _getSelfTargetToken(actor) {
+      return TargetResolver.getSelfTargetToken(actor);
+    }
+
+    /**
      * Execute a single iteration of the action card
      * @param {Actor} actor - The actor executing the action card
      * @param {Roll} rollResult - The roll result for this iteration
@@ -1013,17 +1008,6 @@ export function ItemActionCardExecutionMixin(Base) {
       } else {
         throw new Error(`Unknown action card mode: ${this.system.mode}`);
       }
-    }
-
-    /**
-     * Get the actor's token for self-targeting
-     * Delegates to TargetResolver service for token resolution.
-     * @param {Actor} actor - The actor to get the token for
-     * @returns {TokenDocument|null} The actor's token or null if not found
-     * @private
-     */
-    _getSelfTargetToken(actor) {
-      return TargetResolver.getSelfTargetToken(actor);
     }
 
     /**
@@ -1151,6 +1135,37 @@ export function ItemActionCardExecutionMixin(Base) {
           this._shouldApplyEffect(condition, oneHit, bothHit, rollTotal, threshold, roll, actor, formula),
         this.actor,
       );
+    }
+
+    /**
+     * Process self-effect results for action card execution
+     * Applies effects to the card owner based on self-effects configuration
+     * @private
+     * @param {Array} results - Target hit results (for condition checking)
+     * @param {Roll} rollResult - The roll result
+     * @param {boolean} disableDelays - If true, skip internal timing delays
+     * @param {Object} _selfEffectsConfig - Self-effects configuration (unused, kept for consistency)
+     * @returns {Promise<Array>} Self-effect results
+     */
+    async _processSelfEffectResults(
+      results,
+      rollResult,
+      disableDelays = false,
+      _selfEffectsConfig,
+    ) {
+      return await StatusEffectApplicator.processSelfEffectResults({
+        results,
+        rollResult,
+        embeddedSelfEffects: this.system.embeddedSelfEffects,
+        selfEffectsConfig: this.system.selfEffectsConfig,
+        repetitionContext: this._currentRepetitionContext,
+        actor: this.actor,
+        attemptInventoryReduction: this.system.attemptInventoryReduction,
+        applicationLimit: this.system.selfEffectsApplicationLimit,
+        shouldApplyEffect: this._shouldApplyEffect.bind(this),
+        waitForDelay: this._waitForExecutionDelay.bind(this),
+        disableDelays,
+      });
     }
 
     /**

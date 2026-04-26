@@ -103,7 +103,38 @@
           }
         },
         "RepetitionCountAdjusted": "Repetition formula resulted in {originalCount}, adjusted to minimum of 1",
-        "NewGroupName": "Group {number}"
+        "NewGroupName": "Group {number}",
+        "Config": {
+          "RepetitionsHeader": "Repetitions",
+          "BehaviorHeader": "Behavior",
+          "SelfEffectsHeader": "Self-Effects Configuration"
+        },
+        "SelfEffectsCondition": "Self-Effects Apply On",
+        "SelfEffectsConditionHint": "When should self-effects be applied to the card owner?",
+        "SelfEffectsThreshold": "Self-Effects Threshold",
+        "SelfEffectsThresholdHint": "The roll value required to trigger self-effects (for rollValue condition)",
+        "SelfEffectsApplicationLimit": "Self-Effects Application Limit",
+        "SelfEffectsApplicationLimitHelp": "Maximum number of times self-effects can be applied per action card execution (0 = unlimited)",
+        "SelfEffectsApplicationLimitHint": "Maximum number of times self-effects can be applied (0 = unlimited)",
+        "SelfEffectsNotes": "Self-effects can be applied to the card owner based on success conditions. Effects can include status, gear, or features.",
+        "RollValue": "Roll Value",
+        "RollValueHint": "Activate when roll total is at or above threshold value",
+        "RollUnderValue": "Roll Under Value",
+        "RollUnderValueHint": "Activate when roll total is below threshold value",
+        "RollEven": "Roll Even",
+        "RollEvenHint": "Activate when roll total is an even number",
+        "RollOdd": "Roll Odd",
+        "RollOddHint": "Activate when roll total is an odd number",
+        "RollOnValue": "Roll Exact Value",
+        "RollOnValueHint": "Activate only when roll equals exact threshold value (rare condition)",
+        "ZeroSuccesses": "Zero Successes",
+        "ZeroSuccessesHint": "Activate only when both AC checks fail",
+        "CriticalSuccess": "Critical Hit",
+        "CriticalSuccessHint": "Activate on a critical hit (based on die result, not total)",
+        "CriticalFailure": "Critical Miss",
+        "CriticalFailureHint": "Activate on a critical miss (based on die result, not total)",
+        "Always": "Always",
+        "AlwaysHint": "Always activate this effect"
       }
     }
   }

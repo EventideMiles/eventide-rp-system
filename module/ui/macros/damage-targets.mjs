@@ -259,22 +259,38 @@ export class DamageTargets extends EventideSheetHelpers {
     ) {
       await Promise.all(
         this.selectedArray.map((token) => {
-          damageOptions.formula = DamageProcessor.applyVulnerabilityModifier(
-            originalFormula,
-            damageOptions.type,
-            token.actor,
-          );
+          // Apply healing increase for heal type, vulnerability for damage
+          if (damageOptions.type === "heal") {
+            damageOptions.formula = DamageProcessor.applyHealingIncreaseModifierToFormula(
+              originalFormula,
+              token.actor,
+            );
+          } else {
+            damageOptions.formula = DamageProcessor.applyVulnerabilityModifier(
+              originalFormula,
+              damageOptions.type,
+              token.actor,
+            );
+          }
           token.actor.damageResolve(damageOptions);
         }),
       );
     } else {
       await Promise.all(
         this.targetArray.map((token) => {
-          damageOptions.formula = DamageProcessor.applyVulnerabilityModifier(
-            originalFormula,
-            damageOptions.type,
-            token.actor,
-          );
+          // Apply healing increase for heal type, vulnerability for damage
+          if (damageOptions.type === "heal") {
+            damageOptions.formula = DamageProcessor.applyHealingIncreaseModifierToFormula(
+              originalFormula,
+              token.actor,
+            );
+          } else {
+            damageOptions.formula = DamageProcessor.applyVulnerabilityModifier(
+              originalFormula,
+              damageOptions.type,
+              token.actor,
+            );
+          }
           token.actor.damageResolve(damageOptions);
         }),
       );
