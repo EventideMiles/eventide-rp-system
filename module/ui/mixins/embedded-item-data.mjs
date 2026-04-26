@@ -26,6 +26,9 @@ export const EmbeddedItemDataMixin = (BaseClass) =>
       // Handle transformation items (embedded combat powers)
       if (this.parentItem.type === "transformation") {
         await this._saveTransformationPowerContent(target, content);
+      } else if (this.isSelfEffect) {
+        // Handle action card self-effects
+        await this._saveSelfEffectContent(target, content);
       } else if (this.isEffect) {
         // Handle action card embedded effects
         await this._saveActionCardEffectContent(target, content);
@@ -416,6 +419,9 @@ export const EmbeddedItemDataMixin = (BaseClass) =>
       // Handle transformation items (embedded combat powers)
       if (this.parentItem.type === "transformation") {
         await this._submitTransformationPowerForm(formData);
+      } else if (this.isSelfEffect) {
+        // Handle action card self-effects
+        await this._submitSelfEffectForm(formData);
       } else if (this.isEffect) {
         // Handle action card embedded effects
         await this._submitActionCardEffectForm(formData);
@@ -668,6 +674,11 @@ export const EmbeddedItemDataMixin = (BaseClass) =>
           event.target.value,
           firstEffect,
         );
+      } else if (this.isSelfEffect) {
+        await this._updateSelfEffectIconTint(
+          event.target.value,
+          firstEffect,
+        );
       } else if (this.isEffect) {
         await this._updateActionCardEffectIconTint(
           event.target.value,
@@ -864,6 +875,148 @@ export const EmbeddedItemDataMixin = (BaseClass) =>
         ui.notifications.error(
           game.i18n.localize(
             "EVENTIDE_RP_SYSTEM.Errors.SaveItemIconTintFailed",
+          ),
+        );
+      }
+    }
+
+    /**
+     * Save content for action card self-effects
+     * @param {string} target - The data path to update
+     * @param {string} content - The new content
+     * @private
+     */
+    async _saveSelfEffectContent(target, content) {
+      const effectIndex =
+        this.parentItem.system.embeddedSelfEffects?.findIndex(
+          (s) => s._id === this.originalItemId,
+        );
+      if (effectIndex === -1 || effectIndex === undefined) return;
+
+      const selfEffects = foundry.utils.deepClone(
+        this.parentItem.system.embeddedSelfEffects,
+      );
+      const selfEffectData = selfEffects[effectIndex];
+      foundry.utils.setProperty(selfEffectData, target, content);
+
+      try {
+        this.document.updateSource(selfEffectData);
+
+        await this.parentItem.update(
+          {
+            "system.embeddedSelfEffects": selfEffects,
+          },
+          { fromEmbeddedItem: true },
+        );
+
+        ui.notifications.info(
+          game.i18n.localize("EVENTIDE_RP_SYSTEM.Info.EffectDescriptionSaved"),
+        );
+      } catch (error) {
+        Logger.error(
+          "EmbeddedItemDataMixin | Failed to save self-effect description",
+          { error, selfEffects, selfEffectData },
+          "EMBEDDED_DATA",
+        );
+        ui.notifications.error(
+          "Failed to save self-effect. See console for details.",
+        );
+      }
+    }
+
+    /**
+     * Submit form for action card self-effects
+     * @param {object} formData - The form data
+     * @private
+     */
+    async _submitSelfEffectForm(formData) {
+      const effectIndex =
+        this.parentItem.system.embeddedSelfEffects?.findIndex(
+          (s) => s._id === this.originalItemId,
+        );
+      if (effectIndex === -1 || effectIndex === undefined) {
+        Logger.methodExit(
+          "EmbeddedItemDataMixin",
+          "_submitSelfEffectForm",
+          {
+            reason: "Self-effect not found",
+          },
+        );
+        return;
+      }
+
+      const selfEffects = foundry.utils.deepClone(
+        this.parentItem.system.embeddedSelfEffects,
+      );
+      const selfEffectData = selfEffects[effectIndex];
+      foundry.utils.mergeObject(selfEffectData, formData);
+
+      try {
+        this.document.updateSource(selfEffectData);
+
+        await this.parentItem.update(
+          {
+            "system.embeddedSelfEffects": selfEffects,
+          },
+          { fromEmbeddedItem: true },
+        );
+        this.render();
+      } catch (error) {
+        Logger.error(
+          "EmbeddedItemDataMixin | Failed to save self-effect form data",
+          { error, selfEffects, selfEffectData, formData },
+          "EMBEDDED_DATA",
+        );
+        ui.notifications.error(
+          game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.SaveItemFailed"),
+        );
+        throw error;
+      }
+    }
+
+    /**
+     * Update icon tint for self-effects
+     * @param {string} tintValue - The new tint value
+     * @param {ActiveEffect} firstEffect - The first effect
+     * @private
+     */
+    async _updateSelfEffectIconTint(tintValue, firstEffect) {
+      const effectIndex =
+        this.parentItem.system.embeddedSelfEffects?.findIndex(
+          (s) => s._id === this.originalItemId,
+        );
+      if (effectIndex < 0 || effectIndex === undefined) return;
+
+      const selfEffects = foundry.utils.deepClone(
+        this.parentItem.system.embeddedSelfEffects,
+      );
+      const selfEffectData = selfEffects[effectIndex];
+
+      if (!selfEffectData.effects) selfEffectData.effects = [];
+      const activeEffectIndex = selfEffectData.effects.findIndex(
+        (e) => e._id === firstEffect.id,
+      );
+      if (activeEffectIndex >= 0) {
+        selfEffectData.effects[activeEffectIndex].tint = tintValue;
+      }
+
+      try {
+        this.document.updateSource(selfEffectData);
+        await this.parentItem.update(
+          {
+            "system.embeddedSelfEffects": selfEffects,
+          },
+          { fromEmbeddedItem: true },
+        );
+      } catch (error) {
+        Logger.error(
+          "EmbeddedItemDataMixin | Failed to save self-effect icon tint",
+          { error, selfEffects, selfEffectData },
+          "EMBEDDED_DATA",
+        );
+        ui.notifications.error(
+          game.i18n.localize(
+            "EVENTIDE_RP_SYSTEM.Errors.SaveEffectIconTintFailed",
           ),
         );
       }

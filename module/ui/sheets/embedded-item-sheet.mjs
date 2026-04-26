@@ -21,8 +21,9 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
    * @param {Item} parentItem          The parent item document (action card or transformation).
    * @param {object} [options={}]      Additional sheet options.
    * @param {boolean} [isEffect=false] Whether this is an embedded effect (vs main embedded item).
+   * @param {boolean} [isSelfEffect=false] Whether this is a self-effect (saves to embeddedSelfEffects).
    */
-  constructor(itemData, parentItem, options = {}, isEffect = false) {
+  constructor(itemData, parentItem, options = {}, isEffect = false, isSelfEffect = false) {
     // Create the temporary item using static method to avoid 'this' before super()
     const tempItem = EmbeddedItemSheet._createTempItem(
       itemData,
@@ -43,6 +44,7 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
     this.originalItemId = itemData._id;
     this.parentItem = parentItem;
     this.isEffect = isEffect;
+    this.isSelfEffect = isSelfEffect;
     this.isStatusEffect = itemData.type === "status";
   }
 
@@ -368,6 +370,7 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
         context.embeddedEffects = this.item.getEmbeddedEffects();
         context.embeddedTransformations =
           await this.item.getEmbeddedTransformations();
+        context.embeddedSelfEffects = this.item.getEmbeddedSelfEffects();
         break;
       case "description":
         context.tab = context.tabs[partId];
@@ -538,6 +541,49 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
             );
             ui.notifications.error(
               "Failed to save Combat Power. See console for details.",
+            );
+          }
+        } else if (sheet.isSelfEffect) {
+          // Handle action card self-effects
+          const effectIndex =
+            sheet.parentItem.system.embeddedSelfEffects?.findIndex(
+              (s) => s._id === sheet.originalItemId,
+            );
+          if (effectIndex === -1 || effectIndex === undefined) return;
+
+          const selfEffects = foundry.utils.deepClone(
+            sheet.parentItem.system.embeddedSelfEffects,
+          );
+          const selfEffectData = selfEffects[effectIndex];
+          foundry.utils.setProperty(selfEffectData, attr, path);
+
+          // Issue #127: Sync active effect icons when item image is updated
+          if (attr === "img" && selfEffectData.effects && Array.isArray(selfEffectData.effects)) {
+            for (const activeEffect of selfEffectData.effects) {
+              activeEffect.icon = path;
+              activeEffect.img = path;
+            }
+          }
+
+          try {
+            await sheet.parentItem.update(
+              {
+                "system.embeddedSelfEffects": selfEffects,
+              },
+              { fromEmbeddedItem: true },
+            );
+            sheet.document.updateSource(selfEffectData);
+            sheet.render();
+          } catch (error) {
+            Logger.error(
+              "EmbeddedItemSheet | Failed to save self-effect image",
+              { error, selfEffects, selfEffectData },
+              "EMBEDDED_ITEM_SHEET",
+            );
+            ui.notifications.error(
+              game.i18n.localize(
+                "EVENTIDE_RP_SYSTEM.Errors.SaveEffectImageFailed",
+              ),
             );
           }
         } else if (sheet.isEffect) {
@@ -852,6 +898,66 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
         );
         ui.notifications.error(
           "Failed to save Combat Power. See console for details.",
+        );
+      }
+    } else if (this.isSelfEffect) {
+      const effectIndex =
+        this.parentItem.system.embeddedSelfEffects?.findIndex(
+          (s) => s._id === this.originalItemId,
+        );
+
+      if (effectIndex === -1 || effectIndex === undefined) {
+        Logger.error(
+          "EmbeddedItemSheet | Self-effect not found in action card",
+          null,
+          "EMBEDDED_ITEM_SHEET",
+        );
+        return;
+      }
+
+      const selfEffects = foundry.utils.deepClone(
+        this.parentItem.system.embeddedSelfEffects,
+      );
+      const selfEffectData = selfEffects[effectIndex];
+
+      // Ensure effects array exists
+      if (!selfEffectData.effects) selfEffectData.effects = [];
+
+      // Find or create the active effect in the stored data
+      let activeEffectIndex = selfEffectData.effects.findIndex(
+        (e) => e._id === firstEffect.id,
+      );
+
+      if (activeEffectIndex >= 0) {
+        selfEffectData.effects[activeEffectIndex].showIcon = showIcon;
+      } else {
+        const newEffect = firstEffect.toObject();
+        newEffect.showIcon = showIcon;
+        selfEffectData.effects.push(newEffect);
+        activeEffectIndex = selfEffectData.effects.length - 1;
+      }
+
+      try {
+        firstEffect.updateSource({ showIcon });
+
+        this.parentItem.update(
+          {
+            "system.embeddedSelfEffects": selfEffects,
+          },
+          { fromEmbeddedItem: true },
+        );
+
+        this.render();
+      } catch (error) {
+        Logger.error(
+          "EmbeddedItemSheet | Failed to toggle self-effect display",
+          { error, selfEffects, selfEffectData },
+          "EMBEDDED_ITEM_SHEET",
+        );
+        ui.notifications.error(
+          game.i18n.localize(
+            "EVENTIDE_RP_SYSTEM.Errors.ToggleEffectDisplayFailed",
+          ),
         );
       }
     } else if (this.isEffect) {

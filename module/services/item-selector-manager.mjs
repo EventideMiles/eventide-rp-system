@@ -74,6 +74,13 @@ export class ItemSelectorManager {
       selectorType: "action-cards",
       itemTypeFilter: "transformation",
     },
+    "self-effects": {
+      itemTypes: () => ItemSourceCollector.getEffectItemTypes(),
+      handlerName: "_onSelfEffectSelected",
+      placeholderKey:
+        "EVENTIDE_RP_SYSTEM.Forms.SelfEffectsSelector.Placeholder",
+      selectorType: "self-effects",
+    },
   };
 
   /**

@@ -279,6 +279,18 @@ export const ItemSheetActionsMixin = (BaseClass) =>
     }
 
     /**
+     * Handle creating a new self-effect as an embedded self-effect in an action card
+     * Delegates to EmbeddedItemManager service
+     * @param {Event} _event - The click event
+     * @param {HTMLElement} _target - The target element
+     * @protected
+     */
+    static async _createNewSelfEffect(_event, _target) {
+      await EmbeddedItemManager.createNewSelfEffect(this.item);
+      this.render();
+    }
+
+    /**
      * Handle editing an embedded item from an action card
      * Delegates to EmbeddedItemManager service
      * @param {Event} _event - The click event
@@ -301,6 +313,17 @@ export const ItemSheetActionsMixin = (BaseClass) =>
     }
 
     /**
+     * Handle editing an embedded self-effect from an action card
+     * Delegates to EmbeddedItemManager service
+     * @param {Event} _event - The click event
+     * @param {HTMLElement} target - The target element
+     * @protected
+     */
+    static async _editEmbeddedSelfEffect(_event, target) {
+      await EmbeddedItemManager.editEmbeddedSelfEffect(this.item, target?.dataset?.effectId);
+    }
+
+    /**
      * Handle removing an embedded effect from an action card
      * Delegates to EmbeddedItemManager service
      * @param {Event} _event - The click event
@@ -309,6 +332,18 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      */
     static async _removeEmbeddedEffect(_event, target) {
       await EmbeddedItemManager.removeEmbeddedEffect(this.item, target?.dataset?.effectId);
+      this.render();
+    }
+
+    /**
+     * Handle removing an embedded self-effect from an action card
+     * Delegates to EmbeddedItemManager service
+     * @param {Event} _event - The click event
+     * @param {HTMLElement} target - The target element
+     * @protected
+     */
+    static async _removeEmbeddedSelfEffect(_event, target) {
+      await EmbeddedItemManager.removeEmbeddedSelfEffect(this.item, target?.dataset?.effectId);
       this.render();
     }
 
