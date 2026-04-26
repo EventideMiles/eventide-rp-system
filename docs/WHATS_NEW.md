@@ -2,6 +2,19 @@
 
 ## Latest Release
 
+**[v14.2.0](release-notes/v14.2.0.md)** - Healing Increase with Multiplicative Support _(April 2026)_
+
+**Key Highlights:**
+
+- **Healing Increase Hidden Ability** — new `healIncrease` hidden ability modifies healing received by characters
+- **Additive & Multiplicative Support** — supports all multiplicative modes (Multiply, Divide, Multiply Buff/Debuff) for healing scaling
+- **Minimum Healing Constraint** — healing cannot turn into damage; minimum of 1 healing guaranteed
+- **Overhealing Display** — chat cards now show overhealing amount when healing exceeds max resolve
+- **Formula Construction** — proper order of operations for additive and multiplicative healing effects
+- **Consistent Formula Display** — fixed bug where roll terms weren't showing in nested math formulas
+
+## Recent Major Releases
+
 **[v14.1.0](release-notes/v14.1.0.md)** - Multiply & Divide Character Effect Modes _(April 2026)_
 
 **Key Highlights:**
@@ -25,8 +38,6 @@
 - **Damage Condition Default** — changed to `oneSuccess` per user feedback for more consistent behavior
 - **Code Consolidation & Cleanup** — theme management mixin, shared logic consolidation, unused code removal
 - **Development Environment** — JSConfig updated to `bundler` moduleResolution, testing disabled pending v14 test utility compatibility
-
-## Recent Major Releases
 
 **[v13.22.0](release-notes/v13.22.0.md)** - Formula Validation & Feature System Enhancements _(March 2026)_
 
@@ -224,8 +235,9 @@ Enhanced character customization through circumstantial bonuses and feature-base
 
 | Version     | Release Date  | Focus                                                                                  |
 | ----------- | ------------- | -------------------------------------------------------------------------------------- |
-| **v14.1.0** | April 2026    | Multiply & Divide Character Effect Modes                                               |
-| **v14.0.0** | April 2026    | Foundry VTT v14 Compatibility & ActiveEffect Schema Migration                          |
+| **v14.2.0** | April 2026    | Healing Increase with Multiplicative Support                                           |
+| v14.1.0     | April 2026    | Multiply & Divide Character Effect Modes                                               |
+| v14.0.0     | April 2026    | Foundry VTT v14 Compatibility & ActiveEffect Schema Migration                          |
 | v13.22.0    | March 2026    | Formula Validation & Feature System Enhancements                                       |
 | v13.21.8    | February 2026 | Self-Target Abilities & Display Fixes                                                  |
 | v13.21.5    | February 2026 | Security Hardening & GM Control Enhancements                                           |
@@ -295,4 +307,4 @@ We encourage users to:
 
 ---
 
-**Current Version**: v14.1.0 | **Foundry VTT Compatibility**: v14+ | **Last Updated**: April 2026
+**Current Version**: v14.2.0 | **Foundry VTT Compatibility**: v14+ | **Last Updated**: April 2026
