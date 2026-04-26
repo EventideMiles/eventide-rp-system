@@ -130,24 +130,24 @@ class ERPSRollHandler {
     });
   }
 
-  /**
-   * Process a roll and generate appropriate chat messages
-   *
-   * @async
-   * @param {Object} options - Roll configuration options
-   * @param {string} [options.formula="1"] - The dice formula to roll
-   * @param {string} [options.label="unknown roll"] - Display name for the roll
-   * @param {string} [options.type="unknown"] - Type of roll (ability code, "damage", etc.)
-   * @param {string} [options.className=""] - Additional CSS class for styling
-   * @param {boolean} [options.critAllowed=true] - Whether critical hits/misses are possible
-   * @param {boolean} [options.acCheck=true] - Whether to check against target AC values
-   * @param {string} [options.description=""] - Optional description text
-   * @param {boolean} [options.toMessage=true] - Whether to create a chat message
-   * @param {string} [options.rollMode=null] - Roll visibility mode
-   * @param {string} [options.soundKey=null] - Optional sound key
-   * @param {Actor} actor - Actor performing the roll
-   * @returns {Promise<Roll>} The evaluated roll
-   */
+   /**
+    * Process a roll and generate appropriate chat messages
+    *
+    * @async
+    * @param {Object} options - Roll configuration options
+    * @param {string} [options.formula="1"] - The dice formula to roll
+    * @param {string} [options.label="unknown roll"] - Display name for the roll
+    * @param {string} [options.type="unknown"] - Type of roll (ability code, "damage", etc.)
+    * @param {string} [options.className=""] - Additional CSS class for styling
+    * @param {boolean} [options.critAllowed=true] - Whether critical hits/misses are possible
+    * @param {boolean} [options.acCheck=true] - Whether to check against target AC values
+    * @param {string} [options.description=""] - Optional description text
+    * @param {boolean} [options.toMessage=true] - Whether to create a chat message
+    * @param {string} [options.rollMode=null] - Roll visibility mode
+    * @param {string} [options.soundKey=null] - Optional sound key
+    * @param {Actor} actor - Actor performing the roll
+    * @returns {Promise<Roll>} The evaluated roll
+    */
   async handleRoll(
     {
       formula = this.defaults.formula,
@@ -183,6 +183,26 @@ class ERPSRollHandler {
       critAllowed,
     );
 
+    // Apply additional roll data (e.g., overhealing) before message creation
+    if (type === "heal") {
+      // use actor.system.resolve.value and actor.system.resolve.override 
+      // (if set) or actor.system.resolve.max to determine if the result overheals
+      const healRoom = actor.system.resolve.override ? 
+        actor.system.resolve.override - actor.system.resolve.value : 
+        actor.system.resolve.max - actor.system.resolve.value;
+
+      if (result.total > healRoom) {
+        result.overhealing = result.total - healRoom;
+        Logger.debug(
+          `Overhealing calculated: ${result.overhealing} (roll total: ${result.total}, heal room: ${healRoom})`,
+          { overhealingValue: result.overhealing, rollTotal: result.total, healRoom },
+           "ROLL_DICE",
+         );
+      } else {
+        result.overhealing = null;
+      }
+    }
+
     // Prepare template data
     const templateData = this._prepareRollTemplateData({
       actor,
@@ -200,6 +220,7 @@ class ERPSRollHandler {
       img,
       bgColor,
       textColor,
+      overhealing: result.overhealing || null,
     });
 
     // Render the template and create chat message if requested
@@ -308,6 +329,7 @@ class ERPSRollHandler {
     img,
     bgColor,
     textColor,
+    overhealing = null,
   }) {
     // Get styling for this roll type
     const pickedType = type.toLowerCase();
@@ -342,6 +364,10 @@ class ERPSRollHandler {
       item: img ? { img, name: label } : null,
       bgColor,
       textColor,
+      // GM visibility for conditional displays
+      isGM: game.user.isGM,
+      // Overhealing for healing rolls (if applicable)
+      overhealing,
     };
   }
 
