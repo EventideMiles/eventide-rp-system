@@ -37,10 +37,13 @@ import { TargetResolver } from "./target-resolver.mjs";
  * @property {string} [attackChain.damageFormula] - Damage formula if applicable
  * @property {string} [attackChain.damageType] - Type of damage
  * @property {Array} embeddedTransformations - Embedded transformation data
+ * @property {Array} embeddedSelfEffects - Embedded self-effect data
+ * @property {Object} selfEffectsConfig - Self-effects configuration
  * @property {LockedTargetData[]} lockedTargets - Locked targets from popup
  * @property {Function} processDamage - Function to process damage results
  * @property {Function} processStatus - Function to process status results
  * @property {Function} processTransformation - Function to process transformations
+ * @property {Function} processSelfEffect - Function to process self-effects
  * @property {Function} waitForDelay - Function to wait for execution delay
  * @property {boolean} disableDelays - Whether to disable delays
  * @property {boolean} shouldApplyDamage - Whether to apply damage
@@ -81,10 +84,13 @@ export class AttackChainExecutor {
       embeddedItem,
       attackChain,
       embeddedTransformations,
+      embeddedSelfEffects,
+      selfEffectsConfig,
       lockedTargets,
       processDamage,
       processStatus,
       processTransformation,
+      processSelfEffect,
       waitForDelay,
       disableDelays,
       shouldApplyDamage,
@@ -102,7 +108,7 @@ export class AttackChainExecutor {
       const targetArray = resolvedTargets.map((r) => r.token).filter(Boolean);
 
       if (targetArray.length === 0) {
-        Logger.warn(
+        await Logger.warn(
           "No valid targets found for attack chain",
           null,
           "ACTION_CARD",
@@ -156,6 +162,22 @@ export class AttackChainExecutor {
         );
       }
 
+      // Process self-effects after transformations (apply to card owner)
+      let selfEffectResults = [];
+      if (
+        embeddedSelfEffects &&
+        embeddedSelfEffects.length > 0 &&
+        processSelfEffect
+      ) {
+        selfEffectResults = await processSelfEffect(
+          results,
+          rollResult,
+          disableDelays,
+          isFinalRepetition,
+          selfEffectsConfig,
+        );
+      }
+
       return {
         success: true,
         mode: "attackChain",
@@ -165,6 +187,7 @@ export class AttackChainExecutor {
         damageResults,
         statusResults,
         transformationResults,
+        selfEffectResults,
       };
     } catch (error) {
       Logger.error(

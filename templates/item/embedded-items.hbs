@@ -261,5 +261,94 @@
         <p>{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.TransformationNotes"}}</p>
       </div>
     </div>
+
+    <!-- Self-Effects Section -->
+    <div class="erps-items-panel">
+      <div class="erps-items-panel__section-header">
+        {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.SelfEffects"}}
+      </div>
+
+      {{#if embeddedSelfEffects.length}}
+        <ol class="erps-items-panel__list erps-items-panel__list--three-column">
+          <li class="erps-items-panel__item erps-items-panel__item--header">
+            <div class="erps-items-panel__cell erps-items-panel__cell--image">{{localize 'Image'}}</div>
+            <div class='erps-items-panel__cell erps-items-panel__cell--name'>{{localize 'Name'}}</div>
+            <div class='erps-items-panel__cell erps-items-panel__cell--controls'>{{localize 'Controls'}}</div>
+          </li>
+          {{#each embeddedSelfEffects as |effect|}}
+            <li
+              class="erps-items-panel__item erps-items-panel__item--draggable"
+              data-item-id="{{effect.id}}"
+              data-embedded-type="self-effect"
+              data-drag="true"
+              data-document-class="Item"
+              title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.DragToExtract'}}"
+            >
+              <div class="erps-items-panel__cell erps-items-panel__cell--image">
+                <img
+                  class="erps-items-panel__image"
+                  src="{{effect.img}}"
+                  title="{{effect.name}}"
+                  width="24"
+                  height="24"
+                />
+                <i class="fas fa-arrows-alt erps-items-panel__drag-indicator" title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.DragToExtract'}}"></i>
+              </div>
+              <div class="erps-items-panel__cell erps-items-panel__cell--name">
+                <span class="erps-items-panel__name">{{effect.name}}</span>
+                <span class="erps-items-panel__type">({{effect.type}})</span>
+              </div>
+              <div class="erps-items-panel__cell erps-items-panel__cell--controls">
+                {{#if @root.editable}}
+                  <a
+                    class="erps-items-panel__control erps-items-panel__control--edit"
+                    data-action="editEmbeddedSelfEffect"
+                    data-effect-id="{{effect.originalId}}"
+                    title="{{localize 'EVENTIDE_RP_SYSTEM.UI.Edit'}}"
+                  >
+                    <i class="fas fa-edit"></i>
+                  </a>
+                  <a
+                    class="erps-items-panel__control erps-items-panel__control--delete"
+                    data-action="removeEmbeddedSelfEffect"
+                    data-effect-id="{{effect.originalId}}"
+                    title="{{localize 'EVENTIDE_RP_SYSTEM.UI.Remove'}}"
+                  >
+                    <i class="fas fa-trash"></i>
+                  </a>
+                {{/if}}
+              </div>
+            </li>
+          {{/each}}
+        </ol>
+      {{else}}
+        <div class="erps-items-panel__empty">
+          <p>{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.NoSelfEffects"}}</p>
+          {{#if @root.editable}}
+            <button type="button" class="erps-button erps-button--primary" data-action="createNewSelfEffect">
+              <i class="fas fa-plus"></i> {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.CreateNewSelfEffect"}}
+            </button>
+          {{/if}}
+        </div>
+      {{/if}}
+
+      {{#if @root.editable}}
+        <!-- Item Selector for Self-Effects -->
+        <div class="erps-item-selector-container" data-selector="self-effects">
+          {{> "components/item-selector-combo-box"
+              selectorType="self-effects"
+              placeholder=(localize "EVENTIDE_RP_SYSTEM.Forms.SelfEffectsSelector.Placeholder")
+              ariaLabel=(localize "EVENTIDE_RP_SYSTEM.Forms.SelfEffectsSelector.AriaLabel")}}
+        </div>
+
+        <div class="erps-items-panel__drop-zone" data-drop-zone="self-effect">
+          <p>{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.DropSelfEffectHere"}}</p>
+        </div>
+      {{/if}}
+
+      <div class="erps-items-panel__notes">
+        <p>{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.SelfEffectsNotes"}}</p>
+      </div>
+    </div>
   </div>
 </section>

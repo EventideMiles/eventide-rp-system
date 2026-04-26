@@ -91,6 +91,9 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
         removeEmbeddedEffect: this._removeEmbeddedEffect,
         editEmbeddedTransformation: this._editEmbeddedTransformation,
         removeEmbeddedTransformation: this._removeEmbeddedTransformation,
+        createNewSelfEffect: this._createNewSelfEffect,
+        editEmbeddedSelfEffect: this._editEmbeddedSelfEffect,
+        removeEmbeddedSelfEffect: this._removeEmbeddedSelfEffect,
       },
       position: {
         width: 840,
@@ -699,7 +702,7 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
       const selectorTypes = ['action-item', 'effects'];
       
       if (this.item.type === "actionCard") {
-        selectorTypes.push('transformations');
+        selectorTypes.push('transformations', 'self-effects');
       }
       
       if (this.item.type === "transformation") {
@@ -870,6 +873,35 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
       ui.notifications.error(
         game.i18n.localize(
           "EVENTIDE_RP_SYSTEM.Errors.FailedToAddTransformation",
+        ),
+      );
+    }
+  }
+
+  /**
+   * Handle self-effect selection from the self-effects selector
+   * @param {Item} droppedItem - The self-effect item that was selected
+   * @returns {Promise<void>}
+   * @protected
+   */
+  async _onSelfEffectSelected(droppedItem) {
+    try {
+      // Add the embedded self-effect (same as drag-and-drop)
+      await this.item.addEmbeddedSelfEffect(droppedItem);
+
+      // Re-render the sheet to show the new self-effect
+      this.render();
+
+      ui.notifications.info(
+        game.i18n.format("EVENTIDE_RP_SYSTEM.Forms.SelfEffectsSelector.ItemAdded", {
+          itemName: droppedItem.name,
+        }),
+      );
+    } catch (error) {
+      Logger.error("Failed to add self-effect", error, "ITEM_SHEET");
+      ui.notifications.error(
+        game.i18n.localize(
+          "EVENTIDE_RP_SYSTEM.Errors.FailedToAddSelfEffectToActionCard",
         ),
       );
     }

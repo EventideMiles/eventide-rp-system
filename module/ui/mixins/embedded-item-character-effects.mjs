@@ -69,6 +69,8 @@ export const EmbeddedItemCharacterEffectsMixin = (BaseClass) =>
 
       if (this.parentItem.type === "transformation") {
         await this._updateTransformationCharacterEffects(effectData, firstEffect);
+      } else if (this.isSelfEffect) {
+        await this._updateSelfEffectCharacterEffects(effectData, firstEffect);
       } else if (this.isEffect) {
         await this._updateActionCardEffectCharacterEffects(
           effectData,
@@ -191,6 +193,67 @@ export const EmbeddedItemCharacterEffectsMixin = (BaseClass) =>
         Logger.error(
           "EmbeddedItemCharacterEffectsMixin | Failed to save effect character effects",
           { error, statusEffects, statusData },
+          "EMBEDDED_CHARACTER_EFFECTS",
+        );
+        ui.notifications.error(
+          game.i18n.localize(
+            "EVENTIDE_RP_SYSTEM.Errors.SaveEffectCharacterEffectsFailed",
+          ),
+        );
+      }
+    }
+
+    /**
+     * Update character effects for self-effects
+     * Self-effects are stored in embeddedSelfEffects on the parent action card.
+     * @param {object} effectData - The effect data to update
+     * @param {ActiveEffect} firstEffect - The first effect
+     * @private
+     */
+    async _updateSelfEffectCharacterEffects(effectData, firstEffect) {
+      const effectIndex =
+        this.parentItem.system.embeddedSelfEffects?.findIndex(
+          (s) => s._id === this.originalItemId,
+        );
+      if (effectIndex === -1 || effectIndex === undefined) return;
+
+      const selfEffects = foundry.utils.deepClone(
+        this.parentItem.system.embeddedSelfEffects,
+      );
+      const selfEffectData = selfEffects[effectIndex];
+
+      // Update the effects array in the self-effect data
+      if (!selfEffectData.effects) selfEffectData.effects = [];
+      const activeEffectIndex = selfEffectData.effects.findIndex(
+        (e) => e._id === firstEffect.id,
+      );
+      if (activeEffectIndex >= 0) {
+        selfEffectData.effects[activeEffectIndex] = foundry.utils.mergeObject(
+          selfEffectData.effects[activeEffectIndex],
+          effectData,
+        );
+      } else {
+        selfEffectData.effects.push(
+          foundry.utils.mergeObject(firstEffect.toObject(), effectData),
+        );
+      }
+
+      try {
+        // Update the temporary document's source data first
+        this.document.updateSource(selfEffectData);
+
+        await this.parentItem.update(
+          {
+            "system.embeddedSelfEffects": selfEffects,
+          },
+          { fromEmbeddedItem: true },
+        );
+
+        this.render();
+      } catch (error) {
+        Logger.error(
+          "EmbeddedItemCharacterEffectsMixin | Failed to save self-effect character effects",
+          { error, selfEffects, selfEffectData },
           "EMBEDDED_CHARACTER_EFFECTS",
         );
         ui.notifications.error(
@@ -342,6 +405,8 @@ export const EmbeddedItemCharacterEffectsMixin = (BaseClass) =>
       // Update based on parent type
       if (this.parentItem.type === "transformation") {
         await this._updateTransformationEffectDisplay(effectData, firstEffect);
+      } else if (this.isSelfEffect) {
+        await this._updateSelfEffectEffectDisplay(effectData, firstEffect);
       } else if (this.isEffect) {
         await this._updateActionCardEffectDisplay(effectData, firstEffect);
       } else {
@@ -433,6 +498,50 @@ export const EmbeddedItemCharacterEffectsMixin = (BaseClass) =>
       await this.parentItem.update(
         {
           "system.embeddedStatusEffects": statusEffects,
+        },
+        { fromEmbeddedItem: true },
+      );
+      this.render();
+    }
+
+    /**
+     * Update effect display for self-effects
+     * @param {object} effectData - The effect data to update
+     * @param {ActiveEffect} firstEffect - The first effect
+     * @private
+     */
+    async _updateSelfEffectEffectDisplay(effectData, firstEffect) {
+      const effectIndex =
+        this.parentItem.system.embeddedSelfEffects?.findIndex(
+          (s) => s._id === this.originalItemId,
+        );
+      if (effectIndex === -1 || effectIndex === undefined) return;
+
+      const selfEffects = foundry.utils.deepClone(
+        this.parentItem.system.embeddedSelfEffects,
+      );
+      const selfEffectData = selfEffects[effectIndex];
+
+      // Update the effects array in the self-effect data
+      if (!selfEffectData.effects) selfEffectData.effects = [];
+      const activeEffectIndex = selfEffectData.effects.findIndex(
+        (e) => e._id === firstEffect.id,
+      );
+      if (activeEffectIndex >= 0) {
+        selfEffectData.effects[activeEffectIndex] = foundry.utils.mergeObject(
+          selfEffectData.effects[activeEffectIndex],
+          effectData,
+        );
+      } else {
+        selfEffectData.effects.push(
+          foundry.utils.mergeObject(firstEffect.toObject(), effectData),
+        );
+      }
+
+      this.document.updateSource(selfEffectData);
+      await this.parentItem.update(
+        {
+          "system.embeddedSelfEffects": selfEffects,
         },
         { fromEmbeddedItem: true },
       );

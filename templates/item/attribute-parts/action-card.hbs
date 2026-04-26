@@ -82,7 +82,10 @@
           </div>
         </label>
       </div>
+      </div>
     </div>
+
+
 
 
 
@@ -277,6 +280,74 @@
             {{/if}}
           </div>
         </div>
+
+
+            {{!-- Self-Effects Configuration --}}
+    <div class="erps-form__subsection">
+      <div class="erps-form__header erps-form__header--small">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Config.SelfEffectsHeader"}}</div>
+
+      <div class="grid grid-2col">
+        <div>
+          <label class="erps-input-label">
+            {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.SelfEffectsCondition"}}
+          </label>
+          <select class="erps-select" name="system.selfEffectsConfig.condition">
+            <option value="never" {{#if (eq system.selfEffectsConfig.condition "never")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.Never'}}">
+              {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Never"}}
+            </option>
+            <option value="oneSuccess" {{#if (eq system.selfEffectsConfig.condition "oneSuccess")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.OneSuccess'}}">
+              {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.OneSuccess"}}
+            </option>
+            <option value="twoSuccesses" {{#if (eq system.selfEffectsConfig.condition "twoSuccesses")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.TwoSuccesses'}}">
+              {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.TwoSuccesses"}}
+            </option>
+            <option value="rollValue" {{#if (eq system.selfEffectsConfig.condition "rollValue")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.Conditions.RollValueHint'}}">
+              {{localize "EVENTIDE_RP_SYSTEM.Item.Conditions.RollValue"}}
+            </option>
+            <option value="rollUnderValue" {{#if (eq system.selfEffectsConfig.condition "rollUnderValue")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.Conditions.RollUnderValueHint'}}">
+              {{localize "EVENTIDE_RP_SYSTEM.Item.Conditions.RollUnderValue"}}
+            </option>
+            <option value="rollEven" {{#if (eq system.selfEffectsConfig.condition "rollEven")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.Conditions.RollEvenHint'}}">
+              {{localize "EVENTIDE_RP_SYSTEM.Item.Conditions.RollEven"}}
+            </option>
+            <option value="rollOdd" {{#if (eq system.selfEffectsConfig.condition "rollOdd")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.Conditions.RollOddHint'}}">
+              {{localize "EVENTIDE_RP_SYSTEM.Item.Conditions.RollOdd"}}
+            </option>
+            <option value="rollOnValue" {{#if (eq system.selfEffectsConfig.condition "rollOnValue")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.Conditions.RollOnValueHint'}}">
+              {{localize "EVENTIDE_RP_SYSTEM.Item.Conditions.RollOnValue"}}
+            </option>
+            <option value="zeroSuccesses" {{#if (eq system.selfEffectsConfig.condition "zeroSuccesses")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.Conditions.ZeroSuccessesHint'}}">
+              {{localize "EVENTIDE_RP_SYSTEM.Item.Conditions.ZeroSuccesses"}}
+            </option>
+            <option value="always" {{#if (eq system.selfEffectsConfig.condition "always")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.Conditions.AlwaysHint'}}">
+              {{localize "EVENTIDE_RP_SYSTEM.Item.Conditions.Always"}}
+            </option>
+            <option value="criticalSuccess" {{#if (eq system.selfEffectsConfig.condition "criticalSuccess")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.Conditions.CriticalSuccessHint'}}">
+              {{localize "EVENTIDE_RP_SYSTEM.Item.Conditions.CriticalSuccess"}}
+            </option>
+            <option value="criticalFailure" {{#if (eq system.selfEffectsConfig.condition "criticalFailure")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.Conditions.CriticalFailureHint'}}">
+              {{localize "EVENTIDE_RP_SYSTEM.Item.Conditions.CriticalFailure"}}
+            </option>
+          </select>
+        </div>
+        {{#if (or (eq system.selfEffectsConfig.condition "rollValue") (eq system.selfEffectsConfig.condition "rollUnderValue") (eq system.selfEffectsConfig.condition "rollOnValue"))}}
+        <div>
+          <label class="erps-input-label">
+            {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.SelfEffectsThreshold"}}
+          </label>
+          <input
+            type="number"
+            class="erps-input"
+            name="system.selfEffectsConfig.threshold"
+            value="{{system.selfEffectsConfig.threshold}}"
+            min="1"
+            max="30"
+            placeholder="15"
+          />
+        </div>
+        {{/if}}
+      </div>
+    </div>
 
 
       </div>

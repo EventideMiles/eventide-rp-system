@@ -229,6 +229,64 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
     });
 
     /**
+     * Embedded effects that apply to card owner (self-targeting)
+     * Contains status/gear/feature items that apply based on self-effects condition
+     */
+    schema.embeddedSelfEffects = new fields.ArrayField(
+      new fields.ObjectField({
+        required: true,
+      }),
+      {
+        required: true,
+        initial: [],
+      },
+    );
+
+    /**
+     * Configuration for when to apply embedded self-effects
+     */
+    schema.selfEffectsConfig = new fields.SchemaField({
+      condition: new fields.StringField({
+        required: true,
+        initial: "oneSuccess",
+        choices: [
+          "never",
+          "oneSuccess",
+          "twoSuccesses",
+          "rollValue",
+          "rollUnderValue",
+          "rollEven",
+          "rollOdd",
+          "rollOnValue",
+          "zeroSuccesses",
+          "always",
+          "criticalSuccess",
+          "criticalFailure",
+        ],
+      }),
+      threshold: new fields.NumberField({
+        required: false,
+        initial: 15,
+        integer: true,
+        min: 1,
+      }),
+    });
+
+    /**
+     * Limit on how many times self-effects can apply per execution
+     * 0 = no limit (apply on every success)
+     * 1+ = apply self-effects up to this many times
+     * Mirrors statusApplicationLimit behavior
+     */
+    schema.selfEffectsApplicationLimit = new fields.NumberField({
+      required: true,
+      initial: 1,
+      min: 0,
+      integer: true,
+      nullable: false,
+    });
+
+    /**
      * Saved damage configuration (only used when mode is "savedDamage")
      */
     schema.savedDamage = new fields.SchemaField({
