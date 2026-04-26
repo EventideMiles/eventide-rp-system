@@ -66,6 +66,11 @@
       "Vuln": {
         "long": "Vulnerability",
         "abbr": "vuln"
+      },
+      "HealIncrease": {
+        "long": "Healing Increase",
+        "abbr": "heal+",
+        "desc": "Modifies healing received. Add mode adds a flat bonus, multiply/divide modes scale healing. Negative values cannot turn healing into damage (minimum 1 healing)."
       }
     },
     "RollTypes": {
@@ -1061,7 +1066,8 @@
         "Effect": "Effect",
         "OutOfStock": "Source was out of stock",
         "StatusIntensified": "Status intensified:",
-        "StatusApplied": "Status applied:"
+        "StatusApplied": "Status applied:",
+        "Overhealing": "Overhealing"
       },
       "PartialTransfer": "Partial transfer completed"
     },

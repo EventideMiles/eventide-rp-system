@@ -172,6 +172,8 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
       powerMult: createHiddenAbilitySchema(100, 100, 0),
       // Resolve percentage multiplier (100 = 100%, 400 = 400%, etc.)
       resolveMult: createHiddenAbilitySchema(100, 100, 0),
+      // Healing increase - modifies healing received (default 0 = no modification)
+      healIncrease: createHiddenAbilitySchema(0, 0, 0),
     });
 
     schema.statTotal = new fields.SchemaField({

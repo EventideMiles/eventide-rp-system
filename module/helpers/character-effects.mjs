@@ -44,6 +44,7 @@ const prepareCharacterEffects = async (effect) => {
     "vuln",
     "powerMult",
     "resolveMult",
+    "healIncrease",
   ];
   const overrideAbilities = ["powerOverride", "resolveOverride"];
   const allAbilities = [...abilities, ...hiddenAbilities, ...overrideAbilities];

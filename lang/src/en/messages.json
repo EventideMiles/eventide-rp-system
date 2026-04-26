@@ -32,8 +32,9 @@
         "Effect": "Effect",
         "OutOfStock": "Source was out of stock",
         "StatusIntensified": "Status intensified:",
-        "StatusApplied": "Status applied:"
-      }
+        "StatusApplied": "Status applied:",
+        "Overhealing": "Overhealing"
+       }
     },
     "MessageHeaders": {
       "Status": "Status Effect: {name}",
