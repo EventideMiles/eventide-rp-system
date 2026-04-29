@@ -8607,7 +8607,7 @@ body.erps-image-zoom-active {
   border: 2px solid var(--theme-secondary, var(--erps-sheet-secondary));
   border-radius: 10px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  overflow: hidden;
+  overflow: clip;
   font-family: var(--erps-ui-font, sans-serif);
 }
 .erps-form::before {
@@ -9214,7 +9214,7 @@ body.erps-image-zoom-active {
 .erps-callouts {
   position: sticky;
   top: 0;
-  z-index: 10;
+  z-index: 5;
   margin-bottom: 0.75rem;
   display: flex;
   flex-direction: column;
@@ -9443,6 +9443,8 @@ body.erps-image-zoom-active {
 .erps-form__footer .erps-button {
   min-width: 6rem;
   flex-shrink: 0;
+  position: relative;
+  z-index: 7;
 }
 .erps-form__footer .erps-button:focus {
   outline: 2px solid var(--theme-glow, var(--erps-sheet-glow));
@@ -9573,5 +9575,3 @@ body.erps-image-zoom-active {
     flex: 1;
   }
 }
-
-/*# sourceMappingURL=eventide-rp-system.css.map */

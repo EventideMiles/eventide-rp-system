@@ -28,7 +28,7 @@ $callout-icon-size: 1.25rem;
 $callout-icon-margin: tokens.$sheet-spacing-sm;
 
 // Positioning
-$callout-z-index: 10;
+$callout-z-index: 5; // Lower than footer (z-index: 10) to prevent overlap with buttons
 $callout-top-offset: 0;
 
 // Transitions
