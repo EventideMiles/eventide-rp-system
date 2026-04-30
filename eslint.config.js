@@ -21,6 +21,7 @@ export default [
         clearTimeout: "readonly",
         clearInterval: "readonly",
         CustomEvent: "readonly",
+        AbortController: "readonly",
 
         // Node.js globals
         process: "readonly",

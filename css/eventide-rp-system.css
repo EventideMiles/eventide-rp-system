@@ -8632,6 +8632,24 @@ body.erps-image-zoom-active {
   padding: 2rem;
   border-radius: 12px;
 }
+.erps-form [data-transformation-option]:focus-visible {
+  outline: 2px solid var(--theme-primary, #007bff);
+  outline-offset: 2px;
+  background-color: rgba(0, 123, 255, 0.15);
+}
+.erps-form .erps-form__status-effect-checkbox:focus-visible {
+  outline: 2px solid var(--theme-primary, #007bff);
+  outline-offset: 2px;
+}
+.erps-form .erps-button:focus-visible {
+  outline: 2px solid var(--theme-primary, #007bff);
+  outline-offset: 2px;
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
+}
+.erps-form [tabindex]:focus-visible {
+  outline: 2px solid var(--theme-primary, #007bff);
+  outline-offset: 2px;
+}
 
 .erps-form__content {
   flex: 1;

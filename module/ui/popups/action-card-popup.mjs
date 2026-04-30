@@ -77,7 +77,7 @@ export class ActionCardPopup extends ThemeManagedPopupMixin(EventidePopupHelpers
   }
 
   /**
-   * Initialize transformation selection styling and click handlers
+   * Initialize transformation selection styling and keyboard handlers
    * @private
    */
   _initializeTransformationSelection() {
@@ -101,25 +101,32 @@ export class ActionCardPopup extends ThemeManagedPopupMixin(EventidePopupHelpers
       // Add click handler
       row.addEventListener("click", (event) => {
         event.preventDefault();
+        this._selectTransformationRow(row, targetId, radio);
+      });
 
-        // Clear all selections for this target
-        const allRows = this.element.querySelectorAll(
-          `[data-transformation-option="${targetId}"]`,
-        );
-        allRows.forEach((r) => {
-          r.style.border = "2px solid transparent";
-          r.style.backgroundColor = "transparent";
-          const radioInput = this.element.querySelector(
-            `input[name="transformation-${targetId}"][value="${r.dataset.transformationValue}"]`,
-          );
-          if (radioInput) radioInput.checked = false;
-        });
+      // Add keyboard handlers for accessibility
+      row.addEventListener("keydown", (event) => {
+        // Enter or Space: Select this option
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          event.stopPropagation();
+          this._selectTransformationRow(row, targetId, radio);
+          return;
+        }
 
-        // Select this option
-        row.style.border = "2px solid #007bff";
-        row.style.backgroundColor = "rgba(0, 123, 255, 0.1)";
-        if (radio) {
-          radio.checked = true;
+        // Arrow keys: Navigate between transformation options
+        if (event.key === "ArrowDown" || event.key === "ArrowRight") {
+          event.preventDefault();
+          event.stopPropagation();
+          this._focusNextTransformationRow(row, targetId, 1);
+          return;
+        }
+
+        if (event.key === "ArrowUp" || event.key === "ArrowLeft") {
+          event.preventDefault();
+          event.stopPropagation();
+          this._focusNextTransformationRow(row, targetId, -1);
+          
         }
       });
 
@@ -136,6 +143,61 @@ export class ActionCardPopup extends ThemeManagedPopupMixin(EventidePopupHelpers
         }
       });
     });
+  }
+
+  /**
+   * Select a transformation row and update visual state
+   * @param {HTMLElement} row - The row element to select
+   * @param {string} targetId - The target ID for this transformation group
+   * @param {HTMLInputElement|null} radio - The associated radio input
+   * @private
+   */
+  _selectTransformationRow(row, targetId, radio) {
+    // Clear all selections for this target
+    const allRows = this.element.querySelectorAll(
+      `[data-transformation-option="${targetId}"]`,
+    );
+    allRows.forEach((r) => {
+      r.style.border = "2px solid transparent";
+      r.style.backgroundColor = "transparent";
+      r.setAttribute("aria-checked", "false");
+      const radioInput = this.element.querySelector(
+        `input[name="transformation-${targetId}"][value="${r.dataset.transformationValue}"]`,
+      );
+      if (radioInput) radioInput.checked = false;
+    });
+
+    // Select this option
+    row.style.border = "2px solid #007bff";
+    row.style.backgroundColor = "rgba(0, 123, 255, 0.1)";
+    row.setAttribute("aria-checked", "true");
+    if (radio) {
+      radio.checked = true;
+    }
+  }
+
+  /**
+   * Focus the next/previous transformation row in the group
+   * @param {HTMLElement} currentRow - The currently focused row
+   * @param {string} targetId - The target ID for this transformation group
+   * @param {number} direction - 1 for next, -1 for previous
+   * @private
+   */
+  _focusNextTransformationRow(currentRow, targetId, direction) {
+    const allRows = Array.from(
+      this.element.querySelectorAll(`[data-transformation-option="${targetId}"]`),
+    );
+    const currentIndex = allRows.indexOf(currentRow);
+    let nextIndex = currentIndex + direction;
+
+    // Wrap around
+    if (nextIndex < 0) nextIndex = allRows.length - 1;
+    if (nextIndex >= allRows.length) nextIndex = 0;
+
+    const nextRow = allRows[nextIndex];
+    if (nextRow) {
+      nextRow.focus();
+    }
   }
 
   /**
