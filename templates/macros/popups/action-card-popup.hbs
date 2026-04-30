@@ -219,13 +219,16 @@
                 <span class="erps-form__target-name">{{this.name}}</span>
               </div>
 
-              <div class="erps-form__transformation-options">
+              <div class="erps-form__transformation-options" role="radiogroup" aria-label="Transformation options">
                 <table class="erps-form__transformation-table" style="width: 100%; border-collapse: collapse;">
                   {{#each ../embeddedTransformations}}
                     <tr class="erps-form__transformation-row">
                       <td style="padding: 8px; border: 2px solid transparent; cursor: pointer; border-radius: 4px;"
                           data-transformation-option="{{../this.id}}"
                           data-transformation-value="{{this.id}}"
+                          tabindex="0"
+                          role="radio"
+                          aria-checked="{{#if @first}}true{{else}}false{{/if}}"
                           title="{{this.description}}">
                         <input
                           type="radio"
@@ -249,6 +252,9 @@
                     <td style="padding: 8px; border: 2px solid transparent; cursor: pointer; border-radius: 4px;"
                         data-transformation-option="{{this.id}}"
                         data-transformation-value="none"
+                        tabindex="0"
+                        role="radio"
+                        aria-checked="false"
                         title="Skip transformation for this target">
                       <input
                         type="radio"
