@@ -133,15 +133,15 @@ function clearAllSystemIntervals() {
 
 /**
  * Clean up orphaned GM control status elements
- * 
+ *
  * NOTE: This function intentionally does NOT clean up:
  * - Theme attributes on active sheets (would break active UI)
  * - ERPS DOM elements via cloneNode (would destroy event listeners)
- * 
+ *
  * These operations were removed because they break Foundry V2's ApplicationV2
  * framework, which maintains internal references to DOM elements. Cloning
  * elements destroys these references and causes sheets to fail to open.
- * 
+ *
  * @private
  */
 function cleanupOrphanedElements() {
