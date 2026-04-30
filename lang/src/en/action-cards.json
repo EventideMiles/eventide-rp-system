@@ -107,7 +107,20 @@
         "Config": {
           "RepetitionsHeader": "Repetitions",
           "BehaviorHeader": "Behavior",
-          "SelfEffectsHeader": "Self-Effects Configuration"
+          "SelfEffectsHeader": "Self-Effects Configuration",
+          "IntensifyBehaviorHeader": "Intensify Behavior",
+          "IntensifyBehaviorHint": "Configure how much each effect type intensifies when a status is reapplied to an existing target. Set to 0 to prevent intensification for that effect type. Only applies in Attack Chain mode.",
+          "IntensifyTargetEffects": "Target Effects",
+          "IntensifySelfEffects": "Self Effects",
+          "IntensifyAdd": "Add",
+          "IntensifyAdvantage": "Advantage",
+          "IntensifyDisadvantage": "Disadvantage",
+          "IntensifyAC": "AC",
+          "IntensifyMultiply": "Multiply",
+          "IntensifyDivide": "Divide",
+          "IntensifyMultiplyBuff": "Multiply (Buff)",
+          "IntensifyMultiplyDebuff": "Multiply (Debuff)",
+          "IntensifyOverride": "Override"
         },
         "SelfEffectsCondition": "Self-Effects Apply On",
         "SelfEffectsConditionHint": "When should self-effects be applied to the card owner?",
