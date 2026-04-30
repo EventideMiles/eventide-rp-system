@@ -356,7 +356,7 @@ export class ChatMessageBuilder {
    * @param {ChatSpeakerData} options.speaker - Speaker data
    * @param {string|null} [options.sound=null] - Built-in sound (usually null when using custom sounds)
    * @param {Roll[]} [options.rolls=[]] - Roll objects
-   * @param {string} [options.rollMode=null] - Roll visibility mode
+   * @param {string} [options.messageMode=null] - Message visibility mode ("public", "ic", "gm", "blind", "self")
    * @param {string|null} [options.soundKey=null] - Custom sound key
    * @param {boolean} [options.forceSound=false] - Force sound playback
    * @param {Object|null} [options.rollFlags=null] - Roll data for flags
@@ -368,7 +368,7 @@ export class ChatMessageBuilder {
     speaker,
     sound = null,
     rolls = [],
-    rollMode = null,
+    messageMode = null,
     soundKey = null,
     forceSound = false,
     rollFlags = null,
@@ -398,9 +398,9 @@ export class ChatMessageBuilder {
       messageData.flags["eventide-rp-system"].roll = rollFlags;
     }
 
-    // Apply roll mode settings
-    if (rollMode) {
-      ChatMessageBuilder.applyRollModeSettings(messageData, rollMode);
+    // Apply message mode settings
+    if (messageMode) {
+      ChatMessageBuilder.applyMessageModeSettings(messageData, messageMode);
     }
 
     // Merge custom flags
@@ -412,29 +412,60 @@ export class ChatMessageBuilder {
   }
 
   /**
-   * Apply roll mode visibility settings to message data
+   * Apply message mode visibility settings to message data
    *
+   * Uses Foundry V14's new messageMode values:
+   * - "public" or "ic" - Visible to all (no whisper)
+   * - "gm" - GM only
+   * - "blind" - Blind roll (GM sees result)
+   * - "self" - Self only
+   *
+   * @static
+   * @param {Object} messageData - Message data object to modify
+   * @param {string} messageMode - Message mode to apply ("public", "ic", "gm", "blind", "self")
+   * @returns {Object} Modified message data object
+   */
+  static applyMessageModeSettings(messageData, messageMode) {
+    // "public" and "ic" are visible to all - no special handling needed
+    if (messageMode !== "public" && messageMode !== "ic") {
+      messageData.messageMode = messageMode;
+
+      // Handle GM-only messages
+      if (messageMode === "gm" || messageMode === "blind") {
+        messageData.whisper = game.users
+          .filter((user) => user.isGM)
+          .map((user) => user.id);
+      } else if (messageMode === "self") {
+        // Handle self-only messages
+        messageData.whisper = [game.user.id];
+      }
+    }
+
+    return messageData;
+  }
+
+  /**
+   * Apply roll mode visibility settings to message data (deprecated)
+   *
+   * @deprecated Use applyMessageModeSettings instead
    * @static
    * @param {Object} messageData - Message data object to modify
    * @param {string} rollMode - Roll mode to apply ("gmroll", "blindroll", "selfroll", etc.)
    * @returns {Object} Modified message data object
    */
   static applyRollModeSettings(messageData, rollMode) {
-    if (rollMode !== "roll") {
-      messageData.rollMode = rollMode;
-
-      // Handle GM-only rolls
-      if (rollMode === "gmroll" || rollMode === "blindroll") {
-        messageData.whisper = game.users
-          .filter((user) => user.isGM)
-          .map((user) => user.id);
-      } else if (rollMode === "selfroll") {
-        // Handle self-only rolls
-        messageData.whisper = [game.user.id];
-      }
-    }
-
-    return messageData;
+    // Convert legacy rollMode values to messageMode values
+    const modeMap = {
+      roll: "public",
+      gmroll: "gm",
+      blindroll: "blind",
+      selfroll: "self",
+    };
+    const messageMode = modeMap[rollMode] || rollMode;
+    return ChatMessageBuilder.applyMessageModeSettings(
+      messageData,
+      messageMode,
+    );
   }
 
   /**
