@@ -812,6 +812,11 @@ export function ItemActionCardExecutionMixin(Base) {
       disableDelays = false,
       isFinalRepetition = true,
     ) {
+      // Get intensify config from the action card (only applies in attackChain mode)
+      const intensifyConfig = this.system.mode === "attackChain"
+        ? this.system.intensifyBehavior?.target
+        : null;
+
       return await StatusEffectApplicator.processStatusResults({
         results,
         rollResult,
@@ -824,6 +829,7 @@ export function ItemActionCardExecutionMixin(Base) {
         waitForDelay: this._waitForExecutionDelay.bind(this),
         disableDelays,
         isFinalRepetition,
+        intensifyConfig,
       });
     }
 
@@ -1163,6 +1169,11 @@ export function ItemActionCardExecutionMixin(Base) {
       disableDelays = false,
       _selfEffectsConfig,
     ) {
+      // Get intensify config for self-effects from the action card (only applies in attackChain mode)
+      const intensifyConfig = this.system.mode === "attackChain"
+        ? this.system.intensifyBehavior?.self
+        : null;
+
       return await StatusEffectApplicator.processSelfEffectResults({
         results,
         rollResult,
@@ -1175,6 +1186,7 @@ export function ItemActionCardExecutionMixin(Base) {
         shouldApplyEffect: this._shouldApplyEffect.bind(this),
         waitForDelay: this._waitForExecutionDelay.bind(this),
         disableDelays,
+        intensifyConfig,
       });
     }
 
