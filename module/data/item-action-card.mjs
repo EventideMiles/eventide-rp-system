@@ -469,6 +469,144 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
       initial: false,
     });
 
+    /**
+     * Intensify behavior configuration for status effect intensification
+     * Controls how much each effect type is intensified when re-applied
+     * Only applies in attackChain mode, not savedDamage mode
+     */
+    schema.intensifyBehavior = new fields.SchemaField({
+      target: new fields.SchemaField({
+        add: new fields.NumberField({
+          required: true,
+          initial: 1,
+          min: 0,
+          integer: true,
+          nullable: false,
+        }),
+        advantage: new fields.NumberField({
+          required: true,
+          initial: 1,
+          min: 0,
+          integer: true,
+          nullable: false,
+        }),
+        disadvantage: new fields.NumberField({
+          required: true,
+          initial: 1,
+          min: 0,
+          integer: true,
+          nullable: false,
+        }),
+        acChange: new fields.NumberField({
+          required: true,
+          initial: 1,
+          min: 0,
+          integer: true,
+          nullable: false,
+        }),
+        multiply: new fields.NumberField({
+          required: true,
+          initial: 1,
+          min: 0,
+          integer: true,
+          nullable: false,
+        }),
+        divide: new fields.NumberField({
+          required: true,
+          initial: 1,
+          min: 0,
+          integer: true,
+          nullable: false,
+        }),
+        multiplyBuff: new fields.NumberField({
+          required: true,
+          initial: 1,
+          min: 0,
+          integer: true,
+          nullable: false,
+        }),
+        multiplyDebuff: new fields.NumberField({
+          required: true,
+          initial: 1,
+          min: 0,
+          integer: true,
+          nullable: false,
+        }),
+        override: new fields.NumberField({
+          required: true,
+          initial: 1,
+          min: 0,
+          integer: true,
+          nullable: false,
+        }),
+      }),
+      self: new fields.SchemaField({
+        add: new fields.NumberField({
+          required: true,
+          initial: 1,
+          min: 0,
+          integer: true,
+          nullable: false,
+        }),
+        advantage: new fields.NumberField({
+          required: true,
+          initial: 1,
+          min: 0,
+          integer: true,
+          nullable: false,
+        }),
+        disadvantage: new fields.NumberField({
+          required: true,
+          initial: 1,
+          min: 0,
+          integer: true,
+          nullable: false,
+        }),
+        acChange: new fields.NumberField({
+          required: true,
+          initial: 1,
+          min: 0,
+          integer: true,
+          nullable: false,
+        }),
+        multiply: new fields.NumberField({
+          required: true,
+          initial: 1,
+          min: 0,
+          integer: true,
+          nullable: false,
+        }),
+        divide: new fields.NumberField({
+          required: true,
+          initial: 1,
+          min: 0,
+          integer: true,
+          nullable: false,
+        }),
+        multiplyBuff: new fields.NumberField({
+          required: true,
+          initial: 1,
+          min: 0,
+          integer: true,
+          nullable: false,
+        }),
+        multiplyDebuff: new fields.NumberField({
+          required: true,
+          initial: 1,
+          min: 0,
+          integer: true,
+          nullable: false,
+        }),
+        override: new fields.NumberField({
+          required: true,
+          initial: 1,
+          min: 0,
+          integer: true,
+          nullable: false,
+        }),
+      }),
+    });
+
     return schema;
   }
 }
