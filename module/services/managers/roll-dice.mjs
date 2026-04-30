@@ -48,7 +48,7 @@ class ERPSRollHandler {
       acCheck: true,
       description: "",
       toMessage: true,
-      rollMode: null, // Will use game setting if null
+      messageMode: null, // Will use game setting if null
       soundKey: null, // Optional sound key for the sound manager
     };
 

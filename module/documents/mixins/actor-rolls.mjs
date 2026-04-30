@@ -242,7 +242,7 @@ export const ActorRollsMixin = (BaseClass) =>
           formula,
           label,
           type: ability,
-          rollMode: game.settings.get("core", "rollMode"),
+          messageMode: game.settings.get("core", "messageMode"),
           soundKey: "diceRoll",
         };
 
@@ -288,7 +288,7 @@ export const ActorRollsMixin = (BaseClass) =>
      * @param {string} [params.label="Custom Roll"] - Label for the roll
      * @param {string} [params.type="custom"] - Type identifier for the roll
      * @param {Object} [params.rollData] - Additional data to merge with actor roll data
-     * @param {string} [params.rollMode] - Roll mode for the roll
+     * @param {string} [params.messageMode] - Message mode for the roll visibility
      * @returns {Promise<Roll>} The evaluated roll
      */
     async rollCustom({
@@ -296,7 +296,7 @@ export const ActorRollsMixin = (BaseClass) =>
       label = "Custom Roll",
       type = "custom",
       rollData = {},
-      rollMode = null,
+      messageMode = null,
     }) {
       Logger.methodEntry("ActorRollsMixin", "rollCustom", {
         formula,
@@ -322,7 +322,7 @@ export const ActorRollsMixin = (BaseClass) =>
           formula,
           label,
           type,
-          rollMode: rollMode || game.settings.get("core", "rollMode"),
+          messageMode: messageMode || game.settings.get("core", "messageMode"),
           rollData: combinedRollData,
         };
 
