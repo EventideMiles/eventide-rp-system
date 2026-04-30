@@ -203,24 +203,35 @@ globalThis.erps = {
       )
     );
 
-    // Get migration version from settings
+    // Get migration version from settings (using the consolidated migrationVersion key)
     let migrationVersion = "Unknown";
+    let migrationLevel = 0;
     try {
-      migrationVersion = game.settings.get(
-        "eventide-rp-system",
-        "embeddedImageMigrationVersion"
-      ) || "Not run";
+      migrationLevel = game.settings.get("eventide-rp-system", "migrationVersion") || 0;
+      migrationVersion = `Level ${migrationLevel}`;
     } catch {
       migrationVersion = "Settings unavailable";
     }
+
+    // Get V14 migration status
+    let v14MigrationVersion = "Unknown";
+    try {
+      v14MigrationVersion = game.settings.get("eventide-rp-system", "v14MigrationVersion") || "Not run";
+    } catch {
+      v14MigrationVersion = "Settings unavailable";
+    }
+
+    // Get active theme instances with proper processing
+    const themeInstancesData = globalThis.erps?.utils?.getActiveThemeInstances?.() || { count: 0, instances: [] };
 
     const diagnostics = {
       trackedIntervals,
       memoryInfo,
       gmControlHooksInitialized,
       numberInputsInitialized,
-      activeThemeInstances:
-        globalThis.erps?.utils?.getActiveThemeInstances?.() || "Unknown",
+      // Theme instances - provide count and detailed instances array
+      themeInstancesCount: themeInstancesData.count || 0,
+      themeInstances: themeInstancesData.instances || [],
       actorCount: game.actors?.size || 0,
       itemCount: game.items?.size || 0,
       messageCount: game.messages?.size || 0,
@@ -229,6 +240,7 @@ globalThis.erps = {
       systemVersion: game.system.version,
       foundryVersion: game.version,
       migrationVersion,
+      v14MigrationVersion,
       timestamp: new Date().toISOString(),
     };
 
