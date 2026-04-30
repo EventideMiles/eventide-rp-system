@@ -23,6 +23,19 @@
               <div class="chat-card__effects-row-cell chat-card__effects-row-cell--middle">
                 {{#if (eq this.type "override")}}
                   {{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.SetTo"}}
+                {{else if (eq this.type "multiply")}}
+                  {{!-- Multiply modes are at index 3 (direct children of ability) --}}
+                  {{#if (eq (keySplit this.key 3) "multiplyNeutral")}}
+                    {{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.Mlt"}}
+                  {{else if (eq (keySplit this.key 3) "divideNeutral")}}
+                    {{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.Dvd"}}
+                  {{else if (eq (keySplit this.key 3) "multiplyBuff")}}
+                    {{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.MltB"}}
+                  {{else if (eq (keySplit this.key 3) "multiplyDebuff")}}
+                    {{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.MltD"}}
+                  {{else}}
+                    {{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.Mlt"}}
+                  {{/if}}
                 {{else}}
                   {{#if (eq (keySplit this.key 4) "advantage")}}
                     {{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.Adv"}}
