@@ -146,10 +146,33 @@ export class RepetitionHandler {
    * @param {RepetitionContext} context - Context to update
    * @param {number} index - Current repetition index
    * @param {boolean} costOnRepetition - Whether cost applies each repetition
+   * @returns {RepetitionContext} The updated context (or new fallback context if input was undefined)
    */
   static updateContextForIteration(context, index, costOnRepetition) {
+    // Defensive guard: if context is undefined (race condition), create a fallback
+    if (!context) {
+      Logger.warn(
+        `RepetitionContext was undefined at iteration ${index} - this indicates a concurrent execution race condition. Creating fallback context.`,
+        { index, costOnRepetition },
+        "ACTION_CARD",
+      );
+      // Return a minimal fallback context
+      return {
+        inExecution: true,
+        costOnRepetition: costOnRepetition || false,
+        appliedTransformations: new Set(),
+        transformationSelections: new Map(),
+        selectedEffectIds: null,
+        appliedStatusEffects: new Set(),
+        statusApplicationCounts: new Map(),
+        statusApplicationLimit: 1,
+        repetitionIndex: index,
+        shouldApplyCost: costOnRepetition || index === 0,
+      };
+    }
     context.repetitionIndex = index;
     context.shouldApplyCost = costOnRepetition || index === 0;
+    return context;
   }
 
   /**

@@ -132,10 +132,14 @@ export function ItemActionCardExecutionMixin(Base) {
         );
 
         // Create repetition context using RepetitionHandler
-        this._currentRepetitionContext = RepetitionHandler.createContext(
+        // Use a local variable to avoid race conditions when executing multiple action cards concurrently
+        const repetitionContext = RepetitionHandler.createContext(
           this.system,
           options,
         );
+        // Also assign to instance property for backward compatibility with item-action-card.mjs
+        // which checks this._currentRepetitionContext in getEmbeddedItem()
+        this._currentRepetitionContext = repetitionContext;
 
         // Execute repetitions
         const results = [];
@@ -286,11 +290,17 @@ export function ItemActionCardExecutionMixin(Base) {
           }
 
           // Update repetition context for cost control BEFORE any embedded item calls
-          RepetitionHandler.updateContextForIteration(
+          // Both the local repetitionContext and this._currentRepetitionContext point to the same object
+          // We update in-place, but also handle the defensive case where a fallback context is returned
+          const updatedContext = RepetitionHandler.updateContextForIteration(
             this._currentRepetitionContext,
             i,
             this.system.costOnRepetition,
           );
+          // If a fallback context was created (due to race condition), update our references
+          if (updatedContext !== this._currentRepetitionContext) {
+            this._currentRepetitionContext = updatedContext;
+          }
 
           let currentRollResult = rollResult;
 
