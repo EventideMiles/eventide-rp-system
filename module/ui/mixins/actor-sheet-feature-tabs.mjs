@@ -19,27 +19,30 @@ export const ActorSheetFeatureTabsMixin = createTabManagementMixin({
   contentDataAttr: "data-feature-content",
   defaultTab: "active",
   stateProperty: "_currentFeatureTab",
+  initMethodName: "_initFeatureTabs",
+  cleanupMethodName: "_cleanupFeatureTabs",
 });
 
 // Extend the mixin to provide specific initialization and cleanup methods
+// that can be called from the actor sheet's _onRender
 export const ActorSheetFeatureTabsMixinWithInit = (BaseClass) => {
   const MixedClass = ActorSheetFeatureTabsMixin(BaseClass);
   
   return class extends MixedClass {
     /**
-     * Initialize feature tab management
-     * @protected
-     */
+      * Initialize feature tab management
+      * @protected
+      */
     _initFeatureTabManagement() {
-      this._initTabManagement();
+      this._initFeatureTabs();
     }
 
     /**
-     * Clean up feature tab management
-     * @protected
-     */
+      * Clean up feature tab management
+      * @protected
+      */
     _cleanupFeatureTabManagement() {
-      this._cleanupTabManagement();
+      this._cleanupFeatureTabs();
     }
   };
 };
