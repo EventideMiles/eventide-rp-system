@@ -19,27 +19,30 @@ export const ActorSheetGearTabsMixin = createTabManagementMixin({
   contentDataAttr: "data-gear-content",
   defaultTab: "equipped",
   stateProperty: "_currentGearTab",
+  initMethodName: "_initGearTabs",
+  cleanupMethodName: "_cleanupGearTabs",
 });
 
 // Extend the mixin to provide specific initialization and cleanup methods
+// that can be called from the actor sheet's _onRender
 export const ActorSheetGearTabsMixinWithInit = (BaseClass) => {
   const MixedClass = ActorSheetGearTabsMixin(BaseClass);
   
   return class extends MixedClass {
     /**
-     * Initialize gear tab management
-     * @protected
-     */
+      * Initialize gear tab management
+      * @protected
+      */
     _initGearTabManagement() {
-      this._initTabManagement();
+      this._initGearTabs();
     }
 
     /**
-     * Clean up gear tab management
-     * @protected
-     */
+      * Clean up gear tab management
+      * @protected
+      */
     _cleanupGearTabManagement() {
-      this._cleanupTabManagement();
+      this._cleanupGearTabs();
     }
   };
 };
