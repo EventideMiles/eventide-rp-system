@@ -13,10 +13,16 @@
  * @param {string} config.contentDataAttr - Data attribute for tab contents (e.g., "data-feature-content")
  * @param {string} config.defaultTab - Default tab to activate (e.g., "active" or "equipped")
  * @param {string} config.stateProperty - Property name for storing current tab state (e.g., "_currentFeatureTab")
+ * @param {string} config.initMethodName - Unique method name for initialization (e.g., "_initGearTabs")
+ * @param {string} config.cleanupMethodName - Unique method name for cleanup (e.g., "_cleanupGearTabs")
  * @returns {class} Extended class with tab management functionality
  */
-export const createTabManagementMixin = (config) => (BaseClass) =>
-  class extends BaseClass {
+export const createTabManagementMixin = (config) => (BaseClass) => {
+  // Extract method names from config
+  const initMethodName = config.initMethodName || "_initTabManagement";
+  const cleanupMethodName = config.cleanupMethodName || "_cleanupTabManagement";
+
+  return class extends BaseClass {
     /**
      * Initialize tab functionality with state preservation
      * @private
@@ -64,9 +70,14 @@ export const createTabManagementMixin = (config) => (BaseClass) =>
           // Store the selected tab
           this[config.stateProperty] = targetTab;
 
+          // Query fresh DOM references for buttons and contents
+          // (originals may be stale after re-renders)
+          const freshButtons = this.element.querySelectorAll(config.buttonSelector);
+          const freshContents = this.element.querySelectorAll(config.contentSelector);
+
           // Remove active class from all buttons and contents
-          newTabButtons.forEach((btn) => btn.classList.remove("active"));
-          tabContents.forEach((content) => content.classList.remove("active"));
+          freshButtons.forEach((btn) => btn.classList.remove("active"));
+          freshContents.forEach((content) => content.classList.remove("active"));
 
           // Add active class to clicked button and corresponding content
           button.classList.add("active");
@@ -134,7 +145,7 @@ export const createTabManagementMixin = (config) => (BaseClass) =>
      * Call this from your _onRender method
      * @protected
      */
-    _initTabManagement() {
+    [initMethodName]() {
       this.#initTabs();
     }
 
@@ -143,7 +154,8 @@ export const createTabManagementMixin = (config) => (BaseClass) =>
      * Call this from your _preClose method
      * @protected
      */
-    _cleanupTabManagement() {
+    [cleanupMethodName]() {
       this.#cleanupTabState();
     }
   };
+};

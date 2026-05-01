@@ -320,10 +320,10 @@ export const ActorSheetAdditionalActionsMixin = (BaseClass) =>
 
         // Handle rolls that supply the formula directly.
         if (dataset.roll) {
-          // Add the current roll mode to the dataset
+          // Add the current message mode to the dataset
           const rollData = {
             ...dataset,
-            rollMode: game.settings.get("core", "rollMode"),
+            messageMode: game.settings.get("core", "messageMode"),
           };
 
           const roll = await erpsRollHandler.handleRoll(rollData, this.actor);

@@ -153,7 +153,7 @@ class ERPSMessageHandler {
    * Creates a chat message for a feature item, handling both roll and non-roll cases.
    * @param {Item} item - The feature item to generate the message for.
    * @param {Object} [options={}] - Additional options for the message
-   * @param {string} [options.rollMode] - The roll mode to use for the message
+   * @param {string} [options.messageMode] - The message mode to use for the message
    * @returns {Promise<ChatMessage>} The created chat message.
    */
   async createFeatureMessage(item, options = {}) {
@@ -165,8 +165,8 @@ class ERPSMessageHandler {
     const style = ERPSRollUtilities.getItemStyle(item);
     const isRoll = rollType !== "none";
 
-    // Get the roll mode from options or use the default game setting
-    const rollMode = options.rollMode || game.settings.get("core", "rollMode");
+    // Get the message mode from options or use the default game setting
+    const messageMode = options.messageMode || game.settings.get("core", "messageMode");
 
     // Get the actor
     const actor = item.parent;
@@ -190,7 +190,7 @@ class ERPSMessageHandler {
           actor,
           "EVENTIDE_RP_SYSTEM.MessageHeaders.Feature",
         ),
-        rollMode,
+        messageMode,
       });
     }
 
@@ -266,7 +266,7 @@ class ERPSMessageHandler {
             actor,
             "EVENTIDE_RP_SYSTEM.MessageHeaders.Feature",
           ),
-          rollMode,
+          messageMode,
         },
         { soundKey: "featureRoll" },
       );
@@ -292,7 +292,7 @@ class ERPSMessageHandler {
           actor,
           "EVENTIDE_RP_SYSTEM.MessageHeaders.Feature",
         ),
-        rollMode,
+        messageMode,
       });
     }
   }
@@ -350,7 +350,7 @@ class ERPSMessageHandler {
    * Creates a chat message for a combat power, handling both roll and non-roll cases.
    * @param {Item} item - The combat power item to create a message for
    * @param {Object} [options={}] - Additional options for the message
-   * @param {string} [options.rollMode] - The roll mode to use for the message
+   * @param {string} [options.messageMode] - The message mode to use for the message
    * @param {Array} [options.lockedTargets] - Locked targets to use for GM section (bypass mode)
    * @returns {Promise<ChatMessage>} The created chat message
    */
@@ -366,8 +366,8 @@ class ERPSMessageHandler {
     const style = ERPSRollUtilities.getItemStyle(item);
     const isRoll = rollType !== "none";
 
-    // Get the roll mode from options or use the default game setting
-    const rollMode = options.rollMode || game.settings.get("core", "rollMode");
+    // Get the message mode from options or use the default game setting
+    const messageMode = options.messageMode || game.settings.get("core", "messageMode");
 
     // Get the actor
     const actor = item.parent;
@@ -395,7 +395,7 @@ class ERPSMessageHandler {
             actor,
             "EVENTIDE_RP_SYSTEM.MessageHeaders.CombatPower",
           ),
-          rollMode,
+          messageMode,
         },
         { soundKey: "combatPower" },
       );
@@ -488,7 +488,7 @@ class ERPSMessageHandler {
             "EVENTIDE_RP_SYSTEM.MessageHeaders.CombatPower",
           ),
           rolls: [roll],
-          rollMode,
+          messageMode,
         },
         { soundKey: "combatPower" },
       );
@@ -520,7 +520,7 @@ class ERPSMessageHandler {
             actor,
             "EVENTIDE_RP_SYSTEM.MessageHeaders.CombatPower",
           ),
-          rollMode,
+          messageMode,
         },
         { soundKey: "combatPower" },
       );

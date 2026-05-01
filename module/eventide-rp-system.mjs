@@ -203,24 +203,35 @@ globalThis.erps = {
       )
     );
 
-    // Get migration version from settings
+    // Get migration version from settings (using the consolidated migrationVersion key)
     let migrationVersion = "Unknown";
+    let migrationLevel = 0;
     try {
-      migrationVersion = game.settings.get(
-        "eventide-rp-system",
-        "embeddedImageMigrationVersion"
-      ) || "Not run";
+      migrationLevel = game.settings.get("eventide-rp-system", "migrationVersion") || 0;
+      migrationVersion = `Level ${migrationLevel}`;
     } catch {
       migrationVersion = "Settings unavailable";
     }
+
+    // Get V14 migration status
+    let v14MigrationVersion = "Unknown";
+    try {
+      v14MigrationVersion = game.settings.get("eventide-rp-system", "v14MigrationVersion") || "Not run";
+    } catch {
+      v14MigrationVersion = "Settings unavailable";
+    }
+
+    // Get active theme instances with proper processing
+    const themeInstancesData = globalThis.erps?.utils?.getActiveThemeInstances?.() || { count: 0, instances: [] };
 
     const diagnostics = {
       trackedIntervals,
       memoryInfo,
       gmControlHooksInitialized,
       numberInputsInitialized,
-      activeThemeInstances:
-        globalThis.erps?.utils?.getActiveThemeInstances?.() || "Unknown",
+      // Theme instances - provide count and detailed instances array
+      themeInstancesCount: themeInstancesData.count || 0,
+      themeInstances: themeInstancesData.instances || [],
       actorCount: game.actors?.size || 0,
       itemCount: game.items?.size || 0,
       messageCount: game.messages?.size || 0,
@@ -229,6 +240,7 @@ globalThis.erps = {
       systemVersion: game.system.version,
       foundryVersion: game.version,
       migrationVersion,
+      v14MigrationVersion,
       timestamp: new Date().toISOString(),
     };
 
@@ -666,31 +678,30 @@ async function rollItemMacro(itemUuid) {
 /**
  * Clean up system resources when the world is being shut down
  * This helps prevent memory leaks and ensures proper cleanup
+ * 
+ * NOTE: We do NOT perform cleanup on:
+ * - visibilitychange (alt-tab): Would destroy active DOM elements
+ * - pause: Too aggressive, could break active sheets
+ * 
+ * Cleanup only happens on:
+ * - beforeunload: Browser/page close (proper shutdown)
+ * - hot reload: Development module reload
  */
 Hooks.on("paused", (paused) => {
-  // If the game is being paused (which can indicate shutdown), perform cleanup
+  // Only log, don't perform aggressive cleanup on pause
+  // Pause can happen during normal gameplay (e.g., combat pause)
   if (paused && game.user.isGM) {
-    Logger.info("Performing system cleanup on pause", null, "SYSTEM_CLEANUP");
-    try {
-      performSystemCleanup();
-    } catch (error) {
-      Logger.error(
-        "Failed to perform cleanup on pause",
-        error,
-        "SYSTEM_CLEANUP",
-      );
-    }
+    Logger.debug("Game paused", null, "SYSTEM_CLEANUP");
   }
 });
 
-// Also clean up on any system disable/reload events if available
+// Log when system applications close (for debugging only)
 if (typeof Hooks.on === "function") {
-  // Listen for any potential system disable events
   Hooks.on("closeApplication", (app) => {
-    // If this is a system-critical application closing, consider cleanup
+    // Log system application closures for debugging purposes only
     if (app.constructor.name.includes("EventideRpSystem")) {
-      Logger.info(
-        "System application closing, checking for cleanup needs",
+      Logger.debug(
+        "System application closing",
         { appName: app.constructor.name },
         "SYSTEM_CLEANUP",
       );

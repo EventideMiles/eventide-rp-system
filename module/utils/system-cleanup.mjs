@@ -132,7 +132,16 @@ function clearAllSystemIntervals() {
 }
 
 /**
- * Clean up orphaned DOM elements that might hold references
+ * Clean up orphaned GM control status elements
+ *
+ * NOTE: This function intentionally does NOT clean up:
+ * - Theme attributes on active sheets (would break active UI)
+ * - ERPS DOM elements via cloneNode (would destroy event listeners)
+ *
+ * These operations were removed because they break Foundry V2's ApplicationV2
+ * framework, which maintains internal references to DOM elements. Cloning
+ * elements destroys these references and causes sheets to fail to open.
+ *
  * @private
  */
 function cleanupOrphanedElements() {
@@ -144,71 +153,6 @@ function cleanupOrphanedElements() {
         el.remove();
       } catch (error) {
         safeLog("warn", "Failed to remove GM status element", error);
-      }
-    });
-
-    // Only clean up theme attributes if we're doing a full system cleanup
-    // This prevents theme loss during alt-tab
-    if (document.visibilityState === "hidden") {
-      safeLog("debug", "Skipping theme cleanup during visibility change");
-      return;
-    }
-
-    // Remove any orphaned theme-related elements and attributes
-    /**
-     * Clean up all theme-related attributes and elements to prevent memory leaks
-     * and ensure clean state on system reload. This includes:
-     * - Global theme attributes (data-theme)
-     * - Component-specific theme attributes (data-bg-theme, data-tab-theme, etc.)
-     * - Eventide-specific theme attributes (data-eventide-theme)
-     *
-     * This cleanup is essential for preventing theme-related issues during
-     * system reloads and ensuring proper theme application on restart.
-     */
-    const themeElements = document.querySelectorAll(
-      "[data-eventide-theme], [data-theme], [data-bg-theme], [data-tab-theme], [data-name-theme], [data-header-theme], [data-table-theme], [data-section-theme], [data-toggle-theme], [data-biography-theme], [data-input-theme], [data-select-theme], [data-button-theme], [data-color-theme], [data-textarea-theme], [data-items-theme]",
-    );
-    themeElements.forEach((el) => {
-      try {
-        // Remove all theme-related attributes
-        el.removeAttribute("data-eventide-theme");
-        el.removeAttribute("data-theme");
-        el.removeAttribute("data-bg-theme");
-        el.removeAttribute("data-tab-theme");
-        el.removeAttribute("data-name-theme");
-        el.removeAttribute("data-header-theme");
-        el.removeAttribute("data-table-theme");
-        el.removeAttribute("data-section-theme");
-        el.removeAttribute("data-toggle-theme");
-        el.removeAttribute("data-biography-theme");
-        el.removeAttribute("data-input-theme");
-        el.removeAttribute("data-select-theme");
-        el.removeAttribute("data-button-theme");
-        el.removeAttribute("data-color-theme");
-        el.removeAttribute("data-textarea-theme");
-        el.removeAttribute("data-items-theme");
-      } catch (error) {
-        safeLog("warn", "Failed to clean theme attributes", error);
-      }
-    });
-
-    /**
-     * Clean up ERPS-specific elements including theme-related classes
-     * This ensures all custom elements and their event listeners are properly
-     * cleaned up during system shutdown or reload.
-     */
-    const erpsElements = document.querySelectorAll(
-      "[class*='erps-'], [data-erps], .eventide-sheet",
-    );
-    erpsElements.forEach((el) => {
-      try {
-        // Clone and replace to remove event listeners
-        const clone = el.cloneNode(true);
-        if (el.parentNode) {
-          el.parentNode.replaceChild(clone, el);
-        }
-      } catch (error) {
-        safeLog("warn", "Failed to clean ERPS element", error);
       }
     });
 
@@ -234,17 +178,11 @@ export function initializeCleanupHooks() {
 
   // Clean up when the world is being shut down
   Hooks.on("ready", () => {
-    // Set up cleanup on page unload
+    // Set up cleanup on page unload only
+    // NOTE: We do NOT clean up on visibilitychange (alt-tab) because that would
+    // destroy active DOM elements and break Foundry V2's ApplicationV2 framework.
     window.addEventListener("beforeunload", () => {
       performSystemCleanup();
-    });
-
-    // Set up cleanup on page visibility change (when tab becomes hidden)
-    document.addEventListener("visibilitychange", () => {
-      if (document.hidden) {
-        safeLog("debug", "Page hidden, performing cleanup");
-        performSystemCleanup();
-      }
     });
   });
 

@@ -100,6 +100,9 @@ $footer-transition: all tokens.$sheet-transition-medium ease;
     // Ensure buttons have consistent sizing in footer
     min-width: 6rem;
     flex-shrink: 0;
+    // Explicit z-index to ensure buttons are always above overlapping elements (callouts: z-index 5)
+    position: relative;
+    z-index: 7;
 
     // Focus management for accessibility
     &:focus {

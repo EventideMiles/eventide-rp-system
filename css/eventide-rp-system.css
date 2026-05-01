@@ -8607,7 +8607,7 @@ body.erps-image-zoom-active {
   border: 2px solid var(--theme-secondary, var(--erps-sheet-secondary));
   border-radius: 10px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  overflow: hidden;
+  overflow: clip;
   font-family: var(--erps-ui-font, sans-serif);
 }
 .erps-form::before {
@@ -8631,6 +8631,24 @@ body.erps-image-zoom-active {
 .erps-form--large {
   padding: 2rem;
   border-radius: 12px;
+}
+.erps-form [data-transformation-option]:focus-visible {
+  outline: 2px solid var(--theme-primary, #007bff);
+  outline-offset: 2px;
+  background-color: rgba(0, 123, 255, 0.15);
+}
+.erps-form .erps-form__status-effect-checkbox:focus-visible {
+  outline: 2px solid var(--theme-primary, #007bff);
+  outline-offset: 2px;
+}
+.erps-form .erps-button:focus-visible {
+  outline: 2px solid var(--theme-primary, #007bff);
+  outline-offset: 2px;
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
+}
+.erps-form [tabindex]:focus-visible {
+  outline: 2px solid var(--theme-primary, #007bff);
+  outline-offset: 2px;
 }
 
 .erps-form__content {
@@ -9214,7 +9232,7 @@ body.erps-image-zoom-active {
 .erps-callouts {
   position: sticky;
   top: 0;
-  z-index: 10;
+  z-index: 5;
   margin-bottom: 0.75rem;
   display: flex;
   flex-direction: column;
@@ -9443,6 +9461,8 @@ body.erps-image-zoom-active {
 .erps-form__footer .erps-button {
   min-width: 6rem;
   flex-shrink: 0;
+  position: relative;
+  z-index: 7;
 }
 .erps-form__footer .erps-button:focus {
   outline: 2px solid var(--theme-glow, var(--erps-sheet-glow));
@@ -9573,5 +9593,3 @@ body.erps-image-zoom-active {
     flex: 1;
   }
 }
-
-/*# sourceMappingURL=eventide-rp-system.css.map */

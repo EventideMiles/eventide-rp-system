@@ -132,10 +132,14 @@ export function ItemActionCardExecutionMixin(Base) {
         );
 
         // Create repetition context using RepetitionHandler
-        this._currentRepetitionContext = RepetitionHandler.createContext(
+        // Use a local variable to avoid race conditions when executing multiple action cards concurrently
+        const repetitionContext = RepetitionHandler.createContext(
           this.system,
           options,
         );
+        // Also assign to instance property for backward compatibility with item-action-card.mjs
+        // which checks this._currentRepetitionContext in getEmbeddedItem()
+        this._currentRepetitionContext = repetitionContext;
 
         // Execute repetitions
         const results = [];
@@ -286,11 +290,17 @@ export function ItemActionCardExecutionMixin(Base) {
           }
 
           // Update repetition context for cost control BEFORE any embedded item calls
-          RepetitionHandler.updateContextForIteration(
+          // Both the local repetitionContext and this._currentRepetitionContext point to the same object
+          // We update in-place, but also handle the defensive case where a fallback context is returned
+          const updatedContext = RepetitionHandler.updateContextForIteration(
             this._currentRepetitionContext,
             i,
             this.system.costOnRepetition,
           );
+          // If a fallback context was created (due to race condition), update our references
+          if (updatedContext !== this._currentRepetitionContext) {
+            this._currentRepetitionContext = updatedContext;
+          }
 
           let currentRollResult = rollResult;
 
@@ -802,6 +812,11 @@ export function ItemActionCardExecutionMixin(Base) {
       disableDelays = false,
       isFinalRepetition = true,
     ) {
+      // Get intensify config from the action card (only applies in attackChain mode)
+      const intensifyConfig = this.system.mode === "attackChain"
+        ? this.system.intensifyBehavior?.target
+        : null;
+
       return await StatusEffectApplicator.processStatusResults({
         results,
         rollResult,
@@ -814,6 +829,7 @@ export function ItemActionCardExecutionMixin(Base) {
         waitForDelay: this._waitForExecutionDelay.bind(this),
         disableDelays,
         isFinalRepetition,
+        intensifyConfig,
       });
     }
 
@@ -1153,6 +1169,11 @@ export function ItemActionCardExecutionMixin(Base) {
       disableDelays = false,
       _selfEffectsConfig,
     ) {
+      // Get intensify config for self-effects from the action card (only applies in attackChain mode)
+      const intensifyConfig = this.system.mode === "attackChain"
+        ? this.system.intensifyBehavior?.self
+        : null;
+
       return await StatusEffectApplicator.processSelfEffectResults({
         results,
         rollResult,
@@ -1165,6 +1186,7 @@ export function ItemActionCardExecutionMixin(Base) {
         shouldApplyEffect: this._shouldApplyEffect.bind(this),
         waitForDelay: this._waitForExecutionDelay.bind(this),
         disableDelays,
+        intensifyConfig,
       });
     }
 

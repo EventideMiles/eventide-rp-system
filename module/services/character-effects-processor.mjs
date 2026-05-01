@@ -189,7 +189,8 @@ export class CharacterEffectsProcessor {
             override: "override",
             advantage: "diceAdjustments.advantage",
             disadvantage: "diceAdjustments.disadvantage",
-            AC: "ac.change",
+            "ac.change": "ac.change",
+            AC: "ac.change", // Legacy support
             transformOverride: "transformOverride",
             transformChange: "transformChange",
             ...multiplyModeMap,

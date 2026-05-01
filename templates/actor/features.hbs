@@ -3,17 +3,17 @@
 
   {{! Features Tab Navigation }}
   <div class="feature-tab-nav">
-    <button class="feature-tab-button feature-tab-button--active active" data-feature-tab="active">
+    <button type="button" class="feature-tab-button feature-tab-button--active active" data-feature-tab="active">
       <i class='fa-solid fa-power-off'></i>
       {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.ActiveFeatures"}}
       <span class="feature-count">{{activeFeatureCount}}</span>
     </button>
-    <button class="feature-tab-button feature-tab-button--inactive" data-feature-tab="inactive">
+    <button type="button" class="feature-tab-button feature-tab-button--inactive" data-feature-tab="inactive">
       <i class='fa-solid fa-ban'></i>
       {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.InactiveFeatures"}}
       <span class="feature-count">{{inactiveFeatureCount}}</span>
     </button>
-    <button class="feature-tab-button feature-tab-button--all" data-feature-tab="all">
+    <button type="button" class="feature-tab-button feature-tab-button--all" data-feature-tab="all">
       <i class='fa-solid fa-list'></i>
       {{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.AllFeatures"}}
       <span class="feature-count">{{featureCount}}</span>

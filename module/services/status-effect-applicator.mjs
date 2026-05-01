@@ -62,6 +62,7 @@ export class StatusEffectApplicator {
    *
    * @static
    * @param {StatusEffectContext} context - The status effect context
+   * @param {Object} [context.intensifyConfig] - Configuration for intensify amounts per effect type
    * @returns {Promise<StatusEffectResult[]>} Array of status effect results
    */
   static async processStatusResults(context) {
@@ -77,6 +78,7 @@ export class StatusEffectApplicator {
       waitForDelay,
       disableDelays,
       isFinalRepetition,
+      intensifyConfig,
     } = context;
 
     const statusResults = [];
@@ -127,6 +129,7 @@ export class StatusEffectApplicator {
               disableDelays,
               isFinalRepetition,
               waitForDelay,
+              intensifyConfig,
             });
 
           statusResults.push(...targetResults);
@@ -211,6 +214,7 @@ export class StatusEffectApplicator {
    * @param {boolean} params.disableDelays - Whether to disable delays
    * @param {boolean} params.isFinalRepetition - Whether this is the final repetition
    * @param {Function} params.waitForDelay - Function to wait for delay
+   * @param {Object} [params.intensifyConfig] - Configuration for intensify amounts per effect type
    * @returns {Promise<StatusEffectResult[]>} Array of status effect results
    */
   static async applyEffectsToTarget(params) {
@@ -223,6 +227,7 @@ export class StatusEffectApplicator {
       disableDelays,
       isFinalRepetition,
       waitForDelay,
+      intensifyConfig,
     } = params;
 
     const statusResults = [];
@@ -295,6 +300,7 @@ export class StatusEffectApplicator {
         disableDelays,
         isFinalRepetition,
         waitForDelay,
+        intensifyConfig,
       });
 
       statusResults.push(applyResult);
@@ -459,6 +465,7 @@ export class StatusEffectApplicator {
    * @param {Function} params.waitForDelay - Function to wait for delays
    * @param {boolean} params.disableDelays - Skip delays flag
    * @param {boolean} params.isFinalRepetition - Is this the final repetition?
+   * @param {Object} [params.intensifyConfig] - Configuration for intensify amounts per effect type
    * @returns {Promise<Array>} Self-effect results
    */
   static async processSelfEffectResults({
@@ -473,6 +480,7 @@ export class StatusEffectApplicator {
     shouldApplyEffect,
     waitForDelay,
     disableDelays = false,
+    intensifyConfig,
   }) {
     if (!embeddedSelfEffects || embeddedSelfEffects.length === 0) {
       return [];
@@ -552,9 +560,13 @@ export class StatusEffectApplicator {
           effectData.system.quantity = 1;
         }
 
-        // Apply or intensify the effect on the actor (same pattern as applySingleEffect)
+        // Apply or intensify the effect on the actor with intensify config
         const applicationResult =
-          await StatusIntensification.applyOrIntensifyStatus(actor, effectData);
+          await StatusIntensification.applyOrIntensifyStatus(
+            actor,
+            effectData,
+            intensifyConfig,
+          );
 
         // Update repetition context
         if (repetitionContext) {
@@ -613,6 +625,7 @@ export class StatusEffectApplicator {
    * @param {boolean} params.disableDelays - Whether to disable delays
    * @param {boolean} params.isFinalRepetition - Whether this is final repetition
    * @param {Function} params.waitForDelay - Function to wait for delay
+   * @param {Object} [params.intensifyConfig] - Configuration for intensify amounts per effect type
    * @returns {Promise<StatusEffectResult>} The status effect result
    */
   static async applySingleEffect(params) {
@@ -624,6 +637,7 @@ export class StatusEffectApplicator {
       disableDelays,
       isFinalRepetition,
       waitForDelay,
+      intensifyConfig,
     } = params;
 
     try {
@@ -642,9 +656,13 @@ export class StatusEffectApplicator {
         effectData.system.quantity = 1;
       }
 
-      // Apply or intensify the effect on the target
+      // Apply or intensify the effect on the target with intensify config
       const applicationResult =
-        await StatusIntensification.applyOrIntensifyStatus(target, effectData);
+        await StatusIntensification.applyOrIntensifyStatus(
+          target,
+          effectData,
+          intensifyConfig,
+        );
 
       // Track that this effect has been applied to this target
       if (

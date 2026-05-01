@@ -18,7 +18,7 @@
   box-shadow:
     0 8px 32px rgb(0 0 0 / 40%),
     inset 0 1px 0 rgb(255 255 255 / 10%);
-  overflow: hidden;
+  overflow: clip;
   font-family: var(--erps-ui-font, sans-serif);
 
   // Theme-aware background with pattern
@@ -49,4 +49,35 @@
     padding: tokens.$sheet-spacing-xl;
     border-radius: tokens.$sheet-radius-xxl;
   }
-} 
+
+  // ===================================
+  // KEYBOARD FOCUS STYLES
+  // ===================================
+  // Focus-visible styles for keyboard navigation accessibility
+
+  // Transformation rows - keyboard focus indicator
+  [data-transformation-option]:focus-visible {
+    outline: 2px solid var(--theme-primary, #007bff);
+    outline-offset: 2px;
+    background-color: rgb(0 123 255 / 15%);
+  }
+
+  // Status effect checkboxes - enhanced focus indicator
+  .erps-form__status-effect-checkbox:focus-visible {
+    outline: 2px solid var(--theme-primary, #007bff);
+    outline-offset: 2px;
+  }
+
+  // Buttons - ensure visible focus
+  .erps-button:focus-visible {
+    outline: 2px solid var(--theme-primary, #007bff);
+    outline-offset: 2px;
+    box-shadow: 0 0 8px rgb(0 123 255 / 50%);
+  }
+
+  // Generic focusable elements with tabindex
+  [tabindex]:focus-visible {
+    outline: 2px solid var(--theme-primary, #007bff);
+    outline-offset: 2px;
+  }
+}
