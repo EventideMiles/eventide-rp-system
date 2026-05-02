@@ -53,6 +53,11 @@
         "abbr": "pwr-o",
         "desc": "Overrides the base max power value before applying percentage multipliers. Only works with GM approval via status effects."
       },
+      "PowerRestoreTarget": {
+        "long": "Power Restore Target",
+        "abbr": "pwr-rt",
+        "desc": "Overrides the value that power is restored to when using the Restore macro. If null, restores to max power instead."
+      },
       "ResolveMult": {
         "long": "Resolve (%)",
         "abbr": "res%",
@@ -62,6 +67,11 @@
         "long": "Resolve Override",
         "abbr": "res-o",
         "desc": "Overrides the base max resolve value before applying percentage multipliers. Only works with GM approval via status effects."
+      },
+      "ResolveRestoreTarget": {
+        "long": "Resolve Restore Target",
+        "abbr": "res-rt",
+        "desc": "Overrides the value that resolve is restored to when using the Restore macro. If null, restores to max resolve instead."
       },
       "Vuln": {
         "long": "Vulnerability",
