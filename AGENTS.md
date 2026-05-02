@@ -9,6 +9,13 @@
 - UI components use embedded-item-all-mixins for shared behavior
 - Sheet mixins provide consistent styling and behavior
 
+### Plans Directory
+- The `plans/` directory exists at the project root for temporary planning documents (release notes drafts, implementation plans, PR descriptions, testing checklists, etc.)
+- This directory is listed in `.gitignore` and must **never** be committed to the repository
+- Contents may include work-in-progress documentation not intended for public distribution
+- When release notes in `plans/` are finalized, they should be moved to `docs/release-notes/` with proper release timeframes
+- The `docs/plans/` subdirectory also contains historical planning documents but should be treated similarly
+
 ### Language File System
 - Source files in `lang/src/en/` are merged by `npm run build:lang` into `lang/en.json`
 - Never edit `lang/en.json` directly - it is auto-generated from source files
