@@ -66,6 +66,8 @@ EVENTIDE_RP_SYSTEM.hiddenAbilities = {
 EVENTIDE_RP_SYSTEM.overrideAbilities = {
   powerOverride: "EVENTIDE_RP_SYSTEM.HiddenAbilities.PowerOverride.long",
   resolveOverride: "EVENTIDE_RP_SYSTEM.HiddenAbilities.ResolveOverride.long",
+  powerRestoreTarget: "EVENTIDE_RP_SYSTEM.HiddenAbilities.PowerRestoreTarget.long",
+  resolveRestoreTarget: "EVENTIDE_RP_SYSTEM.HiddenAbilities.ResolveRestoreTarget.long",
 };
 
 /**
@@ -94,6 +96,8 @@ EVENTIDE_RP_SYSTEM.hiddenAbilityAbbreviations = {
 EVENTIDE_RP_SYSTEM.overrideAbilityAbbreviations = {
   powerOverride: "EVENTIDE_RP_SYSTEM.HiddenAbilities.PowerOverride.abbr",
   resolveOverride: "EVENTIDE_RP_SYSTEM.HiddenAbilities.ResolveOverride.abbr",
+  powerRestoreTarget: "EVENTIDE_RP_SYSTEM.HiddenAbilities.PowerRestoreTarget.abbr",
+  resolveRestoreTarget: "EVENTIDE_RP_SYSTEM.HiddenAbilities.ResolveRestoreTarget.abbr",
 };
 
 /**
