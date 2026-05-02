@@ -219,25 +219,31 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
     },
     description: {
       template: "systems/eventide-rp-system/templates/item/description.hbs",
+      scrollable: [""],
     },
     prerequisites: {
       template: "systems/eventide-rp-system/templates/item/prerequisites.hbs",
+      scrollable: [""],
     },
     characterEffects: {
       template:
         "systems/eventide-rp-system/templates/item/character-effects.hbs",
+      scrollable: [""],
     },
     attributesCombatPower: {
       template:
         "systems/eventide-rp-system/templates/item/attribute-parts/combat-power.hbs",
+      scrollable: [""],
     },
     attributesGear: {
       template:
         "systems/eventide-rp-system/templates/item/attribute-parts/gear.hbs",
+      scrollable: [""],
     },
     attributesFeature: {
       template:
         "systems/eventide-rp-system/templates/item/attribute-parts/feature.hbs",
+      scrollable: [""],
     },
   };
 
