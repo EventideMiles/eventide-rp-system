@@ -116,6 +116,11 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
                 ...requiredInteger,
                 initial: 0,
               }),
+              absTotal: new fields.NumberField({
+                ...requiredInteger,
+                initial: 0,
+                min: 0,
+              }),
               mode: new fields.StringField({
                 required: false,
                 initial: "",
@@ -330,6 +335,9 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
       current.diceAdjustments.total =
         current.diceAdjustments.advantage -
         current.diceAdjustments.disadvantage;
+      current.diceAdjustments.absTotal = Math.abs(
+        current.diceAdjustments.total,
+      );
       if (current.diceAdjustments.total < 0) {
         current.diceAdjustments.mode = "kl";
       } else if (current.diceAdjustments.total > 0) {
