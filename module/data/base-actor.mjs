@@ -25,6 +25,10 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
       }),
       max: new fields.NumberField({ ...requiredInteger, initial: 110, min: 1 }),
       override: new fields.NumberField({ ...overrideInteger, initial: null }),
+      restoreTarget: new fields.NumberField({
+        ...overrideInteger,
+        initial: null,
+      }),
     });
     schema.power = new fields.SchemaField({
       value: new fields.NumberField({ ...requiredInteger, initial: 7, min: 0 }),
@@ -34,6 +38,10 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
         min: 0,
       }),
       override: new fields.NumberField({ ...overrideInteger, initial: null }),
+      restoreTarget: new fields.NumberField({
+        ...overrideInteger,
+        initial: null,
+      }),
     });
     schema.biography = new fields.StringField({ required: true, blank: true }); // equivalent to passing ({initial: ""}) for StringFields
 
