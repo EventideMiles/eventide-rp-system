@@ -251,23 +251,57 @@ export const ActorResourceMixin = (BaseClass) =>
         const restorationPromises = [];
 
         if (resolve) {
-          const maxResolve = this.system.resolve.max || 0;
-          restorationPromises.push(this.addResolve(maxResolve));
-          Logger.debug(
-            `Restoring resolve to maximum: ${maxResolve}`,
-            null,
-            "RESOURCES",
-          );
+          const resolveRestoreTarget = this.system.resolve.restoreTarget;
+          if (resolveRestoreTarget !== null && resolveRestoreTarget !== undefined) {
+            const target = clampValue(
+              resolveRestoreTarget,
+              0,
+              this.system.resolve.max,
+            );
+            restorationPromises.push(
+              this.update({ "system.resolve.value": target }),
+            );
+            Logger.debug(
+              `Restoring resolve to custom target: ${target}`,
+              null,
+              "RESOURCES",
+            );
+          } else {
+            const maxResolve = this.system.resolve.max || 0;
+            restorationPromises.push(this.addResolve(maxResolve));
+            Logger.debug(
+              `Restoring resolve to maximum: ${maxResolve}`,
+              null,
+              "RESOURCES",
+            );
+          }
         }
 
         if (power) {
-          const maxPower = this.system.power.max || 0;
-          restorationPromises.push(this.addPower(maxPower));
-          Logger.debug(
-            `Restoring power to maximum: ${maxPower}`,
-            null,
-            "RESOURCES",
-          );
+          const powerRestoreTarget = this.system.power.restoreTarget;
+          if (powerRestoreTarget !== null && powerRestoreTarget !== undefined) {
+            const target = clampValue(
+              powerRestoreTarget,
+              0,
+              this.system.power.max,
+            );
+            restorationPromises.push(
+              this.update({ "system.power.value": target }),
+            );
+            Logger.debug(
+              `Restoring power to custom target: ${target}`,
+              null,
+              "RESOURCES",
+            );
+          } else {
+            const maxPower = this.system.power.max || 0;
+            restorationPromises.push(this.addPower(maxPower));
+            Logger.debug(
+              `Restoring power to maximum: ${maxPower}`,
+              null,
+              "RESOURCES",
+            );
+          }
         }
 
         await Promise.all(restorationPromises);
