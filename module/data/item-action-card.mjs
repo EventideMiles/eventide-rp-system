@@ -287,6 +287,16 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
     });
 
     /**
+     * When enabled, self-effects are applied once for each target that meets
+     * the success condition, rather than once total. The self-effects
+     * application limit still caps the total number of applications.
+     */
+    schema.selfEffectsScalePerTarget = new fields.BooleanField({
+      required: true,
+      initial: false,
+    });
+
+    /**
      * Saved damage configuration (only used when mode is "savedDamage")
      */
     schema.savedDamage = new fields.SchemaField({

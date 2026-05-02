@@ -4945,6 +4945,10 @@ body.erps-image-zoom-active {
 .eventide-sheet--scrollbars .tab section.main, .eventide-sheet--scrollbars .tab aside.sidebar, .eventide-sheet--scrollbars .tab .items-list {
   overflow: visible;
 }
+.eventide-sheet .eventide-sheet__scrollable-container {
+  display: block;
+  width: 100%;
+}
 .eventide-sheet[data-bg-theme=light] .gear-tab-button {
   color: rgba(0, 0, 0, 0.8);
 }

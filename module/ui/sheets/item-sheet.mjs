@@ -123,51 +123,64 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
     },
     description: {
       template: "systems/eventide-rp-system/templates/item/description.hbs",
+      scrollable: [""],
     },
     prerequisites: {
       template: "systems/eventide-rp-system/templates/item/prerequisites.hbs",
+      scrollable: [""],
     },
     attributesFeature: {
       template:
         "systems/eventide-rp-system/templates/item/attribute-parts/feature.hbs",
+      scrollable: [""],
     },
     attributesGear: {
       template:
         "systems/eventide-rp-system/templates/item/attribute-parts/gear.hbs",
+      scrollable: [""],
     },
     attributesCombatPower: {
       template:
         "systems/eventide-rp-system/templates/item/attribute-parts/combat-power.hbs",
+      scrollable: [""],
     },
     attributesTransformation: {
       template:
         "systems/eventide-rp-system/templates/item/attribute-parts/transformation.hbs",
+      scrollable: [""],
     },
     attributesActionCard: {
       template:
         "systems/eventide-rp-system/templates/item/attribute-parts/action-card.hbs",
+      scrollable: [""],
     },
     attributesActionCardConfig: {
       template:
         "systems/eventide-rp-system/templates/item/attribute-parts/action-card-config.hbs",
+      scrollable: [""],
     },
     effects: {
       template: "systems/eventide-rp-system/templates/item/effects.hbs",
+      scrollable: [""],
     },
     characterEffects: {
       template:
         "systems/eventide-rp-system/templates/item/character-effects.hbs",
+      scrollable: [""],
     },
     embeddedCombatPowers: {
       template:
         "systems/eventide-rp-system/templates/item/embedded-combat-powers.hbs",
+      scrollable: [""],
     },
     embeddedActionCards: {
       template:
         "systems/eventide-rp-system/templates/item/embedded-action-cards.hbs",
+      scrollable: [""],
     },
     embeddedItems: {
       template: "systems/eventide-rp-system/templates/item/embedded-items.hbs",
+      scrollable: [""],
     },
   };
 

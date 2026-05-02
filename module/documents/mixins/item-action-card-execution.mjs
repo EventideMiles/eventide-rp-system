@@ -1187,6 +1187,7 @@ export function ItemActionCardExecutionMixin(Base) {
         waitForDelay: this._waitForExecutionDelay.bind(this),
         disableDelays,
         intensifyConfig,
+        scalePerTarget: this.system.selfEffectsScalePerTarget,
       });
     }
 

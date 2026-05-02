@@ -481,18 +481,197 @@ export class StatusEffectApplicator {
     waitForDelay,
     disableDelays = false,
     intensifyConfig,
+    scalePerTarget = false,
   }) {
     if (!embeddedSelfEffects || embeddedSelfEffects.length === 0) {
       return [];
     }
 
-    // Determine success condition from results
+    const rollTotal = rollResult?.total || 0;
+
+    if (scalePerTarget) {
+      return StatusEffectApplicator._processSelfEffectsPerTarget({
+        results,
+        rollResult,
+        rollTotal,
+        embeddedSelfEffects,
+        selfEffectsConfig,
+        repetitionContext,
+        actor,
+        applicationLimit,
+        shouldApplyEffect,
+        waitForDelay,
+        disableDelays,
+        intensifyConfig,
+      });
+    }
+
+    return StatusEffectApplicator._processSelfEffectsAggregated({
+      results,
+      rollResult,
+      rollTotal,
+      embeddedSelfEffects,
+      selfEffectsConfig,
+      repetitionContext,
+      actor,
+      applicationLimit,
+      shouldApplyEffect,
+      waitForDelay,
+      disableDelays,
+      intensifyConfig,
+    });
+  }
+
+  static async _processSelfEffectsPerTarget({
+    results,
+    rollResult,
+    rollTotal,
+    embeddedSelfEffects,
+    selfEffectsConfig,
+    repetitionContext,
+    actor,
+    applicationLimit,
+    shouldApplyEffect,
+    waitForDelay,
+    disableDelays,
+    intensifyConfig,
+  }) {
+    const resultsArray = [];
+
+    for (const targetResult of results || []) {
+      const currentApplications =
+        repetitionContext?.selfEffectApplications || 0;
+      if (applicationLimit > 0 && currentApplications >= applicationLimit) {
+        Logger.debug(
+          `Self-effects application limit reached during per-target scaling (${currentApplications}/${applicationLimit})`,
+          {
+            actorName: actor.name,
+            limit: applicationLimit,
+            count: currentApplications,
+          },
+          "ACTION_CARD",
+        );
+        break;
+      }
+
+      const oneHit = targetResult.firstHit || targetResult.secondHit;
+      const bothHit = targetResult.firstHit && targetResult.secondHit;
+
+      const conditionMet = shouldApplyEffect(
+        selfEffectsConfig.condition,
+        oneHit,
+        bothHit,
+        rollTotal,
+        selfEffectsConfig.threshold || 15,
+        rollResult,
+        actor,
+        rollResult?.formula,
+      );
+
+      if (!conditionMet) {
+        Logger.debug(
+          `Self-effects condition not met for target "${targetResult.target?.name}" (per-target scaling)`,
+          {
+            condition: selfEffectsConfig.condition,
+            targetName: targetResult.target?.name,
+            oneHit,
+            bothHit,
+            rollTotal,
+            threshold: selfEffectsConfig.threshold,
+          },
+          "ACTION_CARD",
+        );
+        continue;
+      }
+
+      for (const effect of embeddedSelfEffects) {
+        try {
+          const effectData = foundry.utils.deepClone(effect);
+
+          if (effectData.type === "gear" || effectData.type === "status") {
+            effectData.flags = effectData.flags || {};
+            effectData.flags["eventide-rp-system"] =
+              effectData.flags["eventide-rp-system"] || {};
+            effectData.flags["eventide-rp-system"].isEffect = true;
+          }
+
+          if (effectData.type === "gear") {
+            effectData.system = effectData.system || {};
+            effectData.system.equipped = true;
+            effectData.system.quantity = 1;
+          }
+
+          const applicationResult =
+            await StatusIntensification.applyOrIntensifyStatus(
+              actor,
+              effectData,
+              intensifyConfig,
+            );
+
+          if (repetitionContext) {
+            repetitionContext.selfEffectApplications =
+              (repetitionContext.selfEffectApplications || 0) + 1;
+          }
+
+          resultsArray.push({
+            success: applicationResult.applied,
+            effect: effect.name,
+            target: actor.name,
+            applied: applicationResult.applied,
+            intensified: applicationResult.intensified,
+            triggeredBy: targetResult.target?.name,
+          });
+
+          Logger.debug(
+            `Applied self-effect "${effect.name}" to actor "${actor.name}" (per-target: "${targetResult.target?.name}")`,
+            {
+              effectName: effect.name,
+              actorName: actor.name,
+              effectType: effect.type,
+              triggeredBy: targetResult.target?.name,
+            },
+            "ACTION_CARD",
+          );
+
+          if (!disableDelays && waitForDelay) {
+            await waitForDelay();
+          }
+        } catch (error) {
+          Logger.error(
+            `Failed to apply self-effect "${effect.name}" (per-target)`,
+            error,
+            "ACTION_CARD",
+          );
+          resultsArray.push({
+            success: false,
+            effect: effect.name,
+            error: error.message,
+          });
+        }
+      }
+    }
+
+    return resultsArray;
+  }
+
+  static async _processSelfEffectsAggregated({
+    results,
+    rollResult,
+    rollTotal,
+    embeddedSelfEffects,
+    selfEffectsConfig,
+    repetitionContext,
+    actor,
+    applicationLimit,
+    shouldApplyEffect,
+    waitForDelay,
+    disableDelays,
+    intensifyConfig,
+  }) {
     const hasHits = results?.some((r) => r.firstHit || r.secondHit) || false;
     const oneHit = hasHits;
     const bothHit = results?.every((r) => r.firstHit && r.secondHit) || false;
-    const rollTotal = rollResult?.total || 0;
 
-    // Check if condition is met
     const conditionMet = shouldApplyEffect(
       selfEffectsConfig.condition,
       oneHit,
@@ -520,7 +699,6 @@ export class StatusEffectApplicator {
       return [];
     }
 
-    // Check application limit
     if (repetitionContext) {
       const selfEffectApplications =
         repetitionContext.selfEffectApplications || 0;
@@ -538,14 +716,11 @@ export class StatusEffectApplicator {
       }
     }
 
-    // Apply each self-effect to the card owner
     const resultsArray = [];
     for (const effect of embeddedSelfEffects) {
       try {
-        // Clone effect data for safe modification
         const effectData = foundry.utils.deepClone(effect);
 
-        // Set flag for effects to trigger appropriate message via createItem hook
         if (effectData.type === "gear" || effectData.type === "status") {
           effectData.flags = effectData.flags || {};
           effectData.flags["eventide-rp-system"] =
@@ -553,14 +728,12 @@ export class StatusEffectApplicator {
           effectData.flags["eventide-rp-system"].isEffect = true;
         }
 
-        // Ensure gear effects are equipped when transferred
         if (effectData.type === "gear") {
           effectData.system = effectData.system || {};
           effectData.system.equipped = true;
           effectData.system.quantity = 1;
         }
 
-        // Apply or intensify the effect on the actor with intensify config
         const applicationResult =
           await StatusIntensification.applyOrIntensifyStatus(
             actor,
@@ -568,7 +741,6 @@ export class StatusEffectApplicator {
             intensifyConfig,
           );
 
-        // Update repetition context
         if (repetitionContext) {
           repetitionContext.selfEffectApplications =
             (repetitionContext.selfEffectApplications || 0) + 1;
@@ -592,7 +764,6 @@ export class StatusEffectApplicator {
           "ACTION_CARD",
         );
 
-        // Wait for delay if configured
         if (!disableDelays && waitForDelay) {
           await waitForDelay();
         }
