@@ -25,6 +25,10 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
       }),
       max: new fields.NumberField({ ...requiredInteger, initial: 110, min: 1 }),
       override: new fields.NumberField({ ...overrideInteger, initial: null }),
+      restoreTarget: new fields.NumberField({
+        ...overrideInteger,
+        initial: null,
+      }),
     });
     schema.power = new fields.SchemaField({
       value: new fields.NumberField({ ...requiredInteger, initial: 7, min: 0 }),
@@ -34,6 +38,10 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
         min: 0,
       }),
       override: new fields.NumberField({ ...overrideInteger, initial: null }),
+      restoreTarget: new fields.NumberField({
+        ...overrideInteger,
+        initial: null,
+      }),
     });
     schema.biography = new fields.StringField({ required: true, blank: true }); // equivalent to passing ({initial: ""}) for StringFields
 
@@ -107,6 +115,11 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
               total: new fields.NumberField({
                 ...requiredInteger,
                 initial: 0,
+              }),
+              absTotal: new fields.NumberField({
+                ...requiredInteger,
+                initial: 0,
+                min: 0,
               }),
               mode: new fields.StringField({
                 required: false,
@@ -322,6 +335,9 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
       current.diceAdjustments.total =
         current.diceAdjustments.advantage -
         current.diceAdjustments.disadvantage;
+      current.diceAdjustments.absTotal = Math.abs(
+        current.diceAdjustments.total,
+      );
       if (current.diceAdjustments.total < 0) {
         current.diceAdjustments.mode = "kl";
       } else if (current.diceAdjustments.total > 0) {

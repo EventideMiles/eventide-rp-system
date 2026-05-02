@@ -95,6 +95,14 @@
     }
   }
 
+  // Scrollable container inside tab parts
+  // Explicitly set display: block to prevent Foundry's flex layout
+  // from causing content shifts during re-renders
+  .eventide-sheet__scrollable-container {
+    display: block;
+    width: 100%;
+  }
+
   // Light theme text color overrides
   &[data-bg-theme="light"] .gear-tab-button {
     color: rgb(0 0 0 / 80%);

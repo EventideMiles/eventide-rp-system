@@ -53,6 +53,11 @@
         "abbr": "pwr-o",
         "desc": "Overrides the base max power value before applying percentage multipliers. Only works with GM approval via status effects."
       },
+      "PowerRestoreTarget": {
+        "long": "Power Restore Target",
+        "abbr": "pwr-rt",
+        "desc": "Overrides the value that power is restored to when using the Restore macro. If null, restores to max power instead."
+      },
       "ResolveMult": {
         "long": "Resolve (%)",
         "abbr": "res%",
@@ -62,6 +67,11 @@
         "long": "Resolve Override",
         "abbr": "res-o",
         "desc": "Overrides the base max resolve value before applying percentage multipliers. Only works with GM approval via status effects."
+      },
+      "ResolveRestoreTarget": {
+        "long": "Resolve Restore Target",
+        "abbr": "res-rt",
+        "desc": "Overrides the value that resolve is restored to when using the Restore macro. If null, restores to max resolve instead."
       },
       "Vuln": {
         "long": "Vulnerability",
@@ -169,6 +179,10 @@
         "SelfTarget": {
           "label": "Self-Target",
           "hint": "When enabled, this action card automatically targets your own actor instead of requiring target selection. Useful for self-buffs and self-healing effects."
+        },
+        "SelfEffectsScalePerTarget": {
+          "label": "Scale Self-Effects Per Target",
+          "hint": "When enabled, self-effects are applied once for each target that meets the success condition, rather than once total. The self-effects application limit still caps the total number of applications."
         },
         "ResourceFailure": {
           "InsufficientPower": {

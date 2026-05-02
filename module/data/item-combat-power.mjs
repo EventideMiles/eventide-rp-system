@@ -69,6 +69,11 @@ export default class EventideRpSystemCombatPower extends EventideRpSystemItemBas
           ...requiredInteger,
         }),
         total: new fields.NumberField({ initial: 0, ...requiredInteger }),
+        absTotal: new fields.NumberField({
+          initial: 0,
+          ...requiredInteger,
+          min: 0,
+        }),
       }),
     });
 
@@ -79,5 +84,8 @@ export default class EventideRpSystemCombatPower extends EventideRpSystemItemBas
     this.roll.diceAdjustments.total =
       this.roll.diceAdjustments.advantage -
       this.roll.diceAdjustments.disadvantage;
+    this.roll.diceAdjustments.absTotal = Math.abs(
+      this.roll.diceAdjustments.total,
+    );
   }
 }

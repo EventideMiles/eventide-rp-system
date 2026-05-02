@@ -173,6 +173,12 @@ export class CharacterEffectsProcessor {
     if (effect.ability === "resolveOverride") {
       return "system.resolve.override";
     }
+    if (effect.ability === "powerRestoreTarget") {
+      return "system.power.restoreTarget";
+    }
+    if (effect.ability === "resolveRestoreTarget") {
+      return "system.resolve.restoreTarget";
+    }
 
     // Multiply mode mapping shared by both regular and hidden abilities
     const multiplyModeMap = {
@@ -239,7 +245,9 @@ export class CharacterEffectsProcessor {
     // For override abilities, always use override type
     if (
       effect.ability === "powerOverride" ||
-      effect.ability === "resolveOverride"
+      effect.ability === "resolveOverride" ||
+      effect.ability === "powerRestoreTarget" ||
+      effect.ability === "resolveRestoreTarget"
     ) {
       return "override";
     }
@@ -289,6 +297,10 @@ export class CharacterEffectsProcessor {
       key = "system.power.override";
     } else if (newEffect.ability === "resolveOverride") {
       key = "system.resolve.override";
+    } else if (newEffect.ability === "powerRestoreTarget") {
+      key = "system.power.restoreTarget";
+    } else if (newEffect.ability === "resolveRestoreTarget") {
+      key = "system.resolve.restoreTarget";
     } else {
       key = `system.${newEffect.type}.${newEffect.ability}.change`;
     }

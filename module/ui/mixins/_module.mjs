@@ -42,7 +42,6 @@ export { ItemSheetCharacterEffectsMixin } from "./item-sheet-character-effects.m
 export { ItemSheetActionsMixin } from "./item-sheet-actions.mjs";
 export { ItemSheetEffectGuardsMixin } from "./item-sheet-effect-guards.mjs";
 export { TransformationActionCardFormMixin } from "./transformation-action-card-form.mjs";
-export { ScrollPreservationMixin } from "./scroll-preservation.mjs";
 
 // Combined Item Sheet Mixin
 export { ItemSheetAllMixins } from "./item-sheet-all-mixins.mjs";

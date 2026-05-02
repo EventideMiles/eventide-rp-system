@@ -46,7 +46,12 @@ const prepareCharacterEffects = async (effect) => {
     "resolveMult",
     "healIncrease",
   ];
-  const overrideAbilities = ["powerOverride", "resolveOverride"];
+  const overrideAbilities = [
+    "powerOverride",
+    "resolveOverride",
+    "powerRestoreTarget",
+    "resolveRestoreTarget",
+  ];
   const allAbilities = [...abilities, ...hiddenAbilities, ...overrideAbilities];
 
   // Process each change in the effect
@@ -54,11 +59,15 @@ const prepareCharacterEffects = async (effect) => {
     // Determine which ability this change affects
     let ability;
 
-    // Special handling for override abilities (powerOverride, resolveOverride)
+    // Special handling for override abilities (powerOverride, resolveOverride, restoreTargets)
     if (change.key === "system.power.override") {
       ability = "powerOverride";
     } else if (change.key === "system.resolve.override") {
       ability = "resolveOverride";
+    } else if (change.key === "system.power.restoreTarget") {
+      ability = "powerRestoreTarget";
+    } else if (change.key === "system.resolve.restoreTarget") {
+      ability = "resolveRestoreTarget";
     } else {
       // Regular and hidden abilities use includes matching
       ability = allAbilities.find((ability) => change.key.includes(ability));
