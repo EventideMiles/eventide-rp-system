@@ -722,6 +722,9 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
         selectorTypes.push('transformations', 'combat-powers', 'action-cards');
       }
 
+      // Initialize scope selector (shared across all combo boxes on this sheet)
+      this._scopeSelector = ItemSelectorManager.initializeScopeSelector(this, selectorTypes);
+
       // Initialize selectors using the service
       this._selectors = ItemSelectorManager.initializeSelectors(this, selectorTypes);
     } catch (error) {
@@ -738,6 +741,10 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
       if (this._selectors) {
         ItemSelectorManager.cleanupSelectors(this, this._selectors);
         this._selectors = null;
+      }
+      if (this._scopeSelector) {
+        ItemSelectorManager.cleanupScopeSelector(this._scopeSelector);
+        this._scopeSelector = null;
       }
     } catch (error) {
       Logger.warn("Error cleaning up item selectors", error, "ITEM_SHEET");

@@ -22,6 +22,8 @@ export const initHandlebarsPartials = async () => {
     // components
     "components/item-selector-combo-box":
       "systems/eventide-rp-system/templates/components/item-selector-combo-box.hbs",
+    "components/item-scope-selector":
+      "systems/eventide-rp-system/templates/components/item-scope-selector.hbs",
     // macro partials
     "character-effects":
       "systems/eventide-rp-system/templates/macros/parts/character-effects.hbs",

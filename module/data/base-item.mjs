@@ -29,6 +29,19 @@ export default class EventideRpSystemItemBase extends EventideRpSystemDataModel 
       initial: true,
     });
 
+    schema.selectorScopes = new fields.ArrayField(
+      new fields.StringField({
+        required: true,
+        blank: false,
+        choices: ["thisCharacter", "actor", "compendium", "world"],
+      }),
+      {
+        required: false,
+        initial: null,
+        nullable: true,
+      },
+    );
+
     return schema;
   }
 }

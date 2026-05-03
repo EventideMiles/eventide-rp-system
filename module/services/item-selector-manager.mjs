@@ -1,43 +1,23 @@
 /**
  * ItemSelectorManager Service
  *
- * Provides centralized management for item selector combo boxes in item sheets.
- * Handles initialization, cleanup, and configuration of all selector types.
- *
- * This service uses the delegation pattern - item sheets delegate selector
- * management to this service rather than handling it inline.
+ * Provides centralized management for item selector combo boxes and the
+ * shared scope selector in item sheets. Handles initialization, cleanup,
+ * and configuration of all selector types.
  *
  * @module ItemSelectorManager
  * @see module:item-sheet
  */
 
 import { ItemSelectorComboBox } from "../ui/components/item-selector-combo-box.mjs";
-import { ItemSourceCollector } from "../helpers/item-source-collector.mjs";
+import { ItemScopeSelector } from "../ui/components/item-scope-selector.mjs";
+import {
+  ItemSourceCollector,
+  ALL_SCOPES,
+} from "../helpers/item-source-collector.mjs";
 import { Logger } from "./logger.mjs";
 
-/**
- * ItemSelectorManager class for handling item selector operations
- *
- * This service provides methods for creating and managing item selector
- * combo boxes in item sheets. All methods accept a `sheet` parameter
- * to access the sheet's context (item, element, etc.).
- *
- * @class ItemSelectorManager
- */
 export class ItemSelectorManager {
-  /**
-   * Configuration object for all selector types
-   *
-   * Each selector type defines:
-   * - itemTypes: Array of item types or function returning array
-   * - handlerName: Name of the handler method on the sheet
-   * - placeholderKey: i18n key for the placeholder text
-   * - selectorType: Type identifier for the selector
-   * - itemTypeFilter: (optional) Only initialize for this item type
-   *
-   * @static
-   * @type {Object<string, SelectorConfig>}
-   */
   static SELECTOR_CONFIGS = {
     "action-item": {
       itemTypes: () => ItemSourceCollector.getActionItemTypes(),
@@ -83,32 +63,81 @@ export class ItemSelectorManager {
     },
   };
 
-  /**
-   * Initialize item selectors for a sheet
-   *
-   * Creates ItemSelectorComboBox instances for the specified selector types.
-   * Each selector is only initialized if:
-   * 1. The container element exists in the DOM
-   * 2. The itemTypeFilter (if specified) matches the current item type
-   *
-   * Selectors are stored in the sheet's private fields using the pattern
-   * `#${selectorName}Selector` (e.g., #actionItemSelector).
-   *
-   * @param {Object} sheet - The item sheet instance
-   * @param {Item} sheet.item - The parent item
-   * @param {HTMLElement} sheet.element - The sheet element
-   * @param {string[]} selectorTypes - Array of selector type keys to initialize
-   * @returns {Object<string, ItemSelectorComboBox>} Map of selector names to instances
-   * @static
-   *
-   * @example
-   * const selectors = ItemSelectorManager.initializeSelectors(
-   *   this,
-   *   ['action-item', 'effects', 'transformations']
-   * );
-   */
+  static getEffectiveScopes(item) {
+    const savedScopes = item?.system?.selectorScopes;
+    if (savedScopes && Array.isArray(savedScopes) && savedScopes.length > 0) {
+      return savedScopes;
+    }
+    return [...ALL_SCOPES];
+  }
+
+  static async saveScopePreferences(item, scopes) {
+    try {
+      const sortedScopes = [...scopes].sort();
+      await item.update(
+        { "system.selectorScopes": sortedScopes },
+        { render: false },
+      );
+      Logger.debug(
+        "Saved scope preferences",
+        { sortedScopes },
+        "ItemSelectorManager",
+      );
+      return item;
+    } catch (error) {
+      Logger.error(
+        "Failed to save scope preferences",
+        error,
+        "ItemSelectorManager",
+      );
+      throw error;
+    }
+  }
+
+  static initializeScopeSelector(sheet, _selectorTypes) {
+    const container = sheet.element.querySelector("[data-scope-selector]");
+    if (!container) {
+      Logger.debug(
+        "No scope selector container found",
+        null,
+        "ItemSelectorManager",
+      );
+      return null;
+    }
+
+    let scopes = this.getEffectiveScopes(sheet.item);
+    const parentActor = sheet.item?.isOwned ? sheet.item.parent : null;
+
+    if (!parentActor) {
+      scopes = scopes.filter((s) => s !== "thisCharacter");
+    }
+
+    const scopeSelector = new ItemScopeSelector({
+      container,
+      parentActor,
+      scopes,
+      onScopeChange: (newScopes) => {
+        this._handleScopeChange(sheet, newScopes);
+      },
+    });
+
+    Logger.debug(
+      "Initialized scope selector",
+      { scopes },
+      "ItemSelectorManager",
+    );
+    return scopeSelector;
+  }
+
   static initializeSelectors(sheet, selectorTypes) {
     const selectors = {};
+
+    // Get shared scope config
+    let scopes = this.getEffectiveScopes(sheet.item);
+    const parentActor = sheet.item?.isOwned ? sheet.item.parent : null;
+    if (!parentActor) {
+      scopes = scopes.filter((s) => s !== "thisCharacter");
+    }
 
     try {
       for (const selectorType of selectorTypes) {
@@ -123,7 +152,6 @@ export class ItemSelectorManager {
           continue;
         }
 
-        // Check if this selector should be filtered by item type
         if (
           config.itemTypeFilter &&
           sheet.item.type !== config.itemTypeFilter
@@ -131,11 +159,9 @@ export class ItemSelectorManager {
           continue;
         }
 
-        // Find the container element
         const container = sheet.element.querySelector(
           `[data-selector="${selectorType}"]`,
         );
-
         if (!container) {
           Logger.debug(
             `Container not found for selector: ${selectorType}`,
@@ -145,25 +171,23 @@ export class ItemSelectorManager {
           continue;
         }
 
-        // Get item types (call function if needed)
         const itemTypes =
           typeof config.itemTypes === "function"
             ? config.itemTypes()
             : config.itemTypes;
 
-        // Create the selector instance
         const selector = new ItemSelectorComboBox({
           container,
           itemTypes,
           onSelect: this.createHandler(sheet, config.handlerName),
           placeholder: game.i18n.localize(config.placeholderKey),
           selectorType: config.selectorType,
+          scopes,
+          parentActor,
         });
 
-        // Store in the returned object
         selectors[selectorType] = selector;
 
-        // Also store in sheet's private field for backward compatibility
         const privateFieldName = `#${this._toCamelCase(selectorType)}Selector`;
         if (typeof sheet._setPrivate === "function") {
           sheet._setPrivate(privateFieldName, selector);
@@ -171,7 +195,7 @@ export class ItemSelectorManager {
 
         Logger.debug(
           `Initialized selector: ${selectorType}`,
-          { selectorType, itemTypes },
+          { selectorType, itemTypes, scopes },
           "ItemSelectorManager",
         );
       }
@@ -186,20 +210,24 @@ export class ItemSelectorManager {
     return selectors;
   }
 
-  /**
-   * Clean up item selector instances
-   *
-   * Calls destroy() on each selector and sets it to null.
-   * This should be called when the sheet is closed or re-rendered.
-   *
-   * @param {Object} sheet - The item sheet instance
-   * @param {Object<string, ItemSelectorComboBox>} selectorInstances - Map of selector instances
-   * @returns {void}
-   * @static
-   *
-   * @example
-   * ItemSelectorManager.cleanupSelectors(this, this._selectors);
-   */
+  static _handleScopeChange(sheet, newScopes) {
+    Logger.debug(
+      "Scope changed, syncing all selectors",
+      { newScopes },
+      "ItemSelectorManager",
+    );
+
+    if (sheet._selectors) {
+      for (const selector of Object.values(sheet._selectors)) {
+        if (typeof selector.setScopes === "function") {
+          selector.setScopes(newScopes);
+        }
+      }
+    }
+
+    this.saveScopePreferences(sheet.item, newScopes);
+  }
+
   static cleanupSelectors(sheet, selectorInstances) {
     try {
       for (const [selectorType, selector] of Object.entries(
@@ -209,7 +237,6 @@ export class ItemSelectorManager {
           selector.destroy();
         }
 
-        // Clear the sheet's private field
         const privateFieldName = `#${this._toCamelCase(selectorType)}Selector`;
         if (typeof sheet._setPrivate === "function") {
           sheet._setPrivate(privateFieldName, null);
@@ -230,20 +257,20 @@ export class ItemSelectorManager {
     }
   }
 
-  /**
-   * Create a bound handler function for a selector
-   *
-   * Returns a function that calls the sheet's method with error handling.
-   * The handler is bound to the sheet instance and wrapped in try-catch.
-   *
-   * @param {Object} sheet - The item sheet instance
-   * @param {string} handlerName - Name of the handler method on the sheet
-   * @returns {Function} Bound handler function
-   * @static
-   *
-   * @example
-   * const handler = ItemSelectorManager.createHandler(this, '_onActionItemSelected');
-   */
+  static cleanupScopeSelector(scopeSelector) {
+    try {
+      if (scopeSelector && typeof scopeSelector.destroy === "function") {
+        scopeSelector.destroy();
+      }
+    } catch (error) {
+      Logger.warn(
+        "Error cleaning up scope selector",
+        error,
+        "ItemSelectorManager",
+      );
+    }
+  }
+
   static createHandler(sheet, handlerName) {
     return async (droppedItem) => {
       try {
@@ -269,48 +296,15 @@ export class ItemSelectorManager {
     };
   }
 
-  /**
-   * Convert kebab-case string to camelCase
-   *
-   * @param {string} str - The kebab-case string
-   * @returns {string} The camelCase string
-   * @private
-   * @static
-   *
-   * @example
-   * ItemSelectorManager._toCamelCase('action-item'); // 'actionItem'
-   */
   static _toCamelCase(str) {
     return str.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
   }
 
-  /**
-   * Get configuration for a specific selector type
-   *
-   * @param {string} selectorType - The selector type key
-   * @returns {SelectorConfig|undefined} The selector configuration
-   * @static
-   */
   static getSelectorConfig(selectorType) {
     return this.SELECTOR_CONFIGS[selectorType];
   }
 
-  /**
-   * Get all available selector type keys
-   *
-   * @returns {string[]} Array of selector type keys
-   * @static
-   */
   static getAvailableSelectorTypes() {
     return Object.keys(this.SELECTOR_CONFIGS);
   }
 }
-
-/**
- * @typedef {Object} SelectorConfig
- * @property {string[]|Function} itemTypes - Array of item types or function returning array
- * @property {string} handlerName - Name of the handler method on the sheet
- * @property {string} placeholderKey - i18n key for the placeholder text
- * @property {string} selectorType - Type identifier for the selector
- * @property {string} [itemTypeFilter] - Only initialize for this item type
- */
