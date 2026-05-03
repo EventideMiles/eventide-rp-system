@@ -1,6 +1,12 @@
 <section class="tab embedded-items {{tab.cssClass}}" data-group="primary" data-tab="embeddedItems">
   <div class="eventide-sheet__scrollable-container">
 
+    {{#if @root.editable}}
+    <div class="erps-items-panel">
+      <div data-scope-selector></div>
+    </div>
+    {{/if}}
+
     <!-- Action Item Section -->
     <div class="erps-items-panel">
       <div class="erps-items-panel__section-header">
