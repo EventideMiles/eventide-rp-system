@@ -148,7 +148,12 @@
         "ToggleDropdown": "Toggle dropdown",
         "ItemList": "Item list",
         "Loading": "Loading available items...",
-        "NoResults": "No items found matching your search"
+        "NoResults": "No items found matching your search",
+        "ScopeFilter": "Filter by source",
+        "ScopeThisCharacter": "This Character",
+        "ScopeAllCharacters": "All Characters",
+        "ScopeCompendiums": "Compendiums",
+        "ScopeWorldItems": "World Items"
       },
       "ActionItemSelector": {
         "Placeholder": "Search for combat power, gear, or feature...",
