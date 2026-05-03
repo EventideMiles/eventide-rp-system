@@ -1,0 +1,102 @@
+@use "config" as *;
+
+// ===================================
+// ERPS ITEM SCOPE SELECTOR
+// ===================================
+// Inline scope filter bar for item selectors.
+// Uses the erps-toggles component for each scope switch.
+
+.erps-item-scope-selector {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.75rem;
+  padding: 0.5rem 0.75rem;
+  background: rgb(var(--erps-current-secondary, var(--theme-secondary, var(--erps-default-secondary))) / 25%);
+  border: 1px solid rgb(var(--erps-current-secondary, var(--theme-secondary, var(--erps-default-secondary))) / 50%);
+  border-radius: $input-border-radius;
+  margin-bottom: 0.5rem;
+
+  // ===================================
+  // HEADER LABEL
+  // ===================================
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--erps-current-bright, var(--theme-bright, var(--erps-default-bright)));
+    white-space: nowrap;
+
+    i {
+      font-size: 0.625rem;
+      opacity: 0.8;
+    }
+  }
+
+  // ===================================
+  // OPTIONS ROW
+  // ===================================
+  &__options {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0;
+    margin-left: 0.5rem;
+  }
+
+  // ===================================
+  // TOGGLE COMPACT VARIANT
+  // Used inline in the scope selector row
+  // ===================================
+  .erps-toggles--compact {
+    margin: 0;
+    gap: 0;
+    padding: 0.25rem 0.625rem;
+    border-right: 1px solid rgb(var(--erps-current-secondary, var(--theme-secondary, var(--erps-default-secondary))) / 40%);
+
+    &:last-child {
+      border-right: none;
+    }
+
+    .erps-toggles__label {
+      font-size: 0.75rem;
+      gap: 0.25rem;
+
+      i {
+        font-size: 0.65rem;
+        opacity: 0.75;
+      }
+    }
+
+    .erps-toggles__track {
+      width: 2.25rem;
+      height: 1.125rem;
+    }
+
+    .erps-toggles__thumb {
+      width: 0.875rem;
+      height: 0.875rem;
+    }
+  }
+
+  // Checked state for compact track - override thumb travel
+  .erps-toggles__input:checked + .erps-toggles__container .erps-toggles__track .erps-toggles__thumb {
+    transform: translateY(-50%) translateX(calc(2.25rem - 0.875rem - 2px));
+  }
+
+  // ===================================
+  // RESPONSIVE
+  // ===================================
+  @media (max-width: 768px) {
+    padding: 0.375rem 0.5rem;
+    gap: 0.375rem 0.5rem;
+
+    &__header {
+      font-size: 0.625rem;
+    }
+  }
+}
