@@ -7,3 +7,4 @@ export * from "./performance-dashboard.mjs";
 export * from "./baseline-sheet-mixins.mjs";
 export * from "./window-sizing-fix-mixin.mjs";
 export * from "./item-selector-combo-box.mjs";
+export * from "./item-scope-selector.mjs";

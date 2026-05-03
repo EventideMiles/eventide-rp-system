@@ -2,6 +2,15 @@
 
 ## Latest Release
 
+**[v14.6.0](release-notes/v14.6.0.md)** - Selective Global Item Selector _(May 2026)_
+
+**Key Highlights:**
+
+- **Source Scope Filtering** — toggle switches on item sheets let users filter which item sources (This Character, All Characters, Compendiums, World Items) are searched by combo box selectors
+- **Shared Scope State** — all combo boxes on the same item sheet share scope selection; toggling one updates all others instantly
+- **Scope Persistence** — scope preferences are saved to the item and persist across sessions without triggering a full re-render
+- **Smart Default Behavior** — if all toggles are unchecked, all scopes are automatically re-enabled to prevent empty results
+
 **[v14.5.0](release-notes/v14.5.0.md)** - Configurable Restore Targets & Per-Target Self-Effect Scaling _(May 2026)_
 
 **Key Highlights:**
@@ -264,7 +273,8 @@ Enhanced character customization through circumstantial bonuses and feature-base
 
 | Version | Release Date | Focus |
 | -- | -- | -- |
-| **v14.5.0** | May 2026 | Configurable Restore Targets & Per-Target Self-Effect Scaling |
+| **v14.6.0** | May 2026 | Selective Global Item Selector |
+| v14.5.0 | May 2026 | Configurable Restore Targets & Per-Target Self-Effect Scaling |
 | v14.4.0 | May 2026 | Configurable Intensification & Accessibility Improvements |
 | v14.3.0 | April 2026 | Action Card Self-Effects |
 | v14.2.0 | April 2026 | Healing Increase with Multiplicative Support |
@@ -294,11 +304,11 @@ Enhanced character customization through circumstantial bonuses and feature-base
 
 ### By Feature Area
 
-- **Action Cards**: [v14.5.0](release-notes/v14.5.0.md), [v14.3.0](release-notes/v14.3.0.md), [v14.0.0](release-notes/v14.0.0.md), [v13.11.0](release-notes/v13.11.0.md), [v13.13.3](release-notes/v13.13.3.md), [v13.14.0](release-notes/v13.14.0.md), [v13.15.0](release-notes/v13.15.0.md), [v13.16.0](release-notes/v13.16.0.md), [v13.18.0](release-notes/v13.18.0.md), [v13.18.1](release-notes/v13.18.1.md), [v13.19.0](release-notes/v13.19.0.md), [v13.19.1](release-notes/v13.19.1.md), [v13.20.0](release-notes/v13.20.0.md), [v13.21.0](release-notes/v13.21.0.md), [v13.21.5](release-notes/v13.21.5.md), [v13.21.8](release-notes/v13.21.8.md), [v13.22.0](release-notes/v13.22.0.md)
+- **Action Cards**: [v14.6.0](release-notes/v14.6.0.md), [v14.5.0](release-notes/v14.5.0.md), [v14.3.0](release-notes/v14.3.0.md), [v14.0.0](release-notes/v14.0.0.md), [v13.11.0](release-notes/v13.11.0.md), [v13.13.3](release-notes/v13.13.3.md), [v13.14.0](release-notes/v13.14.0.md), [v13.15.0](release-notes/v13.15.0.md), [v13.16.0](release-notes/v13.16.0.md), [v13.18.0](release-notes/v13.18.0.md), [v13.18.1](release-notes/v13.18.1.md), [v13.19.0](release-notes/v13.19.0.md), [v13.19.1](release-notes/v13.19.1.md), [v13.20.0](release-notes/v13.20.0.md), [v13.21.0](release-notes/v13.21.0.md), [v13.21.5](release-notes/v13.21.5.md), [v13.21.8](release-notes/v13.21.8.md), [v13.22.0](release-notes/v13.22.0.md)
 - **GM Tools**: [v13.18.0](release-notes/v13.18.0.md), [v13.18.1](release-notes/v13.18.1.md), [v13.20.0](release-notes/v13.20.0.md)
 - **Transformations**: [v13.14.0](release-notes/v13.14.0.md), [v13.15.0](release-notes/v13.15.0.md), [v13.15.5](release-notes/v13.15.5.md), [v13.17.0](release-notes/v13.17.0.md)
 - **Features & Bonuses**: [v13.10.0](release-notes/v13.10.0.md), [v13.19.0](release-notes/v13.19.0.md), [v13.22.0](release-notes/v13.22.0.md)
-- **Status Effects & ActiveEffects**: [v14.5.0](release-notes/v14.5.0.md), [v14.4.0](release-notes/v14.4.0.md), [v14.3.0](release-notes/v14.3.0.md), [v14.1.0](release-notes/v14.1.0.md), [v14.0.0](release-notes/v14.0.0.md), [v13.19.0](release-notes/v13.19.0.md)
+- **Status Effects & ActiveEffects**: [v14.6.0](release-notes/v14.6.0.md), [v14.5.0](release-notes/v14.5.0.md), [v14.4.0](release-notes/v14.4.0.md), [v14.3.0](release-notes/v14.3.0.md), [v14.1.0](release-notes/v14.1.0.md), [v14.0.0](release-notes/v14.0.0.md), [v13.19.0](release-notes/v13.19.0.md)
 - **Combat Automation**: [v13.11.0](release-notes/v13.11.0.md), [v13.13.3](release-notes/v13.13.3.md)
 - **Documentation**: [v13.20.0](release-notes/v13.20.0.md)
 - **Conversion & Migration**: [v14.0.0](release-notes/v14.0.0.md), [v13.17.0](release-notes/v13.17.0.md), [v13.19.0](release-notes/v13.19.0.md), [v13.19.1](release-notes/v13.19.1.md)
@@ -339,4 +349,4 @@ We encourage users to:
 
 ---
 
-**Current Version**: v14.5.0 | **Foundry VTT Compatibility**: v14+ | **Last Updated**: May 2026
+**Current Version**: v14.6.0 | **Foundry VTT Compatibility**: v14+ | **Last Updated**: May 2026

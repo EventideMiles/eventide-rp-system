@@ -1,30 +1,66 @@
 import { Logger } from "../services/logger.mjs";
 
 /**
+ * Valid source scope identifiers for the selective global selector
+ * @type {string[]}
+ */
+export const SOURCE_SCOPES = ["thisCharacter", "actor", "compendium", "world"];
+
+/**
+ * All scope identifiers (default: show everything)
+ * @type {string[]}
+ */
+export const ALL_SCOPES = [...SOURCE_SCOPES];
+
+/**
  * Centralized system for collecting items from all accessible sources
  * including compendiums, character sheets, and world items
  */
 export class ItemSourceCollector {
   /**
-   * Get all accessible items of specified types for the current user
+   * Get all accessible items of specified types for the current user,
+   * optionally filtered by source scopes
    * @param {User} user - The current user
    * @param {string[]} itemTypes - Array of item types to include
+   * @param {string[]|null} sourceScopes - Array of source scopes to include, or null for all
+   * @param {Actor|null} parentActor - The parent actor for "thisCharacter" scope
    * @returns {Promise<Object[]>} Array of formatted item objects
    */
-  static async getAllAccessibleItems(user = game.user, itemTypes = []) {
+  static async getAllAccessibleItems(
+    user = game.user,
+    itemTypes = [],
+    sourceScopes = null,
+    parentActor = null,
+  ) {
+    const scopes = sourceScopes || ALL_SCOPES;
     const allItems = [];
 
     try {
-      // Get items from all sources in parallel for better performance
-      const [compendiumItems, characterItems, worldItems] = await Promise.all([
-        this.getCompendiumItems(itemTypes, user),
-        this.getCharacterSheetItems(itemTypes, user),
-        this.getWorldItems(itemTypes, user),
-      ]);
+      const fetchPromises = [];
 
-      allItems.push(...compendiumItems, ...characterItems, ...worldItems);
+      if (scopes.includes("thisCharacter") && parentActor) {
+        fetchPromises.push(
+          this.getThisCharacterItems(itemTypes, user, parentActor),
+        );
+      }
 
-      // Remove duplicates based on UUID and sort by name
+      if (scopes.includes("actor")) {
+        fetchPromises.push(this.getCharacterSheetItems(itemTypes, user));
+      }
+
+      if (scopes.includes("compendium")) {
+        fetchPromises.push(this.getCompendiumItems(itemTypes, user));
+      }
+
+      if (scopes.includes("world")) {
+        fetchPromises.push(this.getWorldItems(itemTypes, user));
+      }
+
+      const results = await Promise.all(fetchPromises);
+      for (const items of results) {
+        allItems.push(...items);
+      }
+
       const uniqueItems = this._removeDuplicates(allItems);
 
       return uniqueItems.sort((a, b) => a.name.localeCompare(b.name));
@@ -130,6 +166,42 @@ export class ItemSourceCollector {
   }
 
   /**
+   * Get items from the parent actor of the current sheet (this character)
+   * @param {string[]} itemTypes - Array of item types to include
+   * @param {User} user - The current user
+   * @param {Actor} parentActor - The parent actor whose items to collect
+   * @returns {Promise<Object[]>} Array of formatted item objects
+   */
+  static async getThisCharacterItems(
+    itemTypes = [],
+    user = game.user,
+    parentActor = null,
+  ) {
+    const items = [];
+
+    if (!parentActor) return items;
+
+    if (!parentActor.testUserPermission(user, "LIMITED")) return items;
+
+    for (const item of parentActor.items) {
+      if (itemTypes.length > 0 && !itemTypes.includes(item.type)) {
+        continue;
+      }
+
+      const formattedItem = this.formatItemForDisplay(item, {
+        source: `This Character: ${parentActor.name}`,
+        sourceType: "thisCharacter",
+        actorId: parentActor.id,
+        uuid: item.uuid,
+      });
+
+      items.push(formattedItem);
+    }
+
+    return items;
+  }
+
+  /**
    * Get items from the world items database
    * @param {string[]} itemTypes - Array of item types to include
    * @param {User} user - The current user
@@ -209,7 +281,12 @@ export class ItemSourceCollector {
    */
   static _removeDuplicates(items) {
     const seen = new Map();
-    const priorityOrder = { actor: 1, world: 2, compendium: 3 };
+    const priorityOrder = {
+      thisCharacter: 0,
+      actor: 1,
+      world: 2,
+      compendium: 3,
+    };
 
     for (const item of items) {
       const key = `${item.name}|${item.type}`;
