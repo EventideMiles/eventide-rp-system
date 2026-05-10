@@ -513,6 +513,11 @@
         "Gear": "Gear",
         "Statuses": "Statuses"
       },
+      "GmNotes": {
+        "Label": "GM Notes",
+        "Hint": "Private notes only visible to Game Masters",
+        "Placeholder": "Enter private GM notes here..."
+      },
       "CombatPowers": {
         "TransformationCombatPowers": "Combat powers are provided by active transformation",
         "Transformed": "Transformed",

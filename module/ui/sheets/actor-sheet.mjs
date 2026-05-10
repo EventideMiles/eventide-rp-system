@@ -263,7 +263,7 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
                   secrets: this.document.isOwner,
                   // Data to fill in for inline rolls
                   rollData: this.actor.getRollData(),
-                  // Relative UUID resolution
+                  // Relative uuid resolution
                   relativeTo: this.actor,
                 },
               );
@@ -275,6 +275,28 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
             );
             // Fallback to plain text
             context.enrichedBiography = this.actor.system.biography || "";
+          }
+
+          // Enrich GM Notes - only for GMs
+          if (game.user.isGM) {
+            try {
+              context.enrichedGmNotes =
+                await TextEditor.implementation.enrichHTML(
+                  this.actor.system.gmNotes,
+                  {
+                    secrets: true,
+                    rollData: this.actor.getRollData(),
+                    relativeTo: this.actor,
+                  },
+                );
+            } catch (enrichError) {
+              Logger.warn(
+                "Failed to enrich GM Notes HTML",
+                enrichError,
+                "ACTOR_SHEET",
+              );
+              context.enrichedGmNotes = this.actor.system.gmNotes || "";
+            }
           }
           break;
       }
