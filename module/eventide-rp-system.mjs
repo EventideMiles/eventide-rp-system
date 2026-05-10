@@ -91,16 +91,81 @@ const { ActorSheet, ItemSheet } = foundry.appv1.sheets;
 
 // Add key classes to the global scope so they can be more easily used
 // by downstream developers
-/** @type {EventideRPSystemGlobal} */
+/**
+ * The Eventide RP System global API, accessible via `erps` in the browser console.
+ *
+ * This object provides runtime access to the system's document classes, applications,
+ * utility functions, macro dialogs, settings, and diagnostic tools. It is the primary
+ * entry point for macro writers and module developers integrating with the system.
+ *
+ * @namespace globalThis.erps
+ * @type {EventideRPSystemGlobal}
+ *
+ * @example
+ * // Access actor/item document classes
+ * const actor = new erps.documents.EventideRpSystemActor({ name: "Hero", type: "character" });
+ *
+ * @example
+ * // Get a system setting value
+ * const formula = erps.settings.getSetting("initiativeFormula");
+ *
+ * @example
+ * // Roll an item macro
+ * erps.utils.rollItemMacro("Actor.abcd1234.Item.efgh5678");
+ *
+ * @example
+ * // Run diagnostics from the browser console
+ * const info = erps.diagnostics();
+ * console.log(info.systemVersion, info.actorCount);
+ *
+ * @since 13.0.0
+ * @author Eventide RP System
+ */
 globalThis.erps = {
+  /**
+   * System document classes for Actor and Item.
+   *
+   * Use these to create new documents or reference the class constructors
+   * for `instanceof` checks and subclassing.
+   *
+   * @example
+   * const actor = new erps.documents.EventideRpSystemActor({ name: "Hero", type: "character" });
+   * if (doc instanceof erps.documents.EventideRpSystemItem) { ... }
+   */
   documents: {
     EventideRpSystemActor,
     EventideRpSystemItem,
   },
+
+  /**
+   * System sheet application classes for Actor and Item.
+   *
+   * Useful for `instanceof` checks or programmatic sheet rendering.
+   *
+   * @example
+   * if (app instanceof erps.applications.EventideRpSystemActorSheet) { ... }
+   */
   applications: {
     EventideRpSystemActorSheet,
     EventideRpSystemItemSheet,
   },
+
+  /**
+   * Utility functions for common Foundry tasks, UI helpers, and system operations.
+   *
+   * Includes all static methods from {@link CommonFoundryTasks} (e.g., `getTargetArray`,
+   * `retrieveSheetTheme`), the `rollItemMacro` function, color picker / number input /
+   * range slider helpers, {@link ErrorHandler}, {@link performSystemCleanup},
+   * and {@link TransformationConverter}.
+   *
+   * @example
+   * // Get currently targeted tokens
+   * const targets = erps.utils.getTargetArray();
+   *
+   * @example
+   * // Get the user's current sheet theme
+   * const theme = erps.utils.retrieveSheetTheme();
+   */
   utils: {
     ...commonTasks,
     rollItemMacro,
@@ -117,6 +182,22 @@ globalThis.erps = {
     performSystemCleanup,
     TransformationConverter,
   },
+
+  /**
+   * Macro dialog classes that can be instantiated programmatically.
+   *
+   * Each class extends Foundry's Application and provides a UI dialog
+   * for a specific game action (e.g., creating gear, transferring items,
+   * applying damage, rolling abilities).
+   *
+   * @example
+   * // Open a gear creation dialog for a specific actor
+   * new erps.macros.GearCreator({ actor }).render(true);
+   *
+   * @example
+   * // Open a damage targets dialog
+   * new erps.macros.DamageTargets().render(true);
+   */
   macros: {
     GearTransfer,
     GearCreator,
@@ -129,17 +210,80 @@ globalThis.erps = {
     ActorToTransformationConverter,
     TransformationToActorConverter,
   },
+
+  /**
+   * System settings getters and setters.
+   *
+   * Provides typed access to world-scoped and client-scoped system settings
+   * without needing to use the full `game.settings.get("eventide-rp-system", key)` pattern.
+   *
+   * @example
+   * const initiative = erps.settings.getSetting("initiativeFormula");
+   * await erps.settings.setSetting("initiativeFormula", "1d20+3");
+   */
   settings: {
     getSetting,
     setSetting,
   },
-  messages: erpsMessageHandler,
-  models,
-  Logger,
-  gmControl: null, // Will be set after import
 
-  // Manual cleanup functions for debugging and emergency cleanup
+  /**
+   * Message handler for system chat messages.
+   * Provides methods for creating and managing Eventide RP System chat messages.
+   */
+  messages: erpsMessageHandler,
+
+  /**
+   * Data model classes for all actor and item types.
+   *
+   * Maps type names to their DataModel classes, matching what is registered
+   * in `CONFIG.Actor.dataModels` and `CONFIG.Item.dataModels`.
+   *
+   * @example
+   * const schema = erps.models.EventideRpSystemCharacter.defineSchema();
+   */
+  models,
+
+  /**
+   * System logger with leveled output (debug, info, warn, error).
+   *
+   * Respects the `testingMode` setting for debug-level output.
+   * All log messages are prefixed with `ERPS`.
+   *
+   * @example
+   * erps.Logger.info("Character created", { name: actor.name }, "CHARACTER");
+   * erps.Logger.error("Failed to roll", error, "ROLLS");
+   */
+  Logger,
+
+  /**
+   * GM Control manager for action approval workflows.
+   *
+   * Set asynchronously after init — may be `null` during early initialization.
+   * Provides methods for managing pending GM actions and stat approvals.
+   *
+   * @type {Object|null}
+   */
+  gmControl: null,
+
+  /**
+   * Perform standard system cleanup — clears tracked intervals and stale DOM references.
+   *
+   * Safe to call during normal operation. For aggressive cleanup use `forceCleanup()`.
+   *
+   * @example
+   * erps.cleanup();
+   */
   cleanup: performSystemCleanup,
+
+  /**
+   * Force aggressive cleanup — clears ALL intervals and timeouts, then runs standard cleanup.
+   *
+   * ⚠️ This may disrupt active animations and pending operations. Use only for
+   * debugging or emergency cleanup when the system is in a bad state.
+   *
+   * @example
+   * erps.forceCleanup();
+   */
   forceCleanup: () => {
     Logger.warn(
       "Performing FORCE cleanup - this will clear ALL intervals and timeouts!",
@@ -151,7 +295,22 @@ globalThis.erps = {
     Logger.info("Force cleanup completed", null, "SYSTEM_INIT");
   },
 
-  // Diagnostic function to check system state
+  /**
+   * Collect and return system diagnostic information.
+   *
+   * Returns an object containing memory usage, interval counts, initialization state,
+   * document counts, system/Foundry versions, migration status, and active theme instances.
+   *
+   * @returns {SystemDiagnostics} Diagnostic snapshot of the current system state
+   *
+   * @example
+   * const info = erps.diagnostics();
+   * console.log(`Actors: ${info.actorCount}, System: ${info.systemVersion}`);
+   *
+   * @maintenance Useful for bug reports and troubleshooting. Safe to call at any time.
+   *
+   * @since 13.0.0
+   */
   diagnostics: () => {
     const trackedIntervals = window._erpsIntervalIds
       ? window._erpsIntervalIds.size
@@ -248,7 +407,20 @@ globalThis.erps = {
     return diagnostics;
   },
 
-  // Performance monitoring dashboard
+  /**
+   * Open the system performance monitoring dashboard.
+   *
+   * Loads and renders a graphical dashboard showing system resource usage,
+   * active intervals, and performance metrics. Falls back to a simple
+   * notification if the dashboard component fails to load.
+   *
+   * @example
+   * erps.showPerformanceDashboard();
+   *
+   * @maintenance Intended for development and debugging, not runtime gameplay.
+   *
+   * @since 14.0.0
+   */
   showPerformanceDashboard: () => {
     // Import and create the performance dashboard application
     import("./ui/components/performance-dashboard.mjs")
