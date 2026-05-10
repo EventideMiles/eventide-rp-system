@@ -45,6 +45,9 @@ export default class EventideRpSystemActorBase extends EventideRpSystemDataModel
     });
     schema.biography = new fields.StringField({ required: true, blank: true }); // equivalent to passing ({initial: ""}) for StringFields
 
+    // GM Notes - private notes only visible to GMs
+    schema.gmNotes = new fields.StringField({ required: true, blank: true });
+
     schema.attributes = new fields.SchemaField({
       level: new fields.SchemaField({
         value: new fields.NumberField({

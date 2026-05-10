@@ -1574,6 +1574,50 @@ label,
 .eventide-sheet.eventide-sheet--scrollbars .tab.description .editor {
   min-height: 48rem;
 }
+.eventide-sheet .biography-section .biography-header {
+  font-family: var(--erps-info-font);
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--erps-sheet-light, var(--theme-light, var(--erps-sheet-light)));
+  margin: 0 0 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+.eventide-sheet .biography-section .biography-header i {
+  color: var(--erps-sheet-accent, var(--theme-accent, var(--erps-sheet-accent)));
+  font-size: 1rem;
+}
+.eventide-sheet .gm-notes-section {
+  margin-top: 1.5rem;
+  border-top: 2px solid var(--erps-sheet-glow, var(--theme-glow, var(--erps-sheet-glow)));
+  padding-top: 1rem;
+}
+.eventide-sheet .gm-notes-section .gm-notes-header {
+  font-family: var(--erps-info-font);
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--erps-sheet-light, var(--theme-light, var(--erps-sheet-light)));
+  margin: 0 0 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+.eventide-sheet .gm-notes-section .gm-notes-header i {
+  color: var(--erps-sheet-accent, var(--theme-accent, var(--erps-sheet-accent)));
+  font-size: 1rem;
+}
+.eventide-sheet .gm-notes-section .gm-notes-content {
+  min-height: 10rem;
+  padding: 0.5rem;
+  border: 1px solid var(--erps-sheet-glow, var(--theme-glow, var(--erps-sheet-glow)));
+  border-radius: 4px;
+}
+.eventide-sheet.eventide-sheet--scrollbars .tab.biography .gm-notes-section .editor, .eventide-sheet.eventide-sheet--scrollbars .tab.biography .gm-notes-section prose-mirror {
+  min-height: 20rem;
+}
 
 .eventide-sheet:not([data-bg-theme]) {
   --theme-primary: rgba(21, 101, 192, 0.9);

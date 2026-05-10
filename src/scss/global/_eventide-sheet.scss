@@ -511,6 +511,68 @@ label,
   &.eventide-sheet--scrollbars .tab.description .editor {
     min-height: 48rem;
   }
+
+  // ===================================
+  // BIOGRAPHY SECTION HEADER
+  // ===================================
+
+  .biography-section {
+    .biography-header {
+      font-family: var(--erps-info-font);
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--erps-sheet-light, var(--theme-light, var(--erps-sheet-light)));
+      margin: 0 0 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-shadow: 0 1px 2px rgb(0 0 0 / 60%);
+
+      i {
+        color: var(--erps-sheet-accent, var(--theme-accent, var(--erps-sheet-accent)));
+        font-size: 1rem;
+      }
+    }
+  }
+
+  // ===================================
+  // GM NOTES SECTION
+  // ===================================
+
+  .gm-notes-section {
+    margin-top: 1.5rem;
+    border-top: 2px solid var(--erps-sheet-glow, var(--theme-glow, var(--erps-sheet-glow)));
+    padding-top: 1rem;
+
+    .gm-notes-header {
+      font-family: var(--erps-info-font);
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--erps-sheet-light, var(--theme-light, var(--erps-sheet-light)));
+      margin: 0 0 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-shadow: 0 1px 2px rgb(0 0 0 / 60%);
+
+      i {
+        color: var(--erps-sheet-accent, var(--theme-accent, var(--erps-sheet-accent)));
+        font-size: 1rem;
+      }
+    }
+
+    .gm-notes-content {
+      min-height: 10rem;
+      padding: 0.5rem;
+      border: 1px solid var(--erps-sheet-glow, var(--theme-glow, var(--erps-sheet-glow)));
+      border-radius: 4px;
+    }
+  }
+
+  &.eventide-sheet--scrollbars .tab.biography .gm-notes-section .editor,
+  &.eventide-sheet--scrollbars .tab.biography .gm-notes-section prose-mirror {
+    min-height: 20rem;
+  }
 }
 
 // Default theme application for sheets without data-bg-theme attribute

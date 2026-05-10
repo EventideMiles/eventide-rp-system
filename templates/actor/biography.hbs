@@ -4,14 +4,40 @@
   data-group='primary'
   data-tab='biography'
 >
-  {{! Editors must receive enriched text data from getData to properly handle rolls, UUID links, etc. }}
-  {{#if editable}}
-    <prose-mirror name="system.biography" data-document-u-u-i-d="{{actor.uuid}}" value="{{system.biography}}" collaborate="true" toggled="true">
-      {{{enrichedBiography}}}
-    </prose-mirror>
-  {{else}}
-    <div class="biography-content">
-      {{editor biography target="system.biography" button=true owner=owner editable=editable}}
+  {{! Biography section with header }}
+  <div class="biography-section">
+    <h3 class="biography-header">
+      <i class="fas fa-feather-alt"></i>
+      {{localize "EVENTIDE_RP_SYSTEM.Actor.Tabs.Biography"}}
+    </h3>
+    {{! Editors must receive enriched text data from getData to properly handle rolls, UUID links, etc. }}
+    {{#if editable}}
+      <prose-mirror name="system.biography" data-document-u-u-i-d="{{actor.uuid}}" value="{{system.biography}}" collaborate="true" toggled="true">
+        {{{enrichedBiography}}}
+      </prose-mirror>
+    {{else}}
+      <div class="biography-content">
+        {{editor biography target="system.biography" button=true owner=owner editable=editable}}
+      </div>
+    {{/if}}
+  </div>
+
+  {{! GM Notes - only visible to GMs }}
+  {{#if isGM}}
+    <div class="gm-notes-section">
+      <h3 class="gm-notes-header">
+        <i class="fas fa-user-shield"></i>
+        {{localize "EVENTIDE_RP_SYSTEM.Actor.GmNotes.Label"}}
+      </h3>
+      {{#if editable}}
+        <prose-mirror name="system.gmNotes" data-document-u-u-i-d="{{actor.uuid}}" value="{{system.gmNotes}}" collaborate="true" toggled="true">
+          {{{enrichedGmNotes}}}
+        </prose-mirror>
+      {{else}}
+        <div class="gm-notes-content">
+          {{{enrichedGmNotes}}}
+        </div>
+      {{/if}}
     </div>
   {{/if}}
 </section>
