@@ -504,6 +504,9 @@
           "hint": "Automatically update the token's image when the actor's image is updated"
         }
       },
+      "Actions": {
+        "Rest": "Rest"
+      },
       "Tabs": {
         "CombatPowers": "Combat Powers",
         "ActionCards": "Action Cards",
@@ -625,6 +628,7 @@
       "GearError": "Cannot use Gear right now!",
       "GearNotFoundInInventory": "Gear '{gearName}' not found in actor's inventory",
       "GMOnly": "Only GMs can use this script in this mode.",
+      "NotOwnerOrGM": "Only the actor's owner or a GM can use the rest function.",
       "ItemNotFound": "Item not found",
       "LocalStorage": "There was some sort of error storing values locally.",
       "MissingStatus": "Selected status not found!",
@@ -1274,6 +1278,7 @@
       "GearCreator": "Gear Creator",
       "GearPopup": "Use Gear",
       "GearTransfer": "Transfer Gear",
+      "RestRecover": "Rest / Recover",
       "RestoreTarget": "Restore Target",
       "SelectAbilityRoll": "Select Ability Roll",
       "SheetTheme": "Cycle Sheet Theme",

@@ -56,6 +56,9 @@
           "hint": "Automatically update the token's image when the actor's image is updated"
         }
       },
+      "Actions": {
+        "Rest": "Rest"
+      },
       "Tabs": {
         "CombatPowers": "Combat Powers",
         "ActionCards": "Action Cards",
