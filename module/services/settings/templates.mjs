@@ -44,6 +44,7 @@ export const preloadHandlebarsTemplates = async function () {
     "systems/eventide-rp-system/templates/macros/gear-transfer.hbs",
     "systems/eventide-rp-system/templates/macros/restore-target.hbs",
     "systems/eventide-rp-system/templates/macros/select-ability-roll.hbs",
+    "systems/eventide-rp-system/templates/macros/npc-quick-generator.hbs",
 
     // Popup templates
     "systems/eventide-rp-system/templates/macros/popups/combat-power-popup.hbs",

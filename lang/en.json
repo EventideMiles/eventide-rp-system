@@ -501,7 +501,11 @@
       "Controls": {
         "AutoTokenUpdate": {
           "label": "Auto Token Update",
-          "hint": "Automatically update the token's image when the actor's image is updated"
+          "hint": "Automatically update the prototype token when the actor's name or image changes"
+        },
+        "AutoTokenSync": {
+          "label": "Sync Placed Tokens",
+          "hint": "Also update existing tokens placed on scenes when the actor's name or image changes"
         }
       },
       "Actions": {
@@ -766,6 +770,7 @@
       "SheetContextPreparationError": "Failed to prepare sheet context",
       "ThemeOperation": "Theme operation failed",
       "ToggleAutoTokenUpdateError": "Failed to toggle auto token update",
+      "ToggleAutoTokenSyncError": "Failed to toggle sync placed tokens",
       "TransformationApplyError": "Failed to apply transformation",
       "TransformationRemoveError": "Failed to remove transformation",
       "FailedToSetActionItem": "Failed to set action item",
@@ -1267,6 +1272,61 @@
       "V14Failed": "V14 migration failed. Check console for details.",
       "V14FixedShowIcon": "Fixed {count} effects with showIcon=1"
     },
+    "NpcGenerator": {
+      "Title": "NPC Quick Generator",
+      "LevelLabel": "Level / CR",
+      "LevelHint": "The level (and CR) for the generated NPC. Stats scale based on this value.",
+      "TemplateLabel": "Template",
+      "TemplateHint": "Select a built-in archetype, a compendium template, or enter custom values.",
+      "ModeLabel": "Distribution Mode",
+      "TemplateMode": "Template",
+      "CustomMode": "Custom",
+      "ArchetypeBalanced": "Balanced",
+      "ArchetypeWarrior": "Warrior",
+      "ArchetypeSpellcaster": "Spellcaster",
+      "ArchetypeSkirmisher": "Skirmisher",
+      "ArchetypeBrute": "Brute",
+      "ArchetypeDefender": "Defender",
+      "BudgetLabel": "Stat Budget",
+      "BudgetRemaining": "Remaining",
+      "DerivedStats": "Derived Stats",
+      "MaxResolve": "Max Resolve",
+      "MaxPower": "Max Power",
+      "ArmorClass": "AC",
+      "OverrideResolve": "Override Resolve",
+      "OverridePower": "Override Power",
+      "OverrideSection": "Stat Overrides",
+      "OverrideHint": "Optionally override the formula-derived values with fixed resolve or power maximums.",
+      "NpcName": "NPC Name",
+      "NpcNameHint": "Leave blank to use the template name or a default name.",
+      "Generate": "Generate NPC",
+      "ApplyToExisting": "Apply to Existing NPC",
+      "AutoDistribute": "Auto-distribute",
+      "NoTemplatesAvailable": "No compendium templates available — using built-in archetypes.",
+      "BuiltInArchetypes": "Built-in Archetypes",
+      "CompendiumTemplates": "Compendium Templates",
+      "UserTemplates": "User Templates",
+      "OverrideFeatureName": "NPC Overrides",
+      "OverrideFeatureDescription": "Level {level} NPC overrides — {overrides}",
+      "Preview": "Stat Preview",
+      "StrainDistribution": "Strain Distribution",
+      "MustBeNpc": "The selected actor must be an NPC.",
+      "SelectTemplate": "— Select a template —",
+      "CustomLabel": "Custom Distribution",
+      "CustomHint": "Manually assign ability scores. The total must equal the stat budget.",
+      "CreatedSuccess": "NPC \"{name}\" created successfully.",
+      "AppliedSuccess": "NPC \"{name}\" updated successfully.",
+      "GenerationFailed": "Failed to generate NPC. Check the console for details.",
+      "CalloutCreate": "Configure the NPC's stats below and click Generate to create a new NPC actor.",
+      "CalloutApply": "Applying stats to \"{name}\". This will update the NPC's abilities, level, and derived stats.",
+      "Abilities": {
+        "Acro": "Acrobatics",
+        "Phys": "Physical",
+        "Fort": "Fortitude",
+        "Will": "Will",
+        "Wits": "Wits"
+      }
+    },
     "WindowTitles": {
       "ActorToTransformation": "Convert Actor to Transformation",
       "ChangeTargetStatus": "Change Target Status",
@@ -1275,6 +1335,7 @@
       "DamageTargets": "Damage Targets",
       "EffectCreator": "Effect Creator",
       "FeaturePopup": "Feature Information",
+      "GenerateNpc": "NPC Quick Generator",
       "GearCreator": "Gear Creator",
       "GearPopup": "Use Gear",
       "GearTransfer": "Transfer Gear",
@@ -1457,6 +1518,8 @@
     "MinimumResolveValueHint": "The minimum value that an actor's max resolve can be. Applies after percentage multipliers.",
     "MinimumResolveValueWarning": "Minimum Resolve Value must be a positive integer (1 or greater). Resetting to default ({0}).",
     "ActionCardExecutionLimitName": "Action Card Execution Limit",
-    "ActionCardExecutionLimitHint": "Maximum number of action cards that can be executed per turn"
+    "ActionCardExecutionLimitHint": "Maximum number of action cards that can be executed per turn",
+    "NpcTemplateCompendiumName": "NPC Template Compendium",
+    "NpcTemplateCompendiumHint": "The compendium pack to use as a source for NPC templates in the NPC Quick Generator. Leave empty to use only built-in archetypes. Enter the pack ID (e.g., 'world.my-npc-templates'). User compendium templates take priority over system templates and built-in archetypes."
   }
 }

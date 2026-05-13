@@ -735,6 +735,17 @@ export const registerSettings = function () {
     },
   });
 
+  // NPC Template Compendium (for NPC Quick Generator)
+  game.settings.register("eventide-rp-system", "npcTemplateCompendium", {
+    name: "SETTINGS.NpcTemplateCompendiumName",
+    hint: "SETTINGS.NpcTemplateCompendiumHint",
+    scope: "world",
+    config: true,
+    restricted: true,
+    type: String,
+    default: "",
+  });
+
   // ===========================================
   // DERIVED VALUE SETTINGS (GM Only - No Reload Needed)
   // ===========================================

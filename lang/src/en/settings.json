@@ -138,6 +138,9 @@
     "MinimumResolveValueHint": "The minimum value that an actor's max resolve can be. Applies after percentage multipliers.",
     "MinimumResolveValueWarning": "Minimum Resolve Value must be a positive integer (1 or greater). Resetting to default ({0}).",
     "ActionCardExecutionLimitName": "Action Card Execution Limit",
-    "ActionCardExecutionLimitHint": "Maximum number of action cards that can be executed per turn"
+    "ActionCardExecutionLimitHint": "Maximum number of action cards that can be executed per turn",
+
+    "NpcTemplateCompendiumName": "NPC Template Compendium",
+    "NpcTemplateCompendiumHint": "The compendium pack to use as a source for NPC templates in the NPC Quick Generator. Leave empty to use only built-in archetypes. Enter the pack ID (e.g., 'world.my-npc-templates'). User compendium templates take priority over system templates and built-in archetypes."
   }
 }
