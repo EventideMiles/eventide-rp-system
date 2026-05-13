@@ -100,6 +100,7 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
       toggleGroupCollapse: this._toggleGroupCollapse,
       deleteGroup: this._deleteActionCardGroup,
       createGroup: this._createActionCardGroup,
+      restRecover: this._onRestRecover,
     },
     // Custom property that's merged into `this.options`
     dragDrop: [
