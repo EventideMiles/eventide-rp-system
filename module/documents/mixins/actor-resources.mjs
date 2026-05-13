@@ -222,12 +222,12 @@ export const ActorResourceMixin = (BaseClass) =>
         all,
       });
 
-      if (!game.user.isGM) {
+      if (!game.user.isGM && !this.isOwner) {
         ui.notifications.warn(
-          game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.GMOnly"),
+          game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.NotOwnerOrGM"),
         );
         Logger.warn(
-          "Non-GM user attempted to use restore function",
+          "Non-owner user attempted to use restore function",
           null,
           "RESOURCES",
         );
