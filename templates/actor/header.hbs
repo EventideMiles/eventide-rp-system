@@ -19,10 +19,25 @@
                  class="erps-toggles__input"
                  name="actor.flags.eventide-rp-system.autoTokenUpdate"
                  id="actor.flags.eventide-rp-system.autoTokenUpdate"
-                 {{checked actor.flags.eventide-rp-system.autoTokenUpdate}}
+                 {{checked autoTokenUpdate}}
                  data-action="toggleAutoTokenUpdate">
           <div class="erps-toggles__container">
             <span class="erps-toggles__label">{{localize "EVENTIDE_RP_SYSTEM.Actor.Controls.AutoTokenUpdate.label"}}</span>
+            <span class="erps-toggles__track">
+              <span class="erps-toggles__thumb"></span>
+            </span>
+          </div>
+        </label>
+        <label class="erps-toggles erps-toggles--small erps-toggles--label-left"
+               title="{{localize "EVENTIDE_RP_SYSTEM.Actor.Controls.AutoTokenSync.hint"}}">
+          <input type="checkbox"
+                 class="erps-toggles__input"
+                 name="actor.flags.eventide-rp-system.autoTokenSync"
+                 id="actor.flags.eventide-rp-system.autoTokenSync"
+                 {{checked autoTokenSync}}
+                 data-action="toggleAutoTokenSync">
+          <div class="erps-toggles__container">
+            <span class="erps-toggles__label">{{localize "EVENTIDE_RP_SYSTEM.Actor.Controls.AutoTokenSync.label"}}</span>
             <span class="erps-toggles__track">
               <span class="erps-toggles__thumb"></span>
             </span>

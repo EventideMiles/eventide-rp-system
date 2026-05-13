@@ -170,6 +170,7 @@
       "SheetContextPreparationError": "Failed to prepare sheet context",
       "ThemeOperation": "Theme operation failed",
       "ToggleAutoTokenUpdateError": "Failed to toggle auto token update",
+      "ToggleAutoTokenSyncError": "Failed to toggle sync placed tokens",
       "TransformationApplyError": "Failed to apply transformation",
       "TransformationRemoveError": "Failed to remove transformation",
       "FailedToSetActionItem": "Failed to set action item",
