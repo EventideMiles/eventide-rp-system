@@ -11,6 +11,8 @@ import { Logger } from "../../services/_module.mjs";
  * @extends {EventideSheetHelpers}
  */
 export class RestoreTarget extends EventideSheetHelpers {
+  #actorOverride = null;
+
   /** @override */
   static PARTS = {
     restoreTarget: {
@@ -38,10 +40,25 @@ export class RestoreTarget extends EventideSheetHelpers {
   };
 
   /**
+   * Create a RestoreTarget instance pre-bound to a specific actor.
+   * Skips target validation and allows owner access (not just GM).
+   * @param {Actor} actor - The actor to restore
+   * @returns {RestoreTarget} A new instance bound to the given actor
+   */
+  static forActor(actor) {
+    const instance = new RestoreTarget();
+    instance.#actorOverride = actor;
+    return instance;
+  }
+
+  /**
    * Get the localized window title
    * @returns {string} The localized window title
    */
   get title() {
+    if (this.#actorOverride) {
+      return game.i18n.format("EVENTIDE_RP_SYSTEM.WindowTitles.RestRecover");
+    }
     return game.i18n.format("EVENTIDE_RP_SYSTEM.WindowTitles.RestoreTarget");
   }
 
@@ -52,29 +69,37 @@ export class RestoreTarget extends EventideSheetHelpers {
    * @throws {Error} If no target is selected or multiple targets are selected
    */
   async _prepareContext(_options) {
-    await EventideSheetHelpers._gmCheck();
     const context = {};
-
-    this.targetTokens = await erps.utils.getTargetArray();
     context.cssClass = RestoreTarget.DEFAULT_OPTIONS.classes.join(" ");
-    if (this.targetTokens.length === 0) {
-      ui.notifications.error(
-        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.TargetFirst"),
+
+    if (this.#actorOverride) {
+      context.actor = this.#actorOverride;
+      context.statusEffects = context.actor?.items?.filter(
+        (item) => item?.type === "status",
       );
-      this.close();
-    } else if (this.targetTokens.length > 1) {
-      ui.notifications.error(
-        game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.SingleTargetOnly"),
+      this.statusEffects = context.statusEffects;
+    } else {
+      await EventideSheetHelpers._gmCheck();
+      this.targetTokens = await erps.utils.getTargetArray();
+      if (this.targetTokens.length === 0) {
+        ui.notifications.error(
+          game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.TargetFirst"),
+        );
+        this.close();
+      } else if (this.targetTokens.length > 1) {
+        ui.notifications.error(
+          game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.SingleTargetOnly"),
+        );
+        this.close();
+      }
+
+      context.actor = this.targetTokens[0].actor;
+      context.statusEffects = context.actor?.items?.filter(
+        (item) => item?.type === "status",
       );
-      this.close();
+
+      this.statusEffects = context.statusEffects;
     }
-
-    context.actor = this.targetTokens[0].actor;
-    context.statusEffects = context.actor?.items?.filter(
-      (item) => item?.type === "status",
-    );
-
-    this.statusEffects = context.statusEffects;
 
     context.defaultOptions = {
       restoreResolve: true,
@@ -164,6 +189,7 @@ export class RestoreTarget extends EventideSheetHelpers {
     // Clear references to arrays and objects
     this.targetTokens = null;
     this.statusEffects = null;
+    this.#actorOverride = null;
 
     await super._preClose(options);
   }
@@ -176,7 +202,7 @@ export class RestoreTarget extends EventideSheetHelpers {
    * @private
    */
   static async #onSubmit(event, form, formData) {
-    const actor = this.targetTokens[0].actor;
+    const actor = this.#actorOverride || this.targetTokens[0].actor;
 
     const selectedStatuses = this.statusEffects?.filter((status) => {
       const value = formData.get(status.id);

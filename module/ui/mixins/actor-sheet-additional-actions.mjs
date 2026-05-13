@@ -1,6 +1,7 @@
 import { Logger } from "../../services/logger.mjs";
 import { ErrorHandler } from "../../utils/error-handler.mjs";
 import { erpsRollHandler } from "../../services/_module.mjs";
+import { RestoreTarget } from "../macros/restore-target.mjs";
 
 const FilePicker = foundry.applications.apps.FilePicker.implementation;
 
@@ -656,8 +657,20 @@ export const ActorSheetAdditionalActionsMixin = (BaseClass) =>
             "ADDITIONAL_ACTIONS",
           );
         }
-      } catch (error) {
-        Logger.error("Failed to cleanup empty groups", error, "ADDITIONAL_ACTIONS");
-      }
+} catch (error) {
+      Logger.error("Failed to cleanup empty groups", error, "ADDITIONAL_ACTIONS");
     }
-  };
+  }
+
+  /**
+   * Handle the Rest/Recover button click on the actor sheet.
+   * Opens the RestoreTarget dialog pre-bound to this sheet's actor.
+   * @param {PointerEvent} _event - The originating click event
+   * @param {HTMLElement} _target - The capturing HTML element which defined a [data-action]
+   * @protected
+   */
+  static async _onRestRecover(_event, _target) {
+    const dialog = RestoreTarget.forActor(this.actor);
+    dialog.render(true);
+  }
+};
