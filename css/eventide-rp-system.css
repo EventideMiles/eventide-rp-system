@@ -1455,6 +1455,18 @@ label,
   animation: name-input-glow 3s ease-in-out infinite 1.5s;
   z-index: 1;
 }
+.eventide-sheet .document-name--with-rest::after {
+  display: none;
+}
+.eventide-sheet .document-name .eventide-sheet__character-name {
+  flex: 3;
+}
+.eventide-sheet .document-name .erps-button--rest {
+  flex: 1;
+  margin-left: 0.5rem;
+  align-self: center;
+  white-space: nowrap;
+}
 .eventide-sheet .eventide-sheet__character-name {
   font-family: var(--erps-display-font);
   font-size: 1.8rem;

@@ -315,6 +315,23 @@ label,
       animation: name-input-glow 3s ease-in-out infinite 1.5s;
       z-index: 1;
     }
+
+    // When the rest button is present, hide the right glow bar
+    // since the button takes that visual role
+    &--with-rest::after {
+      display: none;
+    }
+
+    .eventide-sheet__character-name {
+      flex: 3;
+    }
+
+    .erps-button--rest {
+      flex: 1;
+      margin-left: 0.5rem;
+      align-self: center;
+      white-space: nowrap;
+    }
   }
 
   // Target the specific character name input class
