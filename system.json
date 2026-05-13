@@ -11,62 +11,37 @@
   "documentTypes": {
     "Actor": {
       "character": {
-        "htmlFields": [
-          "biography"
-        ]
+        "htmlFields": ["biography"]
       },
       "npc": {
-        "htmlFields": [
-          "biography"
-        ]
+        "htmlFields": ["biography"]
       }
     },
     "Item": {
       "feature": {
-        "htmlFields": [
-          "description"
-        ]
+        "htmlFields": ["description"]
       },
       "gear": {
-        "htmlFields": [
-          "description"
-        ]
+        "htmlFields": ["description"]
       },
       "status": {
-        "htmlFields": [
-          "description"
-        ]
+        "htmlFields": ["description"]
       },
       "combatPower": {
-        "htmlFields": [
-          "description"
-        ]
+        "htmlFields": ["description"]
       },
       "transformation": {
-        "htmlFields": [
-          "description"
-        ]
+        "htmlFields": ["description"]
       },
       "actionCard": {
-        "htmlFields": [
-          "description"
-        ]
+        "htmlFields": ["description"]
       }
     }
   },
   "flags": {
     "hotReload": {
-      "extensions": [
-        "css",
-        "html",
-        "hbs",
-        "json"
-      ],
-      "paths": [
-        "css",
-        "lang",
-        "templates"
-      ]
+      "extensions": ["css", "html", "hbs", "json"],
+      "paths": ["css", "lang", "templates"]
     }
   },
   "url": "https://github.com/EventideMiles/eventide-rp-system",
@@ -86,12 +61,8 @@
     "minimum": "14",
     "verified": "14"
   },
-  "esmodules": [
-    "module/eventide-rp-system.mjs"
-  ],
-  "styles": [
-    "css/eventide-rp-system.css"
-  ],
+  "esmodules": ["module/eventide-rp-system.mjs"],
+  "styles": ["css/eventide-rp-system.css"],
   "languages": [
     {
       "lang": "en",
@@ -109,6 +80,11 @@
       "name": "erps-features",
       "label": "Core Features",
       "type": "Item"
+    },
+    {
+      "name": "erps-npc-templates",
+      "label": "Core NPC Templates",
+      "type": "Actor"
     }
   ],
   "packFolders": [],

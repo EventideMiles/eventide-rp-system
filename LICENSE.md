@@ -148,6 +148,7 @@ The full text of the LGPL 2.1 license can be found at:
 - plague-doctor-profile.svg
 - island.svg
 - swords-power.svg
+- village.svg
 
 ### By DarkZaitzev under CC BY 3.0 from game-icons.net
 

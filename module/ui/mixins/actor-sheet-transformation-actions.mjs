@@ -220,4 +220,64 @@ export const ActorSheetTransformationActionsMixin = (BaseClass) =>
         );
       }
     }
+
+    static async _toggleAutoTokenSync(_event, _target) {
+      Logger.methodEntry(
+        "ActorSheetTransformationActionsMixin",
+        "_toggleAutoTokenSync",
+        {
+          actorName: this.actor?.name,
+          currentValue: this.actor.getFlag(
+            "eventide-rp-system",
+            "autoTokenSync",
+          ),
+        },
+      );
+
+      try {
+        const currentValue =
+          this.actor.getFlag("eventide-rp-system", "autoTokenSync") || false;
+        const newValue = !currentValue;
+
+        await this.actor.setFlag(
+          "eventide-rp-system",
+          "autoTokenSync",
+          newValue,
+        );
+
+        Logger.info(
+          `Auto token sync toggled to: ${newValue}`,
+          {
+            actorName: this.actor.name,
+            previousValue: currentValue,
+            newValue,
+          },
+          "TRANSFORMATION_ACTIONS",
+        );
+
+        Logger.methodExit(
+          "ActorSheetTransformationActionsMixin",
+          "_toggleAutoTokenSync",
+          newValue,
+        );
+        return newValue;
+      } catch (error) {
+        await ErrorHandler.handleAsync(Promise.reject(error), {
+          context: `Toggle auto token sync for ${this.actor?.name}`,
+          errorType: ErrorHandler.ERROR_TYPES.FOUNDRY_API,
+          userMessage: game.i18n.format(
+            "EVENTIDE_RP_SYSTEM.Errors.ToggleAutoTokenSyncError",
+            {
+              actorName: this.actor?.name || "Unknown",
+            },
+          ),
+        });
+
+        Logger.methodExit(
+          "ActorSheetTransformationActionsMixin",
+          "_toggleAutoTokenSync",
+          null,
+        );
+      }
+    }
   };

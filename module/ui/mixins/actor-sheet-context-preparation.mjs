@@ -553,6 +553,10 @@ export const ActorSheetContextPreparationMixin = (BaseClass) =>
           "eventide-rp-system",
           "autoTokenUpdate",
         );
+        context.autoTokenSync = this.actor.getFlag(
+          "eventide-rp-system",
+          "autoTokenSync",
+        );
 
         // Prepare health data
         if (systemData.health) {

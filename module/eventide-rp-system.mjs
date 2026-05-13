@@ -28,6 +28,7 @@ import {
   TransformationCreator,
   ActorToTransformationConverter,
   TransformationToActorConverter,
+  NpcQuickGenerator,
 } from "./ui/_module.mjs";
 
 // import service classes and constants
@@ -49,6 +50,7 @@ import {
   EmbeddedImageMigration,
   SettingNameMigration,
   V14ActiveEffectMigration,
+  NpcGenerator,
 } from "./services/_module.mjs";
 
 // Import token configuration guards
@@ -181,6 +183,7 @@ globalThis.erps = {
     ErrorHandler,
     performSystemCleanup,
     TransformationConverter,
+    NpcGenerator,
   },
 
   /**
@@ -209,6 +212,7 @@ globalThis.erps = {
     TransformationCreator,
     ActorToTransformationConverter,
     TransformationToActorConverter,
+    NpcQuickGenerator,
   },
 
   /**
@@ -755,9 +759,77 @@ Hooks.once("ready", () => {
     EventideRpSystemActor._onCreateToken(tokenDocument, data, options, userId);
   });
 
+  // Sync actor name/image to prototype token and placed tokens when autoTokenUpdate is enabled
+  Hooks.on("preUpdateActor", (actor, change, _options, _userId) => {
+    if (actor.getFlag("eventide-rp-system", "autoTokenUpdate")) {
+      if (foundry.utils.hasProperty(change, "name")) {
+        foundry.utils.setProperty(change, "prototypeToken.name", change.name);
+      }
+      if (foundry.utils.hasProperty(change, "img")) {
+        foundry.utils.setProperty(change, "prototypeToken.texture.src", change.img);
+      }
+    }
+  });
+
+  Hooks.on("updateActor", (actor, change, _options, userId) => {
+    if (userId === game.user.id && actor.getFlag("eventide-rp-system", "autoTokenSync")) {
+      const tokenUpdates = [];
+      if (foundry.utils.hasProperty(change, "name")) {
+        tokenUpdates.push({ key: "name", value: change.name });
+      }
+      if (foundry.utils.hasProperty(change, "img")) {
+        tokenUpdates.push({ key: "texture.src", value: change.img });
+      }
+      if (tokenUpdates.length > 0) {
+        const tokens = actor.getActiveTokens();
+        if (tokens.length > 0) {
+          const sceneUpdates = new Map();
+          for (const token of tokens) {
+            const sceneId = token.scene.id;
+            if (!sceneUpdates.has(sceneId)) {
+              sceneUpdates.set(sceneId, []);
+            }
+            const update = { _id: token.id };
+            for (const { key, value } of tokenUpdates) {
+              update[key] = value;
+            }
+            sceneUpdates.get(sceneId).push(update);
+          }
+          for (const [sceneId, updates] of sceneUpdates) {
+            const scene = game.scenes.get(sceneId);
+            if (scene) {
+              scene.updateEmbeddedDocuments("Token", updates);
+            }
+          }
+        }
+      }
+    }
+  });
+
   // Register canvas ready hook to ensure transformation consistency when switching scenes
   Hooks.on("canvasReady", () => {
     EventideRpSystemActor._onCanvasReady();
+  });
+
+  // Register actor directory context menu for NPC Quick Generator
+  Hooks.on("getActorDirectoryEntryContext", (html, entries) => {
+    entries.push({
+      name: "EVENTIDE_RP_SYSTEM.NpcGenerator.Title",
+      icon: '<i class="fa-solid fa-wand-magic-sparkles"></i>',
+      callback: (li) => {
+        const actorId = li.dataset.documentId;
+        const actor = game.actors.get(actorId);
+        if (actor) {
+          new NpcQuickGenerator({ sourceActor: actor }).render(true);
+        }
+      },
+      condition: (li) => {
+        const actorId = li.dataset.documentId;
+        const actor = game.actors.get(actorId);
+        return actor?.type === "npc" && game.user.isGM;
+      },
+      group: "action",
+    });
   });
 });
 

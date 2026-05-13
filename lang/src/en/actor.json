@@ -53,7 +53,11 @@
       "Controls": {
         "AutoTokenUpdate": {
           "label": "Auto Token Update",
-          "hint": "Automatically update the token's image when the actor's image is updated"
+          "hint": "Automatically update the prototype token when the actor's name or image changes"
+        },
+        "AutoTokenSync": {
+          "label": "Sync Placed Tokens",
+          "hint": "Also update existing tokens placed on scenes when the actor's name or image changes"
         }
       },
       "Actions": {

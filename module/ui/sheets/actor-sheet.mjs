@@ -1,6 +1,7 @@
 import { CommonFoundryTasks } from "../../utils/_module.mjs";
 import { Logger } from "../../services/_module.mjs";
 import { ErrorHandler } from "../../utils/error-handler.mjs";
+import { NpcQuickGenerator } from "../macros/_module.mjs";
 import {
   initTabContainerStyling,
   cleanupTabContainerStyling,
@@ -78,6 +79,12 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
           label: "EVENTIDE_RP_SYSTEM.WindowTitles.SheetTheme",
           ownership: "OWNER",
         },
+        {
+          action: "generateNpc",
+          icon: "fa-solid fa-wand-magic-sparkles",
+          label: "EVENTIDE_RP_SYSTEM.WindowTitles.GenerateNpc",
+          ownership: "OWNER",
+        },
       ],
     },
     actions: {
@@ -94,6 +101,7 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
       applyTransformation: this._applyTransformation,
       removeTransformation: this._removeTransformation,
       toggleAutoTokenUpdate: this._toggleAutoTokenUpdate,
+      toggleAutoTokenSync: this._toggleAutoTokenSync,
       configureToken: this._onConfigureToken,
       setSheetTheme: this._setSheetTheme,
       executeActionCard: this._executeActionCard,
@@ -101,6 +109,7 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
       deleteGroup: this._deleteActionCardGroup,
       createGroup: this._createActionCardGroup,
       restRecover: this._onRestRecover,
+      generateNpc: this._onGenerateNpc,
     },
     // Custom property that's merged into `this.options`
     dragDrop: [
@@ -1628,4 +1637,21 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
   }
 
   // Note: Action card execution is now handled by ActorSheetAdditionalActionsMixin
+
+  /**
+   * Open the NPC Quick Generator for this actor (NPC only)
+   * @param {Event} _event - The originating click event
+   * @param {HTMLElement} _target - The capturing element
+   * @static
+   * @protected
+   */
+  static _onGenerateNpc(_event, _target) {
+    if (this.actor.type !== "npc") {
+      ui.notifications.warn(
+        game.i18n.localize("EVENTIDE_RP_SYSTEM.NpcGenerator.MustBeNpc"),
+      );
+      return;
+    }
+    new NpcQuickGenerator({ sourceActor: this.actor }).render(true);
+  }
 }
