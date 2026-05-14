@@ -1,0 +1,112 @@
+{
+  "EVENTIDE_RP_SYSTEM": {
+    "ActionCardPresets": {
+      "Title": "Create Action Card from Preset",
+      "ReconfigureTitle": "Apply Preset Template",
+      "SelectPreset": "Select a Preset",
+      "BlankCardOption": "Blank Card",
+      "BlankCardDescription": "Create a blank action card with default settings",
+      "CreateButton": "Create",
+      "ApplyButton": "Apply Template",
+      "CancelButton": "Cancel",
+      "PresetApplied": "Preset \"{presetName}\" applied to action card",
+      "CardCreated": "Action card \"{cardName}\" created from \"{presetName}\" preset",
+      "PreserveEmbeddedInfo": "This will reconfigure the card's behavior. Embedded items and effects will be preserved.",
+      "Configure": "Configure",
+      "BasicAttack": {
+        "Label": "Basic Attack",
+        "Description": "A simple attack roll with damage on success. No status effects."
+      },
+      "DamageAndStatus": {
+        "Label": "Damage + Status",
+        "Description": "A physical attack that deals damage and applies a status effect on success."
+      },
+      "SpellWithStatus": {
+        "Label": "Spell with Status",
+        "Description": "A magical attack with spellcasting stats that deals damage and applies a status effect."
+      },
+      "HealingSpell": {
+        "Label": "Healing Spell",
+        "Description": "A self-targeting heal that restores health without an attack roll."
+      },
+      "MultiHitAttack": {
+        "Label": "Multi-Hit Attack",
+        "Description": "An attack that rolls multiple times, potentially hitting several targets."
+      },
+      "MultiHitStatus": {
+        "Label": "Multi-Hit + Status",
+        "Description": "A multi-hit attack that applies damage and status effects with each successful hit."
+      },
+      "DefensiveBuff": {
+        "Label": "Defensive Buff",
+        "Description": "Self-targeting buff with no damage. Applies effects to the user on a successful roll."
+      },
+      "TransformationTrigger": {
+        "Label": "Transformation Trigger",
+        "Description": "Triggers a transformation on a successful roll. No damage or status effects."
+      },
+      "CritFishing": {
+        "Label": "Crit Fishing",
+        "Description": "An attack that only deals damage on a critical hit, but with increased damage."
+      },
+      "DirectDamage": {
+        "Label": "Direct Damage",
+        "Description": "Flat damage or healing with no attack roll. Useful for effects like magic missile or environmental damage."
+      },
+      "Presets": {
+        "Label": "Preset",
+        "Description": "Choose a starting template for your action card"
+      },
+      "Fields": {
+        "Name": "Name",
+        "FirstStat": "First Stat",
+        "SecondStat": "Second Stat",
+        "DamageFormula": "Damage Formula",
+        "SavedDamageFormula": "Damage/Heal Formula",
+        "SavedDamageType": "Damage/Heal Type",
+        "DamageType": "Damage Type",
+        "AdvanceInitiative": "Advance Initiative",
+        "AdvanceInitiativeHint": "Automatically advance initiative after executing this card",
+        "SelfTarget": "Self-Target",
+        "SelfTargetHint": "Automatically target your own actor instead of requiring target selection",
+        "Repetitions": "Repetitions",
+        "RepetitionsHint": "Number of times to repeat this action (can be a formula like 1d4)",
+        "SelfEffectsCondition": "Self-Effects Condition",
+        "TransformationCondition": "Transformation Condition",
+        "StatusApplicationLimit": "Status Application Limit",
+        "StatusApplicationLimitHint": "Maximum times status effects can apply per execution (0 = unlimited)"
+      },
+      "ConditionLabels": {
+        "never": "Never",
+        "oneSuccess": "On One Success",
+        "twoSuccesses": "On Two Successes",
+        "rollValue": "Roll Value",
+        "rollUnderValue": "Roll Under Value",
+        "rollEven": "Roll Even",
+        "rollOdd": "Roll Odd",
+        "rollOnValue": "Roll Exact Value",
+        "zeroSuccesses": "Zero Successes",
+        "always": "Always",
+        "criticalSuccess": "Critical Hit",
+        "criticalFailure": "Critical Miss"
+      },
+      "StatLabels": {
+        "acro": "Acrobatics",
+        "phys": "Physical",
+        "fort": "Fortitude",
+        "will": "Will",
+        "wits": "Wits"
+      },
+      "DamageTypeLabels": {
+        "damage": "Damage",
+        "heal": "Healing"
+      },
+      "Mode": {
+        "AttackChain": "Attack Chain",
+        "SavedDamage": "Direct Damage"
+      },
+      "NoPresetSelected": "Please select a preset template",
+      "ConfigureLabel": "Configure"
+    }
+  }
+}

@@ -165,6 +165,10 @@ The full text of the LGPL 2.1 license can be found at:
 - chess-king.svg
 - mounted-knight.svg
 
+### By Faithtoken under CC BY 3.0 from game-icons.net
+
+- card-random.svg
+
 ### By Marek Szturc under Unsplash license from unsplash.com
 
 - wolf-sunset.jpg
