@@ -105,9 +105,14 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
         await erps.utils.TransformationConverter.actorToTransformation(actor);
 
       // Get the transformation item data (prefer compendium version)
-      const transformationData = transformation.compendium || transformation.world;
+      const transformationData =
+        transformation.compendium || transformation.world;
       if (!transformationData) {
-        Logger.warn("No transformation data available from conversion", null, "DRAG_DROP");
+        Logger.warn(
+          "No transformation data available from conversion",
+          null,
+          "DRAG_DROP",
+        );
         return false;
       }
 
@@ -121,7 +126,8 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
         "eventide-rp-system",
         "activeTransformationCursed",
       );
-      const newTransformationCursed = transformationData.system?.cursed || false;
+      const newTransformationCursed =
+        transformationData.system?.cursed || false;
 
       // If actor has an active transformation
       if (activeTransformationName) {
@@ -174,10 +180,7 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
     async _onDropItem(event, data) {
       try {
         // Remove drag feedback when drop occurs
-        DragDropHandler.removeDragFeedback(
-          DragDropHandler.CONFIG.ACTOR,
-          this,
-        );
+        DragDropHandler.removeDragFeedback(DragDropHandler.CONFIG.ACTOR, this);
 
         if (!this.actor.isOwner) {
           return false;
@@ -335,10 +338,15 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
         itemData = itemData.map((data) => {
           if (data.type === "actionCard") {
             // Convert to plain object if it's a Document or DataModel instance
-            const plainData = data.toObject ? data.toObject() : foundry.utils.deepClone(data);
+            const plainData = data.toObject
+              ? data.toObject()
+              : foundry.utils.deepClone(data);
 
             // Ensure system is a plain object
-            if (!plainData.system || typeof plainData.system.toObject === 'function') {
+            if (
+              !plainData.system ||
+              typeof plainData.system.toObject === "function"
+            ) {
               plainData.system = plainData.system?.toObject?.() || {};
             }
 
@@ -516,7 +524,9 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
             };
 
             event.dataTransfer.setData("text/plain", JSON.stringify(dragData));
-            docRow.classList.add(DragDropHandler.CONFIG.ACTOR.groupDraggingClass);
+            docRow.classList.add(
+              DragDropHandler.CONFIG.ACTOR.groupDraggingClass,
+            );
 
             Logger.debug(
               "Started dragging group",
@@ -642,7 +652,9 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
           docRow.classList.remove("dragging");
         }
         if (docRow.classList.contains("erps-action-card-group")) {
-          docRow.classList.remove(DragDropHandler.CONFIG.ACTOR.groupDraggingClass);
+          docRow.classList.remove(
+            DragDropHandler.CONFIG.ACTOR.groupDraggingClass,
+          );
         }
         docRow.classList.remove(DragDropHandler.CONFIG.ACTOR.draggingClass);
       }
@@ -660,10 +672,7 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
     _onDragLeave(event) {
       // Only remove feedback if we're actually leaving the sheet
       if (!this.element.contains(event.relatedTarget)) {
-        DragDropHandler.removeDragFeedback(
-          DragDropHandler.CONFIG.ACTOR,
-          this,
-        );
+        DragDropHandler.removeDragFeedback(DragDropHandler.CONFIG.ACTOR, this);
       }
     }
 
@@ -724,6 +733,9 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
         const isGmActionsTabActive =
           DragDropHandler.CONFIG.ACTOR.isGmActionsTabActive(this);
 
+        // Derive smart defaults based on the dragged item type
+        const smartDefaults = this._getSmartDefaultsForItem(item);
+
         // Create the action card data for non-status items
         const actionCardData = {
           name: game.i18n.format(
@@ -740,15 +752,15 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
             bgColor: item.system?.bgColor || "#8B4513",
             textColor: item.system?.textColor || "#ffffff",
             advanceInitiative: false,
-            attemptInventoryReduction: false,
+            attemptInventoryReduction: smartDefaults.attemptInventoryReduction,
             gmOnly: isGmActionsTabActive,
             attackChain: {
-              firstStat: "acro",
-              secondStat: "phys",
-              damageCondition: "never",
+              firstStat: smartDefaults.firstStat,
+              secondStat: smartDefaults.secondStat,
+              damageCondition: "oneSuccess",
               damageFormula: "1d6",
               damageType: "damage",
-              statusCondition: "never",
+              statusCondition: "oneSuccess",
               statusThreshold: 15,
             },
             embeddedStatusEffects: [],
@@ -801,6 +813,55 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
     }
 
     /**
+     * Derive smart defaults for a new action card based on the dragged item type.
+     *
+     * Combat powers carry their roll abilities to the action card stats.
+     * Gear items default to inventory reduction mode.
+     * All other types use baseline defaults.
+     *
+     * @param {Item} item - The item being dropped to create an action card
+     * @returns {{ firstStat: string, secondStat: string, attemptInventoryReduction: boolean }}
+     * @private
+     */
+    _getSmartDefaultsForItem(item) {
+      const VALID_STATS = ["acro", "phys", "fort", "will", "wits"];
+
+      // Resolve a stat from the item's roll config, falling back to "acro" for invalid/unaugmented
+      const resolveStat = (value, fallback = "acro") => {
+        if (value && VALID_STATS.includes(value)) {
+          return value;
+        }
+        return fallback;
+      };
+
+      switch (item.type) {
+        case "combatPower": {
+          const rollAbility = item.system?.roll?.ability;
+          const secondAbility = item.system?.roll?.secondAbility;
+          return {
+            firstStat: resolveStat(rollAbility),
+            secondStat: resolveStat(secondAbility, "phys"),
+            attemptInventoryReduction: false,
+          };
+        }
+        case "gear": {
+          const rollAbility = item.system?.roll?.ability;
+          return {
+            firstStat: resolveStat(rollAbility),
+            secondStat: "phys",
+            attemptInventoryReduction: true,
+          };
+        }
+        default:
+          return {
+            firstStat: "acro",
+            secondStat: "phys",
+            attemptInventoryReduction: false,
+          };
+      }
+    }
+
+    /**
      * Create a saved damage action card from a status item
      * @param {Item} statusItem - The status item to create an action card from
      * @returns {Promise<Item[]>} The created action card
@@ -843,10 +904,10 @@ export const ActorSheetDragDropMixin = (BaseClass) =>
             attackChain: {
               firstStat: "acro",
               secondStat: "phys",
-              damageCondition: "never",
+              damageCondition: "oneSuccess",
               damageFormula: "1d6",
               damageType: "damage",
-              statusCondition: "never",
+              statusCondition: "oneSuccess",
               statusThreshold: 15,
             },
             savedDamage: {
