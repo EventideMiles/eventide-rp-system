@@ -113,7 +113,9 @@
         "DeleteGroupSuccess": "Deleted group: {name}",
         "CardCopied": "Copied action card: {name}",
         "GroupCopied": "Copied group '{groupName}' with {cardCount} action cards",
-        "NoCardsInGroup": "No action cards found in this group"
+        "NoCardsInGroup": "No action cards found in this group",
+        "NewItem": "+Item",
+        "FromTemplate": "+Template"
       }
     }
   }
