@@ -1,7 +1,7 @@
-<section class="tab action-card-config {{tab.cssClass}}" 
+<section class="tab action-card-config {{tab.cssClass}}"
          data-group="primary" data-tab="config">
   <div class="eventide-sheet__scrollable-container">
-    
+
     {{!-- Repetitions Section --}}
   <div class="erps-form__section">
     <h3 class="erps-form__header">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Config.RepetitionsHeader"}}</h3>
@@ -70,7 +70,7 @@
   {{!-- Boolean Configuration Section --}}
   <div class="erps-form__section">
     <h3 class="erps-form__header">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Config.BehaviorHeader"}}</h3>
-    
+
     {{!-- Repeat to Hit Toggle --}}
     <div class="eventide-sheet__toggle-group">
       <label class="erps-toggles erps-toggles--label-left">
@@ -226,274 +226,321 @@
     </div>
   </div>
 
-  {{!-- Intensify Behavior Section --}}
+  {{!-- Intensify Behavior Section (collapsed by default) --}}
   <div class="erps-form__section">
     <h3 class="erps-form__header">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Config.IntensifyBehaviorHeader"}}</h3>
     <p class="erps-form__hint">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Config.IntensifyBehaviorHint"}}</p>
-    
-    {{!-- Target Effects --}}
-    <fieldset class="erps-fieldset">
-      <legend class="erps-fieldset__legend">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Config.IntensifyTargetEffects"}}</legend>
-      <div class="grid grid-3col">
-        <div class="erps-form__group">
-          <label class="erps-input-label" for="{{item.id}}-intensify-add-target">
-            {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Config.IntensifyAdd"}}
-          </label>
-          <input type="number"
-                 id="{{item.id}}-intensify-add-target"
-                 name="system.intensifyBehavior.target.add"
-                 value="{{item.system.intensifyBehavior.target.add}}"
-                 min="0"
-                 step="1"
-                 class="erps-input"
-                 data-dtype="Number" />
-        </div>
 
-        <div class="erps-form__group">
-          <label class="erps-input-label" for="{{item.id}}-intensify-advantage-target">
-            {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Config.IntensifyAdvantage"}}
-          </label>
-          <input type="number"
-                 id="{{item.id}}-intensify-advantage-target"
-                 name="system.intensifyBehavior.target.advantage"
-                 value="{{item.system.intensifyBehavior.target.advantage}}"
-                 min="0"
-                 step="1"
-                 class="erps-input"
-                 data-dtype="Number" />
-        </div>
-
-        <div class="erps-form__group">
-          <label class="erps-input-label" for="{{item.id}}-intensify-disadvantage-target">
-            {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Config.IntensifyDisadvantage"}}
-          </label>
-          <input type="number"
-                 id="{{item.id}}-intensify-disadvantage-target"
-                 name="system.intensifyBehavior.target.disadvantage"
-                 value="{{item.system.intensifyBehavior.target.disadvantage}}"
-                 min="0"
-                 step="1"
-                 class="erps-input"
-                 data-dtype="Number" />
-        </div>
-
-        <div class="erps-form__group">
-          <label class="erps-input-label" for="{{item.id}}-intensify-ac-target">
-            {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Config.IntensifyAC"}}
-          </label>
-          <input type="number"
-                 id="{{item.id}}-intensify-ac-target"
-                 name="system.intensifyBehavior.target.acChange"
-                 value="{{item.system.intensifyBehavior.target.acChange}}"
-                 min="0"
-                 step="1"
-                 class="erps-input"
-                 data-dtype="Number" />
-        </div>
-
-        <div class="erps-form__group">
-          <label class="erps-input-label" for="{{item.id}}-intensify-multiply-target">
-            {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Config.IntensifyMultiply"}}
-          </label>
-          <input type="number"
-                 id="{{item.id}}-intensify-multiply-target"
-                 name="system.intensifyBehavior.target.multiply"
-                 value="{{item.system.intensifyBehavior.target.multiply}}"
-                 min="0"
-                 step="1"
-                 class="erps-input"
-                 data-dtype="Number" />
-        </div>
-
-        <div class="erps-form__group">
-          <label class="erps-input-label" for="{{item.id}}-intensify-divide-target">
-            {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Config.IntensifyDivide"}}
-          </label>
-          <input type="number"
-                 id="{{item.id}}-intensify-divide-target"
-                 name="system.intensifyBehavior.target.divide"
-                 value="{{item.system.intensifyBehavior.target.divide}}"
-                 min="0"
-                 step="1"
-                 class="erps-input"
-                 data-dtype="Number" />
-        </div>
-
-        <div class="erps-form__group">
-          <label class="erps-input-label" for="{{item.id}}-intensify-multiplybuff-target">
-            {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Config.IntensifyMultiplyBuff"}}
-          </label>
-          <input type="number"
-                 id="{{item.id}}-intensify-multiplybuff-target"
-                 name="system.intensifyBehavior.target.multiplyBuff"
-                 value="{{item.system.intensifyBehavior.target.multiplyBuff}}"
-                 min="0"
-                 step="1"
-                 class="erps-input"
-                 data-dtype="Number" />
-        </div>
-
-        <div class="erps-form__group">
-          <label class="erps-input-label" for="{{item.id}}-intensify-multiplydebuff-target">
-            {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Config.IntensifyMultiplyDebuff"}}
-          </label>
-          <input type="number"
-                 id="{{item.id}}-intensify-multiplydebuff-target"
-                 name="system.intensifyBehavior.target.multiplyDebuff"
-                 value="{{item.system.intensifyBehavior.target.multiplyDebuff}}"
-                 min="0"
-                 step="1"
-                 class="erps-input"
-                 data-dtype="Number" />
-        </div>
-
-        <div class="erps-form__group">
-          <label class="erps-input-label" for="{{item.id}}-intensify-override-target">
-            {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Config.IntensifyOverride"}}
-          </label>
-          <input type="number"
-                 id="{{item.id}}-intensify-override-target"
-                 name="system.intensifyBehavior.target.override"
-                 value="{{item.system.intensifyBehavior.target.override}}"
-                 min="0"
-                 step="1"
-                 class="erps-input"
-                 data-dtype="Number" />
-        </div>
+    {{!-- Collapsible toggle: most cards use default +1, so this is collapsed by default --}}
+    <div class="erps-collapsible {{#if intensifyModified}}erps-collapsible--expanded{{/if}}" data-collapsible="intensify-behavior">
+      <div class="erps-collapsible__header" data-action="toggleCollapsible" data-collapsible-target="intensify-behavior">
+        <span class="erps-collapsible__chevron">▶</span>
+        <span class="erps-collapsible__title">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Config.IntensifyBehaviorToggle"}}</span>
       </div>
-    </fieldset>
+      <p class="erps-form__hint" style="margin: 0 0 0.25rem 1.4rem;">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Config.IntensifyBehaviorToggleHint"}}</p>
 
-    {{!-- Self Effects --}}
-    <fieldset class="erps-fieldset">
-      <legend class="erps-fieldset__legend">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Config.IntensifySelfEffects"}}</legend>
-      <div class="grid grid-3col">
-        <div class="erps-form__group">
-          <label class="erps-input-label" for="{{item.id}}-intensify-add-self">
-            {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Config.IntensifyAdd"}}
-          </label>
+      <div class="erps-collapsible__content">
+        {{!-- Set All Target --}}
+        <div class="erps-set-all">
+          <span class="erps-set-all__label">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Config.IntensifySetAllTarget"}}</span>
           <input type="number"
-                 id="{{item.id}}-intensify-add-self"
-                 name="system.intensifyBehavior.self.add"
-                 value="{{item.system.intensifyBehavior.self.add}}"
+                 class="erps-input erps-set-all__input"
+                 id="{{item.id}}-intensify-set-all-target"
+                 value="1"
                  min="0"
                  step="1"
-                 class="erps-input"
                  data-dtype="Number" />
+          <button type="button"
+                  class="erps-set-all__button"
+                  data-action="setAllIntensifyTarget"
+                  data-target-group="target">
+            {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Config.IntensifySetAllApply"}}
+          </button>
         </div>
 
-        <div class="erps-form__group">
-          <label class="erps-input-label" for="{{item.id}}-intensify-advantage-self">
-            {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Config.IntensifyAdvantage"}}
-          </label>
+        {{!-- Target Effects --}}
+        <fieldset class="erps-fieldset">
+          <legend class="erps-fieldset__legend">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Config.IntensifyTargetEffects"}}</legend>
+          <div class="grid grid-3col">
+            <div class="erps-form__group">
+              <label class="erps-input-label" for="{{item.id}}-intensify-add-target">
+                {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Config.IntensifyAdd"}}
+              </label>
+              <input type="number"
+                     id="{{item.id}}-intensify-add-target"
+                     name="system.intensifyBehavior.target.add"
+                     value="{{item.system.intensifyBehavior.target.add}}"
+                     min="0"
+                     step="1"
+                     class="erps-input"
+                     data-dtype="Number" />
+            </div>
+
+            <div class="erps-form__group">
+              <label class="erps-input-label" for="{{item.id}}-intensify-advantage-target">
+                {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Config.IntensifyAdvantage"}}
+              </label>
+              <input type="number"
+                     id="{{item.id}}-intensify-advantage-target"
+                     name="system.intensifyBehavior.target.advantage"
+                     value="{{item.system.intensifyBehavior.target.advantage}}"
+                     min="0"
+                     step="1"
+                     class="erps-input"
+                     data-dtype="Number" />
+            </div>
+
+            <div class="erps-form__group">
+              <label class="erps-input-label" for="{{item.id}}-intensify-disadvantage-target">
+                {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Config.IntensifyDisadvantage"}}
+              </label>
+              <input type="number"
+                     id="{{item.id}}-intensify-disadvantage-target"
+                     name="system.intensifyBehavior.target.disadvantage"
+                     value="{{item.system.intensifyBehavior.target.disadvantage}}"
+                     min="0"
+                     step="1"
+                     class="erps-input"
+                     data-dtype="Number" />
+            </div>
+
+            <div class="erps-form__group">
+              <label class="erps-input-label" for="{{item.id}}-intensify-ac-target">
+                {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Config.IntensifyAC"}}
+              </label>
+              <input type="number"
+                     id="{{item.id}}-intensify-ac-target"
+                     name="system.intensifyBehavior.target.acChange"
+                     value="{{item.system.intensifyBehavior.target.acChange}}"
+                     min="0"
+                     step="1"
+                     class="erps-input"
+                     data-dtype="Number" />
+            </div>
+
+            <div class="erps-form__group">
+              <label class="erps-input-label" for="{{item.id}}-intensify-multiply-target">
+                {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Config.IntensifyMultiply"}}
+              </label>
+              <input type="number"
+                     id="{{item.id}}-intensify-multiply-target"
+                     name="system.intensifyBehavior.target.multiply"
+                     value="{{item.system.intensifyBehavior.target.multiply}}"
+                     min="0"
+                     step="1"
+                     class="erps-input"
+                     data-dtype="Number" />
+            </div>
+
+            <div class="erps-form__group">
+              <label class="erps-input-label" for="{{item.id}}-intensify-divide-target">
+                {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Config.IntensifyDivide"}}
+              </label>
+              <input type="number"
+                     id="{{item.id}}-intensify-divide-target"
+                     name="system.intensifyBehavior.target.divide"
+                     value="{{item.system.intensifyBehavior.target.divide}}"
+                     min="0"
+                     step="1"
+                     class="erps-input"
+                     data-dtype="Number" />
+            </div>
+
+            <div class="erps-form__group">
+              <label class="erps-input-label" for="{{item.id}}-intensify-multiplybuff-target">
+                {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Config.IntensifyMultiplyBuff"}}
+              </label>
+              <input type="number"
+                     id="{{item.id}}-intensify-multiplybuff-target"
+                     name="system.intensifyBehavior.target.multiplyBuff"
+                     value="{{item.system.intensifyBehavior.target.multiplyBuff}}"
+                     min="0"
+                     step="1"
+                     class="erps-input"
+                     data-dtype="Number" />
+            </div>
+
+            <div class="erps-form__group">
+              <label class="erps-input-label" for="{{item.id}}-intensify-multiplydebuff-target">
+                {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Config.IntensifyMultiplyDebuff"}}
+              </label>
+              <input type="number"
+                     id="{{item.id}}-intensify-multiplydebuff-target"
+                     name="system.intensifyBehavior.target.multiplyDebuff"
+                     value="{{item.system.intensifyBehavior.target.multiplyDebuff}}"
+                     min="0"
+                     step="1"
+                     class="erps-input"
+                     data-dtype="Number" />
+            </div>
+
+            <div class="erps-form__group">
+              <label class="erps-input-label" for="{{item.id}}-intensify-override-target">
+                {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Config.IntensifyOverride"}}
+              </label>
+              <input type="number"
+                     id="{{item.id}}-intensify-override-target"
+                     name="system.intensifyBehavior.target.override"
+                     value="{{item.system.intensifyBehavior.target.override}}"
+                     min="0"
+                     step="1"
+                     class="erps-input"
+                     data-dtype="Number" />
+            </div>
+          </div>
+        </fieldset>
+
+        {{!-- Set All Self --}}
+        <div class="erps-set-all">
+          <span class="erps-set-all__label">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Config.IntensifySetAllSelf"}}</span>
           <input type="number"
-                 id="{{item.id}}-intensify-advantage-self"
-                 name="system.intensifyBehavior.self.advantage"
-                 value="{{item.system.intensifyBehavior.self.advantage}}"
+                 class="erps-input erps-set-all__input"
+                 id="{{item.id}}-intensify-set-all-self"
+                 value="1"
                  min="0"
                  step="1"
-                 class="erps-input"
                  data-dtype="Number" />
+          <button type="button"
+                  class="erps-set-all__button"
+                  data-action="setAllIntensifySelf"
+                  data-target-group="self">
+            {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Config.IntensifySetAllApply"}}
+          </button>
         </div>
 
-        <div class="erps-form__group">
-          <label class="erps-input-label" for="{{item.id}}-intensify-disadvantage-self">
-            {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Config.IntensifyDisadvantage"}}
-          </label>
-          <input type="number"
-                 id="{{item.id}}-intensify-disadvantage-self"
-                 name="system.intensifyBehavior.self.disadvantage"
-                 value="{{item.system.intensifyBehavior.self.disadvantage}}"
-                 min="0"
-                 step="1"
-                 class="erps-input"
-                 data-dtype="Number" />
-        </div>
+        {{!-- Self Effects --}}
+        <fieldset class="erps-fieldset">
+          <legend class="erps-fieldset__legend">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Config.IntensifySelfEffects"}}</legend>
+          <div class="grid grid-3col">
+            <div class="erps-form__group">
+              <label class="erps-input-label" for="{{item.id}}-intensify-add-self">
+                {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Config.IntensifyAdd"}}
+              </label>
+              <input type="number"
+                     id="{{item.id}}-intensify-add-self"
+                     name="system.intensifyBehavior.self.add"
+                     value="{{item.system.intensifyBehavior.self.add}}"
+                     min="0"
+                     step="1"
+                     class="erps-input"
+                     data-dtype="Number" />
+            </div>
 
-        <div class="erps-form__group">
-          <label class="erps-input-label" for="{{item.id}}-intensify-ac-self">
-            {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Config.IntensifyAC"}}
-          </label>
-          <input type="number"
-                 id="{{item.id}}-intensify-ac-self"
-                 name="system.intensifyBehavior.self.acChange"
-                 value="{{item.system.intensifyBehavior.self.acChange}}"
-                 min="0"
-                 step="1"
-                 class="erps-input"
-                 data-dtype="Number" />
-        </div>
+            <div class="erps-form__group">
+              <label class="erps-input-label" for="{{item.id}}-intensify-advantage-self">
+                {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Config.IntensifyAdvantage"}}
+              </label>
+              <input type="number"
+                     id="{{item.id}}-intensify-advantage-self"
+                     name="system.intensifyBehavior.self.advantage"
+                     value="{{item.system.intensifyBehavior.self.advantage}}"
+                     min="0"
+                     step="1"
+                     class="erps-input"
+                     data-dtype="Number" />
+            </div>
 
-        <div class="erps-form__group">
-          <label class="erps-input-label" for="{{item.id}}-intensify-multiply-self">
-            {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Config.IntensifyMultiply"}}
-          </label>
-          <input type="number"
-                 id="{{item.id}}-intensify-multiply-self"
-                 name="system.intensifyBehavior.self.multiply"
-                 value="{{item.system.intensifyBehavior.self.multiply}}"
-                 min="0"
-                 step="1"
-                 class="erps-input"
-                 data-dtype="Number" />
-        </div>
+            <div class="erps-form__group">
+              <label class="erps-input-label" for="{{item.id}}-intensify-disadvantage-self">
+                {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Config.IntensifyDisadvantage"}}
+              </label>
+              <input type="number"
+                     id="{{item.id}}-intensify-disadvantage-self"
+                     name="system.intensifyBehavior.self.disadvantage"
+                     value="{{item.system.intensifyBehavior.self.disadvantage}}"
+                     min="0"
+                     step="1"
+                     class="erps-input"
+                     data-dtype="Number" />
+            </div>
 
-        <div class="erps-form__group">
-          <label class="erps-input-label" for="{{item.id}}-intensify-divide-self">
-            {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Config.IntensifyDivide"}}
-          </label>
-          <input type="number"
-                 id="{{item.id}}-intensify-divide-self"
-                 name="system.intensifyBehavior.self.divide"
-                 value="{{item.system.intensifyBehavior.self.divide}}"
-                 min="0"
-                 step="1"
-                 class="erps-input"
-                 data-dtype="Number" />
-        </div>
+            <div class="erps-form__group">
+              <label class="erps-input-label" for="{{item.id}}-intensify-ac-self">
+                {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Config.IntensifyAC"}}
+              </label>
+              <input type="number"
+                     id="{{item.id}}-intensify-ac-self"
+                     name="system.intensifyBehavior.self.acChange"
+                     value="{{item.system.intensifyBehavior.self.acChange}}"
+                     min="0"
+                     step="1"
+                     class="erps-input"
+                     data-dtype="Number" />
+            </div>
 
-        <div class="erps-form__group">
-          <label class="erps-input-label" for="{{item.id}}-intensify-multiplybuff-self">
-            {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Config.IntensifyMultiplyBuff"}}
-          </label>
-          <input type="number"
-                 id="{{item.id}}-intensify-multiplybuff-self"
-                 name="system.intensifyBehavior.self.multiplyBuff"
-                 value="{{item.system.intensifyBehavior.self.multiplyBuff}}"
-                 min="0"
-                 step="1"
-                 class="erps-input"
-                 data-dtype="Number" />
-        </div>
+            <div class="erps-form__group">
+              <label class="erps-input-label" for="{{item.id}}-intensify-multiply-self">
+                {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Config.IntensifyMultiply"}}
+              </label>
+              <input type="number"
+                     id="{{item.id}}-intensify-multiply-self"
+                     name="system.intensifyBehavior.self.multiply"
+                     value="{{item.system.intensifyBehavior.self.multiply}}"
+                     min="0"
+                     step="1"
+                     class="erps-input"
+                     data-dtype="Number" />
+            </div>
 
-        <div class="erps-form__group">
-          <label class="erps-input-label" for="{{item.id}}-intensify-multiplydebuff-self">
-            {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Config.IntensifyMultiplyDebuff"}}
-          </label>
-          <input type="number"
-                 id="{{item.id}}-intensify-multiplydebuff-self"
-                 name="system.intensifyBehavior.self.multiplyDebuff"
-                 value="{{item.system.intensifyBehavior.self.multiplyDebuff}}"
-                 min="0"
-                 step="1"
+            <div class="erps-form__group">
+              <label class="erps-input-label" for="{{item.id}}-intensify-divide-self">
+                {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Config.IntensifyDivide"}}
+              </label>
+              <input type="number"
+                     id="{{item.id}}-intensify-divide-self"
+                     name="system.intensifyBehavior.self.divide"
+                     value="{{item.system.intensifyBehavior.self.divide}}"
+                     min="0"
+                     step="1"
                  class="erps-input"
-                 data-dtype="Number" />
-        </div>
+                     data-dtype="Number" />
+            </div>
 
-        <div class="erps-form__group">
-          <label class="erps-input-label" for="{{item.id}}-intensify-override-self">
-            {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Config.IntensifyOverride"}}
-          </label>
-          <input type="number"
-                 id="{{item.id}}-intensify-override-self"
-                 name="system.intensifyBehavior.self.override"
-                 value="{{item.system.intensifyBehavior.self.override}}"
-                 min="0"
-                 step="1"
-                 class="erps-input"
-                 data-dtype="Number" />
-        </div>
+            <div class="erps-form__group">
+              <label class="erps-input-label" for="{{item.id}}-intensify-multiplybuff-self">
+                {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Config.IntensifyMultiplyBuff"}}
+              </label>
+              <input type="number"
+                     id="{{item.id}}-intensify-multiplybuff-self"
+                     name="system.intensifyBehavior.self.multiplyBuff"
+                     value="{{item.system.intensifyBehavior.self.multiplyBuff}}"
+                     min="0"
+                     step="1"
+                     class="erps-input"
+                     data-dtype="Number" />
+            </div>
+
+            <div class="erps-form__group">
+              <label class="erps-input-label" for="{{item.id}}-intensify-multiplydebuff-self">
+                {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Config.IntensifyMultiplyDebuff"}}
+              </label>
+              <input type="number"
+                     id="{{item.id}}-intensify-multiplydebuff-self"
+                     name="system.intensifyBehavior.self.multiplyDebuff"
+                     value="{{item.system.intensifyBehavior.self.multiplyDebuff}}"
+                     min="0"
+                     step="1"
+                     class="erps-input"
+                     data-dtype="Number" />
+            </div>
+
+            <div class="erps-form__group">
+              <label class="erps-input-label" for="{{item.id}}-intensify-override-self">
+                {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Config.IntensifyOverride"}}
+              </label>
+              <input type="number"
+                     id="{{item.id}}-intensify-override-self"
+                     name="system.intensifyBehavior.self.override"
+                     value="{{item.system.intensifyBehavior.self.override}}"
+                     min="0"
+                     step="1"
+                     class="erps-input"
+                     data-dtype="Number" />
+            </div>
+          </div>
+        </fieldset>
       </div>
-    </fieldset>
+    </div>
   </div>
   </div>
 </section>

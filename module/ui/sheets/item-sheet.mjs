@@ -39,12 +39,18 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
 
       // Add our custom actions to the options after parent construction
       foundry.utils.mergeObject(this.options.actions, {
-        exportEmbeddedCombatPowers: (e, t) => this._handleExportAction('exportEmbeddedCombatPowers', e, t),
-        exportEmbeddedActionCards: (e, t) => this._handleExportAction('exportEmbeddedActionCards', e, t),
-        exportEmbeddedActionItem: (e, t) => this._handleExportAction('exportEmbeddedActionItem', e, t),
-        exportEmbeddedEffects: (e, t) => this._handleExportAction('exportEmbeddedEffects', e, t),
-        exportEmbeddedTransformations: (e, t) => this._handleExportAction('exportEmbeddedTransformations', e, t),
-        exportAllEmbeddedItems: (e, t) => this._handleExportAction('exportAllEmbeddedItems', e, t),
+        exportEmbeddedCombatPowers: (e, t) =>
+          this._handleExportAction("exportEmbeddedCombatPowers", e, t),
+        exportEmbeddedActionCards: (e, t) =>
+          this._handleExportAction("exportEmbeddedActionCards", e, t),
+        exportEmbeddedActionItem: (e, t) =>
+          this._handleExportAction("exportEmbeddedActionItem", e, t),
+        exportEmbeddedEffects: (e, t) =>
+          this._handleExportAction("exportEmbeddedEffects", e, t),
+        exportEmbeddedTransformations: (e, t) =>
+          this._handleExportAction("exportEmbeddedTransformations", e, t),
+        exportAllEmbeddedItems: (e, t) =>
+          this._handleExportAction("exportAllEmbeddedItems", e, t),
       });
     } catch (error) {
       Logger.error("Failed to initialize item sheet", error, "ITEM_SHEET");
@@ -94,6 +100,9 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
         createNewSelfEffect: this._createNewSelfEffect,
         editEmbeddedSelfEffect: this._editEmbeddedSelfEffect,
         removeEmbeddedSelfEffect: this._removeEmbeddedSelfEffect,
+        setAllIntensifyTarget: this._setAllIntensifyTarget,
+        setAllIntensifySelf: this._setAllIntensifySelf,
+        toggleCollapsible: this._toggleCollapsible,
       },
       position: {
         width: 840,
@@ -390,13 +399,18 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
           );
         break;
       case "prerequisites":
-        ContextPreparationHelper.preparePrerequisitesContext(this.item, context);
+        ContextPreparationHelper.preparePrerequisitesContext(
+          this.item,
+          context,
+        );
         break;
       case "embeddedCombatPowers":
         context.tab = context.tabs[partId];
         Object.assign(
           context,
-          ContextPreparationHelper.prepareEmbeddedCombatPowersContext(this.item),
+          ContextPreparationHelper.prepareEmbeddedCombatPowersContext(
+            this.item,
+          ),
         );
         break;
       case "embeddedActionCards":
@@ -572,6 +586,9 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
     this._initializeItemSelectors().catch((error) => {
       Logger.error("Failed to initialize item selectors", error, "ItemSheet");
     });
+
+    // Bind collapsible section toggle listeners
+    this._bindCollapsibleListeners();
   }
 
   /**
@@ -591,9 +608,9 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
 
       // If this isn't our style, check if the owning sheet still exists
       if (sheetId !== this.id.toString()) {
-        const owningElement = document.getElementById(
-          `app-${sheetId}`,
-        ) || document.querySelector(`[data-appid="${sheetId}"]`);
+        const owningElement =
+          document.getElementById(`app-${sheetId}`) ||
+          document.querySelector(`[data-appid="${sheetId}"]`);
 
         // If the owning sheet doesn't exist, remove the orphaned style
         if (!owningElement) {
@@ -640,13 +657,18 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
   async _onChangeForm(formConfig, event) {
     this.#formChanged = true;
 
+    // Skip inputs that are not bound to the data model (e.g., utility "Set All" inputs)
+    if (!event.target?.name) {
+      return;
+    }
+
     // Use FormFieldHelper for color and damage formula handling
     const fieldResult = FormFieldHelper.handleFieldSync(event, this.item);
-    
+
     if (fieldResult.normalizedValue !== undefined) {
       event.target.value = fieldResult.normalizedValue;
     }
-    
+
     if (fieldResult.shouldUpdate && fieldResult.updateData) {
       await this.item.update(fieldResult.updateData);
       return;
@@ -704,7 +726,10 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
   async _initializeItemSelectors() {
     try {
       // Only initialize for action card and transformation items
-      if (this.item.type !== "actionCard" && this.item.type !== "transformation") {
+      if (
+        this.item.type !== "actionCard" &&
+        this.item.type !== "transformation"
+      ) {
         return;
       }
 
@@ -712,21 +737,27 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
       this._cleanupItemSelectors();
 
       // Determine which selectors to initialize based on item type
-      const selectorTypes = ['action-item', 'effects'];
-      
+      const selectorTypes = ["action-item", "effects"];
+
       if (this.item.type === "actionCard") {
-        selectorTypes.push('transformations', 'self-effects');
+        selectorTypes.push("transformations", "self-effects");
       }
-      
+
       if (this.item.type === "transformation") {
-        selectorTypes.push('transformations', 'combat-powers', 'action-cards');
+        selectorTypes.push("transformations", "combat-powers", "action-cards");
       }
 
       // Initialize scope selector (shared across all combo boxes on this sheet)
-      this._scopeSelector = ItemSelectorManager.initializeScopeSelector(this, selectorTypes);
+      this._scopeSelector = ItemSelectorManager.initializeScopeSelector(
+        this,
+        selectorTypes,
+      );
 
       // Initialize selectors using the service
-      this._selectors = ItemSelectorManager.initializeSelectors(this, selectorTypes);
+      this._selectors = ItemSelectorManager.initializeSelectors(
+        this,
+        selectorTypes,
+      );
     } catch (error) {
       Logger.error("Failed to initialize item selectors", error, "ItemSheet");
     }
@@ -913,9 +944,12 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
       this.render();
 
       ui.notifications.info(
-        game.i18n.format("EVENTIDE_RP_SYSTEM.Forms.SelfEffectsSelector.ItemAdded", {
-          itemName: droppedItem.name,
-        }),
+        game.i18n.format(
+          "EVENTIDE_RP_SYSTEM.Forms.SelfEffectsSelector.ItemAdded",
+          {
+            itemName: droppedItem.name,
+          },
+        ),
       );
     } catch (error) {
       Logger.error("Failed to add self-effect", error, "ITEM_SHEET");
@@ -939,7 +973,11 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
     try {
       await ExportActionHandler.executeExport(actionKey, this.item);
     } catch (error) {
-      Logger.error(`Failed to execute export action: ${actionKey}`, error, "ITEM_SHEET");
+      Logger.error(
+        `Failed to execute export action: ${actionKey}`,
+        error,
+        "ITEM_SHEET",
+      );
     }
   }
 
@@ -1010,6 +1048,136 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
       }
     } else {
       return super._onClickAction(event, target);
+    }
+  }
+
+  /**
+   * Set all intensify behavior values for the target group to a single value.
+   * Reads the value from the "Set All Target" input and applies it to all 9 target fields.
+   *
+   * @param {PointerEvent} _event - The originating click event
+   * @param {HTMLElement} target - The button element that was clicked
+   * @protected
+   */
+  async _setAllIntensifyTarget(_event, target) {
+    if (this.item.type !== "actionCard") return;
+
+    const input = target
+      .closest(".erps-set-all")
+      .querySelector("input[type='number']");
+    const value = Math.max(0, parseInt(input?.value, 10) || 0);
+
+    const keys = [
+      "add",
+      "advantage",
+      "disadvantage",
+      "acChange",
+      "multiply",
+      "divide",
+      "multiplyBuff",
+      "multiplyDebuff",
+      "override",
+    ];
+
+    const updateData = {};
+    for (const key of keys) {
+      updateData[`system.intensifyBehavior.target.${key}`] = value;
+    }
+
+    await this.item.update(updateData);
+  }
+
+  /**
+   * Set all intensify behavior values for the self group to a single value.
+   * Reads the value from the "Set All Self" input and applies it to all 9 self fields.
+   *
+   * @param {PointerEvent} _event - The originating click event
+   * @param {HTMLElement} target - The button element that was clicked
+   * @protected
+   */
+  async _setAllIntensifySelf(_event, target) {
+    if (this.item.type !== "actionCard") return;
+
+    const input = target
+      .closest(".erps-set-all")
+      .querySelector("input[type='number']");
+    const value = Math.max(0, parseInt(input?.value, 10) || 0);
+
+    const keys = [
+      "add",
+      "advantage",
+      "disadvantage",
+      "acChange",
+      "multiply",
+      "divide",
+      "multiplyBuff",
+      "multiplyDebuff",
+      "override",
+    ];
+
+    const updateData = {};
+    for (const key of keys) {
+      updateData[`system.intensifyBehavior.self.${key}`] = value;
+    }
+
+    await this.item.update(updateData);
+  }
+
+  /**
+   * Toggle a collapsible section's expanded/collapsed state.
+   * Adds or removes the `erps-collapsible--expanded` class on the
+   * collapsible container identified by the `data-collapsible-target` attribute.
+   *
+   * @param {PointerEvent} _event - The originating click event
+   * @param {HTMLElement} target - The header element that was clicked
+   * @protected
+   */
+  _toggleCollapsible(_event, target) {
+    const collapsibleId = target.dataset.collapsibleTarget;
+    if (!collapsibleId) return;
+
+    const container = this.element.querySelector(
+      `[data-collapsible="${collapsibleId}"]`,
+    );
+    if (!container) return;
+
+    container.classList.toggle("erps-collapsible--expanded");
+  }
+
+  /**
+   * Bind click listeners for collapsible sections and set-all buttons.
+   * Uses direct event listeners since the collapsible header is a div inside a form,
+   * which can conflict with the form's submitOnChange behavior.
+   * @private
+   */
+  _bindCollapsibleListeners() {
+    // Collapsible section headers
+    const headers = this.element.querySelectorAll(
+      '[data-action="toggleCollapsible"]',
+    );
+    for (const header of headers) {
+      header.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        this._toggleCollapsible(event, header);
+      });
+    }
+
+    // Set-all intensify buttons
+    const setAllButtons = this.element.querySelectorAll(
+      '[data-action="setAllIntensifyTarget"], [data-action="setAllIntensifySelf"]',
+    );
+    for (const button of setAllButtons) {
+      button.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        const action = button.dataset.action;
+        if (action === "setAllIntensifyTarget") {
+          this._setAllIntensifyTarget(event, button);
+        } else if (action === "setAllIntensifySelf") {
+          this._setAllIntensifySelf(event, button);
+        }
+      });
     }
   }
 
