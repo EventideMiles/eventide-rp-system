@@ -37,7 +37,10 @@
         "OutOfStock": "Source was out of stock",
         "StatusIntensified": "Status intensified:",
         "StatusApplied": "Status applied:",
-        "Overhealing": "Overhealing"
+        "Overhealing": "Overhealing",
+        "Abilities": "Abilities",
+        "StatusEffects": "Status Effects",
+        "Transformation": "Transformation"
        }
     },
     "MessageHeaders": {
@@ -51,7 +54,8 @@
       "Transformation": "Transformation: {name}",
       "GearEffect": "Gear Effect: {name}",
       "GearEffectTransfer": "Gear Effect Transfer: {name}",
-      "ActionCard": "Action Card: {name}"
+      "ActionCard": "Action Card: {name}",
+      "Summary": "Character Summary: {name}"
     },
     "PartialTransfer": "Only {quantity} items were available to transfer."
   }

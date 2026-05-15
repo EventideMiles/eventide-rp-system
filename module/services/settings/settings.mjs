@@ -898,6 +898,17 @@ export const registerSettings = function () {
   // DEVELOPER/TESTING SETTINGS (GM Only)
   // ===========================================
 
+  // Enable Post Summary for non-GMs
+  game.settings.register("eventide-rp-system", "enablePostSummary", {
+    name: "SETTINGS.EnablePostSummaryName",
+    hint: "SETTINGS.EnablePostSummaryHint",
+    scope: "world",
+    config: true,
+    restricted: true,
+    type: Boolean,
+    default: false,
+  });
+
   // Testing Mode (developer setting)
   game.settings.register("eventide-rp-system", "testingMode", {
     name: "SETTINGS.TestingModeName",

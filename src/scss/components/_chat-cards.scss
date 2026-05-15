@@ -171,6 +171,22 @@
       font-weight: bold;
       font-size: 1rem;
     }
+
+    // No-bullet variant for summary displays
+    &--no-bullet {
+      padding-left: 0.5rem;
+
+      &::before {
+        content: none;
+      }
+    }
+
+    // Two-column variant for summary displays
+    &--summary {
+      grid-template-columns: 1fr 1fr;
+      padding: 0.375rem 0.5rem;
+      width: 100%;
+    }
   }
 
   &__effects-row-cell {
