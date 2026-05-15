@@ -133,7 +133,9 @@
           "WithTargets": "There are <strong>{count} target(s)</strong> selected. This will create a transformation for each target and your compendium."
         },
         "ActionCard": {
-          "NoEmbeddedItem": "This action card has no embedded item configured. Please add an item to the action slot before executing.",
+          "NoEmbeddedItem": "This action card needs a combat power to execute. Go to the <strong>Embedded Items</strong> tab to create or drop one.",
+          "AllConditionsNever": "This card has no conditions set to trigger any effects. Set at least one condition (Damage, Status, Self-Effects, or Transformation) for the card to do something when executed.",
+          "SavedDamageNoEffects": "Saved Damage cards apply a flat formula without rolling. Add embedded status effects or self-effects to make this card more versatile.",
           "TargetingError": "You do not have the correct targets selected for this action card.",
           "TooManyStatuses": "This action card requires selecting 0 or 1 status effects. Currently {count} status effects are selected. Please deselect all but one status effect to proceed."
         },

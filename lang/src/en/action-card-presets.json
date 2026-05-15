@@ -106,7 +106,16 @@
         "SavedDamage": "Direct Damage"
       },
       "NoPresetSelected": "Please select a preset template",
-      "ConfigureLabel": "Configure"
+      "ConfigureLabel": "Configure",
+      "QuickCreate": {
+        "SectionTitle": "Embedded Combat Power",
+        "SectionHint": "Optionally create a combat power to embed in this action card.",
+        "PowerName": "Power Name",
+        "PowerNameHint": "Name for the embedded combat power",
+        "RollType": "Roll Type",
+        "Ability": "Ability",
+        "Cost": "Power Cost"
+      }
     }
   }
 }
