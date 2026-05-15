@@ -18,6 +18,7 @@
             {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.SavedDamageMode"}}
           </option>
         </select>
+        <p class="erps-form__hint">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.ModeHint"}}</p>
       </div>
 
       {{!-- Advance Initiative Toggle --}}
@@ -102,6 +103,7 @@
                 {{/unless}}
               {{/each}}
             </select>
+            <p class="erps-form__hint">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.FirstStatHint"}}</p>
           </div>
           <div>
             <label class="erps-input-label">
@@ -116,6 +118,7 @@
                 {{/unless}}
               {{/each}}
             </select>
+            <p class="erps-form__hint">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.SecondStatHint"}}</p>
           </div>
         </div>
 
@@ -129,6 +132,7 @@
                 {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.DamageCondition"}}
               </label>
               {{> components/condition-select name="system.attackChain.damageCondition" currentValue=system.attackChain.damageCondition}}
+              <p class="erps-form__hint">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.DamageConditionHint"}}</p>
             </div>
             <div>
               <label class="erps-input-label">
@@ -183,6 +187,7 @@
                 {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.StatusCondition"}}
               </label>
               {{> components/condition-select name="system.attackChain.statusCondition" currentValue=system.attackChain.statusCondition}}
+              <p class="erps-form__hint">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.StatusConditionHint"}}</p>
             </div>
             {{#if (or (eq system.attackChain.statusCondition "rollValue") (eq system.attackChain.statusCondition "rollUnderValue") (eq system.attackChain.statusCondition "rollOnValue"))}}
             <div>
@@ -213,6 +218,7 @@
             {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.SelfEffectsCondition"}}
           </label>
           {{> components/condition-select name="system.selfEffectsConfig.condition" currentValue=system.selfEffectsConfig.condition}}
+          <p class="erps-form__hint">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.SelfEffectsConditionHint"}}</p>
         </div>
         {{#if (or (eq system.selfEffectsConfig.condition "rollValue") (eq system.selfEffectsConfig.condition "rollUnderValue") (eq system.selfEffectsConfig.condition "rollOnValue"))}}
         <div>
@@ -246,6 +252,7 @@
             {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.TransformationCondition"}}
           </label>
           {{> components/condition-select name="system.transformationConfig.condition" currentValue=system.transformationConfig.condition}}
+          <p class="erps-form__hint">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.TransformationConditionHint"}}</p>
         </div>
         {{#if (or (eq system.transformationConfig.condition "rollValue") (eq system.transformationConfig.condition "rollUnderValue") (eq system.transformationConfig.condition "rollOnValue"))}}
         <div>
