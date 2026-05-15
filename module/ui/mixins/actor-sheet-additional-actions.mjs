@@ -2,6 +2,7 @@ import { Logger } from "../../services/logger.mjs";
 import { ErrorHandler } from "../../utils/error-handler.mjs";
 import { erpsRollHandler } from "../../services/_module.mjs";
 import { RestoreTarget } from "../macros/restore-target.mjs";
+import { createCharacterSummaryMessage } from "../../services/_module.mjs";
 
 const FilePicker = foundry.applications.apps.FilePicker.implementation;
 
@@ -636,5 +637,24 @@ export const ActorSheetAdditionalActionsMixin = (BaseClass) =>
   static async _onRestRecover(_event, _target) {
     const dialog = RestoreTarget.forActor(this.actor);
     dialog.render(true);
+  }
+
+  /**
+   * Handle the Post Summary button click on the actor sheet.
+   * Creates a chat message with a character overview.
+   * @param {PointerEvent} _event - The originating click event
+   * @param {HTMLElement} _target - The capturing HTML element which defined a [data-action]
+   * @protected
+   */
+  static async _onPostSummary(_event, _target) {
+    try {
+      await createCharacterSummaryMessage(this.actor);
+    } catch (error) {
+      ErrorHandler.handleError(
+        error,
+        "Failed to post character summary",
+        "ACTOR_SHEET",
+      );
+    }
   }
 };

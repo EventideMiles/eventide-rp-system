@@ -111,6 +111,7 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
       restRecover: this._onRestRecover,
       generateNpc: this._onGenerateNpc,
       createFromTemplate: this._createFromTemplateActionCard,
+      postSummary: this._onPostSummary,
       
     },
     // Custom property that's merged into `this.options`

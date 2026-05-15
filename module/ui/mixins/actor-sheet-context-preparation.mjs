@@ -606,6 +606,12 @@ export const ActorSheetContextPreparationMixin = (BaseClass) =>
         context.isGM = game.user.isGM;
         context.canEdit = this.document.isOwner || game.user.isGM;
 
+        // Feature toggles
+        context.enablePostSummary = game.settings.get(
+          "eventide-rp-system",
+          "enablePostSummary",
+        );
+
         Logger.debug(
           "Actor data prepared successfully",
           {

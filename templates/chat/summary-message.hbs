@@ -1,0 +1,48 @@
+<div class="chat-card">
+  <div class="chat-card__header chat-card__header--restore">
+    <i class="fa-solid fa-list"></i> {{header}}
+  </div>
+  <div class="chat-card__description">
+    <div class="chat-card__description--header">{{actor.name}} — Level {{level}}</div>
+    <div>{{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.Resolve"}}: {{resolve.value}} / {{resolve.max}}</div>
+    <div>{{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.Power"}}: {{power.value}} / {{power.max}}</div>
+  </div>
+  {{#if abilities}}
+  <hr class="chat-card__hr" />
+  <div class="chat-card__effects">
+    <div class="chat-card__effects--title">{{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.Abilities"}}</div>
+    {{#each abilities}}
+    <div class="chat-card__effects-row">
+      <div class="chat-card__effects-row-content chat-card__effects-row-content--no-bullet chat-card__effects-row-content--summary">
+        <div class="chat-card__effects-row-cell chat-card__effects-row-cell--first">{{this.label}}</div>
+        <div class="chat-card__effects-row-cell chat-card__effects-row-cell--last">
+          {{#if (ne this.value this.total)}}
+            {{this.value}} → {{this.total}}
+          {{else}}
+            {{this.total}}
+          {{/if}}
+          {{#if this.ac}}<span style="opacity: 0.7;"> | AC {{this.ac}}</span>{{/if}}
+        </div>
+      </div>
+    </div>
+    {{/each}}
+  </div>
+  {{/if}}
+  <hr class="chat-card__hr" />
+  <div class="chat-card__effects">
+    <div class="chat-card__effects-row">
+      <div class="chat-card__effects-row-content chat-card__effects-row-content--no-bullet chat-card__effects-row-content--summary">
+        <div class="chat-card__effects-row-cell chat-card__effects-row-cell--first">{{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.StatusEffects"}}</div>
+        <div class="chat-card__effects-row-cell chat-card__effects-row-cell--last">{{statusCount}}</div>
+      </div>
+    </div>
+    {{#if isTransformed}}
+    <div class="chat-card__effects-row">
+      <div class="chat-card__effects-row-content chat-card__effects-row-content--no-bullet chat-card__effects-row-content--summary">
+        <div class="chat-card__effects-row-cell chat-card__effects-row-cell--first">{{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.Transformation"}}</div>
+        <div class="chat-card__effects-row-cell chat-card__effects-row-cell--last">{{transformationName}}</div>
+      </div>
+    </div>
+    {{/if}}
+  </div>
+</div>

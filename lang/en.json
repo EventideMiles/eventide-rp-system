@@ -728,6 +728,13 @@
         "TargetsExhaustedFailureMessage": "None of the original targets still exist.",
         "TargetsExhaustedTargetsRemoved": "Targets Removed: {names}",
         "TargetsExhaustedNote": "Remaining repetitions were not executed."
+      },
+      "Summary": {
+        "ResolveAndPower": "Resolve: {resolve}/{resolveMax} | Power: {power}/{powerMax}",
+        "Level": "Level: {level}",
+        "Abilities": "Abilities",
+        "Title": "Character Summary",
+        "ClickHint": "Click to post summary to GMs"
       }
     },
     "Errors": {
@@ -1269,7 +1276,10 @@
         "OutOfStock": "Source was out of stock",
         "StatusIntensified": "Status intensified:",
         "StatusApplied": "Status applied:",
-        "Overhealing": "Overhealing"
+        "Overhealing": "Overhealing",
+        "Abilities": "Abilities",
+        "StatusEffects": "Status Effects",
+        "Transformation": "Transformation"
       },
       "PartialTransfer": "Partial transfer completed"
     },
@@ -1284,7 +1294,8 @@
       "Transformation": "Transformation: {name}",
       "GearEffect": "Gear Effect: {name}",
       "GearEffectTransfer": "Gear Effect Transfer: {name}",
-      "ActionCard": "Action Card: {name}"
+      "ActionCard": "Action Card: {name}",
+      "Summary": "Character Summary: {name}"
     },
     "PartialTransfer": "Only {quantity} items were available to transfer.",
     "Effect": {
@@ -1632,6 +1643,8 @@
     "ErrorSavingSoundSettings": "Error saving sound settings",
     "SoundResetToDefault": "Sound for {0} reset to default.",
     "NoPlayerPermission": "Players do not have permission to change sound settings.",
+    "EnablePostSummaryName": "Enable Post Summary",
+    "EnablePostSummaryHint": "Allows players to use the Post Summary feature on their character sheets. When enabled, a Character Summary card appears in the status bar for non-GM users.",
     "TestingModeName": "Testing Mode",
     "TestingModeHint": "Enable or disable testing mode console logging for debugging.",
     "MinimumDiceValueName": "Minimum Dice Value",
