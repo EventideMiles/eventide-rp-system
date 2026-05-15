@@ -78,7 +78,54 @@ export class ContextPreparationHelper {
     // Add size options for the select input
     context.sizeOptions = this.SIZE_OPTIONS;
 
+    // Add intensifyModified flag for action card config tab
+    // When true, the collapsible intensify section renders expanded
+    if (
+      partId === "attributesActionCardConfig" &&
+      context.item?.type === "actionCard"
+    ) {
+      context.intensifyModified = this._isIntensifyModified(context.item);
+    }
+
     return context;
+  }
+
+  /**
+   * Check if an action card has non-default intensify behavior values.
+   * All 18 fields default to 1 — if any differ, the card has been customized.
+   *
+   * @param {Item} item - The action card item
+   * @returns {boolean} True if any intensify value differs from the default of 1
+   * @static
+   * @private
+   */
+  static _isIntensifyModified(item) {
+    const behavior = item.system?.intensifyBehavior;
+    if (!behavior) return false;
+
+    const groups = [behavior.target, behavior.self];
+    const keys = [
+      "add",
+      "advantage",
+      "disadvantage",
+      "acChange",
+      "multiply",
+      "divide",
+      "multiplyBuff",
+      "multiplyDebuff",
+      "override",
+    ];
+
+    for (const group of groups) {
+      if (!group) continue;
+      for (const key of keys) {
+        if (group[key] !== undefined && group[key] !== 1) {
+          return true;
+        }
+      }
+    }
+
+    return false;
   }
 
   /**

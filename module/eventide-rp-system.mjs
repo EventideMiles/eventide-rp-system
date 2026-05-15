@@ -29,6 +29,7 @@ import {
   ActorToTransformationConverter,
   TransformationToActorConverter,
   NpcQuickGenerator,
+  ActionCardPresetDialog,
 } from "./ui/_module.mjs";
 
 // import service classes and constants
@@ -213,6 +214,7 @@ globalThis.erps = {
     ActorToTransformationConverter,
     TransformationToActorConverter,
     NpcQuickGenerator,
+    ActionCardPresetDialog,
   },
 
   /**
@@ -370,7 +372,8 @@ globalThis.erps = {
     let migrationVersion = "Unknown";
     let migrationLevel = 0;
     try {
-      migrationLevel = game.settings.get("eventide-rp-system", "migrationVersion") || 0;
+      migrationLevel =
+        game.settings.get("eventide-rp-system", "migrationVersion") || 0;
       migrationVersion = `Level ${migrationLevel}`;
     } catch {
       migrationVersion = "Settings unavailable";
@@ -379,13 +382,19 @@ globalThis.erps = {
     // Get V14 migration status
     let v14MigrationVersion = "Unknown";
     try {
-      v14MigrationVersion = game.settings.get("eventide-rp-system", "v14MigrationVersion") || "Not run";
+      v14MigrationVersion =
+        game.settings.get("eventide-rp-system", "v14MigrationVersion") ||
+        "Not run";
     } catch {
       v14MigrationVersion = "Settings unavailable";
     }
 
     // Get active theme instances with proper processing
-    const themeInstancesData = globalThis.erps?.utils?.getActiveThemeInstances?.() || { count: 0, instances: [] };
+    const themeInstancesData =
+      globalThis.erps?.utils?.getActiveThemeInstances?.() || {
+        count: 0,
+        instances: [],
+      };
 
     const diagnostics = {
       trackedIntervals,
@@ -494,9 +503,8 @@ Hooks.once("init", async () => {
 
   // Set up GM control manager in global scope (async)
   try {
-    const { gmControlManager } = await import(
-      "./services/managers/gm-control.mjs"
-    );
+    const { gmControlManager } =
+      await import("./services/managers/gm-control.mjs");
     globalThis.erps.gmControl = gmControlManager;
   } catch (error) {
     Logger.error("Failed to load GM control manager", error, "SYSTEM_INIT");
@@ -734,7 +742,11 @@ Hooks.once("ready", () => {
 
   // Run migrations (Issues #127, #128)
   EmbeddedImageMigration.run().catch((error) => {
-    Logger.error("Failed to run embedded image migration", error, "SYSTEM_INIT");
+    Logger.error(
+      "Failed to run embedded image migration",
+      error,
+      "SYSTEM_INIT",
+    );
   });
   SettingNameMigration.run().catch((error) => {
     Logger.error("Failed to run setting name migration", error, "SYSTEM_INIT");
@@ -742,7 +754,11 @@ Hooks.once("ready", () => {
 
   // Run V14 ActiveEffect migration
   V14ActiveEffectMigration.run().catch((error) => {
-    Logger.error("Failed to run V14 ActiveEffect migration", error, "SYSTEM_INIT");
+    Logger.error(
+      "Failed to run V14 ActiveEffect migration",
+      error,
+      "SYSTEM_INIT",
+    );
   });
 
   // Remove immediate theme styles now that the full theme system is loaded
@@ -766,13 +782,20 @@ Hooks.once("ready", () => {
         foundry.utils.setProperty(change, "prototypeToken.name", change.name);
       }
       if (foundry.utils.hasProperty(change, "img")) {
-        foundry.utils.setProperty(change, "prototypeToken.texture.src", change.img);
+        foundry.utils.setProperty(
+          change,
+          "prototypeToken.texture.src",
+          change.img,
+        );
       }
     }
   });
 
   Hooks.on("updateActor", (actor, change, _options, userId) => {
-    if (userId === game.user.id && actor.getFlag("eventide-rp-system", "autoTokenSync")) {
+    if (
+      userId === game.user.id &&
+      actor.getFlag("eventide-rp-system", "autoTokenSync")
+    ) {
       const tokenUpdates = [];
       if (foundry.utils.hasProperty(change, "name")) {
         tokenUpdates.push({ key: "name", value: change.name });
@@ -814,16 +837,16 @@ Hooks.once("ready", () => {
   // Register actor directory context menu for NPC Quick Generator
   Hooks.on("getActorDirectoryEntryContext", (html, entries) => {
     entries.push({
-      name: "EVENTIDE_RP_SYSTEM.NpcGenerator.Title",
+      label: "EVENTIDE_RP_SYSTEM.NpcGenerator.Title",
       icon: '<i class="fa-solid fa-wand-magic-sparkles"></i>',
-      callback: (li) => {
+      onClick: (_event, li) => {
         const actorId = li.dataset.documentId;
         const actor = game.actors.get(actorId);
         if (actor) {
           new NpcQuickGenerator({ sourceActor: actor }).render(true);
         }
       },
-      condition: (li) => {
+      visible: (li) => {
         const actorId = li.dataset.documentId;
         const actor = game.actors.get(actorId);
         return actor?.type === "npc" && game.user.isGM;
@@ -922,11 +945,11 @@ async function rollItemMacro(itemUuid) {
 /**
  * Clean up system resources when the world is being shut down
  * This helps prevent memory leaks and ensures proper cleanup
- * 
+ *
  * NOTE: We do NOT perform cleanup on:
  * - visibilitychange (alt-tab): Would destroy active DOM elements
  * - pause: Too aggressive, could break active sheets
- * 
+ *
  * Cleanup only happens on:
  * - beforeunload: Browser/page close (proper shutdown)
  * - hot reload: Development module reload

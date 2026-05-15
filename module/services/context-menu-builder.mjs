@@ -262,23 +262,23 @@ export class ContextMenuBuilder {
 
     return [
       {
-        name: "EVENTIDE_RP_SYSTEM.ContextMenu.MoveToGroup",
+        label: "EVENTIDE_RP_SYSTEM.ContextMenu.MoveToGroup",
         icon: '<i class="fas fa-folder-open"></i>',
-        callback: (target) => {
+        onClick: (_event, target) => {
           const itemId = target.dataset.itemId;
           this.showMoveToGroupDialogForTransformation(itemId, groups, sheet);
         },
       },
       {
-        name: "EVENTIDE_RP_SYSTEM.ContextMenu.RemoveFromGroup",
+        label: "EVENTIDE_RP_SYSTEM.ContextMenu.RemoveFromGroup",
         icon: '<i class="fas fa-folder-minus"></i>',
-        condition: (target) => {
+        visible: (target) => {
           const itemId = target.dataset.itemId;
           const actionCards = sheet.item.system.embeddedActionCards || [];
           const actionCard = actionCards.find((card) => card._id === itemId);
           return actionCard && actionCard.system.groupId;
         },
-        callback: async (target) => {
+        onClick: async (_event, target) => {
           const itemId = target.dataset.itemId;
           const actionCards = sheet.item.system.embeddedActionCards || [];
           const actionCard = actionCards.find((card) => card._id === itemId);
@@ -317,9 +317,9 @@ export class ContextMenuBuilder {
         },
       },
       {
-        name: "EVENTIDE_RP_SYSTEM.ContextMenu.CreateNewGroup",
+        label: "EVENTIDE_RP_SYSTEM.ContextMenu.CreateNewGroup",
         icon: '<i class="fas fa-folder-plus"></i>',
-        callback: async (target) => {
+        onClick: async (_event, target) => {
           const itemId = target.dataset.itemId;
 
           // Create the new group first
@@ -480,9 +480,9 @@ export class ContextMenuBuilder {
   getTransformationGroupHeaderContextOptions(sheet) {
     return [
       {
-        name: "EVENTIDE_RP_SYSTEM.ContextMenu.CreateActionInGroup",
+        label: "EVENTIDE_RP_SYSTEM.ContextMenu.CreateActionInGroup",
         icon: '<i class="fas fa-plus"></i>',
-        callback: async (target) => {
+        onClick: async (_event, target) => {
           const groupId =
             target.dataset.groupId ||
             target.closest("[data-group-id]")?.dataset.groupId;
@@ -586,9 +586,9 @@ export class ContextMenuBuilder {
   getTransformationTabContextOptions(itemType, sheet) {
     return [
       {
-        name: `EVENTIDE_RP_SYSTEM.ContextMenu.CreateNew${itemType.charAt(0).toUpperCase() + itemType.slice(1)}`,
+        label: `EVENTIDE_RP_SYSTEM.ContextMenu.CreateNew${itemType.charAt(0).toUpperCase() + itemType.slice(1)}`,
         icon: '<i class="fas fa-plus"></i>',
-        callback: async () => {
+        onClick: async () => {
           await this._createEmbeddedItemInTab(itemType, sheet);
         },
       },

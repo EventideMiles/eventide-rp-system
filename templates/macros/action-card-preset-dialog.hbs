@@ -1,0 +1,141 @@
+{{!-- Action Card Preset Library Dialog --}}
+<div class="{{cssClass}} erps-form" autocomplete="off">
+  {{> callout-box}}
+  <div class="erps-form__content">
+
+    {{!-- Preset Selection Grid --}}
+    <section class="erps-preset-section">
+      <h2 class="erps-form__header">{{localize "EVENTIDE_RP_SYSTEM.ActionCardPresets.SelectPreset"}}</h2>
+      <div class="erps-preset-grid">
+        {{#each presets}}
+          <div
+                  class="erps-preset-card {{#if (eq id ../selectedPresetId)}}erps-preset-card--selected{{/if}}"
+                  data-action="selectPreset"
+                  data-preset-id="{{id}}"
+                  role="button"
+                  tabindex="0">
+            <i class="{{icon}} erps-preset-card__icon"></i>
+            <span class="erps-preset-card__label">{{label}}</span>
+            <span class="erps-preset-card__description">{{description}}</span>
+            <span class="erps-preset-card__mode erps-preset-card__mode--{{mode}}">
+              {{#if (eq mode "savedDamage")}}{{localize "EVENTIDE_RP_SYSTEM.ActionCardPresets.Mode.SavedDamage"}}{{else}}{{localize "EVENTIDE_RP_SYSTEM.ActionCardPresets.Mode.AttackChain"}}{{/if}}
+            </span>
+          </div>
+        {{/each}}
+      </div>
+    </section>
+
+    {{!-- Key Fields Configuration --}}
+    {{#if selectedPresetId}}
+    <section class="erps-preset-fields">
+      <h3 class="erps-form__header">{{localize "EVENTIDE_RP_SYSTEM.ActionCardPresets.Configure"}}</h3>
+
+      {{#if preserveEmbeddedInfo}}
+        <div class="erps-callouts">
+          <div class="erps-callout erps-callout--information">
+            <i class="fas fa-info-circle"></i>
+            <div class="erps-callout__content">
+              <span>{{localize "EVENTIDE_RP_SYSTEM.ActionCardPresets.PreserveEmbeddedInfo"}}</span>
+            </div>
+          </div>
+        </div>
+      {{/if}}
+
+      <div class="erps-preset-fields__grid">
+        {{#each keyFields}}
+          <div class="erps-preset-fields__row">
+            <label class="erps-form__label">{{label}}</label>
+
+            {{#if (eq type "text")}}
+              <input type="text"
+                     name="{{path}}"
+                     value="{{value}}"
+                     class="erps-input" />
+            {{/if}}
+
+            {{#if (eq type "number")}}
+              <input type="number"
+                     name="{{path}}"
+                     value="{{value}}"
+                     min="0"
+                     class="erps-input" />
+              {{#if hint}}<p class="erps-form__hint">{{hint}}</p>{{/if}}
+            {{/if}}
+
+            {{#if (eq type "select")}}
+              <select name="{{path}}" class="erps-select">
+                {{#each choices}}
+                  <option value="{{value}}" {{#if selected}}selected{{/if}}>
+                    {{label}}
+                  </option>
+                {{/each}}
+              </select>
+            {{/if}}
+
+            {{#if (eq type "checkbox")}}
+              <label class="erps-toggles">
+                <input type="checkbox"
+                       name="{{path}}"
+                       {{#if value}}checked{{/if}}
+                       data-dtype="Boolean"
+                       class="erps-toggles__input" />
+                <div class="erps-toggles__container">
+                  <span class="erps-toggles__track">
+                    <span class="erps-toggles__thumb"></span>
+                  </span>
+                </div>
+              </label>
+              {{#if hint}}<p class="erps-form__hint">{{hint}}</p>{{/if}}
+            {{/if}}
+          </div>
+        {{/each}}
+      </div>
+    </section>
+    {{/if}}
+
+    {{!-- Embedded Combat Power Quick-Create --}}
+    {{#if showPowerQuickCreate}}
+    <section class="erps-preset-fields">
+      <h3 class="erps-form__header">{{localize "EVENTIDE_RP_SYSTEM.ActionCardPresets.QuickCreate.SectionTitle"}}</h3>
+      <p class="erps-form__hint">{{localize "EVENTIDE_RP_SYSTEM.ActionCardPresets.QuickCreate.SectionHint"}}</p>
+      <div class="erps-preset-fields__grid">
+        <div class="erps-preset-fields__row">
+          <label class="erps-form__label">{{localize "EVENTIDE_RP_SYSTEM.ActionCardPresets.QuickCreate.PowerName"}}</label>
+          <input type="text"
+                 name="powerName"
+                 value="{{defaultPowerName}}"
+                 class="erps-input" />
+          <p class="erps-form__hint">{{localize "EVENTIDE_RP_SYSTEM.ActionCardPresets.QuickCreate.PowerNameHint"}}</p>
+        </div>
+        <div class="erps-preset-fields__row">
+          <label class="erps-form__label">{{localize "EVENTIDE_RP_SYSTEM.ActionCardPresets.QuickCreate.RollType"}}</label>
+          <select name="powerRollType" class="erps-select">
+            <option value="roll" {{#if (eq powerRollType "roll")}}selected{{/if}}>Roll</option>
+            <option value="flat" {{#if (eq powerRollType "flat")}}selected{{/if}}>Flat</option>
+            <option value="none" {{#if (eq powerRollType "none")}}selected{{/if}}>None</option>
+          </select>
+        </div>
+        <div class="erps-preset-fields__row">
+          <label class="erps-form__label">{{localize "EVENTIDE_RP_SYSTEM.ActionCardPresets.QuickCreate.Ability"}}</label>
+          <select name="powerAbility" class="erps-select">
+            {{#each abilities as |label key|}}
+              <option value="{{key}}" {{#if (eq ../powerAbility key)}}selected{{/if}}>{{label}}</option>
+            {{/each}}
+            <option value="unaugmented" {{#if (eq ../powerAbility "unaugmented")}}selected{{/if}}>Unaugmented</option>
+          </select>
+        </div>
+        <div class="erps-preset-fields__row">
+          <label class="erps-form__label">{{localize "EVENTIDE_RP_SYSTEM.ActionCardPresets.QuickCreate.Cost"}}</label>
+          <input type="number"
+                 name="powerCost"
+                 value="{{powerCost}}"
+                 min="0"
+                 class="erps-input" />
+        </div>
+      </div>
+    </section>
+    {{/if}}
+  </div>
+
+  {{> macro-footer}}
+</div>

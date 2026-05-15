@@ -34,6 +34,7 @@
 @use 'components/sheet/forms';
 @use 'components/sheet/erps-callouts';
 @use 'components/sheet/erps-form-footer';
+@use 'components/action-card-preset-dialog';
 
 // Import Google Fonts after ALL @use statements to avoid CSS parsing errors
 @import 'https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap';

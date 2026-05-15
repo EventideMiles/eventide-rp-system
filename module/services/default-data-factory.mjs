@@ -313,7 +313,7 @@ export class DefaultDataFactory {
     return {
       firstStat: "acro",
       secondStat: "phys",
-      damageCondition: "never",
+      damageCondition: "oneSuccess",
       damageFormula: "1d6",
       damageType: "damage",
       damageThreshold: 15,

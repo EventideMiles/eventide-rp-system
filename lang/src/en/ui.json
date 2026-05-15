@@ -194,7 +194,9 @@
       "CreateNewCombatPower": "Create New Combat Power",
       "CreateNewStatus": "Create New Status",
       "CreateNewGear": "Create New Gear",
-      "CreateNewActionCard": "Create New Action Card"
+      "CreateNewActionCard": "Create New Action Card",
+      "CreateFromTemplateActionCard": "New from Template",
+      "ApplyPresetTemplate": "Apply Preset Template"
     }
   }
 }

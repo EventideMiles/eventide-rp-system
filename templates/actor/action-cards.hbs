@@ -127,16 +127,25 @@
                 </th>
                 <th class="erps-data-table__header-cell erps-data-table__header-cell--controls">
                   {{#if @root.editable}}
-                    <a
-                      class="erps-data-table__create-button"
-                      title="{{localize 'DOCUMENT.Create' type='Item'}}"
-                      data-action="createDoc"
-                      data-document-class="Item"
-                      data-type="actionCard"
-                    >
-                      <i class="fas fa-plus"></i>
-                      {{localize "DOCUMENT.New" type="item"}}
-                    </a>
+                    <div class="erps-data-table__create-buttons">
+                      <a
+                        class="erps-data-table__create-button"
+                        title="{{localize 'DOCUMENT.Create' type='Item'}}"
+                        data-action="createDoc"
+                        data-document-class="Item"
+                        data-type="actionCard"
+                      >
+                        <i class="fas fa-plus"></i>
+                        {{localize "EVENTIDE_RP_SYSTEM.Actor.ActionCards.NewItem"}}
+                      </a>
+                      <a
+                        class="erps-data-table__create-button erps-data-table__create-button--template"
+                        data-action="createFromTemplate"
+                      >
+                        <i class="fas fa-bolt"></i>
+                        {{localize "EVENTIDE_RP_SYSTEM.Actor.ActionCards.FromTemplate"}}
+                      </a>
+                    </div>
                   {{/if}}
                 </th>
               </tr>
