@@ -6,6 +6,7 @@ import {
   cleanupThemeManager,
 } from "../../helpers/_module.mjs";
 import { Logger } from "../../services/logger.mjs";
+import { DefaultDataFactory } from "../../services/default-data-factory.mjs";
 import {
   CHOICE_SETS,
   getActionCardPreset,
@@ -73,6 +74,9 @@ export class ActionCardPresetDialog extends EventideSheetHelpers {
     this._selectedPresetId = "";
     this._keyFieldValues = {};
     this._themeManager = null;
+    this._powerRollType = "roll";
+    this._powerAbility = "unaugmented";
+    this._powerCost = 1;
 
     // In reconfigure mode, pre-fill key fields from the existing item's data
     if (this._isReconfigure && this._existingItem) {
@@ -121,6 +125,26 @@ export class ActionCardPresetDialog extends EventideSheetHelpers {
     context.isReconfigure = this._isReconfigure;
     context.preserveEmbeddedInfo = this._isReconfigure;
     context.cssClass = ActionCardPresetDialog.DEFAULT_OPTIONS.classes.join(" ");
+
+    // Embedded power quick-create context
+    if (this._selectedPresetId && !this._isReconfigure) {
+      const selectedPreset = getActionCardPreset(this._selectedPresetId);
+      const isAttackChain = selectedPreset?.systemData?.mode !== "savedDamage";
+      context.showPowerQuickCreate = isAttackChain;
+
+      if (isAttackChain) {
+        const cardName = this._keyFieldValues?.name || "";
+        context.defaultPowerName = cardName ? `${cardName} Power` : "";
+        context.powerRollType = this._powerRollType || "roll";
+        context.powerAbility = this._powerAbility || "unaugmented";
+        context.powerCost = this._powerCost ?? 1;
+        context.abilities = Object.fromEntries(
+          Object.keys(CONFIG.EVENTIDE_RP_SYSTEM.abilities).map((key) => [key, game.i18n.localize(CONFIG.EVENTIDE_RP_SYSTEM.abilities[key])]),
+        );
+      }
+    } else {
+      context.showPowerQuickCreate = false;
+    }
 
     // Footer buttons
     context.footerButtons = [
@@ -360,6 +384,51 @@ export class ActionCardPresetDialog extends EventideSheetHelpers {
       ]);
 
       if (created && created[0]) {
+        const createdCard = created[0];
+
+        // Quick-create embedded combat power if fields were provided
+        const powerName = foundry.utils.getProperty(data, "powerName");
+        if (
+          powerName &&
+          !this._isReconfigure &&
+          getActionCardPreset(this._selectedPresetId)?.systemData?.mode !==
+            "savedDamage"
+        ) {
+          const powerRollType =
+            foundry.utils.getProperty(data, "powerRollType") || "roll";
+          const powerAbility =
+            foundry.utils.getProperty(data, "powerAbility") || "unaugmented";
+          const powerCost =
+            Number(foundry.utils.getProperty(data, "powerCost")) || 1;
+
+          const powerRollData = DefaultDataFactory.getDefaultRollData();
+          powerRollData.type = powerRollType;
+          powerRollData.ability = powerAbility;
+          powerRollData.bonus = 0;
+          powerRollData.diceAdjustments = {
+            advantage: 0,
+            disadvantage: 0,
+            total: 0,
+            absTotal: 0,
+          };
+
+          const embeddedItemData = {
+            _id: foundry.utils.randomID(),
+            name: powerName,
+            type: "combatPower",
+            img: "icons/svg/item-bag.svg",
+            system: {
+              ...DefaultDataFactory.getSystemData("combatPower"),
+              roll: powerRollData,
+              cost: powerCost,
+              description: "",
+            },
+            effects: [],
+          };
+
+          await createdCard.update({ "system.embeddedItem": embeddedItemData });
+        }
+
         ui.notifications.info(
           game.i18n.format("EVENTIDE_RP_SYSTEM.ActionCardPresets.CardCreated", {
             cardName: name,
@@ -369,7 +438,7 @@ export class ActionCardPresetDialog extends EventideSheetHelpers {
           }),
         );
         // Optionally open the item sheet for further editing
-        created[0].sheet.render(true);
+        createdCard.sheet.render(true);
       }
     }
   }

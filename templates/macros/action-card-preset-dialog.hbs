@@ -92,6 +92,49 @@
       </div>
     </section>
     {{/if}}
+
+    {{!-- Embedded Combat Power Quick-Create --}}
+    {{#if showPowerQuickCreate}}
+    <section class="erps-preset-fields">
+      <h3 class="erps-form__header">{{localize "EVENTIDE_RP_SYSTEM.ActionCardPresets.QuickCreate.SectionTitle"}}</h3>
+      <p class="erps-form__hint">{{localize "EVENTIDE_RP_SYSTEM.ActionCardPresets.QuickCreate.SectionHint"}}</p>
+      <div class="erps-preset-fields__grid">
+        <div class="erps-preset-fields__row">
+          <label class="erps-form__label">{{localize "EVENTIDE_RP_SYSTEM.ActionCardPresets.QuickCreate.PowerName"}}</label>
+          <input type="text"
+                 name="powerName"
+                 value="{{defaultPowerName}}"
+                 class="erps-input" />
+          <p class="erps-form__hint">{{localize "EVENTIDE_RP_SYSTEM.ActionCardPresets.QuickCreate.PowerNameHint"}}</p>
+        </div>
+        <div class="erps-preset-fields__row">
+          <label class="erps-form__label">{{localize "EVENTIDE_RP_SYSTEM.ActionCardPresets.QuickCreate.RollType"}}</label>
+          <select name="powerRollType" class="erps-select">
+            <option value="roll" {{#if (eq powerRollType "roll")}}selected{{/if}}>Roll</option>
+            <option value="flat" {{#if (eq powerRollType "flat")}}selected{{/if}}>Flat</option>
+            <option value="none" {{#if (eq powerRollType "none")}}selected{{/if}}>None</option>
+          </select>
+        </div>
+        <div class="erps-preset-fields__row">
+          <label class="erps-form__label">{{localize "EVENTIDE_RP_SYSTEM.ActionCardPresets.QuickCreate.Ability"}}</label>
+          <select name="powerAbility" class="erps-select">
+            {{#each abilities as |label key|}}
+              <option value="{{key}}" {{#if (eq ../powerAbility key)}}selected{{/if}}>{{label}}</option>
+            {{/each}}
+            <option value="unaugmented" {{#if (eq ../powerAbility "unaugmented")}}selected{{/if}}>Unaugmented</option>
+          </select>
+        </div>
+        <div class="erps-preset-fields__row">
+          <label class="erps-form__label">{{localize "EVENTIDE_RP_SYSTEM.ActionCardPresets.QuickCreate.Cost"}}</label>
+          <input type="number"
+                 name="powerCost"
+                 value="{{powerCost}}"
+                 min="0"
+                 class="erps-input" />
+        </div>
+      </div>
+    </section>
+    {{/if}}
   </div>
 
   {{> macro-footer}}
