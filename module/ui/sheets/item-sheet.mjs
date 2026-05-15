@@ -351,17 +351,58 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
   _prepareCallouts() {
     const callouts = [];
 
-    // Check for action cards in attack chain mode without embedded item
-    if (this.item.type === "actionCard") {
-      if (
-        this.item.system.mode === "attackChain" &&
-        !this.item.system.embeddedItem?.type
-      ) {
+    if (this.item.type !== "actionCard") return callouts;
+
+    const system = this.item.system;
+
+    // Callout 1: Attack chain with no embedded item
+    if (
+      system.mode === "attackChain" &&
+      !system.embeddedItem?.type
+    ) {
+      callouts.push({
+        type: "warning",
+        faIcon: "fas fa-exclamation-triangle",
+        text: game.i18n.localize(
+          "EVENTIDE_RP_SYSTEM.Forms.Callouts.ActionCard.NoEmbeddedItem",
+        ),
+      });
+    }
+
+    // Callout 2: Attack chain with all conditions set to "never" — card won't do anything
+    if (system.mode === "attackChain") {
+      const ac = system.attackChain || {};
+      const selfEffectsCond = system.selfEffectsConfig?.condition || "never";
+      const transformCond = system.transformationConfig?.condition || "never";
+      const allNever =
+        (ac.damageCondition === "never" || !ac.damageCondition) &&
+        (ac.statusCondition === "never" || !ac.statusCondition) &&
+        selfEffectsCond === "never" &&
+        transformCond === "never";
+
+      if (allNever) {
         callouts.push({
           type: "warning",
           faIcon: "fas fa-exclamation-triangle",
           text: game.i18n.localize(
-            "EVENTIDE_RP_SYSTEM.Forms.Callouts.ActionCard.NoEmbeddedItem",
+            "EVENTIDE_RP_SYSTEM.Forms.Callouts.ActionCard.AllConditionsNever",
+          ),
+        });
+      }
+    }
+
+    // Callout 3: Saved damage with no embedded status effects or self-effects
+    if (system.mode === "savedDamage") {
+      const hasEffects =
+        (system.embeddedStatusEffects && system.embeddedStatusEffects.length > 0) ||
+        (system.embeddedSelfEffects && system.embeddedSelfEffects.length > 0);
+
+      if (!hasEffects) {
+        callouts.push({
+          type: "information",
+          faIcon: "fas fa-lightbulb",
+          text: game.i18n.localize(
+            "EVENTIDE_RP_SYSTEM.Forms.Callouts.ActionCard.SavedDamageNoEffects",
           ),
         });
       }
