@@ -46,18 +46,24 @@ export class EventideRpSystemActor extends ActorTransformationMixin(
 
     await super._onCreate(data, options, userId);
 
-    // Handle token linking and vision setup based on actor type
+    // Handle prototype token configuration based on actor type
     try {
       // Get the default vision range from settings
       const visionRange = getSetting("defaultTokenVisionRange") || 50;
 
+      // Common prototype token defaults for all actor types
+      const tokenConfig = {
+        "prototypeToken.displayName": CONST.TOKEN_DISPLAY_MODES.OWNER_HOVER,
+        "prototypeToken.displayBars": CONST.TOKEN_DISPLAY_MODES.OWNER,
+        "prototypeToken.sight.enabled": true,
+        "prototypeToken.sight.range": visionRange,
+      };
+
       if (data.type === "character") {
         // Characters should ALWAYS be linked to their tokens
-        await this.update({
-          "prototypeToken.actorLink": true,
-          "prototypeToken.sight.enabled": true,
-          "prototypeToken.sight.range": visionRange,
-        });
+        tokenConfig["prototypeToken.actorLink"] = true;
+
+        await this.update(tokenConfig);
 
         Logger.debug(
           `Auto-linked prototype token and enabled vision for character actor: ${this.name}`,
@@ -66,11 +72,9 @@ export class EventideRpSystemActor extends ActorTransformationMixin(
         );
       } else if (data.type === "npc") {
         // NPCs should ALWAYS be unlinked from their tokens
-        await this.update({
-          "prototypeToken.actorLink": false,
-          "prototypeToken.sight.enabled": true,
-          "prototypeToken.sight.range": visionRange,
-        });
+        tokenConfig["prototypeToken.actorLink"] = false;
+
+        await this.update(tokenConfig);
 
         Logger.debug(
           `Ensured prototype token is unlinked and enabled vision for NPC actor: ${this.name}`,

@@ -117,6 +117,9 @@
     "SoundResetToDefault": "Sound for {0} reset to default.",
     "NoPlayerPermission": "Players do not have permission to change sound settings.",
 
+    "EnablePostSummaryName": "Enable Post Summary",
+    "EnablePostSummaryHint": "Allows players to use the Post Summary feature on their character sheets. When enabled, a Character Summary card appears in the status bar for non-GM users.",
+
     "TestingModeName": "Testing Mode",
     "TestingModeHint": "Enable or disable testing mode console logging for debugging.",
 
