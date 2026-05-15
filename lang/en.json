@@ -202,13 +202,29 @@
         "SavedDamage": "Direct Damage"
       },
       "NoPresetSelected": "Please select a preset template",
-      "ConfigureLabel": "Configure"
+      "ConfigureLabel": "Configure",
+      "QuickCreate": {
+        "SectionTitle": "Embedded Combat Power",
+        "SectionHint": "Optionally create a combat power to embed in this action card.",
+        "PowerName": "Power Name",
+        "PowerNameHint": "Name for the embedded combat power",
+        "RollType": "Roll Type",
+        "Ability": "Ability",
+        "Cost": "Power Cost"
+      }
     },
     "Item": {
       "ActionCard": {
         "PopupTitle": "Execute Action Card",
         "EmbeddedItem": "Embedded Item",
         "DropItemHere": "Drop an item here to embed it",
+        "ModeHint": "Attack Chain rolls dice against target AC. Saved Damage applies a flat formula without rolling.",
+        "FirstStatHint": "The first of two abilities rolled for this attack. The higher result determines success.",
+        "SecondStatHint": "The second ability rolled alongside the first. Both are checked against AC independently.",
+        "DamageConditionHint": "When the card applies damage. Most attacks use One Success. Set to Never for buff-only or transformation cards.",
+        "StatusConditionHint": "When the card applies status effects to targets. Set to Never if this card only deals damage.",
+        "SelfEffectsConditionHint": "When should self-effects be applied to the card owner?",
+        "TransformationConditionHint": "When this card triggers a transformation on the target. Set to Never unless using transformations.",
         "SupportedTypes": "Supports: Combat Powers, Gear, Features",
         "ClearItem": "Clear embedded item",
         "Mode": "Mode",
@@ -336,7 +352,6 @@
           "IntensifyOverride": "Override"
         },
         "SelfEffectsCondition": "Self Effects Condition",
-        "SelfEffectsConditionHint": "When should self-effects be applied to the card owner?",
         "SelfEffectsThreshold": "Self Effects Threshold",
         "SelfEffectsThresholdHint": "The roll value required to trigger self-effects (for rollValue condition)",
         "SelfEffectsApplicationLimit": "Self Effects Application Limit",
@@ -1095,7 +1110,9 @@
           "WithTargets": "There are <strong>{count} target(s)</strong> selected. This will create a transformation for each target and your compendium."
         },
         "ActionCard": {
-          "NoEmbeddedItem": "This action card has no embedded item configured. Please add an item to the action slot before executing.",
+          "NoEmbeddedItem": "This action card needs a combat power to execute. Go to the <strong>Embedded Items</strong> tab to create or drop one.",
+          "AllConditionsNever": "This card has no conditions set to trigger any effects. Set at least one condition (Damage, Status, Self-Effects, or Transformation) for the card to do something when executed.",
+          "SavedDamageNoEffects": "Saved Damage cards apply a flat formula without rolling. Add embedded status effects or self-effects to make this card more versatile.",
           "TargetingError": "You do not have the correct targets selected for this action card.",
           "TooManyStatuses": "This action card requires selecting 0 or 1 status effects. Currently {count} status effects are selected. Please deselect all but one status effect to proceed."
         },
