@@ -13,25 +13,27 @@
         <th class='erps-data-table__header-cell erps-data-table__header-cell--center'>{{localize 'EVENTIDE_RP_SYSTEM.Item.Inventory.Cost.label'}}</th>
         <th class='erps-data-table__header-cell erps-data-table__header-cell--center'>{{localize 'EVENTIDE_RP_SYSTEM.Item.Descriptors.UsageInfo.label'}}</th>
         <th class='erps-data-table__header-cell erps-data-table__header-cell--controls'>
-          {{#if (eq transformationCombatPowers.length 0)}}
-            {{#if @root.editable }}
-              <a
-                class='erps-data-table__create-button'
-                title='{{localize "DOCUMENT.Create" type='Item'}}'
-                data-action='createDoc'
-                data-document-class='Item'
-                data-type='combatPower'
-              >
-                <i class='fas fa-plus'></i>
-                {{localize 'DOCUMENT.New' type='item'}}
-              </a>
+          <div class='erps-data-table__controls'>
+            {{#if (eq transformationCombatPowers.length 0)}}
+              {{#if @root.editable }}
+                <a
+                  class='erps-data-table__create-button'
+                  title='{{localize "DOCUMENT.Create" type='Item'}}'
+                  data-action='createDoc'
+                  data-document-class='Item'
+                  data-type='combatPower'
+                >
+                  <i class='fas fa-plus'></i>
+                  {{localize 'DOCUMENT.New' type='item'}}
+                </a>
+              {{/if}}
+            {{else}}
+              <div class='erps-data-table__transformation-notice' title='{{localize "EVENTIDE_RP_SYSTEM.Actor.CombatPowers.TransformedLocked"}}'>
+                <span>{{localize "EVENTIDE_RP_SYSTEM.Actor.CombatPowers.Transformed"}}</span>
+                <i class='fas fa-lock'></i>
+              </div>
             {{/if}}
-          {{else}}
-            <div class='erps-data-table__transformation-notice' title='{{localize "EVENTIDE_RP_SYSTEM.Actor.CombatPowers.TransformedLocked"}}'>
-              <span>{{localize "EVENTIDE_RP_SYSTEM.Actor.CombatPowers.Transformed"}}</span>
-              <i class='fas fa-lock'></i>
-            </div>
-          {{/if}}
+          </div>
         </th>
       </tr>
     </thead>
