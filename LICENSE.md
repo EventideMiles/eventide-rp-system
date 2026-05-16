@@ -149,6 +149,7 @@ The full text of the LGPL 2.1 license can be found at:
 - island.svg
 - swords-power.svg
 - village.svg
+- archive-research.svg
 
 ### By DarkZaitzev under CC BY 3.0 from game-icons.net
 

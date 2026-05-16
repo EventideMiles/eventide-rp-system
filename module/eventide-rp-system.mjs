@@ -879,6 +879,24 @@ Hooks.once("ready", () => {
       },
       group: "action",
     });
+
+    entries.push({
+      label: "EVENTIDE_RP_SYSTEM.WindowTitles.RollHistory",
+      icon: '<i class="fas fa-dice-d6"></i>',
+      onClick: (_event, li) => {
+        const actorId = li.dataset.documentId;
+        const actor = game.actors.get(actorId);
+        if (actor) {
+          RollHistory.forActor(actor).render(true);
+        }
+      },
+      visible: (li) => {
+        const actorId = li.dataset.documentId;
+        const actor = game.actors.get(actorId);
+        return actor?.isOwner || game.user.isGM;
+      },
+      group: "action",
+    });
   });
 });
 

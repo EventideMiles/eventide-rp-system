@@ -43,6 +43,23 @@ export class RollHistory extends EventideSheetHelpers {
     return instance;
   }
 
+  static fromSelectedToken() {
+    const tokens = canvas?.tokens?.controlled;
+    if (!tokens || tokens.length === 0) {
+      ui.notifications.warn(
+        game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.RollHistoryNoTokenSelected"),
+      );
+      return null;
+    }
+    if (tokens.length > 1) {
+      ui.notifications.warn(
+        game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.RollHistorySelectSingleToken"),
+      );
+      return null;
+    }
+    return RollHistory.forActor(tokens[0].actor);
+  }
+
   get title() {
     return game.i18n.format("EVENTIDE_RP_SYSTEM.RollHistory.WindowTitle", {
       name: this.#actor?.name ?? "???",

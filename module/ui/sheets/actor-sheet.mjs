@@ -1204,32 +1204,33 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
           }
         },
       },
-      // Bulk equip toggle - only show on unequipped items
+      // Bulk equip toggle — two mutually exclusive entries since Foundry V14
+      // ContextMenu requires string labels (function labels are not supported).
       {
-        label: (target) => {
-          const itemId = target.dataset.itemId;
-          const item = this.actor.items.get(itemId);
-          const isSkipped = item?.system?.skipBulkEquip === true;
-          return isSkipped
-            ? "EVENTIDE_RP_SYSTEM.ContextMenu.IncludeInEquipAll"
-            : "EVENTIDE_RP_SYSTEM.ContextMenu.ExcludeFromEquipAll";
-        },
-        icon: (target) => {
-          const itemId = target.dataset.itemId;
-          const item = this.actor.items.get(itemId);
-          const isSkipped = item?.system?.skipBulkEquip === true;
-          return isSkipped
-            ? '<i class="fa-solid fa-link"></i>'
-            : '<i class="fa-solid fa-link-slash"></i>';
-        },
+        label: "EVENTIDE_RP_SYSTEM.ContextMenu.IncludeInEquipAll",
+        icon: '<i class="fa-solid fa-link"></i>',
         visible: (target) => {
           if (!target.dataset.itemId) return false;
           const item = this.actor.items.get(target.dataset.itemId);
-          return !!item && !item.system.equipped;
+          return !!item && !item.system.equipped && item.system.skipBulkEquip === true;
         },
         onClick: async (_event, target) => {
-          const itemId = target.dataset.itemId;
-          const item = this.actor.items.get(itemId);
+          const item = this.actor.items.get(target.dataset.itemId);
+          if (!item) return;
+          const current = item.system.skipBulkEquip === true;
+          await item.update({ "system.skipBulkEquip": !current });
+        },
+      },
+      {
+        label: "EVENTIDE_RP_SYSTEM.ContextMenu.ExcludeFromEquipAll",
+        icon: '<i class="fa-solid fa-link-slash"></i>',
+        visible: (target) => {
+          if (!target.dataset.itemId) return false;
+          const item = this.actor.items.get(target.dataset.itemId);
+          return !!item && !item.system.equipped && item.system.skipBulkEquip !== true;
+        },
+        onClick: async (_event, target) => {
+          const item = this.actor.items.get(target.dataset.itemId);
           if (!item) return;
           const current = item.system.skipBulkEquip === true;
           await item.update({ "system.skipBulkEquip": !current });

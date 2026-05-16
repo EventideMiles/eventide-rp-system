@@ -1,3 +1,5 @@
-2026/05/14-22:04:42.570320 723bfc5fd6c0 Recovering log #799
-2026/05/14-22:04:42.571020 723bfc5fd6c0 Delete type=0 #799
-2026/05/14-22:04:42.571029 723bfc5fd6c0 Delete type=3 #797
+2026/05/16-01:35:21.887397 707918dfd6c0 Log #805: 0 ops saved to Table #808 OK
+2026/05/16-01:35:21.887414 707918dfd6c0 Archiving /home/miles/.local/share/FoundryVTT/Data/systems/eventide-rp-system/packs/erps-macros/000805.log: OK
+2026/05/16-01:35:21.887438 707918dfd6c0 Table #807: 23 entries OK
+2026/05/16-01:35:21.887455 707918dfd6c0 Archiving /home/miles/.local/share/FoundryVTT/Data/systems/eventide-rp-system/packs/erps-macros/MANIFEST-000803: OK
+2026/05/16-01:35:21.887771 707918dfd6c0 **** Repaired leveldb /home/miles/.local/share/FoundryVTT/Data/systems/eventide-rp-system/packs/erps-macros; recovered 1 files; 7943 bytes. Some data may have been lost. ****

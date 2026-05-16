@@ -917,6 +917,8 @@
       "ThemeOperation": "Theme operation failed",
       "ToggleAutoTokenUpdateError": "Failed to toggle auto token update",
       "ToggleAutoTokenSyncError": "Failed to toggle sync placed tokens",
+      "RollHistoryNoTokenSelected": "Select a token on the canvas first to view its roll history.",
+      "RollHistorySelectSingleToken": "Select only one token to view its roll history.",
       "TransformationApplyError": "Failed to apply transformation",
       "TransformationRemoveError": "Failed to remove transformation",
       "FailedToSetActionItem": "Failed to set action item",
