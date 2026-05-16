@@ -1,7 +1,7 @@
 import { CommonFoundryTasks } from "../../utils/_module.mjs";
 import { Logger } from "../../services/_module.mjs";
 import { ErrorHandler } from "../../utils/error-handler.mjs";
-import { NpcQuickGenerator } from "../macros/_module.mjs";
+import { NpcQuickGenerator, RollHistory } from "../macros/_module.mjs";
 import {
   initTabContainerStyling,
   cleanupTabContainerStyling,
@@ -85,6 +85,12 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
           label: "EVENTIDE_RP_SYSTEM.WindowTitles.GenerateNpc",
           ownership: "OWNER",
         },
+        {
+          action: "viewRollHistory",
+          icon: "fas fa-dice-d6",
+          label: "EVENTIDE_RP_SYSTEM.WindowTitles.RollHistory",
+          ownership: "OWNER",
+        },
       ],
     },
     actions: {
@@ -115,7 +121,7 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
       generateNpc: this._onGenerateNpc,
       createFromTemplate: this._createFromTemplateActionCard,
       postSummary: this._onPostSummary,
-      
+      viewRollHistory: this._viewRollHistory,
     },
     // Custom property that's merged into `this.options`
     dragDrop: [
@@ -1403,6 +1409,23 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
     } catch (error) {
       Logger.error(
         "Failed to open Action Card Preset Dialog",
+        error,
+        "ACTOR_SHEET",
+      );
+    }
+  }
+
+  /**
+   * Open the Roll History dialog for the current actor.
+   * Shows the last N system rolls (ability checks, gear, damage, heal, initiative).
+   * @private
+   */
+  static async _viewRollHistory(_event, _target) {
+    try {
+      RollHistory.forActor(this.actor).render(true);
+    } catch (error) {
+      Logger.error(
+        "Failed to open Roll History dialog",
         error,
         "ACTOR_SHEET",
       );

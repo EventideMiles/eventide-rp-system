@@ -1485,6 +1485,27 @@
         "Wits": "Wits"
       }
     },
+    "RollHistory": {
+      "WindowTitle": "{name} — Roll History",
+      "Empty": "No rolls recorded yet. Rolls made through the system's native roll buttons (ability checks, gear, damage, heal, initiative) are automatically tracked.",
+      "TableHeader": "Recent Rolls",
+      "ColType": "Type",
+      "ColFormula": "Formula",
+      "ColTotal": "Total",
+      "ColTime": "When",
+      "TypeGear": "Gear",
+      "TypeDamage": "Damage",
+      "TypeHeal": "Heal",
+      "TypeInitiative": "Initiative",
+      "TypeUnaugmented": "Generic",
+      "TypeUnknown": "Other",
+      "TimeAgo": {
+        "Seconds": "{seconds}s ago",
+        "Minutes": "{minutes}m ago",
+        "Hours": "{hours}h ago",
+        "Days": "{days}d ago"
+      }
+    },
     "WindowTitles": {
       "ActorToTransformation": "Convert Actor to Transformation",
       "ChangeTargetStatus": "Change Target Status",
@@ -1497,6 +1518,7 @@
       "GearCreator": "Gear Creator",
       "GearPopup": "Use Gear",
       "GearTransfer": "Transfer Gear",
+      "RollHistory": "Roll History",
       "RestRecover": "Rest / Recover",
       "RestoreTarget": "Restore Target",
       "SelectAbilityRoll": "Select Ability Roll",
