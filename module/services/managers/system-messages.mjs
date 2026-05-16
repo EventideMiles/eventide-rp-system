@@ -25,6 +25,8 @@ class ERPSMessageHandler {
         "systems/eventide-rp-system/templates/chat/gear-transfer-message.hbs",
       gearEquip:
         "systems/eventide-rp-system/templates/chat/gear-equip-message.hbs",
+      gearBulk:
+        "systems/eventide-rp-system/templates/chat/gear-bulk-message.hbs",
       transformation:
         "systems/eventide-rp-system/templates/chat/transformation-message.hbs",
       playerActionApproval:
@@ -670,6 +672,40 @@ class ERPSMessageHandler {
         { soundKey: "gearUnequip" },
       );
     }
+  }
+
+  /**
+   * Creates a single summary chat message for bulk gear equip/unequip operations
+   * @param {string} action - "equipped" or "unequipped"
+   * @param {Item[]} items - Array of gear items affected
+   * @param {Actor} actor - The actor performing the bulk operation
+   * @returns {Promise<ChatMessage|null>} The created chat message, or null if setting disabled
+   */
+  async createBulkGearMessage(action, items, actor) {
+    if (!game.settings.get("eventide-rp-system", "showGearEquipMessages")) {
+      return null;
+    }
+
+    const data = {
+      action,
+      items,
+      actor,
+      count: items.length,
+    };
+
+    const labelKey =
+      action === "equipped"
+        ? "EVENTIDE_RP_SYSTEM.MessageHeaders.GearBulkEquip"
+        : "EVENTIDE_RP_SYSTEM.MessageHeaders.GearBulkUnequip";
+
+    return this._createChatMessage(
+      "gearBulk",
+      data,
+      {
+        speaker: ERPSRollUtilities.getSpeaker(actor, labelKey),
+      },
+      { soundKey: action === "equipped" ? "gearEquip" : "gearUnequip" },
+    );
   }
 
   /**
