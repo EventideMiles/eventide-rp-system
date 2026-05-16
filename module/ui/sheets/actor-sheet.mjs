@@ -95,8 +95,11 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
       toggleEffect: this._toggleEffect,
       roll: this._onRoll,
       toggleGear: this._toggleGear,
+      equipAllGear: this._equipAllGear,
+      unequipAllGear: this._unequipAllGear,
       incrementGear: this._incrementGear,
       decrementGear: this._decrementGear,
+      toggleSkipBulkEquip: this._toggleSkipBulkEquip,
       toggleFeature: this._toggleFeature,
       applyTransformation: this._applyTransformation,
       removeTransformation: this._removeTransformation,
@@ -594,18 +597,6 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
           const item = this.actor.items.get(itemId);
           if (item) {
             item.sheet.render(true);
-          }
-        },
-      },
-      {
-        label: "EVENTIDE_RP_SYSTEM.ContextMenu.ApplyPresetTemplate",
-        icon: '<i class="fas fa-bolt"></i>',
-        visible: (target) => !!target.dataset.itemId,
-        onClick: async (_event, target) => {
-          const itemId = target.dataset.itemId;
-          const item = this.actor.items.get(itemId);
-          if (item && item.type === "actionCard") {
-            await this._applyPresetToActionCard(item);
           }
         },
       },
@@ -1205,6 +1196,37 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
           if (item) {
             item.sheet.render(true);
           }
+        },
+      },
+      // Bulk equip toggle - only show on unequipped items
+      {
+        label: (target) => {
+          const itemId = target.dataset.itemId;
+          const item = this.actor.items.get(itemId);
+          const isSkipped = item?.system?.skipBulkEquip === true;
+          return isSkipped
+            ? "EVENTIDE_RP_SYSTEM.ContextMenu.IncludeInEquipAll"
+            : "EVENTIDE_RP_SYSTEM.ContextMenu.ExcludeFromEquipAll";
+        },
+        icon: (target) => {
+          const itemId = target.dataset.itemId;
+          const item = this.actor.items.get(itemId);
+          const isSkipped = item?.system?.skipBulkEquip === true;
+          return isSkipped
+            ? '<i class="fa-solid fa-link"></i>'
+            : '<i class="fa-solid fa-link-slash"></i>';
+        },
+        visible: (target) => {
+          if (!target.dataset.itemId) return false;
+          const item = this.actor.items.get(target.dataset.itemId);
+          return !!item && !item.system.equipped;
+        },
+        onClick: async (_event, target) => {
+          const itemId = target.dataset.itemId;
+          const item = this.actor.items.get(itemId);
+          if (!item) return;
+          const current = item.system.skipBulkEquip === true;
+          await item.update({ "system.skipBulkEquip": !current });
         },
       },
       {
