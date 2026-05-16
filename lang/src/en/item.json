@@ -38,6 +38,15 @@
         "Equipped": {
           "label": "Equipped"
         },
+        "EquipAll": {
+          "label": "Equip All"
+        },
+        "UnequipAll": {
+          "label": "Unequip All"
+        },
+        "SkipBulkEquip": {
+          "label": "Exclude from Equip All"
+        },
         "Cursed": {
           "label": "Cursed"
         },

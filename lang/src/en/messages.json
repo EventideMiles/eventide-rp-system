@@ -43,6 +43,10 @@
         "Transformation": "Transformation"
        }
     },
+    "Gear": {
+      "NoItemsToEquip": "No items available to equip.",
+      "NoItemsToUnequip": "No items available to unequip."
+    },
     "MessageHeaders": {
       "Status": "Status Effect: {name}",
       "Gear": "Gear: {name}",
@@ -51,6 +55,8 @@
       "GearTransfer": "Gear Transfer: {name}",
       "Restore": "Restoration: {name}",
       "GearEquip": "Equipment Change: {name}",
+      "GearBulkEquip": "Equipped Items: {name}",
+      "GearBulkUnequip": "Unequipped Items: {name}",
       "Transformation": "Transformation: {name}",
       "GearEffect": "Gear Effect: {name}",
       "GearEffectTransfer": "Gear Effect Transfer: {name}",
