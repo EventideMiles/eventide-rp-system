@@ -484,6 +484,15 @@
         "Equipped": {
           "label": "Equipped"
         },
+        "EquipAll": {
+          "label": "Equip All"
+        },
+        "UnequipAll": {
+          "label": "Unequip All"
+        },
+        "SkipBulkEquip": {
+          "label": "Exclude from Equip All"
+        },
         "Cursed": {
           "label": "Cursed"
         },
@@ -1283,6 +1292,10 @@
       },
       "PartialTransfer": "Partial transfer completed"
     },
+    "Gear": {
+      "NoItemsToEquip": "No items available to equip.",
+      "NoItemsToUnequip": "No items available to unequip."
+    },
     "MessageHeaders": {
       "Status": "Status: {name}",
       "Gear": "Gear: {name}",
@@ -1291,6 +1304,8 @@
       "GearTransfer": "Gear Transfer: {name}",
       "Restore": "Restoration: {name}",
       "GearEquip": "Equipment Change: {name}",
+      "GearBulkEquip": "Equipped Items: {name}",
+      "GearBulkUnequip": "Unequipped Items: {name}",
       "Transformation": "Transformation: {name}",
       "GearEffect": "Gear Effect: {name}",
       "GearEffectTransfer": "Gear Effect Transfer: {name}",
@@ -1534,7 +1549,9 @@
       "CreateNewGear": "Create New Gear",
       "CreateNewActionCard": "Create New Action Card",
       "CreateFromTemplateActionCard": "New from Template",
-      "ApplyPresetTemplate": "Apply Preset Template"
+      "ApplyPresetTemplate": "Apply Preset Template",
+      "ExcludeFromEquipAll": "Exclude from Equip All",
+      "IncludeInEquipAll": "Include in Equip All"
     }
   },
   "TYPES": {
