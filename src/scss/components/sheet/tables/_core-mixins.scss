@@ -164,8 +164,8 @@
 @mixin controls-cell {
   text-align: right;
   white-space: nowrap;
-  width: auto;
-  min-width: min-content;
+  width: 1%;
+  min-width: calc(#{tokens.$sheet-spacing-md} * 2 + 6 * #{$erps-table-control-size} + 5 * #{$erps-table-gap-medium});
   padding: 0;
   vertical-align: middle;
   position: relative;

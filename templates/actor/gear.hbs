@@ -17,6 +17,18 @@
 
   {{! Equipped Gear Content }}
   <div class="gear-tab-content gear-tab-content--equipped active" data-gear-content="equipped">
+    {{#if equippedGear.length}}
+      <div class="gear-toolbar">
+        <a
+          class="gear-toolbar__button"
+          title='{{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.UnequipAll.label"}}'
+          data-action='unequipAllGear'
+        >
+          <i class='fa-solid fa-helmet-battle'></i>
+          {{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.UnequipAll.label"}}
+        </a>
+      </div>
+    {{/if}}
     <table class='erps-data-table erps-data-table--gear erps-data-table--equipped erps-data-table--radius-full'>
       <thead class='erps-data-table__header'>
         <tr class='erps-data-table__header-row'>
@@ -24,18 +36,20 @@
           <th class='erps-data-table__header-cell erps-data-table__header-cell--center'>{{localize 'EVENTIDE_RP_SYSTEM.Item.Inventory.Cost.label'}}</th>
           <th class='erps-data-table__header-cell erps-data-table__header-cell--center'>{{localize 'EVENTIDE_RP_SYSTEM.Item.Inventory.Quantity.label'}}</th>
           <th class='erps-data-table__header-cell erps-data-table__header-cell--controls'>
-            {{#if @root.editable}}
-              <a
-                class='erps-data-table__create-button'
-                title='{{localize "DOCUMENT.Create" type='Item'}}'
-                data-action='createDoc'
-                data-document-class='Item'
-                data-type='gear'
-              >
-                <i class='fas fa-plus'></i>
-                {{localize 'DOCUMENT.New' type='item'}}
-              </a>
-            {{/if}}
+            <div class='erps-data-table__controls'>
+              {{#if @root.editable}}
+                <a
+                  class='erps-data-table__create-button'
+                  title='{{localize "DOCUMENT.Create" type='Item'}}'
+                  data-action='createDoc'
+                  data-document-class='Item'
+                  data-type='gear'
+                >
+                  <i class='fas fa-plus'></i>
+                  {{localize 'DOCUMENT.New' type='item'}}
+                </a>
+              {{/if}}
+            </div>
           </th>
         </tr>
       </thead>
@@ -147,13 +161,25 @@
 
   {{! Unequipped Gear Content }}
   <div class="gear-tab-content gear-tab-content--unequipped" data-gear-content="unequipped">
+    {{#if unequippedGear.length}}
+      <div class="gear-toolbar">
+        <a
+          class="gear-toolbar__button"
+          title='{{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.EquipAll.label"}}'
+          data-action='equipAllGear'
+        >
+          <i class='fa-solid fa-helmet-battle'></i>
+          {{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.EquipAll.label"}}
+        </a>
+      </div>
+    {{/if}}
     <table class='erps-data-table erps-data-table--gear erps-data-table--unequipped erps-data-table--radius-full'>
       <thead class='erps-data-table__header'>
         <tr class='erps-data-table__header-row'>
           <th class='erps-data-table__header-cell erps-data-table__header-cell--name'>{{localize 'Name'}}</th>
           <th class='erps-data-table__header-cell erps-data-table__header-cell--center'>{{localize 'EVENTIDE_RP_SYSTEM.Item.Inventory.Cost.label'}}</th>
           <th class='erps-data-table__header-cell erps-data-table__header-cell--center'>{{localize 'EVENTIDE_RP_SYSTEM.Item.Inventory.Quantity.label'}}</th>
-          <th class='erps-data-table__header-cell erps-data-table__header-cell--controls'>{{localize 'Controls'}}</th>
+          <th class='erps-data-table__header-cell erps-data-table__header-cell--controls'></th>
         </tr>
       </thead>
       <tbody class='erps-data-table__body'>
@@ -190,6 +216,18 @@
                     <i class="fa-solid fa-triangle-exclamation"></i>
                   {{else}}
                     <i class='fa-solid fa-helmet-battle{{#if (and item.system.cursed @root.isGM)}} erps-data-table__control-button--cursed{{/if}}'></i>
+                  {{/if}}
+                </a>
+                <a
+                  class="erps-data-table__control-button erps-data-table__control-button--bulk-toggle"
+                  title='{{localize "EVENTIDE_RP_SYSTEM.Item.Inventory.SkipBulkEquip.label"}}'
+                  data-action='toggleSkipBulkEquip'
+                  data-item-id='{{item._id}}'
+                >
+                  {{#if item.system.skipBulkEquip}}
+                    <i class="fa-solid fa-link-slash"></i>
+                  {{else}}
+                    <i class="fa-solid fa-link"></i>
                   {{/if}}
                 </a>
                 {{#if @root.isGM}}

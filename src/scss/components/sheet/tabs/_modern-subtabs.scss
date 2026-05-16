@@ -71,6 +71,34 @@
   }
 }
 
+.gear-toolbar {
+  display: flex;
+  gap: $tab-gap;
+  margin-bottom: $tab-nav-margin-bottom;
+  justify-content: flex-end;
+
+  &__button {
+    display: inline-flex;
+    align-items: center;
+    gap: $tab-gap;
+    font-size: $tab-font-size;
+    color: var(--theme-text, #fff);
+    cursor: pointer;
+    text-decoration: none;
+    opacity: 0.7;
+    transition: opacity 0.15s ease;
+
+    &:hover {
+      opacity: 1;
+      text-shadow: 0 0 12px var(--theme-glow);
+    }
+
+    i {
+      font-size: 0.85em;
+    }
+  }
+}
+
 // ===================================
 // FEATURE SUBTAB SYSTEM
 // ===================================
