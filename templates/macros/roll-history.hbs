@@ -1,0 +1,38 @@
+{{!-- Roll History Dialog --}}
+<div class="{{cssClass}} erps-form" autocomplete="off">
+  <div class="erps-form__content">
+    {{#if empty}}
+      <div class="erps-callout erps-callout--information">
+        <i class="fas fa-info-circle"></i>
+        {{localize "EVENTIDE_RP_SYSTEM.RollHistory.Empty"}}
+      </div>
+    {{else}}
+      <div class="erps-form__header">
+        {{localize "EVENTIDE_RP_SYSTEM.RollHistory.TableHeader"}}
+      </div>
+      <div class="erps-table__wrapper" style="max-height: 400px; overflow-y: auto;">
+        <table class="erps-table erps-table--history">
+          <thead>
+            <tr>
+              <th>{{localize "EVENTIDE_RP_SYSTEM.RollHistory.ColType"}}</th>
+              <th>{{localize "EVENTIDE_RP_SYSTEM.RollHistory.ColFormula"}}</th>
+              <th>{{localize "EVENTIDE_RP_SYSTEM.RollHistory.ColTotal"}}</th>
+              <th>{{localize "EVENTIDE_RP_SYSTEM.RollHistory.ColTime"}}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each rolls as |roll|}}
+            <tr>
+              <td><span class="erps-tag">{{roll.label}}</span></td>
+              <td><code>{{roll.formula}}</code></td>
+              <td class="erps-table__total">{{roll.total}}</td>
+              <td class="erps-table__time">{{roll.timeAgo}}</td>
+            </tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
+    {{/if}}
+  </div>
+  {{> macro-footer}}
+</div>

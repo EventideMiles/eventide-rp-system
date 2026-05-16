@@ -50,6 +50,7 @@ class ERPSMessageHandler {
     data,
     messageOptions,
     soundOptions = null,
+    rollFlags = null,
   ) {
     const { ChatMessageBuilder } = await import("../chat-message-builder.mjs");
 
@@ -57,9 +58,10 @@ class ERPSMessageHandler {
       templatePath: this.templates[templateKey],
       templateData: data,
       messageOptions,
+      rollFlags,
       soundKey: soundOptions?.soundKey || null,
       forceSound: soundOptions?.force || false,
-      useERPSRollUtilitiesSpeaker: true, // Maintain existing behavior
+      useERPSRollUtilitiesSpeaker: true,
     });
   }
 
@@ -273,6 +275,7 @@ class ERPSMessageHandler {
           messageMode,
         },
         { soundKey: "featureRoll" },
+        { type: item.system.roll.ability, formula: result.formula, total: result.total },
       );
     } catch (error) {
       Logger.error(
@@ -557,6 +560,7 @@ class ERPSMessageHandler {
           messageMode,
         },
         { soundKey: "combatPower" },
+        { type: item.system.roll.ability, formula: result.formula, total: result.total },
       );
     } catch (error) {
       Logger.error(

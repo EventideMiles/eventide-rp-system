@@ -30,6 +30,7 @@ import {
   TransformationToActorConverter,
   NpcQuickGenerator,
   ActionCardPresetDialog,
+  RollHistory,
 } from "./ui/_module.mjs";
 
 // import service classes and constants
@@ -215,6 +216,7 @@ globalThis.erps = {
     TransformationToActorConverter,
     NpcQuickGenerator,
     ActionCardPresetDialog,
+    RollHistory,
   },
 
   /**
@@ -827,6 +829,30 @@ Hooks.once("ready", () => {
         }
       }
     }
+  });
+
+  // Record system rolls into actor roll history flag
+  Hooks.on("createChatMessage", (message) => {
+    const rollFlag = message.flags?.["eventide-rp-system"]?.roll;
+    if (!rollFlag) return;
+
+    const speaker = ChatMessage.getSpeaker(message);
+    const actorId = speaker.actor;
+    if (!actorId) return;
+
+    const actor = game.actors.get(actorId);
+    if (!actor) return;
+
+    const history = actor.getFlag("eventide-rp-system", "rollHistory") || [];
+    history.push({
+      timestamp: Date.now(),
+      type: rollFlag.type,
+      formula: rollFlag.formula,
+      total: rollFlag.total,
+    });
+    if (history.length > 50) history.splice(0, history.length - 50);
+
+    actor.setFlag("eventide-rp-system", "rollHistory", history);
   });
 
   // Register canvas ready hook to ensure transformation consistency when switching scenes
