@@ -10,7 +10,7 @@
  */
 
 import { Logger } from "./logger.mjs";
-import { ERPSRollUtilities } from "../utils/roll-utilities.mjs";
+import { ConditionEvaluator } from "../helpers/condition-evaluator.mjs";
 
 /**
  * @typedef {Object} TargetHitResult
@@ -425,51 +425,16 @@ export class DamageProcessor {
     actor = null,
     formula = null,
   ) {
-    switch (condition) {
-      case "never":
-        return false;
-      case "oneSuccess":
-        return oneHit;
-      case "twoSuccesses":
-        return bothHit;
-      case "rollValue":
-        return rollTotal >= threshold;
-      case "rollUnderValue":
-        return rollTotal < threshold;
-      case "rollEven":
-        return rollTotal % 2 === 0;
-      case "rollOdd":
-        return rollTotal % 2 !== 0;
-      case "rollOnValue":
-        return rollTotal === threshold;
-      case "zeroSuccesses":
-        return !oneHit;
-      case "always":
-        return true;
-      case "criticalSuccess":
-      case "criticalFailure": {
-        if (!roll || !actor || !formula) {
-          return false;
-        }
-
-        const actorRollData = actor.getRollData();
-        const criticalStates = ERPSRollUtilities.determineCriticalStates({
-          roll,
-          thresholds: actorRollData.hiddenAbilities,
-          formula,
-          critAllowed: true,
-        });
-
-        const result =
-          condition === "criticalSuccess"
-            ? criticalStates.critHit && !criticalStates.stolenCrit
-            : criticalStates.critMiss && !criticalStates.savedMiss;
-
-        return result;
-      }
-      default:
-        return false;
-    }
+    return ConditionEvaluator.evaluate(
+      condition,
+      oneHit,
+      bothHit,
+      rollTotal,
+      threshold,
+      roll,
+      actor,
+      formula,
+    );
   }
 
   /**
