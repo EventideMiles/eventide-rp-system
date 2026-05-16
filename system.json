@@ -81,7 +81,7 @@
       "thumbnail": "systems/eventide-rp-system/assets/icons/magic-gate.svg"
     }
   ],
-  "version": "14.6.0",
+  "version": "14.7.0",
   "compatibility": {
     "minimum": "14",
     "verified": "14"
@@ -109,6 +109,11 @@
       "name": "erps-features",
       "label": "Core Features",
       "type": "Item"
+    },
+    {
+      "name": "erps-npc-templates",
+      "label": "Core NPC Templates",
+      "type": "Actor"
     }
   ],
   "packFolders": [],

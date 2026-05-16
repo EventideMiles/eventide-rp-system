@@ -1,0 +1,168 @@
+{{!-- NPC Quick Generator Dialog --}}
+<div class="{{cssClass}} erps-form npc-quick-generator" autocomplete="off">
+  {{> callout-box}}
+  <div class="erps-form__content">
+
+    {{!-- Distribution Mode Toggle --}}
+    <div class="erps-form__group">
+      <div class="erps-form__header">{{localize "EVENTIDE_RP_SYSTEM.NpcGenerator.ModeLabel"}}</div>
+      <div class="npc-generator__mode-toggle">
+        <label class="npc-generator__mode-option">
+          <input type="radio" name="distributionMode" value="template" {{#if (eq distributionMode "template")}}checked{{/if}}>
+          <span>{{localize "EVENTIDE_RP_SYSTEM.NpcGenerator.TemplateMode"}}</span>
+        </label>
+        <label class="npc-generator__mode-option">
+          <input type="radio" name="distributionMode" value="custom" {{#if (eq distributionMode "custom")}}checked{{/if}}>
+          <span>{{localize "EVENTIDE_RP_SYSTEM.NpcGenerator.CustomMode"}}</span>
+        </label>
+      </div>
+    </div>
+
+    {{!-- Level / CR Input --}}
+    <div class="erps-form__group">
+      <label class="erps-form__label" for="npcLevel">{{localize "EVENTIDE_RP_SYSTEM.NpcGenerator.LevelLabel"}}</label>
+      <div class="erps-number-input">
+        <button type="button" class="erps-number-input__button erps-number-input__button--decrement" data-action="decrementLevel">−</button>
+        <input class="erps-number-input__input" type="number" id="npcLevel" name="level" value="{{level}}" min="1">
+        <button type="button" class="erps-number-input__button erps-number-input__button--increment" data-action="incrementLevel">+</button>
+      </div>
+      <p class="erps-form__help-text">{{localize "EVENTIDE_RP_SYSTEM.NpcGenerator.LevelHint"}}</p>
+    </div>
+
+    {{!-- Template Selector (template mode) --}}
+    <div class="npc-generator__template-section" style="display: {{#if (eq distributionMode "template")}}block{{else}}none{{/if}};">
+      <div class="erps-form__group">
+        <label class="erps-form__label" for="templateSelect">{{localize "EVENTIDE_RP_SYSTEM.NpcGenerator.TemplateLabel"}}</label>
+        <select class="erps-select" id="templateSelect" name="templateId">
+          <option value="">{{localize "EVENTIDE_RP_SYSTEM.NpcGenerator.SelectTemplate"}}</option>
+          {{#each templateGroups as |group|}}
+            <optgroup label="{{group.label}}">
+              {{#each group.templates as |tmpl|}}
+                <option value="{{tmpl.id}}" {{#if tmpl.selected}}selected{{/if}}>{{tmpl.name}}</option>
+              {{/each}}
+            </optgroup>
+          {{/each}}
+        </select>
+        <p class="erps-form__help-text">{{localize "EVENTIDE_RP_SYSTEM.NpcGenerator.TemplateHint"}}</p>
+      </div>
+    </div>
+
+    {{!-- Stat Budget Display --}}
+    <div class="erps-form__group">
+      <div class="erps-form__header">{{localize "EVENTIDE_RP_SYSTEM.NpcGenerator.StrainDistribution"}}</div>
+      <div class="npc-generator__budget-display">
+        <span class="npc-generator__budget-label">{{localize "EVENTIDE_RP_SYSTEM.NpcGenerator.BudgetLabel"}}:</span>
+        <span class="npc-generator__budget-value">{{statBudget}}</span>
+        {{#if (eq distributionMode "custom")}}
+          <span class="npc-generator__budget-separator">|</span>
+          <span class="npc-generator__budget-label">{{localize "EVENTIDE_RP_SYSTEM.NpcGenerator.BudgetRemaining"}}:</span>
+          <span class="npc-generator__budget-value {{#ifCond budgetRemaining "<" 0}}npc-generator__budget-value--error{{/ifCond}}">{{budgetRemaining}}</span>
+        {{/if}}
+      </div>
+    </div>
+
+    {{!-- Ability Scores --}}
+    <div class="npc-generator__abilities">
+      {{#each abilities as |ability|}}
+        <div class="npc-generator__ability-row">
+          <label class="npc-generator__ability-label" for="ability-{{ability.key}}">
+            {{localize ability.label}}
+          </label>
+          {{#if (eq ../distributionMode "template")}}
+            <span class="npc-generator__ability-value npc-generator__ability-value--readonly">{{ability.value}}</span>
+          {{else}}
+            <div class="npc-generator__ability-inputs">
+              <div class="erps-number-input">
+                <button type="button" class="erps-number-input__button erps-number-input__button--decrement" data-action="decrementAbility" data-ability="{{ability.key}}">−</button>
+                <input class="erps-number-input__input" type="number" id="ability-{{ability.key}}" name="ability-{{ability.key}}" value="{{ability.value}}" min="1">
+                <button type="button" class="erps-number-input__button erps-number-input__button--increment" data-action="incrementAbility" data-ability="{{ability.key}}">+</button>
+              </div>
+              <input class="npc-generator__ability-slider" type="range" name="slider-{{ability.key}}" value="{{ability.value}}" min="1" max="{{../statBudget}}" data-ability="{{ability.key}}">
+            </div>
+          {{/if}}
+          <span class="npc-generator__ability-ac">AC {{ability.ac}}</span>
+        </div>
+      {{/each}}
+    </div>
+
+    {{!-- Auto-distribute button (custom mode) --}}
+    {{#if (eq distributionMode "custom")}}
+      <div class="erps-form__group">
+        <button type="button" class="erps-button erps-button--secondary" data-action="autoDistribute">
+          <i class="fas fa-balance-scale"></i> {{localize "EVENTIDE_RP_SYSTEM.NpcGenerator.AutoDistribute"}}
+        </button>
+      </div>
+    {{/if}}
+
+    {{!-- Derived Stats Preview --}}
+    <div class="erps-form__group">
+      <div class="erps-form__header">{{localize "EVENTIDE_RP_SYSTEM.NpcGenerator.DerivedStats"}}</div>
+      <div class="npc-generator__derived-stats">
+        <div class="npc-generator__derived-row">
+          <span class="npc-generator__derived-label">{{localize "EVENTIDE_RP_SYSTEM.NpcGenerator.MaxResolve"}}:</span>
+          <span class="npc-generator__derived-value">{{derivedResolve}}</span>
+        </div>
+        <div class="npc-generator__derived-row">
+          <span class="npc-generator__derived-label">{{localize "EVENTIDE_RP_SYSTEM.NpcGenerator.MaxPower"}}:</span>
+          <span class="npc-generator__derived-value">{{derivedPower}}</span>
+        </div>
+        <div class="npc-generator__derived-row">
+          <span class="npc-generator__derived-label">{{localize "EVENTIDE_RP_SYSTEM.NpcGenerator.ArmorClass"}}:</span>
+          <span class="npc-generator__derived-value">{{derivedAC}}</span>
+        </div>
+      </div>
+    </div>
+
+    {{!-- Override Section --}}
+    <div class="erps-form__group">
+      <div class="erps-form__header">{{localize "EVENTIDE_RP_SYSTEM.NpcGenerator.OverrideSection"}}</div>
+      <p class="erps-form__help-text">{{localize "EVENTIDE_RP_SYSTEM.NpcGenerator.OverrideHint"}}</p>
+
+      <div class="npc-generator__override-row">
+        <label class="erps-toggles erps-toggles--label-left">
+          <input class="erps-toggles__input" type="checkbox" id="overrideResolveEnabled" name="overrideResolveEnabled" data-action="toggleOverrideResolve" {{#if overrideResolveEnabled}}checked{{/if}}>
+          <div class="erps-toggles__container">
+            <span class="erps-toggles__track">
+              <span class="erps-toggles__thumb"></span>
+            </span>
+            <span class="erps-toggles__label">
+              {{localize "EVENTIDE_RP_SYSTEM.NpcGenerator.OverrideResolve"}}
+            </span>
+          </div>
+        </label>
+        {{#if overrideResolveEnabled}}
+          <div class="npc-generator__override-value">
+            <input class="erps-input" type="number" id="overrideResolveValue" name="overrideResolveValue" value="{{overrideResolveValue}}" min="1">
+          </div>
+        {{/if}}
+      </div>
+
+      <div class="npc-generator__override-row">
+        <label class="erps-toggles erps-toggles--label-left">
+          <input class="erps-toggles__input" type="checkbox" id="overridePowerEnabled" name="overridePowerEnabled" data-action="toggleOverridePower" {{#if overridePowerEnabled}}checked{{/if}}>
+          <div class="erps-toggles__container">
+            <span class="erps-toggles__track">
+              <span class="erps-toggles__thumb"></span>
+            </span>
+            <span class="erps-toggles__label">
+              {{localize "EVENTIDE_RP_SYSTEM.NpcGenerator.OverridePower"}}
+            </span>
+          </div>
+        </label>
+        {{#if overridePowerEnabled}}
+          <div class="npc-generator__override-value">
+            <input class="erps-input" type="number" id="overridePowerValue" name="overridePowerValue" value="{{overridePowerValue}}" min="1">
+          </div>
+        {{/if}}
+      </div>
+    </div>
+
+    {{!-- NPC Name --}}
+    <div class="erps-form__group">
+      <label class="erps-form__label" for="npcName">{{localize "EVENTIDE_RP_SYSTEM.NpcGenerator.NpcName"}}</label>
+      <input class="erps-input" type="text" id="npcName" name="npcName" value="{{npcName}}" placeholder="{{localize "EVENTIDE_RP_SYSTEM.NpcGenerator.NpcNameHint"}}">
+    </div>
+  </div>
+
+  {{> macro-footer}}
+</div>

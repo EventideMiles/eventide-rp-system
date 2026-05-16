@@ -18,6 +18,7 @@
             {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.SavedDamageMode"}}
           </option>
         </select>
+        <p class="erps-form__hint">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.ModeHint"}}</p>
       </div>
 
       {{!-- Advance Initiative Toggle --}}
@@ -102,6 +103,7 @@
                 {{/unless}}
               {{/each}}
             </select>
+            <p class="erps-form__hint">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.FirstStatHint"}}</p>
           </div>
           <div>
             <label class="erps-input-label">
@@ -116,6 +118,7 @@
                 {{/unless}}
               {{/each}}
             </select>
+            <p class="erps-form__hint">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.SecondStatHint"}}</p>
           </div>
         </div>
 
@@ -128,44 +131,8 @@
               <label class="erps-input-label">
                 {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.DamageCondition"}}
               </label>
-              <select class="erps-select" name="system.attackChain.damageCondition">
-                <option value="never" {{#if (eq system.attackChain.damageCondition "never")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.Never'}}">
-                  {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Never"}}
-                </option>
-                <option value="oneSuccess" {{#if (eq system.attackChain.damageCondition "oneSuccess")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.OneSuccess'}}">
-                  {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.OneSuccess"}}
-                </option>
-                <option value="twoSuccesses" {{#if (eq system.attackChain.damageCondition "twoSuccesses")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.TwoSuccesses'}}">
-                  {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.TwoSuccesses"}}
-                </option>
-                <option value="rollValue" {{#if (eq system.attackChain.damageCondition "rollValue")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.RollValueHint'}}">
-                  {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.RollValue"}}
-                </option>
-                <option value="rollUnderValue" {{#if (eq system.attackChain.damageCondition "rollUnderValue")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.RollUnderValueHint'}}">
-                  {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.RollUnderValue"}}
-                </option>
-                <option value="rollEven" {{#if (eq system.attackChain.damageCondition "rollEven")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.RollEvenHint'}}">
-                  {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.RollEven"}}
-                </option>
-                <option value="rollOdd" {{#if (eq system.attackChain.damageCondition "rollOdd")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.RollOddHint'}}">
-                  {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.RollOdd"}}
-                </option>
-                <option value="rollOnValue" {{#if (eq system.attackChain.damageCondition "rollOnValue")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.RollOnValueHint'}}">
-                  {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.RollOnValue"}}
-                </option>
-                <option value="zeroSuccesses" {{#if (eq system.attackChain.damageCondition "zeroSuccesses")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.ZeroSuccessesHint'}}">
-                  {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.ZeroSuccesses"}}
-                </option>
-                <option value="always" {{#if (eq system.attackChain.damageCondition "always")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.AlwaysHint'}}">
-                  {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Always"}}
-                </option>
-                <option value="criticalSuccess" {{#if (eq system.attackChain.damageCondition "criticalSuccess")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.CriticalSuccessHint'}}">
-                  {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.CriticalSuccess"}}
-                </option>
-                <option value="criticalFailure" {{#if (eq system.attackChain.damageCondition "criticalFailure")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.CriticalFailureHint'}}">
-                  {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.CriticalFailure"}}
-                </option>
-              </select>
+              {{> components/condition-select name="system.attackChain.damageCondition" currentValue=system.attackChain.damageCondition}}
+              <p class="erps-form__hint">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.DamageConditionHint"}}</p>
             </div>
             <div>
               <label class="erps-input-label">
@@ -219,44 +186,8 @@
               <label class="erps-input-label">
                 {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.StatusCondition"}}
               </label>
-              <select class="erps-select" name="system.attackChain.statusCondition">
-                <option value="never" {{#if (eq system.attackChain.statusCondition "never")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.Never'}}">
-                  {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Never"}}
-                </option>
-                <option value="oneSuccess" {{#if (eq system.attackChain.statusCondition "oneSuccess")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.OneSuccess'}}">
-                  {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.OneSuccess"}}
-                </option>
-                <option value="twoSuccesses" {{#if (eq system.attackChain.statusCondition "twoSuccesses")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.TwoSuccesses'}}">
-                  {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.TwoSuccesses"}}
-                </option>
-                <option value="rollValue" {{#if (eq system.attackChain.statusCondition "rollValue")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.RollValueHint'}}">
-                  {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.RollValue"}}
-                </option>
-                <option value="rollUnderValue" {{#if (eq system.attackChain.statusCondition "rollUnderValue")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.RollUnderValueHint'}}">
-                  {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.RollUnderValue"}}
-                </option>
-                <option value="rollEven" {{#if (eq system.attackChain.statusCondition "rollEven")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.RollEvenHint'}}">
-                  {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.RollEven"}}
-                </option>
-                <option value="rollOdd" {{#if (eq system.attackChain.statusCondition "rollOdd")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.RollOddHint'}}">
-                  {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.RollOdd"}}
-                </option>
-                <option value="rollOnValue" {{#if (eq system.attackChain.statusCondition "rollOnValue")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.RollOnValueHint'}}">
-                  {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.RollOnValue"}}
-                </option>
-                <option value="zeroSuccesses" {{#if (eq system.attackChain.statusCondition "zeroSuccesses")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.ZeroSuccessesHint'}}">
-                  {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.ZeroSuccesses"}}
-                </option>
-                <option value="always" {{#if (eq system.attackChain.statusCondition "always")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.AlwaysHint'}}">
-                  {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Always"}}
-                </option>
-                <option value="criticalSuccess" {{#if (eq system.attackChain.statusCondition "criticalSuccess")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.CriticalSuccessHint'}}">
-                  {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.CriticalSuccess"}}
-                </option>
-                <option value="criticalFailure" {{#if (eq system.attackChain.statusCondition "criticalFailure")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.CriticalFailureHint'}}">
-                  {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.CriticalFailure"}}
-                </option>
-              </select>
+              {{> components/condition-select name="system.attackChain.statusCondition" currentValue=system.attackChain.statusCondition}}
+              <p class="erps-form__hint">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.StatusConditionHint"}}</p>
             </div>
             {{#if (or (eq system.attackChain.statusCondition "rollValue") (eq system.attackChain.statusCondition "rollUnderValue") (eq system.attackChain.statusCondition "rollOnValue"))}}
             <div>
@@ -286,44 +217,8 @@
           <label class="erps-input-label">
             {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.SelfEffectsCondition"}}
           </label>
-          <select class="erps-select" name="system.selfEffectsConfig.condition">
-            <option value="never" {{#if (eq system.selfEffectsConfig.condition "never")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.Never'}}">
-              {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Never"}}
-            </option>
-            <option value="oneSuccess" {{#if (eq system.selfEffectsConfig.condition "oneSuccess")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.OneSuccess'}}">
-              {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.OneSuccess"}}
-            </option>
-            <option value="twoSuccesses" {{#if (eq system.selfEffectsConfig.condition "twoSuccesses")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.TwoSuccesses'}}">
-              {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.TwoSuccesses"}}
-            </option>
-            <option value="rollValue" {{#if (eq system.selfEffectsConfig.condition "rollValue")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.Conditions.RollValueHint'}}">
-              {{localize "EVENTIDE_RP_SYSTEM.Item.Conditions.RollValue"}}
-            </option>
-            <option value="rollUnderValue" {{#if (eq system.selfEffectsConfig.condition "rollUnderValue")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.Conditions.RollUnderValueHint'}}">
-              {{localize "EVENTIDE_RP_SYSTEM.Item.Conditions.RollUnderValue"}}
-            </option>
-            <option value="rollEven" {{#if (eq system.selfEffectsConfig.condition "rollEven")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.Conditions.RollEvenHint'}}">
-              {{localize "EVENTIDE_RP_SYSTEM.Item.Conditions.RollEven"}}
-            </option>
-            <option value="rollOdd" {{#if (eq system.selfEffectsConfig.condition "rollOdd")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.Conditions.RollOddHint'}}">
-              {{localize "EVENTIDE_RP_SYSTEM.Item.Conditions.RollOdd"}}
-            </option>
-            <option value="rollOnValue" {{#if (eq system.selfEffectsConfig.condition "rollOnValue")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.Conditions.RollOnValueHint'}}">
-              {{localize "EVENTIDE_RP_SYSTEM.Item.Conditions.RollOnValue"}}
-            </option>
-            <option value="zeroSuccesses" {{#if (eq system.selfEffectsConfig.condition "zeroSuccesses")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.Conditions.ZeroSuccessesHint'}}">
-              {{localize "EVENTIDE_RP_SYSTEM.Item.Conditions.ZeroSuccesses"}}
-            </option>
-            <option value="always" {{#if (eq system.selfEffectsConfig.condition "always")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.Conditions.AlwaysHint'}}">
-              {{localize "EVENTIDE_RP_SYSTEM.Item.Conditions.Always"}}
-            </option>
-            <option value="criticalSuccess" {{#if (eq system.selfEffectsConfig.condition "criticalSuccess")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.Conditions.CriticalSuccessHint'}}">
-              {{localize "EVENTIDE_RP_SYSTEM.Item.Conditions.CriticalSuccess"}}
-            </option>
-            <option value="criticalFailure" {{#if (eq system.selfEffectsConfig.condition "criticalFailure")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.Conditions.CriticalFailureHint'}}">
-              {{localize "EVENTIDE_RP_SYSTEM.Item.Conditions.CriticalFailure"}}
-            </option>
-          </select>
+          {{> components/condition-select name="system.selfEffectsConfig.condition" currentValue=system.selfEffectsConfig.condition}}
+          <p class="erps-form__hint">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.SelfEffectsConditionHint"}}</p>
         </div>
         {{#if (or (eq system.selfEffectsConfig.condition "rollValue") (eq system.selfEffectsConfig.condition "rollUnderValue") (eq system.selfEffectsConfig.condition "rollOnValue"))}}
         <div>
@@ -356,44 +251,8 @@
           <label class="erps-input-label">
             {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.TransformationCondition"}}
           </label>
-          <select class="erps-select" name="system.transformationConfig.condition">
-            <option value="never" {{#if (eq system.transformationConfig.condition "never")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.Never'}}">
-              {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Never"}}
-            </option>
-            <option value="oneSuccess" {{#if (eq system.transformationConfig.condition "oneSuccess")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.OneSuccess'}}">
-              {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.OneSuccess"}}
-            </option>
-            <option value="twoSuccesses" {{#if (eq system.transformationConfig.condition "twoSuccesses")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.TwoSuccesses'}}">
-              {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.TwoSuccesses"}}
-            </option>
-            <option value="rollValue" {{#if (eq system.transformationConfig.condition "rollValue")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.RollValueHint'}}">
-              {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.RollValue"}}
-            </option>
-            <option value="rollUnderValue" {{#if (eq system.transformationConfig.condition "rollUnderValue")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.RollUnderValueHint'}}">
-              {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.RollUnderValue"}}
-            </option>
-            <option value="rollEven" {{#if (eq system.transformationConfig.condition "rollEven")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.RollEvenHint'}}">
-              {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.RollEven"}}
-            </option>
-            <option value="rollOdd" {{#if (eq system.transformationConfig.condition "rollOdd")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.RollOddHint'}}">
-              {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.RollOdd"}}
-            </option>
-            <option value="rollOnValue" {{#if (eq system.transformationConfig.condition "rollOnValue")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.RollOnValueHint'}}">
-              {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.RollOnValue"}}
-            </option>
-            <option value="zeroSuccesses" {{#if (eq system.transformationConfig.condition "zeroSuccesses")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.ZeroSuccessesHint'}}">
-              {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.ZeroSuccesses"}}
-            </option>
-            <option value="always" {{#if (eq system.transformationConfig.condition "always")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.AlwaysHint'}}">
-              {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Always"}}
-            </option>
-            <option value="criticalSuccess" {{#if (eq system.transformationConfig.condition "criticalSuccess")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.CriticalSuccessHint'}}">
-              {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.CriticalSuccess"}}
-            </option>
-            <option value="criticalFailure" {{#if (eq system.transformationConfig.condition "criticalFailure")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.CriticalFailureHint'}}">
-              {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.CriticalFailure"}}
-            </option>
-          </select>
+          {{> components/condition-select name="system.transformationConfig.condition" currentValue=system.transformationConfig.condition}}
+          <p class="erps-form__hint">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.TransformationConditionHint"}}</p>
         </div>
         {{#if (or (eq system.transformationConfig.condition "rollValue") (eq system.transformationConfig.condition "rollUnderValue") (eq system.transformationConfig.condition "rollOnValue"))}}
         <div>

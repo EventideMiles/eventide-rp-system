@@ -28,6 +28,9 @@ import {
   TransformationCreator,
   ActorToTransformationConverter,
   TransformationToActorConverter,
+  NpcQuickGenerator,
+  ActionCardPresetDialog,
+  RollHistory,
 } from "./ui/_module.mjs";
 
 // import service classes and constants
@@ -49,6 +52,7 @@ import {
   EmbeddedImageMigration,
   SettingNameMigration,
   V14ActiveEffectMigration,
+  NpcGenerator,
 } from "./services/_module.mjs";
 
 // Import token configuration guards
@@ -91,16 +95,81 @@ const { ActorSheet, ItemSheet } = foundry.appv1.sheets;
 
 // Add key classes to the global scope so they can be more easily used
 // by downstream developers
-/** @type {EventideRPSystemGlobal} */
+/**
+ * The Eventide RP System global API, accessible via `erps` in the browser console.
+ *
+ * This object provides runtime access to the system's document classes, applications,
+ * utility functions, macro dialogs, settings, and diagnostic tools. It is the primary
+ * entry point for macro writers and module developers integrating with the system.
+ *
+ * @namespace globalThis.erps
+ * @type {EventideRPSystemGlobal}
+ *
+ * @example
+ * // Access actor/item document classes
+ * const actor = new erps.documents.EventideRpSystemActor({ name: "Hero", type: "character" });
+ *
+ * @example
+ * // Get a system setting value
+ * const formula = erps.settings.getSetting("initiativeFormula");
+ *
+ * @example
+ * // Roll an item macro
+ * erps.utils.rollItemMacro("Actor.abcd1234.Item.efgh5678");
+ *
+ * @example
+ * // Run diagnostics from the browser console
+ * const info = erps.diagnostics();
+ * console.log(info.systemVersion, info.actorCount);
+ *
+ * @since 13.0.0
+ * @author Eventide RP System
+ */
 globalThis.erps = {
+  /**
+   * System document classes for Actor and Item.
+   *
+   * Use these to create new documents or reference the class constructors
+   * for `instanceof` checks and subclassing.
+   *
+   * @example
+   * const actor = new erps.documents.EventideRpSystemActor({ name: "Hero", type: "character" });
+   * if (doc instanceof erps.documents.EventideRpSystemItem) { ... }
+   */
   documents: {
     EventideRpSystemActor,
     EventideRpSystemItem,
   },
+
+  /**
+   * System sheet application classes for Actor and Item.
+   *
+   * Useful for `instanceof` checks or programmatic sheet rendering.
+   *
+   * @example
+   * if (app instanceof erps.applications.EventideRpSystemActorSheet) { ... }
+   */
   applications: {
     EventideRpSystemActorSheet,
     EventideRpSystemItemSheet,
   },
+
+  /**
+   * Utility functions for common Foundry tasks, UI helpers, and system operations.
+   *
+   * Includes all static methods from {@link CommonFoundryTasks} (e.g., `getTargetArray`,
+   * `retrieveSheetTheme`), the `rollItemMacro` function, color picker / number input /
+   * range slider helpers, {@link ErrorHandler}, {@link performSystemCleanup},
+   * and {@link TransformationConverter}.
+   *
+   * @example
+   * // Get currently targeted tokens
+   * const targets = erps.utils.getTargetArray();
+   *
+   * @example
+   * // Get the user's current sheet theme
+   * const theme = erps.utils.retrieveSheetTheme();
+   */
   utils: {
     ...commonTasks,
     rollItemMacro,
@@ -116,7 +185,24 @@ globalThis.erps = {
     ErrorHandler,
     performSystemCleanup,
     TransformationConverter,
+    NpcGenerator,
   },
+
+  /**
+   * Macro dialog classes that can be instantiated programmatically.
+   *
+   * Each class extends Foundry's Application and provides a UI dialog
+   * for a specific game action (e.g., creating gear, transferring items,
+   * applying damage, rolling abilities).
+   *
+   * @example
+   * // Open a gear creation dialog for a specific actor
+   * new erps.macros.GearCreator({ actor }).render(true);
+   *
+   * @example
+   * // Open a damage targets dialog
+   * new erps.macros.DamageTargets().render(true);
+   */
   macros: {
     GearTransfer,
     GearCreator,
@@ -128,18 +214,84 @@ globalThis.erps = {
     TransformationCreator,
     ActorToTransformationConverter,
     TransformationToActorConverter,
+    NpcQuickGenerator,
+    ActionCardPresetDialog,
+    RollHistory,
   },
+
+  /**
+   * System settings getters and setters.
+   *
+   * Provides typed access to world-scoped and client-scoped system settings
+   * without needing to use the full `game.settings.get("eventide-rp-system", key)` pattern.
+   *
+   * @example
+   * const initiative = erps.settings.getSetting("initiativeFormula");
+   * await erps.settings.setSetting("initiativeFormula", "1d20+3");
+   */
   settings: {
     getSetting,
     setSetting,
   },
-  messages: erpsMessageHandler,
-  models,
-  Logger,
-  gmControl: null, // Will be set after import
 
-  // Manual cleanup functions for debugging and emergency cleanup
+  /**
+   * Message handler for system chat messages.
+   * Provides methods for creating and managing Eventide RP System chat messages.
+   */
+  messages: erpsMessageHandler,
+
+  /**
+   * Data model classes for all actor and item types.
+   *
+   * Maps type names to their DataModel classes, matching what is registered
+   * in `CONFIG.Actor.dataModels` and `CONFIG.Item.dataModels`.
+   *
+   * @example
+   * const schema = erps.models.EventideRpSystemCharacter.defineSchema();
+   */
+  models,
+
+  /**
+   * System logger with leveled output (debug, info, warn, error).
+   *
+   * Respects the `testingMode` setting for debug-level output.
+   * All log messages are prefixed with `ERPS`.
+   *
+   * @example
+   * erps.Logger.info("Character created", { name: actor.name }, "CHARACTER");
+   * erps.Logger.error("Failed to roll", error, "ROLLS");
+   */
+  Logger,
+
+  /**
+   * GM Control manager for action approval workflows.
+   *
+   * Set asynchronously after init — may be `null` during early initialization.
+   * Provides methods for managing pending GM actions and stat approvals.
+   *
+   * @type {Object|null}
+   */
+  gmControl: null,
+
+  /**
+   * Perform standard system cleanup — clears tracked intervals and stale DOM references.
+   *
+   * Safe to call during normal operation. For aggressive cleanup use `forceCleanup()`.
+   *
+   * @example
+   * erps.cleanup();
+   */
   cleanup: performSystemCleanup,
+
+  /**
+   * Force aggressive cleanup — clears ALL intervals and timeouts, then runs standard cleanup.
+   *
+   * ⚠️ This may disrupt active animations and pending operations. Use only for
+   * debugging or emergency cleanup when the system is in a bad state.
+   *
+   * @example
+   * erps.forceCleanup();
+   */
   forceCleanup: () => {
     Logger.warn(
       "Performing FORCE cleanup - this will clear ALL intervals and timeouts!",
@@ -151,7 +303,22 @@ globalThis.erps = {
     Logger.info("Force cleanup completed", null, "SYSTEM_INIT");
   },
 
-  // Diagnostic function to check system state
+  /**
+   * Collect and return system diagnostic information.
+   *
+   * Returns an object containing memory usage, interval counts, initialization state,
+   * document counts, system/Foundry versions, migration status, and active theme instances.
+   *
+   * @returns {SystemDiagnostics} Diagnostic snapshot of the current system state
+   *
+   * @example
+   * const info = erps.diagnostics();
+   * console.log(`Actors: ${info.actorCount}, System: ${info.systemVersion}`);
+   *
+   * @maintenance Useful for bug reports and troubleshooting. Safe to call at any time.
+   *
+   * @since 13.0.0
+   */
   diagnostics: () => {
     const trackedIntervals = window._erpsIntervalIds
       ? window._erpsIntervalIds.size
@@ -207,7 +374,8 @@ globalThis.erps = {
     let migrationVersion = "Unknown";
     let migrationLevel = 0;
     try {
-      migrationLevel = game.settings.get("eventide-rp-system", "migrationVersion") || 0;
+      migrationLevel =
+        game.settings.get("eventide-rp-system", "migrationVersion") || 0;
       migrationVersion = `Level ${migrationLevel}`;
     } catch {
       migrationVersion = "Settings unavailable";
@@ -216,13 +384,19 @@ globalThis.erps = {
     // Get V14 migration status
     let v14MigrationVersion = "Unknown";
     try {
-      v14MigrationVersion = game.settings.get("eventide-rp-system", "v14MigrationVersion") || "Not run";
+      v14MigrationVersion =
+        game.settings.get("eventide-rp-system", "v14MigrationVersion") ||
+        "Not run";
     } catch {
       v14MigrationVersion = "Settings unavailable";
     }
 
     // Get active theme instances with proper processing
-    const themeInstancesData = globalThis.erps?.utils?.getActiveThemeInstances?.() || { count: 0, instances: [] };
+    const themeInstancesData =
+      globalThis.erps?.utils?.getActiveThemeInstances?.() || {
+        count: 0,
+        instances: [],
+      };
 
     const diagnostics = {
       trackedIntervals,
@@ -248,7 +422,20 @@ globalThis.erps = {
     return diagnostics;
   },
 
-  // Performance monitoring dashboard
+  /**
+   * Open the system performance monitoring dashboard.
+   *
+   * Loads and renders a graphical dashboard showing system resource usage,
+   * active intervals, and performance metrics. Falls back to a simple
+   * notification if the dashboard component fails to load.
+   *
+   * @example
+   * erps.showPerformanceDashboard();
+   *
+   * @maintenance Intended for development and debugging, not runtime gameplay.
+   *
+   * @since 14.0.0
+   */
   showPerformanceDashboard: () => {
     // Import and create the performance dashboard application
     import("./ui/components/performance-dashboard.mjs")
@@ -318,9 +505,8 @@ Hooks.once("init", async () => {
 
   // Set up GM control manager in global scope (async)
   try {
-    const { gmControlManager } = await import(
-      "./services/managers/gm-control.mjs"
-    );
+    const { gmControlManager } =
+      await import("./services/managers/gm-control.mjs");
     globalThis.erps.gmControl = gmControlManager;
   } catch (error) {
     Logger.error("Failed to load GM control manager", error, "SYSTEM_INIT");
@@ -558,7 +744,11 @@ Hooks.once("ready", () => {
 
   // Run migrations (Issues #127, #128)
   EmbeddedImageMigration.run().catch((error) => {
-    Logger.error("Failed to run embedded image migration", error, "SYSTEM_INIT");
+    Logger.error(
+      "Failed to run embedded image migration",
+      error,
+      "SYSTEM_INIT",
+    );
   });
   SettingNameMigration.run().catch((error) => {
     Logger.error("Failed to run setting name migration", error, "SYSTEM_INIT");
@@ -566,7 +756,11 @@ Hooks.once("ready", () => {
 
   // Run V14 ActiveEffect migration
   V14ActiveEffectMigration.run().catch((error) => {
-    Logger.error("Failed to run V14 ActiveEffect migration", error, "SYSTEM_INIT");
+    Logger.error(
+      "Failed to run V14 ActiveEffect migration",
+      error,
+      "SYSTEM_INIT",
+    );
   });
 
   // Remove immediate theme styles now that the full theme system is loaded
@@ -583,9 +777,126 @@ Hooks.once("ready", () => {
     EventideRpSystemActor._onCreateToken(tokenDocument, data, options, userId);
   });
 
+  // Sync actor name/image to prototype token and placed tokens when autoTokenUpdate is enabled
+  Hooks.on("preUpdateActor", (actor, change, _options, _userId) => {
+    if (actor.getFlag("eventide-rp-system", "autoTokenUpdate")) {
+      if (foundry.utils.hasProperty(change, "name")) {
+        foundry.utils.setProperty(change, "prototypeToken.name", change.name);
+      }
+      if (foundry.utils.hasProperty(change, "img")) {
+        foundry.utils.setProperty(
+          change,
+          "prototypeToken.texture.src",
+          change.img,
+        );
+      }
+    }
+  });
+
+  Hooks.on("updateActor", (actor, change, _options, userId) => {
+    if (
+      userId === game.user.id &&
+      actor.getFlag("eventide-rp-system", "autoTokenSync")
+    ) {
+      const tokenUpdates = [];
+      if (foundry.utils.hasProperty(change, "name")) {
+        tokenUpdates.push({ key: "name", value: change.name });
+      }
+      if (foundry.utils.hasProperty(change, "img")) {
+        tokenUpdates.push({ key: "texture.src", value: change.img });
+      }
+      if (tokenUpdates.length > 0) {
+        const tokens = actor.getActiveTokens();
+        if (tokens.length > 0) {
+          const sceneUpdates = new Map();
+          for (const token of tokens) {
+            const sceneId = token.scene.id;
+            if (!sceneUpdates.has(sceneId)) {
+              sceneUpdates.set(sceneId, []);
+            }
+            const update = { _id: token.id };
+            for (const { key, value } of tokenUpdates) {
+              update[key] = value;
+            }
+            sceneUpdates.get(sceneId).push(update);
+          }
+          for (const [sceneId, updates] of sceneUpdates) {
+            const scene = game.scenes.get(sceneId);
+            if (scene) {
+              scene.updateEmbeddedDocuments("Token", updates);
+            }
+          }
+        }
+      }
+    }
+  });
+
+  // Record system rolls into actor roll history flag
+  Hooks.on("createChatMessage", (message) => {
+    const rollFlag = message.flags?.["eventide-rp-system"]?.roll;
+    if (!rollFlag) return;
+
+    const speaker = ChatMessage.getSpeaker(message);
+    const actorId = speaker.actor;
+    if (!actorId) return;
+
+    const actor = game.actors.get(actorId);
+    if (!actor) return;
+
+    const history = actor.getFlag("eventide-rp-system", "rollHistory") || [];
+    history.push({
+      timestamp: Date.now(),
+      type: rollFlag.type,
+      formula: rollFlag.formula,
+      total: rollFlag.total,
+    });
+    if (history.length > 50) history.splice(0, history.length - 50);
+
+    actor.setFlag("eventide-rp-system", "rollHistory", history);
+  });
+
   // Register canvas ready hook to ensure transformation consistency when switching scenes
   Hooks.on("canvasReady", () => {
     EventideRpSystemActor._onCanvasReady();
+  });
+
+  // Register actor directory context menu for NPC Quick Generator
+  Hooks.on("getActorDirectoryEntryContext", (html, entries) => {
+    entries.push({
+      label: "EVENTIDE_RP_SYSTEM.NpcGenerator.Title",
+      icon: '<i class="fa-solid fa-wand-magic-sparkles"></i>',
+      onClick: (_event, li) => {
+        const actorId = li.dataset.documentId;
+        const actor = game.actors.get(actorId);
+        if (actor) {
+          new NpcQuickGenerator({ sourceActor: actor }).render(true);
+        }
+      },
+      visible: (li) => {
+        const actorId = li.dataset.documentId;
+        const actor = game.actors.get(actorId);
+        return actor?.type === "npc" && game.user.isGM;
+      },
+      group: "action",
+    });
+
+    entries.push({
+      label: "EVENTIDE_RP_SYSTEM.WindowTitles.RollHistory",
+      icon: '<i class="fas fa-dice-d6"></i>',
+      onClick: (_event, li) => {
+        const actorId = li.dataset.documentId;
+        const actor = game.actors.get(actorId);
+        if (actor) {
+          RollHistory.forActor(actor).render(true);
+        }
+      },
+      visible: (li) => {
+        const actorId = li.dataset.documentId;
+        const actor = game.actors.get(actorId);
+        return actor?.isOwner || game.user.isGM;
+      },
+      group: "action",
+    });
   });
 });
 
@@ -678,11 +989,11 @@ async function rollItemMacro(itemUuid) {
 /**
  * Clean up system resources when the world is being shut down
  * This helps prevent memory leaks and ensures proper cleanup
- * 
+ *
  * NOTE: We do NOT perform cleanup on:
  * - visibilitychange (alt-tab): Would destroy active DOM elements
  * - pause: Too aggressive, could break active sheets
- * 
+ *
  * Cleanup only happens on:
  * - beforeunload: Browser/page close (proper shutdown)
  * - hot reload: Development module reload

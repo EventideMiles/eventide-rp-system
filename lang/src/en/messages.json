@@ -37,8 +37,15 @@
         "OutOfStock": "Source was out of stock",
         "StatusIntensified": "Status intensified:",
         "StatusApplied": "Status applied:",
-        "Overhealing": "Overhealing"
-       }
+        "Overhealing": "Overhealing",
+        "Abilities": "Abilities",
+        "StatusEffects": "Status Effects",
+        "Transformation": "Transformation"
+        },
+        "Gear": {
+          "NoItemsToEquip": "No items available to equip.",
+          "NoItemsToUnequip": "No items available to unequip."
+        }
     },
     "MessageHeaders": {
       "Status": "Status Effect: {name}",
@@ -48,10 +55,13 @@
       "GearTransfer": "Gear Transfer: {name}",
       "Restore": "Restoration: {name}",
       "GearEquip": "Equipment Change: {name}",
+      "GearBulkEquip": "Equipped Items: {name}",
+      "GearBulkUnequip": "Unequipped Items: {name}",
       "Transformation": "Transformation: {name}",
       "GearEffect": "Gear Effect: {name}",
       "GearEffectTransfer": "Gear Effect Transfer: {name}",
-      "ActionCard": "Action Card: {name}"
+      "ActionCard": "Action Card: {name}",
+      "Summary": "Character Summary: {name}"
     },
     "PartialTransfer": "Only {quantity} items were available to transfer."
   }

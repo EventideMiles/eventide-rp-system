@@ -53,8 +53,15 @@
       "Controls": {
         "AutoTokenUpdate": {
           "label": "Auto Token Update",
-          "hint": "Automatically update the token's image when the actor's image is updated"
+          "hint": "Automatically update the prototype token when the actor's name or image changes"
+        },
+        "AutoTokenSync": {
+          "label": "Sync Placed Tokens",
+          "hint": "Also update existing tokens placed on scenes when the actor's name or image changes"
         }
+      },
+      "Actions": {
+        "Rest": "Rest"
       },
       "Tabs": {
         "CombatPowers": "Combat Powers",
@@ -64,6 +71,11 @@
         "Features": "Features",
         "Gear": "Gear",
         "Statuses": "Statuses"
+      },
+      "GmNotes": {
+        "Label": "GM Notes",
+        "Hint": "Private notes only visible to Game Masters",
+        "Placeholder": "Enter private GM notes here..."
       },
       "CombatPowers": {
         "TransformationCombatPowers": "Combat powers are provided by active transformation",
@@ -101,7 +113,9 @@
         "DeleteGroupSuccess": "Deleted group: {name}",
         "CardCopied": "Copied action card: {name}",
         "GroupCopied": "Copied group '{groupName}' with {cardCount} action cards",
-        "NoCardsInGroup": "No action cards found in this group"
+        "NoCardsInGroup": "No action cards found in this group",
+        "NewItem": "+Item",
+        "FromTemplate": "+Template"
       }
     }
   }

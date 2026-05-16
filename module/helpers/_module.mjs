@@ -16,4 +16,5 @@ export * from "./message-flags.mjs";
 export * from "./inventory-utils.mjs";
 export * from "./status-intensification.mjs";
 export * from "./item-source-collector.mjs";
+export * from "./condition-evaluator.mjs";
 export * from "./theme/_module.mjs";

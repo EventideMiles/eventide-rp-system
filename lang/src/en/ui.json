@@ -8,9 +8,12 @@
       "DamageTargets": "Damage Targets",
       "EffectCreator": "Effect Creator",
       "FeaturePopup": "Feature Information",
+      "GenerateNpc": "NPC Quick Generator",
       "GearCreator": "Gear Creator",
       "GearPopup": "Use Gear",
       "GearTransfer": "Transfer Gear",
+      "RollHistory": "Roll History",
+      "RestRecover": "Rest / Recover",
       "RestoreTarget": "Restore Target",
       "SelectAbilityRoll": "Select Ability Roll",
       "SheetTheme": "Cycle Sheet Theme",
@@ -192,7 +195,11 @@
       "CreateNewCombatPower": "Create New Combat Power",
       "CreateNewStatus": "Create New Status",
       "CreateNewGear": "Create New Gear",
-      "CreateNewActionCard": "Create New Action Card"
+      "CreateNewActionCard": "Create New Action Card",
+      "CreateFromTemplateActionCard": "New from Template",
+      "ApplyPresetTemplate": "Apply Preset Template",
+      "ExcludeFromEquipAll": "Exclude from Equip All",
+      "IncludeInEquipAll": "Include in Equip All"
     }
   }
 }

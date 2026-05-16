@@ -148,6 +148,8 @@ The full text of the LGPL 2.1 license can be found at:
 - plague-doctor-profile.svg
 - island.svg
 - swords-power.svg
+- village.svg
+- archive-research.svg
 
 ### By DarkZaitzev under CC BY 3.0 from game-icons.net
 
@@ -163,6 +165,10 @@ The full text of the LGPL 2.1 license can be found at:
 - chess-pawn.svg
 - chess-king.svg
 - mounted-knight.svg
+
+### By Faithtoken under CC BY 3.0 from game-icons.net
+
+- card-random.svg
 
 ### By Marek Szturc under Unsplash license from unsplash.com
 

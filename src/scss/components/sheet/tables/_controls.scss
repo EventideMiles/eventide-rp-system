@@ -46,6 +46,17 @@
       @include equip-button;
     }
 
+    // Bulk equip toggle (muted indicator for skipBulkEquip)
+    &--bulk-toggle {
+      opacity: 0.55;
+
+      &:hover {
+        opacity: 1;
+        background: themes.color(gray, 40);
+        border-color: themes.color(gray, 60);
+      }
+    }
+
     // Toggle button variants
     &--toggle {
       @include toggle-button;
@@ -132,5 +143,22 @@
     &:active {
       transform: translateY(0);
     }
+
+    &--template {
+      background: linear-gradient(135deg, themes.color(blue, 20), themes.color(blue, 30));
+      border-color: themes.color(blue, 40);
+
+      &:hover {
+        background: themes.color(blue, 80);
+        border-color: themes.color(blue, 80);
+        box-shadow: 0 0 tokens.$sheet-shadow-blur-lg themes.color(blue, 60);
+      }
+    }
   }
-} 
+
+  &__create-buttons {
+    display: inline-flex;
+    align-items: center;
+    gap: $erps-table-gap-small;
+  }
+}

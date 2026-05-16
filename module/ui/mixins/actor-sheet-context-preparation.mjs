@@ -553,6 +553,10 @@ export const ActorSheetContextPreparationMixin = (BaseClass) =>
           "eventide-rp-system",
           "autoTokenUpdate",
         );
+        context.autoTokenSync = this.actor.getFlag(
+          "eventide-rp-system",
+          "autoTokenSync",
+        );
 
         // Prepare health data
         if (systemData.health) {
@@ -601,6 +605,12 @@ export const ActorSheetContextPreparationMixin = (BaseClass) =>
         context.isOwner = this.document.isOwner;
         context.isGM = game.user.isGM;
         context.canEdit = this.document.isOwner || game.user.isGM;
+
+        // Feature toggles
+        context.enablePostSummary = game.settings.get(
+          "eventide-rp-system",
+          "enablePostSummary",
+        );
 
         Logger.debug(
           "Actor data prepared successfully",

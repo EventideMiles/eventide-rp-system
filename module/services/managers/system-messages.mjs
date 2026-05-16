@@ -25,10 +25,14 @@ class ERPSMessageHandler {
         "systems/eventide-rp-system/templates/chat/gear-transfer-message.hbs",
       gearEquip:
         "systems/eventide-rp-system/templates/chat/gear-equip-message.hbs",
+      gearBulk:
+        "systems/eventide-rp-system/templates/chat/gear-bulk-message.hbs",
       transformation:
         "systems/eventide-rp-system/templates/chat/transformation-message.hbs",
       playerActionApproval:
         "systems/eventide-rp-system/templates/chat/player-action-approval.hbs",
+      summary:
+        "systems/eventide-rp-system/templates/chat/summary-message.hbs",
     };
   }
 
@@ -46,6 +50,7 @@ class ERPSMessageHandler {
     data,
     messageOptions,
     soundOptions = null,
+    rollFlags = null,
   ) {
     const { ChatMessageBuilder } = await import("../chat-message-builder.mjs");
 
@@ -53,9 +58,10 @@ class ERPSMessageHandler {
       templatePath: this.templates[templateKey],
       templateData: data,
       messageOptions,
+      rollFlags,
       soundKey: soundOptions?.soundKey || null,
       forceSound: soundOptions?.force || false,
-      useERPSRollUtilitiesSpeaker: true, // Maintain existing behavior
+      useERPSRollUtilitiesSpeaker: true,
     });
   }
 
@@ -269,6 +275,7 @@ class ERPSMessageHandler {
           messageMode,
         },
         { soundKey: "featureRoll" },
+        { type: item.system.roll.ability, formula: result.formula, total: result.total },
       );
     } catch (error) {
       Logger.error(
@@ -343,6 +350,68 @@ class ERPSMessageHandler {
         ),
       },
       { soundKey: "statusRemove" },
+    );
+  }
+
+  /**
+   * Creates a chat message with a character summary (name, level, resolve, power, abilities).
+   * @param {Actor} actor - The actor to summarize
+   * @returns {Promise<ChatMessage>} The created chat message
+   */
+  async createCharacterSummaryMessage(actor) {
+    const abilityKeys = Object.keys(CONFIG.EVENTIDE_RP_SYSTEM.abilities);
+    const abilities = abilityKeys.map((key) => ({
+      key,
+      label: game.i18n.localize(CONFIG.EVENTIDE_RP_SYSTEM.abilities[key]),
+      value: actor.system.abilities[key]?.value ?? 1,
+      total: actor.system.abilities[key]?.total ?? 1,
+      ac: actor.system.abilities[key]?.ac?.total ?? null,
+    }));
+
+    const statusCount = actor.items.filter(
+      (item) => item.type === "status",
+    ).length;
+    const isTransformed = actor.getFlag(
+      "eventide-rp-system",
+      "activeTransformation",
+    );
+    const transformationName = isTransformed
+      ? actor.getFlag("eventide-rp-system", "activeTransformationName")
+      : null;
+
+    const data = {
+      actor: {
+        name: actor.name,
+        img: actor.img,
+      },
+      header: game.i18n.format("EVENTIDE_RP_SYSTEM.MessageHeaders.Summary", {
+        name: actor.name,
+      }),
+      level: actor.system.attributes?.level?.value ?? 1,
+      resolve: {
+        value: actor.system.resolve?.value ?? 0,
+        max: actor.system.resolve?.max ?? 0,
+      },
+      power: {
+        value: actor.system.power?.value ?? 0,
+        max: actor.system.power?.max ?? 0,
+      },
+      abilities,
+      statusCount,
+      isTransformed: !!isTransformed,
+      transformationName,
+    };
+
+    return this._createChatMessage(
+      "summary",
+      data,
+      {
+        speaker: ERPSRollUtilities.getSpeaker(
+          actor,
+          "EVENTIDE_RP_SYSTEM.MessageHeaders.Summary",
+        ),
+        whisper: game.users.filter((u) => u.isGM).map((u) => u.id),
+      },
     );
   }
 
@@ -491,6 +560,7 @@ class ERPSMessageHandler {
           messageMode,
         },
         { soundKey: "combatPower" },
+        { type: item.system.roll.ability, formula: result.formula, total: result.total },
       );
     } catch (error) {
       Logger.error(
@@ -606,6 +676,40 @@ class ERPSMessageHandler {
         { soundKey: "gearUnequip" },
       );
     }
+  }
+
+  /**
+   * Creates a single summary chat message for bulk gear equip/unequip operations
+   * @param {string} action - "equipped" or "unequipped"
+   * @param {Item[]} items - Array of gear items affected
+   * @param {Actor} actor - The actor performing the bulk operation
+   * @returns {Promise<ChatMessage|null>} The created chat message, or null if setting disabled
+   */
+  async createBulkGearMessage(action, items, actor) {
+    if (!game.settings.get("eventide-rp-system", "showGearEquipMessages")) {
+      return null;
+    }
+
+    const data = {
+      action,
+      items,
+      actor,
+      count: items.length,
+    };
+
+    const labelKey =
+      action === "equipped"
+        ? "EVENTIDE_RP_SYSTEM.MessageHeaders.GearBulkEquip"
+        : "EVENTIDE_RP_SYSTEM.MessageHeaders.GearBulkUnequip";
+
+    return this._createChatMessage(
+      "gearBulk",
+      data,
+      {
+        speaker: ERPSRollUtilities.getSpeaker(actor, labelKey),
+      },
+      { soundKey: action === "equipped" ? "gearEquip" : "gearUnequip" },
+    );
   }
 
   /**
@@ -972,6 +1076,8 @@ erpsMessageHandler.notifyPlayerActionResult =
   erpsMessageHandler.notifyPlayerActionResult.bind(erpsMessageHandler);
 erpsMessageHandler.createTargetsExhaustedMessage =
   erpsMessageHandler.createTargetsExhaustedMessage.bind(erpsMessageHandler);
+erpsMessageHandler.createCharacterSummaryMessage =
+  erpsMessageHandler.createCharacterSummaryMessage.bind(erpsMessageHandler);
 
 // Export individual functions for backward compatibility
 /**
@@ -1131,3 +1237,11 @@ export const notifyPlayerActionResult = (
  */
 export const createTargetsExhaustedMessage = (options) =>
   erpsMessageHandler.createTargetsExhaustedMessage(options);
+
+/**
+ * Creates a character summary chat message
+ * @param {Actor} actor - The actor to summarize
+ * @returns {Promise<ChatMessage>} The created chat message
+ */
+export const createCharacterSummaryMessage = (actor) =>
+  erpsMessageHandler.createCharacterSummaryMessage(actor);

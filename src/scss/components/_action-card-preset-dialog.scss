@@ -1,0 +1,264 @@
+// =============================================================================
+// ACTION CARD PRESET DIALOG
+// =============================================================================
+// Styling for the Action Card Preset Library dialog, including preset card grid
+// and configuration fields. Wider, more spacious layout with subtle borders.
+
+@use "../utils/themes" as themes;
+@use "../utils/sheet-tokens" as tokens;
+
+// =============================================================================
+// CONFIGURATION
+// =============================================================================
+
+$preset-card-min-width: 240px;
+$preset-card-padding: tokens.$sheet-spacing-base tokens.$sheet-spacing-lg;
+$preset-card-border-radius: tokens.$sheet-radius-lg;
+$preset-card-gap: tokens.$sheet-spacing-base;
+$preset-grid-gap: tokens.$sheet-spacing-base;
+$field-row-gap: tokens.$sheet-spacing-sm;
+$field-label-width: 12rem;
+
+// =============================================================================
+// PRESET SECTION
+// =============================================================================
+
+.erps-preset-section {
+  margin-bottom: tokens.$sheet-spacing-xl;
+
+  .erps-form__header {
+    margin-bottom: tokens.$sheet-spacing-md;
+  }
+}
+
+// =============================================================================
+// PRESET GRID
+// =============================================================================
+
+.erps-preset-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax($preset-card-min-width, 1fr));
+  gap: $preset-grid-gap;
+}
+
+// =============================================================================
+// PRESET CARD
+// =============================================================================
+
+.erps-preset-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: $preset-card-padding;
+  background: linear-gradient(
+    135deg,
+    var(--theme-primary, var(--erps-sheet-primary)),
+    var(--theme-secondary, var(--erps-sheet-secondary))
+  );
+  border: tokens.$sheet-border-thin solid var(--theme-secondary, var(--erps-sheet-secondary));
+  border-radius: $preset-card-border-radius;
+  cursor: pointer;
+  transition: all tokens.$sheet-transition-medium ease;
+  text-align: left;
+  position: relative;
+  min-height: 6.5rem;
+  box-sizing: border-box;
+
+  // Keyboard focus styling for accessibility
+  &:focus-visible {
+    outline: 2px solid var(--theme-glow, var(--erps-sheet-glow));
+    outline-offset: 2px;
+  }
+
+  // Subtle hover effect
+  &:hover {
+    border-color: var(--theme-light, var(--erps-sheet-light));
+    box-shadow:
+      0 2px 8px rgb(0 0 0 / 20%),
+      0 0 12px var(--theme-glow, var(--erps-sheet-glow));
+    transform: translateY(tokens.$sheet-transform-hover-sm);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  // Selected state
+  &--selected {
+    border-color: var(--theme-glow, var(--erps-sheet-glow));
+    background: linear-gradient(
+      135deg,
+      var(--theme-light, var(--erps-sheet-light)),
+      var(--theme-primary, var(--erps-sheet-primary))
+    );
+    box-shadow:
+      0 0 0 1px var(--theme-glow, var(--erps-sheet-glow)),
+      0 4px 16px rgb(0 0 0 / 30%),
+      0 0 20px var(--theme-glow, var(--erps-sheet-glow));
+
+    // Accent indicator bar
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--theme-glow, var(--erps-sheet-glow));
+      box-shadow: 0 0 8px var(--theme-glow, var(--erps-sheet-glow));
+      border-top-left-radius: $preset-card-border-radius;
+      border-top-right-radius: $preset-card-border-radius;
+    }
+
+    &:hover {
+      box-shadow:
+        0 0 0 1px var(--theme-glow, var(--erps-sheet-glow)),
+        0 6px 20px rgb(0 0 0 / 35%),
+        0 0 25px var(--theme-glow, var(--erps-sheet-glow));
+    }
+  }
+}
+
+// Icon
+.erps-preset-card__icon {
+  font-size: 1.2rem;
+  line-height: 1;
+  color: var(--theme-text, var(--erps-sheet-text));
+  margin-bottom: tokens.$sheet-spacing-sm;
+  opacity: 0.9;
+  display: block;
+  flex-shrink: 0;
+}
+
+// Label
+.erps-preset-card__label {
+  display: block;
+  font-family: var(--erps-ui-font, sans-serif);
+  font-size: tokens.$sheet-font-size-value-sm;
+  font-weight: tokens.$sheet-font-weight-bold;
+  color: var(--theme-text, var(--erps-sheet-text));
+  text-transform: uppercase;
+  letter-spacing: tokens.$sheet-letter-spacing-base;
+  margin-bottom: tokens.$sheet-spacing-xs;
+  line-height: tokens.$sheet-line-height-base;
+}
+
+// Description
+.erps-preset-card__description {
+  display: block;
+  font-size: tokens.$sheet-font-size-label-md;
+  color: var(--theme-text, var(--erps-sheet-text));
+  opacity: 0.75;
+  line-height: tokens.$sheet-line-height-loose;
+  margin-bottom: tokens.$sheet-spacing-sm;
+  flex-grow: 1;
+}
+
+// Mode badge
+.erps-preset-card__mode {
+  display: inline-block;
+  font-size: tokens.$sheet-font-size-label-xs;
+  font-weight: tokens.$sheet-font-weight-medium;
+  text-transform: uppercase;
+  letter-spacing: tokens.$sheet-letter-spacing-tight;
+  padding: tokens.$sheet-spacing-xs tokens.$sheet-spacing-sm;
+  border-radius: tokens.$sheet-radius-xs;
+  border: 1px solid var(--theme-secondary, var(--erps-sheet-secondary));
+  background: rgb(0 0 0 / 15%);
+  color: var(--theme-text, var(--erps-sheet-text));
+  opacity: 0.8;
+  margin-top: tokens.$sheet-spacing-sm;
+  flex-shrink: 0;
+
+  &--attackChain {
+    border-color: rgb(59 130 246 / 40%);
+    background: rgb(59 130 246 / 15%);
+  }
+
+  &--savedDamage {
+    border-color: rgb(249 115 22 / 40%);
+    background: rgb(249 115 22 / 15%);
+  }
+}
+
+// =============================================================================
+// PRESET FIELDS (Configuration Section)
+// =============================================================================
+
+.erps-preset-fields {
+  padding-top: tokens.$sheet-spacing-lg;
+  border-top: 1px solid var(--theme-secondary, var(--erps-sheet-secondary));
+
+  .erps-form__header {
+    margin-bottom: tokens.$sheet-spacing-md;
+  }
+
+  // Callout inside fields section
+  .erps-callouts {
+    margin-bottom: tokens.$sheet-spacing-md;
+  }
+}
+
+// =============================================================================
+// PRESET FIELDS GRID
+// =============================================================================
+
+.erps-preset-fields__grid {
+  display: flex;
+  flex-direction: column;
+  gap: tokens.$sheet-spacing-xs;
+}
+
+.erps-preset-fields__row {
+  display: grid;
+  grid-template-columns: $field-label-width 1fr;
+  gap: tokens.$sheet-spacing-md;
+  align-items: start;
+  padding: tokens.$sheet-spacing-sm tokens.$sheet-spacing-md;
+  border-bottom: 1px solid rgb(255 255 255 / 6%);
+  border-radius: tokens.$sheet-radius-xs;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background: rgb(255 255 255 / 3%);
+  }
+
+  // Checkbox rows need different alignment
+  .erps-toggles {
+    grid-column: 2;
+  }
+
+  .erps-form__hint {
+    grid-column: 2;
+    margin-top: tokens.$sheet-spacing-xs;
+  }
+
+  // Label alignment for field rows
+  .erps-form__label {
+    white-space: nowrap;
+    justify-self: end;
+    text-align: right;
+    padding-top: tokens.$sheet-spacing-xs;
+  }
+}
+
+// Responsive: stack labels above inputs on small screens
+@media (width <= 768px) {
+  .erps-preset-fields__row {
+    grid-template-columns: 1fr;
+    gap: tokens.$sheet-spacing-xs;
+    padding: tokens.$sheet-spacing-sm;
+
+    .erps-form__label {
+      justify-self: start;
+      text-align: left;
+    }
+  }
+
+  .erps-preset-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -27,4 +27,136 @@
   &:last-child {
     margin-bottom: 0;
   }
-} 
+}
+
+// ===================================
+// COLLAPSIBLE SECTIONS
+// ===================================
+// Progressive disclosure pattern for advanced options
+
+.erps-collapsible {
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: tokens.$sheet-spacing-sm;
+    cursor: pointer;
+    user-select: none;
+    padding: tokens.$sheet-spacing-sm 0;
+    border-bottom: 1px solid transparent;
+    transition: border-color tokens.$sheet-transition-medium ease;
+
+    &:hover {
+      border-bottom-color: var(--theme-secondary, var(--erps-sheet-secondary));
+    }
+  }
+
+  &__chevron {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.2rem;
+    height: 1.2rem;
+    transition: transform tokens.$sheet-transition-medium ease;
+    color: var(--theme-text, var(--erps-sheet-text));
+    font-size: 0.7rem;
+    flex-shrink: 0;
+
+    .erps-collapsible--expanded & {
+      transform: rotate(90deg);
+    }
+  }
+
+  &__title {
+    font-size: tokens.$sheet-font-size-label-md;
+    font-weight: tokens.$sheet-font-weight-medium;
+    color: var(--theme-text, var(--erps-sheet-text));
+    flex: 1;
+  }
+
+  &__content {
+    display: none;
+    padding-top: tokens.$sheet-spacing-sm;
+    animation: erps-collapsible-fade-in tokens.$sheet-transition-medium ease;
+
+    .erps-collapsible--expanded & {
+      display: block;
+    }
+  }
+}
+
+@keyframes erps-collapsible-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// ===================================
+// FIELDSETS
+// ===================================
+// Styled fieldsets for grouped form controls
+
+.erps-fieldset {
+  border: 1px solid var(--theme-secondary, var(--erps-sheet-secondary));
+  border-radius: tokens.$sheet-radius-sm;
+  padding: tokens.$sheet-spacing-sm tokens.$sheet-spacing-md
+    tokens.$sheet-spacing-md;
+  margin: tokens.$sheet-spacing-sm 0;
+  background: rgb(0 0 0 / 5%);
+
+  &__legend {
+    font-size: tokens.$sheet-font-size-label-sm;
+    font-weight: tokens.$sheet-font-weight-semibold;
+    color: var(--theme-text, var(--erps-sheet-text));
+    text-transform: uppercase;
+    letter-spacing: tokens.$sheet-letter-spacing-tight;
+    padding: 0 tokens.$sheet-spacing-xs;
+  }
+}
+
+// ===================================
+// SET-ALL ROWS
+// ===================================
+// Quick batch-control rows for setting multiple values at once
+
+.erps-set-all {
+  display: flex;
+  align-items: center;
+  gap: tokens.$sheet-spacing-sm;
+  padding: tokens.$sheet-spacing-sm 0;
+  margin-bottom: tokens.$sheet-spacing-sm;
+  border-bottom: 1px solid var(--theme-secondary, var(--erps-sheet-secondary));
+
+  &__label {
+    font-size: tokens.$sheet-font-size-label-sm;
+    font-weight: tokens.$sheet-font-weight-medium;
+    color: var(--theme-text, var(--erps-sheet-text));
+    white-space: nowrap;
+  }
+
+  &__input {
+    width: 4rem;
+    text-align: center;
+  }
+
+  &__button {
+    white-space: nowrap;
+    font-size: tokens.$sheet-font-size-label-sm;
+    padding: tokens.$sheet-spacing-xs tokens.$sheet-spacing-sm;
+    background: var(--theme-primary, var(--erps-sheet-primary));
+    border: 1px solid var(--theme-secondary, var(--erps-sheet-secondary));
+    border-radius: tokens.$sheet-radius-xs;
+    color: var(--theme-text, var(--erps-sheet-text));
+    cursor: pointer;
+    transition: all tokens.$sheet-transition-base ease;
+
+    &:hover {
+      background: var(--theme-glow, var(--erps-sheet-glow));
+      border-color: var(--theme-light, var(--erps-sheet-light));
+    }
+  }
+}

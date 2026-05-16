@@ -273,6 +273,116 @@ export class SoundSettingsApplication extends EventideSheetHelpers {
 }
 
 /**
+ * Helper function to register a formula-type system setting with standardized
+ * validation, sanitization, warning, and revert behavior.
+ *
+ * Extracts the repeated pattern from initiativeFormula, crToXpFormula,
+ * maxPowerFormula, maxResolveFormula, and statPointsFormula settings.
+ * Each onChange handler follows the same steps:
+ *   1. Sanitize the formula
+ *   2. Validate the sanitized formula
+ *   3. On failure: show error, revert setting, return
+ *   4. On success with sanitization changes: warn about removed characters
+ *   5. Show any validation warnings
+ *   6. Execute post-success callback
+ *
+ * @param {string} key - The setting key (e.g., "initiativeFormula")
+ * @param {Object} options - Setting configuration options
+ * @param {string} options.name - Localized setting name key
+ * @param {string} options.hint - Localized setting hint key
+ * @param {string} options.default - Default formula value
+ * @param {string} options.settingType - Validation setting type (e.g., "initiative", "maxPower")
+ * @param {string[]} options.requiredRefs - Required data references (e.g., ["@fort"])
+ * @param {"default"|"current"} [options.revertTo="default"] - Revert behavior on validation failure:
+ *   "default" reverts to the setting's default value with a warning;
+ *   "current" reverts to the last saved value without a warning
+ * @param {Function} [options.onSuccess] - Callback after successful validation, receives (sanitized, original)
+ * @private
+ */
+function registerFormulaSetting(key, options) {
+  const {
+    name,
+    hint,
+    default: defaultFormula,
+    settingType,
+    requiredRefs,
+    revertTo = "default",
+    onSuccess,
+  } = options;
+
+  game.settings.register("eventide-rp-system", key, {
+    name,
+    hint,
+    scope: "world",
+    config: true,
+    restricted: true,
+    type: String,
+    default: defaultFormula,
+    onChange: (value) => {
+      // Step 1: Sanitize formula
+      const sanitized = FormulaValidator.sanitizeFormula(value);
+
+      // Step 2: Validate formula
+      const validator = new FormulaValidator();
+      const result = validator.validateSettingFormula(sanitized, settingType, {
+        allowBlank: false,
+        allowDataRefs: true,
+        requiredRefs,
+      });
+
+      // Step 3: Handle validation failure
+      if (!result.isValid) {
+        ui.notifications.error(
+          game.i18n.format(result.errorKey, result.details || {}),
+        );
+
+        if (revertTo === "current") {
+          const currentValue = game.settings.get("eventide-rp-system", key);
+          game.settings.set("eventide-rp-system", key, currentValue);
+        } else {
+          game.settings.set("eventide-rp-system", key, defaultFormula);
+          ui.notifications.warn(
+            game.i18n.format(
+              "EVENTIDE_RP_SYSTEM.Forms.Sanitization.InvalidFormulaReverted",
+              {
+                formula: value,
+                default: defaultFormula,
+              },
+            ),
+          );
+        }
+        return;
+      }
+
+      // Step 4: Warn if characters were removed during sanitization
+      if (sanitized !== value) {
+        ui.notifications.warn(
+          game.i18n.format(
+            "EVENTIDE_RP_SYSTEM.Forms.Sanitization.InvalidCharactersRemoved",
+            {
+              original: value,
+              sanitized,
+            },
+          ),
+        );
+      }
+
+      // Step 5: Show validation warnings
+      if (result.warnings?.length > 0) {
+        result.warnings.forEach((warning) => {
+          ui.notifications.warn(warning);
+        });
+      }
+
+      // Step 6: Execute post-success callback
+      if (onSuccess) {
+        onSuccess(sanitized, value);
+      }
+    },
+  });
+}
+
+/**
  * Helper function to refresh all actors' derived data when formula settings change
  * Used by maxPowerFormula and maxResolveFormula onChange handlers (Issues #125, #126)
  * @private
@@ -435,57 +545,14 @@ export const registerSettings = function () {
   // ===========================================
 
   // Initiative Formula (affects combat mechanics - needs reload)
-  game.settings.register("eventide-rp-system", "initiativeFormula", {
+  registerFormulaSetting("initiativeFormula", {
     name: "SETTINGS.InitiativeFormulaName",
     hint: "SETTINGS.InitiativeFormulaHint",
-    scope: "world",
-    config: true,
-    restricted: true,
-    type: String,
-    default:
-      "1d@hiddenAbilities.dice.total + @statTotal.mainInit + @statTotal.subInit",
-    onChange: (value) => {
-      // Sanitize formula first
-      const sanitized = FormulaValidator.sanitizeFormula(value);
-      
-      // Validate formula before applying
-      const validator = new FormulaValidator();
-      const result = validator.validateSettingFormula(sanitized, "initiative", {
-        allowBlank: false,
-        allowDataRefs: true,
-        requiredRefs: ["@hiddenAbilities", "@statTotal"],
-      });
-
-      if (!result.isValid) {
-        ui.notifications.error(
-          game.i18n.format(result.errorKey, result.details || {}),
-        );
-        // Revert to previous value
-        const currentValue = game.settings.get(
-          "eventide-rp-system",
-          "initiativeFormula",
-        );
-        game.settings.set("eventide-rp-system", "initiativeFormula", currentValue);
-        return;
-      }
-
-      // Warn user if characters were removed
-      if (sanitized !== value) {
-        ui.notifications.warn(
-          game.i18n.format("EVENTIDE_RP_SYSTEM.Forms.Sanitization.InvalidCharactersRemoved", {
-            original: value,
-            sanitized,
-          }),
-        );
-      }
-
-      // Show warnings if any
-      if (result.warnings?.length > 0) {
-        result.warnings.forEach((warning) => {
-          ui.notifications.warn(warning);
-        });
-      }
-
+    default: "1d@hiddenAbilities.dice.total + @statTotal.mainInit + @statTotal.subInit",
+    settingType: "initiative",
+    requiredRefs: ["@hiddenAbilities", "@statTotal"],
+    revertTo: "current",
+    onSuccess: (sanitized) => {
       // Update the initiative formula in the current session
       CONFIG.Combat.initiative.formula = sanitized;
 
@@ -633,58 +700,13 @@ export const registerSettings = function () {
   // ===========================================
 
   // CR to XP Calculation Formula (can be changed immediately)
-  game.settings.register("eventide-rp-system", "crToXpFormula", {
+  registerFormulaSetting("crToXpFormula", {
     name: "SETTINGS.CrToXpFormulaName",
     hint: "SETTINGS.CrToXpFormulaHint",
-    scope: "world",
-    config: true,
-    restricted: true,
-    type: String,
     default: "@cr * 200 + @cr * @cr * 50",
-    onChange: (value) => {
-      // Sanitize formula first
-      const sanitized = FormulaValidator.sanitizeFormula(value);
-      
-      // Validate formula before applying
-      const validator = new FormulaValidator();
-      const result = validator.validateSettingFormula(sanitized, "crToXp", {
-        allowBlank: false,
-        allowDataRefs: true,
-        requiredRefs: ["@cr"],
-      });
-
-      if (!result.isValid) {
-        ui.notifications.error(
-          game.i18n.format(result.errorKey, result.details || {}),
-        );
-        const defaultFormula = "@cr * 200 + @cr * @cr * 50";
-        game.settings.set("eventide-rp-system", "crToXpFormula", defaultFormula);
-        ui.notifications.warn(
-          game.i18n.format("EVENTIDE_RP_SYSTEM.Forms.Sanitization.InvalidFormulaReverted", {
-            formula: value,
-            default: defaultFormula,
-          }),
-        );
-        return;
-      }
-
-      // Warn user if characters were removed
-      if (sanitized !== value) {
-        ui.notifications.warn(
-          game.i18n.format("EVENTIDE_RP_SYSTEM.Forms.Sanitization.InvalidCharactersRemoved", {
-            original: value,
-            sanitized,
-          }),
-        );
-      }
-
-      // Show warnings if any
-      if (result.warnings?.length > 0) {
-        result.warnings.forEach((warning) => {
-          ui.notifications.warn(warning);
-        });
-      }
-
+    settingType: "crToXp",
+    requiredRefs: ["@cr"],
+    onSuccess: () => {
       // Refresh any open NPC sheets to show updated XP values
       Object.values(ui.windows).forEach((app) => {
         if (
@@ -713,6 +735,17 @@ export const registerSettings = function () {
     },
   });
 
+  // NPC Template Compendium (for NPC Quick Generator)
+  game.settings.register("eventide-rp-system", "npcTemplateCompendium", {
+    name: "SETTINGS.NpcTemplateCompendiumName",
+    hint: "SETTINGS.NpcTemplateCompendiumHint",
+    scope: "world",
+    config: true,
+    restricted: true,
+    type: String,
+    default: "",
+  });
+
   // ===========================================
   // DERIVED VALUE SETTINGS (GM Only - No Reload Needed)
   // ===========================================
@@ -734,172 +767,37 @@ export const registerSettings = function () {
   });
 
   // Max Power Formula (Issue #125)
-  game.settings.register("eventide-rp-system", "maxPowerFormula", {
+  registerFormulaSetting("maxPowerFormula", {
     name: "SETTINGS.MaxPowerFormulaName",
     hint: "SETTINGS.MaxPowerFormulaHint",
-    scope: "world",
-    config: true,
-    restricted: true,
-    type: String,
     default: "5 + @will.total + @fort.total",
-    onChange: (value) => {
-      // Sanitize formula first
-      const sanitized = FormulaValidator.sanitizeFormula(value);
-      
-      // Validate formula before applying
-      const validator = new FormulaValidator();
-      const result = validator.validateSettingFormula(sanitized, "maxPower", {
-        allowBlank: false,
-        allowDataRefs: true,
-        requiredRefs: ["@will", "@fort"],
-      });
-
-      if (!result.isValid) {
-        ui.notifications.error(
-          game.i18n.format(result.errorKey, result.details || {}),
-        );
-        const defaultFormula = "5 + @will.total + @fort.total";
-        game.settings.set("eventide-rp-system", "maxPowerFormula", defaultFormula);
-        ui.notifications.warn(
-          game.i18n.format("EVENTIDE_RP_SYSTEM.Forms.Sanitization.InvalidFormulaReverted", {
-            formula: value,
-            default: defaultFormula,
-          }),
-        );
-        return;
-      }
-
-      // Warn user if characters were removed
-      if (sanitized !== value) {
-        ui.notifications.warn(
-          game.i18n.format("EVENTIDE_RP_SYSTEM.Forms.Sanitization.InvalidCharactersRemoved", {
-            original: value,
-            sanitized,
-          }),
-        );
-      }
-
-      // Show warnings if any
-      if (result.warnings?.length > 0) {
-        result.warnings.forEach((warning) => {
-          ui.notifications.warn(warning);
-        });
-      }
-
+    settingType: "maxPower",
+    requiredRefs: ["@will", "@fort"],
+    onSuccess: () => {
       _refreshAllActorDerivedData();
     },
   });
 
   // Max Resolve Formula (Issue #126)
-  game.settings.register("eventide-rp-system", "maxResolveFormula", {
+  registerFormulaSetting("maxResolveFormula", {
     name: "SETTINGS.MaxResolveFormulaName",
     hint: "SETTINGS.MaxResolveFormulaHint",
-    scope: "world",
-    config: true,
-    restricted: true,
-    type: String,
     default: "100 + (10 * @fort.total)",
-    onChange: (value) => {
-      // Sanitize formula first
-      const sanitized = FormulaValidator.sanitizeFormula(value);
-      
-      // Validate formula before applying
-      const validator = new FormulaValidator();
-      const result = validator.validateSettingFormula(sanitized, "maxResolve", {
-        allowBlank: false,
-        allowDataRefs: true,
-        requiredRefs: ["@fort"],
-      });
-
-      if (!result.isValid) {
-        ui.notifications.error(
-          game.i18n.format(result.errorKey, result.details || {}),
-        );
-        const defaultFormula = "100 + (10 * @fort.total)";
-        game.settings.set("eventide-rp-system", "maxResolveFormula", defaultFormula);
-        ui.notifications.warn(
-          game.i18n.format("EVENTIDE_RP_SYSTEM.Forms.Sanitization.InvalidFormulaReverted", {
-            formula: value,
-            default: defaultFormula,
-          }),
-        );
-        return;
-      }
-
-      // Warn user if characters were removed
-      if (sanitized !== value) {
-        ui.notifications.warn(
-          game.i18n.format("EVENTIDE_RP_SYSTEM.Forms.Sanitization.InvalidCharactersRemoved", {
-            original: value,
-            sanitized,
-          }),
-        );
-      }
-
-      // Show warnings if any
-      if (result.warnings?.length > 0) {
-        result.warnings.forEach((warning) => {
-          ui.notifications.warn(warning);
-        });
-      }
-
+    settingType: "maxResolve",
+    requiredRefs: ["@fort"],
+    onSuccess: () => {
       _refreshAllActorDerivedData();
     },
   });
 
   // Stat Points Formula (Issue #137)
-  game.settings.register("eventide-rp-system", "statPointsFormula", {
+  registerFormulaSetting("statPointsFormula", {
     name: "SETTINGS.StatPointsFormulaName",
     hint: "SETTINGS.StatPointsFormulaHint",
-    scope: "world",
-    config: true,
-    restricted: true,
-    type: String,
     default: "14 + (2 * @lvl.value)",
-    onChange: (value) => {
-      // Sanitize formula first
-      const sanitized = FormulaValidator.sanitizeFormula(value);
-      
-      // Validate formula before applying
-      const validator = new FormulaValidator();
-      const result = validator.validateSettingFormula(sanitized, "statPoints", {
-        allowBlank: false,
-        allowDataRefs: true,
-        requiredRefs: ["@lvl"],
-      });
-
-      if (!result.isValid) {
-        ui.notifications.error(
-          game.i18n.format(result.errorKey, result.details || {}),
-        );
-        const defaultFormula = "14 + (2 * @lvl.value)";
-        game.settings.set("eventide-rp-system", "statPointsFormula", defaultFormula);
-        ui.notifications.warn(
-          game.i18n.format("EVENTIDE_RP_SYSTEM.Forms.Sanitization.InvalidFormulaReverted", {
-            formula: value,
-            default: defaultFormula,
-          }),
-        );
-        return;
-      }
-
-      // Warn user if characters were removed
-      if (sanitized !== value) {
-        ui.notifications.warn(
-          game.i18n.format("EVENTIDE_RP_SYSTEM.Forms.Sanitization.InvalidCharactersRemoved", {
-            original: value,
-            sanitized,
-          }),
-        );
-      }
-
-      // Show warnings if any
-      if (result.warnings?.length > 0) {
-        result.warnings.forEach((warning) => {
-          ui.notifications.warn(warning);
-        });
-      }
-
+    settingType: "statPoints",
+    requiredRefs: ["@lvl"],
+    onSuccess: () => {
       _refreshAllActorDerivedData();
     },
   });
@@ -999,6 +897,17 @@ export const registerSettings = function () {
   // ===========================================
   // DEVELOPER/TESTING SETTINGS (GM Only)
   // ===========================================
+
+  // Enable Post Summary for non-GMs
+  game.settings.register("eventide-rp-system", "enablePostSummary", {
+    name: "SETTINGS.EnablePostSummaryName",
+    hint: "SETTINGS.EnablePostSummaryHint",
+    scope: "world",
+    config: true,
+    restricted: true,
+    type: Boolean,
+    default: false,
+  });
 
   // Testing Mode (developer setting)
   game.settings.register("eventide-rp-system", "testingMode", {

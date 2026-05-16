@@ -49,9 +49,7 @@
 
     // Right align controls column headers
     &--controls {
-      text-align: right;
-      white-space: nowrap;
-      vertical-align: middle;
+      @include controls-cell;
       height: 100%;
     }
 
@@ -188,4 +186,5 @@
       flex-shrink: 0;
     }
   }
+
 } 

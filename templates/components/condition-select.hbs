@@ -1,0 +1,49 @@
+{{!--
+  Condition Select Partial
+
+  Renders a <select> dropdown for action card condition configuration.
+  All 4 condition selectors on the action card attributes tab share
+  the same 12 option values — this partial deduplicates that markup.
+
+  Parameters:
+    name         — (required) The form field path, e.g. "system.attackChain.damageCondition"
+    currentValue — (required) The currently selected condition value
+--}}
+<select class="erps-select" name="{{name}}">
+  <option value="never" {{#if (eq currentValue "never")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.Never'}}">
+    {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Never"}}
+  </option>
+  <option value="oneSuccess" {{#if (eq currentValue "oneSuccess")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.OneSuccess'}}">
+    {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.OneSuccess"}}
+  </option>
+  <option value="twoSuccesses" {{#if (eq currentValue "twoSuccesses")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.TwoSuccesses'}}">
+    {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.TwoSuccesses"}}
+  </option>
+  <option value="rollValue" {{#if (eq currentValue "rollValue")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.RollValueHint'}}">
+    {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.RollValue"}}
+  </option>
+  <option value="rollUnderValue" {{#if (eq currentValue "rollUnderValue")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.RollUnderValueHint'}}">
+    {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.RollUnderValue"}}
+  </option>
+  <option value="rollEven" {{#if (eq currentValue "rollEven")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.RollEvenHint'}}">
+    {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.RollEven"}}
+  </option>
+  <option value="rollOdd" {{#if (eq currentValue "rollOdd")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.RollOddHint'}}">
+    {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.RollOdd"}}
+  </option>
+  <option value="rollOnValue" {{#if (eq currentValue "rollOnValue")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.RollOnValueHint'}}">
+    {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.RollOnValue"}}
+  </option>
+  <option value="zeroSuccesses" {{#if (eq currentValue "zeroSuccesses")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.ZeroSuccessesHint'}}">
+    {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.ZeroSuccesses"}}
+  </option>
+  <option value="always" {{#if (eq currentValue "always")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.AlwaysHint'}}">
+    {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Always"}}
+  </option>
+  <option value="criticalSuccess" {{#if (eq currentValue "criticalSuccess")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.CriticalSuccessHint'}}">
+    {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.CriticalSuccess"}}
+  </option>
+  <option value="criticalFailure" {{#if (eq currentValue "criticalFailure")}}selected{{/if}} title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.CriticalFailureHint'}}">
+    {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.CriticalFailure"}}
+  </option>
+</select>

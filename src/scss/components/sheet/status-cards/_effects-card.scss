@@ -83,4 +83,72 @@
       @include status-card-details(red);
     }
   }
+
+  // Summary variant — subdued, no animations
+  &--summary {
+    border-color: themes.color(gray, 50);
+    background: linear-gradient(
+      135deg,
+      themes.color(gray, 15) 0%,
+      rgba(40, 40, 50, 0.8) 50%,
+      themes.color(gray, 10) 100%
+    );
+    box-shadow: none;
+    cursor: pointer;
+    opacity: 0.7;
+
+    .eventide-effects-card__icon {
+      @include status-card-icon(gray);
+    }
+
+    .eventide-effects-card__label {
+      @include status-card-label;
+    }
+
+    .eventide-effects-card__details {
+      font-size: $status-card-details-font-size;
+      font-weight: 500;
+      color: themes.color(white, 60);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: $text-line-height;
+    }
+
+    .eventide-effects-card__indicator {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: $status-card-button-size;
+      height: $status-card-button-size;
+      border-radius: $button-border-radius;
+      background: themes.color(gray, 20);
+      border: $button-border-width solid themes.color(gray, 50);
+      color: themes.color(white, 50);
+      margin-left: $status-card-gap;
+      flex-shrink: 0;
+
+      i {
+        font-size: $status-card-button-icon-size;
+        animation: none;
+      }
+    }
+
+    &:hover {
+      opacity: 0.9;
+      border-color: themes.color(gray, 65);
+    }
+
+    // Remove all animations
+    animation: none;
+
+    .eventide-effects-card__icon i {
+      animation: none;
+    }
+
+    &::before {
+      animation: none !important;
+      content: none;
+    }
+  }
 } 

@@ -171,6 +171,13 @@ label,
       pointer-events: none;
     }
 
+    // Toggle group layout
+    .eventide-sheet__toggle-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
     // Light theme specific overrides
     &[data-header-theme="light"] {
       // Toggle label text for light theme
@@ -314,6 +321,23 @@ label,
       transform: translateY(-50%);
       animation: name-input-glow 3s ease-in-out infinite 1.5s;
       z-index: 1;
+    }
+
+    // When the rest button is present, hide the right glow bar
+    // since the button takes that visual role
+    &--with-rest::after {
+      display: none;
+    }
+
+    .eventide-sheet__character-name {
+      flex: 3;
+    }
+
+    .erps-button--rest {
+      flex: 1;
+      margin-left: 0.5rem;
+      align-self: center;
+      white-space: nowrap;
     }
   }
 
@@ -510,6 +534,68 @@ label,
 
   &.eventide-sheet--scrollbars .tab.description .editor {
     min-height: 48rem;
+  }
+
+  // ===================================
+  // BIOGRAPHY SECTION HEADER
+  // ===================================
+
+  .biography-section {
+    .biography-header {
+      font-family: var(--erps-info-font);
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--erps-sheet-light, var(--theme-light, var(--erps-sheet-light)));
+      margin: 0 0 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-shadow: 0 1px 2px rgb(0 0 0 / 60%);
+
+      i {
+        color: var(--erps-sheet-accent, var(--theme-accent, var(--erps-sheet-accent)));
+        font-size: 1rem;
+      }
+    }
+  }
+
+  // ===================================
+  // GM NOTES SECTION
+  // ===================================
+
+  .gm-notes-section {
+    margin-top: 1.5rem;
+    border-top: 2px solid var(--erps-sheet-glow, var(--theme-glow, var(--erps-sheet-glow)));
+    padding-top: 1rem;
+
+    .gm-notes-header {
+      font-family: var(--erps-info-font);
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--erps-sheet-light, var(--theme-light, var(--erps-sheet-light)));
+      margin: 0 0 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-shadow: 0 1px 2px rgb(0 0 0 / 60%);
+
+      i {
+        color: var(--erps-sheet-accent, var(--theme-accent, var(--erps-sheet-accent)));
+        font-size: 1rem;
+      }
+    }
+
+    .gm-notes-content {
+      min-height: 10rem;
+      padding: 0.5rem;
+      border: 1px solid var(--erps-sheet-glow, var(--theme-glow, var(--erps-sheet-glow)));
+      border-radius: 4px;
+    }
+  }
+
+  &.eventide-sheet--scrollbars .tab.biography .gm-notes-section .editor,
+  &.eventide-sheet--scrollbars .tab.biography .gm-notes-section prose-mirror {
+    min-height: 20rem;
   }
 }
 

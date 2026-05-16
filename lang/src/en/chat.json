@@ -33,6 +33,13 @@
         "TargetsExhaustedFailureMessage": "None of the original targets still exist.",
         "TargetsExhaustedTargetsRemoved": "Targets Removed: {names}",
         "TargetsExhaustedNote": "Remaining repetitions were not executed."
+      },
+      "Summary": {
+        "ResolveAndPower": "Resolve: {resolve}/{resolveMax} | Power: {power}/{powerMax}",
+        "Level": "Level: {level}",
+        "Abilities": "Abilities",
+        "Title": "Character Summary",
+        "ClickHint": "Click to post summary to GMs"
       }
     }
   }

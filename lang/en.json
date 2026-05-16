@@ -96,11 +96,135 @@
       "Spell": "Spell",
       "Other": "Other"
     },
+    "ActionCardPresets": {
+      "Title": "Create Action Card from Preset",
+      "ReconfigureTitle": "Apply Preset Template",
+      "SelectPreset": "Select a Preset",
+      "BlankCardOption": "Blank Card",
+      "BlankCardDescription": "Create a blank action card with default settings",
+      "CreateButton": "Create",
+      "ApplyButton": "Apply Template",
+      "CancelButton": "Cancel",
+      "PresetApplied": "Preset \"{presetName}\" applied to action card",
+      "CardCreated": "Action card \"{cardName}\" created from \"{presetName}\" preset",
+      "PreserveEmbeddedInfo": "This will reconfigure the card's behavior. Embedded items and effects will be preserved.",
+      "Configure": "Configure",
+      "BasicAttack": {
+        "Label": "Basic Attack",
+        "Description": "A simple attack roll with damage on success. No status effects."
+      },
+      "DamageAndStatus": {
+        "Label": "Damage + Status",
+        "Description": "A physical attack that deals damage and applies a status effect on success."
+      },
+      "SpellWithStatus": {
+        "Label": "Spell with Status",
+        "Description": "A magical attack with spellcasting stats that deals damage and applies a status effect."
+      },
+      "HealingSpell": {
+        "Label": "Healing Spell",
+        "Description": "A self-targeting heal that restores health without an attack roll."
+      },
+      "MultiHitAttack": {
+        "Label": "Multi-Hit Attack",
+        "Description": "An attack that rolls multiple times, potentially hitting several targets."
+      },
+      "MultiHitStatus": {
+        "Label": "Multi-Hit + Status",
+        "Description": "A multi-hit attack that applies damage and status effects with each successful hit."
+      },
+      "DefensiveBuff": {
+        "Label": "Defensive Buff",
+        "Description": "Self-targeting buff with no damage. Applies effects to the user on a successful roll."
+      },
+      "TransformationTrigger": {
+        "Label": "Transformation Trigger",
+        "Description": "Triggers a transformation on a successful roll. No damage or status effects."
+      },
+      "CritFishing": {
+        "Label": "Crit Fishing",
+        "Description": "An attack that only deals damage on a critical hit, but with increased damage."
+      },
+      "DirectDamage": {
+        "Label": "Direct Damage",
+        "Description": "Flat damage or healing with no attack roll. Useful for effects like magic missile or environmental damage."
+      },
+      "Presets": {
+        "Label": "Preset",
+        "Description": "Choose a starting template for your action card"
+      },
+      "Fields": {
+        "Name": "Name",
+        "FirstStat": "First Stat",
+        "SecondStat": "Second Stat",
+        "DamageFormula": "Damage Formula",
+        "SavedDamageFormula": "Damage/Heal Formula",
+        "SavedDamageType": "Damage/Heal Type",
+        "DamageType": "Damage Type",
+        "AdvanceInitiative": "Advance Initiative",
+        "AdvanceInitiativeHint": "Automatically advance initiative after executing this card",
+        "SelfTarget": "Self-Target",
+        "SelfTargetHint": "Automatically target your own actor instead of requiring target selection",
+        "Repetitions": "Repetitions",
+        "RepetitionsHint": "Number of times to repeat this action (can be a formula like 1d4)",
+        "SelfEffectsCondition": "Self-Effects Condition",
+        "TransformationCondition": "Transformation Condition",
+        "StatusApplicationLimit": "Status Application Limit",
+        "StatusApplicationLimitHint": "Maximum times status effects can apply per execution (0 = unlimited)"
+      },
+      "ConditionLabels": {
+        "never": "Never",
+        "oneSuccess": "On One Success",
+        "twoSuccesses": "On Two Successes",
+        "rollValue": "Roll Value",
+        "rollUnderValue": "Roll Under Value",
+        "rollEven": "Roll Even",
+        "rollOdd": "Roll Odd",
+        "rollOnValue": "Roll Exact Value",
+        "zeroSuccesses": "Zero Successes",
+        "always": "Always",
+        "criticalSuccess": "Critical Hit",
+        "criticalFailure": "Critical Miss"
+      },
+      "StatLabels": {
+        "acro": "Acrobatics",
+        "phys": "Physical",
+        "fort": "Fortitude",
+        "will": "Will",
+        "wits": "Wits"
+      },
+      "DamageTypeLabels": {
+        "damage": "Damage",
+        "heal": "Healing"
+      },
+      "Mode": {
+        "AttackChain": "Attack Chain",
+        "SavedDamage": "Direct Damage"
+      },
+      "NoPresetSelected": "Please select a preset template",
+      "ConfigureLabel": "Configure",
+      "QuickCreate": {
+        "SectionTitle": "Embedded Combat Power",
+        "SectionHint": "Optionally create a combat power to embed in this action card.",
+        "PowerName": "Power Name",
+        "PowerNameHint": "Name for the embedded combat power",
+        "RollType": "Roll Type",
+        "Ability": "Ability",
+        "Cost": "Power Cost"
+      }
+    },
     "Item": {
       "ActionCard": {
         "PopupTitle": "Execute Action Card",
         "EmbeddedItem": "Embedded Item",
         "DropItemHere": "Drop an item here to embed it",
+        "ModeHint": "Attack Chain rolls dice against target AC. Saved Damage applies a flat formula without rolling.",
+        "FirstStatHint": "The first of two abilities rolled for this attack. The higher result determines success.",
+        "SecondStatHint": "The second ability rolled alongside the first. Both are checked against AC independently.",
+        "DamageConditionHint": "When the card applies damage. Most attacks use One Success. Set to Never for buff-only or transformation cards.",
+        "StatusConditionHint": "When the card applies status effects to targets. Set to Never if this card only deals damage.",
+        "SelfEffectsConditionHint": "When should self-effects be applied to the card owner?",
+        "TransformationConditionHint": "When this card triggers a transformation on the target. Set to Never unless using transformations.",
         "SupportedTypes": "Supports: Combat Powers, Gear, Features",
         "ClearItem": "Clear embedded item",
         "Mode": "Mode",
@@ -210,6 +334,11 @@
           "SelfEffectsHeader": "Self-Effects Configuration",
           "IntensifyBehaviorHeader": "Intensify Behavior",
           "IntensifyBehaviorHint": "Configure how much each effect type intensifies when a status is reapplied to an existing target. Set to 0 to prevent intensification for that effect type. Only applies in Attack Chain mode.",
+          "IntensifyBehaviorToggle": "Modify Intensification Values",
+          "IntensifyBehaviorToggleHint": "Most cards use the default +1 intensification for all types. Expand to customize individual values.",
+          "IntensifySetAllTarget": "Set All Target",
+          "IntensifySetAllSelf": "Set All Self",
+          "IntensifySetAllApply": "Apply",
           "IntensifyTargetEffects": "Target Effects",
           "IntensifySelfEffects": "Self Effects",
           "IntensifyAdd": "Add",
@@ -223,7 +352,6 @@
           "IntensifyOverride": "Override"
         },
         "SelfEffectsCondition": "Self Effects Condition",
-        "SelfEffectsConditionHint": "When should self-effects be applied to the card owner?",
         "SelfEffectsThreshold": "Self Effects Threshold",
         "SelfEffectsThresholdHint": "The roll value required to trigger self-effects (for rollValue condition)",
         "SelfEffectsApplicationLimit": "Self Effects Application Limit",
@@ -355,6 +483,15 @@
         },
         "Equipped": {
           "label": "Equipped"
+        },
+        "EquipAll": {
+          "label": "Equip All"
+        },
+        "UnequipAll": {
+          "label": "Unequip All"
+        },
+        "SkipBulkEquip": {
+          "label": "Exclude from Equip All"
         },
         "Cursed": {
           "label": "Cursed"
@@ -501,8 +638,15 @@
       "Controls": {
         "AutoTokenUpdate": {
           "label": "Auto Token Update",
-          "hint": "Automatically update the token's image when the actor's image is updated"
+          "hint": "Automatically update the prototype token when the actor's name or image changes"
+        },
+        "AutoTokenSync": {
+          "label": "Sync Placed Tokens",
+          "hint": "Also update existing tokens placed on scenes when the actor's name or image changes"
         }
+      },
+      "Actions": {
+        "Rest": "Rest"
       },
       "Tabs": {
         "CombatPowers": "Combat Powers",
@@ -512,6 +656,11 @@
         "Features": "Features",
         "Gear": "Gear",
         "Statuses": "Statuses"
+      },
+      "GmNotes": {
+        "Label": "GM Notes",
+        "Hint": "Private notes only visible to Game Masters",
+        "Placeholder": "Enter private GM notes here..."
       },
       "CombatPowers": {
         "TransformationCombatPowers": "Combat powers are provided by active transformation",
@@ -550,7 +699,9 @@
         "DeleteGroupSuccess": "Deleted group: {name}",
         "CardCopied": "Copied action card: {name}",
         "GroupCopied": "Copied group '{groupName}' with {cardCount} action cards",
-        "NoCardsInGroup": "No action cards found in this group"
+        "NoCardsInGroup": "No action cards found in this group",
+        "NewItem": "+Item",
+        "FromTemplate": "+Template"
       }
     },
     "Chat": {
@@ -586,6 +737,13 @@
         "TargetsExhaustedFailureMessage": "None of the original targets still exist.",
         "TargetsExhaustedTargetsRemoved": "Targets Removed: {names}",
         "TargetsExhaustedNote": "Remaining repetitions were not executed."
+      },
+      "Summary": {
+        "ResolveAndPower": "Resolve: {resolve}/{resolveMax} | Power: {power}/{powerMax}",
+        "Level": "Level: {level}",
+        "Abilities": "Abilities",
+        "Title": "Character Summary",
+        "ClickHint": "Click to post summary to GMs"
       }
     },
     "Errors": {
@@ -620,6 +778,7 @@
       "GearError": "Cannot use Gear right now!",
       "GearNotFoundInInventory": "Gear '{gearName}' not found in actor's inventory",
       "GMOnly": "Only GMs can use this script in this mode.",
+      "NotOwnerOrGM": "Only the actor's owner or a GM can use the rest function.",
       "ItemNotFound": "Item not found",
       "LocalStorage": "There was some sort of error storing values locally.",
       "MissingStatus": "Selected status not found!",
@@ -757,6 +916,9 @@
       "SheetContextPreparationError": "Failed to prepare sheet context",
       "ThemeOperation": "Theme operation failed",
       "ToggleAutoTokenUpdateError": "Failed to toggle auto token update",
+      "ToggleAutoTokenSyncError": "Failed to toggle sync placed tokens",
+      "RollHistoryNoTokenSelected": "Select a token on the canvas first to view its roll history.",
+      "RollHistorySelectSingleToken": "Select only one token to view its roll history.",
       "TransformationApplyError": "Failed to apply transformation",
       "TransformationRemoveError": "Failed to remove transformation",
       "FailedToSetActionItem": "Failed to set action item",
@@ -966,7 +1128,9 @@
           "WithTargets": "There are <strong>{count} target(s)</strong> selected. This will create a transformation for each target and your compendium."
         },
         "ActionCard": {
-          "NoEmbeddedItem": "This action card has no embedded item configured. Please add an item to the action slot before executing.",
+          "NoEmbeddedItem": "This action card needs a combat power to execute. Go to the <strong>Embedded Items</strong> tab to create or drop one.",
+          "AllConditionsNever": "This card has no conditions set to trigger any effects. Set at least one condition (Damage, Status, Self-Effects, or Transformation) for the card to do something when executed.",
+          "SavedDamageNoEffects": "Saved Damage cards apply a flat formula without rolling. Add embedded status effects or self-effects to make this card more versatile.",
           "TargetingError": "You do not have the correct targets selected for this action card.",
           "TooManyStatuses": "This action card requires selecting 0 or 1 status effects. Currently {count} status effects are selected. Please deselect all but one status effect to proceed."
         },
@@ -1123,7 +1287,14 @@
         "OutOfStock": "Source was out of stock",
         "StatusIntensified": "Status intensified:",
         "StatusApplied": "Status applied:",
-        "Overhealing": "Overhealing"
+        "Overhealing": "Overhealing",
+        "Abilities": "Abilities",
+        "StatusEffects": "Status Effects",
+        "Transformation": "Transformation"
+      },
+      "Gear": {
+        "NoItemsToEquip": "No items available to equip.",
+        "NoItemsToUnequip": "No items available to unequip."
       },
       "PartialTransfer": "Partial transfer completed"
     },
@@ -1135,10 +1306,13 @@
       "GearTransfer": "Gear Transfer: {name}",
       "Restore": "Restoration: {name}",
       "GearEquip": "Equipment Change: {name}",
+      "GearBulkEquip": "Equipped Items: {name}",
+      "GearBulkUnequip": "Unequipped Items: {name}",
       "Transformation": "Transformation: {name}",
       "GearEffect": "Gear Effect: {name}",
       "GearEffectTransfer": "Gear Effect Transfer: {name}",
-      "ActionCard": "Action Card: {name}"
+      "ActionCard": "Action Card: {name}",
+      "Summary": "Character Summary: {name}"
     },
     "PartialTransfer": "Only {quantity} items were available to transfer.",
     "Effect": {
@@ -1258,6 +1432,82 @@
       "V14Failed": "V14 migration failed. Check console for details.",
       "V14FixedShowIcon": "Fixed {count} effects with showIcon=1"
     },
+    "NpcGenerator": {
+      "Title": "NPC Quick Generator",
+      "LevelLabel": "Level / CR",
+      "LevelHint": "The level (and CR) for the generated NPC. Stats scale based on this value.",
+      "TemplateLabel": "Template",
+      "TemplateHint": "Select a built-in archetype, a compendium template, or enter custom values.",
+      "ModeLabel": "Distribution Mode",
+      "TemplateMode": "Template",
+      "CustomMode": "Custom",
+      "ArchetypeBalanced": "Balanced",
+      "ArchetypeWarrior": "Warrior",
+      "ArchetypeSpellcaster": "Spellcaster",
+      "ArchetypeSkirmisher": "Skirmisher",
+      "ArchetypeBrute": "Brute",
+      "ArchetypeDefender": "Defender",
+      "BudgetLabel": "Stat Budget",
+      "BudgetRemaining": "Remaining",
+      "DerivedStats": "Derived Stats",
+      "MaxResolve": "Max Resolve",
+      "MaxPower": "Max Power",
+      "ArmorClass": "AC",
+      "OverrideResolve": "Override Resolve",
+      "OverridePower": "Override Power",
+      "OverrideSection": "Stat Overrides",
+      "OverrideHint": "Optionally override the formula-derived values with fixed resolve or power maximums.",
+      "NpcName": "NPC Name",
+      "NpcNameHint": "Leave blank to use the template name or a default name.",
+      "Generate": "Generate NPC",
+      "ApplyToExisting": "Apply to Existing NPC",
+      "AutoDistribute": "Auto-distribute",
+      "NoTemplatesAvailable": "No compendium templates available — using built-in archetypes.",
+      "BuiltInArchetypes": "Built-in Archetypes",
+      "CompendiumTemplates": "Compendium Templates",
+      "UserTemplates": "User Templates",
+      "OverrideFeatureName": "NPC Overrides",
+      "OverrideFeatureDescription": "Level {level} NPC overrides — {overrides}",
+      "Preview": "Stat Preview",
+      "StrainDistribution": "Strain Distribution",
+      "MustBeNpc": "The selected actor must be an NPC.",
+      "SelectTemplate": "— Select a template —",
+      "CustomLabel": "Custom Distribution",
+      "CustomHint": "Manually assign ability scores. The total must equal the stat budget.",
+      "CreatedSuccess": "NPC \"{name}\" created successfully.",
+      "AppliedSuccess": "NPC \"{name}\" updated successfully.",
+      "GenerationFailed": "Failed to generate NPC. Check the console for details.",
+      "CalloutCreate": "Configure the NPC's stats below and click Generate to create a new NPC actor.",
+      "CalloutApply": "Applying stats to \"{name}\". This will update the NPC's abilities, level, and derived stats.",
+      "Abilities": {
+        "Acro": "Acrobatics",
+        "Phys": "Physical",
+        "Fort": "Fortitude",
+        "Will": "Will",
+        "Wits": "Wits"
+      }
+    },
+    "RollHistory": {
+      "WindowTitle": "{name} — Roll History",
+      "Empty": "No rolls recorded yet. Rolls made through the system's native roll buttons (ability checks, gear, damage, heal, initiative) are automatically tracked.",
+      "TableHeader": "Recent Rolls",
+      "ColType": "Type",
+      "ColFormula": "Formula",
+      "ColTotal": "Total",
+      "ColTime": "When",
+      "TypeGear": "Gear",
+      "TypeDamage": "Damage",
+      "TypeHeal": "Heal",
+      "TypeInitiative": "Initiative",
+      "TypeUnaugmented": "Generic",
+      "TypeUnknown": "Other",
+      "TimeAgo": {
+        "Seconds": "{seconds}s ago",
+        "Minutes": "{minutes}m ago",
+        "Hours": "{hours}h ago",
+        "Days": "{days}d ago"
+      }
+    },
     "WindowTitles": {
       "ActorToTransformation": "Convert Actor to Transformation",
       "ChangeTargetStatus": "Change Target Status",
@@ -1266,9 +1516,12 @@
       "DamageTargets": "Damage Targets",
       "EffectCreator": "Effect Creator",
       "FeaturePopup": "Feature Information",
+      "GenerateNpc": "NPC Quick Generator",
       "GearCreator": "Gear Creator",
       "GearPopup": "Use Gear",
       "GearTransfer": "Transfer Gear",
+      "RollHistory": "Roll History",
+      "RestRecover": "Rest / Recover",
       "RestoreTarget": "Restore Target",
       "SelectAbilityRoll": "Select Ability Roll",
       "SheetTheme": "Cycle Sheet Theme",
@@ -1318,7 +1571,11 @@
       "CreateNewCombatPower": "Create New Combat Power",
       "CreateNewStatus": "Create New Status",
       "CreateNewGear": "Create New Gear",
-      "CreateNewActionCard": "Create New Action Card"
+      "CreateNewActionCard": "Create New Action Card",
+      "CreateFromTemplateActionCard": "New from Template",
+      "ApplyPresetTemplate": "Apply Preset Template",
+      "ExcludeFromEquipAll": "Exclude from Equip All",
+      "IncludeInEquipAll": "Include in Equip All"
     }
   },
   "TYPES": {
@@ -1427,6 +1684,8 @@
     "ErrorSavingSoundSettings": "Error saving sound settings",
     "SoundResetToDefault": "Sound for {0} reset to default.",
     "NoPlayerPermission": "Players do not have permission to change sound settings.",
+    "EnablePostSummaryName": "Enable Post Summary",
+    "EnablePostSummaryHint": "Allows players to use the Post Summary feature on their character sheets. When enabled, a Character Summary card appears in the status bar for non-GM users.",
     "TestingModeName": "Testing Mode",
     "TestingModeHint": "Enable or disable testing mode console logging for debugging.",
     "MinimumDiceValueName": "Minimum Dice Value",
@@ -1447,6 +1706,8 @@
     "MinimumResolveValueHint": "The minimum value that an actor's max resolve can be. Applies after percentage multipliers.",
     "MinimumResolveValueWarning": "Minimum Resolve Value must be a positive integer (1 or greater). Resetting to default ({0}).",
     "ActionCardExecutionLimitName": "Action Card Execution Limit",
-    "ActionCardExecutionLimitHint": "Maximum number of action cards that can be executed per turn"
+    "ActionCardExecutionLimitHint": "Maximum number of action cards that can be executed per turn",
+    "NpcTemplateCompendiumName": "NPC Template Compendium",
+    "NpcTemplateCompendiumHint": "The compendium pack to use as a source for NPC templates in the NPC Quick Generator. Leave empty to use only built-in archetypes. Enter the pack ID (e.g., 'world.my-npc-templates'). User compendium templates take priority over system templates and built-in archetypes."
   }
 }

@@ -1,6 +1,8 @@
 import { Logger } from "../../services/logger.mjs";
 import { ErrorHandler } from "../../utils/error-handler.mjs";
 import { erpsRollHandler } from "../../services/_module.mjs";
+import { RestoreTarget } from "../macros/restore-target.mjs";
+import { createCharacterSummaryMessage } from "../../services/_module.mjs";
 
 const FilePicker = foundry.applications.apps.FilePicker.implementation;
 
@@ -141,43 +143,7 @@ export const ActorSheetAdditionalActionsMixin = (BaseClass) =>
           type: "image",
           redirectToRoot: img ? [img] : [],
           callback: async (path) => {
-            const updateData = { [attr]: path };
-
-            // If auto token update is enabled, also update the token image
-            const autoTokenUpdate = this.actor.getFlag(
-              "eventide-rp-system",
-              "autoTokenUpdate",
-            );
-            if (autoTokenUpdate && attr === "img") {
-              updateData["prototypeToken.texture.src"] = path;
-
-              // Also update any existing tokens on the scene
-              const tokens = this.actor.getActiveTokens();
-              if (tokens.length > 0) {
-                // Update tokens on their respective scenes
-                const sceneUpdates = new Map();
-                for (const token of tokens) {
-                  const sceneId = token.scene.id;
-                  if (!sceneUpdates.has(sceneId)) {
-                    sceneUpdates.set(sceneId, []);
-                  }
-                  sceneUpdates.get(sceneId).push({
-                    _id: token.id,
-                    "texture.src": path,
-                  });
-                }
-
-                // Execute updates for each scene
-                for (const [sceneId, updates] of sceneUpdates) {
-                  const scene = game.scenes.get(sceneId);
-                  if (scene) {
-                    await scene.updateEmbeddedDocuments("Token", updates);
-                  }
-                }
-              }
-            }
-
-            await this.document.update(updateData);
+            await this.document.update({ [attr]: path });
           },
           top: this.position.top + 40,
           left: this.position.left + 10,
@@ -656,8 +622,39 @@ export const ActorSheetAdditionalActionsMixin = (BaseClass) =>
             "ADDITIONAL_ACTIONS",
           );
         }
-      } catch (error) {
-        Logger.error("Failed to cleanup empty groups", error, "ADDITIONAL_ACTIONS");
-      }
+} catch (error) {
+      Logger.error("Failed to cleanup empty groups", error, "ADDITIONAL_ACTIONS");
     }
-  };
+  }
+
+  /**
+   * Handle the Rest/Recover button click on the actor sheet.
+   * Opens the RestoreTarget dialog pre-bound to this sheet's actor.
+   * @param {PointerEvent} _event - The originating click event
+   * @param {HTMLElement} _target - The capturing HTML element which defined a [data-action]
+   * @protected
+   */
+  static async _onRestRecover(_event, _target) {
+    const dialog = RestoreTarget.forActor(this.actor);
+    dialog.render(true);
+  }
+
+  /**
+   * Handle the Post Summary button click on the actor sheet.
+   * Creates a chat message with a character overview.
+   * @param {PointerEvent} _event - The originating click event
+   * @param {HTMLElement} _target - The capturing HTML element which defined a [data-action]
+   * @protected
+   */
+  static async _onPostSummary(_event, _target) {
+    try {
+      await createCharacterSummaryMessage(this.actor);
+    } catch (error) {
+      ErrorHandler.handleError(
+        error,
+        "Failed to post character summary",
+        "ACTOR_SHEET",
+      );
+    }
+  }
+};

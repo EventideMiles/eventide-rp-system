@@ -1,5 +1,22 @@
 {{! Status indicators bar - moved to bottom of entire header }}
   <div class="eventide-header__status-bar">
+    {{! Character Summary Card — first item for GM convenience }}
+    {{#if (or @root.isGM enablePostSummary)}}
+      <article class="eventide-effects-card eventide-effects-card--summary" data-action="postSummary" style="cursor: pointer;">
+        <header class="eventide-effects-card__header">
+          <div class="eventide-effects-card__icon">
+            <i class="fas fa-list"></i>
+          </div>
+          <div class="eventide-effects-card__info">
+            <span class="eventide-effects-card__label">{{localize "EVENTIDE_RP_SYSTEM.Chat.Summary.Title"}}</span>
+            <span class="eventide-effects-card__details">{{localize "EVENTIDE_RP_SYSTEM.Chat.Summary.ClickHint"}}</span>
+          </div>
+          <div class="eventide-effects-card__indicator">
+            <i class="fas fa-chevron-circle-right"></i>
+          </div>
+        </header>
+      </article>
+    {{/if}}
     {{! Transformation Effect Card - moved here as requested }}
     {{#if actor.flags.eventide-rp-system.activeTransformation}}
       <article class="eventide-transformation-card {{#if actor.flags.eventide-rp-system.activeTransformationCursed}}eventide-transformation-card--cursed{{/if}}"
