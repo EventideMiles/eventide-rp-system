@@ -2,6 +2,25 @@
 
 ## Latest Release
 
+**[v14.7.0](release-notes/v14.7.0.md)** — Action Card Preset Library, NPC Quick Generator & More _(May 2026)_
+
+**Key Highlights:**
+
+- **Action Card Preset Library** — 10 pre-built templates (Basic Attack, Spell with Status, Healing Spell, etc.) that pre-fill all 45+ fields so cards work immediately, plus inline embedded combat power creation during preset selection
+- **Smart Defaults & Hints** — drag-dropped items now start with `oneSuccess` conditions (cards do something out of the box), contextual hint text on 7 key fields, and callout warnings for common configuration mistakes
+- **Collapsible Intensify Section** — the 18-field intensify grid is hidden behind a toggle with "Set All Target/Self" quick controls; auto-expands for non-default values
+- **NPC Quick Generator** — CR-based NPC creation with 6 archetypes, compendium template support, and stat overrides, accessible from the sidebar or NPC sheet
+- **Token Sync Refactor** — Auto Token Update split into two independent toggles (prototype token vs. placed scene tokens), now syncing both name and image
+- **Rest/Recovery Button** — campground icon on actor sheets opens the restore dialog pre-bound to that actor; permission relaxed to GM-or-owner
+- **GM Notes Field** — private GM-only notes on all actor sheets with ProseMirror rich text editor
+- **Character Summary Command** — click a status bar card to post a full character overview as a GM-only whisper
+- **Gear Equip All / Unequip All** — bulk toolbar buttons with smart skipping (cursed items, quantity-0, `skipBulkEquip` flag) and a summary chat card
+- **Actor Roll History** — per-actor tracking of the last 50 system rolls with a dice-icon header button and standalone macro support
+- **Shared Condition Evaluator** — extracted duplicated 12-condition switches into a single utility (1-place change for new condition types)
+- **Code Quality** — formula validation dedup (−113 lines) and JSDoc on `globalThis.erps` public API
+
+## Recent Major Releases
+
 **[v14.6.0](release-notes/v14.6.0.md)** - Selective Global Item Selector _(May 2026)_
 
 **Key Highlights:**
@@ -29,8 +48,6 @@
 - **V14 MessageMode API Migration** — migrated deprecated roll mode APIs to Foundry VTT v14's new API
 - **Keyboard-Navigable Popups** — full keyboard navigation support with focus-visible styles
 - **Accessibility Attributes** — ARIA labels and semantic structure for transformation rows
-
-## Recent Major Releases
 
 **[v14.3.0](release-notes/v14.3.0.md)** - Action Card Self-Effects _(April 2026)_
 
@@ -273,7 +290,8 @@ Enhanced character customization through circumstantial bonuses and feature-base
 
 | Version | Release Date | Focus |
 | -- | -- | -- |
-| **v14.6.0** | May 2026 | Selective Global Item Selector |
+| **v14.7.0** | May 2026 | Action Card Preset Library, NPC Quick Generator & More |
+| v14.6.0 | May 2026 | Selective Global Item Selector |
 | v14.5.0 | May 2026 | Configurable Restore Targets & Per-Target Self-Effect Scaling |
 | v14.4.0 | May 2026 | Configurable Intensification & Accessibility Improvements |
 | v14.3.0 | April 2026 | Action Card Self-Effects |
@@ -304,8 +322,8 @@ Enhanced character customization through circumstantial bonuses and feature-base
 
 ### By Feature Area
 
-- **Action Cards**: [v14.6.0](release-notes/v14.6.0.md), [v14.5.0](release-notes/v14.5.0.md), [v14.3.0](release-notes/v14.3.0.md), [v14.0.0](release-notes/v14.0.0.md), [v13.11.0](release-notes/v13.11.0.md), [v13.13.3](release-notes/v13.13.3.md), [v13.14.0](release-notes/v13.14.0.md), [v13.15.0](release-notes/v13.15.0.md), [v13.16.0](release-notes/v13.16.0.md), [v13.18.0](release-notes/v13.18.0.md), [v13.18.1](release-notes/v13.18.1.md), [v13.19.0](release-notes/v13.19.0.md), [v13.19.1](release-notes/v13.19.1.md), [v13.20.0](release-notes/v13.20.0.md), [v13.21.0](release-notes/v13.21.0.md), [v13.21.5](release-notes/v13.21.5.md), [v13.21.8](release-notes/v13.21.8.md), [v13.22.0](release-notes/v13.22.0.md)
-- **GM Tools**: [v13.18.0](release-notes/v13.18.0.md), [v13.18.1](release-notes/v13.18.1.md), [v13.20.0](release-notes/v13.20.0.md)
+- **Action Cards**: [v14.7.0](release-notes/v14.7.0.md), [v14.6.0](release-notes/v14.6.0.md), [v14.5.0](release-notes/v14.5.0.md), [v14.3.0](release-notes/v14.3.0.md), [v14.0.0](release-notes/v14.0.0.md), [v13.11.0](release-notes/v13.11.0.md), [v13.13.3](release-notes/v13.13.3.md), [v13.14.0](release-notes/v13.14.0.md), [v13.15.0](release-notes/v13.15.0.md), [v13.16.0](release-notes/v13.16.0.md), [v13.18.0](release-notes/v13.18.0.md), [v13.18.1](release-notes/v13.18.1.md), [v13.19.0](release-notes/v13.19.0.md), [v13.19.1](release-notes/v13.19.1.md), [v13.20.0](release-notes/v13.20.0.md), [v13.21.0](release-notes/v13.21.0.md), [v13.21.5](release-notes/v13.21.5.md), [v13.21.8](release-notes/v13.21.8.md), [v13.22.0](release-notes/v13.22.0.md)
+- **GM Tools**: [v14.7.0](release-notes/v14.7.0.md), [v13.18.0](release-notes/v13.18.0.md), [v13.18.1](release-notes/v13.18.1.md), [v13.20.0](release-notes/v13.20.0.md)
 - **Transformations**: [v13.14.0](release-notes/v13.14.0.md), [v13.15.0](release-notes/v13.15.0.md), [v13.15.5](release-notes/v13.15.5.md), [v13.17.0](release-notes/v13.17.0.md)
 - **Features & Bonuses**: [v13.10.0](release-notes/v13.10.0.md), [v13.19.0](release-notes/v13.19.0.md), [v13.22.0](release-notes/v13.22.0.md)
 - **Status Effects & ActiveEffects**: [v14.6.0](release-notes/v14.6.0.md), [v14.5.0](release-notes/v14.5.0.md), [v14.4.0](release-notes/v14.4.0.md), [v14.3.0](release-notes/v14.3.0.md), [v14.1.0](release-notes/v14.1.0.md), [v14.0.0](release-notes/v14.0.0.md), [v13.19.0](release-notes/v13.19.0.md)
@@ -349,4 +367,4 @@ We encourage users to:
 
 ---
 
-**Current Version**: v14.6.0 | **Foundry VTT Compatibility**: v14+ | **Last Updated**: May 2026
+**Current Version**: v14.7.0 | **Foundry VTT Compatibility**: v14+ | **Last Updated**: May 2026
