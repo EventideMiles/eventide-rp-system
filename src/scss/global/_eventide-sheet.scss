@@ -171,6 +171,13 @@ label,
       pointer-events: none;
     }
 
+    // Toggle group layout
+    .eventide-sheet__toggle-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
     // Light theme specific overrides
     &[data-header-theme="light"] {
       // Toggle label text for light theme

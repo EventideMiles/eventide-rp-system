@@ -196,7 +196,9 @@
       "CreateNewGear": "Create New Gear",
       "CreateNewActionCard": "Create New Action Card",
       "CreateFromTemplateActionCard": "New from Template",
-      "ApplyPresetTemplate": "Apply Preset Template"
+      "ApplyPresetTemplate": "Apply Preset Template",
+      "ExcludeFromEquipAll": "Exclude from Equip All",
+      "IncludeInEquipAll": "Include in Equip All"
     }
   }
 }

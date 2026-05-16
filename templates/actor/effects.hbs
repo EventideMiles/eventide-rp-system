@@ -16,23 +16,25 @@
           <th class='erps-data-table__header-cell erps-data-table__header-cell--center'>{{localize 'EVENTIDE_RP_SYSTEM.Effect.Source'}}</th>
           <th class='erps-data-table__header-cell erps-data-table__header-cell--center'>{{localize 'EFFECT.TabDuration'}}</th>
           <th class='erps-data-table__header-cell erps-data-table__header-cell--controls'>
-            <a
-              class='erps-data-table__create-button'
-              data-action='createDoc'
-              data-document-class='ActiveEffect'
-              data-origin="{{@root.actor.uuid}}"
-              data-img="icons/svg/aura.svg"
-              {{#if (eq section.type "inactive")}}
-                data-disabled="true"
-              {{else if (eq section.type "temporary")}}
-                data-duration.rounds="1"
-              {{/if}}
-              title='{{localize "DOCUMENT.Create" type='Effect'}}'
-              onclick='event.stopPropagation();'
-            >
-              <i class='fas fa-plus'></i>
-              {{localize 'DOCUMENT.New' type='Effect'}}
-            </a>
+            <div class='erps-data-table__controls'>
+              <a
+                class='erps-data-table__create-button'
+                data-action='createDoc'
+                data-document-class='ActiveEffect'
+                data-origin="{{@root.actor.uuid}}"
+                data-img="icons/svg/aura.svg"
+                {{#if (eq section.type "inactive")}}
+                  data-disabled="true"
+                {{else if (eq section.type "temporary")}}
+                  data-duration.rounds="1"
+                {{/if}}
+                title='{{localize "DOCUMENT.Create" type='Effect'}}'
+                onclick='event.stopPropagation();'
+              >
+                <i class='fas fa-plus'></i>
+                {{localize 'DOCUMENT.New' type='Effect'}}
+              </a>
+            </div>
           </th>
         </tr>
       </thead>

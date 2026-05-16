@@ -27,18 +27,20 @@
         <tr class='erps-data-table__header-row'>
           <th class='erps-data-table__header-cell erps-data-table__header-cell--name'>{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Name"}}</th>
           <th class='erps-data-table__header-cell erps-data-table__header-cell--controls'>
-            {{#if @root.editable}}
-              <a
-                class='erps-data-table__create-button'
-                title='Create item'
-                data-action='createDoc'
-                data-document-class='Item'
-                data-type='feature'
-              >
-                <i class='fas fa-plus'></i>
-                {{localize 'DOCUMENT.New' type='feature'}}
-              </a>
-            {{/if}}
+            <div class='erps-data-table__controls'>
+              {{#if @root.editable}}
+                <a
+                  class='erps-data-table__create-button'
+                  title='Create item'
+                  data-action='createDoc'
+                  data-document-class='Item'
+                  data-type='feature'
+                >
+                  <i class='fas fa-plus'></i>
+                  {{localize 'DOCUMENT.New' type='feature'}}
+                </a>
+              {{/if}}
+            </div>
           </th>
         </tr>
       </thead>
@@ -104,18 +106,20 @@
         <tr class='erps-data-table__header-row'>
           <th class='erps-data-table__header-cell erps-data-table__header-cell--name'>{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Name"}}</th>
           <th class='erps-data-table__header-cell erps-data-table__header-cell--controls'>
-            {{#if @root.editable}}
-              <a
-                class='erps-data-table__create-button'
-                title='Create item'
-                data-action='createDoc'
-                data-document-class='Item'
-                data-type='feature'
-              >
-                <i class='fas fa-plus'></i>
-                {{localize 'DOCUMENT.New' type='feature'}}
-              </a>
-            {{/if}}
+            <div class='erps-data-table__controls'>
+              {{#if @root.editable}}
+                <a
+                  class='erps-data-table__create-button'
+                  title='Create item'
+                  data-action='createDoc'
+                  data-document-class='Item'
+                  data-type='feature'
+                >
+                  <i class='fas fa-plus'></i>
+                  {{localize 'DOCUMENT.New' type='feature'}}
+                </a>
+              {{/if}}
+            </div>
           </th>
         </tr>
       </thead>
@@ -183,18 +187,20 @@
         <tr class='erps-data-table__header-row'>
           <th class='erps-data-table__header-cell erps-data-table__header-cell--name'>{{localize "EVENTIDE_RP_SYSTEM.Forms.Sections.Name"}}</th>
           <th class='erps-data-table__header-cell erps-data-table__header-cell--controls'>
-            {{#if @root.editable}}
-              <a
-                class='erps-data-table__create-button'
-                title='Create item'
-                data-action='createDoc'
-                data-document-class='Item'
-                data-type='feature'
-              >
-                <i class='fas fa-plus'></i>
-                {{localize 'DOCUMENT.New' type='feature'}}
-              </a>
-            {{/if}}
+            <div class='erps-data-table__controls'>
+              {{#if @root.editable}}
+                <a
+                  class='erps-data-table__create-button'
+                  title='Create item'
+                  data-action='createDoc'
+                  data-document-class='Item'
+                  data-type='feature'
+                >
+                  <i class='fas fa-plus'></i>
+                  {{localize 'DOCUMENT.New' type='feature'}}
+                </a>
+              {{/if}}
+            </div>
           </th>
         </tr>
       </thead>

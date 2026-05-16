@@ -50,6 +50,11 @@ export default class EventideRpSystemGear extends EventideRpSystemItemBase {
       initial: 0,
     });
 
+    schema.skipBulkEquip = new fields.BooleanField({
+      required: true,
+      initial: false,
+    });
+
     schema.targeted = new fields.BooleanField({
       required: true,
       initial: true,

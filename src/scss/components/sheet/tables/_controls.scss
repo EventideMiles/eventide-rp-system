@@ -46,6 +46,17 @@
       @include equip-button;
     }
 
+    // Bulk equip toggle (muted indicator for skipBulkEquip)
+    &--bulk-toggle {
+      opacity: 0.55;
+
+      &:hover {
+        opacity: 1;
+        background: themes.color(gray, 40);
+        border-color: themes.color(gray, 60);
+      }
+    }
+
     // Toggle button variants
     &--toggle {
       @include toggle-button;
