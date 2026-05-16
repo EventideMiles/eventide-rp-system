@@ -41,11 +41,11 @@
         "Abilities": "Abilities",
         "StatusEffects": "Status Effects",
         "Transformation": "Transformation"
-       }
-    },
-    "Gear": {
-      "NoItemsToEquip": "No items available to equip.",
-      "NoItemsToUnequip": "No items available to unequip."
+        },
+        "Gear": {
+          "NoItemsToEquip": "No items available to equip.",
+          "NoItemsToUnequip": "No items available to unequip."
+        }
     },
     "MessageHeaders": {
       "Status": "Status Effect: {name}",
