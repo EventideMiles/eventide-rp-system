@@ -2,6 +2,9 @@
 <div class="erps-form__header erps-form__header--large" style="{{style}}">
     <div>{{item.name}}</div>
     <div class="erps-form__section">
+        {{#if showOriginalImageLabel}}
+        <label class="erps-input-label">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.MultiImageSelector.OriginalImage"}}</label>
+        {{/if}}
         <img 
             src="{{item.img}}" 
             class="erps-form__image" 

@@ -391,23 +391,6 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
       }
     }
 
-    // Callout 3: Saved damage with no embedded status effects or self-effects
-    if (system.mode === "savedDamage") {
-      const hasEffects =
-        (system.embeddedStatusEffects && system.embeddedStatusEffects.length > 0) ||
-        (system.embeddedSelfEffects && system.embeddedSelfEffects.length > 0);
-
-      if (!hasEffects) {
-        callouts.push({
-          type: "information",
-          faIcon: "fas fa-lightbulb",
-          text: game.i18n.localize(
-            "EVENTIDE_RP_SYSTEM.Forms.Callouts.ActionCard.SavedDamageNoEffects",
-          ),
-        });
-      }
-    }
-
     return callouts;
   }
 
