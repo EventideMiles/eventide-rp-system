@@ -163,7 +163,25 @@
         "CriticalFailure": "Critical Miss",
         "CriticalFailureHint": "Activate on a critical miss (based on die result, not total)",
         "Always": "Always",
-        "AlwaysHint": "Always activate this effect"
+        "AlwaysHint": "Always activate this effect",
+        "MultiImageSelector": {
+          "Title": "Image & Color Selector",
+          "ActionSection": "Action Card",
+          "CombatPowerSection": "Combat Power",
+          "StatusEffectsSection": "Status Effects",
+          "TransformationsSection": "Transformations",
+          "SelfEffectsSection": "Self-Effects",
+          "Image": "Image",
+          "OriginalImage": "Original Power Image",
+          "ClickToChange": "Click to change image",
+          "SyncImage": "Sync Image",
+          "SyncColors": "Sync Colors",
+          "AddCombatPower": "Add Combat Power",
+          "AddStatusEffect": "Add Status Effect",
+          "AddSelfEffect": "Add Self-Effect",
+          "Apply": "Apply",
+          "Cancel": "Cancel"
+        }
       }
     }
   }

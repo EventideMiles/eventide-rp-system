@@ -37,7 +37,6 @@ export const ItemSheetActionsMixin = (BaseClass) =>
       // CRITICAL FIX: Detect if this is being called on an embedded item sheet
       // and delegate to the correct embedded item method
       if (this.constructor.name === "EmbeddedItemSheet" || this.parentItem) {
-        // Call the embedded item sheet's image editing method directly
         if (typeof this._onEditImageEmbedded === "function") {
           return this._onEditImageEmbedded(_event, target);
         } else if (this.constructor._onEditImageEmbedded) {
@@ -48,6 +47,13 @@ export const ItemSheetActionsMixin = (BaseClass) =>
           );
         }
         return;
+      }
+
+      // For standalone action cards (not saved damage), open the multi-image selector
+      if (this.item?.type === "actionCard" && this.item.system?.mode !== "savedDamage") {
+        const { MultiImageSelector } = await import("../popups/multi-image-selector.mjs");
+        const popup = new MultiImageSelector({ item: this.item });
+        return popup.render(true);
       }
 
       try {

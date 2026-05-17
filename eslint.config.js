@@ -21,6 +21,7 @@ export default [
         clearTimeout: "readonly",
         clearInterval: "readonly",
         CustomEvent: "readonly",
+        FormData: "readonly",
         AbortController: "readonly",
 
         // Node.js globals
