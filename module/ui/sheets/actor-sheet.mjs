@@ -607,6 +607,24 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
         },
       },
       {
+        label: "EVENTIDE_RP_SYSTEM.ContextMenu.EditImages",
+        icon: '<i class="fas fa-images"></i>',
+        visible: (target) => {
+          if (!target.dataset.itemId) return false;
+          const item = this.actor.items.get(target.dataset.itemId);
+          return item?.type === "actionCard" && item.system?.mode !== "savedDamage";
+        },
+        onClick: async (_event, target) => {
+          const itemId = target.dataset.itemId;
+          const item = this.actor.items.get(itemId);
+          if (item?.type === "actionCard") {
+            const { MultiImageSelector } = await import("../popups/multi-image-selector.mjs");
+            const popup = new MultiImageSelector({ item });
+            popup.render(true);
+          }
+        },
+      },
+      {
         label: "EVENTIDE_RP_SYSTEM.ContextMenu.Duplicate",
         icon: '<i class="fas fa-copy"></i>',
         visible: (target) => !!target.dataset.itemId,

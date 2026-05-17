@@ -1,0 +1,339 @@
+{{!-- Multi-Image Selector Popup --}}
+<div class="{{cssClass}} erps-form" autocomplete="off">
+  <div class="erps-form__content">
+    {{> popup-header}}
+
+    {{!-- Action Section (always at top) --}}
+    <div class="erps-form__section">
+      <div class="erps-form__header">
+        {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.MultiImageSelector.ActionSection"}}
+      </div>
+
+      <div class="erps-form__group erps-form__group--grid erps-form__group--grid-3">
+        <div class="erps-form__group erps-form__group--compact">
+          <label class="erps-input-label">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.MultiImageSelector.Image"}}</label>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <img
+              class="erps-image-picker"
+              src="{{itemImg}}"
+              data-target="img"
+              data-action="onEditImage"
+              title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.MultiImageSelector.ClickToChange'}}"
+            />
+            <input class="erps-hidden-input" type="hidden" name="img" value="{{itemImg}}" />
+          </div>
+        </div>
+
+        <div class="erps-form__group erps-form__group--compact">
+          {{> erps-color-picker
+            name="system.bgColor"
+            value=bgColor
+            labelPosition="above"
+            label=(localize "EVENTIDE_RP_SYSTEM.Item.Colors.BgColor.label")
+            placeholder=(localize "EVENTIDE_RP_SYSTEM.Item.Colors.BgColor.placeholder")
+          }}
+        </div>
+
+        <div class="erps-form__group erps-form__group--compact">
+          {{> erps-color-picker
+            name="system.textColor"
+            value=textColor
+            labelPosition="above"
+            label=(localize "EVENTIDE_RP_SYSTEM.Item.Colors.TextColor.label")
+            placeholder=(localize "EVENTIDE_RP_SYSTEM.Item.Colors.TextColor.placeholder")
+          }}
+        </div>
+      </div>
+    </div>
+
+    {{!-- Combat Power Section (hidden in savedDamage mode) --}}
+    {{#unless isSavedDamage}}
+    <div class="erps-form__section">
+      <div class="erps-form__header">
+        {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.MultiImageSelector.CombatPowerSection"}}
+      </div>
+
+      {{#if embeddedItem}}
+        <div class="erps-form__group erps-form__group--grid erps-form__group--grid-3">
+          <div class="erps-form__group erps-form__group--compact">
+            <label class="erps-input-label">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.MultiImageSelector.Image"}}</label>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <img
+                class="erps-image-picker"
+                src="{{embeddedItem.img}}"
+                data-target="embeddedItem.img"
+                data-action="onEditImage"
+                title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.MultiImageSelector.ClickToChange'}}"
+              />
+              <input class="erps-hidden-input" type="hidden" name="embeddedItem.img" value="{{embeddedItem.img}}" />
+            </div>
+            <label class="erps-toggles erps-toggles--label-left" style="margin-top: 4px;">
+              <input type="checkbox" class="erps-toggles__input" name="syncImage-embeddedItem" />
+              <div class="erps-toggles__container">
+                <span class="erps-toggles__label">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.MultiImageSelector.SyncImage"}}</span>
+                <span class="erps-toggles__track">
+                  <span class="erps-toggles__thumb"></span>
+                </span>
+              </div>
+            </label>
+          </div>
+
+          <div class="erps-form__group erps-form__group--compact">
+            {{> erps-color-picker
+              name="embeddedItem.system.bgColor"
+              value=embeddedItem.bgColor
+              labelPosition="above"
+              label=(localize "EVENTIDE_RP_SYSTEM.Item.Colors.BgColor.label")
+              placeholder=(localize "EVENTIDE_RP_SYSTEM.Item.Colors.BgColor.placeholder")
+            }}
+          </div>
+
+          <div class="erps-form__group erps-form__group--compact">
+            {{> erps-color-picker
+              name="embeddedItem.system.textColor"
+              value=embeddedItem.textColor
+              labelPosition="above"
+              label=(localize "EVENTIDE_RP_SYSTEM.Item.Colors.TextColor.label")
+              placeholder=(localize "EVENTIDE_RP_SYSTEM.Item.Colors.TextColor.placeholder")
+            }}
+            <label class="erps-toggles erps-toggles--label-left" style="margin-top: 4px;">
+              <input type="checkbox" class="erps-toggles__input" name="syncColors-embeddedItem" />
+              <div class="erps-toggles__container">
+                <span class="erps-toggles__label">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.MultiImageSelector.SyncColors"}}</span>
+                <span class="erps-toggles__track">
+                  <span class="erps-toggles__thumb"></span>
+                </span>
+              </div>
+            </label>
+          </div>
+        </div>
+      {{else}}
+        <div class="erps-form__group erps-form__group--compact">
+          <button type="button" class="erps-button erps-button--secondary" data-action="addCombatPower">
+            <i class="fas fa-plus"></i> {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.MultiImageSelector.AddCombatPower"}}
+          </button>
+        </div>
+      {{/if}}
+    </div>
+    {{/unless}}
+
+    {{!-- Status Effects Section --}}
+    <div class="erps-form__section">
+      <div class="erps-form__header">
+        {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.MultiImageSelector.StatusEffectsSection"}}
+      </div>
+
+      {{#if statusEffects.length}}
+        {{#each statusEffects}}
+          <div class="erps-form__subsection">
+            <div class="erps-form__header erps-form__header--small">{{this.name}}</div>
+            <div class="erps-form__group erps-form__group--grid erps-form__group--grid-3">
+              <div class="erps-form__group erps-form__group--compact">
+                <label class="erps-input-label">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.MultiImageSelector.Image"}}</label>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <img
+                    class="erps-image-picker"
+                    src="{{this.img}}"
+                    data-target="{{this.imgField}}"
+                    data-action="onEditImage"
+                    title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.MultiImageSelector.ClickToChange'}}"
+                  />
+                  <input class="erps-hidden-input" type="hidden" name="{{this.imgField}}" value="{{this.img}}" />
+                </div>
+                <label class="erps-toggles erps-toggles--label-left" style="margin-top: 4px;">
+                  <input type="checkbox" class="erps-toggles__input" name="{{this.syncImageField}}" />
+                  <div class="erps-toggles__container">
+                    <span class="erps-toggles__label">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.MultiImageSelector.SyncImage"}}</span>
+                    <span class="erps-toggles__track">
+                      <span class="erps-toggles__thumb"></span>
+                    </span>
+                  </div>
+                </label>
+              </div>
+
+              <div class="erps-form__group erps-form__group--compact">
+                {{> erps-color-picker
+                  name=this.bgColorField
+                  value=this.bgColor
+                  labelPosition="above"
+                  label=(localize "EVENTIDE_RP_SYSTEM.Item.Colors.BgColor.label")
+                  placeholder=(localize "EVENTIDE_RP_SYSTEM.Item.Colors.BgColor.placeholder")
+                }}
+              </div>
+
+              <div class="erps-form__group erps-form__group--compact">
+                {{> erps-color-picker
+                  name=this.textColorField
+                  value=this.textColor
+                  labelPosition="above"
+                  label=(localize "EVENTIDE_RP_SYSTEM.Item.Colors.TextColor.label")
+                  placeholder=(localize "EVENTIDE_RP_SYSTEM.Item.Colors.TextColor.placeholder")
+                }}
+                <label class="erps-toggles erps-toggles--label-left" style="margin-top: 4px;">
+                  <input type="checkbox" class="erps-toggles__input" name="{{this.syncColorsField}}" />
+                  <div class="erps-toggles__container">
+                    <span class="erps-toggles__label">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.MultiImageSelector.SyncColors"}}</span>
+                    <span class="erps-toggles__track">
+                      <span class="erps-toggles__thumb"></span>
+                    </span>
+                  </div>
+                </label>
+              </div>
+            </div>
+          </div>
+        {{/each}}
+      {{else}}
+        <div class="erps-form__group erps-form__group--compact">
+          <button type="button" class="erps-button erps-button--secondary" data-action="addStatusEffect">
+            <i class="fas fa-plus"></i> {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.MultiImageSelector.AddStatusEffect"}}
+          </button>
+        </div>
+      {{/if}}
+    </div>
+
+    {{!-- Transformations Section (no add button) --}}
+    {{#if transformations.length}}
+    <div class="erps-form__section">
+      <div class="erps-form__header">
+        {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.MultiImageSelector.TransformationsSection"}}
+      </div>
+
+      {{#each transformations}}
+        <div class="erps-form__subsection">
+          <div class="erps-form__header erps-form__header--small">{{this.name}}</div>
+          <div class="erps-form__group erps-form__group--grid erps-form__group--grid-3">
+            <div class="erps-form__group erps-form__group--compact">
+              <label class="erps-input-label">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.MultiImageSelector.Image"}}</label>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <img
+                  class="erps-image-picker"
+                  src="{{this.img}}"
+                  data-target="{{this.imgField}}"
+                  data-action="onEditImage"
+                  title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.MultiImageSelector.ClickToChange'}}"
+                />
+                <input class="erps-hidden-input" type="hidden" name="{{this.imgField}}" value="{{this.img}}" />
+              </div>
+              <label class="erps-toggles erps-toggles--label-left" style="margin-top: 4px;">
+                <input type="checkbox" class="erps-toggles__input" name="{{this.syncImageField}}" />
+                <div class="erps-toggles__container">
+                  <span class="erps-toggles__label">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.MultiImageSelector.SyncImage"}}</span>
+                  <span class="erps-toggles__track">
+                    <span class="erps-toggles__thumb"></span>
+                  </span>
+                </div>
+              </label>
+            </div>
+
+            <div class="erps-form__group erps-form__group--compact">
+              {{> erps-color-picker
+                name=this.bgColorField
+                value=this.bgColor
+                labelPosition="above"
+                label=(localize "EVENTIDE_RP_SYSTEM.Item.Colors.BgColor.label")
+                placeholder=(localize "EVENTIDE_RP_SYSTEM.Item.Colors.BgColor.placeholder")
+              }}
+            </div>
+
+            <div class="erps-form__group erps-form__group--compact">
+              {{> erps-color-picker
+                name=this.textColorField
+                value=this.textColor
+                labelPosition="above"
+                label=(localize "EVENTIDE_RP_SYSTEM.Item.Colors.TextColor.label")
+                placeholder=(localize "EVENTIDE_RP_SYSTEM.Item.Colors.TextColor.placeholder")
+              }}
+              <label class="erps-toggles erps-toggles--label-left" style="margin-top: 4px;">
+                <input type="checkbox" class="erps-toggles__input" name="{{this.syncColorsField}}" />
+                <div class="erps-toggles__container">
+                  <span class="erps-toggles__label">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.MultiImageSelector.SyncColors"}}</span>
+                  <span class="erps-toggles__track">
+                    <span class="erps-toggles__thumb"></span>
+                  </span>
+                </div>
+              </label>
+            </div>
+          </div>
+        </div>
+      {{/each}}
+    </div>
+    {{/if}}
+
+    {{!-- Self-Effects Section --}}
+    <div class="erps-form__section">
+      <div class="erps-form__header">
+        {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.MultiImageSelector.SelfEffectsSection"}}
+      </div>
+
+      {{#if selfEffects.length}}
+        {{#each selfEffects}}
+          <div class="erps-form__subsection">
+            <div class="erps-form__header erps-form__header--small">{{this.name}}</div>
+            <div class="erps-form__group erps-form__group--grid erps-form__group--grid-3">
+              <div class="erps-form__group erps-form__group--compact">
+                <label class="erps-input-label">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.MultiImageSelector.Image"}}</label>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <img
+                    class="erps-image-picker"
+                    src="{{this.img}}"
+                    data-target="{{this.imgField}}"
+                    data-action="onEditImage"
+                    title="{{localize 'EVENTIDE_RP_SYSTEM.Item.ActionCard.MultiImageSelector.ClickToChange'}}"
+                  />
+                  <input class="erps-hidden-input" type="hidden" name="{{this.imgField}}" value="{{this.img}}" />
+                </div>
+                <label class="erps-toggles erps-toggles--label-left" style="margin-top: 4px;">
+                  <input type="checkbox" class="erps-toggles__input" name="{{this.syncImageField}}" />
+                  <div class="erps-toggles__container">
+                    <span class="erps-toggles__label">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.MultiImageSelector.SyncImage"}}</span>
+                    <span class="erps-toggles__track">
+                      <span class="erps-toggles__thumb"></span>
+                    </span>
+                  </div>
+                </label>
+              </div>
+
+              <div class="erps-form__group erps-form__group--compact">
+                {{> erps-color-picker
+                  name=this.bgColorField
+                  value=this.bgColor
+                  labelPosition="above"
+                  label=(localize "EVENTIDE_RP_SYSTEM.Item.Colors.BgColor.label")
+                  placeholder=(localize "EVENTIDE_RP_SYSTEM.Item.Colors.BgColor.placeholder")
+                }}
+              </div>
+
+              <div class="erps-form__group erps-form__group--compact">
+                {{> erps-color-picker
+                  name=this.textColorField
+                  value=this.textColor
+                  labelPosition="above"
+                  label=(localize "EVENTIDE_RP_SYSTEM.Item.Colors.TextColor.label")
+                  placeholder=(localize "EVENTIDE_RP_SYSTEM.Item.Colors.TextColor.placeholder")
+                }}
+                <label class="erps-toggles erps-toggles--label-left" style="margin-top: 4px;">
+                  <input type="checkbox" class="erps-toggles__input" name="{{this.syncColorsField}}" />
+                  <div class="erps-toggles__container">
+                    <span class="erps-toggles__label">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.MultiImageSelector.SyncColors"}}</span>
+                    <span class="erps-toggles__track">
+                      <span class="erps-toggles__thumb"></span>
+                    </span>
+                  </div>
+                </label>
+              </div>
+            </div>
+          </div>
+        {{/each}}
+      {{else}}
+        <div class="erps-form__group erps-form__group--compact">
+          <button type="button" class="erps-button erps-button--secondary" data-action="addSelfEffect">
+            <i class="fas fa-plus"></i> {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.MultiImageSelector.AddSelfEffect"}}
+          </button>
+        </div>
+      {{/if}}
+    </div>
+  </div>
+
+  {{!-- Footer with buttons --}}
+  {{> macro-footer}}
+</div>
