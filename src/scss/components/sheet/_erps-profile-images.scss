@@ -30,7 +30,6 @@ $profile-inner-shadow-opacity-hover: 0.2;
 
 // Transitions
 $profile-transition: all tokens.$sheet-transition-medium;
-$profile-hover-scale: 1.03;
 
 // Opacity values
 $profile-disabled-opacity: tokens.$sheet-opacity-disabled;
@@ -146,7 +145,7 @@ $profile-disabled-overlay-opacity: 0.6;
 
   &:hover {
     border: $profile-border-width inset rgb(255 255 255 / 90%);
-    transform: scale($profile-hover-scale);
+    transform: scale(tokens.$sheet-profile-hover-scale);
 
     @include profile-shadow-hover;
   }
