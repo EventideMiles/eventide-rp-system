@@ -1,6 +1,7 @@
 @use "../utils/colors" as colors;
 @use "../utils/typography" as typography;
 @use "../utils/themes" as themes;
+@use "../utils/sheet-tokens" as tokens;
 @use "../components/sheet/resource-boxes" as resource-boxes;
 @use "../components/sheet/erps-profile-images" as profile-images;
 @use "sass:map";
@@ -200,6 +201,7 @@ label,
         flex-shrink: 0;
         position: relative;
         z-index: 2;
+        margin: tokens.$sheet-spacing-xs;
       }
 
       .eventide-sheet__header-fields {
@@ -228,6 +230,11 @@ label,
       padding: 0.2rem;
       margin-bottom: 0.5rem;
       position: relative;
+
+      // Give the profile image grid cell breathing room so hover glow doesn't clip
+      .flexcol.grid-span-2 {
+        padding: tokens.$sheet-spacing-xs;
+      }
 
       // Add subtle animated glow using theme colors
       &::before {
