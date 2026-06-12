@@ -4,3 +4,5 @@ reviews:
     target_branches:
       - "main"
       - "develop"
+  path_filters:
+    - "!packs/**"
