@@ -255,7 +255,7 @@ export class EmbeddedImageMigration {
       await item.update(updateData, { diff: false });
     }
 
-    return { itemsFixed: Object.keys(updateData).length, effectsFixed };
+    return { itemsFixed: Object.keys(updateData).length > 0 ? 1 : 0, effectsFixed };
   }
 
   static async _fixActionCardEmbeddedItem(item) {
