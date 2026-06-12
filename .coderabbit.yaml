@@ -1,0 +1,6 @@
+reviews:
+  auto_review:
+    enabled: true
+    target_branches:
+      - "main"
+      - "develop"
