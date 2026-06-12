@@ -1,31 +1,16 @@
 import { Logger } from "../logger.mjs";
 
-/**
- * Migration service for embedded item fixes
- * Handles migrations for:
- * - Issue #127: Fix broken image associations in embedded items
- * - Issue #128/#133: Migrate statusPerSuccess (boolean) to statusApplicationLimit (number)
- */
 export class EmbeddedImageMigration {
-  /**
-   * Run the migration to fix embedded item images
-   * Only runs once per world by tracking the migration version
-   *
-   * @returns {Promise<void>}
-   */
   static async run() {
-    // Only GMs should run migrations
-    if (!game.user.isGM) {
-      return;
-    }
+    if (!game.user.isGM) return;
 
-    const migrationVersion = 1;
+    const migrationVersion = 2;
 
     let oldTrackingSetting = null;
     try {
       oldTrackingSetting = game.settings.get(
         "eventide-rp-system",
-        "embeddedImageMigrationVersion"
+        "embeddedImageMigrationVersion",
       );
     } catch {
       // Old setting doesn't exist, which is fine for new installations
@@ -33,39 +18,38 @@ export class EmbeddedImageMigration {
 
     const lastMigration = game.settings.get(
       "eventide-rp-system",
-      "migrationVersion"
+      "migrationVersion",
     );
 
     const migrationLevel = Math.floor(Number(lastMigration) || 0);
-    
+
     if (oldTrackingSetting != null) {
       Logger.info(
         "Cleaning up old embeddedImageMigrationVersion setting",
         { oldValue: oldTrackingSetting },
-        "MIGRATION"
+        "MIGRATION",
       );
       await game.settings.set(
         "eventide-rp-system",
         "embeddedImageMigrationVersion",
-        null
+        null,
       );
       Logger.info(
         "Embedded image migration already completed (old setting found)",
         null,
-        "MIGRATION"
+        "MIGRATION",
       );
 
-      // if migrationLevel is not a number or is less than migrationVersion we should set the setting to the migrationVersion
       if (isNaN(migrationLevel) || migrationLevel < migrationVersion) {
         await game.settings.set(
           "eventide-rp-system",
           "migrationVersion",
-          migrationVersion
+          migrationVersion,
         );
         Logger.info(
           "Updated migrationVersion to current version due to old tracking setting",
           { migrationVersion },
-          "MIGRATION"
+          "MIGRATION",
         );
       }
       return;
@@ -75,32 +59,26 @@ export class EmbeddedImageMigration {
       Logger.info(
         "Starting embedded image migration (first migration)",
         null,
-        "MIGRATION"
+        "MIGRATION",
       );
-    }
-
-    // already at or past migration level
-    else if (migrationLevel >= migrationVersion) {
+    } else if (migrationLevel >= migrationVersion) {
       Logger.debug(
         "Embedded image migration already completed",
         { level: migrationLevel },
-        "MIGRATION"
+        "MIGRATION",
       );
       return;
-    }
-    // Case 4: Need to run this migration
-    else {
+    } else {
       Logger.info(
         "Starting embedded image migration",
         { level: migrationLevel },
-        "MIGRATION"
+        "MIGRATION",
       );
     }
 
-    // Warn users not to reload during migration
     const migrationNotification = ui.notifications.warn(
       game.i18n.localize("EVENTIDE_RP_SYSTEM.Migration.InProgress"),
-      { permanent: true }
+      { permanent: true },
     );
 
     try {
@@ -108,25 +86,21 @@ export class EmbeddedImageMigration {
       let effectsFixed = 0;
       let statusFieldsMigrated = 0;
 
-      // Process all items in the world for embedded image fixes
-      for (const item of game.items) {
-        const result = await this._processItem(item);
-        itemsFixed += result.itemsFixed;
-        effectsFixed += result.effectsFixed;
-        statusFieldsMigrated += result.statusFieldsMigrated;
-      }
-
-      // Process items in all actors
-      for (const actor of game.actors) {
-        for (const item of actor.items) {
+      const processItems = async (items) => {
+        for (const item of items) {
           const result = await this._processItem(item);
           itemsFixed += result.itemsFixed;
           effectsFixed += result.effectsFixed;
           statusFieldsMigrated += result.statusFieldsMigrated;
         }
+      };
+
+      await processItems(game.items);
+
+      for (const actor of game.actors) {
+        await processItems(actor.items);
       }
 
-      // Process items in unlocked compendiums
       for (const pack of game.packs) {
         if (
           pack.documentName === "Item" &&
@@ -134,78 +108,56 @@ export class EmbeddedImageMigration {
           pack.metadata.packageType === "world"
         ) {
           const documents = await pack.getDocuments();
-          for (const item of documents) {
-            const result = await this._processItem(item);
-            itemsFixed += result.itemsFixed;
-            effectsFixed += result.effectsFixed;
-            statusFieldsMigrated += result.statusFieldsMigrated;
-          }
+          await processItems(documents);
         }
       }
 
-      // Save migration version as numeric
       await game.settings.set(
         "eventide-rp-system",
         "migrationVersion",
-        1
+        migrationVersion,
       );
 
       Logger.info(
         "Embedded image migration completed",
-        { itemsFixed, effectsFixed, statusFieldsMigrated, level: 1 },
-        "MIGRATION"
+        { itemsFixed, effectsFixed, statusFieldsMigrated, level: migrationVersion },
+        "MIGRATION",
       );
 
-      // Build notification message based on what was fixed
+      migrationNotification.remove();
+
       const messages = [];
       if (effectsFixed > 0) {
         messages.push(game.i18n.format("EVENTIDE_RP_SYSTEM.Migration.FixedEffectImages", {
           effectsFixed,
-          itemsFixed
+          itemsFixed,
         }));
       }
       if (statusFieldsMigrated > 0) {
         messages.push(game.i18n.format("EVENTIDE_RP_SYSTEM.Migration.MigratedStatusFields", {
-          count: statusFieldsMigrated
+          count: statusFieldsMigrated,
         }));
       }
 
-      // Remove the permanent "in progress" notification
-      migrationNotification.remove();
-
       if (messages.length > 0) {
         ui.notifications.info(game.i18n.format("EVENTIDE_RP_SYSTEM.Migration.Complete", {
-          message: messages.join(". ")
+          message: messages.join(". "),
         }));
       } else {
         ui.notifications.info(game.i18n.localize("EVENTIDE_RP_SYSTEM.Migration.CompleteNoChanges"));
       }
     } catch (error) {
-      // Remove the permanent "in progress" notification even on failure
       migrationNotification.remove();
-
-      Logger.error(
-        "Embedded image migration failed",
-        error,
-        "MIGRATION"
-      );
-      ui.notifications.error(
-        game.i18n.localize("EVENTIDE_RP_SYSTEM.Migration.Failed")
-      );
+      Logger.error("Embedded image migration failed", error, "MIGRATION");
+      ui.notifications.error(game.i18n.localize("EVENTIDE_RP_SYSTEM.Migration.Failed"));
     }
   }
 
-  /**
-   * Process a single item and fix any embedded image issues
-   * @param {Item} item - The item to process
-   * @returns {Promise<{itemsFixed: number, effectsFixed: number, statusFieldsMigrated: number}>}
-   */
   static async _processItem(item) {
     let itemsFixed = 0;
     let effectsFixed = 0;
     let statusFieldsMigrated = 0;
 
-    // Handle action cards: migrate statusPerSuccess to statusApplicationLimit (Issue #128, #133)
     if (item.type === "actionCard") {
       const result = await this._migrateStatusPerSuccess(item);
       if (result.fixed) {
@@ -214,95 +166,98 @@ export class EmbeddedImageMigration {
       }
     }
 
-    // Handle action cards with embedded status effects
-    if (item.type === "actionCard" && item.system.embeddedStatusEffects?.length > 0) {
-      const result = await this._fixActionCardEmbeddedEffects(item);
-      if (result.fixed) {
-        itemsFixed++;
-        effectsFixed += result.effectsFixed;
-      }
+    if (item.type === "actionCard") {
+      const arraysResult = await this._fixActionCardEmbeddedArrays(item);
+      itemsFixed += arraysResult.itemsFixed;
+      effectsFixed += arraysResult.effectsFixed;
     }
 
-    // Handle action cards with embedded items (gear, combatPower, feature)
     if (item.type === "actionCard" && item.system.embeddedItem) {
-      const result = await this._fixActionCardEmbeddedItem(item);
+      const itemResult = await this._fixActionCardEmbeddedItem(item);
+      itemsFixed += itemResult.itemsFixed;
+      effectsFixed += itemResult.effectsFixed;
+    }
+
+    if (item.type === "status" && item.effects?.size > 0) {
+      const result = await this._fixStatusItemEffects(item);
       if (result.fixed) {
         itemsFixed++;
         effectsFixed += result.effectsFixed;
       }
     }
 
-    // Handle transformations with embedded combat powers
-    if (item.type === "transformation" && item.system.embeddedCombatPowers?.length > 0) {
-      const result = await this._fixTransformationEmbeddedPowers(item);
-      if (result.fixed) {
-        itemsFixed++;
-        effectsFixed += result.effectsFixed;
+    if (item.type === "transformation") {
+      if (item.system.embeddedCombatPowers?.length > 0) {
+        const result = await this._fixTransformationEmbeddedPowers(item);
+        if (result.fixed) {
+          itemsFixed++;
+          effectsFixed += result.effectsFixed;
+        }
       }
-    }
 
-    // Handle transformations with embedded action cards
-    if (item.type === "transformation" && item.system.embeddedActionCards?.length > 0) {
-      const result = await this._fixTransformationEmbeddedActionCards(item);
-      if (result.fixed) {
-        itemsFixed++;
-        effectsFixed += result.effectsFixed;
+      if (item.system.embeddedActionCards?.length > 0) {
+        const result = await this._fixTransformationEmbeddedActionCards(item);
+        if (result.fixed) {
+          itemsFixed++;
+          effectsFixed += result.effectsFixed;
+        }
       }
     }
 
     return { itemsFixed, effectsFixed, statusFieldsMigrated };
   }
 
-  /**
-   * Fix embedded status effects in an action card
-   * @param {Item} item - The action card item
-   * @returns {Promise<{fixed: boolean, effectsFixed: number}>}
-   */
-  static async _fixActionCardEmbeddedEffects(item) {
+  static async _fixActionCardEmbeddedArrays(item) {
     let effectsFixed = 0;
-    let needsUpdate = false;
+    const updateData = {};
 
-    const statusEffects = foundry.utils.deepClone(item.system.embeddedStatusEffects);
+    const syncArrayEffects = (arrayName) => {
+      const items = foundry.utils.getProperty(item.system, arrayName);
+      if (!items || !Array.isArray(items) || items.length === 0) return;
 
-    for (const embeddedItem of statusEffects) {
-      if (!embeddedItem.effects || !Array.isArray(embeddedItem.effects)) {
-        continue;
-      }
+      const updated = foundry.utils.deepClone(items);
+      let changed = false;
 
-      for (const effect of embeddedItem.effects) {
-        // Sync effect icon/img with item image
-        if (effect.icon !== embeddedItem.img && embeddedItem.img) {
-          effect.icon = embeddedItem.img;
-          effect.img = embeddedItem.img;
-          needsUpdate = true;
-          effectsFixed++;
+      for (const entry of updated) {
+        if (!entry.img || !entry.effects || !Array.isArray(entry.effects)) {
+          continue;
         }
 
-        // Sync effect name with item name (optional - for completeness)
-        if (effect.name !== embeddedItem.name && embeddedItem.name) {
-          effect.name = embeddedItem.name;
-          needsUpdate = true;
+        for (const effect of entry.effects) {
+          if (effect.img !== entry.img) {
+            effect.img = entry.img;
+            changed = true;
+            effectsFixed++;
+          }
+
+          if (effect.icon !== undefined) {
+            delete effect.icon;
+            changed = true;
+          }
+
+          if (effect.name !== entry.name && entry.name) {
+            effect.name = entry.name;
+            changed = true;
+          }
         }
       }
+
+      if (changed) {
+        updateData[`system.${arrayName}`] = updated;
+      }
+    };
+
+    syncArrayEffects("embeddedStatusEffects");
+    syncArrayEffects("embeddedTransformations");
+    syncArrayEffects("embeddedSelfEffects");
+
+    if (Object.keys(updateData).length > 0) {
+      await item.update(updateData, { diff: false });
     }
 
-    if (needsUpdate) {
-      await item.update({ "system.embeddedStatusEffects": statusEffects });
-      Logger.debug(
-        "Fixed embedded status effect images in action card",
-        { itemName: item.name, effectsFixed },
-        "MIGRATION"
-      );
-    }
-
-    return { fixed: needsUpdate, effectsFixed };
+    return { itemsFixed: Object.keys(updateData).length, effectsFixed };
   }
 
-  /**
-   * Fix embedded item's effects in an action card
-   * @param {Item} item - The action card item
-   * @returns {Promise<{fixed: boolean, effectsFixed: number}>}
-   */
   static async _fixActionCardEmbeddedItem(item) {
     let effectsFixed = 0;
     let needsUpdate = false;
@@ -311,15 +266,17 @@ export class EmbeddedImageMigration {
 
     if (embeddedItem.effects && Array.isArray(embeddedItem.effects)) {
       for (const effect of embeddedItem.effects) {
-        // Sync effect icon/img with item image
-        if (effect.icon !== embeddedItem.img && embeddedItem.img) {
-          effect.icon = embeddedItem.img;
+        if (effect.img !== embeddedItem.img && embeddedItem.img) {
           effect.img = embeddedItem.img;
           needsUpdate = true;
           effectsFixed++;
         }
 
-        // Sync effect name with item name
+        if (effect.icon !== undefined) {
+          delete effect.icon;
+          needsUpdate = true;
+        }
+
         if (effect.name !== embeddedItem.name && embeddedItem.name) {
           effect.name = embeddedItem.name;
           needsUpdate = true;
@@ -328,60 +285,80 @@ export class EmbeddedImageMigration {
     }
 
     if (needsUpdate) {
-      await item.update({ "system.embeddedItem": embeddedItem });
+      await item.update({ "system.embeddedItem": embeddedItem }, { diff: false });
       Logger.debug(
         "Fixed embedded item effect images in action card",
         { itemName: item.name, effectsFixed },
-        "MIGRATION"
+        "MIGRATION",
       );
     }
 
-    return { fixed: needsUpdate, effectsFixed };
+    return { itemsFixed: needsUpdate ? 1 : 0, effectsFixed };
   }
 
-  /**
-   * Migrate statusPerSuccess (boolean) to statusApplicationLimit (number) for action cards
-   * Issue #128, #133: Convert legacy boolean field to new numeric limit field
-   * - true → 0 (no limit, apply on every success)
-   * - false → 1 (apply once)
-   * @param {Item} item - The action card item
-   * @returns {Promise<{fixed: boolean}>}
-   */
   static async _migrateStatusPerSuccess(item) {
-    // Check if statusPerSuccess is a boolean (legacy data that needs migration)
-    // After migration, it should be null
     const statusPerSuccess = item.system.statusPerSuccess;
 
     if (typeof statusPerSuccess !== "boolean") {
       return { fixed: false };
     }
 
-    // Convert boolean to numeric limit
     const statusApplicationLimit = statusPerSuccess === true ? 0 : 1;
 
-    await item.update({
-      "system.statusApplicationLimit": statusApplicationLimit,
-      "system.statusPerSuccess": null
-    });
+    await item.update(
+      {
+        "system.statusApplicationLimit": statusApplicationLimit,
+        "system.statusPerSuccess": null,
+      },
+      { diff: false },
+    );
 
     Logger.debug(
       "Migrated statusPerSuccess to statusApplicationLimit",
-      {
-        itemName: item.name,
-        oldValue: statusPerSuccess,
-        newValue: statusApplicationLimit
-      },
-      "MIGRATION"
+      { itemName: item.name, oldValue: statusPerSuccess, newValue: statusApplicationLimit },
+      "MIGRATION",
     );
 
     return { fixed: true };
   }
 
-  /**
-   * Fix embedded combat powers in a transformation
-   * @param {Item} item - The transformation item
-   * @returns {Promise<{fixed: boolean, effectsFixed: number}>}
-   */
+  static async _fixStatusItemEffects(item) {
+    let effectsFixed = 0;
+    const updateData = {};
+
+    for (const effect of item.effects) {
+      const updates = { _id: effect.id };
+      let effectNeedsUpdate = false;
+
+      if (effect.img !== item.img && item.img) {
+        updates.img = item.img;
+        effectNeedsUpdate = true;
+        effectsFixed++;
+      }
+
+      if (effect.icon !== undefined) {
+        updates["-=icon"] = null;
+        effectNeedsUpdate = true;
+      }
+
+      if (effectNeedsUpdate) {
+        if (!updateData.effects) updateData.effects = [];
+        updateData.effects.push(updates);
+      }
+    }
+
+    if (Object.keys(updateData).length > 0) {
+      await item.update(updateData, { diff: false });
+      Logger.debug(
+        "Fixed status item effect images",
+        { itemName: item.name, effectsFixed },
+        "MIGRATION",
+      );
+    }
+
+    return { fixed: Object.keys(updateData).length > 0, effectsFixed };
+  }
+
   static async _fixTransformationEmbeddedPowers(item) {
     let effectsFixed = 0;
     let needsUpdate = false;
@@ -389,20 +366,20 @@ export class EmbeddedImageMigration {
     const embeddedPowers = foundry.utils.deepClone(item.system.embeddedCombatPowers);
 
     for (const power of embeddedPowers) {
-      if (!power.effects || !Array.isArray(power.effects)) {
-        continue;
-      }
+      if (!power.effects || !Array.isArray(power.effects)) continue;
 
       for (const effect of power.effects) {
-        // Sync effect icon/img with item image
-        if (effect.icon !== power.img && power.img) {
-          effect.icon = power.img;
+        if (effect.img !== power.img && power.img) {
           effect.img = power.img;
           needsUpdate = true;
           effectsFixed++;
         }
 
-        // Sync effect name with item name
+        if (effect.icon !== undefined) {
+          delete effect.icon;
+          needsUpdate = true;
+        }
+
         if (effect.name !== power.name && power.name) {
           effect.name = power.name;
           needsUpdate = true;
@@ -411,22 +388,17 @@ export class EmbeddedImageMigration {
     }
 
     if (needsUpdate) {
-      await item.update({ "system.embeddedCombatPowers": embeddedPowers });
+      await item.update({ "system.embeddedCombatPowers": embeddedPowers }, { diff: false });
       Logger.debug(
         "Fixed embedded combat power effect images in transformation",
         { itemName: item.name, effectsFixed },
-        "MIGRATION"
+        "MIGRATION",
       );
     }
 
     return { fixed: needsUpdate, effectsFixed };
   }
 
-  /**
-   * Fix embedded action cards in a transformation
-   * @param {Item} item - The transformation item
-   * @returns {Promise<{fixed: boolean, effectsFixed: number}>}
-   */
   static async _fixTransformationEmbeddedActionCards(item) {
     let effectsFixed = 0;
     let needsUpdate = false;
@@ -434,40 +406,44 @@ export class EmbeddedImageMigration {
     const embeddedActionCards = foundry.utils.deepClone(item.system.embeddedActionCards);
 
     for (const actionCard of embeddedActionCards) {
-      // Migrate statusPerSuccess to statusApplicationLimit in embedded action cards (Issue #128, #133)
       if (typeof actionCard.system?.statusPerSuccess === "boolean") {
-        actionCard.system.statusApplicationLimit = actionCard.system.statusPerSuccess === true ? 0 : 1;
+        actionCard.system.statusApplicationLimit =
+          actionCard.system.statusPerSuccess === true ? 0 : 1;
         actionCard.system.statusPerSuccess = null;
         needsUpdate = true;
       }
 
-      // Fix embedded item in the action card
       if (actionCard.system?.embeddedItem?.effects) {
-        const embeddedItem = actionCard.system.embeddedItem;
-        for (const effect of embeddedItem.effects) {
-          if (effect.icon !== embeddedItem.img && embeddedItem.img) {
-            effect.icon = embeddedItem.img;
-            effect.img = embeddedItem.img;
+        const eItem = actionCard.system.embeddedItem;
+        for (const effect of eItem.effects) {
+          if (effect.img !== eItem.img && eItem.img) {
+            effect.img = eItem.img;
             needsUpdate = true;
             effectsFixed++;
           }
-          if (effect.name !== embeddedItem.name && embeddedItem.name) {
-            effect.name = embeddedItem.name;
+          if (effect.icon !== undefined) {
+            delete effect.icon;
+            needsUpdate = true;
+          }
+          if (effect.name !== eItem.name && eItem.name) {
+            effect.name = eItem.name;
             needsUpdate = true;
           }
         }
       }
 
-      // Fix embedded status effects in the action card
       if (actionCard.system?.embeddedStatusEffects) {
         for (const statusEffect of actionCard.system.embeddedStatusEffects) {
           if (statusEffect.effects && Array.isArray(statusEffect.effects)) {
             for (const effect of statusEffect.effects) {
-              if (effect.icon !== statusEffect.img && statusEffect.img) {
-                effect.icon = statusEffect.img;
+              if (effect.img !== statusEffect.img && statusEffect.img) {
                 effect.img = statusEffect.img;
                 needsUpdate = true;
                 effectsFixed++;
+              }
+              if (effect.icon !== undefined) {
+                delete effect.icon;
+                needsUpdate = true;
               }
               if (effect.name !== statusEffect.name && statusEffect.name) {
                 effect.name = statusEffect.name;
@@ -477,14 +453,58 @@ export class EmbeddedImageMigration {
           }
         }
       }
+
+      if (actionCard.system?.embeddedSelfEffects) {
+        for (const selfEffect of actionCard.system.embeddedSelfEffects) {
+          if (selfEffect.effects && Array.isArray(selfEffect.effects)) {
+            for (const effect of selfEffect.effects) {
+              if (effect.img !== selfEffect.img && selfEffect.img) {
+                effect.img = selfEffect.img;
+                needsUpdate = true;
+                effectsFixed++;
+              }
+              if (effect.icon !== undefined) {
+                delete effect.icon;
+                needsUpdate = true;
+              }
+              if (effect.name !== selfEffect.name && selfEffect.name) {
+                effect.name = selfEffect.name;
+                needsUpdate = true;
+              }
+            }
+          }
+        }
+      }
+
+      if (actionCard.system?.embeddedTransformations) {
+        for (const transformation of actionCard.system.embeddedTransformations) {
+          if (transformation.effects && Array.isArray(transformation.effects)) {
+            for (const effect of transformation.effects) {
+              if (effect.img !== transformation.img && transformation.img) {
+                effect.img = transformation.img;
+                needsUpdate = true;
+                effectsFixed++;
+              }
+              if (effect.icon !== undefined) {
+                delete effect.icon;
+                needsUpdate = true;
+              }
+              if (effect.name !== transformation.name && transformation.name) {
+                effect.name = transformation.name;
+                needsUpdate = true;
+              }
+            }
+          }
+        }
+      }
     }
 
     if (needsUpdate) {
-      await item.update({ "system.embeddedActionCards": embeddedActionCards });
+      await item.update({ "system.embeddedActionCards": embeddedActionCards }, { diff: false });
       Logger.debug(
         "Fixed embedded action card effect images in transformation",
         { itemName: item.name, effectsFixed },
-        "MIGRATION"
+        "MIGRATION",
       );
     }
 
