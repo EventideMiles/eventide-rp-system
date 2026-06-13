@@ -258,7 +258,7 @@ function setupItemCreationHooks() {
     if (game.user.id !== triggerPlayer) return;
 
     // Handle status message creation
-    if (item.type === "status" && item.system.description) {
+    if (item.type === "status") {
       erps.messages.createStatusMessage(
         item,
         item.flags?.["eventide-rp-system"]?.isEffect
@@ -306,7 +306,7 @@ function setupItemDeletionHooks() {
     if (game.user.id !== triggerPlayer) return;
 
     // Handle status removal message
-    if (item.type === "status" && item.system.description) {
+    if (item.type === "status") {
       erps.messages.createDeleteStatusMessage(item);
     }
   });
