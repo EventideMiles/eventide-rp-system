@@ -521,11 +521,9 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
           const powerData = powers[powerIndex];
           foundry.utils.setProperty(powerData, attr, path);
 
-          // Issue #127: Sync active effect icons when item image is updated
-          // Update both 'icon' (standard Foundry) and 'img' (legacy) properties
+          // Issue #127: Sync active effect images when item image is updated
           if (attr === "img" && powerData.effects && Array.isArray(powerData.effects)) {
             for (const activeEffect of powerData.effects) {
-              activeEffect.icon = path;
               activeEffect.img = path;
             }
           }
@@ -563,10 +561,9 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
           const selfEffectData = selfEffects[effectIndex];
           foundry.utils.setProperty(selfEffectData, attr, path);
 
-          // Issue #127: Sync active effect icons when item image is updated
+          // Issue #127: Sync active effect images when item image is updated
           if (attr === "img" && selfEffectData.effects && Array.isArray(selfEffectData.effects)) {
             for (const activeEffect of selfEffectData.effects) {
-              activeEffect.icon = path;
               activeEffect.img = path;
             }
           }
@@ -606,11 +603,9 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
           const effectData = statusEffects[effectIndex];
           foundry.utils.setProperty(effectData, attr, path);
 
-          // Issue #127: Sync active effect icons when item image is updated
-          // Update both 'icon' (standard Foundry) and 'img' (legacy) properties
+          // Issue #127: Sync active effect images when item image is updated
           if (attr === "img" && effectData.effects && Array.isArray(effectData.effects)) {
             for (const activeEffect of effectData.effects) {
-              activeEffect.icon = path;
               activeEffect.img = path;
             }
           }
@@ -688,11 +683,9 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
           );
           foundry.utils.setProperty(itemData, attr, path);
 
-          // Issue #127: Sync active effect icons when item image is updated
-          // Update both 'icon' (standard Foundry) and 'img' (legacy) properties
+          // Issue #127: Sync active effect images when item image is updated
           if (attr === "img" && itemData.effects && Array.isArray(itemData.effects)) {
             for (const activeEffect of itemData.effects) {
-              activeEffect.icon = path;
               activeEffect.img = path;
             }
           }
@@ -735,6 +728,10 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
    */
   async _preClose(options = {}) {
     await super._preClose(options);
+    if (this._onProseMirrorSaveEvent && this.element) {
+      this.element.removeEventListener("save", this._onProseMirrorSaveEvent);
+      this._onProseMirrorSaveEvent = null;
+    }
     this._cleanupThemeManagement();
   }
 
@@ -746,10 +743,11 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
     this._initThemeManagement();
 
     if (this.element) {
-      this.element.addEventListener("save", (event) => {
+      this._onProseMirrorSaveEvent = (event) => {
         if (!event.target.matches("prose-mirror")) return;
         this._onProseMirrorSave(event);
-      });
+      };
+      this.element.addEventListener("save", this._onProseMirrorSaveEvent);
     }
   }
 

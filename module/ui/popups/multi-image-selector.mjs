@@ -516,6 +516,11 @@ export class MultiImageSelector extends ThemeManagedPopupMixin(
       templateData.img = savedData["img"] || this.item.img;
       templateData.system.bgColor = savedData["system.bgColor"] || this.item.system?.bgColor || "";
       templateData.system.textColor = savedData["system.textColor"] || this.item.system?.textColor || "";
+      if (templateData.effects && Array.isArray(templateData.effects)) {
+        for (const effect of templateData.effects) {
+          effect.img = templateData.img;
+        }
+      }
 
       const tempItem = new CONFIG.Item.documentClass(templateData, {
         parent: null,
@@ -544,6 +549,11 @@ export class MultiImageSelector extends ThemeManagedPopupMixin(
       templateData.img = savedData["img"] || this.item.img;
       templateData.system.bgColor = savedData["system.bgColor"] || this.item.system?.bgColor || "";
       templateData.system.textColor = savedData["system.textColor"] || this.item.system?.textColor || "";
+      if (templateData.effects && Array.isArray(templateData.effects)) {
+        for (const effect of templateData.effects) {
+          effect.img = templateData.img;
+        }
+      }
 
       const tempItem = new CONFIG.Item.documentClass(templateData, {
         parent: null,
@@ -581,13 +591,14 @@ export class MultiImageSelector extends ThemeManagedPopupMixin(
           raw[el.name] = el.value;
         }
       }
-      const updateData = {};
+      const actionCardUpdates = {};
+      const embeddedUpdates = [];
 
       const checked = (value) => value && value !== "null";
 
-      if (raw.img) updateData.img = raw.img;
-      if (raw["system.bgColor"]) updateData["system.bgColor"] = raw["system.bgColor"];
-      if (raw["system.textColor"]) updateData["system.textColor"] = raw["system.textColor"];
+      if (raw.img) actionCardUpdates.img = raw.img;
+      if (raw["system.bgColor"]) actionCardUpdates["system.bgColor"] = raw["system.bgColor"];
+      if (raw["system.textColor"]) actionCardUpdates["system.textColor"] = raw["system.textColor"];
 
       // Helper: check if a form value actually differs from current data
       const changed = (formVal, currentVal) =>
@@ -600,41 +611,43 @@ export class MultiImageSelector extends ThemeManagedPopupMixin(
       const currentEmbedded = actionCard.system.embeddedItem;
       if (currentEmbedded && currentEmbedded._id) {
         const updatedEmbedded = foundry.utils.deepClone(currentEmbedded);
-        let embChanged = false;
 
         const eImg = raw["embeddedItem.img"];
         if (changed(eImg, currentEmbedded.img)) {
           updatedEmbedded.img = eImg;
-          embChanged = true;
         }
         if (checked(raw["syncImage-embeddedItem"])) {
           updatedEmbedded.img = raw.img || actionCard.img;
-          embChanged = true;
         }
 
         const eBg = raw["embeddedItem.system.bgColor"];
         if (changed(eBg, currentEmbedded.system?.bgColor || "")) {
           if (!updatedEmbedded.system) updatedEmbedded.system = {};
           updatedEmbedded.system.bgColor = eBg;
-          embChanged = true;
         }
         const eTc = raw["embeddedItem.system.textColor"];
         if (changed(eTc, currentEmbedded.system?.textColor || "")) {
           if (!updatedEmbedded.system) updatedEmbedded.system = {};
           updatedEmbedded.system.textColor = eTc;
-          embChanged = true;
         }
 
         if (checked(raw["syncColors-embeddedItem"])) {
           if (!updatedEmbedded.system) updatedEmbedded.system = {};
           updatedEmbedded.system.bgColor = raw["system.bgColor"] || currentBg;
           updatedEmbedded.system.textColor = raw["system.textColor"] || currentTc;
-          embChanged = true;
         }
 
-        if (embChanged) {
-          updateData["system.embeddedItem"] = updatedEmbedded;
+        // Always sync effect.img to item.img
+        if (updatedEmbedded.img && updatedEmbedded.effects && Array.isArray(updatedEmbedded.effects)) {
+          for (const activeEffect of updatedEmbedded.effects) {
+            if (activeEffect.img !== updatedEmbedded.img) {
+              activeEffect.img = updatedEmbedded.img;
+            }
+          }
         }
+
+        // Always write back to ensure effect sync is persisted even if no other change
+        embeddedUpdates.push({ "system.embeddedItem": updatedEmbedded });
       }
 
       // Process array-based embedded items
@@ -642,7 +655,6 @@ export class MultiImageSelector extends ThemeManagedPopupMixin(
         const currentItems = foundry.utils.deepClone(
           foundry.utils.getProperty(actionCard.system, arrayName) || [],
         );
-        let arrChanged = false;
 
         currentItems.forEach((item, index) => {
           const prefix = `${arrayName}.${index}`;
@@ -655,42 +667,53 @@ export class MultiImageSelector extends ThemeManagedPopupMixin(
 
           if (changed(fImg, item.img || "")) {
             item.img = fImg;
-            arrChanged = true;
           }
           if (changed(fBg, item.system?.bgColor || "")) {
             if (!item.system) item.system = {};
             item.system.bgColor = fBg;
-            arrChanged = true;
           }
           if (changed(fTc, item.system?.textColor || "")) {
             if (!item.system) item.system = {};
             item.system.textColor = fTc;
-            arrChanged = true;
           }
 
           if (syncImg) {
             item.img = raw.img || actionCard.img;
-            arrChanged = true;
           }
           if (syncCol) {
             if (!item.system) item.system = {};
             item.system.bgColor = raw["system.bgColor"] || currentBg;
             item.system.textColor = raw["system.textColor"] || currentTc;
-            arrChanged = true;
           }
         });
 
-        if (arrChanged) {
-          updateData[`system.${arrayName}`] = currentItems;
+        // Always sync effect.img to item.img
+        for (const item of currentItems) {
+          if (item.img && item.effects && Array.isArray(item.effects)) {
+            for (const activeEffect of item.effects) {
+              if (activeEffect.img !== item.img) {
+                activeEffect.img = item.img;
+              }
+            }
+          }
         }
+
+        // Always write back to ensure effect sync is persisted even if no other change
+        embeddedUpdates.push({ [`system.${arrayName}`]: currentItems });
       };
 
       processArray("embeddedStatusEffects");
       processArray("embeddedTransformations");
       processArray("embeddedSelfEffects");
 
-      if (Object.keys(updateData).length > 0) {
-        await actionCard.update(updateData);
+      // Apply action card-level updates first
+      if (Object.keys(actionCardUpdates).length > 0) {
+        await actionCard.update(actionCardUpdates);
+      }
+
+      // Apply each embedded data update separately (matching EmbeddedItemSheet pattern)
+      for (const update of embeddedUpdates) {
+        await actionCard.update(update, { fromEmbeddedItem: true, diff: false });
       }
 
       this.close();

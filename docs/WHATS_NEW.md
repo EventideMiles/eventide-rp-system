@@ -2,6 +2,19 @@
 
 ## Latest Release
 
+**[v14.9.0](release-notes/v14.9.0.md)** — Textless Status Messages & Multi-Image Selector Fixes _(June 2026)_
+
+**Key Highlights:**
+
+- **Textless Status Messages** — status items without a description now generate chat messages on apply/remove, matching the behavior of described statuses (previously silently skipped)
+- **Sheet Image Hover Glow Clipping** — reduced profile hover scale to 1.03 and added padding/margin breathing room so the hover glow no longer clips at the header edges
+- **Inflated Embedded Item Count** — `_fixActionCardEmbeddedArrays` now returns a binary `itemsFixed` value, fixing inflated counts in migration summaries
+- **Multi-Image Selector Image Persistence** — added `diff: false` to nested `effects[].img` updates so deeply nested effect images persist correctly on Foundry V14 instead of reverting after reload
+- **Shared Hover-Scale Token** — replaced the local `$profile-hover-scale` declaration with `tokens.$sheet-profile-hover-scale` to prevent future drift across sheets
+- **Migration v2 Rewrite** — embedded-image migration now uses `diff: false` on all updates, force-persisting any pre-existing effect-image desyncs on upgrade
+
+## Recent Major Releases
+
 **[v14.8.0](release-notes/v14.8.0.md)** — Multi-Image Selector for Action Cards _(May 2026)_
 
 **Key Highlights:**
@@ -13,8 +26,6 @@
 - **Access Points** — item sheet header profile image click (replaces single-image FilePicker for non-saved-damage action cards; saved-damage cards still use FilePicker directly) and right-click "Edit Images" context menu on actor sheet action card rows
 - **Form Data Preservation** — unsaved changes (including scroll position) preserved across re-renders when adding new items
 - **Saved Damage Mode** — Combat Power section hidden for saved-damage-mode cards
-
-## Recent Major Releases
 
 **[v14.7.0](release-notes/v14.7.0.md)** - Action Card Preset Library, NPC Quick Generator & More _(May 2026)_
 
@@ -302,6 +313,7 @@ Enhanced character customization through circumstantial bonuses and feature-base
 
 | Version | Release Date | Focus |
 | -- | -- | -- |
+| **v14.9.0** | June 2026 | Textless Status Messages & Multi-Image Selector Fixes |
 | **v14.8.0** | May 2026 | Multi-Image Selector for Action Cards |
 | **v14.7.0** | May 2026 | Action Card Preset Library, NPC Quick Generator & More |
 | v14.6.0 | May 2026 | Selective Global Item Selector |
@@ -335,11 +347,11 @@ Enhanced character customization through circumstantial bonuses and feature-base
 
 ### By Feature Area
 
-- **Action Cards**: [v14.8.0](release-notes/v14.8.0.md), [v14.7.0](release-notes/v14.7.0.md), [v14.6.0](release-notes/v14.6.0.md), [v14.5.0](release-notes/v14.5.0.md), [v14.3.0](release-notes/v14.3.0.md), [v14.0.0](release-notes/v14.0.0.md), [v13.11.0](release-notes/v13.11.0.md), [v13.13.3](release-notes/v13.13.3.md), [v13.14.0](release-notes/v13.14.0.md), [v13.15.0](release-notes/v13.15.0.md), [v13.16.0](release-notes/v13.16.0.md), [v13.18.0](release-notes/v13.18.0.md), [v13.18.1](release-notes/v13.18.1.md), [v13.19.0](release-notes/v13.19.0.md), [v13.19.1](release-notes/v13.19.1.md), [v13.20.0](release-notes/v13.20.0.md), [v13.21.0](release-notes/v13.21.0.md), [v13.21.5](release-notes/v13.21.5.md), [v13.21.8](release-notes/v13.21.8.md), [v13.22.0](release-notes/v13.22.0.md)
+- **Action Cards**: [v14.9.0](release-notes/v14.9.0.md), [v14.8.0](release-notes/v14.8.0.md), [v14.7.0](release-notes/v14.7.0.md), [v14.6.0](release-notes/v14.6.0.md), [v14.5.0](release-notes/v14.5.0.md), [v14.3.0](release-notes/v14.3.0.md), [v14.0.0](release-notes/v14.0.0.md), [v13.11.0](release-notes/v13.11.0.md), [v13.13.3](release-notes/v13.13.3.md), [v13.14.0](release-notes/v13.14.0.md), [v13.15.0](release-notes/v13.15.0.md), [v13.16.0](release-notes/v13.16.0.md), [v13.18.0](release-notes/v13.18.0.md), [v13.18.1](release-notes/v13.18.1.md), [v13.19.0](release-notes/v13.19.0.md), [v13.19.1](release-notes/v13.19.1.md), [v13.20.0](release-notes/v13.20.0.md), [v13.21.0](release-notes/v13.21.0.md), [v13.21.5](release-notes/v13.21.5.md), [v13.21.8](release-notes/v13.21.8.md), [v13.22.0](release-notes/v13.22.0.md)
 - **GM Tools**: [v14.7.0](release-notes/v14.7.0.md), [v13.18.0](release-notes/v13.18.0.md), [v13.18.1](release-notes/v13.18.1.md), [v13.20.0](release-notes/v13.20.0.md)
 - **Transformations**: [v13.14.0](release-notes/v13.14.0.md), [v13.15.0](release-notes/v13.15.0.md), [v13.15.5](release-notes/v13.15.5.md), [v13.17.0](release-notes/v13.17.0.md)
 - **Features & Bonuses**: [v13.10.0](release-notes/v13.10.0.md), [v13.19.0](release-notes/v13.19.0.md), [v13.22.0](release-notes/v13.22.0.md)
-- **Status Effects & ActiveEffects**: [v14.6.0](release-notes/v14.6.0.md), [v14.5.0](release-notes/v14.5.0.md), [v14.4.0](release-notes/v14.4.0.md), [v14.3.0](release-notes/v14.3.0.md), [v14.1.0](release-notes/v14.1.0.md), [v14.0.0](release-notes/v14.0.0.md), [v13.19.0](release-notes/v13.19.0.md)
+- **Status Effects & ActiveEffects**: [v14.9.0](release-notes/v14.9.0.md), [v14.6.0](release-notes/v14.6.0.md), [v14.5.0](release-notes/v14.5.0.md), [v14.4.0](release-notes/v14.4.0.md), [v14.3.0](release-notes/v14.3.0.md), [v14.1.0](release-notes/v14.1.0.md), [v14.0.0](release-notes/v14.0.0.md), [v13.19.0](release-notes/v13.19.0.md)
 - **Combat Automation**: [v13.11.0](release-notes/v13.11.0.md), [v13.13.3](release-notes/v13.13.3.md)
 - **Documentation**: [v13.20.0](release-notes/v13.20.0.md)
 - **Conversion & Migration**: [v14.0.0](release-notes/v14.0.0.md), [v13.17.0](release-notes/v13.17.0.md), [v13.19.0](release-notes/v13.19.0.md), [v13.19.1](release-notes/v13.19.1.md)
@@ -380,4 +392,4 @@ We encourage users to:
 
 ---
 
-**Current Version**: v14.8.0 | **Foundry VTT Compatibility**: v14+ | **Last Updated**: May 2026
+**Current Version**: v14.9.0 | **Foundry VTT Compatibility**: v14+ | **Last Updated**: June 2026
