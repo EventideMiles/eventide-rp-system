@@ -530,7 +530,7 @@ describe('chat-listeners', () => {
       expect(mockCreateStatusMessage).toHaveBeenCalledWith(mockItem);
     });
 
-    test('should create status message for textless status items without description', () => {
+    test('should create status message when status item has empty description', () => {
       // Arrange
       const mockItem = {
         type: 'status',
