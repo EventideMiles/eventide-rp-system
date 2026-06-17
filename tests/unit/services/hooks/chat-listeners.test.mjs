@@ -521,8 +521,26 @@ describe('chat-listeners', () => {
       const mockCreateStatusMessage = vi.fn();
       global.erps = { messages: { createStatusMessage: mockCreateStatusMessage } };
 
-      // Act - simulate item creation hook
-      if (mockItem.type === 'status' && mockItem.system.description) {
+      // Act - simulate item creation hook (textless statuses also generate messages)
+      if (mockItem.type === 'status') {
+        mockCreateStatusMessage(mockItem);
+      }
+
+      // Assert
+      expect(mockCreateStatusMessage).toHaveBeenCalledWith(mockItem);
+    });
+
+    test('should create status message for textless status items without description', () => {
+      // Arrange
+      const mockItem = {
+        type: 'status',
+        system: { description: '' }
+      };
+      const mockCreateStatusMessage = vi.fn();
+      global.erps = { messages: { createStatusMessage: mockCreateStatusMessage } };
+
+      // Act - simulate item creation hook (no description guard)
+      if (mockItem.type === 'status') {
         mockCreateStatusMessage(mockItem);
       }
 

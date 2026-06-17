@@ -728,6 +728,10 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
    */
   async _preClose(options = {}) {
     await super._preClose(options);
+    if (this._onProseMirrorSaveEvent && this.element) {
+      this.element.removeEventListener("save", this._onProseMirrorSaveEvent);
+      this._onProseMirrorSaveEvent = null;
+    }
     this._cleanupThemeManagement();
   }
 
@@ -739,10 +743,11 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
     this._initThemeManagement();
 
     if (this.element) {
-      this.element.addEventListener("save", (event) => {
+      this._onProseMirrorSaveEvent = (event) => {
         if (!event.target.matches("prose-mirror")) return;
         this._onProseMirrorSave(event);
-      });
+      };
+      this.element.addEventListener("save", this._onProseMirrorSaveEvent);
     }
   }
 
