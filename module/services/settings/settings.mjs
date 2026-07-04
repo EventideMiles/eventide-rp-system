@@ -695,6 +695,21 @@ export const registerSettings = function () {
     },
   });
 
+  // Default Item Selector Scopes (GM Only)
+  game.settings.register(
+    "eventide-rp-system",
+    "defaultItemSelectorScopes",
+    {
+      name: "SETTINGS.DefaultItemSelectorScopesName",
+      hint: "SETTINGS.DefaultItemSelectorScopesHint",
+      scope: "world",
+      config: true,
+      restricted: true,
+      type: String,
+      default: "",
+    },
+  );
+
   // ===========================================
   // NPC SETTINGS (GM Only - No Reload Needed)
   // ===========================================
