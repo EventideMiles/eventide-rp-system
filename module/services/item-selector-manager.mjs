@@ -87,8 +87,14 @@ export class ItemSelectorManager {
           }
         }
       }
-    } catch {
-      // Setting not available yet, use defaults
+    } catch (err) {
+      Logger.debug(
+        "Failed to read defaultItemSelectorScopes setting, using defaults",
+        {
+          error: err.message,
+          method: "getEffectiveScopes",
+        },
+      );
     }
 
     return defaultScopes;

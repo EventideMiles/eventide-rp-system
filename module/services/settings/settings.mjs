@@ -1,6 +1,7 @@
 import { EventideSheetHelpers } from "../../ui/_module.mjs";
 import { erpsSoundManager, Logger } from "../_module.mjs";
 import { FormulaValidator } from "../formula-validator.mjs";
+import { SOURCE_SCOPES } from "../../helpers/item-source-collector.mjs";
 
 /**
  * EVENTIDE RP SYSTEM - SETTINGS CONFIGURATION
@@ -707,6 +708,16 @@ export const registerSettings = function () {
       restricted: true,
       type: String,
       default: "",
+      onChange: (value) => {
+        if (!value) return;
+        const parts = value.split(",").map((s) => s.trim()).filter(Boolean);
+        const invalid = parts.filter((s) => !SOURCE_SCOPES.includes(s));
+        if (invalid.length > 0) {
+          ui.notifications.warn(
+            `Ignored invalid scope(s) in Default Item Selector Scopes: "${invalid.join(", ")}". Valid values: ${SOURCE_SCOPES.join(", ")}`,
+          );
+        }
+      },
     },
   );
 
