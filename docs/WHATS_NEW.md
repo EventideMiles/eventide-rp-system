@@ -2,6 +2,14 @@
 
 ## Latest Release
 
+**[v14.9.1](release-notes/v14.9.1.md)** — Default "This Character" Toggle & Sync Label Clarity _(July 2026)_
+
+**Key Highlights:**
+
+- **Default "This Character" Toggle** — item selector source scopes now default to only This Character being enabled; new GM setting configures additional default scopes
+- **Configurable Default Scopes** — GMs can set which additional scopes (All Characters, Compendiums, World Items) are enabled by default via comma-separated system setting
+- **Sync Label Clarity** — Multi-Image Selector sync toggles renamed to "Sync Image With Action" and "Sync Color With Action" for unambiguous meaning
+
 **[v14.9.0](release-notes/v14.9.0.md)** — Textless Status Messages & Multi-Image Selector Fixes _(June 2026)_
 
 **Key Highlights:**
@@ -313,6 +321,7 @@ Enhanced character customization through circumstantial bonuses and feature-base
 
 | Version | Release Date | Focus |
 | -- | -- | -- |
+| **v14.9.1** | July 2026 | Default "This Character" Toggle & Sync Label Clarity |
 | **v14.9.0** | June 2026 | Textless Status Messages & Multi-Image Selector Fixes |
 | **v14.8.0** | May 2026 | Multi-Image Selector for Action Cards |
 | **v14.7.0** | May 2026 | Action Card Preset Library, NPC Quick Generator & More |
@@ -392,4 +401,4 @@ We encourage users to:
 
 ---
 
-**Current Version**: v14.9.0 | **Foundry VTT Compatibility**: v14+ | **Last Updated**: June 2026
+**Current Version**: v14.9.1 | **Foundry VTT Compatibility**: v14+ | **Last Updated**: July 2026
