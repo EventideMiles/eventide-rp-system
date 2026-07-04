@@ -13,7 +13,7 @@ import { ItemSelectorComboBox } from "../ui/components/item-selector-combo-box.m
 import { ItemScopeSelector } from "../ui/components/item-scope-selector.mjs";
 import {
   ItemSourceCollector,
-  ALL_SCOPES,
+  SOURCE_SCOPES,
 } from "../helpers/item-source-collector.mjs";
 import { Logger } from "./logger.mjs";
 
@@ -68,7 +68,36 @@ export class ItemSelectorManager {
     if (savedScopes && Array.isArray(savedScopes) && savedScopes.length > 0) {
       return savedScopes;
     }
-    return [...ALL_SCOPES];
+
+    const defaultScopes = ["thisCharacter"];
+
+    try {
+      const additionalScopes = game.settings.get(
+        "eventide-rp-system",
+        "defaultItemSelectorScopes",
+      );
+      if (additionalScopes) {
+        const parsed = additionalScopes
+          .split(",")
+          .map((s) => s.trim())
+          .filter((s) => s && SOURCE_SCOPES.includes(s));
+        for (const scope of parsed) {
+          if (!defaultScopes.includes(scope)) {
+            defaultScopes.push(scope);
+          }
+        }
+      }
+    } catch (err) {
+      Logger.debug(
+        "Failed to read defaultItemSelectorScopes setting, using defaults",
+        {
+          error: err.message,
+          method: "getEffectiveScopes",
+        },
+      );
+    }
+
+    return defaultScopes;
   }
 
   static async saveScopePreferences(item, scopes) {

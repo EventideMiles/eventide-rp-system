@@ -56,6 +56,9 @@
     "ActionCardExecutionDelayName": "Action Card Execution Delay",
     "ActionCardExecutionDelayHint": "Delay in milliseconds between each step of action card execution (0-10000ms, in 100ms increments).",
 
+    "DefaultItemSelectorScopesName": "Default Item Selector Scopes",
+    "DefaultItemSelectorScopesHint": "Additional source scopes enabled by default in item selectors (comma-separated: actor, compendium, world). 'This Character' is always enabled by default.",
+
     "CrToXpFormulaName": "CR to XP Calculation",
     "CrToXpFormulaHint": "Formula for converting Challenge Rating to Experience Points. Use @cr to reference the CR value. Use simple math operations (+, -, *, /) and dice notation. Example: '@cr * 200 + @cr * @cr * 50'",
 

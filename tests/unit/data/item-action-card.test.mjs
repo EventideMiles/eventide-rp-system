@@ -447,7 +447,7 @@ describe('EventideRpSystemActionCard Schema - Priority 1 Critical Definitions', 
       expect(schema.advanceInitiative.options.initial).toBe(false);
       expect(schema.attemptInventoryReduction.options.initial).toBe(false);
       expect(schema.repeatToHit.options.initial).toBe(false);
-      expect(schema.damageApplication.options.initial).toBe(false);
+      expect(schema.damageApplication.options.initial).toBe(true);
       expect(schema.costOnRepetition.options.initial).toBe(false);
 
       // Status application limit should default to 1 (apply once)
