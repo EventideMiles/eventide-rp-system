@@ -185,7 +185,7 @@ export class DefaultDataFactory {
         attemptInventoryReduction: false,
         repetitions: "1",
         repeatToHit: false,
-        damageApplication: false,
+        damageApplication: true,
         statusApplicationLimit: 1,
         timingOverride: 0.0,
         costOnRepetition: false,

@@ -343,7 +343,7 @@ describe('DefaultDataFactory', () => {
       expect(result.system.advanceInitiative).toBe(false);
       expect(result.system.attemptInventoryReduction).toBe(false);
       expect(result.system.repeatToHit).toBe(false);
-      expect(result.system.damageApplication).toBe(false);
+      expect(result.system.damageApplication).toBe(true);
       expect(result.system.costOnRepetition).toBe(false);
       expect(result.system.failOnFirstMiss).toBe(true);
     });

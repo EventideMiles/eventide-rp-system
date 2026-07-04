@@ -384,7 +384,7 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
      */
     schema.damageApplication = new fields.BooleanField({
       required: true,
-      initial: false,
+      initial: true,
     });
 
     /**
