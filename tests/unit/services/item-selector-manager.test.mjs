@@ -250,7 +250,7 @@ describe('ItemSelectorManager', () => {
 
     test('should return exactly 5 selector types', () => {
       const types = ItemSelectorManager.getAvailableSelectorTypes();
-      expect(types).toHaveLength(5);
+      expect(types).toHaveLength(6);
     });
   });
 

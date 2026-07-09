@@ -180,7 +180,7 @@ describe('ERPSMessageHandler', () => {
     // Setup game.settings mocks
     if (global.game.settings) {
       global.game.settings.get = vi.fn((scope, key) => {
-        if (key === 'rollMode') return 'publicroll';
+        if (key === 'rollMode' || key === 'messageMode') return 'publicroll';
         if (scope === 'eventide-rp-system' && key === 'showGearEquipMessages') return true;
         return null;
       });
@@ -246,6 +246,7 @@ describe('ERPSMessageHandler', () => {
         },
         soundKey: 'statusApply',
         forceSound: false,
+        rollFlags: null,
         useERPSRollUtilitiesSpeaker: true
       });
     });
@@ -293,6 +294,7 @@ describe('ERPSMessageHandler', () => {
         },
         soundKey: 'gearEquip',
         forceSound: false,
+        rollFlags: null,
         useERPSRollUtilitiesSpeaker: true
       });
     });
@@ -345,10 +347,11 @@ describe('ERPSMessageHandler', () => {
         },
         messageOptions: {
           speaker: { alias: 'Test Speaker' },
-          rollMode: 'publicroll'
+          messageMode: 'publicroll'
         },
         soundKey: null,
         forceSound: false,
+        rollFlags: null,
         useERPSRollUtilitiesSpeaker: true
       });
     });
@@ -390,6 +393,7 @@ describe('ERPSMessageHandler', () => {
         messageOptions: expect.any(Object),
         soundKey: null,
         forceSound: false,
+        rollFlags: null,
         useERPSRollUtilitiesSpeaker: true
       });
     });
@@ -414,6 +418,7 @@ describe('ERPSMessageHandler', () => {
         messageOptions: expect.any(Object),
         soundKey: null,
         forceSound: false,
+        rollFlags: null,
         useERPSRollUtilitiesSpeaker: true
       });
     });
@@ -432,6 +437,7 @@ describe('ERPSMessageHandler', () => {
         messageOptions: expect.any(Object),
         soundKey: null,
         forceSound: false,
+        rollFlags: null,
         useERPSRollUtilitiesSpeaker: true
       });
     });
@@ -450,6 +456,7 @@ describe('ERPSMessageHandler', () => {
         messageOptions: expect.any(Object),
         soundKey: null,
         forceSound: false,
+        rollFlags: null,
         useERPSRollUtilitiesSpeaker: true
       });
     });
@@ -528,17 +535,18 @@ describe('ERPSMessageHandler', () => {
     });
 
     test('should use custom roll mode from options', async () => {
-      await messageHandler.createFeatureMessage(mockItem, { rollMode: 'blindroll' });
+      await messageHandler.createFeatureMessage(mockItem, { messageMode: 'blindroll' });
 
       expect(ChatMessageBuilder.createMessage).toHaveBeenCalledWith({
         templatePath: messageHandler.templates.feature,
         templateData: expect.any(Object),
         messageOptions: {
           speaker: expect.any(Object),
-          rollMode: 'blindroll'
+          messageMode: 'blindroll'
         },
         soundKey: null,
         forceSound: false,
+        rollFlags: null,
         useERPSRollUtilitiesSpeaker: true
       });
     });
@@ -559,6 +567,7 @@ describe('ERPSMessageHandler', () => {
         },
         soundKey: 'statusRemove',
         forceSound: false,
+        rollFlags: null,
         useERPSRollUtilitiesSpeaker: true
       });
     });
@@ -584,6 +593,7 @@ describe('ERPSMessageHandler', () => {
         },
         soundKey: 'statusRemove',
         forceSound: false,
+        rollFlags: null,
         useERPSRollUtilitiesSpeaker: true
       });
     });
@@ -613,10 +623,11 @@ describe('ERPSMessageHandler', () => {
         },
         messageOptions: {
           speaker: { alias: 'Test Speaker' },
-          rollMode: 'publicroll'
+          messageMode: 'publicroll'
         },
         soundKey: 'combatPower',
         forceSound: false,
+        rollFlags: null,
         useERPSRollUtilitiesSpeaker: true
       });
     });
@@ -707,6 +718,7 @@ describe('ERPSMessageHandler', () => {
         messageOptions: expect.any(Object),
         soundKey: 'combatPower',
         forceSound: false,
+        rollFlags: null,
         useERPSRollUtilitiesSpeaker: true
       });
     });
@@ -856,6 +868,7 @@ describe('ERPSMessageHandler', () => {
         },
         soundKey: 'gearTransfer',
         forceSound: false,
+        rollFlags: null,
         useERPSRollUtilitiesSpeaker: true
       });
     });
@@ -884,6 +897,7 @@ describe('ERPSMessageHandler', () => {
         messageOptions: expect.any(Object),
         soundKey: 'gearEquip',
         forceSound: false,
+        rollFlags: null,
         useERPSRollUtilitiesSpeaker: true
       });
     });
@@ -1249,6 +1263,7 @@ describe('ERPSMessageHandler', () => {
         messageOptions: expect.any(Object),
         soundKey: 'gearEquip',
         forceSound: false,
+        rollFlags: null,
         useERPSRollUtilitiesSpeaker: true
       });
     });
@@ -1290,6 +1305,7 @@ describe('ERPSMessageHandler', () => {
         messageOptions: expect.any(Object),
         soundKey: 'combatPower',
         forceSound: false,
+        rollFlags: null,
         useERPSRollUtilitiesSpeaker: true
       });
     });
@@ -1310,6 +1326,7 @@ describe('ERPSMessageHandler', () => {
         messageOptions: expect.any(Object),
         soundKey: 'statusRemove',
         forceSound: false,
+        rollFlags: null,
         useERPSRollUtilitiesSpeaker: true
       });
     });

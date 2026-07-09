@@ -91,6 +91,7 @@ export class AttackChainExecutor {
       processStatus,
       processTransformation,
       processSelfEffect,
+      processSelfDamage,
       waitForDelay,
       disableDelays,
       shouldApplyDamage,
@@ -178,6 +179,15 @@ export class AttackChainExecutor {
         );
       }
 
+      // Process self-damage after self-effects (apply to card owner)
+      let selfDamageResults = null;
+      if (processSelfDamage) {
+        if (!disableDelays) {
+          await waitForDelay();
+        }
+        selfDamageResults = await processSelfDamage(results, rollResult);
+      }
+
       return {
         success: true,
         mode: "attackChain",
@@ -188,6 +198,7 @@ export class AttackChainExecutor {
         statusResults,
         transformationResults,
         selfEffectResults,
+        selfDamageResults,
       };
     } catch (error) {
       Logger.error(

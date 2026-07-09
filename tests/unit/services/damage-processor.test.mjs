@@ -63,10 +63,11 @@ describe('DamageProcessor', () => {
           vuln: { total: 0 }
         },
         hiddenAbilities: {
-          vuln: { total: 0 }
+          vuln: { value: 0, change: 0, total: 0 }
         }
       },
       damageResolve: vi.fn(async () => null),
+      applyDamageBundle: vi.fn(async () => ({ resolveRoll: null, powerRoll: null })),
       getRollData: vi.fn(() => ({
         hiddenAbilities: { acro: 20, miss: 5 }
       }))
@@ -123,7 +124,7 @@ describe('DamageProcessor', () => {
 
   describe('resolveDamageForTarget()', () => {
     test('should apply vulnerability modifier when vuln is positive', async () => {
-      mockActor.system.hiddenAbilities.vuln.total = 25;
+      mockActor.system.hiddenAbilities.vuln.value = 25;
 
       const mockDamageRoll = {
         total: 12,
@@ -335,6 +336,88 @@ describe('DamageProcessor', () => {
 
       expect(damageResults).toHaveLength(0);
     });
+
+    test('should apply power damage independently when resolve condition not met', async () => {
+      const target1 = { ...mockActor, id: 'target-1' };
+      const results = [{ target: target1, oneHit: false, bothHit: false }];
+
+      target1.damageResolve = vi.fn(async () => ({
+        total: 5,
+        formula: '1d6',
+      }));
+
+      const context = {
+        ...mockContext,
+        damageCondition: 'twoSuccesses',
+        powerDamageFormula: '1d6',
+        powerDamageType: 'damage',
+        powerDamageCondition: 'zeroSuccesses',
+        powerDamageThreshold: 15,
+      };
+
+      const damageResults = await DamageProcessor.processDamageResults(results, mockRollResult, context);
+
+      expect(damageResults).toHaveLength(1);
+      expect(target1.damageResolve).toHaveBeenCalledWith(
+        expect.objectContaining({
+          resource: 'power',
+          type: 'damage',
+        })
+      );
+    });
+
+    test('should bundle resolve and power damage when both conditions met', async () => {
+      const target1 = { ...mockActor, id: 'target-1' };
+      const results = [{ target: target1, oneHit: true, bothHit: false }];
+
+      const mockResolveRoll = { total: 10, formula: '2d6' };
+      const mockPowerRoll = { total: 5, formula: '1d6' };
+
+      target1.applyDamageBundle = vi.fn(async () => ({
+        resolveRoll: mockResolveRoll,
+        powerRoll: mockPowerRoll,
+      }));
+
+      const context = {
+        ...mockContext,
+        damageCondition: 'oneSuccess',
+        powerDamageFormula: '1d6',
+        powerDamageType: 'damage',
+        powerDamageCondition: 'oneSuccess',
+        powerDamageThreshold: 15,
+      };
+
+      const damageResults = await DamageProcessor.processDamageResults(results, mockRollResult, context);
+
+      expect(damageResults).toHaveLength(1);
+      expect(target1.applyDamageBundle).toHaveBeenCalledWith(
+        expect.objectContaining({
+          resolveDamage: expect.any(Object),
+          powerDamage: expect.objectContaining({ formula: '1d6', type: 'damage' }),
+        })
+      );
+    });
+
+    test('should exclude power damage from bundle when powerDamageFormula is zero', async () => {
+      const target1 = { ...mockActor, id: 'target-1' };
+      const results = [{ target: target1, oneHit: true, bothHit: false }];
+
+      target1.damageResolve = vi.fn(async () => ({ total: 10 }));
+
+      const context = {
+        ...mockContext,
+        powerDamageFormula: '0',
+        powerDamageType: 'damage',
+        powerDamageCondition: 'oneSuccess',
+        powerDamageThreshold: 15,
+      };
+
+      await DamageProcessor.processDamageResults(results, mockRollResult, context);
+
+      // Only resolve applies (power is zero) — should use single-type damageResolve
+      expect(target1.damageResolve).toHaveBeenCalled();
+      expect(target1.applyDamageBundle).not.toHaveBeenCalled();
+    });
   });
 
   describe('processSavedDamage()', () => {
@@ -363,11 +446,11 @@ describe('DamageProcessor', () => {
 
       expect(result).toHaveLength(1);
       expect(result[0].target).toBe(mockActor);
-      expect(result[0].roll).toEqual(mockDamageRoll);
+      expect(result[0].resolveRoll).toEqual(mockDamageRoll);
     });
 
     test('should apply vulnerability to saved damage', async () => {
-      mockActor.system.hiddenAbilities.vuln.total = 25;
+      mockActor.system.hiddenAbilities.vuln.value = 25;
 
       const savedContext = {
         actionCard: mockActionCard,
@@ -395,7 +478,7 @@ describe('DamageProcessor', () => {
       const result = await DamageProcessor.processSavedDamage([targetToken], savedContext);
 
       expect(result).toHaveLength(1);
-      expect(result[0].roll).toEqual(mockDamageRoll);
+      expect(result[0].resolveRoll).toEqual(mockDamageRoll);
     });
 
     test('should handle missing vuln in saved damage', async () => {
@@ -424,7 +507,7 @@ describe('DamageProcessor', () => {
       const result = await DamageProcessor.processSavedDamage([targetToken], savedContext);
 
       expect(result).toHaveLength(1);
-      expect(result[0].roll).toEqual(mockDamageRoll);
+      expect(result[0].resolveRoll).toEqual(mockDamageRoll);
     });
 
     test('should handle roll failure in saved damage', async () => {
@@ -540,6 +623,32 @@ describe('DamageProcessor', () => {
     });
   });
 
+  describe('isZeroFormula()', () => {
+    test('should return true for undefined', () => {
+      expect(DamageProcessor.isZeroFormula(undefined)).toBe(true);
+    });
+
+    test('should return true for empty string', () => {
+      expect(DamageProcessor.isZeroFormula('')).toBe(true);
+    });
+
+    test('should return true for whitespace-only string', () => {
+      expect(DamageProcessor.isZeroFormula('   ')).toBe(true);
+    });
+
+    test('should return true for literal zero', () => {
+      expect(DamageProcessor.isZeroFormula('0')).toBe(true);
+    });
+
+    test('should return false for a dice formula', () => {
+      expect(DamageProcessor.isZeroFormula('1d6')).toBe(false);
+    });
+
+    test('should return false for a non-zero flat value', () => {
+      expect(DamageProcessor.isZeroFormula('5')).toBe(false);
+    });
+  });
+
   describe('isValidFormula()', () => {
     test('should return true for valid formula string', () => {
       const result = DamageProcessor.isValidFormula('2d6+5');
@@ -574,19 +683,19 @@ describe('DamageProcessor', () => {
 
   describe('applyVulnerabilityModifier()', () => {
     test('should add vulnerability to formula for non-healing damage', () => {
-      mockActor.system.hiddenAbilities.vuln.total = 10;
+      mockActor.system.hiddenAbilities.vuln.value = 10;
       const result = DamageProcessor.applyVulnerabilityModifier('2d6', 'physical', mockActor);
       expect(result).toBe('2d6 + 10');
     });
 
     test('should not modify formula for healing damage', () => {
-      mockActor.system.hiddenAbilities.vuln.total = 10;
+      mockActor.system.hiddenAbilities.vuln.value = 10;
       const result = DamageProcessor.applyVulnerabilityModifier('2d6', 'heal', mockActor);
       expect(result).toBe('2d6');
     });
 
     test('should not modify formula when vulnerability is zero', () => {
-      mockActor.system.hiddenAbilities.vuln.total = 0;
+      mockActor.system.hiddenAbilities.vuln.value = 0;
       const result = DamageProcessor.applyVulnerabilityModifier('2d6', 'physical', mockActor);
       expect(result).toBe('2d6');
     });

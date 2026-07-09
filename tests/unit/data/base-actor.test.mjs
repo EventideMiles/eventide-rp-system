@@ -857,7 +857,7 @@ describe('EventideRpSystemBaseActor - Phase 2 Branch Coverage', () => {
       const rollData = actorData.getRollData();
 
       expect(rollData.lvl).toBe(1);
-      expect(rollData.statTotal).toBe(0);
+      expect(rollData.statTotal.value).toBe(0);
       expect(rollData.cr).toBe(3);
       expect(rollData.xp).toBe(600);
     });

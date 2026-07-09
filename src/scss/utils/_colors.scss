@@ -60,6 +60,8 @@
   --erps-card-header-unknown: #535353;
   --erps-card-header-damage: #6A0404;
   --erps-card-header-heal: #cb8e00;
+  --erps-card-header-power-damage: #5b2a86;
+  --erps-card-header-power-heal: #8b5cf6;
   --erps-card-header-effect: #9A5D2D;
   --erps-card-header-delete: #555;
   --erps-card-header-transfer: #9B4B7D;
@@ -298,6 +300,8 @@ $gear: var(--erps-card-header-gear);
 $unknown: var(--erps-card-header-unknown);
 $damage: var(--erps-card-header-damage);
 $heal: var(--erps-card-header-heal);
+$power-damage: var(--erps-card-header-power-damage);
+$power-heal: var(--erps-card-header-power-heal);
 $effect: var(--erps-card-header-effect);
 $delete: var(--erps-card-header-delete);
 $transformation-gradient: var(--erps-card-header-transformation);

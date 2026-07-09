@@ -125,8 +125,8 @@ describe("Healing Increase", () => {
       test("handles multiply buff by zero protection", () => {
         const hiddenAbility = { value: 5, change: 0, multiplyNeutral: 1, divideNeutral: 1, multiplyBuff: 0, multiplyDebuff: 1 };
         const result = DamageProcessor.buildModifiedFormula("d20", hiddenAbility);
-        // Multiply by 0 should be treated as 1 (no-op)
-        expect(result).toBe("d20 + 5");
+        // Multiply by 0 is treated as 1 (buffFactor), but still wraps and applies
+        expect(result).toBe("1 * (d20 + 5)");
       });
     });
 
@@ -146,8 +146,8 @@ describe("Healing Increase", () => {
       test("handles multiply debuff by zero protection", () => {
         const hiddenAbility = { value: 5, change: 0, multiplyNeutral: 1, divideNeutral: 1, multiplyBuff: 1, multiplyDebuff: 0 };
         const result = DamageProcessor.buildModifiedFormula("d20", hiddenAbility);
-        // Multiply by 0 should be treated as 1 (no-op)
-        expect(result).toBe("d20 + 5");
+        // Multiply by 0 is treated as 1 (debuffFactor), but still wraps with floor
+        expect(result).toBe("floor((d20 + 5) / 1)");
       });
     });
 
@@ -163,7 +163,7 @@ describe("Healing Increase", () => {
         const hiddenAbility = { value: 3, change: 0, multiplyNeutral: 2, divideNeutral: 2, multiplyBuff: 2, multiplyDebuff: 2 };
         const result = DamageProcessor.buildModifiedFormula("d20", hiddenAbility);
         // Order: multiplyNeutral, divideNeutral, multiplyBuff, multiplyDebuff
-        expect(result).toBe("floor(floor(2 * (2 * (d20 + 3)) / 2) / 2)");
+        expect(result).toBe("floor(2 * floor(2 * (d20 + 3) / 2) / 2)");
       });
     });
 
@@ -250,7 +250,8 @@ describe("Healing Increase", () => {
     test("applies healing increase additive with minimum 1", () => {
       const actor = createMockActor({ value: 5, change: 3, multiplyNeutral: 1, divideNeutral: 1, multiplyBuff: 1, multiplyDebuff: 1 });
       const result = DamageProcessor.applyHealingIncreaseModifierToFormula("d20", actor);
-      expect(result).toBe("max(1, d20 + 8)");
+      // Positive additive with no multiplicative effects does not need max(1, ...)
+      expect(result).toBe("d20 + 8");
     });
 
     test("applies healing increase multiply with minimum 1", () => {

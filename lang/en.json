@@ -242,6 +242,14 @@
         "DamageFormula": "Damage Formula",
         "DamageType": "Damage Type",
         "DamageThreshold": "Damage Threshold",
+        "PowerDamageConfig": "Power Damage Configuration",
+        "PowerDamageCondition": "Apply Power Damage",
+        "PowerDamageConditionHint": "When the card applies power damage. Power damage affects the target's Power resource instead of Resolve.",
+        "PowerDamageFormula": "Power Damage Formula",
+        "PowerDamageType": "Power Damage Type",
+        "PowerDamageThreshold": "Power Damage Threshold",
+        "SavedPowerFormula": "Power Damage Formula",
+        "SavedPowerType": "Power Damage Type",
         "DamageOn": "Damage on",
         "StatusConfig": "Status Configuration",
         "StatusCondition": "Apply Status",
@@ -354,6 +362,14 @@
         "SelfEffectsCondition": "Self Effects Condition",
         "SelfEffectsThreshold": "Self Effects Threshold",
         "SelfEffectsThresholdHint": "The roll value required to trigger self-effects (for rollValue condition)",
+        "SelfDamageConfig": "Self-Damage Configuration",
+        "SelfDamageCondition": "Apply Self-Damage",
+        "SelfDamageConditionHint": "When the card applies damage or healing to its owner. Defaults to Never. Affects Resolve and/or Power based on the formulas below.",
+        "SelfDamageThreshold": "Self-Damage Threshold",
+        "SelfResolveFormula": "Resolve Formula",
+        "SelfResolveType": "Resolve Type",
+        "SelfPowerFormula": "Power Formula",
+        "SelfPowerType": "Power Type",
         "SelfEffectsApplicationLimit": "Self Effects Application Limit",
         "SelfEffectsApplicationLimitHelp": "Maximum number of times self-effects can be applied per action card execution (0 = unlimited)",
         "SelfEffectsApplicationLimitHint": "0 = unlimited, 1+ = apply up to this many times per execution",
@@ -419,8 +435,12 @@
           "hint": "Re-roll the embedded item for each repetition (attack chains only)"
         },
         "DamageApplication": {
-          "label": "Damage Per Success",
-          "hint": "Apply damage on every repetition instead of just the first success"
+          "label": "Resolve Damage Per Success",
+          "hint": "Apply resolve damage on every repetition instead of just the first success"
+        },
+        "PowerDamageApplication": {
+          "label": "Power Damage Per Success",
+          "hint": "Apply power damage on every repetition instead of just the first success"
         },
         "TimingOverride": {
           "label": "Timing Override (seconds)",
@@ -743,7 +763,8 @@
         "ResultDenied": "Your action '{actionCard}' has been denied by {gm}",
         "Repetitions": "Repetitons",
         "ToHit": "To Hit",
-        "Damage": "Damage",
+        "Damage": "Resolve Damage",
+        "PowerDamage": "Power Damage",
         "Status": "Status",
         "Cost": "Cost"
       },
@@ -1305,6 +1326,8 @@
         "StatusIntensified": "Status intensified:",
         "StatusApplied": "Status applied:",
         "Overhealing": "Overhealing",
+        "ResolveDamage": "Resolve Damage",
+        "PowerDamage": "Power Damage",
         "Abilities": "Abilities",
         "StatusEffects": "Status Effects",
         "Transformation": "Transformation"

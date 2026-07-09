@@ -700,7 +700,7 @@ describe('CharacterEffectsProcessor', () => {
     });
 
     test('does not create effect when allowCreate is false', async () => {
-      const result = await CharacterEffectsProcessor.getOrCreateFirstEffect(mockItem, false);
+      const result = await CharacterEffectsProcessor.getOrCreateFirstEffect(mockItem, 0, false);
 
       expect(result).toBeUndefined();
       expect(mockItem.createEmbeddedDocuments).not.toHaveBeenCalled();

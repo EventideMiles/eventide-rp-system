@@ -63,9 +63,10 @@ describe('EventideRpSystemItemBase', () => {
     test('should include only base item fields in schema', () => {
       const schema = EventideRpSystemItemBase.defineSchema();
       const keys = Object.keys(schema);
-      expect(keys).toHaveLength(2);
+      expect(keys).toHaveLength(3);
       expect(keys).toContain('description');
       expect(keys).toContain('rollActorName');
+      expect(keys).toContain('selectorScopes');
     });
   });
 

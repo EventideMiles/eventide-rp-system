@@ -43,10 +43,10 @@ describe('Handlebars Partials', () => {
       await initHandlebarsPartials();
 
       // Assert - Verify fetch was called for each partial
-      expect(mockFetch).toHaveBeenCalledTimes(18);
+      expect(mockFetch).toHaveBeenCalledTimes(20);
 
       // Assert - Verify registerPartial was called for each partial
-      expect(global.Handlebars.registerPartial).toHaveBeenCalledTimes(18);
+      expect(global.Handlebars.registerPartial).toHaveBeenCalledTimes(20);
     });
 
     test('should register erps-color-picker partial', async () => {
@@ -217,7 +217,7 @@ describe('Handlebars Partials', () => {
       await initHandlebarsPartials();
 
       // Assert - Verify all partials were attempted
-      expect(mockFetch).toHaveBeenCalledTimes(18);
+      expect(mockFetch).toHaveBeenCalledTimes(20);
       // Verify error was logged for the failed partial
       expect(Logger.error).toHaveBeenCalled();
       // Verify other partials were still registered
@@ -257,7 +257,7 @@ describe('Handlebars Partials', () => {
       await initHandlebarsPartials();
 
       // Assert - All fetches should have been initiated
-      expect(fetchPromises.length).toBe(18);
+      expect(fetchPromises.length).toBe(20);
     });
   });
 });

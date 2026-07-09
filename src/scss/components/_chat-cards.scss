@@ -326,6 +326,8 @@
 
   &__header--damage { background-color: var(--erps-card-header-damage); }
   &__header--heal { background-color: var(--erps-card-header-heal); }
+  &__header--power-damage { background-color: var(--erps-card-header-power-damage); }
+  &__header--power-heal { background-color: var(--erps-card-header-power-heal); }
   &__header--delete { background-color: var(--erps-card-header-delete); }
   &__header--restore { background-color: var(--erps-card-header-heal); }
   &__header--transfer { background-color: var(--erps-card-header-transfer); }
@@ -395,6 +397,29 @@
   }
   &__value--initiative { color: var(--erps-card-header-initiative); }
   &__value--power { color: #666; }
+  &__value--power-damage { color: var(--erps-card-header-power-damage); }
+  &__value--power-heal { color: var(--erps-card-header-power-heal); }
+
+  // Multi-roll cards: reduce value size by 10% when both resolve + power shown
+  &--multi-roll &__value {
+    font-size: 2.7rem; // 10% reduction from 3rem
+  }
+
+  // Section labels above formula bar
+  &__section-label {
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 0.25rem 0.5rem 0;
+    opacity: 0.8;
+
+    &--damage { color: var(--erps-card-header-damage); }
+    &--heal { color: var(--erps-card-header-heal); }
+    &--power-damage { color: var(--erps-card-header-power-damage); }
+    &--power-heal { color: var(--erps-card-header-power-heal); }
+  }
   &__value--acro { color: var(--erps-abilities-acro); }
   &__value--phys { color: var(--erps-abilities-phys); }
   &__value--fort { color: var(--erps-abilities-fort); }
