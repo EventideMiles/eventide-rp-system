@@ -150,7 +150,7 @@ describe('DamageProcessor', () => {
     });
 
     test('should not apply vulnerability modifier when vuln is negative', async () => {
-      mockActor.system.hiddenAbilities.vuln.total = -25;
+      mockActor.system.hiddenAbilities.vuln.value = -25;
 
       const mockDamageRoll = {
         total: 12,
@@ -160,8 +160,8 @@ describe('DamageProcessor', () => {
       };
 
       mockActor.damageResolve = vi.fn(async (options) => {
-        // Negative vuln doesn't modify formula in current implementation
-        expect(options.formula).toBe('2d6');
+        // Negative vuln reduces the formula (resistance)
+        expect(options.formula).toBe('2d6 - 25');
         return mockDamageRoll;
       });
 

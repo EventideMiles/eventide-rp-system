@@ -180,12 +180,12 @@ export class AttackChainExecutor {
       }
 
       // Process self-damage after self-effects (apply to card owner)
-      let selfDamageResults = null;
+      let selfDamageResults = [];
       if (processSelfDamage) {
-        if (!disableDelays) {
+        selfDamageResults = await processSelfDamage(results, rollResult);
+        if (selfDamageResults && !disableDelays) {
           await waitForDelay();
         }
-        selfDamageResults = await processSelfDamage(results, rollResult);
       }
 
       return {

@@ -344,7 +344,7 @@ class ERPSRollHandler {
     if (resolveDamage) {
       primaryType = resolveDamage.type.toLowerCase();
     } else if (powerDamage) {
-      primaryType = powerDamage.type === "heal" ? "powerHeal" : "powerDamage";
+      primaryType = powerDamage.type === "heal" ? "power-heal" : "power-damage";
     } else {
       primaryType = "damage";
     }
