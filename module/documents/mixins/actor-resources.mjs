@@ -330,7 +330,10 @@ export const ActorResourceMixin = (BaseClass) =>
         });
         return { resolveRoll, powerRoll };
       } catch (error) {
-        Logger.error("Error in damage bundle operation", error, "RESOURCES");
+        await ErrorHandler.handleAsync(Promise.reject(error), {
+          context: "Damage bundle operation",
+          errorType: ErrorHandler.ERROR_TYPES.FOUNDRY_API,
+        });
         Logger.methodExit("ActorResourceMixin", "applyDamageBundle", null);
         throw error;
       }
