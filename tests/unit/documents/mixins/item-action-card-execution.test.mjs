@@ -1608,7 +1608,7 @@ describe('ItemActionCardExecutionMixin', () => {
         new Error('Damage failed'),
       );
 
-      // Should not throw, just propagate the error
+      // The processor error propagates and the promise rejects
       await expect(item.executeSavedDamage({})).rejects.toThrow('Damage failed');
     });
   });
