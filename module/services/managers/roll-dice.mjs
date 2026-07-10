@@ -373,13 +373,14 @@ class ERPSRollHandler {
 
     // Render template and create a single chat message with both rolls
     const content = await renderTemplate(this.templates.standard, templateData);
+    const primaryRoll = resolveSection?.roll ?? powerSection?.roll;
     const messageData = await this._createMessageData({
       speaker: ChatMessage.getSpeaker({ actor }),
       content,
       rolls,
       type: primaryType,
-      formula: "",
-      total: 0,
+      formula: primaryRoll?.formula ?? "",
+      total: primaryRoll?.total ?? 0,
       rollMode: "roll",
     });
     await ChatMessage.create(messageData);
@@ -402,9 +403,10 @@ class ERPSRollHandler {
    */
   _computeOverhealing(total, resource) {
     if (!resource) return null;
-    const room = resource.override
-      ? resource.override - resource.value
-      : resource.max - resource.value;
+    const room =
+      resource.override != null
+        ? resource.override - resource.value
+        : resource.max - resource.value;
     if (total > room) {
       return total - room;
     }

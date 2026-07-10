@@ -42,15 +42,16 @@ if (!global.foundry.applications.handlebars) {
   };
 }
 
+// Ensure canvas has tokens property (library mock omits it)
+if (global.canvas && !global.canvas.tokens) {
+  global.canvas.tokens = { placeables: [] };
+}
+
 // Ensure CONFIG.EVENTIDE_RP_SYSTEM has baseline ability configuration.
 // Individual tests may override with more specific values.
 if (!global.CONFIG) global.CONFIG = {};
 if (!global.CONFIG.EVENTIDE_RP_SYSTEM) {
-
-// Ensure canvas has tokens property (library mock omits it)
-if (global.canvas && !global.canvas.tokens) {
-  global.canvas.tokens = { placeables: [] };
-}  global.CONFIG.EVENTIDE_RP_SYSTEM = {
+  global.CONFIG.EVENTIDE_RP_SYSTEM = {
     abilities: {
       acro: 'EVENTIDE_RP_SYSTEM.Abilities.Acro',
       phys: 'EVENTIDE_RP_SYSTEM.Abilities.Phys',
@@ -330,7 +331,7 @@ global.foundry.utils.getDocumentClass = function getDocumentClass(
   if (documentName && global.CONFIG?.[documentName]?.documentClass) {
     return global.CONFIG[documentName].documentClass;
   }
-  return global.CONFIG?.Item?.documentClass || class {};
+  return class {};
 };
 
 global.foundry.utils.isNewerVersion = function isNewerVersion(v1, v2) {
@@ -583,8 +584,10 @@ globalThis.Roll = class EnhancedMockRoll {
     );
 
     // Resolve dice terms (NdM) deterministically: each die rolls its minimum (1)
-    formula = formula.replace(/(\d+)d(\d+)([khlo!]*)/gi, (match, count) =>
-      String(parseInt(count, 10)),
+    // Consume the full modifier suffix (kh1, kl2, etc.) so no trailing chars remain
+    formula = formula.replace(
+      /(\d+)d(\d+)(?:[khlo!]\d*)*/gi,
+      (match, count) => String(parseInt(count, 10)),
     );
 
     // Map Foundry/math helper functions to their JS Math equivalents
