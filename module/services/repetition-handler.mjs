@@ -10,6 +10,7 @@
  */
 
 import { Logger } from "./logger.mjs";
+import { DamageProcessor } from "./damage-processor.mjs";
 
 /**
  * @typedef {Object} RepetitionContext
@@ -230,6 +231,9 @@ export class RepetitionHandler {
     const hasDamageFormula =
       system.attackChain?.damageFormula &&
       system.attackChain?.damageCondition !== "never";
+    const hasPowerDamageFormula =
+      !DamageProcessor.isZeroFormula(system.attackChain?.powerDamageFormula) &&
+      system.attackChain?.powerDamageCondition !== "never";
 
     // Check each target for any successful condition
     for (const targetResult of result.targetResults) {
@@ -247,6 +251,24 @@ export class RepetitionHandler {
         );
 
         if (damageSuccess) {
+          return true;
+        }
+      }
+
+      // Check power damage condition (independent of resolve damage)
+      if (hasPowerDamageFormula) {
+        const powerDamageSuccess = shouldApplyEffect(
+          system.attackChain.powerDamageCondition,
+          targetResult.oneHit,
+          targetResult.bothHit,
+          rollTotal,
+          system.attackChain.powerDamageThreshold || 15,
+          rollResult,
+          actor,
+          rollResult?.formula,
+        );
+
+        if (powerDamageSuccess) {
           return true;
         }
       }

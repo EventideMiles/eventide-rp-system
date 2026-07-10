@@ -115,6 +115,28 @@
       <p class="erps-form__hint">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.DamageApplication.hint"}}</p>
     </div>
 
+    {{!-- Power Damage Application Toggle --}}
+    <div class="eventide-sheet__toggle-group">
+      <label class="erps-toggles erps-toggles--label-left">
+        <input
+          type="checkbox"
+          class="erps-toggles__input"
+          name="system.powerDamageApplication"
+          id="system.powerDamageApplication"
+          {{checked system.powerDamageApplication}}
+        />
+        <div class="erps-toggles__container">
+          <span class="erps-toggles__label" title='{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.PowerDamageApplication.hint"}}'>
+            {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.PowerDamageApplication.label"}}
+          </span>
+          <span class="erps-toggles__track">
+            <span class="erps-toggles__thumb"></span>
+          </span>
+        </div>
+      </label>
+      <p class="erps-form__hint">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.PowerDamageApplication.hint"}}</p>
+    </div>
+
     {{!-- Cost On Repetition Toggle --}}
     <div class="eventide-sheet__toggle-group">
       <label class="erps-toggles erps-toggles--label-left">

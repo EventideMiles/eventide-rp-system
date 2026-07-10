@@ -73,27 +73,71 @@ export class DamageProcessor {
    */
   static async processDamageResults(results, rollResult, context) {
     const damageResults = [];
+    const rollTotal = rollResult?.total || 0;
 
     for (const result of results) {
-      const shouldApplyDamage = DamageProcessor.shouldApplyEffect(
-        context.damageCondition,
-        result.oneHit,
-        result.bothHit,
-        rollResult?.total || 0,
-        context.damageThreshold || 15,
-        rollResult,
-        context.actor,
-        context.formula,
+      // Resolve damage condition
+      const hasResolveFormula = !DamageProcessor.isZeroFormula(
+        context.damageFormula,
       );
+      const applyResolve =
+        hasResolveFormula &&
+        context.applyResolve !== false &&
+        DamageProcessor.shouldApplyEffect(
+          context.damageCondition,
+          result.oneHit,
+          result.bothHit,
+          rollTotal,
+          context.damageThreshold || 15,
+          rollResult,
+          context.actor,
+          context.formula,
+        );
 
-      if (shouldApplyDamage && context.damageFormula) {
+      // Power damage condition (independent of resolve damage)
+      const hasPowerFormula = !DamageProcessor.isZeroFormula(
+        context.powerDamageFormula,
+      );
+      const applyPower =
+        hasPowerFormula &&
+        context.applyPower !== false &&
+        DamageProcessor.shouldApplyEffect(
+          context.powerDamageCondition,
+          result.oneHit,
+          result.bothHit,
+          rollTotal,
+          context.powerDamageThreshold || 15,
+          rollResult,
+          context.actor,
+          context.formula,
+        );
+
+      if (applyResolve || applyPower) {
         try {
-          const damageRoll = await DamageProcessor.resolveDamageForTarget(
+          const bundle = await DamageProcessor.resolveDamageBundleForTarget(
             result.target,
-            context,
+            {
+              resolveDamage: applyResolve
+                ? {
+                    formula: context.damageFormula,
+                    damageType: context.damageType,
+                  }
+                : null,
+              powerDamage: applyPower
+                ? {
+                    formula: context.powerDamageFormula,
+                    damageType: context.powerDamageType,
+                  }
+                : null,
+              label: context.label,
+              description: context.description,
+              img: context.img,
+              bgColor: context.bgColor,
+              textColor: context.textColor,
+            },
           );
-          if (damageRoll) {
-            damageResults.push({ target: result.target, roll: damageRoll });
+          if (bundle) {
+            damageResults.push({ target: result.target, ...bundle });
           }
         } catch (damageError) {
           Logger.error(
@@ -123,13 +167,36 @@ export class DamageProcessor {
   static async processSavedDamage(targetArray, context) {
     const damageResults = [];
 
+    const hasResolveFormula = !DamageProcessor.isZeroFormula(context.formula);
+    const hasPowerFormula = !DamageProcessor.isZeroFormula(
+      context.powerFormula,
+    );
+
     for (const target of targetArray) {
+      // Apply per-repetition gates from context
+      const applyResolve = hasResolveFormula && context.applyResolve !== false;
+      const applyPower = hasPowerFormula && context.applyPower !== false;
+
+      if (!applyResolve && !applyPower) {
+        continue;
+      }
+
       try {
-        const damageRoll = await DamageProcessor.resolveDamageForTarget(
+        const bundle = await DamageProcessor.resolveDamageBundleForTarget(
           target.actor,
           {
-            damageFormula: context.formula,
-            damageType: context.type,
+            resolveDamage: applyResolve
+              ? {
+                  formula: context.formula,
+                  damageType: context.type,
+                }
+              : null,
+            powerDamage: applyPower
+              ? {
+                  formula: context.powerFormula,
+                  damageType: context.powerType,
+                }
+              : null,
             label: context.label,
             description: context.description,
             img: context.img,
@@ -137,8 +204,8 @@ export class DamageProcessor {
             textColor: context.textColor,
           },
         );
-        if (damageRoll) {
-          damageResults.push({ target: target.actor, roll: damageRoll });
+        if (bundle) {
+          damageResults.push({ target: target.actor, ...bundle });
         }
       } catch (damageError) {
         Logger.error(
@@ -151,6 +218,75 @@ export class DamageProcessor {
     }
 
     return damageResults;
+  }
+
+  /**
+   * Process self-damage for the card owner based on a condition
+   *
+   * Evaluates the self-damage condition against aggregated target hit results
+   * (mirroring the self-effects pattern). When the condition is met and at
+   * least one formula is non-zero, applies a resolve + power damage bundle to
+   * the owner actor via resolveDamageBundleForTarget.
+   *
+   * @static
+   * @param {Array} results - Target hit results
+   * @param {Roll|null} rollResult - The attack roll result
+   * @param {Object} context - Self-damage context
+   * @param {Object} context.config - selfDamageConfig ({ condition, threshold, resolveFormula, resolveType, powerFormula, powerType })
+   * @param {Actor} context.actor - The card owner (recipient of self-damage)
+   * @param {Function} context.shouldApplyEffect - Condition evaluator function
+   * @param {string} [context.label] - Label for the damage roll
+   * @param {string} [context.description] - Description for the damage roll
+   * @param {string} [context.img] - Image for the damage roll
+   * @param {string} [context.bgColor] - Background color
+   * @param {string} [context.textColor] - Text color
+   * @returns {Promise<Object|null>} The bundle result or null if not applied
+   */
+  static async processSelfDamageResults(results, rollResult, context) {
+    const { config, actor, shouldApplyEffect } = context;
+
+    if (!config || !actor) return null;
+
+    const hasResolveFormula = !DamageProcessor.isZeroFormula(
+      config.resolveFormula,
+    );
+    const hasPowerFormula = !DamageProcessor.isZeroFormula(config.powerFormula);
+
+    // Nothing to do if both formulas are zero
+    if (!hasResolveFormula && !hasPowerFormula) return null;
+
+    // Aggregate hit results across all targets (mirrors self-effects default path)
+    const hasHits = results?.some((r) => r.firstHit || r.secondHit) || false;
+    const oneHit = hasHits;
+    const bothHit = results?.every((r) => r.firstHit && r.secondHit) || false;
+    const rollTotal = rollResult?.total || 0;
+
+    const conditionMet = shouldApplyEffect(
+      config.condition,
+      oneHit,
+      bothHit,
+      rollTotal,
+      config.threshold || 15,
+      rollResult,
+      actor,
+      rollResult?.formula,
+    );
+
+    if (!conditionMet) return null;
+
+    return await DamageProcessor.resolveDamageBundleForTarget(actor, {
+      resolveDamage: hasResolveFormula
+        ? { formula: config.resolveFormula, damageType: config.resolveType }
+        : null,
+      powerDamage: hasPowerFormula
+        ? { formula: config.powerFormula, damageType: config.powerType }
+        : null,
+      label: context.label,
+      description: context.description,
+      img: context.img,
+      bgColor: context.bgColor,
+      textColor: context.textColor,
+    });
   }
 
   /**
@@ -210,6 +346,119 @@ export class DamageProcessor {
     });
 
     return damageRoll;
+  }
+
+  /**
+   * Resolve a damage bundle (resolve + power) for a single target
+   *
+   * Applies vulnerability/healing modifiers to the resolve formula only
+   * (power damage has no vulnerability concept), then calls the target's
+   * applyDamageBundle method to render a combined chat card and apply
+   * each damage type to its respective resource.
+   *
+   * @static
+   * @param {Actor} target - The target actor
+   * @param {Object} context - Bundle context
+   * @param {Object|null} [context.resolveDamage] - Resolve damage payload ({ formula, damageType })
+   * @param {Object|null} [context.powerDamage] - Power damage payload ({ formula, damageType })
+   * @param {string} context.label - Label for the damage roll
+   * @param {string} context.description - Description for the damage roll
+   * @param {string} context.img - Image for the damage roll
+   * @param {string} context.bgColor - Background color for the damage roll
+   * @param {string} context.textColor - Text color for the damage roll
+   * @returns {Promise<Object|null>} { resolveRoll, powerRoll } or null
+   */
+  static async resolveDamageBundleForTarget(target, context) {
+    const {
+      resolveDamage = null,
+      powerDamage = null,
+      label,
+      description,
+      img,
+      bgColor,
+      textColor,
+    } = context;
+
+    // Apply modifiers to the resolve formula (vulnerability / healing increase)
+    let resolvePayload = null;
+    if (resolveDamage) {
+      let resolveFormula = resolveDamage.formula;
+      const resolveType = resolveDamage.damageType;
+      if (resolveType === "heal") {
+        resolveFormula = DamageProcessor.applyHealingIncreaseModifierToFormula(
+          resolveFormula,
+          target,
+        );
+      } else {
+        resolveFormula = DamageProcessor.applyVulnerabilityModifier(
+          resolveFormula,
+          resolveType,
+          target,
+        );
+      }
+      resolvePayload = { formula: resolveFormula, type: resolveType };
+    }
+
+    // Power damage uses the raw formula (no vulnerability concept for power)
+    const powerPayload = powerDamage
+      ? { formula: powerDamage.formula, type: powerDamage.damageType }
+      : null;
+
+    // Route based on how many damage types are present:
+    // - Both types → stacked card (applyDamageBundle)
+    // - Single type → classic tall card (damageResolve)
+    const displayProps = { label, description, img, bgColor, textColor };
+
+    if (resolvePayload && powerPayload) {
+      // Both resolve and power → combined stacked card
+      return await target.applyDamageBundle({
+        resolveDamage: resolvePayload,
+        powerDamage: powerPayload,
+        ...displayProps,
+      });
+    } else if (resolvePayload) {
+      // Only resolve → classic single tall card
+      return {
+        resolveRoll: await target.damageResolve({
+          formula: resolvePayload.formula,
+          type: resolvePayload.type,
+          ...displayProps,
+        }),
+        powerRoll: null,
+      };
+    } else if (powerPayload) {
+      // Only power → single tall card with purple styling
+      return {
+        resolveRoll: null,
+        powerRoll: await target.damageResolve({
+          formula: powerPayload.formula,
+          type: powerPayload.type,
+          resource: "power",
+          ...displayProps,
+        }),
+      };
+    }
+
+    return null;
+  }
+
+  /**
+   * Check if a damage formula represents zero/no damage
+   *
+   * Returns true for empty strings, whitespace, or a literal "0".
+   * Used to skip power damage (or any damage) that should not appear.
+   *
+   * @static
+   * @param {string} [formula] - The formula to check
+   * @returns {boolean} True if the formula represents zero damage
+   */
+  static isZeroFormula(formula) {
+    if (!formula) return true;
+    const trimmed = String(formula).trim();
+    if (trimmed === "") return true;
+    // Evaluate simple numeric "0" (possibly with surrounding whitespace/parens)
+    if (/^[0(.\s)]*$/.test(trimmed)) return true;
+    return false;
   }
 
   /**

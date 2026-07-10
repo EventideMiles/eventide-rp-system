@@ -46,6 +46,8 @@ export class FormFieldHelper {
   static DAMAGE_FORMULA_FIELDS = {
     "system.attackChain.damageFormula": "system.savedDamage.formula",
     "system.savedDamage.formula": "system.attackChain.damageFormula",
+    "system.attackChain.powerDamageFormula": "system.savedDamage.powerFormula",
+    "system.savedDamage.powerFormula": "system.attackChain.powerDamageFormula",
   };
 
   /**
@@ -54,7 +56,13 @@ export class FormFieldHelper {
    * @static
    * @type {string[]}
    */
-  static FORMULA_FIELDS = ["damageFormula", "formula", "repetitions"];
+  static FORMULA_FIELDS = [
+    "damageFormula",
+    "formula",
+    "powerDamageFormula",
+    "powerFormula",
+    "repetitions",
+  ];
 
   /**
    * Check if a field name is a color field

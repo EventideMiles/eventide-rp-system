@@ -21,7 +21,8 @@
         "ResultDenied": "Your action '{actionCard}' has been denied by {gm}",
         "Repetitions": "Repetitons",
         "ToHit": "To Hit",
-        "Damage": "Damage",
+        "Damage": "Resolve Damage",
+        "PowerDamage": "Power Damage",
         "Status": "Status",
         "Cost": "Cost"
       },

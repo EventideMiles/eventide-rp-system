@@ -395,7 +395,7 @@ describe('ContextMenuBuilder', () => {
       const options = builder.getTransformationActionCardContextOptions(mockSheet);
 
       const moveToGroupOption = options.find(opt => 
-        opt.name === 'EVENTIDE_RP_SYSTEM.ContextMenu.MoveToGroup'
+        opt.label === 'EVENTIDE_RP_SYSTEM.ContextMenu.MoveToGroup'
       );
       expect(moveToGroupOption).toBeDefined();
       expect(moveToGroupOption.icon).toBe('<i class="fas fa-folder-open"></i>');
@@ -405,7 +405,7 @@ describe('ContextMenuBuilder', () => {
       const options = builder.getTransformationActionCardContextOptions(mockSheet);
 
       const removeFromGroupOption = options.find(opt => 
-        opt.name === 'EVENTIDE_RP_SYSTEM.ContextMenu.RemoveFromGroup'
+        opt.label === 'EVENTIDE_RP_SYSTEM.ContextMenu.RemoveFromGroup'
       );
       expect(removeFromGroupOption).toBeDefined();
       expect(removeFromGroupOption.icon).toBe('<i class="fas fa-folder-minus"></i>');
@@ -415,7 +415,7 @@ describe('ContextMenuBuilder', () => {
       const options = builder.getTransformationActionCardContextOptions(mockSheet);
 
       const createNewGroupOption = options.find(opt => 
-        opt.name === 'EVENTIDE_RP_SYSTEM.ContextMenu.CreateNewGroup'
+        opt.label === 'EVENTIDE_RP_SYSTEM.ContextMenu.CreateNewGroup'
       );
       expect(createNewGroupOption).toBeDefined();
       expect(createNewGroupOption.icon).toBe('<i class="fas fa-folder-plus"></i>');
@@ -429,11 +429,11 @@ describe('ContextMenuBuilder', () => {
       const target = createMockElement({ dataset: { itemId: 'card-123' } });
 
       const removeFromGroupOption = options.find(opt =>
-        opt.name === 'EVENTIDE_RP_SYSTEM.ContextMenu.RemoveFromGroup'
+        opt.label === 'EVENTIDE_RP_SYSTEM.ContextMenu.RemoveFromGroup'
       );
       
       // Condition returns actionCard && actionCard.system.groupId (falsy when groupId is null)
-      expect(removeFromGroupOption.condition(target)).toBeFalsy();
+      expect(removeFromGroupOption.visible(target)).toBeFalsy();
     });
 
     test('RemoveFromGroup condition should return truthy when card has groupId', () => {
@@ -444,11 +444,11 @@ describe('ContextMenuBuilder', () => {
       const target = createMockElement({ dataset: { itemId: 'card-123' } });
 
       const removeFromGroupOption = options.find(opt =>
-        opt.name === 'EVENTIDE_RP_SYSTEM.ContextMenu.RemoveFromGroup'
+        opt.label === 'EVENTIDE_RP_SYSTEM.ContextMenu.RemoveFromGroup'
       );
       
       // Condition returns actionCard && actionCard.system.groupId (truthy when groupId exists)
-      expect(removeFromGroupOption.condition(target)).toBeTruthy();
+      expect(removeFromGroupOption.visible(target)).toBeTruthy();
     });
 
     test('MoveToGroup callback should call showMoveToGroupDialogForTransformation', async () => {
@@ -458,13 +458,13 @@ describe('ContextMenuBuilder', () => {
       const target = createMockElement({ dataset: { itemId: 'card-123' } });
 
       const moveToGroupOption = options.find(opt =>
-        opt.name === 'EVENTIDE_RP_SYSTEM.ContextMenu.MoveToGroup'
+        opt.label === 'EVENTIDE_RP_SYSTEM.ContextMenu.MoveToGroup'
       );
 
       // Spy on showMoveToGroupDialogForTransformation
       const spy = vi.spyOn(builder, 'showMoveToGroupDialogForTransformation');
 
-      moveToGroupOption.callback(target);
+      moveToGroupOption.onClick({}, target);
 
       expect(spy).toHaveBeenCalledWith('card-123', groups, mockSheet);
     });
@@ -478,10 +478,10 @@ describe('ContextMenuBuilder', () => {
       const target = createMockElement({ dataset: { itemId: 'card-123' } });
 
       const removeFromGroupOption = options.find(opt =>
-        opt.name === 'EVENTIDE_RP_SYSTEM.ContextMenu.RemoveFromGroup'
+        opt.label === 'EVENTIDE_RP_SYSTEM.ContextMenu.RemoveFromGroup'
       );
 
-      await removeFromGroupOption.callback(target);
+      await removeFromGroupOption.onClick({}, target);
 
       expect(mockSheet.item.update).toHaveBeenCalled();
       const updateCall = mockSheet.item.update.mock.calls[0][0];
@@ -497,10 +497,10 @@ describe('ContextMenuBuilder', () => {
       const target = createMockElement({ dataset: { itemId: 'card-123' } });
 
       const removeFromGroupOption = options.find(opt =>
-        opt.name === 'EVENTIDE_RP_SYSTEM.ContextMenu.RemoveFromGroup'
+        opt.label === 'EVENTIDE_RP_SYSTEM.ContextMenu.RemoveFromGroup'
       );
 
-      await removeFromGroupOption.callback(target);
+      await removeFromGroupOption.onClick({}, target);
 
       const updateCall = mockSheet.item.update.mock.calls[0][0];
       // Group should be removed since no cards remain in it
@@ -516,10 +516,10 @@ describe('ContextMenuBuilder', () => {
       const target = createMockElement({ dataset: { itemId: 'card-123' } });
 
       const createNewGroupOption = options.find(opt =>
-        opt.name === 'EVENTIDE_RP_SYSTEM.ContextMenu.CreateNewGroup'
+        opt.label === 'EVENTIDE_RP_SYSTEM.ContextMenu.CreateNewGroup'
       );
 
-      await createNewGroupOption.callback(target);
+      await createNewGroupOption.onClick({}, target);
 
       expect(mockSheet.item.update).toHaveBeenCalled();
       const updateCall = mockSheet.item.update.mock.calls[0][0];
@@ -539,10 +539,10 @@ describe('ContextMenuBuilder', () => {
       const target = createMockElement({ dataset: { itemId: 'card-123' } });
 
       const createNewGroupOption = options.find(opt =>
-        opt.name === 'EVENTIDE_RP_SYSTEM.ContextMenu.CreateNewGroup'
+        opt.label === 'EVENTIDE_RP_SYSTEM.ContextMenu.CreateNewGroup'
       );
 
-      await createNewGroupOption.callback(target);
+      await createNewGroupOption.onClick({}, target);
 
       const updateCall = mockSheet.item.update.mock.calls[0][0];
       expect(updateCall['system.actionCardGroups'][2].name).toBe('Group 3');
@@ -564,7 +564,7 @@ describe('ContextMenuBuilder', () => {
       const options = builder.getTransformationGroupHeaderContextOptions(mockSheet);
 
       const createOption = options.find(opt =>
-        opt.name === 'EVENTIDE_RP_SYSTEM.ContextMenu.CreateActionInGroup'
+        opt.label === 'EVENTIDE_RP_SYSTEM.ContextMenu.CreateActionInGroup'
       );
       expect(createOption).toBeDefined();
       expect(createOption.icon).toBe('<i class="fas fa-plus"></i>');
@@ -578,7 +578,7 @@ describe('ContextMenuBuilder', () => {
       const target = createMockElement({ dataset: { groupId: 'group-456' } });
 
       const createOption = options.find(opt =>
-        opt.name === 'EVENTIDE_RP_SYSTEM.ContextMenu.CreateActionInGroup'
+        opt.label === 'EVENTIDE_RP_SYSTEM.ContextMenu.CreateActionInGroup'
       );
 
       // Mock the EmbeddedItemSheet import
@@ -589,7 +589,7 @@ describe('ContextMenuBuilder', () => {
         }
       }));
 
-      await createOption.callback(target);
+      await createOption.onClick({}, target);
 
       expect(mockSheet.item.update).toHaveBeenCalled();
       const updateCall = mockSheet.item.update.mock.calls[0][0];
@@ -605,10 +605,10 @@ describe('ContextMenuBuilder', () => {
       target.closest = vi.fn(() => ({ dataset: { groupId: 'group-789' } }));
 
       const createOption = options.find(opt =>
-        opt.name === 'EVENTIDE_RP_SYSTEM.ContextMenu.CreateActionInGroup'
+        opt.label === 'EVENTIDE_RP_SYSTEM.ContextMenu.CreateActionInGroup'
       );
 
-      await createOption.callback(target);
+      await createOption.onClick({}, target);
 
       expect(target.closest).toHaveBeenCalledWith('[data-group-id]');
     });
@@ -628,7 +628,7 @@ describe('ContextMenuBuilder', () => {
     test('should capitalize item type in option name', () => {
       const options = builder.getTransformationTabContextOptions('combatPower', mockSheet);
 
-      expect(options[0].name).toContain('CombatPower');
+      expect(options[0].label).toContain('CombatPower');
     });
 
     test('should include plus icon', () => {
@@ -984,10 +984,10 @@ describe('ContextMenuBuilder', () => {
       const target = createMockElement({ dataset: { itemId: 'card-123' } });
 
       const removeFromGroupOption = options.find(opt =>
-        opt.name === 'EVENTIDE_RP_SYSTEM.ContextMenu.RemoveFromGroup'
+        opt.label === 'EVENTIDE_RP_SYSTEM.ContextMenu.RemoveFromGroup'
       );
 
-      await removeFromGroupOption.callback(target);
+      await removeFromGroupOption.onClick({}, target);
 
       // Should not update since card was not found
       // The callback checks for actionCard && actionCard.system.groupId
@@ -1003,10 +1003,10 @@ describe('ContextMenuBuilder', () => {
       const target = createMockElement({ dataset: { itemId: 'card-123' } });
 
       const removeFromGroupOption = options.find(opt =>
-        opt.name === 'EVENTIDE_RP_SYSTEM.ContextMenu.RemoveFromGroup'
+        opt.label === 'EVENTIDE_RP_SYSTEM.ContextMenu.RemoveFromGroup'
       );
 
-      await removeFromGroupOption.callback(target);
+      await removeFromGroupOption.onClick({}, target);
 
       const updateCall = mockSheet.item.update.mock.calls[0][0];
       // Group should not be removed since card-456 still has it
@@ -1030,10 +1030,10 @@ describe('ContextMenuBuilder', () => {
       const target = createMockElement({ dataset: { itemId: 'card-123' } });
 
       const createNewGroupOption = options.find(opt =>
-        opt.name === 'EVENTIDE_RP_SYSTEM.ContextMenu.CreateNewGroup'
+        opt.label === 'EVENTIDE_RP_SYSTEM.ContextMenu.CreateNewGroup'
       );
 
-      await createNewGroupOption.callback(target);
+      await createNewGroupOption.onClick({}, target);
 
       const updateCall = mockSheet.item.update.mock.calls[0][0];
       // Should start from Group 1 since no "Group N" pattern matched
@@ -1052,10 +1052,10 @@ describe('ContextMenuBuilder', () => {
       const target = createMockElement({ dataset: { itemId: 'card-123' } });
 
       const createNewGroupOption = options.find(opt =>
-        opt.name === 'EVENTIDE_RP_SYSTEM.ContextMenu.CreateNewGroup'
+        opt.label === 'EVENTIDE_RP_SYSTEM.ContextMenu.CreateNewGroup'
       );
 
-      await createNewGroupOption.callback(target);
+      await createNewGroupOption.onClick({}, target);
 
       const updateCall = mockSheet.item.update.mock.calls[0][0];
       expect(updateCall['system.actionCardGroups'][2].sort).toBe(21);

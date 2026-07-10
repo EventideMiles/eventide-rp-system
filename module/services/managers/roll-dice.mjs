@@ -69,6 +69,14 @@ class ERPSRollHandler {
         "fa-sharp-duotone fa-light fa-claw-marks",
       ],
       heal: ["chat-card__header--heal", "fa-regular fa-wave-pulse"],
+      "power-damage": [
+        "chat-card__header--power-damage",
+        "fa-solid fa-bolt",
+      ],
+      "power-heal": [
+        "chat-card__header--power-heal",
+        "fa-solid fa-wand-magic-sparkles",
+      ],
       initiative: [
         "chat-card__header--initiative",
         "fa-solid fa-hourglass-start",
@@ -184,22 +192,25 @@ class ERPSRollHandler {
     );
 
     // Apply additional roll data (e.g., overhealing) before message creation
-    if (type === "heal") {
-      // use actor.system.resolve.value and actor.system.resolve.override 
-      // (if set) or actor.system.resolve.max to determine if the result overheals
-      const healRoom = actor.system.resolve.override ? 
-        actor.system.resolve.override - actor.system.resolve.value : 
-        actor.system.resolve.max - actor.system.resolve.value;
+    if (type === "heal" || type === "power-heal") {
+      // Check the appropriate resource for overhealing
+      const healResource =
+        type === "power-heal" ? actor.system?.power : actor.system?.resolve;
+      if (healResource) {
+        const healRoom = healResource.override
+          ? healResource.override - healResource.value
+          : healResource.max - healResource.value;
 
-      if (result.total > healRoom) {
-        result.overhealing = result.total - healRoom;
-        Logger.debug(
-          `Overhealing calculated: ${result.overhealing} (roll total: ${result.total}, heal room: ${healRoom})`,
-          { overhealingValue: result.overhealing, rollTotal: result.total, healRoom },
-           "ROLL_DICE",
-         );
-      } else {
-        result.overhealing = null;
+        if (result.total > healRoom) {
+          result.overhealing = result.total - healRoom;
+          Logger.debug(
+            `Overhealing calculated: ${result.overhealing} (roll total: ${result.total}, heal room: ${healRoom})`,
+            { overhealingValue: result.overhealing, rollTotal: result.total, healRoom },
+             "ROLL_DICE",
+          );
+        } else {
+          result.overhealing = null;
+        }
       }
     }
 
@@ -237,6 +248,169 @@ class ERPSRollHandler {
     }
 
     return roll;
+  }
+
+  /**
+   * Process a damage bundle (resolve + power) and generate a combined chat message
+   *
+   * Evaluates both rolls (when present), computes overhealing/overcharge per
+   * resource, renders a single roll-message card with both roll sections, and
+   * creates one ChatMessage with both Roll objects attached. When only one
+   * payload is present, a single-section card is rendered.
+   *
+   * @async
+   * @param {Object} options - Bundle configuration
+   * @param {Object|null} [options.resolveDamage=null] - Resolve damage payload
+   * @param {string} [options.resolveDamage.formula] - Resolve damage formula
+   * @param {string} [options.resolveDamage.type] - Resolve damage type ("damage"|"heal")
+   * @param {Object|null} [options.powerDamage=null] - Power damage payload
+   * @param {string} [options.powerDamage.formula] - Power damage formula
+   * @param {string} [options.powerDamage.type] - Power damage type ("damage"|"heal")
+   * @param {string} [options.label="Damage"] - Display label
+   * @param {string} [options.description=""] - Description
+   * @param {string} [options.img=null] - Image
+   * @param {string} [options.bgColor=null] - Background color
+   * @param {string} [options.textColor=null] - Text color
+   * @param {Actor} actor - The actor performing the roll
+   * @returns {Promise<Object>} { resolveRoll, powerRoll } The evaluated rolls
+   */
+  async handleDamageBundle(
+    {
+      resolveDamage = null,
+      powerDamage = null,
+      label = "Damage",
+      description = "",
+      img = null,
+      bgColor = null,
+      textColor = null,
+    } = {},
+    actor,
+  ) {
+    const rolls = [];
+    let resolveSection = null;
+    let powerSection = null;
+
+    // Resolve damage roll
+    if (resolveDamage) {
+      const { roll, result } = await this._createAndEvaluateRoll(
+        resolveDamage.formula,
+        actor,
+      );
+      const pickedType = resolveDamage.type.toLowerCase();
+      const [pickedCardClass, pickedIcon] = this._getCardStyling(pickedType);
+      const overhealing =
+        pickedType === "heal"
+          ? this._computeOverhealing(result.total, actor.system?.resolve)
+          : null;
+      result.overhealing = overhealing;
+      resolveSection = {
+        roll: result,
+        pickedType,
+        pickedCardClass,
+        pickedIcon,
+        overhealing,
+        hasRoll: true,
+      };
+      rolls.push(roll);
+    }
+
+    // Power damage roll
+    if (powerDamage) {
+      const { roll, result } = await this._createAndEvaluateRoll(
+        powerDamage.formula,
+        actor,
+      );
+      const pickedType =
+        powerDamage.type === "heal" ? "power-heal" : "power-damage";
+      const [pickedCardClass, pickedIcon] = this._getCardStyling(pickedType);
+      const overhealing =
+        powerDamage.type === "heal"
+          ? this._computeOverhealing(result.total, actor.system?.power)
+          : null;
+      result.overhealing = overhealing;
+      powerSection = {
+        roll: result,
+        pickedType,
+        pickedCardClass,
+        pickedIcon,
+        overhealing,
+        hasRoll: true,
+      };
+      rolls.push(roll);
+    }
+
+    // Primary styling for the card header (resolve takes precedence, else power)
+    let primaryType;
+    if (resolveDamage) {
+      primaryType = resolveDamage.type.toLowerCase();
+    } else if (powerDamage) {
+      primaryType = powerDamage.type === "heal" ? "power-heal" : "power-damage";
+    } else {
+      primaryType = "damage";
+    }
+    const [pickedCardClass, pickedIcon] = this._getCardStyling(primaryType);
+
+    const templateData = {
+      rollData: actor.getRollData(),
+      label,
+      description,
+      item: img ? { img, name: label } : null,
+      bgColor,
+      textColor,
+      pickedCardClass,
+      pickedIcon,
+      pickedType: primaryType,
+      resolveSection,
+      powerSection,
+      // Legacy compat for templates referencing root roll vars
+      roll: resolveSection?.roll ?? powerSection?.roll ?? null,
+      overhealing: resolveSection?.overhealing ?? null,
+      actor,
+      isGM: game.user.isGM,
+      name: actor.name,
+      hasRoll: true,
+    };
+
+    // Render template and create a single chat message with both rolls
+    const content = await renderTemplate(this.templates.standard, templateData);
+    const primaryRoll = resolveSection?.roll ?? powerSection?.roll;
+    const messageData = await this._createMessageData({
+      speaker: ChatMessage.getSpeaker({ actor }),
+      content,
+      rolls,
+      type: primaryType,
+      formula: primaryRoll?.formula ?? "",
+      total: primaryRoll?.total ?? 0,
+      rollMode: "roll",
+    });
+    await ChatMessage.create(messageData);
+
+    return {
+      resolveRoll: resolveSection?.roll ?? null,
+      powerRoll: powerSection?.roll ?? null,
+    };
+  }
+
+  /**
+   * Compute overhealing/overcharge for a heal roll against a resource pool
+   *
+   * Works for both resolve and power resources (both share value/max/override).
+   *
+   * @private
+   * @param {number} total - The roll total
+   * @param {Object} resource - The resource pool ({ value, max, override })
+   * @returns {number|null} The overcharge amount, or null if none
+   */
+  _computeOverhealing(total, resource) {
+    if (!resource) return null;
+    const room =
+      resource.override != null
+        ? resource.override - resource.value
+        : resource.max - resource.value;
+    if (total > room) {
+      return total - room;
+    }
+    return null;
   }
 
   /**

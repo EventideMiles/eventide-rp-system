@@ -248,9 +248,15 @@ describe('ItemSelectorManager', () => {
       expect(types).toContain('action-cards');
     });
 
-    test('should return exactly 5 selector types', () => {
+    test('should return exactly 6 selector types', () => {
       const types = ItemSelectorManager.getAvailableSelectorTypes();
-      expect(types).toHaveLength(5);
+      expect(types).toHaveLength(6);
+      expect(types).toContain('action-item');
+      expect(types).toContain('effects');
+      expect(types).toContain('transformations');
+      expect(types).toContain('combat-powers');
+      expect(types).toContain('action-cards');
+      expect(types).toContain('self-effects');
     });
   });
 

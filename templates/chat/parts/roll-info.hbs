@@ -14,6 +14,9 @@
         <div class="chat-card__header chat-card__header--saved-miss">{{localize "EVENTIDE_RP_SYSTEM.Messages.Sections.SavedMiss"}}</div>
         {{/if}}
     {{/if}}
+    {{#if sectionLabel}}
+    <div class="chat-card__section-label chat-card__section-label--{{pickedType}}">{{sectionLabel}}</div>
+    {{/if}}
     {{#if roll}}
     <div class="chat-card__formula-toggle formula-toggle">
       <span class="chat-card__formula">{{roll.formula}}</span>

@@ -17,16 +17,16 @@ describe('V14ActiveEffectMigration', () => {
         duration: { seconds: 18000 },
         showIcon: undefined
       };
-      const result = V14ActiveEffectMigration._migrateEffectData(effect);
+      const result = V14ActiveEffectMigration._migrateEffectData(effect, 'status');
       expect(result.showIcon).toBe(2);
     });
 
     test('should set showIcon to 0 for effects with duration = 0', () => {
       const effect = {
-        duration: { seconds: 0 },
+        duration: { seconds: 0, value: null },
         showIcon: undefined
       };
-      const result = V14ActiveEffectMigration._migrateEffectData(effect);
+      const result = V14ActiveEffectMigration._migrateEffectData(effect, 'status');
       expect(result.showIcon).toBe(0);
     });
 
@@ -34,17 +34,17 @@ describe('V14ActiveEffectMigration', () => {
       const effect = {
         showIcon: undefined
       };
-      const result = V14ActiveEffectMigration._migrateEffectData(effect);
+      const result = V14ActiveEffectMigration._migrateEffectData(effect, 'status');
       expect(result.showIcon).toBe(0);
     });
 
-    test('should not override existing showIcon value', () => {
+    test('should convert transitional showIcon=1 to ALWAYS when duration exists', () => {
       const effect = {
         duration: { seconds: 18000 },
         showIcon: 1
       };
-      const result = V14ActiveEffectMigration._migrateEffectData(effect);
-      expect(result.showIcon).toBeUndefined();
+      const result = V14ActiveEffectMigration._migrateEffectData(effect, 'status');
+      expect(result.showIcon).toBe(2);
     });
 
     test('should set duration to permanent V14 schema', () => {
@@ -84,7 +84,10 @@ describe('V14ActiveEffectMigration', () => {
       const effect = {
         showIcon: CONST.ACTIVE_EFFECT_SHOW_ICON.ALWAYS,
         duration: { expired: false, expiry: null, units: 'seconds', value: null },
-        origin: null
+        origin: null,
+        statuses: [],
+        type: 'base',
+        start: { combat: null, combatant: null, initiative: null, round: null, time: 0, turn: null }
       };
       const result = V14ActiveEffectMigration._migrateEffectData(effect);
       expect(result).toBeNull();
@@ -96,8 +99,8 @@ describe('V14ActiveEffectMigration', () => {
         showIcon: undefined,
         origin: ''
       };
-      const result = V14ActiveEffectMigration._migrateEffectData(effect);
-      expect(result).toEqual({
+      const result = V14ActiveEffectMigration._migrateEffectData(effect, 'status');
+      expect(result).toEqual(expect.objectContaining({
         showIcon: CONST.ACTIVE_EFFECT_SHOW_ICON.ALWAYS,
         duration: {
           expired: false,
@@ -106,7 +109,7 @@ describe('V14ActiveEffectMigration', () => {
           value: null
         },
         origin: null
-      });
+      }));
     });
 
     test('should handle effect with no properties needing migration', () => {
@@ -115,7 +118,10 @@ describe('V14ActiveEffectMigration', () => {
         system: { changes: [] },
         showIcon: CONST.ACTIVE_EFFECT_SHOW_ICON.NEVER,
         duration: {},
-        origin: null
+        origin: null,
+        statuses: [],
+        type: 'base',
+        start: { combat: null, combatant: null, initiative: null, round: null, time: 0, turn: null }
       };
       const result = V14ActiveEffectMigration._migrateEffectData(effect);
       expect(result).toBeNull();

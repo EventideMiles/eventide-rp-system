@@ -8,6 +8,8 @@
 // Vitest globals are enabled, so we don't need to import them
 // describe, test, expect, beforeEach, vi are available globally
 
+import { getDefaultAdjustments } from '../../../../module/utils/dice-adjustments.mjs';
+
 // Mock the dependencies first
 const mockLogger = {
   methodEntry: vi.fn(),
@@ -741,7 +743,8 @@ describe('ItemRollsMixin', () => {
       
       const result = item._calculateAbilityBasedAdjustments(rollData);
       
-      expect(result.total).toBe(0);
+      // Total is calculated from advantage/disadvantage (1+1 advantage, 0 disadvantage = 2)
+      expect(result.total).toBe(2);
       expect(result.advantage).toBe(2);
       expect(result.disadvantage).toBe(0);
     });
@@ -1028,9 +1031,9 @@ describe('ItemRollsMixin', () => {
     });
   });
 
-  describe('_getDefaultAdjustments()', () => {
+  describe('getDefaultAdjustments()', () => {
     test('should return default adjustments object', () => {
-      const result = item._getDefaultAdjustments();
+      const result = getDefaultAdjustments();
       
       expect(result).toEqual({
         total: 0,

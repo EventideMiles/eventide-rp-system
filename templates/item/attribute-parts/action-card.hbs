@@ -177,6 +177,61 @@
           </div>
         </div>
 
+        {{!-- Power Damage Configuration --}}
+        <div class="erps-form__subsection">
+          <div class="erps-form__header erps-form__header--small">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.PowerDamageConfig"}}</div>
+
+          <div class="grid grid-3col">
+            <div>
+              <label class="erps-input-label">
+                {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.PowerDamageCondition"}}
+              </label>
+              {{> components/condition-select name="system.attackChain.powerDamageCondition" currentValue=system.attackChain.powerDamageCondition}}
+              <p class="erps-form__hint">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.PowerDamageConditionHint"}}</p>
+            </div>
+            <div>
+              <label class="erps-input-label">
+                {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.PowerDamageFormula"}}
+              </label>
+              <input
+                type="text"
+                class="erps-input"
+                name="system.attackChain.powerDamageFormula"
+                value="{{system.attackChain.powerDamageFormula}}"
+                placeholder="0"
+              />
+            </div>
+            <div>
+              <label class="erps-input-label">
+                {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.PowerDamageType"}}
+              </label>
+              <select class="erps-select" name="system.attackChain.powerDamageType">
+                <option value="damage" {{#if (eq system.attackChain.powerDamageType "damage")}}selected{{/if}}>
+                  {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Damage"}}
+                </option>
+                <option value="heal" {{#if (eq system.attackChain.powerDamageType "heal")}}selected{{/if}}>
+                  {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Heal"}}
+                </option>
+              </select>
+            </div>
+            {{#if (or (eq system.attackChain.powerDamageCondition "rollValue") (eq system.attackChain.powerDamageCondition "rollUnderValue") (eq system.attackChain.powerDamageCondition "rollOnValue"))}}
+            <div>
+              <label class="erps-input-label">
+                {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.PowerDamageThreshold"}}
+              </label>
+              <input
+                type="number"
+                class="erps-input"
+                name="system.attackChain.powerDamageThreshold"
+                value="{{system.attackChain.powerDamageThreshold}}"
+                min="1"
+                placeholder="15"
+              />
+            </div>
+            {{/if}}
+          </div>
+        </div>
+
         {{!-- Status Configuration --}}
         <div class="erps-form__subsection">
           <div class="erps-form__header erps-form__header--small">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.StatusConfig"}}</div>
@@ -236,6 +291,90 @@
           />
         </div>
         {{/if}}
+      </div>
+    </div>
+
+            {{!-- Self-Damage Configuration --}}
+    <div class="erps-form__subsection">
+      <div class="erps-form__header erps-form__header--small">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.SelfDamageConfig"}}</div>
+
+      <div class="grid grid-2col">
+        <div>
+          <label class="erps-input-label">
+            {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.SelfDamageCondition"}}
+          </label>
+          {{> components/condition-select name="system.selfDamageConfig.condition" currentValue=system.selfDamageConfig.condition}}
+          <p class="erps-form__hint">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.SelfDamageConditionHint"}}</p>
+        </div>
+        {{#if (or (eq system.selfDamageConfig.condition "rollValue") (eq system.selfDamageConfig.condition "rollUnderValue") (eq system.selfDamageConfig.condition "rollOnValue"))}}
+        <div>
+          <label class="erps-input-label">
+            {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.SelfDamageThreshold"}}
+          </label>
+          <input
+            type="number"
+            class="erps-input"
+            name="system.selfDamageConfig.threshold"
+            value="{{system.selfDamageConfig.threshold}}"
+            min="1"
+            max="30"
+            placeholder="15"
+          />
+        </div>
+        {{/if}}
+      </div>
+
+      <div class="grid grid-2col" style="margin-top: 0.5rem;">
+        <div>
+          <label class="erps-input-label">
+            {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.SelfResolveFormula"}}
+          </label>
+          <input
+            type="text"
+            class="erps-input"
+            name="system.selfDamageConfig.resolveFormula"
+            value="{{system.selfDamageConfig.resolveFormula}}"
+            placeholder="0"
+          />
+        </div>
+        <div>
+          <label class="erps-input-label">
+            {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.SelfResolveType"}}
+          </label>
+          <select class="erps-select" name="system.selfDamageConfig.resolveType">
+            <option value="damage" {{#if (eq system.selfDamageConfig.resolveType "damage")}}selected{{/if}}>
+              {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Damage"}}
+            </option>
+            <option value="heal" {{#if (eq system.selfDamageConfig.resolveType "heal")}}selected{{/if}}>
+              {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Heal"}}
+            </option>
+          </select>
+        </div>
+        <div>
+          <label class="erps-input-label">
+            {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.SelfPowerFormula"}}
+          </label>
+          <input
+            type="text"
+            class="erps-input"
+            name="system.selfDamageConfig.powerFormula"
+            value="{{system.selfDamageConfig.powerFormula}}"
+            placeholder="0"
+          />
+        </div>
+        <div>
+          <label class="erps-input-label">
+            {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.SelfPowerType"}}
+          </label>
+          <select class="erps-select" name="system.selfDamageConfig.powerType">
+            <option value="damage" {{#if (eq system.selfDamageConfig.powerType "damage")}}selected{{/if}}>
+              {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Damage"}}
+            </option>
+            <option value="heal" {{#if (eq system.selfDamageConfig.powerType "heal")}}selected{{/if}}>
+              {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Heal"}}
+            </option>
+          </select>
+        </div>
       </div>
     </div>
 
@@ -304,6 +443,39 @@
               {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Heal"}}
             </option>
           </select>
+        </div>
+      </div>
+
+      {{!-- Power Damage (Saved) --}}
+      <div class="erps-form__subsection">
+        <div class="erps-form__header erps-form__header--small">{{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.PowerDamageConfig"}}</div>
+
+        <div class="grid grid-2col">
+          <div>
+            <label class="erps-input-label">
+              {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.SavedPowerFormula"}}
+            </label>
+            <input
+              type="text"
+              class="erps-input"
+              name="system.savedDamage.powerFormula"
+              value="{{system.savedDamage.powerFormula}}"
+              placeholder="0"
+            />
+          </div>
+          <div>
+            <label class="erps-input-label">
+              {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.SavedPowerType"}}
+            </label>
+            <select class="erps-select" name="system.savedDamage.powerType">
+              <option value="damage" {{#if (eq system.savedDamage.powerType "damage")}}selected{{/if}}>
+                {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Damage"}}
+              </option>
+              <option value="heal" {{#if (eq system.savedDamage.powerType "heal")}}selected{{/if}}>
+                {{localize "EVENTIDE_RP_SYSTEM.Item.ActionCard.Heal"}}
+              </option>
+            </select>
+          </div>
         </div>
       </div>
     </div>

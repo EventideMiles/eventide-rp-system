@@ -569,10 +569,10 @@ describe('ChatMessageBuilder', () => {
       const result = ChatMessageBuilder.buildMessageData({
         content: '<div>Test</div>',
         speaker: { actor: 'actor-123' },
-        rollMode: 'gmroll'
+        messageMode: 'gm'
       });
 
-      expect(result.rollMode).toBe('gmroll');
+      expect(result.messageMode).toBe('gm');
       expect(result.whisper).toEqual(['gm-456']);
     });
 
@@ -611,7 +611,7 @@ describe('ChatMessageBuilder', () => {
       const messageData = { speaker: {}, content: 'test' };
       const result = ChatMessageBuilder.applyRollModeSettings(messageData, 'roll');
 
-      expect(result.rollMode).toBeUndefined();
+      expect(result.messageMode).toBeUndefined();
       expect(result.whisper).toBeUndefined();
     });
 
@@ -619,7 +619,7 @@ describe('ChatMessageBuilder', () => {
       const messageData = { speaker: {}, content: 'test' };
       const result = ChatMessageBuilder.applyRollModeSettings(messageData, 'gmroll');
 
-      expect(result.rollMode).toBe('gmroll');
+      expect(result.messageMode).toBe('gm');
       expect(result.whisper).toEqual(['gm-456']);
     });
 
@@ -627,7 +627,7 @@ describe('ChatMessageBuilder', () => {
       const messageData = { speaker: {}, content: 'test' };
       const result = ChatMessageBuilder.applyRollModeSettings(messageData, 'blindroll');
 
-      expect(result.rollMode).toBe('blindroll');
+      expect(result.messageMode).toBe('blind');
       expect(result.whisper).toEqual(['gm-456']);
     });
 
@@ -635,7 +635,7 @@ describe('ChatMessageBuilder', () => {
       const messageData = { speaker: {}, content: 'test' };
       const result = ChatMessageBuilder.applyRollModeSettings(messageData, 'selfroll');
 
-      expect(result.rollMode).toBe('selfroll');
+      expect(result.messageMode).toBe('self');
       expect(result.whisper).toEqual(['user-123']);
     });
   });

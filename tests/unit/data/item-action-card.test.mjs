@@ -135,7 +135,7 @@ describe('EventideRpSystemActionCard Schema - Priority 1 Critical Definitions', 
 
       expect(damageCondition).toBeDefined();
       expect(damageCondition.options.required).toBe(true);
-      expect(damageCondition.options.initial).toBe('never');
+      expect(damageCondition.options.initial).toBe('oneSuccess');
       expect(damageCondition.options.choices).toEqual([
         'never',
         'oneSuccess',
@@ -177,6 +177,58 @@ describe('EventideRpSystemActionCard Schema - Priority 1 Critical Definitions', 
       expect(damageThreshold.options.initial).toBe(15);
       expect(damageThreshold.options.integer).toBe(true);
       expect(damageThreshold.options.min).toBe(1);
+    });
+
+    test('should define power damage condition with correct choices', () => {
+      const powerDamageCondition =
+        schema.attackChain.schema.powerDamageCondition;
+
+      expect(powerDamageCondition).toBeDefined();
+      expect(powerDamageCondition.options.required).toBe(true);
+      expect(powerDamageCondition.options.initial).toBe('oneSuccess');
+      expect(powerDamageCondition.options.choices).toEqual([
+        'never',
+        'oneSuccess',
+        'twoSuccesses',
+        'rollValue',
+        'rollUnderValue',
+        'rollEven',
+        'rollOdd',
+        'rollOnValue',
+        'zeroSuccesses',
+        'always',
+        'criticalSuccess',
+        'criticalFailure',
+      ]);
+    });
+
+    test('should define power damage formula defaulting to zero', () => {
+      const powerDamageFormula =
+        schema.attackChain.schema.powerDamageFormula;
+
+      expect(powerDamageFormula).toBeDefined();
+      expect(powerDamageFormula.options.required).toBe(true);
+      expect(powerDamageFormula.options.initial).toBe('0');
+    });
+
+    test('should define power damage type with correct choices', () => {
+      const powerDamageType = schema.attackChain.schema.powerDamageType;
+
+      expect(powerDamageType).toBeDefined();
+      expect(powerDamageType.options.required).toBe(true);
+      expect(powerDamageType.options.initial).toBe('damage');
+      expect(powerDamageType.options.choices).toEqual(['damage', 'heal']);
+    });
+
+    test('should define power damage threshold with correct constraints', () => {
+      const powerDamageThreshold =
+        schema.attackChain.schema.powerDamageThreshold;
+
+      expect(powerDamageThreshold).toBeDefined();
+      expect(powerDamageThreshold.options.required).toBe(false);
+      expect(powerDamageThreshold.options.initial).toBe(15);
+      expect(powerDamageThreshold.options.integer).toBe(true);
+      expect(powerDamageThreshold.options.min).toBe(1);
     });
 
     test('should define status condition with correct choices', () => {
@@ -293,6 +345,70 @@ describe('EventideRpSystemActionCard Schema - Priority 1 Critical Definitions', 
       expect(type.options.initial).toBe('damage');
       expect(type.options.choices).toEqual(['damage', 'heal']);
     });
+
+    test('should define saved power damage formula defaulting to zero', () => {
+      const powerFormula = schema.savedDamage.schema.powerFormula;
+
+      expect(powerFormula).toBeDefined();
+      expect(powerFormula.options.required).toBe(true);
+      expect(powerFormula.options.initial).toBe('0');
+    });
+
+    test('should define saved power damage type', () => {
+      const powerType = schema.savedDamage.schema.powerType;
+
+      expect(powerType).toBeDefined();
+      expect(powerType.options.required).toBe(true);
+      expect(powerType.options.initial).toBe('damage');
+      expect(powerType.options.choices).toEqual(['damage', 'heal']);
+    });
+  });
+
+  describe('Self-Damage Configuration', () => {
+    test('should define self-damage config schema field', () => {
+      const field = schema.selfDamageConfig;
+
+      expect(field).toBeDefined();
+      expect(field.schema).toBeDefined();
+    });
+
+    test('should define self-damage condition defaulting to never', () => {
+      const condition = schema.selfDamageConfig.schema.condition;
+
+      expect(condition).toBeDefined();
+      expect(condition.options.required).toBe(true);
+      expect(condition.options.initial).toBe('never');
+      expect(condition.options.choices).toEqual([
+        'never',
+        'oneSuccess',
+        'twoSuccesses',
+        'rollValue',
+        'rollUnderValue',
+        'rollEven',
+        'rollOdd',
+        'rollOnValue',
+        'zeroSuccesses',
+        'always',
+        'criticalSuccess',
+        'criticalFailure',
+      ]);
+    });
+
+    test('should define self-damage resolve formula defaulting to zero', () => {
+      const resolveFormula = schema.selfDamageConfig.schema.resolveFormula;
+
+      expect(resolveFormula).toBeDefined();
+      expect(resolveFormula.options.required).toBe(true);
+      expect(resolveFormula.options.initial).toBe('0');
+    });
+
+    test('should define self-damage power formula defaulting to zero', () => {
+      const powerFormula = schema.selfDamageConfig.schema.powerFormula;
+
+      expect(powerFormula).toBeDefined();
+      expect(powerFormula.options.required).toBe(true);
+      expect(powerFormula.options.initial).toBe('0');
+    });
   });
 
   describe('Advanced Features Configuration', () => {
@@ -336,7 +452,15 @@ describe('EventideRpSystemActionCard Schema - Priority 1 Critical Definitions', 
 
       expect(field).toBeDefined();
       expect(field.options.required).toBe(true);
-      expect(field.options.initial).toBe(false);
+      expect(field.options.initial).toBe(true);
+    });
+
+    test('should define power damage application mode', () => {
+      const field = schema.powerDamageApplication;
+
+      expect(field).toBeDefined();
+      expect(field.options.required).toBe(true);
+      expect(field.options.initial).toBe(true);
     });
 
     test('should define status application limit', () => {
@@ -438,8 +562,8 @@ describe('EventideRpSystemActionCard Schema - Priority 1 Critical Definitions', 
       // Mode should default to attackChain (primary use case)
       expect(schema.mode.options.initial).toBe('attackChain');
 
-      // Damage conditions should default to never (conservative)
-      expect(schema.attackChain.schema.damageCondition.options.initial).toBe('never');
+      // Damage conditions should default to oneSuccess
+      expect(schema.attackChain.schema.damageCondition.options.initial).toBe('oneSuccess');
       expect(schema.attackChain.schema.statusCondition.options.initial).toBe('oneSuccess');
       expect(schema.transformationConfig.schema.condition.options.initial).toBe('oneSuccess');
 

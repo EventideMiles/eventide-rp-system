@@ -645,6 +645,57 @@ describe('RepetitionHandler', () => {
       );
     });
 
+    test('should return true when power damage condition is met (even if resolve is not)', () => {
+      // Arrange: resolve damage uses a condition that does not fire
+      mockSystem.attackChain.damageCondition = 'twoSuccesses';
+      mockSystem.attackChain.powerDamageFormula = '1d6';
+      mockSystem.attackChain.powerDamageCondition = 'oneSuccess';
+      mockSystem.attackChain.powerDamageThreshold = 15;
+      mockResult.targetResults = [{ oneHit: true, bothHit: false }];
+
+      // shouldApplyEffect returns true only for the power condition
+      mockShouldApplyEffect.mockImplementation((condition) => {
+        return condition === 'oneSuccess';
+      });
+
+      // Act
+      const result = RepetitionHandler.checkIterationSuccess(
+        mockResult,
+        mockSystem,
+        mockShouldApplyEffect,
+        mockActor
+      );
+
+      // Assert
+      expect(result).toBe(true);
+    });
+
+    test('should not check power damage when powerDamageFormula is zero', () => {
+      // Arrange
+      mockSystem.attackChain.powerDamageFormula = '0';
+      mockSystem.attackChain.powerDamageCondition = 'oneSuccess';
+
+      // Act
+      RepetitionHandler.checkIterationSuccess(
+        mockResult,
+        mockSystem,
+        mockShouldApplyEffect,
+        mockActor
+      );
+
+      // Assert: power condition should not have been evaluated
+      expect(mockShouldApplyEffect).not.toHaveBeenCalledWith(
+        'oneSuccess',
+        expect.anything(),
+        expect.anything(),
+        expect.anything(),
+        expect.anything(),
+        expect.anything(),
+        expect.anything(),
+        expect.anything()
+      );
+    });
+
     test('should handle missing baseRoll', () => {
       // Arrange
       mockResult.baseRoll = null;

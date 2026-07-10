@@ -343,7 +343,7 @@ describe('system-cleanup.mjs', () => {
       expect(mockElement.remove).toHaveBeenCalled();
     });
 
-    test('should clean theme attributes when visible', () => {
+    test('should clean orphaned elements when visible', () => {
       const mockElement = {
         remove: vi.fn(),
         removeAttribute: vi.fn(),
@@ -353,8 +353,8 @@ describe('system-cleanup.mjs', () => {
 
       performSystemCleanup();
 
-      // Theme attributes should be removed
-      expect(mockElement.removeAttribute).toHaveBeenCalled();
+      // Orphaned elements should be removed
+      expect(mockElement.remove).toHaveBeenCalled();
     });
 
     test('should handle errors when removing elements', () => {

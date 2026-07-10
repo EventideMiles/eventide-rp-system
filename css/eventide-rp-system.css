@@ -96,6 +96,8 @@
   --erps-card-header-unknown: #535353;
   --erps-card-header-damage: #6A0404;
   --erps-card-header-heal: #cb8e00;
+  --erps-card-header-power-damage: #5b2a86;
+  --erps-card-header-power-heal: #8b5cf6;
   --erps-card-header-effect: #9A5D2D;
   --erps-card-header-delete: #555;
   --erps-card-header-transfer: #9B4B7D;
@@ -2098,6 +2100,12 @@ body *::-webkit-scrollbar-track,
 .chat-card__header--heal {
   background-color: var(--erps-card-header-heal);
 }
+.chat-card__header--power-damage {
+  background-color: var(--erps-card-header-power-damage);
+}
+.chat-card__header--power-heal {
+  background-color: var(--erps-card-header-power-heal);
+}
 .chat-card__header--delete {
   background-color: var(--erps-card-header-delete);
 }
@@ -2179,6 +2187,36 @@ body *::-webkit-scrollbar-track,
 }
 .chat-card__value--power {
   color: #666;
+}
+.chat-card__value--power-damage {
+  color: var(--erps-card-header-power-damage);
+}
+.chat-card__value--power-heal {
+  color: var(--erps-card-header-power-heal);
+}
+.chat-card--multi-roll .chat-card__value {
+  font-size: 2.7rem;
+}
+.chat-card__section-label {
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 0.25rem 0.5rem 0;
+  opacity: 0.8;
+}
+.chat-card__section-label--damage {
+  color: var(--erps-card-header-damage);
+}
+.chat-card__section-label--heal {
+  color: var(--erps-card-header-heal);
+}
+.chat-card__section-label--power-damage {
+  color: var(--erps-card-header-power-damage);
+}
+.chat-card__section-label--power-heal {
+  color: var(--erps-card-header-power-heal);
 }
 .chat-card__value--acro {
   color: var(--erps-abilities-acro);

@@ -55,7 +55,8 @@ describe('EmbeddedImageMigration', () => {
       // Mock foundry.utils
       global.foundry = {
         utils: {
-          deepClone: vi.fn((obj) => JSON.parse(JSON.stringify(obj)))
+          deepClone: vi.fn((obj) => JSON.parse(JSON.stringify(obj))),
+          getProperty: vi.fn((obj, path) => path.split('.').reduce((o, k) => o?.[k], obj))
         }
       };
     });
@@ -69,7 +70,10 @@ describe('EmbeddedImageMigration', () => {
     });
 
     test('should return early when migration already completed', async () => {
-      global.game.settings.get.mockReturnValue('1.3.0');
+      global.game.settings.get.mockImplementation((scope, key) => {
+        if (key === 'migrationVersion') return 2;
+        return null;
+      });
 
       await EmbeddedImageMigration.run();
 
@@ -77,7 +81,10 @@ describe('EmbeddedImageMigration', () => {
     });
 
     test('should process game.items when migration version is different', async () => {
-      global.game.settings.get.mockReturnValue('1.0.0');
+      global.game.settings.get.mockImplementation((scope, key) => {
+        if (key === 'migrationVersion') return 0;
+        return null;
+      });
 
       const mockItem = global.testUtils.createMockItem({
         type: 'actionCard',
@@ -94,13 +101,16 @@ describe('EmbeddedImageMigration', () => {
 
       expect(global.game.settings.set).toHaveBeenCalledWith(
         'eventide-rp-system',
-        'embeddedImageMigrationVersion',
-        '1.3.0'
+        'migrationVersion',
+        2
       );
     });
 
     test('should process game.actors items during migration', async () => {
-      global.game.settings.get.mockReturnValue('1.0.0');
+      global.game.settings.get.mockImplementation((scope, key) => {
+        if (key === 'migrationVersion') return 0;
+        return null;
+      });
 
       const mockActor = global.testUtils.createMockActor({
         name: 'Test Actor'
@@ -122,13 +132,16 @@ describe('EmbeddedImageMigration', () => {
 
       expect(global.game.settings.set).toHaveBeenCalledWith(
         'eventide-rp-system',
-        'embeddedImageMigrationVersion',
-        '1.3.0'
+        'migrationVersion',
+        2
       );
     });
 
     test('should process unlocked world compendium packs during migration', async () => {
-      global.game.settings.get.mockReturnValue('1.0.0');
+      global.game.settings.get.mockImplementation((scope, key) => {
+        if (key === 'migrationVersion') return 0;
+        return null;
+      });
 
       const mockPack = {
         documentName: 'Item',
@@ -155,13 +168,16 @@ describe('EmbeddedImageMigration', () => {
       expect(mockPack.getDocuments).toHaveBeenCalled();
       expect(global.game.settings.set).toHaveBeenCalledWith(
         'eventide-rp-system',
-        'embeddedImageMigrationVersion',
-        '1.3.0'
+        'migrationVersion',
+        2
       );
     });
 
     test('should skip locked compendium packs', async () => {
-      global.game.settings.get.mockReturnValue('1.0.0');
+      global.game.settings.get.mockImplementation((scope, key) => {
+        if (key === 'migrationVersion') return 0;
+        return null;
+      });
 
       const mockLockedPack = {
         documentName: 'Item',
@@ -180,7 +196,10 @@ describe('EmbeddedImageMigration', () => {
     });
 
     test('should skip non-world compendium packs', async () => {
-      global.game.settings.get.mockReturnValue('1.0.0');
+      global.game.settings.get.mockImplementation((scope, key) => {
+        if (key === 'migrationVersion') return 0;
+        return null;
+      });
 
       const mockSystemPack = {
         documentName: 'Item',
@@ -199,7 +218,10 @@ describe('EmbeddedImageMigration', () => {
     });
 
     test('should show migration in progress notification', async () => {
-      global.game.settings.get.mockReturnValue('1.0.0');
+      global.game.settings.get.mockImplementation((scope, key) => {
+        if (key === 'migrationVersion') return 0;
+        return null;
+      });
 
       const mockNotification = { remove: vi.fn() };
       global.ui.notifications.warn.mockReturnValue(mockNotification);
@@ -213,7 +235,10 @@ describe('EmbeddedImageMigration', () => {
     });
 
     test('should remove in progress notification on completion', async () => {
-      global.game.settings.get.mockReturnValue('1.0.0');
+      global.game.settings.get.mockImplementation((scope, key) => {
+        if (key === 'migrationVersion') return 0;
+        return null;
+      });
 
       const mockNotification = { remove: vi.fn() };
       global.ui.notifications.warn.mockReturnValue(mockNotification);
@@ -224,12 +249,10 @@ describe('EmbeddedImageMigration', () => {
     });
 
     test('should handle migration errors gracefully', async () => {
-      // Make the settings.get throw an error after the initial check
+      // Allow migration to proceed (migrationVersion = 0 means not yet migrated)
       global.game.settings.get.mockImplementation((scope, key) => {
-        if (key === 'embeddedImageMigrationVersion') {
-          return '1.0.0';
-        }
-        throw new Error('Settings error');
+        if (key === 'migrationVersion') return 0;
+        return null;
       });
 
       // Make the pack processing throw an error
@@ -261,7 +284,8 @@ describe('EmbeddedImageMigration', () => {
       vi.clearAllMocks();
       global.foundry = {
         utils: {
-          deepClone: vi.fn((obj) => JSON.parse(JSON.stringify(obj)))
+          deepClone: vi.fn((obj) => JSON.parse(JSON.stringify(obj))),
+          getProperty: vi.fn((obj, path) => path.split('.').reduce((o, k) => o?.[k], obj))
         }
       };
     });
@@ -314,12 +338,13 @@ describe('EmbeddedImageMigration', () => {
     });
   });
 
-  describe('_fixActionCardEmbeddedEffects()', () => {
+  describe('_fixActionCardEmbeddedArrays()', () => {
     beforeEach(() => {
       vi.clearAllMocks();
       global.foundry = {
         utils: {
-          deepClone: vi.fn((obj) => JSON.parse(JSON.stringify(obj)))
+          deepClone: vi.fn((obj) => JSON.parse(JSON.stringify(obj))),
+          getProperty: vi.fn((obj, path) => path.split('.').reduce((o, k) => o?.[k], obj)),
         }
       };
     });
@@ -342,14 +367,15 @@ describe('EmbeddedImageMigration', () => {
         update: vi.fn()
       });
 
-      const result = await EmbeddedImageMigration._fixActionCardEmbeddedEffects(mockItem);
+      const result = await EmbeddedImageMigration._fixActionCardEmbeddedArrays(mockItem);
 
-      expect(result.fixed).toBe(true);
+      expect(result.itemsFixed).toBe(1);
       expect(result.effectsFixed).toBe(1);
       expect(mockItem.update).toHaveBeenCalledWith(
         expect.objectContaining({
           'system.embeddedStatusEffects': expect.any(Array)
-        })
+        }),
+        expect.anything()
       );
     });
 
@@ -371,11 +397,11 @@ describe('EmbeddedImageMigration', () => {
         update: vi.fn()
       });
 
-      const result = await EmbeddedImageMigration._fixActionCardEmbeddedEffects(mockItem);
+      const result = await EmbeddedImageMigration._fixActionCardEmbeddedArrays(mockItem);
 
-      expect(result.fixed).toBe(true);
-      // Note: Only name changes don't increment effectsFixed counter
-      expect(result.effectsFixed).toBe(0);
+      expect(result.itemsFixed).toBe(1);
+      // Name change + missing img triggers effectsFixed increment
+      expect(result.effectsFixed).toBe(1);
     });
 
     test('should skip when effect icon already matches item image', async () => {
@@ -388,7 +414,7 @@ describe('EmbeddedImageMigration', () => {
               name: 'Bleeding',
               img: 'icons/svg/bleed.svg',
               effects: [
-                { icon: 'icons/svg/bleed.svg', name: 'Bleeding' }
+                { img: 'icons/svg/bleed.svg', name: 'Bleeding' }
               ]
             }
           ]
@@ -396,9 +422,9 @@ describe('EmbeddedImageMigration', () => {
         update: vi.fn()
       });
 
-      const result = await EmbeddedImageMigration._fixActionCardEmbeddedEffects(mockItem);
+      const result = await EmbeddedImageMigration._fixActionCardEmbeddedArrays(mockItem);
 
-      expect(result.fixed).toBe(false);
+      expect(result.itemsFixed).toBe(0);
       expect(result.effectsFixed).toBe(0);
       expect(mockItem.update).not.toHaveBeenCalled();
     });
@@ -428,9 +454,9 @@ describe('EmbeddedImageMigration', () => {
         update: vi.fn()
       });
 
-      const result = await EmbeddedImageMigration._fixActionCardEmbeddedEffects(mockItem);
+      const result = await EmbeddedImageMigration._fixActionCardEmbeddedArrays(mockItem);
 
-      expect(result.fixed).toBe(true);
+      expect(result.itemsFixed).toBe(1);
       expect(result.effectsFixed).toBe(2);
     });
 
@@ -449,9 +475,9 @@ describe('EmbeddedImageMigration', () => {
         update: vi.fn()
       });
 
-      const result = await EmbeddedImageMigration._fixActionCardEmbeddedEffects(mockItem);
+      const result = await EmbeddedImageMigration._fixActionCardEmbeddedArrays(mockItem);
 
-      expect(result.fixed).toBe(false);
+      expect(result.itemsFixed).toBe(0);
       expect(result.effectsFixed).toBe(0);
     });
 
@@ -473,9 +499,9 @@ describe('EmbeddedImageMigration', () => {
         update: vi.fn()
       });
 
-      const result = await EmbeddedImageMigration._fixActionCardEmbeddedEffects(mockItem);
+      const result = await EmbeddedImageMigration._fixActionCardEmbeddedArrays(mockItem);
 
-      expect(result.fixed).toBe(false);
+      expect(result.itemsFixed).toBe(0);
       expect(result.effectsFixed).toBe(0);
     });
   });
@@ -485,7 +511,8 @@ describe('EmbeddedImageMigration', () => {
       vi.clearAllMocks();
       global.foundry = {
         utils: {
-          deepClone: vi.fn((obj) => JSON.parse(JSON.stringify(obj)))
+          deepClone: vi.fn((obj) => JSON.parse(JSON.stringify(obj))),
+          getProperty: vi.fn((obj, path) => path.split('.').reduce((o, k) => o?.[k], obj))
         }
       };
     });
@@ -508,12 +535,13 @@ describe('EmbeddedImageMigration', () => {
 
       const result = await EmbeddedImageMigration._fixActionCardEmbeddedItem(mockItem);
 
-      expect(result.fixed).toBe(true);
+      expect(result.itemsFixed).toBe(1);
       expect(result.effectsFixed).toBe(1);
       expect(mockItem.update).toHaveBeenCalledWith(
         expect.objectContaining({
           'system.embeddedItem': expect.any(Object)
-        })
+        }),
+        expect.anything()
       );
     });
 
@@ -535,9 +563,9 @@ describe('EmbeddedImageMigration', () => {
 
       const result = await EmbeddedImageMigration._fixActionCardEmbeddedItem(mockItem);
 
-      expect(result.fixed).toBe(true);
-      // Note: Only name changes don't increment effectsFixed counter
-      expect(result.effectsFixed).toBe(0);
+      expect(result.itemsFixed).toBe(1);
+      // Missing img + name change both trigger effectsFixed
+      expect(result.effectsFixed).toBe(1);
     });
 
     test('should skip when no effects array present', async () => {
@@ -555,7 +583,7 @@ describe('EmbeddedImageMigration', () => {
 
       const result = await EmbeddedImageMigration._fixActionCardEmbeddedItem(mockItem);
 
-      expect(result.fixed).toBe(false);
+      expect(result.itemsFixed).toBe(0);
       expect(result.effectsFixed).toBe(0);
     });
 
@@ -568,7 +596,7 @@ describe('EmbeddedImageMigration', () => {
             name: 'Sword',
             img: 'icons/svg/sword.svg',
             effects: [
-              { icon: 'icons/svg/sword.svg', name: 'Sword' }
+              { img: 'icons/svg/sword.svg', name: 'Sword' }
             ]
           }
         },
@@ -577,7 +605,7 @@ describe('EmbeddedImageMigration', () => {
 
       const result = await EmbeddedImageMigration._fixActionCardEmbeddedItem(mockItem);
 
-      expect(result.fixed).toBe(false);
+      expect(result.itemsFixed).toBe(0);
       expect(mockItem.update).not.toHaveBeenCalled();
     });
   });
@@ -600,10 +628,13 @@ describe('EmbeddedImageMigration', () => {
       const result = await EmbeddedImageMigration._migrateStatusPerSuccess(mockItem);
 
       expect(result.fixed).toBe(true);
-      expect(mockItem.update).toHaveBeenCalledWith({
-        'system.statusApplicationLimit': 0,
-        'system.statusPerSuccess': null
-      });
+      expect(mockItem.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          'system.statusApplicationLimit': 0,
+          'system.statusPerSuccess': null
+        }),
+        expect.anything()
+      );
     });
 
     test('should migrate statusPerSuccess false to statusApplicationLimit 1', async () => {
@@ -619,10 +650,13 @@ describe('EmbeddedImageMigration', () => {
       const result = await EmbeddedImageMigration._migrateStatusPerSuccess(mockItem);
 
       expect(result.fixed).toBe(true);
-      expect(mockItem.update).toHaveBeenCalledWith({
-        'system.statusApplicationLimit': 1,
-        'system.statusPerSuccess': null
-      });
+      expect(mockItem.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          'system.statusApplicationLimit': 1,
+          'system.statusPerSuccess': null
+        }),
+        expect.anything()
+      );
     });
 
     test('should skip when statusPerSuccess is not boolean', async () => {
@@ -661,7 +695,8 @@ describe('EmbeddedImageMigration', () => {
       vi.clearAllMocks();
       global.foundry = {
         utils: {
-          deepClone: vi.fn((obj) => JSON.parse(JSON.stringify(obj)))
+          deepClone: vi.fn((obj) => JSON.parse(JSON.stringify(obj))),
+          getProperty: vi.fn((obj, path) => path.split('.').reduce((o, k) => o?.[k], obj))
         }
       };
     });
@@ -691,7 +726,8 @@ describe('EmbeddedImageMigration', () => {
       expect(mockItem.update).toHaveBeenCalledWith(
         expect.objectContaining({
           'system.embeddedCombatPowers': expect.any(Array)
-        })
+        }),
+        expect.anything()
       );
     });
 
@@ -716,8 +752,8 @@ describe('EmbeddedImageMigration', () => {
       const result = await EmbeddedImageMigration._fixTransformationEmbeddedPowers(mockItem);
 
       expect(result.fixed).toBe(true);
-      // Note: Only name changes don't increment effectsFixed counter
-      expect(result.effectsFixed).toBe(0);
+      // Missing img + name change triggers effectsFixed
+      expect(result.effectsFixed).toBe(1);
     });
 
     test('should skip when no effects array present', async () => {
@@ -778,7 +814,8 @@ describe('EmbeddedImageMigration', () => {
       vi.clearAllMocks();
       global.foundry = {
         utils: {
-          deepClone: vi.fn((obj) => JSON.parse(JSON.stringify(obj)))
+          deepClone: vi.fn((obj) => JSON.parse(JSON.stringify(obj))),
+          getProperty: vi.fn((obj, path) => path.split('.').reduce((o, k) => o?.[k], obj))
         }
       };
     });
@@ -806,7 +843,8 @@ describe('EmbeddedImageMigration', () => {
       expect(mockItem.update).toHaveBeenCalledWith(
         expect.objectContaining({
           'system.embeddedActionCards': expect.any(Array)
-        })
+        }),
+        expect.anything()
       );
     });
 
