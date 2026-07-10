@@ -638,6 +638,7 @@ export function ItemActionCardExecutionMixin(Base) {
       shouldApplyDamage = true,
       shouldApplyStatus = true,
       isFinalRepetition = true,
+      damageGates = {},
     ) {
       const embeddedItem = this.getEmbeddedItem({ executionContext: true });
       if (!embeddedItem) {
@@ -660,7 +661,7 @@ export function ItemActionCardExecutionMixin(Base) {
         selfEffectsConfig: this.system.selfEffectsConfig,
         lockedTargets: this._lockedTargets,
         processDamage: (results, roll, delays) =>
-          this._processDamageResults(results, roll, delays),
+          this._processDamageResults(results, roll, delays, damageGates),
         processStatus: (results, roll, delays, isFinal) =>
           this._processStatusResults(results, roll, delays, isFinal),
         processTransformation: (results, roll, delays, isFinal) =>
@@ -750,8 +751,12 @@ export function ItemActionCardExecutionMixin(Base) {
      * @param {boolean} _disableDelays - If true, skip internal timing delays (unused, kept for signature compatibility)
      * @returns {Promise<Array>} Damage results
      */
-    async _processDamageResults(results, rollResult, _disableDelays = false) {
-      const gates = this._currentDamageGates || {};
+    async _processDamageResults(
+      results,
+      rollResult,
+      _disableDelays = false,
+      gates = {},
+    ) {
       return await DamageProcessor.processDamageResults(results, rollResult, {
         damageFormula: this.system.attackChain.damageFormula,
         damageType: this.system.attackChain.damageType,
@@ -1026,7 +1031,7 @@ export function ItemActionCardExecutionMixin(Base) {
         this.system.powerDamageApplication || repetitionIndex === 0;
       // Damage processing happens if either type should apply
       const shouldApplyDamage = applyResolve || applyPower;
-      this._currentDamageGates = { applyResolve, applyPower };
+      const damageGates = { applyResolve, applyPower };
 
       // IMPORTANT: Always check status conditions on each repetition
       // The _processStatusResults method will handle tracking which effects have already been applied
@@ -1046,10 +1051,10 @@ export function ItemActionCardExecutionMixin(Base) {
           shouldApplyDamage,
           shouldApplyStatus,
           isFinalRepetition,
+          damageGates,
         );
       } finally {
-        // Always clean up per-iteration gates, even if execution throws
-        delete this._currentDamageGates;
+        // Gates are passed by parameter — no instance state to clean up
       }
 
       // For repeatToHit scenarios, we need to evaluate each repetition independently

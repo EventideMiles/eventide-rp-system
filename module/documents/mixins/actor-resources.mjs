@@ -259,21 +259,19 @@ export const ActorResourceMixin = (BaseClass) =>
         hasPower: !!powerDamage,
       });
 
-      // Validate types
-      for (const [key, payload] of [
-        ["resolveDamage", resolveDamage],
-        ["powerDamage", powerDamage],
-      ]) {
-        if (payload && !["damage", "heal"].includes(payload.type)) {
-          const error = new Error(
-            `Invalid ${key} type: ${payload.type}. Must be "damage" or "heal".`,
-          );
-          Logger.error("Invalid damage type provided", error, "RESOURCES");
-          throw error;
-        }
-      }
-
       try {
+        // Validate types
+        for (const [key, payload] of [
+          ["resolveDamage", resolveDamage],
+          ["powerDamage", powerDamage],
+        ]) {
+          if (payload && !["damage", "heal"].includes(payload.type)) {
+            throw new Error(
+              `Invalid ${key} type: ${payload.type}. Must be "damage" or "heal".`,
+            );
+          }
+        }
+
         const { resolveRoll, powerRoll } = await erpsRollHandler.handleDamageBundle(
           { resolveDamage, powerDamage, label, description, img, bgColor, textColor },
           this,

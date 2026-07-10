@@ -10,6 +10,7 @@
  */
 
 import { Logger } from "./logger.mjs";
+import { DamageProcessor } from "./damage-processor.mjs";
 
 /**
  * @typedef {Object} RepetitionContext
@@ -231,8 +232,7 @@ export class RepetitionHandler {
       system.attackChain?.damageFormula &&
       system.attackChain?.damageCondition !== "never";
     const hasPowerDamageFormula =
-      system.attackChain?.powerDamageFormula &&
-      system.attackChain?.powerDamageFormula !== "0" &&
+      !DamageProcessor.isZeroFormula(system.attackChain?.powerDamageFormula) &&
       system.attackChain?.powerDamageCondition !== "never";
 
     // Check each target for any successful condition
