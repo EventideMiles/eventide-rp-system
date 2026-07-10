@@ -1754,18 +1754,22 @@ describe('ItemActionCardExecutionMixin', () => {
   });
 
   describe('executeSavedDamageIteration()', () => {
-    test('should skip execution when repetitionIndex > 0 and damageApplication is false', async () => {
+    test('should still call executeSavedDamage when both damage gates are off', async () => {
       item.system.damageApplication = false;
-      item.system.savedDamage = { formula: '2d6', type: 'damage' };
-      
+      item.system.powerDamageApplication = false;
+      item.system.savedDamage = { formula: '2d6', type: 'damage', powerFormula: '0', powerType: 'damage' };
+
       mockTargetResolver.resolveTargets.mockResolvedValue({
         success: true,
         targets: []
       });
-      
+
+      mockDamageProcessor.processSavedDamage.mockResolvedValue([]);
+
       const result = await item.executeSavedDamageIteration({}, 1, 2);
-      
-      expect(result.skipped).toBe(true);
+
+      // executeSavedDamage runs (for transformations etc.) but damage is empty
+      expect(result.success).toBe(true);
       expect(result.damageResults).toEqual([]);
     });
 

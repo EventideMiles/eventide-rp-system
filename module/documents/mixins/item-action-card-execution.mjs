@@ -1011,6 +1011,24 @@ export function ItemActionCardExecutionMixin(Base) {
     }
 
     /**
+     * Compute per-damage-type gates for a given repetition index.
+     * Each type applies on the first repetition (index 0) regardless of its
+     * per-success toggle; on subsequent repetitions it applies only if the
+     * toggle is enabled.
+     * @param {number} repetitionIndex - Current repetition index (0-based)
+     * @returns {{ applyResolve: boolean, applyPower: boolean }}
+     * @private
+     */
+    _computeDamageGates(repetitionIndex) {
+      return {
+        applyResolve:
+          this.system.damageApplication || repetitionIndex === 0,
+        applyPower:
+          this.system.powerDamageApplication || repetitionIndex === 0,
+      };
+    }
+
+    /**
      * Execute a single attack chain iteration with repetition awareness
      * @param {Actor} actor - The actor executing the action card
      * @param {Roll} rollResult - The roll result for this iteration
@@ -1025,10 +1043,8 @@ export function ItemActionCardExecutionMixin(Base) {
       totalRepetitions,
     ) {
       // Determine if each damage type should apply based on its toggle and repetition index
-      const applyResolve =
-        this.system.damageApplication || repetitionIndex === 0;
-      const applyPower =
-        this.system.powerDamageApplication || repetitionIndex === 0;
+      const { applyResolve, applyPower } =
+        this._computeDamageGates(repetitionIndex);
       // Damage processing happens if either type should apply
       const shouldApplyDamage = applyResolve || applyPower;
       const damageGates = { applyResolve, applyPower };
@@ -1079,25 +1095,12 @@ export function ItemActionCardExecutionMixin(Base) {
       repetitionIndex,
       totalRepetitions,
     ) {
-      // Determine if each damage type should apply based on its toggle and repetition index
-      const applyResolve =
-        this.system.damageApplication || repetitionIndex === 0;
-      const applyPower =
-        this.system.powerDamageApplication || repetitionIndex === 0;
+      const { applyResolve, applyPower } =
+        this._computeDamageGates(repetitionIndex);
 
-      // Skip entirely only if neither damage type should apply
-      if (!applyResolve && !applyPower) {
-        return {
-          success: true,
-          mode: "savedDamage",
-          repetitionIndex,
-          totalRepetitions,
-          damageResults: [],
-          skipped: true,
-        };
-      }
-
-      // Reuse existing executeSavedDamage logic, passing the per-type gates
+      // Always call executeSavedDamage so embedded transformations run even
+      // when both damage types are gated off. The damage processor skips
+      // damage naturally when both gates are false.
       const result = await this.executeSavedDamage(actor, {
         applyResolve,
         applyPower,
