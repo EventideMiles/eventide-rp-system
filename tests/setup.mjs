@@ -45,7 +45,12 @@ if (!global.foundry.applications.handlebars) {
 // Ensure CONFIG.EVENTIDE_RP_SYSTEM has baseline ability configuration.
 // Individual tests may override with more specific values.
 if (!global.CONFIG) global.CONFIG = {};
-if (!global.CONFIG.EVENTIDE_RP_SYSTEM) {  global.CONFIG.EVENTIDE_RP_SYSTEM = {
+if (!global.CONFIG.EVENTIDE_RP_SYSTEM) {
+
+// Ensure canvas has tokens property (library mock omits it)
+if (global.canvas && !global.canvas.tokens) {
+  global.canvas.tokens = { placeables: [] };
+}  global.CONFIG.EVENTIDE_RP_SYSTEM = {
     abilities: {
       acro: 'EVENTIDE_RP_SYSTEM.Abilities.Acro',
       phys: 'EVENTIDE_RP_SYSTEM.Abilities.Phys',
