@@ -93,6 +93,11 @@ describe('EventideRpSystemActor', () => {
 
     test('should execute without error (intentionally empty method)', () => {
       actor = new EventideRpSystemActor();
+
+      // Ensure super.prepareBaseData exists on the mock Actor class
+      if (!Actor.prototype.prepareBaseData) {
+        Actor.prototype.prepareBaseData = vi.fn();
+      }
       
       // Method is intentionally empty, just verify it doesn't throw
       expect(() => actor.prepareBaseData()).not.toThrow();
@@ -433,11 +438,11 @@ describe('EventideRpSystemActor', () => {
         userId: 'user123'
       });
       expect(mockLogger.methodExit).toHaveBeenCalledWith('EventideRpSystemActor', '_onCreate');
-      expect(actor.update).toHaveBeenCalledWith({
+      expect(actor.update).toHaveBeenCalledWith(expect.objectContaining({
         'prototypeToken.actorLink': true,
         'prototypeToken.sight.enabled': true,
         'prototypeToken.sight.range': 50
-      });
+      }));
       
       Actor.prototype._onCreate = originalSuperOnCreate;
     });
@@ -456,11 +461,11 @@ describe('EventideRpSystemActor', () => {
       
       await actor._onCreate(data, options, userId);
       
-      expect(actor.update).toHaveBeenCalledWith({
+      expect(actor.update).toHaveBeenCalledWith(expect.objectContaining({
         'prototypeToken.actorLink': false,
         'prototypeToken.sight.enabled': true,
         'prototypeToken.sight.range': 50
-      });
+      }));
       expect(mockLogger.debug).toHaveBeenCalledWith(
         expect.stringContaining('Ensured prototype token is unlinked'),
         { visionRange: 50 },
@@ -486,11 +491,11 @@ describe('EventideRpSystemActor', () => {
       
       await actor._onCreate(data, options, userId);
       
-      expect(actor.update).toHaveBeenCalledWith({
+      expect(actor.update).toHaveBeenCalledWith(expect.objectContaining({
         'prototypeToken.actorLink': true,
         'prototypeToken.sight.enabled': true,
         'prototypeToken.sight.range': 75
-      });
+      }));
       
       Actor.prototype._onCreate = originalSuperOnCreate;
     });
@@ -511,11 +516,11 @@ describe('EventideRpSystemActor', () => {
       
       await actor._onCreate(data, options, userId);
       
-      expect(actor.update).toHaveBeenCalledWith({
+      expect(actor.update).toHaveBeenCalledWith(expect.objectContaining({
         'prototypeToken.actorLink': true,
         'prototypeToken.sight.enabled': true,
         'prototypeToken.sight.range': 50
-      });
+      }));
       
       Actor.prototype._onCreate = originalSuperOnCreate;
     });

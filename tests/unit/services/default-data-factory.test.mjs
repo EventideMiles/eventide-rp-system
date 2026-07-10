@@ -304,7 +304,7 @@ describe('DefaultDataFactory', () => {
       expect(result.system.attackChain).toBeDefined();
       expect(result.system.attackChain.firstStat).toBe('acro');
       expect(result.system.attackChain.secondStat).toBe('phys');
-      expect(result.system.attackChain.damageCondition).toBe('never');
+      expect(result.system.attackChain.damageCondition).toBe('oneSuccess');
       expect(result.system.attackChain.damageFormula).toBe('1d6');
       expect(result.system.attackChain.damageType).toBe('damage');
       expect(result.system.attackChain.damageThreshold).toBe(15);
@@ -335,6 +335,8 @@ describe('DefaultDataFactory', () => {
       expect(result.system.savedDamage.formula).toBe('1d6');
       expect(result.system.savedDamage.type).toBe('damage');
       expect(result.system.savedDamage.description).toBe('');
+      expect(result.system.savedDamage.powerFormula).toBe('0');
+      expect(result.system.savedDamage.powerType).toBe('damage');
     });
 
     test('should include boolean flags with correct defaults', () => {
@@ -344,6 +346,11 @@ describe('DefaultDataFactory', () => {
       expect(result.system.attemptInventoryReduction).toBe(false);
       expect(result.system.repeatToHit).toBe(false);
       expect(result.system.damageApplication).toBe(true);
+      expect(result.system.powerDamageApplication).toBe(true);
+      expect(result.system.selfDamageConfig).toBeDefined();
+      expect(result.system.selfDamageConfig.condition).toBe('never');
+      expect(result.system.selfDamageConfig.resolveFormula).toBe('0');
+      expect(result.system.selfDamageConfig.powerFormula).toBe('0');
       expect(result.system.costOnRepetition).toBe(false);
       expect(result.system.failOnFirstMiss).toBe(true);
     });
@@ -551,10 +558,14 @@ describe('DefaultDataFactory', () => {
       expect(result).toBeDefined();
       expect(result.firstStat).toBe('acro');
       expect(result.secondStat).toBe('phys');
-      expect(result.damageCondition).toBe('never');
+      expect(result.damageCondition).toBe('oneSuccess');
       expect(result.damageFormula).toBe('1d6');
       expect(result.damageType).toBe('damage');
       expect(result.damageThreshold).toBe(15);
+      expect(result.powerDamageCondition).toBe('oneSuccess');
+      expect(result.powerDamageFormula).toBe('0');
+      expect(result.powerDamageType).toBe('damage');
+      expect(result.powerDamageThreshold).toBe(15);
       expect(result.statusCondition).toBe('oneSuccess');
       expect(result.statusThreshold).toBe(15);
     });

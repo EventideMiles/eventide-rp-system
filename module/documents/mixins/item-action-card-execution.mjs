@@ -667,6 +667,8 @@ export function ItemActionCardExecutionMixin(Base) {
           this._processTransformationResults(results, roll, delays, isFinal),
         processSelfEffect: (results, roll, delays, isFinal, selfEffectsConfig) =>
           this._processSelfEffectResults(results, roll, delays, isFinal, selfEffectsConfig),
+        processSelfDamage: (results, roll) =>
+          this._processSelfDamageResults(results, roll),
         waitForDelay: () => this._waitForExecutionDelay(),
         disableDelays,
         shouldApplyDamage,
@@ -680,7 +682,7 @@ export function ItemActionCardExecutionMixin(Base) {
      * @param {Actor} actor - The actor executing the action card
      * @returns {Promise<Object>} Result of the saved damage execution
      */
-    async executeSavedDamage(_actor) {
+    async executeSavedDamage(_actor, gates = {}) {
 
       try {
         // Resolve targets using TargetResolver service
@@ -700,6 +702,10 @@ export function ItemActionCardExecutionMixin(Base) {
           {
             formula: this.system.savedDamage.formula,
             type: this.system.savedDamage.type,
+            powerFormula: this.system.savedDamage.powerFormula,
+            powerType: this.system.savedDamage.powerType,
+            applyResolve: gates.applyResolve,
+            applyPower: gates.applyPower,
             label: this._getEffectiveLabel(),
             description:
               this.system.description || this.system.savedDamage.description,
@@ -745,11 +751,18 @@ export function ItemActionCardExecutionMixin(Base) {
      * @returns {Promise<Array>} Damage results
      */
     async _processDamageResults(results, rollResult, _disableDelays = false) {
+      const gates = this._currentDamageGates || {};
       return await DamageProcessor.processDamageResults(results, rollResult, {
         damageFormula: this.system.attackChain.damageFormula,
         damageType: this.system.attackChain.damageType,
         damageCondition: this.system.attackChain.damageCondition,
         damageThreshold: this.system.attackChain.damageThreshold || 15,
+        powerDamageFormula: this.system.attackChain.powerDamageFormula,
+        powerDamageType: this.system.attackChain.powerDamageType,
+        powerDamageCondition: this.system.attackChain.powerDamageCondition,
+        powerDamageThreshold: this.system.attackChain.powerDamageThreshold || 15,
+        applyResolve: gates.applyResolve,
+        applyPower: gates.applyPower,
         label: this._getEffectiveLabel(),
         description:
           this.system.description ||
@@ -1006,9 +1019,14 @@ export function ItemActionCardExecutionMixin(Base) {
       repetitionIndex,
       totalRepetitions,
     ) {
-      // Determine if damage should be applied based on damageApplication setting and repetition index
-      const shouldApplyDamage =
+      // Determine if each damage type should apply based on its toggle and repetition index
+      const applyResolve =
         this.system.damageApplication || repetitionIndex === 0;
+      const applyPower =
+        this.system.powerDamageApplication || repetitionIndex === 0;
+      // Damage processing happens if either type should apply
+      const shouldApplyDamage = applyResolve || applyPower;
+      this._currentDamageGates = { applyResolve, applyPower };
 
       // IMPORTANT: Always check status conditions on each repetition
       // The _processStatusResults method will handle tracking which effects have already been applied
@@ -1019,14 +1037,20 @@ export function ItemActionCardExecutionMixin(Base) {
 
       // Reuse existing executeAttackChainWithRollResult logic with normal step delays
       // Keep all step delays, only control the final status delay
-      const result = await this.executeAttackChainWithRollResult(
-        actor,
-        rollResult,
-        false,
-        shouldApplyDamage,
-        shouldApplyStatus,
-        isFinalRepetition,
-      );
+      let result;
+      try {
+        result = await this.executeAttackChainWithRollResult(
+          actor,
+          rollResult,
+          false,
+          shouldApplyDamage,
+          shouldApplyStatus,
+          isFinalRepetition,
+        );
+      } finally {
+        // Always clean up per-iteration gates, even if execution throws
+        delete this._currentDamageGates;
+      }
 
       // For repeatToHit scenarios, we need to evaluate each repetition independently
       // Don't filter based on repetitionIndex - each repetition should be evaluated on its own merits
@@ -1050,8 +1074,14 @@ export function ItemActionCardExecutionMixin(Base) {
       repetitionIndex,
       totalRepetitions,
     ) {
-      // For saved damage, only apply on first iteration unless damageApplication is true
-      if (repetitionIndex > 0 && !this.system.damageApplication) {
+      // Determine if each damage type should apply based on its toggle and repetition index
+      const applyResolve =
+        this.system.damageApplication || repetitionIndex === 0;
+      const applyPower =
+        this.system.powerDamageApplication || repetitionIndex === 0;
+
+      // Skip entirely only if neither damage type should apply
+      if (!applyResolve && !applyPower) {
         return {
           success: true,
           mode: "savedDamage",
@@ -1062,8 +1092,11 @@ export function ItemActionCardExecutionMixin(Base) {
         };
       }
 
-      // Reuse existing executeSavedDamage logic
-      const result = await this.executeSavedDamage(actor);
+      // Reuse existing executeSavedDamage logic, passing the per-type gates
+      const result = await this.executeSavedDamage(actor, {
+        applyResolve,
+        applyPower,
+      });
 
       // Add delay after saved damage except on final repetition
       const isFinalRepetition = repetitionIndex === totalRepetitions - 1;
@@ -1154,6 +1187,34 @@ export function ItemActionCardExecutionMixin(Base) {
         disableDelays,
         intensifyConfig,
         scalePerTarget: this.system.selfEffectsScalePerTarget,
+      });
+    }
+
+    /**
+     * Process self-damage results for action card execution
+     *
+     * Evaluates the self-damage condition against target hit results and, when
+     * met, applies resolve and/or power damage to the card owner via a combined
+     * chat card. Mirrors the self-effects pattern.
+     * @private
+     * @param {Array} results - Target hit results
+     * @param {Roll} rollResult - The attack roll result
+     * @returns {Promise<Object|null>} The self-damage bundle result or null
+     */
+    async _processSelfDamageResults(results, rollResult) {
+      return await DamageProcessor.processSelfDamageResults(results, rollResult, {
+        config: this.system.selfDamageConfig,
+        actor: this.actor,
+        shouldApplyEffect: this._shouldApplyEffect.bind(this),
+        label: this._getEffectiveLabel(),
+        description:
+          this.system.description ||
+          (this.system.rollActorName !== false
+            ? `Self-damage from ${this.name}`
+            : "Self-damage"),
+        img: this._getEffectiveImage(),
+        bgColor: this.system.bgColor,
+        textColor: this.system.textColor,
       });
     }
 

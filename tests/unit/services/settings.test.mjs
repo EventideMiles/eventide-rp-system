@@ -300,16 +300,16 @@ describe('registerSettings()', () => {
     );
   });
 
-  test('should register initativeFormula setting with validation', () => {
+  test('should register initiativeFormula setting with validation', () => {
     // Act
     registerSettings();
 
     // Assert
     expect(global.game.settings.register).toHaveBeenCalledWith(
       'eventide-rp-system',
-      'initativeFormula',
+      'initiativeFormula',
       expect.objectContaining({
-        name: 'SETTINGS.InitativeFormulaName',
+        name: 'SETTINGS.InitiativeFormulaName',
         type: String,
         default: '1d@hiddenAbilities.dice.total + @statTotal.mainInit + @statTotal.subInit',
         onChange: expect.any(Function),
@@ -324,11 +324,11 @@ describe('registerSettings()', () => {
 
     // Get the onChange callback
     const formulaCall = global.game.settings.register.mock.calls.find(
-      (call) => call[1] === 'initativeFormula'
+      (call) => call[1] === 'initiativeFormula'
     );
     
     if (!formulaCall) {
-      throw new Error('initativeFormula setting not found');
+      throw new Error('initiativeFormula setting not found');
     }
     
     const onChange = formulaCall[2].onChange;
@@ -761,18 +761,17 @@ describe('registerSettings()', () => {
     );
   });
 
-  test('should register embeddedImageMigrationVersion setting', () => {
+  test('should register migrationVersion setting', () => {
     // Act
     registerSettings();
 
     // Assert
     expect(global.game.settings.register).toHaveBeenCalledWith(
       'eventide-rp-system',
-      'embeddedImageMigrationVersion',
+      'migrationVersion',
       expect.objectContaining({
-        name: 'Embedded Image Migration Version',
-        type: String,
-        default: '',
+        name: 'Migration Version',
+        type: Number,
         config: false,
       })
     );

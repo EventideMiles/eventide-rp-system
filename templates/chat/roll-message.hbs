@@ -1,4 +1,4 @@
-<div class="chat-card">
+<div class="chat-card{{#ifCond resolveSection "&&" powerSection}} chat-card--multi-roll{{/ifCond}}">
   <div class="chat-card__header {{pickedCardClass}}
     {{#if item.img}}chat-card__header--image{{/if}}"
     {{#if (or bgColor textColor)}} style="{{#if bgColor}}background-color: {{bgColor}};{{/if}}{{#if textColor}} color: {{textColor}};{{/if}}"
@@ -11,7 +11,14 @@
     {{/if}}
   </div>
 
-  {{> roll-info cardClass="combat-roll" cardType="combat-roll" overhealing=overhealing}}
+  {{#if resolveSection}}
+    {{> roll-info cardClass="combat-roll" cardType="combat-roll" roll=resolveSection.roll pickedType=resolveSection.pickedType overhealing=resolveSection.overhealing hasRoll=true sectionLabel=(localize "EVENTIDE_RP_SYSTEM.Messages.Sections.ResolveDamage")}}
+  {{else}}{{#unless powerSection}}
+    {{> roll-info cardClass="combat-roll" cardType="combat-roll" overhealing=overhealing}}
+  {{/unless}}{{/if}}
+  {{#if powerSection}}
+    {{> roll-info cardClass="combat-roll" cardType="combat-roll" roll=powerSection.roll pickedType=powerSection.pickedType overhealing=powerSection.overhealing hasRoll=true sectionLabel=(localize "EVENTIDE_RP_SYSTEM.Messages.Sections.PowerDamage")}}
+  {{/if}}
   {{> card-ac-check}}
 
 

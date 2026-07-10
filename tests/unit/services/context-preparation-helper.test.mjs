@@ -522,6 +522,7 @@ describe('ContextPreparationHelper', () => {
       const item = {
         getEmbeddedItem: vi.fn(() => ({ id: 'embedded-1' })),
         getEmbeddedEffects: vi.fn(() => []),
+        getEmbeddedSelfEffects: vi.fn(() => []),
         getEmbeddedTransformations: vi.fn(async () => []),
       };
 
@@ -538,6 +539,7 @@ describe('ContextPreparationHelper', () => {
       const item = {
         getEmbeddedItem: vi.fn(() => null),
         getEmbeddedEffects: vi.fn(() => [{ id: 'effect-1' }]),
+        getEmbeddedSelfEffects: vi.fn(() => []),
         getEmbeddedTransformations: vi.fn(async () => []),
       };
 
@@ -554,6 +556,7 @@ describe('ContextPreparationHelper', () => {
       const item = {
         getEmbeddedItem: vi.fn(() => null),
         getEmbeddedEffects: vi.fn(() => []),
+        getEmbeddedSelfEffects: vi.fn(() => []),
         getEmbeddedTransformations: vi.fn(async () => [{ id: 'trans-1' }]),
       };
 
@@ -570,6 +573,7 @@ describe('ContextPreparationHelper', () => {
       const item = {
         getEmbeddedItem: vi.fn(() => null),
         getEmbeddedEffects: vi.fn(() => []),
+        getEmbeddedSelfEffects: vi.fn(() => []),
       };
 
       // Act

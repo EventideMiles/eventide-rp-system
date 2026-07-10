@@ -83,11 +83,9 @@ describe('EventideRpSystemCharacter', () => {
       spy.mockRestore();
     });
 
-    test('should return undefined (implementation does not return super result)', () => {
-      // Note: The actual implementation in actor-character.mjs calls super.getRollData()
-      // but does not return the result. This test documents that behavior.
+    test('should return super.getRollData() result', () => {
       const result = character.getRollData();
-      expect(result).toBeUndefined();
+      expect(result).toEqual({ mock: 'data' });
     });
   });
 

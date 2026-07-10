@@ -224,8 +224,12 @@
           "hint": "Re-roll the embedded item for each repetition (attack chains only)"
         },
         "DamageApplication": {
-          "label": "Damage Per Success",
-          "hint": "Apply damage on every repetition instead of just the first success"
+          "label": "Resolve Damage Per Success",
+          "hint": "Apply resolve damage on every repetition instead of just the first success"
+        },
+        "PowerDamageApplication": {
+          "label": "Power Damage Per Success",
+          "hint": "Apply power damage on every repetition instead of just the first success"
         },
         "TimingOverride": {
           "label": "Timing Override (seconds)",

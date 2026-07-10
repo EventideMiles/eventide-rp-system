@@ -852,6 +852,7 @@ class ERPSMessageHandler {
         description: actionCard.system.description,
         repetitions: actionCard.system.repetitions,
         damageApplication: actionCard.system.damageApplication,
+        powerDamageApplication: actionCard.system.powerDamageApplication,
         statusApplicationLimit: actionCard.system.statusApplicationLimit,
         costOnRepetition: actionCard.system.costOnRepetition,
         failOnFirstMiss: actionCard.system.failOnFirstMiss,

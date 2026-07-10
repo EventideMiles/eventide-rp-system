@@ -69,9 +69,9 @@ describe('Config Service', () => {
       expect(EVENTIDE_RP_SYSTEM.hiddenAbilities.resolveMult).toBe('EVENTIDE_RP_SYSTEM.HiddenAbilities.ResolveMult.long');
     });
 
-    test('should have exactly 8 hidden abilities', () => {
+    test('should have exactly 9 hidden abilities', () => {
       // Assert
-      expect(Object.keys(EVENTIDE_RP_SYSTEM.hiddenAbilities)).toHaveLength(8);
+      expect(Object.keys(EVENTIDE_RP_SYSTEM.hiddenAbilities)).toHaveLength(9);
     });
   });
 
@@ -83,9 +83,9 @@ describe('Config Service', () => {
       expect(EVENTIDE_RP_SYSTEM.overrideAbilities.resolveOverride).toBe('EVENTIDE_RP_SYSTEM.HiddenAbilities.ResolveOverride.long');
     });
 
-    test('should have exactly 2 override abilities', () => {
+    test('should have exactly 4 override abilities', () => {
       // Assert
-      expect(Object.keys(EVENTIDE_RP_SYSTEM.overrideAbilities)).toHaveLength(2);
+      expect(Object.keys(EVENTIDE_RP_SYSTEM.overrideAbilities)).toHaveLength(4);
     });
   });
 
@@ -103,9 +103,9 @@ describe('Config Service', () => {
       expect(EVENTIDE_RP_SYSTEM.hiddenAbilityAbbreviations.resolveMult).toBe('EVENTIDE_RP_SYSTEM.HiddenAbilities.ResolveMult.abbr');
     });
 
-    test('should have exactly 8 hidden ability abbreviations', () => {
+    test('should have exactly 9 hidden ability abbreviations', () => {
       // Assert
-      expect(Object.keys(EVENTIDE_RP_SYSTEM.hiddenAbilityAbbreviations)).toHaveLength(8);
+      expect(Object.keys(EVENTIDE_RP_SYSTEM.hiddenAbilityAbbreviations)).toHaveLength(9);
     });
   });
 
@@ -117,9 +117,9 @@ describe('Config Service', () => {
       expect(EVENTIDE_RP_SYSTEM.overrideAbilityAbbreviations.resolveOverride).toBe('EVENTIDE_RP_SYSTEM.HiddenAbilities.ResolveOverride.abbr');
     });
 
-    test('should have exactly 2 override ability abbreviations', () => {
+    test('should have exactly 4 override ability abbreviations', () => {
       // Assert
-      expect(Object.keys(EVENTIDE_RP_SYSTEM.overrideAbilityAbbreviations)).toHaveLength(2);
+      expect(Object.keys(EVENTIDE_RP_SYSTEM.overrideAbilityAbbreviations)).toHaveLength(4);
     });
   });
 

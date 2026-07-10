@@ -38,6 +38,8 @@
         "StatusIntensified": "Status intensified:",
         "StatusApplied": "Status applied:",
         "Overhealing": "Overhealing",
+        "ResolveDamage": "Resolve Damage",
+        "PowerDamage": "Power Damage",
         "Abilities": "Abilities",
         "StatusEffects": "Status Effects",
         "Transformation": "Transformation"

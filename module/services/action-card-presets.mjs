@@ -605,7 +605,12 @@ export const mergePresetData = (presetId, userOverrides = {}) => {
   const attackChainDefaults = DefaultDataFactory.getDefaultAttackChainData();
 
   // Step 3: Add savedDamage defaults
-  const savedDamageDefaults = { formula: "1d6", type: "damage" };
+  const savedDamageDefaults = {
+    formula: "1d6",
+    type: "damage",
+    powerFormula: "0",
+    powerType: "damage",
+  };
 
   // Build the full defaults by merging layers
   const merged = foundry.utils.mergeObject(

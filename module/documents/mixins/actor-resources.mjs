@@ -102,13 +102,14 @@ export const ActorResourceMixin = (BaseClass) =>
     }
 
     /**
-     * Apply damage or healing to the actor's resolve
+     * Apply damage or healing to the actor's resolve or power
      *
      * @param {Object} options - The damage options
      * @param {string} [options.formula="1"] - The damage formula
      * @param {string} [options.label="Damage"] - Label for the damage roll
      * @param {string} [options.description=""] - Description of the damage
      * @param {string} [options.type="damage"] - "damage" or "heal"
+     * @param {string} [options.resource="resolve"] - "resolve" or "power"
      * @param {boolean} [options.critAllowed=false] - Whether crits are allowed
      * @param {boolean} [options.acCheck=false] - Whether to check against AC
      * @param {string|null} [options.soundKey=null] - Sound effect key
@@ -119,6 +120,7 @@ export const ActorResourceMixin = (BaseClass) =>
       label = "Damage",
       description = "",
       type = "damage",
+      resource = "resolve",
       critAllowed = false,
       acCheck = false,
       soundKey = null,
@@ -130,6 +132,7 @@ export const ActorResourceMixin = (BaseClass) =>
         formula,
         label,
         type,
+        resource,
       });
 
       // Validate type parameter
@@ -141,10 +144,18 @@ export const ActorResourceMixin = (BaseClass) =>
         throw error;
       }
 
+      // Determine card type for styling (power gets distinct purple styling)
+      const cardType =
+        resource === "power"
+          ? type === "heal"
+            ? "power-heal"
+            : "power-damage"
+          : type;
+
       const rollData = {
         formula,
         label,
-        type,
+        type: cardType,
         critAllowed,
         description,
         acCheck,
@@ -162,21 +173,38 @@ export const ActorResourceMixin = (BaseClass) =>
         if (this.isOwner) {
           const damageAmount = Math.abs(roll.total);
 
-          // Apply damage to resolve
-          if (type === "heal") {
-            await this.addResolve(damageAmount);
-            Logger.info(
-              `Healed ${damageAmount} resolve for actor "${this.name}"${roll.overhealing > 0 ? ` (${roll.overhealing} overhealing)` : ""}`,
-              null,
-              "RESOURCES",
-            );
+          if (resource === "power") {
+            if (type === "heal") {
+              await this.addPower(damageAmount);
+              Logger.info(
+                `Restored ${damageAmount} power for actor "${this.name}"${roll.overhealing > 0 ? ` (${roll.overhealing} overcharge)` : ""}`,
+                null,
+                "RESOURCES",
+              );
+            } else {
+              await this.addPower(-damageAmount);
+              Logger.info(
+                `Applied ${damageAmount} power damage to actor "${this.name}"`,
+                null,
+                "RESOURCES",
+              );
+            }
           } else {
-            await this.addResolve(-damageAmount);
-            Logger.info(
-              `Applied ${damageAmount} damage to actor "${this.name}"`,
-              null,
-              "RESOURCES",
-            );
+            if (type === "heal") {
+              await this.addResolve(damageAmount);
+              Logger.info(
+                `Healed ${damageAmount} resolve for actor "${this.name}"${roll.overhealing > 0 ? ` (${roll.overhealing} overhealing)` : ""}`,
+                null,
+                "RESOURCES",
+              );
+            } else {
+              await this.addResolve(-damageAmount);
+              Logger.info(
+                `Applied ${damageAmount} damage to actor "${this.name}"`,
+                null,
+                "RESOURCES",
+              );
+            }
           }
         } else {
           Logger.warn(
@@ -191,6 +219,121 @@ export const ActorResourceMixin = (BaseClass) =>
       } catch (error) {
         Logger.error("Error in damage resolve operation", error, "RESOURCES");
         Logger.methodExit("ActorResourceMixin", "damageResolve", null);
+        throw error;
+      }
+    }
+
+    /**
+     * Apply a bundle of resolve damage and/or power damage to the actor
+     *
+     * Renders a single combined chat card containing both rolls (when present)
+     * and applies each to its respective resource (resolve via addResolve,
+     * power via addPower). When powerDamage is null, this behaves as a
+     * single resolve damage roll.
+     *
+     * @param {Object} options - The damage bundle options
+     * @param {Object|null} [options.resolveDamage=null] - Resolve damage payload
+     * @param {string} [options.resolveDamage.formula] - The resolve damage formula
+     * @param {string} [options.resolveDamage.type] - The resolve damage type ("damage" or "heal")
+     * @param {Object|null} [options.powerDamage=null] - Power damage payload
+     * @param {string} [options.powerDamage.formula] - The power damage formula
+     * @param {string} [options.powerDamage.type] - The power damage type ("damage" or "heal")
+     * @param {string} [options.label="Damage"] - Label for the damage roll
+     * @param {string} [options.description=""] - Description for the damage roll
+     * @param {string} [options.img=null] - Image for the damage roll
+     * @param {string} [options.bgColor=null] - Background color for the damage roll
+     * @param {string} [options.textColor=null] - Text color for the damage roll
+     * @returns {Promise<Object>} { resolveRoll, powerRoll } The damage roll results
+     */
+    async applyDamageBundle({
+      resolveDamage = null,
+      powerDamage = null,
+      label = "Damage",
+      description = "",
+      img = null,
+      bgColor = null,
+      textColor = null,
+    } = {}) {
+      Logger.methodEntry("ActorResourceMixin", "applyDamageBundle", {
+        hasResolve: !!resolveDamage,
+        hasPower: !!powerDamage,
+      });
+
+      // Validate types
+      for (const [key, payload] of [
+        ["resolveDamage", resolveDamage],
+        ["powerDamage", powerDamage],
+      ]) {
+        if (payload && !["damage", "heal"].includes(payload.type)) {
+          const error = new Error(
+            `Invalid ${key} type: ${payload.type}. Must be "damage" or "heal".`,
+          );
+          Logger.error("Invalid damage type provided", error, "RESOURCES");
+          throw error;
+        }
+      }
+
+      try {
+        const { resolveRoll, powerRoll } = await erpsRollHandler.handleDamageBundle(
+          { resolveDamage, powerDamage, label, description, img, bgColor, textColor },
+          this,
+        );
+
+        // Apply each resource change if the user has permission
+        if (this.isOwner) {
+          if (resolveDamage && resolveRoll) {
+            const resolveAmount = Math.abs(resolveRoll.total);
+            if (resolveDamage.type === "heal") {
+              await this.addResolve(resolveAmount);
+              Logger.info(
+                `Healed ${resolveAmount} resolve for actor "${this.name}"`,
+                null,
+                "RESOURCES",
+              );
+            } else {
+              await this.addResolve(-resolveAmount);
+              Logger.info(
+                `Applied ${resolveAmount} resolve damage to actor "${this.name}"`,
+                null,
+                "RESOURCES",
+              );
+            }
+          }
+
+          if (powerDamage && powerRoll) {
+            const powerAmount = Math.abs(powerRoll.total);
+            if (powerDamage.type === "heal") {
+              await this.addPower(powerAmount);
+              Logger.info(
+                `Restored ${powerAmount} power for actor "${this.name}"${powerRoll.overhealing > 0 ? ` (${powerRoll.overhealing} overcharge)` : ""}`,
+                null,
+                "RESOURCES",
+              );
+            } else {
+              await this.addPower(-powerAmount);
+              Logger.info(
+                `Applied ${powerAmount} power damage to actor "${this.name}"`,
+                null,
+                "RESOURCES",
+              );
+            }
+          }
+        } else {
+          Logger.warn(
+            "User lacks permission to apply damage",
+            null,
+            "RESOURCES",
+          );
+        }
+
+        Logger.methodExit("ActorResourceMixin", "applyDamageBundle", {
+          resolveRoll,
+          powerRoll,
+        });
+        return { resolveRoll, powerRoll };
+      } catch (error) {
+        Logger.error("Error in damage bundle operation", error, "RESOURCES");
+        Logger.methodExit("ActorResourceMixin", "applyDamageBundle", null);
         throw error;
       }
     }

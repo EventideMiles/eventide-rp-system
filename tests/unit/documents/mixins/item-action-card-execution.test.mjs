@@ -65,7 +65,8 @@ const mockChatMessageBuilder = {
 };
 
 const mockDamageProcessor = {
-  processDamageResults: vi.fn()
+  processDamageResults: vi.fn(),
+  processSavedDamage: vi.fn(),
 };
 
 const mockAttackChainExecutor = {
@@ -1469,62 +1470,63 @@ describe('ItemActionCardExecutionMixin', () => {
       const mockActor = {
         id: 'actor1',
         name: 'Test Actor',
-        damageResolve: vi.fn().mockResolvedValue({ total: 10 }),
-        system: {
-          hiddenAbilities: {
-            vuln: { total: 0 }
-          }
-        }
+        system: { hiddenAbilities: { vuln: { total: 0 } } },
       };
-      
+
       mockTargetResolver.resolveTargets.mockResolvedValue({
         success: true,
-        targets: [{ actor: mockActor }]
+        targets: [{ actor: mockActor }],
       });
-      
+
       item.system.savedDamage = {
         formula: '2d6',
         type: 'damage',
-        description: 'Test damage'
+        powerFormula: '0',
+        powerType: 'damage',
+        description: 'Test damage',
       };
-      
+
+      mockDamageProcessor.processSavedDamage.mockResolvedValue([
+        { target: mockActor, resolveRoll: { total: 10 } },
+      ]);
+
       const result = await item.executeSavedDamage({});
-      
+
       expect(result.success).toBe(true);
       expect(result.mode).toBe('savedDamage');
       expect(result.damageResults).toHaveLength(1);
-      expect(mockActor.damageResolve).toHaveBeenCalled();
+      expect(mockDamageProcessor.processSavedDamage).toHaveBeenCalled();
     });
 
     test('should apply vulnerability modifier when target has vulnerability', async () => {
       const mockActor = {
         id: 'actor1',
         name: 'Test Actor',
-        damageResolve: vi.fn().mockResolvedValue({ total: 12 }),
-        system: {
-          hiddenAbilities: {
-            vuln: { total: 2 }
-          }
-        }
+        system: { hiddenAbilities: { vuln: { total: 2 } } },
       };
-      
+
       mockTargetResolver.resolveTargets.mockResolvedValue({
         success: true,
-        targets: [{ actor: mockActor }]
+        targets: [{ actor: mockActor }],
       });
-      
+
       item.system.savedDamage = {
         formula: '2d6',
-        type: 'damage'
+        type: 'damage',
+        powerFormula: '0',
+        powerType: 'damage',
       };
-      
+
+      mockDamageProcessor.processSavedDamage.mockResolvedValue([
+        { target: mockActor, resolveRoll: { total: 12 } },
+      ]);
+
       await item.executeSavedDamage({});
-      
-      // Should add vulnerability to formula
-      expect(mockActor.damageResolve).toHaveBeenCalledWith(
-        expect.objectContaining({
-          formula: '2d6 + 2'
-        })
+
+      // The raw formula is passed to the processor which applies vulnerability
+      expect(mockDamageProcessor.processSavedDamage).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.objectContaining({ formula: '2d6', type: 'damage' }),
       );
     });
 
@@ -1532,31 +1534,30 @@ describe('ItemActionCardExecutionMixin', () => {
       const mockActor = {
         id: 'actor1',
         name: 'Test Actor',
-        damageResolve: vi.fn().mockResolvedValue({ total: 10 }),
-        system: {
-          hiddenAbilities: {
-            vuln: { total: 2 }
-          }
-        }
+        system: { hiddenAbilities: { vuln: { total: 2 } } },
       };
-      
+
       mockTargetResolver.resolveTargets.mockResolvedValue({
         success: true,
-        targets: [{ actor: mockActor }]
+        targets: [{ actor: mockActor }],
       });
-      
+
       item.system.savedDamage = {
         formula: '2d6',
-        type: 'heal'
+        type: 'heal',
+        powerFormula: '0',
+        powerType: 'damage',
       };
-      
+
+      mockDamageProcessor.processSavedDamage.mockResolvedValue([
+        { target: mockActor, resolveRoll: { total: 10 } },
+      ]);
+
       await item.executeSavedDamage({});
-      
-      // Should NOT add vulnerability for heal
-      expect(mockActor.damageResolve).toHaveBeenCalledWith(
-        expect.objectContaining({
-          formula: '2d6'
-        })
+
+      expect(mockDamageProcessor.processSavedDamage).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.objectContaining({ formula: '2d6', type: 'heal' }),
       );
     });
 
@@ -1588,22 +1589,27 @@ describe('ItemActionCardExecutionMixin', () => {
       const mockActor = {
         id: 'actor1',
         name: 'Test Actor',
-        damageResolve: vi.fn().mockRejectedValue(new Error('Damage failed')),
-        system: { hiddenAbilities: { vuln: { total: 0 } } }
+        system: { hiddenAbilities: { vuln: { total: 0 } } },
       };
-      
+
       mockTargetResolver.resolveTargets.mockResolvedValue({
         success: true,
-        targets: [{ actor: mockActor }]
+        targets: [{ actor: mockActor }],
       });
-      
-      item.system.savedDamage = { formula: '2d6', type: 'damage' };
-      
-      // Should not throw, just log error and continue
-      const result = await item.executeSavedDamage({});
-      
-      expect(result.success).toBe(true);
-      expect(result.damageResults).toHaveLength(0);
+
+      item.system.savedDamage = {
+        formula: '2d6',
+        type: 'damage',
+        powerFormula: '0',
+        powerType: 'damage',
+      };
+
+      mockDamageProcessor.processSavedDamage.mockRejectedValue(
+        new Error('Damage failed'),
+      );
+
+      // Should not throw, just propagate the error
+      await expect(item.executeSavedDamage({})).rejects.toThrow('Damage failed');
     });
   });
 
@@ -2011,33 +2017,29 @@ describe('ItemActionCardExecutionMixin', () => {
     test('should throw error when damageResolve fails on target', async () => {
       const mockActor = { id: 'actor1', name: 'Test Actor' };
       item.actor = mockActor;
-      
+
       const mockTargetActor = {
         id: 'target1',
         name: 'Target',
-        damageResolve: vi.fn().mockRejectedValue(new Error('Damage resolve failed'))
       };
-      
+
       const mockTargets = [{
         actor: mockTargetActor,
         token: { id: 'token1' }
       }];
-      
+
       mockTargetResolver.resolveTargets.mockResolvedValue({
         success: true,
         targets: mockTargets
       });
 
-      // The error is caught inside the loop and logged, but doesn't throw
-      // The function should still succeed but with empty damageResults
-      const result = await item.executeSavedDamage(mockActor);
-      
-      expect(result.success).toBe(true);
-      expect(result.damageResults).toEqual([]);
-      expect(mockLogger.error).toHaveBeenCalledWith(
-        'Failed to apply saved damage',
-        expect.any(Error),
-        'ACTION_CARD'
+      mockDamageProcessor.processSavedDamage.mockRejectedValue(
+        new Error('Damage resolve failed'),
+      );
+
+      // The error propagates from executeSavedDamage
+      await expect(item.executeSavedDamage(mockActor)).rejects.toThrow(
+        'Damage resolve failed',
       );
     });
 

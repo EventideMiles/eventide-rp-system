@@ -138,6 +138,7 @@ describe('ActorRollsMixin - Priority 1 Critical Functions', () => {
           total: 5,
           diceAdjustments: {
             total: 1,
+            absTotal: 1,
             mode: 'kh'
           }
         },
@@ -146,6 +147,7 @@ describe('ActorRollsMixin - Priority 1 Critical Functions', () => {
           total: 3,
           diceAdjustments: {
             total: 0,
+            absTotal: 0,
             mode: 'kh'
           }
         },
@@ -154,6 +156,7 @@ describe('ActorRollsMixin - Priority 1 Critical Functions', () => {
           total: 2,
           diceAdjustments: {
             total: -2,
+            absTotal: 2,
             mode: 'kl'
           }
         },
@@ -162,6 +165,7 @@ describe('ActorRollsMixin - Priority 1 Critical Functions', () => {
           total: 4,
           diceAdjustments: {
             total: 0,
+            absTotal: 0,
             mode: 'kh'
           }
         },
@@ -170,6 +174,7 @@ describe('ActorRollsMixin - Priority 1 Critical Functions', () => {
           total: 3,
           diceAdjustments: {
             total: 0,
+            absTotal: 0,
             mode: 'kh'
           }
         }
@@ -277,7 +282,7 @@ describe('ActorRollsMixin - Priority 1 Critical Functions', () => {
     test('should throw error for invalid ability parameter', async () => {
       await expect(actor.getRollFormula({ ability: null }))
         .rejects
-        .toThrow('Invalid ability parameter: null');
+        .toThrow('Invalid ability parameter: must be a string');
 
       // Logger mock is not working properly, skip this check
       // expect(mockLogger.error).toHaveBeenCalledWith(
@@ -290,7 +295,7 @@ describe('ActorRollsMixin - Priority 1 Critical Functions', () => {
     test('should throw error for non-string ability parameter', async () => {
       await expect(actor.getRollFormula({ ability: 42 }))
         .rejects
-        .toThrow('Invalid ability parameter: 42');
+        .toThrow('Invalid ability parameter: must be a string');
     });
 
     test('should throw error for non-existent ability', async () => {
@@ -332,6 +337,7 @@ describe('ActorRollsMixin - Priority 1 Critical Functions', () => {
 
     test('should handle extreme dice adjustment values', async () => {
       mockRollData.abilities.acro.diceAdjustments.total = 10;
+      mockRollData.abilities.acro.diceAdjustments.absTotal = 10;
 
       const formula = await actor.getRollFormula({ ability: 'acro' });
 
@@ -370,6 +376,7 @@ describe('ActorRollsMixin - Priority 1 Critical Functions', () => {
           total: 5,
           diceAdjustments: {
             total: 1,
+            absTotal: 1,
             mode: 'kh'
           }
         },
@@ -378,6 +385,7 @@ describe('ActorRollsMixin - Priority 1 Critical Functions', () => {
           total: 3,
           diceAdjustments: {
             total: 0,
+            absTotal: 0,
             mode: 'kh'
           }
         },
@@ -386,6 +394,7 @@ describe('ActorRollsMixin - Priority 1 Critical Functions', () => {
           total: 2,
           diceAdjustments: {
             total: -2,
+            absTotal: 2,
             mode: 'kl'
           }
         },
@@ -394,6 +403,7 @@ describe('ActorRollsMixin - Priority 1 Critical Functions', () => {
           total: 4,
           diceAdjustments: {
             total: 0,
+            absTotal: 0,
             mode: 'kh'
           }
         },
@@ -402,6 +412,7 @@ describe('ActorRollsMixin - Priority 1 Critical Functions', () => {
           total: 3,
           diceAdjustments: {
             total: 0,
+            absTotal: 0,
             mode: 'kh'
           }
         }
@@ -605,6 +616,19 @@ describe('ActorRollsMixin - Priority 1 Critical Functions', () => {
 // Integration tests for complete rolling workflow
 describe('Rolling Integration Tests', () => {
   test('should complete full rolling workflow without errors', async () => {
+    // Ensure CONFIG has abilities for this integration test
+    global.CONFIG = {
+      EVENTIDE_RP_SYSTEM: {
+        abilities: {
+          acro: 'Acrobatics',
+          phys: 'Physical',
+          fort: 'Fortitude',
+          will: 'Will',
+          wits: 'Wits'
+        }
+      }
+    };
+
     const MockActor = class {
       constructor() {
         this.name = 'Test Actor';
@@ -615,7 +639,7 @@ describe('Rolling Integration Tests', () => {
               acro: {
                 value: 3,
                 total: 6,
-                diceAdjustments: { total: 2, mode: 'kh' }
+                diceAdjustments: { total: 2, absTotal: 2, mode: 'kh' }
               }
             },
             hiddenAbilities: {
@@ -673,6 +697,7 @@ describe('ActorRollsMixin - Phase 2 Branch Coverage', () => {
           total: 5,
           diceAdjustments: {
             total: 1,
+            absTotal: 1,
             mode: 'kh'
           }
         },
@@ -681,6 +706,7 @@ describe('ActorRollsMixin - Phase 2 Branch Coverage', () => {
           total: 3,
           diceAdjustments: {
             total: 0,
+            absTotal: 0,
             mode: 'kh'
           }
         },
@@ -689,6 +715,7 @@ describe('ActorRollsMixin - Phase 2 Branch Coverage', () => {
           total: 2,
           diceAdjustments: {
             total: -2,
+            absTotal: 2,
             mode: 'kl'
           }
         },
@@ -697,6 +724,7 @@ describe('ActorRollsMixin - Phase 2 Branch Coverage', () => {
           total: 4,
           diceAdjustments: {
             total: 0,
+            absTotal: 0,
             mode: 'kh'
           }
         },
@@ -705,6 +733,7 @@ describe('ActorRollsMixin - Phase 2 Branch Coverage', () => {
           total: 3,
           diceAdjustments: {
             total: 0,
+            absTotal: 0,
             mode: 'kh'
           }
         }
@@ -782,6 +811,7 @@ describe('ActorRollsMixin - Phase 2 Branch Coverage', () => {
     test('should generate formula with positive dice adjustments (absTotal > 0)', async () => {
       // This tests the if branch at line 111
       mockRollData.abilities.acro.diceAdjustments.total = 2;
+      mockRollData.abilities.acro.diceAdjustments.absTotal = 2;
       mockRollData.abilities.acro.diceAdjustments.mode = 'kh';
 
       const formula = await actor.getRollFormula({ ability: 'acro' });
@@ -793,6 +823,7 @@ describe('ActorRollsMixin - Phase 2 Branch Coverage', () => {
     test('should generate formula with negative dice adjustments using kl mode', async () => {
       // This tests negative dice adjustments with kl mode
       mockRollData.abilities.fort.diceAdjustments.total = -3;
+      mockRollData.abilities.fort.diceAdjustments.absTotal = 3;
       mockRollData.abilities.fort.diceAdjustments.mode = 'kl';
 
       const formula = await actor.getRollFormula({ ability: 'fort' });
@@ -1063,12 +1094,12 @@ describe('ActorRollsMixin - Phase 2 Branch Coverage', () => {
 
       await actor.rollCustom({
         formula: '1d20',
-        rollMode: 'gmroll'
+        messageMode: 'gmroll'
       });
 
       expect(mockErpsRollHandler.handleRoll).toHaveBeenCalledWith(
         expect.objectContaining({
-          rollMode: 'gmroll'
+          messageMode: 'gmroll'
         }),
         actor
       );

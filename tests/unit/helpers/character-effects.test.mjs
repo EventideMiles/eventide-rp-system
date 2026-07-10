@@ -334,11 +334,11 @@ describe('character-effects', () => {
         expect(result.regularEffects[0].mode).toBe('transformChange');
       });
 
-      test('should set override mode when mode equals 5', async () => {
+      test('should set override mode when type equals override', async () => {
         const effect = {
           system: {
             changes: [
-              { key: 'system.abilities.acro', value: '5', mode: 5 }
+              { key: 'system.abilities.acro', value: '5', type: 'override' }
             ]
           }
         };
@@ -389,7 +389,7 @@ describe('character-effects', () => {
             changes: [
               { key: 'system.abilities.phys', value: '3', mode: 2 },
               { key: 'system.abilities.cmax', value: '2', mode: 2 },
-              { key: 'system.resolve.override', value: '8', mode: 5 }
+              { key: 'system.resolve.override', value: '8', type: 'override' }
             ]
           }
         };

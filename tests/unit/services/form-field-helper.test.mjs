@@ -59,8 +59,8 @@ describe('FormFieldHelper', () => {
         expect(FormFieldHelper.DAMAGE_FORMULA_FIELDS['system.savedDamage.formula']).toBe('system.attackChain.damageFormula');
       });
 
-      test('should have exactly 2 field mappings', () => {
-        expect(Object.keys(FormFieldHelper.DAMAGE_FORMULA_FIELDS)).toHaveLength(2);
+      test('should have exactly 4 field mappings', () => {
+        expect(Object.keys(FormFieldHelper.DAMAGE_FORMULA_FIELDS)).toHaveLength(4);
       });
     });
 
@@ -77,8 +77,16 @@ describe('FormFieldHelper', () => {
         expect(FormFieldHelper.FORMULA_FIELDS).toContain('repetitions');
       });
 
-      test('should have exactly 3 field names', () => {
-        expect(FormFieldHelper.FORMULA_FIELDS).toHaveLength(3);
+      test('should include powerDamageFormula', () => {
+        expect(FormFieldHelper.FORMULA_FIELDS).toContain('powerDamageFormula');
+      });
+
+      test('should include powerFormula', () => {
+        expect(FormFieldHelper.FORMULA_FIELDS).toContain('powerFormula');
+      });
+
+      test('should have exactly 5 field names', () => {
+        expect(FormFieldHelper.FORMULA_FIELDS).toHaveLength(5);
       });
     });
   });

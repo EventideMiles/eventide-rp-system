@@ -144,6 +144,56 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
         integer: true,
         min: 1,
       }),
+      powerDamageCondition: new fields.StringField({
+        required: true,
+        initial: "oneSuccess",
+        choices: [
+          "never",
+          "oneSuccess",
+          "twoSuccesses",
+          "rollValue",
+          "rollUnderValue",
+          "rollEven",
+          "rollOdd",
+          "rollOnValue",
+          "zeroSuccesses",
+          "always",
+          "criticalSuccess",
+          "criticalFailure",
+        ],
+      }),
+      powerDamageFormula: new fields.StringField({
+        required: true,
+        initial: "0",
+        validate: (value) => {
+          const sanitized = FormulaValidator.sanitizeFormula(value);
+
+          const validator = new FormulaValidator();
+          const result = validator.validateDamageFormula(sanitized, {
+            allowBlank: true,
+            allowDataRefs: true,
+          });
+
+          if (!result.isValid) {
+            throw new Error(
+              game.i18n.format(result.errorKey, result.details || {}),
+            );
+          }
+
+          return true;
+        },
+      }),
+      powerDamageType: new fields.StringField({
+        required: true,
+        initial: "damage",
+        choices: ["damage", "heal"],
+      }),
+      powerDamageThreshold: new fields.NumberField({
+        required: false,
+        initial: 15,
+        integer: true,
+        min: 1,
+      }),
       statusCondition: new fields.StringField({
         required: true,
         initial: "oneSuccess",
@@ -325,6 +375,108 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
         initial: "damage",
         choices: ["damage", "heal"],
       }),
+      powerFormula: new fields.StringField({
+        required: true,
+        initial: "0",
+        validate: (value) => {
+          const sanitized = FormulaValidator.sanitizeFormula(value);
+
+          const validator = new FormulaValidator();
+          const result = validator.validateDamageFormula(sanitized, {
+            allowBlank: true,
+            allowDataRefs: false,
+          });
+          if (!result.isValid) {
+            throw new Error(
+              game.i18n.format(result.errorKey, result.details || {}),
+            );
+          }
+          return true;
+        },
+      }),
+      powerType: new fields.StringField({
+        required: true,
+        initial: "damage",
+        choices: ["damage", "heal"],
+      }),
+    });
+
+    /**
+     * Self-damage configuration (applied to the card owner based on a condition).
+     * Mirrors the self-effects pattern but applies resolve/power damage/heal
+     * to the owning actor instead of embedded items. Defaults to "never".
+     */
+    schema.selfDamageConfig = new fields.SchemaField({
+      condition: new fields.StringField({
+        required: true,
+        initial: "never",
+        choices: [
+          "never",
+          "oneSuccess",
+          "twoSuccesses",
+          "rollValue",
+          "rollUnderValue",
+          "rollEven",
+          "rollOdd",
+          "rollOnValue",
+          "zeroSuccesses",
+          "always",
+          "criticalSuccess",
+          "criticalFailure",
+        ],
+      }),
+      threshold: new fields.NumberField({
+        required: false,
+        initial: 15,
+        integer: true,
+        min: 1,
+      }),
+      resolveFormula: new fields.StringField({
+        required: true,
+        initial: "0",
+        validate: (value) => {
+          const sanitized = FormulaValidator.sanitizeFormula(value);
+          const validator = new FormulaValidator();
+          const result = validator.validateDamageFormula(sanitized, {
+            allowBlank: true,
+            allowDataRefs: true,
+          });
+          if (!result.isValid) {
+            throw new Error(
+              game.i18n.format(result.errorKey, result.details || {}),
+            );
+          }
+          return true;
+        },
+      }),
+      resolveType: new fields.StringField({
+        required: true,
+        initial: "damage",
+        choices: ["damage", "heal"],
+      }),
+      powerFormula: new fields.StringField({
+        required: true,
+        initial: "0",
+        validate: (value) => {
+          const sanitized = FormulaValidator.sanitizeFormula(value);
+          const validator = new FormulaValidator();
+          const result = validator.validateDamageFormula(sanitized, {
+            allowBlank: true,
+            allowDataRefs: true,
+          });
+          if (!result.isValid) {
+            throw new Error(
+              game.i18n.format(result.errorKey, result.details || {}),
+            );
+          }
+          return true;
+        },
+      }),
+      powerType: new fields.StringField({
+        required: true,
+        initial: "damage",
+        choices: ["damage", "heal"],
+      }),
     });
 
     /**
@@ -383,6 +535,14 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
      * Whether damage applies on every repetition (true) or just first success (false)
      */
     schema.damageApplication = new fields.BooleanField({
+      required: true,
+      initial: true,
+    });
+
+    /**
+     * Whether power damage applies on every repetition (true) or just first success (false)
+     */
+    schema.powerDamageApplication = new fields.BooleanField({
       required: true,
       initial: true,
     });

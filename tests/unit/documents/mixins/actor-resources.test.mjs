@@ -454,6 +454,7 @@ describe('ActorResourceMixin', () => {
   describe('restore()', () => {
     test('should return null when user is not GM', async () => {
       global.game.user.isGM = false;
+      actor.isOwner = false;
 
       const result = await actor.restore({ resolve: true });
 
