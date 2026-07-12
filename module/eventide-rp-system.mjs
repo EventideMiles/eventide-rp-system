@@ -52,6 +52,7 @@ import {
   EmbeddedImageMigration,
   SettingNameMigration,
   V14ActiveEffectMigration,
+  CombatPowerLinkingMigration,
   NpcGenerator,
 } from "./services/_module.mjs";
 
@@ -758,6 +759,15 @@ Hooks.once("ready", () => {
   V14ActiveEffectMigration.run().catch((error) => {
     Logger.error(
       "Failed to run V14 ActiveEffect migration",
+      error,
+      "SYSTEM_INIT",
+    );
+  });
+
+  // Run combat power linking migration (creates actor items from embedded snapshots)
+  CombatPowerLinkingMigration.run().catch((error) => {
+    Logger.error(
+      "Failed to run combat power linking migration",
       error,
       "SYSTEM_INIT",
     );

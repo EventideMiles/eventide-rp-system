@@ -118,9 +118,26 @@ export function ItemActionCardMixin(Base) {
             (this.update.toString().includes("embeddedActionCards") ||
               this.update.toString().includes("embeddedTransformations")));
 
+        // Determine if we should link to the source item instead of just copying.
+        // Combat powers that are already owned by the same actor get linked so
+        // edits propagate to all action cards referencing them.
+        let itemRef = null;
+        if (
+          item.type === "combatPower" &&
+          this.isOwned &&
+          this.parent &&
+          item.isOwned &&
+          item.parent?.id === this.parent?.id
+        ) {
+          itemRef = item.id;
+        }
+
         // Update the document, passing fromEmbeddedItem flag for virtual items
         await this.update(
-          { "system.embeddedItem": itemData },
+          {
+            "system.embeddedItem": itemData,
+            "system.embeddedItemRef": itemRef,
+          },
           isVirtualItem ? { fromEmbeddedItem: true } : {},
         );
 
@@ -155,7 +172,7 @@ export function ItemActionCardMixin(Base) {
 
         // Update the document, passing fromEmbeddedItem flag for virtual items
         await this.update(
-          { "system.embeddedItem": null },
+          { "system.embeddedItem": null, "system.embeddedItemRef": null },
           isVirtualItem ? { fromEmbeddedItem: true } : {},
         );
         return this;
@@ -163,6 +180,101 @@ export function ItemActionCardMixin(Base) {
         Logger.error("Failed to clear embedded item", error, "ACTION_CARD");
         throw error;
       }
+    }
+
+    /**
+     * Link this action card to a combat power already on the actor.
+     *
+     * After linking, getEmbeddedItem resolves the real item from the actor's
+     * items. Editing the source item propagates to all linked action cards.
+     * The embeddedItem snapshot is refreshed from the source.
+     *
+     * @param {string} itemId - The ID of the combat power on the actor
+     * @returns {Promise<Item>} This action card instance for method chaining
+     * @async
+     */
+    async linkEmbeddedItem(itemId) {
+      if (this.type !== "actionCard") {
+        throw new Error(
+          "linkEmbeddedItem can only be called on action card items",
+        );
+      }
+
+      const actor = this.isOwned ? this.parent : null;
+      if (!actor || !actor.items) {
+        throw new Error("Action card must be owned by an actor to link items");
+      }
+
+      const sourceItem = actor.items.get(itemId);
+      if (!sourceItem) {
+        throw new Error(`Item not found on actor: ${itemId}`);
+      }
+
+      if (sourceItem.type !== "combatPower") {
+        throw new Error(
+          `Only combat powers can be linked, got: ${sourceItem.type}`,
+        );
+      }
+
+      // Refresh the snapshot from the source and store the reference
+      const snapshot = sourceItem.toObject();
+      snapshot._id = foundry.utils.randomID();
+
+      await this.update({
+        "system.embeddedItem": snapshot,
+        "system.embeddedItemRef": itemId,
+      });
+
+      return this;
+    }
+
+    /**
+     * Unlink this action card from its source combat power.
+     *
+     * The action card retains its embeddedItem snapshot but no longer
+     * resolves from the source item. Edits to the source no longer
+     * propagate to this card.
+     *
+     * @returns {Promise<Item>} This action card instance for method chaining
+     * @async
+     */
+    async unlinkEmbeddedItem() {
+      if (this.type !== "actionCard") return this;
+
+      await this.update({ "system.embeddedItemRef": null });
+      return this;
+    }
+
+    /**
+     * Sync the embeddedItem snapshot from the linked source item.
+     *
+     * Called when the source item changes or on sheet render to keep
+     * the snapshot current. Only applies when embeddedItemRef is set
+     * and the source item exists on the actor.
+     *
+     * @returns {Promise<Item|null>} This action card if updated, null otherwise
+     * @async
+     */
+    async syncFromSource() {
+      if (!this.system.embeddedItemRef) return null;
+
+      const actor = this.isOwned ? this.parent : null;
+      if (!actor || !actor.items) return null;
+
+      const sourceItem = actor.items.get(this.system.embeddedItemRef);
+      if (!sourceItem) return null;
+
+      const snapshot = sourceItem.toObject();
+      // Preserve the snapshot's internal ID (not the source's ID)
+      const currentSnapshot = this.system.embeddedItem;
+      if (currentSnapshot && currentSnapshot._id) {
+        snapshot._id = currentSnapshot._id;
+      } else {
+        snapshot._id = foundry.utils.randomID();
+      }
+
+      await this.update({ "system.embeddedItem": snapshot });
+      return this;
     }
 
     /**
@@ -180,6 +292,32 @@ export function ItemActionCardMixin(Base) {
       }
 
       const { executionContext = false } = options;
+
+      // If we have a reference to a real item on the actor, resolve it directly.
+      // This is the "linked" path — edits to the source item propagate to all
+      // action cards that reference it.
+      if (this.system.embeddedItemRef) {
+        const actor = this.isOwned ? this.parent : null;
+        if (actor && actor.items) {
+          const linkedItem = actor.items.get(this.system.embeddedItemRef);
+          if (linkedItem) {
+            // For repetition context with cost zeroing, return a clone with zeroed cost
+            if (
+              executionContext &&
+              this._currentRepetitionContext &&
+              !this._currentRepetitionContext.shouldApplyCost
+            ) {
+              const data = linkedItem.toObject();
+              if (data.system && data.system.cost !== undefined) {
+                data.system.cost = 0;
+              }
+              return new CONFIG.Item.documentClass(data, { parent: actor });
+            }
+            return linkedItem;
+          }
+        }
+        // Ref set but item not found — fall through to snapshot
+      }
 
       try {
         if (

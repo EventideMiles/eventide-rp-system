@@ -51,11 +51,24 @@ export default class EventideRpSystemActionCard extends EventideRpSystemItemBase
 
     /**
      * Single embedded item (combat power, gear, or feature)
-     * Only used in attack chain mode
+     * Only used in attack chain mode. When embeddedItemRef is set, this
+     * serves as a snapshot/cache of the linked item.
      */
     schema.embeddedItem = new fields.ObjectField({
       required: true,
       initial: {},
+      nullable: true,
+    });
+
+    /**
+     * Optional reference to a real item on the actor.
+     * When set, getEmbeddedItem resolves the linked item instead of the
+     * embedded snapshot. Editing the linked item updates all action cards
+     * that reference it. Currently supports combatPower items.
+     */
+    schema.embeddedItemRef = new fields.StringField({
+      required: false,
+      initial: null,
       nullable: true,
     });
 

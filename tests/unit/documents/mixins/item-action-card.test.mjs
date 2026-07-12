@@ -364,7 +364,7 @@ describe('ItemActionCardMixin', () => {
       await item.clearEmbeddedItem();
 
       expect(item.update).toHaveBeenCalledWith(
-        { 'system.embeddedItem': null },
+        { 'system.embeddedItem': null, 'system.embeddedItemRef': null },
         expect.any(Object)
       );
     });
@@ -382,7 +382,7 @@ describe('ItemActionCardMixin', () => {
       await item.clearEmbeddedItem();
 
       expect(item.update).toHaveBeenCalledWith(
-        { 'system.embeddedItem': null },
+        { 'system.embeddedItem': null, 'system.embeddedItemRef': null },
         { fromEmbeddedItem: true }
       );
     });
