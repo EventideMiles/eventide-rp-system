@@ -227,8 +227,6 @@ export class CombatPowerLinkingMigration {
 
     const compareFields = [
       "cost",
-      "bgColor",
-      "textColor",
       "active",
       "targeted",
     ];

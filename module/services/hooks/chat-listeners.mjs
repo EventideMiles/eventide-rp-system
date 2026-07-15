@@ -257,6 +257,13 @@ function setupItemCreationHooks() {
     if (!item.actor) return;
     if (game.user.id !== triggerPlayer) return;
 
+    // Handle action card transfer: resolve stale embeddedItemRef
+    if (item.type === "actionCard" && item.system.embeddedItemRef) {
+      item.resolveTransfer().catch((_error) => {
+        // Non-critical — card falls back to embeddedItem snapshot
+      });
+    }
+
     // Handle status message creation
     if (item.type === "status") {
       erps.messages.createStatusMessage(

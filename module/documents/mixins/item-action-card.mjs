@@ -278,6 +278,126 @@ export function ItemActionCardMixin(Base) {
     }
 
     /**
+     * Resolve a stale embeddedItemRef after transferring to a new actor.
+     *
+     * When an action card with a linked combat power is moved to a different
+     * actor, the embeddedItemRef points to an item that no longer exists.
+     * This method searches the new actor for a matching combat power (by
+     * name and system data, ignoring icon differences) and links to it.
+     * If no match is found, creates a new combat power from the snapshot.
+     *
+     * Called automatically from the createItem hook on first creation.
+     *
+     * @returns {Promise<boolean>} True if the ref was resolved, false if no action needed
+     * @async
+     */
+    async resolveTransfer() {
+      if (this.type !== "actionCard") return false;
+      if (!this.system.embeddedItemRef) return false;
+
+      const actor = this.isOwned ? this.parent : null;
+      if (!actor || !actor.items) return false;
+
+      // Check if the ref already resolves on this actor
+      const existing = actor.items.get(this.system.embeddedItemRef);
+      if (existing) return false; // Ref is valid, nothing to do
+
+      // Ref is stale — need to find or create a replacement
+      const embeddedData = this.system.embeddedItem;
+      if (
+        !embeddedData ||
+        !embeddedData.type ||
+        embeddedData.type !== "combatPower"
+      ) {
+        // Not a combat power — just clear the stale ref
+        await this.update({ "system.embeddedItemRef": null });
+        return false;
+      }
+
+      // Search for a matching combat power (ignoring icon differences)
+      const combatPowers = actor.items.filter(
+        (item) => item.type === "combatPower",
+      );
+
+      let matchedItem = null;
+      for (const item of combatPowers) {
+        if (
+          item.name === embeddedData.name &&
+          this._systemDataMatches(item.system, embeddedData.system)
+        ) {
+          matchedItem = item;
+          break;
+        }
+      }
+
+      if (matchedItem) {
+        // Link to the existing combat power on this actor
+        await this.update({ "system.embeddedItemRef": matchedItem.id });
+        Logger.debug(
+          `Transfer: linked action card "${this.name}" to existing combat power "${matchedItem.name}" on actor "${actor.name}"`,
+          { cardId: this.id, itemId: matchedItem.id },
+          "ACTION_CARD",
+        );
+      } else {
+        // No match — create a new combat power from the snapshot
+        const cleanData = foundry.utils.deepClone(embeddedData);
+        delete cleanData._id;
+        if (cleanData.flags) {
+          delete cleanData.flags["eventide-rp-system"];
+        }
+
+        const created = await actor.createEmbeddedDocuments("Item", [
+          cleanData,
+        ]);
+        if (created && created.length > 0) {
+          await this.update({ "system.embeddedItemRef": created[0].id });
+          Logger.debug(
+            `Transfer: created combat power "${cleanData.name}" on actor "${actor.name}" and linked action card "${this.name}"`,
+            { cardId: this.id, itemId: created[0].id },
+            "ACTION_CARD",
+          );
+        }
+      }
+
+      return true;
+    }
+
+    /**
+     * Compare two system data objects for deduplication.
+     * Used by resolveTransfer to find matching combat powers.
+     * Compares functional fields but NOT icon/image.
+     *
+     * @param {Object} sysA - First system data
+     * @param {Object} sysB - Second system data
+     * @returns {boolean} True if they match
+     * @private
+     */
+    _systemDataMatches(sysA, sysB) {
+      if (!sysA || !sysB) return false;
+
+      const compareFields = [
+        "cost",
+        "active",
+        "targeted",
+      ];
+
+      for (const field of compareFields) {
+        if ((sysA[field] ?? null) !== (sysB[field] ?? null)) return false;
+      }
+
+      // Compare roll sub-objects
+      const rollA = sysA.roll;
+      const rollB = sysB.roll;
+      if (rollA || rollB) {
+        if (!rollA || !rollB) return false;
+        if (rollA.type !== rollB.type) return false;
+        if (rollA.formula !== rollB.formula) return false;
+      }
+
+      return true;
+    }
+
+    /**
      * Get the embedded item for this action card as a temporary item document.
      * Creates a temporary item with overridden update methods to persist changes.
      *
