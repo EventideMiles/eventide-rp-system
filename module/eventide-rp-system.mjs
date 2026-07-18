@@ -766,11 +766,10 @@ Hooks.once("ready", () => {
 
   // Run combat power linking migration (creates actor items from embedded snapshots)
   CombatPowerLinkingMigration.run().catch((error) => {
-    Logger.error(
-      "Failed to run combat power linking migration",
-      error,
-      "SYSTEM_INIT",
-    );
+    ErrorHandler.handleAsync(Promise.reject(error), {
+      context: "Combat power linking migration (startup)",
+      errorType: ErrorHandler.ERROR_TYPES.FOUNDRY_API,
+    });
   });
 
   // Remove immediate theme styles now that the full theme system is loaded

@@ -17,6 +17,7 @@
  */
 
 import { Logger } from "../logger.mjs";
+import { ErrorHandler } from "../../utils/error-handler.mjs";
 
 const MIGRATION_VERSION = 3;
 
@@ -94,11 +95,10 @@ export class CombatPowerLinkingMigration {
         );
       }
     } catch (error) {
-      Logger.error(
-        "Combat power linking migration failed",
-        error,
-        "MIGRATION",
-      );
+      await ErrorHandler.handleAsync(Promise.reject(error), {
+        context: "Combat power linking migration",
+        errorType: ErrorHandler.ERROR_TYPES.FOUNDRY_API,
+      });
     } finally {
       migrationNotification?.remove?.();
     }
