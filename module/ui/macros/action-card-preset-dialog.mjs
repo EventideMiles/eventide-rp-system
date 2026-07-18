@@ -331,6 +331,7 @@ export class ActionCardPresetDialog extends EventideSheetHelpers {
       // Preserve embedded content and other non-preset fields
       const preservedFields = {
         embeddedItem: this._existingItem.system.embeddedItem,
+        embeddedItemRef: this._existingItem.system.embeddedItemRef,
         embeddedStatusEffects: this._existingItem.system.embeddedStatusEffects,
         embeddedTransformations:
           this._existingItem.system.embeddedTransformations,
@@ -413,7 +414,6 @@ export class ActionCardPresetDialog extends EventideSheetHelpers {
           };
 
           const embeddedItemData = {
-            _id: foundry.utils.randomID(),
             name: powerName,
             type: "combatPower",
             img: "icons/svg/item-bag.svg",
@@ -426,7 +426,22 @@ export class ActionCardPresetDialog extends EventideSheetHelpers {
             effects: [],
           };
 
-          await createdCard.update({ "system.embeddedItem": embeddedItemData });
+          // If on an actor, create the combat power as a real item and link
+          if (this._actor) {
+            const created = await this._actor.createEmbeddedDocuments(
+              "Item",
+              [embeddedItemData],
+            );
+            if (created && created.length > 0) {
+              await createdCard.setEmbeddedItem(created[0]);
+            }
+          } else {
+            // Unowned (compendium/world) — store snapshot only
+            embeddedItemData._id = foundry.utils.randomID();
+            await createdCard.update({
+              "system.embeddedItem": embeddedItemData,
+            });
+          }
         }
 
         ui.notifications.info(

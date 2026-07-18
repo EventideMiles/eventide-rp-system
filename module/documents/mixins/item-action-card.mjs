@@ -363,6 +363,79 @@ export function ItemActionCardMixin(Base) {
     }
 
     /**
+     * Attempt to link an unlinked action card to a combat power on the actor.
+     *
+     * Called from the createItem hook when an action card arrives on an actor
+     * with an embedded combat power snapshot but no embeddedItemRef. Searches
+     * for a matching item on the actor and links to it, or creates one.
+     *
+     * @returns {Promise<boolean>} True if linked, false if no action taken
+     * @async
+     */
+    async attemptLinkOnActor() {
+      if (this.type !== "actionCard") return false;
+      if (this.system.embeddedItemRef) return false; // Already linked
+
+      const embeddedData = this.system.embeddedItem;
+      if (
+        !embeddedData ||
+        embeddedData.type !== "combatPower" ||
+        Object.keys(embeddedData).length === 0
+      ) {
+        return false;
+      }
+
+      const actor = this.isOwned ? this.parent : null;
+      if (!actor || !actor.items) return false;
+
+      // Search for a matching combat power (name + system data, no icon)
+      const combatPowers = actor.items.filter(
+        (item) => item.type === "combatPower",
+      );
+
+      let matchedItem = null;
+      for (const item of combatPowers) {
+        if (
+          item.name === embeddedData.name &&
+          this._systemDataMatches(item.system, embeddedData.system)
+        ) {
+          matchedItem = item;
+          break;
+        }
+      }
+
+      if (matchedItem) {
+        await this.update({ "system.embeddedItemRef": matchedItem.id });
+        Logger.debug(
+          `Linked action card "${this.name}" to existing combat power "${matchedItem.name}"`,
+          { cardId: this.id, itemId: matchedItem.id },
+          "ACTION_CARD",
+        );
+        return true;
+      }
+
+      // No match — create the combat power on the actor from the snapshot
+      const cleanData = foundry.utils.deepClone(embeddedData);
+      delete cleanData._id;
+      if (cleanData.flags) {
+        delete cleanData.flags["eventide-rp-system"];
+      }
+
+      const created = await actor.createEmbeddedDocuments("Item", [cleanData]);
+      if (created && created.length > 0) {
+        await this.update({ "system.embeddedItemRef": created[0].id });
+        Logger.debug(
+          `Created combat power "${cleanData.name}" on actor and linked action card "${this.name}"`,
+          { cardId: this.id, itemId: created[0].id },
+          "ACTION_CARD",
+        );
+        return true;
+      }
+
+      return false;
+    }
+
+    /**
      * Compare two system data objects for deduplication.
      * Used by resolveTransfer to find matching combat powers.
      * Compares functional fields but NOT icon/image.

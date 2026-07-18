@@ -296,6 +296,19 @@ function setupItemCreationHooks() {
       });
     }
 
+    // Handle action card arriving without a ref but with an embedded combat
+    // power — attempt to link it to a real item on this actor
+    if (
+      item.type === "actionCard" &&
+      !item.system.embeddedItemRef &&
+      item.system.embeddedItem?.type === "combatPower" &&
+      Object.keys(item.system.embeddedItem).length > 0
+    ) {
+      item.attemptLinkOnActor().catch((_error) => {
+        // Non-critical — card works from snapshot
+      });
+    }
+
     // Handle status message creation
     if (item.type === "status") {
       erps.messages.createStatusMessage(
