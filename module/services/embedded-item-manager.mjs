@@ -342,6 +342,17 @@ export class EmbeddedItemManager {
    */
   static async editEmbeddedItem(item) {
     try {
+      // If linked to a source item on the actor, open that item's sheet directly
+      // so edits propagate to all cards referencing it
+      if (item.system.embeddedItemRef && item.isOwned && item.parent) {
+        const sourceItem = item.parent.items.get(item.system.embeddedItemRef);
+        if (sourceItem) {
+          sourceItem.sheet.render(true);
+          return true;
+        }
+      }
+
+      // Fallback: open the embedded item sheet (unlinked or missing source)
       const embeddedItem = item.getEmbeddedItem();
       if (!embeddedItem) {
         Logger.warn(

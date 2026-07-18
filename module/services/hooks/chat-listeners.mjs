@@ -211,8 +211,40 @@ function setupItemUpdateHooks() {
     if (item.type === "feature") {
       handleFeatureActiveState(item);
     }
+
+    // When a combat power is updated, sync snapshots on linked action cards
+    if (item.type === "combatPower") {
+      syncLinkedActionCards(item);
+    }
   });
 }
+
+/**
+ * Sync embeddedItem snapshots on action cards that reference a combat power.
+ *
+ * Called when a combat power is updated. Finds all action cards on the same
+ * actor whose embeddedItemRef points to this item and refreshes their
+ * embeddedItem snapshot so display data stays current.
+ *
+ * @private
+ * @param {Item} combatPower - The combat power that was updated
+ */
+const syncLinkedActionCards = (combatPower) => {
+  const actor = combatPower.actor;
+  if (!actor || !actor.items) return;
+
+  const linkedCards = actor.items.filter(
+    (item) =>
+      item.type === "actionCard" &&
+      item.system.embeddedItemRef === combatPower.id,
+  );
+
+  for (const card of linkedCards) {
+    card.syncFromSource().catch((_error) => {
+      // Non-critical — snapshot will refresh on next render
+    });
+  }
+};
 
 /**
  * Handle gear equip state changes
