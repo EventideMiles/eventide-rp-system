@@ -48,6 +48,7 @@ describe('EventideRpSystemActionCard Schema - Priority 1 Critical Definitions', 
 
       // Verify all major schema fields are present
       expect(schema.embeddedItem).toBeDefined();
+      expect(schema.embeddedItemRef).toBeDefined();
       expect(schema.mode).toBeDefined();
       expect(schema.attackChain).toBeDefined();
       expect(schema.savedDamage).toBeDefined();
@@ -601,6 +602,10 @@ describe('EventideRpSystemActionCard Schema - Priority 1 Critical Definitions', 
 
       // Object fields
       expect(schema.embeddedItem.constructor.name).toContain('ObjectField');
+
+      // String reference field
+      expect(schema.embeddedItemRef.constructor.name).toContain('StringField');
+      expect(schema.embeddedItemRef.options.initial).toBeNull();
 
       // Schema fields
       expect(schema.attackChain.constructor.name).toContain('SchemaField');

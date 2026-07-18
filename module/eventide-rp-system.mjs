@@ -52,6 +52,7 @@ import {
   EmbeddedImageMigration,
   SettingNameMigration,
   V14ActiveEffectMigration,
+  CombatPowerLinkingMigration,
   NpcGenerator,
 } from "./services/_module.mjs";
 
@@ -761,6 +762,14 @@ Hooks.once("ready", () => {
       error,
       "SYSTEM_INIT",
     );
+  });
+
+  // Run combat power linking migration (creates actor items from embedded snapshots)
+  CombatPowerLinkingMigration.run().catch((error) => {
+    ErrorHandler.handleAsync(Promise.reject(error), {
+      context: "Combat power linking migration (startup)",
+      errorType: ErrorHandler.ERROR_TYPES.FOUNDRY_API,
+    });
   });
 
   // Remove immediate theme styles now that the full theme system is loaded

@@ -211,8 +211,40 @@ function setupItemUpdateHooks() {
     if (item.type === "feature") {
       handleFeatureActiveState(item);
     }
+
+    // When a combat power is updated, sync snapshots on linked action cards
+    if (item.type === "combatPower") {
+      syncLinkedActionCards(item);
+    }
   });
 }
+
+/**
+ * Sync embeddedItem snapshots on action cards that reference a combat power.
+ *
+ * Called when a combat power is updated. Finds all action cards on the same
+ * actor whose embeddedItemRef points to this item and refreshes their
+ * embeddedItem snapshot so display data stays current.
+ *
+ * @private
+ * @param {Item} combatPower - The combat power that was updated
+ */
+const syncLinkedActionCards = (combatPower) => {
+  const actor = combatPower.actor;
+  if (!actor || !actor.items) return;
+
+  const linkedCards = actor.items.filter(
+    (item) =>
+      item.type === "actionCard" &&
+      item.system.embeddedItemRef === combatPower.id,
+  );
+
+  for (const card of linkedCards) {
+    card.syncFromSource().catch((_error) => {
+      // Non-critical — snapshot will refresh on next render
+    });
+  }
+};
 
 /**
  * Handle gear equip state changes
@@ -256,6 +288,26 @@ function setupItemCreationHooks() {
   Hooks.on("createItem", (item, _options, triggerPlayer) => {
     if (!item.actor) return;
     if (game.user.id !== triggerPlayer) return;
+
+    // Handle action card transfer: resolve stale embeddedItemRef
+    if (item.type === "actionCard" && item.system.embeddedItemRef) {
+      item.resolveTransfer().catch((_error) => {
+        // Non-critical — card falls back to embeddedItem snapshot
+      });
+    }
+
+    // Handle action card arriving without a ref but with an embedded combat
+    // power — attempt to link it to a real item on this actor
+    if (
+      item.type === "actionCard" &&
+      !item.system.embeddedItemRef &&
+      item.system.embeddedItem?.type === "combatPower" &&
+      Object.keys(item.system.embeddedItem).length > 0
+    ) {
+      item.attemptLinkOnActor().catch((_error) => {
+        // Non-critical — card works from snapshot
+      });
+    }
 
     // Handle status message creation
     if (item.type === "status") {

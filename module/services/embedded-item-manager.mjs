@@ -240,10 +240,23 @@ export class EmbeddedItemManager {
     try {
       const newPowerData = this.getDefaultCombatPowerData(item, "actionCard");
 
+      // If the action card is owned by an actor, create the combat power on
+      // the actor and link to it so edits propagate.
+      if (item.isOwned && item.parent) {
+        const created = await item.parent.createEmbeddedDocuments("Item", [
+          newPowerData,
+        ]);
+        if (created && created.length > 0) {
+          await item.setEmbeddedItem(created[0]);
+          return true;
+        }
+        return false;
+      }
+
+      // Unowned action card (compendium/world) — snapshot only
       const tempItem = new CONFIG.Item.documentClass(newPowerData, {
         parent: null,
       });
-
       await item.setEmbeddedItem(tempItem);
       return true;
     } catch (error) {
@@ -330,6 +343,17 @@ export class EmbeddedItemManager {
    */
   static async editEmbeddedItem(item) {
     try {
+      // If linked to a source item on the actor, open that item's sheet directly
+      // so edits propagate to all cards referencing it
+      if (item.system.embeddedItemRef && item.isOwned && item.parent) {
+        const sourceItem = item.parent.items.get(item.system.embeddedItemRef);
+        if (sourceItem) {
+          sourceItem.sheet.render(true);
+          return true;
+        }
+      }
+
+      // Fallback: open the embedded item sheet (unlinked or missing source)
       const embeddedItem = item.getEmbeddedItem();
       if (!embeddedItem) {
         Logger.warn(

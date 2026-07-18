@@ -170,6 +170,7 @@ export class DefaultDataFactory {
         mode: "attackChain",
         attackChain: this.getDefaultAttackChainData(),
         embeddedItem: {},
+        embeddedItemRef: null,
         embeddedStatusEffects: [],
         embeddedTransformations: [],
         transformationConfig: {

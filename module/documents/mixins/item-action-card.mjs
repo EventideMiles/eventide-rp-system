@@ -1,4 +1,5 @@
 import { Logger } from "../../services/_module.mjs";
+import { ErrorHandler } from "../../utils/error-handler.mjs";
 
 /**
  * Mixin that provides action card functionality to Item documents.
@@ -118,9 +119,26 @@ export function ItemActionCardMixin(Base) {
             (this.update.toString().includes("embeddedActionCards") ||
               this.update.toString().includes("embeddedTransformations")));
 
+        // Determine if we should link to the source item instead of just copying.
+        // Combat powers that are already owned by the same actor get linked so
+        // edits propagate to all action cards referencing them.
+        let itemRef = null;
+        if (
+          item.type === "combatPower" &&
+          this.isOwned &&
+          this.parent &&
+          item.isOwned &&
+          item.parent?.id === this.parent?.id
+        ) {
+          itemRef = item.id;
+        }
+
         // Update the document, passing fromEmbeddedItem flag for virtual items
         await this.update(
-          { "system.embeddedItem": itemData },
+          {
+            "system.embeddedItem": itemData,
+            "system.embeddedItemRef": itemRef,
+          },
           isVirtualItem ? { fromEmbeddedItem: true } : {},
         );
 
@@ -155,7 +173,7 @@ export function ItemActionCardMixin(Base) {
 
         // Update the document, passing fromEmbeddedItem flag for virtual items
         await this.update(
-          { "system.embeddedItem": null },
+          { "system.embeddedItem": null, "system.embeddedItemRef": null },
           isVirtualItem ? { fromEmbeddedItem: true } : {},
         );
         return this;
@@ -163,6 +181,296 @@ export function ItemActionCardMixin(Base) {
         Logger.error("Failed to clear embedded item", error, "ACTION_CARD");
         throw error;
       }
+    }
+
+    /**
+     * Link this action card to a combat power already on the actor.
+     *
+     * After linking, getEmbeddedItem resolves the real item from the actor's
+     * items. Editing the source item propagates to all linked action cards.
+     * The embeddedItem snapshot is refreshed from the source.
+     *
+     * @param {string} itemId - The ID of the combat power on the actor
+     * @returns {Promise<Item>} This action card instance for method chaining
+     * @async
+     */
+    async linkEmbeddedItem(itemId) {
+      ErrorHandler.assert(
+        this.type === "actionCard",
+        "linkEmbeddedItem can only be called on action card items",
+      );
+
+      const actor = this.isOwned ? this.parent : null;
+      ErrorHandler.assert(
+        actor && actor.items,
+        "Action card must be owned by an actor to link items",
+      );
+
+      const sourceItem = actor.items.get(itemId);
+      ErrorHandler.assert(sourceItem, `Item not found on actor: ${itemId}`);
+
+      ErrorHandler.assert(
+        sourceItem.type === "combatPower",
+        `Only combat powers can be linked, got: ${sourceItem.type}`,
+      );
+
+      // Refresh the snapshot from the source and store the reference
+      const snapshot = sourceItem.toObject();
+      snapshot._id = foundry.utils.randomID();
+
+      await this.update({
+        "system.embeddedItem": snapshot,
+        "system.embeddedItemRef": itemId,
+      });
+
+      return this;
+    }
+
+    /**
+     * Unlink this action card from its source combat power.
+     *
+     * The action card retains its embeddedItem snapshot but no longer
+     * resolves from the source item. Edits to the source no longer
+     * propagate to this card.
+     *
+     * @returns {Promise<Item>} This action card instance for method chaining
+     * @async
+     */
+    async unlinkEmbeddedItem() {
+      if (this.type !== "actionCard") return this;
+
+      await this.update({ "system.embeddedItemRef": null });
+      return this;
+    }
+
+    /**
+     * Sync the embeddedItem snapshot from the linked source item.
+     *
+     * Called when the source item changes or on sheet render to keep
+     * the snapshot current. Only applies when embeddedItemRef is set
+     * and the source item exists on the actor.
+     *
+     * @returns {Promise<Item|null>} This action card if updated, null otherwise
+     * @async
+     */
+    async syncFromSource() {
+      if (!this.system.embeddedItemRef) return null;
+
+      const actor = this.isOwned ? this.parent : null;
+      if (!actor || !actor.items) return null;
+
+      const sourceItem = actor.items.get(this.system.embeddedItemRef);
+      if (!sourceItem) return null;
+
+      const snapshot = sourceItem.toObject();
+      // Preserve the snapshot's internal ID (not the source's ID)
+      const currentSnapshot = this.system.embeddedItem;
+      if (currentSnapshot && currentSnapshot._id) {
+        snapshot._id = currentSnapshot._id;
+      } else {
+        snapshot._id = foundry.utils.randomID();
+      }
+
+      await this.update({ "system.embeddedItem": snapshot });
+      return this;
+    }
+
+    /**
+     * Resolve a stale embeddedItemRef after transferring to a new actor.
+     *
+     * When an action card with a linked combat power is moved to a different
+     * actor, the embeddedItemRef points to an item that no longer exists.
+     * This method searches the new actor for a matching combat power (by
+     * name and system data, ignoring icon differences) and links to it.
+     * If no match is found, creates a new combat power from the snapshot.
+     *
+     * Called automatically from the createItem hook on first creation.
+     *
+     * @returns {Promise<boolean>} True if the ref was resolved, false if no action needed
+     * @async
+     */
+    async resolveTransfer() {
+      if (this.type !== "actionCard") return false;
+      if (!this.system.embeddedItemRef) return false;
+
+      const actor = this.isOwned ? this.parent : null;
+      if (!actor || !actor.items) return false;
+
+      // Check if the ref already resolves on this actor
+      const existing = actor.items.get(this.system.embeddedItemRef);
+      if (existing) return false; // Ref is valid, nothing to do
+
+      // Ref is stale — need to find or create a replacement
+      const embeddedData = this.system.embeddedItem;
+      if (
+        !embeddedData ||
+        !embeddedData.type ||
+        embeddedData.type !== "combatPower"
+      ) {
+        // Not a combat power — just clear the stale ref
+        await this.update({ "system.embeddedItemRef": null });
+        return false;
+      }
+
+      // Search for a matching combat power (ignoring icon differences)
+      const combatPowers = actor.items.filter(
+        (item) => item.type === "combatPower",
+      );
+
+      let matchedItem = null;
+      for (const item of combatPowers) {
+        if (
+          item.name === embeddedData.name &&
+          this._systemDataMatches(item.system, embeddedData.system)
+        ) {
+          matchedItem = item;
+          break;
+        }
+      }
+
+      if (matchedItem) {
+        // Link to the existing combat power on this actor (refreshes snapshot too)
+        await this.linkEmbeddedItem(matchedItem.id);
+        Logger.debug(
+          `Transfer: linked action card "${this.name}" to existing combat power "${matchedItem.name}" on actor "${actor.name}"`,
+          { cardId: this.id, itemId: matchedItem.id },
+          "ACTION_CARD",
+        );
+      } else {
+        // No match — create a new combat power from the snapshot
+        const cleanData = foundry.utils.deepClone(embeddedData);
+        delete cleanData._id;
+        if (cleanData.flags) {
+          delete cleanData.flags["eventide-rp-system"];
+        }
+
+        const created = await actor.createEmbeddedDocuments("Item", [
+          cleanData,
+        ]);
+        if (created && created.length > 0) {
+          await this.update({ "system.embeddedItemRef": created[0].id });
+          Logger.debug(
+            `Transfer: created combat power "${cleanData.name}" on actor "${actor.name}" and linked action card "${this.name}"`,
+            { cardId: this.id, itemId: created[0].id },
+            "ACTION_CARD",
+          );
+        }
+      }
+
+      return true;
+    }
+
+    /**
+     * Attempt to link an unlinked action card to a combat power on the actor.
+     *
+     * Called from the createItem hook when an action card arrives on an actor
+     * with an embedded combat power snapshot but no embeddedItemRef. Searches
+     * for a matching item on the actor and links to it, or creates one.
+     *
+     * @returns {Promise<boolean>} True if linked, false if no action taken
+     * @async
+     */
+    async attemptLinkOnActor() {
+      if (this.type !== "actionCard") return false;
+      if (this.system.embeddedItemRef) return false; // Already linked
+
+      const embeddedData = this.system.embeddedItem;
+      if (
+        !embeddedData ||
+        embeddedData.type !== "combatPower" ||
+        Object.keys(embeddedData).length === 0
+      ) {
+        return false;
+      }
+
+      const actor = this.isOwned ? this.parent : null;
+      if (!actor || !actor.items) return false;
+
+      // Search for a matching combat power (name + system data, no icon)
+      const combatPowers = actor.items.filter(
+        (item) => item.type === "combatPower",
+      );
+
+      let matchedItem = null;
+      for (const item of combatPowers) {
+        if (
+          item.name === embeddedData.name &&
+          this._systemDataMatches(item.system, embeddedData.system)
+        ) {
+          matchedItem = item;
+          break;
+        }
+      }
+
+      if (matchedItem) {
+        await this.linkEmbeddedItem(matchedItem.id);
+        Logger.debug(
+          `Linked action card "${this.name}" to existing combat power "${matchedItem.name}"`,
+          { cardId: this.id, itemId: matchedItem.id },
+          "ACTION_CARD",
+        );
+        return true;
+      }
+
+      // No match — create the combat power on the actor from the snapshot
+      const cleanData = foundry.utils.deepClone(embeddedData);
+      delete cleanData._id;
+      if (cleanData.flags) {
+        delete cleanData.flags["eventide-rp-system"];
+      }
+
+      const created = await actor.createEmbeddedDocuments("Item", [cleanData]);
+      if (created && created.length > 0) {
+        await this.update({ "system.embeddedItemRef": created[0].id });
+        Logger.debug(
+          `Created combat power "${cleanData.name}" on actor and linked action card "${this.name}"`,
+          { cardId: this.id, itemId: created[0].id },
+          "ACTION_CARD",
+        );
+        return true;
+      }
+
+      return false;
+    }
+
+    /**
+     * Compare two system data objects for deduplication.
+     * Used by resolveTransfer to find matching combat powers.
+     * Compares functional fields but NOT icon/image.
+     *
+     * @param {Object} sysA - First system data
+     * @param {Object} sysB - Second system data
+     * @returns {boolean} True if they match
+     * @private
+     */
+    _systemDataMatches(sysA, sysB) {
+      if (!sysA || !sysB) return false;
+
+      const compareFields = [
+        "cost",
+        "active",
+        "targeted",
+        "description",
+        "prerequisites",
+        "usageInfo",
+      ];
+
+      for (const field of compareFields) {
+        if ((sysA[field] ?? null) !== (sysB[field] ?? null)) return false;
+      }
+
+      // Deep-compare roll sub-object (functional mechanics, not derived data)
+      const rollA = sysA.roll;
+      const rollB = sysB.roll;
+      if (rollA || rollB) {
+        if (!rollA || !rollB) return false;
+        if (rollA.type !== rollB.type) return false;
+        if (rollA.ability !== rollB.ability) return false;
+        if (rollA.secondAbility !== rollB.secondAbility) return false;
+        if ((rollA.bonus ?? 0) !== (rollB.bonus ?? 0)) return false;
+      }
+
+      return true;
     }
 
     /**
@@ -180,6 +488,32 @@ export function ItemActionCardMixin(Base) {
       }
 
       const { executionContext = false } = options;
+
+      // If we have a reference to a real item on the actor, resolve it directly.
+      // This is the "linked" path — edits to the source item propagate to all
+      // action cards that reference it.
+      if (this.system.embeddedItemRef) {
+        const actor = this.isOwned ? this.parent : null;
+        if (actor && actor.items) {
+          const linkedItem = actor.items.get(this.system.embeddedItemRef);
+          if (linkedItem) {
+            // For repetition context with cost zeroing, return a clone with zeroed cost
+            if (
+              executionContext &&
+              this._currentRepetitionContext &&
+              !this._currentRepetitionContext.shouldApplyCost
+            ) {
+              const data = linkedItem.toObject();
+              if (data.system && data.system.cost !== undefined) {
+                data.system.cost = 0;
+              }
+              return new CONFIG.Item.documentClass(data, { parent: actor });
+            }
+            return linkedItem;
+          }
+        }
+        // Ref set but item not found — fall through to snapshot
+      }
 
       try {
         if (
