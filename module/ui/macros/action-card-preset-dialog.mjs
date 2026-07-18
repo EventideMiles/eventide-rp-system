@@ -428,12 +428,23 @@ export class ActionCardPresetDialog extends EventideSheetHelpers {
 
           // Create the combat power as a real item on the actor and link
           // (this._actor is guaranteed truthy — we're inside the else-if branch)
-          const created = await this._actor.createEmbeddedDocuments(
+          const createdPowers = await this._actor.createEmbeddedDocuments(
             "Item",
             [embeddedItemData],
           );
-          if (created && created.length > 0) {
-            await createdCard.setEmbeddedItem(created[0]);
+          if (!createdPowers || createdPowers.length === 0) {
+            throw new Error("Failed to create combat power on actor");
+          }
+
+          // Attempt linking — clean up the orphaned combat power on failure
+          try {
+            await createdCard.setEmbeddedItem(createdPowers[0]);
+          } catch (linkError) {
+            // Rollback: delete the combat power we just created
+            await this._actor.deleteEmbeddedDocuments("Item", [
+              createdPowers[0].id,
+            ]);
+            throw linkError;
           }
         }
 
