@@ -229,6 +229,7 @@ export class CombatPowerLinkingMigration {
       "cost",
       "active",
       "targeted",
+      "description",
     ];
 
     for (const field of compareFields) {

@@ -379,6 +379,7 @@ export function ItemActionCardMixin(Base) {
         "cost",
         "active",
         "targeted",
+        "description",
       ];
 
       for (const field of compareFields) {
