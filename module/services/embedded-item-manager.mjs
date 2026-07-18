@@ -240,10 +240,22 @@ export class EmbeddedItemManager {
     try {
       const newPowerData = this.getDefaultCombatPowerData(item, "actionCard");
 
+      // If the action card is owned by an actor, create the combat power on
+      // the actor and link to it so edits propagate.
+      if (item.isOwned && item.parent) {
+        const created = await item.parent.createEmbeddedDocuments("Item", [
+          newPowerData,
+        ]);
+        if (created && created.length > 0) {
+          await item.setEmbeddedItem(created[0]);
+          return true;
+        }
+      }
+
+      // Fallback: create as an unlinked embedded snapshot (unowned action card)
       const tempItem = new CONFIG.Item.documentClass(newPowerData, {
         parent: null,
       });
-
       await item.setEmbeddedItem(tempItem);
       return true;
     } catch (error) {

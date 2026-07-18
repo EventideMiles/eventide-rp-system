@@ -611,30 +611,37 @@ export class MultiImageSelector extends ThemeManagedPopupMixin(
       const currentEmbedded = actionCard.system.embeddedItem;
       if (currentEmbedded && currentEmbedded._id) {
         const updatedEmbedded = foundry.utils.deepClone(currentEmbedded);
+        const sourceItemUpdates = {}; // Track changes to apply to linked source
 
         const eImg = raw["embeddedItem.img"];
         if (changed(eImg, currentEmbedded.img)) {
           updatedEmbedded.img = eImg;
+          sourceItemUpdates.img = eImg;
         }
         if (checked(raw["syncImage-embeddedItem"])) {
           updatedEmbedded.img = raw.img || actionCard.img;
+          sourceItemUpdates.img = updatedEmbedded.img;
         }
 
         const eBg = raw["embeddedItem.system.bgColor"];
         if (changed(eBg, currentEmbedded.system?.bgColor || "")) {
           if (!updatedEmbedded.system) updatedEmbedded.system = {};
           updatedEmbedded.system.bgColor = eBg;
+          sourceItemUpdates["system.bgColor"] = eBg;
         }
         const eTc = raw["embeddedItem.system.textColor"];
         if (changed(eTc, currentEmbedded.system?.textColor || "")) {
           if (!updatedEmbedded.system) updatedEmbedded.system = {};
           updatedEmbedded.system.textColor = eTc;
+          sourceItemUpdates["system.textColor"] = eTc;
         }
 
         if (checked(raw["syncColors-embeddedItem"])) {
           if (!updatedEmbedded.system) updatedEmbedded.system = {};
           updatedEmbedded.system.bgColor = raw["system.bgColor"] || currentBg;
           updatedEmbedded.system.textColor = raw["system.textColor"] || currentTc;
+          sourceItemUpdates["system.bgColor"] = updatedEmbedded.system.bgColor;
+          sourceItemUpdates["system.textColor"] = updatedEmbedded.system.textColor;
         }
 
         // Always sync effect.img to item.img
@@ -643,6 +650,22 @@ export class MultiImageSelector extends ThemeManagedPopupMixin(
             if (activeEffect.img !== updatedEmbedded.img) {
               activeEffect.img = updatedEmbedded.img;
             }
+          }
+        }
+
+        // If linked to a source item on the actor, update the source too
+        // so the change propagates to all cards referencing it
+        if (
+          actionCard.system.embeddedItemRef &&
+          Object.keys(sourceItemUpdates).length > 0 &&
+          actionCard.isOwned &&
+          actionCard.parent
+        ) {
+          const sourceItem = actionCard.parent.items.get(
+            actionCard.system.embeddedItemRef,
+          );
+          if (sourceItem) {
+            await sourceItem.update(sourceItemUpdates);
           }
         }
 
