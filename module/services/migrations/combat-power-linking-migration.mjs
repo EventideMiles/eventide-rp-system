@@ -57,6 +57,7 @@ export class CombatPowerLinkingMigration {
     );
 
     let migratedCount = 0;
+    let failureCount = 0;
 
     try {
       // Process actors and their owned action cards
@@ -65,23 +66,33 @@ export class CombatPowerLinkingMigration {
       ].filter((actor) => actor.isOwner);
 
       for (const actor of actorsToProcess) {
-        migratedCount += await CombatPowerLinkingMigration._processActor(
+        const result = await CombatPowerLinkingMigration._processActor(
           actor,
         );
+        migratedCount += result.migrated;
+        failureCount += result.failed;
       }
 
-      // Update migration version
-      await game.settings.set(
-        "eventide-rp-system",
-        "migrationVersion",
-        MIGRATION_VERSION,
-      );
+      if (failureCount > 0) {
+        Logger.warn(
+          `Combat power linking migration completed with ${failureCount} failure(s). Migration version NOT updated — will retry on next load.`,
+          { migratedCount, failureCount },
+          "MIGRATION",
+        );
+      } else {
+        // All cards succeeded — update migration version
+        await game.settings.set(
+          "eventide-rp-system",
+          "migrationVersion",
+          MIGRATION_VERSION,
+        );
 
-      Logger.info(
-        `Combat power linking migration complete. Migrated ${migratedCount} action card(s).`,
-        { migratedCount, migrationVersion: MIGRATION_VERSION },
-        "MIGRATION",
-      );
+        Logger.info(
+          `Combat power linking migration complete. Migrated ${migratedCount} action card(s).`,
+          { migratedCount, migrationVersion: MIGRATION_VERSION },
+          "MIGRATION",
+        );
+      }
     } catch (error) {
       Logger.error(
         "Combat power linking migration failed",
@@ -99,7 +110,7 @@ export class CombatPowerLinkingMigration {
    * Process a single actor's action cards.
    *
    * @param {Actor} actor - The actor to process
-   * @returns {Promise<number>} Number of cards migrated on this actor
+   * @returns {Promise<{migrated: number, failed: number}>} Counts for this actor
    * @private
    * @static
    */
@@ -115,6 +126,7 @@ export class CombatPowerLinkingMigration {
     );
 
     let count = 0;
+    let failed = 0;
 
     for (const card of actionCards) {
       try {
@@ -159,13 +171,13 @@ export class CombatPowerLinkingMigration {
         }
 
         if (itemId) {
-          // Refresh the snapshot from the source (or keep existing) and set the ref
-          await card.update({
-            "system.embeddedItemRef": itemId,
-          });
+          await card.linkEmbeddedItem(itemId);
           count++;
+        } else {
+          failed++;
         }
       } catch (error) {
+        failed++;
         Logger.warn(
           `Failed to migrate action card "${card.name}" on actor "${actor.name}"`,
           error,
@@ -174,7 +186,7 @@ export class CombatPowerLinkingMigration {
       }
     }
 
-    return count;
+    return { migrated: count, failed };
   }
 
   /**
@@ -230,19 +242,23 @@ export class CombatPowerLinkingMigration {
       "active",
       "targeted",
       "description",
+      "prerequisites",
+      "usageInfo",
     ];
 
     for (const field of compareFields) {
       if ((sysA[field] ?? null) !== (sysB[field] ?? null)) return false;
     }
 
-    // Compare roll sub-objects
+    // Deep-compare roll sub-object
     const rollA = sysA.roll;
     const rollB = sysB.roll;
     if (rollA || rollB) {
       if (!rollA || !rollB) return false;
       if (rollA.type !== rollB.type) return false;
-      if (rollA.formula !== rollB.formula) return false;
+      if (rollA.ability !== rollB.ability) return false;
+      if (rollA.secondAbility !== rollB.secondAbility) return false;
+      if ((rollA.bonus ?? 0) !== (rollB.bonus ?? 0)) return false;
     }
 
     return true;

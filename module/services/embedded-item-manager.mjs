@@ -250,9 +250,10 @@ export class EmbeddedItemManager {
           await item.setEmbeddedItem(created[0]);
           return true;
         }
+        return false;
       }
 
-      // Fallback: create as an unlinked embedded snapshot (unowned action card)
+      // Unowned action card (compendium/world) — snapshot only
       const tempItem = new CONFIG.Item.documentClass(newPowerData, {
         parent: null,
       });

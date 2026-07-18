@@ -331,8 +331,8 @@ export function ItemActionCardMixin(Base) {
       }
 
       if (matchedItem) {
-        // Link to the existing combat power on this actor
-        await this.update({ "system.embeddedItemRef": matchedItem.id });
+        // Link to the existing combat power on this actor (refreshes snapshot too)
+        await this.linkEmbeddedItem(matchedItem.id);
         Logger.debug(
           `Transfer: linked action card "${this.name}" to existing combat power "${matchedItem.name}" on actor "${actor.name}"`,
           { cardId: this.id, itemId: matchedItem.id },
@@ -405,7 +405,7 @@ export function ItemActionCardMixin(Base) {
       }
 
       if (matchedItem) {
-        await this.update({ "system.embeddedItemRef": matchedItem.id });
+        await this.linkEmbeddedItem(matchedItem.id);
         Logger.debug(
           `Linked action card "${this.name}" to existing combat power "${matchedItem.name}"`,
           { cardId: this.id, itemId: matchedItem.id },
@@ -453,19 +453,23 @@ export function ItemActionCardMixin(Base) {
         "active",
         "targeted",
         "description",
+        "prerequisites",
+        "usageInfo",
       ];
 
       for (const field of compareFields) {
         if ((sysA[field] ?? null) !== (sysB[field] ?? null)) return false;
       }
 
-      // Compare roll sub-objects
+      // Deep-compare roll sub-object (functional mechanics, not derived data)
       const rollA = sysA.roll;
       const rollB = sysB.roll;
       if (rollA || rollB) {
         if (!rollA || !rollB) return false;
         if (rollA.type !== rollB.type) return false;
-        if (rollA.formula !== rollB.formula) return false;
+        if (rollA.ability !== rollB.ability) return false;
+        if (rollA.secondAbility !== rollB.secondAbility) return false;
+        if ((rollA.bonus ?? 0) !== (rollB.bonus ?? 0)) return false;
       }
 
       return true;

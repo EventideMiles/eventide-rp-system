@@ -426,21 +426,14 @@ export class ActionCardPresetDialog extends EventideSheetHelpers {
             effects: [],
           };
 
-          // If on an actor, create the combat power as a real item and link
-          if (this._actor) {
-            const created = await this._actor.createEmbeddedDocuments(
-              "Item",
-              [embeddedItemData],
-            );
-            if (created && created.length > 0) {
-              await createdCard.setEmbeddedItem(created[0]);
-            }
-          } else {
-            // Unowned (compendium/world) — store snapshot only
-            embeddedItemData._id = foundry.utils.randomID();
-            await createdCard.update({
-              "system.embeddedItem": embeddedItemData,
-            });
+          // Create the combat power as a real item on the actor and link
+          // (this._actor is guaranteed truthy — we're inside the else-if branch)
+          const created = await this._actor.createEmbeddedDocuments(
+            "Item",
+            [embeddedItemData],
+          );
+          if (created && created.length > 0) {
+            await createdCard.setEmbeddedItem(created[0]);
           }
         }
 
