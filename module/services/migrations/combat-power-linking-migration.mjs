@@ -178,11 +178,10 @@ export class CombatPowerLinkingMigration {
         }
       } catch (error) {
         failed++;
-        Logger.warn(
-          `Failed to migrate action card "${card.name}" on actor "${actor.name}"`,
-          error,
-          "MIGRATION",
-        );
+        await ErrorHandler.handleAsync(Promise.reject(error), {
+          context: `Migrating action card "${card.name}" on actor "${actor.name}"`,
+          errorType: ErrorHandler.ERROR_TYPES.FOUNDRY_API,
+        });
       }
     }
 

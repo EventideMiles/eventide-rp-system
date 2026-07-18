@@ -1,4 +1,5 @@
 import { Logger } from "../../services/_module.mjs";
+import { ErrorHandler } from "../../utils/error-handler.mjs";
 
 /**
  * Mixin that provides action card functionality to Item documents.
@@ -194,27 +195,24 @@ export function ItemActionCardMixin(Base) {
      * @async
      */
     async linkEmbeddedItem(itemId) {
-      if (this.type !== "actionCard") {
-        throw new Error(
-          "linkEmbeddedItem can only be called on action card items",
-        );
-      }
+      ErrorHandler.assert(
+        this.type === "actionCard",
+        "linkEmbeddedItem can only be called on action card items",
+      );
 
       const actor = this.isOwned ? this.parent : null;
-      if (!actor || !actor.items) {
-        throw new Error("Action card must be owned by an actor to link items");
-      }
+      ErrorHandler.assert(
+        actor && actor.items,
+        "Action card must be owned by an actor to link items",
+      );
 
       const sourceItem = actor.items.get(itemId);
-      if (!sourceItem) {
-        throw new Error(`Item not found on actor: ${itemId}`);
-      }
+      ErrorHandler.assert(sourceItem, `Item not found on actor: ${itemId}`);
 
-      if (sourceItem.type !== "combatPower") {
-        throw new Error(
-          `Only combat powers can be linked, got: ${sourceItem.type}`,
-        );
-      }
+      ErrorHandler.assert(
+        sourceItem.type === "combatPower",
+        `Only combat powers can be linked, got: ${sourceItem.type}`,
+      );
 
       // Refresh the snapshot from the source and store the reference
       const snapshot = sourceItem.toObject();
