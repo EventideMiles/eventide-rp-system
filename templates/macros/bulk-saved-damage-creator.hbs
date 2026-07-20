@@ -75,13 +75,15 @@
             <li class="erps-bulk-image-list__item" data-index="{{index}}">
               <img class="erps-bulk-image-list__thumb" src="{{path}}" alt="{{name}}" />
               <span class="erps-bulk-image-list__name">{{name}}</span>
-              <a
+              <button
+                type="button"
                 class="erps-bulk-image-list__remove"
                 data-action="removeImage"
                 data-index="{{index}}"
+                aria-label="{{localize 'EVENTIDE_RP_SYSTEM.BulkSavedDamageCreator.RemoveImage'}}"
                 title="{{localize 'EVENTIDE_RP_SYSTEM.BulkSavedDamageCreator.RemoveImage'}}">
                 <i class="fas fa-xmark"></i>
-              </a>
+              </button>
             </li>
           {{/each}}
         </ul>

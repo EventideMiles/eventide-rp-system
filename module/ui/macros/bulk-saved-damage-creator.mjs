@@ -9,6 +9,7 @@ import { Logger } from "../../services/logger.mjs";
 import { DefaultDataFactory } from "../../services/default-data-factory.mjs";
 import { FormulaValidator } from "../../services/formula-validator.mjs";
 import { getSetting, setSetting } from "../../services/settings/settings.mjs";
+import { ErrorHandler } from "../../utils/error-handler.mjs";
 
 const FilePicker = foundry.applications.apps.FilePicker.implementation;
 
@@ -441,6 +442,7 @@ export class BulkSavedDamageCreator extends EventideSheetHelpers {
     const data = foundry.utils.expandObject(formData.object || formData);
 
     if (!this._actor) {
+      event.preventDefault();
       ui.notifications.error(
         game.i18n.localize(
           "EVENTIDE_RP_SYSTEM.BulkSavedDamageCreator.Errors.NoActor",
@@ -450,6 +452,7 @@ export class BulkSavedDamageCreator extends EventideSheetHelpers {
     }
 
     if (this._discoveredImages.length === 0) {
+      event.preventDefault();
       ui.notifications.warn(
         game.i18n.localize(
           "EVENTIDE_RP_SYSTEM.BulkSavedDamageCreator.Errors.NoImages",
@@ -462,6 +465,7 @@ export class BulkSavedDamageCreator extends EventideSheetHelpers {
 
     const validationError = this._validateConfig(config);
     if (validationError) {
+      event.preventDefault();
       ui.notifications.error(validationError);
       return;
     }
@@ -508,10 +512,24 @@ export class BulkSavedDamageCreator extends EventideSheetHelpers {
     );
 
     try {
-      const created = await this._actor.createEmbeddedDocuments(
-        "Item",
-        cardDataArray,
+      const [created, error] = await ErrorHandler.handleAsync(
+        this._actor.createEmbeddedDocuments("Item", cardDataArray),
+        {
+          context: "Bulk action card creation",
+          userMessage: game.i18n.localize(
+            "EVENTIDE_RP_SYSTEM.BulkSavedDamageCreator.Errors.CreateFailed",
+          ),
+          errorType: ErrorHandler.ERROR_TYPES.FOUNDRY_API,
+        },
       );
+
+      if (error) {
+        // ErrorHandler already logged + showed the user notification.
+        // Prevent closeOnSubmit so the user can fix input and retry.
+        event.preventDefault();
+        return;
+      }
+
       const count = Array.isArray(created) ? created.length : 0;
       ui.notifications.info(
         game.i18n.format(
@@ -523,8 +541,10 @@ export class BulkSavedDamageCreator extends EventideSheetHelpers {
       // Persist the configuration for next time.
       this._persistConfig(config);
     } catch (error) {
+      // Defensive fallback for any non-awaitable failures outside the
+      // createEmbeddedDocuments promise itself.
       Logger.error(
-        "Failed to create bulk action cards",
+        "Unexpected failure in bulk creation flow",
         error,
         "BULK_SAVED_DAMAGE_CREATOR",
       );
@@ -533,9 +553,7 @@ export class BulkSavedDamageCreator extends EventideSheetHelpers {
           "EVENTIDE_RP_SYSTEM.BulkSavedDamageCreator.Errors.CreateFailed",
         ),
       );
-      // Prevent closeOnSubmit from closing the dialog so the user can fix input.
       event.preventDefault();
-      throw error;
     }
   }
 

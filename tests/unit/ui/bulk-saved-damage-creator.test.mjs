@@ -27,6 +27,7 @@ const {
   mockValidateRepetition,
   mockGetSetting,
   mockSetSetting,
+  mockHandleAsync,
 } = vi.hoisted(() => ({
   mockLogger: {
     debug: vi.fn(),
@@ -38,6 +39,11 @@ const {
   mockValidateRepetition: vi.fn(() => ({ isValid: true })),
   mockGetSetting: vi.fn(() => null),
   mockSetSetting: vi.fn(async () => undefined),
+  // ErrorHandler.handleAsync: default pass-through (success path).
+  mockHandleAsync: vi.fn(async (promise) => {
+    const result = await promise;
+    return [result, null];
+  }),
 }));
 
 vi.mock("../../../module/services/logger.mjs", () => ({
@@ -77,6 +83,23 @@ vi.mock("../../../module/services/settings/settings.mjs", () => ({
   setSetting: mockSetSetting,
 }));
 
+// ErrorHandler: default pass-through (success path). Tests that need the
+// failure path override mockHandleAsync in their own beforeEach/test body.
+vi.mock("../../../module/utils/error-handler.mjs", () => ({
+  ErrorHandler: {
+    ERROR_TYPES: {
+      VALIDATION: "validation",
+      NETWORK: "network",
+      PERMISSION: "permission",
+      DATA: "data",
+      UI: "ui",
+      FOUNDRY_API: "foundry_api",
+      UNKNOWN: "unknown",
+    },
+    handleAsync: mockHandleAsync,
+  },
+}));
+
 // ---------------------------------------------------------------------------
 // Test suite
 // ---------------------------------------------------------------------------
@@ -91,6 +114,12 @@ describe("BulkSavedDamageCreator", () => {
     // Reset validator mocks to "valid" by default.
     mockValidateDamage.mockReturnValue({ isValid: true });
     mockValidateRepetition.mockReturnValue({ isValid: true });
+
+    // Reset ErrorHandler to pass-through (success path) by default.
+    mockHandleAsync.mockImplementation(async (promise) => {
+      const result = await promise;
+      return [result, null];
+    });
 
     mockGetSetting.mockReturnValue(null);
     mockSetSetting.mockResolvedValue(undefined);
@@ -633,7 +662,7 @@ describe("BulkSavedDamageCreator", () => {
       expect(browseMock).not.toHaveBeenCalled();
     });
 
-    test("returns empty array when browse throws", async () => {
+    test("propagates browse error via rejection (does not swallow)", async () => {
       global.foundry.applications.apps.FilePicker.implementation.browse =
         vi.fn(async () => {
           throw new Error("Network error");
