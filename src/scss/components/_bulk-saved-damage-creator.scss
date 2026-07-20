@@ -1,0 +1,127 @@
+// =============================================================================
+// BULK SAVED DAMAGE CREATOR DIALOG
+// =============================================================================
+// Styling for the Bulk Saved Damage Creator dialog, used to create many
+// savedDamage action cards at once from a folder of images.
+
+@use "../utils/sheet-tokens" as tokens;
+
+// =============================================================================
+// LAYOUT SECTIONS
+// =============================================================================
+
+.bulk-saved-damage-creator {
+  .erps-section {
+    margin-bottom: tokens.$sheet-spacing-lg;
+  }
+
+  .erps-form__header-count {
+    color: var(--erps-text-muted, var(--color-text-light-secondary));
+    font-weight: tokens.$sheet-font-weight-normal;
+    margin-left: tokens.$sheet-spacing-xs;
+  }
+}
+
+// =============================================================================
+// FOLDER PICKER ROW
+// =============================================================================
+
+.erps-bulk-folder-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: tokens.$sheet-spacing-sm;
+
+  .erps-input {
+    flex: 1 1 18rem;
+    min-width: 0;
+  }
+}
+
+.erps-bulk-recursive-row {
+  display: flex;
+  align-items: center;
+  gap: tokens.$sheet-spacing-sm;
+  margin-top: tokens.$sheet-spacing-sm;
+}
+
+// =============================================================================
+// NEW GROUP NAME ROW
+// =============================================================================
+
+// The "new group name" row is only meaningful when the user picks
+// "Create new group..." in the dropdown. It's visible by default but the
+// surrounding logic can hide it via [hidden] when not relevant.
+.erps-bulk-new-group-row {
+  &[hidden] {
+    display: none;
+  }
+}
+
+// =============================================================================
+// FORM HINT VARIANTS
+// =============================================================================
+
+.erps-form__hint {
+  &--error {
+    color: var(--color-level-error-text, #b33a3a);
+  }
+
+  &--muted {
+    color: var(--erps-text-muted, var(--color-text-light-secondary));
+    font-style: italic;
+  }
+}
+
+// =============================================================================
+// DISCOVERED IMAGE LIST
+// =============================================================================
+
+.erps-bulk-image-list {
+  list-style: none;
+  margin: tokens.$sheet-spacing-sm 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: tokens.$sheet-spacing-sm;
+  max-height: 360px;
+  overflow-y: auto;
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: tokens.$sheet-spacing-sm;
+    padding: tokens.$sheet-spacing-sm;
+    background: var(--erps-sheet-background, rgba(0, 0, 0, 0.05));
+    border: tokens.$sheet-border-thin solid var(--erps-sheet-border, rgba(0, 0, 0, 0.1));
+    border-radius: tokens.$sheet-radius-md;
+  }
+
+  &__thumb {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: tokens.$sheet-radius-sm;
+    flex-shrink: 0;
+    background: rgba(0, 0, 0, 0.1);
+  }
+
+  &__name {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__remove {
+    flex-shrink: 0;
+    cursor: pointer;
+    color: var(--erps-text-muted, var(--color-text-light-secondary));
+    padding: tokens.$sheet-spacing-xs tokens.$sheet-spacing-sm;
+
+    &:hover {
+      color: var(--color-level-error-text, #b33a3a);
+    }
+  }
+}

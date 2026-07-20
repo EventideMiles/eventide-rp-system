@@ -73,7 +73,7 @@
 - Handlebars templates organized in logical directories with partials
 
 ### Critical Gotchas
-- **Test suite is fully functional** — All 3385 tests pass as of v14.10.0. The test infrastructure was recovered by enhancing the `@rayners/foundry-test-utils` mocks in `tests/setup.mjs` (Roll formula evaluation, schema default initialization, `foundry.utils`, `CONFIG`, `CONST`, and `CONST.TOKEN_DISPLAY_MODES` mocks). You can confidently run `npm test`. When fixing tests, update stale assertions rather than disabling tests.
+- **Test suite is fully functional** — All 3449 tests pass as of v14.12.0. The test infrastructure was recovered by enhancing the `@rayners/foundry-test-utils` mocks in `tests/setup.mjs` (Roll formula evaluation, schema default initialization, `foundry.utils`, `CONFIG`, `CONST`, and `CONST.TOKEN_DISPLAY_MODES` mocks). You can confidently run `npm test`. When fixing tests, update stale assertions rather than disabling tests.
 - Memory management requires cleanup via `performSystemCleanup()` and `performPreInitCleanup()`
 - Global scope exposed via `globalThis.erps` with extensive API
 - Pre-commit hooks enforce validation with NVM loading
@@ -101,7 +101,7 @@
 
 ## Testing Guidelines for AI Agents
 
-> ⚠️ **NOTE: Test suite is fully functional as of v14.10.0** — `npm test` runs all 3385 tests with 0 failures. The `@rayners/foundry-test-utils` library is at latest (1.2.2); the mock enhancements live in `tests/setup.mjs`.
+> ⚠️ **NOTE: Test suite is fully functional as of v14.12.0** — `npm test` runs all 3449 tests with 0 failures. The `@rayners/foundry-test-utils` library is at latest (1.2.2); the mock enhancements live in `tests/setup.mjs`.
 
 ### Test Framework
 
@@ -111,7 +111,7 @@ The Eventide RP System uses **Vitest** with **@rayners/foundry-test-utils** for 
 - **Mocking**: @rayners/foundry-test-utils 1.2.2 - Foundry VTT environment mocking
 - **Coverage**: v8 provider with HTML, JSON, and LCOV reports
 - **Environment**: jsdom for Foundry VTT compatibility
-- **Current Status**: All 3385 tests passing (test suite fully recovered in v14.10.0)
+- **Current Status**: All 3449 tests passing (test suite fully recovered in v14.10.0, expanded in v14.12.0)
 
 ### Test Structure
 

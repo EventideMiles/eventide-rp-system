@@ -120,6 +120,7 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
       restRecover: this._onRestRecover,
       generateNpc: this._onGenerateNpc,
       createFromTemplate: this._createFromTemplateActionCard,
+      createBulkFromFolder: this._createBulkSavedDamageFromFolder,
       postSummary: this._onPostSummary,
       viewRollHistory: this._viewRollHistory,
     },
@@ -559,6 +560,14 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
         visible: (target) => !target.dataset.itemId,
         onClick: async () => {
           await this._createFromTemplateActionCard();
+        },
+      },
+      {
+        label: "EVENTIDE_RP_SYSTEM.ContextMenu.CreateBulkFromFolder",
+        icon: '<i class="fas fa-layer-group"></i>',
+        visible: (target) => !target.dataset.itemId,
+        onClick: async () => {
+          await this._createBulkSavedDamageFromFolder();
         },
       },
       {
@@ -1428,6 +1437,26 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
     } catch (error) {
       Logger.error(
         "Failed to open Action Card Preset Dialog",
+        error,
+        "ACTOR_SHEET",
+      );
+    }
+  }
+
+  /**
+   * Open the Bulk Saved Damage Creator dialog to create many saved-damage
+   * action cards at once from a folder of images.
+   * @private
+   */
+  static async _createBulkSavedDamageFromFolder(_event, _target) {
+    try {
+      const { BulkSavedDamageCreator } = await import(
+        "../macros/bulk-saved-damage-creator.mjs"
+      );
+      new BulkSavedDamageCreator({ actor: this.actor }).render(true);
+    } catch (error) {
+      Logger.error(
+        "Failed to open Bulk Saved Damage Creator",
         error,
         "ACTOR_SHEET",
       );

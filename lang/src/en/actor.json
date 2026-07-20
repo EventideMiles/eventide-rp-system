@@ -115,7 +115,8 @@
         "GroupCopied": "Copied group '{groupName}' with {cardCount} action cards",
         "NoCardsInGroup": "No action cards found in this group",
         "NewItem": "+Item",
-        "FromTemplate": "+Template"
+        "FromTemplate": "+Template",
+        "FromFolder": "+Bulk"
       }
     }
   }

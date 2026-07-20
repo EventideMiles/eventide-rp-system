@@ -2,6 +2,18 @@
 
 ## Latest Release
 
+**[v14.12.0](release-notes/v14.12.0.md)** — Bulk Saved Damage Creator _(July 2026)_
+
+**Key Highlights:**
+
+- **Bulk Saved Damage Creator** — new dialog for creating many savedDamage action cards at once from a folder of images. One card per image, named with the full filename including extension to encourage manual review.
+- **Visual folder picker** — Foundry FilePicker opens in folder-selection mode, captures the active source tab (data/public/s3), and triggers a scan automatically.
+- **Recursive scanning** — optional toggle descends into subfolders (up to 5 levels); nested images get relative-path names (`boss/dragon.png`).
+- **Shared configuration** — all cards in a batch share damage formulas, repetition settings, and colors. Per-card customization is intentionally out of scope.
+- **Group assignment** — optionally drop all created cards into a new or existing action card group.
+- **Persisted configuration** — the dialog remembers the last-used folder, formulas, colors, and recursive state via a hidden client setting.
+- **64 new tests** — full unit-test coverage for filtering, scanning, grouping, persistence, and form-data parsing; suite now at 3449 passing tests.
+
 **[v14.9.1](release-notes/v14.9.1.md)** — Default "This Character" Toggle & Sync Label Clarity _(July 2026)_
 
 **Key Highlights:**
@@ -321,6 +333,7 @@ Enhanced character customization through circumstantial bonuses and feature-base
 
 | Version | Release Date | Focus |
 | -- | -- | -- |
+| **v14.12.0** | July 2026 | Bulk Saved Damage Creator |
 | **v14.9.1** | July 2026 | Default "This Character" Toggle & Sync Label Clarity |
 | **v14.9.0** | June 2026 | Textless Status Messages & Multi-Image Selector Fixes |
 | **v14.8.0** | May 2026 | Multi-Image Selector for Action Cards |
@@ -356,7 +369,7 @@ Enhanced character customization through circumstantial bonuses and feature-base
 
 ### By Feature Area
 
-- **Action Cards**: [v14.9.0](release-notes/v14.9.0.md), [v14.8.0](release-notes/v14.8.0.md), [v14.7.0](release-notes/v14.7.0.md), [v14.6.0](release-notes/v14.6.0.md), [v14.5.0](release-notes/v14.5.0.md), [v14.3.0](release-notes/v14.3.0.md), [v14.0.0](release-notes/v14.0.0.md), [v13.11.0](release-notes/v13.11.0.md), [v13.13.3](release-notes/v13.13.3.md), [v13.14.0](release-notes/v13.14.0.md), [v13.15.0](release-notes/v13.15.0.md), [v13.16.0](release-notes/v13.16.0.md), [v13.18.0](release-notes/v13.18.0.md), [v13.18.1](release-notes/v13.18.1.md), [v13.19.0](release-notes/v13.19.0.md), [v13.19.1](release-notes/v13.19.1.md), [v13.20.0](release-notes/v13.20.0.md), [v13.21.0](release-notes/v13.21.0.md), [v13.21.5](release-notes/v13.21.5.md), [v13.21.8](release-notes/v13.21.8.md), [v13.22.0](release-notes/v13.22.0.md)
+- **Action Cards**: [v14.12.0](release-notes/v14.12.0.md), [v14.9.0](release-notes/v14.9.0.md), [v14.8.0](release-notes/v14.8.0.md), [v14.7.0](release-notes/v14.7.0.md), [v14.6.0](release-notes/v14.6.0.md), [v14.5.0](release-notes/v14.5.0.md), [v14.3.0](release-notes/v14.3.0.md), [v14.0.0](release-notes/v14.0.0.md), [v13.11.0](release-notes/v13.11.0.md), [v13.13.3](release-notes/v13.13.3.md), [v13.14.0](release-notes/v13.14.0.md), [v13.15.0](release-notes/v13.15.0.md), [v13.16.0](release-notes/v13.16.0.md), [v13.18.0](release-notes/v13.18.0.md), [v13.18.1](release-notes/v13.18.1.md), [v13.19.0](release-notes/v13.19.0.md), [v13.19.1](release-notes/v13.19.1.md), [v13.20.0](release-notes/v13.20.0.md), [v13.21.0](release-notes/v13.21.0.md), [v13.21.5](release-notes/v13.21.5.md), [v13.21.8](release-notes/v13.21.8.md), [v13.22.0](release-notes/v13.22.0.md)
 - **GM Tools**: [v14.7.0](release-notes/v14.7.0.md), [v13.18.0](release-notes/v13.18.0.md), [v13.18.1](release-notes/v13.18.1.md), [v13.20.0](release-notes/v13.20.0.md)
 - **Transformations**: [v13.14.0](release-notes/v13.14.0.md), [v13.15.0](release-notes/v13.15.0.md), [v13.15.5](release-notes/v13.15.5.md), [v13.17.0](release-notes/v13.17.0.md)
 - **Features & Bonuses**: [v13.10.0](release-notes/v13.10.0.md), [v13.19.0](release-notes/v13.19.0.md), [v13.22.0](release-notes/v13.22.0.md)
@@ -401,4 +414,4 @@ We encourage users to:
 
 ---
 
-**Current Version**: v14.9.1 | **Foundry VTT Compatibility**: v14+ | **Last Updated**: July 2026
+**Current Version**: v14.12.0 | **Foundry VTT Compatibility**: v14+ | **Last Updated**: July 2026

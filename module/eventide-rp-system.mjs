@@ -30,6 +30,7 @@ import {
   TransformationToActorConverter,
   NpcQuickGenerator,
   ActionCardPresetDialog,
+  BulkSavedDamageCreator,
   RollHistory,
 } from "./ui/_module.mjs";
 
@@ -217,6 +218,7 @@ globalThis.erps = {
     TransformationToActorConverter,
     NpcQuickGenerator,
     ActionCardPresetDialog,
+    BulkSavedDamageCreator,
     RollHistory,
   },
 

@@ -197,7 +197,8 @@
       "CreateNewGear": "Create New Gear",
        "EditImages": "Edit Images",
        "CreateNewActionCard": "Create New Action Card",
-      "CreateFromTemplateActionCard": "New from Template",
+       "CreateFromTemplateActionCard": "New from Template",
+      "CreateBulkFromFolder": "Bulk from Image Folder",
       "ApplyPresetTemplate": "Apply Preset Template",
       "ExcludeFromEquipAll": "Exclude from Equip All",
       "IncludeInEquipAll": "Include in Equip All"

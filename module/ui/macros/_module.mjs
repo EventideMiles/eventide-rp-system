@@ -7,4 +7,5 @@ export * from "./actor-to-transformation-converter.mjs";
 export * from "./transformation-to-actor-converter.mjs";
 export * from "./npc-quick-generator.mjs";
 export * from "./action-card-preset-dialog.mjs";
+export * from "./bulk-saved-damage-creator.mjs";
 export * from "./roll-history.mjs";

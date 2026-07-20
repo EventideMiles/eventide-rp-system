@@ -1,0 +1,224 @@
+{{!-- Bulk Saved Damage Action Card Creator --}}
+<div class="{{cssClass}} erps-form" autocomplete="off">
+  {{> callout-box}}
+  <div class="erps-form__content">
+
+    {{!-- Target Actor --}}
+    <section class="erps-section">
+      <h2 class="erps-form__header">{{localize "EVENTIDE_RP_SYSTEM.BulkSavedDamageCreator.Sections.Target"}}</h2>
+      <div class="erps-preset-fields__row">
+        <label class="erps-form__label">{{localize "EVENTIDE_RP_SYSTEM.BulkSavedDamageCreator.TargetActor"}}</label>
+        <input type="text" value="{{actorName}}" class="erps-input" disabled />
+      </div>
+    </section>
+
+    {{!-- Folder Picker --}}
+    <section class="erps-section">
+      <h2 class="erps-form__header">{{localize "EVENTIDE_RP_SYSTEM.BulkSavedDamageCreator.Sections.Folder"}}</h2>
+      <p class="erps-form__hint">{{localize "EVENTIDE_RP_SYSTEM.BulkSavedDamageCreator.FolderHint"}}</p>
+      <div class="erps-preset-fields__row erps-bulk-folder-row">
+        <input
+          type="text"
+          name="folderPath"
+          value="{{folderPath}}"
+          placeholder="{{localize 'EVENTIDE_RP_SYSTEM.BulkSavedDamageCreator.FolderPlaceholder'}}"
+          class="erps-input" />
+        <button
+          type="button"
+          class="erps-button erps-button--secondary"
+          data-action="browseFolder">
+          <i class="fas fa-folder-open"></i>
+          {{localize "EVENTIDE_RP_SYSTEM.BulkSavedDamageCreator.BrowseButton"}}
+        </button>
+        <button
+          type="button"
+          class="erps-button erps-button--secondary"
+          data-action="scanFolder">
+          <i class="fas fa-magnifying-glass"></i>
+          {{localize "EVENTIDE_RP_SYSTEM.BulkSavedDamageCreator.ScanButton"}}
+        </button>
+      </div>
+      <p class="erps-form__hint erps-form__hint--muted">
+        {{localize "EVENTIDE_RP_SYSTEM.BulkSavedDamageCreator.SourceLabel"}}: {{folderSource}}
+      </p>
+      <div class="erps-preset-fields__row erps-bulk-recursive-row">
+        <label class="erps-toggles">
+          <input type="checkbox" name="recursive" {{#if config.recursive}}checked{{/if}} data-dtype="Boolean" class="erps-toggles__input" />
+          <div class="erps-toggles__container">
+            <span class="erps-toggles__track"><span class="erps-toggles__thumb"></span></span>
+          </div>
+        </label>
+        <span>{{localize "EVENTIDE_RP_SYSTEM.BulkSavedDamageCreator.RecursiveLabel"}}</span>
+      </div>
+      <p class="erps-form__hint">{{localize "EVENTIDE_RP_SYSTEM.BulkSavedDamageCreator.RecursiveHint"}}</p>
+
+      {{#if scanError}}
+        <p class="erps-form__hint erps-form__hint--error">
+          <i class="fas fa-circle-exclamation"></i> {{scanError}}
+        </p>
+      {{/if}}
+    </section>
+
+    {{!-- Discovered Images --}}
+    <section class="erps-section">
+      <h2 class="erps-form__header">
+        {{localize "EVENTIDE_RP_SYSTEM.BulkSavedDamageCreator.Sections.Images"}}
+        {{#if hasImages}}
+          <span class="erps-form__header-count">({{imageCount}})</span>
+        {{/if}}
+      </h2>
+
+      {{#if hasImages}}
+        <p class="erps-form__hint">{{localize "EVENTIDE_RP_SYSTEM.BulkSavedDamageCreator.ImagesHint"}}</p>
+        <ul class="erps-bulk-image-list">
+          {{#each images}}
+            <li class="erps-bulk-image-list__item" data-index="{{index}}">
+              <img class="erps-bulk-image-list__thumb" src="{{path}}" alt="{{name}}" />
+              <span class="erps-bulk-image-list__name">{{name}}</span>
+              <a
+                class="erps-bulk-image-list__remove"
+                data-action="removeImage"
+                data-index="{{index}}"
+                title="{{localize 'EVENTIDE_RP_SYSTEM.BulkSavedDamageCreator.RemoveImage'}}">
+                <i class="fas fa-xmark"></i>
+              </a>
+            </li>
+          {{/each}}
+        </ul>
+      {{else}}
+        <p class="erps-form__hint erps-form__hint--muted">
+          {{localize "EVENTIDE_RP_SYSTEM.BulkSavedDamageCreator.NoImages"}}
+        </p>
+      {{/if}}
+    </section>
+
+    {{!-- Damage Configuration --}}
+    <section class="erps-section">
+      <h2 class="erps-form__header">{{localize "EVENTIDE_RP_SYSTEM.BulkSavedDamageCreator.Sections.Damage"}}</h2>
+      <div class="erps-preset-fields__grid">
+        <div class="erps-preset-fields__row">
+          <label class="erps-form__label">{{localize "EVENTIDE_RP_SYSTEM.BulkSavedDamageCreator.ResolveFormula"}}</label>
+          <input type="text" name="resolveFormula" value="{{config.resolveFormula}}" class="erps-input" />
+          <p class="erps-form__hint">{{localize "EVENTIDE_RP_SYSTEM.BulkSavedDamageCreator.ResolveFormulaHint"}}</p>
+        </div>
+        <div class="erps-preset-fields__row">
+          <label class="erps-form__label">{{localize "EVENTIDE_RP_SYSTEM.BulkSavedDamageCreator.ResolveType"}}</label>
+          <select name="resolveType" class="erps-select">
+            <option value="damage" {{#if (eq config.resolveType "damage")}}selected{{/if}}>
+              {{localize "EVENTIDE_RP_SYSTEM.BulkSavedDamageCreator.TypeDamage"}}
+            </option>
+            <option value="heal" {{#if (eq config.resolveType "heal")}}selected{{/if}}>
+              {{localize "EVENTIDE_RP_SYSTEM.BulkSavedDamageCreator.TypeHeal"}}
+            </option>
+          </select>
+        </div>
+        <div class="erps-preset-fields__row">
+          <label class="erps-form__label">{{localize "EVENTIDE_RP_SYSTEM.BulkSavedDamageCreator.PowerFormula"}}</label>
+          <input type="text" name="powerFormula" value="{{config.powerFormula}}" class="erps-input" />
+          <p class="erps-form__hint">{{localize "EVENTIDE_RP_SYSTEM.BulkSavedDamageCreator.PowerFormulaHint"}}</p>
+        </div>
+        <div class="erps-preset-fields__row">
+          <label class="erps-form__label">{{localize "EVENTIDE_RP_SYSTEM.BulkSavedDamageCreator.PowerType"}}</label>
+          <select name="powerType" class="erps-select">
+            <option value="damage" {{#if (eq config.powerType "damage")}}selected{{/if}}>
+              {{localize "EVENTIDE_RP_SYSTEM.BulkSavedDamageCreator.TypeDamage"}}
+            </option>
+            <option value="heal" {{#if (eq config.powerType "heal")}}selected{{/if}}>
+              {{localize "EVENTIDE_RP_SYSTEM.BulkSavedDamageCreator.TypeHeal"}}
+            </option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    {{!-- Repetitions --}}
+    <section class="erps-section">
+      <h2 class="erps-form__header">{{localize "EVENTIDE_RP_SYSTEM.BulkSavedDamageCreator.Sections.Repetitions"}}</h2>
+      <div class="erps-preset-fields__grid">
+        <div class="erps-preset-fields__row">
+          <label class="erps-form__label">{{localize "EVENTIDE_RP_SYSTEM.BulkSavedDamageCreator.RepetitionFormula"}}</label>
+          <input type="text" name="repetitions" value="{{config.repetitions}}" class="erps-input" />
+          <p class="erps-form__hint">{{localize "EVENTIDE_RP_SYSTEM.BulkSavedDamageCreator.RepetitionFormulaHint"}}</p>
+        </div>
+        <div class="erps-preset-fields__row">
+          <label class="erps-form__label">{{localize "EVENTIDE_RP_SYSTEM.BulkSavedDamageCreator.DamageApplication"}}</label>
+          <label class="erps-toggles">
+            <input type="checkbox" name="damageApplication" {{#if config.damageApplication}}checked{{/if}} data-dtype="Boolean" class="erps-toggles__input" />
+            <div class="erps-toggles__container">
+              <span class="erps-toggles__track"><span class="erps-toggles__thumb"></span></span>
+            </div>
+          </label>
+          <p class="erps-form__hint">{{localize "EVENTIDE_RP_SYSTEM.BulkSavedDamageCreator.DamageApplicationHint"}}</p>
+        </div>
+        <div class="erps-preset-fields__row">
+          <label class="erps-form__label">{{localize "EVENTIDE_RP_SYSTEM.BulkSavedDamageCreator.PowerDamageApplication"}}</label>
+          <label class="erps-toggles">
+            <input type="checkbox" name="powerDamageApplication" {{#if config.powerDamageApplication}}checked{{/if}} data-dtype="Boolean" class="erps-toggles__input" />
+            <div class="erps-toggles__container">
+              <span class="erps-toggles__track"><span class="erps-toggles__thumb"></span></span>
+            </div>
+          </label>
+          <p class="erps-form__hint">{{localize "EVENTIDE_RP_SYSTEM.BulkSavedDamageCreator.PowerDamageApplicationHint"}}</p>
+        </div>
+      </div>
+    </section>
+
+    {{!-- Group Assignment --}}
+    <section class="erps-section">
+      <h2 class="erps-form__header">{{localize "EVENTIDE_RP_SYSTEM.BulkSavedDamageCreator.Sections.Group"}}</h2>
+      <div class="erps-preset-fields__grid">
+        <div class="erps-preset-fields__row">
+          <label class="erps-form__label">{{localize "EVENTIDE_RP_SYSTEM.BulkSavedDamageCreator.GroupMode"}}</label>
+          <select name="groupSelection" class="erps-select">
+            <option value="" {{#if (eq groupConfig.mode "none")}}selected{{/if}}>
+              {{localize "EVENTIDE_RP_SYSTEM.BulkSavedDamageCreator.GroupModeNone"}}
+            </option>
+            {{#if existingGroups.length}}
+              <optgroup label="{{localize 'EVENTIDE_RP_SYSTEM.BulkSavedDamageCreator.GroupModeExisting'}}">
+                {{#each existingGroups}}
+                  <option value="{{id}}" {{#if (and (eq ../groupConfig.mode "existing") (eq ../groupConfig.existingId id))}}selected{{/if}}>
+                    {{name}}
+                  </option>
+                {{/each}}
+              </optgroup>
+            {{/if}}
+            <option value="__new__" {{#if (eq groupConfig.mode "new")}}selected{{/if}}>
+              {{localize "EVENTIDE_RP_SYSTEM.BulkSavedDamageCreator.GroupModeNew"}}
+            </option>
+          </select>
+        </div>
+        <div class="erps-preset-fields__row erps-bulk-new-group-row" data-new-group-row>
+          <label class="erps-form__label">{{localize "EVENTIDE_RP_SYSTEM.BulkSavedDamageCreator.NewGroupName"}}</label>
+          <input
+            type="text"
+            name="newGroupName"
+            value="{{groupConfig.newName}}"
+            placeholder="{{localize 'EVENTIDE_RP_SYSTEM.BulkSavedDamageCreator.NewGroupNamePlaceholder'}}"
+            class="erps-input" />
+          <p class="erps-form__hint">{{localize "EVENTIDE_RP_SYSTEM.BulkSavedDamageCreator.NewGroupNameHint"}}</p>
+        </div>
+      </div>
+    </section>
+
+    {{!-- Colors --}}
+    <section class="erps-section">
+      <h2 class="erps-form__header">{{localize "EVENTIDE_RP_SYSTEM.BulkSavedDamageCreator.Sections.Colors"}}</h2>
+      <div class="erps-preset-fields__grid erps-preset-fields__grid--colors">
+        {{> erps-color-picker
+          name="bgColor"
+          value=config.bgColor
+          label=(localize "EVENTIDE_RP_SYSTEM.BulkSavedDamageCreator.BgColor")
+          labelPosition="above"
+        }}
+        {{> erps-color-picker
+          name="textColor"
+          value=config.textColor
+          label=(localize "EVENTIDE_RP_SYSTEM.BulkSavedDamageCreator.TextColor")
+          labelPosition="above"
+        }}
+      </div>
+    </section>
+  </div>
+
+  {{> macro-footer}}
+</div>
