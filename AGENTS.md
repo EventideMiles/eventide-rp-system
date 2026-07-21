@@ -19,7 +19,7 @@
 ### Language File System
 - Source files in `lang/src/en/` are merged by `npm run build:lang` into `lang/en.json`
 - Never edit `lang/en.json` directly - it is auto-generated from source files
-- Translation keys follow pattern: `ERPS.Category.Subcategory.Key`
+- Translation keys follow pattern: `EVENTIDE_RP_SYSTEM.Category.Subcategory.Key` (e.g. `EVENTIDE_RP_SYSTEM.BulkSavedDamageCreator.Errors.NoActor`)
 
 ### Template Organization
 - Handlebars partials must be registered in `module/services/settings/handlebars-partials.mjs`
