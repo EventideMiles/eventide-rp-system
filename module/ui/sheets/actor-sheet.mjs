@@ -559,7 +559,9 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
         icon: '<i class="fas fa-bolt"></i>',
         visible: (target) => !target.dataset.itemId,
         onClick: async () => {
-          await this._createFromTemplateActionCard();
+          // Static method lookup via constructor, with `this` explicitly
+          // bound to the sheet instance so this.actor is available inside.
+          await this.constructor._createFromTemplateActionCard.call(this);
         },
       },
       {
@@ -567,7 +569,9 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
         icon: '<i class="fas fa-layer-group"></i>',
         visible: (target) => !target.dataset.itemId,
         onClick: async () => {
-          await this._createBulkSavedDamageFromFolder();
+          // Static method lookup via constructor, with `this` explicitly
+          // bound to the sheet instance so this.actor is available inside.
+          await this.constructor._createBulkSavedDamageFromFolder.call(this);
         },
       },
       {
