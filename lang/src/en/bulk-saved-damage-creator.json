@@ -1,0 +1,69 @@
+{
+  "EVENTIDE_RP_SYSTEM": {
+    "BulkSavedDamageCreator": {
+      "Title": "Bulk Saved Damage from Images",
+      "CancelButton": "Cancel",
+      "CreateButton": "Create {count} Card(s)",
+      "BrowseButton": "Browse",
+      "ScanButton": "Scan",
+      "RemoveImage": "Remove",
+      "TargetActor": "Target Actor",
+      "FolderHint": "Enter a path inside your Foundry data directory (for example: worlds/my-world/assets/attacks). Use Browse to navigate visually.",
+      "FolderPlaceholder": "worlds/my-world/assets/attacks",
+      "SourceLabel": "Source",
+      "ImagesHint": "One saved-damage action card will be created per image, named with the full image filename (including extension) to encourage manual review.",
+      "NoImages": "No images discovered yet. Browse or scan a folder to see them here.",
+      "ResolveFormula": "Resolve Damage Formula",
+      "ResolveFormulaHint": "Roll formula applied to the target's resolve (e.g. 2d6, 1d8+3).",
+      "ResolveType": "Resolve Damage Type",
+      "PowerFormula": "Power Damage Formula",
+      "PowerFormulaHint": "Roll formula applied to the target's power resource. Leave 0 for none.",
+      "PowerType": "Power Damage Type",
+      "TypeDamage": "Damage",
+      "TypeHeal": "Heal",
+      "RepetitionFormula": "Repetition Formula",
+      "RepetitionFormulaHint": "How many times the card repeats. A number like 1, or a roll formula like 1d4.",
+      "DamageApplication": "Resolve Damage on Every Repetition",
+      "DamageApplicationHint": "If off, resolve damage is only applied on the first repetition.",
+      "PowerDamageApplication": "Power Damage on Every Repetition",
+      "PowerDamageApplicationHint": "If off, power damage is only applied on the first repetition.",
+      "BgColor": "Background Color",
+      "TextColor": "Text Color",
+      "RecursiveLabel": "Scan subfolders recursively",
+      "RecursiveHint": "When enabled, subdirectories are scanned as well. Cards for nested images are named with their relative path (e.g. \"boss/dragon.png\").",
+      "GroupMode": "Action Card Group",
+      "GroupModeNone": "No group (ungrouped)",
+      "GroupModeExisting": "Existing groups",
+      "GroupModeNew": "Create new group...",
+      "NewGroupName": "New Group Name",
+      "NewGroupNamePlaceholder": "Boss Attacks",
+      "NewGroupNameHint": "Leave blank to auto-name as \"Group N\".",
+      "Sections": {
+        "Target": "Target",
+        "Folder": "Source Folder",
+        "Images": "Discovered Images",
+        "Damage": "Damage",
+        "Repetitions": "Repetitions",
+        "Group": "Group Assignment",
+        "Colors": "Colors"
+      },
+      "Notifications": {
+        "Created": "Created {count} saved-damage action card(s) on {actorName}."
+      },
+      "Errors": {
+        "NoActor": "No target actor provided.",
+        "NoFolder": "Enter a folder path to scan.",
+        "NoImages": "No images found in the selected folder.",
+        "NoImagesWithCount": "No images recognized. The folder contains {fileCount} file(s) in source '{source}'. Check that the folder actually contains image files (png, jpg, webp, svg, gif, bmp).",
+        "BrowseFailed": "Failed to open the folder browser.",
+        "ScanFailed": "Failed to scan the folder. Check the path and try again.",
+        "ScanFailedWithPath": "Failed to scan '{folder}' in source '{source}'. The path or source may be incorrect.",
+        "CreateFailed": "Failed to create the action cards.",
+        "CreateGroupFailed": "Failed to create the new action card group.",
+        "InvalidResolveFormula": "Invalid resolve damage formula: {formula}",
+        "InvalidPowerFormula": "Invalid power damage formula: {formula}",
+        "InvalidRepetitionFormula": "Invalid repetition formula: {formula}"
+      }
+    }
+  }
+}

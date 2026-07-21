@@ -970,6 +970,33 @@ export const registerSettings = function () {
   });
 
   // ===========================================
+  // BULK SAVED DAMAGE CREATOR (Client preference - hidden)
+  // ===========================================
+  // Persists the last-used configuration of the Bulk Saved Damage Creator
+  // dialog so reopening it doesn't reset formulas, colors, etc.
+  game.settings.register("eventide-rp-system", "bulkSavedDamageCreatorConfig", {
+    name: "Bulk Saved Damage Creator Config",
+    hint: "Last-used configuration for the Bulk Saved Damage Creator dialog.",
+    scope: "client",
+    config: false, // Hidden from settings menu
+    type: Object,
+    default: {
+      folderPath: "",
+      folderSource: "data",
+      resolveFormula: "1d6",
+      resolveType: "damage",
+      powerFormula: "0",
+      powerType: "damage",
+      repetitions: "1",
+      damageApplication: true,
+      powerDamageApplication: true,
+      bgColor: "#8B4513",
+      textColor: "#ffffff",
+      recursive: false,
+    },
+  });
+
+  // ===========================================
   // SOUND SETTINGS (GM Only - Hidden from main menu)
   // ===========================================
 
