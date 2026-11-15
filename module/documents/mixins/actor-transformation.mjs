@@ -77,7 +77,8 @@ export const ActorTransformationMixin = (BaseClass) =>
         "eventide-rp-system",
         "activeTransformationCursed",
       );
-      const newTransformationCursed = transformationItem.system?.cursed || false;
+      const newTransformationCursed =
+        transformationItem.system?.cursed || false;
 
       // If actor has an active transformation
       if (activeTransformationName) {
@@ -110,7 +111,9 @@ export const ActorTransformationMixin = (BaseClass) =>
         // Check if this is an unlinked token actor
         if (this.isToken) {
           // For unlinked tokens, only transform THIS specific token
-          return await this._applyTransformationToUnlinkedToken(transformationItem);
+          return await this._applyTransformationToUnlinkedToken(
+            transformationItem,
+          );
         }
 
         // For linked actors, transform all tokens across all scenes
@@ -234,7 +237,9 @@ export const ActorTransformationMixin = (BaseClass) =>
         await this._setTransformationFlags(actorTransformationItem);
 
         // Update THIS token with the transformation appearance
-        const updates = this._getTokenTransformationUpdates(actorTransformationItem);
+        const updates = this._getTokenTransformationUpdates(
+          actorTransformationItem,
+        );
         if (Object.keys(updates).length > 0) {
           await this.token.update(updates);
         }
@@ -458,7 +463,6 @@ export const ActorTransformationMixin = (BaseClass) =>
      * @private
      */
     async _transformPowerAndResolveUpdate(actorTransformationItem) {
-
       const newPowerAdjustment = Number(
         actorTransformationItem.system.powerAdjustment,
       );
@@ -584,7 +588,6 @@ export const ActorTransformationMixin = (BaseClass) =>
      * @returns {Promise<void>}
      */
     async _setTransformationFlags(transformationItem) {
-
       // Get embedded combat powers data
       const embeddedCombatPowers =
         transformationItem.system.getEmbeddedCombatPowers();
@@ -624,7 +627,6 @@ export const ActorTransformationMixin = (BaseClass) =>
         "activeTransformationActionCards",
         embeddedActionCardsData,
       );
-
     }
 
     /**
@@ -775,7 +777,6 @@ export const ActorTransformationMixin = (BaseClass) =>
      * @returns {Promise<void>}
      */
     async _restoreOriginalTokenData(tokens, originalTokenData) {
-
       // Validate we have template data
       if (!originalTokenData) {
         Logger.warn(
@@ -878,7 +879,6 @@ export const ActorTransformationMixin = (BaseClass) =>
      * @returns {Promise<void>}
      */
     async _clearTransformationFlags() {
-
       // Do NOT clear originalTokenData - keep it for the next transformation to update
       await this.unsetFlag("eventide-rp-system", "activeTransformation");
       await this.unsetFlag("eventide-rp-system", "activeTransformationName");
@@ -916,7 +916,6 @@ export const ActorTransformationMixin = (BaseClass) =>
      * @returns {Promise<Item>} The transformation item that is now on the actor
      */
     async _ensureTransformationItemOnActor(transformationItem) {
-
       // Check if this transformation is already on the actor
       const existingTransformation = this.items.get(transformationItem.id);
       if (existingTransformation) {
@@ -938,7 +937,10 @@ export const ActorTransformationMixin = (BaseClass) =>
 
       // If the transformation item is not embedded in this actor's collection, create a copy
       // Note: temporary items may have a parent but not be in the collection
-      if (transformationItem.parent !== this || !transformationItem.collection) {
+      if (
+        transformationItem.parent !== this ||
+        !transformationItem.collection
+      ) {
         const transformationData = transformationItem.toObject();
 
         // Ensure effects are properly included for embedded transformations
@@ -953,7 +955,6 @@ export const ActorTransformationMixin = (BaseClass) =>
         const [createdItem] = await this.createEmbeddedDocuments("Item", [
           transformationData,
         ]);
-
 
         return createdItem;
       }
@@ -1081,19 +1082,21 @@ export const ActorTransformationMixin = (BaseClass) =>
           "TRANSFORMATION",
         );
 
-        const transformationActionCardItems = transformationActionCards.map((actionCardData) => {
-          const tempItem = new CONFIG.Item.documentClass(actionCardData, {
-            parent: this,
-          });
+        const transformationActionCardItems = transformationActionCards.map(
+          (actionCardData) => {
+            const tempItem = new CONFIG.Item.documentClass(actionCardData, {
+              parent: this,
+            });
 
-          // The temporary item is editable if the actor is editable
-          Object.defineProperty(tempItem, "isEditable", {
-            value: this.isEditable,
-            configurable: true,
-          });
+            // The temporary item is editable if the actor is editable
+            Object.defineProperty(tempItem, "isEditable", {
+              value: this.isEditable,
+              configurable: true,
+            });
 
-          return tempItem;
-        });
+            return tempItem;
+          },
+        );
 
         Logger.methodExit(
           "ActorTransformationMixin",
@@ -1104,7 +1107,9 @@ export const ActorTransformationMixin = (BaseClass) =>
       }
 
       // No transformation or no transformation action cards - return actor's own action cards
-      const actorActionCards = this.items.filter((item) => item.type === "actionCard");
+      const actorActionCards = this.items.filter(
+        (item) => item.type === "actionCard",
+      );
       Logger.debug(
         "Returning actor's own action cards",
         {
@@ -1148,19 +1153,21 @@ export const ActorTransformationMixin = (BaseClass) =>
           "TRANSFORMATION",
         );
 
-        const transformationCombatPowerItems = transformationCombatPowers.map((combatPowerData) => {
-          const tempItem = new CONFIG.Item.documentClass(combatPowerData, {
-            parent: this,
-          });
+        const transformationCombatPowerItems = transformationCombatPowers.map(
+          (combatPowerData) => {
+            const tempItem = new CONFIG.Item.documentClass(combatPowerData, {
+              parent: this,
+            });
 
-          // The temporary item is editable if the actor is editable
-          Object.defineProperty(tempItem, "isEditable", {
-            value: this.isEditable,
-            configurable: true,
-          });
+            // The temporary item is editable if the actor is editable
+            Object.defineProperty(tempItem, "isEditable", {
+              value: this.isEditable,
+              configurable: true,
+            });
 
-          return tempItem;
-        });
+            return tempItem;
+          },
+        );
 
         Logger.methodExit(
           "ActorTransformationMixin",
@@ -1171,7 +1178,9 @@ export const ActorTransformationMixin = (BaseClass) =>
       }
 
       // No transformation or no transformation combat powers - return actor's own combat powers
-      const actorCombatPowers = this.items.filter((item) => item.type === "combatPower");
+      const actorCombatPowers = this.items.filter(
+        (item) => item.type === "combatPower",
+      );
       Logger.debug(
         "Returning actor's own combat powers",
         {
@@ -1199,7 +1208,9 @@ export const ActorTransformationMixin = (BaseClass) =>
         "eventide-rp-system",
         "activeTransformationCombatPowers",
       );
-      return transformationCombatPowers && transformationCombatPowers.length > 0;
+      return (
+        transformationCombatPowers && transformationCombatPowers.length > 0
+      );
     }
 
     /**

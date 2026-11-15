@@ -90,7 +90,7 @@
     background: linear-gradient(
       135deg,
       themes.color(gray, 15) 0%,
-      rgba(40, 40, 50, 0.8) 50%,
+      rgb(40 40 50 / 80%) 50%,
       themes.color(gray, 10) 100%
     );
     box-shadow: none;

@@ -69,10 +69,7 @@ class ERPSRollHandler {
         "fa-sharp-duotone fa-light fa-claw-marks",
       ],
       heal: ["chat-card__header--heal", "fa-regular fa-wave-pulse"],
-      "power-damage": [
-        "chat-card__header--power-damage",
-        "fa-solid fa-bolt",
-      ],
+      "power-damage": ["chat-card__header--power-damage", "fa-solid fa-bolt"],
       "power-heal": [
         "chat-card__header--power-heal",
         "fa-solid fa-wand-magic-sparkles",
@@ -138,24 +135,24 @@ class ERPSRollHandler {
     });
   }
 
-   /**
-    * Process a roll and generate appropriate chat messages
-    *
-    * @async
-    * @param {Object} options - Roll configuration options
-    * @param {string} [options.formula="1"] - The dice formula to roll
-    * @param {string} [options.label="unknown roll"] - Display name for the roll
-    * @param {string} [options.type="unknown"] - Type of roll (ability code, "damage", etc.)
-    * @param {string} [options.className=""] - Additional CSS class for styling
-    * @param {boolean} [options.critAllowed=true] - Whether critical hits/misses are possible
-    * @param {boolean} [options.acCheck=true] - Whether to check against target AC values
-    * @param {string} [options.description=""] - Optional description text
-    * @param {boolean} [options.toMessage=true] - Whether to create a chat message
-    * @param {string} [options.rollMode=null] - Roll visibility mode
-    * @param {string} [options.soundKey=null] - Optional sound key
-    * @param {Actor} actor - Actor performing the roll
-    * @returns {Promise<Roll>} The evaluated roll
-    */
+  /**
+   * Process a roll and generate appropriate chat messages
+   *
+   * @async
+   * @param {Object} options - Roll configuration options
+   * @param {string} [options.formula="1"] - The dice formula to roll
+   * @param {string} [options.label="unknown roll"] - Display name for the roll
+   * @param {string} [options.type="unknown"] - Type of roll (ability code, "damage", etc.)
+   * @param {string} [options.className=""] - Additional CSS class for styling
+   * @param {boolean} [options.critAllowed=true] - Whether critical hits/misses are possible
+   * @param {boolean} [options.acCheck=true] - Whether to check against target AC values
+   * @param {string} [options.description=""] - Optional description text
+   * @param {boolean} [options.toMessage=true] - Whether to create a chat message
+   * @param {string} [options.rollMode=null] - Roll visibility mode
+   * @param {string} [options.soundKey=null] - Optional sound key
+   * @param {Actor} actor - Actor performing the roll
+   * @returns {Promise<Roll>} The evaluated roll
+   */
   async handleRoll(
     {
       formula = this.defaults.formula,
@@ -205,8 +202,12 @@ class ERPSRollHandler {
           result.overhealing = result.total - healRoom;
           Logger.debug(
             `Overhealing calculated: ${result.overhealing} (roll total: ${result.total}, heal room: ${healRoom})`,
-            { overhealingValue: result.overhealing, rollTotal: result.total, healRoom },
-             "ROLL_DICE",
+            {
+              overhealingValue: result.overhealing,
+              rollTotal: result.total,
+              healRoom,
+            },
+            "ROLL_DICE",
           );
         } else {
           result.overhealing = null;

@@ -33,10 +33,10 @@ export function ItemActionCardExecutionMixin(Base) {
 
       // Permission check for GM-only action cards
       if (this.system.gmOnly && !game.user.isGM) {
-        ui.notifications.error(
-          "Only GMs can execute GM-only action cards.",
+        ui.notifications.error("Only GMs can execute GM-only action cards.");
+        throw new Error(
+          "Insufficient permissions to execute GM-only action card",
         );
-        throw new Error("Insufficient permissions to execute GM-only action card");
       }
 
       try {
@@ -87,10 +87,10 @@ export function ItemActionCardExecutionMixin(Base) {
 
       // Permission check for GM-only action cards
       if (this.system.gmOnly && !game.user.isGM) {
-        ui.notifications.error(
-          "Only GMs can execute GM-only action cards.",
+        ui.notifications.error("Only GMs can execute GM-only action cards.");
+        throw new Error(
+          "Insufficient permissions to execute GM-only action card",
         );
-        throw new Error("Insufficient permissions to execute GM-only action card");
       }
 
       try {
@@ -106,7 +106,6 @@ export function ItemActionCardExecutionMixin(Base) {
 
         // Check if action fails due to insufficient repetitions
         if (repetitionCount <= 0) {
-
           // Send failure message to chat
           await this.sendFailureMessage(
             actor,
@@ -144,7 +143,6 @@ export function ItemActionCardExecutionMixin(Base) {
         // Execute repetitions
         const results = [];
         for (let i = 0; i < effectiveRepetitionCount; i++) {
-
           // Check if resource was depleted in a previous iteration (flag it forward pattern)
           // This check happens AFTER the first iteration, checking the flag set by handleBypass
           if (i > 0 && options?.actionCardContext?.resourceDepleted) {
@@ -161,9 +159,10 @@ export function ItemActionCardExecutionMixin(Base) {
             // Create a resource check result from the depletion info
             const depletionCheck = {
               canExecute: false,
-              reason: options.actionCardContext.depletedResourceType === "quantity"
-                ? "insufficientQuantity"
-                : "insufficientPower",
+              reason:
+                options.actionCardContext.depletedResourceType === "quantity"
+                  ? "insufficientQuantity"
+                  : "insufficientPower",
               required: options.actionCardContext.depletedRequired,
               available: options.actionCardContext.depletedAvailable,
             };
@@ -333,13 +332,32 @@ export function ItemActionCardExecutionMixin(Base) {
             effectiveRepetitionCount > 1
           ) {
             // Check if first iteration failed to trigger any effects
-            const firstIterationSuccess = RepetitionHandler.checkIterationSuccess(
-              result,
-              this.system,
-              (condition, oneHit, bothHit, rollTotal, threshold, roll, actor, formula) =>
-                this._shouldApplyEffect(condition, oneHit, bothHit, rollTotal, threshold, roll, actor, formula),
-              this.actor,
-            );
+            const firstIterationSuccess =
+              RepetitionHandler.checkIterationSuccess(
+                result,
+                this.system,
+                (
+                  condition,
+                  oneHit,
+                  bothHit,
+                  rollTotal,
+                  threshold,
+                  roll,
+                  actor,
+                  formula,
+                ) =>
+                  this._shouldApplyEffect(
+                    condition,
+                    oneHit,
+                    bothHit,
+                    rollTotal,
+                    threshold,
+                    roll,
+                    actor,
+                    formula,
+                  ),
+                this.actor,
+              );
             if (!firstIterationSuccess) {
               Logger.info(
                 `Action card execution stopped due to failOnFirstMiss`,
@@ -500,7 +518,6 @@ export function ItemActionCardExecutionMixin(Base) {
      * @returns {Promise<Object>} Result of the attack chain execution
      */
     async executeAttackChain(_actor) {
-
       try {
         // Check if attack chains are enabled globally
         const chainsEnabled = game.settings.get(
@@ -561,7 +578,6 @@ export function ItemActionCardExecutionMixin(Base) {
           statusResults: [],
         };
 
-
         return chainResult;
       } catch (error) {
         Logger.error("Failed to execute attack chain", error, "ACTION_CARD");
@@ -579,7 +595,12 @@ export function ItemActionCardExecutionMixin(Base) {
      */
     #validateLockedTargetsForRepetition() {
       if (!this._lockedTargets || this._lockedTargets.length === 0) {
-        return { valid: false, exhausted: true, removedCount: 0, removedNames: [] };
+        return {
+          valid: false,
+          exhausted: true,
+          removedCount: 0,
+          removedNames: [],
+        };
       }
 
       const result = TargetResolver.resolveLockedTargets(this._lockedTargets);
@@ -604,7 +625,7 @@ export function ItemActionCardExecutionMixin(Base) {
           valid: false,
           exhausted: true,
           removedCount: this._lockedTargets.length,
-          removedNames: result.invalid.map(t => t.name)
+          removedNames: result.invalid.map((t) => t.name),
         };
       }
 
@@ -614,11 +635,16 @@ export function ItemActionCardExecutionMixin(Base) {
           valid: true,
           exhausted: false,
           removedCount: result.invalid.length,
-          removedNames: result.invalid.map(t => t.name)
+          removedNames: result.invalid.map((t) => t.name),
         };
       }
 
-      return { valid: true, exhausted: false, removedCount: 0, removedNames: [] };
+      return {
+        valid: true,
+        exhausted: false,
+        removedCount: 0,
+        removedNames: [],
+      };
     }
 
     /**
@@ -643,11 +669,7 @@ export function ItemActionCardExecutionMixin(Base) {
       const embeddedItem = this.getEmbeddedItem({ executionContext: true });
       if (!embeddedItem) {
         const error = new Error("No embedded item found for attack chain");
-        Logger.error(
-          "No embedded item for attack chain",
-          error,
-          "ACTION_CARD",
-        );
+        Logger.error("No embedded item for attack chain", error, "ACTION_CARD");
         throw error;
       }
 
@@ -666,8 +688,20 @@ export function ItemActionCardExecutionMixin(Base) {
           this._processStatusResults(results, roll, delays, isFinal),
         processTransformation: (results, roll, delays, isFinal) =>
           this._processTransformationResults(results, roll, delays, isFinal),
-        processSelfEffect: (results, roll, delays, isFinal, selfEffectsConfig) =>
-          this._processSelfEffectResults(results, roll, delays, isFinal, selfEffectsConfig),
+        processSelfEffect: (
+          results,
+          roll,
+          delays,
+          isFinal,
+          selfEffectsConfig,
+        ) =>
+          this._processSelfEffectResults(
+            results,
+            roll,
+            delays,
+            isFinal,
+            selfEffectsConfig,
+          ),
         processSelfDamage: (results, roll) =>
           this._processSelfDamageResults(results, roll),
         waitForDelay: () => this._waitForExecutionDelay(),
@@ -684,7 +718,6 @@ export function ItemActionCardExecutionMixin(Base) {
      * @returns {Promise<Object>} Result of the saved damage execution
      */
     async executeSavedDamage(_actor, gates = {}) {
-
       try {
         // Resolve targets using TargetResolver service
         const resolution = await TargetResolver.resolveTargets({
@@ -734,7 +767,6 @@ export function ItemActionCardExecutionMixin(Base) {
           transformationResults,
         };
 
-
         return result;
       } catch (error) {
         Logger.error("Failed to execute saved damage", error, "ACTION_CARD");
@@ -765,13 +797,16 @@ export function ItemActionCardExecutionMixin(Base) {
         powerDamageFormula: this.system.attackChain.powerDamageFormula,
         powerDamageType: this.system.attackChain.powerDamageType,
         powerDamageCondition: this.system.attackChain.powerDamageCondition,
-        powerDamageThreshold: this.system.attackChain.powerDamageThreshold || 15,
+        powerDamageThreshold:
+          this.system.attackChain.powerDamageThreshold || 15,
         applyResolve: gates.applyResolve,
         applyPower: gates.applyPower,
         label: this._getEffectiveLabel(),
         description:
           this.system.description ||
-          (this.system.rollActorName !== false ? `Attack chain damage from ${this.name}` : "Attack chain damage"),
+          (this.system.rollActorName !== false
+            ? `Attack chain damage from ${this.name}`
+            : "Attack chain damage"),
         img: this._getEffectiveImage(),
         bgColor: this.system.bgColor,
         textColor: this.system.textColor,
@@ -797,9 +832,10 @@ export function ItemActionCardExecutionMixin(Base) {
       isFinalRepetition = true,
     ) {
       // Get intensify config from the action card (only applies in attackChain mode)
-      const intensifyConfig = this.system.mode === "attackChain"
-        ? this.system.intensifyBehavior?.target
-        : null;
+      const intensifyConfig =
+        this.system.mode === "attackChain"
+          ? this.system.intensifyBehavior?.target
+          : null;
 
       return await StatusEffectApplicator.processStatusResults({
         results,
@@ -826,7 +862,11 @@ export function ItemActionCardExecutionMixin(Base) {
      * @returns {Object} Object with canExecute boolean and reason string
      */
     checkEmbeddedItemResources(embeddedItem, actor, shouldConsumeCost = true) {
-      return ResourceValidator.checkEmbeddedItemResources(embeddedItem, actor, shouldConsumeCost);
+      return ResourceValidator.checkEmbeddedItemResources(
+        embeddedItem,
+        actor,
+        shouldConsumeCost,
+      );
     }
 
     /**
@@ -949,12 +989,11 @@ export function ItemActionCardExecutionMixin(Base) {
         await embeddedItem.roll({
           bypass: true,
           skipTargetingCheck: true,
-          lockedTargets: this._lockedTargets
+          lockedTargets: this._lockedTargets,
         });
 
         // Wait for the roll result
         const rollResult = await rollResultPromise;
-
 
         return rollResult;
       } catch (error) {
@@ -1021,10 +1060,8 @@ export function ItemActionCardExecutionMixin(Base) {
      */
     _computeDamageGates(repetitionIndex) {
       return {
-        applyResolve:
-          this.system.damageApplication || repetitionIndex === 0,
-        applyPower:
-          this.system.powerDamageApplication || repetitionIndex === 0,
+        applyResolve: this.system.damageApplication || repetitionIndex === 0,
+        applyPower: this.system.powerDamageApplication || repetitionIndex === 0,
       };
     }
 
@@ -1154,8 +1191,26 @@ export function ItemActionCardExecutionMixin(Base) {
       return RepetitionHandler.checkIterationSuccess(
         result,
         this.system,
-        (condition, oneHit, bothHit, rollTotal, threshold, roll, actor, formula) =>
-          this._shouldApplyEffect(condition, oneHit, bothHit, rollTotal, threshold, roll, actor, formula),
+        (
+          condition,
+          oneHit,
+          bothHit,
+          rollTotal,
+          threshold,
+          roll,
+          actor,
+          formula,
+        ) =>
+          this._shouldApplyEffect(
+            condition,
+            oneHit,
+            bothHit,
+            rollTotal,
+            threshold,
+            roll,
+            actor,
+            formula,
+          ),
         this.actor,
       );
     }
@@ -1177,9 +1232,10 @@ export function ItemActionCardExecutionMixin(Base) {
       _selfEffectsConfig,
     ) {
       // Get intensify config for self-effects from the action card (only applies in attackChain mode)
-      const intensifyConfig = this.system.mode === "attackChain"
-        ? this.system.intensifyBehavior?.self
-        : null;
+      const intensifyConfig =
+        this.system.mode === "attackChain"
+          ? this.system.intensifyBehavior?.self
+          : null;
 
       return await StatusEffectApplicator.processSelfEffectResults({
         results,
@@ -1210,20 +1266,24 @@ export function ItemActionCardExecutionMixin(Base) {
      * @returns {Promise<Object|null>} The self-damage bundle result or null
      */
     async _processSelfDamageResults(results, rollResult) {
-      return await DamageProcessor.processSelfDamageResults(results, rollResult, {
-        config: this.system.selfDamageConfig,
-        actor: this.actor,
-        shouldApplyEffect: this._shouldApplyEffect.bind(this),
-        label: this._getEffectiveLabel(),
-        description:
-          this.system.description ||
-          (this.system.rollActorName !== false
-            ? `Self-damage from ${this.name}`
-            : "Self-damage"),
-        img: this._getEffectiveImage(),
-        bgColor: this.system.bgColor,
-        textColor: this.system.textColor,
-      });
+      return await DamageProcessor.processSelfDamageResults(
+        results,
+        rollResult,
+        {
+          config: this.system.selfDamageConfig,
+          actor: this.actor,
+          shouldApplyEffect: this._shouldApplyEffect.bind(this),
+          label: this._getEffectiveLabel(),
+          description:
+            this.system.description ||
+            (this.system.rollActorName !== false
+              ? `Self-damage from ${this.name}`
+              : "Self-damage"),
+          img: this._getEffectiveImage(),
+          bgColor: this.system.bgColor,
+          textColor: this.system.textColor,
+        },
+      );
     }
 
     /**
@@ -1248,9 +1308,28 @@ export function ItemActionCardExecutionMixin(Base) {
         embeddedTransformations: this.system.embeddedTransformations,
         transformationConfig: this.system.transformationConfig,
         repetitionContext: this._currentRepetitionContext,
-        getEmbeddedTransformations: (options) => this.getEmbeddedTransformations(options),
-        shouldApplyEffect: (condition, oneHit, bothHit, rollTotal, threshold, roll, actor, formula) =>
-          this._shouldApplyEffect(condition, oneHit, bothHit, rollTotal, threshold, roll, actor, formula),
+        getEmbeddedTransformations: (options) =>
+          this.getEmbeddedTransformations(options),
+        shouldApplyEffect: (
+          condition,
+          oneHit,
+          bothHit,
+          rollTotal,
+          threshold,
+          roll,
+          actor,
+          formula,
+        ) =>
+          this._shouldApplyEffect(
+            condition,
+            oneHit,
+            bothHit,
+            rollTotal,
+            threshold,
+            roll,
+            actor,
+            formula,
+          ),
         waitForDelay: () => this._waitForExecutionDelay(),
         mode: this.system.mode,
         disableDelays,
@@ -1268,7 +1347,10 @@ export function ItemActionCardExecutionMixin(Base) {
      */
     async _applyTransformationWithValidation(targetActor, transformationData) {
       // Delegate to TransformationApplicator service
-      return TransformationApplicator.applyWithValidation(targetActor, transformationData);
+      return TransformationApplicator.applyWithValidation(
+        targetActor,
+        transformationData,
+      );
     }
 
     /**
@@ -1278,7 +1360,9 @@ export function ItemActionCardExecutionMixin(Base) {
      */
     async _promptGMForTransformationChoice() {
       // Delegate to TransformationApplicator service
-      return TransformationApplicator.promptForSelection(this.system.embeddedTransformations);
+      return TransformationApplicator.promptForSelection(
+        this.system.embeddedTransformations,
+      );
     }
   };
 }

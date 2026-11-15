@@ -24,7 +24,7 @@ export class SettingNameMigration {
     try {
       oldTrackingSetting = game.settings.get(
         "eventide-rp-system",
-        "settingNameMigrationVersion"
+        "settingNameMigrationVersion",
       );
     } catch {
       // Old setting doesn't exist, which is fine for new installations
@@ -32,7 +32,7 @@ export class SettingNameMigration {
 
     const lastMigration = game.settings.get(
       "eventide-rp-system",
-      "migrationVersion"
+      "migrationVersion",
     );
 
     const currentLevel = Math.floor(Number(lastMigration) || 0);
@@ -41,17 +41,17 @@ export class SettingNameMigration {
       Logger.info(
         "Cleaning up old settingNameMigrationVersion setting",
         { oldValue: oldTrackingSetting },
-        "MIGRATION"
+        "MIGRATION",
       );
       await game.settings.set(
         "eventide-rp-system",
         "settingNameMigrationVersion",
-        null
+        null,
       );
       Logger.info(
         "Setting name migration already completed (old setting found)",
         null,
-        "MIGRATION"
+        "MIGRATION",
       );
 
       // if currentLevel is not a number or is less than migrationLevel we should set the setting to the migrationLevel
@@ -59,12 +59,12 @@ export class SettingNameMigration {
         await game.settings.set(
           "eventide-rp-system",
           "migrationVersion",
-          migrationLevel
+          migrationLevel,
         );
         Logger.info(
           "Updated migrationVersion to current version due to old tracking setting",
           { migrationLevel },
-          "MIGRATION"
+          "MIGRATION",
         );
       }
       return;
@@ -74,7 +74,7 @@ export class SettingNameMigration {
       Logger.info(
         "Waiting for embedded image migration to complete first",
         null,
-        "MIGRATION"
+        "MIGRATION",
       );
     }
 
@@ -83,7 +83,7 @@ export class SettingNameMigration {
       Logger.debug(
         "Setting name migration already completed",
         { level: currentLevel },
-        "MIGRATION"
+        "MIGRATION",
       );
       return;
     }
@@ -92,7 +92,7 @@ export class SettingNameMigration {
       Logger.info(
         "Starting setting name migration",
         { currentLevel },
-        "MIGRATION"
+        "MIGRATION",
       );
     }
     // Unknown state - skip
@@ -100,7 +100,7 @@ export class SettingNameMigration {
       Logger.debug(
         "Unknown migration state, skipping",
         { lastMigration },
-        "MIGRATION"
+        "MIGRATION",
       );
       return;
     }
@@ -112,35 +112,31 @@ export class SettingNameMigration {
       try {
         const oldValue = game.settings.get(
           "eventide-rp-system",
-          "initativeFormula"
+          "initativeFormula",
         );
-        
+
         // Set the new setting with the old value
         await game.settings.set(
           "eventide-rp-system",
           "initiativeFormula",
-          oldValue
+          oldValue,
         );
-        
+
         // Clear the old setting
-        await game.settings.set(
-          "eventide-rp-system",
-          "initativeFormula",
-          null
-        );
-        
+        await game.settings.set("eventide-rp-system", "initativeFormula", null);
+
         settingsMigrated++;
         Logger.info(
           "Migrated initiativeFormula setting",
           { oldValue },
-          "MIGRATION"
+          "MIGRATION",
         );
       } catch {
         // Old setting doesn't exist, which is fine for new installations
         Logger.debug(
           "Old initativeFormula setting not found (new installation)",
           null,
-          "MIGRATION"
+          "MIGRATION",
         );
       }
 
@@ -148,29 +144,25 @@ export class SettingNameMigration {
       await game.settings.set(
         "eventide-rp-system",
         "migrationVersion",
-        migrationLevel
+        migrationLevel,
       );
 
       Logger.info(
         "Setting name migration completed",
         { settingsMigrated, level: migrationLevel },
-        "MIGRATION"
+        "MIGRATION",
       );
 
       ui.notifications.info(
         game.i18n.format("EVENTIDE_RP_SYSTEM.Migration.Completed", {
           count: settingsMigrated,
-        })
+        }),
       );
     } catch (error) {
-      Logger.error(
-        "Setting name migration failed",
-        error,
-        "MIGRATION"
-      );
+      Logger.error("Setting name migration failed", error, "MIGRATION");
 
       ui.notifications.error(
-        game.i18n.localize("EVENTIDE_RP_SYSTEM.Migration.Failed")
+        game.i18n.localize("EVENTIDE_RP_SYSTEM.Migration.Failed"),
       );
     }
   }

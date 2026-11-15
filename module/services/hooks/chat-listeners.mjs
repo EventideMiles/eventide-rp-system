@@ -90,7 +90,11 @@ const addImageZoomFunctionality = (html) => {
       event.stopPropagation();
 
       const imageSrc = image.src;
-      const imageAlt = image.alt || image.closest('.chat-card')?.querySelector('.chat-card__header div')?.textContent || 'Chat card image';
+      const imageAlt =
+        image.alt ||
+        image.closest(".chat-card")?.querySelector(".chat-card__header div")
+          ?.textContent ||
+        "Chat card image";
 
       // Show the zoomed image
       ImageZoomService.showZoom(imageSrc, imageAlt);
@@ -98,7 +102,7 @@ const addImageZoomFunctionality = (html) => {
 
     // Add title attribute for better UX
     if (!image.title) {
-      image.title = 'Click to enlarge';
+      image.title = "Click to enlarge";
     }
   });
 };
@@ -132,7 +136,11 @@ const addPlayerActionApprovalButtons = (html, message) => {
           await handleDenyPlayerAction(button, message);
         }
       } catch (error) {
-        Logger.error("Error handling player action approval", error, "CHAT_LISTENERS");
+        Logger.error(
+          "Error handling player action approval",
+          error,
+          "CHAT_LISTENERS",
+        );
         ui.notifications.error(
           game.i18n.localize(
             "EVENTIDE_RP_SYSTEM.Errors.ActionCardEffectFailed",
@@ -142,7 +150,6 @@ const addPlayerActionApprovalButtons = (html, message) => {
     });
   });
 };
-
 
 /**
  * Handle approving a player action request
@@ -167,7 +174,6 @@ const handleDenyPlayerAction = async (button, message) => {
   // Use the GM control manager to deny the player action
   await gmControlManager.approvePlayerAction(message, false);
 };
-
 
 /**
  * Remove elements that should not be visible to non-GM users
@@ -363,4 +369,3 @@ function setupItemDeletionHooks() {
     }
   });
 }
-

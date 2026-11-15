@@ -50,8 +50,12 @@ export const ItemSheetActionsMixin = (BaseClass) =>
       }
 
       // For standalone action cards (not saved damage), open the multi-image selector
-      if (this.item?.type === "actionCard" && this.item.system?.mode !== "savedDamage") {
-        const { MultiImageSelector } = await import("../popups/multi-image-selector.mjs");
+      if (
+        this.item?.type === "actionCard" &&
+        this.item.system?.mode !== "savedDamage"
+      ) {
+        const { MultiImageSelector } =
+          await import("../popups/multi-image-selector.mjs");
         const popup = new MultiImageSelector({ item: this.item });
         return popup.render(true);
       }
@@ -95,7 +99,10 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @protected
      */
     static async _removeCombatPower(_event, target) {
-      await EmbeddedItemManager.removeCombatPower(this.item, target?.dataset?.powerId);
+      await EmbeddedItemManager.removeCombatPower(
+        this.item,
+        target?.dataset?.powerId,
+      );
     }
 
     /**
@@ -107,7 +114,10 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @protected
      */
     static async _removeActionCard(_event, target) {
-      await EmbeddedItemManager.removeActionCard(this.item, target?.dataset?.actionCardId);
+      await EmbeddedItemManager.removeActionCard(
+        this.item,
+        target?.dataset?.actionCardId,
+      );
     }
 
     /**
@@ -119,7 +129,10 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @protected
      */
     static async _editEmbeddedActionCard(_event, target) {
-      await EmbeddedItemManager.editEmbeddedActionCard(this.item, target?.dataset?.actionCardId);
+      await EmbeddedItemManager.editEmbeddedActionCard(
+        this.item,
+        target?.dataset?.actionCardId,
+      );
     }
 
     /**
@@ -315,7 +328,10 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @protected
      */
     static async _editEmbeddedEffect(_event, target) {
-      await EmbeddedItemManager.editEmbeddedEffect(this.item, target?.dataset?.effectId);
+      await EmbeddedItemManager.editEmbeddedEffect(
+        this.item,
+        target?.dataset?.effectId,
+      );
     }
 
     /**
@@ -326,7 +342,10 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @protected
      */
     static async _editEmbeddedSelfEffect(_event, target) {
-      await EmbeddedItemManager.editEmbeddedSelfEffect(this.item, target?.dataset?.effectId);
+      await EmbeddedItemManager.editEmbeddedSelfEffect(
+        this.item,
+        target?.dataset?.effectId,
+      );
     }
 
     /**
@@ -337,7 +356,10 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @protected
      */
     static async _removeEmbeddedEffect(_event, target) {
-      await EmbeddedItemManager.removeEmbeddedEffect(this.item, target?.dataset?.effectId);
+      await EmbeddedItemManager.removeEmbeddedEffect(
+        this.item,
+        target?.dataset?.effectId,
+      );
       this.render();
     }
 
@@ -349,7 +371,10 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @protected
      */
     static async _removeEmbeddedSelfEffect(_event, target) {
-      await EmbeddedItemManager.removeEmbeddedSelfEffect(this.item, target?.dataset?.effectId);
+      await EmbeddedItemManager.removeEmbeddedSelfEffect(
+        this.item,
+        target?.dataset?.effectId,
+      );
       this.render();
     }
 
@@ -361,7 +386,10 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @protected
      */
     static async _editEmbeddedTransformation(_event, target) {
-      await EmbeddedItemManager.editEmbeddedTransformation(this.item, target?.dataset?.transformationId);
+      await EmbeddedItemManager.editEmbeddedTransformation(
+        this.item,
+        target?.dataset?.transformationId,
+      );
     }
 
     /**
@@ -396,7 +424,10 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @protected
      */
     static async _removeEmbeddedTransformation(_event, target) {
-      await EmbeddedItemManager.removeEmbeddedTransformation(this.item, target?.dataset?.transformationId);
+      await EmbeddedItemManager.removeEmbeddedTransformation(
+        this.item,
+        target?.dataset?.transformationId,
+      );
       this.render();
     }
 
@@ -673,8 +704,15 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @param {string} stopSelector - CSS selector for the container to stop at when searching for overflow parents
      * @private
      */
-    _enhanceContextMenuWithOverflowFix(contextMenu, stopSelector = ".window-content") {
-      _contextMenuBuilder.enhanceContextMenuWithOverflowFix(contextMenu, stopSelector, this);
+    _enhanceContextMenuWithOverflowFix(
+      contextMenu,
+      stopSelector = ".window-content",
+    ) {
+      _contextMenuBuilder.enhanceContextMenuWithOverflowFix(
+        contextMenu,
+        stopSelector,
+        this,
+      );
     }
 
     /**
@@ -708,7 +746,9 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @private
      */
     _getTransformationActionCardContextOptions() {
-      return _contextMenuBuilder.getTransformationActionCardContextOptions(this);
+      return _contextMenuBuilder.getTransformationActionCardContextOptions(
+        this,
+      );
     }
 
     /**
@@ -718,7 +758,11 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @private
      */
     async _showMoveToGroupDialogForTransformation(itemId, groups) {
-      return _contextMenuBuilder.showMoveToGroupDialogForTransformation(itemId, groups, this);
+      return _contextMenuBuilder.showMoveToGroupDialogForTransformation(
+        itemId,
+        groups,
+        this,
+      );
     }
 
     /**
@@ -735,7 +779,9 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @private
      */
     _getTransformationGroupHeaderContextOptions() {
-      return _contextMenuBuilder.getTransformationGroupHeaderContextOptions(this);
+      return _contextMenuBuilder.getTransformationGroupHeaderContextOptions(
+        this,
+      );
     }
 
     /**
@@ -753,7 +799,11 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @private
      */
     _createTransformationTabContextMenu(tabName, itemType) {
-      _contextMenuBuilder.createTransformationTabContextMenu(tabName, itemType, this);
+      _contextMenuBuilder.createTransformationTabContextMenu(
+        tabName,
+        itemType,
+        this,
+      );
     }
 
     /**
@@ -763,7 +813,10 @@ export const ItemSheetActionsMixin = (BaseClass) =>
      * @private
      */
     _getTransformationTabContextOptions(itemType) {
-      return _contextMenuBuilder.getTransformationTabContextOptions(itemType, this);
+      return _contextMenuBuilder.getTransformationTabContextOptions(
+        itemType,
+        this,
+      );
     }
 
     /**

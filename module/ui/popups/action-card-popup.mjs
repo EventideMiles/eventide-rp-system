@@ -11,7 +11,9 @@ import { TargetResolver } from "../../services/target-resolver.mjs";
  * to trigger the action card's chain logic.
  * @extends {ThemeManagedPopupMixin(EventidePopupHelpers)}
  */
-export class ActionCardPopup extends ThemeManagedPopupMixin(EventidePopupHelpers) {
+export class ActionCardPopup extends ThemeManagedPopupMixin(
+  EventidePopupHelpers,
+) {
   /** @override */
   static PARTS = {
     actionCardPopup: {
@@ -126,7 +128,6 @@ export class ActionCardPopup extends ThemeManagedPopupMixin(EventidePopupHelpers
           event.preventDefault();
           event.stopPropagation();
           this._focusNextTransformationRow(row, targetId, -1);
-          
         }
       });
 
@@ -185,7 +186,9 @@ export class ActionCardPopup extends ThemeManagedPopupMixin(EventidePopupHelpers
    */
   _focusNextTransformationRow(currentRow, targetId, direction) {
     const allRows = Array.from(
-      this.element.querySelectorAll(`[data-transformation-option="${targetId}"]`),
+      this.element.querySelectorAll(
+        `[data-transformation-option="${targetId}"]`,
+      ),
     );
     const currentIndex = allRows.indexOf(currentRow);
     let nextIndex = currentIndex + direction;

@@ -19,7 +19,8 @@ const ABILITY_LABELS = {
 export class NpcQuickGenerator extends EventideSheetHelpers {
   static PARTS = {
     npcQuickGenerator: {
-      template: "systems/eventide-rp-system/templates/macros/npc-quick-generator.hbs",
+      template:
+        "systems/eventide-rp-system/templates/macros/npc-quick-generator.hbs",
     },
   };
 
@@ -120,7 +121,9 @@ export class NpcQuickGenerator extends EventideSheetHelpers {
     context.footerButtons = [
       this._sourceActor
         ? {
-            label: game.i18n.localize("EVENTIDE_RP_SYSTEM.NpcGenerator.ApplyToExisting"),
+            label: game.i18n.localize(
+              "EVENTIDE_RP_SYSTEM.NpcGenerator.ApplyToExisting",
+            ),
             type: "submit",
             cssClass: "erps-button erps-button--primary",
             name: "apply",
@@ -169,7 +172,10 @@ export class NpcQuickGenerator extends EventideSheetHelpers {
             this._distributionMode = "template";
             const weights = this._getTemplateWeights();
             if (weights) {
-              this._abilities = NpcGenerator.distributeStats(this._level, weights);
+              this._abilities = NpcGenerator.distributeStats(
+                this._level,
+                weights,
+              );
             }
             const template = this._templates.find(
               (t) => t.id === this._selectedTemplateId,
@@ -187,14 +193,20 @@ export class NpcQuickGenerator extends EventideSheetHelpers {
         break;
 
       default: {
-        if (target.name.startsWith("ability-") && this._distributionMode === "custom") {
+        if (
+          target.name.startsWith("ability-") &&
+          this._distributionMode === "custom"
+        ) {
           const ability = target.name.replace("ability-", "");
           const val = parseInt(target.value, 10);
           if (ABILITY_KEYS.includes(ability) && !isNaN(val) && val >= 1) {
             this._abilities[ability] = val;
             needsRender = true;
           }
-        } else if (target.name.startsWith("slider-") && this._distributionMode === "custom") {
+        } else if (
+          target.name.startsWith("slider-") &&
+          this._distributionMode === "custom"
+        ) {
           const ability = target.name.replace("slider-", "");
           const val = parseInt(target.value, 10);
           if (ABILITY_KEYS.includes(ability) && !isNaN(val) && val >= 1) {
@@ -231,24 +243,29 @@ export class NpcQuickGenerator extends EventideSheetHelpers {
     }
 
     this._budgetRemaining = this._calculateBudgetRemaining();
-    this._derivedResolve = NpcGenerator.evaluateFormula(
-      "maxResolveFormula",
-      this._abilities,
-      this._level,
-    ) ?? "—";
-    this._derivedPower = NpcGenerator.evaluateFormula(
-      "maxPowerFormula",
-      this._abilities,
-      this._level,
-    ) ?? "—";
+    this._derivedResolve =
+      NpcGenerator.evaluateFormula(
+        "maxResolveFormula",
+        this._abilities,
+        this._level,
+      ) ?? "—";
+    this._derivedPower =
+      NpcGenerator.evaluateFormula(
+        "maxPowerFormula",
+        this._abilities,
+        this._level,
+      ) ?? "—";
 
     const totalAbilityScore = ABILITY_KEYS.reduce(
       (sum, key) => sum + (this._abilities[key] || 0),
       0,
     );
-    this._derivedAC = totalAbilityScore > 0
-      ? Math.max(...ABILITY_KEYS.map((key) => (this._abilities[key] || 0) + 11))
-      : "—";
+    this._derivedAC =
+      totalAbilityScore > 0
+        ? Math.max(
+            ...ABILITY_KEYS.map((key) => (this._abilities[key] || 0) + 11),
+          )
+        : "—";
   }
 
   _calculateBudgetRemaining() {
@@ -275,7 +292,9 @@ export class NpcQuickGenerator extends EventideSheetHelpers {
     const builtIn = this._templates.filter((t) => t.isArchetype);
     if (builtIn.length > 0) {
       groups.push({
-        label: game.i18n.localize("EVENTIDE_RP_SYSTEM.NpcGenerator.BuiltInArchetypes"),
+        label: game.i18n.localize(
+          "EVENTIDE_RP_SYSTEM.NpcGenerator.BuiltInArchetypes",
+        ),
         templates: builtIn.map((t) => ({
           ...t,
           selected: t.id === this._selectedTemplateId,
@@ -288,7 +307,9 @@ export class NpcQuickGenerator extends EventideSheetHelpers {
     );
     if (systemTemplates.length > 0) {
       groups.push({
-        label: game.i18n.localize("EVENTIDE_RP_SYSTEM.NpcGenerator.CompendiumTemplates"),
+        label: game.i18n.localize(
+          "EVENTIDE_RP_SYSTEM.NpcGenerator.CompendiumTemplates",
+        ),
         templates: systemTemplates.map((t) => ({
           ...t,
           selected: t.id === this._selectedTemplateId,
@@ -299,7 +320,9 @@ export class NpcQuickGenerator extends EventideSheetHelpers {
     const userTemplates = this._templates.filter((t) => t.isUserPack);
     if (userTemplates.length > 0) {
       groups.push({
-        label: game.i18n.localize("EVENTIDE_RP_SYSTEM.NpcGenerator.UserTemplates"),
+        label: game.i18n.localize(
+          "EVENTIDE_RP_SYSTEM.NpcGenerator.UserTemplates",
+        ),
         templates: userTemplates.map((t) => ({
           ...t,
           selected: t.id === this._selectedTemplateId,
@@ -318,7 +341,9 @@ export class NpcQuickGenerator extends EventideSheetHelpers {
       return { ...NpcGenerator.ARCHETYPES[key] };
     }
 
-    const template = this._templates.find((t) => t.id === this._selectedTemplateId);
+    const template = this._templates.find(
+      (t) => t.id === this._selectedTemplateId,
+    );
     if (template?.weights) {
       return { ...template.weights };
     }

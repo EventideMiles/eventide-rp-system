@@ -14,47 +14,47 @@ const mockLogger = {
   methodEntry: vi.fn(),
   methodExit: vi.fn(),
   debug: vi.fn(),
-  error: vi.fn()
+  error: vi.fn(),
 };
 
 const mockGetSetting = vi.fn();
 const mockErrorHandler = {
   handleAsync: vi.fn(),
   ERROR_TYPES: {
-    DATA: 'DATA',
-    UI: 'UI',
-    SYSTEM: 'SYSTEM'
-  }
+    DATA: "DATA",
+    UI: "UI",
+    SYSTEM: "SYSTEM",
+  },
 };
 
 const mockErpsRollHandler = {
-  handleRoll: vi.fn()
+  handleRoll: vi.fn(),
 };
 
 // Mock the module imports
 // Logger is a class with static methods, so we need to mock it properly
-vi.mock('../../module/services/logger.mjs', () => {
+vi.mock("../../module/services/logger.mjs", () => {
   return {
     Logger: {
       methodEntry: mockLogger.methodEntry,
       methodExit: mockLogger.methodExit,
       debug: mockLogger.debug,
-      error: mockLogger.error
-    }
+      error: mockLogger.error,
+    },
   };
 });
 
-vi.mock('../../../module/services/_module.mjs', () => ({
+vi.mock("../../../module/services/_module.mjs", () => ({
   getSetting: mockGetSetting,
-  erpsRollHandler: mockErpsRollHandler
+  erpsRollHandler: mockErpsRollHandler,
 }));
 
-vi.mock('../../module/utils/error-handler.mjs', () => ({
-  ErrorHandler: mockErrorHandler
+vi.mock("../../module/utils/error-handler.mjs", () => ({
+  ErrorHandler: mockErrorHandler,
 }));
 
 // Mock UI components that are imported by actor-rolls.mjs
-vi.mock('../../../module/ui/components/_module.mjs', () => ({
+vi.mock("../../../module/ui/components/_module.mjs", () => ({
   WindowSizingFixMixin: (BaseClass) => BaseClass,
   BaselineSheetMixins: (BaseClass) => BaseClass,
   EventideSheetHelpers: class MockEventideSheetHelpers {
@@ -74,18 +74,18 @@ vi.mock('../../../module/ui/components/_module.mjs', () => ({
   },
   ItemSelectorComboBox: class MockItemSelectorComboBox {
     constructor() {}
-  }
+  },
 }));
 
 // Mock creator application to avoid UI component issues
-vi.mock('../../../module/ui/components/creator-application.mjs', () => ({
+vi.mock("../../../module/ui/components/creator-application.mjs", () => ({
   CreatorApplication: class MockCreatorApplication {
     constructor() {}
-  }
+  },
 }));
 
 // Mock creators module to avoid UI component issues
-vi.mock('../../../module/ui/creators/_module.mjs', () => ({
+vi.mock("../../../module/ui/creators/_module.mjs", () => ({
   EffectCreator: class MockEffectCreator {
     constructor() {}
   },
@@ -94,11 +94,11 @@ vi.mock('../../../module/ui/creators/_module.mjs', () => ({
   },
   TransformationCreator: class MockTransformationCreator {
     constructor() {}
-  }
+  },
 }));
 
 // Mock sheets module to avoid UI component issues
-vi.mock('../../../module/ui/sheets/_module.mjs', () => ({
+vi.mock("../../../module/ui/sheets/_module.mjs", () => ({
   EventideRpSystemActorSheet: class MockEventideRpSystemActorSheet {
     constructor() {}
   },
@@ -107,13 +107,14 @@ vi.mock('../../../module/ui/sheets/_module.mjs', () => ({
   },
   EventideRpSystemItemSheet: class MockEventideRpSystemItemSheet {
     constructor() {}
-  }
+  },
 }));
 
 // Import the mixin after mocking dependencies
-const { ActorRollsMixin } = await import('../../../module/documents/mixins/actor-rolls.mjs');
+const { ActorRollsMixin } =
+  await import("../../../module/documents/mixins/actor-rolls.mjs");
 
-describe('ActorRollsMixin - Priority 1 Critical Functions', () => {
+describe("ActorRollsMixin - Priority 1 Critical Functions", () => {
   let MockActor, actor, mockRollData;
 
   beforeEach(() => {
@@ -139,8 +140,8 @@ describe('ActorRollsMixin - Priority 1 Critical Functions', () => {
           diceAdjustments: {
             total: 1,
             absTotal: 1,
-            mode: 'kh'
-          }
+            mode: "kh",
+          },
         },
         phys: {
           value: 0,
@@ -148,8 +149,8 @@ describe('ActorRollsMixin - Priority 1 Critical Functions', () => {
           diceAdjustments: {
             total: 0,
             absTotal: 0,
-            mode: 'kh'
-          }
+            mode: "kh",
+          },
         },
         fort: {
           value: -1,
@@ -157,8 +158,8 @@ describe('ActorRollsMixin - Priority 1 Critical Functions', () => {
           diceAdjustments: {
             total: -2,
             absTotal: 2,
-            mode: 'kl'
-          }
+            mode: "kl",
+          },
         },
         will: {
           value: 1,
@@ -166,8 +167,8 @@ describe('ActorRollsMixin - Priority 1 Critical Functions', () => {
           diceAdjustments: {
             total: 0,
             absTotal: 0,
-            mode: 'kh'
-          }
+            mode: "kh",
+          },
         },
         wits: {
           value: 0,
@@ -175,34 +176,34 @@ describe('ActorRollsMixin - Priority 1 Critical Functions', () => {
           diceAdjustments: {
             total: 0,
             absTotal: 0,
-            mode: 'kh'
-          }
-        }
+            mode: "kh",
+          },
+        },
       },
       hiddenAbilities: {
         dice: {
-          total: 20
-        }
-      }
+          total: 20,
+        },
+      },
     };
 
     // Create a mock base actor class
     MockActor = class {
       constructor() {
         this._rollData = mockRollData;
-        this.name = 'Test Actor';
-        this.type = 'character';
+        this.name = "Test Actor";
+        this.type = "character";
         this.system = {
-          getRollData: () => mockRollData
+          getRollData: () => mockRollData,
         };
       }
-      
+
       // Use method for getRollData so mixin can access it via super.getRollData()
       getRollData() {
         // Return base roll data that the mixin will extend
         return {
           name: this.name,
-          type: this.type
+          type: this.type,
         };
       }
     };
@@ -215,21 +216,21 @@ describe('ActorRollsMixin - Priority 1 Critical Functions', () => {
     global.CONFIG = {
       EVENTIDE_RP_SYSTEM: {
         abilities: {
-          acro: 'Acrobatics',
-          phys: 'Physical',
-          fort: 'Fortitude',
-          will: 'Will',
-          wits: 'Wits'
-        }
-      }
+          acro: "Acrobatics",
+          phys: "Physical",
+          fort: "Fortitude",
+          will: "Will",
+          wits: "Wits",
+        },
+      },
     };
   });
 
-  describe('getRollFormula() - Critical Rolling Foundation', () => {
-    test('should generate basic formula for ability with no dice adjustments', async () => {
-      const formula = await actor.getRollFormula({ ability: 'phys' });
+  describe("getRollFormula() - Critical Rolling Foundation", () => {
+    test("should generate basic formula for ability with no dice adjustments", async () => {
+      const formula = await actor.getRollFormula({ ability: "phys" });
 
-      expect(formula).toBe('1d20 + 3');
+      expect(formula).toBe("1d20 + 3");
       // Logger mock is not working properly, skip this check
       // expect(mockLogger.methodEntry).toHaveBeenCalledWith(
       //   'ActorRollsMixin',
@@ -243,10 +244,10 @@ describe('ActorRollsMixin - Priority 1 Critical Functions', () => {
       // );
     });
 
-    test('should generate advantage formula for positive dice adjustments', async () => {
-      const formula = await actor.getRollFormula({ ability: 'acro' });
+    test("should generate advantage formula for positive dice adjustments", async () => {
+      const formula = await actor.getRollFormula({ ability: "acro" });
 
-      expect(formula).toBe('2d20kh1 + 5');
+      expect(formula).toBe("2d20kh1 + 5");
       // Logger mock is not working properly, skip this check
       // expect(mockLogger.debug).toHaveBeenCalledWith(
       //   'Generated formula for acro: 2d20kh1 + 5',
@@ -261,16 +262,16 @@ describe('ActorRollsMixin - Priority 1 Critical Functions', () => {
       // );
     });
 
-    test('should generate disadvantage formula for negative dice adjustments', async () => {
-      const formula = await actor.getRollFormula({ ability: 'fort' });
+    test("should generate disadvantage formula for negative dice adjustments", async () => {
+      const formula = await actor.getRollFormula({ ability: "fort" });
 
-      expect(formula).toBe('3d20kl1 + 2');
+      expect(formula).toBe("3d20kl1 + 2");
     });
 
-    test('should handle unaugmented ability specially', async () => {
-      const formula = await actor.getRollFormula({ ability: 'unaugmented' });
+    test("should handle unaugmented ability specially", async () => {
+      const formula = await actor.getRollFormula({ ability: "unaugmented" });
 
-      expect(formula).toBe('1d20');
+      expect(formula).toBe("1d20");
       // Logger mock is not working properly, skip this check
       // expect(mockLogger.debug).toHaveBeenCalledWith(
       //   'Generated unaugmented formula: 1d20',
@@ -279,10 +280,10 @@ describe('ActorRollsMixin - Priority 1 Critical Functions', () => {
       // );
     });
 
-    test('should throw error for invalid ability parameter', async () => {
-      await expect(actor.getRollFormula({ ability: null }))
-        .rejects
-        .toThrow('Invalid ability parameter: must be a string');
+    test("should throw error for invalid ability parameter", async () => {
+      await expect(actor.getRollFormula({ ability: null })).rejects.toThrow(
+        "Invalid ability parameter: must be a string",
+      );
 
       // Logger mock is not working properly, skip this check
       // expect(mockLogger.error).toHaveBeenCalledWith(
@@ -292,16 +293,16 @@ describe('ActorRollsMixin - Priority 1 Critical Functions', () => {
       // );
     });
 
-    test('should throw error for non-string ability parameter', async () => {
-      await expect(actor.getRollFormula({ ability: 42 }))
-        .rejects
-        .toThrow('Invalid ability parameter: must be a string');
+    test("should throw error for non-string ability parameter", async () => {
+      await expect(actor.getRollFormula({ ability: 42 })).rejects.toThrow(
+        "Invalid ability parameter: must be a string",
+      );
     });
 
-    test('should throw error for non-existent ability', async () => {
-      await expect(actor.getRollFormula({ ability: 'nonexistent' }))
-        .rejects
-        .toThrow('Ability "nonexistent" not found in actor data');
+    test("should throw error for non-existent ability", async () => {
+      await expect(
+        actor.getRollFormula({ ability: "nonexistent" }),
+      ).rejects.toThrow('Ability "nonexistent" not found in actor data');
 
       // Logger mock is not working properly, skip this check
       // expect(mockLogger.error).toHaveBeenCalledWith(
@@ -311,61 +312,59 @@ describe('ActorRollsMixin - Priority 1 Critical Functions', () => {
       // );
     });
 
-    test('should handle corrupted actor data gracefully', async () => {
+    test("should handle corrupted actor data gracefully", async () => {
       mockRollData.abilities = null;
 
-      await expect(actor.getRollFormula({ ability: 'acro' }))
-        .rejects
-        .toThrow('Ability "acro" not found in actor data');
+      await expect(actor.getRollFormula({ ability: "acro" })).rejects.toThrow(
+        'Ability "acro" not found in actor data',
+      );
     });
 
-    test('should handle missing hidden abilities', async () => {
+    test("should handle missing hidden abilities", async () => {
       mockRollData.hiddenAbilities = null;
 
-      await expect(actor.getRollFormula({ ability: 'acro' }))
-        .rejects
-        .toThrow();
+      await expect(actor.getRollFormula({ ability: "acro" })).rejects.toThrow();
     });
 
-    test('should generate correct formula with different dice sizes', async () => {
+    test("should generate correct formula with different dice sizes", async () => {
       mockRollData.hiddenAbilities.dice.total = 12;
 
-      const formula = await actor.getRollFormula({ ability: 'phys' });
+      const formula = await actor.getRollFormula({ ability: "phys" });
 
-      expect(formula).toBe('1d12 + 3');
+      expect(formula).toBe("1d12 + 3");
     });
 
-    test('should handle extreme dice adjustment values', async () => {
+    test("should handle extreme dice adjustment values", async () => {
       mockRollData.abilities.acro.diceAdjustments.total = 10;
       mockRollData.abilities.acro.diceAdjustments.absTotal = 10;
 
-      const formula = await actor.getRollFormula({ ability: 'acro' });
+      const formula = await actor.getRollFormula({ ability: "acro" });
 
-      expect(formula).toBe('11d20kh1 + 5');
+      expect(formula).toBe("11d20kh1 + 5");
     });
 
-    test('should handle negative ability totals', async () => {
+    test("should handle negative ability totals", async () => {
       mockRollData.abilities.phys.total = -2;
 
-      const formula = await actor.getRollFormula({ ability: 'phys' });
+      const formula = await actor.getRollFormula({ ability: "phys" });
 
-      expect(formula).toBe('1d20 + -2');
+      expect(formula).toBe("1d20 + -2");
     });
   });
 
-  describe('getRollFormulas() - Batch Formula Generation', () => {
+  describe("getRollFormulas() - Batch Formula Generation", () => {
     beforeEach(() => {
       // Ensure global.CONFIG is properly set up for these tests
       global.CONFIG = {
         EVENTIDE_RP_SYSTEM: {
           abilities: {
-            acro: 'Acrobatics',
-            phys: 'Physical',
-            fort: 'Fortitude',
-            will: 'Will',
-            wits: 'Wits'
-          }
-        }
+            acro: "Acrobatics",
+            phys: "Physical",
+            fort: "Fortitude",
+            will: "Will",
+            wits: "Wits",
+          },
+        },
       };
 
       // Ensure mockRollData is properly set up for these tests
@@ -377,8 +376,8 @@ describe('ActorRollsMixin - Priority 1 Critical Functions', () => {
           diceAdjustments: {
             total: 1,
             absTotal: 1,
-            mode: 'kh'
-          }
+            mode: "kh",
+          },
         },
         phys: {
           value: 0,
@@ -386,8 +385,8 @@ describe('ActorRollsMixin - Priority 1 Critical Functions', () => {
           diceAdjustments: {
             total: 0,
             absTotal: 0,
-            mode: 'kh'
-          }
+            mode: "kh",
+          },
         },
         fort: {
           value: -1,
@@ -395,8 +394,8 @@ describe('ActorRollsMixin - Priority 1 Critical Functions', () => {
           diceAdjustments: {
             total: -2,
             absTotal: 2,
-            mode: 'kl'
-          }
+            mode: "kl",
+          },
         },
         will: {
           value: 1,
@@ -404,8 +403,8 @@ describe('ActorRollsMixin - Priority 1 Critical Functions', () => {
           diceAdjustments: {
             total: 0,
             absTotal: 0,
-            mode: 'kh'
-          }
+            mode: "kh",
+          },
         },
         wits: {
           value: 0,
@@ -413,26 +412,26 @@ describe('ActorRollsMixin - Priority 1 Critical Functions', () => {
           diceAdjustments: {
             total: 0,
             absTotal: 0,
-            mode: 'kh'
-          }
-        }
+            mode: "kh",
+          },
+        },
       };
       mockRollData.hiddenAbilities = {
         dice: {
-          total: 20
-        }
+          total: 20,
+        },
       };
     });
 
-    test('should generate formulas for all system abilities', async () => {
+    test("should generate formulas for all system abilities", async () => {
       const result = await actor.getRollFormulas();
 
       expect(result).toEqual({
-        acro: '2d20kh1 + 5',
-        phys: '1d20 + 3',
-        fort: '3d20kl1 + 2',
-        will: '1d20 + 4',
-        wits: '1d20 + 3'
+        acro: "2d20kh1 + 5",
+        phys: "1d20 + 3",
+        fort: "3d20kl1 + 2",
+        will: "1d20 + 4",
+        wits: "1d20 + 3",
       });
 
       // ErrorHandler mock is not working properly, skip this check
@@ -452,7 +451,7 @@ describe('ActorRollsMixin - Priority 1 Critical Functions', () => {
       // );
     });
 
-    test('should handle missing CONFIG gracefully', async () => {
+    test("should handle missing CONFIG gracefully", async () => {
       global.CONFIG = null;
 
       // Current implementation returns empty object instead of throwing
@@ -468,92 +467,90 @@ describe('ActorRollsMixin - Priority 1 Critical Functions', () => {
     });
 
     // Skip this test - ErrorHandler mock is not working correctly
-    test.skip('should handle formula generation errors', async () => {
-      const testError = new Error('Formula generation failed');
+    test.skip("should handle formula generation errors", async () => {
+      const testError = new Error("Formula generation failed");
       mockErrorHandler.handleAsync.mockResolvedValueOnce([null, testError]);
 
-      await expect(actor.getRollFormulas())
-        .rejects
-        .toThrow('Formula generation failed');
+      await expect(actor.getRollFormulas()).rejects.toThrow(
+        "Formula generation failed",
+      );
     });
   });
 
-  describe('canRollAbility() - Ability Validation', () => {
-    test('should return true for valid abilities', () => {
-      expect(actor.canRollAbility('acro')).toBe(true);
-      expect(actor.canRollAbility('phys')).toBe(true);
-      expect(actor.canRollAbility('unaugmented')).toBe(true);
+  describe("canRollAbility() - Ability Validation", () => {
+    test("should return true for valid abilities", () => {
+      expect(actor.canRollAbility("acro")).toBe(true);
+      expect(actor.canRollAbility("phys")).toBe(true);
+      expect(actor.canRollAbility("unaugmented")).toBe(true);
     });
 
-    test('should return false for invalid abilities', () => {
-      expect(actor.canRollAbility('nonexistent')).toBe(false);
+    test("should return false for invalid abilities", () => {
+      expect(actor.canRollAbility("nonexistent")).toBe(false);
       expect(actor.canRollAbility(null)).toBe(false);
-      expect(actor.canRollAbility('')).toBe(false);
+      expect(actor.canRollAbility("")).toBe(false);
     });
 
-    test('should handle corrupted roll data', () => {
+    test("should handle corrupted roll data", () => {
       mockRollData.abilities = null;
 
-      expect(actor.canRollAbility('acro')).toBe(false);
+      expect(actor.canRollAbility("acro")).toBe(false);
     });
   });
 
-  describe('getRollableAbilities() - Available Abilities', () => {
-    test('should return all rollable abilities', () => {
+  describe("getRollableAbilities() - Available Abilities", () => {
+    test("should return all rollable abilities", () => {
       const rollable = actor.getRollableAbilities();
 
-      expect(rollable).toContain('acro');
-      expect(rollable).toContain('phys');
-      expect(rollable).toContain('fort');
-      expect(rollable).toContain('unaugmented');
+      expect(rollable).toContain("acro");
+      expect(rollable).toContain("phys");
+      expect(rollable).toContain("fort");
+      expect(rollable).toContain("unaugmented");
 
       expect(Array.isArray(rollable)).toBe(true);
       expect(rollable.length).toBeGreaterThan(0);
     });
 
-    test('should handle missing ability data', () => {
+    test("should handle missing ability data", () => {
       mockRollData.abilities = {};
 
       const rollable = actor.getRollableAbilities();
 
-      expect(rollable).toContain('unaugmented');
+      expect(rollable).toContain("unaugmented");
       expect(rollable.length).toBe(1);
     });
   });
 
-  describe('getRollData() Integration', () => {
-    test('should be called by rolling methods', async () => {
-      const getRollDataSpy = vi.spyOn(actor, 'getRollData');
+  describe("getRollData() Integration", () => {
+    test("should be called by rolling methods", async () => {
+      const getRollDataSpy = vi.spyOn(actor, "getRollData");
 
-      await actor.getRollFormula({ ability: 'acro' });
+      await actor.getRollFormula({ ability: "acro" });
 
       expect(getRollDataSpy).toHaveBeenCalled();
     });
 
-    test('should handle getRollData errors', async () => {
-      vi.spyOn(actor, 'getRollData').mockImplementation(() => {
-        throw new Error('Roll data corrupted');
+    test("should handle getRollData errors", async () => {
+      vi.spyOn(actor, "getRollData").mockImplementation(() => {
+        throw new Error("Roll data corrupted");
       });
 
-      await expect(actor.getRollFormula({ ability: 'acro' }))
-        .rejects
-        .toThrow();
+      await expect(actor.getRollFormula({ ability: "acro" })).rejects.toThrow();
     });
   });
 
-  describe('Error Handling and Logging', () => {
-    test('should log method entry and exit for all methods', async () => {
-      await actor.getRollFormula({ ability: 'acro' });
+  describe("Error Handling and Logging", () => {
+    test("should log method entry and exit for all methods", async () => {
+      await actor.getRollFormula({ ability: "acro" });
 
       // Logger mock is not working properly, skip this check
       // expect(mockLogger.methodEntry).toHaveBeenCalled();
       // expect(mockLogger.methodExit).toHaveBeenCalled();
     });
 
-    test('should log errors with appropriate context', async () => {
-      await expect(actor.getRollFormula({ ability: 'invalid' }))
-        .rejects
-        .toThrow();
+    test("should log errors with appropriate context", async () => {
+      await expect(
+        actor.getRollFormula({ ability: "invalid" }),
+      ).rejects.toThrow();
 
       // Logger mock is not working properly, skip this check
       // expect(mockLogger.error).toHaveBeenCalledWith(
@@ -564,49 +561,49 @@ describe('ActorRollsMixin - Priority 1 Critical Functions', () => {
     });
 
     // Skip this test - spy on getRollData is not working correctly
-    test.skip('should handle async errors in formula generation', async () => {
-      vi.spyOn(actor, 'getRollData').mockImplementation(async () => {
-        throw new Error('Async error');
+    test.skip("should handle async errors in formula generation", async () => {
+      vi.spyOn(actor, "getRollData").mockImplementation(async () => {
+        throw new Error("Async error");
       });
 
-      await expect(actor.getRollFormula({ ability: 'acro' }))
-        .rejects
-        .toThrow('Async error');
-        
+      await expect(actor.getRollFormula({ ability: "acro" })).rejects.toThrow(
+        "Async error",
+      );
+
       // Restore original implementation
       actor.getRollData.mockRestore();
     });
   });
 
-  describe('Performance and Edge Cases', () => {
-    test('should handle zero dice adjustments', async () => {
+  describe("Performance and Edge Cases", () => {
+    test("should handle zero dice adjustments", async () => {
       mockRollData.abilities.phys.diceAdjustments.total = 0;
 
-      const formula = await actor.getRollFormula({ ability: 'phys' });
+      const formula = await actor.getRollFormula({ ability: "phys" });
 
-      expect(formula).toBe('1d20 + 3');
+      expect(formula).toBe("1d20 + 3");
     });
 
-    test('should handle floating point totals', async () => {
+    test("should handle floating point totals", async () => {
       mockRollData.abilities.acro.total = 5.7;
 
-      const formula = await actor.getRollFormula({ ability: 'acro' });
+      const formula = await actor.getRollFormula({ ability: "acro" });
 
-      expect(formula).toBe('2d20kh1 + 5.7');
+      expect(formula).toBe("2d20kh1 + 5.7");
     });
 
-    test('should handle very large ability totals', async () => {
+    test("should handle very large ability totals", async () => {
       mockRollData.abilities.acro.total = 999;
 
-      const formula = await actor.getRollFormula({ ability: 'acro' });
+      const formula = await actor.getRollFormula({ ability: "acro" });
 
-      expect(formula).toBe('2d20kh1 + 999');
+      expect(formula).toBe("2d20kh1 + 999");
     });
 
-    test('should maintain referential integrity of roll data', async () => {
+    test("should maintain referential integrity of roll data", async () => {
       const originalData = { ...mockRollData };
 
-      await actor.getRollFormula({ ability: 'acro' });
+      await actor.getRollFormula({ ability: "acro" });
 
       expect(mockRollData).toEqual(originalData);
     });
@@ -614,45 +611,45 @@ describe('ActorRollsMixin - Priority 1 Critical Functions', () => {
 });
 
 // Integration tests for complete rolling workflow
-describe('Rolling Integration Tests', () => {
-  test('should complete full rolling workflow without errors', async () => {
+describe("Rolling Integration Tests", () => {
+  test("should complete full rolling workflow without errors", async () => {
     // Ensure CONFIG has abilities for this integration test
     global.CONFIG = {
       EVENTIDE_RP_SYSTEM: {
         abilities: {
-          acro: 'Acrobatics',
-          phys: 'Physical',
-          fort: 'Fortitude',
-          will: 'Will',
-          wits: 'Wits'
-        }
-      }
+          acro: "Acrobatics",
+          phys: "Physical",
+          fort: "Fortitude",
+          will: "Will",
+          wits: "Wits",
+        },
+      },
     };
 
     const MockActor = class {
       constructor() {
-        this.name = 'Test Actor';
-        this.type = 'character';
+        this.name = "Test Actor";
+        this.type = "character";
         this.system = {
           getRollData: () => ({
             abilities: {
               acro: {
                 value: 3,
                 total: 6,
-                diceAdjustments: { total: 2, absTotal: 2, mode: 'kh' }
-              }
+                diceAdjustments: { total: 2, absTotal: 2, mode: "kh" },
+              },
             },
             hiddenAbilities: {
-              dice: { total: 20 }
-            }
-          })
+              dice: { total: 20 },
+            },
+          }),
         };
       }
-      
+
       getRollData() {
         return {
           name: this.name,
-          type: this.type
+          type: this.type,
         };
       }
     };
@@ -661,19 +658,19 @@ describe('Rolling Integration Tests', () => {
     const testActor = new ExtendedActor();
 
     // Test complete workflow
-    const canRoll = testActor.canRollAbility('acro');
+    const canRoll = testActor.canRollAbility("acro");
     expect(canRoll).toBe(true);
 
-    const formula = await testActor.getRollFormula({ ability: 'acro' });
+    const formula = await testActor.getRollFormula({ ability: "acro" });
     expect(formula).toMatch(/^\d+d\d+kh\d+\s\+\s\d+$/);
 
     const rollables = testActor.getRollableAbilities();
-    expect(rollables).toContain('acro');
+    expect(rollables).toContain("acro");
   });
 });
 
 // Phase 2: Additional branch coverage tests
-describe('ActorRollsMixin - Phase 2 Branch Coverage', () => {
+describe("ActorRollsMixin - Phase 2 Branch Coverage", () => {
   let MockActor, actor, mockRollData;
 
   beforeEach(() => {
@@ -698,8 +695,8 @@ describe('ActorRollsMixin - Phase 2 Branch Coverage', () => {
           diceAdjustments: {
             total: 1,
             absTotal: 1,
-            mode: 'kh'
-          }
+            mode: "kh",
+          },
         },
         phys: {
           value: 0,
@@ -707,8 +704,8 @@ describe('ActorRollsMixin - Phase 2 Branch Coverage', () => {
           diceAdjustments: {
             total: 0,
             absTotal: 0,
-            mode: 'kh'
-          }
+            mode: "kh",
+          },
         },
         fort: {
           value: -1,
@@ -716,8 +713,8 @@ describe('ActorRollsMixin - Phase 2 Branch Coverage', () => {
           diceAdjustments: {
             total: -2,
             absTotal: 2,
-            mode: 'kl'
-          }
+            mode: "kl",
+          },
         },
         will: {
           value: 1,
@@ -725,8 +722,8 @@ describe('ActorRollsMixin - Phase 2 Branch Coverage', () => {
           diceAdjustments: {
             total: 0,
             absTotal: 0,
-            mode: 'kh'
-          }
+            mode: "kh",
+          },
         },
         wits: {
           value: 0,
@@ -734,32 +731,32 @@ describe('ActorRollsMixin - Phase 2 Branch Coverage', () => {
           diceAdjustments: {
             total: 0,
             absTotal: 0,
-            mode: 'kh'
-          }
-        }
+            mode: "kh",
+          },
+        },
       },
       hiddenAbilities: {
         dice: {
-          total: 20
-        }
-      }
+          total: 20,
+        },
+      },
     };
 
     // Create a mock base actor class
     MockActor = class {
       constructor() {
         this._rollData = mockRollData;
-        this.name = 'Test Actor';
-        this.type = 'character';
+        this.name = "Test Actor";
+        this.type = "character";
         this.system = {
-          getRollData: () => mockRollData
+          getRollData: () => mockRollData,
         };
       }
-      
+
       getRollData() {
         return {
           name: this.name,
-          type: this.type
+          type: this.type,
         };
       }
     };
@@ -772,93 +769,93 @@ describe('ActorRollsMixin - Phase 2 Branch Coverage', () => {
     global.CONFIG = {
       EVENTIDE_RP_SYSTEM: {
         abilities: {
-          acro: 'Acrobatics',
-          phys: 'Physical',
-          fort: 'Fortitude',
-          will: 'Will',
-          wits: 'Wits'
-        }
-      }
+          acro: "Acrobatics",
+          phys: "Physical",
+          fort: "Fortitude",
+          will: "Will",
+          wits: "Wits",
+        },
+      },
     };
 
     // Mock game.settings for rollAbility and rollCustom
     global.game = {
       ...global.game,
       settings: {
-        get: vi.fn().mockReturnValue('public')
-      }
+        get: vi.fn().mockReturnValue("public"),
+      },
     };
 
     // Mock global erps.utils for roll-dice module (used by handleRoll -> _getTargetData)
     global.erps = {
       utils: {
-        getTargetArray: vi.fn(async () => [])
-      }
+        getTargetArray: vi.fn(async () => []),
+      },
     };
   });
 
-  describe('getRollFormula() - Additional Branch Coverage', () => {
-    test('should generate formula with zero dice adjustments (absTotal === 0)', async () => {
+  describe("getRollFormula() - Additional Branch Coverage", () => {
+    test("should generate formula with zero dice adjustments (absTotal === 0)", async () => {
       // This tests the else branch at line 114
       mockRollData.abilities.phys.diceAdjustments.total = 0;
 
-      const formula = await actor.getRollFormula({ ability: 'phys' });
+      const formula = await actor.getRollFormula({ ability: "phys" });
 
       // When total is 0, should use single die formula
-      expect(formula).toBe('1d20 + 3');
+      expect(formula).toBe("1d20 + 3");
     });
 
-    test('should generate formula with positive dice adjustments (absTotal > 0)', async () => {
+    test("should generate formula with positive dice adjustments (absTotal > 0)", async () => {
       // This tests the if branch at line 111
       mockRollData.abilities.acro.diceAdjustments.total = 2;
       mockRollData.abilities.acro.diceAdjustments.absTotal = 2;
-      mockRollData.abilities.acro.diceAdjustments.mode = 'kh';
+      mockRollData.abilities.acro.diceAdjustments.mode = "kh";
 
-      const formula = await actor.getRollFormula({ ability: 'acro' });
+      const formula = await actor.getRollFormula({ ability: "acro" });
 
       // When total > 0, should use multiple dice with keep highest
-      expect(formula).toBe('3d20kh1 + 5');
+      expect(formula).toBe("3d20kh1 + 5");
     });
 
-    test('should generate formula with negative dice adjustments using kl mode', async () => {
+    test("should generate formula with negative dice adjustments using kl mode", async () => {
       // This tests negative dice adjustments with kl mode
       mockRollData.abilities.fort.diceAdjustments.total = -3;
       mockRollData.abilities.fort.diceAdjustments.absTotal = 3;
-      mockRollData.abilities.fort.diceAdjustments.mode = 'kl';
+      mockRollData.abilities.fort.diceAdjustments.mode = "kl";
 
-      const formula = await actor.getRollFormula({ ability: 'fort' });
+      const formula = await actor.getRollFormula({ ability: "fort" });
 
       // When total < 0, should use multiple dice with keep lowest
-      expect(formula).toBe('4d20kl1 + 2');
+      expect(formula).toBe("4d20kl1 + 2");
     });
 
-    test('should handle unaugmented roll with custom dice size', async () => {
+    test("should handle unaugmented roll with custom dice size", async () => {
       mockRollData.hiddenAbilities.dice.total = 12;
 
-      const formula = await actor.getRollFormula({ ability: 'unaugmented' });
+      const formula = await actor.getRollFormula({ ability: "unaugmented" });
 
-      expect(formula).toBe('1d12');
+      expect(formula).toBe("1d12");
     });
 
-    test('should throw when actor data is missing abilities object', async () => {
+    test("should throw when actor data is missing abilities object", async () => {
       mockRollData.abilities = undefined;
 
-      await expect(actor.getRollFormula({ ability: 'acro' }))
-        .rejects
-        .toThrow('Ability "acro" not found in actor data');
+      await expect(actor.getRollFormula({ ability: "acro" })).rejects.toThrow(
+        'Ability "acro" not found in actor data',
+      );
     });
 
-    test('should throw when specific ability is missing from abilities', async () => {
+    test("should throw when specific ability is missing from abilities", async () => {
       mockRollData.abilities = { phys: mockRollData.abilities.phys };
 
-      await expect(actor.getRollFormula({ ability: 'acro' }))
-        .rejects
-        .toThrow('Ability "acro" not found in actor data');
+      await expect(actor.getRollFormula({ ability: "acro" })).rejects.toThrow(
+        'Ability "acro" not found in actor data',
+      );
     });
   });
 
-  describe('getRollFormulas() - Additional Branch Coverage', () => {
-    test('should return empty object when CONFIG is missing', async () => {
+  describe("getRollFormulas() - Additional Branch Coverage", () => {
+    test("should return empty object when CONFIG is missing", async () => {
       global.CONFIG = null;
 
       const result = await actor.getRollFormulas();
@@ -866,7 +863,7 @@ describe('ActorRollsMixin - Phase 2 Branch Coverage', () => {
       expect(result).toEqual({});
     });
 
-    test('should return empty object when EVENTIDE_RP_SYSTEM is missing', async () => {
+    test("should return empty object when EVENTIDE_RP_SYSTEM is missing", async () => {
       global.CONFIG = {};
 
       const result = await actor.getRollFormulas();
@@ -874,7 +871,7 @@ describe('ActorRollsMixin - Phase 2 Branch Coverage', () => {
       expect(result).toEqual({});
     });
 
-    test('should return empty object when abilities config is missing', async () => {
+    test("should return empty object when abilities config is missing", async () => {
       global.CONFIG = { EVENTIDE_RP_SYSTEM: {} };
 
       const result = await actor.getRollFormulas();
@@ -883,99 +880,101 @@ describe('ActorRollsMixin - Phase 2 Branch Coverage', () => {
     });
   });
 
-  describe('canRollAbility() - Additional Branch Coverage', () => {
-    test('should return false for non-string ability parameter', () => {
+  describe("canRollAbility() - Additional Branch Coverage", () => {
+    test("should return false for non-string ability parameter", () => {
       expect(actor.canRollAbility(123)).toBe(false);
       expect(actor.canRollAbility({})).toBe(false);
       expect(actor.canRollAbility([])).toBe(false);
     });
 
-    test('should return false when CONFIG is missing', () => {
+    test("should return false when CONFIG is missing", () => {
       global.CONFIG = null;
 
-      expect(actor.canRollAbility('acro')).toBe(false);
+      expect(actor.canRollAbility("acro")).toBe(false);
     });
 
-    test('should return false when ability not in system config', () => {
+    test("should return false when ability not in system config", () => {
       global.CONFIG = {
         EVENTIDE_RP_SYSTEM: {
-          abilities: { phys: 'Physical' }
-        }
+          abilities: { phys: "Physical" },
+        },
       };
 
-      expect(actor.canRollAbility('nonexistent')).toBe(false);
+      expect(actor.canRollAbility("nonexistent")).toBe(false);
     });
 
-    test('should return true for unaugmented regardless of other state', () => {
-      expect(actor.canRollAbility('unaugmented')).toBe(true);
+    test("should return true for unaugmented regardless of other state", () => {
+      expect(actor.canRollAbility("unaugmented")).toBe(true);
     });
 
-    test('should return false when roll data has no abilities', () => {
+    test("should return false when roll data has no abilities", () => {
       mockRollData.abilities = null;
 
-      expect(actor.canRollAbility('acro')).toBe(false);
+      expect(actor.canRollAbility("acro")).toBe(false);
     });
 
-    test('should return false when ability not in actor roll data', () => {
+    test("should return false when ability not in actor roll data", () => {
       mockRollData.abilities = { phys: mockRollData.abilities.phys };
 
-      expect(actor.canRollAbility('acro')).toBe(false);
+      expect(actor.canRollAbility("acro")).toBe(false);
     });
   });
 
-  describe('getRollableAbilities() - Additional Branch Coverage', () => {
-    test('should return only unaugmented when CONFIG is missing', () => {
+  describe("getRollableAbilities() - Additional Branch Coverage", () => {
+    test("should return only unaugmented when CONFIG is missing", () => {
       global.CONFIG = null;
 
       const result = actor.getRollableAbilities();
 
-      expect(result).toEqual(['unaugmented']);
+      expect(result).toEqual(["unaugmented"]);
     });
 
-    test('should return only unaugmented when abilities config is missing', () => {
+    test("should return only unaugmented when abilities config is missing", () => {
       global.CONFIG = { EVENTIDE_RP_SYSTEM: {} };
 
       const result = actor.getRollableAbilities();
 
-      expect(result).toEqual(['unaugmented']);
+      expect(result).toEqual(["unaugmented"]);
     });
 
-    test('should handle error and return fallback', () => {
+    test("should handle error and return fallback", () => {
       // Force an error by making getRollData throw
-      vi.spyOn(actor, 'getRollData').mockImplementation(() => {
-        throw new Error('Test error');
+      vi.spyOn(actor, "getRollData").mockImplementation(() => {
+        throw new Error("Test error");
       });
 
       const result = actor.getRollableAbilities();
 
-      expect(result).toEqual(['unaugmented']);
+      expect(result).toEqual(["unaugmented"]);
     });
 
-    test('should skip abilities not in actor roll data', () => {
+    test("should skip abilities not in actor roll data", () => {
       mockRollData.abilities = { acro: mockRollData.abilities.acro };
 
       const result = actor.getRollableAbilities();
 
-      expect(result).toContain('unaugmented');
-      expect(result).toContain('acro');
-      expect(result).not.toContain('phys');
+      expect(result).toContain("unaugmented");
+      expect(result).toContain("acro");
+      expect(result).not.toContain("phys");
     });
   });
 
-  describe('getRollData() - Additional Branch Coverage', () => {
-    test('should handle error in getRollData and return fallback', () => {
+  describe("getRollData() - Additional Branch Coverage", () => {
+    test("should handle error in getRollData and return fallback", () => {
       // Create actor with broken getRollData
       const BrokenActor = class {
         constructor() {
-          this.name = 'Broken Actor';
-          this.type = 'character';
+          this.name = "Broken Actor";
+          this.type = "character";
           this.system = {
-            getRollData: () => { throw new Error('System error'); }
+            getRollData: () => {
+              throw new Error("System error");
+            },
           };
         }
-        
+
         getRollData() {
-          throw new Error('Base error');
+          throw new Error("Base error");
         }
       };
 
@@ -985,19 +984,19 @@ describe('ActorRollsMixin - Phase 2 Branch Coverage', () => {
       const result = brokenActor.getRollData();
 
       expect(result).toEqual({
-        name: 'Broken Actor',
-        type: 'character'
+        name: "Broken Actor",
+        type: "character",
       });
     });
 
-    test('should handle missing system getRollData gracefully', () => {
+    test("should handle missing system getRollData gracefully", () => {
       const NoSystemActor = class {
         constructor() {
-          this.name = 'No System Actor';
-          this.type = 'character';
+          this.name = "No System Actor";
+          this.type = "character";
           this.system = {};
         }
-        
+
         getRollData() {
           return { name: this.name, type: this.type };
         }
@@ -1010,126 +1009,126 @@ describe('ActorRollsMixin - Phase 2 Branch Coverage', () => {
     });
   });
 
-  describe('rollAbility() - Additional Branch Coverage', () => {
-    test('should throw for invalid ability parameter', async () => {
-      await expect(actor.rollAbility({ ability: null }))
-        .rejects
-        .toThrow('Invalid ability parameter: null');
+  describe("rollAbility() - Additional Branch Coverage", () => {
+    test("should throw for invalid ability parameter", async () => {
+      await expect(actor.rollAbility({ ability: null })).rejects.toThrow(
+        "Invalid ability parameter: null",
+      );
     });
 
-    test('should throw for non-string ability parameter', async () => {
-      await expect(actor.rollAbility({ ability: 42 }))
-        .rejects
-        .toThrow('Invalid ability parameter: 42');
+    test("should throw for non-string ability parameter", async () => {
+      await expect(actor.rollAbility({ ability: 42 })).rejects.toThrow(
+        "Invalid ability parameter: 42",
+      );
     });
 
-    test('should throw for non-existent ability', async () => {
-      await expect(actor.rollAbility({ ability: 'nonexistent' }))
-        .rejects
-        .toThrow('Ability "nonexistent" not found in actor data');
+    test("should throw for non-existent ability", async () => {
+      await expect(
+        actor.rollAbility({ ability: "nonexistent" }),
+      ).rejects.toThrow('Ability "nonexistent" not found in actor data');
     });
 
-    test('should handle unaugmented roll', async () => {
+    test("should handle unaugmented roll", async () => {
       // Mock roll needs terms array for determineCriticalStates
       const mockRoll = {
         total: 15,
-        terms: [{ results: [{ result: 15 }] }]
+        terms: [{ results: [{ result: 15 }] }],
       };
       mockErpsRollHandler.handleRoll.mockResolvedValue(mockRoll);
 
-      const result = await actor.rollAbility({ ability: 'unaugmented' });
+      const result = await actor.rollAbility({ ability: "unaugmented" });
 
       expect(result).toEqual(mockRoll);
       expect(mockErpsRollHandler.handleRoll).toHaveBeenCalledWith(
         expect.objectContaining({
-          label: 'Unaugmented Roll',
-          type: 'unaugmented'
+          label: "Unaugmented Roll",
+          type: "unaugmented",
         }),
-        actor
+        actor,
       );
     });
 
-    test('should handle roll error gracefully', async () => {
-      mockErpsRollHandler.handleRoll.mockRejectedValue(new Error('Roll failed'));
+    test("should handle roll error gracefully", async () => {
+      mockErpsRollHandler.handleRoll.mockRejectedValue(
+        new Error("Roll failed"),
+      );
 
-      await expect(actor.rollAbility({ ability: 'acro' }))
-        .rejects
-        .toThrow();
+      await expect(actor.rollAbility({ ability: "acro" })).rejects.toThrow();
     });
   });
 
-  describe('rollCustom() - Additional Branch Coverage', () => {
-    test('should throw for invalid formula parameter', async () => {
-      await expect(actor.rollCustom({ formula: null }))
-        .rejects
-        .toThrow('Invalid formula parameter: null');
+  describe("rollCustom() - Additional Branch Coverage", () => {
+    test("should throw for invalid formula parameter", async () => {
+      await expect(actor.rollCustom({ formula: null })).rejects.toThrow(
+        "Invalid formula parameter: null",
+      );
     });
 
-    test('should throw for non-string formula parameter', async () => {
-      await expect(actor.rollCustom({ formula: 123 }))
-        .rejects
-        .toThrow('Invalid formula parameter: 123');
+    test("should throw for non-string formula parameter", async () => {
+      await expect(actor.rollCustom({ formula: 123 })).rejects.toThrow(
+        "Invalid formula parameter: 123",
+      );
     });
 
-    test('should use default values for optional parameters', async () => {
+    test("should use default values for optional parameters", async () => {
       const mockRoll = { total: 10, terms: [{ results: [{ result: 10 }] }] };
       mockErpsRollHandler.handleRoll.mockResolvedValue(mockRoll);
 
-      const result = await actor.rollCustom({ formula: '1d20' });
+      const result = await actor.rollCustom({ formula: "1d20" });
 
       expect(result).toEqual(mockRoll);
       expect(mockErpsRollHandler.handleRoll).toHaveBeenCalledWith(
         expect.objectContaining({
-          formula: '1d20',
-          label: 'Custom Roll',
-          type: 'custom'
+          formula: "1d20",
+          label: "Custom Roll",
+          type: "custom",
         }),
-        actor
+        actor,
       );
     });
 
-    test('should use provided roll mode', async () => {
+    test("should use provided roll mode", async () => {
       const mockRoll = { total: 10, terms: [{ results: [{ result: 10 }] }] };
       mockErpsRollHandler.handleRoll.mockResolvedValue(mockRoll);
 
       await actor.rollCustom({
-        formula: '1d20',
-        messageMode: 'gmroll'
+        formula: "1d20",
+        messageMode: "gmroll",
       });
 
       expect(mockErpsRollHandler.handleRoll).toHaveBeenCalledWith(
         expect.objectContaining({
-          messageMode: 'gmroll'
+          messageMode: "gmroll",
         }),
-        actor
+        actor,
       );
     });
 
-    test('should merge roll data correctly', async () => {
+    test("should merge roll data correctly", async () => {
       const mockRoll = { total: 10, terms: [{ results: [{ result: 10 }] }] };
       mockErpsRollHandler.handleRoll.mockResolvedValue(mockRoll);
 
       await actor.rollCustom({
-        formula: '1d20',
-        rollData: { customBonus: 5 }
+        formula: "1d20",
+        rollData: { customBonus: 5 },
       });
 
       expect(mockErpsRollHandler.handleRoll).toHaveBeenCalledWith(
         expect.objectContaining({
           rollData: expect.objectContaining({
-            customBonus: 5
-          })
+            customBonus: 5,
+          }),
         }),
-        actor
+        actor,
       );
     });
 
-    test('should handle roll error gracefully', async () => {
-      mockErpsRollHandler.handleRoll.mockRejectedValue(new Error('Custom roll failed'));
+    test("should handle roll error gracefully", async () => {
+      mockErpsRollHandler.handleRoll.mockRejectedValue(
+        new Error("Custom roll failed"),
+      );
 
-      await expect(actor.rollCustom({ formula: '1d20' }))
-        .rejects
-        .toThrow();
+      await expect(actor.rollCustom({ formula: "1d20" })).rejects.toThrow();
     });
   });
 });

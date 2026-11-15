@@ -16,35 +16,35 @@ const mockLogger = {
   debug: vi.fn(),
   error: vi.fn(),
   warn: vi.fn(),
-  info: vi.fn()
+  info: vi.fn(),
 };
 
 const mockGetSetting = vi.fn();
 
 // Mock the module imports
-vi.mock('../../../module/services/logger.mjs', () => ({
-  Logger: mockLogger
+vi.mock("../../../module/services/logger.mjs", () => ({
+  Logger: mockLogger,
 }));
 
-vi.mock('../../../module/services/_module.mjs', () => ({
-  getSetting: mockGetSetting
+vi.mock("../../../module/services/_module.mjs", () => ({
+  getSetting: mockGetSetting,
 }));
 
 // Mock the mixins module - each mixin returns the class unchanged
-vi.mock('../../../module/documents/mixins/_module.mjs', () => ({
+vi.mock("../../../module/documents/mixins/_module.mjs", () => ({
   ItemRollsMixin: (BaseClass) => BaseClass,
   ItemPopupsMixin: (BaseClass) => BaseClass,
   ItemUtilitiesMixin: (BaseClass) => BaseClass,
   ItemActionCardMixin: (BaseClass) => BaseClass,
-  ItemActionCardExecutionMixin: (BaseClass) => BaseClass
+  ItemActionCardExecutionMixin: (BaseClass) => BaseClass,
 }));
 
 // Mock the global Item class from Foundry VTT
 global.Item = class MockItem {
   constructor(data = {}, _options = {}) {
-    this.id = data._id || 'test-item-id';
-    this.name = data.name || 'Test Item';
-    this.type = data.type || 'gear';
+    this.id = data._id || "test-item-id";
+    this.name = data.name || "Test Item";
+    this.type = data.type || "gear";
     this.system = data.system || {};
     this.actor = data.actor || null;
     this.effects = data.effects || { size: 0, contents: [] };
@@ -61,9 +61,10 @@ global.Item = class MockItem {
 };
 
 // Import the item class after mocking dependencies
-const { EventideRpSystemItem } = await import('../../../module/documents/item.mjs');
+const { EventideRpSystemItem } =
+  await import("../../../module/documents/item.mjs");
 
-describe('EventideRpSystemItem', () => {
+describe("EventideRpSystemItem", () => {
   let item;
 
   beforeEach(() => {
@@ -71,50 +72,50 @@ describe('EventideRpSystemItem', () => {
     mockGetSetting.mockReturnValue(false); // testingMode off by default
   });
 
-  describe('prepareData()', () => {
-    test('should exist as a method', () => {
+  describe("prepareData()", () => {
+    test("should exist as a method", () => {
       item = new EventideRpSystemItem();
-      
-      expect(typeof item.prepareData).toBe('function');
+
+      expect(typeof item.prepareData).toBe("function");
     });
 
-    test('should call super.prepareData()', () => {
+    test("should call super.prepareData()", () => {
       item = new EventideRpSystemItem();
-      item.name = 'Test Item';
-      item.type = 'gear';
+      item.name = "Test Item";
+      item.type = "gear";
       item.system = { quantity: 1 };
 
       // Should not throw when called
       expect(() => item.prepareData()).not.toThrow();
     });
 
-    test('should log debug message when testingMode is enabled', () => {
+    test("should log debug message when testingMode is enabled", () => {
       mockGetSetting.mockReturnValue(true); // testingMode on
-      
+
       item = new EventideRpSystemItem();
-      item.name = 'Test Item';
-      item.type = 'gear';
+      item.name = "Test Item";
+      item.type = "gear";
       item.system = { quantity: 1 };
 
       item.prepareData();
 
       expect(mockLogger.debug).toHaveBeenCalledWith(
-        'Prepared data for item',
+        "Prepared data for item",
         expect.objectContaining({
-          itemName: 'Test Item',
-          itemType: 'gear',
-          hasSystem: true
+          itemName: "Test Item",
+          itemType: "gear",
+          hasSystem: true,
         }),
-        'ITEM_DATA'
+        "ITEM_DATA",
       );
     });
 
-    test('should not log when testingMode is disabled', () => {
+    test("should not log when testingMode is disabled", () => {
       mockGetSetting.mockReturnValue(false);
-      
+
       item = new EventideRpSystemItem();
-      item.name = 'Test Item';
-      item.type = 'gear';
+      item.name = "Test Item";
+      item.type = "gear";
       item.system = { quantity: 1 };
 
       item.prepareData();
@@ -123,17 +124,17 @@ describe('EventideRpSystemItem', () => {
     });
   });
 
-  describe('getRollData()', () => {
-    test('should exist as a method', () => {
+  describe("getRollData()", () => {
+    test("should exist as a method", () => {
       item = new EventideRpSystemItem();
-      
-      expect(typeof item.getRollData).toBe('function');
+
+      expect(typeof item.getRollData).toBe("function");
     });
 
-    test('should return system data when no parent actor', () => {
+    test("should return system data when no parent actor", () => {
       item = new EventideRpSystemItem();
-      item.name = 'Test Item';
-      item.type = 'gear';
+      item.name = "Test Item";
+      item.type = "gear";
       item.system = { quantity: 1, weight: 5 };
       item.actor = null;
 
@@ -142,38 +143,38 @@ describe('EventideRpSystemItem', () => {
       expect(rollData).toEqual({ quantity: 1, weight: 5 });
     });
 
-    test('should include actor roll data when parent actor exists', () => {
+    test("should include actor roll data when parent actor exists", () => {
       item = new EventideRpSystemItem();
-      item.name = 'Test Item';
-      item.type = 'gear';
+      item.name = "Test Item";
+      item.type = "gear";
       item.system = { quantity: 1 };
       item.actor = {
-        getRollData: vi.fn().mockReturnValue({ 
+        getRollData: vi.fn().mockReturnValue({
           abilities: { acro: { total: 5 } },
-          level: 3
-        })
+          level: 3,
+        }),
       };
 
       const rollData = item.getRollData();
 
       expect(rollData.quantity).toBe(1);
-      expect(rollData.actor).toEqual({ 
+      expect(rollData.actor).toEqual({
         abilities: { acro: { total: 5 } },
-        level: 3
+        level: 3,
       });
     });
 
-    test('should return fallback data on error', () => {
+    test("should return fallback data on error", () => {
       item = new EventideRpSystemItem();
-      item.name = 'Test Item';
-      item.type = 'gear';
+      item.name = "Test Item";
+      item.type = "gear";
       item.system = { quantity: 1 };
-      
+
       // Create a circular reference to cause an error in spread
       item.actor = {
         getRollData: vi.fn().mockImplementation(() => {
-          throw new Error('Actor error');
-        })
+          throw new Error("Actor error");
+        }),
       };
 
       const rollData = item.getRollData();
@@ -182,67 +183,67 @@ describe('EventideRpSystemItem', () => {
       expect(mockLogger.error).toHaveBeenCalled();
     });
 
-    test('should log debug message when testingMode is enabled and no actor', () => {
+    test("should log debug message when testingMode is enabled and no actor", () => {
       mockGetSetting.mockReturnValue(true);
-      
+
       item = new EventideRpSystemItem();
-      item.name = 'Test Item';
-      item.type = 'gear';
+      item.name = "Test Item";
+      item.type = "gear";
       item.system = { quantity: 1 };
       item.actor = null;
 
       item.getRollData();
 
       expect(mockLogger.debug).toHaveBeenCalledWith(
-        'No parent actor found for item roll data',
-        { itemName: 'Test Item' },
-        'ITEM_DATA'
+        "No parent actor found for item roll data",
+        { itemName: "Test Item" },
+        "ITEM_DATA",
       );
     });
   });
 
-  describe('getItemSummary()', () => {
-    test('should exist as a method', () => {
+  describe("getItemSummary()", () => {
+    test("should exist as a method", () => {
       item = new EventideRpSystemItem();
-      
-      expect(typeof item.getItemSummary).toBe('function');
+
+      expect(typeof item.getItemSummary).toBe("function");
     });
 
-    test('should call getSummary and return its result', () => {
+    test("should call getSummary and return its result", () => {
       item = new EventideRpSystemItem();
-      item.name = 'Test Item';
-      item.type = 'gear';
-      
+      item.name = "Test Item";
+      item.type = "gear";
+
       // Mock the getSummary method from utilities mixin
       item.getSummary = vi.fn().mockReturnValue({
-        name: 'Test Item',
-        type: 'gear',
-        quantity: 1
+        name: "Test Item",
+        type: "gear",
+        quantity: 1,
       });
 
       const result = item.getItemSummary();
 
       expect(item.getSummary).toHaveBeenCalled();
       expect(result).toEqual({
-        name: 'Test Item',
-        type: 'gear',
-        quantity: 1
+        name: "Test Item",
+        type: "gear",
+        quantity: 1,
       });
     });
   });
 
-  describe('hasCapability()', () => {
-    test('should exist as a method', () => {
+  describe("hasCapability()", () => {
+    test("should exist as a method", () => {
       item = new EventideRpSystemItem();
-      
-      expect(typeof item.hasCapability).toBe('function');
+
+      expect(typeof item.hasCapability).toBe("function");
     });
 
     test('should return result of canRoll for "roll" capability', () => {
       item = new EventideRpSystemItem();
       item.canRoll = vi.fn().mockReturnValue(true);
 
-      const result = item.hasCapability('roll');
+      const result = item.hasCapability("roll");
 
       expect(item.canRoll).toHaveBeenCalled();
       expect(result).toBe(true);
@@ -252,7 +253,7 @@ describe('EventideRpSystemItem', () => {
       item = new EventideRpSystemItem();
       item.hasPopupSupport = vi.fn().mockReturnValue(true);
 
-      const result = item.hasCapability('popup');
+      const result = item.hasCapability("popup");
 
       expect(item.hasPopupSupport).toHaveBeenCalled();
       expect(result).toBe(true);
@@ -262,7 +263,7 @@ describe('EventideRpSystemItem', () => {
       item = new EventideRpSystemItem();
       item.hasQuantity = vi.fn().mockReturnValue(true);
 
-      const result = item.hasCapability('quantity');
+      const result = item.hasCapability("quantity");
 
       expect(item.hasQuantity).toHaveBeenCalled();
       expect(result).toBe(true);
@@ -272,7 +273,7 @@ describe('EventideRpSystemItem', () => {
       item = new EventideRpSystemItem();
       item.effects = { size: 2 };
 
-      const result = item.hasCapability('effects');
+      const result = item.hasCapability("effects");
 
       expect(result).toBe(true);
     });
@@ -281,132 +282,132 @@ describe('EventideRpSystemItem', () => {
       item = new EventideRpSystemItem();
       item.effects = { size: 0 };
 
-      const result = item.hasCapability('effects');
+      const result = item.hasCapability("effects");
 
       expect(result).toBe(false);
     });
 
-    test('should return false and log warning for unknown capability', () => {
+    test("should return false and log warning for unknown capability", () => {
       item = new EventideRpSystemItem();
 
-      const result = item.hasCapability('unknownCapability');
+      const result = item.hasCapability("unknownCapability");
 
       expect(result).toBe(false);
       expect(mockLogger.warn).toHaveBeenCalledWith(
-        'Unknown capability check: unknownCapability',
+        "Unknown capability check: unknownCapability",
         null,
-        'ITEM'
+        "ITEM",
       );
     });
   });
 
-  describe('getDisplayIcon()', () => {
-    test('should exist as a method', () => {
+  describe("getDisplayIcon()", () => {
+    test("should exist as a method", () => {
       item = new EventideRpSystemItem();
-      
-      expect(typeof item.getDisplayIcon).toBe('function');
+
+      expect(typeof item.getDisplayIcon).toBe("function");
     });
 
-    test('should return correct icon for gear type', () => {
+    test("should return correct icon for gear type", () => {
       item = new EventideRpSystemItem();
-      item.type = 'gear';
+      item.type = "gear";
 
       const icon = item.getDisplayIcon();
 
-      expect(icon).toBe('fa-solid fa-shield');
+      expect(icon).toBe("fa-solid fa-shield");
     });
 
-    test('should return correct icon for combatPower type', () => {
+    test("should return correct icon for combatPower type", () => {
       item = new EventideRpSystemItem();
-      item.type = 'combatPower';
+      item.type = "combatPower";
 
       const icon = item.getDisplayIcon();
 
-      expect(icon).toBe('fa-solid fa-bolt');
+      expect(icon).toBe("fa-solid fa-bolt");
     });
 
-    test('should return correct icon for feature type', () => {
+    test("should return correct icon for feature type", () => {
       item = new EventideRpSystemItem();
-      item.type = 'feature';
+      item.type = "feature";
 
       const icon = item.getDisplayIcon();
 
-      expect(icon).toBe('fa-solid fa-star');
+      expect(icon).toBe("fa-solid fa-star");
     });
 
-    test('should return correct icon for status type', () => {
+    test("should return correct icon for status type", () => {
       item = new EventideRpSystemItem();
-      item.type = 'status';
+      item.type = "status";
 
       const icon = item.getDisplayIcon();
 
-      expect(icon).toBe('fa-solid fa-circle-info');
+      expect(icon).toBe("fa-solid fa-circle-info");
     });
 
-    test('should return correct icon for transformation type', () => {
+    test("should return correct icon for transformation type", () => {
       item = new EventideRpSystemItem();
-      item.type = 'transformation';
+      item.type = "transformation";
 
       const icon = item.getDisplayIcon();
 
-      expect(icon).toBe('fa-solid fa-exchange-alt');
+      expect(icon).toBe("fa-solid fa-exchange-alt");
     });
 
-    test('should return default icon for unknown type', () => {
+    test("should return default icon for unknown type", () => {
       item = new EventideRpSystemItem();
-      item.type = 'unknownType';
+      item.type = "unknownType";
 
       const icon = item.getDisplayIcon();
 
-      expect(icon).toBe('fa-solid fa-question');
+      expect(icon).toBe("fa-solid fa-question");
     });
   });
 
-  describe('getSortPriority()', () => {
-    test('should exist as a method', () => {
+  describe("getSortPriority()", () => {
+    test("should exist as a method", () => {
       item = new EventideRpSystemItem();
-      
-      expect(typeof item.getSortPriority).toBe('function');
+
+      expect(typeof item.getSortPriority).toBe("function");
     });
 
-    test('should return priority 1 for combatPower type', () => {
+    test("should return priority 1 for combatPower type", () => {
       item = new EventideRpSystemItem();
-      item.type = 'combatPower';
+      item.type = "combatPower";
 
       expect(item.getSortPriority()).toBe(1);
     });
 
-    test('should return priority 2 for gear type', () => {
+    test("should return priority 2 for gear type", () => {
       item = new EventideRpSystemItem();
-      item.type = 'gear';
+      item.type = "gear";
 
       expect(item.getSortPriority()).toBe(2);
     });
 
-    test('should return priority 3 for feature type', () => {
+    test("should return priority 3 for feature type", () => {
       item = new EventideRpSystemItem();
-      item.type = 'feature';
+      item.type = "feature";
 
       expect(item.getSortPriority()).toBe(3);
     });
 
-    test('should return priority 4 for transformation type', () => {
+    test("should return priority 4 for transformation type", () => {
       item = new EventideRpSystemItem();
-      item.type = 'transformation';
+      item.type = "transformation";
 
       expect(item.getSortPriority()).toBe(4);
     });
 
-    test('should return priority 5 for status type', () => {
+    test("should return priority 5 for status type", () => {
       item = new EventideRpSystemItem();
-      item.type = 'status';
+      item.type = "status";
 
       expect(item.getSortPriority()).toBe(5);
     });
 
-    test('should return default priority 999 for unknown type', () => {
+    test("should return default priority 999 for unknown type", () => {
       item = new EventideRpSystemItem();
-      item.type = 'unknownType';
+      item.type = "unknownType";
 
       expect(item.getSortPriority()).toBe(999);
     });

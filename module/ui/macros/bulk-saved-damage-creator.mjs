@@ -160,8 +160,7 @@ export class BulkSavedDamageCreator extends EventideSheetHelpers {
       name: entry.name,
     }));
     context.config = this._config;
-    context.cssClass =
-      BulkSavedDamageCreator.DEFAULT_OPTIONS.classes.join(" ");
+    context.cssClass = BulkSavedDamageCreator.DEFAULT_OPTIONS.classes.join(" ");
 
     // Group assignment context
     const groups = Array.isArray(this._actor?.system?.actionCardGroups)
@@ -566,10 +565,9 @@ export class BulkSavedDamageCreator extends EventideSheetHelpers {
    * @private
    */
   async _createNewGroup(name) {
-    const existingGroups =
-      Array.isArray(this._actor?.system?.actionCardGroups)
-        ? this._actor.system.actionCardGroups
-        : [];
+    const existingGroups = Array.isArray(this._actor?.system?.actionCardGroups)
+      ? this._actor.system.actionCardGroups
+      : [];
 
     const trimmed = String(name || "").trim();
     const groupName =
@@ -608,10 +606,13 @@ export class BulkSavedDamageCreator extends EventideSheetHelpers {
   _validateConfig(config) {
     const validator = new FormulaValidator();
 
-    const resolveResult = validator.validateDamageFormula(config.resolveFormula, {
-      allowBlank: false,
-      allowDataRefs: false,
-    });
+    const resolveResult = validator.validateDamageFormula(
+      config.resolveFormula,
+      {
+        allowBlank: false,
+        allowDataRefs: false,
+      },
+    );
     if (!resolveResult.isValid) {
       return game.i18n.format(
         "EVENTIDE_RP_SYSTEM.BulkSavedDamageCreator.Errors.InvalidResolveFormula",

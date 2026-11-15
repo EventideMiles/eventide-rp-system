@@ -11,20 +11,20 @@ import {
   registerSettings,
   getSetting,
   setSetting,
-} from '../../../module/services/settings/settings.mjs';
+} from "../../../module/services/settings/settings.mjs";
 
 // Mock dependencies
-vi.mock('../../../module/services/managers/sound-manager.mjs', () => ({
+vi.mock("../../../module/services/managers/sound-manager.mjs", () => ({
   erpsSoundManager: {
     getDefaultSounds: vi.fn(() => ({
-      testSound: 'sounds/test.mp3',
-      anotherSound: 'sounds/another.mp3',
+      testSound: "sounds/test.mp3",
+      anotherSound: "sounds/another.mp3",
     })),
     playSound: vi.fn(),
   },
 }));
 
-vi.mock('../../../module/services/logger.mjs', () => ({
+vi.mock("../../../module/services/logger.mjs", () => ({
   Logger: {
     info: vi.fn(),
     debug: vi.fn(),
@@ -33,7 +33,7 @@ vi.mock('../../../module/services/logger.mjs', () => ({
   },
 }));
 
-vi.mock('../../../module/services/formula-validator.mjs', () => ({
+vi.mock("../../../module/services/formula-validator.mjs", () => ({
   FormulaValidator: class {
     static sanitizeFormula(formula) {
       return formula;
@@ -45,7 +45,7 @@ vi.mock('../../../module/services/formula-validator.mjs', () => ({
   },
 }));
 
-vi.mock('../../../module/ui/components/eventide-sheet-helpers.mjs', () => ({
+vi.mock("../../../module/ui/components/eventide-sheet-helpers.mjs", () => ({
   EventideSheetHelpers: class {
     constructor(options = {}) {
       this.options = options;
@@ -57,7 +57,7 @@ vi.mock('../../../module/ui/components/eventide-sheet-helpers.mjs', () => ({
   },
 }));
 
-describe('SoundSettingsApplication', () => {
+describe("SoundSettingsApplication", () => {
   let mockApp;
   let mockElement;
 
@@ -81,20 +81,19 @@ describe('SoundSettingsApplication', () => {
     };
   });
 
-  describe('_prepareContext()', () => {
-    test('should prepare context with sound settings', async () => {
+  describe("_prepareContext()", () => {
+    test("should prepare context with sound settings", async () => {
       // Arrange
       const mockSounds = {
-        testSound: 'sounds/test.mp3',
-        anotherSound: 'sounds/another.mp3',
+        testSound: "sounds/test.mp3",
+        anotherSound: "sounds/another.mp3",
       };
-      const { erpsSoundManager } = await import(
-        '../../../module/services/managers/sound-manager.mjs'
-      );
+      const { erpsSoundManager } =
+        await import("../../../module/services/managers/sound-manager.mjs");
       erpsSoundManager.getDefaultSounds.mockReturnValue(mockSounds);
       global.game.settings.get.mockImplementation((scope, key) => {
-        if (key.startsWith('sound_')) {
-          const soundKey = key.replace('sound_', '');
+        if (key.startsWith("sound_")) {
+          const soundKey = key.replace("sound_", "");
           return mockSounds[soundKey];
         }
         return null;
@@ -108,7 +107,7 @@ describe('SoundSettingsApplication', () => {
       expect(context.sounds).toBeDefined();
     });
 
-    test('should close app if user is not GM', async () => {
+    test("should close app if user is not GM", async () => {
       // Arrange
       global.game.user.isGM = false;
 
@@ -120,12 +119,13 @@ describe('SoundSettingsApplication', () => {
       expect(result).toBeUndefined();
     });
 
-    test('should handle missing sound settings gracefully', async () => {
+    test("should handle missing sound settings gracefully", async () => {
       // Arrange
-      const { erpsSoundManager } = await import(
-        '../../../module/services/managers/sound-manager.mjs'
-      );
-      erpsSoundManager.getDefaultSounds.mockReturnValue({});
+      const { erpsSoundManager } =
+        await import("../../../module/services/managers/sound-manager.mjs");
+      // mockReturnValueOnce: v3-era restoreMocks wiped this between tests,
+      // vitest 4 does not — the empty-sounds impl must not leak.
+      erpsSoundManager.getDefaultSounds.mockReturnValueOnce({});
       global.game.settings.get.mockReturnValue(null);
 
       // Act
@@ -135,10 +135,9 @@ describe('SoundSettingsApplication', () => {
       expect(context).toBeDefined();
     });
   });
-
 });
 
-describe('registerSettings()', () => {
+describe("registerSettings()", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     global.game.settings.register = vi.fn();
@@ -161,7 +160,7 @@ describe('registerSettings()', () => {
     global.CONFIG = {
       Combat: {
         initiative: {
-          formula: '',
+          formula: "",
         },
       },
       Actor: {
@@ -185,43 +184,43 @@ describe('registerSettings()', () => {
     };
   });
 
-  test('should register enableSystemSounds setting', () => {
+  test("should register enableSystemSounds setting", () => {
     // Act
     registerSettings();
 
     // Assert
     expect(global.game.settings.register).toHaveBeenCalledWith(
-      'eventide-rp-system',
-      'enableSystemSounds',
+      "eventide-rp-system",
+      "enableSystemSounds",
       expect.objectContaining({
-        name: 'SETTINGS.EnableSystemSoundsName',
+        name: "SETTINGS.EnableSystemSoundsName",
         type: Boolean,
         default: true,
-      })
+      }),
     );
   });
 
-  test('should register sheetTheme setting with onChange handler', () => {
+  test("should register sheetTheme setting with onChange handler", () => {
     // Act
     registerSettings();
 
     // Assert
     expect(global.game.settings.register).toHaveBeenCalledWith(
-      'eventide-rp-system',
-      'sheetTheme',
+      "eventide-rp-system",
+      "sheetTheme",
       expect.objectContaining({
-        name: 'SETTINGS.SheetThemeName',
+        name: "SETTINGS.SheetThemeName",
         type: String,
-        default: 'blue',
+        default: "blue",
         onChange: expect.any(Function),
-      })
+      }),
     );
   });
 
-  test('should migrate theme from flag to setting when flag exists', async () => {
+  test("should migrate theme from flag to setting when flag exists", async () => {
     // Arrange
-    global.game.user.getFlag.mockReturnValue('dark');
-    global.game.settings.get.mockReturnValue('blue');
+    global.game.user.getFlag.mockReturnValue("dark");
+    global.game.settings.get.mockReturnValue("blue");
     global.game.settings.set.mockResolvedValue(undefined);
     // Ensure ui.notifications is defined
     global.ui.notifications = {
@@ -229,33 +228,33 @@ describe('registerSettings()', () => {
       warn: vi.fn(),
       info: vi.fn(),
     };
-    const { Logger } = await import('../../../module/services/logger.mjs');
+    const { Logger } = await import("../../../module/services/logger.mjs");
 
     // Act
     registerSettings();
 
     // Get the onChange callback
     const sheetThemeCall = global.game.settings.register.mock.calls.find(
-      (call) => call[1] === 'sheetTheme'
+      (call) => call[1] === "sheetTheme",
     );
     const onChange = sheetThemeCall[2].onChange;
 
     // Simulate the onChange being called
-    onChange('blue');
+    onChange("blue");
 
     // Assert
     expect(global.game.settings.set).toHaveBeenCalledWith(
-      'eventide-rp-system',
-      'sheetTheme',
-      'dark'
+      "eventide-rp-system",
+      "sheetTheme",
+      "dark",
     );
     expect(Logger.info).toHaveBeenCalled();
   });
 
-  test('should not migrate theme when flag does not exist', () => {
+  test("should not migrate theme when flag does not exist", () => {
     // Arrange
     global.game.user.getFlag.mockReturnValue(null);
-    global.game.settings.get.mockReturnValue('blue');
+    global.game.settings.get.mockReturnValue("blue");
     // Ensure ui.notifications is defined
     global.ui.notifications = {
       error: vi.fn(),
@@ -268,348 +267,348 @@ describe('registerSettings()', () => {
 
     // Get the onChange callback
     const sheetThemeCall = global.game.settings.register.mock.calls.find(
-      (call) => call[1] === 'sheetTheme'
+      (call) => call[1] === "sheetTheme",
     );
     const onChange = sheetThemeCall[2].onChange;
 
     // Simulate the onChange being called
-    onChange('blue');
+    onChange("blue");
 
     // Assert
     expect(global.game.settings.set).not.toHaveBeenCalledWith(
-      'eventide-rp-system',
-      'sheetTheme',
-      expect.any(String)
+      "eventide-rp-system",
+      "sheetTheme",
+      expect.any(String),
     );
   });
 
-  test('should register defaultCharacterTab setting', () => {
+  test("should register defaultCharacterTab setting", () => {
     // Act
     registerSettings();
 
     // Assert
     expect(global.game.settings.register).toHaveBeenCalledWith(
-      'eventide-rp-system',
-      'defaultCharacterTab',
+      "eventide-rp-system",
+      "defaultCharacterTab",
       expect.objectContaining({
-        name: 'SETTINGS.DefaultCharacterTabName',
+        name: "SETTINGS.DefaultCharacterTabName",
         type: String,
-        default: 'features',
+        default: "features",
         choices: expect.any(Object),
-      })
+      }),
     );
   });
 
-  test('should register initiativeFormula setting with validation', () => {
+  test("should register initiativeFormula setting with validation", () => {
     // Act
     registerSettings();
 
     // Assert
     expect(global.game.settings.register).toHaveBeenCalledWith(
-      'eventide-rp-system',
-      'initiativeFormula',
+      "eventide-rp-system",
+      "initiativeFormula",
       expect.objectContaining({
-        name: 'SETTINGS.InitiativeFormulaName',
+        name: "SETTINGS.InitiativeFormulaName",
         type: String,
-        default: '1d@hiddenAbilities.dice.total + @statTotal.mainInit + @statTotal.subInit',
+        default:
+          "1d@hiddenAbilities.dice.total + @statTotal.mainInit + @statTotal.subInit",
         onChange: expect.any(Function),
-      })
+      }),
     );
   });
 
-
-  test('should update CONFIG.Combat.initiative.formula on valid change', () => {
+  test("should update CONFIG.Combat.initiative.formula on valid change", () => {
     // Act
     registerSettings();
 
     // Get the onChange callback
     const formulaCall = global.game.settings.register.mock.calls.find(
-      (call) => call[1] === 'initiativeFormula'
+      (call) => call[1] === "initiativeFormula",
     );
-    
+
     if (!formulaCall) {
-      throw new Error('initiativeFormula setting not found');
+      throw new Error("initiativeFormula setting not found");
     }
-    
+
     const onChange = formulaCall[2].onChange;
 
     // Simulate the onChange being called
-    onChange('1d20+5');
+    onChange("1d20+5");
 
     // Assert
-    expect(global.CONFIG.Combat.initiative.formula).toBe('1d20+5');
+    expect(global.CONFIG.Combat.initiative.formula).toBe("1d20+5");
     expect(
-      global.foundry.applications.settings.SettingsConfig.reloadConfirm
+      global.foundry.applications.settings.SettingsConfig.reloadConfirm,
     ).toHaveBeenCalled();
   });
 
-  test('should register initiativeDecimals setting', () => {
+  test("should register initiativeDecimals setting", () => {
     // Act
     registerSettings();
 
     // Assert
     expect(global.game.settings.register).toHaveBeenCalledWith(
-      'eventide-rp-system',
-      'initiativeDecimals',
+      "eventide-rp-system",
+      "initiativeDecimals",
       expect.objectContaining({
-        name: 'SETTINGS.InitiativeDecimalsName',
+        name: "SETTINGS.InitiativeDecimalsName",
         type: Number,
         default: 2,
         range: { min: 0, max: 4, step: 1 },
-      })
+      }),
     );
   });
 
-  test('should register autoRollNpcInitiative setting', () => {
+  test("should register autoRollNpcInitiative setting", () => {
     // Act
     registerSettings();
 
     // Assert
     expect(global.game.settings.register).toHaveBeenCalledWith(
-      'eventide-rp-system',
-      'autoRollNpcInitiative',
+      "eventide-rp-system",
+      "autoRollNpcInitiative",
       expect.objectContaining({
-        name: 'SETTINGS.AutoRollNpcInitiativeName',
+        name: "SETTINGS.AutoRollNpcInitiativeName",
         type: Boolean,
         default: true,
-      })
+      }),
     );
   });
 
-  test('should register hideNpcInitiativeRolls setting', () => {
+  test("should register hideNpcInitiativeRolls setting", () => {
     // Act
     registerSettings();
 
     // Assert
     expect(global.game.settings.register).toHaveBeenCalledWith(
-      'eventide-rp-system',
-      'hideNpcInitiativeRolls',
+      "eventide-rp-system",
+      "hideNpcInitiativeRolls",
       expect.objectContaining({
-        name: 'SETTINGS.HideNpcInitiativeRollsName',
+        name: "SETTINGS.HideNpcInitiativeRollsName",
         type: Boolean,
         default: false,
-      })
+      }),
     );
   });
 
-  test('should register autoRollPlayerInitiative setting', () => {
+  test("should register autoRollPlayerInitiative setting", () => {
     // Act
     registerSettings();
 
     // Assert
     expect(global.game.settings.register).toHaveBeenCalledWith(
-      'eventide-rp-system',
-      'autoRollPlayerInitiative',
+      "eventide-rp-system",
+      "autoRollPlayerInitiative",
       expect.objectContaining({
-        name: 'SETTINGS.AutoRollPlayerInitiativeName',
+        name: "SETTINGS.AutoRollPlayerInitiativeName",
         type: Boolean,
         default: false,
-      })
+      }),
     );
   });
 
-  test('should register defaultCombatRoundDuration setting', () => {
+  test("should register defaultCombatRoundDuration setting", () => {
     // Act
     registerSettings();
 
     // Assert
     expect(global.game.settings.register).toHaveBeenCalledWith(
-      'eventide-rp-system',
-      'defaultCombatRoundDuration',
+      "eventide-rp-system",
+      "defaultCombatRoundDuration",
       expect.objectContaining({
-        name: 'SETTINGS.DefaultCombatRoundDurationName',
+        name: "SETTINGS.DefaultCombatRoundDurationName",
         type: Number,
         default: 6,
         range: { min: 1, max: 60, step: 1 },
-      })
+      }),
     );
   });
 
-  test('should register showGearEquipMessages setting', () => {
+  test("should register showGearEquipMessages setting", () => {
     // Act
     registerSettings();
 
     // Assert
     expect(global.game.settings.register).toHaveBeenCalledWith(
-      'eventide-rp-system',
-      'showGearEquipMessages',
+      "eventide-rp-system",
+      "showGearEquipMessages",
       expect.objectContaining({
-        name: 'SETTINGS.ShowGearEquipMessagesName',
+        name: "SETTINGS.ShowGearEquipMessagesName",
         type: Boolean,
         default: true,
-      })
+      }),
     );
   });
 
-  test('should register gearEquippedDefault setting', () => {
+  test("should register gearEquippedDefault setting", () => {
     // Act
     registerSettings();
 
     // Assert
     expect(global.game.settings.register).toHaveBeenCalledWith(
-      'eventide-rp-system',
-      'gearEquippedDefault',
+      "eventide-rp-system",
+      "gearEquippedDefault",
       expect.objectContaining({
-        name: 'SETTINGS.GearEquippedDefaultName',
+        name: "SETTINGS.GearEquippedDefaultName",
         type: Boolean,
         default: true,
-      })
+      }),
     );
   });
 
-  test('should register enableActionCardChains setting', () => {
+  test("should register enableActionCardChains setting", () => {
     // Act
     registerSettings();
 
     // Assert
     expect(global.game.settings.register).toHaveBeenCalledWith(
-      'eventide-rp-system',
-      'enableActionCardChains',
+      "eventide-rp-system",
+      "enableActionCardChains",
       expect.objectContaining({
-        name: 'SETTINGS.EnableActionCardChainsName',
+        name: "SETTINGS.EnableActionCardChainsName",
         type: Boolean,
         default: true,
-      })
+      }),
     );
   });
 
-  test('should register actionCardExecutionDelay setting', () => {
+  test("should register actionCardExecutionDelay setting", () => {
     // Act
     registerSettings();
 
     // Assert
     expect(global.game.settings.register).toHaveBeenCalledWith(
-      'eventide-rp-system',
-      'actionCardExecutionDelay',
+      "eventide-rp-system",
+      "actionCardExecutionDelay",
       expect.objectContaining({
-        name: 'SETTINGS.ActionCardExecutionDelayName',
+        name: "SETTINGS.ActionCardExecutionDelayName",
         type: Number,
         default: 2000,
         range: { min: 0, max: 10000, step: 100 },
-      })
+      }),
     );
   });
 
-  test('should register crToXpFormula setting with validation', () => {
+  test("should register crToXpFormula setting with validation", () => {
     // Act
     registerSettings();
 
     // Assert
     expect(global.game.settings.register).toHaveBeenCalledWith(
-      'eventide-rp-system',
-      'crToXpFormula',
+      "eventide-rp-system",
+      "crToXpFormula",
       expect.objectContaining({
-        name: 'SETTINGS.CrToXpFormulaName',
+        name: "SETTINGS.CrToXpFormulaName",
         type: String,
-        default: '@cr * 200 + @cr * @cr * 50',
+        default: "@cr * 200 + @cr * @cr * 50",
         onChange: expect.any(Function),
-      })
+      }),
     );
   });
 
-  test('should register defaultTokenVisionRange setting', () => {
+  test("should register defaultTokenVisionRange setting", () => {
     // Act
     registerSettings();
 
     // Assert
     expect(global.game.settings.register).toHaveBeenCalledWith(
-      'eventide-rp-system',
-      'defaultTokenVisionRange',
+      "eventide-rp-system",
+      "defaultTokenVisionRange",
       expect.objectContaining({
-        name: 'SETTINGS.DefaultTokenVisionRangeName',
+        name: "SETTINGS.DefaultTokenVisionRangeName",
         type: Number,
         default: 50,
         range: { min: 0, max: 1000, step: 5 },
-      })
+      }),
     );
   });
 
-  test('should register minimumDiceValue setting', () => {
+  test("should register minimumDiceValue setting", () => {
     // Act
     registerSettings();
 
     // Assert
     expect(global.game.settings.register).toHaveBeenCalledWith(
-      'eventide-rp-system',
-      'minimumDiceValue',
+      "eventide-rp-system",
+      "minimumDiceValue",
       expect.objectContaining({
-        name: 'SETTINGS.MinimumDiceValueName',
+        name: "SETTINGS.MinimumDiceValueName",
         type: Number,
         default: 1,
         range: { min: 1, max: 20, step: 1 },
-      })
+      }),
     );
   });
 
-  test('should register maxPowerFormula setting with validation', () => {
+  test("should register maxPowerFormula setting with validation", () => {
     // Act
     registerSettings();
 
     // Assert
     expect(global.game.settings.register).toHaveBeenCalledWith(
-      'eventide-rp-system',
-      'maxPowerFormula',
+      "eventide-rp-system",
+      "maxPowerFormula",
       expect.objectContaining({
-        name: 'SETTINGS.MaxPowerFormulaName',
+        name: "SETTINGS.MaxPowerFormulaName",
         type: String,
-        default: '5 + @will.total + @fort.total',
+        default: "5 + @will.total + @fort.total",
         onChange: expect.any(Function),
-      })
+      }),
     );
   });
 
-  test('should register maxResolveFormula setting with validation', () => {
+  test("should register maxResolveFormula setting with validation", () => {
     // Act
     registerSettings();
 
     // Assert
     expect(global.game.settings.register).toHaveBeenCalledWith(
-      'eventide-rp-system',
-      'maxResolveFormula',
+      "eventide-rp-system",
+      "maxResolveFormula",
       expect.objectContaining({
-        name: 'SETTINGS.MaxResolveFormulaName',
+        name: "SETTINGS.MaxResolveFormulaName",
         type: String,
-        default: '100 + (10 * @fort.total)',
+        default: "100 + (10 * @fort.total)",
         onChange: expect.any(Function),
-      })
+      }),
     );
   });
 
-  test('should register statPointsFormula setting with validation', () => {
+  test("should register statPointsFormula setting with validation", () => {
     // Act
     registerSettings();
 
     // Assert
     expect(global.game.settings.register).toHaveBeenCalledWith(
-      'eventide-rp-system',
-      'statPointsFormula',
+      "eventide-rp-system",
+      "statPointsFormula",
       expect.objectContaining({
-        name: 'SETTINGS.StatPointsFormulaName',
+        name: "SETTINGS.StatPointsFormulaName",
         type: String,
-        default: '14 + (2 * @lvl.value)',
+        default: "14 + (2 * @lvl.value)",
         onChange: expect.any(Function),
-      })
+      }),
     );
   });
 
-  test('should register minimumPowerValue setting with validation', () => {
+  test("should register minimumPowerValue setting with validation", () => {
     // Act
     registerSettings();
 
     // Assert
     expect(global.game.settings.register).toHaveBeenCalledWith(
-      'eventide-rp-system',
-      'minimumPowerValue',
+      "eventide-rp-system",
+      "minimumPowerValue",
       expect.objectContaining({
-        name: 'SETTINGS.MinimumPowerValueName',
+        name: "SETTINGS.MinimumPowerValueName",
         type: Number,
         default: 1,
         onChange: expect.any(Function),
-      })
+      }),
     );
   });
 
-  test('should validate minimumPowerValue and reset to default on invalid', () => {
+  test("should validate minimumPowerValue and reset to default on invalid", () => {
     // Arrange
     global.game.settings.set.mockResolvedValue(undefined);
     // Ensure ui.notifications is defined
@@ -624,13 +623,13 @@ describe('registerSettings()', () => {
 
     // Get the onChange callback
     const powerCall = global.game.settings.register.mock.calls.find(
-      (call) => call[1] === 'minimumPowerValue'
+      (call) => call[1] === "minimumPowerValue",
     );
-    
+
     if (!powerCall) {
-      throw new Error('minimumPowerValue setting not found');
+      throw new Error("minimumPowerValue setting not found");
     }
-    
+
     const onChange = powerCall[2].onChange;
 
     // Simulate the onChange being called with invalid value
@@ -638,31 +637,31 @@ describe('registerSettings()', () => {
 
     // Assert
     expect(global.game.settings.set).toHaveBeenCalledWith(
-      'eventide-rp-system',
-      'minimumPowerValue',
-      1
+      "eventide-rp-system",
+      "minimumPowerValue",
+      1,
     );
     expect(global.ui.notifications.warn).toHaveBeenCalled();
   });
 
-  test('should register minimumResolveValue setting with validation', () => {
+  test("should register minimumResolveValue setting with validation", () => {
     // Act
     registerSettings();
 
     // Assert
     expect(global.game.settings.register).toHaveBeenCalledWith(
-      'eventide-rp-system',
-      'minimumResolveValue',
+      "eventide-rp-system",
+      "minimumResolveValue",
       expect.objectContaining({
-        name: 'SETTINGS.MinimumResolveValueName',
+        name: "SETTINGS.MinimumResolveValueName",
         type: Number,
         default: 10,
         onChange: expect.any(Function),
-      })
+      }),
     );
   });
 
-  test('should validate minimumResolveValue and reset to default on invalid', () => {
+  test("should validate minimumResolveValue and reset to default on invalid", () => {
     // Arrange
     global.game.settings.set.mockResolvedValue(undefined);
     // Ensure ui.notifications is defined
@@ -677,13 +676,13 @@ describe('registerSettings()', () => {
 
     // Get the onChange callback
     const resolveCall = global.game.settings.register.mock.calls.find(
-      (call) => call[1] === 'minimumResolveValue'
+      (call) => call[1] === "minimumResolveValue",
     );
-    
+
     if (!resolveCall) {
-      throw new Error('minimumResolveValue setting not found');
+      throw new Error("minimumResolveValue setting not found");
     }
-    
+
     const onChange = resolveCall[2].onChange;
 
     // Simulate the onChange being called with invalid value
@@ -691,63 +690,63 @@ describe('registerSettings()', () => {
 
     // Assert
     expect(global.game.settings.set).toHaveBeenCalledWith(
-      'eventide-rp-system',
-      'minimumResolveValue',
-      10
+      "eventide-rp-system",
+      "minimumResolveValue",
+      10,
     );
     expect(global.ui.notifications.warn).toHaveBeenCalled();
   });
 
-  test('should register actionCardExecutionLimit setting', () => {
+  test("should register actionCardExecutionLimit setting", () => {
     // Act
     registerSettings();
 
     // Assert
     expect(global.game.settings.register).toHaveBeenCalledWith(
-      'eventide-rp-system',
-      'actionCardExecutionLimit',
+      "eventide-rp-system",
+      "actionCardExecutionLimit",
       expect.objectContaining({
-        name: 'SETTINGS.ActionCardExecutionLimitName',
+        name: "SETTINGS.ActionCardExecutionLimitName",
         type: Number,
         default: 30,
         range: { min: 0, max: 100, step: 1 },
-      })
+      }),
     );
   });
 
-  test('should register testingMode setting', () => {
+  test("should register testingMode setting", () => {
     // Act
     registerSettings();
 
     // Assert
     expect(global.game.settings.register).toHaveBeenCalledWith(
-      'eventide-rp-system',
-      'testingMode',
+      "eventide-rp-system",
+      "testingMode",
       expect.objectContaining({
-        name: 'SETTINGS.TestingModeName',
+        name: "SETTINGS.TestingModeName",
         type: Boolean,
         default: false,
         onChange: expect.any(Function),
-      })
+      }),
     );
   });
 
-  test('should log info when testingMode changes', async () => {
+  test("should log info when testingMode changes", async () => {
     // Arrange
-    const { Logger } = await import('../../../module/services/logger.mjs');
+    const { Logger } = await import("../../../module/services/logger.mjs");
 
     // Act
     registerSettings();
 
     // Get the onChange callback
     const testingCall = global.game.settings.register.mock.calls.find(
-      (call) => call[1] === 'testingMode'
+      (call) => call[1] === "testingMode",
     );
-    
+
     if (!testingCall) {
-      throw new Error('testingMode setting not found');
+      throw new Error("testingMode setting not found");
     }
-    
+
     const onChange = testingCall[2].onChange;
 
     // Simulate the onChange being called
@@ -755,74 +754,74 @@ describe('registerSettings()', () => {
 
     // Assert
     expect(Logger.info).toHaveBeenCalledWith(
-      'Testing mode setting changed',
+      "Testing mode setting changed",
       { value: true },
-      'SETTINGS'
+      "SETTINGS",
     );
   });
 
-  test('should register migrationVersion setting', () => {
+  test("should register migrationVersion setting", () => {
     // Act
     registerSettings();
 
     // Assert
     expect(global.game.settings.register).toHaveBeenCalledWith(
-      'eventide-rp-system',
-      'migrationVersion',
+      "eventide-rp-system",
+      "migrationVersion",
       expect.objectContaining({
-        name: 'Migration Version',
+        name: "Migration Version",
         type: Number,
         config: false,
-      })
+      }),
     );
   });
 
-  test('should register sound settings for each default sound', () => {
+  test("should register sound settings for each default sound", () => {
     // Act
     registerSettings();
 
     // Assert
     expect(global.game.settings.register).toHaveBeenCalledWith(
-      'eventide-rp-system',
-      'sound_testSound',
+      "eventide-rp-system",
+      "sound_testSound",
       expect.objectContaining({
         type: String,
-        default: 'sounds/test.mp3',
+        default: "sounds/test.mp3",
         config: false,
-      })
+      }),
     );
     expect(global.game.settings.register).toHaveBeenCalledWith(
-      'eventide-rp-system',
-      'sound_anotherSound',
+      "eventide-rp-system",
+      "sound_anotherSound",
       expect.objectContaining({
         type: String,
-        default: 'sounds/another.mp3',
+        default: "sounds/another.mp3",
         config: false,
-      })
+      }),
     );
   });
 
-  test('should register sound settings menu on ready hook', () => {
+  test("should register sound settings menu on ready hook", () => {
     // Act
     registerSettings();
 
     // Assert
     expect(global.Hooks.once).toHaveBeenCalledWith(
-      'ready',
-      expect.any(Function)
+      "ready",
+      expect.any(Function),
     );
     expect(global.game.settings.registerMenu).toHaveBeenCalledWith(
-      'eventide-rp-system',
-      'soundSettings',
+      "eventide-rp-system",
+      "soundSettings",
       expect.objectContaining({
-        name: 'SETTINGS.SoundSettingsName',
+        name: "SETTINGS.SoundSettingsName",
         type: SoundSettingsApplication,
         restricted: true,
-      })
+      }),
     );
   });
 
-  test('should reset empty sound values to default', () => {
+  test("should reset empty sound values to default", () => {
     // Arrange
     global.game.settings.set.mockResolvedValue(undefined);
     // Ensure ui.notifications is defined
@@ -837,114 +836,114 @@ describe('registerSettings()', () => {
 
     // Get the onChange callback for sound setting
     const soundCall = global.game.settings.register.mock.calls.find(
-      (call) => call[1] === 'sound_testSound'
+      (call) => call[1] === "sound_testSound",
     );
-    
+
     if (!soundCall) {
-      throw new Error('sound_testSound setting not found');
+      throw new Error("sound_testSound setting not found");
     }
-    
+
     const onChange = soundCall[2].onChange;
 
     // Simulate the onChange being called with empty value
-    onChange('');
+    onChange("");
 
     // Assert
     expect(global.game.settings.set).toHaveBeenCalledWith(
-      'eventide-rp-system',
-      'sound_testSound',
-      'sounds/test.mp3'
+      "eventide-rp-system",
+      "sound_testSound",
+      "sounds/test.mp3",
     );
     expect(global.ui.notifications.info).toHaveBeenCalled();
   });
 });
 
-describe('getSetting()', () => {
+describe("getSetting()", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     global.game.settings.get = vi.fn();
   });
 
-  test('should return setting value when available', () => {
+  test("should return setting value when available", () => {
     // Arrange
-    global.game.settings.get.mockReturnValue('testValue');
+    global.game.settings.get.mockReturnValue("testValue");
 
     // Act
-    const result = getSetting('testKey');
+    const result = getSetting("testKey");
 
     // Assert
-    expect(result).toBe('testValue');
+    expect(result).toBe("testValue");
     expect(global.game.settings.get).toHaveBeenCalledWith(
-      'eventide-rp-system',
-      'testKey'
+      "eventide-rp-system",
+      "testKey",
     );
   });
 
-  test('should return null when setting is not available', () => {
+  test("should return null when setting is not available", () => {
     // Arrange
     global.game.settings.get.mockImplementation(() => {
-      throw new Error('Setting not found');
+      throw new Error("Setting not found");
     });
 
     // Act
-    const result = getSetting('nonExistentKey');
+    const result = getSetting("nonExistentKey");
 
     // Assert
     expect(result).toBeNull();
   });
 
-  test('should handle game not ready scenario', () => {
+  test("should handle game not ready scenario", () => {
     // Arrange
     global.game.settings.get.mockImplementation(() => {
-      throw new Error('Game not ready');
+      throw new Error("Game not ready");
     });
 
     // Act
-    const result = getSetting('anyKey');
+    const result = getSetting("anyKey");
 
     // Assert
     expect(result).toBeNull();
   });
 });
 
-describe('setSetting()', () => {
+describe("setSetting()", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     global.game.settings.set = vi.fn();
   });
 
-  test('should set setting value and return promise', async () => {
+  test("should set setting value and return promise", async () => {
     // Arrange
     const mockPromise = Promise.resolve();
     global.game.settings.set.mockReturnValue(mockPromise);
 
     // Act
-    const result = setSetting('testKey', 'testValue');
+    const result = setSetting("testKey", "testValue");
 
     // Assert
     expect(result).toBe(mockPromise);
     expect(global.game.settings.set).toHaveBeenCalledWith(
-      'eventide-rp-system',
-      'testKey',
-      'testValue'
+      "eventide-rp-system",
+      "testKey",
+      "testValue",
     );
   });
 
-  test('should handle setting with complex value', async () => {
+  test("should handle setting with complex value", async () => {
     // Arrange
-    const complexValue = { nested: { data: 'value' } };
+    const complexValue = { nested: { data: "value" } };
     const mockPromise = Promise.resolve();
     global.game.settings.set.mockReturnValue(mockPromise);
 
     // Act
-    const result = setSetting('complexKey', complexValue);
+    const result = setSetting("complexKey", complexValue);
 
     // Assert
     expect(result).toBe(mockPromise);
     expect(global.game.settings.set).toHaveBeenCalledWith(
-      'eventide-rp-system',
-      'complexKey',
-      complexValue
+      "eventide-rp-system",
+      "complexKey",
+      complexValue,
     );
   });
 });

@@ -70,17 +70,25 @@ export class TransformationCreator {
         // Show additional guidance notification
         setTimeout(() => {
           ui.notifications.info(
-            game.i18n.localize("EVENTIDE_RP_SYSTEM.Info.TransformationUsageGuidance"),
-            { permanent: false }
+            game.i18n.localize(
+              "EVENTIDE_RP_SYSTEM.Info.TransformationUsageGuidance",
+            ),
+            { permanent: false },
           );
         }, 1500); // Delay so it shows after the creation message
       }
 
       return item;
     } catch (error) {
-      Logger.error("Failed to create transformation", error, "TransformationCreator");
+      Logger.error(
+        "Failed to create transformation",
+        error,
+        "TransformationCreator",
+      );
       ui.notifications.error(
-        game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.TransformationCreationFailed"),
+        game.i18n.localize(
+          "EVENTIDE_RP_SYSTEM.Errors.TransformationCreationFailed",
+        ),
       );
       throw error;
     }
@@ -112,16 +120,20 @@ export class TransformationCreator {
         type: "Item",
       };
 
-      pack = await foundry.documents.collections.CompendiumCollection.createCompendium(packData);
+      pack =
+        await foundry.documents.collections.CompendiumCollection.createCompendium(
+          packData,
+        );
 
       ui.notifications.info(
-        game.i18n.localize("EVENTIDE_RP_SYSTEM.Info.CustomTransformationsCompendiumCreated"),
+        game.i18n.localize(
+          "EVENTIDE_RP_SYSTEM.Info.CustomTransformationsCompendiumCreated",
+        ),
       );
     }
 
     return pack;
   }
-
 
   /**
    * Legacy method to maintain compatibility with existing macro calls

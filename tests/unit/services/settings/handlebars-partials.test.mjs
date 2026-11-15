@@ -5,16 +5,16 @@
  * Tests the registration of Handlebars partials for the Eventide RP System.
  */
 
-import { initHandlebarsPartials } from '../../../../module/services/settings/handlebars-partials.mjs';
+import { initHandlebarsPartials } from "../../../../module/services/settings/handlebars-partials.mjs";
 
 // Mock Logger
-vi.mock('../../../../module/services/logger.mjs', () => ({
+vi.mock("../../../../module/services/logger.mjs", () => ({
   Logger: {
     error: vi.fn(),
   },
 }));
 
-describe('Handlebars Partials', () => {
+describe("Handlebars Partials", () => {
   let mockFetch;
 
   beforeEach(() => {
@@ -31,12 +31,12 @@ describe('Handlebars Partials', () => {
     };
   });
 
-  describe('initHandlebarsPartials()', () => {
-    test('should register all defined partials', async () => {
+  describe("initHandlebarsPartials()", () => {
+    test("should register all defined partials", async () => {
       // Arrange - Mock successful fetch responses for all partials
       mockFetch.mockResolvedValue({
         ok: true,
-        text: async () => '<div>template content</div>',
+        text: async () => "<div>template content</div>",
       });
 
       // Act - Initialize partials
@@ -49,11 +49,11 @@ describe('Handlebars Partials', () => {
       expect(global.Handlebars.registerPartial).toHaveBeenCalledTimes(20);
     });
 
-    test('should register erps-color-picker partial', async () => {
+    test("should register erps-color-picker partial", async () => {
       // Arrange
       mockFetch.mockResolvedValue({
         ok: true,
-        text: async () => '<div>color picker</div>',
+        text: async () => "<div>color picker</div>",
       });
 
       // Act
@@ -61,19 +61,19 @@ describe('Handlebars Partials', () => {
 
       // Assert
       expect(mockFetch).toHaveBeenCalledWith(
-        'systems/eventide-rp-system/templates/partials/erps-color-picker.hbs',
+        "systems/eventide-rp-system/templates/partials/erps-color-picker.hbs",
       );
       expect(global.Handlebars.registerPartial).toHaveBeenCalledWith(
-        'erps-color-picker',
-        '<div>color picker</div>',
+        "erps-color-picker",
+        "<div>color picker</div>",
       );
     });
 
-    test('should register item-selector-combo-box partial', async () => {
+    test("should register item-selector-combo-box partial", async () => {
       // Arrange
       mockFetch.mockResolvedValue({
         ok: true,
-        text: async () => '<div>combo box</div>',
+        text: async () => "<div>combo box</div>",
       });
 
       // Act
@@ -81,19 +81,19 @@ describe('Handlebars Partials', () => {
 
       // Assert
       expect(mockFetch).toHaveBeenCalledWith(
-        'systems/eventide-rp-system/templates/components/item-selector-combo-box.hbs',
+        "systems/eventide-rp-system/templates/components/item-selector-combo-box.hbs",
       );
       expect(global.Handlebars.registerPartial).toHaveBeenCalledWith(
-        'components/item-selector-combo-box',
-        '<div>combo box</div>',
+        "components/item-selector-combo-box",
+        "<div>combo box</div>",
       );
     });
 
-    test('should register macro partials', async () => {
+    test("should register macro partials", async () => {
       // Arrange
       mockFetch.mockResolvedValue({
         ok: true,
-        text: async () => '<div>macro partial</div>',
+        text: async () => "<div>macro partial</div>",
       });
 
       // Act
@@ -101,31 +101,31 @@ describe('Handlebars Partials', () => {
 
       // Assert - Verify macro partials are registered
       const macroPartials = [
-        'character-effects',
-        'macro-footer',
-        'callout-box',
-        'card-effects',
-        'card-ac-check',
-        'roll-info',
-        'color-pickers',
-        'popup-effects',
-        'popup-roll',
-        'popup-header',
+        "character-effects",
+        "macro-footer",
+        "callout-box",
+        "card-effects",
+        "card-ac-check",
+        "roll-info",
+        "color-pickers",
+        "popup-effects",
+        "popup-roll",
+        "popup-header",
       ];
 
       macroPartials.forEach((partialName) => {
         expect(global.Handlebars.registerPartial).toHaveBeenCalledWith(
           partialName,
-          '<div>macro partial</div>',
+          "<div>macro partial</div>",
         );
       });
     });
 
-    test('should register actor partials', async () => {
+    test("should register actor partials", async () => {
       // Arrange
       mockFetch.mockResolvedValue({
         ok: true,
-        text: async () => '<div>actor partial</div>',
+        text: async () => "<div>actor partial</div>",
       });
 
       // Act
@@ -133,26 +133,26 @@ describe('Handlebars Partials', () => {
 
       // Assert - Verify actor partials are registered
       const actorPartials = [
-        'actor-abilities',
-        'actor-status',
-        'actor-primary-resources',
-        'actor-secondary-resources',
-        'actor/partials/action-card-row',
+        "actor-abilities",
+        "actor-status",
+        "actor-primary-resources",
+        "actor-secondary-resources",
+        "actor/partials/action-card-row",
       ];
 
       actorPartials.forEach((partialName) => {
         expect(global.Handlebars.registerPartial).toHaveBeenCalledWith(
           partialName,
-          '<div>actor partial</div>',
+          "<div>actor partial</div>",
         );
       });
     });
 
-    test('should register item partials', async () => {
+    test("should register item partials", async () => {
       // Arrange
       mockFetch.mockResolvedValue({
         ok: true,
-        text: async () => '<div>item partial</div>',
+        text: async () => "<div>item partial</div>",
       });
 
       // Act
@@ -160,14 +160,14 @@ describe('Handlebars Partials', () => {
 
       // Assert - Verify item partials are registered
       expect(global.Handlebars.registerPartial).toHaveBeenCalledWith(
-        'item/partials/transformation-action-card-row',
-        '<div>item partial</div>',
+        "item/partials/transformation-action-card-row",
+        "<div>item partial</div>",
       );
     });
 
-    test('should log error when fetch fails', async () => {
+    test("should log error when fetch fails", async () => {
       // Arrange
-      const { Logger } = await import('../../../../module/services/logger.mjs');
+      const { Logger } = await import("../../../../module/services/logger.mjs");
       mockFetch.mockResolvedValue({
         ok: false,
         status: 404,
@@ -179,16 +179,16 @@ describe('Handlebars Partials', () => {
       // Assert - Verify error was logged
       expect(Logger.error).toHaveBeenCalled();
       expect(Logger.error).toHaveBeenCalledWith(
-        expect.stringContaining('Failed to load Handlebars partial'),
+        expect.stringContaining("Failed to load Handlebars partial"),
         expect.any(Error),
-        'HANDLEBARS',
+        "HANDLEBARS",
       );
     });
 
-    test('should log error when fetch throws exception', async () => {
+    test("should log error when fetch throws exception", async () => {
       // Arrange
-      const { Logger } = await import('../../../../module/services/logger.mjs');
-      mockFetch.mockRejectedValue(new Error('Network error'));
+      const { Logger } = await import("../../../../module/services/logger.mjs");
+      mockFetch.mockRejectedValue(new Error("Network error"));
 
       // Act
       await initHandlebarsPartials();
@@ -197,9 +197,9 @@ describe('Handlebars Partials', () => {
       expect(Logger.error).toHaveBeenCalled();
     });
 
-    test('should continue registering other partials when one fails', async () => {
+    test("should continue registering other partials when one fails", async () => {
       // Arrange
-      const { Logger } = await import('../../../../module/services/logger.mjs');
+      const { Logger } = await import("../../../../module/services/logger.mjs");
       let callCount = 0;
       mockFetch.mockImplementation(() => {
         callCount++;
@@ -209,7 +209,7 @@ describe('Handlebars Partials', () => {
         }
         return Promise.resolve({
           ok: true,
-          text: async () => '<div>template</div>',
+          text: async () => "<div>template</div>",
         });
       });
 
@@ -224,11 +224,11 @@ describe('Handlebars Partials', () => {
       expect(global.Handlebars.registerPartial).toHaveBeenCalled();
     });
 
-    test('should handle empty template content', async () => {
+    test("should handle empty template content", async () => {
       // Arrange
       mockFetch.mockResolvedValue({
         ok: true,
-        text: async () => '',
+        text: async () => "",
       });
 
       // Act
@@ -237,17 +237,17 @@ describe('Handlebars Partials', () => {
       // Assert - Should still register the partial with empty content
       expect(global.Handlebars.registerPartial).toHaveBeenCalledWith(
         expect.any(String),
-        '',
+        "",
       );
     });
 
-    test('should fetch partials in parallel', async () => {
+    test("should fetch partials in parallel", async () => {
       // Arrange
       const fetchPromises = [];
       mockFetch.mockImplementation(() => {
         const promise = Promise.resolve({
           ok: true,
-          text: async () => '<div>template</div>',
+          text: async () => "<div>template</div>",
         });
         fetchPromises.push(promise);
         return promise;

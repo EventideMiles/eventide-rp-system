@@ -27,20 +27,20 @@ export const ActorSheetFeatureTabsMixin = createTabManagementMixin({
 // that can be called from the actor sheet's _onRender
 export const ActorSheetFeatureTabsMixinWithInit = (BaseClass) => {
   const MixedClass = ActorSheetFeatureTabsMixin(BaseClass);
-  
+
   return class extends MixedClass {
     /**
-      * Initialize feature tab management
-      * @protected
-      */
+     * Initialize feature tab management
+     * @protected
+     */
     _initFeatureTabManagement() {
       this._initFeatureTabs();
     }
 
     /**
-      * Clean up feature tab management
-      * @protected
-      */
+     * Clean up feature tab management
+     * @protected
+     */
     _cleanupFeatureTabManagement() {
       this._cleanupFeatureTabs();
     }

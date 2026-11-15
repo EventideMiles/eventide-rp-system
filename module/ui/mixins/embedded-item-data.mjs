@@ -215,7 +215,10 @@ export const EmbeddedItemDataMixin = (BaseClass) =>
       }
 
       // Check if there's a direct parent reference to a transformation
-      if (this.parentItem.parent && this.parentItem.parent.type === "transformation") {
+      if (
+        this.parentItem.parent &&
+        this.parentItem.parent.type === "transformation"
+      ) {
         Logger.debug(
           "EmbeddedItemDataMixin | Action card has transformation parent",
           { transformationId: this.parentItem.parent.id },
@@ -236,7 +239,9 @@ export const EmbeddedItemDataMixin = (BaseClass) =>
       }
 
       // Check if the action card has a custom update method (indicating it's from a transformation)
-      const hasCustomUpdate = this.parentItem.update && this.parentItem.update.toString().includes('embeddedActionCards');
+      const hasCustomUpdate =
+        this.parentItem.update &&
+        this.parentItem.update.toString().includes("embeddedActionCards");
       if (hasCustomUpdate) {
         Logger.debug(
           "EmbeddedItemDataMixin | Action card has custom update method (transformation)",
@@ -253,7 +258,7 @@ export const EmbeddedItemDataMixin = (BaseClass) =>
           hasParent: !!this.parentItem.parent,
           parentType: this.parentItem.parent?.type,
           hasTransformationParent: !!this.parentItem._transformationParent,
-          hasCustomUpdate
+          hasCustomUpdate,
         },
         "EMBEDDED_DATA",
       );
@@ -277,7 +282,10 @@ export const EmbeddedItemDataMixin = (BaseClass) =>
       }
 
       // Check if there's a direct parent reference to an action card
-      if (this.parentItem.parent && this.parentItem.parent.type === "actionCard") {
+      if (
+        this.parentItem.parent &&
+        this.parentItem.parent.type === "actionCard"
+      ) {
         Logger.debug(
           "EmbeddedItemDataMixin | Transformation has action card parent",
           { actionCardId: this.parentItem.parent.id },
@@ -298,7 +306,9 @@ export const EmbeddedItemDataMixin = (BaseClass) =>
       }
 
       // Check if the transformation has a custom update method (indicating it's from an action card)
-      const hasCustomUpdate = this.parentItem.update && this.parentItem.update.toString().includes('embeddedTransformations');
+      const hasCustomUpdate =
+        this.parentItem.update &&
+        this.parentItem.update.toString().includes("embeddedTransformations");
       if (hasCustomUpdate) {
         Logger.debug(
           "EmbeddedItemDataMixin | Transformation has custom update method (action card)",
@@ -315,7 +325,7 @@ export const EmbeddedItemDataMixin = (BaseClass) =>
           hasParent: !!this.parentItem.parent,
           parentType: this.parentItem.parent?.type,
           hasActionCardParent: !!this.parentItem._actionCardParent,
-          hasCustomUpdate
+          hasCustomUpdate,
         },
         "EMBEDDED_DATA",
       );
@@ -331,9 +341,7 @@ export const EmbeddedItemDataMixin = (BaseClass) =>
     async _saveEmbeddedTransformationItemContent(target, content) {
       // Use the transformation's enhanced update method with the fromEmbeddedItem flag
       const itemData = {
-        ...foundry.utils.deepClone(
-          this.document.toObject(),
-        ),
+        ...foundry.utils.deepClone(this.document.toObject()),
       };
       foundry.utils.setProperty(itemData, target, content);
 
@@ -384,9 +392,12 @@ export const EmbeddedItemDataMixin = (BaseClass) =>
 
         // Use the action card's update method with the fromEmbeddedItem flag
         // This will prevent the action card sheet from closing
-        await this.parentItem.update({
-          "system.embeddedItem": itemData,
-        }, { fromEmbeddedItem: true });
+        await this.parentItem.update(
+          {
+            "system.embeddedItem": itemData,
+          },
+          { fromEmbeddedItem: true },
+        );
 
         // Bring the embedded item sheet back to the front
         this.bringToFront();
@@ -588,9 +599,7 @@ export const EmbeddedItemDataMixin = (BaseClass) =>
     async _submitEmbeddedTransformationItemForm(formData) {
       // Use the transformation's enhanced update method with the fromEmbeddedItem flag
       const itemData = {
-        ...foundry.utils.deepClone(
-          this.document.toObject(),
-        ),
+        ...foundry.utils.deepClone(this.document.toObject()),
       };
       foundry.utils.mergeObject(itemData, formData);
 
@@ -638,9 +647,12 @@ export const EmbeddedItemDataMixin = (BaseClass) =>
 
         // Use the action card's update method with the fromEmbeddedItem flag
         // This will prevent the action card sheet from closing
-        await this.parentItem.update({
-          "system.embeddedItem": itemData,
-        }, { fromEmbeddedItem: true });
+        await this.parentItem.update(
+          {
+            "system.embeddedItem": itemData,
+          },
+          { fromEmbeddedItem: true },
+        );
 
         this.render();
 
@@ -675,10 +687,7 @@ export const EmbeddedItemDataMixin = (BaseClass) =>
           firstEffect,
         );
       } else if (this.isSelfEffect) {
-        await this._updateSelfEffectIconTint(
-          event.target.value,
-          firstEffect,
-        );
+        await this._updateSelfEffectIconTint(event.target.value, firstEffect);
       } else if (this.isEffect) {
         await this._updateActionCardEffectIconTint(
           event.target.value,
@@ -794,13 +803,19 @@ export const EmbeddedItemDataMixin = (BaseClass) =>
     async _updateActionCardItemIconTint(tintValue, firstEffect) {
       // Check if this action card is embedded within a transformation
       if (this._isActionCardEmbeddedInTransformation()) {
-        await this._updateEmbeddedActionCardItemIconTint(tintValue, firstEffect);
+        await this._updateEmbeddedActionCardItemIconTint(
+          tintValue,
+          firstEffect,
+        );
         return;
       }
 
       // Check if this is a transformation embedded within an action card
       if (this._isTransformationEmbeddedInActionCard()) {
-        await this._updateEmbeddedTransformationItemIconTint(tintValue, firstEffect);
+        await this._updateEmbeddedTransformationItemIconTint(
+          tintValue,
+          firstEffect,
+        );
         return;
       }
 
@@ -818,9 +833,12 @@ export const EmbeddedItemDataMixin = (BaseClass) =>
 
       try {
         this.document.updateSource(itemData);
-        await this.parentItem.update({
-          "system.embeddedItem": itemData,
-        }, { fromEmbeddedItem: true });
+        await this.parentItem.update(
+          {
+            "system.embeddedItem": itemData,
+          },
+          { fromEmbeddedItem: true },
+        );
       } catch (error) {
         Logger.error(
           "EmbeddedItemDataMixin | Failed to save item icon tint",
@@ -844,9 +862,7 @@ export const EmbeddedItemDataMixin = (BaseClass) =>
     async _updateEmbeddedTransformationItemIconTint(tintValue, firstEffect) {
       // Use the transformation's enhanced update method with the fromEmbeddedItem flag
       const itemData = {
-        ...foundry.utils.deepClone(
-          this.document.toObject(),
-        ),
+        ...foundry.utils.deepClone(this.document.toObject()),
       };
 
       if (!itemData.effects) itemData.effects = [];
@@ -887,10 +903,9 @@ export const EmbeddedItemDataMixin = (BaseClass) =>
      * @private
      */
     async _saveSelfEffectContent(target, content) {
-      const effectIndex =
-        this.parentItem.system.embeddedSelfEffects?.findIndex(
-          (s) => s._id === this.originalItemId,
-        );
+      const effectIndex = this.parentItem.system.embeddedSelfEffects?.findIndex(
+        (s) => s._id === this.originalItemId,
+      );
       if (effectIndex === -1 || effectIndex === undefined) return;
 
       const selfEffects = foundry.utils.deepClone(
@@ -930,18 +945,13 @@ export const EmbeddedItemDataMixin = (BaseClass) =>
      * @private
      */
     async _submitSelfEffectForm(formData) {
-      const effectIndex =
-        this.parentItem.system.embeddedSelfEffects?.findIndex(
-          (s) => s._id === this.originalItemId,
-        );
+      const effectIndex = this.parentItem.system.embeddedSelfEffects?.findIndex(
+        (s) => s._id === this.originalItemId,
+      );
       if (effectIndex === -1 || effectIndex === undefined) {
-        Logger.methodExit(
-          "EmbeddedItemDataMixin",
-          "_submitSelfEffectForm",
-          {
-            reason: "Self-effect not found",
-          },
-        );
+        Logger.methodExit("EmbeddedItemDataMixin", "_submitSelfEffectForm", {
+          reason: "Self-effect not found",
+        });
         return;
       }
 
@@ -981,10 +991,9 @@ export const EmbeddedItemDataMixin = (BaseClass) =>
      * @private
      */
     async _updateSelfEffectIconTint(tintValue, firstEffect) {
-      const effectIndex =
-        this.parentItem.system.embeddedSelfEffects?.findIndex(
-          (s) => s._id === this.originalItemId,
-        );
+      const effectIndex = this.parentItem.system.embeddedSelfEffects?.findIndex(
+        (s) => s._id === this.originalItemId,
+      );
       if (effectIndex < 0 || effectIndex === undefined) return;
 
       const selfEffects = foundry.utils.deepClone(
@@ -1047,9 +1056,12 @@ export const EmbeddedItemDataMixin = (BaseClass) =>
 
         // Use the action card's update method with the fromEmbeddedItem flag
         // This will prevent the action card sheet from closing
-        await this.parentItem.update({
-          "system.embeddedItem": itemData,
-        }, { fromEmbeddedItem: true });
+        await this.parentItem.update(
+          {
+            "system.embeddedItem": itemData,
+          },
+          { fromEmbeddedItem: true },
+        );
 
         // Bring the embedded item sheet back to the front
         this.bringToFront();

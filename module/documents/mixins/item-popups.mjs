@@ -395,12 +395,12 @@ export const ItemPopupsMixin = (BaseClass) =>
 
         // Check eligibility using the popup's validation logic
         const problems = await tempPopup.checkEligibility(options);
-        
+
         // Use the popup's own validation method if it exists, otherwise use generic check
         let hasProblems;
-        if (typeof tempPopup._hasValidationProblems === 'function') {
+        if (typeof tempPopup._hasValidationProblems === "function") {
           hasProblems = tempPopup._hasValidationProblems(problems);
-        } else if (typeof popupClass._hasValidationProblems === 'function') {
+        } else if (typeof popupClass._hasValidationProblems === "function") {
           hasProblems = popupClass._hasValidationProblems(problems);
         } else {
           // Generic validation check - handle gearValidation array properly

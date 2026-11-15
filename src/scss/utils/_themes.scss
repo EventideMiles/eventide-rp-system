@@ -1009,27 +1009,39 @@ $default-theme-image-bg: map.get($blue-theme, image-bg) !default;
 // Apply only scrollbar theme variables globally (for global scrollbar theming only)
 @mixin apply-all-global-scrollbar-themes($attribute-name: 'data-theme') {
   &:not([#{$attribute-name}]), &[#{$attribute-name}="blue"] {
+    // stylelint-disable-next-line scss/dollar-variable-no-missing-interpolation -- false positive: value IS interpolated (map.get() inside an interpolation block); the rule's detection cannot see through the Sass function call, and the compiled CSS emits real colors
     --theme-scrollbar-thumb: #{map.get($blue-theme, scrollbar-thumb)};
+    // stylelint-disable-next-line scss/dollar-variable-no-missing-interpolation -- false positive: value IS interpolated (map.get() inside an interpolation block); the rule's detection cannot see through the Sass function call, and the compiled CSS emits real colors
     --theme-scrollbar-track: #{map.get($blue-theme, scrollbar-track)};
   }
   &[#{$attribute-name}="gold"] {
+    // stylelint-disable-next-line scss/dollar-variable-no-missing-interpolation -- false positive: value IS interpolated (map.get() inside an interpolation block); the rule's detection cannot see through the Sass function call, and the compiled CSS emits real colors
     --theme-scrollbar-thumb: #{map.get($gold-theme, scrollbar-thumb)};
+    // stylelint-disable-next-line scss/dollar-variable-no-missing-interpolation -- false positive: value IS interpolated (map.get() inside an interpolation block); the rule's detection cannot see through the Sass function call, and the compiled CSS emits real colors
     --theme-scrollbar-track: #{map.get($gold-theme, scrollbar-track)};
   }
   &[#{$attribute-name}="green"] {
+    // stylelint-disable-next-line scss/dollar-variable-no-missing-interpolation -- false positive: value IS interpolated (map.get() inside an interpolation block); the rule's detection cannot see through the Sass function call, and the compiled CSS emits real colors
     --theme-scrollbar-thumb: #{map.get($green-theme, scrollbar-thumb)};
+    // stylelint-disable-next-line scss/dollar-variable-no-missing-interpolation -- false positive: value IS interpolated (map.get() inside an interpolation block); the rule's detection cannot see through the Sass function call, and the compiled CSS emits real colors
     --theme-scrollbar-track: #{map.get($green-theme, scrollbar-track)};
   }
   &[#{$attribute-name}="black"] {
+    // stylelint-disable-next-line scss/dollar-variable-no-missing-interpolation -- false positive: value IS interpolated (map.get() inside an interpolation block); the rule's detection cannot see through the Sass function call, and the compiled CSS emits real colors
     --theme-scrollbar-thumb: #{map.get($black-theme, scrollbar-thumb)};
+    // stylelint-disable-next-line scss/dollar-variable-no-missing-interpolation -- false positive: value IS interpolated (map.get() inside an interpolation block); the rule's detection cannot see through the Sass function call, and the compiled CSS emits real colors
     --theme-scrollbar-track: #{map.get($black-theme, scrollbar-track)};
   }
   &[#{$attribute-name}="purple"] {
+    // stylelint-disable-next-line scss/dollar-variable-no-missing-interpolation -- false positive: value IS interpolated (map.get() inside an interpolation block); the rule's detection cannot see through the Sass function call, and the compiled CSS emits real colors
     --theme-scrollbar-thumb: #{map.get($purple-theme, scrollbar-thumb)};
+    // stylelint-disable-next-line scss/dollar-variable-no-missing-interpolation -- false positive: value IS interpolated (map.get() inside an interpolation block); the rule's detection cannot see through the Sass function call, and the compiled CSS emits real colors
     --theme-scrollbar-track: #{map.get($purple-theme, scrollbar-track)};
   }
   &[#{$attribute-name}="light"] {
+    // stylelint-disable-next-line scss/dollar-variable-no-missing-interpolation -- false positive: value IS interpolated (map.get() inside an interpolation block); the rule's detection cannot see through the Sass function call, and the compiled CSS emits real colors
     --theme-scrollbar-thumb: #{map.get($light-theme, scrollbar-thumb)};
+    // stylelint-disable-next-line scss/dollar-variable-no-missing-interpolation -- false positive: value IS interpolated (map.get() inside an interpolation block); the rule's detection cannot see through the Sass function call, and the compiled CSS emits real colors
     --theme-scrollbar-track: #{map.get($light-theme, scrollbar-track)};
   }
 }

@@ -132,7 +132,10 @@ export class MultiImageSelector extends ThemeManagedPopupMixin(
    */
   _setupFormChangeDelegation() {
     if (!this.element) return;
-    const form = this.element.tagName === "FORM" ? this.element : this.element.querySelector("form");
+    const form =
+      this.element.tagName === "FORM"
+        ? this.element
+        : this.element.querySelector("form");
     if (!form) return;
 
     if (this._boundFormChangeHandler) {
@@ -158,12 +161,21 @@ export class MultiImageSelector extends ThemeManagedPopupMixin(
       isImage = true;
       value = target.value;
       syncPrefix = "syncImage-";
-    } else if (target.name === "system.bgColor" || target.name === "system.bgColor-hex") {
+    } else if (
+      target.name === "system.bgColor" ||
+      target.name === "system.bgColor-hex"
+    ) {
       isBg = true;
-      value = this.element.querySelector('input[name="system.bgColor"]')?.value || "";
+      value =
+        this.element.querySelector('input[name="system.bgColor"]')?.value || "";
       syncPrefix = "syncColors-";
-    } else if (target.name === "system.textColor" || target.name === "system.textColor-hex") {
-      value = this.element.querySelector('input[name="system.textColor"]')?.value || "";
+    } else if (
+      target.name === "system.textColor" ||
+      target.name === "system.textColor-hex"
+    ) {
+      value =
+        this.element.querySelector('input[name="system.textColor"]')?.value ||
+        "";
       syncPrefix = "syncColors-";
     } else {
       return;
@@ -171,29 +183,39 @@ export class MultiImageSelector extends ThemeManagedPopupMixin(
 
     if (!value) return;
 
-    this.element.querySelectorAll(`input[type="checkbox"][name^="${syncPrefix}"]:checked`).forEach((cb) => {
-      const prefix = cb.name.slice(syncPrefix.length);
-      if (isImage) {
-        const targetName = `${prefix}.img`;
-        const input = this.element.querySelector(`input[name="${targetName}"]`);
-        const img = this.element.querySelector(`img[data-target="${targetName}"]`);
-        if (input) input.value = value;
-        if (img) img.src = value;
-      } else {
-        const colorField = isBg ? "system.bgColor" : "system.textColor";
-        const fieldName = `${prefix}.${colorField}`;
-        const input = this.element.querySelector(`input[name="${fieldName}"]`);
-        const hex = this.element.querySelector(`input[name="${fieldName}-hex"]`);
-        if (input) {
-          input.value = value;
-          input.dispatchEvent(new Event("change", { bubbles: true }));
+    this.element
+      .querySelectorAll(`input[type="checkbox"][name^="${syncPrefix}"]:checked`)
+      .forEach((cb) => {
+        const prefix = cb.name.slice(syncPrefix.length);
+        if (isImage) {
+          const targetName = `${prefix}.img`;
+          const input = this.element.querySelector(
+            `input[name="${targetName}"]`,
+          );
+          const img = this.element.querySelector(
+            `img[data-target="${targetName}"]`,
+          );
+          if (input) input.value = value;
+          if (img) img.src = value;
+        } else {
+          const colorField = isBg ? "system.bgColor" : "system.textColor";
+          const fieldName = `${prefix}.${colorField}`;
+          const input = this.element.querySelector(
+            `input[name="${fieldName}"]`,
+          );
+          const hex = this.element.querySelector(
+            `input[name="${fieldName}-hex"]`,
+          );
+          if (input) {
+            input.value = value;
+            input.dispatchEvent(new Event("change", { bubbles: true }));
+          }
+          if (hex) {
+            hex.value = value;
+            hex.dispatchEvent(new Event("change", { bubbles: true }));
+          }
         }
-        if (hex) {
-          hex.value = value;
-          hex.dispatchEvent(new Event("change", { bubbles: true }));
-        }
-      }
-    });
+      });
   }
 
   /**
@@ -284,32 +306,50 @@ export class MultiImageSelector extends ThemeManagedPopupMixin(
   _applySyncDisabledStates() {
     if (!this.element) return;
 
-    this.element.querySelectorAll('input[type="checkbox"][name^="syncImage-"]').forEach((cb) => {
-      const prefix = cb.name.slice("syncImage-".length);
-      const targetName = `${prefix}.img`;
-      const input = this.element.querySelector(`input[name="${targetName}"]`);
-      const img = this.element.querySelector(`img[data-target="${targetName}"]`);
+    this.element
+      .querySelectorAll('input[type="checkbox"][name^="syncImage-"]')
+      .forEach((cb) => {
+        const prefix = cb.name.slice("syncImage-".length);
+        const targetName = `${prefix}.img`;
+        const input = this.element.querySelector(`input[name="${targetName}"]`);
+        const img = this.element.querySelector(
+          `img[data-target="${targetName}"]`,
+        );
 
-      if (cb.checked) {
-        if (input) input.disabled = true;
-        if (img) img.classList.add("erps-image-picker--disabled");
-      } else {
-        if (input) input.disabled = false;
-        if (img) img.classList.remove("erps-image-picker--disabled");
-      }
-    });
+        if (cb.checked) {
+          if (input) input.disabled = true;
+          if (img) img.classList.add("erps-image-picker--disabled");
+        } else {
+          if (input) input.disabled = false;
+          if (img) img.classList.remove("erps-image-picker--disabled");
+        }
+      });
 
-    this.element.querySelectorAll('input[type="checkbox"][name^="syncColors-"]').forEach((cb) => {
-      const prefix = cb.name.slice("syncColors-".length);
-      const bgInput = this.element.querySelector(`input[name="${prefix}.system.bgColor"]`);
-      const bgHex = this.element.querySelector(`input[name="${prefix}.system.bgColor-hex"]`);
-      const tcInput = this.element.querySelector(`input[name="${prefix}.system.textColor"]`);
-      const tcHex = this.element.querySelector(`input[name="${prefix}.system.textColor-hex"]`);
-      const disabled = cb.checked;
+    this.element
+      .querySelectorAll('input[type="checkbox"][name^="syncColors-"]')
+      .forEach((cb) => {
+        const prefix = cb.name.slice("syncColors-".length);
+        const bgInput = this.element.querySelector(
+          `input[name="${prefix}.system.bgColor"]`,
+        );
+        const bgHex = this.element.querySelector(
+          `input[name="${prefix}.system.bgColor-hex"]`,
+        );
+        const tcInput = this.element.querySelector(
+          `input[name="${prefix}.system.textColor"]`,
+        );
+        const tcHex = this.element.querySelector(
+          `input[name="${prefix}.system.textColor-hex"]`,
+        );
+        const disabled = cb.checked;
 
-      [bgInput, tcInput].forEach((el) => { if (el) el.disabled = disabled; });
-      [bgHex, tcHex].forEach((el) => { if (el) el.disabled = disabled; });
-    });
+        [bgInput, tcInput].forEach((el) => {
+          if (el) el.disabled = disabled;
+        });
+        [bgHex, tcHex].forEach((el) => {
+          if (el) el.disabled = disabled;
+        });
+      });
   }
 
   /**
@@ -379,9 +419,7 @@ export class MultiImageSelector extends ThemeManagedPopupMixin(
     if (!targetField) return;
 
     try {
-      const input = this.element.querySelector(
-        `input[name="${targetField}"]`,
-      );
+      const input = this.element.querySelector(`input[name="${targetField}"]`);
       const currentPath = input?.value || "";
 
       const fp = new FilePicker({
@@ -417,7 +455,10 @@ export class MultiImageSelector extends ThemeManagedPopupMixin(
   static _saveFormData(app) {
     if (!app?.element) return {};
 
-    const form = app.element.tagName === "FORM" ? app.element : app.element.querySelector("form");
+    const form =
+      app.element.tagName === "FORM"
+        ? app.element
+        : app.element.querySelector("form");
     if (!form) return {};
 
     const savedData = {};
@@ -486,8 +527,10 @@ export class MultiImageSelector extends ThemeManagedPopupMixin(
         "actionCard",
       );
       templateData.img = savedData["img"] || this.item.img;
-      templateData.system.bgColor = savedData["system.bgColor"] || this.item.system?.bgColor || "";
-      templateData.system.textColor = savedData["system.textColor"] || this.item.system?.textColor || "";
+      templateData.system.bgColor =
+        savedData["system.bgColor"] || this.item.system?.bgColor || "";
+      templateData.system.textColor =
+        savedData["system.textColor"] || this.item.system?.textColor || "";
 
       const tempItem = new CONFIG.Item.documentClass(templateData, {
         parent: null,
@@ -514,8 +557,10 @@ export class MultiImageSelector extends ThemeManagedPopupMixin(
 
       const templateData = DefaultDataFactory.getStatusData(this.item);
       templateData.img = savedData["img"] || this.item.img;
-      templateData.system.bgColor = savedData["system.bgColor"] || this.item.system?.bgColor || "";
-      templateData.system.textColor = savedData["system.textColor"] || this.item.system?.textColor || "";
+      templateData.system.bgColor =
+        savedData["system.bgColor"] || this.item.system?.bgColor || "";
+      templateData.system.textColor =
+        savedData["system.textColor"] || this.item.system?.textColor || "";
       if (templateData.effects && Array.isArray(templateData.effects)) {
         for (const effect of templateData.effects) {
           effect.img = templateData.img;
@@ -547,8 +592,10 @@ export class MultiImageSelector extends ThemeManagedPopupMixin(
 
       const templateData = DefaultDataFactory.getStatusData(this.item);
       templateData.img = savedData["img"] || this.item.img;
-      templateData.system.bgColor = savedData["system.bgColor"] || this.item.system?.bgColor || "";
-      templateData.system.textColor = savedData["system.textColor"] || this.item.system?.textColor || "";
+      templateData.system.bgColor =
+        savedData["system.bgColor"] || this.item.system?.bgColor || "";
+      templateData.system.textColor =
+        savedData["system.textColor"] || this.item.system?.textColor || "";
       if (templateData.effects && Array.isArray(templateData.effects)) {
         for (const effect of templateData.effects) {
           effect.img = templateData.img;
@@ -586,7 +633,7 @@ export class MultiImageSelector extends ThemeManagedPopupMixin(
       for (const el of form.elements) {
         if (!el.name) continue;
         if (el.type === "checkbox") {
-          raw[el.name] = el.checked ? (el.value || "on") : "null";
+          raw[el.name] = el.checked ? el.value || "on" : "null";
         } else {
           raw[el.name] = el.value;
         }
@@ -597,8 +644,10 @@ export class MultiImageSelector extends ThemeManagedPopupMixin(
       const checked = (value) => value && value !== "null";
 
       if (raw.img) actionCardUpdates.img = raw.img;
-      if (raw["system.bgColor"]) actionCardUpdates["system.bgColor"] = raw["system.bgColor"];
-      if (raw["system.textColor"]) actionCardUpdates["system.textColor"] = raw["system.textColor"];
+      if (raw["system.bgColor"])
+        actionCardUpdates["system.bgColor"] = raw["system.bgColor"];
+      if (raw["system.textColor"])
+        actionCardUpdates["system.textColor"] = raw["system.textColor"];
 
       // Helper: check if a form value actually differs from current data
       const changed = (formVal, currentVal) =>
@@ -639,13 +688,19 @@ export class MultiImageSelector extends ThemeManagedPopupMixin(
         if (checked(raw["syncColors-embeddedItem"])) {
           if (!updatedEmbedded.system) updatedEmbedded.system = {};
           updatedEmbedded.system.bgColor = raw["system.bgColor"] || currentBg;
-          updatedEmbedded.system.textColor = raw["system.textColor"] || currentTc;
+          updatedEmbedded.system.textColor =
+            raw["system.textColor"] || currentTc;
           sourceItemUpdates["system.bgColor"] = updatedEmbedded.system.bgColor;
-          sourceItemUpdates["system.textColor"] = updatedEmbedded.system.textColor;
+          sourceItemUpdates["system.textColor"] =
+            updatedEmbedded.system.textColor;
         }
 
         // Always sync effect.img to item.img
-        if (updatedEmbedded.img && updatedEmbedded.effects && Array.isArray(updatedEmbedded.effects)) {
+        if (
+          updatedEmbedded.img &&
+          updatedEmbedded.effects &&
+          Array.isArray(updatedEmbedded.effects)
+        ) {
           for (const activeEffect of updatedEmbedded.effects) {
             if (activeEffect.img !== updatedEmbedded.img) {
               activeEffect.img = updatedEmbedded.img;
@@ -736,7 +791,10 @@ export class MultiImageSelector extends ThemeManagedPopupMixin(
 
       // Apply each embedded data update separately (matching EmbeddedItemSheet pattern)
       for (const update of embeddedUpdates) {
-        await actionCard.update(update, { fromEmbeddedItem: true, diff: false });
+        await actionCard.update(update, {
+          fromEmbeddedItem: true,
+          diff: false,
+        });
       }
 
       this.close();

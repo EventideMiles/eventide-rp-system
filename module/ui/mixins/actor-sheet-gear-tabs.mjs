@@ -27,20 +27,20 @@ export const ActorSheetGearTabsMixin = createTabManagementMixin({
 // that can be called from the actor sheet's _onRender
 export const ActorSheetGearTabsMixinWithInit = (BaseClass) => {
   const MixedClass = ActorSheetGearTabsMixin(BaseClass);
-  
+
   return class extends MixedClass {
     /**
-      * Initialize gear tab management
-      * @protected
-      */
+     * Initialize gear tab management
+     * @protected
+     */
     _initGearTabManagement() {
       this._initGearTabs();
     }
 
     /**
-      * Clean up gear tab management
-      * @protected
-      */
+     * Clean up gear tab management
+     * @protected
+     */
     _cleanupGearTabManagement() {
       this._cleanupGearTabs();
     }

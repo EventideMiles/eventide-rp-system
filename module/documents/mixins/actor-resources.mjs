@@ -272,10 +272,19 @@ export const ActorResourceMixin = (BaseClass) =>
           }
         }
 
-        const { resolveRoll, powerRoll } = await erpsRollHandler.handleDamageBundle(
-          { resolveDamage, powerDamage, label, description, img, bgColor, textColor },
-          this,
-        );
+        const { resolveRoll, powerRoll } =
+          await erpsRollHandler.handleDamageBundle(
+            {
+              resolveDamage,
+              powerDamage,
+              label,
+              description,
+              img,
+              bgColor,
+              textColor,
+            },
+            this,
+          );
 
         // Apply each resource change if the user has permission
         if (this.isOwner) {
@@ -396,7 +405,10 @@ export const ActorResourceMixin = (BaseClass) =>
 
         if (resolve) {
           const resolveRestoreTarget = this.system.resolve.restoreTarget;
-          if (resolveRestoreTarget !== null && resolveRestoreTarget !== undefined) {
+          if (
+            resolveRestoreTarget !== null &&
+            resolveRestoreTarget !== undefined
+          ) {
             const target = clampValue(
               resolveRestoreTarget,
               0,

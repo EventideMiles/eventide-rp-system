@@ -6,10 +6,10 @@
  * damage application, status effects, player approval, and bulk operations.
  */
 
-import { gmControlManager } from '../../../../module/services/managers/gm-control.mjs';
+import { gmControlManager } from "../../../../module/services/managers/gm-control.mjs";
 
 // Mock Logger
-vi.mock('../../../../module/services/logger.mjs', () => ({
+vi.mock("../../../../module/services/logger.mjs", () => ({
   Logger: {
     methodEntry: vi.fn(),
     methodExit: vi.fn(),
@@ -21,7 +21,7 @@ vi.mock('../../../../module/services/logger.mjs', () => ({
 }));
 
 // Mock MessageFlags
-vi.mock('../../../../module/helpers/message-flags.mjs', () => ({
+vi.mock("../../../../module/helpers/message-flags.mjs", () => ({
   MessageFlags: {
     getGMApplyFlag: vi.fn(),
     updateGMApplyFlag: vi.fn(),
@@ -33,29 +33,29 @@ vi.mock('../../../../module/helpers/message-flags.mjs', () => ({
 }));
 
 // Mock StatusIntensification
-vi.mock('../../../../module/helpers/status-intensification.mjs', () => ({
+vi.mock("../../../../module/helpers/status-intensification.mjs", () => ({
   StatusIntensification: {
     applyOrIntensifyStatus: vi.fn(),
   },
 }));
 
 // Mock DamageProcessor
-vi.mock('../../../../module/services/damage-processor.mjs', () => ({
+vi.mock("../../../../module/services/damage-processor.mjs", () => ({
   DamageProcessor: {
     applyVulnerabilityModifier: vi.fn(),
   },
 }));
 
 // Mock system-messages
-vi.mock('../../../../module/services/managers/system-messages.mjs', () => ({
+vi.mock("../../../../module/services/managers/system-messages.mjs", () => ({
   notifyPlayerActionResult: vi.fn(),
 }));
 
 // Import mocked modules
-import { MessageFlags } from '../../../../module/helpers/message-flags.mjs';
-import { DamageProcessor } from '../../../../module/services/damage-processor.mjs';
+import { MessageFlags } from "../../../../module/helpers/message-flags.mjs";
+import { DamageProcessor } from "../../../../module/services/damage-processor.mjs";
 
-describe('GMControlManager', () => {
+describe("GMControlManager", () => {
   let mockMessage;
   let mockTargetActor;
   let mockSourceActor;
@@ -72,8 +72,8 @@ describe('GMControlManager', () => {
 
     // Setup mock user
     mockUser = {
-      id: 'user1',
-      name: 'TestGM',
+      id: "user1",
+      name: "TestGM",
       isGM: true,
     };
 
@@ -110,12 +110,14 @@ describe('GMControlManager', () => {
     // Setup mock CONFIG
     mockConfig = {
       Item: {
-        documentClass: vi.fn((data) => ({
-          ...data,
-          name: data.name || 'Mock Action Card',
-          system: data.system || {},
-          img: data.img || null,
-        })),
+        documentClass: vi.fn(function (data) {
+          return {
+            ...data,
+            name: data.name || "Mock Action Card",
+            system: data.system || {},
+            img: data.img || null,
+          };
+        }),
       },
     };
 
@@ -127,105 +129,105 @@ describe('GMControlManager', () => {
 
     // Setup mock target actor
     mockTargetActor = {
-      id: 'target1',
-      name: 'Target Actor',
+      id: "target1",
+      name: "Target Actor",
       damageResolve: vi.fn(() => Promise.resolve(mockDamageRoll)),
     };
 
     // Setup mock source actor
     mockSourceActor = {
-      id: 'source1',
-      name: 'Source Actor',
+      id: "source1",
+      name: "Source Actor",
       items: new Map(),
     };
 
     // Setup mock action card
     mockActionCard = {
-      id: 'action1',
-      name: 'Test Action Card',
+      id: "action1",
+      name: "Test Action Card",
       system: {
-        description: 'Test action card description',
-        _getEffectiveImage: vi.fn(() => 'action-card.png'),
-        bgColor: '#ff0000',
-        textColor: '#ffffff',
+        description: "Test action card description",
+        _getEffectiveImage: vi.fn(() => "action-card.png"),
+        bgColor: "#ff0000",
+        textColor: "#ffffff",
       },
-      img: 'default-action.png',
+      img: "default-action.png",
       executeWithRollResult: vi.fn(() => Promise.resolve({ success: true })),
     };
 
     // Setup mock damage roll
     mockDamageRoll = {
       total: 10,
-      formula: '2d6',
+      formula: "2d6",
     };
 
     // Setup mock message
     mockMessage = {
-      id: 'msg1',
+      id: "msg1",
       flags: {},
       delete: vi.fn(() => Promise.resolve()),
     };
 
     // Add actors to game
-    mockGame.actors.set('target1', mockTargetActor);
-    mockGame.actors.set('source1', mockSourceActor);
+    mockGame.actors.set("target1", mockTargetActor);
+    mockGame.actors.set("source1", mockSourceActor);
 
     // Add action card to source actor
-    mockSourceActor.items.set('action1', mockActionCard);
+    mockSourceActor.items.set("action1", mockActionCard);
 
     // Default mock implementations
     MessageFlags.getGMApplyFlag.mockReturnValue({
-      actionCardId: 'action1',
-      actorId: 'source1',
+      actionCardId: "action1",
+      actorId: "source1",
       damage: {
-        targetId: 'target1',
-        formula: '2d6',
-        type: 'physical',
+        targetId: "target1",
+        formula: "2d6",
+        type: "physical",
         applied: false,
       },
       status: {
-        targetId: 'target1',
+        targetId: "target1",
         effects: [],
         applied: false,
       },
     });
 
     MessageFlags.updateGMApplyFlag.mockResolvedValue(mockMessage);
-    DamageProcessor.applyVulnerabilityModifier.mockReturnValue('2d6');
+    DamageProcessor.applyVulnerabilityModifier.mockReturnValue("2d6");
   });
 
-  describe('constructor', () => {
-    test('should initialize with pending applications map', () => {
+  describe("constructor", () => {
+    test("should initialize with pending applications map", () => {
       expect(gmControlManager.pendingApplications).toBeInstanceOf(Map);
     });
   });
 
-  describe('hasGMPermission()', () => {
-    test('should return true for GM user', () => {
+  describe("hasGMPermission()", () => {
+    test("should return true for GM user", () => {
       const result = gmControlManager.hasGMPermission(mockUser);
       expect(result).toBe(true);
     });
 
-    test('should return true for GM when using default game.user', () => {
+    test("should return true for GM when using default game.user", () => {
       const result = gmControlManager.hasGMPermission();
       expect(result).toBe(true);
     });
 
-    test('should return false for non-GM user', () => {
+    test("should return false for non-GM user", () => {
       mockUser.isGM = false;
       const result = gmControlManager.hasGMPermission(mockUser);
       expect(result).toBe(false);
     });
   });
 
-  describe('cleanup()', () => {
-    test('should call cleanup method without errors', () => {
+  describe("cleanup()", () => {
+    test("should call cleanup method without errors", () => {
       expect(() => gmControlManager.cleanup()).not.toThrow();
     });
   });
 
-  describe('getPendingStats()', () => {
-    test('should return statistics with zero values when no pending messages', () => {
+  describe("getPendingStats()", () => {
+    test("should return statistics with zero values when no pending messages", () => {
       MessageFlags.hasPendingApplications.mockReturnValue(false);
       mockGame.messages = [];
 
@@ -238,22 +240,22 @@ describe('GMControlManager', () => {
       });
     });
 
-    test('should count pending damage applications', () => {
-      const mockMessage1 = { id: 'msg1', flags: {} };
-      const mockMessage2 = { id: 'msg2', flags: {} };
+    test("should count pending damage applications", () => {
+      const mockMessage1 = { id: "msg1", flags: {} };
+      const mockMessage2 = { id: "msg2", flags: {} };
       mockGame.messages = [mockMessage1, mockMessage2];
 
       MessageFlags.hasPendingApplications.mockImplementation((msg) => {
-        return msg.id === 'msg1' || msg.id === 'msg2';
+        return msg.id === "msg1" || msg.id === "msg2";
       });
 
       MessageFlags.getGMApplyFlag.mockImplementation((msg) => {
-        if (msg.id === 'msg1') {
+        if (msg.id === "msg1") {
           return {
             damage: { applied: false },
             status: null,
           };
-        } else if (msg.id === 'msg2') {
+        } else if (msg.id === "msg2") {
           return {
             damage: { applied: false },
             status: { applied: false },
@@ -269,8 +271,8 @@ describe('GMControlManager', () => {
       expect(stats.pendingStatus).toBe(1);
     });
 
-    test('should count pending status applications', () => {
-      const mockMessage = { id: 'msg1', flags: {} };
+    test("should count pending status applications", () => {
+      const mockMessage = { id: "msg1", flags: {} };
       mockGame.messages = [mockMessage];
 
       MessageFlags.hasPendingApplications.mockReturnValue(true);
@@ -287,189 +289,189 @@ describe('GMControlManager', () => {
     });
   });
 
-  describe('applyDamage()', () => {
+  describe("applyDamage()", () => {
     beforeEach(() => {
       MessageFlags.getGMApplyFlag.mockReturnValue({
-        actionCardId: 'action1',
-        actorId: 'source1',
+        actionCardId: "action1",
+        actorId: "source1",
         damage: {
-          targetId: 'target1',
-          formula: '2d6',
-          type: 'physical',
+          targetId: "target1",
+          formula: "2d6",
+          type: "physical",
           applied: false,
         },
       });
     });
 
-    test('should apply damage successfully to target actor', async () => {
+    test("should apply damage successfully to target actor", async () => {
       const result = await gmControlManager.applyDamage(
         mockMessage,
-        'target1',
-        '2d6',
-        'physical',
+        "target1",
+        "2d6",
+        "physical",
       );
 
       expect(result).toBe(true);
       expect(mockTargetActor.damageResolve).toHaveBeenCalledWith({
-        formula: '2d6',
-        label: 'Test Action Card',
-        description: 'Test action card description',
-        type: 'physical',
-        img: 'action-card.png',
-        bgColor: '#ff0000',
-        textColor: '#ffffff',
+        formula: "2d6",
+        label: "Test Action Card",
+        description: "Test action card description",
+        type: "physical",
+        img: "action-card.png",
+        bgColor: "#ff0000",
+        textColor: "#ffffff",
       });
       expect(MessageFlags.updateGMApplyFlag).toHaveBeenCalledWith(
         mockMessage,
-        'damage',
+        "damage",
         { applied: true, targetValid: true },
       );
       expect(ui.notifications.info).toHaveBeenCalledWith(
-        'Applied 10 physical damage to Target Actor',
+        "Applied 10 physical damage to Target Actor",
       );
     });
 
-    test('should return false and warn when target actor is missing', async () => {
+    test("should return false and warn when target actor is missing", async () => {
       const result = await gmControlManager.applyDamage(
         mockMessage,
-        'nonexistent',
-        '2d6',
-        'physical',
+        "nonexistent",
+        "2d6",
+        "physical",
       );
 
       expect(result).toBe(false);
       expect(ui.notifications.warn).toHaveBeenCalledWith(
-        'EVENTIDE_RP_SYSTEM.Errors.TargetActorMissing',
+        "EVENTIDE_RP_SYSTEM.Errors.TargetActorMissing",
       );
       expect(MessageFlags.updateGMApplyFlag).toHaveBeenCalledWith(
         mockMessage,
-        'damage',
+        "damage",
         { applied: false, targetValid: false },
       );
       expect(mockTargetActor.damageResolve).not.toHaveBeenCalled();
     });
 
-    test('should apply vulnerability modifier to damage formula', async () => {
-      DamageProcessor.applyVulnerabilityModifier.mockReturnValue('4d6');
+    test("should apply vulnerability modifier to damage formula", async () => {
+      DamageProcessor.applyVulnerabilityModifier.mockReturnValue("4d6");
 
       await gmControlManager.applyDamage(
         mockMessage,
-        'target1',
-        '2d6',
-        'physical',
+        "target1",
+        "2d6",
+        "physical",
       );
 
       expect(DamageProcessor.applyVulnerabilityModifier).toHaveBeenCalledWith(
-        '2d6',
-        'physical',
+        "2d6",
+        "physical",
         mockTargetActor,
       );
       expect(mockTargetActor.damageResolve).toHaveBeenCalledWith(
         expect.objectContaining({
-          formula: '4d6',
+          formula: "4d6",
         }),
       );
     });
 
-    test('should handle damage resolution error gracefully', async () => {
-      const damageError = new Error('Roll failed');
+    test("should handle damage resolution error gracefully", async () => {
+      const damageError = new Error("Roll failed");
       mockTargetActor.damageResolve.mockRejectedValue(damageError);
 
       const result = await gmControlManager.applyDamage(
         mockMessage,
-        'target1',
-        '2d6',
-        'physical',
+        "target1",
+        "2d6",
+        "physical",
       );
 
       expect(result).toBe(false);
       expect(ui.notifications.error).toHaveBeenCalledWith(
-        'Failed to apply damage: Roll failed',
+        "Failed to apply damage: Roll failed",
       );
       expect(MessageFlags.updateGMApplyFlag).toHaveBeenCalledWith(
         mockMessage,
-        'damage',
-        { applied: true, failed: true, error: 'Roll failed' },
+        "damage",
+        { applied: true, failed: true, error: "Roll failed" },
       );
     });
 
-    test('should use default values when action card is not found', async () => {
+    test("should use default values when action card is not found", async () => {
       MessageFlags.getGMApplyFlag.mockReturnValue({
-        actionCardId: 'nonexistent',
-        actorId: 'source1',
+        actionCardId: "nonexistent",
+        actorId: "source1",
         damage: {
-          targetId: 'target1',
-          formula: '2d6',
-          type: 'physical',
+          targetId: "target1",
+          formula: "2d6",
+          type: "physical",
           applied: false,
         },
       });
 
       await gmControlManager.applyDamage(
         mockMessage,
-        'target1',
-        '2d6',
-        'physical',
+        "target1",
+        "2d6",
+        "physical",
       );
 
       expect(mockTargetActor.damageResolve).toHaveBeenCalledWith(
         expect.objectContaining({
-          label: 'Action Card',
-          description: 'Damage from action card attack chain',
+          label: "Action Card",
+          description: "Damage from action card attack chain",
         }),
       );
     });
 
-    test('should use stored action card data when item not found', async () => {
+    test("should use stored action card data when item not found", async () => {
       const storedActionCardData = {
-        id: 'action2',
-        name: 'Stored Action Card',
-        img: 'stored.png',
+        id: "action2",
+        name: "Stored Action Card",
+        img: "stored.png",
         system: {
-          description: 'Stored description',
-          bgColor: '#00ff00',
-          textColor: '#000000',
-          _getEffectiveImage: vi.fn(() => 'stored.png'),
+          description: "Stored description",
+          bgColor: "#00ff00",
+          textColor: "#000000",
+          _getEffectiveImage: vi.fn(() => "stored.png"),
         },
       };
 
       MessageFlags.getGMApplyFlag.mockReturnValue({
-        actionCardId: 'action2',
-        actorId: 'source1',
+        actionCardId: "action2",
+        actorId: "source1",
         actionCardData: storedActionCardData,
         damage: {
-          targetId: 'target1',
-          formula: '2d6',
-          type: 'physical',
+          targetId: "target1",
+          formula: "2d6",
+          type: "physical",
           applied: false,
         },
       });
 
       await gmControlManager.applyDamage(
         mockMessage,
-        'target1',
-        '2d6',
-        'physical',
+        "target1",
+        "2d6",
+        "physical",
       );
 
       expect(mockTargetActor.damageResolve).toHaveBeenCalledWith(
         expect.objectContaining({
-          label: 'Stored Action Card',
-          description: 'Stored description',
-          img: 'stored.png',
+          label: "Stored Action Card",
+          description: "Stored description",
+          img: "stored.png",
         }),
       );
     });
 
-    test('should wait for execution delay before checking auto cleanup', async () => {
+    test("should wait for execution delay before checking auto cleanup", async () => {
       vi.useFakeTimers();
       mockGame.settings.get.mockReturnValue(1000);
 
       const promise = gmControlManager.applyDamage(
         mockMessage,
-        'target1',
-        '2d6',
-        'physical',
+        "target1",
+        "2d6",
+        "physical",
       );
 
       await vi.advanceTimersByTimeAsync(1000);
@@ -479,15 +481,15 @@ describe('GMControlManager', () => {
     });
   });
 
-  describe('applyStatusEffects()', () => {
+  describe("applyStatusEffects()", () => {
     beforeEach(() => {
       MessageFlags.getGMApplyFlag.mockReturnValue({
         status: {
-          targetId: 'target1',
+          targetId: "target1",
           effects: [
             {
-              type: 'status',
-              name: 'Burning',
+              type: "status",
+              name: "Burning",
               system: {},
             },
           ],
@@ -496,27 +498,26 @@ describe('GMControlManager', () => {
       });
     });
 
-    test('should apply status effects successfully to target actor', async () => {
-      const { StatusIntensification } = await import(
-        '../../../../module/helpers/status-intensification.mjs'
-      );
+    test("should apply status effects successfully to target actor", async () => {
+      const { StatusIntensification } =
+        await import("../../../../module/helpers/status-intensification.mjs");
       StatusIntensification.applyOrIntensifyStatus.mockResolvedValue({
         applied: true,
       });
 
       const result = await gmControlManager.applyStatusEffects(
         mockMessage,
-        'target1',
+        "target1",
       );
 
       expect(result).toBe(true);
       expect(StatusIntensification.applyOrIntensifyStatus).toHaveBeenCalledWith(
         mockTargetActor,
         expect.objectContaining({
-          type: 'status',
-          name: 'Burning',
+          type: "status",
+          name: "Burning",
           flags: {
-            'eventide-rp-system': {
+            "eventide-rp-system": {
               isEffect: true,
             },
           },
@@ -524,62 +525,61 @@ describe('GMControlManager', () => {
       );
       expect(MessageFlags.updateGMApplyFlag).toHaveBeenCalledWith(
         mockMessage,
-        'status',
+        "status",
         { applied: true, targetValid: true, appliedCount: 1 },
       );
       expect(ui.notifications.info).toHaveBeenCalledWith(
-        'Applied 1 status effect(s) to Target Actor',
+        "Applied 1 status effect(s) to Target Actor",
       );
     });
 
-    test('should return false and warn when target actor is missing', async () => {
+    test("should return false and warn when target actor is missing", async () => {
       const result = await gmControlManager.applyStatusEffects(
         mockMessage,
-        'nonexistent',
+        "nonexistent",
       );
 
       expect(result).toBe(false);
       expect(ui.notifications.warn).toHaveBeenCalledWith(
-        'EVENTIDE_RP_SYSTEM.Errors.TargetActorMissing',
+        "EVENTIDE_RP_SYSTEM.Errors.TargetActorMissing",
       );
       expect(MessageFlags.updateGMApplyFlag).toHaveBeenCalledWith(
         mockMessage,
-        'status',
+        "status",
         { applied: false, targetValid: false },
       );
     });
 
-    test('should return false when no status effects in message flag', async () => {
+    test("should return false when no status effects in message flag", async () => {
       MessageFlags.getGMApplyFlag.mockReturnValue({
         status: null,
       });
 
       const result = await gmControlManager.applyStatusEffects(
         mockMessage,
-        'target1',
+        "target1",
       );
 
       expect(result).toBe(false);
       expect(ui.notifications.error).toHaveBeenCalledWith(
-        'EVENTIDE_RP_SYSTEM.Errors.NoStatusEffectsInMessage',
+        "EVENTIDE_RP_SYSTEM.Errors.NoStatusEffectsInMessage",
       );
     });
 
-    test('should prepare gear effects with equipped and quantity', async () => {
-      const { StatusIntensification } = await import(
-        '../../../../module/helpers/status-intensification.mjs'
-      );
+    test("should prepare gear effects with equipped and quantity", async () => {
+      const { StatusIntensification } =
+        await import("../../../../module/helpers/status-intensification.mjs");
       StatusIntensification.applyOrIntensifyStatus.mockResolvedValue({
         applied: true,
       });
 
       MessageFlags.getGMApplyFlag.mockReturnValue({
         status: {
-          targetId: 'target1',
+          targetId: "target1",
           effects: [
             {
-              type: 'gear',
-              name: 'Shield',
+              type: "gear",
+              name: "Shield",
               system: {},
             },
           ],
@@ -587,19 +587,19 @@ describe('GMControlManager', () => {
         },
       });
 
-      await gmControlManager.applyStatusEffects(mockMessage, 'target1');
+      await gmControlManager.applyStatusEffects(mockMessage, "target1");
 
       expect(StatusIntensification.applyOrIntensifyStatus).toHaveBeenCalledWith(
         mockTargetActor,
         expect.objectContaining({
-          type: 'gear',
-          name: 'Shield',
+          type: "gear",
+          name: "Shield",
           system: {
             equipped: true,
             quantity: 1,
           },
           flags: {
-            'eventide-rp-system': {
+            "eventide-rp-system": {
               isEffect: true,
             },
           },
@@ -607,125 +607,121 @@ describe('GMControlManager', () => {
       );
     });
 
-    test('should handle status effect application errors gracefully', async () => {
-      const { StatusIntensification } = await import(
-        '../../../../module/helpers/status-intensification.mjs'
-      );
+    test("should handle status effect application errors gracefully", async () => {
+      const { StatusIntensification } =
+        await import("../../../../module/helpers/status-intensification.mjs");
       StatusIntensification.applyOrIntensifyStatus.mockRejectedValue(
-        new Error('Effect failed'),
+        new Error("Effect failed"),
       );
 
       const result = await gmControlManager.applyStatusEffects(
         mockMessage,
-        'target1',
+        "target1",
       );
 
       expect(result).toBe(true);
       expect(ui.notifications.warn).toHaveBeenCalledWith(
-        'EVENTIDE_RP_SYSTEM.Errors.NoStatusApplied',
+        "EVENTIDE_RP_SYSTEM.Errors.NoStatusApplied",
       );
     });
 
-    test('should warn when no status effects were successfully applied', async () => {
-      const { StatusIntensification } = await import(
-        '../../../../module/helpers/status-intensification.mjs'
-      );
+    test("should warn when no status effects were successfully applied", async () => {
+      const { StatusIntensification } =
+        await import("../../../../module/helpers/status-intensification.mjs");
       StatusIntensification.applyOrIntensifyStatus.mockResolvedValue({
         applied: false,
       });
 
-      await gmControlManager.applyStatusEffects(mockMessage, 'target1');
+      await gmControlManager.applyStatusEffects(mockMessage, "target1");
 
       expect(ui.notifications.warn).toHaveBeenCalledWith(
-        'EVENTIDE_RP_SYSTEM.Errors.NoStatusApplied',
+        "EVENTIDE_RP_SYSTEM.Errors.NoStatusApplied",
       );
     });
 
-    test('should count multiple applied status effects', async () => {
-      const { StatusIntensification } = await import(
-        '../../../../module/helpers/status-intensification.mjs'
-      );
+    test("should count multiple applied status effects", async () => {
+      const { StatusIntensification } =
+        await import("../../../../module/helpers/status-intensification.mjs");
       StatusIntensification.applyOrIntensifyStatus.mockResolvedValue({
         applied: true,
       });
 
       MessageFlags.getGMApplyFlag.mockReturnValue({
         status: {
-          targetId: 'target1',
+          targetId: "target1",
           effects: [
-            { type: 'status', name: 'Burning', system: {} },
-            { type: 'status', name: 'Frozen', system: {} },
-            { type: 'status', name: 'Poisoned', system: {} },
+            { type: "status", name: "Burning", system: {} },
+            { type: "status", name: "Frozen", system: {} },
+            { type: "status", name: "Poisoned", system: {} },
           ],
           applied: false,
         },
       });
 
-      await gmControlManager.applyStatusEffects(mockMessage, 'target1');
+      await gmControlManager.applyStatusEffects(mockMessage, "target1");
 
       expect(MessageFlags.updateGMApplyFlag).toHaveBeenCalledWith(
         mockMessage,
-        'status',
+        "status",
         { applied: true, targetValid: true, appliedCount: 3 },
       );
     });
   });
 
-  describe('discardDamage()', () => {
-    test('should mark damage as discarded and update flag', async () => {
+  describe("discardDamage()", () => {
+    test("should mark damage as discarded and update flag", async () => {
       const result = await gmControlManager.discardDamage(mockMessage);
 
       expect(result).toBe(true);
       expect(MessageFlags.updateGMApplyFlag).toHaveBeenCalledWith(
         mockMessage,
-        'damage',
+        "damage",
         { applied: true, discarded: true },
       );
       expect(ui.notifications.info).toHaveBeenCalledWith(
-        'EVENTIDE_RP_SYSTEM.Info.DamageDiscarded',
+        "EVENTIDE_RP_SYSTEM.Info.DamageDiscarded",
       );
     });
   });
 
-  describe('discardStatusEffects()', () => {
-    test('should mark status effects as discarded and update flag', async () => {
+  describe("discardStatusEffects()", () => {
+    test("should mark status effects as discarded and update flag", async () => {
       const result = await gmControlManager.discardStatusEffects(mockMessage);
 
       expect(result).toBe(true);
       expect(MessageFlags.updateGMApplyFlag).toHaveBeenCalledWith(
         mockMessage,
-        'status',
+        "status",
         { applied: true, discarded: true },
       );
       expect(ui.notifications.info).toHaveBeenCalledWith(
-        'EVENTIDE_RP_SYSTEM.Info.StatusEffectsDiscarded',
+        "EVENTIDE_RP_SYSTEM.Info.StatusEffectsDiscarded",
       );
     });
   });
 
-  describe('applyAllEffects()', () => {
+  describe("applyAllEffects()", () => {
     beforeEach(() => {
       MessageFlags.getGMApplyFlag.mockReturnValue({
-        actionCardId: 'action1',
-        actorId: 'source1',
+        actionCardId: "action1",
+        actorId: "source1",
         damage: {
-          targetId: 'target1',
-          formula: '2d6',
-          type: 'physical',
+          targetId: "target1",
+          formula: "2d6",
+          type: "physical",
           applied: false,
         },
         status: {
-          targetId: 'target1',
-          effects: [{ type: 'status', name: 'Burning', system: {} }],
+          targetId: "target1",
+          effects: [{ type: "status", name: "Burning", system: {} }],
           applied: false,
         },
       });
     });
 
-    test('should apply both damage and status effects successfully', async () => {
-      const { StatusIntensification } = await import(
-        '../../../../module/helpers/status-intensification.mjs'
-      );
+    test("should apply both damage and status effects successfully", async () => {
+      const { StatusIntensification } =
+        await import("../../../../module/helpers/status-intensification.mjs");
       StatusIntensification.applyOrIntensifyStatus.mockResolvedValue({
         applied: true,
       });
@@ -736,32 +732,32 @@ describe('GMControlManager', () => {
       expect(mockTargetActor.damageResolve).toHaveBeenCalled();
       expect(MessageFlags.updateGMApplyFlag).toHaveBeenCalledWith(
         mockMessage,
-        'damage',
+        "damage",
         { applied: true, targetValid: true },
       );
       expect(MessageFlags.updateGMApplyFlag).toHaveBeenCalledWith(
         mockMessage,
-        'status',
+        "status",
         { applied: true, targetValid: true, appliedCount: 1 },
       );
       expect(ui.notifications.info).toHaveBeenCalledWith(
-        'EVENTIDE_RP_SYSTEM.Info.AllEffectsApplied',
+        "EVENTIDE_RP_SYSTEM.Info.AllEffectsApplied",
       );
     });
 
-    test('should apply only damage when status is already applied', async () => {
+    test("should apply only damage when status is already applied", async () => {
       MessageFlags.getGMApplyFlag.mockReturnValue({
-        actionCardId: 'action1',
-        actorId: 'source1',
+        actionCardId: "action1",
+        actorId: "source1",
         damage: {
-          targetId: 'target1',
-          formula: '2d6',
-          type: 'physical',
+          targetId: "target1",
+          formula: "2d6",
+          type: "physical",
           applied: false,
         },
         status: {
-          targetId: 'target1',
-          effects: [{ type: 'status', name: 'Burning', system: {} }],
+          targetId: "target1",
+          effects: [{ type: "status", name: "Burning", system: {} }],
           applied: true,
         },
       });
@@ -771,23 +767,23 @@ describe('GMControlManager', () => {
       expect(result).toBe(true);
       expect(mockTargetActor.damageResolve).toHaveBeenCalled();
       expect(ui.notifications.info).toHaveBeenCalledWith(
-        'EVENTIDE_RP_SYSTEM.Info.AllEffectsApplied',
+        "EVENTIDE_RP_SYSTEM.Info.AllEffectsApplied",
       );
     });
 
-    test('should apply only status effects when damage is already applied', async () => {
+    test("should apply only status effects when damage is already applied", async () => {
       MessageFlags.getGMApplyFlag.mockReturnValue({
-        actionCardId: 'action1',
-        actorId: 'source1',
+        actionCardId: "action1",
+        actorId: "source1",
         damage: {
-          targetId: 'target1',
-          formula: '2d6',
-          type: 'physical',
+          targetId: "target1",
+          formula: "2d6",
+          type: "physical",
           applied: true,
         },
         status: {
-          targetId: 'target1',
-          effects: [{ type: 'status', name: 'Burning', system: {} }],
+          targetId: "target1",
+          effects: [{ type: "status", name: "Burning", system: {} }],
           applied: false,
         },
       });
@@ -797,40 +793,42 @@ describe('GMControlManager', () => {
       expect(result).toBe(true);
       expect(mockTargetActor.damageResolve).not.toHaveBeenCalled();
       expect(ui.notifications.info).toHaveBeenCalledWith(
-        'EVENTIDE_RP_SYSTEM.Info.AllEffectsApplied',
+        "EVENTIDE_RP_SYSTEM.Info.AllEffectsApplied",
       );
     });
 
-    test('should return false and warn when flag is missing', async () => {
+    test("should return false and warn when flag is missing", async () => {
       MessageFlags.getGMApplyFlag.mockReturnValue(null);
 
       const result = await gmControlManager.applyAllEffects(mockMessage);
 
       expect(result).toBe(false);
       expect(ui.notifications.warn).toHaveBeenCalledWith(
-        'EVENTIDE_RP_SYSTEM.Errors.NoGMApplyData',
+        "EVENTIDE_RP_SYSTEM.Errors.NoGMApplyData",
       );
     });
 
-    test('should handle partial failure and warn', async () => {
-      mockTargetActor.damageResolve.mockRejectedValue(new Error('Damage failed'));
+    test("should handle partial failure and warn", async () => {
+      mockTargetActor.damageResolve.mockRejectedValue(
+        new Error("Damage failed"),
+      );
 
       const result = await gmControlManager.applyAllEffects(mockMessage);
 
       expect(result).toBe(false);
       expect(ui.notifications.warn).toHaveBeenCalledWith(
-        'EVENTIDE_RP_SYSTEM.Errors.SomeEffectsFailed',
+        "EVENTIDE_RP_SYSTEM.Errors.SomeEffectsFailed",
       );
     });
 
-    test('should handle case where only damage exists', async () => {
+    test("should handle case where only damage exists", async () => {
       MessageFlags.getGMApplyFlag.mockReturnValue({
-        actionCardId: 'action1',
-        actorId: 'source1',
+        actionCardId: "action1",
+        actorId: "source1",
         damage: {
-          targetId: 'target1',
-          formula: '2d6',
-          type: 'physical',
+          targetId: "target1",
+          formula: "2d6",
+          type: "physical",
           applied: false,
         },
       });
@@ -839,17 +837,17 @@ describe('GMControlManager', () => {
 
       expect(result).toBe(true);
       expect(ui.notifications.info).toHaveBeenCalledWith(
-        'EVENTIDE_RP_SYSTEM.Info.AllEffectsApplied',
+        "EVENTIDE_RP_SYSTEM.Info.AllEffectsApplied",
       );
     });
 
-    test('should handle case where only status exists', async () => {
+    test("should handle case where only status exists", async () => {
       MessageFlags.getGMApplyFlag.mockReturnValue({
-        actionCardId: 'action1',
-        actorId: 'source1',
+        actionCardId: "action1",
+        actorId: "source1",
         status: {
-          targetId: 'target1',
-          effects: [{ type: 'status', name: 'Burning', system: {} }],
+          targetId: "target1",
+          effects: [{ type: "status", name: "Burning", system: {} }],
           applied: false,
         },
       });
@@ -858,58 +856,58 @@ describe('GMControlManager', () => {
 
       expect(result).toBe(true);
       expect(ui.notifications.info).toHaveBeenCalledWith(
-        'EVENTIDE_RP_SYSTEM.Info.AllEffectsApplied',
+        "EVENTIDE_RP_SYSTEM.Info.AllEffectsApplied",
       );
     });
   });
 
-  describe('discardAllEffects()', () => {
+  describe("discardAllEffects()", () => {
     beforeEach(() => {
       MessageFlags.getGMApplyFlag.mockReturnValue({
         damage: {
-          targetId: 'target1',
-          formula: '2d6',
-          type: 'physical',
+          targetId: "target1",
+          formula: "2d6",
+          type: "physical",
           applied: false,
         },
         status: {
-          targetId: 'target1',
-          effects: [{ type: 'status', name: 'Burning', system: {} }],
+          targetId: "target1",
+          effects: [{ type: "status", name: "Burning", system: {} }],
           applied: false,
         },
       });
     });
 
-    test('should discard both damage and status effects successfully', async () => {
+    test("should discard both damage and status effects successfully", async () => {
       const result = await gmControlManager.discardAllEffects(mockMessage);
 
       expect(result).toBe(true);
       expect(MessageFlags.updateGMApplyFlag).toHaveBeenCalledWith(
         mockMessage,
-        'damage',
+        "damage",
         { applied: true, discarded: true },
       );
       expect(MessageFlags.updateGMApplyFlag).toHaveBeenCalledWith(
         mockMessage,
-        'status',
+        "status",
         { applied: true, discarded: true },
       );
       expect(ui.notifications.info).toHaveBeenCalledWith(
-        'EVENTIDE_RP_SYSTEM.Info.AllEffectsDiscarded',
+        "EVENTIDE_RP_SYSTEM.Info.AllEffectsDiscarded",
       );
     });
 
-    test('should discard only damage when status is already applied', async () => {
+    test("should discard only damage when status is already applied", async () => {
       MessageFlags.getGMApplyFlag.mockReturnValue({
         damage: {
-          targetId: 'target1',
-          formula: '2d6',
-          type: 'physical',
+          targetId: "target1",
+          formula: "2d6",
+          type: "physical",
           applied: false,
         },
         status: {
-          targetId: 'target1',
-          effects: [{ type: 'status', name: 'Burning', system: {} }],
+          targetId: "target1",
+          effects: [{ type: "status", name: "Burning", system: {} }],
           applied: true,
         },
       });
@@ -918,21 +916,21 @@ describe('GMControlManager', () => {
 
       expect(result).toBe(true);
       expect(ui.notifications.info).toHaveBeenCalledWith(
-        'EVENTIDE_RP_SYSTEM.Info.AllEffectsDiscarded',
+        "EVENTIDE_RP_SYSTEM.Info.AllEffectsDiscarded",
       );
     });
 
-    test('should discard only status when damage is already applied', async () => {
+    test("should discard only status when damage is already applied", async () => {
       MessageFlags.getGMApplyFlag.mockReturnValue({
         damage: {
-          targetId: 'target1',
-          formula: '2d6',
-          type: 'physical',
+          targetId: "target1",
+          formula: "2d6",
+          type: "physical",
           applied: true,
         },
         status: {
-          targetId: 'target1',
-          effects: [{ type: 'status', name: 'Burning', system: {} }],
+          targetId: "target1",
+          effects: [{ type: "status", name: "Burning", system: {} }],
           applied: false,
         },
       });
@@ -941,40 +939,40 @@ describe('GMControlManager', () => {
 
       expect(result).toBe(true);
       expect(ui.notifications.info).toHaveBeenCalledWith(
-        'EVENTIDE_RP_SYSTEM.Info.AllEffectsDiscarded',
+        "EVENTIDE_RP_SYSTEM.Info.AllEffectsDiscarded",
       );
     });
 
-    test('should return false and warn when flag is missing', async () => {
+    test("should return false and warn when flag is missing", async () => {
       MessageFlags.getGMApplyFlag.mockReturnValue(null);
 
       const result = await gmControlManager.discardAllEffects(mockMessage);
 
       expect(result).toBe(false);
       expect(ui.notifications.warn).toHaveBeenCalledWith(
-        'EVENTIDE_RP_SYSTEM.Errors.NoGMApplyData',
+        "EVENTIDE_RP_SYSTEM.Errors.NoGMApplyData",
       );
     });
 
-    test('should handle partial failure and warn', async () => {
+    test("should handle partial failure and warn", async () => {
       MessageFlags.updateGMApplyFlag.mockRejectedValueOnce(
-        new Error('Update failed'),
+        new Error("Update failed"),
       );
 
       const result = await gmControlManager.discardAllEffects(mockMessage);
 
       expect(result).toBe(false);
       expect(ui.notifications.warn).toHaveBeenCalledWith(
-        'EVENTIDE_RP_SYSTEM.Errors.SomeDiscardFailed',
+        "EVENTIDE_RP_SYSTEM.Errors.SomeDiscardFailed",
       );
     });
 
-    test('should handle case where only damage exists', async () => {
+    test("should handle case where only damage exists", async () => {
       MessageFlags.getGMApplyFlag.mockReturnValue({
         damage: {
-          targetId: 'target1',
-          formula: '2d6',
-          type: 'physical',
+          targetId: "target1",
+          formula: "2d6",
+          type: "physical",
           applied: false,
         },
       });
@@ -983,15 +981,15 @@ describe('GMControlManager', () => {
 
       expect(result).toBe(true);
       expect(ui.notifications.info).toHaveBeenCalledWith(
-        'EVENTIDE_RP_SYSTEM.Info.AllEffectsDiscarded',
+        "EVENTIDE_RP_SYSTEM.Info.AllEffectsDiscarded",
       );
     });
 
-    test('should handle case where only status exists', async () => {
+    test("should handle case where only status exists", async () => {
       MessageFlags.getGMApplyFlag.mockReturnValue({
         status: {
-          targetId: 'target1',
-          effects: [{ type: 'status', name: 'Burning', system: {} }],
+          targetId: "target1",
+          effects: [{ type: "status", name: "Burning", system: {} }],
           applied: false,
         },
       });
@@ -1000,29 +998,29 @@ describe('GMControlManager', () => {
 
       expect(result).toBe(true);
       expect(ui.notifications.info).toHaveBeenCalledWith(
-        'EVENTIDE_RP_SYSTEM.Info.AllEffectsDiscarded',
+        "EVENTIDE_RP_SYSTEM.Info.AllEffectsDiscarded",
       );
     });
   });
 
-  describe('approvePlayerAction()', () => {
+  describe("approvePlayerAction()", () => {
     let mockPlayerApprovalMessage;
 
     beforeEach(() => {
       mockPlayerApprovalMessage = {
-        id: 'playerMsg1',
+        id: "playerMsg1",
         flags: {},
         delete: vi.fn(() => Promise.resolve()),
       };
 
       MessageFlags.getPlayerActionApprovalFlag.mockReturnValue({
-        playerId: 'player1',
-        playerName: 'Test Player',
-        actorId: 'source1',
-        actionCardId: 'action1',
-        targetIds: ['target1'],
+        playerId: "player1",
+        playerName: "Test Player",
+        actorId: "source1",
+        actionCardId: "action1",
+        targetIds: ["target1"],
         rollResult: 15,
-        lockedTargets: { target1: 'hit' },
+        lockedTargets: { target1: "hit" },
         transformationSelections: {},
         selectedEffectIds: [],
         timestamp: Date.now(),
@@ -1034,7 +1032,7 @@ describe('GMControlManager', () => {
       );
     });
 
-    test('should return false when approval flag is missing', async () => {
+    test("should return false when approval flag is missing", async () => {
       MessageFlags.getPlayerActionApprovalFlag.mockReturnValue(null);
 
       const result = await gmControlManager.approvePlayerAction(
@@ -1044,17 +1042,17 @@ describe('GMControlManager', () => {
 
       expect(result).toBe(false);
       expect(ui.notifications.warn).toHaveBeenCalledWith(
-        'EVENTIDE_RP_SYSTEM.Errors.NoPlayerActionApproval',
+        "EVENTIDE_RP_SYSTEM.Errors.NoPlayerActionApproval",
       );
     });
 
-    test('should return false when action is already processed', async () => {
+    test("should return false when action is already processed", async () => {
       MessageFlags.getPlayerActionApprovalFlag.mockReturnValue({
-        playerId: 'player1',
-        playerName: 'Test Player',
-        actorId: 'source1',
-        actionCardId: 'action1',
-        targetIds: ['target1'],
+        playerId: "player1",
+        playerName: "Test Player",
+        actorId: "source1",
+        actionCardId: "action1",
+        targetIds: ["target1"],
         rollResult: 15,
         processed: true,
         timestamp: Date.now(),
@@ -1067,12 +1065,12 @@ describe('GMControlManager', () => {
 
       expect(result).toBe(false);
       expect(ui.notifications.warn).toHaveBeenCalledWith(
-        'EVENTIDE_RP_SYSTEM.Errors.ActionAlreadyProcessed',
+        "EVENTIDE_RP_SYSTEM.Errors.ActionAlreadyProcessed",
       );
       expect(mockPlayerApprovalMessage.delete).not.toHaveBeenCalled();
     });
 
-    test('should update flag and delete message when approving', async () => {
+    test("should update flag and delete message when approving", async () => {
       await gmControlManager.approvePlayerAction(
         mockPlayerApprovalMessage,
         true,
@@ -1081,15 +1079,14 @@ describe('GMControlManager', () => {
       expect(MessageFlags.updatePlayerActionApprovalFlag).toHaveBeenCalledWith(
         mockPlayerApprovalMessage,
         true,
-        'TestGM',
+        "TestGM",
       );
       expect(mockPlayerApprovalMessage.delete).toHaveBeenCalled();
     });
 
-    test('should notify player of approval result', async () => {
-      const { notifyPlayerActionResult } = await import(
-        '../../../../module/services/managers/system-messages.mjs'
-      );
+    test("should notify player of approval result", async () => {
+      const { notifyPlayerActionResult } =
+        await import("../../../../module/services/managers/system-messages.mjs");
 
       await gmControlManager.approvePlayerAction(
         mockPlayerApprovalMessage,
@@ -1097,16 +1094,16 @@ describe('GMControlManager', () => {
       );
 
       expect(notifyPlayerActionResult).toHaveBeenCalledWith(
-        'player1',
-        'Test Player',
-        'action1',
+        "player1",
+        "Test Player",
+        "action1",
         true,
-        'TestGM',
+        "TestGM",
       );
     });
 
-    test('should handle message deletion failure gracefully', async () => {
-      const deleteError = new Error('Delete failed');
+    test("should handle message deletion failure gracefully", async () => {
+      const deleteError = new Error("Delete failed");
       mockPlayerApprovalMessage.delete.mockRejectedValue(deleteError);
 
       const result = await gmControlManager.approvePlayerAction(
@@ -1118,8 +1115,8 @@ describe('GMControlManager', () => {
       expect(mockPlayerApprovalMessage.delete).toHaveBeenCalled();
     });
 
-    test('should return error when actor not found for approved action', async () => {
-      mockGame.actors.delete('source1');
+    test("should return error when actor not found for approved action", async () => {
+      mockGame.actors.delete("source1");
 
       const result = await gmControlManager.approvePlayerAction(
         mockPlayerApprovalMessage,
@@ -1128,11 +1125,11 @@ describe('GMControlManager', () => {
 
       expect(result).toBe(false);
       expect(ui.notifications.error).toHaveBeenCalledWith(
-        'EVENTIDE_RP_SYSTEM.Errors.UnableToFindActor',
+        "EVENTIDE_RP_SYSTEM.Errors.UnableToFindActor",
       );
     });
 
-    test('should execute action card when approved', async () => {
+    test("should execute action card when approved", async () => {
       await gmControlManager.approvePlayerAction(
         mockPlayerApprovalMessage,
         true,
@@ -1142,17 +1139,17 @@ describe('GMControlManager', () => {
         mockSourceActor,
         15,
         {
-          lockedTargets: { target1: 'hit' },
+          lockedTargets: { target1: "hit" },
           transformationSelections: {},
           selectedEffectIds: [],
         },
       );
     });
 
-    test('should set and clear canvas targets when tokens exist', async () => {
+    test("should set and clear canvas targets when tokens exist", async () => {
       const mockToken = {
-        id: 'token1',
-        actor: { id: 'target1' },
+        id: "token1",
+        actor: { id: "target1" },
       };
       mockCanvas.tokens.placeables = [mockToken];
 
@@ -1161,25 +1158,25 @@ describe('GMControlManager', () => {
         true,
       );
 
-      expect(canvas.tokens.setTargets).toHaveBeenCalledWith(['token1']);
+      expect(canvas.tokens.setTargets).toHaveBeenCalledWith(["token1"]);
       expect(canvas.tokens.setTargets).toHaveBeenLastCalledWith([]);
     });
 
-    test('should use stored action card data when item not found', async () => {
+    test("should use stored action card data when item not found", async () => {
       const storedActionCardData = {
-        id: 'action2',
-        name: 'Stored Action Card',
+        id: "action2",
+        name: "Stored Action Card",
         system: {
-          description: 'Stored description',
+          description: "Stored description",
         },
       };
 
       MessageFlags.getPlayerActionApprovalFlag.mockReturnValue({
-        playerId: 'player1',
-        playerName: 'Test Player',
-        actorId: 'source1',
-        actionCardId: 'action2',
-        targetIds: ['target1'],
+        playerId: "player1",
+        playerName: "Test Player",
+        actorId: "source1",
+        actionCardId: "action2",
+        targetIds: ["target1"],
         rollResult: 15,
         actionCardData: storedActionCardData,
         timestamp: Date.now(),
@@ -1197,14 +1194,14 @@ describe('GMControlManager', () => {
       );
     });
 
-    test('should return error when action card not found', async () => {
-      mockSourceActor.items.delete('action1');
+    test("should return error when action card not found", async () => {
+      mockSourceActor.items.delete("action1");
       MessageFlags.getPlayerActionApprovalFlag.mockReturnValue({
-        playerId: 'player1',
-        playerName: 'Test Player',
-        actorId: 'source1',
-        actionCardId: 'nonexistent',
-        targetIds: ['target1'],
+        playerId: "player1",
+        playerName: "Test Player",
+        actorId: "source1",
+        actionCardId: "nonexistent",
+        targetIds: ["target1"],
         rollResult: 15,
         timestamp: Date.now(),
         processed: false,
@@ -1217,14 +1214,14 @@ describe('GMControlManager', () => {
 
       expect(result).toBe(false);
       expect(ui.notifications.error).toHaveBeenCalledWith(
-        'Unable to find action card for execution',
+        "Unable to find action card for execution",
       );
     });
 
-    test('should handle execution failure gracefully', async () => {
+    test("should handle execution failure gracefully", async () => {
       mockActionCard.executeWithRollResult.mockResolvedValue({
         success: false,
-        reason: 'Execution failed',
+        reason: "Execution failed",
       });
 
       await gmControlManager.approvePlayerAction(
@@ -1233,14 +1230,13 @@ describe('GMControlManager', () => {
       );
 
       expect(ui.notifications.warn).toHaveBeenCalledWith(
-        'Action execution failed: Execution failed',
+        "Action execution failed: Execution failed",
       );
     });
 
-    test('should notify when action is denied', async () => {
-      const { notifyPlayerActionResult } = await import(
-        '../../../../module/services/managers/system-messages.mjs'
-      );
+    test("should notify when action is denied", async () => {
+      const { notifyPlayerActionResult } =
+        await import("../../../../module/services/managers/system-messages.mjs");
 
       await gmControlManager.approvePlayerAction(
         mockPlayerApprovalMessage,
@@ -1248,21 +1244,21 @@ describe('GMControlManager', () => {
       );
 
       expect(notifyPlayerActionResult).toHaveBeenCalledWith(
-        'player1',
-        'Test Player',
-        'action1',
+        "player1",
+        "Test Player",
+        "action1",
         false,
-        'TestGM',
+        "TestGM",
       );
       expect(ui.notifications.info).toHaveBeenCalledWith(
-        'Action request from Test Player has been denied',
+        "Action request from Test Player has been denied",
       );
       expect(mockActionCard.executeWithRollResult).not.toHaveBeenCalled();
     });
 
-    test('should return error on overall processing failure', async () => {
+    test("should return error on overall processing failure", async () => {
       MessageFlags.updatePlayerActionApprovalFlag.mockRejectedValue(
-        new Error('Update failed'),
+        new Error("Update failed"),
       );
 
       const result = await gmControlManager.approvePlayerAction(
@@ -1272,79 +1268,75 @@ describe('GMControlManager', () => {
 
       expect(result).toBe(false);
       expect(ui.notifications.error).toHaveBeenCalledWith(
-        'EVENTIDE_RP_SYSTEM.Errors.FailedToProcessApproval',
+        "EVENTIDE_RP_SYSTEM.Errors.FailedToProcessApproval",
       );
     });
   });
 
-  describe('validateAllPendingMessages()', () => {
-    test('should validate and return updated count', async () => {
-      const mockMessage1 = { id: 'msg1', flags: {} };
-      const mockMessage2 = { id: 'msg2', flags: {} };
+  describe("validateAllPendingMessages()", () => {
+    test("should validate and return updated count", async () => {
+      const mockMessage1 = { id: "msg1", flags: {} };
+      const mockMessage2 = { id: "msg2", flags: {} };
       mockGame.messages = [mockMessage1, mockMessage2];
 
       MessageFlags.hasPendingApplications.mockReturnValue(true);
       MessageFlags.validateTargets.mockResolvedValueOnce(true);
       MessageFlags.validateTargets.mockResolvedValueOnce(false);
 
-      const result =
-        await gmControlManager.validateAllPendingMessages();
+      const result = await gmControlManager.validateAllPendingMessages();
 
       expect(result).toBe(1);
       expect(MessageFlags.validateTargets).toHaveBeenCalledWith(mockMessage1);
       expect(MessageFlags.validateTargets).toHaveBeenCalledWith(mockMessage2);
     });
 
-    test('should return 0 when no pending messages', async () => {
+    test("should return 0 when no pending messages", async () => {
       mockGame.messages = [];
       MessageFlags.hasPendingApplications.mockReturnValue(false);
 
-      const result =
-        await gmControlManager.validateAllPendingMessages();
+      const result = await gmControlManager.validateAllPendingMessages();
 
       expect(result).toBe(0);
       expect(MessageFlags.validateTargets).not.toHaveBeenCalled();
     });
 
-    test('should handle individual message validation errors gracefully', async () => {
-      const mockMessage1 = { id: 'msg1', flags: {} };
-      const mockMessage2 = { id: 'msg2', flags: {} };
+    test("should handle individual message validation errors gracefully", async () => {
+      const mockMessage1 = { id: "msg1", flags: {} };
+      const mockMessage2 = { id: "msg2", flags: {} };
       mockGame.messages = [mockMessage1, mockMessage2];
 
       MessageFlags.hasPendingApplications.mockReturnValue(true);
       MessageFlags.validateTargets.mockRejectedValueOnce(
-        new Error('Validation failed'),
+        new Error("Validation failed"),
       );
       MessageFlags.validateTargets.mockResolvedValueOnce(true);
 
-      const result =
-        await gmControlManager.validateAllPendingMessages();
+      const result = await gmControlManager.validateAllPendingMessages();
 
       expect(result).toBe(1);
     });
 
-    test('should return 0 on overall validation failure', async () => {
-      mockGame.messages = [{ id: 'msg1', flags: {} }];
+    test("should return 0 on overall validation failure", async () => {
+      mockGame.messages = [{ id: "msg1", flags: {} }];
       MessageFlags.hasPendingApplications.mockImplementation(() => {
-        throw new Error('Filter failed');
+        throw new Error("Filter failed");
       });
 
-      const result =
-        await gmControlManager.validateAllPendingMessages();
+      const result = await gmControlManager.validateAllPendingMessages();
 
       expect(result).toBe(0);
     });
   });
 
-  describe('bulkCleanupResolvedMessages()', () => {
+  describe("bulkCleanupResolvedMessages()", () => {
     beforeEach(() => {
       vi.useRealTimers();
     });
 
-    test('should delete old resolved messages', async () => {
+    test("should delete old resolved messages", async () => {
       const oldTimestamp = Date.now() - 3700000; // Over 1 hour old
       const mockResolvedMessage = {
-        id: 'resolved1',
+        id: "resolved1",
         flags: {},
         delete: vi.fn(() => Promise.resolve()),
       };
@@ -1356,20 +1348,19 @@ describe('GMControlManager', () => {
         processed: true,
       });
 
-      const result =
-        await gmControlManager.bulkCleanupResolvedMessages();
+      const result = await gmControlManager.bulkCleanupResolvedMessages();
 
       expect(result).toBe(1);
       expect(mockResolvedMessage.delete).toHaveBeenCalled();
       expect(ui.notifications.info).toHaveBeenCalledWith(
-        'Cleaned up 1 resolved GM apply message(s)',
+        "Cleaned up 1 resolved GM apply message(s)",
       );
     });
 
-    test('should not delete recent messages', async () => {
+    test("should not delete recent messages", async () => {
       const recentTimestamp = Date.now() - 1800000; // 30 minutes old
       const mockRecentMessage = {
-        id: 'recent1',
+        id: "recent1",
         flags: {},
         delete: vi.fn(() => Promise.resolve()),
       };
@@ -1381,17 +1372,16 @@ describe('GMControlManager', () => {
         processed: true,
       });
 
-      const result =
-        await gmControlManager.bulkCleanupResolvedMessages();
+      const result = await gmControlManager.bulkCleanupResolvedMessages();
 
       expect(result).toBe(0);
       expect(mockRecentMessage.delete).not.toHaveBeenCalled();
     });
 
-    test('should not delete unprocessed messages', async () => {
+    test("should not delete unprocessed messages", async () => {
       const oldTimestamp = Date.now() - 3700000;
       const mockUnprocessedMessage = {
-        id: 'unprocessed1',
+        id: "unprocessed1",
         flags: {},
         delete: vi.fn(() => Promise.resolve()),
       };
@@ -1403,16 +1393,15 @@ describe('GMControlManager', () => {
         processed: false,
       });
 
-      const result =
-        await gmControlManager.bulkCleanupResolvedMessages();
+      const result = await gmControlManager.bulkCleanupResolvedMessages();
 
       expect(result).toBe(0);
       expect(mockUnprocessedMessage.delete).not.toHaveBeenCalled();
     });
 
-    test('should handle messages without approval flags', async () => {
+    test("should handle messages without approval flags", async () => {
       const mockMessage = {
-        id: 'msg1',
+        id: "msg1",
         flags: {},
         delete: vi.fn(() => Promise.resolve()),
       };
@@ -1420,24 +1409,23 @@ describe('GMControlManager', () => {
       mockGame.messages = [mockMessage];
       MessageFlags.getPlayerActionApprovalFlag.mockReturnValue(null);
 
-      const result =
-        await gmControlManager.bulkCleanupResolvedMessages();
+      const result = await gmControlManager.bulkCleanupResolvedMessages();
 
       expect(result).toBe(0);
       expect(mockMessage.delete).not.toHaveBeenCalled();
     });
 
-    test('should handle individual deletion failures gracefully', async () => {
+    test("should handle individual deletion failures gracefully", async () => {
       const oldTimestamp = Date.now() - 3700000;
       const mockMessage1 = {
-        id: 'msg1',
+        id: "msg1",
         flags: {},
         delete: vi.fn(() => Promise.resolve()),
       };
       const mockMessage2 = {
-        id: 'msg2',
+        id: "msg2",
         flags: {},
-        delete: vi.fn(() => Promise.reject(new Error('Delete failed'))),
+        delete: vi.fn(() => Promise.reject(new Error("Delete failed"))),
       };
 
       mockGame.messages = [mockMessage1, mockMessage2];
@@ -1447,31 +1435,29 @@ describe('GMControlManager', () => {
         processed: true,
       });
 
-      const result =
-        await gmControlManager.bulkCleanupResolvedMessages();
+      const result = await gmControlManager.bulkCleanupResolvedMessages();
 
       expect(result).toBe(1);
       expect(ui.notifications.info).toHaveBeenCalledWith(
-        'Cleaned up 1 resolved GM apply message(s)',
+        "Cleaned up 1 resolved GM apply message(s)",
       );
     });
 
-    test('should return 0 on overall cleanup failure', async () => {
-      mockGame.messages = [{ id: 'msg1', flags: {} }];
+    test("should return 0 on overall cleanup failure", async () => {
+      mockGame.messages = [{ id: "msg1", flags: {} }];
       MessageFlags.getPlayerActionApprovalFlag.mockImplementation(() => {
-        throw new Error('Filter failed');
+        throw new Error("Filter failed");
       });
 
-      const result =
-        await gmControlManager.bulkCleanupResolvedMessages();
+      const result = await gmControlManager.bulkCleanupResolvedMessages();
 
       expect(result).toBe(0);
     });
 
-    test('should use custom maxAge parameter', async () => {
+    test("should use custom maxAge parameter", async () => {
       const oldTimestamp = Date.now() - 3700000;
       const mockMessage = {
-        id: 'msg1',
+        id: "msg1",
         flags: {},
         delete: vi.fn(() => Promise.resolve()),
       };

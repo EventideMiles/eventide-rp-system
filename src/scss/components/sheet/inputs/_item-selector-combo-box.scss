@@ -191,6 +191,12 @@
       outline: none;
       background: rgb(var(--erps-current-bright, var(--theme-bright, var(--erps-default-bright))) / 20%);
     }
+
+    // Keyboard-focus ring (a11y) — merged in from the old standalone ACCESSIBILITY IMPROVEMENTS block; kept after &:focus so :focus-visible still wins the outline cascade exactly as before
+    &:focus-visible {
+      outline: 2px solid var(--erps-current-bright, var(--theme-bright, var(--erps-default-bright)));
+      outline-offset: -2px;
+    }
   }
 
   // ===================================
@@ -289,7 +295,7 @@
   // ===================================
   // RESPONSIVE ADJUSTMENTS
   // ===================================
-  @media (max-width: 768px) {
+  @media (width <= 768px) {
     &__item {
       grid-template-columns: 50px 1fr;
       grid-template-areas:
@@ -317,16 +323,6 @@
 
     &__dropdown {
       max-height: 250px;
-    }
-  }
-
-  // ===================================
-  // ACCESSIBILITY IMPROVEMENTS
-  // ===================================
-  &__item {
-    &:focus-visible {
-      outline: 2px solid var(--erps-current-bright, var(--theme-bright, var(--erps-default-bright)));
-      outline-offset: -2px;
     }
   }
 

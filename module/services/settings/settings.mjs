@@ -416,7 +416,7 @@ function _refreshAllActorDerivedData() {
     Logger.debug(
       "Refreshed all actors after formula setting change",
       { actorCount: game.actors.size },
-      "SETTINGS"
+      "SETTINGS",
     );
   }, 100);
 }
@@ -549,7 +549,8 @@ export const registerSettings = function () {
   registerFormulaSetting("initiativeFormula", {
     name: "SETTINGS.InitiativeFormulaName",
     hint: "SETTINGS.InitiativeFormulaHint",
-    default: "1d@hiddenAbilities.dice.total + @statTotal.mainInit + @statTotal.subInit",
+    default:
+      "1d@hiddenAbilities.dice.total + @statTotal.mainInit + @statTotal.subInit",
     settingType: "initiative",
     requiredRefs: ["@hiddenAbilities", "@statTotal"],
     revertTo: "current",
@@ -697,29 +698,28 @@ export const registerSettings = function () {
   });
 
   // Default Item Selector Scopes (GM Only)
-  game.settings.register(
-    "eventide-rp-system",
-    "defaultItemSelectorScopes",
-    {
-      name: "SETTINGS.DefaultItemSelectorScopesName",
-      hint: "SETTINGS.DefaultItemSelectorScopesHint",
-      scope: "world",
-      config: true,
-      restricted: true,
-      type: String,
-      default: "",
-      onChange: (value) => {
-        if (!value) return;
-        const parts = value.split(",").map((s) => s.trim()).filter(Boolean);
-        const invalid = parts.filter((s) => !SOURCE_SCOPES.includes(s));
-        if (invalid.length > 0) {
-          ui.notifications.warn(
-            `Ignored invalid scope(s) in Default Item Selector Scopes: "${invalid.join(", ")}". Valid values: ${SOURCE_SCOPES.join(", ")}`,
-          );
-        }
-      },
+  game.settings.register("eventide-rp-system", "defaultItemSelectorScopes", {
+    name: "SETTINGS.DefaultItemSelectorScopesName",
+    hint: "SETTINGS.DefaultItemSelectorScopesHint",
+    scope: "world",
+    config: true,
+    restricted: true,
+    type: String,
+    default: "",
+    onChange: (value) => {
+      if (!value) return;
+      const parts = value
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean);
+      const invalid = parts.filter((s) => !SOURCE_SCOPES.includes(s));
+      if (invalid.length > 0) {
+        ui.notifications.warn(
+          `Ignored invalid scope(s) in Default Item Selector Scopes: "${invalid.join(", ")}". Valid values: ${SOURCE_SCOPES.join(", ")}`,
+        );
+      }
     },
-  );
+  });
 
   // ===========================================
   // NPC SETTINGS (GM Only - No Reload Needed)
@@ -844,7 +844,7 @@ export const registerSettings = function () {
     onChange: (value) => {
       const defaultValue = 1;
       let intValue;
-      
+
       // Convert value to integer if possible
       if (typeof value === "number" && !isNaN(value)) {
         intValue = Math.trunc(value);
@@ -854,14 +854,18 @@ export const registerSettings = function () {
 
       // Validate: if not a valid number or below minimum, reset to default
       if (isNaN(intValue) || intValue < 0) {
-        game.settings.set("eventide-rp-system", "minimumPowerValue", defaultValue);
+        game.settings.set(
+          "eventide-rp-system",
+          "minimumPowerValue",
+          defaultValue,
+        );
         ui.notifications.warn(
           game.i18n.format("SETTINGS.MinimumPowerValueWarning", [defaultValue]),
         );
       } else {
         game.settings.set("eventide-rp-system", "minimumPowerValue", intValue);
       }
-      
+
       _refreshAllActorDerivedData();
     },
   });
@@ -878,7 +882,7 @@ export const registerSettings = function () {
     onChange: (value) => {
       const defaultValue = 10;
       let intValue;
-      
+
       // Convert value to integer if possible
       if (typeof value === "number" && !isNaN(value)) {
         intValue = Math.trunc(value);
@@ -888,14 +892,24 @@ export const registerSettings = function () {
 
       // Validate: if not a valid number or below minimum, reset to default
       if (isNaN(intValue) || intValue < 1) {
-        game.settings.set("eventide-rp-system", "minimumResolveValue", defaultValue);
+        game.settings.set(
+          "eventide-rp-system",
+          "minimumResolveValue",
+          defaultValue,
+        );
         ui.notifications.warn(
-          game.i18n.format("SETTINGS.MinimumResolveValueWarning", [defaultValue]),
+          game.i18n.format("SETTINGS.MinimumResolveValueWarning", [
+            defaultValue,
+          ]),
         );
       } else {
-        game.settings.set("eventide-rp-system", "minimumResolveValue", intValue);
+        game.settings.set(
+          "eventide-rp-system",
+          "minimumResolveValue",
+          intValue,
+        );
       }
-      
+
       _refreshAllActorDerivedData();
     },
   });

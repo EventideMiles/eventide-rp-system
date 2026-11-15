@@ -53,44 +53,72 @@ export class ItemSelectorComboBox {
     return {
       selectorType: this.selectorType,
       placeholder: this.placeholder,
-      ariaLabel: this.placeholder
+      ariaLabel: this.placeholder,
     };
   }
 
   async init() {
-    Logger.debug("Initializing item selector combo box", {
-      container: this.container,
-      containerType: this.container?.constructor?.name,
-      itemTypes: this.itemTypes,
-      selectorType: this.selectorType,
-      scopes: this.currentScopes
-    }, "ITEM_SELECTOR");
+    Logger.debug(
+      "Initializing item selector combo box",
+      {
+        container: this.container,
+        containerType: this.container?.constructor?.name,
+        itemTypes: this.itemTypes,
+        selectorType: this.selectorType,
+        scopes: this.currentScopes,
+      },
+      "ITEM_SELECTOR",
+    );
 
     if (!this.container) {
       Logger.error("No container provided", null, "ItemSelectorComboBox");
       return;
     }
 
-    const containerElement = this.container.nodeType ? this.container : this.container[0];
+    const containerElement = this.container.nodeType
+      ? this.container
+      : this.container[0];
     if (!containerElement) {
       Logger.error("Invalid container", null, "ItemSelectorComboBox");
       return;
     }
 
-    const templatePath = "systems/eventide-rp-system/templates/components/item-selector-combo-box.hbs";
-    const html = await foundry.applications.handlebars.renderTemplate(templatePath, this.getData());
+    const templatePath =
+      "systems/eventide-rp-system/templates/components/item-selector-combo-box.hbs";
+    const html = await foundry.applications.handlebars.renderTemplate(
+      templatePath,
+      this.getData(),
+    );
     containerElement.innerHTML = html;
 
-    this.element = containerElement.querySelector(".erps-item-selector-combo-box");
-    this.input = this.element?.querySelector(".erps-item-selector-combo-box__input");
-    this.dropdown = this.element?.querySelector(".erps-item-selector-combo-box__dropdown");
-    this.list = this.element?.querySelector(".erps-item-selector-combo-box__list");
-    this.loading = this.element?.querySelector(".erps-item-selector-combo-box__loading");
-    this.empty = this.element?.querySelector(".erps-item-selector-combo-box__empty");
-    this.dropdownArrow = this.element?.querySelector(".erps-item-selector-combo-box__dropdown-arrow");
+    this.element = containerElement.querySelector(
+      ".erps-item-selector-combo-box",
+    );
+    this.input = this.element?.querySelector(
+      ".erps-item-selector-combo-box__input",
+    );
+    this.dropdown = this.element?.querySelector(
+      ".erps-item-selector-combo-box__dropdown",
+    );
+    this.list = this.element?.querySelector(
+      ".erps-item-selector-combo-box__list",
+    );
+    this.loading = this.element?.querySelector(
+      ".erps-item-selector-combo-box__loading",
+    );
+    this.empty = this.element?.querySelector(
+      ".erps-item-selector-combo-box__empty",
+    );
+    this.dropdownArrow = this.element?.querySelector(
+      ".erps-item-selector-combo-box__dropdown-arrow",
+    );
 
     if (!this.element || !this.input) {
-      Logger.error("Required DOM elements not found", null, "ItemSelectorComboBox");
+      Logger.error(
+        "Required DOM elements not found",
+        null,
+        "ItemSelectorComboBox",
+      );
       return;
     }
 
@@ -112,7 +140,10 @@ export class ItemSelectorComboBox {
     this.input.addEventListener("keydown", this.boundInputKeydown);
 
     if (this.dropdownArrow) {
-      this.dropdownArrow.addEventListener("click", this.boundDropdownArrowClick);
+      this.dropdownArrow.addEventListener(
+        "click",
+        this.boundDropdownArrowClick,
+      );
     }
 
     this.boundListClick = (event) => {
@@ -135,11 +166,15 @@ export class ItemSelectorComboBox {
   }
 
   async loadItems() {
-    Logger.debug("Starting to load items", {
-      itemTypes: this.itemTypes,
-      selectorType: this.selectorType,
-      scopes: this.currentScopes
-    }, "ITEM_SELECTOR");
+    Logger.debug(
+      "Starting to load items",
+      {
+        itemTypes: this.itemTypes,
+        selectorType: this.selectorType,
+        scopes: this.currentScopes,
+      },
+      "ITEM_SELECTOR",
+    );
 
     this.showLoading(true);
 
@@ -150,31 +185,41 @@ export class ItemSelectorComboBox {
         game.user,
         this.itemTypes,
         sourceScopes,
-        this.parentActor
+        this.parentActor,
       );
 
       if (this.selectorType === "action-item") {
-        this.allItems = await ItemSourceCollector.filterActionItemsByRollType(this.allItems);
+        this.allItems = await ItemSourceCollector.filterActionItemsByRollType(
+          this.allItems,
+        );
       }
 
       this.filteredItems = [...this.allItems];
 
       const currentSearch = this.input?.value || "";
       if (currentSearch.trim()) {
-        this.filteredItems = ItemSourceCollector.filterItems(this.allItems, currentSearch);
+        this.filteredItems = ItemSourceCollector.filterItems(
+          this.allItems,
+          currentSearch,
+        );
       }
 
       this.renderItems();
     } catch (error) {
       Logger.error("Failed to load items", error, "ItemSelectorComboBox");
-      ui.notifications.error(game.i18n.localize("EVENTIDE_RP_SYSTEM.UI.FailedToLoadItems"));
+      ui.notifications.error(
+        game.i18n.localize("EVENTIDE_RP_SYSTEM.UI.FailedToLoadItems"),
+      );
     } finally {
       this.showLoading(false);
     }
   }
 
   filterItems(searchText) {
-    this.filteredItems = ItemSourceCollector.filterItems(this.allItems, searchText);
+    this.filteredItems = ItemSourceCollector.filterItems(
+      this.allItems,
+      searchText,
+    );
     this.selectedIndex = -1;
     this.renderItems();
   }
@@ -266,17 +311,26 @@ export class ItemSelectorComboBox {
   }
 
   updateSelection() {
-    const items = this.list.querySelectorAll(".erps-item-selector-combo-box__item");
+    const items = this.list.querySelectorAll(
+      ".erps-item-selector-combo-box__item",
+    );
     items.forEach((element, index) => {
       const isSelected = index === this.selectedIndex;
-      element.classList.toggle("erps-item-selector-combo-box__item--selected", isSelected);
+      element.classList.toggle(
+        "erps-item-selector-combo-box__item--selected",
+        isSelected,
+      );
       element.setAttribute("aria-selected", isSelected);
     });
   }
 
   async selectItem(index) {
     if (index < 0 || index >= this.filteredItems.length) {
-      Logger.warn("Invalid index provided for item selection", { index, maxIndex: this.filteredItems.length - 1 }, "ITEM_SELECTOR");
+      Logger.warn(
+        "Invalid index provided for item selection",
+        { index, maxIndex: this.filteredItems.length - 1 },
+        "ITEM_SELECTOR",
+      );
       return;
     }
 
@@ -361,7 +415,10 @@ export class ItemSelectorComboBox {
         if (!this.isOpen) {
           this.setDropdownOpen(true);
         } else {
-          this.selectedIndex = Math.min(this.selectedIndex + 1, this.filteredItems.length - 1);
+          this.selectedIndex = Math.min(
+            this.selectedIndex + 1,
+            this.filteredItems.length - 1,
+          );
           this.updateSelection();
         }
         break;
@@ -415,7 +472,11 @@ export class ItemSelectorComboBox {
     } else if (uuid) {
       this.selectItemByUuid(uuid);
     } else {
-      Logger.error("Neither index nor UUID available for selection", null, "ItemSelectorComboBox");
+      Logger.error(
+        "Neither index nor UUID available for selection",
+        null,
+        "ItemSelectorComboBox",
+      );
     }
   }
 
@@ -450,19 +511,28 @@ export class ItemSelectorComboBox {
     }
 
     if (this.input) {
-      if (this.boundInputFocus) this.input.removeEventListener("focus", this.boundInputFocus);
-      if (this.boundInputBlur) this.input.removeEventListener("blur", this.boundInputBlur);
-      if (this.boundInputChange) this.input.removeEventListener("input", this.boundInputChange);
-      if (this.boundInputKeydown) this.input.removeEventListener("keydown", this.boundInputKeydown);
+      if (this.boundInputFocus)
+        this.input.removeEventListener("focus", this.boundInputFocus);
+      if (this.boundInputBlur)
+        this.input.removeEventListener("blur", this.boundInputBlur);
+      if (this.boundInputChange)
+        this.input.removeEventListener("input", this.boundInputChange);
+      if (this.boundInputKeydown)
+        this.input.removeEventListener("keydown", this.boundInputKeydown);
     }
 
     if (this.dropdownArrow && this.boundDropdownArrowClick) {
-      this.dropdownArrow.removeEventListener("click", this.boundDropdownArrowClick);
+      this.dropdownArrow.removeEventListener(
+        "click",
+        this.boundDropdownArrowClick,
+      );
     }
 
     if (this.list) {
-      if (this.boundListClick) this.list.removeEventListener("click", this.boundListClick);
-      if (this.boundListHover) this.list.removeEventListener("mouseenter", this.boundListHover);
+      if (this.boundListClick)
+        this.list.removeEventListener("click", this.boundListClick);
+      if (this.boundListHover)
+        this.list.removeEventListener("mouseenter", this.boundListHover);
     }
 
     this.boundInputFocus = null;

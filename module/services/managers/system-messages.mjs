@@ -31,8 +31,7 @@ class ERPSMessageHandler {
         "systems/eventide-rp-system/templates/chat/transformation-message.hbs",
       playerActionApproval:
         "systems/eventide-rp-system/templates/chat/player-action-approval.hbs",
-      summary:
-        "systems/eventide-rp-system/templates/chat/summary-message.hbs",
+      summary: "systems/eventide-rp-system/templates/chat/summary-message.hbs",
     };
   }
 
@@ -172,7 +171,8 @@ class ERPSMessageHandler {
     const isRoll = rollType !== "none";
 
     // Get the message mode from options or use the default game setting
-    const messageMode = options.messageMode || game.settings.get("core", "messageMode");
+    const messageMode =
+      options.messageMode || game.settings.get("core", "messageMode");
 
     // Get the actor
     const actor = item.parent;
@@ -275,7 +275,11 @@ class ERPSMessageHandler {
           messageMode,
         },
         { soundKey: "featureRoll" },
-        { type: item.system.roll.ability, formula: result.formula, total: result.total },
+        {
+          type: item.system.roll.ability,
+          formula: result.formula,
+          total: result.total,
+        },
       );
     } catch (error) {
       Logger.error(
@@ -402,17 +406,13 @@ class ERPSMessageHandler {
       transformationName,
     };
 
-    return this._createChatMessage(
-      "summary",
-      data,
-      {
-        speaker: ERPSRollUtilities.getSpeaker(
-          actor,
-          "EVENTIDE_RP_SYSTEM.MessageHeaders.Summary",
-        ),
-        whisper: game.users.filter((u) => u.isGM).map((u) => u.id),
-      },
-    );
+    return this._createChatMessage("summary", data, {
+      speaker: ERPSRollUtilities.getSpeaker(
+        actor,
+        "EVENTIDE_RP_SYSTEM.MessageHeaders.Summary",
+      ),
+      whisper: game.users.filter((u) => u.isGM).map((u) => u.id),
+    });
   }
 
   /**
@@ -436,7 +436,8 @@ class ERPSMessageHandler {
     const isRoll = rollType !== "none";
 
     // Get the message mode from options or use the default game setting
-    const messageMode = options.messageMode || game.settings.get("core", "messageMode");
+    const messageMode =
+      options.messageMode || game.settings.get("core", "messageMode");
 
     // Get the actor
     const actor = item.parent;
@@ -560,7 +561,11 @@ class ERPSMessageHandler {
           messageMode,
         },
         { soundKey: "combatPower" },
-        { type: item.system.roll.ability, formula: result.formula, total: result.total },
+        {
+          type: item.system.roll.ability,
+          formula: result.formula,
+          total: result.total,
+        },
       );
     } catch (error) {
       Logger.error(
@@ -833,7 +838,8 @@ class ERPSMessageHandler {
     const formattedTransformationSelections = {};
     if (transformationSelections) {
       for (const [targetId, transformationId] of transformationSelections) {
-        const transformationName = transformationNameMap.get(transformationId) || transformationId;
+        const transformationName =
+          transformationNameMap.get(transformationId) || transformationId;
         formattedTransformationSelections[targetId] = transformationName;
       }
     }
@@ -856,7 +862,8 @@ class ERPSMessageHandler {
         statusApplicationLimit: actionCard.system.statusApplicationLimit,
         costOnRepetition: actionCard.system.costOnRepetition,
         failOnFirstMiss: actionCard.system.failOnFirstMiss,
-        embeddedTransformations: actionCard.system.embeddedTransformations || [],
+        embeddedTransformations:
+          actionCard.system.embeddedTransformations || [],
       },
       targets: targetData,
       rollResult,
@@ -1042,7 +1049,11 @@ class ERPSMessageHandler {
     };
 
     const message = await ChatMessage.create(messageData);
-    Logger.methodExit("SystemMessages", "createTargetsExhaustedMessage", message);
+    Logger.methodExit(
+      "SystemMessages",
+      "createTargetsExhaustedMessage",
+      message,
+    );
     return message;
   }
 }

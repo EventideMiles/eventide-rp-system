@@ -21,28 +21,28 @@ const mockItemBase = class {
 global.CONFIG = {
   EVENTIDE_RP_SYSTEM: {
     abilities: {
-      acro: 'EVENTIDE_RP_SYSTEM.Abilities.Acro',
-      phys: 'EVENTIDE_RP_SYSTEM.Abilities.Phys',
-      fort: 'EVENTIDE_RP_SYSTEM.Abilities.Fort',
-      will: 'EVENTIDE_RP_SYSTEM.Abilities.Will',
-      wits: 'EVENTIDE_RP_SYSTEM.Abilities.Wits'
+      acro: "EVENTIDE_RP_SYSTEM.Abilities.Acro",
+      phys: "EVENTIDE_RP_SYSTEM.Abilities.Phys",
+      fort: "EVENTIDE_RP_SYSTEM.Abilities.Fort",
+      will: "EVENTIDE_RP_SYSTEM.Abilities.Will",
+      wits: "EVENTIDE_RP_SYSTEM.Abilities.Wits",
     },
     abilityAbbreviations: {
-      acro: 'EVENTIDE_RP_SYSTEM.AbilityAbbr.Acro',
-      phys: 'EVENTIDE_RP_SYSTEM.AbilityAbbr.Phys',
-      fort: 'EVENTIDE_RP_SYSTEM.AbilityAbbr.Fort',
-      will: 'EVENTIDE_RP_SYSTEM.AbilityAbbr.Will',
-      wits: 'EVENTIDE_RP_SYSTEM.AbilityAbbr.Wits'
+      acro: "EVENTIDE_RP_SYSTEM.AbilityAbbr.Acro",
+      phys: "EVENTIDE_RP_SYSTEM.AbilityAbbr.Phys",
+      fort: "EVENTIDE_RP_SYSTEM.AbilityAbbr.Fort",
+      will: "EVENTIDE_RP_SYSTEM.AbilityAbbr.Will",
+      wits: "EVENTIDE_RP_SYSTEM.AbilityAbbr.Wits",
     },
     hiddenAbilities: {
-      dice: 'EVENTIDE_RP_SYSTEM.HiddenAbilities.Dice',
-      cmax: 'EVENTIDE_RP_SYSTEM.HiddenAbilities.CMax',
-      cmin: 'EVENTIDE_RP_SYSTEM.HiddenAbilities.CMin',
-      fmin: 'EVENTIDE_RP_SYSTEM.HiddenAbilities.FMin',
-      fmax: 'EVENTIDE_RP_SYSTEM.HiddenAbilities.FMax',
-      vuln: 'EVENTIDE_RP_SYSTEM.HiddenAbilities.Vuln'
-    }
-  }
+      dice: "EVENTIDE_RP_SYSTEM.HiddenAbilities.Dice",
+      cmax: "EVENTIDE_RP_SYSTEM.HiddenAbilities.CMax",
+      cmin: "EVENTIDE_RP_SYSTEM.HiddenAbilities.CMin",
+      fmin: "EVENTIDE_RP_SYSTEM.HiddenAbilities.FMin",
+      fmax: "EVENTIDE_RP_SYSTEM.HiddenAbilities.FMax",
+      vuln: "EVENTIDE_RP_SYSTEM.HiddenAbilities.Vuln",
+    },
+  },
 };
 
 // Mock game.i18n
@@ -51,44 +51,45 @@ global.game = {
   i18n: {
     localize: vi.fn((key) => {
       const translations = {
-        'EVENTIDE_RP_SYSTEM.Abilities.Acro': 'Acrobatics',
-        'EVENTIDE_RP_SYSTEM.Abilities.Phys': 'Physical',
-        'EVENTIDE_RP_SYSTEM.Abilities.Fort': 'Fortitude',
-        'EVENTIDE_RP_SYSTEM.Abilities.Will': 'Will',
-        'EVENTIDE_RP_SYSTEM.Abilities.Wits': 'Wits',
-        'EVENTIDE_RP_SYSTEM.AbilityAbbr.Acro': 'ACR',
-        'EVENTIDE_RP_SYSTEM.AbilityAbbr.Phys': 'PHY',
-        'EVENTIDE_RP_SYSTEM.AbilityAbbr.Fort': 'FOR',
-        'EVENTIDE_RP_SYSTEM.AbilityAbbr.Will': 'WIL',
-        'EVENTIDE_RP_SYSTEM.AbilityAbbr.Wits': 'WIT',
-        'EVENTIDE_RP_SYSTEM.HiddenAbilities.Dice': 'Dice Size',
-        'EVENTIDE_RP_SYSTEM.HiddenAbilities.CMax': 'Critical Max',
-        'EVENTIDE_RP_SYSTEM.HiddenAbilities.CMin': 'Critical Min',
-        'EVENTIDE_RP_SYSTEM.HiddenAbilities.FMin': 'Fumble Min',
-        'EVENTIDE_RP_SYSTEM.HiddenAbilities.FMax': 'Fumble Max',
-        'EVENTIDE_RP_SYSTEM.HiddenAbilities.Vuln': 'Vulnerability'
+        "EVENTIDE_RP_SYSTEM.Abilities.Acro": "Acrobatics",
+        "EVENTIDE_RP_SYSTEM.Abilities.Phys": "Physical",
+        "EVENTIDE_RP_SYSTEM.Abilities.Fort": "Fortitude",
+        "EVENTIDE_RP_SYSTEM.Abilities.Will": "Will",
+        "EVENTIDE_RP_SYSTEM.Abilities.Wits": "Wits",
+        "EVENTIDE_RP_SYSTEM.AbilityAbbr.Acro": "ACR",
+        "EVENTIDE_RP_SYSTEM.AbilityAbbr.Phys": "PHY",
+        "EVENTIDE_RP_SYSTEM.AbilityAbbr.Fort": "FOR",
+        "EVENTIDE_RP_SYSTEM.AbilityAbbr.Will": "WIL",
+        "EVENTIDE_RP_SYSTEM.AbilityAbbr.Wits": "WIT",
+        "EVENTIDE_RP_SYSTEM.HiddenAbilities.Dice": "Dice Size",
+        "EVENTIDE_RP_SYSTEM.HiddenAbilities.CMax": "Critical Max",
+        "EVENTIDE_RP_SYSTEM.HiddenAbilities.CMin": "Critical Min",
+        "EVENTIDE_RP_SYSTEM.HiddenAbilities.FMin": "Fumble Min",
+        "EVENTIDE_RP_SYSTEM.HiddenAbilities.FMax": "Fumble Max",
+        "EVENTIDE_RP_SYSTEM.HiddenAbilities.Vuln": "Vulnerability",
       };
       return translations[key] || key;
-    })
-  }
+    }),
+  },
 };
 
 // Mock module imports
-vi.mock('../../../module/data/_module.mjs', () => ({
-  EventideRpSystemItemBase: mockItemBase
+vi.mock("../../../module/data/_module.mjs", () => ({
+  EventideRpSystemItemBase: mockItemBase,
 }));
 
 // Import the data model after setting up mocks
-const { default: EventideRpSystemBaseActor } = await import('../../../module/data/base-actor.mjs');
+const { default: EventideRpSystemBaseActor } =
+  await import("../../../module/data/base-actor.mjs");
 
-describe('EventideRpSystemBaseActor - Priority 1 Data Preparation', () => {
+describe("EventideRpSystemBaseActor - Priority 1 Data Preparation", () => {
   let actorData;
 
   beforeEach(() => {
     // Create a fresh actor data instance for each test
     actorData = new EventideRpSystemBaseActor({
       attributes: {
-        level: { value: 1 }
+        level: { value: 1 },
       },
       abilities: {
         acro: {
@@ -99,7 +100,12 @@ describe('EventideRpSystemBaseActor - Priority 1 Data Preparation', () => {
           change: 1,
           total: 3,
           ac: { change: 0, total: 11 },
-          diceAdjustments: { advantage: 2, disadvantage: 0, total: 2, mode: '' }
+          diceAdjustments: {
+            advantage: 2,
+            disadvantage: 0,
+            total: 2,
+            mode: "",
+          },
         },
         phys: {
           value: 0,
@@ -109,7 +115,12 @@ describe('EventideRpSystemBaseActor - Priority 1 Data Preparation', () => {
           change: 0,
           total: 1,
           ac: { change: -1, total: 10 },
-          diceAdjustments: { advantage: 0, disadvantage: 1, total: -1, mode: '' }
+          diceAdjustments: {
+            advantage: 0,
+            disadvantage: 1,
+            total: -1,
+            mode: "",
+          },
         },
         fort: {
           value: -1,
@@ -119,7 +130,12 @@ describe('EventideRpSystemBaseActor - Priority 1 Data Preparation', () => {
           change: 0,
           total: 5,
           ac: { change: 2, total: 13 },
-          diceAdjustments: { advantage: 0, disadvantage: 0, total: 0, mode: '' }
+          diceAdjustments: {
+            advantage: 0,
+            disadvantage: 0,
+            total: 0,
+            mode: "",
+          },
         },
         will: {
           value: 3,
@@ -129,7 +145,12 @@ describe('EventideRpSystemBaseActor - Priority 1 Data Preparation', () => {
           change: -1,
           total: 2,
           ac: { change: 0, total: 11 },
-          diceAdjustments: { advantage: 1, disadvantage: 2, total: -1, mode: '' }
+          diceAdjustments: {
+            advantage: 1,
+            disadvantage: 2,
+            total: -1,
+            mode: "",
+          },
         },
         wits: {
           value: 1,
@@ -139,8 +160,13 @@ describe('EventideRpSystemBaseActor - Priority 1 Data Preparation', () => {
           change: 0,
           total: 1,
           ac: { change: 0, total: 11 },
-          diceAdjustments: { advantage: 0, disadvantage: 0, total: 0, mode: '' }
-        }
+          diceAdjustments: {
+            advantage: 0,
+            disadvantage: 0,
+            total: 0,
+            mode: "",
+          },
+        },
       },
       hiddenAbilities: {
         dice: { value: 20, total: 20, override: null, change: 0 },
@@ -150,17 +176,17 @@ describe('EventideRpSystemBaseActor - Priority 1 Data Preparation', () => {
         fmax: { value: 1, total: 1, override: null, change: 0 },
         vuln: { value: 0, total: 0, override: null, change: 0 },
         powerMult: { value: 100, total: 100, override: null, change: 0 },
-        resolveMult: { value: 100, total: 100, override: null, change: 0 }
+        resolveMult: { value: 100, total: 100, override: null, change: 0 },
       },
-      statTotal: { value: 0, baseValue: 0, max: 0, mainInit: 0, subInit: 0 }
+      statTotal: { value: 0, baseValue: 0, max: 0, mainInit: 0, subInit: 0 },
     });
 
     // Clear i18n mock calls
     global.game.i18n.localize.mockClear();
   });
 
-  describe('prepareDerivedData() - Critical Data Calculations', () => {
-    test('should calculate ability totals without overrides', () => {
+  describe("prepareDerivedData() - Critical Data Calculations", () => {
+    test("should calculate ability totals without overrides", () => {
       actorData.prepareDerivedData();
 
       expect(actorData.abilities.acro.total).toBe(3); // 2 + 1 + 0
@@ -168,14 +194,14 @@ describe('EventideRpSystemBaseActor - Priority 1 Data Preparation', () => {
       expect(actorData.abilities.wits.total).toBe(1); // 1 + 0 + 0
     });
 
-    test('should calculate ability totals with overrides', () => {
+    test("should calculate ability totals with overrides", () => {
       actorData.prepareDerivedData();
 
       // Fort uses override: 5 + 0 + 0 = 5
       expect(actorData.abilities.fort.total).toBe(5);
     });
 
-    test('should calculate armor class correctly', () => {
+    test("should calculate armor class correctly", () => {
       actorData.prepareDerivedData();
 
       expect(actorData.abilities.acro.ac.total).toBe(14); // 3 + 11 + 0
@@ -183,7 +209,7 @@ describe('EventideRpSystemBaseActor - Priority 1 Data Preparation', () => {
       expect(actorData.abilities.fort.ac.total).toBe(18); // 5 + 11 + 2
     });
 
-    test('should calculate dice adjustments correctly', () => {
+    test("should calculate dice adjustments correctly", () => {
       actorData.prepareDerivedData();
 
       expect(actorData.abilities.acro.diceAdjustments.total).toBe(2); // 2 - 0
@@ -192,47 +218,58 @@ describe('EventideRpSystemBaseActor - Priority 1 Data Preparation', () => {
       expect(actorData.abilities.will.diceAdjustments.total).toBe(-1); // 1 - 2
     });
 
-    test('should set dice adjustment modes correctly', () => {
+    test("should set dice adjustment modes correctly", () => {
       actorData.prepareDerivedData();
 
-      expect(actorData.abilities.acro.diceAdjustments.mode).toBe('k'); // positive
-      expect(actorData.abilities.phys.diceAdjustments.mode).toBe('kl'); // negative
-      expect(actorData.abilities.fort.diceAdjustments.mode).toBe(''); // zero
-      expect(actorData.abilities.will.diceAdjustments.mode).toBe('kl'); // negative
+      expect(actorData.abilities.acro.diceAdjustments.mode).toBe("k"); // positive
+      expect(actorData.abilities.phys.diceAdjustments.mode).toBe("kl"); // negative
+      expect(actorData.abilities.fort.diceAdjustments.mode).toBe(""); // zero
+      expect(actorData.abilities.will.diceAdjustments.mode).toBe("kl"); // negative
     });
 
-    test('should localize ability labels', () => {
+    test("should localize ability labels", () => {
       actorData.prepareDerivedData();
 
-      expect(actorData.abilities.acro.label).toBe('Acrobatics');
-      expect(actorData.abilities.phys.label).toBe('Physical');
-      expect(actorData.abilities.fort.label).toBe('Fortitude');
-      expect(actorData.abilities.will.label).toBe('Will');
-      expect(actorData.abilities.wits.label).toBe('Wits');
+      expect(actorData.abilities.acro.label).toBe("Acrobatics");
+      expect(actorData.abilities.phys.label).toBe("Physical");
+      expect(actorData.abilities.fort.label).toBe("Fortitude");
+      expect(actorData.abilities.will.label).toBe("Will");
+      expect(actorData.abilities.wits.label).toBe("Wits");
 
-      expect(global.game.i18n.localize).toHaveBeenCalledWith('EVENTIDE_RP_SYSTEM.Abilities.Acro');
+      expect(global.game.i18n.localize).toHaveBeenCalledWith(
+        "EVENTIDE_RP_SYSTEM.Abilities.Acro",
+      );
     });
 
-    test('should localize ability abbreviations', () => {
+    test("should localize ability abbreviations", () => {
       actorData.prepareDerivedData();
 
-      expect(actorData.abilities.acro.abbr).toBe('ACR');
-      expect(actorData.abilities.phys.abbr).toBe('PHY');
-      expect(actorData.abilities.fort.abbr).toBe('FOR');
-      expect(actorData.abilities.will.abbr).toBe('WIL');
-      expect(actorData.abilities.wits.abbr).toBe('WIT');
+      expect(actorData.abilities.acro.abbr).toBe("ACR");
+      expect(actorData.abilities.phys.abbr).toBe("PHY");
+      expect(actorData.abilities.fort.abbr).toBe("FOR");
+      expect(actorData.abilities.will.abbr).toBe("WIL");
+      expect(actorData.abilities.wits.abbr).toBe("WIT");
     });
 
-    test('should handle missing localization keys gracefully', () => {
-      global.game.i18n.localize.mockReturnValue(null);
+    test("should handle missing localization keys gracefully", () => {
+      // Scoped swap: v3-era restoreMocks reset this impl after the test;
+      // vitest 4 does not, so restore manually to avoid leaking null.
+      // The finally guard guarantees restoration even if prepareDerivedData()
+      // or an assertion throws mid-test.
+      const originalLocalize = global.game.i18n.localize;
+      global.game.i18n.localize = vi.fn().mockReturnValue(null);
 
-      actorData.prepareDerivedData();
+      try {
+        actorData.prepareDerivedData();
 
-      expect(actorData.abilities.acro.label).toBe('acro');
-      expect(actorData.abilities.acro.abbr).toBe('acro');
+        expect(actorData.abilities.acro.label).toBe("acro");
+        expect(actorData.abilities.acro.abbr).toBe("acro");
+      } finally {
+        global.game.i18n.localize = originalLocalize;
+      }
     });
 
-    test('should calculate hidden ability totals without overrides', () => {
+    test("should calculate hidden ability totals without overrides", () => {
       actorData.prepareDerivedData();
 
       expect(actorData.hiddenAbilities.dice.total).toBe(20); // 20 + 0
@@ -240,7 +277,7 @@ describe('EventideRpSystemBaseActor - Priority 1 Data Preparation', () => {
       expect(actorData.hiddenAbilities.vuln.total).toBe(0); // 0 + 0
     });
 
-    test('should calculate hidden ability totals with overrides', () => {
+    test("should calculate hidden ability totals with overrides", () => {
       actorData.hiddenAbilities.dice.override = 12;
       actorData.hiddenAbilities.dice.change = 2;
 
@@ -249,29 +286,29 @@ describe('EventideRpSystemBaseActor - Priority 1 Data Preparation', () => {
       expect(actorData.hiddenAbilities.dice.total).toBe(14); // 12 + 2
     });
 
-    test('should localize hidden ability labels', () => {
+    test("should localize hidden ability labels", () => {
       actorData.prepareDerivedData();
 
-      expect(actorData.hiddenAbilities.dice.label).toBe('Dice Size');
-      expect(actorData.hiddenAbilities.cmax.label).toBe('Critical Max');
-      expect(actorData.hiddenAbilities.vuln.label).toBe('Vulnerability');
+      expect(actorData.hiddenAbilities.dice.label).toBe("Dice Size");
+      expect(actorData.hiddenAbilities.cmax.label).toBe("Critical Max");
+      expect(actorData.hiddenAbilities.vuln.label).toBe("Vulnerability");
     });
 
-    test('should calculate total stat value', () => {
+    test("should calculate total stat value", () => {
       actorData.prepareDerivedData();
 
       // acro(3) + phys(1) + fort(5) + will(2) + wits(1) = 12
       expect(actorData.statTotal.value).toBe(12);
     });
 
-    test('should calculate main initiative', () => {
+    test("should calculate main initiative", () => {
       actorData.prepareDerivedData();
 
       // (acro.total + wits.total) / 2 = (3 + 1) / 2 = 2
       expect(actorData.statTotal.mainInit).toBe(2);
     });
 
-    test('should calculate sub initiative', () => {
+    test("should calculate sub initiative", () => {
       actorData.prepareDerivedData();
 
       // statTotal.value / 100 = 12 / 100 = 0.12
@@ -279,8 +316,8 @@ describe('EventideRpSystemBaseActor - Priority 1 Data Preparation', () => {
     });
   });
 
-  describe('Edge Cases and Error Handling', () => {
-    test('should handle negative ability values', () => {
+  describe("Edge Cases and Error Handling", () => {
+    test("should handle negative ability values", () => {
       actorData.abilities.acro.value = -5;
       actorData.abilities.acro.change = -2;
       actorData.abilities.acro.transformChange = -1;
@@ -291,7 +328,7 @@ describe('EventideRpSystemBaseActor - Priority 1 Data Preparation', () => {
       expect(actorData.abilities.acro.ac.total).toBe(3); // -8 + 11 + 0
     });
 
-    test('should handle very large ability values', () => {
+    test("should handle very large ability values", () => {
       actorData.abilities.phys.value = 999;
       actorData.abilities.phys.change = 1;
       actorData.abilities.phys.transformChange = 0;
@@ -302,7 +339,7 @@ describe('EventideRpSystemBaseActor - Priority 1 Data Preparation', () => {
       expect(actorData.abilities.phys.ac.total).toBe(1010); // 1000 + 11 + (-1)
     });
 
-    test('should handle floating point values', () => {
+    test("should handle floating point values", () => {
       actorData.abilities.will.value = 2.5;
       actorData.abilities.will.change = 0.3;
       actorData.abilities.will.transformChange = 0.2;
@@ -312,27 +349,27 @@ describe('EventideRpSystemBaseActor - Priority 1 Data Preparation', () => {
       expect(actorData.abilities.will.total).toBe(3);
     });
 
-    test('should handle zero dice adjustments correctly', () => {
+    test("should handle zero dice adjustments correctly", () => {
       actorData.abilities.acro.diceAdjustments.advantage = 0;
       actorData.abilities.acro.diceAdjustments.disadvantage = 0;
 
       actorData.prepareDerivedData();
 
       expect(actorData.abilities.acro.diceAdjustments.total).toBe(0);
-      expect(actorData.abilities.acro.diceAdjustments.mode).toBe('');
+      expect(actorData.abilities.acro.diceAdjustments.mode).toBe("");
     });
 
-    test('should handle large dice adjustment values', () => {
+    test("should handle large dice adjustment values", () => {
       actorData.abilities.acro.diceAdjustments.advantage = 10;
       actorData.abilities.acro.diceAdjustments.disadvantage = 3;
 
       actorData.prepareDerivedData();
 
       expect(actorData.abilities.acro.diceAdjustments.total).toBe(7);
-      expect(actorData.abilities.acro.diceAdjustments.mode).toBe('k');
+      expect(actorData.abilities.acro.diceAdjustments.mode).toBe("k");
     });
 
-    test('should handle null/undefined values in abilities', () => {
+    test("should handle null/undefined values in abilities", () => {
       actorData.abilities.acro.value = null;
       actorData.abilities.acro.change = undefined;
       actorData.abilities.acro.transform = null;
@@ -342,36 +379,38 @@ describe('EventideRpSystemBaseActor - Priority 1 Data Preparation', () => {
     });
   });
 
-  describe('Performance and Data Integrity', () => {
-    test('should not modify original input data structure', () => {
+  describe("Performance and Data Integrity", () => {
+    test("should not modify original input data structure", () => {
       const originalAbilities = JSON.parse(JSON.stringify(actorData.abilities));
 
       actorData.prepareDerivedData();
 
       // Original values should remain unchanged
       expect(actorData.abilities.acro.value).toBe(originalAbilities.acro.value);
-      expect(actorData.abilities.phys.change).toBe(originalAbilities.phys.change);
+      expect(actorData.abilities.phys.change).toBe(
+        originalAbilities.phys.change,
+      );
     });
 
-    test('should handle repeated calls consistently', () => {
+    test("should handle repeated calls consistently", () => {
       actorData.prepareDerivedData();
       const firstResult = {
         acroTotal: actorData.abilities.acro.total,
         statTotal: actorData.statTotal.value,
-        mainInit: actorData.statTotal.mainInit
+        mainInit: actorData.statTotal.mainInit,
       };
 
       actorData.prepareDerivedData();
       const secondResult = {
         acroTotal: actorData.abilities.acro.total,
         statTotal: actorData.statTotal.value,
-        mainInit: actorData.statTotal.mainInit
+        mainInit: actorData.statTotal.mainInit,
       };
 
       expect(firstResult).toEqual(secondResult);
     });
 
-    test('should complete calculation in reasonable time', () => {
+    test("should complete calculation in reasonable time", () => {
       const startTime = Date.now();
 
       actorData.prepareDerivedData();
@@ -383,8 +422,11 @@ describe('EventideRpSystemBaseActor - Priority 1 Data Preparation', () => {
       expect(executionTime).toBeLessThan(10);
     });
 
-    test('should call parent prepareDerivedData', () => {
-      const parentSpy = vi.spyOn(global.foundry.abstract.TypeDataModel.prototype, 'prepareDerivedData');
+    test("should call parent prepareDerivedData", () => {
+      const parentSpy = vi.spyOn(
+        global.foundry.abstract.TypeDataModel.prototype,
+        "prepareDerivedData",
+      );
 
       actorData.prepareDerivedData();
 
@@ -394,8 +436,8 @@ describe('EventideRpSystemBaseActor - Priority 1 Data Preparation', () => {
     });
   });
 
-  describe('Complex Calculation Scenarios', () => {
-    test('should handle mixed positive and negative dice adjustments across abilities', () => {
+  describe("Complex Calculation Scenarios", () => {
+    test("should handle mixed positive and negative dice adjustments across abilities", () => {
       actorData.abilities.acro.diceAdjustments.advantage = 5;
       actorData.abilities.acro.diceAdjustments.disadvantage = 2; // net +3
 
@@ -405,13 +447,13 @@ describe('EventideRpSystemBaseActor - Priority 1 Data Preparation', () => {
       actorData.prepareDerivedData();
 
       expect(actorData.abilities.acro.diceAdjustments.total).toBe(3);
-      expect(actorData.abilities.acro.diceAdjustments.mode).toBe('k');
+      expect(actorData.abilities.acro.diceAdjustments.mode).toBe("k");
 
       expect(actorData.abilities.phys.diceAdjustments.total).toBe(-3);
-      expect(actorData.abilities.phys.diceAdjustments.mode).toBe('kl');
+      expect(actorData.abilities.phys.diceAdjustments.mode).toBe("kl");
     });
 
-    test('should maintain calculation accuracy with multiple overrides', () => {
+    test("should maintain calculation accuracy with multiple overrides", () => {
       // Set overrides for all abilities
       actorData.abilities.acro.override = 10;
       actorData.abilities.phys.override = -2;
@@ -435,14 +477,14 @@ describe('EventideRpSystemBaseActor - Priority 1 Data Preparation', () => {
 });
 
 // Phase 2: Additional branch coverage tests
-describe('EventideRpSystemBaseActor - Phase 2 Branch Coverage', () => {
+describe("EventideRpSystemBaseActor - Phase 2 Branch Coverage", () => {
   let actorData;
 
   beforeEach(() => {
     // Create a fresh actor data instance for each test
     actorData = new EventideRpSystemBaseActor({
       attributes: {
-        level: { value: 1 }
+        level: { value: 1 },
       },
       abilities: {
         acro: {
@@ -453,7 +495,12 @@ describe('EventideRpSystemBaseActor - Phase 2 Branch Coverage', () => {
           change: 1,
           total: 3,
           ac: { change: 0, total: 11 },
-          diceAdjustments: { advantage: 2, disadvantage: 0, total: 2, mode: '' }
+          diceAdjustments: {
+            advantage: 2,
+            disadvantage: 0,
+            total: 2,
+            mode: "",
+          },
         },
         phys: {
           value: 0,
@@ -463,7 +510,12 @@ describe('EventideRpSystemBaseActor - Phase 2 Branch Coverage', () => {
           change: 0,
           total: 1,
           ac: { change: -1, total: 10 },
-          diceAdjustments: { advantage: 0, disadvantage: 1, total: -1, mode: '' }
+          diceAdjustments: {
+            advantage: 0,
+            disadvantage: 1,
+            total: -1,
+            mode: "",
+          },
         },
         fort: {
           value: -1,
@@ -473,7 +525,12 @@ describe('EventideRpSystemBaseActor - Phase 2 Branch Coverage', () => {
           change: 0,
           total: 5,
           ac: { change: 2, total: 13 },
-          diceAdjustments: { advantage: 0, disadvantage: 0, total: 0, mode: '' }
+          diceAdjustments: {
+            advantage: 0,
+            disadvantage: 0,
+            total: 0,
+            mode: "",
+          },
         },
         will: {
           value: 3,
@@ -483,7 +540,12 @@ describe('EventideRpSystemBaseActor - Phase 2 Branch Coverage', () => {
           change: -1,
           total: 2,
           ac: { change: 0, total: 11 },
-          diceAdjustments: { advantage: 1, disadvantage: 2, total: -1, mode: '' }
+          diceAdjustments: {
+            advantage: 1,
+            disadvantage: 2,
+            total: -1,
+            mode: "",
+          },
         },
         wits: {
           value: 1,
@@ -493,8 +555,13 @@ describe('EventideRpSystemBaseActor - Phase 2 Branch Coverage', () => {
           change: 0,
           total: 1,
           ac: { change: 0, total: 11 },
-          diceAdjustments: { advantage: 0, disadvantage: 0, total: 0, mode: '' }
-        }
+          diceAdjustments: {
+            advantage: 0,
+            disadvantage: 0,
+            total: 0,
+            mode: "",
+          },
+        },
       },
       hiddenAbilities: {
         dice: { value: 20, total: 20, override: null, change: 0 },
@@ -504,11 +571,11 @@ describe('EventideRpSystemBaseActor - Phase 2 Branch Coverage', () => {
         fmax: { value: 1, total: 1, override: null, change: 0 },
         vuln: { value: 0, total: 0, override: null, change: 0 },
         powerMult: { value: 100, total: 100, override: null, change: 0 },
-        resolveMult: { value: 100, total: 100, override: null, change: 0 }
+        resolveMult: { value: 100, total: 100, override: null, change: 0 },
       },
       statTotal: { value: 0, baseValue: 0, max: 0, mainInit: 0, subInit: 0 },
       power: { value: 7, max: 7, override: null },
-      resolve: { value: 110, max: 110, override: null }
+      resolve: { value: 110, max: 110, override: null },
     });
 
     // Clear i18n mock calls
@@ -518,21 +585,21 @@ describe('EventideRpSystemBaseActor - Phase 2 Branch Coverage', () => {
     global.game.settings = {
       get: vi.fn((system, key) => {
         const defaults = {
-          'minimumDiceValue': 1,
-          'minimumPowerValue': 1,
-          'minimumResolveValue': 10,
-          'maxPowerFormula': '',
-          'maxResolveFormula': '',
-          'statPointsFormula': '14 + (2 * @lvl.value)',
-          'crToXpFormula': '@cr * 200 + @cr * @cr * 50'
+          minimumDiceValue: 1,
+          minimumPowerValue: 1,
+          minimumResolveValue: 10,
+          maxPowerFormula: "",
+          maxResolveFormula: "",
+          statPointsFormula: "14 + (2 * @lvl.value)",
+          crToXpFormula: "@cr * 200 + @cr * @cr * 50",
         };
         return defaults[key] ?? null;
-      })
+      }),
     };
   });
 
-  describe('prepareDerivedData() - Power Calculation Branches', () => {
-    test('should use power override when set to non-zero value', () => {
+  describe("prepareDerivedData() - Power Calculation Branches", () => {
+    test("should use power override when set to non-zero value", () => {
       actorData.power.override = 50;
 
       actorData.prepareDerivedData();
@@ -540,7 +607,7 @@ describe('EventideRpSystemBaseActor - Phase 2 Branch Coverage', () => {
       expect(actorData.power.max).toBe(50);
     });
 
-    test('should ignore power override when set to null', () => {
+    test("should ignore power override when set to null", () => {
       actorData.power.override = null;
       actorData.abilities.will.total = 5;
       actorData.abilities.fort.total = 3;
@@ -552,7 +619,7 @@ describe('EventideRpSystemBaseActor - Phase 2 Branch Coverage', () => {
       expect(actorData.power.max).toBeGreaterThanOrEqual(1);
     });
 
-    test('should ignore power override when set to 0', () => {
+    test("should ignore power override when set to 0", () => {
       actorData.power.override = 0;
       actorData.abilities.will.total = 5;
       actorData.abilities.fort.total = 3;
@@ -563,7 +630,7 @@ describe('EventideRpSystemBaseActor - Phase 2 Branch Coverage', () => {
       expect(actorData.power.max).toBeGreaterThanOrEqual(1);
     });
 
-    test('should apply power multiplier when not 100%', () => {
+    test("should apply power multiplier when not 100%", () => {
       // Set value to 200 so total (value + change = 200 + 0) will be 200%
       actorData.hiddenAbilities.powerMult.value = 200;
       actorData.power.override = 20;
@@ -574,10 +641,10 @@ describe('EventideRpSystemBaseActor - Phase 2 Branch Coverage', () => {
       expect(actorData.power.max).toBe(40);
     });
 
-    test('should enforce minimum power value from settings', () => {
+    test("should enforce minimum power value from settings", () => {
       global.game.settings.get.mockImplementation((system, key) => {
-        if (key === 'minimumPowerValue') return 10;
-        if (key === 'maxPowerFormula') return '';
+        if (key === "minimumPowerValue") return 10;
+        if (key === "maxPowerFormula") return "";
         return null;
       });
       actorData.power.override = 5;
@@ -587,7 +654,7 @@ describe('EventideRpSystemBaseActor - Phase 2 Branch Coverage', () => {
       expect(actorData.power.max).toBe(10);
     });
 
-    test('should clamp power value to max', () => {
+    test("should clamp power value to max", () => {
       actorData.power.value = 100;
       actorData.power.override = 20;
 
@@ -597,8 +664,8 @@ describe('EventideRpSystemBaseActor - Phase 2 Branch Coverage', () => {
     });
   });
 
-  describe('prepareDerivedData() - Resolve Calculation Branches', () => {
-    test('should use resolve override when set to non-zero value', () => {
+  describe("prepareDerivedData() - Resolve Calculation Branches", () => {
+    test("should use resolve override when set to non-zero value", () => {
       actorData.resolve.override = 200;
 
       actorData.prepareDerivedData();
@@ -606,7 +673,7 @@ describe('EventideRpSystemBaseActor - Phase 2 Branch Coverage', () => {
       expect(actorData.resolve.max).toBe(200);
     });
 
-    test('should ignore resolve override when set to null', () => {
+    test("should ignore resolve override when set to null", () => {
       actorData.resolve.override = null;
       actorData.abilities.fort.total = 5;
 
@@ -616,7 +683,7 @@ describe('EventideRpSystemBaseActor - Phase 2 Branch Coverage', () => {
       expect(actorData.resolve.max).toBeGreaterThanOrEqual(10);
     });
 
-    test('should ignore resolve override when set to 0', () => {
+    test("should ignore resolve override when set to 0", () => {
       actorData.resolve.override = 0;
       actorData.abilities.fort.total = 5;
 
@@ -626,7 +693,7 @@ describe('EventideRpSystemBaseActor - Phase 2 Branch Coverage', () => {
       expect(actorData.resolve.max).toBeGreaterThanOrEqual(10);
     });
 
-    test('should apply resolve multiplier when not 100%', () => {
+    test("should apply resolve multiplier when not 100%", () => {
       actorData.hiddenAbilities.resolveMult.total = 150; // 150%
       actorData.hiddenAbilities.resolveMult.value = 150;
       actorData.resolve.override = 100;
@@ -637,10 +704,10 @@ describe('EventideRpSystemBaseActor - Phase 2 Branch Coverage', () => {
       expect(actorData.resolve.max).toBe(150);
     });
 
-    test('should enforce minimum resolve value from settings', () => {
+    test("should enforce minimum resolve value from settings", () => {
       global.game.settings.get.mockImplementation((system, key) => {
-        if (key === 'minimumResolveValue') return 50;
-        if (key === 'maxResolveFormula') return '';
+        if (key === "minimumResolveValue") return 50;
+        if (key === "maxResolveFormula") return "";
         return null;
       });
       actorData.resolve.override = 30;
@@ -650,7 +717,7 @@ describe('EventideRpSystemBaseActor - Phase 2 Branch Coverage', () => {
       expect(actorData.resolve.max).toBe(50);
     });
 
-    test('should clamp resolve value to max', () => {
+    test("should clamp resolve value to max", () => {
       actorData.resolve.value = 500;
       actorData.resolve.override = 100;
 
@@ -660,10 +727,10 @@ describe('EventideRpSystemBaseActor - Phase 2 Branch Coverage', () => {
     });
   });
 
-  describe('prepareDerivedData() - Minimum Dice Value Branch', () => {
-    test('should apply minimum dice value from settings', () => {
+  describe("prepareDerivedData() - Minimum Dice Value Branch", () => {
+    test("should apply minimum dice value from settings", () => {
       global.game.settings.get.mockImplementation((system, key) => {
-        if (key === 'minimumDiceValue') return 10;
+        if (key === "minimumDiceValue") return 10;
         return null;
       });
       // Set value to 5 so total (value + change = 5 + 0) will be below minimum of 10
@@ -674,9 +741,9 @@ describe('EventideRpSystemBaseActor - Phase 2 Branch Coverage', () => {
       expect(actorData.hiddenAbilities.dice.total).toBe(10);
     });
 
-    test('should not modify dice when above minimum', () => {
+    test("should not modify dice when above minimum", () => {
       global.game.settings.get.mockImplementation((system, key) => {
-        if (key === 'minimumDiceValue') return 10;
+        if (key === "minimumDiceValue") return 10;
         return null;
       });
       // Set value to 20 so total (value + change = 20 + 0) will be above minimum of 10
@@ -687,7 +754,7 @@ describe('EventideRpSystemBaseActor - Phase 2 Branch Coverage', () => {
       expect(actorData.hiddenAbilities.dice.total).toBe(20);
     });
 
-    test('should handle missing settings gracefully', () => {
+    test("should handle missing settings gracefully", () => {
       // Save original settings to restore after test
       const originalSettings = global.game.settings;
       global.game.settings = undefined;
@@ -704,8 +771,8 @@ describe('EventideRpSystemBaseActor - Phase 2 Branch Coverage', () => {
     });
   });
 
-  describe('prepareDerivedData() - Ability Override Priority', () => {
-    test('should use override over transformOverride', () => {
+  describe("prepareDerivedData() - Ability Override Priority", () => {
+    test("should use override over transformOverride", () => {
       actorData.abilities.acro.override = 10;
       actorData.abilities.acro.transformOverride = 5;
       actorData.abilities.acro.value = 2;
@@ -719,7 +786,7 @@ describe('EventideRpSystemBaseActor - Phase 2 Branch Coverage', () => {
       expect(actorData.abilities.acro.total).toBe(11);
     });
 
-    test('should use transformOverride when override is null', () => {
+    test("should use transformOverride when override is null", () => {
       actorData.abilities.acro.override = null;
       actorData.abilities.acro.transformOverride = 8;
       actorData.abilities.acro.value = 2;
@@ -733,7 +800,7 @@ describe('EventideRpSystemBaseActor - Phase 2 Branch Coverage', () => {
       expect(actorData.abilities.acro.total).toBe(9);
     });
 
-    test('should use value when both overrides are null', () => {
+    test("should use value when both overrides are null", () => {
       actorData.abilities.acro.override = null;
       actorData.abilities.acro.transformOverride = null;
       actorData.abilities.acro.value = 2;
@@ -748,8 +815,8 @@ describe('EventideRpSystemBaseActor - Phase 2 Branch Coverage', () => {
     });
   });
 
-  describe('prepareDerivedData() - Hidden Abilities Override Branch', () => {
-    test('should use override for hidden ability total', () => {
+  describe("prepareDerivedData() - Hidden Abilities Override Branch", () => {
+    test("should use override for hidden ability total", () => {
       actorData.hiddenAbilities.dice.override = 12;
       actorData.hiddenAbilities.dice.change = 2;
       actorData.hiddenAbilities.dice.value = 20;
@@ -760,7 +827,7 @@ describe('EventideRpSystemBaseActor - Phase 2 Branch Coverage', () => {
       expect(actorData.hiddenAbilities.dice.total).toBe(14);
     });
 
-    test('should use value when override is null', () => {
+    test("should use value when override is null", () => {
       actorData.hiddenAbilities.dice.override = null;
       actorData.hiddenAbilities.dice.change = 2;
       actorData.hiddenAbilities.dice.value = 20;
@@ -772,7 +839,7 @@ describe('EventideRpSystemBaseActor - Phase 2 Branch Coverage', () => {
     });
   });
 
-  describe('prepareDerivedData() - Dice Adjustment Mode Branches', () => {
+  describe("prepareDerivedData() - Dice Adjustment Mode Branches", () => {
     test('should set mode to "k" for positive total', () => {
       actorData.abilities.acro.diceAdjustments.advantage = 3;
       actorData.abilities.acro.diceAdjustments.disadvantage = 1;
@@ -780,7 +847,7 @@ describe('EventideRpSystemBaseActor - Phase 2 Branch Coverage', () => {
       actorData.prepareDerivedData();
 
       expect(actorData.abilities.acro.diceAdjustments.total).toBe(2);
-      expect(actorData.abilities.acro.diceAdjustments.mode).toBe('k');
+      expect(actorData.abilities.acro.diceAdjustments.mode).toBe("k");
     });
 
     test('should set mode to "kl" for negative total', () => {
@@ -790,22 +857,22 @@ describe('EventideRpSystemBaseActor - Phase 2 Branch Coverage', () => {
       actorData.prepareDerivedData();
 
       expect(actorData.abilities.acro.diceAdjustments.total).toBe(-2);
-      expect(actorData.abilities.acro.diceAdjustments.mode).toBe('kl');
+      expect(actorData.abilities.acro.diceAdjustments.mode).toBe("kl");
     });
 
-    test('should set mode to empty string for zero total', () => {
+    test("should set mode to empty string for zero total", () => {
       actorData.abilities.acro.diceAdjustments.advantage = 2;
       actorData.abilities.acro.diceAdjustments.disadvantage = 2;
 
       actorData.prepareDerivedData();
 
       expect(actorData.abilities.acro.diceAdjustments.total).toBe(0);
-      expect(actorData.abilities.acro.diceAdjustments.mode).toBe('');
+      expect(actorData.abilities.acro.diceAdjustments.mode).toBe("");
     });
   });
 
-  describe('prepareDerivedData() - CR and XP Branches', () => {
-    test('should calculate XP from CR when cr is defined', () => {
+  describe("prepareDerivedData() - CR and XP Branches", () => {
+    test("should calculate XP from CR when cr is defined", () => {
       actorData.cr = 5;
 
       actorData.prepareDerivedData();
@@ -813,7 +880,7 @@ describe('EventideRpSystemBaseActor - Phase 2 Branch Coverage', () => {
       expect(actorData.xp).toBeGreaterThan(0);
     });
 
-    test('should not calculate XP when cr is undefined', () => {
+    test("should not calculate XP when cr is undefined", () => {
       actorData.cr = undefined;
 
       actorData.prepareDerivedData();
@@ -822,7 +889,7 @@ describe('EventideRpSystemBaseActor - Phase 2 Branch Coverage', () => {
       expect(actorData.xp).toBe(0);
     });
 
-    test('should not calculate XP when cr is negative', () => {
+    test("should not calculate XP when cr is negative", () => {
       actorData.cr = -1;
 
       actorData.prepareDerivedData();
@@ -832,8 +899,8 @@ describe('EventideRpSystemBaseActor - Phase 2 Branch Coverage', () => {
     });
   });
 
-  describe('getRollData() - Branch Coverage', () => {
-    test('should copy abilities to top level and preserve nested structure', () => {
+  describe("getRollData() - Branch Coverage", () => {
+    test("should copy abilities to top level and preserve nested structure", () => {
       const rollData = actorData.getRollData();
 
       expect(rollData.acro).toBeDefined();
@@ -842,7 +909,7 @@ describe('EventideRpSystemBaseActor - Phase 2 Branch Coverage', () => {
       expect(rollData.abilities.acro).toBeDefined();
     });
 
-    test('should copy hiddenAbilities to top level', () => {
+    test("should copy hiddenAbilities to top level", () => {
       const rollData = actorData.getRollData();
 
       expect(rollData.hiddenAbilities).toBeDefined();
@@ -850,7 +917,7 @@ describe('EventideRpSystemBaseActor - Phase 2 Branch Coverage', () => {
       expect(rollData.dice.total).toBe(20);
     });
 
-    test('should include level, statTotal, cr, and xp', () => {
+    test("should include level, statTotal, cr, and xp", () => {
       actorData.cr = 3;
       actorData.xp = 600;
 
@@ -862,7 +929,7 @@ describe('EventideRpSystemBaseActor - Phase 2 Branch Coverage', () => {
       expect(rollData.xp).toBe(600);
     });
 
-    test('should handle missing abilities gracefully', () => {
+    test("should handle missing abilities gracefully", () => {
       actorData.abilities = null;
 
       const rollData = actorData.getRollData();
@@ -870,7 +937,7 @@ describe('EventideRpSystemBaseActor - Phase 2 Branch Coverage', () => {
       expect(rollData.abilities).toBeUndefined();
     });
 
-    test('should handle missing hiddenAbilities gracefully', () => {
+    test("should handle missing hiddenAbilities gracefully", () => {
       actorData.hiddenAbilities = null;
 
       const rollData = actorData.getRollData();
@@ -879,8 +946,8 @@ describe('EventideRpSystemBaseActor - Phase 2 Branch Coverage', () => {
     });
   });
 
-  describe('calculateXPFromCR() - Branch Coverage', () => {
-    test('should calculate XP using default formula', () => {
+  describe("calculateXPFromCR() - Branch Coverage", () => {
+    test("should calculate XP using default formula", () => {
       actorData.cr = 5;
 
       const xp = actorData.calculateXPFromCR();
@@ -889,11 +956,11 @@ describe('EventideRpSystemBaseActor - Phase 2 Branch Coverage', () => {
       expect(xp).toBe(2250);
     });
 
-    test('should return minimum 10 on error', () => {
+    test("should return minimum 10 on error", () => {
       // Force an error by making Roll throw
       const OriginalRoll = global.Roll;
-      global.Roll = vi.fn().mockImplementation(() => {
-        throw new Error('Roll error');
+      global.Roll = vi.fn().mockImplementation(function () {
+        throw new Error("Roll error");
       });
 
       actorData.cr = 5;
@@ -907,8 +974,8 @@ describe('EventideRpSystemBaseActor - Phase 2 Branch Coverage', () => {
     });
   });
 
-  describe('calculateDerivedMaxPower() - Branch Coverage', () => {
-    test('should calculate max power using default formula', () => {
+  describe("calculateDerivedMaxPower() - Branch Coverage", () => {
+    test("should calculate max power using default formula", () => {
       actorData.abilities.will.total = 5;
       actorData.abilities.fort.total = 3;
 
@@ -918,10 +985,10 @@ describe('EventideRpSystemBaseActor - Phase 2 Branch Coverage', () => {
       expect(maxPower).toBe(13);
     });
 
-    test('should return minimum 1 on error', () => {
+    test("should return minimum 1 on error", () => {
       const OriginalRoll = global.Roll;
-      global.Roll = vi.fn().mockImplementation(() => {
-        throw new Error('Roll error');
+      global.Roll = vi.fn().mockImplementation(function () {
+        throw new Error("Roll error");
       });
 
       actorData.abilities.will.total = 5;
@@ -936,7 +1003,7 @@ describe('EventideRpSystemBaseActor - Phase 2 Branch Coverage', () => {
       global.Roll = OriginalRoll;
     });
 
-    test('should handle missing ability totals gracefully', () => {
+    test("should handle missing ability totals gracefully", () => {
       actorData.abilities.will = null;
       actorData.abilities.fort = null;
 
@@ -947,8 +1014,8 @@ describe('EventideRpSystemBaseActor - Phase 2 Branch Coverage', () => {
     });
   });
 
-  describe('calculateDerivedMaxResolve() - Branch Coverage', () => {
-    test('should calculate max resolve using default formula', () => {
+  describe("calculateDerivedMaxResolve() - Branch Coverage", () => {
+    test("should calculate max resolve using default formula", () => {
       actorData.abilities.fort.total = 5;
 
       const maxResolve = actorData.calculateDerivedMaxResolve();
@@ -957,10 +1024,10 @@ describe('EventideRpSystemBaseActor - Phase 2 Branch Coverage', () => {
       expect(maxResolve).toBe(150);
     });
 
-    test('should return minimum 10 on error', () => {
+    test("should return minimum 10 on error", () => {
       const OriginalRoll = global.Roll;
-      global.Roll = vi.fn().mockImplementation(() => {
-        throw new Error('Roll error');
+      global.Roll = vi.fn().mockImplementation(function () {
+        throw new Error("Roll error");
       });
 
       actorData.abilities.fort.total = 5;
@@ -974,7 +1041,7 @@ describe('EventideRpSystemBaseActor - Phase 2 Branch Coverage', () => {
       global.Roll = OriginalRoll;
     });
 
-    test('should handle missing fort total gracefully', () => {
+    test("should handle missing fort total gracefully", () => {
       actorData.abilities.fort = null;
 
       const maxResolve = actorData.calculateDerivedMaxResolve();
@@ -984,22 +1051,22 @@ describe('EventideRpSystemBaseActor - Phase 2 Branch Coverage', () => {
     });
   });
 
-  describe('calculateDerivedStatPointsMax() - Branch Coverage', () => {
+  describe("calculateDerivedStatPointsMax() - Branch Coverage", () => {
     beforeEach(() => {
       // Set up game.settings mock for these tests
       global.game.settings = {
         get: vi.fn((system, key) => {
           const defaults = {
-            'statPointsFormula': '14 + (2 * @lvl.value)'
+            statPointsFormula: "14 + (2 * @lvl.value)",
           };
           return defaults[key] ?? null;
-        })
+        }),
       };
     });
 
     test('should return 0 when formula is "0"', () => {
       global.game.settings.get.mockImplementationOnce((system, key) => {
-        if (key === 'statPointsFormula') return '0';
+        if (key === "statPointsFormula") return "0";
         return null;
       });
 
@@ -1008,7 +1075,7 @@ describe('EventideRpSystemBaseActor - Phase 2 Branch Coverage', () => {
       expect(result).toBe(0);
     });
 
-    test('should calculate stat points using default formula', () => {
+    test("should calculate stat points using default formula", () => {
       actorData.attributes.level.value = 5;
 
       const result = actorData.calculateDerivedStatPointsMax();
@@ -1017,12 +1084,12 @@ describe('EventideRpSystemBaseActor - Phase 2 Branch Coverage', () => {
       expect(result).toBe(24);
     });
 
-    test('should return 0 on error', () => {
+    test("should return 0 on error", () => {
       // Save original Roll to restore after this test
       const OriginalRoll = global.Roll;
 
-      global.Roll = vi.fn().mockImplementation(() => {
-        throw new Error('Roll error');
+      global.Roll = vi.fn().mockImplementation(function () {
+        throw new Error("Roll error");
       });
 
       const result = actorData.calculateDerivedStatPointsMax();

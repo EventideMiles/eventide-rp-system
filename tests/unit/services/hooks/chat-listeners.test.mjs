@@ -19,130 +19,149 @@ beforeEach(() => {
   global.game = {
     user: {
       isGM: false,
-      id: 'user123'
-    }
+      id: "user123",
+    },
   };
 
   global.ImageZoomService = {
-    showZoom: vi.fn()
+    showZoom: vi.fn(),
   };
 
   global.gmControlManager = {
-    approvePlayerAction: vi.fn()
+    approvePlayerAction: vi.fn(),
   };
 
   global.erps = {
     messages: {
       createStatusMessage: vi.fn(),
       createFeatureMessage: vi.fn(),
-      createGearMessage: vi.fn()
-    }
+      createGearMessage: vi.fn(),
+    },
   };
 
   global.ui = {
     notifications: {
       error: vi.fn(),
       warn: vi.fn(),
-      info: vi.fn()
-    }
+      info: vi.fn(),
+    },
   };
 });
 
-describe('chat-listeners', () => {
-  describe('Hook Registration', () => {
-    test('should register renderChatMessageHTML hook', () => {
+describe("chat-listeners", () => {
+  describe("Hook Registration", () => {
+    test("should register renderChatMessageHTML hook", () => {
       // Arrange & Act
       global.Hooks.on("renderChatMessageHTML", () => {});
 
       // Assert
-      expect(global.Hooks.on).toHaveBeenCalledWith("renderChatMessageHTML", expect.any(Function));
+      expect(global.Hooks.on).toHaveBeenCalledWith(
+        "renderChatMessageHTML",
+        expect.any(Function),
+      );
     });
 
-    test('should register erpsUpdateItem hook', () => {
+    test("should register erpsUpdateItem hook", () => {
       // Arrange & Act
       global.Hooks.on("erpsUpdateItem", () => {});
 
       // Assert
-      expect(global.Hooks.on).toHaveBeenCalledWith("erpsUpdateItem", expect.any(Function));
+      expect(global.Hooks.on).toHaveBeenCalledWith(
+        "erpsUpdateItem",
+        expect.any(Function),
+      );
     });
 
-    test('should register updateItem hook', () => {
+    test("should register updateItem hook", () => {
       // Arrange & Act
       global.Hooks.on("updateItem", () => {});
 
       // Assert
-      expect(global.Hooks.on).toHaveBeenCalledWith("updateItem", expect.any(Function));
+      expect(global.Hooks.on).toHaveBeenCalledWith(
+        "updateItem",
+        expect.any(Function),
+      );
     });
 
-    test('should register createItem hook', () => {
+    test("should register createItem hook", () => {
       // Arrange & Act
       global.Hooks.on("createItem", () => {});
 
       // Assert
-      expect(global.Hooks.on).toHaveBeenCalledWith("createItem", expect.any(Function));
+      expect(global.Hooks.on).toHaveBeenCalledWith(
+        "createItem",
+        expect.any(Function),
+      );
     });
 
-    test('should register deleteItem hook', () => {
+    test("should register deleteItem hook", () => {
       // Arrange & Act
       global.Hooks.on("deleteItem", () => {});
 
       // Assert
-      expect(global.Hooks.on).toHaveBeenCalledWith("deleteItem", expect.any(Function));
+      expect(global.Hooks.on).toHaveBeenCalledWith(
+        "deleteItem",
+        expect.any(Function),
+      );
     });
   });
 
-  describe('Formula Toggle Functionality', () => {
-    test('should toggle active class on formula toggle click', () => {
+  describe("Formula Toggle Functionality", () => {
+    test("should toggle active class on formula toggle click", () => {
       // Arrange
-      const html = document.createElement('div');
+      const html = document.createElement("div");
       html.innerHTML = `
         <div class="chat-card__initiative">
           <button class="chat-card__formula-toggle">Toggle</button>
           <div class="chat-card__roll-details" style="display: block;">Details</div>
         </div>
       `;
-      const toggle = html.querySelector('.chat-card__formula-toggle');
-      const rollDetails = html.querySelector('.chat-card__roll-details');
+      const toggle = html.querySelector(".chat-card__formula-toggle");
+      const rollDetails = html.querySelector(".chat-card__roll-details");
 
       // Act - simulate the toggle logic from the source
-      toggle.addEventListener('click', () => {
-        toggle.classList.toggle('active');
-        rollDetails.style.display = toggle.classList.contains('active') ? 'none' : 'block';
+      toggle.addEventListener("click", () => {
+        toggle.classList.toggle("active");
+        rollDetails.style.display = toggle.classList.contains("active")
+          ? "none"
+          : "block";
       });
       toggle.click();
 
       // Assert
-      expect(toggle.classList.contains('active')).toBe(true);
-      expect(rollDetails.style.display).toBe('none');
+      expect(toggle.classList.contains("active")).toBe(true);
+      expect(rollDetails.style.display).toBe("none");
     });
 
-    test('should show roll details when toggled from hidden', () => {
+    test("should show roll details when toggled from hidden", () => {
       // Arrange
-      const html = document.createElement('div');
+      const html = document.createElement("div");
       html.innerHTML = `
         <div class="chat-card__combat-roll">
           <button class="chat-card__formula-toggle active">Toggle</button>
           <div class="chat-card__roll-details" style="display: none;">Details</div>
         </div>
       `;
-      const toggle = html.querySelector('.chat-card__formula-toggle');
-      const rollDetails = html.querySelector('.chat-card__roll-details');
+      const toggle = html.querySelector(".chat-card__formula-toggle");
+      const rollDetails = html.querySelector(".chat-card__roll-details");
 
       // Act - simulate the toggle logic from the source
-      toggle.addEventListener('click', () => {
-        toggle.classList.toggle('active');
-        rollDetails.style.display = toggle.classList.contains('active') ? 'none' : 'block';
+      toggle.addEventListener("click", () => {
+        toggle.classList.toggle("active");
+        rollDetails.style.display = toggle.classList.contains("active")
+          ? "none"
+          : "block";
       });
       toggle.click();
 
       // Assert
-      expect(toggle.classList.contains('active')).toBe(false);
-      expect(rollDetails.style.display).toBe('block');
+      expect(toggle.classList.contains("active")).toBe(false);
+      expect(rollDetails.style.display).toBe("block");
     });
 
-    test('should handle multiple formula toggles independently', () => {
+    test("should handle multiple formula toggles independently", () => {
       // Arrange
-      const html = document.createElement('div');
+      const html = document.createElement("div");
       html.innerHTML = `
         <div class="chat-card__initiative">
           <button class="chat-card__formula-toggle">Toggle 1</button>
@@ -153,17 +172,19 @@ describe('chat-listeners', () => {
           <div class="chat-card__roll-details">Details 2</div>
         </div>
       `;
-      const toggle1 = html.querySelectorAll('.chat-card__formula-toggle')[0];
-      const toggle2 = html.querySelectorAll('.chat-card__formula-toggle')[1];
-      const details1 = html.querySelectorAll('.chat-card__roll-details')[0];
-      const details2 = html.querySelectorAll('.chat-card__roll-details')[1];
+      const toggle1 = html.querySelectorAll(".chat-card__formula-toggle")[0];
+      const toggle2 = html.querySelectorAll(".chat-card__formula-toggle")[1];
+      const details1 = html.querySelectorAll(".chat-card__roll-details")[0];
+      const details2 = html.querySelectorAll(".chat-card__roll-details")[1];
 
       // Act - simulate the toggle logic from the source for both toggles
       const attachToggleHandler = (toggle, details) => {
-        toggle.addEventListener('click', () => {
-          toggle.classList.toggle('active');
+        toggle.addEventListener("click", () => {
+          toggle.classList.toggle("active");
           if (details) {
-            details.style.display = toggle.classList.contains('active') ? 'none' : 'block';
+            details.style.display = toggle.classList.contains("active")
+              ? "none"
+              : "block";
           }
         });
       };
@@ -173,161 +194,192 @@ describe('chat-listeners', () => {
       toggle1.click();
 
       // Assert
-      expect(toggle1.classList.contains('active')).toBe(true);
-      expect(toggle2.classList.contains('active')).toBe(false);
-      expect(details1.style.display).toBe('none');
-      expect(details2.style.display).toBe('');
+      expect(toggle1.classList.contains("active")).toBe(true);
+      expect(toggle2.classList.contains("active")).toBe(false);
+      expect(details1.style.display).toBe("none");
+      expect(details2.style.display).toBe("");
     });
   });
 
-  describe('Image Zoom Functionality', () => {
-    test('should add click handler to primary chat card images', () => {
+  describe("Image Zoom Functionality", () => {
+    test("should add click handler to primary chat card images", () => {
       // Arrange
-      const html = document.createElement('div');
+      const html = document.createElement("div");
       html.innerHTML = `
         <div class="chat-card">
           <img class="chat-card__image--primary" src="test.jpg" alt="Test Image">
         </div>
       `;
-      const image = html.querySelector('.chat-card__image--primary');
+      const image = html.querySelector(".chat-card__image--primary");
 
       // Act - simulate the image zoom logic from the source
       const handleImageClick = (img) => {
-        const altText = img.alt ||
-                        img.closest('.chat-card')?.querySelector('.chat-card__header')?.textContent?.trim() ||
-                        'Chat card image';
+        const altText =
+          img.alt ||
+          img
+            .closest(".chat-card")
+            ?.querySelector(".chat-card__header")
+            ?.textContent?.trim() ||
+          "Chat card image";
         // Use getAttribute to get the relative URL instead of the absolute one
-        global.ImageZoomService.showZoom(img.getAttribute('src'), altText);
+        global.ImageZoomService.showZoom(img.getAttribute("src"), altText);
       };
       handleImageClick(image);
 
       // Assert
-      expect(global.ImageZoomService.showZoom).toHaveBeenCalledWith('test.jpg', 'Test Image');
+      expect(global.ImageZoomService.showZoom).toHaveBeenCalledWith(
+        "test.jpg",
+        "Test Image",
+      );
     });
 
-    test('should use header text as alt text when image alt is missing', () => {
+    test("should use header text as alt text when image alt is missing", () => {
       // Arrange
-      const html = document.createElement('div');
+      const html = document.createElement("div");
       html.innerHTML = `
         <div class="chat-card">
           <div class="chat-card__header"><div>Card Title</div></div>
           <img class="chat-card__image--primary" src="test.jpg">
         </div>
       `;
-      const image = html.querySelector('.chat-card__image--primary');
+      const image = html.querySelector(".chat-card__image--primary");
 
       // Act - simulate the image zoom logic from the source
       const handleImageClick = (img) => {
-        const altText = img.alt ||
-                        img.closest('.chat-card')?.querySelector('.chat-card__header')?.textContent?.trim() ||
-                        'Chat card image';
+        const altText =
+          img.alt ||
+          img
+            .closest(".chat-card")
+            ?.querySelector(".chat-card__header")
+            ?.textContent?.trim() ||
+          "Chat card image";
         // Use getAttribute to get the relative URL instead of the absolute one
-        global.ImageZoomService.showZoom(img.getAttribute('src'), altText);
+        global.ImageZoomService.showZoom(img.getAttribute("src"), altText);
       };
       handleImageClick(image);
 
       // Assert
-      expect(global.ImageZoomService.showZoom).toHaveBeenCalledWith('test.jpg', 'Card Title');
+      expect(global.ImageZoomService.showZoom).toHaveBeenCalledWith(
+        "test.jpg",
+        "Card Title",
+      );
     });
 
-    test('should use default alt text when no header text available', () => {
+    test("should use default alt text when no header text available", () => {
       // Arrange
-      const html = document.createElement('div');
+      const html = document.createElement("div");
       html.innerHTML = `
         <div class="chat-card">
           <img class="chat-card__image--primary" src="test.jpg">
         </div>
       `;
-      const image = html.querySelector('.chat-card__image--primary');
+      const image = html.querySelector(".chat-card__image--primary");
 
       // Act - simulate the image zoom logic from the source
       const handleImageClick = (img) => {
-        const altText = img.alt ||
-                        img.closest('.chat-card')?.querySelector('.chat-card__header')?.textContent?.trim() ||
-                        'Chat card image';
+        const altText =
+          img.alt ||
+          img
+            .closest(".chat-card")
+            ?.querySelector(".chat-card__header")
+            ?.textContent?.trim() ||
+          "Chat card image";
         // Use getAttribute to get the relative URL instead of the absolute one
-        global.ImageZoomService.showZoom(img.getAttribute('src'), altText);
+        global.ImageZoomService.showZoom(img.getAttribute("src"), altText);
       };
       handleImageClick(image);
 
       // Assert
-      expect(global.ImageZoomService.showZoom).toHaveBeenCalledWith('test.jpg', 'Chat card image');
+      expect(global.ImageZoomService.showZoom).toHaveBeenCalledWith(
+        "test.jpg",
+        "Chat card image",
+      );
     });
 
-    test('should add title attribute to images without one', () => {
+    test("should add title attribute to images without one", () => {
       // Arrange
-      const html = document.createElement('div');
+      const html = document.createElement("div");
       html.innerHTML = `
         <div class="chat-card">
           <img class="chat-card__image--primary" src="test.jpg">
         </div>
       `;
-      const image = html.querySelector('.chat-card__image--primary');
+      const image = html.querySelector(".chat-card__image--primary");
 
       // Act - simulate the title addition logic
       if (!image.title) {
-        image.title = 'Click to enlarge';
+        image.title = "Click to enlarge";
       }
 
       // Assert
-      expect(image.title).toBe('Click to enlarge');
+      expect(image.title).toBe("Click to enlarge");
     });
 
-    test('should not override existing title attribute', () => {
+    test("should not override existing title attribute", () => {
       // Arrange
-      const html = document.createElement('div');
+      const html = document.createElement("div");
       html.innerHTML = `
         <div class="chat-card">
           <img class="chat-card__image--primary" src="test.jpg" title="Custom Title">
         </div>
       `;
-      const image = html.querySelector('.chat-card__image--primary');
+      const image = html.querySelector(".chat-card__image--primary");
 
       // Act - simulate the title addition logic
       if (!image.title) {
-        image.title = 'Click to enlarge';
+        image.title = "Click to enlarge";
       }
 
       // Assert
-      expect(image.title).toBe('Custom Title');
+      expect(image.title).toBe("Custom Title");
     });
   });
 
-  describe('Player Action Approval Buttons', () => {
-    test('should not add approval buttons for non-GM users', () => {
+  describe("Player Action Approval Buttons", () => {
+    test("should not add approval buttons for non-GM users", () => {
       // Arrange
       global.game.user.isGM = false;
-      const html = document.createElement('div');
+      const html = document.createElement("div");
       html.innerHTML = `
         <button data-action="approvePlayerAction">Approve</button>
         <button data-action="denyPlayerAction">Deny</button>
       `;
-      const approveButton = html.querySelector('[data-action="approvePlayerAction"]');
-      const _denyButton = html.querySelector('[data-action="denyPlayerAction"]');
+      const approveButton = html.querySelector(
+        '[data-action="approvePlayerAction"]',
+      );
+      const _denyButton = html.querySelector(
+        '[data-action="denyPlayerAction"]',
+      );
       let clickHandlerCalled = false;
 
       // Act - simulate the non-GM check
       if (global.game.user.isGM) {
-        approveButton.addEventListener('click', () => { clickHandlerCalled = true; });
+        approveButton.addEventListener("click", () => {
+          clickHandlerCalled = true;
+        });
       }
 
       // Assert
       expect(clickHandlerCalled).toBe(false);
     });
 
-    test('should add approval buttons for GM users', () => {
+    test("should add approval buttons for GM users", () => {
       // Arrange
       global.game.user.isGM = true;
-      const html = document.createElement('div');
+      const html = document.createElement("div");
       html.innerHTML = `
         <button data-action="approvePlayerAction">Approve</button>
       `;
-      const approveButton = html.querySelector('[data-action="approvePlayerAction"]');
+      const approveButton = html.querySelector(
+        '[data-action="approvePlayerAction"]',
+      );
       let clickHandlerCalled = false;
 
       // Act - simulate the GM check
       if (global.game.user.isGM) {
-        approveButton.addEventListener('click', () => { clickHandlerCalled = true; });
+        approveButton.addEventListener("click", () => {
+          clickHandlerCalled = true;
+        });
         approveButton.click();
       }
 
@@ -335,20 +387,20 @@ describe('chat-listeners', () => {
       expect(clickHandlerCalled).toBe(true);
     });
 
-    test('should call approvePlayerAction on approve button click', () => {
+    test("should call approvePlayerAction on approve button click", () => {
       // Arrange
       global.game.user.isGM = true;
-      const mockMessage = { id: 'msg123' };
+      const mockMessage = { id: "msg123" };
       const mockApprove = vi.fn().mockResolvedValue(undefined);
       global.gmControlManager = { approvePlayerAction: mockApprove };
-      const html = document.createElement('div');
+      const html = document.createElement("div");
       html.innerHTML = `
         <button data-action="approvePlayerAction">Approve</button>
       `;
       const button = html.querySelector('[data-action="approvePlayerAction"]');
 
       // Act - simulate the button handler
-      button.addEventListener('click', async () => {
+      button.addEventListener("click", async () => {
         await mockApprove(mockMessage, true);
       });
       button.click();
@@ -357,20 +409,20 @@ describe('chat-listeners', () => {
       expect(mockApprove).toHaveBeenCalledWith(mockMessage, true);
     });
 
-    test('should call approvePlayerAction with false on deny button click', () => {
+    test("should call approvePlayerAction with false on deny button click", () => {
       // Arrange
       global.game.user.isGM = true;
-      const mockMessage = { id: 'msg123' };
+      const mockMessage = { id: "msg123" };
       const mockApprove = vi.fn().mockResolvedValue(undefined);
       global.gmControlManager = { approvePlayerAction: mockApprove };
-      const html = document.createElement('div');
+      const html = document.createElement("div");
       html.innerHTML = `
         <button data-action="denyPlayerAction">Deny</button>
       `;
       const button = html.querySelector('[data-action="denyPlayerAction"]');
 
       // Act - simulate the button handler
-      button.addEventListener('click', async () => {
+      button.addEventListener("click", async () => {
         await mockApprove(mockMessage, false);
       });
       button.click();
@@ -380,11 +432,11 @@ describe('chat-listeners', () => {
     });
   });
 
-  describe('Restricted Elements Removal', () => {
-    test('should remove restricted elements for non-GM users', () => {
+  describe("Restricted Elements Removal", () => {
+    test("should remove restricted elements for non-GM users", () => {
       // Arrange
       global.game.user.isGM = false;
-      const html = document.createElement('div');
+      const html = document.createElement("div");
       html.innerHTML = `
         <div class="chat-card__effects--ac-check">AC Check</div>
         <div class="secret">Secret Info</div>
@@ -393,21 +445,23 @@ describe('chat-listeners', () => {
 
       // Act - simulate the removal logic
       if (!global.game.user.isGM) {
-        html.querySelectorAll('.chat-card__effects--ac-check, .secret').forEach((el) => {
-          el.remove();
-        });
+        html
+          .querySelectorAll(".chat-card__effects--ac-check, .secret")
+          .forEach((el) => {
+            el.remove();
+          });
       }
 
       // Assert
-      expect(html.querySelector('.chat-card__effects--ac-check')).toBeNull();
-      expect(html.querySelector('.secret')).toBeNull();
-      expect(html.querySelector('.public')).not.toBeNull();
+      expect(html.querySelector(".chat-card__effects--ac-check")).toBeNull();
+      expect(html.querySelector(".secret")).toBeNull();
+      expect(html.querySelector(".public")).not.toBeNull();
     });
 
-    test('should not remove restricted elements for GM users', () => {
+    test("should not remove restricted elements for GM users", () => {
       // Arrange
       global.game.user.isGM = true;
-      const html = document.createElement('div');
+      const html = document.createElement("div");
       html.innerHTML = `
         <div class="chat-card__effects--ac-check">AC Check</div>
         <div class="secret">Secret Info</div>
@@ -415,32 +469,38 @@ describe('chat-listeners', () => {
 
       // Act - simulate the removal logic
       if (!global.game.user.isGM) {
-        html.querySelectorAll('.chat-card__effects--ac-check, .secret').forEach((el) => {
-          el.remove();
-        });
+        html
+          .querySelectorAll(".chat-card__effects--ac-check, .secret")
+          .forEach((el) => {
+            el.remove();
+          });
       }
 
       // Assert
-      expect(html.querySelector('.chat-card__effects--ac-check')).not.toBeNull();
-      expect(html.querySelector('.secret')).not.toBeNull();
+      expect(
+        html.querySelector(".chat-card__effects--ac-check"),
+      ).not.toBeNull();
+      expect(html.querySelector(".secret")).not.toBeNull();
     });
   });
 
-  describe('Item Update Hooks', () => {
-    test('should handle erpsUpdateItem for status items', () => {
+  describe("Item Update Hooks", () => {
+    test("should handle erpsUpdateItem for status items", () => {
       // Arrange
-      global.game.user.id = 'user123';
+      global.game.user.id = "user123";
       const mockItem = {
-        type: 'status',
-        actor: { id: 'actor1' },
-        system: { description: 'Test status' }
+        type: "status",
+        actor: { id: "actor1" },
+        system: { description: "Test status" },
       };
       const mockCreateStatusMessage = vi.fn();
-      global.erps = { messages: { createStatusMessage: mockCreateStatusMessage } };
+      global.erps = {
+        messages: { createStatusMessage: mockCreateStatusMessage },
+      };
 
       // Act - simulate the hook handler logic
-      if (global.game.user.id === 'user123' && mockItem.actor) {
-        if (mockItem.type === 'status') {
+      if (global.game.user.id === "user123" && mockItem.actor) {
+        if (mockItem.type === "status") {
           mockCreateStatusMessage(mockItem, null);
         }
       }
@@ -449,19 +509,21 @@ describe('chat-listeners', () => {
       expect(mockCreateStatusMessage).toHaveBeenCalledWith(mockItem, null);
     });
 
-    test('should not handle erpsUpdateItem for different trigger player', () => {
+    test("should not handle erpsUpdateItem for different trigger player", () => {
       // Arrange
-      global.game.user.id = 'user123';
+      global.game.user.id = "user123";
       const mockItem = {
-        type: 'status',
-        actor: { id: 'actor1' }
+        type: "status",
+        actor: { id: "actor1" },
       };
       const mockCreateStatusMessage = vi.fn();
-      global.erps = { messages: { createStatusMessage: mockCreateStatusMessage } };
+      global.erps = {
+        messages: { createStatusMessage: mockCreateStatusMessage },
+      };
 
       // Act - simulate the hook handler logic with different trigger player
-      if (global.game.user.id === 'otherUser' && mockItem.actor) {
-        if (mockItem.type === 'status') {
+      if (global.game.user.id === "otherUser" && mockItem.actor) {
+        if (mockItem.type === "status") {
           mockCreateStatusMessage(mockItem, null);
         }
       }
@@ -470,16 +532,20 @@ describe('chat-listeners', () => {
       expect(mockCreateStatusMessage).not.toHaveBeenCalled();
     });
 
-    test('should handle gear equip state when equipped with quantity', () => {
+    test("should handle gear equip state when equipped with quantity", () => {
       // Arrange
       const mockItem = {
-        type: 'gear',
-        system: { equipped: true, quantity: 2 }
+        type: "gear",
+        system: { equipped: true, quantity: 2 },
       };
       let equipMessageCalled = false;
 
       // Act - simulate the equip state logic
-      if (mockItem.type === 'gear' && mockItem.system.equipped && mockItem.system.quantity > 0) {
+      if (
+        mockItem.type === "gear" &&
+        mockItem.system.equipped &&
+        mockItem.system.quantity > 0
+      ) {
         if (mockItem.system.quantity <= 0 || !mockItem.system.equipped) {
           // Disable effects
         } else {
@@ -491,16 +557,16 @@ describe('chat-listeners', () => {
       expect(equipMessageCalled).toBe(true);
     });
 
-    test('should disable effects when gear unequipped or no quantity', () => {
+    test("should disable effects when gear unequipped or no quantity", () => {
       // Arrange
       const mockItem = {
-        type: 'gear',
-        system: { equipped: false, quantity: 0 }
+        type: "gear",
+        system: { equipped: false, quantity: 0 },
       };
       let effectsDisabled = false;
 
       // Act - simulate the disable effects logic
-      if (mockItem.type === 'gear') {
+      if (mockItem.type === "gear") {
         if (mockItem.system.quantity <= 0 || !mockItem.system.equipped) {
           effectsDisabled = true;
         }
@@ -511,18 +577,20 @@ describe('chat-listeners', () => {
     });
   });
 
-  describe('Item Creation Hooks', () => {
-    test('should create status message for status items with description', () => {
+  describe("Item Creation Hooks", () => {
+    test("should create status message for status items with description", () => {
       // Arrange
       const mockItem = {
-        type: 'status',
-        system: { description: 'Test status description' }
+        type: "status",
+        system: { description: "Test status description" },
       };
       const mockCreateStatusMessage = vi.fn();
-      global.erps = { messages: { createStatusMessage: mockCreateStatusMessage } };
+      global.erps = {
+        messages: { createStatusMessage: mockCreateStatusMessage },
+      };
 
       // Act - simulate item creation hook (textless statuses also generate messages)
-      if (mockItem.type === 'status') {
+      if (mockItem.type === "status") {
         mockCreateStatusMessage(mockItem);
       }
 
@@ -530,17 +598,19 @@ describe('chat-listeners', () => {
       expect(mockCreateStatusMessage).toHaveBeenCalledWith(mockItem);
     });
 
-    test('should create status message when status item has empty description', () => {
+    test("should create status message when status item has empty description", () => {
       // Arrange
       const mockItem = {
-        type: 'status',
-        system: { description: '' }
+        type: "status",
+        system: { description: "" },
       };
       const mockCreateStatusMessage = vi.fn();
-      global.erps = { messages: { createStatusMessage: mockCreateStatusMessage } };
+      global.erps = {
+        messages: { createStatusMessage: mockCreateStatusMessage },
+      };
 
       // Act - simulate item creation hook (no description guard)
-      if (mockItem.type === 'status') {
+      if (mockItem.type === "status") {
         mockCreateStatusMessage(mockItem);
       }
 
@@ -548,17 +618,19 @@ describe('chat-listeners', () => {
       expect(mockCreateStatusMessage).toHaveBeenCalledWith(mockItem);
     });
 
-    test('should create feature message for feature items with description', () => {
+    test("should create feature message for feature items with description", () => {
       // Arrange
       const mockItem = {
-        type: 'feature',
-        system: { description: 'Test feature description' }
+        type: "feature",
+        system: { description: "Test feature description" },
       };
       const mockCreateFeatureMessage = vi.fn();
-      global.erps = { messages: { createFeatureMessage: mockCreateFeatureMessage } };
+      global.erps = {
+        messages: { createFeatureMessage: mockCreateFeatureMessage },
+      };
 
       // Act - simulate item creation hook
-      if (mockItem.type === 'feature' && mockItem.system.description) {
+      if (mockItem.type === "feature" && mockItem.system.description) {
         mockCreateFeatureMessage(mockItem);
       }
 
@@ -566,17 +638,17 @@ describe('chat-listeners', () => {
       expect(mockCreateFeatureMessage).toHaveBeenCalledWith(mockItem);
     });
 
-    test('should create gear message for gear items with description', () => {
+    test("should create gear message for gear items with description", () => {
       // Arrange
       const mockItem = {
-        type: 'gear',
-        system: { description: 'Test gear description' }
+        type: "gear",
+        system: { description: "Test gear description" },
       };
       const mockCreateGearMessage = vi.fn();
       global.erps = { messages: { createGearMessage: mockCreateGearMessage } };
 
       // Act - simulate item creation hook
-      if (mockItem.type === 'gear' && mockItem.system.description) {
+      if (mockItem.type === "gear" && mockItem.system.description) {
         mockCreateGearMessage(mockItem);
       }
 
@@ -584,16 +656,16 @@ describe('chat-listeners', () => {
       expect(mockCreateGearMessage).toHaveBeenCalledWith(mockItem);
     });
 
-    test('should handle gear equip state on creation', () => {
+    test("should handle gear equip state on creation", () => {
       // Arrange
       const mockItem = {
-        type: 'gear',
-        system: { equipped: true, quantity: 1 }
+        type: "gear",
+        system: { equipped: true, quantity: 1 },
       };
       let equipStateHandled = false;
 
       // Act - simulate equip state handling
-      if (mockItem.type === 'gear' && mockItem.system.equipped) {
+      if (mockItem.type === "gear" && mockItem.system.equipped) {
         equipStateHandled = true;
       }
 

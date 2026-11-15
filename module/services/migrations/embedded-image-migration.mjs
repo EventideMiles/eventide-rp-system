@@ -120,7 +120,12 @@ export class EmbeddedImageMigration {
 
       Logger.info(
         "Embedded image migration completed",
-        { itemsFixed, effectsFixed, statusFieldsMigrated, level: migrationVersion },
+        {
+          itemsFixed,
+          effectsFixed,
+          statusFieldsMigrated,
+          level: migrationVersion,
+        },
         "MIGRATION",
       );
 
@@ -128,28 +133,41 @@ export class EmbeddedImageMigration {
 
       const messages = [];
       if (effectsFixed > 0) {
-        messages.push(game.i18n.format("EVENTIDE_RP_SYSTEM.Migration.FixedEffectImages", {
-          effectsFixed,
-          itemsFixed,
-        }));
+        messages.push(
+          game.i18n.format("EVENTIDE_RP_SYSTEM.Migration.FixedEffectImages", {
+            effectsFixed,
+            itemsFixed,
+          }),
+        );
       }
       if (statusFieldsMigrated > 0) {
-        messages.push(game.i18n.format("EVENTIDE_RP_SYSTEM.Migration.MigratedStatusFields", {
-          count: statusFieldsMigrated,
-        }));
+        messages.push(
+          game.i18n.format(
+            "EVENTIDE_RP_SYSTEM.Migration.MigratedStatusFields",
+            {
+              count: statusFieldsMigrated,
+            },
+          ),
+        );
       }
 
       if (messages.length > 0) {
-        ui.notifications.info(game.i18n.format("EVENTIDE_RP_SYSTEM.Migration.Complete", {
-          message: messages.join(". "),
-        }));
+        ui.notifications.info(
+          game.i18n.format("EVENTIDE_RP_SYSTEM.Migration.Complete", {
+            message: messages.join(". "),
+          }),
+        );
       } else {
-        ui.notifications.info(game.i18n.localize("EVENTIDE_RP_SYSTEM.Migration.CompleteNoChanges"));
+        ui.notifications.info(
+          game.i18n.localize("EVENTIDE_RP_SYSTEM.Migration.CompleteNoChanges"),
+        );
       }
     } catch (error) {
       migrationNotification.remove();
       Logger.error("Embedded image migration failed", error, "MIGRATION");
-      ui.notifications.error(game.i18n.localize("EVENTIDE_RP_SYSTEM.Migration.Failed"));
+      ui.notifications.error(
+        game.i18n.localize("EVENTIDE_RP_SYSTEM.Migration.Failed"),
+      );
     }
   }
 
@@ -255,7 +273,10 @@ export class EmbeddedImageMigration {
       await item.update(updateData, { diff: false });
     }
 
-    return { itemsFixed: Object.keys(updateData).length > 0 ? 1 : 0, effectsFixed };
+    return {
+      itemsFixed: Object.keys(updateData).length > 0 ? 1 : 0,
+      effectsFixed,
+    };
   }
 
   static async _fixActionCardEmbeddedItem(item) {
@@ -285,7 +306,10 @@ export class EmbeddedImageMigration {
     }
 
     if (needsUpdate) {
-      await item.update({ "system.embeddedItem": embeddedItem }, { diff: false });
+      await item.update(
+        { "system.embeddedItem": embeddedItem },
+        { diff: false },
+      );
       Logger.debug(
         "Fixed embedded item effect images in action card",
         { itemName: item.name, effectsFixed },
@@ -315,7 +339,11 @@ export class EmbeddedImageMigration {
 
     Logger.debug(
       "Migrated statusPerSuccess to statusApplicationLimit",
-      { itemName: item.name, oldValue: statusPerSuccess, newValue: statusApplicationLimit },
+      {
+        itemName: item.name,
+        oldValue: statusPerSuccess,
+        newValue: statusApplicationLimit,
+      },
       "MIGRATION",
     );
 
@@ -363,7 +391,9 @@ export class EmbeddedImageMigration {
     let effectsFixed = 0;
     let needsUpdate = false;
 
-    const embeddedPowers = foundry.utils.deepClone(item.system.embeddedCombatPowers);
+    const embeddedPowers = foundry.utils.deepClone(
+      item.system.embeddedCombatPowers,
+    );
 
     for (const power of embeddedPowers) {
       if (!power.effects || !Array.isArray(power.effects)) continue;
@@ -388,7 +418,10 @@ export class EmbeddedImageMigration {
     }
 
     if (needsUpdate) {
-      await item.update({ "system.embeddedCombatPowers": embeddedPowers }, { diff: false });
+      await item.update(
+        { "system.embeddedCombatPowers": embeddedPowers },
+        { diff: false },
+      );
       Logger.debug(
         "Fixed embedded combat power effect images in transformation",
         { itemName: item.name, effectsFixed },
@@ -403,7 +436,9 @@ export class EmbeddedImageMigration {
     let effectsFixed = 0;
     let needsUpdate = false;
 
-    const embeddedActionCards = foundry.utils.deepClone(item.system.embeddedActionCards);
+    const embeddedActionCards = foundry.utils.deepClone(
+      item.system.embeddedActionCards,
+    );
 
     for (const actionCard of embeddedActionCards) {
       if (typeof actionCard.system?.statusPerSuccess === "boolean") {
@@ -477,7 +512,8 @@ export class EmbeddedImageMigration {
       }
 
       if (actionCard.system?.embeddedTransformations) {
-        for (const transformation of actionCard.system.embeddedTransformations) {
+        for (const transformation of actionCard.system
+          .embeddedTransformations) {
           if (transformation.effects && Array.isArray(transformation.effects)) {
             for (const effect of transformation.effects) {
               if (effect.img !== transformation.img && transformation.img) {
@@ -500,7 +536,10 @@ export class EmbeddedImageMigration {
     }
 
     if (needsUpdate) {
-      await item.update({ "system.embeddedActionCards": embeddedActionCards }, { diff: false });
+      await item.update(
+        { "system.embeddedActionCards": embeddedActionCards },
+        { diff: false },
+      );
       Logger.debug(
         "Fixed embedded action card effect images in transformation",
         { itemName: item.name, effectsFixed },

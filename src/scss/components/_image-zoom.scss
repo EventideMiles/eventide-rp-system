@@ -13,7 +13,7 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: rgb(0 0 0 / 70%);
     z-index: 10000; // Very high to ensure it appears above all content
     display: flex;
     align-items: center;
@@ -51,8 +51,8 @@
     object-fit: contain;
     border-radius: tokens.$sheet-radius-lg;
     box-shadow:
-      0 tokens.$sheet-shadow-blur-xxl tokens.$sheet-shadow-blur-xxl rgba(0, 0, 0, 0.5),
-      0 0 tokens.$sheet-glow-blur-md rgba(255, 255, 255, 0.1);
+      0 tokens.$sheet-shadow-blur-xxl tokens.$sheet-shadow-blur-xxl rgb(0 0 0 / 50%),
+      0 0 tokens.$sheet-glow-blur-md rgb(255 255 255 / 10%);
     transform: scale(0.8);
     transition: transform tokens.$sheet-transition-medium ease;
 
@@ -83,13 +83,13 @@
       background-color tokens.$sheet-transition-base ease,
       transform tokens.$sheet-transition-base ease,
       box-shadow tokens.$sheet-transition-base ease;
-    box-shadow: 0 tokens.$sheet-shadow-blur-sm tokens.$sheet-shadow-blur-md rgba(0, 0, 0, 0.3);
+    box-shadow: 0 tokens.$sheet-shadow-blur-sm tokens.$sheet-shadow-blur-md rgb(0 0 0 / 30%);
     
     &:hover {
       background: var(--erps-current-secondary);
       transform: scale(tokens.$sheet-transform-scale-icon);
       box-shadow: 
-        0 tokens.$sheet-shadow-blur-md tokens.$sheet-shadow-blur-lg rgba(0, 0, 0, 0.4),
+        0 tokens.$sheet-shadow-blur-md tokens.$sheet-shadow-blur-lg rgb(0 0 0 / 40%),
         0 0 tokens.$sheet-glow-blur-sm var(--theme-glow);
     }
     

@@ -665,7 +665,9 @@ export class CreatorApplication extends EventideSheetHelpers {
             changes,
           },
           disabled: false,
-          showIcon: basicData.displayOnToken ? CONST.ACTIVE_EFFECT_SHOW_ICON.ALWAYS : CONST.ACTIVE_EFFECT_SHOW_ICON.NEVER,
+          showIcon: basicData.displayOnToken
+            ? CONST.ACTIVE_EFFECT_SHOW_ICON.ALWAYS
+            : CONST.ACTIVE_EFFECT_SHOW_ICON.NEVER,
           description: basicData.description || "",
           origin: "",
           tint: basicData.iconTint,

@@ -4,12 +4,12 @@ import { WindowSizingFixMixin } from "./window-sizing-fix-mixin.mjs";
 
 /**
  * Eventide Popup Helpers
- * 
+ *
  * Base class for popup applications providing:
  * - Keyboard navigation and focus management
  * - Form submission handling
  * - Eligibility checking
- * 
+ *
  * @extends {WindowSizingFixMixin(HandlebarsApplicationMixin(ApplicationV2))}
  */
 export class EventidePopupHelpers extends WindowSizingFixMixin(
@@ -227,10 +227,10 @@ export class EventidePopupHelpers extends WindowSizingFixMixin(
    */
   async _onFirstRender(context, options) {
     await super._onFirstRender(context, options);
-    
+
     // Store form element reference
     this._formElement = this.element;
-    
+
     // Focus the appropriate button based on eligibility
     this._focusDefaultButton();
   }
@@ -245,11 +245,11 @@ export class EventidePopupHelpers extends WindowSizingFixMixin(
    */
   _onRender(context, options) {
     super._onRender(context, options);
-    
+
     // Set up keyboard event listener with AbortController for easy cleanup
     // Use capture phase (true) to intercept events before Foundry's handlers
     this._keyboardAbortController = new AbortController();
-    this.element.addEventListener('keydown', this._onKeyDown.bind(this), {
+    this.element.addEventListener("keydown", this._onKeyDown.bind(this), {
       signal: this._keyboardAbortController.signal,
       capture: true,
     });
@@ -267,9 +267,9 @@ export class EventidePopupHelpers extends WindowSizingFixMixin(
       this._keyboardAbortController.abort();
       this._keyboardAbortController = null;
     }
-    
+
     this._formElement = null;
-    
+
     // Call mixin cleanup
     await super._preClose(options);
   }
@@ -282,31 +282,31 @@ export class EventidePopupHelpers extends WindowSizingFixMixin(
   _onKeyDown(event) {
     // Don't handle events if the popup is closing
     if (!this.element) return;
-    
+
     const key = event.key;
-    
+
     // Escape: Let Foundry's dismiss handler work (don't stop propagation)
-    if (key === 'Escape') {
+    if (key === "Escape") {
       // Foundry VTT handles this via the DISMISS keybinding
       return;
     }
-    
+
     // Enter: Submit the form if we have a submit button and no validation problems
-    if (key === 'Enter') {
+    if (key === "Enter") {
       // Don't submit if the user is in a textarea (they may want newlines)
-      if (event.target.tagName === 'TEXTAREA') return;
-      
+      if (event.target.tagName === "TEXTAREA") return;
+
       // Don't submit if we're on a checkbox or radio input (let Space handle selection)
-      if (event.target.type === 'checkbox' || event.target.type === 'radio') {
+      if (event.target.type === "checkbox" || event.target.type === "radio") {
         return;
       }
-      
+
       // If focused on a transformation row (role="radio"), let the row's own handler process it
       // The row has its own keydown handler that will handle selection
-      if (event.target.getAttribute('role') === 'radio') {
+      if (event.target.getAttribute("role") === "radio") {
         return;
       }
-      
+
       // Try to find and click the submit button
       const submitButton = this.element.querySelector('button[type="submit"]');
       if (submitButton && !submitButton.disabled) {
@@ -316,15 +316,15 @@ export class EventidePopupHelpers extends WindowSizingFixMixin(
         return;
       }
     }
-    
+
     // Tab: Handle focus trapping
-    if (key === 'Tab') {
+    if (key === "Tab") {
       this._handleTabKey(event);
       // Always stop propagation for Tab to prevent Foundry from switching characters
       event.stopPropagation();
       return;
     }
-    
+
     // For all other keys, stop propagation to prevent Foundry's global handlers
     // This prevents things like WASD canvas movement while popup is focused
     event.stopPropagation();
@@ -338,25 +338,24 @@ export class EventidePopupHelpers extends WindowSizingFixMixin(
   _handleTabKey(event) {
     const focusableElements = this._getFocusableElements();
     if (focusableElements.length === 0) return;
-    
+
     const firstElement = focusableElements[0];
     const lastElement = focusableElements[focusableElements.length - 1];
     const currentElement = document.activeElement;
-    
+
     // If shift+tab on first element, wrap to last
     if (event.shiftKey && currentElement === firstElement) {
       event.preventDefault();
       lastElement.focus();
       return;
     }
-    
+
     // If tab on last element, wrap to first
     if (!event.shiftKey && currentElement === lastElement) {
       event.preventDefault();
       firstElement.focus();
-      
     }
-    
+
     // Let normal tab behavior work
   }
 
@@ -367,18 +366,19 @@ export class EventidePopupHelpers extends WindowSizingFixMixin(
    */
   _getFocusableElements() {
     if (!this.element) return [];
-    
+
     const selector = [
-      'button:not([disabled])',
-      'input:not([disabled])',
-      'select:not([disabled])',
-      'textarea:not([disabled])',
-      'a[href]',
+      "button:not([disabled])",
+      "input:not([disabled])",
+      "select:not([disabled])",
+      "textarea:not([disabled])",
+      "a[href]",
       '[tabindex]:not([tabindex="-1"])',
-    ].join(', ');
-    
-    return Array.from(this.element.querySelectorAll(selector))
-      .filter((el) => el.offsetParent !== null); // Exclude hidden elements
+    ].join(", ");
+
+    return Array.from(this.element.querySelectorAll(selector)).filter(
+      (el) => el.offsetParent !== null,
+    ); // Exclude hidden elements
   }
 
   /**
@@ -389,14 +389,16 @@ export class EventidePopupHelpers extends WindowSizingFixMixin(
    */
   _focusDefaultButton() {
     if (!this.element) return;
-    
+
     // Check if we have validation problems
-    const hasProblems = this.problems && Object.values(this.problems).some((value) => {
-      // Handle gearValidation array
-      if (Array.isArray(value)) return value.length > 0;
-      return value;
-    });
-    
+    const hasProblems =
+      this.problems &&
+      Object.values(this.problems).some((value) => {
+        // Handle gearValidation array
+        if (Array.isArray(value)) return value.length > 0;
+        return value;
+      });
+
     // Try to focus submit button if no problems
     if (!hasProblems) {
       const submitButton = this.element.querySelector('button[type="submit"]');
@@ -405,14 +407,16 @@ export class EventidePopupHelpers extends WindowSizingFixMixin(
         return;
       }
     }
-    
+
     // Fall back to close button
-    const closeButton = this.element.querySelector('button[data-action="close"]');
+    const closeButton = this.element.querySelector(
+      'button[data-action="close"]',
+    );
     if (closeButton) {
       closeButton.focus();
       return;
     }
-    
+
     // Final fallback: focus the first focusable element
     const focusableElements = this._getFocusableElements();
     if (focusableElements.length > 0) {

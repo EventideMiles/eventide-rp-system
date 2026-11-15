@@ -9,290 +9,374 @@
 // Vitest globals are enabled, so we don't need to import them
 // describe, test, expect, beforeEach, vi are available globally
 
-import { erpsRollHandler, handleRoll, rollInitiative } from '../../../../module/services/managers/roll-dice.mjs';
+import {
+  erpsRollHandler,
+  handleRoll,
+  rollInitiative,
+} from "../../../../module/services/managers/roll-dice.mjs";
 
 // Mock dependencies
-vi.mock('../../../../module/services/_module.mjs', () => ({
+vi.mock("../../../../module/services/_module.mjs", () => ({
   getSetting: vi.fn(),
   Logger: {
     warn: vi.fn(),
     debug: vi.fn(),
-    error: vi.fn()
-  }
+    error: vi.fn(),
+  },
 }));
 
-vi.mock('../../../../module/utils/_module.mjs', () => ({
+vi.mock("../../../../module/utils/_module.mjs", () => ({
   ERPSRollUtilities: {
     determineCriticalStates: vi.fn(() => ({
       critHit: false,
       critMiss: false,
       savedMiss: false,
-      stolenCrit: false
-    }))
-  }
+      stolenCrit: false,
+    })),
+  },
 }));
 
-vi.mock('../../../../module/services/chat-message-builder.mjs', () => ({
+vi.mock("../../../../module/services/chat-message-builder.mjs", () => ({
   ChatMessageBuilder: {
-    buildMessageData: vi.fn(() => Promise.resolve({}))
-  }
+    buildMessageData: vi.fn(() => Promise.resolve({})),
+  },
 }));
 
 // Import mocked modules
-import { getSetting, Logger } from '../../../../module/services/_module.mjs';
-import { ERPSRollUtilities } from '../../../../module/utils/_module.mjs';
+import { getSetting, Logger } from "../../../../module/services/_module.mjs";
+import { ERPSRollUtilities } from "../../../../module/utils/_module.mjs";
 
-describe('ERPSRollHandler', () => {
+describe("ERPSRollHandler", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  describe('constructor', () => {
-    test('should initialize with default templates', () => {
+  describe("constructor", () => {
+    test("should initialize with default templates", () => {
       expect(erpsRollHandler.templates).toBeDefined();
-      expect(erpsRollHandler.templates.standard).toBe('systems/eventide-rp-system/templates/chat/roll-message.hbs');
-      expect(erpsRollHandler.templates.initiative).toBe('systems/eventide-rp-system/templates/chat/initiative-roll.hbs');
+      expect(erpsRollHandler.templates.standard).toBe(
+        "systems/eventide-rp-system/templates/chat/roll-message.hbs",
+      );
+      expect(erpsRollHandler.templates.initiative).toBe(
+        "systems/eventide-rp-system/templates/chat/initiative-roll.hbs",
+      );
     });
 
-    test('should initialize with default options', () => {
+    test("should initialize with default options", () => {
       expect(erpsRollHandler.defaults).toBeDefined();
-      expect(erpsRollHandler.defaults.formula).toBe('1');
-      expect(erpsRollHandler.defaults.label).toBe('unknown roll');
-      expect(erpsRollHandler.defaults.type).toBe('unknown');
+      expect(erpsRollHandler.defaults.formula).toBe("1");
+      expect(erpsRollHandler.defaults.label).toBe("unknown roll");
+      expect(erpsRollHandler.defaults.type).toBe("unknown");
       expect(erpsRollHandler.defaults.critAllowed).toBe(true);
       expect(erpsRollHandler.defaults.acCheck).toBe(true);
       expect(erpsRollHandler.defaults.toMessage).toBe(true);
     });
 
-    test('should initialize with roll type styles', () => {
+    test("should initialize with roll type styles", () => {
       expect(erpsRollHandler.rollTypeStyles).toBeDefined();
-      expect(erpsRollHandler.rollTypeStyles.acro).toEqual(['chat-card__header--acrobatics', 'fa-solid fa-feather-pointed']);
-      expect(erpsRollHandler.rollTypeStyles.phys).toEqual(['chat-card__header--physical', 'fa-solid fa-dragon']);
-      expect(erpsRollHandler.rollTypeStyles.fort).toEqual(['chat-card__header--fortitude', 'fa-solid fa-shield']);
-      expect(erpsRollHandler.rollTypeStyles.will).toEqual(['chat-card__header--will', 'fa-solid fa-fire-flame-curved']);
-      expect(erpsRollHandler.rollTypeStyles.wits).toEqual(['chat-card__header--wits', 'fa-solid fa-chess']);
-      expect(erpsRollHandler.rollTypeStyles.gear).toEqual(['chat-card__header--gear', 'fa-solid fa-toolbox']);
-      expect(erpsRollHandler.rollTypeStyles.damage).toEqual(['chat-card__header--damage', 'fa-sharp-duotone fa-light fa-claw-marks']);
-      expect(erpsRollHandler.rollTypeStyles.heal).toEqual(['chat-card__header--heal', 'fa-regular fa-wave-pulse']);
-      expect(erpsRollHandler.rollTypeStyles.initiative).toEqual(['chat-card__header--initiative', 'fa-solid fa-hourglass-start']);
-      expect(erpsRollHandler.rollTypeStyles.default).toEqual(['chat-card__header--unknown', 'fa-solid fa-question']);
+      expect(erpsRollHandler.rollTypeStyles.acro).toEqual([
+        "chat-card__header--acrobatics",
+        "fa-solid fa-feather-pointed",
+      ]);
+      expect(erpsRollHandler.rollTypeStyles.phys).toEqual([
+        "chat-card__header--physical",
+        "fa-solid fa-dragon",
+      ]);
+      expect(erpsRollHandler.rollTypeStyles.fort).toEqual([
+        "chat-card__header--fortitude",
+        "fa-solid fa-shield",
+      ]);
+      expect(erpsRollHandler.rollTypeStyles.will).toEqual([
+        "chat-card__header--will",
+        "fa-solid fa-fire-flame-curved",
+      ]);
+      expect(erpsRollHandler.rollTypeStyles.wits).toEqual([
+        "chat-card__header--wits",
+        "fa-solid fa-chess",
+      ]);
+      expect(erpsRollHandler.rollTypeStyles.gear).toEqual([
+        "chat-card__header--gear",
+        "fa-solid fa-toolbox",
+      ]);
+      expect(erpsRollHandler.rollTypeStyles.damage).toEqual([
+        "chat-card__header--damage",
+        "fa-sharp-duotone fa-light fa-claw-marks",
+      ]);
+      expect(erpsRollHandler.rollTypeStyles.heal).toEqual([
+        "chat-card__header--heal",
+        "fa-regular fa-wave-pulse",
+      ]);
+      expect(erpsRollHandler.rollTypeStyles.initiative).toEqual([
+        "chat-card__header--initiative",
+        "fa-solid fa-hourglass-start",
+      ]);
+      expect(erpsRollHandler.rollTypeStyles.default).toEqual([
+        "chat-card__header--unknown",
+        "fa-solid fa-question",
+      ]);
     });
   });
 
-  describe('_getCardStyling', () => {
-    test('should return correct styling for acro type', () => {
-      const result = erpsRollHandler._getCardStyling('acro');
-      expect(result).toEqual(['chat-card__header--acrobatics', 'fa-solid fa-feather-pointed']);
+  describe("_getCardStyling", () => {
+    test("should return correct styling for acro type", () => {
+      const result = erpsRollHandler._getCardStyling("acro");
+      expect(result).toEqual([
+        "chat-card__header--acrobatics",
+        "fa-solid fa-feather-pointed",
+      ]);
     });
 
-    test('should return correct styling for phys type', () => {
-      const result = erpsRollHandler._getCardStyling('phys');
-      expect(result).toEqual(['chat-card__header--physical', 'fa-solid fa-dragon']);
+    test("should return correct styling for phys type", () => {
+      const result = erpsRollHandler._getCardStyling("phys");
+      expect(result).toEqual([
+        "chat-card__header--physical",
+        "fa-solid fa-dragon",
+      ]);
     });
 
-    test('should return correct styling for fort type', () => {
-      const result = erpsRollHandler._getCardStyling('fort');
-      expect(result).toEqual(['chat-card__header--fortitude', 'fa-solid fa-shield']);
+    test("should return correct styling for fort type", () => {
+      const result = erpsRollHandler._getCardStyling("fort");
+      expect(result).toEqual([
+        "chat-card__header--fortitude",
+        "fa-solid fa-shield",
+      ]);
     });
 
-    test('should return correct styling for will type', () => {
-      const result = erpsRollHandler._getCardStyling('will');
-      expect(result).toEqual(['chat-card__header--will', 'fa-solid fa-fire-flame-curved']);
+    test("should return correct styling for will type", () => {
+      const result = erpsRollHandler._getCardStyling("will");
+      expect(result).toEqual([
+        "chat-card__header--will",
+        "fa-solid fa-fire-flame-curved",
+      ]);
     });
 
-    test('should return correct styling for wits type', () => {
-      const result = erpsRollHandler._getCardStyling('wits');
-      expect(result).toEqual(['chat-card__header--wits', 'fa-solid fa-chess']);
+    test("should return correct styling for wits type", () => {
+      const result = erpsRollHandler._getCardStyling("wits");
+      expect(result).toEqual(["chat-card__header--wits", "fa-solid fa-chess"]);
     });
 
-    test('should return correct styling for gear type', () => {
-      const result = erpsRollHandler._getCardStyling('gear');
-      expect(result).toEqual(['chat-card__header--gear', 'fa-solid fa-toolbox']);
+    test("should return correct styling for gear type", () => {
+      const result = erpsRollHandler._getCardStyling("gear");
+      expect(result).toEqual([
+        "chat-card__header--gear",
+        "fa-solid fa-toolbox",
+      ]);
     });
 
-    test('should return correct styling for damage type', () => {
-      const result = erpsRollHandler._getCardStyling('damage');
-      expect(result).toEqual(['chat-card__header--damage', 'fa-sharp-duotone fa-light fa-claw-marks']);
+    test("should return correct styling for damage type", () => {
+      const result = erpsRollHandler._getCardStyling("damage");
+      expect(result).toEqual([
+        "chat-card__header--damage",
+        "fa-sharp-duotone fa-light fa-claw-marks",
+      ]);
     });
 
-    test('should return correct styling for heal type', () => {
-      const result = erpsRollHandler._getCardStyling('heal');
-      expect(result).toEqual(['chat-card__header--heal', 'fa-regular fa-wave-pulse']);
+    test("should return correct styling for heal type", () => {
+      const result = erpsRollHandler._getCardStyling("heal");
+      expect(result).toEqual([
+        "chat-card__header--heal",
+        "fa-regular fa-wave-pulse",
+      ]);
     });
 
-    test('should return correct styling for initiative type', () => {
-      const result = erpsRollHandler._getCardStyling('initiative');
-      expect(result).toEqual(['chat-card__header--initiative', 'fa-solid fa-hourglass-start']);
+    test("should return correct styling for initiative type", () => {
+      const result = erpsRollHandler._getCardStyling("initiative");
+      expect(result).toEqual([
+        "chat-card__header--initiative",
+        "fa-solid fa-hourglass-start",
+      ]);
     });
 
-    test('should return default styling for unknown type', () => {
-      const result = erpsRollHandler._getCardStyling('unknown');
-      expect(result).toEqual(['chat-card__header--unknown', 'fa-solid fa-question']);
+    test("should return default styling for unknown type", () => {
+      const result = erpsRollHandler._getCardStyling("unknown");
+      expect(result).toEqual([
+        "chat-card__header--unknown",
+        "fa-solid fa-question",
+      ]);
     });
 
-    test('should handle case-insensitive type matching', () => {
-      const result = erpsRollHandler._getCardStyling('ACRO');
-      expect(result).toEqual(['chat-card__header--acrobatics', 'fa-solid fa-feather-pointed']);
+    test("should handle case-insensitive type matching", () => {
+      const result = erpsRollHandler._getCardStyling("ACRO");
+      expect(result).toEqual([
+        "chat-card__header--acrobatics",
+        "fa-solid fa-feather-pointed",
+      ]);
     });
 
-    test('should handle mixed case type matching', () => {
-      const result = erpsRollHandler._getCardStyling('PhYs');
-      expect(result).toEqual(['chat-card__header--physical', 'fa-solid fa-dragon']);
+    test("should handle mixed case type matching", () => {
+      const result = erpsRollHandler._getCardStyling("PhYs");
+      expect(result).toEqual([
+        "chat-card__header--physical",
+        "fa-solid fa-dragon",
+      ]);
     });
   });
 
-  describe('_getInitiativeSettings', () => {
-    test('should return setting value when successful', () => {
+  describe("_getInitiativeSettings", () => {
+    test("should return setting value when successful", () => {
       getSetting.mockReturnValue(true);
       const result = erpsRollHandler._getInitiativeSettings();
-      expect(getSetting).toHaveBeenCalledWith('hideNpcInitiativeRolls');
+      expect(getSetting).toHaveBeenCalledWith("hideNpcInitiativeRolls");
       expect(result).toBe(true);
     });
 
-    test('should return false when setting is false', () => {
+    test("should return false when setting is false", () => {
       getSetting.mockReturnValue(false);
       const result = erpsRollHandler._getInitiativeSettings();
       expect(result).toBe(false);
     });
 
-    test('should return false and log warning on error', () => {
-      const error = new Error('Setting not found');
+    test("should return false and log warning on error", () => {
+      const error = new Error("Setting not found");
       getSetting.mockImplementation(() => {
         throw error;
       });
       const result = erpsRollHandler._getInitiativeSettings();
       expect(Logger.warn).toHaveBeenCalledWith(
-        'Error getting hideNpcInitiativeRolls setting',
+        "Error getting hideNpcInitiativeRolls setting",
         error,
-        'ROLL_DICE'
+        "ROLL_DICE",
       );
       expect(result).toBe(false);
     });
   });
 
-  describe('_createInitiativeRoll', () => {
-    test('should create and evaluate roll with combatant actor data', async () => {
+  describe("_createInitiativeRoll", () => {
+    test("should create and evaluate roll with combatant actor data", async () => {
       const mockActor = {
-        getRollData: vi.fn(() => ({ abilities: { acro: 3 } }))
+        getRollData: vi.fn(() => ({ abilities: { acro: 3 } })),
       };
       const mockCombatant = {
-        actor: mockActor
+        actor: mockActor,
       };
 
       // Mock CONFIG.Combat.initiative.formula
-      global.CONFIG.Combat = { initiative: { formula: '1d20 + @abilities.acro' } };
+      global.CONFIG.Combat = {
+        initiative: { formula: "1d20 + @abilities.acro" },
+      };
 
       const roll = await erpsRollHandler._createInitiativeRoll(mockCombatant);
-      
+
       expect(roll).toBeDefined();
       expect(mockActor.getRollData).toHaveBeenCalled();
     });
 
-    test('should handle combatant without actor', async () => {
+    test("should handle combatant without actor", async () => {
       const mockCombatant = {
-        actor: null
+        actor: null,
       };
 
-      global.CONFIG.Combat = { initiative: { formula: '1d20' } };
+      global.CONFIG.Combat = { initiative: { formula: "1d20" } };
 
       const roll = await erpsRollHandler._createInitiativeRoll(mockCombatant);
-      
+
       expect(roll).toBeDefined();
     });
   });
 
-  describe('_updateCombatantInitiative', () => {
-    test('should update combatant initiative value', async () => {
+  describe("_updateCombatantInitiative", () => {
+    test("should update combatant initiative value", async () => {
       const mockCombatant = {
-        id: 'combatant-1',
+        id: "combatant-1",
         parent: {
-          updateEmbeddedDocuments: vi.fn(() => Promise.resolve())
-        }
+          updateEmbeddedDocuments: vi.fn(() => Promise.resolve()),
+        },
       };
       const mockRoll = { total: 15.5 };
 
       await erpsRollHandler._updateCombatantInitiative(mockCombatant, mockRoll);
 
-      expect(mockCombatant.parent.updateEmbeddedDocuments).toHaveBeenCalledWith('Combatant', [
-        { _id: 'combatant-1', initiative: 15.5 }
-      ]);
+      expect(mockCombatant.parent.updateEmbeddedDocuments).toHaveBeenCalledWith(
+        "Combatant",
+        [{ _id: "combatant-1", initiative: 15.5 }],
+      );
     });
   });
 
-  describe('_determineCriticalStates', () => {
-    test('should call ERPSRollUtilities.determineCriticalStates with correct parameters', () => {
+  describe("_determineCriticalStates", () => {
+    test("should call ERPSRollUtilities.determineCriticalStates with correct parameters", () => {
       const mockActor = {
-        getRollData: vi.fn(() => ({ hiddenAbilities: { dice: 3 } }))
+        getRollData: vi.fn(() => ({ hiddenAbilities: { dice: 3 } })),
       };
       const mockResult = { total: 20 };
-      const formula = '1d20';
+      const formula = "1d20";
 
       ERPSRollUtilities.determineCriticalStates.mockReturnValue({
         critHit: true,
         critMiss: false,
         savedMiss: false,
-        stolenCrit: false
+        stolenCrit: false,
       });
 
-      const result = erpsRollHandler._determineCriticalStates(mockResult, mockActor, formula, true);
+      const result = erpsRollHandler._determineCriticalStates(
+        mockResult,
+        mockActor,
+        formula,
+        true,
+      );
 
       expect(ERPSRollUtilities.determineCriticalStates).toHaveBeenCalledWith({
         roll: mockResult,
         thresholds: { dice: 3 },
         formula,
-        critAllowed: true
+        critAllowed: true,
       });
       expect(result.critHit).toBe(true);
       expect(result.critMiss).toBe(false);
     });
 
-    test('should handle critAllowed false', () => {
+    test("should handle critAllowed false", () => {
       const mockActor = {
-        getRollData: vi.fn(() => ({ hiddenAbilities: {} }))
+        getRollData: vi.fn(() => ({ hiddenAbilities: {} })),
       };
       const mockResult = { total: 1 };
-      const formula = '1d20';
+      const formula = "1d20";
 
       ERPSRollUtilities.determineCriticalStates.mockReturnValue({
         critHit: false,
         critMiss: false,
         savedMiss: false,
-        stolenCrit: false
+        stolenCrit: false,
       });
 
-      erpsRollHandler._determineCriticalStates(mockResult, mockActor, formula, false);
+      erpsRollHandler._determineCriticalStates(
+        mockResult,
+        mockActor,
+        formula,
+        false,
+      );
 
       expect(ERPSRollUtilities.determineCriticalStates).toHaveBeenCalledWith({
         roll: mockResult,
         thresholds: {},
         formula,
-        critAllowed: false
+        critAllowed: false,
       });
     });
   });
 
-  describe('_prepareRollTemplateData', () => {
-    test('should prepare template data with all required fields', () => {
+  describe("_prepareRollTemplateData", () => {
+    test("should prepare template data with all required fields", () => {
       const mockActor = {
-        name: 'Test Actor',
-        getRollData: vi.fn(() => ({ abilities: { acro: 3 } }))
+        name: "Test Actor",
+        getRollData: vi.fn(() => ({ abilities: { acro: 3 } })),
       };
       const mockRoll = { total: 15 };
       const criticalStates = {
         critHit: false,
         critMiss: false,
         savedMiss: false,
-        stolenCrit: false
+        stolenCrit: false,
       };
 
       const result = erpsRollHandler._prepareRollTemplateData({
         actor: mockActor,
         roll: mockRoll,
-        formula: '1d20+3',
-        label: 'Acrobatics Check',
-        description: 'Jumping over a pit',
-        type: 'acro',
-        className: 'custom-class',
+        formula: "1d20+3",
+        label: "Acrobatics Check",
+        description: "Jumping over a pit",
+        type: "acro",
+        className: "custom-class",
         critAllowed: true,
         addCheck: false,
         targetArray: [],
@@ -300,18 +384,18 @@ describe('ERPSRollHandler', () => {
         criticalStates,
         img: null,
         bgColor: null,
-        textColor: null
+        textColor: null,
       });
 
       expect(result.rollData).toEqual({ abilities: { acro: 3 } });
       expect(result.roll).toBe(mockRoll);
       expect(result.result).toBe(mockRoll);
-      expect(result.label).toBe('Acrobatics Check');
-      expect(result.description).toBe('Jumping over a pit');
-      expect(result.pickedCardClass).toBe('chat-card__header--acrobatics');
-      expect(result.pickedIcon).toBe('fa-solid fa-feather-pointed');
-      expect(result.pickedType).toBe('acro');
-      expect(result.className).toBe('custom-class');
+      expect(result.label).toBe("Acrobatics Check");
+      expect(result.description).toBe("Jumping over a pit");
+      expect(result.pickedCardClass).toBe("chat-card__header--acrobatics");
+      expect(result.pickedIcon).toBe("fa-solid fa-feather-pointed");
+      expect(result.pickedType).toBe("acro");
+      expect(result.className).toBe("custom-class");
       expect(result.critAllowed).toBe(true);
       expect(result.hasRoll).toBe(true);
       expect(result.acCheck).toBe(false);
@@ -321,71 +405,71 @@ describe('ERPSRollHandler', () => {
       expect(result.critMiss).toBe(false);
       expect(result.savedMiss).toBe(false);
       expect(result.stolenCrit).toBe(false);
-      expect(result.name).toBe('Test Actor');
+      expect(result.name).toBe("Test Actor");
       expect(result.total).toBe(15);
-      expect(result.formula).toBe('1d20+3');
+      expect(result.formula).toBe("1d20+3");
       expect(result.item).toBeNull();
       expect(result.bgColor).toBeNull();
       expect(result.textColor).toBeNull();
     });
 
-    test('should include item data when img is provided', () => {
+    test("should include item data when img is provided", () => {
       const mockActor = {
-        name: 'Test Actor',
-        getRollData: vi.fn(() => ({}))
+        name: "Test Actor",
+        getRollData: vi.fn(() => ({})),
       };
       const mockRoll = { total: 10 };
       const criticalStates = {
         critHit: false,
         critMiss: false,
         savedMiss: false,
-        stolenCrit: false
+        stolenCrit: false,
       };
 
       const result = erpsRollHandler._prepareRollTemplateData({
         actor: mockActor,
         roll: mockRoll,
-        formula: '1d20',
-        label: 'Attack',
-        description: '',
-        type: 'phys',
-        className: '',
+        formula: "1d20",
+        label: "Attack",
+        description: "",
+        type: "phys",
+        className: "",
         critAllowed: true,
         addCheck: false,
         targetArray: [],
         targetRollData: [],
         criticalStates,
-        img: 'path/to/image.png',
-        bgColor: '#ff0000',
-        textColor: '#ffffff'
+        img: "path/to/image.png",
+        bgColor: "#ff0000",
+        textColor: "#ffffff",
       });
 
-      expect(result.item).toEqual({ img: 'path/to/image.png', name: 'Attack' });
-      expect(result.bgColor).toBe('#ff0000');
-      expect(result.textColor).toBe('#ffffff');
+      expect(result.item).toEqual({ img: "path/to/image.png", name: "Attack" });
+      expect(result.bgColor).toBe("#ff0000");
+      expect(result.textColor).toBe("#ffffff");
     });
 
-    test('should handle critical states correctly', () => {
+    test("should handle critical states correctly", () => {
       const mockActor = {
-        name: 'Test Actor',
-        getRollData: vi.fn(() => ({}))
+        name: "Test Actor",
+        getRollData: vi.fn(() => ({})),
       };
       const mockRoll = { total: 20 };
       const criticalStates = {
         critHit: true,
         critMiss: false,
         savedMiss: false,
-        stolenCrit: true
+        stolenCrit: true,
       };
 
       const result = erpsRollHandler._prepareRollTemplateData({
         actor: mockActor,
         roll: mockRoll,
-        formula: '1d20',
-        label: 'Critical Test',
-        description: '',
-        type: 'phys',
-        className: '',
+        formula: "1d20",
+        label: "Critical Test",
+        description: "",
+        type: "phys",
+        className: "",
         critAllowed: true,
         addCheck: false,
         targetArray: [],
@@ -393,7 +477,7 @@ describe('ERPSRollHandler', () => {
         criticalStates,
         img: null,
         bgColor: null,
-        textColor: null
+        textColor: null,
       });
 
       expect(result.critHit).toBe(true);
@@ -403,14 +487,16 @@ describe('ERPSRollHandler', () => {
     });
   });
 
-  describe('handleRoll exported function', () => {
-    test('should be a function', () => {
-      expect(typeof handleRoll).toBe('function');
+  describe("handleRoll exported function", () => {
+    test("should be a function", () => {
+      expect(typeof handleRoll).toBe("function");
     });
 
-    test('should call erpsRollHandler.handleRoll', () => {
-      const mockHandleRoll = vi.spyOn(erpsRollHandler, 'handleRoll').mockResolvedValue({});
-      const options = { formula: '1d20' };
+    test("should call erpsRollHandler.handleRoll", () => {
+      const mockHandleRoll = vi
+        .spyOn(erpsRollHandler, "handleRoll")
+        .mockResolvedValue({});
+      const options = { formula: "1d20" };
       const actor = global.testUtils.createMockActor();
 
       handleRoll(options, actor);
@@ -419,14 +505,16 @@ describe('ERPSRollHandler', () => {
     });
   });
 
-  describe('rollInitiative exported function', () => {
-    test('should be a function', () => {
-      expect(typeof rollInitiative).toBe('function');
+  describe("rollInitiative exported function", () => {
+    test("should be a function", () => {
+      expect(typeof rollInitiative).toBe("function");
     });
 
-    test('should call erpsRollHandler.rollInitiative', () => {
-      const mockRollInitiative = vi.spyOn(erpsRollHandler, 'rollInitiative').mockResolvedValue({});
-      const options = { combatant: { id: 'test' } };
+    test("should call erpsRollHandler.rollInitiative", () => {
+      const mockRollInitiative = vi
+        .spyOn(erpsRollHandler, "rollInitiative")
+        .mockResolvedValue({});
+      const options = { combatant: { id: "test" } };
 
       rollInitiative(options);
 
@@ -434,53 +522,56 @@ describe('ERPSRollHandler', () => {
     });
   });
 
-  describe('_createMessageData', () => {
-    test('should build message data with all options', async () => {
-      const mockSpeaker = { actor: { id: 'actor-1' } };
+  describe("_createMessageData", () => {
+    test("should build message data with all options", async () => {
+      const mockSpeaker = { actor: { id: "actor-1" } };
       const mockRoll = { total: 15 };
 
       const result = await erpsRollHandler._createMessageData({
         speaker: mockSpeaker,
-        content: '<div>Test Content</div>',
-        sound: 'dice-sound',
+        content: "<div>Test Content</div>",
+        sound: "dice-sound",
         rolls: [mockRoll],
-        type: 'acro',
-        formula: '1d20+3',
+        type: "acro",
+        formula: "1d20+3",
         total: 15,
-        rollMode: 'roll',
-        soundKey: 'testSound'
+        rollMode: "roll",
+        soundKey: "testSound",
       });
 
       expect(result).toBeDefined();
     });
 
-    test('should use default sound when not provided', async () => {
-      const mockSpeaker = { actor: { id: 'actor-1' } };
+    test("should use default sound when not provided", async () => {
+      const mockSpeaker = { actor: { id: "actor-1" } };
       const mockRoll = { total: 10 };
 
-      global.CONFIG.sounds = { dice: 'default-dice-sound' };
+      global.CONFIG.sounds = { dice: "default-dice-sound" };
 
       const result = await erpsRollHandler._createMessageData({
         speaker: mockSpeaker,
-        content: '<div>Test</div>',
+        content: "<div>Test</div>",
         rolls: [mockRoll],
-        type: 'phys',
-        formula: '1d20',
+        type: "phys",
+        formula: "1d20",
         total: 10,
-        rollMode: 'roll'
+        rollMode: "roll",
       });
 
       expect(result).toBeDefined();
     });
   });
 
-  describe('_createAndEvaluateRoll', () => {
-    test('should create and evaluate a roll with actor data', async () => {
+  describe("_createAndEvaluateRoll", () => {
+    test("should create and evaluate a roll with actor data", async () => {
       const mockActor = {
-        getRollData: vi.fn(() => ({ abilities: { acro: 3 } }))
+        getRollData: vi.fn(() => ({ abilities: { acro: 3 } })),
       };
 
-      const { roll, result } = await erpsRollHandler._createAndEvaluateRoll('1d20', mockActor);
+      const { roll, result } = await erpsRollHandler._createAndEvaluateRoll(
+        "1d20",
+        mockActor,
+      );
 
       expect(mockActor.getRollData).toHaveBeenCalled();
       expect(roll).toBeDefined();
@@ -489,78 +580,83 @@ describe('ERPSRollHandler', () => {
     });
   });
 
-  describe('_getTargetData', () => {
-    test('should return empty arrays when no targets and acCheck is true', async () => {
+  describe("_getTargetData", () => {
+    test("should return empty arrays when no targets and acCheck is true", async () => {
       global.erps = {
         utils: {
-          getTargetArray: vi.fn().mockResolvedValue([])
-        }
+          getTargetArray: vi.fn().mockResolvedValue([]),
+        },
       };
 
       const mockResult = { total: 15 };
 
-      const { addCheck, targetArray, targetRollData } = await erpsRollHandler._getTargetData(true, mockResult);
+      const { addCheck, targetArray, targetRollData } =
+        await erpsRollHandler._getTargetData(true, mockResult);
 
       expect(addCheck).toBe(false);
       expect(targetArray).toEqual([]);
       expect(targetRollData).toEqual([]);
     });
 
-    test('should return addCheck false when acCheck is false', async () => {
+    test("should return addCheck false when acCheck is false", async () => {
       global.erps = {
         utils: {
-          getTargetArray: vi.fn().mockResolvedValue([])
-        }
+          getTargetArray: vi.fn().mockResolvedValue([]),
+        },
       };
 
       const mockResult = { total: 15 };
 
-      const { addCheck, targetArray } = await erpsRollHandler._getTargetData(false, mockResult);
+      const { addCheck, targetArray } = await erpsRollHandler._getTargetData(
+        false,
+        mockResult,
+      );
 
       expect(addCheck).toBe(false);
       expect(targetArray).toEqual([]);
     });
 
-    test('should process targets when targets exist and acCheck is true', async () => {
+    test("should process targets when targets exist and acCheck is true", async () => {
       const mockTargetActor = {
-        name: 'Target Actor',
-        getRollData: vi.fn(() => ({ ac: 15 }))
+        name: "Target Actor",
+        getRollData: vi.fn(() => ({ ac: 15 })),
       };
       const mockTarget = {
-        actor: mockTargetActor
+        actor: mockTargetActor,
       };
 
       global.erps = {
         utils: {
-          getTargetArray: vi.fn().mockResolvedValue([mockTarget])
-        }
+          getTargetArray: vi.fn().mockResolvedValue([mockTarget]),
+        },
       };
 
       const mockResult = { total: 18 };
 
-      const { addCheck, targetArray, targetRollData } = await erpsRollHandler._getTargetData(true, mockResult);
+      const { addCheck, targetArray, targetRollData } =
+        await erpsRollHandler._getTargetData(true, mockResult);
 
       expect(addCheck).toBe(true);
       expect(targetArray).toHaveLength(1);
       expect(targetRollData).toHaveLength(1);
-      expect(targetRollData[0].name).toBe('Target Actor');
+      expect(targetRollData[0].name).toBe("Target Actor");
       expect(targetRollData[0].compare).toBe(18);
     });
   });
 
-  describe('_createInitiativeMessage', () => {
-    test('should create initiative message with correct data', async () => {
+  describe("_createInitiativeMessage", () => {
+    test("should create initiative message with correct data", async () => {
       const mockActor = {
-        id: 'actor-1',
-        name: 'Test Actor'
+        id: "actor-1",
+        name: "Test Actor",
       };
       const mockCombatant = {
-        name: 'Test Combatant',
-        actor: mockActor
+        name: "Test Combatant",
+        actor: mockActor,
       };
       const mockRoll = {
-        formula: '1d20+3',
-        total: 15.5
+        formula: "1d20+3",
+        total: 15.5,
       };
 
       global.ChatMessage.getSpeaker = vi.fn(() => ({ actor: mockActor }));
@@ -571,25 +667,25 @@ describe('ERPSRollHandler', () => {
         roll: mockRoll,
         isNpc: false,
         shouldWhisper: false,
-        description: 'Test initiative'
+        description: "Test initiative",
       });
 
       expect(result).toBeDefined();
       expect(ChatMessage.getSpeaker).toHaveBeenCalledWith({ actor: mockActor });
     });
 
-    test('should use gmroll mode when shouldWhisper is true', async () => {
+    test("should use gmroll mode when shouldWhisper is true", async () => {
       const mockActor = {
-        id: 'actor-1',
-        name: 'NPC Actor'
+        id: "actor-1",
+        name: "NPC Actor",
       };
       const mockCombatant = {
-        name: 'NPC Combatant',
-        actor: mockActor
+        name: "NPC Combatant",
+        actor: mockActor,
       };
       const mockRoll = {
-        formula: '1d20',
-        total: 12.0
+        formula: "1d20",
+        total: 12.0,
       };
 
       global.ChatMessage.getSpeaker = vi.fn(() => ({ actor: mockActor }));
@@ -600,26 +696,26 @@ describe('ERPSRollHandler', () => {
         roll: mockRoll,
         isNpc: true,
         shouldWhisper: true,
-        description: ''
+        description: "",
       });
 
       expect(result).toBeDefined();
     });
   });
 
-  describe('_createRollChatMessage', () => {
-    test('should create chat message with correct template data', async () => {
+  describe("_createRollChatMessage", () => {
+    test("should create chat message with correct template data", async () => {
       const mockActor = {
-        id: 'actor-1',
-        name: 'Test Actor'
+        id: "actor-1",
+        name: "Test Actor",
       };
       const mockRoll = {
         total: 18,
-        formula: '1d20+3'
+        formula: "1d20+3",
       };
       const mockTemplateData = {
-        label: 'Attack Roll',
-        total: 18
+        label: "Attack Roll",
+        total: 18,
       };
 
       global.ChatMessage.getSpeaker = vi.fn(() => ({ actor: mockActor }));
@@ -628,11 +724,11 @@ describe('ERPSRollHandler', () => {
       const result = await erpsRollHandler._createRollChatMessage({
         actor: mockActor,
         roll: mockRoll,
-        formula: '1d20+3',
-        type: 'phys',
+        formula: "1d20+3",
+        type: "phys",
         templateData: mockTemplateData,
-        rollMode: 'roll',
-        soundKey: null
+        rollMode: "roll",
+        soundKey: null,
       });
 
       expect(result).toBeDefined();
@@ -640,20 +736,29 @@ describe('ERPSRollHandler', () => {
     });
   });
 
-  describe('_getCardStyling additional cases', () => {
-    test('should return default for completely unknown type string', () => {
-      const result = erpsRollHandler._getCardStyling('nonexistent');
-      expect(result).toEqual(['chat-card__header--unknown', 'fa-solid fa-question']);
+  describe("_getCardStyling additional cases", () => {
+    test("should return default for completely unknown type string", () => {
+      const result = erpsRollHandler._getCardStyling("nonexistent");
+      expect(result).toEqual([
+        "chat-card__header--unknown",
+        "fa-solid fa-question",
+      ]);
     });
 
-    test('should handle type with special characters', () => {
-      const result = erpsRollHandler._getCardStyling('acro-test');
-      expect(result).toEqual(['chat-card__header--unknown', 'fa-solid fa-question']);
+    test("should handle type with special characters", () => {
+      const result = erpsRollHandler._getCardStyling("acro-test");
+      expect(result).toEqual([
+        "chat-card__header--unknown",
+        "fa-solid fa-question",
+      ]);
     });
 
-    test('should handle numeric type string', () => {
-      const result = erpsRollHandler._getCardStyling('123');
-      expect(result).toEqual(['chat-card__header--unknown', 'fa-solid fa-question']);
+    test("should handle numeric type string", () => {
+      const result = erpsRollHandler._getCardStyling("123");
+      expect(result).toEqual([
+        "chat-card__header--unknown",
+        "fa-solid fa-question",
+      ]);
     });
   });
 });

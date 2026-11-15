@@ -112,8 +112,10 @@ describe("BulkSavedDamageCreator", () => {
     vi.clearAllMocks();
 
     // Reset validator mocks to "valid" by default.
-    mockValidateDamage.mockReturnValue({ isValid: true });
-    mockValidateRepetition.mockReturnValue({ isValid: true });
+    // mockReset first: clears leftover mockReturnValueOnce queues (vitest 4
+    // restoreMocks no longer wipes plain vi.fn() state between tests).
+    mockValidateDamage.mockReset().mockReturnValue({ isValid: true });
+    mockValidateRepetition.mockReset().mockReturnValue({ isValid: true });
 
     // Reset ErrorHandler to pass-through (success path) by default.
     mockHandleAsync.mockImplementation(async (promise) => {
@@ -132,8 +134,8 @@ describe("BulkSavedDamageCreator", () => {
     };
 
     // Stub FilePicker.browse — individual tests override the return value.
-    originalFilePickerBrowse = global.foundry.applications.apps.FilePicker
-      .implementation.browse;
+    originalFilePickerBrowse =
+      global.foundry.applications.apps.FilePicker.implementation.browse;
     global.foundry.applications.apps.FilePicker.implementation.browse = vi.fn(
       async () => ({ files: [], dirs: [] }),
     );
@@ -180,13 +182,7 @@ describe("BulkSavedDamageCreator", () => {
 
     test("recognizes all supported extensions case-insensitively", () => {
       const result = BulkSavedDamageCreator._buildImageEntries(
-        [
-          "x/a.PNG",
-          "x/b.WebP",
-          "x/c.GIF",
-          "x/d.svg",
-          "x/e.bmp",
-        ],
+        ["x/a.PNG", "x/b.WebP", "x/c.GIF", "x/d.svg", "x/e.bmp"],
         "x",
       );
       expect(result).toHaveLength(5);
@@ -602,11 +598,12 @@ describe("BulkSavedDamageCreator", () => {
 
   describe("_collectFiles", () => {
     test("returns files from a flat scan (non-recursive)", async () => {
-      global.foundry.applications.apps.FilePicker.implementation.browse =
-        vi.fn(async () => ({
+      global.foundry.applications.apps.FilePicker.implementation.browse = vi.fn(
+        async () => ({
           files: ["root/a.png", "root/b.png"],
           dirs: ["root/sub"], // ignored because recursive=false
-        }));
+        }),
+      );
 
       const dialog = makeDialog();
       const files = await dialog._collectFiles(
@@ -663,10 +660,11 @@ describe("BulkSavedDamageCreator", () => {
     });
 
     test("propagates browse error via rejection (does not swallow)", async () => {
-      global.foundry.applications.apps.FilePicker.implementation.browse =
-        vi.fn(async () => {
+      global.foundry.applications.apps.FilePicker.implementation.browse = vi.fn(
+        async () => {
           throw new Error("Network error");
-        });
+        },
+      );
 
       const dialog = makeDialog();
       await expect(dialog._collectFiles("root", "data", false)).rejects.toThrow(
@@ -688,11 +686,12 @@ describe("BulkSavedDamageCreator", () => {
     });
 
     test("populates discoveredImages with filtered entries", async () => {
-      global.foundry.applications.apps.FilePicker.implementation.browse =
-        vi.fn(async () => ({
+      global.foundry.applications.apps.FilePicker.implementation.browse = vi.fn(
+        async () => ({
           files: ["icons/a.png", "icons/b.jpg", "icons/readme.txt"],
           dirs: [],
-        }));
+        }),
+      );
 
       const dialog = makeDialog();
       dialog._folderPath = "icons";
@@ -703,11 +702,12 @@ describe("BulkSavedDamageCreator", () => {
     });
 
     test("sets NoImagesWithCount error when folder has files but no images", async () => {
-      global.foundry.applications.apps.FilePicker.implementation.browse =
-        vi.fn(async () => ({
+      global.foundry.applications.apps.FilePicker.implementation.browse = vi.fn(
+        async () => ({
           files: ["icons/readme.txt", "icons/data.json"],
           dirs: [],
-        }));
+        }),
+      );
 
       const dialog = makeDialog();
       await dialog._scanFolder("icons");
@@ -719,10 +719,11 @@ describe("BulkSavedDamageCreator", () => {
     });
 
     test("sets ScanFailedWithPath error when browse throws", async () => {
-      global.foundry.applications.apps.FilePicker.implementation.browse =
-        vi.fn(async () => {
+      global.foundry.applications.apps.FilePicker.implementation.browse = vi.fn(
+        async () => {
           throw new Error("Permission denied");
-        });
+        },
+      );
 
       const dialog = makeDialog();
       dialog._folderSource = "data";
@@ -937,9 +938,8 @@ describe("BulkSavedDamageCreator", () => {
         { _id: "g2", name: "Group 2", sort: 100000 },
       ];
       await dialog._createNewGroup("Group 3");
-      const newGroup = mockActor.update.mock.calls[0][0][
-        "system.actionCardGroups"
-      ][2];
+      const newGroup =
+        mockActor.update.mock.calls[0][0]["system.actionCardGroups"][2];
       expect(newGroup.sort).toBe(200000);
     });
 
@@ -948,9 +948,8 @@ describe("BulkSavedDamageCreator", () => {
       const existing = { _id: "g1", name: "Group 1", sort: 0 };
       mockActor.system.actionCardGroups = [existing];
       await dialog._createNewGroup("Group 2");
-      const groups = mockActor.update.mock.calls[0][0][
-        "system.actionCardGroups"
-      ];
+      const groups =
+        mockActor.update.mock.calls[0][0]["system.actionCardGroups"];
       expect(groups).toHaveLength(2);
       expect(groups[0]).toBe(existing);
     });

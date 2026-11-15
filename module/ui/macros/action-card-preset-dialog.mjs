@@ -139,7 +139,10 @@ export class ActionCardPresetDialog extends EventideSheetHelpers {
         context.powerAbility = this._powerAbility || "unaugmented";
         context.powerCost = this._powerCost ?? 1;
         context.abilities = Object.fromEntries(
-          Object.keys(CONFIG.EVENTIDE_RP_SYSTEM.abilities).map((key) => [key, game.i18n.localize(CONFIG.EVENTIDE_RP_SYSTEM.abilities[key])]),
+          Object.keys(CONFIG.EVENTIDE_RP_SYSTEM.abilities).map((key) => [
+            key,
+            game.i18n.localize(CONFIG.EVENTIDE_RP_SYSTEM.abilities[key]),
+          ]),
         );
       }
     } else {

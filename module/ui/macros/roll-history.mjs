@@ -47,13 +47,17 @@ export class RollHistory extends EventideSheetHelpers {
     const tokens = canvas?.tokens?.controlled;
     if (!tokens || tokens.length === 0) {
       ui.notifications.warn(
-        game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.RollHistoryNoTokenSelected"),
+        game.i18n.localize(
+          "EVENTIDE_RP_SYSTEM.Errors.RollHistoryNoTokenSelected",
+        ),
       );
       return null;
     }
     if (tokens.length > 1) {
       ui.notifications.warn(
-        game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.RollHistorySelectSingleToken"),
+        game.i18n.localize(
+          "EVENTIDE_RP_SYSTEM.Errors.RollHistorySelectSingleToken",
+        ),
       );
       return null;
     }
@@ -102,23 +106,44 @@ export class RollHistory extends EventideSheetHelpers {
       labels[key] = def.label || key;
     }
     labels.gear = game.i18n.localize("EVENTIDE_RP_SYSTEM.RollHistory.TypeGear");
-    labels.damage = game.i18n.localize("EVENTIDE_RP_SYSTEM.RollHistory.TypeDamage");
+    labels.damage = game.i18n.localize(
+      "EVENTIDE_RP_SYSTEM.RollHistory.TypeDamage",
+    );
     labels.heal = game.i18n.localize("EVENTIDE_RP_SYSTEM.RollHistory.TypeHeal");
-    labels.initiative = game.i18n.localize("EVENTIDE_RP_SYSTEM.RollHistory.TypeInitiative");
-    labels.unaugmented = game.i18n.localize("EVENTIDE_RP_SYSTEM.RollHistory.TypeUnaugmented");
-    labels.unknown = game.i18n.localize("EVENTIDE_RP_SYSTEM.RollHistory.TypeUnknown");
+    labels.initiative = game.i18n.localize(
+      "EVENTIDE_RP_SYSTEM.RollHistory.TypeInitiative",
+    );
+    labels.unaugmented = game.i18n.localize(
+      "EVENTIDE_RP_SYSTEM.RollHistory.TypeUnaugmented",
+    );
+    labels.unknown = game.i18n.localize(
+      "EVENTIDE_RP_SYSTEM.RollHistory.TypeUnknown",
+    );
     return labels;
   }
 
   _formatTimeAgo(timestamp) {
     const seconds = Math.floor((Date.now() - timestamp) / 1000);
-    if (seconds < 60) return game.i18n.format("EVENTIDE_RP_SYSTEM.RollHistory.TimeAgo.Seconds", { seconds });
+    if (seconds < 60)
+      return game.i18n.format(
+        "EVENTIDE_RP_SYSTEM.RollHistory.TimeAgo.Seconds",
+        { seconds },
+      );
     const minutes = Math.floor(seconds / 60);
-    if (minutes < 60) return game.i18n.format("EVENTIDE_RP_SYSTEM.RollHistory.TimeAgo.Minutes", { minutes });
+    if (minutes < 60)
+      return game.i18n.format(
+        "EVENTIDE_RP_SYSTEM.RollHistory.TimeAgo.Minutes",
+        { minutes },
+      );
     const hours = Math.floor(minutes / 60);
-    if (hours < 24) return game.i18n.format("EVENTIDE_RP_SYSTEM.RollHistory.TimeAgo.Hours", { hours });
+    if (hours < 24)
+      return game.i18n.format("EVENTIDE_RP_SYSTEM.RollHistory.TimeAgo.Hours", {
+        hours,
+      });
     const days = Math.floor(hours / 24);
-    return game.i18n.format("EVENTIDE_RP_SYSTEM.RollHistory.TimeAgo.Days", { days });
+    return game.i18n.format("EVENTIDE_RP_SYSTEM.RollHistory.TimeAgo.Days", {
+      days,
+    });
   }
 
   _onRender(_context, _options) {
@@ -137,7 +162,11 @@ export class RollHistory extends EventideSheetHelpers {
           this.themeManager = manager;
         })
         .catch((error) => {
-          Logger.error("Failed to initialize theme manager for roll history", error, "THEME");
+          Logger.error(
+            "Failed to initialize theme manager for roll history",
+            error,
+            "THEME",
+          );
         });
     }
   }

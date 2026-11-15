@@ -15,15 +15,21 @@ export class TokenConfigGuards {
    * to intercept and prevent configuration during active transformations
    */
   static initialize() {
-    Logger.info("Initializing Token Configuration Guards", null, "TRANSFORMATION");
+    Logger.info(
+      "Initializing Token Configuration Guards",
+      null,
+      "TRANSFORMATION",
+    );
 
     // Get the namespaced classes in Foundry v13
     const TokenConfig = foundry.applications.sheets.TokenConfig;
-    const PrototypeTokenConfig = foundry.applications.sheets.PrototypeTokenConfig;
+    const PrototypeTokenConfig =
+      foundry.applications.sheets.PrototypeTokenConfig;
 
     // Store original render methods
     const originalTokenConfigRender = TokenConfig.prototype.render;
-    const originalPrototypeTokenConfigRender = PrototypeTokenConfig.prototype.render;
+    const originalPrototypeTokenConfigRender =
+      PrototypeTokenConfig.prototype.render;
 
     // Override TokenConfig render (for placed tokens)
     TokenConfig.prototype.render = async function (...args) {
@@ -37,14 +43,21 @@ export class TokenConfigGuards {
           hasActor: !!actor,
           actorName: actor?.name,
           isToken: actor?.isToken,
-          hasGetFlag: !!(actor?.getFlag),
-          activeTransformation: actor?.getFlag?.("eventide-rp-system", "activeTransformation"),
+          hasGetFlag: !!actor?.getFlag,
+          activeTransformation: actor?.getFlag?.(
+            "eventide-rp-system",
+            "activeTransformation",
+          ),
         },
         "TRANSFORMATION",
       );
 
       // Check if this is a linked token with an active transformation
-      if (actor && !actor.isToken && actor.getFlag("eventide-rp-system", "activeTransformation")) {
+      if (
+        actor &&
+        !actor.isToken &&
+        actor.getFlag("eventide-rp-system", "activeTransformation")
+      ) {
         Logger.debug(
           "Blocking token config - linked actor has active transformation",
           { actorName: actor.name, tokenId: token.id },
@@ -60,7 +73,11 @@ export class TokenConfigGuards {
       }
 
       // Check if this is an unlinked token with an active transformation
-      if (actor && actor.isToken && actor.getFlag("eventide-rp-system", "activeTransformation")) {
+      if (
+        actor &&
+        actor.isToken &&
+        actor.getFlag("eventide-rp-system", "activeTransformation")
+      ) {
         Logger.debug(
           "Blocking token config - unlinked token has active transformation",
           { tokenId: token.id },
@@ -90,7 +107,11 @@ export class TokenConfigGuards {
       const actor = this.actor;
 
       // Check if actor exists and has an active transformation
-      if (actor && actor.getFlag && actor.getFlag("eventide-rp-system", "activeTransformation")) {
+      if (
+        actor &&
+        actor.getFlag &&
+        actor.getFlag("eventide-rp-system", "activeTransformation")
+      ) {
         Logger.debug(
           "Blocking prototype token config - actor has active transformation",
           { actorName: actor.name },
@@ -109,7 +130,11 @@ export class TokenConfigGuards {
       return originalPrototypeTokenConfigRender.call(this, ...args);
     };
 
-    Logger.info("Token Configuration Guards initialized", null, "TRANSFORMATION");
+    Logger.info(
+      "Token Configuration Guards initialized",
+      null,
+      "TRANSFORMATION",
+    );
   }
 
   /**
@@ -133,7 +158,9 @@ export class TokenConfigGuards {
       );
 
       ui.notifications.warn(
-        game.i18n.localize("EVENTIDE_RP_SYSTEM.Notifications.TokenConfigBlockedForPlayers"),
+        game.i18n.localize(
+          "EVENTIDE_RP_SYSTEM.Notifications.TokenConfigBlockedForPlayers",
+        ),
       );
       return context;
     }
@@ -141,7 +168,9 @@ export class TokenConfigGuards {
     // For GMs, show confirmation dialog
     const proceed = await foundry.applications.api.DialogV2.confirm({
       window: {
-        title: game.i18n.localize("EVENTIDE_RP_SYSTEM.Dialogs.TokenConfigDuringTransformation.Title"),
+        title: game.i18n.localize(
+          "EVENTIDE_RP_SYSTEM.Dialogs.TokenConfigDuringTransformation.Title",
+        ),
       },
       content: `
         <p>${game.i18n.localize("EVENTIDE_RP_SYSTEM.Dialogs.TokenConfigDuringTransformation.LinkedWarning")}</p>
@@ -168,7 +197,9 @@ export class TokenConfigGuards {
       );
 
       ui.notifications.info(
-        game.i18n.localize("EVENTIDE_RP_SYSTEM.Notifications.TokenConfigCancelled"),
+        game.i18n.localize(
+          "EVENTIDE_RP_SYSTEM.Notifications.TokenConfigCancelled",
+        ),
       );
       return context;
     }
@@ -185,7 +216,12 @@ export class TokenConfigGuards {
    * @param {Array} args - The render method arguments
    * @returns {Promise<TokenConfig|null>}
    */
-  static async _handleUnlinkedTokenConfig(actor, originalRender, context, args) {
+  static async _handleUnlinkedTokenConfig(
+    actor,
+    originalRender,
+    context,
+    args,
+  ) {
     // For non-GMs, just show a notification and block access
     if (!game.user.isGM) {
       Logger.info(
@@ -195,7 +231,9 @@ export class TokenConfigGuards {
       );
 
       ui.notifications.warn(
-        game.i18n.localize("EVENTIDE_RP_SYSTEM.Notifications.TokenConfigBlockedForPlayers"),
+        game.i18n.localize(
+          "EVENTIDE_RP_SYSTEM.Notifications.TokenConfigBlockedForPlayers",
+        ),
       );
       return context;
     }
@@ -203,7 +241,9 @@ export class TokenConfigGuards {
     // For GMs, show confirmation dialog
     const proceed = await foundry.applications.api.DialogV2.confirm({
       window: {
-        title: game.i18n.localize("EVENTIDE_RP_SYSTEM.Dialogs.TokenConfigDuringTransformation.Title"),
+        title: game.i18n.localize(
+          "EVENTIDE_RP_SYSTEM.Dialogs.TokenConfigDuringTransformation.Title",
+        ),
       },
       content: `
         <p>${game.i18n.localize("EVENTIDE_RP_SYSTEM.Dialogs.TokenConfigDuringTransformation.UnlinkedWarning")}</p>
@@ -230,7 +270,9 @@ export class TokenConfigGuards {
       );
 
       ui.notifications.info(
-        game.i18n.localize("EVENTIDE_RP_SYSTEM.Notifications.TokenConfigCancelled"),
+        game.i18n.localize(
+          "EVENTIDE_RP_SYSTEM.Notifications.TokenConfigCancelled",
+        ),
       );
       return context;
     }
@@ -247,7 +289,12 @@ export class TokenConfigGuards {
    * @param {Array} args - The render method arguments
    * @returns {Promise<DefaultTokenConfig|null>}
    */
-  static async _handlePrototypeTokenConfig(actor, originalRender, context, args) {
+  static async _handlePrototypeTokenConfig(
+    actor,
+    originalRender,
+    context,
+    args,
+  ) {
     // For non-GMs, just show a notification and block access
     if (!game.user.isGM) {
       Logger.info(
@@ -257,7 +304,9 @@ export class TokenConfigGuards {
       );
 
       ui.notifications.warn(
-        game.i18n.localize("EVENTIDE_RP_SYSTEM.Notifications.PrototypeTokenConfigBlockedForPlayers"),
+        game.i18n.localize(
+          "EVENTIDE_RP_SYSTEM.Notifications.PrototypeTokenConfigBlockedForPlayers",
+        ),
       );
       return context;
     }
@@ -265,7 +314,9 @@ export class TokenConfigGuards {
     // For GMs, show confirmation dialog
     const proceed = await foundry.applications.api.DialogV2.confirm({
       window: {
-        title: game.i18n.localize("EVENTIDE_RP_SYSTEM.Dialogs.PrototypeTokenConfigDuringTransformation.Title"),
+        title: game.i18n.localize(
+          "EVENTIDE_RP_SYSTEM.Dialogs.PrototypeTokenConfigDuringTransformation.Title",
+        ),
       },
       content: `
         <p>${game.i18n.localize("EVENTIDE_RP_SYSTEM.Dialogs.PrototypeTokenConfigDuringTransformation.Warning")}</p>
@@ -292,7 +343,9 @@ export class TokenConfigGuards {
       );
 
       ui.notifications.info(
-        game.i18n.localize("EVENTIDE_RP_SYSTEM.Notifications.PrototypeTokenConfigCancelled"),
+        game.i18n.localize(
+          "EVENTIDE_RP_SYSTEM.Notifications.PrototypeTokenConfigCancelled",
+        ),
       );
       return context;
     }

@@ -272,7 +272,9 @@ export class PerformanceDashboard extends BaselineSheetMixins(ApplicationV2) {
 
     if (instance) {
       await instance.render();
-      ui.notifications.info(game.i18n.localize("EVENTIDE_RP_SYSTEM.UI.DashboardRefreshed"));
+      ui.notifications.info(
+        game.i18n.localize("EVENTIDE_RP_SYSTEM.UI.DashboardRefreshed"),
+      );
     }
   }
 
@@ -286,7 +288,9 @@ export class PerformanceDashboard extends BaselineSheetMixins(ApplicationV2) {
   static async #onCleanup(event, target) {
     try {
       globalThis.erps?.cleanup?.();
-      ui.notifications.info(game.i18n.localize("EVENTIDE_RP_SYSTEM.UI.CleanupCompleted"));
+      ui.notifications.info(
+        game.i18n.localize("EVENTIDE_RP_SYSTEM.UI.CleanupCompleted"),
+      );
 
       // Refresh the dashboard after cleanup
       setTimeout(() => {
