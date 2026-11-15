@@ -48,7 +48,11 @@ export const ActorSheetFeatureActionsMixin = (BaseClass) =>
           "FEATURE_ACTIONS",
         );
 
-        Logger.methodExit("ActorSheetFeatureActionsMixin", "_toggleFeature", feature);
+        Logger.methodExit(
+          "ActorSheetFeatureActionsMixin",
+          "_toggleFeature",
+          feature,
+        );
       } catch (error) {
         await ErrorHandler.handleAsync(Promise.reject(error), {
           context: `Toggle feature for ${this.actor?.name}`,
@@ -58,7 +62,11 @@ export const ActorSheetFeatureActionsMixin = (BaseClass) =>
           ),
         });
 
-        Logger.methodExit("ActorSheetFeatureActionsMixin", "_toggleFeature", null);
+        Logger.methodExit(
+          "ActorSheetFeatureActionsMixin",
+          "_toggleFeature",
+          null,
+        );
       }
     }
   };

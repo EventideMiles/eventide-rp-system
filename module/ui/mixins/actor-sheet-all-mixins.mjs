@@ -24,7 +24,9 @@ export const ActorSheetAllMixins = (BaseClass) =>
         ActorSheetAdditionalActionsMixin(
           ActorSheetFeatureTabsMixinWithInit(
             ActorSheetGearTabsMixinWithInit(
-              ActorSheetThemeMixin(ActorSheetStatusBarMixin(ContextMenuMixin(BaseClass))),
+              ActorSheetThemeMixin(
+                ActorSheetStatusBarMixin(ContextMenuMixin(BaseClass)),
+              ),
             ),
           ),
         ),

@@ -13,10 +13,10 @@
  * coverage while keeping the tests maintainable.
  */
 
-import { DragDropHandler } from '../../../module/services/drag-drop-handler.mjs';
+import { DragDropHandler } from "../../../module/services/drag-drop-handler.mjs";
 
 // Mock dependencies
-vi.mock('../../../module/helpers/logger.mjs', () => ({
+vi.mock("../../../module/helpers/logger.mjs", () => ({
   Logger: {
     debug: vi.fn(),
     info: vi.fn(),
@@ -31,7 +31,7 @@ if (!global.foundry.utils) {
 }
 global.foundry.utils.fromUuid = vi.fn();
 
-describe('DragDropHandler', () => {
+describe("DragDropHandler", () => {
   let mockActor;
   let mockItem;
   let mockSheet;
@@ -42,9 +42,9 @@ describe('DragDropHandler', () => {
 
     // Setup mock item
     mockItem = {
-      _id: 'item123',
-      name: 'Test Item',
-      type: 'actionCard',
+      _id: "item123",
+      name: "Test Item",
+      type: "actionCard",
       system: {
         groupId: null,
       },
@@ -55,7 +55,7 @@ describe('DragDropHandler', () => {
     class MockItemsCollection extends Map {
       constructor() {
         super();
-        this.set('item123', mockItem);
+        this.set("item123", mockItem);
         // Spy on get method
         this._get = this.get;
         this.get = vi.fn((id) => super.get(id));
@@ -71,9 +71,9 @@ describe('DragDropHandler', () => {
 
     // Setup mock actor with items collection
     mockActor = {
-      _id: 'actor123',
-      name: 'Test Actor',
-      type: 'character',
+      _id: "actor123",
+      name: "Test Actor",
+      type: "character",
       system: {
         actionCardGroups: [],
       },
@@ -97,25 +97,27 @@ describe('DragDropHandler', () => {
     };
 
     // Setup mock target element
-    mockTarget = document.createElement('div');
-    mockTarget.dataset.itemId = 'item123';
-    mockTarget.classList.add('action-card');
+    mockTarget = document.createElement("div");
+    mockTarget.dataset.itemId = "item123";
+    mockTarget.classList.add("action-card");
     mockTarget.closest = vi.fn(() => mockTarget);
   });
 
-  describe('addDragFeedback()', () => {
-    test('should add drag feedback for actor sheet', () => {
+  describe("addDragFeedback()", () => {
+    test("should add drag feedback for actor sheet", () => {
       const config = DragDropHandler.CONFIG.ACTOR;
-      const dropZone = document.createElement('div');
-      dropZone.classList.add('drop-zone');
+      const dropZone = document.createElement("div");
+      dropZone.classList.add("drop-zone");
       mockSheet.element.querySelector.mockReturnValue(dropZone);
 
       const mockEvent = {
         dataTransfer: {
-          getData: vi.fn(() => JSON.stringify({
-            type: 'Item',
-            data: { type: 'combatPower' },
-          })),
+          getData: vi.fn(() =>
+            JSON.stringify({
+              type: "Item",
+              data: { type: "combatPower" },
+            }),
+          ),
         },
         target: mockTarget,
       };
@@ -125,18 +127,20 @@ describe('DragDropHandler', () => {
       expect(dropZone.classList.contains(config.dragOverClass)).toBe(true);
     });
 
-    test('should not add drag feedback for item sheet when supportsActionCardCreation is false', () => {
+    test("should not add drag feedback for item sheet when supportsActionCardCreation is false", () => {
       const config = DragDropHandler.CONFIG.ITEM;
-      const dropZone = document.createElement('div');
-      dropZone.classList.add('drop-zone');
+      const dropZone = document.createElement("div");
+      dropZone.classList.add("drop-zone");
       mockSheet.element.querySelector.mockReturnValue(dropZone);
 
       const mockEvent = {
         dataTransfer: {
-          getData: vi.fn(() => JSON.stringify({
-            type: 'Item',
-            data: { type: 'combatPower' },
-          })),
+          getData: vi.fn(() =>
+            JSON.stringify({
+              type: "Item",
+              data: { type: "combatPower" },
+            }),
+          ),
         },
         target: mockTarget,
       };
@@ -147,16 +151,16 @@ describe('DragDropHandler', () => {
       expect(dropZone.classList.contains(config.dragOverClass)).toBe(false);
     });
 
-    test('should handle invalid drag data gracefully', () => {
+    test("should handle invalid drag data gracefully", () => {
       const config = DragDropHandler.CONFIG.ACTOR;
-      const dropZone = document.createElement('div');
-      dropZone.classList.add('drop-zone');
+      const dropZone = document.createElement("div");
+      dropZone.classList.add("drop-zone");
       mockSheet.element.querySelector.mockReturnValue(dropZone);
 
       const mockEvent = {
         dataTransfer: {
           getData: vi.fn(() => {
-            throw new Error('Invalid JSON');
+            throw new Error("Invalid JSON");
           }),
         },
         target: mockTarget,
@@ -171,10 +175,10 @@ describe('DragDropHandler', () => {
     });
   });
 
-  describe('removeDragFeedback()', () => {
-    test('should remove drag feedback for actor sheet', () => {
+  describe("removeDragFeedback()", () => {
+    test("should remove drag feedback for actor sheet", () => {
       const config = DragDropHandler.CONFIG.ACTOR;
-      const dropZone = document.createElement('div');
+      const dropZone = document.createElement("div");
       dropZone.classList.add(config.dragOverClass);
       mockSheet.element.querySelector.mockReturnValue(dropZone);
 
@@ -183,13 +187,16 @@ describe('DragDropHandler', () => {
       expect(dropZone.classList.contains(config.dragOverClass)).toBe(false);
     });
 
-    test('should remove drag feedback for item sheet', () => {
+    test("should remove drag feedback for item sheet", () => {
       const config = DragDropHandler.CONFIG.ITEM;
-      const dropZone1 = document.createElement('div');
-      const dropZone2 = document.createElement('div');
+      const dropZone1 = document.createElement("div");
+      const dropZone2 = document.createElement("div");
       dropZone1.classList.add(config.dragOverClass);
       dropZone2.classList.add(config.dragOverClass);
-      mockSheet.element.querySelectorAll.mockReturnValue([dropZone1, dropZone2]);
+      mockSheet.element.querySelectorAll.mockReturnValue([
+        dropZone1,
+        dropZone2,
+      ]);
       mockSheet.element.querySelector.mockReturnValue(null);
 
       DragDropHandler.removeDragFeedback(config, mockSheet);
@@ -198,7 +205,7 @@ describe('DragDropHandler', () => {
       expect(dropZone2.classList.contains(config.dragOverClass)).toBe(false);
     });
 
-    test('should handle null drop zone', () => {
+    test("should handle null drop zone", () => {
       const config = DragDropHandler.CONFIG.ACTOR;
       mockSheet.element.querySelector.mockReturnValue(null);
 
@@ -208,89 +215,105 @@ describe('DragDropHandler', () => {
     });
   });
 
-  describe('getEmbeddedDocument()', () => {
-    test('should get embedded document from target with data-document-class', () => {
+  describe("getEmbeddedDocument()", () => {
+    test("should get embedded document from target with data-document-class", () => {
       const config = DragDropHandler.CONFIG.ACTOR;
-      const docRow = document.createElement('li');
-      docRow.dataset.itemId = 'item123';
-      docRow.dataset.documentClass = 'Item';
+      const docRow = document.createElement("li");
+      docRow.dataset.itemId = "item123";
+      docRow.dataset.documentClass = "Item";
       mockTarget.closest.mockReturnValue(docRow);
 
-      const result = DragDropHandler.getEmbeddedDocument(config, mockSheet, mockTarget);
+      const result = DragDropHandler.getEmbeddedDocument(
+        config,
+        mockSheet,
+        mockTarget,
+      );
 
       expect(result).toBeDefined();
     });
 
-    test('should handle null document row with item-id', () => {
+    test("should handle null document row with item-id", () => {
       const config = DragDropHandler.CONFIG.ACTOR;
       mockTarget.closest.mockReturnValue(null);
-      mockTarget.dataset.itemId = 'item123';
+      mockTarget.dataset.itemId = "item123";
 
-      const result = DragDropHandler.getEmbeddedDocument(config, mockSheet, mockTarget);
-
-      expect(result).toBeDefined();
-    });
-  });
-
-  describe('_findItemByDocumentClass()', () => {
-    test('should find item by document class lookup', () => {
-      const config = DragDropHandler.CONFIG.ACTOR;
-      const docRow = document.createElement('li');
-      docRow.dataset.itemId = 'item123';
-      docRow.dataset.documentClass = 'Item';
-
-      const result = DragDropHandler._findItemByDocumentClass(
+      const result = DragDropHandler.getEmbeddedDocument(
         config,
-        mockActor,
-        'item123',
-        docRow,
-      );
-
-      expect(result).toBeDefined();
-    });
-
-    test('should handle non-Item document class', () => {
-      const config = DragDropHandler.CONFIG.ACTOR;
-      const docRow = document.createElement('li');
-      docRow.dataset.itemId = 'item123';
-      docRow.dataset.documentClass = 'Other';
-
-      const result = DragDropHandler._findItemByDocumentClass(
-        config,
-        mockActor,
-        'item123',
-        docRow,
+        mockSheet,
+        mockTarget,
       );
 
       expect(result).toBeDefined();
     });
   });
 
-  describe('_tryDirectItemIdLookup()', () => {
-    test('should find item by direct ID lookup', () => {
+  describe("_findItemByDocumentClass()", () => {
+    test("should find item by document class lookup", () => {
       const config = DragDropHandler.CONFIG.ACTOR;
-      mockTarget.dataset.itemId = 'item123';
+      const docRow = document.createElement("li");
+      docRow.dataset.itemId = "item123";
+      docRow.dataset.documentClass = "Item";
 
-      const result = DragDropHandler._tryDirectItemIdLookup(config, mockActor, mockTarget);
+      const result = DragDropHandler._findItemByDocumentClass(
+        config,
+        mockActor,
+        "item123",
+        docRow,
+      );
 
       expect(result).toBeDefined();
     });
 
-    test('should return null when no item ID', () => {
+    test("should handle non-Item document class", () => {
+      const config = DragDropHandler.CONFIG.ACTOR;
+      const docRow = document.createElement("li");
+      docRow.dataset.itemId = "item123";
+      docRow.dataset.documentClass = "Other";
+
+      const result = DragDropHandler._findItemByDocumentClass(
+        config,
+        mockActor,
+        "item123",
+        docRow,
+      );
+
+      expect(result).toBeDefined();
+    });
+  });
+
+  describe("_tryDirectItemIdLookup()", () => {
+    test("should find item by direct ID lookup", () => {
+      const config = DragDropHandler.CONFIG.ACTOR;
+      mockTarget.dataset.itemId = "item123";
+
+      const result = DragDropHandler._tryDirectItemIdLookup(
+        config,
+        mockActor,
+        mockTarget,
+      );
+
+      expect(result).toBeDefined();
+    });
+
+    test("should return null when no item ID", () => {
       const config = DragDropHandler.CONFIG.ACTOR;
       mockTarget.dataset.itemId = undefined;
 
-      const result = DragDropHandler._tryDirectItemIdLookup(config, mockActor, mockTarget);
+      const result = DragDropHandler._tryDirectItemIdLookup(
+        config,
+        mockActor,
+        mockTarget,
+      );
 
       expect(result).toBeNull();
     });
   });
 
-  describe('_findDocumentRow()', () => {
-    test('should find document row from target', () => {
-      const docRow = document.createElement('li');
-      docRow.dataset.itemId = 'item123';
-      docRow.dataset.documentClass = 'Item';
+  describe("_findDocumentRow()", () => {
+    test("should find document row from target", () => {
+      const docRow = document.createElement("li");
+      docRow.dataset.itemId = "item123";
+      docRow.dataset.documentClass = "Item";
       mockTarget.closest.mockReturnValue(docRow);
 
       const result = DragDropHandler._findDocumentRow(mockTarget);
@@ -298,7 +321,7 @@ describe('DragDropHandler', () => {
       expect(result).toBe(docRow);
     });
 
-    test('should return null when no document row found', () => {
+    test("should return null when no document row found", () => {
       mockTarget.closest.mockReturnValue(null);
 
       const result = DragDropHandler._findDocumentRow(mockTarget);
@@ -307,14 +330,14 @@ describe('DragDropHandler', () => {
     });
   });
 
-  describe('_findTransformationCard()', () => {
-    test('should create temporary transformation item from flags', () => {
+  describe("_findTransformationCard()", () => {
+    test("should create temporary transformation item from flags", () => {
       const config = DragDropHandler.CONFIG.ACTOR;
       mockActor.getFlag.mockImplementation((scope, key) => {
-        if (key === 'activeTransformation') return 'trans123';
-        if (key === 'activeTransformationName') return 'Test Transformation';
-        if (key === 'activeTransformationCursed') return false;
-        if (key === 'activeTransformationCombatPowers') return [];
+        if (key === "activeTransformation") return "trans123";
+        if (key === "activeTransformationName") return "Test Transformation";
+        if (key === "activeTransformationCursed") return false;
+        if (key === "activeTransformationCombatPowers") return [];
         return null;
       });
 
@@ -342,12 +365,12 @@ describe('DragDropHandler', () => {
       const result = DragDropHandler._findTransformationCard(
         config,
         mockActor,
-        'trans123',
+        "trans123",
       );
 
       expect(result).toBeDefined();
-      expect(result.name).toBe('Test Transformation');
-      expect(result.type).toBe('transformation');
+      expect(result.name).toBe("Test Transformation");
+      expect(result.type).toBe("transformation");
 
       // Restore
       if (originalGameItems) {
@@ -359,33 +382,33 @@ describe('DragDropHandler', () => {
     });
   });
 
-  describe('_findItemByDocumentClass()', () => {
-    test('should find item by document class lookup', () => {
+  describe("_findItemByDocumentClass()", () => {
+    test("should find item by document class lookup", () => {
       const config = DragDropHandler.CONFIG.ACTOR;
-      const docRow = document.createElement('li');
-      docRow.dataset.itemId = 'item123';
-      docRow.dataset.documentClass = 'Item';
+      const docRow = document.createElement("li");
+      docRow.dataset.itemId = "item123";
+      docRow.dataset.documentClass = "Item";
 
       const result = DragDropHandler._findItemByDocumentClass(
         config,
         mockActor,
-        'item123',
+        "item123",
         docRow,
       );
 
       expect(result).toBeDefined();
     });
 
-    test('should handle non-Item document class', () => {
+    test("should handle non-Item document class", () => {
       const config = DragDropHandler.CONFIG.ACTOR;
-      const docRow = document.createElement('li');
-      docRow.dataset.itemId = 'item123';
-      docRow.dataset.documentClass = 'Other';
+      const docRow = document.createElement("li");
+      docRow.dataset.itemId = "item123";
+      docRow.dataset.documentClass = "Other";
 
       const result = DragDropHandler._findItemByDocumentClass(
         config,
         mockActor,
-        'item123',
+        "item123",
         docRow,
       );
 
@@ -393,48 +416,56 @@ describe('DragDropHandler', () => {
     });
   });
 
-  describe('_tryDirectItemIdLookup()', () => {
-    test('should find item by direct ID lookup', () => {
+  describe("_tryDirectItemIdLookup()", () => {
+    test("should find item by direct ID lookup", () => {
       const config = DragDropHandler.CONFIG.ACTOR;
-      mockTarget.dataset.itemId = 'item123';
+      mockTarget.dataset.itemId = "item123";
 
-      const result = DragDropHandler._tryDirectItemIdLookup(config, mockActor, mockTarget);
+      const result = DragDropHandler._tryDirectItemIdLookup(
+        config,
+        mockActor,
+        mockTarget,
+      );
 
       expect(result).toBeDefined();
     });
 
-    test('should return null when no item ID', () => {
+    test("should return null when no item ID", () => {
       const config = DragDropHandler.CONFIG.ACTOR;
       mockTarget.dataset.itemId = undefined;
 
-      const result = DragDropHandler._tryDirectItemIdLookup(config, mockActor, mockTarget);
+      const result = DragDropHandler._tryDirectItemIdLookup(
+        config,
+        mockActor,
+        mockTarget,
+      );
 
       expect(result).toBeNull();
     });
   });
 
-  describe('CONFIG', () => {
-    test('should export ACTOR configuration', () => {
+  describe("CONFIG", () => {
+    test("should export ACTOR configuration", () => {
       const config = DragDropHandler.CONFIG;
 
       expect(config.ACTOR).toBeDefined();
-      expect(config.ACTOR.type).toBe('actor');
+      expect(config.ACTOR.type).toBe("actor");
       expect(config.ACTOR.getDataStore).toBeInstanceOf(Function);
       expect(config.ACTOR.getItems).toBeInstanceOf(Function);
       expect(config.ACTOR.getGroups).toBeInstanceOf(Function);
     });
 
-    test('should export ITEM configuration', () => {
+    test("should export ITEM configuration", () => {
       const config = DragDropHandler.CONFIG;
 
       expect(config.ITEM).toBeDefined();
-      expect(config.ITEM.type).toBe('item');
+      expect(config.ITEM.type).toBe("item");
       expect(config.ITEM.getDataStore).toBeInstanceOf(Function);
       expect(config.ITEM.getItems).toBeInstanceOf(Function);
       expect(config.ITEM.getGroups).toBeInstanceOf(Function);
     });
 
-    test('should have frozen configuration objects', () => {
+    test("should have frozen configuration objects", () => {
       const config = DragDropHandler.CONFIG;
       const actorConfig = config.ACTOR;
 

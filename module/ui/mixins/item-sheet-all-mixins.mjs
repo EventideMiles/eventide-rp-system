@@ -28,7 +28,9 @@ export function ItemSheetAllMixins(BaseClass) {
     ItemSheetDragDropMixin(
       ItemSheetCharacterEffectsMixin(
         ItemSheetActionsMixin(
-          TransformationActionCardFormMixin(ItemSheetEffectGuardsMixin(BaseClass)),
+          TransformationActionCardFormMixin(
+            ItemSheetEffectGuardsMixin(BaseClass),
+          ),
         ),
       ),
     ),

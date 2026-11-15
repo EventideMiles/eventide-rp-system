@@ -8,19 +8,19 @@
 
 // Vitest globals are enabled, so we don't need to import them
 // describe, test, expect, beforeEach, vi are available globally
-import { EmbeddedImageMigration } from '../../../../module/services/migrations/embedded-image-migration.mjs';
+import { EmbeddedImageMigration } from "../../../../module/services/migrations/embedded-image-migration.mjs";
 
 // Mock Logger
-vi.mock('../../../../module/services/logger.mjs', () => ({
+vi.mock("../../../../module/services/logger.mjs", () => ({
   Logger: {
     debug: vi.fn(),
     info: vi.fn(),
-    error: vi.fn()
-  }
+    error: vi.fn(),
+  },
 }));
 
-describe('EmbeddedImageMigration', () => {
-  describe('run()', () => {
+describe("EmbeddedImageMigration", () => {
+  describe("run()", () => {
     beforeEach(() => {
       // Reset mocks
       vi.clearAllMocks();
@@ -28,19 +28,19 @@ describe('EmbeddedImageMigration', () => {
       // Mock game.user
       global.game = {
         user: {
-          isGM: true
+          isGM: true,
         },
         settings: {
           get: vi.fn(),
-          set: vi.fn()
+          set: vi.fn(),
         },
         items: [],
         actors: [],
         packs: [],
         i18n: {
           localize: vi.fn((key) => key),
-          format: vi.fn((key, params) => `${key} ${JSON.stringify(params)}`)
-        }
+          format: vi.fn((key, params) => `${key} ${JSON.stringify(params)}`),
+        },
       };
 
       // Mock ui.notifications
@@ -48,20 +48,22 @@ describe('EmbeddedImageMigration', () => {
         notifications: {
           warn: vi.fn(() => ({ remove: vi.fn() })),
           info: vi.fn(),
-          error: vi.fn()
-        }
+          error: vi.fn(),
+        },
       };
 
       // Mock foundry.utils
       global.foundry = {
         utils: {
           deepClone: vi.fn((obj) => JSON.parse(JSON.stringify(obj))),
-          getProperty: vi.fn((obj, path) => path.split('.').reduce((o, k) => o?.[k], obj))
-        }
+          getProperty: vi.fn((obj, path) =>
+            path.split(".").reduce((o, k) => o?.[k], obj),
+          ),
+        },
       };
     });
 
-    test('should return early when user is not GM', async () => {
+    test("should return early when user is not GM", async () => {
       global.game.user.isGM = false;
 
       await EmbeddedImageMigration.run();
@@ -69,9 +71,9 @@ describe('EmbeddedImageMigration', () => {
       expect(global.game.settings.get).not.toHaveBeenCalled();
     });
 
-    test('should return early when migration already completed', async () => {
+    test("should return early when migration already completed", async () => {
       global.game.settings.get.mockImplementation((scope, key) => {
-        if (key === 'migrationVersion') return 2;
+        if (key === "migrationVersion") return 2;
         return null;
       });
 
@@ -80,19 +82,19 @@ describe('EmbeddedImageMigration', () => {
       expect(global.game.settings.set).not.toHaveBeenCalled();
     });
 
-    test('should process game.items when migration version is different', async () => {
+    test("should process game.items when migration version is different", async () => {
       global.game.settings.get.mockImplementation((scope, key) => {
-        if (key === 'migrationVersion') return 0;
+        if (key === "migrationVersion") return 0;
         return null;
       });
 
       const mockItem = global.testUtils.createMockItem({
-        type: 'actionCard',
-        name: 'Test Action Card',
+        type: "actionCard",
+        name: "Test Action Card",
         system: {
-          statusPerSuccess: true
+          statusPerSuccess: true,
         },
-        update: vi.fn()
+        update: vi.fn(),
       });
 
       global.game.items = [mockItem];
@@ -100,29 +102,29 @@ describe('EmbeddedImageMigration', () => {
       await EmbeddedImageMigration.run();
 
       expect(global.game.settings.set).toHaveBeenCalledWith(
-        'eventide-rp-system',
-        'migrationVersion',
-        2
+        "eventide-rp-system",
+        "migrationVersion",
+        2,
       );
     });
 
-    test('should process game.actors items during migration', async () => {
+    test("should process game.actors items during migration", async () => {
       global.game.settings.get.mockImplementation((scope, key) => {
-        if (key === 'migrationVersion') return 0;
+        if (key === "migrationVersion") return 0;
         return null;
       });
 
       const mockActor = global.testUtils.createMockActor({
-        name: 'Test Actor'
+        name: "Test Actor",
       });
 
       const mockItem = global.testUtils.createMockItem({
-        type: 'actionCard',
-        name: 'Test Action Card',
+        type: "actionCard",
+        name: "Test Action Card",
         system: {
-          statusPerSuccess: true
+          statusPerSuccess: true,
         },
-        update: vi.fn()
+        update: vi.fn(),
       });
 
       mockActor.items = [mockItem];
@@ -131,34 +133,34 @@ describe('EmbeddedImageMigration', () => {
       await EmbeddedImageMigration.run();
 
       expect(global.game.settings.set).toHaveBeenCalledWith(
-        'eventide-rp-system',
-        'migrationVersion',
-        2
+        "eventide-rp-system",
+        "migrationVersion",
+        2,
       );
     });
 
-    test('should process unlocked world compendium packs during migration', async () => {
+    test("should process unlocked world compendium packs during migration", async () => {
       global.game.settings.get.mockImplementation((scope, key) => {
-        if (key === 'migrationVersion') return 0;
+        if (key === "migrationVersion") return 0;
         return null;
       });
 
       const mockPack = {
-        documentName: 'Item',
+        documentName: "Item",
         locked: false,
         metadata: {
-          packageType: 'world'
+          packageType: "world",
         },
         getDocuments: vi.fn().mockResolvedValue([
           global.testUtils.createMockItem({
-            type: 'actionCard',
-            name: 'Compendium Action Card',
+            type: "actionCard",
+            name: "Compendium Action Card",
             system: {
-              statusPerSuccess: false
+              statusPerSuccess: false,
             },
-            update: vi.fn()
-          })
-        ])
+            update: vi.fn(),
+          }),
+        ]),
       };
 
       global.game.packs = [mockPack];
@@ -167,25 +169,25 @@ describe('EmbeddedImageMigration', () => {
 
       expect(mockPack.getDocuments).toHaveBeenCalled();
       expect(global.game.settings.set).toHaveBeenCalledWith(
-        'eventide-rp-system',
-        'migrationVersion',
-        2
+        "eventide-rp-system",
+        "migrationVersion",
+        2,
       );
     });
 
-    test('should skip locked compendium packs', async () => {
+    test("should skip locked compendium packs", async () => {
       global.game.settings.get.mockImplementation((scope, key) => {
-        if (key === 'migrationVersion') return 0;
+        if (key === "migrationVersion") return 0;
         return null;
       });
 
       const mockLockedPack = {
-        documentName: 'Item',
+        documentName: "Item",
         locked: true,
         metadata: {
-          packageType: 'world'
+          packageType: "world",
         },
-        getDocuments: vi.fn()
+        getDocuments: vi.fn(),
       };
 
       global.game.packs = [mockLockedPack];
@@ -195,19 +197,19 @@ describe('EmbeddedImageMigration', () => {
       expect(mockLockedPack.getDocuments).not.toHaveBeenCalled();
     });
 
-    test('should skip non-world compendium packs', async () => {
+    test("should skip non-world compendium packs", async () => {
       global.game.settings.get.mockImplementation((scope, key) => {
-        if (key === 'migrationVersion') return 0;
+        if (key === "migrationVersion") return 0;
         return null;
       });
 
       const mockSystemPack = {
-        documentName: 'Item',
+        documentName: "Item",
         locked: false,
         metadata: {
-          packageType: 'system'
+          packageType: "system",
         },
-        getDocuments: vi.fn()
+        getDocuments: vi.fn(),
       };
 
       global.game.packs = [mockSystemPack];
@@ -217,9 +219,9 @@ describe('EmbeddedImageMigration', () => {
       expect(mockSystemPack.getDocuments).not.toHaveBeenCalled();
     });
 
-    test('should show migration in progress notification', async () => {
+    test("should show migration in progress notification", async () => {
       global.game.settings.get.mockImplementation((scope, key) => {
-        if (key === 'migrationVersion') return 0;
+        if (key === "migrationVersion") return 0;
         return null;
       });
 
@@ -229,14 +231,14 @@ describe('EmbeddedImageMigration', () => {
       await EmbeddedImageMigration.run();
 
       expect(global.ui.notifications.warn).toHaveBeenCalledWith(
-        'EVENTIDE_RP_SYSTEM.Migration.InProgress',
-        { permanent: true }
+        "EVENTIDE_RP_SYSTEM.Migration.InProgress",
+        { permanent: true },
       );
     });
 
-    test('should remove in progress notification on completion', async () => {
+    test("should remove in progress notification on completion", async () => {
       global.game.settings.get.mockImplementation((scope, key) => {
-        if (key === 'migrationVersion') return 0;
+        if (key === "migrationVersion") return 0;
         return null;
       });
 
@@ -248,21 +250,21 @@ describe('EmbeddedImageMigration', () => {
       expect(mockNotification.remove).toHaveBeenCalled();
     });
 
-    test('should handle migration errors gracefully', async () => {
+    test("should handle migration errors gracefully", async () => {
       // Allow migration to proceed (migrationVersion = 0 means not yet migrated)
       global.game.settings.get.mockImplementation((scope, key) => {
-        if (key === 'migrationVersion') return 0;
+        if (key === "migrationVersion") return 0;
         return null;
       });
 
       // Make the pack processing throw an error
       const mockPack = {
-        documentName: 'Item',
+        documentName: "Item",
         locked: false,
         metadata: {
-          packageType: 'world'
+          packageType: "world",
         },
-        getDocuments: vi.fn().mockRejectedValue(new Error('Pack error'))
+        getDocuments: vi.fn().mockRejectedValue(new Error("Pack error")),
       };
 
       global.game.packs = [mockPack];
@@ -279,25 +281,27 @@ describe('EmbeddedImageMigration', () => {
     });
   });
 
-  describe('_processItem()', () => {
+  describe("_processItem()", () => {
     beforeEach(() => {
       vi.clearAllMocks();
       global.foundry = {
         utils: {
           deepClone: vi.fn((obj) => JSON.parse(JSON.stringify(obj))),
-          getProperty: vi.fn((obj, path) => path.split('.').reduce((o, k) => o?.[k], obj))
-        }
+          getProperty: vi.fn((obj, path) =>
+            path.split(".").reduce((o, k) => o?.[k], obj),
+          ),
+        },
       };
     });
 
-    test('should process actionCard with statusPerSuccess migration', async () => {
+    test("should process actionCard with statusPerSuccess migration", async () => {
       const mockItem = global.testUtils.createMockItem({
-        type: 'actionCard',
-        name: 'Test Action Card',
+        type: "actionCard",
+        name: "Test Action Card",
         system: {
-          statusPerSuccess: true
+          statusPerSuccess: true,
         },
-        update: vi.fn()
+        update: vi.fn(),
       });
 
       const result = await EmbeddedImageMigration._processItem(mockItem);
@@ -306,15 +310,15 @@ describe('EmbeddedImageMigration', () => {
       expect(result.statusFieldsMigrated).toBe(1);
     });
 
-    test('should skip items already migrated (statusPerSuccess is not boolean)', async () => {
+    test("should skip items already migrated (statusPerSuccess is not boolean)", async () => {
       const mockItem = global.testUtils.createMockItem({
-        type: 'actionCard',
-        name: 'Test Action Card',
+        type: "actionCard",
+        name: "Test Action Card",
         system: {
           statusPerSuccess: null,
-          statusApplicationLimit: 0
+          statusApplicationLimit: 0,
         },
-        update: vi.fn()
+        update: vi.fn(),
       });
 
       const result = await EmbeddedImageMigration._processItem(mockItem);
@@ -323,11 +327,11 @@ describe('EmbeddedImageMigration', () => {
       expect(result.statusFieldsMigrated).toBe(0);
     });
 
-    test('should return zero counts for non-actionCard items', async () => {
+    test("should return zero counts for non-actionCard items", async () => {
       const mockItem = global.testUtils.createMockItem({
-        type: 'gear',
-        name: 'Test Gear',
-        update: vi.fn()
+        type: "gear",
+        name: "Test Gear",
+        update: vi.fn(),
       });
 
       const result = await EmbeddedImageMigration._processItem(mockItem);
@@ -338,623 +342,634 @@ describe('EmbeddedImageMigration', () => {
     });
   });
 
-  describe('_fixActionCardEmbeddedArrays()', () => {
+  describe("_fixActionCardEmbeddedArrays()", () => {
     beforeEach(() => {
       vi.clearAllMocks();
       global.foundry = {
         utils: {
           deepClone: vi.fn((obj) => JSON.parse(JSON.stringify(obj))),
-          getProperty: vi.fn((obj, path) => path.split('.').reduce((o, k) => o?.[k], obj)),
-        }
+          getProperty: vi.fn((obj, path) =>
+            path.split(".").reduce((o, k) => o?.[k], obj),
+          ),
+        },
       };
     });
 
-    test('should fix effect icon when different from item image', async () => {
+    test("should fix effect icon when different from item image", async () => {
       const mockItem = global.testUtils.createMockItem({
-        type: 'actionCard',
-        name: 'Test Action Card',
+        type: "actionCard",
+        name: "Test Action Card",
         system: {
           embeddedStatusEffects: [
             {
-              name: 'Bleeding',
-              img: 'icons/svg/bleed.svg',
-              effects: [
-                { icon: 'icons/svg/wrong.svg', name: 'Bleeding' }
-              ]
-            }
-          ]
+              name: "Bleeding",
+              img: "icons/svg/bleed.svg",
+              effects: [{ icon: "icons/svg/wrong.svg", name: "Bleeding" }],
+            },
+          ],
         },
-        update: vi.fn()
+        update: vi.fn(),
       });
 
-      const result = await EmbeddedImageMigration._fixActionCardEmbeddedArrays(mockItem);
+      const result =
+        await EmbeddedImageMigration._fixActionCardEmbeddedArrays(mockItem);
 
       expect(result.itemsFixed).toBe(1);
       expect(result.effectsFixed).toBe(1);
       expect(mockItem.update).toHaveBeenCalledWith(
         expect.objectContaining({
-          'system.embeddedStatusEffects': expect.any(Array)
+          "system.embeddedStatusEffects": expect.any(Array),
         }),
-        expect.anything()
+        expect.anything(),
       );
     });
 
-    test('should fix effect name when different from item name', async () => {
+    test("should fix effect name when different from item name", async () => {
       const mockItem = global.testUtils.createMockItem({
-        type: 'actionCard',
-        name: 'Test Action Card',
+        type: "actionCard",
+        name: "Test Action Card",
         system: {
           embeddedStatusEffects: [
             {
-              name: 'Bleeding',
-              img: 'icons/svg/bleed.svg',
-              effects: [
-                { icon: 'icons/svg/bleed.svg', name: 'Wrong Name' }
-              ]
-            }
-          ]
+              name: "Bleeding",
+              img: "icons/svg/bleed.svg",
+              effects: [{ icon: "icons/svg/bleed.svg", name: "Wrong Name" }],
+            },
+          ],
         },
-        update: vi.fn()
+        update: vi.fn(),
       });
 
-      const result = await EmbeddedImageMigration._fixActionCardEmbeddedArrays(mockItem);
+      const result =
+        await EmbeddedImageMigration._fixActionCardEmbeddedArrays(mockItem);
 
       expect(result.itemsFixed).toBe(1);
       // Name change + missing img triggers effectsFixed increment
       expect(result.effectsFixed).toBe(1);
     });
 
-    test('should skip when effect icon already matches item image', async () => {
+    test("should skip when effect icon already matches item image", async () => {
       const mockItem = global.testUtils.createMockItem({
-        type: 'actionCard',
-        name: 'Test Action Card',
+        type: "actionCard",
+        name: "Test Action Card",
         system: {
           embeddedStatusEffects: [
             {
-              name: 'Bleeding',
-              img: 'icons/svg/bleed.svg',
-              effects: [
-                { img: 'icons/svg/bleed.svg', name: 'Bleeding' }
-              ]
-            }
-          ]
+              name: "Bleeding",
+              img: "icons/svg/bleed.svg",
+              effects: [{ img: "icons/svg/bleed.svg", name: "Bleeding" }],
+            },
+          ],
         },
-        update: vi.fn()
+        update: vi.fn(),
       });
 
-      const result = await EmbeddedImageMigration._fixActionCardEmbeddedArrays(mockItem);
+      const result =
+        await EmbeddedImageMigration._fixActionCardEmbeddedArrays(mockItem);
 
       expect(result.itemsFixed).toBe(0);
       expect(result.effectsFixed).toBe(0);
       expect(mockItem.update).not.toHaveBeenCalled();
     });
 
-    test('should handle multiple embedded status effects', async () => {
+    test("should handle multiple embedded status effects", async () => {
       const mockItem = global.testUtils.createMockItem({
-        type: 'actionCard',
-        name: 'Test Action Card',
+        type: "actionCard",
+        name: "Test Action Card",
         system: {
           embeddedStatusEffects: [
             {
-              name: 'Bleeding',
-              img: 'icons/svg/bleed.svg',
-              effects: [
-                { icon: 'wrong.svg', name: 'Bleeding' }
-              ]
+              name: "Bleeding",
+              img: "icons/svg/bleed.svg",
+              effects: [{ icon: "wrong.svg", name: "Bleeding" }],
             },
             {
-              name: 'Poisoned',
-              img: 'icons/svg/poison.svg',
-              effects: [
-                { icon: 'wrong2.svg', name: 'Poisoned' }
-              ]
-            }
-          ]
+              name: "Poisoned",
+              img: "icons/svg/poison.svg",
+              effects: [{ icon: "wrong2.svg", name: "Poisoned" }],
+            },
+          ],
         },
-        update: vi.fn()
+        update: vi.fn(),
       });
 
-      const result = await EmbeddedImageMigration._fixActionCardEmbeddedArrays(mockItem);
+      const result =
+        await EmbeddedImageMigration._fixActionCardEmbeddedArrays(mockItem);
 
       expect(result.itemsFixed).toBe(1);
       expect(result.effectsFixed).toBe(2);
     });
 
-    test('should skip effects without effects array', async () => {
+    test("should skip effects without effects array", async () => {
       const mockItem = global.testUtils.createMockItem({
-        type: 'actionCard',
-        name: 'Test Action Card',
+        type: "actionCard",
+        name: "Test Action Card",
         system: {
           embeddedStatusEffects: [
             {
-              name: 'No Effects',
-              img: 'icons/svg/test.svg'
-            }
-          ]
+              name: "No Effects",
+              img: "icons/svg/test.svg",
+            },
+          ],
         },
-        update: vi.fn()
+        update: vi.fn(),
       });
 
-      const result = await EmbeddedImageMigration._fixActionCardEmbeddedArrays(mockItem);
+      const result =
+        await EmbeddedImageMigration._fixActionCardEmbeddedArrays(mockItem);
 
       expect(result.itemsFixed).toBe(0);
       expect(result.effectsFixed).toBe(0);
     });
 
-    test('should skip when item image is empty', async () => {
+    test("should skip when item image is empty", async () => {
       const mockItem = global.testUtils.createMockItem({
-        type: 'actionCard',
-        name: 'Test Action Card',
+        type: "actionCard",
+        name: "Test Action Card",
         system: {
           embeddedStatusEffects: [
             {
-              name: 'No Image',
-              img: '',
-              effects: [
-                { icon: 'wrong.svg', name: 'No Image' }
-              ]
-            }
-          ]
+              name: "No Image",
+              img: "",
+              effects: [{ icon: "wrong.svg", name: "No Image" }],
+            },
+          ],
         },
-        update: vi.fn()
+        update: vi.fn(),
       });
 
-      const result = await EmbeddedImageMigration._fixActionCardEmbeddedArrays(mockItem);
+      const result =
+        await EmbeddedImageMigration._fixActionCardEmbeddedArrays(mockItem);
 
       expect(result.itemsFixed).toBe(0);
       expect(result.effectsFixed).toBe(0);
     });
   });
 
-  describe('_fixActionCardEmbeddedItem()', () => {
+  describe("_fixActionCardEmbeddedItem()", () => {
     beforeEach(() => {
       vi.clearAllMocks();
       global.foundry = {
         utils: {
           deepClone: vi.fn((obj) => JSON.parse(JSON.stringify(obj))),
-          getProperty: vi.fn((obj, path) => path.split('.').reduce((o, k) => o?.[k], obj))
-        }
+          getProperty: vi.fn((obj, path) =>
+            path.split(".").reduce((o, k) => o?.[k], obj),
+          ),
+        },
       };
     });
 
-    test('should fix embedded item effect icon', async () => {
+    test("should fix embedded item effect icon", async () => {
       const mockItem = global.testUtils.createMockItem({
-        type: 'actionCard',
-        name: 'Test Action Card',
+        type: "actionCard",
+        name: "Test Action Card",
         system: {
           embeddedItem: {
-            name: 'Sword',
-            img: 'icons/svg/sword.svg',
-            effects: [
-              { icon: 'wrong.svg', name: 'Sword' }
-            ]
-          }
+            name: "Sword",
+            img: "icons/svg/sword.svg",
+            effects: [{ icon: "wrong.svg", name: "Sword" }],
+          },
         },
-        update: vi.fn()
+        update: vi.fn(),
       });
 
-      const result = await EmbeddedImageMigration._fixActionCardEmbeddedItem(mockItem);
+      const result =
+        await EmbeddedImageMigration._fixActionCardEmbeddedItem(mockItem);
 
       expect(result.itemsFixed).toBe(1);
       expect(result.effectsFixed).toBe(1);
       expect(mockItem.update).toHaveBeenCalledWith(
         expect.objectContaining({
-          'system.embeddedItem': expect.any(Object)
+          "system.embeddedItem": expect.any(Object),
         }),
-        expect.anything()
+        expect.anything(),
       );
     });
 
-    test('should fix embedded item effect name', async () => {
+    test("should fix embedded item effect name", async () => {
       const mockItem = global.testUtils.createMockItem({
-        type: 'actionCard',
-        name: 'Test Action Card',
+        type: "actionCard",
+        name: "Test Action Card",
         system: {
           embeddedItem: {
-            name: 'Sword',
-            img: 'icons/svg/sword.svg',
-            effects: [
-              { icon: 'icons/svg/sword.svg', name: 'Wrong Name' }
-            ]
-          }
+            name: "Sword",
+            img: "icons/svg/sword.svg",
+            effects: [{ icon: "icons/svg/sword.svg", name: "Wrong Name" }],
+          },
         },
-        update: vi.fn()
+        update: vi.fn(),
       });
 
-      const result = await EmbeddedImageMigration._fixActionCardEmbeddedItem(mockItem);
+      const result =
+        await EmbeddedImageMigration._fixActionCardEmbeddedItem(mockItem);
 
       expect(result.itemsFixed).toBe(1);
       // Missing img + name change both trigger effectsFixed
       expect(result.effectsFixed).toBe(1);
     });
 
-    test('should skip when no effects array present', async () => {
+    test("should skip when no effects array present", async () => {
       const mockItem = global.testUtils.createMockItem({
-        type: 'actionCard',
-        name: 'Test Action Card',
+        type: "actionCard",
+        name: "Test Action Card",
         system: {
           embeddedItem: {
-            name: 'No Effects',
-            img: 'icons/svg/test.svg'
-          }
+            name: "No Effects",
+            img: "icons/svg/test.svg",
+          },
         },
-        update: vi.fn()
+        update: vi.fn(),
       });
 
-      const result = await EmbeddedImageMigration._fixActionCardEmbeddedItem(mockItem);
+      const result =
+        await EmbeddedImageMigration._fixActionCardEmbeddedItem(mockItem);
 
       expect(result.itemsFixed).toBe(0);
       expect(result.effectsFixed).toBe(0);
     });
 
-    test('should skip when already matching', async () => {
+    test("should skip when already matching", async () => {
       const mockItem = global.testUtils.createMockItem({
-        type: 'actionCard',
-        name: 'Test Action Card',
+        type: "actionCard",
+        name: "Test Action Card",
         system: {
           embeddedItem: {
-            name: 'Sword',
-            img: 'icons/svg/sword.svg',
-            effects: [
-              { img: 'icons/svg/sword.svg', name: 'Sword' }
-            ]
-          }
+            name: "Sword",
+            img: "icons/svg/sword.svg",
+            effects: [{ img: "icons/svg/sword.svg", name: "Sword" }],
+          },
         },
-        update: vi.fn()
+        update: vi.fn(),
       });
 
-      const result = await EmbeddedImageMigration._fixActionCardEmbeddedItem(mockItem);
+      const result =
+        await EmbeddedImageMigration._fixActionCardEmbeddedItem(mockItem);
 
       expect(result.itemsFixed).toBe(0);
       expect(mockItem.update).not.toHaveBeenCalled();
     });
   });
 
-  describe('_migrateStatusPerSuccess()', () => {
+  describe("_migrateStatusPerSuccess()", () => {
     beforeEach(() => {
       vi.clearAllMocks();
     });
 
-    test('should migrate statusPerSuccess true to statusApplicationLimit 0', async () => {
+    test("should migrate statusPerSuccess true to statusApplicationLimit 0", async () => {
       const mockItem = global.testUtils.createMockItem({
-        type: 'actionCard',
-        name: 'Test Action Card',
+        type: "actionCard",
+        name: "Test Action Card",
         system: {
-          statusPerSuccess: true
+          statusPerSuccess: true,
         },
-        update: vi.fn()
+        update: vi.fn(),
       });
 
-      const result = await EmbeddedImageMigration._migrateStatusPerSuccess(mockItem);
+      const result =
+        await EmbeddedImageMigration._migrateStatusPerSuccess(mockItem);
 
       expect(result.fixed).toBe(true);
       expect(mockItem.update).toHaveBeenCalledWith(
         expect.objectContaining({
-          'system.statusApplicationLimit': 0,
-          'system.statusPerSuccess': null
+          "system.statusApplicationLimit": 0,
+          "system.statusPerSuccess": null,
         }),
-        expect.anything()
+        expect.anything(),
       );
     });
 
-    test('should migrate statusPerSuccess false to statusApplicationLimit 1', async () => {
+    test("should migrate statusPerSuccess false to statusApplicationLimit 1", async () => {
       const mockItem = global.testUtils.createMockItem({
-        type: 'actionCard',
-        name: 'Test Action Card',
+        type: "actionCard",
+        name: "Test Action Card",
         system: {
-          statusPerSuccess: false
+          statusPerSuccess: false,
         },
-        update: vi.fn()
+        update: vi.fn(),
       });
 
-      const result = await EmbeddedImageMigration._migrateStatusPerSuccess(mockItem);
+      const result =
+        await EmbeddedImageMigration._migrateStatusPerSuccess(mockItem);
 
       expect(result.fixed).toBe(true);
       expect(mockItem.update).toHaveBeenCalledWith(
         expect.objectContaining({
-          'system.statusApplicationLimit': 1,
-          'system.statusPerSuccess': null
+          "system.statusApplicationLimit": 1,
+          "system.statusPerSuccess": null,
         }),
-        expect.anything()
+        expect.anything(),
       );
     });
 
-    test('should skip when statusPerSuccess is not boolean', async () => {
+    test("should skip when statusPerSuccess is not boolean", async () => {
       const mockItem = global.testUtils.createMockItem({
-        type: 'actionCard',
-        name: 'Test Action Card',
+        type: "actionCard",
+        name: "Test Action Card",
         system: {
-          statusPerSuccess: null
+          statusPerSuccess: null,
         },
-        update: vi.fn()
+        update: vi.fn(),
       });
 
-      const result = await EmbeddedImageMigration._migrateStatusPerSuccess(mockItem);
+      const result =
+        await EmbeddedImageMigration._migrateStatusPerSuccess(mockItem);
 
       expect(result.fixed).toBe(false);
       expect(mockItem.update).not.toHaveBeenCalled();
     });
 
-    test('should skip when statusPerSuccess is undefined', async () => {
+    test("should skip when statusPerSuccess is undefined", async () => {
       const mockItem = global.testUtils.createMockItem({
-        type: 'actionCard',
-        name: 'Test Action Card',
+        type: "actionCard",
+        name: "Test Action Card",
         system: {},
-        update: vi.fn()
+        update: vi.fn(),
       });
 
-      const result = await EmbeddedImageMigration._migrateStatusPerSuccess(mockItem);
+      const result =
+        await EmbeddedImageMigration._migrateStatusPerSuccess(mockItem);
 
       expect(result.fixed).toBe(false);
       expect(mockItem.update).not.toHaveBeenCalled();
     });
   });
 
-  describe('_fixTransformationEmbeddedPowers()', () => {
+  describe("_fixTransformationEmbeddedPowers()", () => {
     beforeEach(() => {
       vi.clearAllMocks();
       global.foundry = {
         utils: {
           deepClone: vi.fn((obj) => JSON.parse(JSON.stringify(obj))),
-          getProperty: vi.fn((obj, path) => path.split('.').reduce((o, k) => o?.[k], obj))
-        }
+          getProperty: vi.fn((obj, path) =>
+            path.split(".").reduce((o, k) => o?.[k], obj),
+          ),
+        },
       };
     });
 
-    test('should fix embedded combat power effect icon', async () => {
+    test("should fix embedded combat power effect icon", async () => {
       const mockItem = global.testUtils.createMockItem({
-        type: 'transformation',
-        name: 'Test Transformation',
+        type: "transformation",
+        name: "Test Transformation",
         system: {
           embeddedCombatPowers: [
             {
-              name: 'Fireball',
-              img: 'icons/svg/fire.svg',
-              effects: [
-                { icon: 'wrong.svg', name: 'Fireball' }
-              ]
-            }
-          ]
+              name: "Fireball",
+              img: "icons/svg/fire.svg",
+              effects: [{ icon: "wrong.svg", name: "Fireball" }],
+            },
+          ],
         },
-        update: vi.fn()
+        update: vi.fn(),
       });
 
-      const result = await EmbeddedImageMigration._fixTransformationEmbeddedPowers(mockItem);
+      const result =
+        await EmbeddedImageMigration._fixTransformationEmbeddedPowers(mockItem);
 
       expect(result.fixed).toBe(true);
       expect(result.effectsFixed).toBe(1);
       expect(mockItem.update).toHaveBeenCalledWith(
         expect.objectContaining({
-          'system.embeddedCombatPowers': expect.any(Array)
+          "system.embeddedCombatPowers": expect.any(Array),
         }),
-        expect.anything()
+        expect.anything(),
       );
     });
 
-    test('should fix embedded combat power effect name', async () => {
+    test("should fix embedded combat power effect name", async () => {
       const mockItem = global.testUtils.createMockItem({
-        type: 'transformation',
-        name: 'Test Transformation',
+        type: "transformation",
+        name: "Test Transformation",
         system: {
           embeddedCombatPowers: [
             {
-              name: 'Fireball',
-              img: 'icons/svg/fire.svg',
-              effects: [
-                { icon: 'icons/svg/fire.svg', name: 'Wrong Name' }
-              ]
-            }
-          ]
+              name: "Fireball",
+              img: "icons/svg/fire.svg",
+              effects: [{ icon: "icons/svg/fire.svg", name: "Wrong Name" }],
+            },
+          ],
         },
-        update: vi.fn()
+        update: vi.fn(),
       });
 
-      const result = await EmbeddedImageMigration._fixTransformationEmbeddedPowers(mockItem);
+      const result =
+        await EmbeddedImageMigration._fixTransformationEmbeddedPowers(mockItem);
 
       expect(result.fixed).toBe(true);
       // Missing img + name change triggers effectsFixed
       expect(result.effectsFixed).toBe(1);
     });
 
-    test('should skip when no effects array present', async () => {
+    test("should skip when no effects array present", async () => {
       const mockItem = global.testUtils.createMockItem({
-        type: 'transformation',
-        name: 'Test Transformation',
+        type: "transformation",
+        name: "Test Transformation",
         system: {
           embeddedCombatPowers: [
             {
-              name: 'No Effects',
-              img: 'icons/svg/test.svg'
-            }
-          ]
+              name: "No Effects",
+              img: "icons/svg/test.svg",
+            },
+          ],
         },
-        update: vi.fn()
+        update: vi.fn(),
       });
 
-      const result = await EmbeddedImageMigration._fixTransformationEmbeddedPowers(mockItem);
+      const result =
+        await EmbeddedImageMigration._fixTransformationEmbeddedPowers(mockItem);
 
       expect(result.fixed).toBe(false);
       expect(result.effectsFixed).toBe(0);
     });
 
-    test('should handle multiple embedded powers', async () => {
+    test("should handle multiple embedded powers", async () => {
       const mockItem = global.testUtils.createMockItem({
-        type: 'transformation',
-        name: 'Test Transformation',
+        type: "transformation",
+        name: "Test Transformation",
         system: {
           embeddedCombatPowers: [
             {
-              name: 'Fireball',
-              img: 'icons/svg/fire.svg',
-              effects: [
-                { icon: 'wrong.svg', name: 'Fireball' }
-              ]
+              name: "Fireball",
+              img: "icons/svg/fire.svg",
+              effects: [{ icon: "wrong.svg", name: "Fireball" }],
             },
             {
-              name: 'Ice Storm',
-              img: 'icons/svg/ice.svg',
-              effects: [
-                { icon: 'wrong2.svg', name: 'Ice Storm' }
-              ]
-            }
-          ]
+              name: "Ice Storm",
+              img: "icons/svg/ice.svg",
+              effects: [{ icon: "wrong2.svg", name: "Ice Storm" }],
+            },
+          ],
         },
-        update: vi.fn()
+        update: vi.fn(),
       });
 
-      const result = await EmbeddedImageMigration._fixTransformationEmbeddedPowers(mockItem);
+      const result =
+        await EmbeddedImageMigration._fixTransformationEmbeddedPowers(mockItem);
 
       expect(result.fixed).toBe(true);
       expect(result.effectsFixed).toBe(2);
     });
   });
 
-  describe('_fixTransformationEmbeddedActionCards()', () => {
+  describe("_fixTransformationEmbeddedActionCards()", () => {
     beforeEach(() => {
       vi.clearAllMocks();
       global.foundry = {
         utils: {
           deepClone: vi.fn((obj) => JSON.parse(JSON.stringify(obj))),
-          getProperty: vi.fn((obj, path) => path.split('.').reduce((o, k) => o?.[k], obj))
-        }
+          getProperty: vi.fn((obj, path) =>
+            path.split(".").reduce((o, k) => o?.[k], obj),
+          ),
+        },
       };
     });
 
-    test('should migrate statusPerSuccess in embedded action cards', async () => {
+    test("should migrate statusPerSuccess in embedded action cards", async () => {
       const mockItem = global.testUtils.createMockItem({
-        type: 'transformation',
-        name: 'Test Transformation',
+        type: "transformation",
+        name: "Test Transformation",
         system: {
           embeddedActionCards: [
             {
-              name: 'Embedded Action',
+              name: "Embedded Action",
               system: {
-                statusPerSuccess: true
-              }
-            }
-          ]
+                statusPerSuccess: true,
+              },
+            },
+          ],
         },
-        update: vi.fn()
+        update: vi.fn(),
       });
 
-      const result = await EmbeddedImageMigration._fixTransformationEmbeddedActionCards(mockItem);
+      const result =
+        await EmbeddedImageMigration._fixTransformationEmbeddedActionCards(
+          mockItem,
+        );
 
       expect(result.fixed).toBe(true);
       expect(mockItem.update).toHaveBeenCalledWith(
         expect.objectContaining({
-          'system.embeddedActionCards': expect.any(Array)
+          "system.embeddedActionCards": expect.any(Array),
         }),
-        expect.anything()
+        expect.anything(),
       );
     });
 
-    test('should fix embedded item effect in embedded action cards', async () => {
+    test("should fix embedded item effect in embedded action cards", async () => {
       const mockItem = global.testUtils.createMockItem({
-        type: 'transformation',
-        name: 'Test Transformation',
+        type: "transformation",
+        name: "Test Transformation",
         system: {
           embeddedActionCards: [
             {
-              name: 'Embedded Action',
+              name: "Embedded Action",
               system: {
                 embeddedItem: {
-                  name: 'Test Gear',
-                  img: 'icons/svg/gear.svg',
-                  effects: [
-                    { icon: 'wrong.svg', name: 'Test Gear' }
-                  ]
-                }
-              }
-            }
-          ]
+                  name: "Test Gear",
+                  img: "icons/svg/gear.svg",
+                  effects: [{ icon: "wrong.svg", name: "Test Gear" }],
+                },
+              },
+            },
+          ],
         },
-        update: vi.fn()
+        update: vi.fn(),
       });
 
-      const result = await EmbeddedImageMigration._fixTransformationEmbeddedActionCards(mockItem);
+      const result =
+        await EmbeddedImageMigration._fixTransformationEmbeddedActionCards(
+          mockItem,
+        );
 
       expect(result.fixed).toBe(true);
       expect(result.effectsFixed).toBe(1);
     });
 
-    test('should fix embedded status effects in embedded action cards', async () => {
+    test("should fix embedded status effects in embedded action cards", async () => {
       const mockItem = global.testUtils.createMockItem({
-        type: 'transformation',
-        name: 'Test Transformation',
+        type: "transformation",
+        name: "Test Transformation",
         system: {
           embeddedActionCards: [
             {
-              name: 'Embedded Action',
+              name: "Embedded Action",
               system: {
                 embeddedStatusEffects: [
                   {
-                    name: 'Bleeding',
-                    img: 'icons/svg/bleed.svg',
-                    effects: [
-                      { icon: 'wrong.svg', name: 'Bleeding' }
-                    ]
-                  }
-                ]
-              }
-            }
-          ]
+                    name: "Bleeding",
+                    img: "icons/svg/bleed.svg",
+                    effects: [{ icon: "wrong.svg", name: "Bleeding" }],
+                  },
+                ],
+              },
+            },
+          ],
         },
-        update: vi.fn()
+        update: vi.fn(),
       });
 
-      const result = await EmbeddedImageMigration._fixTransformationEmbeddedActionCards(mockItem);
+      const result =
+        await EmbeddedImageMigration._fixTransformationEmbeddedActionCards(
+          mockItem,
+        );
 
       expect(result.fixed).toBe(true);
       expect(result.effectsFixed).toBe(1);
     });
 
-    test('should handle multiple embedded action cards', async () => {
+    test("should handle multiple embedded action cards", async () => {
       const mockItem = global.testUtils.createMockItem({
-        type: 'transformation',
-        name: 'Test Transformation',
+        type: "transformation",
+        name: "Test Transformation",
         system: {
           embeddedActionCards: [
             {
-              name: 'Action 1',
+              name: "Action 1",
               system: {
-                statusPerSuccess: true
-              }
+                statusPerSuccess: true,
+              },
             },
             {
-              name: 'Action 2',
+              name: "Action 2",
               system: {
-                statusPerSuccess: false
-              }
-            }
-          ]
+                statusPerSuccess: false,
+              },
+            },
+          ],
         },
-        update: vi.fn()
+        update: vi.fn(),
       });
 
-      const result = await EmbeddedImageMigration._fixTransformationEmbeddedActionCards(mockItem);
+      const result =
+        await EmbeddedImageMigration._fixTransformationEmbeddedActionCards(
+          mockItem,
+        );
 
       expect(result.fixed).toBe(true);
     });
 
-    test('should skip when no changes needed', async () => {
+    test("should skip when no changes needed", async () => {
       const mockItem = global.testUtils.createMockItem({
-        type: 'transformation',
-        name: 'Test Transformation',
+        type: "transformation",
+        name: "Test Transformation",
         system: {
           embeddedActionCards: [
             {
-              name: 'Embedded Action',
+              name: "Embedded Action",
               system: {
                 statusPerSuccess: null,
-                statusApplicationLimit: 0
-              }
-            }
-          ]
+                statusApplicationLimit: 0,
+              },
+            },
+          ],
         },
-        update: vi.fn()
+        update: vi.fn(),
       });
 
-      const result = await EmbeddedImageMigration._fixTransformationEmbeddedActionCards(mockItem);
+      const result =
+        await EmbeddedImageMigration._fixTransformationEmbeddedActionCards(
+          mockItem,
+        );
 
       expect(result.fixed).toBe(false);
       expect(result.effectsFixed).toBe(0);

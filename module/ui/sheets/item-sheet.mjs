@@ -356,10 +356,7 @@ export class EventideRpSystemItemSheet extends ItemSheetAllMixins(
     const system = this.item.system;
 
     // Callout 1: Attack chain with no embedded item
-    if (
-      system.mode === "attackChain" &&
-      !system.embeddedItem?.type
-    ) {
+    if (system.mode === "attackChain" && !system.embeddedItem?.type) {
       callouts.push({
         type: "warning",
         faIcon: "fas fa-exclamation-triangle",

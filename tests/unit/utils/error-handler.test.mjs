@@ -6,22 +6,22 @@
  * document operations, sheet rendering, validation, and safe execution.
  */
 
-import { describe, test, expect, beforeEach, afterEach, vi } from 'vitest';
-import { ErrorHandler } from '../../../module/utils/error-handler.mjs';
+import { describe, test, expect, beforeEach, afterEach, vi } from "vitest";
+import { ErrorHandler } from "../../../module/utils/error-handler.mjs";
 
 // Mock Logger module
-vi.mock('../../../module/services/logger.mjs', () => ({
+vi.mock("../../../module/services/logger.mjs", () => ({
   Logger: {
     error: vi.fn(),
     warn: vi.fn(),
     debug: vi.fn(),
-    info: vi.fn()
-  }
+    info: vi.fn(),
+  },
 }));
 
-import { Logger } from '../../../module/services/logger.mjs';
+import { Logger } from "../../../module/services/logger.mjs";
 
-describe('ErrorHandler', () => {
+describe("ErrorHandler", () => {
   // Store original globals
   let originalGame;
   let originalUi;
@@ -38,36 +38,36 @@ describe('ErrorHandler', () => {
     global.game = {
       i18n: {
         format: vi.fn((key, data) => {
-          if (key === 'EVENTIDE_RP_SYSTEM.Errors.DocumentOperation') {
+          if (key === "EVENTIDE_RP_SYSTEM.Errors.DocumentOperation") {
             return `Error during ${data.operation} for ${data.type}`;
           }
-          if (key === 'EVENTIDE_RP_SYSTEM.Errors.SheetRender') {
+          if (key === "EVENTIDE_RP_SYSTEM.Errors.SheetRender") {
             return `Error rendering ${data.sheet}`;
           }
-          if (key === 'EVENTIDE_RP_SYSTEM.Errors.Validation') {
+          if (key === "EVENTIDE_RP_SYSTEM.Errors.Validation") {
             return `Validation failed: ${data.errors}`;
           }
-          if (key === 'EVENTIDE_RP_SYSTEM.Errors.UnexpectedError') {
-            return 'An unexpected error occurred';
+          if (key === "EVENTIDE_RP_SYSTEM.Errors.UnexpectedError") {
+            return "An unexpected error occurred";
           }
           return key;
         }),
         localize: vi.fn((key) => {
-          if (key.includes('Permission')) return 'Permission denied';
-          if (key.includes('Network')) return 'Network error';
-          if (key.includes('Validation')) return 'Validation error';
-          if (key.includes('Generic')) return `Error: ${key}`;
+          if (key.includes("Permission")) return "Permission denied";
+          if (key.includes("Network")) return "Network error";
+          if (key.includes("Validation")) return "Validation error";
+          if (key.includes("Generic")) return `Error: ${key}`;
           return key;
-        })
-      }
+        }),
+      },
     };
 
     global.ui = {
       notifications: {
         error: vi.fn(),
         warn: vi.fn(),
-        info: vi.fn()
-      }
+        info: vi.fn(),
+      },
     };
   });
 
@@ -77,58 +77,58 @@ describe('ErrorHandler', () => {
     global.ui = originalUi;
   });
 
-  describe('ERROR_TYPES', () => {
-    test('should define all error types as frozen object', () => {
+  describe("ERROR_TYPES", () => {
+    test("should define all error types as frozen object", () => {
       expect(ErrorHandler.ERROR_TYPES).toBeDefined();
-      expect(typeof ErrorHandler.ERROR_TYPES).toBe('object');
+      expect(typeof ErrorHandler.ERROR_TYPES).toBe("object");
       expect(Object.isFrozen(ErrorHandler.ERROR_TYPES)).toBe(true);
     });
 
-    test('should have VALIDATION type', () => {
-      expect(ErrorHandler.ERROR_TYPES.VALIDATION).toBe('validation');
+    test("should have VALIDATION type", () => {
+      expect(ErrorHandler.ERROR_TYPES.VALIDATION).toBe("validation");
     });
 
-    test('should have NETWORK type', () => {
-      expect(ErrorHandler.ERROR_TYPES.NETWORK).toBe('network');
+    test("should have NETWORK type", () => {
+      expect(ErrorHandler.ERROR_TYPES.NETWORK).toBe("network");
     });
 
-    test('should have PERMISSION type', () => {
-      expect(ErrorHandler.ERROR_TYPES.PERMISSION).toBe('permission');
+    test("should have PERMISSION type", () => {
+      expect(ErrorHandler.ERROR_TYPES.PERMISSION).toBe("permission");
     });
 
-    test('should have DATA type', () => {
-      expect(ErrorHandler.ERROR_TYPES.DATA).toBe('data');
+    test("should have DATA type", () => {
+      expect(ErrorHandler.ERROR_TYPES.DATA).toBe("data");
     });
 
-    test('should have UI type', () => {
-      expect(ErrorHandler.ERROR_TYPES.UI).toBe('ui');
+    test("should have UI type", () => {
+      expect(ErrorHandler.ERROR_TYPES.UI).toBe("ui");
     });
 
-    test('should have FOUNDRY_API type', () => {
-      expect(ErrorHandler.ERROR_TYPES.FOUNDRY_API).toBe('foundry_api');
+    test("should have FOUNDRY_API type", () => {
+      expect(ErrorHandler.ERROR_TYPES.FOUNDRY_API).toBe("foundry_api");
     });
 
-    test('should have UNKNOWN type', () => {
-      expect(ErrorHandler.ERROR_TYPES.UNKNOWN).toBe('unknown');
+    test("should have UNKNOWN type", () => {
+      expect(ErrorHandler.ERROR_TYPES.UNKNOWN).toBe("unknown");
     });
   });
 
-  describe('handleAsync()', () => {
-    test('should return [result, null] for successful promise', async () => {
+  describe("handleAsync()", () => {
+    test("should return [result, null] for successful promise", async () => {
       // Arrange
-      const successPromise = Promise.resolve({ data: 'success' });
+      const successPromise = Promise.resolve({ data: "success" });
 
       // Act
       const [result, error] = await ErrorHandler.handleAsync(successPromise);
 
       // Assert
-      expect(result).toEqual({ data: 'success' });
+      expect(result).toEqual({ data: "success" });
       expect(error).toBeNull();
     });
 
-    test('should return [null, error] for failed promise', async () => {
+    test("should return [null, error] for failed promise", async () => {
       // Arrange
-      const errorPromise = Promise.reject(new Error('Test error'));
+      const errorPromise = Promise.reject(new Error("Test error"));
 
       // Act
       const [result, error] = await ErrorHandler.handleAsync(errorPromise);
@@ -136,145 +136,151 @@ describe('ErrorHandler', () => {
       // Assert
       expect(result).toBeNull();
       expect(error).toBeInstanceOf(Error);
-      expect(error.message).toBe('Test error');
+      expect(error.message).toBe("Test error");
     });
 
-    test('should log error with context', async () => {
+    test("should log error with context", async () => {
       // Arrange
-      const errorPromise = Promise.reject(new Error('Test error'));
+      const errorPromise = Promise.reject(new Error("Test error"));
 
       // Act
-      await ErrorHandler.handleAsync(errorPromise, { context: 'TestContext' });
+      await ErrorHandler.handleAsync(errorPromise, { context: "TestContext" });
 
       // Assert
       expect(Logger.error).toHaveBeenCalledWith(
-        'Error in TestContext',
+        "Error in TestContext",
         expect.any(Error),
-        'UNKNOWN'
+        "UNKNOWN",
       );
     });
 
-    test('should use custom error type', async () => {
+    test("should use custom error type", async () => {
       // Arrange
-      const errorPromise = Promise.reject(new Error('Test error'));
+      const errorPromise = Promise.reject(new Error("Test error"));
 
       // Act
       await ErrorHandler.handleAsync(errorPromise, {
-        context: 'TestContext',
-        errorType: ErrorHandler.ERROR_TYPES.NETWORK
+        context: "TestContext",
+        errorType: ErrorHandler.ERROR_TYPES.NETWORK,
       });
 
       // Assert
       expect(Logger.error).toHaveBeenCalledWith(
-        'Error in TestContext',
+        "Error in TestContext",
         expect.any(Error),
-        'NETWORK'
+        "NETWORK",
       );
     });
 
-    test('should show notification to user by default', async () => {
+    test("should show notification to user by default", async () => {
       // Arrange
-      const errorPromise = Promise.reject(new Error('Test error'));
+      const errorPromise = Promise.reject(new Error("Test error"));
 
       // Act
-      await ErrorHandler.handleAsync(errorPromise, { context: 'TestContext' });
+      await ErrorHandler.handleAsync(errorPromise, { context: "TestContext" });
 
       // Assert
       expect(global.ui.notifications.error).toHaveBeenCalled();
     });
 
-    test('should not show notification when showToUser is false', async () => {
+    test("should not show notification when showToUser is false", async () => {
       // Arrange
-      const errorPromise = Promise.reject(new Error('Test error'));
+      const errorPromise = Promise.reject(new Error("Test error"));
 
       // Act
       await ErrorHandler.handleAsync(errorPromise, {
-        context: 'TestContext',
-        showToUser: false
+        context: "TestContext",
+        showToUser: false,
       });
 
       // Assert
       expect(global.ui.notifications.error).not.toHaveBeenCalled();
     });
 
-    test('should use custom user message', async () => {
+    test("should use custom user message", async () => {
       // Arrange
-      const errorPromise = Promise.reject(new Error('Test error'));
+      const errorPromise = Promise.reject(new Error("Test error"));
 
       // Act
       await ErrorHandler.handleAsync(errorPromise, {
-        context: 'TestContext',
-        userMessage: 'Custom error message'
+        context: "TestContext",
+        userMessage: "Custom error message",
       });
 
       // Assert
-      expect(global.ui.notifications.error).toHaveBeenCalledWith('Custom error message');
+      expect(global.ui.notifications.error).toHaveBeenCalledWith(
+        "Custom error message",
+      );
     });
 
-    test('should use default context when not provided', async () => {
+    test("should use default context when not provided", async () => {
       // Arrange
-      const errorPromise = Promise.reject(new Error('Test error'));
+      const errorPromise = Promise.reject(new Error("Test error"));
 
       // Act
       await ErrorHandler.handleAsync(errorPromise);
 
       // Assert
       expect(Logger.error).toHaveBeenCalledWith(
-        'Error in Unknown Operation',
+        "Error in Unknown Operation",
         expect.any(Error),
-        'UNKNOWN'
+        "UNKNOWN",
       );
     });
 
-    test('should handle ui being undefined', async () => {
+    test("should handle ui being undefined", async () => {
       // Arrange
       global.ui = undefined;
-      const errorPromise = Promise.reject(new Error('Test error'));
+      const errorPromise = Promise.reject(new Error("Test error"));
 
       // Act & Assert - should not throw
-      const [result, error] = await ErrorHandler.handleAsync(errorPromise, { context: 'Test' });
+      const [result, error] = await ErrorHandler.handleAsync(errorPromise, {
+        context: "Test",
+      });
       expect(result).toBeNull();
       expect(error).toBeInstanceOf(Error);
     });
 
-    test('should handle ui.notifications being undefined', async () => {
+    test("should handle ui.notifications being undefined", async () => {
       // Arrange
       global.ui = {};
-      const errorPromise = Promise.reject(new Error('Test error'));
+      const errorPromise = Promise.reject(new Error("Test error"));
 
       // Act & Assert - should not throw
-      const [result, error] = await ErrorHandler.handleAsync(errorPromise, { context: 'Test' });
+      const [result, error] = await ErrorHandler.handleAsync(errorPromise, {
+        context: "Test",
+      });
       expect(result).toBeNull();
       expect(error).toBeInstanceOf(Error);
     });
   });
 
-  describe('handleDocumentOperation()', () => {
-    test('should return [result, null] for successful operation', async () => {
+  describe("handleDocumentOperation()", () => {
+    test("should return [result, null] for successful operation", async () => {
       // Arrange
-      const successPromise = Promise.resolve({ id: 'actor123' });
+      const successPromise = Promise.resolve({ id: "actor123" });
 
       // Act
       const [result, error] = await ErrorHandler.handleDocumentOperation(
         successPromise,
-        'create actor',
-        'Actor'
+        "create actor",
+        "Actor",
       );
 
       // Assert
-      expect(result).toEqual({ id: 'actor123' });
+      expect(result).toEqual({ id: "actor123" });
       expect(error).toBeNull();
     });
 
-    test('should return [null, error] for failed operation', async () => {
+    test("should return [null, error] for failed operation", async () => {
       // Arrange
-      const errorPromise = Promise.reject(new Error('Database error'));
+      const errorPromise = Promise.reject(new Error("Database error"));
 
       // Act
       const [result, error] = await ErrorHandler.handleDocumentOperation(
         errorPromise,
-        'create actor',
-        'Actor'
+        "create actor",
+        "Actor",
       );
 
       // Assert
@@ -282,74 +288,84 @@ describe('ErrorHandler', () => {
       expect(error).toBeInstanceOf(Error);
     });
 
-    test('should use FOUNDRY_API error type', async () => {
+    test("should use FOUNDRY_API error type", async () => {
       // Arrange
-      const errorPromise = Promise.reject(new Error('Database error'));
+      const errorPromise = Promise.reject(new Error("Database error"));
 
       // Act
-      await ErrorHandler.handleDocumentOperation(errorPromise, 'create actor', 'Actor');
+      await ErrorHandler.handleDocumentOperation(
+        errorPromise,
+        "create actor",
+        "Actor",
+      );
 
       // Assert
       expect(Logger.error).toHaveBeenCalledWith(
-        'Error in Document Operation: create actor',
+        "Error in Document Operation: create actor",
         expect.any(Error),
-        'FOUNDRY_API'
+        "FOUNDRY_API",
       );
     });
 
-    test('should use default documentType when not provided', async () => {
+    test("should use default documentType when not provided", async () => {
       // Arrange
-      const errorPromise = Promise.reject(new Error('Database error'));
+      const errorPromise = Promise.reject(new Error("Database error"));
 
       // Act
-      await ErrorHandler.handleDocumentOperation(errorPromise, 'create');
+      await ErrorHandler.handleDocumentOperation(errorPromise, "create");
 
       // Assert
       expect(global.game.i18n.format).toHaveBeenCalledWith(
-        'EVENTIDE_RP_SYSTEM.Errors.DocumentOperation',
+        "EVENTIDE_RP_SYSTEM.Errors.DocumentOperation",
         expect.objectContaining({
-          operation: 'create',
-          type: 'document'
-        })
+          operation: "create",
+          type: "document",
+        }),
       );
     });
 
-    test('should show localized error message to user', async () => {
+    test("should show localized error message to user", async () => {
       // Arrange
-      const errorPromise = Promise.reject(new Error('Database error'));
+      const errorPromise = Promise.reject(new Error("Database error"));
 
       // Act
-      await ErrorHandler.handleDocumentOperation(errorPromise, 'create actor', 'Actor');
+      await ErrorHandler.handleDocumentOperation(
+        errorPromise,
+        "create actor",
+        "Actor",
+      );
 
       // Assert
-      expect(global.ui.notifications.error).toHaveBeenCalledWith('Error during create actor for Actor');
+      expect(global.ui.notifications.error).toHaveBeenCalledWith(
+        "Error during create actor for Actor",
+      );
     });
   });
 
-  describe('handleSheetRender()', () => {
-    test('should return [result, null] for successful render', async () => {
+  describe("handleSheetRender()", () => {
+    test("should return [result, null] for successful render", async () => {
       // Arrange
-      const successPromise = Promise.resolve({ html: '<div></div>' });
+      const successPromise = Promise.resolve({ html: "<div></div>" });
 
       // Act
       const [result, error] = await ErrorHandler.handleSheetRender(
         successPromise,
-        'CharacterSheet'
+        "CharacterSheet",
       );
 
       // Assert
-      expect(result).toEqual({ html: '<div></div>' });
+      expect(result).toEqual({ html: "<div></div>" });
       expect(error).toBeNull();
     });
 
-    test('should return [null, error] for failed render', async () => {
+    test("should return [null, error] for failed render", async () => {
       // Arrange
-      const errorPromise = Promise.reject(new Error('Template not found'));
+      const errorPromise = Promise.reject(new Error("Template not found"));
 
       // Act
       const [result, error] = await ErrorHandler.handleSheetRender(
         errorPromise,
-        'CharacterSheet'
+        "CharacterSheet",
       );
 
       // Assert
@@ -357,35 +373,37 @@ describe('ErrorHandler', () => {
       expect(error).toBeInstanceOf(Error);
     });
 
-    test('should use UI error type', async () => {
+    test("should use UI error type", async () => {
       // Arrange
-      const errorPromise = Promise.reject(new Error('Template not found'));
+      const errorPromise = Promise.reject(new Error("Template not found"));
 
       // Act
-      await ErrorHandler.handleSheetRender(errorPromise, 'CharacterSheet');
+      await ErrorHandler.handleSheetRender(errorPromise, "CharacterSheet");
 
       // Assert
       expect(Logger.error).toHaveBeenCalledWith(
-        'Error in Sheet Render: CharacterSheet',
+        "Error in Sheet Render: CharacterSheet",
         expect.any(Error),
-        'UI'
+        "UI",
       );
     });
 
-    test('should show localized error message to user', async () => {
+    test("should show localized error message to user", async () => {
       // Arrange
-      const errorPromise = Promise.reject(new Error('Template not found'));
+      const errorPromise = Promise.reject(new Error("Template not found"));
 
       // Act
-      await ErrorHandler.handleSheetRender(errorPromise, 'CharacterSheet');
+      await ErrorHandler.handleSheetRender(errorPromise, "CharacterSheet");
 
       // Assert
-      expect(global.ui.notifications.error).toHaveBeenCalledWith('Error rendering CharacterSheet');
+      expect(global.ui.notifications.error).toHaveBeenCalledWith(
+        "Error rendering CharacterSheet",
+      );
     });
   });
 
-  describe('handleValidation()', () => {
-    test('should return true for valid result', () => {
+  describe("handleValidation()", () => {
+    test("should return true for valid result", () => {
       // Arrange
       const validationResult = { isValid: true, errors: [] };
 
@@ -396,9 +414,12 @@ describe('ErrorHandler', () => {
       expect(result).toBe(true);
     });
 
-    test('should return false for invalid result', () => {
+    test("should return false for invalid result", () => {
       // Arrange
-      const validationResult = { isValid: false, errors: ['Field is required'] };
+      const validationResult = {
+        isValid: false,
+        errors: ["Field is required"],
+      };
 
       // Act
       const result = ErrorHandler.handleValidation(validationResult);
@@ -407,24 +428,30 @@ describe('ErrorHandler', () => {
       expect(result).toBe(false);
     });
 
-    test('should log warning for invalid result', () => {
+    test("should log warning for invalid result", () => {
       // Arrange
-      const validationResult = { isValid: false, errors: ['Field is required', 'Invalid format'] };
+      const validationResult = {
+        isValid: false,
+        errors: ["Field is required", "Invalid format"],
+      };
 
       // Act
-      ErrorHandler.handleValidation(validationResult, 'CharacterCreation');
+      ErrorHandler.handleValidation(validationResult, "CharacterCreation");
 
       // Assert
       expect(Logger.warn).toHaveBeenCalledWith(
-        'CharacterCreation failed: Field is required; Invalid format',
+        "CharacterCreation failed: Field is required; Invalid format",
         validationResult,
-        'VALIDATION'
+        "VALIDATION",
       );
     });
 
-    test('should show warning notification for invalid result', () => {
+    test("should show warning notification for invalid result", () => {
       // Arrange
-      const validationResult = { isValid: false, errors: ['Field is required'] };
+      const validationResult = {
+        isValid: false,
+        errors: ["Field is required"],
+      };
 
       // Act
       ErrorHandler.handleValidation(validationResult);
@@ -433,46 +460,46 @@ describe('ErrorHandler', () => {
       expect(global.ui.notifications.warn).toHaveBeenCalled();
     });
 
-    test('should use default context when not provided', () => {
+    test("should use default context when not provided", () => {
       // Arrange
-      const validationResult = { isValid: false, errors: ['Error'] };
+      const validationResult = { isValid: false, errors: ["Error"] };
 
       // Act
       ErrorHandler.handleValidation(validationResult);
 
       // Assert
       expect(Logger.warn).toHaveBeenCalledWith(
-        'Validation failed: Error',
+        "Validation failed: Error",
         validationResult,
-        'VALIDATION'
+        "VALIDATION",
       );
     });
 
-    test('should handle ui being undefined', () => {
+    test("should handle ui being undefined", () => {
       // Arrange
       global.ui = undefined;
-      const validationResult = { isValid: false, errors: ['Error'] };
+      const validationResult = { isValid: false, errors: ["Error"] };
 
       // Act & Assert - should not throw
-      const result = ErrorHandler.handleValidation(validationResult, 'Test');
+      const result = ErrorHandler.handleValidation(validationResult, "Test");
       expect(result).toBe(false);
     });
 
-    test('should handle ui.notifications being undefined', () => {
+    test("should handle ui.notifications being undefined", () => {
       // Arrange
       global.ui = {};
-      const validationResult = { isValid: false, errors: ['Error'] };
+      const validationResult = { isValid: false, errors: ["Error"] };
 
       // Act & Assert - should not throw
-      const result = ErrorHandler.handleValidation(validationResult, 'Test');
+      const result = ErrorHandler.handleValidation(validationResult, "Test");
       expect(result).toBe(false);
     });
   });
 
-  describe('createValidationError()', () => {
-    test('should create validation error object with array of errors', () => {
+  describe("createValidationError()", () => {
+    test("should create validation error object with array of errors", () => {
       // Arrange
-      const errors = ['Error 1', 'Error 2', 'Error 3'];
+      const errors = ["Error 1", "Error 2", "Error 3"];
 
       // Act
       const result = ErrorHandler.createValidationError(errors);
@@ -480,13 +507,13 @@ describe('ErrorHandler', () => {
       // Assert
       expect(result).toEqual({
         isValid: false,
-        errors: ['Error 1', 'Error 2', 'Error 3']
+        errors: ["Error 1", "Error 2", "Error 3"],
       });
     });
 
-    test('should convert single error string to array', () => {
+    test("should convert single error string to array", () => {
       // Arrange
-      const errors = 'Single error';
+      const errors = "Single error";
 
       // Act
       const result = ErrorHandler.createValidationError(errors);
@@ -494,11 +521,11 @@ describe('ErrorHandler', () => {
       // Assert
       expect(result).toEqual({
         isValid: false,
-        errors: ['Single error']
+        errors: ["Single error"],
       });
     });
 
-    test('should handle empty array', () => {
+    test("should handle empty array", () => {
       // Arrange
       const errors = [];
 
@@ -508,24 +535,24 @@ describe('ErrorHandler', () => {
       // Assert
       expect(result).toEqual({
         isValid: false,
-        errors: []
+        errors: [],
       });
     });
   });
 
-  describe('createValidationSuccess()', () => {
-    test('should create successful validation result', () => {
+  describe("createValidationSuccess()", () => {
+    test("should create successful validation result", () => {
       // Act
       const result = ErrorHandler.createValidationSuccess();
 
       // Assert
       expect(result).toEqual({
         isValid: true,
-        errors: []
+        errors: [],
       });
     });
 
-    test('should return consistent object structure', () => {
+    test("should return consistent object structure", () => {
       // Act
       const result1 = ErrorHandler.createValidationSuccess();
       const result2 = ErrorHandler.createValidationSuccess();
@@ -538,8 +565,8 @@ describe('ErrorHandler', () => {
     });
   });
 
-  describe('safeExecute()', () => {
-    test('should return function result on success', () => {
+  describe("safeExecute()", () => {
+    test("should return function result on success", () => {
       // Arrange
       const fn = (a, b) => a + b;
 
@@ -550,7 +577,7 @@ describe('ErrorHandler', () => {
       expect(result).toBe(5);
     });
 
-    test('should bind function to thisArg', () => {
+    test("should bind function to thisArg", () => {
       // Arrange
       const obj = { multiplier: 2 };
       const fn = function (value) {
@@ -564,7 +591,7 @@ describe('ErrorHandler', () => {
       expect(result).toBe(10);
     });
 
-    test('should pass multiple arguments correctly', () => {
+    test("should pass multiple arguments correctly", () => {
       // Arrange
       const fn = (a, b, c) => a + b + c;
 
@@ -575,10 +602,10 @@ describe('ErrorHandler', () => {
       expect(result).toBe(6);
     });
 
-    test('should return null and log error on failure', () => {
+    test("should return null and log error on failure", () => {
       // Arrange
       const fn = () => {
-        throw new Error('Function error');
+        throw new Error("Function error");
       };
 
       // Act
@@ -587,30 +614,32 @@ describe('ErrorHandler', () => {
       // Assert
       expect(result).toBeNull();
       expect(Logger.error).toHaveBeenCalledWith(
-        'Error in safe execution',
+        "Error in safe execution",
         expect.any(Error),
-        'SAFE_EXECUTE'
+        "SAFE_EXECUTE",
       );
     });
 
-    test('should show error notification to user on failure', () => {
+    test("should show error notification to user on failure", () => {
       // Arrange
       const fn = () => {
-        throw new Error('Function error');
+        throw new Error("Function error");
       };
 
       // Act
       ErrorHandler.safeExecute(fn);
 
       // Assert - localize returns the key as the message
-      expect(global.ui.notifications.error).toHaveBeenCalledWith('EVENTIDE_RP_SYSTEM.Errors.UnexpectedError');
+      expect(global.ui.notifications.error).toHaveBeenCalledWith(
+        "EVENTIDE_RP_SYSTEM.Errors.UnexpectedError",
+      );
     });
 
-    test('should handle ui being undefined', () => {
+    test("should handle ui being undefined", () => {
       // Arrange
       global.ui = undefined;
       const fn = () => {
-        throw new Error('Function error');
+        throw new Error("Function error");
       };
 
       // Act & Assert - should not throw
@@ -618,11 +647,11 @@ describe('ErrorHandler', () => {
       expect(result).toBeNull();
     });
 
-    test('should handle ui.notifications being undefined', () => {
+    test("should handle ui.notifications being undefined", () => {
       // Arrange
       global.ui = {};
       const fn = () => {
-        throw new Error('Function error');
+        throw new Error("Function error");
       };
 
       // Act & Assert - should not throw
@@ -630,141 +659,151 @@ describe('ErrorHandler', () => {
       expect(result).toBeNull();
     });
 
-    test('should work with no arguments', () => {
+    test("should work with no arguments", () => {
       // Arrange
-      const fn = () => 'result';
+      const fn = () => "result";
 
       // Act
       const result = ErrorHandler.safeExecute(fn);
 
       // Assert
-      expect(result).toBe('result');
+      expect(result).toBe("result");
     });
 
-    test('should work with null thisArg', () => {
+    test("should work with null thisArg", () => {
       // Arrange
-      const fn = () => 'result';
+      const fn = () => "result";
 
       // Act
       const result = ErrorHandler.safeExecute(fn, null);
 
       // Assert
-      expect(result).toBe('result');
+      expect(result).toBe("result");
     });
   });
 
-  describe('assert()', () => {
-    test('should not throw when condition is true', () => {
+  describe("assert()", () => {
+    test("should not throw when condition is true", () => {
       // Act & Assert - should not throw
-      expect(() => ErrorHandler.assert(true, 'Should not throw')).not.toThrow();
+      expect(() => ErrorHandler.assert(true, "Should not throw")).not.toThrow();
     });
 
-    test('should throw when condition is false', () => {
+    test("should throw when condition is false", () => {
       // Act & Assert
-      expect(() => ErrorHandler.assert(false, 'Condition failed')).toThrow('Condition failed');
+      expect(() => ErrorHandler.assert(false, "Condition failed")).toThrow(
+        "Condition failed",
+      );
     });
 
-    test('should use default error type when not provided', () => {
+    test("should use default error type when not provided", () => {
       // Arrange
       let caughtError;
       try {
-        ErrorHandler.assert(false, 'Test message');
+        ErrorHandler.assert(false, "Test message");
       } catch (error) {
         caughtError = error;
       }
 
       // Assert
-      expect(caughtError.type).toBe('validation');
+      expect(caughtError.type).toBe("validation");
     });
 
-    test('should use custom error type when provided', () => {
+    test("should use custom error type when provided", () => {
       // Arrange
       let caughtError;
       try {
-        ErrorHandler.assert(false, 'Test message', ErrorHandler.ERROR_TYPES.NETWORK);
+        ErrorHandler.assert(
+          false,
+          "Test message",
+          ErrorHandler.ERROR_TYPES.NETWORK,
+        );
       } catch (error) {
         caughtError = error;
       }
 
       // Assert
-      expect(caughtError.type).toBe('network');
+      expect(caughtError.type).toBe("network");
     });
 
-    test('should set error type on thrown error', () => {
+    test("should set error type on thrown error", () => {
       // Arrange
       let caughtError;
       try {
-        ErrorHandler.assert(false, 'Test message', ErrorHandler.ERROR_TYPES.PERMISSION);
+        ErrorHandler.assert(
+          false,
+          "Test message",
+          ErrorHandler.ERROR_TYPES.PERMISSION,
+        );
       } catch (error) {
         caughtError = error;
       }
 
       // Assert
       expect(caughtError).toBeInstanceOf(Error);
-      expect(caughtError.message).toBe('Test message');
-      expect(caughtError.type).toBe('permission');
+      expect(caughtError.message).toBe("Test message");
+      expect(caughtError.type).toBe("permission");
     });
   });
 
-  describe('isErrorType()', () => {
-    test('should return true when error type matches', () => {
+  describe("isErrorType()", () => {
+    test("should return true when error type matches", () => {
       // Arrange
-      const error = new Error('Test');
-      error.type = 'validation';
+      const error = new Error("Test");
+      error.type = "validation";
 
       // Act
-      const result = ErrorHandler.isErrorType(error, 'validation');
+      const result = ErrorHandler.isErrorType(error, "validation");
 
       // Assert
       expect(result).toBe(true);
     });
 
-    test('should return false when error type does not match', () => {
+    test("should return false when error type does not match", () => {
       // Arrange
-      const error = new Error('Test');
-      error.type = 'validation';
+      const error = new Error("Test");
+      error.type = "validation";
 
       // Act
-      const result = ErrorHandler.isErrorType(error, 'network');
+      const result = ErrorHandler.isErrorType(error, "network");
 
       // Assert
       expect(result).toBe(false);
     });
 
-    test('should return false when error has no type', () => {
+    test("should return false when error has no type", () => {
       // Arrange
-      const error = new Error('Test');
+      const error = new Error("Test");
 
       // Act
-      const result = ErrorHandler.isErrorType(error, 'validation');
+      const result = ErrorHandler.isErrorType(error, "validation");
 
       // Assert
       expect(result).toBe(false);
     });
 
-    test('should return falsy when error is null', () => {
+    test("should return falsy when error is null", () => {
       // Act
-      const result = ErrorHandler.isErrorType(null, 'validation');
+      const result = ErrorHandler.isErrorType(null, "validation");
 
       // Assert - returns null due to short-circuit evaluation
       expect(result).toBeFalsy();
     });
 
-    test('should return falsy when error is undefined', () => {
+    test("should return falsy when error is undefined", () => {
       // Act
-      const result = ErrorHandler.isErrorType(undefined, 'validation');
+      const result = ErrorHandler.isErrorType(undefined, "validation");
 
       // Assert - returns undefined due to short-circuit evaluation
       expect(result).toBeFalsy();
     });
 
-    test('should work with all error types', () => {
+    test("should work with all error types", () => {
       // Arrange
       const errorTypes = Object.values(ErrorHandler.ERROR_TYPES);
-      
-      errorTypes.forEach(type => {
+
+      errorTypes.forEach((type) => {
         // Arrange
-        const error = new Error('Test');
+        const error = new Error("Test");
         error.type = type;
 
         // Act & Assert
@@ -773,89 +812,92 @@ describe('ErrorHandler', () => {
     });
   });
 
-  describe('#createUserMessage (private method)', () => {
-    test('should create permission error message for permission errors', async () => {
+  describe("#createUserMessage (private method)", () => {
+    test("should create permission error message for permission errors", async () => {
       // Arrange
-      const error = new Error('User does not have permission');
+      const error = new Error("User does not have permission");
       const errorPromise = Promise.reject(error);
 
       // Act
-      await ErrorHandler.handleAsync(errorPromise, { context: 'Test' });
+      await ErrorHandler.handleAsync(errorPromise, { context: "Test" });
 
       // Assert
       expect(global.game.i18n.localize).toHaveBeenCalledWith(
-        expect.stringContaining('Permission')
+        expect.stringContaining("Permission"),
       );
     });
 
-    test('should create network error message for network errors', async () => {
+    test("should create network error message for network errors", async () => {
       // Arrange
-      const error = new Error('Network connection failed');
+      const error = new Error("Network connection failed");
       const errorPromise = Promise.reject(error);
 
       // Act
-      await ErrorHandler.handleAsync(errorPromise, { context: 'Test' });
+      await ErrorHandler.handleAsync(errorPromise, { context: "Test" });
 
       // Assert - the localized error message is shown to user via notifications
       expect(global.ui.notifications.error).toHaveBeenCalled();
     });
 
-    test('should create network error message for fetch errors', async () => {
+    test("should create network error message for fetch errors", async () => {
       // Arrange
-      const error = new Error('Failed to fetch data');
+      const error = new Error("Failed to fetch data");
       const errorPromise = Promise.reject(error);
 
       // Act
-      await ErrorHandler.handleAsync(errorPromise, { context: 'Test' });
+      await ErrorHandler.handleAsync(errorPromise, { context: "Test" });
 
       // Assert
       expect(global.game.i18n.localize).toHaveBeenCalledWith(
-        expect.stringContaining('Network')
+        expect.stringContaining("Network"),
       );
     });
 
-    test('should create validation error message for ValidationError', async () => {
+    test("should create validation error message for ValidationError", async () => {
       // Arrange
-      const error = new Error('Invalid data');
-      error.name = 'ValidationError';
+      const error = new Error("Invalid data");
+      error.name = "ValidationError";
       const errorPromise = Promise.reject(error);
 
       // Act
-      await ErrorHandler.handleAsync(errorPromise, { context: 'Test' });
+      await ErrorHandler.handleAsync(errorPromise, { context: "Test" });
 
       // Assert
       expect(global.game.i18n.format).toHaveBeenCalledWith(
-        expect.stringContaining('Validation'),
-        expect.any(Object)
+        expect.stringContaining("Validation"),
+        expect.any(Object),
       );
     });
 
-    test('should create generic error message for other errors', async () => {
+    test("should create generic error message for other errors", async () => {
       // Arrange
-      const error = new Error('Some random error');
+      const error = new Error("Some random error");
       const errorPromise = Promise.reject(error);
 
       // Act
-      await ErrorHandler.handleAsync(errorPromise, { context: 'TestContext' });
+      await ErrorHandler.handleAsync(errorPromise, { context: "TestContext" });
 
       // Assert
       expect(global.game.i18n.format).toHaveBeenCalledWith(
-        expect.stringContaining('Generic'),
+        expect.stringContaining("Generic"),
         expect.objectContaining({
-          context: 'TestContext',
-          message: 'Some random error'
-        })
+          context: "TestContext",
+          message: "Some random error",
+        }),
       );
     });
 
-    test('should fallback when game is undefined', async () => {
+    test("should fallback when game is undefined", async () => {
       // Arrange
       global.game = undefined;
-      const error = new Error('Test error');
+      const error = new Error("Test error");
       const errorPromise = Promise.reject(error);
 
       // Act
-      const [result, caughtError] = await ErrorHandler.handleAsync(errorPromise, { context: 'Test' });
+      const [result, caughtError] = await ErrorHandler.handleAsync(
+        errorPromise,
+        { context: "Test" },
+      );
 
       // Assert
       expect(result).toBeNull();
@@ -864,14 +906,17 @@ describe('ErrorHandler', () => {
       expect(global.ui.notifications.error).toHaveBeenCalled();
     });
 
-    test('should fallback when game.i18n is undefined', async () => {
+    test("should fallback when game.i18n is undefined", async () => {
       // Arrange
       global.game = {};
-      const error = new Error('Test error');
+      const error = new Error("Test error");
       const errorPromise = Promise.reject(error);
 
       // Act
-      const [result, caughtError] = await ErrorHandler.handleAsync(errorPromise, { context: 'Test' });
+      const [result, caughtError] = await ErrorHandler.handleAsync(
+        errorPromise,
+        { context: "Test" },
+      );
 
       // Assert
       expect(result).toBeNull();
@@ -879,45 +924,50 @@ describe('ErrorHandler', () => {
     });
   });
 
-  describe('Integration scenarios', () => {
-    test('should handle chained async operations', async () => {
+  describe("Integration scenarios", () => {
+    test("should handle chained async operations", async () => {
       // Arrange
-      const successPromise = Promise.resolve({ id: '123' });
+      const successPromise = Promise.resolve({ id: "123" });
 
       // Act
-      const [result1, error1] = await ErrorHandler.handleAsync(successPromise, { context: 'Op1' });
+      const [result1, error1] = await ErrorHandler.handleAsync(successPromise, {
+        context: "Op1",
+      });
       const [result2, error2] = await ErrorHandler.handleAsync(
         Promise.resolve(result1.id),
-        { context: 'Op2' }
+        { context: "Op2" },
       );
 
       // Assert
-      expect(result2).toBe('123');
+      expect(result2).toBe("123");
       expect(error1).toBeNull();
       expect(error2).toBeNull();
     });
 
-    test('should handle validation followed by async operation', async () => {
+    test("should handle validation followed by async operation", async () => {
       // Arrange
       const validationResult = { isValid: true, errors: [] };
-      const successPromise = Promise.resolve('success');
+      const successPromise = Promise.resolve("success");
 
       // Act
-      const isValid = ErrorHandler.handleValidation(validationResult, 'PreCheck');
+      const isValid = ErrorHandler.handleValidation(
+        validationResult,
+        "PreCheck",
+      );
       const [result, error] = isValid
-        ? await ErrorHandler.handleAsync(successPromise, { context: 'MainOp' })
-        : [null, new Error('Validation failed')];
+        ? await ErrorHandler.handleAsync(successPromise, { context: "MainOp" })
+        : [null, new Error("Validation failed")];
 
       // Assert
       expect(isValid).toBe(true);
-      expect(result).toBe('success');
+      expect(result).toBe("success");
       expect(error).toBeNull();
     });
 
-    test('should handle safeExecute with async function', async () => {
+    test("should handle safeExecute with async function", async () => {
       // Arrange
       const asyncFn = async () => {
-        return Promise.resolve('async result');
+        return Promise.resolve("async result");
       };
 
       // Act
@@ -926,7 +976,7 @@ describe('ErrorHandler', () => {
       // Assert - safeExecute returns the promise, need to await
       expect(result).toBeInstanceOf(Promise);
       const awaitedResult = await result;
-      expect(await awaitedResult).toBe('async result');
+      expect(await awaitedResult).toBe("async result");
     });
   });
 });

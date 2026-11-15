@@ -79,4 +79,3 @@ export const initializeThemeManager = async (application, options = {}) => {
   themeManager.initialize();
   return themeManager;
 };
-

@@ -138,7 +138,7 @@ export const EmbeddedItemConstructorMixin = (BaseClass) =>
         img: tempItem.img,
         type: "base",
         system: {
-          changes: []
+          changes: [],
         },
         disabled: false,
         showIcon: CONST.ACTIVE_EFFECT_SHOW_ICON.NEVER,
@@ -149,7 +149,7 @@ export const EmbeddedItemConstructorMixin = (BaseClass) =>
           expired: false,
         },
         description: "",
-        
+
         flags: {},
         tint: "#ffffff",
         transfer: true,

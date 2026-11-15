@@ -34,9 +34,12 @@ export const ItemSheetEffectGuardsMixin = (BaseClass) =>
       );
 
       // Additional check - skip effect guards for temporary items at the method level
-      if (!this.item.collection ||
-          !this.item.isEmbedded ||
-          (this.item.update && this.item.update.toString().includes('embeddedActionCards'))) {
+      if (
+        !this.item.collection ||
+        !this.item.isEmbedded ||
+        (this.item.update &&
+          this.item.update.toString().includes("embeddedActionCards"))
+      ) {
         Logger.debug(
           "Skipping effect guards - temporary or transformation item detected",
           {
@@ -45,7 +48,9 @@ export const ItemSheetEffectGuardsMixin = (BaseClass) =>
             itemId: this.item?.id,
             hasCollection: !!this.item.collection,
             isEmbedded: this.item.isEmbedded,
-            hasCustomUpdate: this.item.update && this.item.update.toString().includes('embeddedActionCards'),
+            hasCustomUpdate:
+              this.item.update &&
+              this.item.update.toString().includes("embeddedActionCards"),
           },
           "EFFECT_GUARDS",
         );
@@ -70,8 +75,14 @@ export const ItemSheetEffectGuardsMixin = (BaseClass) =>
           const keepEffect = this.item.effects.contents[0];
           const effectIds = effects.map((effect) => effect._id);
 
-          await this.item.deleteEmbeddedDocuments("ActiveEffect", effectIds, { fromEmbeddedItem: true });
-          await this.item.createEmbeddedDocuments("ActiveEffect", [keepEffect], { fromEmbeddedItem: true });
+          await this.item.deleteEmbeddedDocuments("ActiveEffect", effectIds, {
+            fromEmbeddedItem: true,
+          });
+          await this.item.createEmbeddedDocuments(
+            "ActiveEffect",
+            [keepEffect],
+            { fromEmbeddedItem: true },
+          );
 
           Logger.info(
             "Multiple effects consolidated successfully",
@@ -100,11 +111,13 @@ export const ItemSheetEffectGuardsMixin = (BaseClass) =>
             img: this.item.img,
             type: "base",
             system: {
-              changes: []
+              changes: [],
             },
             disabled: false,
             showIcon:
-              this.item.type === "status" || this.item.type === "feature" ? CONST.ACTIVE_EFFECT_SHOW_ICON.ALWAYS : CONST.ACTIVE_EFFECT_SHOW_ICON.NEVER,
+              this.item.type === "status" || this.item.type === "feature"
+                ? CONST.ACTIVE_EFFECT_SHOW_ICON.ALWAYS
+                : CONST.ACTIVE_EFFECT_SHOW_ICON.NEVER,
             description: "",
             origin: "",
             tint: "#ffffff",
@@ -113,7 +126,9 @@ export const ItemSheetEffectGuardsMixin = (BaseClass) =>
             flags: {},
           });
 
-          await this.item.createEmbeddedDocuments("ActiveEffect", [newEffect], { fromEmbeddedItem: true });
+          await this.item.createEmbeddedDocuments("ActiveEffect", [newEffect], {
+            fromEmbeddedItem: true,
+          });
 
           Logger.info(
             "Default effect created successfully",
@@ -150,7 +165,11 @@ export const ItemSheetEffectGuardsMixin = (BaseClass) =>
             img: this.item.img,
           };
 
-          await this.item.updateEmbeddedDocuments("ActiveEffect", [updateData], { fromEmbeddedItem: true });
+          await this.item.updateEmbeddedDocuments(
+            "ActiveEffect",
+            [updateData],
+            { fromEmbeddedItem: true },
+          );
 
           Logger.info(
             "Effect synchronized with item successfully",

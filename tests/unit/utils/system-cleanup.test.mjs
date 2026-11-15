@@ -15,7 +15,7 @@
 // =================================
 
 // Mock Logger service - use vi.fn() inside the mock factory function
-vi.mock('../../../module/services/logger.mjs', () => ({
+vi.mock("../../../module/services/logger.mjs", () => ({
   Logger: {
     debug: vi.fn(),
     info: vi.fn(),
@@ -25,17 +25,17 @@ vi.mock('../../../module/services/logger.mjs', () => ({
 }));
 
 // Mock color-pickers module
-vi.mock('../../../module/helpers/color-pickers.mjs', () => ({
+vi.mock("../../../module/helpers/color-pickers.mjs", () => ({
   cleanupGlobalColorPickers: vi.fn(),
 }));
 
 // Mock theme module
-vi.mock('../../../module/helpers/_module.mjs', () => ({
+vi.mock("../../../module/helpers/_module.mjs", () => ({
   cleanupGlobalThemeManager: vi.fn(),
 }));
 
 // Mock GM control hooks
-vi.mock('../../../module/services/hooks/gm-control-hooks.mjs', () => ({
+vi.mock("../../../module/services/hooks/gm-control-hooks.mjs", () => ({
   cleanupGMControlHooks: vi.fn(),
 }));
 
@@ -55,13 +55,13 @@ import {
   performSystemCleanup,
   performPreInitCleanup,
   initializeCleanupHooks,
-} from '../../../module/utils/system-cleanup.mjs';
+} from "../../../module/utils/system-cleanup.mjs";
 
 // Import mocked modules for access in tests
-import { Logger } from '../../../module/services/logger.mjs';
-import { cleanupGlobalColorPickers } from '../../../module/helpers/color-pickers.mjs';
-import { cleanupGlobalThemeManager } from '../../../module/helpers/_module.mjs';
-import { cleanupGMControlHooks } from '../../../module/services/hooks/gm-control-hooks.mjs';
+import { Logger } from "../../../module/services/logger.mjs";
+import { cleanupGlobalColorPickers } from "../../../module/helpers/color-pickers.mjs";
+import { cleanupGlobalThemeManager } from "../../../module/helpers/_module.mjs";
+import { cleanupGMControlHooks } from "../../../module/services/hooks/gm-control-hooks.mjs";
 
 // =================================
 // Helper Functions
@@ -88,7 +88,7 @@ function setupMockDocument(elements = []) {
   const mockQuerySelectorAll = vi.fn().mockReturnValue(elements);
   global.document = {
     querySelectorAll: mockQuerySelectorAll,
-    visibilityState: 'visible',
+    visibilityState: "visible",
     hidden: false,
     addEventListener: vi.fn(),
     removeEventListener: vi.fn(),
@@ -131,14 +131,14 @@ function setupMockGame() {
 // Tests
 // =================================
 
-describe('system-cleanup.mjs', () => {
+describe("system-cleanup.mjs", () => {
   beforeEach(() => {
     resetMocks();
     setupMockWindow();
     setupMockDocument();
     setupMockHooks();
     setupMockGame();
-    
+
     // Setup setTimeout mock
     global.setTimeout = vi.fn().mockReturnValue(100);
     global.clearTimeout = vi.fn();
@@ -152,7 +152,7 @@ describe('system-cleanup.mjs', () => {
     global.setTimeout = originalSetTimeout;
     global.clearTimeout = originalClearTimeout;
     global.clearInterval = originalClearInterval;
-    
+
     // Clear all mocks
     vi.clearAllMocks();
   });
@@ -160,8 +160,8 @@ describe('system-cleanup.mjs', () => {
   // =================================
   // performSystemCleanup() Tests
   // =================================
-  describe('performSystemCleanup()', () => {
-    test('should call all cleanup functions', () => {
+  describe("performSystemCleanup()", () => {
+    test("should call all cleanup functions", () => {
       performSystemCleanup();
 
       expect(cleanupGMControlHooks).toHaveBeenCalled();
@@ -169,29 +169,29 @@ describe('system-cleanup.mjs', () => {
       expect(cleanupGlobalThemeManager).toHaveBeenCalled();
     });
 
-    test('should handle errors gracefully', () => {
+    test("should handle errors gracefully", () => {
       // mockImplementationOnce: the throwing impl must not leak into later
       // tests (vitest 4 restoreMocks no longer resets plain vi.fn() impls).
       cleanupGMControlHooks.mockImplementationOnce(() => {
-        throw new Error('Test error');
+        throw new Error("Test error");
       });
 
       // Should not throw
       expect(() => performSystemCleanup()).not.toThrow();
     });
 
-    test('should continue cleanup even if one function fails', () => {
+    test("should continue cleanup even if one function fails", () => {
       // Reset mocks to clear previous calls
       resetMocks();
 
       // Make the first cleanup function throw
       cleanupGMControlHooks.mockImplementationOnce(() => {
-        throw new Error('Test error');
+        throw new Error("Test error");
       });
 
       // Should not throw even when first cleanup fails
       expect(() => performSystemCleanup()).not.toThrow();
-      
+
       // The error is caught and logged, but the function completes
       // Verify that the error was logged
       expect(Logger.error).toHaveBeenCalled();
@@ -201,8 +201,8 @@ describe('system-cleanup.mjs', () => {
   // =================================
   // performPreInitCleanup() Tests
   // =================================
-  describe('performPreInitCleanup()', () => {
-    test('should call all cleanup functions', () => {
+  describe("performPreInitCleanup()", () => {
+    test("should call all cleanup functions", () => {
       performPreInitCleanup();
 
       expect(cleanupGlobalColorPickers).toHaveBeenCalled();
@@ -210,11 +210,11 @@ describe('system-cleanup.mjs', () => {
       expect(cleanupGMControlHooks).toHaveBeenCalled();
     });
 
-    test('should handle errors gracefully', () => {
+    test("should handle errors gracefully", () => {
       // mockImplementationOnce: prevent leak into later tests (vitest 4
       // restoreMocks no longer resets plain vi.fn() implementations).
       cleanupGlobalColorPickers.mockImplementationOnce(() => {
-        throw new Error('Test error');
+        throw new Error("Test error");
       });
 
       // Should not throw
@@ -225,14 +225,17 @@ describe('system-cleanup.mjs', () => {
   // =================================
   // initializeCleanupHooks() Tests
   // =================================
-  describe('initializeCleanupHooks()', () => {
-    test('should register ready hook', () => {
+  describe("initializeCleanupHooks()", () => {
+    test("should register ready hook", () => {
       initializeCleanupHooks();
 
-      expect(global.Hooks.on).toHaveBeenCalledWith('ready', expect.any(Function));
+      expect(global.Hooks.on).toHaveBeenCalledWith(
+        "ready",
+        expect.any(Function),
+      );
     });
 
-    test('should not initialize twice', () => {
+    test("should not initialize twice", () => {
       // First call
       initializeCleanupHooks();
       const firstCallCount = global.Hooks.on.mock.calls.length;
@@ -243,36 +246,36 @@ describe('system-cleanup.mjs', () => {
       expect(global.Hooks.on.mock.calls.length).toBe(firstCallCount);
     });
 
-    test('should setup beforeunload listener on ready', () => {
+    test("should setup beforeunload listener on ready", () => {
       initializeCleanupHooks();
 
       // Get the ready callback
       const readyCallback = global.Hooks.on.mock.calls.find(
-        call => call[0] === 'ready'
+        (call) => call[0] === "ready",
       )?.[1];
 
       if (readyCallback) {
         readyCallback();
         expect(global.window.addEventListener).toHaveBeenCalledWith(
-          'beforeunload',
-          expect.any(Function)
+          "beforeunload",
+          expect.any(Function),
         );
       }
     });
 
-    test('should setup visibilitychange listener on ready', () => {
+    test("should setup visibilitychange listener on ready", () => {
       initializeCleanupHooks();
 
       // Get the ready callback
       const readyCallback = global.Hooks.on.mock.calls.find(
-        call => call[0] === 'ready'
+        (call) => call[0] === "ready",
       )?.[1];
 
       if (readyCallback) {
         readyCallback();
         expect(global.document.addEventListener).toHaveBeenCalledWith(
-          'visibilitychange',
-          expect.any(Function)
+          "visibilitychange",
+          expect.any(Function),
         );
       }
     });
@@ -281,8 +284,8 @@ describe('system-cleanup.mjs', () => {
   // =================================
   // clearAllSystemIntervals() Tests (via performPreInitCleanup)
   // =================================
-  describe('clearAllSystemIntervals()', () => {
-    test('should clear tracked intervals', () => {
+  describe("clearAllSystemIntervals()", () => {
+    test("should clear tracked intervals", () => {
       // Add some mock interval IDs
       global.window._erpsIntervalIds.add(1);
       global.window._erpsIntervalIds.add(2);
@@ -295,7 +298,7 @@ describe('system-cleanup.mjs', () => {
       expect(global.clearTimeout).toHaveBeenCalled();
     });
 
-    test('should handle missing _erpsIntervalIds', () => {
+    test("should handle missing _erpsIntervalIds", () => {
       // Remove _erpsIntervalIds
       delete global.window._erpsIntervalIds;
 
@@ -303,10 +306,10 @@ describe('system-cleanup.mjs', () => {
       expect(() => performPreInitCleanup()).not.toThrow();
     });
 
-    test('should handle errors when clearing intervals', () => {
+    test("should handle errors when clearing intervals", () => {
       global.window._erpsIntervalIds.add(999);
       global.clearInterval.mockImplementation(() => {
-        throw new Error('Clear interval error');
+        throw new Error("Clear interval error");
       });
 
       // Should not throw
@@ -317,8 +320,8 @@ describe('system-cleanup.mjs', () => {
   // =================================
   // cleanupOrphanedElements() Tests (via performSystemCleanup)
   // =================================
-  describe('cleanupOrphanedElements()', () => {
-    test('should remove GM status elements', () => {
+  describe("cleanupOrphanedElements()", () => {
+    test("should remove GM status elements", () => {
       const mockElement = {
         remove: vi.fn(),
       };
@@ -329,8 +332,8 @@ describe('system-cleanup.mjs', () => {
       expect(mockElement.remove).toHaveBeenCalled();
     });
 
-    test('should skip theme cleanup when visibilityState is hidden', () => {
-      global.document.visibilityState = 'hidden';
+    test("should skip theme cleanup when visibilityState is hidden", () => {
+      global.document.visibilityState = "hidden";
       global.document.hidden = true;
 
       const mockElement = {
@@ -347,13 +350,13 @@ describe('system-cleanup.mjs', () => {
       expect(mockElement.remove).toHaveBeenCalled();
     });
 
-    test('should clean orphaned elements when visible', () => {
+    test("should clean orphaned elements when visible", () => {
       const mockElement = {
         remove: vi.fn(),
         removeAttribute: vi.fn(),
       };
       setupMockDocument([mockElement]);
-      global.document.visibilityState = 'visible';
+      global.document.visibilityState = "visible";
 
       performSystemCleanup();
 
@@ -361,10 +364,10 @@ describe('system-cleanup.mjs', () => {
       expect(mockElement.remove).toHaveBeenCalled();
     });
 
-    test('should handle errors when removing elements', () => {
+    test("should handle errors when removing elements", () => {
       const mockElement = {
         remove: vi.fn().mockImplementation(() => {
-          throw new Error('Remove error');
+          throw new Error("Remove error");
         }),
       };
       setupMockDocument([mockElement]);
@@ -373,7 +376,7 @@ describe('system-cleanup.mjs', () => {
       expect(() => performSystemCleanup()).not.toThrow();
     });
 
-    test('should handle elements without parentNode', () => {
+    test("should handle elements without parentNode", () => {
       const mockElement = {
         remove: vi.fn(),
         cloneNode: vi.fn().mockReturnThis(),
@@ -389,8 +392,8 @@ describe('system-cleanup.mjs', () => {
   // =================================
   // cleanupGlobalNumberInputs() Tests (via performPreInitCleanup)
   // =================================
-  describe('cleanupGlobalNumberInputs()', () => {
-    test('should call erps.utils.cleanupNumberInputsGlobal when available', () => {
+  describe("cleanupGlobalNumberInputs()", () => {
+    test("should call erps.utils.cleanupNumberInputsGlobal when available", () => {
       global.erps = {
         utils: {
           cleanupNumberInputsGlobal: vi.fn(),
@@ -404,14 +407,14 @@ describe('system-cleanup.mjs', () => {
       delete global.erps;
     });
 
-    test('should handle missing erps global', () => {
+    test("should handle missing erps global", () => {
       delete global.erps;
 
       // Should not throw
       expect(() => performPreInitCleanup()).not.toThrow();
     });
 
-    test('should handle missing utils property', () => {
+    test("should handle missing utils property", () => {
       global.erps = {};
 
       // Should not throw
@@ -424,8 +427,8 @@ describe('system-cleanup.mjs', () => {
   // =================================
   // safeLog() Tests (via exported functions)
   // =================================
-  describe('safeLog()', () => {
-    test('should use Logger when game.settings is available', () => {
+  describe("safeLog()", () => {
+    test("should use Logger when game.settings is available", () => {
       global.game = {
         settings: {
           get: vi.fn().mockReturnValue(true),
@@ -438,14 +441,16 @@ describe('system-cleanup.mjs', () => {
       expect(Logger.info).toHaveBeenCalled();
     });
 
-    test('should fallback to console when Logger throws', () => {
+    test("should fallback to console when Logger throws", () => {
       // Make Logger throw
       Logger.info.mockImplementation(() => {
-        throw new Error('Logger error');
+        throw new Error("Logger error");
       });
 
       // Mock console.info
-      const mockConsoleInfo = vi.spyOn(console, 'info').mockImplementation(() => {});
+      const mockConsoleInfo = vi
+        .spyOn(console, "info")
+        .mockImplementation(() => {});
 
       // Should not throw
       expect(() => performSystemCleanup()).not.toThrow();
@@ -453,7 +458,7 @@ describe('system-cleanup.mjs', () => {
       mockConsoleInfo.mockRestore();
     });
 
-    test('should handle missing game object', () => {
+    test("should handle missing game object", () => {
       global.game = undefined;
 
       // Should not throw
@@ -464,29 +469,29 @@ describe('system-cleanup.mjs', () => {
   // =================================
   // Edge Cases
   // =================================
-  describe('Edge Cases', () => {
-    test('should handle missing document object', () => {
+  describe("Edge Cases", () => {
+    test("should handle missing document object", () => {
       global.document = undefined;
 
       // Should not throw
       expect(() => performSystemCleanup()).not.toThrow();
     });
 
-    test('should handle missing window object', () => {
+    test("should handle missing window object", () => {
       global.window = undefined;
 
       // Should not throw
       expect(() => performSystemCleanup()).not.toThrow();
     });
 
-    test('should handle missing Hooks object', () => {
+    test("should handle missing Hooks object", () => {
       global.Hooks = undefined;
 
       // Should not throw
       expect(() => initializeCleanupHooks()).not.toThrow();
     });
 
-    test('should handle hot module disposal', () => {
+    test("should handle hot module disposal", () => {
       // Setup hot module
       global.module = {
         hot: {

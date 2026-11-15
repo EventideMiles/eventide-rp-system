@@ -58,7 +58,9 @@ export const createTabManagementMixin = (config) => (BaseClass) => {
       });
 
       // Re-query buttons after cloning
-      const newTabButtons = this.element.querySelectorAll(config.buttonSelector);
+      const newTabButtons = this.element.querySelectorAll(
+        config.buttonSelector,
+      );
 
       // Handle tab button clicks
       newTabButtons.forEach((button) => {
@@ -72,12 +74,18 @@ export const createTabManagementMixin = (config) => (BaseClass) => {
 
           // Query fresh DOM references for buttons and contents
           // (originals may be stale after re-renders)
-          const freshButtons = this.element.querySelectorAll(config.buttonSelector);
-          const freshContents = this.element.querySelectorAll(config.contentSelector);
+          const freshButtons = this.element.querySelectorAll(
+            config.buttonSelector,
+          );
+          const freshContents = this.element.querySelectorAll(
+            config.contentSelector,
+          );
 
           // Remove active class from all buttons and contents
           freshButtons.forEach((btn) => btn.classList.remove("active"));
-          freshContents.forEach((content) => content.classList.remove("active"));
+          freshContents.forEach((content) =>
+            content.classList.remove("active"),
+          );
 
           // Add active class to clicked button and corresponding content
           button.classList.add("active");
@@ -87,7 +95,6 @@ export const createTabManagementMixin = (config) => (BaseClass) => {
           if (targetContent) {
             targetContent.classList.add("active");
           }
-
         });
       });
 
@@ -126,7 +133,9 @@ export const createTabManagementMixin = (config) => (BaseClass) => {
         if (firstButton && firstContent) {
           firstButton.classList.add("active");
           firstContent.classList.add("active");
-          this[config.stateProperty] = firstButton.getAttribute(config.buttonDataAttr);
+          this[config.stateProperty] = firstButton.getAttribute(
+            config.buttonDataAttr,
+          );
         }
       }
     }

@@ -68,7 +68,10 @@ export const EmbeddedItemCharacterEffectsMixin = (BaseClass) =>
       const effectData = { _id: firstEffect.id, system: { changes } };
 
       if (this.parentItem.type === "transformation") {
-        await this._updateTransformationCharacterEffects(effectData, firstEffect);
+        await this._updateTransformationCharacterEffects(
+          effectData,
+          firstEffect,
+        );
       } else if (this.isSelfEffect) {
         await this._updateSelfEffectCharacterEffects(effectData, firstEffect);
       } else if (this.isEffect) {
@@ -91,10 +94,9 @@ export const EmbeddedItemCharacterEffectsMixin = (BaseClass) =>
      * @private
      */
     async _updateTransformationCharacterEffects(effectData, firstEffect) {
-      const powerIndex =
-        this.parentItem.system.embeddedCombatPowers.findIndex(
-          (p) => p._id === this.originalItemId,
-        );
+      const powerIndex = this.parentItem.system.embeddedCombatPowers.findIndex(
+        (p) => p._id === this.originalItemId,
+      );
       if (powerIndex === -1) return;
 
       const powers = foundry.utils.deepClone(
@@ -211,10 +213,9 @@ export const EmbeddedItemCharacterEffectsMixin = (BaseClass) =>
      * @private
      */
     async _updateSelfEffectCharacterEffects(effectData, firstEffect) {
-      const effectIndex =
-        this.parentItem.system.embeddedSelfEffects?.findIndex(
-          (s) => s._id === this.originalItemId,
-        );
+      const effectIndex = this.parentItem.system.embeddedSelfEffects?.findIndex(
+        (s) => s._id === this.originalItemId,
+      );
       if (effectIndex === -1 || effectIndex === undefined) return;
 
       const selfEffects = foundry.utils.deepClone(
@@ -384,7 +385,9 @@ export const EmbeddedItemCharacterEffectsMixin = (BaseClass) =>
      * @protected
      */
     static async _toggleEmbeddedEffectDisplay(event, target) {
-      const showIcon = target.checked ? CONST.ACTIVE_EFFECT_SHOW_ICON.ALWAYS : CONST.ACTIVE_EFFECT_SHOW_ICON.NEVER;
+      const showIcon = target.checked
+        ? CONST.ACTIVE_EFFECT_SHOW_ICON.ALWAYS
+        : CONST.ACTIVE_EFFECT_SHOW_ICON.NEVER;
 
       // Get the first effect from the temporary item, or create one if needed
       let firstEffect = this.document.effects.contents[0];
@@ -423,10 +426,9 @@ export const EmbeddedItemCharacterEffectsMixin = (BaseClass) =>
      * @private
      */
     async _updateTransformationEffectDisplay(effectData, firstEffect) {
-      const powerIndex =
-        this.parentItem.system.embeddedCombatPowers.findIndex(
-          (p) => p._id === this.originalItemId,
-        );
+      const powerIndex = this.parentItem.system.embeddedCombatPowers.findIndex(
+        (p) => p._id === this.originalItemId,
+      );
       if (powerIndex === -1) return;
 
       const powers = foundry.utils.deepClone(
@@ -511,10 +513,9 @@ export const EmbeddedItemCharacterEffectsMixin = (BaseClass) =>
      * @private
      */
     async _updateSelfEffectEffectDisplay(effectData, firstEffect) {
-      const effectIndex =
-        this.parentItem.system.embeddedSelfEffects?.findIndex(
-          (s) => s._id === this.originalItemId,
-        );
+      const effectIndex = this.parentItem.system.embeddedSelfEffects?.findIndex(
+        (s) => s._id === this.originalItemId,
+      );
       if (effectIndex === -1 || effectIndex === undefined) return;
 
       const selfEffects = foundry.utils.deepClone(

@@ -276,7 +276,9 @@ export const ItemSheetDragDropMixin = (BaseClass) =>
 
             if (originalSelfEffectData) {
               // Create clean drag data for the embedded self-effect
-              const effectData = foundry.utils.deepClone(originalSelfEffectData);
+              const effectData = foundry.utils.deepClone(
+                originalSelfEffectData,
+              );
               // Strip ID to prevent Foundry colliding IDs
               delete effectData._id;
 
@@ -374,7 +376,9 @@ export const ItemSheetDragDropMixin = (BaseClass) =>
         await ErrorHandler.handleAsync(Promise.reject(error), {
           context: `Handle drop on ${this.item?.name}`,
           errorType: ErrorHandler.ERROR_TYPES.UI,
-          userMessage: game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.DropError"),
+          userMessage: game.i18n.localize(
+            "EVENTIDE_RP_SYSTEM.Errors.DropError",
+          ),
         });
 
         return false;
@@ -604,14 +608,18 @@ export const ItemSheetDragDropMixin = (BaseClass) =>
         const dropZones = this.element.querySelectorAll(
           DragDropHandler.CONFIG.ITEM.dropZoneSelector,
         );
-        const actionCardSheet = this.element.querySelector(".tab.embedded-items");
+        const actionCardSheet = this.element.querySelector(
+          ".tab.embedded-items",
+        );
 
         dropZones.forEach((zone) => {
           zone.classList.add(DragDropHandler.CONFIG.ITEM.dragOverClass);
         });
 
         if (actionCardSheet) {
-          actionCardSheet.classList.add(DragDropHandler.CONFIG.ITEM.dragActiveClass);
+          actionCardSheet.classList.add(
+            DragDropHandler.CONFIG.ITEM.dragActiveClass,
+          );
         }
       }
     }
@@ -912,10 +920,13 @@ export const ItemSheetDragDropMixin = (BaseClass) =>
       const supportedTypes = ["status", "gear", "feature"];
       if (!supportedTypes.includes(droppedItem.type)) {
         ui.notifications.warn(
-          game.i18n.format("EVENTIDE_RP_SYSTEM.Errors.ActionCardSelfEffectTypes", {
-            type: droppedItem.type,
-            supported: supportedTypes.join(", "),
-          }),
+          game.i18n.format(
+            "EVENTIDE_RP_SYSTEM.Errors.ActionCardSelfEffectTypes",
+            {
+              type: droppedItem.type,
+              supported: supportedTypes.join(", "),
+            },
+          ),
         );
         return false;
       }
@@ -933,7 +944,11 @@ export const ItemSheetDragDropMixin = (BaseClass) =>
         );
         return true;
       } catch (error) {
-        Logger.error("Failed to add self-effect to action card", error, "DRAG_DROP");
+        Logger.error(
+          "Failed to add self-effect to action card",
+          error,
+          "DRAG_DROP",
+        );
         ui.notifications.error(
           game.i18n.format(
             "EVENTIDE_RP_SYSTEM.Errors.FailedToAddSelfEffectToActionCard",

@@ -648,14 +648,22 @@ class GMControlManager {
       // Get player action approval flag
       const flag = MessageFlags.getPlayerActionApprovalFlag(message);
       if (!flag) {
-        ui.notifications.warn(game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.NoPlayerActionApproval"));
+        ui.notifications.warn(
+          game.i18n.localize(
+            "EVENTIDE_RP_SYSTEM.Errors.NoPlayerActionApproval",
+          ),
+        );
         Logger.methodExit("GMControlManager", "approvePlayerAction", false);
         return false;
       }
 
       // Check if already processed
       if (flag.processed) {
-        ui.notifications.warn(game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.ActionAlreadyProcessed"));
+        ui.notifications.warn(
+          game.i18n.localize(
+            "EVENTIDE_RP_SYSTEM.Errors.ActionAlreadyProcessed",
+          ),
+        );
         Logger.methodExit("GMControlManager", "approvePlayerAction", false);
         return false;
       }
@@ -672,29 +680,28 @@ class GMControlManager {
         await message.delete();
         Logger.info(
           "Auto-deleted processed player action approval message",
-          { 
-            messageId: message.id, 
-            approved, 
-            processedBy: game.user.name 
+          {
+            messageId: message.id,
+            approved,
+            processedBy: game.user.name,
           },
-          "GM_CONTROL"
+          "GM_CONTROL",
         );
       } catch (deleteError) {
         Logger.warn(
-          "Failed to auto-delete approval message", 
-          { 
+          "Failed to auto-delete approval message",
+          {
             error: deleteError.message,
-            messageId: message.id 
-          }, 
-          "GM_CONTROL"
+            messageId: message.id,
+          },
+          "GM_CONTROL",
         );
         // Don't fail the entire operation if deletion fails
       }
 
       // Notify the player of the result
-      const { notifyPlayerActionResult } = await import(
-        "./system-messages.mjs"
-      );
+      const { notifyPlayerActionResult } =
+        await import("./system-messages.mjs");
       await notifyPlayerActionResult(
         flag.playerId,
         flag.playerName,
@@ -709,7 +716,9 @@ class GMControlManager {
           // Get the actor
           const actor = game.actors.get(flag.actorId);
           if (!actor) {
-            ui.notifications.error(game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.UnableToFindActor"));
+            ui.notifications.error(
+              game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.UnableToFindActor"),
+            );
             Logger.methodExit("GMControlManager", "approvePlayerAction", false);
             return false;
           }
@@ -723,16 +732,17 @@ class GMControlManager {
             actionCard = new CONFIG.Item.documentClass(flag.actionCardData, {
               parent: actor,
             });
-            Logger.debug("Using stored action card data for transformation-sourced action", {
-              actionCardId: flag.actionCardId,
-              actionCardName: actionCard.name,
-            });
+            Logger.debug(
+              "Using stored action card data for transformation-sourced action",
+              {
+                actionCardId: flag.actionCardId,
+                actionCardName: actionCard.name,
+              },
+            );
           }
 
           if (!actionCard) {
-            ui.notifications.error(
-              "Unable to find action card for execution",
-            );
+            ui.notifications.error("Unable to find action card for execution");
             Logger.methodExit("GMControlManager", "approvePlayerAction", false);
             return false;
           }
@@ -795,7 +805,11 @@ class GMControlManager {
           }
         } catch (execError) {
           Logger.error("Failed to execute approved player action", execError);
-          ui.notifications.error(game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.FailedToExecuteAction"));
+          ui.notifications.error(
+            game.i18n.localize(
+              "EVENTIDE_RP_SYSTEM.Errors.FailedToExecuteAction",
+            ),
+          );
           Logger.methodExit("GMControlManager", "approvePlayerAction", false);
           return false;
         }
@@ -810,7 +824,9 @@ class GMControlManager {
       return true;
     } catch (error) {
       Logger.error("Failed to process player action approval", error);
-      ui.notifications.error(game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.FailedToProcessApproval"));
+      ui.notifications.error(
+        game.i18n.localize("EVENTIDE_RP_SYSTEM.Errors.FailedToProcessApproval"),
+      );
       Logger.methodExit("GMControlManager", "approvePlayerAction", false);
       return false;
     }

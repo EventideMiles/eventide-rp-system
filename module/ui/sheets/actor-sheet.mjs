@@ -625,13 +625,16 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
         visible: (target) => {
           if (!target.dataset.itemId) return false;
           const item = this.actor.items.get(target.dataset.itemId);
-          return item?.type === "actionCard" && item.system?.mode !== "savedDamage";
+          return (
+            item?.type === "actionCard" && item.system?.mode !== "savedDamage"
+          );
         },
         onClick: async (_event, target) => {
           const itemId = target.dataset.itemId;
           const item = this.actor.items.get(itemId);
           if (item?.type === "actionCard") {
-            const { MultiImageSelector } = await import("../popups/multi-image-selector.mjs");
+            const { MultiImageSelector } =
+              await import("../popups/multi-image-selector.mjs");
             const popup = new MultiImageSelector({ item });
             popup.render(true);
           }
@@ -751,8 +754,7 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
       content,
       ok: {
         label: game.i18n.localize("EVENTIDE_RP_SYSTEM.Forms.Buttons.Confirm"),
-        onClick: (event, button, _dialog) =>
-          button.form.elements.groupId.value,
+        onClick: (event, button, _dialog) => button.form.elements.groupId.value,
       },
       rejectClose: false,
       modal: true,
@@ -1243,7 +1245,11 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
         visible: (target) => {
           if (!target.dataset.itemId) return false;
           const item = this.actor.items.get(target.dataset.itemId);
-          return !!item && !item.system.equipped && item.system.skipBulkEquip === true;
+          return (
+            !!item &&
+            !item.system.equipped &&
+            item.system.skipBulkEquip === true
+          );
         },
         onClick: async (_event, target) => {
           const item = this.actor.items.get(target.dataset.itemId);
@@ -1258,7 +1264,11 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
         visible: (target) => {
           if (!target.dataset.itemId) return false;
           const item = this.actor.items.get(target.dataset.itemId);
-          return !!item && !item.system.equipped && item.system.skipBulkEquip !== true;
+          return (
+            !!item &&
+            !item.system.equipped &&
+            item.system.skipBulkEquip !== true
+          );
         },
         onClick: async (_event, target) => {
           const item = this.actor.items.get(target.dataset.itemId);
@@ -1454,9 +1464,8 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
    */
   static async _createBulkSavedDamageFromFolder(_event, _target) {
     try {
-      const { BulkSavedDamageCreator } = await import(
-        "../macros/bulk-saved-damage-creator.mjs"
-      );
+      const { BulkSavedDamageCreator } =
+        await import("../macros/bulk-saved-damage-creator.mjs");
       new BulkSavedDamageCreator({ actor: this.actor }).render(true);
     } catch (error) {
       Logger.error(
@@ -1476,11 +1485,7 @@ export class EventideRpSystemActorSheet extends ActorSheetAllMixins(
     try {
       RollHistory.forActor(this.actor).render(true);
     } catch (error) {
-      Logger.error(
-        "Failed to open Roll History dialog",
-        error,
-        "ACTOR_SHEET",
-      );
+      Logger.error("Failed to open Roll History dialog", error, "ACTOR_SHEET");
     }
   }
 

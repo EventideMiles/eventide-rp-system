@@ -198,15 +198,20 @@ export const ItemRollsMixin = (BaseClass) =>
       }
 
       // Get ability totals
-      const ability1Total = rollData.actor.abilities[rollData.roll.ability].total || 0;
-      const ability2Total = rollData.actor.abilities[rollData.roll.secondAbility].total || 0;
+      const ability1Total =
+        rollData.actor.abilities[rollData.roll.ability].total || 0;
+      const ability2Total =
+        rollData.actor.abilities[rollData.roll.secondAbility].total || 0;
 
       // Calculate average (rounded up)
       const averageAbility = Math.ceil((ability1Total + ability2Total) / 2);
 
       // Get combined dice adjustments from both abilities
-      const ability1DiceAdj = rollData.actor.abilities[rollData.roll.ability].diceAdjustments || {};
-      const ability2DiceAdj = rollData.actor.abilities[rollData.roll.secondAbility].diceAdjustments || {};
+      const ability1DiceAdj =
+        rollData.actor.abilities[rollData.roll.ability].diceAdjustments || {};
+      const ability2DiceAdj =
+        rollData.actor.abilities[rollData.roll.secondAbility].diceAdjustments ||
+        {};
       const itemDiceAdj = rollData.roll.diceAdjustments || {};
 
       const adjustments = calculateMixedRollAdjustments(
@@ -451,7 +456,6 @@ export const ItemRollsMixin = (BaseClass) =>
       Logger.methodExit("ItemRollsMixin", "_buildDiceFormula", formula);
       return formula;
     }
-
 
     /**
      * Validate if the item can perform rolls

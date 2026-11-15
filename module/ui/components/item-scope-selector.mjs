@@ -1,4 +1,7 @@
-import { ALL_SCOPES, SOURCE_SCOPES } from "../../helpers/item-source-collector.mjs";
+import {
+  ALL_SCOPES,
+  SOURCE_SCOPES,
+} from "../../helpers/item-source-collector.mjs";
 import { Logger } from "../../services/logger.mjs";
 
 const SCOPE_LABELS = {
@@ -30,7 +33,7 @@ export class ItemScopeSelector {
     this.onScopeChange = options.onScopeChange || (() => {});
 
     if (!this.parentActor) {
-      this.scopes = this.scopes.filter(s => s !== "thisCharacter");
+      this.scopes = this.scopes.filter((s) => s !== "thisCharacter");
     }
 
     this.currentScopes = [...this.scopes];
@@ -43,13 +46,23 @@ export class ItemScopeSelector {
 
   async _init() {
     if (!this.container) {
-      Logger.error("No container provided for ItemScopeSelector", null, "ItemScopeSelector");
+      Logger.error(
+        "No container provided for ItemScopeSelector",
+        null,
+        "ItemScopeSelector",
+      );
       return;
     }
 
-    const containerElement = this.container.nodeType ? this.container : this.container[0];
+    const containerElement = this.container.nodeType
+      ? this.container
+      : this.container[0];
     if (!containerElement) {
-      Logger.error("Invalid container for ItemScopeSelector", null, "ItemScopeSelector");
+      Logger.error(
+        "Invalid container for ItemScopeSelector",
+        null,
+        "ItemScopeSelector",
+      );
       return;
     }
 
@@ -58,7 +71,9 @@ export class ItemScopeSelector {
 
   _build(containerElement) {
     const availableScopes = this._getAvailableScopes();
-    const label = game.i18n.localize("EVENTIDE_RP_SYSTEM.Forms.ItemSelector.ScopeFilter");
+    const label = game.i18n.localize(
+      "EVENTIDE_RP_SYSTEM.Forms.ItemSelector.ScopeFilter",
+    );
 
     const wrapper = document.createElement("div");
     wrapper.className = "erps-item-scope-selector";
@@ -77,7 +92,8 @@ export class ItemScopeSelector {
       const scopeIcon = SCOPE_ICONS[scope] || "fas fa-circle";
 
       const toggleLabel = document.createElement("label");
-      toggleLabel.className = "erps-toggles erps-toggles--label-left erps-toggles--compact";
+      toggleLabel.className =
+        "erps-toggles erps-toggles--label-left erps-toggles--compact";
       toggleLabel.setAttribute("for", scopeId);
 
       const input = document.createElement("input");
@@ -135,7 +151,9 @@ export class ItemScopeSelector {
 
   _onChange(_event) {
     const newScopes = [];
-    const inputs = this.element.querySelectorAll(".erps-item-scope-selector__input");
+    const inputs = this.element.querySelectorAll(
+      ".erps-item-scope-selector__input",
+    );
 
     for (const input of inputs) {
       if (input.checked) {
@@ -157,7 +175,9 @@ export class ItemScopeSelector {
 
   setScopes(scopes) {
     this.currentScopes = [...scopes];
-    const inputs = this.element?.querySelectorAll(".erps-item-scope-selector__input");
+    const inputs = this.element?.querySelectorAll(
+      ".erps-item-scope-selector__input",
+    );
     if (!inputs) return;
 
     for (const input of inputs) {

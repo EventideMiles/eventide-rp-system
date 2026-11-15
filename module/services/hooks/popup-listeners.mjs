@@ -24,9 +24,11 @@ export const initPopupListeners = () => {
 const setupPopupRendering = () => {
   Hooks.on("renderApplicationV2", (app, html, _data) => {
     // Only process popup applications, not all ApplicationV2 instances
-    if (app.constructor.name.includes("Popup") || 
-        app.element?.classList?.contains("popup") ||
-        html?.querySelector?.(".erps-form__image")) {
+    if (
+      app.constructor.name.includes("Popup") ||
+      app.element?.classList?.contains("popup") ||
+      html?.querySelector?.(".erps-form__image")
+    ) {
       addPopupImageZoomFunctionality(html);
     }
   });
@@ -49,9 +51,10 @@ const addPopupImageZoomFunctionality = (html) => {
       event.stopPropagation();
 
       const imageSrc = image.src;
-      const imageAlt = image.alt || 
-                       image.closest('.erps-form')?.querySelector('[name="name"]')?.value || 
-                       'Popup form image';
+      const imageAlt =
+        image.alt ||
+        image.closest(".erps-form")?.querySelector('[name="name"]')?.value ||
+        "Popup form image";
 
       // Show the zoomed image
       ImageZoomService.showZoom(imageSrc, imageAlt);
@@ -59,10 +62,10 @@ const addPopupImageZoomFunctionality = (html) => {
 
     // Add title attribute for better UX
     if (!image.title) {
-      image.title = 'Click to enlarge';
+      image.title = "Click to enlarge";
     }
 
     // Add CSS class to indicate the image is clickable
-    image.classList.add('erps-form__image--zoomable');
+    image.classList.add("erps-form__image--zoomable");
   });
 };

@@ -48,7 +48,10 @@ export const ItemSheetCharacterEffectsMixin = (BaseClass) =>
       try {
         // Delegate to service for form parsing
         const characterEffects =
-          CharacterEffectsProcessor.parseCharacterEffectsForm(this.form, remove);
+          CharacterEffectsProcessor.parseCharacterEffectsForm(
+            this.form,
+            remove,
+          );
 
         // Delegate to service for effect processing (with extended modes)
         const changes = await CharacterEffectsProcessor.processEffectsToChanges(
@@ -74,13 +77,17 @@ export const ItemSheetCharacterEffectsMixin = (BaseClass) =>
           { _id: firstEffect._id, system: { changes } },
         );
 
-        Logger.info("Character effects updated successfully", {
-          itemName: this.item.name,
-          effectsCount: changes.length,
-          regularEffectsCount: characterEffects.regularEffects.length,
-          hiddenEffectsCount: characterEffects.hiddenEffects.length,
-          overrideEffectsCount: characterEffects.overrideEffects.length,
-        }, "CHARACTER_EFFECTS");
+        Logger.info(
+          "Character effects updated successfully",
+          {
+            itemName: this.item.name,
+            effectsCount: changes.length,
+            regularEffectsCount: characterEffects.regularEffects.length,
+            hiddenEffectsCount: characterEffects.hiddenEffects.length,
+            overrideEffectsCount: characterEffects.overrideEffects.length,
+          },
+          "CHARACTER_EFFECTS",
+        );
 
         Logger.methodExit(
           "ItemSheetCharacterEffectsMixin",
@@ -137,11 +144,15 @@ export const ItemSheetCharacterEffectsMixin = (BaseClass) =>
         await this._updateCharacterEffects({ newEffect });
         event.target.focus();
 
-        Logger.info("New character effect created", {
-          itemName: this.item.name,
-          effectType: type,
-          effectAbility: ability,
-        }, "CHARACTER_EFFECTS");
+        Logger.info(
+          "New character effect created",
+          {
+            itemName: this.item.name,
+            effectType: type,
+            effectAbility: ability,
+          },
+          "CHARACTER_EFFECTS",
+        );
 
         Logger.methodExit(
           "ItemSheetCharacterEffectsMixin",
@@ -191,11 +202,15 @@ export const ItemSheetCharacterEffectsMixin = (BaseClass) =>
 
         await this._updateCharacterEffects({ remove: { index, type } });
 
-        Logger.info("Character effect deleted", {
-          itemName: this.item.name,
-          effectIndex: index,
-          effectType: type,
-        }, "CHARACTER_EFFECTS");
+        Logger.info(
+          "Character effect deleted",
+          {
+            itemName: this.item.name,
+            effectIndex: index,
+            effectType: type,
+          },
+          "CHARACTER_EFFECTS",
+        );
 
         Logger.methodExit(
           "ItemSheetCharacterEffectsMixin",
@@ -237,7 +252,11 @@ export const ItemSheetCharacterEffectsMixin = (BaseClass) =>
           this.constructor._toggleEffectDisplay &&
           this.constructor !== ItemSheetCharacterEffectsMixin
         ) {
-          return this.constructor._toggleEffectDisplay.call(this, event, target);
+          return this.constructor._toggleEffectDisplay.call(
+            this,
+            event,
+            target,
+          );
         }
       }
 
@@ -252,7 +271,9 @@ export const ItemSheetCharacterEffectsMixin = (BaseClass) =>
       );
 
       try {
-        const showIcon = target.checked ? CONST.ACTIVE_EFFECT_SHOW_ICON.ALWAYS : CONST.ACTIVE_EFFECT_SHOW_ICON.NEVER;
+        const showIcon = target.checked
+          ? CONST.ACTIVE_EFFECT_SHOW_ICON.ALWAYS
+          : CONST.ACTIVE_EFFECT_SHOW_ICON.NEVER;
 
         // Delegate to service for effect creation/retrieval
         const firstEffect =
@@ -274,11 +295,15 @@ export const ItemSheetCharacterEffectsMixin = (BaseClass) =>
         );
         event.target.focus();
 
-        Logger.info("Effect display toggled", {
-          itemName: this.item.name,
-          displayEnabled: target.checked,
-          showIcon,
-        }, "CHARACTER_EFFECTS");
+        Logger.info(
+          "Effect display toggled",
+          {
+            itemName: this.item.name,
+            displayEnabled: target.checked,
+            showIcon,
+          },
+          "CHARACTER_EFFECTS",
+        );
 
         Logger.methodExit(
           "ItemSheetCharacterEffectsMixin",

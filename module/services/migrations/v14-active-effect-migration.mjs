@@ -49,12 +49,18 @@ export class V14ActiveEffectMigration {
       this.SETTING_KEY,
     );
     if (currentVersion === this.VERSION) {
-      Logger.debug("V14ActiveEffectMigration already completed", null, "MIGRATION");
+      Logger.debug(
+        "V14ActiveEffectMigration already completed",
+        null,
+        "MIGRATION",
+      );
       return;
     }
 
     Logger.info("Running V14 ActiveEffect migration...", null, "MIGRATION");
-    ui.notifications.info(game.i18n.localize("EVENTIDE_RP_SYSTEM.Migration.V14InProgress"));
+    ui.notifications.info(
+      game.i18n.localize("EVENTIDE_RP_SYSTEM.Migration.V14InProgress"),
+    );
 
     try {
       // Migrate all actors
@@ -79,7 +85,9 @@ export class V14ActiveEffectMigration {
       );
 
       Logger.info("V14 ActiveEffect migration complete", null, "MIGRATION");
-      ui.notifications.info(game.i18n.localize("EVENTIDE_RP_SYSTEM.Migration.V14Complete"));
+      ui.notifications.info(
+        game.i18n.localize("EVENTIDE_RP_SYSTEM.Migration.V14Complete"),
+      );
     } catch (error) {
       Logger.error("V14 ActiveEffect migration failed:", error, "MIGRATION");
       ui.notifications.error(
@@ -115,22 +123,34 @@ export class V14ActiveEffectMigration {
       // ========================================
       // STEP 1: Fix effects on actors and their owned items
       // ========================================
-      Logger.debug("Checking actor effects and actor-owned items for showIcon=1...", null, "MIGRATION");
+      Logger.debug(
+        "Checking actor effects and actor-owned items for showIcon=1...",
+        null,
+        "MIGRATION",
+      );
       for (const actor of game.actors) {
         try {
           const result = await this._fixActorEffectsShowIcon(actor);
-          if (result.actorEffects > 0 || result.ownedItemEffects > 0 || result.embeddedItemEffects > 0) {
+          if (
+            result.actorEffects > 0 ||
+            result.ownedItemEffects > 0 ||
+            result.embeddedItemEffects > 0
+          ) {
             actorEffectsFixed += result.actorEffects;
             actorOwnedItemEffectsFixed += result.ownedItemEffects;
             actorOwnedEmbeddedEffectsFixed += result.embeddedItemEffects;
             Logger.info(
               `Fixed ${result.actorEffects} actor effects, ${result.ownedItemEffects} owned item effects, and ${result.embeddedItemEffects} embedded effects for actor: ${actor.name}`,
               null,
-              "MIGRATION"
+              "MIGRATION",
             );
           }
         } catch (error) {
-          Logger.error(`Failed to fix effects on actor ${actor.name}:`, error, "MIGRATION");
+          Logger.error(
+            `Failed to fix effects on actor ${actor.name}:`,
+            error,
+            "MIGRATION",
+          );
         }
       }
 
@@ -147,11 +167,15 @@ export class V14ActiveEffectMigration {
             Logger.info(
               `Fixed ${result.topLevel} top-level and ${result.embedded} embedded effects on item: ${item.name}`,
               null,
-              "MIGRATION"
+              "MIGRATION",
             );
           }
         } catch (error) {
-          Logger.error(`Failed to fix effects on item ${item.name}:`, error, "MIGRATION");
+          Logger.error(
+            `Failed to fix effects on item ${item.name}:`,
+            error,
+            "MIGRATION",
+          );
         }
       }
 
@@ -165,7 +189,11 @@ export class V14ActiveEffectMigration {
         }
 
         try {
-          Logger.debug(`Processing compendium: ${pack.metadata.label}`, null, "MIGRATION");
+          Logger.debug(
+            `Processing compendium: ${pack.metadata.label}`,
+            null,
+            "MIGRATION",
+          );
           const documents = await pack.getDocuments();
 
           for (const doc of documents) {
@@ -177,37 +205,59 @@ export class V14ActiveEffectMigration {
                 Logger.info(
                   `Fixed ${result.topLevel} top-level and ${result.embedded} embedded effects in compendium document: ${doc.name}`,
                   null,
-                  "MIGRATION"
+                  "MIGRATION",
                 );
               }
             } catch (error) {
-              Logger.error(`Failed to fix effects in compendium document ${doc.name}:`, error, "MIGRATION");
+              Logger.error(
+                `Failed to fix effects in compendium document ${doc.name}:`,
+                error,
+                "MIGRATION",
+              );
             }
           }
         } catch (error) {
-          Logger.error(`Failed to process compendium ${pack.metadata.label}:`, error, "MIGRATION");
+          Logger.error(
+            `Failed to process compendium ${pack.metadata.label}:`,
+            error,
+            "MIGRATION",
+          );
         }
       }
 
       // ========================================
       // Summary
       // ========================================
-      totalFixed = actorEffectsFixed + actorOwnedItemEffectsFixed + actorOwnedEmbeddedEffectsFixed + worldItemEffectsFixed + embeddedItemEffectsFixed + compendiumEffectsFixed;
+      totalFixed =
+        actorEffectsFixed +
+        actorOwnedItemEffectsFixed +
+        actorOwnedEmbeddedEffectsFixed +
+        worldItemEffectsFixed +
+        embeddedItemEffectsFixed +
+        compendiumEffectsFixed;
       if (totalFixed > 0) {
         Logger.info(
           `showIcon=1 fix complete. Fixed ${totalFixed} total effects: ` +
-          `${actorEffectsFixed} actor effects, ` +
-          `${actorOwnedItemEffectsFixed} actor-owned item effects, ` +
-          `${actorOwnedEmbeddedEffectsFixed} actor-owned embedded item effects, ` +
-          `${worldItemEffectsFixed} world item effects, ` +
-          `${embeddedItemEffectsFixed} embedded item effects, ` +
-          `${compendiumEffectsFixed} compendium effects`,
+            `${actorEffectsFixed} actor effects, ` +
+            `${actorOwnedItemEffectsFixed} actor-owned item effects, ` +
+            `${actorOwnedEmbeddedEffectsFixed} actor-owned embedded item effects, ` +
+            `${worldItemEffectsFixed} world item effects, ` +
+            `${embeddedItemEffectsFixed} embedded item effects, ` +
+            `${compendiumEffectsFixed} compendium effects`,
           null,
-          "MIGRATION"
+          "MIGRATION",
         );
-        ui.notifications.info(game.i18n.format("EVENTIDE_RP_SYSTEM.Migration.V14FixedShowIcon", { count: totalFixed }));
+        ui.notifications.info(
+          game.i18n.format("EVENTIDE_RP_SYSTEM.Migration.V14FixedShowIcon", {
+            count: totalFixed,
+          }),
+        );
       } else {
-        Logger.debug("No showIcon=1 effects found that needed fixing", null, "MIGRATION");
+        Logger.debug(
+          "No showIcon=1 effects found that needed fixing",
+          null,
+          "MIGRATION",
+        );
       }
     } catch (error) {
       Logger.error("showIcon=1 fix migration failed:", error, "MIGRATION");
@@ -222,32 +272,40 @@ export class V14ActiveEffectMigration {
    * @private
    */
   static async _fixActorEffectsShowIcon(actor) {
-    const result = { actorEffects: 0, ownedItemEffects: 0, embeddedItemEffects: 0 };
+    const result = {
+      actorEffects: 0,
+      ownedItemEffects: 0,
+      embeddedItemEffects: 0,
+    };
     const effectsToUpdate = [];
 
     // ========================================
     // Fix effects directly on the actor
     // ========================================
     for (const effect of actor.effects) {
-      if (effect.showIcon === CONST.ACTIVE_EFFECT_SHOW_ICON.CONDITIONAL || effect.showIcon === undefined || effect.showIcon === null) {
+      if (
+        effect.showIcon === CONST.ACTIVE_EFFECT_SHOW_ICON.CONDITIONAL ||
+        effect.showIcon === undefined ||
+        effect.showIcon === null
+      ) {
         // Get the full effect data and update showIcon based on duration
         const effectData = effect.toObject();
-        const hadDuration = effect.duration && (
-          effect.duration.seconds ||
-          effect.duration.rounds ||
-          effect.duration.turns ||
-          effect.duration.startTime ||
-          effect.duration.value !== null
-        );
+        const hadDuration =
+          effect.duration &&
+          (effect.duration.seconds ||
+            effect.duration.rounds ||
+            effect.duration.turns ||
+            effect.duration.startTime ||
+            effect.duration.value !== null);
         effectData.showIcon = hadDuration
           ? CONST.ACTIVE_EFFECT_SHOW_ICON.ALWAYS
           : CONST.ACTIVE_EFFECT_SHOW_ICON.NEVER;
         effectsToUpdate.push(effectData);
         result.actorEffects++;
         Logger.debug(
-          `Found showIcon=${effect.showIcon} on actor effect: ${effect._id} (${effect.name || 'unnamed'}), setting to ${effectData.showIcon}`,
+          `Found showIcon=${effect.showIcon} on actor effect: ${effect._id} (${effect.name || "unnamed"}), setting to ${effectData.showIcon}`,
           null,
-          "MIGRATION"
+          "MIGRATION",
         );
       }
     }
@@ -255,9 +313,16 @@ export class V14ActiveEffectMigration {
     if (effectsToUpdate.length > 0) {
       // Delete all effects with showIcon=1 (CONDITIONAL) and recreate them with showIcon=0 (NEVER)
       // This is the most reliable way to ensure the update persists
-      await actor.deleteEmbeddedDocuments("ActiveEffect", effectsToUpdate.map(e => e._id));
+      await actor.deleteEmbeddedDocuments(
+        "ActiveEffect",
+        effectsToUpdate.map((e) => e._id),
+      );
       await actor.createEmbeddedDocuments("ActiveEffect", effectsToUpdate);
-      Logger.debug(`Fixed ${result.actorEffects} effects on actor: ${actor.name}`, null, "MIGRATION");
+      Logger.debug(
+        `Fixed ${result.actorEffects} effects on actor: ${actor.name}`,
+        null,
+        "MIGRATION",
+      );
     }
 
     // ========================================
@@ -272,11 +337,15 @@ export class V14ActiveEffectMigration {
           Logger.info(
             `Fixed ${itemResult.topLevel} top-level and ${itemResult.embedded} embedded effects on actor-owned item: ${item.name}`,
             null,
-            "MIGRATION"
+            "MIGRATION",
           );
         }
       } catch (error) {
-        Logger.error(`Failed to fix effects on actor-owned item ${item.name}:`, error, "MIGRATION");
+        Logger.error(
+          `Failed to fix effects on actor-owned item ${item.name}:`,
+          error,
+          "MIGRATION",
+        );
       }
     }
 
@@ -298,29 +367,37 @@ export class V14ActiveEffectMigration {
     // ========================================
     const effectsNeedingFix = [];
     for (const effect of item.effects) {
-      if (effect.showIcon === 1 || effect.showIcon === undefined || effect.showIcon === null) {
+      if (
+        effect.showIcon === 1 ||
+        effect.showIcon === undefined ||
+        effect.showIcon === null
+      ) {
         effectsNeedingFix.push(effect._id);
         result.topLevel++;
         Logger.debug(
-          `Found showIcon=${effect.showIcon} on actor-owned item effect: ${effect._id} (${effect.name || 'unnamed'}) on ${item.name}`,
+          `Found showIcon=${effect.showIcon} on actor-owned item effect: ${effect._id} (${effect.name || "unnamed"}) on ${item.name}`,
           null,
-          "MIGRATION"
+          "MIGRATION",
         );
       }
     }
 
     if (effectsNeedingFix.length > 0) {
       // Build the effects update array with full effect data
-      updates.effects = item.effects.map(effect => {
+      updates.effects = item.effects.map((effect) => {
         const effectData = effect.toObject();
-        if (effect.showIcon === 1 || effect.showIcon === undefined || effect.showIcon === null) {
-          const hadDuration = effect.duration && (
-            effect.duration.seconds ||
-            effect.duration.rounds ||
-            effect.duration.turns ||
-            effect.duration.startTime ||
-            effect.duration.value !== null
-          );
+        if (
+          effect.showIcon === 1 ||
+          effect.showIcon === undefined ||
+          effect.showIcon === null
+        ) {
+          const hadDuration =
+            effect.duration &&
+            (effect.duration.seconds ||
+              effect.duration.rounds ||
+              effect.duration.turns ||
+              effect.duration.startTime ||
+              effect.duration.value !== null);
           effectData.showIcon = hadDuration
             ? CONST.ACTIVE_EFFECT_SHOW_ICON.ALWAYS
             : CONST.ACTIVE_EFFECT_SHOW_ICON.NEVER;
@@ -344,10 +421,14 @@ export class V14ActiveEffectMigration {
       Logger.debug(
         `Updating actor-owned item ${item.name} with ${effectsNeedingFix.length} top-level and ${result.embedded} embedded fixes`,
         null,
-        "MIGRATION"
+        "MIGRATION",
       );
       await item.update(updates);
-      Logger.debug(`Successfully updated actor-owned item: ${item.name}`, null, "MIGRATION");
+      Logger.debug(
+        `Successfully updated actor-owned item: ${item.name}`,
+        null,
+        "MIGRATION",
+      );
     }
 
     return result;
@@ -368,29 +449,37 @@ export class V14ActiveEffectMigration {
     // ========================================
     const effectsNeedingFix = [];
     for (const effect of item.effects) {
-      if (effect.showIcon === 1 || effect.showIcon === undefined || effect.showIcon === null) {
+      if (
+        effect.showIcon === 1 ||
+        effect.showIcon === undefined ||
+        effect.showIcon === null
+      ) {
         effectsNeedingFix.push(effect._id);
         result.topLevel++;
         Logger.debug(
-          `Found showIcon=${effect.showIcon} on item effect: ${effect._id} (${effect.name || 'unnamed'}) on ${item.name}`,
+          `Found showIcon=${effect.showIcon} on item effect: ${effect._id} (${effect.name || "unnamed"}) on ${item.name}`,
           null,
-          "MIGRATION"
+          "MIGRATION",
         );
       }
     }
 
     if (effectsNeedingFix.length > 0) {
       // Build the effects update array with full effect data
-      updates.effects = item.effects.map(effect => {
+      updates.effects = item.effects.map((effect) => {
         const effectData = effect.toObject();
-        if (effect.showIcon === 1 || effect.showIcon === undefined || effect.showIcon === null) {
-          const hadDuration = effect.duration && (
-            effect.duration.seconds ||
-            effect.duration.rounds ||
-            effect.duration.turns ||
-            effect.duration.startTime ||
-            effect.duration.value !== null
-          );
+        if (
+          effect.showIcon === 1 ||
+          effect.showIcon === undefined ||
+          effect.showIcon === null
+        ) {
+          const hadDuration =
+            effect.duration &&
+            (effect.duration.seconds ||
+              effect.duration.rounds ||
+              effect.duration.turns ||
+              effect.duration.startTime ||
+              effect.duration.value !== null);
           effectData.showIcon = hadDuration
             ? CONST.ACTIVE_EFFECT_SHOW_ICON.ALWAYS
             : CONST.ACTIVE_EFFECT_SHOW_ICON.NEVER;
@@ -414,10 +503,14 @@ export class V14ActiveEffectMigration {
       Logger.debug(
         `Updating item ${item.name} with ${effectsNeedingFix.length} top-level and ${result.embedded} embedded fixes`,
         null,
-        "MIGRATION"
+        "MIGRATION",
       );
       await item.update(updates);
-      Logger.debug(`Successfully updated item: ${item.name}`, null, "MIGRATION");
+      Logger.debug(
+        `Successfully updated item: ${item.name}`,
+        null,
+        "MIGRATION",
+      );
     }
 
     return result;
@@ -438,29 +531,37 @@ export class V14ActiveEffectMigration {
     // ========================================
     const effectsNeedingFix = [];
     for (const effect of doc.effects) {
-      if (effect.showIcon === 1 || effect.showIcon === undefined || effect.showIcon === null) {
+      if (
+        effect.showIcon === 1 ||
+        effect.showIcon === undefined ||
+        effect.showIcon === null
+      ) {
         effectsNeedingFix.push(effect._id);
         result.topLevel++;
         Logger.debug(
-          `Found showIcon=${effect.showIcon} on compendium effect: ${effect._id} (${effect.name || 'unnamed'}) in ${doc.name}`,
+          `Found showIcon=${effect.showIcon} on compendium effect: ${effect._id} (${effect.name || "unnamed"}) in ${doc.name}`,
           null,
-          "MIGRATION"
+          "MIGRATION",
         );
       }
     }
 
     if (effectsNeedingFix.length > 0) {
       // Build the effects update array with full effect data
-      updates.effects = doc.effects.map(effect => {
+      updates.effects = doc.effects.map((effect) => {
         const effectData = effect.toObject();
-        if (effect.showIcon === 1 || effect.showIcon === undefined || effect.showIcon === null) {
-          const hadDuration = effect.duration && (
-            effect.duration.seconds ||
-            effect.duration.rounds ||
-            effect.duration.turns ||
-            effect.duration.startTime ||
-            effect.duration.value !== null
-          );
+        if (
+          effect.showIcon === 1 ||
+          effect.showIcon === undefined ||
+          effect.showIcon === null
+        ) {
+          const hadDuration =
+            effect.duration &&
+            (effect.duration.seconds ||
+              effect.duration.rounds ||
+              effect.duration.turns ||
+              effect.duration.startTime ||
+              effect.duration.value !== null);
           effectData.showIcon = hadDuration
             ? CONST.ACTIVE_EFFECT_SHOW_ICON.ALWAYS
             : CONST.ACTIVE_EFFECT_SHOW_ICON.NEVER;
@@ -485,13 +586,17 @@ export class V14ActiveEffectMigration {
       Logger.debug(
         `Updating compendium document ${doc.name} with ${effectsNeedingFix.length} top-level and ${result.embedded} embedded fixes`,
         null,
-        "MIGRATION"
+        "MIGRATION",
       );
 
       // For compendium documents, we need to update through the document's update method
       // The document is already loaded from the compendium, so we can call update directly
       await doc.update(updates);
-      Logger.debug(`Successfully updated compendium document: ${doc.name}`, null, "MIGRATION");
+      Logger.debug(
+        `Successfully updated compendium document: ${doc.name}`,
+        null,
+        "MIGRATION",
+      );
     }
 
     return result;
@@ -579,42 +684,61 @@ export class V14ActiveEffectMigration {
 
     // Count effects array changes
     if (original.effects && updated.effects) {
-      for (let i = 0; i < original.effects.length && i < updated.effects.length; i++) {
-        if (original.effects[i].showIcon === 1 && updated.effects[i].showIcon === 0) {
+      for (
+        let i = 0;
+        i < original.effects.length && i < updated.effects.length;
+        i++
+      ) {
+        if (
+          original.effects[i].showIcon === 1 &&
+          updated.effects[i].showIcon === 0
+        ) {
           count++;
         }
       }
     }
 
     // Recursively count in nested embedded items
-    if (original.system?.embeddedCombatPowers && updated.system?.embeddedCombatPowers) {
+    if (
+      original.system?.embeddedCombatPowers &&
+      updated.system?.embeddedCombatPowers
+    ) {
       count += this._countEffectsFixedInArray(
         original.system.embeddedCombatPowers,
-        updated.system.embeddedCombatPowers
+        updated.system.embeddedCombatPowers,
       );
     }
-    if (original.system?.embeddedActionCards && updated.system?.embeddedActionCards) {
+    if (
+      original.system?.embeddedActionCards &&
+      updated.system?.embeddedActionCards
+    ) {
       count += this._countEffectsFixedInArray(
         original.system.embeddedActionCards,
-        updated.system.embeddedActionCards
+        updated.system.embeddedActionCards,
       );
     }
-    if (original.system?.embeddedStatusEffects && updated.system?.embeddedStatusEffects) {
+    if (
+      original.system?.embeddedStatusEffects &&
+      updated.system?.embeddedStatusEffects
+    ) {
       count += this._countEffectsFixedInArray(
         original.system.embeddedStatusEffects,
-        updated.system.embeddedStatusEffects
+        updated.system.embeddedStatusEffects,
       );
     }
-    if (original.system?.embeddedTransformations && updated.system?.embeddedTransformations) {
+    if (
+      original.system?.embeddedTransformations &&
+      updated.system?.embeddedTransformations
+    ) {
       count += this._countEffectsFixedInArray(
         original.system.embeddedTransformations,
-        updated.system.embeddedTransformations
+        updated.system.embeddedTransformations,
       );
     }
     if (original.system?.embeddedItem && updated.system?.embeddedItem) {
       count += this._countEffectsFixedInItem(
         original.system.embeddedItem,
-        updated.system.embeddedItem
+        updated.system.embeddedItem,
       );
     }
 
@@ -636,7 +760,7 @@ export class V14ActiveEffectMigration {
     if (item.type === "transformation") {
       if (item.system.embeddedCombatPowers?.length > 0) {
         const fixedPowers = item.system.embeddedCombatPowers.map((power) =>
-          this._fixEmbeddedItemEffectsShowIcon(power)
+          this._fixEmbeddedItemEffectsShowIcon(power),
         );
         updates["system.embeddedCombatPowers"] = fixedPowers;
         hasChanges = true;
@@ -644,7 +768,7 @@ export class V14ActiveEffectMigration {
 
       if (item.system.embeddedActionCards?.length > 0) {
         const fixedCards = item.system.embeddedActionCards.map((card) =>
-          this._fixEmbeddedItemEffectsShowIcon(card)
+          this._fixEmbeddedItemEffectsShowIcon(card),
         );
         updates["system.embeddedActionCards"] = fixedCards;
         hasChanges = true;
@@ -666,9 +790,12 @@ export class V14ActiveEffectMigration {
       }
 
       // Fix embedded item (can be transformation)
-      if (item.system.embeddedItem && Object.keys(item.system.embeddedItem).length > 0) {
+      if (
+        item.system.embeddedItem &&
+        Object.keys(item.system.embeddedItem).length > 0
+      ) {
         updates["system.embeddedItem"] = this._fixEmbeddedItemEffectsShowIcon(
-          item.system.embeddedItem
+          item.system.embeddedItem,
         );
         hasChanges = true;
       }
@@ -676,7 +803,7 @@ export class V14ActiveEffectMigration {
       // Fix embedded status effects
       if (item.system.embeddedStatusEffects?.length > 0) {
         const fixedStatuses = item.system.embeddedStatusEffects.map((status) =>
-          this._fixEmbeddedItemEffectsShowIcon(status)
+          this._fixEmbeddedItemEffectsShowIcon(status),
         );
         updates["system.embeddedStatusEffects"] = fixedStatuses;
         hasChanges = true;
@@ -684,8 +811,8 @@ export class V14ActiveEffectMigration {
 
       // Fix embedded transformations
       if (item.system.embeddedTransformations?.length > 0) {
-        const fixedTransformations = item.system.embeddedTransformations.map((trans) =>
-          this._fixEmbeddedItemEffectsShowIcon(trans)
+        const fixedTransformations = item.system.embeddedTransformations.map(
+          (trans) => this._fixEmbeddedItemEffectsShowIcon(trans),
         );
         updates["system.embeddedTransformations"] = fixedTransformations;
         hasChanges = true;
@@ -709,7 +836,6 @@ export class V14ActiveEffectMigration {
 
     const fixedItem = foundry.utils.deepClone(embeddedItem);
 
-
     // Fix effects array if present
     if (Array.isArray(fixedItem.effects)) {
       fixedItem.effects = fixedItem.effects.map((effect) => {
@@ -717,21 +843,25 @@ export class V14ActiveEffectMigration {
         // - Effects with showIcon === 1 (V13 CONDITIONAL) → migrate based on duration
         // - Effects with showIcon undefined/null (missing) → set default based on duration
         // - Effects with showIcon 0 or 2 → already correct, leave as-is
-        if (effect.showIcon === undefined || effect.showIcon === null || effect.showIcon === 1) {
+        if (
+          effect.showIcon === undefined ||
+          effect.showIcon === null ||
+          effect.showIcon === 1
+        ) {
           // In V13, CONDITIONAL (showIcon: 1) meant "show icon if duration is set"
           // For missing showIcon, we apply the same logic to preserve user intent
           // Check if this effect had a duration
           // Handle BOTH V13 format (seconds, rounds, turns, startTime) AND
           // V14 format (value not null) - in case of partial migration
-          const hadDuration = effect.duration && (
+          const hadDuration =
+            effect.duration &&
             // V13 format
-            effect.duration.seconds ||
-            effect.duration.rounds ||
-            effect.duration.turns ||
-            effect.duration.startTime ||
-            // V14 format - value is set (not null/undefined)
-            effect.duration.value !== null
-          );
+            (effect.duration.seconds ||
+              effect.duration.rounds ||
+              effect.duration.turns ||
+              effect.duration.startTime ||
+              // V14 format - value is set (not null/undefined)
+              effect.duration.value !== null);
 
           // If had duration, user intended icon to show → ALWAYS (2)
           // If no duration (permanent), user didn't intend icon to show → NEVER (0)
@@ -748,36 +878,43 @@ export class V14ActiveEffectMigration {
     // Handle nested embedded items in transformations
     if (fixedItem.type === "transformation") {
       if (Array.isArray(fixedItem.system?.embeddedCombatPowers)) {
-        fixedItem.system.embeddedCombatPowers = fixedItem.system.embeddedCombatPowers.map(
-          (power) => this._fixEmbeddedItemEffectsShowIcon(power)
-        );
+        fixedItem.system.embeddedCombatPowers =
+          fixedItem.system.embeddedCombatPowers.map((power) =>
+            this._fixEmbeddedItemEffectsShowIcon(power),
+          );
       }
 
       if (Array.isArray(fixedItem.system?.embeddedActionCards)) {
-        fixedItem.system.embeddedActionCards = fixedItem.system.embeddedActionCards.map(
-          (card) => this._fixEmbeddedItemEffectsShowIcon(card)
-        );
+        fixedItem.system.embeddedActionCards =
+          fixedItem.system.embeddedActionCards.map((card) =>
+            this._fixEmbeddedItemEffectsShowIcon(card),
+          );
       }
     }
 
     // Handle nested embedded items in action cards
     if (fixedItem.type === "actionCard") {
-      if (fixedItem.system?.embeddedItem && Object.keys(fixedItem.system.embeddedItem).length > 0) {
+      if (
+        fixedItem.system?.embeddedItem &&
+        Object.keys(fixedItem.system.embeddedItem).length > 0
+      ) {
         fixedItem.system.embeddedItem = this._fixEmbeddedItemEffectsShowIcon(
-          fixedItem.system.embeddedItem
+          fixedItem.system.embeddedItem,
         );
       }
 
       if (Array.isArray(fixedItem.system?.embeddedStatusEffects)) {
-        fixedItem.system.embeddedStatusEffects = fixedItem.system.embeddedStatusEffects.map(
-          (status) => this._fixEmbeddedItemEffectsShowIcon(status)
-        );
+        fixedItem.system.embeddedStatusEffects =
+          fixedItem.system.embeddedStatusEffects.map((status) =>
+            this._fixEmbeddedItemEffectsShowIcon(status),
+          );
       }
 
       if (Array.isArray(fixedItem.system?.embeddedTransformations)) {
-        fixedItem.system.embeddedTransformations = fixedItem.system.embeddedTransformations.map(
-          (trans) => this._fixEmbeddedItemEffectsShowIcon(trans)
-        );
+        fixedItem.system.embeddedTransformations =
+          fixedItem.system.embeddedTransformations.map((trans) =>
+            this._fixEmbeddedItemEffectsShowIcon(trans),
+          );
       }
     }
 
@@ -825,7 +962,10 @@ export class V14ActiveEffectMigration {
 
     // Migrate embedded effects
     for (const effect of item.effects) {
-      const effectUpdates = this._migrateEffectData(effect.toObject(), item.type);
+      const effectUpdates = this._migrateEffectData(
+        effect.toObject(),
+        item.type,
+      );
       if (effectUpdates) {
         if (!updates.effects) updates.effects = [];
         updates.effects.push({ _id: effect._id, ...effectUpdates });
@@ -858,7 +998,7 @@ export class V14ActiveEffectMigration {
       // Migrate embedded combat powers
       if (item.system.embeddedCombatPowers?.length > 0) {
         const migratedPowers = item.system.embeddedCombatPowers.map((power) =>
-          this._migrateEmbeddedItem(power, "combatPower")
+          this._migrateEmbeddedItem(power, "combatPower"),
         );
         updates["system.embeddedCombatPowers"] = migratedPowers;
       }
@@ -866,7 +1006,7 @@ export class V14ActiveEffectMigration {
       // Migrate embedded action cards
       if (item.system.embeddedActionCards?.length > 0) {
         const migratedCards = item.system.embeddedActionCards.map((card) =>
-          this._migrateEmbeddedItem(card, "actionCard")
+          this._migrateEmbeddedItem(card, "actionCard"),
         );
         updates["system.embeddedActionCards"] = migratedCards;
       }
@@ -874,25 +1014,28 @@ export class V14ActiveEffectMigration {
 
     if (item.type === "actionCard") {
       // Migrate single embedded item (can be a transformation)
-      if (item.system.embeddedItem && Object.keys(item.system.embeddedItem).length > 0) {
+      if (
+        item.system.embeddedItem &&
+        Object.keys(item.system.embeddedItem).length > 0
+      ) {
         updates["system.embeddedItem"] = this._migrateEmbeddedItem(
           item.system.embeddedItem,
-          item.system.embeddedItem.type || "gear"
+          item.system.embeddedItem.type || "gear",
         );
       }
 
       // Migrate embedded status effects
       if (item.system.embeddedStatusEffects?.length > 0) {
-        const migratedStatuses = item.system.embeddedStatusEffects.map((status) =>
-          this._migrateEmbeddedItem(status, "status")
+        const migratedStatuses = item.system.embeddedStatusEffects.map(
+          (status) => this._migrateEmbeddedItem(status, "status"),
         );
         updates["system.embeddedStatusEffects"] = migratedStatuses;
       }
 
       // Migrate embedded transformations
       if (item.system.embeddedTransformations?.length > 0) {
-        const migratedTransformations = item.system.embeddedTransformations.map((trans) =>
-          this._migrateEmbeddedItem(trans, "transformation")
+        const migratedTransformations = item.system.embeddedTransformations.map(
+          (trans) => this._migrateEmbeddedItem(trans, "transformation"),
         );
         updates["system.embeddedTransformations"] = migratedTransformations;
       }
@@ -928,41 +1071,48 @@ export class V14ActiveEffectMigration {
     if (itemType === "transformation") {
       // Migrate nested combat powers
       if (Array.isArray(migratedItem.system?.embeddedCombatPowers)) {
-        migratedItem.system.embeddedCombatPowers = migratedItem.system.embeddedCombatPowers.map(
-          (power) => this._migrateEmbeddedItem(power, "combatPower")
-        );
+        migratedItem.system.embeddedCombatPowers =
+          migratedItem.system.embeddedCombatPowers.map((power) =>
+            this._migrateEmbeddedItem(power, "combatPower"),
+          );
       }
 
       // Migrate nested action cards
       if (Array.isArray(migratedItem.system?.embeddedActionCards)) {
-        migratedItem.system.embeddedActionCards = migratedItem.system.embeddedActionCards.map(
-          (card) => this._migrateEmbeddedItem(card, "actionCard")
-        );
+        migratedItem.system.embeddedActionCards =
+          migratedItem.system.embeddedActionCards.map((card) =>
+            this._migrateEmbeddedItem(card, "actionCard"),
+          );
       }
     }
 
     // Handle nested embedded items in action cards
     if (itemType === "actionCard") {
       // Migrate nested embedded item (can be a transformation)
-      if (migratedItem.system?.embeddedItem && Object.keys(migratedItem.system.embeddedItem).length > 0) {
+      if (
+        migratedItem.system?.embeddedItem &&
+        Object.keys(migratedItem.system.embeddedItem).length > 0
+      ) {
         migratedItem.system.embeddedItem = this._migrateEmbeddedItem(
           migratedItem.system.embeddedItem,
-          migratedItem.system.embeddedItem.type || "gear"
+          migratedItem.system.embeddedItem.type || "gear",
         );
       }
 
       // Migrate nested status effects
       if (Array.isArray(migratedItem.system?.embeddedStatusEffects)) {
-        migratedItem.system.embeddedStatusEffects = migratedItem.system.embeddedStatusEffects.map(
-          (status) => this._migrateEmbeddedItem(status, "status")
-        );
+        migratedItem.system.embeddedStatusEffects =
+          migratedItem.system.embeddedStatusEffects.map((status) =>
+            this._migrateEmbeddedItem(status, "status"),
+          );
       }
 
       // Migrate nested transformations
       if (Array.isArray(migratedItem.system?.embeddedTransformations)) {
-        migratedItem.system.embeddedTransformations = migratedItem.system.embeddedTransformations.map(
-          (trans) => this._migrateEmbeddedItem(trans, "transformation")
-        );
+        migratedItem.system.embeddedTransformations =
+          migratedItem.system.embeddedTransformations.map((trans) =>
+            this._migrateEmbeddedItem(trans, "transformation"),
+          );
       }
     }
 
@@ -1008,7 +1158,7 @@ export class V14ActiveEffectMigration {
    */
   static _getShowIconForItemType(itemType) {
     // These types should NEVER show icons - not user-controllable
-    const neverTypes = ['actionCard', 'combatPower', 'transformation'];
+    const neverTypes = ["actionCard", "combatPower", "transformation"];
     if (neverTypes.includes(itemType)) {
       return CONST?.ACTIVE_EFFECT_SHOW_ICON?.NEVER ?? 0;
     }
@@ -1040,7 +1190,7 @@ export class V14ActiveEffectMigration {
     // V14: Add `phase` field to all changes
     // Note: In v14, changes moved from top-level to system.changes
     // We read from either location (for backward compatibility) and write to system.changes
-    const oldChanges = effect.changes || (effect.system?.changes) || [];
+    const oldChanges = effect.changes || effect.system?.changes || [];
     if (Array.isArray(oldChanges) && oldChanges.length > 0) {
       const migratedChanges = oldChanges.map((change) => {
         // Only add phase if not already present
@@ -1051,7 +1201,10 @@ export class V14ActiveEffectMigration {
       });
       // Only update if we made changes
       if (JSON.stringify(migratedChanges) !== JSON.stringify(oldChanges)) {
-        updates["system"] = { ...(effect.system || {}), changes: migratedChanges };
+        updates["system"] = {
+          ...(effect.system || {}),
+          changes: migratedChanges,
+        };
       }
     }
 
@@ -1102,7 +1255,7 @@ export class V14ActiveEffectMigration {
     // V14 showIcon values: 0 = NEVER, 1 = HOVER (transitional from v13), 2 = ALWAYS
     // Value 1 (HOVER) from v13 should always be converted to 0 (NEVER)
     if (itemType) {
-      const neverTypes = ['actionCard', 'combatPower', 'transformation'];
+      const neverTypes = ["actionCard", "combatPower", "transformation"];
       if (neverTypes.includes(itemType)) {
         // Non-user-controllable types always get NEVER (0)
         if (effect.showIcon !== 0) {
@@ -1111,17 +1264,21 @@ export class V14ActiveEffectMigration {
       } else {
         // User-controllable types (status, feature, gear)
         // Handle showIcon=1 (CONDITIONAL) and missing values based on duration
-        if (effect.showIcon === undefined || effect.showIcon === null || effect.showIcon === 1) {
-          const hadDuration = effect.duration && (
-            effect.duration.seconds ||
-            effect.duration.rounds ||
-            effect.duration.turns ||
-            effect.duration.startTime ||
-            effect.duration.value !== null
-          );
+        if (
+          effect.showIcon === undefined ||
+          effect.showIcon === null ||
+          effect.showIcon === 1
+        ) {
+          const hadDuration =
+            effect.duration &&
+            (effect.duration.seconds ||
+              effect.duration.rounds ||
+              effect.duration.turns ||
+              effect.duration.startTime ||
+              effect.duration.value !== null);
           updates["showIcon"] = hadDuration
-            ? CONST?.ACTIVE_EFFECT_SHOW_ICON?.ALWAYS ?? 2
-            : CONST?.ACTIVE_EFFECT_SHOW_ICON?.NEVER ?? 0;
+            ? (CONST?.ACTIVE_EFFECT_SHOW_ICON?.ALWAYS ?? 2)
+            : (CONST?.ACTIVE_EFFECT_SHOW_ICON?.NEVER ?? 0);
         }
       }
     } else {

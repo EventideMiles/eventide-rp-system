@@ -34,7 +34,10 @@ export const ContextMenuMixin = (BaseClass) =>
       orphanedStyles.forEach((style) => {
         // Check if the style belongs to a sheet that still exists
         const styleId = style.id;
-        const sheetId = styleId.replace("erps-context-menu-scrollbar-hide-", "");
+        const sheetId = styleId.replace(
+          "erps-context-menu-scrollbar-hide-",
+          "",
+        );
 
         // If this isn't our style, check if the owning sheet still exists
         if (sheetId !== this.id.toString()) {
@@ -169,11 +172,8 @@ export const ContextMenuMixin = (BaseClass) =>
           window.setTimeout(() => {
             // Restore all overflow values
             if (this._overflowContainers) {
-              for (const {
-                element,
-                overflow,
-                overflowY,
-              } of this._overflowContainers) {
+              for (const { element, overflow, overflowY } of this
+                ._overflowContainers) {
                 element.style.overflow = overflow;
                 element.style.overflowY = overflowY;
               }
@@ -241,7 +241,8 @@ export const ContextMenuMixin = (BaseClass) =>
 
       // Restore overflow values if they exist
       if (this._overflowContainers) {
-        for (const { element, overflow, overflowY } of this._overflowContainers) {
+        for (const { element, overflow, overflowY } of this
+          ._overflowContainers) {
           element.style.overflow = overflow;
           element.style.overflowY = overflowY;
         }

@@ -31,19 +31,19 @@ global.foundry.abstract = global.foundry.abstract || {};
 global.foundry.abstract.TypeDataModel = MockTypeDataModel;
 
 // Import the module under test
-import EventideRpSystemDataModel from '../../../module/data/base-model.mjs';
+import EventideRpSystemDataModel from "../../../module/data/base-model.mjs";
 
-describe('EventideRpSystemDataModel', () => {
-  describe('toPlainObject()', () => {
-    test('should return a plain object with spread operator', () => {
+describe("EventideRpSystemDataModel", () => {
+  describe("toPlainObject()", () => {
+    test("should return a plain object with spread operator", () => {
       // Create a data model instance with test data
       const testData = {
-        name: 'Test Model',
+        name: "Test Model",
         value: 42,
         nested: {
-          key: 'value',
-          array: [1, 2, 3]
-        }
+          key: "value",
+          array: [1, 2, 3],
+        },
       };
 
       const model = new EventideRpSystemDataModel(testData);
@@ -53,55 +53,55 @@ describe('EventideRpSystemDataModel', () => {
 
       // Verify it returns an object
       expect(result).toBeDefined();
-      expect(typeof result).toBe('object');
+      expect(typeof result).toBe("object");
     });
 
-    test('should return an object even for empty data', () => {
+    test("should return an object even for empty data", () => {
       const model = new EventideRpSystemDataModel({});
 
       const result = model.toPlainObject();
 
       expect(result).toBeDefined();
-      expect(typeof result).toBe('object');
+      expect(typeof result).toBe("object");
     });
 
-    test('should return an object for null data', () => {
+    test("should return an object for null data", () => {
       const model = new EventideRpSystemDataModel(null);
 
       const result = model.toPlainObject();
 
       expect(result).toBeDefined();
-      expect(typeof result).toBe('object');
+      expect(typeof result).toBe("object");
     });
 
-    test('should return an object for undefined data', () => {
+    test("should return an object for undefined data", () => {
       const model = new EventideRpSystemDataModel(undefined);
 
       const result = model.toPlainObject();
 
       expect(result).toBeDefined();
-      expect(typeof result).toBe('object');
+      expect(typeof result).toBe("object");
     });
 
-    test('should handle complex nested data', () => {
+    test("should handle complex nested data", () => {
       const complexData = {
         level1: {
           level2: {
             level3: {
-              value: 'deep',
-              array: [{ id: 1 }, { id: 2 }]
-            }
-          }
+              value: "deep",
+              array: [{ id: 1 }, { id: 2 }],
+            },
+          },
         },
-        items: ['a', 'b', 'c'],
-        count: 10
+        items: ["a", "b", "c"],
+        count: 10,
       };
 
       const model = new EventideRpSystemDataModel(complexData);
       const result = model.toPlainObject();
 
       expect(result).toBeDefined();
-      expect(typeof result).toBe('object');
+      expect(typeof result).toBe("object");
     });
   });
 });

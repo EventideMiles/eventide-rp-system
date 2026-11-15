@@ -23,7 +23,13 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
    * @param {boolean} [isEffect=false] Whether this is an embedded effect (vs main embedded item).
    * @param {boolean} [isSelfEffect=false] Whether this is a self-effect (saves to embeddedSelfEffects).
    */
-  constructor(itemData, parentItem, options = {}, isEffect = false, isSelfEffect = false) {
+  constructor(
+    itemData,
+    parentItem,
+    options = {},
+    isEffect = false,
+    isSelfEffect = false,
+  ) {
     // Create the temporary item using static method to avoid 'this' before super()
     const tempItem = EmbeddedItemSheet._createTempItem(
       itemData,
@@ -129,7 +135,7 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
       img: tempItem.img,
       type: "base",
       system: {
-        changes: []
+        changes: [],
       },
       disabled: false,
       showIcon: CONST.ACTIVE_EFFECT_SHOW_ICON.ALWAYS, // V14: 0 = don't show, 2 = show on token
@@ -522,7 +528,11 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
           foundry.utils.setProperty(powerData, attr, path);
 
           // Issue #127: Sync active effect images when item image is updated
-          if (attr === "img" && powerData.effects && Array.isArray(powerData.effects)) {
+          if (
+            attr === "img" &&
+            powerData.effects &&
+            Array.isArray(powerData.effects)
+          ) {
             for (const activeEffect of powerData.effects) {
               activeEffect.img = path;
             }
@@ -562,7 +572,11 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
           foundry.utils.setProperty(selfEffectData, attr, path);
 
           // Issue #127: Sync active effect images when item image is updated
-          if (attr === "img" && selfEffectData.effects && Array.isArray(selfEffectData.effects)) {
+          if (
+            attr === "img" &&
+            selfEffectData.effects &&
+            Array.isArray(selfEffectData.effects)
+          ) {
             for (const activeEffect of selfEffectData.effects) {
               activeEffect.img = path;
             }
@@ -604,7 +618,11 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
           foundry.utils.setProperty(effectData, attr, path);
 
           // Issue #127: Sync active effect images when item image is updated
-          if (attr === "img" && effectData.effects && Array.isArray(effectData.effects)) {
+          if (
+            attr === "img" &&
+            effectData.effects &&
+            Array.isArray(effectData.effects)
+          ) {
             for (const activeEffect of effectData.effects) {
               activeEffect.img = path;
             }
@@ -684,7 +702,11 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
           foundry.utils.setProperty(itemData, attr, path);
 
           // Issue #127: Sync active effect images when item image is updated
-          if (attr === "img" && itemData.effects && Array.isArray(itemData.effects)) {
+          if (
+            attr === "img" &&
+            itemData.effects &&
+            Array.isArray(itemData.effects)
+          ) {
             for (const activeEffect of itemData.effects) {
               activeEffect.img = path;
             }
@@ -826,7 +848,9 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
    * @private
    */
   static _toggleEffectDisplay(event, target) {
-    const showIcon = target.checked ? CONST.ACTIVE_EFFECT_SHOW_ICON.ALWAYS : CONST.ACTIVE_EFFECT_SHOW_ICON.NEVER;
+    const showIcon = target.checked
+      ? CONST.ACTIVE_EFFECT_SHOW_ICON.ALWAYS
+      : CONST.ACTIVE_EFFECT_SHOW_ICON.NEVER;
 
     const firstEffect = this.document.effects.contents[0];
 
@@ -905,10 +929,9 @@ export class EmbeddedItemSheet extends EmbeddedItemAllMixins(
         );
       }
     } else if (this.isSelfEffect) {
-      const effectIndex =
-        this.parentItem.system.embeddedSelfEffects?.findIndex(
-          (s) => s._id === this.originalItemId,
-        );
+      const effectIndex = this.parentItem.system.embeddedSelfEffects?.findIndex(
+        (s) => s._id === this.originalItemId,
+      );
 
       if (effectIndex === -1 || effectIndex === undefined) {
         Logger.error(

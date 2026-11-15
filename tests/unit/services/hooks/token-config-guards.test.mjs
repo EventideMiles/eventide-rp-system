@@ -10,7 +10,7 @@
 // describe, test, expect, beforeEach, vi are available globally
 
 // Mock Logger
-vi.mock('../../../../module/services/logger.mjs', () => ({
+vi.mock("../../../../module/services/logger.mjs", () => ({
   Logger: {
     debug: vi.fn(),
     info: vi.fn(),
@@ -35,8 +35,12 @@ beforeEach(async () => {
   };
 
   // Mock foundry.applications.sheets with proper prototype methods
-  const originalTokenConfigRender = vi.fn().mockResolvedValue('token-config-rendered');
-  const originalPrototypeTokenConfigRender = vi.fn().mockResolvedValue('prototype-token-config-rendered');
+  const originalTokenConfigRender = vi
+    .fn()
+    .mockResolvedValue("token-config-rendered");
+  const originalPrototypeTokenConfigRender = vi
+    .fn()
+    .mockResolvedValue("prototype-token-config-rendered");
 
   global.foundry = {
     ...global.foundry,
@@ -63,12 +67,15 @@ beforeEach(async () => {
   };
 
   // Set render methods on prototypes
-  global.foundry.applications.sheets.TokenConfig.prototype.render = originalTokenConfigRender;
-  global.foundry.applications.sheets.PrototypeTokenConfig.prototype.render = originalPrototypeTokenConfigRender;
+  global.foundry.applications.sheets.TokenConfig.prototype.render =
+    originalTokenConfigRender;
+  global.foundry.applications.sheets.PrototypeTokenConfig.prototype.render =
+    originalPrototypeTokenConfigRender;
 
   // Store original render methods for test access
   global.originalTokenConfigRender = originalTokenConfigRender;
-  global.originalPrototypeTokenConfigRender = originalPrototypeTokenConfigRender;
+  global.originalPrototypeTokenConfigRender =
+    originalPrototypeTokenConfigRender;
 
   // Mock ui
   global.ui = {
@@ -80,7 +87,8 @@ beforeEach(async () => {
   };
 
   // Re-import the module after reset to get fresh state
-  const module = await import('../../../../module/services/hooks/token-config-guards.mjs');
+  const module =
+    await import("../../../../module/services/hooks/token-config-guards.mjs");
   global.TokenConfigGuards = module.TokenConfigGuards;
 });
 
@@ -96,7 +104,7 @@ function createMockActor(options = {}) {
   const {
     isToken = false,
     hasActiveTransformation = false,
-    name = 'Test Actor',
+    name = "Test Actor",
   } = options;
 
   return {
@@ -104,7 +112,7 @@ function createMockActor(options = {}) {
     isToken,
     getFlag: vi.fn((_scope, _key) => hasActiveTransformation),
     removeTransformation: vi.fn().mockResolvedValue(undefined),
-    token: isToken ? { id: 'token-123' } : null,
+    token: isToken ? { id: "token-123" } : null,
   };
 }
 
@@ -117,58 +125,64 @@ function createMockActor(options = {}) {
 function createMockToken(options = {}) {
   const { actor = null } = options;
   return {
-    id: 'token-123',
+    id: "token-123",
     actor,
   };
 }
 
-describe('TokenConfigGuards', () => {
-  describe('initialize()', () => {
-    test('should override TokenConfig and PrototypeTokenConfig render methods', () => {
+describe("TokenConfigGuards", () => {
+  describe("initialize()", () => {
+    test("should override TokenConfig and PrototypeTokenConfig render methods", () => {
       // Arrange
       const TokenConfig = global.foundry.applications.sheets.TokenConfig;
-      const PrototypeTokenConfig = global.foundry.applications.sheets.PrototypeTokenConfig;
+      const PrototypeTokenConfig =
+        global.foundry.applications.sheets.PrototypeTokenConfig;
 
       // Act
       global.TokenConfigGuards.initialize();
 
       // Assert
-      expect(TokenConfig.prototype.render).not.toBe(global.originalTokenConfigRender);
-      expect(PrototypeTokenConfig.prototype.render).not.toBe(global.originalPrototypeTokenConfigRender);
+      expect(TokenConfig.prototype.render).not.toBe(
+        global.originalTokenConfigRender,
+      );
+      expect(PrototypeTokenConfig.prototype.render).not.toBe(
+        global.originalPrototypeTokenConfigRender,
+      );
     });
 
-    test('should log initialization message', async () => {
+    test("should log initialization message", async () => {
       // Arrange
-      const { Logger } = await import('../../../../module/services/logger.mjs');
+      const { Logger } = await import("../../../../module/services/logger.mjs");
 
       // Act
       global.TokenConfigGuards.initialize();
 
       // Assert
       expect(Logger.info).toHaveBeenCalledWith(
-        'Initializing Token Configuration Guards',
+        "Initializing Token Configuration Guards",
         null,
-        'TRANSFORMATION'
+        "TRANSFORMATION",
       );
       expect(Logger.info).toHaveBeenCalledWith(
-        'Token Configuration Guards initialized',
+        "Token Configuration Guards initialized",
         null,
-        'TRANSFORMATION'
+        "TRANSFORMATION",
       );
     });
   });
 
-  describe('TokenConfig.render() - Linked Actor with Active Transformation', () => {
-    test('should block non-GM users from token config', async () => {
+  describe("TokenConfig.render() - Linked Actor with Active Transformation", () => {
+    test("should block non-GM users from token config", async () => {
       // Arrange
       global.game.user.isGM = false;
       const actor = createMockActor({
         isToken: false,
         hasActiveTransformation: true,
-        name: 'Transformed Actor',
+        name: "Transformed Actor",
       });
       const token = createMockToken({ actor });
-      const mockTokenConfig = new global.foundry.applications.sheets.TokenConfig();
+      const mockTokenConfig =
+        new global.foundry.applications.sheets.TokenConfig();
       mockTokenConfig.token = token;
 
       // Act
@@ -177,21 +191,22 @@ describe('TokenConfigGuards', () => {
 
       // Assert
       expect(ui.notifications.warn).toHaveBeenCalledWith(
-        '[EVENTIDE_RP_SYSTEM.Notifications.TokenConfigBlockedForPlayers]'
+        "[EVENTIDE_RP_SYSTEM.Notifications.TokenConfigBlockedForPlayers]",
       );
       expect(actor.removeTransformation).not.toHaveBeenCalled();
     });
 
-    test('should show confirmation dialog for GM users', async () => {
+    test("should show confirmation dialog for GM users", async () => {
       // Arrange
       global.game.user.isGM = true;
       const actor = createMockActor({
         isToken: false,
         hasActiveTransformation: true,
-        name: 'Transformed Actor',
+        name: "Transformed Actor",
       });
       const token = createMockToken({ actor });
-      const mockTokenConfig = new global.foundry.applications.sheets.TokenConfig();
+      const mockTokenConfig =
+        new global.foundry.applications.sheets.TokenConfig();
       mockTokenConfig.token = token;
 
       // Act
@@ -199,19 +214,22 @@ describe('TokenConfigGuards', () => {
       await mockTokenConfig.render();
 
       // Assert
-      expect(global.foundry.applications.api.DialogV2.confirm).toHaveBeenCalled();
+      expect(
+        global.foundry.applications.api.DialogV2.confirm,
+      ).toHaveBeenCalled();
     });
 
-    test('should revert transformation and proceed when GM confirms', async () => {
+    test("should revert transformation and proceed when GM confirms", async () => {
       // Arrange
       global.game.user.isGM = true;
       const actor = createMockActor({
         isToken: false,
         hasActiveTransformation: true,
-        name: 'Transformed Actor',
+        name: "Transformed Actor",
       });
       const token = createMockToken({ actor });
-      const mockTokenConfig = new global.foundry.applications.sheets.TokenConfig();
+      const mockTokenConfig =
+        new global.foundry.applications.sheets.TokenConfig();
       mockTokenConfig.token = token;
       global.foundry.applications.api.DialogV2.confirm.mockResolvedValue(true);
 
@@ -224,16 +242,17 @@ describe('TokenConfigGuards', () => {
       expect(global.originalTokenConfigRender).toHaveBeenCalled();
     });
 
-    test('should cancel and show notification when GM declines', async () => {
+    test("should cancel and show notification when GM declines", async () => {
       // Arrange
       global.game.user.isGM = true;
       const actor = createMockActor({
         isToken: false,
         hasActiveTransformation: true,
-        name: 'Transformed Actor',
+        name: "Transformed Actor",
       });
       const token = createMockToken({ actor });
-      const mockTokenConfig = new global.foundry.applications.sheets.TokenConfig();
+      const mockTokenConfig =
+        new global.foundry.applications.sheets.TokenConfig();
       mockTokenConfig.token = token;
       global.foundry.applications.api.DialogV2.confirm.mockResolvedValue(false);
 
@@ -244,23 +263,24 @@ describe('TokenConfigGuards', () => {
       // Assert
       expect(actor.removeTransformation).not.toHaveBeenCalled();
       expect(ui.notifications.info).toHaveBeenCalledWith(
-        '[EVENTIDE_RP_SYSTEM.Notifications.TokenConfigCancelled]'
+        "[EVENTIDE_RP_SYSTEM.Notifications.TokenConfigCancelled]",
       );
       expect(result).toBe(mockTokenConfig);
     });
   });
 
-  describe('TokenConfig.render() - Unlinked Token with Active Transformation', () => {
-    test('should block non-GM users from unlinked token config', async () => {
+  describe("TokenConfig.render() - Unlinked Token with Active Transformation", () => {
+    test("should block non-GM users from unlinked token config", async () => {
       // Arrange
       global.game.user.isGM = false;
       const actor = createMockActor({
         isToken: true,
         hasActiveTransformation: true,
-        name: 'Unlinked Token Actor',
+        name: "Unlinked Token Actor",
       });
       const token = createMockToken({ actor });
-      const mockTokenConfig = new global.foundry.applications.sheets.TokenConfig();
+      const mockTokenConfig =
+        new global.foundry.applications.sheets.TokenConfig();
       mockTokenConfig.token = token;
 
       // Act
@@ -269,21 +289,22 @@ describe('TokenConfigGuards', () => {
 
       // Assert
       expect(ui.notifications.warn).toHaveBeenCalledWith(
-        '[EVENTIDE_RP_SYSTEM.Notifications.TokenConfigBlockedForPlayers]'
+        "[EVENTIDE_RP_SYSTEM.Notifications.TokenConfigBlockedForPlayers]",
       );
       expect(actor.removeTransformation).not.toHaveBeenCalled();
     });
 
-    test('should show confirmation dialog for GM users with unlinked token', async () => {
+    test("should show confirmation dialog for GM users with unlinked token", async () => {
       // Arrange
       global.game.user.isGM = true;
       const actor = createMockActor({
         isToken: true,
         hasActiveTransformation: true,
-        name: 'Unlinked Token Actor',
+        name: "Unlinked Token Actor",
       });
       const token = createMockToken({ actor });
-      const mockTokenConfig = new global.foundry.applications.sheets.TokenConfig();
+      const mockTokenConfig =
+        new global.foundry.applications.sheets.TokenConfig();
       mockTokenConfig.token = token;
 
       // Act
@@ -291,19 +312,22 @@ describe('TokenConfigGuards', () => {
       await mockTokenConfig.render();
 
       // Assert
-      expect(global.foundry.applications.api.DialogV2.confirm).toHaveBeenCalled();
+      expect(
+        global.foundry.applications.api.DialogV2.confirm,
+      ).toHaveBeenCalled();
     });
 
-    test('should revert transformation and proceed when GM confirms for unlinked token', async () => {
+    test("should revert transformation and proceed when GM confirms for unlinked token", async () => {
       // Arrange
       global.game.user.isGM = true;
       const actor = createMockActor({
         isToken: true,
         hasActiveTransformation: true,
-        name: 'Unlinked Token Actor',
+        name: "Unlinked Token Actor",
       });
       const token = createMockToken({ actor });
-      const mockTokenConfig = new global.foundry.applications.sheets.TokenConfig();
+      const mockTokenConfig =
+        new global.foundry.applications.sheets.TokenConfig();
       mockTokenConfig.token = token;
       global.foundry.applications.api.DialogV2.confirm.mockResolvedValue(true);
 
@@ -316,16 +340,17 @@ describe('TokenConfigGuards', () => {
       expect(global.originalTokenConfigRender).toHaveBeenCalled();
     });
 
-    test('should cancel and show notification when GM declines for unlinked token', async () => {
+    test("should cancel and show notification when GM declines for unlinked token", async () => {
       // Arrange
       global.game.user.isGM = true;
       const actor = createMockActor({
         isToken: true,
         hasActiveTransformation: true,
-        name: 'Unlinked Token Actor',
+        name: "Unlinked Token Actor",
       });
       const token = createMockToken({ actor });
-      const mockTokenConfig = new global.foundry.applications.sheets.TokenConfig();
+      const mockTokenConfig =
+        new global.foundry.applications.sheets.TokenConfig();
       mockTokenConfig.token = token;
       global.foundry.applications.api.DialogV2.confirm.mockResolvedValue(false);
 
@@ -336,22 +361,23 @@ describe('TokenConfigGuards', () => {
       // Assert
       expect(actor.removeTransformation).not.toHaveBeenCalled();
       expect(ui.notifications.info).toHaveBeenCalledWith(
-        '[EVENTIDE_RP_SYSTEM.Notifications.TokenConfigCancelled]'
+        "[EVENTIDE_RP_SYSTEM.Notifications.TokenConfigCancelled]",
       );
       expect(result).toBe(mockTokenConfig);
     });
   });
 
-  describe('TokenConfig.render() - No Active Transformation', () => {
-    test('should allow token config when no active transformation', async () => {
+  describe("TokenConfig.render() - No Active Transformation", () => {
+    test("should allow token config when no active transformation", async () => {
       // Arrange
       const actor = createMockActor({
         isToken: false,
         hasActiveTransformation: false,
-        name: 'Normal Actor',
+        name: "Normal Actor",
       });
       const token = createMockToken({ actor });
-      const mockTokenConfig = new global.foundry.applications.sheets.TokenConfig();
+      const mockTokenConfig =
+        new global.foundry.applications.sheets.TokenConfig();
       mockTokenConfig.token = token;
 
       // Act
@@ -360,13 +386,16 @@ describe('TokenConfigGuards', () => {
 
       // Assert
       expect(global.originalTokenConfigRender).toHaveBeenCalled();
-      expect(global.foundry.applications.api.DialogV2.confirm).not.toHaveBeenCalled();
+      expect(
+        global.foundry.applications.api.DialogV2.confirm,
+      ).not.toHaveBeenCalled();
     });
 
-    test('should allow token config when actor is null', async () => {
+    test("should allow token config when actor is null", async () => {
       // Arrange
       const token = createMockToken({ actor: null });
-      const mockTokenConfig = new global.foundry.applications.sheets.TokenConfig();
+      const mockTokenConfig =
+        new global.foundry.applications.sheets.TokenConfig();
       mockTokenConfig.token = token;
 
       // Act
@@ -375,12 +404,15 @@ describe('TokenConfigGuards', () => {
 
       // Assert
       expect(global.originalTokenConfigRender).toHaveBeenCalled();
-      expect(global.foundry.applications.api.DialogV2.confirm).not.toHaveBeenCalled();
+      expect(
+        global.foundry.applications.api.DialogV2.confirm,
+      ).not.toHaveBeenCalled();
     });
 
-    test('should allow token config when token is null', async () => {
+    test("should allow token config when token is null", async () => {
       // Arrange
-      const mockTokenConfig = new global.foundry.applications.sheets.TokenConfig();
+      const mockTokenConfig =
+        new global.foundry.applications.sheets.TokenConfig();
       mockTokenConfig.token = null;
 
       // Act
@@ -389,20 +421,23 @@ describe('TokenConfigGuards', () => {
 
       // Assert
       expect(global.originalTokenConfigRender).toHaveBeenCalled();
-      expect(global.foundry.applications.api.DialogV2.confirm).not.toHaveBeenCalled();
+      expect(
+        global.foundry.applications.api.DialogV2.confirm,
+      ).not.toHaveBeenCalled();
     });
   });
 
-  describe('PrototypeTokenConfig.render() - Actor with Active Transformation', () => {
-    test('should block non-GM users from prototype token config', async () => {
+  describe("PrototypeTokenConfig.render() - Actor with Active Transformation", () => {
+    test("should block non-GM users from prototype token config", async () => {
       // Arrange
       global.game.user.isGM = false;
       const actor = createMockActor({
         isToken: false,
         hasActiveTransformation: true,
-        name: 'Transformed Actor',
+        name: "Transformed Actor",
       });
-      const mockPrototypeTokenConfig = new global.foundry.applications.sheets.PrototypeTokenConfig();
+      const mockPrototypeTokenConfig =
+        new global.foundry.applications.sheets.PrototypeTokenConfig();
       mockPrototypeTokenConfig.actor = actor;
 
       // Act
@@ -411,20 +446,21 @@ describe('TokenConfigGuards', () => {
 
       // Assert
       expect(ui.notifications.warn).toHaveBeenCalledWith(
-        '[EVENTIDE_RP_SYSTEM.Notifications.PrototypeTokenConfigBlockedForPlayers]'
+        "[EVENTIDE_RP_SYSTEM.Notifications.PrototypeTokenConfigBlockedForPlayers]",
       );
       expect(actor.removeTransformation).not.toHaveBeenCalled();
     });
 
-    test('should show confirmation dialog for GM users', async () => {
+    test("should show confirmation dialog for GM users", async () => {
       // Arrange
       global.game.user.isGM = true;
       const actor = createMockActor({
         isToken: false,
         hasActiveTransformation: true,
-        name: 'Transformed Actor',
+        name: "Transformed Actor",
       });
-      const mockPrototypeTokenConfig = new global.foundry.applications.sheets.PrototypeTokenConfig();
+      const mockPrototypeTokenConfig =
+        new global.foundry.applications.sheets.PrototypeTokenConfig();
       mockPrototypeTokenConfig.actor = actor;
 
       // Act
@@ -432,18 +468,21 @@ describe('TokenConfigGuards', () => {
       await mockPrototypeTokenConfig.render();
 
       // Assert
-      expect(global.foundry.applications.api.DialogV2.confirm).toHaveBeenCalled();
+      expect(
+        global.foundry.applications.api.DialogV2.confirm,
+      ).toHaveBeenCalled();
     });
 
-    test('should revert transformation and proceed when GM confirms', async () => {
+    test("should revert transformation and proceed when GM confirms", async () => {
       // Arrange
       global.game.user.isGM = true;
       const actor = createMockActor({
         isToken: false,
         hasActiveTransformation: true,
-        name: 'Transformed Actor',
+        name: "Transformed Actor",
       });
-      const mockPrototypeTokenConfig = new global.foundry.applications.sheets.PrototypeTokenConfig();
+      const mockPrototypeTokenConfig =
+        new global.foundry.applications.sheets.PrototypeTokenConfig();
       mockPrototypeTokenConfig.actor = actor;
       global.foundry.applications.api.DialogV2.confirm.mockResolvedValue(true);
 
@@ -456,15 +495,16 @@ describe('TokenConfigGuards', () => {
       expect(global.originalPrototypeTokenConfigRender).toHaveBeenCalled();
     });
 
-    test('should cancel and show notification when GM declines', async () => {
+    test("should cancel and show notification when GM declines", async () => {
       // Arrange
       global.game.user.isGM = true;
       const actor = createMockActor({
         isToken: false,
         hasActiveTransformation: true,
-        name: 'Transformed Actor',
+        name: "Transformed Actor",
       });
-      const mockPrototypeTokenConfig = new global.foundry.applications.sheets.PrototypeTokenConfig();
+      const mockPrototypeTokenConfig =
+        new global.foundry.applications.sheets.PrototypeTokenConfig();
       mockPrototypeTokenConfig.actor = actor;
       global.foundry.applications.api.DialogV2.confirm.mockResolvedValue(false);
 
@@ -475,21 +515,22 @@ describe('TokenConfigGuards', () => {
       // Assert
       expect(actor.removeTransformation).not.toHaveBeenCalled();
       expect(ui.notifications.info).toHaveBeenCalledWith(
-        '[EVENTIDE_RP_SYSTEM.Notifications.PrototypeTokenConfigCancelled]'
+        "[EVENTIDE_RP_SYSTEM.Notifications.PrototypeTokenConfigCancelled]",
       );
       expect(result).toBe(mockPrototypeTokenConfig);
     });
   });
 
-  describe('PrototypeTokenConfig.render() - No Active Transformation', () => {
-    test('should allow prototype token config when no active transformation', async () => {
+  describe("PrototypeTokenConfig.render() - No Active Transformation", () => {
+    test("should allow prototype token config when no active transformation", async () => {
       // Arrange
       const actor = createMockActor({
         isToken: false,
         hasActiveTransformation: false,
-        name: 'Normal Actor',
+        name: "Normal Actor",
       });
-      const mockPrototypeTokenConfig = new global.foundry.applications.sheets.PrototypeTokenConfig();
+      const mockPrototypeTokenConfig =
+        new global.foundry.applications.sheets.PrototypeTokenConfig();
       mockPrototypeTokenConfig.actor = actor;
 
       // Act
@@ -498,12 +539,15 @@ describe('TokenConfigGuards', () => {
 
       // Assert
       expect(global.originalPrototypeTokenConfigRender).toHaveBeenCalled();
-      expect(global.foundry.applications.api.DialogV2.confirm).not.toHaveBeenCalled();
+      expect(
+        global.foundry.applications.api.DialogV2.confirm,
+      ).not.toHaveBeenCalled();
     });
 
-    test('should allow prototype token config when actor is null', async () => {
+    test("should allow prototype token config when actor is null", async () => {
       // Arrange
-      const mockPrototypeTokenConfig = new global.foundry.applications.sheets.PrototypeTokenConfig();
+      const mockPrototypeTokenConfig =
+        new global.foundry.applications.sheets.PrototypeTokenConfig();
       mockPrototypeTokenConfig.actor = null;
 
       // Act
@@ -512,44 +556,50 @@ describe('TokenConfigGuards', () => {
 
       // Assert
       expect(global.originalPrototypeTokenConfigRender).toHaveBeenCalled();
-      expect(global.foundry.applications.api.DialogV2.confirm).not.toHaveBeenCalled();
+      expect(
+        global.foundry.applications.api.DialogV2.confirm,
+      ).not.toHaveBeenCalled();
     });
   });
 
-  describe('Edge Cases', () => {
-    test('should throw error when actor has no getFlag method', async () => {
+  describe("Edge Cases", () => {
+    test("should throw error when actor has no getFlag method", async () => {
       // Arrange
       const actor = createMockActor({
         isToken: false,
         hasActiveTransformation: false,
-        name: 'Actor without getFlag',
+        name: "Actor without getFlag",
       });
       delete actor.getFlag;
       const token = createMockToken({ actor });
-      const mockTokenConfig = new global.foundry.applications.sheets.TokenConfig();
+      const mockTokenConfig =
+        new global.foundry.applications.sheets.TokenConfig();
       mockTokenConfig.token = token;
 
       // Act & Assert
       global.TokenConfigGuards.initialize();
       await expect(mockTokenConfig.render()).rejects.toThrow(
-        'actor.getFlag is not a function'
+        "actor.getFlag is not a function",
       );
     });
 
-    test('should handle actor without getFlag method in prototype token config', async () => {
+    test("should handle actor without getFlag method in prototype token config", async () => {
       // Arrange
       const actor = createMockActor({
         isToken: false,
         hasActiveTransformation: false,
-        name: 'Actor without getFlag',
+        name: "Actor without getFlag",
       });
       delete actor.getFlag;
-      const mockPrototypeTokenConfig = new global.foundry.applications.sheets.PrototypeTokenConfig();
+      const mockPrototypeTokenConfig =
+        new global.foundry.applications.sheets.PrototypeTokenConfig();
       mockPrototypeTokenConfig.actor = actor;
 
       // Act & Assert - should allow since getFlag is checked for existence first
       global.TokenConfigGuards.initialize();
-      await expect(mockPrototypeTokenConfig.render()).resolves.toBe('prototype-token-config-rendered');
+      await expect(mockPrototypeTokenConfig.render()).resolves.toBe(
+        "prototype-token-config-rendered",
+      );
     });
   });
 });

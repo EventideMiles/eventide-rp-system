@@ -261,10 +261,11 @@ export class DamageTargets extends EventideSheetHelpers {
         this.selectedArray.map((token) => {
           // Apply healing increase for heal type, vulnerability for damage
           if (damageOptions.type === "heal") {
-            damageOptions.formula = DamageProcessor.applyHealingIncreaseModifierToFormula(
-              originalFormula,
-              token.actor,
-            );
+            damageOptions.formula =
+              DamageProcessor.applyHealingIncreaseModifierToFormula(
+                originalFormula,
+                token.actor,
+              );
           } else {
             damageOptions.formula = DamageProcessor.applyVulnerabilityModifier(
               originalFormula,
@@ -280,10 +281,11 @@ export class DamageTargets extends EventideSheetHelpers {
         this.targetArray.map((token) => {
           // Apply healing increase for heal type, vulnerability for damage
           if (damageOptions.type === "heal") {
-            damageOptions.formula = DamageProcessor.applyHealingIncreaseModifierToFormula(
-              originalFormula,
-              token.actor,
-            );
+            damageOptions.formula =
+              DamageProcessor.applyHealingIncreaseModifierToFormula(
+                originalFormula,
+                token.actor,
+              );
           } else {
             damageOptions.formula = DamageProcessor.applyVulnerabilityModifier(
               originalFormula,

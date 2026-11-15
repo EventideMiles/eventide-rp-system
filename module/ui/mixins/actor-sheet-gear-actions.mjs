@@ -152,7 +152,11 @@ export const ActorSheetGearActionsMixin = (BaseClass) =>
 
         await this.actor.updateEmbeddedDocuments("Item", updates);
 
-        await erps.messages.createBulkGearMessage("equipped", toEquip, this.actor);
+        await erps.messages.createBulkGearMessage(
+          "equipped",
+          toEquip,
+          this.actor,
+        );
 
         Logger.info(`Equipped ${toEquip.length} gear items`, {
           actorName: this.actor.name,
@@ -174,11 +178,7 @@ export const ActorSheetGearActionsMixin = (BaseClass) =>
           ),
         });
 
-        Logger.methodExit(
-          "ActorSheetGearActionsMixin",
-          "_equipAllGear",
-          null,
-        );
+        Logger.methodExit("ActorSheetGearActionsMixin", "_equipAllGear", null);
       }
     }
 
@@ -227,7 +227,11 @@ export const ActorSheetGearActionsMixin = (BaseClass) =>
 
         await this.actor.updateEmbeddedDocuments("Item", updates);
 
-        await erps.messages.createBulkGearMessage("unequipped", toUnequip, this.actor);
+        await erps.messages.createBulkGearMessage(
+          "unequipped",
+          toUnequip,
+          this.actor,
+        );
 
         Logger.info(`Unequipped ${toUnequip.length} gear items`, {
           actorName: this.actor.name,
@@ -291,7 +295,11 @@ export const ActorSheetGearActionsMixin = (BaseClass) =>
           "GEAR_ACTIONS",
         );
 
-        Logger.methodExit("ActorSheetGearActionsMixin", "_toggleSkipBulkEquip", gear);
+        Logger.methodExit(
+          "ActorSheetGearActionsMixin",
+          "_toggleSkipBulkEquip",
+          gear,
+        );
       } catch (error) {
         await ErrorHandler.handleAsync(Promise.reject(error), {
           context: `Toggle skipBulkEquip for ${this.actor?.name}`,
@@ -301,7 +309,11 @@ export const ActorSheetGearActionsMixin = (BaseClass) =>
           ),
         });
 
-        Logger.methodExit("ActorSheetGearActionsMixin", "_toggleSkipBulkEquip", null);
+        Logger.methodExit(
+          "ActorSheetGearActionsMixin",
+          "_toggleSkipBulkEquip",
+          null,
+        );
       }
     }
 

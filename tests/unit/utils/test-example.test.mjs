@@ -9,101 +9,101 @@
 // Vitest globals are enabled, so we don't need to import them
 // describe, test, expect, beforeEach are available globally
 
-describe('Vitest Setup Validation', () => {
-  test('should have FoundryVTT globals available', () => {
+describe("Vitest Setup Validation", () => {
+  test("should have FoundryVTT globals available", () => {
     expect(global.foundry).toBeDefined();
     expect(global.game).toBeDefined();
     expect(global.CONFIG).toBeDefined();
     expect(global.ui).toBeDefined();
   });
 
-  test('should have foundry data fields mocked', () => {
+  test("should have foundry data fields mocked", () => {
     expect(global.foundry.data.fields.StringField).toBeDefined();
     expect(global.foundry.data.fields.NumberField).toBeDefined();
     expect(global.foundry.data.fields.BooleanField).toBeDefined();
     expect(global.foundry.data.fields.SchemaField).toBeDefined();
   });
 
-  test('should create field instances', () => {
+  test("should create field instances", () => {
     const stringField = new global.foundry.data.fields.StringField({
       required: true,
-      initial: 'test'
+      initial: "test",
     });
 
     expect(stringField.options.required).toBe(true);
-    expect(stringField.options.initial).toBe('test');
+    expect(stringField.options.initial).toBe("test");
   });
 
-  test('should have game object properly mocked', () => {
+  test("should have game object properly mocked", () => {
     expect(global.game.user).toBeDefined();
-    expect(global.game.user.id).toBe('test-user');
+    expect(global.game.user.id).toBe("test-user");
     expect(global.game.settings).toBeDefined();
     expect(global.game.i18n).toBeDefined();
   });
 
-  test('should have test utilities available', () => {
+  test("should have test utilities available", () => {
     expect(global.testUtils).toBeDefined();
-    expect(typeof global.testUtils.createMockActor).toBe('function');
-    expect(typeof global.testUtils.createMockItem).toBe('function');
-    expect(typeof global.testUtils.createMockRoll).toBe('function');
+    expect(typeof global.testUtils.createMockActor).toBe("function");
+    expect(typeof global.testUtils.createMockItem).toBe("function");
+    expect(typeof global.testUtils.createMockRoll).toBe("function");
   });
 
-  test('should create mock actor with test utilities', () => {
+  test("should create mock actor with test utilities", () => {
     const mockActor = global.testUtils.createMockActor({
-      name: 'Custom Test Actor'
+      name: "Custom Test Actor",
     });
 
-    expect(mockActor.id).toBe('test-actor-id');
-    expect(mockActor.name).toBe('Custom Test Actor');
-    expect(mockActor.type).toBe('character');
+    expect(mockActor.id).toBe("test-actor-id");
+    expect(mockActor.name).toBe("Custom Test Actor");
+    expect(mockActor.type).toBe("character");
     expect(mockActor.system.abilities).toBeDefined();
     expect(mockActor.system.resources).toBeDefined();
   });
 
-  test('should create mock item with test utilities', () => {
+  test("should create mock item with test utilities", () => {
     const mockItem = global.testUtils.createMockItem({
-      name: 'Custom Test Item',
-      type: 'combatPower'
+      name: "Custom Test Item",
+      type: "combatPower",
     });
 
-    expect(mockItem.id).toBe('test-item-id');
-    expect(mockItem.name).toBe('Custom Test Item');
-    expect(mockItem.type).toBe('combatPower');
+    expect(mockItem.id).toBe("test-item-id");
+    expect(mockItem.name).toBe("Custom Test Item");
+    expect(mockItem.type).toBe("combatPower");
     expect(mockItem.system).toBeDefined();
   });
 
-  test('should create mock roll with test utilities', () => {
-    const mockRoll = global.testUtils.createMockRoll(15, [15], '1d20+5');
+  test("should create mock roll with test utilities", () => {
+    const mockRoll = global.testUtils.createMockRoll(15, [15], "1d20+5");
 
     expect(mockRoll.total).toBe(15);
-    expect(mockRoll.formula).toBe('1d20+5');
+    expect(mockRoll.formula).toBe("1d20+5");
     expect(mockRoll.dice).toBeDefined();
     expect(Array.isArray(mockRoll.dice)).toBe(true);
   });
 });
 
-describe('Data Field Validation', () => {
-  test('should create string field with correct options', () => {
+describe("Data Field Validation", () => {
+  test("should create string field with correct options", () => {
     const field = new global.foundry.data.fields.StringField({
       required: true,
-      initial: 'default value',
+      initial: "default value",
       blank: false,
-      choices: ['option1', 'option2', 'option3']
+      choices: ["option1", "option2", "option3"],
     });
 
     expect(field.options.required).toBe(true);
-    expect(field.options.initial).toBe('default value');
+    expect(field.options.initial).toBe("default value");
     expect(field.options.blank).toBe(false);
-    expect(field.options.choices).toEqual(['option1', 'option2', 'option3']);
+    expect(field.options.choices).toEqual(["option1", "option2", "option3"]);
   });
 
-  test('should create number field with constraints', () => {
+  test("should create number field with constraints", () => {
     const field = new global.foundry.data.fields.NumberField({
       required: true,
       initial: 10,
       min: 1,
       max: 20,
-      integer: true
+      integer: true,
     });
 
     expect(field.options.required).toBe(true);
@@ -113,20 +113,20 @@ describe('Data Field Validation', () => {
     expect(field.options.integer).toBe(true);
   });
 
-  test('should create schema field with nested fields', () => {
+  test("should create schema field with nested fields", () => {
     const schema = new global.foundry.data.fields.SchemaField({
       name: new global.foundry.data.fields.StringField({
         required: true,
-        initial: ''
+        initial: "",
       }),
       value: new global.foundry.data.fields.NumberField({
         required: true,
-        initial: 0
+        initial: 0,
       }),
       enabled: new global.foundry.data.fields.BooleanField({
         required: true,
-        initial: false
-      })
+        initial: false,
+      }),
     });
 
     // @rayners/foundry-test-utils uses 'schema' property instead of 'fields'
@@ -136,10 +136,10 @@ describe('Data Field Validation', () => {
     expect(schema.schema.enabled).toBeDefined();
   });
 
-  test('should create array field with element type', () => {
+  test("should create array field with element type", () => {
     const arrayField = new global.foundry.data.fields.ArrayField(
       new global.foundry.data.fields.ObjectField({ required: true }),
-      { required: true, initial: [] }
+      { required: true, initial: [] },
     );
 
     // @rayners/foundry-test-utils uses 'element' property
@@ -149,35 +149,43 @@ describe('Data Field Validation', () => {
   });
 });
 
-describe('Game Simulation', () => {
+describe("Game Simulation", () => {
   beforeEach(() => {
     // Reset game state before each test
     global.game.settings.get.mockClear();
     global.game.i18n.localize.mockClear();
   });
 
-  test('should simulate game settings retrieval', () => {
+  test("should simulate game settings retrieval", () => {
     global.game.settings.get.mockReturnValue(true);
 
-    const result = global.game.settings.get('eventide-rp-system', 'testingMode');
+    const result = global.game.settings.get(
+      "eventide-rp-system",
+      "testingMode",
+    );
 
     expect(result).toBe(true);
-    expect(global.game.settings.get).toHaveBeenCalledWith('eventide-rp-system', 'testingMode');
+    expect(global.game.settings.get).toHaveBeenCalledWith(
+      "eventide-rp-system",
+      "testingMode",
+    );
   });
 
-  test('should simulate i18n localization', () => {
-    global.game.i18n.localize.mockReturnValue('Translated Text');
+  test("should simulate i18n localization", () => {
+    global.game.i18n.localize.mockReturnValue("Translated Text");
 
-    const result = global.game.i18n.localize('EVENTIDE_RP_SYSTEM.Test.Key');
+    const result = global.game.i18n.localize("EVENTIDE_RP_SYSTEM.Test.Key");
 
-    expect(result).toBe('Translated Text');
-    expect(global.game.i18n.localize).toHaveBeenCalledWith('EVENTIDE_RP_SYSTEM.Test.Key');
+    expect(result).toBe("Translated Text");
+    expect(global.game.i18n.localize).toHaveBeenCalledWith(
+      "EVENTIDE_RP_SYSTEM.Test.Key",
+    );
   });
 
-  test('should have user permission methods available', () => {
+  test("should have user permission methods available", () => {
     // Verify that permission methods exist
-    expect(typeof global.game.user.getFlag).toBe('function');
-    expect(typeof global.game.user.setFlag).toBe('function');
-    expect(typeof global.game.user.unsetFlag).toBe('function');
+    expect(typeof global.game.user.getFlag).toBe("function");
+    expect(typeof global.game.user.setFlag).toBe("function");
+    expect(typeof global.game.user.unsetFlag).toBe("function");
   });
 });

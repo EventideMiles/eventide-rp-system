@@ -5,7 +5,9 @@ import { ThemeManagedPopupMixin } from "../mixins/_module.mjs";
  * Application for displaying combat power information including roll formulas and prerequisites.
  * @extends {ThemeManagedPopupMixin(EventidePopupHelpers)}
  */
-export class CombatPowerPopup extends ThemeManagedPopupMixin(EventidePopupHelpers) {
+export class CombatPowerPopup extends ThemeManagedPopupMixin(
+  EventidePopupHelpers,
+) {
   /** @override */
   static PARTS = {
     combatPowerPopup: {

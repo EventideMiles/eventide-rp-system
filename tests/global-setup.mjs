@@ -4,10 +4,10 @@
  */
 export default function globalSetup() {
   // Set test environment flag
-  process.env.NODE_ENV = 'test';
+  process.env.NODE_ENV = "test";
 
   // Set testing mode flag for Eventide RP System
-  process.env.ERPS_TESTING_MODE = 'true';
+  process.env.ERPS_TESTING_MODE = "true";
 
   // Suppress console logs during testing (can be overridden per test)
   if (!process.env.VITEST_VERBOSE) {

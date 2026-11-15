@@ -618,43 +618,50 @@ export const ActorSheetAdditionalActionsMixin = (BaseClass) =>
 
           Logger.debug(
             "Cleaned up empty groups",
-            { removedCount: emptyGroups.length, removedIds: emptyGroups.map((g) => g._id) },
+            {
+              removedCount: emptyGroups.length,
+              removedIds: emptyGroups.map((g) => g._id),
+            },
             "ADDITIONAL_ACTIONS",
           );
         }
-} catch (error) {
-      Logger.error("Failed to cleanup empty groups", error, "ADDITIONAL_ACTIONS");
+      } catch (error) {
+        Logger.error(
+          "Failed to cleanup empty groups",
+          error,
+          "ADDITIONAL_ACTIONS",
+        );
+      }
     }
-  }
 
-  /**
-   * Handle the Rest/Recover button click on the actor sheet.
-   * Opens the RestoreTarget dialog pre-bound to this sheet's actor.
-   * @param {PointerEvent} _event - The originating click event
-   * @param {HTMLElement} _target - The capturing HTML element which defined a [data-action]
-   * @protected
-   */
-  static async _onRestRecover(_event, _target) {
-    const dialog = RestoreTarget.forActor(this.actor);
-    dialog.render(true);
-  }
-
-  /**
-   * Handle the Post Summary button click on the actor sheet.
-   * Creates a chat message with a character overview.
-   * @param {PointerEvent} _event - The originating click event
-   * @param {HTMLElement} _target - The capturing HTML element which defined a [data-action]
-   * @protected
-   */
-  static async _onPostSummary(_event, _target) {
-    try {
-      await createCharacterSummaryMessage(this.actor);
-    } catch (error) {
-      ErrorHandler.handleError(
-        error,
-        "Failed to post character summary",
-        "ACTOR_SHEET",
-      );
+    /**
+     * Handle the Rest/Recover button click on the actor sheet.
+     * Opens the RestoreTarget dialog pre-bound to this sheet's actor.
+     * @param {PointerEvent} _event - The originating click event
+     * @param {HTMLElement} _target - The capturing HTML element which defined a [data-action]
+     * @protected
+     */
+    static async _onRestRecover(_event, _target) {
+      const dialog = RestoreTarget.forActor(this.actor);
+      dialog.render(true);
     }
-  }
-};
+
+    /**
+     * Handle the Post Summary button click on the actor sheet.
+     * Creates a chat message with a character overview.
+     * @param {PointerEvent} _event - The originating click event
+     * @param {HTMLElement} _target - The capturing HTML element which defined a [data-action]
+     * @protected
+     */
+    static async _onPostSummary(_event, _target) {
+      try {
+        await createCharacterSummaryMessage(this.actor);
+      } catch (error) {
+        ErrorHandler.handleError(
+          error,
+          "Failed to post character summary",
+          "ACTOR_SHEET",
+        );
+      }
+    }
+  };

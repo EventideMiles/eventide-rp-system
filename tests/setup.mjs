@@ -4,7 +4,7 @@
  */
 
 // Import FoundryVTT mocks from @rayners/foundry-test-utils
-import '@rayners/foundry-test-utils/dist/mocks/foundry-mocks.js';
+import "@rayners/foundry-test-utils/dist/mocks/foundry-mocks.js";
 
 // Expose foundry globally for modules that use bare 'foundry' identifier
 globalThis.foundry = globalThis.foundry || {};
@@ -37,8 +37,10 @@ if (!global.foundry.applications) {
 }
 if (!global.foundry.applications.handlebars) {
   global.foundry.applications.handlebars = {
-    renderTemplate: vi.fn(() => Promise.resolve('<div>Rendered Template</div>')),
-    loadTemplates: vi.fn(() => Promise.resolve())
+    renderTemplate: vi.fn(() =>
+      Promise.resolve("<div>Rendered Template</div>"),
+    ),
+    loadTemplates: vi.fn(() => Promise.resolve()),
   };
 }
 
@@ -53,22 +55,22 @@ if (!global.CONFIG) global.CONFIG = {};
 if (!global.CONFIG.EVENTIDE_RP_SYSTEM) {
   global.CONFIG.EVENTIDE_RP_SYSTEM = {
     abilities: {
-      acro: 'EVENTIDE_RP_SYSTEM.Abilities.Acro',
-      phys: 'EVENTIDE_RP_SYSTEM.Abilities.Phys',
-      fort: 'EVENTIDE_RP_SYSTEM.Abilities.Fort',
-      will: 'EVENTIDE_RP_SYSTEM.Abilities.Will',
-      wits: 'EVENTIDE_RP_SYSTEM.Abilities.Wits',
+      acro: "EVENTIDE_RP_SYSTEM.Abilities.Acro",
+      phys: "EVENTIDE_RP_SYSTEM.Abilities.Phys",
+      fort: "EVENTIDE_RP_SYSTEM.Abilities.Fort",
+      will: "EVENTIDE_RP_SYSTEM.Abilities.Will",
+      wits: "EVENTIDE_RP_SYSTEM.Abilities.Wits",
     },
     hiddenAbilities: {
-      dice: 'EVENTIDE_RP_SYSTEM.HiddenAbilities.Dice',
-      cmax: 'EVENTIDE_RP_SYSTEM.HiddenAbilities.Cmax',
-      cmin: 'EVENTIDE_RP_SYSTEM.HiddenAbilities.Cmin',
-      fmax: 'EVENTIDE_RP_SYSTEM.HiddenAbilities.Fmax',
-      fmin: 'EVENTIDE_RP_SYSTEM.HiddenAbilities.Fmin',
-      vuln: 'EVENTIDE_RP_SYSTEM.HiddenAbilities.Vuln',
-      powerMult: 'EVENTIDE_RP_SYSTEM.HiddenAbilities.PowerMult',
-      resolveMult: 'EVENTIDE_RP_SYSTEM.HiddenAbilities.ResolveMult',
-      healIncrease: 'EVENTIDE_RP_SYSTEM.HiddenAbilities.HealIncrease',
+      dice: "EVENTIDE_RP_SYSTEM.HiddenAbilities.Dice",
+      cmax: "EVENTIDE_RP_SYSTEM.HiddenAbilities.Cmax",
+      cmin: "EVENTIDE_RP_SYSTEM.HiddenAbilities.Cmin",
+      fmax: "EVENTIDE_RP_SYSTEM.HiddenAbilities.Fmax",
+      fmin: "EVENTIDE_RP_SYSTEM.HiddenAbilities.Fmin",
+      vuln: "EVENTIDE_RP_SYSTEM.HiddenAbilities.Vuln",
+      powerMult: "EVENTIDE_RP_SYSTEM.HiddenAbilities.PowerMult",
+      resolveMult: "EVENTIDE_RP_SYSTEM.HiddenAbilities.ResolveMult",
+      healIncrease: "EVENTIDE_RP_SYSTEM.HiddenAbilities.HealIncrease",
     },
   };
 }
@@ -103,7 +105,7 @@ if (!global.foundry.applications.api) {
     ApplicationV2: class MockApplicationV2 {
       constructor() {}
     },
-    HandlebarsApplicationMixin: (BaseClass) => BaseClass
+    HandlebarsApplicationMixin: (BaseClass) => BaseClass,
   };
 }
 
@@ -113,31 +115,31 @@ if (!global.foundry.applications.ux) {
     TextEditor: class MockTextEditor {
       constructor() {}
       static implementation = {
-        enrichHTML: vi.fn(() => Promise.resolve('<p>Enriched</p>')),
+        enrichHTML: vi.fn(() => Promise.resolve("<p>Enriched</p>")),
         getDragEventData: vi.fn(() => ({
-          type: 'Item',
-          itemId: 'item123',
-          actorId: 'actor123',
-          data: { type: 'actionCard' },
-        }))
-      }
-    }
+          type: "Item",
+          itemId: "item123",
+          actorId: "actor123",
+          data: { type: "actionCard" },
+        })),
+      };
+    },
   };
 }
 
 // Also add global TextEditor for modules that reference it directly from foundry scope
 if (!global.TextEditor) {
   global.TextEditor = {
-    enrichHTML: vi.fn((content => content)),
+    enrichHTML: vi.fn((content) => content),
     implementation: {
-      enrichHTML: vi.fn(() => Promise.resolve('<p>Enriched</p>')),
+      enrichHTML: vi.fn(() => Promise.resolve("<p>Enriched</p>")),
       getDragEventData: vi.fn(() => ({
-        type: 'Item',
-        itemId: 'item123',
-        actorId: 'actor123',
-        data: { type: 'actionCard' },
-      }))
-    }
+        type: "Item",
+        itemId: "item123",
+        actorId: "actor123",
+        data: { type: "actionCard" },
+      })),
+    },
   };
 }
 
@@ -148,18 +150,18 @@ if (!global.foundry.applications.sheets) {
       constructor() {}
       static DEFAULT_OPTIONS = {
         window: {
-          controls: []
-        }
+          controls: [],
+        },
       };
     },
     ItemSheetV2: class MockItemSheetV2 {
       constructor() {}
       static DEFAULT_OPTIONS = {
         window: {
-          controls: []
-        }
+          controls: [],
+        },
       };
-    }
+    },
   };
 }
 
@@ -168,7 +170,7 @@ if (!global.foundry.data.fields.ColorField) {
   global.foundry.data.fields.ColorField = class MockColorField {
     constructor(options = {}) {
       this.options = options;
-      this.initial = options.initial || '#000000';
+      this.initial = options.initial || "#000000";
     }
   };
 }
@@ -179,8 +181,8 @@ if (!global.foundry.applications.apps) {
     FilePicker: {
       implementation: class MockFilePicker {
         constructor() {}
-      }
-    }
+      },
+    },
   };
 }
 
@@ -216,7 +218,7 @@ if (!global.foundry.utils) {
 }
 
 global.foundry.utils.deepClone = function deepClone(obj) {
-  if (obj === null || typeof obj !== 'object') return obj;
+  if (obj === null || typeof obj !== "object") return obj;
   if (obj instanceof Date) return new Date(obj.getTime());
   if (obj instanceof Array) return obj.map((item) => deepClone(item));
   if (obj instanceof Object) {
@@ -236,7 +238,8 @@ global.foundry.utils.mergeObject = function mergeObject(
   other = {},
   options = {},
 ) {
-  const target = options.inplace === false ? JSON.parse(JSON.stringify(original)) : original;
+  const target =
+    options.inplace === false ? JSON.parse(JSON.stringify(original)) : original;
   const sources = [other];
 
   for (const source of sources) {
@@ -245,9 +248,9 @@ global.foundry.utils.mergeObject = function mergeObject(
       const val = source[key];
       if (val === null || val === undefined) continue;
       if (
-        typeof val === 'object' &&
+        typeof val === "object" &&
         !Array.isArray(val) &&
-        typeof target[key] === 'object' &&
+        typeof target[key] === "object" &&
         !Array.isArray(target[key])
       ) {
         mergeObject(target[key], val);
@@ -264,18 +267,18 @@ global.foundry.utils.randomID = function randomID() {
 };
 
 global.foundry.utils.getProperty = function getProperty(obj, path) {
-  if (!obj || typeof path !== 'string') return undefined;
-  return path.split('.').reduce((current, key) => {
+  if (!obj || typeof path !== "string") return undefined;
+  return path.split(".").reduce((current, key) => {
     return current === null || current === undefined ? undefined : current[key];
   }, obj);
 };
 
 global.foundry.utils.setProperty = function setProperty(obj, path, value) {
-  if (!obj || typeof path !== 'string') return false;
-  const parts = path.split('.');
+  if (!obj || typeof path !== "string") return false;
+  const parts = path.split(".");
   let current = obj;
   for (let i = 0; i < parts.length - 1; i++) {
-    if (typeof current[parts[i]] !== 'object' || current[parts[i]] === null) {
+    if (typeof current[parts[i]] !== "object" || current[parts[i]] === null) {
       current[parts[i]] = {};
     }
     current = current[parts[i]];
@@ -295,10 +298,10 @@ global.foundry.utils.duplicate = function duplicate(obj) {
 global.foundry.utils.expandObject = function expandObject(obj) {
   const result = {};
   for (const key of Object.keys(obj || {})) {
-    const parts = key.split('.');
+    const parts = key.split(".");
     let current = result;
     for (let i = 0; i < parts.length - 1; i++) {
-      if (typeof current[parts[i]] !== 'object' || current[parts[i]] === null) {
+      if (typeof current[parts[i]] !== "object" || current[parts[i]] === null) {
         current[parts[i]] = {};
       }
       current = current[parts[i]];
@@ -308,11 +311,15 @@ global.foundry.utils.expandObject = function expandObject(obj) {
   return result;
 };
 
-global.foundry.utils.flattenObject = function flattenObject(obj, prefix = '') {
+global.foundry.utils.flattenObject = function flattenObject(obj, prefix = "") {
   const result = {};
   for (const key of Object.keys(obj || {})) {
     const path = prefix ? `${prefix}.${key}` : key;
-    if (obj[key] !== null && typeof obj[key] === 'object' && !Array.isArray(obj[key])) {
+    if (
+      obj[key] !== null &&
+      typeof obj[key] === "object" &&
+      !Array.isArray(obj[key])
+    ) {
       Object.assign(result, flattenObject(obj[key], path));
     } else {
       result[path] = obj[key];
@@ -335,8 +342,8 @@ global.foundry.utils.getDocumentClass = function getDocumentClass(
 };
 
 global.foundry.utils.isNewerVersion = function isNewerVersion(v1, v2) {
-  const p1 = String(v1).split('.').map(Number);
-  const p2 = String(v2).split('.').map(Number);
+  const p1 = String(v1).split(".").map(Number);
+  const p2 = String(v2).split(".").map(Number);
   for (let i = 0; i < Math.max(p1.length, p2.length); i++) {
     const a = p1[i] || 0;
     const b = p2[i] || 0;
@@ -378,18 +385,20 @@ global.foundry.utils.delay = function delay(ms) {
 
 // Enhance MockTypeDataModel to properly initialize schema defaults
 const OriginalMockTypeDataModel = global.foundry.abstract.TypeDataModel;
-global.foundry.abstract.TypeDataModel = class EnhancedMockTypeDataModel extends OriginalMockTypeDataModel {
+global.foundry.abstract.TypeDataModel = class EnhancedMockTypeDataModel extends (
+  OriginalMockTypeDataModel
+) {
   constructor(data = {}) {
     // Call parent constructor first
     super(data);
-    
+
     // Initialize schema defaults if defineSchema is defined
     if (this.constructor.defineSchema) {
       const schema = this.constructor.defineSchema();
       this._initializeSchemaDefaults(schema, data);
     }
   }
-  
+
   _initializeSchemaDefaults(schema, data, target = this) {
     // Recursively initialize schema defaults, filling in missing values on the
     // target object while preserving any values provided in data.
@@ -397,7 +406,7 @@ global.foundry.abstract.TypeDataModel = class EnhancedMockTypeDataModel extends 
 
     const fields = global.foundry.data.fields;
     for (const [key, field] of Object.entries(schema)) {
-      const hasDataValue = data && typeof data === 'object' && key in data;
+      const hasDataValue = data && typeof data === "object" && key in data;
 
       if (field instanceof fields.SchemaField) {
         const nestedSchema = field.fields || field.schema;
@@ -405,10 +414,14 @@ global.foundry.abstract.TypeDataModel = class EnhancedMockTypeDataModel extends 
         // target value; otherwise a fresh object. This ensures provided
         // values are preserved while missing nested defaults get filled in.
         let nestedTarget;
-        if (hasDataValue && typeof data[key] === 'object' && data[key] !== null) {
+        if (
+          hasDataValue &&
+          typeof data[key] === "object" &&
+          data[key] !== null
+        ) {
           nestedTarget = data[key];
           target[key] = nestedTarget;
-        } else if (target[key] && typeof target[key] === 'object') {
+        } else if (target[key] && typeof target[key] === "object") {
           nestedTarget = target[key];
         } else {
           nestedTarget = {};
@@ -452,76 +465,79 @@ global.testUtils = {
    * Create a mock actor with default data
    */
   createMockActor: (overrides = {}) => ({
-    id: 'test-actor-id',
-    name: 'Test Actor',
-    type: 'character',
+    id: "test-actor-id",
+    name: "Test Actor",
+    type: "character",
     system: {
       abilities: {
         acro: { value: 0, override: false, transform: 0, change: 0 },
         phys: { value: 0, override: false, transform: 0, change: 0 },
         fort: { value: 0, override: false, transform: 0, change: 0 },
         will: { value: 0, override: false, transform: 0, change: 0 },
-        wits: { value: 0, override: false, transform: 0, change: 0 }
+        wits: { value: 0, override: false, transform: 0, change: 0 },
       },
       resources: {
         resolve: { value: 10, max: 10 },
-        power: { value: 5, max: 5 }
+        power: { value: 5, max: 5 },
       },
-      level: { value: 1 }
+      level: { value: 1 },
     },
-    ...overrides
+    ...overrides,
   }),
 
   /**
    * Create a mock item with default data
    */
   createMockItem: (overrides = {}) => ({
-    id: 'test-item-id',
-    name: 'Test Item',
-    type: 'gear',
+    id: "test-item-id",
+    name: "Test Item",
+    type: "gear",
     system: {
-      description: 'A test item',
+      description: "A test item",
       roll: {
-        formula: '1d20',
-        type: 'roll'
-      }
+        formula: "1d20",
+        type: "roll",
+      },
     },
-    ...overrides
+    ...overrides,
   }),
 
   /**
    * Mock a dice roll result
    */
-  createMockRoll: (total = 10, dice = [10], formula = '1d20') => ({
+  createMockRoll: (total = 10, dice = [10], formula = "1d20") => ({
     total,
-    dice: [{ results: dice.map(r => ({ result: r, active: true })) }],
+    dice: [{ results: dice.map((r) => ({ result: r, active: true })) }],
     formula,
     terms: [
       {
         number: 1,
         faces: 20,
-        results: dice.map(r => ({ result: r, active: true }))
-      }
-    ]
+        results: dice.map((r) => ({ result: r, active: true })),
+      },
+    ],
   }),
 
   /**
    * Wait for next tick (useful for async testing)
    */
-  nextTick: () => new Promise(resolve => setTimeout(resolve, 0))
+  nextTick: () => new Promise((resolve) => setTimeout(resolve, 0)),
 };
 
 // Ensure game.i18n is properly mocked for format() calls
 if (!global.game?.i18n) {
-  global.game = { ...global.game, i18n: { format: vi.fn((key, _data) => key) } };
+  global.game = {
+    ...global.game,
+    i18n: { format: vi.fn((key, _data) => key) },
+  };
 } else if (!global.game.i18n.format) {
   global.game.i18n.format = vi.fn((key, _data) => key);
 }
 
 // Mock performance.memory if not available (for Node.js environment)
 /* eslint-disable no-undef */
-if (typeof performance !== 'undefined' && !performance.memory) {
-  Object.defineProperty(performance, 'memory', {
+if (typeof performance !== "undefined" && !performance.memory) {
+  Object.defineProperty(performance, "memory", {
     value: {
       usedJSHeapSize: 50 * 1024 * 1024,
       totalJSHeapSize: 100 * 1024 * 1024,
@@ -534,7 +550,10 @@ if (typeof performance !== 'undefined' && !performance.memory) {
 
 // Ensure ui.notifications is properly mocked
 if (!global.ui?.notifications) {
-  global.ui = { ...global.ui, notifications: { warn: vi.fn(), info: vi.fn(), error: vi.fn() } };
+  global.ui = {
+    ...global.ui,
+    notifications: { warn: vi.fn(), info: vi.fn(), error: vi.fn() },
+  };
 } else if (!global.ui.notifications.warn) {
   global.ui.notifications.warn = vi.fn();
   global.ui.notifications.info = vi.fn();
@@ -562,21 +581,21 @@ globalThis.Roll = class EnhancedMockRoll {
   }
 
   _resolveValue(path) {
-    const parts = path.split('.');
+    const parts = path.split(".");
     let value = this.rollData;
     for (const part of parts) {
       value = value?.[part];
       if (value === undefined) return 0;
     }
-    if (typeof value === 'number') return value;
-    if (value && typeof value === 'object' && typeof value.total === 'number') {
+    if (typeof value === "number") return value;
+    if (value && typeof value === "object" && typeof value.total === "number") {
       return value.total;
     }
     return 0;
   }
 
   _evaluate() {
-    let formula = String(this.formula ?? '0');
+    let formula = String(this.formula ?? "0");
 
     // Replace @path.to.value data references with resolved numbers
     formula = formula.replace(/@([\w.]+)/g, (match, path) =>
@@ -585,28 +604,26 @@ globalThis.Roll = class EnhancedMockRoll {
 
     // Resolve dice terms (NdM) deterministically: each die rolls its minimum (1)
     // Consume the full modifier suffix (kh1, kl2, etc.) so no trailing chars remain
-    formula = formula.replace(
-      /(\d+)d(\d+)(?:[khlo!]\d*)*/gi,
-      (match, count) => String(parseInt(count, 10)),
+    formula = formula.replace(/(\d+)d(\d+)(?:[khlo!]\d*)*/gi, (match, count) =>
+      String(parseInt(count, 10)),
     );
 
     // Map Foundry/math helper functions to their JS Math equivalents
     formula = formula
-      .replace(/\bmax\s*\(/g, 'Math.max(')
-      .replace(/\bmin\s*\(/g, 'Math.min(')
-      .replace(/\bfloor\s*\(/g, 'Math.floor(')
-      .replace(/\bceil\s*\(/g, 'Math.ceil(')
-      .replace(/\bround\s*\(/g, 'Math.round(')
-      .replace(/\babs\s*\(/g, 'Math.abs(')
-      .replace(/\bsign\s*\(/g, 'Math.sign(')
-      .replace(/\bpow\s*\(/g, 'Math.pow(')
-      .replace(/\bsqrt\s*\(/g, 'Math.sqrt(');
+      .replace(/\bmax\s*\(/g, "Math.max(")
+      .replace(/\bmin\s*\(/g, "Math.min(")
+      .replace(/\bfloor\s*\(/g, "Math.floor(")
+      .replace(/\bceil\s*\(/g, "Math.ceil(")
+      .replace(/\bround\s*\(/g, "Math.round(")
+      .replace(/\babs\s*\(/g, "Math.abs(")
+      .replace(/\bsign\s*\(/g, "Math.sign(")
+      .replace(/\bpow\s*\(/g, "Math.pow(")
+      .replace(/\bsqrt\s*\(/g, "Math.sqrt(");
 
     try {
-       
       const result = new Function(`"use strict"; return (${formula});`)();
       this.total =
-        typeof result === 'number' && !Number.isNaN(result) ? result : 0;
+        typeof result === "number" && !Number.isNaN(result) ? result : 0;
     } catch {
       this.total = 0;
     }
@@ -629,7 +646,7 @@ globalThis.Roll = class EnhancedMockRoll {
   }
 
   static validate(formula) {
-    return typeof formula === 'string' && formula.trim().length > 0;
+    return typeof formula === "string" && formula.trim().length > 0;
   }
 };
 

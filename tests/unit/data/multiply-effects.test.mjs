@@ -48,74 +48,100 @@ describe("Multiply/Divide Character Effects", () => {
 
     test("maps multiply mode to multiplyNeutral for hidden abilities", () => {
       const effect = { ability: "dice", mode: "multiply" };
-      const result = CharacterEffectsProcessor.mapEffectModeToKey(effect, false);
+      const result = CharacterEffectsProcessor.mapEffectModeToKey(
+        effect,
+        false,
+      );
       expect(result).toBe("system.hiddenAbilities.dice.multiplyNeutral");
     });
 
     test("maps divide mode to divideNeutral for hidden abilities", () => {
       const effect = { ability: "dice", mode: "divide" };
-      const result = CharacterEffectsProcessor.mapEffectModeToKey(effect, false);
+      const result = CharacterEffectsProcessor.mapEffectModeToKey(
+        effect,
+        false,
+      );
       expect(result).toBe("system.hiddenAbilities.dice.divideNeutral");
     });
 
     test("maps multiplyBuff mode for hidden abilities", () => {
       const effect = { ability: "cmax", mode: "multiplyBuff" };
-      const result = CharacterEffectsProcessor.mapEffectModeToKey(effect, false);
+      const result = CharacterEffectsProcessor.mapEffectModeToKey(
+        effect,
+        false,
+      );
       expect(result).toBe("system.hiddenAbilities.cmax.multiplyBuff");
     });
 
     test("maps multiplyDebuff mode for hidden abilities", () => {
       const effect = { ability: "cmax", mode: "multiplyDebuff" };
-      const result = CharacterEffectsProcessor.mapEffectModeToKey(effect, false);
+      const result = CharacterEffectsProcessor.mapEffectModeToKey(
+        effect,
+        false,
+      );
       expect(result).toBe("system.hiddenAbilities.cmax.multiplyDebuff");
     });
 
     test("still maps add/override modes correctly for hidden abilities", () => {
       const addEffect = { ability: "dice", mode: "add" };
       const overrideEffect = { ability: "dice", mode: "override" };
-      expect(CharacterEffectsProcessor.mapEffectModeToKey(addEffect, false)).toBe(
-        "system.hiddenAbilities.dice.change",
-      );
-      expect(CharacterEffectsProcessor.mapEffectModeToKey(overrideEffect, false)).toBe(
-        "system.hiddenAbilities.dice.override",
-      );
+      expect(
+        CharacterEffectsProcessor.mapEffectModeToKey(addEffect, false),
+      ).toBe("system.hiddenAbilities.dice.change");
+      expect(
+        CharacterEffectsProcessor.mapEffectModeToKey(overrideEffect, false),
+      ).toBe("system.hiddenAbilities.dice.override");
     });
   });
 
   describe("CharacterEffectsProcessor.getTypeForEffect", () => {
     test("returns multiply type for multiply mode", () => {
       const effect = { ability: "acro", mode: "multiply" };
-      expect(CharacterEffectsProcessor.getTypeForEffect(effect, true)).toBe("multiply");
+      expect(CharacterEffectsProcessor.getTypeForEffect(effect, true)).toBe(
+        "multiply",
+      );
     });
 
     test("returns multiply type for divide mode", () => {
       const effect = { ability: "acro", mode: "divide" };
-      expect(CharacterEffectsProcessor.getTypeForEffect(effect, true)).toBe("multiply");
+      expect(CharacterEffectsProcessor.getTypeForEffect(effect, true)).toBe(
+        "multiply",
+      );
     });
 
     test("returns multiply type for multiplyBuff mode", () => {
       const effect = { ability: "acro", mode: "multiplyBuff" };
-      expect(CharacterEffectsProcessor.getTypeForEffect(effect, true)).toBe("multiply");
+      expect(CharacterEffectsProcessor.getTypeForEffect(effect, true)).toBe(
+        "multiply",
+      );
     });
 
     test("returns multiply type for multiplyDebuff mode", () => {
       const effect = { ability: "acro", mode: "multiplyDebuff" };
-      expect(CharacterEffectsProcessor.getTypeForEffect(effect, true)).toBe("multiply");
+      expect(CharacterEffectsProcessor.getTypeForEffect(effect, true)).toBe(
+        "multiply",
+      );
     });
 
     test("returns multiply type for hidden ability multiply modes", () => {
       const effect = { ability: "dice", mode: "multiply" };
-      expect(CharacterEffectsProcessor.getTypeForEffect(effect, false)).toBe("multiply");
+      expect(CharacterEffectsProcessor.getTypeForEffect(effect, false)).toBe(
+        "multiply",
+      );
     });
 
     test("returns add type for add mode on regular abilities", () => {
       const effect = { ability: "acro", mode: "add" };
-      expect(CharacterEffectsProcessor.getTypeForEffect(effect, true)).toBe("add");
+      expect(CharacterEffectsProcessor.getTypeForEffect(effect, true)).toBe(
+        "add",
+      );
     });
 
     test("returns override type for override mode on regular abilities", () => {
       const effect = { ability: "acro", mode: "override" };
-      expect(CharacterEffectsProcessor.getTypeForEffect(effect, true)).toBe("override");
+      expect(CharacterEffectsProcessor.getTypeForEffect(effect, true)).toBe(
+        "override",
+      );
     });
   });
 
@@ -127,7 +153,10 @@ describe("Multiply/Divide Character Effects", () => {
         overrideEffects: [],
       };
 
-      const changes = await CharacterEffectsProcessor.processEffectsToChanges(characterEffects);
+      const changes =
+        await CharacterEffectsProcessor.processEffectsToChanges(
+          characterEffects,
+        );
 
       expect(changes).toHaveLength(1);
       expect(changes[0]).toEqual({
@@ -145,7 +174,10 @@ describe("Multiply/Divide Character Effects", () => {
         overrideEffects: [],
       };
 
-      const changes = await CharacterEffectsProcessor.processEffectsToChanges(characterEffects);
+      const changes =
+        await CharacterEffectsProcessor.processEffectsToChanges(
+          characterEffects,
+        );
 
       expect(changes).toHaveLength(1);
       expect(changes[0]).toEqual({
@@ -163,7 +195,10 @@ describe("Multiply/Divide Character Effects", () => {
         overrideEffects: [],
       };
 
-      const changes = await CharacterEffectsProcessor.processEffectsToChanges(characterEffects);
+      const changes =
+        await CharacterEffectsProcessor.processEffectsToChanges(
+          characterEffects,
+        );
 
       expect(changes).toHaveLength(1);
       expect(changes[0].key).toBe("system.abilities.phys.multiplyBuff");
@@ -172,12 +207,17 @@ describe("Multiply/Divide Character Effects", () => {
 
     test("processes multiplyDebuff effects correctly", async () => {
       const characterEffects = {
-        regularEffects: [{ ability: "will", mode: "multiplyDebuff", value: "3" }],
+        regularEffects: [
+          { ability: "will", mode: "multiplyDebuff", value: "3" },
+        ],
         hiddenEffects: [],
         overrideEffects: [],
       };
 
-      const changes = await CharacterEffectsProcessor.processEffectsToChanges(characterEffects);
+      const changes =
+        await CharacterEffectsProcessor.processEffectsToChanges(
+          characterEffects,
+        );
 
       expect(changes).toHaveLength(1);
       expect(changes[0].key).toBe("system.abilities.will.multiplyDebuff");
@@ -194,7 +234,10 @@ describe("Multiply/Divide Character Effects", () => {
         overrideEffects: [],
       };
 
-      const changes = await CharacterEffectsProcessor.processEffectsToChanges(characterEffects);
+      const changes =
+        await CharacterEffectsProcessor.processEffectsToChanges(
+          characterEffects,
+        );
 
       expect(changes).toHaveLength(2);
       expect(changes[0]).toEqual({
@@ -248,7 +291,8 @@ describe("Multiply/Divide Character Effects", () => {
       test("multiply by 1 is no-op", () => {
         const total = 10;
         const multiplyNeutral = 1;
-        const result = multiplyNeutral !== 1 ? roundToCent(total * multiplyNeutral) : total;
+        const result =
+          multiplyNeutral !== 1 ? roundToCent(total * multiplyNeutral) : total;
         expect(result).toBe(10);
       });
     });
@@ -257,21 +301,24 @@ describe("Multiply/Divide Character Effects", () => {
       test("positive total divided by 2", () => {
         let total = 10;
         const divideNeutral = 2;
-        if (divideNeutral !== 1 && divideNeutral !== 0) total = roundToCent(total / divideNeutral);
+        if (divideNeutral !== 1 && divideNeutral !== 0)
+          total = roundToCent(total / divideNeutral);
         expect(Math.round(total)).toBe(5);
       });
 
       test("negative total divided by 2", () => {
         let total = -4;
         const divideNeutral = 2;
-        if (divideNeutral !== 1 && divideNeutral !== 0) total = roundToCent(total / divideNeutral);
+        if (divideNeutral !== 1 && divideNeutral !== 0)
+          total = roundToCent(total / divideNeutral);
         expect(Math.round(total)).toBe(-2);
       });
 
       test("divide by 1 is no-op", () => {
         let total = 10;
         const divideNeutral = 1;
-        if (divideNeutral !== 1 && divideNeutral !== 0) total = roundToCent(total / divideNeutral);
+        if (divideNeutral !== 1 && divideNeutral !== 0)
+          total = roundToCent(total / divideNeutral);
         expect(total).toBe(10);
       });
     });
@@ -281,7 +328,9 @@ describe("Multiply/Divide Character Effects", () => {
         let total = 10;
         const multiplyBuff = 2;
         const buffFactor = multiplyBuff !== 0 ? multiplyBuff : 1;
-        total = roundToCent(total >= 0 ? total * buffFactor : total / buffFactor);
+        total = roundToCent(
+          total >= 0 ? total * buffFactor : total / buffFactor,
+        );
         expect(Math.round(total)).toBe(20);
       });
 
@@ -289,7 +338,9 @@ describe("Multiply/Divide Character Effects", () => {
         let total = -4;
         const multiplyBuff = 2;
         const buffFactor = multiplyBuff !== 0 ? multiplyBuff : 1;
-        total = roundToCent(total >= 0 ? total * buffFactor : total / buffFactor);
+        total = roundToCent(
+          total >= 0 ? total * buffFactor : total / buffFactor,
+        );
         expect(Math.round(total)).toBe(-2);
       });
 
@@ -297,7 +348,9 @@ describe("Multiply/Divide Character Effects", () => {
         let total = 0;
         const multiplyBuff = 2;
         const buffFactor = multiplyBuff !== 0 ? multiplyBuff : 1;
-        total = roundToCent(total >= 0 ? total * buffFactor : total / buffFactor);
+        total = roundToCent(
+          total >= 0 ? total * buffFactor : total / buffFactor,
+        );
         expect(Math.round(total)).toBe(0);
       });
 
@@ -305,7 +358,9 @@ describe("Multiply/Divide Character Effects", () => {
         let total = 10;
         const multiplyBuff = 0.5;
         const buffFactor = multiplyBuff !== 0 ? multiplyBuff : 1;
-        total = roundToCent(total >= 0 ? total * buffFactor : total / buffFactor);
+        total = roundToCent(
+          total >= 0 ? total * buffFactor : total / buffFactor,
+        );
         expect(Math.round(total)).toBe(5);
       });
     });
@@ -315,7 +370,9 @@ describe("Multiply/Divide Character Effects", () => {
         let total = 10;
         const multiplyDebuff = 2;
         const debuffFactor = multiplyDebuff !== 0 ? multiplyDebuff : 1;
-        total = roundToCent(total > 0 ? total / debuffFactor : total * debuffFactor);
+        total = roundToCent(
+          total > 0 ? total / debuffFactor : total * debuffFactor,
+        );
         expect(Math.round(total)).toBe(5);
       });
 
@@ -323,7 +380,9 @@ describe("Multiply/Divide Character Effects", () => {
         let total = -4;
         const multiplyDebuff = 2;
         const debuffFactor = multiplyDebuff !== 0 ? multiplyDebuff : 1;
-        total = roundToCent(total > 0 ? total / debuffFactor : total * debuffFactor);
+        total = roundToCent(
+          total > 0 ? total / debuffFactor : total * debuffFactor,
+        );
         expect(Math.round(total)).toBe(-8);
       });
 
@@ -331,7 +390,9 @@ describe("Multiply/Divide Character Effects", () => {
         let total = 0;
         const multiplyDebuff = 2;
         const debuffFactor = multiplyDebuff !== 0 ? multiplyDebuff : 1;
-        total = roundToCent(total > 0 ? total / debuffFactor : total * debuffFactor);
+        total = roundToCent(
+          total > 0 ? total / debuffFactor : total * debuffFactor,
+        );
         expect(Math.round(total)).toBe(0);
       });
     });
@@ -510,14 +571,46 @@ describe("Multiply/Divide Character Effects", () => {
     test("multiply key patterns are correctly identified", () => {
       // Test the key pattern matching logic directly
       const testCases = [
-        { key: "system.abilities.acro.multiplyNeutral", type: "multiply", expected: "multiply" },
-        { key: "system.abilities.acro.divideNeutral", type: "multiply", expected: "divide" },
-        { key: "system.abilities.phys.multiplyBuff", type: "multiply", expected: "multiplyBuff" },
-        { key: "system.abilities.fort.multiplyDebuff", type: "multiply", expected: "multiplyDebuff" },
-        { key: "system.hiddenAbilities.dice.multiplyNeutral", type: "multiply", expected: "multiply" },
-        { key: "system.hiddenAbilities.cmax.divideNeutral", type: "multiply", expected: "divide" },
-        { key: "system.abilities.acro.change", type: "add", expected: "change" },
-        { key: "system.abilities.acro.override", type: "override", expected: "override" },
+        {
+          key: "system.abilities.acro.multiplyNeutral",
+          type: "multiply",
+          expected: "multiply",
+        },
+        {
+          key: "system.abilities.acro.divideNeutral",
+          type: "multiply",
+          expected: "divide",
+        },
+        {
+          key: "system.abilities.phys.multiplyBuff",
+          type: "multiply",
+          expected: "multiplyBuff",
+        },
+        {
+          key: "system.abilities.fort.multiplyDebuff",
+          type: "multiply",
+          expected: "multiplyDebuff",
+        },
+        {
+          key: "system.hiddenAbilities.dice.multiplyNeutral",
+          type: "multiply",
+          expected: "multiply",
+        },
+        {
+          key: "system.hiddenAbilities.cmax.divideNeutral",
+          type: "multiply",
+          expected: "divide",
+        },
+        {
+          key: "system.abilities.acro.change",
+          type: "add",
+          expected: "change",
+        },
+        {
+          key: "system.abilities.acro.override",
+          type: "override",
+          expected: "override",
+        },
       ];
 
       for (const tc of testCases) {

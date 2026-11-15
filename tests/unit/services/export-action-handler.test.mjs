@@ -5,10 +5,10 @@
  * Tests the export action delegation and header control generation functionality.
  */
 
-import { ExportActionHandler } from '../../../module/services/export-action-handler.mjs';
+import { ExportActionHandler } from "../../../module/services/export-action-handler.mjs";
 
 // Mock dependencies
-vi.mock('../../../module/services/embedded-item-exporter.mjs', () => ({
+vi.mock("../../../module/services/embedded-item-exporter.mjs", () => ({
   EmbeddedItemExporter: {
     exportEmbeddedCombatPowers: vi.fn(),
     exportEmbeddedActionCards: vi.fn(),
@@ -19,7 +19,7 @@ vi.mock('../../../module/services/embedded-item-exporter.mjs', () => ({
   },
 }));
 
-vi.mock('../../../module/services/logger.mjs', () => ({
+vi.mock("../../../module/services/logger.mjs", () => ({
   Logger: {
     error: vi.fn(),
     warn: vi.fn(),
@@ -27,7 +27,7 @@ vi.mock('../../../module/services/logger.mjs', () => ({
   },
 }));
 
-describe('ExportActionHandler', () => {
+describe("ExportActionHandler", () => {
   let mockGame;
   let mockEmbeddedItemExporter;
   let mockLogger;
@@ -47,91 +47,100 @@ describe('ExportActionHandler', () => {
     global.game = mockGame;
 
     // Get mocked modules
-    const { EmbeddedItemExporter } = await import(
-      '../../../module/services/embedded-item-exporter.mjs'
-    );
+    const { EmbeddedItemExporter } =
+      await import("../../../module/services/embedded-item-exporter.mjs");
     mockEmbeddedItemExporter = EmbeddedItemExporter;
 
-    const { Logger } = await import('../../../module/services/logger.mjs');
+    const { Logger } = await import("../../../module/services/logger.mjs");
     mockLogger = Logger;
   });
 
-  describe('EXPORT_ACTIONS configuration', () => {
-    test('should define exportEmbeddedCombatPowers action', () => {
+  describe("EXPORT_ACTIONS configuration", () => {
+    test("should define exportEmbeddedCombatPowers action", () => {
       // Assert
-      expect(ExportActionHandler.EXPORT_ACTIONS.exportEmbeddedCombatPowers).toEqual({
-        serviceMethod: 'exportEmbeddedCombatPowers',
-        icon: 'fas fa-swords',
-        labelKey: 'EVENTIDE_RP_SYSTEM.UI.ExportEmbeddedCombatPowers',
-        applicableItemTypes: ['transformation'],
+      expect(
+        ExportActionHandler.EXPORT_ACTIONS.exportEmbeddedCombatPowers,
+      ).toEqual({
+        serviceMethod: "exportEmbeddedCombatPowers",
+        icon: "fas fa-swords",
+        labelKey: "EVENTIDE_RP_SYSTEM.UI.ExportEmbeddedCombatPowers",
+        applicableItemTypes: ["transformation"],
         contentCheck: expect.any(Function),
       });
     });
 
-    test('should define exportEmbeddedActionCards action', () => {
+    test("should define exportEmbeddedActionCards action", () => {
       // Assert
-      expect(ExportActionHandler.EXPORT_ACTIONS.exportEmbeddedActionCards).toEqual({
-        serviceMethod: 'exportEmbeddedActionCards',
-        icon: 'fas fa-cards-blank',
-        labelKey: 'EVENTIDE_RP_SYSTEM.UI.ExportEmbeddedActionCards',
-        applicableItemTypes: ['transformation'],
+      expect(
+        ExportActionHandler.EXPORT_ACTIONS.exportEmbeddedActionCards,
+      ).toEqual({
+        serviceMethod: "exportEmbeddedActionCards",
+        icon: "fas fa-cards-blank",
+        labelKey: "EVENTIDE_RP_SYSTEM.UI.ExportEmbeddedActionCards",
+        applicableItemTypes: ["transformation"],
         contentCheck: expect.any(Function),
       });
     });
 
-    test('should define exportEmbeddedActionItem action', () => {
+    test("should define exportEmbeddedActionItem action", () => {
       // Assert
-      expect(ExportActionHandler.EXPORT_ACTIONS.exportEmbeddedActionItem).toEqual({
-        serviceMethod: 'exportEmbeddedActionItem',
-        icon: 'fas fa-magic',
-        labelKey: 'EVENTIDE_RP_SYSTEM.UI.ExportEmbeddedActionItem',
-        applicableItemTypes: ['actionCard'],
+      expect(
+        ExportActionHandler.EXPORT_ACTIONS.exportEmbeddedActionItem,
+      ).toEqual({
+        serviceMethod: "exportEmbeddedActionItem",
+        icon: "fas fa-magic",
+        labelKey: "EVENTIDE_RP_SYSTEM.UI.ExportEmbeddedActionItem",
+        applicableItemTypes: ["actionCard"],
         contentCheck: expect.any(Function),
       });
     });
 
-    test('should define exportEmbeddedEffects action', () => {
+    test("should define exportEmbeddedEffects action", () => {
       // Assert
       expect(ExportActionHandler.EXPORT_ACTIONS.exportEmbeddedEffects).toEqual({
-        serviceMethod: 'exportEmbeddedEffects',
-        icon: 'fas fa-sparkles',
-        labelKey: 'EVENTIDE_RP_SYSTEM.UI.ExportEmbeddedEffects',
-        applicableItemTypes: ['actionCard'],
+        serviceMethod: "exportEmbeddedEffects",
+        icon: "fas fa-sparkles",
+        labelKey: "EVENTIDE_RP_SYSTEM.UI.ExportEmbeddedEffects",
+        applicableItemTypes: ["actionCard"],
         contentCheck: expect.any(Function),
       });
     });
 
-    test('should define exportEmbeddedTransformations action', () => {
+    test("should define exportEmbeddedTransformations action", () => {
       // Assert
-      expect(ExportActionHandler.EXPORT_ACTIONS.exportEmbeddedTransformations).toEqual({
-        serviceMethod: 'exportEmbeddedTransformations',
-        icon: 'fas fa-exchange-alt',
-        labelKey: 'EVENTIDE_RP_SYSTEM.UI.ExportEmbeddedTransformations',
-        applicableItemTypes: ['actionCard'],
+      expect(
+        ExportActionHandler.EXPORT_ACTIONS.exportEmbeddedTransformations,
+      ).toEqual({
+        serviceMethod: "exportEmbeddedTransformations",
+        icon: "fas fa-exchange-alt",
+        labelKey: "EVENTIDE_RP_SYSTEM.UI.ExportEmbeddedTransformations",
+        applicableItemTypes: ["actionCard"],
         contentCheck: expect.any(Function),
       });
     });
 
-    test('should define exportAllEmbeddedItems action', () => {
+    test("should define exportAllEmbeddedItems action", () => {
       // Assert
-      expect(ExportActionHandler.EXPORT_ACTIONS.exportAllEmbeddedItems).toEqual({
-        serviceMethod: 'exportAllEmbeddedItems',
-        icon: 'fas fa-file-export',
-        labelKey: 'EVENTIDE_RP_SYSTEM.UI.ExportAllEmbeddedItems',
-        applicableItemTypes: ['transformation', 'actionCard'],
-        contentCheck: expect.any(Function),
-      });
+      expect(ExportActionHandler.EXPORT_ACTIONS.exportAllEmbeddedItems).toEqual(
+        {
+          serviceMethod: "exportAllEmbeddedItems",
+          icon: "fas fa-file-export",
+          labelKey: "EVENTIDE_RP_SYSTEM.UI.ExportAllEmbeddedItems",
+          applicableItemTypes: ["transformation", "actionCard"],
+          contentCheck: expect.any(Function),
+        },
+      );
     });
   });
 
-  describe('executeExport()', () => {
-    test('should call appropriate service method for valid export action', async () => {
+  describe("executeExport()", () => {
+    test("should call appropriate service method for valid export action", async () => {
       // Arrange
       const mockItem = {
-        id: 'item-1',
-        type: 'transformation',
+        id: "item-1",
+        type: "transformation",
         system: {
-          embeddedCombatPowers: [{ id: 'power-1' }],
+          embeddedCombatPowers: [{ id: "power-1" }],
         },
       };
       mockEmbeddedItemExporter.exportEmbeddedCombatPowers.mockResolvedValue({
@@ -142,40 +151,43 @@ describe('ExportActionHandler', () => {
 
       // Act
       const result = await ExportActionHandler.executeExport(
-        'exportEmbeddedCombatPowers',
+        "exportEmbeddedCombatPowers",
         mockItem,
       );
 
       // Assert
-      expect(mockEmbeddedItemExporter.exportEmbeddedCombatPowers).toHaveBeenCalledWith(
-        mockItem,
-      );
+      expect(
+        mockEmbeddedItemExporter.exportEmbeddedCombatPowers,
+      ).toHaveBeenCalledWith(mockItem);
       expect(result).toEqual({ success: 1, failed: 0, errors: [] });
     });
 
-    test('should return null for unknown export action key', async () => {
+    test("should return null for unknown export action key", async () => {
       // Arrange
-      const mockItem = { id: 'item-1', type: 'transformation' };
+      const mockItem = { id: "item-1", type: "transformation" };
 
       // Act
-      const result = await ExportActionHandler.executeExport('unknownAction', mockItem);
+      const result = await ExportActionHandler.executeExport(
+        "unknownAction",
+        mockItem,
+      );
 
       // Assert
       expect(result).toBeNull();
       expect(mockLogger.error).toHaveBeenCalledWith(
-        'Unknown export action key: unknownAction',
-        { exportActionKey: 'unknownAction' },
-        'EXPORT_ACTION_HANDLER',
+        "Unknown export action key: unknownAction",
+        { exportActionKey: "unknownAction" },
+        "EXPORT_ACTION_HANDLER",
       );
     });
 
-    test('should return null when item type is not applicable', async () => {
+    test("should return null when item type is not applicable", async () => {
       // Arrange
-      const mockItem = { id: 'item-1', type: 'gear' };
+      const mockItem = { id: "item-1", type: "gear" };
 
       // Act
       const result = await ExportActionHandler.executeExport(
-        'exportEmbeddedCombatPowers',
+        "exportEmbeddedCombatPowers",
         mockItem,
       );
 
@@ -183,27 +195,27 @@ describe('ExportActionHandler', () => {
       expect(result).toBeNull();
       expect(mockLogger.warn).toHaveBeenCalledWith(
         "Export action 'exportEmbeddedCombatPowers' is not applicable to item type 'gear'",
-        { exportActionKey: 'exportEmbeddedCombatPowers', itemType: 'gear' },
-        'EXPORT_ACTION_HANDLER',
+        { exportActionKey: "exportEmbeddedCombatPowers", itemType: "gear" },
+        "EXPORT_ACTION_HANDLER",
       );
     });
 
-    test('should return null when service method throws error', async () => {
+    test("should return null when service method throws error", async () => {
       // Arrange
       const mockItem = {
-        id: 'item-1',
-        type: 'transformation',
+        id: "item-1",
+        type: "transformation",
         system: {
-          embeddedCombatPowers: [{ id: 'power-1' }],
+          embeddedCombatPowers: [{ id: "power-1" }],
         },
       };
       mockEmbeddedItemExporter.exportEmbeddedCombatPowers.mockRejectedValue(
-        new Error('Export failed'),
+        new Error("Export failed"),
       );
 
       // Act
       const result = await ExportActionHandler.executeExport(
-        'exportEmbeddedCombatPowers',
+        "exportEmbeddedCombatPowers",
         mockItem,
       );
 
@@ -211,41 +223,46 @@ describe('ExportActionHandler', () => {
       expect(result).toBeNull();
       expect(mockLogger.error).toHaveBeenCalledWith(
         "Failed to execute export action 'exportEmbeddedCombatPowers'",
-        { error: expect.any(Error), itemId: 'item-1' },
-        'EXPORT_ACTION_HANDLER',
+        { error: expect.any(Error), itemId: "item-1" },
+        "EXPORT_ACTION_HANDLER",
       );
     });
 
-    test('should log debug message on successful export', async () => {
+    test("should log debug message on successful export", async () => {
       // Arrange
       const mockItem = {
-        id: 'item-1',
-        type: 'transformation',
+        id: "item-1",
+        type: "transformation",
         system: {
-          embeddedCombatPowers: [{ id: 'power-1' }],
+          embeddedCombatPowers: [{ id: "power-1" }],
         },
       };
       const mockResult = { success: 1, failed: 0, errors: [] };
-      mockEmbeddedItemExporter.exportEmbeddedCombatPowers.mockResolvedValue(mockResult);
+      mockEmbeddedItemExporter.exportEmbeddedCombatPowers.mockResolvedValue(
+        mockResult,
+      );
 
       // Act
-      await ExportActionHandler.executeExport('exportEmbeddedCombatPowers', mockItem);
+      await ExportActionHandler.executeExport(
+        "exportEmbeddedCombatPowers",
+        mockItem,
+      );
 
       // Assert
       expect(mockLogger.debug).toHaveBeenCalledWith(
         "Export action 'exportEmbeddedCombatPowers' completed",
-        { results: mockResult, itemId: 'item-1' },
-        'EXPORT_ACTION_HANDLER',
+        { results: mockResult, itemId: "item-1" },
+        "EXPORT_ACTION_HANDLER",
       );
     });
 
-    test('should handle exportEmbeddedActionCards action', async () => {
+    test("should handle exportEmbeddedActionCards action", async () => {
       // Arrange
       const mockItem = {
-        id: 'item-1',
-        type: 'transformation',
+        id: "item-1",
+        type: "transformation",
         system: {
-          embeddedActionCards: [{ id: 'card-1' }],
+          embeddedActionCards: [{ id: "card-1" }],
         },
       };
       mockEmbeddedItemExporter.exportEmbeddedActionCards.mockResolvedValue({
@@ -256,23 +273,23 @@ describe('ExportActionHandler', () => {
 
       // Act
       const result = await ExportActionHandler.executeExport(
-        'exportEmbeddedActionCards',
+        "exportEmbeddedActionCards",
         mockItem,
       );
 
       // Assert
-      expect(mockEmbeddedItemExporter.exportEmbeddedActionCards).toHaveBeenCalledWith(
-        mockItem,
-      );
+      expect(
+        mockEmbeddedItemExporter.exportEmbeddedActionCards,
+      ).toHaveBeenCalledWith(mockItem);
       expect(result).toEqual({ success: 1, failed: 0, errors: [] });
     });
 
-    test('should handle exportEmbeddedActionItem action', async () => {
+    test("should handle exportEmbeddedActionItem action", async () => {
       // Arrange
       const mockItem = {
-        id: 'item-1',
-        type: 'actionCard',
-        getEmbeddedItem: vi.fn(() => ({ id: 'embedded-1' })),
+        id: "item-1",
+        type: "actionCard",
+        getEmbeddedItem: vi.fn(() => ({ id: "embedded-1" })),
       };
       mockEmbeddedItemExporter.exportEmbeddedActionItem.mockResolvedValue({
         success: 1,
@@ -282,23 +299,23 @@ describe('ExportActionHandler', () => {
 
       // Act
       const result = await ExportActionHandler.executeExport(
-        'exportEmbeddedActionItem',
+        "exportEmbeddedActionItem",
         mockItem,
       );
 
       // Assert
-      expect(mockEmbeddedItemExporter.exportEmbeddedActionItem).toHaveBeenCalledWith(
-        mockItem,
-      );
+      expect(
+        mockEmbeddedItemExporter.exportEmbeddedActionItem,
+      ).toHaveBeenCalledWith(mockItem);
       expect(result).toEqual({ success: 1, failed: 0, errors: [] });
     });
 
-    test('should handle exportEmbeddedEffects action', async () => {
+    test("should handle exportEmbeddedEffects action", async () => {
       // Arrange
       const mockItem = {
-        id: 'item-1',
-        type: 'actionCard',
-        getEmbeddedEffects: vi.fn(() => [{ id: 'effect-1' }]),
+        id: "item-1",
+        type: "actionCard",
+        getEmbeddedEffects: vi.fn(() => [{ id: "effect-1" }]),
       };
       mockEmbeddedItemExporter.exportEmbeddedEffects.mockResolvedValue({
         success: 1,
@@ -308,24 +325,24 @@ describe('ExportActionHandler', () => {
 
       // Act
       const result = await ExportActionHandler.executeExport(
-        'exportEmbeddedEffects',
+        "exportEmbeddedEffects",
         mockItem,
       );
 
       // Assert
-      expect(mockEmbeddedItemExporter.exportEmbeddedEffects).toHaveBeenCalledWith(
-        mockItem,
-      );
+      expect(
+        mockEmbeddedItemExporter.exportEmbeddedEffects,
+      ).toHaveBeenCalledWith(mockItem);
       expect(result).toEqual({ success: 1, failed: 0, errors: [] });
     });
 
-    test('should handle exportEmbeddedTransformations action', async () => {
+    test("should handle exportEmbeddedTransformations action", async () => {
       // Arrange
       const mockItem = {
-        id: 'item-1',
-        type: 'actionCard',
+        id: "item-1",
+        type: "actionCard",
         system: {
-          embeddedTransformations: [{ id: 'trans-1' }],
+          embeddedTransformations: [{ id: "trans-1" }],
         },
       };
       mockEmbeddedItemExporter.exportEmbeddedTransformations.mockResolvedValue({
@@ -336,24 +353,24 @@ describe('ExportActionHandler', () => {
 
       // Act
       const result = await ExportActionHandler.executeExport(
-        'exportEmbeddedTransformations',
+        "exportEmbeddedTransformations",
         mockItem,
       );
 
       // Assert
-      expect(mockEmbeddedItemExporter.exportEmbeddedTransformations).toHaveBeenCalledWith(
-        mockItem,
-      );
+      expect(
+        mockEmbeddedItemExporter.exportEmbeddedTransformations,
+      ).toHaveBeenCalledWith(mockItem);
       expect(result).toEqual({ success: 1, failed: 0, errors: [] });
     });
 
-    test('should handle exportAllEmbeddedItems action', async () => {
+    test("should handle exportAllEmbeddedItems action", async () => {
       // Arrange
       const mockItem = {
-        id: 'item-1',
-        type: 'transformation',
+        id: "item-1",
+        type: "transformation",
         system: {
-          embeddedCombatPowers: [{ id: 'power-1' }],
+          embeddedCombatPowers: [{ id: "power-1" }],
         },
       };
       mockEmbeddedItemExporter.exportAllEmbeddedItems.mockResolvedValue({
@@ -364,23 +381,23 @@ describe('ExportActionHandler', () => {
 
       // Act
       const result = await ExportActionHandler.executeExport(
-        'exportAllEmbeddedItems',
+        "exportAllEmbeddedItems",
         mockItem,
       );
 
       // Assert
-      expect(mockEmbeddedItemExporter.exportAllEmbeddedItems).toHaveBeenCalledWith(
-        mockItem,
-      );
+      expect(
+        mockEmbeddedItemExporter.exportAllEmbeddedItems,
+      ).toHaveBeenCalledWith(mockItem);
       expect(result).toEqual({ success: 1, failed: 0, errors: [] });
     });
   });
 
-  describe('getHeaderControls()', () => {
-    test('should return empty array for non-GM users', () => {
+  describe("getHeaderControls()", () => {
+    test("should return empty array for non-GM users", () => {
       // Arrange
       mockGame.user.isGM = false;
-      const mockItem = { id: 'item-1', type: 'transformation' };
+      const mockItem = { id: "item-1", type: "transformation" };
 
       // Act
       const controls = ExportActionHandler.getHeaderControls(mockItem);
@@ -389,14 +406,14 @@ describe('ExportActionHandler', () => {
       expect(controls).toEqual([]);
     });
 
-    test('should return controls for applicable export actions', () => {
+    test("should return controls for applicable export actions", () => {
       // Arrange
       const mockItem = {
-        id: 'item-1',
-        type: 'transformation',
+        id: "item-1",
+        type: "transformation",
         system: {
-          embeddedCombatPowers: [{ id: 'power-1' }],
-          embeddedActionCards: [{ id: 'card-1' }],
+          embeddedCombatPowers: [{ id: "power-1" }],
+          embeddedActionCards: [{ id: "card-1" }],
         },
       };
 
@@ -406,18 +423,18 @@ describe('ExportActionHandler', () => {
       // Assert
       expect(controls).toHaveLength(3); // combatPowers, actionCards, allEmbeddedItems
       expect(controls[0]).toEqual({
-        action: 'exportEmbeddedCombatPowers',
-        icon: 'fas fa-swords',
-        label: 'EVENTIDE_RP_SYSTEM.UI.ExportEmbeddedCombatPowers',
+        action: "exportEmbeddedCombatPowers",
+        icon: "fas fa-swords",
+        label: "EVENTIDE_RP_SYSTEM.UI.ExportEmbeddedCombatPowers",
         ownership: 2,
       });
     });
 
-    test('should filter out actions that fail content check', () => {
+    test("should filter out actions that fail content check", () => {
       // Arrange
       const mockItem = {
-        id: 'item-1',
-        type: 'transformation',
+        id: "item-1",
+        type: "transformation",
         system: {
           embeddedCombatPowers: [],
           embeddedActionCards: [],
@@ -431,15 +448,15 @@ describe('ExportActionHandler', () => {
       expect(controls).toHaveLength(0);
     });
 
-    test('should return controls for actionCard type', () => {
+    test("should return controls for actionCard type", () => {
       // Arrange
       const mockItem = {
-        id: 'item-1',
-        type: 'actionCard',
-        getEmbeddedItem: vi.fn(() => ({ id: 'embedded-1' })),
-        getEmbeddedEffects: vi.fn(() => [{ id: 'effect-1' }]),
+        id: "item-1",
+        type: "actionCard",
+        getEmbeddedItem: vi.fn(() => ({ id: "embedded-1" })),
+        getEmbeddedEffects: vi.fn(() => [{ id: "effect-1" }]),
         system: {
-          embeddedTransformations: [{ id: 'trans-1' }],
+          embeddedTransformations: [{ id: "trans-1" }],
         },
       };
 
@@ -450,13 +467,13 @@ describe('ExportActionHandler', () => {
       expect(controls).toHaveLength(4); // actionItem, effects, transformations, allEmbeddedItems
     });
 
-    test('should localize control labels', () => {
+    test("should localize control labels", () => {
       // Arrange
       const mockItem = {
-        id: 'item-1',
-        type: 'transformation',
+        id: "item-1",
+        type: "transformation",
         system: {
-          embeddedCombatPowers: [{ id: 'power-1' }],
+          embeddedCombatPowers: [{ id: "power-1" }],
         },
       };
       mockGame.i18n.localize.mockImplementation((key) => `Localized: ${key}`);
@@ -466,17 +483,17 @@ describe('ExportActionHandler', () => {
 
       // Assert
       expect(controls[0].label).toBe(
-        'Localized: EVENTIDE_RP_SYSTEM.UI.ExportEmbeddedCombatPowers',
+        "Localized: EVENTIDE_RP_SYSTEM.UI.ExportEmbeddedCombatPowers",
       );
     });
 
-    test('should set ownership to 2 (GM only) for all controls', () => {
+    test("should set ownership to 2 (GM only) for all controls", () => {
       // Arrange
       const mockItem = {
-        id: 'item-1',
-        type: 'transformation',
+        id: "item-1",
+        type: "transformation",
         system: {
-          embeddedCombatPowers: [{ id: 'power-1' }],
+          embeddedCombatPowers: [{ id: "power-1" }],
         },
       };
 
@@ -489,13 +506,13 @@ describe('ExportActionHandler', () => {
       });
     });
 
-    test('should include exportAllEmbeddedItems when transformation has content', () => {
+    test("should include exportAllEmbeddedItems when transformation has content", () => {
       // Arrange
       const mockItem = {
-        id: 'item-1',
-        type: 'transformation',
+        id: "item-1",
+        type: "transformation",
         system: {
-          embeddedCombatPowers: [{ id: 'power-1' }],
+          embeddedCombatPowers: [{ id: "power-1" }],
           embeddedActionCards: [],
         },
       };
@@ -504,16 +521,18 @@ describe('ExportActionHandler', () => {
       const controls = ExportActionHandler.getHeaderControls(mockItem);
 
       // Assert
-      const allItemsControl = controls.find((c) => c.action === 'exportAllEmbeddedItems');
+      const allItemsControl = controls.find(
+        (c) => c.action === "exportAllEmbeddedItems",
+      );
       expect(allItemsControl).toBeDefined();
     });
 
-    test('should include exportAllEmbeddedItems when actionCard has content', () => {
+    test("should include exportAllEmbeddedItems when actionCard has content", () => {
       // Arrange
       const mockItem = {
-        id: 'item-1',
-        type: 'actionCard',
-        getEmbeddedItem: vi.fn(() => ({ id: 'embedded-1' })),
+        id: "item-1",
+        type: "actionCard",
+        getEmbeddedItem: vi.fn(() => ({ id: "embedded-1" })),
         getEmbeddedEffects: vi.fn(() => []),
         system: {
           embeddedTransformations: [],
@@ -524,14 +543,16 @@ describe('ExportActionHandler', () => {
       const controls = ExportActionHandler.getHeaderControls(mockItem);
 
       // Assert
-      const allItemsControl = controls.find((c) => c.action === 'exportAllEmbeddedItems');
+      const allItemsControl = controls.find(
+        (c) => c.action === "exportAllEmbeddedItems",
+      );
       expect(allItemsControl).toBeDefined();
     });
 
-    test('should handle null game.user gracefully', () => {
+    test("should handle null game.user gracefully", () => {
       // Arrange
       mockGame.user = null;
-      const mockItem = { id: 'item-1', type: 'transformation' };
+      const mockItem = { id: "item-1", type: "transformation" };
 
       // Act
       const controls = ExportActionHandler.getHeaderControls(mockItem);
@@ -541,56 +562,58 @@ describe('ExportActionHandler', () => {
     });
   });
 
-  describe('getApplicableExports()', () => {
-    test('should return applicable exports for transformation type', () => {
+  describe("getApplicableExports()", () => {
+    test("should return applicable exports for transformation type", () => {
       // Act
-      const exports = ExportActionHandler.getApplicableExports('transformation');
+      const exports =
+        ExportActionHandler.getApplicableExports("transformation");
 
       // Assert
       expect(exports).toEqual([
-        'exportEmbeddedCombatPowers',
-        'exportEmbeddedActionCards',
-        'exportAllEmbeddedItems',
+        "exportEmbeddedCombatPowers",
+        "exportEmbeddedActionCards",
+        "exportAllEmbeddedItems",
       ]);
     });
 
-    test('should return applicable exports for actionCard type', () => {
+    test("should return applicable exports for actionCard type", () => {
       // Act
-      const exports = ExportActionHandler.getApplicableExports('actionCard');
+      const exports = ExportActionHandler.getApplicableExports("actionCard");
 
       // Assert
       expect(exports).toEqual([
-        'exportEmbeddedActionItem',
-        'exportEmbeddedEffects',
-        'exportEmbeddedTransformations',
-        'exportAllEmbeddedItems',
+        "exportEmbeddedActionItem",
+        "exportEmbeddedEffects",
+        "exportEmbeddedTransformations",
+        "exportAllEmbeddedItems",
       ]);
     });
 
-    test('should return empty array for non-applicable item type', () => {
+    test("should return empty array for non-applicable item type", () => {
       // Act
-      const exports = ExportActionHandler.getApplicableExports('gear');
+      const exports = ExportActionHandler.getApplicableExports("gear");
 
       // Assert
       expect(exports).toEqual([]);
     });
 
-    test('should return empty array for unknown item type', () => {
+    test("should return empty array for unknown item type", () => {
       // Act
-      const exports = ExportActionHandler.getApplicableExports('unknownType');
+      const exports = ExportActionHandler.getApplicableExports("unknownType");
 
       // Assert
       expect(exports).toEqual([]);
     });
   });
 
-  describe('contentCheck functions', () => {
-    test('exportEmbeddedCombatPowers contentCheck should return true when powers exist', () => {
+  describe("contentCheck functions", () => {
+    test("exportEmbeddedCombatPowers contentCheck should return true when powers exist", () => {
       // Arrange
-      const config = ExportActionHandler.EXPORT_ACTIONS.exportEmbeddedCombatPowers;
+      const config =
+        ExportActionHandler.EXPORT_ACTIONS.exportEmbeddedCombatPowers;
       const mockItem = {
         system: {
-          embeddedCombatPowers: [{ id: 'power-1' }],
+          embeddedCombatPowers: [{ id: "power-1" }],
         },
       };
 
@@ -601,9 +624,10 @@ describe('ExportActionHandler', () => {
       expect(result).toBe(true);
     });
 
-    test('exportEmbeddedCombatPowers contentCheck should return false when no powers', () => {
+    test("exportEmbeddedCombatPowers contentCheck should return false when no powers", () => {
       // Arrange
-      const config = ExportActionHandler.EXPORT_ACTIONS.exportEmbeddedCombatPowers;
+      const config =
+        ExportActionHandler.EXPORT_ACTIONS.exportEmbeddedCombatPowers;
       const mockItem = {
         system: {
           embeddedCombatPowers: [],
@@ -617,12 +641,13 @@ describe('ExportActionHandler', () => {
       expect(result).toBe(false);
     });
 
-    test('exportEmbeddedActionCards contentCheck should return true when cards exist', () => {
+    test("exportEmbeddedActionCards contentCheck should return true when cards exist", () => {
       // Arrange
-      const config = ExportActionHandler.EXPORT_ACTIONS.exportEmbeddedActionCards;
+      const config =
+        ExportActionHandler.EXPORT_ACTIONS.exportEmbeddedActionCards;
       const mockItem = {
         system: {
-          embeddedActionCards: [{ id: 'card-1' }],
+          embeddedActionCards: [{ id: "card-1" }],
         },
       };
 
@@ -633,11 +658,12 @@ describe('ExportActionHandler', () => {
       expect(result).toBe(true);
     });
 
-    test('exportEmbeddedActionItem contentCheck should return true when embedded item exists', () => {
+    test("exportEmbeddedActionItem contentCheck should return true when embedded item exists", () => {
       // Arrange
-      const config = ExportActionHandler.EXPORT_ACTIONS.exportEmbeddedActionItem;
+      const config =
+        ExportActionHandler.EXPORT_ACTIONS.exportEmbeddedActionItem;
       const mockItem = {
-        getEmbeddedItem: vi.fn(() => ({ id: 'embedded-1' })),
+        getEmbeddedItem: vi.fn(() => ({ id: "embedded-1" })),
       };
 
       // Act
@@ -647,11 +673,11 @@ describe('ExportActionHandler', () => {
       expect(result).toBe(true);
     });
 
-    test('exportEmbeddedEffects contentCheck should return true when effects exist', () => {
+    test("exportEmbeddedEffects contentCheck should return true when effects exist", () => {
       // Arrange
       const config = ExportActionHandler.EXPORT_ACTIONS.exportEmbeddedEffects;
       const mockItem = {
-        getEmbeddedEffects: vi.fn(() => [{ id: 'effect-1' }]),
+        getEmbeddedEffects: vi.fn(() => [{ id: "effect-1" }]),
       };
 
       // Act
@@ -661,12 +687,13 @@ describe('ExportActionHandler', () => {
       expect(result).toBe(true);
     });
 
-    test('exportEmbeddedTransformations contentCheck should return true when transformations exist', () => {
+    test("exportEmbeddedTransformations contentCheck should return true when transformations exist", () => {
       // Arrange
-      const config = ExportActionHandler.EXPORT_ACTIONS.exportEmbeddedTransformations;
+      const config =
+        ExportActionHandler.EXPORT_ACTIONS.exportEmbeddedTransformations;
       const mockItem = {
         system: {
-          embeddedTransformations: [{ id: 'trans-1' }],
+          embeddedTransformations: [{ id: "trans-1" }],
         },
       };
 
@@ -677,13 +704,13 @@ describe('ExportActionHandler', () => {
       expect(result).toBe(true);
     });
 
-    test('exportAllEmbeddedItems contentCheck should return true for transformation with powers', () => {
+    test("exportAllEmbeddedItems contentCheck should return true for transformation with powers", () => {
       // Arrange
       const config = ExportActionHandler.EXPORT_ACTIONS.exportAllEmbeddedItems;
       const mockItem = {
-        type: 'transformation',
+        type: "transformation",
         system: {
-          embeddedCombatPowers: [{ id: 'power-1' }],
+          embeddedCombatPowers: [{ id: "power-1" }],
           embeddedActionCards: [],
         },
       };
@@ -695,14 +722,14 @@ describe('ExportActionHandler', () => {
       expect(result).toBe(true);
     });
 
-    test('exportAllEmbeddedItems contentCheck should return true for transformation with cards', () => {
+    test("exportAllEmbeddedItems contentCheck should return true for transformation with cards", () => {
       // Arrange
       const config = ExportActionHandler.EXPORT_ACTIONS.exportAllEmbeddedItems;
       const mockItem = {
-        type: 'transformation',
+        type: "transformation",
         system: {
           embeddedCombatPowers: [],
-          embeddedActionCards: [{ id: 'card-1' }],
+          embeddedActionCards: [{ id: "card-1" }],
         },
       };
 
@@ -713,12 +740,12 @@ describe('ExportActionHandler', () => {
       expect(result).toBe(true);
     });
 
-    test('exportAllEmbeddedItems contentCheck should return true for actionCard with embedded item', () => {
+    test("exportAllEmbeddedItems contentCheck should return true for actionCard with embedded item", () => {
       // Arrange
       const config = ExportActionHandler.EXPORT_ACTIONS.exportAllEmbeddedItems;
       const mockItem = {
-        type: 'actionCard',
-        getEmbeddedItem: vi.fn(() => ({ id: 'embedded-1' })),
+        type: "actionCard",
+        getEmbeddedItem: vi.fn(() => ({ id: "embedded-1" })),
         getEmbeddedEffects: vi.fn(() => []),
         system: {
           embeddedTransformations: [],
@@ -732,11 +759,11 @@ describe('ExportActionHandler', () => {
       expect(result).toBe(true);
     });
 
-    test('exportAllEmbeddedItems contentCheck should return false for item with no content', () => {
+    test("exportAllEmbeddedItems contentCheck should return false for item with no content", () => {
       // Arrange
       const config = ExportActionHandler.EXPORT_ACTIONS.exportAllEmbeddedItems;
       const mockItem = {
-        type: 'transformation',
+        type: "transformation",
         system: {
           embeddedCombatPowers: [],
           embeddedActionCards: [],

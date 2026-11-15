@@ -62,14 +62,12 @@ export class CombatPowerLinkingMigration {
 
     try {
       // Process actors and their owned action cards
-      const actorsToProcess = [
-        ...game.actors.values(),
-      ].filter((actor) => actor.isOwner);
+      const actorsToProcess = [...game.actors.values()].filter(
+        (actor) => actor.isOwner,
+      );
 
       for (const actor of actorsToProcess) {
-        const result = await CombatPowerLinkingMigration._processActor(
-          actor,
-        );
+        const result = await CombatPowerLinkingMigration._processActor(actor);
         migratedCount += result.migrated;
         failureCount += result.failed;
       }

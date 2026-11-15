@@ -14,7 +14,7 @@ const mockActorBase = class {
   static defineSchema() {
     const fields = global.foundry.data.fields;
     return {
-      name: new fields.StringField({ required: true, initial: '' }),
+      name: new fields.StringField({ required: true, initial: "" }),
     };
   }
 
@@ -23,86 +23,87 @@ const mockActorBase = class {
   }
 
   getRollData() {
-    return { mock: 'data' };
+    return { mock: "data" };
   }
 };
 
 // Mock module imports
-vi.mock('../../../module/data/base-actor.mjs', () => ({
-  default: mockActorBase
+vi.mock("../../../module/data/base-actor.mjs", () => ({
+  default: mockActorBase,
 }));
 
 // Import the data model after setting up mocks
-const { default: EventideRpSystemCharacter } = await import('../../../module/data/actor-character.mjs');
+const { default: EventideRpSystemCharacter } =
+  await import("../../../module/data/actor-character.mjs");
 
-describe('EventideRpSystemCharacter', () => {
+describe("EventideRpSystemCharacter", () => {
   let character;
 
   beforeEach(() => {
     // Create a fresh character data instance for each test
     character = new EventideRpSystemCharacter({
-      name: 'Test Character',
+      name: "Test Character",
     });
   });
 
-  describe('Schema Definition', () => {
-    test('should define schema that extends base actor schema', () => {
+  describe("Schema Definition", () => {
+    test("should define schema that extends base actor schema", () => {
       const schema = EventideRpSystemCharacter.defineSchema();
       expect(schema).toBeDefined();
       expect(schema.name).toBeDefined();
     });
 
-    test('should include all base actor fields', () => {
+    test("should include all base actor fields", () => {
       const schema = EventideRpSystemCharacter.defineSchema();
       const baseSchema = mockActorBase.defineSchema();
-      Object.keys(baseSchema).forEach(key => {
+      Object.keys(baseSchema).forEach((key) => {
         expect(schema[key]).toBeDefined();
       });
     });
   });
 
-  describe('prepareDerivedData()', () => {
-    test('should call super.prepareDerivedData()', () => {
-      const spy = vi.spyOn(mockActorBase.prototype, 'prepareDerivedData');
+  describe("prepareDerivedData()", () => {
+    test("should call super.prepareDerivedData()", () => {
+      const spy = vi.spyOn(mockActorBase.prototype, "prepareDerivedData");
       character.prepareDerivedData();
       expect(spy).toHaveBeenCalled();
       spy.mockRestore();
     });
 
-    test('should prepare derived data correctly', () => {
+    test("should prepare derived data correctly", () => {
       // Should not throw any errors
       expect(() => character.prepareDerivedData()).not.toThrow();
     });
   });
 
-  describe('getRollData()', () => {
-    test('should call super.getRollData()', () => {
-      const spy = vi.spyOn(mockActorBase.prototype, 'getRollData');
+  describe("getRollData()", () => {
+    test("should call super.getRollData()", () => {
+      const spy = vi.spyOn(mockActorBase.prototype, "getRollData");
       character.getRollData();
       expect(spy).toHaveBeenCalled();
       spy.mockRestore();
     });
 
-    test('should return super.getRollData() result', () => {
+    test("should return super.getRollData() result", () => {
       const result = character.getRollData();
-      expect(result).toEqual({ mock: 'data' });
+      expect(result).toEqual({ mock: "data" });
     });
   });
 
-  describe('Instance Creation', () => {
-    test('should create instance with valid data', () => {
+  describe("Instance Creation", () => {
+    test("should create instance with valid data", () => {
       const data = new EventideRpSystemCharacter({
-        name: 'Hero',
+        name: "Hero",
       });
       expect(data).toBeInstanceOf(EventideRpSystemCharacter);
     });
 
-    test('should create instance with minimal data', () => {
+    test("should create instance with minimal data", () => {
       const data = new EventideRpSystemCharacter({});
       expect(data).toBeInstanceOf(EventideRpSystemCharacter);
     });
 
-    test('should handle empty constructor', () => {
+    test("should handle empty constructor", () => {
       const data = new EventideRpSystemCharacter();
       expect(data).toBeInstanceOf(EventideRpSystemCharacter);
     });
