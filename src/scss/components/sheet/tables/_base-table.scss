@@ -50,6 +50,7 @@
     // Right align controls column headers
     &--controls {
       @include controls-cell;
+
       height: 100%;
     }
 

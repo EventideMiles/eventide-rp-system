@@ -30,10 +30,15 @@ $theme-list: ("blue", "black", "green", "light", "gold", "purple");
 
     @if $theme-name == "blue" { $theme-map: themes.$blue-theme; } @else if $theme-name == "black" { $theme-map: themes.$black-theme; } @else if $theme-name == "green" { $theme-map: themes.$green-theme; } @else if $theme-name == "light" { $theme-map: themes.$light-theme; } @else if $theme-name == "gold" { $theme-map: themes.$gold-theme; } @else if $theme-name == "purple" { $theme-map: themes.$purple-theme; }
 
+    // stylelint-disable-next-line scss/dollar-variable-no-missing-interpolation -- false positive: value IS interpolated (map.get() inside an interpolation block); the rule's detection cannot see through the Sass function call, and the compiled CSS emits real colors
     --erps-current-primary: #{map.get($theme-map, primary)};
+    // stylelint-disable-next-line scss/dollar-variable-no-missing-interpolation -- false positive: value IS interpolated (map.get() inside an interpolation block); the rule's detection cannot see through the Sass function call, and the compiled CSS emits real colors
     --erps-current-secondary: #{map.get($theme-map, secondary)};
+    // stylelint-disable-next-line scss/dollar-variable-no-missing-interpolation -- false positive: value IS interpolated (map.get() inside an interpolation block); the rule's detection cannot see through the Sass function call, and the compiled CSS emits real colors
     --erps-current-bright: #{map.get($theme-map, light)};
+    // stylelint-disable-next-line scss/dollar-variable-no-missing-interpolation -- false positive: value IS interpolated (map.get() inside an interpolation block); the rule's detection cannot see through the Sass function call, and the compiled CSS emits real colors
     --erps-current-glow: #{map.get($theme-map, glow)};
+    // stylelint-disable-next-line scss/dollar-variable-no-missing-interpolation -- false positive: value IS interpolated (map.get() inside an interpolation block); the rule's detection cannot see through the Sass function call, and the compiled CSS emits real colors
     --erps-current-text: #{map.get($theme-map, text)};
   }
 }

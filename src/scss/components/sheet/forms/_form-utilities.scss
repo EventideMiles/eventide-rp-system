@@ -97,7 +97,7 @@
 .erps-form__hint {
   margin: tokens.$sheet-spacing-xs 0 0 0;
   font-size: 0.85em;
-  color: var(--erps-sheet-text-muted, rgba(255, 255, 255, 0.6));
+  color: var(--erps-sheet-text-muted, rgb(255 255 255 / 60%));
   line-height: 1.4;
 }
 

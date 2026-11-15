@@ -92,8 +92,8 @@
     align-items: center;
     gap: tokens.$sheet-spacing-sm;
     padding: tokens.$sheet-spacing-sm;
-    background: var(--erps-sheet-background, rgba(0, 0, 0, 0.05));
-    border: tokens.$sheet-border-thin solid var(--erps-sheet-border, rgba(0, 0, 0, 0.1));
+    background: var(--erps-sheet-background, rgb(0 0 0 / 5%));
+    border: tokens.$sheet-border-thin solid var(--erps-sheet-border, rgb(0 0 0 / 10%));
     border-radius: tokens.$sheet-radius-md;
   }
 
@@ -103,7 +103,7 @@
     object-fit: cover;
     border-radius: tokens.$sheet-radius-sm;
     flex-shrink: 0;
-    background: rgba(0, 0, 0, 0.1);
+    background: rgb(0 0 0 / 10%);
   }
 
   &__name {

@@ -287,67 +287,6 @@ label,
     }
   }
 
-  // Character name input theme system with multiple color schemes
-  .document-name {
-    position: relative;
-    margin-bottom: 0.5rem;
-
-    // Add subtle animated element to the left
-    &::before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: -25px;
-      width: 20px;
-      height: 3px;
-      background: linear-gradient(90deg,
-        transparent 0%,
-        var(--erps-sheet-glow, var(--theme-glow, var(--erps-sheet-glow))) 30%,
-        var(--erps-sheet-light, var(--theme-light, var(--erps-sheet-light))) 70%,
-        transparent 100%);
-      border-radius: 2px;
-      transform: translateY(-50%);
-      animation: name-input-glow 3s ease-in-out infinite;
-      z-index: 1;
-    }
-
-    // Add decorative elements on both sides
-    &::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      right: -25px;
-      width: 20px;
-      height: 3px;
-      background: linear-gradient(90deg,
-        transparent 0%,
-        var(--erps-sheet-light, var(--theme-light, var(--erps-sheet-light))) 30%,
-        var(--erps-sheet-glow, var(--theme-glow, var(--erps-sheet-glow))) 70%,
-        transparent 100%);
-      border-radius: 2px;
-      transform: translateY(-50%);
-      animation: name-input-glow 3s ease-in-out infinite 1.5s;
-      z-index: 1;
-    }
-
-    // When the rest button is present, hide the right glow bar
-    // since the button takes that visual role
-    &--with-rest::after {
-      display: none;
-    }
-
-    .eventide-sheet__character-name {
-      flex: 3;
-    }
-
-    .erps-button--rest {
-      flex: 1;
-      margin-left: 0.5rem;
-      align-self: center;
-      white-space: nowrap;
-    }
-  }
-
   // Target the specific character name input class
   .eventide-sheet__character-name {
     font-family: var(--erps-display-font);
@@ -450,6 +389,67 @@ label,
       opacity: 0.7;
       font-style: italic;
       text-shadow: 0 1px 2px rgb(0 0 0 / 60%);
+    }
+  }
+
+  // Character name input theme system with multiple color schemes
+  .document-name {
+    position: relative;
+    margin-bottom: 0.5rem;
+
+    // Add subtle animated element to the left
+    &::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: -25px;
+      width: 20px;
+      height: 3px;
+      background: linear-gradient(90deg,
+        transparent 0%,
+        var(--erps-sheet-glow, var(--theme-glow, var(--erps-sheet-glow))) 30%,
+        var(--erps-sheet-light, var(--theme-light, var(--erps-sheet-light))) 70%,
+        transparent 100%);
+      border-radius: 2px;
+      transform: translateY(-50%);
+      animation: name-input-glow 3s ease-in-out infinite;
+      z-index: 1;
+    }
+
+    // Add decorative elements on both sides
+    &::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      right: -25px;
+      width: 20px;
+      height: 3px;
+      background: linear-gradient(90deg,
+        transparent 0%,
+        var(--erps-sheet-light, var(--theme-light, var(--erps-sheet-light))) 30%,
+        var(--erps-sheet-glow, var(--theme-glow, var(--erps-sheet-glow))) 70%,
+        transparent 100%);
+      border-radius: 2px;
+      transform: translateY(-50%);
+      animation: name-input-glow 3s ease-in-out infinite 1.5s;
+      z-index: 1;
+    }
+
+    // When the rest button is present, hide the right glow bar
+    // since the button takes that visual role
+    &--with-rest::after {
+      display: none;
+    }
+
+    .eventide-sheet__character-name {
+      flex: 3;
+    }
+
+    .erps-button--rest {
+      flex: 1;
+      margin-left: 0.5rem;
+      align-self: center;
+      white-space: nowrap;
     }
   }
 

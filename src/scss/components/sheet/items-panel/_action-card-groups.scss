@@ -95,7 +95,6 @@
 
   // Bottom border when expanded
   border-bottom: tokens.$sheet-border-thin solid rgb(255 255 255 / 10%);
-
   transition: all tokens.$sheet-transition-base;
 
   &:hover {
@@ -257,6 +256,21 @@
 
   // Padding around content
   padding: 0;
+
+  // INTEGRATION WITH DATA TABLES — merged in from the old standalone block under the DATA TABLES banner; this rule stays before the light-theme override further down the file, so that override still wins the cascade exactly as before
+  .erps-data-table__row {
+    // Remove borders between items in group for cleaner look
+    &:not(:last-child) {
+      border-bottom: tokens.$sheet-border-thin solid rgb(255 255 255 / 5%);
+    }
+
+    // Slightly darker background for items in groups
+    background: rgb(0 0 0 / 10%);
+
+    &:hover {
+      background: rgb(0 0 0 / 20%);
+    }
+  }
 }
 
 // =============================================================================
@@ -309,7 +323,6 @@
     padding: tokens.$sheet-spacing-sm 0;
     margin-bottom: tokens.$sheet-spacing-sm;
     border-bottom: tokens.$sheet-border-thin solid var(--theme-secondary);
-
     color: var(--theme-text);
     opacity: 0.8;
   }
@@ -358,27 +371,6 @@
   opacity: 0.6;
   transform: rotate(1deg) scale(0.98);
   box-shadow: 0 4px 12px rgb(0 0 0 / 40%);
-}
-
-// =============================================================================
-// INTEGRATION WITH DATA TABLES
-// =============================================================================
-
-// Style action cards within groups
-.erps-action-card-group__content {
-  .erps-data-table__row {
-    // Remove borders between items in group for cleaner look
-    &:not(:last-child) {
-      border-bottom: tokens.$sheet-border-thin solid rgb(255 255 255 / 5%);
-    }
-
-    // Slightly darker background for items in groups
-    background: rgb(0 0 0 / 10%);
-
-    &:hover {
-      background: rgb(0 0 0 / 20%);
-    }
-  }
 }
 
 // =============================================================================
