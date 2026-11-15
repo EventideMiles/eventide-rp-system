@@ -43,7 +43,7 @@
   "private": true,
   "engines": {
     "node": ">=24.16.0",
-    "npm": ">=11.10.0"
+    "npm": ">=11.16.0"
   },
   "devDependencies": {
     "@rayners/foundry-test-utils": "^1.2.2",
@@ -62,5 +62,10 @@
     "stylelint-config-standard-scss": "^15.0.1",
     "terser": "5.51.2",
     "vitest": "4.1.12"
+  },
+  "allowScripts": {
+    "@parcel/watcher@2.5.1": true,
+    "@sentry/cli@2.58.6": true,
+    "fsevents@2.3.3": true
   }
 }
