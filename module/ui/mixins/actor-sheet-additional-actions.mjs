@@ -657,11 +657,10 @@ export const ActorSheetAdditionalActionsMixin = (BaseClass) =>
       try {
         await createCharacterSummaryMessage(this.actor);
       } catch (error) {
-        ErrorHandler.handleError(
-          error,
-          "Failed to post character summary",
-          "ACTOR_SHEET",
-        );
+        await ErrorHandler.handleAsync(Promise.reject(error), {
+          context: "Failed to post character summary",
+          errorType: ErrorHandler.ERROR_TYPES.UI,
+        });
       }
     }
   };
