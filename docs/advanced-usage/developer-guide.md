@@ -148,8 +148,8 @@ const [result, error] = await ErrorPatterns.documentOperation(
 
 ### Prerequisites
 
-- **Node.js 24.16+**: For build tools and development dependencies — development requires Node ≥ 24.16 because it bundles npm ≥ 11.10, which supports the repo's `min-release-age` supply-chain cooldown (see `.npmrc`)
-- **npm 11.10+**: A separate requirement from Node — it's what powers the repo's `min-release-age` supply-chain cooldown. The npm bundled with Node ≥ 24.16 and Node 26 satisfies it; if you manage npm separately, upgrade to ≥ 11.10. The repo enforces the `engines` floors on install via `engine-strict` (`.npmrc`), so installs with older toolchains fail fast rather than silently skipping the cooldown
+- **Node.js 24.16+**: For build tools and development dependencies — the npm requirement below is a separate, independent floor and is not guaranteed by the Node version alone
+- **npm 11.10+**: An independent requirement, regardless of Node version — it's what powers the repo's `min-release-age` supply-chain cooldown. The npm bundled with the Node 24 (24.16+) and Node 26 lines satisfies it; the Node 25 line does not (Node 25.0.0 ships npm 11.6.2), so on non-LTS/current Node lines — or if you manage npm separately — check `npm -v` yourself and upgrade to ≥ 11.10 if needed. The repo enforces the `engines` floors on install via `engine-strict` (`.npmrc`), so installs with older toolchains fail fast rather than silently skipping the cooldown
 - **Foundry VTT v13.341+**: Development environment
 - **Git**: Version control
 - **Code Editor**: VS Code recommended with Foundry VTT extensions
