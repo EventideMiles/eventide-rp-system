@@ -226,15 +226,19 @@ describe('EventideRpSystemBaseActor - Priority 1 Data Preparation', () => {
     test('should handle missing localization keys gracefully', () => {
       // Scoped swap: v3-era restoreMocks reset this impl after the test;
       // vitest 4 does not, so restore manually to avoid leaking null.
+      // The finally guard guarantees restoration even if prepareDerivedData()
+      // or an assertion throws mid-test.
       const originalLocalize = global.game.i18n.localize;
       global.game.i18n.localize = vi.fn().mockReturnValue(null);
 
-      actorData.prepareDerivedData();
+      try {
+        actorData.prepareDerivedData();
 
-      expect(actorData.abilities.acro.label).toBe('acro');
-      expect(actorData.abilities.acro.abbr).toBe('acro');
-
-      global.game.i18n.localize = originalLocalize;
+        expect(actorData.abilities.acro.label).toBe('acro');
+        expect(actorData.abilities.acro.abbr).toBe('acro');
+      } finally {
+        global.game.i18n.localize = originalLocalize;
+      }
     });
 
     test('should calculate hidden ability totals without overrides', () => {

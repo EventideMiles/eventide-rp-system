@@ -42,7 +42,7 @@
   "license": "LGPL-2.1-or-later",
   "private": true,
   "engines": {
-    "node": ">=24"
+    "node": ">=24.16.0"
   },
   "devDependencies": {
     "@rayners/foundry-test-utils": "^1.2.2",

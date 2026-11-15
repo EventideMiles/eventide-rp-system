@@ -148,7 +148,7 @@ const [result, error] = await ErrorPatterns.documentOperation(
 
 ### Prerequisites
 
-- **Node.js 18+**: For build tools and development dependencies
+- **Node.js 24.16+**: For build tools and development dependencies — development requires Node ≥ 24.16 because it bundles npm ≥ 11.10, which supports the repo's `min-release-age` supply-chain cooldown (see `.npmrc`)
 - **Foundry VTT v13.341+**: Development environment
 - **Git**: Version control
 - **Code Editor**: VS Code recommended with Foundry VTT extensions
