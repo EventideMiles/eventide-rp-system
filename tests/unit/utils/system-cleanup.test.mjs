@@ -170,7 +170,9 @@ describe('system-cleanup.mjs', () => {
     });
 
     test('should handle errors gracefully', () => {
-      cleanupGMControlHooks.mockImplementation(() => {
+      // mockImplementationOnce: the throwing impl must not leak into later
+      // tests (vitest 4 restoreMocks no longer resets plain vi.fn() impls).
+      cleanupGMControlHooks.mockImplementationOnce(() => {
         throw new Error('Test error');
       });
 
@@ -181,9 +183,9 @@ describe('system-cleanup.mjs', () => {
     test('should continue cleanup even if one function fails', () => {
       // Reset mocks to clear previous calls
       resetMocks();
-      
+
       // Make the first cleanup function throw
-      cleanupGMControlHooks.mockImplementation(() => {
+      cleanupGMControlHooks.mockImplementationOnce(() => {
         throw new Error('Test error');
       });
 
@@ -209,7 +211,9 @@ describe('system-cleanup.mjs', () => {
     });
 
     test('should handle errors gracefully', () => {
-      cleanupGlobalColorPickers.mockImplementation(() => {
+      // mockImplementationOnce: prevent leak into later tests (vitest 4
+      // restoreMocks no longer resets plain vi.fn() implementations).
+      cleanupGlobalColorPickers.mockImplementationOnce(() => {
         throw new Error('Test error');
       });
 

@@ -363,7 +363,7 @@ describe('TransformationApplicator', () => {
         getFlag: vi.fn().mockReturnValue(null),
         applyTransformation: vi.fn().mockResolvedValue(),
       };
-      CONFIG.Item.documentClass.mockReturnValue(mockActor);
+      CONFIG.Item.documentClass.mockImplementation(function () { return mockActor; });
 
       // Act
       await TransformationApplicator.processTransformationResults(context);
@@ -480,7 +480,7 @@ describe('TransformationApplicator', () => {
         toObject: vi.fn(() => ({ name: 'Werewolf', type: 'transformation', system: { cursed: true }, effects: [] })),
       };
       const mockTempItem = { name: 'Werewolf' };
-      CONFIG.Item.documentClass.mockReturnValue(mockTempItem);
+      CONFIG.Item.documentClass.mockImplementation(function () { return mockTempItem; });
 
       // Act
       const result = await TransformationApplicator.applyWithValidation(mockTargetActor, mockTransformation);
@@ -509,7 +509,7 @@ describe('TransformationApplicator', () => {
         toObject: vi.fn(() => ({ name: 'Cursed Form', type: 'transformation', system: { cursed: true }, effects: [] })),
       };
       const mockTempItem = { name: 'Cursed Form' };
-      CONFIG.Item.documentClass.mockReturnValue(mockTempItem);
+      CONFIG.Item.documentClass.mockImplementation(function () { return mockTempItem; });
 
       // Act
       const result = await TransformationApplicator.applyWithValidation(mockTargetActor, mockTransformation);
@@ -535,7 +535,7 @@ describe('TransformationApplicator', () => {
         toObject: vi.fn(() => ({ name: 'Werewolf', type: 'transformation', system: { cursed: true }, effects: [] })),
       };
       const mockTempItem = { name: 'Werewolf' };
-      CONFIG.Item.documentClass.mockReturnValue(mockTempItem);
+      CONFIG.Item.documentClass.mockImplementation(function () { return mockTempItem; });
 
       // Act
       const result = await TransformationApplicator.applyWithValidation(mockTargetActor, mockTransformation);
@@ -556,7 +556,7 @@ describe('TransformationApplicator', () => {
         system: { cursed: true },
       };
       const mockTempItem = { name: 'Werewolf' };
-      CONFIG.Item.documentClass.mockReturnValue(mockTempItem);
+      CONFIG.Item.documentClass.mockImplementation(function () { return mockTempItem; });
 
       // Act
       const result = await TransformationApplicator.applyWithValidation(mockTargetActor, mockTransformation);
@@ -580,7 +580,7 @@ describe('TransformationApplicator', () => {
         toObject: vi.fn(() => ({ name: 'Werewolf', type: 'transformation', system: { cursed: true }, effects: [] })),
       };
       const mockTempItem = { name: 'Werewolf' };
-      CONFIG.Item.documentClass.mockReturnValue(mockTempItem);
+      CONFIG.Item.documentClass.mockImplementation(function () { return mockTempItem; });
 
       // Act
       const result = await TransformationApplicator.applyWithValidation(mockTargetActor, mockTransformation);
@@ -605,7 +605,7 @@ describe('TransformationApplicator', () => {
           dialogResolve(null);
         }),
       };
-      global.Dialog = vi.fn((config) => {
+      global.Dialog = vi.fn(function (config) {
         dialogResolve = config.buttons.cancel.callback;
         return mockDialog;
       });
@@ -632,7 +632,7 @@ describe('TransformationApplicator', () => {
           dialogResolve(null);
         }),
       };
-      global.Dialog = vi.fn((config) => {
+      global.Dialog = vi.fn(function (config) {
         dialogResolve = config.buttons.cancel.callback;
         return mockDialog;
       });
@@ -666,7 +666,7 @@ describe('TransformationApplicator', () => {
       const mockDialog = {
         render: vi.fn(),
       };
-      global.Dialog = vi.fn((config) => {
+      global.Dialog = vi.fn(function (config) {
         applyCallback = config.buttons.apply.callback;
         return mockDialog;
       });
@@ -687,7 +687,7 @@ describe('TransformationApplicator', () => {
       const mockDialog = {
         render: vi.fn(),
       };
-      global.Dialog = vi.fn((config) => {
+      global.Dialog = vi.fn(function (config) {
         cancelCallback = config.buttons.cancel.callback;
         return mockDialog;
       });
@@ -708,7 +708,7 @@ describe('TransformationApplicator', () => {
       const mockDialog = {
         render: vi.fn(),
       };
-      global.Dialog = vi.fn((config) => {
+      global.Dialog = vi.fn(function (config) {
         closeCallback = config.close;
         return mockDialog;
       });

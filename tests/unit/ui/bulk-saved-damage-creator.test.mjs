@@ -112,8 +112,10 @@ describe("BulkSavedDamageCreator", () => {
     vi.clearAllMocks();
 
     // Reset validator mocks to "valid" by default.
-    mockValidateDamage.mockReturnValue({ isValid: true });
-    mockValidateRepetition.mockReturnValue({ isValid: true });
+    // mockReset first: clears leftover mockReturnValueOnce queues (vitest 4
+    // restoreMocks no longer wipes plain vi.fn() state between tests).
+    mockValidateDamage.mockReset().mockReturnValue({ isValid: true });
+    mockValidateRepetition.mockReset().mockReturnValue({ isValid: true });
 
     // Reset ErrorHandler to pass-through (success path) by default.
     mockHandleAsync.mockImplementation(async (promise) => {

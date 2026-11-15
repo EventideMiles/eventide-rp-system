@@ -53,7 +53,9 @@ describe('RepetitionHandler', () => {
     };
 
     // Mock Roll constructor
-    global.Roll = vi.fn((_formula, _data) => mockRoll);
+    global.Roll = vi.fn(function (_formula, _data) {
+      return mockRoll;
+    });
 
     // Mock game settings
     global.game = {

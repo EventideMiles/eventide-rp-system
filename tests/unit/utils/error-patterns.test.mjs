@@ -295,7 +295,8 @@ describe('wrapAsync()', () => {
   test('should use function name as context by default', async () => {
     const error = new Error('Test error');
     const asyncFn = vi.fn().mockRejectedValue(error);
-    asyncFn.name = 'myAsyncFunction';
+    // vitest 4 makes mock `name` non-writable (still configurable) — define instead of assign
+    Object.defineProperty(asyncFn, 'name', { value: 'myAsyncFunction', configurable: true });
     const wrapped = wrapAsync(asyncFn);
 
     await wrapped();

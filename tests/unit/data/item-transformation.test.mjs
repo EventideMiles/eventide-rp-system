@@ -404,11 +404,13 @@ describe('EventideRpSystemTransformation', () => {
       ];
 
       // Mock CONFIG.Item.documentClass
-      const mockItemClass = vi.fn(() => ({
+      const mockItemClass = vi.fn(function () {
+        return {
         sheet: mockParent.sheet,
         isEditable: true,
         update: vi.fn(),
-      }));
+      };
+      });
       global.CONFIG.Item = { documentClass: mockItemClass };
 
       const result = transformation.getEmbeddedCombatPowers();
@@ -421,10 +423,12 @@ describe('EventideRpSystemTransformation', () => {
       mockParent.isEditable = false;
       transformation.embeddedCombatPowers = [{ _id: 'power-1', name: 'Power 1' }];
 
-      const mockItemClass = vi.fn(() => ({
+      const mockItemClass = vi.fn(function () {
+        return {
         sheet: mockParent.sheet,
         update: vi.fn(),
-      }));
+      };
+      });
       global.CONFIG.Item = { documentClass: mockItemClass };
 
       transformation.getEmbeddedCombatPowers();
@@ -436,10 +440,12 @@ describe('EventideRpSystemTransformation', () => {
     test('should create temporary items with correct parent for owned transformation', () => {
       transformation.embeddedCombatPowers = [{ _id: 'power-1', name: 'Power 1' }];
 
-      const mockItemClass = vi.fn(() => ({
+      const mockItemClass = vi.fn(function () {
+        return {
         sheet: mockParent.sheet,
         update: vi.fn(),
-      }));
+      };
+      });
       global.CONFIG.Item = { documentClass: mockItemClass };
 
       transformation.getEmbeddedCombatPowers();
@@ -454,10 +460,12 @@ describe('EventideRpSystemTransformation', () => {
       mockParent.isOwned = false;
       transformation.embeddedCombatPowers = [{ _id: 'power-1', name: 'Power 1' }];
 
-      const mockItemClass = vi.fn(() => ({
+      const mockItemClass = vi.fn(function () {
+        return {
         sheet: mockParent.sheet,
         update: vi.fn(),
-      }));
+      };
+      });
       global.CONFIG.Item = { documentClass: mockItemClass };
 
       transformation.getEmbeddedCombatPowers();
@@ -472,7 +480,7 @@ describe('EventideRpSystemTransformation', () => {
       transformation.embeddedCombatPowers = [{ _id: 'power-1', name: 'Power 1' }];
 
       let tempItemInstance;
-      const mockItemClass = vi.fn((data) => {
+      const mockItemClass = vi.fn(function (data) {
         tempItemInstance = {
           id: data._id,
           sheet: mockParent.sheet,
@@ -502,7 +510,7 @@ describe('EventideRpSystemTransformation', () => {
       mockParent.update.mockResolvedValue(transformation);
 
       let capturedTempItem;
-      const mockItemClass = vi.fn((data) => {
+      const mockItemClass = vi.fn(function (data) {
         capturedTempItem = {
           id: data._id,
           sheet: mockParent.sheet,
@@ -527,7 +535,7 @@ describe('EventideRpSystemTransformation', () => {
       mockParent.update.mockResolvedValue(transformation);
 
       let capturedTempItem;
-      const mockItemClass = vi.fn((data) => {
+      const mockItemClass = vi.fn(function (data) {
         capturedTempItem = {
           id: data._id,
           sheet: mockParent.sheet,
@@ -549,7 +557,7 @@ describe('EventideRpSystemTransformation', () => {
       transformation.embeddedCombatPowers = [{ _id: 'power-1', name: 'Power 1' }];
 
       let capturedTempItem;
-      const mockItemClass = vi.fn((_data) => {
+      const mockItemClass = vi.fn(function (_data) {
         capturedTempItem = {
           id: 'different-id',  // This ID doesn't exist in embeddedCombatPowers
           sheet: mockParent.sheet,
@@ -580,11 +588,13 @@ describe('EventideRpSystemTransformation', () => {
         { _id: 'card-2', name: 'Card 2' },
       ];
 
-      const mockItemClass = vi.fn(() => ({
+      const mockItemClass = vi.fn(function () {
+        return {
         sheet: mockParent.sheet,
         isEditable: true,
         update: vi.fn(),
-      }));
+      };
+      });
       global.CONFIG.Item = { documentClass: mockItemClass };
 
       const result = transformation.getEmbeddedActionCards();
@@ -597,10 +607,12 @@ describe('EventideRpSystemTransformation', () => {
       mockParent.isEditable = false;
       transformation.embeddedActionCards = [{ _id: 'card-1', name: 'Card 1' }];
 
-      const mockItemClass = vi.fn(() => ({
+      const mockItemClass = vi.fn(function () {
+        return {
         sheet: mockParent.sheet,
         update: vi.fn(),
-      }));
+      };
+      });
       global.CONFIG.Item = { documentClass: mockItemClass };
 
       transformation.getEmbeddedActionCards();
@@ -612,10 +624,12 @@ describe('EventideRpSystemTransformation', () => {
     test('should create temporary items with correct parent for owned transformation', () => {
       transformation.embeddedActionCards = [{ _id: 'card-1', name: 'Card 1' }];
 
-      const mockItemClass = vi.fn(() => ({
+      const mockItemClass = vi.fn(function () {
+        return {
         sheet: mockParent.sheet,
         update: vi.fn(),
-      }));
+      };
+      });
       global.CONFIG.Item = { documentClass: mockItemClass };
 
       transformation.getEmbeddedActionCards();
@@ -630,10 +644,12 @@ describe('EventideRpSystemTransformation', () => {
       mockParent.isOwned = false;
       transformation.embeddedActionCards = [{ _id: 'card-1', name: 'Card 1' }];
 
-      const mockItemClass = vi.fn(() => ({
+      const mockItemClass = vi.fn(function () {
+        return {
         sheet: mockParent.sheet,
         update: vi.fn(),
-      }));
+      };
+      });
       global.CONFIG.Item = { documentClass: mockItemClass };
 
       transformation.getEmbeddedActionCards();
@@ -652,7 +668,7 @@ describe('EventideRpSystemTransformation', () => {
       mockParent.update.mockResolvedValue(transformation);
 
       let capturedTempItem;
-      const mockItemClass = vi.fn((data) => {
+      const mockItemClass = vi.fn(function (data) {
         capturedTempItem = {
           id: data._id,
           sheet: mockParent.sheet,
@@ -679,7 +695,7 @@ describe('EventideRpSystemTransformation', () => {
       mockParent.update.mockResolvedValue(transformation);
 
       let capturedTempItem;
-      const mockItemClass = vi.fn((data) => {
+      const mockItemClass = vi.fn(function (data) {
         capturedTempItem = {
           id: data._id,
           sheet: mockParent.sheet,
@@ -703,7 +719,7 @@ describe('EventideRpSystemTransformation', () => {
       mockParent.update.mockResolvedValue(transformation);
 
       let capturedTempItem;
-      const mockItemClass = vi.fn((data) => {
+      const mockItemClass = vi.fn(function (data) {
         capturedTempItem = {
           id: data._id,
           sheet: { ...mockParent.sheet, rendered: true, render: vi.fn() },
@@ -728,7 +744,7 @@ describe('EventideRpSystemTransformation', () => {
       mockParent.update.mockResolvedValue(transformation);
 
       let capturedTempItem;
-      const mockItemClass = vi.fn((data) => {
+      const mockItemClass = vi.fn(function (data) {
         capturedTempItem = {
           id: data._id,
           sheet: { ...mockParent.sheet, rendered: true, render: vi.fn() },
@@ -752,7 +768,7 @@ describe('EventideRpSystemTransformation', () => {
       transformation.embeddedActionCards = [{ _id: 'card-1', name: 'Card 1' }];
 
       let capturedTempItem;
-      const mockItemClass = vi.fn((_data) => {
+      const mockItemClass = vi.fn(function (_data) {
         capturedTempItem = {
           id: 'different-id',  // This ID doesn't exist in embeddedActionCards
           sheet: mockParent.sheet,
@@ -773,7 +789,7 @@ describe('EventideRpSystemTransformation', () => {
       mockParent.update.mockResolvedValue(transformation);
 
       let capturedTempItem;
-      const mockItemClass = vi.fn((data) => {
+      const mockItemClass = vi.fn(function (data) {
         capturedTempItem = {
           id: data._id,
           sheet: { ...mockParent.sheet, rendered: true, render: vi.fn() },
@@ -799,7 +815,7 @@ describe('EventideRpSystemTransformation', () => {
       mockParent.update.mockResolvedValue(transformation);
 
       let capturedTempItem;
-      const mockItemClass = vi.fn((data) => {
+      const mockItemClass = vi.fn(function (data) {
         capturedTempItem = {
           id: data._id,
           sheet: { ...mockParent.sheet, rendered: true, render: vi.fn() },
@@ -989,7 +1005,7 @@ describe('EventideRpSystemTransformation', () => {
       mockParent.parent = null;
       transformation.parent = mockParent;
 
-      const mockItemClass = vi.fn(() => ({ update: vi.fn() }));
+      const mockItemClass = vi.fn(function () { return { update: vi.fn() }; });
       global.CONFIG.Item = { documentClass: mockItemClass };
 
       transformation.getEmbeddedCombatPowers();

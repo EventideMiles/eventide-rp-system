@@ -110,12 +110,14 @@ describe('GMControlManager', () => {
     // Setup mock CONFIG
     mockConfig = {
       Item: {
-        documentClass: vi.fn((data) => ({
-          ...data,
-          name: data.name || 'Mock Action Card',
-          system: data.system || {},
-          img: data.img || null,
-        })),
+        documentClass: vi.fn(function (data) {
+          return {
+            ...data,
+            name: data.name || 'Mock Action Card',
+            system: data.system || {},
+            img: data.img || null,
+          };
+        }),
       },
     };
 

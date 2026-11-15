@@ -563,9 +563,11 @@ describe('ItemPopupsMixin', () => {
     test('should create and render popup successfully', async () => {
       item = new MixedClass({ type: 'combatPower', name: 'Test Power', system: { cost: 1 } });
       
-      const mockPopupClass = vi.fn().mockImplementation(() => ({
-        render: vi.fn().mockResolvedValue({ id: 'popup-123' })
-      }));
+      const mockPopupClass = vi.fn().mockImplementation(function () {
+        return {
+          render: vi.fn().mockResolvedValue({ id: 'popup-123' })
+        };
+      });
       
       item._importPopupClass = vi.fn().mockResolvedValue(mockPopupClass);
       
@@ -651,7 +653,9 @@ describe('ItemPopupsMixin', () => {
         _hasValidationProblems: vi.fn().mockReturnValue(true)
       };
       
-      const mockPopupClass = vi.fn().mockImplementation(() => mockPopupInstance);
+      const mockPopupClass = vi.fn().mockImplementation(function () {
+        return mockPopupInstance;
+      });
       item._importPopupClass = vi.fn().mockResolvedValue(mockPopupClass);
       
       const popupConfig = { className: 'CombatPowerPopup', type: 'combatPower' };
@@ -673,7 +677,9 @@ describe('ItemPopupsMixin', () => {
         _hasValidationProblems: null
       };
       
-      const mockPopupClass = vi.fn().mockImplementation(() => mockPopupInstance);
+      const mockPopupClass = vi.fn().mockImplementation(function () {
+        return mockPopupInstance;
+      });
       item._importPopupClass = vi.fn().mockResolvedValue(mockPopupClass);
       
       const popupConfig = { className: 'GearPopup', type: 'gear' };
@@ -689,7 +695,9 @@ describe('ItemPopupsMixin', () => {
         // No _hasValidationProblems instance method
       };
       
-      const mockPopupClass = vi.fn().mockImplementation(() => mockPopupInstance);
+      const mockPopupClass = vi.fn().mockImplementation(function () {
+        return mockPopupInstance;
+      });
       mockPopupClass._hasValidationProblems = vi.fn().mockReturnValue(true);
       
       item._importPopupClass = vi.fn().mockResolvedValue(mockPopupClass);
@@ -707,7 +715,9 @@ describe('ItemPopupsMixin', () => {
         // No _hasValidationProblems method
       };
       
-      const mockPopupClass = vi.fn().mockImplementation(() => mockPopupInstance);
+      const mockPopupClass = vi.fn().mockImplementation(function () {
+        return mockPopupInstance;
+      });
       // No static _hasValidationProblems either
       
       item._importPopupClass = vi.fn().mockResolvedValue(mockPopupClass);
@@ -725,7 +735,9 @@ describe('ItemPopupsMixin', () => {
         checkEligibility: vi.fn().mockResolvedValue({})
       };
       
-      const mockPopupClass = vi.fn().mockImplementation(() => mockPopupInstance);
+      const mockPopupClass = vi.fn().mockImplementation(function () {
+        return mockPopupInstance;
+      });
       item._importPopupClass = vi.fn().mockResolvedValue(mockPopupClass);
       item._prepareItemForPopup = vi.fn().mockResolvedValue(undefined);
       
@@ -754,7 +766,9 @@ describe('ItemPopupsMixin', () => {
         checkEligibility: vi.fn().mockResolvedValue({})
       };
       
-      const mockPopupClass = vi.fn().mockImplementation(() => mockPopupInstance);
+      const mockPopupClass = vi.fn().mockImplementation(function () {
+        return mockPopupInstance;
+      });
       item._importPopupClass = vi.fn().mockResolvedValue(mockPopupClass);
       
       const popupConfig = { className: 'CombatPowerPopup', type: 'combatPower' };
@@ -770,7 +784,9 @@ describe('ItemPopupsMixin', () => {
         checkEligibility: vi.fn().mockResolvedValue({})
       };
       
-      const mockPopupClass = vi.fn().mockImplementation(() => mockPopupInstance);
+      const mockPopupClass = vi.fn().mockImplementation(function () {
+        return mockPopupInstance;
+      });
       item._importPopupClass = vi.fn().mockResolvedValue(mockPopupClass);
       
       // Mock _executeBypassActionForType to throw a generic error
@@ -789,7 +805,9 @@ describe('ItemPopupsMixin', () => {
         checkEligibility: vi.fn().mockResolvedValue({})
       };
       
-      const mockPopupClass = vi.fn().mockImplementation(() => mockPopupInstance);
+      const mockPopupClass = vi.fn().mockImplementation(function () {
+        return mockPopupInstance;
+      });
       item._importPopupClass = vi.fn().mockResolvedValue(mockPopupClass);
       item._prepareItemForPopup = vi.fn().mockResolvedValue(undefined);
       

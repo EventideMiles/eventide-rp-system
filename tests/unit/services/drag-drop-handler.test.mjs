@@ -329,12 +329,14 @@ describe('DragDropHandler', () => {
       const originalConfigItem = global.CONFIG?.Item;
       global.CONFIG = global.CONFIG || {};
       global.CONFIG.Item = {
-        documentClass: vi.fn((data) => ({
-          _id: data._id,
-          name: data.name,
-          type: data.type,
-          system: data.system,
-        })),
+        documentClass: vi.fn(function (data) {
+          return {
+            _id: data._id,
+            name: data.name,
+            type: data.type,
+            system: data.system,
+          };
+        }),
       };
 
       const result = DragDropHandler._findTransformationCard(

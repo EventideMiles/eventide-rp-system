@@ -450,7 +450,7 @@ describe('ItemActionCardMixin', () => {
         updateSource: vi.fn(),
         sheet: { close: vi.fn(), render: vi.fn() }
       };
-      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+      global.CONFIG.Item.documentClass.mockImplementation(function () { return mockTempItem; });
 
       item.getEmbeddedItem();
 
@@ -472,7 +472,7 @@ describe('ItemActionCardMixin', () => {
       };
 
       const mockTempEffect = { _id: 'effect-id' };
-      global.CONFIG.ActiveEffect.documentClass.mockReturnValue(mockTempEffect);
+      global.CONFIG.ActiveEffect.documentClass.mockImplementation(function () { return mockTempEffect; });
 
       const mockTempItem = {
         effects: new MockCollection(),
@@ -481,7 +481,7 @@ describe('ItemActionCardMixin', () => {
         updateSource: vi.fn(),
         sheet: { close: vi.fn(), render: vi.fn() }
       };
-      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+      global.CONFIG.Item.documentClass.mockImplementation(function () { return mockTempItem; });
 
       item.getEmbeddedItem();
 
@@ -509,7 +509,7 @@ describe('ItemActionCardMixin', () => {
         updateSource: vi.fn(),
         sheet: { close: vi.fn(), render: vi.fn() }
       };
-      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+      global.CONFIG.Item.documentClass.mockImplementation(function () { return mockTempItem; });
 
       // The deepClone mock will be called, and the cost should be modified
       item.getEmbeddedItem();
@@ -536,7 +536,7 @@ describe('ItemActionCardMixin', () => {
         updateSource: vi.fn(),
         sheet: { close: vi.fn(), render: vi.fn() }
       };
-      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+      global.CONFIG.Item.documentClass.mockImplementation(function () { return mockTempItem; });
 
       item.getEmbeddedItem();
 
@@ -840,8 +840,8 @@ describe('ItemActionCardMixin', () => {
       };
 
       global.CONFIG.Item.documentClass
-        .mockReturnValueOnce(mockTempItem1)
-        .mockReturnValueOnce(mockTempItem2);
+        .mockImplementationOnce(function () { return mockTempItem1; })
+        .mockImplementationOnce(function () { return mockTempItem2; });
 
       const result = item.getEmbeddedEffects();
 
@@ -863,7 +863,7 @@ describe('ItemActionCardMixin', () => {
         updateSource: vi.fn(),
         sheet: { close: vi.fn(), render: vi.fn() }
       };
-      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+      global.CONFIG.Item.documentClass.mockImplementation(function () { return mockTempItem; });
 
       item.getEmbeddedEffects();
 
@@ -882,7 +882,7 @@ describe('ItemActionCardMixin', () => {
         updateSource: vi.fn(),
         sheet: { close: vi.fn(), render: vi.fn() }
       };
-      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+      global.CONFIG.Item.documentClass.mockImplementation(function () { return mockTempItem; });
 
       item.getEmbeddedEffects();
 
@@ -900,7 +900,7 @@ describe('ItemActionCardMixin', () => {
       item.system.embeddedStatusEffects = [effectData];
 
       const mockTempEffect = { _id: 'ae-1' };
-      global.CONFIG.ActiveEffect.documentClass.mockReturnValue(mockTempEffect);
+      global.CONFIG.ActiveEffect.documentClass.mockImplementation(function () { return mockTempEffect; });
 
       const mockTempItem = {
         effects: new MockCollection(),
@@ -909,7 +909,7 @@ describe('ItemActionCardMixin', () => {
         updateSource: vi.fn(),
         sheet: { close: vi.fn(), render: vi.fn() }
       };
-      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+      global.CONFIG.Item.documentClass.mockImplementation(function () { return mockTempItem; });
 
       item.getEmbeddedEffects();
 
@@ -930,7 +930,7 @@ describe('ItemActionCardMixin', () => {
         updateSource: vi.fn(),
         sheet: { close: vi.fn(), render: vi.fn() }
       };
-      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+      global.CONFIG.Item.documentClass.mockImplementation(function () { return mockTempItem; });
 
       const result = item.getEmbeddedEffects();
 
@@ -950,7 +950,7 @@ describe('ItemActionCardMixin', () => {
         updateSource: vi.fn(),
         sheet: { close: vi.fn(), render: vi.fn() }
       };
-      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+      global.CONFIG.Item.documentClass.mockImplementation(function () { return mockTempItem; });
 
       const result = item.getEmbeddedEffects({ executionContext: true });
 
@@ -1270,7 +1270,7 @@ describe('ItemActionCardMixin', () => {
           handleBypass: vi.fn()
         }
       };
-      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+      global.CONFIG.Item.documentClass.mockImplementation(function () { return mockTempItem; });
 
       await item.getEmbeddedTransformations();
 
@@ -1303,7 +1303,7 @@ describe('ItemActionCardMixin', () => {
           handleBypass: mockHandleBypass
         }
       };
-      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+      global.CONFIG.Item.documentClass.mockImplementation(function () { return mockTempItem; });
 
       const tempItem = item.getEmbeddedItem();
 
@@ -1327,7 +1327,7 @@ describe('ItemActionCardMixin', () => {
         updateSource: vi.fn(),
         sheet: { close: vi.fn(), render: vi.fn() }
       };
-      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+      global.CONFIG.Item.documentClass.mockImplementation(function () { return mockTempItem; });
 
       const effects = item.getEmbeddedEffects();
       expect(effects.length).toBeGreaterThan(0);
@@ -1353,7 +1353,7 @@ describe('ItemActionCardMixin', () => {
         updateSource: vi.fn(),
         sheet: { close: vi.fn(), render: vi.fn() }
       };
-      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+      global.CONFIG.Item.documentClass.mockImplementation(function () { return mockTempItem; });
 
       const effects = item.getEmbeddedEffects();
       const tempEffect = effects[0];
@@ -1380,7 +1380,7 @@ describe('ItemActionCardMixin', () => {
         updateSource: vi.fn(),
         sheet: { close: vi.fn(), render: vi.fn() }
       };
-      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+      global.CONFIG.Item.documentClass.mockImplementation(function () { return mockTempItem; });
 
       const effects = item.getEmbeddedEffects();
       await effects[0].update({ 'system.someProperty': 'newValue' });
@@ -1402,7 +1402,7 @@ describe('ItemActionCardMixin', () => {
         updateSource: vi.fn(),
         sheet: mockSheet
       };
-      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+      global.CONFIG.Item.documentClass.mockImplementation(function () { return mockTempItem; });
 
       const effects = item.getEmbeddedEffects();
       await effects[0].update({ 'system.someProperty': 'newValue' });
@@ -1425,7 +1425,7 @@ describe('ItemActionCardMixin', () => {
         updateSource: vi.fn(),
         sheet: mockSheet
       };
-      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+      global.CONFIG.Item.documentClass.mockImplementation(function () { return mockTempItem; });
 
       const effects = item.getEmbeddedEffects();
       await effects[0].update({ 'system.someProperty': 'newValue' }, { fromEmbeddedItem: true });
@@ -1454,7 +1454,7 @@ describe('ItemActionCardMixin', () => {
         updateSource: vi.fn(),
         sheet: { close: vi.fn(), render: vi.fn(), rendered: true }
       };
-      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+      global.CONFIG.Item.documentClass.mockImplementation(function () { return mockTempItem; });
 
       const effects = item.getEmbeddedEffects();
       await effects[0].updateEmbeddedDocuments('ActiveEffect', []);
@@ -1481,7 +1481,7 @@ describe('ItemActionCardMixin', () => {
         updateSource: vi.fn(),
         sheet: mockSheet
       };
-      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+      global.CONFIG.Item.documentClass.mockImplementation(function () { return mockTempItem; });
 
       const effects = item.getEmbeddedEffects();
       await effects[0].updateEmbeddedDocuments('ActiveEffect', []);
@@ -1509,7 +1509,7 @@ describe('ItemActionCardMixin', () => {
         updateSource: vi.fn(),
         sheet: mockSheet
       };
-      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+      global.CONFIG.Item.documentClass.mockImplementation(function () { return mockTempItem; });
 
       const effects = item.getEmbeddedEffects();
       await effects[0].updateEmbeddedDocuments('ActiveEffect', [], { fromEmbeddedItem: true });
@@ -1554,7 +1554,7 @@ describe('ItemActionCardMixin', () => {
       ];
 
       // Make CONFIG.Item.documentClass throw an error
-      global.CONFIG.Item.documentClass.mockImplementation(() => {
+      global.CONFIG.Item.documentClass.mockImplementation(function () {
         throw new Error('Test error');
       });
 
@@ -1607,7 +1607,7 @@ describe('ItemActionCardMixin', () => {
       global.CONFIG.Item.documentClass.prototype = {
         updateEmbeddedDocuments: vi.fn().mockResolvedValue([])
       };
-      const documentClassSpy = global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+      const documentClassSpy = global.CONFIG.Item.documentClass.mockImplementation(function () { return mockTempItem; });
 
       // Set embeddedItem after configuring mocks
       item.system.embeddedItem = embeddedData;
@@ -1667,7 +1667,7 @@ describe('ItemActionCardMixin', () => {
       global.CONFIG.Item.documentClass.prototype = {
         updateEmbeddedDocuments: vi.fn().mockResolvedValue([])
       };
-      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+      global.CONFIG.Item.documentClass.mockImplementation(function () { return mockTempItem; });
 
       item.system.embeddedItem = embeddedData;
 
@@ -1701,7 +1701,7 @@ describe('ItemActionCardMixin', () => {
       global.CONFIG.Item.documentClass.prototype = {
         updateEmbeddedDocuments: vi.fn().mockResolvedValue([])
       };
-      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+      global.CONFIG.Item.documentClass.mockImplementation(function () { return mockTempItem; });
 
       item.system.embeddedItem = embeddedData;
 
@@ -1721,7 +1721,7 @@ describe('ItemActionCardMixin', () => {
       ];
 
       // Make CONFIG.Item.documentClass throw an error
-      global.CONFIG.Item.documentClass.mockImplementation(() => {
+      global.CONFIG.Item.documentClass.mockImplementation(function () {
         throw new Error('Test error');
       });
 
@@ -1749,7 +1749,7 @@ describe('ItemActionCardMixin', () => {
         sheet: { close: vi.fn(), render: vi.fn() },
         system: {}
       };
-      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+      global.CONFIG.Item.documentClass.mockImplementation(function () { return mockTempItem; });
 
       const result = await item.getEmbeddedTransformations();
 
@@ -1772,7 +1772,7 @@ describe('ItemActionCardMixin', () => {
         sheet: { close: vi.fn(), render: vi.fn() },
         system: {}
       };
-      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+      global.CONFIG.Item.documentClass.mockImplementation(function () { return mockTempItem; });
 
       const result = await item.getEmbeddedTransformations();
 
@@ -1797,7 +1797,7 @@ describe('ItemActionCardMixin', () => {
         sheet: { close: vi.fn(), render: vi.fn() },
         system: {}
       };
-      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+      global.CONFIG.Item.documentClass.mockImplementation(function () { return mockTempItem; });
 
       const transformations = await item.getEmbeddedTransformations();
       const tempTransformation = transformations[0];
@@ -1823,7 +1823,7 @@ describe('ItemActionCardMixin', () => {
         sheet: { close: vi.fn(), render: vi.fn() },
         system: {}
       };
-      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+      global.CONFIG.Item.documentClass.mockImplementation(function () { return mockTempItem; });
 
       const transformations = await item.getEmbeddedTransformations();
       const tempTransformation = transformations[0];
@@ -1851,7 +1851,7 @@ describe('ItemActionCardMixin', () => {
         sheet: { close: vi.fn(), render: vi.fn() },
         system: {}
       };
-      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+      global.CONFIG.Item.documentClass.mockImplementation(function () { return mockTempItem; });
 
       const transformations = await item.getEmbeddedTransformations();
       await transformations[0].update({ 'system.someProperty': 'newValue' });
@@ -1874,7 +1874,7 @@ describe('ItemActionCardMixin', () => {
         sheet: mockSheet,
         system: {}
       };
-      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+      global.CONFIG.Item.documentClass.mockImplementation(function () { return mockTempItem; });
 
       const transformations = await item.getEmbeddedTransformations();
       await transformations[0].update({ 'system.someProperty': 'newValue' });
@@ -1898,7 +1898,7 @@ describe('ItemActionCardMixin', () => {
         sheet: mockSheet,
         system: {}
       };
-      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+      global.CONFIG.Item.documentClass.mockImplementation(function () { return mockTempItem; });
 
       const transformations = await item.getEmbeddedTransformations();
       await transformations[0].update({ 'system.someProperty': 'newValue' }, { fromEmbeddedItem: true });
@@ -1922,7 +1922,7 @@ describe('ItemActionCardMixin', () => {
         sheet: mockSheet,
         system: {}
       };
-      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+      global.CONFIG.Item.documentClass.mockImplementation(function () { return mockTempItem; });
 
       const transformations = await item.getEmbeddedTransformations();
       await transformations[0].update({ img: 'new-image.svg' });
@@ -1946,7 +1946,7 @@ describe('ItemActionCardMixin', () => {
         sheet: mockSheet,
         system: {}
       };
-      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+      global.CONFIG.Item.documentClass.mockImplementation(function () { return mockTempItem; });
 
       const transformations = await item.getEmbeddedTransformations({ executionContext: true });
       await transformations[0].update({ 'system.someProperty': 'newValue' });
@@ -1973,7 +1973,7 @@ describe('ItemActionCardMixin', () => {
         sheet: mockSheet,
         system: {}
       };
-      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+      global.CONFIG.Item.documentClass.mockImplementation(function () { return mockTempItem; });
 
       const transformations = await item.getEmbeddedTransformations();
       await transformations[0].update({ 'system.embeddedCombatPowers': [] });
@@ -1998,7 +1998,7 @@ describe('ItemActionCardMixin', () => {
         sheet: mockSheet,
         system: {}
       };
-      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+      global.CONFIG.Item.documentClass.mockImplementation(function () { return mockTempItem; });
 
       const transformations = await item.getEmbeddedTransformations();
       await transformations[0].update({ 'system.embeddedActionCards': [] });
@@ -2023,7 +2023,7 @@ describe('ItemActionCardMixin', () => {
         sheet: mockSheet,
         system: {}
       };
-      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+      global.CONFIG.Item.documentClass.mockImplementation(function () { return mockTempItem; });
 
       const transformations = await item.getEmbeddedTransformations();
       const tempTransformation = transformations[0];
@@ -2052,7 +2052,7 @@ describe('ItemActionCardMixin', () => {
         sheet: mockSheet,
         system: {}
       };
-      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+      global.CONFIG.Item.documentClass.mockImplementation(function () { return mockTempItem; });
 
       const transformations = await item.getEmbeddedTransformations();
       await transformations[0].update({ 'system.embeddedCombatPowers': [] });
@@ -2078,7 +2078,7 @@ describe('ItemActionCardMixin', () => {
         sheet: mockSheet,
         system: {}
       };
-      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+      global.CONFIG.Item.documentClass.mockImplementation(function () { return mockTempItem; });
 
       const transformations = await item.getEmbeddedTransformations();
       await transformations[0].update({ 'system.embeddedCombatPowers': [] });
@@ -2112,7 +2112,7 @@ describe('ItemActionCardMixin', () => {
         sheet: mockSheet,
         system: {}
       };
-      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+      global.CONFIG.Item.documentClass.mockImplementation(function () { return mockTempItem; });
 
       const transformations = await item.getEmbeddedTransformations();
       await transformations[0].updateEmbeddedDocuments('ActiveEffect', []);
@@ -2140,7 +2140,7 @@ describe('ItemActionCardMixin', () => {
         sheet: mockSheet,
         system: {}
       };
-      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+      global.CONFIG.Item.documentClass.mockImplementation(function () { return mockTempItem; });
 
       const transformations = await item.getEmbeddedTransformations();
       await transformations[0].updateEmbeddedDocuments('ActiveEffect', []);
@@ -2169,7 +2169,7 @@ describe('ItemActionCardMixin', () => {
         sheet: mockSheet,
         system: {}
       };
-      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+      global.CONFIG.Item.documentClass.mockImplementation(function () { return mockTempItem; });
 
       const transformations = await item.getEmbeddedTransformations();
       await transformations[0].updateEmbeddedDocuments('ActiveEffect', [], { fromEmbeddedItem: true });
@@ -2198,7 +2198,7 @@ describe('ItemActionCardMixin', () => {
         sheet: mockSheet,
         system: {}
       };
-      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+      global.CONFIG.Item.documentClass.mockImplementation(function () { return mockTempItem; });
 
       const transformations = await item.getEmbeddedTransformations({ executionContext: true });
       await transformations[0].updateEmbeddedDocuments('ActiveEffect', []);
@@ -2234,7 +2234,7 @@ describe('ItemActionCardMixin', () => {
           handleBypass: mockHandleBypass
         }
       };
-      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+      global.CONFIG.Item.documentClass.mockImplementation(function () { return mockTempItem; });
 
       const transformations = await item.getEmbeddedTransformations();
 
@@ -2266,7 +2266,7 @@ describe('ItemActionCardMixin', () => {
           handleBypass: 'not a function'
         }
       };
-      global.CONFIG.Item.documentClass.mockImplementation(() => mockTempItem);
+      global.CONFIG.Item.documentClass.mockImplementation(function () { return mockTempItem; });
 
       const transformations = await item.getEmbeddedTransformations();
 

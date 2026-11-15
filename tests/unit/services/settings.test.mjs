@@ -125,7 +125,9 @@ describe('SoundSettingsApplication', () => {
       const { erpsSoundManager } = await import(
         '../../../module/services/managers/sound-manager.mjs'
       );
-      erpsSoundManager.getDefaultSounds.mockReturnValue({});
+      // mockReturnValueOnce: v3-era restoreMocks wiped this between tests,
+      // vitest 4 does not — the empty-sounds impl must not leak.
+      erpsSoundManager.getDefaultSounds.mockReturnValueOnce({});
       global.game.settings.get.mockReturnValue(null);
 
       // Act

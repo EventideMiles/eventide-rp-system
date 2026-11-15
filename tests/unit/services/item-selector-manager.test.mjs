@@ -19,10 +19,12 @@ vi.mock('../../../module/services/logger.mjs', () => ({
 }));
 
 vi.mock('../../../module/ui/components/item-selector-combo-box.mjs', () => ({
-  ItemSelectorComboBox: vi.fn().mockImplementation((config) => ({
-    destroy: vi.fn(),
-    config
-  }))
+  ItemSelectorComboBox: vi.fn().mockImplementation(function (config) {
+    return {
+      destroy: vi.fn(),
+      config
+    };
+  })
 }));
 
 vi.mock('../../../module/helpers/item-source-collector.mjs', () => ({
@@ -352,10 +354,12 @@ describe('ItemSelectorManager', () => {
       };
       
       // Reset mock implementation for each test
-      ItemSelectorComboBox.mockImplementation((config) => ({
-        destroy: vi.fn(),
-        config
-      }));
+      ItemSelectorComboBox.mockImplementation(function (config) {
+        return {
+          destroy: vi.fn(),
+          config
+        };
+      });
     });
 
     test('should return empty object for empty selectorTypes array', () => {
@@ -467,7 +471,7 @@ describe('ItemSelectorManager', () => {
 
     test('should log error on initialization failure', () => {
       // Make ItemSelectorComboBox throw an error
-      ItemSelectorComboBox.mockImplementationOnce(() => {
+      ItemSelectorComboBox.mockImplementationOnce(function () {
         throw new Error('Init error');
       });
       

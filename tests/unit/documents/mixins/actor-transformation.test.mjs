@@ -100,12 +100,14 @@ describe('ActorTransformationMixin', () => {
 
     global.CONFIG = {
       Item: {
-        documentClass: vi.fn().mockImplementation((data, options) => ({
-          ...data,
-          parent: options?.parent,
-          isEditable: options?.parent?.isEditable ?? true,
-          toObject: vi.fn().mockReturnValue(data)
-        }))
+        documentClass: vi.fn().mockImplementation(function (data, options) {
+          return {
+            ...data,
+            parent: options?.parent,
+            isEditable: options?.parent?.isEditable ?? true,
+            toObject: vi.fn().mockReturnValue(data)
+          };
+        })
       }
     };
     

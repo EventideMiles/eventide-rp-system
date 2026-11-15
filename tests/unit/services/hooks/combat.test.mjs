@@ -267,7 +267,9 @@ describe('Combat Hooks', () => {
           return false;
         });
 
-        mockErpsRollHandler.rollInitiative.mockRejectedValue(
+        // mockRejectedValueOnce: the rejection must not leak into later tests
+        // (vitest 4 restoreAllMocks no longer resets plain vi.fn() implementations)
+        mockErpsRollHandler.rollInitiative.mockRejectedValueOnce(
           new Error('Roll failed'),
         );
 

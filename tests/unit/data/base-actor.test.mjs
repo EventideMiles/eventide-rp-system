@@ -224,12 +224,17 @@ describe('EventideRpSystemBaseActor - Priority 1 Data Preparation', () => {
     });
 
     test('should handle missing localization keys gracefully', () => {
-      global.game.i18n.localize.mockReturnValue(null);
+      // Scoped swap: v3-era restoreMocks reset this impl after the test;
+      // vitest 4 does not, so restore manually to avoid leaking null.
+      const originalLocalize = global.game.i18n.localize;
+      global.game.i18n.localize = vi.fn().mockReturnValue(null);
 
       actorData.prepareDerivedData();
 
       expect(actorData.abilities.acro.label).toBe('acro');
       expect(actorData.abilities.acro.abbr).toBe('acro');
+
+      global.game.i18n.localize = originalLocalize;
     });
 
     test('should calculate hidden ability totals without overrides', () => {
@@ -892,7 +897,7 @@ describe('EventideRpSystemBaseActor - Phase 2 Branch Coverage', () => {
     test('should return minimum 10 on error', () => {
       // Force an error by making Roll throw
       const OriginalRoll = global.Roll;
-      global.Roll = vi.fn().mockImplementation(() => {
+      global.Roll = vi.fn().mockImplementation(function () {
         throw new Error('Roll error');
       });
 
@@ -920,7 +925,7 @@ describe('EventideRpSystemBaseActor - Phase 2 Branch Coverage', () => {
 
     test('should return minimum 1 on error', () => {
       const OriginalRoll = global.Roll;
-      global.Roll = vi.fn().mockImplementation(() => {
+      global.Roll = vi.fn().mockImplementation(function () {
         throw new Error('Roll error');
       });
 
@@ -959,7 +964,7 @@ describe('EventideRpSystemBaseActor - Phase 2 Branch Coverage', () => {
 
     test('should return minimum 10 on error', () => {
       const OriginalRoll = global.Roll;
-      global.Roll = vi.fn().mockImplementation(() => {
+      global.Roll = vi.fn().mockImplementation(function () {
         throw new Error('Roll error');
       });
 
@@ -1021,7 +1026,7 @@ describe('EventideRpSystemBaseActor - Phase 2 Branch Coverage', () => {
       // Save original Roll to restore after this test
       const OriginalRoll = global.Roll;
 
-      global.Roll = vi.fn().mockImplementation(() => {
+      global.Roll = vi.fn().mockImplementation(function () {
         throw new Error('Roll error');
       });
 

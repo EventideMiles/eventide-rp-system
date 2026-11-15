@@ -297,7 +297,9 @@ describe('EmbeddedItemManager', () => {
         const mockItem = { id: 'item1', name: 'Test Card', setEmbeddedItem: vi.fn().mockResolvedValue(undefined) };
         const mockPowerData = { name: 'New Power', type: 'combatPower' };
         const mockTempItem = { id: 'temp1', name: 'New Power' };
-        const mockDocumentClass = vi.fn().mockReturnValue(mockTempItem);
+        const mockDocumentClass = vi.fn().mockImplementation(function () {
+          return mockTempItem;
+        });
         DefaultDataFactory.getCombatPowerData.mockReturnValue(mockPowerData);
         global.CONFIG = { Item: { documentClass: mockDocumentClass } };
 
@@ -349,7 +351,9 @@ describe('EmbeddedItemManager', () => {
         };
         const mockStatusData = { name: 'New Status', type: 'status' };
         const mockTempItem = { id: 'temp1', name: 'New Status' };
-        const mockDocumentClass = vi.fn().mockReturnValue(mockTempItem);
+        const mockDocumentClass = vi.fn().mockImplementation(function () {
+          return mockTempItem;
+        });
         DefaultDataFactory.getStatusData.mockReturnValue(mockStatusData);
         global.CONFIG = { Item: { documentClass: mockDocumentClass } };
 
@@ -389,7 +393,9 @@ describe('EmbeddedItemManager', () => {
         };
         const mockTransformationData = { name: 'New Transformation', type: 'transformation' };
         const mockTempItem = { id: 'temp1', name: 'New Transformation' };
-        const mockDocumentClass = vi.fn().mockReturnValue(mockTempItem);
+        const mockDocumentClass = vi.fn().mockImplementation(function () {
+          return mockTempItem;
+        });
         DefaultDataFactory.getTransformationData.mockReturnValue(mockTransformationData);
         global.CONFIG = { Item: { documentClass: mockDocumentClass } };
 
@@ -609,7 +615,9 @@ describe('EmbeddedItemManager', () => {
         };
         const mockPowerData = { name: 'New Power', type: 'combatPower' };
         const mockTempItem = { id: 'temp1', name: 'New Power' };
-        const mockDocumentClass = vi.fn().mockReturnValue(mockTempItem);
+        const mockDocumentClass = vi.fn().mockImplementation(function () {
+          return mockTempItem;
+        });
         DefaultDataFactory.getCombatPowerData.mockReturnValue(mockPowerData);
         global.CONFIG = { Item: { documentClass: mockDocumentClass } };
 
@@ -646,7 +654,9 @@ describe('EmbeddedItemManager', () => {
         };
         const mockActionCardData = { name: 'New Action Card', type: 'actionCard' };
         const mockTempItem = { id: 'temp1', name: 'New Action Card' };
-        const mockDocumentClass = vi.fn().mockReturnValue(mockTempItem);
+        const mockDocumentClass = vi.fn().mockImplementation(function () {
+          return mockTempItem;
+        });
         DefaultDataFactory.getActionCardData.mockReturnValue(mockActionCardData);
         global.CONFIG = { Item: { documentClass: mockDocumentClass } };
 
